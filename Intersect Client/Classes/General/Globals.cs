@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Intersect;
 using Intersect.GameObjects;
 using IntersectClientExtras.Database;
 using IntersectClientExtras.File_Management;
@@ -84,7 +83,7 @@ namespace Intersect_Client.Classes.General
         public static bool InCraft = false;
 
         //Trading (Only 2 people can trade at once)
-        public static ItemInstance[,] Trade = new ItemInstance[2, Options.MaxInvItems];
+        public static ItemInstance[,] Trade;
 
         public static bool InTrade = false;
 

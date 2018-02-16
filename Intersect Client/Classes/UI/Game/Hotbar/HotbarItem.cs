@@ -1,7 +1,7 @@
 ﻿using System;
 using Intersect.Client.Classes.Core;
 using Intersect.GameObjects;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Control;
@@ -175,9 +175,7 @@ namespace Intersect.Client.Classes.UI.Game.Hotbar
             //See if Label Should be changed
             if (mHotKey != GameControls.ActiveControls.ControlMapping[Controls.Hotkey1 + mYindex].Key1)
             {
-                KeyLabel.SetText(Strings.Get("keys",
-                    Enum.GetName(typeof(Keys),
-                        GameControls.ActiveControls.ControlMapping[Controls.Hotkey1 + mYindex].Key1)));
+                KeyLabel.SetText(Strings.Keys.keydict[Enum.GetName(typeof(Keys),GameControls.ActiveControls.ControlMapping[Controls.Hotkey1 + mYindex].Key1).ToLower()]);
                 mHotKey = GameControls.ActiveControls.ControlMapping[Controls.Hotkey1 + mYindex].Key1;
             }
             //See if we lost our hotbar item

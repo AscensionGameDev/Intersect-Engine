@@ -1,5 +1,6 @@
 ﻿using System;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
@@ -25,7 +26,7 @@ namespace Intersect_Client.Classes.UI.Game
         //Init
         public FriendsWindow(Canvas gameCanvas)
         {
-            mFriendsWindow = new WindowControl(gameCanvas, Strings.Get("friends", "title"), false, "FriendsWindow");
+            mFriendsWindow = new WindowControl(gameCanvas, Strings.Friends.title, false, "FriendsWindow");
             mFriendsWindow.DisableResizing();
 
             mTextboxContainer = new ImagePanel(mFriendsWindow, "SearchContainer");
@@ -39,6 +40,8 @@ namespace Intersect_Client.Classes.UI.Game
             mAddButton.Clicked += addButton_Clicked;
 
             UpdateList();
+
+            mFriendsWindow.LoadJsonUi(GameContentManager.UI.InGame);
         }
 
         //Methods
@@ -123,8 +126,8 @@ namespace Intersect_Client.Classes.UI.Game
             var row = (ListBoxRow) sender;
             mTempName = (string) row.UserData;
 
-            InputBox iBox = new InputBox(Strings.Get("friends", "removefriend"),
-                Strings.Get("friends", "removefriendprompt", mTempName),
+            InputBox iBox = new InputBox(Strings.Friends.removefriend,
+                Strings.Friends.removefriendprompt.ToString(mTempName),
                 true, InputBox.InputType.YesNo, RemoveFriend, null, 0);
         }
 

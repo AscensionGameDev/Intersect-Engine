@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Intersect.Client.Classes.Core;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
@@ -68,13 +69,13 @@ namespace Intersect_Client.Classes.UI
             mMainMenu = mainMenu;
 
             //Main Menu Window
-            mOptionsPanel = new ImagePanel(parent, "OptionsPanel");
+            mOptionsPanel = new ImagePanel(parent, "OptionsWindow");
             mOptionsPanel.IsHidden = true;
             Gui.InputBlockingElements.Add(mOptionsPanel);
 
             //Menu Header
             mOptionsHeader = new Label(mOptionsPanel, "OptionsHeader");
-            mOptionsHeader.SetText(Strings.Get("options", "title"));
+            mOptionsHeader.SetText(Strings.Options.title);
 
             //Options Get Stored in the Options Scroll Control
             mOptionsContainer = new ScrollControl(mOptionsPanel, "OptionsContainer");
@@ -86,7 +87,7 @@ namespace Intersect_Client.Classes.UI
 
             //Options - Resolution Label
             mResolutionLabel = new Label(mResolutionBackground, "ResolutionLabel");
-            mResolutionLabel.SetText(Strings.Get("options", "resolution"));
+            mResolutionLabel.SetText(Strings.Options.resolution);
 
             mResolutionList = new ComboBox(mResolutionBackground, "ResolutionCombobox");
             var myModes = GameGraphics.Renderer.GetValidVideoModes();
@@ -101,31 +102,31 @@ namespace Intersect_Client.Classes.UI
 
             //Options - FPS Label
             mFpsLabel = new Label(mFpsBackground, "FPSLabel");
-            mFpsLabel.SetText(Strings.Get("options", "targetfps"));
+            mFpsLabel.SetText(Strings.Options.targetfps);
 
             //Options - FPS List
             mFpsList = new ComboBox(mFpsBackground, "FPSCombobox");
-            mFpsList.AddItem(Strings.Get("options", "vsync"));
-            mFpsList.AddItem(Strings.Get("options", "30fps"));
-            mFpsList.AddItem(Strings.Get("options", "60fps"));
-            mFpsList.AddItem(Strings.Get("options", "90fps"));
-            mFpsList.AddItem(Strings.Get("options", "120fps"));
-            mFpsList.AddItem(Strings.Get("options", "unlimitedfps"));
+            mFpsList.AddItem(Strings.Options.vsync);
+            mFpsList.AddItem(Strings.Options.fps30);
+            mFpsList.AddItem(Strings.Options.fps60);
+            mFpsList.AddItem(Strings.Options.fps90);
+            mFpsList.AddItem(Strings.Options.fps120);
+            mFpsList.AddItem(Strings.Options.unlimitedfps);
 
             //Options - Fullscreen Checkbox
             mFullscreen =
                 new LabeledCheckBox(mOptionsContainer, "FullscreenCheckbox")
                 {
-                    Text = Strings.Get("options", "fullscreen")
+                    Text = Strings.Options.fullscreen
                 };
 
             mEditKeybindingsBtn =
-                new Button(mOptionsContainer, "KeybindingsButton") {Text = Strings.Get("controls", "edit")};
+                new Button(mOptionsContainer, "KeybindingsButton") { Text = Strings.Controls.edit };
             mEditKeybindingsBtn.Clicked += _editKeybindingsBtn_Clicked;
 
             //Options - Sound Label
             mSoundLabel = new Label(mOptionsContainer, "SoundLabel");
-            mSoundLabel.SetText(Strings.Get("options", "soundvolume", 100));
+            mSoundLabel.SetText(Strings.Options.soundvolume.ToString( 100));
 
             //Options - Sound Slider
             mSoundSlider = new HorizontalSlider(mOptionsContainer, "SoundSlider");
@@ -135,7 +136,7 @@ namespace Intersect_Client.Classes.UI
 
             //Options - Music Label
             mMusicLabel = new Label(mOptionsContainer, "MusicLabel");
-            mMusicLabel.SetText(Strings.Get("options", "musicvolume", 100));
+            mMusicLabel.SetText(Strings.Options.musicvolume.ToString( 100));
 
             //Options - Music Slider
             mMusicSlider = new HorizontalSlider(mOptionsContainer, "MusicSlider");
@@ -156,7 +157,7 @@ namespace Intersect_Client.Classes.UI
             {
                 var label = new Label(mControlsContainer,
                     "Control" + Enum.GetName(typeof(Controls), control) + "Label");
-                label.Text = Strings.Get("controls", Enum.GetName(typeof(Controls), control).ToLower());
+                label.Text = Strings.Controls.controldict[Enum.GetName(typeof(Controls), control).ToLower()];
 
                 var key1 = new Button(mControlsContainer,
                     "Control" + Enum.GetName(typeof(Controls), control) + "Button1");
@@ -175,16 +176,25 @@ namespace Intersect_Client.Classes.UI
 
             //Options - Apply Button
             mApplyBtn = new Button(mOptionsContainer, "ApplyButton");
-            mApplyBtn.SetText(Strings.Get("options", "apply"));
+            mApplyBtn.SetText(Strings.Options.apply);
             mApplyBtn.Clicked += ApplyBtn_Clicked;
 
             //Options - Back Button
             mBackBtn = new Button(mOptionsContainer, "CancelButton");
-            mBackBtn.SetText(Strings.Get("options", "cancel"));
+            mBackBtn.SetText(Strings.Options.cancel);
             mBackBtn.Clicked += BackBtn_Clicked;
 
             GameInputHandler.KeyDown += OnKeyDown;
             GameInputHandler.MouseDown += OnKeyDown;
+
+            if (mainMenu == null)
+            {
+                mOptionsPanel.LoadJsonUi(GameContentManager.UI.InGame);
+            }
+            else
+            {
+                mOptionsPanel.LoadJsonUi(GameContentManager.UI.Menu);
+            }
         }
 
         private void Key2_Clicked(Base sender, ClickedEventArgs arguments)
@@ -201,7 +211,7 @@ namespace Intersect_Client.Classes.UI
         {
             if (mEdittingButton == null)
             {
-                sender.Text = Strings.Get("controls", "listening");
+                sender.Text = Strings.Controls.listening;
                 mEdittingKey = keyNum;
                 mEdittingControl = (Controls) sender.UserData;
                 mEdittingButton = sender;
@@ -217,21 +227,19 @@ namespace Intersect_Client.Classes.UI
             {
                 mControlsContainer.Hide();
                 mOptionsContainer.Show();
-                mOptionsHeader.SetText(Strings.Get("options", "title"));
+                mOptionsHeader.SetText(Strings.Options.title);
                 mExitKeybindingsButton.Hide();
             }
             else
             {
                 mControlsContainer.Show();
                 mOptionsContainer.Hide();
-                mOptionsHeader.SetText(Strings.Get("controls", "title"));
+                mOptionsHeader.SetText(Strings.Controls.title);
                 mExitKeybindingsButton.Show();
                 foreach (Controls control in Enum.GetValues(typeof(Controls)))
                 {
-                    mKeyButtons[control][0].Text = Strings.Get("keys",
-                        Enum.GetName(typeof(Keys), mEdittingControls.ControlMapping[control].Key1));
-                    mKeyButtons[control][1].Text = Strings.Get("keys",
-                        Enum.GetName(typeof(Keys), mEdittingControls.ControlMapping[control].Key2));
+                    mKeyButtons[control][0].Text = Strings.Keys.keydict[Enum.GetName(typeof(Keys), mEdittingControls.ControlMapping[control].Key1).ToLower()];
+                    mKeyButtons[control][1].Text = Strings.Keys.keydict[Enum.GetName(typeof(Keys), mEdittingControls.ControlMapping[control].Key2).ToLower()];
                 }
             }
         }
@@ -244,13 +252,11 @@ namespace Intersect_Client.Classes.UI
                 mEdittingControls.UpdateControl(mEdittingControl, mEdittingKey, key);
                 if (mEdittingKey == 1)
                 {
-                    mEdittingButton.Text = Strings.Get("keys",
-                        Enum.GetName(typeof(Keys), mEdittingControls.ControlMapping[mEdittingControl].Key1));
+                    mEdittingButton.Text = Strings.Keys.keydict[Enum.GetName(typeof(Keys), mEdittingControls.ControlMapping[mEdittingControl].Key1).ToLower()];
                 }
                 else
                 {
-                    mEdittingButton.Text = Strings.Get("keys",
-                        Enum.GetName(typeof(Keys), mEdittingControls.ControlMapping[mEdittingControl].Key2));
+                    mEdittingButton.Text = Strings.Keys.keydict[Enum.GetName(typeof(Keys), mEdittingControls.ControlMapping[mEdittingControl].Key2).ToLower()];
                 }
                 mEdittingButton = null;
                 Gui.GwenInput.HandleInput = true;
@@ -283,32 +289,32 @@ namespace Intersect_Client.Classes.UI
             switch (Globals.Database.TargetFps)
             {
                 case -1: //Unlimited
-                    mFpsList.SelectByText(Strings.Get("options", "unlimitedfps"));
+                    mFpsList.SelectByText(Strings.Options.unlimitedfps);
                     break;
                 case 0: //VSYNC
-                    mFpsList.SelectByText(Strings.Get("options", "vsync"));
+                    mFpsList.SelectByText(Strings.Options.vsync);
                     break;
                 case 1:
-                    mFpsList.SelectByText(Strings.Get("options", "30fps"));
+                    mFpsList.SelectByText(Strings.Options.fps30);
                     break;
                 case 2:
-                    mFpsList.SelectByText(Strings.Get("options", "60fps"));
+                    mFpsList.SelectByText(Strings.Options.fps60);
                     break;
                 case 3:
-                    mFpsList.SelectByText(Strings.Get("options", "90fps"));
+                    mFpsList.SelectByText(Strings.Options.fps90);
                     break;
                 case 4:
-                    mFpsList.SelectByText(Strings.Get("options", "120fps"));
+                    mFpsList.SelectByText(Strings.Options.fps120);
                     break;
                 default:
-                    mFpsList.SelectByText(Strings.Get("options", "vsync"));
+                    mFpsList.SelectByText(Strings.Options.vsync);
                     break;
             }
             mFullscreen.IsChecked = Globals.Database.FullScreen;
             mMusicSlider.Value = Globals.Database.MusicVolume;
             mSoundSlider.Value = Globals.Database.SoundVolume;
-            mMusicLabel.Text = Strings.Get("options", "musicvolume", (int) mMusicSlider.Value);
-            mSoundLabel.Text = Strings.Get("options", "soundvolume", (int) mSoundSlider.Value);
+            mMusicLabel.Text = Strings.Options.musicvolume.ToString( (int)mMusicSlider.Value);
+            mSoundLabel.Text = Strings.Options.soundvolume.ToString( (int)mSoundSlider.Value);
             mOptionsPanel.IsHidden = false;
         }
 
@@ -345,14 +351,14 @@ namespace Intersect_Client.Classes.UI
 
         void _musicSlider_ValueChanged(Base sender, EventArgs arguments)
         {
-            mMusicLabel.Text = Strings.Get("options", "musicvolume", (int) mMusicSlider.Value);
+            mMusicLabel.Text = Strings.Options.musicvolume.ToString((int)mMusicSlider.Value);
             Globals.Database.MusicVolume = (int) mMusicSlider.Value;
             GameAudio.UpdateGlobalVolume();
         }
 
         void _soundSlider_ValueChanged(Base sender, EventArgs arguments)
         {
-            mSoundLabel.Text = Strings.Get("options", "soundvolume", (int) mSoundSlider.Value);
+            mSoundLabel.Text = Strings.Options.soundvolume.ToString((int)mSoundSlider.Value);
             Globals.Database.SoundVolume = (int) mSoundSlider.Value;
             GameAudio.UpdateGlobalVolume();
         }
@@ -376,23 +382,23 @@ namespace Intersect_Client.Classes.UI
                 shouldReset = true;
             }
             var newFps = 0;
-            if (mFpsList.SelectedItem.Text == Strings.Get("options", "unlimitedfps"))
+            if (mFpsList.SelectedItem.Text == Strings.Options.unlimitedfps)
             {
                 newFps = -1;
             }
-            else if (mFpsList.SelectedItem.Text == Strings.Get("options", "30fps"))
+            else if (mFpsList.SelectedItem.Text == Strings.Options.fps30)
             {
                 newFps = 1;
             }
-            else if (mFpsList.SelectedItem.Text == Strings.Get("options", "60fps"))
+            else if (mFpsList.SelectedItem.Text == Strings.Options.fps60)
             {
                 newFps = 2;
             }
-            else if (mFpsList.SelectedItem.Text == Strings.Get("options", "90fps"))
+            else if (mFpsList.SelectedItem.Text == Strings.Options.fps90)
             {
                 newFps = 3;
             }
-            else if (mFpsList.SelectedItem.Text == Strings.Get("options", "120fps"))
+            else if (mFpsList.SelectedItem.Text == Strings.Options.fps120)
             {
                 newFps = 4;
             }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Intersect.Localization;
 using Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Events;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Maps
@@ -115,12 +114,12 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Li
         public List<ResourceSpawn> ResourceSpawns { get; set; } = new List<ResourceSpawn>();
 
         //Properties
-        public string Music { get; set; } = Strings.Get("general", "none");
+        public string Music { get; set; } = "None";
 
-        public string Sound { get; set; } = Strings.Get("general", "none");
+        public string Sound { get; set; } = "None";
         public bool IsIndoors { get; set; }
-        public string Panorama { get; set; } = Strings.Get("general", "none");
-        public string Fog { get; set; } = Strings.Get("general", "none");
+        public string Panorama { get; set; } = "None";
+        public string Fog { get; set; } = "None";
         public int FogXSpeed { get; set; }
         public int FogYSpeed { get; set; }
         public int FogTransparency { get; set; }
@@ -134,7 +133,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Li
         public byte PlayerLightIntensity { get; set; } = 255;
         public float PlayerLightExpand { get; set; }
         public Color PlayerLightColor { get; set; } = Color.White;
-        public string OverlayGraphic { get; set; } = Strings.Get("general", "none");
+        public string OverlayGraphic { get; set; } = "None";
 
         public object GetMapLock()
         {

@@ -6,7 +6,7 @@ using DarkUI.Forms;
 using Intersect.Editor.Classes;
 using Intersect.Enums;
 using Intersect.GameObjects;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Forms.Editors
 {
@@ -104,35 +104,35 @@ namespace Intersect.Editor.Forms.Editors
 
         private void InitLocalization()
         {
-            Text = Strings.Get("shopeditor", "title");
-            toolStripItemNew.Text = Strings.Get("shopeditor", "new");
-            toolStripItemDelete.Text = Strings.Get("shopeditor", "delete");
-            toolStripItemCopy.Text = Strings.Get("shopeditor", "copy");
-            toolStripItemPaste.Text = Strings.Get("shopeditor", "paste");
-            toolStripItemUndo.Text = Strings.Get("shopeditor", "undo");
+            Text = Strings.ShopEditor.title;
+            toolStripItemNew.Text = Strings.ShopEditor.New;
+            toolStripItemDelete.Text = Strings.ShopEditor.delete;
+            toolStripItemCopy.Text = Strings.ShopEditor.copy;
+            toolStripItemPaste.Text = Strings.ShopEditor.paste;
+            toolStripItemUndo.Text = Strings.ShopEditor.undo;
 
-            grpGeneral.Text = Strings.Get("shopeditor", "general");
-            lblName.Text = Strings.Get("shopeditor", "name");
-            lblDefaultCurrency.Text = Strings.Get("shopeditor", "defaultcurrency");
+            grpGeneral.Text = Strings.ShopEditor.general;
+            lblName.Text = Strings.ShopEditor.name;
+            lblDefaultCurrency.Text = Strings.ShopEditor.defaultcurrency;
 
-            grpItemsSold.Text = Strings.Get("shopeditor", "itemssold");
-            lblAddSoldItem.Text = Strings.Get("shopeditor", "addlabel");
-            lblSellFor.Text = Strings.Get("shopeditor", "sellfor");
-            lblSellCost.Text = Strings.Get("shopeditor", "sellcost");
-            btnAddSoldItem.Text = Strings.Get("shopeditor", "addsolditem");
-            btnDelSoldItem.Text = Strings.Get("shopeditor", "removesolditem");
+            grpItemsSold.Text = Strings.ShopEditor.itemssold;
+            lblAddSoldItem.Text = Strings.ShopEditor.addlabel;
+            lblSellFor.Text = Strings.ShopEditor.sellfor;
+            lblSellCost.Text = Strings.ShopEditor.sellcost;
+            btnAddSoldItem.Text = Strings.ShopEditor.addsolditem;
+            btnDelSoldItem.Text = Strings.ShopEditor.removesolditem;
 
-            grpItemsBought.Text = Strings.Get("shopeditor", "itemsboughtwhitelist");
-            rdoBuyWhitelist.Text = Strings.Get("shopeditor", "whitelist");
-            rdoBuyBlacklist.Text = Strings.Get("shopeditor", "blacklist");
-            lblItemBought.Text = Strings.Get("shopeditor", "addboughtitem");
-            lblBuyFor.Text = Strings.Get("shopeditor", "buyfor");
-            lblBuyAmount.Text = Strings.Get("shopeditor", "buycost");
-            btnAddBoughtItem.Text = Strings.Get("shopeditor", "addboughtitem");
-            btnDelBoughtItem.Text = Strings.Get("shopeditor", "removeboughtitem");
+            grpItemsBought.Text = Strings.ShopEditor.itemsboughtwhitelist;
+            rdoBuyWhitelist.Text = Strings.ShopEditor.whitelist;
+            rdoBuyBlacklist.Text = Strings.ShopEditor.blacklist;
+            lblItemBought.Text = Strings.ShopEditor.addboughtitem;
+            lblBuyFor.Text = Strings.ShopEditor.buyfor;
+            lblBuyAmount.Text = Strings.ShopEditor.buycost;
+            btnAddBoughtItem.Text = Strings.ShopEditor.addboughtitem;
+            btnDelBoughtItem.Text = Strings.ShopEditor.removeboughtitem;
 
-            btnSave.Text = Strings.Get("shopeditor", "save");
-            btnCancel.Text = Strings.Get("shopeditor", "cancel");
+            btnSave.Text = Strings.ShopEditor.save;
+            btnCancel.Text = Strings.ShopEditor.cancel;
         }
 
         private void UpdateEditor()
@@ -173,13 +173,13 @@ namespace Intersect.Editor.Forms.Editors
             {
                 cmbBuyFor.Enabled = true;
                 nudBuyAmount.Enabled = true;
-                grpItemsBought.Text = Strings.Get("shopeditor", "itemsboughtwhitelist");
+                grpItemsBought.Text = Strings.ShopEditor.itemsboughtwhitelist;
             }
             else
             {
                 cmbBuyFor.Enabled = false;
                 nudBuyAmount.Enabled = false;
-                grpItemsBought.Text = Strings.Get("shopeditor", "itemsboughtblacklist");
+                grpItemsBought.Text = Strings.ShopEditor.itemsboughtblacklist;
             }
         }
 
@@ -311,8 +311,8 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (mEditorItem != null && lstShops.Focused)
             {
-                if (DarkMessageBox.ShowWarning(Strings.Get("shopeditor", "deleteprompt"),
-                        Strings.Get("shopeditor", "deletetitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                if (DarkMessageBox.ShowWarning(Strings.ShopEditor.deleteprompt,
+                        Strings.ShopEditor.deletetitle, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(mEditorItem);
@@ -342,8 +342,8 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (mChanged.Contains(mEditorItem) && mEditorItem != null)
             {
-                if (DarkMessageBox.ShowWarning(Strings.Get("shopeditor", "undoprompt"),
-                        Strings.Get("shopeditor", "undotitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                if (DarkMessageBox.ShowWarning(Strings.ShopEditor.undoprompt,
+                        Strings.ShopEditor.undotitle, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
                     mEditorItem.RestoreBackup();

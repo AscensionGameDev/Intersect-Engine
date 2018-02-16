@@ -4,7 +4,7 @@ using Intersect;
 using Intersect.Client.Classes.UI.Game.EntityBox;
 using Intersect.Enums;
 using Intersect.GameObjects;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen;
@@ -58,8 +58,6 @@ namespace Intersect_Client.Classes.UI.Game
         public ImagePanel[] PaperdollPanels;
         public string[] PaperdollTextures;
 
-        private ImagePanel mStatusTemplate;
-
         //Spell List
         public List<SpellStatus> Items = new List<SpellStatus>();
 
@@ -112,50 +110,38 @@ namespace Intersect_Client.Classes.UI.Game
             HpBackground = new ImagePanel(EntityInfoPanel, "HPBarBackground");
             HpBar = new ImagePanel(EntityInfoPanel, "HPBar");
             HpTitle = new Label(EntityInfoPanel, "HPTitle");
-            HpTitle.SetText(Strings.Get("entitybox", "vital0"));
+            HpTitle.SetText(Strings.EntityBox.vital0);
             HpLbl = new Label(EntityInfoPanel, "HPLabel");
 
             MpBackground = new ImagePanel(EntityInfoPanel, "MPBackground");
             MpBar = new ImagePanel(EntityInfoPanel, "MPBar");
             MpTitle = new Label(EntityInfoPanel, "MPTitle");
-            MpTitle.SetText(Strings.Get("entitybox", "vital1"));
+            MpTitle.SetText(Strings.EntityBox.vital1);
             MpLbl = new Label(EntityInfoPanel, "MPLabel");
 
             ExpBackground = new ImagePanel(EntityInfoPanel, "EXPBackground");
             ExpBar = new ImagePanel(EntityInfoPanel, "EXPBar");
             ExpTitle = new Label(EntityInfoPanel, "EXPTitle");
-            ExpTitle.SetText(Strings.Get("entitybox", "exp"));
+            ExpTitle.SetText(Strings.EntityBox.exp);
             ExpLbl = new Label(EntityInfoPanel, "EXPLabel");
 
             TradeLabel = new Button(EntityInfoPanel, "TradeButton");
-            TradeLabel.SetText(Strings.Get("entitybox", "trade"));
-            TradeLabel.SetToolTipText(Strings.Get("entitybox", "tradetip", MyEntity.MyName));
+            TradeLabel.SetText(Strings.EntityBox.trade);
+            TradeLabel.SetToolTipText(Strings.EntityBox.tradetip.ToString( MyEntity.MyName));
             TradeLabel.Clicked += tradeRequest_Clicked;
 
             PartyLabel = new Button(EntityInfoPanel, "PartyButton");
-            PartyLabel.SetText(Strings.Get("entitybox", "party"));
-            PartyLabel.SetToolTipText(Strings.Get("entitybox", "partytip", MyEntity.MyName));
+            PartyLabel.SetText(Strings.EntityBox.party);
+            PartyLabel.SetToolTipText(Strings.EntityBox.partytip.ToString(MyEntity.MyName));
             PartyLabel.Clicked += invite_Clicked;
 
             EntityStatusPanel = new ImagePanel(EntityWindow, "StatusArea");
-
-            if (PlayerBox)
-            {
-                mStatusTemplate = new ImagePanel(EntityStatusPanel, "PlayerStatusTemplate");
-            }
-            else
-            {
-                mStatusTemplate = new ImagePanel(EntityStatusPanel, "TargetStatusTemplate");
-            }
-
-            var itemIcon = new ImagePanel(mStatusTemplate, "StatusIcon");
 
             UpdateSpellStatus();
 
             SetEntity(myEntity);
 
-            //TODO: Make this more efficient
-            if (!PlayerBox) Gui.LoadRootUiData(EntityWindow, "InGame.xml");
+            EntityWindow.LoadJsonUi(GameContentManager.UI.InGame);
 
             mLastUpdateTime = Globals.System.GetTimeMs();
         }
@@ -294,16 +280,15 @@ namespace Intersect_Client.Classes.UI.Game
                 Items.Add(new SpellStatus(this, i));
                 if (PlayerBox)
                 {
-                    Items[i].Container = new ImagePanel(EntityStatusPanel, "PlayerStatusTemplate");
+                    Items[i].Container = new ImagePanel(EntityStatusPanel, "PlayerStatusIcon");
                 }
                 else
                 {
-                    Items[i].Container = new ImagePanel(EntityStatusPanel, "TargetStatusTemplate");
+                    Items[i].Container = new ImagePanel(EntityStatusPanel, "TargetStatusIcon");
                 }
                 Items[i].Setup();
-
-                //TODO Made this more efficient.
-                Gui.LoadRootUiData(Items[i].Container, "InGame.xml");
+                
+                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame);
                 Items[i].Container.Name = "";
 
                 var xPadding = Items[i].Container.Padding.Left + Items[i].Container.Padding.Right;
@@ -314,12 +299,11 @@ namespace Intersect_Client.Classes.UI.Game
                     (i / ((float)EntityStatusPanel.Width / (float)(Items[i].Container.Width + xPadding))) *
                     (Items[i].Container.Height + yPadding) + yPadding);
             }
-            mStatusTemplate.Hide();
         }
 
         private void UpdateLevel()
         {
-            EntityLevel.SetText(Strings.Get("entitybox", "level", MyEntity.Level));
+            EntityLevel.SetText(Strings.EntityBox.level.ToString(MyEntity.Level));
         }
 
         private void UpdateHpBar(float elapsedTime)
@@ -331,14 +315,14 @@ namespace Intersect_Client.Classes.UI.Game
                                  (float) MyEntity.MaxVital[(int) Vitals.Health]);
                 targetHpWidth = Math.Min(1, Math.Max(0, targetHpWidth));
                 //Fix the Labels
-                HpLbl.Text = Strings.Get("entitybox", "vital0val", MyEntity.Vital[(int) Vitals.Health],
+                HpLbl.Text = Strings.EntityBox.vital0val.ToString(MyEntity.Vital[(int) Vitals.Health],
                     MyEntity.MaxVital[(int) Vitals.Health]);
                 //Multiply by the width of the bars.
                 targetHpWidth *= HpBackground.Width;
             }
             else
             {
-                HpLbl.Text = Strings.Get("entitybox", "vital0val", 0, 0);
+                HpLbl.Text = Strings.EntityBox.vital0val.ToString( 0, 0);
                 targetHpWidth = HpBackground.Width;
             }
             if ((int) targetHpWidth != CurHpWidth)
@@ -380,13 +364,13 @@ namespace Intersect_Client.Classes.UI.Game
                 targetMpWidth = ((float) MyEntity.Vital[(int) Vitals.Mana] /
                                  (float) MyEntity.MaxVital[(int) Vitals.Mana]);
                 targetMpWidth = Math.Min(1, Math.Max(0, targetMpWidth));
-                MpLbl.Text = Strings.Get("entitybox", "vital1val", MyEntity.Vital[(int) Vitals.Mana],
+                MpLbl.Text = Strings.EntityBox.vital1val.ToString(MyEntity.Vital[(int) Vitals.Mana],
                     MyEntity.MaxVital[(int) Vitals.Mana]);
                 targetMpWidth *= MpBackground.Width;
             }
             else
             {
-                MpLbl.Text = Strings.Get("entitybox", "vital1val", 0, 0);
+                MpLbl.Text = Strings.EntityBox.vital1val.ToString(0, 0);
                 targetMpWidth = MpBackground.Width;
             }
             if ((int) targetMpWidth != CurMpWidth)
@@ -427,13 +411,13 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 targetExpWidth = (float) ((Player) MyEntity).Experience /
                                  (float) ((Player) MyEntity).GetNextLevelExperience();
-                ExpLbl.Text = Strings.Get("entitybox", "expval", ((Player) MyEntity).Experience,
+                ExpLbl.Text = Strings.EntityBox.expval.ToString(((Player) MyEntity).Experience,
                     ((Player) MyEntity).GetNextLevelExperience());
             }
             else
             {
                 targetExpWidth = 1f;
-                ExpLbl.Text = Strings.Get("entitybox", "maxlevel");
+                ExpLbl.Text = Strings.EntityBox.maxlevel;
             }
             targetExpWidth *= ExpBackground.Width;
             if ((int) targetExpWidth != CurExpWidth)

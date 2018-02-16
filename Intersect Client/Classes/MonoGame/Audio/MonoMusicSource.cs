@@ -1,5 +1,5 @@
 ﻿using System;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
 using Intersect.Logging;
 using IntersectClientExtras.Audio;
 using IntersectClientExtras.GenericClasses;
@@ -26,7 +26,7 @@ namespace Intersect_MonoGameDx.Classes.SFML.Audio
             catch (Exception exception)
             {
                 Log.Error($"Error loading '{path}'.", exception);
-                ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Get("errors", "loadfile", Strings.Get("words", "lcase_sound")), new Color(0xBF, 0x0, 0x0)));
+                ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound), new Color(0xBF, 0x0, 0x0)));
             }
         }
 

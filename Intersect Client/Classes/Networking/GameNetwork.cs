@@ -1,5 +1,6 @@
 ﻿using System;
 using Intersect;
+using Intersect.Config;
 using Intersect.Logging;
 using IntersectClientExtras.Network;
 using Intersect_Client.Classes.General;
@@ -35,7 +36,7 @@ namespace Intersect_Client.Classes.Networking
         private static void TryConnect()
         {
             sConnected = false;
-            MySocket.Connect(Globals.Database.ServerHost, Globals.Database.ServerPort);
+            MySocket.Connect(ClientOptions.ServerHost, ClientOptions.ServerPort);
         }
 
         private static void MySocket_OnConnectionFailed()

@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using Intersect.Enums;
-using Intersect.Localization;
+using Intersect.Server.Classes.Localization;
 using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Packets.Reflectable;
@@ -255,7 +255,7 @@ namespace Intersect.Server.Classes.Networking
             PacketSender.SendEntityLeave(client.Entity.MyIndex, (int) EntityTypes.Player, client.Entity.CurrentMap);
             if (!client.IsEditor)
             {
-                PacketSender.SendGlobalMsg(Strings.Get("player", "left", client.Entity.MyName, Options.GameName));
+                PacketSender.SendGlobalMsg(Strings.Player.left.ToString( client.Entity.MyName, Options.GameName));
             }
             client.Entity.Dispose();
             client.Entity = null;

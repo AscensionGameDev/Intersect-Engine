@@ -7,16 +7,13 @@ using Intersect.Editor.Forms;
 using Intersect.Editor.Forms.DockingElements;
 using Intersect.Enums;
 using Intersect.GameObjects;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Classes
 {
     public static class Globals
     {
         //Network Variables
-        public static string ServerHost = "localhost";
-
-        public static int ServerPort = 5400;
         public static int ReconnectTime = 3000;
 
         //Editor Loop Variables
@@ -128,7 +125,7 @@ namespace Intersect.Editor.Classes
 
         public static string GetColorName(Color.ChatColor color)
         {
-            return Strings.Get("colors", ((int) color).ToString());
+            return Strings.Colors.presets[(int) color];
         }
 
         public static string GetStatName(int statnum)

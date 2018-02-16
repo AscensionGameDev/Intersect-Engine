@@ -1,4 +1,4 @@
-﻿using Intersect.Localization;
+﻿using Intersect.Client.Classes.Localization;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen;
@@ -98,22 +98,22 @@ namespace Intersect_Client.Classes.UI.Game
                     switch (maxResponse)
                     {
                         case 1:
-                            mEventDialogWindow.Name = "EventDialogWindow_Max1Response";
+                            mEventDialogWindow.Name = "EventDialogWindow_1Response";
                             mEventResponse1.Name = "Response1Button";
                             break;
                         case 2:
-                            mEventDialogWindow.Name = "EventDialogWindow_Max2Responses";
+                            mEventDialogWindow.Name = "EventDialogWindow_2Responses";
                             mEventResponse1.Name = "Response1Button";
                             mEventResponse2.Name = "Response2Button";
                             break;
                         case 3:
-                            mEventDialogWindow.Name = "EventDialogWindow_Max3Responses";
+                            mEventDialogWindow.Name = "EventDialogWindow_3Responses";
                             mEventResponse1.Name = "Response1Button";
                             mEventResponse2.Name = "Response2Button";
                             mEventResponse3.Name = "Response3Button";
                             break;
                         case 4:
-                            mEventDialogWindow.Name = "EventDialogWindow_Max4Responses";
+                            mEventDialogWindow.Name = "EventDialogWindow_4Responses";
                             mEventResponse1.Name = "Response1Button";
                             mEventResponse2.Name = "Response2Button";
                             mEventResponse3.Name = "Response3Button";
@@ -121,8 +121,7 @@ namespace Intersect_Client.Classes.UI.Game
                             break;
                     }
 
-                    //TODO: LOAD FROM XML HERE
-                    Gui.LoadRootUiData(mEventDialogWindow, "InGame.xml");
+                    mEventDialogWindow.LoadJsonUi(GameContentManager.UI.InGame);
 
                     if (faceTex != null)
                     {
@@ -141,7 +140,7 @@ namespace Intersect_Client.Classes.UI.Game
                     if (responseCount == 0)
                     {
                         mEventResponse1.Show();
-                        mEventResponse1.SetText(Strings.Get("eventwindow", "continue"));
+                        mEventResponse1.SetText(Strings.EventWindow.Continue);
                         mEventResponse2.Hide();
                         mEventResponse3.Hide();
                         mEventResponse4.Hide();

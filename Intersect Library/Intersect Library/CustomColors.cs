@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
-using System.Xml;
+using Newtonsoft.Json;
+using Formatting = Newtonsoft.Json.Formatting;
 
 namespace Intersect
 {
@@ -95,22 +97,17 @@ namespace Intersect
 
         public static void Load()
         {
-            if (!File.Exists(Path.Combine("resources", "colors.xml")))
+            if (File.Exists(Path.Combine("resources", "colors.json")))
             {
-                Save();
-            }
-            else
-            {
-                XmlDocument doc = new XmlDocument();
-                doc.LoadXml(File.ReadAllText(Path.Combine("resources", "colors.xml")));
+                Dictionary<string, string> colors = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(Path.Combine("resources", "colors.json")));
+
                 Type type = typeof(CustomColors);
                 foreach (var p in type.GetFields(System.Reflection.BindingFlags.Static |
                                                  System.Reflection.BindingFlags.Public))
                 {
-                    var node = doc.SelectSingleNode("//Colors/" + p.Name);
-                    if (node != null)
+                    if (colors.ContainsKey(p.Name))
                     {
-                        var value = node.InnerText;
+                        var value = colors[p.Name];
                         Match match = Regex.Match(value,
                             "argb" + Regex.Escape("(") + "([0-9]*),([0-9]*),([0-9]*),([0-9]*)" + Regex.Escape(")"));
                         if (match.Success)
@@ -122,32 +119,22 @@ namespace Intersect
                     }
                 }
             }
+            Save();
         }
 
         private static void Save()
         {
-            XmlWriterSettings settings = new XmlWriterSettings();
-            settings.Indent = true;
-            StringWriter ms = new StringWriter();
-            XmlWriter writer = XmlWriter.Create(ms, settings);
-
-            writer.WriteStartDocument();
-            writer.WriteStartElement("Colors");
+            Dictionary<string, string> colors = new Dictionary<string, string>();
 
             Type type = typeof(CustomColors);
             foreach (var p in type.GetFields(System.Reflection.BindingFlags.Static |
                                              System.Reflection.BindingFlags.Public))
             {
-                Color val = (Color) p.GetValue(null);
-                writer.WriteElementString(p.Name,
-                    "argb(" + String.Join(",",
-                        new string[4] {val.A.ToString(), val.R.ToString(), val.G.ToString(), val.B.ToString()}) + ")");
+                Color val = (Color)p.GetValue(null);
+                colors.Add(p.Name, "argb(" + String.Join(",",
+                                       new string[4] { val.A.ToString(), val.R.ToString(), val.G.ToString(), val.B.ToString() }) + ")");
             }
-            writer.WriteEndElement();
-            writer.WriteEndDocument();
-            writer.Close();
-
-            File.WriteAllText(Path.Combine("resources", "colors.xml"), ms.ToString());
+            File.WriteAllText(Path.Combine("resources", "colors.json"), JsonConvert.SerializeObject(colors,Formatting.Indented));
         }
 
         public static byte[] GetData()
@@ -157,7 +144,7 @@ namespace Intersect
             foreach (var p in type.GetFields(System.Reflection.BindingFlags.Static |
                                              System.Reflection.BindingFlags.Public))
             {
-                bf.WriteInteger(((Color) p.GetValue(null)).ToArgb());
+                bf.WriteInteger(((Color)p.GetValue(null)).ToArgb());
             }
             return bf.ToArray();
         }

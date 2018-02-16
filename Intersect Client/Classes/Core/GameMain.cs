@@ -1,11 +1,14 @@
 ﻿using System.Linq;
+using Intersect.Config;
 using Intersect.GameObjects;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Graphics;
+using IntersectClientExtras.Gwen.Input;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Maps;
 using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.UI;
+using Intersect_Client.Classes.UI.Game;
 
 // ReSharper disable All
 
@@ -24,7 +27,7 @@ namespace Intersect_Client.Classes.Core
 
             //Load Sounds
             GameAudio.Init();
-            GameAudio.PlayMusic(Globals.Database.MenuBgm, 3, 3, true);
+            GameAudio.PlayMusic(ClientOptions.MenuMusic, 3, 3, true);
 
             //Init Network
             GameNetwork.InitNetwork();
@@ -48,6 +51,7 @@ namespace Intersect_Client.Classes.Core
             {
                 GameNetwork.Update();
                 GameFade.Update();
+                Gui.ToggleInput(Globals.GameState != GameStates.Intro);
                 if (Globals.GameState == GameStates.Intro)
                 {
                     ProcessIntro();
@@ -71,10 +75,9 @@ namespace Intersect_Client.Classes.Core
 
         private static void ProcessIntro()
         {
-            if (Globals.Database.IntroBg.Count > 0)
+            if (ClientOptions.IntroImages.Count > 0)
             {
-                GameTexture imageTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Image,
-                    Globals.Database.IntroBg[Globals.IntroIndex]);
+                GameTexture imageTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Image, ClientOptions.IntroImages[Globals.IntroIndex]);
                 if (imageTex != null)
                 {
                     if (Globals.IntroStartTime == -1)
@@ -108,7 +111,7 @@ namespace Intersect_Client.Classes.Core
                 {
                     Globals.IntroIndex++;
                 }
-                if (Globals.IntroIndex >= Globals.Database.IntroBg.Count)
+                if (Globals.IntroIndex >= ClientOptions.IntroImages.Count)
                 {
                     Globals.GameState = GameStates.Menu;
                 }
@@ -134,7 +137,7 @@ namespace Intersect_Client.Classes.Core
             if (Globals.Me == null || Globals.Me.MapInstance == null) return;
             if (!_createdMapTextures)
             {
-                if (Globals.Database.RenderCaching) GameGraphics.CreateMapTextures(9 * 18);
+                if (ClientOptions.RenderCache) GameGraphics.CreateMapTextures(9 * 18);
                 _createdMapTextures = true;
             }
             if (!_loadedTilesets && Globals.HasGameData)
@@ -142,7 +145,7 @@ namespace Intersect_Client.Classes.Core
                 Globals.ContentManager.LoadTilesets(TilesetBase.GetNameList());
                 _loadedTilesets = true;
             }
-            if (Globals.Database.RenderCaching && Globals.Me != null && Globals.Me.MapInstance != null)
+            if (ClientOptions.RenderCache && Globals.Me != null && Globals.Me.MapInstance != null)
             {
                 var gridX = Globals.Me.MapInstance.MapGridX;
                 var gridY = Globals.Me.MapInstance.MapGridY;
@@ -160,7 +163,7 @@ namespace Intersect_Client.Classes.Core
                                 {
                                     return;
                                 }
-                                else if (map.MapRendered == false && Globals.Database.RenderCaching == true)
+                                else if (map.MapRendered == false && ClientOptions.RenderCache == true)
                                 {
                                     lock (map.MapLock)
                                     {
@@ -205,7 +208,7 @@ namespace Intersect_Client.Classes.Core
                                 var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid[x, y]);
                                 if (map != null)
                                 {
-                                    if (map.MapLoaded == false || (Globals.Database.RenderCaching && map.MapRendered == false))
+                                    if (map.MapLoaded == false || (ClientOptions.RenderCache && map.MapRendered == false))
                                     {
                                         canShowWorld = false;
                                     }

@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Intersect.Config;
 using IntersectClientExtras.Database;
 using Microsoft.Win32;
 
@@ -12,8 +13,8 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Database
 
             regkey.CreateSubKey("IntersectClient");
             regkey = regkey.OpenSubKey("IntersectClient", true);
-            regkey.CreateSubKey(ServerHost + ":" + ServerPort);
-            regkey = regkey.OpenSubKey(ServerHost + ":" + ServerPort, true);
+            regkey.CreateSubKey(ClientOptions.ServerHost + ":" + ClientOptions.ServerPort);
+            regkey = regkey.OpenSubKey(ClientOptions.ServerHost + ":" + ClientOptions.ServerPort, true);
             regkey.SetValue(key, value);
         }
 
@@ -25,7 +26,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Database
             {
                 return "";
             }
-            regkey = regkey.OpenSubKey(ServerHost + ":" + ServerPort);
+            regkey = regkey.OpenSubKey(ClientOptions.ServerHost + ":" + ClientOptions.ServerPort);
             if (regkey == null)
             {
                 return "";
@@ -40,15 +41,17 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Database
 
         public override bool LoadConfig()
         {
-            if (!File.Exists(Path.Combine("resources", "config.xml")))
+            if (!File.Exists(Path.Combine("resources", "config.json")))
             {
-                File.WriteAllText(Path.Combine("resources", "config.xml"), GetDefaultConfig());
-                return LoadConfig();
+                ClientOptions.Load(null);
+                File.WriteAllText(Path.Combine("resources", "config.json"), ClientOptions.GetJson());
+                return true;
             }
             else
             {
-                string xmldata = File.ReadAllText(Path.Combine("resources", "config.xml"));
-                return LoadConfigFromXml(xmldata);
+                string jsonData = File.ReadAllText(Path.Combine("resources", "config.json"));
+                ClientOptions.Load(jsonData);
+                return true;
             }
         }
     }

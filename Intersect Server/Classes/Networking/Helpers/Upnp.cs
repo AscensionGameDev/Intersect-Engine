@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Intersect.Localization;
+using Intersect.Server.Classes.Localization;
 using Open.Nat;
 
 namespace Intersect.Server.Classes.Networking
@@ -18,11 +18,11 @@ namespace Intersect.Server.Classes.Networking
                 var nat = new NatDiscoverer();
                 var cts = new CancellationTokenSource(5000);
                 sDevice = await nat.DiscoverDeviceAsync(PortMapper.Upnp, cts);
-                Console.WriteLine(Strings.Get("upnp", "initialized"));
+                Console.WriteLine(Strings.Upnp.initialized);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(Strings.Get("upnp", "initializationfailed"));
+                Console.WriteLine(Strings.Upnp.initializationfailed);
             }
             return null;
         }
@@ -36,11 +36,11 @@ namespace Intersect.Server.Classes.Networking
                 switch (protocol)
                 {
                     case Protocol.Tcp:
-                        Console.WriteLine(Strings.Get("upnp", "forwardedtcp", port));
+                        Console.WriteLine(Strings.Upnp.forwardedtcp.ToString( port));
                         break;
 
                     case Protocol.Udp:
-                        Console.WriteLine(Strings.Get("upnp", "forwardedudp", port));
+                        Console.WriteLine(Strings.Upnp.forwardedudp.ToString( port));
                         sPortForwarded = true;
                         break;
                 }
@@ -50,11 +50,11 @@ namespace Intersect.Server.Classes.Networking
                 switch (protocol)
                 {
                     case Protocol.Tcp:
-                        Console.WriteLine(Strings.Get("upnp", "failedforwardingtcp", port));
+                        Console.WriteLine(Strings.Upnp.failedforwardingtcp.ToString( port));
                         break;
 
                     case Protocol.Udp:
-                        Console.WriteLine(Strings.Get("upnp", "failedforwardingudp", port));
+                        Console.WriteLine(Strings.Upnp.failedforwardingudp.ToString( port));
                         break;
                 }
             }

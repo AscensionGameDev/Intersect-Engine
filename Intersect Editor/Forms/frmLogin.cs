@@ -4,9 +4,10 @@ using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
+using Intersect.Config;
 using Intersect.Editor.Classes;
 using Intersect.Editor.Classes.Core;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Forms
 {
@@ -29,48 +30,41 @@ namespace Intersect.Editor.Forms
         {
             AppDomain.CurrentDomain.UnhandledException += Program.CurrentDomain_UnhandledException;
             GameContentManager.CheckForResources();
-            if (Database.LoadOptions())
+            Database.LoadOptions();
+            mOptionsLoaded = true;
+            Strings.Load(ClientOptions.Language);
+            EditorLoopDelegate = EditorLoop.StartLoop;
+            if (Preferences.LoadPreference("username").Trim().Length > 0)
             {
-                mOptionsLoaded = true;
-                Strings.Init(Strings.IntersectComponent.Editor, Options.Language);
-                EditorLoopDelegate = EditorLoop.StartLoop;
-                if (Preferences.LoadPreference("username").Trim().Length > 0)
-                {
-                    txtUsername.Text = Preferences.LoadPreference("Username");
-                    txtPassword.Text = "*****";
-                    mSavedPassword = Preferences.LoadPreference("Password");
-                    chkRemember.Checked = true;
-                }
-                Database.InitMapCache();
-                InitLocalization();
+                txtUsername.Text = Preferences.LoadPreference("Username");
+                txtPassword.Text = "*****";
+                mSavedPassword = Preferences.LoadPreference("Password");
+                chkRemember.Checked = true;
             }
-            else
-            {
-                MessageBox.Show("Failed to load config.xml. Does it exist?  Path(Resources/config.xml)");
-                Application.Exit();
-            }
+            Database.InitMapCache();
+            InitLocalization();
         }
 
         private void InitLocalization()
         {
-            Text = Strings.Get("login", "title");
-            lblVersion.Text = Strings.Get("login", "version", Application.ProductVersion);
-            lblGettingStarted.Text = Strings.Get("login", "gettingstarted");
-            lblUsername.Text = Strings.Get("login", "username");
-            lblPassword.Text = Strings.Get("login", "password");
-            chkRemember.Text = Strings.Get("login", "rememberme");
-            btnLogin.Text = Strings.Get("login", "login");
-            lblStatus.Text = Strings.Get("login", "connecting");
+            Text = Strings.Login.title;
+            lblVersion.Text = Strings.Login.version.ToString( Application.ProductVersion);
+            lblGettingStarted.Text = Strings.Login.gettingstarted;
+            lblUsername.Text = Strings.Login.username;
+            lblPassword.Text = Strings.Login.password;
+            chkRemember.Text = Strings.Login.rememberme;
+            btnLogin.Text = Strings.Login.login;
+            lblStatus.Text = Strings.Login.connecting;
         }
 
         private void tmrSocket_Tick(object sender, EventArgs e)
         {
             if (!mOptionsLoaded) return;
             EditorNetwork.Update();
-            var statusString = Strings.Get("login", "connecting");
+            var statusString = Strings.Login.connecting;
             if (EditorNetwork.Connected)
             {
-                statusString = Strings.Get("login", "connected");
+                statusString = Strings.Login.connected;
                 btnLogin.Enabled = true;
             }
             else if (EditorNetwork.Connecting)
@@ -78,7 +72,7 @@ namespace Intersect.Editor.Forms
             }
             else
             {
-                statusString = Strings.Get("login", "failedtoconnect",
+                statusString = Strings.Login.failedtoconnect.ToString(
                     ((Globals.ReconnectTime - Globals.System.GetTimeMs()) / 1000).ToString("0"));
                 btnLogin.Enabled = false;
             }
@@ -87,7 +81,7 @@ namespace Intersect.Editor.Forms
             {
                 if (clsProcess.ProcessName.Contains("raptr"))
                 {
-                    Globals.LoginForm.lblStatus.Text = Strings.Get("login", "raptr");
+                    Globals.LoginForm.lblStatus.Text = Strings.Login.raptr;
                     btnLogin.Enabled = false;
                 }
             }

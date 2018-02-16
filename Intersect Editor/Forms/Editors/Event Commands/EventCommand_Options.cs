@@ -4,7 +4,7 @@ using System.IO;
 using System.Windows.Forms;
 using Intersect.Editor.Classes.Core;
 using Intersect.GameObjects.Events;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
@@ -28,7 +28,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             txtShowOptionsOpt3.Text = mMyCommand.Strs[3];
             txtShowOptionsOpt4.Text = mMyCommand.Strs[4];
             cmbFace.Items.Clear();
-            cmbFace.Items.Add(Strings.Get("general", "none"));
+            cmbFace.Items.Add(Strings.General.none);
             cmbFace.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Face));
             if (cmbFace.Items.IndexOf(TextUtils.NullToNone(mMyCommand.Strs[5])) > -1)
             {
@@ -43,16 +43,16 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpOptions.Text = Strings.Get("eventshowoptions", "title");
-            lblText.Text = Strings.Get("eventshowoptions", "text");
-            lblFace.Text = Strings.Get("eventshowoptions", "face");
-            lblCommands.Text = Strings.Get("eventshowoptions", "commands");
-            lblOpt1.Text = Strings.Get("eventshowoptions", "option1");
-            lblOpt2.Text = Strings.Get("eventshowoptions", "option2");
-            lblOpt3.Text = Strings.Get("eventshowoptions", "option3");
-            lblOpt4.Text = Strings.Get("eventshowoptions", "option4");
-            btnSave.Text = Strings.Get("eventshowoptions", "okay");
-            btnCancel.Text = Strings.Get("eventshowoptions", "cancel");
+            grpOptions.Text = Strings.EventShowOptions.title;
+            lblText.Text = Strings.EventShowOptions.text;
+            lblFace.Text = Strings.EventShowOptions.face;
+            lblCommands.Text = Strings.EventShowOptions.commands;
+            lblOpt1.Text = Strings.EventShowOptions.option1;
+            lblOpt2.Text = Strings.EventShowOptions.option2;
+            lblOpt3.Text = Strings.EventShowOptions.option3;
+            lblOpt4.Text = Strings.EventShowOptions.option4;
+            btnSave.Text = Strings.EventShowOptions.okay;
+            btnCancel.Text = Strings.EventShowOptions.cancel;
         }
 
         private void UpdateFacePreview()

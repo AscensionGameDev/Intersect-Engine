@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Xml;
-using Intersect.Localization;
+using Intersect.Migration.Localization;
+using Intersect.Logging;
 using Intersect.Migration.UpgradeInstructions.Upgrade_1;
+using Intersect.Migration.UpgradeInstructions.Upgrade_10;
 using Intersect.Migration.UpgradeInstructions.Upgrade_2;
 using Intersect.Migration.UpgradeInstructions.Upgrade_3;
 using Intersect.Migration.UpgradeInstructions.Upgrade_4;
@@ -18,7 +20,7 @@ namespace Intersect.Migration
 {
     public static class Database
     {
-        public const int DbVersion = 10;
+        public const int DbVersion = 11;
         private const string DB_FILENAME = "resources/intersect.db";
 
         //Database Variables
@@ -44,6 +46,10 @@ namespace Intersect.Migration
                 {
                     Log.Trace(exception);
                 }
+            }
+            else if (File.Exists("resources/config.json"))
+            {
+                //TODO: Make sure migration tool can load language from new config.json
             }
             return "English";
         }
@@ -167,16 +173,22 @@ namespace Intersect.Migration
                         currentVersion++;
                         IncrementDatabaseVersion();
                         break;
+                    case 10:
+                        var upgrade10 = new Upgrade10(sDbConnection);
+                        upgrade10.Upgrade();
+                        currentVersion++;
+                        IncrementDatabaseVersion();
+                        break;
                     default:
-                        throw new Exception(Strings.Get("upgrade", "noinstructions"));
+                        throw new Exception(Strings.Upgrade.noinstructions);
                 }
                 currentVersion = GetDatabaseVersion();
             }
 
             sDbConnection.Close();
             sDbConnection = null;
-            Console.WriteLine(Strings.Get("upgrade", "updated", currentVersion));
-            Console.WriteLine(Strings.Get("upgrade", "backupinfo", startingVersion, startingVersion,
+            Console.WriteLine(Strings.Upgrade.updated.ToString( currentVersion));
+            Console.WriteLine(Strings.Upgrade.backupinfo.ToString( startingVersion, startingVersion,
                 DateTime.Now.ToString("yyyy-MM-dd hh-mm-ss")));
         }
     }

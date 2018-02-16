@@ -2,7 +2,8 @@
 using Intersect;
 using Intersect.Client.Classes.UI.Game.Bank;
 using Intersect.GameObjects;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.General;
@@ -32,14 +33,14 @@ namespace Intersect_Client.Classes.UI.Game
         //Init
         public BankWindow(Canvas gameCanvas)
         {
-            mBankWindow = new WindowControl(gameCanvas, Strings.Get("bank", "title"), false, "BankWindow");
+            mBankWindow = new WindowControl(gameCanvas, Strings.Bank.title, false, "BankWindow");
             mBankWindow.DisableResizing();
             Gui.InputBlockingElements.Add(mBankWindow);
 
             mItemContainer = new ScrollControl(mBankWindow, "ItemContainer");
             mItemContainer.EnableScroll(false, true);
 
-            Gui.LoadRootUiData(mBankWindow, "InGame.xml");
+            mBankWindow.LoadJsonUi(GameContentManager.UI.InGame);
             InitItemContainer();
         }
 
@@ -105,14 +106,13 @@ namespace Intersect_Client.Classes.UI.Game
             for (int i = 0; i < Options.MaxBankSlots; i++)
             {
                 Items.Add(new BankItem(this, i));
-                Items[i].Container = new ImagePanel(mItemContainer, "BankItemContainer");
+                Items[i].Container = new ImagePanel(mItemContainer, "BankItem");
                 Items[i].Setup();
 
                 mValues.Add(new Label(mItemContainer));
                 mValues[i].Text = "";
 
-                //TODO Made this more efficient.
-                Gui.LoadRootUiData(Items[i].Container, "InGame.xml");
+                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame);
 
                 var xPadding = Items[i].Container.Padding.Left + Items[i].Container.Padding.Right;
                 var yPadding = Items[i].Container.Padding.Top + Items[i].Container.Padding.Bottom;

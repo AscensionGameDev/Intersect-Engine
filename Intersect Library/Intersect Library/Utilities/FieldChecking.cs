@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text.RegularExpressions;
-using Intersect.Localization;
 
 namespace Intersect.Utilities
 {
@@ -14,12 +13,12 @@ namespace Intersect.Utilities
         public const string PATTERN_USERNAME = @"^[a-zA-Z0-9]{2,24}$";
         public const string PATTERN_PASSWORD = @"^[-_=\+`~!@#\$%\^&\*()\[\]{}\\|;\:'"",<\.>/\?a-zA-Z0-9]{4,64}$";
 
-        public static bool IsWellformedEmailAddress(string email)
+        public static bool IsWellformedEmailAddress(string email, string emailRegex)
         {
             if (email == null) return false;
             try
             {
-                var customPattern = Strings.Get("regex", "email");
+                var customPattern = emailRegex;
                 if (string.IsNullOrEmpty(customPattern)) customPattern = PATTERN_EMAIL_ADDRESS;
                 return Regex.IsMatch(email, customPattern);
             }
@@ -29,12 +28,12 @@ namespace Intersect.Utilities
             }
         }
 
-        public static bool IsValidUsername(string username)
+        public static bool IsValidUsername(string username, string usernameRegex)
         {
             if (username == null) return false;
             try
             {
-                var customPattern = Strings.Get("regex", "username");
+                var customPattern = usernameRegex;
                 if (string.IsNullOrEmpty(customPattern)) customPattern = PATTERN_USERNAME;
                 return Regex.IsMatch(username.Trim(), customPattern);
             }
@@ -44,12 +43,12 @@ namespace Intersect.Utilities
             }
         }
 
-        public static bool IsValidPassword(string password)
+        public static bool IsValidPassword(string password, string passwordRegex)
         {
             if (password == null) return false;
             try
             {
-                var customPattern = Strings.Get("regex", "password");
+                var customPattern = passwordRegex;
                 if (string.IsNullOrEmpty(customPattern)) customPattern = PATTERN_PASSWORD;
                 return Regex.IsMatch(password.Trim(), customPattern);
             }

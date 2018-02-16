@@ -8,7 +8,7 @@ using Intersect.Editor.Classes.Core;
 using Intersect.Editor.Forms.Editors;
 using Intersect.Enums;
 using Intersect.GameObjects;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms
@@ -78,17 +78,17 @@ namespace Intersect.Editor.Forms
         private void frmNpc_Load(object sender, EventArgs e)
         {
             cmbSprite.Items.Clear();
-            cmbSprite.Items.Add(Strings.Get("general", "none"));
+            cmbSprite.Items.Add(Strings.General.none);
             cmbSprite.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity));
             cmbSpell.Items.Clear();
             cmbSpell.Items.AddRange(Database.GetGameObjectList(GameObjectType.Spell));
             cmbHostileNPC.Items.Clear();
             cmbHostileNPC.Items.AddRange(Database.GetGameObjectList(GameObjectType.Npc));
             cmbDropItem.Items.Clear();
-            cmbDropItem.Items.Add(Strings.Get("general", "none"));
+            cmbDropItem.Items.Add(Strings.General.none);
             cmbDropItem.Items.AddRange(Database.GetGameObjectList(GameObjectType.Item));
             cmbAttackAnimation.Items.Clear();
-            cmbAttackAnimation.Items.Add(Strings.Get("general", "none"));
+            cmbAttackAnimation.Items.Add(Strings.General.none);
             cmbAttackAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
             cmbScalingStat.Items.Clear();
             for (int x = 0; x < Options.MaxStats; x++)
@@ -106,76 +106,76 @@ namespace Intersect.Editor.Forms
 
         private void InitLocalization()
         {
-            Text = Strings.Get("npceditor", "title");
-            toolStripItemNew.Text = Strings.Get("npceditor", "new");
-            toolStripItemDelete.Text = Strings.Get("npceditor", "delete");
-            toolStripItemCopy.Text = Strings.Get("npceditor", "copy");
-            toolStripItemPaste.Text = Strings.Get("npceditor", "paste");
-            toolStripItemUndo.Text = Strings.Get("npceditor", "undo");
+            Text = Strings.NpcEditor.title;
+            toolStripItemNew.Text = Strings.NpcEditor.New;
+            toolStripItemDelete.Text = Strings.NpcEditor.delete;
+            toolStripItemCopy.Text = Strings.NpcEditor.copy;
+            toolStripItemPaste.Text = Strings.NpcEditor.paste;
+            toolStripItemUndo.Text = Strings.NpcEditor.undo;
 
-            grpNpcs.Text = Strings.Get("npceditor", "npcs");
+            grpNpcs.Text = Strings.NpcEditor.npcs;
 
-            grpGeneral.Text = Strings.Get("npceditor", "general");
-            lblName.Text = Strings.Get("npceditor", "name");
-            lblBehavior.Text = Strings.Get("npceditor", "behavior");
+            grpGeneral.Text = Strings.NpcEditor.general;
+            lblName.Text = Strings.NpcEditor.name;
+            lblBehavior.Text = Strings.NpcEditor.behavior;
             cmbBehavior.Items.Clear();
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < Strings.NpcEditor.behaviors.Length; i++)
             {
-                cmbBehavior.Items.Add(Strings.Get("npceditor", "behavior" + i));
+                cmbBehavior.Items.Add(Strings.NpcEditor.behaviors[i]);
             }
-            lblPic.Text = Strings.Get("npceditor", "sprite");
-            lblSpawnDuration.Text = Strings.Get("npceditor", "spawnduration");
-            lblSightRange.Text = Strings.Get("npceditor", "sightrange");
+            lblPic.Text = Strings.NpcEditor.sprite;
+            lblSpawnDuration.Text = Strings.NpcEditor.spawnduration;
+            lblSightRange.Text = Strings.NpcEditor.sightrange;
 
-            grpStats.Text = Strings.Get("npceditor", "stats");
-            lblHP.Text = Strings.Get("npceditor", "hp");
-            lblMana.Text = Strings.Get("npceditor", "mana");
-            lblStr.Text = Strings.Get("npceditor", "attack");
-            lblDef.Text = Strings.Get("npceditor", "defense");
-            lblSpd.Text = Strings.Get("npceditor", "speed");
-            lblMag.Text = Strings.Get("npceditor", "abilitypower");
-            lblMR.Text = Strings.Get("npceditor", "magicresist");
-            lblExp.Text = Strings.Get("npceditor", "exp");
+            grpStats.Text = Strings.NpcEditor.stats;
+            lblHP.Text = Strings.NpcEditor.hp;
+            lblMana.Text = Strings.NpcEditor.mana;
+            lblStr.Text = Strings.NpcEditor.attack;
+            lblDef.Text = Strings.NpcEditor.defense;
+            lblSpd.Text = Strings.NpcEditor.speed;
+            lblMag.Text = Strings.NpcEditor.abilitypower;
+            lblMR.Text = Strings.NpcEditor.magicresist;
+            lblExp.Text = Strings.NpcEditor.exp;
 
-            grpSpells.Text = Strings.Get("npceditor", "spells");
-            lblSpell.Text = Strings.Get("npceditor", "spell");
-            btnAdd.Text = Strings.Get("npceditor", "addspell");
-            btnRemove.Text = Strings.Get("npceditor", "removespell");
-            lblFreq.Text = Strings.Get("npceditor", "frequency");
+            grpSpells.Text = Strings.NpcEditor.spells;
+            lblSpell.Text = Strings.NpcEditor.spell;
+            btnAdd.Text = Strings.NpcEditor.addspell;
+            btnRemove.Text = Strings.NpcEditor.removespell;
+            lblFreq.Text = Strings.NpcEditor.frequency;
             cmbFreq.Items.Clear();
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < Strings.NpcEditor.frequencies.Length; i++)
             {
-                cmbFreq.Items.Add(Strings.Get("npceditor", "frequency" + i));
+                cmbFreq.Items.Add(Strings.NpcEditor.frequencies[i]);
             }
 
-            grpNpcVsNpc.Text = Strings.Get("npceditor", "npcvsnpc");
-            chkEnabled.Text = Strings.Get("npceditor", "enabled");
-            chkAttackAllies.Text = Strings.Get("npceditor", "attackallies");
-            lblNPC.Text = Strings.Get("npceditor", "npc");
-            btnAddAggro.Text = Strings.Get("npceditor", "addhostility");
-            btnRemoveAggro.Text = Strings.Get("npceditor", "removehostility");
+            grpNpcVsNpc.Text = Strings.NpcEditor.npcvsnpc;
+            chkEnabled.Text = Strings.NpcEditor.enabled;
+            chkAttackAllies.Text = Strings.NpcEditor.attackallies;
+            lblNPC.Text = Strings.NpcEditor.npc;
+            btnAddAggro.Text = Strings.NpcEditor.addhostility;
+            btnRemoveAggro.Text = Strings.NpcEditor.removehostility;
 
-            grpDrops.Text = Strings.Get("npceditor", "drops");
-            lblDropIndex.Text = Strings.Get("npceditor", "dropindex");
-            lblDropItem.Text = Strings.Get("npceditor", "dropitem");
-            lblDropAmount.Text = Strings.Get("npceditor", "dropamount");
-            lblDropChance.Text = Strings.Get("npceditor", "dropchance");
+            grpDrops.Text = Strings.NpcEditor.drops;
+            lblDropIndex.Text = Strings.NpcEditor.dropindex;
+            lblDropItem.Text = Strings.NpcEditor.dropitem;
+            lblDropAmount.Text = Strings.NpcEditor.dropamount;
+            lblDropChance.Text = Strings.NpcEditor.dropchance;
 
-            grpCombat.Text = Strings.Get("npceditor", "combat");
-            lblDamage.Text = Strings.Get("npceditor", "basedamage");
-            lblCritChance.Text = Strings.Get("npceditor", "critchance");
-            lblDamageType.Text = Strings.Get("npceditor", "damagetype");
+            grpCombat.Text = Strings.NpcEditor.combat;
+            lblDamage.Text = Strings.NpcEditor.basedamage;
+            lblCritChance.Text = Strings.NpcEditor.critchance;
+            lblDamageType.Text = Strings.NpcEditor.damagetype;
             cmbDamageType.Items.Clear();
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < Strings.Combat.damagetypes.Length; i++)
             {
-                cmbDamageType.Items.Add(Strings.Get("npceditor", "damagetype" + i));
+                cmbDamageType.Items.Add(Strings.Combat.damagetypes[i]);
             }
-            lblScalingStat.Text = Strings.Get("npceditor", "scalingstat");
-            lblScaling.Text = Strings.Get("npceditor", "scalingamount");
-            lblAttackAnimation.Text = Strings.Get("npceditor", "attackanimation");
+            lblScalingStat.Text = Strings.NpcEditor.scalingstat;
+            lblScaling.Text = Strings.NpcEditor.scalingamount;
+            lblAttackAnimation.Text = Strings.NpcEditor.attackanimation;
 
-            btnSave.Text = Strings.Get("npceditor", "save");
-            btnCancel.Text = Strings.Get("npceditor", "cancel");
+            btnSave.Text = Strings.NpcEditor.save;
+            btnCancel.Text = Strings.NpcEditor.cancel;
         }
 
         public void InitEditor()
@@ -226,7 +226,7 @@ namespace Intersect.Editor.Forms
                     }
                     else
                     {
-                        lstSpells.Items.Add(Strings.Get("general", "none"));
+                        lstSpells.Items.Add(Strings.General.none);
                     }
                 }
                 if (lstSpells.Items.Count > 0)
@@ -247,7 +247,7 @@ namespace Intersect.Editor.Forms
                     }
                     else
                     {
-                        lstAggro.Items.Add(Strings.Get("general", "none"));
+                        lstAggro.Items.Add(Strings.General.none);
                     }
                 }
 
@@ -365,7 +365,7 @@ namespace Intersect.Editor.Forms
                 }
                 else
                 {
-                    lstAggro.Items.Add(Strings.Get("general", "none"));
+                    lstAggro.Items.Add(Strings.General.none);
                 }
             }
         }
@@ -389,8 +389,8 @@ namespace Intersect.Editor.Forms
         {
             if (mEditorItem != null && lstNpcs.Focused)
             {
-                if (DarkMessageBox.ShowWarning(Strings.Get("npceditor", "deleteprompt"),
-                        Strings.Get("npceditor", "deletetitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                if (DarkMessageBox.ShowWarning(Strings.NpcEditor.deleteprompt,
+                        Strings.NpcEditor.deletetitle, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(mEditorItem);
@@ -420,8 +420,8 @@ namespace Intersect.Editor.Forms
         {
             if (mChanged.Contains(mEditorItem) && mEditorItem != null)
             {
-                if (DarkMessageBox.ShowWarning(Strings.Get("npceditor", "undoprompt"),
-                        Strings.Get("npceditor", "undotitle"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                if (DarkMessageBox.ShowWarning(Strings.NpcEditor.undoprompt,
+                        Strings.NpcEditor.undotitle, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
                     mEditorItem.RestoreBackup();

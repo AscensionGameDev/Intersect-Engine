@@ -2,7 +2,8 @@
 using Intersect;
 using Intersect.Client.Classes.UI.Game.Trades;
 using Intersect.GameObjects;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
@@ -37,29 +38,29 @@ namespace Intersect_Client.Classes.UI.Game
             EntityId = entityId;
 
             mTradeWindow = new WindowControl(gameCanvas,
-                Strings.Get("trading", "title", Globals.Entities[EntityId].MyName), false, "TradeWindow");
+                Strings.Trading.title.ToString(Globals.Entities[EntityId].MyName), false, "TradeWindow");
             mTradeWindow.DisableResizing();
             Gui.InputBlockingElements.Add(mTradeWindow);
 
             mYourOffer = new Label(mTradeWindow, "YourOfferLabel")
             {
-                Text = Strings.Get("trading", "youroffer")
+                Text = Strings.Trading.youroffer
             };
 
             mTheirOffer = new Label(mTradeWindow, "TheirOfferLabel")
             {
-                Text = Strings.Get("trading", "theiroffer")
+                Text = Strings.Trading.theiroffer
             };
 
             mTrade = new Button(mTradeWindow, "TradeButton");
-            mTrade.SetText(Strings.Get("trading", "accept"));
+            mTrade.SetText(Strings.Trading.accept);
             mTrade.Clicked += trade_Clicked;
 
             for (int i = 0; i < 2; i++)
             {
                 TradeSegment.Add(new TradeSegment(this, mTradeWindow, i));
             }
-            Gui.LoadRootUiData(mTradeWindow, "InGame.xml");
+            mTradeWindow.LoadJsonUi(GameContentManager.UI.InGame);
 
             for (int i = 0; i < 2; i++)
             {
@@ -136,7 +137,7 @@ namespace Intersect_Client.Classes.UI.Game
                         TradeSegment[n].Values[i].IsHidden = true;
                     }
                 }
-                TradeSegment[n].GoldValue.Text = Strings.Get("trading", "value", g);
+                TradeSegment[n].GoldValue.Text = Strings.Trading.value.ToString(g);
                 TradeSegment[n].GoldValue.SetPosition(
                     4 +
                     (((2 * n) + 1) * (mTradeWindow.Width - mTradeWindow.Padding.Left -
@@ -161,7 +162,7 @@ namespace Intersect_Client.Classes.UI.Game
         //Trade the item
         void trade_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            mTrade.Text = Strings.Get("trading", "pending");
+            mTrade.Text = Strings.Trading.pending;
             PacketSender.SendAcceptTrade();
         }
     }

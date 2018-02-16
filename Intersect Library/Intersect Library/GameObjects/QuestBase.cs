@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Intersect.GameObjects.Conditions;
 using Intersect.GameObjects.Events;
+using Intersect.Localization;
 using Intersect.Models;
 
 namespace Intersect.GameObjects
@@ -172,19 +173,19 @@ namespace Intersect.GameObjects
                 Id = id;
             }
 
-            public string GetTaskString()
+            public string GetTaskString(LocalizedString[] descriptions)
             {
                 var taskString = "";
                 switch (Objective)
                 {
                     case 0: //Event Driven
-                        taskString = "Event Driven - " + Desc;
+                        taskString = descriptions[Objective].ToString(Desc);
                         break;
                     case 1: //Gather Items
-                        taskString = "Gather Items [" + ItemBase.GetName(Data1) + " x" + Data2 + "] - " + Desc;
+                        taskString = descriptions[Objective].ToString(ItemBase.GetName(Data1), Data2, Desc);
                         break;
                     case 2: //Kill Npcs
-                        taskString = "Kill Npc(s) [" + NpcBase.GetName(Data1) + " x" + Data2 + "] - " + Desc;
+                        taskString = descriptions[Objective].ToString(NpcBase.GetName(Data1), Data2, Desc);
                         break;
                 }
                 return taskString;

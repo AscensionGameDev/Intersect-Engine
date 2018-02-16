@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using Intersect.Client.Interface;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
@@ -405,7 +405,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                 mFps = mFpsCount;
                 mFpsCount = 0;
                 mFpsTimer = Globals.System.GetTimeMs() + 1000;
-                mGameWindow.Title = Strings.Get("main", "gamename");
+                mGameWindow.Title = Strings.Main.gamename;
             }
             for (int i = 0; i < mAllTextures.Count; i++)
             {

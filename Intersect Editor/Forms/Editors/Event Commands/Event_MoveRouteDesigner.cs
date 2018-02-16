@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
@@ -64,13 +64,13 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             {
                 if (mEditingCommand != null)
                 {
-                    cmbTarget.Items.Add(Strings.Get("eventmoveroute", "player"));
+                    cmbTarget.Items.Add(Strings.EventMoveRoute.player);
                     if (mEditingCommand.Route.Target == -1) cmbTarget.SelectedIndex = 0;
                 }
                 foreach (var evt in mCurrentMap.Events)
                 {
                     cmbTarget.Items.Add(evt.Key == mEditingEvent.Index
-                        ? Strings.Get("eventmoveroute", "thisevent")
+                        ? Strings.EventMoveRoute.thisevent.ToString()
                         : "" + evt.Value.Name);
                     if (mEditingCommand != null)
                     {
@@ -95,19 +95,18 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpMoveRoute.Text = Strings.Get("eventmoveroute", "title");
-            grpCommands.Text = Strings.Get("eventmoveroute", "commands");
-            chkIgnoreIfBlocked.Text = Strings.Get("eventmoveroute", "ignoreblocked");
-            chkRepeatRoute.Text = Strings.Get("eventmoveroute", "repeatroute");
-            btnOkay.Text = Strings.Get("eventmoveroute", "okay");
-            btnCancel.Text = Strings.Get("eventmoveroute", "cancel");
+            grpMoveRoute.Text = Strings.EventMoveRoute.title;
+            grpCommands.Text = Strings.EventMoveRoute.command;
+            chkIgnoreIfBlocked.Text = Strings.EventMoveRoute.ignoreblocked;
+            chkRepeatRoute.Text = Strings.EventMoveRoute.repeatroute;
+            btnOkay.Text = Strings.EventMoveRoute.okay;
+            btnCancel.Text = Strings.EventMoveRoute.cancel;
             for (int i = 0; i < lstCommands.Nodes.Count; i++)
             {
-                lstCommands.Nodes[i].Text = Strings.Get("eventmoveroute", lstCommands.Nodes[i].Name);
+                lstCommands.Nodes[i].Text = Strings.EventMoveRoute.commands[lstCommands.Nodes[i].Name];
                 for (int x = 0; x < lstCommands.Nodes[i].Nodes.Count; x++)
                 {
-                    lstCommands.Nodes[i].Nodes[x].Text = Strings.Get("eventmoveroute",
-                        lstCommands.Nodes[i].Nodes[x].Name);
+                    lstCommands.Nodes[i].Nodes[x].Text = Strings.EventMoveRoute.commands[lstCommands.Nodes[i].Nodes[x].Name];
                 }
             }
         }
@@ -123,7 +122,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                     {
                         if (Convert.ToInt32(lstCommands.Nodes[i].Nodes[x].Tag) == (int) action.Type)
                         {
-                            lstActions.Items.Add(Strings.Get("eventmoveroute", lstCommands.Nodes[i].Nodes[x].Name));
+                            lstActions.Items.Add(Strings.EventMoveRoute.commands[lstCommands.Nodes[i].Nodes[x].Name]);
                         }
                     }
                 }

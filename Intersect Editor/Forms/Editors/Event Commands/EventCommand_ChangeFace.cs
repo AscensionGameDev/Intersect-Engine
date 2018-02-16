@@ -4,7 +4,7 @@ using System.IO;
 using System.Windows.Forms;
 using Intersect.Editor.Classes.Core;
 using Intersect.GameObjects.Events;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
@@ -34,10 +34,10 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpChangeFace.Text = Strings.Get("eventchangeface", "title");
-            lblFace.Text = Strings.Get("eventchangeface", "label");
-            btnSave.Text = Strings.Get("eventchangeface", "okay");
-            btnCancel.Text = Strings.Get("eventchangeface", "cancel");
+            grpChangeFace.Text = Strings.EventChangeFace.title;
+            lblFace.Text = Strings.EventChangeFace.label;
+            btnSave.Text = Strings.EventChangeFace.okay;
+            btnCancel.Text = Strings.EventChangeFace.cancel;
         }
 
         private void UpdatePreview()

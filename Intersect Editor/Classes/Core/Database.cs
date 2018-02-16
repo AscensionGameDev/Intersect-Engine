@@ -1,7 +1,7 @@
 using System;
 using System.Drawing;
 using System.IO;
-using System.Xml;
+using Intersect.Config;
 using Intersect.Enums;
 using Mono.Data.Sqlite;
 
@@ -19,7 +19,7 @@ namespace Intersect.Editor.Classes
         private const string MAP_CACHE_DATA = "data";
 
         //Options Constants
-        private const string OPTION_TABLE = "options";
+        private const string OPTION_TABLE = "Options";
 
         private const string OPTION_ID = "id";
         private const string OPTION_NAME = "name";
@@ -35,56 +35,19 @@ namespace Intersect.Editor.Classes
         public static int GridLightColor = System.Drawing.Color.White.ToArgb();
 
         //Options File
-        public static bool LoadOptions()
+        public static void LoadOptions()
         {
             if (!Directory.Exists("resources")) Directory.CreateDirectory("resources");
-            if (!File.Exists("resources/config.xml"))
+
+            if (File.Exists("resources/config.json"))
             {
-                var settings = new XmlWriterSettings {Indent = true};
-                using (var writer = XmlWriter.Create("resources/config.xml", settings))
-                {
-                    writer.WriteStartDocument();
-                    writer.WriteComment("Config.xml generated automatically by Intersect Game Engine.");
-                    writer.WriteStartElement("Config");
-                    writer.WriteElementString("Language", "English");
-                    writer.WriteElementString("Host", "localhost");
-                    writer.WriteElementString("Port", "5400");
-                    writer.WriteElementString("RenderCache", "true");
-                    //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
-                    writer.WriteElementString("MenuBgm", "");
-                    //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
-                    writer.WriteElementString("MenuBG", "background.png");
-                    //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
-                    writer.WriteElementString("Logo", "logo.png");
-                    //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
-                    writer.WriteElementString("IntroBg", "");
-                    //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
-                    writer.WriteEndElement();
-                    writer.WriteEndDocument();
-                    writer.Flush();
-                    writer.Close();
-                }
+                ClientOptions.Load(File.ReadAllText("resources/config.json"));
             }
             else
             {
-                XmlDocument xmlDoc = new XmlDocument();
-                try
-                {
-                    xmlDoc.LoadXml(File.ReadAllText("resources/config.xml"));
-                    Options.Language = "English";
-                    if (xmlDoc.SelectSingleNode("//Config/Language") != null)
-                    {
-                        Options.Language = xmlDoc.SelectSingleNode("//Config/Language").InnerText;
-                    }
-                    Globals.ServerHost = xmlDoc.SelectSingleNode("//Config/Host").InnerText;
-                    Globals.ServerPort = int.Parse(xmlDoc.SelectSingleNode("//Config/Port").InnerText);
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
+                ClientOptions.Load(null);
             }
-            return true;
+            File.WriteAllText("resources/config.json", ClientOptions.GetJson());
         }
 
         //Game Object Handling

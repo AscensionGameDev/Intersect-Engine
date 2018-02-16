@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using Intersect.Client.Classes.UI.Game.Crafting;
 using Intersect.GameObjects;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
@@ -46,7 +47,7 @@ namespace Intersect_Client.Classes.UI.Game
 
         public CraftingWindow(Canvas gameCanvas)
         {
-            mCraftWindow = new WindowControl(gameCanvas, Strings.Get("craftingbench", "title"), false,
+            mCraftWindow = new WindowControl(gameCanvas, Strings.CraftingBench.title, false,
                 "CraftingWindow");
             mCraftWindow.DisableResizing();
 
@@ -54,13 +55,13 @@ namespace Intersect_Client.Classes.UI.Game
 
             //Labels
             mLblRecipes = new Label(mCraftWindow, "RecipesTitle");
-            mLblRecipes.Text = Strings.Get("craftingbench", "recipes");
+            mLblRecipes.Text = Strings.CraftingBench.recipes;
 
             mLblIngredients = new Label(mCraftWindow, "IngredientsTitle");
-            mLblIngredients.Text = Strings.Get("craftingbench", "ingredients");
+            mLblIngredients.Text = Strings.CraftingBench.ingredients;
 
             mLblProduct = new Label(mCraftWindow, "ProductLabel");
-            mLblProduct.Text = Strings.Get("craftingbench", "product");
+            mLblProduct.Text = Strings.CraftingBench.product;
 
             //Recepie list
             mRecipes = new ListBox(mCraftWindow, "RecipesList");
@@ -71,10 +72,10 @@ namespace Intersect_Client.Classes.UI.Game
 
             //Load the craft button
             mCraft = new Button(mCraftWindow, "CraftButton");
-            mCraft.SetText(Strings.Get("craftingbench", "craft"));
+            mCraft.SetText(Strings.CraftingBench.craft);
             mCraft.Clicked += craft_Clicked;
 
-            Gui.LoadRootUiData(mCraftWindow, "InGame.xml");
+            mCraftWindow.LoadJsonUi(GameContentManager.UI.InGame);
 
             Gui.InputBlockingElements.Add(mCraftWindow);
 
@@ -118,8 +119,8 @@ namespace Intersect_Client.Classes.UI.Game
             };
             mCombinedItem.Setup("CraftedItemIcon");
 
-            //TODO Made this more efficient.
-            Gui.LoadRootUiData(mCombinedItem.Container, "InGame.xml");
+            mCombinedItem.Container.LoadJsonUi(GameContentManager.UI.InGame);
+            mCombinedItem.LoadItem();
 
             for (int i = 0; i < mItems.Count; i++)
             {
@@ -153,7 +154,7 @@ namespace Intersect_Client.Classes.UI.Game
             for (int i = 0; i < craft.Ingredients.Count; i++)
             {
                 mItems.Add(new RecipeItem(this, craft.Ingredients[i]));
-                mItems[i].Container = new ImagePanel(mItemContainer, "IngredientItemContainer");
+                mItems[i].Container = new ImagePanel(mItemContainer, "CraftingIngredient");
                 mItems[i].Setup("IngredientItemIcon");
 
                 Label lblTemp = new Label(mItems[i].Container, "IngredientItemValue");
@@ -166,8 +167,8 @@ namespace Intersect_Client.Classes.UI.Game
                 lblTemp.Text = onHand + "/" + craft.Ingredients[i].Quantity;
                 mValues.Add(lblTemp);
 
-                //TODO Made this more efficient.
-                Gui.LoadRootUiData(mItems[i].Container, "InGame.xml");
+                mItems[i].Container.LoadJsonUi(GameContentManager.UI.InGame);
+                mItems[i].LoadItem();
 
                 var xPadding = mItems[i].Container.Padding.Left + mItems[i].Container.Padding.Right;
                 var yPadding = mItems[i].Container.Padding.Top + mItems[i].Container.Padding.Bottom;
@@ -209,7 +210,7 @@ namespace Intersect_Client.Classes.UI.Game
                     Crafting = false;
                     mCraftWindow.IsClosable = true;
                     mBar.Width = 0;
-                    ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Get("craftingbench", "incorrectresources"),
+                    ChatboxMsg.AddMessage(new ChatboxMsg(Strings.CraftingBench.incorrectresources,
                         Color.Red));
                     return;
                 }
@@ -291,7 +292,7 @@ namespace Intersect_Client.Classes.UI.Game
 
             if (!cancraft)
             {
-                ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Get("craftingbench", "incorrectresources"),
+                ChatboxMsg.AddMessage(new ChatboxMsg(Strings.CraftingBench.incorrectresources,
                     Color.Red));
                 return;
             }

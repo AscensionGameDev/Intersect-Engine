@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using Intersect.Editor.Classes.Core;
 using Intersect.GameObjects.Events;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
@@ -19,7 +19,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             mEventEditor = editor;
             InitLocalization();
             cmbBgm.Items.Clear();
-            cmbBgm.Items.Add(Strings.Get("general", "none"));
+            cmbBgm.Items.Add(Strings.General.none);
             cmbBgm.Items.AddRange(GameContentManager.SmartSortedMusicNames);
             if (cmbBgm.Items.IndexOf(TextUtils.NullToNone(mMyCommand.Strs[0])) > -1)
             {
@@ -33,10 +33,10 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpBGM.Text = Strings.Get("eventplaybgm", "title");
-            lblBGM.Text = Strings.Get("eventplaybgm", "label");
-            btnSave.Text = Strings.Get("eventplaybgm", "okay");
-            btnCancel.Text = Strings.Get("eventplaybgm", "cancel");
+            grpBGM.Text = Strings.EventPlayBgm.title;
+            lblBGM.Text = Strings.EventPlayBgm.label;
+            btnSave.Text = Strings.EventPlayBgm.okay;
+            btnCancel.Text = Strings.EventPlayBgm.cancel;
         }
 
         private void btnSave_Click(object sender, EventArgs e)

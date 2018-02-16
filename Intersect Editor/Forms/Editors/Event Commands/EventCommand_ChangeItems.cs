@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using Intersect.Editor.Classes;
 using Intersect.Enums;
 using Intersect.GameObjects.Events;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
@@ -32,20 +32,20 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             {
                 nudGiveTakeAmount.Value = mMyCommand.Ints[2];
             }
-            lblAmount.Text = Strings.Get("eventchangeitems", "amount");
+            lblAmount.Text = Strings.EventChangeItems.amount;
         }
 
         private void InitLocalization()
         {
-            grpChangeItems.Text = Strings.Get("eventchangeitems", "title");
-            lblAction.Text = Strings.Get("eventchangeitems", "action");
+            grpChangeItems.Text = Strings.EventChangeItems.title;
+            lblAction.Text = Strings.EventChangeItems.action;
             cmbAction.Items.Clear();
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < Strings.EventChangeItems.actions.Length; i++)
             {
-                cmbAction.Items.Add(Strings.Get("eventchangeitems", "action" + i));
+                cmbAction.Items.Add(Strings.EventChangeItems.actions[i]);
             }
-            btnSave.Text = Strings.Get("eventchangeitems", "okay");
-            btnCancel.Text = Strings.Get("eventchangeitems", "cancel");
+            btnSave.Text = Strings.EventChangeItems.okay;
+            btnCancel.Text = Strings.EventChangeItems.cancel;
         }
 
         private void btnSave_Click(object sender, EventArgs e)

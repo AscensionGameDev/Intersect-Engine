@@ -12,7 +12,7 @@ using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
-using Intersect.Localization;
+using Intersect.Server.Classes.Localization;
 using Intersect.Logging;
 using Intersect.Models;
 using Intersect.Server.Classes.Entities;
@@ -28,8 +28,8 @@ namespace Intersect.Server.Classes.Core
     public static class Database
     {
         private const string DIRECTORY_BACKUPS = "resources/backups";
-        private const int DbVersion = 10;
-        private const string DB_FILENAME = "resources/intersect.db";
+        private const int DbVersion = 11;
+        private const string DbFilename = "resources/intersect.db";
 
         //Database Variables
         private const string INFO_TABLE = "info";
@@ -220,7 +220,7 @@ namespace Intersect.Server.Classes.Core
                 Directory.CreateDirectory(DIRECTORY_BACKUPS);
         }
 
-        //As of now database writes only occur on player saving & when editors make game changes
+        //As of now Database writes only occur on player saving & when editors make game changes
         //Database writes are actually pretty rare. And even player saves are offloaded as tasks so
         //if delayed it won't matter much.
         //TODO: Options for saving frequency and number of backups to keep.
@@ -282,14 +282,14 @@ namespace Intersect.Server.Classes.Core
         {
             SqliteConnection.SetConfig(SQLiteConfig.Serialized);
 
-            if (File.Exists(DB_FILENAME)) BackupDatabase();
+            if (File.Exists(DbFilename)) BackupDatabase();
             else CreateDatabase();
 
             OpenDatabaseConnection();
 
             if (GetDatabaseVersion() != DbVersion)
             {
-                Console.WriteLine(Strings.Get("database", "outofdate", GetDatabaseVersion(), DbVersion));
+                Console.WriteLine(Strings.Database.outofdate.ToString( GetDatabaseVersion(), DbVersion));
                 return false;
             }
             LoadAllGameObjects();
@@ -301,7 +301,7 @@ namespace Intersect.Server.Classes.Core
         {
             if (sDbConnection == null)
             {
-                sDbConnection = new SqliteConnection($"Data Source={DB_FILENAME},Version=3");
+                sDbConnection = new SqliteConnection($"Data Source={DbFilename},Version=3");
                 sDbConnection?.Open();
             }
         }
@@ -321,7 +321,7 @@ namespace Intersect.Server.Classes.Core
 
         private static void CreateDatabase()
         {
-            sDbConnection = new SqliteConnection($"Data Source={DB_FILENAME},Version=3,New=True");
+            sDbConnection = new SqliteConnection($"Data Source={DbFilename},Version=3,New=True");
             sDbConnection?.Open();
             CreateInfoTable();
             CreateUsersTable();
@@ -675,7 +675,7 @@ namespace Intersect.Server.Classes.Core
         //Players General
         public static void LoadPlayerDatabase()
         {
-            Console.WriteLine(Strings.Get("database", "usingsqlite"));
+            Console.WriteLine(Strings.Database.usingsqlite);
         }
 
         public static Client GetPlayerClient(string username)
@@ -693,7 +693,7 @@ namespace Intersect.Server.Classes.Core
                 }
             }
 
-            //Didn't find the player online, lets load him from our database.
+            //Didn't find the player online, lets load him from our Database.
             var fakeClient = new Client(-1, null);
             var en = new Player(-1, fakeClient);
             fakeClient.Entity = en;
@@ -709,12 +709,12 @@ namespace Intersect.Server.Classes.Core
                 var client = GetPlayerClient(username);
                 client.Power = power;
                 SaveUser(client);
-                PacketSender.SendPlayerMsg(client, Strings.Get("player", "powerchanged"), client.Entity.MyName);
-                Console.WriteLine(Strings.Get("commandoutput", "powerlevel", username, power));
+                PacketSender.SendPlayerMsg(client, Strings.Player.powerchanged, client.Entity.MyName);
+                Console.WriteLine(Strings.Commandoutput.powerlevel.ToString( username, power));
             }
             else
             {
-                Console.WriteLine(Strings.Get("account", "doesnotexist"));
+                Console.WriteLine(Strings.Account.doesnotexist);
             }
         }
 
@@ -1021,7 +1021,7 @@ namespace Intersect.Server.Classes.Core
                 transaction.Commit();
             }
             if (!newCharacter)
-                PacketSender.SendPlayerMsg(player.MyClient, Strings.Get("player", "saved"));
+                PacketSender.SendPlayerMsg(player.MyClient, Strings.Player.saved);
             return (rowId);
         }
 
@@ -1924,7 +1924,7 @@ namespace Intersect.Server.Classes.Core
                         }
                         else
                         {
-                            return Strings.Get("account", "mutestatus", banStart, banner, duration, reason);
+                            return Strings.Account.mutestatus.ToString( banStart, banner, duration, reason);
                         }
                     }
                 }
@@ -1988,7 +1988,7 @@ namespace Intersect.Server.Classes.Core
                         }
                         else
                         {
-                            return Strings.Get("account", "banstatus", banStart, banner, duration, reason);
+                            return Strings.Account.banstatus.ToString( banStart, banner, duration, reason);
                         }
                     }
                 }
@@ -2205,14 +2205,14 @@ namespace Intersect.Server.Classes.Core
                         }
                         else
                         {
-                            nullIssues += Strings.Get("database", "nullfound", index, tableName) + Environment.NewLine;
+                            nullIssues += Strings.Database.nullfound.ToString( index, tableName) + Environment.NewLine;
                         }
                     }
                 }
             }
             if (nullIssues != "")
             {
-                throw (new Exception(Strings.Get("database", "nullerror") + Environment.NewLine + nullIssues));
+                throw (new Exception(Strings.Database.nullerror + Environment.NewLine + nullIssues));
             }
         }
 
@@ -2220,7 +2220,7 @@ namespace Intersect.Server.Classes.Core
         {
             if (gameObject == null)
             {
-                Log.Error("Attempted to persist null game object to the database.");
+                Log.Error("Attempted to persist null game object to the Database.");
             }
 
             var insertQuery = "UPDATE " + gameObject.DatabaseTable + " set " + GAME_OBJECT_DELETED + "=@" +
@@ -2404,7 +2404,7 @@ namespace Intersect.Server.Classes.Core
                         }
                         else
                         {
-                            nullIssues += Strings.Get("database", "nullfound", index, MAP_TILES_TABLE) +
+                            nullIssues += Strings.Database.nullfound.ToString( index, MAP_TILES_TABLE) +
                                           Environment.NewLine;
                         }
                     }
@@ -2416,7 +2416,7 @@ namespace Intersect.Server.Classes.Core
             }
             if (nullIssues != "")
             {
-                throw (new Exception(Strings.Get("database", "nullerror") + Environment.NewLine + nullIssues));
+                throw (new Exception(Strings.Database.nullerror + Environment.NewLine + nullIssues));
             }
             return null;
         }
@@ -2439,7 +2439,7 @@ namespace Intersect.Server.Classes.Core
         {
             if (MapBase.Lookup.Count == 0)
             {
-                Console.WriteLine(Strings.Get("database", "nomaps"));
+                Console.WriteLine(Strings.Database.nomaps);
                 AddGameObject(GameObjectType.Map);
             }
 
@@ -2452,9 +2452,9 @@ namespace Intersect.Server.Classes.Core
         {
             if (ClassBase.Lookup.Count == 0)
             {
-                Console.WriteLine(Strings.Get("database", "noclasses"));
+                Console.WriteLine(Strings.Database.noclasses);
                 var cls = (ClassBase) AddGameObject(GameObjectType.Class);
-                cls.Name = Strings.Get("database", "default");
+                cls.Name = Strings.Database.Default;
                 var defaultMale = new ClassSprite()
                 {
                     Sprite = "1.png",

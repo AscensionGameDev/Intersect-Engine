@@ -4,7 +4,7 @@ using Intersect.Editor.Classes;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
@@ -26,11 +26,11 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpCompleteTask.Text = Strings.Get("eventcompletequesttask", "title");
-            lblQuest.Text = Strings.Get("eventcompletequesttask", "quest");
-            lblTask.Text = Strings.Get("eventcompletequesttask", "task");
-            btnSave.Text = Strings.Get("eventcompletequesttask", "okay");
-            btnCancel.Text = Strings.Get("eventcompletequesttask", "cancel");
+            grpCompleteTask.Text = Strings.EventCompleteQuestTask.title;
+            lblQuest.Text = Strings.EventCompleteQuestTask.quest;
+            lblTask.Text = Strings.EventCompleteQuestTask.task;
+            btnSave.Text = Strings.EventCompleteQuestTask.okay;
+            btnCancel.Text = Strings.EventCompleteQuestTask.cancel;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -77,7 +77,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                     cmbQuestTask.Items.Clear();
                     foreach (var task in quest.Tasks)
                     {
-                        cmbQuestTask.Items.Add(task.GetTaskString());
+                        cmbQuestTask.Items.Add(task.GetTaskString(Strings.TaskEditor.descriptions));
                         if (task.Id == mMyCommand.Ints[1])
                         {
                             cmbQuestTask.SelectedIndex = cmbQuestTask.Items.Count - 1;

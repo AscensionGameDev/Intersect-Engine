@@ -11,7 +11,7 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 using Microsoft.Xna.Framework.Graphics;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -37,7 +37,7 @@ namespace Intersect.Editor.Forms
 
         private void InitLocalization()
         {
-            Text = Strings.Get("mapping", "editortitle");
+            Text = Strings.Mapping.editortitle;
         }
 
         private void frmMapEditor_Load(object sender, EventArgs e)
@@ -883,8 +883,8 @@ namespace Intersect.Editor.Forms
                             if (Globals.MapGrid.Grid[x, y].Mapnum > -1)
                             {
                                 if (Globals.CurrentMap.Changed() &&
-                                    DarkMessageBox.ShowInformation(Strings.Get("mapping", "savemapdialogue"),
-                                        Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo,
+                                    DarkMessageBox.ShowInformation(Strings.Mapping.savemapdialogue,
+                                        Strings.Mapping.savemap, DarkDialogButton.YesNo,
                                         Properties.Resources.Icon) == DialogResult.Yes)
                                 {
                                     SaveMap();
@@ -893,16 +893,16 @@ namespace Intersect.Editor.Forms
                             }
                             else
                             {
-                                DarkMessageBox.ShowError(Strings.Get("mapping", "diagonalwarning"),
-                                    Strings.Get("mapping", "createmap"), DarkDialogButton.Ok,
+                                DarkMessageBox.ShowError(Strings.Mapping.diagonalwarning,
+                                    Strings.Mapping.createmap, DarkDialogButton.Ok,
                                     Properties.Resources.Icon);
                                 return;
                             }
                         }
                         else
                         {
-                            DarkMessageBox.ShowError(Strings.Get("mapping", "diagonalwarning"),
-                                Strings.Get("mapping", "createmap"), DarkDialogButton.Ok, Properties.Resources.Icon);
+                            DarkMessageBox.ShowError(Strings.Mapping.diagonalwarning,
+                                Strings.Mapping.createmap, DarkDialogButton.Ok, Properties.Resources.Icon);
                             return;
                         }
                     }
@@ -912,13 +912,13 @@ namespace Intersect.Editor.Forms
                     if (newMap == -1)
                     {
                         if (
-                            DarkMessageBox.ShowInformation(Strings.Get("mapping", "createmapdialogue"),
-                                Strings.Get("mapping", "createmap"), DarkDialogButton.YesNo,
+                            DarkMessageBox.ShowInformation(Strings.Mapping.createmapdialogue,
+                                Strings.Mapping.createmap, DarkDialogButton.YesNo,
                                 Properties.Resources.Icon) !=
                             DialogResult.Yes) return;
                         if (Globals.CurrentMap.Changed() &&
-                            DarkMessageBox.ShowWarning(Strings.Get("mapping", "savemapdialogue"),
-                                Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                            DarkMessageBox.ShowWarning(Strings.Mapping.savemapdialogue,
+                                Strings.Mapping.savemap, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                             DialogResult.Yes)
                         {
                             SaveMap();
@@ -928,8 +928,8 @@ namespace Intersect.Editor.Forms
                     else
                     {
                         if (Globals.CurrentMap.Changed() &&
-                            DarkMessageBox.ShowWarning(Strings.Get("mapping", "savemapdialogue"),
-                                Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                            DarkMessageBox.ShowWarning(Strings.Mapping.savemapdialogue,
+                                Strings.Mapping.savemap, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                             DialogResult.Yes)
                         {
                             SaveMap();
@@ -1051,8 +1051,8 @@ namespace Intersect.Editor.Forms
                 CurrentMapState = tmpMap.SaveInternal();
             }
             if (
-                DarkMessageBox.ShowWarning(Strings.Get("mapping", "filllayerdialogue"),
-                    Strings.Get("mapping", "filllayer"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                DarkMessageBox.ShowWarning(Strings.Mapping.filllayerdialogue,
+                    Strings.Mapping.filllayer, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                 DialogResult.Yes)
             {
                 int x1 = 0;
@@ -1129,8 +1129,8 @@ namespace Intersect.Editor.Forms
                 CurrentMapState = tmpMap.SaveInternal();
             }
             if (
-                DarkMessageBox.ShowWarning(Strings.Get("mapping", "eraselayerdialogue"),
-                    Strings.Get("mapping", "eraselayer"), DarkDialogButton.YesNo, Properties.Resources.Icon) ==
+                DarkMessageBox.ShowWarning(Strings.Mapping.eraselayerdialogue,
+                    Strings.Mapping.eraselayer, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                 DialogResult.Yes)
             {
                 for (var x = 0; x < Options.MapWidth; x++)
@@ -1803,6 +1803,7 @@ namespace Intersect.Editor.Forms
 
         private void pnlMapContainer_Resize(object sender, EventArgs e)
         {
+            if (!Options.Loaded) return;
             picMap.Size = pnlMapContainer.ClientSize;
             picMap.MinimumSize = new Size((Options.MapWidth + 2) * Options.TileWidth,
                 (Options.MapHeight + 2) * Options.TileHeight);

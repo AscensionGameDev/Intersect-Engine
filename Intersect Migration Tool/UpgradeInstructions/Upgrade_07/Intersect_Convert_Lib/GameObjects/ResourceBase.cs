@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Intersect.Localization;
 using Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Conditions;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects
@@ -18,12 +17,12 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Li
         // Drops
         public List<ResourceDrop> Drops = new List<ResourceDrop>();
 
-        public string EndGraphic = Strings.Get("general", "none");
+        public string EndGraphic = "None";
 
         public ConditionLists HarvestingReqs = new ConditionLists();
 
         // Graphics
-        public string InitialGraphic = Strings.Get("general", "none");
+        public string InitialGraphic = "None";
 
         public int MaxHp;
         public int MinHp;

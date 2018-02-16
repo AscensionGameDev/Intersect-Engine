@@ -1,5 +1,7 @@
 using System.Collections.Generic;
-using Intersect.Localization;
+using System.IO;
+using Intersect.Client.Classes.Localization;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.General;
@@ -37,41 +39,44 @@ namespace Intersect_Client.Classes.UI.Menu
         {
             mMenuCanvas = menuCanvas;
 
-            new ImagePanel(menuCanvas, "Logo");
+            var logo = new ImagePanel(menuCanvas, "Logo");
+            logo.LoadJsonUi(GameContentManager.UI.Menu);
 
             //Main Menu Window
             mMenuWindow = new ImagePanel(menuCanvas, "MenuWindow");
 
             //Menu Header
             mMenuHeader = new Label(mMenuWindow, "Title");
-            mMenuHeader.SetText(Strings.Get("mainmenu", "title"));
+            mMenuHeader.SetText(Strings.MainMenu.title);
 
             //Login Button
             mLoginButton = new Button(mMenuWindow, "LoginButton");
-            mLoginButton.SetText(Strings.Get("mainmenu", "login"));
+            mLoginButton.SetText(Strings.MainMenu.login);
             mLoginButton.Clicked += LoginButton_Clicked;
 
             //Register Button
             mRegisterButton = new Button(mMenuWindow, "RegisterButton");
-            mRegisterButton.SetText(Strings.Get("mainmenu", "register"));
+            mRegisterButton.SetText(Strings.MainMenu.register);
             mRegisterButton.Clicked += RegisterButton_Clicked;
 
             //Credits Button
             mCreditsButton = new Button(mMenuWindow, "CreditsButton");
-            mCreditsButton.SetText(Strings.Get("mainmenu", "credits"));
+            mCreditsButton.SetText(Strings.MainMenu.credits);
             mCreditsButton.Clicked += CreditsButton_Clicked;
 
             //Exit Button
             mExitButton = new Button(mMenuWindow, "ExitButton");
-            mExitButton.SetText(Strings.Get("mainmenu", "exit"));
+            mExitButton.SetText(Strings.MainMenu.exit);
             mExitButton.Clicked += ExitButton_Clicked;
 
             //Options Button
             mOptionsButton = new Button(mMenuWindow, "OptionsButton");
             mOptionsButton.Clicked += OptionsButton_Clicked;
-            mOptionsButton.SetText(Strings.Get("mainmenu", "options"));
-            if (!string.IsNullOrEmpty(Strings.Get("mainmenu", "options")))
-                mOptionsButton.SetToolTipText(Strings.Get("mainmenu", "options"));
+            mOptionsButton.SetText(Strings.MainMenu.options);
+            if (!string.IsNullOrEmpty(Strings.MainMenu.options))
+                mOptionsButton.SetToolTipText(Strings.MainMenu.options);
+
+            mMenuWindow.LoadJsonUi(GameContentManager.UI.Menu);
 
             //Options Controls
             mOptionsWindow = new OptionsWindow(menuCanvas, this, mMenuWindow);

@@ -4,7 +4,7 @@ using Intersect.Editor.Classes;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Quest
 {
@@ -40,30 +40,30 @@ namespace Intersect.Editor.Forms.Editors.Quest
 
         private void InitLocalization()
         {
-            grpEditor.Text = Strings.Get("taskeditor", "editor");
+            grpEditor.Text = Strings.TaskEditor.editor;
 
-            lblType.Text = Strings.Get("taskeditor", "type");
+            lblType.Text = Strings.TaskEditor.type;
             cmbTaskType.Items.Clear();
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < Strings.TaskEditor.types.Length; i++)
             {
-                cmbTaskType.Items.Add(Strings.Get("taskeditor", "type" + i));
+                cmbTaskType.Items.Add(Strings.TaskEditor.types[i]);
             }
 
-            lblDesc.Text = Strings.Get("taskeditor", "desc");
+            lblDesc.Text = Strings.TaskEditor.desc;
 
-            grpKillNpcs.Text = Strings.Get("taskeditor", "killnpcs");
-            lblNpc.Text = Strings.Get("taskeditor", "npc");
-            lblNpcQuantity.Text = Strings.Get("taskeditor", "npcamount");
+            grpKillNpcs.Text = Strings.TaskEditor.killnpcs;
+            lblNpc.Text = Strings.TaskEditor.npc;
+            lblNpcQuantity.Text = Strings.TaskEditor.npcamount;
 
-            grpGatherItems.Text = Strings.Get("taskeditor", "gatheritems");
-            lblItem.Text = Strings.Get("taskeditor", "item");
-            lblItemQuantity.Text = Strings.Get("taskeditor", "gatheramount");
+            grpGatherItems.Text = Strings.TaskEditor.gatheritems;
+            lblItem.Text = Strings.TaskEditor.item;
+            lblItemQuantity.Text = Strings.TaskEditor.gatheramount;
 
-            lblEventDriven.Text = Strings.Get("taskeditor", "eventdriven");
+            lblEventDriven.Text = Strings.TaskEditor.eventdriven;
 
-            btnEditTaskEvent.Text = Strings.Get("taskeditor", "editcompletionevent");
-            btnSave.Text = Strings.Get("taskeditor", "ok");
-            btnCancel.Text = Strings.Get("taskeditor", "cancel");
+            btnEditTaskEvent.Text = Strings.TaskEditor.editcompletionevent;
+            btnSave.Text = Strings.TaskEditor.ok;
+            btnCancel.Text = Strings.TaskEditor.cancel;
         }
 
         private void UpdateFormElements()
@@ -127,7 +127,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
 
         private void btnEditTaskEvent_Click(object sender, EventArgs e)
         {
-            mMyTask.CompletionEvent.Name = Strings.Get("taskeditor", "completionevent");
+            mMyTask.CompletionEvent.Name = Strings.TaskEditor.completionevent;
             FrmEvent editor = new FrmEvent(null)
             {
                 MyEvent = mMyTask.CompletionEvent

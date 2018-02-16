@@ -1,5 +1,6 @@
 ﻿using System;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
@@ -25,20 +26,20 @@ namespace Intersect_Client.Classes.UI.Game
         private Label mPromptLabel;
         private TextBoxNumeric mTextbox;
         private ImagePanel mTextboxBg;
-        private string mUiDataFile;
+        private GameContentManager.UI _uiStage;
         private Button mYesButton;
         public int UserData;
         public float Value;
 
         public InputBox(string title, string prompt, bool modal, InputType inputtype, EventHandler okayYesSubmitClicked,
-            EventHandler cancelClicked, int userData, Base parent = null, string uiDataFile = "InGame.xml")
+            EventHandler cancelClicked, int userData, Base parent = null, GameContentManager.UI stage = GameContentManager.UI.InGame)
         {
             if (parent == null) parent = Gui.GameUi.GameCanvas;
             OkayEventHandler = okayYesSubmitClicked;
             CancelEventHandler = cancelClicked;
             this.UserData = userData;
             mInputType = inputtype;
-            mUiDataFile = uiDataFile;
+            _uiStage = stage;
             mPrompt = prompt;
 
             mMyWindow = new WindowControl(parent, title, modal, "InputBox");
@@ -56,15 +57,15 @@ namespace Intersect_Client.Classes.UI.Game
             }
 
             mYesButton = new Button(mMyWindow, "YesButton");
-            mYesButton.SetText(Strings.Get("inputbox", "okay"));
+            mYesButton.SetText(Strings.InputBox.okay);
             mYesButton.Clicked += okayBtn_Clicked;
 
             mNoButton = new Button(mMyWindow, "NoButton");
-            mNoButton.SetText(Strings.Get("inputbox", "cancel"));
+            mNoButton.SetText(Strings.InputBox.cancel);
             mNoButton.Clicked += cancelBtn_Clicked;
 
             mOkayButton = new Button(mMyWindow, "OkayButton");
-            mOkayButton.SetText(Strings.Get("inputbox", "okay"));
+            mOkayButton.SetText(Strings.InputBox.okay);
             mOkayButton.Clicked += okayBtn_Clicked;
 
             mPromptLabel = new Label(mMyWindow, "PromptLabel");
@@ -74,7 +75,7 @@ namespace Intersect_Client.Classes.UI.Game
         {
             if (!mInitialized)
             {
-                Gui.LoadRootUiData(mMyWindow, mUiDataFile);
+                mMyWindow.LoadJsonUi(_uiStage, true);
                 var text = Gui.WrapText(mPrompt, mPromptLabel.Width, mPromptLabel.Font);
                 int y = mPromptLabel.Y;
                 foreach (string s in text)
@@ -93,8 +94,8 @@ namespace Intersect_Client.Classes.UI.Game
                 switch (mInputType)
                 {
                     case InputType.YesNo:
-                        mYesButton.Text = Strings.Get("inputbox", "yes");
-                        mNoButton.Text = Strings.Get("inputbox", "no");
+                        mYesButton.Text = Strings.InputBox.yes;
+                        mNoButton.Text = Strings.InputBox.no;
                         mOkayButton.Hide();
                         mYesButton.Show();
                         mNoButton.Show();

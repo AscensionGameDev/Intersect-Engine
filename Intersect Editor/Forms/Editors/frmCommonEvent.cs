@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using Intersect.Editor.Classes;
 using Intersect.Enums;
 using Intersect.GameObjects.Events;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Forms.Editors
 {
@@ -19,10 +19,10 @@ namespace Intersect.Editor.Forms.Editors
 
         private void InitLocalization()
         {
-            Text = Strings.Get("commoneventeditor", "title");
-            grpCommonEvents.Text = Strings.Get("commoneventeditor", "events");
-            btnNew.Text = Strings.Get("commoneventeditor", "new");
-            btnDelete.Text = Strings.Get("commoneventeditor", "delete");
+            Text = Strings.CommoneEventEditor.title;
+            grpCommonEvents.Text = Strings.CommoneEventEditor.events;
+            btnNew.Text = Strings.CommoneEventEditor.New;
+            btnDelete.Text = Strings.CommoneEventEditor.delete;
         }
 
         protected override void GameObjectUpdatedDelegate(GameObjectType type)

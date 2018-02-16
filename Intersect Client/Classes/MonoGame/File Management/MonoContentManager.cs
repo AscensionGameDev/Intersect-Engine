@@ -6,7 +6,7 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.Core;
@@ -66,8 +66,8 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
                             if (mErrorString != "")
                             {
                                 if (
-                                    MessageBox.Show(Strings.Get("resources", "resourceexception", mErrorString),
-                                        Strings.Get("resources", "failedtoload"),
+                                    MessageBox.Show(Strings.Resources.resourceexception.ToString( mErrorString),
+                                        Strings.Resources.failedtoload,
                                         MessageBoxButtons.YesNo) != DialogResult.Yes)
                                 {
                                     retry = false;
@@ -81,8 +81,8 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
                     }
                     else
                     {
-                        MessageBox.Show(Strings.Get("resources", "resourcesfatal"),
-                            Strings.Get("resources", "failedtoload"));
+                        MessageBox.Show(Strings.Resources.resourcesfatal,
+                            Strings.Resources.failedtoload);
                     }
                 }
                 mLoadingForm.Close();
@@ -114,7 +114,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
             {
                 if (e.Cancelled)
                 {
-                    mErrorString = Strings.Get("resources", "cancelled");
+                    mErrorString = Strings.Resources.cancelled;
                 }
                 else
                 {

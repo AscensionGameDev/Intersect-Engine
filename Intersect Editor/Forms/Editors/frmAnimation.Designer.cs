@@ -1,6 +1,6 @@
 ﻿using DarkUI.Controls;
 using Intersect.Editor.Forms.Controls;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Forms
 {
@@ -531,12 +531,12 @@ namespace Intersect.Editor.Forms
             this.cmbLowerGraphic.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbLowerGraphic.FormattingEnabled = true;
             this.cmbLowerGraphic.Items.AddRange(new object[] {
-            "//general/none"});
+            "//General/none"});
             this.cmbLowerGraphic.Location = new System.Drawing.Point(54, 223);
             this.cmbLowerGraphic.Name = "cmbLowerGraphic";
             this.cmbLowerGraphic.Size = new System.Drawing.Size(149, 21);
             this.cmbLowerGraphic.TabIndex = 3;
-            this.cmbLowerGraphic.Text = "//general/none";
+            this.cmbLowerGraphic.Text = "//General/none";
             this.cmbLowerGraphic.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbLowerGraphic.SelectedIndexChanged += new System.EventHandler(this.cmbLowerGraphic_SelectedIndexChanged);
             // 
@@ -837,12 +837,12 @@ namespace Intersect.Editor.Forms
             this.cmbUpperGraphic.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbUpperGraphic.FormattingEnabled = true;
             this.cmbUpperGraphic.Items.AddRange(new object[] {
-            "//general/none"});
+            "//General/none"});
             this.cmbUpperGraphic.Location = new System.Drawing.Point(57, 223);
             this.cmbUpperGraphic.Name = "cmbUpperGraphic";
             this.cmbUpperGraphic.Size = new System.Drawing.Size(143, 21);
             this.cmbUpperGraphic.TabIndex = 15;
-            this.cmbUpperGraphic.Text = "//general/none";
+            this.cmbUpperGraphic.Text = "//General/none";
             this.cmbUpperGraphic.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbUpperGraphic.SelectedIndexChanged += new System.EventHandler(this.cmbUpperGraphic_SelectedIndexChanged);
             // 

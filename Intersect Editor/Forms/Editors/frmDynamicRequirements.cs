@@ -4,7 +4,7 @@ using System.Windows.Forms;
 using Intersect.Editor.Forms.Editors.Event_Commands;
 using Intersect.GameObjects.Conditions;
 using Intersect.GameObjects.Events;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Forms.Editors
 {
@@ -35,38 +35,38 @@ namespace Intersect.Editor.Forms.Editors
 
         private void InitLocalization(RequirementType type)
         {
-            Text = Strings.Get("dynamicrequirements", "title");
-            grpConditionLists.Text = Strings.Get("dynamicrequirements", "conditionlists");
+            Text = Strings.DynamicRequirements.title;
+            grpConditionLists.Text = Strings.DynamicRequirements.conditionlists;
             switch (type)
             {
                 case RequirementType.Item:
-                    lblInstructions.Text = Strings.Get("dynamicrequirements", "instructionsitem");
+                    lblInstructions.Text = Strings.DynamicRequirements.instructionsitem;
                     break;
                 case RequirementType.Resource:
-                    lblInstructions.Text = Strings.Get("dynamicrequirements", "instructionsresource");
+                    lblInstructions.Text = Strings.DynamicRequirements.instructionsresource;
                     break;
                 case RequirementType.Spell:
-                    lblInstructions.Text = Strings.Get("dynamicrequirements", "instructionsspell");
+                    lblInstructions.Text = Strings.DynamicRequirements.instructionsspell;
                     break;
                 case RequirementType.Event:
-                    lblInstructions.Text = Strings.Get("dynamicrequirements", "instructionsevent");
+                    lblInstructions.Text = Strings.DynamicRequirements.instructionsevent;
                     break;
                 case RequirementType.Quest:
-                    lblInstructions.Text = Strings.Get("dynamicrequirements", "instructionsquest");
+                    lblInstructions.Text = Strings.DynamicRequirements.instructionsquest;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
-            btnAddList.Text = Strings.Get("dynamicrequirements", "addlist");
-            btnRemoveList.Text = Strings.Get("dynamicrequirements", "removelist");
-            btnSave.Text = Strings.Get("dynamicrequirements", "savelists");
-            btnCancel.Text = Strings.Get("dynamicrequirements", "cancellists");
-            grpConditionList.Text = Strings.Get("dynamicrequirements", "conditionlist");
-            lblListName.Text = Strings.Get("dynamicrequirements", "listname");
-            btnAddCondition.Text = Strings.Get("dynamicrequirements", "addcondition");
-            btnRemoveCondition.Text = Strings.Get("dynamicrequirements", "removecondition");
-            btnConditionsOkay.Text = Strings.Get("dynamicrequirements", "saveconditions");
-            btnConditionsCancel.Text = Strings.Get("dynamicrequirements", "cancelconditions");
+            btnAddList.Text = Strings.DynamicRequirements.addlist;
+            btnRemoveList.Text = Strings.DynamicRequirements.removelist;
+            btnSave.Text = Strings.DynamicRequirements.savelists;
+            btnCancel.Text = Strings.DynamicRequirements.cancellists;
+            grpConditionList.Text = Strings.DynamicRequirements.conditionlist;
+            lblListName.Text = Strings.DynamicRequirements.listname;
+            btnAddCondition.Text = Strings.DynamicRequirements.addcondition;
+            btnRemoveCondition.Text = Strings.DynamicRequirements.removecondition;
+            btnConditionsOkay.Text = Strings.DynamicRequirements.saveconditions;
+            btnConditionsCancel.Text = Strings.DynamicRequirements.cancelconditions;
         }
 
         private void UpdateLists()
@@ -93,7 +93,7 @@ namespace Intersect.Editor.Forms.Editors
             txtListName.Text = list.Name;
             for (int i = 0; i < list.Conditions.Count; i++)
             {
-                lstConditions.Items.Add(list.Conditions[i].GetConditionalDesc());
+                lstConditions.Items.Add(Strings.GetEventConditionalDesc(list.Conditions[i]));
             }
         }
 
@@ -158,7 +158,7 @@ namespace Intersect.Editor.Forms.Editors
             var cmdWindow = new EventCommandConditionalBranch(cmd, null, null);
             var frm = new Form
             {
-                Text = Strings.Get("dynamicrequirements", "conditioneditor"),
+                Text = Strings.DynamicRequirements.conditioneditor,
                 FormBorderStyle = FormBorderStyle.FixedSingle,
                 Size = new Size(0, 0),
                 AutoSize = true,

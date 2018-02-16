@@ -1,6 +1,6 @@
 ﻿using System;
 using Intersect.GameObjects;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
@@ -48,6 +48,10 @@ namespace Intersect.Client.Classes.UI.Game.Shop
             Pnl.HoverEnter += pnl_HoverEnter;
             Pnl.HoverLeave += pnl_HoverLeave;
             Pnl.DoubleClicked += Pnl_DoubleClicked;
+        }
+
+        public void LoadItem()
+        {
             var item = ItemBase.Lookup.Get<ItemBase>(Globals.GameShop.SellingItems[mMySlot].ItemNum);
             if (item != null)
             {
@@ -67,8 +71,8 @@ namespace Intersect.Client.Classes.UI.Game.Shop
             {
                 if (item.IsStackable())
                 {
-                    InputBox iBox = new InputBox(Strings.Get("shop", "buyitem"),
-                        Strings.Get("shop", "buyitemprompt", item.Name), true, InputBox.InputType.TextInput,
+                    InputBox iBox = new InputBox(Strings.Shop.buyitem,
+                        Strings.Shop.buyitemprompt.ToString(item.Name), true, InputBox.InputType.TextInput,
                         BuyItemInputBoxOkay, null, mMySlot);
                 }
                 else
@@ -110,7 +114,7 @@ namespace Intersect.Client.Classes.UI.Game.Shop
             if (item != null)
                 mDescWindow = new ItemDescWindow(Globals.GameShop.SellingItems[mMySlot].ItemNum, 1, mShopWindow.X - 255,
                     mShopWindow.Y, item.StatsGiven, "",
-                    Strings.Get("shop", "costs", Globals.GameShop.SellingItems[mMySlot].CostItemVal, item.Name));
+                    Strings.Shop.costs.ToString(Globals.GameShop.SellingItems[mMySlot].CostItemVal, item.Name));
         }
 
         public FloatRect RenderBounds()

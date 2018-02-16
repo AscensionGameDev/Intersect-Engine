@@ -7,7 +7,7 @@ using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
@@ -55,33 +55,33 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpSpawnNpc.Text = Strings.Get("eventspawnnpc", "title");
-            lblNpc.Text = Strings.Get("eventspawnnpc", "npc");
-            lblSpawnType.Text = Strings.Get("eventspawnnpc", "spawntype");
+            grpSpawnNpc.Text = Strings.EventSpawnNpc.title;
+            lblNpc.Text = Strings.EventSpawnNpc.npc;
+            lblSpawnType.Text = Strings.EventSpawnNpc.spawntype;
             cmbConditionType.Items.Clear();
-            cmbConditionType.Items.Add(Strings.Get("eventspawnnpc", "spawntype0"));
-            cmbConditionType.Items.Add(Strings.Get("eventspawnnpc", "spawntype1"));
+            cmbConditionType.Items.Add(Strings.EventSpawnNpc.spawntype0);
+            cmbConditionType.Items.Add(Strings.EventSpawnNpc.spawntype1);
 
-            grpTileSpawn.Text = Strings.Get("eventspawnnpc", "spawntype0");
-            grpEntitySpawn.Text = Strings.Get("eventspawnnpc", "spawntype1");
+            grpTileSpawn.Text = Strings.EventSpawnNpc.spawntype0;
+            grpEntitySpawn.Text = Strings.EventSpawnNpc.spawntype1;
 
-            lblMap.Text = Strings.Get("warping", "map", "");
-            lblX.Text = Strings.Get("warping", "x", "");
-            lblY.Text = Strings.Get("warping", "y", "");
-            lblMap.Text = Strings.Get("warping", "direction", "");
+            lblMap.Text = Strings.Warping.map.ToString( "");
+            lblX.Text = Strings.Warping.x.ToString( "");
+            lblY.Text = Strings.Warping.y.ToString( "");
+            lblMap.Text = Strings.Warping.direction.ToString( "");
             cmbDirection.Items.Clear();
             for (int i = 0; i < 4; i++)
             {
-                cmbDirection.Items.Add(Strings.Get("directions", i.ToString()));
+                cmbDirection.Items.Add(Strings.Directions.dir[i]);
             }
-            btnVisual.Text = Strings.Get("warping", "visual");
+            btnVisual.Text = Strings.Warping.visual;
 
-            lblEntity.Text = Strings.Get("eventspawnnpc", "entity");
-            lblRelativeLocation.Text = Strings.Get("eventspawnnpc", "relativelocation");
-            chkDirRelative.Text = Strings.Get("eventspawnnpc", "spawnrelative");
+            lblEntity.Text = Strings.EventSpawnNpc.entity;
+            lblRelativeLocation.Text = Strings.EventSpawnNpc.relativelocation;
+            chkDirRelative.Text = Strings.EventSpawnNpc.spawnrelative;
 
-            btnSave.Text = Strings.Get("eventspawnnpc", "okay");
-            btnCancel.Text = Strings.Get("eventspawnnpc", "cancel");
+            btnSave.Text = Strings.EventSpawnNpc.okay;
+            btnCancel.Text = Strings.EventSpawnNpc.cancel;
         }
 
         private void UpdateFormElements()
@@ -109,7 +109,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                 case 1: //On/Around Entity Spawn
                     grpEntitySpawn.Show();
                     cmbEntities.Items.Clear();
-                    cmbEntities.Items.Add(Strings.Get("eventspawnnpc", "player"));
+                    cmbEntities.Items.Add(Strings.EventSpawnNpc.player);
                     cmbEntities.SelectedIndex = 0;
 
                     if (!mEditingEvent.CommonEvent)
@@ -117,7 +117,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                         foreach (var evt in mCurrentMap.Events)
                         {
                             cmbEntities.Items.Add(evt.Key == mEditingEvent.Index
-                                ? Strings.Get("eventspawnnpc", "this") + " "
+                                ? Strings.EventSpawnNpc.This + " "
                                 : "" + evt.Value.Name);
                             if (mMyCommand.Ints[2] == evt.Key) cmbEntities.SelectedIndex = cmbEntities.Items.Count - 1;
                         }

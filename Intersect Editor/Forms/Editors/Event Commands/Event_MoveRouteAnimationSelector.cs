@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using Intersect.Editor.Classes;
 using Intersect.Enums;
 using Intersect.GameObjects.Events;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
@@ -18,7 +18,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         {
             InitializeComponent();
             cmbAnimation.Items.Clear();
-            cmbAnimation.Items.Add(Strings.Get("general", "none"));
+            cmbAnimation.Items.Add(Strings.General.none);
             cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
             if (!newAction)
             {
@@ -32,10 +32,10 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpSetAnimation.Text = Strings.Get("eventsetanimation", "title");
-            lblAnimation.Text = Strings.Get("eventsetanimation", "label");
-            btnOkay.Text = Strings.Get("eventsetanimation", "okay");
-            btnCancel.Text = Strings.Get("eventsetanimation", "cancel");
+            grpSetAnimation.Text = Strings.EventSetAnimation.title;
+            lblAnimation.Text = Strings.EventSetAnimation.label;
+            btnOkay.Text = Strings.EventSetAnimation.okay;
+            btnCancel.Text = Strings.EventSetAnimation.cancel;
         }
 
         private void btnOkay_Click(object sender, EventArgs e)

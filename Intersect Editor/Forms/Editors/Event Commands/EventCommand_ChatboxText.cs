@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using Intersect.Editor.Classes;
 using Intersect.GameObjects.Events;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
@@ -30,18 +30,18 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpChatboxText.Text = Strings.Get("eventchatboxtext", "title");
-            lblText.Text = Strings.Get("eventchatboxtext", "text");
-            lblColor.Text = Strings.Get("eventchatboxtext", "color");
-            lblChannel.Text = Strings.Get("eventchatboxtext", "channel");
-            lblCommands.Text = Strings.Get("eventchatboxtext", "commands");
+            grpChatboxText.Text = Strings.EventChatboxText.title;
+            lblText.Text = Strings.EventChatboxText.text;
+            lblColor.Text = Strings.EventChatboxText.color;
+            lblChannel.Text = Strings.EventChatboxText.channel;
+            lblCommands.Text = Strings.EventChatboxText.commands;
             cmbChannel.Items.Clear();
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < Strings.EventChatboxText.channels.Length; i++)
             {
-                cmbChannel.Items.Add(Strings.Get("eventchatboxtext", "channel" + i));
+                cmbChannel.Items.Add(Strings.EventChatboxText.channels[i]);
             }
-            btnSave.Text = Strings.Get("eventchatboxtext", "okay");
-            btnCancel.Text = Strings.Get("eventchatboxtext", "cancel");
+            btnSave.Text = Strings.EventChatboxText.okay;
+            btnCancel.Text = Strings.EventChatboxText.cancel;
         }
 
         private void btnSave_Click(object sender, EventArgs e)

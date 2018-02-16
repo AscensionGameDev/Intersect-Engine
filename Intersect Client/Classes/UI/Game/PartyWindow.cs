@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Intersect.Enums;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.General;
@@ -26,12 +27,12 @@ namespace Intersect_Client.Classes.UI.Game
         //Init
         public PartyWindow(Canvas gameCanvas)
         {
-            mPartyWindow = new WindowControl(gameCanvas, Strings.Get("parties", "title"), false, "PartyWindow");
+            mPartyWindow = new WindowControl(gameCanvas, Strings.Parties.title, false, "PartyWindow");
             mPartyWindow.DisableResizing();
 
             //Add the icon representing party leader (ALWAYS member 1 in the party list)
             mLeader = new ImagePanel(mPartyWindow, "LeaderIcon");
-            mLeader.SetToolTipText(Strings.Get("parties", "leader"));
+            mLeader.SetToolTipText(Strings.Parties.leader);
             mLeader.Hide();
             if (Globals.Me.Party.Count > 0)
             {
@@ -75,7 +76,8 @@ namespace Intersect_Client.Classes.UI.Game
                     mKickButtons[i].Clicked += kick_Clicked;
                     if (i < Globals.Me.Party.Count)
                     {
-                        mKickButtons[i].SetToolTipText(Strings.Get("parties", "kick", Globals.Me.Party[i].Name));
+                        mKickButtons[i].SetToolTipText(Strings.Parties.kick.ToString(
+                            Globals.Entities[Globals.Me.Party[i].Index].MyName));
                     }
                     else
                     {
@@ -95,8 +97,10 @@ namespace Intersect_Client.Classes.UI.Game
             }
 
             mLeaveButton = new Button(mPartyWindow, "LeavePartyButton");
-            mLeaveButton.SetToolTipText(Strings.Get("parties", "leave"));
+            mLeaveButton.SetToolTipText(Strings.Parties.leave);
             mLeaveButton.Clicked += leave_Clicked;
+
+            mPartyWindow.LoadJsonUi(GameContentManager.UI.InGame);
         }
 
         //Methods
@@ -138,7 +142,7 @@ namespace Intersect_Client.Classes.UI.Game
                         if (Globals.Me.Party[0].Index == Globals.Me.MyIndex && i > 0)
                         {
                             mKickButtons[i].Show();
-                            mKickButtons[i].SetToolTipText(Strings.Get("parties", "kick", Globals.Me.Party[i].Name));
+                            mKickButtons[i].SetToolTipText(Strings.Parties.kick.ToString(Globals.Me.Party[i].Name));
                         }
                     }
                     else

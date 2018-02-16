@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using Intersect.Client.Classes.UI.Game.Bag;
 using Intersect.GameObjects;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.General;
@@ -25,14 +26,14 @@ namespace Intersect_Client.Classes.UI.Game
         //Init
         public BagWindow(Canvas gameCanvas)
         {
-            mBagWindow = new WindowControl(gameCanvas, Strings.Get("bags", "title"), false, "BagWindow");
+            mBagWindow = new WindowControl(gameCanvas, Strings.Bags.title, false, "BagWindow");
             mBagWindow.DisableResizing();
             Gui.InputBlockingElements.Add(mBagWindow);
 
             mItemContainer = new ScrollControl(mBagWindow, "ItemContainer");
             mItemContainer.EnableScroll(false, true);
 
-            Gui.LoadRootUiData(mBagWindow, "InGame.xml");
+            mBagWindow.LoadJsonUi(GameContentManager.UI.InGame);
 
             InitItemContainer();
         }
@@ -110,14 +111,12 @@ namespace Intersect_Client.Classes.UI.Game
             for (int i = 0; i < Globals.Bag.Length; i++)
             {
                 Items.Add(new BagItem(this, i));
-                Items[i].Container = new ImagePanel(mItemContainer, "BagItemContainer");
+                Items[i].Container = new ImagePanel(mItemContainer, "BagItem");
                 Items[i].Setup();
 
                 mValues.Add(new Label(Items[i].Container, "BagItemValue"));
                 mValues[i].Text = "";
-
-                //TODO Made this more efficient.
-                Gui.LoadRootUiData(Items[i].Container, "InGame.xml");
+                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame);
 
                 var xPadding = Items[i].Container.Padding.Left + Items[i].Container.Padding.Right;
                 var yPadding = Items[i].Container.Padding.Top + Items[i].Container.Padding.Bottom;

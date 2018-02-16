@@ -1,6 +1,7 @@
 ﻿using System;
 using Intersect.Client.Classes.Core;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
@@ -43,21 +44,23 @@ namespace Intersect_Client.Classes.UI.Game
             Gui.FocusElements.Add(mChatboxInput);
 
             mChannelCombobox = new ComboBox(mChatboxWindow, "ChatChannelCombobox");
-            for (int i = 1; i < 4; i++)
+            for (int i = 0; i < 3; i++)
             {
-                var menuItem = mChannelCombobox.AddItem(Strings.Get("chatbox", "channel" + i));
-                menuItem.UserData = i - 1;
+                var menuItem = mChannelCombobox.AddItem(Strings.Chatbox.channels[i]);
+                menuItem.UserData = i -1;
             }
             //Add admin channel only if power > 0.
             if (Globals.Me.Type > 0)
             {
-                var menuItem = mChannelCombobox.AddItem(Strings.Get("chatbox", "channeladmin"));
+                var menuItem = mChannelCombobox.AddItem(Strings.Chatbox.channeladmin);
                 menuItem.UserData = 3;
             }
 
             mChatboxSendButton = new Button(mChatboxWindow, "ChatboxSendButton");
-            mChatboxSendButton.Text = Strings.Get("chatbox", "send");
+            mChatboxSendButton.Text = Strings.Chatbox.send;
             mChatboxSendButton.Clicked += ChatBoxSendBtn_Clicked;
+
+            mChatboxWindow.LoadJsonUi(GameContentManager.UI.InGame);
         }
 
         //Update
@@ -161,18 +164,17 @@ namespace Intersect_Client.Classes.UI.Game
             var key2 = GameControls.ActiveControls.ControlMapping[Controls.Enter].Key2;
             if (key1 == Keys.None && key2 != Keys.None)
             {
-                return Strings.Get("chatbox", "enterchat1", Strings.Get("keys", Enum.GetName(typeof(Keys), key2)));
+                return Strings.Chatbox.enterchat1.ToString(Strings.Keys.keydict[Enum.GetName(typeof(Keys), key2).ToLower()]);
             }
             else if (key1 != Keys.None && key2 == Keys.None)
             {
-                return Strings.Get("chatbox", "enterchat1", Strings.Get("keys", Enum.GetName(typeof(Keys), key1)));
+                return Strings.Chatbox.enterchat1.ToString(Strings.Keys.keydict[Enum.GetName(typeof(Keys), key1).ToLower()]);
             }
             else if (key1 != Keys.None && key2 != Keys.None)
             {
-                return Strings.Get("chatbox", "enterchat1", Strings.Get("keys", Enum.GetName(typeof(Keys), key1)),
-                    Strings.Get("keys", Enum.GetName(typeof(Keys), key2)));
+                return Strings.Chatbox.enterchat1.ToString(Strings.Keys.keydict[Enum.GetName(typeof(Keys), key1).ToLower()], Strings.Keys.keydict[Enum.GetName(typeof(Keys), key2).ToLower()]);
             }
-            return Strings.Get("chatbox", "enterchat");
+            return Strings.Chatbox.enterchat;
         }
     }
 }

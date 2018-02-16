@@ -6,7 +6,7 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps.MapList;
-using Intersect.Localization;
+using Intersect.Server.Classes.Localization;
 using Intersect.Logging;
 using Intersect.Models;
 using Intersect.Server.Classes.Entities;
@@ -72,8 +72,8 @@ namespace Intersect.Server.Classes.Networking
         public static void SendServerConfig(Client client)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)ServerPackets.ServerConfig);
-            bf.WriteBytes(ServerOptions.GetServerConfig());
+            bf.WriteLong((int) ServerPackets.ServerConfig);
+            bf.WriteBytes(Options.GetOptionsData());
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -88,7 +88,7 @@ namespace Intersect.Server.Classes.Networking
 
             if (!client.IsEditor)
             {
-                SendGlobalMsg(Strings.Get("player", "joined", client.Entity.MyName, Options.GameName));
+                SendGlobalMsg(Strings.Player.joined.ToString( client.Entity.MyName, Options.GameName));
             }
         }
 

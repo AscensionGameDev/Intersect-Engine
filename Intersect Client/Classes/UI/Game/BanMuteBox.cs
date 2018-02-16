@@ -1,5 +1,5 @@
 ﻿using System;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
@@ -40,7 +40,7 @@ namespace Intersect_Client.Classes.UI.Game
 
             mReasonLabel = new Label(mMyWindow)
             {
-                Text = Strings.Get("banmute", "reason")
+                Text = Strings.BanMute.reason
             };
             mReasonLabel.SetPosition(100, y);
 
@@ -52,29 +52,29 @@ namespace Intersect_Client.Classes.UI.Game
 
             mDurationLabel = new Label(mMyWindow)
             {
-                Text = Strings.Get("banmute", "duration")
+                Text = Strings.BanMute.duration
             };
             mDurationLabel.SetPosition(100, y);
 
             mDurationBox = new ComboBox(mMyWindow);
             mDurationBox.SetBounds(180, y - 3, 80, 22);
-            mDurationBox.AddItem(Strings.Get("banmute", "1day")).UserData = "1 day";
-            mDurationBox.AddItem(Strings.Get("banmute", "2days")).UserData = "2 days";
-            mDurationBox.AddItem(Strings.Get("banmute", "3days")).UserData = "3 days";
-            mDurationBox.AddItem(Strings.Get("banmute", "4days")).UserData = "4 days";
-            mDurationBox.AddItem(Strings.Get("banmute", "5days")).UserData = "5 days";
-            mDurationBox.AddItem(Strings.Get("banmute", "1week")).UserData = "1 week";
-            mDurationBox.AddItem(Strings.Get("banmute", "2weeks")).UserData = "2 weeks";
-            mDurationBox.AddItem(Strings.Get("banmute", "1month")).UserData = "1 month";
-            mDurationBox.AddItem(Strings.Get("banmute", "2months")).UserData = "2 months";
-            mDurationBox.AddItem(Strings.Get("banmute", "6months")).UserData = "6 months";
-            mDurationBox.AddItem(Strings.Get("banmute", "1year")).UserData = "1 year";
-            mDurationBox.AddItem(Strings.Get("banmute", "forever")).UserData = "Indefinitely";
+            mDurationBox.AddItem(Strings.BanMute.oneday).UserData = "1 day";
+            mDurationBox.AddItem(Strings.BanMute.twodays).UserData = "2 days";
+            mDurationBox.AddItem(Strings.BanMute.threedays).UserData = "3 days";
+            mDurationBox.AddItem(Strings.BanMute.fourdays).UserData = "4 days";
+            mDurationBox.AddItem(Strings.BanMute.fivedays).UserData = "5 days";
+            mDurationBox.AddItem(Strings.BanMute.oneweek).UserData = "1 week";
+            mDurationBox.AddItem(Strings.BanMute.twoweeks).UserData = "2 weeks";
+            mDurationBox.AddItem(Strings.BanMute.onemonth).UserData = "1 month";
+            mDurationBox.AddItem(Strings.BanMute.twomonths).UserData = "2 months";
+            mDurationBox.AddItem(Strings.BanMute.sixmonths).UserData = "6 months";
+            mDurationBox.AddItem(Strings.BanMute.oneyear).UserData = "1 year";
+            mDurationBox.AddItem(Strings.BanMute.forever).UserData = "Indefinitely";
 
 
             mIpLabel = new Label(mMyWindow)
             {
-                Text = Strings.Get("banmute", "ip")
+                Text = Strings.BanMute.ip
             };
             mIpLabel.SetPosition(320, y);
 
@@ -83,13 +83,13 @@ namespace Intersect_Client.Classes.UI.Game
 
             Button okayBtn = new Button(mMyWindow);
             okayBtn.SetSize(86, 22);
-            okayBtn.SetText(Strings.Get("banmute", "ok"));
+            okayBtn.SetText(Strings.BanMute.ok);
             okayBtn.SetPosition(mMyWindow.Width / 2 - 188 / 2, 90);
             okayBtn.Clicked += okayBtn_Clicked;
 
             Button cancelBtn = new Button(mMyWindow);
             cancelBtn.SetSize(86, 22);
-            cancelBtn.SetText(Strings.Get("banmute", "cancel"));
+            cancelBtn.SetText(Strings.BanMute.cancel);
             cancelBtn.Clicked += CancelBtn_Clicked;
             cancelBtn.SetPosition(mMyWindow.Width / 2 - 188 / 2 + 86 + 16, 90);
         }

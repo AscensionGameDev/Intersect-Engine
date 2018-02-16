@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Intersect;
+using Intersect.Config;
 using Intersect.GameObjects;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
@@ -97,7 +98,7 @@ namespace Intersect_Client.Classes.Core
 
         public static void DrawIntro()
         {
-            GameTexture imageTex = sContentManager.GetTexture(GameContentManager.TextureType.Image, Globals.Database.IntroBg[Globals.IntroIndex]);
+            GameTexture imageTex = sContentManager.GetTexture(GameContentManager.TextureType.Image, ClientOptions.IntroImages[Globals.IntroIndex]);
             if (imageTex != null)
             {
                 DrawFullScreenTextureFitMinimum(imageTex);
@@ -106,8 +107,7 @@ namespace Intersect_Client.Classes.Core
 
         public static void DrawMenu()
         {
-            GameTexture imageTex = sContentManager.GetTexture(GameContentManager.TextureType.Gui,
-                Globals.Database.MenuBg);
+            GameTexture imageTex = sContentManager.GetTexture(GameContentManager.TextureType.Gui, ClientOptions.MenuBackground);
             if (imageTex != null)
             {
                 DrawFullScreenTexture(imageTex);
@@ -376,7 +376,7 @@ namespace Intersect_Client.Classes.Core
 
         private static void TryPreRendering(bool takeItEasy = true)
         {
-            if (Globals.Database.RenderCaching && Globals.Me != null && Globals.Me.MapInstance != null)
+            if (ClientOptions.RenderCache && Globals.Me != null && Globals.Me.MapInstance != null)
             {
                 var gridX = Globals.Me.MapInstance.MapGridX;
                 var gridY = Globals.Me.MapInstance.MapGridY;
@@ -406,7 +406,7 @@ namespace Intersect_Client.Classes.Core
 
         private static void FixAutotiles()
         {
-            if (Globals.Database.RenderCaching && Globals.Me != null &&
+            if (ClientOptions.RenderCache && Globals.Me != null &&
                 MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap) != null)
             {
                 var gridX = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).MapGridX;

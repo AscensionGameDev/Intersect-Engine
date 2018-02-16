@@ -46,6 +46,11 @@ namespace Intersect.Client.Classes.UI.Game.Crafting
             Pnl.HoverEnter += pnl_HoverEnter;
             Pnl.HoverLeave += pnl_HoverLeave;
 
+           
+        }
+
+        public void LoadItem()
+        {
             var item = ItemBase.Lookup.Get<ItemBase>(mIngredient.Item);
 
             if (item != null)

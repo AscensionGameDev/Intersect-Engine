@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Intersect.Client.Classes.UI.Game.Shop;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.General;
 
@@ -27,7 +28,7 @@ namespace Intersect_Client.Classes.UI.Game
             mItemContainer = new ScrollControl(mShopWindow, "ItemContainer");
             mItemContainer.EnableScroll(false, true);
 
-            Gui.LoadRootUiData(mShopWindow, "InGame.xml");
+            mShopWindow.LoadJsonUi(GameContentManager.UI.InGame);
 
             InitItemContainer();
         }
@@ -63,11 +64,12 @@ namespace Intersect_Client.Classes.UI.Game
             for (int i = 0; i < Globals.GameShop.SellingItems.Count; i++)
             {
                 Items.Add(new ShopWindowItem(this, i));
-                Items[i].Container = new ImagePanel(mItemContainer, "ShopItemContainer");
+                Items[i].Container = new ImagePanel(mItemContainer, "ShopItem");
                 Items[i].Setup();
+                
+                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame);
 
-                //TODO Made this more efficient.
-                Gui.LoadRootUiData(Items[i].Container, "InGame.xml");
+                Items[i].LoadItem();
 
                 var xPadding = Items[i].Container.Padding.Left + Items[i].Container.Padding.Right;
                 var yPadding = Items[i].Container.Padding.Top + Items[i].Container.Padding.Bottom;

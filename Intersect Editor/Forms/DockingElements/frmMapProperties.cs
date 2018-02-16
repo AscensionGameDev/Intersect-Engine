@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 using Intersect.Editor.Classes.Maps;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace Intersect.Editor.Forms
@@ -20,7 +20,7 @@ namespace Intersect.Editor.Forms
 
         private void InitLocalization()
         {
-            Text = Strings.Get("mapproperties", "title");
+            Text = Strings.MapProperties.title;
         }
 
         public void Update()

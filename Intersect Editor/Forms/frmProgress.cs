@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Forms
 {
@@ -19,7 +19,7 @@ namespace Intersect.Editor.Forms
 
         private void InitLocalization()
         {
-            btnCancel.Text = Strings.Get("progressform", "cancel");
+            btnCancel.Text = Strings.ProgressForm.cancel;
         }
 
         public void SetTitle(string title)

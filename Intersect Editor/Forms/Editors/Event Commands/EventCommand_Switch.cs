@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using Intersect.Editor.Classes;
 using Intersect.Enums;
 using Intersect.GameObjects.Events;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
@@ -30,16 +30,16 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpSetSwitch.Text = Strings.Get("eventsetswitch", "title");
-            lblSwitch.Text = Strings.Get("eventsetswitch", "label");
-            rdoGlobalSwitch.Text = Strings.Get("eventsetswitch", "global");
-            rdoPlayerSwitch.Text = Strings.Get("eventsetswitch", "player");
-            lblTo.Text = Strings.Get("eventsetswitch", "to");
+            grpSetSwitch.Text = Strings.EventSetSwitch.title;
+            lblSwitch.Text = Strings.EventSetSwitch.label;
+            rdoGlobalSwitch.Text = Strings.EventSetSwitch.global;
+            rdoPlayerSwitch.Text = Strings.EventSetSwitch.player;
+            lblTo.Text = Strings.EventSetSwitch.to;
             cmbSetSwitchVal.Items.Clear();
-            cmbSetSwitchVal.Items.Add(Strings.Get("eventsetswitch", "false"));
-            cmbSetSwitchVal.Items.Add(Strings.Get("eventsetswitch", "true"));
-            btnSave.Text = Strings.Get("eventsetswitch", "okay");
-            btnCancel.Text = Strings.Get("eventsetswitch", "cancel");
+            cmbSetSwitchVal.Items.Add(Strings.EventSetSwitch.False);
+            cmbSetSwitchVal.Items.Add(Strings.EventSetSwitch.True);
+            btnSave.Text = Strings.EventSetSwitch.okay;
+            btnCancel.Text = Strings.EventSetSwitch.cancel;
         }
 
         private void InitEditor()

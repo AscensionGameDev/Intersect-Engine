@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using Intersect;
 using Intersect.Client.Classes.UI.Game.Spells;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.General;
@@ -17,8 +18,6 @@ namespace Intersect_Client.Classes.UI.Game
         //Item/Spell Rendering
         private ScrollControl mItemContainer;
 
-        private ImagePanel mItemTemplate;
-
         //Controls
         private WindowControl mSpellWindow;
 
@@ -33,15 +32,12 @@ namespace Intersect_Client.Classes.UI.Game
         //Init
         public SpellsWindow(Canvas gameCanvas)
         {
-            mSpellWindow = new WindowControl(gameCanvas, Strings.Get("spells", "title"), false, "SpellsWindow");
+            mSpellWindow = new WindowControl(gameCanvas, Strings.Spells.title, false, "SpellsWindow");
             mSpellWindow.DisableResizing();
 
             mItemContainer = new ScrollControl(mSpellWindow, "SpellsContainer");
             mItemContainer.EnableScroll(false, true);
-
-            mItemTemplate = new ImagePanel(mItemContainer, "SpellContainer");
-
-            new ImagePanel(mItemTemplate, "SpellIcon");
+            mSpellWindow.LoadJsonUi(GameContentManager.UI.InGame);
         }
 
         //Methods
@@ -83,9 +79,8 @@ namespace Intersect_Client.Classes.UI.Game
                 Items.Add(new SpellItem(this, i));
                 Items[i].Container = new ImagePanel(mItemContainer, "SpellContainer");
                 Items[i].Setup();
-
-                //TODO Made this more efficient.
-                Gui.LoadRootUiData(Items[i].Container, "InGame.xml");
+                
+                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame);
 
                 var xPadding = Items[i].Container.Padding.Left + Items[i].Container.Padding.Right;
                 var yPadding = Items[i].Container.Padding.Top + Items[i].Container.Padding.Bottom;
@@ -95,7 +90,6 @@ namespace Intersect_Client.Classes.UI.Game
                     (i / (mItemContainer.Width / (Items[i].Container.Width + xPadding))) *
                     (Items[i].Container.Height + yPadding) + yPadding);
             }
-            mItemTemplate.Hide();
         }
 
         public void Show()

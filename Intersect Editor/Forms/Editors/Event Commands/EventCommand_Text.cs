@@ -4,7 +4,7 @@ using System.IO;
 using System.Windows.Forms;
 using Intersect.Editor.Classes.Core;
 using Intersect.GameObjects.Events;
-using Intersect.Localization;
+using Intersect.Editor.Classes.Localization;
 using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
@@ -22,7 +22,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             InitLocalization();
             txtShowText.Text = mMyCommand.Strs[0];
             cmbFace.Items.Clear();
-            cmbFace.Items.Add(Strings.Get("general", "none"));
+            cmbFace.Items.Add(Strings.General.none);
             cmbFace.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Face));
             if (cmbFace.Items.IndexOf(TextUtils.NullToNone(mMyCommand.Strs[1])) > -1)
             {
@@ -37,12 +37,12 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void InitLocalization()
         {
-            grpShowText.Text = Strings.Get("eventshowtext", "title");
-            lblText.Text = Strings.Get("eventshowtext", "text");
-            lblFace.Text = Strings.Get("eventshowtext", "face");
-            lblCommands.Text = Strings.Get("eventshowtext", "commands");
-            btnSave.Text = Strings.Get("eventshowtext", "okay");
-            btnCancel.Text = Strings.Get("eventshowtext", "cancel");
+            grpShowText.Text = Strings.EventShowText.title;
+            lblText.Text = Strings.EventShowText.text;
+            lblFace.Text = Strings.EventShowText.face;
+            lblCommands.Text = Strings.EventShowText.commands;
+            btnSave.Text = Strings.EventShowText.okay;
+            btnCancel.Text = Strings.EventShowText.cancel;
         }
 
         private void UpdateFacePreview()

@@ -1232,7 +1232,7 @@ namespace Intersect.Editor.Forms
             this.lblRegenHint.Name = "lblRegenHint";
             this.lblRegenHint.Size = new System.Drawing.Size(100, 72);
             this.lblRegenHint.TabIndex = 0;
-            this.lblRegenHint.Text = "% of HP/Mana to restore per tick.\r\n\r\nTick timer saved in server config.xml.";
+            this.lblRegenHint.Text = "% of HP/Mana to restore per tick.\r\n\r\nTick timer saved in server config.json.";
             // 
             // grpLeveling
             // 

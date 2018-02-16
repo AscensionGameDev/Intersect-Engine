@@ -1,6 +1,6 @@
 ﻿using System;
 using Intersect.GameObjects;
-using Intersect.Localization;
+using Intersect.Client.Classes.Localization;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
@@ -151,7 +151,7 @@ namespace Intersect.Client.Classes.UI.Game.Inventory
                         mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].ItemNum,
                             Globals.Me.Inventory[mMySlot].ItemVal, mInventoryWindow.X - 220, mInventoryWindow.Y,
                             Globals.Me.Inventory[mMySlot].StatBoost, "",
-                            Strings.Get("shop", "sellsfor", shopItem.CostItemVal, hoveredItem.Name));
+                            Strings.Shop.sellsfor.ToString( shopItem.CostItemVal, hoveredItem.Name));
                     }
                 }
                 else if (shopItem == null)
@@ -163,13 +163,13 @@ namespace Intersect.Client.Classes.UI.Game.Inventory
                         mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].ItemNum,
                             Globals.Me.Inventory[mMySlot].ItemVal, mInventoryWindow.X - 220, mInventoryWindow.Y,
                             Globals.Me.Inventory[mMySlot].StatBoost, "",
-                            Strings.Get("shop", "sellsfor", hoveredItem.Price, costItem.Name));
+                            Strings.Shop.sellsfor.ToString( hoveredItem.Price, costItem.Name));
                     }
                 }
                 else
                 {
                     mDescWindow = new ItemDescWindow(invItem.ItemNum, invItem.ItemVal, mInventoryWindow.X - 255,
-                        mInventoryWindow.Y, invItem.StatBoost, "", Strings.Get("shop", "wontbuy"));
+                        mInventoryWindow.Y, invItem.StatBoost, "", Strings.Shop.wontbuy);
                 }
             }
         }
