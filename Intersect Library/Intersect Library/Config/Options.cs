@@ -43,6 +43,8 @@ namespace Intersect
         public static int MapHeight => _options.MapOpts.MapHeight;
         public static int TileWidth => _options.MapOpts.TileWidth;
         public static int TileHeight => _options.MapOpts.TileHeight;
+        public static bool UPnP => _options._upnp;
+        public static bool OpenPortChecker => _options._portChecker;
 
         public static bool Loaded => _options != null;
         
@@ -60,6 +62,12 @@ namespace Intersect
 
         [JsonProperty("ServerPort")]
         protected ushort _serverPort = 5400;
+
+        [JsonProperty("UPnP")]
+        protected bool _upnp = true;
+
+        [JsonProperty("OpenPortChecker")]
+        protected bool _portChecker = true;
 
         //TODO: Remove this when we make npc drops dynamic (B5?)
         [JsonProperty("GameObjects")]

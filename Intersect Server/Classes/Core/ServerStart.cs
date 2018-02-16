@@ -108,45 +108,51 @@ namespace Intersect.Server.Classes
             }
 
             Console.WriteLine();
-            UpnP.ConnectNatDevice().Wait(5000);
-            UpnP.OpenServerPort(Options.ServerPort, Protocol.Tcp).Wait(5000);
-            UpnP.OpenServerPort(Options.ServerPort, Protocol.Udp).Wait(5000);
 
-            Console.WriteLine();
+            if (Options.UPnP && !args.Contains("noupnp"))
+            {
+                UpnP.ConnectNatDevice().Wait(5000);
+                UpnP.OpenServerPort(Options.ServerPort, Protocol.Tcp).Wait(5000);
+                UpnP.OpenServerPort(Options.ServerPort, Protocol.Udp).Wait(5000);
+                Console.WriteLine();
+            }
 
             //Check to see if AGD can see this server. If so let the owner know :)
-            var externalIp = "";
-            var serverAccessible = PortChecker.CanYouSeeMe(Options.ServerPort, out externalIp);
-
-            Console.WriteLine(Strings.Portchecking.connectioninfo);
-            if (!String.IsNullOrEmpty(externalIp))
+            if (Options.OpenPortChecker && !args.Contains("noportcheck"))
             {
-                Console.WriteLine(Strings.Portchecking.publicip, externalIp);
-                Console.WriteLine(Strings.Portchecking.publicport, Options.ServerPort);
+                var externalIp = "";
+                var serverAccessible = PortChecker.CanYouSeeMe(Options.ServerPort, out externalIp);
 
-                Console.WriteLine();
-                if (serverAccessible)
+                Console.WriteLine(Strings.Portchecking.connectioninfo);
+                if (!String.IsNullOrEmpty(externalIp))
                 {
-                    Console.WriteLine(Strings.Portchecking.accessible);
-                    Console.WriteLine(Strings.Portchecking.letothersjoin);
+                    Console.WriteLine(Strings.Portchecking.publicip, externalIp);
+                    Console.WriteLine(Strings.Portchecking.publicport, Options.ServerPort);
+
+                    Console.WriteLine();
+                    if (serverAccessible)
+                    {
+                        Console.WriteLine(Strings.Portchecking.accessible);
+                        Console.WriteLine(Strings.Portchecking.letothersjoin);
+                    }
+                    else
+                    {
+                        Console.WriteLine(Strings.Portchecking.notaccessible);
+                        Console.WriteLine(Strings.Portchecking.debuggingsteps);
+                        Console.WriteLine(Strings.Portchecking.checkfirewalls);
+                        Console.WriteLine(Strings.Portchecking.checkantivirus);
+                        Console.WriteLine(Strings.Portchecking.screwed);
+                        Console.WriteLine();
+                        if (!UpnP.ForwardingSucceeded())
+                            Console.WriteLine(Strings.Portchecking.checkrouterupnp);
+                    }
                 }
                 else
                 {
-                    Console.WriteLine(Strings.Portchecking.notaccessible);
-                    Console.WriteLine(Strings.Portchecking.debuggingsteps);
-                    Console.WriteLine(Strings.Portchecking.checkfirewalls);
-                    Console.WriteLine(Strings.Portchecking.checkantivirus);
-                    Console.WriteLine(Strings.Portchecking.screwed);
-                    Console.WriteLine();
-                    if (!UpnP.ForwardingSucceeded())
-                        Console.WriteLine(Strings.Portchecking.checkrouterupnp);
+                    Console.WriteLine(Strings.Portchecking.notconnected);
                 }
+                Console.WriteLine();
             }
-            else
-            {
-                Console.WriteLine(Strings.Portchecking.notconnected);
-            }
-            Console.WriteLine();
             Console.WriteLine(Strings.Intro.started.ToString( Options.ServerPort));
 
             logicThread = new Thread(() => ServerLoop.RunServerLoop());
