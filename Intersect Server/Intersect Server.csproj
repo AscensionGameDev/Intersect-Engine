@@ -261,7 +261,6 @@
     <EmbeddedResource Include="Resources\sqlite3x86.dll" />
     <EmbeddedResource Include="Resources\sqlite3x64.dll" />
     <Content Include="Icon.ico" />
-    <None Include="Resources\config.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

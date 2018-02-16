@@ -267,7 +267,7 @@ namespace Intersect.Server.Classes.Localization
         public struct Formulas
         {
             public static LocalizedString loadfailed = @"Failed to load formulas! Press any key to shut down.";
-            public static LocalizedString missing = @"Formulas.xml missing. Generated default formulas file.";
+            public static LocalizedString missing = @"Formulas.json missing. Generated default formulas file.";
             public static LocalizedString syntax = @"Error loading formulas! Please make sure the file exists and is free on syntax errors.";
         }
 
