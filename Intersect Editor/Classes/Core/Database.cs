@@ -1,7 +1,6 @@
 using System;
 using System.Drawing;
 using System.IO;
-using System.Xml;
 using Intersect.Config;
 using Intersect.Enums;
 using Mono.Data.Sqlite;

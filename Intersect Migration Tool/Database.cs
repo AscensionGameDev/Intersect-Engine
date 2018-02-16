@@ -47,6 +47,10 @@ namespace Intersect.Migration
                     Log.Trace(exception);
                 }
             }
+            else if (File.Exists("resources/config.json"))
+            {
+                //TODO: Make sure migration tool can load language from new config.json
+            }
             return "English";
         }
 

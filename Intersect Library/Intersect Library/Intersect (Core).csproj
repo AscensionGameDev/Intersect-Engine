@@ -211,18 +211,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Resources\Migrator.English.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Editor.English.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Client.English.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Server.English.xml">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Factories\" />

@@ -1,9 +1,12 @@
-﻿using Intersect.Client.Classes.UI.Menu;
+﻿using System.IO;
+using Intersect.Client.Classes.UI.Menu;
 using Intersect.Client.Classes.Localization;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
+using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
+using Newtonsoft.Json;
 
 namespace Intersect_Client.Classes.UI.Menu
 {
@@ -39,21 +42,7 @@ namespace Intersect_Client.Classes.UI.Menu
             mCreditsContent = new ScrollControl(mCreditsWindow, "CreditsScrollview");
             mCreditsContent.EnableScroll(false, true);
 
-            var creditsParser = new CreditsParser();
             mRichLabel = new RichLabel(mCreditsContent, "CreditsLabel");
-            foreach (var line in creditsParser.Credits)
-            {
-                if (line.Text.Trim().Length == 0)
-                {
-                    mRichLabel.AddLineBreak();
-                }
-                else
-                {
-                    mRichLabel.AddText(line.Text, new Color(line.Clr.A, line.Clr.R, line.Clr.G, line.Clr.B),
-                        line.Alignment, GameContentManager.Current.GetFont(line.Font, line.Size));
-                    mRichLabel.AddLineBreak();
-                }
-            }
 
             //Back Button
             mBackBtn = new Button(mCreditsWindow, "BackButton");
@@ -82,7 +71,39 @@ namespace Intersect_Client.Classes.UI.Menu
         public void Show()
         {
             mCreditsWindow.IsHidden = false;
+            mRichLabel.ClearText();
             mRichLabel.Width = mCreditsContent.Width;
+            Credits credits = new Credits();
+            var creditsFile = Path.Combine("resources", "credits.json");
+            if (File.Exists(creditsFile))
+            {
+                credits = JsonConvert.DeserializeObject<Credits>(File.ReadAllText(creditsFile));
+            }
+            else
+            {
+                Credits.CreditsLine line = new Credits.CreditsLine();
+                line.Text = "Insert your credits here!";
+                line.Alignment = "center";
+                line.Size = 12;
+                line.Clr = Intersect.Color.White;
+                line.Font = "arial";
+                credits.Lines.Add(line);
+            }
+            File.WriteAllText(creditsFile, JsonConvert.SerializeObject(credits, Formatting.Indented));
+
+            foreach (var line in credits.Lines)
+            {
+                if (line.Text.Trim().Length == 0)
+                {
+                    mRichLabel.AddLineBreak();
+                }
+                else
+                {
+                    mRichLabel.AddText(line.Text, new Color(line.Clr.A, line.Clr.R, line.Clr.G, line.Clr.B),
+                        line.GetAlignment(), GameContentManager.Current.GetFont(line.Font, line.Size));
+                    mRichLabel.AddLineBreak();
+                }
+            }
             mRichLabel.SizeToChildren(false, true);
         }
     }

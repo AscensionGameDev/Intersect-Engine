@@ -50,45 +50,45 @@ namespace Intersect
         public byte G { get; set; }
         public byte B { get; set; }
 
-        public float Hue
-        {
-            get
-            {
-                var max = Math.Max(Math.Max(R, G), B);
-                var min = Math.Min(Math.Min(R, G), B);
-                if (max == min) return 0;
+        //public float Hue
+        //{
+        //    get
+        //    {
+        //        var max = Math.Max(Math.Max(R, G), B);
+        //        var min = Math.Min(Math.Min(R, G), B);
+        //        if (max == min) return 0;
                 
-                float hue, delta = max - min;
-                if (max == R) hue = (G - B) / delta + (G < B ? 6 : 0);
-                else if (max == G) hue = (B - R) / delta + 2;
-                else hue = (R - G) / delta + 4;
-                return hue / 6f;
-            }
-        }
+        //        float hue, delta = max - min;
+        //        if (max == R) hue = (G - B) / delta + (G < B ? 6 : 0);
+        //        else if (max == G) hue = (B - R) / delta + 2;
+        //        else hue = (R - G) / delta + 4;
+        //        return hue / 6f;
+        //    }
+        //}
 
-        public float Saturation
-        {
-            get
-            {
-                var max = Math.Max(Math.Max(R, G), B);
-                var min = Math.Min(Math.Min(R, G), B);
-                if (max == min) return 0;
+        //public float Saturation
+        //{
+        //    get
+        //    {
+        //        var max = Math.Max(Math.Max(R, G), B);
+        //        var min = Math.Min(Math.Min(R, G), B);
+        //        if (max == min) return 0;
 
-                float delta = max - min, lightness = (max + min) / RANGE__2_X;
+        //        float delta = max - min, lightness = (max + min) / RANGE__2_X;
 
-                return lightness > 0.5 ? delta / (RANGE__2_X - max - min) : delta / (max + min);
-            }
-        }
+        //        return lightness > 0.5 ? delta / (RANGE__2_X - max - min) : delta / (max + min);
+        //    }
+        //}
 
-        public float Lightness
-        {
-            get
-            {
-                var max = Math.Max(Math.Max(R, G), B);
-                var min = Math.Min(Math.Min(R, G), B);
-                return (max + min) / RANGE__2_X;
-            }
-        }
+        //public float Lightness
+        //{
+        //    get
+        //    {
+        //        var max = Math.Max(Math.Max(R, G), B);
+        //        var min = Math.Min(Math.Min(R, G), B);
+        //        return (max + min) / RANGE__2_X;
+        //    }
+        //}
 
         public static Color Transparent => new Color(0, 0, 0, 0);
 
