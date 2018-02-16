@@ -527,7 +527,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             {
                 foreach (var task in quest.Tasks)
                 {
-                    cmbQuestTask.Items.Add(task.GetTaskString());
+                    cmbQuestTask.Items.Add(task.GetTaskString(Strings.TaskEditor.descriptions));
                 }
                 if (cmbQuestTask.Items.Count > 0) cmbQuestTask.SelectedIndex = 0;
             }

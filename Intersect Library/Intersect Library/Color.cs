@@ -1,4 +1,5 @@
 ﻿using System;
+using Intersect.Localization;
 
 namespace Intersect
 {
@@ -109,35 +110,53 @@ namespace Intersect
         public static Color Cyan => new Color(0, 255, 255);
         public static Color Pink => new Color(255, 192, 203);
 
-        public static Color FromName(string name)
+        public static Color FromName(string name, LocalizedString[] colors)
         {
-            switch (name)
+            if (name == "Black" || name == colors[0])
             {
-                case "Black":
-                    return Black;
-                case "White":
-                    return White;
-                case "Blue":
-                    return Blue;
-                case "Red":
-                    return Red;
-                case "Green":
-                    return Green;
-                case "Yellow":
-                    return Yellow;
-                case "Orange":
-                    return Orange;
-                case "Purple":
-                    return Magenta;
-                case "Gray":
-                    return Gray;
-                case "Cyan":
-                    return Cyan;
-                case "Pink":
-                    return Pink;
-                default:
-                    return White;
+                return Black;
             }
+            else if (name == "White" || name == colors[1])
+            {
+                return White;
+            }
+            else if (name == "Pink" || name == colors[2])
+            {
+                return Pink;
+            }
+            else if (name == "Blue" || name == colors[3])
+            {
+                return Blue;
+            }
+            else if (name == "Red" || name == colors[4])
+            {
+                return Red;
+            }
+            else if (name == "Green" || name == colors[5])
+            {
+                return Green;
+            }
+            else if (name == "Yellow" || name == colors[6])
+            {
+                return Yellow;
+            }
+            else if (name == "Orange" || name == colors[7])
+            {
+                return Orange;
+            }
+            else if (name == "Purple" || name == colors[8])
+            {
+                return Magenta;
+            }
+            else if (name == "Gray" || name == colors[9])
+            {
+                return Gray;
+            }
+            else if (name == "Cyan" || name == colors[10])
+            {
+                return Cyan;
+            }
+            return White;
         }
 
         public static Color FromArgb(int a, int r, int g, int b)

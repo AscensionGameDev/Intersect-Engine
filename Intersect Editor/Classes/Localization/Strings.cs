@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
+using Intersect.Localization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -1818,6 +1819,12 @@ Tick timer saved in server config.json.";
                 @"Gather Item(s)",
                 @"Kill NPC(s)",
             };
+            public static LocalizedString[] descriptions = new LocalizedString[]
+            {
+                @"Event Driven - {00}",
+                @"Gather Items [{00} x{01}] - {02}",
+                @"Kill Npc(s) [{00} x{01}] - {02}",
+            };
         }
 
         public struct Tiles
@@ -2060,7 +2067,7 @@ Negative values for time to flow backwards.";
                                 task = tsk;
                             }
                         }
-                        var taskName = task != null ? task.GetTaskString() : Strings.EventConditionDesc.tasknotfound.ToString();
+                        var taskName = task != null ? task.GetTaskString(Strings.TaskEditor.descriptions) : Strings.EventConditionDesc.tasknotfound.ToString();
                         switch (cmd.Ints[2])
                         {
                             case 1:
@@ -2202,44 +2209,6 @@ Negative values for time to flow backwards.";
                 strings.Add(p.Name, dict);
             }
             File.WriteAllText(Path.Combine("resources", "languages", "Editor." + language + ".json"), JsonConvert.SerializeObject(strings, Formatting.Indented));
-        }
-    }
-
-    public struct LocalizedString
-    {
-        private string _mValue;
-
-        public LocalizedString(string value)
-        {
-            _mValue = value;
-        }
-
-        public static implicit operator LocalizedString(string value)
-        {
-            return new LocalizedString(value);
-        }
-
-        public static implicit operator string(LocalizedString str)
-        {
-            return str._mValue;
-        }
-
-        public override string ToString()
-        {
-            return _mValue;
-        }
-
-        public string ToString(params object[] args)
-        {
-            try
-            {
-                if (args.Length == 0) return _mValue;
-                return string.Format(_mValue, args);
-            }
-            catch (FormatException)
-            {
-                return "Format Exception!";
-            }
         }
     }
 }

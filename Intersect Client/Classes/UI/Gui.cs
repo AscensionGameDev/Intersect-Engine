@@ -155,6 +155,11 @@ namespace Intersect_Client.Classes.UI
             }
         }
 
+        public static void ToggleInput(bool val)
+        {
+            GwenInput.HandleInput = val;
+        }
+
         public static bool MouseHitGui()
         {
             for (int i = 0; i < sGameCanvas.Children.Count; i++)

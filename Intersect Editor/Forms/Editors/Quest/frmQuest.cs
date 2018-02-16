@@ -220,7 +220,7 @@ namespace Intersect.Editor.Forms
             lstTasks.Items.Clear();
             foreach (var task in mEditorItem.Tasks)
             {
-                lstTasks.Items.Add(task.GetTaskString());
+                lstTasks.Items.Add(task.GetTaskString(Strings.TaskEditor.descriptions));
             }
         }
 

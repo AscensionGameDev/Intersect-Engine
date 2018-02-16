@@ -104,6 +104,7 @@
     <Compile Include="Enums\Vitals.cs" />
     <Compile Include="Extensions\GameObjectInfoAttribute.cs" />
     <Compile Include="Config\PlayerOptions.cs" />
+    <Compile Include="Localization\LocalizedString.cs" />
     <Compile Include="Utilities\AlphanumComparator.cs" />
     <Compile Include="Utilities\FieldChecking.cs" />
     <Compile Include="GameObjects\AnimationBase.cs" />

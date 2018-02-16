@@ -1374,7 +1374,7 @@ namespace Intersect.Editor.Forms
                             if (task.Id == command.Ints[1])
                             {
                                 return Strings.EventCommandList.completetask.ToString(
-                                    QuestBase.GetName(command.Ints[0]), task.GetTaskString());
+                                    QuestBase.GetName(command.Ints[0]), task.GetTaskString(Strings.TaskEditor.descriptions));
                             }
                         }
                     }

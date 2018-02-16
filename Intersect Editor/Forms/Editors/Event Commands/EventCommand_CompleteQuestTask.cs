@@ -77,7 +77,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                     cmbQuestTask.Items.Clear();
                     foreach (var task in quest.Tasks)
                     {
-                        cmbQuestTask.Items.Add(task.GetTaskString());
+                        cmbQuestTask.Items.Add(task.GetTaskString(Strings.TaskEditor.descriptions));
                         if (task.Id == mMyCommand.Ints[1])
                         {
                             cmbQuestTask.SelectedIndex = cmbQuestTask.Items.Count - 1;

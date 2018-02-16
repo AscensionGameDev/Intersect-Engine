@@ -648,15 +648,15 @@ namespace Intersect.Server.Classes.Entities
                     {
                         case 0: //Player
                             PacketSender.SendPlayerMsg(MyClient, ParseEventText(command.Strs[0]),
-                                Color.FromName(command.Strs[1]));
+                                Color.FromName(command.Strs[1], Strings.Colors.presets));
                             break;
                         case 1: //Local
                             PacketSender.SendProximityMsg(ParseEventText(command.Strs[0]), MyClient.Entity.CurrentMap,
-                                Color.FromName(command.Strs[1]));
+                                Color.FromName(command.Strs[1], Strings.Colors.presets));
                             break;
                         case 2: //Global
                             PacketSender.SendGlobalMsg(ParseEventText(command.Strs[0]),
-                                Color.FromName(command.Strs[1]));
+                                Color.FromName(command.Strs[1], Strings.Colors.presets));
                             break;
                     }
                     CallStack.Peek().CommandIndex++;
