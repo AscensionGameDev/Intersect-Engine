@@ -142,6 +142,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 
         public override bool Begin()
         {
+            //mGraphicsDevice.SetRenderTarget(null);
             if (mFsChangedTimer > -1 && mFsChangedTimer < Globals.System.GetTimeMs())
             {
                 mGraphics.PreferredBackBufferWidth--;
@@ -184,6 +185,10 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                 if (target != null)
                 {
                     mGraphicsDevice?.SetRenderTarget((RenderTarget2D) target.GetTexture());
+                }
+                else
+                {
+                    mGraphicsDevice?.SetRenderTarget(mScreenshotRenderTarget);
                 }
                 var blend = mNormalState;
                 Effect useEffect = null;
@@ -571,7 +576,6 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         {
             if (mGraphicsDevice == null) return false;
             mScreenshotRenderTarget = new RenderTarget2D(mGraphicsDevice, mScreenWidth, mScreenHeight);
-            mGraphicsDevice.SetRenderTarget(mScreenshotRenderTarget);
             return true;
         }
 
@@ -591,10 +595,12 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             ScreenshotRequests.Clear();
 
             if (mGraphicsDevice == null) return;
+            var skippedFrame = mScreenshotRenderTarget;
+            mScreenshotRenderTarget = null;
             mGraphicsDevice.SetRenderTarget(null);
 
             if (!Begin()) return;
-            mSpriteBatch?.Draw(mScreenshotRenderTarget, new XNARectangle(), XNAColor.White);
+            mSpriteBatch?.Draw(skippedFrame, new XNARectangle(), XNAColor.White);
             End();
         }
     }
