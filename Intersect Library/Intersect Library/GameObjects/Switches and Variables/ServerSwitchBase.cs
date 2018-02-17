@@ -1,5 +1,6 @@
 ﻿using System;
 using Intersect.Models;
+using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
@@ -7,7 +8,8 @@ namespace Intersect.GameObjects
     {
         public bool Value;
 
-        public ServerSwitchBase(int id) : base(id)
+        [JsonConstructor]
+        public ServerSwitchBase(int index) : base(index)
         {
             Name = "New Global Switch";
         }

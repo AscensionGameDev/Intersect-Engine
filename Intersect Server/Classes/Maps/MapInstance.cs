@@ -11,6 +11,7 @@ using Intersect.Server.Classes.Entities;
 using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Items;
 using Intersect.Server.Classes.Networking;
+using Newtonsoft.Json;
 using EventInstance = Intersect.Server.Classes.Entities.EventInstance;
 
 namespace Intersect.Server.Classes.Maps
@@ -22,35 +23,50 @@ namespace Intersect.Server.Classes.Maps
         private static MapInstances sLookup;
 
         //Does the map have a player on or nearby it?
+        [JsonIgnore]
         public bool Active;
 
         private List<Entity> mEntities = new List<Entity>();
+
+        [JsonIgnore]
         public Dictionary<EventBase, EventInstance> GlobalEventInstances = new Dictionary<EventBase, EventInstance>();
+        [JsonIgnore]
         public List<MapItemSpawn> ItemRespawns = new List<MapItemSpawn>();
         private Point[] mMapBlocks;
 
         //Location of Map in the current grid
+        [JsonIgnore]
         public int MapGrid;
 
+        [JsonIgnore]
         public int MapGridX = -1;
+        [JsonIgnore]
         public int MapGridY = -1;
+        [JsonIgnore]
         public List<MapItemInstance> MapItems = new List<MapItemInstance>();
 
         //Projectiles
+        [JsonIgnore]
         public List<Projectile> MapProjectiles = new List<Projectile>();
 
         private Point[] mNpcMapBlocks;
+        [JsonIgnore]
         public Dictionary<NpcSpawn, MapNpcSpawn> NpcSpawnInstances = new Dictionary<NpcSpawn, MapNpcSpawn>();
         private List<Player> mPlayers = new List<Player>();
 
+        [JsonIgnore]
         public Dictionary<ResourceSpawn, MapResourceSpawn> ResourceSpawnInstances =
             new Dictionary<ResourceSpawn, MapResourceSpawn>();
 
         //Temporary Values
+        [JsonIgnore]
         public List<int> SurroundingMaps = new List<int>();
 
+        [JsonIgnore]
         public long TileAccessTime;
+        [JsonIgnore]
         public long LastUpdateTime = -1;
+        [JsonIgnore]
         public long UpdateDelay = 100;
 
         //Init
@@ -59,9 +75,10 @@ namespace Intersect.Server.Classes.Maps
             Layers = null;
         }
 
-        public MapInstance(int mapNum) : base(mapNum, false)
+        [JsonConstructor]
+        public MapInstance(int index) : base(index, false)
         {
-            if (mapNum == -1)
+            if (index == -1)
             {
                 return;
             }

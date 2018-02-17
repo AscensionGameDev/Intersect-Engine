@@ -2,6 +2,7 @@
 using Intersect.GameObjects.Conditions;
 using Intersect.Models;
 using Intersect.Utilities;
+using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
@@ -34,7 +35,8 @@ namespace Intersect.GameObjects
         public int Tool = -1;
         public ConditionLists UseReqs = new ConditionLists();
 
-        public ItemBase(int id) : base(id)
+        [JsonConstructor]
+        public ItemBase(int index) : base(index)
         {
             Name = "New Item";
             Speed = 10; // Set to 10 by default.

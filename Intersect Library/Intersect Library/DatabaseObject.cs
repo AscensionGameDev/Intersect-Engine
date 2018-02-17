@@ -3,6 +3,7 @@ using System.Linq;
 using Intersect.Collections;
 using Intersect.Enums;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 
 namespace Intersect.Models
 {
@@ -14,29 +15,37 @@ namespace Intersect.Models
         {
         }
 
-        protected DatabaseObject(Guid id) : this(id, Lookup.NextIndex)
+        protected DatabaseObject(Guid guid) : this(guid, Lookup.NextIndex)
         {
         }
 
-        protected DatabaseObject(Guid id, int index)
+        [JsonConstructor]
+        protected DatabaseObject(Guid guid, int index)
         {
             // if (index < 0) throw new ArgumentOutOfRangeException();
 
-            Guid = id;
+            Guid = guid;
             Index = index;
         }
 
         [NotNull] public static DatabaseObjectLookup Lookup => LookupUtils.GetLookup(typeof(TObject));
 
+        [JsonIgnore]
         public GameObjectType Type => LookupUtils.GetGameObjectType(typeof(TObject));
 
+        [JsonIgnore]
         public string DatabaseTable => Type.GetTable();
 
+        [JsonIgnore]
         public Guid Guid { get; }
+        [JsonIgnore]
         public int Index { get; }
+        [JsonProperty(Order = -4)]
         public string Name { get; set; }
 
         public abstract void Load(byte[] packet);
+       // public virtual void Load(string json);
+
 
         public void MakeBackup() => mBackup = BinaryData;
         public void DeleteBackup() => mBackup = null;
@@ -49,7 +58,12 @@ namespace Intersect.Models
             }
         }
 
+        [JsonIgnore]
         public abstract byte[] BinaryData { get; }
+
+        [JsonIgnore]
+        public virtual string JsonData => JsonConvert.SerializeObject(this,Formatting.Indented);
+
         public virtual void Delete() => Lookup.Delete((TObject) this);
 
         public static string GetName(int index) => Lookup.Get(index)?.Name ?? "ERR_DELETED";

@@ -1,11 +1,13 @@
 ﻿using System.Text;
 using Intersect.Models;
+using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
     public class TilesetBase : DatabaseObject<TilesetBase>
     {
-        public TilesetBase(int id) : base(id)
+        [JsonConstructor]
+        public TilesetBase(int index) : base(index)
         {
             Name = "";
         }

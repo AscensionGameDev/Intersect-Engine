@@ -5,6 +5,7 @@ using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.Models;
 using Intersect.Utilities;
+using Newtonsoft.Json;
 
 namespace Intersect.GameObjects.Maps
 {
@@ -28,7 +29,8 @@ namespace Intersect.GameObjects.Maps
         //For server only
         public byte[] TileData;
 
-        public MapBase(int mapNum, bool isClient) : base(mapNum)
+        [JsonConstructor]
+        public MapBase(int index, bool isClient) : base(index)
         {
             Name = "New Map";
             IsClient = isClient;
@@ -106,6 +108,7 @@ namespace Intersect.GameObjects.Maps
         public int Left { get; set; } = -1;
         public int Right { get; set; } = -1;
         public int Revision { get; set; }
+        [JsonIgnore]
         public Attribute[,] Attributes { get; set; } = new Attribute[Options.MapWidth, Options.MapHeight];
         public List<LightBase> Lights { get; set; } = new List<LightBase>();
         public Dictionary<int, EventBase> Events { get; set; } = new Dictionary<int, EventBase>();

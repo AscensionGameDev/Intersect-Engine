@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Intersect.Models;
+using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
@@ -16,7 +17,8 @@ namespace Intersect.GameObjects
         //Selling List
         public List<ShopItem> SellingItems = new List<ShopItem>();
 
-        public ShopBase(int id) : base(id)
+        [JsonConstructor]
+        public ShopBase(int index) : base(index)
         {
             Name = "New Shop";
         }
@@ -79,6 +81,7 @@ namespace Intersect.GameObjects
             CostItemVal = myBuffer.ReadInteger();
         }
 
+        [JsonConstructor]
         public ShopItem(int itemNum, int costItemNum, int costVal)
         {
             ItemNum = itemNum;

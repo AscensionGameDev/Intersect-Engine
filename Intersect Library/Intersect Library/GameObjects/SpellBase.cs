@@ -2,6 +2,7 @@
 using Intersect.GameObjects.Conditions;
 using Intersect.Models;
 using Intersect.Utilities;
+using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
@@ -55,7 +56,8 @@ namespace Intersect.GameObjects
         //Heal/Damage
         public int[] VitalDiff = new int[(int) Vitals.VitalCount];
 
-        public SpellBase(int id) : base(id)
+        [JsonConstructor]
+        public SpellBase(int index) : base(index)
         {
             Name = "New Spell";
         }

@@ -2,6 +2,7 @@
 using Intersect.Enums;
 using Intersect.Models;
 using Intersect.Utilities;
+using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
@@ -58,7 +59,8 @@ namespace Intersect.GameObjects
         //Regen Percentages
         public int[] VitalRegen = new int[(int) Vitals.VitalCount];
 
-        public ClassBase(int id) : base(id)
+        [JsonConstructor]
+        public ClassBase(int index) : base(index)
         {
             Name = "New Class";
             for (int i = 0; i < Options.MaxNpcDrops; i++)

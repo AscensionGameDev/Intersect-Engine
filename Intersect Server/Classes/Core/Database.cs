@@ -22,6 +22,8 @@ using Intersect.Server.Classes.Maps;
 using Intersect.Server.Classes.Networking;
 using Intersect.Server.Database;
 using Mono.Data.Sqlite;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Intersect.Server.Classes.Core
 {
@@ -2084,6 +2086,14 @@ namespace Intersect.Server.Classes.Core
 
         private static void LoadGameObject(GameObjectType type, int index, byte[] data)
         {
+            string json = ""; //This will get passed instead of data[]
+            JObject jObj;
+            jObj = JObject.Parse(json);
+            jObj.Add("Index", index);
+
+            //In each case, do
+            //obj = JsonConvert.DeserializeObject<AnimationBase>(jObj.ToString());
+            //Then the Lookup.Set
             switch (type)
             {
                 case GameObjectType.Animation:

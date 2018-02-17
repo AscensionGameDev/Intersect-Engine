@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Intersect.Models;
+using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
@@ -28,7 +29,8 @@ namespace Intersect.GameObjects
         public int Spell;
 
         //Init
-        public ProjectileBase(int id) : base(id)
+        [JsonConstructor]
+        public ProjectileBase(int index) : base(index)
         {
             Name = "New Projectile";
             for (var x = 0; x < SPAWN_LOCATIONS_WIDTH; x++)
