@@ -3,6 +3,7 @@ using Intersect;
 using Intersect.Client.Classes.Core;
 using Intersect.Enums;
 using IntersectClientExtras.GenericClasses;
+using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Input;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Maps;
@@ -22,94 +23,98 @@ namespace Intersect_Client.Classes.Core
 
         public static void OnKeyPressed(Keys key)
         {
-            if (KeyDown != null) KeyDown(key);
-            if (!Gui.HasInputFocus())
+            KeyDown?.Invoke(key);
+            if (Gui.HasInputFocus())
             {
-                if (key == Keys.F11)
+                return;
+            }
+
+            if (key == Keys.F11)
+            {
+                Gui.HideUi = !Gui.HideUi;
+                return;
+            }
+
+            if (GameControls.ControlHasKey(Controls.Screenshot, key))
+            {
+                GameGraphics.Renderer?.RequestScreenshot();
+                return;
+            }
+
+            if (GameControls.ControlHasKey(Controls.PickUp, key))
+            {
+                if (Globals.Me != null)
                 {
-                    Gui.HideUi = !Gui.HideUi;
-                    return;
-                }
-                if (GameControls.ControlHasKey(Controls.PickUp, key))
-                {
-                    if (Globals.Me != null)
+                    if (Globals.Me.TryPickupItem())
                     {
-                        if (Globals.Me.TryPickupItem())
-                        {
-                            return;
-                        }
+                        return;
                     }
                 }
-                else if (GameControls.ControlHasKey(Controls.Block, key))
+            }
+            else if (GameControls.ControlHasKey(Controls.Block, key))
+            {
+                if (Globals.Me != null)
                 {
-                    if (Globals.Me != null)
+                    if (Globals.Me.TryBlock())
                     {
-                        if (Globals.Me.TryBlock())
-                        {
-                            return;
-                        }
+                        return;
                     }
                 }
-                else if (key == Keys.Escape)
-                {
+            }
+            else switch (key)
+            {
+                case Keys.Escape:
                     if (Globals.GameState == GameStates.Intro)
                     {
                         GameFade.FadeIn();
                         Globals.GameState = GameStates.Menu;
                     }
-                }
-                else if (key == Keys.Insert)
-                {
+                    break;
+                case Keys.Insert:
                     //Try to open admin panel!
                     if (Globals.GameState == GameStates.InGame)
                     {
                         PacketSender.SendOpenAdminWindow();
                     }
-                }
-                else if (key == Keys.F2)
-                {
+                    break;
+                case Keys.F2:
                     if (Globals.GameState != GameStates.InGame) return;
                     Gui.GameUi.ShowHideDebug();
-                }
-                else if (GameControls.ControlHasKey(Controls.Enter, key))
-                {
-                    if (Globals.GameState != GameStates.InGame) return;
-                    if (!Gui.HasInputFocus())
+                    break;
+                default:
+                    if (GameControls.ControlHasKey(Controls.Enter, key))
                     {
-                        Gui.GameUi.FocusChat = true;
-                    }
-                }
-                if (Globals.GameState != GameStates.InGame) return;
-                if (!Gui.HasInputFocus())
-                {
-                    if (GameControls.ControlHasKey(Controls.Hotkey0, key))
-                    {
-                        Gui.GameUi.Hotbar.Items[9].Activate();
-                    }
-                    for (var i = Controls.Hotkey1; i <= Controls.Hotkey9; i++)
-                    {
-                        if (GameControls.ControlHasKey(i, key))
+                        if (Globals.GameState != GameStates.InGame) return;
+                        if (!Gui.HasInputFocus())
                         {
-                            var index = (int) (i - Controls.Hotkey1);
-                            Gui.GameUi.Hotbar.Items[index].Activate();
+                            Gui.GameUi.FocusChat = true;
                         }
                     }
-                }
+                    break;
+            }
+
+            if (Globals.GameState != GameStates.InGame) return;
+            if (Gui.HasInputFocus()) return;
+            if (GameControls.ControlHasKey(Controls.Hotkey0, key))
+            {
+                Gui.GameUi.Hotbar.Items[9].Activate();
+            }
+            for (var i = Controls.Hotkey1; i <= Controls.Hotkey9; i++)
+            {
+                if (!GameControls.ControlHasKey(i, key)) continue;
+                var index = (int) (i - Controls.Hotkey1);
+                Gui.GameUi?.Hotbar?.Items?[index]?.Activate();
             }
         }
 
         public static void OnKeyReleased(Keys key)
         {
-            if (KeyUp != null) KeyUp(key);
-            if (!Gui.HasInputFocus())
+            KeyUp?.Invoke(key);
+            if (Gui.HasInputFocus()) return;
+            if (Globals.Me == null) return;
+            if (GameControls.ControlHasKey(Controls.Block, key))
             {
-                if (Globals.Me != null)
-                {
-                    if (GameControls.ControlHasKey(Controls.Block, key))
-                    {
-                        Globals.Me.StopBlocking();
-                    }
-                }
+                Globals.Me.StopBlocking();
             }
         }
 

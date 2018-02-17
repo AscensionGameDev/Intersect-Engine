@@ -79,10 +79,10 @@ namespace Intersect.Client.Classes.Core
 
         private void ResetDefaults()
         {
-            CreateControlMap(Controls.MoveUp, Keys.W, Keys.Up);
-            CreateControlMap(Controls.MoveDown, Keys.S, Keys.Down);
-            CreateControlMap(Controls.MoveLeft, Keys.A, Keys.Left);
-            CreateControlMap(Controls.MoveRight, Keys.D, Keys.Right);
+            CreateControlMap(Controls.MoveUp, Keys.Up, Keys.W);
+            CreateControlMap(Controls.MoveDown, Keys.Down, Keys.S);
+            CreateControlMap(Controls.MoveLeft, Keys.Left, Keys.A);
+            CreateControlMap(Controls.MoveRight, Keys.Right, Keys.D);
             CreateControlMap(Controls.AttackInteract, Keys.E, Keys.LButton);
             CreateControlMap(Controls.Block, Keys.Q, Keys.RButton);
             CreateControlMap(Controls.PickUp, Keys.Space, Keys.None);
@@ -97,14 +97,14 @@ namespace Intersect.Client.Classes.Core
             CreateControlMap(Controls.Hotkey8, Keys.D8, Keys.None);
             CreateControlMap(Controls.Hotkey9, Keys.D9, Keys.None);
             CreateControlMap(Controls.Hotkey0, Keys.D0, Keys.None);
-            CreateControlMap(Controls.Screenshot, Keys.None, Keys.None);
-            CreateControlMap(Controls.OpenMenu, Keys.None, Keys.None);
-            CreateControlMap(Controls.OpenInventory, Keys.None, Keys.None);
-            CreateControlMap(Controls.OpenQuests, Keys.None, Keys.None);
-            CreateControlMap(Controls.OpenCharacterInfo, Keys.None, Keys.None);
-            CreateControlMap(Controls.OpenParties, Keys.None, Keys.None);
-            CreateControlMap(Controls.OpenSpells, Keys.None, Keys.None);
-            CreateControlMap(Controls.OpenFriends, Keys.None, Keys.None);
+            CreateControlMap(Controls.Screenshot, Keys.F12, Keys.None);
+            CreateControlMap(Controls.OpenMenu, Keys.Escape, Keys.None);
+            CreateControlMap(Controls.OpenInventory, Keys.I, Keys.None);
+            CreateControlMap(Controls.OpenQuests, Keys.Q, Keys.None);
+            CreateControlMap(Controls.OpenCharacterInfo, Keys.C, Keys.None);
+            CreateControlMap(Controls.OpenParties, Keys.P, Keys.None);
+            CreateControlMap(Controls.OpenSpells, Keys.X, Keys.None);
+            CreateControlMap(Controls.OpenFriends, Keys.F, Keys.None);
             CreateControlMap(Controls.OpenSettings, Keys.None, Keys.None);
         }
 
@@ -125,35 +125,35 @@ namespace Intersect.Client.Classes.Core
 
         public static bool KeyDown(Controls control)
         {
-            if (ActiveControls.ControlMapping.ContainsKey(control))
+            if (ActiveControls?.ControlMapping.ContainsKey(control) ?? false)
             {
-                if (ActiveControls.ControlMapping[control].KeyDown()) return true;
+                return ActiveControls.ControlMapping[control]?.KeyDown() ?? false;
             }
             return false;
         }
 
         public static bool ControlHasKey(Controls control, Keys key)
         {
-            if (ActiveControls.ControlMapping.ContainsKey(control))
-            {
-                if (ActiveControls.ControlMapping[control].Key1 == key ||
-                    ActiveControls.ControlMapping[control].Key2 == key)
-                {
-                    return true;
-                }
-            }
-            return false;
+            if (!(ActiveControls?.ControlMapping.ContainsKey(control) ?? false)) return false;
+            var mapping = ActiveControls.ControlMapping[control];
+            return (mapping?.Key1 == key || mapping?.Key2 == key);
         }
 
         public void UpdateControl(Controls control, int keyNum, Keys key)
         {
+            var mapping = ControlMapping[control];
+            if (mapping == null)
+            {
+                return;
+            }
+
             if (keyNum == 1)
             {
-                ControlMapping[control].Key1 = key;
+                mapping.Key1 = key;
             }
             else
             {
-                ControlMapping[control].Key2 = key;
+                mapping.Key2 = key;
             }
         }
 
@@ -185,33 +185,34 @@ namespace Intersect.Client.Classes.Core
         {
             if (Key1 != Keys.None && Globals.InputManager.KeyDown(Key1)) return true;
             if (Key2 != Keys.None && Globals.InputManager.KeyDown(Key2)) return true;
-            if (!Gui.MouseHitGui())
+            if (Gui.MouseHitGui()) return false;
+
+            switch (Key1)
             {
-                switch (Key1)
-                {
-                    case Keys.LButton:
-                        if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left)) return true;
-                        break;
-                    case Keys.RButton:
-                        if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Right)) return true;
-                        break;
-                    case Keys.MButton:
-                        if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Middle)) return true;
-                        break;
-                }
-                switch (Key2)
-                {
-                    case Keys.LButton:
-                        if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left)) return true;
-                        break;
-                    case Keys.RButton:
-                        if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Right)) return true;
-                        break;
-                    case Keys.MButton:
-                        if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Middle)) return true;
-                        break;
-                }
+                case Keys.LButton:
+                    if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left)) return true;
+                    break;
+                case Keys.RButton:
+                    if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Right)) return true;
+                    break;
+                case Keys.MButton:
+                    if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Middle)) return true;
+                    break;
             }
+
+            switch (Key2)
+            {
+                case Keys.LButton:
+                    if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left)) return true;
+                    break;
+                case Keys.RButton:
+                    if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Right)) return true;
+                    break;
+                case Keys.MButton:
+                    if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Middle)) return true;
+                    break;
+            }
+
             return false;
         }
     }

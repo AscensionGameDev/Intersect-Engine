@@ -329,6 +329,12 @@ namespace Intersect_Client.Classes.Core
         //Game Rendering
         public static void Render()
         {
+            var takingScreenshot = false;
+            if (Renderer?.ScreenshotRequests.Count > 0)
+            {
+                takingScreenshot = Renderer.BeginScreenshot();
+            }
+
             if (!(Renderer?.Begin() ?? false)) return;
             if (Renderer.GetScreenWidth() != sOldWidth || Renderer.GetScreenHeight() != sOldHeight ||
                 Renderer.DisplayModeChanged())
@@ -372,6 +378,11 @@ namespace Intersect_Client.Classes.Core
             DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), CurrentView,
                 new Color((int)GameFade.GetFade(), 0, 0, 0), null, GameBlendModes.None);
             Renderer.End();
+
+            if (takingScreenshot)
+            {
+                Renderer.EndScreenshot();
+            }
         }
 
         private static void TryPreRendering(bool takeItEasy = true)

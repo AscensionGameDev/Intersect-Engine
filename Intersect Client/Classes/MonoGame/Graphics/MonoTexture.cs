@@ -3,6 +3,7 @@ using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.General;
 using Microsoft.Xna.Framework.Graphics;
+using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 {
@@ -14,7 +15,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         private bool mLoadError;
         private string mName = "";
         private string mPath = "";
-        private Texture2D mTex;
+        private Texture2D mTexture;
         private int mWidth = -1;
 
         public MonoTexture(GraphicsDevice graphicsDevice, string filename)
@@ -27,18 +28,14 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         public void LoadTexture()
         {
             mLoadError = true;
-            if (File.Exists(mPath))
+            if (!File.Exists(mPath)) return;
+            using (var fileStream = new FileStream(mPath, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
-                using (var fileStream = new FileStream(mPath, FileMode.Open, FileAccess.Read, FileShare.Read))
-                {
-                    mTex = Texture2D.FromStream(mGraphicsDevice, fileStream);
-                    if (mTex != null)
-                    {
-                        mWidth = mTex.Width;
-                        mHeight = mTex.Height;
-                        mLoadError = false;
-                    }
-                }
+                mTexture = Texture2D.FromStream(mGraphicsDevice, fileStream);
+                if (mTexture == null) return;
+                mWidth = mTexture.Width;
+                mHeight = mTexture.Height;
+                mLoadError = false;
             }
         }
 
@@ -55,63 +52,56 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         public override int GetWidth()
         {
             ResetAccessTime();
-            if (mWidth == -1)
-            {
-                if (mTex == null) LoadTexture();
-                if (mLoadError)
-                {
-                    mWidth = 0;
-                }
-            }
+            if (mWidth != -1) return mWidth;
+            if (mTexture == null) LoadTexture();
+            if (mLoadError) mWidth = 0;
             return mWidth;
         }
 
         public override int GetHeight()
         {
             ResetAccessTime();
-            if (mHeight == -1)
-            {
-                if (mTex == null) LoadTexture();
-                if (mLoadError)
-                {
-                    mHeight = 0;
-                }
-            }
+            if (mHeight != -1) return mHeight;
+            if (mTexture == null) LoadTexture();
+            if (mLoadError) mHeight = 0;
             return mHeight;
         }
 
         public override object GetTexture()
         {
             ResetAccessTime();
-            if (mTex == null) LoadTexture();
-            return mTex;
+
+            if (mTexture == null)
+            {
+                LoadTexture();
+            }
+
+            return mTexture;
         }
 
         public override Color GetPixel(int x1, int y1)
         {
-            if (mTex == null) LoadTexture();
+            if (mTexture == null)
+            {
+                LoadTexture();
+            }
+
             if (mLoadError)
             {
                 return Color.White;
             }
-            else
-            {
-                Microsoft.Xna.Framework.Color[] pixel = new Microsoft.Xna.Framework.Color[1];
-                mTex.GetData(0, new Microsoft.Xna.Framework.Rectangle(x1, y1, 1, 1), pixel, 0, 1);
-                return new Color(pixel[0].A, pixel[0].R, pixel[0].G, pixel[0].B);
-            }
+
+            var pixel = new Microsoft.Xna.Framework.Color[1];
+            mTexture?.GetData(0, new Rectangle(x1, y1, 1, 1), pixel, 0, 1);
+            return new Color(pixel[0].A, pixel[0].R, pixel[0].G, pixel[0].B);
         }
 
         public void Update()
         {
-            if (mTex != null)
-            {
-                if (mLastAccessTime < Globals.System.GetTimeMs())
-                {
-                    mTex.Dispose();
-                    mTex = null;
-                }
-            }
+            if (mTexture == null) return;
+            if (mLastAccessTime >= Globals.System.GetTimeMs()) return;
+            mTexture.Dispose();
+            mTexture = null;
         }
     }
 }

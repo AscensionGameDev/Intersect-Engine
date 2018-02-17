@@ -2,16 +2,20 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using Intersect.Client.Interface;
 using Intersect.Client.Classes.Localization;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.General;
+using JetBrains.Annotations;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Color = IntersectClientExtras.GenericClasses.Color;
+using XNARectangle = Microsoft.Xna.Framework.Rectangle;
+using XNAColor = Microsoft.Xna.Framework.Color;
 
 namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 {
@@ -27,13 +31,13 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         private int mFpsCount;
         private long mFpsTimer;
         private Game mGame;
-        private GameWindow mGameWindow;
+        [NotNull] private GameWindow mGameWindow;
         private bool mInitialized;
         private BlendState mNormalState;
         private BlendState mMultiplyState;
         RasterizerState mRasterizerState = new RasterizerState() {ScissorTestEnable = true};
         private bool mSpriteBatchBegan;
-        private List<MonoTexture> mAllTextures = new List<MonoTexture>();
+        [NotNull] private readonly List<MonoTexture> mAllTextures = new List<MonoTexture>();
         private long mFsChangedTimer = -1;
         private FloatRect mCurrentView;
         private int mDisplayHeight;
@@ -51,7 +55,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         private List<string> mValidVideoModes;
         private GameRenderTexture mWhiteTexture;
 
-        public MonoRenderer(GraphicsDeviceManager graphics, ContentManager contentManager, Game monoGame)
+        public MonoRenderer(GraphicsDeviceManager graphics, ContentManager contentManager, [NotNull] Game monoGame)
         {
             mGame = monoGame;
             mGraphics = graphics;
@@ -167,23 +171,21 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         }
 
         private void StartSpritebatch(FloatRect view, GameBlendModes mode = GameBlendModes.None,
-            GameShader shader = null, GameRenderTexture target = null, bool forced = false, RasterizerState rs = null, bool drawImmediate = false)
+            GameShader shader = null, GameRenderTexture target = null, bool forced = false, RasterizerState rs = null,
+            bool drawImmediate = false)
         {
-            bool viewsDiff = view.X != mCurrentSpriteView.X || view.Y != mCurrentSpriteView.Y ||
+            var viewsDiff = view.X != mCurrentSpriteView.X || view.Y != mCurrentSpriteView.Y ||
                              view.Width != mCurrentSpriteView.Width || view.Height != mCurrentSpriteView.Height;
-            if (mode != mCurrentBlendmode || (shader != mCurrentShader || (shader != null && shader.ValuesChanged())) || target != mCurrentTarget || viewsDiff ||
+            if (mode != mCurrentBlendmode || (shader != mCurrentShader || (shader != null && shader.ValuesChanged())) ||
+                target != mCurrentTarget || viewsDiff ||
                 forced || drawImmediate || !mSpriteBatchBegan)
             {
                 if (mSpriteBatchBegan) mSpriteBatch.End();
-                if (target == null)
+                if (target != null)
                 {
-                    mGraphicsDevice.SetRenderTarget(null);
+                    mGraphicsDevice?.SetRenderTarget((RenderTarget2D) target.GetTexture());
                 }
-                else
-                {
-                    mGraphicsDevice.SetRenderTarget((RenderTarget2D) target.GetTexture());
-                }
-                BlendState blend = mNormalState;
+                var blend = mNormalState;
                 Effect useEffect = null;
 
                 switch (mode)
@@ -213,7 +215,8 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                     useEffect = (Effect) shader.GetShader();
                     shader.ResetChanged();
                 }
-                mSpriteBatch.Begin(drawImmediate ? SpriteSortMode.Immediate : SpriteSortMode.Deferred, blend, SamplerState.PointClamp, null, rs, useEffect,
+                mSpriteBatch.Begin(drawImmediate ? SpriteSortMode.Immediate : SpriteSortMode.Deferred, blend,
+                    SamplerState.PointClamp, null, rs, useEffect,
                     Matrix.CreateRotationZ(0f) * Matrix.CreateScale(new Vector3(1, 1, 1)) *
                     Matrix.CreateTranslation(-view.X, -view.Y, 0));
                 mCurrentSpriteView = view;
@@ -275,7 +278,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             Color fontColor, bool worldPos = true, GameRenderTexture renderTexture = null, Color borderColor = null)
         {
             if (gameFont == null) return;
-            SpriteFont font = (SpriteFont) gameFont.GetFont();
+            var font = (SpriteFont) gameFont.GetFont();
             if (font == null) return;
             StartSpritebatch(mCurrentView, GameBlendModes.None, null, renderTexture, false, null);
             foreach (var chr in text)
@@ -312,12 +315,12 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             y += mCurrentView.Y;
             //clipRect.X += _currentView.X;
             //clipRect.Y += _currentView.Y;
-            SpriteFont font = (SpriteFont) gameFont.GetFont();
+            var font = (SpriteFont) gameFont.GetFont();
             if (font == null) return;
-            Microsoft.Xna.Framework.Color clr = ConvertColor(fontColor);
+            var clr = ConvertColor(fontColor);
 
             //Copy the current scissor rect so we can restore it after
-            Microsoft.Xna.Framework.Rectangle currentRect = mSpriteBatch.GraphicsDevice.ScissorRectangle;
+            var currentRect = mSpriteBatch.GraphicsDevice.ScissorRectangle;
             EndSpriteBatch();
             //Set the current scissor rectangle
             mSpriteBatch.GraphicsDevice.ScissorRectangle = new Microsoft.Xna.Framework.Rectangle((int) clipRect.X,
@@ -357,9 +360,9 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             Color renderColor, GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.None,
             GameShader shader = null, float rotationDegrees = 0, bool isUi = false, bool drawImmediate = false)
         {
-            if (tex == null || tex.GetTexture() == null) return;
-            Vector2 origin = Vector2.Zero;
-            if (rotationDegrees != 0f)
+            if (tex?.GetTexture() == null) return;
+            var origin = Vector2.Zero;
+            if (Math.Abs(rotationDegrees) > 0.01)
             {
                 rotationDegrees = (float) ((Math.PI / 180) * rotationDegrees);
                 origin = new Vector2(srcRectangle.Width / 2, srcRectangle.Height / 2);
@@ -375,10 +378,10 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                 }
                 StartSpritebatch(mCurrentView, blendMode, shader, null, false, null, drawImmediate);
                 mSpriteBatch.Draw((Texture2D) tex.GetTexture(), null,
-                    new Microsoft.Xna.Framework.Rectangle((int) targetRect.X, (int) targetRect.Y,
+                    new XNARectangle((int) targetRect.X, (int) targetRect.Y,
                         (int) targetRect.Width,
                         (int) targetRect.Height),
-                    new Microsoft.Xna.Framework.Rectangle((int) srcRectangle.X, (int) srcRectangle.Y,
+                    new XNARectangle((int) srcRectangle.X, (int) srcRectangle.Y,
                         (int) srcRectangle.Width, (int) srcRectangle.Height),
                     origin, rotationDegrees, null, ConvertColor(renderColor), SpriteEffects.None, 0);
             }
@@ -407,9 +410,10 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                 mFpsTimer = Globals.System.GetTimeMs() + 1000;
                 mGameWindow.Title = Strings.Main.gamename;
             }
-            for (int i = 0; i < mAllTextures.Count; i++)
+
+            foreach (var texture in mAllTextures)
             {
-                mAllTextures[i].Update();
+                texture?.Update();
             }
         }
 
@@ -506,17 +510,17 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         public override GameFont LoadFont(string filename)
         {
             //Get font size from filename, format should be name_size.xnb or whatever
-            string name =
+            var name =
                 GameContentManager.RemoveExtension(filename)
                     .Replace(Path.Combine("resources", "fonts"), "")
                     .TrimStart(Path.DirectorySeparatorChar);
-            string[] parts = name.Split('_');
+            var parts = name.Split('_');
             if (parts.Length >= 1)
             {
                 if (int.TryParse(parts[parts.Length - 1], out int size))
                 {
                     name = "";
-                    for (int i = 0; i <= parts.Length - 2; i++)
+                    for (var i = 0; i <= parts.Length - 2; i++)
                     {
                         name += parts[i];
                         if (i + 1 < parts.Length - 2) name += "_";
@@ -534,7 +538,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 
         public override GameTexture LoadTexture(string filename)
         {
-            MonoTexture tex = new MonoTexture(mGraphicsDevice, filename);
+            var tex = new MonoTexture(mGraphicsDevice, filename);
             mAllTextures.Add(tex);
             return tex;
         }
@@ -542,7 +546,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         public override Pointf MeasureText(string text, GameFont gameFont, float fontScale)
         {
             if (gameFont == null) return Pointf.Empty;
-            SpriteFont font = (SpriteFont) gameFont.GetFont();
+            var font = (SpriteFont) gameFont.GetFont();
             if (font == null) return Pointf.Empty;
             foreach (var chr in text)
             {
@@ -551,7 +555,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                     text = text.Replace(chr, ' ');
                 }
             }
-            Vector2 size = font.MeasureString(text);
+            var size = font.MeasureString(text);
             return new Pointf(size.X * fontScale, size.Y * fontScale);
         }
 
@@ -559,6 +563,39 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         {
             mCurrentView = view;
             return;
+        }
+
+        private RenderTarget2D mScreenshotRenderTarget;
+
+        public override bool BeginScreenshot()
+        {
+            if (mGraphicsDevice == null) return false;
+            mScreenshotRenderTarget = new RenderTarget2D(mGraphicsDevice, mScreenWidth, mScreenHeight);
+            mGraphicsDevice.SetRenderTarget(mScreenshotRenderTarget);
+            return true;
+        }
+
+        public override void EndScreenshot()
+        {
+            if (mScreenshotRenderTarget == null) return;
+            ScreenshotRequests.ForEach(screenshotRequestStream =>
+            {
+                if (screenshotRequestStream == null) return;
+                mScreenshotRenderTarget.SaveAsPng(
+                    screenshotRequestStream,
+                    mScreenshotRenderTarget.Width,
+                    mScreenshotRenderTarget.Height
+                );
+                screenshotRequestStream.Close();
+            });
+            ScreenshotRequests.Clear();
+
+            if (mGraphicsDevice == null) return;
+            mGraphicsDevice.SetRenderTarget(null);
+
+            if (!Begin()) return;
+            mSpriteBatch?.Draw(mScreenshotRenderTarget, new XNARectangle(), XNAColor.White);
+            End();
         }
     }
 }
