@@ -196,6 +196,15 @@ namespace Intersect.Client.Classes.Localization
                 {"moveright", @"Right:"},
                 {"moveup", @"Up:"},
                 {"pickup", @"Pick Up:"},
+                {"screenshot", @"Screenshot:"},
+                {"openmenu", @"Open Menu:"},
+                {"openinventory", @"Open Inventory:"},
+                {"openquests", @"Open Quests:"},
+                {"opencharacterinfo", @"Open Character Info:"},
+                {"openparties", @"Open Parties:"},
+                {"openspells", @"Open Spells:"},
+                {"openfriends", @"Open Friends:"},
+                {"opensettings", @"Open Settings:"},
             };
             public static LocalizedString edit = @"Edit Controls";
             public static LocalizedString listening = @"Listening";

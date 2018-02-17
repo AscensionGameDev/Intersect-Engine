@@ -7,6 +7,7 @@ using IntersectClientExtras.Input;
 using IntersectClientExtras.Sys;
 using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.Items;
+using JetBrains.Annotations;
 
 namespace Intersect_Client.Classes.General
 {
@@ -28,9 +29,9 @@ namespace Intersect_Client.Classes.General
         //Game Systems
         public static GameContentManager ContentManager;
 
-        public static GameInput InputManager;
-        public static GameSystem System;
-        public static GameDatabase Database;
+        [NotNull] public static GameInput InputManager;
+        [NotNull] public static GameSystem System;
+        [NotNull] public static GameDatabase Database;
 
         //Scene management
         public static bool WaitingOnServer = false;

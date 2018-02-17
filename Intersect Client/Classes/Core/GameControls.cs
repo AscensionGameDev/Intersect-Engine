@@ -4,6 +4,7 @@ using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Input;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.UI;
+using JetBrains.Annotations;
 
 namespace Intersect.Client.Classes.Core
 {
@@ -27,41 +28,52 @@ namespace Intersect.Client.Classes.Core
         Hotkey8,
         Hotkey9,
         Hotkey0,
+        Screenshot,
+        OpenMenu,
+        OpenInventory,
+        OpenQuests,
+        OpenCharacterInfo,
+        OpenParties,
+        OpenSpells,
+        OpenFriends,
+        OpenSettings,
     }
 
     public class GameControls
     {
-        public static GameControls ActiveControls;
-        public Dictionary<Controls, ControlMap> ControlMapping = new Dictionary<Controls, ControlMap>();
+        public static GameControls ActiveControls { get; set; }
 
-        public GameControls()
+        [NotNull] public readonly IDictionary<Controls, ControlMap> ControlMapping;
+
+        public GameControls(GameControls gameControls = null)
         {
-            ControlMapping.Clear();
-            ResetDefaults();
+            ControlMapping = new Dictionary<Controls, ControlMap>();
 
-            foreach (Controls control in Enum.GetValues(typeof(Controls)))
+            if (gameControls != null)
             {
-                var name = Enum.GetName(typeof(Controls), control);
-                var key1 = Globals.Database.LoadPreference(name + "_key1");
-                var key2 = Globals.Database.LoadPreference(name + "_key2");
-                if (string.IsNullOrEmpty(key1) || string.IsNullOrEmpty(key2))
+                foreach (var mapping in gameControls.ControlMapping)
                 {
-                    Globals.Database.SavePreference(name + "_key1", ((int)ControlMapping[control].Key1).ToString());
-                    Globals.Database.SavePreference(name + "_key2", ((int)ControlMapping[control].Key2).ToString());
-                }
-                else
-                {
-                    CreateControlMap(control, (Keys)Convert.ToInt32(key1), (Keys)Convert.ToInt32(key2));
+                    CreateControlMap(mapping.Key, mapping.Value.Key1, mapping.Value.Key2);
                 }
             }
-        }
-
-        public GameControls(GameControls copyFrom)
-        {
-            ControlMapping.Clear();
-            foreach (var mapping in copyFrom.ControlMapping)
+            else
             {
-                CreateControlMap(mapping.Key, mapping.Value.Key1, mapping.Value.Key2);
+                ResetDefaults();
+                foreach (Controls control in Enum.GetValues(typeof(Controls)))
+                {
+                    var name = Enum.GetName(typeof(Controls), control);
+                    var key1 = Globals.Database.LoadPreference(name + "_key1");
+                    var key2 = Globals.Database.LoadPreference(name + "_key2");
+                    if (string.IsNullOrEmpty(key1) || string.IsNullOrEmpty(key2))
+                    {
+                        Globals.Database.SavePreference(name + "_key1", ((int)ControlMapping[control].Key1).ToString());
+                        Globals.Database.SavePreference(name + "_key2", ((int)ControlMapping[control].Key2).ToString());
+                    }
+                    else
+                    {
+                        CreateControlMap(control, (Keys)Convert.ToInt32(key1), (Keys)Convert.ToInt32(key2));
+                    }
+                }
             }
         }
 
@@ -85,6 +97,15 @@ namespace Intersect.Client.Classes.Core
             CreateControlMap(Controls.Hotkey8, Keys.D8, Keys.None);
             CreateControlMap(Controls.Hotkey9, Keys.D9, Keys.None);
             CreateControlMap(Controls.Hotkey0, Keys.D0, Keys.None);
+            CreateControlMap(Controls.Screenshot, Keys.None, Keys.None);
+            CreateControlMap(Controls.OpenMenu, Keys.None, Keys.None);
+            CreateControlMap(Controls.OpenInventory, Keys.None, Keys.None);
+            CreateControlMap(Controls.OpenQuests, Keys.None, Keys.None);
+            CreateControlMap(Controls.OpenCharacterInfo, Keys.None, Keys.None);
+            CreateControlMap(Controls.OpenParties, Keys.None, Keys.None);
+            CreateControlMap(Controls.OpenSpells, Keys.None, Keys.None);
+            CreateControlMap(Controls.OpenFriends, Keys.None, Keys.None);
+            CreateControlMap(Controls.OpenSettings, Keys.None, Keys.None);
         }
 
         public void Save()

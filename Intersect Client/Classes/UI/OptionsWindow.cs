@@ -153,25 +153,55 @@ namespace Intersect_Client.Classes.UI
             mExitKeybindingsButton.Hide();
             mExitKeybindingsButton.Clicked += _editKeybindingsBtn_Clicked;
 
+            var row = 0;
+            var defaultFont = GameContentManager.Current?.GetFont("arial", 16);
             foreach (Controls control in Enum.GetValues(typeof(Controls)))
             {
-                var label = new Label(mControlsContainer,
-                    "Control" + Enum.GetName(typeof(Controls), control) + "Label");
-                label.Text = Strings.Controls.controldict[Enum.GetName(typeof(Controls), control).ToLower()];
+                var offset = row * 32;
+                var name = Enum.GetName(typeof(Controls), control)?.ToLower();
 
-                var key1 = new Button(mControlsContainer,
-                    "Control" + Enum.GetName(typeof(Controls), control) + "Button1");
-                key1.Text = "";
-                key1.UserData = control;
+                var label = new Label(mControlsContainer, $"Control{Enum.GetName(typeof(Controls), control)}Label")
+                {
+                    Text = Strings.Controls.controldict[name],
+                    AutoSizeToContents = true,
+                    Font = defaultFont
+                };
+                label.SetBounds(8, 8 + offset, 0, 24);
+                label.SetTextColor(new Color(255, 255, 255, 255), Label.ControlState.Normal);
+
+                var key1 = new Button(mControlsContainer, $"Control{Enum.GetName(typeof(Controls), control)}Button1")
+                {
+                    Text = "",
+                    AutoSizeToContents = false,
+                    UserData = control,
+                    Font = defaultFont
+                };
                 key1.Clicked += Key1_Clicked;
+                key1.SetBounds(200, 6 + offset, 120, 28);
+                key1.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
+                key1.SetImage(null, "controlnormal.png", Button.ControlState.Normal);
+                key1.SetImage(null, "controlhover.png", Button.ControlState.Hovered);
+                key1.SetImage(null, "", Button.ControlState.Disabled);
+                key1.SetImage(null, "", Button.ControlState.Clicked);
 
-                var key2 = new Button(mControlsContainer,
-                    "Control" + Enum.GetName(typeof(Controls), control) + "Button2");
-                key2.Text = "";
-                key2.UserData = control;
+                var key2 = new Button(mControlsContainer, $"Control{Enum.GetName(typeof(Controls), control)}Button2")
+                {
+                    Text = "",
+                    AutoSizeToContents = false,
+                    UserData = control,
+                    Font = defaultFont
+                };
                 key2.Clicked += Key2_Clicked;
+                key2.SetBounds(350, 6 + offset, 120, 28);
+                key2.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
+                key2.SetImage(null, "controlnormal.png", Button.ControlState.Normal);
+                key2.SetImage(null, "controlhover.png", Button.ControlState.Hovered);
+                key2.SetImage(null, "", Button.ControlState.Disabled);
+                key2.SetImage(null, "", Button.ControlState.Clicked);
 
-                mKeyButtons.Add(control, new Button[2] {key1, key2});
+                mKeyButtons.Add(control, new[] {key1, key2});
+
+                row++;
             }
 
             //Options - Apply Button
@@ -187,14 +217,7 @@ namespace Intersect_Client.Classes.UI
             GameInputHandler.KeyDown += OnKeyDown;
             GameInputHandler.MouseDown += OnKeyDown;
 
-            if (mainMenu == null)
-            {
-                mOptionsPanel.LoadJsonUi(GameContentManager.UI.InGame);
-            }
-            else
-            {
-                mOptionsPanel.LoadJsonUi(GameContentManager.UI.Menu);
-            }
+            mOptionsPanel.LoadJsonUi(mainMenu == null ? GameContentManager.UI.InGame : GameContentManager.UI.Menu);
         }
 
         private void Key2_Clicked(Base sender, ClickedEventArgs arguments)
