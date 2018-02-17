@@ -9,6 +9,7 @@ namespace Intersect.Models
 
         string Name { get; set; }
         byte[] BinaryData { get; }
+        string JsonData { get; }
 
         void Load(byte[] packet);
 

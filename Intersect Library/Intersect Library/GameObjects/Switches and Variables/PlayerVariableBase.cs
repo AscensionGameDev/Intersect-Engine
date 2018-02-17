@@ -1,10 +1,12 @@
 ﻿using Intersect.Models;
+using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
     public class PlayerVariableBase : DatabaseObject<PlayerVariableBase>
     {
-        public PlayerVariableBase(int id) : base(id)
+        [JsonConstructor]
+        public PlayerVariableBase(int index) : base(index)
         {
             Name = "New Player Variable";
         }

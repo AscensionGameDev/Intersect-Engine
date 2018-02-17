@@ -1,5 +1,6 @@
 ﻿using Intersect.Models;
 using Intersect.Utilities;
+using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
@@ -28,7 +29,8 @@ namespace Intersect.GameObjects
         public int UpperAnimYFrames = 1;
         public LightBase[] UpperLights;
 
-        public AnimationBase(int id) : base(id)
+        [JsonConstructor]
+        public AnimationBase(int index) : base(index)
         {
             Name = "New Animation";
             LowerLights = new LightBase[LowerAnimFrameCount];

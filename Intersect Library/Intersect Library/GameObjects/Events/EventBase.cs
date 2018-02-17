@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Intersect.Models;
+using Newtonsoft.Json;
 
 namespace Intersect.GameObjects.Events
 {
@@ -9,6 +10,7 @@ namespace Intersect.GameObjects.Events
         {
         }
 
+        [JsonConstructor]
         public EventBase(int index, int x, int y, bool isCommon = false, byte isGlobal = 0) : base(index)
         {
             Name = "";
@@ -31,6 +33,7 @@ namespace Intersect.GameObjects.Events
         public EventBase(int index, ByteBuffer myBuffer, bool isCommon = false) : base(index)
         {
             Name = "New Event";
+            CommonEvent = isCommon;
             MyPages = new List<EventPage>();
             Load(myBuffer.ToArray());
         }

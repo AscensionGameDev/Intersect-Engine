@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Intersect.Enums;
 using Intersect.Models;
 using Intersect.Utilities;
+using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
@@ -46,7 +47,8 @@ namespace Intersect.GameObjects
         public string Sprite = "";
         public int[] Stat = new int[(int) Stats.StatCount];
 
-        public NpcBase(int id) : base(id)
+        [JsonConstructor]
+        public NpcBase(int index) : base(index)
         {
             Name = "New Npc";
             for (int i = 0; i < Options.MaxNpcDrops; i++)

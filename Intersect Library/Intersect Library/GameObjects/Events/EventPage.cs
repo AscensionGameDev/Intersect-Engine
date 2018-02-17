@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Intersect.GameObjects.Conditions;
 using Intersect.Utilities;
+using Newtonsoft.Json;
 
 namespace Intersect.GameObjects.Events
 {
@@ -55,6 +56,18 @@ namespace Intersect.GameObjects.Events
             Trigger = 0;
             HideName = 0;
             CommandLists.Add(new CommandList());
+        }
+
+        [JsonConstructor]
+        public EventPage(int ignoreThis)
+        {
+            MovementType = 0;
+            MovementSpeed = 2;
+            MovementFreq = 2;
+            Passable = 0;
+            Layer = 1;
+            Trigger = 0;
+            HideName = 0;;
         }
 
         public EventPage(ByteBuffer curBuffer)

@@ -3,6 +3,7 @@ using Intersect.GameObjects.Conditions;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
 using Intersect.Models;
+using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
@@ -47,7 +48,8 @@ namespace Intersect.GameObjects
 
         public List<QuestTask> Tasks = new List<QuestTask>();
 
-        public QuestBase(int id) : base(id)
+        [JsonConstructor]
+        public QuestBase(int index) : base(index)
         {
             Name = "New Quest";
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Intersect.GameObjects.Conditions;
 using Intersect.Models;
 using Intersect.Utilities;
+using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
@@ -28,7 +29,8 @@ namespace Intersect.GameObjects
         public bool WalkableAfter;
         public bool WalkableBefore;
 
-        public ResourceBase(int id) : base(id)
+        [JsonConstructor]
+        public ResourceBase(int index) : base(index)
         {
             Name = "New Resource";
             for (int i = 0; i < Options.MaxNpcDrops; i++)
