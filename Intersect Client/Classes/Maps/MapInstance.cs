@@ -840,14 +840,13 @@ namespace Intersect_Client.Classes.Maps
         public void DrawWeather()
         {
             if (Globals.Me == null || Lookup.Get(Globals.Me.CurrentMap) == null) return;
-
             var anim = AnimationBase.Lookup.Get<AnimationBase>(Weather);
 
             if (anim == null || WeatherIntensity == 0) { return; }
 
             _removeParticles.Clear();
 
-            if (WeatherXSpeed != 0 || WeatherYSpeed != 0)
+            if ((WeatherXSpeed != 0 || WeatherYSpeed != 0) && Globals.Me.MapInstance == this)
             {
                 if (Globals.System.GetTimeMs() > _weatherParticleSpawnTime)
                 {

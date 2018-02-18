@@ -72,7 +72,7 @@ namespace Intersect.Client.Classes.Maps
                 }
                 else if (xVelocity < 0)
                 {
-                    originalX = animSize.X;
+                    originalX = GameGraphics.Renderer.GetScreenWidth();
                 }
             }
 
