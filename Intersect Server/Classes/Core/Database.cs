@@ -2144,6 +2144,7 @@ namespace Intersect.Server.Classes.Core
                     var map = JsonConvert.DeserializeObject<MapInstance>(jObj.ToString());
                     MapInstance.Lookup.Set(index, map);
                     GetMapAttributes(map);
+                    map.Initialize();
                     break;
                 case GameObjectType.CommonEvent:
                     var evt = JsonConvert.DeserializeObject<EventBase>(jObj.ToString());

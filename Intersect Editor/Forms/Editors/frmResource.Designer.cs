@@ -51,6 +51,8 @@ namespace Intersect.Editor.Classes
             this.lblName = new System.Windows.Forms.Label();
             this.txtName = new DarkUI.Controls.DarkTextBox();
             this.grpGraphics = new DarkUI.Controls.DarkGroupBox();
+            this.chkExhaustedFromTileset = new DarkUI.Controls.DarkCheckBox();
+            this.chkInitialFromTileset = new DarkUI.Controls.DarkCheckBox();
             this.exhaustedGraphicContainer = new System.Windows.Forms.Panel();
             this.picEndResource = new System.Windows.Forms.PictureBox();
             this.initalGraphicContainer = new System.Windows.Forms.Panel();
@@ -353,6 +355,8 @@ namespace Intersect.Editor.Classes
             // 
             this.grpGraphics.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpGraphics.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpGraphics.Controls.Add(this.chkExhaustedFromTileset);
+            this.grpGraphics.Controls.Add(this.chkInitialFromTileset);
             this.grpGraphics.Controls.Add(this.exhaustedGraphicContainer);
             this.grpGraphics.Controls.Add(this.initalGraphicContainer);
             this.grpGraphics.Controls.Add(this.cmbEndSprite);
@@ -366,6 +370,24 @@ namespace Intersect.Editor.Classes
             this.grpGraphics.TabIndex = 16;
             this.grpGraphics.TabStop = false;
             this.grpGraphics.Text = "Graphics";
+            // 
+            // chkExhaustedFromTileset
+            // 
+            this.chkExhaustedFromTileset.Location = new System.Drawing.Point(597, 32);
+            this.chkExhaustedFromTileset.Name = "chkExhaustedFromTileset";
+            this.chkExhaustedFromTileset.Size = new System.Drawing.Size(98, 21);
+            this.chkExhaustedFromTileset.TabIndex = 33;
+            this.chkExhaustedFromTileset.Text = "From Tileset";
+            this.chkExhaustedFromTileset.CheckedChanged += new System.EventHandler(this.chkExhaustedFromTileset_CheckedChanged);
+            // 
+            // chkInitialFromTileset
+            // 
+            this.chkInitialFromTileset.Location = new System.Drawing.Point(245, 32);
+            this.chkInitialFromTileset.Name = "chkInitialFromTileset";
+            this.chkInitialFromTileset.Size = new System.Drawing.Size(98, 21);
+            this.chkInitialFromTileset.TabIndex = 32;
+            this.chkInitialFromTileset.Text = "From Tileset";
+            this.chkInitialFromTileset.CheckedChanged += new System.EventHandler(this.chkInitialFromTileset_CheckedChanged);
             // 
             // exhaustedGraphicContainer
             // 
@@ -383,6 +405,9 @@ namespace Intersect.Editor.Classes
             this.picEndResource.Size = new System.Drawing.Size(182, 290);
             this.picEndResource.TabIndex = 2;
             this.picEndResource.TabStop = false;
+            this.picEndResource.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picExhustedResource_MouseDown);
+            this.picEndResource.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picExhaustedResource_MouseMove);
+            this.picEndResource.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picExhaustedResource_MouseUp);
             // 
             // initalGraphicContainer
             // 
@@ -400,6 +425,9 @@ namespace Intersect.Editor.Classes
             this.picInitialResource.Size = new System.Drawing.Size(180, 290);
             this.picInitialResource.TabIndex = 2;
             this.picInitialResource.TabStop = false;
+            this.picInitialResource.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picInitialResource_MouseDown);
+            this.picInitialResource.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picInitialResource_MouseMove);
+            this.picInitialResource.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picInitialResource_MouseUp);
             // 
             // cmbEndSprite
             // 
@@ -846,5 +874,7 @@ namespace Intersect.Editor.Classes
         private System.Windows.Forms.Label lblDropAmount;
         private System.Windows.Forms.Label lblDropChance;
         private System.Windows.Forms.Label lblDropItem;
+        private DarkCheckBox chkExhaustedFromTileset;
+        private DarkCheckBox chkInitialFromTileset;
     }
 }

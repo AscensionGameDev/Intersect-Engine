@@ -1062,20 +1062,39 @@ namespace Intersect.Editor.Classes
                         var resource = ResourceBase.Lookup.Get<ResourceBase>(tmpMap.Attributes[x, y].Data1);
                         if (resource == null) continue;
                         if (TextUtils.IsNone(resource.InitialGraphic)) continue;
-                        var res = GetTexture(TextureType.Resource, resource.InitialGraphic);
-                        if (res == null) continue;
-                        float xpos = x * Options.TileWidth + xoffset;
-                        float ypos = y * Options.TileHeight + yoffset;
-                        if (res.Height > Options.TileHeight)
+                        if (resource.InitialGraphicFromTileset)
                         {
-                            ypos -= ((int) res.Height - Options.TileHeight);
+                            var res = GetTexture(TextureType.Tileset, resource.InitialGraphic);
+                            if (res == null) continue;
+                            float xpos = x * Options.TileWidth + xoffset;
+                            float ypos = y * Options.TileHeight + yoffset;
+                            if ((resource.InitialTilesetHeight + 1) * Options.TileHeight > Options.TileHeight)
+                            {
+                                ypos -= ((int)(resource.InitialTilesetHeight + 1) * Options.TileHeight - Options.TileHeight);
+                            }
+                            if ((resource.InitialTilesetWidth + 1) * Options.TileWidth > Options.TileWidth)
+                            {
+                                xpos -= ((resource.InitialTilesetWidth + 1) * Options.TileWidth - Options.TileWidth) / 2;
+                            }
+                            DrawTexture(res, xpos, ypos, resource.InitialTilesetX * Options.TileWidth, resource.InitialTilesetY * Options.TileHeight, (int)(resource.InitialTilesetWidth + 1) * Options.TileWidth, (int)(resource.InitialTilesetHeight + 1) * Options.TileHeight, renderTarget);
                         }
-                        if (res.Width > Options.TileWidth)
+                        else
                         {
-                            xpos -= (res.Width - Options.TileWidth) / 2;
+                            var res = GetTexture(TextureType.Resource, resource.InitialGraphic);
+                            if (res == null) continue;
+                            float xpos = x * Options.TileWidth + xoffset;
+                            float ypos = y * Options.TileHeight + yoffset;
+                            if (res.Height > Options.TileHeight)
+                            {
+                                ypos -= ((int)res.Height - Options.TileHeight);
+                            }
+                            if (res.Width > Options.TileWidth)
+                            {
+                                xpos -= (res.Width - Options.TileWidth) / 2;
+                            }
+                            DrawTexture(res, xpos, ypos,
+                                0, 0, (int)res.Width, (int)res.Height, renderTarget);
                         }
-                        DrawTexture(res, xpos, ypos,
-                            0, 0, (int) res.Width, (int) res.Height, renderTarget);
                     }
                     else if (tmpMap.Attributes[x, y].Value == (int) MapAttributes.Animation)
                     {

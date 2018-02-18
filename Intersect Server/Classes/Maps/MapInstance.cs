@@ -86,12 +86,6 @@ namespace Intersect.Server.Classes.Maps
             Layers = null;
         }
 
-        [OnDeserialized]
-        internal void OnDeserializedMethod(StreamingContext context)
-        {
-            Initialize();
-        }
-
     public new static MapInstances Lookup => (sLookup = (sLookup ?? new MapInstances(MapBase.Lookup)));
 
         //GameObject Functions

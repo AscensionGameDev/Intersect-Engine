@@ -16,6 +16,7 @@ namespace Intersect_Client.Classes.Entities
         public bool IsDead;
         FloatRect mDestRectangle = FloatRect.Empty;
         FloatRect mSrcRectangle = FloatRect.Empty;
+        private bool _waitingForTilesets;
 
         public Resource(int index, long spawnTime, ByteBuffer bf) : base(index, spawnTime, bf)
         {
@@ -27,8 +28,23 @@ namespace Intersect_Client.Classes.Entities
             get => mMySprite;
             set
             {
+                if (BaseResource == null) return;
                 mMySprite = value;
-                Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Resource, mMySprite);
+                if ((IsDead && BaseResource.EndGraphicFromTileset) || (!IsDead && BaseResource.InitialGraphicFromTileset))
+                {
+                    if (GameContentManager.Current.TilesetsLoaded)
+                    {
+                        Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tileset, mMySprite);
+                    }
+                    else
+                    {
+                        _waitingForTilesets = true;
+                    }
+                }
+                else
+                {
+                    Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Resource, mMySprite);
+                }
                 mHasRenderBounds = false;
             }
         }
@@ -47,6 +63,10 @@ namespace Intersect_Client.Classes.Entities
             if (IsDead)
             {
                 MySprite = BaseResource?.EndGraphic;
+            }
+            else
+            {
+                MySprite = BaseResource?.InitialGraphic;
             }
         }
 
@@ -87,14 +107,39 @@ namespace Intersect_Client.Classes.Entities
             {
                 return;
             }
+            if (_waitingForTilesets && !GameContentManager.Current.TilesetsLoaded) return;
+            if (_waitingForTilesets && GameContentManager.Current.TilesetsLoaded)
+            {
+                _waitingForTilesets = false;
+                MySprite = MySprite;
+            }
             if (Texture != null)
             {
-                mSrcRectangle.Width = Texture.GetWidth();
-                mSrcRectangle.Height = Texture.GetHeight();
+                mSrcRectangle.X = 0;
+                mSrcRectangle.Y = 0;
+                if (IsDead && BaseResource.EndGraphicFromTileset)
+                {
+                    mSrcRectangle.X = BaseResource.EndTilesetX * Options.TileWidth;
+                    mSrcRectangle.Y = BaseResource.EndTilesetY * Options.TileHeight;
+                    mSrcRectangle.Width = (BaseResource.EndTilesetWidth + 1) * Options.TileWidth;
+                    mSrcRectangle.Height = (BaseResource.EndTilesetHeight + 1) * Options.TileHeight;
+                }
+                else if (!IsDead && BaseResource.InitialGraphicFromTileset)
+                {
+                    mSrcRectangle.X = BaseResource.InitialTilesetX * Options.TileWidth;
+                    mSrcRectangle.Y = BaseResource.InitialTilesetY * Options.TileHeight;
+                    mSrcRectangle.Width = (BaseResource.InitialTilesetWidth + 1) * Options.TileWidth;
+                    mSrcRectangle.Height = (BaseResource.InitialTilesetHeight + 1) * Options.TileHeight;
+                }
+                else
+                {
+                    mSrcRectangle.Width = Texture.GetWidth();
+                    mSrcRectangle.Height = Texture.GetHeight();
+                }
                 mDestRectangle.Width = mSrcRectangle.Width;
                 mDestRectangle.Height = mSrcRectangle.Height;
-                mDestRectangle.Y = (int) (map.GetY() + CurrentY * Options.TileHeight + OffsetY);
-                mDestRectangle.X = (int) (map.GetX() + CurrentX * Options.TileWidth + OffsetX);
+                mDestRectangle.Y = (int)(map.GetY() + CurrentY * Options.TileHeight + OffsetY);
+                mDestRectangle.X = (int)(map.GetX() + CurrentX * Options.TileWidth + OffsetX);
                 if (mSrcRectangle.Height > Options.TileHeight)
                 {
                     mDestRectangle.Y -= mSrcRectangle.Height - Options.TileHeight;

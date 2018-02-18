@@ -141,6 +141,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
                         GameGraphics.Renderer.LoadTexture(Path.Combine("resources", "tilesets", t)));
                 }
             }
+            TilesetsLoaded = true;
         }
 
         public void LoadTextureGroup(string directory, Dictionary<string, GameTexture> dict)

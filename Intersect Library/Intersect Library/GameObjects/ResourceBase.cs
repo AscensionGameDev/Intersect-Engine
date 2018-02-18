@@ -15,11 +15,21 @@ namespace Intersect.GameObjects
         public List<ResourceDrop> Drops = new List<ResourceDrop>();
 
         public string EndGraphic = null;
+        public bool EndGraphicFromTileset;
+        public int EndTilesetX;
+        public int EndTilesetY;
+        public int EndTilesetWidth;
+        public int EndTilesetHeight;
 
         public ConditionLists HarvestingReqs = new ConditionLists();
 
         // Graphics
         public string InitialGraphic = null;
+        public bool InitialGraphicFromTileset;
+        public int InitialTilesetX;
+        public int InitialTilesetY;
+        public int InitialTilesetWidth;
+        public int InitialTilesetHeight;
 
         public int MaxHp;
 
