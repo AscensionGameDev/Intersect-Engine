@@ -41,57 +41,65 @@ namespace Intersect_Client.Classes.Core
                 return;
             }
 
-            if (GameControls.ControlHasKey(Controls.PickUp, key))
-            {
-                if (Globals.Me != null)
-                {
-                    if (Globals.Me.TryPickupItem())
-                    {
-                        return;
-                    }
-                }
-            }
-            else if (GameControls.ControlHasKey(Controls.Block, key))
-            {
-                if (Globals.Me != null)
-                {
-                    if (Globals.Me.TryBlock())
-                    {
-                        return;
-                    }
-                }
-            }
-            else switch (key)
-            {
-                case Keys.Escape:
-                    if (Globals.GameState == GameStates.Intro)
-                    {
-                        GameFade.FadeIn();
-                        Globals.GameState = GameStates.Menu;
-                    }
-                    break;
-                case Keys.Insert:
-                    //Try to open admin panel!
-                    if (Globals.GameState == GameStates.InGame)
-                    {
-                        PacketSender.SendOpenAdminWindow();
-                    }
-                    break;
-                case Keys.F2:
-                    if (Globals.GameState != GameStates.InGame) return;
-                    Gui.GameUi.ShowHideDebug();
-                    break;
-                default:
-                    if (GameControls.ControlHasKey(Controls.Enter, key))
-                    {
-                        if (Globals.GameState != GameStates.InGame) return;
-                        if (!Gui.HasInputFocus())
-                        {
-                            Gui.GameUi.FocusChat = true;
-                        }
-                    }
-                    break;
-            }
+			if (GameControls.ControlHasKey(Controls.PickUp, key))
+			{
+				if (Globals.Me != null)
+				{
+					if (Globals.Me.TryPickupItem())
+					{
+						return;
+					}
+				}
+			}
+			else if (GameControls.ControlHasKey(Controls.Block, key))
+			{
+				if (Globals.Me != null)
+				{
+					if (Globals.Me.TryBlock())
+					{
+						return;
+					}
+				}
+			}
+			else if (GameControls.ControlHasKey(Controls.AutoTarget, key))
+			{
+				if (Globals.Me != null)
+				{
+					Globals.Me.AutoTarget();
+					return;
+				}
+			}
+			else switch (key)
+				{
+					case Keys.Escape:
+						if (Globals.GameState == GameStates.Intro)
+						{
+							GameFade.FadeIn();
+							Globals.GameState = GameStates.Menu;
+						}
+						break;
+					case Keys.Insert:
+						//Try to open admin panel!
+						if (Globals.GameState == GameStates.InGame)
+						{
+							PacketSender.SendOpenAdminWindow();
+						}
+						break;
+					case Keys.F2:
+						if (Globals.GameState != GameStates.InGame) return;
+						Gui.GameUi.ShowHideDebug();
+						break;
+					default:
+						if (GameControls.ControlHasKey(Controls.Enter, key))
+						{
+							if (Globals.GameState != GameStates.InGame) return;
+							if (!Gui.HasInputFocus())
+							{
+								Gui.GameUi.FocusChat = true;
+							}
+						}
+						break;
+				}
 
             if (Globals.GameState != GameStates.InGame) return;
             if (Gui.HasInputFocus()) return;

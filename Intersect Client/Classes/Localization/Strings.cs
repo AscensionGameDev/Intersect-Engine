@@ -180,7 +180,8 @@ namespace Intersect.Client.Classes.Localization
             {
                 {"attackinteract", @"Attack/Interact:"},
                 {"block", @"Block:"},
-                {"enter", @"Enter:"},
+				{"autotarget", @"Auto Target:"},
+				{"enter", @"Enter:"},
                 {"hotkey0", @"Hot Key 0:"},
                 {"hotkey1", @"Hot Key 1:"},
                 {"hotkey2", @"Hot Key 2:"},

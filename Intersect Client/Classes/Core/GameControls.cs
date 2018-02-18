@@ -16,6 +16,7 @@ namespace Intersect.Client.Classes.Core
         MoveRight,
         AttackInteract,
         Block,
+		AutoTarget,
         PickUp,
         Enter,
         Hotkey1,
@@ -85,7 +86,8 @@ namespace Intersect.Client.Classes.Core
             CreateControlMap(Controls.MoveRight, Keys.Right, Keys.D);
             CreateControlMap(Controls.AttackInteract, Keys.E, Keys.LButton);
             CreateControlMap(Controls.Block, Keys.Q, Keys.RButton);
-            CreateControlMap(Controls.PickUp, Keys.Space, Keys.None);
+			CreateControlMap(Controls.AutoTarget, Keys.Tab, Keys.None);
+			CreateControlMap(Controls.PickUp, Keys.Space, Keys.None);
             CreateControlMap(Controls.Enter, Keys.Enter, Keys.None);
             CreateControlMap(Controls.Hotkey1, Keys.D1, Keys.None);
             CreateControlMap(Controls.Hotkey2, Keys.D2, Keys.None);
