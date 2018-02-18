@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.Enums;
+using Newtonsoft.Json;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects
 {
@@ -18,7 +19,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         public int DamageType;
 
         //Drops
-        public List<NPCDrop> Drops = new List<NPCDrop>();
+        public List<NpcDrop> Drops = new List<NpcDrop>();
 
         public long Experience;
         public int Level = 1;
@@ -44,12 +45,13 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         public string Sprite = "";
         public int[] Stat = new int[(int) Stats.StatCount];
 
-        public NpcBase(int id) : base(id)
+        [JsonConstructor]
+        public NpcBase(int index) : base(index)
         {
             Name = "New Npc";
             for (int i = 0; i < Options.MaxNpcDrops; i++)
             {
-                Drops.Add(new NPCDrop());
+                Drops.Add(new NpcDrop());
             }
         }
 
@@ -60,7 +62,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
             var myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(packet);
             Name = myBuffer.ReadString();
-            Sprite = myBuffer.ReadString();
+            Sprite = Intersect.Utilities.TextUtils.SanitizeNone(myBuffer.ReadString());
             Level = myBuffer.ReadInteger();
             for (int i = 0; i < (int) Vitals.VitalCount; i++)
             {
@@ -70,7 +72,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
             {
                 Stat[i] = myBuffer.ReadInteger();
             }
-            Experience = myBuffer.ReadInteger();
+            Experience = myBuffer.ReadLong();
             SpawnDuration = myBuffer.ReadInteger();
             Behavior = myBuffer.ReadByte();
             SightRange = myBuffer.ReadInteger();
@@ -161,7 +163,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         }
     }
 
-    public class NPCDrop
+    public class NpcDrop
     {
         public int Amount;
         public int Chance;

@@ -1,10 +1,13 @@
-﻿namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects.Switches_and_Variables
+﻿using Newtonsoft.Json;
+
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects.Switches_and_Variables
 {
     public class ServerVariableBase : DatabaseObject<ServerVariableBase>
     {
         public int Value;
 
-        public ServerVariableBase(int id) : base(id)
+        [JsonConstructor]
+        public ServerVariableBase(int index) : base(index)
         {
             Name = "New Global Variable";
         }

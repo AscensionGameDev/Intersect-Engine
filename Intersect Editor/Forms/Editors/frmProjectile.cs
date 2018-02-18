@@ -14,7 +14,7 @@ namespace Intersect.Editor.Classes
     public partial class FrmProjectile : EditorForm
     {
         private List<ProjectileBase> mChanged = new List<ProjectileBase>();
-        private byte[] mCopiedItem;
+        private string mCopiedItem;
 
         private Bitmap mDirectionGrid;
         private ProjectileBase mEditorItem;
@@ -513,7 +513,7 @@ namespace Intersect.Editor.Classes
         {
             if (mEditorItem != null && lstProjectiles.Focused)
             {
-                mCopiedItem = mEditorItem.BinaryData;
+                mCopiedItem = mEditorItem.JsonData;
                 toolStripItemPaste.Enabled = true;
             }
         }

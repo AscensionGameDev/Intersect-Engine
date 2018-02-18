@@ -47,9 +47,7 @@ namespace Intersect.Editor.Classes.Maps
 
         public int MapGridY { get; set; }
 
-        public override byte[] BinaryData => GetMapData(false);
-
-        public void Load(byte[] myArr, bool import = false)
+        public void Load(string mapJson, bool import = false)
         {
             lock (MapLock)
             {
@@ -57,7 +55,7 @@ namespace Intersect.Editor.Classes.Maps
                 var down = Down;
                 var left = Left;
                 var right = Right;
-                base.Load(myArr);
+                base.Load(mapJson);
                 if (import)
                 {
                     Up = up;
@@ -65,6 +63,7 @@ namespace Intersect.Editor.Classes.Maps
                     Left = left;
                     Right = right;
                 }
+                Autotiles = new MapAutotiles(this);
             }
         }
 
@@ -102,24 +101,26 @@ namespace Intersect.Editor.Classes.Maps
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(myArr);
-            var mapDataLength = bf.ReadInteger();
-            var mapData = bf.ReadBytes(mapDataLength);
+            var mapJson = bf.ReadString();
             var tileDataLength = bf.ReadInteger();
             var tileData = bf.ReadBytes(tileDataLength);
-            Load(mapData, import);
+            var attributeDataLength = bf.ReadInteger();
+            var attributeData = bf.ReadBytes(attributeDataLength);
+            Load(mapJson, import);
             LoadTileData(tileData);
+            LoadAttributes(attributeData);
             bf.Dispose();
         }
 
         public byte[] SaveInternal()
         {
             var bf = new ByteBuffer();
-            var mapData = GetMapData(false);
-            bf.WriteInteger(mapData.Length);
-            bf.WriteBytes(mapData);
+            bf.WriteString(JsonData);
             var tileData = GenerateTileData();
             bf.WriteInteger(tileData.Length);
             bf.WriteBytes(tileData);
+            bf.WriteInteger(AttributesData().Length);
+            bf.WriteBytes(AttributesData());
             return bf.ToArray();
         }
 

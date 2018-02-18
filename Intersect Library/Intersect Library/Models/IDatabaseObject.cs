@@ -8,10 +8,8 @@ namespace Intersect.Models
         string DatabaseTable { get; }
 
         string Name { get; set; }
-        byte[] BinaryData { get; }
         string JsonData { get; }
-
-        void Load(byte[] packet);
+        void Load(string json);
 
         void MakeBackup();
         void RestoreBackup();

@@ -251,7 +251,8 @@ namespace Intersect.Server.Classes.Localization
             public static LocalizedString nomaps = @"No maps found! - Creating an empty map!";
             public static LocalizedString nullerror = @"Tried to load one or more null game objects!";
             public static LocalizedString nullfound = @"Tried to load null value for index {00} of {01}";
-            public static LocalizedString outofdate = @"Database is out of date! Version: {00} Expected Version: {01}. Please run the included migration tool!";
+            public static LocalizedString playerdboutofdate = @"Player Database is out of date! Version: {00} Expected Version: {01}. Please run the included migration tool!";
+            public static LocalizedString gamedboutofdate = @"Game Database is out of date! Version: {00} Expected Version: {01}. Please run the included migration tool!";
             public static LocalizedString usingsqlite = @"Using SQLite Database for account and data storage.";
         }
 

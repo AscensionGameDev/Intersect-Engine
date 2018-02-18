@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Threading;
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -85,31 +86,41 @@ namespace Intersect.Server.Classes.Maps
             Layers = null;
         }
 
-        public new static MapInstances Lookup => (sLookup = (sLookup ?? new MapInstances(MapBase.Lookup)));
+        [OnDeserialized]
+        internal void OnDeserializedMethod(StreamingContext context)
+        {
+            Initialize();
+        }
+
+    public new static MapInstances Lookup => (sLookup = (sLookup ?? new MapInstances(MapBase.Lookup)));
 
         //GameObject Functions
-
-        public override byte[] BinaryData
-        {
-            get { return GetMapData(false); }
-        }
 
         public object GetMapLock()
         {
             return mMapLock;
         }
 
-        public override void Load(byte[] packet)
+        public override void Load(string json)
         {
-            Load(packet, -1);
+            Load(json, -1);
         }
 
-        public void Load(byte[] packet, int keepRevision = -1)
+        public void Initialize()
+        {
+            lock (mMapLock)
+            {
+                CacheMapBlocks();
+                RespawnEverything();
+            }
+        }
+
+        public void Load(string json, int keepRevision = -1)
         {
             lock (mMapLock)
             {
                 DespawnEverything();
-                base.Load(packet);
+                base.Load(json);
                 if (keepRevision > -1) Revision = keepRevision;
                 CacheMapBlocks();
                 RespawnEverything();
@@ -150,9 +161,9 @@ namespace Intersect.Server.Classes.Maps
         }
 
         //Get Map Packet
-        public byte[] GetMapPacket(bool forClient)
+        public string GetMapPacket(bool forClient)
         {
-            return GetMapData(forClient);
+            return JsonData;
         }
 
         public byte[] GetTileData(bool shouldCache = true)

@@ -45,6 +45,7 @@ namespace Intersect.Editor.Forms
             this.lblName = new System.Windows.Forms.Label();
             this.txtName = new DarkUI.Controls.DarkTextBox();
             this.grpLower = new DarkUI.Controls.DarkGroupBox();
+            this.chkDisableLowerRotations = new DarkUI.Controls.DarkCheckBox();
             this.nudLowerLoopCount = new DarkUI.Controls.DarkNumericUpDown();
             this.nudLowerFrameDuration = new DarkUI.Controls.DarkNumericUpDown();
             this.nudLowerFrameCount = new DarkUI.Controls.DarkNumericUpDown();
@@ -66,6 +67,7 @@ namespace Intersect.Editor.Forms
             this.lblLowerGraphic = new System.Windows.Forms.Label();
             this.picLowerAnimation = new System.Windows.Forms.PictureBox();
             this.grpUpper = new DarkUI.Controls.DarkGroupBox();
+            this.chkDisableUpperRotations = new DarkUI.Controls.DarkCheckBox();
             this.nudUpperLoopCount = new DarkUI.Controls.DarkNumericUpDown();
             this.nudUpperFrameDuration = new DarkUI.Controls.DarkNumericUpDown();
             this.nudUpperFrameCount = new DarkUI.Controls.DarkNumericUpDown();
@@ -255,6 +257,7 @@ namespace Intersect.Editor.Forms
             // 
             this.grpLower.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpLower.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpLower.Controls.Add(this.chkDisableLowerRotations);
             this.grpLower.Controls.Add(this.nudLowerLoopCount);
             this.grpLower.Controls.Add(this.nudLowerFrameDuration);
             this.grpLower.Controls.Add(this.nudLowerFrameCount);
@@ -273,10 +276,20 @@ namespace Intersect.Editor.Forms
             this.grpLower.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpLower.Location = new System.Drawing.Point(1, 84);
             this.grpLower.Name = "grpLower";
-            this.grpLower.Size = new System.Drawing.Size(484, 454);
+            this.grpLower.Size = new System.Drawing.Size(484, 450);
             this.grpLower.TabIndex = 19;
             this.grpLower.TabStop = false;
             this.grpLower.Text = "Lower Layer (Below Target)";
+            // 
+            // chkDisableLowerRotations
+            // 
+            this.chkDisableLowerRotations.AutoSize = true;
+            this.chkDisableLowerRotations.Location = new System.Drawing.Point(9, 424);
+            this.chkDisableLowerRotations.Name = "chkDisableLowerRotations";
+            this.chkDisableLowerRotations.Size = new System.Drawing.Size(109, 17);
+            this.chkDisableLowerRotations.TabIndex = 26;
+            this.chkDisableLowerRotations.Text = "Disable Rotations";
+            this.chkDisableLowerRotations.CheckedChanged += new System.EventHandler(this.chkDisableLowerRotations_CheckedChanged);
             // 
             // nudLowerLoopCount
             // 
@@ -561,6 +574,7 @@ namespace Intersect.Editor.Forms
             // 
             this.grpUpper.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpUpper.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpUpper.Controls.Add(this.chkDisableUpperRotations);
             this.grpUpper.Controls.Add(this.nudUpperLoopCount);
             this.grpUpper.Controls.Add(this.nudUpperFrameDuration);
             this.grpUpper.Controls.Add(this.nudUpperFrameCount);
@@ -579,10 +593,20 @@ namespace Intersect.Editor.Forms
             this.grpUpper.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpUpper.Location = new System.Drawing.Point(504, 84);
             this.grpUpper.Name = "grpUpper";
-            this.grpUpper.Size = new System.Drawing.Size(485, 454);
+            this.grpUpper.Size = new System.Drawing.Size(485, 450);
             this.grpUpper.TabIndex = 20;
             this.grpUpper.TabStop = false;
             this.grpUpper.Text = "Upper Layer (Above Target)";
+            // 
+            // chkDisableUpperRotations
+            // 
+            this.chkDisableUpperRotations.AutoSize = true;
+            this.chkDisableUpperRotations.Location = new System.Drawing.Point(6, 424);
+            this.chkDisableUpperRotations.Name = "chkDisableUpperRotations";
+            this.chkDisableUpperRotations.Size = new System.Drawing.Size(109, 17);
+            this.chkDisableUpperRotations.TabIndex = 27;
+            this.chkDisableUpperRotations.Text = "Disable Rotations";
+            this.chkDisableUpperRotations.CheckedChanged += new System.EventHandler(this.chkDisableUpperRotations_CheckedChanged);
             // 
             // nudUpperLoopCount
             // 
@@ -1012,7 +1036,7 @@ namespace Intersect.Editor.Forms
             this.tmrRender.Interval = 16;
             this.tmrRender.Tick += new System.EventHandler(this.tmrRender_Tick);
             // 
-            // frmAnimation
+            // FrmAnimation
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -1134,5 +1158,7 @@ namespace Intersect.Editor.Forms
         private DarkNumericUpDown nudUpperVerticalFrames;
         private DarkNumericUpDown nudUpperHorizontalFrames;
         private System.Windows.Forms.Timer tmrRender;
+        private DarkCheckBox chkDisableLowerRotations;
+        private DarkCheckBox chkDisableUpperRotations;
     }
 }

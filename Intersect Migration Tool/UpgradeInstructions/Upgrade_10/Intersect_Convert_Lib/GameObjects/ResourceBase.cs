@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects.Conditions;
+using Newtonsoft.Json;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects
 {
@@ -11,22 +12,23 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         // Drops
         public List<ResourceDrop> Drops = new List<ResourceDrop>();
 
-        public string EndGraphic = "None";
+        public string EndGraphic = null;
 
         public ConditionLists HarvestingReqs = new ConditionLists();
 
         // Graphics
-        public string InitialGraphic = "None";
+        public string InitialGraphic = null;
 
-        public int MaxHP;
+        public int MaxHp;
 
-        public int MinHP;
+        public int MinHp;
         public int SpawnDuration;
         public int Tool = -1;
         public bool WalkableAfter;
         public bool WalkableBefore;
 
-        public ResourceBase(int id) : base(id)
+        [JsonConstructor]
+        public ResourceBase(int index) : base(index)
         {
             Name = "New Resource";
             for (int i = 0; i < Options.MaxNpcDrops; i++)
@@ -44,8 +46,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
             Name = myBuffer.ReadString();
             InitialGraphic = myBuffer.ReadString();
             EndGraphic = myBuffer.ReadString();
-            MinHP = myBuffer.ReadInteger();
-            MaxHP = myBuffer.ReadInteger();
+            MinHp = myBuffer.ReadInteger();
+            MaxHp = myBuffer.ReadInteger();
             Tool = myBuffer.ReadInteger();
             SpawnDuration = myBuffer.ReadInteger();
             Animation = myBuffer.ReadInteger();
@@ -68,10 +70,10 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         {
             var myBuffer = new ByteBuffer();
             myBuffer.WriteString(Name);
-            myBuffer.WriteString(InitialGraphic);
-            myBuffer.WriteString(EndGraphic);
-            myBuffer.WriteInteger(MinHP);
-            myBuffer.WriteInteger(MaxHP);
+            myBuffer.WriteString(Intersect.Utilities.TextUtils.SanitizeNone(InitialGraphic));
+            myBuffer.WriteString(Intersect.Utilities.TextUtils.SanitizeNone(EndGraphic));
+            myBuffer.WriteInteger(MinHp);
+            myBuffer.WriteInteger(MaxHp);
             myBuffer.WriteInteger(Tool);
             myBuffer.WriteInteger(SpawnDuration);
             myBuffer.WriteInteger(Animation);

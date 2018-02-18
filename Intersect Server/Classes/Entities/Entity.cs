@@ -964,15 +964,15 @@ namespace Intersect.Server.Classes.Entities
             var statBuffTime = -1;
             for (var i = 0; i < (int) Stats.StatCount; i++)
             {
-                enemy.Stat[i].AddBuff(new EntityBuff(spellBase, spellBase.StatDiff[i], (spellBase.Data2 * 100)));
-                if (spellBase.StatDiff[i] != 0 && spellBase.Data2 * 100 != null)
-                    statBuffTime = spellBase.Data2 * 100;
+                enemy.Stat[i].AddBuff(new EntityBuff(spellBase, spellBase.StatDiff[i], spellBase.Data2));
+                if (spellBase.StatDiff[i] != 0)
+                    statBuffTime = spellBase.Data2;
             }
 
                 //Handle other status effects
                 if (spellBase.Data3 > 0)
                 {
-                    new StatusInstance(enemy, spellBase, spellBase.Data3, (spellBase.Data2 * 100), spellBase.Data5);
+                    new StatusInstance(enemy, spellBase, spellBase.Data3, spellBase.Data2, spellBase.Data5);
                     PacketSender.SendActionMsg(enemy, Strings.Combat.status[spellBase.Data3], CustomColors.Status);
                 }
                 else
@@ -1300,8 +1300,7 @@ namespace Intersect.Server.Classes.Entities
                 }
                 if (spellSlot >= 0 && spellSlot < Options.MaxPlayerSkills)
                 {
-                    Spells[spellSlot].SpellCd = Globals.System.GetTimeMs() +
-                                                (spellBase.CooldownDuration * 100);
+                    Spells[spellSlot].SpellCd = Globals.System.GetTimeMs() + spellBase.CooldownDuration;
                     if (GetType() == typeof(Player))
                     {
                         PacketSender.SendSpellCooldown(((Player) this).MyClient, spellSlot);
@@ -1769,7 +1768,7 @@ namespace Intersect.Server.Classes.Entities
                 return;
             }
 
-            mInterval = Globals.System.GetTimeMs() + SpellBase.Data4 * 100;
+            mInterval = Globals.System.GetTimeMs() + SpellBase.Data4;
             Count = SpellBase.Data2 / SpellBase.Data4 - 1;
             target.DoT.Add(this);
             //Subtract 1 since the first tick always occurs when the spell is cast.
@@ -1798,7 +1797,7 @@ namespace Intersect.Server.Classes.Entities
             Attacker?.Attack(Target, SpellBase.VitalDiff[0], SpellBase.VitalDiff[1],
                 (DamageType) SpellBase.DamageType, (Stats) SpellBase.ScalingStat, SpellBase.Scaling,
                 SpellBase.CritChance, Options.CritMultiplier, deadAnimations, aliveAnimations);
-            mInterval = Globals.System.GetTimeMs() + (SpellBase.Data4 * 100);
+            mInterval = Globals.System.GetTimeMs() + SpellBase.Data4;
             Count--;
         }
     }

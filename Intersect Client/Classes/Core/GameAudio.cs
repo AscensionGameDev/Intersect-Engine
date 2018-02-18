@@ -117,6 +117,7 @@ namespace Intersect_Client.Classes.Core
         //Music
         public static void PlayMusic(string filename, float fadeout = 0f, float fadein = 0f, bool loop = false)
         {
+            if (filename == null) return;
             filename = GameContentManager.RemoveExtension(filename);
             if (sMyMusic != null)
             {
@@ -224,6 +225,7 @@ namespace Intersect_Client.Classes.Core
 
         public MapSound(string filename, int x, int y, int map, bool loop, int distance)
         {
+            if (filename == null) return;
             mFilename = GameContentManager.RemoveExtension(filename).ToLower();
             mX = x;
             mY = y;

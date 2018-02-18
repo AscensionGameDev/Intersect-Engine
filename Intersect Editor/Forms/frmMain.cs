@@ -1402,10 +1402,11 @@ namespace Intersect.Editor.Forms
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (!Globals.ClosingEditor && Globals.CurrentMap != null && Globals.CurrentMap.Changed() &&
-                DarkMessageBox.ShowWarning(Strings.Mapping.savemapdialogue, Strings.Mapping.savemap,
-                    DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.Yes)
+                DarkMessageBox.ShowWarning(Strings.Mapping.maphaschangesdialog, Strings.Mapping.mapnotsaved,
+                    DarkDialogButton.YesNo, Properties.Resources.Icon) == DialogResult.No)
             {
-                SaveMap();
+                e.Cancel = true;
+                return;
             }
             Globals.ClosingEditor = true;
         }

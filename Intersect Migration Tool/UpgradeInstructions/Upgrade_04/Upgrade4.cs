@@ -1,5 +1,4 @@
 ﻿using System;
-using Intersect.Logging;
 using Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib;
 using Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib.GameObjects;
 using Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib.GameObjects.Events;
@@ -7,6 +6,7 @@ using Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib.Ga
 using Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib.GameObjects.Maps.MapList;
 using Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib.GameObjects.Switches_and_Variables;
 using Mono.Data.Sqlite;
+using Log = Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.Logging.Log;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_4
 {
@@ -241,7 +241,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_4
                     SaveGameObject(map);
                     break;
                 case GameObject.CommonEvent:
-                    var buffer = new ByteBuffer();
+                    var buffer = new Upgrade_10.Intersect_Convert_Lib.ByteBuffer();
                     buffer.WriteBytes(data);
                     var evt = new EventBase(index, buffer, true);
                     EventBase.AddObject(index, evt);
@@ -366,7 +366,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_4
                             if (dataReader[MAP_LIST_DATA].GetType() != typeof(DBNull))
                             {
                                 var data = (byte[]) dataReader[MAP_LIST_DATA];
-                                ByteBuffer myBuffer = new ByteBuffer();
+                                Upgrade_10.Intersect_Convert_Lib.ByteBuffer myBuffer = new Upgrade_10.Intersect_Convert_Lib.ByteBuffer();
                                 myBuffer.WriteBytes(data);
                                 MapList.GetList().Load(myBuffer, MapBase.GetObjects(), true, true);
                             }

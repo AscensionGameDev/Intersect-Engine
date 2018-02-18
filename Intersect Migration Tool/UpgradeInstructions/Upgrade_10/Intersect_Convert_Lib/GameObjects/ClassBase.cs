@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.Enums;
+using Newtonsoft.Json;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects
 {
@@ -56,7 +57,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         //Regen Percentages
         public int[] VitalRegen = new int[(int) Vitals.VitalCount];
 
-        public ClassBase(int id) : base(id)
+        [JsonConstructor]
+        public ClassBase(int index) : base(index)
         {
             Name = "New Class";
             for (int i = 0; i < Options.MaxNpcDrops; i++)
@@ -70,9 +72,9 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         public override void Load(byte[] packet)
         {
             var spriteCount = 0;
-            ClassSprite TempSprite = new ClassSprite();
+            ClassSprite tempSprite = new ClassSprite();
             var spellCount = 0;
-            ClassSpell TempSpell = new ClassSpell();
+            ClassSpell tempSpell = new ClassSpell();
 
             var myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(packet);
@@ -90,13 +92,13 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
             spriteCount = myBuffer.ReadInteger();
             for (var i = 0; i < spriteCount; i++)
             {
-                TempSprite = new ClassSprite
+                tempSprite = new ClassSprite
                 {
                     Sprite = myBuffer.ReadString(),
                     Face = myBuffer.ReadString(),
                     Gender = myBuffer.ReadByte()
                 };
-                Sprites.Add(TempSprite);
+                Sprites.Add(tempSprite);
             }
 
             //Base Info
@@ -131,8 +133,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
             PointIncrease = myBuffer.ReadInteger();
 
             //Exp Info
-            BaseExp = myBuffer.ReadInteger();
-            ExpIncrease = myBuffer.ReadInteger();
+            BaseExp = myBuffer.ReadLong();
+            ExpIncrease = myBuffer.ReadLong();
 
             //Regen
             for (int i = 0; i < (int) Vitals.VitalCount; i++)
@@ -152,12 +154,12 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
             spellCount = myBuffer.ReadInteger();
             for (var i = 0; i < spellCount; i++)
             {
-                TempSpell = new ClassSpell
+                tempSpell = new ClassSpell
                 {
                     SpellNum = myBuffer.ReadInteger(),
                     Level = myBuffer.ReadInteger()
                 };
-                Spells.Add(TempSpell);
+                Spells.Add(tempSpell);
             }
 
             myBuffer.Dispose();
@@ -179,8 +181,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
             myBuffer.WriteInteger(Sprites.Count);
             for (var i = 0; i < Sprites.Count; i++)
             {
-                myBuffer.WriteString(Sprites[i].Sprite);
-                myBuffer.WriteString(Sprites[i].Face);
+                myBuffer.WriteString(Intersect.Utilities.TextUtils.SanitizeNone(Sprites[i].Sprite));
+                myBuffer.WriteString(Intersect.Utilities.TextUtils.SanitizeNone(Sprites[i].Face));
                 myBuffer.WriteByte(Sprites[i].Gender);
             }
 

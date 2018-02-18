@@ -431,10 +431,11 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             var mapNum = (int) bf.ReadLong();
             bf.ReadInteger();
-            var mapLength = bf.ReadInteger();
-            var mapData = bf.ReadBytes(mapLength);
+            var mapJson = bf.ReadString();
             var tileLength = bf.ReadInteger();
             var tileData = bf.ReadBytes(tileLength);
+            var attributeDataLength = bf.ReadInteger();
+            var attributeData = bf.ReadBytes(attributeDataLength);
             var revision = bf.ReadInteger();
             var map = MapInstance.Lookup.Get<MapInstance>(mapNum);
             if (map != null)
@@ -452,8 +453,9 @@ namespace Intersect_Client.Classes.Networking
             MapInstance.Lookup.Set(mapNum, map);
             lock (map.MapLock)
             {
-                map.Load(mapData);
+                map.Load(mapJson);
                 map.LoadTileData(tileData);
+                map.LoadAttributes(attributeData);
                 if ((mapNum) == Globals.Me.CurrentMap)
                 {
                     GameAudio.PlayMusic(map.Music, 3, 3, true);
@@ -1304,8 +1306,10 @@ namespace Intersect_Client.Classes.Networking
 
         private static void HandleOpenShop(byte[] packet)
         {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
             Globals.GameShop = new ShopBase(0);
-            Globals.GameShop.Load(packet);
+            Globals.GameShop.Load(bf.ReadString());
             Gui.GameUi.NotifyOpenShop();
         }
 
@@ -1317,8 +1321,10 @@ namespace Intersect_Client.Classes.Networking
 
         private static void HandleOpenCraftingBench(byte[] packet)
         {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
             Globals.GameBench = new BenchBase(0);
-            Globals.GameBench.Load(packet);
+            Globals.GameBench.Load(bf.ReadString());
             Gui.GameUi.NotifyOpenCraftingBench();
         }
 
@@ -1364,7 +1370,7 @@ namespace Intersect_Client.Classes.Networking
                 var id = bf.ReadInteger();
                 var another = Convert.ToBoolean(bf.ReadInteger());
                 var deleted = Convert.ToBoolean(bf.ReadInteger());
-                var data = bf.ReadBytes(bf.Length());
+                var json = bf.ReadString();
 
                 switch (type)
                 {
@@ -1373,7 +1379,7 @@ namespace Intersect_Client.Classes.Networking
                         break;
                     case GameObjectType.Tileset:
                         var obj = new TilesetBase(id);
-                        obj.Load(data);
+                        obj.Load(json);
                         TilesetBase.Lookup.Set(id, obj);
                         if (Globals.HasGameData && !another)
                             Globals.ContentManager.LoadTilesets(TilesetBase.GetNameList());
@@ -1388,7 +1394,7 @@ namespace Intersect_Client.Classes.Networking
                         {
                             lookup.DeleteAt(id);
                             var item = lookup.AddNew(type.GetObjectType(), id);
-                            item.Load(data);
+                            item.Load(json);
                         }
                         break;
                 }

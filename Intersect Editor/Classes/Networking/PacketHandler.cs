@@ -261,10 +261,11 @@ namespace Intersect.Editor.Classes
             }
             else
             {
-                var mapLength = bf.ReadInteger();
-                var mapData = bf.ReadBytes(mapLength);
+                var mapJson = bf.ReadString();
                 var tileLength = bf.ReadInteger();
                 var tileData = bf.ReadBytes(tileLength);
+                var attributeDataLength = bf.ReadInteger();
+                var attributeData = bf.ReadBytes(attributeDataLength);
                 var map = new MapInstance((int) mapNum);
                 if (MapInstance.Lookup.Get<MapInstance>(mapNum) != null)
                 {
@@ -272,11 +273,12 @@ namespace Intersect.Editor.Classes
                         Globals.CurrentMap = map;
                     MapInstance.Lookup.Get<MapInstance>(mapNum).Delete();
                 }
-                map.Load(mapData);
+                map.Load(mapJson);
                 map.LoadTileData(tileData);
-                map.SaveStateAsUnchanged();
+                map.LoadAttributes(attributeData);
                 map.MapGridX = bf.ReadInteger();
                 map.MapGridY = bf.ReadInteger();
+                map.SaveStateAsUnchanged();
                 map.InitAutotiles();
                 map.UpdateAdjacentAutotiles();
                 MapInstance.Lookup.Set(mapNum, map);
@@ -436,7 +438,7 @@ namespace Intersect.Editor.Classes
             var id = bf.ReadInteger();
             var another = Convert.ToBoolean(bf.ReadInteger());
             var deleted = Convert.ToBoolean(bf.ReadInteger());
-            var data = bf.ReadBytes(bf.Length());
+            var json = bf.ReadString();
             switch (type)
             {
                 case GameObjectType.Animation:
@@ -448,7 +450,7 @@ namespace Intersect.Editor.Classes
                     else
                     {
                         var anim = new AnimationBase(id);
-                        anim.Load(data);
+                        anim.Load(json);
                         try
                         {
                             AnimationBase.Lookup.Set(id, anim);
@@ -472,7 +474,7 @@ namespace Intersect.Editor.Classes
                     else
                     {
                         var cls = new ClassBase(id);
-                        cls.Load(data);
+                        cls.Load(json);
                         ClassBase.Lookup.Set(id, cls);
                     }
                     break;
@@ -485,7 +487,7 @@ namespace Intersect.Editor.Classes
                     else
                     {
                         var itm = new ItemBase(id);
-                        itm.Load(data);
+                        itm.Load(json);
                         ItemBase.Lookup.Set(id, itm);
                     }
                     break;
@@ -498,7 +500,7 @@ namespace Intersect.Editor.Classes
                     else
                     {
                         var npc = new NpcBase(id);
-                        npc.Load(data);
+                        npc.Load(json);
                         NpcBase.Lookup.Set(id, npc);
                     }
                     break;
@@ -511,7 +513,7 @@ namespace Intersect.Editor.Classes
                     else
                     {
                         var proj = new ProjectileBase(id);
-                        proj.Load(data);
+                        proj.Load(json);
                         ProjectileBase.Lookup.Set(id, proj);
                     }
                     break;
@@ -524,7 +526,7 @@ namespace Intersect.Editor.Classes
                     else
                     {
                         var qst = new QuestBase(id);
-                        qst.Load(data);
+                        qst.Load(json);
                         QuestBase.Lookup.Set(id, qst);
                     }
                     break;
@@ -537,7 +539,7 @@ namespace Intersect.Editor.Classes
                     else
                     {
                         var res = new ResourceBase(id);
-                        res.Load(data);
+                        res.Load(json);
                         ResourceBase.Lookup.Set(id, res);
                     }
                     break;
@@ -550,7 +552,7 @@ namespace Intersect.Editor.Classes
                     else
                     {
                         var shp = new ShopBase(id);
-                        shp.Load(data);
+                        shp.Load(json);
                         ShopBase.Lookup.Set(id, shp);
                     }
                     break;
@@ -563,7 +565,7 @@ namespace Intersect.Editor.Classes
                     else
                     {
                         var spl = new SpellBase(id);
-                        spl.Load(data);
+                        spl.Load(json);
                         SpellBase.Lookup.Set(id, spl);
                     }
                     break;
@@ -576,7 +578,7 @@ namespace Intersect.Editor.Classes
                     else
                     {
                         var cft = new BenchBase(id);
-                        cft.Load(data);
+                        cft.Load(json);
                         BenchBase.Lookup.Set(id, cft);
                     }
                     break;
@@ -592,7 +594,7 @@ namespace Intersect.Editor.Classes
                     else
                     {
                         var evt = new EventBase(id, -1, -1, true);
-                        evt.Load(data);
+                        evt.Load(json);
                         EventBase.Lookup.Set(id, evt);
                     }
                     break;
@@ -605,7 +607,7 @@ namespace Intersect.Editor.Classes
                     else
                     {
                         var pswtch = new PlayerSwitchBase(id);
-                        pswtch.Load(data);
+                        pswtch.Load(json);
                         PlayerSwitchBase.Lookup.Set(id, pswtch);
                     }
                     break;
@@ -618,7 +620,7 @@ namespace Intersect.Editor.Classes
                     else
                     {
                         var pvar = new PlayerVariableBase(id);
-                        pvar.Load(data);
+                        pvar.Load(json);
                         PlayerVariableBase.Lookup.Set(id, pvar);
                     }
                     break;
@@ -631,7 +633,7 @@ namespace Intersect.Editor.Classes
                     else
                     {
                         var sswtch = new ServerSwitchBase(id);
-                        sswtch.Load(data);
+                        sswtch.Load(json);
                         ServerSwitchBase.Lookup.Set(id, sswtch);
                     }
                     break;
@@ -644,13 +646,13 @@ namespace Intersect.Editor.Classes
                     else
                     {
                         var svar = new ServerVariableBase(id);
-                        svar.Load(data);
+                        svar.Load(json);
                         ServerVariableBase.Lookup.Set(id, svar);
                     }
                     break;
                 case GameObjectType.Tileset:
                     var obj = new TilesetBase(id);
-                    obj.Load(data);
+                    obj.Load(json);
                     TilesetBase.Lookup.Set(id, obj);
                     if (Globals.HasGameData && !another) GameContentManager.LoadTilesets();
                     break;

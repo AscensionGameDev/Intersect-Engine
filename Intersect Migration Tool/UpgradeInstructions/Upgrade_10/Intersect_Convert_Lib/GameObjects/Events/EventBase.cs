@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects.Events
 {
@@ -8,6 +9,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         {
         }
 
+        [JsonConstructor]
         public EventBase(int index, int x, int y, bool isCommon = false, byte isGlobal = 0) : base(index)
         {
             Name = "";
@@ -30,6 +32,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         public EventBase(int index, ByteBuffer myBuffer, bool isCommon = false) : base(index)
         {
             Name = "New Event";
+            CommonEvent = isCommon;
             MyPages = new List<EventPage>();
             Load(myBuffer.ToArray());
         }

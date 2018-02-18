@@ -194,7 +194,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_7
 
         public static byte[] GetServerConfig()
         {
-            ByteBuffer bf = new ByteBuffer();
+            Upgrade_10.Intersect_Convert_Lib.ByteBuffer bf = new Upgrade_10.Intersect_Convert_Lib.ByteBuffer();
             bf.WriteString(Intersect_Convert_Lib.Options.GameName);
 
             //Game Objects

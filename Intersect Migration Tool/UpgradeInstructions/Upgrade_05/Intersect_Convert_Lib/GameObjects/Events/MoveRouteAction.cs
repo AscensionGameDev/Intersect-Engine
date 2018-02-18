@@ -6,7 +6,7 @@
         public EventGraphic Graphic;
         public MoveRouteEnum Type;
 
-        public void Save(ByteBuffer myBuffer)
+        public void Save(Upgrade_10.Intersect_Convert_Lib.ByteBuffer myBuffer)
         {
             myBuffer.WriteInteger((int) Type);
             if (Type == MoveRouteEnum.SetGraphic)
@@ -19,7 +19,7 @@
             }
         }
 
-        public void Load(ByteBuffer myBuffer)
+        public void Load(Upgrade_10.Intersect_Convert_Lib.ByteBuffer myBuffer)
         {
             Type = (MoveRouteEnum) myBuffer.ReadInteger();
             if (Type == MoveRouteEnum.SetGraphic)

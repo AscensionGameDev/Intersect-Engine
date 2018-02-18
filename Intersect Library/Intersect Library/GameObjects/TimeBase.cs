@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
@@ -45,6 +46,16 @@ namespace Intersect.GameObjects
                 bf.WriteByte(RangeColors[i].B);
             }
             return bf.ToArray();
+        }
+
+        public void LoadFromJson(string json)
+        {
+            sTimeBase = JsonConvert.DeserializeObject<TimeBase>(json);
+        }
+
+        public static string GetTimeJson()
+        {
+            return JsonConvert.SerializeObject(sTimeBase);
         }
 
         public void ResetColors()

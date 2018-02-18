@@ -68,7 +68,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
         public static int TileHeight = 32;
         public static int LayerCount = 5;
 
-        public static void LoadFromServer(ByteBuffer bf)
+        public static void LoadFromServer(Upgrade_10.Intersect_Convert_Lib.ByteBuffer bf)
         {
             //General
             GameName = bf.ReadString();

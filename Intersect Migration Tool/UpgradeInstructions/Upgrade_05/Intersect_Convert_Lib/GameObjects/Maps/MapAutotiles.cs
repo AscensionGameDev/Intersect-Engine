@@ -143,7 +143,7 @@
 
         public byte[] GetData()
         {
-            ByteBuffer bf = new ByteBuffer();
+            Upgrade_10.Intersect_Convert_Lib.ByteBuffer bf = new Upgrade_10.Intersect_Convert_Lib.ByteBuffer();
             for (var x = 0; x < Options.MapWidth; x++)
             {
                 for (var y = 0; y < Options.MapHeight; y++)
@@ -162,7 +162,7 @@
             return bf.ToArray();
         }
 
-        public void LoadData(ByteBuffer bf)
+        public void LoadData(Upgrade_10.Intersect_Convert_Lib.ByteBuffer bf)
         {
             for (var x = 0; x < Options.MapWidth; x++)
             {

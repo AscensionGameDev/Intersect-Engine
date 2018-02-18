@@ -22,7 +22,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
 
         public byte[] Data(Dictionary<int, MapBase> gameMaps)
         {
-            ByteBuffer myBuffer = new ByteBuffer();
+            Upgrade_10.Intersect_Convert_Lib.ByteBuffer myBuffer = new Upgrade_10.Intersect_Convert_Lib.ByteBuffer();
             myBuffer.WriteInteger(Items.Count);
             foreach (MapListItem item in Items)
             {
@@ -38,7 +38,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
             return myBuffer.ToArray();
         }
 
-        public bool Load(ByteBuffer myBuffer, Dictionary<int, MapBase> gameMaps, bool isServer = true,
+        public bool Load(Upgrade_10.Intersect_Convert_Lib.ByteBuffer myBuffer, Dictionary<int, MapBase> gameMaps, bool isServer = true,
             bool isTopLevel = false)
         {
             if (isTopLevel) sOrderedMaps.Clear();

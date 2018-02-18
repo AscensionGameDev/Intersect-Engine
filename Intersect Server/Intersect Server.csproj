@@ -200,6 +200,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\Core\DatabaseConnection.cs" />
     <Compile Include="Classes\Core\ServerStart.cs" />
     <Compile Include="Classes\Core\ServerSystem.cs" />
     <Compile Include="Classes\Entities\EventInstance.cs" />

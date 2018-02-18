@@ -2,7 +2,6 @@
 using System.IO;
 using System.Xml;
 using Intersect.Migration.Localization;
-using Intersect.Logging;
 using Intersect.Migration.UpgradeInstructions.Upgrade_1;
 using Intersect.Migration.UpgradeInstructions.Upgrade_10;
 using Intersect.Migration.UpgradeInstructions.Upgrade_2;
@@ -174,19 +173,24 @@ namespace Intersect.Migration
                         IncrementDatabaseVersion();
                         break;
                     case 10:
-                        var upgrade10 = new Upgrade10(sDbConnection);
+                        sDbConnection.Close();
+                        sDbConnection = null;
+                        var upgrade10 = new Upgrade10();
                         upgrade10.Upgrade();
-                        currentVersion++;
-                        IncrementDatabaseVersion();
+                        //currentVersion++;
+                        //IncrementDatabaseVersion(); //TOOD: increment both db's
                         break;
                     default:
                         throw new Exception(Strings.Upgrade.noinstructions);
                 }
+                if (sDbConnection == null) break;
                 currentVersion = GetDatabaseVersion();
             }
-
-            sDbConnection.Close();
-            sDbConnection = null;
+            if (sDbConnection != null)
+            {
+                sDbConnection.Close();
+                sDbConnection = null;
+            }
             Console.WriteLine(Strings.Upgrade.updated.ToString( currentVersion));
             Console.WriteLine(Strings.Upgrade.backupinfo.ToString( startingVersion, startingVersion,
                 DateTime.Now.ToString("yyyy-MM-dd hh-mm-ss")));

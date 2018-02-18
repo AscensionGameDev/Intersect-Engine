@@ -18,6 +18,7 @@ using Intersect.Server.Classes.Items;
 using Intersect.Server.Classes.Maps;
 using Intersect.Server.Classes.Spells;
 using Intersect.Utilities;
+using Newtonsoft.Json;
 
 namespace Intersect.Server.Classes.Networking
 {
@@ -672,12 +673,15 @@ namespace Intersect.Server.Classes.Networking
             var mapLength = bf.ReadInteger();
             var map = MapInstance.Lookup.Get<MapInstance>(mapNum);
             if (map == null) return;
-            MapInstance.Lookup.Get<MapInstance>(mapNum).Load(bf.ReadBytes((int) mapLength),
-                MapInstance.Lookup.Get<MapInstance>(mapNum).Revision + 1);
+            MapInstance.Lookup.Get<MapInstance>(mapNum).Load(bf.ReadString(), MapInstance.Lookup.Get<MapInstance>(mapNum).Revision + 1);
             Database.SaveGameObject(MapInstance.Lookup.Get<MapInstance>(mapNum));
             var tileDataLength = bf.ReadInteger();
             var tileData = bf.ReadBytes(tileDataLength);
             if (map.TileData != null) map.TileData = tileData;
+            var attributeDataLength = bf.ReadInteger();
+            var attributeData = bf.ReadBytes(attributeDataLength);
+            map.LoadAttributes(attributeData);
+            Database.SaveMapAttributes(map.Index, map.AttributesData());
             Database.SaveMapTiles(map.Index, tileData);
             Globals.Clients?.ForEach(t =>
             {
@@ -2271,7 +2275,7 @@ namespace Intersect.Server.Classes.Networking
                 {
                     Globals.KillProjectilesOf((ProjectileBase) obj);
                 }
-                obj.Load(bf.ReadBytes(bf.Length()));
+                JsonConvert.PopulateObject(bf.ReadString(), obj);
                 PacketSender.SendGameObjectToAll(obj, false);
                 Database.SaveGameObject(obj);
             }

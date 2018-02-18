@@ -12,7 +12,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Li
         {
         }
 
-        public ConditionList(ByteBuffer buff)
+        public ConditionList(Upgrade_10.Intersect_Convert_Lib.ByteBuffer buff)
         {
             Load(buff);
         }
@@ -22,7 +22,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Li
             Load(data);
         }
 
-        public void Load(ByteBuffer buff)
+        public void Load(Upgrade_10.Intersect_Convert_Lib.ByteBuffer buff)
         {
             Name = buff.ReadString();
             Conditions.Clear();
@@ -37,20 +37,20 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Li
 
         public void Load(byte[] data)
         {
-            var buff = new ByteBuffer();
+            var buff = new Upgrade_10.Intersect_Convert_Lib.ByteBuffer();
             buff.WriteBytes(data);
             Load(buff);
             buff.Dispose();
         }
 
-        public void Save(ByteBuffer buff)
+        public void Save(Upgrade_10.Intersect_Convert_Lib.ByteBuffer buff)
         {
             buff.WriteBytes(Data());
         }
 
         public byte[] Data()
         {
-            var buff = new ByteBuffer();
+            var buff = new Upgrade_10.Intersect_Convert_Lib.ByteBuffer();
             buff.WriteString(Name);
             buff.WriteInteger(Conditions.Count);
             for (int i = 0; i < Conditions.Count; i++)

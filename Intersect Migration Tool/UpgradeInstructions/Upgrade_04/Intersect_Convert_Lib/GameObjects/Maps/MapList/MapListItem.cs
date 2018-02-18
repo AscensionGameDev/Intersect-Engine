@@ -5,13 +5,13 @@
         public string Name = "";
         public int Type = -1; //0 for directory, 1 for map
 
-        public void GetData(ByteBuffer myBuffer)
+        public void GetData(Upgrade_10.Intersect_Convert_Lib.ByteBuffer myBuffer)
         {
             myBuffer.WriteInteger(Type);
             myBuffer.WriteString(Name);
         }
 
-        public void Load(ByteBuffer myBuffer)
+        public void Load(Upgrade_10.Intersect_Convert_Lib.ByteBuffer myBuffer)
         {
             Name = myBuffer.ReadString();
         }

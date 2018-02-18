@@ -24,7 +24,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
 
         public override void Load(byte[] packet)
         {
-            var myBuffer = new ByteBuffer();
+            var myBuffer = new Upgrade_10.Intersect_Convert_Lib.ByteBuffer();
             myBuffer.WriteBytes(packet);
             Name = myBuffer.ReadString();
             DefaultCurrency = myBuffer.ReadInteger();
@@ -46,7 +46,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
 
         public byte[] ShopData()
         {
-            var myBuffer = new ByteBuffer();
+            var myBuffer = new Upgrade_10.Intersect_Convert_Lib.ByteBuffer();
             myBuffer.WriteString(Name);
             myBuffer.WriteInteger(DefaultCurrency);
             myBuffer.WriteInteger(SellingItems.Count);
@@ -71,7 +71,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
         public int CostItemVal;
         public int ItemNum;
 
-        public ShopItem(ByteBuffer myBuffer)
+        public ShopItem(Upgrade_10.Intersect_Convert_Lib.ByteBuffer myBuffer)
         {
             ItemNum = myBuffer.ReadInteger();
             CostItemNum = myBuffer.ReadInteger();
@@ -87,7 +87,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
 
         public byte[] Data()
         {
-            ByteBuffer myBuffer = new ByteBuffer();
+            Upgrade_10.Intersect_Convert_Lib.ByteBuffer myBuffer = new Upgrade_10.Intersect_Convert_Lib.ByteBuffer();
             myBuffer.WriteInteger(ItemNum);
             myBuffer.WriteInteger(CostItemNum);
             myBuffer.WriteInteger(CostItemVal);

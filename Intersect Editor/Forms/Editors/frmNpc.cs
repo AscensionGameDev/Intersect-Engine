@@ -16,7 +16,7 @@ namespace Intersect.Editor.Forms
     public partial class FrmNpc : EditorForm
     {
         private List<NpcBase> mChanged = new List<NpcBase>();
-        private byte[] mCopiedItem;
+        private string mCopiedItem;
         private NpcBase mEditorItem;
 
         public FrmNpc()
@@ -402,7 +402,7 @@ namespace Intersect.Editor.Forms
         {
             if (mEditorItem != null && lstNpcs.Focused)
             {
-                mCopiedItem = mEditorItem.BinaryData;
+                mCopiedItem = mEditorItem.JsonData;
                 toolStripItemPaste.Enabled = true;
             }
         }
