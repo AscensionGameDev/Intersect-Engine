@@ -225,7 +225,10 @@ namespace Intersect.Server.Classes.Core
 
             if (!Directory.Exists(DIRECTORY_BACKUPS))
                 Directory.CreateDirectory(DIRECTORY_BACKUPS);
-        }
+
+			if (!Directory.Exists(Path.Combine("resources", "languages")))
+				Directory.CreateDirectory(Path.Combine("resources", "languages"));
+		}
 
         //As of now Database writes only occur on player saving & when editors make game changes
         //Database writes are actually pretty rare. And even player saves are offloaded as tasks so
