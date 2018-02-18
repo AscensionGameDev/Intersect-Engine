@@ -182,7 +182,7 @@ namespace Intersect_Client.Classes.Entities
                 }
                 else
                 {
-                    PacketSender.SendDropItem(index, 1);
+					InputBox iBox = new InputBox(Strings.Inventory.dropitem, Strings.Inventory.dropprompt.ToString(ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum).Name), true, InputBox.InputType.YesNo, DropInputBoxOkay, null, index);
                 }
             }
         }
@@ -196,7 +196,12 @@ namespace Intersect_Client.Classes.Entities
             }
         }
 
-        public int FindItem(int itemNum, int itemVal = 1)
+		private void DropInputBoxOkay(object sender, EventArgs e)
+		{
+			PacketSender.SendDropItem(((InputBox)sender).UserData, 1);
+		}
+
+		public int FindItem(int itemNum, int itemVal = 1)
         {
             for (int i = 0; i < Options.MaxInvItems; i++)
             {
@@ -254,7 +259,7 @@ namespace Intersect_Client.Classes.Entities
                     }
                     else
                     {
-                        PacketSender.SendSellItem(index, 1);
+						InputBox iBox = new InputBox(Strings.Shop.sellitem, Strings.Shop.sellprompt.ToString(ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum).Name), true, InputBox.InputType.YesNo, SellInputBoxOkay, null, index);
                     }
                 }
                 else
@@ -274,8 +279,13 @@ namespace Intersect_Client.Classes.Entities
             }
         }
 
-        //bank
-        public void TryDepositItem(int index)
+		private void SellInputBoxOkay(object sender, EventArgs e)
+		{
+			PacketSender.SendSellItem(((InputBox)sender).UserData, 1);
+		}
+
+		//bank
+		public void TryDepositItem(int index)
         {
             if (ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum) != null)
             {
@@ -555,6 +565,69 @@ namespace Intersect_Client.Classes.Entities
                 }
             }
         }
+
+		protected int GetDistanceTo(Entity target)
+		{
+			if (target != null)
+			{
+				var myMap = MapInstance.Lookup.Get<MapInstance>(CurrentMap);
+				var targetMap = MapInstance.Lookup.Get<MapInstance>(target.CurrentMap);
+				if (myMap != null && targetMap != null)
+				{
+					//Calculate World Tile of Me
+					var x1 = CurrentX + (myMap.MapGridX * Options.MapWidth);
+					var y1 = CurrentY + (myMap.MapGridY * Options.MapHeight);
+					//Calculate world tile of target
+					var x2 = target.CurrentX + (targetMap.MapGridX * Options.MapWidth);
+					var y2 = target.CurrentY + (targetMap.MapGridY * Options.MapHeight);
+					return (int)Math.Sqrt(Math.Pow(x1 - x2, 2) + (Math.Pow(y1 - y2, 2)));
+				}
+			}
+			//Something is null.. return a value that is out of range :) 
+			return 9999;
+		}
+
+		public void AutoTarget()
+		{
+			Entity closestEntity = null;
+
+			foreach (var en in Globals.Entities)
+			{
+				if (en.Value == null) continue;
+				if (Globals.GridMaps.Contains(en.Value.CurrentMap))
+				{
+					if (en.Value.GetEntityType() == EntityTypes.GlobalEntity || en.Value.GetEntityType() == EntityTypes.Player)
+					{
+						if (en.Value != Globals.Me)
+						{
+							if (GetDistanceTo(en.Value) < GetDistanceTo(closestEntity))
+							{
+								closestEntity = en.Value;
+							}
+						}
+					}
+				}
+			}
+
+			if (closestEntity == null) return;
+
+			if (TargetBox != null)
+			{
+				TargetBox.Dispose();
+				TargetBox = null;
+			}
+			if (closestEntity.GetType() == typeof(Player))
+			{
+				TargetBox = new EntityBox(Gui.GameUi.GameCanvas, EntityTypes.Player, closestEntity);
+			}
+			else
+			{
+				TargetBox = new EntityBox(Gui.GameUi.GameCanvas, EntityTypes.GlobalEntity, closestEntity);
+			}
+
+			TargetIndex = closestEntity.MyIndex;
+			TargetType = 0;
+		}
 
         public bool TryBlock()
         {

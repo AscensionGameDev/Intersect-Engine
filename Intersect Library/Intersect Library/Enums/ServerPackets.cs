@@ -41,6 +41,8 @@ namespace Intersect.Enums
         FadeMusic,
         PlaySound,
         StopSounds,
+		ShowPicture,
+		HidePicture,
         OpenShop,
         CloseShop,
         OpenBank,

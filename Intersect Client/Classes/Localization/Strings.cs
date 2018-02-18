@@ -180,7 +180,8 @@ namespace Intersect.Client.Classes.Localization
             {
                 {"attackinteract", @"Attack/Interact:"},
                 {"block", @"Block:"},
-                {"enter", @"Enter:"},
+				{"autotarget", @"Auto Target:"},
+				{"enter", @"Enter:"},
                 {"hotkey0", @"Hot Key 0:"},
                 {"hotkey1", @"Hot Key 1:"},
                 {"hotkey2", @"Hot Key 2:"},
@@ -249,8 +250,9 @@ namespace Intersect.Client.Classes.Localization
         {
             public static LocalizedString exp = @"EXP:";
             public static LocalizedString expval = @"{00} / {01}";
-            public static LocalizedString level = @"Level: {00}";
-            public static LocalizedString maxlevel = @"Max Level";
+            public static LocalizedString level = @"{00} Lv.{01}";
+			public static LocalizedString map = @"{00}";
+			public static LocalizedString maxlevel = @"Max Level";
             public static LocalizedString party = @"Party";
             public static LocalizedString partytip = @"Invite {00} to your party.";
             public static LocalizedString trade = @"Trade";
@@ -326,7 +328,8 @@ namespace Intersect.Client.Classes.Localization
         {
             public static LocalizedString dropitem = @"Drop Item";
             public static LocalizedString dropitemprompt = @"How many/much {00} do you want to drop?";
-            public static LocalizedString title = @"Inventory";
+			public static LocalizedString dropprompt = @"Do you wish to drop the item: {00}?";
+			public static LocalizedString title = @"Inventory";
         }
 
         public struct ItemDesc
@@ -674,7 +677,8 @@ namespace Intersect.Client.Classes.Localization
             public static LocalizedString costs = @"Costs {00} {01}(s)";
             public static LocalizedString sellitem = @"Sell Item";
             public static LocalizedString sellitemprompt = @"How many/much {00} would you like to sell?";
-            public static LocalizedString sellsfor = @"Sells for {00} {01}(s)";
+			public static LocalizedString sellprompt = @"Do you wish to sell the item: {00}?";
+			public static LocalizedString sellsfor = @"Sells for {00} {01}(s)";
             public static LocalizedString wontbuy = @"Shop Will Not Buy This Item";
         }
 

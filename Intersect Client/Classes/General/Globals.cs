@@ -88,9 +88,9 @@ namespace Intersect_Client.Classes.General
 
         public static bool InTrade = false;
 
-        //Game Shop
-        //Only need 1 shop, and that is the one we see at a given moment in time.
-        public static ShopBase GameShop;
+		//Game Shop
+		//Only need 1 shop, and that is the one we see at a given moment in time.
+		public static ShopBase GameShop;
 
         //Only need 1 bench, and that is the one we see at a given moment in time.
         public static BenchBase GameBench;

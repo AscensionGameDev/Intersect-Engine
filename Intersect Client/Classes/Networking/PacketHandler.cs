@@ -183,7 +183,13 @@ namespace Intersect_Client.Classes.Networking
                     case ServerPackets.StopSounds:
                         HandleStopSounds(bf.ReadBytes(bf.Length()));
                         break;
-                    case ServerPackets.OpenShop:
+					case ServerPackets.ShowPicture:
+						HandleShowPicture(bf.ReadBytes(bf.Length()));
+						break;
+					case ServerPackets.HidePicture:
+						HandleHidePicture(bf.ReadBytes(bf.Length()));
+						break;
+					case ServerPackets.OpenShop:
                         HandleOpenShop(bf.ReadBytes(bf.Length()));
                         break;
                     case ServerPackets.CloseShop:
@@ -1304,7 +1310,23 @@ namespace Intersect_Client.Classes.Networking
             GameAudio.StopAllSounds();
         }
 
-        private static void HandleOpenShop(byte[] packet)
+		private static void HandleShowPicture(byte[] packet)
+		{
+			var bf = new ByteBuffer();
+			bf.WriteBytes(packet);
+			string picture = bf.ReadString();
+			int size = bf.ReadInteger();
+			bool clickable = Convert.ToBoolean(bf.ReadInteger());
+			Gui.GameUi.ShowPicture(picture, size, clickable);
+			bf.Dispose();
+		}
+
+		private static void HandleHidePicture(byte[] packet)
+		{
+			Gui.GameUi.HidePicture();
+		}
+
+		private static void HandleOpenShop(byte[] packet)
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
