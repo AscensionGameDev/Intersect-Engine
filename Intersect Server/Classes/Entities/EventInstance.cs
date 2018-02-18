@@ -1257,7 +1257,15 @@ namespace Intersect.Server.Classes.Entities
                     PacketSender.SendStopSounds(MyClient);
                     CallStack.Peek().CommandIndex++;
                     break;
-                case EventCommandType.Wait:
+				case EventCommandType.ShowPicture:
+					PacketSender.SendShowPicture(MyClient, command.Strs[0], command.Ints[0], command.Ints[1]);
+					CallStack.Peek().CommandIndex++;
+					break;
+				case EventCommandType.HidePicture:
+					PacketSender.SendHidePicture(MyClient);
+					CallStack.Peek().CommandIndex++;
+					break;
+				case EventCommandType.Wait:
                     WaitTimer = Globals.System.GetTimeMs() +
                                 CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
                                     .Commands[CallStack.Peek().CommandIndex].Ints[0];

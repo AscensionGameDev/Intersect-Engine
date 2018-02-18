@@ -311,7 +311,21 @@ Tick timer saved in server config.json.";
             public static LocalizedString title = @"Change Face";
         }
 
-        public struct EventChangeGender
+		public struct EventShowPicture
+		{
+			public static LocalizedString cancel = @"Cancel";
+			public static LocalizedString label = @"Picture:";
+			public static LocalizedString okay = @"Ok";
+			public static LocalizedString title = @"Show Picture";
+			public static LocalizedString checkbox = @"Click To Close Image?";
+			public static LocalizedString size = @"Size:";
+			public static LocalizedString original = @"Original";
+			public static LocalizedString fullscreen = @"Full Screen";
+			public static LocalizedString halfscreen = @"Half Screen";
+			public static LocalizedString stretchtofit = @"Stretch To Fit";
+		}
+
+		public struct EventChangeGender
         {
             public static LocalizedString cancel = @"Cancel";
             public static LocalizedString[] genders = new LocalizedString[]
@@ -425,7 +439,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString globalswitch = @"Set Global Switch {00} to {01}";
             public static LocalizedString globalvariable = @"Set Global Variable {00} ({01})";
             public static LocalizedString gotolabel = @"Go to Label {00}";
-            public static LocalizedString holdplayer = @"Hold Player";
+			public static LocalizedString hidepicture = @"Hide Picture";
+			public static LocalizedString holdplayer = @"Hold Player";
             public static LocalizedString invalid = @"Invalid Command";
             public static LocalizedString itemnotchanged = @"Item(s) Not Given/Taken (Doesn't have/Inventory full)";
             public static LocalizedString itemschanged = @"Item(s) Given/Taken Successfully";
@@ -473,7 +488,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString setvariable = @"Set to {00}";
             public static LocalizedString showoffer = @"Show Offer Window";
             public static LocalizedString showoptions = @"Show Options: {00}";
-            public static LocalizedString showtext = @"Show Text: {00}";
+			public static LocalizedString showpicture = @"Show Picture";
+			public static LocalizedString showtext = @"Show Text: {00}";
             public static LocalizedString skipcompletionevent = @"Without Running Completion Event";
             public static LocalizedString spawnnpc = @"Spawn Npc {00} {01}";
             public static LocalizedString spawnonevent = @"On Event #{00} {01} [X Offset: {02} Y Offset: {03} Dir: {04}]";
@@ -518,7 +534,8 @@ Tick timer saved in server config.json.";
                 {"fadeoutbgm", @"Fadeout BGM"},
                 {"giveexperience", @"Give Experience"},
                 {"gotolabel", @"Go To Label"},
-                {"holdplayer", @"Hold Player"},
+				{"hidepicture", @"Hide Picture"},
+				{"holdplayer", @"Hold Player"},
                 {"label", @"Label"},
                 {"levelup", @"Level Up"},
                 {"logicflow", @"Logic Flow"},
@@ -541,7 +558,8 @@ Tick timer saved in server config.json.";
                 {"setvariable", @"Set Variable"},
                 {"shopandbank", @"Shop and Bank"},
                 {"showoptions", @"Show Options"},
-                {"showtext", @"Show Text"},
+				{"showpicture", @"Show Picture"},
+				{"showtext", @"Show Text"},
                 {"spawnnpc", @"Spawn NPC"},
                 {"specialeffects", @"Special Effects"},
                 {"startcommonevent", @"Start Common Event"},
@@ -550,7 +568,7 @@ Tick timer saved in server config.json.";
                 {"wait", @"Wait..."},
                 {"waitmoveroute", @"Wait for Route Completion"},
                 {"warpplayer", @"Warp Player"},
-            };
+			};
         }
 
         public struct EventCompleteQuestTask

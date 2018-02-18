@@ -8,6 +8,7 @@ using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.UI.Game.Chat;
+using Intersect.Config;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -37,7 +38,7 @@ namespace Intersect_Client.Classes.UI.Game
             mChatboxMessages = new ListBox(mChatboxWindow, "MessageList");
             mChatboxMessages.EnableScroll(false, true);
 
-            mChatboxInput = new TextBox(mChatboxWindow, "ChatboxInputField");
+			mChatboxInput = new TextBox(mChatboxWindow, "ChatboxInputField");
             mChatboxInput.SubmitPressed += ChatBoxInput_SubmitPressed;
             mChatboxInput.Text = GetDefaultInputText();
             mChatboxInput.Clicked += ChatBoxInput_Clicked;
@@ -88,7 +89,7 @@ namespace Intersect_Client.Classes.UI.Game
                     rw.Clicked += ChatboxRow_Clicked;
                     mReceivedMessage = true;
 
-                    while (mChatboxMessages.RowCount > 20)
+					while (mChatboxMessages.RowCount > ClientOptions.ChatLines)
                     {
                         mChatboxMessages.RemoveRow(0);
                     }

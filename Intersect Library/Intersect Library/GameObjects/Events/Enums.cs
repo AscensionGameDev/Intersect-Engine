@@ -95,6 +95,8 @@
         FadeoutBgm,
         PlaySound,
         StopSounds,
+		ShowPicture,
+		HidePicture,
 
         //Etc
         Wait,
