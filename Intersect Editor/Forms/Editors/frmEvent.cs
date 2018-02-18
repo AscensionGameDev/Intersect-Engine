@@ -1342,7 +1342,11 @@ namespace Intersect.Editor.Forms
                     return Strings.EventCommandList.playsound.ToString( command.Strs[0]);
                 case EventCommandType.StopSounds:
                     return Strings.EventCommandList.stopsounds;
-                case EventCommandType.Wait:
+				case EventCommandType.ShowPicture:
+					return Strings.EventCommandList.showpicture;
+				case EventCommandType.HidePicture:
+					return Strings.EventCommandList.hidepicture;
+				case EventCommandType.Wait:
                     return Strings.EventCommandList.wait.ToString( command.Ints[0]);
                 case EventCommandType.OpenBank:
                     return Strings.EventCommandList.openbank;
@@ -1508,7 +1512,12 @@ namespace Intersect.Editor.Forms
                     break;
                 case EventCommandType.StopSounds:
                     break;
-                case EventCommandType.Wait:
+				case EventCommandType.ShowPicture:
+					cmdWindow = new EventCommand_ShowPicture(command, this);
+					break;
+				case EventCommandType.HidePicture:
+					break;
+				case EventCommandType.Wait:
                     cmdWindow = new EventCommandWait(command, this);
                     break;
                 case EventCommandType.OpenBank:

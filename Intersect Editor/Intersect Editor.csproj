@@ -275,6 +275,12 @@
     <Compile Include="Forms\Editors\Event Commands\EventCommand_SetClass.Designer.cs">
       <DependentUpon>EventCommand_SetClass.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Editors\Event Commands\EventCommand_ShowPicture.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\Event Commands\EventCommand_ShowPicture.Designer.cs">
+      <DependentUpon>EventCommand_ShowPicture.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Editors\Event Commands\EventCommand_SpawnNpc.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -636,6 +642,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_SetClass.resx">
       <DependentUpon>EventCommand_SetClass.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_ShowPicture.resx">
+      <DependentUpon>EventCommand_ShowPicture.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_SpawnNpc.resx">
       <DependentUpon>EventCommand_SpawnNpc.cs</DependentUpon>

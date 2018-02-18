@@ -1,4 +1,5 @@
-﻿using Intersect.Client.Classes.UI.Game;
+﻿using Intersect.Client.Classes.UI;
+using Intersect.Client.Classes.UI.Game;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using IntersectClientExtras.Gwen.Control;
@@ -14,7 +15,8 @@ namespace Intersect_Client.Classes.UI.Game
         private BankWindow mBankWindow;
         private Chatbox mChatBox;
         private CraftingWindow mCraftingBenchWindow;
-        private DebugMenu mDebugMenu;
+		private PictureWindow mPictureWindow;
+		private DebugMenu mDebugMenu;
 
         private EventWindow mEventWindow;
         public EntityBox PlayerBox;
@@ -172,8 +174,21 @@ namespace Intersect_Client.Classes.UI.Game
             Globals.InCraft = true;
         }
 
-        //Quest Log
-        public void NotifyQuestsUpdated()
+		//Picture
+
+		public void ShowPicture(string picture, int size, bool clickable)
+		{
+			if (mPictureWindow != null) mPictureWindow.Close();
+			mPictureWindow = new PictureWindow(GameCanvas, picture, size, clickable);
+		}
+
+		public void HidePicture()
+		{
+			mPictureWindow.Close();
+		}
+
+		//Quest Log
+		public void NotifyQuestsUpdated()
         {
             mShouldUpdateQuestLog = true;
         }

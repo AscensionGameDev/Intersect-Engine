@@ -582,7 +582,7 @@ namespace Intersect_Client.Classes.Core
 
         public static FloatRect GetSourceRect(GameTexture gameTexture)
         {
-            return gameTexture == null
+			return gameTexture == null
                 ? new FloatRect()
                 : new FloatRect(0, 0, gameTexture.GetWidth(), gameTexture.GetHeight());
         }
