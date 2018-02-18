@@ -145,85 +145,81 @@ namespace Intersect_Client.Classes.UI.Menu
 
         public void TryLogin()
         {
-            var sha = new SHA256Managed();
             if (Globals.WaitingOnServer)
             {
                 return;
             }
-            if (GameNetwork.Connected)
-            {
-                if (FieldChecking.IsValidUsername(mUsernameTextbox.Text, Strings.Regex.username))
-                {
-                    if (mUseSavedPass)
-                    {
-                        GameFade.FadeOut();
-                        PacketSender.SendLogin(mUsernameTextbox.Text, mSavedPass);
-                        if (!mSavePassChk.IsChecked) SaveCredentials();
-                        Globals.WaitingOnServer = true;
-                    }
-                    else
-                    {
-                        if (FieldChecking.IsValidPassword(mPasswordTextbox.Text, Strings.Regex.password))
-                        {
-                            GameFade.FadeOut();
-                            PacketSender.SendLogin(mUsernameTextbox.Text,
-                                BitConverter.ToString(
-                                        sha.ComputeHash(Encoding.UTF8.GetBytes(mPasswordTextbox.Text.Trim())))
-                                    .Replace("-", ""));
-                            SaveCredentials();
-                            Globals.WaitingOnServer = true;
-                        }
-                        else
-                        {
-                            Gui.MsgboxErrors.Add(
-                                new KeyValuePair<string, string>("", Strings.Errors.passwordinvalid));
-                        }
-                    }
-                }
-                else
-                {
-                    Gui.MsgboxErrors.Add(
-                        new KeyValuePair<string, string>("", Strings.Errors.usernameinvalid));
-                }
-            }
-            else
+
+            if (!GameNetwork.Connected)
             {
                 Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.notconnected));
+                return;
             }
+
+            if (!FieldChecking.IsValidUsername(mUsernameTextbox?.Text, Strings.Regex.username))
+            {
+                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.usernameinvalid));
+                return;
+            }
+
+            if (!FieldChecking.IsValidPassword(mPasswordTextbox?.Text, Strings.Regex.password))
+            {
+                if (!mUseSavedPass)
+                {
+                    Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.passwordinvalid));
+                    return;
+                }
+            }
+
+            var password = mSavedPass;
+            if (!mUseSavedPass)
+            {
+                using (var sha = new SHA256Managed())
+                {
+                    password = ComputePasswordHash(mPasswordTextbox?.Text?.Trim());
+                }
+            }
+
+            GameFade.FadeOut();
+            PacketSender.SendLogin(mUsernameTextbox?.Text, password);
+            SaveCredentials();
+            Globals.WaitingOnServer = true;
         }
 
         private void LoadCredentials()
         {
-            string name = Globals.Database.LoadPreference("Username");
-            if (!string.IsNullOrEmpty(name))
+            var name = Globals.Database.LoadPreference("Username");
+            if (string.IsNullOrEmpty(name)) return;
+            mUsernameTextbox.Text = name;
+            var pass = Globals.Database.LoadPreference("Password");
+            if (string.IsNullOrEmpty(pass)) return;
+            mPasswordTextbox.Text = "****************";
+            mSavedPass = pass;
+            mUseSavedPass = true;
+            mSavePassChk.IsChecked = true;
+        }
+
+        private static string ComputePasswordHash(string password)
+        {
+            using (var sha = new SHA256Managed())
             {
-                mUsernameTextbox.Text = name;
-                string pass = Globals.Database.LoadPreference("Password");
-                if (!string.IsNullOrEmpty(pass))
-                {
-                    mPasswordTextbox.Text = "*********";
-                    mSavedPass = pass;
-                    mUseSavedPass = true;
-                    mSavePassChk.IsChecked = true;
-                }
+                return BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password ?? ""))).Replace("-", "");
             }
         }
 
         private void SaveCredentials()
         {
-            var sha = new SHA256Managed();
+            var username = "";
+            var password = "";
+
             if (mSavePassChk.IsChecked)
             {
-                Globals.Database.SavePreference("Username", mUsernameTextbox.Text.Trim());
-                Globals.Database.SavePreference("Password",
-                    BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(mPasswordTextbox.Text.Trim())))
-                        .Replace("-", ""));
+                username = mUsernameTextbox?.Text?.Trim();
+                password = mUseSavedPass ? mSavedPass : ComputePasswordHash(mPasswordTextbox?.Text?.Trim());
             }
-            else
-            {
-                Globals.Database.SavePreference("Username", "");
-                Globals.Database.SavePreference("Password", "");
-            }
+
+            Globals.Database.SavePreference("Username", username);
+            Globals.Database.SavePreference("Password", password);
         }
     }
 }
