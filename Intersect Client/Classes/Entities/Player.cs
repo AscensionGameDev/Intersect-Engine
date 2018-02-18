@@ -182,7 +182,7 @@ namespace Intersect_Client.Classes.Entities
                 }
                 else
                 {
-                    PacketSender.SendDropItem(index, 1);
+					InputBox iBox = new InputBox(Strings.Inventory.dropitem, Strings.Inventory.dropprompt.ToString(ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum).Name), true, InputBox.InputType.YesNo, DropInputBoxOkay, null, index);
                 }
             }
         }
@@ -196,7 +196,12 @@ namespace Intersect_Client.Classes.Entities
             }
         }
 
-        public int FindItem(int itemNum, int itemVal = 1)
+		private void DropInputBoxOkay(object sender, EventArgs e)
+		{
+			PacketSender.SendDropItem(((InputBox)sender).UserData, 1);
+		}
+
+		public int FindItem(int itemNum, int itemVal = 1)
         {
             for (int i = 0; i < Options.MaxInvItems; i++)
             {
@@ -254,7 +259,7 @@ namespace Intersect_Client.Classes.Entities
                     }
                     else
                     {
-                        PacketSender.SendSellItem(index, 1);
+						InputBox iBox = new InputBox(Strings.Shop.sellitem, Strings.Shop.sellprompt.ToString(ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum).Name), true, InputBox.InputType.YesNo, SellInputBoxOkay, null, index);
                     }
                 }
                 else
@@ -274,8 +279,13 @@ namespace Intersect_Client.Classes.Entities
             }
         }
 
-        //bank
-        public void TryDepositItem(int index)
+		private void SellInputBoxOkay(object sender, EventArgs e)
+		{
+			PacketSender.SendSellItem(((InputBox)sender).UserData, 1);
+		}
+
+		//bank
+		public void TryDepositItem(int index)
         {
             if (ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum) != null)
             {

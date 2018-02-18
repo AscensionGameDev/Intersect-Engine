@@ -327,7 +327,8 @@ namespace Intersect.Client.Classes.Localization
         {
             public static LocalizedString dropitem = @"Drop Item";
             public static LocalizedString dropitemprompt = @"How many/much {00} do you want to drop?";
-            public static LocalizedString title = @"Inventory";
+			public static LocalizedString dropprompt = @"Do you wish to drop the item: {00}?";
+			public static LocalizedString title = @"Inventory";
         }
 
         public struct ItemDesc
@@ -675,7 +676,8 @@ namespace Intersect.Client.Classes.Localization
             public static LocalizedString costs = @"Costs {00} {01}(s)";
             public static LocalizedString sellitem = @"Sell Item";
             public static LocalizedString sellitemprompt = @"How many/much {00} would you like to sell?";
-            public static LocalizedString sellsfor = @"Sells for {00} {01}(s)";
+			public static LocalizedString sellprompt = @"Do you wish to sell the item: {00}?";
+			public static LocalizedString sellsfor = @"Sells for {00} {01}(s)";
             public static LocalizedString wontbuy = @"Shop Will Not Buy This Item";
         }
 
