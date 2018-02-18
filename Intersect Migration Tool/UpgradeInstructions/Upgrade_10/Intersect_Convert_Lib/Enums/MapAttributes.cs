@@ -6,7 +6,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         Blocked,
         Item,
         ZDimension,
-        NPCAvoid,
+        NpcAvoid,
         Warp,
         Sound,
         Resource,

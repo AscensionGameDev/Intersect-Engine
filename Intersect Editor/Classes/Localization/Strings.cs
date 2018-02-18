@@ -1355,6 +1355,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString savemap = @"Save current map?";
             public static LocalizedString savemapdialogue = @"Do you want to save your current map?";
             public static LocalizedString savemapdialoguesure = @"Are you sure you want to save your current map?";
+            public static LocalizedString mapnotsaved = @"Unsaved changes!";
+            public static LocalizedString maphaschangesdialog = @"There are unsaved changes to this map, are you sure you want to exit?";
         }
 
         public struct MapProperties

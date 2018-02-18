@@ -37,14 +37,15 @@ namespace Intersect.Editor.Classes
         public static void SendMap(MapInstance map)
         {
             var bf = new ByteBuffer();
-            var mapData = map.GetMapData(false);
             bf.WriteLong((int) ClientPackets.SaveMap);
             bf.WriteInteger(map.Index);
-            bf.WriteInteger(mapData.Length);
-            bf.WriteBytes(mapData);
+            bf.WriteString(map.JsonData);
             var tileData = map.GenerateTileData();
             bf.WriteInteger(tileData.Length);
             bf.WriteBytes(tileData);
+            var attributeData = map.AttributesData();
+            bf.WriteInteger(attributeData.Length);
+            bf.WriteBytes(attributeData);
             EditorNetwork.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -228,7 +229,7 @@ namespace Intersect.Editor.Classes
             bf.WriteLong((int) ClientPackets.SaveGameObject);
             bf.WriteInteger((int) obj.Type);
             bf.WriteInteger(obj.Index);
-            bf.WriteBytes(obj.BinaryData);
+            bf.WriteString(obj.JsonData);
             EditorNetwork.SendPacket(bf.ToArray());
             bf.Dispose();
         }

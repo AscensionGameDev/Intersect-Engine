@@ -30,7 +30,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Li
             CommonEvent = copy.CommonEvent;
         }
 
-        public EventBase(int index, ByteBuffer myBuffer, bool isCommon = false) : base(index)
+        public EventBase(int index, Upgrade_10.Intersect_Convert_Lib.ByteBuffer myBuffer, bool isCommon = false) : base(index)
         {
             MyName = "New Event";
             MyPages = new List<EventPage>();
@@ -48,7 +48,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Li
 
         public byte[] EventData()
         {
-            var myBuffer = new ByteBuffer();
+            var myBuffer = new Upgrade_10.Intersect_Convert_Lib.ByteBuffer();
             myBuffer.WriteString(MyName);
             myBuffer.WriteInteger(SpawnX);
             myBuffer.WriteInteger(SpawnY);
@@ -63,7 +63,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Li
 
         public override void Load(byte[] packet)
         {
-            var myBuffer = new ByteBuffer();
+            var myBuffer = new Upgrade_10.Intersect_Convert_Lib.ByteBuffer();
             myBuffer.WriteBytes(packet);
             MyName = myBuffer.ReadString();
             SpawnX = myBuffer.ReadInteger();

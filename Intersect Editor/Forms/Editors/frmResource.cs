@@ -16,7 +16,7 @@ namespace Intersect.Editor.Classes
     public partial class FrmResource : EditorForm
     {
         private List<ResourceBase> mChanged = new List<ResourceBase>();
-        private byte[] mCopiedItem;
+        private string mCopiedItem;
         private ResourceBase mEditorItem;
         private Bitmap mEndBitmap;
         private Bitmap mEndTileset;
@@ -343,7 +343,7 @@ namespace Intersect.Editor.Classes
         {
             if (mEditorItem != null && lstResources.Focused)
             {
-                mCopiedItem = mEditorItem.BinaryData;
+                mCopiedItem = mEditorItem.JsonData;
                 toolStripItemPaste.Enabled = true;
             }
         }

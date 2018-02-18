@@ -15,7 +15,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
         {
         }
 
-        public void Load(ByteBuffer myBuffer)
+        public void Load(Upgrade_10.Intersect_Convert_Lib.ByteBuffer myBuffer)
         {
             Target = myBuffer.ReadInteger();
             if (myBuffer.ReadByte() == 1)
@@ -42,7 +42,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
             }
         }
 
-        public void Save(ByteBuffer myBuffer)
+        public void Save(Upgrade_10.Intersect_Convert_Lib.ByteBuffer myBuffer)
         {
             myBuffer.WriteInteger(Target);
             if (IgnoreIfBlocked)

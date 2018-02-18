@@ -7,7 +7,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
     {
         public static byte[] DecompressPacket(byte[] data)
         {
-            var buff = new ByteBuffer();
+            var buff = new Upgrade_10.Intersect_Convert_Lib.ByteBuffer();
             buff.WriteBytes(data);
             var len = buff.ReadInteger();
             var decompessed = new byte[len];
@@ -24,7 +24,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
 
         public static byte[] CompressPacket(byte[] data)
         {
-            var buff = new ByteBuffer();
+            var buff = new Upgrade_10.Intersect_Convert_Lib.ByteBuffer();
             buff.WriteInteger(data.Length);
             var ms = new MemoryStream();
             using (DeflateStream compressionStream = new DeflateStream(ms, CompressionMode.Compress))

@@ -9,7 +9,7 @@ namespace Intersect.Models
 {
     public abstract class DatabaseObject<TObject> : IDatabaseObject where TObject : DatabaseObject<TObject>
     {
-        private byte[] mBackup;
+        private string mBackup;
 
         protected DatabaseObject(int index) : this(Guid.NewGuid(), index)
         {
@@ -22,8 +22,6 @@ namespace Intersect.Models
         [JsonConstructor]
         protected DatabaseObject(Guid guid, int index)
         {
-            // if (index < 0) throw new ArgumentOutOfRangeException();
-
             Guid = guid;
             Index = index;
         }
@@ -43,11 +41,11 @@ namespace Intersect.Models
         [JsonProperty(Order = -4)]
         public string Name { get; set; }
 
-        public abstract void Load(byte[] packet);
+        public virtual void Load(string json) => JsonConvert.PopulateObject(json, this);
        // public virtual void Load(string json);
 
 
-        public void MakeBackup() => mBackup = BinaryData;
+        public void MakeBackup() => mBackup = JsonData;
         public void DeleteBackup() => mBackup = null;
 
         public void RestoreBackup()
@@ -57,9 +55,6 @@ namespace Intersect.Models
                 Load(mBackup);
             }
         }
-
-        [JsonIgnore]
-        public abstract byte[] BinaryData { get; }
 
         [JsonIgnore]
         public virtual string JsonData => JsonConvert.SerializeObject(this,Formatting.Indented);

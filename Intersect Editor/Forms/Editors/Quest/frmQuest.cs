@@ -16,7 +16,7 @@ namespace Intersect.Editor.Forms
     public partial class FrmQuest : EditorForm
     {
         private List<QuestBase> mChanged = new List<QuestBase>();
-        private byte[] mCopiedItem;
+        private string mCopiedItem;
         private QuestBase mEditorItem;
 
         public FrmQuest()
@@ -341,7 +341,7 @@ namespace Intersect.Editor.Forms
         {
             if (mEditorItem != null && lstQuests.Focused)
             {
-                mCopiedItem = mEditorItem.BinaryData;
+                mCopiedItem = mEditorItem.JsonData;
                 toolStripItemPaste.Enabled = true;
             }
         }

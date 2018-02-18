@@ -10,7 +10,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
 {
     public partial class QuestTaskEditor : UserControl
     {
-        private ByteBuffer mEventBackup = new ByteBuffer();
+        private string mEventBackup = null;
         private QuestBase.QuestTask mMyTask;
         public bool Cancelled;
 
@@ -18,7 +18,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
         {
             InitializeComponent();
             mMyTask = refTask;
-            mEventBackup.WriteBytes(mMyTask.CompletionEvent.EventData());
+            mEventBackup = mMyTask.CompletionEvent.JsonData;
             InitLocalization();
             cmbTaskType.SelectedIndex = mMyTask.Objective;
             txtStartDesc.Text = mMyTask.Desc;

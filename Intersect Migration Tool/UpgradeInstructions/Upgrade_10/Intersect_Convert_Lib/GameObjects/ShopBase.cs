@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects
 {
@@ -15,7 +16,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         //Selling List
         public List<ShopItem> SellingItems = new List<ShopItem>();
 
-        public ShopBase(int id) : base(id)
+        [JsonConstructor]
+        public ShopBase(int index) : base(index)
         {
             Name = "New Shop";
         }
@@ -78,6 +80,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
             CostItemVal = myBuffer.ReadInteger();
         }
 
+        [JsonConstructor]
         public ShopItem(int itemNum, int costItemNum, int costVal)
         {
             ItemNum = itemNum;

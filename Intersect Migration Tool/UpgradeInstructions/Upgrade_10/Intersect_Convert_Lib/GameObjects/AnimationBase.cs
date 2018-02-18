@@ -1,4 +1,6 @@
-﻿namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects
+﻿using Newtonsoft.Json;
+
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects
 {
     public class AnimationBase : DatabaseObject<AnimationBase>
     {
@@ -25,7 +27,8 @@
         public int UpperAnimYFrames = 1;
         public LightBase[] UpperLights;
 
-        public AnimationBase(int id) : base(id)
+        [JsonConstructor]
+        public AnimationBase(int index) : base(index)
         {
             Name = "New Animation";
             LowerLights = new LightBase[LowerAnimFrameCount];
@@ -83,10 +86,10 @@
         {
             var myBuffer = new ByteBuffer();
             myBuffer.WriteString(Name);
-            myBuffer.WriteString(Sound);
+            myBuffer.WriteString(Intersect.Utilities.TextUtils.SanitizeNone(Sound));
 
             //Lower Animation
-            myBuffer.WriteString(LowerAnimSprite);
+            myBuffer.WriteString(Intersect.Utilities.TextUtils.SanitizeNone(LowerAnimSprite));
             myBuffer.WriteInteger(LowerAnimXFrames);
             myBuffer.WriteInteger(LowerAnimYFrames);
             myBuffer.WriteInteger(LowerAnimFrameCount);
@@ -98,7 +101,7 @@
             }
 
             //Upper Animation
-            myBuffer.WriteString(UpperAnimSprite);
+            myBuffer.WriteString(Intersect.Utilities.TextUtils.SanitizeNone(UpperAnimSprite));
             myBuffer.WriteInteger(UpperAnimXFrames);
             myBuffer.WriteInteger(UpperAnimYFrames);
             myBuffer.WriteInteger(UpperAnimFrameCount);

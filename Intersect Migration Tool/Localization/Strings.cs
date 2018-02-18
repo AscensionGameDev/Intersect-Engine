@@ -4,12 +4,49 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Intersect.Localization;
+using Intersect.Migration.Localization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.Migration.Localization
 {
+    public struct LocalizedString
+    {
+        private string _mValue;
+
+        public LocalizedString(string value)
+        {
+            _mValue = value;
+        }
+
+        public static implicit operator LocalizedString(string value)
+        {
+            return new LocalizedString(value);
+        }
+
+        public static implicit operator string(LocalizedString str)
+        {
+            return str._mValue;
+        }
+
+        public override string ToString()
+        {
+            return _mValue;
+        }
+
+        public string ToString(params object[] args)
+        {
+            try
+            {
+                if (args.Length == 0) return _mValue;
+                return string.Format(_mValue, args);
+            }
+            catch (FormatException)
+            {
+                return "Format Exception!";
+            }
+        }
+    }
     public static class Strings
     {
         public struct Characters
@@ -30,9 +67,9 @@ namespace Intersect.Migration.Localization
             public static LocalizedString confirmupgrade = @"Do you want to Upgrade? ({00}/{01})";
             public static LocalizedString nodatabase = @"Failed to find an Intersect database to Upgrade.";
             public static LocalizedString outofdate = @"Out-of-date database found. Version: {00} Latest Version: {01}";
-            public static LocalizedString purpose = @"Use this to update your database when deploying the versions of Intersect.";
+            public static LocalizedString purpose = @"Use this to update your database when deploying newer versions of Intersect.";
             public static LocalizedString starting = @"Starting Upgrade Process";
-            public static LocalizedString support = @"For help, support, and updates visit: http://ascensiongamedev.com";
+            public static LocalizedString support = @"For help, support, and updates visit: https://ascensiongamedev.com";
             public static LocalizedString tooloutofdate = @"Is this migration tool up to date?";
             public static LocalizedString uptodate = @"Database does not appear to be out of date. Version: {00} Latest Version: {01}";
         }

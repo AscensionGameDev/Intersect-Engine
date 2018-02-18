@@ -58,7 +58,10 @@ namespace Intersect_Client.Classes.Entities
         {
             if (Hidden) return;
             float rotationDegrees = 0f;
-            if (AutoRotate || mRenderDir != -1)
+            var dontRotate = false;
+            if (upper && MyBase.DisableUpperRotations) dontRotate = true;
+            if (!upper && MyBase.DisableLowerRotations) dontRotate = true;
+            if ((AutoRotate || mRenderDir != -1) && !dontRotate)
             {
                 switch (mRenderDir)
                 {

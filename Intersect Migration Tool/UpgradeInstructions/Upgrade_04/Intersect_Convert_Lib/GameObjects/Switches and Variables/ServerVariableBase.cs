@@ -21,7 +21,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Li
 
         public override void Load(byte[] packet)
         {
-            var myBuffer = new ByteBuffer();
+            var myBuffer = new Upgrade_10.Intersect_Convert_Lib.ByteBuffer();
             myBuffer.WriteBytes(packet);
             Name = myBuffer.ReadString();
             Value = myBuffer.ReadInteger();
@@ -30,7 +30,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Li
 
         public byte[] Data()
         {
-            var myBuffer = new ByteBuffer();
+            var myBuffer = new Upgrade_10.Intersect_Convert_Lib.ByteBuffer();
             myBuffer.WriteString(Name);
             myBuffer.WriteInteger(Value);
             return myBuffer.ToArray();

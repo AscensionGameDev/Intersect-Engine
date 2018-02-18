@@ -73,6 +73,7 @@ namespace Intersect.Editor.Forms
                 CreateSwapChain();
                 Globals.MapLayersWindow.RefreshNpcList();
                 Globals.MapPropertiesWindow.Init(Globals.CurrentMap);
+                Globals.CurrentMap.SaveStateAsUnchanged();
                 if (Globals.MapEditorWindow.picMap.Visible) return;
                 Globals.MapEditorWindow.picMap.Visible = true;
             }

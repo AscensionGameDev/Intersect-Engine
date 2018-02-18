@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.Collections;
 using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.Enums;
-using Intersect.Logging;
+using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.Logging;
+using JetBrains.Annotations;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.Models
 {
     public static class LookupUtils
     {
-        private const string sLock = "";
+        private const string LOCK = "";
 
         private static Dictionary<Type, DatabaseObjectLookup> sLookupMap;
         private static Dictionary<Type, GameObjectType> sEnumMap;
@@ -20,20 +21,18 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         public static Dictionary<Type, GameObjectType> EnumMap => (sEnumMap =
             (sEnumMap ?? new Dictionary<Type, GameObjectType>()));
 
-        public static DatabaseObjectLookup GetLookup(Type type)
+        [NotNull] public static DatabaseObjectLookup GetLookup(Type type)
         {
             if (type == null) throw new ArgumentNullException(nameof(type));
             if (LookupMap == null) throw new ArgumentNullException(nameof(LookupMap));
 
-            lock (sLock)
+            lock (LOCK)
             {
-                DatabaseObjectLookup lookup;
                 try
                 {
                     if (!LookupMap.ContainsKey(type))
                     {
-                        lookup = new DatabaseObjectLookup();
-                        LookupMap[type] = lookup;
+                        LookupMap[type] = new DatabaseObjectLookup();
                     }
                 }
                 catch (Exception exception)

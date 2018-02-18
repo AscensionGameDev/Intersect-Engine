@@ -19,7 +19,7 @@ namespace Intersect.Editor.Forms
     public partial class FrmSpell : EditorForm
     {
         private List<SpellBase> mChanged = new List<SpellBase>();
-        private byte[] mCopiedItem;
+        private string mCopiedItem;
         private SpellBase mEditorItem;
 
         public FrmSpell()
@@ -249,8 +249,8 @@ namespace Intersect.Editor.Forms
                 txtDesc.Text = mEditorItem.Desc;
                 cmbType.SelectedIndex = mEditorItem.SpellType;
 
-                nudCastDuration.Value = mEditorItem.CastDuration * 100;
-                nudCooldownDuration.Value = mEditorItem.CooldownDuration * 100;
+                nudCastDuration.Value = mEditorItem.CastDuration;
+                nudCooldownDuration.Value = mEditorItem.CooldownDuration;
 
                 cmbCastAnimation.SelectedIndex =
                     Database.GameObjectListIndex(GameObjectType.Animation, mEditorItem.CastAnimation) + 1;
@@ -314,8 +314,8 @@ namespace Intersect.Editor.Forms
                 nudCritChance.Value = mEditorItem.CritChance;
 
                 chkHOTDOT.Checked = Convert.ToBoolean(mEditorItem.Data1);
-                nudBuffDuration.Value = mEditorItem.Data2 * 100;
-                nudTick.Value = mEditorItem.Data4 * 100;
+                nudBuffDuration.Value = mEditorItem.Data2;
+                nudTick.Value = mEditorItem.Data4;
                 cmbExtraEffect.SelectedIndex = mEditorItem.Data3;
                 cmbExtraEffect_SelectedIndexChanged(null, null);
             }
@@ -554,7 +554,7 @@ namespace Intersect.Editor.Forms
         {
             if (mEditorItem != null && lstSpells.Focused)
             {
-                mCopiedItem = mEditorItem.BinaryData;
+                mCopiedItem = mEditorItem.JsonData;
                 toolStripItemPaste.Enabled = true;
             }
         }
@@ -722,12 +722,12 @@ namespace Intersect.Editor.Forms
 
         private void nudCastDuration_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.CastDuration = (int) nudCastDuration.Value / 100;
+            mEditorItem.CastDuration = (int) nudCastDuration.Value;
         }
 
         private void nudCooldownDuration_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.CooldownDuration = (int) nudCooldownDuration.Value / 100;
+            mEditorItem.CooldownDuration = (int) nudCooldownDuration.Value;
         }
 
         private void nudHitRadius_ValueChanged(object sender, EventArgs e)
@@ -782,12 +782,12 @@ namespace Intersect.Editor.Forms
 
         private void nudBuffDuration_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Data2 = (int) nudBuffDuration.Value / 100;
+            mEditorItem.Data2 = (int) nudBuffDuration.Value;
         }
 
         private void nudTick_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Data4 = (int) nudTick.Value / 100;
+            mEditorItem.Data4 = (int) nudTick.Value;
         }
 
         private void nudCritChance_ValueChanged(object sender, EventArgs e)

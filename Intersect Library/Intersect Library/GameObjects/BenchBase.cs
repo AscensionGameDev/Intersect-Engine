@@ -13,42 +13,6 @@ namespace Intersect.GameObjects
         {
             Name = "New Bench";
         }
-
-        public override byte[] BinaryData => CraftData();
-
-        public override void Load(byte[] packet)
-        {
-            var myBuffer = new ByteBuffer();
-            myBuffer.WriteBytes(packet);
-
-            Name = myBuffer.ReadString();
-            int count = myBuffer.ReadInteger();
-
-            Crafts.Clear();
-
-            for (int i = 0; i < count; i++)
-            {
-                Crafts.Add(new Craft());
-                Crafts[i].Load(myBuffer);
-            }
-
-            myBuffer.Dispose();
-        }
-
-        public byte[] CraftData()
-        {
-            using (var myBuffer = new ByteBuffer())
-            {
-                myBuffer.WriteString(Name);
-                myBuffer.WriteInteger(Crafts.Count);
-                foreach (var craft in Crafts)
-                {
-                    myBuffer.WriteBytes(craft.Data());
-                }
-
-                return myBuffer.ToArray();
-            }
-        }
     }
 
     public class Craft

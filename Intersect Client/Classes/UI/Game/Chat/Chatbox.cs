@@ -47,7 +47,7 @@ namespace Intersect_Client.Classes.UI.Game
             for (int i = 0; i < 3; i++)
             {
                 var menuItem = mChannelCombobox.AddItem(Strings.Chatbox.channels[i]);
-                menuItem.UserData = i -1;
+                menuItem.UserData = i;
             }
             //Add admin channel only if power > 0.
             if (Globals.Me.Type > 0)

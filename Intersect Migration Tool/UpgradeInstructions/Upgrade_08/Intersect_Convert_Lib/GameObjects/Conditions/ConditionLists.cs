@@ -10,7 +10,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
         {
         }
 
-        public ConditionLists(ByteBuffer buff)
+        public ConditionLists(Upgrade_10.Intersect_Convert_Lib.ByteBuffer buff)
         {
             Load(buff);
         }
@@ -20,7 +20,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
             Load(data);
         }
 
-        public void Load(ByteBuffer buff)
+        public void Load(Upgrade_10.Intersect_Convert_Lib.ByteBuffer buff)
         {
             Lists.Clear();
             var count = buff.ReadInteger();
@@ -34,20 +34,20 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
 
         public void Load(byte[] data)
         {
-            var buff = new ByteBuffer();
+            var buff = new Upgrade_10.Intersect_Convert_Lib.ByteBuffer();
             buff.WriteBytes(data);
             Load(buff);
             buff.Dispose();
         }
 
-        public void Save(ByteBuffer buff)
+        public void Save(Upgrade_10.Intersect_Convert_Lib.ByteBuffer buff)
         {
             buff.WriteBytes(Data());
         }
 
         public byte[] Data()
         {
-            var buff = new ByteBuffer();
+            var buff = new Upgrade_10.Intersect_Convert_Lib.ByteBuffer();
             buff.WriteInteger(Lists.Count);
             for (int i = 0; i < Lists.Count; i++)
             {

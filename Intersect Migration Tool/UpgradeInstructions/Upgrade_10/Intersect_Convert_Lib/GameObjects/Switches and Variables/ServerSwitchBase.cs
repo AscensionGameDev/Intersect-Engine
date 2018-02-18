@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects.Switches_and_Variables
 {
@@ -6,7 +7,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
     {
         public bool Value;
 
-        public ServerSwitchBase(int id) : base(id)
+        [JsonConstructor]
+        public ServerSwitchBase(int index) : base(index)
         {
             Name = "New Global Switch";
         }

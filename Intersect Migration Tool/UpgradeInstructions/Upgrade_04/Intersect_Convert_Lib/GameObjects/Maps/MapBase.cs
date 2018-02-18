@@ -50,7 +50,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Li
         {
             lock (GetMapLock())
             {
-                ByteBuffer bf = new ByteBuffer();
+                Upgrade_10.Intersect_Convert_Lib.ByteBuffer bf = new Upgrade_10.Intersect_Convert_Lib.ByteBuffer();
                 MyName = mapcopy.MyName;
                 Brightness = mapcopy.Brightness;
                 IsIndoors = mapcopy.IsIndoors;
@@ -144,7 +144,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Li
         {
             lock (GetMapLock())
             {
-                var bf = new ByteBuffer();
+                var bf = new Upgrade_10.Intersect_Convert_Lib.ByteBuffer();
                 bf.WriteBytes(packet);
                 MyName = bf.ReadString();
                 Revision = bf.ReadInteger();
@@ -238,7 +238,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Li
                     {
                         var eventIndex = bf.ReadInteger();
                         var evtDataLen = bf.ReadLong();
-                        var evtBuffer = new ByteBuffer();
+                        var evtBuffer = new Upgrade_10.Intersect_Convert_Lib.ByteBuffer();
                         evtBuffer.WriteBytes(bf.ReadBytes((int) evtDataLen));
                         Events.Add(eventIndex, new EventBase(eventIndex, evtBuffer));
                         evtBuffer.Dispose();
@@ -249,7 +249,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Li
 
         public virtual byte[] GetMapData(bool forClient)
         {
-            var bf = new ByteBuffer();
+            var bf = new Upgrade_10.Intersect_Convert_Lib.ByteBuffer();
             bf.WriteString(MyName);
             bf.WriteInteger(Revision);
             bf.WriteInteger(Up);

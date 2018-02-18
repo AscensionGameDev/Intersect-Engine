@@ -68,7 +68,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
             var spellCount = 0;
             ClassSpell tempSpell = new ClassSpell();
 
-            var myBuffer = new ByteBuffer();
+            var myBuffer = new Upgrade_10.Intersect_Convert_Lib.ByteBuffer();
             myBuffer.WriteBytes(packet);
             Name = myBuffer.ReadString();
 
@@ -151,7 +151,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_5.Intersect_Convert_Li
 
         public byte[] ClassData()
         {
-            var myBuffer = new ByteBuffer();
+            var myBuffer = new Upgrade_10.Intersect_Convert_Lib.ByteBuffer();
             myBuffer.WriteString(Name);
 
             myBuffer.WriteInteger(SpawnMap);

@@ -35,7 +35,7 @@
             Color = Color.FromArgb(copy.Color.R, copy.Color.G, copy.Color.B);
         }
 
-        public LightBase(ByteBuffer myBuffer)
+        public LightBase(Upgrade_10.Intersect_Convert_Lib.ByteBuffer myBuffer)
         {
             OffsetX = myBuffer.ReadInteger();
             OffsetY = myBuffer.ReadInteger();
@@ -62,7 +62,7 @@
 
         public byte[] LightData()
         {
-            var myBuffer = new ByteBuffer();
+            var myBuffer = new Upgrade_10.Intersect_Convert_Lib.ByteBuffer();
             myBuffer.WriteInteger(OffsetX);
             myBuffer.WriteInteger(OffsetY);
             myBuffer.WriteInteger(TileX);

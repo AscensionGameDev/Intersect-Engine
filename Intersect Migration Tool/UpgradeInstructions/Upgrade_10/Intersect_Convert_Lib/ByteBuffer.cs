@@ -6,18 +6,18 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
 {
     public class ByteBuffer : IDisposable
     {
-        readonly List<byte> _buff;
+        readonly List<byte> mBuff;
 
         // To detect redundant calls
-        private bool _disposedValue;
+        private bool mDisposedValue;
 
-        private byte[] _readBytes;
-        private bool _wasUpdated;
+        private byte[] mReadBytes;
+        private bool mWasUpdated;
         public int Readpos;
 
         public ByteBuffer()
         {
-            _buff = new List<byte>();
+            mBuff = new List<byte>();
             Readpos = 0;
         }
 
@@ -33,12 +33,12 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
 
         public byte[] ToArray()
         {
-            return _buff.ToArray();
+            return mBuff.ToArray();
         }
 
         public int Count()
         {
-            return _buff.Count;
+            return mBuff.Count;
         }
 
         public int Pos()
@@ -53,20 +53,20 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
 
         public void Clear()
         {
-            _buff.Clear();
+            mBuff.Clear();
             Readpos = 0;
         }
 
         public void WriteBytes(byte[] input)
         {
-            _buff.AddRange(input);
-            _wasUpdated = true;
+            mBuff.AddRange(input);
+            mWasUpdated = true;
         }
 
         public void WriteByte(byte input)
         {
-            _buff.Add(input);
-            _wasUpdated = true;
+            mBuff.Add(input);
+            mWasUpdated = true;
         }
 
         public void WriteBoolean(bool input)
@@ -76,8 +76,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
 
         public void WriteShort(short input)
         {
-            _buff.AddRange(BitConverter.GetBytes(input));
-            _wasUpdated = true;
+            mBuff.AddRange(BitConverter.GetBytes(input));
+            mWasUpdated = true;
         }
 
         public void InsertLength()
@@ -85,26 +85,26 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
             var lenbytes = BitConverter.GetBytes((int) Count());
             for (int i = 0; i < lenbytes.Length; i++)
             {
-                _buff.Insert(i, lenbytes[i]);
+                mBuff.Insert(i, lenbytes[i]);
             }
         }
 
         public void WriteInteger(int input)
         {
-            _buff.AddRange(BitConverter.GetBytes(input));
-            _wasUpdated = true;
+            mBuff.AddRange(BitConverter.GetBytes(input));
+            mWasUpdated = true;
         }
 
         public void WriteLong(long input)
         {
-            _buff.AddRange(BitConverter.GetBytes(input));
-            _wasUpdated = true;
+            mBuff.AddRange(BitConverter.GetBytes(input));
+            mWasUpdated = true;
         }
 
         public void WriteDouble(double input)
         {
-            _buff.AddRange(BitConverter.GetBytes(input));
-            _wasUpdated = true;
+            mBuff.AddRange(BitConverter.GetBytes(input));
+            mWasUpdated = true;
         }
 
         public void WriteString(string input)
@@ -119,20 +119,20 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
                 WriteInteger(data.Length);
                 WriteBytes(data);
             }
-            _wasUpdated = true;
+            mWasUpdated = true;
         }
 
         public string ReadString(bool peek = true)
         {
             var len = ReadInteger(true);
-            if (_wasUpdated)
+            if (mWasUpdated)
             {
-                _readBytes = _buff.ToArray();
-                _wasUpdated = false;
+                mReadBytes = mBuff.ToArray();
+                mWasUpdated = false;
             }
             if (len == 0) return "";
-            var ret = Encoding.Unicode.GetString(_readBytes, Readpos, len);
-            if (peek & _buff.Count > Readpos)
+            var ret = Encoding.Unicode.GetString(mReadBytes, Readpos, len);
+            if (peek & mBuff.Count > Readpos)
             {
                 if (ret.Length > 0)
                 {
@@ -150,9 +150,9 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         public byte ReadByte(bool peek = true)
         {
             //check to see if this passes the byte count
-            if (_buff.Count <= Readpos) throw new Exception("Byte Buffer Past Limit!");
-            var ret = _buff[Readpos];
-            if (peek & _buff.Count > Readpos)
+            if (mBuff.Count <= Readpos) throw new Exception("Byte Buffer Past Limit!");
+            var ret = mBuff[Readpos];
+            if (peek & mBuff.Count > Readpos)
             {
                 Readpos += 1;
             }
@@ -161,7 +161,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
 
         public byte[] ReadBytes(int length, bool peek = true)
         {
-            var ret = _buff.GetRange(Readpos, length).ToArray();
+            var ret = mBuff.GetRange(Readpos, length).ToArray();
             if (peek)
                 Readpos += length;
             return ret;
@@ -170,14 +170,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         public short ReadShort(bool peek = true)
         {
             //check to see if this passes the byte count
-            if (_buff.Count <= Readpos) throw new Exception("Byte Buffer Past Limit!");
-            if (_wasUpdated)
+            if (mBuff.Count <= Readpos) throw new Exception("Byte Buffer Past Limit!");
+            if (mWasUpdated)
             {
-                _readBytes = _buff.ToArray();
-                _wasUpdated = false;
+                mReadBytes = mBuff.ToArray();
+                mWasUpdated = false;
             }
-            var ret = BitConverter.ToInt16(_readBytes, Readpos);
-            if (peek & _buff.Count > Readpos)
+            var ret = BitConverter.ToInt16(mReadBytes, Readpos);
+            if (peek & mBuff.Count > Readpos)
             {
                 Readpos += 2;
             }
@@ -187,14 +187,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         public int ReadInteger(bool peek = true)
         {
             //check to see if this passes the byte count
-            if (_buff.Count <= Readpos) throw new Exception("Byte Buffer Past Limit!");
-            if (_wasUpdated)
+            if (mBuff.Count <= Readpos) throw new Exception("Byte Buffer Past Limit!");
+            if (mWasUpdated)
             {
-                _readBytes = _buff.ToArray();
-                _wasUpdated = false;
+                mReadBytes = mBuff.ToArray();
+                mWasUpdated = false;
             }
-            var ret = BitConverter.ToInt32(_readBytes, Readpos);
-            if (peek & _buff.Count > Readpos)
+            var ret = BitConverter.ToInt32(mReadBytes, Readpos);
+            if (peek & mBuff.Count > Readpos)
             {
                 Readpos += 4;
             }
@@ -204,14 +204,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         public long ReadLong(bool peek = true)
         {
             //check to see if this passes the byte count
-            if (_buff.Count <= Readpos) throw new Exception("Byte Buffer Past Limit!");
-            if (_wasUpdated)
+            if (mBuff.Count <= Readpos) throw new Exception("Byte Buffer Past Limit!");
+            if (mWasUpdated)
             {
-                _readBytes = _buff.ToArray();
-                _wasUpdated = false;
+                mReadBytes = mBuff.ToArray();
+                mWasUpdated = false;
             }
-            var ret = BitConverter.ToInt64(_readBytes, Readpos);
-            if (peek & _buff.Count > Readpos)
+            var ret = BitConverter.ToInt64(mReadBytes, Readpos);
+            if (peek & mBuff.Count > Readpos)
             {
                 Readpos += 8;
             }
@@ -221,14 +221,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         public double ReadDouble(bool peek = true)
         {
             //check to see if this passes the byte count
-            if (_buff.Count <= Readpos) throw new Exception("Byte Buffer Past Limit!");
-            if (_wasUpdated)
+            if (mBuff.Count <= Readpos) throw new Exception("Byte Buffer Past Limit!");
+            if (mWasUpdated)
             {
-                _readBytes = _buff.ToArray();
-                _wasUpdated = false;
+                mReadBytes = mBuff.ToArray();
+                mWasUpdated = false;
             }
-            var ret = BitConverter.ToDouble(_readBytes, Readpos);
-            if (peek & _buff.Count > Readpos)
+            var ret = BitConverter.ToDouble(mReadBytes, Readpos);
+            if (peek & mBuff.Count > Readpos)
             {
                 Readpos += 8;
             }
@@ -238,15 +238,15 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         // IDisposable
         protected virtual void Dispose(bool disposing)
         {
-            if (!_disposedValue)
+            if (!mDisposedValue)
             {
                 if (disposing)
                 {
-                    _buff.Clear();
+                    mBuff.Clear();
                 }
                 Readpos = 0;
             }
-            _disposedValue = true;
+            mDisposedValue = true;
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using Intersect.Migration.Localization;
 using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects.Conditions;
 using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects.Events;
+using Newtonsoft.Json;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects
 {
@@ -14,9 +16,9 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
 
     public struct QuestProgressStruct
     {
-        public int task;
-        public int completed;
-        public int taskProgress;
+        public int Task;
+        public int Completed;
+        public int TaskProgress;
     }
 
     public class QuestBase : DatabaseObject<QuestBase>
@@ -29,7 +31,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         public byte LogBeforeOffer;
 
         //Tasks
-        public int NextTaskID;
+        public int NextTaskId;
 
         public byte Quitable;
 
@@ -45,7 +47,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
 
         public List<QuestTask> Tasks = new List<QuestTask>();
 
-        public QuestBase(int id) : base(id)
+        [JsonConstructor]
+        public QuestBase(int index) : base(index)
         {
             Name = "New Quest";
         }
@@ -69,10 +72,10 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
 
             Requirements.Load(myBuffer);
 
-            NextTaskID = myBuffer.ReadInteger();
-            var MaxTasks = myBuffer.ReadInteger();
+            NextTaskId = myBuffer.ReadInteger();
+            var maxTasks = myBuffer.ReadInteger();
             Tasks.Clear();
-            for (int i = 0; i < MaxTasks; i++)
+            for (int i = 0; i < maxTasks; i++)
             {
                 QuestTask task = new QuestTask(myBuffer.ReadInteger())
                 {
@@ -113,7 +116,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
 
             Requirements.Save(myBuffer);
 
-            myBuffer.WriteInteger(NextTaskID);
+            myBuffer.WriteInteger(NextTaskId);
             myBuffer.WriteInteger(Tasks.Count);
             for (int i = 0; i < Tasks.Count; i++)
             {
@@ -171,19 +174,19 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
                 Id = id;
             }
 
-            public string GetTaskString()
+            public string GetTaskString(LocalizedString[] descriptions)
             {
                 var taskString = "";
                 switch (Objective)
                 {
                     case 0: //Event Driven
-                        taskString = "Event Driven - " + Desc;
+                        taskString = descriptions[Objective].ToString(Desc);
                         break;
                     case 1: //Gather Items
-                        taskString = "Gather Items [" + ItemBase.GetName(Data1) + " x" + Data2 + "] - " + Desc;
+                        taskString = descriptions[Objective].ToString(ItemBase.GetName(Data1), Data2, Desc);
                         break;
                     case 2: //Kill Npcs
-                        taskString = "Kill Npc(s) [" + NpcBase.GetName(Data1) + " x" + Data2 + "] - " + Desc;
+                        taskString = descriptions[Objective].ToString(NpcBase.GetName(Data1), Data2, Desc);
                         break;
                 }
                 return taskString;

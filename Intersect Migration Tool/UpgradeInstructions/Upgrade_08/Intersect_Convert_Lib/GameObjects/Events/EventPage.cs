@@ -56,7 +56,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
             CommandLists.Add(new CommandList());
         }
 
-        public EventPage(ByteBuffer curBuffer)
+        public EventPage(Upgrade_10.Intersect_Convert_Lib.ByteBuffer curBuffer)
         {
             Desc = curBuffer.ReadString();
             MovementType = curBuffer.ReadInteger();
@@ -84,7 +84,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
             ConditionLists.Load(curBuffer);
         }
 
-        public void WriteBytes(ByteBuffer myBuffer)
+        public void WriteBytes(Upgrade_10.Intersect_Convert_Lib.ByteBuffer myBuffer)
         {
             myBuffer.WriteString(Desc);
             myBuffer.WriteInteger(MovementType);

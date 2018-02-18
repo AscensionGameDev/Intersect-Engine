@@ -15,6 +15,7 @@ using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Items;
+using Newtonsoft.Json;
 using Color = IntersectClientExtras.GenericClasses.Color;
 
 namespace Intersect_Client.Classes.Maps
@@ -126,13 +127,12 @@ namespace Intersect_Client.Classes.Maps
 
         //Map Sounds
         public MapSound BackgroundSound { get; set; }
-
-        //LEGACY -- REMOVE WHEN SERIALIZATION IS WORKING!
+        
         //Load
-        public void Load(byte[] packet)
+        public void Load(string json)
         {
             LocalEntitiesToDispose.AddRange(LocalEntities.Keys.ToArray());
-            base.Load(packet);
+            JsonConvert.PopulateObject(json, this);
             MapLoaded = true;
             Autotiles = new MapAutotiles(this);
             CreateMapSounds();
@@ -777,7 +777,7 @@ namespace Intersect_Client.Classes.Maps
                     }
                 }
             }
-            if (Fog.Length > 0)
+            if (Fog != null && Fog.Length > 0)
             {
                 GameTexture fogTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Fog, Fog);
                 if (fogTex != null)

@@ -10,7 +10,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Li
         {
         }
 
-        public CommandList(ByteBuffer myBuffer)
+        public CommandList(Upgrade_10.Intersect_Convert_Lib.ByteBuffer myBuffer)
         {
             var y = myBuffer.ReadInteger();
             for (var i = 0; i < y; i++)
@@ -20,7 +20,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Li
             }
         }
 
-        public void WriteBytes(ByteBuffer myBuffer)
+        public void WriteBytes(Upgrade_10.Intersect_Convert_Lib.ByteBuffer myBuffer)
         {
             myBuffer.WriteInteger(Commands.Count);
             foreach (var command in Commands)
