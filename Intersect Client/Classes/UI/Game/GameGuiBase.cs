@@ -1,4 +1,5 @@
-﻿using Intersect.Enums;
+﻿using Intersect.Client.Classes.UI.Game;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.General;
@@ -35,7 +36,8 @@ namespace Intersect_Client.Classes.UI.Game
         private TradingWindow mTradingWindow;
         public bool FocusChat;
         public Canvas GameCanvas;
-        private GameMenu mGameMenu;
+
+        public GameMenu GameMenu { get; private set; }
 
         //Public Components - For clicking/dragging
         public HotBarWindow Hotbar;
@@ -50,7 +52,7 @@ namespace Intersect_Client.Classes.UI.Game
         {
             mEventWindow = new EventWindow(GameCanvas);
             mChatBox = new Chatbox(GameCanvas, this);
-            mGameMenu = new GameMenu(GameCanvas);
+            GameMenu = new GameMenu(GameCanvas);
             Hotbar = new HotBarWindow(GameCanvas);
             mDebugMenu = new DebugMenu(GameCanvas);
             mQuestOfferWindow = new QuestOfferWindow(GameCanvas);
@@ -66,7 +68,7 @@ namespace Intersect_Client.Classes.UI.Game
         //Friends Window
         public void UpdateFriendsList()
         {
-            mGameMenu.UpdateFriendsList();
+            GameMenu.UpdateFriendsList();
         }
 
         //Admin Window
@@ -236,7 +238,7 @@ namespace Intersect_Client.Classes.UI.Game
             }
             mEventWindow.Update();
             mChatBox.Update();
-            mGameMenu.Update(mShouldUpdateQuestLog);
+            GameMenu.Update(mShouldUpdateQuestLog);
             mShouldUpdateQuestLog = false;
             Hotbar.Update();
             mDebugMenu.Update();

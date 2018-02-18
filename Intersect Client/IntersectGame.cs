@@ -5,11 +5,11 @@ using Intersect.Client.Classes.Core;
 using Intersect.Client.Classes.MonoGame.Network;
 using Intersect.Config;
 using Intersect.Client.Classes.Localization;
+using Intersect.Client.Classes.MonoGame.Database;
 using Intersect.Logging;
 using Intersect.Utilities;
 using IntersectClientExtras.Gwen.Input;
 using IntersectClientExtras.Gwen.Renderer;
-using Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Database;
 using Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management;
 using Intersect_Client.Classes.Bridges_and_Interfaces.SFML.System;
 using Intersect_Client.Classes.Core;
@@ -28,13 +28,12 @@ namespace Intersect.Client
     /// </summary>
     public class IntersectGame : Game
     {
-        GraphicsDeviceManager mGraphics;
-
         public IntersectGame()
         {
             //Setup an error handler
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            mGraphics = new GraphicsDeviceManager(this);
+
+            var graphics = new GraphicsDeviceManager(this);
 
             Content.RootDirectory = "";
             IsMouseVisible = true;
@@ -58,7 +57,7 @@ namespace Intersect.Client
             Gui.ActiveFont = TextUtils.StripToLower(ClientOptions.Font);
             Globals.InputManager = new MonoInput(this);
 
-            var renderer = new MonoRenderer(mGraphics, Content, this);
+            var renderer = new MonoRenderer(graphics, Content, this);
             GameGraphics.Renderer = renderer;
             if (renderer == null) throw new NullReferenceException("No renderer.");
 

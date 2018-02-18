@@ -1,42 +1,30 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Intersect.Config;
 using IntersectClientExtras.Database;
 using Microsoft.Win32;
 
-namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Database
+namespace Intersect.Client.Classes.MonoGame.Database
 {
     public class MonoDatabase : GameDatabase
     {
-        public override void SavePreference(string key, string value)
+        public override void SavePreference(string key, object value)
         {
-            RegistryKey regkey = Registry.CurrentUser.OpenSubKey("Software", true);
+            var regkey = Registry.CurrentUser?.OpenSubKey("Software", true);
 
-            regkey.CreateSubKey("IntersectClient");
-            regkey = regkey.OpenSubKey("IntersectClient", true);
-            regkey.CreateSubKey(ClientOptions.ServerHost + ":" + ClientOptions.ServerPort);
-            regkey = regkey.OpenSubKey(ClientOptions.ServerHost + ":" + ClientOptions.ServerPort, true);
-            regkey.SetValue(key, value);
+            regkey?.CreateSubKey("IntersectClient");
+            regkey = regkey?.OpenSubKey("IntersectClient", true);
+            regkey?.CreateSubKey(ClientOptions.ServerHost + ":" + ClientOptions.ServerPort);
+            regkey = regkey?.OpenSubKey(ClientOptions.ServerHost + ":" + ClientOptions.ServerPort, true);
+            regkey?.SetValue(key, Convert.ToString(value));
         }
 
         public override string LoadPreference(string key)
         {
-            RegistryKey regkey = Registry.CurrentUser.OpenSubKey("Software", false);
-            regkey = regkey.OpenSubKey("IntersectClient", false);
-            if (regkey == null)
-            {
-                return "";
-            }
-            regkey = regkey.OpenSubKey(ClientOptions.ServerHost + ":" + ClientOptions.ServerPort);
-            if (regkey == null)
-            {
-                return "";
-            }
-            string value = (string) regkey.GetValue(key);
-            if (string.IsNullOrEmpty(value))
-            {
-                return "";
-            }
-            return value;
+            var regkey = Registry.CurrentUser?.OpenSubKey("Software", false);
+            regkey = regkey?.OpenSubKey("IntersectClient", false);
+            regkey = regkey?.OpenSubKey(ClientOptions.ServerHost + ":" + ClientOptions.ServerPort);
+            return regkey?.GetValue(key) as string ?? "";
         }
 
         public override bool LoadConfig()
@@ -47,12 +35,10 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Database
                 File.WriteAllText(Path.Combine("resources", "config.json"), ClientOptions.GetJson());
                 return true;
             }
-            else
-            {
-                string jsonData = File.ReadAllText(Path.Combine("resources", "config.json"));
-                ClientOptions.Load(jsonData);
-                return true;
-            }
+
+            var jsonData = File.ReadAllText(Path.Combine("resources", "config.json"));
+            ClientOptions.Load(jsonData);
+            return true;
         }
     }
 }

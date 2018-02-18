@@ -4,53 +4,54 @@ using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
+using Intersect_Client.Classes.UI;
+using Intersect_Client.Classes.UI.Game;
+using JetBrains.Annotations;
 
-namespace Intersect_Client.Classes.UI.Game
+namespace Intersect.Client.Classes.UI.Game
 {
-    class GameMenu
+    public class GameMenu
     {
-        private ImagePanel mCharacterBackground;
-        private Button mCharacterButton;
-        private CharacterWindow mCharacterWindow;
-        private ImagePanel mCloseBackground;
-        private Button mCloseButton;
-        private ImagePanel mFriendsBackground;
-        private Button mFriendsButton;
-        private FriendsWindow mFriendsWindow;
-
         //Canvas instance
-        Canvas mGameCanvas;
-
-        private ImagePanel mInventoryBackground;
-
-        //Control Variables
-        private Button mInventoryButton;
-
-        private InventoryWindow mInventoryWindow;
+        private Canvas mGameCanvas;
 
         //Menu Container
-        private ImagePanel mMenuContainer;
+        private readonly ImagePanel mMenuContainer;
 
-        private ImagePanel mOptionsBackground;
-        private Button mOptionsButton;
+        [NotNull] private readonly ImagePanel mCloseBackground;
+        [NotNull] private readonly Button mCloseButton;
 
-        //Window References
-        private OptionsWindow mOptionsWindow;
+        [NotNull] private readonly ImagePanel mInventoryBackground;
+        [NotNull] private readonly Button mInventoryButton;
+        [NotNull] private readonly InventoryWindow mInventoryWindow;
 
-        private ImagePanel mPartyBackground;
-        private Button mPartyButton;
-        private PartyWindow mPartyWindow;
-        private ImagePanel mQuestsBackground;
-        private Button mQuestsButton;
-        private QuestsWindow mQuestsWindow;
-        private ImagePanel mSpellsBackground;
-        private Button mSpellsButton;
-        private SpellsWindow mSpellsWindow;
+        [NotNull] private readonly ImagePanel mOptionsBackground;
+        [NotNull] private readonly Button mOptionsButton;
+        [NotNull] private readonly OptionsWindow mOptionsWindow;
+
+        [NotNull] private readonly ImagePanel mPartyBackground;
+        [NotNull] private readonly Button mPartyButton;
+        [NotNull] private readonly PartyWindow mPartyWindow;
+
+        [NotNull] private readonly ImagePanel mQuestsBackground;
+        [NotNull] private readonly Button mQuestsButton;
+        [NotNull] private readonly QuestsWindow mQuestsWindow;
+
+        [NotNull] private readonly ImagePanel mSpellsBackground;
+        [NotNull] private readonly Button mSpellsButton;
+        [NotNull] private readonly SpellsWindow mSpellsWindow;
+        [NotNull] private readonly ImagePanel mCharacterBackground;
+        [NotNull] private readonly Button mCharacterButton;
+        [NotNull] private readonly CharacterWindow mCharacterWindow;
+
+        [NotNull] private readonly ImagePanel mFriendsBackground;
+        [NotNull] private readonly Button mFriendsButton;
+        [NotNull] private readonly FriendsWindow mFriendsWindow;
+
         private int mBackgroundHeight = 42;
         private int mBackgroundWidth = 42;
         private int mButtonHeight = 34;
         private int mButtonMargin = 8;
-
         private int mButtonWidth = 34;
 
         //Init
@@ -130,89 +131,19 @@ namespace Intersect_Client.Classes.UI.Game
             mFriendsWindow.UpdateList();
         }
 
-        //Input Handlers
-        void CloseBtn_Clicked(Base sender, ClickedEventArgs arguments)
+        public void HideWindows()
         {
-            Globals.IsRunning = false;
+            if (!Globals.Database.HideOthersOnWindowOpen) return;
+            mCharacterWindow.Hide();
+            mFriendsWindow.Hide();
+            mInventoryWindow.Hide();
+            mPartyWindow.Hide();
+            mQuestsWindow.Hide();
+            mSpellsWindow.Hide();
+            mOptionsWindow.Hide();
         }
 
-        void OptionBtn_Clicked(Base sender, ClickedEventArgs arguments)
-        {
-            if (mOptionsWindow.IsVisible())
-            {
-                mOptionsWindow.Hide();
-            }
-            else
-            {
-                if (!Globals.Me.IsBusy())
-                {
-                    mOptionsWindow.Show();
-                }
-            }
-        }
-
-        void PartyBtn_Clicked(Base sender, ClickedEventArgs arguments)
-        {
-            if (mPartyWindow.IsVisible())
-            {
-                mPartyWindow.Hide();
-            }
-            else
-            {
-                mPartyWindow.Show();
-            }
-        }
-
-        void FriendsBtn_Clicked(Base sender, ClickedEventArgs arguments)
-        {
-            if (mFriendsWindow.IsVisible())
-            {
-                mFriendsWindow.Hide();
-            }
-            else
-            {
-                mFriendsWindow.Show();
-                PacketSender.RequestFriends();
-            }
-        }
-
-        void QuestBtn_Clicked(Base sender, ClickedEventArgs arguments)
-        {
-            if (mQuestsWindow.IsVisible())
-            {
-                mQuestsWindow.Hide();
-            }
-            else
-            {
-                mQuestsWindow.Show();
-            }
-        }
-
-        void InventoryButton_Clicked(Base sender, ClickedEventArgs arguments)
-        {
-            if (mInventoryWindow.IsVisible())
-            {
-                mInventoryWindow.Hide();
-            }
-            else
-            {
-                mInventoryWindow.Show();
-            }
-        }
-
-        void SpellsButton_Clicked(Base sender, ClickedEventArgs arguments)
-        {
-            if (mSpellsWindow.IsVisible())
-            {
-                mSpellsWindow.Hide();
-            }
-            else
-            {
-                mSpellsWindow.Show();
-            }
-        }
-
-        void CharacterButton_Clicked(Base sender, ClickedEventArgs arguments)
+        public void ToggleCharacterWindow()
         {
             if (mCharacterWindow.IsVisible())
             {
@@ -220,8 +151,128 @@ namespace Intersect_Client.Classes.UI.Game
             }
             else
             {
+                HideWindows();
                 mCharacterWindow.Show();
             }
+        }
+
+        public bool ToggleFriendsWindow()
+        {
+            if (mFriendsWindow.IsVisible())
+            {
+                mFriendsWindow.Hide();
+            }
+            else
+            {
+                HideWindows();
+                mFriendsWindow.Show();
+            }
+
+            return mFriendsWindow.IsVisible();
+        }
+
+        public void ToggleInventoryWindow()
+        {
+            if (mInventoryWindow.IsVisible())
+            {
+                mInventoryWindow.Hide();
+            }
+            else
+            {
+                HideWindows();
+                mInventoryWindow.Show();
+            }
+        }
+
+        public void TogglePartyWindow()
+        {
+            if (mPartyWindow.IsVisible())
+            {
+                mPartyWindow.Hide();
+            }
+            else
+            {
+                HideWindows();
+                mPartyWindow.Show();
+            }
+        }
+
+        public void ToggleQuestsWindow()
+        {
+            if (mQuestsWindow.IsVisible())
+            {
+                mQuestsWindow.Hide();
+            }
+            else
+            {
+                HideWindows();
+                mQuestsWindow.Show();
+            }
+        }
+
+        public void ToggleSpellsWindow()
+        {
+            if (mSpellsWindow.IsVisible())
+            {
+                mSpellsWindow.Hide();
+            }
+            else
+            {
+                HideWindows();
+                mSpellsWindow.Show();
+            }
+        }
+
+        //Input Handlers
+        private static void CloseBtn_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            Globals.IsRunning = false;
+        }
+
+        private void OptionBtn_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            if (mOptionsWindow.IsVisible())
+            {
+                mOptionsWindow.Hide();
+            }
+            else
+            {
+                if (Globals.Me?.IsBusy() ?? false) return;
+                mOptionsWindow.Show();
+            }
+        }
+
+        private void PartyBtn_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            TogglePartyWindow();
+        }
+
+        private void FriendsBtn_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            if (ToggleFriendsWindow())
+            {
+                PacketSender.RequestFriends();
+            }
+        }
+
+        private void QuestBtn_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            ToggleQuestsWindow();
+        }
+
+        private void InventoryButton_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            ToggleInventoryWindow();
+        }
+
+        private void SpellsButton_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            ToggleSpellsWindow();
+        }
+
+        private void CharacterButton_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            ToggleCharacterWindow();
         }
     }
 }

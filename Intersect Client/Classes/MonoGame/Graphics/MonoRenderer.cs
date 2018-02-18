@@ -484,7 +484,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 
             var database = Globals.Database;
             var validVideoModes = GetValidVideoModes();
-            var targetResolution = database?.TargetResolution ?? 0;
+            var targetResolution = database.TargetResolution;
 
             if (targetResolution < 0 || validVideoModes?.Count <= targetResolution)
             {

@@ -99,11 +99,41 @@ namespace Intersect_Client.Classes.Core
             {
                 Gui.GameUi.Hotbar.Items[9].Activate();
             }
+
             for (var i = Controls.Hotkey1; i <= Controls.Hotkey9; i++)
             {
                 if (!GameControls.ControlHasKey(i, key)) continue;
                 var index = (int) (i - Controls.Hotkey1);
                 Gui.GameUi?.Hotbar?.Items?[index]?.Activate();
+            }
+
+            if (GameControls.ControlHasKey(Controls.OpenCharacterInfo, key))
+            {
+                Gui.GameUi.GameMenu.ToggleCharacterWindow();
+            }
+            else if (GameControls.ControlHasKey(Controls.OpenFriends, key))
+            {
+                Gui.GameUi.GameMenu.ToggleFriendsWindow();
+            }
+            else if (GameControls.ControlHasKey(Controls.OpenInventory, key))
+            {
+                Gui.GameUi.GameMenu.ToggleInventoryWindow();
+            }
+            else if (GameControls.ControlHasKey(Controls.OpenParties, key))
+            {
+                Gui.GameUi.GameMenu.TogglePartyWindow();
+            }
+            else if (GameControls.ControlHasKey(Controls.OpenQuests, key))
+            {
+                Gui.GameUi.GameMenu.ToggleQuestsWindow();
+            }
+            else if (GameControls.ControlHasKey(Controls.OpenSpells, key))
+            {
+                Gui.GameUi.GameMenu.ToggleSpellsWindow();
+            }
+            else if (GameControls.ControlHasKey(Controls.OpenMenu, key))
+            {
+
             }
         }
 
