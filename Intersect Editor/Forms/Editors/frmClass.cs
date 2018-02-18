@@ -19,7 +19,7 @@ namespace Intersect.Editor.Forms
     public partial class FrmClass : EditorForm
     {
         private List<ClassBase> mChanged = new List<ClassBase>();
-        private byte[] mCopiedItem;
+        private string mCopiedItem;
         private ClassBase mEditorItem;
 
 
@@ -683,7 +683,7 @@ namespace Intersect.Editor.Forms
         {
             if (mEditorItem != null && lstClasses.Focused)
             {
-                mCopiedItem = mEditorItem.BinaryData;
+                mCopiedItem = mEditorItem.JsonData;
                 toolStripItemPaste.Enabled = true;
             }
         }

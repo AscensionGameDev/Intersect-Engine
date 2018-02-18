@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Threading;
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -11,6 +12,7 @@ using Intersect.Server.Classes.Entities;
 using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Items;
 using Intersect.Server.Classes.Networking;
+using Newtonsoft.Json;
 using EventInstance = Intersect.Server.Classes.Entities.EventInstance;
 
 namespace Intersect.Server.Classes.Maps
@@ -22,35 +24,50 @@ namespace Intersect.Server.Classes.Maps
         private static MapInstances sLookup;
 
         //Does the map have a player on or nearby it?
+        [JsonIgnore]
         public bool Active;
 
         private List<Entity> mEntities = new List<Entity>();
+
+        [JsonIgnore]
         public Dictionary<EventBase, EventInstance> GlobalEventInstances = new Dictionary<EventBase, EventInstance>();
+        [JsonIgnore]
         public List<MapItemSpawn> ItemRespawns = new List<MapItemSpawn>();
         private Point[] mMapBlocks;
 
         //Location of Map in the current grid
+        [JsonIgnore]
         public int MapGrid;
 
+        [JsonIgnore]
         public int MapGridX = -1;
+        [JsonIgnore]
         public int MapGridY = -1;
+        [JsonIgnore]
         public List<MapItemInstance> MapItems = new List<MapItemInstance>();
 
         //Projectiles
+        [JsonIgnore]
         public List<Projectile> MapProjectiles = new List<Projectile>();
 
         private Point[] mNpcMapBlocks;
+        [JsonIgnore]
         public Dictionary<NpcSpawn, MapNpcSpawn> NpcSpawnInstances = new Dictionary<NpcSpawn, MapNpcSpawn>();
         private List<Player> mPlayers = new List<Player>();
 
+        [JsonIgnore]
         public Dictionary<ResourceSpawn, MapResourceSpawn> ResourceSpawnInstances =
             new Dictionary<ResourceSpawn, MapResourceSpawn>();
 
         //Temporary Values
+        [JsonIgnore]
         public List<int> SurroundingMaps = new List<int>();
 
+        [JsonIgnore]
         public long TileAccessTime;
+        [JsonIgnore]
         public long LastUpdateTime = -1;
+        [JsonIgnore]
         public long UpdateDelay = 100;
 
         //Init
@@ -59,40 +76,51 @@ namespace Intersect.Server.Classes.Maps
             Layers = null;
         }
 
-        public MapInstance(int mapNum) : base(mapNum, false)
+        [JsonConstructor]
+        public MapInstance(int index) : base(index, false)
         {
-            if (mapNum == -1)
+            if (index == -1)
             {
                 return;
             }
             Layers = null;
         }
 
-        public new static MapInstances Lookup => (sLookup = (sLookup ?? new MapInstances(MapBase.Lookup)));
+        [OnDeserialized]
+        internal void OnDeserializedMethod(StreamingContext context)
+        {
+            Initialize();
+        }
+
+    public new static MapInstances Lookup => (sLookup = (sLookup ?? new MapInstances(MapBase.Lookup)));
 
         //GameObject Functions
-
-        public override byte[] BinaryData
-        {
-            get { return GetMapData(false); }
-        }
 
         public object GetMapLock()
         {
             return mMapLock;
         }
 
-        public override void Load(byte[] packet)
+        public override void Load(string json)
         {
-            Load(packet, -1);
+            Load(json, -1);
         }
 
-        public void Load(byte[] packet, int keepRevision = -1)
+        public void Initialize()
+        {
+            lock (mMapLock)
+            {
+                CacheMapBlocks();
+                RespawnEverything();
+            }
+        }
+
+        public void Load(string json, int keepRevision = -1)
         {
             lock (mMapLock)
             {
                 DespawnEverything();
-                base.Load(packet);
+                base.Load(json);
                 if (keepRevision > -1) Revision = keepRevision;
                 CacheMapBlocks();
                 RespawnEverything();
@@ -133,9 +161,9 @@ namespace Intersect.Server.Classes.Maps
         }
 
         //Get Map Packet
-        public byte[] GetMapPacket(bool forClient)
+        public string GetMapPacket(bool forClient)
         {
-            return GetMapData(forClient);
+            return JsonData;
         }
 
         public byte[] GetTileData(bool shouldCache = true)

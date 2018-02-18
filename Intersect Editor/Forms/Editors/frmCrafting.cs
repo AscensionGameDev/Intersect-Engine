@@ -13,7 +13,7 @@ namespace Intersect.Editor.Forms.Editors
     public partial class FrmCrafting : EditorForm
     {
         private List<BenchBase> mChanged = new List<BenchBase>();
-        private byte[] mCopiedItem;
+        private string mCopiedItem;
         private Craft mCurrentCraft;
         private BenchBase mEditorItem;
 
@@ -261,7 +261,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (mEditorItem != null && lstCrafts.Focused)
             {
-                mCopiedItem = mEditorItem.BinaryData;
+                mCopiedItem = mEditorItem.JsonData;
                 toolStripItemPaste.Enabled = true;
             }
         }

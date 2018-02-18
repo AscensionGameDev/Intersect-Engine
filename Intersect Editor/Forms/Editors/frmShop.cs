@@ -13,7 +13,7 @@ namespace Intersect.Editor.Forms.Editors
     public partial class FrmShop : EditorForm
     {
         private List<ShopBase> mChanged = new List<ShopBase>();
-        private byte[] mCopiedItem;
+        private string mCopiedItem;
         private ShopBase mEditorItem;
 
         public FrmShop()
@@ -324,7 +324,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (mEditorItem != null && lstShops.Focused)
             {
-                mCopiedItem = mEditorItem.BinaryData;
+                mCopiedItem = mEditorItem.JsonData;
                 toolStripItemPaste.Enabled = true;
             }
         }

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.IO;
 using System.Xml;
-using Intersect.Logging;
 using Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib;
 using Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects;
 using Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Events;
 using Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Maps;
 using Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Lib.GameObjects.Switches_and_Variables;
 using Mono.Data.Sqlite;
+using Log = Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.Logging.Log;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_7
 {
@@ -327,7 +327,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_7
                     SaveGameObject(map);
                     break;
                 case GameObject.CommonEvent:
-                    var buffer = new ByteBuffer();
+                    var buffer = new Upgrade_10.Intersect_Convert_Lib.ByteBuffer();
                     buffer.WriteBytes(data);
                     var evt = new EventBase(index, buffer, true);
                     EventBase.AddObject(index, evt);

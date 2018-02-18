@@ -14,14 +14,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_8.Intersect_Convert_Li
             Type = 0;
         }
 
-        public void GetData(ByteBuffer myBuffer, DatabaseObjectLookup gameMaps)
+        public void GetData(Upgrade_10.Intersect_Convert_Lib.ByteBuffer myBuffer, DatabaseObjectLookup gameMaps)
         {
             base.GetData(myBuffer);
             myBuffer.WriteInteger(FolderId);
             myBuffer.WriteBytes(Children.Data(gameMaps));
         }
 
-        public bool Load(ByteBuffer myBuffer, DatabaseObjectLookup gameMaps, bool isServer = true)
+        public bool Load(Upgrade_10.Intersect_Convert_Lib.ByteBuffer myBuffer, DatabaseObjectLookup gameMaps, bool isServer = true)
         {
             Children.Items.Clear();
             base.Load(myBuffer);

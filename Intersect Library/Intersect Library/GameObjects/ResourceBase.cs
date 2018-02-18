@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Intersect.GameObjects.Conditions;
 using Intersect.Models;
 using Intersect.Utilities;
+using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
@@ -28,68 +29,14 @@ namespace Intersect.GameObjects
         public bool WalkableAfter;
         public bool WalkableBefore;
 
-        public ResourceBase(int id) : base(id)
+        [JsonConstructor]
+        public ResourceBase(int index) : base(index)
         {
             Name = "New Resource";
             for (int i = 0; i < Options.MaxNpcDrops; i++)
             {
                 Drops.Add(new ResourceDrop());
             }
-        }
-
-        public override byte[] BinaryData => ResourceData();
-
-        public override void Load(byte[] packet)
-        {
-            var myBuffer = new ByteBuffer();
-            myBuffer.WriteBytes(packet);
-            Name = myBuffer.ReadString();
-            InitialGraphic = myBuffer.ReadString();
-            EndGraphic = myBuffer.ReadString();
-            MinHp = myBuffer.ReadInteger();
-            MaxHp = myBuffer.ReadInteger();
-            Tool = myBuffer.ReadInteger();
-            SpawnDuration = myBuffer.ReadInteger();
-            Animation = myBuffer.ReadInteger();
-            WalkableBefore = Convert.ToBoolean(myBuffer.ReadInteger());
-            WalkableAfter = Convert.ToBoolean(myBuffer.ReadInteger());
-
-            for (int i = 0; i < Options.MaxNpcDrops; i++)
-            {
-                Drops[i].ItemNum = myBuffer.ReadInteger();
-                Drops[i].Amount = myBuffer.ReadInteger();
-                Drops[i].Chance = myBuffer.ReadInteger();
-            }
-
-            HarvestingReqs.Load(myBuffer);
-
-            myBuffer.Dispose();
-        }
-
-        public byte[] ResourceData()
-        {
-            var myBuffer = new ByteBuffer();
-            myBuffer.WriteString(Name);
-            myBuffer.WriteString(TextUtils.SanitizeNone(InitialGraphic));
-            myBuffer.WriteString(TextUtils.SanitizeNone(EndGraphic));
-            myBuffer.WriteInteger(MinHp);
-            myBuffer.WriteInteger(MaxHp);
-            myBuffer.WriteInteger(Tool);
-            myBuffer.WriteInteger(SpawnDuration);
-            myBuffer.WriteInteger(Animation);
-            myBuffer.WriteInteger(Convert.ToInt32(WalkableBefore));
-            myBuffer.WriteInteger(Convert.ToInt32(WalkableAfter));
-
-            for (int i = 0; i < Options.MaxNpcDrops; i++)
-            {
-                myBuffer.WriteInteger(Drops[i].ItemNum);
-                myBuffer.WriteInteger(Drops[i].Amount);
-                myBuffer.WriteInteger(Drops[i].Chance);
-            }
-
-            HarvestingReqs.Save(myBuffer);
-
-            return myBuffer.ToArray();
         }
 
         public class ResourceDrop

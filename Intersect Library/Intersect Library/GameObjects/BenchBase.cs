@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Intersect.Models;
+using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
@@ -7,52 +8,19 @@ namespace Intersect.GameObjects
     {
         public List<Craft> Crafts = new List<Craft>();
 
-        public BenchBase(int id) : base(id)
+        [JsonConstructor]
+        public BenchBase(int index) : base(index)
         {
             Name = "New Bench";
-        }
-
-        public override byte[] BinaryData => CraftData();
-
-        public override void Load(byte[] packet)
-        {
-            var myBuffer = new ByteBuffer();
-            myBuffer.WriteBytes(packet);
-
-            Name = myBuffer.ReadString();
-            int count = myBuffer.ReadInteger();
-
-            Crafts.Clear();
-
-            for (int i = 0; i < count; i++)
-            {
-                Crafts.Add(new Craft());
-                Crafts[i].Load(myBuffer);
-            }
-
-            myBuffer.Dispose();
-        }
-
-        public byte[] CraftData()
-        {
-            using (var myBuffer = new ByteBuffer())
-            {
-                myBuffer.WriteString(Name);
-                myBuffer.WriteInteger(Crafts.Count);
-                foreach (var craft in Crafts)
-                {
-                    myBuffer.WriteBytes(craft.Data());
-                }
-
-                return myBuffer.ToArray();
-            }
         }
     }
 
     public class Craft
     {
         public List<CraftIngredient> Ingredients = new List<CraftIngredient>();
+        [JsonProperty(Order = -3)]
         public int Item = -1;
+        [JsonProperty(Order = -2)]
         public int Time = 1;
 
         public void Load(ByteBuffer bf)

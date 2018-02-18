@@ -17,7 +17,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Li
 
         public void LoadTimeBase(byte[] data)
         {
-            var bf = new ByteBuffer();
+            var bf = new Upgrade_10.Intersect_Convert_Lib.ByteBuffer();
             bf.WriteBytes(data);
             SyncTime = Convert.ToBoolean(bf.ReadInteger());
             RangeInterval = bf.ReadInteger();
@@ -33,7 +33,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_4.Intersect_Convert_Li
 
         public byte[] SaveTimeBase()
         {
-            var bf = new ByteBuffer();
+            var bf = new Upgrade_10.Intersect_Convert_Lib.ByteBuffer();
             bf.WriteInteger(Convert.ToInt32(SyncTime));
             bf.WriteInteger(RangeInterval);
             bf.WriteDouble((double) Rate);

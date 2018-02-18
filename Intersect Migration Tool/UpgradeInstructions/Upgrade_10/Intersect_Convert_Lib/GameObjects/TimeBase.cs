@@ -1,10 +1,11 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects
 {
     public class TimeBase
     {
-        private static TimeBase _timeBase = new TimeBase();
+        private static TimeBase sTimeBase = new TimeBase();
         public Color[] RangeColors;
         public int RangeInterval = 720;
         public float Rate = 1.0f;
@@ -45,6 +46,11 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
                 bf.WriteByte(RangeColors[i].B);
             }
             return bf.ToArray();
+        }
+
+        public static string GetTimeJson()
+        {
+            return JsonConvert.SerializeObject(sTimeBase);
         }
 
         public void ResetColors()
@@ -122,7 +128,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
 
         public static TimeBase GetTimeBase()
         {
-            return _timeBase;
+            return sTimeBase;
         }
     }
 }

@@ -2,6 +2,7 @@
 using Intersect.Enums;
 using Intersect.Models;
 using Intersect.Utilities;
+using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
@@ -58,191 +59,14 @@ namespace Intersect.GameObjects
         //Regen Percentages
         public int[] VitalRegen = new int[(int) Vitals.VitalCount];
 
-        public ClassBase(int id) : base(id)
+        [JsonConstructor]
+        public ClassBase(int index) : base(index)
         {
             Name = "New Class";
             for (int i = 0; i < Options.MaxNpcDrops; i++)
             {
                 Items.Add(new ClassItem());
             }
-        }
-
-        public override byte[] BinaryData => ClassData();
-
-        public override void Load(byte[] packet)
-        {
-            var spriteCount = 0;
-            ClassSprite tempSprite = new ClassSprite();
-            var spellCount = 0;
-            ClassSpell tempSpell = new ClassSpell();
-
-            var myBuffer = new ByteBuffer();
-            myBuffer.WriteBytes(packet);
-            Name = myBuffer.ReadString();
-
-            SpawnMap = myBuffer.ReadInteger();
-            SpawnX = myBuffer.ReadInteger();
-            SpawnY = myBuffer.ReadInteger();
-            SpawnDir = myBuffer.ReadInteger();
-
-            Locked = myBuffer.ReadInteger();
-
-            // Load Class Sprites
-            Sprites.Clear();
-            spriteCount = myBuffer.ReadInteger();
-            for (var i = 0; i < spriteCount; i++)
-            {
-                tempSprite = new ClassSprite
-                {
-                    Sprite = myBuffer.ReadString(),
-                    Face = myBuffer.ReadString(),
-                    Gender = myBuffer.ReadByte()
-                };
-                Sprites.Add(tempSprite);
-            }
-
-            //Base Info
-            for (int i = 0; i < (int) Vitals.VitalCount; i++)
-            {
-                BaseVital[i] = myBuffer.ReadInteger();
-            }
-            for (int i = 0; i < (int) Stats.StatCount; i++)
-            {
-                BaseStat[i] = myBuffer.ReadInteger();
-            }
-            BasePoints = myBuffer.ReadInteger();
-
-            //Combat
-            Damage = myBuffer.ReadInteger();
-            DamageType = myBuffer.ReadInteger();
-            CritChance = myBuffer.ReadInteger();
-            ScalingStat = myBuffer.ReadInteger();
-            Scaling = myBuffer.ReadInteger();
-            AttackAnimation = myBuffer.ReadInteger();
-
-            //Level Up Info
-            IncreasePercentage = myBuffer.ReadInteger();
-            for (int i = 0; i < (int) Vitals.VitalCount; i++)
-            {
-                VitalIncrease[i] = myBuffer.ReadInteger();
-            }
-            for (int i = 0; i < (int) Stats.StatCount; i++)
-            {
-                StatIncrease[i] = myBuffer.ReadInteger();
-            }
-            PointIncrease = myBuffer.ReadInteger();
-
-            //Exp Info
-            BaseExp = myBuffer.ReadLong();
-            ExpIncrease = myBuffer.ReadLong();
-
-            //Regen
-            for (int i = 0; i < (int) Vitals.VitalCount; i++)
-            {
-                VitalRegen[i] = myBuffer.ReadInteger();
-            }
-
-            //Spawn Items
-            for (int i = 0; i < Options.MaxNpcDrops; i++)
-            {
-                Items[i].ItemNum = myBuffer.ReadInteger();
-                Items[i].Amount = myBuffer.ReadInteger();
-            }
-
-            // Load Class Spells
-            Spells.Clear();
-            spellCount = myBuffer.ReadInteger();
-            for (var i = 0; i < spellCount; i++)
-            {
-                tempSpell = new ClassSpell
-                {
-                    SpellNum = myBuffer.ReadInteger(),
-                    Level = myBuffer.ReadInteger()
-                };
-                Spells.Add(tempSpell);
-            }
-
-            myBuffer.Dispose();
-        }
-
-        public byte[] ClassData()
-        {
-            var myBuffer = new ByteBuffer();
-            myBuffer.WriteString(Name);
-
-            myBuffer.WriteInteger(SpawnMap);
-            myBuffer.WriteInteger(SpawnX);
-            myBuffer.WriteInteger(SpawnY);
-            myBuffer.WriteInteger(SpawnDir);
-
-            myBuffer.WriteInteger(Locked);
-
-            //Sprites
-            myBuffer.WriteInteger(Sprites.Count);
-            for (var i = 0; i < Sprites.Count; i++)
-            {
-                myBuffer.WriteString(TextUtils.SanitizeNone(Sprites[i].Sprite));
-                myBuffer.WriteString(TextUtils.SanitizeNone(Sprites[i].Face));
-                myBuffer.WriteByte(Sprites[i].Gender);
-            }
-
-            //Base Stats
-            for (int i = 0; i < (int) Vitals.VitalCount; i++)
-            {
-                myBuffer.WriteInteger(BaseVital[i]);
-            }
-            for (int i = 0; i < (int) Stats.StatCount; i++)
-            {
-                myBuffer.WriteInteger(BaseStat[i]);
-            }
-            myBuffer.WriteInteger(BasePoints);
-
-            //Combat
-            myBuffer.WriteInteger(Damage);
-            myBuffer.WriteInteger(DamageType);
-            myBuffer.WriteInteger(CritChance);
-            myBuffer.WriteInteger(ScalingStat);
-            myBuffer.WriteInteger(Scaling);
-            myBuffer.WriteInteger(AttackAnimation);
-
-            //Level Up Stats
-            myBuffer.WriteInteger(IncreasePercentage);
-            for (int i = 0; i < (int) Vitals.VitalCount; i++)
-            {
-                myBuffer.WriteInteger(VitalIncrease[i]);
-            }
-            for (int i = 0; i < (int) Stats.StatCount; i++)
-            {
-                myBuffer.WriteInteger(StatIncrease[i]);
-            }
-            myBuffer.WriteInteger(PointIncrease);
-
-            //Exp Info
-            myBuffer.WriteLong(BaseExp);
-            myBuffer.WriteLong(ExpIncrease);
-
-            //Regen
-            for (int i = 0; i < (int) Vitals.VitalCount; i++)
-            {
-                myBuffer.WriteInteger(VitalRegen[i]);
-            }
-
-            //Spawn Items
-            for (int i = 0; i < Options.MaxNpcDrops; i++)
-            {
-                myBuffer.WriteInteger(Items[i].ItemNum);
-                myBuffer.WriteInteger(Items[i].Amount);
-            }
-
-            //Spells
-            myBuffer.WriteInteger(Spells.Count);
-            for (var i = 0; i < Spells.Count; i++)
-            {
-                myBuffer.WriteInteger(Spells[i].SpellNum);
-                myBuffer.WriteInteger(Spells[i].Level);
-            }
-
-            return myBuffer.ToArray();
         }
     }
 

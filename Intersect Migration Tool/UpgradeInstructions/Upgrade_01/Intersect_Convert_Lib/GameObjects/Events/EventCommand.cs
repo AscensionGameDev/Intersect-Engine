@@ -16,7 +16,7 @@
             }
         }
 
-        public void Load(ByteBuffer myBuffer)
+        public void Load(Upgrade_10.Intersect_Convert_Lib.ByteBuffer myBuffer)
         {
             Type = (EventCommandType) myBuffer.ReadInteger();
             for (var x = 0; x < 6; x++)
@@ -31,7 +31,7 @@
             }
         }
 
-        public void Save(ByteBuffer myBuffer)
+        public void Save(Upgrade_10.Intersect_Convert_Lib.ByteBuffer myBuffer)
         {
             myBuffer.WriteInteger((int) Type);
             for (var x = 0; x < 6; x++)

@@ -18,14 +18,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_7.Intersect_Convert_Li
             return MapNum.CompareTo(obj.MapNum);
         }
 
-        public void GetData(ByteBuffer myBuffer, Dictionary<int, MapBase> gameMaps)
+        public void GetData(Upgrade_10.Intersect_Convert_Lib.ByteBuffer myBuffer, Dictionary<int, MapBase> gameMaps)
         {
             base.GetData(myBuffer);
             myBuffer.WriteInteger(MapNum);
             myBuffer.WriteString(gameMaps[MapNum].MyName);
         }
 
-        public bool Load(ByteBuffer myBuffer, Dictionary<int, MapBase> gameMaps, bool isServer = true)
+        public bool Load(Upgrade_10.Intersect_Convert_Lib.ByteBuffer myBuffer, Dictionary<int, MapBase> gameMaps, bool isServer = true)
         {
             base.Load(myBuffer);
             MapNum = myBuffer.ReadInteger();

@@ -62,7 +62,7 @@
       <HintPath>..\packages\Costura.Fody.1.6.2\lib\dotnet\Costura.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+    <Reference Include="JetBrains.Annotations">
       <HintPath>..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Data.Sqlite, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
@@ -687,6 +687,7 @@
     <Compile Include="UpgradeInstructions\Upgrade_10\Intersect_Convert_Lib\Threading\ThreadYieldNET35.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_10\Intersect_Convert_Lib\Utilities\CSharpFeatures.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_10\Intersect_Convert_Lib\Utilities\ReflectionUtils.cs" />
+    <Compile Include="UpgradeInstructions\Upgrade_10\Intersect_Convert_Lib\Utilities\TextUtils.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_10\ServerOptions.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_10\Upgrade10.cs" />
   </ItemGroup>
@@ -706,14 +707,7 @@
     <EmbeddedResource Include="Resources\sqlite3x86.dll" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Intersect Library\Intersect Library\Intersect %28Core%29.csproj">
-      <Project>{bc304b43-1f2c-4454-9edc-48f47357ca94}</Project>
-      <Name>Intersect %28Core%29</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="UpgradeInstructions\Upgrade_09\Intersect_Convert_Lib\Factories\" />
-    <Folder Include="UpgradeInstructions\Upgrade_10\Intersect_Convert_Lib\Factories\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Mono.Data.Sqlite.Portable.1.0.3.5\tools\Mono.Data.Sqlite.Portable.targets" Condition="Exists('..\packages\Mono.Data.Sqlite.Portable.1.0.3.5\tools\Mono.Data.Sqlite.Portable.targets')" />

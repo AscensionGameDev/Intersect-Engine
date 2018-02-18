@@ -7,10 +7,10 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
 {
     public sealed class PacketType
     {
-        private static readonly ICollection<PacketType> sPacketTypes = new HashSet<PacketType>();
-        private static readonly IDictionary<Type, PacketType> sTypeLookup = new Dictionary<Type, PacketType>();
+        private static readonly ICollection<PacketType> PacketTypes = new HashSet<PacketType>();
+        private static readonly IDictionary<Type, PacketType> TypeLookup = new Dictionary<Type, PacketType>();
 
-        private static readonly IDictionary<PacketCode, PacketType> sCodeLookup =
+        private static readonly IDictionary<PacketCode, PacketType> CodeLookup =
             new Dictionary<PacketCode, PacketType>();
 
         private PacketType(Type type, ConstructorInfo constructor, PacketCode code)
@@ -31,14 +31,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         public static PacketType Of(Type type)
         {
             Debug.Assert(type != null, "type != null");
-            Debug.Assert(sTypeLookup != null, "sTypeLookup != null");
-            return sTypeLookup.TryGetValue(type, out PacketType packetType) ? packetType : Of(type, null, null);
+            Debug.Assert(TypeLookup != null, "sTypeLookup != null");
+            return TypeLookup.TryGetValue(type, out PacketType packetType) ? packetType : Of(type, null, null);
         }
 
         public static PacketType Of(IPacket packet)
         {
-            Debug.Assert(sCodeLookup != null, "sCodeLookup != null");
-            return sCodeLookup.TryGetValue(packet?.Code ?? PacketCode.Unknown, out PacketType packetType)
+            Debug.Assert(CodeLookup != null, "sCodeLookup != null");
+            return CodeLookup.TryGetValue(packet?.Code ?? PacketCode.Unknown, out PacketType packetType)
                 ? packetType
                 : Of(packet?.GetType(), packet, null);
         }
@@ -65,14 +65,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
             }
 
             Debug.Assert(instance != null, "instance != null");
-            Debug.Assert(sPacketTypes != null, "sPacketTypes != null");
-            Debug.Assert(sCodeLookup != null, "sCodeLookup != null");
-            Debug.Assert(sTypeLookup != null, "sTypeLookup != null");
+            Debug.Assert(PacketTypes != null, "sPacketTypes != null");
+            Debug.Assert(CodeLookup != null, "sCodeLookup != null");
+            Debug.Assert(TypeLookup != null, "sTypeLookup != null");
 
             var packetType = new PacketType(type, constructor, instance.Code);
-            sPacketTypes.Add(packetType);
-            sCodeLookup.Add(instance.Code, packetType);
-            sTypeLookup.Add(type, packetType);
+            PacketTypes.Add(packetType);
+            CodeLookup.Add(instance.Code, packetType);
+            TypeLookup.Add(type, packetType);
             return packetType;
         }
     }

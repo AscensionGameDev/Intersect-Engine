@@ -4,13 +4,14 @@ using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.C
 using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.Enums;
 using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects.Events;
 using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.Models;
+using Newtonsoft.Json;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects.Maps
 {
     public class MapBase : DatabaseObject<MapBase>
     {
         //SyncLock
-        protected object _mapLock = new object();
+        protected object mMapLock = new object();
 
         //Client/Editor Only
         public MapAutotiles Autotiles;
@@ -27,7 +28,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         //For server only
         public byte[] TileData;
 
-        public MapBase(int mapNum, bool isClient) : base(mapNum)
+        [JsonConstructor]
+        public MapBase(int index, bool isClient) : base(index)
         {
             Name = "New Map";
             IsClient = isClient;
@@ -35,64 +37,67 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
 
         public MapBase(MapBase mapcopy) : base(mapcopy.Index)
         {
-            lock (GetMapLock())
+            lock (MapLock)
             {
-                ByteBuffer bf = new ByteBuffer();
-                Name = mapcopy.Name;
-                Brightness = mapcopy.Brightness;
-                IsIndoors = mapcopy.IsIndoors;
-                if (Layers != null && mapcopy.Layers != null)
+                lock (mapcopy.MapLock)
                 {
-                    if (Layers.Length < Options.LayerCount) Layers = new TileArray[Options.LayerCount];
-                    for (var i = 0; i < Options.LayerCount; i++)
+                    ByteBuffer bf = new ByteBuffer();
+                    Name = mapcopy.Name;
+                    Brightness = mapcopy.Brightness;
+                    IsIndoors = mapcopy.IsIndoors;
+                    if (Layers != null && mapcopy.Layers != null)
                     {
-                        Layers[i].Tiles = new Tile[Options.MapWidth, Options.MapHeight];
-                        for (var x = 0; x < Options.MapWidth; x++)
+                        if (Layers.Length < Options.LayerCount) Layers = new TileArray[Options.LayerCount];
+                        for (var i = 0; i < Options.LayerCount; i++)
                         {
-                            for (var y = 0; y < Options.MapHeight; y++)
+                            Layers[i].Tiles = new Tile[Options.MapWidth, Options.MapHeight];
+                            for (var x = 0; x < Options.MapWidth; x++)
                             {
-                                Layers[i].Tiles[x, y] = new Tile
+                                for (var y = 0; y < Options.MapHeight; y++)
                                 {
-                                    TilesetIndex = mapcopy.Layers[i].Tiles[x, y].TilesetIndex,
-                                    X = mapcopy.Layers[i].Tiles[x, y].X,
-                                    Y = mapcopy.Layers[i].Tiles[x, y].Y,
-                                    Autotile = mapcopy.Layers[i].Tiles[x, y].Autotile
+                                    Layers[i].Tiles[x, y] = new Tile
+                                    {
+                                        TilesetIndex = mapcopy.Layers[i].Tiles[x, y].TilesetIndex,
+                                        X = mapcopy.Layers[i].Tiles[x, y].X,
+                                        Y = mapcopy.Layers[i].Tiles[x, y].Y,
+                                        Autotile = mapcopy.Layers[i].Tiles[x, y].Autotile
+                                    };
+                                }
+                            }
+                        }
+                    }
+                    for (var x = 0; x < Options.MapWidth; x++)
+                    {
+                        for (var y = 0; y < Options.MapHeight; y++)
+                        {
+                            if (mapcopy.Attributes[x, y] != null)
+                            {
+                                Attributes[x, y] = new Attribute
+                                {
+                                    Value = mapcopy.Attributes[x, y].Value,
+                                    Data1 = mapcopy.Attributes[x, y].Data1,
+                                    Data2 = mapcopy.Attributes[x, y].Data2,
+                                    Data3 = mapcopy.Attributes[x, y].Data3,
+                                    Data4 = mapcopy.Attributes[x, y].Data4
                                 };
                             }
                         }
                     }
-                }
-                for (var x = 0; x < Options.MapWidth; x++)
-                {
-                    for (var y = 0; y < Options.MapHeight; y++)
+                    for (var i = 0; i < mapcopy.Spawns.Count; i++)
                     {
-                        if (mapcopy.Attributes[x, y] != null)
-                        {
-                            Attributes[x, y] = new Attribute
-                            {
-                                value = mapcopy.Attributes[x, y].value,
-                                data1 = mapcopy.Attributes[x, y].data1,
-                                data2 = mapcopy.Attributes[x, y].data2,
-                                data3 = mapcopy.Attributes[x, y].data3,
-                                data4 = mapcopy.Attributes[x, y].data4
-                            };
-                        }
+                        Spawns.Add(new NpcSpawn(mapcopy.Spawns[i]));
                     }
-                }
-                for (var i = 0; i < mapcopy.Spawns.Count; i++)
-                {
-                    Spawns.Add(new NpcSpawn(mapcopy.Spawns[i]));
-                }
-                for (var i = 0; i < mapcopy.Lights.Count; i++)
-                {
-                    Lights.Add(new LightBase(mapcopy.Lights[i]));
-                }
-                EventIndex = mapcopy.EventIndex;
-                foreach (var evt in mapcopy.Events)
-                {
-                    bf.WriteBytes(evt.Value.EventData());
-                    Events.Add(evt.Key, new EventBase(evt.Key, bf));
-                    bf.Clear();
+                    for (var i = 0; i < mapcopy.Lights.Count; i++)
+                    {
+                        Lights.Add(new LightBase(mapcopy.Lights[i]));
+                    }
+                    EventIndex = mapcopy.EventIndex;
+                    foreach (var evt in mapcopy.Events)
+                    {
+                        bf.WriteBytes(evt.Value.EventData());
+                        Events.Add(evt.Key, new EventBase(evt.Key, bf));
+                        bf.Clear();
+                    }
                 }
             }
         }
@@ -102,6 +107,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         public int Left { get; set; } = -1;
         public int Right { get; set; } = -1;
         public int Revision { get; set; }
+        [JsonIgnore]
         public Attribute[,] Attributes { get; set; } = new Attribute[Options.MapWidth, Options.MapHeight];
         public List<LightBase> Lights { get; set; } = new List<LightBase>();
         public Dictionary<int, EventBase> Events { get; set; } = new Dictionary<int, EventBase>();
@@ -109,12 +115,12 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         public List<ResourceSpawn> ResourceSpawns { get; set; } = new List<ResourceSpawn>();
 
         //Properties
-        public string Music { get; set; } = "None";
+        public string Music { get; set; } = null;
 
-        public string Sound { get; set; } = "None";
+        public string Sound { get; set; } = null;
         public bool IsIndoors { get; set; }
-        public string Panorama { get; set; } = "None";
-        public string Fog { get; set; } = "None";
+        public string Panorama { get; set; } = null;
+        public string Fog { get; set; } = null;
         public int FogXSpeed { get; set; }
         public int FogYSpeed { get; set; }
         public int FogTransparency { get; set; }
@@ -128,18 +134,15 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         public byte PlayerLightIntensity { get; set; } = 255;
         public float PlayerLightExpand { get; set; }
         public Color PlayerLightColor { get; set; } = Color.White;
-        public string OverlayGraphic { get; set; } = "None";
+        public string OverlayGraphic { get; set; } = null;
 
         public override byte[] BinaryData => GetMapData(false);
 
-        public object GetMapLock()
-        {
-            return _mapLock;
-        }
+        public object MapLock => mMapLock;
 
         public override void Load(byte[] packet)
         {
-            lock (GetMapLock())
+            lock (MapLock)
             {
                 var bf = new ByteBuffer();
                 bf.WriteBytes(packet);
@@ -178,11 +181,11 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
                         {
                             Attributes[x, y] = new Attribute
                             {
-                                value = attributeType,
-                                data1 = bf.ReadInteger(),
-                                data2 = bf.ReadInteger(),
-                                data3 = bf.ReadInteger(),
-                                data4 = bf.ReadString()
+                                Value = attributeType,
+                                Data1 = bf.ReadInteger(),
+                                Data2 = bf.ReadInteger(),
+                                Data3 = bf.ReadInteger(),
+                                Data4 = bf.ReadString()
                             };
                         }
                         else
@@ -205,14 +208,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
                     var npcCount = bf.ReadInteger();
                     for (var i = 0; i < npcCount; i++)
                     {
-                        var TempNpc = new NpcSpawn
+                        var tempNpc = new NpcSpawn
                         {
                             NpcNum = bf.ReadInteger(),
                             X = bf.ReadInteger(),
                             Y = bf.ReadInteger(),
                             Dir = bf.ReadInteger()
                         };
-                        Spawns.Add(TempNpc);
+                        Spawns.Add(tempNpc);
                     }
                     Events.Clear();
                     EventIndex = bf.ReadInteger();
@@ -239,11 +242,11 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
             bf.WriteInteger(Down);
             bf.WriteInteger(Left);
             bf.WriteInteger(Right);
-            bf.WriteString(Music);
-            bf.WriteString(Sound);
+            bf.WriteString(Intersect.Utilities.TextUtils.SanitizeNone(Music));
+            bf.WriteString(Intersect.Utilities.TextUtils.SanitizeNone(Sound));
             bf.WriteInteger(Convert.ToInt32(IsIndoors));
-            bf.WriteString(Panorama);
-            bf.WriteString(Fog);
+            bf.WriteString(Intersect.Utilities.TextUtils.SanitizeNone(Panorama));
+            bf.WriteString(Intersect.Utilities.TextUtils.SanitizeNone(Fog));
             bf.WriteInteger(FogXSpeed);
             bf.WriteInteger(FogYSpeed);
             bf.WriteInteger(FogTransparency);
@@ -253,7 +256,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
             bf.WriteInteger(AHue);
             bf.WriteInteger(Brightness);
             bf.WriteByte((byte) ZoneType);
-            bf.WriteString(OverlayGraphic);
+            bf.WriteString(Intersect.Utilities.TextUtils.SanitizeNone(OverlayGraphic));
             bf.WriteInteger(PlayerLightSize);
             bf.WriteDouble(PlayerLightExpand);
             bf.WriteByte(PlayerLightIntensity);
@@ -271,13 +274,13 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
                     }
                     else
                     {
-                        bf.WriteInteger(Attributes[x, y].value);
-                        if (Attributes[x, y].value > 0)
+                        bf.WriteInteger(Attributes[x, y].Value);
+                        if (Attributes[x, y].Value > 0)
                         {
-                            bf.WriteInteger(Attributes[x, y].data1);
-                            bf.WriteInteger(Attributes[x, y].data2);
-                            bf.WriteInteger(Attributes[x, y].data3);
-                            bf.WriteString(Attributes[x, y].data4);
+                            bf.WriteInteger(Attributes[x, y].Data1);
+                            bf.WriteInteger(Attributes[x, y].Data2);
+                            bf.WriteInteger(Attributes[x, y].Data3);
+                            bf.WriteString(Attributes[x, y].Data4);
                         }
                     }
                 }
@@ -308,6 +311,33 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
                     var evtData = t.Value.EventData();
                     bf.WriteLong(evtData.Length);
                     bf.WriteBytes(evtData);
+                }
+            }
+            return bf.ToArray();
+        }
+
+        public byte[] AttributesData()
+        {
+            var bf = new ByteBuffer();
+            for (var x = 0; x < Options.MapWidth; x++)
+            {
+                for (var y = 0; y < Options.MapHeight; y++)
+                {
+                    if (Attributes[x, y] == null)
+                    {
+                        bf.WriteInteger(0);
+                    }
+                    else
+                    {
+                        bf.WriteInteger(Attributes[x, y].Value);
+                        if (Attributes[x, y].Value > 0)
+                        {
+                            bf.WriteInteger(Attributes[x, y].Data1);
+                            bf.WriteInteger(Attributes[x, y].Data2);
+                            bf.WriteInteger(Attributes[x, y].Data3);
+                            bf.WriteString(Attributes[x, y].Data4);
+                        }
+                    }
                 }
             }
             return bf.ToArray();

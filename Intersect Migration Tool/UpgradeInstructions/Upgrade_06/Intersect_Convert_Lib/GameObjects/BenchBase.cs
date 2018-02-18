@@ -18,7 +18,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Li
 
         public override void Load(byte[] packet)
         {
-            var myBuffer = new ByteBuffer();
+            var myBuffer = new Upgrade_10.Intersect_Convert_Lib.ByteBuffer();
             myBuffer.WriteBytes(packet);
 
             Name = myBuffer.ReadString();
@@ -37,7 +37,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Li
 
         public byte[] CraftData()
         {
-            var myBuffer = new ByteBuffer();
+            var myBuffer = new Upgrade_10.Intersect_Convert_Lib.ByteBuffer();
 
             myBuffer.WriteString(Name);
             myBuffer.WriteInteger(Crafts.Count);
@@ -125,7 +125,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Li
         public int Item = -1;
         public int Time = 1;
 
-        public void Load(ByteBuffer bf)
+        public void Load(Upgrade_10.Intersect_Convert_Lib.ByteBuffer bf)
         {
             Item = bf.ReadInteger();
             Time = bf.ReadInteger();
@@ -140,7 +140,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_6.Intersect_Convert_Li
 
         public byte[] Data()
         {
-            var bf = new ByteBuffer();
+            var bf = new Upgrade_10.Intersect_Convert_Lib.ByteBuffer();
             bf.WriteInteger(Item);
             bf.WriteInteger(Time);
             bf.WriteInteger(Ingredients.Count);

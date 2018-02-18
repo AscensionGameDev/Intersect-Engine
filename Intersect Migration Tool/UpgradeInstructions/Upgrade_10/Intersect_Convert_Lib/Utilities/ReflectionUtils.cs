@@ -1,6 +1,8 @@
 ﻿using System;
+using System.IO;
 using System.Reflection;
 using System.Text;
+using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.Logging;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.Utilities
 {
@@ -38,6 +40,38 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
             }
 
             return builder.ToString();
+        }
+
+        public static bool ExtractResource(string resourceName, string destinationName)
+        {
+            if (string.IsNullOrEmpty(destinationName)) throw new ArgumentNullException(nameof(destinationName));
+            using (var desinationStream = new FileStream(destinationName, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+                return ExtractResource(resourceName, desinationStream);
+        }
+
+        public static bool ExtractResource(string resourceName, Stream destinationStream)
+        {
+            if (string.IsNullOrEmpty(resourceName)) throw new ArgumentNullException(nameof(resourceName));
+            if (destinationStream == null) throw new ArgumentNullException(nameof(destinationStream));
+
+            try
+            {
+                var executingAssembly = Assembly.GetEntryAssembly();
+                using (var resourceStream = executingAssembly?.GetManifestResourceStream(resourceName))
+                {
+                    if (resourceStream == null) throw new ArgumentNullException(nameof(resourceStream));
+                    var data = new byte[resourceStream.Length];
+                    resourceStream.Read(data, 0, (int) resourceStream.Length);
+                    destinationStream.Write(data, 0, data.Length);
+                }
+                return true;
+            }
+            catch (Exception exception)
+            {
+                Log.Error(exception);
+                Log.Error($"resourceName: '{resourceName}'");
+                return false;
+            }
         }
     }
 }

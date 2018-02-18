@@ -1,8 +1,11 @@
-﻿namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects.Switches_and_Variables
+﻿using Newtonsoft.Json;
+
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects.Switches_and_Variables
 {
     public class PlayerVariableBase : DatabaseObject<PlayerVariableBase>
     {
-        public PlayerVariableBase(int id) : base(id)
+        [JsonConstructor]
+        public PlayerVariableBase(int index) : base(index)
         {
             Name = "New Player Variable";
         }

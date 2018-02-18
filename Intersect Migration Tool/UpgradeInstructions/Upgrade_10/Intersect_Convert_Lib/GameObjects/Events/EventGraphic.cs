@@ -32,7 +32,7 @@
         public void Save(ByteBuffer curBuffer)
         {
             curBuffer.WriteInteger(Type);
-            curBuffer.WriteString(Filename);
+            curBuffer.WriteString(Intersect.Utilities.TextUtils.SanitizeNone(Filename));
             curBuffer.WriteInteger(X);
             curBuffer.WriteInteger(Y);
             curBuffer.WriteInteger(Width);

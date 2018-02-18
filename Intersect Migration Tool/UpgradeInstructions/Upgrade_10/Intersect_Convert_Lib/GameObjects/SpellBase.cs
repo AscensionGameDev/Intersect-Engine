@@ -1,5 +1,6 @@
 ﻿using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.Enums;
 using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects.Conditions;
+using Newtonsoft.Json;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects
 {
@@ -53,7 +54,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         //Heal/Damage
         public int[] VitalDiff = new int[(int) Vitals.VitalCount];
 
-        public SpellBase(int id) : base(id)
+        [JsonConstructor]
+        public SpellBase(int index) : base(index)
         {
             Name = "New Spell";
         }
@@ -70,8 +72,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
             Cost = myBuffer.ReadInteger();
             Pic = myBuffer.ReadString();
 
-            CastDuration = myBuffer.ReadInteger();
-            CooldownDuration = myBuffer.ReadInteger();
+            CastDuration = myBuffer.ReadInteger() * 100;
+            CooldownDuration = myBuffer.ReadInteger() * 100;
 
             CastAnimation = myBuffer.ReadInteger();
             HitAnimation = myBuffer.ReadInteger();
@@ -110,6 +112,12 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
             Data4 = myBuffer.ReadInteger();
             Data5 = myBuffer.ReadString();
 
+            if (SpellType == (int) SpellTypes.CombatSpell)
+            {
+                Data2 = Data2 * 100;
+                Data4 = Data4 * 100;
+            }
+
             myBuffer.Dispose();
         }
 
@@ -120,7 +128,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
             myBuffer.WriteString(Desc);
             myBuffer.WriteByte(SpellType);
             myBuffer.WriteInteger(Cost);
-            myBuffer.WriteString(Pic);
+            myBuffer.WriteString(Intersect.Utilities.TextUtils.SanitizeNone(Pic));
 
             myBuffer.WriteInteger(CastDuration);
             myBuffer.WriteInteger(CooldownDuration);
@@ -160,7 +168,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
             myBuffer.WriteInteger(Data2);
             myBuffer.WriteInteger(Data3);
             myBuffer.WriteInteger(Data4);
-            myBuffer.WriteString(Data5);
+            myBuffer.WriteString(Intersect.Utilities.TextUtils.SanitizeNone(Data5));
             return myBuffer.ToArray();
         }
     }

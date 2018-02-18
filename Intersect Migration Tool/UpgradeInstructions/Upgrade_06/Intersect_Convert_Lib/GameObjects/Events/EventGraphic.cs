@@ -19,7 +19,7 @@
             Height = -1;
         }
 
-        public void Load(ByteBuffer curBuffer)
+        public void Load(Upgrade_10.Intersect_Convert_Lib.ByteBuffer curBuffer)
         {
             Type = curBuffer.ReadInteger();
             Filename = curBuffer.ReadString();
@@ -29,7 +29,7 @@
             Height = curBuffer.ReadInteger();
         }
 
-        public void Save(ByteBuffer curBuffer)
+        public void Save(Upgrade_10.Intersect_Convert_Lib.ByteBuffer curBuffer)
         {
             curBuffer.WriteInteger(Type);
             curBuffer.WriteString(Filename);

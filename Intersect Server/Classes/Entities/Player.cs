@@ -2582,7 +2582,7 @@ namespace Intersect.Server.Classes.Entities
                                     Vital[(int)Vitals.Mana] - spell.VitalCost[(int)Vitals.Mana];
                                 Vital[(int)Vitals.Health] = Vital[(int)Vitals.Health] -
                                                              spell.VitalCost[(int)Vitals.Health];
-                                CastTime = Globals.System.GetTimeMs() + (spell.CastDuration * 100);
+                                CastTime = Globals.System.GetTimeMs() + spell.CastDuration;
                                 SpellCastSlot = spellSlot;
                                 CastTarget = Target;
 

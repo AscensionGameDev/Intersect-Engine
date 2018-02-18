@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
+using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib;
 using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.Enums;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_10

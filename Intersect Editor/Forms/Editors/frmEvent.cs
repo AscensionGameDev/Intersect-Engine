@@ -25,7 +25,7 @@ namespace Intersect.Editor.Forms
         private readonly MapBase mCurrentMap;
         private int mCurrentCommand = -1;
         private EventCommand mEditingCommand;
-        private ByteBuffer mEventBackup = new ByteBuffer();
+        private string mEventBackup = null;
         private bool mIsEdit;
         private bool mIsInsert;
         private ByteBuffer mPageCopy;
@@ -554,8 +554,7 @@ namespace Intersect.Editor.Forms
         /// </summary>
         public void InitEditor()
         {
-            mEventBackup = new ByteBuffer();
-            mEventBackup.WriteBytes(MyEvent.EventData());
+            mEventBackup = MyEvent.JsonData;
             txtEventname.Text = MyEvent.Name;
             if (MyEvent.Index < 0)
             {
@@ -683,7 +682,7 @@ namespace Intersect.Editor.Forms
             }
             else
             {
-                MyEvent.Load(mEventBackup.ToArray());
+                MyEvent.Load(mEventBackup);
             }
             Hide();
             Dispose();

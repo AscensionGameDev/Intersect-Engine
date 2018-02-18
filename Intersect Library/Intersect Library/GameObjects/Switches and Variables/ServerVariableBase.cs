@@ -1,4 +1,5 @@
 ﻿using Intersect.Models;
+using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
@@ -6,28 +7,10 @@ namespace Intersect.GameObjects
     {
         public int Value;
 
-        public ServerVariableBase(int id) : base(id)
+        [JsonConstructor]
+        public ServerVariableBase(int index) : base(index)
         {
             Name = "New Global Variable";
-        }
-
-        public override byte[] BinaryData => Data();
-
-        public override void Load(byte[] packet)
-        {
-            var myBuffer = new ByteBuffer();
-            myBuffer.WriteBytes(packet);
-            Name = myBuffer.ReadString();
-            Value = myBuffer.ReadInteger();
-            myBuffer.Dispose();
-        }
-
-        public byte[] Data()
-        {
-            var myBuffer = new ByteBuffer();
-            myBuffer.WriteString(Name);
-            myBuffer.WriteInteger(Value);
-            return myBuffer.ToArray();
         }
     }
 }

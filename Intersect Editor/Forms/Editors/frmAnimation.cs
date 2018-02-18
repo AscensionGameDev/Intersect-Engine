@@ -18,7 +18,7 @@ namespace Intersect.Editor.Forms
     public partial class FrmAnimation : EditorForm
     {
         private List<AnimationBase> mChanged = new List<AnimationBase>();
-        private byte[] mCopiedItem;
+        private string mCopiedItem;
         private AnimationBase mEditorItem;
 
         private int mLowerFrame;
@@ -202,6 +202,9 @@ namespace Intersect.Editor.Forms
                 nudUpperFrameDuration.Value = mEditorItem.UpperAnimFrameSpeed;
                 tmrUpperAnimation.Interval = (int) nudUpperFrameDuration.Value;
                 nudUpperLoopCount.Value = mEditorItem.UpperAnimLoopCount;
+
+                chkDisableLowerRotations.Checked = mEditorItem.DisableLowerRotations;
+                chkDisableUpperRotations.Checked = mEditorItem.DisableUpperRotations;
 
                 LoadLowerLight();
                 DrawLowerFrame();
@@ -499,6 +502,7 @@ namespace Intersect.Editor.Forms
             int lowerAnimFrameCount = mEditorItem.LowerAnimFrameCount;
             int lowerAnimFrameSpeed = mEditorItem.LowerAnimFrameSpeed;
             int lowerAnimLoopCount = mEditorItem.LowerAnimLoopCount;
+            bool disableLowerRotations = mEditorItem.DisableLowerRotations;
             LightBase[] lowerLights = mEditorItem.LowerLights;
             mEditorItem.LowerAnimSprite = mEditorItem.UpperAnimSprite;
             mEditorItem.LowerAnimXFrames = mEditorItem.UpperAnimXFrames;
@@ -507,6 +511,8 @@ namespace Intersect.Editor.Forms
             mEditorItem.LowerAnimFrameSpeed = mEditorItem.UpperAnimFrameSpeed;
             mEditorItem.LowerAnimLoopCount = mEditorItem.UpperAnimLoopCount;
             mEditorItem.LowerLights = mEditorItem.UpperLights;
+            mEditorItem.DisableLowerRotations = mEditorItem.DisableUpperRotations;
+
 
             mEditorItem.UpperAnimSprite = lowerAnimSprite;
             mEditorItem.UpperAnimXFrames = lowerAnimXFrames;
@@ -515,6 +521,7 @@ namespace Intersect.Editor.Forms
             mEditorItem.UpperAnimFrameSpeed = lowerAnimFrameSpeed;
             mEditorItem.UpperAnimLoopCount = lowerAnimLoopCount;
             mEditorItem.UpperLights = lowerLights;
+            mEditorItem.DisableUpperRotations = disableLowerRotations;
 
             mUpperFrame = 0;
             mLowerFrame = 0;
@@ -545,7 +552,7 @@ namespace Intersect.Editor.Forms
         {
             if (mEditorItem != null && lstAnimations.Focused)
             {
-                mCopiedItem = mEditorItem.BinaryData;
+                mCopiedItem = mEditorItem.JsonData;
                 toolStripItemPaste.Enabled = true;
             }
         }
@@ -682,6 +689,16 @@ namespace Intersect.Editor.Forms
         {
             DrawLowerFrame();
             DrawUpperFrame();
+        }
+
+        private void chkDisableLowerRotations_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.DisableLowerRotations = chkDisableLowerRotations.Checked;
+        }
+
+        private void chkDisableUpperRotations_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.DisableUpperRotations = chkDisableUpperRotations.Checked;
         }
     }
 }
