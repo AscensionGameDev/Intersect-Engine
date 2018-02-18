@@ -88,7 +88,7 @@ namespace Intersect_Client.Classes.UI.Game
                     rw.Clicked += ChatboxRow_Clicked;
                     mReceivedMessage = true;
 
-                    while (mChatboxMessages.RowCount > 20)
+                    while (mChatboxMessages.RowCount > 100)
                     {
                         mChatboxMessages.RemoveRow(0);
                     }
