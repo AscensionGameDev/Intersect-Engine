@@ -201,7 +201,7 @@ namespace Intersect.Editor.Classes
             {
                 if (mEditorItem.Drops[i].ItemNum != -1)
                 {
-                    lstDrops.Items.Add(Strings.NpcEditor.dropdisplay.ToString(ItemBase.GetName(mEditorItem.Drops[i].ItemNum), mEditorItem.Drops[i].Amount, mEditorItem.Drops[i].Chance));
+                    lstDrops.Items.Add(Strings.ResourceEditor.dropdisplay.ToString(ItemBase.GetName(mEditorItem.Drops[i].ItemNum), mEditorItem.Drops[i].Amount, mEditorItem.Drops[i].Chance));
                 }
                 else
                 {
