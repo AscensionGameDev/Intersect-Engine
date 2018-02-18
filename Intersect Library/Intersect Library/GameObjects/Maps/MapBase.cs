@@ -140,6 +140,13 @@ namespace Intersect.GameObjects.Maps
         public Color PlayerLightColor { get; set; } = Color.White;
         public string OverlayGraphic { get; set; } = null;
 
+        //Weather
+        public int Weather { get; set; } = -1;
+        public int WeatherXSpeed { get; set;}
+        public int WeatherYSpeed { get; set; }
+        public int WeatherIntensity { get; set; }
+        
+
         public object MapLock => mMapLock;
 
         public void LoadAttributes(byte[] data)

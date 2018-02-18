@@ -265,6 +265,7 @@ namespace Intersect_Client.Classes.Core
                         MapInstance map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid[x, y]);
                         if (map != null)
                         {
+                            map.DrawWeather();
                             map.DrawFog();
                             map.DrawOverlayGraphic();
                         }

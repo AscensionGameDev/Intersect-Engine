@@ -88,6 +88,7 @@
     <Compile Include="Classes\Localization\Strings.cs" />
     <Compile Include="Classes\Maps\MapAnimationInstance.cs" />
     <Compile Include="Classes\Maps\MapInstance.cs" />
+    <Compile Include="Classes\Maps\WeatherParticle.cs" />
     <Compile Include="Classes\MonoGame\Network\IntersectNetworkSocket.cs" />
     <Compile Include="Classes\UI\Game\Bag\BagItem.cs" />
     <Compile Include="Classes\UI\Game\Bank\BankItem.cs" />

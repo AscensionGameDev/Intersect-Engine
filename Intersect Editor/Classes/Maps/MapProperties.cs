@@ -5,6 +5,7 @@ using Intersect.Editor.Classes.Core;
 using Intersect.Enums;
 using Intersect.GameObjects.Maps;
 using Intersect.Editor.Classes.Localization;
+using Intersect.GameObjects;
 using Intersect.Utilities;
 
 namespace Intersect.Editor.Classes.Maps
@@ -74,7 +75,7 @@ namespace Intersect.Editor.Classes.Maps
          Browsable(true)]
         public string ZoneType
         {
-            get { return Strings.MapProperties.zones[(int) mMyMap.ZoneType]; }
+            get { return Strings.MapProperties.zones[(int)mMyMap.ZoneType]; }
             set
             {
                 Globals.MapEditorWindow.PrepUndoState();
@@ -82,7 +83,7 @@ namespace Intersect.Editor.Classes.Maps
                 {
                     if (Strings.MapProperties.zones[i] == value)
                     {
-                        mMyMap.ZoneType = (MapZones) i;
+                        mMyMap.ZoneType = (MapZones)i;
                     }
                 }
                 Globals.MapEditorWindow.AddUndoState();
@@ -244,8 +245,8 @@ namespace Intersect.Editor.Classes.Maps
                 if (mMyMap.PlayerLightIntensity != value)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    mMyMap.PlayerLightIntensity = Math.Max(value, (byte) 0);
-                    mMyMap.PlayerLightIntensity = Math.Min(mMyMap.PlayerLightIntensity, (byte) 255);
+                    mMyMap.PlayerLightIntensity = Math.Max(value, (byte)0);
+                    mMyMap.PlayerLightIntensity = Math.Min(mMyMap.PlayerLightIntensity, (byte)255);
                     EditorGraphics.TilePreviewUpdated = true;
                     Globals.MapEditorWindow.AddUndoState();
                 }
@@ -437,6 +438,100 @@ namespace Intersect.Editor.Classes.Maps
                     Globals.MapEditorWindow.PrepUndoState();
                     mMyMap.FogTransparency = Math.Max(value, 0);
                     mMyMap.FogTransparency = Math.Min(mMyMap.FogTransparency, 255);
+                    Globals.MapEditorWindow.AddUndoState();
+                }
+            }
+        }
+        //Weather
+        [CustomCategory("weather"),
+         CustomDescription("weatherdesc"),
+         CustomDisplayName("weather"),
+         DefaultValue("None"),
+         TypeConverter(typeof(MapWeatherProperty)),
+         Browsable(true)]
+        public string Weather
+        {
+            get
+            {
+                List<string> WeatherList = new List<string>
+                {
+                    Strings.General.none
+                };
+                WeatherList.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
+                var name = AnimationBase.GetName(mMyMap.Weather);
+                if (AnimationBase.Lookup.Get<AnimationBase>(mMyMap.Weather) == null) name = null;
+                return TextUtils.NullToNone(name);
+            }
+            set
+            {
+                var intVal = -1;
+                if (!TextUtils.IsNone(value))
+                {
+                    var animationNames = new List<string>(Database.GetGameObjectList(GameObjectType.Animation));
+                    var index = animationNames.IndexOf(value);
+                    intVal = Database.GameObjectIdFromList(GameObjectType.Animation, index);
+                }
+                if (mMyMap.Weather != intVal)
+                {
+                    Globals.MapEditorWindow.PrepUndoState();
+                    mMyMap.Weather = intVal;
+                    Globals.MapEditorWindow.AddUndoState();
+                }
+            }
+        }
+
+        [CustomCategory("weather"),
+         CustomDescription("weatherxspeeddesc"),
+         CustomDisplayName("weatherxspeed"),
+         DefaultValue(0)]
+        public int WeatherXSpeed
+        {
+            get { return mMyMap.WeatherXSpeed; }
+            set
+            {
+                if (mMyMap.WeatherXSpeed != value)
+                {
+                    Globals.MapEditorWindow.PrepUndoState();
+                    mMyMap.WeatherXSpeed = Math.Max(value, -5);
+                    mMyMap.WeatherXSpeed = Math.Min(mMyMap.WeatherXSpeed, 5);
+                    Globals.MapEditorWindow.AddUndoState();
+                }
+            }
+        }
+
+        [CustomCategory("weather"),
+         CustomDescription("weatheryspeeddesc"),
+         CustomDisplayName("weatheryspeed"),
+         DefaultValue(0)]
+        public int WeatherYSpeed
+        {
+            get { return mMyMap.WeatherYSpeed; }
+            set
+            {
+                if (mMyMap.WeatherYSpeed != value)
+                {
+                    Globals.MapEditorWindow.PrepUndoState();
+                    mMyMap.WeatherYSpeed = Math.Max(value, -5);
+                    mMyMap.WeatherYSpeed = Math.Min(mMyMap.WeatherYSpeed, 5);
+                    Globals.MapEditorWindow.AddUndoState();
+                }
+            }
+        }
+
+        [CustomCategory("weather"),
+         CustomDescription("weatherintensitydesc"),
+         CustomDisplayName("weatherintensity"),
+         DefaultValue(0)]
+        public int WeatherAlpha
+        {
+            get { return mMyMap.WeatherIntensity; }
+            set
+            {
+                if (mMyMap.WeatherIntensity != value)
+                {
+                    Globals.MapEditorWindow.PrepUndoState();
+                    mMyMap.WeatherIntensity = Math.Max(value, 0);
+                    mMyMap.WeatherIntensity = Math.Min(mMyMap.WeatherIntensity, 100);
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }
@@ -634,6 +729,32 @@ namespace Intersect.Editor.Classes.Maps
             GetStandardValues(ITypeDescriptorContext context)
         {
             return new StandardValuesCollection(Enum.GetNames(typeof(MapZones)));
+        }
+    }
+
+    public class MapWeatherProperty : StringConverter
+    {
+        public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
+        {
+            //true means show a combobox
+            return true;
+        }
+
+        public override bool GetStandardValuesExclusive(ITypeDescriptorContext context)
+        {
+            //true will limit to list. false will show the list, 
+            //but allow free-form entry
+            return false;
+        }
+
+        public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+        {
+            List<string> WeatherList = new List<string>
+            {
+                Strings.General.none
+            };
+            WeatherList.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
+            return new StandardValuesCollection(WeatherList.ToArray());
         }
     }
 }

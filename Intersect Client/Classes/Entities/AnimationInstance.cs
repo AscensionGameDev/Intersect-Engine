@@ -275,6 +275,57 @@ namespace Intersect_Client.Classes.Entities
             }
         }
 
+        public Point AnimationSize()
+        {
+            var size = new Point(0, 0);
+
+            GameTexture tex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Animation,
+                MyBase.LowerAnimSprite);
+            if (tex != null)
+            {
+                if (MyBase.LowerAnimXFrames > 0 && MyBase.LowerAnimYFrames > 0)
+                {
+                    int frameWidth = tex.GetWidth() / MyBase.LowerAnimXFrames;
+                    int frameHeight = tex.GetHeight() / MyBase.LowerAnimYFrames;
+                    if (frameWidth > size.X) size.X = frameWidth;
+                    if (frameHeight > size.Y) size.Y = frameHeight;
+                }
+            }
+
+            tex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Animation,
+                MyBase.UpperAnimSprite);
+            if (tex != null)
+            {
+                if (MyBase.UpperAnimXFrames > 0 && MyBase.UpperAnimYFrames > 0)
+                {
+                    int frameWidth = tex.GetWidth() / MyBase.UpperAnimXFrames;
+                    int frameHeight = tex.GetHeight() / MyBase.UpperAnimYFrames;
+                    if (frameWidth > size.X) size.X = frameWidth;
+                    if (frameHeight > size.Y) size.Y = frameHeight;
+                }
+            }
+
+            foreach (var light in MyBase.LowerLights)
+            {
+                if (light != null)
+                {
+                    if (light.Size + Math.Abs(light.OffsetX) > size.X) size.X = light.Size + light.OffsetX;
+                    if (light.Size + Math.Abs(light.OffsetY) > size.Y) size.Y = light.Size + light.OffsetY;
+                }
+            }
+
+            foreach (var light in MyBase.UpperLights)
+            {
+                if (light != null)
+                {
+                    if (light.Size + Math.Abs(light.OffsetX) > size.X) size.X = light.Size + light.OffsetX;
+                    if (light.Size + Math.Abs(light.OffsetY) > size.Y) size.Y = light.Size + light.OffsetY;
+                }
+            }
+
+            return size;
+        }
+
         public void SetDir(int dir)
         {
             mRenderDir = dir;

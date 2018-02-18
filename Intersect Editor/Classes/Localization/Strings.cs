@@ -1371,6 +1371,7 @@ Tick timer saved in server config.json.";
                 {"overlay", @"Overlay"},
                 {"fog", @"Fog"},
                 {"audio", @"Audio"},
+                {"weather",@"Weather" }
             };
             public static Dictionary<string, string> displaynames = new Dictionary<string, string>()
             {
@@ -1394,6 +1395,10 @@ Tick timer saved in server config.json.";
                 {"rhue", @"RHue"},
                 {"sound", @"Sound"},
                 {"zonetype", @"Zone Type"},
+                {"weather", @"Weather"},
+                {"weatherxspeed", @"Weather X Speed"},
+                {"weatheryspeed", @"Weather Y Speed"},
+                {"weatherintensity", @"Weather Intensity"},
             };
             public static Dictionary<string, string> descriptions = new Dictionary<string, string>()
             {
@@ -1417,6 +1422,10 @@ Tick timer saved in server config.json.";
                 {"rhuedesc", @"The amount of red in the overlay. (Range: 0 to 255)"},
                 {"sounddesc", @"Looping sound effect for this map."},
                 {"zonedesc", @"The type of map this is."},
+                {"weatherdesc", @"The animation for each weather particle."},
+                {"weatherxspeeddesc", @"How fast horizontally weather particles move across the screen. (Range -5 to 5)"},
+                {"weatheryspeeddesc", @"How fast vertically weather particles move across the screen. (Range -5 to 5)"},
+                {"weatherintensitydesc", @"How intence the weather is (number of particles). (Range 0 to 100)"},
             };
             public static LocalizedString title = @"Map Properties";
             public static LocalizedString[] zones = new LocalizedString[]

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Intersect;
+using Intersect.Client.Classes.Maps;
 using Intersect.Config;
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -41,6 +42,11 @@ namespace Intersect_Client.Classes.Maps
 
         //Fog Variables
         protected long mFogUpdateTime = -1;
+
+        //Weather
+        public List<WeatherParticle> _weatherParticles = new List<WeatherParticle>();
+        public List<WeatherParticle> _removeParticles = new List<WeatherParticle>();
+        private long _weatherParticleSpawnTime;
 
         //Update Timer
         private long mLastUpdateTime;
@@ -830,6 +836,51 @@ namespace Intersect_Client.Classes.Maps
             }
         }
 
+        //Weather
+        public void DrawWeather()
+        {
+            if (Globals.Me == null || Lookup.Get(Globals.Me.CurrentMap) == null) return;
+
+            var anim = AnimationBase.Lookup.Get<AnimationBase>(Weather);
+
+            if (anim == null || WeatherIntensity == 0) { return; }
+
+            _removeParticles.Clear();
+
+            if (WeatherXSpeed != 0 || WeatherYSpeed != 0)
+            {
+                if (Globals.System.GetTimeMs() > _weatherParticleSpawnTime)
+                {
+                    _weatherParticles.Add(new WeatherParticle(_removeParticles, WeatherXSpeed, WeatherYSpeed, anim));
+                    var spawnTime = 25 + (int)(475 * (float)(1f - (float)(WeatherIntensity / 100f)));
+                    spawnTime = (int)(spawnTime * (480000f / (GameGraphics.Renderer.GetScreenWidth() * GameGraphics.Renderer.GetScreenHeight())));
+                    _weatherParticleSpawnTime = Globals.System.GetTimeMs() + spawnTime;
+                }
+            }
+
+            //Process and draw each weather particle
+            foreach (WeatherParticle w in _weatherParticles)
+            {
+                w.Update();
+            }
+
+            //Remove all old particles from the weather particles list from the removeparticles list.
+            foreach (WeatherParticle r in _removeParticles)
+            {
+                r.Dispose();
+                _weatherParticles.Remove(r);
+            }
+        }
+
+        private void ClearWeather()
+        {
+            foreach (WeatherParticle r in _weatherParticles)
+            {
+                r.Dispose();
+            }
+            _weatherParticles.Clear();
+        }
+
         public void GridSwitched()
         {
             mPanoramaIntensity = 1f;
@@ -1040,6 +1091,7 @@ namespace Intersect_Client.Classes.Maps
             }
             MapRendered = false;
             HideActiveAnimations();
+            ClearWeather();
             ClearMapAttributes();
             Delete();
         }

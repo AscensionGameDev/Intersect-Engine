@@ -996,7 +996,7 @@ namespace Intersect.Server.Classes.Core
                 SaveCharacterFriends(player);
                 transaction.Commit();
             }
-            if (!newCharacter)
+            if (!newCharacter && Options.ProgressSavedMessages)
                 PacketSender.SendPlayerMsg(player.MyClient, Strings.Player.saved);
             return (rowId);
         }
