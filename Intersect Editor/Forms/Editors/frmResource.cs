@@ -193,7 +193,7 @@ namespace Intersect.Editor.Classes
             cmbItem.SelectedIndex =
                 Database.GameObjectListIndex(GameObjectType.Item, mEditorItem.Drops[index].ItemNum) + 1;
             nudDropAmount.Value = mEditorItem.Drops[index].Amount;
-            nudDropChance.Value = mEditorItem.Drops[index].Chance;
+            nudDropChance.Value = (decimal)mEditorItem.Drops[index].Chance;
         }
 
         private void nudSpawnDuration_ValueChanged(object sender, EventArgs e)

@@ -13,7 +13,6 @@ namespace Intersect
         public static string Language => _options._language;
         public static ushort ServerPort { get => _options._serverPort; set => _options._serverPort = value; }
         public static string GameName => _options._gameName;
-        public static int MaxNpcDrops => _options.GameObjectOpts.MaxNpcDrops;
         public static int MaxStatValue => _options.PlayerOpts.MaxStat;
         public static int MaxLevel => _options.PlayerOpts.MaxLevel;
         public static int MaxInvItems => _options.PlayerOpts.MaxInventory;
@@ -68,10 +67,6 @@ namespace Intersect
 
         [JsonProperty("OpenPortChecker")]
         protected bool _portChecker = true;
-
-        //TODO: Remove this when we make npc drops dynamic (B5?)
-        [JsonProperty("GameObjects")]
-        public GameObjectOptions GameObjectOpts = new GameObjectOptions();
 
         [JsonProperty ("Player")]
         public PlayerOptions PlayerOpts = new PlayerOptions();

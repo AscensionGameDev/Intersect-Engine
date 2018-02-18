@@ -40,7 +40,7 @@ namespace Intersect.GameObjects
         //Extra Data, Teleport Coords, Custom Spells, Etc
         public int Projectile;
 
-        public int Scaling;
+        public int Scaling = 100;
         public int ScalingStat;
         public byte SpellType;
 

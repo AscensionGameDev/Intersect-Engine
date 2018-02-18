@@ -156,10 +156,11 @@ namespace Intersect.Editor.Forms
             btnRemoveAggro.Text = Strings.NpcEditor.removehostility;
 
             grpDrops.Text = Strings.NpcEditor.drops;
-            lblDropIndex.Text = Strings.NpcEditor.dropindex;
             lblDropItem.Text = Strings.NpcEditor.dropitem;
             lblDropAmount.Text = Strings.NpcEditor.dropamount;
             lblDropChance.Text = Strings.NpcEditor.dropchance;
+            btnDropAdd.Text = Strings.NpcEditor.dropadd;
+            btnDropRemove.Text = Strings.NpcEditor.dropremove;
 
             grpCombat.Text = Strings.NpcEditor.combat;
             lblDamage.Text = Strings.NpcEditor.basedamage;
@@ -191,18 +192,18 @@ namespace Intersect.Editor.Forms
                 pnlContainer.Show();
 
                 txtName.Text = mEditorItem.Name;
-                cmbBehavior.SelectedIndex = Math.Min(mEditorItem.Behavior,cmbBehavior.Items.Count-1);
+                cmbBehavior.SelectedIndex = Math.Min(mEditorItem.Behavior, cmbBehavior.Items.Count - 1);
                 cmbSprite.SelectedIndex = cmbSprite.FindString(TextUtils.NullToNone(mEditorItem.Sprite));
                 nudLevel.Value = mEditorItem.Level;
                 nudSightRange.Value = mEditorItem.SightRange;
                 nudSpawnDuration.Value = mEditorItem.SpawnDuration;
-                nudStr.Value = mEditorItem.Stat[(int) Stats.Attack];
-                nudMag.Value = mEditorItem.Stat[(int) Stats.AbilityPower];
-                nudDef.Value = mEditorItem.Stat[(int) Stats.Defense];
-                nudMR.Value = mEditorItem.Stat[(int) Stats.MagicResist];
-                nudSpd.Value = mEditorItem.Stat[(int) Stats.Speed];
-                nudHp.Value = mEditorItem.MaxVital[(int) Vitals.Health];
-                nudMana.Value = mEditorItem.MaxVital[(int) Vitals.Mana];
+                nudStr.Value = mEditorItem.Stat[(int)Stats.Attack];
+                nudMag.Value = mEditorItem.Stat[(int)Stats.AbilityPower];
+                nudDef.Value = mEditorItem.Stat[(int)Stats.Defense];
+                nudMR.Value = mEditorItem.Stat[(int)Stats.MagicResist];
+                nudSpd.Value = mEditorItem.Stat[(int)Stats.Speed];
+                nudHp.Value = mEditorItem.MaxVital[(int)Vitals.Health];
+                nudMana.Value = mEditorItem.MaxVital[(int)Vitals.Mana];
                 nudExp.Value = mEditorItem.Experience;
                 chkAttackAllies.Checked = mEditorItem.AttackAllies;
                 chkEnabled.Checked = mEditorItem.NpcVsNpcEnabled;
@@ -251,8 +252,8 @@ namespace Intersect.Editor.Forms
                     }
                 }
 
-                nudDropIndex.Value = 1;
                 UpdateDropValues();
+
                 DrawNpcSprite();
                 if (mChanged.IndexOf(mEditorItem) == -1)
                 {
@@ -277,7 +278,7 @@ namespace Intersect.Editor.Forms
 
         private void cmbBehavior_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.Behavior = (byte) cmbBehavior.SelectedIndex;
+            mEditorItem.Behavior = (byte)cmbBehavior.SelectedIndex;
         }
 
         private void cmbSprite_SelectedIndexChanged(object sender, EventArgs e)
@@ -302,13 +303,28 @@ namespace Intersect.Editor.Forms
             picNpc.BackgroundImage = picSpriteBmp;
         }
 
-        private void UpdateDropValues()
+        private void UpdateDropValues(bool keepIndex = false)
         {
-            int index = (int) nudDropIndex.Value - 1;
-            cmbDropItem.SelectedIndex =
-                Database.GameObjectListIndex(GameObjectType.Item, mEditorItem.Drops[index].ItemNum) + 1;
-            nudDropAmount.Value = mEditorItem.Drops[index].Amount;
-            nudDropChance.Value = mEditorItem.Drops[index].Chance;
+            var index = lstDrops.SelectedIndex;
+            lstDrops.Items.Clear();
+
+            var drops = mEditorItem.Drops.ToArray();
+            foreach (var drop in drops)
+            {
+                if (ItemBase.Lookup.Get<ItemBase>(drop.ItemNum) == null) mEditorItem.Drops.Remove(drop);
+            }
+            for (int i = 0; i < mEditorItem.Drops.Count; i++)
+            {
+                if (mEditorItem.Drops[i].ItemNum != -1)
+                {
+                    lstDrops.Items.Add(Strings.NpcEditor.dropdisplay.ToString(ItemBase.GetName(mEditorItem.Drops[i].ItemNum), mEditorItem.Drops[i].Amount, mEditorItem.Drops[i].Chance));
+                }
+                else
+                {
+                    lstDrops.Items.Add(TextUtils.None);
+                }
+            }
+            if (keepIndex && index < lstDrops.Items.Count) lstDrops.SelectedIndex = index;
         }
 
         private void frmNpc_FormClosed(object sender, FormClosedEventArgs e)
@@ -498,8 +514,11 @@ namespace Intersect.Editor.Forms
 
         private void cmbDropItem_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.Drops[(int) nudDropIndex.Value - 1].ItemNum = Database.GameObjectIdFromList(GameObjectType.Item,
-                cmbDropItem.SelectedIndex - 1);
+            if (lstDrops.SelectedIndex > -1 && lstDrops.SelectedIndex < mEditorItem.Drops.Count)
+            {
+                mEditorItem.Drops[lstDrops.SelectedIndex].ItemNum = Database.GameObjectIdFromList(GameObjectType.Item, cmbDropItem.SelectedIndex - 1);
+            }
+            UpdateDropValues(true);
         }
 
         private void lstSpells_SelectedIndexChanged(object sender, EventArgs e)
@@ -530,87 +549,117 @@ namespace Intersect.Editor.Forms
 
         private void nudScaling_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Scaling = (int) nudScaling.Value;
+            mEditorItem.Scaling = (int)nudScaling.Value;
         }
 
         private void nudSpawnDuration_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.SpawnDuration = (int) nudSpawnDuration.Value;
+            mEditorItem.SpawnDuration = (int)nudSpawnDuration.Value;
         }
 
         private void nudSightRange_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.SightRange = (int) nudSightRange.Value;
+            mEditorItem.SightRange = (int)nudSightRange.Value;
         }
 
         private void nudStr_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Stat[(int) Stats.Attack] = (int) nudStr.Value;
+            mEditorItem.Stat[(int)Stats.Attack] = (int)nudStr.Value;
         }
 
         private void nudMag_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Stat[(int) Stats.AbilityPower] = (int) nudMag.Value;
+            mEditorItem.Stat[(int)Stats.AbilityPower] = (int)nudMag.Value;
         }
 
         private void nudDef_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Stat[(int) Stats.Defense] = (int) nudDef.Value;
+            mEditorItem.Stat[(int)Stats.Defense] = (int)nudDef.Value;
         }
 
         private void nudMR_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Stat[(int) Stats.MagicResist] = (int) nudMR.Value;
+            mEditorItem.Stat[(int)Stats.MagicResist] = (int)nudMR.Value;
         }
 
         private void nudSpd_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Stat[(int) Stats.Speed] = (int) nudSpd.Value;
+            mEditorItem.Stat[(int)Stats.Speed] = (int)nudSpd.Value;
         }
 
         private void nudDamage_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Damage = (int) nudDamage.Value;
+            mEditorItem.Damage = (int)nudDamage.Value;
         }
 
         private void nudCritChance_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.CritChance = (int) nudCritChance.Value;
+            mEditorItem.CritChance = (int)nudCritChance.Value;
         }
 
         private void nudDropChance_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Drops[(int) nudDropIndex.Value - 1].Chance = (int) nudDropChance.Value;
+            if (lstDrops.Items.Count <= 0) return;
+            mEditorItem.Drops[(int)lstDrops.SelectedIndex].Chance = (double)nudDropChance.Value;
+            UpdateDropValues(true);
         }
 
         private void nudHp_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.MaxVital[(int) Vitals.Health] = (int) nudHp.Value;
+            mEditorItem.MaxVital[(int)Vitals.Health] = (int)nudHp.Value;
         }
 
         private void nudMana_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.MaxVital[(int) Vitals.Mana] = (int) nudMana.Value;
+            mEditorItem.MaxVital[(int)Vitals.Mana] = (int)nudMana.Value;
         }
 
         private void nudExp_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Experience = (int) nudExp.Value;
+            mEditorItem.Experience = (int)nudExp.Value;
         }
 
         private void nudDropAmount_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Drops[(int) nudDropIndex.Value - 1].Amount = (int) nudDropAmount.Value;
+            if (lstDrops.Items.Count <= 0) return;
+            mEditorItem.Drops[(int)lstDrops.SelectedIndex].Amount = (int)nudDropAmount.Value;
+            UpdateDropValues(true);
         }
 
-        private void nudDropIndex_ValueChanged(object sender, EventArgs e)
+        private void lstDrops_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (lstDrops.SelectedIndex > -1)
+            {
+                cmbDropItem.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item, mEditorItem.Drops[lstDrops.SelectedIndex].ItemNum) + 1;
+                nudDropAmount.Value = mEditorItem.Drops[lstDrops.SelectedIndex].Amount;
+                nudDropChance.Value = (decimal)mEditorItem.Drops[lstDrops.SelectedIndex].Chance;
+            }
+        }
+
+        private void btnDropAdd_Click(object sender, EventArgs e)
+        {
+            mEditorItem.Drops.Add(new NpcDrop());
+            mEditorItem.Drops[mEditorItem.Drops.Count - 1].ItemNum = Database.GameObjectIdFromList(GameObjectType.Item, cmbDropItem.SelectedIndex - 1);
+            mEditorItem.Drops[mEditorItem.Drops.Count - 1].Amount = (int)nudDropAmount.Value;
+            mEditorItem.Drops[mEditorItem.Drops.Count - 1].Chance = (double)nudDropChance.Value;
+
             UpdateDropValues();
+        }
+
+        private void btnDropRemove_Click(object sender, EventArgs e)
+        {
+            if (lstDrops.SelectedIndex > -1)
+            {
+                int i = lstDrops.SelectedIndex;
+                lstDrops.Items.RemoveAt(i);
+                mEditorItem.Drops.RemoveAt(i);
+            }
+            UpdateDropValues(true);
         }
 
         private void nudLevel_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Level = (int) nudLevel.Value;
+            mEditorItem.Level = (int)nudLevel.Value;
         }
     }
 }

@@ -61,12 +61,11 @@ namespace Intersect.Server.Classes.Entities
             }
 
             //Give NPC Drops
-            for (var n = 0; n < Options.MaxNpcDrops; n++)
+            foreach (var drop in myBase.Drops)
             {
-                if (Globals.Rand.Next(1, 101) <= myBase.Drops[n].Chance)
+                if (Globals.Rand.Next(1, 10001) <= drop.Chance * 100 && ItemBase.Lookup.Get<ItemBase>(drop.ItemNum) != null)
                 {
-                    Inventory.Add(new ItemInstance(myBase.Drops[n].ItemNum,
-                        myBase.Drops[n].Amount, -1));
+                    Inventory.Add(new ItemInstance(drop.ItemNum,  drop.Amount, -1));
                 }
             }
 

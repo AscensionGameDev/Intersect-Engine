@@ -33,16 +33,12 @@ namespace Intersect.GameObjects
         public ResourceBase(int index) : base(index)
         {
             Name = "New Resource";
-            for (int i = 0; i < Options.MaxNpcDrops; i++)
-            {
-                Drops.Add(new ResourceDrop());
-            }
         }
 
         public class ResourceDrop
         {
             public int Amount;
-            public int Chance;
+            public double Chance;
             public int ItemNum;
         }
     }

@@ -22,7 +22,7 @@ namespace Intersect.GameObjects
         public int CritChance;
 
         //Combat
-        public int Damage;
+        public int Damage = 1;
 
         public int DamageType;
         public long ExpIncrease = 50;
@@ -37,7 +37,7 @@ namespace Intersect.GameObjects
         public int Locked;
 
         public int PointIncrease;
-        public int Scaling;
+        public int Scaling = 100;
         public int ScalingStat;
         public int SpawnDir;
 
@@ -63,10 +63,6 @@ namespace Intersect.GameObjects
         public ClassBase(int index) : base(index)
         {
             Name = "New Class";
-            for (int i = 0; i < Options.MaxNpcDrops; i++)
-            {
-                Items.Add(new ClassItem());
-            }
         }
     }
 

@@ -22,7 +22,7 @@ namespace Intersect.Server.Classes.Entities
     public class Player : Entity
     {
         //5 minute timeout before someone can send a trade/party request after it has been declined
-        public const long REQUEST_DECLINE_TIMEOUT = 300000;
+        public const long REQUEST_DECLINE_TIMEOUT = 300000;  //TODO: Server option this bitch. JC is a lazy fuck
 
         private bool mSentMap;
         public ItemInstance[] Bank = new ItemInstance[Options.MaxBankSlots];
@@ -482,6 +482,7 @@ namespace Intersect.Server.Classes.Entities
         public void GiveExperience(long amount)
         {
             Experience += amount;
+            if (Experience < 0) Experience = 0;
             if (!CheckLevelUp())
             {
                 PacketSender.SendExperience(MyClient);
@@ -938,7 +939,7 @@ namespace Intersect.Server.Classes.Entities
                         PacketSender.SendPlayerMsg(MyClient, Strings.Items.cannotuse);
                         return;
                     case (int)ItemTypes.Consumable:
-                        var s = "";
+                        var s = Strings.Combat.removesymbol;
                         if (itemBase.Data2 > 0)
                         {
                             s = Strings.Combat.addsymbol;

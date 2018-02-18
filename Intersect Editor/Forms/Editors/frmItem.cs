@@ -207,6 +207,7 @@ namespace Intersect.Editor.Forms
             {
                 cmbConsume.Items.Add(Strings.Combat.vitals[i]);
             }
+            cmbConsume.Items.Add(Strings.Combat.exp);
 
             btnSave.Text = Strings.ItemEditor.save;
             btnCancel.Text = Strings.ItemEditor.cancel;

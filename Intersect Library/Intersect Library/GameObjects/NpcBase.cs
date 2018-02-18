@@ -16,7 +16,7 @@ namespace Intersect.GameObjects
         public int CritChance;
 
         //Combat
-        public int Damage;
+        public int Damage = 1;
 
         public int DamageType;
 
@@ -32,7 +32,7 @@ namespace Intersect.GameObjects
         //NPC vs NPC Combat
         public bool NpcVsNpcEnabled;
 
-        public int Scaling;
+        public int Scaling = 100;
         public int ScalingStat;
         public int SightRange;
 
@@ -51,17 +51,13 @@ namespace Intersect.GameObjects
         public NpcBase(int index) : base(index)
         {
             Name = "New Npc";
-            for (int i = 0; i < Options.MaxNpcDrops; i++)
-            {
-                Drops.Add(new NpcDrop());
-            }
         }
     }
 
     public class NpcDrop
     {
         public int Amount;
-        public int Chance;
+        public double Chance;
         public int ItemNum;
     }
 }

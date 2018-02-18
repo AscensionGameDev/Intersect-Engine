@@ -670,7 +670,6 @@ namespace Intersect.Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var mapNum = (int) bf.ReadInteger();
-            var mapLength = bf.ReadInteger();
             var map = MapInstance.Lookup.Get<MapInstance>(mapNum);
             if (map == null) return;
             MapInstance.Lookup.Get<MapInstance>(mapNum).Load(bf.ReadString(), MapInstance.Lookup.Get<MapInstance>(mapNum).Revision + 1);
@@ -1255,10 +1254,13 @@ namespace Intersect.Server.Classes.Networking
                     }
                 }
 
-                for (int i = 0; i < Options.MaxNpcDrops; i++)
+                foreach (var item in classBase.Items)
                 {
-                    ItemInstance tempItem = new ItemInstance(classBase.Items[i].ItemNum, classBase.Items[i].Amount, -1);
-                    player.TryGiveItem(tempItem, false);
+                    if (ItemBase.Lookup.Get<ItemBase>(item.ItemNum) != null)
+                    {
+                        ItemInstance tempItem = new ItemInstance(item.ItemNum, item.Amount, -1);
+                        player.TryGiveItem(tempItem, false);
+                    }
                 }
 
                 Task.Run(() => Database.SaveCharacter(client.Entity, true));

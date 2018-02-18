@@ -75,7 +75,6 @@
     <Compile Include="Config\ClientOptions.cs" />
     <Compile Include="Config\CombatOptions.cs" />
     <Compile Include="Config\EquipmentOptions.cs" />
-    <Compile Include="Config\GameObjectOptions.cs" />
     <Compile Include="Config\MapOptions.cs" />
     <Compile Include="Config\PaperdollOptions.cs" />
     <Compile Include="Config\PassabilityOptions.cs" />

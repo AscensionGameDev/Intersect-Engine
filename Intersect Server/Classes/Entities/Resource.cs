@@ -61,12 +61,13 @@ namespace Intersect.Server.Classes.Entities
             MaxVital[(int) Vitals.Health] = Vital[(int) Vitals.Health];
             Passable = Convert.ToInt32(MyBase.WalkableBefore);
             Inventory.Clear();
+
             //Give Resource Drops
-            for (int n = 0; n < Options.MaxNpcDrops; n++)
+            foreach (var drop in MyBase.Drops)
             {
-                if (Globals.Rand.Next(1, 101) <= MyBase.Drops[n].Chance)
+                if (Globals.Rand.Next(1, 10001) <= drop.Chance * 100 && ItemBase.Lookup.Get<ItemBase>(drop.ItemNum) != null)
                 {
-                    Inventory.Add(new MapItemInstance(MyBase.Drops[n].ItemNum, MyBase.Drops[n].Amount, -1));
+                    Inventory.Add(new MapItemInstance(drop.ItemNum, drop.Amount, -1));
                 }
             }
 
