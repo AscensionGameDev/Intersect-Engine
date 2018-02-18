@@ -17,7 +17,8 @@ namespace Intersect.Config
         public static ushort ServerPort => _options._port;
         public static bool RenderCache => _options._renderCache;
         public static string Font => _options._font;
-        public static string MenuMusic => _options._menuMusic;
+		public static int ChatLines => _options._chatLines;
+		public static string MenuMusic => _options._menuMusic;
         public static string MenuBackground => _options._menuBackground;
         public static List<string> IntroImages => _options._introImages;
 
@@ -36,7 +37,10 @@ namespace Intersect.Config
         [JsonProperty("Font")]
         protected string _font = "arial";
 
-        [JsonProperty("MenuMusic")]
+		[JsonProperty("ChatLines")]
+		protected int _chatLines = 100;
+
+		[JsonProperty("MenuMusic")]
         protected string _menuMusic = "";
 
         [JsonProperty("MenuBackground")]

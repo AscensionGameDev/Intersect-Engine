@@ -8,6 +8,7 @@ using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.UI.Game.Chat;
+using Intersect.Config;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -88,7 +89,7 @@ namespace Intersect_Client.Classes.UI.Game
                     rw.Clicked += ChatboxRow_Clicked;
                     mReceivedMessage = true;
 
-                    while (mChatboxMessages.RowCount > 100)
+					while (mChatboxMessages.RowCount > ClientOptions.ChatLines)
                     {
                         mChatboxMessages.RemoveRow(0);
                     }
