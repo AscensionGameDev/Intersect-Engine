@@ -47,23 +47,11 @@ namespace Intersect.Client.Classes.UI.Game.Shop
             Pnl = new ImagePanel(Container, "ShopItemIcon");
             Pnl.HoverEnter += pnl_HoverEnter;
             Pnl.HoverLeave += pnl_HoverLeave;
-            Pnl.DoubleClicked += Pnl_DoubleClicked;
+            Pnl.RightClicked += Pnl_RightClicked;
+            Pnl.DoubleClicked += Pnl_RightClicked; //Allow buying via double click OR right click
         }
 
-        public void LoadItem()
-        {
-            var item = ItemBase.Lookup.Get<ItemBase>(Globals.GameShop.SellingItems[mMySlot].ItemNum);
-            if (item != null)
-            {
-                GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Pic);
-                if (itemTex != null)
-                {
-                    Pnl.Texture = itemTex;
-                }
-            }
-        }
-
-        private void Pnl_DoubleClicked(Base sender, ClickedEventArgs arguments)
+        private void Pnl_RightClicked(Base sender, ClickedEventArgs arguments)
         {
             //Confirm the purchase
             var item = ItemBase.Lookup.Get<ItemBase>(Globals.GameShop.SellingItems[mMySlot].ItemNum);
@@ -78,6 +66,19 @@ namespace Intersect.Client.Classes.UI.Game.Shop
                 else
                 {
                     PacketSender.SendBuyItem(mMySlot, 1);
+                }
+            }
+        }
+
+        public void LoadItem()
+        {
+            var item = ItemBase.Lookup.Get<ItemBase>(Globals.GameShop.SellingItems[mMySlot].ItemNum);
+            if (item != null)
+            {
+                GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Pic);
+                if (itemTex != null)
+                {
+                    Pnl.Texture = itemTex;
                 }
             }
         }

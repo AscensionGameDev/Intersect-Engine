@@ -53,7 +53,7 @@ namespace Intersect.Client.Classes.UI.Game.Bag
             Pnl = new ImagePanel(Container, "BagItemIcon");
             Pnl.HoverEnter += pnl_HoverEnter;
             Pnl.HoverLeave += pnl_HoverLeave;
-            Pnl.RightClicked += pnl_RightClicked;
+            Pnl.RightClicked += Pnl_DoubleClicked; //Allow withdrawing via double click OR right click
             Pnl.DoubleClicked += Pnl_DoubleClicked;
             Pnl.Clicked += pnl_Clicked;
         }
@@ -69,10 +69,6 @@ namespace Intersect.Client.Classes.UI.Game.Bag
         void pnl_Clicked(Base sender, ClickedEventArgs arguments)
         {
             mClickTime = Globals.System.GetTimeMs() + 500;
-        }
-
-        void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
-        {
         }
 
         void pnl_HoverLeave(Base sender, EventArgs arguments)

@@ -60,13 +60,17 @@ namespace Intersect.Client.Classes.UI.Game.Inventory
             Pnl.HoverEnter += pnl_HoverEnter;
             Pnl.HoverLeave += pnl_HoverLeave;
             Pnl.RightClicked += pnl_RightClicked;
-            Pnl.DoubleClicked += Pnl_DoubleClicked;
             Pnl.Clicked += pnl_Clicked;
             EquipPanel = new ImagePanel(Pnl, "InventoryItemEquippedIcon");
             EquipPanel.Texture = GameGraphics.Renderer.GetWhiteTexture();
         }
 
-        private void Pnl_DoubleClicked(Base sender, ClickedEventArgs arguments)
+        void pnl_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            mClickTime = Globals.System.GetTimeMs() + 500;
+        }
+
+        void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
         {
             if (Globals.GameShop != null)
             {
@@ -84,16 +88,10 @@ namespace Intersect.Client.Classes.UI.Game.Inventory
             {
                 Globals.Me.TryTradeItem(mMySlot);
             }
-        }
-
-        void pnl_Clicked(Base sender, ClickedEventArgs arguments)
-        {
-            mClickTime = Globals.System.GetTimeMs() + 500;
-        }
-
-        void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
-        {
-            Globals.Me.TryDropItem(mMySlot);
+            else
+            {
+                Globals.Me.TryDropItem(mMySlot);
+            }
         }
 
         void pnl_HoverLeave(Base sender, EventArgs arguments)

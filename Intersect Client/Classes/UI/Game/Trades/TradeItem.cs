@@ -53,7 +53,7 @@ namespace Intersect.Client.Classes.UI.Game.Trades
             Pnl = new ImagePanel(Container, "TradeIcon");
             Pnl.HoverEnter += pnl_HoverEnter;
             Pnl.HoverLeave += pnl_HoverLeave;
-            Pnl.RightClicked += pnl_RightClicked;
+            Pnl.RightClicked += Pnl_DoubleClicked;  //Revoke with right click or double click
             Pnl.DoubleClicked += Pnl_DoubleClicked;
             Pnl.Clicked += pnl_Clicked;
         }
@@ -69,11 +69,6 @@ namespace Intersect.Client.Classes.UI.Game.Trades
         void pnl_Clicked(Base sender, ClickedEventArgs arguments)
         {
             mClickTime = Globals.System.GetTimeMs() + 500;
-        }
-
-        void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
-        {
-            Globals.Me.TryRevokeItem(mMySlot);
         }
 
         void pnl_HoverLeave(Base sender, EventArgs arguments)

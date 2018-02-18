@@ -312,7 +312,14 @@ namespace Intersect_Client.Classes.UI.Game
 
 		private void UpdateMap()
 		{
-			EntityMap.SetText(Strings.EntityBox.map.ToString(MapInstance.Lookup.Get<MapInstance>(MyEntity.CurrentMap).Name));
+		    if (Globals.Me.MapInstance != null)
+		    {
+		        EntityMap.SetText(Strings.EntityBox.map.ToString(Globals.Me.MapInstance.Name));
+            }
+		    else
+		    {
+		        EntityMap.SetText(Strings.EntityBox.map.ToString(""));
+            }
 		}
 
 		private void UpdateHpBar(float elapsedTime)
