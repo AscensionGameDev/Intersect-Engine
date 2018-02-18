@@ -132,7 +132,7 @@ namespace Intersect_Client.Classes.Maps
         public void Load(string json)
         {
             LocalEntitiesToDispose.AddRange(LocalEntities.Keys.ToArray());
-            JsonConvert.PopulateObject(json, this);
+            JsonConvert.PopulateObject(json, this, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
             MapLoaded = true;
             Autotiles = new MapAutotiles(this);
             CreateMapSounds();

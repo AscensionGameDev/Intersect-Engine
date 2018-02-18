@@ -59,17 +59,18 @@ namespace Intersect.Editor.Classes
             this.lblPic2 = new System.Windows.Forms.Label();
             this.cmbInitialSprite = new DarkUI.Controls.DarkComboBox();
             this.lblPic = new System.Windows.Forms.Label();
+            this.tmrRender = new System.Windows.Forms.Timer(this.components);
+            this.pnlContainer = new System.Windows.Forms.Panel();
             this.grpDrops = new DarkUI.Controls.DarkGroupBox();
-            this.nudDropIndex = new DarkUI.Controls.DarkNumericUpDown();
+            this.btnDropRemove = new DarkUI.Controls.DarkButton();
+            this.btnDropAdd = new DarkUI.Controls.DarkButton();
+            this.lstDrops = new System.Windows.Forms.ListBox();
             this.nudDropAmount = new DarkUI.Controls.DarkNumericUpDown();
             this.nudDropChance = new DarkUI.Controls.DarkNumericUpDown();
-            this.cmbItem = new DarkUI.Controls.DarkComboBox();
+            this.cmbDropItem = new DarkUI.Controls.DarkComboBox();
             this.lblDropAmount = new System.Windows.Forms.Label();
             this.lblDropChance = new System.Windows.Forms.Label();
             this.lblDropItem = new System.Windows.Forms.Label();
-            this.lblDropIndex = new System.Windows.Forms.Label();
-            this.tmrRender = new System.Windows.Forms.Timer(this.components);
-            this.pnlContainer = new System.Windows.Forms.Panel();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
             this.toolStrip = new DarkUI.Controls.DarkToolStrip();
@@ -91,11 +92,10 @@ namespace Intersect.Editor.Classes
             ((System.ComponentModel.ISupportInitialize)(this.picEndResource)).BeginInit();
             this.initalGraphicContainer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picInitialResource)).BeginInit();
+            this.pnlContainer.SuspendLayout();
             this.grpDrops.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudDropIndex)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDropAmount)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDropChance)).BeginInit();
-            this.pnlContainer.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -165,6 +165,11 @@ namespace Intersect.Editor.Classes
             this.nudMaxHp.Name = "nudMaxHp";
             this.nudMaxHp.Size = new System.Drawing.Size(135, 20);
             this.nudMaxHp.TabIndex = 42;
+            this.nudMaxHp.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudMaxHp.ValueChanged += new System.EventHandler(this.nudMaxHp_ValueChanged);
             // 
             // nudMinHp
@@ -180,6 +185,11 @@ namespace Intersect.Editor.Classes
             this.nudMinHp.Name = "nudMinHp";
             this.nudMinHp.Size = new System.Drawing.Size(135, 20);
             this.nudMinHp.TabIndex = 41;
+            this.nudMinHp.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudMinHp.ValueChanged += new System.EventHandler(this.nudMinHp_ValueChanged);
             // 
             // nudSpawnDuration
@@ -195,6 +205,11 @@ namespace Intersect.Editor.Classes
             this.nudSpawnDuration.Name = "nudSpawnDuration";
             this.nudSpawnDuration.Size = new System.Drawing.Size(201, 20);
             this.nudSpawnDuration.TabIndex = 40;
+            this.nudSpawnDuration.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudSpawnDuration.ValueChanged += new System.EventHandler(this.nudSpawnDuration_ValueChanged);
             // 
             // cmbAnimation
@@ -345,9 +360,9 @@ namespace Intersect.Editor.Classes
             this.grpGraphics.Controls.Add(this.cmbInitialSprite);
             this.grpGraphics.Controls.Add(this.lblPic);
             this.grpGraphics.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpGraphics.Location = new System.Drawing.Point(229, 0);
+            this.grpGraphics.Location = new System.Drawing.Point(0, 282);
             this.grpGraphics.Name = "grpGraphics";
-            this.grpGraphics.Size = new System.Drawing.Size(476, 454);
+            this.grpGraphics.Size = new System.Drawing.Size(706, 454);
             this.grpGraphics.TabIndex = 16;
             this.grpGraphics.TabStop = false;
             this.grpGraphics.Text = "Graphics";
@@ -356,9 +371,9 @@ namespace Intersect.Editor.Classes
             // 
             this.exhaustedGraphicContainer.AutoScroll = true;
             this.exhaustedGraphicContainer.Controls.Add(this.picEndResource);
-            this.exhaustedGraphicContainer.Location = new System.Drawing.Point(248, 62);
+            this.exhaustedGraphicContainer.Location = new System.Drawing.Point(365, 62);
             this.exhaustedGraphicContainer.Name = "exhaustedGraphicContainer";
-            this.exhaustedGraphicContainer.Size = new System.Drawing.Size(219, 386);
+            this.exhaustedGraphicContainer.Size = new System.Drawing.Size(330, 386);
             this.exhaustedGraphicContainer.TabIndex = 25;
             // 
             // picEndResource
@@ -375,7 +390,7 @@ namespace Intersect.Editor.Classes
             this.initalGraphicContainer.Controls.Add(this.picInitialResource);
             this.initalGraphicContainer.Location = new System.Drawing.Point(13, 62);
             this.initalGraphicContainer.Name = "initalGraphicContainer";
-            this.initalGraphicContainer.Size = new System.Drawing.Size(219, 386);
+            this.initalGraphicContainer.Size = new System.Drawing.Size(330, 386);
             this.initalGraphicContainer.TabIndex = 24;
             // 
             // picInitialResource
@@ -402,7 +417,7 @@ namespace Intersect.Editor.Classes
             this.cmbEndSprite.FormattingEnabled = true;
             this.cmbEndSprite.Items.AddRange(new object[] {
             "None"});
-            this.cmbEndSprite.Location = new System.Drawing.Point(248, 32);
+            this.cmbEndSprite.Location = new System.Drawing.Point(365, 32);
             this.cmbEndSprite.Name = "cmbEndSprite";
             this.cmbEndSprite.Size = new System.Drawing.Size(196, 21);
             this.cmbEndSprite.TabIndex = 16;
@@ -413,7 +428,7 @@ namespace Intersect.Editor.Classes
             // lblPic2
             // 
             this.lblPic2.AutoSize = true;
-            this.lblPic2.Location = new System.Drawing.Point(245, 16);
+            this.lblPic2.Location = new System.Drawing.Point(362, 16);
             this.lblPic2.Name = "lblPic2";
             this.lblPic2.Size = new System.Drawing.Size(96, 13);
             this.lblPic2.TabIndex = 15;
@@ -452,134 +467,6 @@ namespace Intersect.Editor.Classes
             this.lblPic.TabIndex = 13;
             this.lblPic.Text = "Initial Graphic:";
             // 
-            // grpDrops
-            // 
-            this.grpDrops.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpDrops.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpDrops.Controls.Add(this.nudDropIndex);
-            this.grpDrops.Controls.Add(this.nudDropAmount);
-            this.grpDrops.Controls.Add(this.nudDropChance);
-            this.grpDrops.Controls.Add(this.cmbItem);
-            this.grpDrops.Controls.Add(this.lblDropAmount);
-            this.grpDrops.Controls.Add(this.lblDropChance);
-            this.grpDrops.Controls.Add(this.lblDropItem);
-            this.grpDrops.Controls.Add(this.lblDropIndex);
-            this.grpDrops.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpDrops.Location = new System.Drawing.Point(3, 287);
-            this.grpDrops.Name = "grpDrops";
-            this.grpDrops.Size = new System.Drawing.Size(220, 167);
-            this.grpDrops.TabIndex = 17;
-            this.grpDrops.TabStop = false;
-            this.grpDrops.Text = "Drops";
-            // 
-            // nudDropIndex
-            // 
-            this.nudDropIndex.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudDropIndex.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudDropIndex.Location = new System.Drawing.Point(72, 19);
-            this.nudDropIndex.Maximum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.nudDropIndex.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudDropIndex.Name = "nudDropIndex";
-            this.nudDropIndex.Size = new System.Drawing.Size(135, 20);
-            this.nudDropIndex.TabIndex = 44;
-            this.nudDropIndex.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudDropIndex.ValueChanged += new System.EventHandler(this.nudDropIndex_ValueChanged);
-            // 
-            // nudDropAmount
-            // 
-            this.nudDropAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudDropAmount.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudDropAmount.Location = new System.Drawing.Point(9, 97);
-            this.nudDropAmount.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-            this.nudDropAmount.Name = "nudDropAmount";
-            this.nudDropAmount.Size = new System.Drawing.Size(197, 20);
-            this.nudDropAmount.TabIndex = 43;
-            this.nudDropAmount.ValueChanged += new System.EventHandler(this.nudDropAmount_ValueChanged);
-            // 
-            // nudDropChance
-            // 
-            this.nudDropChance.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudDropChance.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudDropChance.Location = new System.Drawing.Point(9, 136);
-            this.nudDropChance.Name = "nudDropChance";
-            this.nudDropChance.Size = new System.Drawing.Size(197, 20);
-            this.nudDropChance.TabIndex = 18;
-            this.nudDropChance.ValueChanged += new System.EventHandler(this.nudDropChance_ValueChanged);
-            // 
-            // cmbItem
-            // 
-            this.cmbItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbItem.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbItem.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbItem.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbItem.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbItem.ButtonIcon")));
-            this.cmbItem.DrawDropdownHoverOutline = false;
-            this.cmbItem.DrawFocusRectangle = false;
-            this.cmbItem.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbItem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbItem.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbItem.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbItem.FormattingEnabled = true;
-            this.cmbItem.Location = new System.Drawing.Point(39, 52);
-            this.cmbItem.Name = "cmbItem";
-            this.cmbItem.Size = new System.Drawing.Size(167, 21);
-            this.cmbItem.TabIndex = 17;
-            this.cmbItem.Text = null;
-            this.cmbItem.TextPadding = new System.Windows.Forms.Padding(2);
-            this.cmbItem.SelectedIndexChanged += new System.EventHandler(this.cmbItem_SelectedIndexChanged);
-            // 
-            // lblDropAmount
-            // 
-            this.lblDropAmount.AutoSize = true;
-            this.lblDropAmount.Location = new System.Drawing.Point(6, 82);
-            this.lblDropAmount.Name = "lblDropAmount";
-            this.lblDropAmount.Size = new System.Drawing.Size(46, 13);
-            this.lblDropAmount.TabIndex = 15;
-            this.lblDropAmount.Text = "Amount:";
-            // 
-            // lblDropChance
-            // 
-            this.lblDropChance.AutoSize = true;
-            this.lblDropChance.Location = new System.Drawing.Point(6, 120);
-            this.lblDropChance.Name = "lblDropChance";
-            this.lblDropChance.Size = new System.Drawing.Size(64, 13);
-            this.lblDropChance.TabIndex = 13;
-            this.lblDropChance.Text = "Chance (%):";
-            // 
-            // lblDropItem
-            // 
-            this.lblDropItem.AutoSize = true;
-            this.lblDropItem.Location = new System.Drawing.Point(6, 49);
-            this.lblDropItem.Name = "lblDropItem";
-            this.lblDropItem.Size = new System.Drawing.Size(27, 13);
-            this.lblDropItem.TabIndex = 11;
-            this.lblDropItem.Text = "Item";
-            // 
-            // lblDropIndex
-            // 
-            this.lblDropIndex.AutoSize = true;
-            this.lblDropIndex.Location = new System.Drawing.Point(6, 21);
-            this.lblDropIndex.Name = "lblDropIndex";
-            this.lblDropIndex.Size = new System.Drawing.Size(62, 13);
-            this.lblDropIndex.TabIndex = 9;
-            this.lblDropIndex.Text = "Drop Index:";
-            // 
             // tmrRender
             // 
             this.tmrRender.Enabled = true;
@@ -588,19 +475,163 @@ namespace Intersect.Editor.Classes
             // 
             // pnlContainer
             // 
+            this.pnlContainer.AutoScroll = true;
             this.pnlContainer.Controls.Add(this.grpDrops);
             this.pnlContainer.Controls.Add(this.grpGeneral);
             this.pnlContainer.Controls.Add(this.grpGraphics);
             this.pnlContainer.Location = new System.Drawing.Point(221, 39);
             this.pnlContainer.Name = "pnlContainer";
-            this.pnlContainer.Size = new System.Drawing.Size(705, 458);
+            this.pnlContainer.Size = new System.Drawing.Size(731, 458);
             this.pnlContainer.TabIndex = 18;
             this.pnlContainer.Visible = false;
+            // 
+            // grpDrops
+            // 
+            this.grpDrops.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpDrops.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpDrops.Controls.Add(this.btnDropRemove);
+            this.grpDrops.Controls.Add(this.btnDropAdd);
+            this.grpDrops.Controls.Add(this.lstDrops);
+            this.grpDrops.Controls.Add(this.nudDropAmount);
+            this.grpDrops.Controls.Add(this.nudDropChance);
+            this.grpDrops.Controls.Add(this.cmbDropItem);
+            this.grpDrops.Controls.Add(this.lblDropAmount);
+            this.grpDrops.Controls.Add(this.lblDropChance);
+            this.grpDrops.Controls.Add(this.lblDropItem);
+            this.grpDrops.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpDrops.Location = new System.Drawing.Point(231, 0);
+            this.grpDrops.Name = "grpDrops";
+            this.grpDrops.Size = new System.Drawing.Size(226, 281);
+            this.grpDrops.TabIndex = 31;
+            this.grpDrops.TabStop = false;
+            this.grpDrops.Text = "Drops";
+            // 
+            // btnDropRemove
+            // 
+            this.btnDropRemove.Location = new System.Drawing.Point(126, 252);
+            this.btnDropRemove.Name = "btnDropRemove";
+            this.btnDropRemove.Padding = new System.Windows.Forms.Padding(5);
+            this.btnDropRemove.Size = new System.Drawing.Size(75, 23);
+            this.btnDropRemove.TabIndex = 64;
+            this.btnDropRemove.Text = "Remove";
+            this.btnDropRemove.Click += new System.EventHandler(this.btnDropRemove_Click);
+            // 
+            // btnDropAdd
+            // 
+            this.btnDropAdd.Location = new System.Drawing.Point(6, 252);
+            this.btnDropAdd.Name = "btnDropAdd";
+            this.btnDropAdd.Padding = new System.Windows.Forms.Padding(5);
+            this.btnDropAdd.Size = new System.Drawing.Size(75, 23);
+            this.btnDropAdd.TabIndex = 63;
+            this.btnDropAdd.Text = "Add";
+            this.btnDropAdd.Click += new System.EventHandler(this.btnDropAdd_Click);
+            // 
+            // lstDrops
+            // 
+            this.lstDrops.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.lstDrops.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lstDrops.ForeColor = System.Drawing.Color.Gainsboro;
+            this.lstDrops.FormattingEnabled = true;
+            this.lstDrops.Location = new System.Drawing.Point(9, 19);
+            this.lstDrops.Name = "lstDrops";
+            this.lstDrops.Size = new System.Drawing.Size(192, 93);
+            this.lstDrops.TabIndex = 62;
+            this.lstDrops.SelectedIndexChanged += new System.EventHandler(this.lstDrops_SelectedIndexChanged);
+            // 
+            // nudDropAmount
+            // 
+            this.nudDropAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudDropAmount.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudDropAmount.Location = new System.Drawing.Point(6, 173);
+            this.nudDropAmount.Maximum = new decimal(new int[] {
+            10000000,
+            0,
+            0,
+            0});
+            this.nudDropAmount.Name = "nudDropAmount";
+            this.nudDropAmount.Size = new System.Drawing.Size(195, 20);
+            this.nudDropAmount.TabIndex = 61;
+            this.nudDropAmount.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudDropAmount.ValueChanged += new System.EventHandler(this.nudDropAmount_ValueChanged);
+            // 
+            // nudDropChance
+            // 
+            this.nudDropChance.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudDropChance.DecimalPlaces = 2;
+            this.nudDropChance.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudDropChance.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudDropChance.Location = new System.Drawing.Point(6, 219);
+            this.nudDropChance.Name = "nudDropChance";
+            this.nudDropChance.Size = new System.Drawing.Size(195, 20);
+            this.nudDropChance.TabIndex = 60;
+            this.nudDropChance.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudDropChance.ValueChanged += new System.EventHandler(this.nudDropChance_ValueChanged);
+            // 
+            // cmbDropItem
+            // 
+            this.cmbDropItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbDropItem.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbDropItem.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbDropItem.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbDropItem.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbDropItem.ButtonIcon")));
+            this.cmbDropItem.DrawDropdownHoverOutline = false;
+            this.cmbDropItem.DrawFocusRectangle = false;
+            this.cmbDropItem.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbDropItem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbDropItem.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbDropItem.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbDropItem.FormattingEnabled = true;
+            this.cmbDropItem.Location = new System.Drawing.Point(6, 131);
+            this.cmbDropItem.Name = "cmbDropItem";
+            this.cmbDropItem.Size = new System.Drawing.Size(195, 21);
+            this.cmbDropItem.TabIndex = 17;
+            this.cmbDropItem.Text = null;
+            this.cmbDropItem.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbDropItem.SelectedIndexChanged += new System.EventHandler(this.cmbDropItem_SelectedIndexChanged);
+            // 
+            // lblDropAmount
+            // 
+            this.lblDropAmount.AutoSize = true;
+            this.lblDropAmount.Location = new System.Drawing.Point(3, 157);
+            this.lblDropAmount.Name = "lblDropAmount";
+            this.lblDropAmount.Size = new System.Drawing.Size(46, 13);
+            this.lblDropAmount.TabIndex = 15;
+            this.lblDropAmount.Text = "Amount:";
+            // 
+            // lblDropChance
+            // 
+            this.lblDropChance.AutoSize = true;
+            this.lblDropChance.Location = new System.Drawing.Point(3, 202);
+            this.lblDropChance.Name = "lblDropChance";
+            this.lblDropChance.Size = new System.Drawing.Size(64, 13);
+            this.lblDropChance.TabIndex = 13;
+            this.lblDropChance.Text = "Chance (%):";
+            // 
+            // lblDropItem
+            // 
+            this.lblDropItem.AutoSize = true;
+            this.lblDropItem.Location = new System.Drawing.Point(3, 114);
+            this.lblDropItem.Name = "lblDropItem";
+            this.lblDropItem.Size = new System.Drawing.Size(30, 13);
+            this.lblDropItem.TabIndex = 11;
+            this.lblDropItem.Text = "Item:";
             // 
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(736, 503);
+            this.btnCancel.Location = new System.Drawing.Point(762, 503);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
             this.btnCancel.Size = new System.Drawing.Size(190, 27);
@@ -610,7 +641,7 @@ namespace Intersect.Editor.Classes
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(540, 503);
+            this.btnSave.Location = new System.Drawing.Point(566, 503);
             this.btnSave.Name = "btnSave";
             this.btnSave.Padding = new System.Windows.Forms.Padding(5);
             this.btnSave.Size = new System.Drawing.Size(190, 27);
@@ -635,7 +666,7 @@ namespace Intersect.Editor.Classes
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Padding = new System.Windows.Forms.Padding(5, 0, 1, 0);
-            this.toolStrip.Size = new System.Drawing.Size(936, 25);
+            this.toolStrip.Size = new System.Drawing.Size(957, 25);
             this.toolStrip.TabIndex = 47;
             this.toolStrip.Text = "toolStrip1";
             // 
@@ -719,13 +750,13 @@ namespace Intersect.Editor.Classes
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
-            // frmResource
+            // FrmResource
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.ClientSize = new System.Drawing.Size(936, 537);
+            this.ClientSize = new System.Drawing.Size(957, 537);
             this.ControlBox = false;
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.btnCancel);
@@ -735,6 +766,7 @@ namespace Intersect.Editor.Classes
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.KeyPreview = true;
             this.Name = "FrmResource";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Resource Editor";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frmResource_FormClosed);
             this.Load += new System.EventHandler(this.frmResource_Load);
@@ -751,12 +783,11 @@ namespace Intersect.Editor.Classes
             ((System.ComponentModel.ISupportInitialize)(this.picEndResource)).EndInit();
             this.initalGraphicContainer.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picInitialResource)).EndInit();
+            this.pnlContainer.ResumeLayout(false);
             this.grpDrops.ResumeLayout(false);
             this.grpDrops.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudDropIndex)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDropAmount)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDropChance)).EndInit();
-            this.pnlContainer.ResumeLayout(false);
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
             this.ResumeLayout(false);
@@ -776,11 +807,6 @@ namespace Intersect.Editor.Classes
         private DarkCheckBox chkWalkableBefore;
         private DarkComboBox cmbToolType;
         private System.Windows.Forms.Label lblToolType;
-        private DarkGroupBox grpDrops;
-        private System.Windows.Forms.Label lblDropAmount;
-        private System.Windows.Forms.Label lblDropChance;
-        private System.Windows.Forms.Label lblDropItem;
-        private System.Windows.Forms.Label lblDropIndex;
         private DarkComboBox cmbEndSprite;
         private System.Windows.Forms.Label lblPic2;
         private DarkComboBox cmbInitialSprite;
@@ -807,12 +833,18 @@ namespace Intersect.Editor.Classes
         private System.Windows.Forms.Panel initalGraphicContainer;
         private DarkButton btnRequirements;
         private DarkComboBox cmbAnimation;
-        private DarkComboBox cmbItem;
         private DarkNumericUpDown nudSpawnDuration;
-        private DarkNumericUpDown nudDropChance;
         private DarkNumericUpDown nudMaxHp;
         private DarkNumericUpDown nudMinHp;
+        private DarkGroupBox grpDrops;
+        private DarkButton btnDropRemove;
+        private DarkButton btnDropAdd;
+        private System.Windows.Forms.ListBox lstDrops;
         private DarkNumericUpDown nudDropAmount;
-		private DarkNumericUpDown nudDropIndex;
-	}
+        private DarkNumericUpDown nudDropChance;
+        private DarkComboBox cmbDropItem;
+        private System.Windows.Forms.Label lblDropAmount;
+        private System.Windows.Forms.Label lblDropChance;
+        private System.Windows.Forms.Label lblDropItem;
+    }
 }

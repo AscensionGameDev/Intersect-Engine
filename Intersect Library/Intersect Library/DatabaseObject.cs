@@ -41,7 +41,7 @@ namespace Intersect.Models
         [JsonProperty(Order = -4)]
         public string Name { get; set; }
 
-        public virtual void Load(string json) => JsonConvert.PopulateObject(json, this);
+        public virtual void Load(string json) => JsonConvert.PopulateObject(json, this, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
        // public virtual void Load(string json);
 
 

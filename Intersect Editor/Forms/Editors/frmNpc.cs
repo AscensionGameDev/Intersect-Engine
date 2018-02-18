@@ -512,15 +512,6 @@ namespace Intersect.Editor.Forms
             mEditorItem.ScalingStat = cmbScalingStat.SelectedIndex;
         }
 
-        private void cmbDropItem_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (lstDrops.SelectedIndex > -1 && lstDrops.SelectedIndex < mEditorItem.Drops.Count)
-            {
-                mEditorItem.Drops[lstDrops.SelectedIndex].ItemNum = Database.GameObjectIdFromList(GameObjectType.Item, cmbDropItem.SelectedIndex - 1);
-            }
-            UpdateDropValues(true);
-        }
-
         private void lstSpells_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (lstSpells.SelectedIndex > -1)
@@ -597,13 +588,6 @@ namespace Intersect.Editor.Forms
             mEditorItem.CritChance = (int)nudCritChance.Value;
         }
 
-        private void nudDropChance_ValueChanged(object sender, EventArgs e)
-        {
-            if (lstDrops.Items.Count <= 0) return;
-            mEditorItem.Drops[(int)lstDrops.SelectedIndex].Chance = (double)nudDropChance.Value;
-            UpdateDropValues(true);
-        }
-
         private void nudHp_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.MaxVital[(int)Vitals.Health] = (int)nudHp.Value;
@@ -619,9 +603,18 @@ namespace Intersect.Editor.Forms
             mEditorItem.Experience = (int)nudExp.Value;
         }
 
+        private void cmbDropItem_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lstDrops.SelectedIndex > -1 && lstDrops.SelectedIndex < mEditorItem.Drops.Count)
+            {
+                mEditorItem.Drops[lstDrops.SelectedIndex].ItemNum = Database.GameObjectIdFromList(GameObjectType.Item, cmbDropItem.SelectedIndex - 1);
+            }
+            UpdateDropValues(true);
+        }
+
         private void nudDropAmount_ValueChanged(object sender, EventArgs e)
         {
-            if (lstDrops.Items.Count <= 0) return;
+            if (lstDrops.SelectedIndex < lstDrops.Items.Count) return;
             mEditorItem.Drops[(int)lstDrops.SelectedIndex].Amount = (int)nudDropAmount.Value;
             UpdateDropValues(true);
         }
@@ -654,6 +647,13 @@ namespace Intersect.Editor.Forms
                 lstDrops.Items.RemoveAt(i);
                 mEditorItem.Drops.RemoveAt(i);
             }
+            UpdateDropValues(true);
+        }
+
+        private void nudDropChance_ValueChanged(object sender, EventArgs e)
+        {
+            if (lstDrops.SelectedIndex < lstDrops.Items.Count) return;
+            mEditorItem.Drops[(int)lstDrops.SelectedIndex].Chance = (double)nudDropChance.Value;
             UpdateDropValues(true);
         }
 

@@ -101,9 +101,9 @@ namespace Intersect.Editor.Classes
             cmbAnimation.Items.Clear();
             cmbAnimation.Items.Add(Strings.General.none);
             cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
-            cmbItem.Items.Clear();
-            cmbItem.Items.Add(Strings.General.none);
-            cmbItem.Items.AddRange(Database.GetGameObjectList(GameObjectType.Item));
+            cmbDropItem.Items.Clear();
+            cmbDropItem.Items.Add(Strings.General.none);
+            cmbDropItem.Items.AddRange(Database.GetGameObjectList(GameObjectType.Item));
             InitLocalization();
             UpdateEditor();
         }
@@ -131,10 +131,11 @@ namespace Intersect.Editor.Classes
             btnRequirements.Text = Strings.ResourceEditor.requirements;
 
             grpDrops.Text = Strings.ResourceEditor.drops;
-            lblDropIndex.Text = Strings.ResourceEditor.dropindex;
             lblDropItem.Text = Strings.ResourceEditor.dropitem;
             lblDropAmount.Text = Strings.ResourceEditor.dropamount;
             lblDropChance.Text = Strings.ResourceEditor.dropchance;
+            btnDropAdd.Text = Strings.ResourceEditor.dropadd;
+            btnDropRemove.Text = Strings.ResourceEditor.dropremove;
 
             grpGraphics.Text = Strings.ResourceEditor.graphics;
             lblPic.Text = Strings.ResourceEditor.initialgraphic;
@@ -171,7 +172,6 @@ namespace Intersect.Editor.Classes
                 chkWalkableAfter.Checked = mEditorItem.WalkableAfter;
                 cmbInitialSprite.SelectedIndex = cmbInitialSprite.FindString(TextUtils.NullToNone(TextUtils.NullToNone(mEditorItem.InitialGraphic)));
                 cmbEndSprite.SelectedIndex = cmbEndSprite.FindString(TextUtils.NullToNone(TextUtils.NullToNone(mEditorItem.EndGraphic)));
-                nudDropIndex.Value = 1;
                 UpdateDropValues();
                 Render();
                 if (mChanged.IndexOf(mEditorItem) == -1)
@@ -187,23 +187,33 @@ namespace Intersect.Editor.Classes
             UpdateToolStripItems();
         }
 
-        private void UpdateDropValues()
+        private void UpdateDropValues(bool keepIndex = false)
         {
-            int index = (int) nudDropIndex.Value - 1;
-            cmbItem.SelectedIndex =
-                Database.GameObjectListIndex(GameObjectType.Item, mEditorItem.Drops[index].ItemNum) + 1;
-            nudDropAmount.Value = mEditorItem.Drops[index].Amount;
-            nudDropChance.Value = (decimal)mEditorItem.Drops[index].Chance;
+            var index = lstDrops.SelectedIndex;
+            lstDrops.Items.Clear();
+
+            var drops = mEditorItem.Drops.ToArray();
+            foreach (var drop in drops)
+            {
+                if (ItemBase.Lookup.Get<ItemBase>(drop.ItemNum) == null) mEditorItem.Drops.Remove(drop);
+            }
+            for (int i = 0; i < mEditorItem.Drops.Count; i++)
+            {
+                if (mEditorItem.Drops[i].ItemNum != -1)
+                {
+                    lstDrops.Items.Add(Strings.NpcEditor.dropdisplay.ToString(ItemBase.GetName(mEditorItem.Drops[i].ItemNum), mEditorItem.Drops[i].Amount, mEditorItem.Drops[i].Chance));
+                }
+                else
+                {
+                    lstDrops.Items.Add(TextUtils.None);
+                }
+            }
+            if (keepIndex && index < lstDrops.Items.Count) lstDrops.SelectedIndex = index;
         }
 
         private void nudSpawnDuration_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.SpawnDuration = (int) nudSpawnDuration.Value;
-        }
-
-        private void nudDropChance_ValueChanged(object sender, EventArgs e)
-        {
-            mEditorItem.Drops[(int) nudDropIndex.Value - 1].Chance = (int) nudDropChance.Value;
         }
 
         private void cmbToolType_SelectedIndexChanged(object sender, EventArgs e)
@@ -428,21 +438,10 @@ namespace Intersect.Editor.Classes
             frm.ShowDialog();
         }
 
-        private void cmbItem_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            mEditorItem.Drops[(int) nudDropIndex.Value - 1].ItemNum = Database.GameObjectIdFromList(GameObjectType.Item,
-                cmbItem.SelectedIndex - 1);
-        }
-
         private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
             mEditorItem.Animation =
                 Database.GameObjectIdFromList(GameObjectType.Animation, cmbAnimation.SelectedIndex - 1);
-        }
-
-        private void nudDropAmount_ValueChanged(object sender, EventArgs e)
-        {
-            mEditorItem.Drops[(int) nudDropIndex.Value - 1].Amount = (int) nudDropAmount.Value;
         }
 
         private void nudMinHp_ValueChanged(object sender, EventArgs e)
@@ -455,9 +454,59 @@ namespace Intersect.Editor.Classes
             mEditorItem.MaxHp = (int) nudMaxHp.Value;
         }
 
-        private void nudDropIndex_ValueChanged(object sender, EventArgs e)
+
+        private void cmbDropItem_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (lstDrops.SelectedIndex > -1 && lstDrops.SelectedIndex < mEditorItem.Drops.Count)
+            {
+                mEditorItem.Drops[lstDrops.SelectedIndex].ItemNum = Database.GameObjectIdFromList(GameObjectType.Item, cmbDropItem.SelectedIndex - 1);
+            }
+            UpdateDropValues(true);
+        }
+
+        private void nudDropAmount_ValueChanged(object sender, EventArgs e)
+        {
+            if (lstDrops.SelectedIndex < lstDrops.Items.Count) return;
+            mEditorItem.Drops[(int)lstDrops.SelectedIndex].Amount = (int)nudDropAmount.Value;
+            UpdateDropValues(true);
+        }
+
+        private void lstDrops_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lstDrops.SelectedIndex > -1)
+            {
+                cmbDropItem.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item, mEditorItem.Drops[lstDrops.SelectedIndex].ItemNum) + 1;
+                nudDropAmount.Value = mEditorItem.Drops[lstDrops.SelectedIndex].Amount;
+                nudDropChance.Value = (decimal)mEditorItem.Drops[lstDrops.SelectedIndex].Chance;
+            }
+        }
+
+        private void btnDropAdd_Click(object sender, EventArgs e)
+        {
+            mEditorItem.Drops.Add(new ResourceBase.ResourceDrop());
+            mEditorItem.Drops[mEditorItem.Drops.Count - 1].ItemNum = Database.GameObjectIdFromList(GameObjectType.Item, cmbDropItem.SelectedIndex - 1);
+            mEditorItem.Drops[mEditorItem.Drops.Count - 1].Amount = (int)nudDropAmount.Value;
+            mEditorItem.Drops[mEditorItem.Drops.Count - 1].Chance = (double)nudDropChance.Value;
+
             UpdateDropValues();
+        }
+
+        private void btnDropRemove_Click(object sender, EventArgs e)
+        {
+            if (lstDrops.SelectedIndex > -1)
+            {
+                int i = lstDrops.SelectedIndex;
+                lstDrops.Items.RemoveAt(i);
+                mEditorItem.Drops.RemoveAt(i);
+            }
+            UpdateDropValues(true);
+        }
+
+        private void nudDropChance_ValueChanged(object sender, EventArgs e)
+        {
+            if (lstDrops.SelectedIndex < lstDrops.Items.Count) return;
+            mEditorItem.Drops[(int)lstDrops.SelectedIndex].Chance = (double)nudDropChance.Value;
+            UpdateDropValues(true);
         }
     }
 }
