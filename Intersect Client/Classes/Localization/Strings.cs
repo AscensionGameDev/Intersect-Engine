@@ -249,8 +249,9 @@ namespace Intersect.Client.Classes.Localization
         {
             public static LocalizedString exp = @"EXP:";
             public static LocalizedString expval = @"{00} / {01}";
-            public static LocalizedString level = @"Level: {00}";
-            public static LocalizedString maxlevel = @"Max Level";
+            public static LocalizedString level = @"{00} Lv.{01}";
+			public static LocalizedString map = @"{00}";
+			public static LocalizedString maxlevel = @"Max Level";
             public static LocalizedString party = @"Party";
             public static LocalizedString partytip = @"Invite {00} to your party.";
             public static LocalizedString trade = @"Trade";

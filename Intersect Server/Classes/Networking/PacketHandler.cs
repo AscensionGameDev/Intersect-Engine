@@ -670,7 +670,6 @@ namespace Intersect.Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var mapNum = (int) bf.ReadInteger();
-            var mapLength = bf.ReadInteger();
             var map = MapInstance.Lookup.Get<MapInstance>(mapNum);
             if (map == null) return;
             MapInstance.Lookup.Get<MapInstance>(mapNum).Load(bf.ReadString(), MapInstance.Lookup.Get<MapInstance>(mapNum).Revision + 1);
