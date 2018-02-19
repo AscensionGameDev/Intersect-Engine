@@ -41,8 +41,8 @@ namespace Intersect.Server.Classes
                 Environment.Exit(-0x1000);
             }
 
-			Database.CheckDirectories();
-			Thread logicThread;
+            Database.CheckDirectories();
+            Thread logicThread;
             if (!Options.LoadFromDisk())
             {
                 Console.WriteLine("Failed to load server options! Press any key to shut down.");

@@ -6,7 +6,7 @@ namespace Intersect.Config
 {
     public class MapOptions
     {
-		//Maps
+        //Maps
         public int GameBorderStyle; //0 For Smart Borders, 1 for Non-Seamless, 2 for black borders
         public int ItemSpawnTime = 15000;
         public int ItemDespawnTime = 15000;

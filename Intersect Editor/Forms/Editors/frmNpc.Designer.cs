@@ -1484,8 +1484,8 @@ namespace Intersect.Editor.Forms
         private DarkNumericUpDown nudMana;
         private DarkNumericUpDown nudHp;
         private DarkNumericUpDown nudExp;
-		private System.Windows.Forms.Label lblLevel;
-		private DarkNumericUpDown nudLevel;
+        private System.Windows.Forms.Label lblLevel;
+        private DarkNumericUpDown nudLevel;
         private DarkGroupBox grpDrops;
         private DarkButton btnDropRemove;
         private DarkButton btnDropAdd;

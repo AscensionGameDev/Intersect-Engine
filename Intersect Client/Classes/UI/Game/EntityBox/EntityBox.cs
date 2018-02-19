@@ -31,8 +31,8 @@ namespace Intersect_Client.Classes.UI.Game
         public ImagePanel EntityFace;
         public ImagePanel EntityFaceContainer;
         public ImagePanel EntityInfoPanel;
-		public Label EntityMap;
-		public Label EntityName;
+        public Label EntityMap;
+        public Label EntityName;
         public ImagePanel EntityStatusPanel;
 
         public EntityTypes EntityType;
@@ -106,9 +106,9 @@ namespace Intersect_Client.Classes.UI.Game
 
             EventDesc = new RichLabel(EntityInfoPanel, "EventDescLabel");
 
-			EntityMap = new Label(EntityInfoPanel, "EntityMapLabel");
+            EntityMap = new Label(EntityInfoPanel, "EntityMapLabel");
 
-			HpBackground = new ImagePanel(EntityInfoPanel, "HPBarBackground");
+            HpBackground = new ImagePanel(EntityInfoPanel, "HPBarBackground");
             HpBar = new ImagePanel(EntityInfoPanel, "HPBar");
             HpTitle = new Label(EntityInfoPanel, "HPTitle");
             HpTitle.SetText(Strings.EntityBox.vital0);
@@ -165,15 +165,15 @@ namespace Intersect_Client.Classes.UI.Game
                     {
                         TradeLabel.Hide();
                         PartyLabel.Hide();
-					}
+                    }
                     else
                     {
                         ExpBackground.Hide();
                         ExpBar.Hide();
                         ExpLbl.Hide();
                         ExpTitle.Hide();
-						EntityMap.Hide();
-					}
+                        EntityMap.Hide();
+                    }
                     EventDesc.Hide();
                     break;
                 case EntityTypes.GlobalEntity:
@@ -184,7 +184,7 @@ namespace Intersect_Client.Classes.UI.Game
                     ExpTitle.Hide();
                     TradeLabel.Hide();
                     PartyLabel.Hide();
-					EntityMap.Hide();
+                    EntityMap.Hide();
                     break;
                 case EntityTypes.Event:
                     ExpBackground.Hide();
@@ -201,8 +201,8 @@ namespace Intersect_Client.Classes.UI.Game
                     HpTitle.Hide();
                     TradeLabel.Hide();
                     PartyLabel.Hide();
-					EntityMap.Hide();
-					break;
+                    EntityMap.Hide();
+                    break;
             }
             EntityName.SetText(MyEntity.MyName);
         }
@@ -241,7 +241,7 @@ namespace Intersect_Client.Classes.UI.Game
             if (EntityType != EntityTypes.Event)
             {
                 UpdateName();
-				UpdateMap();
+                UpdateMap();
                 UpdateHpBar(elapsedTime);
                 UpdateMpBar(elapsedTime);
             }
@@ -310,19 +310,19 @@ namespace Intersect_Client.Classes.UI.Game
             EntityName.SetText(Strings.EntityBox.level.ToString(MyEntity.MyName, MyEntity.Level));
         }
 
-		private void UpdateMap()
-		{
-		    if (Globals.Me.MapInstance != null)
-		    {
-		        EntityMap.SetText(Strings.EntityBox.map.ToString(Globals.Me.MapInstance.Name));
+        private void UpdateMap()
+        {
+            if (Globals.Me.MapInstance != null)
+            {
+                EntityMap.SetText(Strings.EntityBox.map.ToString(Globals.Me.MapInstance.Name));
             }
-		    else
-		    {
-		        EntityMap.SetText(Strings.EntityBox.map.ToString(""));
+            else
+            {
+                EntityMap.SetText(Strings.EntityBox.map.ToString(""));
             }
-		}
+        }
 
-		private void UpdateHpBar(float elapsedTime)
+        private void UpdateHpBar(float elapsedTime)
         {
             float targetHpWidth = 0f;
             if (MyEntity.MaxVital[(int) Vitals.Health] > 0)

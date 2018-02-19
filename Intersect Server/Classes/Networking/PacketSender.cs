@@ -1212,26 +1212,26 @@ namespace Intersect.Server.Classes.Networking
             bf.Dispose();
         }
 
-		public static void SendShowPicture(Client client, string picture, int size, int clickable)
-		{
-			var bf = new ByteBuffer();
-			bf.WriteLong((int)ServerPackets.ShowPicture);
-			bf.WriteString(picture);
-			bf.WriteInteger(size);
-			bf.WriteInteger(clickable);
-			client.SendPacket(bf.ToArray());
-			bf.Dispose();
-		}
+        public static void SendShowPicture(Client client, string picture, int size, int clickable)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ServerPackets.ShowPicture);
+            bf.WriteString(picture);
+            bf.WriteInteger(size);
+            bf.WriteInteger(clickable);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
 
-		public static void SendHidePicture(Client client)
-		{
-			var bf = new ByteBuffer();
-			bf.WriteLong((int)ServerPackets.HidePicture);
-			client.SendPacket(bf.ToArray());
-			bf.Dispose();
-		}
+        public static void SendHidePicture(Client client)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ServerPackets.HidePicture);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
 
-		public static void SendOpenShop(Client client, int shopNum)
+        public static void SendOpenShop(Client client, int shopNum)
         {
             if (ShopBase.Lookup.Get<ShopBase>(shopNum) == null) return;
             var bf = new ByteBuffer();
