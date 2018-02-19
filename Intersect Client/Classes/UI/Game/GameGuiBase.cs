@@ -15,8 +15,8 @@ namespace Intersect_Client.Classes.UI.Game
         private BankWindow mBankWindow;
         private Chatbox mChatBox;
         private CraftingWindow mCraftingBenchWindow;
-		private PictureWindow mPictureWindow;
-		private DebugMenu mDebugMenu;
+        private PictureWindow mPictureWindow;
+        private DebugMenu mDebugMenu;
 
         private EventWindow mEventWindow;
         public EntityBox PlayerBox;
@@ -39,6 +39,8 @@ namespace Intersect_Client.Classes.UI.Game
         public bool FocusChat;
         public Canvas GameCanvas;
 
+        public IngameMenuWindow IngameMenuWindow { get; private set; }
+
         public GameMenu GameMenu { get; private set; }
 
         //Public Components - For clicking/dragging
@@ -59,6 +61,8 @@ namespace Intersect_Client.Classes.UI.Game
             mDebugMenu = new DebugMenu(GameCanvas);
             mQuestOfferWindow = new QuestOfferWindow(GameCanvas);
             PlayerBox = new EntityBox(GameCanvas, EntityTypes.Player, Globals.Me, true);
+
+            IngameMenuWindow = new IngameMenuWindow(GameCanvas) {IsHidden = true};
         }
 
         //Chatbox
@@ -174,21 +178,21 @@ namespace Intersect_Client.Classes.UI.Game
             Globals.InCraft = true;
         }
 
-		//Picture
+        //Picture
 
-		public void ShowPicture(string picture, int size, bool clickable)
-		{
-			if (mPictureWindow != null) mPictureWindow.Close();
-			mPictureWindow = new PictureWindow(GameCanvas, picture, size, clickable);
-		}
+        public void ShowPicture(string picture, int size, bool clickable)
+        {
+            if (mPictureWindow != null) mPictureWindow.Close();
+            mPictureWindow = new PictureWindow(GameCanvas, picture, size, clickable);
+        }
 
-		public void HidePicture()
-		{
-			mPictureWindow.Close();
-		}
+        public void HidePicture()
+        {
+            mPictureWindow.Close();
+        }
 
-		//Quest Log
-		public void NotifyQuestsUpdated()
+        //Quest Log
+        public void NotifyQuestsUpdated()
         {
             mShouldUpdateQuestLog = true;
         }
@@ -243,6 +247,12 @@ namespace Intersect_Client.Classes.UI.Game
         public void AdminWindowSelectName(string name)
         {
             mAdminWindow.SetName(name);
+        }
+
+        public bool ToggleIngameMenu()
+        {
+            IngameMenuWindow?.ToggleHidden();
+            return !IngameMenuWindow?.IsHidden ?? false;
         }
 
         public void Draw()

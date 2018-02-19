@@ -5,14 +5,15 @@ using System.Linq;
 using System.Text;
 using Intersect.Models;
 using Intersect.Utilities;
+using JetBrains.Annotations;
 
 namespace Intersect.Collections
 {
     public class DatabaseObjectLookup : IIndexLookup<IDatabaseObject>
     {
-        private readonly Dictionary<Guid, IDatabaseObject> mIdMap;
-        private readonly Dictionary<int, IDatabaseObject> mIndexMap;
-        private readonly object mLock;
+        [NotNull] private readonly Dictionary<Guid, IDatabaseObject> mIdMap;
+        [NotNull] private readonly Dictionary<int, IDatabaseObject> mIndexMap;
+        [NotNull] private readonly object mLock;
 
         public DatabaseObjectLookup()
         {
@@ -22,54 +23,56 @@ namespace Intersect.Collections
             mIndexMap = new Dictionary<int, IDatabaseObject>();
         }
 
+        [NotNull]
         public string[] Names =>
             this.Select(pair => pair.Value?.Name ?? "ERR_DELETED").ToArray();
 
         public virtual IDatabaseObject this[Guid id]
         {
-            get { return Get(id); }
-            set { Set(id, value); }
+            get => Get(id);
+            set => Set(id, value);
         }
 
         public virtual IDatabaseObject this[int index]
         {
-            get { return Get(index); }
-            set { Set(index, value); }
+            get => Get(index);
+            set => Set(index, value);
         }
 
+        [NotNull]
         public List<int> IndexList
         {
             get
             {
                 lock (mLock)
                 {
-                    return IndexKeys?.ToList();
+                    return IndexKeys.ToList();
                 }
             }
         }
 
+        [NotNull]
         public List<IDatabaseObject> ValueList
         {
             get
             {
                 lock (mLock)
                 {
-                    return IndexValues?.ToList();
+                    return IndexValues.ToList();
                 }
             }
         }
+        
+        [NotNull] public Type KeyType => typeof(Guid);
 
-        public Type KeyType => typeof(Guid);
-        public Type IndexKeyType => typeof(int);
-        public Type ValueType => typeof(IDatabaseObject);
+        [NotNull] public Type IndexKeyType => typeof(int);
+
+        [NotNull] public Type ValueType => typeof(IDatabaseObject);
 
         public virtual int Count
         {
             get
             {
-                if (mIdMap == null || mIndexMap == null)
-                    throw new ArgumentNullException();
-
                 if (mIdMap.Count != mIndexMap.Count)
                     throw new ArgumentOutOfRangeException();
 
@@ -77,46 +80,45 @@ namespace Intersect.Collections
             }
         }
 
+        [NotNull]
         public virtual IDictionary<Guid, IDatabaseObject> Clone
         {
             get
             {
-                if (mLock == null) throw new ArgumentNullException();
                 lock (mLock)
                 {
-                    return mIdMap?.ToDictionary(pair => pair.Key, pair => pair.Value);
+                    return mIdMap.ToDictionary(pair => pair.Key, pair => pair.Value);
                 }
             }
         }
 
-        public virtual ICollection<KeyValuePair<Guid, IDatabaseObject>> Pairs => Clone;
-        public virtual ICollection<Guid> Keys => mIdMap?.Keys;
-        public virtual ICollection<IDatabaseObject> Values => mIdMap?.Values;
+        [NotNull] public virtual ICollection<KeyValuePair<Guid, IDatabaseObject>> Pairs => Clone;
+        [NotNull] public virtual ICollection<Guid> Keys => mIdMap.Keys;
+        [NotNull] public virtual ICollection<IDatabaseObject> Values => mIdMap.Values;
 
         public virtual int NextIndex
         {
             get
             {
-                if (mLock == null) throw new ArgumentNullException();
-                lock (mLock) return (mIndexMap?.Keys.Max() + 1) ?? -1;
+                lock (mLock) return mIndexMap.Keys.Max() + 1;
             }
         }
 
+        [NotNull]
         public IDictionary<int, IDatabaseObject> IndexClone
         {
             get
             {
-                if (mLock == null) throw new ArgumentNullException();
                 lock (mLock)
                 {
-                    return mIndexMap?.ToDictionary(pair => pair.Key, pair => pair.Value);
+                    return mIndexMap.ToDictionary(pair => pair.Key, pair => pair.Value);
                 }
             }
         }
 
-        public ICollection<KeyValuePair<int, IDatabaseObject>> IndexPairs => IndexClone;
-        public ICollection<int> IndexKeys => mIndexMap?.Keys;
-        public ICollection<IDatabaseObject> IndexValues => mIndexMap?.Values;
+        [NotNull] public ICollection<KeyValuePair<int, IDatabaseObject>> IndexPairs => IndexClone;
+        [NotNull] public ICollection<int> IndexKeys => mIndexMap.Keys;
+        [NotNull] public ICollection<IDatabaseObject> IndexValues => mIndexMap.Values;
 
         public virtual IDatabaseObject Get(Guid id) => TryGetValue(id, out IDatabaseObject value)
             ? value
@@ -127,10 +129,10 @@ namespace Intersect.Collections
             : default(IDatabaseObject);
 
         public virtual TObject Get<TObject>(Guid id)
-            where TObject : IDatabaseObject => TryGetValue<TObject>(id, out TObject value) ? value : default(TObject);
+            where TObject : IDatabaseObject => TryGetValue(id, out TObject value) ? value : default(TObject);
 
         public virtual TObject Get<TObject>(int index)
-            where TObject : IDatabaseObject => TryGetValue<TObject>(index, out TObject value)
+            where TObject : IDatabaseObject => TryGetValue(index, out TObject value)
             ? value
             : default(TObject);
 
@@ -153,9 +155,6 @@ namespace Intersect.Collections
                 value = default(IDatabaseObject);
                 return false;
             }
-
-            if (mLock == null) throw new ArgumentNullException();
-            if (mIdMap == null) throw new ArgumentNullException();
 
             lock (mLock)
             {
@@ -182,9 +181,6 @@ namespace Intersect.Collections
                 value = default(IDatabaseObject);
                 return false;
             }
-
-            if (mLock == null) throw new ArgumentNullException();
-            if (mIndexMap == null) throw new ArgumentNullException();
 
             lock (mLock)
             {
@@ -268,10 +264,6 @@ namespace Intersect.Collections
             if (!IsIdValid(value.Guid)) throw new ArgumentOutOfRangeException();
             if (!IsIndexValid(value.Index)) throw new ArgumentOutOfRangeException();
 
-            if (mLock == null) throw new ArgumentNullException();
-            if (mIdMap == null) throw new ArgumentNullException();
-            if (mIndexMap == null) throw new ArgumentNullException();
-
             lock (mLock)
             {
                 return mIdMap.Remove(value.Guid) && mIndexMap.Remove(value.Index);
@@ -282,9 +274,6 @@ namespace Intersect.Collections
         {
             if (guid == null) throw new ArgumentNullException();
             if (!IsIdValid(guid)) throw new ArgumentOutOfRangeException();
-
-            if (mLock == null) throw new ArgumentNullException();
-            if (mIdMap == null) throw new ArgumentNullException();
 
             IDatabaseObject obj;
 
@@ -300,9 +289,6 @@ namespace Intersect.Collections
         {
             if (!IsIndexValid(index)) throw new ArgumentOutOfRangeException();
 
-            if (mLock == null) throw new ArgumentNullException();
-            if (mIndexMap == null) throw new ArgumentNullException();
-
             IDatabaseObject obj;
 
             lock (mLock)
@@ -315,10 +301,6 @@ namespace Intersect.Collections
 
         public virtual void Clear()
         {
-            if (mLock == null) throw new ArgumentNullException();
-            if (mIdMap == null) throw new ArgumentNullException();
-            if (mIndexMap == null) throw new ArgumentNullException();
-
             lock (mLock)
             {
                 mIdMap.Clear();
@@ -343,12 +325,10 @@ namespace Intersect.Collections
             if (!IsIdValid(value.Guid)) throw new ArgumentOutOfRangeException(nameof(value.Guid));
             if (!IsIndexValid(value.Index)) throw new ArgumentOutOfRangeException(nameof(value.Index));
 
-            if (mLock == null) throw new ArgumentNullException(nameof(mLock));
-            if (mIdMap == null) throw new ArgumentNullException(nameof(mIdMap));
-            if (mIndexMap == null) throw new ArgumentNullException(nameof(mIndexMap));
-
             lock (mLock)
             {
+                mIdMap.TryGetValue(value.Guid, out IDatabaseObject gameObject);
+
                 if (!overwrite)
                 {
                     if (mIdMap.ContainsKey(value.Guid)) return false;
@@ -356,11 +336,11 @@ namespace Intersect.Collections
                 }
                 else if (mIdMap.ContainsKey(value.Guid))
                 {
-                    mIndexMap.Remove(mIdMap[value.Guid].Index);
+                    mIndexMap.Remove(gameObject?.Index ?? -1);
                 }
                 else if (mIndexMap.ContainsKey(value.Index))
                 {
-                    mIdMap.Remove(mIndexMap[value.Index].Guid);
+                    mIdMap.Remove(gameObject?.Guid ?? Guid.Empty);
                 }
 
                 mIdMap[value.Guid] = value;
@@ -369,21 +349,19 @@ namespace Intersect.Collections
             }
         }
 
-        private string MessageNoConstructor(Type type, params string[] constructorMessage)
+        private static string MessageNoConstructor(Type type, params string[] constructorMessage)
         {
+            var joinedConstructorMessage = string.Join(",", constructorMessage ?? new string[] { });
             var builder = new StringBuilder();
             builder.AppendLine(
-                $@"No ({
-                        string.Join(",", constructorMessage ?? new string[] { })
-                    }) constructor for type '{type?.Name}'.");
+                $@"No ({joinedConstructorMessage}) constructor for type '{type?.Name}'.");
             builder.AppendLine(ReflectionUtils.StringifyConstructors(type));
             return builder.ToString();
         }
 
         public virtual IEnumerator<KeyValuePair<int, IDatabaseObject>> GetIndexEnumerator()
         {
-            if (IndexClone != null) return IndexClone.GetEnumerator();
-            throw new ArgumentNullException();
+            return IndexClone.GetEnumerator();
         }
     }
 }

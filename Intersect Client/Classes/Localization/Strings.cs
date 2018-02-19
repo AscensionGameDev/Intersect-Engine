@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Intersect.Localization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -176,12 +174,12 @@ namespace Intersect.Client.Classes.Localization
 
         public struct Controls
         {
-            public static Dictionary<string, LocalizedString> controldict = new Dictionary<string, LocalizedString>()
+            public static Dictionary<string, LocalizedString> controldict = new Dictionary<string, LocalizedString>
             {
                 {"attackinteract", @"Attack/Interact:"},
                 {"block", @"Block:"},
-				{"autotarget", @"Auto Target:"},
-				{"enter", @"Enter:"},
+                {"autotarget", @"Auto Target:"},
+                {"enter", @"Enter:"},
                 {"hotkey0", @"Hot Key 0:"},
                 {"hotkey1", @"Hot Key 1:"},
                 {"hotkey2", @"Hot Key 2:"},
@@ -206,7 +204,11 @@ namespace Intersect.Client.Classes.Localization
                 {"openspells", @"Open Spells:"},
                 {"openfriends", @"Open Friends:"},
                 {"opensettings", @"Open Settings:"},
+                {"opendebugger", @"Open Debugger:"},
+                {"openadminpanel", @"Open Admin Panel:"},
+                {"togglegui", @"Toggle Interface:"}
             };
+
             public static LocalizedString edit = @"Edit Controls";
             public static LocalizedString listening = @"Listening";
             public static LocalizedString title = @"Controls";
@@ -251,8 +253,8 @@ namespace Intersect.Client.Classes.Localization
             public static LocalizedString exp = @"EXP:";
             public static LocalizedString expval = @"{00} / {01}";
             public static LocalizedString level = @"{00} Lv.{01}";
-			public static LocalizedString map = @"{00}";
-			public static LocalizedString maxlevel = @"Max Level";
+            public static LocalizedString map = @"{00}";
+            public static LocalizedString maxlevel = @"Max Level";
             public static LocalizedString party = @"Party";
             public static LocalizedString partytip = @"Invite {00} to your party.";
             public static LocalizedString trade = @"Trade";
@@ -302,10 +304,9 @@ namespace Intersect.Client.Classes.Localization
         public struct GameMenu
         {
             public static LocalizedString character = @"Character Info";
-            public static LocalizedString exit = @"Exit Game";
+            public static LocalizedString Menu = @"Open Menu";
             public static LocalizedString friends = @"Friends";
             public static LocalizedString items = @"Inventory";
-            public static LocalizedString options = @"Options";
             public static LocalizedString party = @"Party";
             public static LocalizedString quest = @"Quest Log";
             public static LocalizedString spells = @"Spell Book";
@@ -328,8 +329,8 @@ namespace Intersect.Client.Classes.Localization
         {
             public static LocalizedString dropitem = @"Drop Item";
             public static LocalizedString dropitemprompt = @"How many/much {00} do you want to drop?";
-			public static LocalizedString dropprompt = @"Do you wish to drop the item: {00}?";
-			public static LocalizedString title = @"Inventory";
+            public static LocalizedString dropprompt = @"Do you wish to drop the item: {00}?";
+            public static LocalizedString title = @"Inventory";
         }
 
         public struct ItemDesc
@@ -677,8 +678,8 @@ namespace Intersect.Client.Classes.Localization
             public static LocalizedString costs = @"Costs {00} {01}(s)";
             public static LocalizedString sellitem = @"Sell Item";
             public static LocalizedString sellitemprompt = @"How many/much {00} would you like to sell?";
-			public static LocalizedString sellprompt = @"Do you wish to sell the item: {00}?";
-			public static LocalizedString sellsfor = @"Sells for {00} {01}(s)";
+            public static LocalizedString sellprompt = @"Do you wish to sell the item: {00}?";
+            public static LocalizedString sellsfor = @"Sells for {00} {01}(s)";
             public static LocalizedString wontbuy = @"Shop Will Not Buy This Item";
         }
 
@@ -760,6 +761,15 @@ namespace Intersect.Client.Classes.Localization
             public static LocalizedString youroffer = @"Your offer:";
         }
 
+        public struct IngameMenu
+        {
+            public static LocalizedString Title = @"Menu";
+            public static LocalizedString Options = @"Options";
+            public static LocalizedString GoToCharacterSelect = @"Go to Character Select";
+            public static LocalizedString Logout = @"Logout";
+            public static LocalizedString ExitToDesktop = @"Exit to Desktop";
+            public static LocalizedString Close = @"Close";
+        }
 
         public static void Load(string language)
         {

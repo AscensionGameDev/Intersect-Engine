@@ -69,8 +69,7 @@ namespace Intersect_Client.Classes.UI
             mMainMenu = mainMenu;
 
             //Main Menu Window
-            mOptionsPanel = new ImagePanel(parent, "OptionsWindow");
-            mOptionsPanel.IsHidden = true;
+            mOptionsPanel = new ImagePanel(parent, "OptionsWindow") {IsHidden = true};
             Gui.InputBlockingElements.Add(mOptionsPanel);
 
             //Menu Header
@@ -91,11 +90,11 @@ namespace Intersect_Client.Classes.UI
 
             mResolutionList = new ComboBox(mResolutionBackground, "ResolutionCombobox");
             var myModes = GameGraphics.Renderer.GetValidVideoModes();
-            for (var i = 0; i < myModes.Count; i++)
+            myModes?.ForEach(t =>
             {
-                var item = mResolutionList.AddItem(myModes[i]);
+                var item = mResolutionList.AddItem(t);
                 item.Alignment = Pos.Center;
-            }
+            });
 
             //FPS Background
             mFpsBackground = new ImagePanel(mOptionsContainer, "FPSPanel");

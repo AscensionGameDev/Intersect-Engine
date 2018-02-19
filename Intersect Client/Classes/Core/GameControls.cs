@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Input;
 using Intersect_Client.Classes.General;
@@ -16,7 +17,7 @@ namespace Intersect.Client.Classes.Core
         MoveRight,
         AttackInteract,
         Block,
-		AutoTarget,
+        AutoTarget,
         PickUp,
         Enter,
         Hotkey1,
@@ -38,6 +39,9 @@ namespace Intersect.Client.Classes.Core
         OpenSpells,
         OpenFriends,
         OpenSettings,
+        OpenDebugger,
+        OpenAdminPanel,
+        ToggleGui
     }
 
     public class GameControls
@@ -86,8 +90,8 @@ namespace Intersect.Client.Classes.Core
             CreateControlMap(Controls.MoveRight, Keys.Right, Keys.D);
             CreateControlMap(Controls.AttackInteract, Keys.E, Keys.LButton);
             CreateControlMap(Controls.Block, Keys.Q, Keys.RButton);
-			CreateControlMap(Controls.AutoTarget, Keys.Tab, Keys.None);
-			CreateControlMap(Controls.PickUp, Keys.Space, Keys.None);
+            CreateControlMap(Controls.AutoTarget, Keys.Tab, Keys.None);
+            CreateControlMap(Controls.PickUp, Keys.Space, Keys.None);
             CreateControlMap(Controls.Enter, Keys.Enter, Keys.None);
             CreateControlMap(Controls.Hotkey1, Keys.D1, Keys.None);
             CreateControlMap(Controls.Hotkey2, Keys.D2, Keys.None);
@@ -102,12 +106,15 @@ namespace Intersect.Client.Classes.Core
             CreateControlMap(Controls.Screenshot, Keys.F12, Keys.None);
             CreateControlMap(Controls.OpenMenu, Keys.Escape, Keys.None);
             CreateControlMap(Controls.OpenInventory, Keys.I, Keys.None);
-            CreateControlMap(Controls.OpenQuests, Keys.Q, Keys.None);
+            CreateControlMap(Controls.OpenQuests, Keys.T, Keys.None);
             CreateControlMap(Controls.OpenCharacterInfo, Keys.C, Keys.None);
             CreateControlMap(Controls.OpenParties, Keys.P, Keys.None);
             CreateControlMap(Controls.OpenSpells, Keys.X, Keys.None);
             CreateControlMap(Controls.OpenFriends, Keys.F, Keys.None);
             CreateControlMap(Controls.OpenSettings, Keys.None, Keys.None);
+            CreateControlMap(Controls.OpenDebugger, Keys.F2, Keys.None);
+            CreateControlMap(Controls.OpenAdminPanel, Keys.Insert, Keys.None);
+            CreateControlMap(Controls.ToggleGui, Keys.F11, Keys.None);
         }
 
         public void Save()
@@ -132,6 +139,11 @@ namespace Intersect.Client.Classes.Core
                 return ActiveControls.ControlMapping[control]?.KeyDown() ?? false;
             }
             return false;
+        }
+
+        public static List<Controls> GetControlsFor(Keys key)
+        {
+            return Enum.GetValues(typeof(Controls)).Cast<Controls>().Where(control => ControlHasKey(control, key)).ToList();
         }
 
         public static bool ControlHasKey(Controls control, Keys key)

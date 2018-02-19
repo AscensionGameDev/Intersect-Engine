@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
@@ -116,21 +117,8 @@ namespace Intersect_Client.Classes.UI
         public static bool HasInputFocus()
         {
             if (FocusElements == null || InputBlockingElements == null) return false;
-            for (var i = 0; i < FocusElements.Count; i++)
-            {
-                if (FocusElements[i].HasFocus)
-                {
-                    return true;
-                }
-            }
-            for (var i = 0; i < InputBlockingElements.Count; i++)
-            {
-                if (InputBlockingElements[i].IsHidden == false)
-                {
-                    return true;
-                }
-            }
-            return false;
+            return FocusElements.Any(t => t?.HasFocus ?? false) ||
+                InputBlockingElements.Any(t => t?.IsHidden == false);
         }
 
         #endregion

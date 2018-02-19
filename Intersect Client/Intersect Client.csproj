@@ -96,7 +96,9 @@
     <Compile Include="Classes\UI\Game\Crafting\RecipeItem.cs" />
     <Compile Include="Classes\UI\Game\EntityBox\SpellStatus.cs" />
     <Compile Include="Classes\UI\Game\Hotbar\HotbarItem.cs" />
+    <Compile Include="Classes\UI\Game\IngameMenuWindow.cs" />
     <Compile Include="Classes\UI\Game\Inventory\InventoryItem.cs" />
+    <Compile Include="Classes\UI\Game\PictureWindow.cs" />
     <Compile Include="Classes\UI\Game\Shop\ShopItem.cs" />
     <Compile Include="Classes\UI\Game\Spells\SpellItem.cs" />
     <Compile Include="Classes\UI\Game\Trades\TradeItem.cs" />
@@ -104,7 +106,6 @@
     <Compile Include="Classes\UI\Menu\CreateCharacterWindow.cs" />
     <Compile Include="Classes\UI\Menu\CreditsParser.cs" />
     <Compile Include="Classes\UI\Menu\CreditsWindow.cs" />
-    <Compile Include="Classes\UI\Game\PictureWindow.cs" />
     <Compile Include="MathHelper.cs" />
     <Compile Include="Classes\MonoGame\Audio\MonoMusicInstance.cs" />
     <Compile Include="Classes\MonoGame\Audio\MonoMusicSource.cs" />

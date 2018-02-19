@@ -1,40 +1,38 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using JetBrains.Annotations;
 
 namespace Intersect.Localization
 {
     public struct LocalizedString
     {
-        private string _mValue;
+        [NotNull]
+        private readonly string mValue;
 
-        public LocalizedString(string value)
+        public LocalizedString([NotNull] string value)
         {
-            _mValue = value;
+            mValue = value;
         }
 
-        public static implicit operator LocalizedString(string value)
+        public static implicit operator LocalizedString([NotNull] string value)
         {
             return new LocalizedString(value);
         }
 
         public static implicit operator string(LocalizedString str)
         {
-            return str._mValue;
+            return str.mValue;
         }
 
         public override string ToString()
         {
-            return _mValue;
+            return mValue;
         }
 
         public string ToString(params object[] args)
         {
             try
             {
-                if (args.Length == 0) return _mValue;
-                return string.Format(_mValue, args);
+                return args?.Length == 0 ? mValue : string.Format(mValue, args ?? new object[] { });
             }
             catch (FormatException)
             {

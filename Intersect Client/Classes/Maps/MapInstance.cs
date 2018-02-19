@@ -16,6 +16,7 @@ using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Items;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Color = IntersectClientExtras.GenericClasses.Color;
 
@@ -103,18 +104,8 @@ namespace Intersect_Client.Classes.Maps
         {
         }
 
-        public new static MapInstances Lookup
-        {
-            get
-            {
-                if (sLookup == null)
-                {
-                    sLookup = new MapInstances(MapBase.Lookup);
-                }
-
-                return sLookup;
-            }
-        }
+        [NotNull]
+        public new static MapInstances Lookup => sLookup ?? (sLookup = new MapInstances(MapBase.Lookup));
 
         public bool MapLoaded { get; private set; }
         public bool MapRendered { get; set; }

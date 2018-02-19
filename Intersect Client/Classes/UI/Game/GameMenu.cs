@@ -18,16 +18,12 @@ namespace Intersect.Client.Classes.UI.Game
         //Menu Container
         private readonly ImagePanel mMenuContainer;
 
-        [NotNull] private readonly ImagePanel mCloseBackground;
-        [NotNull] private readonly Button mCloseButton;
+        [NotNull] private readonly ImagePanel mMenuBackground;
+        [NotNull] private readonly Button mMenuButton;
 
         [NotNull] private readonly ImagePanel mInventoryBackground;
         [NotNull] private readonly Button mInventoryButton;
         [NotNull] private readonly InventoryWindow mInventoryWindow;
-
-        [NotNull] private readonly ImagePanel mOptionsBackground;
-        [NotNull] private readonly Button mOptionsButton;
-        [NotNull] private readonly OptionsWindow mOptionsWindow;
 
         [NotNull] private readonly ImagePanel mPartyBackground;
         [NotNull] private readonly Button mPartyButton;
@@ -91,21 +87,15 @@ namespace Intersect.Client.Classes.UI.Game
             mPartyButton.SetToolTipText(Strings.GameMenu.party);
             mPartyButton.Clicked += PartyBtn_Clicked;
 
-            mOptionsBackground = new ImagePanel(mMenuContainer, "OptionsContainer");
-            mOptionsButton = new Button(mOptionsBackground, "OptionsButton");
-            mOptionsButton.SetToolTipText(Strings.GameMenu.options);
-            mOptionsButton.Clicked += OptionBtn_Clicked;
-
             //Go in reverse order from the right
-            mCloseBackground = new ImagePanel(mMenuContainer, "ExitGameContainer");
-            mCloseButton = new Button(mCloseBackground, "ExitGameButton");
-            mCloseButton.SetToolTipText(Strings.GameMenu.exit);
-            mCloseButton.Clicked += CloseBtn_Clicked;
+            mMenuBackground = new ImagePanel(mMenuContainer, "MenuContainer");
+            mMenuButton = new Button(mMenuBackground, "MenuButton");
+            mMenuButton.SetToolTipText(Strings.GameMenu.Menu);
+            mMenuButton.Clicked += MenuButtonClicked;
 
             mMenuContainer.LoadJsonUi(GameContentManager.UI.InGame);
 
             //Assign Window References
-            mOptionsWindow = new OptionsWindow(gameCanvas, null, null);
             mPartyWindow = new PartyWindow(gameCanvas);
             mFriendsWindow = new FriendsWindow(gameCanvas);
             mInventoryWindow = new InventoryWindow(gameCanvas);
@@ -123,7 +113,6 @@ namespace Intersect.Client.Classes.UI.Game
             mPartyWindow.Update();
             mFriendsWindow.Update();
             mQuestsWindow.Update(updateQuestLog);
-            mOptionsWindow.Update();
         }
 
         public void UpdateFriendsList()
@@ -140,7 +129,6 @@ namespace Intersect.Client.Classes.UI.Game
             mPartyWindow.Hide();
             mQuestsWindow.Hide();
             mSpellsWindow.Hide();
-            mOptionsWindow.Hide();
         }
 
         public void ToggleCharacterWindow()
@@ -224,22 +212,9 @@ namespace Intersect.Client.Classes.UI.Game
         }
 
         //Input Handlers
-        private static void CloseBtn_Clicked(Base sender, ClickedEventArgs arguments)
+        private static void MenuButtonClicked(Base sender, ClickedEventArgs arguments)
         {
-            Globals.IsRunning = false;
-        }
-
-        private void OptionBtn_Clicked(Base sender, ClickedEventArgs arguments)
-        {
-            if (mOptionsWindow.IsVisible())
-            {
-                mOptionsWindow.Hide();
-            }
-            else
-            {
-                if (Globals.Me?.IsBusy() ?? false) return;
-                mOptionsWindow.Show();
-            }
+            Gui.GameUi?.IngameMenuWindow?.ToggleHidden();
         }
 
         private void PartyBtn_Clicked(Base sender, ClickedEventArgs arguments)
