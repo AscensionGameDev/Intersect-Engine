@@ -2217,7 +2217,7 @@ namespace Intersect.Server.Classes.Entities
 
             for (var i = 0; i < Options.MaxInvItems; i++)
             {
-                if (Trade[i].ItemNum > 0)
+                if (Trade[i] != null && Trade[i].ItemNum > 0)
                 {
                     if (!TryGiveItem(Trade[i]))
                     {
