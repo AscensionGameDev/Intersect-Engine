@@ -25,7 +25,17 @@ namespace Intersect.Migration
                 }
             }
 
-            Type.GetType("Intersect.Migration.Migrator")?.GetMethod("Start")?.Invoke(null, new object[] { args });
+            try
+            {
+                Type.GetType("Intersect.Migration.Migrator")?.GetMethod("Start")?.Invoke(null, new object[] {args});
+            }
+            catch (Exception ex)
+            {
+                var type = Type.GetType("Intersect.Migration.Migrator", true);
+                Debug.Assert(type != null, "type != null");
+                MethodInfo staticMethodInfo = type.GetMethod("CurrentDomain_UnhandledException");
+                staticMethodInfo.Invoke(null, new object[] { null, new UnhandledExceptionEventArgs(ex.InnerException != null ? ex.InnerException : ex, true) });
+            }
         }
     }
 }
