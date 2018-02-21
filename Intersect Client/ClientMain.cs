@@ -115,12 +115,10 @@ namespace Intersect.Client
                     ExportDependency("MonoGame.Framework.dll.config", "", "MonoGame.Framework.Client.dll.config");
                     break;
 
-                case PlatformID.Unix:
-                    break;
-
                 case PlatformID.Xbox:
                     break;
 
+                case PlatformID.Unix:
                 default:
                     ExportDependency("libopenal.so.1", folder);
                     ExportDependency("libSDL2-2.0.so.0", folder);
