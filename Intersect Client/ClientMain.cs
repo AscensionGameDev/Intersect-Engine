@@ -33,9 +33,17 @@ namespace Intersect.Client
                 var instance = Activator.CreateInstance(type);
                 type.InvokeMember("Run", BindingFlags.InvokeMethod, null, instance, null);
             }
-            catch (PlatformNotSupportedException)
+            catch (Exception ex)
             {
-                System.Windows.Forms.MessageBox.Show(@"OpenGL Initialialization Error! Try updating your graphics drivers!");
+                if (ex.InnerException != null && ex.InnerException.GetType().Name == "NoSuitableGraphicsDeviceException")
+                {
+                    System.Windows.Forms.MessageBox.Show(@"OpenGL Initialialization Error! Try updating your graphics drivers! Make sure you're not using remote desktop software. Visit https://goo.gl/RSP3ts for more information.");
+                    Environment.Exit(-1);
+                }
+                var type = Type.GetType("Intersect.Client.IntersectGame", true);
+                Debug.Assert(type != null, "type != null");
+                MethodInfo staticMethodInfo = type.GetMethod("CurrentDomain_UnhandledException");
+                staticMethodInfo.Invoke(null, new object[] {null, new UnhandledExceptionEventArgs(ex.InnerException != null ? ex.InnerException : ex,true) });
             }
         }
 

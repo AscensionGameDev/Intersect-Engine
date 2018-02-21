@@ -58,7 +58,7 @@ namespace Intersect.Client
         }
 
         //Really basic error handler for debugging purposes
-        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs exception)
+        public static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs exception)
         {
             Log.Error((Exception) exception?.ExceptionObject);
             MessageBox.Show(
