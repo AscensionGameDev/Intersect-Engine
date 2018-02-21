@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Intersect.GameObjects;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
@@ -82,9 +83,10 @@ namespace Intersect.Client.Classes.UI.Game.EntityBox
                 var timeDiff = Globals.System.GetTimeMs() - mEntityBox.MyEntity.Status[mYindex].TimeRecevied;
                 var remaining = mEntityBox.MyEntity.Status[mYindex].TimeRemaining - timeDiff;
                 var fraction = (float)((float)remaining / (float)mEntityBox.MyEntity.Status[mYindex].TotalDuration);
+                Debug.WriteLine(Pnl.RenderColor.A.ToString());
                 Pnl.RenderColor = new IntersectClientExtras.GenericClasses.Color((int)(fraction * 255f), 255, 255, 255);
-                if ((mTexLoaded != "" && spell == null) || (spell != null && mTexLoaded != spell.Pic) ||
-                    mCurrentSpell != mEntityBox.MyEntity.Status[mYindex].SpellNum)
+                Debug.WriteLine(Pnl.RenderColor.A.ToString());
+                if ((mTexLoaded != "" && spell == null) || (spell != null && mTexLoaded != spell.Pic) || mCurrentSpell != mEntityBox.MyEntity.Status[mYindex].SpellNum)
                 {
                     if (spell != null)
                     {
@@ -114,7 +116,7 @@ namespace Intersect.Client.Classes.UI.Game.EntityBox
                         mTexLoaded = "";
                     }
                 }
-                else
+                else if (remaining <= 0)
                 {
                     if (Pnl.Texture != null)
                     {
