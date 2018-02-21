@@ -583,34 +583,39 @@ namespace Intersect.Editor.Classes.Maps
                 CreateTextures(panelBounds);
                 mCreateTextures = false;
             }
-            if (Grid != null)
+            lock (GetMapGridLock())
             {
-                lock (mTexLock)
+                if (Grid != null)
                 {
-                    for (int x = 0; x < GridWidth; x++)
+                    lock (mTexLock)
                     {
-                        for (int y = 0; y < GridHeight; y++)
+                        for (int x = 0; x < GridWidth; x++)
                         {
-                            //Figure out if this texture should be loaded
-                            if (new Rectangle(ContentRect.X + (x + 1) * TileWidth, ContentRect.Y + (y + 1) * TileHeight,
-                                    TileWidth,
-                                    TileHeight).IntersectsWith(ViewRect) && Grid[x, y] != null)
+                            for (int y = 0; y < GridHeight; y++)
                             {
-                                //if not loaded, add it to the queue
-                                if ((Grid[x, y].Tex == null || Grid[x, y].Tex.IsDisposed) && Grid[x, y].Mapnum != -1 &&
-                                    !mToLoad.Contains(Grid[x, y]))
+                                //Figure out if this texture should be loaded
+                                if (new Rectangle(ContentRect.X + (x + 1) * TileWidth,
+                                        ContentRect.Y + (y + 1) * TileHeight,
+                                        TileWidth,
+                                        TileHeight).IntersectsWith(ViewRect) && Grid[x, y] != null)
                                 {
-                                    mToLoad.Add(Grid[x, y]);
+                                    //if not loaded, add it to the queue
+                                    if ((Grid[x, y].Tex == null || Grid[x, y].Tex.IsDisposed) &&
+                                        Grid[x, y].Mapnum != -1 &&
+                                        !mToLoad.Contains(Grid[x, y]))
+                                    {
+                                        mToLoad.Add(Grid[x, y]);
+                                    }
                                 }
-                            }
-                            else
-                            {
-                                //If loaded, kick it to the curb
-                                if (mToLoad.Contains(Grid[x, y])) mToLoad.Remove(Grid[x, y]);
-                                if (Grid[x, y].Tex != null)
+                                else
                                 {
-                                    mFreeTextures.Add(Grid[x, y].Tex);
-                                    Grid[x, y].Tex = null;
+                                    //If loaded, kick it to the curb
+                                    if (mToLoad.Contains(Grid[x, y])) mToLoad.Remove(Grid[x, y]);
+                                    if (Grid[x, y] != null && Grid[x, y].Tex != null)
+                                    {
+                                        mFreeTextures.Add(Grid[x, y].Tex);
+                                        Grid[x, y].Tex = null;
+                                    }
                                 }
                             }
                         }
