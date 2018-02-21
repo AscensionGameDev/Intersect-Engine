@@ -2051,6 +2051,12 @@ namespace Intersect.Server.Classes.Entities
             {
                 if (Inventory[slot].ItemNum > -1)
                 {
+                    if (itemBase.Bound > 0)
+                    {
+                        PacketSender.SendPlayerMsg(MyClient, Strings.Get("trading", "bound"), CustomColors.ItemBound);
+                        return;
+                    }
+
                     if (itemBase.IsStackable())
                     {
                         if (amount >= Inventory[slot].ItemVal)
