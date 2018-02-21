@@ -556,7 +556,12 @@ namespace Intersect.Server.Classes.Networking
                 }
                 else if (cmd == Strings.Get("chat", "pmcmd") || cmd == Strings.Get("chat", "messagecmd"))
                 {
+                    if (splitString.Length < 3)
+                    {
+                        return;
+                    } 
                     msg = msg.Remove(0, splitString[1].Length + 1); //Chop off the player name parameter
+                    if (msg.Trim().Length == 0) return;
 
                     for (int i = 0; i < Globals.Clients.Count; i++)
                     {
@@ -580,6 +585,7 @@ namespace Intersect.Server.Classes.Networking
                 }
                 else if (cmd == Strings.Get("chat", "replycmd") || cmd == Strings.Get("chat", "rcmd"))
                 {
+                    if (msg.Trim().Length == 0) return;
                     if (client.Entity.ChatTarget != null)
                     {
                         PacketSender.SendPlayerMsg(client, Strings.Get("chat", "private", client.Entity.MyName, msg),
