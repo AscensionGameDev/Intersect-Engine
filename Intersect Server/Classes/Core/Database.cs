@@ -963,62 +963,66 @@ namespace Intersect.Server.Classes.Core
                               + "=@" + CHAR_LAST_ONLINE_TIME + " WHERE " + CHAR_ID + "=@" + CHAR_ID +
                               ";SELECT last_insert_rowid();";
             long rowId = -1;
-            using (var transaction = sDbConnection?.BeginTransaction())
+            lock (SqlConnectionLock)
             {
-                using (var cmd = new SqliteCommand(newCharacter ? insertQuery : updateQuery, sDbConnection))
+                using (var transaction = sDbConnection?.BeginTransaction())
                 {
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_USER_ID, player.MyClient.MyId));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_NAME, player.MyName));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_MAP, player.CurrentMap));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_X, player.CurrentX));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_Y, player.CurrentY));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_Z, player.CurrentZ));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_DIR, player.Dir));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_SPRITE, player.MySprite));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_FACE, player.Face));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_CLASS, player.Class));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_GENDER, player.Gender));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_LEVEL, player.Level));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_EXP, player.Experience));
-                    var vitals = "";
-                    for (var i = 0; i < player.Vital.Length; i++)
+                    using (var cmd = new SqliteCommand(newCharacter ? insertQuery : updateQuery, sDbConnection))
                     {
-                        vitals += player.Vital[i] + ",";
+                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_USER_ID, player.MyClient.MyId));
+                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_NAME, player.MyName));
+                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_MAP, player.CurrentMap));
+                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_X, player.CurrentX));
+                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_Y, player.CurrentY));
+                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_Z, player.CurrentZ));
+                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_DIR, player.Dir));
+                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_SPRITE, player.MySprite));
+                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_FACE, player.Face));
+                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_CLASS, player.Class));
+                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_GENDER, player.Gender));
+                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_LEVEL, player.Level));
+                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_EXP, player.Experience));
+                        var vitals = "";
+                        for (var i = 0; i < player.Vital.Length; i++)
+                        {
+                            vitals += player.Vital[i] + ",";
+                        }
+                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_VITALS, vitals));
+                        var maxVitals = "";
+                        for (var i = 0; i < player.MaxVital.Length; i++)
+                        {
+                            maxVitals += player.MaxVital[i] + ",";
+                        }
+                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_MAX_VITALS, maxVitals));
+                        var stats = "";
+                        for (var i = 0; i < player.Stat.Length; i++)
+                        {
+                            stats += player.Stat[i].Stat + ",";
+                        }
+                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_STATS, stats));
+                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_STAT_POINTS, player.StatPoints));
+                        var equipment = "";
+                        for (var i = 0; i < player.Equipment.Length; i++)
+                        {
+                            equipment += player.Equipment[i] + ",";
+                        }
+                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_EQUIPMENT, equipment));
+                        if (!newCharacter) cmd.Parameters.Add(new SqliteParameter("@" + CHAR_ID, player.MyId));
+                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_LAST_ONLINE_TIME,
+                            DateTime.UtcNow.ToBinary()));
+                        rowId = (int) ((long) ExecuteScalar(cmd));
                     }
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_VITALS, vitals));
-                    var maxVitals = "";
-                    for (var i = 0; i < player.MaxVital.Length; i++)
-                    {
-                        maxVitals += player.MaxVital[i] + ",";
-                    }
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_MAX_VITALS, maxVitals));
-                    var stats = "";
-                    for (var i = 0; i < player.Stat.Length; i++)
-                    {
-                        stats += player.Stat[i].Stat + ",";
-                    }
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_STATS, stats));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_STAT_POINTS, player.StatPoints));
-                    var equipment = "";
-                    for (var i = 0; i < player.Equipment.Length; i++)
-                    {
-                        equipment += player.Equipment[i] + ",";
-                    }
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_EQUIPMENT, equipment));
-                    if (!newCharacter) cmd.Parameters.Add(new SqliteParameter("@" + CHAR_ID, player.MyId));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_LAST_ONLINE_TIME, DateTime.UtcNow.ToBinary()));
-                    rowId = (int) ((long) ExecuteScalar(cmd));
+                    if (newCharacter) player.MyId = rowId;
+                    SaveCharacterInventory(player);
+                    SaveCharacterSpells(player);
+                    SaveCharacterBank(player);
+                    SaveCharacterHotbar(player);
+                    SaveCharacterSwitches(player);
+                    SaveCharacterVariables(player);
+                    SaveCharacterQuests(player);
+                    SaveCharacterFriends(player);
+                    transaction.Commit();
                 }
-                if (newCharacter) player.MyId = rowId;
-                SaveCharacterInventory(player);
-                SaveCharacterSpells(player);
-                SaveCharacterBank(player);
-                SaveCharacterHotbar(player);
-                SaveCharacterSwitches(player);
-                SaveCharacterVariables(player);
-                SaveCharacterQuests(player);
-                SaveCharacterFriends(player);
-                transaction.Commit();
             }
             if (!newCharacter)
                 PacketSender.SendPlayerMsg(player.MyClient, Strings.Get("player", "saved"));
