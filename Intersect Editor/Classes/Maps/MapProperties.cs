@@ -633,7 +633,12 @@ namespace Intersect.Editor.Classes.Maps
         public override StandardValuesCollection
             GetStandardValues(ITypeDescriptorContext context)
         {
-            return new StandardValuesCollection(Enum.GetNames(typeof(MapZones)));
+            var values = new List<string>();
+            for (byte i = 0; i < Enum.GetNames(typeof(MapZones)).Length; i++)
+            {
+                values.Add(Strings.Get("mapproperties", "zone" + i));
+            }
+            return new StandardValuesCollection(values);
         }
     }
 }
