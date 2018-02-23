@@ -297,7 +297,12 @@ namespace Intersect.Editor.Forms
             this.nudLowerLoopCount.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudLowerLoopCount.Location = new System.Drawing.Point(9, 398);
             this.nudLowerLoopCount.Maximum = new decimal(new int[] {
-            10,
+            2147483647,
+            0,
+            0,
+            0});
+            this.nudLowerLoopCount.Minimum = new decimal(new int[] {
+            1,
             0,
             0,
             0});
@@ -322,7 +327,7 @@ namespace Intersect.Editor.Forms
             0,
             0});
             this.nudLowerFrameDuration.Minimum = new decimal(new int[] {
-            1,
+            10,
             0,
             0,
             0});
@@ -341,6 +346,11 @@ namespace Intersect.Editor.Forms
             this.nudLowerFrameCount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudLowerFrameCount.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudLowerFrameCount.Location = new System.Drawing.Point(10, 330);
+            this.nudLowerFrameCount.Maximum = new decimal(new int[] {
+            65536,
+            0,
+            0,
+            0});
             this.nudLowerFrameCount.Minimum = new decimal(new int[] {
             1,
             0,
@@ -362,7 +372,7 @@ namespace Intersect.Editor.Forms
             this.nudLowerVerticalFrames.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudLowerVerticalFrames.Location = new System.Drawing.Point(10, 296);
             this.nudLowerVerticalFrames.Maximum = new decimal(new int[] {
-            20,
+            256,
             0,
             0,
             0});
@@ -387,7 +397,7 @@ namespace Intersect.Editor.Forms
             this.nudLowerHorizontalFrames.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudLowerHorizontalFrames.Location = new System.Drawing.Point(10, 260);
             this.nudLowerHorizontalFrames.Maximum = new decimal(new int[] {
-            20,
+            256,
             0,
             0,
             0});
@@ -614,7 +624,12 @@ namespace Intersect.Editor.Forms
             this.nudUpperLoopCount.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudUpperLoopCount.Location = new System.Drawing.Point(6, 398);
             this.nudUpperLoopCount.Maximum = new decimal(new int[] {
-            10,
+            2147483647,
+            0,
+            0,
+            0});
+            this.nudUpperLoopCount.Minimum = new decimal(new int[] {
+            1,
             0,
             0,
             0});
@@ -639,7 +654,7 @@ namespace Intersect.Editor.Forms
             0,
             0});
             this.nudUpperFrameDuration.Minimum = new decimal(new int[] {
-            1,
+            10,
             0,
             0,
             0});
@@ -658,6 +673,11 @@ namespace Intersect.Editor.Forms
             this.nudUpperFrameCount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudUpperFrameCount.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudUpperFrameCount.Location = new System.Drawing.Point(6, 330);
+            this.nudUpperFrameCount.Maximum = new decimal(new int[] {
+            65536,
+            0,
+            0,
+            0});
             this.nudUpperFrameCount.Minimum = new decimal(new int[] {
             1,
             0,
@@ -679,7 +699,7 @@ namespace Intersect.Editor.Forms
             this.nudUpperVerticalFrames.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudUpperVerticalFrames.Location = new System.Drawing.Point(6, 296);
             this.nudUpperVerticalFrames.Maximum = new decimal(new int[] {
-            20,
+            256,
             0,
             0,
             0});
@@ -704,7 +724,7 @@ namespace Intersect.Editor.Forms
             this.nudUpperHorizontalFrames.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudUpperHorizontalFrames.Location = new System.Drawing.Point(6, 263);
             this.nudUpperHorizontalFrames.Maximum = new decimal(new int[] {
-            20,
+            256,
             0,
             0,
             0});
