@@ -10,9 +10,10 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         }
 
         [JsonConstructor]
-        public EventBase(int index, int x, int y, bool isCommon = false, byte isGlobal = 0) : base(index)
+        public EventBase(int index, int mapIndex,int x, int y, bool isCommon = false, byte isGlobal = 0) : base(index)
         {
             Name = "";
+            MapIndex = mapIndex;
             if (isCommon) Name = "Common Event " + index;
             SpawnX = x;
             SpawnY = y;
@@ -37,6 +38,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
             Load(myBuffer.ToArray());
         }
 
+        public int MapIndex { get; set; } //Used for assigning move routes and such.. will be replaced with guid soon.
         public int SpawnX { get; set; }
         public int SpawnY { get; set; }
         public bool CommonEvent { get; set; }

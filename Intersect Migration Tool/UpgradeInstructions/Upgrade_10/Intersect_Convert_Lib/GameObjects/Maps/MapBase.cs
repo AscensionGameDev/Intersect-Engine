@@ -227,6 +227,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
                         var evtBuffer = new ByteBuffer();
                         evtBuffer.WriteBytes(bf.ReadBytes((int) evtDataLen));
                         Events.Add(eventIndex, new EventBase(eventIndex, evtBuffer));
+                        Events[eventIndex].MapIndex = eventIndex;
                         evtBuffer.Dispose();
                     }
                 }
