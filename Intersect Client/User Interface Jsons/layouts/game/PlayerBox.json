@@ -14,7 +14,6 @@
   "MouseInputEnabled": true,
   "HideToolTip": false,
   "Texture": "",
-  "TextureSourceRect": "0,0,0,0",
   "Children": {
     "EntityInfoPanel": {
       "Bounds": "0,0,314,126",
@@ -32,69 +31,9 @@
       "MouseInputEnabled": true,
       "HideToolTip": false,
       "Texture": "entitybox.png",
-      "TextureSourceRect": "0,0,314,314",
       "Children": {
         "EntityNameLabel": {
-          "Bounds": "16,7,67,22",
-          "Padding": "0,0,0,0",
-          "AlignmentEdgeDistances": "0,0,0,0",
-          "Margin": "0,0,0,0",
-          "RenderColor": "255,255,255,255",
-          "Alignments": "",
-          "DrawBackground": true,
-          "MinimumSize": "1,1",
-          "MaximumSize": "4096,4096",
-          "Disabled": false,
-          "Hidden": false,
-          "RestrictToParent": false,
-          "MouseInputEnabled": false,
-          "HideToolTip": false,
-          "TextColor": "255,255,255,255",
-          "HoveredTextColor": "",
-          "ClickedTextColor": "",
-          "DisabledTextColor": "",
-          "TextAlign": "Left, Top",
-          "TextPadding": "0,0,0,0",
-          "AutoSizeToContents": true,
-          "Font": "arial,14",
-          "TextScale": 1.0
-        },
-        "EntityGraphicContainer": {
-          "Bounds": "18,39,64,64",
-          "Padding": "0,0,0,0",
-          "AlignmentEdgeDistances": "0,0,0,0",
-          "Margin": "0,0,0,0",
-          "RenderColor": "255,255,255,255",
-          "Alignments": "",
-          "DrawBackground": true,
-          "MinimumSize": "1,1",
-          "MaximumSize": "4096,4096",
-          "Disabled": false,
-          "Hidden": false,
-          "RestrictToParent": false,
-          "MouseInputEnabled": true,
-          "HideToolTip": false,
-          "Texture": "",
-          "TextureSourceRect": "0,0,0,0"
-        },
-        "EventDescLabel": {
-          "Bounds": "93,37,207,0",
-          "Padding": "0,0,0,0",
-          "AlignmentEdgeDistances": "0,0,0,0",
-          "Margin": "0,0,0,0",
-          "RenderColor": "255,255,255,255",
-          "Alignments": "",
-          "DrawBackground": true,
-          "MinimumSize": "1,1",
-          "MaximumSize": "4096,4096",
-          "Disabled": false,
-          "Hidden": false,
-          "RestrictToParent": false,
-          "MouseInputEnabled": true,
-          "HideToolTip": false
-        },
-        "EntityLevelLabel": {
-          "Bounds": "228,10,1,10",
+          "Bounds": "76,10,150,18",
           "Padding": "0,0,0,0",
           "AlignmentEdgeDistances": "0,0,0,0",
           "Margin": "0,0,0,0",
@@ -118,6 +57,114 @@
           "Font": "arial,12",
           "TextScale": 1.0
         },
+        "EntityLevelLabel": {
+          "Bounds": "16,10,1,10",
+          "Padding": "0,0,0,0",
+          "AlignmentEdgeDistances": "0,0,0,0",
+          "Margin": "0,0,0,0",
+          "RenderColor": "255,255,255,255",
+          "Alignments": "",
+          "DrawBackground": true,
+          "MinimumSize": "1,1",
+          "MaximumSize": "4096,4096",
+          "Disabled": false,
+          "Hidden": false,
+          "RestrictToParent": false,
+          "MouseInputEnabled": false,
+          "HideToolTip": false,
+          "TextColor": "255,255,255,255",
+          "HoveredTextColor": "",
+          "ClickedTextColor": "",
+          "DisabledTextColor": "",
+          "TextAlign": "Left, Top",
+          "TextPadding": "0,0,0,0",
+          "AutoSizeToContents": true,
+          "Font": "arial,12",
+          "TextScale": 1.0
+        },
+        "NameAndLevelLabel": {
+          "Bounds": "16,10,1,10",
+          "Padding": "0,0,0,0",
+          "AlignmentEdgeDistances": "0,0,0,0",
+          "Margin": "0,0,0,0",
+          "RenderColor": "255,255,255,255",
+          "Alignments": "",
+          "DrawBackground": true,
+          "MinimumSize": "1,1",
+          "MaximumSize": "4096,4096",
+          "Disabled": false,
+          "Hidden": true,
+          "RestrictToParent": false,
+          "MouseInputEnabled": false,
+          "HideToolTip": false,
+          "TextColor": "255,255,255,255",
+          "HoveredTextColor": "",
+          "ClickedTextColor": "",
+          "DisabledTextColor": "",
+          "TextAlign": "Left, Top",
+          "TextPadding": "0,0,0,0",
+          "AutoSizeToContents": true,
+          "Font": "arial,12",
+          "TextScale": 1.0
+        },
+        "EntityMapLabel": {
+          "Bounds": "100,10,200,22",
+          "Padding": "0,0,0,0",
+          "AlignmentEdgeDistances": "0,0,0,0",
+          "Margin": "0,0,0,0",
+          "RenderColor": "255,255,255,255",
+          "Alignments": "",
+          "DrawBackground": true,
+          "MinimumSize": "1,1",
+          "MaximumSize": "4096,4096",
+          "Disabled": false,
+          "Hidden": false,
+          "RestrictToParent": false,
+          "MouseInputEnabled": false,
+          "HideToolTip": false,
+          "TextColor": "255,255,255,255",
+          "HoveredTextColor": "",
+          "ClickedTextColor": "",
+          "DisabledTextColor": "",
+          "TextAlign": "Right, Top",
+          "TextPadding": "0,0,0,0",
+          "AutoSizeToContents": false,
+          "Font": "arial,12",
+          "TextScale": 1.0
+        },
+        "EntityGraphicContainer": {
+          "Bounds": "18,39,64,64",
+          "Padding": "0,0,0,0",
+          "AlignmentEdgeDistances": "0,0,0,0",
+          "Margin": "0,0,0,0",
+          "RenderColor": "255,255,255,255",
+          "Alignments": "",
+          "DrawBackground": true,
+          "MinimumSize": "1,1",
+          "MaximumSize": "4096,4096",
+          "Disabled": false,
+          "Hidden": false,
+          "RestrictToParent": false,
+          "MouseInputEnabled": true,
+          "HideToolTip": false,
+          "Texture": ""
+        },
+        "EventDescLabel": {
+          "Bounds": "93,37,207,0",
+          "Padding": "0,0,0,0",
+          "AlignmentEdgeDistances": "0,0,0,0",
+          "Margin": "0,0,0,0",
+          "RenderColor": "255,255,255,255",
+          "Alignments": "",
+          "DrawBackground": true,
+          "MinimumSize": "1,1",
+          "MaximumSize": "4096,4096",
+          "Disabled": false,
+          "Hidden": false,
+          "RestrictToParent": false,
+          "MouseInputEnabled": true,
+          "HideToolTip": false
+        },
         "HPBarBackground": {
           "Bounds": "117,32,183,25",
           "Padding": "0,0,0,0",
@@ -133,8 +180,7 @@
           "RestrictToParent": false,
           "MouseInputEnabled": true,
           "HideToolTip": false,
-          "Texture": "emptybar.png",
-          "TextureSourceRect": "0,0,183,183"
+          "Texture": "emptybar.png"
         },
         "HPBar": {
           "Bounds": "117,32,183,25",
@@ -151,8 +197,7 @@
           "RestrictToParent": false,
           "MouseInputEnabled": true,
           "HideToolTip": false,
-          "Texture": "lifebar.png",
-          "TextureSourceRect": "0,0,183,183"
+          "Texture": "lifebar.png"
         },
         "HPTitle": {
           "Bounds": "93,37,22,15",
@@ -219,8 +264,7 @@
           "RestrictToParent": false,
           "MouseInputEnabled": true,
           "HideToolTip": false,
-          "Texture": "emptybar.png",
-          "TextureSourceRect": "0,0,183,183"
+          "Texture": "emptybar.png"
         },
         "MPBar": {
           "Bounds": "117,58,183,25",
@@ -237,8 +281,7 @@
           "RestrictToParent": false,
           "MouseInputEnabled": true,
           "HideToolTip": false,
-          "Texture": "manabar.png",
-          "TextureSourceRect": "0,0,183,183"
+          "Texture": "manabar.png"
         },
         "MPTitle": {
           "Bounds": "93,63,24,15",
@@ -305,8 +348,7 @@
           "RestrictToParent": false,
           "MouseInputEnabled": true,
           "HideToolTip": false,
-          "Texture": "emptybar.png",
-          "TextureSourceRect": "0,0,183,183"
+          "Texture": "emptybar.png"
         },
         "EXPBar": {
           "Bounds": "117,84,183,25",
@@ -323,8 +365,7 @@
           "RestrictToParent": false,
           "MouseInputEnabled": true,
           "HideToolTip": false,
-          "Texture": "expbar.png",
-          "TextureSourceRect": "0,0,183,183"
+          "Texture": "expbar.png"
         },
         "EXPTitle": {
           "Bounds": "88,89,29,15",
@@ -404,7 +445,11 @@
           "HoveredImage": "",
           "ClickedImage": "",
           "DisabledImage": "",
-          "CenterImage": false
+          "CenterImage": false,
+          "HoverSound": null,
+          "MouseUpSound": null,
+          "MouseDownSound": null,
+          "ClickSound": null
         },
         "PartyButton": {
           "Bounds": "165,89,100,20",
@@ -434,7 +479,11 @@
           "HoveredImage": "",
           "ClickedImage": "",
           "DisabledImage": "",
-          "CenterImage": false
+          "CenterImage": false,
+          "HoverSound": null,
+          "MouseUpSound": null,
+          "MouseDownSound": null,
+          "ClickSound": null
         }
       }
     },
@@ -453,8 +502,7 @@
       "RestrictToParent": false,
       "MouseInputEnabled": true,
       "HideToolTip": false,
-      "Texture": "",
-      "TextureSourceRect": "0,0,0,0"
+      "Texture": ""
     }
   }
 }
