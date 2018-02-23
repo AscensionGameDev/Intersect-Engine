@@ -254,8 +254,8 @@ namespace Intersect.Client.Classes.UI.Game
 
         public bool ToggleIngameMenu()
         {
-            IngameMenu?.ToggleHidden();
-            return !IngameMenu?.IsHidden ?? false;
+            IngameMenu.ToggleHidden();
+            return !IngameMenu.IsHidden;
         }
 
         public void Draw()
