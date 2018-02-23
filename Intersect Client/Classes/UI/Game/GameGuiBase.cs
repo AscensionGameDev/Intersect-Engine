@@ -39,7 +39,7 @@ namespace Intersect_Client.Classes.UI.Game
         public bool FocusChat;
         public Canvas GameCanvas;
 
-        public IngameMenuWindow IngameMenuWindow { get; private set; }
+        public IngameMenu IngameMenuWindow { get; private set; }
 
         public GameMenu GameMenu { get; private set; }
 
@@ -62,7 +62,7 @@ namespace Intersect_Client.Classes.UI.Game
             mQuestOfferWindow = new QuestOfferWindow(GameCanvas);
             PlayerBox = new EntityBox(GameCanvas, EntityTypes.Player, Globals.Me, true);
 
-            IngameMenuWindow = new IngameMenuWindow(GameCanvas) {IsHidden = true};
+            IngameMenuWindow = new IngameMenu(GameCanvas) {IsHidden = true};
         }
 
         //Chatbox

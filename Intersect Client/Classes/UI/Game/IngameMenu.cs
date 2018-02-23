@@ -1,20 +1,16 @@
-﻿using System;
-using System.IO;
-using Intersect.Client.Classes.Localization;
+﻿using Intersect.Client.Classes.Localization;
+using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.UI;
 using IntersectClientExtras.File_Management;
-using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
-using Intersect_Client.Classes.Core;
-using Intersect_Client.Classes.General;
-using Intersect_Client.Classes.UI;
 using JetBrains.Annotations;
 using UIColor = IntersectClientExtras.GenericClasses.Color;
 
 namespace Intersect.Client.Classes.UI.Game
 {
-    public class IngameMenuWindow : ImagePanel
+    public class IngameMenu : ImagePanel
     {
         [NotNull] private readonly ImagePanel mContainer;
 
@@ -31,7 +27,7 @@ namespace Intersect.Client.Classes.UI.Game
         public bool GoToCharacterSelectEnabled => false;
         public bool LogoutEnabled => false;
 
-        public IngameMenuWindow([NotNull] Canvas gameCanvas) : base(gameCanvas, "IngameMenuWindow")
+        public IngameMenu([NotNull] Canvas gameCanvas) : base(gameCanvas, "IngameMenuWindow")
         {
             Gui.InputBlockingElements?.Add(this);
 
