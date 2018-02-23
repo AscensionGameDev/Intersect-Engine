@@ -1,0 +1,17 @@
+{
+  "Bounds": "302,0,762,262",
+  "Padding": "0,0,0,0",
+  "AlignmentEdgeDistances": "0,0,0,0",
+  "Margin": "0,0,0,0",
+  "RenderColor": "255,255,255,255",
+  "Alignments": "CenterH",
+  "DrawBackground": true,
+  "MinimumSize": "1,1",
+  "MaximumSize": "4096,4096",
+  "Disabled": false,
+  "Hidden": false,
+  "RestrictToParent": false,
+  "MouseInputEnabled": true,
+  "HideToolTip": false,
+  "Texture": "logo.png"
+}
