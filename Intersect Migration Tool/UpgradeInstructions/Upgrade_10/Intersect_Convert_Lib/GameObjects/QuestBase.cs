@@ -25,7 +25,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
     {
         public string BeforeDesc = "";
         public string EndDesc = "";
-        public EventBase EndEvent = new EventBase(-1, 0, 0, true);
+        public EventBase EndEvent = new EventBase(-1,-1, 0, 0, true);
         public string InProgressDesc = "";
         public byte LogAfterComplete;
         public byte LogBeforeOffer;
@@ -43,7 +43,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         public string StartDesc = "";
 
         //Events
-        public EventBase StartEvent = new EventBase(-1, 0, 0, true);
+        public EventBase StartEvent = new EventBase(-1,-1, 0, 0, true);
 
         public List<QuestTask> Tasks = new List<QuestTask>();
 
@@ -162,7 +162,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
 
         public class QuestTask
         {
-            public EventBase CompletionEvent = new EventBase(-1, 0, 0, true);
+            public EventBase CompletionEvent = new EventBase(-1,-1, 0, 0, true);
             public int Data1;
             public int Data2;
             public string Desc = "";

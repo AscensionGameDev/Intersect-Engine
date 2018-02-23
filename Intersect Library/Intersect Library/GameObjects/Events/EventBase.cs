@@ -23,12 +23,13 @@ namespace Intersect.GameObjects.Events
             MyPages = new List<EventPage> {new EventPage()};
         }
 
-        public EventBase(int index, EventBase copy) : base(index)
+        public EventBase(int index,int mapIndex, EventBase copy) : base(index)
         {
             Name = "New Event";
             MyPages = new List<EventPage>();
             Load(copy.JsonData);
             CommonEvent = copy.CommonEvent;
+            MapIndex = mapIndex;
         }
 
         public EventBase(int index, string json, bool isCommon = false) : base(index)

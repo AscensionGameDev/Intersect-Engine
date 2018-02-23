@@ -593,7 +593,7 @@ namespace Intersect.Editor.Classes
                     }
                     else
                     {
-                        var evt = new EventBase(id, -1, -1, true);
+                        var evt = new EventBase(id, -1, -1, -1,true);
                         evt.Load(json);
                         EventBase.Lookup.Set(id, evt);
                     }

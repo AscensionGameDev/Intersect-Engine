@@ -401,7 +401,7 @@ namespace Intersect.Editor.Forms
                         EventBase tmpEvent;
                         if ((tmpEvent = Globals.CurrentMap.FindEventAt(Globals.CurTileX, Globals.CurTileY)) != null)
                         {
-                            Globals.CurrentMap.Events.Remove(tmpEvent.Index);
+                            Globals.CurrentMap.Events.Remove(tmpEvent.MapIndex);
                             mMapChanged = true;
                         }
                     }
@@ -976,7 +976,7 @@ namespace Intersect.Editor.Forms
                         Globals.CurrentMap.FindEventAt(Globals.CurTileX,
                             Globals.CurTileY)) == null)
                 {
-                    tmpEvent = new EventBase(Globals.CurrentMap.EventIndex, Globals.CurTileX, Globals.CurTileY);
+                    tmpEvent = new EventBase(-1,Globals.CurrentMap.EventIndex, Globals.CurTileX, Globals.CurTileY);
                     Globals.CurrentMap.Events.Add(Globals.CurrentMap.EventIndex, tmpEvent);
                     Globals.CurrentMap.EventIndex++;
                     tmpEventEditor = new FrmEvent(Globals.CurrentMap)
@@ -1555,10 +1555,9 @@ namespace Intersect.Editor.Forms
                             {
                                 if (tmpMap.FindEventAt(x0, y0) != null)
                                 {
-                                    tmpMap.Events.Remove(tmpMap.FindEventAt(x0, y0).Index);
+                                    tmpMap.Events.Remove(tmpMap.FindEventAt(x0, y0).MapIndex);
                                 }
-                                eventCopy = new EventBase(tmpMap.EventIndex,
-                                    Globals.SelectionSource.FindEventAt(x0 - dragxoffset, y0 - dragyoffset))
+                                eventCopy = new EventBase(-1,tmpMap.EventIndex, Globals.SelectionSource.FindEventAt(x0 - dragxoffset, y0 - dragyoffset))
                                 {
                                     SpawnX = x0,
                                     SpawnY = y0
@@ -1693,7 +1692,7 @@ namespace Intersect.Editor.Forms
                         {
                             if (((MapInstance) tmpMap).FindEventAt(x0, y0) != null)
                             {
-                                tmpMap.Events.Remove(((MapInstance) tmpMap).FindEventAt(x0, y0).Index);
+                                tmpMap.Events.Remove(((MapInstance) tmpMap).FindEventAt(x0, y0).MapIndex);
                             }
                         }
                     }

@@ -2329,7 +2329,7 @@ namespace Intersect.Server.Classes.Core
                         MapInstance.Lookup.Set(index, objw);
                         break;
                     case GameObjectType.CommonEvent:
-                        var objf = new EventBase(index, -1, -1, true);
+                        var objf = new EventBase(index, -1, -1, -1,true);
                         dbObj = objf;
                         EventBase.Lookup.Set(index, objf);
                         break;

@@ -77,7 +77,7 @@ namespace Intersect_Client.Classes.UI.Game
             for (int i = 0; i < Options.MaxPlayerSkills; i++)
             {
                 Items.Add(new SpellItem(this, i));
-                Items[i].Container = new ImagePanel(mItemContainer, "SpellContainer");
+                Items[i].Container = new ImagePanel(mItemContainer, "Spell");
                 Items[i].Setup();
                 
                 Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame);

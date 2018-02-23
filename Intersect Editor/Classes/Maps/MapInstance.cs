@@ -64,6 +64,7 @@ namespace Intersect.Editor.Classes.Maps
                     Right = right;
                 }
                 Autotiles = new MapAutotiles(this);
+                InitAutotiles();
             }
         }
 

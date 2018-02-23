@@ -291,7 +291,7 @@ namespace Intersect.Server.Classes.Entities
                         eventFound = true;
                     }
                     if (eventFound) continue;
-                    PacketSender.SendEntityLeaveTo(MyClient, evt.MyIndex, (int)EntityTypes.Event, evt.MapNum);
+                    PacketSender.SendEntityLeaveTo(MyClient, evt.MapIndex, (int)EntityTypes.Event, evt.MapNum);
                     EventLookup.TryRemove(new Tuple<int, int, int>(evt.MapNum, evt.MapNum < 0 ? -1 : evt.BaseEvent.SpawnX, evt.MapNum < 0 ? -1 : evt.BaseEvent.SpawnY), out EventInstance z);
                 }
             }
@@ -3070,7 +3070,7 @@ namespace Intersect.Server.Classes.Entities
         {
             foreach (var evt in EventLookup.Values)
             {
-                if (evt.MapNum == mapNum && evt.BaseEvent.Index == eventIndex)
+                if (evt.MapNum == mapNum && evt.BaseEvent.MapIndex == eventIndex)
                 {
                     if (evt.PageInstance == null) return;
                     if (evt.PageInstance.Trigger != 0) return;
@@ -3115,7 +3115,7 @@ namespace Intersect.Server.Classes.Entities
             {
                 foreach (var evt in EventLookup.Values)
                 {
-                    if (evt.MapNum == mapNum && evt.BaseEvent.Index == eventIndex)
+                    if (evt.MapNum == mapNum && evt.BaseEvent.MapIndex == eventIndex)
                     {
                         if (evt.CallStack.Count <= 0) return;
                         if (evt.CallStack.Peek().WaitingForResponse != CommandInstance.EventResponse.Dialogue)
@@ -3203,7 +3203,7 @@ namespace Intersect.Server.Classes.Entities
                 {
                     if ((trigger == -1 || baseEvent.MyPages[i].Trigger == trigger) && tmpEvent.CanSpawnPage(i, baseEvent))
                     {
-                        tmpEvent.PageInstance = new EventPageInstance(baseEvent, baseEvent.MyPages[i], baseEvent.Index, -1 * commonEventLaunch, tmpEvent, MyClient);
+                        tmpEvent.PageInstance = new EventPageInstance(baseEvent, baseEvent.MyPages[i], baseEvent.MapIndex, -1 * commonEventLaunch, tmpEvent, MyClient);
                         tmpEvent.PageIndex = i;
                         //Check for /command trigger
                         if (trigger == (int)EventPage.CommonEventTriggers.Command)

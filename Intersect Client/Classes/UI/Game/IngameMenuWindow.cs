@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Intersect.Client.Classes.Localization;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Graphics;
@@ -30,8 +31,7 @@ namespace Intersect.Client.Classes.UI.Game
         public bool GoToCharacterSelectEnabled => false;
         public bool LogoutEnabled => false;
 
-        public IngameMenuWindow([NotNull] Canvas gameCanvas)
-            : base(gameCanvas, "IngameMenuWindow")
+        public IngameMenuWindow([NotNull] Canvas gameCanvas) : base(gameCanvas, "IngameMenuWindow")
         {
             Gui.InputBlockingElements?.Add(this);
 
@@ -139,6 +139,7 @@ namespace Intersect.Client.Classes.UI.Game
             mClose.ProcessAlignments();
             mClose.Clicked += Close_Clicked;
 
+        
             mContainer.LoadJsonUi(GameContentManager.UI.InGame);
 
             mGoToCharacterSelect.IsHidden = !GoToCharacterSelectEnabled;
