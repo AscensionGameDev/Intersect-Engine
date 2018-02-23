@@ -1,6 +1,7 @@
 ﻿using System;
 using Intersect.Client.Classes.Core;
 using Intersect.Client.Classes.Localization;
+using Intersect.Client.Classes.UI.Game;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Control;

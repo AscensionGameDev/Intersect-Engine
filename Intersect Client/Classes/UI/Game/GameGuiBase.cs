@@ -1,15 +1,21 @@
-﻿using Intersect.Client.Classes.UI;
-using Intersect.Client.Classes.UI.Game;
-using Intersect.Enums;
+﻿using Intersect.Enums;
 using Intersect.GameObjects;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
+using Intersect_Client.Classes.UI.Game;
+using JetBrains.Annotations;
 
-namespace Intersect_Client.Classes.UI.Game
+namespace Intersect.Client.Classes.UI.Game
 {
     public class GameGuiBase
     {
+        [NotNull]
+        public Canvas GameCanvas { get; }
+
+        [NotNull]
+        public IngameMenu IngameMenu { get; }
+
         private AdminWindow mAdminWindow;
         private BagWindow mBagWindow;
         private BankWindow mBankWindow;
@@ -19,7 +25,7 @@ namespace Intersect_Client.Classes.UI.Game
         private DebugMenu mDebugMenu;
 
         private EventWindow mEventWindow;
-        public EntityBox PlayerBox;
+        public Intersect_Client.Classes.UI.Game.EntityBox PlayerBox;
         private QuestOfferWindow mQuestOfferWindow;
         private ShopWindow mShopWindow;
         private bool mShouldCloseBag;
@@ -37,18 +43,17 @@ namespace Intersect_Client.Classes.UI.Game
         private int mTradingTarget = -1;
         private TradingWindow mTradingWindow;
         public bool FocusChat;
-        public Canvas GameCanvas;
-
-        public IngameMenu IngameMenu { get; private set; }
 
         public GameMenu GameMenu { get; private set; }
 
         //Public Components - For clicking/dragging
         public HotBarWindow Hotbar;
 
-        public GameGuiBase(Canvas myCanvas)
+        public GameGuiBase([NotNull] Canvas myCanvas)
         {
             GameCanvas = myCanvas;
+            IngameMenu = new IngameMenu(GameCanvas) { IsHidden = true };
+
             InitGameGui();
         }
 
@@ -60,9 +65,7 @@ namespace Intersect_Client.Classes.UI.Game
             Hotbar = new HotBarWindow(GameCanvas);
             mDebugMenu = new DebugMenu(GameCanvas);
             mQuestOfferWindow = new QuestOfferWindow(GameCanvas);
-            PlayerBox = new EntityBox(GameCanvas, EntityTypes.Player, Globals.Me, true);
-
-            IngameMenu = new IngameMenu(GameCanvas) {IsHidden = true};
+            PlayerBox = new Intersect_Client.Classes.UI.Game.EntityBox(GameCanvas, EntityTypes.Player, Globals.Me, true);
         }
 
         //Chatbox
