@@ -311,8 +311,8 @@ namespace Intersect_Client.Classes.UI.Game
         private void UpdateLevel()
         {
             var levelString = Strings.EntityBox.level.ToString(MyEntity.Level);
-            EntityLevel.Text = levelString;
-            EntityNameAndLevel.Text = Strings.EntityBox.NameAndLevel.ToString(MyEntity.MyName, levelString);
+            if (!EntityLevel.IsHidden) EntityLevel.Text = levelString;
+            if (!EntityNameAndLevel.IsHidden) EntityNameAndLevel.Text = Strings.EntityBox.NameAndLevel.ToString(MyEntity.MyName, levelString);
         }
 
         private void UpdateMap()
