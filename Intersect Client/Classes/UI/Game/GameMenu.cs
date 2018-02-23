@@ -214,7 +214,7 @@ namespace Intersect.Client.Classes.UI.Game
         //Input Handlers
         private static void MenuButtonClicked(Base sender, ClickedEventArgs arguments)
         {
-            Gui.GameUi?.IngameMenuWindow?.ToggleHidden();
+            Gui.GameUi?.IngameMenu?.ToggleHidden();
         }
 
         private void PartyBtn_Clicked(Base sender, ClickedEventArgs arguments)
