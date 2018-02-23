@@ -41,13 +41,13 @@ namespace Intersect.Editor.Classes
 
             if (File.Exists("resources/config.json"))
             {
-                ClientOptions.Load(File.ReadAllText("resources/config.json"));
+                ClientOptions.LoadFrom(File.ReadAllText("resources/config.json"));
             }
             else
             {
-                ClientOptions.Load(null);
+                ClientOptions.LoadFrom(null);
             }
-            File.WriteAllText("resources/config.json", ClientOptions.GetJson());
+            File.WriteAllText("resources/config.json", ClientOptions.ToJson());
         }
 
         //Game Object Handling

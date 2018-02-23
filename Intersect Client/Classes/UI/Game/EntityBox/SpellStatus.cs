@@ -64,7 +64,7 @@ namespace Intersect.Client.Classes.UI.Game.EntityBox
 
         public FloatRect RenderBounds()
         {
-            FloatRect rect = new FloatRect()
+            FloatRect rect = new FloatRect
             {
                 X = Pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).X,
                 Y = Pnl.LocalPosToCanvas(new IntersectClientExtras.GenericClasses.Point(0, 0)).Y,
@@ -81,7 +81,7 @@ namespace Intersect.Client.Classes.UI.Game.EntityBox
                 var spell = SpellBase.Lookup.Get<SpellBase>(mEntityBox.MyEntity.Status[mYindex].SpellNum);
                 var timeDiff = Globals.System.GetTimeMs() - mEntityBox.MyEntity.Status[mYindex].TimeRecevied;
                 var remaining = mEntityBox.MyEntity.Status[mYindex].TimeRemaining - timeDiff;
-                var fraction = (float)((float)remaining / (float)mEntityBox.MyEntity.Status[mYindex].TotalDuration);
+                var fraction = remaining / (float)mEntityBox.MyEntity.Status[mYindex].TotalDuration;
                 Pnl.RenderColor = new IntersectClientExtras.GenericClasses.Color((int)(fraction * 255f), 255, 255, 255);
                 if ((mTexLoaded != "" && spell == null) || (spell != null && mTexLoaded != spell.Pic) ||
                     mCurrentSpell != mEntityBox.MyEntity.Status[mYindex].SpellNum)

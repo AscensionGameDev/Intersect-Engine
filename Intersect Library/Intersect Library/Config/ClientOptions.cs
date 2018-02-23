@@ -1,76 +1,70 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace Intersect.Config
 {
     public class ClientOptions
     {
-        private static ClientOptions _options;
+        [NotNull]
+        private static ClientOptions sOptions;
+
+        static ClientOptions() => sOptions = new ClientOptions();
 
         //Public Getters
-        public static string Language => _options._language;
-        public static string ServerHost => _options._host;
-        public static ushort ServerPort => _options._port;
-        public static bool RenderCache => _options._renderCache;
-        public static string Font => _options._font;
-        public static int ChatLines => _options._chatLines;
-        public static string MenuMusic => _options._menuMusic;
-        public static string MenuBackground => _options._menuBackground;
-        public static List<string> IntroImages => _options._introImages;
+        public static string Language => sOptions.mLanguage;
+        public static string ServerHost => sOptions.mHost;
+        public static ushort ServerPort => sOptions.mPort;
+        public static bool RenderCache => sOptions.mRenderCache;
+        public static string Font => sOptions.mFont;
+        public static int ChatLines => sOptions.mChatLines;
+        public static string MenuMusic => sOptions.mMenuMusic;
+        public static string MenuBackground => sOptions.mMenuBackground;
+        public static List<string> IntroImages => sOptions.mIntroImages;
 
         [JsonProperty("Language")]
-        protected string _language = "English";
+        protected string mLanguage = "English";
 
         [JsonProperty("Host")]
-        protected string _host = "localhost";
+        protected string mHost = "localhost";
 
         [JsonProperty("Port")]
-        protected ushort _port = 5400;
+        protected ushort mPort = 5400;
 
         [JsonProperty("RenderCache")]
-        protected bool _renderCache = true;
+        protected bool mRenderCache = true;
 
         [JsonProperty("Font")]
-        protected string _font = "arial";
+        protected string mFont = "arial";
 
         [JsonProperty("ChatLines")]
-        protected int _chatLines = 100;
+        protected int mChatLines = 100;
 
         [JsonProperty("MenuMusic")]
-        protected string _menuMusic = "";
+        protected string mMenuMusic = "";
 
         [JsonProperty("MenuBackground")]
-        protected string _menuBackground = "background.png";
+        protected string mMenuBackground = "background.png";
 
         [JsonProperty("IntroImages")]
-        protected List<string> _introImages = new List<string>();
+        protected List<string> mIntroImages = new List<string>();
 
-        public static void Load(string json)
+        public static void LoadFrom(string json)
         {
-            if (string.IsNullOrEmpty(json))
-            {
-                _options = new ClientOptions();
-            }
-            else
-            {
-                _options = JsonConvert.DeserializeObject<ClientOptions>(json);
-            }
+            sOptions = (string.IsNullOrEmpty(json) ? null : JsonConvert.DeserializeObject<ClientOptions>(json)) ?? sOptions;
         }
 
-        public static string GetJson()
+        public static string ToJson()
         {
-            return JsonConvert.SerializeObject(_options, Formatting.Indented);
+            return JsonConvert.SerializeObject(sOptions, Formatting.Indented);
         }
-
-
+        
         [OnDeserializing]
         internal void OnDeserializingMethod(StreamingContext context)
         {
-            _introImages.Clear();
+            mIntroImages?.Clear();
         }
 
         [OnDeserialized]
@@ -81,7 +75,7 @@ namespace Intersect.Config
 
         public void Validate()
         {
-            _introImages = new List<string>(_introImages.Distinct());
+            mIntroImages = new List<string>(mIntroImages?.Distinct() ?? new List<string>());
         }
 
     }

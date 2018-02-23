@@ -3,6 +3,7 @@ using System.IO;
 using Intersect.Enums;
 using Intersect.Server.Classes.Localization;
 using Intersect.Server.Classes.Entities;
+using Intersect.Utilities;
 using NCalc;
 using Newtonsoft.Json;
 using Formatting = Newtonsoft.Json.Formatting;
@@ -11,6 +12,8 @@ namespace Intersect.Server.Classes.General
 {
     public class Formulas
     {
+        public Formula ExpFormula = new Formula("BaseExp * Power(Gain, Level)");
+
         private static Formulas _formulas;
 
         private const string FORMULAS_FILE = "resources/formulas.json";

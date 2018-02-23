@@ -825,6 +825,7 @@ namespace Intersect.Server.Classes.Entities
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.GiveExperience:
+                    // TODO: Long exp
                     MyPlayer.GiveExperience(command.Ints[0]);
                     CallStack.Peek().CommandIndex++;
                     break;

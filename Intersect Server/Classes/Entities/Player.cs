@@ -112,6 +112,16 @@ namespace Intersect.Server.Classes.Entities
             }
         }
 
+        public long ExperienceToNextLevel
+        {
+            get
+            {
+                if (Level >= Options.MaxLevel) return -1;
+                var classBase = ClassBase.Lookup.Get<ClassBase>(Class);
+                return classBase?.ExperienceToNextLevel(Level) ?? ClassBase.DEFAULT_BASE_EXPERIENCE;
+            }
+        }
+
         //Update
         public override void Update(long timeMs)
         {
@@ -373,13 +383,11 @@ namespace Intersect.Server.Classes.Entities
         //Leveling
         public void SetLevel(int level, bool resetExperience = false)
         {
-            if (level > 0)
-            {
-                Level = Math.Min(Options.MaxLevel, level);
-                if (resetExperience) Experience = 0;
-                PacketSender.SendEntityDataToProximity(this);
-                PacketSender.SendExperience(MyClient);
-            }
+            if (level < 1) return;
+            Level = Math.Min(Options.MaxLevel, level);
+            if (resetExperience) Experience = 0;
+            PacketSender.SendEntityDataToProximity(this);
+            PacketSender.SendExperience(MyClient);
         }
 
         public void LevelUp(bool resetExperience = true, int levels = 1)
@@ -492,28 +500,14 @@ namespace Intersect.Server.Classes.Entities
         private bool CheckLevelUp()
         {
             var levelCount = 0;
-            while (Experience >= GetExperienceToNextLevel() && GetExperienceToNextLevel() > 0)
+            while (Experience >= ExperienceToNextLevel && ExperienceToNextLevel > 0)
             {
-                Experience -= GetExperienceToNextLevel();
+                Experience -= ExperienceToNextLevel;
                 levelCount++;
             }
-            if (levelCount > 0)
-            {
-                LevelUp(false, levelCount);
-                return true;
-            }
-            return false;
-        }
-
-        public int GetExperienceToNextLevel()
-        {
-            if (Level >= Options.MaxLevel) return -1;
-            var myclass = ClassBase.Lookup.Get<ClassBase>(Class);
-            if (myclass != null)
-            {
-                return (int)(myclass.BaseExp * Math.Pow(1 + (myclass.ExpIncrease / 100f) / 1, Level - 1));
-            }
-            return 1000;
+            if (levelCount <= 0) return false;
+            LevelUp(false, levelCount);
+            return true;
         }
 
         //Combat

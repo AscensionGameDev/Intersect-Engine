@@ -36,8 +36,10 @@ namespace Intersect.Models
 
         [JsonIgnore]
         public Guid Guid { get; }
+
         [JsonIgnore]
         public int Index { get; }
+
         [JsonProperty(Order = -4)]
         public string Name { get; set; }
 

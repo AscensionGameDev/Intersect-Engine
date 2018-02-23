@@ -31,13 +31,13 @@ namespace Intersect.Client.Classes.MonoGame.Database
         {
             if (!File.Exists(Path.Combine("resources", "config.json")))
             {
-                ClientOptions.Load(null);
-                File.WriteAllText(Path.Combine("resources", "config.json"), ClientOptions.GetJson());
+                ClientOptions.LoadFrom(null);
+                File.WriteAllText(Path.Combine("resources", "config.json"), ClientOptions.ToJson());
                 return true;
             }
 
             var jsonData = File.ReadAllText(Path.Combine("resources", "config.json"));
-            ClientOptions.Load(jsonData);
+            ClientOptions.LoadFrom(jsonData);
             return true;
         }
     }

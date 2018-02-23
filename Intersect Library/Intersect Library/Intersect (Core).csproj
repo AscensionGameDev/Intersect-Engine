@@ -51,6 +51,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NCalc, Version=1.3.8.0, Culture=neutral, PublicKeyToken=973cde3f1cafed03, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\ncalc.1.3.8\lib\NCalc.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.10.0.3\lib\net35\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -105,6 +108,7 @@
     <Compile Include="Config\PlayerOptions.cs" />
     <Compile Include="Localization\LocalizedString.cs" />
     <Compile Include="Utilities\AlphanumComparator.cs" />
+    <Compile Include="Utilities\ExperienceCurve.cs" />
     <Compile Include="Utilities\FieldChecking.cs" />
     <Compile Include="GameObjects\AnimationBase.cs" />
     <Compile Include="GameObjects\ClassBase.cs" />
@@ -196,6 +200,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SharedConstants.cs" />
+    <Compile Include="Utilities\Formula.cs" />
+    <Compile Include="Utilities\MathHelper.cs" />
     <Compile Include="Utilities\TextUtils.cs" />
     <Compile Include="Threading\IThreadYield.cs" />
     <Compile Include="Threading\ThreadYieldNet35.cs" />
