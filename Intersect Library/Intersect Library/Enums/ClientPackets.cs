@@ -4,6 +4,7 @@ namespace Intersect.Enums
     {
         Ping = 0,
         Login,
+        Logout,
         NeedMap,
         SendMove,
         LocalMessage,
