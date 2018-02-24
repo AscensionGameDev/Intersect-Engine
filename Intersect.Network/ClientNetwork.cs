@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using Intersect.Logging;
+using JetBrains.Annotations;
 using Lidgren.Network;
 
 namespace Intersect.Network
@@ -13,7 +14,7 @@ namespace Intersect.Network
 
         private Guid mGuid;
 
-        public ClientNetwork(NetworkConfiguration configuration, RSAParameters rsaParameters)
+        public ClientNetwork([NotNull] NetworkConfiguration configuration, RSAParameters rsaParameters)
             : base(configuration)
         {
             mGuid = Guid.Empty;
@@ -80,7 +81,7 @@ namespace Intersect.Network
 
         protected virtual void HandleInterfaceOnDisconnected(INetworkLayerInterface sender, IConnection connection)
         {
-            Log.Info($"Disconnected [{connection?.Guid}].");
+            Log.Info($"Disconnected [{connection?.Guid ?? Guid.Empty}].");
             IsConnected = false;
             OnDisconnected?.Invoke(sender, connection);
         }

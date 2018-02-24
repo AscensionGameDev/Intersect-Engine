@@ -11,6 +11,8 @@ using Intersect.Network.Packets.Reflectable;
 using IntersectClientExtras.Network;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
+using Intersect_Client.Classes.UI;
+using Intersect_Client.Classes.UI.Menu;
 
 namespace Intersect.Client.Classes.MonoGame.Network
 {
@@ -31,29 +33,24 @@ namespace Intersect.Client.Classes.MonoGame.Network
                 ClientLidgrenNetwork.Close();
                 ClientLidgrenNetwork = null;
             }
-            if (ClientLidgrenNetwork == null)
-            {
-                var config = new NetworkConfiguration(ClientOptions.ServerHost, ClientOptions.ServerPort);
-                var assembly = Assembly.GetExecutingAssembly();
-                using (var stream = assembly.GetManifestResourceStream("Intersect.Client.public-intersect.bek"))
-                {
-                    var rsaKey = EncryptionKey.FromStream<RsaKey>(stream);
-                    Debug.Assert(rsaKey != null, "rsaKey != null");
-                    ClientLidgrenNetwork = new ClientNetwork(config, rsaKey.Parameters);
-                }
 
-                if (ClientLidgrenNetwork != null)
-                {
-                    ClientLidgrenNetwork.Handlers[PacketCode.BinaryPacket] = AddPacketToQueue;
-                    ClientLidgrenNetwork.OnDisconnected = delegate(INetworkLayerInterface sender, IConnection connection)
-                    {
-                        this.OnDisconnected();
-                    };
-                    if (!ClientLidgrenNetwork.Connect())
-                    {
-                        Log.Error("An error occurred while attempting to connect.");
-                    }
-                }
+            var config = new NetworkConfiguration(ClientOptions.ServerHost, ClientOptions.ServerPort);
+            var assembly = Assembly.GetExecutingAssembly();
+            using (var stream = assembly.GetManifestResourceStream("Intersect.Client.public-intersect.bek"))
+            {
+                var rsaKey = EncryptionKey.FromStream<RsaKey>(stream);
+                Debug.Assert(rsaKey != null, "rsaKey != null");
+                ClientLidgrenNetwork = new ClientNetwork(config, rsaKey.Parameters);
+            }
+
+            if (ClientLidgrenNetwork == null) return;
+            ClientLidgrenNetwork.Handlers[PacketCode.BinaryPacket] = AddPacketToQueue;
+            ClientLidgrenNetwork.OnConnected += delegate { OnConnected(); };
+            ClientLidgrenNetwork.OnDisconnected += delegate { OnDisconnected(); };
+
+            if (!ClientLidgrenNetwork.Connect())
+            {
+                Log.Error("An error occurred while attempting to connect.");
             }
         }
 

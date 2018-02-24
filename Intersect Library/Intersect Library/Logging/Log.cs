@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using JetBrains.Annotations;
 
 namespace Intersect.Logging
 {
@@ -16,17 +17,16 @@ namespace Intersect.Logging
 
         private static Logger sGlobal;
 
+        [NotNull]
         public static Logger Global
         {
             get
             {
-                if (sGlobal == null)
-                {
-                    sGlobal = new Logger();
-                    sGlobal.AddOutput(new FileOutput());
-                    sGlobal.AddOutput(new FileOutput($"errors-{ExecutableName}.log", LogLevel.Error));
-                    // TODO: Add console output
-                }
+                if (sGlobal != null) return sGlobal;
+                sGlobal = new Logger();
+                sGlobal.AddOutput(new FileOutput());
+                sGlobal.AddOutput(new FileOutput($"errors-{ExecutableName}.log", LogLevel.Error));
+                // TODO: Add console output
 
                 return sGlobal;
             }

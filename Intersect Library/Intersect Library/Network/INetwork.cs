@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace Intersect.Network
 {
     public interface INetwork : IDisposable
     {
+        [NotNull]
         NetworkConfiguration Configuration { get; }
 
         Guid Guid { get; }

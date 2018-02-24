@@ -1,30 +1,39 @@
 using System.Collections.Generic;
 using System.IO;
 using Intersect.Client.Classes.Localization;
+using Intersect.Network;
 using IntersectClientExtras.File_Management;
+using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
+using IntersectClientExtras.Network;
 using Intersect_Client.Classes.General;
+using JetBrains.Annotations;
 
 namespace Intersect_Client.Classes.UI.Menu
 {
     public class MainMenu
     {
-        private CreateCharacterWindow mCreateCharacterWindow;
-        private Button mCreditsButton;
-        private CreditsWindow mCreditsWindow;
-        private Button mExitButton;
+        private readonly CreateCharacterWindow mCreateCharacterWindow;
+        private readonly Button mCreditsButton;
+        private readonly CreditsWindow mCreditsWindow;
+        private readonly Button mExitButton;
 
-        private Button mLoginButton;
-        private LoginWindow mLoginWindow;
-        private Label mMenuHeader;
-        private ImagePanel mMenuWindow;
-        private Button mOptionsButton;
+        [NotNull]
+        private readonly Button mLoginButton;
+        private readonly LoginWindow mLoginWindow;
 
-        private OptionsWindow mOptionsWindow;
-        private Button mRegisterButton;
-        private RegisterWindow mRegisterWindow;
-        private SelectCharacterWindow mSelectCharacterWindow;
+        private readonly Label mMenuHeader;
+        private readonly ImagePanel mMenuWindow;
+        private readonly Button mOptionsButton;
+
+        private readonly OptionsWindow mOptionsWindow;
+
+        [NotNull]
+        private readonly Button mRegisterButton;
+        private readonly RegisterWindow mRegisterWindow;
+
+        private readonly SelectCharacterWindow mSelectCharacterWindow;
         private bool mShouldOpenCharacterCreation;
         private bool mShouldOpenCharacterSelection;
 
@@ -32,7 +41,10 @@ namespace Intersect_Client.Classes.UI.Menu
         private bool mHasMadeCharacterCreation;
 
         //Controls
-        private Canvas mMenuCanvas;
+        private readonly Canvas mMenuCanvas;
+
+        [NotNull]
+        private readonly Label mServerStatusLabel;
 
         //Init
         public MainMenu(Canvas menuCanvas)
@@ -44,6 +56,20 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Main Menu Window
             mMenuWindow = new ImagePanel(menuCanvas, "MenuWindow");
+
+            mServerStatusLabel = new Label(mMenuWindow, "ServerStatusLabel")
+            {
+                AutoSizeToContents = true,
+                ShouldDrawBackground = true,
+                Text = Strings.Server.StatusLabel.ToString(sNetworkActivity ? (sNetworkStatus ? Strings.Server.Online : Strings.Server.Offline) : Strings.Server.Connecting),
+            };
+            mServerStatusLabel.SetTextColor(Color.White, Label.ControlState.Normal);
+            mServerStatusLabel.AddAlignment(IntersectClientExtras.Gwen.Alignments.Bottom);
+            mServerStatusLabel.AddAlignment(IntersectClientExtras.Gwen.Alignments.Left);
+            mServerStatusLabel.ProcessAlignments();
+
+            sOnNetworkConnected += HandleConnection;
+            sOnNetworkDisconnected += HandleDisconnection;
 
             //Menu Header
             mMenuHeader = new Label(mMenuWindow, "Title");
@@ -90,6 +116,18 @@ namespace Intersect_Client.Classes.UI.Menu
             mSelectCharacterWindow = new SelectCharacterWindow(mMenuCanvas, this, mMenuWindow);
             //Credits Controls
             mCreditsWindow = new CreditsWindow(mMenuCanvas, this);
+
+            mLoginButton.IsDisabled = !sNetworkStatus;
+            mRegisterButton.IsDisabled = !sNetworkStatus;
+        }
+
+        ~MainMenu()
+        {
+            // ReSharper disable once DelegateSubtraction
+            sOnNetworkConnected -= HandleConnection;
+
+            // ReSharper disable once DelegateSubtraction
+            sOnNetworkDisconnected -= HandleDisconnection;
         }
 
         //Methods
@@ -193,6 +231,39 @@ namespace Intersect_Client.Classes.UI.Menu
         void ExitButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
             Globals.IsRunning = false;
+        }
+
+        private void HandleConnection()
+        {
+            mServerStatusLabel.Text = Strings.Server.StatusLabel.ToString(Strings.Server.Online);
+            mLoginButton.IsDisabled = false;
+            mRegisterButton.IsDisabled = false;
+        }
+
+        private void HandleDisconnection()
+        {
+            mServerStatusLabel.Text = Strings.Server.StatusLabel.ToString(Strings.Server.Offline);
+            mLoginButton.IsDisabled = true;
+            mRegisterButton.IsDisabled = true;
+        }
+
+        private static bool sNetworkActivity;
+        private static bool sNetworkStatus;
+        private static ConnectedHandler sOnNetworkConnected;
+        private static DisconnectedHandler sOnNetworkDisconnected;
+
+        public static void OnNetworkConnected()
+        {
+            sNetworkActivity = true;
+            sNetworkStatus = true;
+            sOnNetworkConnected?.Invoke();
+        }
+
+        public static void OnNetworkDisconnected()
+        {
+            sNetworkActivity = true;
+            sNetworkStatus = false;
+            sOnNetworkDisconnected?.Invoke();
         }
     }
 }

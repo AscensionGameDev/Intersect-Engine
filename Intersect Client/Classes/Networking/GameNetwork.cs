@@ -36,7 +36,7 @@ namespace Intersect_Client.Classes.Networking
         private static void TryConnect()
         {
             sConnected = false;
-            MySocket.Connect(ClientOptions.ServerHost, ClientOptions.ServerPort);
+            MySocket?.Connect(ClientOptions.ServerHost, ClientOptions.ServerPort);
         }
 
         private static void MySocket_OnConnectionFailed()
@@ -84,7 +84,7 @@ namespace Intersect_Client.Classes.Networking
             }
             else
             {
-                MySocket.Disconnect("");
+                MySocket?.Disconnect("");
                 TryConnect();
             }
 
@@ -102,8 +102,8 @@ namespace Intersect_Client.Classes.Networking
             {
                 sConnected = false;
                 Connecting = false;
-                MySocket.Disconnect(reason);
-                MySocket.Dispose();
+                MySocket?.Disconnect(reason);
+                MySocket?.Dispose();
                 MySocket = null;
             }
             catch (Exception exception)

@@ -27,8 +27,10 @@ namespace Intersect_Client.Classes.UI
         private static TexturedBase sGwenSkin;
         public static List<KeyValuePair<string, string>> MsgboxErrors = new List<KeyValuePair<string, string>>();
         public static bool SetupHandlers;
+
         public static GameGuiBase GameUi;
         public static MenuGuiBase MenuUi;
+
         public static ErrorMessageHandler ErrorMsgHandler;
         public static string ActiveFont = "arial";
         public static bool HideUi;

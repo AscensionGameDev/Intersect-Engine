@@ -5,13 +5,14 @@ using System.Security.Cryptography;
 using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Server.Classes.Networking;
+using JetBrains.Annotations;
 using Lidgren.Network;
 
 namespace Intersect.Server.Network
 {
     public class ServerNetwork : AbstractNetwork, IServer
     {
-        public ServerNetwork(NetworkConfiguration configuration, RSAParameters rsaParameters)
+        public ServerNetwork([NotNull] NetworkConfiguration configuration, RSAParameters rsaParameters)
             : base(configuration)
         {
             Guid = Guid.NewGuid();

@@ -202,6 +202,7 @@
     <Compile Include="SharedConstants.cs" />
     <Compile Include="Utilities\Formula.cs" />
     <Compile Include="Utilities\MathHelper.cs" />
+    <Compile Include="Utilities\Retry.cs" />
     <Compile Include="Utilities\TextUtils.cs" />
     <Compile Include="Threading\IThreadYield.cs" />
     <Compile Include="Threading\ThreadYieldNet35.cs" />

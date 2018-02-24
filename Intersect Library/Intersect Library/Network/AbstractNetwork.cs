@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using Intersect.Logging;
 using Intersect.Memory;
+using JetBrains.Annotations;
 
 namespace Intersect.Network
 {
@@ -16,7 +17,7 @@ namespace Intersect.Network
         private readonly List<INetworkLayerInterface> mNetworkLayerInterfaces;
         private bool mDisposed;
 
-        protected AbstractNetwork(NetworkConfiguration configuration)
+        protected AbstractNetwork([NotNull] NetworkConfiguration configuration)
         {
             mDisposed = false;
 
@@ -42,8 +43,11 @@ namespace Intersect.Network
         public bool AddConnection(IConnection connection)
         {
             if (connection == null) throw new ArgumentNullException();
+            if (mConnections?.ContainsKey(connection.Guid) ?? false)
+                return false;
+
             mConnections?.Add(connection.Guid, connection);
-            return mConnections?.ContainsKey(connection.Guid) ?? false;
+            return true;
         }
 
         public bool RemoveConnection(IConnection connection)

@@ -27,6 +27,8 @@ namespace Intersect.Network
         void Start();
         void Stop(string reason = "stopping");
 
+        bool Connect();
+
         void Disconnect(IConnection connection, string message);
         void Disconnect(ICollection<IConnection> connections, string messages);
     }

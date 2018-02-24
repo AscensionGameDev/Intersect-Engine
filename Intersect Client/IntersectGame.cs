@@ -20,6 +20,7 @@ using Intersect_Client_MonoGame.Classes.SFML.Graphics;
 using Intersect_Client_MonoGame.Classes.SFML.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MainMenu = Intersect_Client.Classes.UI.Menu.MainMenu;
 
 namespace Intersect.Client
 {
@@ -91,6 +92,8 @@ namespace Intersect.Client
 
             // TODO: Remove old netcode
             GameNetwork.MySocket = new IntersectNetworkSocket();
+            GameNetwork.MySocket.Connected += MainMenu.OnNetworkConnected;
+            GameNetwork.MySocket.Disconnected += MainMenu.OnNetworkDisconnected;
 
             GameMain.Start();
             base.Initialize();

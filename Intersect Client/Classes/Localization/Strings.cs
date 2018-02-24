@@ -671,6 +671,15 @@ namespace Intersect.Client.Classes.Localization
             public static LocalizedString resourcesfatal = @"Failed to load resources from client directory and Ascension Game Dev server. Cannot launch game!";
         }
 
+        public struct Server
+        {
+            public static LocalizedString StatusLabel = @"Server Status: {00}";
+            public static LocalizedString Online = @"Online";
+            public static LocalizedString Offline = @"Offline";
+            public static LocalizedString Connecting = @"Connecting...";
+            public static LocalizedString Unknown = @"Unknown";
+        }
+
         public struct Shop
         {
             public static LocalizedString buyitem = @"Buy Item";

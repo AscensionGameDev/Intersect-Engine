@@ -32,7 +32,7 @@ namespace Intersect.Editor.Classes
                 }
 
                 EditorLidgrenNetwork.Handlers[PacketCode.BinaryPacket] = PacketHandler.HandlePacket;
-                EditorLidgrenNetwork.OnDisconnected = HandleDc;
+                EditorLidgrenNetwork.OnDisconnected += HandleDc;
             }
 
             if (!Connected)

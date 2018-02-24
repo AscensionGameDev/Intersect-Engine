@@ -7,6 +7,8 @@ using System.Threading;
 using Intersect.Logging;
 using Intersect.Memory;
 using Intersect.Network.Packets;
+using Intersect.Utilities;
+using JetBrains.Annotations;
 using Lidgren.Network;
 
 namespace Intersect.Network
@@ -16,12 +18,23 @@ namespace Intersect.Network
         public delegate void HandleUnconnectedMessage(NetPeer peer, NetIncomingMessage message);
 
         private static readonly IConnection[] EmptyConnections = { };
+
+        [NotNull]
         private readonly IDictionary<long, Guid> mGuidLookup;
 
+        [NotNull]
         private readonly INetwork mNetwork;
+
+        [NotNull]
         private readonly NetPeer mPeer;
+
+        [NotNull]
         private readonly NetPeerConfiguration mPeerConfiguration;
+
+        [NotNull]
         private readonly RandomNumberGenerator mRng;
+        
+        [NotNull]
         private readonly RSACryptoServiceProvider mRsa;
 
         public LidgrenInterface(INetwork network, Type peerType, RSAParameters rsaParameters)
@@ -82,8 +95,9 @@ namespace Intersect.Network
             mPeerConfiguration.UseMessageRecycling = true;
 
             var constructorInfo = peerType.GetConstructor(new[] {typeof(NetPeerConfiguration)});
-            if (constructorInfo == null) throw new ArgumentNullException();
-            mPeer = constructorInfo.Invoke(new object[] {mPeerConfiguration}) as NetPeer;
+            if (constructorInfo == null) throw new ArgumentNullException(nameof(constructorInfo));
+            var constructedPeer = constructorInfo.Invoke(new object[] { mPeerConfiguration }) as NetPeer;
+            mPeer = constructedPeer ?? throw new ArgumentNullException(nameof(constructedPeer));
 
             mGuidLookup = new Dictionary<long, Guid>();
 
@@ -114,50 +128,61 @@ namespace Intersect.Network
 
         public void Start()
         {
-            Debug.Assert(mNetwork != null, "mNetwork != null");
-            Debug.Assert(mNetwork.Configuration != null, "mNetwork.Configuration != null");
-            Debug.Assert(mPeerConfiguration != null, "mPeerConfiguration != null");
-            Debug.Assert(mPeer != null, "mPeer != null");
-            Debug.Assert(mRsa != null, "mRsa != null");
-
             if (mNetwork.Configuration.IsServer)
             {
                 Log.Info($"Listening on {mPeerConfiguration.LocalAddress}:{mPeerConfiguration.Port}.");
                 mPeer.Start();
+                return;
             }
-            else
+
+            if (!Connect())
             {
-                Log.Info($"Connecting to {mNetwork.Configuration.Host}:{mNetwork.Configuration.Port}...");
-
-                var handshakeSecret = new byte[32];
-                mRng?.GetNonZeroBytes(handshakeSecret);
-
-                var connectionRsa = new RSACryptoServiceProvider(2048);
-
-                var hail = new HailPacket(mRsa, handshakeSecret, SharedConstants.VersionData,
-                    connectionRsa.ExportParameters(false));
-                var hailMessage = mPeer.CreateMessage(hail.EstimatedSize);
-
-                IBuffer buffer = new LidgrenBuffer(hailMessage);
-                hail.Write(ref buffer);
-
-                mPeer.Start();
-                var connection = mPeer.Connect(mNetwork.Configuration.Host, mNetwork.Configuration.Port, hailMessage);
-                var server = new LidgrenConnection(mNetwork, Guid.Empty, connection, handshakeSecret,
-                    connectionRsa.ExportParameters(true));
-
-                if (mNetwork.AddConnection(server)) return;
-
-                Log.Error("Failed to add connection to list.");
-                connection?.Disconnect("client_error");
+                Log.Error("Failed to make the initial connection attempt.");
             }
+        }
+
+        public bool Connect()
+        {
+            if (mNetwork.Configuration.IsServer)
+            {
+                throw new InvalidOperationException("Server interfaces cannot use Connect().");
+            }
+
+            Log.Info($"Connecting to {mNetwork.Configuration.Host}:{mNetwork.Configuration.Port}...");
+
+            var handshakeSecret = new byte[32];
+            mRng.GetNonZeroBytes(handshakeSecret);
+
+            var connectionRsa = new RSACryptoServiceProvider(2048);
+
+            var hail = new HailPacket(mRsa, handshakeSecret, SharedConstants.VersionData,
+                connectionRsa.ExportParameters(false));
+            var hailMessage = mPeer.CreateMessage(hail.EstimatedSize);
+
+            IBuffer buffer = new LidgrenBuffer(hailMessage);
+            hail.Write(ref buffer);
+
+            if (mPeer.Status == NetPeerStatus.NotRunning)
+            {
+                mPeer.Start();
+            }
+
+            var connection = mPeer.Connect(mNetwork.Configuration.Host, mNetwork.Configuration.Port, hailMessage);
+            var server = new LidgrenConnection(mNetwork, Guid.Empty, connection, handshakeSecret,
+                connectionRsa.ExportParameters(true));
+
+            if (mNetwork.AddConnection(server))
+                return true;
+
+            Log.Error("Failed to add connection to list.");
+            connection?.Disconnect("client_error");
+            return false;
         }
 
         public bool TryGetInboundBuffer(out IBuffer buffer, out IConnection connection)
         {
             buffer = default(IBuffer);
             connection = default(IConnection);
-            if (mPeer == null) return false;
 
             var message = TryHandleInboundMessage();
             if (message == null) return true;
@@ -171,7 +196,7 @@ namespace Intersect.Network
                 return false;
             }
 
-            connection = mNetwork?.FindConnection(guid);
+            connection = mNetwork.FindConnection(guid);
 
             if (connection != null)
             {
@@ -349,108 +374,101 @@ namespace Intersect.Network
                             break;
 
                         case NetConnectionStatus.Connected:
-                        {
-                            Debug.Assert(mNetwork.Configuration != null, "mNetwork.Configuration != null");
-
-                            LidgrenConnection intersectConnection;
-                            if (!mNetwork.Configuration.IsServer)
                             {
-                                intersectConnection = mNetwork.FindConnection<LidgrenConnection>(Guid.Empty);
-                                if (intersectConnection == null)
+                                LidgrenConnection intersectConnection;
+                                if (!mNetwork.Configuration.IsServer)
                                 {
-                                    Log.Error("Bad state, no connection found.");
-                                    mNetwork.Disconnect("client_connection_missing");
-                                    connection?.Disconnect("client_connection_missing");
-                                    break;
-                                }
+                                    intersectConnection = mNetwork.FindConnection<LidgrenConnection>(Guid.Empty);
+                                    if (intersectConnection == null)
+                                    {
+                                        Log.Error("Bad state, no connection found.");
+                                        mNetwork.Disconnect("client_connection_missing");
+                                        connection?.Disconnect("client_connection_missing");
+                                        break;
+                                    }
 
-                                if (OnConnectionApproved != null)
-                                {
-                                    OnConnectionApproved(this, intersectConnection);
+                                    if (OnConnectionApproved != null)
+                                    {
+                                        FireOnConnectionApproved(this, intersectConnection);
+                                    }
+                                    else
+                                    {
+                                        Log.Error("No handlers for OnConnectionApproved.");
+                                    }
+
+                                    Debug.Assert(connection != null, "connection != null");
+                                    IBuffer buffer = new LidgrenBuffer(connection.RemoteHailMessage);
+                                    var approval = new ApprovalPacket(intersectConnection.Rsa);
+
+                                    if (!approval.Read(ref buffer))
+                                    {
+                                        Log.Error("Unable to read approval message, disconnecting.");
+                                        mNetwork?.Disconnect("client_error");
+                                        connection.Disconnect("client_error");
+                                        break;
+                                    }
+
+                                    if (!intersectConnection.HandleApproval(approval))
+                                    {
+                                        mNetwork?.Disconnect("bad_handshake_secret");
+                                        connection.Disconnect("bad_handshake_secret");
+                                        break;
+                                    }
+
+                                    var clientNetwork = mNetwork as ClientNetwork;
+                                    if (clientNetwork == null) throw new InvalidOperationException();
+                                    clientNetwork.AssignGuid(approval.Guid);
+
+                                    Debug.Assert(mGuidLookup != null, "mGuidLookup != null");
+                                    mGuidLookup.Add(connection.RemoteUniqueIdentifier, Guid.Empty);
                                 }
                                 else
                                 {
-                                    Log.Error("No handlers for OnConnectionApproved.");
+                                    Log.Diagnostic($"{message.MessageType}: {message} [{connection?.Status}]");
+                                    if (!mGuidLookup.TryGetValue(lidgrenId, out Guid guid))
+                                    {
+                                        Log.Error($"Unknown client connected ({lidgrenIdHex}).");
+                                        connection?.Disconnect("server_unknown_client");
+                                        break;
+                                    }
+
+                                    intersectConnection = mNetwork.FindConnection<LidgrenConnection>(guid);
                                 }
 
-                                Debug.Assert(connection != null, "connection != null");
-                                IBuffer buffer = new LidgrenBuffer(connection.RemoteHailMessage);
-                                var approval = new ApprovalPacket(intersectConnection.Rsa);
-
-                                if (!approval.Read(ref buffer))
+                                if (OnConnected == null)
                                 {
-                                    Log.Error("Unable to read approval message, disconnecting.");
-                                    mNetwork?.Disconnect("client_error");
-                                    connection.Disconnect("client_error");
+                                    Log.Error("No handlers for OnConnected.");
                                     break;
                                 }
 
-                                if (!intersectConnection.HandleApproval(approval))
-                                {
-                                    mNetwork?.Disconnect("bad_handshake_secret");
-                                    connection.Disconnect("bad_handshake_secret");
-                                    break;
-                                }
-
-                                var clientNetwork = mNetwork as ClientNetwork;
-                                if (clientNetwork == null) throw new InvalidOperationException();
-                                clientNetwork.AssignGuid(approval.Guid);
-
-                                Debug.Assert(mGuidLookup != null, "mGuidLookup != null");
-                                mGuidLookup.Add(connection.RemoteUniqueIdentifier, Guid.Empty);
+                                intersectConnection?.HandleConnected();
+                                FireOnConnected(this, intersectConnection);
                             }
-                            else
-                            {
-                                Log.Diagnostic($"{message.MessageType}: {message} [{connection?.Status}]");
-                                if (!mGuidLookup.TryGetValue(lidgrenId, out Guid guid))
-                                {
-                                    Log.Error($"Unknown client connected ({lidgrenIdHex}).");
-                                    connection?.Disconnect("server_unknown_client");
-                                    break;
-                                }
-
-                                intersectConnection = mNetwork.FindConnection<LidgrenConnection>(guid);
-                            }
-
-                            if (OnConnected == null)
-                            {
-                                Log.Error("No handlers for OnConnected.");
-                                break;
-                            }
-
-                            intersectConnection?.HandleConnected();
-                            OnConnected(this, intersectConnection);
-
                             break;
-                        }
 
                         case NetConnectionStatus.Disconnected:
-                        {
-                            Debug.Assert(connection != null, "connection != null");
-                            Log.Debug($"{message.MessageType}: {message} [{connection.Status}]");
-                            if (!mGuidLookup.TryGetValue(lidgrenId, out Guid guid))
                             {
-                                Log.Debug($"Unknown client disconnected ({lidgrenIdHex}).");
-                                break;
-                            }
+                                Debug.Assert(connection != null, "connection != null");
+                                Log.Debug($"{message.MessageType}: {message} [{connection.Status}]");
 
-                            if (OnDisconnected == null)
-                            {
-                                Log.Error("No handlers for OnDisconnected.");
-                                break;
-                            }
+                                if (!mGuidLookup.TryGetValue(lidgrenId, out Guid guid))
+                                {
+                                    Log.Debug($"Unknown client disconnected ({lidgrenIdHex}).");
+                                    FireOnDisconnected(this, null);
+                                    break;
+                                }
 
-                            var client = mNetwork.FindConnection(guid);
-                            if (client != null)
-                            {
-                                client?.HandleDisconnected();
-                                OnDisconnected(this, client);
-                                mNetwork?.RemoveConnection(client);
+                                var client = mNetwork.FindConnection(guid);
+                                if (client != null)
+                                {
+                                    client.HandleDisconnected();
+                                    FireOnDisconnected(this, client);
+                                    mNetwork.RemoveConnection(client);
+                                }
+                                
+                                mGuidLookup.Remove(connection.RemoteUniqueIdentifier);
                             }
-                            Debug.Assert(mGuidLookup != null, "mGuidLookup != null");
-                            mGuidLookup.Remove(connection.RemoteUniqueIdentifier);
                             break;
-                        }
 
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -557,6 +575,39 @@ namespace Intersect.Network
             return null;
         }
 
+        protected void FireOnConnected(INetworkLayerInterface sender, IConnection connection)
+        {
+            if (OnConnected == null)
+            {
+                Log.Error("No handlers for OnConnected.");
+                return;
+            }
+
+            OnConnected(sender, connection);
+        }
+
+        protected void FireOnConnectionApproved(INetworkLayerInterface sender, IConnection connection)
+        {
+            if (OnConnectionApproved == null)
+            {
+                Log.Error("No handlers for OnConnectionApproved.");
+                return;
+            }
+
+            OnConnectionApproved(sender, connection);
+        }
+
+        protected void FireOnDisconnected(INetworkLayerInterface sender, IConnection connection)
+        {
+            if (OnDisconnected == null)
+            {
+                Log.Error("No handlers for OnDisconnected.");
+                return;
+            }
+
+            OnDisconnected(sender, connection);
+        }
+
         private void SendMessage(NetOutgoingMessage message, LidgrenConnection connection,
             NetDeliveryMethod deliveryMethod, int sequenceChannel = 0)
         {
@@ -587,7 +638,7 @@ namespace Intersect.Network
 
         internal bool Disconnect(string message)
         {
-            mPeer?.Connections?.ForEach(connection => connection?.Disconnect(message));
+            mPeer.Connections?.ForEach(connection => connection?.Disconnect(message));
             return true;
         }
     }
