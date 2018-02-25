@@ -781,19 +781,13 @@ namespace Intersect.Server.Classes
         private static void ShutDown()
         {
             //Save all online players
-            if (Globals.Clients != null)
+            Globals.Clients?.FindAll(client => client?.Entity != null).ForEach(client =>
             {
-                for (int i = 0; i < Globals.Clients.Count; i++)
-                {
-                    if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
-                    {
-                        Database.SaveCharacter(Globals.Clients[i].Entity);
-                    }
-                }
-            }
+                Database.SaveCharacter(client?.Entity);
+            });
 
             Globals.ServerStarted = false;
-            if (SocketServer != null) SocketServer.Dispose();
+            SocketServer?.Dispose();
         }
 
         private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
