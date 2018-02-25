@@ -15,6 +15,10 @@ namespace Intersect.Network
 {
     public sealed class LidgrenInterface : INetworkLayerInterface
     {
+        private const string REJECT_BAD_HAIL = "bad_hail";
+        private const string REJECT_BAD_VERSION = "bad_version";
+        private const string REJECT_SERVER_ERROR = "server_error";
+
         public delegate void HandleUnconnectedMessage(NetPeer peer, NetIncomingMessage message);
 
         private static readonly IConnection[] EmptyConnections = { };
@@ -50,7 +54,7 @@ namespace Intersect.Network
 
             mRsa = new RSACryptoServiceProvider();
             mRsa.ImportParameters(rsaParameters);
-            mPeerConfiguration = new NetPeerConfiguration(SharedConstants.VersionName)
+            mPeerConfiguration = new NetPeerConfiguration($"{VersionHelper.ExecutableVersion} {VersionHelper.LibraryVersion} {SharedConstants.VersionName}")
             {
                 AcceptIncomingConnections = configuration.IsServer
             };
@@ -120,6 +124,7 @@ namespace Intersect.Network
 
         public HandleUnconnectedMessage OnUnconnectedMessage { get; set; }
         public HandleConnectionEvent OnConnectionApproved { get; set; }
+        public HandleConnectionEvent OnConnectionDenied { get; set; }
 
         public HandlePacketAvailable OnPacketAvailable { get; set; }
 
@@ -387,14 +392,7 @@ namespace Intersect.Network
                                         break;
                                     }
 
-                                    if (OnConnectionApproved != null)
-                                    {
-                                        FireOnConnectionApproved(this, intersectConnection);
-                                    }
-                                    else
-                                    {
-                                        Log.Error("No handlers for OnConnectionApproved.");
-                                    }
+                                    FireHandler(OnConnectionApproved, nameof(OnConnectionApproved), this, intersectConnection);
 
                                     Debug.Assert(connection != null, "connection != null");
                                     IBuffer buffer = new LidgrenBuffer(connection.RemoteHailMessage);
@@ -435,14 +433,8 @@ namespace Intersect.Network
                                     intersectConnection = mNetwork.FindConnection<LidgrenConnection>(guid);
                                 }
 
-                                if (OnConnected == null)
-                                {
-                                    Log.Error("No handlers for OnConnected.");
-                                    break;
-                                }
-
-                                intersectConnection?.HandleConnected();
-                                FireOnConnected(this, intersectConnection);
+                                if (OnConnected != null) intersectConnection?.HandleConnected();
+                                FireHandler(OnConnected, nameof(OnConnected), this, intersectConnection);
                             }
                             break;
 
@@ -450,11 +442,30 @@ namespace Intersect.Network
                             {
                                 Debug.Assert(connection != null, "connection != null");
                                 Log.Debug($"{message.MessageType}: {message} [{connection.Status}]");
+                                var result = (NetConnectionStatus)message.ReadByte();
+                                var reason = message.ReadString();
+
+                                HandleConnectionEvent disconnectHandler;
+                                string disconnectHandlerName;
+                                switch (reason)
+                                {
+                                    case REJECT_BAD_HAIL:
+                                    case REJECT_BAD_VERSION:
+                                    case REJECT_SERVER_ERROR:
+                                        disconnectHandler = OnConnectionDenied;
+                                        disconnectHandlerName = nameof(OnConnectionDenied);
+                                        break;
+
+                                    default:
+                                        disconnectHandler = OnDisconnected;
+                                        disconnectHandlerName = nameof(OnDisconnected);
+                                        break;
+                                }
 
                                 if (!mGuidLookup.TryGetValue(lidgrenId, out Guid guid))
                                 {
                                     Log.Debug($"Unknown client disconnected ({lidgrenIdHex}).");
-                                    FireOnDisconnected(this, null);
+                                    FireHandler(disconnectHandler, disconnectHandlerName, this, null);
                                     break;
                                 }
 
@@ -462,7 +473,7 @@ namespace Intersect.Network
                                 if (client != null)
                                 {
                                     client.HandleDisconnected();
-                                    FireOnDisconnected(this, client);
+                                    FireHandler(disconnectHandler, disconnectHandlerName, this, client);
                                     mNetwork.RemoveConnection(client);
                                 }
                                 
@@ -487,9 +498,8 @@ namespace Intersect.Network
 
                     if (!hail.Read(ref buffer))
                     {
-                        Log.Error($"Failed to read hail, denying connection [{lidgrenIdHex}].");
-                        Debug.Assert(connection != null, "connection != null");
-                        connection.Deny("bad_hail");
+                        Log.Warn($"Failed to read hail, denying connection [{lidgrenIdHex}].");
+                        connection?.Deny(REJECT_BAD_HAIL);
                         break;
                     }
 
@@ -498,16 +508,14 @@ namespace Intersect.Network
                     if (!SharedConstants.VersionData.SequenceEqual(hail.VersionData))
                     {
                         Log.Error($"Bad version detected, denying connection [{lidgrenIdHex}].");
-                        Debug.Assert(connection != null, "connection != null");
-                        connection.Deny("bad_version");
+                        connection?.Deny(REJECT_BAD_VERSION);
                         break;
                     }
 
                     if (OnConnectionApproved == null)
                     {
                         Log.Error($"No handlers for OnConnectionApproved, denying connection [{lidgrenIdHex}].");
-                        Debug.Assert(connection != null, "connection != null");
-                        connection.Deny("server_error");
+                        connection?.Deny(REJECT_SERVER_ERROR);
                         break;
                     }
 
@@ -520,8 +528,7 @@ namespace Intersect.Network
                     if (!mNetwork.AddConnection(client))
                     {
                         Log.Error($"Failed to add the connection.");
-                        Debug.Assert(connection != null, "connection != null");
-                        connection.Deny("server_error");
+                        connection?.Deny(REJECT_SERVER_ERROR);
                         break;
                     }
 
@@ -575,37 +582,12 @@ namespace Intersect.Network
             return null;
         }
 
-        protected void FireOnConnected(INetworkLayerInterface sender, IConnection connection)
+        private bool FireHandler(HandleConnectionEvent handler, string name, INetworkLayerInterface sender, IConnection connection)
         {
-            if (OnConnected == null)
-            {
-                Log.Error("No handlers for OnConnected.");
-                return;
-            }
+            handler?.Invoke(sender, connection);
 
-            OnConnected(sender, connection);
-        }
-
-        protected void FireOnConnectionApproved(INetworkLayerInterface sender, IConnection connection)
-        {
-            if (OnConnectionApproved == null)
-            {
-                Log.Error("No handlers for OnConnectionApproved.");
-                return;
-            }
-
-            OnConnectionApproved(sender, connection);
-        }
-
-        protected void FireOnDisconnected(INetworkLayerInterface sender, IConnection connection)
-        {
-            if (OnDisconnected == null)
-            {
-                Log.Error("No handlers for OnDisconnected.");
-                return;
-            }
-
-            OnDisconnected(sender, connection);
+            if (handler == null) Log.Error($"No handlers for '{name}'.");
+            return handler != null;
         }
 
         private void SendMessage(NetOutgoingMessage message, LidgrenConnection connection,

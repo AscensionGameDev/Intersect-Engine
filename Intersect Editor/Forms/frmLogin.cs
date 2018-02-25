@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
@@ -62,29 +63,30 @@ namespace Intersect.Editor.Forms
             if (!mOptionsLoaded) return;
             EditorNetwork.Update();
             var statusString = Strings.Login.connecting;
+            btnLogin.Enabled = EditorNetwork.Connected;
             if (EditorNetwork.Connected)
             {
                 statusString = Strings.Login.connected;
-                btnLogin.Enabled = true;
             }
             else if (EditorNetwork.Connecting)
             {
             }
+            else if (EditorNetwork.ConnectionDenied)
+            {
+                statusString = Strings.Login.Denied;
+            }
             else
             {
-                statusString = Strings.Login.failedtoconnect.ToString(
-                    ((Globals.ReconnectTime - Globals.System.GetTimeMs()) / 1000).ToString("0"));
-                btnLogin.Enabled = false;
+                var seconds = (Globals.ReconnectTime - Globals.System.GetTimeMs()) / 1000;
+                statusString = Strings.Login.failedtoconnect.ToString(seconds.ToString("0"));
             }
-            Globals.LoginForm.lblStatus.Text = statusString;
-            foreach (Process clsProcess in Process.GetProcesses())
+            Process.GetProcesses().ToList().ForEach(process =>
             {
-                if (clsProcess.ProcessName.Contains("raptr"))
-                {
-                    Globals.LoginForm.lblStatus.Text = Strings.Login.raptr;
-                    btnLogin.Enabled = false;
-                }
-            }
+                if (!(process?.ProcessName.Contains("raptr") ?? false)) return;
+                statusString = Strings.Login.raptr;
+                btnLogin.Enabled = false;
+            });
+            Globals.LoginForm.lblStatus.Text = statusString;
         }
 
         private void btnLogin_Click(object sender, EventArgs e)

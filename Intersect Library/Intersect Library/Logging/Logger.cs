@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace Intersect.Logging
 {
@@ -20,6 +21,7 @@ namespace Intersect.Logging
             Tag = (string.IsNullOrEmpty(tag) ? null : tag);
         }
 
+        [NotNull]
         public List<ILogOutput> Outputs
         {
             get
@@ -36,11 +38,6 @@ namespace Intersect.Logging
         public LogLevel LogLevel { get; set; }
 
         public string Tag { get; set; }
-
-        public List<ILogOutput> GetOutputs()
-        {
-            return Outputs;
-        }
 
         public bool AddOutput(ILogOutput output)
         {

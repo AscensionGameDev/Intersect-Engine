@@ -4,6 +4,8 @@ using Intersect.Config;
 using Intersect.Logging;
 using IntersectClientExtras.Network;
 using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.UI;
+using Intersect_Client.Classes.UI.Menu;
 
 namespace Intersect_Client.Classes.Networking
 {
@@ -36,13 +38,14 @@ namespace Intersect_Client.Classes.Networking
         private static void TryConnect()
         {
             sConnected = false;
+            MainMenu.OnNetworkConnecting();
             MySocket?.Connect(ClientOptions.ServerHost, ClientOptions.ServerPort);
         }
 
-        private static void MySocket_OnConnectionFailed()
+        private static void MySocket_OnConnectionFailed(bool denied)
         {
             sConnected = false;
-            TryConnect();
+            if (!denied) TryConnect();
         }
 
         private static void MySocket_OnDataReceived(byte[] packet)

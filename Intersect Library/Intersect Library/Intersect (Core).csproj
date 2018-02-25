@@ -208,6 +208,7 @@
     <Compile Include="Threading\ThreadYieldNet35.cs" />
     <Compile Include="Utilities\CSharpFeatures.cs" />
     <Compile Include="Utilities\ReflectionUtils.cs" />
+    <Compile Include="Utilities\VersionHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

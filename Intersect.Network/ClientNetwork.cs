@@ -25,12 +25,14 @@ namespace Intersect.Network
             mLidgrenInterface = new LidgrenInterface(this, typeof(NetClient), rsaParameters);
             mLidgrenInterface.OnConnected += HandleInterfaceOnConnected;
             mLidgrenInterface.OnConnectionApproved += HandleInterfaceOnConnectonApproved;
+            mLidgrenInterface.OnConnectionDenied += HandleInterfaceOnConnectonDenied;
             mLidgrenInterface.OnDisconnected += HandleInterfaceOnDisconnected;
             AddNetworkLayerInterface(mLidgrenInterface);
         }
 
         public HandleConnectionEvent OnConnected { get; set; }
         public HandleConnectionEvent OnConnectionApproved { get; set; }
+        public HandleConnectionEvent OnConnectionDenied { get; set; }
         public HandleConnectionEvent OnDisconnected { get; set; }
 
         public bool IsConnected { get; private set; }
@@ -77,6 +79,12 @@ namespace Intersect.Network
         {
             Log.Info($"Connection approved [{connection?.Guid}].");
             OnConnectionApproved?.Invoke(sender, connection);
+        }
+
+        protected virtual void HandleInterfaceOnConnectonDenied(INetworkLayerInterface sender, IConnection connection)
+        {
+            Log.Info($"Connection denied [{connection?.Guid}].");
+            OnConnectionDenied?.Invoke(sender, connection);
         }
 
         protected virtual void HandleInterfaceOnDisconnected(INetworkLayerInterface sender, IConnection connection)

@@ -15,6 +15,7 @@ namespace Intersect.Editor.Classes
     {
         public static ClientNetwork EditorLidgrenNetwork;
         public static bool Connecting;
+        public static bool ConnectionDenied;
         public static bool Connected => EditorLidgrenNetwork?.IsConnected ?? false;
 
         public static void InitNetwork()
@@ -33,6 +34,11 @@ namespace Intersect.Editor.Classes
 
                 EditorLidgrenNetwork.Handlers[PacketCode.BinaryPacket] = PacketHandler.HandlePacket;
                 EditorLidgrenNetwork.OnDisconnected += HandleDc;
+                EditorLidgrenNetwork.OnConnectionDenied += delegate
+                {
+                    Connecting = false;
+                    ConnectionDenied = true;
+                };
             }
 
             if (!Connected)
@@ -47,24 +53,9 @@ namespace Intersect.Editor.Classes
 
         public static void Update()
         {
-            if (!Connected && !Connecting)
+            if (!Connected && !Connecting && !ConnectionDenied)
             {
                 InitNetwork();
-            }
-        }
-
-        public static void CheckNetwork()
-        {
-            if (Connected == false && Connecting == false)
-            {
-                InitNetwork();
-            }
-            else
-            {
-                if (!Connected)
-                {
-                    //PROBLEM!
-                }
             }
         }
 

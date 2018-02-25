@@ -93,6 +93,7 @@ namespace Intersect.Client
             // TODO: Remove old netcode
             GameNetwork.MySocket = new IntersectNetworkSocket();
             GameNetwork.MySocket.Connected += MainMenu.OnNetworkConnected;
+            GameNetwork.MySocket.ConnectionFailed += MainMenu.OnNetworkFailed;
             GameNetwork.MySocket.Disconnected += MainMenu.OnNetworkDisconnected;
 
             GameMain.Start();

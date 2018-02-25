@@ -1233,6 +1233,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString connected = @"Connected to server. Ready to login!";
             public static LocalizedString connecting = @"Connecting to server...";
             public static LocalizedString failedtoconnect = @"Failed to connect, retrying in {00} seconds.";
+            public static LocalizedString Denied = @"Connection denied. Version mismatch?";
             public static LocalizedString gettingstarted = @"Getting Started?
         1. Start the Intersect Server
         2. Open the Intersect Client and Create an Account

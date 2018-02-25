@@ -676,6 +676,7 @@ namespace Intersect.Client.Classes.Localization
             public static LocalizedString StatusLabel = @"Server Status: {00}";
             public static LocalizedString Online = @"Online";
             public static LocalizedString Offline = @"Offline";
+            public static LocalizedString Failed = @"Network Error";
             public static LocalizedString Connecting = @"Connecting...";
             public static LocalizedString Unknown = @"Unknown";
         }

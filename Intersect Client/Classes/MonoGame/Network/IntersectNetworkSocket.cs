@@ -47,6 +47,7 @@ namespace Intersect.Client.Classes.MonoGame.Network
             ClientLidgrenNetwork.Handlers[PacketCode.BinaryPacket] = AddPacketToQueue;
             ClientLidgrenNetwork.OnConnected += delegate { OnConnected(); };
             ClientLidgrenNetwork.OnDisconnected += delegate { OnDisconnected(); };
+            ClientLidgrenNetwork.OnConnectionDenied += delegate { OnConnectionFailed(true); };
 
             if (!ClientLidgrenNetwork.Connect())
             {

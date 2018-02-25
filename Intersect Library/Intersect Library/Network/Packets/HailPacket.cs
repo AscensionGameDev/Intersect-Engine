@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Security.Cryptography;
+using Intersect.Logging;
 using Intersect.Memory;
 #if INTERSECT_DIAGNOSTIC
 using Intersect.Logging;
@@ -69,31 +70,39 @@ namespace Intersect.Network.Packets
 
         public override bool Read(ref IBuffer buffer)
         {
-            if (!base.Read(ref buffer)) return false;
-            if (!buffer.Read(out mEncryptedHail)) return false;
-
-            if (mRsa == null) throw new ArgumentNullException(nameof(mRsa));
-            var decryptedHail = mRsa.Decrypt(mEncryptedHail, true);
-            using (var hailBuffer = new MemoryBuffer(decryptedHail))
+            try
             {
-                if (!hailBuffer.Read(out mVersionData)) return false;
-                if (!hailBuffer.Read(out mHandshakeSecret, SIZE_HANDSHAKE_SECRET)) return false;
+                if (!base.Read(ref buffer)) return false;
+                if (!buffer.Read(out mEncryptedHail)) return false;
+
+                if (mRsa == null) throw new ArgumentNullException(nameof(mRsa));
+                var decryptedHail = mRsa.Decrypt(mEncryptedHail, true);
+                using (var hailBuffer = new MemoryBuffer(decryptedHail))
+                {
+                    if (!hailBuffer.Read(out mVersionData)) return false;
+                    if (!hailBuffer.Read(out mHandshakeSecret, SIZE_HANDSHAKE_SECRET)) return false;
 
 #if INTERSECT_DIAGNOSTIC
                 Log.Debug($"VersionData: {BitConverter.ToString(VersionData)}");
                 Log.Debug($"Handshake secret: {BitConverter.ToString(HandshakeSecret)}.");
 #endif
 
-                if (!hailBuffer.Read(out ushort bits)) return false;
-                RsaParameters = new RSAParameters();
-                if (!hailBuffer.Read(out mRsaParameters.Exponent, 3)) return false;
-                if (!hailBuffer.Read(out mRsaParameters.Modulus, bits >> 3)) return false;
+                    if (!hailBuffer.Read(out ushort bits)) return false;
+                    RsaParameters = new RSAParameters();
+                    if (!hailBuffer.Read(out mRsaParameters.Exponent, 3)) return false;
+                    if (!hailBuffer.Read(out mRsaParameters.Modulus, bits >> 3)) return false;
 
 #if INTERSECT_DIAGNOSTIC
                 DumpKey(RsaParameters, true);
 #endif
 
-                return true;
+                    return true;
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.Warn(exception);
+                return false;
             }
         }
 
