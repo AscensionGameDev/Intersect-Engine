@@ -15,6 +15,7 @@ using Intersect.Server.Classes.Core;
 using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Networking;
 using Intersect.Server.Network;
+using Intersect.Server.WebApi;
 using Open.Nat;
 using Intersect.Utilities;
 
@@ -25,6 +26,7 @@ namespace Intersect.Server.Classes
     public class ServerStart
     {
         private static bool sErrorHalt = true;
+        private static ServerApi serverApi;
         public static ServerNetwork SocketServer;
 
         public static void Start(string[] args)
@@ -80,6 +82,8 @@ namespace Intersect.Server.Classes
                 Console.ReadKey();
                 return;
             }
+            serverApi = new ServerApi();
+            serverApi.Start();
             CustomColors.Load();
             Console.WriteLine(Strings.Commandoutput.playercount.ToString( Database.GetRegisteredPlayers()));
             Console.WriteLine(Strings.Commandoutput.gametime.ToString( ServerTime.GetTime().ToString("F")));
@@ -786,6 +790,8 @@ namespace Intersect.Server.Classes
                 Database.SaveCharacter(client?.Entity);
             });
 
+
+
             Globals.ServerStarted = false;
             SocketServer?.Dispose();
         }
@@ -827,11 +833,17 @@ namespace Intersect.Server.Classes
             }
         }
 
-        //Really basic error handler for debugging purposes
-        public static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        public static void ProcessUnhandledException(object sender, Exception exception)
         {
-            Log.Error((Exception)e?.ExceptionObject);
-            if (e.IsTerminating)
+            Log.Error($"Received unhandled exception from {sender}.");
+            Log.Error(exception);
+        }
+
+        //Really basic error handler for debugging purposes
+        public static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEvent)
+        {
+            ProcessUnhandledException(sender, unhandledExceptionEvent?.ExceptionObject as Exception);
+            if (unhandledExceptionEvent?.IsTerminating ?? false)
             {
                 if (sErrorHalt)
                 {
@@ -843,11 +855,10 @@ namespace Intersect.Server.Classes
                     Console.WriteLine(Strings.Errors.errorservercrashnohalt);
                 }
                 ShutDown();
+                return;
             }
-            else
-            {
-                Console.WriteLine(Strings.Errors.errorlogged);
-            }
+
+            Console.WriteLine(Strings.Errors.errorlogged);
         }
 
         private static bool RunningOnWindows()
