@@ -5,6 +5,8 @@ using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
+using Intersect_Client.Classes.Core;
+using Intersect_Client.Classes.Networking;
 using JetBrains.Annotations;
 using UIColor = IntersectClientExtras.GenericClasses.Color;
 
@@ -156,12 +158,13 @@ namespace Intersect.Client.Classes.UI.Game
 
         private static void GoToCharacterSelect_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            
+            // TODO: Implement character select
         }
 
         private static void Logout_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            
+            // TODO: Implement Logout
+            //GameMain.Logout();
         }
 
         private static void ExitToDesktop_Clicked(Base sender, ClickedEventArgs arguments) => Globals.IsRunning = false;

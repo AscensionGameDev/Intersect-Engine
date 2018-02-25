@@ -22,10 +22,16 @@ namespace Intersect_Client.Classes.Networking
         public static void SendLogin(string username, string password)
         {
             var bf = new ByteBuffer();
-            var sha = new SHA256Managed();
             bf.WriteLong((int) ClientPackets.Login);
             bf.WriteString(username.ToLower().Trim());
             bf.WriteString(password.Trim());
+            GameNetwork.SendPacket(bf.ToArray());
+        }
+
+        public static void SendLogout()
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ClientPackets.Logout);
             GameNetwork.SendPacket(bf.ToArray());
         }
 

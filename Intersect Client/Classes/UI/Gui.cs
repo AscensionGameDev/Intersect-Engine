@@ -107,13 +107,9 @@ namespace Intersect_Client.Classes.UI
         public static void DestroyGwen()
         {
             //The canvases dispose of all of their children.
-            if (sMenuCanvas == null)
-            {
-                return;
-            }
-            sMenuCanvas.Dispose();
-            sGameCanvas.Dispose();
-            sGwenSkin.Dispose();
+            sMenuCanvas?.Dispose();
+            sGameCanvas?.Dispose();
+            sGwenSkin?.Dispose();
             GwenInitialized = false;
         }
 

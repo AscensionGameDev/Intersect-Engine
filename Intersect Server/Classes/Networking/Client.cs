@@ -211,6 +211,40 @@ namespace Intersect.Server.Classes.Networking
             }
         }
 
+        public void Logout()
+        {
+            if (Entity == null) return;
+            
+            Task.Run(() => Database.SaveCharacter(Entity));
+            var map = MapInstance.Lookup.Get<MapInstance>(Entity.CurrentMap);
+            map?.RemoveEntity(Entity);
+
+            //Update parties
+            Entity.LeaveParty();
+
+            //Update trade
+            Entity.CancelTrade();
+
+            //Clear all event spawned NPC's
+            var entities = Entity.SpawnedNpcs.ToArray();
+            foreach (var t in entities)
+            {
+                if (t == null || t.GetType() != typeof(Npc)) continue;
+                if (t.Despawnable) t.Die(0);
+            }
+            Entity.SpawnedNpcs.Clear();
+
+            PacketSender.SendEntityLeave(Entity.MyIndex, (int)EntityTypes.Player, Entity.CurrentMap);
+            if (!IsEditor)
+            {
+                PacketSender.SendGlobalMsg(Strings.Player.left.ToString(Entity.MyName, Options.GameName));
+            }
+            Entity.Dispose();
+            Entity = null;
+            if (EntityIndex <= Globals.Entities.Count)
+                Globals.Entities[EntityIndex] = null;
+        }
+
         public static void RemoveBeta4Client(IConnection connection)
         {
             if (connection == null) return;
@@ -230,37 +264,7 @@ namespace Intersect.Server.Classes.Networking
                 ? $"Client disconnected ([menu])"
                 : $"Client disconnected ({client.MyAccount}->{client.Entity?.MyName ?? "[editor]"})");
 
-            if (client.Entity == null) return;
-
-            var en = client.Entity;
-            Task.Run(() => Database.SaveCharacter(en));
-            var map = MapInstance.Lookup.Get<MapInstance>(client.Entity.CurrentMap);
-            map?.RemoveEntity(client.Entity);
-
-            //Update parties
-            client.Entity.LeaveParty();
-
-            //Update trade
-            client.Entity.CancelTrade();
-
-            //Clear all event spawned NPC's
-            var entities = client.Entity.SpawnedNpcs.ToArray();
-            foreach (var t in entities)
-            {
-                if (t == null || t.GetType() != typeof(Npc)) continue;
-                if (t.Despawnable) t.Die(0);
-            }
-            client.Entity.SpawnedNpcs.Clear();
-
-            PacketSender.SendEntityLeave(client.Entity.MyIndex, (int) EntityTypes.Player, client.Entity.CurrentMap);
-            if (!client.IsEditor)
-            {
-                PacketSender.SendGlobalMsg(Strings.Player.left.ToString( client.Entity.MyName, Options.GameName));
-            }
-            client.Entity.Dispose();
-            client.Entity = null;
-            if (client.EntityIndex <= Globals.Entities.Count)
-                Globals.Entities[client.EntityIndex] = null;
+            client.Logout();
         }
 
         public static Client FindBeta4Client(IConnection connection)

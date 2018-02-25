@@ -67,6 +67,9 @@ namespace Intersect.Server.Classes.Networking
                 case ClientPackets.Login:
                     HandleLogin(client, packet);
                     break;
+                case ClientPackets.Logout:
+                    HandleLogout(client, packet);
+                    break;
                 case ClientPackets.NeedMap:
                     HandleNeedMap(client, packet);
                     break;
@@ -377,6 +380,11 @@ namespace Intersect.Server.Classes.Networking
             }
         }
 
+        private static void HandleLogout(Client client, byte[] packet)
+        {
+            client?.Logout();
+        }
+
         private static void HandleNeedMap(Client client, byte[] packet)
         {
             var bf = new ByteBuffer();
@@ -606,46 +614,43 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteBytes(packet);
             var usr = bf.ReadString();
             var pass = bf.ReadString();
-            if (Database.AccountExists(usr))
-            {
-                if (Database.CheckPassword(usr, pass))
-                {
-                    if (Database.CheckPower(usr) == 2)
-                    {
-                        client.IsEditor = true;
-                        client.MyAccount = usr;
-                        lock (Globals.ClientLock)
-                        {
-                            var clients = Globals.Clients.ToArray();
-                            foreach (var user in clients)
-                            {
-                                if (user.MyAccount.ToLower() == client.MyAccount.ToLower() && user != client &&
-                                    user.IsEditor)
-                                {
-                                    user.Disconnect();
-                                }
-                            }
-                        }
-                        PacketSender.SendServerConfig(client);
-                        PacketSender.SendJoinGame(client);
-                        PacketSender.SendTimeBaseTo(client);
-                        PacketSender.SendGameData(client);
-                        PacketSender.SendMapList(client);
-                    }
-                    else
-                    {
-                        PacketSender.SendLoginError(client, Strings.Account.badaccess);
-                    }
-                }
-                else
-                {
-                    PacketSender.SendLoginError(client, Strings.Account.badlogin);
-                }
-            }
-            else
+            if (!Database.AccountExists(usr))
             {
                 PacketSender.SendLoginError(client, Strings.Account.badlogin);
+                return;
             }
+
+            if (!Database.CheckPassword(usr, pass))
+            {
+                PacketSender.SendLoginError(client, Strings.Account.badlogin);
+                return;
+            }
+
+            if (Database.CheckPower(usr) != 2)
+            {
+                PacketSender.SendLoginError(client, Strings.Account.badaccess);
+                return;
+            }
+
+            client.IsEditor = true;
+            client.MyAccount = usr;
+            lock (Globals.ClientLock)
+            {
+                var clients = Globals.Clients.ToArray();
+                foreach (var user in clients)
+                {
+                    if (user.MyAccount.ToLower() == client.MyAccount.ToLower() && user != client &&
+                        user.IsEditor)
+                    {
+                        user.Disconnect();
+                    }
+                }
+            }
+            PacketSender.SendServerConfig(client);
+            PacketSender.SendJoinGame(client);
+            PacketSender.SendTimeBaseTo(client);
+            PacketSender.SendGameData(client);
+            PacketSender.SendMapList(client);
         }
 
         private static void HandleMap(Client client, byte[] packet)

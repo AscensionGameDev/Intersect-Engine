@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Intersect.Config;
 using Intersect.GameObjects;
 using IntersectClientExtras.File_Management;
@@ -52,21 +53,31 @@ namespace Intersect_Client.Classes.Core
                 GameNetwork.Update();
                 GameFade.Update();
                 Gui.ToggleInput(Globals.GameState != GameStates.Intro);
-                if (Globals.GameState == GameStates.Intro)
+
+                switch (Globals.GameState)
                 {
-                    ProcessIntro();
-                }
-                else if (Globals.GameState == GameStates.Menu)
-                {
-                    ProcessMenu();
-                }
-                else if (Globals.GameState == GameStates.Loading)
-                {
-                    ProcessLoading();
-                }
-                if (Globals.GameState == GameStates.InGame)
-                {
-                    ProcessGame();
+                    case GameStates.Intro:
+                        ProcessIntro();
+                        break;
+
+                    case GameStates.Menu:
+                        ProcessMenu();
+                        break;
+
+                    case GameStates.Loading:
+                        ProcessLoading();
+                        break;
+
+                    case GameStates.InGame:
+                        ProcessGame();
+                        break;
+
+                    case GameStates.Error:
+                        break;
+
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(Globals.GameState),
+                            $"Value {Globals.GameState} out of range.");
                 }
                 Globals.InputManager.Update();
                 GameAudio.Update();
@@ -313,6 +324,14 @@ namespace Intersect_Client.Classes.Core
         {
             Globals.LoggedIn = true;
             GameAudio.StopMusic(3f);
+        }
+
+        public static void Logout()
+        {
+            PacketSender.SendLogout();
+            Globals.LoggedIn = false;
+            Gui.MenuUi.Reset();
+            Globals.GameState = GameStates.Menu;
         }
     }
 }
