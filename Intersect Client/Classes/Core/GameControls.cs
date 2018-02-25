@@ -106,7 +106,7 @@ namespace Intersect.Client.Classes.Core
             CreateControlMap(Controls.Screenshot, Keys.F12, Keys.None);
             CreateControlMap(Controls.OpenMenu, Keys.Escape, Keys.None);
             CreateControlMap(Controls.OpenInventory, Keys.I, Keys.None);
-            CreateControlMap(Controls.OpenQuests, Keys.T, Keys.None);
+            CreateControlMap(Controls.OpenQuests, Keys.L, Keys.None);
             CreateControlMap(Controls.OpenCharacterInfo, Keys.C, Keys.None);
             CreateControlMap(Controls.OpenParties, Keys.P, Keys.None);
             CreateControlMap(Controls.OpenSpells, Keys.X, Keys.None);

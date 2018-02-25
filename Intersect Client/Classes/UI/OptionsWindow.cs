@@ -33,6 +33,7 @@ namespace Intersect_Client.Classes.UI
         private ComboBox mFpsList;
 
         private LabeledCheckBox mFullscreen;
+        private LabeledCheckBox mAutocloseWindowsCheckbox;
 
         //Parent Windows
         private bool mGameWindow = false;
@@ -118,6 +119,11 @@ namespace Intersect_Client.Classes.UI
                 {
                     Text = Strings.Options.fullscreen
                 };
+
+            mAutocloseWindowsCheckbox = new LabeledCheckBox(mOptionsContainer, "AutocloseWindowsCheckbox")
+            {
+                Text = Strings.Options.AutocloseWindows
+            };
 
             mEditKeybindingsBtn =
                 new Button(mOptionsContainer, "KeybindingsButton") { Text = Strings.Controls.edit };
@@ -332,6 +338,7 @@ namespace Intersect_Client.Classes.UI
                     mFpsList.SelectByText(Strings.Options.vsync);
                     break;
             }
+            mAutocloseWindowsCheckbox.IsChecked = Globals.Database.HideOthersOnWindowOpen;
             mFullscreen.IsChecked = Globals.Database.FullScreen;
             mMusicSlider.Value = Globals.Database.MusicVolume;
             mSoundSlider.Value = Globals.Database.SoundVolume;
@@ -398,6 +405,7 @@ namespace Intersect_Client.Classes.UI
                     Globals.Database.TargetResolution = i;
                 }
             }
+            Globals.Database.HideOthersOnWindowOpen = mAutocloseWindowsCheckbox.IsChecked;
             if (Globals.Database.FullScreen != mFullscreen.IsChecked)
             {
                 Globals.Database.FullScreen = mFullscreen.IsChecked;

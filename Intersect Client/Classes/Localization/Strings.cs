@@ -603,6 +603,7 @@ namespace Intersect.Client.Classes.Localization
             public static LocalizedString apply = @"Apply";
             public static LocalizedString cancel = @"Cancel";
             public static LocalizedString fullscreen = @"Fullscreen";
+            public static LocalizedString AutocloseWindows = @"Auto-close Windows";
             public static LocalizedString musicvolume = @"Music Volume: {00}%";
             public static LocalizedString resolution = @"Resolution:";
             public static LocalizedString soundvolume = @"Sound Volume: {00}%";
