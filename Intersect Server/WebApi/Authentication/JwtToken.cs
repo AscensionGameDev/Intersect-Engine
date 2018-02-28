@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Nancy;
 
-namespace Intersect.Server.WebApi.Modules
+namespace Intersect.Server.WebApi.Authentication
 {
-    public class Auth : NancyModule
+    public class JwtToken
     {
+        public string Data;
+        public long Expiration;
     }
 }

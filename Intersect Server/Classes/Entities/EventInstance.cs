@@ -514,7 +514,7 @@ namespace Intersect.Server.Classes.Entities
                 if (input.Contains(Strings.Events.onlinelistcommand) ||
                     input.Contains(Strings.Events.onlinecountcommand))
                 {
-                    var onlineList = Globals.GetOnlineList();
+                    var onlineList = Globals.OnlineList;
                     input = input.Replace(Strings.Events.onlinecountcommand, onlineList.Count.ToString());
                     var sb = new StringBuilder();
                     for (int i = 0; i < onlineList.Count; i++)

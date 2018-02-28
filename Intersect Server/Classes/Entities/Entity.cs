@@ -37,7 +37,6 @@ namespace Intersect.Server.Classes.Entities
 
         //Location Info
         public int CurrentX;
-
         public int CurrentY;
         public int CurrentZ;
         public bool Dead;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.IO.Compression;
 using System.Reflection;
 using System.Text;
 using Intersect.Logging;
@@ -45,8 +46,46 @@ namespace Intersect.Utilities
         public static bool ExtractResource(string resourceName, string destinationName)
         {
             if (string.IsNullOrEmpty(destinationName)) throw new ArgumentNullException(nameof(destinationName));
-            using (var desinationStream = new FileStream(destinationName, FileMode.OpenOrCreate, FileAccess.ReadWrite))
-                return ExtractResource(resourceName, desinationStream);
+            using (var destinationStream = new FileStream(destinationName, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+                return ExtractResource(resourceName, destinationStream);
+        }
+
+        public static bool ExtractCosturaResource(string resourceName, string destinationName)
+        {
+            if (string.IsNullOrEmpty(resourceName)) throw new ArgumentNullException(nameof(resourceName));
+            if (string.IsNullOrEmpty(destinationName)) throw new ArgumentNullException(nameof(destinationName));
+            if (!resourceName.StartsWith("costura.")) return false;
+            if (!resourceName.EndsWith(".compressed")) return false;
+            using (var destinationStream = new FileStream(destinationName, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+                return ExtractCompressedResource(resourceName, destinationStream);
+        }
+
+        public static bool ExtractCompressedResource(string resourceName, Stream destinationStream)
+        {
+            if (string.IsNullOrEmpty(resourceName)) throw new ArgumentNullException(nameof(resourceName));
+            if (destinationStream == null) throw new ArgumentNullException(nameof(destinationStream));
+
+            try
+            {
+                var executingAssembly = Assembly.GetEntryAssembly();
+                using (var compressedResourceStream = executingAssembly?.GetManifestResourceStream(resourceName))
+                {
+                    if (compressedResourceStream == null)
+                        throw new ArgumentNullException(nameof(compressedResourceStream));
+
+                    using (var resourceStream = new DeflateStream(compressedResourceStream, CompressionMode.Decompress))
+                    {
+                        StreamUtils.Pipe(resourceStream, destinationStream);
+                    }
+                }
+                return true;
+            }
+            catch (Exception exception)
+            {
+                Log.Error(exception);
+                Log.Error($"resourceName: '{resourceName}'");
+                return false;
+            }
         }
 
         public static bool ExtractResource(string resourceName, Stream destinationStream)
@@ -59,10 +98,7 @@ namespace Intersect.Utilities
                 var executingAssembly = Assembly.GetEntryAssembly();
                 using (var resourceStream = executingAssembly?.GetManifestResourceStream(resourceName))
                 {
-                    if (resourceStream == null) throw new ArgumentNullException(nameof(resourceStream));
-                    var data = new byte[resourceStream.Length];
-                    resourceStream.Read(data, 0, (int) resourceStream.Length);
-                    destinationStream.Write(data, 0, data.Length);
+                    StreamUtils.Pipe(resourceStream, destinationStream);
                 }
                 return true;
             }

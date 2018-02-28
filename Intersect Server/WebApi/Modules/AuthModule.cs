@@ -1,0 +1,85 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Intersect.Server.WebApi.Authentication;
+using JetBrains.Annotations;
+using Jose;
+using Nancy;
+
+namespace Intersect.Server.WebApi.Modules
+{
+    public class AuthModule : ServerModule
+    {
+        [NotNull]
+        private IAuthorizationProvider AuthorizationProvider => ServerApi.Instance.AuthorizationProvider;
+
+        protected override bool Secured => false;
+
+        public AuthModule() : base("/auth")
+        {
+            Post("/", args => RequestAuthorization(args));
+            Delete("/", args => RevokeAuthorization(args));
+
+#if DEBUG
+            Get("/request", args => RequestAuthorization(args));
+            Get("/revoke", args => RevokeAuthorization(args));
+#endif
+        }
+
+        private Response RequestAuthorization(dynamic args)
+        {
+            string username = Request?.Form?.username;
+            string password = Request?.Form?.password;
+
+#if DEBUG
+            username = username ?? Request?.Query?.username;
+            password = password ?? Request?.Query?.password;
+#endif
+
+            var token = AuthorizationProvider.Authorize(username, password);
+            if (token == null)
+            {
+                return new Response
+                {
+                    StatusCode = HttpStatusCode.Unauthorized,
+                    ReasonPhrase = "Invalid credentials."
+                };
+            }
+
+            //return Response.AsJson(new {Authorization = $"Bearer {AuthorizationProvider.Encode(token)}"});
+
+            return new Response
+            {
+                StatusCode = HttpStatusCode.OK,
+                Headers =
+                {
+                    {"Authorization", $"Bearer {AuthorizationProvider.Encode(token)}"}
+                }
+            };
+        }
+
+        private Response RevokeAuthorization(dynamic args)
+        {
+            var authorization = Request?.Headers?.Authorization;
+
+#if DEBUG
+            authorization = authorization ?? Request?.Query?.authorization;
+#endif
+
+            var token = AuthorizationProvider.Decode(authorization);
+            var statusCode = HttpStatusCode.InternalServerError;
+
+            if (token == null)
+            {
+                statusCode = HttpStatusCode.Unauthorized;
+            } else if (AuthorizationProvider.Expire(token))
+            {
+                statusCode = HttpStatusCode.OK;
+            }
+
+            return new Response { StatusCode = statusCode};
+        }
+    }
+}

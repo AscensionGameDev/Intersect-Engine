@@ -29,19 +29,34 @@ namespace Intersect.Server.Classes
         private static ServerApi serverApi;
         public static ServerNetwork SocketServer;
 
-        public static void Start(string[] args)
+        static ServerStart()
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            if (RunningOnWindows()) SetConsoleCtrlHandler(new HandlerRoutine(ConsoleCtrlCheck), true);
-            Console.CancelKeyPress += Console_CancelKeyPress;
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+        }
 
+        private static void ExtractSQLite()
+        {
             //Place sqlite3.dll where it's needed.
             var dllname = Environment.Is64BitProcess ? "sqlite3x64.dll" : "sqlite3x86.dll";
-            if (!ReflectionUtils.ExtractResource($"Intersect.Server.Resources.{dllname}", "sqlite3.dll"))
-            {
-                Log.Error("Failed to extract sqlite library, terminating startup.");
-                Environment.Exit(-0x1000);
-            }
+            if (ReflectionUtils.ExtractResource($"Intersect.Server.Resources.{dllname}", "sqlite3.dll")) return;
+            Log.Error("Failed to extract sqlite library, terminating startup.");
+            Environment.Exit(-0x1000);
+        }
+
+        private static void ExtractNancy()
+        {
+            if (ReflectionUtils.ExtractCosturaResource("costura.nancy.dll.compressed", "Nancy.dll")) return;
+            Log.Error("Failed to extract Nancy, terminating startup.");
+            Environment.Exit(-0x1001);
+        }
+
+        public static void Start(string[] args)
+        {
+            if (RunningOnWindows()) SetConsoleCtrlHandler(ConsoleCtrlCheck, true);
+            Console.CancelKeyPress += Console_CancelKeyPress;
+
+            ExtractSQLite();
 
             Database.CheckDirectories();
             Thread logicThread;
@@ -51,6 +66,8 @@ namespace Intersect.Server.Classes
                 Console.ReadKey();
                 return;
             }
+
+            ExtractNancy();
 
             foreach (var arg in args)
             {
@@ -72,7 +89,7 @@ namespace Intersect.Server.Classes
             Console.WriteLine(@"  _| |_| | | | ||  __/ |  \__ \  __/ (__| |_ ");
             Console.WriteLine(@" |_____|_| |_|\__\___|_|  |___/\___|\___|\__|");
             Console.WriteLine(Strings.Intro.tagline);
-            Console.WriteLine("Copyright (C) 2018  Ascension Game Dev");
+            Console.WriteLine(@"Copyright (C) 2018  Ascension Game Dev");
             Console.WriteLine(Strings.Intro.version.ToString( Assembly.GetExecutingAssembly().GetName().Version));
             Console.WriteLine(Strings.Intro.support);
             Console.WriteLine(Strings.Intro.loading);
@@ -790,8 +807,7 @@ namespace Intersect.Server.Classes
                 Database.SaveCharacter(client?.Entity);
             });
 
-
-
+            serverApi.Stop();
             Globals.ServerStarted = false;
             SocketServer?.Dispose();
         }
@@ -799,15 +815,15 @@ namespace Intersect.Server.Classes
         private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
             // Ignore missing resources
-            if (args.Name.Contains(".resources"))
+            if (args?.Name?.Contains(".resources") ?? false)
                 return null;
 
             // check for assemblies already loaded
-            Assembly assembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.FullName == args.Name);
+            var assembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.FullName == args.Name);
             if (assembly != null)
                 return assembly;
 
-            string filename = args.Name.Split(',')[0] + ".dll".ToLower();
+            var filename = args.Name.Split(',')[0] + ".dll".ToLower();
 
             //Try Loading from libs/server first
             var libsFolder = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, "libs", "server");
@@ -822,14 +838,7 @@ namespace Intersect.Server.Classes
                         ? Path.Combine("libs", "server", "x64")
                         : Path.Combine("libs", "server", "x86"),
                     filename);
-                if (File.Exists(archSpecificPath))
-                {
-                    return Assembly.LoadFile(archSpecificPath);
-                }
-                else
-                {
-                    return null;
-                }
+                return File.Exists(archSpecificPath) ? Assembly.LoadFile(archSpecificPath) : null;
             }
         }
 
