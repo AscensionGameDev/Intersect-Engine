@@ -55,7 +55,11 @@ namespace Intersect.Server.WebApi.Modules
                 StatusCode = HttpStatusCode.OK,
                 Headers =
                 {
-                    {"Authorization", $"Bearer {AuthorizationProvider.Encode(token)}"}
+                    {"Authorization", $"Bearer {AuthorizationProvider.Encode(token)}"},
+
+#if DEBUG
+                    {"Set-Cookie", $"__isid={AuthorizationProvider.Encode(token)}; Path=/"}
+#endif
                 }
             };
         }

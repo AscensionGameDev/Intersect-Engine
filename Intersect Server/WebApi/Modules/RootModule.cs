@@ -6,7 +6,12 @@ namespace Intersect.Server.WebApi.Modules
     {
         public RootModule() : base("/")
         {
-            Get("/", args => new HtmlResponse(Nancy.HttpStatusCode.NotFound));
+            Get("/", args =>
+            {
+                var identity = Context.CurrentUser;
+                return new HtmlResponse(Nancy.HttpStatusCode.NotFound);
+            });
+            //Options("/", args => )
         }
     }
 }

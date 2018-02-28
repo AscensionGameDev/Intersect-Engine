@@ -38,7 +38,8 @@ namespace Intersect.Server.Database
             if (token == null)
                 throw new ArgumentNullException(nameof(token));
 
-            return mSessions.TryGetValue(token, out User user) ? new ClaimsPrincipal(new UserIdentity(user)) : null;
+            var claimsPrincipal = mSessions.TryGetValue(token, out User user) ? new ClaimsPrincipal(new UserIdentity(user)) : null;
+            return claimsPrincipal;
         }
 
         public bool Expire(JwtToken token)

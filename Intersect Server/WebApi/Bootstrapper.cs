@@ -6,6 +6,7 @@ using Nancy.Authentication.Stateless;
 using Nancy.Bootstrapper;
 using Nancy.TinyIoc;
 using System;
+using System.Linq;
 
 namespace Intersect.Server.WebApi
 {
@@ -22,13 +23,24 @@ namespace Intersect.Server.WebApi
         {
             pipelines?.AfterRequest?.AddItemToEndOfPipeline(pipelineContext =>
             {
+                pipelineContext?.Response?.Headers?.Add("Access-Control-Allow-Headers", "Authorization");
                 pipelineContext?.Response?.Headers?.Add("Access-Control-Allow-Origin", "*");
                 pipelineContext?.Response?.Headers?.Add("Access-Control-Allow-Methods", "POST,GET,DELETE,PUT,OPTIONS");
+                pipelineContext?.Response?.Headers?.Add("Access-Control-Request-Headers", "Authorization");
+                pipelineContext?.Response?.Headers?.Add("WWW-Authenticate", "Bearer");
             });
 
             StatelessAuthentication.Enable(pipelines, new StatelessAuthenticationConfiguration(ctx =>
             {
                 var authorizationHeader = ctx?.Request?.Headers?.Authorization;
+
+#if DEBUG
+                if (string.IsNullOrWhiteSpace(authorizationHeader))
+                {
+                    authorizationHeader = ctx?.Request?.Headers?.Cookie?.ToList().Find(cookie => string.Equals("__isid", cookie?.Name))?.Value;
+                }
+#endif
+
                 try
                 {
                     var token = mAuthorizationProvider?.Decode(authorizationHeader);

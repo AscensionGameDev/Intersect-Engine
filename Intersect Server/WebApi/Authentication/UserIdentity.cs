@@ -14,7 +14,10 @@ namespace Intersect.Server.WebApi.Authentication
 
         public string AuthenticationType => "jwt";
 
-        public bool IsAuthenticated => User.Power == 2;
+        public bool IsAuthenticated
+        {
+            get => User.Power == 2;
+        }
 
         public UserIdentity(User user)
         {
