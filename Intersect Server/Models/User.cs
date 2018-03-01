@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using JetBrains.Annotations;
 
 namespace Intersect.Server.Models
@@ -23,6 +19,6 @@ namespace Intersect.Server.Models
         [NotNull]
         public string Salt { get; set; }
         
-        public long Power { get; set; }
+        public UserRights Rights { get; set; }
     }
 }

@@ -47,9 +47,8 @@ namespace Intersect.Server.WebApi
                     var expiration = DateTime.FromBinary(token?.Expiration ?? long.MinValue);
                     return expiration <= DateTime.UtcNow ? null : mAuthorizationProvider?.FindUserFrom(token);
                 }
-                catch (Exception exception)
+                catch (Exception)
                 {
-                    Log.Warn(exception);
                     return null;
                 }
             }));

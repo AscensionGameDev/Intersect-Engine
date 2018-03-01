@@ -64,14 +64,14 @@ namespace Intersect.Server.Database
             {
                 Name = username,
                 Password = password,
-                Power = power,
+                Rights = UserRightsHelper.FromLegacyPowers(power),
                 Guid = new Guid(username.GetHashCode(), BitConverter.ToInt16(passwordHashBytes, 0), BitConverter.ToInt16(passwordHashBytes, 2), BitConverter.GetBytes(power))
             };
 
             var token = new JwtToken
             {
                 Data = $"{user.Guid}_{user.Name}",
-                Expiration = DateTime.UtcNow.AddMinutes(1).ToBinary()
+                Expiration = DateTime.UtcNow.AddMinutes(5).ToBinary()
             };
 
             mSessions[token] = user;

@@ -1,23 +1,21 @@
 ﻿using Intersect.Server.Models;
 using JetBrains.Annotations;
 using System;
+using System.Security.Claims;
 using System.Security.Principal;
 
 namespace Intersect.Server.WebApi.Authentication
 {
-    public class UserIdentity : IIdentity
+    public class UserIdentity : ClaimsIdentity
     {
         [NotNull]
         public User User { get; }
 
-        public string Name => User.Guid.ToString();
+        public override string Name => User.Guid.ToString();
 
-        public string AuthenticationType => "jwt";
+        public override string AuthenticationType => "jwt";
 
-        public bool IsAuthenticated
-        {
-            get => User.Power == 2;
-        }
+        public override bool IsAuthenticated => User.Rights.Api;
 
         public UserIdentity(User user)
         {

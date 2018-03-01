@@ -7,6 +7,7 @@ using Intersect.Server.WebApi.Authentication;
 using JetBrains.Annotations;
 using Jose;
 using Nancy;
+using Newtonsoft.Json;
 
 namespace Intersect.Server.WebApi.Modules
 {
@@ -17,6 +18,11 @@ namespace Intersect.Server.WebApi.Modules
 
         protected override bool Secured => false;
 
+        protected override IDictionary<Tuple<string, string>, bool> RouteSecurity => new Dictionary<Tuple<string, string>, bool>
+        {
+            {new Tuple<string, string>("GET", "/access"), true}
+        };
+
         public AuthModule() : base("/auth")
         {
             Post("/", args => RequestAuthorization(args));
@@ -26,6 +32,21 @@ namespace Intersect.Server.WebApi.Modules
             Get("/request", args => RequestAuthorization(args));
             Get("/revoke", args => RevokeAuthorization(args));
 #endif
+
+            
+
+            Get("/access", args =>
+            {
+                var user = Context?.CurrentUser?.Identity as UserIdentity;
+
+                var access = new string[] { };
+                if (user != null)
+                {
+                    
+                }
+
+                return Response.AsJson(JsonConvert.SerializeObject(null));
+            });
         }
 
         private Response RequestAuthorization(dynamic args)
@@ -38,13 +59,17 @@ namespace Intersect.Server.WebApi.Modules
             password = password ?? Request?.Query?.password;
 #endif
 
-            var token = AuthorizationProvider.Authorize(username, password);
-            if (token == null)
+            JwtToken token;
+            try
+            {
+                token = AuthorizationProvider.Authorize(username, password);
+            }
+            catch (Exception exception)
             {
                 return new Response
                 {
                     StatusCode = HttpStatusCode.Unauthorized,
-                    ReasonPhrase = "Invalid credentials."
+                    ReasonPhrase = exception.Message ?? "Invalid credentials."
                 };
             }
 
