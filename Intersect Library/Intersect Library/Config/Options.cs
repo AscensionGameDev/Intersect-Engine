@@ -96,6 +96,7 @@ namespace Intersect
         public static bool LoadFromDisk()
         {
             _options = new Options();
+            if (!Directory.Exists("resources")) Directory.CreateDirectory("resources");
             if (File.Exists("resources/config.json"))
             {
                 _options = JsonConvert.DeserializeObject<Options>(File.ReadAllText("resources/config.json"));
