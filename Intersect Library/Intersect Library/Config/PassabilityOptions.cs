@@ -10,8 +10,7 @@ namespace Intersect.Config
         public bool Safe = true;
         public bool Arena = false;
 
-        [JsonIgnore]
-        public bool[] Passable;
+        [JsonIgnore] public bool[] Passable;
 
         public PassabilityOptions()
         {

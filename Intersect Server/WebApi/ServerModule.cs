@@ -87,7 +87,7 @@ namespace Intersect.Server.WebApi
             RouteSecurity?.TryGetValue((method.ToUpperInvariant(), path), out routeSecured);
 
             return (context.CurrentUser?.IsAuthenticated() ?? false) || !routeSecured
-                ? null : new Response { StatusCode = HttpStatusCode.Unauthorized };
+                ? null : GetDefaultResponse(context, HttpStatusCode.Unauthorized);
         }
 
         protected Response GetDefaultResponse([NotNull] NancyContext context, HttpStatusCode httpStatusCode)
@@ -107,27 +107,30 @@ namespace Intersect.Server.WebApi
                 path = path.Remove(0, modulePath.Length);
             }
 
-            if (DefaultResponse == null || DefaultResponse.Count < 1)
+            /* Normally I'd go with more code outside the if-block, but
+             * I'd rather not repeat the default response twice. */
+            // ReSharper disable once InvertIf
+            if (DefaultResponse != null && DefaultResponse.Count > 0)
             {
-                object responseBody = new
-                {
-                    A = 1
-                };
-                var response = (Response) responseBody;
+                if (DefaultResponse.TryGetValue((method, path, httpStatusCode), out object methodPathResponse))
+                    return Response.AsJson(methodPathResponse, httpStatusCode);
+
+                if (DefaultResponse.TryGetValue(("*", path, httpStatusCode), out object pathResponse))
+                    return Response.AsJson(pathResponse, httpStatusCode);
+
+                if (DefaultResponse.TryGetValue((method, "*", httpStatusCode), out object methodResponse))
+                    return Response.AsJson(methodResponse, httpStatusCode);
+
+                if (DefaultResponse.TryGetValue(("*", "*", httpStatusCode), out object wildcardResponse))
+                    return Response.AsJson(wildcardResponse, httpStatusCode);
             }
 
-            if (DefaultResponse.TryGetValue((method, path, httpStatusCode), out object methodPathResponse))
+            return Response.AsJson(new
             {
-                var response = (Response) methodPathResponse;
-
-            }
-            DefaultResponse?.TryGetValue(("*", "*", httpStatusCode), out object wildcardResponse);
-            DefaultResponse?.TryGetValue((method, "*", httpStatusCode), out object methodResponse);
-            DefaultResponse?.TryGetValue(("*", path, httpStatusCode), out object pathResponse);
+                status = httpStatusCode,
+                message = "Either nothing is here or you are unauthorized to view this page."
+            }, httpStatusCode);
         }
-
-        protected static bool IsAuthenticated(NancyContext context)
-            => context?.CurrentUser?.Identity?.IsAuthenticated ?? false;
 
         protected static Response Forbid() => new Response { StatusCode = HttpStatusCode.Forbidden };
     }
