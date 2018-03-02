@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
 using Intersect.Server.Models;
 using Intersect.Server.WebApi.Authentication;
 using JetBrains.Annotations;
@@ -55,10 +51,10 @@ namespace Intersect.Server.Database
             if (string.IsNullOrWhiteSpace(password))
                 throw new ArgumentNullException(nameof(password));
 
-            if (!Classes.Core.Database.CheckPassword(username, password))
+            if (!Classes.Core.LegacyDatabase.CheckPassword(username, password))
                 throw new ArgumentException("Invalid credentials.");
 
-            var power = Classes.Core.Database.CheckPower(username);
+            var power = Classes.Core.LegacyDatabase.CheckPower(username);
             var passwordHashBytes = BitConverter.GetBytes(password.GetHashCode());
             var user = new User
             {

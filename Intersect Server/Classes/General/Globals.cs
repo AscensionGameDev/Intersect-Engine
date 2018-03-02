@@ -27,9 +27,9 @@ namespace Intersect.Server.Classes.General
         //Game helping stuff
         public static Random Rand = new Random();
 
-        public static List<Entity> OnlineList => Clients?
+        public static List<EntityInstance> OnlineList => Clients?
             .FindAll(client => client?.Entity != null)
-            .Select<Client, Entity>(client => client.Entity)
+            .Select<Client, EntityInstance>(client => client.Entity)
             .ToList();
 
         public static int FindOpenEntity()

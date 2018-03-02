@@ -1,23 +1,19 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Intersect.Enums;
+﻿using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Server.Classes.Entities;
 using Intersect.Server.Classes.General;
-using Intersect.Server.Classes.Networking;
 using Intersect.Server.Utilities;
 using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Intersect.Server.WebApi.Modules
 {
     public class PlayerModule : ServerModule
     {
-        public static Player AsPlayer(Entity entity) => entity as Player;
+        public static Player AsPlayer(EntityInstance entity) => entity as Player;
 
         public static JObject ToJson(Player player)
         {
@@ -26,17 +22,18 @@ namespace Intersect.Server.WebApi.Modules
 
             return new JObject
             {
-                {"name", player.MyName},
-                {"sprite", player.MySprite},
+                {"name", player.Name},
+                {"sprite", player.Sprite},
                 {"level", player.Level},
-                {"experience", player.Experience},
+                {"experience", player.Exp},
                 {"experiencetnl", player.ExperienceToNextLevel},
                 {"classId", player.Class},
                 {"class", ClassBase.Lookup.Get<ClassBase>(player.Class)?.Name},
-                {"map", player.CurrentMap},
+                {"map", player.Map},
                 {"location", new JObject {
-                    {"x", player.CurrentX},
-                    {"y", player.CurrentY},
+                    {"x", player.X},
+                    {"y", player.Y},
+                    {"z", player.Z}
                 }},
                 {"facing", player.Dir},
                 {"isdead", player.Dead},
@@ -123,7 +120,7 @@ namespace Intersect.Server.WebApi.Modules
         {
             Get("/{name}", parameters =>
             {
-                var playerEntity = OnlinePlayers?.Find(entity => string.Equals(entity?.MyName, parameters?.name,
+                var playerEntity = OnlinePlayers?.Find(entity => string.Equals(entity?.Name, parameters?.name,
                     StringComparison.InvariantCultureIgnoreCase));
                 if (playerEntity == null)
                     return new JObject
