@@ -2,6 +2,7 @@
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
+using Intersect.Server.Classes.Database;
 using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Maps;
 using Intersect.Server.Classes.Misc.Pathfinding;
@@ -9,7 +10,7 @@ using Intersect.Server.Classes.Networking;
 
 namespace Intersect.Server.Classes.Entities
 {
-    public class EventPageInstance : Entity
+    public class EventPageInstance : EntityInstance
     {
         private Pathfinder mPathFinder;
         public EventBase BaseEvent;
@@ -58,14 +59,14 @@ namespace Intersect.Server.Classes.Entities
         private int mWalkingAnim;
 
         public EventPageInstance(EventBase myEvent, EventPage myPage, int mapIndex, int mapNum, EventInstance eventIndex,
-            Client client) : base(mapIndex)
+            Client client) : base(mapIndex, new EntityBase())
         {
             BaseEvent = myEvent;
             MyPage = myPage;
-            CurrentMap = mapNum;
-            CurrentX = eventIndex.CurrentX;
-            CurrentY = eventIndex.CurrentY;
-            MyName = myEvent.Name;
+            Map = mapNum;
+            X = eventIndex.CurrentX;
+            Y = eventIndex.CurrentY;
+            Name = myEvent.Name;
             MovementType = MyPage.MovementType;
             MovementFreq = MyPage.MovementFreq;
             MovementSpeed = MyPage.MovementSpeed;
@@ -84,7 +85,7 @@ namespace Intersect.Server.Classes.Entities
             MyGraphic.Y = MyPage.Graphic.Y;
             MyGraphic.Width = MyPage.Graphic.Width;
             MyGraphic.Height = MyPage.Graphic.Height;
-            MySprite = MyPage.Graphic.Filename;
+            Sprite = MyPage.Graphic.Filename;
             mDirectionFix = MyPage.DirectionFix;
             mWalkingAnim = MyPage.WalkingAnimation;
             mRenderLevel = MyPage.Layer;
@@ -117,15 +118,15 @@ namespace Intersect.Server.Classes.Entities
         }
 
         public EventPageInstance(EventBase myEvent, EventPage myPage, int mapIndex, int mapNum, EventInstance eventIndex,
-            Client client, EventPageInstance globalClone) : base(mapIndex)
+            Client client, EventPageInstance globalClone) : base(mapIndex, new EntityBase())
         {
             BaseEvent = myEvent;
             GlobalClone = globalClone;
             MyPage = myPage;
-            CurrentMap = mapNum;
-            CurrentX = globalClone.CurrentX;
-            CurrentY = globalClone.CurrentY;
-            MyName = myEvent.Name;
+            Map = mapNum;
+            X = globalClone.X;
+            Y = globalClone.Y;
+            Name = myEvent.Name;
             MovementType = globalClone.MovementType;
             MovementFreq = globalClone.MovementFreq;
             MovementSpeed = globalClone.MovementSpeed;
@@ -133,7 +134,7 @@ namespace Intersect.Server.Classes.Entities
             Trigger = MyPage.Trigger;
             Passable = globalClone.Passable;
             HideName = globalClone.HideName;
-            CurrentMap = mapNum;
+            Map = mapNum;
             MyEventIndex = eventIndex;
             MoveRoute = globalClone.MoveRoute;
             mPathFinder = new Pathfinder(this);
@@ -144,7 +145,7 @@ namespace Intersect.Server.Classes.Entities
             MyGraphic.Y = globalClone.MyGraphic.Y;
             MyGraphic.Width = globalClone.MyGraphic.Width;
             MyGraphic.Height = globalClone.MyGraphic.Height;
-            MySprite = MyPage.Graphic.Filename;
+            Sprite = MyPage.Graphic.Filename;
             mDirectionFix = MyPage.DirectionFix;
             mWalkingAnim = MyPage.WalkingAnimation;
             mRenderLevel = MyPage.Layer;
@@ -279,12 +280,12 @@ namespace Intersect.Server.Classes.Entities
                             if (client != null && GlobalClone == null) //Local Event
                             {
                                 if (mPathFinder.GetTarget() == null ||
-                                    mPathFinder.GetTarget().TargetMap != client.Entity.CurrentMap ||
-                                    mPathFinder.GetTarget().TargetX != client.Entity.CurrentX ||
-                                    mPathFinder.GetTarget().TargetY != client.Entity.CurrentY)
+                                    mPathFinder.GetTarget().TargetMap != client.Entity.Map ||
+                                    mPathFinder.GetTarget().TargetX != client.Entity.X ||
+                                    mPathFinder.GetTarget().TargetY != client.Entity.Y)
                                 {
-                                    mPathFinder.SetTarget(new PathfinderTarget(client.Entity.CurrentMap,
-                                        client.Entity.CurrentX, client.Entity.CurrentY));
+                                    mPathFinder.SetTarget(new PathfinderTarget(client.Entity.Map,
+                                        client.Entity.X, client.Entity.Y));
                                 }
                                 //Todo check if next to or on top of player.. if so don't run pathfinder.
                                 if (mPathFinder.Update(timeMs) == PathfinderResult.Success)
@@ -582,16 +583,16 @@ namespace Intersect.Server.Classes.Entities
             switch (moveDir)
             {
                 case (int) Directions.Up:
-                    if (CurrentY == 0) return -5;
+                    if (Y == 0) return -5;
                     break;
                 case (int) Directions.Down:
-                    if (CurrentY == Options.MapHeight - 1) return -5;
+                    if (Y == Options.MapHeight - 1) return -5;
                     break;
                 case (int) Directions.Left:
-                    if (CurrentX == 0) return -5;
+                    if (X == 0) return -5;
                     break;
                 case (int) Directions.Right:
-                    if (CurrentX == Options.MapWidth - 1) return -5;
+                    if (X == Options.MapWidth - 1) return -5;
                     break;
             }
             return base.CanMove(moveDir);
@@ -624,7 +625,7 @@ namespace Intersect.Server.Classes.Entities
             }
             if (GlobalClone != null)
             {
-                var map = MapInstance.Lookup.Get<MapInstance>(GlobalClone.CurrentMap);
+                var map = MapInstance.Lookup.Get<MapInstance>(GlobalClone.Map);
                 if (map == null || !map.FindEvent(GlobalClone.BaseEvent, GlobalClone)) return true;
             }
             return false;

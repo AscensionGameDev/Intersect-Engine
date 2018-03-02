@@ -9,82 +9,119 @@ using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.Server.Classes.Localization;
 using Intersect.Server.Classes.Core;
+using Intersect.Server.Classes.Database;
+using Intersect.Server.Classes.Database.PlayerData.Characters;
 using Intersect.Server.Classes.General;
-using Intersect.Server.Classes.Items;
+
 using Intersect.Server.Classes.Maps;
 using Intersect.Server.Classes.Networking;
 using Intersect.Server.Classes.Spells;
 
 namespace Intersect.Server.Classes.Entities
 {
-    using Database = Intersect.Server.Classes.Core.Database;
+    using LegacyDatabase = Intersect.Server.Classes.Core.LegacyDatabase;
 
-    public class Player : Entity
+    public class Player : EntityInstance
     {
+        private Character mCharacterBase;
+
+        //Mapping to Character Base Properties
+        public int Class
+        {
+            get => mCharacterBase.ClassIndex;
+            set => mCharacterBase.ClassIndex = value;
+        }
+        public int Gender
+        {
+            get => mCharacterBase.Gender;
+            set => mCharacterBase.Gender = value;
+        }
+        public int StatPoints
+        {
+            get => mCharacterBase.StatPoints;
+            set => mCharacterBase.StatPoints = value;
+        }
+        public long Exp
+        {
+            get => mCharacterBase.Exp;
+            set => mCharacterBase.Exp = value;
+        }
+        public int[] Equipment
+        {
+            get => mCharacterBase.Equipment;
+            set => mCharacterBase.Equipment = value;
+        }
+
+        public List<BankItem> Bank
+        {
+            get => mCharacterBase.Bank;
+            set => mCharacterBase.Bank = value;
+        }
+
+        public Dictionary<int, string> Friends = new Dictionary<int, string>();
+        public HotbarInstance[] Hotbar = new HotbarInstance[Options.MaxHotbar];
+        public Dictionary<int, bool> Switches = new Dictionary<int, bool>();
+        public Dictionary<int, int> Variables = new Dictionary<int, int>();
+        public Dictionary<int, QuestProgressStruct> Quests = new Dictionary<int, QuestProgressStruct>();
+
+
         //5 minute timeout before someone can send a trade/party request after it has been declined
         public const long REQUEST_DECLINE_TIMEOUT = 300000;  //TODO: Server option this bitch. JC is a lazy fuck
 
+
+        //TODO: Clean all of this stuff up
         private bool mSentMap;
-        public ItemInstance[] Bank = new ItemInstance[Options.MaxBankSlots];
         public Player ChatTarget = null;
-        public int Class = 0;
         public int CraftIndex = -1;
         public long CraftTimer = 0;
-        public int[] Equipment = new int[Options.EquipmentSlots.Count];
-
         //Temporary Values
         private object mEventLock = new object();
-
         public ConcurrentDictionary<Tuple<int, int, int>, EventInstance> EventLookup = new ConcurrentDictionary<Tuple<int, int, int>, EventInstance>();
         private int mEventCounter = 0;
         private int mCommonEventLaunches = 0;
-        public long Experience;
         public Player FriendRequester;
         public Dictionary<Player, long> FriendRequests = new Dictionary<Player, long>();
-        public Dictionary<int, string> Friends = new Dictionary<int, string>();
-        public int Gender = 0;
-        public HotbarInstance[] Hotbar = new HotbarInstance[Options.MaxHotbar];
-        public int InBag = -1;
+        public Bag InBag;
         public bool InBank;
         public int InCraft = -1;
         public bool InGame;
         public int InShop = -1;
         public int LastMapEntered = -1;
         public Client MyClient;
-
         public long MyId = -1;
         public List<Player> Party = new List<Player>();
         public Player PartyRequester;
         public Dictionary<Player, long> PartyRequests = new Dictionary<Player, long>();
         public List<int> QuestOffers = new List<int>();
-        public Dictionary<int, QuestProgressStruct> Quests = new Dictionary<int, QuestProgressStruct>();
-
         public long SaveTimer = Environment.TickCount;
-
         //Event Spawned Npcs
         public List<Npc> SpawnedNpcs = new List<Npc>();
-
-        public int StatPoints;
-        public Dictionary<int, bool> Switches = new Dictionary<int, bool>();
-        public ItemInstance[] Trade = new ItemInstance[Options.MaxInvItems];
+        public Item[] Trade = new Item[Options.MaxInvItems];
         public bool TradeAccepted;
         public Player TradeRequester;
         public Dictionary<Player, long> TradeRequests = new Dictionary<Player, long>();
         public int Trading = -1;
-        public Dictionary<int, int> Variables = new Dictionary<int, int>();
 
         //Init
-        public Player(int index, Client newClient) : base(index)
+        public Player(int index, Client newClient, Character character) : base(index,character)
         {
             MyClient = newClient;
-            for (var i = 0; i < Options.MaxPlayerSkills; i++)
+            mCharacterBase = character;
+            if (Spells.Count < Options.MaxPlayerSkills)
             {
-                Spells.Add(new SpellInstance());
+                for (int i = Spells.Count; i < Options.MaxPlayerSkills; i++)
+                {
+                    Spells.Add(new SpellInstance());
+                }
             }
-            for (var i = 0; i < Options.MaxInvItems; i++)
+            if (Items.Count < Options.MaxInvItems)
             {
-                Inventory.Add(new ItemInstance(-1, 0, -1));
+                for (int i = Items.Count; i < Options.MaxInvItems; i++)
+                {
+                    Items.Add(new Item(-1,0));
+                }
             }
+
             for (var i = 0; i < Options.EquipmentSlots.Count; i++)
             {
                 Equipment[i] = -1;
@@ -125,14 +162,14 @@ namespace Intersect.Server.Classes.Entities
         //Update
         public override void Update(long timeMs)
         {
-            if (!InGame || CurrentMap == -1)
+            if (!InGame || Map == -1)
             {
                 return;
             }
 
             if (SaveTimer + 120000 < timeMs)
             {
-                Task.Run(() => Database.SaveCharacter(this, false));
+                Task.Run(() => LegacyDatabase.SaveCharacter(this, false));
                 SaveTimer = timeMs;
             }
 
@@ -198,26 +235,26 @@ namespace Intersect.Server.Classes.Entities
             }
 
             //If we switched maps, lets update the maps
-            if (LastMapEntered != CurrentMap)
+            if (LastMapEntered != Map)
             {
                 if (MapInstance.Lookup.Get<MapInstance>(LastMapEntered) != null)
                 {
                     MapInstance.Lookup.Get<MapInstance>(LastMapEntered).RemoveEntity(this);
                 }
-                if (CurrentMap > -1)
+                if (Map > -1)
                 {
-                    if (!MapInstance.Lookup.IndexKeys.Contains(CurrentMap))
+                    if (!MapInstance.Lookup.IndexKeys.Contains(Map))
                     {
                         WarpToSpawn();
                     }
                     else
                     {
-                        MapInstance.Lookup.Get<MapInstance>(CurrentMap).PlayerEnteredMap(this);
+                        MapInstance.Lookup.Get<MapInstance>(Map).PlayerEnteredMap(this);
                     }
                 }
             }
 
-            var currentMap = MapInstance.Lookup.Get<MapInstance>(CurrentMap);
+            var currentMap = MapInstance.Lookup.Get<MapInstance>(Map);
             if (currentMap != null)
             {
                 for (var i = 0; i < currentMap.SurroundingMaps.Count + 1; i++)
@@ -276,9 +313,9 @@ namespace Intersect.Server.Classes.Entities
                             eventFound = true;
                         }
                     }
-                    if (evt.MapNum != CurrentMap)
+                    if (evt.MapNum != Map)
                     {
-                        foreach (var t in MapInstance.Lookup.Get<MapInstance>(CurrentMap).SurroundingMaps)
+                        foreach (var t in MapInstance.Lookup.Get<MapInstance>(Map).SurroundingMaps)
                         {
                             if (t == evt.MapNum)
                             {
@@ -338,7 +375,7 @@ namespace Intersect.Server.Classes.Entities
             }
         }
 
-        public override void Die(int dropitems = 0, Entity killer = null)
+        public override void Die(int dropitems = 0, EntityInstance killer = null)
         {
             //Flag death to the client
             PacketSender.SendPlayerDeath(this);
@@ -385,7 +422,7 @@ namespace Intersect.Server.Classes.Entities
         {
             if (level < 1) return;
             Level = Math.Min(Options.MaxLevel, level);
-            if (resetExperience) Experience = 0;
+            if (resetExperience) Exp = 0;
             PacketSender.SendEntityDataToProximity(this);
             PacketSender.SendExperience(MyClient);
         }
@@ -462,16 +499,16 @@ namespace Intersect.Server.Classes.Entities
                 }
             }
 
-            PacketSender.SendPlayerMsg(MyClient, Strings.Player.levelup.ToString( Level), CustomColors.LevelUp, MyName);
+            PacketSender.SendPlayerMsg(MyClient, Strings.Player.levelup.ToString( Level), CustomColors.LevelUp, Name);
             PacketSender.SendActionMsg(this, Strings.Combat.levelup, CustomColors.LevelUp);
             foreach (var msg in spellMsgs)
             {
-                PacketSender.SendPlayerMsg(MyClient, msg, CustomColors.Info, MyName);
+                PacketSender.SendPlayerMsg(MyClient, msg, CustomColors.Info, Name);
             }
             if (StatPoints > 0)
             {
                 PacketSender.SendPlayerMsg(MyClient, Strings.Player.statpoints.ToString( StatPoints),
-                    CustomColors.StatPoints, MyName);
+                    CustomColors.StatPoints, Name);
             }
             PacketSender.SendExperience(MyClient);
             PacketSender.SendPointsTo(MyClient);
@@ -489,8 +526,8 @@ namespace Intersect.Server.Classes.Entities
 
         public void GiveExperience(long amount)
         {
-            Experience += amount;
-            if (Experience < 0) Experience = 0;
+            Exp += amount;
+            if (Exp < 0) Exp = 0;
             if (!CheckLevelUp())
             {
                 PacketSender.SendExperience(MyClient);
@@ -500,9 +537,9 @@ namespace Intersect.Server.Classes.Entities
         private bool CheckLevelUp()
         {
             var levelCount = 0;
-            while (Experience >= ExperienceToNextLevel && ExperienceToNextLevel > 0)
+            while (Exp >= ExperienceToNextLevel && ExperienceToNextLevel > 0)
             {
-                Experience -= ExperienceToNextLevel;
+                Exp -= ExperienceToNextLevel;
                 levelCount++;
             }
             if (levelCount <= 0) return false;
@@ -511,7 +548,7 @@ namespace Intersect.Server.Classes.Entities
         }
 
         //Combat
-        public override void KilledEntity(Entity en)
+        public override void KilledEntity(EntityInstance en)
         {
             if (en.GetType() == typeof(Npc))
             {
@@ -565,7 +602,7 @@ namespace Intersect.Server.Classes.Entities
             }
         }
 
-        public override void TryAttack(Entity enemy, ProjectileBase projectile, SpellBase parentSpell, ItemBase parentItem, int projectileDir)
+        public override void TryAttack(EntityInstance enemy, ProjectileBase projectile, SpellBase parentSpell, ItemBase parentItem, int projectileDir)
         {
             //If Entity is resource, check for the correct tool and make sure its not a spell cast.
             if (enemy.GetType() == typeof(Resource))
@@ -591,7 +628,7 @@ namespace Intersect.Server.Classes.Entities
             base.TryAttack(enemy, projectile, parentSpell, parentItem, projectileDir);
         }
 
-        public override void TryAttack(Entity enemy)
+        public override void TryAttack(EntityInstance enemy)
         {
             if (CastTime >= Globals.System.GetTimeMs())
             {
@@ -609,7 +646,7 @@ namespace Intersect.Server.Classes.Entities
             {
                 weapon =
                     ItemBase.Lookup.Get<ItemBase>(
-                        Inventory[((Player)Globals.Entities[MyIndex]).Equipment[Options.WeaponIndex]].ItemNum);
+                        Items[((Player)Globals.Entities[MyIndex]).Equipment[Options.WeaponIndex]].ItemNum);
             }
 
             //If Entity is resource, check for the correct tool and make sure its not a spell cast.
@@ -656,10 +693,10 @@ namespace Intersect.Server.Classes.Entities
                         100, 10, Options.CritMultiplier);
                 }
             }
-            PacketSender.SendEntityAttack(this, (int)EntityTypes.GlobalEntity, CurrentMap, CalculateAttackTime());
+            PacketSender.SendEntityAttack(this, (int)EntityTypes.GlobalEntity, Map, CalculateAttackTime());
         }
 
-        public override bool CanAttack(Entity en, SpellBase spell)
+        public override bool CanAttack(EntityInstance en, SpellBase spell)
         {
             if (!base.CanAttack(en,spell)) return false;
             if (en.GetType() == typeof(Npc) && ((Npc)en).MyBase.Behavior == (int)NpcBehavior.Friendly) return false;
@@ -702,9 +739,9 @@ namespace Intersect.Server.Classes.Entities
                 WarpToSpawn();
                 return;
             }
-            CurrentX = newX;
-            CurrentY = newY;
-            CurrentZ = zOverride;
+            X = newX;
+            Y = newY;
+            Z = zOverride;
             Dir = newDir;
             foreach (var evt in EventLookup.Values)
             {
@@ -713,15 +750,15 @@ namespace Intersect.Server.Classes.Entities
                     EventLookup.TryRemove(new Tuple<int, int, int>(evt.MapNum, evt.BaseEvent.SpawnX, evt.BaseEvent.SpawnY), out EventInstance z);
                 }
             }
-            if (newMap != CurrentMap || mSentMap == false)
+            if (newMap != Map || mSentMap == false)
             {
-                var oldMap = MapInstance.Lookup.Get<MapInstance>(CurrentMap);
+                var oldMap = MapInstance.Lookup.Get<MapInstance>(Map);
                 if (oldMap != null)
                 {
                     oldMap.RemoveEntity(this);
                 }
-                PacketSender.SendEntityLeave(MyIndex, (int)EntityTypes.Player, CurrentMap);
-                CurrentMap = newMap;
+                PacketSender.SendEntityLeave(MyIndex, (int)EntityTypes.Player, Map);
+                Map = newMap;
                 map.PlayerEnteredMap(this);
                 PacketSender.SendEntityDataToProximity(this);
                 PacketSender.SendEntityPositionToAll(this);
@@ -773,7 +810,7 @@ namespace Intersect.Server.Classes.Entities
         }
 
         //Inventory
-        public bool CanGiveItem(ItemInstance item)
+        public bool CanGiveItem(Item item)
         {
             var itemBase = ItemBase.Lookup.Get<ItemBase>(item.ItemNum);
             if (itemBase != null)
@@ -782,7 +819,7 @@ namespace Intersect.Server.Classes.Entities
                 {
                     for (var i = 0; i < Options.MaxInvItems; i++)
                     {
-                        if (Inventory[i].ItemNum == item.ItemNum)
+                        if (Items[i].ItemNum == item.ItemNum)
                         {
                             return true;
                         }
@@ -792,7 +829,7 @@ namespace Intersect.Server.Classes.Entities
                 //Either a non stacking item, or we couldn't find the item already existing in the players inventory
                 for (var i = 0; i < Options.MaxInvItems; i++)
                 {
-                    if (Inventory[i].ItemNum == -1)
+                    if (Items[i].ItemNum == -1)
                     {
                         return true;
                     }
@@ -801,7 +838,7 @@ namespace Intersect.Server.Classes.Entities
             return false;
         }
 
-        public bool TryGiveItem(ItemInstance item, bool sendUpdate = true)
+        public bool TryGiveItem(Item item, bool sendUpdate = true)
         {
             var itemBase = ItemBase.Lookup.Get<ItemBase>(item.ItemNum);
             if (itemBase != null)
@@ -810,9 +847,9 @@ namespace Intersect.Server.Classes.Entities
                 {
                     for (var i = 0; i < Options.MaxInvItems; i++)
                     {
-                        if (Inventory[i].ItemNum == item.ItemNum)
+                        if (Items[i].ItemNum == item.ItemNum)
                         {
-                            Inventory[i].ItemVal += item.ItemVal;
+                            Items[i].ItemVal += item.ItemVal;
                             if (sendUpdate)
                             {
                                 PacketSender.SendInventoryItemUpdate(MyClient, i);
@@ -826,9 +863,9 @@ namespace Intersect.Server.Classes.Entities
                 //Either a non stacking item, or we couldn't find the item already existing in the players inventory
                 for (var i = 0; i < Options.MaxInvItems; i++)
                 {
-                    if (Inventory[i].ItemNum == -1)
+                    if (Items[i].ItemNum == -1)
                     {
-                        Inventory[i] = item.Clone();
+                        Items[i] = item.Clone();
                         if (sendUpdate)
                         {
                             PacketSender.SendInventoryItemUpdate(MyClient, i);
@@ -843,9 +880,9 @@ namespace Intersect.Server.Classes.Entities
 
         public void SwapItems(int item1, int item2)
         {
-            var tmpInstance = Inventory[item2].Clone();
-            Inventory[item2] = Inventory[item1].Clone();
-            Inventory[item1] = tmpInstance.Clone();
+            var tmpInstance = Items[item2].Clone();
+            Items[item2] = Items[item1].Clone();
+            Items[item1] = tmpInstance.Clone();
             PacketSender.SendInventoryItemUpdate(MyClient, item1);
             PacketSender.SendInventoryItemUpdate(MyClient, item2);
             EquipmentProcessItemSwap(item1, item2);
@@ -854,7 +891,7 @@ namespace Intersect.Server.Classes.Entities
 
         public void DropItems(int slot, int amount)
         {
-            var itemBase = ItemBase.Lookup.Get<ItemBase>(Inventory[slot].ItemNum);
+            var itemBase = ItemBase.Lookup.Get<ItemBase>(Items[slot].ItemNum);
             if (itemBase != null)
             {
                 if (itemBase.Bound > 0)
@@ -871,31 +908,31 @@ namespace Intersect.Server.Classes.Entities
                     }
                 }
 
-                if (amount >= Inventory[slot].ItemVal)
+                if (amount >= Items[slot].ItemVal)
                 {
-                    amount = Inventory[slot].ItemVal;
+                    amount = Items[slot].ItemVal;
                 }
                 if (itemBase.IsStackable())
                 {
-                    MapInstance.Lookup.Get<MapInstance>(CurrentMap)
-                        .SpawnItem(CurrentX, CurrentY, Inventory[slot], amount);
+                    MapInstance.Lookup.Get<MapInstance>(Map)
+                        .SpawnItem(X, Y, Items[slot], amount);
                 }
                 else
                 {
                     for (var i = 0; i < amount; i++)
                     {
-                        MapInstance.Lookup.Get<MapInstance>(CurrentMap)
-                            .SpawnItem(CurrentX, CurrentY, Inventory[slot], 1);
+                        MapInstance.Lookup.Get<MapInstance>(Map)
+                            .SpawnItem(X, Y, Items[slot], 1);
                     }
                 }
-                if (amount == Inventory[slot].ItemVal)
+                if (amount == Items[slot].ItemVal)
                 {
-                    Inventory[slot] = new ItemInstance(-1, 0, -1);
+                    Items[slot] = Item.None;
                     EquipmentProcessItemLoss(slot);
                 }
                 else
                 {
-                    Inventory[slot].ItemVal -= amount;
+                    Items[slot].ItemVal -= amount;
                 }
                 UpdateGatherItemQuests(itemBase.Index);
                 PacketSender.SendInventoryItemUpdate(MyClient, slot);
@@ -905,8 +942,8 @@ namespace Intersect.Server.Classes.Entities
         public void UseItem(int slot)
         {
             var equipped = false;
-            var itemInstance = Inventory[slot];
-            var itemBase = ItemBase.Lookup.Get<ItemBase>(itemInstance.ItemNum);
+            var Item = Items[slot];
+            var itemBase = ItemBase.Lookup.Get<ItemBase>(Item.ItemNum);
             if (itemBase != null)
             {
                 //Check if the user is silenced or stunned
@@ -942,7 +979,7 @@ namespace Intersect.Server.Classes.Entities
                         switch (itemBase.Data1)
                         {
                             case 0: //Health
-                                AddVital(Vitals.Health, itemBase.Data2);
+                                AddVital(Enums.Vitals.Health, itemBase.Data2);
                                 if (s == Strings.Combat.addsymbol)
                                 {
                                     PacketSender.SendActionMsg(this, s + itemBase.Data2, CustomColors.Heal);
@@ -950,14 +987,14 @@ namespace Intersect.Server.Classes.Entities
                                 else
                                 {
                                     PacketSender.SendActionMsg(this, s + itemBase.Data2, CustomColors.PhysicalDamage);
-                                    if (Vital[(int)Vitals.Health] <= 0) //Add a death handler for poison.
+                                    if (Vital[(int)Enums.Vitals.Health] <= 0) //Add a death handler for poison.
                                     {
                                         Die();
                                     }
                                 }
                                 break;
                             case 1: //Mana
-                                AddVital(Vitals.Mana, itemBase.Data2);
+                                AddVital(Enums.Vitals.Mana, itemBase.Data2);
                                 PacketSender.SendActionMsg(this, s + itemBase.Data2, CustomColors.AddMana);
                                 break;
                             case 2: //Exp
@@ -999,11 +1036,11 @@ namespace Intersect.Server.Classes.Entities
                                     if (Equipment[Options.WeaponIndex] > -1)
                                     {
                                         //If we have a 2-hand weapon, remove it to equip this new shield
-                                        if (ItemBase.Lookup.Get<ItemBase>(Inventory[Equipment[Options.WeaponIndex]]
+                                        if (ItemBase.Lookup.Get<ItemBase>(Items[Equipment[Options.WeaponIndex]]
                                                 .ItemNum) != null &&
                                             Convert.ToBoolean(
                                                 ItemBase.Lookup
-                                                    .Get<ItemBase>(Inventory[Equipment[Options.WeaponIndex]].ItemNum)
+                                                    .Get<ItemBase>(Items[Equipment[Options.WeaponIndex]].ItemNum)
                                                     .Data4))
                                         {
                                             Equipment[Options.WeaponIndex] = -1;
@@ -1034,15 +1071,15 @@ namespace Intersect.Server.Classes.Entities
                         break;
                     case (int)ItemTypes.Bag:
                         //Bags will never, ever, be stackable. Going to use the value property for the bag id in the Database.
-                        if (itemInstance.BagId == -1)
+                        if (Item.Bag == null)
                         {
                             //Create the Bag
                             var slotCount = itemBase.Data1;
                             if (slotCount < 1) slotCount = 1;
-                            itemInstance.BagId = Database.CreateBag(slotCount);
+                            Item.Bag = new Bag(slotCount);
                         }
                         //Send the bag to the player (this will make it appear on screen)
-                        OpenBag(itemInstance);
+                        OpenBag(Item);
                         break;
                     default:
                         PacketSender.SendPlayerMsg(MyClient, Strings.Items.notimplemented);
@@ -1050,7 +1087,7 @@ namespace Intersect.Server.Classes.Entities
                 }
                 if (itemBase.Animation > -1)
                 {
-                    PacketSender.SendAnimationToProximity(itemBase.Animation, 1, MyIndex, CurrentMap,
+                    PacketSender.SendAnimationToProximity(itemBase.Animation, 1, MyIndex, Map,
                         0,
                         0, Dir); //Target Type 1 will be global entity
                 }
@@ -1064,33 +1101,33 @@ namespace Intersect.Server.Classes.Entities
             {
                 return false;
             }
-            var itemBase = ItemBase.Lookup.Get<ItemBase>(Inventory[slot].ItemNum);
+            var itemBase = ItemBase.Lookup.Get<ItemBase>(Items[slot].ItemNum);
             if (itemBase != null)
             {
                 if (itemBase.IsStackable())
                 {
-                    if (amount > Inventory[slot].ItemVal)
+                    if (amount > Items[slot].ItemVal)
                     {
-                        amount = Inventory[slot].ItemVal;
+                        amount = Items[slot].ItemVal;
                     }
                     else
                     {
-                        if (amount == Inventory[slot].ItemVal)
+                        if (amount == Items[slot].ItemVal)
                         {
-                            Inventory[slot] = new ItemInstance(-1, 0, -1);
+                            Items[slot] = Item.None;
                             EquipmentProcessItemLoss(slot);
                             returnVal = true;
                         }
                         else
                         {
-                            Inventory[slot].ItemVal -= amount;
+                            Items[slot].ItemVal -= amount;
                             returnVal = true;
                         }
                     }
                 }
                 else
                 {
-                    Inventory[slot] = new ItemInstance(-1, 0, -1);
+                    Items[slot] = Item.None;
                     EquipmentProcessItemLoss(slot);
                     returnVal = true;
                 }
@@ -1105,24 +1142,24 @@ namespace Intersect.Server.Classes.Entities
 
         public bool TakeItemsByNum(int itemNum, int amount)
         {
-            if (CountItemInstances(itemNum) < amount)
+            if (CountItems(itemNum) < amount)
                 return false;
 
-            if (Inventory == null)
+            if (Items == null)
                 return false;
 
-            var invbackup = Inventory.Select(item => item?.Clone()).ToList();
+            var invbackup = Items.Select(item => item?.Clone()).ToList();
 
             for (var i = 0; i < Options.MaxInvItems; i++)
             {
-                var item = Inventory[i];
+                var item = Items[i];
                 if (item?.ItemNum != itemNum)
                     continue;
 
                 if (item.ItemVal <= 1)
                 {
                     amount -= 1;
-                    Inventory[i] = new ItemInstance();
+                    Items[i] = new Item();
                     PacketSender.SendInventoryItemUpdate(MyClient, i);
                     if (amount == 0)
                         return true;
@@ -1132,7 +1169,7 @@ namespace Intersect.Server.Classes.Entities
                     if (amount >= item.ItemVal)
                     {
                         amount -= item.ItemVal;
-                        Inventory[i] = new ItemInstance();
+                        Items[i] = new Item();
                         PacketSender.SendInventoryItemUpdate(MyClient, i);
                         if (amount == 0)
                             return true;
@@ -1146,19 +1183,19 @@ namespace Intersect.Server.Classes.Entities
                 }
             }
 
-            Inventory = invbackup;
+            Items = invbackup;
             PacketSender.SendInventory(MyClient);
             return false;
         }
 
         public int FindItem(int itemNum, int itemVal = 1)
         {
-            if (Inventory == null)
+            if (Items == null)
                 return -1;
 
             for (var i = 0; i < Options.MaxInvItems; i++)
             {
-                var item = Inventory[i];
+                var item = Items[i];
                 if (item?.ItemNum != itemNum)
                     continue;
 
@@ -1169,15 +1206,15 @@ namespace Intersect.Server.Classes.Entities
             return -1;
         }
 
-        public int CountItemInstances(int itemNum)
+        public int CountItems(int itemNum)
         {
-            if (Inventory == null)
+            if (Items == null)
                 return -1;
 
             var count = 0;
             for (var i = 0; i < Options.MaxInvItems; i++)
             {
-                var item = Inventory[i];
+                var item = Items[i];
                 if (item?.ItemNum != itemNum)
                     continue;
 
@@ -1191,9 +1228,9 @@ namespace Intersect.Server.Classes.Entities
         {
             if (Equipment[Options.WeaponIndex] > -1 && Equipment[Options.WeaponIndex] < Options.MaxInvItems)
             {
-                if (Inventory[Equipment[Options.WeaponIndex]].ItemNum > -1)
+                if (Items[Equipment[Options.WeaponIndex]].ItemNum > -1)
                 {
-                    var item = ItemBase.Lookup.Get<ItemBase>(Inventory[Equipment[Options.WeaponIndex]].ItemNum);
+                    var item = ItemBase.Lookup.Get<ItemBase>(Items[Equipment[Options.WeaponIndex]].ItemNum);
                     if (item != null)
                     {
                         return item.Damage;
@@ -1226,12 +1263,12 @@ namespace Intersect.Server.Classes.Entities
             var canSellItem = true;
             var rewardItemNum = -1;
             var rewardItemVal = 0;
-            var sellItemNum = Inventory[slot].ItemNum;
+            var sellItemNum = Items[slot].ItemNum;
             if (InShop == -1) return;
             var shop = ShopBase.Lookup.Get<ShopBase>(InShop);
             if (shop != null)
             {
-                var itemBase = ItemBase.Lookup.Get<ItemBase>(Inventory[slot].ItemNum);
+                var itemBase = ItemBase.Lookup.Get<ItemBase>(Items[slot].ItemNum);
                 if (itemBase != null)
                 {
                     if (itemBase.Bound > 0)
@@ -1243,9 +1280,9 @@ namespace Intersect.Server.Classes.Entities
                     //Check if this is a bag with items.. if so don't allow sale
                     if (itemBase.ItemType == (int)ItemTypes.Bag)
                     {
-                        if (Inventory[slot].BagId > -1)
+                        if (Items[slot].Bag != null)
                         {
-                            if (!Database.BagEmpty(Inventory[slot].BagId))
+                            if (!LegacyDatabase.BagEmpty(Items[slot].Bag))
                             {
                                 PacketSender.SendPlayerMsg(MyClient, Strings.Bags.onlysellempty,
                                     CustomColors.Error);
@@ -1287,31 +1324,31 @@ namespace Intersect.Server.Classes.Entities
                         }
                     }
 
-                    if (amount >= Inventory[slot].ItemVal)
+                    if (amount >= Items[slot].ItemVal)
                     {
-                        amount = Inventory[slot].ItemVal;
+                        amount = Items[slot].ItemVal;
                     }
-                    if (amount == Inventory[slot].ItemVal)
+                    if (amount == Items[slot].ItemVal)
                     {
                         //Definitely can get reward.
-                        Inventory[slot] = new ItemInstance(-1, 0, -1);
+                        Items[slot] = Item.None;
                         EquipmentProcessItemLoss(slot);
                     }
                     else
                     {
                         //check if can get reward
-                        if (!CanGiveItem(new ItemInstance(rewardItemNum, rewardItemVal, -1)))
+                        if (!CanGiveItem(new Item(rewardItemNum, rewardItemVal)))
                         {
                             canSellItem = false;
                         }
                         else
                         {
-                            Inventory[slot].ItemVal -= amount;
+                            Items[slot].ItemVal -= amount;
                         }
                     }
                     if (canSellItem)
                     {
-                        TryGiveItem(new ItemInstance(rewardItemNum, rewardItemVal * amount, -1), true);
+                        TryGiveItem(new Item(rewardItemNum, rewardItemVal * amount), true);
                     }
                     PacketSender.SendInventoryItemUpdate(MyClient, slot);
                 }
@@ -1341,7 +1378,7 @@ namespace Intersect.Server.Classes.Entities
                             FindItem(shop.SellingItems[slot].CostItemNum,
                                 shop.SellingItems[slot].CostItemVal * buyItemAmt) > -1)
                         {
-                            if (CanGiveItem(new ItemInstance(buyItemNum, buyItemAmt, -1)))
+                            if (CanGiveItem(new Item(buyItemNum, buyItemAmt)))
                             {
                                 if (shop.SellingItems[slot].CostItemVal > 0)
                                 {
@@ -1350,12 +1387,12 @@ namespace Intersect.Server.Classes.Entities
                                             shop.SellingItems[slot].CostItemVal * buyItemAmt),
                                         shop.SellingItems[slot].CostItemVal * buyItemAmt);
                                 }
-                                TryGiveItem(new ItemInstance(buyItemNum, buyItemAmt, -1), true);
+                                TryGiveItem(new Item(buyItemNum, buyItemAmt), true);
                             }
                             else
                             {
                                 if (shop.SellingItems[slot].CostItemVal * buyItemAmt ==
-                                    Inventory[
+                                    Items[
                                         FindItem(shop.SellingItems[slot].CostItemNum,
                                             shop.SellingItems[slot].CostItemVal * buyItemAmt)].ItemVal)
                                 {
@@ -1363,19 +1400,19 @@ namespace Intersect.Server.Classes.Entities
                                         FindItem(shop.SellingItems[slot].CostItemNum,
                                             shop.SellingItems[slot].CostItemVal * buyItemAmt),
                                         shop.SellingItems[slot].CostItemVal * buyItemAmt);
-                                    TryGiveItem(new ItemInstance(buyItemNum, buyItemAmt, -1), true);
+                                    TryGiveItem(new Item(buyItemNum, buyItemAmt), true);
                                 }
                                 else
                                 {
                                     PacketSender.SendPlayerMsg(MyClient, Strings.Shops.inventoryfull,
-                                        CustomColors.Error, MyName);
+                                        CustomColors.Error, Name);
                                 }
                             }
                         }
                         else
                         {
                             PacketSender.SendPlayerMsg(MyClient, Strings.Shops.cantafford,
-                                CustomColors.Error, MyName);
+                                CustomColors.Error, Name);
                         }
                     }
                 }
@@ -1408,15 +1445,15 @@ namespace Intersect.Server.Classes.Entities
         {
             if (InCraft > -1)
             {
-                var invbackup = new List<ItemInstance>();
-                foreach (var item in Inventory)
+                var invbackup = new List<Item>();
+                foreach (var item in Items)
                 {
                     invbackup.Add(item.Clone());
                 }
 
                 //Quickly Look through the inventory and create a catalog of what items we have, and how many
                 var itemdict = new Dictionary<int, int>();
-                foreach (var item in Inventory)
+                foreach (var item in Items)
                 {
                     if (item != null)
                     {
@@ -1458,7 +1495,7 @@ namespace Intersect.Server.Classes.Entities
                 {
                     if (!TakeItemsByNum(c.Item, c.Quantity))
                     {
-                        Inventory = invbackup;
+                        Items = invbackup;
                         PacketSender.SendInventory(MyClient);
                         CraftIndex = -1;
                         return;
@@ -1466,7 +1503,7 @@ namespace Intersect.Server.Classes.Entities
                 }
 
                 //Give them the craft
-                if (TryGiveItem(new ItemInstance(BenchBase.Lookup.Get<BenchBase>(InCraft).Crafts[index].Item, 1, -1)))
+                if (TryGiveItem(new Item(BenchBase.Lookup.Get<BenchBase>(InCraft).Crafts[index].Item, 1)))
                 {
                     PacketSender.SendPlayerMsg(MyClient,
                         Strings.Crafting.crafted.ToString(
@@ -1475,7 +1512,7 @@ namespace Intersect.Server.Classes.Entities
                 }
                 else
                 {
-                    Inventory = invbackup;
+                    Items = invbackup;
                     PacketSender.SendInventory(MyClient);
                     PacketSender.SendPlayerMsg(MyClient,
                         Strings.Crafting.nospace.ToString(
@@ -1491,7 +1528,7 @@ namespace Intersect.Server.Classes.Entities
             //See if we have lost the items needed for our current craft, if so end the crafting session
             //Quickly Look through the inventory and create a catalog of what items we have, and how many
             var itemdict = new Dictionary<int, int>();
-            foreach (var item in Inventory)
+            foreach (var item in Items)
             {
                 if (item != null)
                 {
@@ -1555,16 +1592,16 @@ namespace Intersect.Server.Classes.Entities
         public void DepositItem(int slot, int amount)
         {
             if (!InBank) return;
-            var itemBase = ItemBase.Lookup.Get<ItemBase>(Inventory[slot].ItemNum);
+            var itemBase = ItemBase.Lookup.Get<ItemBase>(Items[slot].ItemNum);
             if (itemBase != null)
             {
-                if (Inventory[slot].ItemNum > -1)
+                if (Items[slot].ItemNum > -1)
                 {
                     if (itemBase.IsStackable())
                     {
-                        if (amount >= Inventory[slot].ItemVal)
+                        if (amount >= Items[slot].ItemVal)
                         {
-                            amount = Inventory[slot].ItemVal;
+                            amount = Items[slot].ItemVal;
                         }
                     }
                     else
@@ -1576,19 +1613,19 @@ namespace Intersect.Server.Classes.Entities
                     {
                         for (var i = 0; i < Options.MaxBankSlots; i++)
                         {
-                            if (Bank[i] != null && Bank[i].ItemNum == Inventory[slot].ItemNum)
+                            if (Bank[i] != null && Bank[i].ItemNum == Items[slot].ItemNum)
                             {
                                 amount = Math.Min(amount, int.MaxValue - Bank[i].ItemVal);
                                 Bank[i].ItemVal += amount;
                                 //Remove Items from inventory send updates
-                                if (amount >= Inventory[slot].ItemVal)
+                                if (amount >= Items[slot].ItemVal)
                                 {
-                                    Inventory[slot] = new ItemInstance(-1, 0, -1);
+                                    Items[slot] = Item.None;
                                     EquipmentProcessItemLoss(slot);
                                 }
                                 else
                                 {
-                                    Inventory[slot].ItemVal -= amount;
+                                    Items[slot].ItemVal -= amount;
                                 }
                                 PacketSender.SendInventoryItemUpdate(MyClient, slot);
                                 PacketSender.SendBankUpdate(MyClient, i);
@@ -1602,18 +1639,17 @@ namespace Intersect.Server.Classes.Entities
                     {
                         if (Bank[i] == null || Bank[i].ItemNum == -1)
                         {
-                            Bank[i] = new ItemInstance(-1, 0, -1);
-                            Bank[i] = Inventory[slot].Clone();
+                            Bank[i] = new BankItem(Items[slot]);
                             Bank[i].ItemVal = amount;
                             //Remove Items from inventory send updates
-                            if (amount >= Inventory[slot].ItemVal)
+                            if (amount >= Items[slot].ItemVal)
                             {
-                                Inventory[slot] = new ItemInstance(-1, 0, -1);
+                                Items[slot] = Item.None;
                                 EquipmentProcessItemLoss(slot);
                             }
                             else
                             {
-                                Inventory[slot].ItemVal -= amount;
+                                Items[slot].ItemVal -= amount;
                             }
                             PacketSender.SendInventoryItemUpdate(MyClient, slot);
                             PacketSender.SendBankUpdate(MyClient, i);
@@ -1635,7 +1671,7 @@ namespace Intersect.Server.Classes.Entities
 
             Debug.Assert(ItemBase.Lookup != null, "ItemBase.Lookup != null");
             Debug.Assert(Bank != null, "Bank != null");
-            Debug.Assert(Inventory != null, "Inventory != null");
+            Debug.Assert(Items != null, "Inventory != null");
 
             var bankSlotItem = Bank[slot];
             if (bankSlotItem == null) return;
@@ -1663,7 +1699,7 @@ namespace Intersect.Server.Classes.Entities
                     /* Find an existing stack */
                     for (var i = 0; i < Options.MaxInvItems; i++)
                     {
-                        var inventorySlotItem = Inventory[i];
+                        var inventorySlotItem = Items[i];
                         if (inventorySlotItem == null) continue;
                         if (inventorySlotItem.ItemNum == bankSlotItem.ItemNum) continue;
                         inventorySlot = i;
@@ -1676,7 +1712,7 @@ namespace Intersect.Server.Classes.Entities
                     /* Find a free slot if we don't have one already */
                     for (var j = 0; j < Options.MaxInvItems; j++)
                     {
-                        if (Inventory[j] != null && Inventory[j].ItemNum != -1) continue;
+                        if (Items[j] != null && Items[j].ItemNum != -1) continue;
                         inventorySlot = j;
                         break;
                     }
@@ -1691,17 +1727,17 @@ namespace Intersect.Server.Classes.Entities
                     }
 
                 /* Move the items to the inventory */
-                Debug.Assert(Inventory[inventorySlot] != null, "Inventory[inventorySlot] != null");
-                amount = Math.Min(amount, int.MaxValue - Inventory[inventorySlot].ItemVal);
+                Debug.Assert(Items[inventorySlot] != null, "Inventory[inventorySlot] != null");
+                amount = Math.Min(amount, int.MaxValue - Items[inventorySlot].ItemVal);
 
-                if (Inventory[inventorySlot] == null || Inventory[inventorySlot].ItemNum == -1 ||
-                    Inventory[inventorySlot].ItemVal < 0)
+                if (Items[inventorySlot] == null || Items[inventorySlot].ItemNum == -1 ||
+                    Items[inventorySlot].ItemVal < 0)
                 {
-                    Inventory[inventorySlot] = bankSlotItem.Clone();
-                    Inventory[inventorySlot].ItemVal = 0;
+                    Items[inventorySlot] = bankSlotItem.Clone();
+                    Items[inventorySlot].ItemVal = 0;
                 }
 
-                Inventory[inventorySlot].ItemVal += amount;
+                Items[inventorySlot].ItemVal += amount;
                 if (amount >= bankSlotItem.ItemVal)
                 {
                     Bank[slot] = null;
@@ -1722,7 +1758,7 @@ namespace Intersect.Server.Classes.Entities
         
         public void SwapBankItems(int item1, int item2)
         {
-            ItemInstance tmpInstance = null;
+            BankItem tmpInstance = null;
             if (Bank[item2] != null) tmpInstance = Bank[item2].Clone();
             if (Bank[item1] != null)
             {
@@ -1745,59 +1781,56 @@ namespace Intersect.Server.Classes.Entities
         }
 
         //Bag
-        public bool OpenBag(ItemInstance bagItem)
+        public bool OpenBag(Item bagItem)
         {
-            if (IsBusy() || !HasBag(bagItem.BagId)) return false;
-            if (bagItem.BagInstance == null) Database.LoadBag(bagItem);
-            InBag = bagItem.BagId;
-            PacketSender.SendOpenBag(MyClient, bagItem.BagInstance.Slots, bagItem.BagInstance);
+            if (IsBusy() || !HasBag(bagItem.Bag)) return false;
+            //if (bagItem.Bag == null) LegacyDatabase.LoadBag(bagItem);
+            InBag = bagItem.Bag;
+            PacketSender.SendOpenBag(MyClient, bagItem.Bag.SlotCount, bagItem.Bag);
             return true;
         }
 
-        public bool HasBag(int bagId)
+        public bool HasBag(Bag bag)
         {
-            for (var i = 0; i < Inventory.Count; i++)
+            for (var i = 0; i < Items.Count; i++)
             {
-                if (Inventory[i] != null && Inventory[i].BagId == bagId) return true;
+                if (Items[i] != null && Items[i].Bag == bag) return true;
             }
             return false;
         }
 
-        public BagInstance GetBag()
+        public Bag GetBag()
         {
-            if (InBag > -1)
+            if (InBag != null)
             {
-                for (var i = 0; i < Inventory.Count; i++)
-                {
-                    if (Inventory[i] != null && Inventory[i].BagId == InBag) return Inventory[i].BagInstance;
-                }
+                return InBag;
             }
             return null;
         }
 
         public void CloseBag()
         {
-            if (InBag > -1)
+            if (InBag != null)
             {
-                InBag = -1;
+                InBag = null;
                 PacketSender.SendCloseBag(MyClient);
             }
         }
 
         public void StoreBagItem(int slot, int amount)
         {
-            if (InBag < 0 || !HasBag(InBag)) return;
-            var itemBase = ItemBase.Lookup.Get<ItemBase>(Inventory[slot].ItemNum);
+            if (InBag == null || !HasBag(InBag)) return;
+            var itemBase = ItemBase.Lookup.Get<ItemBase>(Items[slot].ItemNum);
             var bag = GetBag();
             if (itemBase != null && bag != null)
             {
-                if (Inventory[slot].ItemNum > -1)
+                if (Items[slot].ItemNum > -1)
                 {
                     if (itemBase.IsStackable())
                     {
-                        if (amount >= Inventory[slot].ItemVal)
+                        if (amount >= Items[slot].ItemVal)
                         {
-                            amount = Inventory[slot].ItemVal;
+                            amount = Items[slot].ItemVal;
                         }
                     }
                     else
@@ -1806,7 +1839,7 @@ namespace Intersect.Server.Classes.Entities
                     }
 
                     //Make Sure we are not Storing a Bag inside of itself
-                    if (Inventory[slot].BagId == InBag)
+                    if (Items[slot].Bag == InBag)
                     {
                         PacketSender.SendPlayerMsg(MyClient, Strings.Bags.baginself, CustomColors.Error);
                         return;
@@ -1815,23 +1848,23 @@ namespace Intersect.Server.Classes.Entities
                     //Find a spot in the bag for it!
                     if (itemBase.IsStackable())
                     {
-                        for (var i = 0; i < bag.Slots; i++)
+                        for (var i = 0; i < bag.SlotCount; i++)
                         {
-                            if (bag.Items[i] != null && bag.Items[i].ItemNum == Inventory[slot].ItemNum)
+                            if (bag.Items[i] != null && bag.Items[i].ItemNum == Items[slot].ItemNum)
                             {
                                 amount = Math.Min(amount, int.MaxValue - bag.Items[i].ItemVal);
                                 bag.Items[i].ItemVal += amount;
                                 //Remove Items from inventory send updates
-                                if (amount >= Inventory[slot].ItemVal)
+                                if (amount >= Items[slot].ItemVal)
                                 {
-                                    Inventory[slot] = new ItemInstance(-1, 0, -1);
+                                    Items[slot] = Item.None;
                                     EquipmentProcessItemLoss(slot);
                                 }
                                 else
                                 {
-                                    Inventory[slot].ItemVal -= amount;
+                                    Items[slot].ItemVal -= amount;
                                 }
-                                Database.SaveBagItem(InBag, i, bag.Items[i]);
+                                //LegacyDatabase.SaveBagItem(InBag, i, bag.Items[i]);
                                 PacketSender.SendInventoryItemUpdate(MyClient, slot);
                                 PacketSender.SendBagUpdate(MyClient, i, bag.Items[i]);
                                 return;
@@ -1840,24 +1873,23 @@ namespace Intersect.Server.Classes.Entities
                     }
 
                     //Either a non stacking item, or we couldn't find the item already existing in the players inventory
-                    for (var i = 0; i < bag.Slots; i++)
+                    for (var i = 0; i < bag.SlotCount; i++)
                     {
                         if (bag.Items[i] == null || bag.Items[i].ItemNum == -1)
                         {
-                            bag.Items[i] = new ItemInstance(-1, 0, -1);
-                            bag.Items[i] = Inventory[slot].Clone();
+                            bag.Items[i] = new BagItem(Items[slot]);
                             bag.Items[i].ItemVal = amount;
                             //Remove Items from inventory send updates
-                            if (amount >= Inventory[slot].ItemVal)
+                            if (amount >= Items[slot].ItemVal)
                             {
-                                Inventory[slot] = new ItemInstance(-1, 0, -1);
+                                Items[slot] = Item.None;
                                 EquipmentProcessItemLoss(slot);
                             }
                             else
                             {
-                                Inventory[slot].ItemVal -= amount;
+                                Items[slot].ItemVal -= amount;
                             }
-                            Database.SaveBagItem(InBag, i, bag.Items[i]);
+                            //LegacyDatabase.SaveBagItem(InBag, i, bag.Items[i]);
                             PacketSender.SendInventoryItemUpdate(MyClient, slot);
                             PacketSender.SendBagUpdate(MyClient, i, bag.Items[i]);
                             return;
@@ -1874,9 +1906,9 @@ namespace Intersect.Server.Classes.Entities
 
         public void RetreiveBagItem(int slot, int amount)
         {
-            if (InBag < 0 || !HasBag(InBag)) return;
+            if (InBag == null || !HasBag(InBag)) return;
             var bag = GetBag();
-            if (bag == null || slot > bag.Items.Length || bag.Items[slot] == null) return;
+            if (bag == null || slot > bag.Items.Count || bag.Items[slot] == null) return;
             var itemBase = ItemBase.Lookup.Get<ItemBase>(bag.Items[slot].ItemNum);
             var inventorySlot = -1;
             if (itemBase != null)
@@ -1900,7 +1932,7 @@ namespace Intersect.Server.Classes.Entities
                         /* Find an existing stack */
                         for (var i = 0; i < Options.MaxInvItems; i++)
                         {
-                            if (Inventory[i] != null && Inventory[i].ItemNum == bag.Items[slot].ItemNum)
+                            if (Items[i] != null && Items[i].ItemNum == bag.Items[slot].ItemNum)
                             {
                                 inventorySlot = i;
                                 break;
@@ -1913,7 +1945,7 @@ namespace Intersect.Server.Classes.Entities
                         /* Find a free slot if we don't have one already */
                         for (var j = 0; j < Options.MaxInvItems; j++)
                         {
-                            if (Inventory[j] == null || Inventory[j].ItemNum == -1)
+                            if (Items[j] == null || Items[j].ItemNum == -1)
                             {
                                 inventorySlot = j;
                                 break;
@@ -1930,15 +1962,15 @@ namespace Intersect.Server.Classes.Entities
                     }
 
                     /* Move the items to the inventory */
-                    amount = Math.Min(amount, int.MaxValue - Inventory[inventorySlot].ItemVal);
+                    amount = Math.Min(amount, int.MaxValue - Items[inventorySlot].ItemVal);
 
-                    if (Inventory[inventorySlot] == null || Inventory[inventorySlot].ItemNum == -1 ||
-                        Inventory[inventorySlot].ItemVal < 0)
+                    if (Items[inventorySlot] == null || Items[inventorySlot].ItemNum == -1 ||
+                        Items[inventorySlot].ItemVal < 0)
                     {
-                        Inventory[inventorySlot] = new ItemInstance(bag.Items[slot].ItemNum, 0, -1);
+                        Items[inventorySlot] = new Item(bag.Items[slot].ItemNum, 0);
                     }
 
-                    Inventory[inventorySlot].ItemVal += amount;
+                    Items[inventorySlot].ItemVal += amount;
                     if (amount >= bag.Items[slot].ItemVal)
                     {
                         bag.Items[slot] = null;
@@ -1947,7 +1979,7 @@ namespace Intersect.Server.Classes.Entities
                     {
                         bag.Items[slot].ItemVal -= amount;
                     }
-                    Database.SaveBagItem(InBag, slot, bag.Items[slot]);
+                    //LegacyDatabase.SaveBagItem(InBag, slot, bag.Items[slot]);
 
                     PacketSender.SendInventoryItemUpdate(MyClient, inventorySlot);
                     PacketSender.SendBagUpdate(MyClient, slot, bag.Items[slot]);
@@ -1961,9 +1993,9 @@ namespace Intersect.Server.Classes.Entities
 
         public void SwapBagItems(int item1, int item2)
         {
-            if (InBag < 0 || !HasBag(InBag)) return;
+            if (InBag != null || !HasBag(InBag)) return;
             var bag = GetBag();
-            ItemInstance tmpInstance = null;
+            BagItem tmpInstance = null;
             if (bag.Items[item2] != null) tmpInstance = bag.Items[item2].Clone();
             if (bag.Items[item1] != null)
             {
@@ -1981,8 +2013,6 @@ namespace Intersect.Server.Classes.Entities
             {
                 bag.Items[item1] = null;
             }
-            Database.SaveBagItem(InBag, item1, bag.Items[item1]);
-            Database.SaveBagItem(InBag, item2, bag.Items[item2]);
             PacketSender.SendBagUpdate(MyClient, item1, bag.Items[item1]);
             PacketSender.SendBagUpdate(MyClient, item2, bag.Items[item2]);
         }
@@ -2005,7 +2035,7 @@ namespace Intersect.Server.Classes.Entities
                 }
                 else
                 {
-                    PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Friends.busy.ToString( MyName),
+                    PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Friends.busy.ToString( Name),
                         CustomColors.Error);
                 }
             }
@@ -2032,7 +2062,7 @@ namespace Intersect.Server.Classes.Entities
                 }
                 else
                 {
-                    PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Trading.busy.ToString( MyName),
+                    PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Trading.busy.ToString( Name),
                         CustomColors.Error);
                 }
             }
@@ -2041,10 +2071,10 @@ namespace Intersect.Server.Classes.Entities
         public void OfferItem(int slot, int amount)
         {
             if (Trading < 0) return;
-            var itemBase = ItemBase.Lookup.Get<ItemBase>(Inventory[slot].ItemNum);
+            var itemBase = ItemBase.Lookup.Get<ItemBase>(Items[slot].ItemNum);
             if (itemBase != null)
             {
-                if (Inventory[slot].ItemNum > -1)
+                if (Items[slot].ItemNum > -1)
                 {
                     if (itemBase.Bound > 0)
                     {
@@ -2054,9 +2084,9 @@ namespace Intersect.Server.Classes.Entities
 
                     if (itemBase.IsStackable())
                     {
-                        if (amount >= Inventory[slot].ItemVal)
+                        if (amount >= Items[slot].ItemVal)
                         {
-                            amount = Inventory[slot].ItemVal;
+                            amount = Items[slot].ItemVal;
                         }
                     }
                     else
@@ -2067,9 +2097,9 @@ namespace Intersect.Server.Classes.Entities
                     //Check if this is a bag with items.. if so don't allow sale
                     if (itemBase.ItemType == (int)ItemTypes.Bag)
                     {
-                        if (Inventory[slot].BagId > -1)
+                        if (Items[slot].Bag != null)
                         {
-                            if (!Database.BagEmpty(Inventory[slot].BagId))
+                            if (!LegacyDatabase.BagEmpty(Items[slot].Bag))
                             {
                                 PacketSender.SendPlayerMsg(MyClient, Strings.Bags.onlytradeempty,
                                     CustomColors.Error);
@@ -2083,19 +2113,19 @@ namespace Intersect.Server.Classes.Entities
                     {
                         for (var i = 0; i < Options.MaxInvItems; i++)
                         {
-                            if (Trade[i] != null && Trade[i].ItemNum == Inventory[slot].ItemNum)
+                            if (Trade[i] != null && Trade[i].ItemNum == Items[slot].ItemNum)
                             {
                                 amount = Math.Min(amount, int.MaxValue - Trade[i].ItemVal);
                                 Trade[i].ItemVal += amount;
                                 //Remove Items from inventory send updates
-                                if (amount >= Inventory[slot].ItemVal)
+                                if (amount >= Items[slot].ItemVal)
                                 {
-                                    Inventory[slot] = new ItemInstance(-1, 0, -1);
+                                    Items[slot] = Item.None;
                                     EquipmentProcessItemLoss(slot);
                                 }
                                 else
                                 {
-                                    Inventory[slot].ItemVal -= amount;
+                                    Items[slot].ItemVal -= amount;
                                 }
                                 PacketSender.SendInventoryItemUpdate(MyClient, slot);
                                 PacketSender.SendTradeUpdate(MyClient, MyIndex, i);
@@ -2110,18 +2140,18 @@ namespace Intersect.Server.Classes.Entities
                     {
                         if (Trade[i] == null || Trade[i].ItemNum == -1)
                         {
-                            Trade[i] = new ItemInstance(-1, 0, -1);
-                            Trade[i] = Inventory[slot].Clone();
+                            Trade[i] = Item.None;
+                            Trade[i] = Items[slot].Clone();
                             Trade[i].ItemVal = amount;
                             //Remove Items from inventory send updates
-                            if (amount >= Inventory[slot].ItemVal)
+                            if (amount >= Items[slot].ItemVal)
                             {
-                                Inventory[slot] = new ItemInstance(-1, 0, -1);
+                                Items[slot] = Item.None;
                                 EquipmentProcessItemLoss(slot);
                             }
                             else
                             {
-                                Inventory[slot].ItemVal -= amount;
+                                Items[slot].ItemVal -= amount;
                             }
                             PacketSender.SendInventoryItemUpdate(MyClient, slot);
                             PacketSender.SendTradeUpdate(MyClient, MyIndex, i);
@@ -2161,7 +2191,7 @@ namespace Intersect.Server.Classes.Entities
                 /* Find an existing stack */
                 for (var i = 0; i < Options.MaxInvItems; i++)
                 {
-                    if (Inventory[i] != null && Inventory[i].ItemNum == Trade[slot].ItemNum)
+                    if (Items[i] != null && Items[i].ItemNum == Trade[slot].ItemNum)
                     {
                         inventorySlot = i;
                         break;
@@ -2174,7 +2204,7 @@ namespace Intersect.Server.Classes.Entities
                 /* Find a free slot if we don't have one already */
                 for (var j = 0; j < Options.MaxInvItems; j++)
                 {
-                    if (Inventory[j] == null || Inventory[j].ItemNum == -1)
+                    if (Items[j] == null || Items[j].ItemNum == -1)
                     {
                         inventorySlot = j;
                         break;
@@ -2189,15 +2219,15 @@ namespace Intersect.Server.Classes.Entities
             }
 
             /* Move the items to the inventory */
-            amount = Math.Min(amount, int.MaxValue - Inventory[inventorySlot].ItemVal);
+            amount = Math.Min(amount, int.MaxValue - Items[inventorySlot].ItemVal);
 
-            if (Inventory[inventorySlot] == null || Inventory[inventorySlot].ItemNum == -1 ||
-                Inventory[inventorySlot].ItemVal < 0)
+            if (Items[inventorySlot] == null || Items[inventorySlot].ItemNum == -1 ||
+                Items[inventorySlot].ItemVal < 0)
             {
-                Inventory[inventorySlot] = new ItemInstance(Trade[slot].ItemNum, 0, Trade[slot].BagId);
+                Items[inventorySlot] = new Item(Trade[slot].ItemNum, 0, Trade[slot].Bag);
             }
 
-            Inventory[inventorySlot].ItemVal += amount;
+            Items[inventorySlot].ItemVal += amount;
             if (amount >= Trade[slot].ItemVal)
             {
                 Trade[slot] = null;
@@ -2222,8 +2252,8 @@ namespace Intersect.Server.Classes.Entities
                 {
                     if (!TryGiveItem(Trade[i]))
                     {
-                        MapInstance.Lookup.Get<MapInstance>(CurrentMap)
-                            .SpawnItem(CurrentX, CurrentY, Trade[i], Trade[i].ItemVal);
+                        MapInstance.Lookup.Get<MapInstance>(Map)
+                            .SpawnItem(X, Y, Trade[i], Trade[i].ItemVal);
                         PacketSender.SendPlayerMsg(MyClient, Strings.Trading.itemsdropped,
                             CustomColors.Error);
                     }
@@ -2270,7 +2300,7 @@ namespace Intersect.Server.Classes.Entities
                 }
                 else
                 {
-                    PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Parties.busy.ToString( MyName),
+                    PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Parties.busy.ToString( Name),
                         CustomColors.Error);
                 }
             }
@@ -2310,7 +2340,7 @@ namespace Intersect.Server.Classes.Entities
                 {
                     Party[i].Party = Party;
                     PacketSender.SendParty(Party[i].MyClient);
-                    PacketSender.SendPlayerMsg(Party[i].MyClient, Strings.Parties.joined.ToString( target.MyName),
+                    PacketSender.SendPlayerMsg(Party[i].MyClient, Strings.Parties.joined.ToString( target.Name),
                         CustomColors.Accepted);
                 }
             }
@@ -2341,7 +2371,7 @@ namespace Intersect.Server.Classes.Entities
                             Party[i].Party = Party;
                             PacketSender.SendParty(Party[i].MyClient);
                             PacketSender.SendPlayerMsg(Party[i].MyClient,
-                                Strings.Parties.memberkicked.ToString( oldMember.MyName), CustomColors.Error);
+                                Strings.Parties.memberkicked.ToString( oldMember.Name), CustomColors.Error);
                         }
                     }
                     else if (Party.Count > 0) //Check if anyone is left on their own
@@ -2371,7 +2401,7 @@ namespace Intersect.Server.Classes.Entities
                         Party[i].Party = Party;
                         PacketSender.SendParty(Party[i].MyClient);
                         PacketSender.SendPlayerMsg(Party[i].MyClient,
-                            Strings.Parties.memberleft.ToString( oldMember.MyName), CustomColors.Error);
+                            Strings.Parties.memberleft.ToString( oldMember.Name), CustomColors.Error);
                     }
                 }
                 else if (Party.Count > 0) //Check if anyone is left on their own
@@ -2409,13 +2439,13 @@ namespace Intersect.Server.Classes.Entities
                 target.Trading = MyIndex;
                 TradeAccepted = false;
                 target.TradeAccepted = false;
-                Trade = new ItemInstance[Options.MaxInvItems];
-                target.Trade = new ItemInstance[Options.MaxInvItems];
+                Trade = new Item[Options.MaxInvItems];
+                target.Trade = new Item[Options.MaxInvItems];
 
                 for (var i = 0; i < Options.MaxInvItems; i++)
                 {
-                    Trade[i] = new ItemInstance();
-                    target.Trade[i] = new ItemInstance();
+                    Trade[i] = new Item();
+                    target.Trade[i] = new Item();
                 }
 
                 //Send the trade confirmation to both players
@@ -2428,7 +2458,7 @@ namespace Intersect.Server.Classes.Entities
         {
             var bf = new ByteBuffer();
             bf.WriteInteger(MyIndex);
-            bf.WriteString(MyName);
+            bf.WriteString(Name);
             for (int i = 0; i < (int)Vitals.VitalCount; i++)
             {
                 bf.WriteInteger(Vital[i]);
@@ -2503,7 +2533,7 @@ namespace Intersect.Server.Classes.Entities
             PacketSender.SendPlayerSpellUpdate(MyClient, spellSlot);
         }
 
-        public void UseSpell(int spellSlot, Entity target)
+        public void UseSpell(int spellSlot, EntityInstance target)
         {
             var spellNum = Spells[spellSlot].SpellNum;
             Target = target;
@@ -2601,7 +2631,7 @@ namespace Intersect.Server.Classes.Entities
 
                                 if (spell.CastAnimation > -1)
                                 {
-                                    PacketSender.SendAnimationToProximity(spell.CastAnimation, 1, MyIndex, CurrentMap,
+                                    PacketSender.SendAnimationToProximity(spell.CastAnimation, 1, MyIndex, Map,
                                         0,
                                         0, Dir); //Target Type 1 will be global entity
                                 }
@@ -3024,9 +3054,9 @@ namespace Intersect.Server.Classes.Entities
                                 if (questTask.Objective == 1 && questTask.Data1 == item.Index) //gather items
                                 {
                                     var questProg = Quests[questId];
-                                    if (questProg.TaskProgress != CountItemInstances(item.Index))
+                                    if (questProg.TaskProgress != CountItems(item.Index))
                                     {
-                                        questProg.TaskProgress = CountItemInstances(item.Index);
+                                        questProg.TaskProgress = CountItems(item.Index);
                                         if (questProg.TaskProgress >= questTask.Data2)
                                         {
                                             CompleteQuestTask(questId, Quests[questId].Task);
@@ -3062,8 +3092,8 @@ namespace Intersect.Server.Classes.Entities
             {
                 if (evt != null && evt.PageInstance != null)
                 {
-                    if (evt.PageInstance.CurrentMap == map && evt.PageInstance.CurrentX == x &&
-                        evt.PageInstance.CurrentY == y && evt.PageInstance.CurrentZ == z)
+                    if (evt.PageInstance.Map == map && evt.PageInstance.X == x &&
+                        evt.PageInstance.Y == y && evt.PageInstance.Z == z)
                     {
                         return evt.PageInstance;
                     }
@@ -3256,13 +3286,13 @@ namespace Intersect.Server.Classes.Entities
         public override void Move(int moveDir, Client client, bool dontUpdate = false, bool correction = false)
         {
             var index = MyIndex;
-            var oldMap = CurrentMap;
+            var oldMap = Map;
             client = MyClient;
             base.Move(moveDir, client, dontUpdate, correction);
             // Check for a warp, if so warp the player.
             var attribute =
-                MapInstance.Lookup.Get<MapInstance>(Globals.Entities[index].CurrentMap).Attributes[
-                    Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY];
+                MapInstance.Lookup.Get<MapInstance>(Globals.Entities[index].Map).Attributes[
+                    Globals.Entities[index].X, Globals.Entities[index].Y];
             if (attribute != null && attribute.Value == (int)MapAttributes.Warp)
             {
                 if (Convert.ToInt32(attribute.Data4) == -1)
@@ -3279,14 +3309,14 @@ namespace Intersect.Server.Classes.Entities
 
             foreach (var evt in EventLookup.Values)
             {
-                if (evt.MapNum == CurrentMap)
+                if (evt.MapNum == Map)
                 {
                     if (evt.PageInstance != null)
                     {
-                        if (evt.PageInstance.CurrentMap == CurrentMap &&
-                            evt.PageInstance.CurrentX == CurrentX &&
-                            evt.PageInstance.CurrentY == CurrentY &&
-                            evt.PageInstance.CurrentZ == CurrentZ)
+                        if (evt.PageInstance.Map == Map &&
+                            evt.PageInstance.X == X &&
+                            evt.PageInstance.Y == Y &&
+                            evt.PageInstance.Z == Z)
                         {
                             if (evt.PageInstance.Trigger != 1) return;
                             if (evt.CallStack.Count != 0) return;

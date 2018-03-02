@@ -9,15 +9,16 @@ using Intersect.GameObjects.Conditions;
 using Intersect.GameObjects.Events;
 using Intersect.Server.Classes.Localization;
 using Intersect.Server.Classes.Core;
+using Intersect.Server.Classes.Database.PlayerData.Characters;
 using Intersect.Server.Classes.General;
-using Intersect.Server.Classes.Items;
+
 using Intersect.Server.Classes.Maps;
 using Intersect.Server.Classes.Networking;
 using Intersect.Server.Classes.Spells;
 
 namespace Intersect.Server.Classes.Entities
 {
-    using Database = Intersect.Server.Classes.Core.Database;
+    using LegacyDatabase = Intersect.Server.Classes.Core.LegacyDatabase;
 
     public class EventInstance
     {
@@ -82,8 +83,8 @@ namespace Intersect.Server.Classes.Entities
                 //Check for despawn
                 if (PageInstance.ShouldDespawn())
                 {
-                    CurrentX = PageInstance.CurrentX;
-                    CurrentY = PageInstance.CurrentY;
+                    CurrentX = PageInstance.X;
+                    CurrentY = PageInstance.Y;
                     PageInstance = null;
                     PlayerHasDied = false;
                     if (HoldingPlayer)
@@ -508,8 +509,8 @@ namespace Intersect.Server.Classes.Entities
         {
             if (MyClient != null && MyClient.Entity != null)
             {
-                input = input.Replace(Strings.Events.playernamecommand, MyClient.Entity.MyName);
-                input = input.Replace(Strings.Events.eventnamecommand, PageInstance.MyName);
+                input = input.Replace(Strings.Events.playernamecommand, MyClient.Entity.Name);
+                input = input.Replace(Strings.Events.eventnamecommand, PageInstance.Name);
                 input = input.Replace(Strings.Events.commandparameter, PageInstance.Param);
                 if (input.Contains(Strings.Events.onlinelistcommand) ||
                     input.Contains(Strings.Events.onlinecountcommand))
@@ -519,7 +520,7 @@ namespace Intersect.Server.Classes.Entities
                     var sb = new StringBuilder();
                     for (int i = 0; i < onlineList.Count; i++)
                     {
-                        sb.Append(onlineList[i].MyName + (i != onlineList.Count - 1 ? ", " : ""));
+                        sb.Append(onlineList[i].Name + (i != onlineList.Count - 1 ? ", " : ""));
                     }
                     input = input.Replace(Strings.Events.onlinelistcommand, sb.ToString());
                 }
@@ -623,7 +624,7 @@ namespace Intersect.Server.Classes.Entities
             bool success = false;
             TileHelper tile;
             int npcNum, animNum, spawnCondition, mapNum = -1, tileX = 0, tileY = 0, direction = (int) Directions.Up;
-            Entity targetEntity = null;
+            EntityInstance targetEntity = null;
             CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
             CallStack.Peek().ResponseIndex = 0;
             switch (command.Type)
@@ -650,7 +651,7 @@ namespace Intersect.Server.Classes.Entities
                                 Color.FromName(command.Strs[1], Strings.Colors.presets));
                             break;
                         case 1: //Local
-                            PacketSender.SendProximityMsg(ParseEventText(command.Strs[0]), MyClient.Entity.CurrentMap,
+                            PacketSender.SendProximityMsg(ParseEventText(command.Strs[0]), MyClient.Entity.Map,
                                 Color.FromName(command.Strs[1], Strings.Colors.presets));
                             break;
                         case 2: //Global
@@ -675,7 +676,7 @@ namespace Intersect.Server.Classes.Entities
                         if (serverSwitch != null)
                         {
                             serverSwitch.Value = Convert.ToBoolean(command.Ints[2]);
-                            Database.SaveGameObject(serverSwitch);
+                            LegacyDatabase.SaveGameObject(serverSwitch);
                         }
                     }
                     CallStack.Peek().CommandIndex++;
@@ -725,7 +726,7 @@ namespace Intersect.Server.Classes.Entities
                                     break;
                             }
                         }
-                        Database.SaveGameObject(serverVarible);
+                        LegacyDatabase.SaveGameObject(serverVarible);
                     }
 
                     CallStack.Peek().CommandIndex++;
@@ -877,7 +878,7 @@ namespace Intersect.Server.Classes.Entities
                     success = false;
                     if (command.Ints[0] == 0) //Try to give item
                     {
-                        success = MyPlayer.TryGiveItem(new ItemInstance(command.Ints[1], command.Ints[2], -1));
+                        success = MyPlayer.TryGiveItem(new Item(command.Ints[1], command.Ints[2]));
                     }
                     else
                     {
@@ -909,7 +910,7 @@ namespace Intersect.Server.Classes.Entities
                     }
                     break;
                 case EventCommandType.ChangeSprite:
-                    MyPlayer.MySprite = command.Strs[0];
+                    MyPlayer.Sprite = command.Strs[0];
                     PacketSender.SendEntityDataToProximity(MyPlayer);
                     CallStack.Peek().CommandIndex++;
                     break;
@@ -1071,9 +1072,9 @@ namespace Intersect.Server.Classes.Entities
                                     }
                                     direction = targetEntity.Dir;
                                 }
-                                mapNum = targetEntity.CurrentMap;
-                                tileX = targetEntity.CurrentX + xDiff;
-                                tileY = targetEntity.CurrentY + yDiff;
+                                mapNum = targetEntity.Map;
+                                tileX = targetEntity.X + xDiff;
+                                tileY = targetEntity.Y + yDiff;
                             }
                             break;
                     }
@@ -1174,13 +1175,13 @@ namespace Intersect.Server.Classes.Entities
                                     if (targetEntity.GetType() == typeof(Player))
                                     {
                                         PacketSender.SendAnimationToProximity(animNum, 1, targetEntity.MyIndex,
-                                            MyClient.Entity.CurrentMap, 0, 0, direction);
+                                            MyClient.Entity.Map, 0, 0, direction);
                                         //Target Type 1 will be global entity
                                     }
                                     else
                                     {
                                         PacketSender.SendAnimationToProximity(animNum, 2, targetEntity.MyIndex,
-                                            targetEntity.CurrentMap, 0, 0, direction);
+                                            targetEntity.Map, 0, 0, direction);
                                     }
                                     CallStack.Peek().CommandIndex++;
                                     return;
@@ -1212,9 +1213,9 @@ namespace Intersect.Server.Classes.Entities
                                                 break;
                                         }
                                     }
-                                    mapNum = targetEntity.CurrentMap;
-                                    tileX = targetEntity.CurrentX + xDiff;
-                                    tileY = targetEntity.CurrentY + yDiff;
+                                    mapNum = targetEntity.Map;
+                                    tileX = targetEntity.X + xDiff;
+                                    tileY = targetEntity.Y + yDiff;
                                 }
                             }
                             break;

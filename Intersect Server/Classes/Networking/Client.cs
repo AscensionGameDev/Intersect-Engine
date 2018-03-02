@@ -16,7 +16,7 @@ using Lidgren.Network;
 
 namespace Intersect.Server.Classes.Networking
 {
-    using Database = Intersect.Server.Classes.Core.Database;
+    using LegacyDatabase = Intersect.Server.Classes.Core.LegacyDatabase;
 
     public class Client
     {
@@ -24,7 +24,7 @@ namespace Intersect.Server.Classes.Networking
 
         private long mConnectTime;
         protected long mTimeout = 20000; //20 seconds
-        public List<Character> Characters = new List<Character>();
+        public List<LegacyCharacter> Characters = new List<LegacyCharacter>();
 
         //Network Variables
         private IConnection mConnection;
@@ -197,7 +197,7 @@ namespace Intersect.Server.Classes.Networking
             var client = new Client(connection);
             try
             {
-                Globals.Entities[client.EntityIndex] = new Player(client.EntityIndex, client);
+                Globals.Entities[client.EntityIndex] = null;
                 lock (Globals.ClientLock)
                 {
                     Globals.Clients.Add(client);
@@ -215,8 +215,8 @@ namespace Intersect.Server.Classes.Networking
         {
             if (Entity == null) return;
             
-            Task.Run(() => Database.SaveCharacter(Entity));
-            var map = MapInstance.Lookup.Get<MapInstance>(Entity.CurrentMap);
+            Task.Run(() => LegacyDatabase.SaveCharacter(Entity));
+            var map = MapInstance.Lookup.Get<MapInstance>(Entity.Map);
             map?.RemoveEntity(Entity);
 
             //Update parties
@@ -234,10 +234,10 @@ namespace Intersect.Server.Classes.Networking
             }
             Entity.SpawnedNpcs.Clear();
 
-            PacketSender.SendEntityLeave(Entity.MyIndex, (int)EntityTypes.Player, Entity.CurrentMap);
+            PacketSender.SendEntityLeave(Entity.MyIndex, (int)EntityTypes.Player, Entity.Map);
             if (!IsEditor)
             {
-                PacketSender.SendGlobalMsg(Strings.Player.left.ToString(Entity.MyName, Options.GameName));
+                PacketSender.SendGlobalMsg(Strings.Player.left.ToString(Entity.Name, Options.GameName));
             }
             Entity.Dispose();
             Entity = null;
@@ -262,7 +262,7 @@ namespace Intersect.Server.Classes.Networking
                 //? $"Client disconnected ({(client.IsEditor ? "[editor]" : "[client]")})"
                 // TODO: Transmit client information on network start so we can determine editor vs client
                 ? $"Client disconnected ([menu])"
-                : $"Client disconnected ({client.MyAccount}->{client.Entity?.MyName ?? "[editor]"})");
+                : $"Client disconnected ({client.MyAccount}->{client.Entity?.Name ?? "[editor]"})");
 
             client.Logout();
         }
@@ -276,7 +276,7 @@ namespace Intersect.Server.Classes.Networking
         }
     }
 
-    public class Character
+    public class LegacyCharacter
     {
         public int Class = 0;
         public string[] Equipment = new string[Options.EquipmentSlots.Count];
@@ -286,7 +286,7 @@ namespace Intersect.Server.Classes.Networking
         public int Slot = 1;
         public string Sprite = "";
 
-        public Character(int slot, string name, string sprite, string face, int level, int charClass)
+        public LegacyCharacter(int slot, string name, string sprite, string face, int level, int charClass)
         {
             for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {

@@ -12,9 +12,9 @@ using Intersect.Logging;
 using Intersect.Models;
 using Intersect.Network;
 using Intersect.Network.Packets.Reflectable;
+using Intersect.Server.Classes.Database.PlayerData.Characters;
 using Intersect.Server.Classes.Entities;
 using Intersect.Server.Classes.General;
-using Intersect.Server.Classes.Items;
 using Intersect.Server.Classes.Maps;
 using Intersect.Server.Classes.Spells;
 using Intersect.Utilities;
@@ -22,7 +22,7 @@ using Newtonsoft.Json;
 
 namespace Intersect.Server.Classes.Networking
 {
-    using Database = Intersect.Server.Classes.Core.Database;
+    using LegacyDatabase = Intersect.Server.Classes.Core.LegacyDatabase;
 
     public class PacketHandler
     {
@@ -309,13 +309,13 @@ namespace Intersect.Server.Classes.Networking
                 var username = bf.ReadString();
                 var password = bf.ReadString();
 
-                if (!Database.AccountExists(username))
+                if (!LegacyDatabase.AccountExists(username))
                 {
                     PacketSender.SendLoginError(client, Strings.Account.badlogin);
                     return;
                 }
 
-                if (!Database.CheckPassword(username, password))
+                if (!LegacyDatabase.CheckPassword(username, password))
                 {
                     PacketSender.SendLoginError(client, Strings.Account.badlogin);
                     return;
@@ -324,7 +324,7 @@ namespace Intersect.Server.Classes.Networking
                 client.MyAccount = username;
 
                 //Check for ban
-                var isBanned = Database.CheckBan(username, client.GetIp());
+                var isBanned = LegacyDatabase.CheckBan(username, client.GetIp());
                 if (isBanned != null)
                 {
                     PacketSender.SendLoginError(client, isBanned);
@@ -339,12 +339,12 @@ namespace Intersect.Server.Classes.Networking
                         if (user?.IsEditor ?? false) return;
 
                         if (!string.Equals(user?.MyAccount, client.MyAccount, StringComparison.InvariantCultureIgnoreCase)) return;
-                        if (client.Entity != null) Database.SaveCharacter(client.Entity, false);
+                        if (client.Entity != null) LegacyDatabase.SaveCharacter(client.Entity, false);
                         user?.Disconnect();
                     });
                 }
 
-                if (!Database.LoadUser(client))
+                if (!LegacyDatabase.LoadUser(client))
                 {
                     PacketSender.SendLoginError(client, Strings.Account.loadfail);
                     return;
@@ -352,7 +352,7 @@ namespace Intersect.Server.Classes.Networking
 
 
                 //Check for mute
-                var isMuted = Database.CheckMute(username, client.GetIp());
+                var isMuted = LegacyDatabase.CheckMute(username, client.GetIp());
                 if (isMuted != null)
                 {
                     client.Muted = true;
@@ -360,15 +360,13 @@ namespace Intersect.Server.Classes.Networking
                 }
 
                 PacketSender.SendServerConfig(client);
-                Globals.Entities[index] = new Player(index, client);
-                client.Entity = (Player)Globals.Entities[index];
-                Database.GetCharacters(client);
+                LegacyDatabase.GetCharacters(client);
                 //Character selection if more than one.
                 if (Options.MaxCharacters > 1)
                 {
                     PacketSender.SendPlayerCharacters(client);
                 }
-                else if (client.Characters?.Count > 0 && Database.LoadCharacter(client, client.Characters[0].Slot))
+                else if (client.Characters?.Count > 0 && LegacyDatabase.LoadCharacter(client, client.Characters[0].Slot))
                 {
                     PacketSender.SendJoinGame(client);
                 }
@@ -394,7 +392,7 @@ namespace Intersect.Server.Classes.Networking
             if (map != null)
             {
                 PacketSender.SendMap(client, mapNum);
-                if (!client.IsEditor && client.Entity != null && mapNum == client.Entity.CurrentMap)
+                if (!client.IsEditor && client.Entity != null && mapNum == client.Entity.Map)
                 {
                     PacketSender.SendMapGrid(client, MapInstance.Lookup.Get<MapInstance>(mapNum).MapGrid);
                 }
@@ -445,7 +443,7 @@ namespace Intersect.Server.Classes.Networking
                 PacketSender.SendEntityPositionTo(client, client.Entity);
                 return;
             }
-            if (map != client.Entity.CurrentMap || x != client.Entity.CurrentX || y != client.Entity.CurrentY)
+            if (map != client.Entity.Map || x != client.Entity.X || y != client.Entity.Y)
             {
                 PacketSender.SendEntityPositionTo(client, client.Entity);
             }
@@ -481,38 +479,38 @@ namespace Intersect.Server.Classes.Networking
                 {
                     if (client.Power == 2)
                     {
-                        PacketSender.SendProximityMsg(Strings.Chat.local.ToString(client.Entity.MyName, msg),
-                            client.Entity.CurrentMap, CustomColors.AdminLocalChat, client.Entity.MyName);
+                        PacketSender.SendProximityMsg(Strings.Chat.local.ToString(client.Entity.Name, msg),
+                            client.Entity.Map, CustomColors.AdminLocalChat, client.Entity.Name);
                     }
                     else if (client.Power == 1)
                     {
-                        PacketSender.SendProximityMsg(Strings.Chat.local.ToString(client.Entity.MyName, msg),
-                            client.Entity.CurrentMap, CustomColors.ModLocalChat, client.Entity.MyName);
+                        PacketSender.SendProximityMsg(Strings.Chat.local.ToString(client.Entity.Name, msg),
+                            client.Entity.Map, CustomColors.ModLocalChat, client.Entity.Name);
                     }
                     else
                     {
-                        PacketSender.SendProximityMsg(Strings.Chat.local.ToString(client.Entity.MyName, msg),
-                            client.Entity.CurrentMap, CustomColors.LocalChat, client.Entity.MyName);
+                        PacketSender.SendProximityMsg(Strings.Chat.local.ToString(client.Entity.Name, msg),
+                            client.Entity.Map, CustomColors.LocalChat, client.Entity.Name);
                     }
                     PacketSender.SendChatBubble(client.Entity.MyIndex, (int)EntityTypes.GlobalEntity, msg,
-                        client.Entity.CurrentMap);
+                        client.Entity.Map);
                 }
                 else if (cmd == Strings.Chat.allcmd || cmd == "/1" || cmd == Strings.Chat.globalcmd)
                 {
                     if (client.Power == 2)
                     {
-                        PacketSender.SendGlobalMsg(Strings.Chat.Global.ToString(client.Entity.MyName, msg),
-                            CustomColors.AdminGlobalChat, client.Entity.MyName);
+                        PacketSender.SendGlobalMsg(Strings.Chat.Global.ToString(client.Entity.Name, msg),
+                            CustomColors.AdminGlobalChat, client.Entity.Name);
                     }
                     else if (client.Power == 1)
                     {
-                        PacketSender.SendGlobalMsg(Strings.Chat.Global.ToString(client.Entity.MyName, msg),
-                            CustomColors.ModGlobalChat, client.Entity.MyName);
+                        PacketSender.SendGlobalMsg(Strings.Chat.Global.ToString(client.Entity.Name, msg),
+                            CustomColors.ModGlobalChat, client.Entity.Name);
                     }
                     else
                     {
-                        PacketSender.SendGlobalMsg(Strings.Chat.Global.ToString(client.Entity.MyName, msg),
-                            CustomColors.GlobalChat, client.Entity.MyName);
+                        PacketSender.SendGlobalMsg(Strings.Chat.Global.ToString(client.Entity.Name, msg),
+                            CustomColors.GlobalChat, client.Entity.Name);
                     }
                 }
                 else if (cmd == Strings.Chat.partycmd || cmd == "/2")
@@ -520,8 +518,8 @@ namespace Intersect.Server.Classes.Networking
                     if (client.Entity.InParty(client.Entity))
                     {
                         PacketSender.SendPartyMsg(client,
-                            Strings.Chat.party.ToString(client.Entity.MyName, msg), CustomColors.PartyChat,
-                            client.Entity.MyName);
+                            Strings.Chat.party.ToString(client.Entity.Name, msg), CustomColors.PartyChat,
+                            client.Entity.Name);
                     }
                     else
                     {
@@ -532,16 +530,16 @@ namespace Intersect.Server.Classes.Networking
                 {
                     if (client.Power > 0)
                     {
-                        PacketSender.SendAdminMsg(Strings.Chat.admin.ToString(client.Entity.MyName, msg),
-                            CustomColors.AdminChat, client.Entity.MyName);
+                        PacketSender.SendAdminMsg(Strings.Chat.admin.ToString(client.Entity.Name, msg),
+                            CustomColors.AdminChat, client.Entity.Name);
                     }
                 }
                 else if (cmd == Strings.Chat.announcementcmd)
                 {
                     if (client.Power > 0)
                     {
-                        PacketSender.SendGlobalMsg(Strings.Chat.announcement.ToString(client.Entity.MyName, msg),
-                            CustomColors.AnnouncementChat, client.Entity.MyName);
+                        PacketSender.SendGlobalMsg(Strings.Chat.announcement.ToString(client.Entity.Name, msg),
+                            CustomColors.AnnouncementChat, client.Entity.Name);
                     }
                 }
                 else if (cmd == Strings.Chat.pmcmd || cmd == Strings.Chat.messagecmd)
@@ -557,14 +555,14 @@ namespace Intersect.Server.Classes.Networking
                     {
                         if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                         {
-                            if (splitString[1].ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
+                            if (splitString[1].ToLower() == Globals.Clients[i].Entity.Name.ToLower())
                             {
                                 PacketSender.SendPlayerMsg(client,
-                                    Strings.Chat.Private.ToString(client.Entity.MyName, msg), CustomColors.PrivateChat,
-                                    client.Entity.MyName);
+                                    Strings.Chat.Private.ToString(client.Entity.Name, msg), CustomColors.PrivateChat,
+                                    client.Entity.Name);
                                 PacketSender.SendPlayerMsg(Globals.Clients[i],
-                                    Strings.Chat.Private.ToString(client.Entity.MyName, msg), CustomColors.PrivateChat,
-                                    client.Entity.MyName);
+                                    Strings.Chat.Private.ToString(client.Entity.Name, msg), CustomColors.PrivateChat,
+                                    client.Entity.Name);
                                 Globals.Clients[i].Entity.ChatTarget = client.Entity;
                                 client.Entity.ChatTarget = Globals.Clients[i].Entity;
                                 return;
@@ -578,11 +576,11 @@ namespace Intersect.Server.Classes.Networking
                     if (msg.Trim().Length == 0) return;
                     if (client.Entity.ChatTarget != null)
                     {
-                        PacketSender.SendPlayerMsg(client, Strings.Chat.Private.ToString(client.Entity.MyName, msg),
-                            CustomColors.PrivateChat, client.Entity.MyName);
+                        PacketSender.SendPlayerMsg(client, Strings.Chat.Private.ToString(client.Entity.Name, msg),
+                            CustomColors.PrivateChat, client.Entity.Name);
                         PacketSender.SendPlayerMsg(client.Entity.ChatTarget.MyClient,
-                            Strings.Chat.Private.ToString(client.Entity.MyName, msg), CustomColors.PrivateChat,
-                            client.Entity.MyName);
+                            Strings.Chat.Private.ToString(client.Entity.Name, msg), CustomColors.PrivateChat,
+                            client.Entity.Name);
                         client.Entity.ChatTarget.ChatTarget = client.Entity;
                     }
                     else
@@ -620,19 +618,19 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteBytes(packet);
             var usr = bf.ReadString();
             var pass = bf.ReadString();
-            if (!Database.AccountExists(usr))
+            if (!LegacyDatabase.AccountExists(usr))
             {
                 PacketSender.SendLoginError(client, Strings.Account.badlogin);
                 return;
             }
 
-            if (!Database.CheckPassword(usr, pass))
+            if (!LegacyDatabase.CheckPassword(usr, pass))
             {
                 PacketSender.SendLoginError(client, Strings.Account.badlogin);
                 return;
             }
 
-            if (Database.CheckPower(usr) != 2)
+            if (LegacyDatabase.CheckPower(usr) != 2)
             {
                 PacketSender.SendLoginError(client, Strings.Account.badaccess);
                 return;
@@ -667,15 +665,15 @@ namespace Intersect.Server.Classes.Networking
             var map = MapInstance.Lookup.Get<MapInstance>(mapNum);
             if (map == null) return;
             MapInstance.Lookup.Get<MapInstance>(mapNum).Load(bf.ReadString(), MapInstance.Lookup.Get<MapInstance>(mapNum).Revision + 1);
-            Database.SaveGameObject(MapInstance.Lookup.Get<MapInstance>(mapNum));
+            LegacyDatabase.SaveGameObject(MapInstance.Lookup.Get<MapInstance>(mapNum));
             var tileDataLength = bf.ReadInteger();
             var tileData = bf.ReadBytes(tileDataLength);
             if (map.TileData != null) map.TileData = tileData;
             var attributeDataLength = bf.ReadInteger();
             var attributeData = bf.ReadBytes(attributeDataLength);
             map.LoadAttributes(attributeData);
-            Database.SaveMapAttributes(map.Index, map.AttributesData());
-            Database.SaveMapTiles(map.Index, tileData);
+            LegacyDatabase.SaveMapAttributes(map.Index, map.AttributesData());
+            LegacyDatabase.SaveMapTiles(map.Index, tileData);
             Globals.Clients?.ForEach(t =>
             {
                 if (t?.IsEditor ?? false) PacketSender.SendMapList(t);
@@ -687,7 +685,7 @@ namespace Intersect.Server.Classes.Networking
             }
             foreach (var player in players)
             {
-                player.Warp(player.CurrentMap, player.CurrentX, player.CurrentY, player.Dir, false, player.CurrentZ, true);
+                player.Warp(player.Map, player.X, player.Y, player.Dir, false, player.Z, true);
                 PacketSender.SendMap(player.MyClient, (int)mapNum);
             }
             PacketSender.SendMap(client, (int)mapNum, true); //Sends map to everyone/everything in proximity
@@ -704,10 +702,10 @@ namespace Intersect.Server.Classes.Networking
             if (location == -1)
             {
                 var destType = bf.ReadInteger();
-                newMap = Database.AddGameObject(GameObjectType.Map).Index;
+                newMap = LegacyDatabase.AddGameObject(GameObjectType.Map).Index;
                 tmpMap = MapInstance.Lookup.Get<MapInstance>(newMap);
-                Database.SaveGameObject(tmpMap);
-                Database.GenerateMapGrids();
+                LegacyDatabase.SaveGameObject(tmpMap);
+                LegacyDatabase.GenerateMapGrids();
                 PacketSender.SendMap(client, newMap, true);
                 PacketSender.SendMapGridToAll(tmpMap.MapGrid);
                 //FolderDirectory parent = null;
@@ -716,7 +714,7 @@ namespace Intersect.Server.Classes.Networking
                 {
                     MapList.GetList().AddMap(newMap, MapBase.Lookup);
                 }
-                Database.SaveMapFolders();
+                LegacyDatabase.SaveMapFolders();
                 PacketSender.SendMapListToAll();
                 /*else if (destType == 0)
                 {
@@ -753,7 +751,7 @@ namespace Intersect.Server.Classes.Networking
                         if (MapInstance.Lookup.Get<MapInstance>(MapInstance.Lookup.Get<MapInstance>(relativeMap).Up) ==
                             null)
                         {
-                            newMap = Database.AddGameObject(GameObjectType.Map).Index;
+                            newMap = LegacyDatabase.AddGameObject(GameObjectType.Map).Index;
                             tmpMap = MapInstance.Lookup.Get<MapInstance>(newMap);
                             tmpMap.MapGrid = MapInstance.Lookup.Get<MapInstance>(relativeMap).MapGrid;
                             tmpMap.MapGridX = MapInstance.Lookup.Get<MapInstance>(relativeMap).MapGridX;
@@ -766,7 +764,7 @@ namespace Intersect.Server.Classes.Networking
                         if (MapInstance.Lookup.Get<MapInstance>(MapInstance.Lookup.Get<MapInstance>(relativeMap)
                                 .Down) == null)
                         {
-                            newMap = Database.AddGameObject(GameObjectType.Map).Index;
+                            newMap = LegacyDatabase.AddGameObject(GameObjectType.Map).Index;
                             tmpMap = MapInstance.Lookup.Get<MapInstance>(newMap);
                             tmpMap.MapGrid = MapInstance.Lookup.Get<MapInstance>(relativeMap).MapGrid;
                             tmpMap.MapGridX = MapInstance.Lookup.Get<MapInstance>(relativeMap).MapGridX;
@@ -779,7 +777,7 @@ namespace Intersect.Server.Classes.Networking
                         if (MapInstance.Lookup.Get<MapInstance>(MapInstance.Lookup.Get<MapInstance>(relativeMap)
                                 .Left) == null)
                         {
-                            newMap = Database.AddGameObject(GameObjectType.Map).Index;
+                            newMap = LegacyDatabase.AddGameObject(GameObjectType.Map).Index;
                             tmpMap = MapInstance.Lookup.Get<MapInstance>(newMap);
                             tmpMap.MapGrid = MapInstance.Lookup.Get<MapInstance>(relativeMap).MapGrid;
                             tmpMap.MapGridX = MapInstance.Lookup.Get<MapInstance>(relativeMap).MapGridX - 1;
@@ -792,7 +790,7 @@ namespace Intersect.Server.Classes.Networking
                         if (MapInstance.Lookup.Get<MapInstance>(MapInstance.Lookup.Get<MapInstance>(relativeMap)
                                 .Right) == null)
                         {
-                            newMap = Database.AddGameObject(GameObjectType.Map).Index;
+                            newMap = LegacyDatabase.AddGameObject(GameObjectType.Map).Index;
                             tmpMap = MapInstance.Lookup.Get<MapInstance>(newMap);
                             tmpMap.MapGrid = MapInstance.Lookup.Get<MapInstance>(relativeMap).MapGrid;
                             tmpMap.MapGridX = MapInstance.Lookup.Get<MapInstance>(relativeMap).MapGridX + 1;
@@ -804,58 +802,58 @@ namespace Intersect.Server.Classes.Networking
 
                 if (newMap > -1)
                 {
-                    Database.SaveGameObject(MapInstance.Lookup.Get<MapInstance>(relativeMap));
+                    LegacyDatabase.SaveGameObject(MapInstance.Lookup.Get<MapInstance>(relativeMap));
 
-                    if (tmpMap.MapGridX >= 0 && tmpMap.MapGridX < Database.MapGrids[tmpMap.MapGrid].Width)
+                    if (tmpMap.MapGridX >= 0 && tmpMap.MapGridX < LegacyDatabase.MapGrids[tmpMap.MapGrid].Width)
                     {
-                        if (tmpMap.MapGridY + 1 < Database.MapGrids[tmpMap.MapGrid].Height)
+                        if (tmpMap.MapGridY + 1 < LegacyDatabase.MapGrids[tmpMap.MapGrid].Height)
                         {
-                            tmpMap.Down = Database.MapGrids[tmpMap.MapGrid]
+                            tmpMap.Down = LegacyDatabase.MapGrids[tmpMap.MapGrid]
                                 .MyGrid[tmpMap.MapGridX, tmpMap.MapGridY + 1];
                             if (tmpMap.Down > -1)
                             {
                                 MapInstance.Lookup.Get<MapInstance>(tmpMap.Down).Up = newMap;
-                                Database.SaveGameObject(MapInstance.Lookup.Get<MapInstance>(tmpMap.Down));
+                                LegacyDatabase.SaveGameObject(MapInstance.Lookup.Get<MapInstance>(tmpMap.Down));
                             }
                         }
                         if (tmpMap.MapGridY - 1 >= 0)
                         {
-                            tmpMap.Up = Database.MapGrids[tmpMap.MapGrid].MyGrid[tmpMap.MapGridX, tmpMap.MapGridY - 1];
+                            tmpMap.Up = LegacyDatabase.MapGrids[tmpMap.MapGrid].MyGrid[tmpMap.MapGridX, tmpMap.MapGridY - 1];
                             if (tmpMap.Up > -1)
                             {
                                 MapInstance.Lookup.Get<MapInstance>(tmpMap.Up).Down = newMap;
-                                Database.SaveGameObject(MapInstance.Lookup.Get<MapInstance>(tmpMap.Up));
+                                LegacyDatabase.SaveGameObject(MapInstance.Lookup.Get<MapInstance>(tmpMap.Up));
                             }
                         }
                     }
 
-                    if (tmpMap.MapGridY >= 0 && tmpMap.MapGridY < Database.MapGrids[tmpMap.MapGrid].Height)
+                    if (tmpMap.MapGridY >= 0 && tmpMap.MapGridY < LegacyDatabase.MapGrids[tmpMap.MapGrid].Height)
                     {
                         if (tmpMap.MapGridX - 1 >= 0)
                         {
-                            tmpMap.Left = Database.MapGrids[tmpMap.MapGrid]
+                            tmpMap.Left = LegacyDatabase.MapGrids[tmpMap.MapGrid]
                                 .MyGrid[tmpMap.MapGridX - 1, tmpMap.MapGridY];
                             if (tmpMap.Left > -1)
                             {
                                 MapInstance.Lookup.Get<MapInstance>(tmpMap.Left).Right = newMap;
-                                Database.SaveGameObject(MapInstance.Lookup.Get<MapInstance>(tmpMap.Left));
+                                LegacyDatabase.SaveGameObject(MapInstance.Lookup.Get<MapInstance>(tmpMap.Left));
                             }
                         }
 
-                        if (tmpMap.MapGridX + 1 < Database.MapGrids[tmpMap.MapGrid].Width)
+                        if (tmpMap.MapGridX + 1 < LegacyDatabase.MapGrids[tmpMap.MapGrid].Width)
                         {
                             tmpMap.Right =
-                                Database.MapGrids[tmpMap.MapGrid].MyGrid[tmpMap.MapGridX + 1, tmpMap.MapGridY];
+                                LegacyDatabase.MapGrids[tmpMap.MapGrid].MyGrid[tmpMap.MapGridX + 1, tmpMap.MapGridY];
                             if (tmpMap.Right > -1)
                             {
                                 MapInstance.Lookup.Get<MapInstance>(tmpMap.Right).Left = newMap;
-                                Database.SaveGameObject(MapInstance.Lookup.Get<MapInstance>(tmpMap.Right));
+                                LegacyDatabase.SaveGameObject(MapInstance.Lookup.Get<MapInstance>(tmpMap.Right));
                             }
                         }
                     }
 
-                    Database.SaveGameObject(tmpMap);
-                    Database.GenerateMapGrids();
+                    LegacyDatabase.SaveGameObject(tmpMap);
+                    LegacyDatabase.GenerateMapGrids();
                     PacketSender.SendMap(client, newMap, true);
                     PacketSender.SendMapGridToAll(MapInstance.Lookup.Get<MapInstance>(newMap).MapGrid);
                     PacketSender.SendEnterMap(client, newMap);
@@ -868,7 +866,7 @@ namespace Intersect.Server.Classes.Networking
                     {
                         MapList.GetList().AddMap(newMap, MapBase.Lookup);
                     }
-                    Database.SaveMapFolders();
+                    LegacyDatabase.SaveMapFolders();
                     PacketSender.SendMapListToAll();
                 }
             }
@@ -929,7 +927,7 @@ namespace Intersect.Server.Classes.Networking
                     }
                 }
 
-                var attackingTile = new TileHelper(client.Entity.CurrentMap, client.Entity.CurrentX, client.Entity.CurrentY);
+                var attackingTile = new TileHelper(client.Entity.Map, client.Entity.X, client.Entity.Y);
                 switch (client.Entity.Dir)
                 {
                     case 0:
@@ -951,15 +949,15 @@ namespace Intersect.Server.Classes.Networking
                 {
                     if (client.Entity.Equipment[Options.WeaponIndex] >= 0 &&
                         ItemBase.Lookup.Get<ItemBase>(client.Entity
-                            .Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum) !=
+                            .Items[client.Entity.Equipment[Options.WeaponIndex]].ItemNum) !=
                         null)
                     {
                         ItemBase weaponItem = ItemBase.Lookup.Get<ItemBase>(client.Entity
-                            .Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum);
+                            .Items[client.Entity.Equipment[Options.WeaponIndex]].ItemNum);
 
                         //Check for animation
                         var attackAnim = AnimationBase.Lookup.Get<AnimationBase>(ItemBase.Lookup.Get<ItemBase>(
-                                client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum)
+                                client.Entity.Items[client.Entity.Equipment[Options.WeaponIndex]].ItemNum)
                             .AttackAnimation);
                         if (attackAnim != null && attackingTile.TryFix())
                         {
@@ -967,7 +965,7 @@ namespace Intersect.Server.Classes.Networking
                         }
 
                         var weaponInvSlot = client.Entity.Equipment[Options.WeaponIndex];
-                        var invItem = client.Entity.Inventory[weaponInvSlot];
+                        var invItem = client.Entity.Items[weaponInvSlot];
                         var weapon = ItemBase.Lookup.Get<ItemBase>(invItem?.ItemNum ?? -1);
                         var projectileBase = ProjectileBase.Lookup.Get<ProjectileBase>(weapon?.Projectile ?? -1);
 
@@ -995,7 +993,7 @@ namespace Intersect.Server.Classes.Networking
                                         Strings.Get("items", "notenough", "FAILED_TO_DEDUCT_AMMO"),
                                         CustomColors.NoAmmo);
                                     PacketSender.SendPlayerMsg(client,
-                                        Strings.Get("items", "notenough", $"FAILED_TO_DEDUCT_AMMO {client.Entity.CountItemInstances(projectileBase.Ammo)}"),
+                                        Strings.Get("items", "notenough", $"FAILED_TO_DEDUCT_AMMO {client.Entity.CountItems(projectileBase.Ammo)}"),
                                         CustomColors.NoAmmo);
 #endif
                                 }
@@ -1008,10 +1006,10 @@ namespace Intersect.Server.Classes.Networking
                                     CustomColors.NoAmmo);
                             }
 #endif
-                            MapInstance.Lookup.Get<MapInstance>(client.Entity.CurrentMap)
+                            MapInstance.Lookup.Get<MapInstance>(client.Entity.Map)
                                 .SpawnMapProjectile(client.Entity, projectileBase, null, weaponItem,
-                                    client.Entity.CurrentMap,
-                                    client.Entity.CurrentX, client.Entity.CurrentY, client.Entity.CurrentZ,
+                                    client.Entity.Map,
+                                    client.Entity.X, client.Entity.Y, client.Entity.Z,
                                     client.Entity.Dir, null);
                             return;
                         }
@@ -1080,8 +1078,8 @@ namespace Intersect.Server.Classes.Networking
                 PacketSender.SendPlayerMsg(client, Strings.Player.adminjoined,
                     CustomColors.AdminJoined);
             }
-            Globals.Entities[index].Warp(Globals.Entities[index].CurrentMap, Globals.Entities[index].CurrentX,
-                Globals.Entities[index].CurrentY, Globals.Entities[index].Dir, false, Globals.Entities[index].CurrentZ);
+            Globals.Entities[index].Warp(Globals.Entities[index].Map, Globals.Entities[index].X,
+                Globals.Entities[index].Y, Globals.Entities[index].Dir, false, Globals.Entities[index].Z);
             PacketSender.SendEntityDataTo(client, client.Entity);
 
             //Search for login activated events and run them
@@ -1128,25 +1126,25 @@ namespace Intersect.Server.Classes.Networking
                 PacketSender.SendLoginError(client, Strings.Account.invalidemail);
                 return;
             }
-            if (Database.AccountExists(username))
+            if (LegacyDatabase.AccountExists(username))
             {
                 PacketSender.SendLoginError(client, Strings.Account.exists);
             }
             else
             {
-                if (Database.EmailInUse(email))
+                if (LegacyDatabase.EmailInUse(email))
                 {
                     PacketSender.SendLoginError(client, Strings.Account.emailexists);
                 }
                 else
                 {
-                    Database.CreateAccount(client, username, password, email);
+                    LegacyDatabase.CreateAccount(client, username, password, email);
                     PacketSender.SendServerConfig(client);
 
                     //Character selection if more than one.
                     if (Options.MaxCharacters > 1)
                     {
-                        Database.GetCharacters(client);
+                        LegacyDatabase.GetCharacters(client);
                         PacketSender.SendPlayerCharacters(client);
                     }
                     else
@@ -1179,7 +1177,7 @@ namespace Intersect.Server.Classes.Networking
                 PacketSender.SendLoginError(client, Strings.Account.invalidclass);
                 return;
             }
-            if (Database.CharacterNameInUse(name))
+            if (LegacyDatabase.CharacterNameInUse(name))
             {
                 PacketSender.SendLoginError(client, Strings.Account.characterexists);
             }
@@ -1192,7 +1190,7 @@ namespace Intersect.Server.Classes.Networking
                 for (int i = 0; i < Options.MaxCharacters; i++)
                 {
                     bool foundChar = false;
-                    foreach (Character c in client.Characters)
+                    foreach (LegacyCharacter c in client.Characters)
                     {
                         if (c.Slot == i)
                         {
@@ -1215,11 +1213,11 @@ namespace Intersect.Server.Classes.Networking
                 }
 
                 client.Entity = player;
-                player.MyName = name;
+                player.Name = name;
                 player.Class = Class;
                 if (classBase.Sprites.Count > 0)
                 {
-                    player.MySprite = classBase.Sprites[sprite].Sprite;
+                    player.Sprite = classBase.Sprites[sprite].Sprite;
                     player.Face = classBase.Sprites[sprite].Face;
                     player.Gender = classBase.Sprites[sprite].Gender;
                 }
@@ -1252,12 +1250,12 @@ namespace Intersect.Server.Classes.Networking
                 {
                     if (ItemBase.Lookup.Get<ItemBase>(item.ItemNum) != null)
                     {
-                        ItemInstance tempItem = new ItemInstance(item.ItemNum, item.Amount, -1);
+                        Item tempItem = new Item(item.ItemNum, item.Amount, null);
                         player.TryGiveItem(tempItem, false);
                     }
                 }
 
-                Task.Run(() => Database.SaveCharacter(client.Entity, true));
+                Task.Run(() => LegacyDatabase.SaveCharacter(client.Entity, true));
             }
             bf.Dispose();
         }
@@ -1267,21 +1265,21 @@ namespace Intersect.Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var index = bf.ReadInteger();
-            if (index < MapInstance.Lookup.Get<MapInstance>(client.Entity.CurrentMap).MapItems.Count &&
-                MapInstance.Lookup.Get<MapInstance>(client.Entity.CurrentMap).MapItems[index] != null)
+            if (index < MapInstance.Lookup.Get<MapInstance>(client.Entity.Map).MapItems.Count &&
+                MapInstance.Lookup.Get<MapInstance>(client.Entity.Map).MapItems[index] != null)
             {
-                if (MapInstance.Lookup.Get<MapInstance>(client.Entity.CurrentMap).MapItems[index].X ==
-                    client.Entity.CurrentX &&
-                    MapInstance.Lookup.Get<MapInstance>(client.Entity.CurrentMap).MapItems[index].Y ==
-                    client.Entity.CurrentY)
+                if (MapInstance.Lookup.Get<MapInstance>(client.Entity.Map).MapItems[index].X ==
+                    client.Entity.X &&
+                    MapInstance.Lookup.Get<MapInstance>(client.Entity.Map).MapItems[index].Y ==
+                    client.Entity.Y)
                 {
                     if (
                         client.Entity.TryGiveItem(
-                            ((ItemInstance)MapInstance.Lookup.Get<MapInstance>(client.Entity.CurrentMap)
+                            ((Item)MapInstance.Lookup.Get<MapInstance>(client.Entity.Map)
                                 .MapItems[index])))
                     {
                         //Remove Item From Map
-                        MapInstance.Lookup.Get<MapInstance>(client.Entity.CurrentMap).RemoveItem(index);
+                        MapInstance.Lookup.Get<MapInstance>(client.Entity.Map).RemoveItem(index);
                     }
                 }
             }
@@ -1442,7 +1440,7 @@ namespace Intersect.Server.Classes.Networking
                     {
                         mapNum = bf.ReadInteger();
                         MapInstance.Lookup.Get<MapInstance>(mapNum).Name = bf.ReadString();
-                        Database.SaveGameObject(MapInstance.Lookup.Get<MapInstance>(mapNum));
+                        LegacyDatabase.SaveGameObject(MapInstance.Lookup.Get<MapInstance>(mapNum));
                         PacketSender.SendMapListToAll();
                     }
                     break;
@@ -1465,9 +1463,9 @@ namespace Intersect.Server.Classes.Networking
                         mapNum = bf.ReadInteger();
                         var players = MapInstance.Lookup.Get<MapInstance>(mapNum).GetPlayersOnMap();
                         MapList.GetList().DeleteMap(mapNum);
-                        Database.SaveGameObject(MapInstance.Lookup.Get<MapInstance>(mapNum));
-                        Database.DeleteGameObject(MapInstance.Lookup.Get<MapInstance>(mapNum));
-                        Database.GenerateMapGrids();
+                        LegacyDatabase.SaveGameObject(MapInstance.Lookup.Get<MapInstance>(mapNum));
+                        LegacyDatabase.DeleteGameObject(MapInstance.Lookup.Get<MapInstance>(mapNum));
+                        LegacyDatabase.GenerateMapGrids();
                         PacketSender.SendMapListToAll();
                         foreach (var player in players)
                         {
@@ -1478,7 +1476,7 @@ namespace Intersect.Server.Classes.Networking
                     break;
             }
             PacketSender.SendMapListToAll();
-            Database.SaveMapFolders();
+            LegacyDatabase.SaveMapFolders();
             bf.Dispose();
         }
 
@@ -1508,20 +1506,20 @@ namespace Intersect.Server.Classes.Networking
             switch (type)
             {
                 case (int)AdminActions.WarpTo:
-                    client.Entity.Warp(Convert.ToInt32(val1), client.Entity.CurrentX, client.Entity.CurrentY);
+                    client.Entity.Warp(Convert.ToInt32(val1), client.Entity.X, client.Entity.Y);
                     break;
                 case (int)AdminActions.WarpMeTo:
                     for (int i = 0; i < Globals.Clients.Count; i++)
                     {
                         if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                         {
-                            if (val1.ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
+                            if (val1.ToLower() == Globals.Clients[i].Entity.Name.ToLower())
                             {
-                                client.Entity.Warp(Globals.Clients[i].Entity.CurrentMap,
-                                    Globals.Clients[i].Entity.CurrentX, Globals.Clients[i].Entity.CurrentY);
+                                client.Entity.Warp(Globals.Clients[i].Entity.Map,
+                                    Globals.Clients[i].Entity.X, Globals.Clients[i].Entity.Y);
                                 PacketSender.SendPlayerMsg(client, Strings.Player.warpedto.ToString(val1));
                                 PacketSender.SendPlayerMsg(Globals.Clients[i],
-                                    Strings.Player.warpedtoyou.ToString(client.Entity.MyName));
+                                    Strings.Player.warpedtoyou.ToString(client.Entity.Name));
                                 return;
                             }
                         }
@@ -1533,14 +1531,14 @@ namespace Intersect.Server.Classes.Networking
                     {
                         if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                         {
-                            if (val1.ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
+                            if (val1.ToLower() == Globals.Clients[i].Entity.Name.ToLower())
                             {
-                                Globals.Clients[i].Entity.Warp(client.Entity.CurrentMap, client.Entity.CurrentX,
-                                    client.Entity.CurrentY);
+                                Globals.Clients[i].Entity.Warp(client.Entity.Map, client.Entity.X,
+                                    client.Entity.Y);
                                 PacketSender.SendPlayerMsg(client, Strings.Player.haswarpedto.ToString(val1),
-                                    client.Entity.MyName);
+                                    client.Entity.Name);
                                 PacketSender.SendPlayerMsg(Globals.Clients[i],
-                                    Strings.Player.beenwarpedto.ToString(client.Entity.MyName), client.Entity.MyName);
+                                    Strings.Player.beenwarpedto.ToString(client.Entity.Name), client.Entity.Name);
                                 return;
                             }
                         }
@@ -1558,10 +1556,10 @@ namespace Intersect.Server.Classes.Networking
                     {
                         if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                         {
-                            if (val1.ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
+                            if (val1.ToLower() == Globals.Clients[i].Entity.Name.ToLower())
                             {
                                 PacketSender.SendGlobalMsg(Strings.Player.kicked.ToString(
-                                    Globals.Clients[i].Entity.MyName, client.Entity.MyName));
+                                    Globals.Clients[i].Entity.Name, client.Entity.Name));
                                 Globals.Clients[i].Disconnect(); //Kick em'
                                 return;
                             }
@@ -1574,11 +1572,11 @@ namespace Intersect.Server.Classes.Networking
                     {
                         if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                         {
-                            if (val1.ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
+                            if (val1.ToLower() == Globals.Clients[i].Entity.Name.ToLower())
                             {
                                 Globals.Clients[i].Entity.Die(); //Kill em'
                                 PacketSender.SendGlobalMsg(Strings.Player.killed.ToString(
-                                    Globals.Clients[i].Entity.MyName, client.Entity.MyName));
+                                    Globals.Clients[i].Entity.Name, client.Entity.Name));
                                 return;
                             }
                         }
@@ -1590,9 +1588,9 @@ namespace Intersect.Server.Classes.Networking
                     {
                         if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                         {
-                            if (val1.ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
+                            if (val1.ToLower() == Globals.Clients[i].Entity.Name.ToLower())
                             {
-                                Globals.Clients[i].Entity.MySprite = val2;
+                                Globals.Clients[i].Entity.Sprite = val2;
                                 PacketSender.SendEntityDataToProximity(Globals.Clients[i].Entity);
                                 return;
                             }
@@ -1605,7 +1603,7 @@ namespace Intersect.Server.Classes.Networking
                     {
                         if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                         {
-                            if (val1.ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
+                            if (val1.ToLower() == Globals.Clients[i].Entity.Name.ToLower())
                             {
                                 Globals.Clients[i].Entity.Face = val2;
                                 PacketSender.SendEntityDataToProximity(Globals.Clients[i].Entity);
@@ -1621,9 +1619,9 @@ namespace Intersect.Server.Classes.Networking
                     {
                         if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                         {
-                            if (val1.ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
+                            if (val1.ToLower() == Globals.Clients[i].Entity.Name.ToLower())
                             {
-                                if (val1.ToLower() != client.Entity.MyName.ToLower()) //Can't increase your own power!
+                                if (val1.ToLower() != client.Entity.Name.ToLower()) //Can't increase your own power!
                                 {
                                     if (client.Power == 2)
                                     {
@@ -1654,7 +1652,7 @@ namespace Intersect.Server.Classes.Networking
                                         {
                                             PacketSender.SendGlobalMsg(Strings.Player.deadmin.ToString(val1));
                                         }
-                                        Database.SaveUser(targetClient);
+                                        LegacyDatabase.SaveUser(targetClient);
                                         return;
                                     }
                                     else
@@ -1678,13 +1676,13 @@ namespace Intersect.Server.Classes.Networking
                     {
                         if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                         {
-                            if (val1.ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
+                            if (val1.ToLower() == Globals.Clients[i].Entity.Name.ToLower())
                             {
-                                Database.DeleteMute(Globals.Clients[i].MyAccount);
+                                LegacyDatabase.DeleteMute(Globals.Clients[i].MyAccount);
                                 Globals.Clients[i].Muted = false;
                                 Globals.Clients[i].MuteReason = "";
                                 PacketSender.SendGlobalMsg(Strings.Account.unmuted.ToString(
-                                    Globals.Clients[i].Entity.MyName));
+                                    Globals.Clients[i].Entity.Name));
                                 return;
                             }
                         }
@@ -1692,9 +1690,9 @@ namespace Intersect.Server.Classes.Networking
                     PacketSender.SendPlayerMsg(client, Strings.Player.offline);
                     break;
                 case (int)AdminActions.UnBan:
-                    if (Database.AccountExists(val1))
+                    if (LegacyDatabase.AccountExists(val1))
                     {
-                        Database.DeleteBan(val1);
+                        LegacyDatabase.DeleteBan(val1);
                         PacketSender.SendPlayerMsg(client, Strings.Account.unbanned.ToString(val1));
                     }
                     else
@@ -1707,23 +1705,23 @@ namespace Intersect.Server.Classes.Networking
                     {
                         if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                         {
-                            if (val1.ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
+                            if (val1.ToLower() == Globals.Clients[i].Entity.Name.ToLower())
                             {
                                 if (Convert.ToBoolean(val4) == true)
                                 {
-                                    Database.AddMute(Globals.Clients[i], Convert.ToInt32(val2), val3,
-                                        client.Entity.MyName, Globals.Clients[i].GetIp());
+                                    LegacyDatabase.AddMute(Globals.Clients[i], Convert.ToInt32(val2), val3,
+                                        client.Entity.Name, Globals.Clients[i].GetIp());
                                 }
                                 else
                                 {
-                                    Database.AddMute(Globals.Clients[i], Convert.ToInt32(val2), val3,
-                                        client.Entity.MyName, "");
+                                    LegacyDatabase.AddMute(Globals.Clients[i], Convert.ToInt32(val2), val3,
+                                        client.Entity.Name, "");
                                 }
                                 Globals.Clients[i].Muted = true;
-                                Globals.Clients[i].MuteReason = Database.CheckMute(Globals.Clients[i].MyAccount,
+                                Globals.Clients[i].MuteReason = LegacyDatabase.CheckMute(Globals.Clients[i].MyAccount,
                                     Globals.Clients[i].GetIp());
                                 PacketSender.SendGlobalMsg(Strings.Account.muted.ToString(
-                                    Globals.Clients[i].Entity.MyName));
+                                    Globals.Clients[i].Entity.Name));
                                 return;
                             }
                         }
@@ -1735,21 +1733,21 @@ namespace Intersect.Server.Classes.Networking
                     {
                         if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                         {
-                            if (val1.ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
+                            if (val1.ToLower() == Globals.Clients[i].Entity.Name.ToLower())
                             {
                                 if (Convert.ToBoolean(val4) == true)
                                 {
-                                    Database.AddBan(Globals.Clients[i], Convert.ToInt32(val2), val3,
-                                        client.Entity.MyName, Globals.Clients[i].GetIp());
+                                    LegacyDatabase.AddBan(Globals.Clients[i], Convert.ToInt32(val2), val3,
+                                        client.Entity.Name, Globals.Clients[i].GetIp());
                                 }
                                 else
                                 {
-                                    Database.AddBan(Globals.Clients[i], Convert.ToInt32(val2), val3,
-                                        client.Entity.MyName, "");
+                                    LegacyDatabase.AddBan(Globals.Clients[i], Convert.ToInt32(val2), val3,
+                                        client.Entity.Name, "");
                                 }
 
                                 PacketSender.SendGlobalMsg(Strings.Account.banned.ToString(
-                                    Globals.Clients[i].Entity.MyName));
+                                    Globals.Clients[i].Entity.Name));
                                 Globals.Clients[i].Disconnect(); //Kick em'
                                 return;
                             }
@@ -1794,69 +1792,69 @@ namespace Intersect.Server.Classes.Networking
 
                         //Up
                         if (gridY - 1 >= 0 &&
-                            Database.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapNum).MapGrid]
+                            LegacyDatabase.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapNum).MapGrid]
                                 .MyGrid[gridX, gridY - 1] > -1)
                         {
                             if (
                                 MapInstance.Lookup.Get<MapInstance>(
-                                    Database.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapNum).MapGrid]
+                                    LegacyDatabase.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapNum).MapGrid]
                                         .MyGrid[gridX, gridY - 1]) !=
                                 null)
                                 MapInstance.Lookup.Get<MapInstance>(
-                                        Database.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapNum).MapGrid]
+                                        LegacyDatabase.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapNum).MapGrid]
                                             .MyGrid[gridX, gridY - 1])
                                     .ClearConnections((int)Directions.Down);
                         }
 
                         //Down
-                        if (gridY + 1 < Database.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapNum).MapGrid].Height &&
-                            Database.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapNum).MapGrid]
+                        if (gridY + 1 < LegacyDatabase.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapNum).MapGrid].Height &&
+                            LegacyDatabase.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapNum).MapGrid]
                                 .MyGrid[gridX, gridY + 1] > -1)
                         {
                             if (
                                 MapInstance.Lookup.Get<MapInstance>(
-                                    Database.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapNum).MapGrid]
+                                    LegacyDatabase.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapNum).MapGrid]
                                         .MyGrid[gridX, gridY + 1]) !=
                                 null)
                                 MapInstance.Lookup.Get<MapInstance>(
-                                        Database.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapNum).MapGrid]
+                                        LegacyDatabase.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapNum).MapGrid]
                                             .MyGrid[gridX, gridY + 1])
                                     .ClearConnections((int)Directions.Up);
                         }
 
                         //Left
                         if (gridX - 1 >= 0 &&
-                            Database.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapNum).MapGrid]
+                            LegacyDatabase.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapNum).MapGrid]
                                 .MyGrid[gridX - 1, gridY] > -1)
                         {
                             if (
                                 MapInstance.Lookup.Get<MapInstance>(
-                                    Database.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapNum).MapGrid]
+                                    LegacyDatabase.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapNum).MapGrid]
                                         .MyGrid[gridX - 1, gridY]) !=
                                 null)
                                 MapInstance.Lookup.Get<MapInstance>(
-                                        Database.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapNum).MapGrid]
+                                        LegacyDatabase.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapNum).MapGrid]
                                             .MyGrid[gridX - 1, gridY])
                                     .ClearConnections((int)Directions.Right);
                         }
 
                         //Right
-                        if (gridX + 1 < Database.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapNum).MapGrid].Width &&
-                            Database.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapNum).MapGrid]
+                        if (gridX + 1 < LegacyDatabase.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapNum).MapGrid].Width &&
+                            LegacyDatabase.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapNum).MapGrid]
                                 .MyGrid[gridX + 1, gridY] > -1)
                         {
                             if (
                                 MapInstance.Lookup.Get<MapInstance>(
-                                    Database.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapNum).MapGrid]
+                                    LegacyDatabase.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapNum).MapGrid]
                                         .MyGrid[gridX + 1, gridY]) !=
                                 null)
                                 MapInstance.Lookup.Get<MapInstance>(
-                                        Database.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapNum).MapGrid]
+                                        LegacyDatabase.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapNum).MapGrid]
                                             .MyGrid[gridX + 1, gridY])
                                     .ClearConnections((int)Directions.Left);
                         }
 
-                        Database.GenerateMapGrids();
+                        LegacyDatabase.GenerateMapGrids();
                         if (MapInstance.Lookup.IndexKeys.Contains(curMap))
                         {
                             mapGrid = MapInstance.Lookup.Get<MapInstance>(curMap).MapGrid;
@@ -1886,24 +1884,24 @@ namespace Intersect.Server.Classes.Networking
                 {
                     long xOffset = MapInstance.Lookup.Get<MapInstance>(linkMap).MapGridX - gridX;
                     long yOffset = MapInstance.Lookup.Get<MapInstance>(linkMap).MapGridY - gridY;
-                    for (int x = 0; x < Database.MapGrids[adjacentGrid].Width; x++)
+                    for (int x = 0; x < LegacyDatabase.MapGrids[adjacentGrid].Width; x++)
                     {
-                        for (int y = 0; y < Database.MapGrids[adjacentGrid].Height; y++)
+                        for (int y = 0; y < LegacyDatabase.MapGrids[adjacentGrid].Height; y++)
                         {
-                            if (x + xOffset >= 0 && x + xOffset < Database.MapGrids[linkGrid].Width &&
+                            if (x + xOffset >= 0 && x + xOffset < LegacyDatabase.MapGrids[linkGrid].Width &&
                                 y + yOffset >= 0 &&
-                                y + yOffset < Database.MapGrids[linkGrid].Height)
+                                y + yOffset < LegacyDatabase.MapGrids[linkGrid].Height)
                             {
-                                if (Database.MapGrids[adjacentGrid].MyGrid[x, y] != -1 &&
-                                    Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset] != -1)
+                                if (LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x, y] != -1 &&
+                                    LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset] != -1)
                                 {
                                     //Incompatible Link!
                                     PacketSender.SendAlert(client, Strings.Mapping.linkfail,
                                         Strings.Mapping.linkfailerror.ToString(MapBase.GetName(linkMap),
                                             MapBase.GetName(adjacentMap),
-                                            MapBase.GetName(Database.MapGrids[adjacentGrid].MyGrid[x, y]),
+                                            MapBase.GetName(LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x, y]),
                                             MapBase.GetName(
-                                                Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset])));
+                                                LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset])));
                                     return;
                                 }
                             }
@@ -1911,93 +1909,93 @@ namespace Intersect.Server.Classes.Networking
                     }
                     if (canLink)
                     {
-                        for (int x = -1; x < Database.MapGrids[adjacentGrid].Width + 1; x++)
+                        for (int x = -1; x < LegacyDatabase.MapGrids[adjacentGrid].Width + 1; x++)
                         {
-                            for (int y = -1; y < Database.MapGrids[adjacentGrid].Height + 1; y++)
+                            for (int y = -1; y < LegacyDatabase.MapGrids[adjacentGrid].Height + 1; y++)
                             {
-                                if (x + xOffset >= 0 && x + xOffset < Database.MapGrids[linkGrid].Width &&
-                                    y + yOffset >= 0 && y + yOffset < Database.MapGrids[linkGrid].Height)
+                                if (x + xOffset >= 0 && x + xOffset < LegacyDatabase.MapGrids[linkGrid].Width &&
+                                    y + yOffset >= 0 && y + yOffset < LegacyDatabase.MapGrids[linkGrid].Height)
                                 {
-                                    if (Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset] != -1)
+                                    if (LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset] != -1)
                                     {
                                         bool inXBounds = x > -1 &&
-                                                         x < Database.MapGrids[adjacentGrid].Width;
+                                                         x < LegacyDatabase.MapGrids[adjacentGrid].Width;
                                         bool inYBounds = y > -1 &&
-                                                         y < Database.MapGrids[adjacentGrid].Height;
+                                                         y < LegacyDatabase.MapGrids[adjacentGrid].Height;
                                         if (inXBounds && inYBounds)
-                                            Database.MapGrids[adjacentGrid].MyGrid[x, y] =
-                                                Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
+                                            LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x, y] =
+                                                LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
 
                                         if (inXBounds && y - 1 >= 0 &&
-                                            Database.MapGrids[adjacentGrid].MyGrid[x, y - 1] > -1)
+                                            LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x, y - 1] > -1)
                                         {
                                             MapInstance.Lookup.Get<MapInstance>(
-                                                    Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]).Up =
-                                                Database.MapGrids[adjacentGrid].MyGrid[x, y - 1];
+                                                    LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]).Up =
+                                                LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x, y - 1];
                                             MapInstance.Lookup
-                                                    .Get<MapInstance>(Database.MapGrids[adjacentGrid].MyGrid[x, y - 1])
+                                                    .Get<MapInstance>(LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x, y - 1])
                                                     .Down =
-                                                Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
-                                            Database.SaveGameObject(
-                                                MapInstance.Lookup.Get<MapInstance>(Database.MapGrids[adjacentGrid]
+                                                LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
+                                            LegacyDatabase.SaveGameObject(
+                                                MapInstance.Lookup.Get<MapInstance>(LegacyDatabase.MapGrids[adjacentGrid]
                                                     .MyGrid[x, y - 1]));
                                         }
 
-                                        if (inXBounds && y + 1 < Database.MapGrids[adjacentGrid].Height &&
-                                            Database.MapGrids[adjacentGrid].MyGrid[x, y + 1] > -1)
+                                        if (inXBounds && y + 1 < LegacyDatabase.MapGrids[adjacentGrid].Height &&
+                                            LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x, y + 1] > -1)
                                         {
                                             MapInstance.Lookup.Get<MapInstance>(
-                                                    Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]).Down =
-                                                Database.MapGrids[adjacentGrid].MyGrid[x, y + 1];
+                                                    LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]).Down =
+                                                LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x, y + 1];
                                             MapInstance.Lookup
-                                                    .Get<MapInstance>(Database.MapGrids[adjacentGrid].MyGrid[x, y + 1])
+                                                    .Get<MapInstance>(LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x, y + 1])
                                                     .Up =
-                                                Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
-                                            Database.SaveGameObject(
-                                                MapInstance.Lookup.Get<MapInstance>(Database.MapGrids[adjacentGrid]
+                                                LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
+                                            LegacyDatabase.SaveGameObject(
+                                                MapInstance.Lookup.Get<MapInstance>(LegacyDatabase.MapGrids[adjacentGrid]
                                                     .MyGrid[x, y + 1]));
                                         }
 
                                         if (inYBounds && x - 1 >= 0 &&
-                                            Database.MapGrids[adjacentGrid].MyGrid[x - 1, y] > -1)
+                                            LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x - 1, y] > -1)
                                         {
                                             MapInstance.Lookup.Get<MapInstance>(
-                                                    Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]).Left =
-                                                Database.MapGrids[adjacentGrid].MyGrid[x - 1, y];
+                                                    LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]).Left =
+                                                LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x - 1, y];
                                             MapInstance.Lookup
-                                                    .Get<MapInstance>(Database.MapGrids[adjacentGrid].MyGrid[x - 1, y])
+                                                    .Get<MapInstance>(LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x - 1, y])
                                                     .Right =
-                                                Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
-                                            Database.SaveGameObject(
-                                                MapInstance.Lookup.Get<MapInstance>(Database.MapGrids[adjacentGrid]
+                                                LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
+                                            LegacyDatabase.SaveGameObject(
+                                                MapInstance.Lookup.Get<MapInstance>(LegacyDatabase.MapGrids[adjacentGrid]
                                                     .MyGrid[x - 1, y]));
                                         }
 
-                                        if (inYBounds && x + 1 < Database.MapGrids[adjacentGrid].Width &&
-                                            Database.MapGrids[adjacentGrid].MyGrid[x + 1, y] > -1)
+                                        if (inYBounds && x + 1 < LegacyDatabase.MapGrids[adjacentGrid].Width &&
+                                            LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x + 1, y] > -1)
                                         {
                                             MapInstance.Lookup.Get<MapInstance>(
-                                                    Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]).Right
+                                                    LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]).Right
                                                 =
-                                                Database.MapGrids[adjacentGrid].MyGrid[x + 1, y];
+                                                LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x + 1, y];
                                             MapInstance.Lookup
-                                                    .Get<MapInstance>(Database.MapGrids[adjacentGrid].MyGrid[x + 1, y])
+                                                    .Get<MapInstance>(LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x + 1, y])
                                                     .Left =
-                                                Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
-                                            Database.SaveGameObject(
-                                                MapInstance.Lookup.Get<MapInstance>(Database.MapGrids[adjacentGrid]
+                                                LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
+                                            LegacyDatabase.SaveGameObject(
+                                                MapInstance.Lookup.Get<MapInstance>(LegacyDatabase.MapGrids[adjacentGrid]
                                                     .MyGrid[x + 1, y]));
                                         }
 
-                                        Database.SaveGameObject(
+                                        LegacyDatabase.SaveGameObject(
                                             MapInstance.Lookup.Get<MapInstance>(
-                                                Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]));
+                                                LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]));
                                     }
                                 }
                             }
                         }
-                        Database.SaveGameObject(MapInstance.Lookup.Get<MapInstance>(linkMap));
-                        Database.GenerateMapGrids();
+                        LegacyDatabase.SaveGameObject(MapInstance.Lookup.Get<MapInstance>(linkMap));
+                        LegacyDatabase.GenerateMapGrids();
                         PacketSender.SendMapGridToAll(MapInstance.Lookup.Get<MapInstance>(adjacentMap).MapGrid);
                     }
                 }
@@ -2083,7 +2081,7 @@ namespace Intersect.Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var type = (GameObjectType)bf.ReadInteger();
-            var obj = Database.AddGameObject(type);
+            var obj = LegacyDatabase.AddGameObject(type);
             PacketSender.SendGameObjectToAll(obj);
             bf.Dispose();
         }
@@ -2183,7 +2181,7 @@ namespace Intersect.Server.Classes.Networking
                 {
                     Globals.KillNpcsOf((NpcBase)obj);
                 }
-                Database.DeleteGameObject(obj);
+                LegacyDatabase.DeleteGameObject(obj);
                 PacketSender.SendGameObjectToAll(obj, true);
             }
             bf.Dispose();
@@ -2273,7 +2271,7 @@ namespace Intersect.Server.Classes.Networking
                 }
                 JsonConvert.PopulateObject(bf.ReadString(), obj, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
                 PacketSender.SendGameObjectToAll(obj, false);
-                Database.SaveGameObject(obj);
+                LegacyDatabase.SaveGameObject(obj);
             }
             bf.Dispose();
         }
@@ -2283,7 +2281,7 @@ namespace Intersect.Server.Classes.Networking
             if (client.IsEditor)
             {
                 TimeBase.GetTimeBase().LoadTimeBase(packet);
-                Database.SaveTime();
+                LegacyDatabase.SaveTime();
                 ServerTime.Init();
                 PacketSender.SendTimeBaseToAllEditors();
             }
@@ -2338,7 +2336,7 @@ namespace Intersect.Server.Classes.Networking
                 if (client.Entity.PartyRequester.IsValidPlayer)
                 {
                     PacketSender.SendPlayerMsg(client.Entity.PartyRequester.MyClient,
-                        Strings.Parties.declined.ToString(client.Entity.MyName), CustomColors.Declined);
+                        Strings.Parties.declined.ToString(client.Entity.Name), CustomColors.Declined);
 
                     if (client.Entity.PartyRequests.ContainsKey(client.Entity.PartyRequester))
                     {
@@ -2430,7 +2428,7 @@ namespace Intersect.Server.Classes.Networking
                     else
                     {
                         PacketSender.SendPlayerMsg(client, Strings.Trading.busy.ToString(
-                            client.Entity.TradeRequester.MyName), Color.Red);
+                            client.Entity.TradeRequester.Name), Color.Red);
                     }
                 }
 
@@ -2449,7 +2447,7 @@ namespace Intersect.Server.Classes.Networking
                 if (client.Entity.TradeRequester.IsValidPlayer)
                 {
                     PacketSender.SendPlayerMsg(client.Entity.TradeRequester.MyClient,
-                        Strings.Trading.declined.ToString(client.Entity.MyName), CustomColors.Declined);
+                        Strings.Trading.declined.ToString(client.Entity.Name), CustomColors.Declined);
                     if (client.Entity.TradeRequests.ContainsKey(client.Entity.TradeRequester))
                     {
                         client.Entity.TradeRequests[client.Entity.TradeRequester] = Globals.System.GetTimeMs() +
@@ -2490,7 +2488,7 @@ namespace Intersect.Server.Classes.Networking
             client.Entity.TradeAccepted = true;
             if (((Player)Globals.Entities[client.Entity.Trading]).TradeAccepted == true)
             {
-                ItemInstance[] t = new ItemInstance[Options.MaxInvItems];
+                Item[] t = new Item[Options.MaxInvItems];
 
                 //Swap the trade boxes over, then return the trade boxes to their new owners!
                 t = client.Entity.Trade;
@@ -2530,11 +2528,11 @@ namespace Intersect.Server.Classes.Networking
                         foreach (var tileset in TilesetBase.Lookup)
                             if (tileset.Value.Name == value) return;
                     }
-                    var obj = Database.AddGameObject(type);
+                    var obj = LegacyDatabase.AddGameObject(type);
                     if (type == GameObjectType.Tileset)
                     {
                         ((TilesetBase)obj).Name = value;
-                        Database.SaveGameObject(obj);
+                        LegacyDatabase.SaveGameObject(obj);
                     }
                     PacketSender.SendGameObjectToAll(obj, false, i != count - 1);
                 }
@@ -2608,27 +2606,27 @@ namespace Intersect.Server.Classes.Networking
             if (Globals.Entities[target] != null && Globals.Entities[target].GetEntityType() == EntityTypes.Player &&
                 target != client.Entity.MyIndex)
             {
-                var charId = Database.GetCharacterId(((Player)Globals.Entities[target]).MyName);
+                var charId = LegacyDatabase.GetCharacterId(((Player)Globals.Entities[target]).Name);
                 if (charId != -1)
                 {
                     if (!client.Entity.Friends.ContainsKey(charId)) // Incase one user deleted friend then re-requested
                     {
-                        client.Entity.Friends.Add(charId, ((Player)Globals.Entities[target]).MyName);
+                        client.Entity.Friends.Add(charId, ((Player)Globals.Entities[target]).Name);
                         PacketSender.SendPlayerMsg(client,
-                            Strings.Friends.notification.ToString(((Player)Globals.Entities[target]).MyName),
+                            Strings.Friends.notification.ToString(((Player)Globals.Entities[target]).Name),
                             CustomColors.Accepted);
                         PacketSender.SendFriends(client);
                     }
                 }
 
-                charId = Database.GetCharacterId(client.Entity.MyName);
+                charId = LegacyDatabase.GetCharacterId(client.Entity.Name);
                 if (charId != -1)
                 {
                     if (!client.Entity.Friends.ContainsKey(charId)) // Incase one user deleted friend then re-requested
                     {
-                        ((Player)Globals.Entities[target]).Friends.Add(charId, client.Entity.MyName);
+                        ((Player)Globals.Entities[target]).Friends.Add(charId, client.Entity.Name);
                         PacketSender.SendPlayerMsg(((Player)Globals.Entities[target]).MyClient,
-                            Strings.Friends.accept.ToString(client.Entity.MyName), CustomColors.Accepted);
+                            Strings.Friends.accept.ToString(client.Entity.Name), CustomColors.Accepted);
                         PacketSender.SendFriends(((Player)Globals.Entities[target]).MyClient);
                     }
                 }
@@ -2669,12 +2667,12 @@ namespace Intersect.Server.Classes.Networking
             string name = bf.ReadString();
 
             //Don't add yourself!
-            if (name.ToLower() == client.Entity.MyName.ToLower())
+            if (name.ToLower() == client.Entity.Name.ToLower())
             {
                 return;
             }
 
-            var charId = Database.GetCharacterId(name);
+            var charId = LegacyDatabase.GetCharacterId(name);
             if (charId != -1)
             {
                 if (!client.Entity.Friends.ContainsKey(charId))
@@ -2684,7 +2682,7 @@ namespace Intersect.Server.Classes.Networking
                     {
                         if (c != null && c.Entity != null)
                         {
-                            if (name.ToLower() == c.Entity.MyName.ToLower())
+                            if (name.ToLower() == c.Entity.Name.ToLower())
                             {
                                 c.Entity.FriendRequest(client.Entity);
                                 return;
@@ -2707,12 +2705,12 @@ namespace Intersect.Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             string name = bf.ReadString();
-            var charId = Database.GetCharacterId(name);
+            var charId = LegacyDatabase.GetCharacterId(name);
             if (charId != -1)
             {
                 if (client.Entity.Friends.ContainsKey(charId))
                 {
-                    Database.DeleteCharacterFriend(client.Entity, charId);
+                    LegacyDatabase.DeleteCharacterFriend(client.Entity, charId);
                     client.Entity.Friends.Remove(charId);
                     PacketSender.SendPlayerMsg(client, Strings.Friends.remove, CustomColors.Declined);
                     PacketSender.SendFriends(client);
@@ -2727,7 +2725,7 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteBytes(packet);
             var charSlot = bf.ReadInteger();
 
-            if (Database.LoadCharacter(client, charSlot))
+            if (LegacyDatabase.LoadCharacter(client, charSlot))
             {
                 PacketSender.SendJoinGame(client);
             }
@@ -2740,8 +2738,8 @@ namespace Intersect.Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var charSlot = bf.ReadInteger();
-            Database.DeleteCharacter(client, charSlot);
-            Database.GetCharacters(client);
+            LegacyDatabase.DeleteCharacter(client, charSlot);
+            LegacyDatabase.GetCharacters(client);
             PacketSender.SendLoginError(client, Strings.Account.deletechar,
                 Strings.Account.deleted);
             PacketSender.SendPlayerCharacters(client);

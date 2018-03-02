@@ -22,7 +22,7 @@ namespace Intersect.Server.Classes.General
         public static List<Client> Clients = new List<Client>();
         public static IDictionary<Guid, Client> ClientLookup = new Dictionary<Guid, Client>();
 
-        public static List<Entity> Entities = new List<Entity>();
+        public static List<EntityInstance> Entities = new List<EntityInstance>();
 
         //Game helping stuff
         public static Random Rand = new Random();
@@ -50,7 +50,7 @@ namespace Intersect.Server.Classes.General
             return Entities.Count - 1;
         }
 
-        public static void AddEntity(Entity newEntity)
+        public static void AddEntity(EntityInstance newEntity)
         {
             var slot = FindOpenEntity();
             Entities[slot] = newEntity;

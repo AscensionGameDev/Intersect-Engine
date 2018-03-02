@@ -40,7 +40,7 @@ namespace Intersect.Server.Classes.General
         }
 
         public static int CalculateDamage(int baseDamage, DamageType damageType, Stats scalingStat, int scaling,
-            double critMultiplier, Entity attacker, Entity victim)
+            double critMultiplier, EntityInstance attacker, EntityInstance victim)
         {
             var expression = "";
             switch (damageType)

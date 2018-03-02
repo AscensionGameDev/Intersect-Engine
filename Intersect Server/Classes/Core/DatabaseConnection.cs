@@ -60,7 +60,7 @@ namespace Intersect.Server.Classes.Core
         public void Backup()
         {
             var backupsToKeep = 360;
-            Database.CheckDirectories();
+            LegacyDatabase.CheckDirectories();
             var sw = new Stopwatch();
             sw.Start();
             lock (mDbLock)
@@ -80,7 +80,7 @@ namespace Intersect.Server.Classes.Core
                     {
                         // Create the compressed file.
                         using (var outFile =
-                            File.Create($"{Database.DIRECTORY_BACKUPS}/{mDbFileName}_{DateTime.Now:yyyy-MM-dd hh-mm-ss}.db.gz"))
+                            File.Create($"{LegacyDatabase.DIRECTORY_BACKUPS}/{mDbFileName}_{DateTime.Now:yyyy-MM-dd hh-mm-ss}.db.gz"))
                         {
                             using (var compressionStream =
                                 new GZipStream(outFile,
