@@ -5,16 +5,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.Server.Classes.Database;
+using Intersect.Server.Classes.Database.PlayerData.Characters;
 using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Maps;
 using Intersect.Server.Classes.Misc.Pathfinding;
 using Intersect.Server.Classes.Networking;
 using Intersect.Server.Classes.Spells;
-using Intersect.Server.Classes.Items;
+
 
 namespace Intersect.Server.Classes.Entities
 {
-    public class Npc : Entity
+    public class Npc : EntityInstance
     {
         //Behaviour
         public byte Behaviour;
@@ -30,7 +32,7 @@ namespace Intersect.Server.Classes.Entities
         public NpcBase MyBase;
 
         //Targetting
-        public Entity MyTarget;
+        public EntityInstance MyTarget;
 
         //Pathfinding
         private Pathfinder mPathFinder;
@@ -42,10 +44,10 @@ namespace Intersect.Server.Classes.Entities
         public long RespawnTime;
 
         public Npc(int index, NpcBase myBase, bool despawnable = false)
-            : base(index)
+            : base(index, new EntityBase())
         {
-            MyName = myBase.Name;
-            MySprite = myBase.Sprite;
+            Name = myBase.Name;
+            Sprite = myBase.Sprite;
             Level = myBase.Level;
             MyBase = myBase;
             Despawnable = despawnable;
@@ -65,7 +67,7 @@ namespace Intersect.Server.Classes.Entities
             {
                 if (Globals.Rand.Next(1, 10001) <= drop.Chance * 100 && ItemBase.Lookup.Get<ItemBase>(drop.ItemNum) != null)
                 {
-                    Inventory.Add(new ItemInstance(drop.ItemNum,  drop.Amount, -1));
+                    Items.Add(new Item(drop.ItemNum,  drop.Amount));
                 }
             }
 
@@ -81,16 +83,16 @@ namespace Intersect.Server.Classes.Entities
             return EntityTypes.GlobalEntity;
         }
 
-        public override void Die(int dropitems = 100, Entity killer = null)
+        public override void Die(int dropitems = 100, EntityInstance killer = null)
         {
             base.Die(dropitems, killer);
-            MapInstance.Lookup.Get<MapInstance>(CurrentMap).RemoveEntity(this);
-            PacketSender.SendEntityLeave(MyIndex, (int) EntityTypes.GlobalEntity, CurrentMap);
+            MapInstance.Lookup.Get<MapInstance>(Map).RemoveEntity(this);
+            PacketSender.SendEntityLeave(MyIndex, (int) EntityTypes.GlobalEntity, Map);
             Globals.Entities[MyIndex] = null;
         }
 
         //Targeting
-        public void AssignTarget(Entity en)
+        public void AssignTarget(EntityInstance en)
         {
             if (MyBase.Behavior == (int) NpcBehavior.Friendly) return;
             if (en.GetType() == typeof(Projectile))
@@ -124,7 +126,7 @@ namespace Intersect.Server.Classes.Entities
             PacketSender.SendNpcAggressionToProximity(this);
         }
 
-        public override bool CanAttack(Entity en, SpellBase spell)
+        public override bool CanAttack(EntityInstance en, SpellBase spell)
         {
             if (!base.CanAttack(en, spell)) return false;
             if (en.GetType() == typeof(Npc) && ((Npc) en).MyBase.Behavior == (int) NpcBehavior.Friendly) return false;
@@ -149,7 +151,7 @@ namespace Intersect.Server.Classes.Entities
             return true;
         }
 
-        public override void TryAttack(Entity enemy)
+        public override void TryAttack(EntityInstance enemy)
         {
             if (enemy.IsDisposed) return;
             if (!CanAttack(enemy, null)) return;
@@ -172,11 +174,11 @@ namespace Intersect.Server.Classes.Entities
                 base.TryAttack(enemy, MyBase.Damage, (DamageType) MyBase.DamageType,
                     (Stats) MyBase.ScalingStat,
                     MyBase.Scaling, MyBase.CritChance, Options.CritMultiplier, deadAnimations, aliveAnimations);
-                PacketSender.SendEntityAttack(this, (int) EntityTypes.GlobalEntity, CurrentMap, CalculateAttackTime());
+                PacketSender.SendEntityAttack(this, (int) EntityTypes.GlobalEntity, Map, CalculateAttackTime());
             }
         }
 
-        public bool CanNpcCombat(Entity enemy, bool friendly = false)
+        public bool CanNpcCombat(EntityInstance enemy, bool friendly = false)
         {
             //Check for NpcVsNpc Combat, both must be enabled and the attacker must have it as an enemy or attack all types of npc.
             if (!friendly)
@@ -321,7 +323,7 @@ namespace Intersect.Server.Classes.Entities
                                             if (spell.CastAnimation > -1)
                                             {
                                                 PacketSender.SendAnimationToProximity(spell.CastAnimation, 1,
-                                                    MyIndex, CurrentMap, 0, 0, Dir);
+                                                    MyIndex, Map, 0, 0, Dir);
                                                 //Target Type 1 will be global entity
                                             }
 
@@ -341,7 +343,7 @@ namespace Intersect.Server.Classes.Entities
         //General Updating
         public override void Update(long timeMs)
         {
-            var curMapLink = CurrentMap;
+            var curMapLink = Map;
             base.Update(timeMs);
             if (MoveTimer < Globals.System.GetTimeMs())
             {
@@ -353,9 +355,9 @@ namespace Intersect.Server.Classes.Entities
                 {
                     if (!MyTarget.IsDead())
                     {
-                        targetMap = MyTarget.CurrentMap;
-                        targetX = MyTarget.CurrentX;
-                        targetY = MyTarget.CurrentY;
+                        targetMap = MyTarget.Map;
+                        targetX = MyTarget.X;
+                        targetY = MyTarget.Y;
                         var targetStatuses = MyTarget.Statuses.Values.ToArray();
                         foreach (var targetStatus in targetStatuses)
                         {
@@ -384,19 +386,19 @@ namespace Intersect.Server.Classes.Entities
                 if (targetMap > -1)
                 {
                     //Check if target map is on one of the surrounding maps, if not then we are not even going to look.
-                    if (targetMap != CurrentMap)
+                    if (targetMap != Map)
                     {
-                        if (MapInstance.Lookup.Get<MapInstance>(CurrentMap).SurroundingMaps.Count > 0)
+                        if (MapInstance.Lookup.Get<MapInstance>(Map).SurroundingMaps.Count > 0)
                         {
                             for (var x = 0;
-                                x < MapInstance.Lookup.Get<MapInstance>(CurrentMap).SurroundingMaps.Count;
+                                x < MapInstance.Lookup.Get<MapInstance>(Map).SurroundingMaps.Count;
                                 x++)
                             {
-                                if (MapInstance.Lookup.Get<MapInstance>(CurrentMap).SurroundingMaps[x] == targetMap)
+                                if (MapInstance.Lookup.Get<MapInstance>(Map).SurroundingMaps[x] == targetMap)
                                 {
                                     break;
                                 }
-                                if (x == MapInstance.Lookup.Get<MapInstance>(CurrentMap).SurroundingMaps.Count - 1)
+                                if (x == MapInstance.Lookup.Get<MapInstance>(Map).SurroundingMaps.Count - 1)
                                 {
                                     targetMap = -1;
                                 }
@@ -527,23 +529,23 @@ namespace Intersect.Server.Classes.Entities
                 LastRandomMove = Globals.System.GetTimeMs() + Globals.Rand.Next(1000, 3000);
             }
             //If we switched maps, lets update the maps
-            if (curMapLink != CurrentMap)
+            if (curMapLink != Map)
             {
                 if (curMapLink != -1)
                 {
                     MapInstance.Lookup.Get<MapInstance>(curMapLink).RemoveEntity(this);
                 }
-                if (CurrentMap > -1)
+                if (Map > -1)
                 {
-                    MapInstance.Lookup.Get<MapInstance>(CurrentMap).AddEntity(this);
+                    MapInstance.Lookup.Get<MapInstance>(Map).AddEntity(this);
                 }
             }
         }
 
         private void TryFindNewTarget(int avoidIndex = -1)
         {
-            var maps = MapInstance.Lookup.Get<MapInstance>(CurrentMap).GetSurroundingMaps(true);
-            var possibleTargets = new List<Entity>();
+            var maps = MapInstance.Lookup.Get<MapInstance>(Map).GetSurroundingMaps(true);
+            var possibleTargets = new List<EntityInstance>();
             int closestRange = Range + 1; //If the range is out of range we didn't find anything.
             int closestIndex = -1;
             foreach (var map in maps)
@@ -601,19 +603,19 @@ namespace Intersect.Server.Classes.Entities
             {
                 return;
             }
-            CurrentX = newX;
-            CurrentY = newY;
-            CurrentZ = zOverride;
+            X = newX;
+            Y = newY;
+            Z = zOverride;
             Dir = newDir;
-            if (newMap != CurrentMap )
+            if (newMap != Map )
             {
-                var oldMap = MapInstance.Lookup.Get<MapInstance>(CurrentMap);
+                var oldMap = MapInstance.Lookup.Get<MapInstance>(Map);
                 if (oldMap != null)
                 {
                     oldMap.RemoveEntity(this);
                 }
-                PacketSender.SendEntityLeave(MyIndex, (int)EntityTypes.GlobalEntity, CurrentMap);
-                CurrentMap = newMap;
+                PacketSender.SendEntityLeave(MyIndex, (int)EntityTypes.GlobalEntity, Map);
+                Map = newMap;
                 PacketSender.SendEntityDataToProximity(this);
                 PacketSender.SendEntityPositionToAll(this);
             }
