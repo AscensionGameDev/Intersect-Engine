@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 
 namespace Intersect.Server.Models
 {
@@ -39,6 +41,20 @@ namespace Intersect.Server.Models
 
     public static class UserRightsHelper
     {
+        [NotNull]
+        private static readonly Type UserRightsType = typeof(UserRights);
+
+        [NotNull]
+        private static readonly List<PropertyInfo> UserRightsPermissions = UserRightsType
+            .GetProperties(BindingFlags.Public | BindingFlags.Instance).ToList();
+
+        public static List<string> EnumeratePermissions(this UserRights userRights, bool permitted = true)
+        {
+            return UserRightsPermissions
+                .FindAll(property => (bool) (property?.GetValue(userRights, null) ?? false) == permitted)
+                .Select(property => property?.Name).ToList();
+        }
+
         public static UserRights FromLegacyPowers(long power)
         {
             switch (power)

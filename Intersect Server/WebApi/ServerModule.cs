@@ -11,6 +11,9 @@ using Nancy.Security;
 
 namespace Intersect.Server.WebApi
 {
+    using MethodPath = ValueTuple<string, string>;
+    using MethodPathCode = ValueTuple<string, string, HttpStatusCode>;
+
     public abstract class ServerModule : NancyModule
     {
         private T QuerySelector<T>(string key) => Query(key ?? "");
@@ -44,7 +47,9 @@ namespace Intersect.Server.WebApi
 
         protected virtual bool Secured => true;
 
-        protected virtual IDictionary<Tuple<string, string>, bool> RouteSecurity => null;
+        protected virtual IDictionary<MethodPath, bool> RouteSecurity => null;
+
+        protected virtual IDictionary<MethodPathCode, object> DefaultResponse => null;
 
         protected ServerModule(string modulePath) : base(modulePath)
         {
@@ -79,10 +84,46 @@ namespace Intersect.Server.WebApi
             }
 
             var routeSecured = Secured;
-            RouteSecurity?.TryGetValue(new Tuple<string, string>(method.ToUpperInvariant(), path), out routeSecured);
+            RouteSecurity?.TryGetValue((method.ToUpperInvariant(), path), out routeSecured);
 
             return (context.CurrentUser?.IsAuthenticated() ?? false) || !routeSecured
                 ? null : new Response { StatusCode = HttpStatusCode.Unauthorized };
+        }
+
+        protected Response GetDefaultResponse([NotNull] NancyContext context, HttpStatusCode httpStatusCode)
+        {
+            var request = context.Request;
+            if (request == null) return Forbid();
+
+            var method = request.Method;
+            if (method == null) return Forbid();
+
+            var path = request.Path;
+            if (path == null) return Forbid();
+
+            var modulePath = ModulePath ?? "";
+            if (path.StartsWith(modulePath))
+            {
+                path = path.Remove(0, modulePath.Length);
+            }
+
+            if (DefaultResponse == null || DefaultResponse.Count < 1)
+            {
+                object responseBody = new
+                {
+                    A = 1
+                };
+                var response = (Response) responseBody;
+            }
+
+            if (DefaultResponse.TryGetValue((method, path, httpStatusCode), out object methodPathResponse))
+            {
+                var response = (Response) methodPathResponse;
+
+            }
+            DefaultResponse?.TryGetValue(("*", "*", httpStatusCode), out object wildcardResponse);
+            DefaultResponse?.TryGetValue((method, "*", httpStatusCode), out object methodResponse);
+            DefaultResponse?.TryGetValue(("*", path, httpStatusCode), out object pathResponse);
         }
 
         protected static bool IsAuthenticated(NancyContext context)

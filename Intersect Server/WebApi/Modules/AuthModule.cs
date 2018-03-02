@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Intersect.Server.Models;
 using Intersect.Server.WebApi.Authentication;
 using JetBrains.Annotations;
 using Jose;
@@ -11,6 +12,9 @@ using Newtonsoft.Json;
 
 namespace Intersect.Server.WebApi.Modules
 {
+    using MethodPath = ValueTuple<string, string>;
+    using MethodPathCode = ValueTuple<string, string, HttpStatusCode>;
+
     public class AuthModule : ServerModule
     {
         [NotNull]
@@ -18,9 +22,14 @@ namespace Intersect.Server.WebApi.Modules
 
         protected override bool Secured => false;
 
-        protected override IDictionary<Tuple<string, string>, bool> RouteSecurity => new Dictionary<Tuple<string, string>, bool>
+        protected override IDictionary<MethodPath, bool> RouteSecurity => new Dictionary<MethodPath, bool>
         {
-            {new Tuple<string, string>("GET", "/access"), true}
+            [("GET", "/access")] = true
+        };
+
+        protected override IDictionary<MethodPathCode, object> DefaultResponse => new Dictionary<MethodPathCode, object>
+        {
+            [("GET", "/access", HttpStatusCode.Unauthorized)] = new string[0]
         };
 
         public AuthModule() : base("/auth")
@@ -33,19 +42,12 @@ namespace Intersect.Server.WebApi.Modules
             Get("/revoke", args => RevokeAuthorization(args));
 #endif
 
-            
-
             Get("/access", args =>
             {
-                var user = Context?.CurrentUser?.Identity as UserIdentity;
-
-                var access = new string[] { };
-                if (user != null)
-                {
-                    
-                }
-
-                return Response.AsJson(JsonConvert.SerializeObject(null));
+                var userIdentity = Context?.CurrentUser?.Identity as UserIdentity;
+                var access = userIdentity?.User.Rights.EnumeratePermissions() ?? new List<string>();
+                //return Response.AsJson(JsonConvert.SerializeObject(access));
+                return Response.AsJson(access);
             });
         }
 
