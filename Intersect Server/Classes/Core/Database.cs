@@ -15,9 +15,9 @@ using Intersect.GameObjects.Maps.MapList;
 using Intersect.Server.Classes.Localization;
 using Intersect.Logging;
 using Intersect.Models;
+using Intersect.Server.Classes.Database.PlayerData.Characters;
 using Intersect.Server.Classes.Entities;
 using Intersect.Server.Classes.General;
-using Intersect.Server.Classes.Items;
 using Intersect.Server.Classes.Maps;
 using Intersect.Server.Classes.Networking;
 using Intersect.Server.Database;
@@ -27,7 +27,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Intersect.Server.Classes.Core
 {
-    public static class Database
+    public static class LegacyDatabase
     {
         public const string DIRECTORY_BACKUPS = "resources/backups";
         private const int DbVersion = 11;
@@ -659,14 +659,7 @@ namespace Intersect.Server.Classes.Core
                     }
                 }
             }
-
-            //Didn't find the player online, lets load him from our Database.
-            var fakeClient = new Client(-1, null);
-            var en = new Player(-1, fakeClient);
-            fakeClient.Entity = en;
-            fakeClient.MyAccount = username;
-            LoadUser(fakeClient);
-            return fakeClient;
+            return null;
         }
 
         public static void SetPlayerPower(string username, int power)
@@ -674,10 +667,13 @@ namespace Intersect.Server.Classes.Core
             if (AccountExists(username))
             {
                 var client = GetPlayerClient(username);
-                client.Power = power;
-                SaveUser(client);
-                PacketSender.SendPlayerMsg(client, Strings.Player.powerchanged, client.Entity.MyName);
-                Console.WriteLine(Strings.Commandoutput.powerlevel.ToString( username, power));
+                if (client != null)
+                {
+                    client.Power = power;
+                    SaveUser(client);
+                    PacketSender.SendPlayerMsg(client, Strings.Player.powerchanged, client.Entity.Name);
+                    Console.WriteLine(Strings.Commandoutput.powerlevel.ToString(username, power));
+                }
             }
             else
             {
@@ -944,18 +940,18 @@ namespace Intersect.Server.Classes.Core
                 {
                     cmd.CommandText = newCharacter ? insertQuery : updateQuery;
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_USER_ID, player.MyClient.MyId));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_NAME, player.MyName));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_MAP, player.CurrentMap));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_X, player.CurrentX));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_Y, player.CurrentY));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_Z, player.CurrentZ));
+                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_NAME, player.Name));
+                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_MAP, player.Map));
+                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_X, player.X));
+                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_Y, player.Y));
+                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_Z, player.Z));
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_DIR, player.Dir));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_SPRITE, player.MySprite));
+                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_SPRITE, player.Sprite));
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_FACE, player.Face));
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_CLASS, player.Class));
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_GENDER, player.Gender));
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_LEVEL, player.Level));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_EXP, player.Experience));
+                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_EXP, player.Exp));
                     var vitals = "";
                     for (var i = 0; i < player.Vital.Length; i++)
                     {
@@ -986,216 +982,11 @@ namespace Intersect.Server.Classes.Core
                     rowId = (int)((long)sPlayerDbConnection.ExecuteScalar(cmd));
                 }
                 if (newCharacter) player.MyId = rowId;
-                SaveCharacterInventory(player);
-                SaveCharacterSpells(player);
-                SaveCharacterBank(player);
-                SaveCharacterHotbar(player);
-                SaveCharacterSwitches(player);
-                SaveCharacterVariables(player);
-                SaveCharacterQuests(player);
-                SaveCharacterFriends(player);
                 transaction.Commit();
             }
             if (!newCharacter && Options.ProgressSavedMessages)
                 PacketSender.SendPlayerMsg(player.MyClient, Strings.Player.saved);
             return (rowId);
-        }
-
-        private static void SaveCharacterInventory(Player player)
-        {
-            for (var i = 0; i < Options.MaxInvItems; i++)
-            {
-                var query = "INSERT OR REPLACE into " + CHAR_INV_TABLE + " (" + CHAR_INV_CHAR_ID + "," +
-                            CHAR_INV_SLOT + "," + CHAR_INV_ITEM_NUM + "," + CHAR_INV_ITEM_VAL + "," +
-                            CHAR_INV_ITEM_STATS + "," + CHAR_INV_ITEM_BAG_ID + ")" + " VALUES " + " (@" +
-                            CHAR_INV_CHAR_ID + ",@" + CHAR_INV_SLOT +
-                            ",@" + CHAR_INV_ITEM_NUM + ",@" + CHAR_INV_ITEM_VAL + ",@" + CHAR_INV_ITEM_STATS + ",@" +
-                            CHAR_INV_ITEM_BAG_ID + ")";
-                using (var cmd = sPlayerDbConnection.CreateCommand())
-                {
-                    cmd.CommandText = query;
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_INV_CHAR_ID, player.MyId));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_INV_SLOT, i));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_INV_ITEM_NUM, player.Inventory[i].ItemNum));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_INV_ITEM_VAL, player.Inventory[i].ItemVal));
-                    var stats = "";
-                    for (var x = 0; x < player.Inventory[i].StatBoost.Length; x++)
-                    {
-                        stats += player.Inventory[i].StatBoost[x] + ",";
-                    }
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_INV_ITEM_STATS, stats));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_INV_ITEM_BAG_ID, player.Inventory[i].BagId));
-                    var result = sPlayerDbConnection.ExecuteNonQuery(cmd);
-                    Log.Diagnostic($"Saving inventory slot {player.MyId}-{i}: {result} row(s) updated.");
-                }
-            }
-        }
-
-        private static void SaveCharacterSpells(Player player)
-        {
-            for (var i = 0; i < Options.MaxPlayerSkills; i++)
-            {
-                var query = "INSERT OR REPLACE into " + CHAR_SPELL_TABLE + " (" + CHAR_SPELL_CHAR_ID + "," +
-                            CHAR_SPELL_SLOT + "," + CHAR_SPELL_NUM + "," + CHAR_SPELL_CD + ")" + " VALUES " + " (@" +
-                            CHAR_SPELL_CHAR_ID + ",@" + CHAR_SPELL_SLOT + ",@" + CHAR_SPELL_NUM + ",@" +
-                            CHAR_SPELL_CD + ");";
-                using (var cmd = sPlayerDbConnection.CreateCommand())
-                {
-                    cmd.CommandText = query;
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_SPELL_CHAR_ID, player.MyId));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_SPELL_SLOT, i));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_SPELL_NUM, player.Spells[i].SpellNum));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_SPELL_CD,
-                        (player.Spells[i].SpellCd > Globals.System.GetTimeMs()
-                            ? Globals.System.GetTimeMs() - player.Spells[i].SpellCd
-                            : 0)));
-                    sPlayerDbConnection.ExecuteNonQuery(cmd);
-                }
-            }
-        }
-
-        private static void SaveCharacterBank(Player player)
-        {
-            for (var i = 0; i < Options.MaxBankSlots; i++)
-            {
-                var query = "INSERT OR REPLACE into " + CHAR_BANK_TABLE + " (" + CHAR_BANK_CHAR_ID + "," +
-                            CHAR_BANK_SLOT + "," + CHAR_BANK_ITEM_NUM + "," + CHAR_BANK_ITEM_VAL + "," +
-                            CHAR_BANK_ITEM_STATS + "," + CHAR_BANK_ITEM_BAG_ID + ")" + " VALUES " + " (@" +
-                            CHAR_BANK_CHAR_ID + ",@" +
-                            CHAR_BANK_SLOT + ",@" + CHAR_BANK_ITEM_NUM + ",@" + CHAR_BANK_ITEM_VAL + ",@" +
-                            CHAR_BANK_ITEM_STATS + ",@" + CHAR_BANK_ITEM_BAG_ID + ");";
-                using (var cmd = sPlayerDbConnection.CreateCommand())
-                {
-                    cmd.CommandText = query;
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_BANK_CHAR_ID, player.MyId));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_BANK_SLOT, i));
-                    if (player.Bank[i] != null)
-                    {
-                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_BANK_ITEM_NUM, player.Bank[i].ItemNum));
-                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_BANK_ITEM_VAL, player.Bank[i].ItemVal));
-                        var stats = "";
-                        for (var x = 0; x < player.Bank[i].StatBoost.Length; x++)
-                        {
-                            stats += player.Bank[i].StatBoost[x] + ",";
-                        }
-                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_BANK_ITEM_STATS, stats));
-                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_BANK_ITEM_BAG_ID, player.Bank[i].BagId));
-                    }
-                    else
-                    {
-                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_BANK_ITEM_NUM, -1));
-                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_BANK_ITEM_VAL, -1));
-                        var stats = "";
-                        for (var x = 0; x < Options.MaxStats; x++)
-                        {
-                            stats += "-1,";
-                        }
-                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_BANK_ITEM_STATS, stats));
-                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_BANK_ITEM_BAG_ID, -1));
-                    }
-                    sPlayerDbConnection.ExecuteNonQuery(cmd);
-                }
-            }
-        }
-
-        private static void SaveCharacterHotbar(Player player)
-        {
-            for (var i = 0; i < Options.MaxHotbar; i++)
-            {
-                var query = "INSERT OR REPLACE into " + CHAR_HOTBAR_TABLE + " (" + CHAR_HOTBAR_CHAR_ID + "," +
-                            CHAR_HOTBAR_SLOT + "," + CHAR_HOTBAR_TYPE + "," + CHAR_HOTBAR_ITEMSLOT + ")" +
-                            " VALUES " + " (@" + CHAR_HOTBAR_CHAR_ID + ",@" + CHAR_HOTBAR_SLOT + ",@" +
-                            CHAR_HOTBAR_TYPE + ",@" + CHAR_HOTBAR_ITEMSLOT + ");";
-                using (var cmd = sPlayerDbConnection.CreateCommand())
-                {
-                    cmd.CommandText = query;
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_HOTBAR_CHAR_ID, player.MyId));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_HOTBAR_SLOT, i));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_HOTBAR_TYPE, player.Hotbar[i].Type));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_HOTBAR_ITEMSLOT, player.Hotbar[i].Slot));
-                    sPlayerDbConnection.ExecuteNonQuery(cmd);
-                }
-            }
-        }
-
-        private static void SaveCharacterSwitches(Player player)
-        {
-            foreach (var playerSwitch in player.Switches)
-            {
-                var query = "INSERT OR REPLACE into " + CHAR_SWITCHES_TABLE + " (" + CHAR_SWITCH_CHAR_ID + "," +
-                            CHAR_SWITCH_SLOT + "," + CHAR_SWITCH_VAL + ")" + " VALUES " + " (@" +
-                            CHAR_SWITCH_CHAR_ID + ",@" + CHAR_SWITCH_SLOT + ",@" + CHAR_SWITCH_VAL + ");";
-                using (var cmd = sPlayerDbConnection.CreateCommand())
-                {
-                    cmd.CommandText = query;
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_SWITCH_CHAR_ID, player.MyId));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_SWITCH_SLOT, playerSwitch.Key));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_SWITCH_VAL,
-                        Convert.ToInt32(playerSwitch.Value)));
-                    sPlayerDbConnection.ExecuteNonQuery(cmd);
-                }
-            }
-        }
-
-        private static void SaveCharacterVariables(Player player)
-        {
-            foreach (var playerVariable in player.Variables)
-            {
-                var query = "INSERT OR REPLACE into " + CHAR_VARIABLES_TABLE + " (" + CHAR_VARIABLE_CHAR_ID + "," +
-                            CHAR_VARIABLE_SLOT + "," + CHAR_VARIABLE_VAL + ")" + " VALUES " + " (@" +
-                            CHAR_VARIABLE_CHAR_ID + ",@" + CHAR_VARIABLE_SLOT + ",@" + CHAR_VARIABLE_VAL + ");";
-                using (var cmd = sPlayerDbConnection.CreateCommand())
-                {
-                    cmd.CommandText = query;
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_VARIABLE_CHAR_ID, player.MyId));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_VARIABLE_SLOT, playerVariable.Key));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_VARIABLE_VAL,
-                        Convert.ToInt32(playerVariable.Value)));
-                    sPlayerDbConnection.ExecuteNonQuery(cmd);
-                }
-            }
-        }
-
-        private static void SaveCharacterQuests(Player player)
-        {
-            foreach (var playerQuest in player.Quests)
-            {
-                var query = "INSERT OR REPLACE into " + CHAR_QUESTS_TABLE + " (" + CHAR_QUEST_CHAR_ID + "," +
-                            CHAR_QUEST_ID + "," + CHAR_QUEST_TASK + "," + CHAR_QUEST_TASK_PROGRESS + "," +
-                            CHAR_QUEST_COMPLETED + ")" + " VALUES " + " (@" + CHAR_QUEST_CHAR_ID + ",@" +
-                            CHAR_QUEST_ID + ",@" + CHAR_QUEST_TASK + ",@" + CHAR_QUEST_TASK_PROGRESS + ",@" +
-                            CHAR_QUEST_COMPLETED + ");";
-                using (var cmd = sPlayerDbConnection.CreateCommand())
-                {
-                    cmd.CommandText = query;
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_QUEST_CHAR_ID, player.MyId));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_QUEST_ID, playerQuest.Key));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_QUEST_TASK,
-                        Convert.ToInt32(playerQuest.Value.Task)));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_QUEST_TASK_PROGRESS,
-                        Convert.ToInt32(playerQuest.Value.TaskProgress)));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_QUEST_COMPLETED,
-                        Convert.ToInt32(playerQuest.Value.Completed)));
-                    sPlayerDbConnection.ExecuteNonQuery(cmd);
-                }
-            }
-        }
-
-        private static void SaveCharacterFriends(Player player)
-        {
-            foreach (var friend in player.Friends)
-            {
-                var query = "INSERT OR REPLACE into " + CHAR_FRIENDS_TABLE + " (" + CHAR_FRIEND_CHAR_ID + "," +
-                            CHAR_FRIEND_ID + ")" + " VALUES " + " (@" + CHAR_FRIEND_CHAR_ID + ",@" +
-                            CHAR_FRIEND_ID + ");";
-                using (var cmd = sPlayerDbConnection.CreateCommand())
-                {
-                    cmd.CommandText = query;
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_FRIEND_CHAR_ID, player.MyId));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_FRIEND_ID, friend.Key));
-                    sPlayerDbConnection.ExecuteNonQuery(cmd);
-                }
-            }
         }
 
         public static void GetCharacters(Client client)
@@ -1218,7 +1009,7 @@ namespace Intersect.Server.Classes.Core
                     {
                         while (dataReader.Read())
                         {
-                            var character = new Character(Convert.ToInt32(dataReader[CHAR_ID]),
+                            var character = new LegacyCharacter(Convert.ToInt32(dataReader[CHAR_ID]),
                                 dataReader[CHAR_NAME].ToString(), dataReader[CHAR_SPRITE].ToString(),
                                 dataReader[CHAR_FACE].ToString(),
                                 Convert.ToInt32(dataReader[CHAR_LEVEL]), Convert.ToInt32(dataReader[CHAR_CLASS]));
@@ -1239,9 +1030,7 @@ namespace Intersect.Server.Classes.Core
                                             Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] <
                                         Options.MaxInvItems)
                                     {
-                                        var itemNum = GetCharacterInventoryItem(character.Slot,
-                                            equipmentArray[
-                                                Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])]);
+                                        var itemNum = -1;
 
                                         if (ItemBase.Lookup.Get<ItemBase>(itemNum) != null)
                                         {
@@ -1289,18 +1078,18 @@ namespace Intersect.Server.Classes.Core
                         if (dataReader.HasRows && dataReader.Read())
                         {
                             en.MyId = Convert.ToInt32(dataReader[CHAR_ID]);
-                            en.MyName = dataReader[CHAR_NAME].ToString();
-                            en.CurrentMap = Convert.ToInt32(dataReader[CHAR_MAP]);
-                            en.CurrentX = Convert.ToInt32(dataReader[CHAR_X]);
-                            en.CurrentY = Convert.ToInt32(dataReader[CHAR_Y]);
-                            en.CurrentZ = Convert.ToInt32(dataReader[CHAR_Z]);
+                            en.Name = dataReader[CHAR_NAME].ToString();
+                            en.Map = Convert.ToInt32(dataReader[CHAR_MAP]);
+                            en.X = Convert.ToInt32(dataReader[CHAR_X]);
+                            en.Y = Convert.ToInt32(dataReader[CHAR_Y]);
+                            en.Z = Convert.ToInt32(dataReader[CHAR_Z]);
                             en.Dir = Convert.ToInt32(dataReader[CHAR_DIR]);
-                            en.MySprite = dataReader[CHAR_SPRITE].ToString();
+                            en.Sprite = dataReader[CHAR_SPRITE].ToString();
                             en.Face = dataReader[CHAR_FACE].ToString();
                             en.Class = Convert.ToInt32(dataReader[CHAR_CLASS]);
                             en.Gender = Convert.ToInt32(dataReader[CHAR_GENDER]);
                             en.Level = Convert.ToInt32(dataReader[CHAR_LEVEL]);
-                            en.Experience = Convert.ToInt64(dataReader[CHAR_EXP]);
+                            en.Exp = Convert.ToInt64(dataReader[CHAR_EXP]);
                             var vitalString = dataReader[CHAR_VITALS].ToString();
                             var vitals = vitalString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
                             for (var i = 0; i < (int) Vitals.VitalCount && i < vitals.Length; i++)
@@ -1327,14 +1116,6 @@ namespace Intersect.Server.Classes.Core
                             {
                                 en.Equipment[i] = int.Parse(equipment[i]);
                             }
-                            if (!LoadCharacterInventory(en)) return false;
-                            if (!LoadCharacterSpells(en)) return false;
-                            if (!LoadCharacterBank(en)) return false;
-                            if (!LoadCharacterHotbar(en)) return false;
-                            if (!LoadCharacterSwitches(en)) return false;
-                            if (!LoadCharacterVariables(en)) return false;
-                            if (!LoadCharacterQuests(en)) return false;
-                            if (!LoadCharacterFriends(en)) return false;
                             return true;
                         }
                     }
@@ -1376,349 +1157,6 @@ namespace Intersect.Server.Classes.Core
             }
         }
 
-        private static bool LoadCharacterInventory(Player player)
-        {
-            var commaSep = new char[1];
-            commaSep[0] = ',';
-            try
-            {
-                var query = $"SELECT * from {CHAR_INV_TABLE} WHERE " + CHAR_INV_CHAR_ID + "=@" +
-                            CHAR_INV_CHAR_ID + ";";
-                using (var cmd = sPlayerDbConnection.CreateCommand())
-                {
-                    cmd.CommandText = query;
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_INV_CHAR_ID, player.MyId));
-                    using (var dataReader = sPlayerDbConnection.ExecuteReader(cmd))
-                    {
-                        while (dataReader.Read())
-                        {
-                            var slot = Convert.ToInt32(dataReader[CHAR_INV_SLOT]);
-                            if (slot >= 0 && slot < Options.MaxInvItems)
-                            {
-                                player.Inventory[slot].ItemNum = Convert.ToInt32(dataReader[CHAR_INV_ITEM_NUM]);
-                                player.Inventory[slot].ItemVal = Convert.ToInt32(dataReader[CHAR_INV_ITEM_VAL]);
-                                var statBoostStr = dataReader[CHAR_INV_ITEM_STATS].ToString();
-                                var stats = statBoostStr.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
-                                for (var i = 0; i < (int) Stats.StatCount && i < stats.Length; i++)
-                                {
-                                    player.Inventory[slot].StatBoost[i] = int.Parse(stats[i]);
-                                }
-                                if (ItemBase.Lookup.Get<ItemBase>(player.Inventory[slot].ItemNum) == null)
-                                {
-                                    player.Inventory[slot].ItemNum = -1;
-                                    player.Inventory[slot].ItemVal = 0;
-                                    for (var i = 0; i < (int) Stats.StatCount && i < stats.Length; i++)
-                                    {
-                                        player.Inventory[slot].StatBoost[i] = 0;
-                                    }
-                                }
-                                player.Inventory[slot].BagId = Convert.ToInt32(dataReader[CHAR_INV_ITEM_BAG_ID]);
-                            }
-                        }
-                    }
-                }
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        private static int GetCharacterInventoryItem(int charId, int invSlot)
-        {
-            var itemId = -1;
-            try
-            {
-                var query = $"SELECT * from {CHAR_INV_TABLE} WHERE " + CHAR_INV_CHAR_ID + "=@" +
-                            CHAR_INV_CHAR_ID + " AND " + CHAR_INV_SLOT + "=@" + CHAR_INV_SLOT + ";";
-                using (var cmd = sPlayerDbConnection.CreateCommand())
-                {
-                    cmd.CommandText = query;
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_INV_CHAR_ID, charId));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_INV_SLOT, invSlot));
-                    using (var dataReader = sPlayerDbConnection.ExecuteReader(cmd))
-                    {
-                        while (dataReader.Read())
-                        {
-                            var slot = Convert.ToInt32(dataReader[CHAR_INV_SLOT]);
-                            if (slot >= 0 && slot < Options.MaxInvItems && slot == invSlot)
-                            {
-                                return Convert.ToInt32(dataReader[CHAR_INV_ITEM_NUM]);
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            return itemId;
-        }
-
-        private static bool LoadCharacterSpells(Player player)
-        {
-            try
-            {
-                var query = $"SELECT * from {CHAR_SPELL_TABLE} WHERE " + CHAR_SPELL_CHAR_ID + "=@" +
-                            CHAR_SPELL_CHAR_ID + ";";
-                using (var cmd = sPlayerDbConnection.CreateCommand())
-                {
-                    cmd.CommandText = query;
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_SPELL_CHAR_ID, player.MyId));
-                    using (var dataReader = sPlayerDbConnection.ExecuteReader(cmd))
-                    {
-                        while (dataReader.Read())
-                        {
-                            var slot = Convert.ToInt32(dataReader[CHAR_SPELL_SLOT]);
-                            if (slot >= 0 && slot < Options.MaxPlayerSkills)
-                            {
-                                player.Spells[slot].SpellNum = Convert.ToInt32(dataReader[CHAR_SPELL_NUM]);
-                                player.Spells[slot].SpellCd = Globals.System.GetTimeMs() +
-                                                              Convert.ToInt32(dataReader[CHAR_SPELL_CD]);
-                                if (SpellBase.Lookup.Get<SpellBase>(player.Spells[slot].SpellNum) == null)
-                                {
-                                    player.Spells[slot].SpellNum = -1;
-                                    player.Spells[slot].SpellCd = -1;
-                                }
-                            }
-                        }
-                    }
-                }
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        private static bool LoadCharacterBank(Player player)
-        {
-            var commaSep = new char[1];
-            commaSep[0] = ',';
-            try
-            {
-                var query = $"SELECT * from {CHAR_BANK_TABLE} WHERE " + CHAR_BANK_CHAR_ID + "=@" +
-                            CHAR_BANK_CHAR_ID + ";";
-                using (var cmd = sPlayerDbConnection.CreateCommand())
-                {
-                    cmd.CommandText = query;
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_BANK_CHAR_ID, player.MyId));
-                    using (var dataReader = sPlayerDbConnection.ExecuteReader(cmd))
-                    {
-                        while (dataReader.Read())
-                        {
-                            var slot = Convert.ToInt32(dataReader[CHAR_BANK_SLOT]);
-                            if (slot >= 0 && slot < Options.MaxBankSlots)
-                            {
-                                if (player.Bank[slot] == null) player.Bank[slot] = new ItemInstance();
-                                player.Bank[slot].ItemNum = Convert.ToInt32(dataReader[CHAR_BANK_ITEM_NUM]);
-                                player.Bank[slot].ItemVal = Convert.ToInt32(dataReader[CHAR_BANK_ITEM_VAL]);
-                                var statBoostStr = dataReader[CHAR_BANK_ITEM_STATS].ToString();
-                                var stats = statBoostStr.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
-                                for (var i = 0; i < (int) Stats.StatCount && i < stats.Length; i++)
-                                {
-                                    player.Bank[slot].StatBoost[i] = int.Parse(stats[i]);
-                                }
-                                if (ItemBase.Lookup.Get<ItemBase>(player.Bank[slot].ItemNum) == null)
-                                {
-                                    player.Bank[slot].ItemNum = -1;
-                                    player.Bank[slot].ItemVal = 0;
-                                    for (var i = 0; i < (int) Stats.StatCount && i < stats.Length; i++)
-                                    {
-                                        player.Bank[slot].StatBoost[i] = 0;
-                                    }
-                                }
-                                player.Bank[slot].BagId = Convert.ToInt32(dataReader[CHAR_BANK_ITEM_BAG_ID]);
-                            }
-                        }
-                    }
-                }
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        private static bool LoadCharacterHotbar(Player player)
-        {
-            try
-            {
-                var query = $"SELECT * from {CHAR_HOTBAR_TABLE} WHERE " + CHAR_HOTBAR_CHAR_ID + "=@" +
-                            CHAR_HOTBAR_CHAR_ID + ";";
-                using (var cmd = sPlayerDbConnection.CreateCommand())
-                {
-                    cmd.CommandText = query;
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_HOTBAR_CHAR_ID, player.MyId));
-                    using (var dataReader = sPlayerDbConnection.ExecuteReader(cmd))
-                    {
-                        while (dataReader.Read())
-                        {
-                            var slot = Convert.ToInt32(dataReader[CHAR_HOTBAR_SLOT]);
-                            if (slot >= 0 && slot < Options.MaxHotbar)
-                            {
-                                player.Hotbar[slot].Type = Convert.ToInt32(dataReader[CHAR_HOTBAR_TYPE]);
-                                player.Hotbar[slot].Slot = Convert.ToInt32(dataReader[CHAR_HOTBAR_ITEMSLOT]);
-                            }
-                        }
-                    }
-                }
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        private static bool LoadCharacterSwitches(Player player)
-        {
-            try
-            {
-                var query = $"SELECT * from {CHAR_SWITCHES_TABLE} WHERE " + CHAR_SWITCH_CHAR_ID + "=@" +
-                            CHAR_SWITCH_CHAR_ID + ";";
-                using (var cmd = sPlayerDbConnection.CreateCommand())
-                {
-                    cmd.CommandText = query;
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_SWITCH_CHAR_ID, player.MyId));
-                    using (var dataReader = sPlayerDbConnection.ExecuteReader(cmd))
-                    {
-                        while (dataReader.Read())
-                        {
-                            var id = Convert.ToInt32(dataReader[CHAR_SWITCH_SLOT]);
-                            if (player.Switches.ContainsKey(id))
-                            {
-                                player.Switches[id] = Convert.ToBoolean(Convert.ToInt32(dataReader[CHAR_SWITCH_VAL]));
-                            }
-                            else
-                            {
-                                player.Switches.Add(id,
-                                    Convert.ToBoolean(Convert.ToInt32(dataReader[CHAR_SWITCH_VAL])));
-                            }
-                        }
-                    }
-                }
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        private static bool LoadCharacterVariables(Player player)
-        {
-            try
-            {
-                var query = $"SELECT * from {CHAR_VARIABLES_TABLE} WHERE " + CHAR_VARIABLE_CHAR_ID + "=@" +
-                            CHAR_VARIABLE_CHAR_ID + ";";
-                using (var cmd = sPlayerDbConnection.CreateCommand())
-                {
-                    cmd.CommandText = query;
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_VARIABLE_CHAR_ID, player.MyId));
-                    using (var dataReader = sPlayerDbConnection.ExecuteReader(cmd))
-                    {
-                        while (dataReader.Read())
-                        {
-                            var id = Convert.ToInt32(dataReader[CHAR_VARIABLE_SLOT]);
-                            if (player.Variables.ContainsKey(id))
-                            {
-                                player.Variables[id] = Convert.ToInt32(dataReader[CHAR_VARIABLE_VAL]);
-                            }
-                            else
-                            {
-                                player.Variables.Add(id, Convert.ToInt32(dataReader[CHAR_VARIABLE_VAL]));
-                            }
-                        }
-                    }
-                }
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        private static bool LoadCharacterQuests(Player player)
-        {
-            try
-            {
-                var query = $"SELECT * from {CHAR_QUESTS_TABLE} WHERE " + CHAR_QUEST_CHAR_ID + "=@" +
-                            CHAR_QUEST_CHAR_ID + ";";
-                using (var cmd = sPlayerDbConnection.CreateCommand())
-                {
-                    cmd.CommandText = query;
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_QUEST_CHAR_ID, player.MyId));
-                    using (var dataReader = sPlayerDbConnection.ExecuteReader(cmd))
-                    {
-                        while (dataReader.Read())
-                        {
-                            var id = Convert.ToInt32(dataReader[CHAR_QUEST_ID]);
-                            if (player.Quests.ContainsKey(id))
-                            {
-                                var questProgress = player.Quests[id];
-                                questProgress.Task = Convert.ToInt32(dataReader[CHAR_QUEST_TASK]);
-                                questProgress.TaskProgress = Convert.ToInt32(dataReader[CHAR_QUEST_TASK_PROGRESS]);
-                                questProgress.Completed = Convert.ToInt32(dataReader[CHAR_QUEST_COMPLETED]);
-                                player.Quests[id] = questProgress;
-                            }
-                            else
-                            {
-                                var questProgress = new QuestProgressStruct()
-                                {
-                                    Task = Convert.ToInt32(dataReader[CHAR_QUEST_TASK]),
-                                    TaskProgress = Convert.ToInt32(dataReader[CHAR_QUEST_TASK_PROGRESS]),
-                                    Completed = Convert.ToInt32(dataReader[CHAR_QUEST_COMPLETED])
-                                };
-                                player.Quests.Add(id, questProgress);
-                            }
-                        }
-                    }
-                }
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        private static bool LoadCharacterFriends(Player player)
-        {
-            player.Friends.Clear();
-
-            try
-            {
-                var query = "SELECT " + CHAR_TABLE + "." + CHAR_NAME + "," + CHAR_FRIENDS_TABLE + "." +
-                            CHAR_FRIEND_ID + " FROM " + CHAR_FRIENDS_TABLE + " INNER JOIN " + CHAR_TABLE + " ON " +
-                            CHAR_FRIENDS_TABLE + "." + CHAR_FRIEND_ID + " = " + CHAR_TABLE + "." + CHAR_ID + " WHERE " +
-                            CHAR_FRIEND_CHAR_ID + "=@" + CHAR_FRIEND_CHAR_ID + ";";
-                using (var cmd = sPlayerDbConnection.CreateCommand())
-                {
-                    cmd.CommandText = query;
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_FRIEND_CHAR_ID, player.MyId));
-                    using (var dataReader = sPlayerDbConnection.ExecuteReader(cmd))
-                    {
-                        while (dataReader.Read())
-                        {
-                            player.Friends.Add(Convert.ToInt32(dataReader[CHAR_FRIEND_ID]),
-                                dataReader[CHAR_NAME].ToString());
-                        }
-                    }
-                }
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
         public static void DeleteCharacterFriend(Player player, int key)
         {
             if (player == null) return;
@@ -1750,124 +1188,25 @@ namespace Intersect.Server.Classes.Core
             return (int) (rowId);
         }
 
-        public static void LoadBag(ItemInstance bagItem)
+        public static bool BagEmpty(Bag bag)
         {
-            var commaSep = new char[1];
-            commaSep[0] = ',';
-            //Query the Bags table to get the number of slots...
-            var query = $"SELECT * from {BAGS_TABLE} WHERE " + BAG_ID + " =@" + BAG_ID + ";";
-            using (var cmd = sPlayerDbConnection.CreateCommand())
+            if (bag != null)
             {
-                cmd.CommandText = query;
-                cmd.Parameters.Add(new SqliteParameter("@" + BAG_ID, bagItem.BagId));
-                using (var dataReader = sPlayerDbConnection.ExecuteReader(cmd))
+                for (var i = 0; i < bag.Items.Count; i++)
                 {
-                    while (dataReader.Read())
+                    if (bag.Items[i] != null)
                     {
-                        var slots = Convert.ToInt32(dataReader[BAG_SLOT_COUNT]);
-                        bagItem.BagInstance = new BagInstance(slots);
-                    }
-                }
-            }
-            if (bagItem.BagInstance != null)
-            {
-                //Then query the bag items table to get all the item data...
-                query = $"SELECT * from {BAG_ITEMS_TABLE} WHERE " + BAG_ITEM_CONTAINER_ID + " = @" +
-                        BAG_ITEM_CONTAINER_ID + ";";
-                using (var cmd = sPlayerDbConnection.CreateCommand())
-                {
-                    cmd.CommandText = query;
-                    cmd.Parameters.Add(new SqliteParameter("@" + BAG_ITEM_CONTAINER_ID, bagItem.BagId));
-                    using (var dataReader = sPlayerDbConnection.ExecuteReader(cmd))
-                    {
-                        while (dataReader.Read())
+                        var item = ItemBase.Lookup.Get<ItemBase>(bag.Items[i].ItemNum);
+                        if (item != null)
                         {
-                            var slot = Convert.ToInt32(dataReader[BAG_ITEM_SLOT]);
-                            if (slot >= 0 && slot < bagItem.BagInstance.Slots)
-                            {
-                                bagItem.BagInstance.Items[slot].ItemNum = Convert.ToInt32(dataReader[BAG_ITEM_NUM]);
-                                bagItem.BagInstance.Items[slot].ItemVal = Convert.ToInt32(dataReader[BAG_ITEM_VAL]);
-                                var statBoostStr = dataReader[BAG_ITEM_STATS].ToString();
-                                var stats = statBoostStr.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
-                                for (var i = 0; i < (int) Stats.StatCount && i < stats.Length; i++)
-                                {
-                                    bagItem.BagInstance.Items[slot].StatBoost[i] = int.Parse(stats[i]);
-                                }
-                                if (ItemBase.Lookup.Get<ItemBase>(bagItem.BagInstance.Items[slot].ItemNum) == null)
-                                {
-                                    bagItem.BagInstance.Items[slot].ItemNum = -1;
-                                    bagItem.BagInstance.Items[slot].ItemVal = 0;
-                                    for (var i = 0; i < (int) Stats.StatCount && i < stats.Length; i++)
-                                    {
-                                        bagItem.BagInstance.Items[slot].StatBoost[i] = 0;
-                                    }
-                                }
-                                bagItem.BagInstance.Items[slot].BagId = Convert.ToInt32(dataReader[BAG_ITEM_BAG_ID]);
-                            }
+                            return false;
                         }
-                    }
-                }
-            }
-        }
-
-        public static bool BagEmpty(int bagId)
-        {
-            var bagItem = new ItemInstance(-1, 0, bagId);
-            LoadBag(bagItem);
-            for (var i = 0; i < bagItem.BagInstance.Slots; i++)
-            {
-                if (bagItem.BagInstance.Items[i] != null)
-                {
-                    var item = ItemBase.Lookup.Get<ItemBase>(bagItem.BagInstance.Items[i].ItemNum);
-                    if (item != null)
-                    {
-                        return false;
                     }
                 }
             }
             return true;
         }
-
-        public static void SaveBagItem(int bagId, int slot, ItemInstance bagItem)
-        {
-            var query = "INSERT OR REPLACE into " + BAG_ITEMS_TABLE + " (" + BAG_ITEM_CONTAINER_ID + "," +
-                        BAG_ITEM_SLOT +
-                        "," + BAG_ITEM_NUM + "," +
-                        BAG_ITEM_VAL + "," + BAG_ITEM_STATS + "," + BAG_ITEM_BAG_ID + ")" + " VALUES " + " (@" +
-                        BAG_ITEM_CONTAINER_ID + ",@" + BAG_ITEM_SLOT + ",@" + BAG_ITEM_NUM + ",@" + BAG_ITEM_VAL +
-                        ",@" +
-                        BAG_ITEM_STATS + ",@" + BAG_ITEM_BAG_ID + ");";
-            using (var cmd = sPlayerDbConnection.CreateCommand())
-            {
-                cmd.CommandText = query;
-                cmd.Parameters.Add(new SqliteParameter("@" + BAG_ITEM_CONTAINER_ID, bagId));
-                cmd.Parameters.Add(new SqliteParameter("@" + BAG_ITEM_SLOT, slot));
-                if (bagItem != null)
-                {
-                    cmd.Parameters.Add(new SqliteParameter("@" + BAG_ITEM_NUM, bagItem.ItemNum));
-                    cmd.Parameters.Add(new SqliteParameter("@" + BAG_ITEM_VAL, bagItem.ItemVal));
-                    var stats = "";
-                    for (var x = 0; x < bagItem.StatBoost.Length; x++)
-                    {
-                        stats += bagItem.StatBoost[x] + ",";
-                    }
-                    cmd.Parameters.Add(new SqliteParameter("@" + BAG_ITEM_STATS, stats));
-                }
-                else
-                {
-                    cmd.Parameters.Add(new SqliteParameter("@" + BAG_ITEM_NUM, -1));
-                    cmd.Parameters.Add(new SqliteParameter("@" + BAG_ITEM_VAL, -1));
-                    var stats = "";
-                    for (var x = 0; x < Options.MaxStats; x++)
-                    {
-                        stats += "0,";
-                    }
-                    cmd.Parameters.Add(new SqliteParameter("@" + BAG_ITEM_STATS, stats));
-                }
-                cmd.Parameters.Add(new SqliteParameter("@" + BAG_ITEM_BAG_ID, bagId));
-                sPlayerDbConnection.ExecuteNonQuery(cmd);
-            }
-        }
+        
 
         //Bans and Mutes
         public static void AddMute(Client player, int duration, string reason, string muter, string ip)

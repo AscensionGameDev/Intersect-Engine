@@ -2,20 +2,21 @@
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
+using Intersect.Server.Classes.Database;
 using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Maps;
 using Intersect.Server.Classes.Networking;
 
 namespace Intersect.Server.Classes.Entities
 {
-    public class Projectile : Entity
+    public class Projectile : EntityInstance
     {
         private int mSpawnCount;
         private int mSpawnedAmount;
         private int mTotalSpawns;
         public ItemBase Item;
         public ProjectileBase MyBase;
-        public Entity Owner;
+        public EntityInstance Owner;
         private int mQuantity;
         public bool HasGrappled;
 
@@ -24,22 +25,22 @@ namespace Intersect.Server.Classes.Entities
 
         private long mSpawnTime;
         public SpellBase Spell;
-        public Entity Target;
+        public EntityInstance Target;
 
-        public Projectile(int index, Entity owner, SpellBase parentSpell, ItemBase parentItem,
+        public Projectile(int index, EntityInstance owner, SpellBase parentSpell, ItemBase parentItem,
             ProjectileBase projectile,
-            int map, int X, int Y, int z, int direction, Entity target) : base(index)
+            int map, int X, int Y, int z, int direction, EntityInstance target) : base(index, new EntityBase())
         {
             MyBase = projectile;
-            MyName = MyBase.Name;
+            Name = MyBase.Name;
             Owner = owner;
             Stat = owner.Stat;
             Vital[(int) Vitals.Health] = 1;
             MaxVital[(int) Vitals.Health] = 1;
-            CurrentMap = map;
-            CurrentX = X;
-            CurrentY = Y;
-            CurrentZ = z;
+            Map = map;
+            base.X = X;
+            base.Y = Y;
+            Z = z;
             Dir = direction;
             Spell = parentSpell;
             Item = parentItem;
@@ -79,8 +80,8 @@ namespace Intersect.Server.Classes.Entities
                         if (MyBase.SpawnLocations[x, y].Directions[d] == true && mSpawnedAmount < Spawns.Length)
                         {
                             ProjectileSpawns s = new ProjectileSpawns(FindProjectileRotationDir(Dir, d),
-                                CurrentX + FindProjectileRotationX(Dir, x - 2, y - 2),
-                                CurrentY + FindProjectileRotationY(Dir, x - 2, y - 2), CurrentZ, CurrentMap, MyBase,
+                                X + FindProjectileRotationX(Dir, x - 2, y - 2),
+                                Y + FindProjectileRotationY(Dir, x - 2, y - 2), Z, Map, MyBase,
                                 this);
                             Spawns[mSpawnedAmount] = s;
                             mSpawnedAmount++;
@@ -338,8 +339,8 @@ namespace Intersect.Server.Classes.Entities
                 var entities = map.GetEntities();
                 for (int z = 0; z < entities.Count; z++)
                 {
-                    if (entities[z] != null && entities[z].CurrentX == spawn.X &&
-                        entities[z].CurrentY == spawn.Y && entities[z].CurrentZ == spawn.Z)
+                    if (entities[z] != null && entities[z].X == spawn.X &&
+                        entities[z].Y == spawn.Y && entities[z].Z == spawn.Z)
                     {
                         killSpawn = spawn.HitEntity(entities[z]);
                     }
@@ -429,7 +430,7 @@ namespace Intersect.Server.Classes.Entities
             return killSpawn;
         }
 
-        public override void Die(int dropitems = 0, Entity killer = null)
+        public override void Die(int dropitems = 0, EntityInstance killer = null)
         {
             for (int i = 0; i < Spawns.Length; i++)
             {
@@ -439,8 +440,8 @@ namespace Intersect.Server.Classes.Entities
                     Spawns[i] = null;
                 }
             }
-            MapInstance.Lookup.Get<MapInstance>(CurrentMap).RemoveProjectile(this);
-            PacketSender.SendEntityLeave(MyIndex, (int) EntityTypes.Projectile, CurrentMap);
+            MapInstance.Lookup.Get<MapInstance>(Map).RemoveProjectile(this);
+            PacketSender.SendEntityLeave(MyIndex, (int) EntityTypes.Projectile, Map);
             Globals.Entities[MyIndex] = null;
         }
 
@@ -493,7 +494,7 @@ namespace Intersect.Server.Classes.Entities
                                 (long) ((float) ProjectileBase.Speed / (float) ProjectileBase.Range);
         }
 
-        public bool HitEntity(Entity en)
+        public bool HitEntity(EntityInstance en)
         {
             var targetEntity = en;
             if (targetEntity != null && targetEntity != Parent.Owner)

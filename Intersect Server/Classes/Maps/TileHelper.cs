@@ -2,7 +2,7 @@
 
 namespace Intersect.Server.Classes.Maps
 {
-    using Database = Intersect.Server.Classes.Core.Database;
+    using LegacyDatabase = Intersect.Server.Classes.Core.LegacyDatabase;
 
     public class TileHelper
     {
@@ -62,35 +62,35 @@ namespace Intersect.Server.Classes.Maps
             switch (direction)
             {
                 case (int) Directions.Up:
-                    if (gridY > 0 && Database.MapGrids[grid].MyGrid[gridX, gridY - 1] > -1)
+                    if (gridY > 0 && LegacyDatabase.MapGrids[grid].MyGrid[gridX, gridY - 1] > -1)
                     {
-                        mMapNum = Database.MapGrids[grid].MyGrid[gridX, gridY - 1];
+                        mMapNum = LegacyDatabase.MapGrids[grid].MyGrid[gridX, gridY - 1];
                         mTileY += Options.MapHeight;
                         return true;
                     }
                     return false;
                 case (int) Directions.Down:
-                    if (gridY + 1 < Database.MapGrids[grid].Height &&
-                        Database.MapGrids[grid].MyGrid[gridX, gridY + 1] > -1)
+                    if (gridY + 1 < LegacyDatabase.MapGrids[grid].Height &&
+                        LegacyDatabase.MapGrids[grid].MyGrid[gridX, gridY + 1] > -1)
                     {
-                        mMapNum = Database.MapGrids[grid].MyGrid[gridX, gridY + 1];
+                        mMapNum = LegacyDatabase.MapGrids[grid].MyGrid[gridX, gridY + 1];
                         mTileY -= Options.MapHeight;
                         return true;
                     }
                     return false;
                 case (int) Directions.Left:
-                    if (gridX > 0 && Database.MapGrids[grid].MyGrid[gridX - 1, gridY] > -1)
+                    if (gridX > 0 && LegacyDatabase.MapGrids[grid].MyGrid[gridX - 1, gridY] > -1)
                     {
-                        mMapNum = Database.MapGrids[grid].MyGrid[gridX - 1, gridY];
+                        mMapNum = LegacyDatabase.MapGrids[grid].MyGrid[gridX - 1, gridY];
                         mTileX += Options.MapWidth;
                         return true;
                     }
                     return false;
                 case (int) Directions.Right:
-                    if (gridX + 1 < Database.MapGrids[grid].Width &&
-                        Database.MapGrids[grid].MyGrid[gridX + 1, gridY] > -1)
+                    if (gridX + 1 < LegacyDatabase.MapGrids[grid].Width &&
+                        LegacyDatabase.MapGrids[grid].MyGrid[gridX + 1, gridY] > -1)
                     {
-                        mMapNum = Database.MapGrids[grid].MyGrid[gridX + 1, gridY];
+                        mMapNum = LegacyDatabase.MapGrids[grid].MyGrid[gridX + 1, gridY];
                         mTileX -= Options.MapWidth;
                         return true;
                     }

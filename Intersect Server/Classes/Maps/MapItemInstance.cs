@@ -1,8 +1,8 @@
-﻿using Intersect.Server.Classes.Items;
+﻿using Intersect.Server.Classes.Database.PlayerData.Characters;
 
 namespace Intersect.Server.Classes.Maps
 {
-    public class MapItemInstance : ItemInstance
+    public class MapItem : Item
     {
         public int AttributeSpawnX = -1;
         public int AttributeSpawnY = -1;
@@ -10,7 +10,11 @@ namespace Intersect.Server.Classes.Maps
         public int X = 0;
         public int Y = 0;
 
-        public MapItemInstance(int itemNum, int itemVal, int bagId) : base(itemNum, itemVal, bagId)
+        public MapItem(int itemNum, int itemVal) : base(itemNum, itemVal, null)
+        {
+        }
+
+        public MapItem(int itemNum, int itemVal, Bag bag) : base(itemNum, itemVal, bag)
         {
         }
 

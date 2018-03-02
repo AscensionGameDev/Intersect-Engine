@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Resources;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Intersect.Server.Classes.Localization;
@@ -20,7 +21,7 @@ using Intersect.Utilities;
 
 namespace Intersect.Server.Classes
 {
-    using Database = Intersect.Server.Classes.Core.Database;
+    using Database = Intersect.Server.Classes.Core.LegacyDatabase;
 
     public class ServerStart
     {
@@ -33,15 +34,9 @@ namespace Intersect.Server.Classes
             if (RunningOnWindows()) SetConsoleCtrlHandler(new HandlerRoutine(ConsoleCtrlCheck), true);
             Console.CancelKeyPress += Console_CancelKeyPress;
 
-            //Place sqlite3.dll where it's needed.
-            var dllname = Environment.Is64BitProcess ? "sqlite3x64.dll" : "sqlite3x86.dll";
-            if (!ReflectionUtils.ExtractResource($"Intersect.Server.Resources.{dllname}", "sqlite3.dll"))
-            {
-                Log.Error("Failed to extract sqlite library, terminating startup.");
-                Environment.Exit(-0x1000);
-            }
+            ExportDependencies();
 
-            Database.CheckDirectories();
+            LegacyDatabase.CheckDirectories();
             Thread logicThread;
             if (!Options.LoadFromDisk())
             {
@@ -75,13 +70,13 @@ namespace Intersect.Server.Classes
             Console.WriteLine(Strings.Intro.support);
             Console.WriteLine(Strings.Intro.loading);
             Formulas.LoadFormulas();
-            if (!Database.InitDatabase())
+            if (!LegacyDatabase.InitDatabase())
             {
                 Console.ReadKey();
                 return;
             }
             CustomColors.Load();
-            Console.WriteLine(Strings.Commandoutput.playercount.ToString( Database.GetRegisteredPlayers()));
+            Console.WriteLine(Strings.Commandoutput.playercount.ToString(LegacyDatabase.GetRegisteredPlayers()));
             Console.WriteLine(Strings.Commandoutput.gametime.ToString( ServerTime.GetTime().ToString("F")));
             ServerTime.Update();
             Log.Global.AddOutput(new ConsoleOutput(Debugger.IsAttached ? LogLevel.All : LogLevel.Error));
@@ -210,7 +205,7 @@ namespace Intersect.Server.Classes
                             if (Globals.Clients[i] != null)
                             {
                                 var name = Globals.Clients[i].Entity != null
-                                    ? Globals.Clients[i].Entity.MyName
+                                    ? Globals.Clients[i].Entity.Name
                                     : "";
                                 Console.WriteLine(string.Format("{0,-10}", "#" + i) +
                                                   string.Format("{0,-28}", Globals.Clients[i].MyAccount) +
@@ -235,16 +230,16 @@ namespace Intersect.Server.Classes
                                 {
                                     if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                                     {
-                                        string user = Globals.Clients[i].Entity.MyName.ToLower();
+                                        string user = Globals.Clients[i].Entity.Name.ToLower();
                                         if (user == commandsplit[1].ToLower())
                                         {
                                             Globals.Clients[i].Entity.Die();
                                             PacketSender.SendGlobalMsg(@"    " +
                                                                        Strings.Player.serverkilled.ToString(
-                                                                           Globals.Clients[i].Entity.MyName));
+                                                                           Globals.Clients[i].Entity.Name));
                                             Console.WriteLine(@"    " +
                                                               Strings.Commandoutput.killsuccess.ToString(
-                                                                  Globals.Clients[i].Entity.MyName));
+                                                                  Globals.Clients[i].Entity.Name));
                                             userFound = true;
                                             break;
                                         }
@@ -279,14 +274,14 @@ namespace Intersect.Server.Classes
                                 {
                                     if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                                     {
-                                        string user = Globals.Clients[i].Entity.MyName.ToLower();
+                                        string user = Globals.Clients[i].Entity.Name.ToLower();
                                         if (user == commandsplit[1].ToLower())
                                         {
                                             PacketSender.SendGlobalMsg(Strings.Player.serverkicked.ToString(
-                                                Globals.Clients[i].Entity.MyName));
+                                                Globals.Clients[i].Entity.Name));
                                             Console.WriteLine(@"    " +
                                                               Strings.Player.serverkicked.ToString(
-                                                                  Globals.Clients[i].Entity.MyName));
+                                                                  Globals.Clients[i].Entity.Name));
                                             Globals.Clients[i].Disconnect(); //Kick em'
                                             userFound = true;
                                             break;
@@ -318,9 +313,9 @@ namespace Intersect.Server.Classes
                             }
                             else
                             {
-                                if (Database.AccountExists(commandsplit[1]))
+                                if (LegacyDatabase.AccountExists(commandsplit[1]))
                                 {
-                                    Database.DeleteBan(commandsplit[1]);
+                                    LegacyDatabase.DeleteBan(commandsplit[1]);
                                     Console.WriteLine(
                                         @"    " + Strings.Account.unbanned.ToString( commandsplit[1]));
                                 }
@@ -357,7 +352,7 @@ namespace Intersect.Server.Classes
                                     {
                                         if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                                         {
-                                            string user = Globals.Clients[i].Entity.MyName.ToLower();
+                                            string user = Globals.Clients[i].Entity.Name.ToLower();
                                             if (user == commandsplit[1].ToLower())
                                             {
                                                 string reason = "";
@@ -369,15 +364,15 @@ namespace Intersect.Server.Classes
                                                 {
                                                     ip = Globals.Clients[i].GetIp();
                                                 }
-                                                Database.AddBan(Globals.Clients[i],
+                                                LegacyDatabase.AddBan(Globals.Clients[i],
                                                     Convert.ToInt32(commandsplit[2]),
                                                     reason,
                                                     Strings.Commands.banuser, ip);
                                                 PacketSender.SendGlobalMsg(Strings.Account.banned.ToString(
-                                                    Globals.Clients[i].Entity.MyName));
+                                                    Globals.Clients[i].Entity.Name));
                                                 Console.WriteLine(@"    " +
                                                                   Strings.Account.banned.ToString(
-                                                                      Globals.Clients[i].Entity.MyName));
+                                                                      Globals.Clients[i].Entity.Name));
                                                 Globals.Clients[i].Disconnect(); //Kick em'
                                                 userFound = true;
                                                 break;
@@ -419,17 +414,17 @@ namespace Intersect.Server.Classes
                                 {
                                     if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                                     {
-                                        string user = Globals.Clients[i].Entity.MyName.ToLower();
+                                        string user = Globals.Clients[i].Entity.Name.ToLower();
                                         if (user == commandsplit[1].ToLower())
                                         {
-                                            Database.DeleteMute(Globals.Clients[i].MyAccount);
+                                            LegacyDatabase.DeleteMute(Globals.Clients[i].MyAccount);
                                             Globals.Clients[i].Muted = false;
                                             Globals.Clients[i].MuteReason = "";
                                             PacketSender.SendGlobalMsg(Strings.Account.unmuted.ToString(
-                                                Globals.Clients[i].Entity.MyName));
+                                                Globals.Clients[i].Entity.Name));
                                             Console.WriteLine(@"    " +
                                                               Strings.Account.unmuted.ToString(
-                                                                  Globals.Clients[i].Entity.MyName));
+                                                                  Globals.Clients[i].Entity.Name));
                                             userFound = true;
                                             break;
                                         }
@@ -468,7 +463,7 @@ namespace Intersect.Server.Classes
                                     {
                                         if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                                         {
-                                            string user = Globals.Clients[i].Entity.MyName.ToLower();
+                                            string user = Globals.Clients[i].Entity.Name.ToLower();
                                             if (user == commandsplit[1].ToLower())
                                             {
                                                 string reason = "";
@@ -480,18 +475,18 @@ namespace Intersect.Server.Classes
                                                 {
                                                     ip = Globals.Clients[i].GetIp();
                                                 }
-                                                Database.AddMute(Globals.Clients[i],
+                                                LegacyDatabase.AddMute(Globals.Clients[i],
                                                     Convert.ToInt32(commandsplit[2]),
                                                     reason, Strings.Commands.muteuser, ip);
                                                 Globals.Clients[i].Muted = true; //Cut out their tongues!
                                                 Globals.Clients[i].MuteReason =
-                                                    Database.CheckMute(Globals.Clients[i].MyAccount,
+                                                    LegacyDatabase.CheckMute(Globals.Clients[i].MyAccount,
                                                         Globals.Clients[i].GetIp());
                                                 PacketSender.SendGlobalMsg(Strings.Account.muted.ToString(
-                                                    Globals.Clients[i].Entity.MyName));
+                                                    Globals.Clients[i].Entity.Name));
                                                 Console.WriteLine(@"    " +
                                                                   Strings.Account.muted.ToString(
-                                                                      Globals.Clients[i].Entity.MyName));
+                                                                      Globals.Clients[i].Entity.Name));
                                                 userFound = true;
                                                 break;
                                             }
@@ -534,25 +529,25 @@ namespace Intersect.Server.Classes
                                     {
                                         if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                                         {
-                                            string user = Globals.Clients[i].Entity.MyName.ToLower();
+                                            string user = Globals.Clients[i].Entity.Name.ToLower();
                                             if (user == commandsplit[1].ToLower())
                                             {
-                                                Database.SetPlayerPower(Globals.Clients[i].MyAccount,
+                                                LegacyDatabase.SetPlayerPower(Globals.Clients[i].MyAccount,
                                                     int.Parse(commandsplit[2]));
                                                 PacketSender.SendEntityDataToProximity(Globals.Clients[i].Entity);
                                                 if (Globals.Clients[i].Power > 0)
                                                 {
                                                     PacketSender.SendGlobalMsg(Strings.Player.admin.ToString(
-                                                        Globals.Clients[i].Entity.MyName));
+                                                        Globals.Clients[i].Entity.Name));
                                                 }
                                                 else
                                                 {
                                                     PacketSender.SendGlobalMsg(Strings.Player.deadmin.ToString(
-                                                        Globals.Clients[i].Entity.MyName));
+                                                        Globals.Clients[i].Entity.Name));
                                                 }
                                                 Console.WriteLine(@"    " +
                                                                   Strings.Commandoutput.powerchanged.ToString(
-                                                                      Globals.Clients[i].Entity.MyName));
+                                                                      Globals.Clients[i].Entity.Name));
 
                                                 userFound = true;
                                                 break;
@@ -596,9 +591,9 @@ namespace Intersect.Server.Classes
                                     {
                                         try
                                         {
-                                            if (Database.AccountExists(commandsplit[1]))
+                                            if (LegacyDatabase.AccountExists(commandsplit[1]))
                                             {
-                                                Database.SetPlayerPower(commandsplit[1],
+                                                LegacyDatabase.SetPlayerPower(commandsplit[1],
                                                     int.Parse(commandsplit[2]));
                                                 Console.WriteLine(@"    " +
                                                                   Strings.Commandoutput.powerchanged.ToString(
@@ -783,7 +778,7 @@ namespace Intersect.Server.Classes
             //Save all online players
             Globals.Clients?.FindAll(client => client?.Entity != null).ForEach(client =>
             {
-                Database.SaveCharacter(client?.Entity);
+                LegacyDatabase.SaveCharacter(client?.Entity);
             });
 
             Globals.ServerStarted = false;
@@ -890,6 +885,111 @@ namespace Intersect.Server.Classes
             }
             return true;
         }
+
+        #region "dependencies"
+        private static void ClearDlls()
+        {
+            DeleteIfExists("libe_sqlite3.so");
+            DeleteIfExists("e_sqlite3.dll");
+        }
+
+        private static string ReadProcessOutput(string name)
+        {
+            try
+            {
+                Debug.Assert(name != null, "name != null");
+                var p = new Process
+                {
+                    StartInfo =
+                    {
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        FileName = name
+                    }
+                };
+                p.Start();
+                // Do not wait for the child process to exit before
+                // reading to the end of its redirected stream.
+                // p.WaitForExit();
+                // Read the output stream first and then wait.
+                var output = p.StandardOutput.ReadToEnd();
+                p.WaitForExit();
+                output = output.Trim();
+                return output;
+            }
+            catch { return ""; }
+        }
+
+        private static void ExportDependencies()
+        {
+            ClearDlls();
+
+            //Place sqlite3.dll where it's needed.
+            var dllname = Environment.Is64BitProcess ? "sqlite3x64.dll" : "sqlite3x86.dll";
+            if (!ReflectionUtils.ExtractResource($"Intersect.Server.Resources.{dllname}", "sqlite3.dll"))
+            {
+                Log.Error("Failed to extract sqlite library, terminating startup.");
+                Environment.Exit(-0x1000);
+            }
+
+            var os = Environment.OSVersion;
+            var platformId = os.Platform;
+            if (platformId == PlatformID.Unix)
+            {
+                var unixName = ReadProcessOutput("uname");
+                if (unixName?.Contains("Darwin") ?? false)
+                {
+                    platformId = PlatformID.MacOSX;
+                }
+            }
+
+            switch (platformId)
+            {
+                case PlatformID.Win32NT:
+                case PlatformID.Win32S:
+                case PlatformID.Win32Windows:
+                case PlatformID.WinCE:
+                    //Place e_sqlite3.dll where it's needed.
+                    dllname = Environment.Is64BitProcess ? "e_sqlite3x64.dll" : "e_sqlite3x86.dll";
+                    if (!ReflectionUtils.ExtractResource($"Intersect.Server.Resources.{dllname}", "e_sqlite3.dll"))
+                    {
+                        Log.Error("Failed to extract e_sqlite library, terminating startup.");
+                        Environment.Exit(-0x1000);
+                    }
+                    break;
+
+                case PlatformID.MacOSX:
+                    break;
+
+                case PlatformID.Xbox:
+                    break;
+
+                case PlatformID.Unix:
+                    //Place libe_sqlite3.so where it's needed.
+                    dllname = "libe_sqlite3.so";
+                    if (!ReflectionUtils.ExtractResource($"Intersect.Server.Resources.{dllname}", "libe_sqlite.so"))
+                    {
+                        Log.Error("Failed to extract libe_sqlite.so library, terminating startup.");
+                        Environment.Exit(-0x1000);
+                    }
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(platformId));
+            }
+        }
+
+        private static bool DeleteIfExists(string filename)
+        {
+            try
+            {
+                Debug.Assert(filename != null, "filename != null");
+                if (File.Exists(filename)) File.Delete(filename);
+                return true;
+            }
+            catch { return false; }
+        }
+        #endregion
 
         #region unmanaged
         // Declare the SetConsoleCtrlHandler function

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Intersect.Server.Classes.Maps
 {
-    using Database = Intersect.Server.Classes.Core.Database;
+    using LegacyDatabase = Intersect.Server.Classes.Core.LegacyDatabase;
 
     public class MapGrid
     {
@@ -118,7 +118,7 @@ namespace Intersect.Server.Classes.Maps
         {
             if (MyMaps.Contains(mapNum)) return true;
             if (!parent) return false;
-            return Database.MapGrids.Any(t => t.HasMap(mapNum));
+            return LegacyDatabase.MapGrids.Any(t => t.HasMap(mapNum));
         }
     }
 }

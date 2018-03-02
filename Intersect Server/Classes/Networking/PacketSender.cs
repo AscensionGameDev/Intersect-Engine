@@ -9,14 +9,15 @@ using Intersect.GameObjects.Maps.MapList;
 using Intersect.Server.Classes.Localization;
 using Intersect.Logging;
 using Intersect.Models;
+using Intersect.Server.Classes.Database.PlayerData.Characters;
 using Intersect.Server.Classes.Entities;
 using Intersect.Server.Classes.General;
-using Intersect.Server.Classes.Items;
+
 using Intersect.Server.Classes.Maps;
 
 namespace Intersect.Server.Classes.Networking
 {
-    using Database = Intersect.Server.Classes.Core.Database;
+    using LegacyDatabase = Intersect.Server.Classes.Core.LegacyDatabase;
 
     public static class PacketSender
     {
@@ -88,7 +89,7 @@ namespace Intersect.Server.Classes.Networking
 
             if (!client.IsEditor)
             {
-                SendGlobalMsg(Strings.Player.joined.ToString( client.Entity.MyName, Options.GameName));
+                SendGlobalMsg(Strings.Player.joined.ToString( client.Entity.Name, Options.GameName));
             }
         }
 
@@ -176,9 +177,9 @@ namespace Intersect.Server.Classes.Networking
 
                         case 0:
                             bf.WriteInteger(0 == map.MapGridX ? 1 : 0);
-                            bf.WriteInteger(Database.MapGrids[map.MapGrid].XMax - 1 == map.MapGridX ? 1 : 0);
+                            bf.WriteInteger(LegacyDatabase.MapGrids[map.MapGrid].XMax - 1 == map.MapGridX ? 1 : 0);
                             bf.WriteInteger(0 == map.MapGridY ? 1 : 0);
-                            bf.WriteInteger(Database.MapGrids[map.MapGrid].YMax - 1 == map.MapGridY ? 1 : 0);
+                            bf.WriteInteger(LegacyDatabase.MapGrids[map.MapGrid].YMax - 1 == map.MapGridY ? 1 : 0);
                             break;
 
                         default:
@@ -228,7 +229,7 @@ namespace Intersect.Server.Classes.Networking
             bf.Dispose();
         }
 
-        private static byte[] GetEntityPacket(Entity en, Client forClient)
+        private static byte[] GetEntityPacket(EntityInstance en, Client forClient)
         {
             var bf = new ByteBuffer();
             bf.WriteLong(en.SpawnTime);
@@ -251,7 +252,7 @@ namespace Intersect.Server.Classes.Networking
             return bf.ToArray();
         }
 
-        public static void SendEntityDataTo(Client client, Entity en)
+        public static void SendEntityDataTo(Client client, EntityInstance en)
         {
             if (en == null)
             {
@@ -289,11 +290,11 @@ namespace Intersect.Server.Classes.Networking
             }
         }
 
-        public static void SendMapEntitiesTo(Client client, List<Entity> entities)
+        public static void SendMapEntitiesTo(Client client, List<EntityInstance> entities)
         {
             var buff = new ByteBuffer();
             buff.WriteLong((long)ServerPackets.MapEntities);
-            var sendEntities = new List<Entity>();
+            var sendEntities = new List<EntityInstance>();
             for (int i = 0; i < entities.Count; i++)
             {
                 if (entities[i] != null && entities[i] != client.Entity)
@@ -311,7 +312,7 @@ namespace Intersect.Server.Classes.Networking
             SendMapEntityEquipmentTo(client, sendEntities); //Send the equipment of each player
         }
 
-        public static void SendMapEntityEquipmentTo(Client client, List<Entity> entities)
+        public static void SendMapEntityEquipmentTo(Client client, List<EntityInstance> entities)
         {
             for (int i = 0; i < entities.Count; i++)
             {
@@ -326,7 +327,7 @@ namespace Intersect.Server.Classes.Networking
             }
         }
 
-        public static void SendEntityDataToProximity(Entity en, Client except = null)
+        public static void SendEntityDataToProximity(EntityInstance en, Client except = null)
         {
             if (en == null)
             {
@@ -338,7 +339,7 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteLong(en.MyIndex);
             bf.WriteInteger((int)en.GetEntityType());
             bf.WriteBytes(en.Data());
-            SendDataToProximity(en.CurrentMap, bf.ToArray(), except);
+            SendDataToProximity(en.Map, bf.ToArray(), except);
             bf.Dispose();
             SendEntityVitals(en);
             SendEntityStats(en);
@@ -350,7 +351,7 @@ namespace Intersect.Server.Classes.Networking
             }
         }
 
-        public static void SendEntityPositionTo(Client client, Entity en)
+        public static void SendEntityPositionTo(Client client, EntityInstance en)
         {
             if (en == null)
             {
@@ -360,9 +361,9 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteLong((int)ServerPackets.EntityPosition);
             bf.WriteLong(en.MyIndex);
             bf.WriteInteger((int)en.GetEntityType());
-            bf.WriteInteger(en.CurrentMap);
-            bf.WriteInteger(en.CurrentX);
-            bf.WriteInteger(en.CurrentY);
+            bf.WriteInteger(en.Map);
+            bf.WriteInteger(en.X);
+            bf.WriteInteger(en.Y);
             bf.WriteInteger(en.Dir);
             bf.WriteInteger(en.Passable);
             bf.WriteInteger(en.HideName);
@@ -370,7 +371,7 @@ namespace Intersect.Server.Classes.Networking
             bf.Dispose();
         }
 
-        public static void SendEntityPositionToAll(Entity en)
+        public static void SendEntityPositionToAll(EntityInstance en)
         {
             if (en == null)
             {
@@ -380,13 +381,13 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteLong((int)ServerPackets.EntityPosition);
             bf.WriteLong(en.MyIndex);
             bf.WriteInteger((int)en.GetEntityType());
-            bf.WriteInteger(en.CurrentMap);
-            bf.WriteInteger(en.CurrentX);
-            bf.WriteInteger(en.CurrentY);
+            bf.WriteInteger(en.Map);
+            bf.WriteInteger(en.X);
+            bf.WriteInteger(en.Y);
             bf.WriteInteger(en.Dir);
             bf.WriteInteger(en.Passable);
             bf.WriteInteger(en.HideName);
-            SendDataToProximity(en.CurrentMap, bf.ToArray());
+            SendDataToProximity(en.Map, bf.ToArray());
             bf.Dispose();
         }
 
@@ -410,7 +411,7 @@ namespace Intersect.Server.Classes.Networking
                 bf.WriteInteger(en.MyBase.Behavior);
             }
 
-            SendDataToProximity(en.CurrentMap, bf.ToArray());
+            SendDataToProximity(en.Map, bf.ToArray());
             bf.Dispose();
         }
 
@@ -571,7 +572,7 @@ namespace Intersect.Server.Classes.Networking
             }
         }
 
-        public static void SendDataToAllBut(Entity en, byte[] packet)
+        public static void SendDataToAllBut(EntityInstance en, byte[] packet)
         {
             lock (Globals.ClientLock)
             {
@@ -609,44 +610,44 @@ namespace Intersect.Server.Classes.Networking
             bf.Dispose();
         }
 
-        public static void SendEntityMove(Entity en, bool correction = false)
+        public static void SendEntityMove(EntityInstance en, bool correction = false)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.EntityMove);
             bf.WriteLong(en.MyIndex);
             bf.WriteInteger((int)en.GetEntityType());
-            bf.WriteInteger(en.CurrentMap);
-            bf.WriteInteger(en.CurrentX);
-            bf.WriteInteger(en.CurrentY);
+            bf.WriteInteger(en.Map);
+            bf.WriteInteger(en.X);
+            bf.WriteInteger(en.Y);
             bf.WriteInteger(en.Dir);
             bf.WriteInteger(Convert.ToInt32(correction));
-            SendDataToProximity(en.CurrentMap, bf.ToArray());
+            SendDataToProximity(en.Map, bf.ToArray());
             bf.Dispose();
         }
 
-        public static void SendEntityMoveTo(Client client, Entity en, bool correction = false)
+        public static void SendEntityMoveTo(Client client, EntityInstance en, bool correction = false)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.EntityMove);
             bf.WriteLong(en.MyIndex);
             bf.WriteInteger((int)en.GetEntityType());
-            bf.WriteInteger(en.CurrentMap);
-            bf.WriteInteger(en.CurrentX);
-            bf.WriteInteger(en.CurrentY);
+            bf.WriteInteger(en.Map);
+            bf.WriteInteger(en.X);
+            bf.WriteInteger(en.Y);
             bf.WriteInteger(en.Dir);
             bf.WriteInteger(Convert.ToInt32(correction));
             SendDataTo(client, bf.ToArray());
             bf.Dispose();
         }
 
-        public static void SendEntityVitals(Entity en)
+        public static void SendEntityVitals(EntityInstance en)
         {
             if (en == null) return;
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.EntityVitals);
             bf.WriteLong(en.MyIndex);
             bf.WriteInteger((int)en.GetEntityType());
-            bf.WriteInteger(en.CurrentMap);
+            bf.WriteInteger(en.Map);
             for (var i = 0; i < (int)Vitals.VitalCount; i++)
             {
                 bf.WriteInteger(en.MaxVital[i]);
@@ -670,33 +671,33 @@ namespace Intersect.Server.Classes.Networking
                     SendPartyUpdateTo(((Player)en).Party[i].MyClient, (Player)en);
                 }
             }
-            SendDataToProximity(en.CurrentMap, bf.ToArray());
+            SendDataToProximity(en.Map, bf.ToArray());
             bf.Dispose();
         }
 
-        public static void SendEntityStats(Entity en)
+        public static void SendEntityStats(EntityInstance en)
         {
             if (en == null) return;
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.EntityStats);
             bf.WriteLong(en.MyIndex);
             bf.WriteInteger((int)en.GetEntityType());
-            bf.WriteInteger(en.CurrentMap);
+            bf.WriteInteger(en.Map);
             for (var i = 0; i < (int)Stats.StatCount; i++)
             {
                 bf.WriteInteger(en.Stat[i].Value());
             }
-            SendDataToProximity(en.CurrentMap, bf.ToArray());
+            SendDataToProximity(en.Map, bf.ToArray());
             bf.Dispose();
         }
 
-        public static void SendEntityVitalsTo(Client client, Entity en)
+        public static void SendEntityVitalsTo(Client client, EntityInstance en)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.EntityVitals);
             bf.WriteLong(en.MyIndex);
             bf.WriteInteger((int)en.GetEntityType());
-            bf.WriteInteger(en.CurrentMap);
+            bf.WriteInteger(en.Map);
             for (var i = 0; i < (int)Vitals.VitalCount; i++)
             {
                 bf.WriteInteger(en.MaxVital[i]);
@@ -716,13 +717,13 @@ namespace Intersect.Server.Classes.Networking
             bf.Dispose();
         }
 
-        public static void SendEntityStatsTo(Client client, Entity en)
+        public static void SendEntityStatsTo(Client client, EntityInstance en)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.EntityStats);
             bf.WriteLong(en.MyIndex);
             bf.WriteInteger((int)en.GetEntityType());
-            bf.WriteInteger(en.CurrentMap);
+            bf.WriteInteger(en.Map);
             for (var i = 0; i < (int)Stats.StatCount; i++)
             {
                 bf.WriteInteger(en.Stat[i].Value());
@@ -743,7 +744,7 @@ namespace Intersect.Server.Classes.Networking
             bf.Dispose();
         }
 
-        public static void SendEntityAttack(Entity en, int type, int map, int attackTime)
+        public static void SendEntityAttack(EntityInstance en, int type, int map, int attackTime)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.EntityAttack);
@@ -899,7 +900,7 @@ namespace Intersect.Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.InventoryUpdate);
             bf.WriteInteger(slot);
-            bf.WriteBytes(client.Entity.Inventory[slot].Data());
+            bf.WriteBytes(client.Entity.Items[slot].Data());
             SendDataTo(client, bf.ToArray());
             bf.Dispose();
         }
@@ -935,13 +936,13 @@ namespace Intersect.Server.Classes.Networking
                 }
                 else
                 {
-                    if (en.Equipment[i] == -1 || en.Inventory[en.Equipment[i]].ItemNum == -1)
+                    if (en.Equipment[i] == -1 || en.Items[en.Equipment[i]].ItemNum == -1)
                     {
                         bf.WriteInteger(-1);
                     }
                     else
                     {
-                        bf.WriteInteger(en.Inventory[en.Equipment[i]].ItemNum);
+                        bf.WriteInteger(en.Items[en.Equipment[i]].ItemNum);
                     }
                 }
             }
@@ -956,16 +957,16 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteInteger(en.MyClient.EntityIndex);
             for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {
-                if (en.Equipment[i] == -1 || en.Inventory[en.Equipment[i]].ItemNum == -1)
+                if (en.Equipment[i] == -1 || en.Items[en.Equipment[i]].ItemNum == -1)
                 {
                     bf.WriteInteger(-1);
                 }
                 else
                 {
-                    bf.WriteInteger(en.Inventory[en.Equipment[i]].ItemNum);
+                    bf.WriteInteger(en.Items[en.Equipment[i]].ItemNum);
                 }
             }
-            SendDataToProximity(en.CurrentMap, bf.ToArray(), en.MyClient);
+            SendDataToProximity(en.Map, bf.ToArray(), en.MyClient);
             SendPlayerEquipmentTo(en.MyClient, en);
             bf.Dispose();
         }
@@ -1050,7 +1051,7 @@ namespace Intersect.Server.Classes.Networking
                 {
                     if (Globals.Clients[i].IsEditor)
                     {
-                        if (Database.MapGrids[gridIndex].HasMap(Globals.Clients[i].EditorMap))
+                        if (LegacyDatabase.MapGrids[gridIndex].HasMap(Globals.Clients[i].EditorMap))
                         {
                             SendMapGrid(Globals.Clients[i], gridIndex);
                         }
@@ -1059,7 +1060,7 @@ namespace Intersect.Server.Classes.Networking
                     {
                         if (Globals.Clients[i].Entity != null)
                         {
-                            if (Database.MapGrids[gridIndex].HasMap(Globals.Clients[i].Entity.CurrentMap))
+                            if (LegacyDatabase.MapGrids[gridIndex].HasMap(Globals.Clients[i].Entity.Map))
                             {
                                 SendMapGrid(Globals.Clients[i], gridIndex, true);
                             }
@@ -1073,23 +1074,23 @@ namespace Intersect.Server.Classes.Networking
         {
             ByteBuffer bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.MapGrid);
-            bf.WriteLong(Database.MapGrids[gridIndex].Width);
-            bf.WriteLong(Database.MapGrids[gridIndex].Height);
+            bf.WriteLong(LegacyDatabase.MapGrids[gridIndex].Width);
+            bf.WriteLong(LegacyDatabase.MapGrids[gridIndex].Height);
             bf.WriteBoolean(clearKnownMaps);
             if (clearKnownMaps) client.SentMaps.Clear();
-            for (int x = 0; x < Database.MapGrids[gridIndex].Width; x++)
+            for (int x = 0; x < LegacyDatabase.MapGrids[gridIndex].Width; x++)
             {
-                for (int y = 0; y < Database.MapGrids[gridIndex].Height; y++)
+                for (int y = 0; y < LegacyDatabase.MapGrids[gridIndex].Height; y++)
                 {
-                    if (MapInstance.Lookup.Get<MapInstance>(Database.MapGrids[gridIndex].MyGrid[x, y]) != null)
+                    if (MapInstance.Lookup.Get<MapInstance>(LegacyDatabase.MapGrids[gridIndex].MyGrid[x, y]) != null)
                     {
-                        bf.WriteInteger(Database.MapGrids[gridIndex].MyGrid[x, y]);
+                        bf.WriteInteger(LegacyDatabase.MapGrids[gridIndex].MyGrid[x, y]);
                         if (client.IsEditor)
                         {
                             bf.WriteString(MapInstance.Lookup
-                                .Get<MapInstance>(Database.MapGrids[gridIndex].MyGrid[x, y]).Name);
+                                .Get<MapInstance>(LegacyDatabase.MapGrids[gridIndex].MyGrid[x, y]).Name);
                             bf.WriteInteger(MapInstance.Lookup
-                                .Get<MapInstance>(Database.MapGrids[gridIndex].MyGrid[x, y]).Revision);
+                                .Get<MapInstance>(LegacyDatabase.MapGrids[gridIndex].MyGrid[x, y]).Revision);
                         }
                     }
                     else
@@ -1099,17 +1100,17 @@ namespace Intersect.Server.Classes.Networking
                 }
             }
             client.SendPacket(bf.ToArray());
-            if (!client.IsEditor && clearKnownMaps) SendMap(client, client.Entity.CurrentMap);
+            if (!client.IsEditor && clearKnownMaps) SendMap(client, client.Entity.Map);
             bf.Dispose();
         }
 
-        public static void SendEntityCastTime(Entity en, int spellNum)
+        public static void SendEntityCastTime(EntityInstance en, int spellNum)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.CastTime);
             bf.WriteInteger(en.MyIndex);
             bf.WriteInteger(spellNum);
-            SendDataToProximity(en.CurrentMap, bf.ToArray());
+            SendDataToProximity(en.Map, bf.ToArray());
             bf.Dispose();
         }
 
@@ -1126,7 +1127,7 @@ namespace Intersect.Server.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ServerPackets.Experience);
-            bf.WriteLong(client.Entity.Experience);
+            bf.WriteLong(client.Entity.Exp);
             bf.WriteLong(client.Entity.ExperienceToNextLevel);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
@@ -1415,7 +1416,7 @@ namespace Intersect.Server.Classes.Networking
             bf.Dispose();
         }
 
-        public static void SendEntityDash(Entity en, int endMap, int endX, int endY, int dashTime, int direction)
+        public static void SendEntityDash(EntityInstance en, int endMap, int endX, int endY, int dashTime, int direction)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.EntityDash);
@@ -1425,23 +1426,23 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteInteger(endY);
             bf.WriteInteger(dashTime);
             bf.WriteInteger(direction);
-            SendDataToProximity(en.CurrentMap, bf.ToArray());
+            SendDataToProximity(en.Map, bf.ToArray());
             bf.Dispose();
         }
 
-        public static void SendActionMsg(Entity en, string message, Color color)
+        public static void SendActionMsg(EntityInstance en, string message, Color color)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.ActionMsg);
-            bf.WriteInteger(en.CurrentMap);
-            bf.WriteInteger(en.CurrentX);
-            bf.WriteInteger(en.CurrentY);
+            bf.WriteInteger(en.Map);
+            bf.WriteInteger(en.X);
+            bf.WriteInteger(en.Y);
             bf.WriteString(message);
             bf.WriteByte(color.A);
             bf.WriteByte(color.R);
             bf.WriteByte(color.G);
             bf.WriteByte(color.B);
-            SendDataToProximity(en.CurrentMap, bf.ToArray());
+            SendDataToProximity(en.Map, bf.ToArray());
             bf.Dispose();
         }
 
@@ -1459,12 +1460,12 @@ namespace Intersect.Server.Classes.Networking
                         x < map.MapGridX + 2;
                         x++)
                     {
-                        if (x >= Database.MapGrids[map.MapGrid].XMin &&
-                            x < Database.MapGrids[map.MapGrid].XMax &&
-                            y >= Database.MapGrids[map.MapGrid].YMin &&
-                            y < Database.MapGrids[map.MapGrid].YMax)
+                        if (x >= LegacyDatabase.MapGrids[map.MapGrid].XMin &&
+                            x < LegacyDatabase.MapGrids[map.MapGrid].XMax &&
+                            y >= LegacyDatabase.MapGrids[map.MapGrid].YMin &&
+                            y < LegacyDatabase.MapGrids[map.MapGrid].YMax)
                         {
-                            bf.WriteLong(Database.MapGrids[map.MapGrid].MyGrid[x, y]);
+                            bf.WriteLong(LegacyDatabase.MapGrids[map.MapGrid].MyGrid[x, y]);
                         }
                         else
                         {
@@ -1579,7 +1580,7 @@ namespace Intersect.Server.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((long)ServerPackets.PartyInvite);
-            bf.WriteString(leader.MyName);
+            bf.WriteString(leader.Name);
             bf.WriteInteger(leader.MyIndex);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
@@ -1686,7 +1687,7 @@ namespace Intersect.Server.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((long)ServerPackets.TradeRequest);
-            bf.WriteString(partner.MyName);
+            bf.WriteString(partner.Name);
             bf.WriteInteger(partner.MyIndex);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
@@ -1697,7 +1698,7 @@ namespace Intersect.Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteLong((long)ServerPackets.PlayerDeath);
             bf.WriteLong(en.MyIndex);
-            SendDataToProximity(en.CurrentMap, bf.ToArray());
+            SendDataToProximity(en.Map, bf.ToArray());
             bf.Dispose();
         }
 
@@ -1707,11 +1708,11 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteLong((long)ServerPackets.EntityZDimension);
             bf.WriteLong(index);
             bf.WriteInteger(z);
-            SendDataToProximity(Globals.Entities[index].CurrentMap, bf.ToArray());
+            SendDataToProximity(Globals.Entities[index].Map, bf.ToArray());
             bf.Dispose();
         }
 
-        public static void SendOpenBag(Client client, int slots, BagInstance bag)
+        public static void SendOpenBag(Client client, int slots, Bag bag)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.OpenBag);
@@ -1724,7 +1725,7 @@ namespace Intersect.Server.Classes.Networking
             bf.Dispose();
         }
 
-        public static void SendBagUpdate(Client client, int slot, ItemInstance item)
+        public static void SendBagUpdate(Client client, int slot, Item item)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.BagUpdate);
@@ -1774,10 +1775,10 @@ namespace Intersect.Server.Classes.Networking
                 {
                     if (c != null && c.Entity != null)
                     {
-                        if (friend.Value.ToLower() == c.Entity.MyName.ToLower())
+                        if (friend.Value.ToLower() == c.Entity.Name.ToLower())
                         {
                             online.Add(friend.Value);
-                            map.Add(MapList.GetList().FindMap(client.Entity.CurrentMap).Name);
+                            map.Add(MapList.GetList().FindMap(client.Entity.Map).Name);
                             found = true;
                             break;
                         }
@@ -1812,7 +1813,7 @@ namespace Intersect.Server.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((long)ServerPackets.FriendRequest);
-            bf.WriteString(partner.MyName);
+            bf.WriteString(partner.Name);
             bf.WriteInteger(partner.MyIndex);
             client.SendPacket(bf.ToArray());
             bf.Dispose();

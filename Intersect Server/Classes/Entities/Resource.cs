@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.Server.Classes.Database;
 using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Maps;
 using Intersect.Server.Classes.Networking;
 
 namespace Intersect.Server.Classes.Entities
 {
-    public class Resource : Entity
+    public class Resource : EntityInstance
     {
         public bool IsDead;
 
@@ -18,11 +19,11 @@ namespace Intersect.Server.Classes.Entities
         //Respawn
         public long RespawnTime = 0;
 
-        public Resource(int index, ResourceBase resource) : base(index)
+        public Resource(int index, ResourceBase resource) : base(index, new EntityBase())
         {
             MyBase = resource;
-            MyName = resource.Name;
-            MySprite = resource.InitialGraphic;
+            Name = resource.Name;
+            Sprite = resource.InitialGraphic;
             Vital[(int) Vitals.Health] = Globals.Rand.Next(Math.Min(1, resource.MinHp),
                 Math.Max(resource.MaxHp, Math.Min(1, resource.MinHp)) + 1);
             MaxVital[(int) Vitals.Health] = Vital[(int) Vitals.Health];
@@ -30,23 +31,23 @@ namespace Intersect.Server.Classes.Entities
             HideName = 1;
         }
 
-        public void Destroy(int dropitems = 0, Entity killer = null)
+        public void Destroy(int dropitems = 0, EntityInstance killer = null)
         {
             Die(dropitems, killer);
-            PacketSender.SendEntityLeave(MyIndex, (int) EntityTypes.Resource, CurrentMap);
+            PacketSender.SendEntityLeave(MyIndex, (int) EntityTypes.Resource, Map);
         }
 
-        public override void Die(int dropitems = 100, Entity killer = null)
+        public override void Die(int dropitems = 100, EntityInstance killer = null)
         {
             base.Die(0, killer);
-            MySprite = MyBase.EndGraphic;
+            Sprite = MyBase.EndGraphic;
             Passable = Convert.ToInt32(MyBase.WalkableAfter);
             IsDead = true;
             if (dropitems > 0)
             {
                 SpawnResourceItems(killer);
                 if (MyBase.Animation > -1)
-                    PacketSender.SendAnimationToProximity(MyBase.Animation, -1, -1, CurrentMap, CurrentX, CurrentY,
+                    PacketSender.SendAnimationToProximity(MyBase.Animation, -1, -1, Map, X, Y,
                         (int) Directions.Up);
             }
             PacketSender.SendEntityDataToProximity(this);
@@ -55,19 +56,19 @@ namespace Intersect.Server.Classes.Entities
 
         public void Spawn()
         {
-            MySprite = MyBase.InitialGraphic;
+            Sprite = MyBase.InitialGraphic;
             Vital[(int) Vitals.Health] = Globals.Rand.Next(Math.Min(1, MyBase.MinHp),
                 Math.Max(MyBase.MaxHp, Math.Min(1, MyBase.MinHp)) + 1);
             MaxVital[(int) Vitals.Health] = Vital[(int) Vitals.Health];
             Passable = Convert.ToInt32(MyBase.WalkableBefore);
-            Inventory.Clear();
+            Items.Clear();
 
             //Give Resource Drops
             foreach (var drop in MyBase.Drops)
             {
                 if (Globals.Rand.Next(1, 10001) <= drop.Chance * 100 && ItemBase.Lookup.Get<ItemBase>(drop.ItemNum) != null)
                 {
-                    Inventory.Add(new MapItemInstance(drop.ItemNum, drop.Amount, -1));
+                    Items.Add(new MapItem(drop.ItemNum, drop.Amount));
                 }
             }
 
@@ -77,15 +78,15 @@ namespace Intersect.Server.Classes.Entities
             PacketSender.SendEntityVitals(this);
         }
 
-        public void SpawnResourceItems(Entity killer)
+        public void SpawnResourceItems(EntityInstance killer)
         {
             //Find tile to spawn items
             var tiles = new List<TileHelper>();
-            for (int x = CurrentX - 1; x <= CurrentX + 1; x++)
+            for (int x = X - 1; x <= X + 1; x++)
             {
-                for (int y = CurrentY - 1; y <= CurrentY + 1; y++)
+                for (int y = Y - 1; y <= Y + 1; y++)
                 {
-                    var tileHelper = new TileHelper(CurrentMap, x, y);
+                    var tileHelper = new TileHelper(Map, x, y);
                     if (tileHelper.TryFix())
                     {
                         //Tile is valid.. let's see if its open
@@ -98,9 +99,9 @@ namespace Intersect.Server.Classes.Entities
                             }
                             else
                             {
-                                if (killer.CurrentMap == tileHelper.GetMap() &&
-                                    killer.CurrentX == tileHelper.GetX() &&
-                                    killer.CurrentY == tileHelper.GetY())
+                                if (killer.Map == tileHelper.GetMap() &&
+                                    killer.X == tileHelper.GetX() &&
+                                    killer.Y == tileHelper.GetY())
                                 {
                                     tiles.Add(tileHelper);
                                 }
@@ -115,8 +116,8 @@ namespace Intersect.Server.Classes.Entities
                 //Prefer the players tile, otherwise choose randomly
                 for (int i = 0; i < tiles.Count; i++)
                 {
-                    if (tiles[i].GetMap() == killer.CurrentMap && tiles[i].GetX() == killer.CurrentX &&
-                        tiles[i].GetY() == killer.CurrentY)
+                    if (tiles[i].GetMap() == killer.Map && tiles[i].GetX() == killer.X &&
+                        tiles[i].GetY() == killer.Y)
                     {
                         selectedTile = tiles[i];
                     }
@@ -126,7 +127,7 @@ namespace Intersect.Server.Classes.Entities
                     selectedTile = tiles[Globals.Rand.Next(0, tiles.Count)];
                 }
                 // Drop items
-                foreach (var item in Inventory)
+                foreach (var item in Items)
                 {
                     if (ItemBase.Lookup.Get<ItemBase>(item.ItemNum) != null)
                     {
@@ -135,7 +136,7 @@ namespace Intersect.Server.Classes.Entities
                     }
                 }
             }
-            Inventory.Clear();
+            Items.Clear();
         }
 
         public override void ProcessRegen()
