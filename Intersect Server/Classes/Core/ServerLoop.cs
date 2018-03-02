@@ -34,6 +34,7 @@ namespace Intersect.Server.Classes.Core
                         Task.Run(() => LegacyDatabase.BackupDatabase());
                         lastDbUpdate = DateTime.Now;
                     }
+                    LegacyDatabase.SavePlayers();
                     minuteTimer = timeMs + 60000;
                 }
                 cps++;

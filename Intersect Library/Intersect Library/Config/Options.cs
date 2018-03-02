@@ -10,6 +10,9 @@ namespace Intersect
     {
         private static Options _options;
 
+        [JsonIgnore]
+        public bool ExportDatabaseSettings { get; set; }
+
         //Public Getters
         public static string Language => _options._language;
         public static ushort ServerPort { get => _options._serverPort; set => _options._serverPort = value; }
@@ -46,6 +49,9 @@ namespace Intersect
         public static bool UPnP => _options._upnp;
         public static bool OpenPortChecker => _options._portChecker;
         public static bool ProgressSavedMessages => _options.PlayerOpts.ProgressSavedMessages;
+        public static DatabaseOptions PlayerDb => _options.PlayerDatabase;
+        public static DatabaseOptions GameDb => _options.GameDatabase;
+
 
         [NotNull]
         public static PlayerOptions Player => _options.PlayerOpts;
@@ -105,6 +111,9 @@ namespace Intersect
         [JsonProperty("Map")]
         public MapOptions MapOpts = new MapOptions();
 
+        public DatabaseOptions PlayerDatabase = new DatabaseOptions();
+        public DatabaseOptions GameDatabase = new DatabaseOptions();
+
 
         //Caching Json
         private static string optionsCompressed = "";
@@ -117,7 +126,9 @@ namespace Intersect
             {
                 _options = JsonConvert.DeserializeObject<Options>(File.ReadAllText("resources/config.json"));
             }
+            _options.ExportDatabaseSettings = true;
             File.WriteAllText("resources/config.json", JsonConvert.SerializeObject(_options,Formatting.Indented));
+            _options.ExportDatabaseSettings = false;
             optionsCompressed = JsonConvert.SerializeObject(_options);
             return true;
         }
@@ -132,6 +143,16 @@ namespace Intersect
         public static void LoadFromServer(ByteBuffer bf)
         {
             _options = JsonConvert.DeserializeObject<Options>(bf.ReadString());
+        }
+
+        public bool ShouldSerializePlayerDatabase()
+        {
+            return ExportDatabaseSettings;
+        }
+
+        public bool ShouldSerializeGameDatabase()
+        {
+            return ExportDatabaseSettings;
         }
     }
 }

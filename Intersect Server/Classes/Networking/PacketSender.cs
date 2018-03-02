@@ -546,7 +546,7 @@ namespace Intersect.Server.Classes.Networking
                 {
                     if (client.IsEditor || client.Entity != null)
                     {
-                        if (client.Power > 0)
+                        if (client.Access > 0)
                         {
                             SendPlayerMsg(client, message, clr, target);
                         }
@@ -1005,31 +1005,53 @@ namespace Intersect.Server.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.PlayerCharacters);
-            if (client.Characters.Count < Options.MaxCharacters)
-            {
-                bf.WriteInteger(client.Characters.Count + 1);
-            }
-            else
-            {
-                bf.WriteInteger(client.Characters.Count);
-            }
+            bf.WriteInteger(client.Characters.Count);
+            bf.WriteBoolean(client.Characters.Count < Options.MaxCharacters);
             foreach (var character in client.Characters)
             {
-                bf.WriteInteger(character.Slot);
+                bf.WriteGuid(character.Id);
                 bf.WriteString(character.Name);
                 bf.WriteString(character.Sprite);
                 bf.WriteString(character.Face);
                 bf.WriteInteger(character.Level);
-                bf.WriteString(ClassBase.GetName(character.Class));
+                bf.WriteString(ClassBase.GetName(character.ClassIndex));
 
-                for (int n = 0; n < Options.EquipmentSlots.Count; n++)
+
+                var equipmentArray = character.Equipment;
+                var equipment = new string[Options.EquipmentSlots.Count];
+                //Draw the equipment/paperdolls
+                for (var z = 0; z < Options.PaperdollOrder[1].Count; z++)
                 {
-                    bf.WriteString(character.Equipment[n]);
+                    if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z]) > -1)
+                    {
+                        if (equipmentArray[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] >
+                            -1 && equipmentArray[
+                                Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] <
+                            Options.MaxInvItems)
+                        {
+                            var itemNum = -1;
+
+                            if (ItemBase.Lookup.Get<ItemBase>(itemNum) != null)
+                            {
+                                var itemdata = ItemBase.Lookup.Get<ItemBase>(itemNum);
+                                if (character.Gender == 0)
+                                {
+                                    equipment[z] = itemdata.MalePaperdoll;
+                                }
+                                else
+                                {
+                                    equipment[z] = itemdata.FemalePaperdoll;
+                                }
+                            }
+                        }
+                    }
                 }
-            }
-            if (client.Characters.Count < Options.MaxCharacters)
-            {
-                bf.WriteInteger(-1);
+
+                for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+                {
+                    bf.WriteString(equipment[i]);
+                }
+
             }
             client.SendPacket(bf.ToArray());
             bf.Dispose();
@@ -1775,9 +1797,9 @@ namespace Intersect.Server.Classes.Networking
                 {
                     if (c != null && c.Entity != null)
                     {
-                        if (friend.Value.ToLower() == c.Entity.Name.ToLower())
+                        if (friend.Target.Name.ToLower() == c.Entity.Name.ToLower())
                         {
-                            online.Add(friend.Value);
+                            online.Add(friend.Target.Name);
                             map.Add(MapList.GetList().FindMap(client.Entity.Map).Name);
                             found = true;
                             break;
@@ -1786,7 +1808,7 @@ namespace Intersect.Server.Classes.Networking
                 }
                 if (found == false)
                 {
-                    offline.Add(friend.Value);
+                    offline.Add(friend.Target.Name);
                 }
             }
 

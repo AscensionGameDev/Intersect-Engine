@@ -130,7 +130,7 @@ namespace Intersect_Client.Classes.UI.Menu
                 mPaperdollPortraits[i].Hide();
             }
 
-            if (Characters[mSelectedChar].Id > -1)
+            if (Characters[mSelectedChar] != null)
             {
                 mCharnameLabel.SetText(Strings.CharacterSelection.name.ToString(Characters[mSelectedChar].Name));
                 mInfoLabel.SetText(Strings.CharacterSelection.info.ToString(Characters[mSelectedChar].Level,
@@ -251,7 +251,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
         private void DeleteCharacter(Object sender, EventArgs e)
         {
-            PacketSender.DeleteChar(((InputBox) sender).UserData);
+            PacketSender.DeleteChar((Guid)(((InputBox) sender).UserData));
             mSelectedChar = 0;
             Update();
         }
@@ -268,17 +268,17 @@ namespace Intersect_Client.Classes.UI.Menu
         public string[] Equipment = new string[Options.EquipmentSlots.Count];
         public bool Exists = false;
         public string Face = "";
-        public int Id = -1;
+        public Guid Id;
         public int Level = 1;
         public string Name = "";
         public string Sprite = "";
 
-        public Character(int id)
+        public Character(Guid id)
         {
             Id = id;
         }
 
-        public Character(int id, string name, string sprite, string face, int level, string charClass)
+        public Character(Guid id, string name, string sprite, string face, int level, string charClass)
         {
             for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {

@@ -28,11 +28,11 @@ namespace Intersect_Client.Classes.UI.Game
         private ImagePanel mTextboxBg;
         private GameContentManager.UI _uiStage;
         private Button mYesButton;
-        public int UserData;
+        public object UserData;
         public float Value;
 
         public InputBox(string title, string prompt, bool modal, InputType inputtype, EventHandler okayYesSubmitClicked,
-            EventHandler cancelClicked, int userData, Base parent = null, GameContentManager.UI stage = GameContentManager.UI.InGame)
+            EventHandler cancelClicked, object userData, Base parent = null, GameContentManager.UI stage = GameContentManager.UI.InGame)
         {
             if (parent == null) parent = Gui.GameUi.GameCanvas;
             OkayEventHandler = okayYesSubmitClicked;

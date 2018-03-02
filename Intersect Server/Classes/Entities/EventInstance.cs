@@ -434,7 +434,7 @@ namespace Intersect.Server.Classes.Entities
                     }
                     return false;
                 case 9: //Power Is
-                    if (myPlayer.MyClient.Power > conditionCommand.Ints[1]) return true;
+                    if (myPlayer.MyClient.Access > conditionCommand.Ints[1]) return true;
                     return false;
                 case 10: //Time is between
                     if (conditionCommand.Ints[1] > -1 && conditionCommand.Ints[2] > -1 &&
@@ -925,7 +925,7 @@ namespace Intersect.Server.Classes.Entities
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.SetAccess:
-                    MyPlayer.MyClient.Power = command.Ints[0];
+                    MyPlayer.MyClient.Access = command.Ints[0];
                     PacketSender.SendEntityDataToProximity(MyPlayer);
                     PacketSender.SendPlayerMsg(MyPlayer.MyClient, Strings.Player.powerchanged, Color.Red);
                     CallStack.Peek().CommandIndex++;

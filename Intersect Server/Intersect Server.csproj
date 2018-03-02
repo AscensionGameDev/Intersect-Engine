@@ -417,7 +417,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="private-intersect.bek" />
-    <None Include="app.config" />
     <None Include="packages.config" />
     <EmbeddedResource Include="Resources\libe_sqlite3.so" />
   </ItemGroup>

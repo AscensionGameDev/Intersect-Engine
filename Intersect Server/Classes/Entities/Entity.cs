@@ -71,6 +71,11 @@ namespace Intersect.Server.Classes.Entities
             get => mEntityBase.Level;
             set => mEntityBase.Level = value;
         }
+        public int[] BaseStat
+        {
+            get => mEntityBase.Stat;
+            set => mEntityBase.Stat = value;
+        }
         //Vitals & Stats
         public int[] Vital
         {
@@ -133,7 +138,7 @@ namespace Intersect.Server.Classes.Entities
            
             for (var I = 0; I < (int) Stats.StatCount; I++)
             {
-                Stat[I] = new EntityStat(0, I);
+                Stat[I] = new EntityStat(0, I,this,null);
             }
 
             MyIndex = index;
@@ -1661,7 +1666,7 @@ namespace Intersect.Server.Classes.Entities
             }
             if (GetType() == typeof(Player)) //helps the client identify admins if entity is a player.
             {
-                bf.WriteInteger(((Player) this).MyClient.Power);
+                bf.WriteInteger(((Player) this).MyClient.Access);
             }
             else if (GetType() == typeof(Npc)) //Helps the client identify NPC Behavior
             {
@@ -1684,17 +1689,24 @@ namespace Intersect.Server.Classes.Entities
 
     public class EntityStat
     {
+        private EntityInstance mOwner;
         private Player mPlayer;
         private int mStatType;
         private Dictionary<SpellBase, EntityBuff> mBuff = new Dictionary<SpellBase, EntityBuff>();
         private bool mChanged;
-        public int Stat;
 
-        public EntityStat(int stat, int statType, Player owner = null)
+        public int Stat
         {
-            Stat = stat;
-            mPlayer = owner;
+            get => mOwner.BaseStat[mStatType];
+            set => mOwner.BaseStat[mStatType] = value;
+        }
+
+        public EntityStat(int stat, int statType, EntityInstance owner, Player player)
+        {
+            mOwner = owner;
+            mPlayer = player;
             mStatType = statType;
+            Stat = stat;
         }
 
         public int Value()

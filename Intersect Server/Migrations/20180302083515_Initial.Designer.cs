@@ -11,8 +11,8 @@ using System;
 namespace Intersect.Server.Migrations
 {
     [DbContext(typeof(PlayerContext))]
-    [Migration("20180301020210_InitialPlayerDataCommit")]
-    partial class InitialPlayerDataCommit
+    [Migration("20180302083515_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -28,6 +28,8 @@ namespace Intersect.Server.Migrations
                     b.Property<string>("Banner");
 
                     b.Property<DateTime>("EndTime");
+
+                    b.Property<string>("Ip");
 
                     b.Property<Guid>("PlayerId");
 
@@ -121,12 +123,14 @@ namespace Intersect.Server.Migrations
 
                     b.Property<Guid>("Class");
 
+                    b.Property<int>("ClassIndex");
+
                     b.Property<int>("Dir");
 
                     b.Property<string>("EquipmentJson")
                         .HasColumnName("Equipment");
 
-                    b.Property<int>("Exp");
+                    b.Property<long>("Exp");
 
                     b.Property<string>("Face");
 
@@ -137,6 +141,8 @@ namespace Intersect.Server.Migrations
                     b.Property<int>("Level");
 
                     b.Property<Guid>("Map");
+
+                    b.Property<int>("MapIndex");
 
                     b.Property<string>("MaxVitalsJson")
                         .HasColumnName("MaxVitals");
@@ -332,6 +338,8 @@ namespace Intersect.Server.Migrations
 
                     b.Property<DateTime>("EndTime");
 
+                    b.Property<string>("Ip");
+
                     b.Property<string>("Muter");
 
                     b.Property<Guid>("PlayerId");
@@ -347,7 +355,7 @@ namespace Intersect.Server.Migrations
                     b.ToTable("Mutes");
                 });
 
-            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Player", b =>
+            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
@@ -368,12 +376,12 @@ namespace Intersect.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Players");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Ban", b =>
                 {
-                    b.HasOne("Intersect.Server.Classes.Database.PlayerData.Player", "Player")
+                    b.HasOne("Intersect.Server.Classes.Database.PlayerData.User", "Player")
                         .WithMany()
                         .HasForeignKey("PlayerId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -409,7 +417,7 @@ namespace Intersect.Server.Migrations
 
             modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.Character", b =>
                 {
-                    b.HasOne("Intersect.Server.Classes.Database.PlayerData.Player", "Account")
+                    b.HasOne("Intersect.Server.Classes.Database.PlayerData.User", "Account")
                         .WithMany("Characters")
                         .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -480,7 +488,7 @@ namespace Intersect.Server.Migrations
 
             modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Mute", b =>
                 {
-                    b.HasOne("Intersect.Server.Classes.Database.PlayerData.Player", "Player")
+                    b.HasOne("Intersect.Server.Classes.Database.PlayerData.User", "Player")
                         .WithMany()
                         .HasForeignKey("PlayerId")
                         .OnDelete(DeleteBehavior.Cascade);

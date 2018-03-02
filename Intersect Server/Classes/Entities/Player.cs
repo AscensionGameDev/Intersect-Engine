@@ -26,6 +26,7 @@ namespace Intersect.Server.Classes.Entities
         private Character mCharacterBase;
 
         //Mapping to Character Base Properties
+        public Character Character => mCharacterBase;
         public int Class
         {
             get => mCharacterBase.ClassIndex;
@@ -52,13 +53,14 @@ namespace Intersect.Server.Classes.Entities
             set => mCharacterBase.Equipment = value;
         }
 
+        public List<Friend> Friends => mCharacterBase.Friends;
+
         public List<BankItem> Bank
         {
             get => mCharacterBase.Bank;
             set => mCharacterBase.Bank = value;
         }
-
-        public Dictionary<int, string> Friends = new Dictionary<int, string>();
+        
         public HotbarInstance[] Hotbar = new HotbarInstance[Options.MaxHotbar];
         public Dictionary<int, bool> Switches = new Dictionary<int, bool>();
         public Dictionary<int, int> Variables = new Dictionary<int, int>();
@@ -93,7 +95,6 @@ namespace Intersect.Server.Classes.Entities
         public Player PartyRequester;
         public Dictionary<Player, long> PartyRequests = new Dictionary<Player, long>();
         public List<int> QuestOffers = new List<int>();
-        public long SaveTimer = Environment.TickCount;
         //Event Spawned Npcs
         public List<Npc> SpawnedNpcs = new List<Npc>();
         public Item[] Trade = new Item[Options.MaxInvItems];
@@ -132,7 +133,7 @@ namespace Intersect.Server.Classes.Entities
             }
             for (var I = 0; I < (int)Stats.StatCount; I++)
             {
-                Stat[I] = new EntityStat(0, I, this);
+                Stat[I] = new EntityStat(0, I, this,this);
             }
         }
 
@@ -165,12 +166,6 @@ namespace Intersect.Server.Classes.Entities
             if (!InGame || Map == -1)
             {
                 return;
-            }
-
-            if (SaveTimer + 120000 < timeMs)
-            {
-                Task.Run(() => LegacyDatabase.SaveCharacter(this, false));
-                SaveTimer = timeMs;
             }
 
             if (InCraft > -1 && CraftIndex > -1)
@@ -2039,6 +2034,25 @@ namespace Intersect.Server.Classes.Entities
                         CustomColors.Error);
                 }
             }
+        }
+
+        public bool HasFriend(Character character)
+        {
+            foreach (var friend in Friends)
+            {
+                if (friend.Target == character) return true;
+            }
+            return false;
+        }
+
+        public void AddFriend(Character character)
+        {
+            var friend = new Friend
+            {
+                Owner = mCharacterBase,
+                Target = character
+            };
+            Friends.Add(friend);
         }
 
         //Trading

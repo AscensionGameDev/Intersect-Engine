@@ -7,6 +7,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using Intersect.Collections;
+using Intersect.Config;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
@@ -15,12 +16,15 @@ using Intersect.GameObjects.Maps.MapList;
 using Intersect.Server.Classes.Localization;
 using Intersect.Logging;
 using Intersect.Models;
+using Intersect.Server.Classes.Database.PlayerData;
 using Intersect.Server.Classes.Database.PlayerData.Characters;
 using Intersect.Server.Classes.Entities;
 using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Maps;
 using Intersect.Server.Classes.Networking;
 using Intersect.Server.Database;
+using JetBrains.Annotations;
+using Microsoft.EntityFrameworkCore;
 using Mono.Data.Sqlite;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -40,28 +44,6 @@ namespace Intersect.Server.Classes.Core
 
         private const string DB_VERSION = "dbversion";
 
-        //Ban Table Constants
-        private const string BAN_TABLE = "bans";
-
-        private const string BAN_ID = "id";
-        private const string BAN_TIME = "time";
-        private const string BAN_USER = "user";
-        private const string BAN_IP = "ip";
-        private const string BAN_DURATION = "duration";
-        private const string BAN_REASON = "reason";
-        private const string BAN_BANNER = "banner";
-
-        //Mute Table Constants
-        private const string MUTE_TABLE = "mutes";
-
-        private const string MUTE_ID = "id";
-        private const string MUTE_TIME = "time";
-        private const string MUTE_USER = "user";
-        private const string MUTE_IP = "ip";
-        private const string MUTE_DURATION = "duration";
-        private const string MUTE_REASON = "reason";
-        private const string MUTE_MUTER = "muter";
-
         //Log Table Constants
         private const string LOG_TABLE = "logs";
 
@@ -69,106 +51,6 @@ namespace Intersect.Server.Classes.Core
         private const string LOG_TIME = "time";
         private const string LOG_TYPE = "type";
         private const string LOG_INFO = "info";
-
-        //User Table Constants
-        private const string USERS_TABLE = "users";
-
-        private const string USER_ID = "id";
-        private const string USER_NAME = "user";
-        private const string USER_PASS = "pass";
-        private const string USER_SALT = "salt";
-        private const string USER_EMAIL = "email";
-        private const string USER_POWER = "power";
-
-        //Character Table Constants
-        private const string CHAR_TABLE = "characters";
-
-        private const string CHAR_ID = "id";
-        private const string CHAR_USER_ID = "user_id";
-        private const string CHAR_DELETED = "deleted";
-        private const string CHAR_NAME = "name";
-        private const string CHAR_MAP = "map";
-        private const string CHAR_X = "x";
-        private const string CHAR_Y = "y";
-        private const string CHAR_Z = "z";
-        private const string CHAR_DIR = "dir";
-        private const string CHAR_SPRITE = "sprite";
-        private const string CHAR_FACE = "face";
-        private const string CHAR_CLASS = "class";
-        private const string CHAR_GENDER = "gender";
-        private const string CHAR_LEVEL = "level";
-        private const string CHAR_EXP = "exp";
-        private const string CHAR_VITALS = "vitals";
-        private const string CHAR_MAX_VITALS = "maxvitals";
-        private const string CHAR_STATS = "stats";
-        private const string CHAR_STAT_POINTS = "statpoints";
-        private const string CHAR_EQUIPMENT = "equipment";
-        private const string CHAR_LAST_ONLINE_TIME = "last_online";
-
-        //Char Inventory Table Constants
-        private const string CHAR_INV_TABLE = "char_inventory";
-
-        private const string CHAR_INV_CHAR_ID = "char_id";
-        private const string CHAR_INV_SLOT = "slot";
-        private const string CHAR_INV_ITEM_NUM = "itemnum";
-        private const string CHAR_INV_ITEM_VAL = "itemval";
-        private const string CHAR_INV_ITEM_STATS = "itemstats";
-        private const string CHAR_INV_ITEM_BAG_ID = "item_bag_id";
-
-        //Char Spells Table Constants
-        private const string CHAR_SPELL_TABLE = "char_spells";
-
-        private const string CHAR_SPELL_CHAR_ID = "char_id";
-        private const string CHAR_SPELL_SLOT = "slot";
-        private const string CHAR_SPELL_NUM = "spellnum";
-        private const string CHAR_SPELL_CD = "spellcd";
-
-        //Char Hotbar Table Constants
-        private const string CHAR_HOTBAR_TABLE = "char_hotbar";
-
-        private const string CHAR_HOTBAR_CHAR_ID = "char_id";
-        private const string CHAR_HOTBAR_SLOT = "slot";
-        private const string CHAR_HOTBAR_TYPE = "type";
-        private const string CHAR_HOTBAR_ITEMSLOT = "itemslot";
-
-        //Char Bank Table Constants
-        private const string CHAR_BANK_TABLE = "char_bank";
-
-        private const string CHAR_BANK_CHAR_ID = "char_id";
-        private const string CHAR_BANK_SLOT = "slot";
-        private const string CHAR_BANK_ITEM_NUM = "itemnum";
-        private const string CHAR_BANK_ITEM_VAL = "itemval";
-        private const string CHAR_BANK_ITEM_STATS = "itemstats";
-        private const string CHAR_BANK_ITEM_BAG_ID = "item_bag_id";
-
-        //Char Switches Table Constants
-        private const string CHAR_SWITCHES_TABLE = "char_switches";
-
-        private const string CHAR_SWITCH_CHAR_ID = "char_id";
-        private const string CHAR_SWITCH_SLOT = "slot";
-        private const string CHAR_SWITCH_VAL = "val";
-
-        //Char Variables Table Constants
-        private const string CHAR_VARIABLES_TABLE = "char_variables";
-
-        private const string CHAR_VARIABLE_CHAR_ID = "char_id";
-        private const string CHAR_VARIABLE_SLOT = "slot";
-        private const string CHAR_VARIABLE_VAL = "val";
-
-        //Char Quests Table Constants
-        private const string CHAR_QUESTS_TABLE = "char_quests";
-
-        private const string CHAR_QUEST_CHAR_ID = "char_id";
-        private const string CHAR_QUEST_ID = "quest_id";
-        private const string CHAR_QUEST_TASK = "task";
-        private const string CHAR_QUEST_TASK_PROGRESS = "task_progress";
-        private const string CHAR_QUEST_COMPLETED = "completed";
-
-        //Char Friendss Table Constants
-        private const string CHAR_FRIENDS_TABLE = "char_friends";
-
-        private const string CHAR_FRIEND_CHAR_ID = "char_id";
-        private const string CHAR_FRIEND_ID = "friend_id";
 
         //GameObject Table Constants
         private const string GAME_OBJECT_ID = "id";
@@ -194,23 +76,9 @@ namespace Intersect.Server.Classes.Core
         private const string TIME_TABLE = "time";
         private const string TIME_DATA = "data";
 
-        //Bag Table Constants
-        private const string BAGS_TABLE = "bags";
-
-        private const string BAG_ID = "bag_id";
-        private const string BAG_SLOT_COUNT = "slot_count";
-
-        //Bag Items Table Constants
-        private const string BAG_ITEMS_TABLE = "bag_items";
-
-        private const string BAG_ITEM_CONTAINER_ID = "bag_id";
-        private const string BAG_ITEM_SLOT = "slot";
-        private const string BAG_ITEM_NUM = "itemnum";
-        private const string BAG_ITEM_VAL = "itemval";
-        private const string BAG_ITEM_STATS = "itemstats";
-        private const string BAG_ITEM_BAG_ID = "item_bag_id";
         private static DatabaseConnection sGameDbConnection;
-        private static DatabaseConnection sPlayerDbConnection;
+
+        private static PlayerContext sPlayerDb;
 
         public static object MapGridLock = new object();
         public static List<MapGrid> MapGrids = new List<MapGrid>();
@@ -237,7 +105,6 @@ namespace Intersect.Server.Classes.Core
         public static void BackupDatabase()
         {
             sGameDbConnection?.Backup();
-            sPlayerDbConnection?.Backup();
         }
 
         //Database setup, version checking
@@ -246,20 +113,24 @@ namespace Intersect.Server.Classes.Core
             SqliteConnection.SetConfig(SQLiteConfig.Serialized);
 
             sGameDbConnection = new DatabaseConnection(GameDbFilename, SetupGameDatabase);
-            sPlayerDbConnection = new DatabaseConnection(PlayersDbFilename, SetupPlayerDatabase);
 
             sGameDbConnection.Open();
-            sPlayerDbConnection.Open();
+
+            //Connect to new player database
+            if (Options.PlayerDb.Type == DatabaseOptions.DatabaseType.sqlite)
+            {
+                sPlayerDb = new PlayerContext(PlayerContext.DbProvider.Sqlite, $"Data Source={PlayersDbFilename}");
+            }
+            else
+            {
+                sPlayerDb = new PlayerContext(PlayerContext.DbProvider.MySql, $"server={Options.PlayerDb.Server};database={Options.PlayerDb.Database};user={Options.PlayerDb.Username};password={Options.PlayerDb.Password}");   
+            }
+            sPlayerDb.Database.EnsureDeleted();
+            sPlayerDb.Database.Migrate();
 
             if (sGameDbConnection.GetVersion() != DbVersion)
             {
                 Console.WriteLine(Strings.Database.gamedboutofdate.ToString(sGameDbConnection.GetVersion(), DbVersion));
-                return false;
-            }
-
-            if (sPlayerDbConnection.GetVersion() != DbVersion)
-            {
-                Console.WriteLine(Strings.Database.playerdboutofdate.ToString(sPlayerDbConnection.GetVersion(), DbVersion));
                 return false;
             }
 
@@ -268,25 +139,9 @@ namespace Intersect.Server.Classes.Core
             return true;
         }
 
-        private static void SetupPlayerDatabase(Object sender, EventArgs e)
+        public static void SavePlayers()
         {
-            sPlayerDbConnection = ((DatabaseConnection) sender);
-            CreateInfoTable(sPlayerDbConnection);
-            CreateUsersTable();
-            CreateCharactersTable();
-            CreateCharacterInventoryTable();
-            CreateCharacterSpellsTable();
-            CreateCharacterHotbarTable();
-            CreateCharacterBankTable();
-            CreateCharacterSwitchesTable();
-            CreateCharacterVariablesTable();
-            CreateCharacterQuestsTable();
-            CreateCharacterFriendsTable();
-            CreateBansTable();
-            CreateMutesTable();
-            CreateLogsTable(sPlayerDbConnection);
-            CreateBagsTable();
-            CreateBagItemsTable();
+            sPlayerDb.SaveChanges();
         }
 
         private static void SetupGameDatabase(Object sender, EventArgs e)
@@ -340,216 +195,6 @@ namespace Intersect.Server.Classes.Core
             };
 
             CreateTable(new TableDescriptor(LOG_TABLE, columns), conn);
-        }
-
-        private static void CreateMutesTable()
-        {
-            var columns = new List<ColumnDescriptor>()
-            {
-                new ColumnDescriptor(MUTE_ID, DataType.Integer) { PrimaryKey = true, Autoincrement = true },
-                new ColumnDescriptor(MUTE_TIME, DataType.Text),
-                new ColumnDescriptor(MUTE_USER, DataType.Integer),
-                new ColumnDescriptor(MUTE_IP, DataType.Text),
-                new ColumnDescriptor(MUTE_DURATION, DataType.Integer),
-                new ColumnDescriptor(MUTE_REASON, DataType.Text),
-                new ColumnDescriptor(MUTE_MUTER, DataType.Text)
-            };
-
-            CreateTable(new TableDescriptor(MUTE_TABLE, columns), sPlayerDbConnection);
-        }
-
-        private static void CreateBansTable()
-        {
-            var columns = new List<ColumnDescriptor>()
-            {
-                new ColumnDescriptor(BAN_ID, DataType.Integer) { PrimaryKey = true, Autoincrement = true },
-                new ColumnDescriptor(BAN_TIME, DataType.Text),
-                new ColumnDescriptor(BAN_USER, DataType.Integer),
-                new ColumnDescriptor(BAN_IP, DataType.Text),
-                new ColumnDescriptor(BAN_DURATION, DataType.Integer),
-                new ColumnDescriptor(BAN_REASON, DataType.Text),
-                new ColumnDescriptor(BAN_BANNER, DataType.Text)
-            };
-
-            CreateTable(new TableDescriptor(BAN_TABLE, columns), sPlayerDbConnection);
-        }
-
-        private static void CreateUsersTable()
-        {
-            var columns = new List<ColumnDescriptor>()
-            {
-                new ColumnDescriptor(USER_ID, DataType.Integer) { PrimaryKey = true, Autoincrement = true },
-                new ColumnDescriptor(USER_NAME, DataType.Text),
-                new ColumnDescriptor(USER_PASS, DataType.Text),
-                new ColumnDescriptor(USER_SALT, DataType.Text),
-                new ColumnDescriptor(USER_EMAIL, DataType.Text),
-                new ColumnDescriptor(USER_POWER, DataType.Integer)
-            };
-
-            CreateTable(new TableDescriptor(USERS_TABLE, columns), sPlayerDbConnection);
-        }
-
-        private static void CreateCharactersTable()
-        {
-            var columns = new List<ColumnDescriptor>()
-            {
-                new ColumnDescriptor(USER_ID, DataType.Integer) { PrimaryKey = true, Autoincrement = true },
-                new ColumnDescriptor(CHAR_USER_ID, DataType.Integer),
-                new ColumnDescriptor(CHAR_NAME, DataType.Text),
-                new ColumnDescriptor(CHAR_DELETED, DataType.Integer),
-                new ColumnDescriptor(CHAR_MAP, DataType.Integer),
-                new ColumnDescriptor(CHAR_X, DataType.Integer),
-                new ColumnDescriptor(CHAR_Y, DataType.Integer),
-                new ColumnDescriptor(CHAR_Z, DataType.Integer),
-                new ColumnDescriptor(CHAR_DIR, DataType.Integer),
-                new ColumnDescriptor(CHAR_SPRITE, DataType.Text),
-                new ColumnDescriptor(CHAR_FACE, DataType.Text),
-                new ColumnDescriptor(CHAR_CLASS, DataType.Integer),
-                new ColumnDescriptor(CHAR_GENDER, DataType.Integer),
-                new ColumnDescriptor(CHAR_LEVEL, DataType.Integer),
-                new ColumnDescriptor(CHAR_EXP, DataType.Integer),
-                new ColumnDescriptor(CHAR_VITALS, DataType.Text),
-                new ColumnDescriptor(CHAR_MAX_VITALS, DataType.Text),
-                new ColumnDescriptor(CHAR_STATS, DataType.Text),
-                new ColumnDescriptor(CHAR_STAT_POINTS, DataType.Integer),
-                new ColumnDescriptor(CHAR_EQUIPMENT, DataType.Text),
-                new ColumnDescriptor(CHAR_LAST_ONLINE_TIME, DataType.Integer)
-            };
-
-            CreateTable(new TableDescriptor(CHAR_TABLE, columns), sPlayerDbConnection);
-        }
-
-        private static void CreateCharacterInventoryTable()
-        {
-            var columns = new List<ColumnDescriptor>()
-            {
-                new ColumnDescriptor(CHAR_INV_CHAR_ID, DataType.Integer),
-                new ColumnDescriptor(CHAR_INV_SLOT, DataType.Integer),
-                new ColumnDescriptor(CHAR_INV_ITEM_NUM, DataType.Integer),
-                new ColumnDescriptor(CHAR_INV_ITEM_VAL, DataType.Integer),
-                new ColumnDescriptor(CHAR_INV_ITEM_STATS, DataType.Text),
-                new ColumnDescriptor(CHAR_INV_ITEM_BAG_ID, DataType.Integer)
-            };
-
-            CreateTable(new TableDescriptor(CHAR_INV_TABLE, columns, new UniqueConstraintDescriptor(CHAR_INV_CHAR_ID, CHAR_INV_SLOT)), sPlayerDbConnection);
-        }
-
-        private static void CreateCharacterSpellsTable()
-        {
-            var columns = new List<ColumnDescriptor>()
-            {
-                new ColumnDescriptor(CHAR_SPELL_CHAR_ID, DataType.Integer),
-                new ColumnDescriptor(CHAR_SPELL_SLOT, DataType.Integer),
-                new ColumnDescriptor(CHAR_SPELL_NUM, DataType.Integer),
-                new ColumnDescriptor(CHAR_SPELL_CD, DataType.Integer)
-            };
-
-            CreateTable(new TableDescriptor(CHAR_SPELL_TABLE, columns, new UniqueConstraintDescriptor(CHAR_SPELL_CHAR_ID, CHAR_SPELL_SLOT)), sPlayerDbConnection);
-        }
-
-        private static void CreateCharacterHotbarTable()
-        {
-            var columns = new List<ColumnDescriptor>()
-            {
-                new ColumnDescriptor(CHAR_HOTBAR_CHAR_ID, DataType.Integer),
-                new ColumnDescriptor(CHAR_HOTBAR_SLOT, DataType.Integer),
-                new ColumnDescriptor(CHAR_HOTBAR_TYPE, DataType.Integer),
-                new ColumnDescriptor(CHAR_HOTBAR_ITEMSLOT, DataType.Integer)
-            };
-
-            CreateTable(new TableDescriptor(CHAR_HOTBAR_TABLE, columns, new UniqueConstraintDescriptor(CHAR_HOTBAR_CHAR_ID, CHAR_HOTBAR_SLOT)), sPlayerDbConnection);
-        }
-
-        private static void CreateCharacterBankTable()
-        {
-            var columns = new List<ColumnDescriptor>()
-            {
-                new ColumnDescriptor(CHAR_BANK_CHAR_ID, DataType.Integer),
-                new ColumnDescriptor(CHAR_BANK_SLOT, DataType.Integer),
-                new ColumnDescriptor(CHAR_BANK_ITEM_NUM, DataType.Integer),
-                new ColumnDescriptor(CHAR_BANK_ITEM_VAL, DataType.Integer),
-                new ColumnDescriptor(CHAR_BANK_ITEM_STATS, DataType.Text),
-                new ColumnDescriptor(CHAR_BANK_ITEM_BAG_ID, DataType.Integer)
-            };
-
-            CreateTable(new TableDescriptor(CHAR_BANK_TABLE, columns, new UniqueConstraintDescriptor(CHAR_BANK_CHAR_ID, CHAR_BANK_SLOT)), sPlayerDbConnection);
-        }
-
-        private static void CreateCharacterSwitchesTable()
-        {
-            var columns = new List<ColumnDescriptor>()
-            {
-                new ColumnDescriptor(CHAR_SWITCH_CHAR_ID, DataType.Integer),
-                new ColumnDescriptor(CHAR_SWITCH_SLOT, DataType.Integer),
-                new ColumnDescriptor(CHAR_SWITCH_VAL, DataType.Integer)
-            };
-
-            CreateTable(new TableDescriptor(CHAR_SWITCHES_TABLE, columns, new UniqueConstraintDescriptor(CHAR_SWITCH_CHAR_ID, CHAR_SWITCH_SLOT)), sPlayerDbConnection);
-        }
-
-        private static void CreateCharacterVariablesTable()
-        {
-            var columns = new List<ColumnDescriptor>()
-            {
-                new ColumnDescriptor(CHAR_VARIABLE_CHAR_ID, DataType.Integer),
-                new ColumnDescriptor(CHAR_VARIABLE_SLOT, DataType.Integer),
-                new ColumnDescriptor(CHAR_VARIABLE_VAL, DataType.Integer)
-            };
-
-            CreateTable(new TableDescriptor(CHAR_VARIABLES_TABLE, columns, new UniqueConstraintDescriptor(CHAR_VARIABLE_CHAR_ID, CHAR_VARIABLE_SLOT)), sPlayerDbConnection);
-        }
-
-        private static void CreateCharacterQuestsTable()
-        {
-            var columns = new List<ColumnDescriptor>()
-            {
-                new ColumnDescriptor(CHAR_QUEST_CHAR_ID, DataType.Integer),
-                new ColumnDescriptor(CHAR_QUEST_ID, DataType.Integer),
-                new ColumnDescriptor(CHAR_QUEST_TASK, DataType.Integer),
-                new ColumnDescriptor(CHAR_QUEST_TASK_PROGRESS, DataType.Integer),
-                new ColumnDescriptor(CHAR_QUEST_COMPLETED, DataType.Integer)
-            };
-
-            CreateTable(new TableDescriptor(CHAR_QUESTS_TABLE, columns, new UniqueConstraintDescriptor(CHAR_QUEST_CHAR_ID, CHAR_QUEST_ID)), sPlayerDbConnection);
-        }
-
-        private static void CreateCharacterFriendsTable()
-        {
-            var columns = new List<ColumnDescriptor>()
-            {
-                new ColumnDescriptor(CHAR_FRIEND_CHAR_ID, DataType.Integer),
-                new ColumnDescriptor(CHAR_FRIEND_ID, DataType.Integer)
-            };
-
-            CreateTable(new TableDescriptor(CHAR_FRIENDS_TABLE, columns, new UniqueConstraintDescriptor(CHAR_FRIEND_CHAR_ID, CHAR_FRIEND_ID)), sPlayerDbConnection);
-        }
-
-        private static void CreateBagsTable()
-        {
-            var columns = new List<ColumnDescriptor>()
-            {
-                new ColumnDescriptor(BAG_ID, DataType.Integer) { PrimaryKey = true, Autoincrement = true },
-                new ColumnDescriptor(BAG_SLOT_COUNT, DataType.Integer)
-            };
-
-            CreateTable(new TableDescriptor(BAGS_TABLE, columns), sPlayerDbConnection);
-        }
-
-        private static void CreateBagItemsTable()
-        {
-            var columns = new List<ColumnDescriptor>()
-            {
-                new ColumnDescriptor(BAG_ITEM_CONTAINER_ID, DataType.Integer),
-                new ColumnDescriptor(BAG_ITEM_SLOT, DataType.Integer),
-                new ColumnDescriptor(BAG_ITEM_NUM, DataType.Integer),
-                new ColumnDescriptor(BAG_ITEM_VAL, DataType.Integer),
-                new ColumnDescriptor(BAG_ITEM_STATS, DataType.Text),
-                new ColumnDescriptor(BAG_ITEM_BAG_ID, DataType.Text)
-            };
-
-            CreateTable(new TableDescriptor(BAG_ITEMS_TABLE, columns, new UniqueConstraintDescriptor(BAG_ITEM_CONTAINER_ID, BAG_ITEM_SLOT)), sPlayerDbConnection);
-            CreateBag(1);
-            //This is to bypass an issue where we use itemVal to store the bag identifier (we are terrible!)
         }
 
         private static void CreateGameObjectTables()
@@ -645,7 +290,7 @@ namespace Intersect.Server.Classes.Core
             Console.WriteLine(Strings.Database.usingsqlite);
         }
 
-        public static Client GetPlayerClient(string username)
+        public static Client GetPlayerClient([NotNull] string username)
         {
             //Try to fetch a player entity by username, online or offline.
             //Check Online First
@@ -653,7 +298,7 @@ namespace Intersect.Server.Classes.Core
             {
                 foreach (var client in Globals.Clients)
                 {
-                    if (client.Entity != null && client.MyAccount.ToLower() == username.ToLower())
+                    if (client.Entity != null && client.Name.ToLower() == username.ToLower())
                     {
                         return client;
                     }
@@ -662,18 +307,13 @@ namespace Intersect.Server.Classes.Core
             return null;
         }
 
-        public static void SetPlayerPower(string username, int power)
+        public static void SetPlayerPower([NotNull] string username, int power)
         {
-            if (AccountExists(username))
+            var user = GetUser(username);
+            if (user != null)
             {
-                var client = GetPlayerClient(username);
-                if (client != null)
-                {
-                    client.Power = power;
-                    SaveUser(client);
-                    PacketSender.SendPlayerMsg(client, Strings.Player.powerchanged, client.Entity.Name);
-                    Console.WriteLine(Strings.Commandoutput.powerlevel.ToString(username, power));
-                }
+                user.Access = power;
+                sPlayerDb.SaveChanges();
             }
             else
             {
@@ -682,676 +322,218 @@ namespace Intersect.Server.Classes.Core
         }
 
         //User Info
-        public static bool AccountExists(string accountname)
+        public static bool AccountExists([NotNull] string accountname)
         {
-            long count = -1;
-            var query = $"SELECT COUNT(*) from {USERS_TABLE} WHERE LOWER(" + USER_NAME + ")=@" + USER_NAME +
-                        ";";
-            using (var cmd = sPlayerDbConnection.CreateCommand())
-            {
-                cmd.CommandText = query;
-                cmd.Parameters.Add(new SqliteParameter("@" + USER_NAME, accountname.ToLower().Trim()));
-                count = (long) sPlayerDbConnection.ExecuteScalar(cmd);
-            }
-
-            return (count > 0);
+            return sPlayerDb.Users.Any(p => string.Equals(p.Name.Trim(), accountname.Trim(), StringComparison.CurrentCultureIgnoreCase));
         }
 
-        public static bool EmailInUse(string email)
+        public static User GetUser([NotNull] string username)
         {
-            long count = -1;
-            var query = $"SELECT COUNT(*) from {USERS_TABLE} WHERE LOWER(" + USER_EMAIL + ")=@" +
-                        USER_EMAIL + ";";
-            using (var cmd = sPlayerDbConnection.CreateCommand())
-            {
-                cmd.CommandText = query;
-                cmd.Parameters.Add(new SqliteParameter("@" + USER_EMAIL, email.ToLower().Trim()));
-                count = (long) sPlayerDbConnection.ExecuteScalar(cmd);
-            }
-
-            return (count > 0);
+            return sPlayerDb.Users.Where(p => string.Equals(p.Name.Trim(), username.Trim(), StringComparison.CurrentCultureIgnoreCase))?.First();
         }
 
-        public static bool CharacterNameInUse(string name)
+        public static Character GetUserCharacter(User user, Guid characterId)
         {
-            long count = -1;
-            var query = $"SELECT COUNT(*) from {CHAR_TABLE} WHERE LOWER(" + CHAR_NAME + ")=@" + CHAR_NAME +
-                        " AND " + CHAR_DELETED + " = 0;";
-            using (var cmd = sPlayerDbConnection.CreateCommand())
+            foreach (var character in user.Characters)
             {
-                cmd.CommandText = query;
-                cmd.Parameters.Add(new SqliteParameter("@" + CHAR_NAME, name.ToLower().Trim()));
-                count = (long) sPlayerDbConnection.ExecuteScalar(cmd);
+                if (character.Id == characterId) return character;
             }
-
-            return (count > 0);
+            return null;
         }
 
-        public static int GetCharacterId(string name)
+        public static Character GetCharacter(Guid id)
         {
-            var id = -1;
-            var query = $"SELECT {CHAR_ID} from {CHAR_TABLE} WHERE LOWER(" + CHAR_NAME + ")=@" + CHAR_NAME +
-                        " AND " + CHAR_DELETED + " = 0;";
-            using (var cmd = sPlayerDbConnection.CreateCommand())
-            {
-                cmd.CommandText = query;
-                cmd.Parameters.Add(new SqliteParameter("@" + CHAR_NAME, name.ToLower().Trim()));
-                using (var dataReader = sPlayerDbConnection.ExecuteReader(cmd))
-                {
-                    if (dataReader.HasRows && dataReader.Read())
-                    {
-                        id = Convert.ToInt32(dataReader[CHAR_ID]);
-                    }
-                }
-            }
-
-            return id;
+            return sPlayerDb.Characters.Where(p => p.Id == id)?.First();
         }
 
-        public static long GetRegisteredPlayers()
+        public static Character GetCharacter(string name)
         {
-            long count = -1;
-            var cmd = $"SELECT COUNT(*) from {USERS_TABLE};";
-            using (var createCommand = sPlayerDbConnection?.CreateCommand())
-            {
-                createCommand.CommandText = cmd;
-                count = (long) sPlayerDbConnection.ExecuteScalar(createCommand);
-            }
-
-            return count;
+            return sPlayerDb.Characters.Where(p => string.Equals(p.Name.Trim(), name.Trim(), StringComparison.CurrentCultureIgnoreCase))?.First();
         }
 
-        public static void CreateAccount(Client client, string username, string password, string email)
+        public static bool EmailInUse([NotNull]string email)
+        {
+            return sPlayerDb.Users.Any(p => string.Equals(p.Email.Trim(), email.Trim(), StringComparison.CurrentCultureIgnoreCase));
+        }
+
+        public static bool CharacterNameInUse([NotNull]string name)
+        {
+            return sPlayerDb.Characters.Any(p => string.Equals(p.Name.Trim(), name.Trim(), StringComparison.CurrentCultureIgnoreCase));
+        }
+
+        public static Guid? GetCharacterId([NotNull]string name)
+        {
+            return sPlayerDb.Characters.Where(p => string.Equals(p.Name.Trim(), name.Trim(), StringComparison.CurrentCultureIgnoreCase))?.First()?.Id;
+        }
+
+        public static long RegisteredPlayers => sPlayerDb.Users.Count();
+
+        public static void CreateAccount([NotNull] Client client, [NotNull] string username, [NotNull] string password, [NotNull] string email)
         {
             var sha = new SHA256Managed();
-            client.MyAccount = username;
 
             //Generate a Salt
             var rng = new RNGCryptoServiceProvider();
             var buff = new byte[20];
             rng.GetBytes(buff);
-            client.MySalt =
+            var salt =
                 BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(Convert.ToBase64String(buff))))
                     .Replace("-", "");
 
             //Hash the Password
-            client.MyPassword =
-                BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password + client.MySalt)))
+            var pass =
+                BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password + salt)))
                     .Replace("-", "");
 
-            client.MyEmail = email;
-
-            if (GetRegisteredPlayers() == 0)
+            var access = 0;
+            if (RegisteredPlayers== 0)
             {
-                client.Power = 2;
+                access = 2;
             }
-            client.MyId = SaveUser(client, true);
+
+            var user = new User()
+            {
+                Name = username,
+                Email = email,
+                Salt = salt,
+                Password = pass,
+                Access = access,
+            };
+            sPlayerDb.Users.Add(user);
+            client.SetUser(user);
+            sPlayerDb.SaveChanges();
         }
 
-        public static long SaveUser(Client client, bool newUser = false)
+        public static bool CheckPassword([NotNull] string username, [NotNull] string password)
         {
-            if (client == null) return -1;
-            long rowId = -1;
-
-            var insertQuery =
-                $"INSERT into {USERS_TABLE} ({USER_NAME}, {USER_EMAIL}, {USER_PASS}, {USER_SALT}, {USER_POWER})" +
-                $"VALUES (@{USER_NAME}, @{USER_EMAIL}, @{USER_PASS}, @{USER_SALT}, @{USER_POWER}); SELECT last_insert_rowid();";
-
-            var updateQuery = $"UPDATE {USERS_TABLE} SET " +
-                              $"{USER_NAME}=@{USER_NAME}, " +
-                              $"{USER_EMAIL}=@{USER_EMAIL}, " +
-                              $"{USER_PASS}=@{USER_PASS}, " +
-                              $"{USER_SALT}=@{USER_SALT}, " +
-                              $"{USER_POWER}=@{USER_POWER} " +
-                              $"WHERE {USER_ID}=@{USER_ID};";
-
-            using (var cmd = sPlayerDbConnection.CreateCommand())
+            var user = GetUser(username);
+            if (user != null)
             {
-                cmd.CommandText = newUser ? insertQuery : updateQuery;
-                cmd.Parameters.Add(new SqliteParameter("@" + USER_NAME, client.MyAccount));
-                cmd.Parameters.Add(new SqliteParameter("@" + USER_EMAIL, client.MyEmail));
-                cmd.Parameters.Add(new SqliteParameter("@" + USER_PASS, client.MyPassword));
-                cmd.Parameters.Add(new SqliteParameter("@" + USER_SALT, client.MySalt));
-                cmd.Parameters.Add(new SqliteParameter("@" + USER_POWER, client.Power));
-                if (!newUser) cmd.Parameters.Add(new SqliteParameter("@" + USER_ID, client.MyId));
-                if (newUser)
+                var sha = new SHA256Managed();
+                var pass = user.Password;
+                var salt = user.Salt;
+                var temppass =
+                    BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password + salt)))
+                        .Replace("-", "");
+                if (temppass == pass)
                 {
-                    rowId = (int) ((long) sPlayerDbConnection.ExecuteScalar(cmd));
-                }
-                else
-                {
-                    sPlayerDbConnection.ExecuteNonQuery(cmd);
-                    rowId = client.MyId;
+                    return true;
                 }
             }
-
-            return (rowId);
-        }
-
-        public static bool CheckPassword(string username, string password)
-        {
-            var sha = new SHA256Managed();
-            var query = "SELECT " + USER_SALT + "," + USER_PASS + " from " + USERS_TABLE + " WHERE LOWER(" +
-                        USER_NAME + ")=@" + USER_NAME + ";";
-            using (var cmd = sPlayerDbConnection.CreateCommand())
-            {
-                cmd.CommandText = query;
-                cmd.Parameters.Add(new SqliteParameter("@" + USER_NAME, username.ToLower().Trim()));
-                using (var dataReader = sPlayerDbConnection.ExecuteReader(cmd))
-                {
-                    if (dataReader.HasRows && dataReader.Read())
-                    {
-                        var pass = dataReader[USER_PASS].ToString();
-                        var salt = dataReader[USER_SALT].ToString();
-                        var temppass =
-                            BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password + salt)))
-                                .Replace("-", "");
-                        if (temppass == pass)
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-
             return false;
         }
 
-        public static long CheckPower(string username)
+        public static int CheckPower([NotNull] string username)
         {
-            long power = 0;
-            var query = $"SELECT {USER_POWER} from {USERS_TABLE} WHERE LOWER(" + USER_NAME + ")=@" +
-                        USER_NAME + ";";
-            using (var cmd = sPlayerDbConnection.CreateCommand())
-            {
-                cmd.CommandText = query;
-                cmd.Parameters.Add(new SqliteParameter("@" + USER_NAME, username.ToLower().Trim()));
-                power = (long) sPlayerDbConnection.ExecuteScalar(cmd);
-            }
-
+            int power = 0;
+            power = sPlayerDb.Users.Where(p => string.Equals(p.Name.Trim(), username.Trim(), StringComparison.CurrentCultureIgnoreCase)).Select(p => p.Access).First();
             return power;
         }
 
-        public static bool LoadUser(Client client)
+        public static bool LoadUser([NotNull] Client client, [NotNull] string username)
         {
-            var query = $"SELECT * from {USERS_TABLE} WHERE LOWER(" + USER_NAME + ")=@" + USER_NAME + ";";
-            using (var cmd = sPlayerDbConnection.CreateCommand())
+            var user = GetUser(username);
+            if (user != null)
             {
-                cmd.CommandText = query;
-                cmd.Parameters.Add(new SqliteParameter("@" + USER_NAME, client.MyAccount.ToLower().Trim()));
-                using (var dataReader = sPlayerDbConnection.ExecuteReader(cmd))
-                {
-                    if (dataReader.HasRows && dataReader.Read())
-                    {
-                        client.MyAccount = dataReader[USER_NAME].ToString();
-                        client.MyPassword = dataReader[USER_PASS].ToString();
-                        client.MySalt = dataReader[USER_SALT].ToString();
-                        client.MyEmail = dataReader[USER_EMAIL].ToString();
-                        client.Power = Convert.ToInt32(dataReader[USER_POWER]);
-                        client.MyId = Convert.ToInt32(dataReader[USER_ID]);
-
-                        return true;
-                    }
-                }
+                client.SetUser(user);
+                return true;
             }
-
             return false;
         }
 
-        //Character Saving/Loading
-        public static long SaveCharacter(Player player, bool newCharacter = false)
+        public static void DeleteCharacter(Guid characterId)
         {
-            var startTime = Globals.System.GetTimeMs();
-            if (player == null)
-            {
-                return -1;
-            }
-            if (player.MyClient.MyAccount == "") return -1;
-            if (!newCharacter && player.MyId == -1) return -1;
-            var insertQuery = $"INSERT into {CHAR_TABLE} (" + CHAR_USER_ID + "," + CHAR_NAME + "," + CHAR_MAP +
-                              "," + CHAR_X + "," + CHAR_Y + "," + CHAR_Z + "," + CHAR_DIR + "," + CHAR_SPRITE + "," +
-                              CHAR_FACE + "," + CHAR_CLASS + "," + CHAR_GENDER + "," + CHAR_LEVEL + "," + CHAR_EXP +
-                              "," + CHAR_VITALS + "," + CHAR_MAX_VITALS + "," + CHAR_STATS + "," + CHAR_STAT_POINTS +
-                              "," + CHAR_EQUIPMENT + "," + CHAR_DELETED + "," + CHAR_LAST_ONLINE_TIME + ")" +
-                              " VALUES (@" + CHAR_USER_ID + ",@" + CHAR_NAME + ",@" +
-                              CHAR_MAP + ",@" + CHAR_X + ",@" + CHAR_Y + ",@" + CHAR_Z + ",@" + CHAR_DIR + ",@" +
-                              CHAR_SPRITE + ",@" + CHAR_FACE + ",@" + CHAR_CLASS + ",@" + CHAR_GENDER + ",@" +
-                              CHAR_LEVEL + ",@" + CHAR_EXP + ",@" + CHAR_VITALS + ",@" + CHAR_MAX_VITALS + ",@" +
-                              CHAR_STATS + ",@" + CHAR_STAT_POINTS + ",@" + CHAR_EQUIPMENT + ",0,@" +
-                              CHAR_LAST_ONLINE_TIME + ");SELECT last_insert_rowid();";
-
-            var updateQuery = "UPDATE " + CHAR_TABLE + " SET " + CHAR_USER_ID + "=@" + CHAR_USER_ID +
-                              "," + CHAR_NAME + "=@" + CHAR_NAME + "," + CHAR_MAP + "=@" + CHAR_MAP + "," +
-                              CHAR_X + "=@" + CHAR_X + "," + CHAR_Y + "=@" + CHAR_Y + "," + CHAR_Z + "=@" + CHAR_Z +
-                              "," + CHAR_DIR +
-                              "=@" + CHAR_DIR + "," + CHAR_SPRITE + "=@" + CHAR_SPRITE + "," + CHAR_FACE + "=@" +
-                              CHAR_FACE + "," + CHAR_CLASS + "=@" + CHAR_CLASS + "," + CHAR_GENDER + "=@" +
-                              CHAR_GENDER + "," + CHAR_LEVEL + "=@" + CHAR_LEVEL + "," + CHAR_EXP + "=@" + CHAR_EXP +
-                              "," + CHAR_VITALS + "=@" + CHAR_VITALS + "," + CHAR_MAX_VITALS + "=@" +
-                              CHAR_MAX_VITALS + "," + CHAR_STATS + "=@" + CHAR_STATS + "," + CHAR_STAT_POINTS + "=@" +
-                              CHAR_STAT_POINTS + "," + CHAR_EQUIPMENT + "=@" + CHAR_EQUIPMENT + "," +
-                              CHAR_LAST_ONLINE_TIME
-                              + "=@" + CHAR_LAST_ONLINE_TIME + " WHERE " + CHAR_ID + "=@" + CHAR_ID +
-                              ";SELECT last_insert_rowid();";
-            long rowId = -1;
-            lock (SqlConnectionLock)
-            {
-                using (var transaction = sPlayerDbConnection?.BeginTransaction())
-                {
-                    using (var cmd = new SqliteCommand(newCharacter ? insertQuery : updateQuery, sPlayerDbConnection?.DbConnection))
-                    {
-                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_USER_ID, player.MyClient.MyId));
-                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_NAME, player.MyName));
-                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_MAP, player.CurrentMap));
-                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_X, player.CurrentX));
-                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_Y, player.CurrentY));
-                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_Z, player.CurrentZ));
-                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_DIR, player.Dir));
-                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_SPRITE, player.MySprite));
-                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_FACE, player.Face));
-                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_CLASS, player.Class));
-                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_GENDER, player.Gender));
-                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_LEVEL, player.Level));
-                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_EXP, player.Experience));
-                        var vitals = "";
-                        for (var i = 0; i < player.Vital.Length; i++)
-                        {
-                            vitals += player.Vital[i] + ",";
-                        }
-                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_VITALS, vitals));
-                        var maxVitals = "";
-                        for (var i = 0; i < player.MaxVital.Length; i++)
-                        {
-                            maxVitals += player.MaxVital[i] + ",";
-                        }
-                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_MAX_VITALS, maxVitals));
-                        var stats = "";
-                        for (var i = 0; i < player.Stat.Length; i++)
-                        {
-                            stats += player.Stat[i].Stat + ",";
-                        }
-                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_STATS, stats));
-                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_STAT_POINTS, player.StatPoints));
-                        var equipment = "";
-                        for (var i = 0; i < player.Equipment.Length; i++)
-                        {
-                            equipment += player.Equipment[i] + ",";
-                        }
-                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_EQUIPMENT, equipment));
-                        if (!newCharacter) cmd.Parameters.Add(new SqliteParameter("@" + CHAR_ID, player.MyId));
-                        cmd.Parameters.Add(new SqliteParameter("@" + CHAR_LAST_ONLINE_TIME,
-                            DateTime.UtcNow.ToBinary()));
-                        rowId = (int) ((long)sPlayerDbConnection.ExecuteScalar(cmd));
-                    }
-                    if (newCharacter) player.MyId = rowId;
-                    SaveCharacterInventory(player);
-                    SaveCharacterSpells(player);
-                    SaveCharacterBank(player);
-                    SaveCharacterHotbar(player);
-                    SaveCharacterSwitches(player);
-                    SaveCharacterVariables(player);
-                    SaveCharacterQuests(player);
-                    SaveCharacterFriends(player);
-                    transaction.Commit();
-                }
-            }
-            if (!newCharacter && Options.ProgressSavedMessages)
-                PacketSender.SendPlayerMsg(player.MyClient, Strings.Player.saved);
-            return (rowId);
+            sPlayerDb.Characters.Remove(sPlayerDb.Characters.Find(characterId));
         }
 
-        public static void GetCharacters(Client client)
+        public static void DeleteCharacterFriend([NotNull] Player player, [NotNull] Character friend)
         {
-            var commaSep = new char[1];
-            commaSep[0] = ',';
-            try
-            {
-                client.Characters.Clear();
-                var query = "SELECT " + CHAR_ID + "," + CHAR_NAME + "," + CHAR_SPRITE + "," + CHAR_GENDER + "," +
-                            CHAR_FACE + "," + CHAR_LEVEL + "," + CHAR_CLASS + "," + CHAR_EQUIPMENT + "," +
-                            CHAR_LAST_ONLINE_TIME + " FROM " + CHAR_TABLE + " WHERE " + CHAR_USER_ID + "=@" +
-                            CHAR_USER_ID + " AND " + CHAR_DELETED + " = 0 ORDER BY " + CHAR_LAST_ONLINE_TIME +
-                            " DESC LIMIT " + Options.MaxCharacters + ";";
-                using (var cmd = sPlayerDbConnection.CreateCommand())
-                {
-                    cmd.CommandText = query;
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_USER_ID, client.MyId));
-                    using (var dataReader = sPlayerDbConnection.ExecuteReader(cmd))
-                    {
-                        while (dataReader.Read())
-                        {
-                            var character = new LegacyCharacter(Convert.ToInt32(dataReader[CHAR_ID]),
-                                dataReader[CHAR_NAME].ToString(), dataReader[CHAR_SPRITE].ToString(),
-                                dataReader[CHAR_FACE].ToString(),
-                                Convert.ToInt32(dataReader[CHAR_LEVEL]), Convert.ToInt32(dataReader[CHAR_CLASS]));
-                            var equipmentString = dataReader[CHAR_EQUIPMENT].ToString()
-                                .Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
-                            var equipmentArray = new int[Options.EquipmentSlots.Count];
-                            for (var i = 0; i < (int) Options.EquipmentSlots.Count && i < equipmentString.Length; i++)
-                            {
-                                equipmentArray[i] = int.Parse(equipmentString[i]);
-                            }
-                            //Draw the equipment/paperdolls
-                            for (var z = 0; z < Options.PaperdollOrder[1].Count; z++)
-                            {
-                                if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z]) > -1)
-                                {
-                                    if (equipmentArray[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] >
-                                        -1 && equipmentArray[
-                                            Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] <
-                                        Options.MaxInvItems)
-                                    {
-                                        var itemNum = -1;
-
-                                        if (ItemBase.Lookup.Get<ItemBase>(itemNum) != null)
-                                        {
-                                            var itemdata = ItemBase.Lookup.Get<ItemBase>(itemNum);
-                                            if (Convert.ToInt32(dataReader[CHAR_GENDER]) == 0)
-                                            {
-                                                character.Equipment[z] = itemdata.MalePaperdoll;
-                                            }
-                                            else
-                                            {
-                                                character.Equipment[z] = itemdata.FemalePaperdoll;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            client.Characters.Add(character);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        public static bool LoadCharacter(Client client, int id)
-        {
-            var en = client.Entity;
-            var commaSep = new char[1];
-            commaSep[0] = ',';
-            if (client.MyId == -1) return false;
-            try
-            {
-                var query = $"SELECT * from {CHAR_TABLE} WHERE " + CHAR_USER_ID + "=@" + CHAR_USER_ID + " AND " +
-                            CHAR_ID + "=@" + CHAR_ID + ";";
-                using (var cmd = sPlayerDbConnection.CreateCommand())
-                {
-                    cmd.CommandText = query;
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_USER_ID, client.MyId));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_ID, id));
-                    using (var dataReader = sPlayerDbConnection.ExecuteReader(cmd))
-                    {
-                        if (dataReader.HasRows && dataReader.Read())
-                        {
-                            en.MyId = Convert.ToInt32(dataReader[CHAR_ID]);
-                            en.Name = dataReader[CHAR_NAME].ToString();
-                            en.Map = Convert.ToInt32(dataReader[CHAR_MAP]);
-                            en.X = Convert.ToInt32(dataReader[CHAR_X]);
-                            en.Y = Convert.ToInt32(dataReader[CHAR_Y]);
-                            en.Z = Convert.ToInt32(dataReader[CHAR_Z]);
-                            en.Dir = Convert.ToInt32(dataReader[CHAR_DIR]);
-                            en.Sprite = dataReader[CHAR_SPRITE].ToString();
-                            en.Face = dataReader[CHAR_FACE].ToString();
-                            en.Class = Convert.ToInt32(dataReader[CHAR_CLASS]);
-                            en.Gender = Convert.ToInt32(dataReader[CHAR_GENDER]);
-                            en.Level = Convert.ToInt32(dataReader[CHAR_LEVEL]);
-                            en.Exp = Convert.ToInt64(dataReader[CHAR_EXP]);
-                            var vitalString = dataReader[CHAR_VITALS].ToString();
-                            var vitals = vitalString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
-                            for (var i = 0; i < (int) Vitals.VitalCount && i < vitals.Length; i++)
-                            {
-                                en.Vital[i] = int.Parse(vitals[i]);
-                            }
-                            var maxVitalString = dataReader[CHAR_MAX_VITALS].ToString();
-                            var maxVitals = maxVitalString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
-                            for (var i = 0; i < (int) Vitals.VitalCount && i < maxVitals.Length; i++)
-                            {
-                                en.MaxVital[i] = int.Parse(maxVitals[i]);
-                            }
-                            var statsString = dataReader[CHAR_STATS].ToString();
-                            var stats = statsString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
-                            for (var i = 0; i < (int) Stats.StatCount && i < stats.Length; i++)
-                            {
-                                en.Stat[i].Stat = int.Parse(stats[i]);
-                                if (en.Stat[i].Stat > Options.MaxStatValue) en.Stat[i].Stat = Options.MaxStatValue;
-                            }
-                            en.StatPoints = Convert.ToInt32(dataReader[CHAR_STAT_POINTS]);
-                            var equipmentString = dataReader[CHAR_EQUIPMENT].ToString();
-                            var equipment = equipmentString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
-                            for (var i = 0; i < (int) Options.EquipmentSlots.Count && i < equipment.Length; i++)
-                            {
-                                en.Equipment[i] = int.Parse(equipment[i]);
-                            }
-                            return true;
-                        }
-                    }
-                }
-                return false;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-            }
-        }
-
-        public static void DeleteCharacter(Client client, int id)
-        {
-            var commaSep = new char[1];
-            commaSep[0] = ',';
-            if (client.MyId == -1) return;
-            try
-            {
-                var query = "UPDATE " + CHAR_TABLE + " SET " + CHAR_DELETED + " = 1 WHERE " + CHAR_USER_ID + "=@" +
-                            CHAR_USER_ID + " AND " + CHAR_ID + "=@" + CHAR_ID + ";";
-                using (var cmd = sPlayerDbConnection.CreateCommand())
-                {
-                    cmd.CommandText = query;
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_USER_ID, client.MyId));
-                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_ID, id));
-                    sPlayerDbConnection.ExecuteNonQuery(cmd);
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-            }
-        }
-
-        public static void DeleteCharacterFriend(Player player, int key)
-        {
-            if (player == null) return;
-
-            const string insertQuery = "DELETE FROM " + CHAR_FRIENDS_TABLE + " WHERE " + CHAR_FRIEND_ID + "=@" + CHAR_FRIEND_ID +
-                                       " AND " + CHAR_FRIEND_CHAR_ID + " = @" + CHAR_FRIEND_CHAR_ID + ";";
-            using (var cmd = sPlayerDbConnection.CreateCommand())
-            {
-                cmd.CommandText = insertQuery;
-                Debug.Assert(cmd.Parameters != null, "cmd.Parameters != null");
-                cmd.Parameters.Add(new SqliteParameter("@" + CHAR_FRIEND_ID, key));
-                cmd.Parameters.Add(new SqliteParameter("@" + CHAR_FRIEND_CHAR_ID, player.MyId));
-                sPlayerDbConnection.ExecuteNonQuery(cmd);
-            }
+            sPlayerDb.Character_Friends.Remove(sPlayerDb.Character_Friends.SingleOrDefault(p => p.Owner == player.Character && p.Target == friend));
         }
 
         //Bags
-        public static int CreateBag(int slotCount)
+        public static Bag CreateBag(int slotCount)
         {
-            var insertQuery = $"INSERT into {BAGS_TABLE} (" + BAG_SLOT_COUNT + ")" + "VALUES (@" + BAG_SLOT_COUNT +
-                              ");SELECT last_insert_rowid();";
-            var rowId = -1;
-            using (var cmd = sPlayerDbConnection.CreateCommand())
-            {
-                cmd.CommandText = insertQuery;
-                cmd.Parameters.Add(new SqliteParameter("@" + BAG_SLOT_COUNT, slotCount));
-                rowId = (int) ((long) sPlayerDbConnection.ExecuteScalar(cmd));
-            }
-            return (int) (rowId);
+            var bag = new Bag(slotCount);
+            sPlayerDb.Bags.Add(bag);
+            return bag;
         }
 
-        public static bool BagEmpty(Bag bag)
+        public static bool BagEmpty([NotNull] Bag bag)
         {
-            if (bag != null)
+            for (var i = 0; i < bag.Items.Count; i++)
             {
-                for (var i = 0; i < bag.Items.Count; i++)
+                if (bag.Items[i] != null)
                 {
-                    if (bag.Items[i] != null)
+                    var item = ItemBase.Lookup.Get<ItemBase>(bag.Items[i].ItemNum);
+                    if (item != null)
                     {
-                        var item = ItemBase.Lookup.Get<ItemBase>(bag.Items[i].ItemNum);
-                        if (item != null)
-                        {
-                            return false;
-                        }
+                        return false;
                     }
                 }
             }
             return true;
         }
         
-
         //Bans and Mutes
-        public static void AddMute(Client player, int duration, string reason, string muter, string ip)
+        public static void AddMute([NotNull] Client player, int duration, [NotNull] string reason, [NotNull] string muter, string ip)
         {
-            var query = "INSERT OR REPLACE into " + MUTE_TABLE + " (" + MUTE_ID + "," +
-                        MUTE_TIME + "," + MUTE_USER + "," + MUTE_IP + "," + MUTE_DURATION + "," +
-                        MUTE_REASON + "," + MUTE_MUTER + ")" + " VALUES " + " (@" +
-                        MUTE_ID + ",@" + MUTE_TIME + ",@" + MUTE_USER + ",@" + MUTE_IP + ",@" +
-                        MUTE_DURATION + ",@" + MUTE_REASON + ",@" + MUTE_MUTER + ");";
-            using (var cmd = sPlayerDbConnection.CreateCommand())
+            var mute = new Mute()
             {
-                cmd.CommandText = query;
-                cmd.Parameters.Add(new SqliteParameter("@" + MUTE_ID, player.MyId));
-                cmd.Parameters.Add(new SqliteParameter("@" + MUTE_TIME, DateTime.UtcNow.ToBinary()));
-                cmd.Parameters.Add(new SqliteParameter("@" + MUTE_USER, player.MyAccount));
-                cmd.Parameters.Add(new SqliteParameter("@" + MUTE_IP, ip));
-                var t = DateTime.UtcNow.AddDays(duration);
-                cmd.Parameters.Add(new SqliteParameter("@" + MUTE_DURATION, t.ToBinary()));
-                cmd.Parameters.Add(new SqliteParameter("@" + MUTE_REASON, reason));
-                cmd.Parameters.Add(new SqliteParameter("@" + MUTE_MUTER, muter));
-                sPlayerDbConnection.ExecuteNonQuery(cmd);
-            }
+                Player = player.User,
+                StartTime = DateTime.UtcNow,
+                Reason = reason,
+                Ip = ip,
+                EndTime = DateTime.UtcNow.AddDays(duration),
+                Muter = muter
+            };
+            sPlayerDb.Mutes.Add(mute);
         }
 
-        public static void DeleteMute(string account)
+        public static void DeleteMute([NotNull] User user)
         {
-            var insertQuery = "DELETE FROM " + MUTE_TABLE + " WHERE " + MUTE_USER + "=@" + MUTE_USER + ";";
-            using (var cmd = sPlayerDbConnection.CreateCommand())
-            {
-                cmd.CommandText = insertQuery;
-                cmd.Parameters.Add(new SqliteParameter("@" + MUTE_USER, account));
-                sPlayerDbConnection.ExecuteNonQuery(cmd);
-            }
+            sPlayerDb.Mutes.Remove(sPlayerDb.Mutes.SingleOrDefault(p => p.Player == user));
         }
 
-        public static string CheckMute(string account, string ip)
+        public static string CheckMute([NotNull] User user, string ip)
         {
-            var query = "SELECT " + MUTE_DURATION + "," + MUTE_TIME + "," + MUTE_MUTER + "," + MUTE_REASON +
-                        " from " + MUTE_TABLE + " WHERE (LOWER(" + MUTE_USER + ")=@" + MUTE_USER + ((ip.Trim().Length > 0) ?  " OR " + MUTE_IP +
-                        "=@" + MUTE_IP : "") + ")" + ";";
-            using (var cmd = sPlayerDbConnection.CreateCommand())
+            Mute mute = sPlayerDb.Mutes.SingleOrDefault(p => p.Player == user);
+            if (mute == null) mute = sPlayerDb.Mutes.SingleOrDefault(p => p.Ip == ip);
+            if (mute != null)
             {
-                cmd.CommandText = query;
-                cmd.Parameters.Add(new SqliteParameter("@" + MUTE_USER, account.ToLower().Trim()));
-                cmd.Parameters.Add(new SqliteParameter("@" + MUTE_IP, ip.Trim()));
-                using (var dataReader = sPlayerDbConnection.ExecuteReader(cmd))
-                {
-                    if (dataReader.HasRows && dataReader.Read())
-                    {
-                        var duration = DateTime.FromBinary(Convert.ToInt64(dataReader[MUTE_DURATION]));
-                        var banStart = DateTime.FromBinary(Convert.ToInt64(dataReader[MUTE_TIME]));
-                        var banner = Convert.ToString(dataReader[MUTE_MUTER]);
-                        var reason = Convert.ToString(dataReader[MUTE_REASON]);
-                        if (duration.CompareTo(DateTime.Today) <= 0) //Check that enough time has passed
-                        {
-                            DeleteMute(account);
-                            return null;
-                        }
-                        else
-                        {
-                            return Strings.Account.mutestatus.ToString( banStart, banner, duration, reason);
-                        }
-                    }
-                }
-
-                return null;
+                return Strings.Account.mutestatus.ToString(mute.StartTime, mute.Muter, mute.EndTime, mute.Reason);
             }
+            return null;
         }
 
         public static void AddBan(Client player, int duration, string reason, string banner, string ip)
         {
-            var query = "INSERT OR REPLACE into " + BAN_TABLE + " (" + BAN_ID + "," +
-                        BAN_TIME + "," + BAN_USER + "," + BAN_IP + "," + BAN_DURATION + "," +
-                        BAN_REASON + "," + BAN_BANNER + ")" + " VALUES " + " (@" +
-                        BAN_ID + ",@" + BAN_TIME + ",@" + BAN_USER + ",@" + BAN_IP + ",@" +
-                        BAN_DURATION + ",@" + BAN_REASON + ",@" + BAN_BANNER + ");";
-            using (var cmd = sPlayerDbConnection.CreateCommand())
+            var ban = new Ban()
             {
-                cmd.CommandText = query;
-                cmd.Parameters.Add(new SqliteParameter("@" + BAN_ID, player.MyId));
-                cmd.Parameters.Add(new SqliteParameter("@" + BAN_TIME, DateTime.UtcNow.ToBinary()));
-                cmd.Parameters.Add(new SqliteParameter("@" + BAN_USER, player.MyAccount));
-                cmd.Parameters.Add(new SqliteParameter("@" + BAN_IP, ip));
-                var t = DateTime.UtcNow.AddDays(duration);
-                cmd.Parameters.Add(new SqliteParameter("@" + BAN_DURATION, t.ToBinary()));
-                cmd.Parameters.Add(new SqliteParameter("@" + BAN_REASON, reason));
-                cmd.Parameters.Add(new SqliteParameter("@" + BAN_BANNER, banner));
-                sPlayerDbConnection.ExecuteNonQuery(cmd);
-            }
+                Player = player.User,
+                StartTime = DateTime.UtcNow,
+                Reason = reason,
+                Ip = ip,
+                EndTime = DateTime.UtcNow.AddDays(duration),
+                Banner = banner
+            };
+            sPlayerDb.Bans.Add(ban);
         }
 
-        public static void DeleteBan(string account)
+        public static void DeleteBan([NotNull] User user)
         {
-            var insertQuery = "DELETE FROM " + BAN_TABLE + " WHERE " + BAN_USER + "=@" + BAN_USER + ";";
-            using (var cmd = sPlayerDbConnection.CreateCommand())
-            {
-                cmd.CommandText = insertQuery;
-                cmd.Parameters.Add(new SqliteParameter("@" + BAN_USER, account));
-                sPlayerDbConnection.ExecuteNonQuery(cmd);
-            }
+            sPlayerDb.Mutes.Remove(sPlayerDb.Mutes.SingleOrDefault(p => p.Player == user));
         }
 
-        public static string CheckBan(string account, string ip)
+        public static string CheckBan([NotNull] User user, string ip)
         {
-            var query = "SELECT " + BAN_DURATION + "," + BAN_TIME + "," + BAN_BANNER + "," + BAN_REASON +
-                        " from " + BAN_TABLE + " WHERE (LOWER(" + BAN_USER + ")=@" + BAN_USER + (ip.Trim().Length > 0 ? (" OR " + BAN_IP + "=@" +
-                        BAN_IP) : "") + ")" + ";";
-            using (var cmd = sPlayerDbConnection.CreateCommand())
+            Ban ban = sPlayerDb.Bans.SingleOrDefault(p => p.Player == user);
+            if (ban == null) ban = sPlayerDb.Bans.SingleOrDefault(p => p.Ip == ip);
+            if (ban != null)
             {
-                cmd.CommandText = query;
-                cmd.Parameters.Add(new SqliteParameter("@" + BAN_USER, account.ToLower().Trim()));
-                cmd.Parameters.Add(new SqliteParameter("@" + BAN_IP, ip.Trim()));
-                using (var dataReader = sPlayerDbConnection.ExecuteReader(cmd))
-                {
-                    if (dataReader.HasRows && dataReader.Read())
-                    {
-                        var duration = DateTime.FromBinary(Convert.ToInt64(dataReader[BAN_DURATION]));
-                        var banStart = DateTime.FromBinary(Convert.ToInt64(dataReader[BAN_TIME]));
-                        var banner = Convert.ToString(dataReader[BAN_BANNER]);
-                        var reason = Convert.ToString(dataReader[BAN_REASON]);
-                        if (duration.CompareTo(DateTime.Today) <= 0) //Check that enough time has passed
-                        {
-                            DeleteBan(account);
-                            return null;
-                        }
-                        else
-                        {
-                            return Strings.Account.banstatus.ToString( banStart, banner, duration, reason);
-                        }
-                    }
-                }
-
-                return null;
+                return Strings.Account.banstatus.ToString(ban.StartTime, ban.Banner, ban.EndTime, ban.Reason);
             }
+            return null;
         }
 
         //Game Object Saving/Loading
