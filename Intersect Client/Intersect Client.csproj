@@ -263,7 +263,7 @@
       <Project>{40973f13-3339-4548-9008-ff76a0c8cd79}</Project>
       <Name>IntersectClientExtras</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Intersect Library\Intersect Library\Intersect %28Core%29.csproj">
+    <ProjectReference Include="..\Intersect Library\Intersect %28Core%29.csproj">
       <Project>{bc304b43-1f2c-4454-9edc-48f47357ca94}</Project>
       <Name>Intersect %28Core%29</Name>
     </ProjectReference>
