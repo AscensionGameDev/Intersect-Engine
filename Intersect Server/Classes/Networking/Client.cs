@@ -9,6 +9,8 @@ using Intersect.Server.Classes.Localization;
 using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Packets.Reflectable;
+using Intersect.Server.Classes.Database.PlayerData;
+using Intersect.Server.Classes.Database.PlayerData.Characters;
 using Intersect.Server.Classes.Entities;
 using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Maps;
@@ -20,11 +22,25 @@ namespace Intersect.Server.Classes.Networking
 
     public class Client
     {
+        private User mUser;
+        //Game Incorperation Variables
+        public string Name => mUser.Name;
+        public string Email => mUser.Email;
+        public Guid Id => mUser.Id;
+        public string Password => mUser.Password;
+        public string Salt => mUser.Salt;
+        public int Access
+        {
+            get => mUser.Access;
+            set => mUser.Access = value;
+        }
+        public User User => mUser;
+        public List<Character> Characters => mUser.Characters;
+
         private long mConnectionTimeout;
 
         private long mConnectTime;
         protected long mTimeout = 20000; //20 seconds
-        public List<LegacyCharacter> Characters = new List<LegacyCharacter>();
 
         //Network Variables
         private IConnection mConnection;
@@ -36,19 +52,9 @@ namespace Intersect.Server.Classes.Networking
         //Client Properties
         public bool IsEditor;
 
-        //Adminastrative punnishments
-        public bool Muted = false;
+        public bool Muted => string.IsNullOrEmpty(LegacyDatabase.CheckMute(User, GetIp()));
+        public string MuteReason => LegacyDatabase.CheckMute(User, GetIp());
 
-        public string MuteReason = "";
-
-        //Game Incorperation Variables
-        public string MyAccount = "";
-
-        public string MyEmail = "";
-        public long MyId = -1;
-        public string MyPassword = "";
-        public string MySalt = "";
-        public int Power = 0;
         private ConcurrentQueue<byte[]> mSendQueue = new ConcurrentQueue<byte[]>();
 
         //Sent Maps
@@ -69,6 +75,17 @@ namespace Intersect.Server.Classes.Networking
             {
                 Entity = (Player) Globals.Entities[EntityIndex];
             }
+        }
+
+        public void SetUser(User user)
+        {
+            mUser = user;
+        }
+
+        public void LoadCharacter(Character character)
+        {
+            Entity = new Player(EntityIndex, this, character);
+            Globals.Entities[EntityIndex] = Entity;
         }
 
         private int mPacketCount = 0;
@@ -214,8 +231,9 @@ namespace Intersect.Server.Classes.Networking
         public void Logout()
         {
             if (Entity == null) return;
-            
-            Task.Run(() => LegacyDatabase.SaveCharacter(Entity));
+
+            LegacyDatabase.SavePlayers();
+            //Task.Run(() => LegacyDatabase.SaveCharacter(Entity));
             var map = MapInstance.Lookup.Get<MapInstance>(Entity.Map);
             map?.RemoveEntity(Entity);
 
@@ -258,11 +276,11 @@ namespace Intersect.Server.Classes.Networking
                 Globals.ClientLookup.Remove(connection.Guid);
             }
 
-            Log.Debug(string.IsNullOrWhiteSpace(client.MyAccount)
+            Log.Debug(string.IsNullOrWhiteSpace(client.Name)
                 //? $"Client disconnected ({(client.IsEditor ? "[editor]" : "[client]")})"
                 // TODO: Transmit client information on network start so we can determine editor vs client
                 ? $"Client disconnected ([menu])"
-                : $"Client disconnected ({client.MyAccount}->{client.Entity?.Name ?? "[editor]"})");
+                : $"Client disconnected ({client.Name}->{client.Entity?.Name ?? "[editor]"})");
 
             client.Logout();
         }
@@ -273,31 +291,6 @@ namespace Intersect.Server.Classes.Networking
             {
                 return Globals.Clients.Find(client => client?.mConnection == connection);
             }
-        }
-    }
-
-    public class LegacyCharacter
-    {
-        public int Class = 0;
-        public string[] Equipment = new string[Options.EquipmentSlots.Count];
-        public string Face = "";
-        public int Level = 1;
-        public string Name = "";
-        public int Slot = 1;
-        public string Sprite = "";
-
-        public LegacyCharacter(int slot, string name, string sprite, string face, int level, int charClass)
-        {
-            for (int i = 0; i < Options.EquipmentSlots.Count; i++)
-            {
-                Equipment[i] = "";
-            }
-            Slot = slot;
-            Name = name;
-            Sprite = sprite;
-            Face = face;
-            Level = level;
-            Class = charClass;
         }
     }
 }

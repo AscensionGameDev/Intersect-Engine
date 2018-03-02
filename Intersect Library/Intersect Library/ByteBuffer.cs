@@ -107,6 +107,12 @@ namespace Intersect
             mWasUpdated = true;
         }
 
+        public void WriteGuid(Guid guid)
+        {
+            WriteBytes(guid.ToByteArray());
+            mWasUpdated = true;
+        }
+
         public void WriteString(string input)
         {
             if (string.IsNullOrEmpty(input))
@@ -233,6 +239,18 @@ namespace Intersect
                 Readpos += 8;
             }
             return ret;
+        }
+
+        public Guid ReadGuid(bool peek = true)
+        {
+            // check to see if this passes the byte count
+            if (mBuff.Count <= Readpos) throw new Exception("Byte Buffer Past Limit!");
+            if (mWasUpdated)
+            {
+                mReadBytes = mBuff.ToArray();
+                mWasUpdated = false;
+            }
+            return new Guid(ReadBytes(16,peek));
         }
 
         // IDisposable

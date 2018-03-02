@@ -88,7 +88,7 @@ namespace Intersect.Client.Classes.UI.Game.Shop
             int value = (int) ((InputBox) sender).Value;
             if (value > 0)
             {
-                PacketSender.SendBuyItem(((InputBox) sender).UserData, value);
+                PacketSender.SendBuyItem((int)((InputBox) sender).UserData, value);
             }
         }
 

@@ -1815,24 +1815,20 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
 
             int charCount = bf.ReadInteger();
+            bool freeSlot = bf.ReadBoolean();
 
             for (int i = 0; i < charCount; i++)
             {
-                var index = bf.ReadInteger();
-                if (index > -1)
+                var id = bf.ReadGuid();
+                characters.Add(new Character(id, bf.ReadString(), bf.ReadString(), bf.ReadString(),
+                    bf.ReadInteger(), bf.ReadString()));
+                for (int x = 0; x < Options.EquipmentSlots.Count; x++)
                 {
-                    characters.Add(new Character(index, bf.ReadString(), bf.ReadString(), bf.ReadString(),
-                        bf.ReadInteger(), bf.ReadString()));
-                    for (int x = 0; x < Options.EquipmentSlots.Count; x++)
-                    {
-                        characters[characters.Count - 1].Equipment[x] = bf.ReadString();
-                    }
-                }
-                else
-                {
-                    characters.Add(new Character(-1));
+                    characters[characters.Count - 1].Equipment[x] = bf.ReadString();
                 }
             }
+
+            if (freeSlot) characters.Add(null);
 
             bf.Dispose();
             Globals.WaitingOnServer = false;

@@ -232,9 +232,6 @@
     <Reference Include="MySqlConnector, Version=0.32.0.0, Culture=neutral, PublicKeyToken=d33d3e53aa5f8c92, processorArchitecture=MSIL">
       <HintPath>..\packages\MySqlConnector.0.32.0\lib\net46\MySqlConnector.dll</HintPath>
     </Reference>
-    <Reference Include="MySqlConnector, Version=0.32.0.0, Culture=neutral, PublicKeyToken=d33d3e53aa5f8c92, processorArchitecture=MSIL">
-      <HintPath>..\packages\MySqlConnector.0.32.0\lib\net46\MySqlConnector.dll</HintPath>
-    </Reference>
     <Reference Include="NCalc, Version=1.3.8.0, Culture=neutral, PublicKeyToken=973cde3f1cafed03, processorArchitecture=MSIL">
       <HintPath>..\packages\ncalc.1.3.8\lib\NCalc.dll</HintPath>
     </Reference>
@@ -378,9 +375,9 @@
     <Compile Include="Database\PrimaryKeyDescriptor.cs" />
     <Compile Include="Database\TableDescriptor.cs" />
     <Compile Include="Database\UniqueConstraintDescriptor.cs" />
-    <Compile Include="Migrations\20180301020210_InitialPlayerDataCommit.cs" />
-    <Compile Include="Migrations\20180301020210_InitialPlayerDataCommit.designer.cs">
-      <DependentUpon>20180301020210_InitialPlayerDataCommit.cs</DependentUpon>
+    <Compile Include="Migrations\20180302083515_Initial.cs" />
+    <Compile Include="Migrations\20180302083515_Initial.designer.cs">
+      <DependentUpon>20180302083515_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -392,7 +389,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="private-intersect.bek" />
-    <None Include="app.config" />
     <None Include="packages.config" />
     <EmbeddedResource Include="Resources\libe_sqlite3.so" />
   </ItemGroup>

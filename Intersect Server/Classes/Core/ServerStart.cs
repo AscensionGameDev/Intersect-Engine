@@ -76,7 +76,7 @@ namespace Intersect.Server.Classes
                 return;
             }
             CustomColors.Load();
-            Console.WriteLine(Strings.Commandoutput.playercount.ToString(LegacyDatabase.GetRegisteredPlayers()));
+            Console.WriteLine(Strings.Commandoutput.playercount.ToString(LegacyDatabase.RegisteredPlayers));
             Console.WriteLine(Strings.Commandoutput.gametime.ToString( ServerTime.GetTime().ToString("F")));
             ServerTime.Update();
             Log.Global.AddOutput(new ConsoleOutput(Debugger.IsAttached ? LogLevel.All : LogLevel.Error));
@@ -208,7 +208,7 @@ namespace Intersect.Server.Classes
                                     ? Globals.Clients[i].Entity.Name
                                     : "";
                                 Console.WriteLine(string.Format("{0,-10}", "#" + i) +
-                                                  string.Format("{0,-28}", Globals.Clients[i].MyAccount) +
+                                                  string.Format("{0,-28}", Globals.Clients[i].Name) +
                                                   string.Format("{0,-28}", name));
                             }
                         }
@@ -313,9 +313,10 @@ namespace Intersect.Server.Classes
                             }
                             else
                             {
-                                if (LegacyDatabase.AccountExists(commandsplit[1]))
+                                var unbannedUser = LegacyDatabase.GetUser(commandsplit[1]);
+                                if (unbannedUser != null)
                                 {
-                                    LegacyDatabase.DeleteBan(commandsplit[1]);
+                                    LegacyDatabase.DeleteBan(unbannedUser);
                                     Console.WriteLine(
                                         @"    " + Strings.Account.unbanned.ToString( commandsplit[1]));
                                 }
@@ -410,29 +411,15 @@ namespace Intersect.Server.Classes
                             }
                             else
                             {
-                                for (int i = 0; i < Globals.Clients.Count; i++)
+                                var unmutedUser = LegacyDatabase.GetUser(commandsplit[1]);
+                                if (unmutedUser != null)
                                 {
-                                    if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
-                                    {
-                                        string user = Globals.Clients[i].Entity.Name.ToLower();
-                                        if (user == commandsplit[1].ToLower())
-                                        {
-                                            LegacyDatabase.DeleteMute(Globals.Clients[i].MyAccount);
-                                            Globals.Clients[i].Muted = false;
-                                            Globals.Clients[i].MuteReason = "";
-                                            PacketSender.SendGlobalMsg(Strings.Account.unmuted.ToString(
-                                                Globals.Clients[i].Entity.Name));
-                                            Console.WriteLine(@"    " +
-                                                              Strings.Account.unmuted.ToString(
-                                                                  Globals.Clients[i].Entity.Name));
-                                            userFound = true;
-                                            break;
-                                        }
-                                    }
+                                    LegacyDatabase.DeleteMute(unmutedUser);
+                                    Console.WriteLine(@"    " + Strings.Account.unmuted.ToString(unmutedUser.Name));
                                 }
-                                if (userFound == false)
+                                else
                                 {
-                                    Console.WriteLine(@"    " + Strings.Player.offline);
+                                    Console.WriteLine(@"    " + Strings.Account.notfound);
                                 }
                             }
                         }
@@ -478,10 +465,6 @@ namespace Intersect.Server.Classes
                                                 LegacyDatabase.AddMute(Globals.Clients[i],
                                                     Convert.ToInt32(commandsplit[2]),
                                                     reason, Strings.Commands.muteuser, ip);
-                                                Globals.Clients[i].Muted = true; //Cut out their tongues!
-                                                Globals.Clients[i].MuteReason =
-                                                    LegacyDatabase.CheckMute(Globals.Clients[i].MyAccount,
-                                                        Globals.Clients[i].GetIp());
                                                 PacketSender.SendGlobalMsg(Strings.Account.muted.ToString(
                                                     Globals.Clients[i].Entity.Name));
                                                 Console.WriteLine(@"    " +
@@ -532,10 +515,10 @@ namespace Intersect.Server.Classes
                                             string user = Globals.Clients[i].Entity.Name.ToLower();
                                             if (user == commandsplit[1].ToLower())
                                             {
-                                                LegacyDatabase.SetPlayerPower(Globals.Clients[i].MyAccount,
+                                                LegacyDatabase.SetPlayerPower(Globals.Clients[i].Name,
                                                     int.Parse(commandsplit[2]));
                                                 PacketSender.SendEntityDataToProximity(Globals.Clients[i].Entity);
-                                                if (Globals.Clients[i].Power > 0)
+                                                if (Globals.Clients[i].Access > 0)
                                                 {
                                                     PacketSender.SendGlobalMsg(Strings.Player.admin.ToString(
                                                         Globals.Clients[i].Entity.Name));
@@ -775,11 +758,7 @@ namespace Intersect.Server.Classes
 
         private static void ShutDown()
         {
-            //Save all online players
-            Globals.Clients?.FindAll(client => client?.Entity != null).ForEach(client =>
-            {
-                LegacyDatabase.SaveCharacter(client?.Entity);
-            });
+            LegacyDatabase.SavePlayers();
 
             Globals.ServerStarted = false;
             SocketServer?.Dispose();

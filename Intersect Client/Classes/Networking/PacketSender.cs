@@ -516,19 +516,19 @@ namespace Intersect_Client.Classes.Networking
             GameNetwork.SendPacket(bf.ToArray());
         }
 
-        public static void PlayGame(int charSlot)
+        public static void PlayGame(Guid charId)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.PlayGame);
-            bf.WriteInteger(charSlot);
+            bf.WriteGuid(charId);
             GameNetwork.SendPacket(bf.ToArray());
         }
 
-        public static void DeleteChar(int charSlot)
+        public static void DeleteChar(Guid charId)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.DeleteChar);
-            bf.WriteInteger(charSlot);
+            bf.WriteGuid(charId);
             GameNetwork.SendPacket(bf.ToArray());
         }
 

@@ -192,13 +192,13 @@ namespace Intersect_Client.Classes.Entities
             int value = (int) ((InputBox) sender).Value;
             if (value > 0)
             {
-                PacketSender.SendDropItem(((InputBox) sender).UserData, value);
+                PacketSender.SendDropItem((int)((InputBox) sender).UserData, value);
             }
         }
 
         private void DropInputBoxOkay(object sender, EventArgs e)
         {
-            PacketSender.SendDropItem(((InputBox)sender).UserData, 1);
+            PacketSender.SendDropItem((int)((InputBox)sender).UserData, 1);
         }
 
         public int FindItem(int itemNum, int itemVal = 1)
@@ -275,13 +275,13 @@ namespace Intersect_Client.Classes.Entities
             int value = (int) ((InputBox) sender).Value;
             if (value > 0)
             {
-                PacketSender.SendSellItem(((InputBox) sender).UserData, value);
+                PacketSender.SendSellItem((int)((InputBox) sender).UserData, value);
             }
         }
 
         private void SellInputBoxOkay(object sender, EventArgs e)
         {
-            PacketSender.SendSellItem(((InputBox)sender).UserData, 1);
+            PacketSender.SendSellItem((int)((InputBox)sender).UserData, 1);
         }
 
         //bank
@@ -309,7 +309,7 @@ namespace Intersect_Client.Classes.Entities
             int value = (int) ((InputBox) sender).Value;
             if (value > 0)
             {
-                PacketSender.SendDepositItem(((InputBox) sender).UserData, value);
+                PacketSender.SendDepositItem((int)((InputBox) sender).UserData, value);
             }
         }
 
@@ -336,7 +336,7 @@ namespace Intersect_Client.Classes.Entities
             int value = (int) ((InputBox) sender).Value;
             if (value > 0)
             {
-                PacketSender.SendWithdrawItem(((InputBox) sender).UserData, value);
+                PacketSender.SendWithdrawItem((int)((InputBox) sender).UserData, value);
             }
         }
 
@@ -365,7 +365,7 @@ namespace Intersect_Client.Classes.Entities
             int value = (int) ((InputBox) sender).Value;
             if (value > 0)
             {
-                PacketSender.SendStoreBagItem(((InputBox) sender).UserData, value);
+                PacketSender.SendStoreBagItem((int)((InputBox) sender).UserData, value);
             }
         }
 
@@ -392,7 +392,7 @@ namespace Intersect_Client.Classes.Entities
             int value = (int) ((InputBox) sender).Value;
             if (value > 0)
             {
-                PacketSender.SendRetreiveBagItem(((InputBox) sender).UserData, value);
+                PacketSender.SendRetreiveBagItem((int)((InputBox) sender).UserData, value);
             }
         }
 
@@ -421,7 +421,7 @@ namespace Intersect_Client.Classes.Entities
             int value = (int) ((InputBox) sender).Value;
             if (value > 0)
             {
-                PacketSender.SendOfferItem(((InputBox) sender).UserData, value);
+                PacketSender.SendOfferItem((int)((InputBox) sender).UserData, value);
             }
         }
 
@@ -450,7 +450,7 @@ namespace Intersect_Client.Classes.Entities
             int value = (int) ((InputBox) sender).Value;
             if (value > 0)
             {
-                PacketSender.SendRevokeItem(((InputBox) sender).UserData, value);
+                PacketSender.SendRevokeItem((int)((InputBox) sender).UserData, value);
             }
         }
 
@@ -475,7 +475,7 @@ namespace Intersect_Client.Classes.Entities
 
         private void ForgetSpellInputBoxOkay(object sender, EventArgs e)
         {
-            PacketSender.SendForgetSpell(((InputBox) sender).UserData);
+            PacketSender.SendForgetSpell((int)((InputBox) sender).UserData);
         }
 
         public void TryUseSpell(int index)

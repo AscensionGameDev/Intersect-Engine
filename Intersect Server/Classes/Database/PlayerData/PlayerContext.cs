@@ -29,7 +29,7 @@ namespace Intersect.Server.Classes.Database.PlayerData
         }
 
         private DbProvider mConnection = DbProvider.Sqlite;
-        private string mConnectionString = @"Data Source=playerdata.db";
+        private string mConnectionString = @"Data Source=resources/playerdata.db";
 
         public PlayerContext()
         {

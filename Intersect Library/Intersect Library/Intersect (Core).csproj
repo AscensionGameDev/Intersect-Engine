@@ -77,6 +77,7 @@
     <Compile Include="Compression.cs" />
     <Compile Include="Config\ClientOptions.cs" />
     <Compile Include="Config\CombatOptions.cs" />
+    <Compile Include="Config\DatabaseOptions.cs" />
     <Compile Include="Config\EquipmentOptions.cs" />
     <Compile Include="Config\MapOptions.cs" />
     <Compile Include="Config\PaperdollOptions.cs" />

@@ -4,12 +4,12 @@ using System.Collections.Generic;
 
 namespace Intersect.Server.Migrations
 {
-    public partial class InitialPlayerDataCommit : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Players",
+                name: "Users",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
@@ -23,7 +23,7 @@ namespace Intersect.Server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Players", x => x.Id);
+                    table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -33,6 +33,7 @@ namespace Intersect.Server.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     Banner = table.Column<string>(nullable: true),
                     EndTime = table.Column<DateTime>(nullable: false),
+                    Ip = table.Column<string>(nullable: true),
                     PlayerId = table.Column<Guid>(nullable: false),
                     Reason = table.Column<string>(nullable: true),
                     StartTime = table.Column<DateTime>(nullable: false)
@@ -41,9 +42,9 @@ namespace Intersect.Server.Migrations
                 {
                     table.PrimaryKey("PK_Bans", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Bans_Players_PlayerId",
+                        name: "FK_Bans_Users_PlayerId",
                         column: x => x.PlayerId,
-                        principalTable: "Players",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -54,14 +55,16 @@ namespace Intersect.Server.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     Class = table.Column<Guid>(nullable: false),
+                    ClassIndex = table.Column<int>(nullable: false),
                     Dir = table.Column<int>(nullable: false),
                     Equipment = table.Column<string>(nullable: true),
-                    Exp = table.Column<int>(nullable: false),
+                    Exp = table.Column<long>(nullable: false),
                     Face = table.Column<string>(nullable: true),
                     Gender = table.Column<int>(nullable: false),
                     LastOnline = table.Column<DateTime>(nullable: true),
                     Level = table.Column<int>(nullable: false),
                     Map = table.Column<Guid>(nullable: false),
+                    MapIndex = table.Column<int>(nullable: false),
                     MaxVitals = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
                     Sprite = table.Column<string>(nullable: true),
@@ -76,9 +79,9 @@ namespace Intersect.Server.Migrations
                 {
                     table.PrimaryKey("PK_Characters", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Characters_Players_Id",
+                        name: "FK_Characters_Users_Id",
                         column: x => x.Id,
-                        principalTable: "Players",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -89,6 +92,7 @@ namespace Intersect.Server.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     EndTime = table.Column<DateTime>(nullable: false),
+                    Ip = table.Column<string>(nullable: true),
                     Muter = table.Column<string>(nullable: true),
                     PlayerId = table.Column<Guid>(nullable: false),
                     Reason = table.Column<string>(nullable: true),
@@ -98,9 +102,9 @@ namespace Intersect.Server.Migrations
                 {
                     table.PrimaryKey("PK_Mutes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Mutes_Players_PlayerId",
+                        name: "FK_Mutes_Users_PlayerId",
                         column: x => x.PlayerId,
-                        principalTable: "Players",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -499,7 +503,7 @@ namespace Intersect.Server.Migrations
                 name: "Characters");
 
             migrationBuilder.DropTable(
-                name: "Players");
+                name: "Users");
         }
     }
 }

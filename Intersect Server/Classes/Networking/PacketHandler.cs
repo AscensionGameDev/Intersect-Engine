@@ -321,16 +321,6 @@ namespace Intersect.Server.Classes.Networking
                     return;
                 }
 
-                client.MyAccount = username;
-
-                //Check for ban
-                var isBanned = LegacyDatabase.CheckBan(username, client.GetIp());
-                if (isBanned != null)
-                {
-                    PacketSender.SendLoginError(client, isBanned);
-                    return;
-                }
-
                 lock (Globals.ClientLock)
                 {
                     Globals.Clients?.ForEach(user =>
@@ -338,36 +328,34 @@ namespace Intersect.Server.Classes.Networking
                         if (user == client) return;
                         if (user?.IsEditor ?? false) return;
 
-                        if (!string.Equals(user?.MyAccount, client.MyAccount, StringComparison.InvariantCultureIgnoreCase)) return;
-                        if (client.Entity != null) LegacyDatabase.SaveCharacter(client.Entity, false);
+                        if (!string.Equals(user?.Name, username, StringComparison.InvariantCultureIgnoreCase)) return;
                         user?.Disconnect();
                     });
                 }
 
-                if (!LegacyDatabase.LoadUser(client))
+                if (!LegacyDatabase.LoadUser(client,username))
                 {
                     PacketSender.SendLoginError(client, Strings.Account.loadfail);
                     return;
                 }
 
-
-                //Check for mute
-                var isMuted = LegacyDatabase.CheckMute(username, client.GetIp());
-                if (isMuted != null)
+                //Check for ban
+                var isBanned = LegacyDatabase.CheckBan(client.User, client.GetIp());
+                if (isBanned != null)
                 {
-                    client.Muted = true;
-                    client.MuteReason = isMuted;
+                    PacketSender.SendLoginError(client, isBanned);
+                    return;
                 }
 
                 PacketSender.SendServerConfig(client);
-                LegacyDatabase.GetCharacters(client);
                 //Character selection if more than one.
                 if (Options.MaxCharacters > 1)
                 {
                     PacketSender.SendPlayerCharacters(client);
                 }
-                else if (client.Characters?.Count > 0 && LegacyDatabase.LoadCharacter(client, client.Characters[0].Slot))
+                else if (client.Characters?.Count > 0)
                 {
+                    client.LoadCharacter(client.Characters.First());
                     PacketSender.SendJoinGame(client);
                 }
                 else
@@ -477,12 +465,12 @@ namespace Intersect.Server.Classes.Networking
 
                 if (cmd == Strings.Chat.localcmd || cmd == "/0")
                 {
-                    if (client.Power == 2)
+                    if (client.Access == 2)
                     {
                         PacketSender.SendProximityMsg(Strings.Chat.local.ToString(client.Entity.Name, msg),
                             client.Entity.Map, CustomColors.AdminLocalChat, client.Entity.Name);
                     }
-                    else if (client.Power == 1)
+                    else if (client.Access == 1)
                     {
                         PacketSender.SendProximityMsg(Strings.Chat.local.ToString(client.Entity.Name, msg),
                             client.Entity.Map, CustomColors.ModLocalChat, client.Entity.Name);
@@ -497,12 +485,12 @@ namespace Intersect.Server.Classes.Networking
                 }
                 else if (cmd == Strings.Chat.allcmd || cmd == "/1" || cmd == Strings.Chat.globalcmd)
                 {
-                    if (client.Power == 2)
+                    if (client.Access == 2)
                     {
                         PacketSender.SendGlobalMsg(Strings.Chat.Global.ToString(client.Entity.Name, msg),
                             CustomColors.AdminGlobalChat, client.Entity.Name);
                     }
-                    else if (client.Power == 1)
+                    else if (client.Access == 1)
                     {
                         PacketSender.SendGlobalMsg(Strings.Chat.Global.ToString(client.Entity.Name, msg),
                             CustomColors.ModGlobalChat, client.Entity.Name);
@@ -528,7 +516,7 @@ namespace Intersect.Server.Classes.Networking
                 }
                 else if (cmd == Strings.Chat.admincmd || cmd == "/3")
                 {
-                    if (client.Power > 0)
+                    if (client.Access > 0)
                     {
                         PacketSender.SendAdminMsg(Strings.Chat.admin.ToString(client.Entity.Name, msg),
                             CustomColors.AdminChat, client.Entity.Name);
@@ -536,7 +524,7 @@ namespace Intersect.Server.Classes.Networking
                 }
                 else if (cmd == Strings.Chat.announcementcmd)
                 {
-                    if (client.Power > 0)
+                    if (client.Access > 0)
                     {
                         PacketSender.SendGlobalMsg(Strings.Chat.announcement.ToString(client.Entity.Name, msg),
                             CustomColors.AnnouncementChat, client.Entity.Name);
@@ -631,14 +619,13 @@ namespace Intersect.Server.Classes.Networking
             }
 
             client.IsEditor = true;
-            client.MyAccount = usr;
+            LegacyDatabase.LoadUser(client, usr);
             lock (Globals.ClientLock)
             {
                 var clients = Globals.Clients.ToArray();
                 foreach (var user in clients)
                 {
-                    if (user.MyAccount.ToLower() == client.MyAccount.ToLower() && user != client &&
-                        user.IsEditor)
+                    if (user.Name.ToLower() == usr.ToLower() && user != client && user.IsEditor)
                     {
                         user.Disconnect();
                     }
@@ -1062,12 +1049,12 @@ namespace Intersect.Server.Classes.Networking
             ((Player)client.Entity).InGame = true;
             PacketSender.SendTimeTo(client);
             PacketSender.SendGameData(client);
-            if (client.Power == 1)
+            if (client.Access == 1)
             {
                 PacketSender.SendPlayerMsg(client, Strings.Player.modjoined,
                     CustomColors.ModJoined);
             }
-            else if (client.Power == 2)
+            else if (client.Access == 2)
             {
                 PacketSender.SendPlayerMsg(client, Strings.Player.adminjoined,
                     CustomColors.AdminJoined);
@@ -1109,7 +1096,6 @@ namespace Intersect.Server.Classes.Networking
             var username = bf.ReadString();
             var password = bf.ReadString();
             var email = bf.ReadString();
-            var index = client.EntityIndex;
             if (!FieldChecking.IsValidUsername(username, Strings.Regex.username))
             {
                 PacketSender.SendLoginError(client, Strings.Account.invalidname);
@@ -1138,7 +1124,6 @@ namespace Intersect.Server.Classes.Networking
                     //Character selection if more than one.
                     if (Options.MaxCharacters > 1)
                     {
-                        LegacyDatabase.GetCharacters(client);
                         PacketSender.SendPlayerCharacters(client);
                     }
                     else
@@ -1177,34 +1162,10 @@ namespace Intersect.Server.Classes.Networking
             }
             else
             {
+                var newChar = new Character();
+                client.Characters.Add(newChar);
+                client.LoadCharacter(newChar);
                 var player = (Player)Globals.Entities[index];
-
-                //Find the next free slot to put the character
-                bool space = false;
-                for (int i = 0; i < Options.MaxCharacters; i++)
-                {
-                    bool foundChar = false;
-                    foreach (LegacyCharacter c in client.Characters)
-                    {
-                        if (c.Slot == i)
-                        {
-                            foundChar = true;
-                            break;
-                        }
-                    }
-                    if (foundChar == false)
-                    {
-                        player.MyId = i;
-                        space = true;
-                        break;
-                    }
-                }
-
-                if (space == false) //No space for new chars
-                {
-                    PacketSender.SendLoginError(client, Strings.Account.maxchars);
-                    return;
-                }
 
                 client.Entity = player;
                 player.Name = name;
@@ -1249,7 +1210,7 @@ namespace Intersect.Server.Classes.Networking
                     }
                 }
 
-                Task.Run(() => LegacyDatabase.SaveCharacter(client.Entity, true));
+                LegacyDatabase.SavePlayers();
             }
             bf.Dispose();
         }
@@ -1476,7 +1437,7 @@ namespace Intersect.Server.Classes.Networking
 
         private static void HandleOpenAdminWindow(Client client)
         {
-            if (client.Power > 0)
+            if (client.Access > 0)
             {
                 PacketSender.SendMapList(client);
                 PacketSender.SendOpenAdminWindow(client);
@@ -1485,7 +1446,7 @@ namespace Intersect.Server.Classes.Networking
 
         private static void HandleAdminAction(Client client, byte[] packet)
         {
-            if (client.Power == 0)
+            if (client.Access == 0)
             {
                 return;
             }
@@ -1540,7 +1501,7 @@ namespace Intersect.Server.Classes.Networking
                     PacketSender.SendPlayerMsg(client, Strings.Player.offline);
                     break;
                 case (int)AdminActions.WarpToLoc:
-                    if (client.Power > 0)
+                    if (client.Access > 0)
                     {
                         client.Entity.Warp(Convert.ToInt32(val1), Convert.ToInt32(val2), Convert.ToInt32(val3), 0, true);
                     }
@@ -1617,7 +1578,7 @@ namespace Intersect.Server.Classes.Networking
                             {
                                 if (val1.ToLower() != client.Entity.Name.ToLower()) //Can't increase your own power!
                                 {
-                                    if (client.Power == 2)
+                                    if (client.Access == 2)
                                     {
                                         if (val2 == "Admin")
                                         {
@@ -1633,12 +1594,12 @@ namespace Intersect.Server.Classes.Networking
                                         }
 
                                         var targetClient = Globals.Clients[i];
-                                        targetClient.Power = p;
-                                        if (targetClient.Power == 2)
+                                        targetClient.Access = p;
+                                        if (targetClient.Access == 2)
                                         {
                                             PacketSender.SendGlobalMsg(Strings.Player.admin.ToString(val1));
                                         }
-                                        else if (targetClient.Power == 1)
+                                        else if (targetClient.Access == 1)
                                         {
                                             PacketSender.SendGlobalMsg(Strings.Player.mod.ToString(val1));
                                         }
@@ -1646,7 +1607,6 @@ namespace Intersect.Server.Classes.Networking
                                         {
                                             PacketSender.SendGlobalMsg(Strings.Player.deadmin.ToString(val1));
                                         }
-                                        LegacyDatabase.SaveUser(targetClient);
                                         return;
                                     }
                                     else
@@ -1666,32 +1626,27 @@ namespace Intersect.Server.Classes.Networking
                     PacketSender.SendPlayerMsg(client, Strings.Player.offline);
                     break;
                 case (int)AdminActions.UnMute:
-                    for (int i = 0; i < Globals.Clients.Count; i++)
+                    var unmutedUser = LegacyDatabase.GetUser(val1);
+                    if (unmutedUser != null)
                     {
-                        if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
-                        {
-                            if (val1.ToLower() == Globals.Clients[i].Entity.Name.ToLower())
-                            {
-                                LegacyDatabase.DeleteMute(Globals.Clients[i].MyAccount);
-                                Globals.Clients[i].Muted = false;
-                                Globals.Clients[i].MuteReason = "";
-                                PacketSender.SendGlobalMsg(Strings.Account.unmuted.ToString(
-                                    Globals.Clients[i].Entity.Name));
-                                return;
-                            }
-                        }
+                        LegacyDatabase.DeleteMute(unmutedUser);
+                        PacketSender.SendPlayerMsg(client, Strings.Account.unmuted.ToString(val1));
                     }
-                    PacketSender.SendPlayerMsg(client, Strings.Player.offline);
+                    else
+                    {
+                        PacketSender.SendPlayerMsg(client, Strings.Account.notfound.ToString(val1));
+                    }
                     break;
                 case (int)AdminActions.UnBan:
-                    if (LegacyDatabase.AccountExists(val1))
+                    var unbannedUser = LegacyDatabase.GetUser(val1);
+                    if (unbannedUser != null)
                     {
-                        LegacyDatabase.DeleteBan(val1);
+                        LegacyDatabase.DeleteBan(unbannedUser);
                         PacketSender.SendPlayerMsg(client, Strings.Account.unbanned.ToString(val1));
                     }
                     else
                     {
-                        PacketSender.SendPlayerMsg(client, Strings.Player.offline);
+                        PacketSender.SendPlayerMsg(client, Strings.Account.notfound.ToString(val1));
                     }
                     break;
                 case (int)AdminActions.Mute:
@@ -1711,9 +1666,6 @@ namespace Intersect.Server.Classes.Networking
                                     LegacyDatabase.AddMute(Globals.Clients[i], Convert.ToInt32(val2), val3,
                                         client.Entity.Name, "");
                                 }
-                                Globals.Clients[i].Muted = true;
-                                Globals.Clients[i].MuteReason = LegacyDatabase.CheckMute(Globals.Clients[i].MyAccount,
-                                    Globals.Clients[i].GetIp());
                                 PacketSender.SendGlobalMsg(Strings.Account.muted.ToString(
                                     Globals.Clients[i].Entity.Name));
                                 return;
@@ -2600,29 +2552,19 @@ namespace Intersect.Server.Classes.Networking
             if (Globals.Entities[target] != null && Globals.Entities[target].GetEntityType() == EntityTypes.Player &&
                 target != client.Entity.MyIndex)
             {
-                var charId = LegacyDatabase.GetCharacterId(((Player)Globals.Entities[target]).Name);
-                if (charId != -1)
+                Player targetPlayer = ((Player) Globals.Entities[target]);
+                if (!client.Entity.HasFriend(targetPlayer.Character)) // Incase one user deleted friend then re-requested
                 {
-                    if (!client.Entity.Friends.ContainsKey(charId)) // Incase one user deleted friend then re-requested
-                    {
-                        client.Entity.Friends.Add(charId, ((Player)Globals.Entities[target]).Name);
-                        PacketSender.SendPlayerMsg(client,
-                            Strings.Friends.notification.ToString(((Player)Globals.Entities[target]).Name),
-                            CustomColors.Accepted);
-                        PacketSender.SendFriends(client);
-                    }
+                    client.Entity.AddFriend(targetPlayer.Character);
+                    PacketSender.SendPlayerMsg(client, Strings.Friends.notification.ToString(targetPlayer.Name), CustomColors.Accepted);
+                    PacketSender.SendFriends(client);
                 }
 
-                charId = LegacyDatabase.GetCharacterId(client.Entity.Name);
-                if (charId != -1)
+                if (!targetPlayer.HasFriend(client.Entity.Character)) // Incase one user deleted friend then re-requested
                 {
-                    if (!client.Entity.Friends.ContainsKey(charId)) // Incase one user deleted friend then re-requested
-                    {
-                        ((Player)Globals.Entities[target]).Friends.Add(charId, client.Entity.Name);
-                        PacketSender.SendPlayerMsg(((Player)Globals.Entities[target]).MyClient,
-                            Strings.Friends.accept.ToString(client.Entity.Name), CustomColors.Accepted);
-                        PacketSender.SendFriends(((Player)Globals.Entities[target]).MyClient);
-                    }
+                    targetPlayer.AddFriend(client.Entity.Character);
+                    PacketSender.SendPlayerMsg(targetPlayer.MyClient, Strings.Friends.accept.ToString(client.Entity.Name), CustomColors.Accepted);
+                    PacketSender.SendFriends(targetPlayer.MyClient);
                 }
 
                 return;
@@ -2666,10 +2608,10 @@ namespace Intersect.Server.Classes.Networking
                 return;
             }
 
-            var charId = LegacyDatabase.GetCharacterId(name);
-            if (charId != -1)
+            var character = LegacyDatabase.GetCharacter(name);
+            if (character != null)
             {
-                if (!client.Entity.Friends.ContainsKey(charId))
+                if (!client.Entity.HasFriend(character))
                 {
                     //Add the friend
                     foreach (var c in Globals.Clients) //Check the player is online
@@ -2687,8 +2629,7 @@ namespace Intersect.Server.Classes.Networking
                 }
                 else
                 {
-                    PacketSender.SendPlayerMsg(client, Strings.Friends.alreadyfriends.ToString(name),
-                        CustomColors.Info);
+                    PacketSender.SendPlayerMsg(client, Strings.Friends.alreadyfriends.ToString(name), CustomColors.Info);
                 }
             }
             bf.Dispose();
@@ -2700,12 +2641,13 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteBytes(packet);
             string name = bf.ReadString();
             var charId = LegacyDatabase.GetCharacterId(name);
-            if (charId != -1)
+
+            if (charId != null)
             {
-                if (client.Entity.Friends.ContainsKey(charId))
+                var character = LegacyDatabase.GetCharacter((Guid)charId);
+                if (character != null && client.Entity.HasFriend(character))
                 {
-                    LegacyDatabase.DeleteCharacterFriend(client.Entity, charId);
-                    client.Entity.Friends.Remove(charId);
+                    LegacyDatabase.DeleteCharacterFriend(client.Entity, character);
                     PacketSender.SendPlayerMsg(client, Strings.Friends.remove, CustomColors.Declined);
                     PacketSender.SendFriends(client);
                 }
@@ -2717,13 +2659,13 @@ namespace Intersect.Server.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var charSlot = bf.ReadInteger();
-
-            if (LegacyDatabase.LoadCharacter(client, charSlot))
+            var charId = bf.ReadGuid();
+            var character = LegacyDatabase.GetUserCharacter(client.User, charId);
+            if (character != null)
             {
+                client.LoadCharacter(character);
                 PacketSender.SendJoinGame(client);
             }
-
             bf.Dispose();
         }
 
@@ -2731,11 +2673,13 @@ namespace Intersect.Server.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var charSlot = bf.ReadInteger();
-            LegacyDatabase.DeleteCharacter(client, charSlot);
-            LegacyDatabase.GetCharacters(client);
-            PacketSender.SendLoginError(client, Strings.Account.deletechar,
-                Strings.Account.deleted);
+            var charId = bf.ReadGuid();
+            var character = LegacyDatabase.GetUserCharacter(client.User, charId);
+            if (character != null)
+            {
+                LegacyDatabase.DeleteCharacter(charId);
+            }
+            PacketSender.SendLoginError(client, Strings.Account.deletechar, Strings.Account.deleted);
             PacketSender.SendPlayerCharacters(client);
             bf.Dispose();
         }
