@@ -546,7 +546,12 @@ namespace Intersect.Server.Classes.Networking
                 }
                 else if (cmd == Strings.Chat.pmcmd || cmd == Strings.Chat.messagecmd)
                 {
+                    if (splitString.Length < 3)
+                    {
+                        return;
+                    } 
                     msg = msg.Remove(0, splitString[1].Length + 1); //Chop off the player name parameter
+                    if (msg.Trim().Length == 0) return;
 
                     for (int i = 0; i < Globals.Clients.Count; i++)
                     {
@@ -570,6 +575,7 @@ namespace Intersect.Server.Classes.Networking
                 }
                 else if (cmd == Strings.Chat.replycmd || cmd == Strings.Chat.rcmd)
                 {
+                    if (msg.Trim().Length == 0) return;
                     if (client.Entity.ChatTarget != null)
                     {
                         PacketSender.SendPlayerMsg(client, Strings.Chat.Private.ToString(client.Entity.MyName, msg),

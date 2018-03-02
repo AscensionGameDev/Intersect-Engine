@@ -110,6 +110,7 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 mCombinedItem.DescWindow.Dispose();
             }
+            if (index >= Globals.GameBench.Crafts.Count) return; 
             var craft = Globals.GameBench.Crafts[index];
             if (craft == null) return;
 

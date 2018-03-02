@@ -439,6 +439,7 @@ namespace Intersect.Server.Classes.Localization
         {
             public static LocalizedString accepted = @"The trade was successful!";
             public static LocalizedString alreadydenied = @"Your trade request has already been denied!";
+            public static LocalizedString bound = @"This item is bound to you and cannot be traded!";
             public static LocalizedString busy = @"{00} is busy. Please try again later!";
             public static LocalizedString declined = @"The trade was declined!";
             public static LocalizedString inventorynospace = @"There is no space left in your inventory for that item!";

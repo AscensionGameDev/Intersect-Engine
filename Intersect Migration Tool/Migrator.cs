@@ -81,12 +81,12 @@ namespace Intersect.Migration
         }
 
         //Really basic error handler for debugging purposes
-        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        public static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             if (!Directory.Exists("resources")) Directory.CreateDirectory("resources");
             using (var writer = new StreamWriter("resources/migration_errors.log", true))
             {
-                writer.WriteLine("Message :" + ((Exception)e.ExceptionObject).Message + "<br/>" + Environment.NewLine +
+                writer.WriteLine("Message :" + ((Exception)e.ExceptionObject).Message + Environment.NewLine +
                                  "StackTrace :" + ((Exception)e.ExceptionObject).StackTrace +
                                  "" + Environment.NewLine + "Date :" + DateTime.Now);
                 writer.WriteLine(Environment.NewLine +
