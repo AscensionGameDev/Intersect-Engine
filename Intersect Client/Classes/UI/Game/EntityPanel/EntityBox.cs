@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Intersect;
 using Intersect.Client.Classes.Localization;
-using Intersect.Client.Classes.UI.Game.EntityBox;
-using Intersect.Config;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using IntersectClientExtras.File_Management;
@@ -14,10 +11,10 @@ using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
+using Intersect_Client.Classes.UI;
 using JetBrains.Annotations;
-using Color = IntersectClientExtras.GenericClasses.Color;
 
-namespace Intersect_Client.Classes.UI.Game
+namespace Intersect.Client.Classes.UI.Game.EntityPanel
 {
     public class EntityBox
     {
@@ -229,7 +226,7 @@ namespace Intersect_Client.Classes.UI.Game
                 UpdateSpellStatus();
                 if (EntityType == EntityTypes.Event)
                 {
-                    EventDesc.AddText(((Event) MyEntity).Desc, Color.White);
+                    EventDesc.AddText(((Event) MyEntity).Desc, IntersectClientExtras.GenericClasses.Color.White);
                     EventDesc.SizeToChildren(false, true);
                 }
                 mInitialized = true;

@@ -8,14 +8,14 @@ using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.UI.Game;
 
-namespace Intersect.Client.Classes.UI.Game.EntityBox
+namespace Intersect.Client.Classes.UI.Game.EntityPanel
 {
     public class SpellStatus
     {
         private SpellDescWindow mDescWindow;
 
         //Drag/Drop References
-        private Intersect_Client.Classes.UI.Game.EntityBox mEntityBox;
+        private EntityBox mEntityBox;
 
         public ImagePanel Container;
         private int mCurrentSpell = -1;
@@ -26,7 +26,7 @@ namespace Intersect.Client.Classes.UI.Game.EntityBox
         private string mTexLoaded = "";
         public Label TimeLabel;
 
-        public SpellStatus(Intersect_Client.Classes.UI.Game.EntityBox entityBox, int index)
+        public SpellStatus(EntityBox entityBox, int index)
         {
             mEntityBox = entityBox;
             mYindex = index;

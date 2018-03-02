@@ -1,4 +1,5 @@
-﻿using Intersect.Enums;
+﻿using Intersect.Client.Classes.UI.Game.EntityPanel;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.General;
@@ -25,7 +26,7 @@ namespace Intersect.Client.Classes.UI.Game
         private DebugMenu mDebugMenu;
 
         private EventWindow mEventWindow;
-        public Intersect_Client.Classes.UI.Game.EntityBox PlayerBox;
+        public EntityBox PlayerBox;
         private QuestOfferWindow mQuestOfferWindow;
         private ShopWindow mShopWindow;
         private bool mShouldCloseBag;
@@ -65,7 +66,7 @@ namespace Intersect.Client.Classes.UI.Game
             Hotbar = new HotBarWindow(GameCanvas);
             mDebugMenu = new DebugMenu(GameCanvas);
             mQuestOfferWindow = new QuestOfferWindow(GameCanvas);
-            PlayerBox = new Intersect_Client.Classes.UI.Game.EntityBox(GameCanvas, EntityTypes.Player, Globals.Me, true);
+            PlayerBox = new EntityBox(GameCanvas, EntityTypes.Player, Globals.Me, true);
         }
 
         //Chatbox

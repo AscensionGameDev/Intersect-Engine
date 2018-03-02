@@ -94,7 +94,7 @@
     <Compile Include="Classes\UI\Game\Bank\BankItem.cs" />
     <Compile Include="Classes\UI\Game\Character\EquipmentItem.cs" />
     <Compile Include="Classes\UI\Game\Crafting\RecipeItem.cs" />
-    <Compile Include="Classes\UI\Game\EntityBox\SpellStatus.cs" />
+    <Compile Include="Classes\UI\Game\EntityPanel\SpellStatus.cs" />
     <Compile Include="Classes\UI\Game\Hotbar\HotbarItem.cs" />
     <Compile Include="Classes\UI\Game\IngameMenu.cs" />
     <Compile Include="Classes\UI\Game\Inventory\InventoryItem.cs" />
@@ -135,7 +135,7 @@
     <Compile Include="Classes\UI\Game\Crafting\CraftingWindow.cs" />
     <Compile Include="Classes\UI\Game\DebugMenu.cs" />
     <Compile Include="Classes\UI\Game\Draggable.cs" />
-    <Compile Include="Classes\UI\Game\EntityBox\EntityBox.cs" />
+    <Compile Include="Classes\UI\Game\EntityPanel\EntityBox.cs" />
     <Compile Include="Classes\UI\Game\EventWindow.cs" />
     <Compile Include="Classes\UI\Game\FriendsWindow.cs" />
     <Compile Include="Classes\UI\Game\GameGuiBase.cs" />
