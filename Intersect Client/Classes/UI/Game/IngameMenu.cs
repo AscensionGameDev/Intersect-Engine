@@ -5,7 +5,6 @@ using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
-using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.Networking;
 using JetBrains.Annotations;
 using UIColor = IntersectClientExtras.GenericClasses.Color;

@@ -1,7 +1,7 @@
-﻿using Intersect.Client.Classes.Localization;
+﻿using Intersect.Client.Classes.Core;
+using Intersect.Client.Classes.Localization;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
-using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Maps;
 using Intersect_Client.Classes.Networking;

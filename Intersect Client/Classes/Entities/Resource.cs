@@ -1,10 +1,10 @@
 ﻿using System;
 using Intersect;
+using Intersect.Client.Classes.Core;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
-using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 
 namespace Intersect_Client.Classes.Entities

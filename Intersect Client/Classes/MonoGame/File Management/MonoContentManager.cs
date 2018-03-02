@@ -6,10 +6,10 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using Intersect.Client.Classes.Core;
 using Intersect.Client.Classes.Localization;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Graphics;
-using Intersect_Client.Classes.Core;
 using Intersect_Client_MonoGame.Classes.SFML.Graphics;
 using Intersect_MonoGameDx.Classes.SFML.Audio;
 

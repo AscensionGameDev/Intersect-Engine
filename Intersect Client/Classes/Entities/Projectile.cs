@@ -3,7 +3,7 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Maps;
-using Graphics = Intersect_Client.Classes.Core.GameGraphics;
+using Graphics = Intersect.Client.Classes.Core.GameGraphics;
 
 namespace Intersect_Client.Classes.Entities
 {

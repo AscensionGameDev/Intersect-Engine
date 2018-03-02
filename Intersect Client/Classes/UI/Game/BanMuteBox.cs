@@ -1,9 +1,9 @@
 ﻿using System;
+using Intersect.Client.Classes.Core;
 using Intersect.Client.Classes.Localization;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
-using Intersect_Client.Classes.Core;
 
 namespace Intersect_Client.Classes.UI.Game
 {

@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using Intersect;
 using IntersectClientExtras.Audio;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Maps;
-using Point = IntersectClientExtras.GenericClasses.Point;
 
-namespace Intersect_Client.Classes.Core
+namespace Intersect.Client.Classes.Core
 {
     public static class GameAudio
     {
@@ -338,7 +336,7 @@ namespace Intersect_Client.Classes.Core
             {
                 if (mX == -1 || mY == -1 || mDistance == -1)
                 {
-                    Point player = new Point()
+                    IntersectClientExtras.GenericClasses.Point player = new IntersectClientExtras.GenericClasses.Point()
                     {
                         X = (int) playerx,
                         Y = (int) playery
@@ -359,7 +357,7 @@ namespace Intersect_Client.Classes.Core
 
         //Code Courtesy of  Philip Peterson. -- Released under MIT license.
         //Obtained, 06/27/2015 from http://wiki.unity3d.com/index.php/Distance_from_a_point_to_a_rectangle
-        public static float DistancePointToRectangle(Point point, Rectangle rect)
+        public static float DistancePointToRectangle(IntersectClientExtras.GenericClasses.Point point, Rectangle rect)
         {
             //  Calculate a distance between a point and a rectangle.
             //  The area around/in the rectangle is defined in terms of

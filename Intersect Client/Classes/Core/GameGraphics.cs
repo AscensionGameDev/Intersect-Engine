@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Intersect;
 using Intersect.Config;
 using Intersect.GameObjects;
 using IntersectClientExtras.File_Management;
@@ -10,9 +9,8 @@ using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Maps;
 using Intersect_Client.Classes.UI;
-using Color = Intersect.Color;
 
-namespace Intersect_Client.Classes.Core
+namespace Intersect.Client.Classes.Core
 {
     public static class GameGraphics
     {

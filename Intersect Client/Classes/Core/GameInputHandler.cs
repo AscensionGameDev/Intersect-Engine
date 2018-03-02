@@ -1,6 +1,4 @@
 ﻿using System;
-using Intersect;
-using Intersect.Client.Classes.Core;
 using Intersect.Enums;
 using Intersect.Logging;
 using IntersectClientExtras.GenericClasses;
@@ -10,7 +8,7 @@ using Intersect_Client.Classes.Maps;
 using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.UI;
 
-namespace Intersect_Client.Classes.Core
+namespace Intersect.Client.Classes.Core
 {
     public static class GameInputHandler
     {

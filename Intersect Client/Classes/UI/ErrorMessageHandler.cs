@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using Intersect.Client.Classes.Core;
 using Intersect.Client.Classes.Localization;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Gwen.Control;
-using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.UI.Game;
 
 namespace Intersect_Client.Classes.UI

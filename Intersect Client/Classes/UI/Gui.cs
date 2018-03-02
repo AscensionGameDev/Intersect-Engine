@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Intersect.Client.Classes.Core;
 using Intersect.Client.Classes.UI.Game;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
@@ -7,7 +8,6 @@ using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Input;
 using IntersectClientExtras.Gwen.Skin;
-using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.UI.Game;
 using Intersect_Client.Classes.UI.Menu;

@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using Intersect;
+using Intersect.Client.Classes.Core;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
-using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Items;
 using Intersect_Client.Classes.Maps;

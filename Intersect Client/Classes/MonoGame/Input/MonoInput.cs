@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Intersect.Client.Classes.Core;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Input;
 using IntersectClientExtras.Input;
-using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.UI;
 using Intersect_Client_MonoGame.Classes.SFML.Graphics;
 using Microsoft.Xna.Framework;

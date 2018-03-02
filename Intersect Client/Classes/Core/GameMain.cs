@@ -4,16 +4,14 @@ using Intersect.Config;
 using Intersect.GameObjects;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Graphics;
-using IntersectClientExtras.Gwen.Input;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Maps;
 using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.UI;
-using Intersect_Client.Classes.UI.Game;
 
 // ReSharper disable All
 
-namespace Intersect_Client.Classes.Core
+namespace Intersect.Client.Classes.Core
 {
     public static class GameMain
     {

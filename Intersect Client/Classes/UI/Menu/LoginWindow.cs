@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
+using Intersect.Client.Classes.Core;
 using Intersect.Client.Classes.Localization;
 using Intersect.Utilities;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using IntersectClientExtras.Input;
-using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 

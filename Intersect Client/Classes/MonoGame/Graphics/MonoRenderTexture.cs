@@ -1,6 +1,6 @@
-﻿using IntersectClientExtras.GenericClasses;
+﻿using Intersect.Client.Classes.Core;
+using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
-using Intersect_Client.Classes.Core;
 using Microsoft.Xna.Framework.Graphics;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 

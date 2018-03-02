@@ -1,12 +1,12 @@
 ﻿using System;
 using Intersect;
+using Intersect.Client.Classes.Core;
 using Intersect.Enums;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Client.Classes.Localization;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
-using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 

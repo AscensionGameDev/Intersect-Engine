@@ -7,7 +7,6 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Client.Classes.Localization;
 using Intersect.Client.Classes.UI.Game.EntityPanel;
-using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Items;
 using Intersect_Client.Classes.Maps;

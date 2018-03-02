@@ -12,7 +12,6 @@ using IntersectClientExtras.Gwen.Input;
 using IntersectClientExtras.Gwen.Renderer;
 using Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management;
 using Intersect_Client.Classes.Bridges_and_Interfaces.SFML.System;
-using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.UI;

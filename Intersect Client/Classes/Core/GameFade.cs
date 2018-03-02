@@ -1,6 +1,6 @@
 ﻿using Intersect_Client.Classes.General;
 
-namespace Intersect_Client.Classes.Core
+namespace Intersect.Client.Classes.Core
 {
     public static class GameFade
     {

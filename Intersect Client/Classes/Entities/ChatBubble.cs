@@ -1,9 +1,9 @@
 ﻿using System;
 using Intersect;
+using Intersect.Client.Classes.Core;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
-using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.UI;
 using Color = Intersect.Color;

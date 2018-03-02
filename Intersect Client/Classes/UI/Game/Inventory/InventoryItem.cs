@@ -1,4 +1,5 @@
 ﻿using System;
+using Intersect.Client.Classes.Core;
 using Intersect.GameObjects;
 using Intersect.Client.Classes.Localization;
 using IntersectClientExtras.File_Management;
@@ -8,7 +9,6 @@ using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using IntersectClientExtras.Gwen.Input;
 using IntersectClientExtras.Input;
-using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Items;
 using Intersect_Client.Classes.Networking;
