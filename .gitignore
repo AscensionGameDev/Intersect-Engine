@@ -212,9 +212,6 @@ pip-log.txt
 
 # NuGet Packages Directory
 ## TODO: If you have NuGet Package Restore enabled, uncomment the next line
-#packages/
-
-!packages/*/build/
-#!packages/Fody.2.0.0/build/*
+packages/
 
 .vs/
