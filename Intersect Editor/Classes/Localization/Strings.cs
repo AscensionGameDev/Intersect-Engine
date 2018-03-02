@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -1447,8 +1448,9 @@ Tick timer saved in server config.json.";
                 {"weatherintensitydesc", @"How intence the weather is (number of particles). (Range 0 to 100)"},
             };
             public static LocalizedString title = @"Map Properties";
-            public static LocalizedString[] zones = new LocalizedString[]
-            {
+
+            [NotNull]
+            public static LocalizedString[] zones = {
                 @"Normal",
                 @"Safe",
                 @"Arena",

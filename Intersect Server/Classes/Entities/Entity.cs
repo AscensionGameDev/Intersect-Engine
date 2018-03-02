@@ -1822,6 +1822,7 @@ namespace Intersect.Server.Classes.Entities
             if (en.Statuses.ContainsKey(spell))
             {
                 en.Statuses[spell].Duration = Duration;
+                en.Statuses[spell].StartTime = StartTime;
             }
             else
             {

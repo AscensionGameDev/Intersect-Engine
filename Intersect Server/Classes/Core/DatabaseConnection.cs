@@ -21,8 +21,9 @@ namespace Intersect.Server.Classes.Core
         private string mDbFilePath;
         private string mDbFileName;
         private object mDbLock = new object();
-        private SqliteConnection mDbConnection;
         public event EventHandler OnCreateDb;
+
+        public SqliteConnection DbConnection { get; private set; }
 
         public DatabaseConnection(string databaseFile, EventHandler onCreateDbHandler)
         {
@@ -42,17 +43,17 @@ namespace Intersect.Server.Classes.Core
 
         public void Create()
         {
-            mDbConnection = new SqliteConnection($"Data Source={mDbFilePath},Version=3,New=True");
-            mDbConnection?.Open();
+            DbConnection = new SqliteConnection($"Data Source={mDbFilePath},Version=3,New=True");
+            DbConnection?.Open();
             if (OnCreateDb != null) OnCreateDb(this, null);
         }
 
         public void Open()
         {
-            if (mDbConnection == null)
+            if (DbConnection == null)
             {
-                mDbConnection = new SqliteConnection("Data Source=" + mDbFilePath + ",Version=3");
-                mDbConnection.Open();
+                DbConnection = new SqliteConnection("Data Source=" + mDbFilePath + ",Version=3");
+                DbConnection.Open();
             }
         }
 
@@ -64,7 +65,7 @@ namespace Intersect.Server.Classes.Core
             sw.Start();
             lock (mDbLock)
             {
-                var connectionOpen = mDbConnection != null;
+                var connectionOpen = DbConnection != null;
                 if (connectionOpen)
                 {
                     Close();
@@ -109,15 +110,15 @@ namespace Intersect.Server.Classes.Core
 
         public SqliteCommand CreateCommand()
         {
-            return mDbConnection?.CreateCommand();
+            return DbConnection?.CreateCommand();
         }
 
         public int ExecuteNonQuery(SqliteCommand command)
         {
             lock (mDbLock)
             {
-                command.Connection = mDbConnection;
-                using (var transaction = mDbConnection?.BeginTransaction())
+                command.Connection = DbConnection;
+                using (var transaction = DbConnection?.BeginTransaction())
                 {
                     var returnVal = command.ExecuteNonQuery();
                     transaction.Commit();
@@ -130,7 +131,7 @@ namespace Intersect.Server.Classes.Core
         {
             lock (mDbLock)
             {
-                command.Connection = mDbConnection;
+                command.Connection = DbConnection;
                 return command.ExecuteReader();
             }
         }
@@ -139,22 +140,22 @@ namespace Intersect.Server.Classes.Core
         {
             lock (mDbLock)
             {
-                command.Connection = mDbConnection;
+                command.Connection = DbConnection;
                 return command.ExecuteScalar();
             }
         }
 
         public SqliteTransaction BeginTransaction()
         {
-            return mDbConnection.BeginTransaction();
+            return DbConnection.BeginTransaction();
         }
 
         public long GetVersion()
         {
-            if (mDbConnection != null && mDbConnection.State == ConnectionState.Open)
+            if (DbConnection != null && DbConnection.State == ConnectionState.Open)
             {
                 var cmd = "SELECT " + DB_VERSION + " from " + INFO_TABLE + ";";
-                using (var createCommand = mDbConnection.CreateCommand())
+                using (var createCommand = DbConnection.CreateCommand())
                 {
                     createCommand.CommandText = cmd;
                     return (long)createCommand.ExecuteScalar();
@@ -165,11 +166,11 @@ namespace Intersect.Server.Classes.Core
 
         public void Close()
         {
-            if (mDbConnection != null)
+            if (DbConnection != null)
             {
-                mDbConnection.Close();
-                mDbConnection.Dispose();
-                mDbConnection = null;
+                DbConnection.Close();
+                DbConnection.Dispose();
+                DbConnection = null;
             }
         }
     }
