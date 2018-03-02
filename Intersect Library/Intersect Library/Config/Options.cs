@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using Intersect.Config;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace Intersect
@@ -45,6 +46,21 @@ namespace Intersect
         public static bool UPnP => _options._upnp;
         public static bool OpenPortChecker => _options._portChecker;
         public static bool ProgressSavedMessages => _options.PlayerOpts.ProgressSavedMessages;
+
+        [NotNull]
+        public static PlayerOptions Player => _options.PlayerOpts;
+
+        [NotNull]
+        public static PassabilityOptions Passability => _options.PassabilityOpts;
+
+        [NotNull]
+        public static EquipmentOptions Equipment => _options.EquipmentOpts;
+
+        [NotNull]
+        public static CombatOptions Combat => _options.CombatOpts;
+
+        [NotNull]
+        public static MapOptions Map => _options.MapOpts;
 
         public static bool Loaded => _options != null;
         

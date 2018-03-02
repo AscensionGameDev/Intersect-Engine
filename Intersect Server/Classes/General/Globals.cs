@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Intersect.GameObjects;
 using Intersect.Server.Classes.Core;
 using Intersect.Server.Classes.Entities;
@@ -26,18 +27,10 @@ namespace Intersect.Server.Classes.General
         //Game helping stuff
         public static Random Rand = new Random();
 
-        public static List<Entity> GetOnlineList()
-        {
-            var onlineList = new List<Entity>();
-            for (int i = 0; i < Clients.Count; i++)
-            {
-                if (Clients[i] != null && Clients[i].Entity != null)
-                {
-                    onlineList.Add(Clients[i].Entity);
-                }
-            }
-            return onlineList;
-        }
+        public static List<Entity> OnlineList => Clients?
+            .FindAll(client => client?.Entity != null)
+            .Select<Client, Entity>(client => client.Entity)
+            .ToList();
 
         public static int FindOpenEntity()
         {
