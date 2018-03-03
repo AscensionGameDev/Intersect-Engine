@@ -74,24 +74,24 @@
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Classes\Content\GameContentManager.cs" />
-    <Compile Include="Classes\Content\GameTexture.cs" />
-    <Compile Include="Classes\Core\Database.cs" />
-    <Compile Include="Classes\Core\EditorGraphics.cs" />
-    <Compile Include="Classes\Core\EditorLoop.cs" />
-    <Compile Include="Classes\Core\EditorSystem.cs" />
-    <Compile Include="Classes\Core\Preferences.cs" />
-    <Compile Include="Classes\Core\Program.cs" />
-    <Compile Include="Classes\Entities\AnimationInstance.cs" />
-    <Compile Include="Classes\General\Enums.cs" />
-    <Compile Include="Classes\General\Globals.cs" />
-    <Compile Include="Classes\Localization\Strings.cs" />
-    <Compile Include="Classes\Maps\MapGrid.cs" />
-    <Compile Include="Classes\Maps\MapInstance.cs" />
-    <Compile Include="Classes\Maps\MapProperties.cs" />
-    <Compile Include="Classes\Networking\EditorNetwork.cs" />
-    <Compile Include="Classes\Networking\PacketHandler.cs" />
-    <Compile Include="Classes\Networking\PacketSender.cs" />
+    <Compile Include="ContentManagement\GameContentManager.cs" />
+    <Compile Include="ContentManagement\GameTexture.cs" />
+    <Compile Include="Core\Database.cs" />
+    <Compile Include="Core\EditorGraphics.cs" />
+    <Compile Include="Core\EditorLoop.cs" />
+    <Compile Include="Core\EditorSystem.cs" />
+    <Compile Include="Core\Preferences.cs" />
+    <Compile Include="Core\Program.cs" />
+    <Compile Include="Entities\AnimationInstance.cs" />
+    <Compile Include="General\Enums.cs" />
+    <Compile Include="General\Globals.cs" />
+    <Compile Include="Localization\Strings.cs" />
+    <Compile Include="Maps\MapGrid.cs" />
+    <Compile Include="Maps\MapInstance.cs" />
+    <Compile Include="Maps\MapProperties.cs" />
+    <Compile Include="Networking\EditorNetwork.cs" />
+    <Compile Include="Networking\PacketHandler.cs" />
+    <Compile Include="Networking\PacketSender.cs" />
     <Compile Include="Forms\Controls\AutoDragPanel.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -789,7 +789,9 @@
       <Name>Intersect.Network</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Classes\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />
   <PropertyGroup>
