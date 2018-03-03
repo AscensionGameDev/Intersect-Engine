@@ -9,6 +9,7 @@ using Intersect.GameObjects.Conditions;
 using Intersect.GameObjects.Events;
 using Intersect.Server.Classes.Localization;
 using Intersect.Server.Classes.Core;
+using Intersect.Server.Classes.Database;
 using Intersect.Server.Classes.Database.PlayerData.Characters;
 using Intersect.Server.Classes.General;
 
@@ -279,18 +280,14 @@ namespace Intersect.Server.Classes.Entities
             switch (conditionCommand.Ints[0])
             {
                 case 0: //Player Switch
-                    var switchVal = false;
-                    if (myPlayer.Switches.ContainsKey(conditionCommand.Ints[1]))
-                        switchVal = myPlayer.Switches[conditionCommand.Ints[1]];
+                    var switchVal = myPlayer.GetSwitchValue(conditionCommand.Ints[1]);
                     if (switchVal == Convert.ToBoolean(conditionCommand.Ints[2]))
                     {
                         return true;
                     }
                     break;
                 case 1: //Player Variable
-                    var varVal = 0;
-                    if (myPlayer.Variables.ContainsKey(conditionCommand.Ints[1]))
-                        varVal = myPlayer.Variables[conditionCommand.Ints[1]];
+                    var varVal = myPlayer.GetVariableValue(conditionCommand.Ints[1]);
                     switch (conditionCommand.Ints[2]) //Comparator
                     {
                         case 0: //Equal to
@@ -540,23 +537,14 @@ namespace Intersect.Server.Classes.Entities
                 }
 
                 //Have to accept a numeric parameter after each of the following (player switch/var and server switch/var)
-                MatchCollection matches = Regex.Matches(input,
-                    Regex.Escape(Strings.Events.playervar) + " ([0-9]+)");
+                MatchCollection matches = Regex.Matches(input, Regex.Escape(Strings.Events.playervar) + " ([0-9]+)");
                 foreach (Match m in matches)
                 {
                     if (m.Success)
                     {
                         int id = Convert.ToInt32(m.Groups[1].Value);
-                        if (MyPlayer.Variables.ContainsKey(id))
-                        {
-                            input = input.Replace(Strings.Events.playervar + " " + m.Groups[1].Value,
-                                MyPlayer.Variables[id].ToString());
-                        }
-                        else
-                        {
-                            input = input.Replace(Strings.Events.playervar + " " + m.Groups[1].Value,
-                                0.ToString());
-                        }
+                        input = input.Replace(Strings.Events.playervar + " " + m.Groups[1].Value,
+                            MyPlayer.GetVariableValue(id).ToString());
                     }
                 }
                 matches = Regex.Matches(input, Regex.Escape(Strings.Events.playerswitch) + " ([0-9]+)");
@@ -565,16 +553,8 @@ namespace Intersect.Server.Classes.Entities
                     if (m.Success)
                     {
                         int id = Convert.ToInt32(m.Groups[1].Value);
-                        if (MyPlayer.Switches.ContainsKey(id))
-                        {
-                            input = input.Replace(Strings.Events.playerswitch + " " + m.Groups[1].Value,
-                                MyPlayer.Switches[id].ToString());
-                        }
-                        else
-                        {
-                            input = input.Replace(Strings.Events.playerswitch + " " + m.Groups[1].Value,
-                                false.ToString());
-                        }
+                        input = input.Replace(Strings.Events.playerswitch + " " + m.Groups[1].Value,
+                            MyPlayer.GetSwitchValue(id).ToString());
                     }
                 }
                 matches = Regex.Matches(input, Regex.Escape(Strings.Events.globalvar) + " ([0-9]+)");
@@ -664,11 +644,7 @@ namespace Intersect.Server.Classes.Entities
                 case EventCommandType.SetSwitch:
                     if (command.Ints[0] == (int) SwitchVariableTypes.PlayerSwitch)
                     {
-                        if (!MyPlayer.Switches.ContainsKey(command.Ints[1]))
-                        {
-                            MyPlayer.Switches.Add(command.Ints[1], false);
-                        }
-                        MyPlayer.Switches[command.Ints[1]] = Convert.ToBoolean(command.Ints[2]);
+                        MyPlayer.SetSwitchValue(command.Ints[1], Convert.ToBoolean(command.Ints[2]));
                     }
                     else if (command.Ints[0] == (int) SwitchVariableTypes.ServerSwitch)
                     {
@@ -684,24 +660,19 @@ namespace Intersect.Server.Classes.Entities
                 case EventCommandType.SetVariable:
                     if (command.Ints[0] == (int) SwitchVariableTypes.PlayerVariable)
                     {
-                        if (!MyPlayer.Variables.ContainsKey(command.Ints[1]))
-                        {
-                            MyPlayer.Variables.Add(command.Ints[1], 0);
-                        }
                         switch (command.Ints[2])
                         {
                             case 0: //Set
-                                MyPlayer.Variables[command.Ints[1]] = command.Ints[3];
+                                MyPlayer.SetVariableValue(command.Ints[1], command.Ints[3]);
                                 break;
                             case 1: //Add
-                                MyPlayer.Variables[command.Ints[1]] += command.Ints[3];
+                                MyPlayer.SetVariableValue(command.Ints[1], MyPlayer.GetVariableValue(command.Ints[1]) + command.Ints[3]);
                                 break;
                             case 2: //Subtract
-                                MyPlayer.Variables[command.Ints[1]] -= command.Ints[3];
+                                MyPlayer.SetVariableValue(command.Ints[1], MyPlayer.GetVariableValue(command.Ints[1]) - command.Ints[3]);
                                 break;
                             case 3: //Random
-                                MyPlayer.Variables[command.Ints[1]] = Globals.Rand.Next(command.Ints[3],
-                                    command.Ints[4] + 1);
+                                MyPlayer.SetVariableValue(command.Ints[1], Globals.Rand.Next(command.Ints[3], command.Ints[4] + 1));
                                 break;
                         }
                     }
@@ -838,7 +809,7 @@ namespace Intersect.Server.Classes.Entities
                     success = false;
                     if (command.Ints[0] == 0) //Try to add a spell
                     {
-                        success = MyPlayer.TryTeachSpell(new SpellInstance(command.Ints[1]));
+                        success = MyPlayer.TryTeachSpell(new Spell(command.Ints[1]));
                     }
                     else
                     {

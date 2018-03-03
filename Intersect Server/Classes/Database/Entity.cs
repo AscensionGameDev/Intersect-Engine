@@ -52,9 +52,9 @@ namespace Intersect.Server.Classes.Database
         public int[] Stat { get; set; } = new int[(int)Enums.Stats.StatCount];
 
         //Inventory
-        public List<InventoryItem> Items { get; set; } = new List<InventoryItem>();
+        public virtual List<InventorySlot> Items { get; set; } = new List<InventorySlot>();
 
         //Spells
-        public List<Spell> Spells { get; set; } = new List<Spell>();
+        public virtual List<SpellSlot> Spells { get; set; } = new List<SpellSlot>();
     }
 }

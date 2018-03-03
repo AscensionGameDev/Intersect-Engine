@@ -22,20 +22,26 @@ namespace Intersect.Server.Classes.Networking
 
     public class Client
     {
-        private User mUser;
         //Game Incorperation Variables
-        public string Name => mUser.Name;
-        public string Email => mUser.Email;
-        public Guid Id => mUser.Id;
-        public string Password => mUser.Password;
-        public string Salt => mUser.Salt;
+        public string Name => User?.Name;
+        public string Email => User?.Email;
+        public Guid Id => User?.Id ?? Guid.Empty;
+        public string Password => User?.Password;
+        public string Salt => User?.Salt;
+
         public int Access
         {
-            get => mUser.Access;
-            set => mUser.Access = value;
+            get => User?.Access ?? -1;
+            set
+            {
+                if (User == null) return;
+                User.Access = value;
+            }
         }
-        public User User => mUser;
-        public List<Character> Characters => mUser.Characters;
+
+        public User User { get; private set; }
+
+        public List<Character> Characters => User?.Characters;
 
         private long mConnectionTimeout;
 
@@ -52,8 +58,8 @@ namespace Intersect.Server.Classes.Networking
         //Client Properties
         public bool IsEditor;
 
-        public bool Muted => string.IsNullOrEmpty(LegacyDatabase.CheckMute(User, GetIp()));
-        public string MuteReason => LegacyDatabase.CheckMute(User, GetIp());
+        public bool Muted => User != null && string.IsNullOrEmpty(LegacyDatabase.CheckMute(User, GetIp()));
+        public string MuteReason => User != null ? LegacyDatabase.CheckMute(User, GetIp()) : null;
 
         private ConcurrentQueue<byte[]> mSendQueue = new ConcurrentQueue<byte[]>();
 
@@ -79,7 +85,7 @@ namespace Intersect.Server.Classes.Networking
 
         public void SetUser(User user)
         {
-            mUser = user;
+            User = user;
         }
 
         public void LoadCharacter(Character character)

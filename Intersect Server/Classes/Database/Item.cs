@@ -1,13 +1,18 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
+using Intersect;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.Server.Classes.Core;
+using Intersect.Server.Classes.Database;
+using Intersect.Server.Classes.Database.PlayerData.Characters;
 using Intersect.Server.Classes.General;
 
-namespace Intersect.Server.Classes.Database.PlayerData.Characters
-{
+namespace Intersect.Server.Classes.Database { 
     public class Item
     {
-        public Bag Bag { get; set; }
+        public Guid? BagId { get; set; }
+        public virtual Bag Bag { get; set; }
         public int ItemNum { get; set; } = -1;
         public int ItemVal { get; set; }
 
@@ -27,17 +32,18 @@ namespace Intersect.Server.Classes.Database.PlayerData.Characters
             
         }
 
-        public static Item None => Item.None;
+        public static Item None => new Item();
 
-        public Item(int itemNum, int itemVal) : this(itemNum, itemVal, null)
+        public Item(int itemNum, int itemVal) : this(itemNum, itemVal, null,null)
         {
             
         }
 
-        public Item(int itemNum, int itemVal, Bag bag)
+        public Item(int itemNum, int itemVal, Guid? bagId,Bag bag)
         {
             ItemNum = itemNum;
             ItemVal = itemVal;
+            BagId = bagId;
             Bag = bag;
             if (ItemBase.Lookup.Get<ItemBase>(ItemNum) != null)
             {
@@ -52,8 +58,20 @@ namespace Intersect.Server.Classes.Database.PlayerData.Characters
             }
         }
 
-        public Item(Item item) : this(item.ItemNum, item.ItemVal, item.Bag)
+        public Item(Item item) : this(item.ItemNum, item.ItemVal, item.BagId,item.Bag)
         {
+            for (int i = 0; i < (int)Stats.StatCount; i++)
+            {
+                StatBoost[i] = item.StatBoost[i];
+            }
+        }
+
+        public virtual void Set(Item item)
+        {
+            ItemNum = item.ItemNum;
+            ItemVal = item.ItemVal;
+            BagId = item.BagId;
+            Bag = item.Bag;
             for (int i = 0; i < (int)Stats.StatCount; i++)
             {
                 StatBoost[i] = item.StatBoost[i];

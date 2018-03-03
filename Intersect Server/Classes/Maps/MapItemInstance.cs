@@ -1,4 +1,6 @@
-﻿using Intersect.Server.Classes.Database.PlayerData.Characters;
+﻿using System;
+using Intersect.Server.Classes.Database;
+using Intersect.Server.Classes.Database.PlayerData.Characters;
 
 namespace Intersect.Server.Classes.Maps
 {
@@ -10,11 +12,11 @@ namespace Intersect.Server.Classes.Maps
         public int X = 0;
         public int Y = 0;
 
-        public MapItem(int itemNum, int itemVal) : base(itemNum, itemVal, null)
+        public MapItem(int itemNum, int itemVal) : base(itemNum, itemVal,null, null)
         {
         }
 
-        public MapItem(int itemNum, int itemVal, Bag bag) : base(itemNum, itemVal, bag)
+        public MapItem(int itemNum, int itemVal, Guid? bagId, Bag bag) : base(itemNum, itemVal,bagId, bag)
         {
         }
 

@@ -5,25 +5,24 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Intersect.Server.Classes.Database.PlayerData.Characters
 {
-    public class Quest
+    public class HotbarSlot
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; private set; }
         public Guid CharacterId { get; private set; }
         public virtual Character Character { get; private set; }
-        public int QuestId { get; private set; }
-        public int TaskId { get; set; }
-        public int TaskProgress { get; set; }
-        public int Completed { get; set; }
+        public int Slot { get; private set; }
+        public int Type { get; set; } = -1;
+        public int ItemSlot { get; set; } = -1;
 
-        public Quest()
+        public HotbarSlot()
         {
             
         }
 
-        public Quest(int id)
+        public HotbarSlot(int slot)
         {
-            QuestId = id;
+            Slot = slot;
         }
     }
 }

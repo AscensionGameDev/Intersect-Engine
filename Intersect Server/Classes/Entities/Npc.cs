@@ -54,20 +54,29 @@ namespace Intersect.Server.Classes.Entities
 
             for (int I = 0; I < (int) Stats.StatCount; I++)
             {
-                Stat[I] = new EntityStat(myBase.Stat[I], I,this,null);
+                BaseStat[I] = myBase.Stat[I];
+                Stat[I] = new EntityStat(I,this,null);
             }
 
+            var spellSlot = 0;
             for (int I = 0; I < MyBase.Spells.Count; I++)
             {
-                Spells.Add(new SpellInstance(MyBase.Spells[I]));
+                var slot = new SpellSlot(spellSlot);
+                slot.Set(new Spell(MyBase.Spells[I]));
+                Spells.Add(slot);
+                spellSlot++;
             }
 
             //Give NPC Drops
+            var itemSlot = 0;
             foreach (var drop in myBase.Drops)
             {
                 if (Globals.Rand.Next(1, 10001) <= drop.Chance * 100 && ItemBase.Lookup.Get<ItemBase>(drop.ItemNum) != null)
                 {
-                    Items.Add(new Item(drop.ItemNum,  drop.Amount));
+                    var slot = new InventorySlot(itemSlot);
+                    Items.Add(slot);
+                    slot.Set(new Item(drop.ItemNum, drop.Amount));
+                    itemSlot++;
                 }
             }
 

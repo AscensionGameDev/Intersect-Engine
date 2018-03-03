@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using Intersect.Server.Classes.Database.PlayerData.Characters;
+using Microsoft.EntityFrameworkCore;
+// ReSharper disable UnusedAutoPropertyAccessor.Local
 
 namespace Intersect.Server.Classes.Database.PlayerData
 {
     public class User
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; set; }
+        public Guid Id { get; private set; }
 
         public string Name { get; set; }
         public string Salt { get; set; }
@@ -18,6 +21,18 @@ namespace Intersect.Server.Classes.Database.PlayerData
         public string PasswordResetCode { get; set; }
         public DateTime? PasswordResetTime { get; set; }
 
-        public List<Character> Characters { get; set; } = new List<Character>();
+        public virtual List<Character> Characters { get; set; } = new List<Character>();
+
+        public static User GetUser(PlayerContext context, string username)
+        {
+            var user = context.Users.Where(p => p.Name.ToLower() == username.ToLower())
+                .Include(p => p.Characters)
+                .SingleOrDefault();
+            foreach (var character in user.Characters)
+            {
+                Character.GetCharacter(context, character.Id);
+            }
+            return user;
+        }
     }
 }

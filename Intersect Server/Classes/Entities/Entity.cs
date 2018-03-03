@@ -84,15 +84,23 @@ namespace Intersect.Server.Classes.Entities
         }
         public int[] MaxVital
         {
-            get => mEntityBase.Vital;
-            set => mEntityBase.Vital = value;
+            get => mEntityBase.MaxVital;
+            set => mEntityBase.MaxVital = value;
         }
 
         public EntityStat[] Stat = new EntityStat[(int)Stats.StatCount];
         //Inventory
-        public List<Item> Items = new List<Item>();
+        public List<InventorySlot> Items
+        {
+            get => mEntityBase.Items;
+            set => mEntityBase.Items = value;
+        }
         //Spells
-        public List<SpellInstance> Spells = new List<SpellInstance>();
+        public List<SpellSlot> Spells
+        {
+            get => mEntityBase.Spells;
+            set => mEntityBase.Spells = value;
+        }
 
 
         //Instance Values
@@ -138,26 +146,10 @@ namespace Intersect.Server.Classes.Entities
            
             for (var I = 0; I < (int) Stats.StatCount; I++)
             {
-                Stat[I] = new EntityStat(0, I,this,null);
+                Stat[I] = new EntityStat(I,this,null);
             }
 
             MyIndex = index;
-            //HP
-            MaxVital[(int) Vitals.Health] = 100;
-            Vital[(int) Vitals.Health] = 100;
-            //MP
-            MaxVital[(int) Vitals.Health] = 100;
-            Vital[(int) Vitals.Health] = 100;
-            //ATK
-            Stat[(int) Stats.Attack].Stat = 23;
-            //Ability
-            Stat[(int) Stats.AbilityPower].Stat = 16;
-            //Def
-            Stat[(int) Stats.Defense].Stat = 23;
-            //MR
-            Stat[(int) Stats.MagicResist].Stat = 16;
-            //SPD
-            Stat[(int) Stats.Speed].Stat = 20;
 
             SpawnTime = Globals.System.GetTimeMs();
         }
@@ -178,7 +170,7 @@ namespace Intersect.Server.Classes.Entities
             if (CastTime != 0 && CastTime < timeMs)
             {
                 CastTime = 0;
-                CastSpell(Spells[SpellCastSlot].SpellNum, SpellCastSlot);
+                CastSpell(Spells[SpellCastSlot].SpellId, SpellCastSlot);
                 CastTarget = null;
             }
             //DoT/HoT timers
@@ -1701,12 +1693,11 @@ namespace Intersect.Server.Classes.Entities
             set => mOwner.BaseStat[mStatType] = value;
         }
 
-        public EntityStat(int stat, int statType, EntityInstance owner, Player player)
+        public EntityStat(int statType, EntityInstance owner, Player player)
         {
             mOwner = owner;
             mPlayer = player;
             mStatType = statType;
-            Stat = stat;
         }
 
         public int Value()

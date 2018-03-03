@@ -4,20 +4,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Intersect.Server.Classes.Database.PlayerData
 {
-    class PlayerContext : DbContext
+    public class PlayerContext : DbContext
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Character> Characters { get; set; }
         public DbSet<Friend> Character_Friends { get; set; }
-        public DbSet<Spell> Character_Spells { get; set; }
+        public DbSet<SpellSlot> Character_Spells { get; set; }
         public DbSet<Switch> Character_Switches { get; set; }
         public DbSet<Variable> Character_Variables { get; set; }
-        public DbSet<Hotbar> Character_Hotbar { get; set; }
+        public DbSet<HotbarSlot> Character_Hotbar { get; set; }
         public DbSet<Quest> Character_Quests { get; set; }
         public DbSet<Bag> Bags { get; set; }
-        public DbSet<InventoryItem> Character_Items { get; set; }
-        public DbSet<BankItem> Character_Bank { get; set; }
-        public DbSet<BagItem> Bag_Items { get; set; }
+        public DbSet<InventorySlot> Character_Items { get; set; }
+        public DbSet<BankSlot> Character_Bank { get; set; }
+        public DbSet<BagSlot> Bag_Items { get; set; }
         public DbSet<Mute> Mutes { get; set; }
         public DbSet<Ban> Bans { get; set; }
 
@@ -67,10 +67,8 @@ namespace Intersect.Server.Classes.Database.PlayerData
             modelBuilder.Entity<Character>().HasMany(b => b.Friends).WithOne(p => p.Owner);
 
             modelBuilder.Entity<Character>().HasMany(b => b.Spells).WithOne(p => p.Character);
-            modelBuilder.Entity<Spell>().HasIndex(p => new { p.Slot, p.CharacterId }).IsUnique();
 
             modelBuilder.Entity<Character>().HasMany(b => b.Items).WithOne(p => p.Character);
-            modelBuilder.Entity<InventoryItem>().HasIndex(p => new { p.Slot, p.CharacterId }).IsUnique();
 
             modelBuilder.Entity<Character>().HasMany(b => b.Switches).WithOne(p => p.Character);
             modelBuilder.Entity<Switch>().HasIndex(p => new { p.SwitchId, p.CharacterId }).IsUnique();
@@ -79,20 +77,17 @@ namespace Intersect.Server.Classes.Database.PlayerData
             modelBuilder.Entity<Variable>().HasIndex(p => new { p.VariableId, p.CharacterId }).IsUnique();
 
             modelBuilder.Entity<Character>().HasMany(b => b.Hotbar).WithOne(p => p.Character);
-            modelBuilder.Entity<Hotbar>().HasIndex(p => new { p.slot, p.CharacterId }).IsUnique();
 
             modelBuilder.Entity<Character>().HasMany(b => b.Quests).WithOne(p => p.Character);
             modelBuilder.Entity<Quest>().HasIndex(p => new { p.QuestId, p.CharacterId }).IsUnique();
 
             modelBuilder.Entity<Character>().HasMany(b => b.Bank).WithOne(p => p.Character);
-            modelBuilder.Entity<BankItem>().HasIndex(p => new { p.Slot, p.CharacterId }).IsUnique();
 
-            modelBuilder.Entity<Bag>().HasMany(b => b.Items).WithOne(p => p.Bag);
-            modelBuilder.Entity<BagItem>().HasIndex(p => new { p.Slot, p.BagId }).IsUnique();
+            modelBuilder.Entity<Bag>().HasMany(b => b.Slots).WithOne(p => p.ParentBag).HasForeignKey(p => p.ParentBagId);
 
-            modelBuilder.Entity<InventoryItem>().HasOne(b => b.Bag);
-            modelBuilder.Entity<BagItem>().HasOne(b => b.Bag);
-            modelBuilder.Entity<BankItem>().HasOne(b => b.Bag);
+            modelBuilder.Entity<InventorySlot>().HasOne(b => b.Bag);
+            modelBuilder.Entity<BagSlot>().HasOne(b => b.Bag);
+            modelBuilder.Entity<BankSlot>().HasOne(b => b.Bag);
 
             modelBuilder.Entity<Ban>().HasOne(b => b.Player);
             modelBuilder.Entity<Mute>().HasOne(b => b.Player);

@@ -12,6 +12,7 @@ using Intersect.Logging;
 using Intersect.Models;
 using Intersect.Network;
 using Intersect.Network.Packets.Reflectable;
+using Intersect.Server.Classes.Database;
 using Intersect.Server.Classes.Database.PlayerData.Characters;
 using Intersect.Server.Classes.Entities;
 using Intersect.Server.Classes.General;
@@ -333,7 +334,7 @@ namespace Intersect.Server.Classes.Networking
                     });
                 }
 
-                if (!LegacyDatabase.LoadUser(client,username))
+                if (!LegacyDatabase.LoadUser(client, username))
                 {
                     PacketSender.SendLoginError(client, Strings.Account.loadfail);
                     return;
@@ -1170,6 +1171,7 @@ namespace Intersect.Server.Classes.Networking
             {
                 var newChar = new Character();
                 client.Characters.Add(newChar);
+                newChar.FixLists();
                 client.LoadCharacter(newChar);
                 var player = (Player)Globals.Entities[index];
 
@@ -1199,10 +1201,7 @@ namespace Intersect.Server.Classes.Networking
                 {
                     if (classBase.Spells[i].Level <= 1)
                     {
-                        SpellInstance tempSpell = new SpellInstance()
-                        {
-                            SpellNum = classBase.Spells[i].SpellNum
-                        };
+                        Spell tempSpell = new Spell(classBase.Spells[i].SpellNum);
                         player.TryTeachSpell(tempSpell, false);
                     }
                 }
@@ -1211,7 +1210,7 @@ namespace Intersect.Server.Classes.Networking
                 {
                     if (ItemBase.Lookup.Get<ItemBase>(item.ItemNum) != null)
                     {
-                        Item tempItem = new Item(item.ItemNum, item.Amount, null);
+                        var tempItem = new Item(item.ItemNum, item.Amount);
                         player.TryGiveItem(tempItem, false);
                     }
                 }
@@ -1235,9 +1234,7 @@ namespace Intersect.Server.Classes.Networking
                     client.Entity.Y)
                 {
                     if (
-                        client.Entity.TryGiveItem(
-                            ((Item)MapInstance.Lookup.Get<MapInstance>(client.Entity.Map)
-                                .MapItems[index])))
+                        client.Entity.TryGiveItem(MapInstance.Lookup.Get<MapInstance>(client.Entity.Map) .MapItems[index]))
                     {
                         //Remove Item From Map
                         MapInstance.Lookup.Get<MapInstance>(client.Entity.Map).RemoveItem(index);

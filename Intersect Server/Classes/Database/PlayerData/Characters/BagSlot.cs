@@ -1,26 +1,27 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
-// ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
+using Intersect.Enums;
 // ReSharper disable UnusedAutoPropertyAccessor.Local
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
 namespace Intersect.Server.Classes.Database.PlayerData.Characters
 {
-    public class Friend
+    public class BagSlot : Item
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; private set; }
-        public virtual Character Owner { get; private set; }
-        public virtual Character Target { get; private set; }
+        public Guid ParentBagId { get; private set; }
+        public virtual Bag ParentBag { get; private set; }
+        public int Slot { get; private set; }
 
-        public Friend()
+        public BagSlot()
         {
-            
+
         }
 
-        public Friend(Character me, Character friend)
+        public BagSlot(int slot)
         {
-            Owner = me;
-            Target = friend;
+            Slot = slot;
         }
     }
 }

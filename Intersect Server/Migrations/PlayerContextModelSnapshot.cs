@@ -20,478 +20,459 @@ namespace Intersect.Server.Migrations
                 .HasAnnotation("ProductVersion", "2.0.1-rtm-125");
 
             modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Ban", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Banner");
+                b.Property<string>("Banner");
 
-                    b.Property<DateTime>("EndTime");
+                b.Property<DateTime>("EndTime");
 
-                    b.Property<string>("Ip");
+                b.Property<string>("Ip");
 
-                    b.Property<Guid>("PlayerId");
+                b.Property<Guid>("PlayerId");
 
-                    b.Property<string>("Reason");
+                b.Property<string>("Reason");
 
-                    b.Property<DateTime>("StartTime");
+                b.Property<DateTime>("StartTime");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("PlayerId");
+                b.HasIndex("PlayerId");
 
-                    b.ToTable("Bans");
-                });
+                b.ToTable("Bans");
+            });
 
             modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.Bag", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd();
 
-                    b.Property<Guid>("CharacterId");
+                b.Property<int>("SlotCount");
 
-                    b.Property<int>("SlotCount");
+                b.HasKey("Id");
 
-                    b.HasKey("Id");
+                b.ToTable("Bags");
+            });
 
-                    b.HasIndex("CharacterId");
+            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.BagSlot", b =>
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd();
 
-                    b.ToTable("Bags");
-                });
+                b.Property<Guid?>("BagId");
 
-            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.BagItem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                b.Property<int>("ItemNum");
 
-                    b.Property<Guid>("BagId");
+                b.Property<int>("ItemVal");
 
-                    b.Property<int>("ItemNum");
+                b.Property<Guid>("ParentBagId");
 
-                    b.Property<int>("ItemVal");
+                b.Property<int>("Slot");
 
-                    b.Property<int>("Slot");
+                b.Property<string>("StatBoostJson")
+                    .HasColumnName("StatBoost");
 
-                    b.Property<string>("StatBoostJson")
-                        .HasColumnName("StatBoost");
+                b.HasKey("Id");
 
-                    b.HasKey("Id");
+                b.HasIndex("BagId");
 
-                    b.HasIndex("BagId");
+                b.HasIndex("ParentBagId");
 
-                    b.HasIndex("Slot", "BagId")
-                        .IsUnique();
+                b.ToTable("Bag_Items");
+            });
 
-                    b.ToTable("Bag_Items");
-                });
+            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.BankSlot", b =>
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd();
 
-            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.BankItem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                b.Property<Guid?>("BagId");
 
-                    b.Property<Guid?>("BagId");
+                b.Property<Guid>("CharacterId");
 
-                    b.Property<Guid>("CharacterId");
+                b.Property<int>("ItemNum");
 
-                    b.Property<int>("ItemNum");
+                b.Property<int>("ItemVal");
 
-                    b.Property<int>("ItemVal");
+                b.Property<int>("Slot");
 
-                    b.Property<int>("Slot");
+                b.Property<string>("StatBoostJson")
+                    .HasColumnName("StatBoost");
 
-                    b.Property<string>("StatBoostJson")
-                        .HasColumnName("StatBoost");
+                b.HasKey("Id");
 
-                    b.HasKey("Id");
+                b.HasIndex("BagId");
 
-                    b.HasIndex("BagId");
+                b.HasIndex("CharacterId");
 
-                    b.HasIndex("CharacterId");
-
-                    b.HasIndex("Slot", "CharacterId")
-                        .IsUnique();
-
-                    b.ToTable("Character_Bank");
-                });
+                b.ToTable("Character_Bank");
+            });
 
             modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.Character", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd();
 
-                    b.Property<Guid>("Class");
+                b.Property<Guid>("Class");
 
-                    b.Property<int>("ClassIndex");
+                b.Property<int>("ClassIndex");
 
-                    b.Property<int>("Dir");
+                b.Property<int>("Dir");
 
-                    b.Property<string>("EquipmentJson")
-                        .HasColumnName("Equipment");
+                b.Property<string>("EquipmentJson")
+                    .HasColumnName("Equipment");
 
-                    b.Property<long>("Exp");
+                b.Property<long>("Exp");
 
-                    b.Property<string>("Face");
+                b.Property<string>("Face");
 
-                    b.Property<int>("Gender");
+                b.Property<int>("Gender");
 
-                    b.Property<DateTime?>("LastOnline");
+                b.Property<DateTime?>("LastOnline");
 
-                    b.Property<int>("Level");
+                b.Property<int>("Level");
 
-                    b.Property<Guid>("Map");
+                b.Property<Guid>("Map");
 
-                    b.Property<int>("MapIndex");
+                b.Property<int>("MapIndex");
 
-                    b.Property<string>("MaxVitalsJson")
-                        .HasColumnName("MaxVitals");
+                b.Property<string>("MaxVitalsJson")
+                    .HasColumnName("MaxVitals");
 
-                    b.Property<string>("Name");
+                b.Property<string>("Name");
 
-                    b.Property<string>("Sprite");
+                b.Property<string>("Sprite");
 
-                    b.Property<int>("StatPoints");
+                b.Property<int>("StatPoints");
 
-                    b.Property<string>("StatsJson")
-                        .HasColumnName("Stats");
+                b.Property<string>("StatsJson")
+                    .HasColumnName("Stats");
 
-                    b.Property<string>("VitalsJson")
-                        .HasColumnName("Vitals");
+                b.Property<string>("VitalsJson")
+                    .HasColumnName("Vitals");
 
-                    b.Property<int>("X");
+                b.Property<int>("X");
 
-                    b.Property<int>("Y");
+                b.Property<int>("Y");
 
-                    b.Property<int>("Z");
+                b.Property<int>("Z");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.ToTable("Characters");
-                });
+                b.ToTable("Characters");
+            });
 
             modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.Friend", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd();
 
-                    b.Property<Guid?>("OwnerId");
+                b.Property<Guid?>("OwnerId");
 
-                    b.Property<Guid?>("TargetId");
+                b.Property<Guid?>("TargetId");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("OwnerId");
+                b.HasIndex("OwnerId");
 
-                    b.HasIndex("TargetId");
+                b.HasIndex("TargetId");
 
-                    b.ToTable("Character_Friends");
-                });
+                b.ToTable("Character_Friends");
+            });
 
-            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.Hotbar", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.HotbarSlot", b =>
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd();
 
-                    b.Property<Guid>("CharacterId");
+                b.Property<Guid>("CharacterId");
 
-                    b.Property<int>("itemslot");
+                b.Property<int>("ItemSlot");
 
-                    b.Property<int>("slot");
+                b.Property<int>("Slot");
 
-                    b.Property<int>("type");
+                b.Property<int>("Type");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("CharacterId");
+                b.HasIndex("CharacterId");
 
-                    b.HasIndex("slot", "CharacterId")
-                        .IsUnique();
+                b.ToTable("Character_Hotbar");
+            });
 
-                    b.ToTable("Character_Hotbar");
-                });
+            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.InventorySlot", b =>
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd();
 
-            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.InventoryItem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                b.Property<Guid?>("BagId");
 
-                    b.Property<Guid?>("BagId");
+                b.Property<Guid>("CharacterId");
 
-                    b.Property<Guid>("CharacterId");
+                b.Property<int>("ItemNum");
 
-                    b.Property<int>("ItemNum");
+                b.Property<int>("ItemVal");
 
-                    b.Property<int>("ItemVal");
+                b.Property<int>("Slot");
 
-                    b.Property<int>("Slot");
+                b.Property<string>("StatBoostJson")
+                    .HasColumnName("StatBoost");
 
-                    b.Property<string>("StatBoostJson")
-                        .HasColumnName("StatBoost");
+                b.HasKey("Id");
 
-                    b.HasKey("Id");
+                b.HasIndex("BagId");
 
-                    b.HasIndex("BagId");
+                b.HasIndex("CharacterId");
 
-                    b.HasIndex("CharacterId");
-
-                    b.HasIndex("Slot", "CharacterId")
-                        .IsUnique();
-
-                    b.ToTable("Character_Items");
-                });
+                b.ToTable("Character_Items");
+            });
 
             modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.Quest", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd();
 
-                    b.Property<Guid>("CharacterId");
+                b.Property<Guid>("CharacterId");
 
-                    b.Property<int>("Completed");
+                b.Property<int>("Completed");
 
-                    b.Property<Guid>("QuestId");
+                b.Property<int>("QuestId");
 
-                    b.Property<Guid>("TaskId");
+                b.Property<int>("TaskId");
 
-                    b.Property<int>("TaskProgress");
+                b.Property<int>("TaskProgress");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("CharacterId");
+                b.HasIndex("CharacterId");
 
-                    b.HasIndex("QuestId", "CharacterId")
-                        .IsUnique();
+                b.HasIndex("QuestId", "CharacterId")
+                    .IsUnique();
 
-                    b.ToTable("Character_Quests");
-                });
+                b.ToTable("Character_Quests");
+            });
 
-            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.Spell", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.SpellSlot", b =>
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd();
 
-                    b.Property<Guid>("CharacterId");
+                b.Property<Guid>("CharacterId");
 
-                    b.Property<int>("Slot");
+                b.Property<int>("Slot");
 
-                    b.Property<long>("SpellCd");
+                b.Property<long>("SpellCd");
 
-                    b.Property<Guid>("SpellId");
+                b.Property<int>("SpellId");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("CharacterId");
+                b.HasIndex("CharacterId");
 
-                    b.HasIndex("Slot", "CharacterId")
-                        .IsUnique();
-
-                    b.ToTable("Character_Spells");
-                });
+                b.ToTable("Character_Spells");
+            });
 
             modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.Switch", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd();
 
-                    b.Property<Guid>("CharacterId");
+                b.Property<Guid>("CharacterId");
 
-                    b.Property<Guid>("SwitchId");
+                b.Property<int>("SwitchId");
 
-                    b.Property<bool>("Valid");
+                b.Property<bool>("Value");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("CharacterId");
+                b.HasIndex("CharacterId");
 
-                    b.HasIndex("SwitchId", "CharacterId")
-                        .IsUnique();
+                b.HasIndex("SwitchId", "CharacterId")
+                    .IsUnique();
 
-                    b.ToTable("Character_Switches");
-                });
+                b.ToTable("Character_Switches");
+            });
 
             modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.Variable", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd();
 
-                    b.Property<Guid>("CharacterId");
+                b.Property<Guid>("CharacterId");
 
-                    b.Property<int>("Value");
+                b.Property<int>("Value");
 
-                    b.Property<Guid>("VariableId");
+                b.Property<int>("VariableId");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("CharacterId");
+                b.HasIndex("CharacterId");
 
-                    b.HasIndex("VariableId", "CharacterId")
-                        .IsUnique();
+                b.HasIndex("VariableId", "CharacterId")
+                    .IsUnique();
 
-                    b.ToTable("Character_Variables");
-                });
+                b.ToTable("Character_Variables");
+            });
 
             modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Mute", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("EndTime");
+                b.Property<DateTime>("EndTime");
 
-                    b.Property<string>("Ip");
+                b.Property<string>("Ip");
 
-                    b.Property<string>("Muter");
+                b.Property<string>("Muter");
 
-                    b.Property<Guid>("PlayerId");
+                b.Property<Guid>("PlayerId");
 
-                    b.Property<string>("Reason");
+                b.Property<string>("Reason");
 
-                    b.Property<DateTime>("StartTime");
+                b.Property<DateTime>("StartTime");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("PlayerId");
+                b.HasIndex("PlayerId");
 
-                    b.ToTable("Mutes");
-                });
+                b.ToTable("Mutes");
+            });
 
             modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.User", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd();
 
-                    b.Property<int>("Access");
+                b.Property<int>("Access");
 
-                    b.Property<string>("Email");
+                b.Property<string>("Email");
 
-                    b.Property<string>("Name");
+                b.Property<string>("Name");
 
-                    b.Property<string>("Password");
+                b.Property<string>("Password");
 
-                    b.Property<string>("PasswordResetCode");
+                b.Property<string>("PasswordResetCode");
 
-                    b.Property<DateTime?>("PasswordResetTime");
+                b.Property<DateTime?>("PasswordResetTime");
 
-                    b.Property<string>("Salt");
+                b.Property<string>("Salt");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.ToTable("Users");
-                });
+                b.ToTable("Users");
+            });
 
             modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Ban", b =>
-                {
-                    b.HasOne("Intersect.Server.Classes.Database.PlayerData.User", "Player")
-                        .WithMany()
-                        .HasForeignKey("PlayerId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
+            {
+                b.HasOne("Intersect.Server.Classes.Database.PlayerData.User", "Player")
+                    .WithMany()
+                    .HasForeignKey("PlayerId")
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
 
-            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.Bag", b =>
-                {
-                    b.HasOne("Intersect.Server.Classes.Database.PlayerData.Characters.Character", "Character")
-                        .WithMany()
-                        .HasForeignKey("CharacterId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
+            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.BagSlot", b =>
+            {
+                b.HasOne("Intersect.Server.Classes.Database.PlayerData.Characters.Bag", "Bag")
+                    .WithMany()
+                    .HasForeignKey("BagId");
 
-            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.BagItem", b =>
-                {
-                    b.HasOne("Intersect.Server.Classes.Database.PlayerData.Characters.Bag", "Bag")
-                        .WithMany("Items")
-                        .HasForeignKey("BagId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
+                b.HasOne("Intersect.Server.Classes.Database.PlayerData.Characters.Bag", "ParentBag")
+                    .WithMany("Slots")
+                    .HasForeignKey("ParentBagId")
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
 
-            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.BankItem", b =>
-                {
-                    b.HasOne("Intersect.Server.Classes.Database.PlayerData.Characters.Bag", "Bag")
-                        .WithMany()
-                        .HasForeignKey("BagId");
+            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.BankSlot", b =>
+            {
+                b.HasOne("Intersect.Server.Classes.Database.PlayerData.Characters.Bag", "Bag")
+                    .WithMany()
+                    .HasForeignKey("BagId");
 
-                    b.HasOne("Intersect.Server.Classes.Database.PlayerData.Characters.Character", "Character")
-                        .WithMany("Bank")
-                        .HasForeignKey("CharacterId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
+                b.HasOne("Intersect.Server.Classes.Database.PlayerData.Characters.Character", "Character")
+                    .WithMany("Bank")
+                    .HasForeignKey("CharacterId")
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
 
             modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.Character", b =>
-                {
-                    b.HasOne("Intersect.Server.Classes.Database.PlayerData.User", "Account")
-                        .WithMany("Characters")
-                        .HasForeignKey("Id")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
+            {
+                b.HasOne("Intersect.Server.Classes.Database.PlayerData.User", "Account")
+                    .WithMany("Characters")
+                    .HasForeignKey("Id")
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
 
             modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.Friend", b =>
-                {
-                    b.HasOne("Intersect.Server.Classes.Database.PlayerData.Characters.Character", "Owner")
-                        .WithMany("Friends")
-                        .HasForeignKey("OwnerId");
+            {
+                b.HasOne("Intersect.Server.Classes.Database.PlayerData.Characters.Character", "Owner")
+                    .WithMany("Friends")
+                    .HasForeignKey("OwnerId");
 
-                    b.HasOne("Intersect.Server.Classes.Database.PlayerData.Characters.Character", "Target")
-                        .WithMany()
-                        .HasForeignKey("TargetId");
-                });
+                b.HasOne("Intersect.Server.Classes.Database.PlayerData.Characters.Character", "Target")
+                    .WithMany()
+                    .HasForeignKey("TargetId");
+            });
 
-            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.Hotbar", b =>
-                {
-                    b.HasOne("Intersect.Server.Classes.Database.PlayerData.Characters.Character", "Character")
-                        .WithMany("Hotbar")
-                        .HasForeignKey("CharacterId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
+            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.HotbarSlot", b =>
+            {
+                b.HasOne("Intersect.Server.Classes.Database.PlayerData.Characters.Character", "Character")
+                    .WithMany("Hotbar")
+                    .HasForeignKey("CharacterId")
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
 
-            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.InventoryItem", b =>
-                {
-                    b.HasOne("Intersect.Server.Classes.Database.PlayerData.Characters.Bag", "Bag")
-                        .WithMany()
-                        .HasForeignKey("BagId");
+            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.InventorySlot", b =>
+            {
+                b.HasOne("Intersect.Server.Classes.Database.PlayerData.Characters.Bag", "Bag")
+                    .WithMany()
+                    .HasForeignKey("BagId");
 
-                    b.HasOne("Intersect.Server.Classes.Database.PlayerData.Characters.Character", "Character")
-                        .WithMany("Items")
-                        .HasForeignKey("CharacterId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
+                b.HasOne("Intersect.Server.Classes.Database.PlayerData.Characters.Character", "Character")
+                    .WithMany("Items")
+                    .HasForeignKey("CharacterId")
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
 
             modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.Quest", b =>
-                {
-                    b.HasOne("Intersect.Server.Classes.Database.PlayerData.Characters.Character", "Character")
-                        .WithMany("Quests")
-                        .HasForeignKey("CharacterId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
+            {
+                b.HasOne("Intersect.Server.Classes.Database.PlayerData.Characters.Character", "Character")
+                    .WithMany("Quests")
+                    .HasForeignKey("CharacterId")
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
 
-            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.Spell", b =>
-                {
-                    b.HasOne("Intersect.Server.Classes.Database.PlayerData.Characters.Character", "Character")
-                        .WithMany("Spells")
-                        .HasForeignKey("CharacterId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
+            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.SpellSlot", b =>
+            {
+                b.HasOne("Intersect.Server.Classes.Database.PlayerData.Characters.Character", "Character")
+                    .WithMany("Spells")
+                    .HasForeignKey("CharacterId")
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
 
             modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.Switch", b =>
-                {
-                    b.HasOne("Intersect.Server.Classes.Database.PlayerData.Characters.Character", "Character")
-                        .WithMany("Switches")
-                        .HasForeignKey("CharacterId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
+            {
+                b.HasOne("Intersect.Server.Classes.Database.PlayerData.Characters.Character", "Character")
+                    .WithMany("Switches")
+                    .HasForeignKey("CharacterId")
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
 
             modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.Variable", b =>
-                {
-                    b.HasOne("Intersect.Server.Classes.Database.PlayerData.Characters.Character", "Character")
-                        .WithMany("Variables")
-                        .HasForeignKey("CharacterId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
+            {
+                b.HasOne("Intersect.Server.Classes.Database.PlayerData.Characters.Character", "Character")
+                    .WithMany("Variables")
+                    .HasForeignKey("CharacterId")
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
 
             modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Mute", b =>
-                {
-                    b.HasOne("Intersect.Server.Classes.Database.PlayerData.User", "Player")
-                        .WithMany()
-                        .HasForeignKey("PlayerId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
+            {
+                b.HasOne("Intersect.Server.Classes.Database.PlayerData.User", "Player")
+                    .WithMany()
+                    .HasForeignKey("PlayerId")
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
 #pragma warning restore 612, 618
         }
     }

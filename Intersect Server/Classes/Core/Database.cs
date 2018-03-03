@@ -16,6 +16,7 @@ using Intersect.GameObjects.Maps.MapList;
 using Intersect.Server.Classes.Localization;
 using Intersect.Logging;
 using Intersect.Models;
+using Intersect.Server.Classes.Database;
 using Intersect.Server.Classes.Database.PlayerData;
 using Intersect.Server.Classes.Database.PlayerData.Characters;
 using Intersect.Server.Classes.Entities;
@@ -125,7 +126,7 @@ namespace Intersect.Server.Classes.Core
             {
                 sPlayerDb = new PlayerContext(PlayerContext.DbProvider.MySql, $"server={Options.PlayerDb.Server};database={Options.PlayerDb.Database};user={Options.PlayerDb.Username};password={Options.PlayerDb.Password}");   
             }
-            sPlayerDb.Database.EnsureDeleted();
+            //sPlayerDb.Database.EnsureDeleted();
             sPlayerDb.Database.Migrate();
 
             if (sGameDbConnection.GetVersion() != DbVersion)
@@ -329,7 +330,7 @@ namespace Intersect.Server.Classes.Core
 
         public static User GetUser([NotNull] string username)
         {
-            return sPlayerDb.Users.Where(p => string.Equals(p.Name.Trim(), username.Trim(), StringComparison.CurrentCultureIgnoreCase))?.First();
+            return User.GetUser(sPlayerDb, username);
         }
 
         public static Character GetUserCharacter(User user, Guid characterId)
@@ -343,12 +344,12 @@ namespace Intersect.Server.Classes.Core
 
         public static Character GetCharacter(Guid id)
         {
-            return sPlayerDb.Characters.Where(p => p.Id == id)?.First();
+            return Character.GetCharacter(sPlayerDb, id);
         }
 
         public static Character GetCharacter(string name)
         {
-            return sPlayerDb.Characters.Where(p => string.Equals(p.Name.Trim(), name.Trim(), StringComparison.CurrentCultureIgnoreCase))?.First();
+            return Character.GetCharacter(sPlayerDb,name);
         }
 
         public static bool EmailInUse([NotNull]string email)
@@ -459,13 +460,19 @@ namespace Intersect.Server.Classes.Core
             return bag;
         }
 
+        public static Bag GetBag(Item item)
+        {
+            if (item.BagId == null) return null;
+            return Bag.GetBag(sPlayerDb,(Guid)item.BagId);
+        }
+
         public static bool BagEmpty([NotNull] Bag bag)
         {
-            for (var i = 0; i < bag.Items.Count; i++)
+            for (var i = 0; i < bag.Slots.Count; i++)
             {
-                if (bag.Items[i] != null)
+                if (bag.Slots[i] != null)
                 {
-                    var item = ItemBase.Lookup.Get<ItemBase>(bag.Items[i].ItemNum);
+                    var item = ItemBase.Lookup.Get<ItemBase>(bag.Slots[i].ItemNum);
                     if (item != null)
                     {
                         return false;
@@ -478,15 +485,7 @@ namespace Intersect.Server.Classes.Core
         //Bans and Mutes
         public static void AddMute([NotNull] Client player, int duration, [NotNull] string reason, [NotNull] string muter, string ip)
         {
-            var mute = new Mute()
-            {
-                Player = player.User,
-                StartTime = DateTime.UtcNow,
-                Reason = reason,
-                Ip = ip,
-                EndTime = DateTime.UtcNow.AddDays(duration),
-                Muter = muter
-            };
+            var mute = new Mute(player.User, ip, reason, duration, muter);
             sPlayerDb.Mutes.Add(mute);
         }
 
@@ -508,15 +507,7 @@ namespace Intersect.Server.Classes.Core
 
         public static void AddBan(Client player, int duration, string reason, string banner, string ip)
         {
-            var ban = new Ban()
-            {
-                Player = player.User,
-                StartTime = DateTime.UtcNow,
-                Reason = reason,
-                Ip = ip,
-                EndTime = DateTime.UtcNow.AddDays(duration),
-                Banner = banner
-            };
+            var ban = new Ban(player.User, ip, reason, duration, banner);
             sPlayerDb.Bans.Add(ban);
         }
 

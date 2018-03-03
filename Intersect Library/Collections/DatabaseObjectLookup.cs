@@ -336,11 +336,11 @@ namespace Intersect.Collections
                 }
                 else if (mIdMap.ContainsKey(value.Guid))
                 {
-                    mIndexMap.Remove(gameObject?.Index ?? -1);
+                    mIndexMap.Remove(mIdMap[value.Guid].Index);
                 }
                 else if (mIndexMap.ContainsKey(value.Index))
                 {
-                    mIdMap.Remove(gameObject?.Guid ?? Guid.Empty);
+                    mIdMap.Remove(mIndexMap[value.Index].Guid);
                 }
 
                 mIdMap[value.Guid] = value;
