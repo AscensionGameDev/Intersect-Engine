@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Intersect.Utilities
+﻿namespace Intersect.Utilities
 {
     public static class ValueUtils
     {
