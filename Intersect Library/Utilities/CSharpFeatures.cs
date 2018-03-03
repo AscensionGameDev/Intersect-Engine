@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 
 namespace Intersect.Utilities
 {
-    [SuppressMessage("ReSharper", "UseNullPropagation")]
     public static class CSharpFeatures
     {
         public delegate IDictionary<TKey, TValue> CreateConcurrentDictionaryAction<TKey, TValue>(int capacity = 0);
