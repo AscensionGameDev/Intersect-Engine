@@ -53,6 +53,8 @@
     <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\GameObjectInfoAttributeTests.cs" />
+    <Compile Include="Extensions\RandomExtensionsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\MathHelperTests.cs" />
     <Compile Include="Utilities\TextUtilsTests.cs" />
