@@ -1,15 +1,27 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
+// ReSharper disable UnusedAutoPropertyAccessor.Local
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
 namespace Intersect.Server.Classes.Database.PlayerData.Characters
 {
     public class Variable
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; set; }
-        public Guid CharacterId { get; set; }
-        public Character Character { get; set; }
-        public Guid VariableId { get; set; }
+        public Guid Id { get; private set; }
+        public Guid CharacterId { get; private set; }
+        public virtual Character Character { get; private set; }
+        public int VariableId { get; private set; }
         public int Value { get; set; }
+
+        public Variable()
+        {
+            
+        }
+
+        public Variable(int id)
+        {
+            VariableId = id;
+        }
     }
 }

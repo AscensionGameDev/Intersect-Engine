@@ -9,6 +9,18 @@ namespace Intersect.Server.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Bags",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    SlotCount = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Bags", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -24,6 +36,35 @@ namespace Intersect.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Bag_Items",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    BagId = table.Column<Guid>(nullable: true),
+                    ItemNum = table.Column<int>(nullable: false),
+                    ItemVal = table.Column<int>(nullable: false),
+                    ParentBagId = table.Column<Guid>(nullable: false),
+                    Slot = table.Column<int>(nullable: false),
+                    StatBoost = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Bag_Items", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Bag_Items_Bags_BagId",
+                        column: x => x.BagId,
+                        principalTable: "Bags",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Bag_Items_Bags_ParentBagId",
+                        column: x => x.ParentBagId,
+                        principalTable: "Bags",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -110,18 +151,28 @@ namespace Intersect.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Bags",
+                name: "Character_Bank",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
+                    BagId = table.Column<Guid>(nullable: true),
                     CharacterId = table.Column<Guid>(nullable: false),
-                    SlotCount = table.Column<int>(nullable: false)
+                    ItemNum = table.Column<int>(nullable: false),
+                    ItemVal = table.Column<int>(nullable: false),
+                    Slot = table.Column<int>(nullable: false),
+                    StatBoost = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Bags", x => x.Id);
+                    table.PrimaryKey("PK_Character_Bank", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Bags_Characters_CharacterId",
+                        name: "FK_Character_Bank_Bags_BagId",
+                        column: x => x.BagId,
+                        principalTable: "Bags",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Character_Bank_Characters_CharacterId",
                         column: x => x.CharacterId,
                         principalTable: "Characters",
                         principalColumn: "Id",
@@ -159,149 +210,15 @@ namespace Intersect.Server.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     CharacterId = table.Column<Guid>(nullable: false),
-                    itemslot = table.Column<int>(nullable: false),
-                    slot = table.Column<int>(nullable: false),
-                    type = table.Column<int>(nullable: false)
+                    ItemSlot = table.Column<int>(nullable: false),
+                    Slot = table.Column<int>(nullable: false),
+                    Type = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Character_Hotbar", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Character_Hotbar_Characters_CharacterId",
-                        column: x => x.CharacterId,
-                        principalTable: "Characters",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Character_Quests",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(nullable: false),
-                    CharacterId = table.Column<Guid>(nullable: false),
-                    Completed = table.Column<int>(nullable: false),
-                    QuestId = table.Column<Guid>(nullable: false),
-                    TaskId = table.Column<Guid>(nullable: false),
-                    TaskProgress = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Character_Quests", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Character_Quests_Characters_CharacterId",
-                        column: x => x.CharacterId,
-                        principalTable: "Characters",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Character_Spells",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(nullable: false),
-                    CharacterId = table.Column<Guid>(nullable: false),
-                    Slot = table.Column<int>(nullable: false),
-                    SpellCd = table.Column<long>(nullable: false),
-                    SpellId = table.Column<Guid>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Character_Spells", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Character_Spells_Characters_CharacterId",
-                        column: x => x.CharacterId,
-                        principalTable: "Characters",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Character_Switches",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(nullable: false),
-                    CharacterId = table.Column<Guid>(nullable: false),
-                    SwitchId = table.Column<Guid>(nullable: false),
-                    Valid = table.Column<bool>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Character_Switches", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Character_Switches_Characters_CharacterId",
-                        column: x => x.CharacterId,
-                        principalTable: "Characters",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Character_Variables",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(nullable: false),
-                    CharacterId = table.Column<Guid>(nullable: false),
-                    Value = table.Column<int>(nullable: false),
-                    VariableId = table.Column<Guid>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Character_Variables", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Character_Variables_Characters_CharacterId",
-                        column: x => x.CharacterId,
-                        principalTable: "Characters",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Bag_Items",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(nullable: false),
-                    BagId = table.Column<Guid>(nullable: false),
-                    ItemNum = table.Column<int>(nullable: false),
-                    ItemVal = table.Column<int>(nullable: false),
-                    Slot = table.Column<int>(nullable: false),
-                    StatBoost = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Bag_Items", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Bag_Items_Bags_BagId",
-                        column: x => x.BagId,
-                        principalTable: "Bags",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Character_Bank",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(nullable: false),
-                    BagId = table.Column<Guid>(nullable: true),
-                    CharacterId = table.Column<Guid>(nullable: false),
-                    ItemNum = table.Column<int>(nullable: false),
-                    ItemVal = table.Column<int>(nullable: false),
-                    Slot = table.Column<int>(nullable: false),
-                    StatBoost = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Character_Bank", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Character_Bank_Bags_BagId",
-                        column: x => x.BagId,
-                        principalTable: "Bags",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Character_Bank_Characters_CharacterId",
                         column: x => x.CharacterId,
                         principalTable: "Characters",
                         principalColumn: "Id",
@@ -337,21 +254,98 @@ namespace Intersect.Server.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Character_Quests",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    CharacterId = table.Column<Guid>(nullable: false),
+                    Completed = table.Column<int>(nullable: false),
+                    QuestId = table.Column<int>(nullable: false),
+                    TaskId = table.Column<int>(nullable: false),
+                    TaskProgress = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Character_Quests", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Character_Quests_Characters_CharacterId",
+                        column: x => x.CharacterId,
+                        principalTable: "Characters",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Character_Spells",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    CharacterId = table.Column<Guid>(nullable: false),
+                    Slot = table.Column<int>(nullable: false),
+                    SpellCd = table.Column<long>(nullable: false),
+                    SpellId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Character_Spells", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Character_Spells_Characters_CharacterId",
+                        column: x => x.CharacterId,
+                        principalTable: "Characters",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Character_Switches",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    CharacterId = table.Column<Guid>(nullable: false),
+                    SwitchId = table.Column<int>(nullable: false),
+                    Value = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Character_Switches", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Character_Switches_Characters_CharacterId",
+                        column: x => x.CharacterId,
+                        principalTable: "Characters",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Character_Variables",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    CharacterId = table.Column<Guid>(nullable: false),
+                    Value = table.Column<int>(nullable: false),
+                    VariableId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Character_Variables", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Character_Variables_Characters_CharacterId",
+                        column: x => x.CharacterId,
+                        principalTable: "Characters",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Bag_Items_BagId",
                 table: "Bag_Items",
                 column: "BagId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bag_Items_Slot_BagId",
+                name: "IX_Bag_Items_ParentBagId",
                 table: "Bag_Items",
-                columns: new[] { "Slot", "BagId" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Bags_CharacterId",
-                table: "Bags",
-                column: "CharacterId");
+                column: "ParentBagId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bans_PlayerId",
@@ -369,12 +363,6 @@ namespace Intersect.Server.Migrations
                 column: "CharacterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Character_Bank_Slot_CharacterId",
-                table: "Character_Bank",
-                columns: new[] { "Slot", "CharacterId" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Character_Friends_OwnerId",
                 table: "Character_Friends",
                 column: "OwnerId");
@@ -390,12 +378,6 @@ namespace Intersect.Server.Migrations
                 column: "CharacterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Character_Hotbar_slot_CharacterId",
-                table: "Character_Hotbar",
-                columns: new[] { "slot", "CharacterId" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Character_Items_BagId",
                 table: "Character_Items",
                 column: "BagId");
@@ -404,12 +386,6 @@ namespace Intersect.Server.Migrations
                 name: "IX_Character_Items_CharacterId",
                 table: "Character_Items",
                 column: "CharacterId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Character_Items_Slot_CharacterId",
-                table: "Character_Items",
-                columns: new[] { "Slot", "CharacterId" },
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Character_Quests_CharacterId",
@@ -426,12 +402,6 @@ namespace Intersect.Server.Migrations
                 name: "IX_Character_Spells_CharacterId",
                 table: "Character_Spells",
                 column: "CharacterId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Character_Spells_Slot_CharacterId",
-                table: "Character_Spells",
-                columns: new[] { "Slot", "CharacterId" },
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Character_Switches_CharacterId",

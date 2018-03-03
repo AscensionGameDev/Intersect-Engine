@@ -11,7 +11,7 @@ using System;
 namespace Intersect.Server.Migrations
 {
     [DbContext(typeof(PlayerContext))]
-    [Migration("20180302083515_Initial")]
+    [Migration("20180303091635_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -49,27 +49,25 @@ namespace Intersect.Server.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<Guid>("CharacterId");
-
                     b.Property<int>("SlotCount");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CharacterId");
-
                     b.ToTable("Bags");
                 });
 
-            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.BagItem", b =>
+            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.BagSlot", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<Guid>("BagId");
+                    b.Property<Guid?>("BagId");
 
                     b.Property<int>("ItemNum");
 
                     b.Property<int>("ItemVal");
+
+                    b.Property<Guid>("ParentBagId");
 
                     b.Property<int>("Slot");
 
@@ -80,13 +78,12 @@ namespace Intersect.Server.Migrations
 
                     b.HasIndex("BagId");
 
-                    b.HasIndex("Slot", "BagId")
-                        .IsUnique();
+                    b.HasIndex("ParentBagId");
 
                     b.ToTable("Bag_Items");
                 });
 
-            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.BankItem", b =>
+            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.BankSlot", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
@@ -109,9 +106,6 @@ namespace Intersect.Server.Migrations
                     b.HasIndex("BagId");
 
                     b.HasIndex("CharacterId");
-
-                    b.HasIndex("Slot", "CharacterId")
-                        .IsUnique();
 
                     b.ToTable("Character_Bank");
                 });
@@ -188,30 +182,27 @@ namespace Intersect.Server.Migrations
                     b.ToTable("Character_Friends");
                 });
 
-            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.Hotbar", b =>
+            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.HotbarSlot", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<Guid>("CharacterId");
 
-                    b.Property<int>("itemslot");
+                    b.Property<int>("ItemSlot");
 
-                    b.Property<int>("slot");
+                    b.Property<int>("Slot");
 
-                    b.Property<int>("type");
+                    b.Property<int>("Type");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CharacterId");
 
-                    b.HasIndex("slot", "CharacterId")
-                        .IsUnique();
-
                     b.ToTable("Character_Hotbar");
                 });
 
-            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.InventoryItem", b =>
+            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.InventorySlot", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
@@ -235,9 +226,6 @@ namespace Intersect.Server.Migrations
 
                     b.HasIndex("CharacterId");
 
-                    b.HasIndex("Slot", "CharacterId")
-                        .IsUnique();
-
                     b.ToTable("Character_Items");
                 });
 
@@ -250,9 +238,9 @@ namespace Intersect.Server.Migrations
 
                     b.Property<int>("Completed");
 
-                    b.Property<Guid>("QuestId");
+                    b.Property<int>("QuestId");
 
-                    b.Property<Guid>("TaskId");
+                    b.Property<int>("TaskId");
 
                     b.Property<int>("TaskProgress");
 
@@ -266,7 +254,7 @@ namespace Intersect.Server.Migrations
                     b.ToTable("Character_Quests");
                 });
 
-            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.Spell", b =>
+            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.SpellSlot", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
@@ -277,14 +265,11 @@ namespace Intersect.Server.Migrations
 
                     b.Property<long>("SpellCd");
 
-                    b.Property<Guid>("SpellId");
+                    b.Property<int>("SpellId");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CharacterId");
-
-                    b.HasIndex("Slot", "CharacterId")
-                        .IsUnique();
 
                     b.ToTable("Character_Spells");
                 });
@@ -296,9 +281,9 @@ namespace Intersect.Server.Migrations
 
                     b.Property<Guid>("CharacterId");
 
-                    b.Property<Guid>("SwitchId");
+                    b.Property<int>("SwitchId");
 
-                    b.Property<bool>("Valid");
+                    b.Property<bool>("Value");
 
                     b.HasKey("Id");
 
@@ -319,7 +304,7 @@ namespace Intersect.Server.Migrations
 
                     b.Property<int>("Value");
 
-                    b.Property<Guid>("VariableId");
+                    b.Property<int>("VariableId");
 
                     b.HasKey("Id");
 
@@ -387,23 +372,19 @@ namespace Intersect.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.Bag", b =>
-                {
-                    b.HasOne("Intersect.Server.Classes.Database.PlayerData.Characters.Character", "Character")
-                        .WithMany()
-                        .HasForeignKey("CharacterId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.BagItem", b =>
+            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.BagSlot", b =>
                 {
                     b.HasOne("Intersect.Server.Classes.Database.PlayerData.Characters.Bag", "Bag")
-                        .WithMany("Items")
-                        .HasForeignKey("BagId")
+                        .WithMany()
+                        .HasForeignKey("BagId");
+
+                    b.HasOne("Intersect.Server.Classes.Database.PlayerData.Characters.Bag", "ParentBag")
+                        .WithMany("Slots")
+                        .HasForeignKey("ParentBagId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.BankItem", b =>
+            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.BankSlot", b =>
                 {
                     b.HasOne("Intersect.Server.Classes.Database.PlayerData.Characters.Bag", "Bag")
                         .WithMany()
@@ -434,7 +415,7 @@ namespace Intersect.Server.Migrations
                         .HasForeignKey("TargetId");
                 });
 
-            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.Hotbar", b =>
+            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.HotbarSlot", b =>
                 {
                     b.HasOne("Intersect.Server.Classes.Database.PlayerData.Characters.Character", "Character")
                         .WithMany("Hotbar")
@@ -442,7 +423,7 @@ namespace Intersect.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.InventoryItem", b =>
+            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.InventorySlot", b =>
                 {
                     b.HasOne("Intersect.Server.Classes.Database.PlayerData.Characters.Bag", "Bag")
                         .WithMany()
@@ -462,7 +443,7 @@ namespace Intersect.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.Spell", b =>
+            modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Characters.SpellSlot", b =>
                 {
                     b.HasOne("Intersect.Server.Classes.Database.PlayerData.Characters.Character", "Character")
                         .WithMany("Spells")

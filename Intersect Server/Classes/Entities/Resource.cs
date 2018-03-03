@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Server.Classes.Database;
+using Intersect.Server.Classes.Database.PlayerData.Characters;
 using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Maps;
 using Intersect.Server.Classes.Networking;
@@ -64,11 +65,15 @@ namespace Intersect.Server.Classes.Entities
             Items.Clear();
 
             //Give Resource Drops
+            var itemSlot = 0;
             foreach (var drop in MyBase.Drops)
             {
                 if (Globals.Rand.Next(1, 10001) <= drop.Chance * 100 && ItemBase.Lookup.Get<ItemBase>(drop.ItemNum) != null)
                 {
-                    Items.Add(new MapItem(drop.ItemNum, drop.Amount));
+                    var slot = new InventorySlot(itemSlot);
+                    slot.Set(new Item(drop.ItemNum,drop.Amount));
+                    Items.Add(slot);
+                    itemSlot++;
                 }
             }
 

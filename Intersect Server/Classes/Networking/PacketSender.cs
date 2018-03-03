@@ -9,6 +9,7 @@ using Intersect.GameObjects.Maps.MapList;
 using Intersect.Server.Classes.Localization;
 using Intersect.Logging;
 using Intersect.Models;
+using Intersect.Server.Classes.Database;
 using Intersect.Server.Classes.Database.PlayerData.Characters;
 using Intersect.Server.Classes.Entities;
 using Intersect.Server.Classes.General;
@@ -1636,11 +1637,11 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteInteger(client.Entity.Quests.Count);
             foreach (var quest in client.Entity.Quests)
             {
-                bf.WriteInteger(quest.Key);
+                bf.WriteInteger(quest.QuestId);
                 bf.WriteByte(1);
-                bf.WriteInteger(quest.Value.Completed);
-                bf.WriteInteger(quest.Value.Task);
-                bf.WriteInteger(quest.Value.TaskProgress);
+                bf.WriteInteger(quest.Completed);
+                bf.WriteInteger(quest.TaskId);
+                bf.WriteInteger(quest.TaskProgress);
             }
             SendDataTo(client, bf.ToArray());
             bf.Dispose();
@@ -1652,12 +1653,13 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteLong((int)ServerPackets.QuestProgress);
             bf.WriteInteger(1);
             bf.WriteInteger(questId);
-            if (player.Quests.ContainsKey(questId))
+            var questProgress = player.FindQuest(questId);
+            if (questProgress != null)
             {
                 bf.WriteByte(1);
-                bf.WriteInteger(player.Quests[questId].Completed);
-                bf.WriteInteger(player.Quests[questId].Task);
-                bf.WriteInteger(player.Quests[questId].TaskProgress);
+                bf.WriteInteger(questProgress.Completed);
+                bf.WriteInteger(questProgress.TaskId);
+                bf.WriteInteger(questProgress.TaskProgress);
             }
             else
             {
@@ -1742,7 +1744,7 @@ namespace Intersect.Server.Classes.Networking
             client.SendPacket(bf.ToArray());
             for (int i = 0; i < slots; i++)
             {
-                SendBagUpdate(client, i, bag.Items[i]);
+                SendBagUpdate(client, i, bag.Slots[i]);
             }
             bf.Dispose();
         }

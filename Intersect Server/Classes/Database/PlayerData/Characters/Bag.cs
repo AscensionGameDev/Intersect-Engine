@@ -1,18 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+
+// ReSharper disable UnusedAutoPropertyAccessor.Local
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
 namespace Intersect.Server.Classes.Database.PlayerData.Characters
 {
     public class Bag
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; set; }
-        public Guid CharacterId { get; set; }
-        public Character Character { get; set; }
-        public int SlotCount { get; set; }
+        public Guid Id { get; private set; }
+        public int SlotCount { get; private set; }
 
-        public List<BagItem> Items { get; set; } = new List<BagItem>();
+        public virtual List<BagSlot> Slots { get; set; } = new List<BagSlot>();
 
         public Bag()
         {
@@ -24,8 +27,16 @@ namespace Intersect.Server.Classes.Database.PlayerData.Characters
             SlotCount = slots;
             for (int i = 0; i < slots; i++)
             {
-                Items.Add(new BagItem());
+                Slots.Add(new BagSlot(i));
             }
+        }
+
+        public static Bag GetBag(PlayerContext context, Guid id)
+        {
+            var bag = context.Bags.Where(p => p.Id == id).Include(p => p.Slots).SingleOrDefault();
+            if (bag != null)
+                bag.Slots = bag.Slots.OrderBy(p => p.Slot).ToList();
+            return bag;
         }
     }
 }
