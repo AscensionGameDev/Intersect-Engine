@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
-using Intersect.Editor.Classes.Core;
-using Intersect.Editor.Classes.Localization;
+using Intersect.Editor.Core;
+using Intersect.Editor.Localization;
 
 namespace Intersect.Editor.Forms
 {

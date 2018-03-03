@@ -4,8 +4,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using Intersect.Editor.Classes.Core;
-using Intersect.Editor.Classes.Maps;
+using Intersect.Editor.ContentManagement;
+using Intersect.Editor.Core;
+using Intersect.Editor.General;
+using Intersect.Editor.Maps;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
@@ -15,7 +17,7 @@ using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Packets.Reflectable;
 
-namespace Intersect.Editor.Classes
+namespace Intersect.Editor.Networking
 {
     public static class PacketHandler
     {

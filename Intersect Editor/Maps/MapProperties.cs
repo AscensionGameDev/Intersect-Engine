@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using Intersect.Editor.Classes.Core;
+using Intersect.Editor.ContentManagement;
+using Intersect.Editor.Core;
+using Intersect.Editor.General;
+using Intersect.Editor.Localization;
 using Intersect.Enums;
-using Intersect.GameObjects.Maps;
-using Intersect.Editor.Classes.Localization;
 using Intersect.GameObjects;
+using Intersect.GameObjects.Maps;
 using Intersect.Utilities;
 
-namespace Intersect.Editor.Classes.Maps
+namespace Intersect.Editor.Maps
 {
     class CustomCategory : CategoryAttribute
     {

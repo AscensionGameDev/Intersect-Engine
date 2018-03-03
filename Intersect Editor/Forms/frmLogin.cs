@@ -7,8 +7,11 @@ using System.Text;
 using System.Windows.Forms;
 using Intersect.Config;
 using Intersect.Editor.Classes;
-using Intersect.Editor.Classes.Core;
-using Intersect.Editor.Classes.Localization;
+using Intersect.Editor.ContentManagement;
+using Intersect.Editor.Core;
+using Intersect.Editor.General;
+using Intersect.Editor.Localization;
+using Intersect.Editor.Networking;
 
 namespace Intersect.Editor.Forms
 {

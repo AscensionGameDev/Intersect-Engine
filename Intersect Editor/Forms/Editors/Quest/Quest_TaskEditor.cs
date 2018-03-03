@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Windows.Forms;
-using Intersect.Editor.Classes;
+using Intersect.Editor.Core;
+using Intersect.Editor.General;
+using Intersect.Editor.Localization;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
-using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Quest
 {

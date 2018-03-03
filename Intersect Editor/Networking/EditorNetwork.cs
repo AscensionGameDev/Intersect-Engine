@@ -3,13 +3,14 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Forms;
 using Intersect.Config;
+using Intersect.Editor.General;
 using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Crypto;
 using Intersect.Network.Crypto.Formats;
 using Intersect.Network.Packets.Reflectable;
 
-namespace Intersect.Editor.Classes
+namespace Intersect.Editor.Networking
 {
     public static class EditorNetwork
     {

@@ -1,8 +1,6 @@
 ﻿using DarkUI.Controls;
-using Intersect.Editor.Forms.Controls;
-using Intersect.Editor.Classes.Localization;
 
-namespace Intersect.Editor.Forms
+namespace Intersect.Editor.Forms.Editors
 {
     partial class FrmAnimation
     {

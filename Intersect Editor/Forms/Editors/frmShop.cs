@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using DarkUI.Forms;
-using Intersect.Editor.Classes;
+using Intersect.Editor.Core;
+using Intersect.Editor.General;
+using Intersect.Editor.Localization;
+using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.GameObjects;
-using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Forms.Editors
 {

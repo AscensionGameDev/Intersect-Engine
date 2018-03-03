@@ -1,9 +1,11 @@
-﻿using Intersect.Editor.Classes.Maps;
+﻿using Intersect.Editor.General;
+using Intersect.Editor.Maps;
 using Intersect.Enums;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Models;
+using MapListUpdates = Intersect.Enums.MapListUpdates;
 
-namespace Intersect.Editor.Classes
+namespace Intersect.Editor.Networking
 {
     public static class PacketSender
     {

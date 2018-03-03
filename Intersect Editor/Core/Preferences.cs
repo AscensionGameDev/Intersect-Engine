@@ -1,7 +1,7 @@
 ﻿using Intersect.Config;
 using Microsoft.Win32;
 
-namespace Intersect.Editor.Classes.Core
+namespace Intersect.Editor.Core
 {
     public static class Preferences
     {

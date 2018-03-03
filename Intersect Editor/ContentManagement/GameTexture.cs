@@ -1,8 +1,9 @@
 ﻿using System.IO;
-using Intersect.Editor.Classes.Core;
+using Intersect.Editor.Core;
+using Intersect.Editor.General;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Intersect.Editor.Classes.Content
+namespace Intersect.Editor.ContentManagement
 {
     public class GameTexture
     {

@@ -4,12 +4,14 @@ using System.Drawing;
 using System.Windows.Forms;
 using DarkUI.Controls;
 using DarkUI.Forms;
-using Intersect.Editor.Forms.Editors;
+using Intersect.Editor.Core;
+using Intersect.Editor.General;
+using Intersect.Editor.Localization;
+using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.GameObjects;
-using Intersect.Editor.Classes.Localization;
 
-namespace Intersect.Editor.Classes
+namespace Intersect.Editor.Forms.Editors
 {
     public partial class FrmProjectile : EditorForm
     {

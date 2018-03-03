@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
-using Intersect.Editor.Classes.Entities;
+using Intersect.Editor.Core;
+using Intersect.Editor.Entities;
+using Intersect.Editor.General;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 
-namespace Intersect.Editor.Classes.Maps
+namespace Intersect.Editor.Maps
 {
     public class MapInstance : MapBase, IGameObject<int, MapInstance>
     {

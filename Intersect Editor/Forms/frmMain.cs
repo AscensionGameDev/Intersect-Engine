@@ -5,15 +5,16 @@ using System.IO;
 using System.Windows.Forms;
 using DarkUI.Controls;
 using DarkUI.Forms;
-using Intersect.Editor.Classes;
-using Intersect.Editor.Classes.Core;
-using Intersect.Editor.Classes.General;
-using Intersect.Editor.Classes.Maps;
+using Intersect.Editor.Core;
 using Intersect.Editor.Forms.DockingElements;
 using Intersect.Editor.Forms.Editors;
+using Intersect.Editor.Forms.Editors.Quest;
+using Intersect.Editor.General;
+using Intersect.Editor.Localization;
+using Intersect.Editor.Maps;
+using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.GameObjects;
-using Intersect.Editor.Classes.Localization;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace Intersect.Editor.Forms

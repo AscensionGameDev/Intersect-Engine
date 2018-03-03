@@ -1,9 +1,8 @@
 ﻿using System.Windows.Forms;
 using DarkUI.Controls;
-using DarkUI.Renderers;
 using Intersect.Editor.Forms.Controls;
 
-namespace Intersect.Editor.Forms
+namespace Intersect.Editor.Forms.DockingElements
 {
     partial class FrmMapList
     {

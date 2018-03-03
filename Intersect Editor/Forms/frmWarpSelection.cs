@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
-using Intersect.Editor.Classes;
-using Intersect.Editor.Classes.Maps;
+using Intersect.Editor.Core;
+using Intersect.Editor.General;
+using Intersect.Editor.Localization;
+using Intersect.Editor.Maps;
+using Intersect.Editor.Networking;
 using Intersect.GameObjects.Maps.MapList;
-using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Forms
 {

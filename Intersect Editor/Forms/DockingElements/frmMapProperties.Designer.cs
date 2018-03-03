@@ -1,4 +1,4 @@
-﻿namespace Intersect.Editor.Forms
+﻿namespace Intersect.Editor.Forms.DockingElements
 {
     partial class FrmMapProperties
     {

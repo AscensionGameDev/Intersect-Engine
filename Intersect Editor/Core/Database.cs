@@ -5,7 +5,7 @@ using Intersect.Config;
 using Intersect.Enums;
 using Mono.Data.Sqlite;
 
-namespace Intersect.Editor.Classes
+namespace Intersect.Editor.Core
 {
     public static class Database
     {

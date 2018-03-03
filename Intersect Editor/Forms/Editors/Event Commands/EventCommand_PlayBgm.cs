@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
-using Intersect.Editor.Classes.Core;
+using Intersect.Editor.ContentManagement;
+using Intersect.Editor.Localization;
 using Intersect.GameObjects.Events;
-using Intersect.Editor.Classes.Localization;
 using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands

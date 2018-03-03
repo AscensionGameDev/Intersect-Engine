@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using Intersect.Editor.Classes;
+using Intersect.Editor.Networking;
 using Intersect.GameObjects.Maps.MapList;
 
 namespace Intersect.Editor.Forms.Controls

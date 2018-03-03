@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
-using Intersect.Editor.Classes.Entities;
-using Intersect.Editor.Classes.General;
-using Intersect.Editor.Classes.Maps;
-using Intersect.Editor.Forms;
+using Intersect.Editor.ContentManagement;
+using Intersect.Editor.Entities;
+using Intersect.Editor.Forms.DockingElements;
+using Intersect.Editor.General;
+using Intersect.Editor.Maps;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
@@ -14,9 +15,8 @@ using Intersect.Logging;
 using Intersect.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using static Intersect.Editor.Classes.Core.GameContentManager;
 
-namespace Intersect.Editor.Classes
+namespace Intersect.Editor.Core
 {
     public static class EditorGraphics
     {
@@ -100,7 +100,7 @@ namespace Intersect.Editor.Classes
                 SetupWhiteTex();
 
                 //Load the rest of the graphics and audio
-                LoadEditorContent();
+                GameContentManager.LoadEditorContent();
 
                 //Create our multiplicative blending state.
                 MultiplyState = new BlendState()
@@ -323,7 +323,7 @@ namespace Intersect.Editor.Classes
 
         private static void DrawTransparentBorders(int gridX, int gridY)
         {
-            var transTex = GetTexture(TextureType.Misc, "transtile.png");
+            var transTex = GameContentManager.GetTexture(GameContentManager.TextureType.Misc, "transtile.png");
             var xoffset = CurrentView.Left + (gridX) * (Options.TileWidth * Options.MapWidth);
             var yoffset = CurrentView.Top + (gridY) * (Options.TileHeight * Options.MapHeight);
             for (int x = 0; x < Options.MapWidth; x++)
@@ -646,7 +646,7 @@ namespace Intersect.Editor.Classes
                                     Log.Error(exception);
                                     continue;
                                 }
-                                Texture2D tilesetTex = GetTexture(TextureType.Tileset, tilesetObj.Name);
+                                Texture2D tilesetTex = GameContentManager.GetTexture(GameContentManager.TextureType.Tileset, tilesetObj.Name);
                                 if (tilesetTex == null || tmpMap.Autotiles == null || tmpMap.Autotiles.Autotile == null)
                                     continue;
                                 if (tmpMap.Autotiles.Autotile[x, y].Layer[z].RenderState !=
@@ -751,7 +751,7 @@ namespace Intersect.Editor.Classes
                             {
                                 if (tmpMap.Attributes[x, y].Value > 0)
                                 {
-                                    var attributesTex = GetTexture(TextureType.Misc, "attributes.png");
+                                    var attributesTex = GameContentManager.GetTexture(GameContentManager.TextureType.Misc, "attributes.png");
                                     if (attributesTex != null)
                                     {
                                         DrawTexture(attributesTex,
@@ -777,7 +777,7 @@ namespace Intersect.Editor.Classes
                         for (var y = 0; y < Options.MapHeight; y++)
                         {
                             if (tmpMap.FindEventAt(x, y) == null) continue;
-                            var eventTex = GetTexture(TextureType.Misc, "eventicon.png");
+                            var eventTex = GameContentManager.GetTexture(GameContentManager.TextureType.Misc, "eventicon.png");
                             if (eventTex != null)
                             {
                                 DrawTexture(eventTex, new RectangleF(0, 0, eventTex.Width, eventTex.Height),
@@ -795,7 +795,7 @@ namespace Intersect.Editor.Classes
                     {
                         if (tmpMap.Spawns[i].X >= 0 && tmpMap.Spawns[i].Y >= 0)
                         {
-                            var spawnTex = GetTexture(TextureType.Misc, "spawnicon.png");
+                            var spawnTex = GameContentManager.GetTexture(GameContentManager.TextureType.Misc, "spawnicon.png");
                             if (spawnTex != null)
                             {
                                 DrawTexture(spawnTex, new RectangleF(0, 0, spawnTex.Width, spawnTex.Height),
@@ -945,7 +945,7 @@ namespace Intersect.Editor.Classes
             sGraphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
             if (Globals.CurrentTileset != null)
             {
-                Texture2D tilesetTex = GetTexture(TextureType.Tileset, Globals.CurrentTileset.Name);
+                Texture2D tilesetTex = GameContentManager.GetTexture(GameContentManager.TextureType.Tileset, Globals.CurrentTileset.Name);
                 if (tilesetTex != null)
                 {
                     DrawTexture(tilesetTex, 0, 0, sTilesetChain);
@@ -1064,7 +1064,7 @@ namespace Intersect.Editor.Classes
                         if (TextUtils.IsNone(resource.InitialGraphic)) continue;
                         if (resource.InitialGraphicFromTileset)
                         {
-                            var res = GetTexture(TextureType.Tileset, resource.InitialGraphic);
+                            var res = GameContentManager.GetTexture(GameContentManager.TextureType.Tileset, resource.InitialGraphic);
                             if (res == null) continue;
                             float xpos = x * Options.TileWidth + xoffset;
                             float ypos = y * Options.TileHeight + yoffset;
@@ -1080,7 +1080,7 @@ namespace Intersect.Editor.Classes
                         }
                         else
                         {
-                            var res = GetTexture(TextureType.Resource, resource.InitialGraphic);
+                            var res = GameContentManager.GetTexture(GameContentManager.TextureType.Resource, resource.InitialGraphic);
                             if (res == null) continue;
                             float xpos = x * Options.TileWidth + xoffset;
                             float ypos = y * Options.TileHeight + yoffset;
@@ -1293,7 +1293,7 @@ namespace Intersect.Editor.Classes
             float ecTime = Globals.System.GetTimeMs() - sFogUpdateTime;
             sFogUpdateTime = Globals.System.GetTimeMs();
             if (string.IsNullOrWhiteSpace(Globals.CurrentMap.Fog)) return;
-            var fogTex = GetTexture(TextureType.Fog, Globals.CurrentMap.Fog);
+            var fogTex = GameContentManager.GetTexture(GameContentManager.TextureType.Fog, Globals.CurrentMap.Fog);
             if (fogTex == null) return;
             var xCount = Globals.MapEditorWindow.picMap.Width / fogTex.Width + 1;
             var yCount = Globals.MapEditorWindow.picMap.Height / fogTex.Height + 1;
@@ -1437,7 +1437,7 @@ namespace Intersect.Editor.Classes
                     for (var y = 0; y < Options.MapHeight; y++)
                     {
                         if (tmpMap.FindLightAt(x, y) == null) continue;
-                        var lightTex = GetTexture(TextureType.Misc, "lighticon.png");
+                        var lightTex = GameContentManager.GetTexture(GameContentManager.TextureType.Misc, "lighticon.png");
                         if (lightTex != null)
                         {
                             DrawTexture(lightTex, new RectangleF(0, 0, lightTex.Width, lightTex.Height),
@@ -1466,7 +1466,7 @@ namespace Intersect.Editor.Classes
 
         public static void DrawLight(int x, int y, LightBase light, RenderTarget2D target)
         {
-            Effect shader = GetShader("radialgradient_editor.xnb");
+            Effect shader = GameContentManager.GetShader("radialgradient_editor.xnb");
             var vec = new Vector4(light.Color.R / 255f,
                 light.Color.G / 255f, light.Color.B / 255f, light.Intensity / 255f);
             shader.Parameters["LightColor"].SetValue(vec);

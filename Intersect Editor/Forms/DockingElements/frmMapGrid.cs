@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Windows.Forms;
-using Intersect.Editor.Classes;
-using Intersect.Editor.Classes.Maps;
-using Intersect.Editor.Classes.Localization;
+using Intersect.Editor.Core;
+using Intersect.Editor.General;
+using Intersect.Editor.Localization;
+using Intersect.Editor.Maps;
 using Microsoft.Xna.Framework.Graphics;
 using WeifenLuo.WinFormsUI.Docking;
 

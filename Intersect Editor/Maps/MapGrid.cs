@@ -6,13 +6,15 @@ using System.Threading;
 using System.Windows.Forms;
 using DarkUI.Forms;
 using Hjg.Pngcs;
-using Intersect.Editor.Classes.General;
+using Intersect.Editor.Core;
 using Intersect.Editor.Forms;
+using Intersect.Editor.General;
+using Intersect.Editor.Localization;
+using Intersect.Editor.Networking;
 using Intersect.GameObjects.Maps.MapList;
-using Intersect.Editor.Classes.Localization;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Intersect.Editor.Classes.Maps
+namespace Intersect.Editor.Maps
 {
     public class MapGrid
     {

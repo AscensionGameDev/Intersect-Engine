@@ -8,8 +8,9 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-using Intersect.Editor.Classes.Content;
+using Intersect.Editor.Core;
 using Intersect.Editor.Forms;
+using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Logging;
@@ -18,7 +19,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Intersect.Editor.Classes.Core
+namespace Intersect.Editor.ContentManagement
 {
     public static class GameContentManager
     {

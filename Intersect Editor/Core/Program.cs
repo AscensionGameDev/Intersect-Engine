@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 using Intersect.Editor.Forms;
+using Intersect.Editor.General;
 using Intersect.Logging;
 
 // TODO: Move or change the namespace?

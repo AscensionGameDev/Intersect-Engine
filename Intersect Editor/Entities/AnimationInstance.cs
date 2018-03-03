@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Drawing;
-using Intersect.Editor.Classes.Core;
+using Intersect.Editor.ContentManagement;
+using Intersect.Editor.Core;
+using Intersect.Editor.General;
 using Intersect.GameObjects;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Intersect.Editor.Classes.Entities
+namespace Intersect.Editor.Entities
 {
     public class AnimationInstance
     {
