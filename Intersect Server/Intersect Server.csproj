@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" 
-  xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -12,7 +11,8 @@
     <AssemblyName>Intersect Server</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetFrameworkProfile />
-    <NuGetPackageImportStamp></NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -167,6 +167,12 @@
   </PropertyGroup>
   <PropertyGroup>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'NoFody|x86'">
+    <OutputPath>..\build\debug\server\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'NoFody|x64'">
+    <OutputPath>..\build\debug\server\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Costura, Version=1.6.2.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
@@ -396,13 +402,13 @@
     <Compile Include="Database\PrimaryKeyDescriptor.cs" />
     <Compile Include="Database\TableDescriptor.cs" />
     <Compile Include="Database\UniqueConstraintDescriptor.cs" />
-    <Compile Include="Models\User.cs" />
-    <Compile Include="Models\UserRights.cs" />
-    <Compile Include="Migrations\20180303091635_Initial.cs" />
-    <Compile Include="Migrations\20180303091635_Initial.designer.cs">
-      <DependentUpon>20180303091635_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\20180304060936_Inital.cs" />
+    <Compile Include="Migrations\20180304060936_Inital.designer.cs">
+      <DependentUpon>20180304060936_Inital.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />
+    <Compile Include="Models\User.cs" />
+    <Compile Include="Models\UserRights.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -467,7 +473,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent></PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\Fody.2.0.0\build\dotnet\Fody.targets" Condition="'$(Configuration)' != 'NoFody' and Exists('..\packages\Fody.2.0.0\build\dotnet\Fody.targets')" />
   <Import Project="..\packages\Fody.2.0.0\build\netstandard1.4\Fody.targets" Condition="Exists('..\packages\Fody.2.0.0\build\netstandard1.4\Fody.targets')" />

@@ -128,6 +128,7 @@ namespace Intersect.Server.Classes.Core
             }
             //sPlayerDb.Database.EnsureDeleted();
             sPlayerDb.Database.Migrate();
+            sPlayerDb.Database.EnsureCreated();
 
             if (sGameDbConnection.GetVersion() != DbVersion)
             {

@@ -69,7 +69,7 @@ namespace Intersect.Server.Classes.Entities
         //Spells
         public virtual List<SpellSlot> Spells { get; set; } = new List<SpellSlot>();
 
-        private EntityBase mEntityBase;
+        //private EntityBase mEntityBase;
 
         //Linking instance variables to base/database object variables
         //public string Name
@@ -197,7 +197,7 @@ namespace Intersect.Server.Classes.Entities
         //Initialization
         public EntityInstance(int index, EntityBase entityBase)
         {
-            mEntityBase = entityBase;
+            //mEntityBase = entityBase;
            
             for (var I = 0; I < (int) Stats.StatCount; I++)
             {

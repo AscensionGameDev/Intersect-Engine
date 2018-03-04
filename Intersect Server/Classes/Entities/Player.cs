@@ -25,6 +25,7 @@ namespace Intersect.Server.Classes.Entities
 {
     using LegacyDatabase = Intersect.Server.Classes.Core.LegacyDatabase;
 
+    [Table("Characters")]
     public class Player : EntityInstance
     {
         //Account
