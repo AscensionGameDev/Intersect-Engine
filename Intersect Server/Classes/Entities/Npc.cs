@@ -95,8 +95,8 @@ namespace Intersect.Server.Classes.Entities
         public override void Die(int dropitems = 100, EntityInstance killer = null)
         {
             base.Die(dropitems, killer);
-            MapInstance.Lookup.Get<MapInstance>(Map).RemoveEntity(this);
-            PacketSender.SendEntityLeave(MyIndex, (int) EntityTypes.GlobalEntity, Map);
+            MapInstance.Lookup.Get<MapInstance>(MapIndex).RemoveEntity(this);
+            PacketSender.SendEntityLeave(MyIndex, (int) EntityTypes.GlobalEntity, MapIndex);
             Globals.Entities[MyIndex] = null;
         }
 
@@ -183,7 +183,7 @@ namespace Intersect.Server.Classes.Entities
                 base.TryAttack(enemy, MyBase.Damage, (DamageType) MyBase.DamageType,
                     (Stats) MyBase.ScalingStat,
                     MyBase.Scaling, MyBase.CritChance, Options.CritMultiplier, deadAnimations, aliveAnimations);
-                PacketSender.SendEntityAttack(this, (int) EntityTypes.GlobalEntity, Map, CalculateAttackTime());
+                PacketSender.SendEntityAttack(this, (int) EntityTypes.GlobalEntity, MapIndex, CalculateAttackTime());
             }
         }
 
@@ -332,7 +332,7 @@ namespace Intersect.Server.Classes.Entities
                                             if (spell.CastAnimation > -1)
                                             {
                                                 PacketSender.SendAnimationToProximity(spell.CastAnimation, 1,
-                                                    MyIndex, Map, 0, 0, Dir);
+                                                    MyIndex, MapIndex, 0, 0, Dir);
                                                 //Target Type 1 will be global entity
                                             }
 
@@ -352,7 +352,7 @@ namespace Intersect.Server.Classes.Entities
         //General Updating
         public override void Update(long timeMs)
         {
-            var curMapLink = Map;
+            var curMapLink = MapIndex;
             base.Update(timeMs);
             if (MoveTimer < Globals.System.GetTimeMs())
             {
@@ -364,7 +364,7 @@ namespace Intersect.Server.Classes.Entities
                 {
                     if (!MyTarget.IsDead())
                     {
-                        targetMap = MyTarget.Map;
+                        targetMap = MyTarget.MapIndex;
                         targetX = MyTarget.X;
                         targetY = MyTarget.Y;
                         var targetStatuses = MyTarget.Statuses.Values.ToArray();
@@ -395,19 +395,19 @@ namespace Intersect.Server.Classes.Entities
                 if (targetMap > -1)
                 {
                     //Check if target map is on one of the surrounding maps, if not then we are not even going to look.
-                    if (targetMap != Map)
+                    if (targetMap != MapIndex)
                     {
-                        if (MapInstance.Lookup.Get<MapInstance>(Map).SurroundingMaps.Count > 0)
+                        if (MapInstance.Lookup.Get<MapInstance>(MapIndex).SurroundingMaps.Count > 0)
                         {
                             for (var x = 0;
-                                x < MapInstance.Lookup.Get<MapInstance>(Map).SurroundingMaps.Count;
+                                x < MapInstance.Lookup.Get<MapInstance>(MapIndex).SurroundingMaps.Count;
                                 x++)
                             {
-                                if (MapInstance.Lookup.Get<MapInstance>(Map).SurroundingMaps[x] == targetMap)
+                                if (MapInstance.Lookup.Get<MapInstance>(MapIndex).SurroundingMaps[x] == targetMap)
                                 {
                                     break;
                                 }
-                                if (x == MapInstance.Lookup.Get<MapInstance>(Map).SurroundingMaps.Count - 1)
+                                if (x == MapInstance.Lookup.Get<MapInstance>(MapIndex).SurroundingMaps.Count - 1)
                                 {
                                     targetMap = -1;
                                 }
@@ -538,22 +538,22 @@ namespace Intersect.Server.Classes.Entities
                 LastRandomMove = Globals.System.GetTimeMs() + Globals.Rand.Next(1000, 3000);
             }
             //If we switched maps, lets update the maps
-            if (curMapLink != Map)
+            if (curMapLink != MapIndex)
             {
                 if (curMapLink != -1)
                 {
                     MapInstance.Lookup.Get<MapInstance>(curMapLink).RemoveEntity(this);
                 }
-                if (Map > -1)
+                if (MapIndex > -1)
                 {
-                    MapInstance.Lookup.Get<MapInstance>(Map).AddEntity(this);
+                    MapInstance.Lookup.Get<MapInstance>(MapIndex).AddEntity(this);
                 }
             }
         }
 
         private void TryFindNewTarget(int avoidIndex = -1)
         {
-            var maps = MapInstance.Lookup.Get<MapInstance>(Map).GetSurroundingMaps(true);
+            var maps = MapInstance.Lookup.Get<MapInstance>(MapIndex).GetSurroundingMaps(true);
             var possibleTargets = new List<EntityInstance>();
             int closestRange = Range + 1; //If the range is out of range we didn't find anything.
             int closestIndex = -1;
@@ -616,15 +616,15 @@ namespace Intersect.Server.Classes.Entities
             Y = newY;
             Z = zOverride;
             Dir = newDir;
-            if (newMap != Map )
+            if (newMap != MapIndex )
             {
-                var oldMap = MapInstance.Lookup.Get<MapInstance>(Map);
+                var oldMap = MapInstance.Lookup.Get<MapInstance>(MapIndex);
                 if (oldMap != null)
                 {
                     oldMap.RemoveEntity(this);
                 }
-                PacketSender.SendEntityLeave(MyIndex, (int)EntityTypes.GlobalEntity, Map);
-                Map = newMap;
+                PacketSender.SendEntityLeave(MyIndex, (int)EntityTypes.GlobalEntity, MapIndex);
+                MapIndex = newMap;
                 PacketSender.SendEntityDataToProximity(this);
                 PacketSender.SendEntityPositionToAll(this);
             }

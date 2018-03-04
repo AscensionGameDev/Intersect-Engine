@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,12 +11,14 @@ using Intersect.GameObjects.Events;
 using Intersect.Server.Classes.Localization;
 using Intersect.Server.Classes.Core;
 using Intersect.Server.Classes.Database;
+using Intersect.Server.Classes.Database.PlayerData;
 using Intersect.Server.Classes.Database.PlayerData.Characters;
 using Intersect.Server.Classes.General;
 
 using Intersect.Server.Classes.Maps;
 using Intersect.Server.Classes.Networking;
 using Intersect.Server.Classes.Spells;
+using Microsoft.EntityFrameworkCore;
 using Switch = Intersect.Server.Classes.Database.PlayerData.Characters.Switch;
 
 namespace Intersect.Server.Classes.Entities
@@ -24,110 +27,210 @@ namespace Intersect.Server.Classes.Entities
 
     public class Player : EntityInstance
     {
-        private Character mCharacterBase;
+        //Account
+        public virtual User Account { get; private set; }
 
-        //Mapping to Character Base Properties
-        public Character Character => mCharacterBase;
-        public int Class
+        //Character Info
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; private set; }
+
+        //Name, X, Y, Dir, Etc all in the base Entity Class
+        public Guid Class { get; set; }
+        public int ClassIndex { get; set; }
+        public int Gender { get; set; }
+        public long Exp { get; set; }
+
+        public int StatPoints { get; set; }
+
+        [Column("Equipment")]
+        public string EquipmentJson
         {
-            get => mCharacterBase.ClassIndex;
-            set => mCharacterBase.ClassIndex = value;
+            get => DatabaseUtils.SaveIntArray(Equipment, Options.EquipmentSlots.Count);
+            set => Equipment = DatabaseUtils.LoadIntArray(value, Options.EquipmentSlots.Count);
         }
-        public int Gender
-        {
-            get => mCharacterBase.Gender;
-            set => mCharacterBase.Gender = value;
-        }
-        public int StatPoints
-        {
-            get => mCharacterBase.StatPoints;
-            set => mCharacterBase.StatPoints = value;
-        }
-        public long Exp
-        {
-            get => mCharacterBase.Exp;
-            set => mCharacterBase.Exp = value;
-        }
-        public int[] Equipment
-        {
-            get => mCharacterBase.Equipment;
-            set => mCharacterBase.Equipment = value;
-        }
-        public List<Friend> Friends => mCharacterBase.Friends;
-        public List<BankSlot> Bank
-        {
-            get => mCharacterBase.Bank;
-            set => mCharacterBase.Bank = value;
-        }
-        public List<HotbarSlot> Hotbar
-        {
-            get => mCharacterBase.Hotbar;
-            set => mCharacterBase.Hotbar = value;
-        }
-        public List<Switch> Switches
-        {
-            get => mCharacterBase.Switches;
-            set => mCharacterBase.Switches = value;
-        }
-        public List<Variable> Variables
-        {
-            get => mCharacterBase.Variables;
-            set => mCharacterBase.Variables = value;
-        }
-        public List<Quest> Quests
-        {
-            get => mCharacterBase.Quests;
-            set => mCharacterBase.Quests = value;
-        }
+        [NotMapped]
+        public int[] Equipment { get; set; } = new int[Options.EquipmentSlots.Count];
 
 
-        //5 minute timeout before someone can send a trade/party request after it has been declined
-        public const long REQUEST_DECLINE_TIMEOUT = 300000;  //TODO: Server option this bitch. JC is a lazy fuck
+        public DateTime? LastOnline { get; set; }
 
+        //Bank
+        public virtual List<BankSlot> Bank { get; set; } = new List<BankSlot>();
 
-        //TODO: Clean all of this stuff up
-        private bool mSentMap;
-        public Player ChatTarget = null;
-        public int CraftIndex = -1;
-        public long CraftTimer = 0;
-        //Temporary Values
-        private object mEventLock = new object();
-        public ConcurrentDictionary<Tuple<int, int, int>, EventInstance> EventLookup = new ConcurrentDictionary<Tuple<int, int, int>, EventInstance>();
-        private int mEventCounter = 0;
-        private int mCommonEventLaunches = 0;
-        public Player FriendRequester;
-        public Dictionary<Player, long> FriendRequests = new Dictionary<Player, long>();
-        public Bag InBag;
-        public bool InBank;
-        public int InCraft = -1;
-        public bool InGame;
-        public int InShop = -1;
-        public int LastMapEntered = -1;
-        public Client MyClient;
-        public long MyId = -1;
-        public List<Player> Party = new List<Player>();
-        public Player PartyRequester;
-        public Dictionary<Player, long> PartyRequests = new Dictionary<Player, long>();
-        public List<int> QuestOffers = new List<int>();
-        //Event Spawned Npcs
-        public List<Npc> SpawnedNpcs = new List<Npc>();
-        public Item[] Trade = new Item[Options.MaxInvItems];
-        public bool TradeAccepted;
-        public Player TradeRequester;
-        public Dictionary<Player, long> TradeRequests = new Dictionary<Player, long>();
-        public int Trading = -1;
+        //Friends
+        public virtual List<Friend> Friends { get; set; } = new List<Friend>();
 
-        //Init
-        public Player(int index, Client newClient, Character character) : base(index,character)
+        //HotBar
+        public virtual List<HotbarSlot> Hotbar { get; set; } = new List<HotbarSlot>();
+
+        //Quests
+        public virtual List<Quest> Quests { get; set; } = new List<Quest>();
+
+        //Switches
+        public virtual List<Switch> Switches { get; set; } = new List<Switch>();
+
+        //Variables
+        public virtual List<Variable> Variables { get; set; } = new List<Variable>();
+
+        public static Player GetCharacter(PlayerContext context, Guid id)
         {
-            MyClient = newClient;
-            mCharacterBase = character;
-            for (var I = 0; I < (int)Stats.StatCount; I++)
+            return GetCharacter(context, p => p.Id == id);
+        }
+
+        public static Player GetCharacter(PlayerContext context, string name)
+        {
+            return GetCharacter(context, p => p.Name.ToLower() == name.ToLower());
+        }
+
+        public static Player GetCharacter(PlayerContext context, System.Linq.Expressions.Expression<Func<Player, bool>> predicate)
+        {
+            var character = context.Characters.Where(predicate)
+                .Include(p => p.Bank)
+                .Include(p => p.Friends)
+                .Include(p => p.Hotbar)
+                .Include(p => p.Quests)
+                .Include(p => p.Switches)
+                .Include(p => p.Variables)
+                .Include(p => p.Items)
+                .Include(p => p.Spells)
+                .SingleOrDefault();
+            if (character != null)
             {
-                Stat[I] = new EntityStat(I, this,this);
+                character.FixLists();
+                character.Items = character.Items.OrderBy(p => p.Slot).ToList();
+                character.Bank = character.Bank.OrderBy(p => p.Slot).ToList();
+                character.Spells = character.Spells.OrderBy(p => p.Slot).ToList();
+                character.Hotbar = character.Hotbar.OrderBy(p => p.Slot).ToList();
+            }
+            return character;
+        }
+
+        public void FixLists()
+        {
+            if (Spells.Count < Options.MaxPlayerSkills)
+            {
+                for (int i = Spells.Count; i < Options.MaxPlayerSkills; i++)
+                {
+                    Spells.Add(new SpellSlot(i));
+                }
+            }
+            if (Items.Count < Options.MaxInvItems)
+            {
+                for (int i = Items.Count; i < Options.MaxInvItems; i++)
+                {
+                    Items.Add(new InventorySlot(i));
+                }
+            }
+            if (Bank.Count < Options.MaxBankSlots)
+            {
+                for (int i = Bank.Count; i < Options.MaxBankSlots; i++)
+                {
+                    Bank.Add(new BankSlot(i));
+                }
+            }
+            if (Hotbar.Count < Options.MaxHotbar)
+            {
+                for (var i = Hotbar.Count; i < Options.MaxHotbar; i++)
+                {
+                    Hotbar.Add(new HotbarSlot(i));
+                }
             }
         }
 
+        //private Character mCharacterBase;
+
+        //Mapping to Character Base Properties
+        //public Character Character => mCharacterBase;
+        //public int ClassIndex
+        //{
+        //    get => mCharacterBase.ClassIndex;
+        //    set => mCharacterBase.ClassIndex = value;
+        //}
+        //public int Gender
+        //{
+        //    get => mCharacterBase.Gender;
+        //    set => mCharacterBase.Gender = value;
+        //}
+        //public int StatPoints
+        //{
+        //    get => mCharacterBase.StatPoints;
+        //    set => mCharacterBase.StatPoints = value;
+        //}
+        //public long Exp
+        //{
+        //    get => mCharacterBase.Exp;
+        //    set => mCharacterBase.Exp = value;
+        //}
+        //public int[] Equipment
+        //{
+        //    get => mCharacterBase.Equipment;
+        //    set => mCharacterBase.Equipment = value;
+        //}
+        //public List<Friend> Friends => mCharacterBase.Friends;
+        //public List<BankSlot> Bank
+        //{
+        //    get => mCharacterBase.Bank;
+        //    set => mCharacterBase.Bank = value;
+        //}
+        //public List<HotbarSlot> Hotbar
+        //{
+        //    get => mCharacterBase.Hotbar;
+        //    set => mCharacterBase.Hotbar = value;
+        //}
+        //public List<Switch> Switches
+        //{
+        //    get => mCharacterBase.Switches;
+        //    set => mCharacterBase.Switches = value;
+        //}
+        //public List<Variable> Variables
+        //{
+        //    get => mCharacterBase.Variables;
+        //    set => mCharacterBase.Variables = value;
+        //}
+        //public List<Quest> Quests
+        //{
+        //    get => mCharacterBase.Quests;
+        //    set => mCharacterBase.Quests = value;
+        //}
+
+
+        //5 minute timeout before someone can send a trade/party request after it has been declined
+        [NotMapped] public const long REQUEST_DECLINE_TIMEOUT = 300000;  //TODO: Server option this bitch. JC is a lazy fuck
+
+
+        //TODO: Clean all of this stuff up
+        [NotMapped] private bool mSentMap;
+        [NotMapped] public Player ChatTarget = null;
+        [NotMapped] public int CraftIndex = -1;
+        [NotMapped] public long CraftTimer = 0;
+        //Temporary Values
+        [NotMapped] private object mEventLock = new object();
+        [NotMapped] public ConcurrentDictionary<Tuple<int, int, int>, EventInstance> EventLookup = new ConcurrentDictionary<Tuple<int, int, int>, EventInstance>();
+        [NotMapped] private int mEventCounter = 0;
+        [NotMapped] private int mCommonEventLaunches = 0;
+        [NotMapped] public Player FriendRequester;
+        [NotMapped] public Dictionary<Player, long> FriendRequests = new Dictionary<Player, long>();
+        [NotMapped] public Bag InBag;
+        [NotMapped] public bool InBank;
+        [NotMapped] public int InCraft = -1;
+        [NotMapped] public bool InGame;
+        [NotMapped] public int InShop = -1;
+        [NotMapped] public int LastMapEntered = -1;
+        [NotMapped] public Client MyClient;
+        [NotMapped] public long MyId = -1;
+        [NotMapped] public List<Player> Party = new List<Player>();
+        [NotMapped] public Player PartyRequester;
+        [NotMapped] public Dictionary<Player, long> PartyRequests = new Dictionary<Player, long>();
+        [NotMapped] public List<int> QuestOffers = new List<int>();
+        //Event Spawned Npcs
+        [NotMapped] public List<Npc> SpawnedNpcs = new List<Npc>();
+        [NotMapped] public Item[] Trade = new Item[Options.MaxInvItems];
+        [NotMapped] public bool TradeAccepted;
+        [NotMapped] public Player TradeRequester;
+        [NotMapped] public Dictionary<Player, long> TradeRequests = new Dictionary<Player, long>();
+        [NotMapped] public int Trading = -1;
+
+        [NotMapped]
         public bool IsValidPlayer
         {
             get
@@ -141,20 +244,37 @@ namespace Intersect.Server.Classes.Entities
             }
         }
 
+        [NotMapped]
         public long ExperienceToNextLevel
         {
             get
             {
                 if (Level >= Options.MaxLevel) return -1;
-                var classBase = ClassBase.Lookup.Get<ClassBase>(Class);
+                var classBase = ClassBase.Lookup.Get<ClassBase>(ClassIndex);
                 return classBase?.ExperienceToNextLevel(Level) ?? ClassBase.DEFAULT_BASE_EXPERIENCE;
+            }
+        }
+
+        public Player() : this(-1, null, null)
+        {
+            
+        }
+
+        //Init
+        public Player(int index, Client newClient, Player character) : base(index, null)
+        {
+            MyClient = newClient;
+            //mCharacterBase = character;
+            for (var I = 0; I < (int)Stats.StatCount; I++)
+            {
+                Stat[I] = new EntityStat(I, this,this);
             }
         }
 
         //Update
         public override void Update(long timeMs)
         {
-            if (!InGame || Map == -1)
+            if (!InGame || MapIndex == -1)
             {
                 return;
             }
@@ -221,26 +341,26 @@ namespace Intersect.Server.Classes.Entities
             }
 
             //If we switched maps, lets update the maps
-            if (LastMapEntered != Map)
+            if (LastMapEntered != MapIndex)
             {
                 if (MapInstance.Lookup.Get<MapInstance>(LastMapEntered) != null)
                 {
                     MapInstance.Lookup.Get<MapInstance>(LastMapEntered).RemoveEntity(this);
                 }
-                if (Map > -1)
+                if (MapIndex > -1)
                 {
-                    if (!MapInstance.Lookup.IndexKeys.Contains(Map))
+                    if (!MapInstance.Lookup.IndexKeys.Contains(MapIndex))
                     {
                         WarpToSpawn();
                     }
                     else
                     {
-                        MapInstance.Lookup.Get<MapInstance>(Map).PlayerEnteredMap(this);
+                        MapInstance.Lookup.Get<MapInstance>(MapIndex).PlayerEnteredMap(this);
                     }
                 }
             }
 
-            var currentMap = MapInstance.Lookup.Get<MapInstance>(Map);
+            var currentMap = MapInstance.Lookup.Get<MapInstance>(MapIndex);
             if (currentMap != null)
             {
                 for (var i = 0; i < currentMap.SurroundingMaps.Count + 1; i++)
@@ -299,9 +419,9 @@ namespace Intersect.Server.Classes.Entities
                             eventFound = true;
                         }
                     }
-                    if (evt.MapNum != Map)
+                    if (evt.MapNum != MapIndex)
                     {
-                        foreach (var t in MapInstance.Lookup.Get<MapInstance>(Map).SurroundingMaps)
+                        foreach (var t in MapInstance.Lookup.Get<MapInstance>(MapIndex).SurroundingMaps)
                         {
                             if (t == evt.MapNum)
                             {
@@ -326,7 +446,7 @@ namespace Intersect.Server.Classes.Entities
             var bf = new ByteBuffer();
             bf.WriteBytes(base.Data());
             bf.WriteInteger(Gender);
-            bf.WriteInteger(Class);
+            bf.WriteInteger(ClassIndex);
             return bf.ToArray();
         }
 
@@ -341,7 +461,7 @@ namespace Intersect.Server.Classes.Entities
             //Remove any damage over time effects
             DoT.Clear();
 
-            var cls = ClassBase.Lookup.Get<ClassBase>(Class);
+            var cls = ClassBase.Lookup.Get<ClassBase>(ClassIndex);
             if (cls != null)
             {
                 Warp(cls.SpawnMap, cls.SpawnX, cls.SpawnY, cls.SpawnDir);
@@ -382,7 +502,7 @@ namespace Intersect.Server.Classes.Entities
         {
             Debug.Assert(ClassBase.Lookup != null, "ClassBase.Lookup != null");
 
-            var playerClass = ClassBase.Lookup.Get<ClassBase>(Class);
+            var playerClass = ClassBase.Lookup.Get<ClassBase>(ClassIndex);
             if (playerClass?.VitalRegen == null) return; ;
 
             foreach (Vitals vital in Enum.GetValues(typeof(Vitals)))
@@ -422,7 +542,7 @@ namespace Intersect.Server.Classes.Entities
                 {
                     SetLevel(Level + 1, resetExperience);
                     //Let's pull up class - leveling info
-                    var myclass = ClassBase.Lookup.Get<ClassBase>(Class);
+                    var myclass = ClassBase.Lookup.Get<ClassBase>(ClassIndex);
                     if (myclass != null)
                     {
                         foreach (Vitals vital in Enum.GetValues(typeof(Vitals)))
@@ -663,7 +783,7 @@ namespace Intersect.Server.Classes.Entities
             }
             else
             {
-                var classBase = ClassBase.Lookup.Get<ClassBase>(Class);
+                var classBase = ClassBase.Lookup.Get<ClassBase>(ClassIndex);
                 if (classBase != null)
                 {
                     base.TryAttack(enemy, classBase.Damage,
@@ -676,7 +796,7 @@ namespace Intersect.Server.Classes.Entities
                         100, 10, Options.CritMultiplier);
                 }
             }
-            PacketSender.SendEntityAttack(this, (int)EntityTypes.GlobalEntity, Map, CalculateAttackTime());
+            PacketSender.SendEntityAttack(this, (int)EntityTypes.GlobalEntity, MapIndex, CalculateAttackTime());
         }
 
         public override bool CanAttack(EntityInstance en, SpellBase spell)
@@ -733,15 +853,15 @@ namespace Intersect.Server.Classes.Entities
                     EventLookup.TryRemove(new Tuple<int, int, int>(evt.MapNum, evt.BaseEvent.SpawnX, evt.BaseEvent.SpawnY), out EventInstance z);
                 }
             }
-            if (newMap != Map || mSentMap == false)
+            if (newMap != MapIndex || mSentMap == false)
             {
-                var oldMap = MapInstance.Lookup.Get<MapInstance>(Map);
+                var oldMap = MapInstance.Lookup.Get<MapInstance>(MapIndex);
                 if (oldMap != null)
                 {
                     oldMap.RemoveEntity(this);
                 }
-                PacketSender.SendEntityLeave(MyIndex, (int)EntityTypes.Player, Map);
-                Map = newMap;
+                PacketSender.SendEntityLeave(MyIndex, (int)EntityTypes.Player, MapIndex);
+                MapIndex = newMap;
                 map.PlayerEnteredMap(this);
                 PacketSender.SendEntityDataToProximity(this);
                 PacketSender.SendEntityPositionToAll(this);
@@ -770,7 +890,7 @@ namespace Intersect.Server.Classes.Entities
         public void WarpToSpawn(bool sendWarp = false)
         {
             int map = -1, x = 0, y = 0, dir = 0;
-            var cls = ClassBase.Lookup.Get<ClassBase>(Class);
+            var cls = ClassBase.Lookup.Get<ClassBase>(ClassIndex);
             if (cls != null)
             {
                 if (MapInstance.Lookup.IndexKeys.Contains(cls.SpawnMap))
@@ -897,14 +1017,14 @@ namespace Intersect.Server.Classes.Entities
                 }
                 if (itemBase.IsStackable())
                 {
-                    MapInstance.Lookup.Get<MapInstance>(Map)
+                    MapInstance.Lookup.Get<MapInstance>(MapIndex)
                         .SpawnItem(X, Y, Items[slot], amount);
                 }
                 else
                 {
                     for (var i = 0; i < amount; i++)
                     {
-                        MapInstance.Lookup.Get<MapInstance>(Map)
+                        MapInstance.Lookup.Get<MapInstance>(MapIndex)
                             .SpawnItem(X, Y, Items[slot], 1);
                     }
                 }
@@ -1061,7 +1181,7 @@ namespace Intersect.Server.Classes.Entities
                 }
                 if (itemBase.Animation > -1)
                 {
-                    PacketSender.SendAnimationToProximity(itemBase.Animation, 1, MyIndex, Map,0,0, Dir); //Target Type 1 will be global entity
+                    PacketSender.SendAnimationToProximity(itemBase.Animation, 1, MyIndex, MapIndex,0,0, Dir); //Target Type 1 will be global entity
                 }
             }
         }
@@ -2037,7 +2157,7 @@ namespace Intersect.Server.Classes.Entities
             }
         }
 
-        public bool HasFriend(Character character)
+        public bool HasFriend(Player character)
         {
             foreach (var friend in Friends)
             {
@@ -2046,9 +2166,9 @@ namespace Intersect.Server.Classes.Entities
             return false;
         }
 
-        public void AddFriend(Character character)
+        public void AddFriend(Player character)
         {
-            var friend = new Friend(mCharacterBase, character);
+            var friend = new Friend(this, character);
             Friends.Add(friend);
         }
 
@@ -2258,7 +2378,7 @@ namespace Intersect.Server.Classes.Entities
                 {
                     if (!TryGiveItem(new Item(Trade[i])))
                     {
-                        MapInstance.Lookup.Get<MapInstance>(Map)
+                        MapInstance.Lookup.Get<MapInstance>(MapIndex)
                             .SpawnItem(X, Y, Trade[i], Trade[i].ItemVal);
                         PacketSender.SendPlayerMsg(MyClient, Strings.Trading.itemsdropped,
                             CustomColors.Error);
@@ -2637,7 +2757,7 @@ namespace Intersect.Server.Classes.Entities
 
                                 if (spell.CastAnimation > -1)
                                 {
-                                    PacketSender.SendAnimationToProximity(spell.CastAnimation, 1, MyIndex, Map,
+                                    PacketSender.SendAnimationToProximity(spell.CastAnimation, 1, MyIndex, MapIndex,
                                         0,
                                         0, Dir); //Target Type 1 will be global entity
                                 }
@@ -3166,7 +3286,7 @@ namespace Intersect.Server.Classes.Entities
             {
                 if (evt != null && evt.PageInstance != null)
                 {
-                    if (evt.PageInstance.Map == map && evt.PageInstance.X == x &&
+                    if (evt.PageInstance.MapIndex == map && evt.PageInstance.X == x &&
                         evt.PageInstance.Y == y && evt.PageInstance.Z == z)
                     {
                         return evt.PageInstance;
@@ -3360,12 +3480,12 @@ namespace Intersect.Server.Classes.Entities
         public override void Move(int moveDir, Client client, bool dontUpdate = false, bool correction = false)
         {
             var index = MyIndex;
-            var oldMap = Map;
+            var oldMap = MapIndex;
             client = MyClient;
             base.Move(moveDir, client, dontUpdate, correction);
             // Check for a warp, if so warp the player.
             var attribute =
-                MapInstance.Lookup.Get<MapInstance>(Globals.Entities[index].Map).Attributes[
+                MapInstance.Lookup.Get<MapInstance>(Globals.Entities[index].MapIndex).Attributes[
                     Globals.Entities[index].X, Globals.Entities[index].Y];
             if (attribute != null && attribute.Value == (int)MapAttributes.Warp)
             {
@@ -3383,11 +3503,11 @@ namespace Intersect.Server.Classes.Entities
 
             foreach (var evt in EventLookup.Values)
             {
-                if (evt.MapNum == Map)
+                if (evt.MapNum == MapIndex)
                 {
                     if (evt.PageInstance != null)
                     {
-                        if (evt.PageInstance.Map == Map &&
+                        if (evt.PageInstance.MapIndex == MapIndex &&
                             evt.PageInstance.X == X &&
                             evt.PageInstance.Y == Y &&
                             evt.PageInstance.Z == Z)

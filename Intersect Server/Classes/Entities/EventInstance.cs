@@ -362,7 +362,7 @@ namespace Intersect.Server.Classes.Entities
                     }
                     break;
                 case 5: //Class Is
-                    if (myPlayer.Class == conditionCommand.Ints[1])
+                    if (myPlayer.ClassIndex == conditionCommand.Ints[1])
                     {
                         return true;
                     }
@@ -631,7 +631,7 @@ namespace Intersect.Server.Classes.Entities
                                 Color.FromName(command.Strs[1], Strings.Colors.presets));
                             break;
                         case 1: //Local
-                            PacketSender.SendProximityMsg(ParseEventText(command.Strs[0]), MyClient.Entity.Map,
+                            PacketSender.SendProximityMsg(ParseEventText(command.Strs[0]), MyClient.Entity.MapIndex,
                                 Color.FromName(command.Strs[1], Strings.Colors.presets));
                             break;
                         case 2: //Global
@@ -1043,7 +1043,7 @@ namespace Intersect.Server.Classes.Entities
                                     }
                                     direction = targetEntity.Dir;
                                 }
-                                mapNum = targetEntity.Map;
+                                mapNum = targetEntity.MapIndex;
                                 tileX = targetEntity.X + xDiff;
                                 tileY = targetEntity.Y + yDiff;
                             }
@@ -1146,13 +1146,13 @@ namespace Intersect.Server.Classes.Entities
                                     if (targetEntity.GetType() == typeof(Player))
                                     {
                                         PacketSender.SendAnimationToProximity(animNum, 1, targetEntity.MyIndex,
-                                            MyClient.Entity.Map, 0, 0, direction);
+                                            MyClient.Entity.MapIndex, 0, 0, direction);
                                         //Target Type 1 will be global entity
                                     }
                                     else
                                     {
                                         PacketSender.SendAnimationToProximity(animNum, 2, targetEntity.MyIndex,
-                                            targetEntity.Map, 0, 0, direction);
+                                            targetEntity.MapIndex, 0, 0, direction);
                                     }
                                     CallStack.Peek().CommandIndex++;
                                     return;
@@ -1184,7 +1184,7 @@ namespace Intersect.Server.Classes.Entities
                                                 break;
                                         }
                                     }
-                                    mapNum = targetEntity.Map;
+                                    mapNum = targetEntity.MapIndex;
                                     tileX = targetEntity.X + xDiff;
                                     tileY = targetEntity.Y + yDiff;
                                 }
@@ -1264,7 +1264,7 @@ namespace Intersect.Server.Classes.Entities
                     if (ClassBase.Lookup.Get<ClassBase>(CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
                             .Commands[CallStack.Peek().CommandIndex].Ints[0]) != null)
                     {
-                        MyPlayer.Class = CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
+                        MyPlayer.ClassIndex = CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
                             .Commands[CallStack.Peek().CommandIndex].Ints[0];
                     }
                     PacketSender.SendEntityDataToProximity(MyPlayer);

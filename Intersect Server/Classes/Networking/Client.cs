@@ -41,7 +41,7 @@ namespace Intersect.Server.Classes.Networking
 
         public User User { get; private set; }
 
-        public List<Character> Characters => User?.Characters;
+        public List<Player> Characters => User?.Characters;
 
         private long mConnectionTimeout;
 
@@ -88,9 +88,12 @@ namespace Intersect.Server.Classes.Networking
             User = user;
         }
 
-        public void LoadCharacter(Character character)
+        public void LoadCharacter(Player character)
         {
-            Entity = new Player(EntityIndex, this, character);
+            //Entity = new Player(EntityIndex, this, character);
+            Entity = character;
+            Entity.MyIndex = EntityIndex;
+            Entity.MyClient = this;
             Globals.Entities[EntityIndex] = Entity;
         }
 
@@ -240,7 +243,7 @@ namespace Intersect.Server.Classes.Networking
 
             LegacyDatabase.SavePlayers();
             //Task.Run(() => LegacyDatabase.SaveCharacter(Entity));
-            var map = MapInstance.Lookup.Get<MapInstance>(Entity.Map);
+            var map = MapInstance.Lookup.Get<MapInstance>(Entity.MapIndex);
             map?.RemoveEntity(Entity);
 
             //Update parties
@@ -258,7 +261,7 @@ namespace Intersect.Server.Classes.Networking
             }
             Entity.SpawnedNpcs.Clear();
 
-            PacketSender.SendEntityLeave(Entity.MyIndex, (int)EntityTypes.Player, Entity.Map);
+            PacketSender.SendEntityLeave(Entity.MyIndex, (int)EntityTypes.Player, Entity.MapIndex);
             if (!IsEditor)
             {
                 PacketSender.SendGlobalMsg(Strings.Player.left.ToString(Entity.Name, Options.GameName));

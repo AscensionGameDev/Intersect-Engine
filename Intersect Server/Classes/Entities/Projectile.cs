@@ -29,7 +29,7 @@ namespace Intersect.Server.Classes.Entities
 
         public Projectile(int index, EntityInstance owner, SpellBase parentSpell, ItemBase parentItem,
             ProjectileBase projectile,
-            int map, int X, int Y, int z, int direction, EntityInstance target) : base(index, new EntityBase())
+            int mapIndex, int X, int Y, int z, int direction, EntityInstance target) : base(index, new EntityBase())
         {
             MyBase = projectile;
             Name = MyBase.Name;
@@ -37,7 +37,7 @@ namespace Intersect.Server.Classes.Entities
             Stat = owner.Stat;
             Vital[(int) Vitals.Health] = 1;
             MaxVital[(int) Vitals.Health] = 1;
-            Map = map;
+            MapIndex = mapIndex;
             base.X = X;
             base.Y = Y;
             Z = z;
@@ -81,7 +81,7 @@ namespace Intersect.Server.Classes.Entities
                         {
                             ProjectileSpawns s = new ProjectileSpawns(FindProjectileRotationDir(Dir, d),
                                 X + FindProjectileRotationX(Dir, x - 2, y - 2),
-                                Y + FindProjectileRotationY(Dir, x - 2, y - 2), Z, Map, MyBase,
+                                Y + FindProjectileRotationY(Dir, x - 2, y - 2), Z, MapIndex, MyBase,
                                 this);
                             Spawns[mSpawnedAmount] = s;
                             mSpawnedAmount++;
@@ -440,8 +440,8 @@ namespace Intersect.Server.Classes.Entities
                     Spawns[i] = null;
                 }
             }
-            MapInstance.Lookup.Get<MapInstance>(Map).RemoveProjectile(this);
-            PacketSender.SendEntityLeave(MyIndex, (int) EntityTypes.Projectile, Map);
+            MapInstance.Lookup.Get<MapInstance>(MapIndex).RemoveProjectile(this);
+            PacketSender.SendEntityLeave(MyIndex, (int) EntityTypes.Projectile, MapIndex);
             Globals.Entities[MyIndex] = null;
         }
 

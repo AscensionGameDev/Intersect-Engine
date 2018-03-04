@@ -45,11 +45,11 @@ namespace Intersect.Server.Classes.Database
         [Column("Stats")]
         public string StatsJson
         {
-            get => DatabaseUtils.SaveIntArray(Stat, (int)Enums.Stats.StatCount);
-            set => Stat = DatabaseUtils.LoadIntArray(value, (int)Enums.Stats.StatCount);
+            get => DatabaseUtils.SaveIntArray(BaseStat, (int)Enums.Stats.StatCount);
+            set => BaseStat = DatabaseUtils.LoadIntArray(value, (int)Enums.Stats.StatCount);
         }
         [NotMapped]
-        public int[] Stat { get; set; } = new int[(int)Enums.Stats.StatCount];
+        public int[] BaseStat { get; set; } = new int[(int)Enums.Stats.StatCount];
 
         //Inventory
         public virtual List<InventorySlot> Items { get; set; } = new List<InventorySlot>();

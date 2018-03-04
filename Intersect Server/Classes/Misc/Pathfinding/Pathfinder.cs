@@ -52,7 +52,7 @@ namespace Intersect.Server.Classes.Misc.Pathfinding
             var path = mPath;
             if (mWaitTime < timeMs)
             {
-                var currentMap = MapInstance.Lookup.Get<MapInstance>(mEntity.Map);
+                var currentMap = MapInstance.Lookup.Get<MapInstance>(mEntity.MapIndex);
                 if (currentMap != null && mTarget != null)
                 {
                     var myGrid = currentMap.MapGrid;
@@ -195,7 +195,7 @@ namespace Intersect.Server.Classes.Misc.Pathfinding
                                                                 {
                                                                     for (int mapY = 0; mapY < Options.MapHeight; mapY++)
                                                                     {
-                                                                        var evt = player.EventExists(ev.Map,
+                                                                        var evt = player.EventExists(ev.MapIndex,
                                                                             mapX, mapY);
                                                                         if (evt != null)
                                                                         {

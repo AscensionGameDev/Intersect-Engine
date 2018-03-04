@@ -381,7 +381,7 @@ namespace Intersect.Server.Classes.Networking
             if (map != null)
             {
                 PacketSender.SendMap(client, mapNum);
-                if (!client.IsEditor && client.Entity != null && mapNum == client.Entity.Map)
+                if (!client.IsEditor && client.Entity != null && mapNum == client.Entity.MapIndex)
                 {
                     PacketSender.SendMapGrid(client, MapInstance.Lookup.Get<MapInstance>(mapNum).MapGrid);
                 }
@@ -432,7 +432,7 @@ namespace Intersect.Server.Classes.Networking
                 PacketSender.SendEntityPositionTo(client, client.Entity);
                 return;
             }
-            if (map != client.Entity.Map || x != client.Entity.X || y != client.Entity.Y)
+            if (map != client.Entity.MapIndex || x != client.Entity.X || y != client.Entity.Y)
             {
                 PacketSender.SendEntityPositionTo(client, client.Entity);
             }
@@ -469,20 +469,20 @@ namespace Intersect.Server.Classes.Networking
                     if (client.Access == 2)
                     {
                         PacketSender.SendProximityMsg(Strings.Chat.local.ToString(client.Entity.Name, msg),
-                            client.Entity.Map, CustomColors.AdminLocalChat, client.Entity.Name);
+                            client.Entity.MapIndex, CustomColors.AdminLocalChat, client.Entity.Name);
                     }
                     else if (client.Access == 1)
                     {
                         PacketSender.SendProximityMsg(Strings.Chat.local.ToString(client.Entity.Name, msg),
-                            client.Entity.Map, CustomColors.ModLocalChat, client.Entity.Name);
+                            client.Entity.MapIndex, CustomColors.ModLocalChat, client.Entity.Name);
                     }
                     else
                     {
                         PacketSender.SendProximityMsg(Strings.Chat.local.ToString(client.Entity.Name, msg),
-                            client.Entity.Map, CustomColors.LocalChat, client.Entity.Name);
+                            client.Entity.MapIndex, CustomColors.LocalChat, client.Entity.Name);
                     }
                     PacketSender.SendChatBubble(client.Entity.MyIndex, (int)EntityTypes.GlobalEntity, msg,
-                        client.Entity.Map);
+                        client.Entity.MapIndex);
                 }
                 else if (cmd == Strings.Chat.allcmd || cmd == "/1" || cmd == Strings.Chat.globalcmd)
                 {
@@ -673,7 +673,7 @@ namespace Intersect.Server.Classes.Networking
             }
             foreach (var player in players)
             {
-                player.Warp(player.Map, player.X, player.Y, player.Dir, false, player.Z, true);
+                player.Warp(player.MapIndex, player.X, player.Y, player.Dir, false, player.Z, true);
                 PacketSender.SendMap(player.MyClient, (int)mapNum);
             }
             PacketSender.SendMap(client, (int)mapNum, true); //Sends map to everyone/everything in proximity
@@ -915,7 +915,7 @@ namespace Intersect.Server.Classes.Networking
                     }
                 }
 
-                var attackingTile = new TileHelper(client.Entity.Map, client.Entity.X, client.Entity.Y);
+                var attackingTile = new TileHelper(client.Entity.MapIndex, client.Entity.X, client.Entity.Y);
                 switch (client.Entity.Dir)
                 {
                     case 0:
@@ -994,9 +994,9 @@ namespace Intersect.Server.Classes.Networking
                                     CustomColors.NoAmmo);
                             }
 #endif
-                            MapInstance.Lookup.Get<MapInstance>(client.Entity.Map)
+                            MapInstance.Lookup.Get<MapInstance>(client.Entity.MapIndex)
                                 .SpawnMapProjectile(client.Entity, projectileBase, null, weaponItem,
-                                    client.Entity.Map,
+                                    client.Entity.MapIndex,
                                     client.Entity.X, client.Entity.Y, client.Entity.Z,
                                     client.Entity.Dir, null);
                             return;
@@ -1024,7 +1024,7 @@ namespace Intersect.Server.Classes.Networking
 
                 if (unequippedAttack)
                 {
-                    var classBase = ClassBase.Lookup.Get<ClassBase>(client.Entity.Class);
+                    var classBase = ClassBase.Lookup.Get<ClassBase>(client.Entity.ClassIndex);
                     if (classBase != null)
                     {
                         //Check for animation
@@ -1066,7 +1066,7 @@ namespace Intersect.Server.Classes.Networking
                 PacketSender.SendPlayerMsg(client, Strings.Player.adminjoined,
                     CustomColors.AdminJoined);
             }
-            Globals.Entities[index].Warp(Globals.Entities[index].Map, Globals.Entities[index].X,
+            Globals.Entities[index].Warp(Globals.Entities[index].MapIndex, Globals.Entities[index].X,
                 Globals.Entities[index].Y, Globals.Entities[index].Dir, false, Globals.Entities[index].Z);
             PacketSender.SendEntityDataTo(client, client.Entity);
 
@@ -1169,7 +1169,7 @@ namespace Intersect.Server.Classes.Networking
             }
             else
             {
-                var newChar = new Character();
+                var newChar = new Player();
                 client.Characters.Add(newChar);
                 newChar.FixLists();
                 client.LoadCharacter(newChar);
@@ -1177,7 +1177,7 @@ namespace Intersect.Server.Classes.Networking
 
                 client.Entity = player;
                 player.Name = name;
-                player.Class = Class;
+                player.ClassIndex = Class;
                 if (classBase.Sprites.Count > 0)
                 {
                     player.Sprite = classBase.Sprites[sprite].Sprite;
@@ -1225,19 +1225,19 @@ namespace Intersect.Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var index = bf.ReadInteger();
-            if (index < MapInstance.Lookup.Get<MapInstance>(client.Entity.Map).MapItems.Count &&
-                MapInstance.Lookup.Get<MapInstance>(client.Entity.Map).MapItems[index] != null)
+            if (index < MapInstance.Lookup.Get<MapInstance>(client.Entity.MapIndex).MapItems.Count &&
+                MapInstance.Lookup.Get<MapInstance>(client.Entity.MapIndex).MapItems[index] != null)
             {
-                if (MapInstance.Lookup.Get<MapInstance>(client.Entity.Map).MapItems[index].X ==
+                if (MapInstance.Lookup.Get<MapInstance>(client.Entity.MapIndex).MapItems[index].X ==
                     client.Entity.X &&
-                    MapInstance.Lookup.Get<MapInstance>(client.Entity.Map).MapItems[index].Y ==
+                    MapInstance.Lookup.Get<MapInstance>(client.Entity.MapIndex).MapItems[index].Y ==
                     client.Entity.Y)
                 {
                     if (
-                        client.Entity.TryGiveItem(MapInstance.Lookup.Get<MapInstance>(client.Entity.Map) .MapItems[index]))
+                        client.Entity.TryGiveItem(MapInstance.Lookup.Get<MapInstance>(client.Entity.MapIndex) .MapItems[index]))
                     {
                         //Remove Item From Map
-                        MapInstance.Lookup.Get<MapInstance>(client.Entity.Map).RemoveItem(index);
+                        MapInstance.Lookup.Get<MapInstance>(client.Entity.MapIndex).RemoveItem(index);
                     }
                 }
             }
@@ -1473,7 +1473,7 @@ namespace Intersect.Server.Classes.Networking
                         {
                             if (val1.ToLower() == Globals.Clients[i].Entity.Name.ToLower())
                             {
-                                client.Entity.Warp(Globals.Clients[i].Entity.Map,
+                                client.Entity.Warp(Globals.Clients[i].Entity.MapIndex,
                                     Globals.Clients[i].Entity.X, Globals.Clients[i].Entity.Y);
                                 PacketSender.SendPlayerMsg(client, Strings.Player.warpedto.ToString(val1));
                                 PacketSender.SendPlayerMsg(Globals.Clients[i],
@@ -1491,7 +1491,7 @@ namespace Intersect.Server.Classes.Networking
                         {
                             if (val1.ToLower() == Globals.Clients[i].Entity.Name.ToLower())
                             {
-                                Globals.Clients[i].Entity.Warp(client.Entity.Map, client.Entity.X,
+                                Globals.Clients[i].Entity.Warp(client.Entity.MapIndex, client.Entity.X,
                                     client.Entity.Y);
                                 PacketSender.SendPlayerMsg(client, Strings.Player.haswarpedto.ToString(val1),
                                     client.Entity.Name);
@@ -2556,16 +2556,16 @@ namespace Intersect.Server.Classes.Networking
                 target != client.Entity.MyIndex)
             {
                 Player targetPlayer = ((Player) Globals.Entities[target]);
-                if (!client.Entity.HasFriend(targetPlayer.Character)) // Incase one user deleted friend then re-requested
+                if (!client.Entity.HasFriend(targetPlayer)) // Incase one user deleted friend then re-requested
                 {
-                    client.Entity.AddFriend(targetPlayer.Character);
+                    client.Entity.AddFriend(targetPlayer);
                     PacketSender.SendPlayerMsg(client, Strings.Friends.notification.ToString(targetPlayer.Name), CustomColors.Accepted);
                     PacketSender.SendFriends(client);
                 }
 
-                if (!targetPlayer.HasFriend(client.Entity.Character)) // Incase one user deleted friend then re-requested
+                if (!targetPlayer.HasFriend(client.Entity)) // Incase one user deleted friend then re-requested
                 {
-                    targetPlayer.AddFriend(client.Entity.Character);
+                    targetPlayer.AddFriend(client.Entity);
                     PacketSender.SendPlayerMsg(targetPlayer.MyClient, Strings.Friends.accept.ToString(client.Entity.Name), CustomColors.Accepted);
                     PacketSender.SendFriends(targetPlayer.MyClient);
                 }

@@ -333,7 +333,7 @@ namespace Intersect.Server.Classes.Core
             return User.GetUser(sPlayerDb, username);
         }
 
-        public static Character GetUserCharacter(User user, Guid characterId)
+        public static Player GetUserCharacter(User user, Guid characterId)
         {
             foreach (var character in user.Characters)
             {
@@ -342,14 +342,14 @@ namespace Intersect.Server.Classes.Core
             return null;
         }
 
-        public static Character GetCharacter(Guid id)
+        public static Player GetCharacter(Guid id)
         {
-            return Character.GetCharacter(sPlayerDb, id);
+            return Player.GetCharacter(sPlayerDb, id);
         }
 
-        public static Character GetCharacter(string name)
+        public static Player GetCharacter(string name)
         {
-            return Character.GetCharacter(sPlayerDb,name);
+            return Player.GetCharacter(sPlayerDb,name);
         }
 
         public static bool EmailInUse([NotNull]string email)
@@ -447,9 +447,9 @@ namespace Intersect.Server.Classes.Core
             sPlayerDb.Characters.Remove(sPlayerDb.Characters.Find(characterId));
         }
 
-        public static void DeleteCharacterFriend([NotNull] Player player, [NotNull] Character friend)
+        public static void DeleteCharacterFriend([NotNull] Player player, [NotNull] Player friend)
         {
-            sPlayerDb.Character_Friends.Remove(sPlayerDb.Character_Friends.SingleOrDefault(p => p.Owner == player.Character && p.Target == friend));
+            sPlayerDb.Character_Friends.Remove(sPlayerDb.Character_Friends.SingleOrDefault(p => p.Owner == player && p.Target == friend));
         }
 
         //Bags

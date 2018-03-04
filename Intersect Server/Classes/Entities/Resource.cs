@@ -35,7 +35,7 @@ namespace Intersect.Server.Classes.Entities
         public void Destroy(int dropitems = 0, EntityInstance killer = null)
         {
             Die(dropitems, killer);
-            PacketSender.SendEntityLeave(MyIndex, (int) EntityTypes.Resource, Map);
+            PacketSender.SendEntityLeave(MyIndex, (int) EntityTypes.Resource, MapIndex);
         }
 
         public override void Die(int dropitems = 100, EntityInstance killer = null)
@@ -48,7 +48,7 @@ namespace Intersect.Server.Classes.Entities
             {
                 SpawnResourceItems(killer);
                 if (MyBase.Animation > -1)
-                    PacketSender.SendAnimationToProximity(MyBase.Animation, -1, -1, Map, X, Y,
+                    PacketSender.SendAnimationToProximity(MyBase.Animation, -1, -1, MapIndex, X, Y,
                         (int) Directions.Up);
             }
             PacketSender.SendEntityDataToProximity(this);
@@ -91,7 +91,7 @@ namespace Intersect.Server.Classes.Entities
             {
                 for (int y = Y - 1; y <= Y + 1; y++)
                 {
-                    var tileHelper = new TileHelper(Map, x, y);
+                    var tileHelper = new TileHelper(MapIndex, x, y);
                     if (tileHelper.TryFix())
                     {
                         //Tile is valid.. let's see if its open
@@ -104,7 +104,7 @@ namespace Intersect.Server.Classes.Entities
                             }
                             else
                             {
-                                if (killer.Map == tileHelper.GetMap() &&
+                                if (killer.MapIndex == tileHelper.GetMap() &&
                                     killer.X == tileHelper.GetX() &&
                                     killer.Y == tileHelper.GetY())
                                 {
@@ -121,7 +121,7 @@ namespace Intersect.Server.Classes.Entities
                 //Prefer the players tile, otherwise choose randomly
                 for (int i = 0; i < tiles.Count; i++)
                 {
-                    if (tiles[i].GetMap() == killer.Map && tiles[i].GetX() == killer.X &&
+                    if (tiles[i].GetMap() == killer.MapIndex && tiles[i].GetX() == killer.X &&
                         tiles[i].GetY() == killer.Y)
                     {
                         selectedTile = tiles[i];

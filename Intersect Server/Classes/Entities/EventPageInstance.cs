@@ -58,12 +58,12 @@ namespace Intersect.Server.Classes.Entities
         public int Trigger;
         private int mWalkingAnim;
 
-        public EventPageInstance(EventBase myEvent, EventPage myPage, int mapIndex, int mapNum, EventInstance eventIndex,
+        public EventPageInstance(EventBase myEvent, EventPage myPage, int mapIndex, int mapIndexNum, EventInstance eventIndex,
             Client client) : base(mapIndex, new EntityBase())
         {
             BaseEvent = myEvent;
             MyPage = myPage;
-            Map = mapNum;
+            MapIndex = mapIndexNum;
             X = eventIndex.CurrentX;
             Y = eventIndex.CurrentY;
             Name = myEvent.Name;
@@ -117,13 +117,13 @@ namespace Intersect.Server.Classes.Entities
             SendToClient();
         }
 
-        public EventPageInstance(EventBase myEvent, EventPage myPage, int mapIndex, int mapNum, EventInstance eventIndex,
+        public EventPageInstance(EventBase myEvent, EventPage myPage, int mapIndex, int mapIndexNum, EventInstance eventIndex,
             Client client, EventPageInstance globalClone) : base(mapIndex, new EntityBase())
         {
             BaseEvent = myEvent;
             GlobalClone = globalClone;
             MyPage = myPage;
-            Map = mapNum;
+            MapIndex = mapIndexNum;
             X = globalClone.X;
             Y = globalClone.Y;
             Name = myEvent.Name;
@@ -134,7 +134,7 @@ namespace Intersect.Server.Classes.Entities
             Trigger = MyPage.Trigger;
             Passable = globalClone.Passable;
             HideName = globalClone.HideName;
-            Map = mapNum;
+            MapIndex = mapIndexNum;
             MyEventIndex = eventIndex;
             MoveRoute = globalClone.MoveRoute;
             mPathFinder = new Pathfinder(this);
@@ -280,11 +280,11 @@ namespace Intersect.Server.Classes.Entities
                             if (client != null && GlobalClone == null) //Local Event
                             {
                                 if (mPathFinder.GetTarget() == null ||
-                                    mPathFinder.GetTarget().TargetMap != client.Entity.Map ||
+                                    mPathFinder.GetTarget().TargetMap != client.Entity.MapIndex ||
                                     mPathFinder.GetTarget().TargetX != client.Entity.X ||
                                     mPathFinder.GetTarget().TargetY != client.Entity.Y)
                                 {
-                                    mPathFinder.SetTarget(new PathfinderTarget(client.Entity.Map,
+                                    mPathFinder.SetTarget(new PathfinderTarget(client.Entity.MapIndex,
                                         client.Entity.X, client.Entity.Y));
                                 }
                                 //Todo check if next to or on top of player.. if so don't run pathfinder.
@@ -625,7 +625,7 @@ namespace Intersect.Server.Classes.Entities
             }
             if (GlobalClone != null)
             {
-                var map = MapInstance.Lookup.Get<MapInstance>(GlobalClone.Map);
+                var map = MapInstance.Lookup.Get<MapInstance>(GlobalClone.MapIndex);
                 if (map == null || !map.FindEvent(GlobalClone.BaseEvent, GlobalClone)) return true;
             }
             return false;

@@ -358,7 +358,7 @@ namespace Intersect.Server.Classes.Maps
                         Globals.Entities[index].X = ResourceSpawns[i].X;
                         Globals.Entities[index].Y = ResourceSpawns[i].Y;
                         Globals.Entities[index].Z = ResourceSpawns[i].Z;
-                        Globals.Entities[index].Map = Index;
+                        Globals.Entities[index].MapIndex = Index;
                         mEntities.Add((Resource) Globals.Entities[index]);
                     }
                 }
@@ -472,7 +472,7 @@ namespace Intersect.Server.Classes.Maps
                 int entityIndex = Globals.FindOpenEntity();
                 Globals.Entities[entityIndex] = new Npc(entityIndex, npcBase, despawnable)
                 {
-                    Map = Index,
+                    MapIndex = Index,
                     X = tileX,
                     Y = tileY,
                     Dir = dir
@@ -832,7 +832,7 @@ namespace Intersect.Server.Classes.Maps
             if (player != null)
             {
                 PacketSender.SendMapEntitiesTo(player.MyClient, mEntities);
-                if (player.Map == Index) player.SendEvents();
+                if (player.MapIndex == Index) player.SendEvents();
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using Intersect.Server.Classes.Database.PlayerData.Characters;
+using Intersect.Server.Classes.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Intersect.Server.Classes.Database.PlayerData
@@ -7,7 +8,7 @@ namespace Intersect.Server.Classes.Database.PlayerData
     public class PlayerContext : DbContext
     {
         public DbSet<User> Users { get; set; }
-        public DbSet<Character> Characters { get; set; }
+        public DbSet<Player> Characters { get; set; }
         public DbSet<Friend> Character_Friends { get; set; }
         public DbSet<SpellSlot> Character_Spells { get; set; }
         public DbSet<Switch> Character_Switches { get; set; }
@@ -64,24 +65,24 @@ namespace Intersect.Server.Classes.Database.PlayerData
                 .WithOne(p => p.Account)
                 .HasForeignKey(p => p.Id);
 
-            modelBuilder.Entity<Character>().HasMany(b => b.Friends).WithOne(p => p.Owner);
+            modelBuilder.Entity<Player>().HasMany(b => b.Friends).WithOne(p => p.Owner);
 
-            modelBuilder.Entity<Character>().HasMany(b => b.Spells).WithOne(p => p.Character);
+            modelBuilder.Entity<Player>().HasMany(b => b.Spells).WithOne(p => p.Character);
 
-            modelBuilder.Entity<Character>().HasMany(b => b.Items).WithOne(p => p.Character);
+            modelBuilder.Entity<Player>().HasMany(b => b.Items).WithOne(p => p.Character);
 
-            modelBuilder.Entity<Character>().HasMany(b => b.Switches).WithOne(p => p.Character);
+            modelBuilder.Entity<Player>().HasMany(b => b.Switches).WithOne(p => p.Character);
             modelBuilder.Entity<Switch>().HasIndex(p => new { p.SwitchId, p.CharacterId }).IsUnique();
 
-            modelBuilder.Entity<Character>().HasMany(b => b.Variables).WithOne(p => p.Character);
+            modelBuilder.Entity<Player>().HasMany(b => b.Variables).WithOne(p => p.Character);
             modelBuilder.Entity<Variable>().HasIndex(p => new { p.VariableId, p.CharacterId }).IsUnique();
 
-            modelBuilder.Entity<Character>().HasMany(b => b.Hotbar).WithOne(p => p.Character);
+            modelBuilder.Entity<Player>().HasMany(b => b.Hotbar).WithOne(p => p.Character);
 
-            modelBuilder.Entity<Character>().HasMany(b => b.Quests).WithOne(p => p.Character);
+            modelBuilder.Entity<Player>().HasMany(b => b.Quests).WithOne(p => p.Character);
             modelBuilder.Entity<Quest>().HasIndex(p => new { p.QuestId, p.CharacterId }).IsUnique();
 
-            modelBuilder.Entity<Character>().HasMany(b => b.Bank).WithOne(p => p.Character);
+            modelBuilder.Entity<Player>().HasMany(b => b.Bank).WithOne(p => p.Character);
 
             modelBuilder.Entity<Bag>().HasMany(b => b.Slots).WithOne(p => p.ParentBag).HasForeignKey(p => p.ParentBagId);
 
