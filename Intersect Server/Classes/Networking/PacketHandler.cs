@@ -2366,22 +2366,22 @@ namespace Intersect.Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             int target = bf.ReadInteger();
-            if (client.Entity.TradeRequester != null && client.Entity.TradeRequester.MyIndex == target)
+            if (client.Entity.Trading.Requester != null && client.Entity.Trading.Requester.MyIndex == target)
             {
-                if (client.Entity.TradeRequester.IsValidPlayer)
+                if (client.Entity.Trading.Requester.IsValidPlayer)
                 {
-                    if (client.Entity.TradeRequester.Trading == -1) //They could have accepted another trade since.
+                    if (client.Entity.Trading.Requester.Trading.Counterparty == null) //They could have accepted another trade since.
                     {
-                        client.Entity.TradeRequester.StartTrade((Player)client.Entity);
+                        client.Entity.Trading.Requester.StartTrade(client.Entity);
                     }
                     else
                     {
                         PacketSender.SendPlayerMsg(client, Strings.Trading.busy.ToString(
-                            client.Entity.TradeRequester.Name), Color.Red);
+                            client.Entity.Trading.Requester.Name), Color.Red);
                     }
                 }
 
-                client.Entity.TradeRequester = null;
+                client.Entity.Trading.Requester = null;
             }
             bf.Dispose();
         }
@@ -2391,24 +2391,24 @@ namespace Intersect.Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             int target = bf.ReadInteger();
-            if (client.Entity.TradeRequester != null && client.Entity.TradeRequester.MyIndex == target)
+            if (client.Entity.Trading.Requester != null && client.Entity.Trading.Requester.MyIndex == target)
             {
-                if (client.Entity.TradeRequester.IsValidPlayer)
+                if (client.Entity.Trading.Requester.IsValidPlayer)
                 {
-                    PacketSender.SendPlayerMsg(client.Entity.TradeRequester.MyClient,
+                    PacketSender.SendPlayerMsg(client.Entity.Trading.Requester.MyClient,
                         Strings.Trading.declined.ToString(client.Entity.Name), CustomColors.Declined);
-                    if (client.Entity.TradeRequests.ContainsKey(client.Entity.TradeRequester))
+                    if (client.Entity.Trading.Requests.ContainsKey(client.Entity.Trading.Requester))
                     {
-                        client.Entity.TradeRequests[client.Entity.TradeRequester] = Globals.System.GetTimeMs() +
+                        client.Entity.Trading.Requests[client.Entity.Trading.Requester] = Globals.System.GetTimeMs() +
                                                                                     Player.REQUEST_DECLINE_TIMEOUT;
                     }
                     else
                     {
-                        client.Entity.TradeRequests.Add(client.Entity.TradeRequester,
+                        client.Entity.Trading.Requests.Add(client.Entity.Trading.Requester,
                             Globals.System.GetTimeMs() + Player.REQUEST_DECLINE_TIMEOUT);
                     }
                 }
-                client.Entity.TradeRequester = null;
+                client.Entity.Trading.Requester = null;
             }
         }
 
@@ -2434,25 +2434,24 @@ namespace Intersect.Server.Classes.Networking
 
         private static void HandleTradeAccept(Client client, byte[] packet)
         {
-            client.Entity.TradeAccepted = true;
-            if (((Player)Globals.Entities[client.Entity.Trading]).TradeAccepted == true)
+            client.Entity.Trading.Accepted = true;
+            if (client.Entity.Trading.Counterparty.Trading.Accepted)
             {
                 Item[] t = new Item[Options.MaxInvItems];
 
                 //Swap the trade boxes over, then return the trade boxes to their new owners!
-                t = client.Entity.Trade;
-                client.Entity.Trade = ((Player)Globals.Entities[client.Entity.Trading]).Trade;
-                ((Player)Globals.Entities[client.Entity.Trading]).Trade = t;
+                t = client.Entity.Trading.Offer;
+                client.Entity.Trading.Offer = client.Entity.Trading.Counterparty.Trading.Offer;
+                client.Entity.Trading.Counterparty.Trading.Offer = t;
+                client.Entity.Trading.Counterparty.ReturnTradeItems();
                 client.Entity.ReturnTradeItems();
-                ((Player)Globals.Entities[client.Entity.Trading]).ReturnTradeItems();
 
                 PacketSender.SendPlayerMsg(client, Strings.Trading.accepted, CustomColors.Accepted);
-                PacketSender.SendPlayerMsg(((Player)Globals.Entities[client.Entity.Trading]).MyClient,
-                    Strings.Trading.accepted, CustomColors.Accepted);
-                PacketSender.SendTradeClose(((Player)Globals.Entities[client.Entity.Trading]).MyClient);
+                PacketSender.SendPlayerMsg(client.Entity.Trading.Counterparty.MyClient, Strings.Trading.accepted, CustomColors.Accepted);
+                PacketSender.SendTradeClose(client.Entity.Trading.Counterparty.MyClient);
                 PacketSender.SendTradeClose(client);
-                ((Player)Globals.Entities[client.Entity.Trading]).Trading = -1;
-                client.Entity.Trading = -1;
+                client.Entity.Trading.Counterparty.Trading.Counterparty = null;
+                client.Entity.Trading.Counterparty = null;
             }
         }
 

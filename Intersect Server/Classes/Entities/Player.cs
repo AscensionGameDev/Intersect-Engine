@@ -18,12 +18,52 @@ using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Maps;
 using Intersect.Server.Classes.Networking;
 using Intersect.Server.Classes.Spells;
+using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Switch = Intersect.Server.Classes.Database.PlayerData.Characters.Switch;
 
 namespace Intersect.Server.Classes.Entities
 {
     using LegacyDatabase = Intersect.Server.Classes.Core.LegacyDatabase;
+
+    public struct Trading : IDisposable
+    {
+        [NotNull]
+        private Player mPlayer;
+
+        public bool Actively => Counterparty != null;
+
+        [CanBeNull]
+        public Player Counterparty;
+
+        public bool Accepted;
+
+        [NotNull]
+        public Item[] Offer;
+
+        public Player Requester;
+
+        [NotNull]
+        public Dictionary<Player, long> Requests;
+
+        public Trading([NotNull] Player player)
+        {
+            mPlayer = player;
+
+            Accepted = false;
+            Counterparty = null;
+            Offer = new Item[Options.MaxInvItems];
+            Requester = null;
+            Requests = new Dictionary<Player, long>();
+        }
+
+        public void Dispose()
+        {
+            Offer = new Item[0];
+            Requester = null;
+            Requests.Clear();
+        }
+    }
 
     [Table("Characters")]
     public class Player : EntityInstance
@@ -138,62 +178,6 @@ namespace Intersect.Server.Classes.Entities
             }
         }
 
-        //private Character mCharacterBase;
-
-        //Mapping to Character Base Properties
-        //public Character Character => mCharacterBase;
-        //public int ClassIndex
-        //{
-        //    get => mCharacterBase.ClassIndex;
-        //    set => mCharacterBase.ClassIndex = value;
-        //}
-        //public int Gender
-        //{
-        //    get => mCharacterBase.Gender;
-        //    set => mCharacterBase.Gender = value;
-        //}
-        //public int StatPoints
-        //{
-        //    get => mCharacterBase.StatPoints;
-        //    set => mCharacterBase.StatPoints = value;
-        //}
-        //public long Exp
-        //{
-        //    get => mCharacterBase.Exp;
-        //    set => mCharacterBase.Exp = value;
-        //}
-        //public int[] Equipment
-        //{
-        //    get => mCharacterBase.Equipment;
-        //    set => mCharacterBase.Equipment = value;
-        //}
-        //public List<Friend> Friends => mCharacterBase.Friends;
-        //public List<BankSlot> Bank
-        //{
-        //    get => mCharacterBase.Bank;
-        //    set => mCharacterBase.Bank = value;
-        //}
-        //public List<HotbarSlot> Hotbar
-        //{
-        //    get => mCharacterBase.Hotbar;
-        //    set => mCharacterBase.Hotbar = value;
-        //}
-        //public List<Switch> Switches
-        //{
-        //    get => mCharacterBase.Switches;
-        //    set => mCharacterBase.Switches = value;
-        //}
-        //public List<Variable> Variables
-        //{
-        //    get => mCharacterBase.Variables;
-        //    set => mCharacterBase.Variables = value;
-        //}
-        //public List<Quest> Quests
-        //{
-        //    get => mCharacterBase.Quests;
-        //    set => mCharacterBase.Quests = value;
-        //}
-
 
         //5 minute timeout before someone can send a trade/party request after it has been declined
         [NotMapped] public const long REQUEST_DECLINE_TIMEOUT = 300000;  //TODO: Server option this bitch. JC is a lazy fuck
@@ -225,11 +209,7 @@ namespace Intersect.Server.Classes.Entities
         [NotMapped] public List<int> QuestOffers = new List<int>();
         //Event Spawned Npcs
         [NotMapped] public List<Npc> SpawnedNpcs = new List<Npc>();
-        [NotMapped] public Item[] Trade = new Item[Options.MaxInvItems];
-        [NotMapped] public bool TradeAccepted;
-        [NotMapped] public Player TradeRequester;
-        [NotMapped] public Dictionary<Player, long> TradeRequests = new Dictionary<Player, long>();
-        [NotMapped] public int Trading = -1;
+        [NotMapped] public Trading Trading;
 
         [NotMapped]
         public bool IsValidPlayer
@@ -264,6 +244,7 @@ namespace Intersect.Server.Classes.Entities
         //Init
         public Player(int index, Client newClient, Player character) : base(index, null)
         {
+            Trading = new Trading(this);
             MyClient = newClient;
             //mCharacterBase = character;
             for (var I = 0; I < (int)Stats.StatCount; I++)
@@ -1671,7 +1652,7 @@ namespace Intersect.Server.Classes.Entities
         //Business
         public bool IsBusy()
         {
-            return InShop > 1 || InBank || InCraft > -1 || Trading > -1;
+            return InShop > 1 || InBank || InCraft > -1 || Trading.Counterparty != null;
         }
 
         //Bank
@@ -2143,7 +2124,7 @@ namespace Intersect.Server.Classes.Entities
             }
             if (!FriendRequests.ContainsKey(fromPlayer) || !(FriendRequests[fromPlayer] > Globals.System.GetTimeMs()))
             {
-                if (TradeRequester == null && PartyRequester == null && FriendRequester == null)
+                if (Trading.Requester == null && PartyRequester == null && FriendRequester == null)
                 {
                     FriendRequester = fromPlayer;
                     PacketSender.SendFriendRequest(MyClient, fromPlayer);
@@ -2176,20 +2157,20 @@ namespace Intersect.Server.Classes.Entities
         //Trading
         public void InviteToTrade(Player fromPlayer)
         {
-            if (fromPlayer.TradeRequests.ContainsKey(this))
+            if (fromPlayer.Trading.Requests.ContainsKey(this))
             {
-                fromPlayer.TradeRequests.Remove(this);
+                fromPlayer.Trading.Requests.Remove(this);
             }
-            if (TradeRequests.ContainsKey(fromPlayer) && TradeRequests[fromPlayer] > Globals.System.GetTimeMs())
+            if (Trading.Requests.ContainsKey(fromPlayer) && Trading.Requests[fromPlayer] > Globals.System.GetTimeMs())
             {
                 PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Trading.alreadydenied,
                     CustomColors.Error);
             }
             else
             {
-                if (TradeRequester == null && PartyRequester == null && FriendRequester == null)
+                if (Trading.Requester == null && PartyRequester == null && FriendRequester == null)
                 {
-                    TradeRequester = fromPlayer;
+                    Trading.Requester = fromPlayer;
                     PacketSender.SendTradeRequest(MyClient, fromPlayer);
                 }
                 else
@@ -2202,7 +2183,7 @@ namespace Intersect.Server.Classes.Entities
 
         public void OfferItem(int slot, int amount)
         {
-            if (Trading < 0) return;
+            if (Trading.Counterparty == null) return;
             var itemBase = ItemBase.Lookup.Get<ItemBase>(Items[slot].ItemNum);
             if (itemBase != null)
             {
@@ -2240,10 +2221,10 @@ namespace Intersect.Server.Classes.Entities
                     {
                         for (var i = 0; i < Options.MaxInvItems; i++)
                         {
-                            if (Trade[i] != null && Trade[i].ItemNum == Items[slot].ItemNum)
+                            if (Trading.Offer[i] != null && Trading.Offer[i].ItemNum == Items[slot].ItemNum)
                             {
-                                amount = Math.Min(amount, int.MaxValue - Trade[i].ItemVal);
-                                Trade[i].ItemVal += amount;
+                                amount = Math.Min(amount, int.MaxValue - Trading.Offer[i].ItemVal);
+                                Trading.Offer[i].ItemVal += amount;
                                 //Remove Items from inventory send updates
                                 if (amount >= Items[slot].ItemVal)
                                 {
@@ -2256,7 +2237,7 @@ namespace Intersect.Server.Classes.Entities
                                 }
                                 PacketSender.SendInventoryItemUpdate(MyClient, slot);
                                 PacketSender.SendTradeUpdate(MyClient, MyIndex, i);
-                                PacketSender.SendTradeUpdate(((Player)Globals.Entities[Trading]).MyClient, MyIndex, i);
+                                PacketSender.SendTradeUpdate(Trading.Counterparty?.MyClient, MyIndex, i);
                                 return;
                             }
                         }
@@ -2265,11 +2246,11 @@ namespace Intersect.Server.Classes.Entities
                     //Either a non stacking item, or we couldn't find the item already existing in the players inventory
                     for (var i = 0; i < Options.MaxInvItems; i++)
                     {
-                        if (Trade[i] == null || Trade[i].ItemNum == -1)
+                        if (Trading.Offer[i] == null || Trading.Offer[i].ItemNum == -1)
                         {
-                            Trade[i] = Item.None;
-                            Trade[i] = Items[slot].Clone();
-                            Trade[i].ItemVal = amount;
+                            Trading.Offer[i] = Item.None;
+                            Trading.Offer[i] = Items[slot].Clone();
+                            Trading.Offer[i].ItemVal = amount;
                             //Remove Items from inventory send updates
                             if (amount >= Items[slot].ItemVal)
                             {
@@ -2282,7 +2263,7 @@ namespace Intersect.Server.Classes.Entities
                             }
                             PacketSender.SendInventoryItemUpdate(MyClient, slot);
                             PacketSender.SendTradeUpdate(MyClient, MyIndex, i);
-                            PacketSender.SendTradeUpdate(((Player)Globals.Entities[Trading]).MyClient, MyIndex, i);
+                            PacketSender.SendTradeUpdate(Trading.Counterparty?.MyClient, MyIndex, i);
                             return;
                         }
                     }
@@ -2297,15 +2278,15 @@ namespace Intersect.Server.Classes.Entities
 
         public void RevokeItem(int slot, int amount)
         {
-            if (Trading < 0) return;
+            if (Trading.Counterparty == null) return;
 
-            var itemBase = ItemBase.Lookup.Get<ItemBase>(Trade[slot].ItemNum);
+            var itemBase = ItemBase.Lookup.Get<ItemBase>(Trading.Offer[slot].ItemNum);
             if (itemBase == null)
             {
                 return;
             }
 
-            if (Trade[slot] == null || Trade[slot].ItemNum < 0)
+            if (Trading.Offer[slot] == null || Trading.Offer[slot].ItemNum < 0)
             {
                 PacketSender.SendPlayerMsg(MyClient, Strings.Trading.revokeinvalid, CustomColors.Error);
                 return;
@@ -2318,7 +2299,7 @@ namespace Intersect.Server.Classes.Entities
                 /* Find an existing stack */
                 for (var i = 0; i < Options.MaxInvItems; i++)
                 {
-                    if (Items[i] != null && Items[i].ItemNum == Trade[slot].ItemNum)
+                    if (Items[i] != null && Items[i].ItemNum == Trading.Offer[slot].ItemNum)
                     {
                         inventorySlot = i;
                         break;
@@ -2351,41 +2332,41 @@ namespace Intersect.Server.Classes.Entities
             if (Items[inventorySlot] == null || Items[inventorySlot].ItemNum == -1 ||
                 Items[inventorySlot].ItemVal < 0)
             {
-                Items[inventorySlot].Set(Trade[slot]);
+                Items[inventorySlot].Set(Trading.Offer[slot]);
             }
 
             Items[inventorySlot].ItemVal += amount;
-            if (amount >= Trade[slot].ItemVal)
+            if (amount >= Trading.Offer[slot].ItemVal)
             {
-                Trade[slot] = null;
+                Trading.Offer[slot] = null;
             }
             else
             {
-                Trade[slot].ItemVal -= amount;
+                Trading.Offer[slot].ItemVal -= amount;
             }
 
             PacketSender.SendInventoryItemUpdate(MyClient, inventorySlot);
             PacketSender.SendTradeUpdate(MyClient, MyIndex, slot);
-            PacketSender.SendTradeUpdate(((Player)Globals.Entities[Trading]).MyClient, MyIndex, slot);
+            PacketSender.SendTradeUpdate(Trading.Counterparty?.MyClient, MyIndex, slot);
         }
 
         public void ReturnTradeItems()
         {
-            if (Trading < 0) return;
+            if (Trading.Counterparty == null) return;
 
             for (var i = 0; i < Options.MaxInvItems; i++)
             {
-                if (Trade[i].ItemNum > 0)
+                if (Trading.Offer[i].ItemNum > 0)
                 {
-                    if (!TryGiveItem(new Item(Trade[i])))
+                    if (!TryGiveItem(new Item(Trading.Offer[i])))
                     {
                         MapInstance.Lookup.Get<MapInstance>(MapIndex)
-                            .SpawnItem(X, Y, Trade[i], Trade[i].ItemVal);
+                            .SpawnItem(X, Y, Trading.Offer[i], Trading.Offer[i].ItemVal);
                         PacketSender.SendPlayerMsg(MyClient, Strings.Trading.itemsdropped,
                             CustomColors.Error);
                     }
-                    Trade[i].ItemNum = 0;
-                    Trade[i].ItemVal = 0;
+                    Trading.Offer[i].ItemNum = 0;
+                    Trading.Offer[i].ItemVal = 0;
                 }
             }
             PacketSender.SendInventory(MyClient);
@@ -2393,17 +2374,16 @@ namespace Intersect.Server.Classes.Entities
 
         public void CancelTrade()
         {
-            if (Trading < 0) return;
+            if (Trading.Counterparty == null) return;
+            Trading.Counterparty.ReturnTradeItems();
+            PacketSender.SendPlayerMsg(Trading.Counterparty.MyClient, Strings.Trading.declined, CustomColors.Error);
+            PacketSender.SendTradeClose(Trading.Counterparty.MyClient);
+            Trading.Counterparty.Trading.Counterparty = null;
+
             ReturnTradeItems();
-            ((Player)Globals.Entities[Trading]).ReturnTradeItems();
             PacketSender.SendPlayerMsg(MyClient, Strings.Trading.declined, CustomColors.Error);
-            PacketSender.SendPlayerMsg(((Player)Globals.Entities[Trading]).MyClient,
-                Strings.Trading.declined,
-                CustomColors.Error);
-            PacketSender.SendTradeClose(((Player)Globals.Entities[Trading]).MyClient);
             PacketSender.SendTradeClose(MyClient);
-            ((Player)Globals.Entities[Trading]).Trading = -1;
-            Trading = -1;
+            Trading.Counterparty = null;
         }
 
         //Parties
@@ -2420,7 +2400,7 @@ namespace Intersect.Server.Classes.Entities
             }
             else
             {
-                if (TradeRequester == null && PartyRequester == null && FriendRequester == null)
+                if (Trading.Requester == null && PartyRequester == null && FriendRequester == null)
                 {
                     PartyRequester = fromPlayer;
                     PacketSender.SendPartyInvite(MyClient, fromPlayer);
@@ -2559,26 +2539,24 @@ namespace Intersect.Server.Classes.Entities
 
         public void StartTrade(Player target)
         {
-            if (target.Trading == -1)
+            if (target?.Trading.Counterparty != null) return;
+            // Set the status of both players to be in a trade
+            Trading.Counterparty = target;
+            target.Trading.Counterparty = this;
+            Trading.Accepted = false;
+            target.Trading.Accepted = false;
+            Trading.Offer = new Item[Options.MaxInvItems];
+            target.Trading.Offer = new Item[Options.MaxInvItems];
+
+            for (var i = 0; i < Options.MaxInvItems; i++)
             {
-                // Set the status of both players to be in a trade
-                Trading = target.MyIndex;
-                target.Trading = MyIndex;
-                TradeAccepted = false;
-                target.TradeAccepted = false;
-                Trade = new Item[Options.MaxInvItems];
-                target.Trade = new Item[Options.MaxInvItems];
-
-                for (var i = 0; i < Options.MaxInvItems; i++)
-                {
-                    Trade[i] = new Item();
-                    target.Trade[i] = new Item();
-                }
-
-                //Send the trade confirmation to both players
-                PacketSender.StartTrade(target.MyClient, MyIndex);
-                PacketSender.StartTrade(MyClient, target.MyIndex);
+                Trading.Offer[i] = new Item();
+                target.Trading.Offer[i] = new Item();
             }
+
+            //Send the trade confirmation to both players
+            PacketSender.StartTrade(target.MyClient, MyIndex);
+            PacketSender.StartTrade(MyClient, target.MyIndex);
         }
 
         public byte[] PartyData()

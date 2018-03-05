@@ -1684,16 +1684,17 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteLong((long)ServerPackets.TradeUpdate);
             bf.WriteInteger(index);
             bf.WriteInteger(slot);
-            if (((Player)Globals.Entities[index]).Trade[slot] == null ||
-                ((Player)Globals.Entities[index]).Trade[slot].ItemNum < 0 ||
-                ((Player)Globals.Entities[index]).Trade[slot].ItemVal <= 0)
+            var player = ((Player) Globals.Entities[index]);
+            if (player.Trading.Offer[slot] == null ||
+                player.Trading.Offer[slot].ItemNum < 0 ||
+                player.Trading.Offer[slot].ItemVal <= 0)
             {
                 bf.WriteInteger(0);
             }
             else
             {
                 bf.WriteInteger(1);
-                bf.WriteBytes(((Player)Globals.Entities[index]).Trade[slot].Data());
+                bf.WriteBytes(player.Trading.Offer[slot].Data());
             }
             client.SendPacket(bf.ToArray());
             bf.Dispose();
