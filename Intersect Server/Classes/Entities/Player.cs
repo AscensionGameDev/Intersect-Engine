@@ -29,7 +29,7 @@ namespace Intersect.Server.Classes.Entities
     public struct Trading : IDisposable
     {
         [NotNull]
-        private Player mPlayer;
+        private readonly Player mPlayer;
 
         public bool Actively => Counterparty != null;
 
@@ -2248,7 +2248,6 @@ namespace Intersect.Server.Classes.Entities
                     {
                         if (Trading.Offer[i] == null || Trading.Offer[i].ItemNum == -1)
                         {
-                            Trading.Offer[i] = Item.None;
                             Trading.Offer[i] = Items[slot].Clone();
                             Trading.Offer[i].ItemVal = amount;
                             //Remove Items from inventory send updates
