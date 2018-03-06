@@ -731,8 +731,8 @@ namespace Intersect.Server.Classes.Entities
                 PacketSender.SendEntityDataToProximity(this);
                 PacketSender.SendEntityPositionToAll(this);
 
-                //If map grid changed then send the new map grid
-                if (!adminWarp && (oldMap == null || !oldMap.SurroundingMaps.Contains(newMap)))
+				//If map grid changed then send the new map grid
+				if (!adminWarp && (oldMap == null || !oldMap.SurroundingMaps.Contains(newMap)))
                 {
                     PacketSender.SendMapGrid(MyClient, map.MapGrid, true);
                 }
