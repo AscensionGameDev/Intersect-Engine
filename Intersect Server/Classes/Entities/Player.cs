@@ -1670,7 +1670,7 @@ namespace Intersect.Server.Classes.Entities
                     {
                         var inventorySlotItem = Inventory[i];
                         if (inventorySlotItem == null) continue;
-                        if (inventorySlotItem.ItemNum == bankSlotItem.ItemNum) continue;
+                        if (inventorySlotItem.ItemNum != bankSlotItem.ItemNum) continue;
                         inventorySlot = i;
                         break;
                     }
