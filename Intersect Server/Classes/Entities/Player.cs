@@ -26,45 +26,6 @@ namespace Intersect.Server.Classes.Entities
 {
     using LegacyDatabase = Intersect.Server.Classes.Core.LegacyDatabase;
 
-    public struct Trading : IDisposable
-    {
-        [NotNull]
-        private readonly Player mPlayer;
-
-        public bool Actively => Counterparty != null;
-
-        [CanBeNull]
-        public Player Counterparty;
-
-        public bool Accepted;
-
-        [NotNull]
-        public Item[] Offer;
-
-        public Player Requester;
-
-        [NotNull]
-        public Dictionary<Player, long> Requests;
-
-        public Trading([NotNull] Player player)
-        {
-            mPlayer = player;
-
-            Accepted = false;
-            Counterparty = null;
-            Offer = new Item[Options.MaxInvItems];
-            Requester = null;
-            Requests = new Dictionary<Player, long>();
-        }
-
-        public void Dispose()
-        {
-            Offer = new Item[0];
-            Requester = null;
-            Requests.Clear();
-        }
-    }
-
     [Table("Characters")]
     public class Player : EntityInstance
     {
@@ -112,39 +73,6 @@ namespace Intersect.Server.Classes.Entities
 
         //Variables
         public virtual List<Variable> Variables { get; set; } = new List<Variable>();
-
-        public static Player GetCharacter(PlayerContext context, Guid id)
-        {
-            return GetCharacter(context, p => p.Id == id);
-        }
-
-        public static Player GetCharacter(PlayerContext context, string name)
-        {
-            return GetCharacter(context, p => p.Name.ToLower() == name.ToLower());
-        }
-
-        public static Player GetCharacter(PlayerContext context, System.Linq.Expressions.Expression<Func<Player, bool>> predicate)
-        {
-            var character = context.Characters.Where(predicate)
-                .Include(p => p.Bank)
-                .Include(p => p.Friends)
-                .Include(p => p.Hotbar)
-                .Include(p => p.Quests)
-                .Include(p => p.Switches)
-                .Include(p => p.Variables)
-                .Include(p => p.Items)
-                .Include(p => p.Spells)
-                .SingleOrDefault();
-            if (character != null)
-            {
-                character.FixLists();
-                character.Items = character.Items.OrderBy(p => p.Slot).ToList();
-                character.Bank = character.Bank.OrderBy(p => p.Slot).ToList();
-                character.Spells = character.Spells.OrderBy(p => p.Slot).ToList();
-                character.Hotbar = character.Hotbar.OrderBy(p => p.Slot).ToList();
-            }
-            return character;
-        }
 
         public void FixLists()
         {
@@ -236,17 +164,16 @@ namespace Intersect.Server.Classes.Entities
             }
         }
 
-        public Player() : this(-1, null, null)
+        public Player() : this(-1, null)
         {
             
         }
 
         //Init
-        public Player(int index, Client newClient, Player character) : base(index, null)
+        public Player(int index, Client newClient) : base(index)
         {
             Trading = new Trading(this);
             MyClient = newClient;
-            //mCharacterBase = character;
             for (var I = 0; I < (int)Stats.StatCount; I++)
             {
                 Stat[I] = new EntityStat(I, this,this);
@@ -3509,5 +3436,44 @@ namespace Intersect.Server.Classes.Entities
     {
         public int Slot = -1;
         public int Type = -1;
+    }
+
+    public struct Trading : IDisposable
+    {
+        [NotNull]
+        private readonly Player mPlayer;
+
+        public bool Actively => Counterparty != null;
+
+        [CanBeNull]
+        public Player Counterparty;
+
+        public bool Accepted;
+
+        [NotNull]
+        public Item[] Offer;
+
+        public Player Requester;
+
+        [NotNull]
+        public Dictionary<Player, long> Requests;
+
+        public Trading([NotNull] Player player)
+        {
+            mPlayer = player;
+
+            Accepted = false;
+            Counterparty = null;
+            Offer = new Item[Options.MaxInvItems];
+            Requester = null;
+            Requests = new Dictionary<Player, long>();
+        }
+
+        public void Dispose()
+        {
+            Offer = new Item[0];
+            Requester = null;
+            Requests.Clear();
+        }
     }
 }

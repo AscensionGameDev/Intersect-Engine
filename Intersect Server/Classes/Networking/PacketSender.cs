@@ -1803,7 +1803,7 @@ namespace Intersect.Server.Classes.Networking
                         if (friend.Target.Name.ToLower() == c.Entity.Name.ToLower())
                         {
                             online.Add(friend.Target.Name);
-                            map.Add(MapList.GetList().FindMap(client.Entity.MapIndex).Name);
+                            map.Add(MapList.GetList().FindMap(friend.Target.MapIndex).Name);
                             found = true;
                             break;
                         }

@@ -342,12 +342,11 @@
     <Compile Include="Classes\Core\ServerStart.cs" />
     <Compile Include="Classes\Core\ServerSystem.cs" />
     <Compile Include="Classes\Database\DatabaseUtils.cs" />
-    <Compile Include="Classes\Database\Entity.cs" />
+    <Compile Include="Classes\Database\GameData\GameContext.cs" />
     <Compile Include="Classes\Database\PlayerData\Ban.cs" />
     <Compile Include="Classes\Database\PlayerData\Characters\Bag.cs" />
     <Compile Include="Classes\Database\PlayerData\Characters\BagSlot.cs" />
     <Compile Include="Classes\Database\PlayerData\Characters\BankSlot.cs" />
-    <Compile Include="Classes\Database\PlayerData\Characters\Character.cs" />
     <Compile Include="Classes\Database\PlayerData\Characters\Friend.cs" />
     <Compile Include="Classes\Database\PlayerData\Characters\HotbarSlot.cs" />
     <Compile Include="Classes\Database\PlayerData\Characters\InventorySlot.cs" />
@@ -429,7 +428,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="private-intersect.bek" />
-    <None Include="app.config" />
     <None Include="packages.config" />
     <EmbeddedResource Include="Resources\libe_sqlite3.so" />
   </ItemGroup>
@@ -468,9 +466,7 @@
       <Name>Intersect.Network</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Classes\Database\GameData\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

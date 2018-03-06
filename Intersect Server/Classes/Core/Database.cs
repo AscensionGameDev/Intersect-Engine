@@ -120,15 +120,14 @@ namespace Intersect.Server.Classes.Core
             //Connect to new player database
             if (Options.PlayerDb.Type == DatabaseOptions.DatabaseType.sqlite)
             {
-                sPlayerDb = new PlayerContext(PlayerContext.DbProvider.Sqlite, $"Data Source={PlayersDbFilename}");
+                sPlayerDb = new PlayerContext(DatabaseUtils.DbProvider.Sqlite, $"Data Source={PlayersDbFilename}");
             }
             else
             {
-                sPlayerDb = new PlayerContext(PlayerContext.DbProvider.MySql, $"server={Options.PlayerDb.Server};database={Options.PlayerDb.Database};user={Options.PlayerDb.Username};password={Options.PlayerDb.Password}");   
+                sPlayerDb = new PlayerContext(DatabaseUtils.DbProvider.MySql, $"server={Options.PlayerDb.Server};database={Options.PlayerDb.Database};user={Options.PlayerDb.Username};password={Options.PlayerDb.Password}");   
             }
             //sPlayerDb.Database.EnsureDeleted();
             sPlayerDb.Database.Migrate();
-            sPlayerDb.Database.EnsureCreated();
 
             if (sGameDbConnection.GetVersion() != DbVersion)
             {
@@ -343,16 +342,6 @@ namespace Intersect.Server.Classes.Core
             return null;
         }
 
-        public static Player GetCharacter(Guid id)
-        {
-            return Player.GetCharacter(sPlayerDb, id);
-        }
-
-        public static Player GetCharacter(string name)
-        {
-            return Player.GetCharacter(sPlayerDb,name);
-        }
-
         public static bool EmailInUse([NotNull]string email)
         {
             return sPlayerDb.Users.Any(p => string.Equals(p.Email.Trim(), email.Trim(), StringComparison.CurrentCultureIgnoreCase));
@@ -366,6 +355,16 @@ namespace Intersect.Server.Classes.Core
         public static Guid? GetCharacterId([NotNull]string name)
         {
             return sPlayerDb.Characters.Where(p => string.Equals(p.Name.Trim(), name.Trim(), StringComparison.CurrentCultureIgnoreCase))?.First()?.Id;
+        }
+
+        public static Player GetCharacter(Guid id)
+        {
+            return User.GetCharacter(sPlayerDb, id);
+        }
+
+        public static Player GetCharacter(string name)
+        {
+            return User.GetCharacter(sPlayerDb, name);
         }
 
         public static long RegisteredPlayers => sPlayerDb.Users.Count();
@@ -482,51 +481,7 @@ namespace Intersect.Server.Classes.Core
             }
             return true;
         }
-        
-        //Bans and Mutes
-        public static void AddMute([NotNull] Client player, int duration, [NotNull] string reason, [NotNull] string muter, string ip)
-        {
-            var mute = new Mute(player.User, ip, reason, duration, muter);
-            sPlayerDb.Mutes.Add(mute);
-        }
-
-        public static void DeleteMute([NotNull] User user)
-        {
-            sPlayerDb.Mutes.Remove(sPlayerDb.Mutes.SingleOrDefault(p => p.Player == user));
-        }
-
-        public static string CheckMute([NotNull] User user, string ip)
-        {
-            Mute mute = sPlayerDb.Mutes.SingleOrDefault(p => p.Player == user);
-            if (mute == null) mute = sPlayerDb.Mutes.SingleOrDefault(p => p.Ip == ip);
-            if (mute != null)
-            {
-                return Strings.Account.mutestatus.ToString(mute.StartTime, mute.Muter, mute.EndTime, mute.Reason);
-            }
-            return null;
-        }
-
-        public static void AddBan(Client player, int duration, string reason, string banner, string ip)
-        {
-            var ban = new Ban(player.User, ip, reason, duration, banner);
-            sPlayerDb.Bans.Add(ban);
-        }
-
-        public static void DeleteBan([NotNull] User user)
-        {
-            sPlayerDb.Mutes.Remove(sPlayerDb.Mutes.SingleOrDefault(p => p.Player == user));
-        }
-
-        public static string CheckBan([NotNull] User user, string ip)
-        {
-            Ban ban = sPlayerDb.Bans.SingleOrDefault(p => p.Player == user);
-            if (ban == null) ban = sPlayerDb.Bans.SingleOrDefault(p => p.Ip == ip);
-            if (ban != null)
-            {
-                return Strings.Account.banstatus.ToString(ban.StartTime, ban.Banner, ban.EndTime, ban.Reason);
-            }
-            return null;
-        }
+       
 
         //Game Object Saving/Loading
         private static void LoadAllGameObjects()

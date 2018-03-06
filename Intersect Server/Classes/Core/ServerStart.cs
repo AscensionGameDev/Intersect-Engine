@@ -13,6 +13,7 @@ using Intersect.Network;
 using Intersect.Network.Crypto;
 using Intersect.Network.Crypto.Formats;
 using Intersect.Server.Classes.Core;
+using Intersect.Server.Classes.Database.PlayerData;
 using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Networking;
 using Intersect.Server.Network;
@@ -343,7 +344,7 @@ namespace Intersect.Server.Classes
                                 var unbannedUser = LegacyDatabase.GetUser(commandsplit[1]);
                                 if (unbannedUser != null)
                                 {
-                                    LegacyDatabase.DeleteBan(unbannedUser);
+                                    Ban.DeleteBan(unbannedUser);
                                     Console.WriteLine(
                                         @"    " + Strings.Account.unbanned.ToString( commandsplit[1]));
                                 }
@@ -392,7 +393,7 @@ namespace Intersect.Server.Classes
                                                 {
                                                     ip = Globals.Clients[i].GetIp();
                                                 }
-                                                LegacyDatabase.AddBan(Globals.Clients[i],
+                                                Ban.AddBan(Globals.Clients[i],
                                                     Convert.ToInt32(commandsplit[2]),
                                                     reason,
                                                     Strings.Commands.banuser, ip);
@@ -441,7 +442,7 @@ namespace Intersect.Server.Classes
                                 var unmutedUser = LegacyDatabase.GetUser(commandsplit[1]);
                                 if (unmutedUser != null)
                                 {
-                                    LegacyDatabase.DeleteMute(unmutedUser);
+                                    Mute.DeleteMute(unmutedUser);
                                     Console.WriteLine(@"    " + Strings.Account.unmuted.ToString(unmutedUser.Name));
                                 }
                                 else
@@ -489,7 +490,7 @@ namespace Intersect.Server.Classes
                                                 {
                                                     ip = Globals.Clients[i].GetIp();
                                                 }
-                                                LegacyDatabase.AddMute(Globals.Clients[i],
+                                                Mute.AddMute(Globals.Clients[i],
                                                     Convert.ToInt32(commandsplit[2]),
                                                     reason, Strings.Commands.muteuser, ip);
                                                 PacketSender.SendGlobalMsg(Strings.Account.muted.ToString(

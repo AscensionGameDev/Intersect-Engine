@@ -43,8 +43,7 @@ namespace Intersect.Server.Classes.Entities
         //Respawn/Despawn
         public long RespawnTime;
 
-        public Npc(int index, NpcBase myBase, bool despawnable = false)
-            : base(index, new EntityBase())
+        public Npc(int index, NpcBase myBase, bool despawnable = false) : base(index)
         {
             Name = myBase.Name;
             Sprite = myBase.Sprite;

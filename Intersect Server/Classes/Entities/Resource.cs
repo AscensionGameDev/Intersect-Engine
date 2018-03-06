@@ -20,7 +20,7 @@ namespace Intersect.Server.Classes.Entities
         //Respawn
         public long RespawnTime = 0;
 
-        public Resource(int index, ResourceBase resource) : base(index, new EntityBase())
+        public Resource(int index, ResourceBase resource) : base(index)
         {
             MyBase = resource;
             Name = resource.Name;

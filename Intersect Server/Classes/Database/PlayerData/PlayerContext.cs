@@ -7,6 +7,9 @@ namespace Intersect.Server.Classes.Database.PlayerData
 {
     public class PlayerContext : DbContext
     {
+        
+        public static PlayerContext Current { get; private set; }
+
         public DbSet<User> Users { get; set; }
         public DbSet<Player> Characters { get; set; }
         public DbSet<Friend> Character_Friends { get; set; }
@@ -22,35 +25,29 @@ namespace Intersect.Server.Classes.Database.PlayerData
         public DbSet<Mute> Mutes { get; set; }
         public DbSet<Ban> Bans { get; set; }
 
-
-        public enum DbProvider
-        {
-            Sqlite,
-            MySql,
-        }
-
-        private DbProvider mConnection = DbProvider.Sqlite;
+        private DatabaseUtils.DbProvider mConnection = DatabaseUtils.DbProvider.Sqlite;
         private string mConnectionString = @"Data Source=resources/playerdata.db";
 
         public PlayerContext()
         {
-            
+            Current = this;
         }
 
-        public PlayerContext(DbProvider connection,string connectionString)
+        public PlayerContext(DatabaseUtils.DbProvider connection,string connectionString)
         {
             mConnection = connection;
             mConnectionString = connectionString;
+            Current = this;
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             switch (mConnection)
             {
-                case DbProvider.Sqlite:
+                case DatabaseUtils.DbProvider.Sqlite:
                     optionsBuilder.UseSqlite(mConnectionString);
                     break;
-                case DbProvider.MySql:
+                case DatabaseUtils.DbProvider.MySql:
                     optionsBuilder.UseMySql(mConnectionString);
                     break;
                 default:

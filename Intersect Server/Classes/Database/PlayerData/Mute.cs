@@ -1,5 +1,10 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using Intersect.Server.Classes.Localization;
+using Intersect.Server.Classes.Networking;
+using JetBrains.Annotations;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
@@ -27,6 +32,32 @@ namespace Intersect.Server.Classes.Database.PlayerData
             Reason = reason;
             EndTime = StartTime.AddDays(durationDays);
             Muter = muter;
+        }
+
+        //Bans and Mutes
+        public static void AddMute([NotNull] Client player, int duration, [NotNull] string reason, [NotNull] string muter, string ip)
+        {
+            var mute = new Mute(player.User, ip, reason, duration, muter);
+            PlayerContext.Current.Mutes.Add(mute);
+            player.User.SetMuted(true, Strings.Account.mutestatus.ToString(mute.StartTime, mute.Muter, mute.EndTime, mute.Reason));
+        }
+
+        public static void DeleteMute([NotNull] User user)
+        {
+            PlayerContext.Current.Mutes.Remove(PlayerContext.Current.Mutes.SingleOrDefault(p => p.Player == user));
+            user.SetMuted(false, "");
+        }
+
+        public static string CheckMute([NotNull] User user, string ip)
+        {
+            Mute mute = PlayerContext.Current.Mutes.SingleOrDefault(p => p.Player == user);
+            if (mute == null) mute = PlayerContext.Current.Mutes.SingleOrDefault(p => p.Ip == ip);
+            if (mute != null)
+            {
+                user.SetMuted(true, Strings.Account.mutestatus.ToString(mute.StartTime, mute.Muter, mute.EndTime, mute.Reason));
+                return user.GetMuteReason();
+            }
+            return null;
         }
     }
 }

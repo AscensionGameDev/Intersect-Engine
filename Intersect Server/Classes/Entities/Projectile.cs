@@ -29,7 +29,7 @@ namespace Intersect.Server.Classes.Entities
 
         public Projectile(int index, EntityInstance owner, SpellBase parentSpell, ItemBase parentItem,
             ProjectileBase projectile,
-            int mapIndex, int X, int Y, int z, int direction, EntityInstance target) : base(index, new EntityBase())
+            int mapIndex, int X, int Y, int z, int direction, EntityInstance target) : base(index)
         {
             MyBase = projectile;
             Name = MyBase.Name;

@@ -58,9 +58,6 @@ namespace Intersect.Server.Classes.Networking
         //Client Properties
         public bool IsEditor;
 
-        public bool Muted => User != null && string.IsNullOrEmpty(LegacyDatabase.CheckMute(User, GetIp()));
-        public string MuteReason => User != null ? LegacyDatabase.CheckMute(User, GetIp()) : null;
-
         private ConcurrentQueue<byte[]> mSendQueue = new ConcurrentQueue<byte[]>();
 
         //Sent Maps

@@ -58,8 +58,7 @@ namespace Intersect.Server.Classes.Entities
         public int Trigger;
         private int mWalkingAnim;
 
-        public EventPageInstance(EventBase myEvent, EventPage myPage, int mapIndex, int mapIndexNum, EventInstance eventIndex,
-            Client client) : base(mapIndex, new EntityBase())
+        public EventPageInstance(EventBase myEvent, EventPage myPage, int mapIndex, int mapIndexNum, EventInstance eventIndex, Client client) : base(mapIndex)
         {
             BaseEvent = myEvent;
             MyPage = myPage;
@@ -118,7 +117,7 @@ namespace Intersect.Server.Classes.Entities
         }
 
         public EventPageInstance(EventBase myEvent, EventPage myPage, int mapIndex, int mapIndexNum, EventInstance eventIndex,
-            Client client, EventPageInstance globalClone) : base(mapIndex, new EntityBase())
+            Client client, EventPageInstance globalClone) : base(mapIndex)
         {
             BaseEvent = myEvent;
             GlobalClone = globalClone;

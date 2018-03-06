@@ -69,85 +69,6 @@ namespace Intersect.Server.Classes.Entities
         //Spells
         public virtual List<SpellSlot> Spells { get; set; } = new List<SpellSlot>();
 
-        //private EntityBase mEntityBase;
-
-        //Linking instance variables to base/database object variables
-        //public string Name
-        //{
-        //    get => mEntityBase.Name;
-        //    set => mEntityBase.Name = value;
-        //}
-
-        ////Location Info
-        //public int MapIndex
-        //{
-        //    get => mEntityBase.MapIndex;
-        //    set => mEntityBase.MapIndex = value;
-        //}
-        //public int X
-        //{
-        //    get => mEntityBase.X;
-        //    set => mEntityBase.X = value;
-        //}
-        //public int Y
-        //{
-        //    get => mEntityBase.Y;
-        //    set => mEntityBase.Y = value;
-        //}
-        //public int Z
-        //{
-        //    get => mEntityBase.Z;
-        //    set => mEntityBase.Z = value;
-        //}
-        //public int Dir
-        //{
-        //    get => mEntityBase.Dir;
-        //    set => mEntityBase.Dir = value;
-        //}
-        //public string Sprite
-        //{
-        //    get => mEntityBase.Sprite;
-        //    set => mEntityBase.Sprite = value;
-        //}
-        //public string Face
-        //{
-        //    get => mEntityBase.Face;
-        //    set => mEntityBase.Face = value;
-        //}
-        //public int Level
-        //{
-        //    get => mEntityBase.Level;
-        //    set => mEntityBase.Level = value;
-        //}
-        //public int[] BaseStat
-        //{
-        //    get => mEntityBase.BaseStat;
-        //    set => mEntityBase.BaseStat = value;
-        //}
-        ////Vitals & Stats
-        //public int[] Vital
-        //{
-        //    get => mEntityBase.Vital;
-        //    set => mEntityBase.Vital = value;
-        //}
-        //public int[] MaxVital
-        //{
-        //    get => mEntityBase.MaxVital;
-        //    set => mEntityBase.MaxVital = value;
-        //}
-        ////Inventory
-        //public List<InventorySlot> Items
-        //{
-        //    get => mEntityBase.Items;
-        //    set => mEntityBase.Items = value;
-        //}
-        ////Spells
-        //public List<SpellSlot> Spells
-        //{
-        //    get => mEntityBase.Spells;
-        //    set => mEntityBase.Spells = value;
-        //}
-
         [NotMapped]
         public EntityStat[] Stat = new EntityStat[(int)Stats.StatCount];
 
@@ -189,16 +110,14 @@ namespace Intersect.Server.Classes.Entities
 
         [NotMapped] public bool IsDisposed { get; private set; }
 
-        public EntityInstance() : this(-1, null)
+        public EntityInstance() : this(-1)
         {
             
         }
 
         //Initialization
-        public EntityInstance(int index, EntityBase entityBase)
+        public EntityInstance(int index)
         {
-            //mEntityBase = entityBase;
-           
             for (var I = 0; I < (int) Stats.StatCount; I++)
             {
                 Stat[I] = new EntityStat(I,this,null);

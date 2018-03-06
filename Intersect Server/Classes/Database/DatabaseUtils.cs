@@ -5,6 +5,12 @@ namespace Intersect.Server.Classes.Database
 {
     public static class DatabaseUtils
     {
+        public enum DbProvider
+        {
+            Sqlite,
+            MySql,
+        }
+
         public static int[] LoadIntArray(string json, int arrayLen)
         {
             var output = new int[arrayLen];

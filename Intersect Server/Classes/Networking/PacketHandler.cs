@@ -13,6 +13,7 @@ using Intersect.Models;
 using Intersect.Network;
 using Intersect.Network.Packets.Reflectable;
 using Intersect.Server.Classes.Database;
+using Intersect.Server.Classes.Database.PlayerData;
 using Intersect.Server.Classes.Database.PlayerData.Characters;
 using Intersect.Server.Classes.Entities;
 using Intersect.Server.Classes.General;
@@ -341,12 +342,15 @@ namespace Intersect.Server.Classes.Networking
                 }
 
                 //Check for ban
-                var isBanned = LegacyDatabase.CheckBan(client.User, client.GetIp());
+                var isBanned = Ban.CheckBan(client.User, client.GetIp());
                 if (isBanned != null)
                 {
                     PacketSender.SendLoginError(client, isBanned);
                     return;
                 }
+
+                //Check Mute Status and Load into user property
+                Mute.CheckMute(client.User, client.GetIp());
 
                 PacketSender.SendServerConfig(client);
                 //Character selection if more than one.
@@ -445,9 +449,9 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteBytes(packet);
             var msg = bf.ReadString();
             string channel = bf.ReadInteger().ToString();
-            if (client.Muted == true) //Don't let the toungless toxic kids speak.
+            if (client.User.IsMuted()) //Don't let the toungless toxic kids speak.
             {
-                PacketSender.SendPlayerMsg(client, client.MuteReason);
+                PacketSender.SendPlayerMsg(client, client.User.GetMuteReason());
                 return;
             }
 
@@ -1632,7 +1636,7 @@ namespace Intersect.Server.Classes.Networking
                     var unmutedUser = LegacyDatabase.GetUser(val1);
                     if (unmutedUser != null)
                     {
-                        LegacyDatabase.DeleteMute(unmutedUser);
+                        Mute.DeleteMute(unmutedUser);
                         PacketSender.SendPlayerMsg(client, Strings.Account.unmuted.ToString(val1));
                     }
                     else
@@ -1644,7 +1648,7 @@ namespace Intersect.Server.Classes.Networking
                     var unbannedUser = LegacyDatabase.GetUser(val1);
                     if (unbannedUser != null)
                     {
-                        LegacyDatabase.DeleteBan(unbannedUser);
+                        Ban.DeleteBan(unbannedUser);
                         PacketSender.SendPlayerMsg(client, Strings.Account.unbanned.ToString(val1));
                     }
                     else
@@ -1661,12 +1665,12 @@ namespace Intersect.Server.Classes.Networking
                             {
                                 if (Convert.ToBoolean(val4) == true)
                                 {
-                                    LegacyDatabase.AddMute(Globals.Clients[i], Convert.ToInt32(val2), val3,
+                                    Mute.AddMute(Globals.Clients[i], Convert.ToInt32(val2), val3,
                                         client.Entity.Name, Globals.Clients[i].GetIp());
                                 }
                                 else
                                 {
-                                    LegacyDatabase.AddMute(Globals.Clients[i], Convert.ToInt32(val2), val3,
+                                    Mute.AddMute(Globals.Clients[i], Convert.ToInt32(val2), val3,
                                         client.Entity.Name, "");
                                 }
                                 PacketSender.SendGlobalMsg(Strings.Account.muted.ToString(
@@ -1686,12 +1690,12 @@ namespace Intersect.Server.Classes.Networking
                             {
                                 if (Convert.ToBoolean(val4) == true)
                                 {
-                                    LegacyDatabase.AddBan(Globals.Clients[i], Convert.ToInt32(val2), val3,
+                                    Ban.AddBan(Globals.Clients[i], Convert.ToInt32(val2), val3,
                                         client.Entity.Name, Globals.Clients[i].GetIp());
                                 }
                                 else
                                 {
-                                    LegacyDatabase.AddBan(Globals.Clients[i], Convert.ToInt32(val2), val3,
+                                    Ban.AddBan(Globals.Clients[i], Convert.ToInt32(val2), val3,
                                         client.Entity.Name, "");
                                 }
 
