@@ -299,22 +299,40 @@ namespace Intersect.Server.Classes.Entities
                         }
                     }
                 }
-                //If this is an npc or other event.. if any global page exists that isn't passable then don't walk here!
-                if (this.GetType() != typeof(Player))
-                {
-                    foreach (var evt in MapInstance.Lookup.Get<MapInstance>(tile.GetMap()).GlobalEventInstances)
-                    {
-                        foreach (var en in evt.Value.GlobalPageInstance)
-                        {
-                            if (en != null && en.CurrentX == tile.GetX() && en.CurrentY == tile.GetY() &&
-                                en.CurrentZ == CurrentZ &&
-                                en.Passable == 0)
-                            {
-                                return (int) EntityTypes.Event;
-                            }
-                        }
-                    }
-                }
+				//If this is an npc or other event.. if any global page exists that isn't passable then don't walk here!
+				if (this.GetType() != typeof(Player))
+				{
+					foreach (var evt in MapInstance.Lookup.Get<MapInstance>(tile.GetMap()).GlobalEventInstances)
+					{
+						foreach (var en in evt.Value.GlobalPageInstance)
+						{
+							if (en != null && en.CurrentX == tile.GetX() && en.CurrentY == tile.GetY() &&
+								en.CurrentZ == CurrentZ &&
+								en.Passable == 0)
+							{
+								return (int)EntityTypes.Event;
+							}
+						}
+					}
+				}
+				else //Check for players local events
+				{
+					foreach (var evt in ((Player)this).EventLookup.Values)
+					{
+						if (evt.MapNum == CurrentMap)
+						{
+							if (evt.PageInstance != null)
+							{
+								if (evt.PageInstance.CurrentMap == tile.GetMap() &&
+									evt.PageInstance.CurrentX == tile.GetX() &&
+									evt.PageInstance.CurrentY == tile.GetY())
+								{
+									if (evt.PageInstance.Passable == 0) return (int)EntityTypes.Event;
+								}
+							}
+						}
+					}
+				}
             }
 
             return -1;
@@ -1882,33 +1900,32 @@ namespace Intersect.Server.Classes.Entities
             for (var i = 1; i <= range; i++)
             {
                 n = en.CanMove(Direction);
-                if (n == -5)
+                if (n == -5) //Check for out of bounds
+				{
+                    return;
+				} //Check for blocks
+				if (n == -2 && blockPass == false)
                 {
                     return;
-                } //Check for out of bounds
-                if (n == -2 && blockPass == false)
+				} //Check for ZDimensionTiles
+				if (n == -3 && zdimensionPass == false)
                 {
                     return;
-                } //Check for blocks
-                if (n == -3 && zdimensionPass == false)
+				} //Check for active resources
+				if (n == (int) EntityTypes.Resource && activeResourcePass == false)
                 {
                     return;
-                } //Check for ZDimensionTiles
-                if (n == (int) EntityTypes.Resource && activeResourcePass == false)
+				} //Check for dead resources
+				if (n == (int) EntityTypes.Resource && deadResourcePass == false)
                 {
                     return;
-                } //Check for active resources
-                if (n == (int) EntityTypes.Resource && deadResourcePass == false)
-                {
-                    return;
-                } //Check for dead resources
-                if (n == (int) EntityTypes.Player) return;
+                } //Check for players and solid events
+                if (n == (int) EntityTypes.Player || n == (int)EntityTypes.Event) return;
 
                 en.Move(Direction, null, true);
                 en.Dir = Facing;
 
                 Range = i;
-                if (n == -4) return;
             }
         }
     }

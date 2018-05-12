@@ -3253,7 +3253,7 @@ namespace Intersect.Server.Classes.Entities
             foreach (var evt in EventLookup.Values)
             {
                 if (evt.HoldingPlayer) return -5;
-            }
+			}
             //TODO Check if any events are blocking us
             return base.CanMove(moveDir);
         }
