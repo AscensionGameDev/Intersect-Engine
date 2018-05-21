@@ -56,8 +56,7 @@ namespace Intersect.Server.Classes.Entities
         public void Spawn()
         {
             MySprite = MyBase.InitialGraphic;
-            Vital[(int) Vitals.Health] = Globals.Rand.Next(Math.Min(1, MyBase.MinHp),
-                Math.Max(MyBase.MaxHp, Math.Min(1, MyBase.MinHp)) + 1);
+            Vital[(int) Vitals.Health] = Globals.Rand.Next(MyBase.MinHp, MyBase.MaxHp + 1);
             MaxVital[(int) Vitals.Health] = Vital[(int) Vitals.Health];
             Passable = Convert.ToInt32(MyBase.WalkableBefore);
             Inventory.Clear();

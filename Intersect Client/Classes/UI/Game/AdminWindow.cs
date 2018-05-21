@@ -50,11 +50,6 @@ namespace Intersect_Client.Classes.UI.Game
         //Player Mod Textboxes
         private TextBox mNameTextbox;
 
-        private CheckBox mNoclipCheckBox;
-
-        //Admin Powers
-        private Label mNoclipLabel;
-
         private Button mSetFaceButton;
         private Button mSetPowerButton;
         private Button mSetSpriteButton;
@@ -121,19 +116,6 @@ namespace Intersect_Client.Classes.UI.Game
             };
             mBanButton.SetBounds(90, 64, 50, 18);
             mBanButton.Clicked += _banButton_Clicked;
-
-            mNoclipLabel = new Label(mAdminWindow)
-            {
-                Text = Strings.Get("admin", "noclip")
-            };
-            mNoclipLabel.SetPosition(6, 86);
-            mNoclipLabel.SetToolTipText("Check to walk through obstacles.");
-
-            mNoclipCheckBox = new CheckBox(mAdminWindow);
-            mNoclipCheckBox.SetPosition(16 + mNoclipLabel.Width, 86);
-            mNoclipCheckBox.IsChecked = Globals.Me.NoClip;
-            mNoclipCheckBox.CheckChanged += _noclipCheckBox_CheckChanged;
-            mNoclipCheckBox.SetToolTipText(Strings.Get("admin", "nocliptip"));
 
             mUnbanButton = new Button(mAdminWindow)
             {
@@ -270,11 +252,6 @@ namespace Intersect_Client.Classes.UI.Game
             FacePanel.Texture =
                 Globals.ContentManager.GetTexture(
                     IntersectClientExtras.File_Management.GameContentManager.TextureType.Face, mFaceDropdown.Text);
-        }
-
-        void _noclipCheckBox_CheckChanged(Base sender, EventArgs arguments)
-        {
-            Globals.Me.NoClip = mNoclipCheckBox.IsChecked;
         }
 
         //Methods

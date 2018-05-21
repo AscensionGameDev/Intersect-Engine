@@ -524,50 +524,55 @@ namespace Intersect.Server.Classes.Entities
                     for (var i = 0; i < Party.Count; i++)
                     {
                         Party[i].GiveExperience(((Npc)en).MyBase.Experience / Party.Count);
-                    }
+						Party[i].UpdateQuestKillTasks(en);
+					}
                 }
                 else
                 {
                     GiveExperience(((Npc)en).MyBase.Experience);
-                }
-
-                //If any quests demand that this Npc be killed then let's handle it
-                var npc = (Npc)en;
-                for (var i = 0; i < Quests.Keys.Count; i++)
-                {
-                    var questId = Quests.Keys.ToArray()[i];
-                    var quest = QuestBase.Lookup.Get<QuestBase>(questId);
-                    if (quest != null)
-                    {
-                        if (Quests[questId].Task > -1)
-                        {
-                            //Assume this quest is in progress. See if we can find the task in the quest
-                            var questTask = quest.FindTask(Quests[questId].Task);
-                            if (questTask != null)
-                            {
-                                if (questTask.Objective == 2 && questTask.Data1 == npc.MyBase.Index) //kill npcs
-                                {
-                                    var questProg = Quests[questId];
-                                    questProg.TaskProgress++;
-                                    if (questProg.TaskProgress >= questTask.Data2)
-                                    {
-                                        CompleteQuestTask(questId, Quests[questId].Task);
-                                    }
-                                    else
-                                    {
-                                        Quests[questId] = questProg;
-                                        PacketSender.SendQuestProgress(this, quest.Index);
-                                        PacketSender.SendPlayerMsg(MyClient,
-                                            Strings.Get("quests", "npctask", quest.Name, questProg.TaskProgress,
-                                                questTask.Data2, NpcBase.GetName(questTask.Data1)));
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+					UpdateQuestKillTasks(en);
+				}
             }
         }
+
+		public void UpdateQuestKillTasks(Entity en)
+		{
+			//If any quests demand that this Npc be killed then let's handle it
+			var npc = (Npc)en;
+			for (var i = 0; i < Quests.Keys.Count; i++)
+			{
+				var questId = Quests.Keys.ToArray()[i];
+				var quest = QuestBase.Lookup.Get<QuestBase>(questId);
+				if (quest != null)
+				{
+					if (Quests[questId].Task > -1)
+					{
+						//Assume this quest is in progress. See if we can find the task in the quest
+						var questTask = quest.FindTask(Quests[questId].Task);
+						if (questTask != null)
+						{
+							if (questTask.Objective == 2 && questTask.Data1 == npc.MyBase.Index) //kill npcs
+							{
+								var questProg = Quests[questId];
+								questProg.TaskProgress++;
+								if (questProg.TaskProgress >= questTask.Data2)
+								{
+									CompleteQuestTask(questId, Quests[questId].Task);
+								}
+								else
+								{
+									Quests[questId] = questProg;
+									PacketSender.SendQuestProgress(this, quest.Index);
+									PacketSender.SendPlayerMsg(MyClient,
+										Strings.Get("quests", "npctask", quest.Name, questProg.TaskProgress,
+											questTask.Data2, NpcBase.GetName(questTask.Data1)));
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 
         public override void TryAttack(Entity enemy, ProjectileBase projectile, SpellBase parentSpell, ItemBase parentItem, int projectileDir)
         {

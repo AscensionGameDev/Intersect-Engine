@@ -27,8 +27,6 @@
         <string id="kick">Kick</string>
         <string id="kill">Kill</string>
         <string id="ban">Ban</string>
-        <string id="noclip">No Clip:</string>
-        <string id="nocliptip">Check to walk through obstacles.</string>
         <string id="unban">Unban</string>
         <string id="mute">Mute</string>
         <string id="unmute">Unmute</string>
