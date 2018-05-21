@@ -1755,7 +1755,7 @@ namespace Intersect.Server.Classes.Networking
                         if (friend.Value.ToLower() == c.Entity.MyName.ToLower())
                         {
                             online.Add(friend.Value);
-                            map.Add(MapList.GetList().FindMap(client.Entity.CurrentMap).Name);
+                            map.Add(MapList.GetList().FindMap(c.Entity.CurrentMap).Name);
                             found = true;
                             break;
                         }
