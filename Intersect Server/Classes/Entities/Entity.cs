@@ -1552,6 +1552,15 @@ namespace Intersect.Server.Classes.Entities
                     var itemBase = ItemBase.Lookup.Get<ItemBase>(item.ItemNum);
                     if (itemBase == null) continue;
 
+					//Don't lose bound items on death for players.
+					if (this.GetType() == typeof(Player))
+					{
+						if (itemBase.Bound > 0)
+						{
+							continue;
+						}
+					}
+
                     if (Globals.Rand.Next(1, 101) >= dropitems) continue;
 
                     var map = MapInstance.Lookup.Get<MapInstance>(CurrentMap);

@@ -930,7 +930,21 @@ namespace Intersect.Server.Classes.Entities
                     }
                 }
 
-                if (!EventInstance.MeetsConditionLists(itemBase.UseReqs, this, null))
+				// Unequip items even if you do not meet the requirements. 
+				// (Need this for silly devs who give people items and then later add restrictions...)
+				if (itemBase.ItemType == (int)ItemTypes.Equipment)
+                for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+				{
+					if (Equipment[i] == slot)
+					{
+						Equipment[i] = -1;
+						PacketSender.SendPlayerEquipmentToProximity(this);
+						PacketSender.SendEntityStats(this);
+						return;
+					}
+				}
+
+				if (!EventInstance.MeetsConditionLists(itemBase.UseReqs, this, null))
                 {
                     PacketSender.SendPlayerMsg(MyClient, Strings.Get("items", "dynamicreq"));
                     return;
