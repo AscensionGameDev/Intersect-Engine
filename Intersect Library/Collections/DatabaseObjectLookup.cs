@@ -246,7 +246,7 @@ namespace Intersect.Collections
 
         public virtual bool Set(Guid key, IDatabaseObject value)
         {
-            if (key != (value?.Guid ?? Guid.Empty))
+            if (key != (value?.Id ?? Guid.Empty))
                 throw new ArgumentException("Provided Guid does not match value.Guid.");
             return InternalSet(value, true);
         }
@@ -261,12 +261,12 @@ namespace Intersect.Collections
         public virtual bool Delete(IDatabaseObject value)
         {
             if (value == null) throw new ArgumentNullException();
-            if (!IsIdValid(value.Guid)) throw new ArgumentOutOfRangeException();
+            if (!IsIdValid(value.Id)) throw new ArgumentOutOfRangeException();
             if (!IsIndexValid(value.Index)) throw new ArgumentOutOfRangeException();
 
             lock (mLock)
             {
-                return mIdMap.Remove(value.Guid) && mIndexMap.Remove(value.Index);
+                return mIdMap.Remove(value.Id) && mIndexMap.Remove(value.Index);
             }
         }
 
@@ -322,28 +322,28 @@ namespace Intersect.Collections
         internal virtual bool InternalSet(IDatabaseObject value, bool overwrite)
         {
             if (value == null) throw new ArgumentNullException(nameof(value));
-            if (!IsIdValid(value.Guid)) throw new ArgumentOutOfRangeException(nameof(value.Guid));
+            if (!IsIdValid(value.Id)) throw new ArgumentOutOfRangeException(nameof(value.Id));
             if (!IsIndexValid(value.Index)) throw new ArgumentOutOfRangeException(nameof(value.Index));
 
             lock (mLock)
             {
-                mIdMap.TryGetValue(value.Guid, out IDatabaseObject gameObject);
+                mIdMap.TryGetValue(value.Id, out IDatabaseObject gameObject);
 
                 if (!overwrite)
                 {
-                    if (mIdMap.ContainsKey(value.Guid)) return false;
+                    if (mIdMap.ContainsKey(value.Id)) return false;
                     if (mIndexMap.ContainsKey(value.Index)) return false;
                 }
-                else if (mIdMap.ContainsKey(value.Guid))
+                else if (mIdMap.ContainsKey(value.Id))
                 {
-                    mIndexMap.Remove(mIdMap[value.Guid].Index);
+                    mIndexMap.Remove(mIdMap[value.Id].Index);
                 }
                 else if (mIndexMap.ContainsKey(value.Index))
                 {
-                    mIdMap.Remove(mIndexMap[value.Index].Guid);
+                    mIdMap.Remove(mIndexMap[value.Index].Id);
                 }
 
-                mIdMap[value.Guid] = value;
+                mIdMap[value.Id] = value;
                 mIndexMap[value.Index] = value;
                 return true;
             }

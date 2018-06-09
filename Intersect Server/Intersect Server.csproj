@@ -341,7 +341,6 @@
     <Compile Include="Classes\Core\DatabaseConnection.cs" />
     <Compile Include="Classes\Core\ServerStart.cs" />
     <Compile Include="Classes\Core\ServerSystem.cs" />
-    <Compile Include="Classes\Database\DatabaseUtils.cs" />
     <Compile Include="Classes\Database\GameData\GameContext.cs" />
     <Compile Include="Classes\Database\PlayerData\Ban.cs" />
     <Compile Include="Classes\Database\PlayerData\Characters\Bag.cs" />
@@ -405,6 +404,11 @@
     <Compile Include="Migrations\20180304060936_Inital.designer.cs">
       <DependentUpon>20180304060936_Inital.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\Game\20180307035259_GameData.cs" />
+    <Compile Include="Migrations\Game\20180307035259_GameData.designer.cs">
+      <DependentUpon>20180307035259_GameData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Game\GameContextModelSnapshot.cs" />
     <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserRights.cs" />

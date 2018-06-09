@@ -1,6 +1,7 @@
 ﻿using System;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.GameObjects.Crafting;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen.Control;
@@ -46,7 +47,7 @@ namespace Intersect.Client.Classes.UI.Game.Crafting
             Pnl.HoverEnter += pnl_HoverEnter;
             Pnl.HoverLeave += pnl_HoverLeave;
 
-           
+
         }
 
         public void LoadItem()
@@ -106,8 +107,12 @@ namespace Intersect.Client.Classes.UI.Game.Crafting
             if (mIngredient != null)
             {
                 DescWindow = new ItemDescWindow(mIngredient.Item, mIngredient.Quantity, mCraftingBenchWindow.X - 255,
-                    mCraftingBenchWindow.Y, new int[(int) Stats.StatCount]);
+                    mCraftingBenchWindow.Y, new int[(int)Stats.StatCount]);
             }
         }
     }
+
+
+
+
 }

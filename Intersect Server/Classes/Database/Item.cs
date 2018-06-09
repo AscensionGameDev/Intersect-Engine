@@ -7,6 +7,7 @@ using Intersect.Server.Classes.Core;
 using Intersect.Server.Classes.Database;
 using Intersect.Server.Classes.Database.PlayerData.Characters;
 using Intersect.Server.Classes.General;
+using Intersect.Utilities;
 
 namespace Intersect.Server.Classes.Database { 
     public class Item

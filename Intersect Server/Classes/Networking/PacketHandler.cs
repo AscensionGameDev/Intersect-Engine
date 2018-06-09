@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
@@ -948,9 +949,7 @@ namespace Intersect.Server.Classes.Networking
                             .Items[client.Entity.Equipment[Options.WeaponIndex]].ItemNum);
 
                         //Check for animation
-                        var attackAnim = AnimationBase.Lookup.Get<AnimationBase>(ItemBase.Lookup.Get<ItemBase>(
-                                client.Entity.Items[client.Entity.Equipment[Options.WeaponIndex]].ItemNum)
-                            .AttackAnimation);
+                        var attackAnim = ItemBase.Lookup.Get<ItemBase>(client.Entity.Items[client.Entity.Equipment[Options.WeaponIndex]].ItemNum).AttackAnimation;
                         if (attackAnim != null && attackingTile.TryFix())
                         {
                             PacketSender.SendAnimationToProximity(attackAnim.Index, -1, -1, attackingTile.GetMap(), attackingTile.GetX(), attackingTile.GetY(), client.Entity.Dir);

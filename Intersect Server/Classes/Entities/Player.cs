@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
 using Intersect.Server.Classes.Localization;
 using Intersect.Server.Classes.Core;
@@ -18,6 +19,7 @@ using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Maps;
 using Intersect.Server.Classes.Networking;
 using Intersect.Server.Classes.Spells;
+using Intersect.Utilities;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Switch = Intersect.Server.Classes.Database.PlayerData.Characters.Switch;
@@ -906,7 +908,7 @@ namespace Intersect.Server.Classes.Entities
             var itemBase = ItemBase.Lookup.Get<ItemBase>(Items[slot].ItemNum);
             if (itemBase != null)
             {
-                if (itemBase.Bound > 0)
+                if (itemBase.Bound)
                 {
                     PacketSender.SendPlayerMsg(MyClient, Strings.Items.bound, CustomColors.ItemBound);
                     return;
@@ -1088,9 +1090,9 @@ namespace Intersect.Server.Classes.Entities
                         PacketSender.SendPlayerMsg(MyClient, Strings.Items.notimplemented);
                         return;
                 }
-                if (itemBase.Animation > -1)
+                if (itemBase.Animation != null)
                 {
-                    PacketSender.SendAnimationToProximity(itemBase.Animation, 1, MyIndex, MapIndex,0,0, Dir); //Target Type 1 will be global entity
+                    PacketSender.SendAnimationToProximity(itemBase.Animation.Index, 1, MyIndex, MapIndex,0,0, Dir); //Target Type 1 will be global entity
                 }
             }
         }
@@ -1275,7 +1277,7 @@ namespace Intersect.Server.Classes.Entities
                 var itemBase = ItemBase.Lookup.Get<ItemBase>(Items[slot].ItemNum);
                 if (itemBase != null)
                 {
-                    if (itemBase.Bound > 0)
+                    if (itemBase.Bound)
                     {
                         PacketSender.SendPlayerMsg(MyClient, Strings.Shops.bound, CustomColors.ItemBound);
                         return;
@@ -1476,11 +1478,11 @@ namespace Intersect.Server.Classes.Entities
                 //Check the player actually has the items
                 foreach (var c in BenchBase.Lookup.Get<BenchBase>(InCraft).Crafts[index].Ingredients)
                 {
-                    if (itemdict.ContainsKey(c.Item))
+                    if (itemdict.ContainsKey(c.Item.Index))
                     {
-                        if (itemdict[c.Item] >= c.Quantity)
+                        if (itemdict[c.Item.Index] >= c.Quantity)
                         {
-                            itemdict[c.Item] -= c.Quantity;
+                            itemdict[c.Item.Index] -= c.Quantity;
                         }
                         else
                         {
@@ -1498,7 +1500,7 @@ namespace Intersect.Server.Classes.Entities
                 //Take the items
                 foreach (var c in BenchBase.Lookup.Get<BenchBase>(InCraft).Crafts[index].Ingredients)
                 {
-                    if (!TakeItemsByNum(c.Item, c.Quantity))
+                    if (!TakeItemsByNum(c.Item.Index, c.Quantity))
                     {
                         for (int i = 0; i < invbackup.Count; i++)
                         {
@@ -1511,11 +1513,11 @@ namespace Intersect.Server.Classes.Entities
                 }
 
                 //Give them the craft
-                if (TryGiveItem(new Item(BenchBase.Lookup.Get<BenchBase>(InCraft).Crafts[index].Item, 1)))
+                if (TryGiveItem(new Item(BenchBase.Lookup.Get<BenchBase>(InCraft).Crafts[index].Item.Index, 1)))
                 {
                     PacketSender.SendPlayerMsg(MyClient,
                         Strings.Crafting.crafted.ToString(
-                            ItemBase.GetName(BenchBase.Lookup.Get<BenchBase>(InCraft).Crafts[index].Item)),
+                            ItemBase.GetName(BenchBase.Lookup.Get<BenchBase>(InCraft).Crafts[index].Item.Index)),
                         CustomColors.Crafted);
                 }
                 else
@@ -1527,7 +1529,7 @@ namespace Intersect.Server.Classes.Entities
                     PacketSender.SendInventory(MyClient);
                     PacketSender.SendPlayerMsg(MyClient,
                         Strings.Crafting.nospace.ToString(
-                            ItemBase.GetName(BenchBase.Lookup.Get<BenchBase>(InCraft).Crafts[index].Item)),
+                            ItemBase.GetName(BenchBase.Lookup.Get<BenchBase>(InCraft).Crafts[index].Item.Index)),
                         CustomColors.Error);
                 }
                 CraftIndex = -1;
@@ -1557,11 +1559,11 @@ namespace Intersect.Server.Classes.Entities
             //Check the player actually has the items
             foreach (var c in BenchBase.Lookup.Get<BenchBase>(InCraft).Crafts[index].Ingredients)
             {
-                if (itemdict.ContainsKey(c.Item))
+                if (itemdict.ContainsKey(c.Item.Index))
                 {
-                    if (itemdict[c.Item] >= c.Quantity)
+                    if (itemdict[c.Item.Index] >= c.Quantity)
                     {
-                        itemdict[c.Item] -= c.Quantity;
+                        itemdict[c.Item.Index] -= c.Quantity;
                     }
                     else
                     {

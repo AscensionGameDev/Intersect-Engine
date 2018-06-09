@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -30,10 +31,8 @@ namespace Intersect.Server.Classes.Maps
 
         private List<EntityInstance> mEntities = new List<EntityInstance>();
 
-        [JsonIgnore]
-        public Dictionary<EventBase, EventInstance> GlobalEventInstances = new Dictionary<EventBase, EventInstance>();
-        [JsonIgnore]
-        public List<MapItemSpawn> ItemRespawns = new List<MapItemSpawn>();
+        [JsonIgnore] [NotMapped] public Dictionary<EventBase, EventInstance> GlobalEventInstances = new Dictionary<EventBase, EventInstance>();
+        [JsonIgnore] public List<MapItemSpawn> ItemRespawns = new List<MapItemSpawn>();
         private Point[] mMapBlocks;
 
         //Location of Map in the current grid

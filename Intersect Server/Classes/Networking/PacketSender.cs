@@ -4,6 +4,7 @@ using System.Linq;
 using Intersect.Collections;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Server.Classes.Localization;

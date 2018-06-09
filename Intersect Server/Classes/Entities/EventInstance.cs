@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Conditions;
+using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
 using Intersect.Server.Classes.Localization;
 using Intersect.Server.Classes.Core;

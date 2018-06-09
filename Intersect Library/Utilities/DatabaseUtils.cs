@@ -1,7 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace Intersect.Server.Classes.Database
+namespace Intersect.Utilities
 {
     public static class DatabaseUtils
     {

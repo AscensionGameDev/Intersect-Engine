@@ -1,6 +1,7 @@
 ﻿using System;
 using Intersect.Server.Classes.Database.PlayerData.Characters;
 using Intersect.Server.Classes.Entities;
+using Intersect.Utilities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Intersect.Server.Classes.Database.PlayerData

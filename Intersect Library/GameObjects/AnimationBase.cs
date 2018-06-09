@@ -1,4 +1,6 @@
-﻿using Intersect.Models;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
+using Intersect.Models;
 using Intersect.Utilities;
 using Newtonsoft.Json;
 
@@ -6,30 +8,44 @@ namespace Intersect.GameObjects
 {
     public class AnimationBase : DatabaseObject<AnimationBase>
     {
-        public int LowerAnimFrameCount = 1;
-        public int LowerAnimFrameSpeed = 100;
-        public int LowerAnimLoopCount;
-        public bool DisableLowerRotations;
-
         //Lower Animation
-        public string LowerAnimSprite = "";
+        public string LowerAnimSprite { get; set; } = "";
+        public int LowerAnimFrameCount { get; set; } = 1;
+        public int LowerAnimXFrames { get; set; } = 1;
+        public int LowerAnimYFrames { get; set; } = 1;
+        public int LowerAnimFrameSpeed { get; set; } = 100;
+        public int LowerAnimLoopCount { get; set; }
+        public bool DisableLowerRotations { get; set; }
+        [Column("LowerLights")]
+        public string LowerLightsJson
+        {
+            get => JsonConvert.SerializeObject(LowerLights);
+            set => LowerLights = JsonConvert.DeserializeObject<LightBase[]>(value);
+        }
+        [NotMapped]
+        public LightBase[] LowerLights { get; set; }
 
-        public int LowerAnimXFrames = 1;
-        public int LowerAnimYFrames = 1;
-        public LightBase[] LowerLights;
-
-        public string Sound = "";
-        public int UpperAnimFrameCount = 1;
-        public int UpperAnimFrameSpeed = 100;
-        public int UpperAnimLoopCount;
-        public bool DisableUpperRotations;
 
         //Upper Animation
-        public string UpperAnimSprite = "";
+        public string UpperAnimSprite { get; set; }
+        public int UpperAnimFrameCount { get; set; } = 1;
+        public int UpperAnimXFrames { get; set; } = 1;
+        public int UpperAnimYFrames { get; set; } = 1;
+        public int UpperAnimFrameSpeed { get; set; } = 100;
+        public int UpperAnimLoopCount { get; set; }
+        public bool DisableUpperRotations { get; set; }
+        [Column("UpperLights")]
+        public string UpperLightsJson
+        {
+            get => JsonConvert.SerializeObject(UpperLights);
+            set => UpperLights = JsonConvert.DeserializeObject<LightBase[]>(value);
+        }
+        [NotMapped]
+        public LightBase[] UpperLights { get; set; }
 
-        public int UpperAnimXFrames = 1;
-        public int UpperAnimYFrames = 1;
-        public LightBase[] UpperLights;
+        //Misc
+        public string Sound { get; set; }
+
 
         [JsonConstructor]
         public AnimationBase(int index) : base(index)
