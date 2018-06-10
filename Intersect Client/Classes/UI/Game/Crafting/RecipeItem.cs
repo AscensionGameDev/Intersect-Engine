@@ -52,7 +52,7 @@ namespace Intersect.Client.Classes.UI.Game.Crafting
 
         public void LoadItem()
         {
-            var item = ItemBase.Lookup.Get<ItemBase>(mIngredient.Item);
+            var item = mIngredient.Item;
 
             if (item != null)
             {

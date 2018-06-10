@@ -15,18 +15,15 @@ namespace Intersect_Client.Classes.UI.Game
     {
         ImagePanel mDescWindow;
 
-        public ItemDescWindow(int itemnum, int amount, int x, int y, int[] statBuffs, string titleOverride = "",
+        public ItemDescWindow(ItemBase item, int amount, int x, int y, int[] statBuffs, string titleOverride = "",
             string valueLabel = "")
         {
-            string title = "";
-            if (titleOverride == "")
-                title = ItemBase.GetName(itemnum);
-            else
-                title = titleOverride;
+            var title = titleOverride;
+            if (string.IsNullOrWhiteSpace(title))
+                title = item.Name;
 
             mDescWindow = new ImagePanel(Gui.GameUi.GameCanvas, "ItemDescWindow");
-
-            var item = ItemBase.Lookup.Get<ItemBase>(itemnum);
+            
             if (item != null)
             {
                 ImagePanel icon = new ImagePanel(mDescWindow, "ItemIcon");

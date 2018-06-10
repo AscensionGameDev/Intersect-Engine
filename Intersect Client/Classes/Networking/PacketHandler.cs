@@ -11,6 +11,7 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Client.Classes.Localization;
+using Intersect.GameObjects.Crafting;
 using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Packets.Reflectable;

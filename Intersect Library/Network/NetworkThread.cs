@@ -55,7 +55,9 @@ namespace Intersect.Network
         private void Loop()
         {
             var sw = new Stopwatch();
+#if DIAGNOSTIC
             var last = 0L;
+#endif
             sw.Start();
             while (IsRunning)
             {

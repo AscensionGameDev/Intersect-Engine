@@ -99,7 +99,7 @@ namespace Intersect.Client.Classes.UI.Game.Trades
             }
             if (ItemBase.Lookup.Get<ItemBase>(Globals.Trade[mMySide, mMySlot].ItemNum) != null)
             {
-                mDescWindow = new ItemDescWindow(Globals.Trade[mMySide, mMySlot].ItemNum,
+                mDescWindow = new ItemDescWindow(Globals.Trade[mMySide, mMySlot].Item,
                     Globals.Trade[mMySide, mMySlot].ItemVal, mTradeWindow.X - 255, mTradeWindow.Y,
                     Globals.Trade[mMySide, mMySlot].StatBoost);
             }

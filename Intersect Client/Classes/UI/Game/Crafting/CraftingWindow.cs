@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Intersect.Client.Classes.UI.Game.Crafting;
 using Intersect.GameObjects;
 using Intersect.Client.Classes.Localization;
+using Intersect.GameObjects.Crafting;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Control;
@@ -158,12 +159,12 @@ namespace Intersect_Client.Classes.UI.Game
                 mItems[i].Container = new ImagePanel(mItemContainer, "CraftingIngredient");
                 mItems[i].Setup("IngredientItemIcon");
 
-                Label lblTemp = new Label(mItems[i].Container, "IngredientItemValue");
+                var lblTemp = new Label(mItems[i].Container, "IngredientItemValue");
 
-                int onHand = 0;
-                if (itemdict.ContainsKey(craft.Ingredients[i].Item))
+                var onHand = 0;
+                if (itemdict.ContainsKey(craft.Ingredients[i].Item.Index))
                 {
-                    onHand = itemdict[craft.Ingredients[i].Item];
+                    onHand = itemdict[craft.Ingredients[i].Item.Index];
                 }
                 lblTemp.Text = onHand + "/" + craft.Ingredients[i].Quantity;
                 mValues.Add(lblTemp);
@@ -187,11 +188,11 @@ namespace Intersect_Client.Classes.UI.Game
                 var cancraft = true;
                 foreach (CraftIngredient c in Globals.GameBench.Crafts[mCraftIndex].Ingredients)
                 {
-                    if (itemdict.ContainsKey(c.Item))
+                    if (itemdict.ContainsKey(c.Item.Index))
                     {
-                        if (itemdict[c.Item] >= c.Quantity)
+                        if (itemdict[c.Item.Index] >= c.Quantity)
                         {
-                            itemdict[c.Item] -= c.Quantity;
+                            itemdict[c.Item.Index] -= c.Quantity;
                         }
                         else
                         {
@@ -272,11 +273,11 @@ namespace Intersect_Client.Classes.UI.Game
             var cancraft = true;
             foreach (CraftIngredient c in Globals.GameBench.Crafts[mCraftIndex].Ingredients)
             {
-                if (itemdict.ContainsKey(c.Item))
+                if (itemdict.ContainsKey(c.Item.Index))
                 {
-                    if (itemdict[c.Item] >= c.Quantity)
+                    if (itemdict[c.Item.Index] >= c.Quantity)
                     {
-                        itemdict[c.Item] -= c.Quantity;
+                        itemdict[c.Item.Index] -= c.Quantity;
                     }
                     else
                     {
@@ -312,7 +313,7 @@ namespace Intersect_Client.Classes.UI.Game
                 ListBoxRow tmpRow;
                 for (int i = 0; i < Globals.GameBench.Crafts.Count; i++)
                 {
-                    tmpRow = mRecipes.AddRow((i + 1) + ") " + ItemBase.GetName(Globals.GameBench.Crafts[i].Item));
+                    tmpRow = mRecipes.AddRow((i + 1) + ") " + Globals.GameBench.Crafts[i].Item.Name);
                     tmpRow.UserData = i;
                     tmpRow.DoubleClicked += tmpNode_DoubleClicked;
                     tmpRow.Clicked += tmpNode_DoubleClicked;

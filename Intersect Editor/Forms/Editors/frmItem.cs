@@ -257,7 +257,7 @@ namespace Intersect.Editor.Forms.Editors
                 chkStackable.Checked = Convert.ToBoolean(mEditorItem.Stackable);
                 cmbToolType.SelectedIndex = mEditorItem.Tool + 1;
                 cmbAttackAnimation.SelectedIndex =
-                    Database.GameObjectListIndex(GameObjectType.Animation, mEditorItem.AttackAnimation) + 1;
+                    Database.GameObjectListIndex(GameObjectType.Animation, mEditorItem.AttackAnimation.Index) + 1;
                 RefreshExtendedData();
                 if (mEditorItem.ItemType == (int) ItemTypes.Equipment)
                     cmbEquipmentBonus.SelectedIndex = mEditorItem.Data2;
@@ -305,7 +305,7 @@ namespace Intersect.Editor.Forms.Editors
                 cmbProjectile.SelectedIndex =
                     Database.GameObjectListIndex(GameObjectType.Projectile, mEditorItem.Projectile) + 1;
                 cmbAnimation.SelectedIndex =
-                    Database.GameObjectListIndex(GameObjectType.Animation, mEditorItem.Animation) +
+                    Database.GameObjectListIndex(GameObjectType.Animation, mEditorItem.Animation.Index) +
                     1;
 
                 if (mChanged.IndexOf(mEditorItem) == -1)
@@ -583,8 +583,8 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbAttackAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.AttackAnimation = Database.GameObjectIdFromList(GameObjectType.Animation,
-                cmbAttackAnimation.SelectedIndex - 1);
+            mEditorItem.AttackAnimation = AnimationBase.Lookup.Get<AnimationBase>(Database.GameObjectIdFromList(GameObjectType.Animation,
+                cmbAttackAnimation.SelectedIndex - 1));
         }
 
         private void cmbDamageType_SelectedIndexChanged(object sender, EventArgs e)
@@ -612,7 +612,7 @@ namespace Intersect.Editor.Forms.Editors
         private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
             mEditorItem.Animation =
-                Database.GameObjectIdFromList(GameObjectType.Animation, cmbAnimation.SelectedIndex - 1);
+                AnimationBase.Lookup.Get<AnimationBase>(Database.GameObjectIdFromList(GameObjectType.Animation, cmbAnimation.SelectedIndex - 1));
         }
 
         private void cmbEvent_SelectedIndexChanged(object sender, EventArgs e)
@@ -692,12 +692,12 @@ namespace Intersect.Editor.Forms.Editors
 
         private void chkBound_CheckedChanged(object sender, EventArgs e)
         {
-            mEditorItem.Bound = Convert.ToInt32(chkBound.Checked);
+            mEditorItem.Bound = chkBound.Checked;
         }
 
         private void chkStackable_CheckedChanged(object sender, EventArgs e)
         {
-            mEditorItem.Stackable = Convert.ToInt32(chkStackable.Checked);
+            mEditorItem.Stackable = chkStackable.Checked;
         }
     }
 }
