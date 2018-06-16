@@ -1,47 +1,58 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Models;
-using Intersect.Utilities;
 using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
+    public class AnimationLayer
+    {
+        public AnimationLayer()
+        {
+            Lights = new LightBase[FrameCount];
+
+            for (var frame = 0; frame < FrameCount; ++frame)
+            {
+                Lights[frame] = new LightBase();
+            }
+        }
+
+        public string Sprite { get; set; } = "";
+
+        public int FrameCount { get; set; } = 1;
+
+        public int XFrames { get; set; } = 1;
+
+        public int YFrames { get; set; } = 1;
+
+        public int FrameSpeed { get; set; } = 100;
+
+        public int LoopCount { get; set; }
+
+        public bool DisableRotations { get; set; }
+
+        [NotMapped]
+        public LightBase[] Lights { get; set; }
+    }
+
     public class AnimationBase : DatabaseObject<AnimationBase>
     {
-        //Lower Animation
-        public string LowerAnimSprite { get; set; } = "";
-        public int LowerAnimFrameCount { get; set; } = 1;
-        public int LowerAnimXFrames { get; set; } = 1;
-        public int LowerAnimYFrames { get; set; } = 1;
-        public int LowerAnimFrameSpeed { get; set; } = 100;
-        public int LowerAnimLoopCount { get; set; }
-        public bool DisableLowerRotations { get; set; }
-        [Column("LowerLights")]
-        public string LowerLightsJson
-        {
-            get => JsonConvert.SerializeObject(LowerLights);
-            set => LowerLights = JsonConvert.DeserializeObject<LightBase[]>(value);
-        }
-        [NotMapped]
-        public LightBase[] LowerLights { get; set; }
+        public AnimationLayer Lower { get; set; }
 
+        public AnimationLayer Upper { get; set; }
 
-        //Upper Animation
-        public string UpperAnimSprite { get; set; }
-        public int UpperAnimFrameCount { get; set; } = 1;
-        public int UpperAnimXFrames { get; set; } = 1;
-        public int UpperAnimYFrames { get; set; } = 1;
-        public int UpperAnimFrameSpeed { get; set; } = 100;
-        public int UpperAnimLoopCount { get; set; }
-        public bool DisableUpperRotations { get; set; }
-        [Column("UpperLights")]
-        public string UpperLightsJson
+        [Column("Lower_Lights")]
+        public string JsonLowerLights
         {
-            get => JsonConvert.SerializeObject(UpperLights);
-            set => UpperLights = JsonConvert.DeserializeObject<LightBase[]>(value);
+            get => JsonConvert.SerializeObject(Lower.Lights);
+            set => Lower.Lights = JsonConvert.DeserializeObject<LightBase[]>(value);
         }
-        [NotMapped]
-        public LightBase[] UpperLights { get; set; }
+
+        [Column("Upper_Lights")]
+        public string JsonUpperLights
+        {
+            get => JsonConvert.SerializeObject(Upper.Lights);
+            set => Upper.Lights = JsonConvert.DeserializeObject<LightBase[]>(value);
+        }
 
         //Misc
         public string Sound { get; set; }
@@ -50,17 +61,10 @@ namespace Intersect.GameObjects
         [JsonConstructor]
         public AnimationBase(int index) : base(index)
         {
+            // TODO: localize this
             Name = "New Animation";
-            LowerLights = new LightBase[LowerAnimFrameCount];
-            for (var i = 0; i < LowerAnimFrameCount; i++)
-            {
-                LowerLights[i] = new LightBase();
-            }
-            UpperLights = new LightBase[UpperAnimFrameCount];
-            for (var i = 0; i < UpperAnimFrameCount; i++)
-            {
-                UpperLights[i] = new LightBase();
-            }
+            Lower = new AnimationLayer();
+            Upper = new AnimationLayer();
         }
     }
 }

@@ -27,10 +27,10 @@ namespace Intersect.Editor.Entities
         public AnimationInstance(AnimationBase animBase, bool loopForever)
         {
             MyBase = animBase;
-            mLowerLoop = animBase.LowerAnimLoopCount;
-            mUpperLoop = animBase.UpperAnimLoopCount;
-            mLowerTimer = Globals.System.GetTimeMs() + animBase.LowerAnimFrameSpeed;
-            mUpperTimer = Globals.System.GetTimeMs() + animBase.UpperAnimFrameSpeed;
+            mLowerLoop = animBase.Lower.LoopCount;
+            mUpperLoop = animBase.Upper.LoopCount;
+            mLowerTimer = Globals.System.GetTimeMs() + animBase.Lower.FrameSpeed;
+            mUpperTimer = Globals.System.GetTimeMs() + animBase.Upper.FrameSpeed;
             mInfiniteLoop = loopForever;
         }
 
@@ -40,19 +40,19 @@ namespace Intersect.Editor.Entities
             {
                 //Draw Lower
                 Texture2D tex = GameContentManager.GetTexture(GameContentManager.TextureType.Animation,
-                    MyBase.LowerAnimSprite);
+                    MyBase.Lower.Sprite);
                 if (mShowLower)
                 {
-                    if (mLowerFrame >= MyBase.LowerAnimFrameCount) return;
+                    if (mLowerFrame >= MyBase.Lower.FrameCount) return;
                     if (tex != null)
                     {
-                        if (MyBase.LowerAnimXFrames > 0 && MyBase.LowerAnimYFrames > 0)
+                        if (MyBase.Lower.XFrames > 0 && MyBase.Lower.YFrames > 0)
                         {
-                            int frameWidth = (int) tex.Width / MyBase.LowerAnimXFrames;
-                            int frameHeight = (int) tex.Height / MyBase.LowerAnimYFrames;
+                            int frameWidth = (int) tex.Width / MyBase.Lower.XFrames;
+                            int frameHeight = (int) tex.Height / MyBase.Lower.YFrames;
                             EditorGraphics.DrawTexture(tex,
-                                new RectangleF((mLowerFrame % MyBase.LowerAnimXFrames) * frameWidth,
-                                    (float) Math.Floor((double) mLowerFrame / MyBase.LowerAnimXFrames) * frameHeight,
+                                new RectangleF((mLowerFrame % MyBase.Lower.XFrames) * frameWidth,
+                                    (float) Math.Floor((double) mLowerFrame / MyBase.Lower.XFrames) * frameHeight,
                                     frameWidth,
                                     frameHeight),
                                 new RectangleF(mRenderX - frameWidth / 2, mRenderY - frameHeight / 2, frameWidth,
@@ -61,29 +61,29 @@ namespace Intersect.Editor.Entities
                         }
                     }
                     EditorGraphics.AddLight(
-                        Options.MapWidth * Options.TileWidth + (int) mRenderX + MyBase.LowerLights[mLowerFrame].OffsetX,
+                        Options.MapWidth * Options.TileWidth + (int) mRenderX + MyBase.Lower.Lights[mLowerFrame].OffsetX,
                         Options.MapHeight * Options.TileHeight + (int) mRenderY +
-                        MyBase.LowerLights[mLowerFrame].OffsetY,
-                        MyBase.LowerLights[mLowerFrame]);
+                        MyBase.Lower.Lights[mLowerFrame].OffsetY,
+                        MyBase.Lower.Lights[mLowerFrame]);
                 }
             }
             else
             {
                 //Draw Upper
                 Texture2D tex = GameContentManager.GetTexture(GameContentManager.TextureType.Animation,
-                    MyBase.UpperAnimSprite);
+                    MyBase.Upper.Sprite);
                 if (mShowUpper)
                 {
-                    if (mUpperFrame >= MyBase.UpperAnimFrameCount) return;
+                    if (mUpperFrame >= MyBase.Upper.FrameCount) return;
                     if (tex != null)
                     {
-                        if (MyBase.UpperAnimXFrames > 0 && MyBase.UpperAnimYFrames > 0)
+                        if (MyBase.Upper.XFrames > 0 && MyBase.Upper.YFrames > 0)
                         {
-                            int frameWidth = (int) tex.Width / MyBase.UpperAnimXFrames;
-                            int frameHeight = (int) tex.Height / MyBase.UpperAnimYFrames;
+                            int frameWidth = (int) tex.Width / MyBase.Upper.XFrames;
+                            int frameHeight = (int) tex.Height / MyBase.Upper.YFrames;
                             EditorGraphics.DrawTexture(tex,
-                                new RectangleF((mUpperFrame % MyBase.UpperAnimXFrames) * frameWidth,
-                                    (float) Math.Floor((double) mUpperFrame / MyBase.UpperAnimXFrames) * frameHeight,
+                                new RectangleF((mUpperFrame % MyBase.Upper.XFrames) * frameWidth,
+                                    (float) Math.Floor((double) mUpperFrame / MyBase.Upper.XFrames) * frameHeight,
                                     frameWidth,
                                     frameHeight),
                                 new RectangleF(mRenderX - frameWidth / 2, mRenderY - frameHeight / 2, frameWidth,
@@ -92,10 +92,10 @@ namespace Intersect.Editor.Entities
                         }
                     }
                     EditorGraphics.AddLight(
-                        Options.MapWidth * Options.TileWidth + (int) mRenderX + MyBase.UpperLights[mUpperFrame].OffsetX,
+                        Options.MapWidth * Options.TileWidth + (int) mRenderX + MyBase.Upper.Lights[mUpperFrame].OffsetX,
                         Options.MapHeight * Options.TileHeight + (int) mRenderY +
-                        MyBase.UpperLights[mUpperFrame].OffsetY,
-                        MyBase.UpperLights[mUpperFrame]);
+                        MyBase.Upper.Lights[mUpperFrame].OffsetY,
+                        MyBase.Upper.Lights[mUpperFrame]);
                 }
             }
         }
@@ -112,7 +112,7 @@ namespace Intersect.Editor.Entities
             if (mLowerTimer < Globals.System.GetTimeMs() && mShowLower)
             {
                 mLowerFrame++;
-                if (mLowerFrame >= MyBase.LowerAnimFrameCount)
+                if (mLowerFrame >= MyBase.Lower.FrameCount)
                 {
                     mLowerLoop--;
                     mLowerFrame = 0;
@@ -120,7 +120,7 @@ namespace Intersect.Editor.Entities
                     {
                         if (mInfiniteLoop)
                         {
-                            mLowerLoop = MyBase.LowerAnimLoopCount;
+                            mLowerLoop = MyBase.Lower.LoopCount;
                         }
                         else
                         {
@@ -128,12 +128,12 @@ namespace Intersect.Editor.Entities
                         }
                     }
                 }
-                mLowerTimer = Globals.System.GetTimeMs() + MyBase.LowerAnimFrameSpeed;
+                mLowerTimer = Globals.System.GetTimeMs() + MyBase.Lower.FrameSpeed;
             }
             if (mUpperTimer < Globals.System.GetTimeMs() && mShowUpper)
             {
                 mUpperFrame++;
-                if (mUpperFrame >= MyBase.UpperAnimFrameCount)
+                if (mUpperFrame >= MyBase.Upper.FrameCount)
                 {
                     mUpperLoop--;
                     mUpperFrame = 0;
@@ -141,7 +141,7 @@ namespace Intersect.Editor.Entities
                     {
                         if (mInfiniteLoop)
                         {
-                            mUpperLoop = MyBase.UpperAnimLoopCount;
+                            mUpperLoop = MyBase.Upper.LoopCount;
                         }
                         else
                         {
@@ -149,7 +149,7 @@ namespace Intersect.Editor.Entities
                         }
                     }
                 }
-                mUpperTimer = Globals.System.GetTimeMs() + MyBase.UpperAnimFrameSpeed;
+                mUpperTimer = Globals.System.GetTimeMs() + MyBase.Upper.FrameSpeed;
             }
         }
     }

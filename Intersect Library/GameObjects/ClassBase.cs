@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Enums;
 using Intersect.Models;
 using Intersect.Server.Utilities;
@@ -14,7 +16,18 @@ namespace Intersect.GameObjects
         public const long DEFAULT_BASE_EXPERIENCE = 100;
         public const long DEFAULT_EXPERIENCE_INCREASE = 50;
 
-        public int AttackAnimation = -1;
+        [Required]
+        [JsonProperty]
+        private Guid AttackAnimationId { get; set; } //This gets stored in the EF database, and serialized to json whenever transferring to client or queried via the api or whatever..
+
+        [NotMapped]
+        [JsonIgnore]
+        public AnimationBase AttackAnimation //This is what we use via code to access the animation easily (ie Item.Animation = whatever), this is easily readable. This property modifies
+            //the AnimationId but doesn't actually get stored or sent.
+        {
+            get => AnimationBase.Lookup.Get<AnimationBase>(AttackAnimationId);
+            set => AttackAnimationId = value?.Id ?? Guid.Empty;
+        }
 
         public int BasePoints;
         public int[] BaseStat = new int[(int) Stats.StatCount];
