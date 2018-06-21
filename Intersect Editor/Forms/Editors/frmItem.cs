@@ -605,7 +605,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void btnEditRequirements_Click(object sender, EventArgs e)
         {
-            var frm = new FrmDynamicRequirements(mEditorItem.UseReqs, RequirementType.Item);
+            var frm = new FrmDynamicRequirements(mEditorItem.UsageRequirements, RequirementType.Item);
             frm.ShowDialog();
         }
 

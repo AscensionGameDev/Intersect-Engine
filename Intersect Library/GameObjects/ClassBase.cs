@@ -75,9 +75,6 @@ namespace Intersect.GameObjects
         [NotNull]
         public ExperienceCurve ExperienceCurve { get; }
 
-        //Starting Items
-        public List<ClassItem> Items = new List<ClassItem>();
-
         //Locked - Can the class be chosen from character select?
         public int Locked;
 
@@ -92,11 +89,38 @@ namespace Intersect.GameObjects
         public int SpawnX;
         public int SpawnY;
 
+        //Starting Items
+        [NotMapped]
+        public List<ClassItem> Items = new List<ClassItem>();
+
+        [Column("Items")]
+        public string JsonItems
+        {
+            get => JsonConvert.SerializeObject(Items);
+            set => Items = JsonConvert.DeserializeObject<List<ClassItem>>(value);
+        }
+
         //Starting Spells
+        [NotMapped]
         public List<ClassSpell> Spells = new List<ClassSpell>();
 
+        [Column("Spells")]
+        public string JsonSpells
+        {
+            get => JsonConvert.SerializeObject(Spells);
+            set => Spells = JsonConvert.DeserializeObject<List<ClassSpell>>(value);
+        }
+
         //Sprites
+        [NotMapped]
         public List<ClassSprite> Sprites = new List<ClassSprite>();
+
+        [Column("Sprites")]
+        public string JsonSprites
+        {
+            get => JsonConvert.SerializeObject(Sprites);
+            set => Sprites = JsonConvert.DeserializeObject<List<ClassSprite>>(value);
+        }
 
         public int[] StatIncrease = new int[(int) Stats.StatCount];
         public int[] VitalIncrease = new int[(int) Vitals.VitalCount];
@@ -122,13 +146,37 @@ namespace Intersect.GameObjects
     public class ClassItem
     {
         public int Amount;
-        public int ItemNum;
+
+        [JsonProperty]
+        public Guid ItemId { get; set; }
+
+        [NotMapped]
+        public ItemBase Item => ItemBase.Lookup.Get<ItemBase>(ItemId);
+
+        [NotMapped]
+        public int ItemNum
+        {
+            get => Item.Index;
+            set => ItemId = ItemBase.Lookup.Get(value)?.Id ?? Guid.Empty;
+        }
     }
 
     public class ClassSpell
     {
         public int Level;
-        public int SpellNum;
+
+        [JsonProperty]
+        public Guid SpellId { get; set; }
+
+        [NotMapped]
+        public SpellBase Spell => SpellBase.Lookup.Get<SpellBase>(SpellId);
+
+        [NotMapped]
+        public int SpellNum
+        {
+            get => Spell.Index;
+            set => SpellId = SpellBase.Lookup.Get(value)?.Id ?? Guid.Empty;
+        }
     }
 
     public class ClassSprite

@@ -67,17 +67,19 @@ namespace Intersect.GameObjects
             get => DatabaseUtils.SaveIntArray(StatsGiven, (int)Enums.Stats.StatCount);
             set => StatsGiven = DatabaseUtils.LoadIntArray(value, (int)Enums.Stats.StatCount);
         }
+
         [NotMapped]
         public int[] StatsGiven { get; set; } = new int[(int)Enums.Stats.StatCount];
 
-        [Column("UsageReqs")]
-        public string UseReqsJson
+        [Column("UsageRequirements")]
+        public string JsonUsageRequirements
         {
-            get => JsonConvert.SerializeObject(UseReqs);
-            set => UseReqs = JsonConvert.DeserializeObject<ConditionLists>(value);
+            get => JsonConvert.SerializeObject(UsageRequirements);
+            set => UsageRequirements = JsonConvert.DeserializeObject<ConditionLists>(value);
         }
+
         [NotMapped]
-        public ConditionLists UseReqs = new ConditionLists();
+        public ConditionLists UsageRequirements = new ConditionLists();
 
         [JsonConstructor]
         public ItemBase(int index) : base(index)
