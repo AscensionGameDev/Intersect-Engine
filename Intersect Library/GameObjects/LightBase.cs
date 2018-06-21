@@ -2,25 +2,30 @@
 {
     public class LightBase
     {
-        public Color Color = Color.White;
-        public float Expand;
-        public byte Intensity = 255;
-        public int OffsetX;
-        public int OffsetY;
-        public int Size;
-        public int TileX;
-        public int TileY;
+        public Color Color { get; set; }
 
-        public LightBase()
-        {
-            TileX = -1;
-            TileY = -1;
-        }
+        public float Expand { get; set; }
+
+        public byte Intensity { get; set; }
+
+        public int OffsetX { get; set; }
+
+        public int OffsetY { get; set; }
+
+        public int Size { get; set; }
+
+        public int TileX { get; set; }
+
+        public int TileY { get; set; }
+
+        public LightBase() : this(-1, -1) {}
 
         public LightBase(int x, int y)
         {
             TileX = x;
             TileY = y;
+            Color = Color.White;
+            Intensity = 255;
         }
 
         public LightBase(LightBase copy)
@@ -48,7 +53,7 @@
         }
 
         public LightBase(int tileX, int tileY, int offsetX, int offsetY, byte intensity, int size, float expand,
-            Color clr)
+            Color color)
         {
             TileX = tileX;
             TileY = tileY;
@@ -57,7 +62,7 @@
             Intensity = intensity;
             Size = size;
             Expand = expand;
-            Color = clr;
+            Color = color;
         }
 
         public byte[] LightData()
