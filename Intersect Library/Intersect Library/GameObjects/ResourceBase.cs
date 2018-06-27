@@ -64,6 +64,8 @@ namespace Intersect.GameObjects
 
             HarvestingReqs.Load(myBuffer);
 
+            if (MinHp > MaxHp) MaxHp = MinHp;
+
             myBuffer.Dispose();
         }
 
