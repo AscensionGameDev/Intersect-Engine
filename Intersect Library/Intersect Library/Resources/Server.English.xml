@@ -253,7 +253,7 @@
         <string id="periodevening">PM</string>
     </Events>
     <Combat>
-        <string id="critcal">CRITICAL HIT!</string>
+        <string id="critical">CRITICAL HIT!</string>
         <string id="miss">MISS!</string>
         <string id="blocked">BLOCKED!</string>
         <string id="dash">DASH!</string>
