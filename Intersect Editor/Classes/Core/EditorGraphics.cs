@@ -325,6 +325,7 @@ namespace Intersect.Editor.Classes
         private static void DrawTransparentBorders(int gridX, int gridY)
         {
             var transTex = GetTexture(TextureType.Misc, "transtile.png");
+            if (transTex == null) return;
             var xoffset = CurrentView.Left + (gridX) * (Options.TileWidth * Options.MapWidth);
             var yoffset = CurrentView.Top + (gridY) * (Options.TileHeight * Options.MapHeight);
             for (int x = 0; x < Options.MapWidth; x++)
