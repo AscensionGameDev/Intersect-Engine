@@ -34,8 +34,8 @@ namespace Intersect.Server.Classes.Entities
             MyName = MyBase.Name;
             Owner = owner;
             Stat = owner.Stat;
-            Vital[(int) Vitals.Health] = 1;
-            MaxVital[(int) Vitals.Health] = 1;
+            SetMaxVital(Vitals.Health, 1);
+            SetVital(Vitals.Health, 1);
             CurrentMap = map;
             CurrentX = X;
             CurrentY = Y;

@@ -353,14 +353,11 @@ namespace Intersect.Server.Classes.Entities
 
             foreach (Vitals vital in Enum.GetValues(typeof(Vitals)))
             {
-                Debug.Assert(Vital != null, "Vital != null");
-                Debug.Assert(MaxVital != null, "MaxVital != null");
-
                 if (vital >= Vitals.VitalCount) continue;
 
                 var vitalId = (int)vital;
-                var vitalValue = Vital[vitalId];
-                var maxVitalValue = MaxVital[vitalId];
+                var vitalValue = GetVital(vital);
+                var maxVitalValue = GetMaxVital(vital);
                 if (vitalValue >= maxVitalValue) continue;
 
                 var vitalRegenRate = playerClass.VitalRegen[vitalId] / 100f;
@@ -397,20 +394,17 @@ namespace Intersect.Server.Classes.Entities
                         {
                             if ((int)vital < (int)Vitals.VitalCount)
                             {
-                                var maxVital = MaxVital[(int)vital];
+                                var maxVital = GetMaxVital(vital);
                                 if (myclass.IncreasePercentage == 1)
                                 {
-                                    maxVital =
-                                        (int)
-                                        (MaxVital[(int)vital] *
-                                         (1f + ((float)myclass.VitalIncrease[(int)vital] / 100f)));
+                                    maxVital =  (int) (GetMaxVital(vital) * (1f + ((float)myclass.VitalIncrease[(int)vital] / 100f)));
                                 }
                                 else
                                 {
-                                    maxVital = MaxVital[(int)vital] + myclass.VitalIncrease[(int)vital];
+                                    maxVital = GetMaxVital(vital) + myclass.VitalIncrease[(int)vital];
                                 }
-                                var vitalDiff = maxVital - MaxVital[(int)vital];
-                                MaxVital[(int)vital] = maxVital;
+                                var vitalDiff = maxVital - GetMaxVital(vital);
+                                SetMaxVital(vital, maxVital);
                                 AddVital(vital, vitalDiff);
                             }
                         }
@@ -974,7 +968,7 @@ namespace Intersect.Server.Classes.Entities
                                 else
                                 {
                                     PacketSender.SendActionMsg(this, s + itemBase.Data2, CustomColors.PhysicalDamage);
-                                    if (Vital[(int)Vitals.Health] <= 0) //Add a death handler for poison.
+                                    if (!HasVital(Vitals.Health)) //Add a death handler for poison.
                                     {
                                         Die();
                                     }
@@ -2455,11 +2449,11 @@ namespace Intersect.Server.Classes.Entities
             bf.WriteString(MyName);
             for (int i = 0; i < (int)Vitals.VitalCount; i++)
             {
-                bf.WriteInteger(Vital[i]);
+                bf.WriteInteger(GetVital(i));
             }
             for (int i = 0; i < (int)Vitals.VitalCount; i++)
             {
-                bf.WriteInteger(MaxVital[i]);
+                bf.WriteInteger(GetMaxVital(i));
             }
             return bf.ToArray();
         }
@@ -2595,18 +2589,17 @@ namespace Intersect.Server.Classes.Entities
                     }
                 }
 
-                if (spell.VitalCost[(int)Vitals.Mana] <= Vital[(int)Vitals.Mana])
+                if (spell.VitalCost[(int)Vitals.Mana] <= GetVital(Vitals.Mana))
                 {
-                    if (spell.VitalCost[(int)Vitals.Health] <= Vital[(int)Vitals.Health])
+                    if (spell.VitalCost[(int)Vitals.Health] <= GetVital(Vitals.Health))
                     {
                         if (Spells[spellSlot].SpellCd < Globals.System.GetTimeMs())
                         {
                             if (CastTime < Globals.System.GetTimeMs())
                             {
-                                Vital[(int)Vitals.Mana] =
-                                    Vital[(int)Vitals.Mana] - spell.VitalCost[(int)Vitals.Mana];
-                                Vital[(int)Vitals.Health] = Vital[(int)Vitals.Health] -
-                                                             spell.VitalCost[(int)Vitals.Health];
+                                SubVital(Vitals.Mana, spell.VitalCost[(int) Vitals.Mana]);
+                                SubVital(Vitals.Health, spell.VitalCost[(int) Vitals.Health]);
+
                                 CastTime = Globals.System.GetTimeMs() + (spell.CastDuration * 100);
                                 SpellCastSlot = spellSlot;
                                 CastTarget = Target;

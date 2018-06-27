@@ -1236,10 +1236,10 @@ namespace Intersect.Server.Classes.Networking
                 }
                 PacketSender.SendJoinGame(client);
                 player.WarpToSpawn();
-                player.Vital[(int) Vitals.Health] = classBase.BaseVital[(int) Vitals.Health];
-                player.Vital[(int) Vitals.Mana] = classBase.BaseVital[(int) Vitals.Mana];
-                player.MaxVital[(int) Vitals.Health] = classBase.BaseVital[(int) Vitals.Health];
-                player.MaxVital[(int) Vitals.Mana] = classBase.BaseVital[(int) Vitals.Mana];
+                player.SetMaxVital(Vitals.Health, classBase.BaseVital[(int)Vitals.Health]);
+                player.SetMaxVital(Vitals.Mana, classBase.BaseVital[(int)Vitals.Mana]);
+                player.SetVital(Vitals.Health, classBase.BaseVital[(int)Vitals.Health]);
+                player.SetVital(Vitals.Mana, classBase.BaseVital[(int)Vitals.Mana]);
 
                 for (int i = 0; i < (int) Stats.StatCount; i++)
                 {

@@ -57,7 +57,7 @@ namespace Intersect.Server.Classes.Entities
         public int Level = 1;
 
         //Vitals & Stats
-        public int[] MaxVital = new int[(int) Vitals.VitalCount];
+        private int[] _maxVital = new int[(int) Vitals.VitalCount];
 
         public EventMoveRoute MoveRoute = null;
         public EventPageInstance MoveRouteSetter = null;
@@ -83,7 +83,7 @@ namespace Intersect.Server.Classes.Entities
         public Dictionary<SpellBase, StatusInstance> Statuses = new Dictionary<SpellBase, StatusInstance>();
 
         public Entity Target = null;
-        public int[] Vital = new int[(int) Vitals.VitalCount];
+        private int[] _vital = new int[(int) Vitals.VitalCount];
 
         //Initialization
         public Entity(int index)
@@ -95,11 +95,11 @@ namespace Intersect.Server.Classes.Entities
 
             MyIndex = index;
             //HP
-            MaxVital[(int) Vitals.Health] = 100;
-            Vital[(int) Vitals.Health] = 100;
+            SetMaxVital(Vitals.Health, 100);
+            SetVital(Vitals.Health,100);
             //MP
-            MaxVital[(int) Vitals.Health] = 100;
-            Vital[(int) Vitals.Health] = 100;
+            SetMaxVital(Vitals.Mana, 100);
+            SetVital(Vitals.Mana, 100);
             //ATK
             Stat[(int) Stats.Attack].Stat = 23;
             //Ability
@@ -787,36 +787,77 @@ namespace Intersect.Server.Classes.Entities
             return true;
         }
 
+        public int GetVital(int vital)
+        {
+            return _vital[vital];
+        }
+        public int GetVital(Vitals vital)
+        {
+            return GetVital((int) vital);
+        }
+        public void SetVital(int vital, int value)
+        {
+            if (value < 0) value = 0;
+            if (GetMaxVital(vital) < value)
+                value = GetMaxVital(vital);
+            _vital[vital] = value;
+            PacketSender.SendEntityVitals(this);
+        }
+        public void SetVital(Vitals vital, int value)
+        {
+            SetVital((int) vital, value);
+        }
+        public int GetMaxVital(int vital)
+        {
+            return _maxVital[vital];
+        }
+        public int GetMaxVital(Vitals vital)
+        {
+            return GetMaxVital((int)vital);
+        }
+        public void SetMaxVital(int vital, int value)
+        {
+            if (value <= 0 && vital == (int)Vitals.Health) value = 1; //Must have at least 1 hp
+            if (value < 0 && vital == (int)Vitals.Mana) value = 0; //Can't have less than 0 mana
+            _maxVital[vital] = value;
+            if (value < GetVital(vital))
+                SetVital(vital,value);
+            PacketSender.SendEntityVitals(this);
+        }
+        public void SetMaxVital(Vitals vital, int value)
+        {
+            SetMaxVital((int)vital, value);
+        }
+        public bool HasVital(Vitals vital)
+        {
+            return GetVital(vital) > 0;
+        }
+        public bool IsFullVital(Vitals vital)
+        {
+            return GetVital(vital) == GetMaxVital(vital);
+        }
         //Vitals
         public void RestoreVital(Vitals vital)
         {
-            Debug.Assert(Vital != null, "Vital != null");
-            Debug.Assert(MaxVital != null, "MaxVital != null");
-
-            var vitalId = (int)vital;
-            Vital[vitalId] = MaxVital[vitalId];
-            PacketSender.SendEntityVitals(this);
+            SetVital(vital, GetMaxVital(vital));
         }
-
         public void AddVital(Vitals vital, int amount)
         {
-            Debug.Assert(Vital != null, "Vital != null");
-            Debug.Assert(MaxVital != null, "MaxVital != null");
-
             if (vital >= Vitals.VitalCount) return;
 
             var vitalId = (int)vital;
-            var maxVitalValue = MaxVital[vitalId];
+            var maxVitalValue = GetMaxVital(vitalId);
             var safeAmount = Math.Min(amount, int.MaxValue - maxVitalValue);
-            Vital[vitalId] += safeAmount;
+            SetVital(vital,GetVital(vital) + safeAmount);
+        }
+        public void SubVital(Vitals vital, int amount)
+        {
+            if (vital >= Vitals.VitalCount) return;
 
-            if (Vital[vitalId] < 0)
-                Vital[vitalId] = 0;
-
-            if (Vital[vitalId] > maxVitalValue)
-                Vital[vitalId] = maxVitalValue;
-
-            PacketSender.SendEntityVitals(this);
+            var vitalId = (int)vital;
+            var maxVitalValue = GetMaxVital(vitalId);
+            var safeAmount = Math.Min(amount, maxVitalValue - GetVital(vital));
+            SetVital(vital, GetVital(vital) - safeAmount);
         }
 
         //Attacking with projectile
@@ -1134,9 +1175,9 @@ namespace Intersect.Server.Classes.Entities
                 baseDamage = Formulas.CalculateDamage(baseDamage, damageType, scalingStat, scaling, critMultiplier,
                     this,
                     enemy);
-                if (baseDamage > 0 && enemy.Vital[(int)Vitals.Health] > 0)
+                if (baseDamage > 0 && enemy.HasVital(Vitals.Health))
                 {
-                    enemy.Vital[(int)Vitals.Health] -= (int)baseDamage;
+                    enemy.SubVital(Vitals.Health, (int) baseDamage);
                     switch (damageType)
                     {
                         case DamageType.Physical:
@@ -1154,9 +1195,9 @@ namespace Intersect.Server.Classes.Entities
                     }
                     enemy.CombatTimer = Globals.System.GetTimeMs() + 5000;
                 }
-                else if (baseDamage < 0 && enemy.Vital[(int)Vitals.Health] < enemy.MaxVital[(int)Vitals.Health])
+                else if (baseDamage < 0 && !enemy.IsFullVital(Vitals.Health))
                 {
-                    enemy.Vital[(int)Vitals.Health] -= (int)baseDamage;
+                    enemy.SubVital(Vitals.Health, (int) baseDamage);
                     PacketSender.SendActionMsg(enemy, Strings.Get("combat", "addsymbol") + (int) Math.Abs(baseDamage),
                         CustomColors.Heal);
                 }
@@ -1165,44 +1206,22 @@ namespace Intersect.Server.Classes.Entities
             {
                 secondaryDamage = Formulas.CalculateDamage(secondaryDamage, damageType, scalingStat, scaling,
                     critMultiplier, this, enemy);
-                if (secondaryDamage > 0 && enemy.Vital[(int) Vitals.Mana] > 0)
+                if (secondaryDamage > 0 && enemy.HasVital(Vitals.Mana))
                 {
                     //If we took damage lets reset our combat timer
-                    enemy.Vital[(int)Vitals.Mana] -= (int)secondaryDamage;
+                    enemy.SubVital(Vitals.Mana, (int) secondaryDamage);
                     enemy.CombatTimer = Globals.System.GetTimeMs() + 5000;
                     PacketSender.SendActionMsg(enemy, Strings.Get("combat", "removesymbol") + (int)secondaryDamage, CustomColors.RemoveMana);
                 }
-                else if (secondaryDamage < 0 && enemy.Vital[(int)Vitals.Mana] < enemy.MaxVital[(int)Vitals.Mana])
+                else if (secondaryDamage < 0 && !enemy.IsFullVital(Vitals.Mana))
                 {
-                    enemy.Vital[(int)Vitals.Mana] -= (int)secondaryDamage;
+                    enemy.SubVital(Vitals.Mana, (int) secondaryDamage);
                     PacketSender.SendActionMsg(enemy, Strings.Get("combat", "addsymbol") + (int) Math.Abs(secondaryDamage), CustomColors.AddMana);
                 }
             }
 
-            //Check if after healing, greater than maximum hp.
-            if (enemy.Vital[(int) Vitals.Health] >=
-                enemy.MaxVital[(int) Vitals.Health])
-            {
-                enemy.Vital[(int) Vitals.Health] =
-                    enemy.MaxVital[(int) Vitals.Health];
-            }
-
-            //Check if after healing, greater than maximum hp.
-            if (enemy.Vital[(int) Vitals.Mana] >=
-                enemy.MaxVital[(int) Vitals.Mana])
-            {
-                enemy.Vital[(int) Vitals.Mana] =
-                    enemy.MaxVital[(int) Vitals.Mana];
-            }
-
-            //Check if after healing, greater than maximum hp.
-            if (enemy.Vital[(int) Vitals.Mana] <= 0)
-            {
-                enemy.Vital[(int) Vitals.Mana] = 0;
-            }
-
             //Dead entity check
-            if (enemy.Vital[(int) Vitals.Health] <= 0)
+            if (enemy.GetVital(Vitals.Health) <= 0)
             {
                 KilledEntity(enemy);
                 if (enemy.GetType() == typeof(Npc) || enemy.GetType() == typeof(Resource))
@@ -1595,7 +1614,7 @@ namespace Intersect.Server.Classes.Entities
         {
             for (var i = 0; i < (int) Vitals.VitalCount; i++)
             {
-                Vital[i] = MaxVital[i];
+                RestoreVital((Vitals)i);
             }
             Dead = false;
         }
@@ -1632,8 +1651,8 @@ namespace Intersect.Server.Classes.Entities
             }
             for (var i = 0; i < (int) Vitals.VitalCount; i++)
             {
-                bf.WriteInteger(MaxVital[i]);
-                bf.WriteInteger(Vital[i]);
+                bf.WriteInteger(GetMaxVital(i));
+                bf.WriteInteger(GetVital(i));
             }
             var statuses = Statuses.ToArray();
             bf.WriteInteger(statuses.Count());
