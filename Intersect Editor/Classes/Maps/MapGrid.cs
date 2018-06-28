@@ -109,57 +109,61 @@ namespace Intersect.Editor.Classes.Maps
 
         public void Load(ByteBuffer bf)
         {
-            Loaded = false;
-            List<int> gridMaps = new List<int>();
-            GridWidth = (int) bf.ReadLong();
-            GridHeight = (int) bf.ReadLong();
-            bf.ReadBoolean();
-            lock (mTexLock)
-            {
-                UnloadTextures();
-                Grid = new MapGridItem[GridWidth, GridHeight];
-            }
-            for (int x = -1; x <= GridWidth; x++)
-            {
-                for (int y = -1; y <= GridHeight; y++)
+            //lock (GetMapGridLock())
+            //{
+                Loaded = false;
+                List<int> gridMaps = new List<int>();
+                GridWidth = (int) bf.ReadLong();
+                GridHeight = (int) bf.ReadLong();
+                bf.ReadBoolean();
+                System.Threading.Thread.Sleep(1000);
+                lock (mTexLock)
                 {
-                    if (y == -1 || y == GridHeight || x == -1 || x == GridWidth)
+                    UnloadTextures();
+                    Grid = new MapGridItem[GridWidth, GridHeight];
+                }
+                for (int x = -1; x <= GridWidth; x++)
+                {
+                    for (int y = -1; y <= GridHeight; y++)
                     {
-                    }
-                    else
-                    {
-                        int num = bf.ReadInteger();
-                        if (num == -1)
+                        if (y == -1 || y == GridHeight || x == -1 || x == GridWidth)
                         {
-                            Grid[x, y] = new MapGridItem(num);
                         }
                         else
                         {
-                            Grid[x, y] = new MapGridItem(num, bf.ReadString(), bf.ReadInteger());
-                            gridMaps.Add(Grid[x, y].Mapnum);
+                            int num = bf.ReadInteger();
+                            if (num == -1)
+                            {
+                                Grid[x, y] = new MapGridItem(num);
+                            }
+                            else
+                            {
+                                Grid[x, y] = new MapGridItem(num, bf.ReadString(), bf.ReadInteger());
+                                gridMaps.Add(Grid[x, y].Mapnum);
+                            }
                         }
                     }
                 }
-            }
-            //Get a list of maps -- if they are not in this grid.
-            mLinkMaps.Clear();
-            for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
-            {
-                if (!gridMaps.Contains(MapList.GetOrderedMaps()[i].MapNum))
+                //Get a list of maps -- if they are not in this grid.
+                mLinkMaps.Clear();
+                for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
                 {
-                    mLinkMaps.Add(MapList.GetOrderedMaps()[i].MapNum);
+                    if (!gridMaps.Contains(MapList.GetOrderedMaps()[i].MapNum))
+                    {
+                        mLinkMaps.Add(MapList.GetOrderedMaps()[i].MapNum);
+                    }
                 }
-            }
-            mMaxZoom = 1f; //Real Size
-            Zoom = mMinZoom;
-            TileWidth = (int) (Options.TileWidth * Options.MapWidth * Zoom);
-            TileHeight = (int) (Options.TileHeight * Options.MapHeight * Zoom);
-            ContentRect = new Rectangle(ViewRect.Width / 2 - (TileWidth * (GridWidth + 2)) / 2,
-                ViewRect.Height / 2 - (TileHeight * (GridHeight + 2)) / 2, TileWidth * (GridWidth + 2),
-                TileHeight * (GridHeight + 2));
-            mCreateTextures = true;
-            Loaded = true;
-            mGridMaps = gridMaps;
+                mMaxZoom = 1f; //Real Size
+                Zoom = mMinZoom;
+                TileWidth = (int) (Options.TileWidth * Options.MapWidth * Zoom);
+                TileHeight = (int) (Options.TileHeight * Options.MapHeight * Zoom);
+                ContentRect = new Rectangle(ViewRect.Width / 2 - (TileWidth * (GridWidth + 2)) / 2,
+                    ViewRect.Height / 2 - (TileHeight * (GridHeight + 2)) / 2, TileWidth * (GridWidth + 2),
+                    TileHeight * (GridHeight + 2));
+                mCreateTextures = true;
+                Loaded = true;
+                mGridMaps = gridMaps;
+            //}
         }
 
         public void DoubleClick(int x, int y)
