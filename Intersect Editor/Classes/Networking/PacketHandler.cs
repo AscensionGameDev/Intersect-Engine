@@ -295,8 +295,9 @@ namespace Intersect.Editor.Classes
                     if (Globals.FetchingMapPreviews || Globals.CurrentMap == map)
                     {
                         int currentmap = Globals.CurrentMap.Index;
-                        if (Database.LoadMapCacheLegacy(mapNum, map.Revision) == null &&
-                            !Globals.MapsToScreenshot.Contains(mapNum)) Globals.MapsToScreenshot.Add(mapNum);
+                        var img = Database.LoadMapCacheLegacy(mapNum, map.Revision);
+                        if (img == null &&  !Globals.MapsToScreenshot.Contains(mapNum)) Globals.MapsToScreenshot.Add(mapNum);
+                        img?.Dispose();
                         if (Globals.FetchingMapPreviews)
                         {
                             if (Globals.MapsToFetch.Contains(mapNum))
