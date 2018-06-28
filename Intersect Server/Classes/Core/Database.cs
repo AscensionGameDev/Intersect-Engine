@@ -2676,12 +2676,7 @@ namespace Intersect.Server.Classes.Core
             lock (SqlConnectionLock)
             {
                 command.Connection = sDbConnection;
-                using (var transaction = sDbConnection?.BeginTransaction())
-                {
-                    var returnVal = command.ExecuteNonQuery();
-                    transaction.Commit();
-                    return returnVal;
-                }
+                return command.ExecuteNonQuery();
             }
         }
 
