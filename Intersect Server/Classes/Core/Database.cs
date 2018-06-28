@@ -2723,40 +2723,8 @@ namespace Intersect.Server.Classes.Core
             {
                 cmd.CommandText = query;
                 cmd.Parameters.Add(new SqliteParameter("@" + TIME_DATA,
-<<<<<<< HEAD
                     TimeBase.GetTimeJson()));
                 sGameDbConnection.ExecuteNonQuery(cmd);
-=======
-                    TimeBase.GetTimeBase().SaveTimeBase()));
-                ExecuteNonQuery(cmd);
-            }
-        }
-
-        public static int ExecuteNonQuery(SqliteCommand command)
-        {
-            lock (SqlConnectionLock)
-            {
-                command.Connection = sDbConnection;
-                return command.ExecuteNonQuery();
-            }
-        }
-
-        public static SqliteDataReader ExecuteReader(SqliteCommand command)
-        {
-            lock (SqlConnectionLock)
-            {
-                command.Connection = sDbConnection;
-                return command.ExecuteReader();
-            }
-        }
-
-        public static object ExecuteScalar(SqliteCommand command)
-        {
-            lock (SqlConnectionLock)
-            {
-                command.Connection = sDbConnection;
-                return command.ExecuteScalar();
->>>>>>> hotfixes
             }
         }
     }

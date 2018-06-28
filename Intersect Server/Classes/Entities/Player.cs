@@ -514,44 +514,48 @@ namespace Intersect.Server.Classes.Entities
                     for (var i = 0; i < Party.Count; i++)
                     {
                         Party[i].GiveExperience(((Npc)en).MyBase.Experience / Party.Count);
-						Party[i].UpdateQuestKillTasks(en);
-					}
+                        Party[i].UpdateQuestKillTasks(en);
+                    }
                 }
                 else
                 {
                     GiveExperience(((Npc)en).MyBase.Experience);
+                    UpdateQuestKillTasks(en);
                 }
+            }
+        }
 
-                //If any quests demand that this Npc be killed then let's handle it
-                var npc = (Npc)en;
-                for (var i = 0; i < Quests.Keys.Count; i++)
+        public void UpdateQuestKillTasks(Entity en)
+        {
+            //If any quests demand that this Npc be killed then let's handle it
+            var npc = (Npc)en;
+            for (var i = 0; i < Quests.Keys.Count; i++)
+            {
+                var questId = Quests.Keys.ToArray()[i];
+                var quest = QuestBase.Lookup.Get<QuestBase>(questId);
+                if (quest != null)
                 {
-                    var questId = Quests.Keys.ToArray()[i];
-                    var quest = QuestBase.Lookup.Get<QuestBase>(questId);
-                    if (quest != null)
+                    if (Quests[questId].Task > -1)
                     {
-                        if (Quests[questId].Task > -1)
+                        //Assume this quest is in progress. See if we can find the task in the quest
+                        var questTask = quest.FindTask(Quests[questId].Task);
+                        if (questTask != null)
                         {
-                            //Assume this quest is in progress. See if we can find the task in the quest
-                            var questTask = quest.FindTask(Quests[questId].Task);
-                            if (questTask != null)
+                            if (questTask.Objective == 2 && questTask.Data1 == npc.MyBase.Index) //kill npcs
                             {
-                                if (questTask.Objective == 2 && questTask.Data1 == npc.MyBase.Index) //kill npcs
+                                var questProg = Quests[questId];
+                                questProg.TaskProgress++;
+                                if (questProg.TaskProgress >= questTask.Data2)
                                 {
-                                    var questProg = Quests[questId];
-                                    questProg.TaskProgress++;
-                                    if (questProg.TaskProgress >= questTask.Data2)
-                                    {
-                                        CompleteQuestTask(questId, Quests[questId].Task);
-                                    }
-                                    else
-                                    {
-                                        Quests[questId] = questProg;
-                                        PacketSender.SendQuestProgress(this, quest.Index);
-                                        PacketSender.SendPlayerMsg(MyClient,
-                                            Strings.Quests.npctask.ToString( quest.Name, questProg.TaskProgress,
-                                                questTask.Data2, NpcBase.GetName(questTask.Data1)));
-                                    }
+                                    CompleteQuestTask(questId, Quests[questId].Task);
+                                }
+                                else
+                                {
+                                    Quests[questId] = questProg;
+                                    PacketSender.SendQuestProgress(this, quest.Index);
+                                    PacketSender.SendPlayerMsg(MyClient,
+                                        Strings.Quests.npctask.ToString(quest.Name, questProg.TaskProgress,
+                                            questTask.Data2, NpcBase.GetName(questTask.Data1)));
                                 }
                             }
                         }
@@ -2586,18 +2590,9 @@ namespace Intersect.Server.Classes.Entities
                         {
                             if (CastTime < Globals.System.GetTimeMs())
                             {
-<<<<<<< HEAD
-                                Vital[(int)Vitals.Mana] =
-                                    Vital[(int)Vitals.Mana] - spell.VitalCost[(int)Vitals.Mana];
-                                Vital[(int)Vitals.Health] = Vital[(int)Vitals.Health] -
-                                                             spell.VitalCost[(int)Vitals.Health];
                                 CastTime = Globals.System.GetTimeMs() + spell.CastDuration;
-=======
                                 SubVital(Vitals.Mana, spell.VitalCost[(int) Vitals.Mana]);
                                 SubVital(Vitals.Health, spell.VitalCost[(int) Vitals.Health]);
-
-                                CastTime = Globals.System.GetTimeMs() + (spell.CastDuration * 100);
->>>>>>> hotfixes
                                 SpellCastSlot = spellSlot;
                                 CastTarget = Target;
 

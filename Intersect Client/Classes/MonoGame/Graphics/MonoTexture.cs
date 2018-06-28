@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Intersect.Client.Classes.Localization;
 using Intersect.Localization;
 using Intersect.Logging;
 using IntersectClientExtras.GenericClasses;
@@ -40,8 +41,8 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                     mTexture = Texture2D.FromStream(mGraphicsDevice, fileStream);
                     if (mTexture != null)
                     {
-                        mWidth = mTex.Width;
-                        mHeight = mTex.Height;
+                        mWidth = mTexture.Width;
+                        mHeight = mTexture.Height;
                         mLoadError = false;
                     }
                 }
@@ -49,7 +50,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                 {
                     //Failed to load texture.. lets log like we do with audio
                     Log.Error($"Error loading '{mName}'.", ex);
-                    ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Get("errors", "loadfile", Strings.Get("words", "lcase_sprite")) + " [" + mName + "]", new Color(0xBF, 0x0, 0x0)));
+                    ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sprite) + " [" + mName + "]", new Color(0xBF, 0x0, 0x0)));
                 }
             }
         }

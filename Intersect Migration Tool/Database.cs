@@ -173,7 +173,7 @@ namespace Intersect.Migration
                         IncrementDatabaseVersion();
                         break;
                     case 10:
-                        var upgrade10 = new Upgrade10(sDbConnection);
+                        var upgrade10 = new Upgrade10();
                         upgrade10.Upgrade();
                         currentVersion++;
                         IncrementDatabaseVersion();
