@@ -609,11 +609,9 @@ namespace Intersect.Server.Classes.Entities
             if (enemy.GetType() == typeof(EventPageInstance)) return;
 
             ItemBase weapon = null;
-            if (((Player)Globals.Entities[MyIndex]).Equipment[Options.WeaponIndex] >= 0)
+            if (Options.WeaponIndex < Equipment.Length && Equipment[Options.WeaponIndex] >= 0)
             {
-                weapon =
-                    ItemBase.Lookup.Get<ItemBase>(
-                        Inventory[((Player)Globals.Entities[MyIndex]).Equipment[Options.WeaponIndex]].ItemNum);
+                weapon = ItemBase.Lookup.Get<ItemBase>(Inventory[Equipment[Options.WeaponIndex]].ItemNum);
             }
 
             //If Entity is resource, check for the correct tool and make sure its not a spell cast.
