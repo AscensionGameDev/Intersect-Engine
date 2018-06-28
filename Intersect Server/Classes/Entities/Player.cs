@@ -2622,8 +2622,20 @@ namespace Intersect.Server.Classes.Entities
                                 }
 
                                 PacketSender.SendEntityVitals(this);
-                                PacketSender.SendEntityVitals(this);
-                                PacketSender.SendEntityCastTime(this, spellNum);
+
+                                //Check if cast should be instance
+                                if (Globals.System.GetTimeMs() >= CastTime)
+                                {
+                                    //Cast now!
+                                    CastTime = 0;
+                                    CastSpell(Spells[SpellCastSlot].SpellNum, SpellCastSlot);
+                                    CastTarget = null;
+                                }
+                                else
+                                {
+                                    //Tell the client we are channeling the spell
+                                    PacketSender.SendEntityCastTime(this, spellNum);
+                                }
                             }
                             else
                             {

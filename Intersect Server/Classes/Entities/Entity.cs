@@ -856,7 +856,7 @@ namespace Intersect.Server.Classes.Entities
 
             var vitalId = (int)vital;
             var maxVitalValue = GetMaxVital(vitalId);
-            var safeAmount = Math.Min(amount, maxVitalValue - GetVital(vital));
+            var safeAmount = Math.Min(amount, GetVital(vital));
             SetVital(vital, GetVital(vital) - safeAmount);
         }
 
