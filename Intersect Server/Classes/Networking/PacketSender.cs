@@ -649,8 +649,8 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteInteger(en.CurrentMap);
             for (var i = 0; i < (int)Vitals.VitalCount; i++)
             {
-                bf.WriteInteger(en.MaxVital[i]);
-                bf.WriteInteger(en.Vital[i]);
+                bf.WriteInteger(en.GetMaxVital(i));
+                bf.WriteInteger(en.GetVital(i));
             }
             var statuses = en.Statuses.Values.ToArray();
             bf.WriteInteger(statuses.Length);
@@ -699,8 +699,8 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteInteger(en.CurrentMap);
             for (var i = 0; i < (int)Vitals.VitalCount; i++)
             {
-                bf.WriteInteger(en.MaxVital[i]);
-                bf.WriteInteger(en.Vital[i]);
+                bf.WriteInteger(en.GetMaxVital(i));
+                bf.WriteInteger(en.GetVital(i));
             }
             var statuses = en.Statuses.Values.ToArray();
             bf.WriteInteger(statuses.Length);
@@ -1777,7 +1777,7 @@ namespace Intersect.Server.Classes.Networking
                         if (friend.Value.ToLower() == c.Entity.MyName.ToLower())
                         {
                             online.Add(friend.Value);
-                            map.Add(MapList.GetList().FindMap(client.Entity.CurrentMap).Name);
+                            map.Add(MapList.GetList().FindMap(c.Entity.CurrentMap).Name);
                             found = true;
                             break;
                         }

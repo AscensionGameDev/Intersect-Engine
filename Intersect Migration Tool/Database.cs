@@ -43,7 +43,7 @@ namespace Intersect.Migration
                 }
                 catch (Exception exception)
                 {
-                    Log.Trace(exception);
+                    UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.Logging.Log.Trace(exception);
                 }
             }
             else if (File.Exists("resources/config.json"))
@@ -173,12 +173,10 @@ namespace Intersect.Migration
                         IncrementDatabaseVersion();
                         break;
                     case 10:
-                        sDbConnection.Close();
-                        sDbConnection = null;
-                        var upgrade10 = new Upgrade10();
+                        var upgrade10 = new Upgrade10(sDbConnection);
                         upgrade10.Upgrade();
-                        //currentVersion++;
-                        //IncrementDatabaseVersion(); //TOOD: increment both db's
+                        currentVersion++;
+                        IncrementDatabaseVersion();
                         break;
                     default:
                         throw new Exception(Strings.Upgrade.noinstructions);

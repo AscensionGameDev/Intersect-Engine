@@ -31,7 +31,6 @@ namespace Intersect.Server.Classes.Core
     {
         public const string DIRECTORY_BACKUPS = "resources/backups";
         private const int DbVersion = 11;
-
         private const string GameDbFilename = "resources/gamedata.db";
         private const string PlayersDbFilename = "resources/playerdata.db";
 
@@ -958,15 +957,15 @@ namespace Intersect.Server.Classes.Core
                         cmd.Parameters.Add(new SqliteParameter("@" + CHAR_LEVEL, player.Level));
                         cmd.Parameters.Add(new SqliteParameter("@" + CHAR_EXP, player.Experience));
                         var vitals = "";
-                        for (var i = 0; i < player.Vital.Length; i++)
+                        for (var i = 0; i < (int)Vitals.VitalCount; i++)
                         {
-                            vitals += player.Vital[i] + ",";
+                            vitals += player.GetVital(i) + ",";
                         }
                         cmd.Parameters.Add(new SqliteParameter("@" + CHAR_VITALS, vitals));
                         var maxVitals = "";
-                        for (var i = 0; i < player.MaxVital.Length; i++)
+                        for (var i = 0; i < (int)Vitals.VitalCount; i++)
                         {
-                            maxVitals += player.MaxVital[i] + ",";
+                            maxVitals += player.GetMaxVital(i) + ",";
                         }
                         cmd.Parameters.Add(new SqliteParameter("@" + CHAR_MAX_VITALS, maxVitals));
                         var stats = "";
@@ -1304,17 +1303,17 @@ namespace Intersect.Server.Classes.Core
                             en.Gender = Convert.ToInt32(dataReader[CHAR_GENDER]);
                             en.Level = Convert.ToInt32(dataReader[CHAR_LEVEL]);
                             en.Experience = Convert.ToInt64(dataReader[CHAR_EXP]);
+                            var maxVitalString = dataReader[CHAR_MAX_VITALS].ToString();
+                            var maxVitals = maxVitalString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
+                            for (var i = 0; i < (int)Vitals.VitalCount && i < maxVitals.Length; i++)
+                            {
+                                en.SetMaxVital(i,int.Parse(maxVitals[i]));
+                            }
                             var vitalString = dataReader[CHAR_VITALS].ToString();
                             var vitals = vitalString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
                             for (var i = 0; i < (int) Vitals.VitalCount && i < vitals.Length; i++)
                             {
-                                en.Vital[i] = int.Parse(vitals[i]);
-                            }
-                            var maxVitalString = dataReader[CHAR_MAX_VITALS].ToString();
-                            var maxVitals = maxVitalString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
-                            for (var i = 0; i < (int) Vitals.VitalCount && i < maxVitals.Length; i++)
-                            {
-                                en.MaxVital[i] = int.Parse(maxVitals[i]);
+                                en.SetVital(i, int.Parse(vitals[i]));
                             }
                             var statsString = dataReader[CHAR_STATS].ToString();
                             var stats = statsString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
@@ -2724,8 +2723,40 @@ namespace Intersect.Server.Classes.Core
             {
                 cmd.CommandText = query;
                 cmd.Parameters.Add(new SqliteParameter("@" + TIME_DATA,
+<<<<<<< HEAD
                     TimeBase.GetTimeJson()));
                 sGameDbConnection.ExecuteNonQuery(cmd);
+=======
+                    TimeBase.GetTimeBase().SaveTimeBase()));
+                ExecuteNonQuery(cmd);
+            }
+        }
+
+        public static int ExecuteNonQuery(SqliteCommand command)
+        {
+            lock (SqlConnectionLock)
+            {
+                command.Connection = sDbConnection;
+                return command.ExecuteNonQuery();
+            }
+        }
+
+        public static SqliteDataReader ExecuteReader(SqliteCommand command)
+        {
+            lock (SqlConnectionLock)
+            {
+                command.Connection = sDbConnection;
+                return command.ExecuteReader();
+            }
+        }
+
+        public static object ExecuteScalar(SqliteCommand command)
+        {
+            lock (SqlConnectionLock)
+            {
+                command.Connection = sDbConnection;
+                return command.ExecuteScalar();
+>>>>>>> hotfixes
             }
         }
     }

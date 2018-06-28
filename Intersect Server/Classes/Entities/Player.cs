@@ -364,14 +364,11 @@ namespace Intersect.Server.Classes.Entities
 
             foreach (Vitals vital in Enum.GetValues(typeof(Vitals)))
             {
-                Debug.Assert(Vital != null, "Vital != null");
-                Debug.Assert(MaxVital != null, "MaxVital != null");
-
                 if (vital >= Vitals.VitalCount) continue;
 
                 var vitalId = (int)vital;
-                var vitalValue = Vital[vitalId];
-                var maxVitalValue = MaxVital[vitalId];
+                var vitalValue = GetVital(vital);
+                var maxVitalValue = GetMaxVital(vital);
                 if (vitalValue >= maxVitalValue) continue;
 
                 var vitalRegenRate = playerClass.VitalRegen[vitalId] / 100f;
@@ -406,20 +403,17 @@ namespace Intersect.Server.Classes.Entities
                         {
                             if ((int)vital < (int)Vitals.VitalCount)
                             {
-                                var maxVital = MaxVital[(int)vital];
+                                var maxVital = GetMaxVital(vital);
                                 if (myclass.IncreasePercentage == 1)
                                 {
-                                    maxVital =
-                                        (int)
-                                        (MaxVital[(int)vital] *
-                                         (1f + ((float)myclass.VitalIncrease[(int)vital] / 100f)));
+                                    maxVital =  (int) (GetMaxVital(vital) * (1f + ((float)myclass.VitalIncrease[(int)vital] / 100f)));
                                 }
                                 else
                                 {
-                                    maxVital = MaxVital[(int)vital] + myclass.VitalIncrease[(int)vital];
+                                    maxVital = GetMaxVital(vital) + myclass.VitalIncrease[(int)vital];
                                 }
-                                var vitalDiff = maxVital - MaxVital[(int)vital];
-                                MaxVital[(int)vital] = maxVital;
+                                var vitalDiff = maxVital - GetMaxVital(vital);
+                                SetMaxVital(vital, maxVital);
                                 AddVital(vital, vitalDiff);
                             }
                         }
@@ -520,7 +514,8 @@ namespace Intersect.Server.Classes.Entities
                     for (var i = 0; i < Party.Count; i++)
                     {
                         Party[i].GiveExperience(((Npc)en).MyBase.Experience / Party.Count);
-                    }
+						Party[i].UpdateQuestKillTasks(en);
+					}
                 }
                 else
                 {
@@ -605,11 +600,9 @@ namespace Intersect.Server.Classes.Entities
             if (enemy.GetType() == typeof(EventPageInstance)) return;
 
             ItemBase weapon = null;
-            if (((Player)Globals.Entities[MyIndex]).Equipment[Options.WeaponIndex] >= 0)
+            if (Options.WeaponIndex < Equipment.Length && Equipment[Options.WeaponIndex] >= 0)
             {
-                weapon =
-                    ItemBase.Lookup.Get<ItemBase>(
-                        Inventory[((Player)Globals.Entities[MyIndex]).Equipment[Options.WeaponIndex]].ItemNum);
+                weapon = ItemBase.Lookup.Get<ItemBase>(Inventory[Equipment[Options.WeaponIndex]].ItemNum);
             }
 
             //If Entity is resource, check for the correct tool and make sure its not a spell cast.
@@ -726,8 +719,8 @@ namespace Intersect.Server.Classes.Entities
                 PacketSender.SendEntityDataToProximity(this);
                 PacketSender.SendEntityPositionToAll(this);
 
-                //If map grid changed then send the new map grid
-                if (!adminWarp && (oldMap == null || !oldMap.SurroundingMaps.Contains(newMap)))
+				//If map grid changed then send the new map grid
+				if (!adminWarp && (oldMap == null || !oldMap.SurroundingMaps.Contains(newMap)))
                 {
                     PacketSender.SendMapGrid(MyClient, map.MapGrid, true);
                 }
@@ -920,7 +913,21 @@ namespace Intersect.Server.Classes.Entities
                     }
                 }
 
-                if (!EventInstance.MeetsConditionLists(itemBase.UseReqs, this, null))
+				// Unequip items even if you do not meet the requirements. 
+				// (Need this for silly devs who give people items and then later add restrictions...)
+				if (itemBase.ItemType == (int)ItemTypes.Equipment)
+                for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+				{
+					if (Equipment[i] == slot)
+					{
+						Equipment[i] = -1;
+						PacketSender.SendPlayerEquipmentToProximity(this);
+						PacketSender.SendEntityStats(this);
+						return;
+					}
+				}
+
+				if (!EventInstance.MeetsConditionLists(itemBase.UseReqs, this, null))
                 {
                     PacketSender.SendPlayerMsg(MyClient, Strings.Items.dynamicreq);
                     return;
@@ -950,7 +957,7 @@ namespace Intersect.Server.Classes.Entities
                                 else
                                 {
                                     PacketSender.SendActionMsg(this, s + itemBase.Data2, CustomColors.PhysicalDamage);
-                                    if (Vital[(int)Vitals.Health] <= 0) //Add a death handler for poison.
+                                    if (!HasVital(Vitals.Health)) //Add a death handler for poison.
                                     {
                                         Die();
                                     }
@@ -1665,7 +1672,7 @@ namespace Intersect.Server.Classes.Entities
                     {
                         var inventorySlotItem = Inventory[i];
                         if (inventorySlotItem == null) continue;
-                        if (inventorySlotItem.ItemNum == bankSlotItem.ItemNum) continue;
+                        if (inventorySlotItem.ItemNum != bankSlotItem.ItemNum) continue;
                         inventorySlot = i;
                         break;
                     }
@@ -2431,11 +2438,11 @@ namespace Intersect.Server.Classes.Entities
             bf.WriteString(MyName);
             for (int i = 0; i < (int)Vitals.VitalCount; i++)
             {
-                bf.WriteInteger(Vital[i]);
+                bf.WriteInteger(GetVital(i));
             }
             for (int i = 0; i < (int)Vitals.VitalCount; i++)
             {
-                bf.WriteInteger(MaxVital[i]);
+                bf.WriteInteger(GetMaxVital(i));
             }
             return bf.ToArray();
         }
@@ -2571,19 +2578,26 @@ namespace Intersect.Server.Classes.Entities
                     }
                 }
 
-                if (spell.VitalCost[(int)Vitals.Mana] <= Vital[(int)Vitals.Mana])
+                if (spell.VitalCost[(int)Vitals.Mana] <= GetVital(Vitals.Mana))
                 {
-                    if (spell.VitalCost[(int)Vitals.Health] <= Vital[(int)Vitals.Health])
+                    if (spell.VitalCost[(int)Vitals.Health] <= GetVital(Vitals.Health))
                     {
                         if (Spells[spellSlot].SpellCd < Globals.System.GetTimeMs())
                         {
                             if (CastTime < Globals.System.GetTimeMs())
                             {
+<<<<<<< HEAD
                                 Vital[(int)Vitals.Mana] =
                                     Vital[(int)Vitals.Mana] - spell.VitalCost[(int)Vitals.Mana];
                                 Vital[(int)Vitals.Health] = Vital[(int)Vitals.Health] -
                                                              spell.VitalCost[(int)Vitals.Health];
                                 CastTime = Globals.System.GetTimeMs() + spell.CastDuration;
+=======
+                                SubVital(Vitals.Mana, spell.VitalCost[(int) Vitals.Mana]);
+                                SubVital(Vitals.Health, spell.VitalCost[(int) Vitals.Health]);
+
+                                CastTime = Globals.System.GetTimeMs() + (spell.CastDuration * 100);
+>>>>>>> hotfixes
                                 SpellCastSlot = spellSlot;
                                 CastTarget = Target;
 
@@ -2607,8 +2621,20 @@ namespace Intersect.Server.Classes.Entities
                                 }
 
                                 PacketSender.SendEntityVitals(this);
-                                PacketSender.SendEntityVitals(this);
-                                PacketSender.SendEntityCastTime(this, spellNum);
+
+                                //Check if cast should be instance
+                                if (Globals.System.GetTimeMs() >= CastTime)
+                                {
+                                    //Cast now!
+                                    CastTime = 0;
+                                    CastSpell(Spells[SpellCastSlot].SpellNum, SpellCastSlot);
+                                    CastTarget = null;
+                                }
+                                else
+                                {
+                                    //Tell the client we are channeling the spell
+                                    PacketSender.SendEntityCastTime(this, spellNum);
+                                }
                             }
                             else
                             {
@@ -3248,7 +3274,7 @@ namespace Intersect.Server.Classes.Entities
             foreach (var evt in EventLookup.Values)
             {
                 if (evt.HoldingPlayer) return -5;
-            }
+			}
             //TODO Check if any events are blocking us
             return base.CanMove(moveDir);
         }
