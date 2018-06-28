@@ -384,10 +384,17 @@ namespace Intersect.Editor.Classes.Maps
             {
                 for (int y = 0; y < GridHeight; y++)
                 {
-                    if (Grid[x, y].Mapnum > -1 && Database.LoadMapCacheLegacy(Grid[x, y].Mapnum,
-                            Grid[x, y].Revision) == null)
+                    if (Grid[x, y].Mapnum > -1)
                     {
-                        maps.Add(Grid[x, y].Mapnum);
+                        var img = Database.LoadMapCacheLegacy(Grid[x, y].Mapnum, Grid[x, y].Revision);
+                        if (img == null)
+                        {
+                            maps.Add(Grid[x, y].Mapnum);
+                        }
+                        else
+                        {
+                            img.Dispose();
+                        }
                     }
                 }
             }
