@@ -75,13 +75,13 @@ namespace Intersect.Editor.Forms
             if (i <= -1 || i >= lstEventCommands.Items.Count) return;
             if (!mCommandProperties[i].Editable) return;
             lstEventCommands.SelectedIndex = i;
+
+            if (mCurrentCommand < 0 || mCurrentCommand >= mCommandProperties.Count) return;
+
             commandMenu.Show((ListBox) sender, e.Location);
             btnEdit.Enabled = true;
             if (!mCommandProperties[mCurrentCommand].Editable) btnEdit.Enabled = false;
-            if (mCommandProperties[mCurrentCommand].MyList.Commands.Count == 0 ||
-                mCommandProperties[mCurrentCommand].MyIndex >=
-                mCommandProperties[mCurrentCommand].MyList.Commands.Count ||
-                mCommandProperties[mCurrentCommand].MyIndex < 0) btnEdit.Enabled = false;
+            if (mCommandProperties[mCurrentCommand].MyIndex < 0 || mCommandProperties[mCurrentCommand].MyIndex >= mCommandProperties[mCurrentCommand].MyList.Commands.Count) btnEdit.Enabled = false;
             btnDelete.Enabled = true;
         }
 
@@ -1616,7 +1616,7 @@ namespace Intersect.Editor.Forms
         /// </summary>
         private void btnInsert_Click(object sender, EventArgs e)
         {
-            if (mCurrentCommand <= -1) return;
+            if (mCurrentCommand < 0 || mCurrentCommand >= mCommandProperties.Count) return;
             if (!mCommandProperties[mCurrentCommand].Editable) return;
             if (mCommandProperties[mCurrentCommand].Type == EventCommandType.Null)
             {
@@ -1634,18 +1634,18 @@ namespace Intersect.Editor.Forms
 
         private void btnEdit_Click(object sender, EventArgs e)
         {
-            if (mCurrentCommand <= -1) return;
+            if (mCurrentCommand < 0 || mCurrentCommand >= mCommandProperties.Count) return;
             if (!mCommandProperties[mCurrentCommand].Editable) return;
-            if (mCommandProperties[mCurrentCommand].MyList.Commands.Count == 0) return;
-            OpenEditCommand(
-                mCommandProperties[mCurrentCommand].MyList.Commands[mCommandProperties[mCurrentCommand].MyIndex]);
+            if (mCommandProperties[mCurrentCommand].MyIndex < 0 || mCommandProperties[mCurrentCommand].MyIndex >= mCommandProperties[mCurrentCommand].MyList.Commands.Count) return;
+            OpenEditCommand(mCommandProperties[mCurrentCommand].MyList.Commands[mCommandProperties[mCurrentCommand].MyIndex]);
             mIsEdit = true;
         }
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            if (mCurrentCommand <= -1) return;
+            if (mCurrentCommand < 0 || mCurrentCommand >= mCommandProperties.Count) return;
             if (!mCommandProperties[mCurrentCommand].Editable) return;
+            if (mCommandProperties[mCurrentCommand].MyIndex < 0 || mCommandProperties[mCurrentCommand].MyIndex >= mCommandProperties[mCurrentCommand].MyList.Commands.Count) return;
             mCommandProperties[mCurrentCommand].MyList.Commands.Remove(mCommandProperties[mCurrentCommand].Cmd);
             ListPageCommands();
         }
