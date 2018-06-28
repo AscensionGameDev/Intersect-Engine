@@ -361,20 +361,23 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
 
         public void InitAutotiles(MapBase[,] surroundingMaps)
         {
-            if (Autotile == null)
+            lock (mMyMap.MapLock)
             {
-                CreateFields();
-            }
-            for (var i = 0; i < Options.LayerCount; i++)
-            {
-                for (var x = 0; x < Options.MapWidth; x++)
+                if (Autotile == null)
                 {
-                    for (var y = 0; y < Options.MapHeight; y++)
+                    CreateFields();
+                }
+                for (var i = 0; i < Options.LayerCount; i++)
+                {
+                    for (var x = 0; x < Options.MapWidth; x++)
                     {
-                        // calculate the subtile positions and place them
-                        CalculateAutotile(x, y, i, surroundingMaps);
-                        // cache the rendering state of the tiles and set them
-                        CacheRenderState(x, y, i);
+                        for (var y = 0; y < Options.MapHeight; y++)
+                        {
+                            // calculate the subtile positions and place them
+                            CalculateAutotile(x, y, i, surroundingMaps);
+                            // cache the rendering state of the tiles and set them
+                            CacheRenderState(x, y, i);
+                        }
                     }
                 }
             }
@@ -383,27 +386,30 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         public bool UpdateAutoTiles(int x, int y, MapBase[,] surroundingMaps)
         {
             var changed = false;
-            for (var x1 = x - 1; x1 < x + 2; x1++)
+            lock (mMyMap.MapLock)
             {
-                if (x1 < 0 || x1 >= Options.MapWidth)
+                for (var x1 = x - 1; x1 < x + 2; x1++)
                 {
-                    continue;
-                }
-                for (var y1 = y - 1; y1 < y + 2; y1++)
-                {
-                    if (y1 < 0 || y1 >= Options.MapHeight)
+                    if (x1 < 0 || x1 >= Options.MapWidth)
                     {
                         continue;
                     }
-                    var oldautotile = Autotile[x1, y1].Copy();
-                    for (int i = 0; i < Options.LayerCount; i++)
+                    for (var y1 = y - 1; y1 < y + 2; y1++)
                     {
-                        // calculate the subtile positions and place them
-                        CalculateAutotile(x1, y1, i, surroundingMaps);
-                        // cache the rendering state of the tiles and set them
-                        CacheRenderState(x1, y1, i);
+                        if (y1 < 0 || y1 >= Options.MapHeight)
+                        {
+                            continue;
+                        }
+                        var oldautotile = Autotile[x1, y1].Copy();
+                        for (int i = 0; i < Options.LayerCount; i++)
+                        {
+                            // calculate the subtile positions and place them
+                            CalculateAutotile(x1, y1, i, surroundingMaps);
+                            // cache the rendering state of the tiles and set them
+                            CacheRenderState(x1, y1, i);
+                        }
+                        if (!Autotile[x1, y1].Equals(oldautotile)) changed = true;
                     }
-                    if (!Autotile[x1, y1].Equals(oldautotile)) changed = true;
                 }
             }
             return changed;
@@ -411,22 +417,25 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
 
         public void UpdateAutoTiles(int x, int y, int layer, MapBase[,] surroundingMaps)
         {
-            for (var x1 = x - 1; x1 < x + 2; x1++)
+            lock (mMyMap.MapLock)
             {
-                if (x1 < 0 || x1 >= Options.MapWidth)
+                for (var x1 = x - 1; x1 < x + 2; x1++)
                 {
-                    continue;
-                }
-                for (var y1 = y - 1; y1 < y + 2; y1++)
-                {
-                    if (y1 < 0 || y1 >= Options.MapHeight)
+                    if (x1 < 0 || x1 >= Options.MapWidth)
                     {
                         continue;
                     }
-                    // calculate the subtile positions and place them
-                    CalculateAutotile(x1, y1, layer, surroundingMaps);
-                    // cache the rendering state of the tiles and set them
-                    CacheRenderState(x1, y1, layer);
+                    for (var y1 = y - 1; y1 < y + 2; y1++)
+                    {
+                        if (y1 < 0 || y1 >= Options.MapHeight)
+                        {
+                            continue;
+                        }
+                        // calculate the subtile positions and place them
+                        CalculateAutotile(x1, y1, layer, surroundingMaps);
+                        // cache the rendering state of the tiles and set them
+                        CacheRenderState(x1, y1, layer);
+                    }
                 }
             }
         }
@@ -438,10 +447,13 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
                 return false;
             }
             var oldautotile = Autotile[x, y].Copy();
-            // calculate the subtile positions and place them
-            CalculateAutotile(x, y, layer, surroundingMaps);
-            // cache the rendering state of the tiles and set them
-            CacheRenderState(x, y, layer);
+            lock (mMyMap.MapLock)
+            {
+                // calculate the subtile positions and place them
+                CalculateAutotile(x, y, layer, surroundingMaps);
+                // cache the rendering state of the tiles and set them
+                CacheRenderState(x, y, layer);
+            }
             return !Autotile[x, y].Equals(oldautotile);
         }
 

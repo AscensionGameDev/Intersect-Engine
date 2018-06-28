@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Newtonsoft.Json;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects
 {
@@ -7,8 +6,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
     {
         public List<Craft> Crafts = new List<Craft>();
 
-        [JsonConstructor]
-        public BenchBase(int index) : base(index)
+        public BenchBase(int id) : base(id)
         {
             Name = "New Bench";
         }
@@ -53,9 +51,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
     public class Craft
     {
         public List<CraftIngredient> Ingredients = new List<CraftIngredient>();
-        [JsonProperty(Order = -3)]
         public int Item = -1;
-        [JsonProperty(Order = -2)]
         public int Time = 1;
 
         public void Load(ByteBuffer bf)

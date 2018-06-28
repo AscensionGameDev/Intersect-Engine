@@ -9,7 +9,6 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
 
         string Name { get; set; }
         byte[] BinaryData { get; }
-        string JsonData { get; }
 
         void Load(byte[] packet);
 

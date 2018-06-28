@@ -4,6 +4,8 @@ using System.Xml;
 using Intersect.Migration.Localization;
 using Intersect.Migration.UpgradeInstructions.Upgrade_1;
 using Intersect.Migration.UpgradeInstructions.Upgrade_10;
+using Intersect.Migration.UpgradeInstructions.Upgrade_11;
+using Intersect.Migration.UpgradeInstructions.Upgrade_11.Intersect_Convert_Lib.Logging;
 using Intersect.Migration.UpgradeInstructions.Upgrade_2;
 using Intersect.Migration.UpgradeInstructions.Upgrade_3;
 using Intersect.Migration.UpgradeInstructions.Upgrade_4;
@@ -43,7 +45,7 @@ namespace Intersect.Migration
                 }
                 catch (Exception exception)
                 {
-                    UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.Logging.Log.Trace(exception);
+                    Log.Trace(exception);
                 }
             }
             else if (File.Exists("resources/config.json"))
@@ -173,10 +175,16 @@ namespace Intersect.Migration
                         IncrementDatabaseVersion();
                         break;
                     case 10:
-                        var upgrade10 = new Upgrade10();
+                        var upgrade10 = new Upgrade10(sDbConnection);
                         upgrade10.Upgrade();
                         currentVersion++;
                         IncrementDatabaseVersion();
+                        break;
+                    case 11:
+                        sDbConnection.Close();
+                        sDbConnection = null;
+                        var upgrade11 = new Upgrade11();
+                        upgrade11.Upgrade();
                         break;
                     default:
                         throw new Exception(Strings.Upgrade.noinstructions);

@@ -1,11 +1,8 @@
-﻿using Newtonsoft.Json;
-
-namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects.Switches_and_Variables
+﻿namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects.Switches_and_Variables
 {
     public class PlayerSwitchBase : DatabaseObject<PlayerSwitchBase>
     {
-        [JsonConstructor]
-        public PlayerSwitchBase(int index) : base(index)
+        public PlayerSwitchBase(int id) : base(id)
         {
             Name = "New Player Switch";
         }

@@ -1,6 +1,6 @@
 ﻿using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.Enums;
 using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects.Conditions;
-using Newtonsoft.Json;
+using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.Utilities;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects
 {
@@ -33,12 +33,11 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         public int Tool = -1;
         public ConditionLists UseReqs = new ConditionLists();
 
-        [JsonConstructor]
-        public ItemBase(int index) : base(index)
+        public ItemBase(int id) : base(id)
         {
             Name = "New Item";
             Speed = 10; // Set to 10 by default.
-            StatsGiven = new int[(int)Stats.StatCount];
+            StatsGiven = new int[Options.MaxStats];
         }
 
         public override byte[] BinaryData => ItemData();
@@ -60,7 +59,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
 
             UseReqs.Load(myBuffer);
 
-            for (var i = 0; i < (int)Stats.StatCount; i++)
+            for (var i = 0; i < Options.MaxStats; i++)
             {
                 StatsGiven[i] = myBuffer.ReadInteger();
             }
@@ -87,7 +86,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
             myBuffer.WriteString(Name);
             myBuffer.WriteString(Desc);
             myBuffer.WriteInteger(ItemType);
-            myBuffer.WriteString(Intersect.Utilities.TextUtils.SanitizeNone(Pic));
+            myBuffer.WriteString(Pic);
             myBuffer.WriteInteger(Price);
             myBuffer.WriteInteger(Bound);
             myBuffer.WriteInteger(Stackable);
@@ -109,8 +108,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
             myBuffer.WriteInteger(ScalingStat);
             myBuffer.WriteInteger(Scaling);
             myBuffer.WriteInteger(Speed);
-            myBuffer.WriteString(Intersect.Utilities.TextUtils.SanitizeNone(MalePaperdoll));
-            myBuffer.WriteString(Intersect.Utilities.TextUtils.SanitizeNone(FemalePaperdoll));
+            myBuffer.WriteString(MalePaperdoll);
+            myBuffer.WriteString(FemalePaperdoll);
             myBuffer.WriteInteger(Tool);
             myBuffer.WriteInteger(Data1);
             myBuffer.WriteInteger(Data2);

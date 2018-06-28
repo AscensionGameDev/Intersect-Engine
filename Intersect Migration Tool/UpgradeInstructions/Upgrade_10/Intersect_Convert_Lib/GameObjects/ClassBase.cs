@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.Enums;
-using Newtonsoft.Json;
+using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.Utilities;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects
 {
@@ -9,7 +9,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         public int AttackAnimation = -1;
 
         //Exp Calculations
-        public long BaseExp = 100;
+        public int BaseExp = 100;
 
         public int BasePoints;
         public int[] BaseStat = new int[(int) Stats.StatCount];
@@ -23,7 +23,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         public int Damage;
 
         public int DamageType;
-        public long ExpIncrease = 50;
+        public int ExpIncrease = 50;
 
         //Level Up Info
         public int IncreasePercentage;
@@ -57,8 +57,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         //Regen Percentages
         public int[] VitalRegen = new int[(int) Vitals.VitalCount];
 
-        [JsonConstructor]
-        public ClassBase(int index) : base(index)
+        public ClassBase(int id) : base(id)
         {
             Name = "New Class";
             for (int i = 0; i < Options.MaxNpcDrops; i++)
@@ -133,8 +132,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
             PointIncrease = myBuffer.ReadInteger();
 
             //Exp Info
-            BaseExp = myBuffer.ReadLong();
-            ExpIncrease = myBuffer.ReadLong();
+            BaseExp = myBuffer.ReadInteger();
+            ExpIncrease = myBuffer.ReadInteger();
 
             //Regen
             for (int i = 0; i < (int) Vitals.VitalCount; i++)
@@ -181,8 +180,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
             myBuffer.WriteInteger(Sprites.Count);
             for (var i = 0; i < Sprites.Count; i++)
             {
-                myBuffer.WriteString(Intersect.Utilities.TextUtils.SanitizeNone(Sprites[i].Sprite));
-                myBuffer.WriteString(Intersect.Utilities.TextUtils.SanitizeNone(Sprites[i].Face));
+                myBuffer.WriteString(Sprites[i].Sprite);
+                myBuffer.WriteString(Sprites[i].Face);
                 myBuffer.WriteByte(Sprites[i].Gender);
             }
 
@@ -218,8 +217,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
             myBuffer.WriteInteger(PointIncrease);
 
             //Exp Info
-            myBuffer.WriteLong(BaseExp);
-            myBuffer.WriteLong(ExpIncrease);
+            myBuffer.WriteInteger(BaseExp);
+            myBuffer.WriteInteger(ExpIncrease);
 
             //Regen
             for (int i = 0; i < (int) Vitals.VitalCount; i++)

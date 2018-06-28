@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.Utilities;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects
 {
@@ -7,6 +7,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         public int LowerAnimFrameCount = 1;
         public int LowerAnimFrameSpeed = 100;
         public int LowerAnimLoopCount;
+        public bool DisableLowerRotations;
 
         //Lower Animation
         public string LowerAnimSprite = "";
@@ -19,6 +20,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         public int UpperAnimFrameCount = 1;
         public int UpperAnimFrameSpeed = 100;
         public int UpperAnimLoopCount;
+        public bool DisableUpperRotations;
 
         //Upper Animation
         public string UpperAnimSprite = "";
@@ -27,8 +29,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         public int UpperAnimYFrames = 1;
         public LightBase[] UpperLights;
 
-        [JsonConstructor]
-        public AnimationBase(int index) : base(index)
+        public AnimationBase(int id) : base(id)
         {
             Name = "New Animation";
             LowerLights = new LightBase[LowerAnimFrameCount];
@@ -86,27 +87,29 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         {
             var myBuffer = new ByteBuffer();
             myBuffer.WriteString(Name);
-            myBuffer.WriteString(Intersect.Utilities.TextUtils.SanitizeNone(Sound));
+            myBuffer.WriteString(Sound);
 
             //Lower Animation
-            myBuffer.WriteString(Intersect.Utilities.TextUtils.SanitizeNone(LowerAnimSprite));
+            myBuffer.WriteString(LowerAnimSprite);
             myBuffer.WriteInteger(LowerAnimXFrames);
             myBuffer.WriteInteger(LowerAnimYFrames);
             myBuffer.WriteInteger(LowerAnimFrameCount);
             myBuffer.WriteInteger(LowerAnimFrameSpeed);
             myBuffer.WriteInteger(LowerAnimLoopCount);
+            myBuffer.WriteBoolean(false);
             for (var i = 0; i < LowerAnimFrameCount; i++)
             {
                 myBuffer.WriteBytes(LowerLights[i].LightData());
             }
 
             //Upper Animation
-            myBuffer.WriteString(Intersect.Utilities.TextUtils.SanitizeNone(UpperAnimSprite));
+            myBuffer.WriteString(UpperAnimSprite);
             myBuffer.WriteInteger(UpperAnimXFrames);
             myBuffer.WriteInteger(UpperAnimYFrames);
             myBuffer.WriteInteger(UpperAnimFrameCount);
             myBuffer.WriteInteger(UpperAnimFrameSpeed);
             myBuffer.WriteInteger(UpperAnimLoopCount);
+            myBuffer.WriteBoolean(false);
             for (var i = 0; i < UpperAnimFrameCount; i++)
             {
                 myBuffer.WriteBytes(UpperLights[i].LightData());

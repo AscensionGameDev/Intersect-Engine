@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
-using Intersect.Migration.Localization;
 using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects.Conditions;
 using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects.Events;
-using Newtonsoft.Json;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects
 {
@@ -25,7 +23,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
     {
         public string BeforeDesc = "";
         public string EndDesc = "";
-        public EventBase EndEvent = new EventBase(-1,-1, 0, 0, true);
+        public EventBase EndEvent = new EventBase(-1, 0, 0, true);
         public string InProgressDesc = "";
         public byte LogAfterComplete;
         public byte LogBeforeOffer;
@@ -43,12 +41,11 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         public string StartDesc = "";
 
         //Events
-        public EventBase StartEvent = new EventBase(-1,-1, 0, 0, true);
+        public EventBase StartEvent = new EventBase(-1, 0, 0, true);
 
         public List<QuestTask> Tasks = new List<QuestTask>();
 
-        [JsonConstructor]
-        public QuestBase(int index) : base(index)
+        public QuestBase(int id) : base(id)
         {
             Name = "New Quest";
         }
@@ -162,7 +159,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
 
         public class QuestTask
         {
-            public EventBase CompletionEvent = new EventBase(-1,-1, 0, 0, true);
+            public EventBase CompletionEvent = new EventBase(-1, 0, 0, true);
             public int Data1;
             public int Data2;
             public string Desc = "";
@@ -174,19 +171,19 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
                 Id = id;
             }
 
-            public string GetTaskString(LocalizedString[] descriptions)
+            public string GetTaskString()
             {
                 var taskString = "";
                 switch (Objective)
                 {
                     case 0: //Event Driven
-                        taskString = descriptions[Objective].ToString(Desc);
+                        taskString = "Event Driven - " + Desc;
                         break;
                     case 1: //Gather Items
-                        taskString = descriptions[Objective].ToString(ItemBase.GetName(Data1), Data2, Desc);
+                        taskString = "Gather Items [" + ItemBase.GetName(Data1) + " x" + Data2 + "] - " + Desc;
                         break;
                     case 2: //Kill Npcs
-                        taskString = descriptions[Objective].ToString(NpcBase.GetName(Data1), Data2, Desc);
+                        taskString = "Kill Npc(s) [" + NpcBase.GetName(Data1) + " x" + Data2 + "] - " + Desc;
                         break;
                 }
                 return taskString;

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects.Conditions;
-using Newtonsoft.Json;
+using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.Utilities;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects.Events
 {
@@ -57,18 +57,6 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
             CommandLists.Add(new CommandList());
         }
 
-        [JsonConstructor]
-        public EventPage(int ignoreThis)
-        {
-            MovementType = 0;
-            MovementSpeed = 2;
-            MovementFreq = 2;
-            Passable = 0;
-            Layer = 1;
-            Trigger = 0;
-            HideName = 0;;
-        }
-
         public EventPage(ByteBuffer curBuffer)
         {
             Desc = curBuffer.ReadString();
@@ -109,7 +97,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
             myBuffer.WriteInteger(Trigger);
             myBuffer.WriteInteger(TriggerVal);
             myBuffer.WriteString(TriggerCommand);
-            myBuffer.WriteString(Intersect.Utilities.TextUtils.SanitizeNone(FaceGraphic));
+            myBuffer.WriteString(FaceGraphic);
             Graphic.Save(myBuffer);
             myBuffer.WriteInteger(HideName);
             myBuffer.WriteInteger(DisablePreview);
