@@ -227,7 +227,7 @@ namespace Intersect.Editor.Classes
             }
         }
 
-        public static void HandleServerConfig(byte[] packet)
+        private static void HandleServerConfig(byte[] packet)
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
@@ -266,12 +266,6 @@ namespace Intersect.Editor.Classes
                 var tileLength = bf.ReadInteger();
                 var tileData = bf.ReadBytes(tileLength);
                 var map = new MapInstance((int) mapNum);
-                if (MapInstance.Lookup.Get<MapInstance>(mapNum) != null)
-                {
-                    if (Globals.CurrentMap == MapInstance.Lookup.Get<MapInstance>(mapNum))
-                        Globals.CurrentMap = map;
-                    MapInstance.Lookup.Get<MapInstance>(mapNum).Delete();
-                }
                 map.Load(mapData);
                 map.LoadTileData(tileData);
                 map.SaveStateAsUnchanged();
@@ -279,6 +273,17 @@ namespace Intersect.Editor.Classes
                 map.MapGridY = bf.ReadInteger();
                 map.InitAutotiles();
                 map.UpdateAdjacentAutotiles();
+                if (MapInstance.Lookup.Get<MapInstance>(mapNum) != null)
+                {
+                    lock (MapInstance.Lookup.Get<MapInstance>(mapNum).MapLock)
+                    {
+                        if (Globals.CurrentMap == MapInstance.Lookup.Get<MapInstance>(mapNum))
+                        {
+                            Globals.CurrentMap = map;
+                        }
+                        MapInstance.Lookup.Get<MapInstance>(mapNum).Delete();
+                    }
+                }
                 MapInstance.Lookup.Set(mapNum, map);
                 if (!Globals.InEditor && Globals.HasGameData)
                 {
