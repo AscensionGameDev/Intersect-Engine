@@ -64,12 +64,12 @@ namespace Intersect.GameObjects
         [Column("StatsGiven")]
         public string StatsJson
         {
-            get => DatabaseUtils.SaveIntArray(StatsGiven, (int)Enums.Stats.StatCount);
-            set => StatsGiven = DatabaseUtils.LoadIntArray(value, (int)Enums.Stats.StatCount);
+            get => DatabaseUtils.SaveIntArray(StatsGiven, (int)Stats.StatCount);
+            set => StatsGiven = DatabaseUtils.LoadIntArray(value, (int)Stats.StatCount);
         }
 
         [NotMapped]
-        public int[] StatsGiven { get; set; } = new int[(int)Enums.Stats.StatCount];
+        public int[] StatsGiven { get; set; } = new int[(int)Stats.StatCount];
 
         [Column("UsageRequirements")]
         public string JsonUsageRequirements

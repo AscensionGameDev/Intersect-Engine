@@ -123,6 +123,7 @@ namespace Intersect.GameObjects
         }
 
         public int[] StatIncrease = new int[(int) Stats.StatCount];
+
         public int[] VitalIncrease = new int[(int) Vitals.VitalCount];
 
         //Regen Percentages
