@@ -146,6 +146,7 @@ namespace Intersect.Editor.Forms
             btnPlayLower.Text = Strings.Get("animationeditor", "lowerplay");
             grpLowerFrameOpts.Text = Strings.Get("animationeditor", "lowerframeoptions");
             btnLowerClone.Text = Strings.Get("animationeditor", "lowerclone");
+            chkDisableLowerRotations.Text = Strings.Get("animationeditor", "disablelowerrotations");
 
             grpUpper.Text = Strings.Get("animationeditor", "uppergroup");
             lblUpperGraphic.Text = Strings.Get("animationeditor", "uppergraphic");
@@ -159,6 +160,7 @@ namespace Intersect.Editor.Forms
             btnPlayUpper.Text = Strings.Get("animationeditor", "upperplay");
             grpUpperFrameOpts.Text = Strings.Get("animationeditor", "upperframeoptions");
             btnUpperClone.Text = Strings.Get("animationeditor", "upperclone");
+            chkDisableUpperRotations.Text = Strings.Get("animationeditor", "disableupperrotations");
 
             btnSave.Text = Strings.Get("animationeditor", "save");
             btnCancel.Text = Strings.Get("animationeditor", "cancel");
@@ -682,6 +684,16 @@ namespace Intersect.Editor.Forms
         {
             DrawLowerFrame();
             DrawUpperFrame();
+        }
+
+        private void chkDisableLowerRotations_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.DisableLowerRotations = chkDisableLowerRotations.Checked;
+        }
+
+        private void chkDisableUpperRotations_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.DisableUpperRotations = chkDisableUpperRotations.Checked;
         }
     }
 }

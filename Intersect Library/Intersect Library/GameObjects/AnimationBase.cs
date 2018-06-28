@@ -8,6 +8,7 @@ namespace Intersect.GameObjects
         public int LowerAnimFrameCount = 1;
         public int LowerAnimFrameSpeed = 100;
         public int LowerAnimLoopCount;
+        public bool DisableLowerRotations;
 
         //Lower Animation
         public string LowerAnimSprite = "";
@@ -20,6 +21,7 @@ namespace Intersect.GameObjects
         public int UpperAnimFrameCount = 1;
         public int UpperAnimFrameSpeed = 100;
         public int UpperAnimLoopCount;
+        public bool DisableUpperRotations;
 
         //Upper Animation
         public string UpperAnimSprite = "";
@@ -60,6 +62,7 @@ namespace Intersect.GameObjects
             LowerAnimFrameCount = myBuffer.ReadInteger();
             LowerAnimFrameSpeed = myBuffer.ReadInteger();
             LowerAnimLoopCount = myBuffer.ReadInteger();
+            DisableLowerRotations = myBuffer.ReadBoolean();
             LowerLights = new LightBase[LowerAnimFrameCount];
             for (var i = 0; i < LowerAnimFrameCount; i++)
             {
@@ -73,6 +76,7 @@ namespace Intersect.GameObjects
             UpperAnimFrameCount = myBuffer.ReadInteger();
             UpperAnimFrameSpeed = myBuffer.ReadInteger();
             UpperAnimLoopCount = myBuffer.ReadInteger();
+            DisableUpperRotations = myBuffer.ReadBoolean();
             UpperLights = new LightBase[UpperAnimFrameCount];
             for (var i = 0; i < UpperAnimFrameCount; i++)
             {
@@ -95,6 +99,7 @@ namespace Intersect.GameObjects
             myBuffer.WriteInteger(LowerAnimFrameCount);
             myBuffer.WriteInteger(LowerAnimFrameSpeed);
             myBuffer.WriteInteger(LowerAnimLoopCount);
+            myBuffer.WriteBoolean(DisableLowerRotations);
             for (var i = 0; i < LowerAnimFrameCount; i++)
             {
                 myBuffer.WriteBytes(LowerLights[i].LightData());
@@ -107,6 +112,7 @@ namespace Intersect.GameObjects
             myBuffer.WriteInteger(UpperAnimFrameCount);
             myBuffer.WriteInteger(UpperAnimFrameSpeed);
             myBuffer.WriteInteger(UpperAnimLoopCount);
+            myBuffer.WriteBoolean(DisableUpperRotations);
             for (var i = 0; i < UpperAnimFrameCount; i++)
             {
                 myBuffer.WriteBytes(UpperLights[i].LightData());

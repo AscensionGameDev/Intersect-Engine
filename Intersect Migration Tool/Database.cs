@@ -4,6 +4,7 @@ using System.Xml;
 using Intersect.Localization;
 using Intersect.Logging;
 using Intersect.Migration.UpgradeInstructions.Upgrade_1;
+using Intersect.Migration.UpgradeInstructions.Upgrade_10;
 using Intersect.Migration.UpgradeInstructions.Upgrade_2;
 using Intersect.Migration.UpgradeInstructions.Upgrade_3;
 using Intersect.Migration.UpgradeInstructions.Upgrade_4;
@@ -19,7 +20,7 @@ namespace Intersect.Migration
 {
     public static class Database
     {
-        public const int DbVersion = 10;
+        public const int DbVersion = 11;
         private const string DB_FILENAME = "resources/intersect.db";
 
         //Database Variables
@@ -43,7 +44,7 @@ namespace Intersect.Migration
                 }
                 catch (Exception exception)
                 {
-                    Log.Trace(exception);
+                    UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.Logging.Log.Trace(exception);
                 }
             }
             return "English";
@@ -165,6 +166,12 @@ namespace Intersect.Migration
                     case 9:
                         var upgrade9 = new Upgrade9(sDbConnection);
                         upgrade9.Upgrade();
+                        currentVersion++;
+                        IncrementDatabaseVersion();
+                        break;
+                    case 10:
+                        var upgrade10 = new Upgrade10(sDbConnection);
+                        upgrade10.Upgrade();
                         currentVersion++;
                         IncrementDatabaseVersion();
                         break;

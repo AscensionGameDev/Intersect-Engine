@@ -340,6 +340,7 @@
         <string id="lowerframecount">Graphic Frame Count:</string>
         <string id="lowerframeduration">Frame Duration (ms):</string>
         <string id="lowerloopcount">Loop Count:</string>
+        <string id="disablelowerrotations">Disable Rotations</string>
         <string id="lowerplayback">Playback</string>
         <string id="lowerframe">Frame: {00}</string>
         <string id="lowerplay">Play Lower Animation</string>
@@ -353,6 +354,7 @@
         <string id="upperframecount">Graphic Frame Count:</string>
         <string id="upperframeduration">Frame Duration (ms):</string>
         <string id="upperloopcount">Loop Count:</string>
+        <string id="disableupperrotations">Disable Rotations</string>
         <string id="upperplayback">Playback</string>
         <string id="upperframe">Frame: {00}</string>
         <string id="upperplay">Play Upper Animation</string>

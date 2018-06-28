@@ -2532,11 +2532,11 @@ namespace Intersect.Server.Classes.Networking
                 var count = bf.ReadInteger();
                 for (int i = 0; i < count; i++)
                 {
-                    var value = bf.ReadString();
+                    var value = bf.ReadString().Trim().ToLower();
                     if (type == GameObjectType.Tileset)
                     {
                         foreach (var tileset in TilesetBase.Lookup)
-                            if (tileset.Value.Name == value) return;
+                            if (tileset.Value.Name.Trim().ToLower() == value) return;
                     }
                     var obj = Database.AddGameObject(type);
                     if (type == GameObjectType.Tileset)

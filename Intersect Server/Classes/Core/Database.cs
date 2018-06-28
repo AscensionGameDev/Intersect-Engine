@@ -28,7 +28,7 @@ namespace Intersect.Server.Classes.Core
     public static class Database
     {
         private const string DIRECTORY_BACKUPS = "resources/backups";
-        private const int DbVersion = 10;
+        private const int DbVersion = 11;
         private const string DB_FILENAME = "resources/intersect.db";
 
         //Database Variables
