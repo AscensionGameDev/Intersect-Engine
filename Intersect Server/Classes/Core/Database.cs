@@ -37,8 +37,7 @@ namespace Intersect.Server.Classes.Core
     public static class LegacyDatabase
     {
         public const string DIRECTORY_BACKUPS = "resources/backups";
-        private const int DbVersion = 11;
-
+        private const int DbVersion = 12;
         private const string GameDbFilename = "resources/gamedata.db";
         private const string PlayersDbFilename = "resources/playerdata.db";
 
@@ -443,7 +442,7 @@ namespace Intersect.Server.Classes.Core
             }
             return false;
         }
-
+        
         public static void DeleteCharacter(Guid characterId)
         {
             sPlayerDb.Characters.Remove(sPlayerDb.Characters.Find(characterId));

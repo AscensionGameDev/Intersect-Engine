@@ -230,7 +230,7 @@ namespace Intersect.Editor.Networking
             }
         }
 
-        public static void HandleServerConfig(byte[] packet)
+        private static void HandleServerConfig(byte[] packet)
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
@@ -270,12 +270,6 @@ namespace Intersect.Editor.Networking
                 var attributeDataLength = bf.ReadInteger();
                 var attributeData = bf.ReadBytes(attributeDataLength);
                 var map = new MapInstance((int) mapNum);
-                if (MapInstance.Lookup.Get<MapInstance>(mapNum) != null)
-                {
-                    if (Globals.CurrentMap == MapInstance.Lookup.Get<MapInstance>(mapNum))
-                        Globals.CurrentMap = map;
-                    MapInstance.Lookup.Get<MapInstance>(mapNum).Delete();
-                }
                 map.Load(mapJson);
                 map.LoadTileData(tileData);
                 map.LoadAttributes(attributeData);
@@ -284,6 +278,17 @@ namespace Intersect.Editor.Networking
                 map.SaveStateAsUnchanged();
                 map.InitAutotiles();
                 map.UpdateAdjacentAutotiles();
+                if (MapInstance.Lookup.Get<MapInstance>(mapNum) != null)
+                {
+                    lock (MapInstance.Lookup.Get<MapInstance>(mapNum).MapLock)
+                    {
+                        if (Globals.CurrentMap == MapInstance.Lookup.Get<MapInstance>(mapNum))
+                        {
+                            Globals.CurrentMap = map;
+                        }
+                        MapInstance.Lookup.Get<MapInstance>(mapNum).Delete();
+                    }
+                }
                 MapInstance.Lookup.Set(mapNum, map);
                 if (!Globals.InEditor && Globals.HasGameData)
                 {
@@ -295,8 +300,9 @@ namespace Intersect.Editor.Networking
                     if (Globals.FetchingMapPreviews || Globals.CurrentMap == map)
                     {
                         int currentmap = Globals.CurrentMap.Index;
-                        if (Database.LoadMapCacheLegacy(mapNum, map.Revision) == null &&
-                            !Globals.MapsToScreenshot.Contains(mapNum)) Globals.MapsToScreenshot.Add(mapNum);
+                        var img = Database.LoadMapCacheLegacy(mapNum, map.Revision);
+                        if (img == null &&  !Globals.MapsToScreenshot.Contains(mapNum)) Globals.MapsToScreenshot.Add(mapNum);
+                        img?.Dispose();
                         if (Globals.FetchingMapPreviews)
                         {
                             if (Globals.MapsToFetch.Contains(mapNum))

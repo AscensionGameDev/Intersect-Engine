@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Intersect.Migration.Localization;
 using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects.Conditions;
-using Newtonsoft.Json;
+using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.Utilities;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects
 {
@@ -27,8 +28,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         public bool WalkableAfter;
         public bool WalkableBefore;
 
-        [JsonConstructor]
-        public ResourceBase(int index) : base(index)
+        public ResourceBase(int id) : base(id)
         {
             Name = "New Resource";
             for (int i = 0; i < Options.MaxNpcDrops; i++)
@@ -63,6 +63,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
 
             HarvestingReqs.Load(myBuffer);
 
+            if (MinHp > MaxHp) MaxHp = MinHp;
+
             myBuffer.Dispose();
         }
 
@@ -70,8 +72,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         {
             var myBuffer = new ByteBuffer();
             myBuffer.WriteString(Name);
-            myBuffer.WriteString(Intersect.Utilities.TextUtils.SanitizeNone(InitialGraphic));
-            myBuffer.WriteString(Intersect.Utilities.TextUtils.SanitizeNone(EndGraphic));
+            myBuffer.WriteString(InitialGraphic);
+            myBuffer.WriteString(EndGraphic);
             myBuffer.WriteInteger(MinHp);
             myBuffer.WriteInteger(MaxHp);
             myBuffer.WriteInteger(Tool);

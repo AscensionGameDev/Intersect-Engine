@@ -147,6 +147,7 @@ namespace Intersect.Editor.Forms.Editors
             btnPlayLower.Text = Strings.AnimationEditor.lowerplay;
             grpLowerFrameOpts.Text = Strings.AnimationEditor.lowerframeoptions;
             btnLowerClone.Text = Strings.AnimationEditor.lowerclone;
+            chkDisableLowerRotations.Text = Strings.AnimationEditor.disablelowerrotations;
 
             grpUpper.Text = Strings.AnimationEditor.uppergroup;
             lblUpperGraphic.Text = Strings.AnimationEditor.uppergraphic;
@@ -160,6 +161,7 @@ namespace Intersect.Editor.Forms.Editors
             btnPlayUpper.Text = Strings.AnimationEditor.upperplay;
             grpUpperFrameOpts.Text = Strings.AnimationEditor.upperframeoptions;
             btnUpperClone.Text = Strings.AnimationEditor.upperclone;
+            chkDisableUpperRotations.Text = Strings.AnimationEditor.disableupperrotations;
 
             btnSave.Text = Strings.AnimationEditor.save;
             btnCancel.Text = Strings.AnimationEditor.cancel;

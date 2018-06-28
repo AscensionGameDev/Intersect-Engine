@@ -143,10 +143,12 @@ namespace Intersect.Editor.Forms
         {
             if (mCurrentMap > -1)
             {
-                if (Database.LoadMapCacheLegacy(mCurrentMap, -1) != null)
+                var img = Database.LoadMapCacheLegacy(mCurrentMap, -1);
+                if (img != null)
                 {
                     UpdatePreview();
                     tmrMapCheck.Enabled = false;
+                    img.Dispose();
                 }
             }
             else

@@ -14,6 +14,11 @@ namespace Intersect.Editor.Forms.DockingElements
 
         public void Init(MapInstance map)
         {
+            if (gridMapProperties.InvokeRequired)
+            {
+                gridMapProperties.Invoke((MethodInvoker) delegate { Init(map); });
+                return;
+            }
             gridMapProperties.SelectedObject = new MapProperties(map);
             InitLocalization();
         }

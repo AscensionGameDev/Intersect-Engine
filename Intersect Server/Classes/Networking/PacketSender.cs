@@ -652,8 +652,8 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteInteger(en.MapIndex);
             for (var i = 0; i < (int)Vitals.VitalCount; i++)
             {
-                bf.WriteInteger(en.MaxVital[i]);
-                bf.WriteInteger(en.Vital[i]);
+                bf.WriteInteger(en.GetMaxVital(i));
+                bf.WriteInteger(en.GetVital(i));
             }
             var statuses = en.Statuses.Values.ToArray();
             bf.WriteInteger(statuses.Length);
@@ -702,8 +702,8 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteInteger(en.MapIndex);
             for (var i = 0; i < (int)Vitals.VitalCount; i++)
             {
-                bf.WriteInteger(en.MaxVital[i]);
-                bf.WriteInteger(en.Vital[i]);
+                bf.WriteInteger(en.GetMaxVital(i));
+                bf.WriteInteger(en.GetVital(i));
             }
             var statuses = en.Statuses.Values.ToArray();
             bf.WriteInteger(statuses.Length);

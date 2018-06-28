@@ -508,6 +508,10 @@ namespace Intersect.Editor.Forms.DockingElements
                 EditorGraphics.TilePreviewUpdated = true;
             }
 
+            if (Globals.CurrentTool == (int) EditingTool.Erase || 
+                Globals.CurrentTool == (int) EditingTool.Fill ||
+                Globals.CurrentTool == (int) EditingTool.Droppler) return; //No click/drag with fill, erase, or droppler tools
+
             if (Globals.MouseButton > -1)
             {
                 var tmpMap = Globals.CurrentMap;

@@ -586,7 +586,11 @@ namespace Intersect_Client.Classes.Maps
                     xOffset = forceFrame * Options.TileWidth * 2;
                     break;
 
-                case MapAutotiles.AUTOTILE_CLIFF:
+				case MapAutotiles.AUTOTILE_ANIM_XP:
+					xOffset = forceFrame * Options.TileWidth * 3;
+					break;
+
+				case MapAutotiles.AUTOTILE_CLIFF:
                     yOffset = -Options.TileHeight;
                     break;
             }

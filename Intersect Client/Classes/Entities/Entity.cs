@@ -577,7 +577,8 @@ namespace Intersect_Client.Classes.Entities
                 if (Status[n].Type == (int) StatusTypes.Transform)
                 {
                     sprite = Status[n].Data;
-                }
+					TransformedSprite = sprite;
+				}
                 //If unit is stealthed, don't render unless the entity is the player.
                 if (Status[n].Type == (int) StatusTypes.Stealth)
                 {
@@ -591,14 +592,14 @@ namespace Intersect_Client.Classes.Entities
                     }
                 }
             }
-            if (sprite != TransformedSprite)
-            {
-                TransformedSprite = sprite;
-            }
-            else
-            {
-                sprite = MySprite;
-            }
+
+			//Check if there is no transformed sprite set
+			if (string.IsNullOrEmpty(sprite))
+			{
+				sprite = MySprite;
+				MySprite = sprite;
+			}
+
             if (Texture != null)
             {
                 var map = MapInstance.Lookup.Get<MapInstance>(CurrentMap);

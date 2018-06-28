@@ -92,7 +92,7 @@ namespace Intersect_Client.Classes.Entities
             int end = 1;
             for (int i = 0; i < mMyBase.Animations.Count; i++)
             {
-                end = start + mMyBase.Animations[i].SpawnRange;
+                end = mMyBase.Animations[i].SpawnRange;
                 if (mQuantity >= start && mQuantity < end)
                 {
                     return i;

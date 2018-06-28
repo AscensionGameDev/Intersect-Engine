@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.Enums;
-using Newtonsoft.Json;
+using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.Utilities;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects
 {
@@ -21,7 +21,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         //Drops
         public List<NpcDrop> Drops = new List<NpcDrop>();
 
-        public long Experience;
+        public int Experience;
         public int Level = 1;
 
         //Vitals & Stats
@@ -45,8 +45,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         public string Sprite = "";
         public int[] Stat = new int[(int) Stats.StatCount];
 
-        [JsonConstructor]
-        public NpcBase(int index) : base(index)
+        public NpcBase(int id) : base(id)
         {
             Name = "New Npc";
             for (int i = 0; i < Options.MaxNpcDrops; i++)
@@ -62,7 +61,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
             var myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(packet);
             Name = myBuffer.ReadString();
-            Sprite = Intersect.Utilities.TextUtils.SanitizeNone(myBuffer.ReadString());
+            Sprite = myBuffer.ReadString();
             Level = myBuffer.ReadInteger();
             for (int i = 0; i < (int) Vitals.VitalCount; i++)
             {
@@ -72,7 +71,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
             {
                 Stat[i] = myBuffer.ReadInteger();
             }
-            Experience = myBuffer.ReadLong();
+            Experience = myBuffer.ReadInteger();
             SpawnDuration = myBuffer.ReadInteger();
             Behavior = myBuffer.ReadByte();
             SightRange = myBuffer.ReadInteger();
@@ -125,7 +124,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
             {
                 myBuffer.WriteInteger(Stat[i]);
             }
-            myBuffer.WriteLong(Experience);
+            myBuffer.WriteInteger(Experience);
             myBuffer.WriteInteger(SpawnDuration);
             myBuffer.WriteByte(Behavior);
             myBuffer.WriteInteger(SightRange);

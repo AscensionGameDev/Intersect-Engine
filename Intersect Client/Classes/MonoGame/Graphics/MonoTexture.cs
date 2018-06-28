@@ -1,7 +1,12 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using Intersect.Client.Classes.Localization;
+using Intersect.Localization;
+using Intersect.Logging;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.UI.Game.Chat;
 using Microsoft.Xna.Framework.Graphics;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
@@ -31,11 +36,22 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             if (!File.Exists(mPath)) return;
             using (var fileStream = new FileStream(mPath, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
-                mTexture = Texture2D.FromStream(mGraphicsDevice, fileStream);
-                if (mTexture == null) return;
-                mWidth = mTexture.Width;
-                mHeight = mTexture.Height;
-                mLoadError = false;
+                try
+                {
+                    mTexture = Texture2D.FromStream(mGraphicsDevice, fileStream);
+                    if (mTexture != null)
+                    {
+                        mWidth = mTexture.Width;
+                        mHeight = mTexture.Height;
+                        mLoadError = false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    //Failed to load texture.. lets log like we do with audio
+                    Log.Error($"Error loading '{mName}'.", ex);
+                    ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sprite) + " [" + mName + "]", new Color(0xBF, 0x0, 0x0)));
+                }
             }
         }
 

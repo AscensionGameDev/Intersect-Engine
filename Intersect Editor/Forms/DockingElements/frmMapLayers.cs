@@ -216,7 +216,7 @@ namespace Intersect.Editor.Forms.DockingElements
             }
             if (TilesetBase.Lookup.Count > 0)
             {
-                Globals.MapLayersWindow.cmbTilesets.SelectedIndex = 0;
+                if (Globals.MapLayersWindow.cmbTilesets.Items.Count > 0) Globals.MapLayersWindow.cmbTilesets.SelectedIndex = 0;
                 Globals.CurrentTileset =
                     TilesetBase.Lookup.Get<TilesetBase>(Database.GameObjectListIndex(GameObjectType.Tileset, 0));
             }

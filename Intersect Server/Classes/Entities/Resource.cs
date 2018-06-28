@@ -25,9 +25,9 @@ namespace Intersect.Server.Classes.Entities
             MyBase = resource;
             Name = resource.Name;
             Sprite = resource.InitialGraphic;
-            Vital[(int) Vitals.Health] = Globals.Rand.Next(Math.Min(1, resource.MinHp),
-                Math.Max(resource.MaxHp, Math.Min(1, resource.MinHp)) + 1);
-            MaxVital[(int) Vitals.Health] = Vital[(int) Vitals.Health];
+            SetMaxVital(Vitals.Health, Globals.Rand.Next(Math.Min(1, resource.MinHp),
+                Math.Max(resource.MaxHp, Math.Min(1, resource.MinHp)) + 1));
+            RestoreVital(Vitals.Health);
             Passable = Convert.ToInt32(resource.WalkableBefore);
             HideName = 1;
         }
@@ -58,9 +58,8 @@ namespace Intersect.Server.Classes.Entities
         public void Spawn()
         {
             Sprite = MyBase.InitialGraphic;
-            Vital[(int) Vitals.Health] = Globals.Rand.Next(Math.Min(1, MyBase.MinHp),
-                Math.Max(MyBase.MaxHp, Math.Min(1, MyBase.MinHp)) + 1);
-            MaxVital[(int) Vitals.Health] = Vital[(int) Vitals.Health];
+            SetMaxVital(Vitals.Health,Globals.Rand.Next(MyBase.MinHp, MyBase.MaxHp + 1));
+            RestoreVital(Vitals.Health);
             Passable = Convert.ToInt32(MyBase.WalkableBefore);
             Items.Clear();
 
@@ -151,9 +150,9 @@ namespace Intersect.Server.Classes.Entities
             {
                 foreach (Vitals vital in Enum.GetValues(typeof(Vitals)))
                 {
-                    if ((int) vital < (int) Vitals.VitalCount && Vital[(int) vital] != MaxVital[(int) vital])
+                    if ((int) vital < (int) Vitals.VitalCount && !IsFullVital(vital))
                     {
-                        AddVital(vital, (int) ((float) MaxVital[(int) vital] * .1f));
+                        AddVital(vital, (int) ((float) GetMaxVital(vital) * .1f));
                     }
                 }
             }

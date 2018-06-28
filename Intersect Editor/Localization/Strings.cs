@@ -38,6 +38,7 @@ namespace Intersect.Editor.Localization
             public static LocalizedString lowergroup = @"Lower Layer (Below Target) ";
             public static LocalizedString lowerhorizontalframes = @"Graphic Horizontal Frames:";
             public static LocalizedString lowerloopcount = @"Loop Count:";
+            public static LocalizedString disablelowerrotations = @"Disable Rotations";
             public static LocalizedString lowerplay = @"Play Lower Animation";
             public static LocalizedString lowerplayback = @"Playback";
             public static LocalizedString lowerstop = @"Stop Upper Animation";
@@ -56,6 +57,7 @@ namespace Intersect.Editor.Localization
             public static LocalizedString upperclone = @"Clone From Previous";
             public static LocalizedString upperframe = @"Frame: {00}";
             public static LocalizedString upperframecount = @"Graphic Frame Count:";
+            public static LocalizedString disableupperrotations = @"Disable Rotations";
             public static LocalizedString upperframeduration = @"Frame Duration (ms):";
             public static LocalizedString upperframeoptions = @"Frame Options";
             public static LocalizedString uppergraphic = @"Graphic:";

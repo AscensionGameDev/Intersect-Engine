@@ -1,4 +1,8 @@
-﻿namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects.Events
+﻿using System;
+using System.Collections.Generic;
+using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects.Switches_and_Variables;
+
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects.Events
 {
     public class EventCommand
     {

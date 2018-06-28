@@ -42,7 +42,7 @@ namespace Intersect.Server.WebApi.Modules
                         .OfType<Vitals>()
                         .ToList()
                         .FindAll(vital => vital != Vitals.VitalCount)
-                        .Select(vital => new JProperty(vital.ToString().ToLower(), player.Vital?[(int)vital]))
+                        .Select(vital => new JProperty(vital.ToString().ToLower(), player.GetVital(vital)))
                         .ToArray<object>()
                 )},
                 {"maxVitals", new JObject(
@@ -50,7 +50,7 @@ namespace Intersect.Server.WebApi.Modules
                         .OfType<Vitals>()
                         .ToList()
                         .FindAll(vital => vital != Vitals.VitalCount)
-                        .Select(vital => new JProperty(vital.ToString().ToLower(), player.MaxVital?[(int)vital]))
+                        .Select(vital => new JProperty(vital.ToString().ToLower(), player.GetMaxVital(vital)))
                         .ToArray<object>()
                 )},
                 {"stats", new JObject(

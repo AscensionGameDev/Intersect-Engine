@@ -1,4 +1,6 @@
-﻿namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects.Events
+﻿using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.Utilities;
+
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects.Events
 {
     public class EventGraphic
     {
@@ -32,7 +34,7 @@
         public void Save(ByteBuffer curBuffer)
         {
             curBuffer.WriteInteger(Type);
-            curBuffer.WriteString(Intersect.Utilities.TextUtils.SanitizeNone(Filename));
+            curBuffer.WriteString(Filename);
             curBuffer.WriteInteger(X);
             curBuffer.WriteInteger(Y);
             curBuffer.WriteInteger(Width);

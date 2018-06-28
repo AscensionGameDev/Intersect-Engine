@@ -111,57 +111,57 @@ namespace Intersect.Editor.Maps
 
         public void Load(ByteBuffer bf)
         {
-            Loaded = false;
-            List<int> gridMaps = new List<int>();
-            GridWidth = (int) bf.ReadLong();
-            GridHeight = (int) bf.ReadLong();
-            bf.ReadBoolean();
-            lock (mTexLock)
+            lock (GetMapGridLock())
             {
+                Loaded = false;
+                List<int> gridMaps = new List<int>();
+                GridWidth = (int)bf.ReadLong();
+                GridHeight = (int)bf.ReadLong();
+                bf.ReadBoolean();
                 UnloadTextures();
                 Grid = new MapGridItem[GridWidth, GridHeight];
-            }
-            for (int x = -1; x <= GridWidth; x++)
-            {
-                for (int y = -1; y <= GridHeight; y++)
+                for (int x = -1; x <= GridWidth; x++)
                 {
-                    if (y == -1 || y == GridHeight || x == -1 || x == GridWidth)
+                    for (int y = -1; y <= GridHeight; y++)
                     {
-                    }
-                    else
-                    {
-                        int num = bf.ReadInteger();
-                        if (num == -1)
+                        if (y == -1 || y == GridHeight || x == -1 || x == GridWidth)
                         {
-                            Grid[x, y] = new MapGridItem(num);
                         }
                         else
                         {
-                            Grid[x, y] = new MapGridItem(num, bf.ReadString(), bf.ReadInteger());
-                            gridMaps.Add(Grid[x, y].Mapnum);
+                            int num = bf.ReadInteger();
+                            if (num == -1)
+                            {
+                                Grid[x, y] = new MapGridItem(num);
+                            }
+                            else
+                            {
+                                Grid[x, y] = new MapGridItem(num, bf.ReadString(), bf.ReadInteger());
+                                gridMaps.Add(Grid[x, y].Mapnum);
+                            }
                         }
                     }
                 }
-            }
-            //Get a list of maps -- if they are not in this grid.
-            mLinkMaps.Clear();
-            for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
-            {
-                if (!gridMaps.Contains(MapList.GetOrderedMaps()[i].MapNum))
+                //Get a list of maps -- if they are not in this grid.
+                mLinkMaps.Clear();
+                for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
                 {
-                    mLinkMaps.Add(MapList.GetOrderedMaps()[i].MapNum);
+                    if (!gridMaps.Contains(MapList.GetOrderedMaps()[i].MapNum))
+                    {
+                        mLinkMaps.Add(MapList.GetOrderedMaps()[i].MapNum);
+                    }
                 }
+                mMaxZoom = 1f; //Real Size
+                Zoom = mMinZoom;
+                TileWidth = (int)(Options.TileWidth * Options.MapWidth * Zoom);
+                TileHeight = (int)(Options.TileHeight * Options.MapHeight * Zoom);
+                ContentRect = new Rectangle(ViewRect.Width / 2 - (TileWidth * (GridWidth + 2)) / 2,
+                    ViewRect.Height / 2 - (TileHeight * (GridHeight + 2)) / 2, TileWidth * (GridWidth + 2),
+                    TileHeight * (GridHeight + 2));
+                mCreateTextures = true;
+                Loaded = true;
+                mGridMaps = gridMaps;
             }
-            mMaxZoom = 1f; //Real Size
-            Zoom = mMinZoom;
-            TileWidth = (int) (Options.TileWidth * Options.MapWidth * Zoom);
-            TileHeight = (int) (Options.TileHeight * Options.MapHeight * Zoom);
-            ContentRect = new Rectangle(ViewRect.Width / 2 - (TileWidth * (GridWidth + 2)) / 2,
-                ViewRect.Height / 2 - (TileHeight * (GridHeight + 2)) / 2, TileWidth * (GridWidth + 2),
-                TileHeight * (GridHeight + 2));
-            mCreateTextures = true;
-            Loaded = true;
-            mGridMaps = gridMaps;
         }
 
         public void DoubleClick(int x, int y)
@@ -192,7 +192,7 @@ namespace Intersect.Editor.Maps
 
         private void SaveMap()
         {
-            if (Globals.CurrentTool == (int) EditingTool.Selection)
+            if (Globals.CurrentTool == (int)EditingTool.Selection)
             {
                 if (Globals.Dragging == true)
                 {
@@ -245,7 +245,7 @@ namespace Intersect.Editor.Maps
             //Generate one row at a time.
             for (int y = 0; y < rows; y++)
             {
-                int gridRow = (int) Math.Floor(y / (double) rowSize);
+                int gridRow = (int)Math.Floor(y / (double)rowSize);
                 if (gridRow != cacheRow)
                 {
                     foreach (var cache in pngReaderDict)
@@ -386,10 +386,17 @@ namespace Intersect.Editor.Maps
             {
                 for (int y = 0; y < GridHeight; y++)
                 {
-                    if (Grid[x, y].Mapnum > -1 && Database.LoadMapCacheLegacy(Grid[x, y].Mapnum,
-                            Grid[x, y].Revision) == null)
+                    if (Grid[x, y].Mapnum > -1)
                     {
-                        maps.Add(Grid[x, y].Mapnum);
+                        var img = Database.LoadMapCacheLegacy(Grid[x, y].Mapnum, Grid[x, y].Revision);
+                        if (img == null)
+                        {
+                            maps.Add(Grid[x, y].Mapnum);
+                        }
+                        else
+                        {
+                            img.Dispose();
+                        }
                     }
                 }
             }
@@ -511,7 +518,7 @@ namespace Intersect.Editor.Maps
                 Database.SaveMapCache(mContextMap.Mapnum, mContextMap.Revision, null);
                 if (MapInstance.Lookup.Get<MapInstance>(mContextMap.Mapnum) != null)
                     MapInstance.Lookup.Get<MapInstance>(mContextMap.Mapnum).Delete();
-                Globals.MapsToFetch = new List<int>() {mContextMap.Mapnum};
+                Globals.MapsToFetch = new List<int>() { mContextMap.Mapnum };
                 PacketSender.SendNeedMap(mContextMap.Mapnum);
             }
         }
@@ -560,14 +567,14 @@ namespace Intersect.Editor.Maps
         public void Update(Microsoft.Xna.Framework.Rectangle panelBounds)
         {
             mMinZoom =
-                Math.Min(panelBounds.Width / (float) (Options.TileWidth * Options.MapWidth * (GridWidth + 2)),
-                    panelBounds.Height / (float) (Options.TileHeight * Options.MapHeight * (GridHeight + 2))) / 2f;
+                Math.Min(panelBounds.Width / (float)(Options.TileWidth * Options.MapWidth * (GridWidth + 2)),
+                    panelBounds.Height / (float)(Options.TileHeight * Options.MapHeight * (GridHeight + 2))) / 2f;
             //Gotta calculate 
             if (Zoom < mMinZoom)
             {
                 Zoom = mMinZoom * 2;
-                TileWidth = (int) (Options.TileWidth * Options.MapWidth * Zoom);
-                TileHeight = (int) (Options.TileHeight * Options.MapHeight * Zoom);
+                TileWidth = (int)(Options.TileWidth * Options.MapWidth * Zoom);
+                TileHeight = (int)(Options.TileHeight * Options.MapHeight * Zoom);
                 ContentRect = new Rectangle(0, 0, TileWidth * (GridWidth + 2), TileHeight * (GridHeight + 2));
                 lock (mTexLock)
                 {
@@ -655,8 +662,8 @@ namespace Intersect.Editor.Maps
         {
             lock (mTexLock)
             {
-                int hCount = (int) Math.Ceiling((float) panelBounds.Width / TileWidth) + 2;
-                int wCount = (int) Math.Ceiling((float) panelBounds.Height / TileHeight) + 2;
+                int hCount = (int)Math.Ceiling((float)panelBounds.Width / TileWidth) + 2;
+                int wCount = (int)Math.Ceiling((float)panelBounds.Height / TileHeight) + 2;
                 for (int i = 0; i < hCount * wCount && i < GridWidth * GridHeight; i++)
                 {
                     mTextures.Add(new Texture2D(EditorGraphics.GetGraphicsDevice(), TileWidth, TileHeight));
@@ -703,8 +710,8 @@ namespace Intersect.Editor.Maps
             int amt = val / 120;
 
             //Find the original tile we are hovering over
-            var x1 = (double) Math.Min(ContentRect.Width, Math.Max(0, mouseX - ContentRect.X)) / (float) TileWidth;
-            var y1 = (double) Math.Min(ContentRect.Height, Math.Max(0, mouseY - ContentRect.Y)) / (float) TileHeight;
+            var x1 = (double)Math.Min(ContentRect.Width, Math.Max(0, mouseX - ContentRect.X)) / (float)TileWidth;
+            var y1 = (double)Math.Min(ContentRect.Height, Math.Max(0, mouseY - ContentRect.Y)) / (float)TileHeight;
             var prevZoom = Zoom;
             Zoom += .05f * amt;
             if (prevZoom != Zoom)
@@ -717,13 +724,13 @@ namespace Intersect.Editor.Maps
             }
             if (Zoom < mMinZoom) Zoom = mMinZoom;
             if (Zoom > mMaxZoom) Zoom = mMaxZoom;
-            TileWidth = (int) (Options.TileWidth * Options.MapWidth * Zoom);
-            TileHeight = (int) (Options.TileHeight * Options.MapHeight * Zoom);
+            TileWidth = (int)(Options.TileWidth * Options.MapWidth * Zoom);
+            TileHeight = (int)(Options.TileHeight * Options.MapHeight * Zoom);
             //were gonna get the X/Y of where the content rect would need so that the grid location that the mouse is hovering over would be center of the viewing rect
             //Get the current location of the mouse over the current content rectangle
 
-            var x2 = (int) (x1 * TileWidth);
-            var y2 = (int) (y1 * TileHeight);
+            var x2 = (int)(x1 * TileWidth);
+            var y2 = (int)(y1 * TileHeight);
 
             ContentRect = new Rectangle(-x2 + mouseX, -y2 + mouseY, TileWidth * (GridWidth + 2),
                 TileHeight * (GridHeight + 2));

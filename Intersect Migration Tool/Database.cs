@@ -4,6 +4,7 @@ using System.Xml;
 using Intersect.Migration.Localization;
 using Intersect.Migration.UpgradeInstructions.Upgrade_1;
 using Intersect.Migration.UpgradeInstructions.Upgrade_10;
+using Intersect.Migration.UpgradeInstructions.Upgrade_11;
 using Intersect.Migration.UpgradeInstructions.Upgrade_2;
 using Intersect.Migration.UpgradeInstructions.Upgrade_3;
 using Intersect.Migration.UpgradeInstructions.Upgrade_4;
@@ -19,7 +20,7 @@ namespace Intersect.Migration
 {
     public static class Database
     {
-        public const int DbVersion = 11;
+        public const int DbVersion = 12;
         private const string DB_FILENAME = "resources/intersect.db";
 
         //Database Variables
@@ -173,12 +174,16 @@ namespace Intersect.Migration
                         IncrementDatabaseVersion();
                         break;
                     case 10:
+                        var upgrade10 = new Upgrade10(sDbConnection);
+                        upgrade10.Upgrade();
+                        currentVersion++;
+                        IncrementDatabaseVersion();
+                        break;
+                    case 11:
                         sDbConnection.Close();
                         sDbConnection = null;
-                        var upgrade10 = new Upgrade10();
-                        upgrade10.Upgrade();
-                        //currentVersion++;
-                        //IncrementDatabaseVersion(); //TOOD: increment both db's
+                        var upgrade11 = new Upgrade11();
+                        upgrade11.Upgrade();
                         break;
                     default:
                         throw new Exception(Strings.Upgrade.noinstructions);

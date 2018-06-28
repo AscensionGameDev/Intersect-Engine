@@ -35,12 +35,12 @@ namespace Intersect.Server.Classes.Entities
             Name = MyBase.Name;
             Owner = owner;
             Stat = owner.Stat;
-            Vital[(int) Vitals.Health] = 1;
-            MaxVital[(int) Vitals.Health] = 1;
             MapIndex = mapIndex;
             base.X = X;
             base.Y = Y;
             Z = z;
+            SetMaxVital(Vitals.Health, 1);
+            SetVital(Vitals.Health, 1);
             Dir = direction;
             Spell = parentSpell;
             Item = parentItem;

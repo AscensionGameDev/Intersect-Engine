@@ -1,4 +1,4 @@
-﻿namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib
+﻿namespace Intersect.Migration.UpgradeInstructions.Upgrade_11.Intersect_Convert_Lib
 {
     public static class TextUtils
     {
