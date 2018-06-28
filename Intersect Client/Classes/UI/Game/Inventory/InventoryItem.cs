@@ -122,7 +122,7 @@ namespace Intersect.Client.Classes.UI.Game.Inventory
             }
             if (Globals.GameShop == null)
             {
-                mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].ItemNum,
+                mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].Item,
                     Globals.Me.Inventory[mMySlot].ItemVal, mInventoryWindow.X - 255, mInventoryWindow.Y,
                     Globals.Me.Inventory[mMySlot].StatBoost);
             }
@@ -146,7 +146,7 @@ namespace Intersect.Client.Classes.UI.Game.Inventory
                     var hoveredItem = ItemBase.Lookup.Get<ItemBase>(shopItem.CostItemNum);
                     if (hoveredItem != null)
                     {
-                        mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].ItemNum,
+                        mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].Item,
                             Globals.Me.Inventory[mMySlot].ItemVal, mInventoryWindow.X - 220, mInventoryWindow.Y,
                             Globals.Me.Inventory[mMySlot].StatBoost, "",
                             Strings.Shop.sellsfor.ToString( shopItem.CostItemVal, hoveredItem.Name));
@@ -158,7 +158,7 @@ namespace Intersect.Client.Classes.UI.Game.Inventory
                     var costItem = ItemBase.Lookup.Get<ItemBase>(Globals.GameShop.DefaultCurrency);
                     if (hoveredItem != null && costItem != null)
                     {
-                        mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].ItemNum,
+                        mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].Item,
                             Globals.Me.Inventory[mMySlot].ItemVal, mInventoryWindow.X - 220, mInventoryWindow.Y,
                             Globals.Me.Inventory[mMySlot].StatBoost, "",
                             Strings.Shop.sellsfor.ToString( hoveredItem.Price, costItem.Name));
@@ -166,7 +166,7 @@ namespace Intersect.Client.Classes.UI.Game.Inventory
                 }
                 else
                 {
-                    mDescWindow = new ItemDescWindow(invItem.ItemNum, invItem.ItemVal, mInventoryWindow.X - 255,
+                    mDescWindow = new ItemDescWindow(invItem.Item, invItem.ItemVal, mInventoryWindow.X - 255,
                         mInventoryWindow.Y, invItem.StatBoost, "", Strings.Shop.wontbuy);
                 }
             }

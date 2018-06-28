@@ -971,7 +971,7 @@ namespace Intersect.Server.Classes.Entities
                     }
                 }
 
-                if (!EventInstance.MeetsConditionLists(itemBase.UseReqs, this, null))
+                if (!EventInstance.MeetsConditionLists(itemBase.UsageRequirements, this, null))
                 {
                     PacketSender.SendPlayerMsg(MyClient, Strings.Items.dynamicreq);
                     return;

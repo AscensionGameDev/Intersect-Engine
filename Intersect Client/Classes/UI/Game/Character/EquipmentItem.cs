@@ -64,8 +64,10 @@ namespace Intersect.Client.Classes.UI.Game.Character
                 mDescWindow.Dispose();
                 mDescWindow = null;
             }
-            if (ItemBase.Lookup.Get<ItemBase>(mCurrentItem) == null) return;
-            mDescWindow = new ItemDescWindow(mCurrentItem, 1, mCharacterWindow.X - 255, mCharacterWindow.Y, mStatBoost, ItemBase.GetName(mCurrentItem));
+
+            var item = ItemBase.Lookup.Get<ItemBase>(mCurrentItem);
+            if (item == null) return;
+            mDescWindow = new ItemDescWindow(item, 1, mCharacterWindow.X - 255, mCharacterWindow.Y, mStatBoost, item.Name);
         }
 
         public FloatRect RenderBounds()

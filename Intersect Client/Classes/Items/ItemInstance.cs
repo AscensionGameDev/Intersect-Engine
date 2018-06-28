@@ -1,5 +1,7 @@
-﻿using Intersect;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Intersect;
 using Intersect.Enums;
+using Intersect.GameObjects;
 
 namespace Intersect_Client.Classes.Items
 {
@@ -8,6 +10,9 @@ namespace Intersect_Client.Classes.Items
         public int ItemNum = -1;
         public int ItemVal;
         public int[] StatBoost = new int[(int) Stats.StatCount];
+
+        [NotMapped]
+        public ItemBase Item => ItemBase.Lookup.Get<ItemBase>(ItemNum);
 
         public ItemInstance()
         {

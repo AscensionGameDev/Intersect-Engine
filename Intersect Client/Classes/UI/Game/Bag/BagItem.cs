@@ -99,7 +99,7 @@ namespace Intersect.Client.Classes.UI.Game.Bag
             }
             if (Globals.Bag[mMySlot] != null)
             {
-                mDescWindow = new ItemDescWindow(Globals.Bag[mMySlot].ItemNum, Globals.Bag[mMySlot].ItemVal,
+                mDescWindow = new ItemDescWindow(Globals.Bag[mMySlot].Item, Globals.Bag[mMySlot].ItemVal,
                     mBagWindow.X - 255, mBagWindow.Y, Globals.Bag[mMySlot].StatBoost);
             }
         }

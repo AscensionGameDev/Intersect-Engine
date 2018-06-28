@@ -136,7 +136,7 @@ namespace Intersect.Client.Classes.UI.Game.Hotbar
                     mItemDescWindow.Dispose();
                     mItemDescWindow = null;
                 }
-                mItemDescWindow = new ItemDescWindow(Globals.Me.Inventory[mCurrentItem].ItemNum, 1,
+                mItemDescWindow = new ItemDescWindow(Globals.Me.Inventory[mCurrentItem].Item, 1,
                     mHotbarWindow.X + Pnl.X + 16 - 255 / 2, mHotbarWindow.Y + mHotbarWindow.Height + 2,
                     Globals.Me.Inventory[mCurrentItem].StatBoost,
                     ItemBase.GetName(Globals.Me.Inventory[mCurrentItem].ItemNum));

@@ -1031,10 +1031,9 @@ namespace Intersect.Server.Classes.Networking
                     if (classBase != null)
                     {
                         //Check for animation
-                        var attackAnim = AnimationBase.Lookup.Get<AnimationBase>(classBase.AttackAnimation);
-                        if (attackAnim != null)
+                        if (classBase.AttackAnimation != null)
                         {
-                            PacketSender.SendAnimationToProximity(attackAnim.Index, -1, -1, attackingTile.GetMap(), attackingTile.GetX(), attackingTile.GetY(), client.Entity.Dir);
+                            PacketSender.SendAnimationToProximity(classBase.AttackAnimation.Index, -1, -1, attackingTile.GetMap(), attackingTile.GetX(), attackingTile.GetY(), client.Entity.Dir);
                         }
                     }
                 }

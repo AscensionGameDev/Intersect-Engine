@@ -181,31 +181,31 @@ namespace Intersect.Editor.Forms.Editors
                 cmbSound.SelectedIndex = cmbSound.FindString(TextUtils.NullToNone(mEditorItem.Sound));
 
                 cmbLowerGraphic.SelectedIndex =
-                    cmbLowerGraphic.FindString(TextUtils.NullToNone(mEditorItem.LowerAnimSprite));
+                    cmbLowerGraphic.FindString(TextUtils.NullToNone(mEditorItem.Lower.Sprite));
 
-                nudLowerHorizontalFrames.Value = mEditorItem.LowerAnimXFrames;
-                nudLowerVerticalFrames.Value = mEditorItem.LowerAnimYFrames;
-                nudLowerFrameCount.Value = mEditorItem.LowerAnimFrameCount;
+                nudLowerHorizontalFrames.Value = mEditorItem.Lower.XFrames;
+                nudLowerVerticalFrames.Value = mEditorItem.Lower.YFrames;
+                nudLowerFrameCount.Value = mEditorItem.Lower.FrameCount;
                 UpdateLowerFrames();
 
-                nudLowerFrameDuration.Value = mEditorItem.LowerAnimFrameSpeed;
+                nudLowerFrameDuration.Value = mEditorItem.Lower.FrameSpeed;
                 tmrLowerAnimation.Interval = (int) nudLowerFrameDuration.Value;
-                nudLowerLoopCount.Value = mEditorItem.LowerAnimLoopCount;
+                nudLowerLoopCount.Value = mEditorItem.Lower.LoopCount;
 
                 cmbUpperGraphic.SelectedIndex =
-                    cmbUpperGraphic.FindString(TextUtils.NullToNone(mEditorItem.UpperAnimSprite));
+                    cmbUpperGraphic.FindString(TextUtils.NullToNone(mEditorItem.Upper.Sprite));
 
-                nudUpperHorizontalFrames.Value = mEditorItem.UpperAnimXFrames;
-                nudUpperVerticalFrames.Value = mEditorItem.UpperAnimYFrames;
-                nudUpperFrameCount.Value = mEditorItem.UpperAnimFrameCount;
+                nudUpperHorizontalFrames.Value = mEditorItem.Upper.XFrames;
+                nudUpperVerticalFrames.Value = mEditorItem.Upper.YFrames;
+                nudUpperFrameCount.Value = mEditorItem.Upper.FrameCount;
                 UpdateUpperFrames();
 
-                nudUpperFrameDuration.Value = mEditorItem.UpperAnimFrameSpeed;
+                nudUpperFrameDuration.Value = mEditorItem.Upper.FrameSpeed;
                 tmrUpperAnimation.Interval = (int) nudUpperFrameDuration.Value;
-                nudUpperLoopCount.Value = mEditorItem.UpperAnimLoopCount;
+                nudUpperLoopCount.Value = mEditorItem.Upper.LoopCount;
 
-                chkDisableLowerRotations.Checked = mEditorItem.DisableLowerRotations;
-                chkDisableUpperRotations.Checked = mEditorItem.DisableUpperRotations;
+                chkDisableLowerRotations.Checked = mEditorItem.Lower.DisableRotations;
+                chkDisableUpperRotations.Checked = mEditorItem.Upper.DisableRotations;
 
                 LoadLowerLight();
                 DrawLowerFrame();
@@ -241,12 +241,12 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbLowerGraphic_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.LowerAnimSprite = TextUtils.SanitizeNone(cmbLowerGraphic?.Text);
+            mEditorItem.Lower.Sprite = TextUtils.SanitizeNone(cmbLowerGraphic?.Text);
         }
 
         private void cmbUpperGraphic_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.UpperAnimSprite = TextUtils.SanitizeNone(cmbUpperGraphic?.Text);
+            mEditorItem.Upper.Sprite = TextUtils.SanitizeNone(cmbUpperGraphic?.Text);
         }
 
         private void tmrLowerAnimation_Tick(object sender, EventArgs e)
@@ -265,22 +265,22 @@ namespace Intersect.Editor.Forms.Editors
         {
             LightBase[] newArray;
             scrlLowerFrame.Maximum = (int) nudLowerFrameCount.Value;
-            if (mEditorItem.LowerAnimFrameCount !=
-                mEditorItem.LowerLights.Length)
+            if (mEditorItem.Lower.FrameCount !=
+                mEditorItem.Lower.Lights.Length)
             {
-                newArray = new LightBase[mEditorItem.LowerAnimFrameCount];
+                newArray = new LightBase[mEditorItem.Lower.FrameCount];
                 for (int i = 0; i < newArray.Length; i++)
                 {
-                    if (i < mEditorItem.LowerLights.Length)
+                    if (i < mEditorItem.Lower.Lights.Length)
                     {
-                        newArray[i] = mEditorItem.LowerLights[i];
+                        newArray[i] = mEditorItem.Lower.Lights[i];
                     }
                     else
                     {
                         newArray[i] = new LightBase(-1, -1);
                     }
                 }
-                mEditorItem.LowerLights = newArray;
+                mEditorItem.Lower.Lights = newArray;
             }
         }
 
@@ -288,22 +288,22 @@ namespace Intersect.Editor.Forms.Editors
         {
             LightBase[] newArray;
             scrlUpperFrame.Maximum = (int) nudUpperFrameCount.Value;
-            if (mEditorItem.UpperAnimFrameCount !=
-                mEditorItem.UpperLights.Length)
+            if (mEditorItem.Upper.FrameCount !=
+                mEditorItem.Upper.Lights.Length)
             {
-                newArray = new LightBase[mEditorItem.UpperAnimFrameCount];
+                newArray = new LightBase[mEditorItem.Upper.FrameCount];
                 for (int i = 0; i < newArray.Length; i++)
                 {
-                    if (i < mEditorItem.UpperLights.Length)
+                    if (i < mEditorItem.Upper.Lights.Length)
                     {
-                        newArray[i] = mEditorItem.UpperLights[i];
+                        newArray[i] = mEditorItem.Upper.Lights[i];
                     }
                     else
                     {
                         newArray[i] = new LightBase(-1, -1);
                     }
                 }
-                mEditorItem.UpperLights = newArray;
+                mEditorItem.Upper.Lights = newArray;
             }
         }
 
@@ -315,14 +315,14 @@ namespace Intersect.Editor.Forms.Editors
             EditorGraphics.EndSpriteBatch();
             graphicsDevice.SetRenderTarget(mLowerDarkness);
             graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
-            if (mLowerFrame < mEditorItem.LowerLights.Length)
+            if (mLowerFrame < mEditorItem.Lower.Lights.Length)
             {
                 EditorGraphics.DrawLight(
                     picLowerAnimation.Width / 2 +
-                    mEditorItem.LowerLights[mLowerFrame].OffsetX,
+                    mEditorItem.Lower.Lights[mLowerFrame].OffsetX,
                     picLowerAnimation.Height / 2 +
-                    mEditorItem.LowerLights[mLowerFrame].OffsetY,
-                    mEditorItem.LowerLights[mLowerFrame], mLowerDarkness);
+                    mEditorItem.Lower.Lights[mLowerFrame].OffsetY,
+                    mEditorItem.Lower.Lights[mLowerFrame], mLowerDarkness);
             }
             EditorGraphics.DrawTexture(EditorGraphics.GetWhiteTex(), new RectangleF(0, 0, 1, 1),
                 new RectangleF(0, 0, mLowerDarkness.Width, mLowerDarkness.Height),
@@ -361,14 +361,14 @@ namespace Intersect.Editor.Forms.Editors
             EditorGraphics.EndSpriteBatch();
             graphicsDevice.SetRenderTarget(mUpperDarkness);
             graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
-            if (mUpperFrame < mEditorItem.UpperLights.Length)
+            if (mUpperFrame < mEditorItem.Upper.Lights.Length)
             {
                 EditorGraphics.DrawLight(
                     picUpperAnimation.Width / 2 +
-                    mEditorItem.UpperLights[mUpperFrame].OffsetX,
+                    mEditorItem.Upper.Lights[mUpperFrame].OffsetX,
                     picUpperAnimation.Height / 2 +
-                    mEditorItem.UpperLights[mUpperFrame].OffsetY,
-                    mEditorItem.UpperLights[mUpperFrame], mUpperDarkness);
+                    mEditorItem.Upper.Lights[mUpperFrame].OffsetY,
+                    mEditorItem.Upper.Lights[mUpperFrame], mUpperDarkness);
             }
             EditorGraphics.DrawTexture(EditorGraphics.GetWhiteTex(), new RectangleF(0, 0, 1, 1),
                 new RectangleF(0, 0, mUpperDarkness.Width, mUpperDarkness.Height),
@@ -426,13 +426,13 @@ namespace Intersect.Editor.Forms.Editors
         private void LoadLowerLight()
         {
             lightEditorLower.CanClose = false;
-            lightEditorLower.LoadEditor(mEditorItem.LowerLights[scrlLowerFrame.Value - 1]);
+            lightEditorLower.LoadEditor(mEditorItem.Lower.Lights[scrlLowerFrame.Value - 1]);
         }
 
         private void LoadUpperLight()
         {
             lightEditorUpper.CanClose = false;
-            lightEditorUpper.LoadEditor(mEditorItem.UpperLights[scrlUpperFrame.Value - 1]);
+            lightEditorUpper.LoadEditor(mEditorItem.Upper.Lights[scrlUpperFrame.Value - 1]);
         }
 
         private void scrlUpperFrame_Scroll(object sender, ScrollValueEventArgs e)
@@ -459,8 +459,8 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (scrlLowerFrame.Value > 1)
             {
-                mEditorItem.LowerLights[scrlLowerFrame.Value - 1] =
-                    new LightBase(mEditorItem.LowerLights[scrlLowerFrame.Value - 2]);
+                mEditorItem.Lower.Lights[scrlLowerFrame.Value - 1] =
+                    new LightBase(mEditorItem.Lower.Lights[scrlLowerFrame.Value - 2]);
                 LoadLowerLight();
                 DrawLowerFrame();
             }
@@ -483,8 +483,8 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (scrlUpperFrame.Value > 1)
             {
-                mEditorItem.UpperLights[scrlUpperFrame.Value - 1] =
-                    new LightBase(mEditorItem.UpperLights[scrlUpperFrame.Value - 2]);
+                mEditorItem.Upper.Lights[scrlUpperFrame.Value - 1] =
+                    new LightBase(mEditorItem.Upper.Lights[scrlUpperFrame.Value - 2]);
                 LoadUpperLight();
                 DrawUpperFrame();
             }
@@ -497,32 +497,32 @@ namespace Intersect.Editor.Forms.Editors
 
         private void btnSwap_Click(object sender, EventArgs e)
         {
-            string lowerAnimSprite = mEditorItem.LowerAnimSprite;
-            int lowerAnimXFrames = mEditorItem.LowerAnimXFrames;
-            int lowerAnimYFrames = mEditorItem.LowerAnimYFrames;
-            int lowerAnimFrameCount = mEditorItem.LowerAnimFrameCount;
-            int lowerAnimFrameSpeed = mEditorItem.LowerAnimFrameSpeed;
-            int lowerAnimLoopCount = mEditorItem.LowerAnimLoopCount;
-            bool disableLowerRotations = mEditorItem.DisableLowerRotations;
-            LightBase[] lowerLights = mEditorItem.LowerLights;
-            mEditorItem.LowerAnimSprite = mEditorItem.UpperAnimSprite;
-            mEditorItem.LowerAnimXFrames = mEditorItem.UpperAnimXFrames;
-            mEditorItem.LowerAnimYFrames = mEditorItem.UpperAnimYFrames;
-            mEditorItem.LowerAnimFrameCount = mEditorItem.UpperAnimFrameCount;
-            mEditorItem.LowerAnimFrameSpeed = mEditorItem.UpperAnimFrameSpeed;
-            mEditorItem.LowerAnimLoopCount = mEditorItem.UpperAnimLoopCount;
-            mEditorItem.LowerLights = mEditorItem.UpperLights;
-            mEditorItem.DisableLowerRotations = mEditorItem.DisableUpperRotations;
+            string lowerAnimSprite = mEditorItem.Lower.Sprite;
+            int lowerAnimXFrames = mEditorItem.Lower.XFrames;
+            int lowerAnimYFrames = mEditorItem.Lower.YFrames;
+            int lowerAnimFrameCount = mEditorItem.Lower.FrameCount;
+            int lowerAnimFrameSpeed = mEditorItem.Lower.FrameSpeed;
+            int lowerAnimLoopCount = mEditorItem.Lower.LoopCount;
+            bool disableLowerRotations = mEditorItem.Lower.DisableRotations;
+            LightBase[] lowerLights = mEditorItem.Lower.Lights;
+            mEditorItem.Lower.Sprite = mEditorItem.Upper.Sprite;
+            mEditorItem.Lower.XFrames = mEditorItem.Upper.XFrames;
+            mEditorItem.Lower.YFrames = mEditorItem.Upper.YFrames;
+            mEditorItem.Lower.FrameCount = mEditorItem.Upper.FrameCount;
+            mEditorItem.Lower.FrameSpeed = mEditorItem.Upper.FrameSpeed;
+            mEditorItem.Lower.LoopCount = mEditorItem.Upper.LoopCount;
+            mEditorItem.Lower.Lights = mEditorItem.Upper.Lights;
+            mEditorItem.Lower.DisableRotations = mEditorItem.Upper.DisableRotations;
 
 
-            mEditorItem.UpperAnimSprite = lowerAnimSprite;
-            mEditorItem.UpperAnimXFrames = lowerAnimXFrames;
-            mEditorItem.UpperAnimYFrames = lowerAnimYFrames;
-            mEditorItem.UpperAnimFrameCount = lowerAnimFrameCount;
-            mEditorItem.UpperAnimFrameSpeed = lowerAnimFrameSpeed;
-            mEditorItem.UpperAnimLoopCount = lowerAnimLoopCount;
-            mEditorItem.UpperLights = lowerLights;
-            mEditorItem.DisableUpperRotations = disableLowerRotations;
+            mEditorItem.Upper.Sprite = lowerAnimSprite;
+            mEditorItem.Upper.XFrames = lowerAnimXFrames;
+            mEditorItem.Upper.YFrames = lowerAnimYFrames;
+            mEditorItem.Upper.FrameCount = lowerAnimFrameCount;
+            mEditorItem.Upper.FrameSpeed = lowerAnimFrameSpeed;
+            mEditorItem.Upper.LoopCount = lowerAnimLoopCount;
+            mEditorItem.Upper.Lights = lowerLights;
+            mEditorItem.Upper.DisableRotations = disableLowerRotations;
 
             mUpperFrame = 0;
             mLowerFrame = 0;
@@ -634,56 +634,56 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudLowerHorizontalFrames_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.LowerAnimXFrames = (int) nudLowerHorizontalFrames.Value;
+            mEditorItem.Lower.XFrames = (int) nudLowerHorizontalFrames.Value;
         }
 
         private void nudLowerVerticalFrames_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.LowerAnimYFrames = (int) nudLowerVerticalFrames.Value;
+            mEditorItem.Lower.YFrames = (int) nudLowerVerticalFrames.Value;
         }
 
         private void nudLowerFrameCount_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.LowerAnimFrameCount = (int) nudLowerFrameCount.Value;
+            mEditorItem.Lower.FrameCount = (int) nudLowerFrameCount.Value;
             UpdateLowerFrames();
         }
 
         private void nudLowerFrameDuration_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.LowerAnimFrameSpeed = (int) nudLowerFrameDuration.Value;
+            mEditorItem.Lower.FrameSpeed = (int) nudLowerFrameDuration.Value;
             tmrLowerAnimation.Interval = (int) nudLowerFrameDuration.Value;
         }
 
         private void nudLowerLoopCount_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.LowerAnimLoopCount = (int) nudLowerLoopCount.Value;
+            mEditorItem.Lower.LoopCount = (int) nudLowerLoopCount.Value;
         }
 
         private void nudUpperHorizontalFrames_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.UpperAnimXFrames = (int) nudUpperHorizontalFrames.Value;
+            mEditorItem.Upper.XFrames = (int) nudUpperHorizontalFrames.Value;
         }
 
         private void nudUpperVerticalFrames_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.UpperAnimYFrames = (int) nudUpperVerticalFrames.Value;
+            mEditorItem.Upper.YFrames = (int) nudUpperVerticalFrames.Value;
         }
 
         private void nudUpperFrameCount_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.UpperAnimFrameCount = (int) nudUpperFrameCount.Value;
+            mEditorItem.Upper.FrameCount = (int) nudUpperFrameCount.Value;
             UpdateUpperFrames();
         }
 
         private void nudUpperFrameDuration_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.UpperAnimFrameSpeed = (int) nudUpperFrameDuration.Value;
+            mEditorItem.Upper.FrameSpeed = (int) nudUpperFrameDuration.Value;
             tmrUpperAnimation.Interval = (int) nudUpperFrameDuration.Value;
         }
 
         private void nudUpperLoopCount_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.UpperAnimLoopCount = (int) nudUpperLoopCount.Value;
+            mEditorItem.Upper.LoopCount = (int) nudUpperLoopCount.Value;
         }
 
         private void tmrRender_Tick(object sender, EventArgs e)
@@ -694,12 +694,12 @@ namespace Intersect.Editor.Forms.Editors
 
         private void chkDisableLowerRotations_CheckedChanged(object sender, EventArgs e)
         {
-            mEditorItem.DisableLowerRotations = chkDisableLowerRotations.Checked;
+            mEditorItem.Lower.DisableRotations = chkDisableLowerRotations.Checked;
         }
 
         private void chkDisableUpperRotations_CheckedChanged(object sender, EventArgs e)
         {
-            mEditorItem.DisableUpperRotations = chkDisableUpperRotations.Checked;
+            mEditorItem.Upper.DisableRotations = chkDisableUpperRotations.Checked;
         }
     }
 }

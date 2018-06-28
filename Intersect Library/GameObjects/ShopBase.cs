@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Models;
 using Newtonsoft.Json;
 
@@ -29,6 +30,9 @@ namespace Intersect.GameObjects
         public int CostItemNum;
         public int CostItemVal;
         public int ItemNum;
+
+        [NotMapped]
+        public ItemBase Item => ItemBase.Lookup.Get<ItemBase>(ItemNum);
 
         public ShopItem(ByteBuffer myBuffer)
         {

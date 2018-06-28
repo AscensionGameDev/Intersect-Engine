@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Intersect.GameObjects;
+using Intersect.GameObjects.Crafting;
 using IntersectClientExtras.Database;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Input;

@@ -26,6 +26,15 @@ namespace Intersect.Utilities
             return output;
         }
 
+        public static void LoadIntArray(ref int[] output, string json, int arrayLen)
+        {
+            var jsonList = JsonConvert.DeserializeObject<List<int>>(json);
+            for (var i = 0; i < arrayLen && i < jsonList.Count; i++)
+            {
+                output[i] = jsonList[i];
+            }
+        }
+
         public static string SaveIntArray(int[] array, int arrayLen)
         {
             var output = new List<int>();

@@ -24,37 +24,37 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<bool>("DisableLowerRotations");
+                    b.Property<bool>("Lower.DisableRotations");
 
-                    b.Property<bool>("DisableUpperRotations");
+                    b.Property<bool>("Upper.DisableRotations");
 
-                    b.Property<int>("LowerAnimFrameCount");
+                    b.Property<int>("Lower.FrameCount");
 
-                    b.Property<int>("LowerAnimFrameSpeed");
+                    b.Property<int>("Lower.FrameSpeed");
 
-                    b.Property<int>("LowerAnimLoopCount");
+                    b.Property<int>("Lower.LoopCount");
 
-                    b.Property<string>("LowerAnimSprite");
+                    b.Property<string>("Lower.Sprite");
 
-                    b.Property<int>("LowerAnimXFrames");
+                    b.Property<int>("Lower.XFrames");
 
-                    b.Property<int>("LowerAnimYFrames");
+                    b.Property<int>("Lower.YFrames");
 
                     b.Property<string>("Name");
 
                     b.Property<string>("Sound");
 
-                    b.Property<int>("UpperAnimFrameCount");
+                    b.Property<int>("Upper.FrameCount");
 
-                    b.Property<int>("UpperAnimFrameSpeed");
+                    b.Property<int>("Upper.FrameSpeed");
 
-                    b.Property<int>("UpperAnimLoopCount");
+                    b.Property<int>("Upper.LoopCount");
 
-                    b.Property<string>("UpperAnimSprite");
+                    b.Property<string>("Upper.Sprite");
 
-                    b.Property<int>("UpperAnimXFrames");
+                    b.Property<int>("Upper.XFrames");
 
-                    b.Property<int>("UpperAnimYFrames");
+                    b.Property<int>("Upper.YFrames");
 
                     b.HasKey("Id");
 

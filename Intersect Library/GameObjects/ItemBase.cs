@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Enums;
 using Intersect.GameObjects.Conditions;
 using Intersect.Models;
@@ -9,8 +11,33 @@ namespace Intersect.GameObjects
 {
     public class ItemBase : DatabaseObject<ItemBase>
     {
-        public AnimationBase Animation { get; set; }
-        public AnimationBase AttackAnimation { get; set; }
+
+        [Required]
+        [JsonProperty]
+        private Guid AnimationId { get; set; } //This gets stored in the EF database, and serialized to json whenever transferring to client or queried via the api or whatever..
+
+        [NotMapped]
+        [JsonIgnore]
+        public AnimationBase Animation //This is what we use via code to access the animation easily (ie Item.Animation = whatever), this is easily readable. This property modifies
+        //the AnimationId but doesn't actually get stored or sent.
+        {
+            get => AnimationBase.Lookup.Get<AnimationBase>(AnimationId);
+            set => AnimationId = value?.Id ?? Guid.Empty;
+        }
+
+        [Required]
+        [JsonProperty]
+        private Guid AttackAnimationId { get; set; } //This gets stored in the EF database, and serialized to json whenever transferring to client or queried via the api or whatever..
+
+        [NotMapped]
+        [JsonIgnore]
+        public AnimationBase AttackAnimation //This is what we use via code to access the animation easily (ie Item.Animation = whatever), this is easily readable. This property modifies
+            //the AnimationId but doesn't actually get stored or sent.
+        {
+            get => AnimationBase.Lookup.Get<AnimationBase>(AttackAnimationId);
+            set => AttackAnimationId = value?.Id ?? Guid.Empty;
+        }
+        
         public bool Bound { get; set; }
         public int CritChance { get; set; }
         public int Damage { get; set; }
@@ -37,20 +64,22 @@ namespace Intersect.GameObjects
         [Column("StatsGiven")]
         public string StatsJson
         {
-            get => DatabaseUtils.SaveIntArray(StatsGiven, (int)Enums.Stats.StatCount);
-            set => StatsGiven = DatabaseUtils.LoadIntArray(value, (int)Enums.Stats.StatCount);
+            get => DatabaseUtils.SaveIntArray(StatsGiven, (int)Stats.StatCount);
+            set => StatsGiven = DatabaseUtils.LoadIntArray(value, (int)Stats.StatCount);
         }
-        [NotMapped]
-        public int[] StatsGiven { get; set; } = new int[(int)Enums.Stats.StatCount];
 
-        [Column("UsageReqs")]
-        public string UseReqsJson
-        {
-            get => JsonConvert.SerializeObject(UseReqs);
-            set => UseReqs = JsonConvert.DeserializeObject<ConditionLists>(value);
-        }
         [NotMapped]
-        public ConditionLists UseReqs = new ConditionLists();
+        public int[] StatsGiven { get; set; } = new int[(int)Stats.StatCount];
+
+        [Column("UsageRequirements")]
+        public string JsonUsageRequirements
+        {
+            get => JsonConvert.SerializeObject(UsageRequirements);
+            set => UsageRequirements = JsonConvert.DeserializeObject<ConditionLists>(value);
+        }
+
+        [NotMapped]
+        public ConditionLists UsageRequirements = new ConditionLists();
 
         [JsonConstructor]
         public ItemBase(int index) : base(index)
