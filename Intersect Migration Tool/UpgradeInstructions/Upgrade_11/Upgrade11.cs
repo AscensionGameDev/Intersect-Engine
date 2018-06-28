@@ -156,7 +156,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_11
 
         private void IncrementDatabaseVersion(SqliteConnection dbConn)
         {
-            var cmd = "UPDATE " + INFO_TABLE + " SET " + DB_VERSION + " = " + (11) + ";";
+            var cmd = "UPDATE " + INFO_TABLE + " SET " + DB_VERSION + " = " + (12) + ";";
             using (var createCommand = dbConn.CreateCommand())
             {
                 createCommand.CommandText = cmd;

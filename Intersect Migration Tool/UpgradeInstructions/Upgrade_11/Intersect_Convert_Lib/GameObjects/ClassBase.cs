@@ -133,8 +133,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_11.Intersect_Convert_L
             PointIncrease = myBuffer.ReadInteger();
 
             //Exp Info
-            BaseExp = myBuffer.ReadLong();
-            ExpIncrease = myBuffer.ReadLong();
+            BaseExp = myBuffer.ReadInteger();
+            ExpIncrease = myBuffer.ReadInteger();
 
             //Regen
             for (int i = 0; i < (int) Vitals.VitalCount; i++)

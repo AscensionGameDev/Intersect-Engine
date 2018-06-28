@@ -72,7 +72,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_11.Intersect_Convert_L
             {
                 Stat[i] = myBuffer.ReadInteger();
             }
-            Experience = myBuffer.ReadLong();
+            Experience = myBuffer.ReadInteger();
             SpawnDuration = myBuffer.ReadInteger();
             Behavior = myBuffer.ReadByte();
             SightRange = myBuffer.ReadInteger();

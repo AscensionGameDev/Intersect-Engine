@@ -21,7 +21,7 @@ namespace Intersect.Migration
 {
     public static class Database
     {
-        public const int DbVersion = 11;
+        public const int DbVersion = 12;
         private const string DB_FILENAME = "resources/intersect.db";
 
         //Database Variables
