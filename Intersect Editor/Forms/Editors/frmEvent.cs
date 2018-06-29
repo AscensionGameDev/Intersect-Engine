@@ -1354,7 +1354,7 @@ namespace Intersect.Editor.Forms.Editors
                 case EventCommandType.OpenShop:
                     return Strings.EventCommandList.openshop.ToString( ShopBase.GetName(command.Ints[0]));
                 case EventCommandType.OpenCraftingBench:
-                    return Strings.EventCommandList.opencrafting.ToString( BenchBase.GetName(command.Ints[0]));
+                    return Strings.EventCommandList.opencrafting.ToString( CraftingTableBase.GetName(command.Ints[0]));
                 case EventCommandType.SetClass:
                     return Strings.EventCommandList.setclass.ToString( ClassBase.GetName(command.Ints[0]));
                 case EventCommandType.StartQuest:
@@ -1527,7 +1527,7 @@ namespace Intersect.Editor.Forms.Editors
                     cmdWindow = new EventCommandOpenShop(command, this);
                     break;
                 case EventCommandType.OpenCraftingBench:
-                    cmdWindow = new EventCommandOpenBench(command, this);
+                    cmdWindow = new EventCommandOpenCraftingTable(command, this);
                     break;
                 case EventCommandType.SetClass:
                     cmdWindow = new EventCommandSetClass(command, this);

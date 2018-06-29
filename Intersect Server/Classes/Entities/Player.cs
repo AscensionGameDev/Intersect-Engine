@@ -192,8 +192,8 @@ namespace Intersect.Server.Classes.Entities
 
             if (InCraft > -1 && CraftIndex > -1)
             {
-                var b = BenchBase.Lookup.Get<BenchBase>(InCraft);
-                if (CraftTimer + b.Crafts[CraftIndex].Time < timeMs)
+                var b = CraftingTableBase.Lookup.Get<CraftingTableBase>(InCraft);
+                if (CraftTimer + CraftBase.Lookup.Get<CraftBase>(b.Crafts[CraftIndex]).Time < timeMs)
                 {
                     CraftItem(CraftIndex);
                 }
@@ -1440,7 +1440,7 @@ namespace Intersect.Server.Classes.Entities
         }
 
         //Crafting
-        public bool OpenCraftingBench(BenchBase bench)
+        public bool OpenCraftingBench(CraftingTableBase bench)
         {
             if (IsBusy()) return false;
             if (bench != null)
@@ -1489,13 +1489,13 @@ namespace Intersect.Server.Classes.Entities
                 }
 
                 //Check the player actually has the items
-                foreach (var c in BenchBase.Lookup.Get<BenchBase>(InCraft).Crafts[index].Ingredients)
+                foreach (var c in CraftBase.Lookup.Get<CraftBase>(CraftingTableBase.Lookup.Get<CraftingTableBase>(InCraft).Crafts[index]).Ingredients)
                 {
-                    if (itemdict.ContainsKey(c.Item.Index))
+                    if (itemdict.ContainsKey(c.Item))
                     {
-                        if (itemdict[c.Item.Index] >= c.Quantity)
+                        if (itemdict[c.Item] >= c.Quantity)
                         {
-                            itemdict[c.Item.Index] -= c.Quantity;
+                            itemdict[c.Item] -= c.Quantity;
                         }
                         else
                         {
@@ -1511,9 +1511,9 @@ namespace Intersect.Server.Classes.Entities
                 }
 
                 //Take the items
-                foreach (var c in BenchBase.Lookup.Get<BenchBase>(InCraft).Crafts[index].Ingredients)
+                foreach (var c in CraftBase.Lookup.Get<CraftBase>(CraftingTableBase.Lookup.Get<CraftingTableBase>(InCraft).Crafts[index]).Ingredients)
                 {
-                    if (!TakeItemsByNum(c.Item.Index, c.Quantity))
+                    if (!TakeItemsByNum(c.Item, c.Quantity))
                     {
                         for (int i = 0; i < invbackup.Count; i++)
                         {
@@ -1526,11 +1526,11 @@ namespace Intersect.Server.Classes.Entities
                 }
 
                 //Give them the craft
-                if (TryGiveItem(new Item(BenchBase.Lookup.Get<BenchBase>(InCraft).Crafts[index].Item.Index, 1)))
+                if (TryGiveItem(new Item(CraftBase.Lookup.Get<CraftBase>(CraftingTableBase.Lookup.Get<CraftingTableBase>(InCraft).Crafts[index]).Item, 1)))
                 {
                     PacketSender.SendPlayerMsg(MyClient,
                         Strings.Crafting.crafted.ToString(
-                            ItemBase.GetName(BenchBase.Lookup.Get<BenchBase>(InCraft).Crafts[index].Item.Index)),
+                            ItemBase.GetName(CraftBase.Lookup.Get<CraftBase>(CraftingTableBase.Lookup.Get<CraftingTableBase>(InCraft).Crafts[index]).Item)),
                         CustomColors.Crafted);
                 }
                 else
@@ -1542,7 +1542,7 @@ namespace Intersect.Server.Classes.Entities
                     PacketSender.SendInventory(MyClient);
                     PacketSender.SendPlayerMsg(MyClient,
                         Strings.Crafting.nospace.ToString(
-                            ItemBase.GetName(BenchBase.Lookup.Get<BenchBase>(InCraft).Crafts[index].Item.Index)),
+                            ItemBase.GetName(CraftBase.Lookup.Get<CraftBase>(CraftingTableBase.Lookup.Get<CraftingTableBase>(InCraft).Crafts[index]).Item)),
                         CustomColors.Error);
                 }
                 CraftIndex = -1;
@@ -1570,13 +1570,13 @@ namespace Intersect.Server.Classes.Entities
             }
 
             //Check the player actually has the items
-            foreach (var c in BenchBase.Lookup.Get<BenchBase>(InCraft).Crafts[index].Ingredients)
+            foreach (var c in CraftBase.Lookup.Get<CraftBase>(CraftingTableBase.Lookup.Get<CraftingTableBase>(InCraft).Crafts[index]).Ingredients)
             {
-                if (itemdict.ContainsKey(c.Item.Index))
+                if (itemdict.ContainsKey(c.Item))
                 {
-                    if (itemdict[c.Item.Index] >= c.Quantity)
+                    if (itemdict[c.Item] >= c.Quantity)
                     {
-                        itemdict[c.Item.Index] -= c.Quantity;
+                        itemdict[c.Item] -= c.Quantity;
                     }
                     else
                     {

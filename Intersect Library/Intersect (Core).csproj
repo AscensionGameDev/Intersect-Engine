@@ -162,8 +162,8 @@
     <Compile Include="Enums\Vitals.cs" />
     <Compile Include="Extensions\GameObjectInfoAttribute.cs" />
     <Compile Include="Config\PlayerOptions.cs" />
-    <Compile Include="GameObjects\Crafting\Craft.cs" />
-    <Compile Include="GameObjects\Crafting\CraftIngredient.cs" />
+    <Compile Include="GameObjects\Crafting\CraftBase.cs" />
+    <Compile Include="GameObjects\Crafting\CraftingTableBase.cs" />
     <Compile Include="Localization\LocalizedString.cs" />
     <Compile Include="Utilities\AlphanumComparator.cs" />
     <Compile Include="Utilities\DatabaseUtils.cs" />
@@ -171,7 +171,6 @@
     <Compile Include="Utilities\FieldChecking.cs" />
     <Compile Include="GameObjects\AnimationBase.cs" />
     <Compile Include="GameObjects\ClassBase.cs" />
-    <Compile Include="GameObjects\Crafting\BenchBase.cs" />
     <Compile Include="GameObjects\Conditions\ConditionList.cs" />
     <Compile Include="GameObjects\Conditions\ConditionLists.cs" />
     <Compile Include="GameObjects\Events\Enums.cs" />

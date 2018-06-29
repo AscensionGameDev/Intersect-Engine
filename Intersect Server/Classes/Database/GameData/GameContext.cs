@@ -18,9 +18,8 @@ namespace Intersect.Server.Classes.Database.GameData
         public DbSet<AnimationBase> Animations { get; set; }
 
         //Crafting
-        public DbSet<BenchBase> Benches { get; set; }
-        public DbSet<Craft> Crafts { get; set; }
-        public DbSet<CraftIngredient> Ingredients { get; set; }
+        public DbSet<CraftBase> Crafts { get; set; }
+        public DbSet<CraftingTableBase> CraftingTables { get; set; }
 
         //Items
         public DbSet<ItemBase> Items { get; set; }
@@ -57,11 +56,6 @@ namespace Intersect.Server.Classes.Database.GameData
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<BenchBase>().HasMany(b => b.Crafts);
-            modelBuilder.Entity<Craft>().HasMany(b => b.Ingredients);
-            modelBuilder.Entity<Craft>().HasOne(b => b.Item);
-            modelBuilder.Entity<ItemBase>().HasOne(b => b.Animation);
-            modelBuilder.Entity<ItemBase>().HasOne(b => b.AttackAnimation);
         }
     }
 }

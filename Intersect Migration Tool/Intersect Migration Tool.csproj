@@ -726,6 +726,8 @@
     <Compile Include="UpgradeInstructions\Upgrade_11\Intersect_Convert_Lib\GameObjects\ClassBase.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_11\Intersect_Convert_Lib\GameObjects\Conditions\ConditionList.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_11\Intersect_Convert_Lib\GameObjects\Conditions\ConditionLists.cs" />
+    <Compile Include="UpgradeInstructions\Upgrade_11\Intersect_Convert_Lib\GameObjects\CraftBase.cs" />
+    <Compile Include="UpgradeInstructions\Upgrade_11\Intersect_Convert_Lib\GameObjects\CraftingTableBase.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_11\Intersect_Convert_Lib\GameObjects\Events\Enums.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_11\Intersect_Convert_Lib\GameObjects\Events\EventBase.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_11\Intersect_Convert_Lib\GameObjects\Events\EventCommand.cs" />

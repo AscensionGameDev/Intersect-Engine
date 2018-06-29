@@ -2091,8 +2091,11 @@ namespace Intersect.Server.Classes.Networking
                 case GameObjectType.Spell:
                     obj = SpellBase.Lookup.Get<SpellBase>(id);
                     break;
-                case GameObjectType.Bench:
-                    obj = DatabaseObject<BenchBase>.Lookup.Get(id);
+                case GameObjectType.CraftTables:
+                    obj = DatabaseObject<CraftingTableBase>.Lookup.Get(id);
+                    break;
+                case GameObjectType.Crafts:
+                    obj = DatabaseObject<CraftBase>.Lookup.Get(id);
                     break;
                 case GameObjectType.Map:
                     break;
@@ -2175,8 +2178,11 @@ namespace Intersect.Server.Classes.Networking
                 case GameObjectType.Spell:
                     obj = SpellBase.Lookup.Get<SpellBase>(id);
                     break;
-                case GameObjectType.Bench:
-                    obj = DatabaseObject<BenchBase>.Lookup.Get(id);
+                case GameObjectType.CraftTables:
+                    obj = DatabaseObject<CraftingTableBase>.Lookup.Get(id);
+                    break;
+                case GameObjectType.Crafts:
+                    obj = DatabaseObject<CraftBase>.Lookup.Get(id);
                     break;
                 case GameObjectType.Map:
                     break;

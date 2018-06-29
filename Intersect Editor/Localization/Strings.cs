@@ -227,17 +227,35 @@ Tick timer saved in server config.json.";
             public static LocalizedString title = @"Common Event Editor";
         }
 
-        public struct CraftingEditor
+        public struct CraftingTableEditor
         {
-            public static LocalizedString benches = @"Benches";
             public static LocalizedString cancel = @"Cancel";
-            public static LocalizedString copy = @"Copy Bench";
+            public static LocalizedString copy = @"Copy Table";
+            public static LocalizedString crafts = @"Available Crafts";
+            public static LocalizedString delete = @"Delete Table";
+            public static LocalizedString deleteprompt = @"Are you sure you want to delete this table? This action cannot be reverted!";
+            public static LocalizedString general = @"General";
+            public static LocalizedString name = @"Name:";
+            public static LocalizedString New = @"New Table";
+            public static LocalizedString paste = @"Paste Table";
+            public static LocalizedString save = @"Save";
+            public static LocalizedString tables = @"Tables";
+            public static LocalizedString title = @"Crafting Tables Editor";
+            public static LocalizedString undo = @"Undo Changes";
+            public static LocalizedString undoprompt = @"Are you sure you want to undo changes made to this table? This action cannot be reverted!";
+            public static LocalizedString undotitle = @"Undo Changes";
+        }
+
+        public struct CraftsEditor
+        {
+            public static LocalizedString cancel = @"Cancel";
+            public static LocalizedString copy = @"Copy Craft";
             public static LocalizedString crafts = @"Crafts";
-            public static LocalizedString delete = @"Delete Bench";
+            public static LocalizedString delete = @"Delete Craft";
             public static LocalizedString deletecraft = @"Delete";
             public static LocalizedString deleteingredient = @"Delete";
-            public static LocalizedString deleteprompt = @"Are you sure you want to delete this bench? This action cannot be reverted!";
-            public static LocalizedString deletetitle = @"Delete Bench";
+            public static LocalizedString deleteprompt = @"Are you sure you want to delete this craft? This action cannot be reverted!";
+            public static LocalizedString deletetitle = @"Delete Craft";
             public static LocalizedString duplicatecraft = @"Duplicate";
             public static LocalizedString duplicateingredient = @"Duplicate";
             public static LocalizedString general = @"General";
@@ -248,15 +266,14 @@ Tick timer saved in server config.json.";
             public static LocalizedString ingredients = @"Ingredients";
             public static LocalizedString item = @"Item:";
             public static LocalizedString name = @"Name:";
-            public static LocalizedString New = @"New Bench";
-            public static LocalizedString newcraft = @"New";
+            public static LocalizedString New = @"New Craft";
             public static LocalizedString newingredient = @"New";
-            public static LocalizedString paste = @"Paste Bench";
+            public static LocalizedString paste = @"Paste Craft";
             public static LocalizedString save = @"Save";
             public static LocalizedString time = @"Time (ms):";
-            public static LocalizedString title = @"Crafting Bench Editor";
+            public static LocalizedString title = @"Crafts Editor";
             public static LocalizedString undo = @"Undo Changes";
-            public static LocalizedString undoprompt = @"Are you sure you want to undo changes made to this bench? This action cannot be reverted!";
+            public static LocalizedString undoprompt = @"Are you sure you want to undo changes made to this craft? This action cannot be reverted!";
             public static LocalizedString undotitle = @"Undo Changes";
         }
 

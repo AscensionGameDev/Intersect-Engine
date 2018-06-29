@@ -447,7 +447,9 @@ namespace Intersect.Editor.Networking
             var id = bf.ReadInteger();
             var another = Convert.ToBoolean(bf.ReadInteger());
             var deleted = Convert.ToBoolean(bf.ReadInteger());
-            var json = bf.ReadString();
+            var json = "";
+            if (!deleted)
+                json = bf.ReadString();
             switch (type)
             {
                 case GameObjectType.Animation:
@@ -578,17 +580,30 @@ namespace Intersect.Editor.Networking
                         SpellBase.Lookup.Set(id, spl);
                     }
                     break;
-                case GameObjectType.Bench:
+                case GameObjectType.CraftTables:
                     if (deleted)
                     {
-                        var cft = BenchBase.Lookup.Get<BenchBase>(id);
+                        var cft = CraftingTableBase.Lookup.Get<CraftingTableBase>(id);
                         cft.Delete();
                     }
                     else
                     {
-                        var cft = new BenchBase(id);
+                        var cft = new CraftingTableBase(id);
                         cft.Load(json);
-                        BenchBase.Lookup.Set(id, cft);
+                        CraftingTableBase.Lookup.Set(id, cft);
+                    }
+                    break;
+                case GameObjectType.Crafts:
+                    if (deleted)
+                    {
+                        var cft = CraftBase.Lookup.Get<CraftBase>(id);
+                        cft.Delete();
+                    }
+                    else
+                    {
+                        var cft = new CraftBase(id);
+                        cft.Load(json);
+                        CraftBase.Lookup.Set(id, cft);
                     }
                     break;
                 case GameObjectType.Map:

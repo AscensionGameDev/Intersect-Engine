@@ -26,7 +26,9 @@ namespace Intersect.Enums
 
         [GameObjectInfo(typeof(SpellBase), "spells")] Spell,
 
-        [GameObjectInfo(typeof(BenchBase), "crafts")] Bench,
+        [GameObjectInfo(typeof(CraftingTableBase), "crafting_tables")] CraftTables,
+
+        [GameObjectInfo(typeof(CraftBase), "crafts")] Crafts,
 
         [GameObjectInfo(typeof(MapBase), "maps")] Map,
 

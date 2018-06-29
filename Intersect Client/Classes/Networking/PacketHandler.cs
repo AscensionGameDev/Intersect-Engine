@@ -1346,8 +1346,8 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            Globals.GameBench = new BenchBase(0);
-            Globals.GameBench.Load(bf.ReadString());
+            Globals.ActiveCraftingTable = new CraftingTableBase(0);
+            Globals.ActiveCraftingTable.Load(bf.ReadString());
             Gui.GameUi.NotifyOpenCraftingBench();
         }
 
