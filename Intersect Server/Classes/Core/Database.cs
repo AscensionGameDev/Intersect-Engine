@@ -41,7 +41,8 @@ namespace Intersect.Server.Classes.Core
         GameObjectType.Animation,
         GameObjectType.CraftTables,
         GameObjectType.Crafts,
-        GameObjectType.Class};
+        GameObjectType.Class,
+        GameObjectType.Item};
 
 
         public const string DIRECTORY_BACKUPS = "resources/backups";
@@ -591,54 +592,6 @@ namespace Intersect.Server.Classes.Core
             }
         }
 
-        private static void LoadGameObject1(GameObjectType type, Guid id)
-        {
-            switch (type)
-            {
-                case GameObjectType.Animation:
-                    var anim = sGameDb.Animations.Where(p => p.Id == id).SingleOrDefault();
-                    break;
-                case GameObjectType.Class:
-                    break;
-                case GameObjectType.Item:
-                    break;
-                case GameObjectType.Npc:
-                    break;
-                case GameObjectType.Projectile:
-                    break;
-                case GameObjectType.Quest:
-                    break;
-                case GameObjectType.Resource:
-                    break;
-                case GameObjectType.Shop:
-                    break;
-                case GameObjectType.Spell:
-                    break;
-                case GameObjectType.CraftTables:
-                    break;
-                case GameObjectType.Crafts:
-                    break;
-                case GameObjectType.Map:
-                    break;
-                case GameObjectType.CommonEvent:
-                    break;
-                case GameObjectType.PlayerSwitch:
-                    break;
-                case GameObjectType.PlayerVariable:
-                    break;
-                case GameObjectType.ServerSwitch:
-                    break;
-                case GameObjectType.ServerVariable:
-                    break;
-                case GameObjectType.Tileset:
-                    break;
-                case GameObjectType.Time:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
-            }
-        }
-
         private static void LoadGameObject(GameObjectType type, int index, string json)
         {
             JObject jObj;
@@ -743,6 +696,11 @@ namespace Intersect.Server.Classes.Core
                     }
                     break;
                 case GameObjectType.Item:
+                    foreach (var itm in sGameDb.Items)
+                    {
+                        ItemBase.Lookup.Set(itm.Id, itm);
+                        ItemBase.Lookup.Set(itm.Index, itm);
+                    }
                     break;
                 case GameObjectType.Npc:
                     break;
@@ -912,6 +870,7 @@ namespace Intersect.Server.Classes.Core
                         break;
                     case GameObjectType.Item:
                         var objd = new ItemBase(index);
+                        sGameDb.Items.Add(objd);
                         dbObj = objd;
                         ItemBase.Lookup.Set(index, objd);
                         break;
@@ -1016,6 +975,7 @@ namespace Intersect.Server.Classes.Core
                     sGameDb.Classes.Remove((ClassBase) gameObject);
                     return;
                 case GameObjectType.Item:
+                    sGameDb.Items.Remove((ItemBase)gameObject);
                     return;
                 case GameObjectType.Npc:
                     return;

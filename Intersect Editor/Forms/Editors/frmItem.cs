@@ -257,7 +257,7 @@ namespace Intersect.Editor.Forms.Editors
                 chkStackable.Checked = Convert.ToBoolean(mEditorItem.Stackable);
                 cmbToolType.SelectedIndex = mEditorItem.Tool + 1;
                 cmbAttackAnimation.SelectedIndex =
-                    Database.GameObjectListIndex(GameObjectType.Animation, mEditorItem.AttackAnimation.Index) + 1;
+                    Database.GameObjectListIndex(GameObjectType.Animation, mEditorItem.AttackAnimationId) + 1;
                 RefreshExtendedData();
                 if (mEditorItem.ItemType == (int) ItemTypes.Equipment)
                     cmbEquipmentBonus.SelectedIndex = mEditorItem.Data2;
@@ -305,7 +305,7 @@ namespace Intersect.Editor.Forms.Editors
                 cmbProjectile.SelectedIndex =
                     Database.GameObjectListIndex(GameObjectType.Projectile, mEditorItem.Projectile) + 1;
                 cmbAnimation.SelectedIndex =
-                    Database.GameObjectListIndex(GameObjectType.Animation, mEditorItem.Animation.Index) +
+                    Database.GameObjectListIndex(GameObjectType.Animation, mEditorItem.AnimationId) +
                     1;
 
                 if (mChanged.IndexOf(mEditorItem) == -1)
