@@ -21,6 +21,9 @@ namespace Intersect.Server.Classes.Database.GameData
         public DbSet<CraftBase> Crafts { get; set; }
         public DbSet<CraftingTableBase> CraftingTables { get; set; }
 
+        //Classes
+        public DbSet<ClassBase> Classes { get; set; }
+
         //Items
         public DbSet<ItemBase> Items { get; set; }
 
@@ -56,6 +59,8 @@ namespace Intersect.Server.Classes.Database.GameData
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<AnimationBase>().OwnsOne(p => p.Upper);
+            modelBuilder.Entity<AnimationBase>().OwnsOne(p => p.Lower);
         }
     }
 }

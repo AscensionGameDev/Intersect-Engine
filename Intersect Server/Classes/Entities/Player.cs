@@ -497,7 +497,7 @@ namespace Intersect.Server.Classes.Entities
                         {
                             if (spell.Level == Level)
                             {
-                                var spellInstance = new Spell(spell.SpellNum);
+                                var spellInstance = new Spell(spell.Spell);
                                 if (TryTeachSpell(spellInstance, true))
                                 {
                                     spellMsgs.Add(Strings.Player.spelltaughtlevelup.ToString(SpellBase.GetName(spellInstance.SpellId)));

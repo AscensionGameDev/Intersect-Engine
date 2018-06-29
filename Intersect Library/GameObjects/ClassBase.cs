@@ -16,31 +16,15 @@ namespace Intersect.GameObjects
         public const long DEFAULT_BASE_EXPERIENCE = 100;
         public const long DEFAULT_EXPERIENCE_INCREASE = 50;
 
-        [Required]
-        [JsonProperty]
-        private Guid AttackAnimationId { get; set; } //This gets stored in the EF database, and serialized to json whenever transferring to client or queried via the api or whatever..
+        public int AttackAnimation { get; set; }
+        public int BasePoints { get; set; }
 
-        [NotMapped]
-        [JsonIgnore]
-        public AnimationBase AttackAnimation //This is what we use via code to access the animation easily (ie Item.Animation = whatever), this is easily readable. This property modifies
-            //the AnimationId but doesn't actually get stored or sent.
-        {
-            get => AnimationBase.Lookup.Get<AnimationBase>(AttackAnimationId);
-            set => AttackAnimationId = value?.Id ?? Guid.Empty;
-        }
-
-        public int BasePoints;
-        public int[] BaseStat = new int[(int) Stats.StatCount];
-
-        //Starting Vitals & Stats
-        public int[] BaseVital = new int[(int) Vitals.VitalCount];
-
-        public int CritChance;
+        public int CritChance { get; set; }
 
         //Combat
-        public int Damage = 1;
+        public int Damage { get; set; } = 1;
 
-        public int DamageType;
+        public int DamageType { get; set; }
 
         [JsonIgnore]
         private long mBaseExp;
@@ -69,68 +53,127 @@ namespace Intersect.GameObjects
         }
 
         //Level Up Info
-        public int IncreasePercentage;
+        public int IncreasePercentage { get; set; }
 
         [JsonIgnore]
+        [NotMapped]
         [NotNull]
         public ExperienceCurve ExperienceCurve { get; }
 
         //Locked - Can the class be chosen from character select?
-        public int Locked;
+        public bool Locked { get; set; }
 
-        public int PointIncrease;
-        public int Scaling = 100;
-        public int ScalingStat;
-        public int SpawnDir;
+        public int PointIncrease { get; set; }
+        public int Scaling { get; set; } = 100;
+        public int ScalingStat { get; set; }
 
         //Spawn Info
-        public int SpawnMap;
+        public int SpawnMap { get; set; }
+        public int SpawnX { get; set; }
+        public int SpawnY { get; set; }
+        public int SpawnDir { get; set; }
 
-        public int SpawnX;
-        public int SpawnY;
+        //Base Stats
+        [Column("BaseStats")]
+        [JsonIgnore]
+        public string JsonBaseStats
+        {
+            get => JsonConvert.SerializeObject(BaseStat);
+            protected set => BaseStat = JsonConvert.DeserializeObject<int[]>(value);
+        }
+        [NotMapped]
+        public int[] BaseStat = new int[(int)Stats.StatCount];
+
+        //Base Vitals
+        [Column("BaseVitals")]
+        [JsonIgnore]
+        public string JsonBaseVitals
+        {
+            get => JsonConvert.SerializeObject(BaseVital);
+            protected set => BaseVital = JsonConvert.DeserializeObject<int[]>(value);
+        }
+        [NotMapped]
+        public int[] BaseVital = new int[(int)Vitals.VitalCount];
 
         //Starting Items
-        [NotMapped]
-        public List<ClassItem> Items = new List<ClassItem>();
-
         [Column("Items")]
+        [JsonIgnore]
         public string JsonItems
         {
             get => JsonConvert.SerializeObject(Items);
-            set => Items = JsonConvert.DeserializeObject<List<ClassItem>>(value);
+            protected set => Items = JsonConvert.DeserializeObject<List<ClassItem>>(value);
         }
+        [NotMapped]
+        public List<ClassItem> Items = new List<ClassItem>();
+
 
         //Starting Spells
-        [NotMapped]
-        public List<ClassSpell> Spells = new List<ClassSpell>();
-
         [Column("Spells")]
+        [JsonIgnore]
         public string JsonSpells
         {
             get => JsonConvert.SerializeObject(Spells);
-            set => Spells = JsonConvert.DeserializeObject<List<ClassSpell>>(value);
+            protected set => Spells = JsonConvert.DeserializeObject<List<ClassSpell>>(value);
         }
+        [NotMapped]
+        public List<ClassSpell> Spells = new List<ClassSpell>();
 
         //Sprites
-        [NotMapped]
-        public List<ClassSprite> Sprites = new List<ClassSprite>();
-
+        [JsonIgnore]
         [Column("Sprites")]
         public string JsonSprites
         {
             get => JsonConvert.SerializeObject(Sprites);
-            set => Sprites = JsonConvert.DeserializeObject<List<ClassSprite>>(value);
+            protected set => Sprites = JsonConvert.DeserializeObject<List<ClassSprite>>(value);
         }
+        [NotMapped]
+        public List<ClassSprite> Sprites = new List<ClassSprite>();
 
+        //Stat Increases (per level)
+        [JsonIgnore]
+        [Column("StatIncreases")]
+        public string StatIncreaseJson
+        {
+            get => JsonConvert.SerializeObject(StatIncrease, Formatting.None);
+            protected set => StatIncrease = JsonConvert.DeserializeObject<int[]>(value);
+        }
+        [NotMapped]
         public int[] StatIncrease = new int[(int) Stats.StatCount];
 
+        //Vital Increases (per level0
+        [JsonIgnore]
+        [Column("VitalIncreases")]
+        public string VitalIncreaseJson
+        {
+            get => JsonConvert.SerializeObject(VitalIncrease, Formatting.None);
+            protected set => VitalIncrease = JsonConvert.DeserializeObject<int[]>(value);
+        }
+        [NotMapped]
         public int[] VitalIncrease = new int[(int) Vitals.VitalCount];
 
-        //Regen Percentages
+        //Vital Regen %
+        [JsonIgnore]
+        [Column("VitalRegen")]
+        public string RegenJson
+        {
+            get => JsonConvert.SerializeObject(VitalRegen, Formatting.None);
+            protected set => VitalRegen = JsonConvert.DeserializeObject<int[]>(value);
+        }
+        [NotMapped]
         public int[] VitalRegen = new int[(int) Vitals.VitalCount];
 
         [JsonConstructor]
         public ClassBase(int index) : base(index)
+        {
+            Name = "New Class";
+
+            ExperienceCurve = new ExperienceCurve();
+            BaseExp = DEFAULT_BASE_EXPERIENCE;
+            ExpIncrease = DEFAULT_EXPERIENCE_INCREASE;
+        }
+
+        //Parameterless constructor for EF
+        public ClassBase()
         {
             Name = "New Class";
 
@@ -146,37 +189,25 @@ namespace Intersect.GameObjects
 
     public class ClassItem
     {
-        public int Amount;
-
         [JsonProperty]
-        public Guid ItemId { get; set; }
-
-        [NotMapped]
-        public ItemBase Item => ItemBase.Lookup.Get<ItemBase>(ItemId);
-
-        [NotMapped]
-        public int ItemNum
+        public int Item { get; set; }
+        public int Amount { get; set; }
+        
+        public ItemBase Get()
         {
-            get => Item?.Index ?? -1;
-            set => ItemId = ItemBase.Lookup.Get(value)?.Id ?? Guid.Empty;
+            return ItemBase.Lookup.Get<ItemBase>(Item);
         }
     }
 
     public class ClassSpell
     {
-        public int Level;
-
         [JsonProperty]
-        public Guid SpellId { get; set; }
+        public int Spell { get; set; }
+        public int Level { get; set; }
 
-        [NotMapped]
-        public SpellBase Spell => SpellBase.Lookup.Get<SpellBase>(SpellId);
-
-        [NotMapped]
-        public int SpellNum
+        public SpellBase Get()
         {
-            get => Spell.Index;
-            set => SpellId = SpellBase.Lookup.Get(value)?.Id ?? Guid.Empty;
+            return SpellBase.Lookup.Get<SpellBase>(Spell);
         }
     }
 

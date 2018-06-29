@@ -1033,7 +1033,7 @@ namespace Intersect.Server.Classes.Networking
                         //Check for animation
                         if (classBase.AttackAnimation != null)
                         {
-                            PacketSender.SendAnimationToProximity(classBase.AttackAnimation.Index, -1, -1, attackingTile.GetMap(), attackingTile.GetX(), attackingTile.GetY(), client.Entity.Dir);
+                            PacketSender.SendAnimationToProximity(classBase.AttackAnimation, -1, -1, attackingTile.GetMap(), attackingTile.GetX(), attackingTile.GetY(), client.Entity.Dir);
                         }
                     }
                 }
@@ -1160,7 +1160,7 @@ namespace Intersect.Server.Classes.Networking
             var sprite = bf.ReadInteger();
             var index = client.EntityIndex;
             var classBase = ClassBase.Lookup.Get<ClassBase>(Class);
-            if (classBase == null || classBase.Locked == 1)
+            if (classBase == null || classBase.Locked)
             {
                 PacketSender.SendLoginError(client, Strings.Account.invalidclass);
                 return;
@@ -1204,16 +1204,16 @@ namespace Intersect.Server.Classes.Networking
                 {
                     if (classBase.Spells[i].Level <= 1)
                     {
-                        Spell tempSpell = new Spell(classBase.Spells[i].SpellNum);
+                        Spell tempSpell = new Spell(classBase.Spells[i].Spell);
                         player.TryTeachSpell(tempSpell, false);
                     }
                 }
 
                 foreach (var item in classBase.Items)
                 {
-                    if (ItemBase.Lookup.Get<ItemBase>(item.ItemNum) != null)
+                    if (ItemBase.Lookup.Get<ItemBase>(item.Item) != null)
                     {
-                        var tempItem = new Item(item.ItemNum, item.Amount);
+                        var tempItem = new Item(item.Item, item.Amount);
                         player.TryGiveItem(tempItem, false);
                     }
                 }

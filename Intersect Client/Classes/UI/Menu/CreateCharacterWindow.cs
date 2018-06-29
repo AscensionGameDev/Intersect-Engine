@@ -144,7 +144,7 @@ namespace Intersect_Client.Classes.UI.Menu
             var classCount = 0;
             foreach (ClassBase cls in ClassBase.Lookup.Values)
             {
-                if (cls.Locked == 0)
+                if (!cls.Locked)
                 {
                     mClassCombobox.AddItem(cls.Name);
                     classCount++;
@@ -231,7 +231,7 @@ namespace Intersect_Client.Classes.UI.Menu
             if (mClassCombobox.SelectedItem == null) return null;
             foreach (var cls in ClassBase.Lookup)
             {
-                if (mClassCombobox.SelectedItem.Text == cls.Value.Name && ((ClassBase) cls.Value).Locked == 0)
+                if (mClassCombobox.SelectedItem.Text == cls.Value.Name && !((ClassBase) cls.Value).Locked)
                 {
                     return (ClassBase) cls.Value;
                 }

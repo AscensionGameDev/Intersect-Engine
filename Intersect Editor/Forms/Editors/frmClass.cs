@@ -96,7 +96,7 @@ namespace Intersect.Editor.Forms.Editors
             for (int i = 0; i < mEditorItem.Spells.Count; i++)
             {
                 lstSpells.Items.Add(Strings.ClassEditor.spellitem.ToString(i + 1,
-                    SpellBase.GetName(mEditorItem.Spells[i].SpellNum), mEditorItem.Spells[i].Level));
+                    SpellBase.GetName(mEditorItem.Spells[i].Spell), mEditorItem.Spells[i].Level));
             }
             if (keepIndex) lstSpells.SelectedIndex = n;
         }
@@ -105,7 +105,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             var n = new ClassSpell
             {
-                SpellNum = Database.GameObjectIdFromList(GameObjectType.Spell, cmbSpell.SelectedIndex),
+                Spell = Database.GameObjectIdFromList(GameObjectType.Spell, cmbSpell.SelectedIndex),
                 Level = (int) nudLevel.Value
             };
 
@@ -151,7 +151,7 @@ namespace Intersect.Editor.Forms.Editors
                 cmbDamageType.SelectedIndex = mEditorItem.DamageType;
                 cmbScalingStat.SelectedIndex = mEditorItem.ScalingStat;
                 cmbAttackAnimation.SelectedIndex =
-                    Database.GameObjectListIndex(GameObjectType.Animation, mEditorItem.AttackAnimation.Index) + 1;
+                    Database.GameObjectListIndex(GameObjectType.Animation, mEditorItem.AttackAnimation) + 1;
 
                 //Regen
                 nudHPRegen.Value = mEditorItem.VitalRegen[(int) Vitals.Health];
@@ -182,7 +182,7 @@ namespace Intersect.Editor.Forms.Editors
                 {
                     lstSpells.SelectedIndex = 0;
                     cmbSpell.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Spell,
-                        mEditorItem.Spells[lstSpells.SelectedIndex].SpellNum);
+                        mEditorItem.Spells[lstSpells.SelectedIndex].Spell);
                     nudLevel.Value = mEditorItem.Spells[lstSpells.SelectedIndex].Level;
                 }
                 else
@@ -580,7 +580,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void chkLocked_CheckedChanged(object sender, EventArgs e)
         {
-            mEditorItem.Locked = Convert.ToInt32(chkLocked.Checked);
+            mEditorItem.Locked = chkLocked.Checked;
         }
 
         private void UpdateIncreases()
@@ -750,8 +750,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbAttackAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.AttackAnimation = AnimationBase.Lookup.Get<AnimationBase>(Database.GameObjectIdFromList(GameObjectType.Animation,
-                cmbAttackAnimation.SelectedIndex - 1));
+            mEditorItem.AttackAnimation = Database.GameObjectIdFromList(GameObjectType.Animation, cmbAttackAnimation.SelectedIndex - 1);
         }
 
         private void cmbDamageType_SelectedIndexChanged(object sender, EventArgs e)
@@ -768,7 +767,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (lstSpells.SelectedIndex > -1 && cmbSpell.SelectedIndex > -1)
             {
-                mEditorItem.Spells[lstSpells.SelectedIndex].SpellNum = Database.GameObjectIdFromList(
+                mEditorItem.Spells[lstSpells.SelectedIndex].Spell = Database.GameObjectIdFromList(
                     GameObjectType.Spell,
                     cmbSpell.SelectedIndex);
                 UpdateSpellList();
@@ -780,7 +779,7 @@ namespace Intersect.Editor.Forms.Editors
             if (lstSpells.SelectedIndex > -1)
             {
                 cmbSpell.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Spell,
-                    mEditorItem.Spells[lstSpells.SelectedIndex].SpellNum);
+                    mEditorItem.Spells[lstSpells.SelectedIndex].Spell);
                 nudLevel.Value = mEditorItem.Spells[lstSpells.SelectedIndex].Level;
             }
         }
@@ -936,13 +935,13 @@ namespace Intersect.Editor.Forms.Editors
             var spawnItems = mEditorItem.Items.ToArray();
             foreach (var spawnItem in spawnItems)
             {
-                if (ItemBase.Lookup.Get<ItemBase>(spawnItem.ItemNum) == null) mEditorItem.Items.Remove(spawnItem);
+                if (ItemBase.Lookup.Get<ItemBase>(spawnItem.Item) == null) mEditorItem.Items.Remove(spawnItem);
             }
             for (int i = 0; i < mEditorItem.Items.Count; i++)
             {
-                if (mEditorItem.Items[i].ItemNum != -1)
+                if (mEditorItem.Items[i].Item != -1)
                 {
-                    lstSpawnItems.Items.Add(Strings.ClassEditor.spawnitemdisplay.ToString(ItemBase.GetName(mEditorItem.Items[i].ItemNum), mEditorItem.Items[i].Amount));
+                    lstSpawnItems.Items.Add(Strings.ClassEditor.spawnitemdisplay.ToString(ItemBase.GetName(mEditorItem.Items[i].Item), mEditorItem.Items[i].Amount));
                 }
                 else
                 {
@@ -956,7 +955,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (lstSpawnItems.SelectedIndex > -1 && lstSpawnItems.SelectedIndex < mEditorItem.Items.Count)
             {
-                mEditorItem.Items[lstSpawnItems.SelectedIndex].ItemNum = Database.GameObjectIdFromList(GameObjectType.Item, cmbSpawnItem.SelectedIndex - 1);
+                mEditorItem.Items[lstSpawnItems.SelectedIndex].Item = Database.GameObjectIdFromList(GameObjectType.Item, cmbSpawnItem.SelectedIndex - 1);
             }
             UpdateSpawnItemValues(true);
         }
@@ -972,7 +971,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (lstSpawnItems.SelectedIndex > -1)
             {
-                cmbSpawnItem.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item, mEditorItem.Items[lstSpawnItems.SelectedIndex].ItemNum) + 1;
+                cmbSpawnItem.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item, mEditorItem.Items[lstSpawnItems.SelectedIndex].Item) + 1;
                 nudSpawnItemAmount.Value = mEditorItem.Items[lstSpawnItems.SelectedIndex].Amount;
             }
         }
@@ -980,7 +979,7 @@ namespace Intersect.Editor.Forms.Editors
         private void btnSpawnItemAdd_Click(object sender, EventArgs e)
         {
             mEditorItem.Items.Add(new ClassItem());
-            mEditorItem.Items[mEditorItem.Items.Count - 1].ItemNum = Database.GameObjectIdFromList(GameObjectType.Item, cmbSpawnItem.SelectedIndex - 1);
+            mEditorItem.Items[mEditorItem.Items.Count - 1].Item = Database.GameObjectIdFromList(GameObjectType.Item, cmbSpawnItem.SelectedIndex - 1);
             mEditorItem.Items[mEditorItem.Items.Count - 1].Amount = (int)nudSpawnItemAmount.Value;
 
             UpdateSpawnItemValues();

@@ -40,7 +40,8 @@ namespace Intersect.Server.Classes.Core
         public static List<GameObjectType> ReadyObjs = new List<GameObjectType> {
         GameObjectType.Animation,
         GameObjectType.CraftTables,
-        GameObjectType.Crafts};
+        GameObjectType.Crafts,
+        GameObjectType.Class};
 
 
         public const string DIRECTORY_BACKUPS = "resources/backups";
@@ -735,6 +736,11 @@ namespace Intersect.Server.Classes.Core
                     }
                     break;
                 case GameObjectType.Class:
+                    foreach (var cls in sGameDb.Classes)
+                    {
+                        ClassBase.Lookup.Set(cls.Id, cls);
+                        ClassBase.Lookup.Set(cls.Index, cls);
+                    }
                     break;
                 case GameObjectType.Item:
                     break;
@@ -900,6 +906,7 @@ namespace Intersect.Server.Classes.Core
                         break;
                     case GameObjectType.Class:
                         var objc = new ClassBase(index);
+                        sGameDb.Classes.Add(objc);
                         dbObj = objc;
                         ClassBase.Lookup.Set(index, objc);
                         break;
@@ -1006,6 +1013,7 @@ namespace Intersect.Server.Classes.Core
                     sGameDb.Animations.Remove((AnimationBase)gameObject);
                     return;
                 case GameObjectType.Class:
+                    sGameDb.Classes.Remove((ClassBase) gameObject);
                     return;
                 case GameObjectType.Item:
                     return;
