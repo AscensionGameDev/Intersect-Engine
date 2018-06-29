@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Models;
 using Newtonsoft.Json;
 
@@ -36,30 +37,40 @@ namespace Intersect.GameObjects
 
     public class AnimationBase : DatabaseObject<AnimationBase>
     {
+        [JsonIgnore]
+        [Column("Lower")]
+        public string LowerJson
+        {
+            get => JsonConvert.SerializeObject(Lower, Formatting.None);
+            protected set => Lower = JsonConvert.DeserializeObject<AnimationLayer>(value);
+        }
+        [NotMapped]
         public AnimationLayer Lower { get; set; }
 
+        [JsonIgnore]
+        [Column("Upper")]
+        public string UpperJson
+        {
+            get => JsonConvert.SerializeObject(Upper, Formatting.None);
+            protected set => Upper = JsonConvert.DeserializeObject<AnimationLayer>(value);
+        }
+        [NotMapped]
         public AnimationLayer Upper { get; set; }
-
-        [Column("Lower_Lights")]
-        public string JsonLowerLights
-        {
-            get => JsonConvert.SerializeObject(Lower.Lights);
-            set => Lower.Lights = JsonConvert.DeserializeObject<LightBase[]>(value);
-        }
-
-        [Column("Upper_Lights")]
-        public string JsonUpperLights
-        {
-            get => JsonConvert.SerializeObject(Upper.Lights);
-            set => Upper.Lights = JsonConvert.DeserializeObject<LightBase[]>(value);
-        }
 
         //Misc
         public string Sound { get; set; }
 
-
         [JsonConstructor]
         public AnimationBase(int index) : base(index)
+        {
+            // TODO: localize this
+            Name = "New Animation";
+            Lower = new AnimationLayer();
+            Upper = new AnimationLayer();
+        }
+
+        //EF Parameterless Constructor
+        public AnimationBase()
         {
             // TODO: localize this
             Name = "New Animation";

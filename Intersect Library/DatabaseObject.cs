@@ -15,6 +15,10 @@ namespace Intersect.Models
 
         private string mBackup;
 
+        protected DatabaseObject() : this(Guid.Empty, -1)
+        {
+        }
+
         protected DatabaseObject(int index) : this(Guid.NewGuid(), index)
         {
         }
@@ -38,8 +42,8 @@ namespace Intersect.Models
         [JsonIgnore][NotMapped]
         public string DatabaseTable => Type.GetTable();
 
-        [JsonIgnore][NotMapped]
-        public int Index { get; }
+        [JsonIgnore]//[NotMapped]
+        public int Index { get; protected set; }
 
         [JsonProperty(Order = -4)]
         [Column(Order = 0)]

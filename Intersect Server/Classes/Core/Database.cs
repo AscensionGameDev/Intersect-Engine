@@ -18,6 +18,7 @@ using Intersect.Server.Classes.Localization;
 using Intersect.Logging;
 using Intersect.Models;
 using Intersect.Server.Classes.Database;
+using Intersect.Server.Classes.Database.GameData;
 using Intersect.Server.Classes.Database.PlayerData;
 using Intersect.Server.Classes.Database.PlayerData.Characters;
 using Intersect.Server.Classes.Entities;
@@ -36,6 +37,12 @@ namespace Intersect.Server.Classes.Core
 {
     public static class LegacyDatabase
     {
+        public static List<GameObjectType> ReadyObjs = new List<GameObjectType> {
+        GameObjectType.Animation,
+        GameObjectType.CraftTables,
+        GameObjectType.Crafts};
+
+
         public const string DIRECTORY_BACKUPS = "resources/backups";
         private const int DbVersion = 12;
         private const string GameDbFilename = "resources/gamedata.db";
@@ -82,6 +89,8 @@ namespace Intersect.Server.Classes.Core
 
         private static PlayerContext sPlayerDb;
 
+        private static GameContext sGameDb;
+
         public static object MapGridLock = new object();
         public static List<MapGrid> MapGrids = new List<MapGrid>();
 
@@ -127,8 +136,17 @@ namespace Intersect.Server.Classes.Core
             {
                 sPlayerDb = new PlayerContext(DatabaseUtils.DbProvider.MySql, $"server={Options.PlayerDb.Server};database={Options.PlayerDb.Database};user={Options.PlayerDb.Username};password={Options.PlayerDb.Password}");   
             }
-            //sPlayerDb.Database.EnsureDeleted();
             sPlayerDb.Database.Migrate();
+
+            if (Options.GameDb.Type == DatabaseOptions.DatabaseType.sqlite)
+            {
+                sGameDb = new GameContext(DatabaseUtils.DbProvider.Sqlite, $"Data Source=resources/efgamedatabase.db");
+            }
+            else
+            {
+                throw new Exception("Learn to walk before you try to run there fella");
+            }
+            sGameDb.Database.Migrate();
 
             if (sGameDbConnection.GetVersion() != DbVersion)
             {
@@ -572,21 +590,62 @@ namespace Intersect.Server.Classes.Core
             }
         }
 
+        private static void LoadGameObject1(GameObjectType type, Guid id)
+        {
+            switch (type)
+            {
+                case GameObjectType.Animation:
+                    var anim = sGameDb.Animations.Where(p => p.Id == id).SingleOrDefault();
+                    break;
+                case GameObjectType.Class:
+                    break;
+                case GameObjectType.Item:
+                    break;
+                case GameObjectType.Npc:
+                    break;
+                case GameObjectType.Projectile:
+                    break;
+                case GameObjectType.Quest:
+                    break;
+                case GameObjectType.Resource:
+                    break;
+                case GameObjectType.Shop:
+                    break;
+                case GameObjectType.Spell:
+                    break;
+                case GameObjectType.CraftTables:
+                    break;
+                case GameObjectType.Crafts:
+                    break;
+                case GameObjectType.Map:
+                    break;
+                case GameObjectType.CommonEvent:
+                    break;
+                case GameObjectType.PlayerSwitch:
+                    break;
+                case GameObjectType.PlayerVariable:
+                    break;
+                case GameObjectType.ServerSwitch:
+                    break;
+                case GameObjectType.ServerVariable:
+                    break;
+                case GameObjectType.Tileset:
+                    break;
+                case GameObjectType.Time:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            }
+        }
+
         private static void LoadGameObject(GameObjectType type, int index, string json)
         {
             JObject jObj;
             jObj = JObject.Parse(json);
             jObj.Add("Index", index);
 
-            //In each case, do
-            //obj = JsonConvert.DeserializeObject<AnimationBase>(jObj.ToString());
-            //Then the Lookup.Set
             switch (type)
             {
-                case GameObjectType.Animation:
-                    var anim = JsonConvert.DeserializeObject<AnimationBase>(jObj.ToString());
-                    AnimationBase.Lookup.Set(index, anim);
-                    break;
                 case GameObjectType.Class:
                     var cls = JsonConvert.DeserializeObject<ClassBase>(jObj.ToString());
                     ClassBase.Lookup.Set(index, cls);
@@ -664,11 +723,79 @@ namespace Intersect.Server.Classes.Core
             }
         }
 
+        private static void LoadAllGameObjects1(GameObjectType gameObjectType)
+        {
+            switch (gameObjectType)
+            {
+                case GameObjectType.Animation:
+                    foreach (var anim in sGameDb.Animations)
+                    {
+                        AnimationBase.Lookup.Set(anim.Id, anim);
+                        AnimationBase.Lookup.Set(anim.Index, anim);
+                    }
+                    break;
+                case GameObjectType.Class:
+                    break;
+                case GameObjectType.Item:
+                    break;
+                case GameObjectType.Npc:
+                    break;
+                case GameObjectType.Projectile:
+                    break;
+                case GameObjectType.Quest:
+                    break;
+                case GameObjectType.Resource:
+                    break;
+                case GameObjectType.Shop:
+                    break;
+                case GameObjectType.Spell:
+                    break;
+                case GameObjectType.CraftTables:
+                    foreach (var craft in sGameDb.CraftingTables)
+                    {
+                        CraftingTableBase.Lookup.Set(craft.Id, craft);
+                        CraftingTableBase.Lookup.Set(craft.Index, craft);
+                    }
+                    break;
+                case GameObjectType.Crafts:
+                    foreach (var craft in sGameDb.Crafts)
+                    {
+                        CraftBase.Lookup.Set(craft.Id, craft);
+                        CraftBase.Lookup.Set(craft.Index, craft);
+                    }
+                    break;
+                case GameObjectType.Map:
+                    break;
+                case GameObjectType.CommonEvent:
+                    break;
+                case GameObjectType.PlayerSwitch:
+                    break;
+                case GameObjectType.PlayerVariable:
+                    break;
+                case GameObjectType.ServerSwitch:
+                    break;
+                case GameObjectType.ServerVariable:
+                    break;
+                case GameObjectType.Tileset:
+                    break;
+                case GameObjectType.Time:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(gameObjectType), gameObjectType, null);
+            }
+        }
+
         private static void LoadGameObjects(GameObjectType gameObjectType)
         {
+            ClearGameObjects(gameObjectType);
+            if (ReadyObjs.Contains(gameObjectType))
+            {
+                LoadAllGameObjects1(gameObjectType);
+                return;
+            }
             var nullIssues = "";
             var tableName = gameObjectType.GetTable();
-            ClearGameObjects(gameObjectType);
+            
             var query = $"SELECT * from {tableName} WHERE " + GAME_OBJECT_DELETED + "=@" + GAME_OBJECT_DELETED +
                         ";";
             using (var cmd = sGameDbConnection.CreateCommand())
@@ -703,6 +830,11 @@ namespace Intersect.Server.Classes.Core
 
         public static void SaveGameObject(IDatabaseObject gameObject)
         {
+            if (ReadyObjs.Contains(gameObject.Type))
+            {
+                sGameDb.SaveChanges();
+                return;
+            }
             if (gameObject == null)
             {
                 Log.Error("Attempted to persist null game object to the Database.");
@@ -762,6 +894,7 @@ namespace Intersect.Server.Classes.Core
                 {
                     case GameObjectType.Animation:
                         var obja = new AnimationBase(index);
+                        sGameDb.Animations.Add(obja);
                         dbObj = obja;
                         AnimationBase.Lookup.Set(index, obja);
                         break;
@@ -807,11 +940,13 @@ namespace Intersect.Server.Classes.Core
                         break;
                     case GameObjectType.CraftTables:
                         var obje = new CraftingTableBase(index);
+                        sGameDb.CraftingTables.Add(obje);
                         dbObj = obje;
                         CraftingTableBase.Lookup.Set(index, obje);
                         break;
                     case GameObjectType.Crafts:
                         var crft = new CraftBase(index);
+                        sGameDb.Crafts.Add(crft);
                         dbObj = crft;
                         CraftBase.Lookup.Set(index, crft);
                         break;
@@ -865,6 +1000,50 @@ namespace Intersect.Server.Classes.Core
 
         public static void DeleteGameObject(IDatabaseObject gameObject)
         {
+            switch (gameObject.Type)
+            {
+                case GameObjectType.Animation:
+                    sGameDb.Animations.Remove((AnimationBase)gameObject);
+                    return;
+                case GameObjectType.Class:
+                    return;
+                case GameObjectType.Item:
+                    return;
+                case GameObjectType.Npc:
+                    return;
+                case GameObjectType.Projectile:
+                    return;
+                case GameObjectType.Quest:
+                    return;
+                case GameObjectType.Resource:
+                    return;
+                case GameObjectType.Shop:
+                    return;
+                case GameObjectType.Spell:
+                    return;
+                case GameObjectType.CraftTables:
+                    sGameDb.CraftingTables.Remove((CraftingTableBase)gameObject);
+                    return;
+                case GameObjectType.Crafts:
+                    sGameDb.Crafts.Remove((CraftBase)gameObject);
+                    return;
+                case GameObjectType.Map:
+                    return;
+                case GameObjectType.CommonEvent:
+                    return;
+                case GameObjectType.PlayerSwitch:
+                    return;
+                case GameObjectType.PlayerVariable:
+                    return;
+                case GameObjectType.ServerSwitch:
+                    return;
+                case GameObjectType.ServerVariable:
+                    return;
+                case GameObjectType.Tileset:
+                    return;
+                case GameObjectType.Time:
+                    return;
+            }
             var insertQuery = "UPDATE " + gameObject.DatabaseTable + " set " + GAME_OBJECT_DELETED + "=@" +
                               GAME_OBJECT_DELETED + " WHERE " +
                               GAME_OBJECT_ID + "=@" + GAME_OBJECT_ID + ";";

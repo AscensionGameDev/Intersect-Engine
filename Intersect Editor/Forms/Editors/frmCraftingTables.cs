@@ -258,5 +258,17 @@ namespace Intersect.Editor.Forms.Editors
             btnSave.Text = Strings.CraftingTableEditor.save;
             btnCancel.Text = Strings.CraftingTableEditor.cancel;
         }
+
+        private void lstAvailableCrafts_SelectedValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Crafts.Clear();
+            for (int i = 0; i < lstAvailableCrafts.Items.Count; i++)
+            {
+                if (lstAvailableCrafts.CheckedIndices.Contains(i))
+                {
+                    mEditorItem.Crafts.Add(Database.GameObjectIdFromList(GameObjectType.Crafts,i));
+                }
+            }
+        }
     }
 }

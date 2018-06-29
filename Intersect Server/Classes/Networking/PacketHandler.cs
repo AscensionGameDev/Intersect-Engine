@@ -637,7 +637,7 @@ namespace Intersect.Server.Classes.Networking
                 var clients = Globals.Clients.ToArray();
                 foreach (var user in clients)
                 {
-                    if (user.Name.ToLower() == usr.ToLower() && user != client && user.IsEditor)
+                    if (user.Name != null && user.Name.ToLower() == usr.ToLower() && user != client && user.IsEditor)
                     {
                         user.Disconnect();
                     }

@@ -172,6 +172,7 @@ namespace Intersect.Editor.Forms.Editors
             this.lstAvailableCrafts.Name = "lstAvailableCrafts";
             this.lstAvailableCrafts.Size = new System.Drawing.Size(190, 287);
             this.lstAvailableCrafts.TabIndex = 0;
+            this.lstAvailableCrafts.SelectedValueChanged += new System.EventHandler(this.lstAvailableCrafts_SelectedValueChanged);
             // 
             // toolStrip
             // 

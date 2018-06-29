@@ -404,9 +404,13 @@
     <Compile Include="Migrations\20180304060936_Inital.designer.cs">
       <DependentUpon>20180304060936_Inital.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\Game\20180307035259_GameData.cs" />
-    <Compile Include="Migrations\Game\20180307035259_GameData.designer.cs">
-      <DependentUpon>20180307035259_GameData.cs</DependentUpon>
+    <Compile Include="Migrations\Game\20180629194939_Testing1.cs" />
+    <Compile Include="Migrations\Game\20180629194939_Testing1.designer.cs">
+      <DependentUpon>20180629194939_Testing1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Game\20180629201316_AddProps.cs" />
+    <Compile Include="Migrations\Game\20180629201316_AddProps.designer.cs">
+      <DependentUpon>20180629201316_AddProps.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\GameContextModelSnapshot.cs" />
     <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />

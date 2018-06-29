@@ -112,7 +112,7 @@ namespace Intersect_Client.Classes.UI.Game
                 mCombinedItem.DescWindow.Dispose();
             }
             if (index >= Globals.ActiveCraftingTable.Crafts.Count) return; 
-            var craft = CraftBase.Lookup.Get<CraftBase>(Globals.ActiveCraftingTable.Crafts[index]);
+            var craft = Globals.ActiveCraftingTable.Crafts.Get(index);
             if (craft == null) return;
             
             mCombinedItem = new RecipeItem(this, new CraftIngredient(craft.Item, 0))

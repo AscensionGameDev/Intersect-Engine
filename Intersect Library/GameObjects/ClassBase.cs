@@ -157,7 +157,7 @@ namespace Intersect.GameObjects
         [NotMapped]
         public int ItemNum
         {
-            get => Item.Index;
+            get => Item?.Index ?? -1;
             set => ItemId = ItemBase.Lookup.Get(value)?.Id ?? Guid.Empty;
         }
     }
