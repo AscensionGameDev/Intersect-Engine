@@ -42,7 +42,9 @@ namespace Intersect.Server.Classes.Core
         GameObjectType.CraftTables,
         GameObjectType.Crafts,
         GameObjectType.Class,
-        GameObjectType.Item};
+        GameObjectType.Item,
+        GameObjectType.Npc,
+        GameObjectType.Projectile};
 
 
         public const string DIRECTORY_BACKUPS = "resources/backups";
@@ -679,6 +681,7 @@ namespace Intersect.Server.Classes.Core
 
         private static void LoadAllGameObjects1(GameObjectType gameObjectType)
         {
+
             switch (gameObjectType)
             {
                 case GameObjectType.Animation:
@@ -703,8 +706,18 @@ namespace Intersect.Server.Classes.Core
                     }
                     break;
                 case GameObjectType.Npc:
+                    foreach (var npc in sGameDb.Npcs)
+                    {
+                        NpcBase.Lookup.Set(npc.Id, npc);
+                        NpcBase.Lookup.Set(npc.Index, npc);
+                    }
                     break;
                 case GameObjectType.Projectile:
+                    foreach (var proj in sGameDb.Projectiles)
+                    {
+                        ProjectileBase.Lookup.Set(proj.Id, proj);
+                        ProjectileBase.Lookup.Set(proj.Index, proj);
+                    }
                     break;
                 case GameObjectType.Quest:
                     break;
@@ -876,11 +889,13 @@ namespace Intersect.Server.Classes.Core
                         break;
                     case GameObjectType.Npc:
                         var objq = new NpcBase(index);
+                        sGameDb.Npcs.Add(objq);
                         dbObj = objq;
                         NpcBase.Lookup.Set(index, objq);
                         break;
                     case GameObjectType.Projectile:
                         var objwe = new ProjectileBase(index);
+                        sGameDb.Projectiles.Add(objwe);
                         dbObj = objwe;
                         ProjectileBase.Lookup.Set(index, objwe);
                         break;
@@ -978,8 +993,10 @@ namespace Intersect.Server.Classes.Core
                     sGameDb.Items.Remove((ItemBase)gameObject);
                     return;
                 case GameObjectType.Npc:
+                    sGameDb.Npcs.Remove((NpcBase) gameObject);
                     return;
                 case GameObjectType.Projectile:
+                    sGameDb.Projectiles.Remove((ProjectileBase) gameObject);
                     return;
                 case GameObjectType.Quest:
                     return;

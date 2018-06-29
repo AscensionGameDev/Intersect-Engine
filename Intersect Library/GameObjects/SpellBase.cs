@@ -61,5 +61,10 @@ namespace Intersect.GameObjects
         {
             Name = "New Spell";
         }
+
+        public static SpellBase Get(int index)
+        {
+            return SpellBase.Lookup.Get<SpellBase>(index);
+        }
     }
 }

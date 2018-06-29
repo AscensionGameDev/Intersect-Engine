@@ -27,6 +27,12 @@ namespace Intersect.Server.Classes.Database.GameData
         //Items
         public DbSet<ItemBase> Items { get; set; }
 
+        //NPCs
+        public DbSet<NpcBase> Npcs { get; set; }
+
+        //Projectiles
+        public DbSet<ProjectileBase> Projectiles { get; set; }
+
         private DatabaseUtils.DbProvider mConnection = DatabaseUtils.DbProvider.Sqlite;
         private string mConnectionString = @"Data Source=resources/gamedata.db";
 

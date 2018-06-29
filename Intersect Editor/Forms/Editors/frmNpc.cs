@@ -198,11 +198,11 @@ namespace Intersect.Editor.Forms.Editors
                 nudLevel.Value = mEditorItem.Level;
                 nudSightRange.Value = mEditorItem.SightRange;
                 nudSpawnDuration.Value = mEditorItem.SpawnDuration;
-                nudStr.Value = mEditorItem.Stat[(int)Stats.Attack];
-                nudMag.Value = mEditorItem.Stat[(int)Stats.AbilityPower];
-                nudDef.Value = mEditorItem.Stat[(int)Stats.Defense];
-                nudMR.Value = mEditorItem.Stat[(int)Stats.MagicResist];
-                nudSpd.Value = mEditorItem.Stat[(int)Stats.Speed];
+                nudStr.Value = mEditorItem.Stats[(int)Stats.Attack];
+                nudMag.Value = mEditorItem.Stats[(int)Stats.AbilityPower];
+                nudDef.Value = mEditorItem.Stats[(int)Stats.Defense];
+                nudMR.Value = mEditorItem.Stats[(int)Stats.MagicResist];
+                nudSpd.Value = mEditorItem.Stats[(int)Stats.Speed];
                 nudHp.Value = mEditorItem.MaxVital[(int)Vitals.Health];
                 nudMana.Value = mEditorItem.MaxVital[(int)Vitals.Mana];
                 nudExp.Value = mEditorItem.Experience;
@@ -216,7 +216,7 @@ namespace Intersect.Editor.Forms.Editors
                 cmbDamageType.SelectedIndex = mEditorItem.DamageType;
                 cmbScalingStat.SelectedIndex = mEditorItem.ScalingStat;
                 cmbAttackAnimation.SelectedIndex =
-                    Database.GameObjectListIndex(GameObjectType.Animation, mEditorItem.AttackAnimation) + 1;
+                    Database.GameObjectListIndex(GameObjectType.Animation, mEditorItem.AttackAnimationId) + 1;
 
                 // Add the spells to the list
                 lstSpells.Items.Clear();
@@ -499,8 +499,8 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbAttackAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.AttackAnimation = Database.GameObjectIdFromList(GameObjectType.Animation,
-                cmbAttackAnimation.SelectedIndex - 1);
+            mEditorItem.AttackAnimation = AnimationBase.Get(Database.GameObjectIdFromList(GameObjectType.Animation,
+                cmbAttackAnimation.SelectedIndex - 1));
         }
 
         private void cmbDamageType_SelectedIndexChanged(object sender, EventArgs e)
@@ -556,27 +556,27 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudStr_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Stat[(int)Stats.Attack] = (int)nudStr.Value;
+            mEditorItem.Stats[(int)Stats.Attack] = (int)nudStr.Value;
         }
 
         private void nudMag_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Stat[(int)Stats.AbilityPower] = (int)nudMag.Value;
+            mEditorItem.Stats[(int)Stats.AbilityPower] = (int)nudMag.Value;
         }
 
         private void nudDef_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Stat[(int)Stats.Defense] = (int)nudDef.Value;
+            mEditorItem.Stats[(int)Stats.Defense] = (int)nudDef.Value;
         }
 
         private void nudMR_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Stat[(int)Stats.MagicResist] = (int)nudMR.Value;
+            mEditorItem.Stats[(int)Stats.MagicResist] = (int)nudMR.Value;
         }
 
         private void nudSpd_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Stat[(int)Stats.Speed] = (int)nudSpd.Value;
+            mEditorItem.Stats[(int)Stats.Speed] = (int)nudSpd.Value;
         }
 
         private void nudDamage_ValueChanged(object sender, EventArgs e)

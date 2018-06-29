@@ -185,6 +185,11 @@ namespace Intersect.GameObjects
         [Pure]
         public long ExperienceToNextLevel(int level)
             => ExperienceCurve.Calculate(level);
+
+        public static ClassBase Get(int index)
+        {
+            return ClassBase.Lookup.Get<ClassBase>(index);
+        }
     }
 
     public class ClassItem

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Models;
 using Newtonsoft.Json;
 
@@ -10,23 +11,60 @@ namespace Intersect.GameObjects
         public const int SPAWN_LOCATIONS_WIDTH = 5;
         public const int SPAWN_LOCATIONS_HEIGHT = 5;
         public const int MAX_PROJECTILE_DIRECTIONS = 8;
-        public int Ammo = -1;
-        public int AmmoRequired = 1;
+
+        [Column("Ammo")]
+        public int AmmoItemId { get; protected set; } = -1;
+        [NotMapped]
+        [JsonIgnore]
+        public ItemBase Ammo
+        {
+            get => ItemBase.Lookup.Get<ItemBase>(AmmoItemId);
+            set => AmmoItemId = value?.Index ?? -1;
+        }
+        public int AmmoRequired { get; set; } = 1;
+
+        [Column("Animations")]
+        [JsonIgnore]
+        public string AnimationsJson
+        {
+            get => JsonConvert.SerializeObject(Animations);
+            set => Animations = JsonConvert.DeserializeObject<List<ProjectileAnimation>>(value);
+        }
+        [NotMapped]
         public List<ProjectileAnimation> Animations = new List<ProjectileAnimation>();
-        public int Delay = 1;
-        public bool GrappleHook;
-        public bool Homing;
-        public bool IgnoreActiveResources;
-        public bool IgnoreExhaustedResources;
-        public bool IgnoreMapBlocks;
-        public bool IgnoreZDimension;
-        public int Knockback;
-        public int Quantity = 1;
-        public int Range = 1;
+
+        public int Delay { get; set; } = 1;
+        public bool GrappleHook { get; set; }
+        public bool Homing { get; set; }
+        public bool IgnoreActiveResources { get; set; }
+        public bool IgnoreExhaustedResources { get; set; }
+        public bool IgnoreMapBlocks { get; set; }
+        public bool IgnoreZDimension { get; set; }
+        public int Knockback { get; set; }
+        public int Quantity { get; set; } = 1;
+        public int Range { get; set; } = 1;
+
+        [Column("SpawnLocations")]
+        [JsonIgnore]
+        public string SpawnsJson
+        {
+            get => JsonConvert.SerializeObject(SpawnLocations);
+            set => SpawnLocations = JsonConvert.DeserializeObject<Location[,]>(value);
+        }
+        [NotMapped]
         public Location[,] SpawnLocations = new Location[SPAWN_LOCATIONS_WIDTH, SPAWN_LOCATIONS_HEIGHT];
 
-        public int Speed = 1;
-        public int Spell;
+        public int Speed { get; set; } = 1;
+
+        [Column("Spell")]
+        public int SpellId { get; protected set; } = -1;
+        [NotMapped]
+        [JsonIgnore]
+        public SpellBase Spell
+        {
+            get => SpellBase.Lookup.Get<SpellBase>(SpellId);
+            set => SpellId = value?.Index ?? -1;
+        }
 
         //Init
         [JsonConstructor]
@@ -40,6 +78,24 @@ namespace Intersect.GameObjects
                     SpawnLocations[x, y] = new Location();
                 }
             }
+        }
+
+        //Parameterless for EF
+        public ProjectileBase()
+        {
+            Name = "New Projectile";
+            for (var x = 0; x < SPAWN_LOCATIONS_WIDTH; x++)
+            {
+                for (var y = 0; y < SPAWN_LOCATIONS_HEIGHT; y++)
+                {
+                    SpawnLocations[x, y] = new Location();
+                }
+            }
+        }
+
+        public static ProjectileBase Get(int index)
+        {
+            return ProjectileBase.Lookup.Get<ProjectileBase>(index);
         }
     }
 

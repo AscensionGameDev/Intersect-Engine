@@ -2615,12 +2615,12 @@ namespace Intersect.Server.Classes.Entities
                 {
                     var projectileBase = ProjectileBase.Lookup.Get<ProjectileBase>(spell.Projectile);
                     if (projectileBase == null) return;
-                    if (projectileBase.Ammo > -1)
+                    if (projectileBase.AmmoItemId > -1)
                     {
-                        if (FindItem(projectileBase.Ammo, projectileBase.AmmoRequired) == -1)
+                        if (FindItem(projectileBase.AmmoItemId, projectileBase.AmmoRequired) == -1)
                         {
                             PacketSender.SendPlayerMsg(MyClient,
-                                Strings.Items.notenough.ToString( ItemBase.GetName(projectileBase.Ammo)),
+                                Strings.Items.notenough.ToString( ItemBase.GetName(projectileBase.AmmoItemId)),
                                 CustomColors.Error);
                             return;
                         }
@@ -2666,9 +2666,9 @@ namespace Intersect.Server.Classes.Entities
                                     spell.TargetType == (int)SpellTargetTypes.Projectile && spell.Projectile > -1)
                                 {
                                     var projectileBase = ProjectileBase.Lookup.Get<ProjectileBase>(spell.Projectile);
-                                    if (projectileBase != null && projectileBase.Ammo > -1)
+                                    if (projectileBase != null && projectileBase.AmmoItemId > -1)
                                     {
-                                        TakeItemsByNum(FindItem(projectileBase.Ammo, projectileBase.AmmoRequired),
+                                        TakeItemsByNum(FindItem(projectileBase.AmmoItemId, projectileBase.AmmoRequired),
                                             projectileBase.AmmoRequired);
                                     }
                                 }

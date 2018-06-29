@@ -12,8 +12,6 @@ namespace Intersect.GameObjects
     public class ItemBase : DatabaseObject<ItemBase>
     {
         [Column("Animation")]
-        [Required]
-        [JsonProperty]
         public int AnimationId { get; protected set; }
         [NotMapped]
         [JsonIgnore]
@@ -24,7 +22,6 @@ namespace Intersect.GameObjects
         }
 
         [Column("AttackAnimation")]
-        [Required]
         [JsonProperty]
         public int AttackAnimationId { get; protected set; }
         [NotMapped]
@@ -98,6 +95,11 @@ namespace Intersect.GameObjects
         public bool IsStackable()
         {
             return (ItemType == (int) ItemTypes.Currency || Stackable) && ItemType != (int)ItemTypes.Equipment && ItemType != (int)ItemTypes.Bag;
+        }
+
+        public static ItemBase Get(int index)
+        {
+            return ItemBase.Lookup.Get<ItemBase>(index);
         }
     }
 }

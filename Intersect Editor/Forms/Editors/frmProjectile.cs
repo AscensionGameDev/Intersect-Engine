@@ -158,7 +158,7 @@ namespace Intersect.Editor.Forms.Editors
                 nudSpawn.Value = mEditorItem.Delay;
                 nudAmount.Value = mEditorItem.Quantity;
                 nudRange.Value = mEditorItem.Range;
-                cmbSpell.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Spell, mEditorItem.Spell) + 1;
+                cmbSpell.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Spell, mEditorItem.SpellId) + 1;
                 nudKnockback.Value = mEditorItem.Knockback;
                 chkIgnoreMapBlocks.Checked = mEditorItem.IgnoreMapBlocks;
                 chkIgnoreActiveResources.Checked = mEditorItem.IgnoreActiveResources;
@@ -166,7 +166,7 @@ namespace Intersect.Editor.Forms.Editors
                 chkIgnoreZDimensionBlocks.Checked = mEditorItem.IgnoreZDimension;
                 chkHoming.Checked = mEditorItem.Homing;
                 chkGrapple.Checked = mEditorItem.GrappleHook;
-                cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item, mEditorItem.Ammo) + 1;
+                cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item, mEditorItem.AmmoItemId) + 1;
                 nudConsume.Value = mEditorItem.AmmoRequired;
 
                 if (lstAnimations.SelectedIndex < 0)
@@ -596,7 +596,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbItem_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.Ammo = Database.GameObjectIdFromList(GameObjectType.Item, cmbItem.SelectedIndex - 1);
+            mEditorItem.Ammo = ItemBase.Get(Database.GameObjectIdFromList(GameObjectType.Item, cmbItem.SelectedIndex - 1));
         }
 
         private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
@@ -641,11 +641,11 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (cmbSpell.SelectedIndex > 0)
             {
-                mEditorItem.Spell = Database.GameObjectIdFromList(GameObjectType.Spell, cmbSpell.SelectedIndex - 1);
+                mEditorItem.Spell = SpellBase.Get(Database.GameObjectIdFromList(GameObjectType.Spell, cmbSpell.SelectedIndex - 1));
             }
             else
             {
-                mEditorItem.Spell = -1;
+                mEditorItem.Spell = null;
             }
         }
     }

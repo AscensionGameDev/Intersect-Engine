@@ -912,11 +912,11 @@ namespace Intersect.Server.Classes.Entities
             //If projectile, check if a splash spell is applied
             if (projectile != null)
             {
-                if (projectile.Spell > -1)
+                if (projectile.SpellId > -1)
                 {
-                    var s = SpellBase.Lookup.Get<SpellBase>(projectile.Spell);
+                    var s = projectile.Spell;
                     if (s != null)
-                        HandleAoESpell(projectile.Spell, s.HitRadius, enemy.MapIndex, enemy.X, enemy.Y,
+                        HandleAoESpell(projectile.SpellId, s.HitRadius, enemy.MapIndex, enemy.X, enemy.Y,
                             null);
 
                     //Check that the npc has not been destroyed by the splash spell

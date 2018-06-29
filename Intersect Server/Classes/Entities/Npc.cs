@@ -53,7 +53,7 @@ namespace Intersect.Server.Classes.Entities
 
             for (int I = 0; I < (int) Stats.StatCount; I++)
             {
-                BaseStat[I] = myBase.Stat[I];
+                BaseStat[I] = myBase.Stats[I];
                 Stat[I] = new EntityStat(I,this,null);
             }
 
@@ -172,10 +172,10 @@ namespace Intersect.Server.Classes.Entities
             var deadAnimations = new List<KeyValuePair<int, int>>();
             var aliveAnimations = new List<KeyValuePair<int, int>>();
 
-            if (MyBase.AttackAnimation > -1)
+            if (MyBase.AttackAnimation != null)
             {
-                deadAnimations.Add(new KeyValuePair<int, int>(MyBase.AttackAnimation, Dir));
-                aliveAnimations.Add(new KeyValuePair<int, int>(MyBase.AttackAnimation, Dir));
+                deadAnimations.Add(new KeyValuePair<int, int>(MyBase.AttackAnimationId, Dir));
+                aliveAnimations.Add(new KeyValuePair<int, int>(MyBase.AttackAnimationId, Dir));
             }
 
             //We were forcing at LEAST 1hp base damage.. but then you can't have guards that won't hurt the player.

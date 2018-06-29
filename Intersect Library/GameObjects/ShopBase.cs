@@ -23,6 +23,11 @@ namespace Intersect.GameObjects
         {
             Name = "New Shop";
         }
+
+        public static ShopBase Get(int index)
+        {
+            return ShopBase.Lookup.Get<ShopBase>(index);
+        }
     }
 
     public class ShopItem

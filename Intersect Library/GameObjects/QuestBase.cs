@@ -103,6 +103,11 @@ namespace Intersect.GameObjects
                 }
                 return taskString;
             }
+
+            public static QuestBase Get(int index)
+            {
+                return QuestBase.Lookup.Get<QuestBase>(index);
+            }
         }
 
         public class QuestReward

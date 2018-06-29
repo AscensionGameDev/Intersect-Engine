@@ -962,13 +962,13 @@ namespace Intersect.Server.Classes.Networking
 
                         if (projectileBase != null)
                         {
-                            if (projectileBase.Ammo > -1)
+                            if (projectileBase.AmmoItemId > -1)
                             {
-                                var itemSlot = client.Entity.FindItem(projectileBase.Ammo, projectileBase.AmmoRequired);
+                                var itemSlot = client.Entity.FindItem(projectileBase.AmmoItemId, projectileBase.AmmoRequired);
                                 if (itemSlot == -1)
                                 {
                                     PacketSender.SendPlayerMsg(client,
-                                        Strings.Items.notenough.ToString(ItemBase.GetName(projectileBase.Ammo)),
+                                        Strings.Items.notenough.ToString(ItemBase.GetName(projectileBase.AmmoItemId)),
                                         CustomColors.NoAmmo);
                                     return;
                                 }
@@ -977,7 +977,7 @@ namespace Intersect.Server.Classes.Networking
                                     Strings.Get("items", "notenough", $"REGISTERED_AMMO ({projectileBase.Ammo}:'{ItemBase.GetName(projectileBase.Ammo)}':{projectileBase.AmmoRequired})"),
                                     CustomColors.NoAmmo);
 #endif
-                                if (!client.Entity.TakeItemsByNum(projectileBase.Ammo, projectileBase.AmmoRequired))
+                                if (!client.Entity.TakeItemsByNum(projectileBase.AmmoItemId, projectileBase.AmmoRequired))
                                 {
 #if INTERSECT_DIAGNOSTIC
                                     PacketSender.SendPlayerMsg(client,

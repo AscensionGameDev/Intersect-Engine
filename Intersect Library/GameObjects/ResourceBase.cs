@@ -51,5 +51,10 @@ namespace Intersect.GameObjects
             public double Chance;
             public int ItemNum;
         }
+
+        public static ResourceBase Get(int index)
+        {
+            return ResourceBase.Lookup.Get<ResourceBase>(index);
+        }
     }
 }
