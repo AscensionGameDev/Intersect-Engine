@@ -205,11 +205,11 @@ namespace Intersect_Client.Classes.Networking
                     case ServerPackets.BankUpdate:
                         HandleBankUpdate(bf.ReadBytes(bf.Length()));
                         break;
-                    case ServerPackets.OpenCraftingBench:
-                        HandleOpenCraftingBench(bf.ReadBytes(bf.Length()));
+                    case ServerPackets.OpenCraftingTable:
+                        HandleOpenCraftingTable(bf.ReadBytes(bf.Length()));
                         break;
-                    case ServerPackets.CloseCraftingBench:
-                        HandleCloseCraftingBench(bf.ReadBytes(bf.Length()));
+                    case ServerPackets.CloseCraftingTable:
+                        HandleCloseCraftingTable(bf.ReadBytes(bf.Length()));
                         break;
                     case ServerPackets.GameObject:
                         HandleGameObject(bf.ReadBytes(bf.Length()));
@@ -1342,18 +1342,18 @@ namespace Intersect_Client.Classes.Networking
             Gui.GameUi.NotifyCloseShop();
         }
 
-        private static void HandleOpenCraftingBench(byte[] packet)
+        private static void HandleOpenCraftingTable(byte[] packet)
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             Globals.ActiveCraftingTable = new CraftingTableBase(0);
             Globals.ActiveCraftingTable.Load(bf.ReadString());
-            Gui.GameUi.NotifyOpenCraftingBench();
+            Gui.GameUi.NotifyOpenCraftingTable();
         }
 
-        private static void HandleCloseCraftingBench(byte[] packet)
+        private static void HandleCloseCraftingTable(byte[] packet)
         {
-            Gui.GameUi.NotifyCloseCraftingBench();
+            Gui.GameUi.NotifyCloseCraftingTable();
         }
 
         private static void HandleOpenBank(byte[] packet)

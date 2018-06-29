@@ -48,7 +48,7 @@ namespace Intersect_Client.Classes.UI.Game
 
         public CraftingWindow(Canvas gameCanvas)
         {
-            mCraftWindow = new WindowControl(gameCanvas, Strings.CraftingBench.title, false,
+            mCraftWindow = new WindowControl(gameCanvas, Strings.Crafting.title, false,
                 "CraftingWindow");
             mCraftWindow.DisableResizing();
 
@@ -56,13 +56,13 @@ namespace Intersect_Client.Classes.UI.Game
 
             //Labels
             mLblRecipes = new Label(mCraftWindow, "RecipesTitle");
-            mLblRecipes.Text = Strings.CraftingBench.recipes;
+            mLblRecipes.Text = Strings.Crafting.recipes;
 
             mLblIngredients = new Label(mCraftWindow, "IngredientsTitle");
-            mLblIngredients.Text = Strings.CraftingBench.ingredients;
+            mLblIngredients.Text = Strings.Crafting.ingredients;
 
             mLblProduct = new Label(mCraftWindow, "ProductLabel");
-            mLblProduct.Text = Strings.CraftingBench.product;
+            mLblProduct.Text = Strings.Crafting.product;
 
             //Recepie list
             mRecipes = new ListBox(mCraftWindow, "RecipesList");
@@ -73,7 +73,7 @@ namespace Intersect_Client.Classes.UI.Game
 
             //Load the craft button
             mCraft = new Button(mCraftWindow, "CraftButton");
-            mCraft.SetText(Strings.CraftingBench.craft);
+            mCraft.SetText(Strings.Crafting.craft);
             mCraft.Clicked += craft_Clicked;
 
             mCraftWindow.LoadJsonUi(GameContentManager.UI.InGame);
@@ -212,7 +212,7 @@ namespace Intersect_Client.Classes.UI.Game
                     Crafting = false;
                     mCraftWindow.IsClosable = true;
                     mBar.Width = 0;
-                    ChatboxMsg.AddMessage(new ChatboxMsg(Strings.CraftingBench.incorrectresources,
+                    ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Crafting.incorrectresources,
                         Color.Red));
                     return;
                 }
@@ -294,7 +294,7 @@ namespace Intersect_Client.Classes.UI.Game
 
             if (!cancraft)
             {
-                ChatboxMsg.AddMessage(new ChatboxMsg(Strings.CraftingBench.incorrectresources,
+                ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Crafting.incorrectresources,
                     Color.Red));
                 return;
             }

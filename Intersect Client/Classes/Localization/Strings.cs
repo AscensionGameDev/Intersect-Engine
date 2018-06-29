@@ -214,14 +214,14 @@ namespace Intersect.Client.Classes.Localization
             public static LocalizedString title = @"Controls";
         }
 
-        public struct CraftingBench
+        public struct Crafting
         {
             public static LocalizedString craft = @"Craft";
             public static LocalizedString incorrectresources = @"You do not have the correct resources to craft this item.";
             public static LocalizedString ingredients = @"Ingredients:";
             public static LocalizedString product = @"Product:";
             public static LocalizedString recipes = @"Recipes:";
-            public static LocalizedString title = @"Crafting Bench";
+            public static LocalizedString title = @"Crafting Table";
         }
 
         public struct Credits

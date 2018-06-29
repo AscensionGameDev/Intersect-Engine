@@ -300,10 +300,10 @@ namespace Intersect_Client.Classes.Networking
             GameNetwork.SendPacket(bf.ToArray());
         }
 
-        public static void SendCloseCraftingBench()
+        public static void SendCloseCraftingTable()
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.CloseCraftingBench);
+            bf.WriteLong((int) ClientPackets.CloseCraftingTable);
             GameNetwork.SendPacket(bf.ToArray());
         }
 

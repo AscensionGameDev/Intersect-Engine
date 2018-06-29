@@ -93,7 +93,7 @@ namespace Intersect_Client.Classes.General
         //Only need 1 shop, and that is the one we see at a given moment in time.
         public static ShopBase GameShop;
 
-        //Only need 1 bench, and that is the one we see at a given moment in time.
+        //Only need 1 table, and that is the one we see at a given moment in time.
         public static CraftingTableBase ActiveCraftingTable;
 
         public static int AnimFrame = 0;

@@ -1294,22 +1294,22 @@ namespace Intersect.Server.Classes.Networking
             bf.Dispose();
         }
 
-        public static void SendOpenCraftingBench(Client client, CraftingTableBase bench)
+        public static void SendOpenCraftingTable(Client client, CraftingTableBase table)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)ServerPackets.OpenCraftingBench);
-            if (bench != null)
+            bf.WriteLong((int)ServerPackets.OpenCraftingTable);
+            if (table != null)
             {
-                bf.WriteString(bench.JsonData);
+                bf.WriteString(table.JsonData);
                 client.SendPacket(bf.ToArray());
             }
             bf.Dispose();
         }
 
-        public static void SendCloseCraftingBench(Client client)
+        public static void SendCloseCraftingTable(Client client)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)ServerPackets.CloseCraftingBench);
+            bf.WriteLong((int)ServerPackets.CloseCraftingTable);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }

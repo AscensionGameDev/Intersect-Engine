@@ -18,23 +18,23 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             mMyCommand = refCommand;
             mEventEditor = editor;
             InitLocalization();
-            cmbbench.Items.Clear();
-            cmbbench.Items.AddRange(Database.GetGameObjectList(GameObjectType.CraftTables));
-            cmbbench.SelectedIndex = Database.GameObjectListIndex(GameObjectType.CraftTables, mMyCommand.Ints[0]);
+            cmbTable.Items.Clear();
+            cmbTable.Items.AddRange(Database.GetGameObjectList(GameObjectType.CraftTables));
+            cmbTable.SelectedIndex = Database.GameObjectListIndex(GameObjectType.CraftTables, mMyCommand.Ints[0]);
         }
 
         private void InitLocalization()
         {
-            grpBench.Text = Strings.EventOpenBench.title;
-            lblBench.Text = Strings.EventOpenBench.label;
-            btnSave.Text = Strings.EventOpenBench.okay;
-            btnCancel.Text = Strings.EventOpenBench.cancel;
+            grpTable.Text = Strings.EventOpenCrafting.title;
+            lblTable.Text = Strings.EventOpenCrafting.label;
+            btnSave.Text = Strings.EventOpenCrafting.okay;
+            btnCancel.Text = Strings.EventOpenCrafting.cancel;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            if (cmbbench.SelectedIndex > -1)
-                mMyCommand.Ints[0] = Database.GameObjectIdFromList(GameObjectType.CraftTables, cmbbench.SelectedIndex);
+            if (cmbTable.SelectedIndex > -1)
+                mMyCommand.Ints[0] = Database.GameObjectIdFromList(GameObjectType.CraftTables, cmbTable.SelectedIndex);
             mEventEditor.FinishCommandEdit();
         }
 

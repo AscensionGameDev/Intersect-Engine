@@ -14,7 +14,7 @@ namespace Intersect.Client.Classes.UI.Game.Crafting
     public class RecipeItem
     {
         //References
-        private CraftingWindow mCraftingBenchWindow;
+        private CraftingWindow mCraftingWindow;
 
         public ItemDescWindow DescWindow;
 
@@ -35,9 +35,9 @@ namespace Intersect.Client.Classes.UI.Game.Crafting
         private int mMouseY = -1;
         public ImagePanel Pnl;
 
-        public RecipeItem(CraftingWindow craftingBenchWindow, CraftIngredient ingredient)
+        public RecipeItem(CraftingWindow craftingWindow, CraftIngredient ingredient)
         {
-            mCraftingBenchWindow = craftingBenchWindow;
+            mCraftingWindow = craftingWindow;
             mIngredient = ingredient;
         }
 
@@ -106,8 +106,8 @@ namespace Intersect.Client.Classes.UI.Game.Crafting
             }
             if (mIngredient != null)
             {
-                DescWindow = new ItemDescWindow(ItemBase.Lookup.Get<ItemBase>(mIngredient.Item), mIngredient.Quantity, mCraftingBenchWindow.X - 255,
-                    mCraftingBenchWindow.Y, new int[(int)Stats.StatCount]);
+                DescWindow = new ItemDescWindow(ItemBase.Lookup.Get<ItemBase>(mIngredient.Item), mIngredient.Quantity, mCraftingWindow.X - 255,
+                    mCraftingWindow.Y, new int[(int)Stats.StatCount]);
             }
         }
     }

@@ -172,8 +172,8 @@ namespace Intersect.Server.Classes.Networking
                 case ClientPackets.CloseShop:
                     HandleCloseShop(client, packet);
                     break;
-                case ClientPackets.CloseCraftingBench:
-                    HandleCloseCraftingBench(client, packet);
+                case ClientPackets.CloseCraftingTable:
+                    HandleCloseCrafting(client, packet);
                     break;
                 case ClientPackets.CraftItem:
                     HandleCraftItem(client, packet);
@@ -1979,9 +1979,9 @@ namespace Intersect.Server.Classes.Networking
             client.Entity.CloseShop();
         }
 
-        private static void HandleCloseCraftingBench(Client client, byte[] packet)
+        private static void HandleCloseCrafting(Client client, byte[] packet)
         {
-            client.Entity.CloseCraftingBench();
+            client.Entity.CloseCraftingTable();
         }
 
         private static void HandleCraftItem(Client client, byte[] packet)

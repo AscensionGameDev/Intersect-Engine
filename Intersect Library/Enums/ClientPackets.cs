@@ -41,7 +41,7 @@ namespace Intersect.Enums
         WithdrawItem,
         MoveBankItem,
         CloseBank,
-        CloseCraftingBench,
+        CloseCraftingTable,
         CraftItem,
         NewGameObject,
         OpenObjectEditor,

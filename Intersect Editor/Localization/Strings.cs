@@ -474,7 +474,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString notcommon = @"Cannot use this command in common events.";
             public static LocalizedString notcommoncaption = @"Common Event Warning!";
             public static LocalizedString openbank = @"Open Bank";
-            public static LocalizedString opencrafting = @"Open Crafting Bench [{00}]";
+            public static LocalizedString opencrafting = @"Open Crafting Table [{00}]";
             public static LocalizedString openshop = @"Open Shop [{00}]";
             public static LocalizedString playanimation = @"Play Animation {00} {01}";
             public static LocalizedString playbgm = @"Play BGM [File: {00}]";
@@ -948,12 +948,12 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventOpenBench
+        public struct EventOpenCrafting
         {
             public static LocalizedString cancel = @"Cancel";
-            public static LocalizedString label = @"Bench:";
+            public static LocalizedString label = @"Table:";
             public static LocalizedString okay = @"Ok";
-            public static LocalizedString title = @"Open Bench";
+            public static LocalizedString title = @"Open Crafting";
         }
 
         public struct EventOpenShop
@@ -1273,7 +1273,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString classeditor = @"Class Editor";
             public static LocalizedString commoneventeditor = @"Common Event Editor";
             public static LocalizedString copy = @"Copy";
-            public static LocalizedString craftingbencheditor = @"Crafting Bench Editor";
+            public static LocalizedString craftingtableeditor = @"Crafting Table Editor";
+            public static LocalizedString craftingeditor = @"Crafts Editor";
             public static LocalizedString currentonly = @"Current Layer Only";
             public static LocalizedString cut = @"Cut";
             public static LocalizedString darkness = @"Darkness";

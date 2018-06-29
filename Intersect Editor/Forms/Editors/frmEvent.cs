@@ -1353,7 +1353,7 @@ namespace Intersect.Editor.Forms.Editors
                     return Strings.EventCommandList.openbank;
                 case EventCommandType.OpenShop:
                     return Strings.EventCommandList.openshop.ToString( ShopBase.GetName(command.Ints[0]));
-                case EventCommandType.OpenCraftingBench:
+                case EventCommandType.OpenCraftingTable:
                     return Strings.EventCommandList.opencrafting.ToString( CraftingTableBase.GetName(command.Ints[0]));
                 case EventCommandType.SetClass:
                     return Strings.EventCommandList.setclass.ToString( ClassBase.GetName(command.Ints[0]));
@@ -1526,7 +1526,7 @@ namespace Intersect.Editor.Forms.Editors
                 case EventCommandType.OpenShop:
                     cmdWindow = new EventCommandOpenShop(command, this);
                     break;
-                case EventCommandType.OpenCraftingBench:
+                case EventCommandType.OpenCraftingTable:
                     cmdWindow = new EventCommandOpenCraftingTable(command, this);
                     break;
                 case EventCommandType.SetClass:

@@ -21,7 +21,7 @@ namespace Intersect.Client.Classes.UI.Game
         private BagWindow mBagWindow;
         private BankWindow mBankWindow;
         private Chatbox mChatBox;
-        private CraftingWindow mCraftingBenchWindow;
+        private CraftingWindow mCraftingWindow;
         private PictureWindow mPictureWindow;
         private DebugMenu mDebugMenu;
 
@@ -31,13 +31,13 @@ namespace Intersect.Client.Classes.UI.Game
         private ShopWindow mShopWindow;
         private bool mShouldCloseBag;
         private bool mShouldCloseBank;
-        private bool mShouldCloseCraftingBench;
+        private bool mShouldCloseCraftingTable;
         private bool mShouldCloseShop;
         private bool mShouldCloseTrading;
         private bool mShouldOpenAdminWindow;
         private bool mShouldOpenBag;
         private bool mShouldOpenBank;
-        private bool mShouldOpenCraftingBench;
+        private bool mShouldOpenCraftingTable;
         private bool mShouldOpenShop;
         private bool mShouldOpenTrading;
         private bool mShouldUpdateQuestLog = true;
@@ -164,21 +164,21 @@ namespace Intersect.Client.Classes.UI.Game
         }
 
         //Crafting
-        public void NotifyOpenCraftingBench()
+        public void NotifyOpenCraftingTable()
         {
-            mShouldOpenCraftingBench = true;
+            mShouldOpenCraftingTable = true;
         }
 
-        public void NotifyCloseCraftingBench()
+        public void NotifyCloseCraftingTable()
         {
-            mShouldCloseCraftingBench = true;
+            mShouldCloseCraftingTable = true;
         }
 
-        public void OpenCraftingBench()
+        public void OpenCraftingTable()
         {
-            if (mCraftingBenchWindow != null) mCraftingBenchWindow.Close();
-            mCraftingBenchWindow = new CraftingWindow(GameCanvas);
-            mShouldOpenCraftingBench = false;
+            if (mCraftingWindow != null) mCraftingWindow.Close();
+            mCraftingWindow = new CraftingWindow(GameCanvas);
+            mShouldOpenCraftingTable = false;
             Globals.InCraft = true;
         }
 
@@ -340,22 +340,22 @@ namespace Intersect.Client.Classes.UI.Game
             mShouldCloseBag = false;
 
             //Crafting station update
-            if (mShouldOpenCraftingBench) OpenCraftingBench();
-            if (mCraftingBenchWindow != null)
+            if (mShouldOpenCraftingTable) OpenCraftingTable();
+            if (mCraftingWindow != null)
             {
-                if (!mCraftingBenchWindow.IsVisible() || mShouldCloseCraftingBench)
+                if (!mCraftingWindow.IsVisible() || mShouldCloseCraftingTable)
                 {
-                    PacketSender.SendCloseCraftingBench();
-                    mCraftingBenchWindow.Close();
-                    mCraftingBenchWindow = null;
+                    PacketSender.SendCloseCraftingTable();
+                    mCraftingWindow.Close();
+                    mCraftingWindow = null;
                     Globals.InCraft = false;
                 }
                 else
                 {
-                    mCraftingBenchWindow.Update();
+                    mCraftingWindow.Update();
                 }
             }
-            mShouldCloseCraftingBench = false;
+            mShouldCloseCraftingTable = false;
 
             //Trading update
             if (mShouldOpenTrading) OpenTrading();

@@ -143,7 +143,8 @@ namespace Intersect.Editor.Forms
             animationEditorToolStripMenuItem.Text = Strings.MainForm.animationeditor;
             classEditorToolStripMenuItem.Text = Strings.MainForm.classeditor;
             commonEventEditorToolStripMenuItem.Text = Strings.MainForm.commoneventeditor;
-            craftingTableEditorToolStripMenuItem.Text = Strings.MainForm.craftingbencheditor;
+            craftingTableEditorToolStripMenuItem.Text = Strings.MainForm.craftingtableeditor;
+            craftsEditorToolStripMenuItem.Text = Strings.MainForm.craftingeditor;
             itemEditorToolStripMenuItem.Text = Strings.MainForm.itemeditor;
             npcEditorToolStripMenuItem.Text = Strings.MainForm.npceditor;
             projectileEditorToolStripMenuItem.Text = Strings.MainForm.projectileeditor;

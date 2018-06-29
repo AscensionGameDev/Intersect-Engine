@@ -1440,23 +1440,23 @@ namespace Intersect.Server.Classes.Entities
         }
 
         //Crafting
-        public bool OpenCraftingBench(CraftingTableBase bench)
+        public bool OpenCraftingTable(CraftingTableBase table)
         {
             if (IsBusy()) return false;
-            if (bench != null)
+            if (table != null)
             {
-                InCraft = bench.Index;
-                PacketSender.SendOpenCraftingBench(MyClient, bench);
+                InCraft = table.Index;
+                PacketSender.SendOpenCraftingTable(MyClient, table);
             }
             return true;
         }
 
-        public void CloseCraftingBench()
+        public void CloseCraftingTable()
         {
             if (InCraft > -1 && CraftIndex == -1)
             {
                 InCraft = -1;
-                PacketSender.SendCloseCraftingBench(MyClient);
+                PacketSender.SendCloseCraftingTable(MyClient);
             }
         }
 

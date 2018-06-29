@@ -103,7 +103,7 @@
         //Shop and Bank
         OpenBank,
         OpenShop,
-        OpenCraftingBench,
+        OpenCraftingTable,
 
         //Extras
         SetClass,

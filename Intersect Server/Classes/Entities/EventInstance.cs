@@ -1255,8 +1255,8 @@ namespace Intersect.Server.Classes.Entities
                     CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.Shop;
                     CallStack.Peek().CommandIndex++;
                     break;
-                case EventCommandType.OpenCraftingBench:
-                    MyPlayer.OpenCraftingBench(CraftingTableBase.Lookup.Get<CraftingTableBase>(CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
+                case EventCommandType.OpenCraftingTable:
+                    MyPlayer.OpenCraftingTable(CraftingTableBase.Lookup.Get<CraftingTableBase>(CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
                         .Commands[CallStack.Peek().CommandIndex].Ints[0]));
                     CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.Crafting;
                     CallStack.Peek().CommandIndex++;
