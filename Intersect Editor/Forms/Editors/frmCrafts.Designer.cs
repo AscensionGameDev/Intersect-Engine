@@ -2,7 +2,7 @@
 
 namespace Intersect.Editor.Forms.Editors
 {
-    partial class FrmCrafting
+    partial class FrmCrafts
     {
         /// <summary>
         /// Required designer variable.
@@ -30,18 +30,13 @@ namespace Intersect.Editor.Forms.Editors
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmCrafting));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmCrafts));
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
-            this.grpBenches = new DarkUI.Controls.DarkGroupBox();
+            this.grpCrafts = new DarkUI.Controls.DarkGroupBox();
             this.lstCrafts = new System.Windows.Forms.ListBox();
             this.pnlContainer = new System.Windows.Forms.Panel();
-            this.grpCrafts = new DarkUI.Controls.DarkGroupBox();
-            this.btnDupCraft = new DarkUI.Controls.DarkButton();
-            this.lstCompositions = new System.Windows.Forms.ListBox();
-            this.btnNewCraft = new DarkUI.Controls.DarkButton();
-            this.btnDeleteCraft = new DarkUI.Controls.DarkButton();
-            this.grpCraft = new DarkUI.Controls.DarkGroupBox();
+            this.grpGeneral = new DarkUI.Controls.DarkGroupBox();
             this.nudSpeed = new DarkUI.Controls.DarkNumericUpDown();
             this.cmbResult = new DarkUI.Controls.DarkComboBox();
             this.lblItem = new System.Windows.Forms.Label();
@@ -66,10 +61,9 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
-            this.grpBenches.SuspendLayout();
-            this.pnlContainer.SuspendLayout();
             this.grpCrafts.SuspendLayout();
-            this.grpCraft.SuspendLayout();
+            this.pnlContainer.SuspendLayout();
+            this.grpGeneral.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudSpeed)).BeginInit();
             this.grpIngredients.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudQuantity)).BeginInit();
@@ -79,7 +73,7 @@ namespace Intersect.Editor.Forms.Editors
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(544, 442);
+            this.btnCancel.Location = new System.Drawing.Point(330, 440);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
             this.btnCancel.Size = new System.Drawing.Size(172, 27);
@@ -89,7 +83,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(333, 442);
+            this.btnSave.Location = new System.Drawing.Point(119, 440);
             this.btnSave.Name = "btnSave";
             this.btnSave.Padding = new System.Windows.Forms.Padding(5);
             this.btnSave.Size = new System.Drawing.Size(169, 27);
@@ -97,18 +91,18 @@ namespace Intersect.Editor.Forms.Editors
             this.btnSave.Text = "Save";
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
-            // grpBenches
+            // grpCrafts
             // 
-            this.grpBenches.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpBenches.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpBenches.Controls.Add(this.lstCrafts);
-            this.grpBenches.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpBenches.Location = new System.Drawing.Point(12, 36);
-            this.grpBenches.Name = "grpBenches";
-            this.grpBenches.Size = new System.Drawing.Size(203, 398);
-            this.grpBenches.TabIndex = 22;
-            this.grpBenches.TabStop = false;
-            this.grpBenches.Text = "Benches";
+            this.grpCrafts.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpCrafts.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpCrafts.Controls.Add(this.lstCrafts);
+            this.grpCrafts.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpCrafts.Location = new System.Drawing.Point(12, 36);
+            this.grpCrafts.Name = "grpCrafts";
+            this.grpCrafts.Size = new System.Drawing.Size(203, 398);
+            this.grpCrafts.TabIndex = 22;
+            this.grpCrafts.TabStop = false;
+            this.grpCrafts.Text = "Crafts";
             // 
             // lstCrafts
             // 
@@ -125,95 +119,31 @@ namespace Intersect.Editor.Forms.Editors
             // 
             // pnlContainer
             // 
-            this.pnlContainer.Controls.Add(this.grpCrafts);
-            this.pnlContainer.Controls.Add(this.grpCraft);
+            this.pnlContainer.Controls.Add(this.grpGeneral);
             this.pnlContainer.Controls.Add(this.grpIngredients);
             this.pnlContainer.Location = new System.Drawing.Point(221, 36);
             this.pnlContainer.Name = "pnlContainer";
-            this.pnlContainer.Size = new System.Drawing.Size(495, 398);
+            this.pnlContainer.Size = new System.Drawing.Size(281, 398);
             this.pnlContainer.TabIndex = 31;
             this.pnlContainer.Visible = false;
             // 
-            // grpCrafts
+            // grpGeneral
             // 
-            this.grpCrafts.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpCrafts.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpCrafts.Controls.Add(this.btnDupCraft);
-            this.grpCrafts.Controls.Add(this.lstCompositions);
-            this.grpCrafts.Controls.Add(this.btnNewCraft);
-            this.grpCrafts.Controls.Add(this.btnDeleteCraft);
-            this.grpCrafts.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpCrafts.Location = new System.Drawing.Point(3, 3);
-            this.grpCrafts.Name = "grpCrafts";
-            this.grpCrafts.Size = new System.Drawing.Size(203, 392);
-            this.grpCrafts.TabIndex = 33;
-            this.grpCrafts.TabStop = false;
-            this.grpCrafts.Text = "Crafts";
-            // 
-            // btnDupCraft
-            // 
-            this.btnDupCraft.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnDupCraft.Location = new System.Drawing.Point(6, 356);
-            this.btnDupCraft.Name = "btnDupCraft";
-            this.btnDupCraft.Padding = new System.Windows.Forms.Padding(5);
-            this.btnDupCraft.Size = new System.Drawing.Size(190, 27);
-            this.btnDupCraft.TabIndex = 21;
-            this.btnDupCraft.Text = "Duplicate";
-            this.btnDupCraft.Click += new System.EventHandler(this.btnDupCraft_Click);
-            // 
-            // lstCompositions
-            // 
-            this.lstCompositions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.lstCompositions.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lstCompositions.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lstCompositions.FormattingEnabled = true;
-            this.lstCompositions.Location = new System.Drawing.Point(6, 19);
-            this.lstCompositions.Name = "lstCompositions";
-            this.lstCompositions.Size = new System.Drawing.Size(191, 262);
-            this.lstCompositions.TabIndex = 1;
-            this.lstCompositions.Click += new System.EventHandler(this.lstCompositions_Click);
-            this.lstCompositions.SelectedIndexChanged += new System.EventHandler(this.lstCompositions_SelectedIndexChanged);
-            // 
-            // btnNewCraft
-            // 
-            this.btnNewCraft.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnNewCraft.Location = new System.Drawing.Point(7, 290);
-            this.btnNewCraft.Name = "btnNewCraft";
-            this.btnNewCraft.Padding = new System.Windows.Forms.Padding(5);
-            this.btnNewCraft.Size = new System.Drawing.Size(190, 27);
-            this.btnNewCraft.TabIndex = 20;
-            this.btnNewCraft.Text = "New";
-            this.btnNewCraft.Click += new System.EventHandler(this.btnNewCraft_Click);
-            // 
-            // btnDeleteCraft
-            // 
-            this.btnDeleteCraft.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnDeleteCraft.Location = new System.Drawing.Point(7, 323);
-            this.btnDeleteCraft.Name = "btnDeleteCraft";
-            this.btnDeleteCraft.Padding = new System.Windows.Forms.Padding(5);
-            this.btnDeleteCraft.Size = new System.Drawing.Size(190, 27);
-            this.btnDeleteCraft.TabIndex = 19;
-            this.btnDeleteCraft.Text = "Delete";
-            this.btnDeleteCraft.Click += new System.EventHandler(this.btnDeleteCraft_Click);
-            // 
-            // grpCraft
-            // 
-            this.grpCraft.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpCraft.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpCraft.Controls.Add(this.nudSpeed);
-            this.grpCraft.Controls.Add(this.cmbResult);
-            this.grpCraft.Controls.Add(this.lblItem);
-            this.grpCraft.Controls.Add(this.lblName);
-            this.grpCraft.Controls.Add(this.txtName);
-            this.grpCraft.Controls.Add(this.lblSpeed);
-            this.grpCraft.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpCraft.Location = new System.Drawing.Point(212, 3);
-            this.grpCraft.Name = "grpCraft";
-            this.grpCraft.Size = new System.Drawing.Size(273, 144);
-            this.grpCraft.TabIndex = 31;
-            this.grpCraft.TabStop = false;
-            this.grpCraft.Text = "General";
-            this.grpCraft.Visible = false;
+            this.grpGeneral.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpGeneral.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpGeneral.Controls.Add(this.nudSpeed);
+            this.grpGeneral.Controls.Add(this.cmbResult);
+            this.grpGeneral.Controls.Add(this.lblItem);
+            this.grpGeneral.Controls.Add(this.lblName);
+            this.grpGeneral.Controls.Add(this.txtName);
+            this.grpGeneral.Controls.Add(this.lblSpeed);
+            this.grpGeneral.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpGeneral.Location = new System.Drawing.Point(5, 3);
+            this.grpGeneral.Name = "grpGeneral";
+            this.grpGeneral.Size = new System.Drawing.Size(273, 144);
+            this.grpGeneral.TabIndex = 31;
+            this.grpGeneral.TabStop = false;
+            this.grpGeneral.Text = "General";
             // 
             // nudSpeed
             // 
@@ -313,7 +243,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpIngredients.Controls.Add(this.lstIngredients);
             this.grpIngredients.Controls.Add(this.lblQuantity);
             this.grpIngredients.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpIngredients.Location = new System.Drawing.Point(212, 153);
+            this.grpIngredients.Location = new System.Drawing.Point(5, 153);
             this.grpIngredients.Name = "grpIngredients";
             this.grpIngredients.Size = new System.Drawing.Size(273, 242);
             this.grpIngredients.TabIndex = 30;
@@ -446,7 +376,7 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Padding = new System.Windows.Forms.Padding(5, 0, 1, 0);
-            this.toolStrip.Size = new System.Drawing.Size(725, 25);
+            this.toolStrip.Size = new System.Drawing.Size(508, 25);
             this.toolStrip.TabIndex = 43;
             this.toolStrip.Text = "toolStrip1";
             // 
@@ -530,30 +460,32 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
-            // frmCrafting
+            // FrmCrafts
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.ClientSize = new System.Drawing.Size(725, 474);
+            this.ClientSize = new System.Drawing.Size(508, 474);
             this.ControlBox = false;
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.pnlContainer);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
-            this.Controls.Add(this.grpBenches);
+            this.Controls.Add(this.grpCrafts);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "FrmCrafting";
-            this.Text = "Crafting Bench Editor";
+            this.Name = "FrmCrafts";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Text = "Crafts Editor";
             this.Load += new System.EventHandler(this.frmCrafting_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.form_KeyDown);
-            this.grpBenches.ResumeLayout(false);
-            this.pnlContainer.ResumeLayout(false);
             this.grpCrafts.ResumeLayout(false);
-            this.grpCraft.ResumeLayout(false);
-            this.grpCraft.PerformLayout();
+            this.pnlContainer.ResumeLayout(false);
+            this.grpGeneral.ResumeLayout(false);
+            this.grpGeneral.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudSpeed)).EndInit();
             this.grpIngredients.ResumeLayout(false);
             this.grpIngredients.PerformLayout();
@@ -568,10 +500,10 @@ namespace Intersect.Editor.Forms.Editors
 
         private DarkButton btnCancel;
         private DarkButton btnSave;
-        private DarkGroupBox grpBenches;
+        private DarkGroupBox grpCrafts;
         private System.Windows.Forms.ListBox lstCrafts;
         private System.Windows.Forms.Panel pnlContainer;
-        private DarkGroupBox grpCraft;
+        private DarkGroupBox grpGeneral;
         private System.Windows.Forms.Label lblItem;
         private System.Windows.Forms.Label lblName;
         private DarkTextBox txtName;
@@ -582,10 +514,6 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.Label lblIngredient;
         private System.Windows.Forms.ListBox lstIngredients;
         private System.Windows.Forms.Label lblQuantity;
-        private DarkGroupBox grpCrafts;
-        private System.Windows.Forms.ListBox lstCompositions;
-        private DarkButton btnNewCraft;
-        private DarkButton btnDeleteCraft;
         private DarkToolStrip toolStrip;
         private System.Windows.Forms.ToolStripButton toolStripItemNew;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
@@ -595,7 +523,6 @@ namespace Intersect.Editor.Forms.Editors
         public System.Windows.Forms.ToolStripButton toolStripItemPaste;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         public System.Windows.Forms.ToolStripButton toolStripItemUndo;
-        private DarkButton btnDupCraft;
         private DarkButton btnDupIngredient;
         private DarkComboBox cmbResult;
         private DarkComboBox cmbIngredient;

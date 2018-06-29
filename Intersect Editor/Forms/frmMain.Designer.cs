@@ -102,7 +102,8 @@ namespace Intersect.Editor.Forms
             this.animationEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.classEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.commonEventEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.craftingEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.craftsEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.craftingTableEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.itemEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.npcEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.projectileEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -195,7 +196,6 @@ namespace Intersect.Editor.Forms
             this.dockLeft.DockRightPortion = 0.15D;
             this.dockLeft.Location = new System.Drawing.Point(0, 49);
             this.dockLeft.Name = "dockLeft";
-            this.dockLeft.Padding = new System.Windows.Forms.Padding(6);
             this.dockLeft.ShowAutoHideContentOnHover = false;
             this.dockLeft.Size = new System.Drawing.Size(1186, 596);
             this.dockLeft.SupportDeeplyNestedContent = true;
@@ -778,7 +778,8 @@ namespace Intersect.Editor.Forms
             this.animationEditorToolStripMenuItem,
             this.classEditorToolStripMenuItem,
             this.commonEventEditorToolStripMenuItem,
-            this.craftingEditorToolStripMenuItem,
+            this.craftsEditorToolStripMenuItem,
+            this.craftingTableEditorToolStripMenuItem,
             this.itemEditorToolStripMenuItem,
             this.npcEditorToolStripMenuItem,
             this.projectileEditorToolStripMenuItem,
@@ -817,13 +818,21 @@ namespace Intersect.Editor.Forms
             this.commonEventEditorToolStripMenuItem.Text = "Common Event Editor";
             this.commonEventEditorToolStripMenuItem.Click += new System.EventHandler(this.commonEventEditorToolStripMenuItem_Click);
             // 
-            // craftingEditorToolStripMenuItem
+            // craftsEditorToolStripMenuItem
             // 
-            this.craftingEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.craftingEditorToolStripMenuItem.Name = "craftingEditorToolStripMenuItem";
-            this.craftingEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
-            this.craftingEditorToolStripMenuItem.Text = "Crafting Bench Editor";
-            this.craftingEditorToolStripMenuItem.Click += new System.EventHandler(this.craftingEditorToolStripMenuItem_Click);
+            this.craftsEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.craftsEditorToolStripMenuItem.Name = "craftsEditorToolStripMenuItem";
+            this.craftsEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.craftsEditorToolStripMenuItem.Text = "Crafts Editor";
+            this.craftsEditorToolStripMenuItem.Click += new System.EventHandler(this.craftsEditorToolStripMenuItem_Click);
+            // 
+            // craftingTableEditorToolStripMenuItem
+            // 
+            this.craftingTableEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.craftingTableEditorToolStripMenuItem.Name = "craftingTableEditorToolStripMenuItem";
+            this.craftingTableEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.craftingTableEditorToolStripMenuItem.Text = "Crafting Table Editor";
+            this.craftingTableEditorToolStripMenuItem.Click += new System.EventHandler(this.craftingTablesEditorToolStripMenuItem_Click);
             // 
             // itemEditorToolStripMenuItem
             // 
@@ -958,7 +967,7 @@ namespace Intersect.Editor.Forms
             this.externalToolsToolStripMenuItem.Text = "External Tools";
             this.externalToolsToolStripMenuItem.Visible = false;
             // 
-            // frmMain
+            // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
@@ -1057,7 +1066,7 @@ namespace Intersect.Editor.Forms
         private ToolStripMenuItem animationEditorToolStripMenuItem;
         private ToolStripMenuItem classEditorToolStripMenuItem;
         private ToolStripMenuItem commonEventEditorToolStripMenuItem;
-        private ToolStripMenuItem craftingEditorToolStripMenuItem;
+        private ToolStripMenuItem craftingTableEditorToolStripMenuItem;
         private ToolStripMenuItem itemEditorToolStripMenuItem;
         private ToolStripMenuItem npcEditorToolStripMenuItem;
         private ToolStripMenuItem projectileEditorToolStripMenuItem;
@@ -1073,5 +1082,6 @@ namespace Intersect.Editor.Forms
         private ToolStripMenuItem aboutToolStripMenuItem;
         private DarkMenuStrip menuStrip;
         private ToolStripMenuItem externalToolsToolStripMenuItem;
+        private ToolStripMenuItem craftsEditorToolStripMenuItem;
     }
 }

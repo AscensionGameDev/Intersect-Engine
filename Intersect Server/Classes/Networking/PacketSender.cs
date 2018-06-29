@@ -1269,7 +1269,7 @@ namespace Intersect.Server.Classes.Networking
             bf.Dispose();
         }
 
-        public static void SendOpenCraftingBench(Client client, BenchBase bench)
+        public static void SendOpenCraftingBench(Client client, CraftingTableBase bench)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.OpenCraftingBench);
@@ -1348,8 +1348,12 @@ namespace Intersect.Server.Classes.Networking
                     foreach (var obj in SpellBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObjectType.Bench:
-                    foreach (var obj in BenchBase.Lookup)
+                case GameObjectType.CraftTables:
+                    foreach (var obj in CraftingTableBase.Lookup)
+                        SendGameObject(client, obj.Value);
+                    break;
+                case GameObjectType.Crafts:
+                    foreach (var obj in CraftBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
                 case GameObjectType.Map:

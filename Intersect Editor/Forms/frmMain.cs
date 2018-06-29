@@ -34,7 +34,8 @@ namespace Intersect.Editor.Forms
 
         private FrmClass mClassEditor;
         private FrmCommonEvent mCommonEventEditor;
-        private FrmCrafting mCraftEditor;
+        private FrmCraftingTables mCraftingTablesEditor;
+        private FrmCrafts mCraftsEditor;
         private FrmItem mItemEditor;
         private FrmNpc mNpcEditor;
         private FrmProjectile mProjectileEditor;
@@ -141,7 +142,7 @@ namespace Intersect.Editor.Forms
             animationEditorToolStripMenuItem.Text = Strings.MainForm.animationeditor;
             classEditorToolStripMenuItem.Text = Strings.MainForm.classeditor;
             commonEventEditorToolStripMenuItem.Text = Strings.MainForm.commoneventeditor;
-            craftingEditorToolStripMenuItem.Text = Strings.MainForm.craftingbencheditor;
+            craftingTableEditorToolStripMenuItem.Text = Strings.MainForm.craftingbencheditor;
             itemEditorToolStripMenuItem.Text = Strings.MainForm.itemeditor;
             npcEditorToolStripMenuItem.Text = Strings.MainForm.npceditor;
             projectileEditorToolStripMenuItem.Text = Strings.MainForm.projectileeditor;
@@ -988,9 +989,14 @@ namespace Intersect.Editor.Forms
             PacketSender.SendOpenEditor(GameObjectType.Spell);
         }
 
-        private void craftingEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        private void craftingTablesEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PacketSender.SendOpenEditor(GameObjectType.Bench);
+            PacketSender.SendOpenEditor(GameObjectType.CraftTables);
+        }
+
+        private void craftsEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PacketSender.SendOpenEditor(GameObjectType.Crafts);
         }
 
         private void animationEditorToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1329,12 +1335,20 @@ namespace Intersect.Editor.Forms
                             mSpellEditor.Show();
                         }
                         break;
-                    case GameObjectType.Bench:
-                        if (mCraftEditor == null || mCraftEditor.Visible == false)
+                    case GameObjectType.CraftTables:
+                        if (mCraftingTablesEditor == null || mCraftingTablesEditor.Visible == false)
                         {
-                            mCraftEditor = new FrmCrafting();
-                            mCraftEditor.InitEditor();
-                            mCraftEditor.Show();
+                            mCraftingTablesEditor = new FrmCraftingTables();
+                            mCraftingTablesEditor.InitEditor();
+                            mCraftingTablesEditor.Show();
+                        }
+                        break;
+                    case GameObjectType.Crafts:
+                        if (mCraftsEditor == null || mCraftsEditor.Visible == false)
+                        {
+                            mCraftsEditor = new FrmCrafts();
+                            mCraftsEditor.InitEditor();
+                            mCraftsEditor.Show();
                         }
                         break;
                     case GameObjectType.Class:

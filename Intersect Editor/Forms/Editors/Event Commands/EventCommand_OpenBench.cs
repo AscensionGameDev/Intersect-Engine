@@ -7,20 +7,20 @@ using Intersect.Editor.Classes.Localization;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
 {
-    public partial class EventCommandOpenBench : UserControl
+    public partial class EventCommandOpenCraftingTable : UserControl
     {
         private readonly FrmEvent mEventEditor;
         private EventCommand mMyCommand;
 
-        public EventCommandOpenBench(EventCommand refCommand, FrmEvent editor)
+        public EventCommandOpenCraftingTable(EventCommand refCommand, FrmEvent editor)
         {
             InitializeComponent();
             mMyCommand = refCommand;
             mEventEditor = editor;
             InitLocalization();
             cmbbench.Items.Clear();
-            cmbbench.Items.AddRange(Database.GetGameObjectList(GameObjectType.Bench));
-            cmbbench.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Bench, mMyCommand.Ints[0]);
+            cmbbench.Items.AddRange(Database.GetGameObjectList(GameObjectType.CraftTables));
+            cmbbench.SelectedIndex = Database.GameObjectListIndex(GameObjectType.CraftTables, mMyCommand.Ints[0]);
         }
 
         private void InitLocalization()
@@ -34,7 +34,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         private void btnSave_Click(object sender, EventArgs e)
         {
             if (cmbbench.SelectedIndex > -1)
-                mMyCommand.Ints[0] = Database.GameObjectIdFromList(GameObjectType.Bench, cmbbench.SelectedIndex);
+                mMyCommand.Ints[0] = Database.GameObjectIdFromList(GameObjectType.CraftTables, cmbbench.SelectedIndex);
             mEventEditor.FinishCommandEdit();
         }
 

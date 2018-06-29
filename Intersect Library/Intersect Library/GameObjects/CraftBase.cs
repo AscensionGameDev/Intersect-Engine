@@ -4,24 +4,19 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-    public class BenchBase : DatabaseObject<BenchBase>
-    {
-        public List<Craft> Crafts = new List<Craft>();
-
-        [JsonConstructor]
-        public BenchBase(int index) : base(index)
-        {
-            Name = "New Bench";
-        }
-    }
-
-    public class Craft
+    public class CraftBase : DatabaseObject<CraftBase>
     {
         public List<CraftIngredient> Ingredients = new List<CraftIngredient>();
         [JsonProperty(Order = -3)]
         public int Item = -1;
         [JsonProperty(Order = -2)]
         public int Time = 1;
+
+        [JsonConstructor]
+        public CraftBase(int index) : base(index)
+        {
+            Name = "New Craft";
+        }
 
         public void Load(ByteBuffer bf)
         {

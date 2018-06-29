@@ -28,6 +28,10 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_11.Intersect_Convert_L
 
         [GameObjectInfo(typeof(BenchBase), "crafts")] Bench,
 
+        [GameObjectInfo(typeof(CraftingTableBase), "crafting_tables")] CraftTables,
+
+        [GameObjectInfo(typeof(CraftBase), "crafts")] Crafts,
+
         [GameObjectInfo(typeof(MapBase), "maps")] Map,
 
         [GameObjectInfo(typeof(EventBase), "events")] CommonEvent,

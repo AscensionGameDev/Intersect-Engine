@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Intersect.Migration.UpgradeInstructions.Upgrade_11.Intersect_Convert_Lib.Enums;
 using Intersect.Migration.UpgradeInstructions.Upgrade_11.Intersect_Convert_Lib.GameObjects;
@@ -169,10 +170,21 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_11
         {
             foreach (var val in Enum.GetValues(typeof(GameObjectType)))
             {
-                if ((GameObjectType)val != GameObjectType.Time)
+                if ((GameObjectType)val != GameObjectType.Time && (GameObjectType)val != GameObjectType.Crafts && (GameObjectType)val != GameObjectType.CraftTables)
                 {
                     MoveTable(((GameObjectType)val).GetTable(), ((GameObjectType)val).GetTable() + "_old", dbConn);
                 }
+            }
+
+            //Create table for craft tables
+            var sql = "CREATE TABLE " + "crafting_tables" + " ("
+                  + GAME_OBJECT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                  + GAME_OBJECT_DELETED + " INTEGER NOT NULL DEFAULT 0,"
+                  + GAME_OBJECT_DATA + " TEXT NOT NULL" + ");";
+            using (var createCommand = _gameDbConnection.CreateCommand())
+            {
+                createCommand.CommandText = sql;
+                createCommand.ExecuteNonQuery();
             }
         }
 
@@ -180,7 +192,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_11
         {
             foreach (var val in Enum.GetValues(typeof(GameObjectType)))
             {
-                if ((GameObjectType)val != GameObjectType.Time)
+                if ((GameObjectType)val != GameObjectType.Time && (GameObjectType)val != GameObjectType.Crafts && (GameObjectType)val != GameObjectType.CraftTables)
                 {
                     DeleteTable(((GameObjectType)val).GetTable() + "_old", dbConn);
                 }
@@ -223,10 +235,13 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_11
                 createCommand.ExecuteNonQuery();
             }
 
-            sql = "INSERT INTO " + tableName + " SELECT * FROM " + newTableName + ";";
-            using (SqliteCommand cmd = new SqliteCommand(sql, connection))
+            if (tableName != "crafts")
             {
-                cmd.ExecuteNonQuery();
+                sql = "INSERT INTO " + tableName + " SELECT * FROM " + newTableName + ";";
+                using (SqliteCommand cmd = new SqliteCommand(sql, connection))
+                {
+                    cmd.ExecuteNonQuery();
+                }
             }
 
             sql = "DELETE FROM " + tableName + " WHERE DELETED=1;";
@@ -251,9 +266,10 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_11
         //Game Object Saving/Loading
         private void LoadAllGameObjects()
         {
+            LoadGameObjects((GameObjectType)GameObjectType.Item);
             foreach (var val in Enum.GetValues(typeof(GameObjectType)))
             {
-                if ((GameObjectType)val != GameObjectType.Time)
+                if ((GameObjectType)val != GameObjectType.Time && (GameObjectType)val != GameObjectType.Item)
                 {
                     LoadGameObjects((GameObjectType)val);
                 }
@@ -265,7 +281,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_11
         {
             foreach (var val in Enum.GetValues(typeof(GameObjectType)))
             {
-                if ((GameObjectType)val != GameObjectType.Time)
+                if ((GameObjectType)val != GameObjectType.Time && (GameObjectType)val != GameObjectType.CraftTables && (GameObjectType)val != GameObjectType.Crafts)
                 {
                     DeleteTable(((GameObjectType)val).GetTable(), dbConn);
                 }
@@ -451,6 +467,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_11
 
         public void LoadGameObjects(GameObjectType gameObjectType)
         {
+            if (gameObjectType == GameObjectType.CraftTables || gameObjectType == GameObjectType.Crafts) return;
             var nullIssues = "";
             lock (_dbLock)
             {
@@ -487,11 +504,138 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_11
             }
         }
 
+        public IDatabaseObject AddGameObject(GameObjectType gameObjectType)
+        {
+            var insertQuery = $"INSERT into {gameObjectType.GetTable()} (" + GAME_OBJECT_DATA + ") VALUES (@" +
+                              GAME_OBJECT_DATA + ")" + "; SELECT last_insert_rowid();";
+            var index = -1;
+            using (var cmd = _gameDbConnection.CreateCommand())
+            {
+                cmd.CommandText = insertQuery;
+                cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DATA, new byte[1]));
+                index = (int)((long)cmd.ExecuteScalar());
+            }
+            if (index > -1)
+            {
+                IDatabaseObject dbObj = null;
+                switch (gameObjectType)
+                {
+                    case GameObjectType.CraftTables:
+                        var obje = new CraftingTableBase(index);
+                        dbObj = obje;
+                        CraftingTableBase.Lookup.Set(index, obje);
+                        break;
+                    case GameObjectType.Crafts:
+                        var crft = new CraftBase(index);
+                        dbObj = crft;
+                        CraftBase.Lookup.Set(index, crft);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(gameObjectType), gameObjectType, null);
+                }
+
+                SaveGameObject(dbObj);
+                return dbObj;
+            }
+            return null;
+        }
+
         public void SaveGameObject(IDatabaseObject gameObject)
         {
             if (gameObject == null)
             {
                 Log.Error("Attempted to persist null game object to the database.");
+            }
+
+            if (gameObject.Type == GameObjectType.Bench)
+            {
+                //Add any crafts
+                var go = (BenchBase)gameObject;
+                var newCrafts = new List<int>();
+                var matchedId = -1;
+                foreach (var craft in go.Crafts)
+                {
+                    var craftId = -1;
+                    //check if we already have the craft anywhere
+                    foreach (var exCraft in CraftBase.Lookup.Values)
+                    {
+                        var cft = (CraftBase) exCraft;
+                        var match = true;
+                        if (cft.Item != craft.Item) match = false;
+                        if (cft.Time != craft.Time) match = false;
+
+                        Dictionary<int,int> cftItems = new Dictionary<int, int>();
+                        Dictionary<int,int> craftItems = new Dictionary<int, int>();
+                        foreach (var item in cft.Ingredients)
+                        {
+                            if (cftItems.ContainsKey(item.Item))
+                            {
+                                cftItems[item.Item] += item.Quantity;
+                            }
+                            else
+                            {
+                                cftItems.Add(item.Item,item.Quantity);
+                            }
+                        }
+
+                        foreach (var item in craft.Ingredients)
+                        {
+                            if (craftItems.ContainsKey(item.Item))
+                            {
+                                craftItems[item.Item] += item.Quantity;
+                            }
+                            else
+                            {
+                                craftItems.Add(item.Item, item.Quantity);
+                            }
+                        }
+
+                        craftItems.Remove(-1);
+                        cftItems.Remove(-1);
+
+                        if (cftItems.Count == craftItems.Count)
+                        {
+                            foreach (var itm in cftItems.Keys)
+                            {
+                                if (!craftItems.ContainsKey(itm) || craftItems[itm] != cftItems[itm]) match = false;
+                            }
+                        }
+                        else
+                        {
+                            match = false;
+                        }
+
+                        if (match)
+                        {
+                            //Found a duplicate ingredient!
+                            matchedId = exCraft.Index;
+                        }
+                    }
+
+                    //add the craft if needed
+                    if (matchedId != -1)
+                    {
+                        newCrafts.Add(matchedId);
+                    }
+                    else
+                    {
+                        //Create new craft, copy over settings, save
+                        var cft = (CraftBase)AddGameObject(GameObjectType.Crafts);
+                        cft.Name = ItemBase.GetName(craft.Item);
+                        cft.Time = craft.Time;
+                        cft.Item = craft.Item;
+                        cft.Ingredients = craft.Ingredients;
+                        SaveGameObject(cft);
+                        newCrafts.Add(cft.Index);
+                    }
+                }
+
+                //Create a table with the bench name and crafts
+                var tbl = (CraftingTableBase) AddGameObject(GameObjectType.CraftTables);
+                tbl.Name = go.Name;
+                tbl.Crafts = newCrafts;
+                SaveGameObject(tbl);
+                return;
             }
 
             lock (_dbLock)
