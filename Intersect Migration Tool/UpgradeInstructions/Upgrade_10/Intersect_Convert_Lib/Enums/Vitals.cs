@@ -2,7 +2,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
 {
     public enum Vitals
     {
-        Health = 0,
+        Health,
         Mana,
         VitalCount
     }

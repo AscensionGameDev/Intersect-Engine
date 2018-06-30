@@ -106,13 +106,14 @@
     <Compile Include="Enums\Vitals.cs" />
     <Compile Include="Extensions\GameObjectInfoAttribute.cs" />
     <Compile Include="Config\PlayerOptions.cs" />
+    <Compile Include="GameObjects\CraftingTableBase.cs" />
     <Compile Include="Localization\LocalizedString.cs" />
     <Compile Include="Utilities\AlphanumComparator.cs" />
     <Compile Include="Utilities\ExperienceCurve.cs" />
     <Compile Include="Utilities\FieldChecking.cs" />
     <Compile Include="GameObjects\AnimationBase.cs" />
     <Compile Include="GameObjects\ClassBase.cs" />
-    <Compile Include="GameObjects\BenchBase.cs" />
+    <Compile Include="GameObjects\CraftBase.cs" />
     <Compile Include="GameObjects\Conditions\ConditionList.cs" />
     <Compile Include="GameObjects\Conditions\ConditionLists.cs" />
     <Compile Include="GameObjects\Events\Enums.cs" />

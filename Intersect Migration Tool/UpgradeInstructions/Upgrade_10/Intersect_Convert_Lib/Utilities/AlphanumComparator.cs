@@ -42,7 +42,7 @@ using System.Text;
  * Please compare against the latest Java version at http://www.DaveKoelle.com
  * to see the most recent modifications
  */
-namespace Intersect.Utilities
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.Utilities
 {
     public class AlphanumComparator : IComparer
     {

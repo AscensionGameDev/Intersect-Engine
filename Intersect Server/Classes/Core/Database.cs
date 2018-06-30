@@ -30,8 +30,7 @@ namespace Intersect.Server.Classes.Core
     public static class Database
     {
         public const string DIRECTORY_BACKUPS = "resources/backups";
-        private const int DbVersion = 11;
-
+        private const int DbVersion = 12;
         private const string GameDbFilename = "resources/gamedata.db";
         private const string PlayersDbFilename = "resources/playerdata.db";
 
@@ -958,15 +957,15 @@ namespace Intersect.Server.Classes.Core
                         cmd.Parameters.Add(new SqliteParameter("@" + CHAR_LEVEL, player.Level));
                         cmd.Parameters.Add(new SqliteParameter("@" + CHAR_EXP, player.Experience));
                         var vitals = "";
-                        for (var i = 0; i < player.Vital.Length; i++)
+                        for (var i = 0; i < (int)Vitals.VitalCount; i++)
                         {
-                            vitals += player.Vital[i] + ",";
+                            vitals += player.GetVital(i) + ",";
                         }
                         cmd.Parameters.Add(new SqliteParameter("@" + CHAR_VITALS, vitals));
                         var maxVitals = "";
-                        for (var i = 0; i < player.MaxVital.Length; i++)
+                        for (var i = 0; i < (int)Vitals.VitalCount; i++)
                         {
-                            maxVitals += player.MaxVital[i] + ",";
+                            maxVitals += player.GetMaxVital(i) + ",";
                         }
                         cmd.Parameters.Add(new SqliteParameter("@" + CHAR_MAX_VITALS, maxVitals));
                         var stats = "";
@@ -1304,17 +1303,17 @@ namespace Intersect.Server.Classes.Core
                             en.Gender = Convert.ToInt32(dataReader[CHAR_GENDER]);
                             en.Level = Convert.ToInt32(dataReader[CHAR_LEVEL]);
                             en.Experience = Convert.ToInt64(dataReader[CHAR_EXP]);
+                            var maxVitalString = dataReader[CHAR_MAX_VITALS].ToString();
+                            var maxVitals = maxVitalString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
+                            for (var i = 0; i < (int)Vitals.VitalCount && i < maxVitals.Length; i++)
+                            {
+                                en.SetMaxVital(i,int.Parse(maxVitals[i]));
+                            }
                             var vitalString = dataReader[CHAR_VITALS].ToString();
                             var vitals = vitalString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
                             for (var i = 0; i < (int) Vitals.VitalCount && i < vitals.Length; i++)
                             {
-                                en.Vital[i] = int.Parse(vitals[i]);
-                            }
-                            var maxVitalString = dataReader[CHAR_MAX_VITALS].ToString();
-                            var maxVitals = maxVitalString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
-                            for (var i = 0; i < (int) Vitals.VitalCount && i < maxVitals.Length; i++)
-                            {
-                                en.MaxVital[i] = int.Parse(maxVitals[i]);
+                                en.SetVital(i, int.Parse(vitals[i]));
                             }
                             var statsString = dataReader[CHAR_STATS].ToString();
                             var stats = statsString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
@@ -2061,8 +2060,11 @@ namespace Intersect.Server.Classes.Core
                 case GameObjectType.Spell:
                     SpellBase.Lookup.Clear();
                     break;
-                case GameObjectType.Bench:
-                    BenchBase.Lookup.Clear();
+                case GameObjectType.CraftTables:
+                    CraftingTableBase.Lookup.Clear();
+                    break;
+                case GameObjectType.Crafts:
+                    CraftBase.Lookup.Clear();
                     break;
                 case GameObjectType.Map:
                     MapBase.Lookup.Clear();
@@ -2139,9 +2141,13 @@ namespace Intersect.Server.Classes.Core
                     var spl = JsonConvert.DeserializeObject<SpellBase>(jObj.ToString());
                     SpellBase.Lookup.Set(index, spl);
                     break;
-                case GameObjectType.Bench:
-                    var cft = JsonConvert.DeserializeObject<BenchBase>(jObj.ToString());
-                    BenchBase.Lookup.Set(index, cft);
+                case GameObjectType.CraftTables:
+                    var cftble = JsonConvert.DeserializeObject<CraftingTableBase>(jObj.ToString());
+                    CraftingTableBase.Lookup.Set(index, cftble);
+                    break;
+                case GameObjectType.Crafts:
+                    var cft = JsonConvert.DeserializeObject<CraftBase>(jObj.ToString());
+                    CraftBase.Lookup.Set(index, cft);
                     break;
                 case GameObjectType.Map:
                     var map = JsonConvert.DeserializeObject<MapInstance>(jObj.ToString());
@@ -2321,10 +2327,15 @@ namespace Intersect.Server.Classes.Core
                         dbObj = objr;
                         SpellBase.Lookup.Set(index, objr);
                         break;
-                    case GameObjectType.Bench:
-                        var obje = new BenchBase(index);
+                    case GameObjectType.CraftTables:
+                        var obje = new CraftingTableBase(index);
                         dbObj = obje;
-                        BenchBase.Lookup.Set(index, obje);
+                        CraftingTableBase.Lookup.Set(index, obje);
+                        break;
+                    case GameObjectType.Crafts:
+                        var crft = new CraftBase(index);
+                        dbObj = crft;
+                        CraftBase.Lookup.Set(index, crft);
                         break;
                     case GameObjectType.Map:
                         var objw = new MapInstance(index);

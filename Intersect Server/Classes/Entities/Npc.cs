@@ -69,8 +69,11 @@ namespace Intersect.Server.Classes.Entities
                 }
             }
 
-            myBase.MaxVital.CopyTo(Vital, 0);
-            myBase.MaxVital.CopyTo(MaxVital, 0);
+            for (int i = 0; i < (int) Vitals.VitalCount; i++)
+            {
+                SetMaxVital(i, myBase.MaxVital[i]);
+                SetVital(i, myBase.MaxVital[i]);
+            }
             Behaviour = myBase.Behavior;
             Range = (byte) myBase.SightRange;
             mPathFinder = new Pathfinder(this);
@@ -274,20 +277,17 @@ namespace Intersect.Server.Classes.Entities
                                 }
                             }
 
-                            if (spell.VitalCost[(int) Vitals.Mana] <= Vital[(int) Vitals.Mana])
+                            if (spell.VitalCost[(int) Vitals.Mana] <= GetVital(Vitals.Mana))
                             {
-                                if (spell.VitalCost[(int) Vitals.Health] <= Vital[(int) Vitals.Health])
+                                if (spell.VitalCost[(int) Vitals.Health] <= GetVital(Vitals.Health))
                                 {
                                     if (Spells[s].SpellCd < Globals.System.GetTimeMs())
                                     {
                                         if (spell.TargetType == (int)SpellTargetTypes.Self || spell.TargetType == (int)SpellTargetTypes.AoE || InRangeOf(MyTarget, range))
                                         {
-                                            Vital[(int) Vitals.Mana] = Vital[(int) Vitals.Mana] -
-                                                                       spell.VitalCost[(int) Vitals.Mana];
-                                            Vital[(int) Vitals.Health] = Vital[(int) Vitals.Health] -
-                                                                         spell.VitalCost[(int) Vitals.Health
-                                                                         ];
                                             CastTime = Globals.System.GetTimeMs() + spell.CastDuration;
+                                            SubVital(Vitals.Mana, spell.VitalCost[(int) Vitals.Mana]);
+                                            SubVital(Vitals.Health,spell.VitalCost[(int)Vitals.Health]);
                                             if (spell.Friendly == 1 && spell.SpellType != (int)SpellTypes.WarpTo)
                                             {
                                                 CastTarget = this;
@@ -579,14 +579,11 @@ namespace Intersect.Server.Classes.Entities
             //For now give npcs/resources 10% health back every regen tick... in the future we should put per-npc and per-resource regen settings into their respective editors.
             foreach (Vitals vital in Enum.GetValues(typeof(Vitals)))
             {
-                Debug.Assert(Vital != null, "Vital != null");
-                Debug.Assert(MaxVital != null, "MaxVital != null");
-
                 if (vital >= Vitals.VitalCount) continue;
 
                 var vitalId = (int)vital;
-                var vitalValue = Vital[vitalId];
-                var maxVitalValue = MaxVital[vitalId];
+                var vitalValue = GetVital(vital);
+                var maxVitalValue = GetMaxVital(vital);
                 if (vitalValue >= maxVitalValue) continue;
 
                 var regenValue = (int)Math.Max(1, maxVitalValue * .1f);

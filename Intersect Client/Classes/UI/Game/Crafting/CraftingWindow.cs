@@ -110,10 +110,10 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 mCombinedItem.DescWindow.Dispose();
             }
-            if (index >= Globals.GameBench.Crafts.Count) return; 
-            var craft = Globals.GameBench.Crafts[index];
+            if (index >= Globals.ActiveCraftingTable.Crafts.Count) return; 
+            var craft = CraftBase.Lookup.Get<CraftBase>(Globals.ActiveCraftingTable.Crafts[index]);
             if (craft == null) return;
-
+            
             mCombinedItem = new RecipeItem(this, new CraftIngredient(craft.Item, 0))
             {
                 Container = new ImagePanel(mCraftWindow, "CraftedItemContainer")
@@ -185,7 +185,7 @@ namespace Intersect_Client.Classes.UI.Game
             if (Crafting)
             {
                 var cancraft = true;
-                foreach (CraftIngredient c in Globals.GameBench.Crafts[mCraftIndex].Ingredients)
+                foreach (CraftIngredient c in CraftBase.Lookup.Get<CraftBase>(Globals.ActiveCraftingTable.Crafts[mCraftIndex]).Ingredients)
                 {
                     if (itemdict.ContainsKey(c.Item))
                     {
@@ -270,7 +270,7 @@ namespace Intersect_Client.Classes.UI.Game
             }
 
             var cancraft = true;
-            foreach (CraftIngredient c in Globals.GameBench.Crafts[mCraftIndex].Ingredients)
+            foreach (CraftIngredient c in CraftBase.Lookup.Get<CraftBase>(Globals.ActiveCraftingTable.Crafts[mCraftIndex]).Ingredients)
             {
                 if (itemdict.ContainsKey(c.Item))
                 {
@@ -310,9 +310,9 @@ namespace Intersect_Client.Classes.UI.Game
             if (!mInitialized)
             {
                 ListBoxRow tmpRow;
-                for (int i = 0; i < Globals.GameBench.Crafts.Count; i++)
+                for (int i = 0; i < Globals.ActiveCraftingTable.Crafts.Count; i++)
                 {
-                    tmpRow = mRecipes.AddRow((i + 1) + ") " + ItemBase.GetName(Globals.GameBench.Crafts[i].Item));
+                    tmpRow = mRecipes.AddRow((i + 1) + ") " + ItemBase.GetName(CraftBase.Lookup.Get<CraftBase>(Globals.ActiveCraftingTable.Crafts[i]).Item));
                     tmpRow.UserData = i;
                     tmpRow.DoubleClicked += tmpNode_DoubleClicked;
                     tmpRow.Clicked += tmpNode_DoubleClicked;
@@ -326,14 +326,14 @@ namespace Intersect_Client.Classes.UI.Game
             if (Crafting == true)
             {
                 long i = Globals.System.GetTimeMs() - mBarTimer;
-                if (i > Globals.GameBench.Crafts[mCraftIndex].Time)
+                if (i > CraftBase.Lookup.Get<CraftBase>(Globals.ActiveCraftingTable.Crafts[mCraftIndex]).Time)
                 {
-                    i = Globals.GameBench.Crafts[mCraftIndex].Time;
+                    i = CraftBase.Lookup.Get<CraftBase>(Globals.ActiveCraftingTable.Crafts[mCraftIndex]).Time;
                     Crafting = false;
                     mCraftWindow.IsClosable = true;
                     LoadCraftItems(mCraftIndex);
                 }
-                decimal width = Convert.ToDecimal(i) / Convert.ToDecimal(Globals.GameBench.Crafts[mCraftIndex].Time) *
+                decimal width = Convert.ToDecimal(i) / Convert.ToDecimal(CraftBase.Lookup.Get<CraftBase>(Globals.ActiveCraftingTable.Crafts[mCraftIndex]).Time) *
                                 mBarContainer.Width;
                 mBar.Width = Convert.ToInt32(width);
             }

@@ -45,8 +45,6 @@ namespace Intersect.GameObjects
             Name = "New Resource";
         }
 
-        
-
         public class ResourceDrop
         {
             public int Amount;

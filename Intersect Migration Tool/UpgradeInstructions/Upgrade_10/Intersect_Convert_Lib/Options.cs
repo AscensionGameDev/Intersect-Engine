@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Intersect.Migration.UpgradeInstructions.Upgrade_9.Intersect_Convert_Lib.Enums;
+using Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.Enums;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib
 {
@@ -60,7 +60,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
         public static int TileHeight = 32;
         public static int LayerCount = 5;
 
-        public static void LoadFromServer(Upgrade_9.Intersect_Convert_Lib.ByteBuffer bf)
+        public static void LoadFromServer(ByteBuffer bf)
         {
             //General
             GameName = bf.ReadString();
@@ -116,7 +116,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_L
             AnimatedSprites.Clear();
             for (int i = 0; i < count; i++)
             {
-                AnimatedSprites.Add(bf.ReadString());
+                AnimatedSprites.Add(bf.ReadString().ToLower());
             }
 
             //Combat

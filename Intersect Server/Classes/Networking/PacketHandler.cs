@@ -1225,10 +1225,11 @@ namespace Intersect.Server.Classes.Networking
                 }
                 PacketSender.SendJoinGame(client);
                 player.WarpToSpawn();
-                player.Vital[(int)Vitals.Health] = classBase.BaseVital[(int)Vitals.Health];
-                player.Vital[(int)Vitals.Mana] = classBase.BaseVital[(int)Vitals.Mana];
-                player.MaxVital[(int)Vitals.Health] = classBase.BaseVital[(int)Vitals.Health];
-                player.MaxVital[(int)Vitals.Mana] = classBase.BaseVital[(int)Vitals.Mana];
+
+                player.SetMaxVital(Vitals.Health, classBase.BaseVital[(int)Vitals.Health]);
+                player.SetMaxVital(Vitals.Mana, classBase.BaseVital[(int)Vitals.Mana]);
+                player.SetVital(Vitals.Health, classBase.BaseVital[(int)Vitals.Health]);
+                player.SetVital(Vitals.Mana, classBase.BaseVital[(int)Vitals.Mana]);
 
                 for (int i = 0; i < (int)Stats.StatCount; i++)
                 {
@@ -2141,8 +2142,11 @@ namespace Intersect.Server.Classes.Networking
                 case GameObjectType.Spell:
                     obj = SpellBase.Lookup.Get<SpellBase>(id);
                     break;
-                case GameObjectType.Bench:
-                    obj = DatabaseObject<BenchBase>.Lookup.Get(id);
+                case GameObjectType.CraftTables:
+                    obj = DatabaseObject<CraftingTableBase>.Lookup.Get(id);
+                    break;
+                case GameObjectType.Crafts:
+                    obj = DatabaseObject<CraftBase>.Lookup.Get(id);
                     break;
                 case GameObjectType.Map:
                     break;
@@ -2225,8 +2229,11 @@ namespace Intersect.Server.Classes.Networking
                 case GameObjectType.Spell:
                     obj = SpellBase.Lookup.Get<SpellBase>(id);
                     break;
-                case GameObjectType.Bench:
-                    obj = DatabaseObject<BenchBase>.Lookup.Get(id);
+                case GameObjectType.CraftTables:
+                    obj = DatabaseObject<CraftingTableBase>.Lookup.Get(id);
+                    break;
+                case GameObjectType.Crafts:
+                    obj = DatabaseObject<CraftBase>.Lookup.Get(id);
                     break;
                 case GameObjectType.Map:
                     break;
@@ -2524,11 +2531,11 @@ namespace Intersect.Server.Classes.Networking
                 var count = bf.ReadInteger();
                 for (int i = 0; i < count; i++)
                 {
-                    var value = bf.ReadString();
+                    var value = bf.ReadString().Trim().ToLower();
                     if (type == GameObjectType.Tileset)
                     {
                         foreach (var tileset in TilesetBase.Lookup)
-                            if (tileset.Value.Name == value) return;
+                            if (tileset.Value.Name.Trim().ToLower() == value) return;
                     }
                     var obj = Database.AddGameObject(type);
                     if (type == GameObjectType.Tileset)

@@ -35,7 +35,6 @@ namespace Intersect_Client.Classes.Entities
 
         private List<PartyMember> mParty;
 
-        public bool NoClip = false;
         public Dictionary<int, QuestProgressStruct> QuestProgress = new Dictionary<int, QuestProgressStruct>();
         public int StatPoints = 0;
 
@@ -1148,11 +1147,11 @@ namespace Intersect_Client.Classes.Entities
                 {
                     if (gameMap.Attributes[tmpX, tmpY] != null)
                     {
-                        if (gameMap.Attributes[tmpX, tmpY].Value == (int) MapAttributes.Blocked && !NoClip)
+                        if (gameMap.Attributes[tmpX, tmpY].Value == (int) MapAttributes.Blocked)
                         {
                             return -2;
                         }
-                        else if (gameMap.Attributes[tmpX, tmpY].Value == (int) MapAttributes.ZDimension && !NoClip)
+                        else if (gameMap.Attributes[tmpX, tmpY].Value == (int) MapAttributes.ZDimension)
                         {
                             if (gameMap.Attributes[tmpX, tmpY].Data2 - 1 == z)
                             {
@@ -1177,7 +1176,7 @@ namespace Intersect_Client.Classes.Entities
                     else
                     {
                         if (en.Value.CurrentMap == tmpMap && en.Value.CurrentX == tmpX && en.Value.CurrentY == tmpY &&
-                            en.Value.CurrentZ == CurrentZ && !NoClip)
+                            en.Value.CurrentZ == CurrentZ)
                         {
                             if (en.Value.GetType() != typeof(Projectile))
                             {
@@ -1212,7 +1211,7 @@ namespace Intersect_Client.Classes.Entities
                     {
                         if (en.Value == null) continue;
                         if (en.Value.CurrentMap == tmpMap && en.Value.CurrentX == tmpX && en.Value.CurrentY == tmpY &&
-                            en.Value.CurrentZ == CurrentZ && en.Value.Passable == 0 && !NoClip)
+                            en.Value.CurrentZ == CurrentZ && en.Value.Passable == 0)
                         {
                             return -4;
                         }

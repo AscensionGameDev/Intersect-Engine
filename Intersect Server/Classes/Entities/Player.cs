@@ -138,8 +138,8 @@ namespace Intersect.Server.Classes.Entities
 
             if (InCraft > -1 && CraftIndex > -1)
             {
-                var b = BenchBase.Lookup.Get<BenchBase>(InCraft);
-                if (CraftTimer + b.Crafts[CraftIndex].Time < timeMs)
+                var b = CraftingTableBase.Lookup.Get<CraftingTableBase>(InCraft);
+                if (CraftTimer + CraftBase.Lookup.Get<CraftBase>(b.Crafts[CraftIndex]).Time < timeMs)
                 {
                     CraftItem(CraftIndex);
                 }
@@ -364,14 +364,11 @@ namespace Intersect.Server.Classes.Entities
 
             foreach (Vitals vital in Enum.GetValues(typeof(Vitals)))
             {
-                Debug.Assert(Vital != null, "Vital != null");
-                Debug.Assert(MaxVital != null, "MaxVital != null");
-
                 if (vital >= Vitals.VitalCount) continue;
 
                 var vitalId = (int)vital;
-                var vitalValue = Vital[vitalId];
-                var maxVitalValue = MaxVital[vitalId];
+                var vitalValue = GetVital(vital);
+                var maxVitalValue = GetMaxVital(vital);
                 if (vitalValue >= maxVitalValue) continue;
 
                 var vitalRegenRate = playerClass.VitalRegen[vitalId] / 100f;
@@ -406,20 +403,17 @@ namespace Intersect.Server.Classes.Entities
                         {
                             if ((int)vital < (int)Vitals.VitalCount)
                             {
-                                var maxVital = MaxVital[(int)vital];
+                                var maxVital = GetMaxVital(vital);
                                 if (myclass.IncreasePercentage == 1)
                                 {
-                                    maxVital =
-                                        (int)
-                                        (MaxVital[(int)vital] *
-                                         (1f + ((float)myclass.VitalIncrease[(int)vital] / 100f)));
+                                    maxVital =  (int) (GetMaxVital(vital) * (1f + ((float)myclass.VitalIncrease[(int)vital] / 100f)));
                                 }
                                 else
                                 {
-                                    maxVital = MaxVital[(int)vital] + myclass.VitalIncrease[(int)vital];
+                                    maxVital = GetMaxVital(vital) + myclass.VitalIncrease[(int)vital];
                                 }
-                                var vitalDiff = maxVital - MaxVital[(int)vital];
-                                MaxVital[(int)vital] = maxVital;
+                                var vitalDiff = maxVital - GetMaxVital(vital);
+                                SetMaxVital(vital, maxVital);
                                 AddVital(vital, vitalDiff);
                             }
                         }
@@ -520,43 +514,48 @@ namespace Intersect.Server.Classes.Entities
                     for (var i = 0; i < Party.Count; i++)
                     {
                         Party[i].GiveExperience(((Npc)en).MyBase.Experience / Party.Count);
+                        Party[i].UpdateQuestKillTasks(en);
                     }
                 }
                 else
                 {
                     GiveExperience(((Npc)en).MyBase.Experience);
+                    UpdateQuestKillTasks(en);
                 }
+            }
+        }
 
-                //If any quests demand that this Npc be killed then let's handle it
-                var npc = (Npc)en;
-                for (var i = 0; i < Quests.Keys.Count; i++)
+        public void UpdateQuestKillTasks(Entity en)
+        {
+            //If any quests demand that this Npc be killed then let's handle it
+            var npc = (Npc)en;
+            for (var i = 0; i < Quests.Keys.Count; i++)
+            {
+                var questId = Quests.Keys.ToArray()[i];
+                var quest = QuestBase.Lookup.Get<QuestBase>(questId);
+                if (quest != null)
                 {
-                    var questId = Quests.Keys.ToArray()[i];
-                    var quest = QuestBase.Lookup.Get<QuestBase>(questId);
-                    if (quest != null)
+                    if (Quests[questId].Task > -1)
                     {
-                        if (Quests[questId].Task > -1)
+                        //Assume this quest is in progress. See if we can find the task in the quest
+                        var questTask = quest.FindTask(Quests[questId].Task);
+                        if (questTask != null)
                         {
-                            //Assume this quest is in progress. See if we can find the task in the quest
-                            var questTask = quest.FindTask(Quests[questId].Task);
-                            if (questTask != null)
+                            if (questTask.Objective == 2 && questTask.Data1 == npc.MyBase.Index) //kill npcs
                             {
-                                if (questTask.Objective == 2 && questTask.Data1 == npc.MyBase.Index) //kill npcs
+                                var questProg = Quests[questId];
+                                questProg.TaskProgress++;
+                                if (questProg.TaskProgress >= questTask.Data2)
                                 {
-                                    var questProg = Quests[questId];
-                                    questProg.TaskProgress++;
-                                    if (questProg.TaskProgress >= questTask.Data2)
-                                    {
-                                        CompleteQuestTask(questId, Quests[questId].Task);
-                                    }
-                                    else
-                                    {
-                                        Quests[questId] = questProg;
-                                        PacketSender.SendQuestProgress(this, quest.Index);
-                                        PacketSender.SendPlayerMsg(MyClient,
-                                            Strings.Quests.npctask.ToString( quest.Name, questProg.TaskProgress,
-                                                questTask.Data2, NpcBase.GetName(questTask.Data1)));
-                                    }
+                                    CompleteQuestTask(questId, Quests[questId].Task);
+                                }
+                                else
+                                {
+                                    Quests[questId] = questProg;
+                                    PacketSender.SendQuestProgress(this, quest.Index);
+                                    PacketSender.SendPlayerMsg(MyClient,
+                                        Strings.Quests.npctask.ToString(quest.Name, questProg.TaskProgress,
+                                            questTask.Data2, NpcBase.GetName(questTask.Data1)));
                                 }
                             }
                         }
@@ -605,11 +604,9 @@ namespace Intersect.Server.Classes.Entities
             if (enemy.GetType() == typeof(EventPageInstance)) return;
 
             ItemBase weapon = null;
-            if (((Player)Globals.Entities[MyIndex]).Equipment[Options.WeaponIndex] >= 0)
+            if (Options.WeaponIndex < Equipment.Length && Equipment[Options.WeaponIndex] >= 0)
             {
-                weapon =
-                    ItemBase.Lookup.Get<ItemBase>(
-                        Inventory[((Player)Globals.Entities[MyIndex]).Equipment[Options.WeaponIndex]].ItemNum);
+                weapon = ItemBase.Lookup.Get<ItemBase>(Inventory[Equipment[Options.WeaponIndex]].ItemNum);
             }
 
             //If Entity is resource, check for the correct tool and make sure its not a spell cast.
@@ -726,8 +723,8 @@ namespace Intersect.Server.Classes.Entities
                 PacketSender.SendEntityDataToProximity(this);
                 PacketSender.SendEntityPositionToAll(this);
 
-                //If map grid changed then send the new map grid
-                if (!adminWarp && (oldMap == null || !oldMap.SurroundingMaps.Contains(newMap)))
+				//If map grid changed then send the new map grid
+				if (!adminWarp && (oldMap == null || !oldMap.SurroundingMaps.Contains(newMap)))
                 {
                     PacketSender.SendMapGrid(MyClient, map.MapGrid, true);
                 }
@@ -920,7 +917,21 @@ namespace Intersect.Server.Classes.Entities
                     }
                 }
 
-                if (!EventInstance.MeetsConditionLists(itemBase.UseReqs, this, null))
+				// Unequip items even if you do not meet the requirements. 
+				// (Need this for silly devs who give people items and then later add restrictions...)
+				if (itemBase.ItemType == (int)ItemTypes.Equipment)
+                for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+				{
+					if (Equipment[i] == slot)
+					{
+						Equipment[i] = -1;
+						PacketSender.SendPlayerEquipmentToProximity(this);
+						PacketSender.SendEntityStats(this);
+						return;
+					}
+				}
+
+				if (!EventInstance.MeetsConditionLists(itemBase.UseReqs, this, null))
                 {
                     PacketSender.SendPlayerMsg(MyClient, Strings.Items.dynamicreq);
                     return;
@@ -950,7 +961,7 @@ namespace Intersect.Server.Classes.Entities
                                 else
                                 {
                                     PacketSender.SendActionMsg(this, s + itemBase.Data2, CustomColors.PhysicalDamage);
-                                    if (Vital[(int)Vitals.Health] <= 0) //Add a death handler for poison.
+                                    if (!HasVital(Vitals.Health)) //Add a death handler for poison.
                                     {
                                         Die();
                                     }
@@ -1435,7 +1446,7 @@ namespace Intersect.Server.Classes.Entities
         }
 
         //Crafting
-        public bool OpenCraftingBench(BenchBase bench)
+        public bool OpenCraftingBench(CraftingTableBase bench)
         {
             if (IsBusy()) return false;
             if (bench != null)
@@ -1484,7 +1495,7 @@ namespace Intersect.Server.Classes.Entities
                 }
 
                 //Check the player actually has the items
-                foreach (var c in BenchBase.Lookup.Get<BenchBase>(InCraft).Crafts[index].Ingredients)
+                foreach (var c in CraftBase.Lookup.Get<CraftBase>(CraftingTableBase.Lookup.Get<CraftingTableBase>(InCraft).Crafts[index]).Ingredients)
                 {
                     if (itemdict.ContainsKey(c.Item))
                     {
@@ -1506,7 +1517,7 @@ namespace Intersect.Server.Classes.Entities
                 }
 
                 //Take the items
-                foreach (var c in BenchBase.Lookup.Get<BenchBase>(InCraft).Crafts[index].Ingredients)
+                foreach (var c in CraftBase.Lookup.Get<CraftBase>(CraftingTableBase.Lookup.Get<CraftingTableBase>(InCraft).Crafts[index]).Ingredients)
                 {
                     if (!TakeItemsByNum(c.Item, c.Quantity))
                     {
@@ -1518,11 +1529,11 @@ namespace Intersect.Server.Classes.Entities
                 }
 
                 //Give them the craft
-                if (TryGiveItem(new ItemInstance(BenchBase.Lookup.Get<BenchBase>(InCraft).Crafts[index].Item, 1, -1)))
+                if (TryGiveItem(new ItemInstance(CraftBase.Lookup.Get<CraftBase>(CraftingTableBase.Lookup.Get<CraftingTableBase>(InCraft).Crafts[index]).Item, 1, -1)))
                 {
                     PacketSender.SendPlayerMsg(MyClient,
                         Strings.Crafting.crafted.ToString(
-                            ItemBase.GetName(BenchBase.Lookup.Get<BenchBase>(InCraft).Crafts[index].Item)),
+                            ItemBase.GetName(CraftBase.Lookup.Get<CraftBase>(CraftingTableBase.Lookup.Get<CraftingTableBase>(InCraft).Crafts[index]).Item)),
                         CustomColors.Crafted);
                 }
                 else
@@ -1531,7 +1542,7 @@ namespace Intersect.Server.Classes.Entities
                     PacketSender.SendInventory(MyClient);
                     PacketSender.SendPlayerMsg(MyClient,
                         Strings.Crafting.nospace.ToString(
-                            ItemBase.GetName(BenchBase.Lookup.Get<BenchBase>(InCraft).Crafts[index].Item)),
+                            ItemBase.GetName(CraftBase.Lookup.Get<CraftBase>(CraftingTableBase.Lookup.Get<CraftingTableBase>(InCraft).Crafts[index]).Item)),
                         CustomColors.Error);
                 }
                 CraftIndex = -1;
@@ -1559,7 +1570,7 @@ namespace Intersect.Server.Classes.Entities
             }
 
             //Check the player actually has the items
-            foreach (var c in BenchBase.Lookup.Get<BenchBase>(InCraft).Crafts[index].Ingredients)
+            foreach (var c in CraftBase.Lookup.Get<CraftBase>(CraftingTableBase.Lookup.Get<CraftingTableBase>(InCraft).Crafts[index]).Ingredients)
             {
                 if (itemdict.ContainsKey(c.Item))
                 {
@@ -1717,7 +1728,7 @@ namespace Intersect.Server.Classes.Entities
                     {
                         var inventorySlotItem = Inventory[i];
                         if (inventorySlotItem == null) continue;
-                        if (inventorySlotItem.ItemNum == bankSlotItem.ItemNum) continue;
+                        if (inventorySlotItem.ItemNum != bankSlotItem.ItemNum) continue;
                         inventorySlot = i;
                         break;
                     }
@@ -2483,11 +2494,11 @@ namespace Intersect.Server.Classes.Entities
             bf.WriteString(MyName);
             for (int i = 0; i < (int)Vitals.VitalCount; i++)
             {
-                bf.WriteInteger(Vital[i]);
+                bf.WriteInteger(GetVital(i));
             }
             for (int i = 0; i < (int)Vitals.VitalCount; i++)
             {
-                bf.WriteInteger(MaxVital[i]);
+                bf.WriteInteger(GetMaxVital(i));
             }
             return bf.ToArray();
         }
@@ -2623,19 +2634,17 @@ namespace Intersect.Server.Classes.Entities
                     }
                 }
 
-                if (spell.VitalCost[(int)Vitals.Mana] <= Vital[(int)Vitals.Mana])
+                if (spell.VitalCost[(int)Vitals.Mana] <= GetVital(Vitals.Mana))
                 {
-                    if (spell.VitalCost[(int)Vitals.Health] <= Vital[(int)Vitals.Health])
+                    if (spell.VitalCost[(int)Vitals.Health] <= GetVital(Vitals.Health))
                     {
                         if (Spells[spellSlot].SpellCd < Globals.System.GetTimeMs())
                         {
                             if (CastTime < Globals.System.GetTimeMs())
                             {
-                                Vital[(int)Vitals.Mana] =
-                                    Vital[(int)Vitals.Mana] - spell.VitalCost[(int)Vitals.Mana];
-                                Vital[(int)Vitals.Health] = Vital[(int)Vitals.Health] -
-                                                             spell.VitalCost[(int)Vitals.Health];
                                 CastTime = Globals.System.GetTimeMs() + spell.CastDuration;
+                                SubVital(Vitals.Mana, spell.VitalCost[(int) Vitals.Mana]);
+                                SubVital(Vitals.Health, spell.VitalCost[(int) Vitals.Health]);
                                 SpellCastSlot = spellSlot;
                                 CastTarget = Target;
 
@@ -2659,8 +2668,20 @@ namespace Intersect.Server.Classes.Entities
                                 }
 
                                 PacketSender.SendEntityVitals(this);
-                                PacketSender.SendEntityVitals(this);
-                                PacketSender.SendEntityCastTime(this, spellNum);
+
+                                //Check if cast should be instance
+                                if (Globals.System.GetTimeMs() >= CastTime)
+                                {
+                                    //Cast now!
+                                    CastTime = 0;
+                                    CastSpell(Spells[SpellCastSlot].SpellNum, SpellCastSlot);
+                                    CastTarget = null;
+                                }
+                                else
+                                {
+                                    //Tell the client we are channeling the spell
+                                    PacketSender.SendEntityCastTime(this, spellNum);
+                                }
                             }
                             else
                             {
@@ -3300,7 +3321,7 @@ namespace Intersect.Server.Classes.Entities
             foreach (var evt in EventLookup.Values)
             {
                 if (evt.HoldingPlayer) return -5;
-            }
+			}
             //TODO Check if any events are blocking us
             return base.CanMove(moveDir);
         }

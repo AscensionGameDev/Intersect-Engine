@@ -68,7 +68,7 @@ namespace Intersect_MonoGameDx.Classes.SFML.Audio
 
         public override AudioInstanceState GetState()
         {
-            if (mDisposed) return AudioInstanceState.Disposed;
+            if (mDisposed || mInstance == null) return AudioInstanceState.Disposed;
             if (mInstance.State == SoundState.Playing) return AudioInstanceState.Playing;
             if (mInstance.State == SoundState.Stopped) return AudioInstanceState.Stopped;
             if (mInstance.State == SoundState.Paused) return AudioInstanceState.Paused;

@@ -649,8 +649,8 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteInteger(en.CurrentMap);
             for (var i = 0; i < (int)Vitals.VitalCount; i++)
             {
-                bf.WriteInteger(en.MaxVital[i]);
-                bf.WriteInteger(en.Vital[i]);
+                bf.WriteInteger(en.GetMaxVital(i));
+                bf.WriteInteger(en.GetVital(i));
             }
             var statuses = en.Statuses.Values.ToArray();
             bf.WriteInteger(statuses.Length);
@@ -699,8 +699,8 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteInteger(en.CurrentMap);
             for (var i = 0; i < (int)Vitals.VitalCount; i++)
             {
-                bf.WriteInteger(en.MaxVital[i]);
-                bf.WriteInteger(en.Vital[i]);
+                bf.WriteInteger(en.GetMaxVital(i));
+                bf.WriteInteger(en.GetVital(i));
             }
             var statuses = en.Statuses.Values.ToArray();
             bf.WriteInteger(statuses.Length);
@@ -1269,7 +1269,7 @@ namespace Intersect.Server.Classes.Networking
             bf.Dispose();
         }
 
-        public static void SendOpenCraftingBench(Client client, BenchBase bench)
+        public static void SendOpenCraftingBench(Client client, CraftingTableBase bench)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.OpenCraftingBench);
@@ -1348,8 +1348,12 @@ namespace Intersect.Server.Classes.Networking
                     foreach (var obj in SpellBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
-                case GameObjectType.Bench:
-                    foreach (var obj in BenchBase.Lookup)
+                case GameObjectType.CraftTables:
+                    foreach (var obj in CraftingTableBase.Lookup)
+                        SendGameObject(client, obj.Value);
+                    break;
+                case GameObjectType.Crafts:
+                    foreach (var obj in CraftBase.Lookup)
                         SendGameObject(client, obj.Value);
                     break;
                 case GameObjectType.Map:
@@ -1777,7 +1781,7 @@ namespace Intersect.Server.Classes.Networking
                         if (friend.Value.ToLower() == c.Entity.MyName.ToLower())
                         {
                             online.Add(friend.Value);
-                            map.Add(MapList.GetList().FindMap(client.Entity.CurrentMap).Name);
+                            map.Add(MapList.GetList().FindMap(c.Entity.CurrentMap).Name);
                             found = true;
                             break;
                         }

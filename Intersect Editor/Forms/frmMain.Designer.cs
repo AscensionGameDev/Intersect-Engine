@@ -6,34 +6,34 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace Intersect.Editor.Forms
 {
-    partial class FrmMain
-    {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
-        private IContainer components = null;
+	partial class FrmMain
+	{
+		/// <summary>
+		/// Required designer variable.
+		/// </summary>
+		private IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+		/// <summary>
+		/// Clean up any resources being used.
+		/// </summary>
+		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing && (components != null))
+			{
+				components.Dispose();
+			}
+			base.Dispose(disposing);
+		}
 
-        #region Windows Form Designer generated code
+		#region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
-        private void InitializeComponent()
-        {
+		/// <summary>
+		/// Required method for Designer support - do not modify
+		/// the contents of this method with the code editor.
+		/// </summary>
+		private void InitializeComponent()
+		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
 			this.statusStrip1 = new DarkUI.Controls.DarkStatusStrip();
 			this.toolStripLabelCoords = new System.Windows.Forms.ToolStripStatusLabel();
@@ -71,11 +71,11 @@ namespace Intersect.Editor.Forms
 			this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
 			this.toolStripButtonBug = new System.Windows.Forms.ToolStripButton();
 			this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
-			this.toolStripButtonQuestion = new System.Windows.Forms.ToolStripButton();
-			this.toolStrip1 = new DarkUI.Controls.DarkToolStrip();
 			this.toolStripBtnFlipVertical = new System.Windows.Forms.ToolStripButton();
 			this.toolStripBtnFlipHorizontal = new System.Windows.Forms.ToolStripButton();
 			this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
+			this.toolStripButtonQuestion = new System.Windows.Forms.ToolStripButton();
+			this.toolStrip1 = new DarkUI.Controls.DarkToolStrip();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.newMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -105,7 +105,8 @@ namespace Intersect.Editor.Forms
 			this.animationEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.classEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.commonEventEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.craftingEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.craftsEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.craftingTableEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.itemEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.npcEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.projectileEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -133,13 +134,13 @@ namespace Intersect.Editor.Forms
 			this.statusStrip1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
 			this.statusStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
 			this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripLabelCoords,
-            this.toolStripSeparator7,
-            this.toolStripLabelRevision,
-            this.toolStripSeparator8,
-            this.toolStripLabelFPS,
-            this.toolStripSeparator9,
-            this.toolStripLabelDebug});
+			this.toolStripLabelCoords,
+			this.toolStripSeparator7,
+			this.toolStripLabelRevision,
+			this.toolStripSeparator8,
+			this.toolStripLabelFPS,
+			this.toolStripSeparator9,
+			this.toolStripLabelDebug});
 			this.statusStrip1.Location = new System.Drawing.Point(0, 645);
 			this.statusStrip1.Name = "statusStrip1";
 			this.statusStrip1.Padding = new System.Windows.Forms.Padding(0, 5, 0, 3);
@@ -501,37 +502,37 @@ namespace Intersect.Editor.Forms
 			this.toolStrip1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
 			this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
 			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripBtnNewMap,
-            this.toolStripBtnSaveMap,
-            this.toolStripSeparator1,
-            this.toolStripBtnCut,
-            this.toolStripBtnCopy,
-            this.toolStripBtnPaste,
-            this.toolStripSeparator2,
-            this.toolStripBtnUndo,
-            this.toolStripBtnRedo,
-            this.toolStripSeparator3,
-            this.toolStripBtnPen,
-            this.toolStripBtnSelect,
-            this.toolStripBtnRect,
-            this.toolStripSeparator4,
-            this.toolStripBtnFlipVertical,
-            this.toolStripBtnFlipHorizontal,
-            this.toolStripSeparator5,
-            this.toolStripBtnFill,
-            this.toolStripBtnErase,
-            this.toolStripBtnEyeDrop,
-            this.toolStripSeparator6,
-            this.toolStripTimeButton,
-            this.toolStripSeparator13,
-            this.toolStripBtnScreenshot,
-            this.toolStripSeparator10,
-            this.toolStripBtnRun,
-            this.toolStripButtonDonate,
-            this.toolStripSeparator12,
-            this.toolStripButtonBug,
-            this.toolStripSeparator11,
-            this.toolStripButtonQuestion});
+			this.toolStripBtnNewMap,
+			this.toolStripBtnSaveMap,
+			this.toolStripSeparator1,
+			this.toolStripBtnCut,
+			this.toolStripBtnCopy,
+			this.toolStripBtnPaste,
+			this.toolStripSeparator2,
+			this.toolStripBtnUndo,
+			this.toolStripBtnRedo,
+			this.toolStripSeparator3,
+			this.toolStripBtnPen,
+			this.toolStripBtnSelect,
+			this.toolStripBtnRect,
+			this.toolStripSeparator4,
+			this.toolStripBtnFlipVertical,
+			this.toolStripBtnFlipHorizontal,
+			this.toolStripSeparator5,
+			this.toolStripBtnFill,
+			this.toolStripBtnErase,
+			this.toolStripBtnEyeDrop,
+			this.toolStripSeparator6,
+			this.toolStripTimeButton,
+			this.toolStripSeparator13,
+			this.toolStripBtnScreenshot,
+			this.toolStripSeparator10,
+			this.toolStripBtnRun,
+			this.toolStripButtonDonate,
+			this.toolStripSeparator12,
+			this.toolStripButtonBug,
+			this.toolStripSeparator11,
+			this.toolStripButtonQuestion});
 			this.toolStrip1.Location = new System.Drawing.Point(0, 24);
 			this.toolStrip1.Name = "toolStrip1";
 			this.toolStrip1.Padding = new System.Windows.Forms.Padding(0);
@@ -573,12 +574,12 @@ namespace Intersect.Editor.Forms
 			// fileToolStripMenuItem
 			// 
 			this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.saveMapToolStripMenuItem,
-            this.newMapToolStripMenuItem,
-            this.importMapToolStripMenuItem,
-            this.exportMapToolStripMenuItem,
-            this.optionsToolStripMenuItem,
-            this.exitToolStripMenuItem});
+			this.saveMapToolStripMenuItem,
+			this.newMapToolStripMenuItem,
+			this.importMapToolStripMenuItem,
+			this.exportMapToolStripMenuItem,
+			this.optionsToolStripMenuItem,
+			this.exitToolStripMenuItem});
 			this.fileToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
 			this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
 			this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
@@ -636,14 +637,14 @@ namespace Intersect.Editor.Forms
 			// editToolStripMenuItem
 			// 
 			this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.undoToolStripMenuItem,
-            this.redoToolStripMenuItem,
-            this.cutToolStripMenuItem,
-            this.copyToolStripMenuItem,
-            this.pasteToolStripMenuItem,
-            this.fillToolStripMenuItem,
-            this.eraseLayerToolStripMenuItem,
-            this.selectToolStripMenuItem});
+			this.undoToolStripMenuItem,
+			this.redoToolStripMenuItem,
+			this.cutToolStripMenuItem,
+			this.copyToolStripMenuItem,
+			this.pasteToolStripMenuItem,
+			this.fillToolStripMenuItem,
+			this.eraseLayerToolStripMenuItem,
+			this.selectToolStripMenuItem});
 			this.editToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
 			this.editToolStripMenuItem.Name = "editToolStripMenuItem";
 			this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
@@ -713,8 +714,8 @@ namespace Intersect.Editor.Forms
 			// selectToolStripMenuItem
 			// 
 			this.selectToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.allLayersToolStripMenuItem,
-            this.currentLayerOnlyToolStripMenuItem});
+			this.allLayersToolStripMenuItem,
+			this.currentLayerOnlyToolStripMenuItem});
 			this.selectToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
 			this.selectToolStripMenuItem.Name = "selectToolStripMenuItem";
 			this.selectToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
@@ -739,12 +740,12 @@ namespace Intersect.Editor.Forms
 			// viewToolStripMenuItem
 			// 
 			this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.hideDarknessToolStripMenuItem,
-            this.hideFogToolStripMenuItem,
-            this.hideOverlayToolStripMenuItem,
-            this.hideTilePreviewToolStripMenuItem,
-            this.hideResourcesToolStripMenuItem,
-            this.mapGridToolStripMenuItem});
+			this.hideDarknessToolStripMenuItem,
+			this.hideFogToolStripMenuItem,
+			this.hideOverlayToolStripMenuItem,
+			this.hideTilePreviewToolStripMenuItem,
+			this.hideResourcesToolStripMenuItem,
+			this.mapGridToolStripMenuItem});
 			this.viewToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
 			this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
 			this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
@@ -811,19 +812,20 @@ namespace Intersect.Editor.Forms
 			// contentEditorsToolStripMenuItem
 			// 
 			this.contentEditorsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.animationEditorToolStripMenuItem,
-            this.classEditorToolStripMenuItem,
-            this.commonEventEditorToolStripMenuItem,
-            this.craftingEditorToolStripMenuItem,
-            this.itemEditorToolStripMenuItem,
-            this.npcEditorToolStripMenuItem,
-            this.projectileEditorToolStripMenuItem,
-            this.questEditorToolStripMenuItem,
-            this.resourceEditorToolStripMenuItem,
-            this.shopEditorToolStripMenuItem,
-            this.spellEditorToolStripMenuItem,
-            this.switchVariableEditorToolStripMenuItem,
-            this.timeEditorToolStripMenuItem});
+			this.animationEditorToolStripMenuItem,
+			this.classEditorToolStripMenuItem,
+			this.commonEventEditorToolStripMenuItem,
+			this.craftsEditorToolStripMenuItem,
+			this.craftingTableEditorToolStripMenuItem,
+			this.itemEditorToolStripMenuItem,
+			this.npcEditorToolStripMenuItem,
+			this.projectileEditorToolStripMenuItem,
+			this.questEditorToolStripMenuItem,
+			this.resourceEditorToolStripMenuItem,
+			this.shopEditorToolStripMenuItem,
+			this.spellEditorToolStripMenuItem,
+			this.switchVariableEditorToolStripMenuItem,
+			this.timeEditorToolStripMenuItem});
 			this.contentEditorsToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
 			this.contentEditorsToolStripMenuItem.Name = "contentEditorsToolStripMenuItem";
 			this.contentEditorsToolStripMenuItem.Size = new System.Drawing.Size(101, 20);
@@ -853,13 +855,21 @@ namespace Intersect.Editor.Forms
 			this.commonEventEditorToolStripMenuItem.Text = "Common Event Editor";
 			this.commonEventEditorToolStripMenuItem.Click += new System.EventHandler(this.commonEventEditorToolStripMenuItem_Click);
 			// 
-			// craftingEditorToolStripMenuItem
+			// craftsEditorToolStripMenuItem
 			// 
-			this.craftingEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-			this.craftingEditorToolStripMenuItem.Name = "craftingEditorToolStripMenuItem";
-			this.craftingEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
-			this.craftingEditorToolStripMenuItem.Text = "Crafting Bench Editor";
-			this.craftingEditorToolStripMenuItem.Click += new System.EventHandler(this.craftingEditorToolStripMenuItem_Click);
+			this.craftsEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+			this.craftsEditorToolStripMenuItem.Name = "craftsEditorToolStripMenuItem";
+			this.craftsEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+			this.craftsEditorToolStripMenuItem.Text = "Crafts Editor";
+			this.craftsEditorToolStripMenuItem.Click += new System.EventHandler(this.craftsEditorToolStripMenuItem_Click);
+			// 
+			// craftingTableEditorToolStripMenuItem
+			// 
+			this.craftingTableEditorToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+			this.craftingTableEditorToolStripMenuItem.Name = "craftingTableEditorToolStripMenuItem";
+			this.craftingTableEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+			this.craftingTableEditorToolStripMenuItem.Text = "Crafting Table Editor";
+			this.craftingTableEditorToolStripMenuItem.Click += new System.EventHandler(this.craftingTablesEditorToolStripMenuItem_Click);
 			// 
 			// itemEditorToolStripMenuItem
 			// 
@@ -936,9 +946,9 @@ namespace Intersect.Editor.Forms
 			// helpToolStripMenuItem
 			// 
 			this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.postQuestionToolStripMenuItem,
-            this.reportBugToolStripMenuItem,
-            this.aboutToolStripMenuItem});
+			this.postQuestionToolStripMenuItem,
+			this.reportBugToolStripMenuItem,
+			this.aboutToolStripMenuItem});
 			this.helpToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
 			this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
 			this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
@@ -973,12 +983,12 @@ namespace Intersect.Editor.Forms
 			this.menuStrip.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
 			this.menuStrip.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
 			this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem,
-            this.editToolStripMenuItem,
-            this.viewToolStripMenuItem,
-            this.contentEditorsToolStripMenuItem,
-            this.externalToolsToolStripMenuItem,
-            this.helpToolStripMenuItem});
+			this.fileToolStripMenuItem,
+			this.editToolStripMenuItem,
+			this.viewToolStripMenuItem,
+			this.contentEditorsToolStripMenuItem,
+			this.externalToolsToolStripMenuItem,
+			this.helpToolStripMenuItem});
 			this.menuStrip.Location = new System.Drawing.Point(0, 0);
 			this.menuStrip.Name = "menuStrip";
 			this.menuStrip.Padding = new System.Windows.Forms.Padding(3, 2, 0, 2);
@@ -1022,95 +1032,96 @@ namespace Intersect.Editor.Forms
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
-        }
+		}
 
-        #endregion
-        private System.Windows.Forms.ToolStripMenuItem hihiToolStripMenuItem;
-        private DarkStatusStrip statusStrip1;
-        public ToolStripStatusLabel toolStripLabelCoords;
-        private ToolStripSeparator toolStripSeparator7;
-        public ToolStripStatusLabel toolStripLabelFPS;
-        private ToolStripSeparator toolStripSeparator8;
-        public ToolStripStatusLabel toolStripLabelDebug;
-        public ToolStripStatusLabel toolStripLabelRevision;
-        private ToolStripSeparator toolStripSeparator9;
-        private WeifenLuo.WinFormsUI.Docking.DockPanel dockLeft;
-        private ToolStripButton toolStripBtnNewMap;
-        private ToolStripButton toolStripBtnSaveMap;
-        private ToolStripSeparator toolStripSeparator1;
-        public ToolStripButton toolStripBtnCut;
-        public ToolStripButton toolStripBtnCopy;
-        public ToolStripButton toolStripBtnPaste;
-        private ToolStripSeparator toolStripSeparator2;
-        public ToolStripButton toolStripBtnUndo;
-        public ToolStripButton toolStripBtnRedo;
-        private ToolStripSeparator toolStripSeparator3;
-        public ToolStripButton toolStripBtnPen;
-        public ToolStripButton toolStripBtnSelect;
-        public ToolStripButton toolStripBtnRect;
-        private ToolStripSeparator toolStripSeparator4;
-        public ToolStripButton toolStripBtnFill;
-        public ToolStripButton toolStripBtnErase;
-        private ToolStripButton toolStripBtnEyeDrop;
-        private ToolStripSeparator toolStripSeparator5;
-        private ToolStripDropDownButton toolStripTimeButton;
-        private ToolStripSeparator toolStripSeparator6;
-        private ToolStripButton toolStripBtnScreenshot;
-        private ToolStripSeparator toolStripSeparator10;
-        private ToolStripButton toolStripBtnRun;
-        private ToolStripButton toolStripButtonDonate;
-        private ToolStripSeparator toolStripSeparator12;
-        private ToolStripButton toolStripButtonBug;
-        private ToolStripSeparator toolStripSeparator11;
-        private ToolStripButton toolStripButtonQuestion;
-        private DarkToolStrip toolStrip1;
-        private ToolStripMenuItem fileToolStripMenuItem;
-        private ToolStripMenuItem saveMapToolStripMenuItem;
-        private ToolStripMenuItem newMapToolStripMenuItem;
-        private ToolStripMenuItem importMapToolStripMenuItem;
-        private ToolStripMenuItem exportMapToolStripMenuItem;
-        private ToolStripMenuItem optionsToolStripMenuItem;
-        private ToolStripMenuItem exitToolStripMenuItem;
-        private ToolStripMenuItem editToolStripMenuItem;
-        private ToolStripMenuItem undoToolStripMenuItem;
-        private ToolStripMenuItem redoToolStripMenuItem;
-        private ToolStripMenuItem cutToolStripMenuItem;
-        private ToolStripMenuItem copyToolStripMenuItem;
-        private ToolStripMenuItem pasteToolStripMenuItem;
-        public ToolStripMenuItem fillToolStripMenuItem;
-        public ToolStripMenuItem eraseLayerToolStripMenuItem;
-        private ToolStripMenuItem selectToolStripMenuItem;
-        private ToolStripMenuItem allLayersToolStripMenuItem;
-        private ToolStripMenuItem currentLayerOnlyToolStripMenuItem;
-        private ToolStripMenuItem viewToolStripMenuItem;
-        private ToolStripMenuItem hideDarknessToolStripMenuItem;
-        private ToolStripMenuItem hideFogToolStripMenuItem;
-        private ToolStripMenuItem hideOverlayToolStripMenuItem;
-        private ToolStripMenuItem hideTilePreviewToolStripMenuItem;
-        private ToolStripMenuItem hideResourcesToolStripMenuItem;
-        private ToolStripMenuItem mapGridToolStripMenuItem;
-        private ToolStripMenuItem contentEditorsToolStripMenuItem;
-        private ToolStripMenuItem animationEditorToolStripMenuItem;
-        private ToolStripMenuItem classEditorToolStripMenuItem;
-        private ToolStripMenuItem commonEventEditorToolStripMenuItem;
-        private ToolStripMenuItem craftingEditorToolStripMenuItem;
-        private ToolStripMenuItem itemEditorToolStripMenuItem;
-        private ToolStripMenuItem npcEditorToolStripMenuItem;
-        private ToolStripMenuItem projectileEditorToolStripMenuItem;
-        private ToolStripMenuItem questEditorToolStripMenuItem;
-        private ToolStripMenuItem resourceEditorToolStripMenuItem;
-        private ToolStripMenuItem shopEditorToolStripMenuItem;
-        private ToolStripMenuItem spellEditorToolStripMenuItem;
-        private ToolStripMenuItem switchVariableEditorToolStripMenuItem;
-        private ToolStripMenuItem timeEditorToolStripMenuItem;
-        private ToolStripMenuItem helpToolStripMenuItem;
-        private ToolStripMenuItem postQuestionToolStripMenuItem;
-        private ToolStripMenuItem reportBugToolStripMenuItem;
-        private ToolStripMenuItem aboutToolStripMenuItem;
-        private DarkMenuStrip menuStrip;
-        private ToolStripMenuItem externalToolsToolStripMenuItem;
+		#endregion
+		private System.Windows.Forms.ToolStripMenuItem hihiToolStripMenuItem;
+		private DarkStatusStrip statusStrip1;
+		public ToolStripStatusLabel toolStripLabelCoords;
+		private ToolStripSeparator toolStripSeparator7;
+		public ToolStripStatusLabel toolStripLabelFPS;
+		private ToolStripSeparator toolStripSeparator8;
+		public ToolStripStatusLabel toolStripLabelDebug;
+		public ToolStripStatusLabel toolStripLabelRevision;
+		private ToolStripSeparator toolStripSeparator9;
+		private WeifenLuo.WinFormsUI.Docking.DockPanel dockLeft;
+		private ToolStripButton toolStripBtnNewMap;
+		private ToolStripButton toolStripBtnSaveMap;
+		private ToolStripSeparator toolStripSeparator1;
+		public ToolStripButton toolStripBtnCut;
+		public ToolStripButton toolStripBtnCopy;
+		public ToolStripButton toolStripBtnPaste;
+		private ToolStripSeparator toolStripSeparator2;
+		public ToolStripButton toolStripBtnUndo;
+		public ToolStripButton toolStripBtnRedo;
+		private ToolStripSeparator toolStripSeparator3;
+		public ToolStripButton toolStripBtnPen;
+		public ToolStripButton toolStripBtnSelect;
+		public ToolStripButton toolStripBtnRect;
+		private ToolStripSeparator toolStripSeparator4;
+		public ToolStripButton toolStripBtnFill;
+		public ToolStripButton toolStripBtnErase;
+		private ToolStripButton toolStripBtnEyeDrop;
+		private ToolStripSeparator toolStripSeparator5;
+		private ToolStripDropDownButton toolStripTimeButton;
+		private ToolStripSeparator toolStripSeparator6;
+		private ToolStripButton toolStripBtnScreenshot;
+		private ToolStripSeparator toolStripSeparator10;
+		private ToolStripButton toolStripBtnRun;
+		private ToolStripButton toolStripButtonDonate;
+		private ToolStripSeparator toolStripSeparator12;
+		private ToolStripButton toolStripButtonBug;
+		private ToolStripSeparator toolStripSeparator11;
+		private ToolStripButton toolStripButtonQuestion;
+		private DarkToolStrip toolStrip1;
+		private ToolStripMenuItem fileToolStripMenuItem;
+		private ToolStripMenuItem saveMapToolStripMenuItem;
+		private ToolStripMenuItem newMapToolStripMenuItem;
+		private ToolStripMenuItem importMapToolStripMenuItem;
+		private ToolStripMenuItem exportMapToolStripMenuItem;
+		private ToolStripMenuItem optionsToolStripMenuItem;
+		private ToolStripMenuItem exitToolStripMenuItem;
+		private ToolStripMenuItem editToolStripMenuItem;
+		private ToolStripMenuItem undoToolStripMenuItem;
+		private ToolStripMenuItem redoToolStripMenuItem;
+		private ToolStripMenuItem cutToolStripMenuItem;
+		private ToolStripMenuItem copyToolStripMenuItem;
+		private ToolStripMenuItem pasteToolStripMenuItem;
+		public ToolStripMenuItem fillToolStripMenuItem;
+		public ToolStripMenuItem eraseLayerToolStripMenuItem;
+		private ToolStripMenuItem selectToolStripMenuItem;
+		private ToolStripMenuItem allLayersToolStripMenuItem;
+		private ToolStripMenuItem currentLayerOnlyToolStripMenuItem;
+		private ToolStripMenuItem viewToolStripMenuItem;
+		private ToolStripMenuItem hideDarknessToolStripMenuItem;
+		private ToolStripMenuItem hideFogToolStripMenuItem;
+		private ToolStripMenuItem hideOverlayToolStripMenuItem;
+		private ToolStripMenuItem hideTilePreviewToolStripMenuItem;
+		private ToolStripMenuItem hideResourcesToolStripMenuItem;
+		private ToolStripMenuItem mapGridToolStripMenuItem;
+		private ToolStripMenuItem contentEditorsToolStripMenuItem;
+		private ToolStripMenuItem animationEditorToolStripMenuItem;
+		private ToolStripMenuItem classEditorToolStripMenuItem;
+		private ToolStripMenuItem commonEventEditorToolStripMenuItem;
+		private ToolStripMenuItem craftingTableEditorToolStripMenuItem;
+		private ToolStripMenuItem itemEditorToolStripMenuItem;
+		private ToolStripMenuItem npcEditorToolStripMenuItem;
+		private ToolStripMenuItem projectileEditorToolStripMenuItem;
+		private ToolStripMenuItem questEditorToolStripMenuItem;
+		private ToolStripMenuItem resourceEditorToolStripMenuItem;
+		private ToolStripMenuItem shopEditorToolStripMenuItem;
+		private ToolStripMenuItem spellEditorToolStripMenuItem;
+		private ToolStripMenuItem switchVariableEditorToolStripMenuItem;
+		private ToolStripMenuItem timeEditorToolStripMenuItem;
+		private ToolStripMenuItem helpToolStripMenuItem;
+		private ToolStripMenuItem postQuestionToolStripMenuItem;
+		private ToolStripMenuItem reportBugToolStripMenuItem;
+		private ToolStripMenuItem aboutToolStripMenuItem;
+		private DarkMenuStrip menuStrip;
+		private ToolStripMenuItem externalToolsToolStripMenuItem;
 		private ToolStripButton toolStripBtnFlipHorizontal;
 		private ToolStripButton toolStripBtnFlipVertical;
 		private ToolStripSeparator toolStripSeparator13;
+		private ToolStripMenuItem craftsEditorToolStripMenuItem;
 	}
 }

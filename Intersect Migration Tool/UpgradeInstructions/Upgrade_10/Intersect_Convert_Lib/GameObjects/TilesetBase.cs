@@ -1,12 +1,10 @@
 ﻿using System.Text;
-using Newtonsoft.Json;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_10.Intersect_Convert_Lib.GameObjects
 {
     public class TilesetBase : DatabaseObject<TilesetBase>
     {
-        [JsonConstructor]
-        public TilesetBase(int index) : base(index)
+        public TilesetBase(int id) : base(id)
         {
             Name = "";
         }

@@ -227,7 +227,7 @@ namespace Intersect.Editor.Classes
             }
         }
 
-        public static void HandleServerConfig(byte[] packet)
+        private static void HandleServerConfig(byte[] packet)
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
@@ -267,12 +267,6 @@ namespace Intersect.Editor.Classes
                 var attributeDataLength = bf.ReadInteger();
                 var attributeData = bf.ReadBytes(attributeDataLength);
                 var map = new MapInstance((int) mapNum);
-                if (MapInstance.Lookup.Get<MapInstance>(mapNum) != null)
-                {
-                    if (Globals.CurrentMap == MapInstance.Lookup.Get<MapInstance>(mapNum))
-                        Globals.CurrentMap = map;
-                    MapInstance.Lookup.Get<MapInstance>(mapNum).Delete();
-                }
                 map.Load(mapJson);
                 map.LoadTileData(tileData);
                 map.LoadAttributes(attributeData);
@@ -281,6 +275,17 @@ namespace Intersect.Editor.Classes
                 map.SaveStateAsUnchanged();
                 map.InitAutotiles();
                 map.UpdateAdjacentAutotiles();
+                if (MapInstance.Lookup.Get<MapInstance>(mapNum) != null)
+                {
+                    lock (MapInstance.Lookup.Get<MapInstance>(mapNum).MapLock)
+                    {
+                        if (Globals.CurrentMap == MapInstance.Lookup.Get<MapInstance>(mapNum))
+                        {
+                            Globals.CurrentMap = map;
+                        }
+                        MapInstance.Lookup.Get<MapInstance>(mapNum).Delete();
+                    }
+                }
                 MapInstance.Lookup.Set(mapNum, map);
                 if (!Globals.InEditor && Globals.HasGameData)
                 {
@@ -292,8 +297,9 @@ namespace Intersect.Editor.Classes
                     if (Globals.FetchingMapPreviews || Globals.CurrentMap == map)
                     {
                         int currentmap = Globals.CurrentMap.Index;
-                        if (Database.LoadMapCacheLegacy(mapNum, map.Revision) == null &&
-                            !Globals.MapsToScreenshot.Contains(mapNum)) Globals.MapsToScreenshot.Add(mapNum);
+                        var img = Database.LoadMapCacheLegacy(mapNum, map.Revision);
+                        if (img == null &&  !Globals.MapsToScreenshot.Contains(mapNum)) Globals.MapsToScreenshot.Add(mapNum);
+                        img?.Dispose();
                         if (Globals.FetchingMapPreviews)
                         {
                             if (Globals.MapsToFetch.Contains(mapNum))
@@ -438,7 +444,9 @@ namespace Intersect.Editor.Classes
             var id = bf.ReadInteger();
             var another = Convert.ToBoolean(bf.ReadInteger());
             var deleted = Convert.ToBoolean(bf.ReadInteger());
-            var json = bf.ReadString();
+            var json = "";
+            if (!deleted)
+                json = bf.ReadString();
             switch (type)
             {
                 case GameObjectType.Animation:
@@ -569,17 +577,30 @@ namespace Intersect.Editor.Classes
                         SpellBase.Lookup.Set(id, spl);
                     }
                     break;
-                case GameObjectType.Bench:
+                case GameObjectType.CraftTables:
                     if (deleted)
                     {
-                        var cft = BenchBase.Lookup.Get<BenchBase>(id);
+                        var cft = CraftingTableBase.Lookup.Get<CraftingTableBase>(id);
                         cft.Delete();
                     }
                     else
                     {
-                        var cft = new BenchBase(id);
+                        var cft = new CraftingTableBase(id);
                         cft.Load(json);
-                        BenchBase.Lookup.Set(id, cft);
+                        CraftingTableBase.Lookup.Set(id, cft);
+                    }
+                    break;
+                case GameObjectType.Crafts:
+                    if (deleted)
+                    {
+                        var cft = CraftBase.Lookup.Get<CraftBase>(id);
+                        cft.Delete();
+                    }
+                    else
+                    {
+                        var cft = new CraftBase(id);
+                        cft.Load(json);
+                        CraftBase.Lookup.Set(id, cft);
                     }
                     break;
                 case GameObjectType.Map:
