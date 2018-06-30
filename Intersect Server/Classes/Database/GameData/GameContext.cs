@@ -42,6 +42,12 @@ namespace Intersect.Server.Classes.Database.GameData
         //Spells
         public DbSet<SpellBase> Spells { get; set; }
 
+        //Switches & Variables
+        public DbSet<PlayerSwitchBase> PlayerSwitches { get; set; }
+        public DbSet<PlayerVariableBase> PlayerVariables { get; set; }
+        public DbSet<ServerSwitchBase> ServerSwitches { get; set; }
+        public DbSet<ServerVariableBase> ServerVariables { get; set; }
+
         private DatabaseUtils.DbProvider mConnection = DatabaseUtils.DbProvider.Sqlite;
         private string mConnectionString = @"Data Source=resources/gamedata.db";
 

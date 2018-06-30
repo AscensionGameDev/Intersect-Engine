@@ -10,5 +10,10 @@ namespace Intersect.GameObjects
         {
             Name = "New Player Variable";
         }
+
+        public PlayerVariableBase()
+        {
+            Name = "New Player Variable";
+        }
     }
 }

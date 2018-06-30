@@ -47,7 +47,11 @@ namespace Intersect.Server.Classes.Core
         GameObjectType.Projectile,
         GameObjectType.Resource,
         GameObjectType.Shop,
-        GameObjectType.Spell};
+        GameObjectType.Spell,
+        GameObjectType.PlayerSwitch,
+        GameObjectType.PlayerVariable,
+        GameObjectType.ServerSwitch,
+        GameObjectType.ServerVariable};
 
 
         public const string DIRECTORY_BACKUPS = "resources/backups";
@@ -763,12 +767,32 @@ namespace Intersect.Server.Classes.Core
                 case GameObjectType.CommonEvent:
                     break;
                 case GameObjectType.PlayerSwitch:
+                    foreach (var psw in sGameDb.PlayerSwitches)
+                    {
+                        PlayerSwitchBase.Lookup.Set(psw.Id, psw);
+                        PlayerSwitchBase.Lookup.Set(psw.Index, psw);
+                    }
                     break;
                 case GameObjectType.PlayerVariable:
+                    foreach (var psw in sGameDb.PlayerVariables)
+                    {
+                        PlayerVariableBase.Lookup.Set(psw.Id, psw);
+                        PlayerVariableBase.Lookup.Set(psw.Index, psw);
+                    }
                     break;
                 case GameObjectType.ServerSwitch:
+                    foreach (var psw in sGameDb.ServerSwitches)
+                    {
+                        ServerSwitchBase.Lookup.Set(psw.Id, psw);
+                        ServerSwitchBase.Lookup.Set(psw.Index, psw);
+                    }
                     break;
                 case GameObjectType.ServerVariable:
+                    foreach (var psw in sGameDb.ServerVariables)
+                    {
+                        ServerVariableBase.Lookup.Set(psw.Id, psw);
+                        ServerVariableBase.Lookup.Set(psw.Index, psw);
+                    }
                     break;
                 case GameObjectType.Tileset:
                     break;
@@ -963,21 +987,25 @@ namespace Intersect.Server.Classes.Core
                         break;
                     case GameObjectType.PlayerSwitch:
                         var objz = new PlayerSwitchBase(index);
+                        sGameDb.PlayerSwitches.Add(objz);
                         dbObj = objz;
                         PlayerSwitchBase.Lookup.Set(index, objz);
                         break;
                     case GameObjectType.PlayerVariable:
                         var objx = new PlayerVariableBase(index);
+                        sGameDb.PlayerVariables.Add(objx);
                         dbObj = objx;
                         PlayerVariableBase.Lookup.Set(index, objx);
                         break;
                     case GameObjectType.ServerSwitch:
                         var ssbobj = new ServerSwitchBase(index);
+                        sGameDb.ServerSwitches.Add(ssbobj);
                         dbObj = ssbobj;
                         ServerSwitchBase.Lookup.Set(index, ssbobj);
                         break;
                     case GameObjectType.ServerVariable:
                         var svbobj = new ServerVariableBase(index);
+                        sGameDb.ServerVariables.Add(svbobj);
                         dbObj = svbobj;
                         ServerVariableBase.Lookup.Set(index, svbobj);
                         break;
@@ -1040,12 +1068,16 @@ namespace Intersect.Server.Classes.Core
                 case GameObjectType.CommonEvent:
                     return;
                 case GameObjectType.PlayerSwitch:
+                    sGameDb.PlayerSwitches.Remove((PlayerSwitchBase) gameObject);
                     return;
                 case GameObjectType.PlayerVariable:
+                    sGameDb.PlayerVariables.Remove((PlayerVariableBase) gameObject);
                     return;
                 case GameObjectType.ServerSwitch:
+                    sGameDb.ServerSwitches.Remove((ServerSwitchBase) gameObject);
                     return;
                 case GameObjectType.ServerVariable:
+                    sGameDb.ServerVariables.Remove((ServerVariableBase)gameObject);
                     return;
                 case GameObjectType.Tileset:
                     return;

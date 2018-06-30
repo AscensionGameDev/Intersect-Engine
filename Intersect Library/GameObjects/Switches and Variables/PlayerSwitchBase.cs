@@ -10,5 +10,10 @@ namespace Intersect.GameObjects
         {
             Name = "New Player Switch";
         }
+
+        public PlayerSwitchBase()
+        {
+            Name = "New Player Switch";
+        }
     }
 }
