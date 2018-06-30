@@ -1,6 +1,6 @@
 namespace Intersect.Enums
 {
-    public enum ItemTypes
+    public enum ItemTypes : int
     {
         None = 0,
         Equipment = 1,

@@ -972,7 +972,7 @@ namespace Intersect.Server.Classes.Entities
 
 				// Unequip items even if you do not meet the requirements. 
 				// (Need this for silly devs who give people items and then later add restrictions...)
-				if (itemBase.ItemType == (int)ItemTypes.Equipment)
+				if (itemBase.ItemType == ItemTypes.Equipment)
                 for (var i = 0; i < Options.EquipmentSlots.Count; i++)
 				{
 					if (Equipment[i] == slot)
@@ -992,21 +992,21 @@ namespace Intersect.Server.Classes.Entities
 
                 switch (itemBase.ItemType)
                 {
-                    case (int)ItemTypes.None:
-                    case (int)ItemTypes.Currency:
+                    case ItemTypes.None:
+                    case ItemTypes.Currency:
                         PacketSender.SendPlayerMsg(MyClient, Strings.Items.cannotuse);
                         return;
-                    case (int)ItemTypes.Consumable:
+                    case ItemTypes.Consumable:
                         var s = Strings.Combat.removesymbol;
                         if (itemBase.Data2 > 0)
                         {
                             s = Strings.Combat.addsymbol;
                         }
 
-                        switch (itemBase.Data1)
+                        switch (itemBase.ConsumableType)
                         {
-                            case 0: //Health
-                                AddVital(Enums.Vitals.Health, itemBase.Data2);
+                            case ConsumableType.Health:
+                                AddVital(Vitals.Health, itemBase.Data2);
                                 if (s == Strings.Combat.addsymbol)
                                 {
                                     PacketSender.SendActionMsg(this, s + itemBase.Data2, CustomColors.Heal);
@@ -1020,20 +1020,22 @@ namespace Intersect.Server.Classes.Entities
                                     }
                                 }
                                 break;
-                            case 1: //Mana
-                                AddVital(Enums.Vitals.Mana, itemBase.Data2);
+                            case ConsumableType.Mana:
+                                AddVital(Vitals.Mana, itemBase.Data2);
                                 PacketSender.SendActionMsg(this, s + itemBase.Data2, CustomColors.AddMana);
                                 break;
-                            case 2: //Exp
+
+                            case ConsumableType.Experience:
                                 GiveExperience(itemBase.Data2);
                                 PacketSender.SendActionMsg(this, s + itemBase.Data2, CustomColors.Experience);
                                 break;
+
                             default:
                                 return;
                         }
                         TakeItemsBySlot(slot, 1);
                         break;
-                    case (int)ItemTypes.Equipment:
+                    case ItemTypes.Equipment:
                         for (var i = 0; i < Options.EquipmentSlots.Count; i++)
                         {
                             if (Equipment[i] == slot)
@@ -1085,18 +1087,18 @@ namespace Intersect.Server.Classes.Entities
                         PacketSender.SendEntityStats(this);
                         if (equipped) return;
                         break;
-                    case (int)ItemTypes.Spell:
+                    case ItemTypes.Spell:
                         if (itemBase.Data1 <= -1) return;
                         if (!TryTeachSpell(new Spell(itemBase.Data1))) return;
                         TakeItemsBySlot(slot, 1);
                         break;
-                    case (int)ItemTypes.Event:
+                    case ItemTypes.Event:
                         var evt = EventBase.Lookup.Get<EventBase>(itemBase.Data1);
                         if (evt == null) return;
                         if (!StartCommonEvent(evt)) return;
                         TakeItemsBySlot(slot, 1);
                         break;
-                    case (int)ItemTypes.Bag:
+                    case ItemTypes.Bag:
                         OpenBag(Item, itemBase);
                         break;
                     default:
@@ -1297,7 +1299,7 @@ namespace Intersect.Server.Classes.Entities
                     }
 
                     //Check if this is a bag with items.. if so don't allow sale
-                    if (itemBase.ItemType == (int)ItemTypes.Bag)
+                    if (itemBase.ItemType == ItemTypes.Bag)
                     {
                         if (Items[slot].Bag == null) Items[slot].Bag = LegacyDatabase.GetBag(Items[slot]);
                         if (Items[slot].Bag != null)
@@ -2144,7 +2146,7 @@ namespace Intersect.Server.Classes.Entities
                     }
 
                     //Check if this is a bag with items.. if so don't allow sale
-                    if (itemBase.ItemType == (int)ItemTypes.Bag)
+                    if (itemBase.ItemType == ItemTypes.Bag)
                     {
                         if (Items[slot].Bag == null) Items[slot].Bag = LegacyDatabase.GetBag(Items[slot]);
                         if (Items[slot].Bag != null)

@@ -1,15 +1,13 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
-using Intersect;
-using Intersect.Enums;
+﻿using Intersect.Enums;
 using Intersect.GameObjects;
-using Intersect.Server.Classes.Core;
-using Intersect.Server.Classes.Database;
 using Intersect.Server.Classes.Database.PlayerData.Characters;
 using Intersect.Server.Classes.General;
 using Intersect.Utilities;
+using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Intersect.Server.Classes.Database { 
+namespace Intersect.Server.Classes.Database
+{
     public class Item
     {
         public Guid? BagId { get; set; }
@@ -48,7 +46,7 @@ namespace Intersect.Server.Classes.Database {
             Bag = bag;
             if (ItemBase.Lookup.Get<ItemBase>(ItemNum) != null)
             {
-                if (ItemBase.Lookup.Get<ItemBase>(ItemNum).ItemType == (int)ItemTypes.Equipment)
+                if (ItemBase.Lookup.Get<ItemBase>(ItemNum).ItemType == ItemTypes.Equipment)
                 {
                     for (int i = 0; i < (int)Stats.StatCount; i++)
                     {
