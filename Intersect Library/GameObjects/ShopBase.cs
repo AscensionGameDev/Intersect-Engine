@@ -8,18 +8,37 @@ namespace Intersect.GameObjects
 {
     public class ShopBase : DatabaseObject<ShopBase>
     {
+        public bool BuyingWhitelist { get; set; } = true;
+        public int DefaultCurrency { get; set; }
+        
+        [Column("BuyingItems")]
+        [JsonIgnore]
+        public string JsonBuyingItems
+        {
+            get => JsonConvert.SerializeObject(BuyingItems);
+            set => BuyingItems = JsonConvert.DeserializeObject<List<ShopItem>>(value);
+        }
+        [NotMapped]
         public List<ShopItem> BuyingItems = new List<ShopItem>();
 
-        //Buying List
-        public bool BuyingWhitelist = true;
-
-        public int DefaultCurrency;
-
-        //Selling List
+        [Column("SellingItems")]
+        [JsonIgnore]
+        public string JsonSellingItems
+        {
+            get => JsonConvert.SerializeObject(SellingItems);
+            set => SellingItems = JsonConvert.DeserializeObject<List<ShopItem>>(value);
+        }
+        [NotMapped]
         public List<ShopItem> SellingItems = new List<ShopItem>();
 
         [JsonConstructor]
         public ShopBase(int index) : base(index)
+        {
+            Name = "New Shop";
+        }
+
+        //EF is so damn picky about its parameters
+        public ShopBase()
         {
             Name = "New Shop";
         }
