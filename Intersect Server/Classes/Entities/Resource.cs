@@ -24,7 +24,7 @@ namespace Intersect.Server.Classes.Entities
         {
             MyBase = resource;
             Name = resource.Name;
-            Sprite = resource.InitialGraphic;
+            Sprite = resource.Initial.Graphic;
             SetMaxVital(Vitals.Health, Globals.Rand.Next(Math.Min(1, resource.MinHp),
                 Math.Max(resource.MaxHp, Math.Min(1, resource.MinHp)) + 1));
             RestoreVital(Vitals.Health);
@@ -41,14 +41,14 @@ namespace Intersect.Server.Classes.Entities
         public override void Die(int dropitems = 100, EntityInstance killer = null)
         {
             base.Die(0, killer);
-            Sprite = MyBase.EndGraphic;
+            Sprite = MyBase.Exhausted.Graphic;
             Passable = Convert.ToInt32(MyBase.WalkableAfter);
             IsDead = true;
             if (dropitems > 0)
             {
                 SpawnResourceItems(killer);
-                if (MyBase.Animation > -1)
-                    PacketSender.SendAnimationToProximity(MyBase.Animation, -1, -1, MapIndex, X, Y,
+                if (MyBase.AnimationId > -1)
+                    PacketSender.SendAnimationToProximity(MyBase.AnimationId, -1, -1, MapIndex, X, Y,
                         (int) Directions.Up);
             }
             PacketSender.SendEntityDataToProximity(this);
@@ -57,7 +57,7 @@ namespace Intersect.Server.Classes.Entities
 
         public void Spawn()
         {
-            Sprite = MyBase.InitialGraphic;
+            Sprite = MyBase.Initial.Graphic;
             SetMaxVital(Vitals.Health,Globals.Rand.Next(MyBase.MinHp, MyBase.MaxHp + 1));
             RestoreVital(Vitals.Health);
             Passable = Convert.ToInt32(MyBase.WalkableBefore);

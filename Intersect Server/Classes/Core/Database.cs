@@ -44,7 +44,8 @@ namespace Intersect.Server.Classes.Core
         GameObjectType.Class,
         GameObjectType.Item,
         GameObjectType.Npc,
-        GameObjectType.Projectile};
+        GameObjectType.Projectile,
+        GameObjectType.Resource};
 
 
         public const string DIRECTORY_BACKUPS = "resources/backups";
@@ -722,6 +723,11 @@ namespace Intersect.Server.Classes.Core
                 case GameObjectType.Quest:
                     break;
                 case GameObjectType.Resource:
+                    foreach (var res in sGameDb.Resources)
+                    {
+                        ResourceBase.Lookup.Set(res.Id, res);
+                        ResourceBase.Lookup.Set(res.Index, res);
+                    }
                     break;
                 case GameObjectType.Shop:
                     break;
@@ -906,6 +912,7 @@ namespace Intersect.Server.Classes.Core
                         break;
                     case GameObjectType.Resource:
                         var objy = new ResourceBase(index);
+                        sGameDb.Resources.Add(objy);
                         dbObj = objy;
                         ResourceBase.Lookup.Set(index, objy);
                         break;
@@ -1001,6 +1008,7 @@ namespace Intersect.Server.Classes.Core
                 case GameObjectType.Quest:
                     return;
                 case GameObjectType.Resource:
+                    sGameDb.Resources.Remove((ResourceBase) gameObject);
                     return;
                 case GameObjectType.Shop:
                     return;

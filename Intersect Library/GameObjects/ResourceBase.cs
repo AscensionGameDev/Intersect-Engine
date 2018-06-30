@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.GameObjects.Conditions;
 using Intersect.Models;
 using Intersect.Utilities;
@@ -7,40 +8,72 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
+
+    public class ResourceState
+    {
+        public string Graphic { get; set; } = null;
+        public bool GraphicFromTileset { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+    }
+
+
     public class ResourceBase : DatabaseObject<ResourceBase>
     {
-        public int Animation;
+        // Graphics
+        public ResourceState Initial { get; set; }
+        public ResourceState Exhausted { get; set; }
+
+        [Column("Animation")]
+        public int AnimationId { get; protected set; }
+        [NotMapped]
+        [JsonIgnore]
+        public AnimationBase Animation
+        {
+            get => AnimationBase.Lookup.Get<AnimationBase>(AnimationId);
+            set => AnimationId = value?.Index ?? -1;
+        }
 
         // Drops
+        [Column("Drops")]
+        [JsonIgnore]
+        public string JsonDrops
+        {
+            get => JsonConvert.SerializeObject(Drops);
+            set => Drops = JsonConvert.DeserializeObject<List<ResourceDrop>>(value);
+        }
+        [NotMapped]
         public List<ResourceDrop> Drops = new List<ResourceDrop>();
 
-        public string EndGraphic = null;
-        public bool EndGraphicFromTileset;
-        public int EndTilesetX;
-        public int EndTilesetY;
-        public int EndTilesetWidth;
-        public int EndTilesetHeight;
+        //Requirements
+        [Column("HarvestingRequirements")]
+        [JsonIgnore]
+        public string JsonHarvestingRequirements
+        {
+            get => JsonConvert.SerializeObject(HarvestingRequirements);
+            set => HarvestingRequirements = JsonConvert.DeserializeObject<ConditionLists>(value);
+        }
+        [NotMapped]
+        public ConditionLists HarvestingRequirements = new ConditionLists();
 
-        public ConditionLists HarvestingReqs = new ConditionLists();
 
-        // Graphics
-        public string InitialGraphic = null;
-        public bool InitialGraphicFromTileset;
-        public int InitialTilesetX;
-        public int InitialTilesetY;
-        public int InitialTilesetWidth;
-        public int InitialTilesetHeight;
-
-        public int MaxHp;
-
-        public int MinHp;
-        public int SpawnDuration;
-        public int Tool = -1;
-        public bool WalkableAfter;
-        public bool WalkableBefore;
+        public int MaxHp { get; set; }
+        public int MinHp { get; set; }
+        public int SpawnDuration { get; set; }
+        public int Tool { get; set; } = -1;
+        public bool WalkableAfter { get; set; }
+        public bool WalkableBefore { get; set; }
 
         [JsonConstructor]
         public ResourceBase(int index) : base(index)
+        {
+            Name = "New Resource";
+        }
+
+        //EF wants NO PARAMETERS!!!!!
+        public ResourceBase()
         {
             Name = "New Resource";
         }

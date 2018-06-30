@@ -626,7 +626,7 @@ namespace Intersect.Server.Classes.Entities
                 // Check that a resource is actually required.
                 var resource = ((Resource)enemy).MyBase;
                 //Check Dynamic Requirements
-                if (!EventInstance.MeetsConditionLists(resource.HarvestingReqs, this, null))
+                if (!EventInstance.MeetsConditionLists(resource.HarvestingRequirements, this, null))
                 {
                     PacketSender.SendPlayerMsg(MyClient, Strings.Combat.resourcereqs);
                     return;
@@ -669,7 +669,7 @@ namespace Intersect.Server.Classes.Entities
                 // Check that a resource is actually required.
                 var resource = ((Resource)enemy).MyBase;
                 //Check Dynamic Requirements
-                if (!EventInstance.MeetsConditionLists(resource.HarvestingReqs, this, null))
+                if (!EventInstance.MeetsConditionLists(resource.HarvestingRequirements, this, null))
                 {
                     PacketSender.SendPlayerMsg(MyClient, Strings.Combat.resourcereqs);
                     return;

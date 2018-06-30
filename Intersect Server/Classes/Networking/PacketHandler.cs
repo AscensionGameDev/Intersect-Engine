@@ -2227,7 +2227,7 @@ namespace Intersect.Server.Classes.Networking
                 {
                     Globals.KillProjectilesOf((ProjectileBase)obj);
                 }
-                JsonConvert.PopulateObject(bf.ReadString(), obj, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
+                JsonConvert.PopulateObject(bf.ReadString(), obj, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Reuse });
                 PacketSender.SendGameObjectToAll(obj, false);
                 LegacyDatabase.SaveGameObject(obj);
             }

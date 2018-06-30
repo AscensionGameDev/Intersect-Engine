@@ -30,7 +30,7 @@ namespace Intersect_Client.Classes.Entities
             {
                 if (BaseResource == null) return;
                 mMySprite = value;
-                if ((IsDead && BaseResource.EndGraphicFromTileset) || (!IsDead && BaseResource.InitialGraphicFromTileset))
+                if ((IsDead && BaseResource.Exhausted.GraphicFromTileset) || (!IsDead && BaseResource.Initial.GraphicFromTileset))
                 {
                     if (GameContentManager.Current.TilesetsLoaded)
                     {
@@ -62,11 +62,11 @@ namespace Intersect_Client.Classes.Entities
             HideName = 1;
             if (IsDead)
             {
-                MySprite = BaseResource?.EndGraphic;
+                MySprite = BaseResource?.Exhausted.Graphic;
             }
             else
             {
-                MySprite = BaseResource?.InitialGraphic;
+                MySprite = BaseResource?.Initial.Graphic;
             }
         }
 
@@ -117,19 +117,19 @@ namespace Intersect_Client.Classes.Entities
             {
                 mSrcRectangle.X = 0;
                 mSrcRectangle.Y = 0;
-                if (IsDead && BaseResource.EndGraphicFromTileset)
+                if (IsDead && BaseResource.Exhausted.GraphicFromTileset)
                 {
-                    mSrcRectangle.X = BaseResource.EndTilesetX * Options.TileWidth;
-                    mSrcRectangle.Y = BaseResource.EndTilesetY * Options.TileHeight;
-                    mSrcRectangle.Width = (BaseResource.EndTilesetWidth + 1) * Options.TileWidth;
-                    mSrcRectangle.Height = (BaseResource.EndTilesetHeight + 1) * Options.TileHeight;
+                    mSrcRectangle.X = BaseResource.Exhausted.X * Options.TileWidth;
+                    mSrcRectangle.Y = BaseResource.Exhausted.Y * Options.TileHeight;
+                    mSrcRectangle.Width = (BaseResource.Exhausted.Width + 1) * Options.TileWidth;
+                    mSrcRectangle.Height = (BaseResource.Exhausted.Height + 1) * Options.TileHeight;
                 }
-                else if (!IsDead && BaseResource.InitialGraphicFromTileset)
+                else if (!IsDead && BaseResource.Initial.GraphicFromTileset)
                 {
-                    mSrcRectangle.X = BaseResource.InitialTilesetX * Options.TileWidth;
-                    mSrcRectangle.Y = BaseResource.InitialTilesetY * Options.TileHeight;
-                    mSrcRectangle.Width = (BaseResource.InitialTilesetWidth + 1) * Options.TileWidth;
-                    mSrcRectangle.Height = (BaseResource.InitialTilesetHeight + 1) * Options.TileHeight;
+                    mSrcRectangle.X = BaseResource.Initial.X * Options.TileWidth;
+                    mSrcRectangle.Y = BaseResource.Initial.Y * Options.TileHeight;
+                    mSrcRectangle.Width = (BaseResource.Initial.Width + 1) * Options.TileWidth;
+                    mSrcRectangle.Height = (BaseResource.Initial.Height + 1) * Options.TileHeight;
                 }
                 else
                 {

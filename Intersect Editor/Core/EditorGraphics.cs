@@ -1062,26 +1062,26 @@ namespace Intersect.Editor.Core
                     {
                         var resource = ResourceBase.Lookup.Get<ResourceBase>(tmpMap.Attributes[x, y].Data1);
                         if (resource == null) continue;
-                        if (TextUtils.IsNone(resource.InitialGraphic)) continue;
-                        if (resource.InitialGraphicFromTileset)
+                        if (TextUtils.IsNone(resource.Initial.Graphic)) continue;
+                        if (resource.Initial.GraphicFromTileset)
                         {
-                            var res = GameContentManager.GetTexture(GameContentManager.TextureType.Tileset, resource.InitialGraphic);
+                            var res = GameContentManager.GetTexture(GameContentManager.TextureType.Tileset, resource.Initial.Graphic);
                             if (res == null) continue;
                             float xpos = x * Options.TileWidth + xoffset;
                             float ypos = y * Options.TileHeight + yoffset;
-                            if ((resource.InitialTilesetHeight + 1) * Options.TileHeight > Options.TileHeight)
+                            if ((resource.Initial.Height + 1) * Options.TileHeight > Options.TileHeight)
                             {
-                                ypos -= ((int)(resource.InitialTilesetHeight + 1) * Options.TileHeight - Options.TileHeight);
+                                ypos -= ((int)(resource.Initial.Height + 1) * Options.TileHeight - Options.TileHeight);
                             }
-                            if ((resource.InitialTilesetWidth + 1) * Options.TileWidth > Options.TileWidth)
+                            if ((resource.Initial.Width + 1) * Options.TileWidth > Options.TileWidth)
                             {
-                                xpos -= ((resource.InitialTilesetWidth + 1) * Options.TileWidth - Options.TileWidth) / 2;
+                                xpos -= ((resource.Initial.Width + 1) * Options.TileWidth - Options.TileWidth) / 2;
                             }
-                            DrawTexture(res, xpos, ypos, resource.InitialTilesetX * Options.TileWidth, resource.InitialTilesetY * Options.TileHeight, (int)(resource.InitialTilesetWidth + 1) * Options.TileWidth, (int)(resource.InitialTilesetHeight + 1) * Options.TileHeight, renderTarget);
+                            DrawTexture(res, xpos, ypos, resource.Initial.X * Options.TileWidth, resource.Initial.Y * Options.TileHeight, (int)(resource.Initial.Width + 1) * Options.TileWidth, (int)(resource.Initial.Height + 1) * Options.TileHeight, renderTarget);
                         }
                         else
                         {
-                            var res = GameContentManager.GetTexture(GameContentManager.TextureType.Resource, resource.InitialGraphic);
+                            var res = GameContentManager.GetTexture(GameContentManager.TextureType.Resource, resource.Initial.Graphic);
                             if (res == null) continue;
                             float xpos = x * Options.TileWidth + xoffset;
                             float ypos = y * Options.TileHeight + yoffset;

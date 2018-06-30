@@ -33,6 +33,9 @@ namespace Intersect.Server.Classes.Database.GameData
         //Projectiles
         public DbSet<ProjectileBase> Projectiles { get; set; }
 
+        //Resources
+        public DbSet<ResourceBase> Resources { get; set; }
+
         private DatabaseUtils.DbProvider mConnection = DatabaseUtils.DbProvider.Sqlite;
         private string mConnectionString = @"Data Source=resources/gamedata.db";
 
@@ -67,6 +70,8 @@ namespace Intersect.Server.Classes.Database.GameData
         {
             modelBuilder.Entity<AnimationBase>().OwnsOne(p => p.Upper);
             modelBuilder.Entity<AnimationBase>().OwnsOne(p => p.Lower);
+            modelBuilder.Entity<ResourceBase>().OwnsOne(p => p.Initial);
+            modelBuilder.Entity<ResourceBase>().OwnsOne(p => p.Exhausted);
         }
     }
 }
