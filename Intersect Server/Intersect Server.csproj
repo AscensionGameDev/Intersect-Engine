@@ -404,9 +404,9 @@
     <Compile Include="Migrations\20180304060936_Inital.designer.cs">
       <DependentUpon>20180304060936_Inital.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\Game\20180630001209_Classes.cs" />
-    <Compile Include="Migrations\Game\20180630001209_Classes.designer.cs">
-      <DependentUpon>20180630001209_Classes.cs</DependentUpon>
+    <Compile Include="Migrations\Game\20180630004337_Classes.cs" />
+    <Compile Include="Migrations\Game\20180630004337_Classes.designer.cs">
+      <DependentUpon>20180630004337_Classes.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\GameContextModelSnapshot.cs" />
     <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />

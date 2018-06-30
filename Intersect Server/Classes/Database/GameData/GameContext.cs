@@ -39,6 +39,9 @@ namespace Intersect.Server.Classes.Database.GameData
         //Shops
         public DbSet<ShopBase> Shops { get; set; }
 
+        //Spells
+        public DbSet<SpellBase> Spells { get; set; }
+
         private DatabaseUtils.DbProvider mConnection = DatabaseUtils.DbProvider.Sqlite;
         private string mConnectionString = @"Data Source=resources/gamedata.db";
 

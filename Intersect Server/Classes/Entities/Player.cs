@@ -2611,9 +2611,9 @@ namespace Intersect.Server.Classes.Entities
 
                 //Check if the caster has the right ammunition if a projectile
                 if (spell.SpellType == (int)SpellTypes.CombatSpell &&
-                    spell.TargetType == (int)SpellTargetTypes.Projectile && spell.Projectile > -1)
+                    spell.TargetType == (int)SpellTargetTypes.Projectile && spell.ProjectileId > -1)
                 {
-                    var projectileBase = ProjectileBase.Lookup.Get<ProjectileBase>(spell.Projectile);
+                    var projectileBase = spell.Projectile;
                     if (projectileBase == null) return;
                     if (projectileBase.AmmoItemId > -1)
                     {
@@ -2663,9 +2663,9 @@ namespace Intersect.Server.Classes.Entities
 
                                 //Check if the caster has the right ammunition if a projectile
                                 if (spell.SpellType == (int)SpellTypes.CombatSpell &&
-                                    spell.TargetType == (int)SpellTargetTypes.Projectile && spell.Projectile > -1)
+                                    spell.TargetType == (int)SpellTargetTypes.Projectile && spell.ProjectileId > -1)
                                 {
-                                    var projectileBase = ProjectileBase.Lookup.Get<ProjectileBase>(spell.Projectile);
+                                    var projectileBase = spell.Projectile;
                                     if (projectileBase != null && projectileBase.AmmoItemId > -1)
                                     {
                                         TakeItemsByNum(FindItem(projectileBase.AmmoItemId, projectileBase.AmmoRequired),
@@ -2673,9 +2673,9 @@ namespace Intersect.Server.Classes.Entities
                                     }
                                 }
 
-                                if (spell.CastAnimation > -1)
+                                if (spell.CastAnimationId > -1)
                                 {
-                                    PacketSender.SendAnimationToProximity(spell.CastAnimation, 1, MyIndex, MapIndex,
+                                    PacketSender.SendAnimationToProximity(spell.CastAnimationId, 1, MyIndex, MapIndex,
                                         0,
                                         0, Dir); //Target Type 1 will be global entity
                                 }

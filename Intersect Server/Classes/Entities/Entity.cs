@@ -997,10 +997,10 @@ namespace Intersect.Server.Classes.Entities
                 if (enemy.GetType() != GetType()) return; //Don't let players aoe heal npcs. Don't let npcs aoe heal players.
             }
 
-            if (spellBase.HitAnimation > -1)
+            if (spellBase.HitAnimationId > -1)
             {
-                deadAnimations.Add(new KeyValuePair<int, int>(spellBase.HitAnimation, (int) Directions.Up));
-                aliveAnimations.Add(new KeyValuePair<int, int>(spellBase.HitAnimation, (int) Directions.Up));
+                deadAnimations.Add(new KeyValuePair<int, int>(spellBase.HitAnimationId, (int) Directions.Up));
+                aliveAnimations.Add(new KeyValuePair<int, int>(spellBase.HitAnimationId, (int) Directions.Up));
             }
 
             var damageHealth = spellBase.VitalDiff[0];
@@ -1266,9 +1266,9 @@ namespace Intersect.Server.Classes.Entities
                         switch (spellBase.TargetType)
                         {
                             case (int) SpellTargetTypes.Self:
-                                if (spellBase.HitAnimation > -1)
+                                if (spellBase.HitAnimationId > -1)
                                 {
-                                    PacketSender.SendAnimationToProximity(spellBase.HitAnimation, 1,
+                                    PacketSender.SendAnimationToProximity(spellBase.HitAnimationId, 1,
                                         MyIndex, MapIndex, 0, 0, Dir); //Target Type 1 will be global entity
                                 }
                                 TryAttack(this, spellBase);
@@ -1289,7 +1289,7 @@ namespace Intersect.Server.Classes.Entities
                                 HandleAoESpell(spellNum, spellBase.HitRadius, MapIndex, X, Y, null);
                                 break;
                             case (int) SpellTargetTypes.Projectile:
-                                var projectileBase = ProjectileBase.Lookup.Get<ProjectileBase>(spellBase.Projectile);
+                                var projectileBase = spellBase.Projectile;
                                 if (projectileBase != null)
                                 {
                                     MapInstance.Lookup.Get<MapInstance>(MapIndex).SpawnMapProjectile(this,
@@ -1828,10 +1828,10 @@ namespace Intersect.Server.Classes.Entities
             if (mInterval > Globals.System.GetTimeMs()) return;
             var deadAnimations = new List<KeyValuePair<int, int>>();
             var aliveAnimations = new List<KeyValuePair<int, int>>();
-            if (SpellBase.HitAnimation > -1)
+            if (SpellBase.HitAnimationId > -1)
             {
-                deadAnimations.Add(new KeyValuePair<int, int>(SpellBase.HitAnimation, (int) Directions.Up));
-                aliveAnimations.Add(new KeyValuePair<int, int>(SpellBase.HitAnimation, (int) Directions.Up));
+                deadAnimations.Add(new KeyValuePair<int, int>(SpellBase.HitAnimationId, (int) Directions.Up));
+                aliveAnimations.Add(new KeyValuePair<int, int>(SpellBase.HitAnimationId, (int) Directions.Up));
             }
 
             Attacker?.Attack(Target, SpellBase.VitalDiff[0], SpellBase.VitalDiff[1],

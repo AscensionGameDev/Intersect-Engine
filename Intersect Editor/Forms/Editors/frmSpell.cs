@@ -254,9 +254,9 @@ namespace Intersect.Editor.Forms.Editors
                 nudCooldownDuration.Value = mEditorItem.CooldownDuration;
 
                 cmbCastAnimation.SelectedIndex =
-                    Database.GameObjectListIndex(GameObjectType.Animation, mEditorItem.CastAnimation) + 1;
+                    Database.GameObjectListIndex(GameObjectType.Animation, mEditorItem.CastAnimationId) + 1;
                 cmbHitAnimation.SelectedIndex =
-                    Database.GameObjectListIndex(GameObjectType.Animation, mEditorItem.HitAnimation) + 1;
+                    Database.GameObjectListIndex(GameObjectType.Animation, mEditorItem.HitAnimationId) + 1;
 
                 cmbSprite.SelectedIndex = cmbSprite.FindString(TextUtils.NullToNone(mEditorItem.Pic));
                 if (cmbSprite.SelectedIndex > 0)
@@ -397,8 +397,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 lblProjectile.Show();
                 cmbProjectile.Show();
-                cmbProjectile.SelectedIndex =
-                    Database.GameObjectListIndex(GameObjectType.Projectile, mEditorItem.Projectile);
+                cmbProjectile.SelectedIndex =  Database.GameObjectListIndex(GameObjectType.Projectile, mEditorItem.ProjectileId);
             }
         }
 
@@ -656,20 +655,17 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbCastAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.CastAnimation = Database.GameObjectIdFromList(GameObjectType.Animation,
-                cmbCastAnimation.SelectedIndex - 1);
+            mEditorItem.CastAnimation = AnimationBase.Get(Database.GameObjectIdFromList(GameObjectType.Animation, cmbCastAnimation.SelectedIndex - 1));
         }
 
         private void cmbHitAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.HitAnimation = Database.GameObjectIdFromList(GameObjectType.Animation,
-                cmbHitAnimation.SelectedIndex - 1);
+            mEditorItem.HitAnimation = AnimationBase.Get(Database.GameObjectIdFromList(GameObjectType.Animation, cmbHitAnimation.SelectedIndex - 1));
         }
 
         private void cmbProjectile_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.Projectile =
-                Database.GameObjectIdFromList(GameObjectType.Projectile, cmbProjectile.SelectedIndex);
+            mEditorItem.Projectile = ProjectileBase.Get(Database.GameObjectIdFromList(GameObjectType.Projectile, cmbProjectile.SelectedIndex));
         }
 
         private void cmbEvent_SelectedIndexChanged(object sender, EventArgs e)

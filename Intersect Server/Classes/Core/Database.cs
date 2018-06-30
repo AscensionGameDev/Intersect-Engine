@@ -46,7 +46,8 @@ namespace Intersect.Server.Classes.Core
         GameObjectType.Npc,
         GameObjectType.Projectile,
         GameObjectType.Resource,
-        GameObjectType.Shop};
+        GameObjectType.Shop,
+        GameObjectType.Spell};
 
 
         public const string DIRECTORY_BACKUPS = "resources/backups";
@@ -683,7 +684,6 @@ namespace Intersect.Server.Classes.Core
 
         private static void LoadAllGameObjects1(GameObjectType gameObjectType)
         {
-
             switch (gameObjectType)
             {
                 case GameObjectType.Animation:
@@ -738,6 +738,11 @@ namespace Intersect.Server.Classes.Core
                     }
                     break;
                 case GameObjectType.Spell:
+                    foreach (var spl in sGameDb.Spells)
+                    {
+                        SpellBase.Lookup.Set(spl.Id, spl);
+                        SpellBase.Lookup.Set(spl.Index, spl);
+                    }
                     break;
                 case GameObjectType.CraftTables:
                     foreach (var craft in sGameDb.CraftingTables)
@@ -930,6 +935,7 @@ namespace Intersect.Server.Classes.Core
                         break;
                     case GameObjectType.Spell:
                         var objr = new SpellBase(index);
+                        sGameDb.Spells.Add(objr);
                         dbObj = objr;
                         SpellBase.Lookup.Set(index, objr);
                         break;
@@ -1021,6 +1027,7 @@ namespace Intersect.Server.Classes.Core
                     sGameDb.Shops.Remove((ShopBase) gameObject);
                     return;
                 case GameObjectType.Spell:
+                    sGameDb.Spells.Remove((SpellBase) gameObject);
                     return;
                 case GameObjectType.CraftTables:
                     sGameDb.CraftingTables.Remove((CraftingTableBase)gameObject);

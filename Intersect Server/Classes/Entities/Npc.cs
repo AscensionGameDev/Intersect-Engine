@@ -267,7 +267,7 @@ namespace Intersect.Server.Classes.Entities
                         var range = spell.CastRange;
                         if (spell != null)
                         {
-                            var projectileBase = ProjectileBase.Lookup.Get<ProjectileBase>(spell.Projectile);
+                            var projectileBase = spell.Projectile;
                             if (spell.SpellType == (int) SpellTypes.CombatSpell &&
                                 spell.TargetType == (int) SpellTargetTypes.Projectile && projectileBase != null &&
                                 InRangeOf(MyTarget, projectileBase.Range))
@@ -328,9 +328,9 @@ namespace Intersect.Server.Classes.Entities
 
                                             SpellCastSlot = s;
 
-                                            if (spell.CastAnimation > -1)
+                                            if (spell.CastAnimationId > -1)
                                             {
-                                                PacketSender.SendAnimationToProximity(spell.CastAnimation, 1,
+                                                PacketSender.SendAnimationToProximity(spell.CastAnimationId, 1,
                                                     MyIndex, MapIndex, 0, 0, Dir);
                                                 //Target Type 1 will be global entity
                                             }
