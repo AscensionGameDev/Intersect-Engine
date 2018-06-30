@@ -14,7 +14,6 @@ namespace Intersect.Config
             "Helmet",
             "Armor",
             "Weapon",
-            "Helmet",
             "Shield",
         };
 

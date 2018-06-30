@@ -2,7 +2,8 @@ namespace Intersect.Enums
 {
     public enum ItemBonusEffects
     {
-        CooldownReduction = 0,
+		None = 0,
+        CooldownReduction,
         LifeSteal
     }
 }

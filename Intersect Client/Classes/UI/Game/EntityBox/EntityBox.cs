@@ -97,19 +97,26 @@ namespace Intersect_Client.Classes.UI.Game
             EntityNameAndLevel = new Label(EntityInfoPanel, "NameAndLevelLabel") { IsHidden = true };
             EntityMap = new Label(EntityInfoPanel, "EntityMapLabel");
 
-            EntityFaceContainer = new ImagePanel(EntityInfoPanel, "EntityGraphicContainer");
-
-            EntityFace = new ImagePanel(EntityFaceContainer);
-            EntityFace.SetSize(64, 64);
-            EntityFace.AddAlignment(Alignments.Center);
-
             PaperdollPanels = new ImagePanel[Options.EquipmentSlots.Count];
             PaperdollTextures = new string[Options.EquipmentSlots.Count];
-            for (int i = 0; i < Options.EquipmentSlots.Count; i++)
-            {
-                PaperdollPanels[i] = new ImagePanel(EntityFaceContainer);
-                PaperdollTextures[i] = "";
-                PaperdollPanels[i].Hide();
+			int i = 0;
+			for (int z = 0; z < Options.PaperdollOrder[1].Count; z++)
+			{
+				if (Options.PaperdollOrder[1][z] == "Player")
+				{
+					EntityFaceContainer = new ImagePanel(EntityInfoPanel, "EntityGraphicContainer");
+
+					EntityFace = new ImagePanel(EntityFaceContainer);
+					EntityFace.SetSize(64, 64);
+					EntityFace.AddAlignment(Alignments.Center);
+				}
+				else
+				{
+					PaperdollPanels[i] = new ImagePanel(EntityFaceContainer);
+					PaperdollTextures[i] = "";
+					PaperdollPanels[i].Hide();
+					i++;
+				}
             }
 
             EventDesc = new RichLabel(EntityInfoPanel, "EventDescLabel");
@@ -501,9 +508,10 @@ namespace Intersect_Client.Classes.UI.Game
                     EntityFace.IsHidden = false;
                 }
                 var equipment = MyEntity.Equipment;
+				int n = 0;
                 for (int z = 0; z < Options.PaperdollOrder[1].Count; z++)
                 {
-                    var paperdoll = "";
+					var paperdoll = "";
                     if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z]) > -1 &&
                         equipment.Length == Options.EquipmentSlots.Count)
                     {
@@ -539,32 +547,45 @@ namespace Intersect_Client.Classes.UI.Game
                             }
                         }
                     }
-                    if (paperdoll == "" && PaperdollTextures[z] != "")
+
+					//Check for Player layer
+					if (Options.PaperdollOrder[1][z] == "Player")
+					{
+						continue;
+					}
+
+					if (paperdoll == "" && PaperdollTextures[n] != "")
                     {
-                        PaperdollPanels[z].Texture = null;
-                        PaperdollPanels[z].Hide();
-                        PaperdollTextures[z] = "";
+                        PaperdollPanels[n].Texture = null;
+                        PaperdollPanels[n].Hide();
+                        PaperdollTextures[n] = "";
                     }
-                    else if (paperdoll != "" && paperdoll != PaperdollTextures[z])
+                    else if (paperdoll != "" && paperdoll != PaperdollTextures[n])
                     {
                         var paperdollTex =
                             Globals.ContentManager.GetTexture(GameContentManager.TextureType.Paperdoll, paperdoll);
-                        PaperdollPanels[z].Texture = paperdollTex;
+                        PaperdollPanels[n].Texture = paperdollTex;
                         if (paperdollTex != null)
                         {
-                            PaperdollPanels[z].SetTextureRect(0, 0,
-                                PaperdollPanels[z].Texture.GetWidth() / 4,
-                                PaperdollPanels[z].Texture.GetHeight() / 4);
-                            PaperdollPanels[z].SetSize(PaperdollPanels[z].Texture.GetWidth() / 4,
-                                PaperdollPanels[z].Texture.GetHeight() / 4);
-                            PaperdollPanels[z].SetPosition(
-                                EntityFaceContainer.Width / 2 - PaperdollPanels[z].Width / 2,
-                                EntityFaceContainer.Height / 2 - PaperdollPanels[z].Height / 2);
+                            PaperdollPanels[n].SetTextureRect(0, 0,
+                                PaperdollPanels[n].Texture.GetWidth() / 4,
+                                PaperdollPanels[n].Texture.GetHeight() / 4);
+                            PaperdollPanels[n].SetSize(PaperdollPanels[n].Texture.GetWidth() / 4,
+                                PaperdollPanels[n].Texture.GetHeight() / 4);
+                            PaperdollPanels[n].SetPosition(
+                                EntityFaceContainer.Width / 2 - PaperdollPanels[n].Width / 2,
+                                EntityFaceContainer.Height / 2 - PaperdollPanels[n].Height / 2);
                         }
-                        PaperdollPanels[z].Show();
-                        PaperdollTextures[z] = paperdoll;
+                        PaperdollPanels[n].Show();
+                        PaperdollTextures[n] = paperdoll;
                     }
-                }
+
+					//Check for Player layer
+					if (Options.PaperdollOrder[1][z] != "Player")
+					{
+						n++;
+					}
+				}
             }
             else if (MyEntity.MySprite != mCurrentSprite && MyEntity.Face != mCurrentSprite)
             {

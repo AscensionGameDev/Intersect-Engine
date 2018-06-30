@@ -64,7 +64,7 @@ namespace Intersect.Editor.Classes.Maps
                     Right = right;
                 }
                 Autotiles = new MapAutotiles(this);
-                InitAutotiles();
+                
             }
         }
 
@@ -91,7 +91,8 @@ namespace Intersect.Editor.Classes.Maps
                 }
             }
             bf.Dispose();
-        }
+			InitAutotiles();
+		}
 
         public void SaveStateAsUnchanged()
         {

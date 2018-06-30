@@ -54,7 +54,8 @@ namespace Intersect_Client.Classes.UI.Game
             }
             if (spell.CooldownDuration > 0)
             {
-                spellDesc.AddText(Strings.SpellDesc.cooldowntime.ToString( ((float) spell.CooldownDuration / 10f)),
+				decimal cdr = 1 - (Globals.Me.GetCooldownReduction() / 100);
+				spellDesc.AddText(Strings.SpellDesc.cooldowntime.ToString( ((float) (spell.CooldownDuration * cdr) / 10f)),
                     spellDesc.RenderColor);
                 spellDesc.AddLineBreak();
                 spellDesc.AddLineBreak();

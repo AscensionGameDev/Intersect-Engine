@@ -1148,12 +1148,13 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             int spellSlot = bf.ReadInteger();
-            if (SpellBase.Lookup.Get<SpellBase>(Globals.Me.Spells[spellSlot].SpellNum) != null)
+			decimal cooldownReduction = (1 - (decimal)(Globals.Me.GetCooldownReduction() / 100));
+			if (SpellBase.Lookup.Get<SpellBase>(Globals.Me.Spells[spellSlot].SpellNum) != null)
             {
                 Globals.Me.Spells[spellSlot].SpellCd = Globals.System.GetTimeMs() +
-                                                       (SpellBase.Lookup
+                                                       (int)(SpellBase.Lookup
                                                             .Get<SpellBase>(Globals.Me.Spells[spellSlot].SpellNum)
-                                                            .CooldownDuration * 100);
+                                                            .CooldownDuration * 100 * cooldownReduction);
             }
             bf.Dispose();
         }

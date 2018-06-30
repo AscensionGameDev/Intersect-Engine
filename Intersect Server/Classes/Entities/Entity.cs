@@ -1046,7 +1046,7 @@ namespace Intersect.Server.Classes.Entities
             }
 
             Attack(enemy, baseDamage, 0, damageType, scalingStat, scaling, critChance, critMultiplier, deadAnimations,
-                aliveAnimations);
+                aliveAnimations, weapon);
 
             //If we took damage lets reset our combat timer
             enemy.CombatTimer = Globals.System.GetTimeMs() + 5000;
@@ -1054,7 +1054,7 @@ namespace Intersect.Server.Classes.Entities
 
         public void Attack(Entity enemy, int baseDamage, int secondaryDamage, DamageType damageType, Stats scalingStat,
             int scaling, int critChance, double critMultiplier, List<KeyValuePair<int, int>> deadAnimations = null,
-            List<KeyValuePair<int, int>> aliveAnimations = null)
+            List<KeyValuePair<int, int>> aliveAnimations = null, ItemBase weapon = null)
         {
             if (enemy == null) return;
 
@@ -1110,9 +1110,8 @@ namespace Intersect.Server.Classes.Entities
             //Calculate Damages
             if (baseDamage != 0)
             {
-                baseDamage = Formulas.CalculateDamage(baseDamage, damageType, scalingStat, scaling, critMultiplier,
-                    this,
-                    enemy);
+                baseDamage = Formulas.CalculateDamage(baseDamage, damageType, scalingStat, scaling, critMultiplier, this, enemy);
+
                 if (baseDamage > 0 && enemy.Vital[(int)Vitals.Health] > 0)
                 {
                     enemy.Vital[(int)Vitals.Health] -= (int)baseDamage;
@@ -1160,8 +1159,25 @@ namespace Intersect.Server.Classes.Entities
                 }
             }
 
-            //Check if after healing, greater than maximum hp.
-            if (enemy.Vital[(int) Vitals.Health] >=
+			//Check for lifesteal
+			if (GetType() == typeof(Player))
+			{
+				decimal lifesteal = ((Player)this).GetLifeSteal() / 100;
+				decimal healthRecovered = lifesteal * baseDamage;
+				if (healthRecovered > 0) //Don't send any +0 msg's.
+				{
+					Vital[(int)Vitals.Health] += (int)healthRecovered;
+					if (Vital[(int)Vitals.Health] > MaxVital[(int)Vitals.Health])
+					{
+						Vital[(int)Vitals.Health] = MaxVital[(int)Vitals.Health];
+					}
+					PacketSender.SendActionMsg(this, Strings.Combat.addsymbol + (int)healthRecovered, CustomColors.Heal);
+					PacketSender.SendEntityVitals(this);
+				}
+			}
+
+			//Check if after healing, greater than maximum hp.
+			if (enemy.Vital[(int) Vitals.Health] >=
                 enemy.MaxVital[(int) Vitals.Health])
             {
                 enemy.Vital[(int) Vitals.Health] =
@@ -1299,7 +1315,14 @@ namespace Intersect.Server.Classes.Entities
                 }
                 if (spellSlot >= 0 && spellSlot < Options.MaxPlayerSkills)
                 {
-                    Spells[spellSlot].SpellCd = Globals.System.GetTimeMs() + spellBase.CooldownDuration;
+					decimal cooldownReduction = 1;
+
+					if (GetType() == typeof(Player)) //Only apply cdr for players with equipment
+					{
+						cooldownReduction = (1 - ((decimal)((Player)this).GetCooldownReduction() / 100));
+					}
+
+					Spells[spellSlot].SpellCd = Globals.System.GetTimeMs() + (int)(spellBase.CooldownDuration * cooldownReduction);
                     if (GetType() == typeof(Player))
                     {
                         PacketSender.SendSpellCooldown(((Player) this).MyClient, spellSlot);

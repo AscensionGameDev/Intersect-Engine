@@ -659,51 +659,57 @@ namespace Intersect_Client.Classes.Entities
                 }
                 destRectangle.Width = srcRectangle.Width;
                 destRectangle.Height = srcRectangle.Height;
-                GameGraphics.DrawGameTexture(Texture, srcRectangle, destRectangle,
-                    new Intersect.Color(alpha, 255, 255, 255));
+				//GameGraphics.DrawGameTexture(Texture, srcRectangle, destRectangle,
+				//    new Intersect.Color(alpha, 255, 255, 255));
 
-                //Don't render the paperdolls if they have transformed.
-                if (sprite == MySprite && Equipment.Length == Options.EquipmentSlots.Count)
-                {
-                    //Draw the equipment/paperdolls
-                    for (int z = 0; z < Options.PaperdollOrder[Dir].Count; z++)
-                    {
-                        if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z]) > -1)
-                        {
-                            if (Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z])] > -1 &&
-                                (this != Globals.Me ||
-                                 Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z])] <
-                                 Options.MaxInvItems))
-                            {
-                                var itemNum = -1;
-                                if (this == Globals.Me)
-                                {
-                                    itemNum =
-                                        Inventory[
-                                                Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z])
-                                                ]]
-                                            .ItemNum;
-                                }
-                                else
-                                {
-                                    itemNum = Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z])];
-                                }
-                                if (ItemBase.Lookup.Get<ItemBase>(itemNum) != null)
-                                {
-                                    var itemdata = ItemBase.Lookup.Get<ItemBase>(itemNum);
-                                    if (Gender == 0)
-                                    {
-                                        DrawEquipment(itemdata.MalePaperdoll, alpha);
-                                    }
-                                    else
-                                    {
-                                        DrawEquipment(itemdata.FemalePaperdoll, alpha);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+				//Order the layers of paperdolls and sprites
+				for (int z = 0; z < Options.PaperdollOrder[Dir].Count; z++)
+				{
+					//Check for player
+					if (Options.PaperdollOrder[Dir][z] == "Player")
+					{
+						GameGraphics.DrawGameTexture(Texture, srcRectangle, destRectangle,
+							new Intersect.Color(alpha, 255, 255, 255));
+					}
+					else if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z]) > -1)
+					{
+						//Don't render the paperdolls if they have transformed.
+						if (sprite == MySprite && Equipment.Length == Options.EquipmentSlots.Count)
+						{
+							if (Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z])] > -1 &&
+								(this != Globals.Me ||
+									Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z])] <
+									Options.MaxInvItems))
+							{
+								var itemNum = -1;
+								if (this == Globals.Me)
+								{
+									itemNum =
+										Inventory[
+												Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z])
+												]]
+											.ItemNum;
+								}
+								else
+								{
+									itemNum = Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z])];
+								}
+								if (ItemBase.Lookup.Get<ItemBase>(itemNum) != null)
+								{
+									var itemdata = ItemBase.Lookup.Get<ItemBase>(itemNum);
+									if (Gender == 0)
+									{
+										DrawEquipment(itemdata.MalePaperdoll, alpha);
+									}
+									else
+									{
+										DrawEquipment(itemdata.FemalePaperdoll, alpha);
+									}
+								}
+							}
+						}
+					}
+				}
             }
         }
 

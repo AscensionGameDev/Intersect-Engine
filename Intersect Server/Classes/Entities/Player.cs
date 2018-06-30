@@ -639,7 +639,7 @@ namespace Intersect.Server.Classes.Entities
             {
                 base.TryAttack(enemy, weapon.Damage, (DamageType)weapon.DamageType,
                     (Stats)weapon.ScalingStat,
-                    weapon.Scaling, weapon.CritChance, Options.CritMultiplier);
+                    weapon.Scaling, weapon.CritChance, Options.CritMultiplier, null, null, weapon);
             }
             else
             {
@@ -1203,8 +1203,60 @@ namespace Intersect.Server.Classes.Entities
             return 0;
         }
 
-        //Shop
-        public bool OpenShop(int shopNum)
+		public decimal GetCooldownReduction()
+		{
+			int cooldown = 0;
+
+			for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+			{
+				if (Equipment[i] > -1)
+				{
+					if (Inventory[Equipment[i]].ItemNum > -1)
+					{
+						var item = ItemBase.Lookup.Get<ItemBase>(Inventory[Equipment[i]].ItemNum);
+						if (item != null)
+						{
+							//Check for cooldown reduction
+							if (item.Data2 == (int)ItemBonusEffects.CooldownReduction)
+							{
+								cooldown += item.Data3;
+							}
+						}
+					}
+				}
+			}
+
+			return cooldown;
+		}
+
+		public decimal GetLifeSteal()
+		{
+			int lifesteal = 0;
+
+			for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+			{
+				if (Equipment[i] > -1)
+				{
+					if (Inventory[Equipment[i]].ItemNum > -1)
+					{
+						var item = ItemBase.Lookup.Get<ItemBase>(Inventory[Equipment[i]].ItemNum);
+						if (item != null)
+						{
+							//Check for cooldown reduction
+							if (item.Data2 == (int)ItemBonusEffects.LifeSteal)
+							{
+								lifesteal += item.Data3;
+							}
+						}
+					}
+				}
+			}
+
+			return lifesteal;
+		}
+
+		//Shop
+		public bool OpenShop(int shopNum)
         {
             if (IsBusy()) return false;
             InShop = shopNum;

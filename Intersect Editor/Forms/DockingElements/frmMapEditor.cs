@@ -1720,8 +1720,153 @@ namespace Intersect.Editor.Forms
             mMapChanged = true;
         }
 
-        //Cut Copy Paste Functions
-        public void Cut()
+		//Flip Functions
+		public void FlipVertical()
+		{
+			MapInstance tmpMap = new MapInstance(Globals.CurrentMap);
+			int selX = Globals.CurMapSelX,
+			selY = Globals.CurMapSelY,
+			selW = Globals.CurMapSelW,
+			selH = Globals.CurMapSelH;
+
+			MapUndoStates.Add(CurrentMapState);
+
+			if (Globals.CurrentTool == (int)EditingTool.Rectangle ||
+				Globals.CurrentTool == (int)EditingTool.Selection)
+			{
+				if (selW < 0)
+				{
+					selX -= Math.Abs(selW);
+					selW = Math.Abs(selW);
+				}
+				if (selH < 0)
+				{
+					selY -= Math.Abs(selH);
+					selH = Math.Abs(selH);
+				}
+
+				for (int x = 0; x < selW; x++)
+				{
+					for (int y = 0; y < selH; y++)
+					{
+						for (int i = 0; i < Options.LayerCount; i++)
+						{
+							Globals.CurrentMap.Layers[i].Tiles[selX + x, selY + y] = tmpMap.Layers[i].Tiles[selX + x, selY + selH - y];
+						}
+						Globals.CurrentMap.Attributes[selX + x, selY + y] = tmpMap.Attributes[selX + x, selY + selH - y];
+
+						//Copy npc spawns over
+						NpcSpawn tmpSpawn = tmpMap.FindSpawnAt(selX + x, selY + y);
+						if (tmpSpawn != null)
+						{
+							NpcSpawn newSpawn = Globals.CurrentMap.FindSpawnAt(selX + x, selY + y);
+							if (newSpawn != null)
+							{
+								newSpawn.X = selX + x;
+								newSpawn.Y = selY + selH - y;
+							}
+						}
+
+						//Copy lights over
+						LightBase tmpLight = tmpMap.FindLightAt(selX + x, selY + y);
+						if (tmpLight != null)
+						{
+							LightBase newLight = Globals.CurrentMap.FindLightAt(selX + x, selY + y);
+							if (newLight != null)
+							{
+								newLight.TileX = selX + x;
+								newLight.TileY = selY + selH - y;
+							}
+						}
+
+						//Copy events over
+						EventBase tmpEvent = tmpMap.FindEventAt(selX + x, selY + y);
+						if (tmpEvent != null)
+						{
+							Globals.CurrentMap.Events[tmpEvent.Index].SpawnX = selX + x;
+							Globals.CurrentMap.Events[tmpEvent.Index].SpawnY = selY + selH - y;
+						}
+					}
+				}
+
+				EditorGraphics.TilePreviewUpdated = true;
+			}
+		}
+
+		public void FlipHorizontal()
+		{
+			MapInstance tmpMap = new MapInstance(Globals.CurrentMap);
+			int selX = Globals.CurMapSelX,
+			selY = Globals.CurMapSelY,
+			selW = Globals.CurMapSelW,
+			selH = Globals.CurMapSelH;
+
+			MapUndoStates.Add(CurrentMapState);
+
+			if (Globals.CurrentTool == (int)EditingTool.Rectangle ||
+				Globals.CurrentTool == (int)EditingTool.Selection)
+			{
+				if (selW < 0)
+				{
+					selX -= Math.Abs(selW);
+					selW = Math.Abs(selW);
+				}
+				if (selH < 0)
+				{
+					selY -= Math.Abs(selH);
+					selH = Math.Abs(selH);
+				}
+
+				for (int x = 0; x < selW; x++)
+				{
+					for (int y = 0; y < selH; y++)
+					{
+						for (int i = 0; i < Options.LayerCount; i++)
+						{
+							Globals.CurrentMap.Layers[i].Tiles[selX + x, selY + y] = tmpMap.Layers[i].Tiles[selX + selW - x, selY + y];
+						}
+						Globals.CurrentMap.Attributes[selX + x, selY + y] = tmpMap.Attributes[selX + selW - x, selY + y];
+
+						//Copy npc spawns over
+						NpcSpawn tmpSpawn = tmpMap.FindSpawnAt(selX + x, selY + y);
+						if (tmpSpawn != null)
+						{
+							NpcSpawn newSpawn = Globals.CurrentMap.FindSpawnAt(selX + x, selY + y);
+							if (newSpawn != null)
+							{
+								newSpawn.X = selX + selW - x;
+								newSpawn.Y = selY + y;
+							}
+						}
+
+						//Copy lights over
+						LightBase tmpLight = tmpMap.FindLightAt(selX + x, selY + y);
+						if (tmpLight != null)
+						{
+							LightBase newLight = Globals.CurrentMap.FindLightAt(selX + x, selY + y);
+							if (newLight != null)
+							{
+								newLight.TileX = selX + selW - x;
+								newLight.TileY = selY + y;
+							}
+						}
+
+						//Copy events over
+						EventBase tmpEvent = tmpMap.FindEventAt(selX + x, selY + y);
+						if (tmpEvent != null)
+						{
+							Globals.CurrentMap.Events[tmpEvent.Index].SpawnX = selX + selW - x;
+							Globals.CurrentMap.Events[tmpEvent.Index].SpawnY = selY + y;
+						}
+					}
+				}
+
+				EditorGraphics.TilePreviewUpdated = true;
+			}
+		}
+
+		//Cut Copy Paste Functions
+		public void Cut()
         {
             Copy();
             WipeCurrentSelection(Globals.CurrentMap);
