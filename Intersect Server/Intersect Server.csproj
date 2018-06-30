@@ -404,11 +404,6 @@
     <Compile Include="Migrations\20180304060936_Inital.designer.cs">
       <DependentUpon>20180304060936_Inital.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\Game\20180630010201_Classes.cs" />
-    <Compile Include="Migrations\Game\20180630010201_Classes.designer.cs">
-      <DependentUpon>20180630010201_Classes.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\GameContextModelSnapshot.cs" />
     <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserRights.cs" />
@@ -470,7 +465,9 @@
       <Name>Intersect.Network</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Migrations\Game\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
