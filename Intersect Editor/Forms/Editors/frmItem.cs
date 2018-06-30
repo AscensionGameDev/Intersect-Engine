@@ -333,16 +333,18 @@ namespace Intersect.Editor.Forms.Editors
             {
                 mEditorItem.Consumable.Type = ConsumableType.None;
                 mEditorItem.Consumable.Value = 0;
+
                 mEditorItem.TwoHanded = false;
+                mEditorItem.EquipmentSlot = 0;
+                mEditorItem.Effect.Type = EffectType.None;
+                mEditorItem.Effect.Percentage = 0;
+
+                mEditorItem.SlotCount = 0;
 
                 mEditorItem.Damage = 0;
                 mEditorItem.Tool = -1;
+
                 mEditorItem.Data1 = 0;
-
-                mEditorItem.EquipmentSlot = 0;
-
-                mEditorItem.Effect.Type = EffectType.None;
-                mEditorItem.Effect.Percentage = 0;
             }
 
             if (cmbType.SelectedIndex == (int) ItemTypes.Consumable)
@@ -374,12 +376,10 @@ namespace Intersect.Editor.Forms.Editors
             }
             else if (cmbType.SelectedIndex == (int) ItemTypes.Bag)
             {
-                if (mEditorItem.Data1 < 1)
-                {
-                    mEditorItem.Data1 = 1;
-                } //Cant have no space or negative space.
+                // Cant have no space or negative space.
+                mEditorItem.SlotCount = Math.Max(1, mEditorItem.SlotCount);
                 grpBags.Visible = true;
-                nudBag.Value = mEditorItem.Data1;
+                nudBag.Value = mEditorItem.SlotCount;
             }
 
             mEditorItem.ItemType = (ItemTypes) cmbType.SelectedIndex;
@@ -688,7 +688,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudBag_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Data1 = (int) nudBag.Value;
+            mEditorItem.SlotCount = (int) nudBag.Value;
         }
 
         private void nudInterval_ValueChanged(object sender, EventArgs e)

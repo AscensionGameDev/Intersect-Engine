@@ -39,6 +39,7 @@ namespace Intersect.GameObjects
         public EffectData Effect { get; set; }
 
         public int EquipmentSlot { get; set; }
+        public int SlotCount { get; set; }
 
         public bool TwoHanded { get; set; }
 

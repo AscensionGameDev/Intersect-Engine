@@ -1814,10 +1814,10 @@ namespace Intersect.Server.Classes.Entities
             if (bagItem.Bag == null)
             {
                 bagItem.Bag = LegacyDatabase.GetBag(bagItem);
-                if (bagItem.Bag == null) //Bag doesnt exist, creatre it!
+                if (bagItem.Bag == null) //Bag doesnt exist, create it!
                 {
                     //Create the Bag
-                    var slotCount = itemBase.Data1;
+                    var slotCount = itemBase.SlotCount;
                     if (slotCount < 1) slotCount = 1;
                     bagItem.Bag = new Bag(slotCount);
                 }
