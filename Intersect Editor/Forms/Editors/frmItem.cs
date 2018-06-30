@@ -241,7 +241,7 @@ namespace Intersect.Editor.Forms.Editors
 
                 txtName.Text = mEditorItem.Name;
                 txtDesc.Text = mEditorItem.Desc;
-                cmbType.SelectedIndex = mEditorItem.ItemType;
+                cmbType.SelectedIndex = (int) mEditorItem.ItemType;
                 cmbPic.SelectedIndex = cmbPic.FindString(TextUtils.NullToNone(mEditorItem.Pic));
                 nudPrice.Value = mEditorItem.Price;
                 nudStr.Value = mEditorItem.StatsGiven[0];
@@ -259,15 +259,15 @@ namespace Intersect.Editor.Forms.Editors
                 cmbAttackAnimation.SelectedIndex =
                     Database.GameObjectListIndex(GameObjectType.Animation, mEditorItem.AttackAnimationId) + 1;
                 RefreshExtendedData();
-                if (mEditorItem.ItemType == (int) ItemTypes.Equipment)
+                if (mEditorItem.ItemType == ItemTypes.Equipment)
                     cmbEquipmentBonus.SelectedIndex = mEditorItem.Data2;
                 nudEffectPercent.Value = mEditorItem.Data3;
                 chk2Hand.Checked = Convert.ToBoolean(mEditorItem.Data4);
                 cmbMalePaperdoll.SelectedIndex = cmbMalePaperdoll.FindString(TextUtils.NullToNone(mEditorItem.MalePaperdoll));
                 cmbFemalePaperdoll.SelectedIndex = cmbFemalePaperdoll.FindString(TextUtils.NullToNone(mEditorItem.FemalePaperdoll));
-                if (mEditorItem.ItemType == (int) ItemTypes.Consumable)
+                if (mEditorItem.ItemType == ItemTypes.Consumable)
                 {
-                    cmbConsume.SelectedIndex = mEditorItem.Data1;
+                    cmbConsume.SelectedIndex = (int) mEditorItem.ConsumableType;
                     nudInterval.Value = mEditorItem.Data2;
                 }
                 if (cmbPic.SelectedIndex > 0)
@@ -329,8 +329,9 @@ namespace Intersect.Editor.Forms.Editors
             grpEvent.Visible = false;
             grpBags.Visible = false;
 
-            if (mEditorItem.ItemType != cmbType.SelectedIndex)
+            if ((int) mEditorItem.ItemType != cmbType.SelectedIndex)
             {
+                mEditorItem.ConsumableType = ConsumableType.None;
                 mEditorItem.Damage = 0;
                 mEditorItem.Tool = -1;
                 mEditorItem.Data1 = 0;
@@ -341,7 +342,7 @@ namespace Intersect.Editor.Forms.Editors
 
             if (cmbType.SelectedIndex == (int) ItemTypes.Consumable)
             {
-                cmbConsume.SelectedIndex = mEditorItem.Data1;
+                cmbConsume.SelectedIndex = (int) mEditorItem.ConsumableType;
                 nudInterval.Value = mEditorItem.Data2;
                 grpConsumable.Visible = true;
             }
@@ -376,7 +377,7 @@ namespace Intersect.Editor.Forms.Editors
                 nudBag.Value = mEditorItem.Data1;
             }
 
-            mEditorItem.ItemType = cmbType.SelectedIndex;
+            mEditorItem.ItemType = (ItemTypes) cmbType.SelectedIndex;
         }
 
         private void cmbType_SelectedIndexChanged(object sender, EventArgs e)
@@ -407,7 +408,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbConsume_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.Data1 = cmbConsume.SelectedIndex;
+            mEditorItem.ConsumableType = (ConsumableType) cmbConsume.SelectedIndex;
         }
 
         private void cmbPaperdoll_SelectedIndexChanged(object sender, EventArgs e)

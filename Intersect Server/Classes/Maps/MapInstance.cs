@@ -222,7 +222,7 @@ namespace Intersect.Server.Classes.Maps
                 MapItems[MapItems.Count - 1].X = x;
                 MapItems[MapItems.Count - 1].Y = y;
                 MapItems[MapItems.Count - 1].DespawnTime = Globals.System.GetTimeMs() + Options.ItemDespawnTime;
-                if (itemBase.ItemType == (int) ItemTypes.Equipment)
+                if (itemBase.ItemType == ItemTypes.Equipment)
                 {
                     MapItems[MapItems.Count - 1].ItemVal = 1;
                     for (int i = 0; i < (int) Stats.StatCount; i++)
@@ -249,7 +249,7 @@ namespace Intersect.Server.Classes.Maps
                 MapItems[MapItems.Count - 1].DespawnTime = -1;
                 MapItems[MapItems.Count - 1].AttributeSpawnX = x;
                 MapItems[MapItems.Count - 1].AttributeSpawnY = y;
-                if (item.ItemType == (int) ItemTypes.Equipment)
+                if (item.ItemType == ItemTypes.Equipment)
                 {
                     MapItems[MapItems.Count - 1].ItemVal = 1;
                     Random r = new Random();

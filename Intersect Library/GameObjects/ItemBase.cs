@@ -1,11 +1,9 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Intersect.Enums;
+﻿using Intersect.Enums;
 using Intersect.GameObjects.Conditions;
 using Intersect.Models;
 using Intersect.Utilities;
 using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Intersect.GameObjects
 {
@@ -36,6 +34,7 @@ namespace Intersect.GameObjects
         public int CritChance { get; set; }
         public int Damage { get; set; }
         public int DamageType { get; set; }
+        public ConsumableType ConsumableType { get; set; }
         public int Data1 { get; set; }
         public int Data2 { get; set; }
         public int Data3 { get; set; }
@@ -43,7 +42,7 @@ namespace Intersect.GameObjects
 
         public string Desc { get; set; } = "";
         public string FemalePaperdoll { get; set; } = "";
-        public int ItemType { get; set; }
+        public ItemTypes ItemType { get; set; }
         public string MalePaperdoll { get; set; } = "";
         public string Pic { get; set; } = "";
         public int Price { get; set; }
@@ -63,7 +62,7 @@ namespace Intersect.GameObjects
             set => StatsGiven = DatabaseUtils.LoadIntArray(value, (int)Stats.StatCount);
         }
         [NotMapped]
-        public int[] StatsGiven { get; set; } = new int[(int)Stats.StatCount];
+        public int[] StatsGiven { get; set; }
 
 
         [Column("UsageRequirements")]
@@ -94,7 +93,7 @@ namespace Intersect.GameObjects
 
         public bool IsStackable()
         {
-            return (ItemType == (int) ItemTypes.Currency || Stackable) && ItemType != (int)ItemTypes.Equipment && ItemType != (int)ItemTypes.Bag;
+            return (ItemType == ItemTypes.Currency || Stackable) && ItemType != ItemTypes.Equipment && ItemType != ItemTypes.Bag;
         }
 
         public static ItemBase Get(int index)

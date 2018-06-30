@@ -40,10 +40,10 @@ namespace Intersect_Client.Classes.UI.Game
 
                 Label itemType = new Label(mDescWindow, "ItemTypeLabel");
                 Label itemValue = new Label(mDescWindow, "ItemValueLabel");
-                itemType.Text = Strings.ItemDesc.itemtypes[item.ItemType];
+                itemType.Text = Strings.ItemDesc.itemtypes[(int)item.ItemType];
                 itemValue.SetText(valueLabel);
 
-                if (item.ItemType == (int) ItemTypes.Equipment)
+                if (item.ItemType == ItemTypes.Equipment)
                 {
                     itemType.Text = Options.EquipmentSlots[item.Data1];
                     if (item.Data1 == Options.WeaponIndex && Convert.ToBoolean(item.Data4) == true)
@@ -62,12 +62,12 @@ namespace Intersect_Client.Classes.UI.Game
                 }
 
                 string stats = "";
-                if (item.ItemType == (int) ItemTypes.Equipment)
+                if (item.ItemType == ItemTypes.Equipment)
                 {
                     stats = Strings.ItemDesc.bonuses;
                     itemDesc.AddText(stats, itemDesc.RenderColor);
                     itemDesc.AddLineBreak();
-                    if (item.ItemType == (int) ItemTypes.Equipment && item.Data1 == Options.WeaponIndex)
+                    if (item.ItemType == ItemTypes.Equipment && item.Data1 == Options.WeaponIndex)
                     {
                         stats = Strings.ItemDesc.damage.ToString( item.Damage);
                         itemDesc.AddText(stats, itemDesc.RenderColor);
@@ -83,7 +83,7 @@ namespace Intersect_Client.Classes.UI.Game
                         }
                     }
                 }
-                if (item.ItemType == (int) ItemTypes.Equipment && item.Data2 > 0 && item.Data3 > 0)
+                if (item.ItemType == ItemTypes.Equipment && item.Data2 > 0 && item.Data3 > 0)
                 {
                     itemDesc.AddText(
                         Strings.ItemDesc.effect.ToString( item.Data3,
