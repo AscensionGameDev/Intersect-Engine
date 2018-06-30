@@ -6,6 +6,7 @@ using Intersect.Editor.Localization;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
+using Newtonsoft.Json;
 
 namespace Intersect.Editor.Forms.Editors.Quest
 {
@@ -19,7 +20,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
         {
             InitializeComponent();
             mMyTask = refTask;
-            mEventBackup = mMyTask.CompletionEvent.JsonData;
+            mEventBackup = mMyTask.EdittingEvent.JsonData;
             InitLocalization();
             cmbTaskType.SelectedIndex = mMyTask.Objective;
             txtStartDesc.Text = mMyTask.Desc;
@@ -117,7 +118,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
         private void btnCancel_Click(object sender, EventArgs e)
         {
             Cancelled = true;
-            mMyTask.CompletionEvent = new EventBase(-1, mEventBackup);
+            JsonConvert.PopulateObject(mEventBackup,mMyTask.EdittingEvent, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
             ParentForm.Close();
         }
 
@@ -128,10 +129,10 @@ namespace Intersect.Editor.Forms.Editors.Quest
 
         private void btnEditTaskEvent_Click(object sender, EventArgs e)
         {
-            mMyTask.CompletionEvent.Name = Strings.TaskEditor.completionevent;
+            mMyTask.EdittingEvent.Name = Strings.TaskEditor.completionevent;
             FrmEvent editor = new FrmEvent(null)
             {
-                MyEvent = mMyTask.CompletionEvent
+                MyEvent = mMyTask.EdittingEvent
             };
             editor.InitEditor();
             editor.ShowDialog();

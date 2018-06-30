@@ -2936,10 +2936,7 @@ namespace Intersect.Server.Classes.Entities
                 {
                     UpdateGatherItemQuests(quest.Tasks[0].Data1);
                 }
-                if (quest.StartEvent != null)
-                {
-                    StartCommonEvent(quest.StartEvent);
-                }
+                StartCommonEvent(EventBase.Get(quest.StartEventId));
                 PacketSender.SendPlayerMsg(MyClient, Strings.Quests.started.ToString( quest.Name),
                     CustomColors.QuestStarted);
                 PacketSender.SendQuestProgress(this, quest.Index);
@@ -3066,10 +3063,7 @@ namespace Intersect.Server.Classes.Entities
                                     {
                                         StartCommonEvent(quest.Tasks[i].CompletionEvent);
                                     }
-                                    if (quest.EndEvent != null)
-                                    {
-                                        StartCommonEvent(quest.EndEvent);
-                                    }
+                                    StartCommonEvent(EventBase.Get(quest.EndEventId));
                                     PacketSender.SendPlayerMsg(MyClient, Strings.Quests.completed.ToString( quest.Name),
                                         Color.Green);
                                 }
@@ -3230,7 +3224,7 @@ namespace Intersect.Server.Classes.Entities
         {
             foreach (var evt in EventLookup.Values)
             {
-                if (evt.MapNum == mapNum && evt.BaseEvent.MapIndex == eventIndex)
+                if (evt.MapNum == mapNum && evt.BaseEvent.MapId == eventIndex)
                 {
                     if (evt.PageInstance == null) return;
                     if (evt.PageInstance.Trigger != 0) return;
@@ -3275,7 +3269,7 @@ namespace Intersect.Server.Classes.Entities
             {
                 foreach (var evt in EventLookup.Values)
                 {
-                    if (evt.MapNum == mapNum && evt.BaseEvent.MapIndex == eventIndex)
+                    if (evt.MapNum == mapNum && evt.BaseEvent.MapId == eventIndex)
                     {
                         if (evt.CallStack.Count <= 0) return;
                         if (evt.CallStack.Peek().WaitingForResponse != CommandInstance.EventResponse.Dialogue)
@@ -3343,6 +3337,7 @@ namespace Intersect.Server.Classes.Entities
 
         public bool StartCommonEvent(EventBase baseEvent, int trigger = -1, string command = "", string param = "")
         {
+            if (baseEvent == null) return false;
             lock (mEventLock)
             {
                 foreach (var evt in EventLookup.Values)
@@ -3359,11 +3354,11 @@ namespace Intersect.Server.Classes.Entities
                 };
                 EventLookup.AddOrUpdate(new Tuple<int, int, int>(-1 * commonEventLaunch, -1, -1), tmpEvent, (key, oldValue) => tmpEvent);
                 //Try to Spawn a PageInstance.. if we can
-                for (var i = baseEvent.MyPages.Count - 1; i >= 0; i--)
+                for (var i = baseEvent.Pages.Count - 1; i >= 0; i--)
                 {
-                    if ((trigger == -1 || baseEvent.MyPages[i].Trigger == trigger) && tmpEvent.CanSpawnPage(i, baseEvent))
+                    if ((trigger == -1 || baseEvent.Pages[i].Trigger == trigger) && tmpEvent.CanSpawnPage(i, baseEvent))
                     {
-                        tmpEvent.PageInstance = new EventPageInstance(baseEvent, baseEvent.MyPages[i], baseEvent.MapIndex, -1 * commonEventLaunch, tmpEvent, MyClient);
+                        tmpEvent.PageInstance = new EventPageInstance(baseEvent, baseEvent.Pages[i], baseEvent.MapId, -1 * commonEventLaunch, tmpEvent, MyClient);
                         tmpEvent.PageIndex = i;
                         //Check for /command trigger
                         if (trigger == (int)EventPage.CommonEventTriggers.Command)

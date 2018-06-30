@@ -88,6 +88,18 @@ namespace Intersect.Editor.Forms.Editors.Quest
         {
             foreach (var item in mChanged)
             {
+                item.StartEvent.RestoreBackup();
+                item.StartEvent.DeleteBackup();
+                item.EndEvent.RestoreBackup();
+                item.EndEvent.DeleteBackup();
+                foreach (var tsk in item.Tasks)
+                {
+                    if (tsk.CompletionEvent.Index > 0)
+                    {
+                        tsk.CompletionEvent.RestoreBackup();
+                    }
+                    tsk.CompletionEvent.DeleteBackup();
+                }
                 item.RestoreBackup();
                 item.DeleteBackup();
             }
@@ -104,6 +116,18 @@ namespace Intersect.Editor.Forms.Editors.Quest
             foreach (var item in mChanged)
             {
                 PacketSender.SendSaveObject(item);
+                PacketSender.SendSaveObject(item.StartEvent);
+                PacketSender.SendSaveObject(item.EndEvent);
+                foreach (var tsk in item.Tasks)
+                {
+                    if (tsk.EdittingEvent.Index > 0)
+                    {
+                        PacketSender.SendSaveObject(tsk.EdittingEvent);
+                    }
+                    tsk.EdittingEvent.DeleteBackup();
+                }
+                item.StartEvent.DeleteBackup();
+                item.EndEvent.DeleteBackup();
                 item.DeleteBackup();
             }
 
@@ -155,6 +179,13 @@ namespace Intersect.Editor.Forms.Editors.Quest
                 if (mChanged.IndexOf(mEditorItem) == -1)
                 {
                     mChanged.Add(mEditorItem);
+                    mEditorItem.StartEvent.MakeBackup();
+                    mEditorItem.EndEvent.MakeBackup();
+                    foreach (var tsk in mEditorItem.Tasks)
+                    {
+                        tsk.CompletionEvent.MakeBackup();
+                        tsk.EdittingEvent = tsk.CompletionEvent;
+                    }
                     mEditorItem.MakeBackup();
                 }
             }
@@ -207,6 +238,8 @@ namespace Intersect.Editor.Forms.Editors.Quest
         private void btnAddTask_Click(object sender, EventArgs e)
         {
             var questTask = new QuestBase.QuestTask(mEditorItem.NextTaskId);
+            questTask.EdittingEvent = new EventBase(-1, -1, 0, 0, true);
+            mEditorItem.AddEvents.Add(mEditorItem.NextTaskId, questTask.EdittingEvent);
             mEditorItem.NextTaskId = mEditorItem.NextTaskId + 1;
             if (OpenTaskEditor(questTask))
             {
@@ -251,6 +284,11 @@ namespace Intersect.Editor.Forms.Editors.Quest
         {
             if (lstTasks.SelectedIndex > -1)
             {
+                mEditorItem.RemoveEvents.Add(mEditorItem.Tasks[lstTasks.SelectedIndex].CompletionEvent.Index);
+                if (mEditorItem.AddEvents.ContainsKey(mEditorItem.Tasks[lstTasks.SelectedIndex].Id))
+                {
+                    mEditorItem.AddEvents.Remove(mEditorItem.Tasks[lstTasks.SelectedIndex].Id);
+                }
                 mEditorItem.Tasks.RemoveAt(lstTasks.SelectedIndex);
                 ListQuestTasks();
             }

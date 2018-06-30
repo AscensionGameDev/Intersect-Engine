@@ -53,7 +53,9 @@ namespace Intersect.Server.Classes.Core
         GameObjectType.ServerSwitch,
         GameObjectType.ServerVariable,
         GameObjectType.Tileset,
-        GameObjectType.Time};
+        GameObjectType.Time,
+        GameObjectType.CommonEvent,
+        GameObjectType.Quest};
 
 
         public const string DIRECTORY_BACKUPS = "resources/backups";
@@ -705,6 +707,11 @@ namespace Intersect.Server.Classes.Core
                     }
                     break;
                 case GameObjectType.Quest:
+                    foreach (var qst in sGameDb.Quests)
+                    {
+                        QuestBase.Lookup.Set(qst.Id, qst);
+                        QuestBase.Lookup.Set(qst.Index, qst);
+                    }
                     break;
                 case GameObjectType.Resource:
                     foreach (var res in sGameDb.Resources)
@@ -744,6 +751,11 @@ namespace Intersect.Server.Classes.Core
                 case GameObjectType.Map:
                     break;
                 case GameObjectType.CommonEvent:
+                    foreach (var evt in sGameDb.Events)
+                    {
+                        EventBase.Lookup.Set(evt.Id, evt);
+                        EventBase.Lookup.Set(evt.Index, evt);
+                    }
                     break;
                 case GameObjectType.PlayerSwitch:
                     foreach (var psw in sGameDb.PlayerSwitches)
@@ -926,6 +938,9 @@ namespace Intersect.Server.Classes.Core
                         break;
                     case GameObjectType.Quest:
                         var objqw = new QuestBase(index);
+                        sGameDb.Quests.Add(objqw);
+                        objqw.StartEvent = (EventBase)AddGameObject(GameObjectType.CommonEvent);
+                        objqw.EndEvent = (EventBase)AddGameObject(GameObjectType.CommonEvent);
                         dbObj = objqw;
                         QuestBase.Lookup.Set(index, objqw);
                         break;
@@ -966,6 +981,7 @@ namespace Intersect.Server.Classes.Core
                         break;
                     case GameObjectType.CommonEvent:
                         var objf = new EventBase(index, -1, -1, -1,true);
+                        sGameDb.Events.Add(objf);
                         dbObj = objf;
                         EventBase.Lookup.Set(index, objf);
                         break;
@@ -1031,6 +1047,13 @@ namespace Intersect.Server.Classes.Core
                     sGameDb.Projectiles.Remove((ProjectileBase) gameObject);
                     return;
                 case GameObjectType.Quest:
+                    sGameDb.Events.Remove(((QuestBase)gameObject).StartEvent);
+                    sGameDb.Events.Remove(((QuestBase)gameObject).EndEvent);
+                    foreach (var tsk in ((QuestBase) gameObject).Tasks)
+                    {
+                        sGameDb.Events.Remove(tsk.CompletionEvent);
+                    }
+                    sGameDb.Quests.Remove((QuestBase) gameObject);
                     return;
                 case GameObjectType.Resource:
                     sGameDb.Resources.Remove((ResourceBase) gameObject);
@@ -1050,6 +1073,7 @@ namespace Intersect.Server.Classes.Core
                 case GameObjectType.Map:
                     return;
                 case GameObjectType.CommonEvent:
+                    sGameDb.Events.Remove((EventBase) gameObject);
                     return;
                 case GameObjectType.PlayerSwitch:
                     sGameDb.PlayerSwitches.Remove((PlayerSwitchBase) gameObject);
@@ -1370,6 +1394,16 @@ namespace Intersect.Server.Classes.Core
         public static void SavePlayerDatabase()
         {
             sPlayerDb.SaveChanges();
+        }
+
+        public static void DeteachOwnedType([NotNull]object entity)
+        {
+            sGameDb.Entry(entity).State = EntityState.Detached;
+        }
+
+        public static void AttachOwnedType([NotNull]object entity)
+        {
+            sGameDb.Entry(entity).State = EntityState.Modified;
         }
     }
 }

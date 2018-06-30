@@ -2137,6 +2137,7 @@ namespace Intersect.Server.Classes.Networking
                     Globals.KillNpcsOf((NpcBase)obj);
                 }
                 LegacyDatabase.DeleteGameObject(obj);
+                LegacyDatabase.SaveGameDatabase();
                 PacketSender.SendGameObjectToAll(obj, true);
             }
             bf.Dispose();
@@ -2218,6 +2219,10 @@ namespace Intersect.Server.Classes.Networking
                 else if (type == GameObjectType.Resource)
                 {
                     Globals.KillResourcesOf((ResourceBase)obj);
+                    
+                    //Must detach owned entities and reattach after json populates -_-
+                    LegacyDatabase.DeteachOwnedType(((ResourceBase)obj).Initial);
+                    LegacyDatabase.DeteachOwnedType(((ResourceBase)obj).Exhausted);
                 }
                 else if (type == GameObjectType.Npc)
                 {
@@ -2227,7 +2232,45 @@ namespace Intersect.Server.Classes.Networking
                 {
                     Globals.KillProjectilesOf((ProjectileBase)obj);
                 }
-                JsonConvert.PopulateObject(bf.ReadString(), obj, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Reuse });
+                else if (type == GameObjectType.Animation)
+                {
+                    //Must detach owned entities and reattach after json populates -_-
+                    LegacyDatabase.DeteachOwnedType(((AnimationBase)obj).Upper);
+                    LegacyDatabase.DeteachOwnedType(((AnimationBase)obj).Lower);
+                }
+
+                JsonConvert.PopulateObject(bf.ReadString(), obj, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
+                
+                if (type == GameObjectType.Resource)
+                {
+                    //Must detach owned entities and reattach after json populates -_-
+                    LegacyDatabase.AttachOwnedType(((ResourceBase)obj).Initial);
+                    LegacyDatabase.AttachOwnedType(((ResourceBase)obj).Exhausted);
+                }
+                else if (type == GameObjectType.Animation)
+                {
+                    //Must detach owned entities and reattach after json populates -_-
+                    LegacyDatabase.AttachOwnedType(((AnimationBase)obj).Upper);
+                    LegacyDatabase.AttachOwnedType(((AnimationBase)obj).Lower);
+                }
+                else if (type == GameObjectType.Quest)
+                {
+                    var qst = (QuestBase) obj;
+                    foreach (var evt in qst.RemoveEvents)
+                    {
+                        var evtb = EventBase.Get(evt);
+                        if (evtb != null) LegacyDatabase.DeleteGameObject(evtb);
+                    }
+                    foreach (var evt in qst.AddEvents)
+                    {
+                        var evtb = (EventBase)LegacyDatabase.AddGameObject(GameObjectType.CommonEvent);
+                        qst.Tasks[evt.Key].CompletionEvent = evtb;
+                        JsonConvert.PopulateObject(JsonConvert.SerializeObject(evt.Value),evtb, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
+                    }
+                    qst.AddEvents.Clear();
+                    qst.RemoveEvents.Clear();
+                }
+
                 PacketSender.SendGameObjectToAll(obj, false);
                 LegacyDatabase.SaveGameObject(obj);
             }

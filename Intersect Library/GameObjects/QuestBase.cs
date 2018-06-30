@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.GameObjects.Conditions;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
@@ -24,32 +26,74 @@ namespace Intersect.GameObjects
 
     public class QuestBase : DatabaseObject<QuestBase>
     {
-        public string BeforeDesc = "";
-        public string EndDesc = "";
-        public EventBase EndEvent = new EventBase(-1, -1, 0, 0, true);
-        public string InProgressDesc = "";
-        public byte LogAfterComplete;
-        public byte LogBeforeOffer;
+        //Basic Quest Properties
+        public string StartDesc { get; set; } = "";
+        public string BeforeDesc { get; set; } = "";
+        public string EndDesc { get; set; } = "";
+        public string InProgressDesc { get; set; } = "";
+        public byte LogAfterComplete { get; set; }
+        public byte LogBeforeOffer { get; set; }
+        public byte Quitable { get; set; }
+        public byte Repeatable { get; set; }
 
-        //Tasks
-        public int NextTaskId;
+        //Tasks - To be phased out with guids
+        public int NextTaskId { get; set; }
 
-        public byte Quitable;
+        //Requirements - Store with json
+        [Column("Requirements")]
+        [JsonIgnore]
+        public string JsonRequirements
+        {
+            get => JsonConvert.SerializeObject(Requirements);
+            set => Requirements = JsonConvert.DeserializeObject<ConditionLists>(value);
+        }
+        [NotMapped]
+        public ConditionLists Requirements { get; set; } = new ConditionLists();
 
-        public byte Repeatable;
 
-        //Requirements
-        public ConditionLists Requirements = new ConditionLists();
+        [Column("StartEvent")]
+        public int StartEventId { get; set; }
+        [NotMapped]
+        [JsonIgnore]
+        public EventBase StartEvent
+        {
+            get => EventBase.Get(StartEventId);
+            set => StartEventId = value.Index;
+        }
 
-        public string StartDesc = "";
+        [Column("EndEvent")]
+        public int EndEventId { get;  set; }
+        [NotMapped]
+        [JsonIgnore]
+        public EventBase EndEvent
+        {
+            get => EventBase.Get(EndEventId);
+            set => EndEventId = value.Index;
+        }
 
-        //Events
-        public EventBase StartEvent = new EventBase(-1, -1, 0, 0, true);
-
+        [Column("Tasks")]
+        [JsonIgnore]
+        public string TasksJson
+        {
+            get => JsonConvert.SerializeObject(Tasks);
+            set => Tasks = JsonConvert.DeserializeObject<List<QuestTask>>(value);
+        }
+        [NotMapped]
         public List<QuestTask> Tasks = new List<QuestTask>();
+
+        [NotMapped]
+        public Dictionary<int, EventBase> AddEvents = new Dictionary<int, EventBase>();  //Events that need to be added for the quest, int is task id
+        [NotMapped]
+        public List<int> RemoveEvents = new List<int>(); //Events that need to be removed for the quest
 
         [JsonConstructor]
         public QuestBase(int index) : base(index)
+        {
+            Name = "New Quest";
+        }
+
+        //Parameterless EF Constructor
+        public QuestBase()
         {
             Name = "New Quest";
         }
@@ -74,7 +118,16 @@ namespace Intersect.GameObjects
 
         public class QuestTask
         {
-            public EventBase CompletionEvent = new EventBase(-1,-1, 0, 0, true);
+            public int CompletionEventId { get; set; }
+            [JsonIgnore]
+            public EventBase CompletionEvent
+            {
+                get => EventBase.Get(CompletionEventId);
+                set => CompletionEventId = value.Index;
+            }
+            [NotMapped]
+            [JsonIgnore]
+            public EventBase EdittingEvent;
             public int Data1;
             public int Data2;
             public string Desc = "";

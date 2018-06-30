@@ -1418,6 +1418,15 @@ namespace Intersect.Server.Classes.Networking
             bool another = false)
         {
             if (client == null) return;
+
+            if (client.IsEditor)
+            {
+                //If editor send quest events and map events
+                if (obj.Type == GameObjectType.Quest)
+                {
+                    SendQuestEventsTo(client, (QuestBase) obj);
+                }
+            }
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.GameObject);
             bf.WriteInteger((int)obj.Type);
@@ -1427,6 +1436,24 @@ namespace Intersect.Server.Classes.Networking
             if (!deleted) bf.WriteString(obj.JsonData);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
+        }
+
+        public static void SendQuestEventsTo(Client client, QuestBase qst)
+        {
+            SendEventIfExists(client, qst.StartEvent);
+            SendEventIfExists(client, qst.EndEvent);
+            foreach (var tsk in qst.Tasks)
+            {
+                SendEventIfExists(client, tsk.CompletionEvent);
+            }
+        }
+
+        public static void SendEventIfExists(Client client, EventBase evt)
+        {
+            if (evt != null && evt.Id != Guid.Empty)
+            {
+                SendGameObject(client, evt, false, false);
+            }
         }
 
         public static void SendGameObjectToAll(IDatabaseObject obj, bool deleted = false, bool another = false)

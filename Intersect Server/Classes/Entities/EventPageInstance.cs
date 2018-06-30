@@ -111,7 +111,7 @@ namespace Intersect.Server.Classes.Entities
                 Animations.Add(myPage.Animation);
             }
             Face = MyPage.FaceGraphic;
-            mPageNum = BaseEvent.MyPages.IndexOf(MyPage);
+            mPageNum = BaseEvent.Pages.IndexOf(MyPage);
             Client = client;
             SendToClient();
         }
@@ -171,7 +171,7 @@ namespace Intersect.Server.Classes.Entities
                 Animations.Add(myPage.Animation);
             }
             Face = MyPage.FaceGraphic;
-            mPageNum = BaseEvent.MyPages.IndexOf(MyPage);
+            mPageNum = BaseEvent.Pages.IndexOf(MyPage);
             Client = client;
             SendToClient();
         }
@@ -615,7 +615,7 @@ namespace Intersect.Server.Classes.Entities
             //Should despawn if conditions are not met OR an earlier page can spawn
             if (!EventInstance.MeetsConditionLists(MyPage.ConditionLists, MyEventIndex.MyPlayer, MyEventIndex))
                 return true;
-            for (int i = 0; i < BaseEvent.MyPages.Count; i++)
+            for (int i = 0; i < BaseEvent.Pages.Count; i++)
             {
                 if (MyEventIndex.CanSpawnPage(i, BaseEvent))
                 {

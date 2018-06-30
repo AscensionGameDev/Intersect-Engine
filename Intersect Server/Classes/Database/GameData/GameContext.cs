@@ -8,6 +8,7 @@ using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Utilities;
 using Microsoft.EntityFrameworkCore;
+using Intersect.GameObjects.Events;
 
 namespace Intersect.Server.Classes.Database.GameData
 {
@@ -25,6 +26,9 @@ namespace Intersect.Server.Classes.Database.GameData
         //Classes
         public DbSet<ClassBase> Classes { get; set; }
 
+        //Events
+        public DbSet<EventBase> Events { get; set; }
+
         //Items
         public DbSet<ItemBase> Items { get; set; }
 
@@ -36,6 +40,9 @@ namespace Intersect.Server.Classes.Database.GameData
 
         //Projectiles
         public DbSet<ProjectileBase> Projectiles { get; set; }
+
+        //Quests
+        public DbSet<QuestBase> Quests { get; set; }
 
         //Resources
         public DbSet<ResourceBase> Resources { get; set; }

@@ -185,9 +185,9 @@ namespace Intersect.Editor.Forms.Editors
 
         private void btnNewPage_Click(object sender, EventArgs e)
         {
-            MyEvent.MyPages.Add(new EventPage());
+            MyEvent.Pages.Add(new EventPage());
             UpdateTabControl();
-            LoadPage(MyEvent.MyPages.Count - 1);
+            LoadPage(MyEvent.Pages.Count - 1);
         }
 
         private void UpdateTabControl()
@@ -197,7 +197,7 @@ namespace Intersect.Editor.Forms.Editors
                 pnlTabs.Controls.Remove(page);
             }
             mPageTabs.Clear();
-            for (int i = 0; i < MyEvent.MyPages.Count; i++)
+            for (int i = 0; i < MyEvent.Pages.Count; i++)
             {
                 var btn = new DarkButton()
                 {
@@ -207,7 +207,7 @@ namespace Intersect.Editor.Forms.Editors
                 mPageTabs.Add(btn);
             }
             pnlTabs.Controls.AddRange(mPageTabs.ToArray());
-            for (int i = 0; i < MyEvent.MyPages.Count; i++)
+            for (int i = 0; i < MyEvent.Pages.Count; i++)
             {
                 var btn = mPageTabs[i];
                 btn.Size = new Size(0, 0);
@@ -243,7 +243,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 btnPastePage.Enabled = false;
             }
-            if (MyEvent.MyPages.Count > 1)
+            if (MyEvent.Pages.Count > 1)
             {
                 btnDeletePage.Enabled = true;
             }
@@ -282,9 +282,9 @@ namespace Intersect.Editor.Forms.Editors
 
         private void btnDeletePage_Click(object sender, EventArgs e)
         {
-            if (MyEvent.MyPages.Count > 1)
+            if (MyEvent.Pages.Count > 1)
             {
-                MyEvent.MyPages.RemoveAt(CurrentPageIndex);
+                MyEvent.Pages.RemoveAt(CurrentPageIndex);
                 UpdateTabControl();
                 LoadPage(0);
             }
@@ -292,7 +292,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void btnClearPage_Click(object sender, EventArgs e)
         {
-            MyEvent.MyPages[CurrentPageIndex] = new EventPage();
+            MyEvent.Pages[CurrentPageIndex] = new EventPage();
             LoadPage(CurrentPageIndex);
         }
 
@@ -308,7 +308,7 @@ namespace Intersect.Editor.Forms.Editors
             if (mPageCopy != null)
             {
                 mPageCopy.Readpos = 0;
-                MyEvent.MyPages[CurrentPageIndex] = new EventPage(mPageCopy);
+                MyEvent.Pages[CurrentPageIndex] = new EventPage(mPageCopy);
                 LoadPage(CurrentPageIndex);
             }
         }
@@ -602,7 +602,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             Text = Strings.EventEditor.title.ToString( MyEvent.Index, txtEventname.Text);
             CurrentPageIndex = pageNum;
-            CurrentPage = MyEvent.MyPages[pageNum];
+            CurrentPage = MyEvent.Pages[pageNum];
             for (int i = 0; i < mPageTabs.Count; i++)
             {
                 if (i == CurrentPageIndex)
