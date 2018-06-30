@@ -707,7 +707,7 @@ namespace Intersect.Server.Classes.Networking
                 {
                     MapList.GetList().AddMap(newMap, MapBase.Lookup);
                 }
-                LegacyDatabase.SaveMapFolders();
+                LegacyDatabase.SaveGameDatabase();
                 PacketSender.SendMapListToAll();
                 /*else if (destType == 0)
                 {
@@ -859,7 +859,7 @@ namespace Intersect.Server.Classes.Networking
                     {
                         MapList.GetList().AddMap(newMap, MapBase.Lookup);
                     }
-                    LegacyDatabase.SaveMapFolders();
+                    LegacyDatabase.SaveGameDatabase();
                     PacketSender.SendMapListToAll();
                 }
             }
@@ -1437,7 +1437,7 @@ namespace Intersect.Server.Classes.Networking
                     break;
             }
             PacketSender.SendMapListToAll();
-            LegacyDatabase.SaveMapFolders();
+            LegacyDatabase.SaveGameDatabase();
             bf.Dispose();
         }
 

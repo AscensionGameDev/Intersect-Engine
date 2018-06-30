@@ -1325,33 +1325,15 @@ namespace Intersect.Server.Classes.Core
         //Map Folders
         private static void LoadMapFolders()
         {
-            var query = $"SELECT * from {MAP_LIST_TABLE};";
-            using (var cmd = sGameDbConnection.CreateCommand())
+            var mapFolders = sGameDb.MapFolders.FirstOrDefault();
+            if (mapFolders == null)
             {
-                cmd.CommandText = query;
-                using (var dataReader = sGameDbConnection.ExecuteReader(cmd))
-                {
-                    if (dataReader.HasRows)
-                    {
-                        while (dataReader.Read())
-                        {
-                            if (dataReader[MAP_LIST_DATA].GetType() != typeof(DBNull))
-                            {
-                                var data = (byte[]) dataReader[MAP_LIST_DATA];
-                                if (data.Length > 1)
-                                {
-                                    var myBuffer = new ByteBuffer();
-                                    myBuffer.WriteBytes(data);
-                                    MapList.GetList().Load(myBuffer, MapBase.Lookup, true, true);
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        InsertMapList();
-                    }
-                }
+                sGameDb.MapFolders.Add(MapList.GetList());
+                sGameDb.SaveChanges();
+            }
+            else
+            {
+                MapList.SetList(mapFolders);
             }
             foreach (var map in MapBase.Lookup)
             {
@@ -1360,20 +1342,8 @@ namespace Intersect.Server.Classes.Core
                     MapList.GetList().AddMap(map.Value.Index, MapBase.Lookup);
                 }
             }
-            SaveMapFolders();
+            SaveGameDatabase();
             PacketSender.SendMapListToAll();
-        }
-
-        public static void SaveMapFolders()
-        {
-            var query = "UPDATE " + MAP_LIST_TABLE + " set " + MAP_LIST_DATA + "=@" + MAP_LIST_DATA + ";";
-            using (var cmd = sGameDbConnection.CreateCommand())
-            {
-                cmd.CommandText = query;
-                cmd.Parameters.Add(new SqliteParameter("@" + MAP_LIST_DATA,
-                    MapList.GetList().Data(MapBase.Lookup)));
-                sGameDbConnection.ExecuteNonQuery(cmd);
-            }
         }
 
         //Time

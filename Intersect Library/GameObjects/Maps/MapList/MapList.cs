@@ -1,16 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Collections;
+using Intersect.GameObjects.Crafting;
+using Newtonsoft.Json;
 
 namespace Intersect.GameObjects.Maps.MapList
 {
     public class MapList
     {
+        //So EF will save this :P
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; protected set; }
         private static MapList sMapList = new MapList();
         private static List<MapListMap> sOrderedMaps = new List<MapListMap>();
-        public List<MapListItem> Items = new List<MapListItem>();
         private Random mRand = new Random();
 
+        [JsonIgnore]
+        [Column("FoldersBlob")]
+        public byte[] FoldersBlob
+        {
+            get => this.Data(MapBase.Lookup);
+            protected set
+            {
+                var bf = new ByteBuffer();
+                bf.WriteBytes(value);
+                this.Load(bf,MapBase.Lookup,true,true);
+            }
+        }
+        [NotMapped]
+        public List<MapListItem> Items = new List<MapListItem>();
+
+        public static void SetList(MapList list)
+        {
+            sMapList = list;
+        }
         public static MapList GetList()
         {
             return sMapList;

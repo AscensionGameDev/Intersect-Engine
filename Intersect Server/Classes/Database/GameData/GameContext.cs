@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
+using Intersect.GameObjects.Maps.MapList;
 using Intersect.Utilities;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,6 +27,9 @@ namespace Intersect.Server.Classes.Database.GameData
 
         //Items
         public DbSet<ItemBase> Items { get; set; }
+
+        //Maps
+        public DbSet<MapList> MapFolders { get; set; }
 
         //NPCs
         public DbSet<NpcBase> Npcs { get; set; }
