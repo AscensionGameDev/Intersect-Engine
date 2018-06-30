@@ -125,6 +125,11 @@ namespace Intersect.Server.Classes.Networking
                 byte[] mapData;
                 if (client.IsEditor)
                 {
+                    foreach (var id in map.EventIds)
+                    {
+                        var evt = EventBase.Get(id);
+                        if (evt != null) SendGameObject(client, evt);
+                    }
                     bf.WriteString(map.JsonData);
                     var tileData = map.GetTileData(false);
                     bf.WriteInteger(tileData.Length);

@@ -9,6 +9,8 @@ using Intersect.GameObjects.Maps.MapList;
 using Intersect.Utilities;
 using Microsoft.EntityFrameworkCore;
 using Intersect.GameObjects.Events;
+using Intersect.GameObjects.Maps;
+using Intersect.Server.Classes.Maps;
 
 namespace Intersect.Server.Classes.Database.GameData
 {
@@ -33,6 +35,7 @@ namespace Intersect.Server.Classes.Database.GameData
         public DbSet<ItemBase> Items { get; set; }
 
         //Maps
+        public DbSet<MapInstance> Maps { get; set; }
         public DbSet<MapList> MapFolders { get; set; }
 
         //NPCs

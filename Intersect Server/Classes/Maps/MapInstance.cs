@@ -27,52 +27,66 @@ namespace Intersect.Server.Classes.Maps
 
         //Does the map have a player on or nearby it?
         [JsonIgnore]
+        [NotMapped]
         public bool Active;
 
+        [NotMapped]
         private List<EntityInstance> mEntities = new List<EntityInstance>();
 
         [JsonIgnore] [NotMapped] public Dictionary<EventBase, EventInstance> GlobalEventInstances = new Dictionary<EventBase, EventInstance>();
-        [JsonIgnore] public List<MapItemSpawn> ItemRespawns = new List<MapItemSpawn>();
-        private Point[] mMapBlocks;
+        [JsonIgnore] [NotMapped] public List<MapItemSpawn> ItemRespawns = new List<MapItemSpawn>();
+        [NotMapped] private Point[] mMapBlocks;
 
         //Location of Map in the current grid
         [JsonIgnore]
+        [NotMapped]
         public int MapGrid;
 
         [JsonIgnore]
+        [NotMapped]
         public int MapGridX = -1;
         [JsonIgnore]
+        [NotMapped]
         public int MapGridY = -1;
         [JsonIgnore]
+        [NotMapped]
         public List<MapItem> MapItems = new List<MapItem>();
 
         //Projectiles
         [JsonIgnore]
+        [NotMapped]
         public List<Projectile> MapProjectiles = new List<Projectile>();
 
         private Point[] mNpcMapBlocks;
         [JsonIgnore]
+        [NotMapped]
         public Dictionary<NpcSpawn, MapNpcSpawn> NpcSpawnInstances = new Dictionary<NpcSpawn, MapNpcSpawn>();
         private List<Player> mPlayers = new List<Player>();
 
         [JsonIgnore]
+        [NotMapped]
         public Dictionary<ResourceSpawn, MapResourceSpawn> ResourceSpawnInstances =
             new Dictionary<ResourceSpawn, MapResourceSpawn>();
 
         //Temporary Values
         [JsonIgnore]
+        [NotMapped]
         public List<int> SurroundingMaps = new List<int>();
 
         [JsonIgnore]
+        [NotMapped]
         public long TileAccessTime;
         [JsonIgnore]
+        [NotMapped]
         public long LastUpdateTime = -1;
         [JsonIgnore]
+        [NotMapped]
         public long UpdateDelay = 100;
 
         //Init
         public MapInstance() : base(-1, false)
         {
+            Name = "New Map";
             Layers = null;
         }
 
@@ -166,28 +180,14 @@ namespace Intersect.Server.Classes.Maps
             //Else grab it (and maybe cache it)
             lock (GetMapLock())
             {
-                if (TileData != null)
+                if (TileData == null) TileData = new byte[Options.LayerCount * Options.MapWidth * Options.MapHeight * 13];
+                if (shouldCache)
                 {
-                    if (shouldCache)
-                    {
-                        TileAccessTime = Globals.System.GetTimeMs();
-                    }
-                    return TileData;
+                    TileAccessTime = Globals.System.GetTimeMs();
                 }
-                else
-                {
-                    if (shouldCache)
-                    {
-                        TileData = LegacyDatabase.GetMapTiles(Index);
-                        TileAccessTime = Globals.System.GetTimeMs();
-                        return TileData;
-                    }
-                    else
-                    {
-                        return LegacyDatabase.GetMapTiles(Index);
-                    }
-                }
+                return TileData;
             }
+            return null;
         }
 
         //Items & Resources
@@ -488,11 +488,12 @@ namespace Intersect.Server.Classes.Maps
         private void SpawnGlobalEvents()
         {
             GlobalEventInstances.Clear();
-            foreach (var evt in Events)
+            foreach (var id in EventIds)
             {
-                if (evt.Value.IsGlobal == 1)
+                var evt = EventBase.Get(id);
+                if (evt != null & evt.IsGlobal == 1)
                 {
-                    GlobalEventInstances.Add(evt.Value, new EventInstance(evt.Value, evt.Key, Index));
+                    GlobalEventInstances.Add(evt, new EventInstance(evt, evt.Index, Index));
                 }
             }
         }
@@ -621,7 +622,7 @@ namespace Intersect.Server.Classes.Maps
                 //See if we should dispose of tile data
                 if (TileAccessTime + 30000 < timeMs && TileData != null)
                 {
-                    TileData = null;
+                    //TileData = null;
                 }
                 if (!Active || CheckActive() == false || LastUpdateTime + UpdateDelay > timeMs)
                 {
@@ -841,7 +842,7 @@ namespace Intersect.Server.Classes.Maps
             if (side == -1 || side == (int) Directions.Down) Down = -1;
             if (side == -1 || side == (int) Directions.Left) Left = -1;
             if (side == -1 || side == (int) Directions.Right) Right = -1;
-            LegacyDatabase.SaveGameObject(this);
+            LegacyDatabase.SaveGameDatabase();
         }
 
         public bool TileBlocked(int x, int y)

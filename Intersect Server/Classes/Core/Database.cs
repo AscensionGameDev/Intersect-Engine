@@ -37,68 +37,12 @@ namespace Intersect.Server.Classes.Core
 {
     public static class LegacyDatabase
     {
-        public static List<GameObjectType> ReadyObjs = new List<GameObjectType> {
-        GameObjectType.Animation,
-        GameObjectType.CraftTables,
-        GameObjectType.Crafts,
-        GameObjectType.Class,
-        GameObjectType.Item,
-        GameObjectType.Npc,
-        GameObjectType.Projectile,
-        GameObjectType.Resource,
-        GameObjectType.Shop,
-        GameObjectType.Spell,
-        GameObjectType.PlayerSwitch,
-        GameObjectType.PlayerVariable,
-        GameObjectType.ServerSwitch,
-        GameObjectType.ServerVariable,
-        GameObjectType.Tileset,
-        GameObjectType.Time,
-        GameObjectType.CommonEvent,
-        GameObjectType.Quest};
-
-
         public const string DIRECTORY_BACKUPS = "resources/backups";
         private const int DbVersion = 12;
         private const string GameDbFilename = "resources/gamedata.db";
         private const string PlayersDbFilename = "resources/playerdata.db";
 
-        //Database Variables
-        private const string INFO_TABLE = "info";
-
         private const string DB_VERSION = "dbversion";
-
-        //Log Table Constants
-        private const string LOG_TABLE = "logs";
-
-        private const string LOG_ID = "id";
-        private const string LOG_TIME = "time";
-        private const string LOG_TYPE = "type";
-        private const string LOG_INFO = "info";
-
-        //GameObject Table Constants
-        private const string GAME_OBJECT_ID = "id";
-
-        private const string GAME_OBJECT_DELETED = "deleted";
-        private const string GAME_OBJECT_DATA = "data";
-
-        //Map Tiles Table
-        private const string MAP_TILES_TABLE = "map_tiles";
-        private const string MAP_TILES_MAP_ID = "map_id";
-        private const string MAP_TILES_DATA = "data";
-
-        //Map List Table Constants
-        private const string MAP_LIST_TABLE = "map_list";
-        private const string MAP_LIST_DATA = "data";
-
-        //Map Attributes Table Constants
-        private const string MAP_ATTRIBUTES_TABLE = "map_attributes";
-        private const string MAP_ATTRIBUTES_MAP_ID = "map_id";
-        private const string MAP_ATTRIBUTES_DATA = "data";
-
-        //Time of Day Table Constants
-        private const string TIME_TABLE = "time";
-        private const string TIME_DATA = "data";
 
         private static DatabaseConnection sGameDbConnection;
 
@@ -182,118 +126,6 @@ namespace Intersect.Server.Classes.Core
         private static void SetupGameDatabase(Object sender, EventArgs e)
         {
             sGameDbConnection = ((DatabaseConnection)sender);
-            CreateInfoTable(sGameDbConnection);
-            CreateMapTilesTable();
-            CreateMapAttributesTable();
-            CreateGameObjectTables();
-            CreateMapListTable();
-            CreateLogsTable(sGameDbConnection);
-        }
-
-        private static void CreateTable(TableDescriptor tableDescriptor, DatabaseConnection conn)
-        {
-            using (var command = conn?.CreateCommand())
-            {
-                Debug.Assert(command != null, "command != null");
-                command.CommandText = $"CREATE TABLE {tableDescriptor};";
-                conn.ExecuteNonQuery(command);
-            }
-        }
-
-        private static void CreateInfoTable(DatabaseConnection conn)
-        {
-            var columns = new List<ColumnDescriptor>()
-            {
-                new ColumnDescriptor(DB_VERSION, DataType.Integer)
-            };
-
-            CreateTable(new TableDescriptor(INFO_TABLE, columns),conn);
-
-            var cmd = $"INSERT into {INFO_TABLE} (" + DB_VERSION + ") VALUES (" + DbVersion + ");";
-            using (var createCommand = conn?.CreateCommand())
-            {
-                if (createCommand == null) return;
-                createCommand.CommandText = cmd;
-                conn.ExecuteNonQuery(createCommand);
-            }
-        }
-
-        private static void CreateLogsTable(DatabaseConnection conn)
-        {
-            var columns = new List<ColumnDescriptor>()
-            {
-                new ColumnDescriptor(LOG_ID, DataType.Integer) { PrimaryKey = true, Autoincrement = true },
-                new ColumnDescriptor(LOG_TIME, DataType.Text),
-                new ColumnDescriptor(LOG_TYPE, DataType.Text),
-                new ColumnDescriptor(LOG_INFO, DataType.Text)
-            };
-
-            CreateTable(new TableDescriptor(LOG_TABLE, columns), conn);
-        }
-
-        private static void CreateGameObjectTables()
-        {
-            foreach (var val in Enum.GetValues(typeof(GameObjectType)))
-            {
-                if ((GameObjectType) val != GameObjectType.Time)
-                    CreateGameObjectTable((GameObjectType) val);
-            }
-        }
-
-        private static void CreateGameObjectTable(GameObjectType gameObjectType)
-        {
-            var columns = new List<ColumnDescriptor>()
-            {
-                new ColumnDescriptor(GAME_OBJECT_ID, DataType.Integer) { PrimaryKey = true, Autoincrement = true },
-                new ColumnDescriptor(GAME_OBJECT_DELETED, DataType.Integer) { NotNull = true, Default = 0},
-                new ColumnDescriptor(GAME_OBJECT_DATA, DataType.Text) { NotNull = true }
-            };
-
-            CreateTable(new TableDescriptor(gameObjectType.GetTable(), columns),sGameDbConnection);
-        }
-
-        private static void CreateMapTilesTable()
-        {
-            var columns = new List<ColumnDescriptor>()
-            {
-                new ColumnDescriptor(MAP_TILES_MAP_ID, DataType.Integer) { Unique = true },
-                new ColumnDescriptor(MAP_TILES_DATA) { NotNull = true }
-            };
-
-            CreateTable(new TableDescriptor(MAP_TILES_TABLE, columns),sGameDbConnection);
-        }
-
-        private static void CreateMapListTable()
-        {
-            var columns = new List<ColumnDescriptor>()
-            {
-                new ColumnDescriptor(MAP_LIST_DATA) { NotNull = true }
-            };
-
-            CreateTable(new TableDescriptor(MAP_LIST_TABLE, columns),sGameDbConnection);
-            InsertMapList();
-        }
-
-        private static void InsertMapList()
-        {
-            var cmd = $"INSERT into {MAP_LIST_TABLE} (" + MAP_LIST_DATA + ") VALUES (@" + MAP_LIST_DATA + ");";
-            using (var createCommand = sGameDbConnection?.CreateCommand())
-            {
-                createCommand.Parameters.Add(new SqliteParameter("@" + MAP_LIST_DATA, new byte[1]));
-                createCommand.CommandText = cmd;
-                sGameDbConnection.ExecuteNonQuery(createCommand);
-            }
-        }
-
-        private static void CreateMapAttributesTable()
-        {
-            var columns = new List<ColumnDescriptor>()
-            {
-                new ColumnDescriptor(MAP_ATTRIBUTES_MAP_ID, DataType.Integer) { Unique = true },
-                new ColumnDescriptor(MAP_ATTRIBUTES_DATA) { NotNull = true }
-            };
-
-            CreateTable(new TableDescriptor(MAP_ATTRIBUTES_TABLE, columns), sGameDbConnection);
         }
 
         //Players General
@@ -582,93 +414,9 @@ namespace Intersect.Server.Classes.Core
             }
         }
 
-        private static void LoadGameObject(GameObjectType type, int index, string json)
+        private static void LoadGameObjects(GameObjectType gameObjectType)
         {
-            JObject jObj;
-            jObj = JObject.Parse(json);
-            jObj.Add("Index", index);
-
-            switch (type)
-            {
-                case GameObjectType.Class:
-                    var cls = JsonConvert.DeserializeObject<ClassBase>(jObj.ToString());
-                    ClassBase.Lookup.Set(index, cls);
-                    break;
-                case GameObjectType.Item:
-                    var itm = JsonConvert.DeserializeObject<ItemBase>(jObj.ToString());
-                    ItemBase.Lookup.Set(index, itm);
-                    break;
-                case GameObjectType.Npc:
-                    var npc = JsonConvert.DeserializeObject<NpcBase>(jObj.ToString());
-                    NpcBase.Lookup.Set(index, npc);
-                    break;
-                case GameObjectType.Projectile:
-                    var proj = JsonConvert.DeserializeObject<ProjectileBase>(jObj.ToString());
-                    ProjectileBase.Lookup.Set(index, proj);
-                    break;
-                case GameObjectType.Quest:
-                    var qst = JsonConvert.DeserializeObject<QuestBase>(jObj.ToString());
-                    QuestBase.Lookup.Set(index, qst);
-                    break;
-                case GameObjectType.Resource:
-                    var res = JsonConvert.DeserializeObject<ResourceBase>(jObj.ToString());
-                    ResourceBase.Lookup.Set(index, res);
-                    break;
-                case GameObjectType.Shop:
-                    var shp = JsonConvert.DeserializeObject<ShopBase>(jObj.ToString());
-                    ShopBase.Lookup.Set(index, shp);
-                    break;
-                case GameObjectType.Spell:
-                    var spl = JsonConvert.DeserializeObject<SpellBase>(jObj.ToString());
-                    SpellBase.Lookup.Set(index, spl);
-                    break;
-                case GameObjectType.CraftTables:
-                    var cftble = JsonConvert.DeserializeObject<CraftingTableBase>(jObj.ToString());
-                    CraftingTableBase.Lookup.Set(index, cftble);
-                    break;
-                case GameObjectType.Crafts:
-                    var cft = JsonConvert.DeserializeObject<CraftBase>(jObj.ToString());
-                    CraftBase.Lookup.Set(index, cft);
-                    break;
-                case GameObjectType.Map:
-                    var map = JsonConvert.DeserializeObject<MapInstance>(jObj.ToString());
-                    MapInstance.Lookup.Set(index, map);
-                    GetMapAttributes(map);
-                    map.Initialize();
-                    break;
-                case GameObjectType.CommonEvent:
-                    var evt = JsonConvert.DeserializeObject<EventBase>(jObj.ToString());
-                    EventBase.Lookup.Set(index, evt);
-                    break;
-                case GameObjectType.PlayerSwitch:
-                    var pswitch = JsonConvert.DeserializeObject<PlayerSwitchBase>(jObj.ToString());
-                    PlayerSwitchBase.Lookup.Set(index, pswitch);
-                    break;
-                case GameObjectType.PlayerVariable:
-                    var pvar = JsonConvert.DeserializeObject<PlayerVariableBase>(jObj.ToString());
-                    PlayerVariableBase.Lookup.Set(index, pvar);
-                    break;
-                case GameObjectType.ServerSwitch:
-                    var sswitch = JsonConvert.DeserializeObject<ServerSwitchBase>(jObj.ToString());
-                    ServerSwitchBase.Lookup.Set(index, sswitch);
-                    break;
-                case GameObjectType.ServerVariable:
-                    var svar = JsonConvert.DeserializeObject<ServerVariableBase>(jObj.ToString());
-                    ServerVariableBase.Lookup.Set(index, svar);
-                    break;
-                case GameObjectType.Tileset:
-                    var tset = JsonConvert.DeserializeObject<TilesetBase>(jObj.ToString());
-                    TilesetBase.Lookup.Set(index, tset);
-                    break;
-                case GameObjectType.Time:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
-            }
-        }
-
-        private static void LoadAllGameObjects1(GameObjectType gameObjectType)
-        {
+            ClearGameObjects(gameObjectType);
             switch (gameObjectType)
             {
                 case GameObjectType.Animation:
@@ -749,6 +497,11 @@ namespace Intersect.Server.Classes.Core
                     }
                     break;
                 case GameObjectType.Map:
+                    foreach (var map in sGameDb.Maps)
+                    {
+                        MapInstance.Lookup.Set(map.Id, map);
+                        MapInstance.Lookup.Set(map.Index, map);
+                    }
                     break;
                 case GameObjectType.CommonEvent:
                     foreach (var evt in sGameDb.Events)
@@ -799,108 +552,18 @@ namespace Intersect.Server.Classes.Core
             }
         }
 
-        private static void LoadGameObjects(GameObjectType gameObjectType)
+        public static IDatabaseObject AddGameObject(GameObjectType gameObjectType, int predefinedid = -1)
         {
-            ClearGameObjects(gameObjectType);
-            if (ReadyObjs.Contains(gameObjectType))
-            {
-                LoadAllGameObjects1(gameObjectType);
-                return;
-            }
-            var nullIssues = "";
-            var tableName = gameObjectType.GetTable();
-            
-            var query = $"SELECT * from {tableName} WHERE " + GAME_OBJECT_DELETED + "=@" + GAME_OBJECT_DELETED +
-                        ";";
-            using (var cmd = sGameDbConnection.CreateCommand())
-            {
-                cmd.CommandText = query;
-                cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DELETED, 0.ToString()));
-                using (var dataReader = sGameDbConnection.ExecuteReader(cmd))
-                {
-                    while (dataReader.Read())
-                    {
-                        var index = Convert.ToInt32(dataReader[GAME_OBJECT_ID]);
-                        if (dataReader[GAME_OBJECT_DATA].GetType() != typeof(DBNull))
-                        {
-                            var json = (string) dataReader[GAME_OBJECT_DATA];
-                            if (!string.IsNullOrEmpty(json))
-                            {
-                                LoadGameObject(gameObjectType, index, json);
-                            }
-                        }
-                        else
-                        {
-                            nullIssues += Strings.Database.nullfound.ToString( index, tableName) + Environment.NewLine;
-                        }
-                    }
-                }
-            }
-            if (nullIssues != "")
-            {
-                throw (new Exception(Strings.Database.nullerror + Environment.NewLine + nullIssues));
-            }
-        }
-
-        public static void SaveGameObject(IDatabaseObject gameObject)
-        {
-            if (ReadyObjs.Contains(gameObject.Type))
-            {
-                sGameDb.SaveChanges();
-                return;
-            }
-            if (gameObject == null)
-            {
-                Log.Error("Attempted to persist null game object to the Database.");
-            }
-
-            var insertQuery = "UPDATE " + gameObject.DatabaseTable + " set " + GAME_OBJECT_DELETED + "=@" +
-                              GAME_OBJECT_DELETED + "," + GAME_OBJECT_DATA + "=@" + GAME_OBJECT_DATA + " WHERE " +
-                              GAME_OBJECT_ID + "=@" + GAME_OBJECT_ID + ";";
-            using (var cmd = sGameDbConnection.CreateCommand())
-            {
-                cmd.CommandText = insertQuery;
-                cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_ID, gameObject.Index));
-                cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DELETED, "0"));
-                if (!string.IsNullOrEmpty(gameObject.JsonData))
-                {
-                    cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DATA, gameObject.JsonData));
-                    try
-                    {
-                        var returnVal = sGameDbConnection.ExecuteNonQuery(cmd);
-                        if (returnVal <= 0)
-                        {
-                            throw new Exception("ExecuteNonQuery updating game object failed!");
-                        }
-                    }
-                    catch (Exception exception)
-                    {
-                        Log.Error(exception);
-                        throw exception;
-                    }
-                }
-            }
-
-            if (gameObject.Type != GameObjectType.Map) return;
-            var map = (MapBase) gameObject;
-            SaveMapAttributes(map.Index, map.AttributesData());
-            if (map.TileData != null)
-            {
-                SaveMapTiles(map.Index, map.TileData);
-            }
-        }
-
-        public static IDatabaseObject AddGameObject(GameObjectType gameObjectType)
-        {
-            var insertQuery = $"INSERT into {gameObjectType.GetTable()} (" + GAME_OBJECT_DATA + ") VALUES (@" +
-                              GAME_OBJECT_DATA + ")" + "; SELECT last_insert_rowid();";
+            var insertQuery = $"INSERT into {gameObjectType.GetTable()} (" + "data" + ") VALUES (@" +
+                              "data" + ")" + "; SELECT last_insert_rowid();";
             var index = -1;
             using (var cmd = sGameDbConnection.CreateCommand())
             {
                 cmd.CommandText = insertQuery;
-                cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DATA, new byte[1]));
+                cmd.Parameters.Add(new SqliteParameter("@" + "data", new byte[1]));
                 index = (int) ((long) sGameDbConnection.ExecuteScalar(cmd));
             }
+            if (predefinedid > -1) index = predefinedid;
             if (index > -1)
             {
                 IDatabaseObject dbObj = null;
@@ -976,6 +639,7 @@ namespace Intersect.Server.Classes.Core
                         break;
                     case GameObjectType.Map:
                         var objw = new MapInstance(index);
+                        sGameDb.Maps.Add(objw);
                         dbObj = objw;
                         MapInstance.Lookup.Set(index, objw);
                         break;
@@ -1020,7 +684,6 @@ namespace Intersect.Server.Classes.Core
                     default:
                         throw new ArgumentOutOfRangeException(nameof(gameObjectType), gameObjectType, null);
                 }
-                SaveGameObject(dbObj);
                 return dbObj;
             }
 
@@ -1071,6 +734,7 @@ namespace Intersect.Server.Classes.Core
                     sGameDb.Crafts.Remove((CraftBase)gameObject);
                     return;
                 case GameObjectType.Map:
+                    sGameDb.Maps.Remove((MapInstance) gameObject);
                     return;
                 case GameObjectType.CommonEvent:
                     sGameDb.Events.Remove((EventBase) gameObject);
@@ -1092,120 +756,6 @@ namespace Intersect.Server.Classes.Core
                     return;
                 case GameObjectType.Time:
                     return;
-            }
-            var insertQuery = "UPDATE " + gameObject.DatabaseTable + " set " + GAME_OBJECT_DELETED + "=@" +
-                              GAME_OBJECT_DELETED + " WHERE " +
-                              GAME_OBJECT_ID + "=@" + GAME_OBJECT_ID + ";";
-            using (var cmd = sGameDbConnection.CreateCommand())
-            {
-                cmd.CommandText = insertQuery;
-                cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_ID, gameObject.Index));
-                cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DELETED, 1.ToString()));
-                cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DATA, gameObject.JsonData));
-                sGameDbConnection.ExecuteNonQuery(cmd);
-            }
-            gameObject.Delete();
-        }
-
-        //Map Tiles Saving/Loading
-        public static byte[] GetMapTiles(int index)
-        {
-            var nullIssues = "";
-            var query = $"SELECT * from {MAP_TILES_TABLE} WHERE " + MAP_TILES_MAP_ID + "=@" + MAP_TILES_MAP_ID +
-                        ";";
-            using (var cmd = sGameDbConnection.CreateCommand())
-            {
-                cmd.CommandText = query;
-                cmd.Parameters.Add(new SqliteParameter("@" + MAP_TILES_MAP_ID, index));
-                using (var dataReader = sGameDbConnection.ExecuteReader(cmd))
-                {
-                    if (dataReader.HasRows && dataReader.Read())
-                    {
-                        if (dataReader[MAP_TILES_DATA].GetType() != typeof(DBNull))
-                        {
-                            return (byte[]) dataReader[MAP_TILES_DATA];
-                        }
-                        else
-                        {
-                            nullIssues += Strings.Database.nullfound.ToString( index, MAP_TILES_TABLE) +
-                                          Environment.NewLine;
-                        }
-                    }
-                    else
-                    {
-                        return new byte[Options.LayerCount * Options.MapWidth * Options.MapHeight * 13];
-                    }
-                }
-            }
-            if (nullIssues != "")
-            {
-                throw (new Exception(Strings.Database.nullerror + Environment.NewLine + nullIssues));
-            }
-            return null;
-        }
-
-        //Map Tiles Saving/Loading
-        public static void GetMapAttributes(MapInstance map)
-        {
-            var nullIssues = "";
-            var query = $"SELECT * from {MAP_ATTRIBUTES_TABLE} WHERE " + MAP_ATTRIBUTES_MAP_ID + "=@" + MAP_ATTRIBUTES_MAP_ID +
-                        ";";
-            using (var cmd = sGameDbConnection.CreateCommand())
-            {
-                cmd.CommandText = query;
-                cmd.Parameters.Add(new SqliteParameter("@" + MAP_ATTRIBUTES_MAP_ID, map.Index));
-                using (var dataReader = sGameDbConnection.ExecuteReader(cmd))
-                {
-                    if (dataReader.HasRows && dataReader.Read())
-                    {
-                        if (dataReader[MAP_ATTRIBUTES_DATA].GetType() != typeof(DBNull))
-                        {
-                            map.LoadAttributes((byte[]) dataReader[MAP_ATTRIBUTES_DATA]);
-                        }
-                        else
-                        {
-                            nullIssues += Strings.Database.nullfound.ToString(map.Index, MAP_ATTRIBUTES_TABLE) +
-                                          Environment.NewLine;
-                        }
-                    }
-                    else
-                    {
-                        //Gotta calculate :/
-                        map.LoadAttributes(new byte[Options.MapWidth * Options.MapHeight * 4]);
-                    }
-                }
-            }
-            if (nullIssues != "")
-            {
-                throw (new Exception(Strings.Database.nullerror + Environment.NewLine + nullIssues));
-            }
-        }
-
-        public static void SaveMapTiles(int index, byte[] data)
-        {
-            if (data == null) return;
-            var query = "INSERT OR REPLACE into " + MAP_TILES_TABLE + " (" + MAP_TILES_MAP_ID + "," + MAP_TILES_DATA +
-                        ")" + " VALUES " + " (@" + MAP_TILES_MAP_ID + ",@" + MAP_TILES_DATA + ")";
-            using (var cmd = sGameDbConnection.CreateCommand())
-            {
-                cmd.CommandText = query;
-                cmd.Parameters.Add(new SqliteParameter("@" + MAP_TILES_MAP_ID, index));
-                cmd.Parameters.Add(new SqliteParameter("@" + MAP_TILES_DATA, data));
-                sGameDbConnection.ExecuteNonQuery(cmd);
-            }
-        }
-
-        public static void SaveMapAttributes(int index, byte[] data)
-        {
-            if (data == null) return;
-            var query = "INSERT OR REPLACE into " + MAP_ATTRIBUTES_TABLE + " (" + MAP_ATTRIBUTES_MAP_ID + "," + MAP_ATTRIBUTES_DATA +
-                        ")" + " VALUES " + " (@" + MAP_ATTRIBUTES_MAP_ID + ",@" + MAP_ATTRIBUTES_DATA + ")";
-            using (var cmd = sGameDbConnection.CreateCommand())
-            {
-                cmd.CommandText = query;
-                cmd.Parameters.Add(new SqliteParameter("@" + MAP_ATTRIBUTES_MAP_ID, index));
-                cmd.Parameters.Add(new SqliteParameter("@" + MAP_ATTRIBUTES_DATA, data));
-                sGameDbConnection.ExecuteNonQuery(cmd);
             }
         }
 
@@ -1250,7 +800,7 @@ namespace Intersect.Server.Classes.Core
                 {
                     cls.BaseStat[i] = 20;
                 }
-                SaveGameObject(cls);
+                SaveGameDatabase();
             }
         }
 
@@ -1288,7 +838,7 @@ namespace Intersect.Server.Classes.Core
             }
             if (updated)
             {
-                SaveGameObject(map);
+                sGameDb.SaveChanges();
                 PacketSender.SendMapToEditors(map.Index);
             }
         }

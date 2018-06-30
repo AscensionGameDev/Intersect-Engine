@@ -291,24 +291,30 @@ namespace Intersect.Server.Classes.Entities
                         //Check to see if we can spawn events, if already spawned.. update them.
                         lock (mEventLock)
                         {
-                            foreach (var mapEvent in map.Events.Values)
+                            foreach (var evtId in map.EventIds)
                             {
-                                //Look for event
-                                var foundEvent = EventExists(map.Index, mapEvent.SpawnX, mapEvent.SpawnY);
-                                if (foundEvent == null)
+                                var mapEvent = EventBase.Get(evtId);
+                                if (mapEvent != null)
                                 {
-                                    var tmpEvent = new EventInstance(mEventCounter++, MyClient, mapEvent, map.Index)
+                                    //Look for event
+                                    var foundEvent = EventExists(map.Index, mapEvent.SpawnX, mapEvent.SpawnY);
+                                    if (foundEvent == null)
                                     {
-                                        IsGlobal = mapEvent.IsGlobal == 1,
-                                        MapNum = map.Index,
-                                        SpawnX = mapEvent.SpawnX,
-                                        SpawnY = mapEvent.SpawnY
-                                    };
-                                    EventLookup.AddOrUpdate(new Tuple<int, int, int>(map.Index, mapEvent.SpawnX, mapEvent.SpawnY), tmpEvent, (key, oldValue) => tmpEvent);
-                                }
-                                else
-                                {
-                                    foundEvent.Update(timeMs);
+                                        var tmpEvent = new EventInstance(mEventCounter++, MyClient, mapEvent, map.Index)
+                                        {
+                                            IsGlobal = mapEvent.IsGlobal == 1,
+                                            MapNum = map.Index,
+                                            SpawnX = mapEvent.SpawnX,
+                                            SpawnY = mapEvent.SpawnY
+                                        };
+                                        EventLookup.AddOrUpdate(
+                                            new Tuple<int, int, int>(map.Index, mapEvent.SpawnX, mapEvent.SpawnY),
+                                            tmpEvent, (key, oldValue) => tmpEvent);
+                                    }
+                                    else
+                                    {
+                                        foundEvent.Update(timeMs);
+                                    }
                                 }
                             }
                         }

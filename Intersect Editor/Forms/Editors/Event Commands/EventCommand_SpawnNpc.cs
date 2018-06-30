@@ -114,7 +114,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
                     if (!mEditingEvent.CommonEvent)
                     {
-                        foreach (var evt in mCurrentMap.Events)
+                        foreach (var evt in mCurrentMap.LocalEvents)
                         {
                             cmbEntities.Items.Add(evt.Key == mEditingEvent.Index
                                 ? Strings.EventSpawnNpc.This + " "
@@ -167,7 +167,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                     }
                     else
                     {
-                        mMyCommand.Ints[2] = mCurrentMap.Events.Keys.ToList()[cmbEntities.SelectedIndex - 1];
+                        mMyCommand.Ints[2] = mCurrentMap.LocalEvents.Keys.ToList()[cmbEntities.SelectedIndex - 1];
                     }
                     mMyCommand.Ints[3] = mSpawnX;
                     mMyCommand.Ints[4] = mSpawnY;

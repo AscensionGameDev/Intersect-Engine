@@ -67,7 +67,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                     cmbTarget.Items.Add(Strings.EventMoveRoute.player);
                     if (mEditingCommand.Route.Target == -1) cmbTarget.SelectedIndex = 0;
                 }
-                foreach (var evt in mCurrentMap.Events)
+                foreach (var evt in mCurrentMap.LocalEvents)
                 {
                     cmbTarget.Items.Add(evt.Key == mEditingEvent.Index
                         ? Strings.EventMoveRoute.thisevent.ToString()
@@ -208,7 +208,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                     }
                     else
                     {
-                        mEditingRoute.Target = mCurrentMap.Events.Keys.ToList()[cmbTarget.SelectedIndex - 1];
+                        mEditingRoute.Target = mCurrentMap.LocalEvents.Keys.ToList()[cmbTarget.SelectedIndex - 1];
                     }
                 }
                 mEventEditor.FinishCommandEdit(true);

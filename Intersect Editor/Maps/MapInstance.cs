@@ -67,6 +67,14 @@ namespace Intersect.Editor.Maps
                 }
                 Autotiles = new MapAutotiles(this);
                 InitAutotiles();
+
+                //Initialize Local Events
+                LocalEvents.Clear();
+                foreach (var id in EventIds)
+                {
+                    var evt = EventBase.Get(id);
+                    LocalEvents.Add(id,evt);
+                }
             }
         }
 
@@ -303,8 +311,8 @@ namespace Intersect.Editor.Maps
 
         public EventBase FindEventAt(int x, int y)
         {
-            if (Events.Count <= 0) return null;
-            foreach (var t in Events.Values)
+            if (LocalEvents.Count <= 0) return null;
+            foreach (var t in LocalEvents.Values)
             {
                 if (t.SpawnX == x && t.SpawnY == y)
                 {

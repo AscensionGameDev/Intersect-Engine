@@ -653,7 +653,7 @@ namespace Intersect.Server.Classes.Entities
                         if (serverSwitch != null)
                         {
                             serverSwitch.Value = Convert.ToBoolean(command.Ints[2]);
-                            LegacyDatabase.SaveGameObject(serverSwitch);
+                            LegacyDatabase.SaveGameDatabase();
                         }
                     }
                     CallStack.Peek().CommandIndex++;
@@ -698,7 +698,7 @@ namespace Intersect.Server.Classes.Entities
                                     break;
                             }
                         }
-                        LegacyDatabase.SaveGameObject(serverVarible);
+                        LegacyDatabase.SaveGameDatabase();
                     }
 
                     CallStack.Peek().CommandIndex++;

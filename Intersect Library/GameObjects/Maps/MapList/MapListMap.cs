@@ -22,7 +22,7 @@ namespace Intersect.GameObjects.Maps.MapList
         {
             base.GetData(myBuffer);
             myBuffer.WriteInteger(MapNum);
-            myBuffer.WriteString(gameMaps[MapNum].Name);
+            myBuffer.WriteString(gameMaps[MapNum]?.Name ?? "Deleted");
         }
 
         public bool Load(ByteBuffer myBuffer, DatabaseObjectLookup gameMaps, bool isServer = true)

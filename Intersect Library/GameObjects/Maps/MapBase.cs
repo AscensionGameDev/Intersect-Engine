@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Collections;
 using Intersect.Enums;
 using Intersect.GameObjects.Events;
@@ -13,10 +14,12 @@ namespace Intersect.GameObjects.Maps
     {
         //SyncLock
         [JsonIgnore]
+        [NotMapped]
         protected object mMapLock = new object();
 
         //Client/Editor Only
         [JsonIgnore]
+        [NotMapped]
         public MapAutotiles Autotiles;
 
         //Server/Editor Only
@@ -24,21 +27,130 @@ namespace Intersect.GameObjects.Maps
 
         //Temporary Values
         [JsonIgnore]
+        [NotMapped]
         public bool IsClient;
 
         //Core Data
         [JsonIgnore]
+        [NotMapped]
         public TileArray[] Layers = new TileArray[Options.LayerCount];
 
         //For server only
         [JsonIgnore]
-        public byte[] TileData;
+        public byte[] TileData { get; set; }
 
+        public int Up { get; set; } = -1;
+        public int Down { get; set; } = -1;
+        public int Left { get; set; } = -1;
+        public int Right { get; set; } = -1;
+        public int Revision { get; set; }
+
+        [Column("Attributes")]
+        [JsonIgnore]
+        public byte[] AttributeData
+        {
+            get => AttributesData();
+            set => LoadAttributes(value);
+        }
+        [NotMapped]
+        [JsonIgnore]
+        public Attribute[,] Attributes { get; set; } = new Attribute[Options.MapWidth, Options.MapHeight];
+
+        [Column("Lights")]
+        [JsonIgnore]
+        public string LightsJson
+        {
+            get => JsonConvert.SerializeObject(Lights);
+            set => Lights = JsonConvert.DeserializeObject<List<LightBase>>(value);
+        }
+        [NotMapped]
+        public List<LightBase> Lights { get; set; } = new List<LightBase>();
+
+        [Column("Events")]
+        [JsonIgnore]
+        public string EventIdsJson
+        {
+            get => JsonConvert.SerializeObject(EventIds);
+            set => EventIds = JsonConvert.DeserializeObject<List<int>>(value);
+        }
+        [NotMapped]
+        public List<int> EventIds = new List<int>();
+
+        [NotMapped]
+        public Dictionary<int,EventBase> LocalEvents = new Dictionary<int, EventBase>();
+
+        [Column("NpcSpawns")]
+        [JsonIgnore]
+        public string NpcSpawnsJson
+        {
+            get => JsonConvert.SerializeObject(Spawns);
+            set => Spawns = JsonConvert.DeserializeObject<List<NpcSpawn>>(value);
+        }
+        [NotMapped]
+        public List<NpcSpawn> Spawns { get; set; } = new List<NpcSpawn>();
+
+        [Column("ResourceSpawns")]
+        [JsonIgnore]
+        public string ResourceSpawnsJson
+        {
+            get => JsonConvert.SerializeObject(ResourceSpawns);
+            set => ResourceSpawns = JsonConvert.DeserializeObject<List<ResourceSpawn>>(value);
+        }
+        [NotMapped]
+        public List<ResourceSpawn> ResourceSpawns { get; set; } = new List<ResourceSpawn>();
+
+        //Properties
+        public string Music { get; set; } = null;
+        public string Sound { get; set; } = null;
+        public bool IsIndoors { get; set; }
+        public string Panorama { get; set; } = null;
+        public string Fog { get; set; } = null;
+        public int FogXSpeed { get; set; }
+        public int FogYSpeed { get; set; }
+        public int FogTransparency { get; set; }
+        public int RHue { get; set; }
+        public int GHue { get; set; }
+        public int BHue { get; set; }
+        public int AHue { get; set; }
+        public int Brightness { get; set; } = 100;
+        public MapZones ZoneType { get; set; } = MapZones.Normal;
+        public int PlayerLightSize { get; set; } = 300;
+        public byte PlayerLightIntensity { get; set; } = 255;
+        public float PlayerLightExpand { get; set; }
+
+        [Column("PlayerLightColor")]
+        [JsonIgnore]
+        public string PlayerLightColorJson
+        {
+            get => JsonConvert.SerializeObject(PlayerLightColor);
+            set => PlayerLightColor = JsonConvert.DeserializeObject<Color>(value);
+        }
+        [NotMapped]
+        public Color PlayerLightColor { get; set; } = Color.White;
+        public string OverlayGraphic { get; set; } = null;
+
+        //Weather
+        public int Weather { get; set; } = -1;
+        public int WeatherXSpeed { get; set;}
+        public int WeatherYSpeed { get; set; }
+        public int WeatherIntensity { get; set; }
+        
+        [NotMapped]
+        [JsonIgnore]
+        public object MapLock => mMapLock;
+        
         [JsonConstructor]
         public MapBase(int index, bool isClient) : base(index)
         {
             Name = "New Map";
             IsClient = isClient;
+        }
+
+        //EF Constructor
+        public MapBase()
+        {
+            Name = "New Map";
+            IsClient = false;
         }
 
         public MapBase(MapBase mapcopy) : base(mapcopy.Index)
@@ -98,56 +210,11 @@ namespace Intersect.GameObjects.Maps
                         Lights.Add(new LightBase(mapcopy.Lights[i]));
                     }
                     EventIndex = mapcopy.EventIndex;
-                    foreach (var evt in mapcopy.Events)
-                    {
-                        Events.Add(evt.Key, new EventBase(evt.Key, evt.Value.JsonData));
-                    }
+                    EventIds.Clear();
+                    EventIds.AddRange(mapcopy.EventIds.ToArray());
                 }
             }
         }
-
-        public int Up { get; set; } = -1;
-        public int Down { get; set; } = -1;
-        public int Left { get; set; } = -1;
-        public int Right { get; set; } = -1;
-        public int Revision { get; set; }
-        [JsonIgnore]
-        public Attribute[,] Attributes { get; set; } = new Attribute[Options.MapWidth, Options.MapHeight];
-        public List<LightBase> Lights { get; set; } = new List<LightBase>();
-        public Dictionary<int, EventBase> Events { get; set; } = new Dictionary<int, EventBase>();
-        public List<NpcSpawn> Spawns { get; set; } = new List<NpcSpawn>();
-        public List<ResourceSpawn> ResourceSpawns { get; set; } = new List<ResourceSpawn>();
-
-        //Properties
-        public string Music { get; set; } = null;
-
-        public string Sound { get; set; } = null;
-        public bool IsIndoors { get; set; }
-        public string Panorama { get; set; } = null;
-        public string Fog { get; set; } = null;
-        public int FogXSpeed { get; set; }
-        public int FogYSpeed { get; set; }
-        public int FogTransparency { get; set; }
-        public int RHue { get; set; }
-        public int GHue { get; set; }
-        public int BHue { get; set; }
-        public int AHue { get; set; }
-        public int Brightness { get; set; } = 100;
-        public MapZones ZoneType { get; set; } = MapZones.Normal;
-        public int PlayerLightSize { get; set; } = 300;
-        public byte PlayerLightIntensity { get; set; } = 255;
-        public float PlayerLightExpand { get; set; }
-        public Color PlayerLightColor { get; set; } = Color.White;
-        public string OverlayGraphic { get; set; } = null;
-
-        //Weather
-        public int Weather { get; set; } = -1;
-        public int WeatherXSpeed { get; set;}
-        public int WeatherYSpeed { get; set; }
-        public int WeatherIntensity { get; set; }
-        
-
-        public object MapLock => mMapLock;
 
         public void LoadAttributes(byte[] data)
         {

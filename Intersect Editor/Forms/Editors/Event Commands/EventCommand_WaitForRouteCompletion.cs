@@ -30,7 +30,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             {
                 cmbEntities.Items.Add(Strings.EventWaitForRouteCompletion.player);
                 if (mEditingCommand.Ints[0] == -1) cmbEntities.SelectedIndex = -1;
-                foreach (var evt in mCurrentMap.Events)
+                foreach (var evt in mCurrentMap.LocalEvents)
                 {
                     cmbEntities.Items.Add(evt.Key == mEditingEvent.Index
                         ? Strings.EventWaitForRouteCompletion.This + " "
@@ -65,7 +65,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                 }
                 else
                 {
-                    mEditingCommand.Ints[0] = mCurrentMap.Events.Keys.ToList()[cmbEntities.SelectedIndex - 1];
+                    mEditingCommand.Ints[0] = mCurrentMap.LocalEvents.Keys.ToList()[cmbEntities.SelectedIndex - 1];
                 }
             }
             mEventEditor.FinishCommandEdit();
