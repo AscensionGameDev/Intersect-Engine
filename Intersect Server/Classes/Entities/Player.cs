@@ -1086,12 +1086,12 @@ namespace Intersect.Server.Classes.Entities
                         if (equipped) return;
                         break;
                     case ItemTypes.Spell:
-                        if (itemBase.Data1 <= -1) return;
-                        if (!TryTeachSpell(new Spell(itemBase.Data1))) return;
+                        if (itemBase.SpellIndex <= -1) return;
+                        if (!TryTeachSpell(new Spell(itemBase.SpellIndex))) return;
                         TakeItemsBySlot(slot, 1);
                         break;
                     case ItemTypes.Event:
-                        var evt = EventBase.Lookup.Get<EventBase>(itemBase.Data1);
+                        var evt = EventBase.Lookup.Get<EventBase>(itemBase.EventIndex);
                         if (evt == null) return;
                         if (!StartCommonEvent(evt)) return;
                         TakeItemsBySlot(slot, 1);

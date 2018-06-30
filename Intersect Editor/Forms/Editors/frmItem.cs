@@ -344,7 +344,8 @@ namespace Intersect.Editor.Forms.Editors
                 mEditorItem.Damage = 0;
                 mEditorItem.Tool = -1;
 
-                mEditorItem.Data1 = 0;
+                mEditorItem.SpellIndex = 0;
+                mEditorItem.EventIndex = 0;
             }
 
             if (cmbType.SelectedIndex == (int) ItemTypes.Consumable)
@@ -355,13 +356,12 @@ namespace Intersect.Editor.Forms.Editors
             }
             else if (cmbType.SelectedIndex == (int) ItemTypes.Spell)
             {
-                cmbTeachSpell.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Spell, mEditorItem.Data1) + 1;
+                cmbTeachSpell.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Spell, mEditorItem.SpellIndex) + 1;
                 grpSpell.Visible = true;
             }
             else if (cmbType.SelectedIndex == (int) ItemTypes.Event)
             {
-                cmbEvent.SelectedIndex = Database.GameObjectListIndex(GameObjectType.CommonEvent, mEditorItem.Data1) +
-                                         1;
+                cmbEvent.SelectedIndex = Database.GameObjectListIndex(GameObjectType.CommonEvent, mEditorItem.EventIndex) + 1;
                 grpEvent.Visible = true;
             }
             else if (cmbType.SelectedIndex == (int) ItemTypes.Equipment)
@@ -623,12 +623,12 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbEvent_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.Data1 = Database.GameObjectIdFromList(GameObjectType.CommonEvent, cmbEvent.SelectedIndex - 1);
+            mEditorItem.EventIndex = Database.GameObjectIdFromList(GameObjectType.CommonEvent, cmbEvent.SelectedIndex - 1);
         }
 
         private void cmbTeachSpell_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.Data1 = Database.GameObjectIdFromList(GameObjectType.Spell, cmbTeachSpell.SelectedIndex - 1);
+            mEditorItem.SpellIndex = Database.GameObjectIdFromList(GameObjectType.Spell, cmbTeachSpell.SelectedIndex - 1);
         }
 
         private void nudPrice_ValueChanged(object sender, EventArgs e)

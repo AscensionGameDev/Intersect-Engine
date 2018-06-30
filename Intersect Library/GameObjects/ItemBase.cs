@@ -36,14 +36,16 @@ namespace Intersect.GameObjects
         public int DamageType { get; set; }
 
         public ConsumableData Consumable { get; set; }
-        public EffectData Effect { get; set; }
 
         public int EquipmentSlot { get; set; }
+        public bool TwoHanded { get; set; }
+        public EffectData Effect { get; set; }
+
+        
         public int SlotCount { get; set; }
 
-        public bool TwoHanded { get; set; }
-
-        public int Data1 { get; set; }
+        public int SpellIndex { get; set; }
+        public int EventIndex { get; set; }
 
         public string Desc { get; set; } = "";
         public string FemalePaperdoll { get; set; } = "";

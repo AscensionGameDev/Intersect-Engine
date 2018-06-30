@@ -17,9 +17,9 @@ namespace Intersect.Server.Classes.Database
         {
         }
 
-        public Spell(int num)
+        public Spell(int spellIndex)
         {
-            SpellId = num;
+            SpellId = spellIndex;
         }
 
         public Spell Clone()
