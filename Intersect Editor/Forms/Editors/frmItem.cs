@@ -267,8 +267,8 @@ namespace Intersect.Editor.Forms.Editors
                 cmbFemalePaperdoll.SelectedIndex = cmbFemalePaperdoll.FindString(TextUtils.NullToNone(mEditorItem.FemalePaperdoll));
                 if (mEditorItem.ItemType == ItemTypes.Consumable)
                 {
-                    cmbConsume.SelectedIndex = (int) mEditorItem.ConsumableType;
-                    nudInterval.Value = mEditorItem.Data2;
+                    cmbConsume.SelectedIndex = (int) mEditorItem.Consumable.Type;
+                    nudInterval.Value = mEditorItem.Consumable.Value;
                 }
                 if (cmbPic.SelectedIndex > 0)
                 {
@@ -331,7 +331,9 @@ namespace Intersect.Editor.Forms.Editors
 
             if ((int) mEditorItem.ItemType != cmbType.SelectedIndex)
             {
-                mEditorItem.ConsumableType = ConsumableType.None;
+                mEditorItem.Consumable.Type = ConsumableType.None;
+                mEditorItem.Consumable.Value = 0;
+
                 mEditorItem.Damage = 0;
                 mEditorItem.Tool = -1;
                 mEditorItem.Data1 = 0;
@@ -342,8 +344,8 @@ namespace Intersect.Editor.Forms.Editors
 
             if (cmbType.SelectedIndex == (int) ItemTypes.Consumable)
             {
-                cmbConsume.SelectedIndex = (int) mEditorItem.ConsumableType;
-                nudInterval.Value = mEditorItem.Data2;
+                cmbConsume.SelectedIndex = (int) mEditorItem.Consumable.Type;
+                nudInterval.Value = mEditorItem.Consumable.Value;
                 grpConsumable.Visible = true;
             }
             else if (cmbType.SelectedIndex == (int) ItemTypes.Spell)
@@ -408,7 +410,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbConsume_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.ConsumableType = (ConsumableType) cmbConsume.SelectedIndex;
+            mEditorItem.Consumable.Type = (ConsumableType) cmbConsume.SelectedIndex;
         }
 
         private void cmbPaperdoll_SelectedIndexChanged(object sender, EventArgs e)
@@ -688,7 +690,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudInterval_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Data2 = (int) nudInterval.Value;
+            mEditorItem.Consumable.Value = (int) nudInterval.Value;
         }
 
         private void chkBound_CheckedChanged(object sender, EventArgs e)

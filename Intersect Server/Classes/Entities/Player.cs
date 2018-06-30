@@ -997,42 +997,48 @@ namespace Intersect.Server.Classes.Entities
                         PacketSender.SendPlayerMsg(MyClient, Strings.Items.cannotuse);
                         return;
                     case ItemTypes.Consumable:
-                        var s = Strings.Combat.removesymbol;
-                        if (itemBase.Data2 > 0)
-                        {
-                            s = Strings.Combat.addsymbol;
-                        }
+                        var negative = itemBase.ConsumableValue < 0;
+                        var symbol = negative ? Strings.Combat.addsymbol : Strings.Combat.removesymbol;
+                        var number = $"${symbol}${itemBase.ConsumableValue}";
+                        var color = CustomColors.Heal;
+                        var die = false;
 
                         switch (itemBase.ConsumableType)
                         {
                             case ConsumableType.Health:
-                                AddVital(Vitals.Health, itemBase.Data2);
-                                if (s == Strings.Combat.addsymbol)
+                                AddVital(Vitals.Health, itemBase.ConsumableValue);
+                                if (negative)
                                 {
-                                    PacketSender.SendActionMsg(this, s + itemBase.Data2, CustomColors.Heal);
-                                }
-                                else
-                                {
-                                    PacketSender.SendActionMsg(this, s + itemBase.Data2, CustomColors.PhysicalDamage);
-                                    if (!HasVital(Vitals.Health)) //Add a death handler for poison.
-                                    {
-                                        Die();
-                                    }
+                                    color = CustomColors.PhysicalDamage;
+                                    //Add a death handler for poison.
+                                    die = !HasVital(Vitals.Health);
                                 }
                                 break;
+
                             case ConsumableType.Mana:
-                                AddVital(Vitals.Mana, itemBase.Data2);
-                                PacketSender.SendActionMsg(this, s + itemBase.Data2, CustomColors.AddMana);
+                                AddVital(Vitals.Mana, itemBase.ConsumableValue);
+                                color = CustomColors.AddMana;
                                 break;
 
                             case ConsumableType.Experience:
-                                GiveExperience(itemBase.Data2);
-                                PacketSender.SendActionMsg(this, s + itemBase.Data2, CustomColors.Experience);
+                                GiveExperience(itemBase.ConsumableValue);
+                                color = CustomColors.Experience;
+                                break;
+
+                            case ConsumableType.None:
                                 break;
 
                             default:
-                                return;
+                                throw new IndexOutOfRangeException();
                         }
+
+                        PacketSender.SendActionMsg(this, number, color);
+
+                        if (die)
+                        {
+                            Die();
+                        }
+
                         TakeItemsBySlot(slot, 1);
                         break;
                     case ItemTypes.Equipment:

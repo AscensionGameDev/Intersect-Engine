@@ -7,6 +7,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Intersect.GameObjects
 {
+    public class ConsumableData
+    {
+        public ConsumableType Type { get; set; }
+        public int Value { get; set; }
+    }
+
     public class ItemBase : DatabaseObject<ItemBase>
     {
         [Column("Animation")]
@@ -34,7 +40,9 @@ namespace Intersect.GameObjects
         public int CritChance { get; set; }
         public int Damage { get; set; }
         public int DamageType { get; set; }
-        public ConsumableType ConsumableType { get; set; }
+
+        public ConsumableData Consumable { get; set; }
+
         public int Data1 { get; set; }
         public int Data2 { get; set; }
         public int Data3 { get; set; }
@@ -72,6 +80,7 @@ namespace Intersect.GameObjects
             get => JsonConvert.SerializeObject(UsageRequirements);
             set => UsageRequirements = JsonConvert.DeserializeObject<ConditionLists>(value);
         }
+
         [NotMapped]
         public ConditionLists UsageRequirements = new ConditionLists();
 
