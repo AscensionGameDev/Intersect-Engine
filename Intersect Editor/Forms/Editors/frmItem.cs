@@ -262,7 +262,7 @@ namespace Intersect.Editor.Forms.Editors
                 if (mEditorItem.ItemType == ItemTypes.Equipment)
                     cmbEquipmentBonus.SelectedIndex = mEditorItem.Data2;
                 nudEffectPercent.Value = mEditorItem.Data3;
-                chk2Hand.Checked = Convert.ToBoolean(mEditorItem.Data4);
+                chk2Hand.Checked = mEditorItem.TwoHanded;
                 cmbMalePaperdoll.SelectedIndex = cmbMalePaperdoll.FindString(TextUtils.NullToNone(mEditorItem.MalePaperdoll));
                 cmbFemalePaperdoll.SelectedIndex = cmbFemalePaperdoll.FindString(TextUtils.NullToNone(mEditorItem.FemalePaperdoll));
                 if (mEditorItem.ItemType == ItemTypes.Consumable)
@@ -333,13 +333,13 @@ namespace Intersect.Editor.Forms.Editors
             {
                 mEditorItem.Consumable.Type = ConsumableType.None;
                 mEditorItem.Consumable.Value = 0;
+                mEditorItem.TwoHanded = false;
 
                 mEditorItem.Damage = 0;
                 mEditorItem.Tool = -1;
                 mEditorItem.Data1 = 0;
                 mEditorItem.Data2 = 0;
                 mEditorItem.Data3 = 0;
-                mEditorItem.Data4 = 0;
             }
 
             if (cmbType.SelectedIndex == (int) ItemTypes.Consumable)
@@ -446,7 +446,7 @@ namespace Intersect.Editor.Forms.Editors
                 mEditorItem.Projectile = -1;
                 mEditorItem.Tool = -1;
                 mEditorItem.Damage = 0;
-                mEditorItem.Data4 = 0;
+                mEditorItem.TwoHanded = false;
             }
         }
 
@@ -462,7 +462,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void chk2Hand_CheckedChanged(object sender, EventArgs e)
         {
-            mEditorItem.Data4 = Convert.ToInt32(chk2Hand.Checked);
+            mEditorItem.TwoHanded = chk2Hand.Checked;
         }
 
         private void FrmItem_FormClosed(object sender, FormClosedEventArgs e)

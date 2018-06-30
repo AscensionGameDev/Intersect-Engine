@@ -46,7 +46,7 @@ namespace Intersect_Client.Classes.UI.Game
                 if (item.ItemType == ItemTypes.Equipment)
                 {
                     itemType.Text = Options.EquipmentSlots[item.Data1];
-                    if (item.Data1 == Options.WeaponIndex && Convert.ToBoolean(item.Data4) == true)
+                    if (item.Data1 == Options.WeaponIndex && item.TwoHanded)
                     {
                         itemType.Text += " - " + Strings.ItemDesc.twohand;
                     }

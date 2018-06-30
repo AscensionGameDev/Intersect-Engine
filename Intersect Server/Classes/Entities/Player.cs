@@ -1057,11 +1057,7 @@ namespace Intersect.Server.Classes.Entities
                                 if (Options.WeaponIndex > -1)
                                 {
                                     //If we are equipping a 2hand weapon, remove the shield
-                                    if (Convert.ToBoolean(itemBase.Data4))
-                                    {
-                                        Equipment[Options.ShieldIndex] = -1;
-                                    }
-                                    Equipment[Options.WeaponIndex] = slot;
+                                    Equipment[Options.WeaponIndex] = itemBase.TwoHanded ? -1 : slot;
                                 }
                             }
                             else if (itemBase.Data1 == Options.ShieldIndex)
@@ -1071,12 +1067,8 @@ namespace Intersect.Server.Classes.Entities
                                     if (Equipment[Options.WeaponIndex] > -1)
                                     {
                                         //If we have a 2-hand weapon, remove it to equip this new shield
-                                        if (ItemBase.Lookup.Get<ItemBase>(Items[Equipment[Options.WeaponIndex]]
-                                                .ItemNum) != null &&
-                                            Convert.ToBoolean(
-                                                ItemBase.Lookup
-                                                    .Get<ItemBase>(Items[Equipment[Options.WeaponIndex]].ItemNum)
-                                                    .Data4))
+                                        var item = ItemBase.Lookup.Get<ItemBase>(Items[Equipment[Options.WeaponIndex]].ItemNum);
+                                        if (item != null && item.TwoHanded)
                                         {
                                             Equipment[Options.WeaponIndex] = -1;
                                         }

@@ -43,10 +43,11 @@ namespace Intersect.GameObjects
 
         public ConsumableData Consumable { get; set; }
 
+        public bool TwoHanded { get; set; }
+
         public int Data1 { get; set; }
         public int Data2 { get; set; }
         public int Data3 { get; set; }
-        public int Data4 { get; set; }
 
         public string Desc { get; set; } = "";
         public string FemalePaperdoll { get; set; } = "";
