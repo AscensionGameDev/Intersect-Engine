@@ -142,6 +142,7 @@
     <Compile Include="DatabaseObject.cs" />
     <Compile Include="Enums\AdminActions.cs" />
     <Compile Include="Enums\ClientPackets.cs" />
+    <Compile Include="Enums\ConsumableType.cs" />
     <Compile Include="Enums\DamageType.cs" />
     <Compile Include="Enums\Directions.cs" />
     <Compile Include="Enums\EntityTypes.cs" />

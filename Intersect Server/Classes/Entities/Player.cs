@@ -997,16 +997,16 @@ namespace Intersect.Server.Classes.Entities
                         PacketSender.SendPlayerMsg(MyClient, Strings.Items.cannotuse);
                         return;
                     case ItemTypes.Consumable:
-                        var negative = itemBase.ConsumableValue < 0;
+                        var negative = itemBase.Consumable.Value < 0;
                         var symbol = negative ? Strings.Combat.addsymbol : Strings.Combat.removesymbol;
-                        var number = $"${symbol}${itemBase.ConsumableValue}";
+                        var number = $"${symbol}${itemBase.Consumable.Value}";
                         var color = CustomColors.Heal;
                         var die = false;
 
-                        switch (itemBase.ConsumableType)
+                        switch (itemBase.Consumable.Type)
                         {
                             case ConsumableType.Health:
-                                AddVital(Vitals.Health, itemBase.ConsumableValue);
+                                AddVital(Vitals.Health, itemBase.Consumable.Value);
                                 if (negative)
                                 {
                                     color = CustomColors.PhysicalDamage;
@@ -1016,12 +1016,12 @@ namespace Intersect.Server.Classes.Entities
                                 break;
 
                             case ConsumableType.Mana:
-                                AddVital(Vitals.Mana, itemBase.ConsumableValue);
+                                AddVital(Vitals.Mana, itemBase.Consumable.Value);
                                 color = CustomColors.AddMana;
                                 break;
 
                             case ConsumableType.Experience:
-                                GiveExperience(itemBase.ConsumableValue);
+                                GiveExperience(itemBase.Consumable.Value);
                                 color = CustomColors.Experience;
                                 break;
 
