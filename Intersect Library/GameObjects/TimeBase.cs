@@ -1,15 +1,28 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
     public class TimeBase
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; protected set; }
         private static TimeBase sTimeBase = new TimeBase();
-        public Color[] RangeColors;
-        public int RangeInterval = 720;
-        public float Rate = 1.0f;
-        public bool SyncTime = true;
+
+        [JsonIgnore]
+        [Column("DaylightHues")]
+        public string RegenJson
+        {
+            get => JsonConvert.SerializeObject(DaylightHues, Formatting.None);
+            protected set => DaylightHues = JsonConvert.DeserializeObject<Color[]>(value);
+        }
+        [NotMapped]
+        public Color[] DaylightHues;
+
+        public int RangeInterval { get; set; } = 720;
+        public float Rate { get; set; } = 1.0f;
+        public bool SyncTime { get; set; } = true;
 
         public TimeBase()
         {
@@ -23,10 +36,10 @@ namespace Intersect.GameObjects
             SyncTime = Convert.ToBoolean(bf.ReadInteger());
             RangeInterval = bf.ReadInteger();
             Rate = (float) bf.ReadDouble();
-            RangeColors = new Color[1440 / RangeInterval];
+            DaylightHues = new Color[1440 / RangeInterval];
             for (int i = 0; i < 1440 / RangeInterval; i++)
             {
-                RangeColors[i] = new Color((int) bf.ReadByte(), (int) bf.ReadByte(), (int) bf.ReadByte(),
+                DaylightHues[i] = new Color((int) bf.ReadByte(), (int) bf.ReadByte(), (int) bf.ReadByte(),
                     (int) bf.ReadByte());
             }
             bf.Dispose();
@@ -40,10 +53,10 @@ namespace Intersect.GameObjects
             bf.WriteDouble((double) Rate);
             for (int i = 0; i < 1440 / RangeInterval; i++)
             {
-                bf.WriteByte(RangeColors[i].A);
-                bf.WriteByte(RangeColors[i].R);
-                bf.WriteByte(RangeColors[i].G);
-                bf.WriteByte(RangeColors[i].B);
+                bf.WriteByte(DaylightHues[i].A);
+                bf.WriteByte(DaylightHues[i].R);
+                bf.WriteByte(DaylightHues[i].G);
+                bf.WriteByte(DaylightHues[i].B);
             }
             return bf.ToArray();
         }
@@ -60,10 +73,10 @@ namespace Intersect.GameObjects
 
         public void ResetColors()
         {
-            RangeColors = new Color[1440 / RangeInterval];
+            DaylightHues = new Color[1440 / RangeInterval];
             for (int i = 0; i < 1440 / RangeInterval; i++)
             {
-                RangeColors[i] = new Color(255, 255, 255, 255);
+                DaylightHues[i] = new Color(255, 255, 255, 255);
             }
         }
 
@@ -129,6 +142,11 @@ namespace Intersect.GameObjects
                     return 10;
             }
             return 5;
+        }
+
+        public static void SetStaticTime(TimeBase time)
+        {
+            sTimeBase = time;
         }
 
         public static TimeBase GetTimeBase()

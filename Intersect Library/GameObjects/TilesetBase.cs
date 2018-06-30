@@ -12,6 +12,12 @@ namespace Intersect.GameObjects
             Name = "";
         }
 
+        //Ef Parameterless Constructor
+        public TilesetBase()
+        {
+            Name = "";
+        }
+
         public new string Name
         {
             get { return base.Name; }

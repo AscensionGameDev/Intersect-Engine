@@ -2239,7 +2239,7 @@ namespace Intersect.Server.Classes.Networking
             if (client.IsEditor)
             {
                 TimeBase.GetTimeBase().LoadTimeBase(packet);
-                LegacyDatabase.SaveTime();
+                LegacyDatabase.SaveGameDatabase();
                 ServerTime.Init();
                 PacketSender.SendTimeBaseToAllEditors();
             }

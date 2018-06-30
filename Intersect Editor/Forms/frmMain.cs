@@ -1249,7 +1249,7 @@ namespace Intersect.Editor.Forms
                 {
                     g.DrawImage(transtile, new System.Drawing.Point(0, 0));
                 }
-                var clr = TimeBase.GetTimeBase().RangeColors[x];
+                var clr = TimeBase.GetTimeBase().DaylightHues[x];
                 Brush brush =
                     new SolidBrush(System.Drawing.Color.FromArgb(clr.A, clr.R, clr.G, clr.B));
                 g.FillRectangle(brush, new Rectangle(0, 0, 32, 32));

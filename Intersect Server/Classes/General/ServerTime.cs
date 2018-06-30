@@ -59,7 +59,7 @@ namespace Intersect.Server.Classes.General
 
         public static Color GetTimeColor()
         {
-            return TimeBase.GetTimeBase().RangeColors[sTimeRange];
+            return TimeBase.GetTimeBase().DaylightHues[sTimeRange];
         }
 
         public static int GetTimeRange()

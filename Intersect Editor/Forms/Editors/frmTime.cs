@@ -94,9 +94,9 @@ namespace Intersect.Editor.Forms.Editors
             if (clrSelector.ShowDialog() == DialogResult.OK)
             {
                 pnlColor.BackColor = clrSelector.Color;
-                mYTime.RangeColors[lstTimes.SelectedIndex].R = pnlColor.BackColor.R;
-                mYTime.RangeColors[lstTimes.SelectedIndex].G = pnlColor.BackColor.G;
-                mYTime.RangeColors[lstTimes.SelectedIndex].B = pnlColor.BackColor.B;
+                mYTime.DaylightHues[lstTimes.SelectedIndex].R = pnlColor.BackColor.R;
+                mYTime.DaylightHues[lstTimes.SelectedIndex].G = pnlColor.BackColor.G;
+                mYTime.DaylightHues[lstTimes.SelectedIndex].B = pnlColor.BackColor.B;
             }
         }
 
@@ -117,7 +117,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             var brightness = (int) ((255 - scrlAlpha.Value) / 255f * 100);
             lblBrightness.Text = Strings.TimeEditor.brightness.ToString( brightness.ToString());
-            mYTime.RangeColors[lstTimes.SelectedIndex].A = (byte) scrlAlpha.Value;
+            mYTime.DaylightHues[lstTimes.SelectedIndex].A = (byte) scrlAlpha.Value;
             pnlColor.Refresh();
         }
 
@@ -129,14 +129,14 @@ namespace Intersect.Editor.Forms.Editors
                 return;
             }
             grpRangeOptions.Show();
-            pnlColor.BackColor = System.Drawing.Color.FromArgb(255, mYTime.RangeColors[lstTimes.SelectedIndex].R,
-                mYTime.RangeColors[lstTimes.SelectedIndex].G,
-                mYTime.RangeColors[lstTimes.SelectedIndex].B);
-            scrlAlpha.Value = mYTime.RangeColors[lstTimes.SelectedIndex].A;
+            pnlColor.BackColor = System.Drawing.Color.FromArgb(255, mYTime.DaylightHues[lstTimes.SelectedIndex].R,
+                mYTime.DaylightHues[lstTimes.SelectedIndex].G,
+                mYTime.DaylightHues[lstTimes.SelectedIndex].B);
+            scrlAlpha.Value = mYTime.DaylightHues[lstTimes.SelectedIndex].A;
             var brightness = (int) ((255 - scrlAlpha.Value) / 255f * 100);
             lblBrightness.Text = Strings.TimeEditor.brightness.ToString( brightness);
             pnlColor.Refresh();
-            EditorGraphics.LightColor = mYTime.RangeColors[lstTimes.SelectedIndex];
+            EditorGraphics.LightColor = mYTime.DaylightHues[lstTimes.SelectedIndex];
         }
 
         private void chkSync_CheckedChanged(object sender, EventArgs e)

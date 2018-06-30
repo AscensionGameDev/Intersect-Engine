@@ -48,6 +48,12 @@ namespace Intersect.Server.Classes.Database.GameData
         public DbSet<ServerSwitchBase> ServerSwitches { get; set; }
         public DbSet<ServerVariableBase> ServerVariables { get; set; }
 
+        //Tilesets
+        public DbSet<TilesetBase> Tilesets { get; set; }
+
+        //Time
+        public DbSet<TimeBase> Time { get; set; }
+
         private DatabaseUtils.DbProvider mConnection = DatabaseUtils.DbProvider.Sqlite;
         private string mConnectionString = @"Data Source=resources/gamedata.db";
 

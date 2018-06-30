@@ -51,7 +51,9 @@ namespace Intersect.Server.Classes.Core
         GameObjectType.PlayerSwitch,
         GameObjectType.PlayerVariable,
         GameObjectType.ServerSwitch,
-        GameObjectType.ServerVariable};
+        GameObjectType.ServerVariable,
+        GameObjectType.Tileset,
+        GameObjectType.Time};
 
 
         public const string DIRECTORY_BACKUPS = "resources/backups";
@@ -183,7 +185,6 @@ namespace Intersect.Server.Classes.Core
             CreateMapAttributesTable();
             CreateGameObjectTables();
             CreateMapListTable();
-            CreateTimeTable();
             CreateLogsTable(sGameDbConnection);
         }
 
@@ -277,28 +278,6 @@ namespace Intersect.Server.Classes.Core
             using (var createCommand = sGameDbConnection?.CreateCommand())
             {
                 createCommand.Parameters.Add(new SqliteParameter("@" + MAP_LIST_DATA, new byte[1]));
-                createCommand.CommandText = cmd;
-                sGameDbConnection.ExecuteNonQuery(createCommand);
-            }
-        }
-
-        private static void CreateTimeTable()
-        {
-            var columns = new List<ColumnDescriptor>()
-            {
-                new ColumnDescriptor(TIME_DATA, DataType.Text) { NotNull = true }
-            };
-
-            CreateTable(new TableDescriptor(TIME_TABLE, columns), sGameDbConnection);
-            InsertTime();
-        }
-
-        private static void InsertTime()
-        {
-            var cmd = $"INSERT into {TIME_TABLE} (" + TIME_DATA + ") VALUES (@" + TIME_DATA + ");";
-            using (var createCommand = sGameDbConnection?.CreateCommand())
-            {
-                createCommand.Parameters.Add(new SqliteParameter("@" + TIME_DATA, new byte[1]));
                 createCommand.CommandText = cmd;
                 sGameDbConnection.ExecuteNonQuery(createCommand);
             }
@@ -795,6 +774,11 @@ namespace Intersect.Server.Classes.Core
                     }
                     break;
                 case GameObjectType.Tileset:
+                    foreach (var psw in sGameDb.Tilesets)
+                    {
+                        ServerVariableBase.Lookup.Set(psw.Id, psw);
+                        ServerVariableBase.Lookup.Set(psw.Index, psw);
+                    }
                     break;
                 case GameObjectType.Time:
                     break;
@@ -1011,6 +995,7 @@ namespace Intersect.Server.Classes.Core
                         break;
                     case GameObjectType.Tileset:
                         var tset = new TilesetBase(index);
+                        sGameDb.Tilesets.Add(tset);
                         dbObj = tset;
                         TilesetBase.Lookup.Set(index, tset);
                         break;
@@ -1019,7 +1004,6 @@ namespace Intersect.Server.Classes.Core
                     default:
                         throw new ArgumentOutOfRangeException(nameof(gameObjectType), gameObjectType, null);
                 }
-
                 SaveGameObject(dbObj);
                 return dbObj;
             }
@@ -1080,6 +1064,7 @@ namespace Intersect.Server.Classes.Core
                     sGameDb.ServerVariables.Remove((ServerVariableBase)gameObject);
                     return;
                 case GameObjectType.Tileset:
+                    sGameDb.Tilesets.Remove((TilesetBase) gameObject);
                     return;
                 case GameObjectType.Time:
                     return;
@@ -1394,47 +1379,27 @@ namespace Intersect.Server.Classes.Core
         //Time
         private static void LoadTime()
         {
-            var query = $"SELECT * from {TIME_TABLE};";
-            using (var cmd = sGameDbConnection.CreateCommand())
+            var time = sGameDb.Time.FirstOrDefault();
+            if (time == null)
             {
-                cmd.CommandText = query;
-                using (var dataReader = sGameDbConnection.ExecuteReader(cmd))
-                {
-                    if (dataReader.HasRows)
-                    {
-                        while (dataReader.Read())
-                        {
-                            if (dataReader[TIME_DATA].GetType() != typeof(DBNull))
-                            {
-                                var json = (string) dataReader[TIME_DATA];
-                                if (!string.IsNullOrEmpty(json))
-                                {
-                                    TimeBase.GetTimeBase().LoadFromJson(json);
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        InsertTime();
-                    }
-                }
+                sGameDb.Time.Add(TimeBase.GetTimeBase());
+                sGameDb.SaveChanges();
             }
-
-            SaveTime();
+            else
+            {
+                TimeBase.SetStaticTime(time);
+            }
             ServerTime.Init();
         }
 
-        public static void SaveTime()
+        public static void SaveGameDatabase()
         {
-            var query = "UPDATE " + TIME_TABLE + " set " + TIME_DATA + "=@" + TIME_DATA + ";";
-            using (var cmd = sGameDbConnection.CreateCommand())
-            {
-                cmd.CommandText = query;
-                cmd.Parameters.Add(new SqliteParameter("@" + TIME_DATA,
-                    TimeBase.GetTimeJson()));
-                sGameDbConnection.ExecuteNonQuery(cmd);
-            }
+            sGameDb.SaveChanges();
+        }
+
+        public static void SavePlayerDatabase()
+        {
+            sPlayerDb.SaveChanges();
         }
     }
 }
