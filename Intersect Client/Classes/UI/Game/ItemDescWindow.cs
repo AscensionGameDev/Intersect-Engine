@@ -45,8 +45,8 @@ namespace Intersect_Client.Classes.UI.Game
 
                 if (item.ItemType == ItemTypes.Equipment)
                 {
-                    itemType.Text = Options.EquipmentSlots[item.Data1];
-                    if (item.Data1 == Options.WeaponIndex && item.TwoHanded)
+                    itemType.Text = Options.EquipmentSlots[item.EquipmentSlot];
+                    if (item.EquipmentSlot == Options.WeaponIndex && item.TwoHanded)
                     {
                         itemType.Text += " - " + Strings.ItemDesc.twohand;
                     }
@@ -67,7 +67,7 @@ namespace Intersect_Client.Classes.UI.Game
                     stats = Strings.ItemDesc.bonuses;
                     itemDesc.AddText(stats, itemDesc.RenderColor);
                     itemDesc.AddLineBreak();
-                    if (item.ItemType == ItemTypes.Equipment && item.Data1 == Options.WeaponIndex)
+                    if (item.ItemType == ItemTypes.Equipment && item.EquipmentSlot == Options.WeaponIndex)
                     {
                         stats = Strings.ItemDesc.damage.ToString( item.Damage);
                         itemDesc.AddText(stats, itemDesc.RenderColor);
@@ -83,15 +83,17 @@ namespace Intersect_Client.Classes.UI.Game
                         }
                     }
                 }
-                if (item.ItemType == ItemTypes.Equipment && item.Data2 > 0 && item.Data3 > 0)
+
+                if (item.ItemType == ItemTypes.Equipment && item.Effect.Type != EffectType.None && item.Effect.Percentage > 0)
                 {
                     itemDesc.AddText(
-                        Strings.ItemDesc.effect.ToString( item.Data3,
-                            Strings.ItemDesc.effects[item.Data2 - 1]), itemDesc.RenderColor);
+                        Strings.ItemDesc.effect.ToString( item.Effect.Percentage,
+                            Strings.ItemDesc.effects[(int)item.Effect.Type - 1]), itemDesc.RenderColor);
                 }
+
                 //Load Again for positioning purposes.
                 mDescWindow.LoadJsonUi(GameContentManager.UI.InGame);
-                GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Pic);
+                var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Pic);
                 if (itemTex != null)
                 {
                     icon.Texture = itemTex;

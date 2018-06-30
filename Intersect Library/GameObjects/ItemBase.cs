@@ -7,12 +7,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Intersect.GameObjects
 {
-    public class ConsumableData
-    {
-        public ConsumableType Type { get; set; }
-        public int Value { get; set; }
-    }
-
     public class ItemBase : DatabaseObject<ItemBase>
     {
         [Column("Animation")]
@@ -42,12 +36,13 @@ namespace Intersect.GameObjects
         public int DamageType { get; set; }
 
         public ConsumableData Consumable { get; set; }
+        public EffectData Effect { get; set; }
+
+        public int EquipmentSlot { get; set; }
 
         public bool TwoHanded { get; set; }
 
         public int Data1 { get; set; }
-        public int Data2 { get; set; }
-        public int Data3 { get; set; }
 
         public string Desc { get; set; } = "";
         public string FemalePaperdoll { get; set; } = "";
@@ -85,20 +80,18 @@ namespace Intersect.GameObjects
         [NotMapped]
         public ConditionLists UsageRequirements = new ConditionLists();
 
+        public ItemBase() => Initialize();
 
         [JsonConstructor]
-        public ItemBase(int index) : base(index)
-        {
-            Name = "New Item";
-            Speed = 10; // Set to 10 by default.
-            StatsGiven = new int[(int)Stats.StatCount];
-        }
+        public ItemBase(int index) : base(index) => Initialize();
 
-        public ItemBase()
+        private void Initialize()
         {
             Name = "New Item";
             Speed = 10; // Set to 10 by default.
             StatsGiven = new int[(int)Stats.StatCount];
+            Consumable = new ConsumableData();
+            Effect = new EffectData();
         }
 
         public bool IsStackable()
@@ -110,5 +103,17 @@ namespace Intersect.GameObjects
         {
             return ItemBase.Lookup.Get<ItemBase>(index);
         }
+    }
+
+    public class ConsumableData
+    {
+        public ConsumableType Type { get; set; }
+        public int Value { get; set; }
+    }
+
+    public class EffectData
+    {
+        public EffectType Type { get; set; }
+        public int Percentage { get; set; }
     }
 }

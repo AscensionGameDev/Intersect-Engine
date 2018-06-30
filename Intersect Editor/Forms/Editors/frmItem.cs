@@ -260,8 +260,8 @@ namespace Intersect.Editor.Forms.Editors
                     Database.GameObjectListIndex(GameObjectType.Animation, mEditorItem.AttackAnimationId) + 1;
                 RefreshExtendedData();
                 if (mEditorItem.ItemType == ItemTypes.Equipment)
-                    cmbEquipmentBonus.SelectedIndex = mEditorItem.Data2;
-                nudEffectPercent.Value = mEditorItem.Data3;
+                    cmbEquipmentBonus.SelectedIndex = (int)mEditorItem.Effect.Type;
+                nudEffectPercent.Value = mEditorItem.Effect.Percentage;
                 chk2Hand.Checked = mEditorItem.TwoHanded;
                 cmbMalePaperdoll.SelectedIndex = cmbMalePaperdoll.FindString(TextUtils.NullToNone(mEditorItem.MalePaperdoll));
                 cmbFemalePaperdoll.SelectedIndex = cmbFemalePaperdoll.FindString(TextUtils.NullToNone(mEditorItem.FemalePaperdoll));
@@ -338,8 +338,11 @@ namespace Intersect.Editor.Forms.Editors
                 mEditorItem.Damage = 0;
                 mEditorItem.Tool = -1;
                 mEditorItem.Data1 = 0;
-                mEditorItem.Data2 = 0;
-                mEditorItem.Data3 = 0;
+
+                mEditorItem.EquipmentSlot = 0;
+
+                mEditorItem.Effect.Type = EffectType.None;
+                mEditorItem.Effect.Percentage = 0;
             }
 
             if (cmbType.SelectedIndex == (int) ItemTypes.Consumable)
@@ -362,12 +365,12 @@ namespace Intersect.Editor.Forms.Editors
             else if (cmbType.SelectedIndex == (int) ItemTypes.Equipment)
             {
                 grpEquipment.Visible = true;
-                if (mEditorItem.Data1 < -1 || mEditorItem.Data1 >= cmbEquipmentSlot.Items.Count)
+                if (mEditorItem.EquipmentSlot < -1 || mEditorItem.EquipmentSlot >= cmbEquipmentSlot.Items.Count)
                 {
-                    mEditorItem.Data1 = 0;
+                    mEditorItem.EquipmentSlot = 0;
                 }
-                cmbEquipmentSlot.SelectedIndex = mEditorItem.Data1;
-                cmbEquipmentBonus.SelectedIndex = mEditorItem.Data2;
+                cmbEquipmentSlot.SelectedIndex = mEditorItem.EquipmentSlot;
+                cmbEquipmentBonus.SelectedIndex = (int) mEditorItem.Effect.Type;
             }
             else if (cmbType.SelectedIndex == (int) ItemTypes.Bag)
             {
@@ -434,7 +437,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbEquipmentSlot_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.Data1 = cmbEquipmentSlot.SelectedIndex;
+            mEditorItem.EquipmentSlot = cmbEquipmentSlot.SelectedIndex;
             if (cmbEquipmentSlot.SelectedIndex == Options.WeaponIndex)
             {
                 grpWeaponProperties.Show();
@@ -457,7 +460,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbEquipmentBonus_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.Data2 = cmbEquipmentBonus.SelectedIndex;
+            mEditorItem.Effect.Type = (EffectType) cmbEquipmentBonus.SelectedIndex;
         }
 
         private void chk2Hand_CheckedChanged(object sender, EventArgs e)
@@ -650,7 +653,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudEffectPercent_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Data3 = (int) nudEffectPercent.Value;
+            mEditorItem.Effect.Percentage = (int) nudEffectPercent.Value;
         }
 
         private void nudRange_ValueChanged(object sender, EventArgs e)

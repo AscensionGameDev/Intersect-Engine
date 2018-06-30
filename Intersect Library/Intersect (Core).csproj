@@ -145,6 +145,7 @@
     <Compile Include="Enums\ConsumableType.cs" />
     <Compile Include="Enums\DamageType.cs" />
     <Compile Include="Enums\Directions.cs" />
+    <Compile Include="Enums\EffectType.cs" />
     <Compile Include="Enums\EntityTypes.cs" />
     <Compile Include="Enums\GameObjectTypeExtensions.cs" />
     <Compile Include="Enums\ItemBonusEffects.cs" />

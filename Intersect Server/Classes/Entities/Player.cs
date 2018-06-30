@@ -1052,7 +1052,7 @@ namespace Intersect.Server.Classes.Entities
                         }
                         if (!equipped)
                         {
-                            if (itemBase.Data1 == Options.WeaponIndex)
+                            if (itemBase.EquipmentSlot == Options.WeaponIndex)
                             {
                                 if (Options.WeaponIndex > -1)
                                 {
@@ -1060,7 +1060,7 @@ namespace Intersect.Server.Classes.Entities
                                     Equipment[Options.WeaponIndex] = itemBase.TwoHanded ? -1 : slot;
                                 }
                             }
-                            else if (itemBase.Data1 == Options.ShieldIndex)
+                            else if (itemBase.EquipmentSlot == Options.ShieldIndex)
                             {
                                 if (Options.ShieldIndex > -1)
                                 {
@@ -1078,7 +1078,7 @@ namespace Intersect.Server.Classes.Entities
                             }
                             else
                             {
-                                Equipment[itemBase.Data1] = slot;
+                                Equipment[itemBase.EquipmentSlot] = slot;
                             }
                         }
                         PacketSender.SendPlayerEquipmentToProximity(this);

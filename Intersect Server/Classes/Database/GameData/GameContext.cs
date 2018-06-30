@@ -102,6 +102,7 @@ namespace Intersect.Server.Classes.Database.GameData
             modelBuilder.Entity<ResourceBase>().OwnsOne(p => p.Initial);
             modelBuilder.Entity<ResourceBase>().OwnsOne(p => p.Exhausted);
             modelBuilder.Entity<ItemBase>().OwnsOne(p => p.Consumable);
+            modelBuilder.Entity<ItemBase>().OwnsOne(p => p.Effect);
         }
     }
 }
