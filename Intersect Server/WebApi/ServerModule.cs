@@ -47,9 +47,9 @@ namespace Intersect.Server.WebApi
 
         protected virtual bool Secured => true;
 
-        protected virtual IDictionary<MethodPath, bool> RouteSecurity => null;
+        protected virtual IDictionary<MethodPath, bool> RouteSecurity { get; set; }
 
-        protected virtual IDictionary<MethodPathCode, object> DefaultResponse => null;
+        protected virtual IDictionary<MethodPathCode, object> DefaultResponse { get; set; }
 
         protected ServerModule(string modulePath) : base(modulePath)
         {
@@ -58,6 +58,10 @@ namespace Intersect.Server.WebApi
 
         private void Initialize()
         {
+            RouteSecurity = new Dictionary<MethodPath, bool>();
+
+            DefaultResponse = new Dictionary<MethodPathCode, object>();
+
             Secure();
         }
 
