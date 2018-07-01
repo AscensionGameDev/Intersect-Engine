@@ -172,7 +172,9 @@ namespace Intersect.Editor.Forms
             toolStripTimeButton.Text = Strings.MainForm.lighting;
             toolStripBtnScreenshot.Text = Strings.MainForm.screenshot;
             toolStripBtnRun.Text = Strings.MainForm.run;
-        }
+			toolStripBtnFlipHorizontal.Text = Strings.MainForm.fliphorizontal;
+			toolStripBtnFlipVertical.Text = Strings.MainForm.flipvertical;
+		}
 
         private void InitExternalTools()
         {
@@ -1426,5 +1428,15 @@ namespace Intersect.Editor.Forms
             }
             Globals.ClosingEditor = true;
         }
-    }
+
+		private void toolStripBtnFlipVertical_Click(object sender, EventArgs e)
+		{
+			Globals.MapEditorWindow.FlipVertical();
+		}
+
+		private void toolStripBtnFlipHorizontal_Click(object sender, EventArgs e)
+		{
+			Globals.MapEditorWindow.FlipHorizontal();
+		}
+	}
 }

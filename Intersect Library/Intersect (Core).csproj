@@ -148,7 +148,6 @@
     <Compile Include="Enums\EffectType.cs" />
     <Compile Include="Enums\EntityTypes.cs" />
     <Compile Include="Enums\GameObjectTypeExtensions.cs" />
-    <Compile Include="Enums\ItemBonusEffects.cs" />
     <Compile Include="Enums\ItemTypes.cs" />
     <Compile Include="Enums\MapAttributes.cs" />
     <Compile Include="Enums\MapListUpdates.cs" />

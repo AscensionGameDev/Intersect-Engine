@@ -11,36 +11,36 @@ namespace Intersect.Config
     {
         public List<string> Up = new List<string>()
         {
-            "Helmet",
+            "Player",
             "Armor",
-            "Weapon",
-            "Helmet",
+			"Helmet",
+			"Weapon",
             "Shield"
         };
         public List<string> Down = new List<string>()
         {
-            "Helmet",
-            "Armor",
-            "Weapon",
-            "Helmet",
-            "Shield"
-        };
+			"Player",
+			"Armor",
+			"Helmet",
+			"Weapon",
+			"Shield"
+		};
         public List<string> Left = new List<string>()
         {
-            "Helmet",
-            "Armor",
-            "Weapon",
-            "Helmet",
-            "Shield"
-        };
+			"Player",
+			"Armor",
+			"Helmet",
+			"Weapon",
+			"Shield"
+		};
         public List<string> Right = new List<string>()
         {
-            "Helmet",
-            "Armor",
-            "Weapon",
-            "Helmet",
-            "Shield"
-        };
+			"Player",
+			"Armor",
+			"Helmet",
+			"Weapon",
+			"Shield"
+		};
 
         [JsonIgnore] public List<string>[] Directions;
 
@@ -86,7 +86,7 @@ namespace Intersect.Config
             {
                 foreach (var item in direction)
                 {
-                    if (!equipment.Slots.Contains(item))
+                    if (!equipment.Slots.Contains(item) & item != "Player")
                     {
                         throw new Exception($"Config Error: Paperdoll item {item} does not exist in equipment slots!");
                     }

@@ -232,7 +232,33 @@ namespace Intersect_Client.Classes.Entities
             return false;
         }
 
-        public void TrySellItem(int index)
+		public decimal GetCooldownReduction()
+		{
+			int cooldown = 0;
+
+			for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+			{
+				if (Equipment[i] > -1)
+				{
+					if (Inventory[Equipment[i]].ItemNum > -1)
+					{
+						var item = ItemBase.Lookup.Get<ItemBase>(Inventory[Equipment[i]].ItemNum);
+						if (item != null)
+						{
+							//Check for cooldown reduction
+							if (item.Effect.Type == EffectType.CooldownReduction)
+							{
+								cooldown += item.Effect.Percentage;
+							}
+						}
+					}
+				}
+			}
+
+			return cooldown;
+		}
+
+		public void TrySellItem(int index)
         {
             if (ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemNum) != null)
             {

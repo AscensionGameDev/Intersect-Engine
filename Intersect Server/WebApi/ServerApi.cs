@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 using Nancy.Hosting.Self;
 using System;
 using Intersect.Server.Database;
+using System.Net;
 
 namespace Intersect.Server.WebApi
 {
@@ -55,8 +56,14 @@ namespace Intersect.Server.WebApi
         {
             if (IsRunning)
                 return;
-
-            mHost.Start();
+			try
+			{
+				mHost.Start();
+			}
+			catch (Exception ex)
+			{
+				//API Port is in use. Ignoring for now but when we actually add in the api we should throw a warning or something.
+			}
         }
 
         public void Stop()

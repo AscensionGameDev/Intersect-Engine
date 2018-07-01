@@ -101,7 +101,8 @@ namespace Intersect.Editor.Maps
                 }
             }
             bf.Dispose();
-        }
+			InitAutotiles();
+		}
 
         public void SaveStateAsUnchanged()
         {

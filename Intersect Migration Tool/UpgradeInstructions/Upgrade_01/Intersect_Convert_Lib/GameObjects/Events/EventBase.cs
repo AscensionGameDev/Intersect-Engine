@@ -73,7 +73,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_1.Intersect_Convert_Li
             MyPages.Clear();
             for (var i = 0; i < pageCount; i++)
             {
-                MyPages.Add(new EventPage(myBuffer));
+               MyPages.Add(new EventPage(myBuffer));
             }
         }
 
