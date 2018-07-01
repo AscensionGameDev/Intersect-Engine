@@ -43,7 +43,7 @@ namespace Intersect_Client.Classes.UI.Game
         private List<Label> mValues = new List<Label>();
 
         private long mBarTimer;
-        private int mCraftIndex;
+        private Guid mCraftId;
         public bool Crafting;
 
         public CraftingWindow(Canvas gameCanvas)
@@ -83,7 +83,7 @@ namespace Intersect_Client.Classes.UI.Game
             Globals.Me.InventoryUpdatedDelegate = () =>
             {
                 //Refresh crafting window items
-                LoadCraftItems(mCraftIndex);
+                LoadCraftItems(mCraftId);
             };
         }
 
@@ -98,10 +98,10 @@ namespace Intersect_Client.Classes.UI.Game
             get { return mCraftWindow.Y; }
         }
 
-        private void LoadCraftItems(int index)
+        private void LoadCraftItems(Guid id)
         {
             //Combined item
-            mCraftIndex = index;
+            mCraftId = id;
             if (mCombinedItem != null)
             {
                 mCraftWindow.Children.Remove(mCombinedItem.Container);
@@ -111,11 +111,11 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 mCombinedItem.DescWindow.Dispose();
             }
-            if (index >= Globals.ActiveCraftingTable.Crafts.Count) return; 
-            var craft = Globals.ActiveCraftingTable.Crafts.Get(index);
+            if (!Globals.ActiveCraftingTable.Crafts.Contains(id)) return; 
+            var craft = Globals.ActiveCraftingTable.Crafts.Get(id);
             if (craft == null) return;
             
-            mCombinedItem = new RecipeItem(this, new CraftIngredient(craft.Item, 0))
+            mCombinedItem = new RecipeItem(this, new CraftIngredient(craft.ItemId, 0))
             {
                 Container = new ImagePanel(mCraftWindow, "CraftedItemContainer")
             };
@@ -129,7 +129,7 @@ namespace Intersect_Client.Classes.UI.Game
                 //Clear the old item description box
                 if (mItems[i].DescWindow != null)
                 {
-                    mItems[mCraftIndex].DescWindow.Dispose();
+                    mItems[i].DescWindow.Dispose();
                 }
                 mItemContainer.RemoveChild(mItems[i].Container, true);
             }
@@ -137,18 +137,18 @@ namespace Intersect_Client.Classes.UI.Game
             mValues.Clear();
 
             //Quickly Look through the inventory and create a catalog of what items we have, and how many
-            Dictionary<int, int> itemdict = new Dictionary<int, int>();
+            Dictionary<Guid, int> itemdict = new Dictionary<Guid, int>();
             foreach (var item in Globals.Me.Inventory)
             {
                 if (item != null)
                 {
-                    if (itemdict.ContainsKey(item.ItemNum))
+                    if (itemdict.ContainsKey(item.ItemId))
                     {
-                        itemdict[item.ItemNum] += item.ItemVal;
+                        itemdict[item.ItemId] += item.Quantity;
                     }
                     else
                     {
-                        itemdict.Add(item.ItemNum, item.ItemVal);
+                        itemdict.Add(item.ItemId, item.Quantity);
                     }
                 }
             }
@@ -162,9 +162,9 @@ namespace Intersect_Client.Classes.UI.Game
                 var lblTemp = new Label(mItems[i].Container, "IngredientItemValue");
 
                 var onHand = 0;
-                if (itemdict.ContainsKey(craft.Ingredients[i].Item))
+                if (itemdict.ContainsKey(craft.Ingredients[i].ItemId))
                 {
-                    onHand = itemdict[craft.Ingredients[i].Item];
+                    onHand = itemdict[craft.Ingredients[i].ItemId];
                 }
                 lblTemp.Text = onHand + "/" + craft.Ingredients[i].Quantity;
                 mValues.Add(lblTemp);
@@ -186,13 +186,13 @@ namespace Intersect_Client.Classes.UI.Game
             if (Crafting)
             {
                 var cancraft = true;
-                foreach (CraftIngredient c in CraftBase.Lookup.Get<CraftBase>(Globals.ActiveCraftingTable.Crafts[mCraftIndex]).Ingredients)
+                foreach (CraftIngredient c in CraftBase.Lookup.Get<CraftBase>(mCraftId).Ingredients)
                 {
-                    if (itemdict.ContainsKey(c.Item))
+                    if (itemdict.ContainsKey(c.ItemId))
                     {
-                        if (itemdict[c.Item] >= c.Quantity)
+                        if (itemdict[c.ItemId] >= c.Quantity)
                         {
-                            itemdict[c.Item] -= c.Quantity;
+                            itemdict[c.ItemId] -= c.Quantity;
                         }
                         else
                         {
@@ -245,7 +245,7 @@ namespace Intersect_Client.Classes.UI.Game
         {
             if (Crafting == false)
             {
-                LoadCraftItems(Convert.ToInt32(((ListBoxRow) sender).UserData));
+                LoadCraftItems((Guid)((ListBoxRow) sender).UserData);
             }
         }
 
@@ -254,30 +254,30 @@ namespace Intersect_Client.Classes.UI.Game
         {
             //This shouldn't be client side :(
             //Quickly Look through the inventory and create a catalog of what items we have, and how many
-            Dictionary<int, int> itemdict = new Dictionary<int, int>();
+            Dictionary<Guid, int> itemdict = new Dictionary<Guid, int>();
             foreach (var item in Globals.Me.Inventory)
             {
                 if (item != null)
                 {
-                    if (itemdict.ContainsKey(item.ItemNum))
+                    if (itemdict.ContainsKey(item.ItemId))
                     {
-                        itemdict[item.ItemNum] += item.ItemVal;
+                        itemdict[item.ItemId] += item.Quantity;
                     }
                     else
                     {
-                        itemdict.Add(item.ItemNum, item.ItemVal);
+                        itemdict.Add(item.ItemId, item.Quantity);
                     }
                 }
             }
 
             var cancraft = true;
-            foreach (CraftIngredient c in CraftBase.Lookup.Get<CraftBase>(Globals.ActiveCraftingTable.Crafts[mCraftIndex]).Ingredients)
+            foreach (CraftIngredient c in CraftBase.Lookup.Get<CraftBase>(mCraftId).Ingredients)
             {
-                if (itemdict.ContainsKey(c.Item))
+                if (itemdict.ContainsKey(c.ItemId))
                 {
-                    if (itemdict[c.Item] >= c.Quantity)
+                    if (itemdict[c.ItemId] >= c.Quantity)
                     {
-                        itemdict[c.Item] -= c.Quantity;
+                        itemdict[c.ItemId] -= c.Quantity;
                     }
                     else
                     {
@@ -301,7 +301,7 @@ namespace Intersect_Client.Classes.UI.Game
 
             Crafting = true;
             mBarTimer = Globals.System.GetTimeMs();
-            PacketSender.SendCraftItem(mCraftIndex);
+            PacketSender.SendCraftItem(mCraftId);
             mCraftWindow.IsClosable = false;
         }
 
@@ -313,28 +313,28 @@ namespace Intersect_Client.Classes.UI.Game
                 ListBoxRow tmpRow;
                 for (int i = 0; i < Globals.ActiveCraftingTable.Crafts.Count; i++)
                 {
-                    tmpRow = mRecipes.AddRow((i + 1) + ") " + ItemBase.GetName(CraftBase.Lookup.Get<CraftBase>(Globals.ActiveCraftingTable.Crafts[i]).Item));
-                    tmpRow.UserData = i;
+                    tmpRow = mRecipes.AddRow((i + 1) + ") " + ItemBase.GetName(CraftBase.Lookup.Get<CraftBase>(Globals.ActiveCraftingTable.Crafts[i]).ItemId));
+                    tmpRow.UserData = Globals.ActiveCraftingTable.Crafts[i];
                     tmpRow.DoubleClicked += tmpNode_DoubleClicked;
                     tmpRow.Clicked += tmpNode_DoubleClicked;
                     tmpRow.SetTextColor(Color.White);
                 }
 
                 //Load the craft data
-                LoadCraftItems(0);
+                if (Globals.ActiveCraftingTable.Crafts.Count > 0) LoadCraftItems(Globals.ActiveCraftingTable.Crafts[0]);
                 mInitialized = true;
             }
             if (Crafting == true)
             {
                 long i = Globals.System.GetTimeMs() - mBarTimer;
-                if (i > CraftBase.Lookup.Get<CraftBase>(Globals.ActiveCraftingTable.Crafts[mCraftIndex]).Time)
+                if (i > CraftBase.Lookup.Get<CraftBase>(mCraftId).Time)
                 {
-                    i = CraftBase.Lookup.Get<CraftBase>(Globals.ActiveCraftingTable.Crafts[mCraftIndex]).Time;
+                    i = CraftBase.Lookup.Get<CraftBase>(mCraftId).Time;
                     Crafting = false;
                     mCraftWindow.IsClosable = true;
-                    LoadCraftItems(mCraftIndex);
+                    LoadCraftItems(mCraftId);
                 }
-                decimal width = Convert.ToDecimal(i) / Convert.ToDecimal(CraftBase.Lookup.Get<CraftBase>(Globals.ActiveCraftingTable.Crafts[mCraftIndex]).Time) *
+                decimal width = Convert.ToDecimal(i) / Convert.ToDecimal(CraftBase.Lookup.Get<CraftBase>(mCraftId).Time) *
                                 mBarContainer.Width;
                 mBar.Width = Convert.ToInt32(width);
             }

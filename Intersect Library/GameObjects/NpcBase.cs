@@ -1,4 +1,5 @@
-﻿using Intersect.Enums;
+﻿using System;
+using Intersect.Enums;
 using Intersect.Models;
 using Newtonsoft.Json;
 using System.Collections.Generic;
@@ -14,22 +15,22 @@ namespace Intersect.GameObjects
         public string JsonAggroList
         {
             get => JsonConvert.SerializeObject(AggroList);
-            set => AggroList = JsonConvert.DeserializeObject<List<int>>(value);
+            set => AggroList = JsonConvert.DeserializeObject<List<Guid>>(value);
         }
         [NotMapped]
-        public List<int> AggroList { get; set; } = new List<int>();
+        public List<Guid> AggroList { get; set; } = new List<Guid>();
 
 
         public bool AttackAllies { get; set; }
 
         [Column("AttackAnimation")]
-        public int AttackAnimationId { get; protected set; }
+        public Guid AttackAnimationId { get; protected set; }
         [NotMapped]
         [JsonIgnore]
         public AnimationBase AttackAnimation
         {
             get => AnimationBase.Lookup.Get<AnimationBase>(AttackAnimationId);
-            set => AttackAnimationId = value?.Index ?? -1;
+            set => AttackAnimationId = value?.Id ?? Guid.Empty;
         }
         
         public byte Behavior { get; set; }
@@ -99,7 +100,7 @@ namespace Intersect.GameObjects
         public int[] Stats = new int[(int) Enums.Stats.StatCount];
 
         [JsonConstructor]
-        public NpcBase(int index) : base(index)
+        public NpcBase(Guid id) : base(id)
         {
             Name = "New Npc";
         }
@@ -109,17 +110,12 @@ namespace Intersect.GameObjects
         {
             Name = "New Npc";
         }
-
-        public static NpcBase Get(int index)
-        {
-            return NpcBase.Lookup.Get<NpcBase>(index);
-        }
     }
 
     public class NpcDrop
     {
-        public int Amount;
+        public int Quantity;
         public double Chance;
-        public int ItemNum;
+        public Guid ItemId;
     }
 }

@@ -37,7 +37,7 @@ namespace Intersect_Client.Classes.Entities
         public int RenderLevel = 1;
         public int WalkingAnim = 1;
 
-        public Event(int index, long spawnTime, int mapNum, ByteBuffer bf) : base(index, spawnTime, bf, true)
+        public Event(Guid id, int mapNum, ByteBuffer bf) : base(id, bf, true)
         {
             var map = MapInstance.Lookup.Get<MapInstance>(CurrentMap);
             if (map != null)
@@ -49,7 +49,7 @@ namespace Intersect_Client.Classes.Entities
 
         public override string ToString()
         {
-            return MyName;
+            return Name;
         }
 
         public override void Load(ByteBuffer bf)
@@ -203,7 +203,7 @@ namespace Intersect_Client.Classes.Entities
                 for (int y = gridY - 1; y <= gridY + 1; y++)
                 {
                     if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
-                        Globals.MapGrid[x, y] != -1)
+                        Globals.MapGrid[x, y] != Guid.Empty)
                     {
                         if (Globals.MapGrid[x, y] == CurrentMap)
                         {
@@ -253,7 +253,7 @@ namespace Intersect_Client.Classes.Entities
 
         public override void DrawName(Color textColor, Color borderColor, Color backgroundColor)
         {
-            if (HideName == 1 || MyName.Trim().Length == 0)
+            if (HideName == 1 || Name.Trim().Length == 0)
             {
                 return;
             }
@@ -298,13 +298,13 @@ namespace Intersect_Client.Classes.Entities
             y = (int) GetTopPos(height) - 12;
             x = (int) Math.Ceiling(GetCenterPos().X);
 
-            Pointf textSize = GameGraphics.Renderer.MeasureText(MyName, GameGraphics.GameFont, 1);
+            Pointf textSize = GameGraphics.Renderer.MeasureText(Name, GameGraphics.GameFont, 1);
 
             if (CustomColors.EventNameBackground != Color.Transparent)
                 GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
                     new FloatRect((x - textSize.X / 2f) - 4, y, textSize.X + 8, textSize.Y),
                     CustomColors.EventNameBackground);
-            GameGraphics.Renderer.DrawString(MyName, GameGraphics.GameFont,
+            GameGraphics.Renderer.DrawString(Name, GameGraphics.GameFont,
                 (int) (x - (int) Math.Ceiling(textSize.X / 2f)), (int) (y), 1,
                 IntersectClientExtras.GenericClasses.Color.FromArgb(CustomColors.EventName.ToArgb()), true, null,
                 IntersectClientExtras.GenericClasses.Color.FromArgb(CustomColors.EventNameBorder.ToArgb()));

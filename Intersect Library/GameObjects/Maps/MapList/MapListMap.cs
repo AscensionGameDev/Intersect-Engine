@@ -5,7 +5,7 @@ namespace Intersect.GameObjects.Maps.MapList
 {
     public class MapListMap : MapListItem, IComparable<MapListMap>
     {
-        public int MapNum = -1;
+        public Guid MapId;
 
         public MapListMap() : base()
         {
@@ -15,30 +15,30 @@ namespace Intersect.GameObjects.Maps.MapList
 
         public int CompareTo(MapListMap obj)
         {
-            return MapNum.CompareTo(obj.MapNum);
+            return MapId.CompareTo(obj.MapId);
         }
 
         public void GetData(ByteBuffer myBuffer, DatabaseObjectLookup gameMaps)
         {
             base.GetData(myBuffer);
-            myBuffer.WriteInteger(MapNum);
-            myBuffer.WriteString(gameMaps[MapNum]?.Name ?? "Deleted");
+            myBuffer.WriteGuid(MapId);
+            myBuffer.WriteString(gameMaps[MapId]?.Name ?? "Deleted");
         }
 
         public bool Load(ByteBuffer myBuffer, DatabaseObjectLookup gameMaps, bool isServer = true)
         {
             base.Load(myBuffer);
-            MapNum = myBuffer.ReadInteger();
+            MapId = myBuffer.ReadGuid();
             Name = myBuffer.ReadString();
             if (isServer)
             {
-                if (!gameMaps.IndexKeys.Contains(MapNum)) return false;
+                if (!gameMaps.Keys.Contains(MapId)) return false;
             }
             else
             {
-                if (gameMaps.IndexKeys.Contains(MapNum))
+                if (gameMaps.Keys.Contains(MapId))
                 {
-                    gameMaps[MapNum].Name = Name;
+                    gameMaps[MapId].Name = Name;
                 }
             }
             return true;

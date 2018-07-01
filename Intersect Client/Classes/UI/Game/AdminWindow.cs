@@ -283,7 +283,7 @@ namespace Intersect_Client.Classes.UI.Game
                 for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
                 {
                     tmpNode = mMapList.AddNode(MapList.GetOrderedMaps()[i].Name);
-                    tmpNode.UserData = (MapList.GetOrderedMaps()[i]).MapNum;
+                    tmpNode.UserData = (MapList.GetOrderedMaps()[i]).MapId;
                     tmpNode.DoubleClicked += tmpNode_DoubleClicked;
                     tmpNode.Clicked += tmpNode_DoubleClicked;
                 }
@@ -312,14 +312,14 @@ namespace Intersect_Client.Classes.UI.Game
                         if (parent == null)
                         {
                             tmpNode = mMapList.AddNode(mapList.Items[i].Name);
-                            tmpNode.UserData = ((MapListMap) mapList.Items[i]).MapNum;
+                            tmpNode.UserData = ((MapListMap) mapList.Items[i]).MapId;
                             tmpNode.DoubleClicked += tmpNode_DoubleClicked;
                             tmpNode.Clicked += tmpNode_DoubleClicked;
                         }
                         else
                         {
                             tmpNode = parent.AddNode(mapList.Items[i].Name);
-                            tmpNode.UserData = ((MapListMap) mapList.Items[i]).MapNum;
+                            tmpNode.UserData = ((MapListMap) mapList.Items[i]).MapId;
                             tmpNode.DoubleClicked += tmpNode_DoubleClicked;
                             tmpNode.Clicked += tmpNode_DoubleClicked;
                         }
@@ -388,7 +388,7 @@ namespace Intersect_Client.Classes.UI.Game
         void _banButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
             if (mNameTextbox.Text.Trim().Length > 0 &&
-                mNameTextbox.Text.Trim().ToLower() != Globals.Me.MyName.Trim().ToLower())
+                mNameTextbox.Text.Trim().ToLower() != Globals.Me.Name.Trim().ToLower())
             {
                 mBanMuteWindow = new BanMuteBox(Strings.Admin.bancaption.ToString( mNameTextbox.Text),
                     Strings.Admin.banprompt.ToString( mNameTextbox.Text), true, BanUser);

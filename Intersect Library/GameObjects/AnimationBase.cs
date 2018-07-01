@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Models;
 using Newtonsoft.Json;
@@ -58,7 +59,7 @@ namespace Intersect.GameObjects
         public string Sound { get; set; }
 
         [JsonConstructor]
-        public AnimationBase(int index) : base(index)
+        public AnimationBase(Guid id) : base(id)
         {
             // TODO: localize this
             Name = "New Animation";
@@ -73,11 +74,6 @@ namespace Intersect.GameObjects
             Name = "New Animation";
             Lower = new AnimationLayer();
             Upper = new AnimationLayer();
-        }
-
-        public static AnimationBase Get(int index)
-        {
-            return AnimationBase.Lookup.Get<AnimationBase>(index);
         }
     }
 }

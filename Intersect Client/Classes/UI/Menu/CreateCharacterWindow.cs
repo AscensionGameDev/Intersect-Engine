@@ -379,12 +379,12 @@ namespace Intersect_Client.Classes.UI.Menu
                 GameFade.FadeOut();
                 if (mMaleChk.IsChecked)
                 {
-                    PacketSender.SendCreateCharacter(mCharnameTextbox.Text, GetClass().Index,
+                    PacketSender.SendCreateCharacter(mCharnameTextbox.Text, GetClass().Id,
                         mMaleSprites[mDisplaySpriteIndex].Key);
                 }
                 else
                 {
-                    PacketSender.SendCreateCharacter(mCharnameTextbox.Text, GetClass().Index,
+                    PacketSender.SendCreateCharacter(mCharnameTextbox.Text, GetClass().Id,
                         mFemaleSprites[mDisplaySpriteIndex].Key);
                 }
                 Globals.WaitingOnServer = true;

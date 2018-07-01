@@ -21,7 +21,7 @@ namespace Intersect.Client.Classes.UI.Game.Bank
         //Drag/Drop References
         private BankWindow mBankWindow;
 
-        private int mCurrentItem = -2;
+        private Guid mCurrentItemId;
         private ItemDescWindow mDescWindow;
 
         //Slot info
@@ -99,7 +99,7 @@ namespace Intersect.Client.Classes.UI.Game.Bank
             }
             if (Globals.Bank[mMySlot] != null)
             {
-                mDescWindow = new ItemDescWindow(Globals.Bank[mMySlot].Item, Globals.Bank[mMySlot].ItemVal,
+                mDescWindow = new ItemDescWindow(Globals.Bank[mMySlot].Item, Globals.Bank[mMySlot].Quantity,
                     mBankWindow.X - 255, mBankWindow.Y, Globals.Bank[mMySlot].StatBoost);
             }
         }
@@ -118,10 +118,10 @@ namespace Intersect.Client.Classes.UI.Game.Bank
 
         public void Update()
         {
-            if (Globals.Bank[mMySlot].ItemNum != mCurrentItem)
+            if (Globals.Bank[mMySlot].ItemId != mCurrentItemId)
             {
-                mCurrentItem = Globals.Bank[mMySlot].ItemNum;
-                var item = ItemBase.Lookup.Get<ItemBase>(Globals.Bank[mMySlot].ItemNum);
+                mCurrentItemId = Globals.Bank[mMySlot].ItemId;
+                var item = ItemBase.Lookup.Get<ItemBase>(Globals.Bank[mMySlot].ItemId);
                 if (item != null)
                 {
                     GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,

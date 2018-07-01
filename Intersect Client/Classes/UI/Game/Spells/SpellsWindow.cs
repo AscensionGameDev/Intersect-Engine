@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Intersect;
 using Intersect.Client.Classes.UI.Game.Spells;
 using Intersect.Client.Classes.Localization;
@@ -56,7 +57,7 @@ namespace Intersect_Client.Classes.UI.Game
             Y = mSpellWindow.Y;
             for (int i = 0; i < Options.MaxPlayerSkills; i++)
             {
-                if (Globals.Me.Spells[i].SpellNum > -1)
+                if (Globals.Me.Spells[i].SpellId != Guid.Empty)
                 {
                     Items[i].Pnl.IsHidden = false;
                     Items[i].Update();

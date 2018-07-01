@@ -1,10 +1,11 @@
-﻿namespace Intersect_Client.Classes.Entities
+﻿using System;
+
+namespace Intersect_Client.Classes.Entities
 {
     public class EventDialog
     {
-        public int EventIndex;
-
-        public int EventMap;
+        public Guid EventId;
+        
         public string Face = "";
         public string Opt1 = "";
         public string Opt2 = "";

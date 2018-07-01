@@ -36,10 +36,10 @@ namespace Intersect.GameObjects.Maps
         [JsonIgnore]
         public byte[] TileData { get; set; }
 
-        public int Up { get; set; } = -1;
-        public int Down { get; set; } = -1;
-        public int Left { get; set; } = -1;
-        public int Right { get; set; } = -1;
+        public Guid Up { get; set; }
+        public Guid Down { get; set; }
+        public Guid Left { get; set; }
+        public Guid Right { get; set; }
         public int Revision { get; set; }
 
         [Column("Attributes")]
@@ -127,7 +127,16 @@ namespace Intersect.GameObjects.Maps
         public string OverlayGraphic { get; set; } = null;
 
         //Weather
-        public int Weather { get; set; } = -1;
+        [Column("WeatherAnimation")]
+        [JsonProperty]
+        public Guid WeatherAnimationId { get; protected set; }
+        [NotMapped]
+        [JsonIgnore]
+        public AnimationBase WeatherAnimation
+        {
+            get => AnimationBase.Lookup.Get<AnimationBase>(WeatherAnimationId);
+            set => WeatherAnimationId = value?.Id ?? Guid.Empty;
+        }
         public int WeatherXSpeed { get; set;}
         public int WeatherYSpeed { get; set; }
         public int WeatherIntensity { get; set; }
@@ -137,7 +146,7 @@ namespace Intersect.GameObjects.Maps
         public object MapLock => mMapLock;
         
         [JsonConstructor]
-        public MapBase(int index, bool isClient) : base(index)
+        public MapBase(Guid id, bool isClient) : base(id)
         {
             Name = "New Map";
             IsClient = isClient;
@@ -150,7 +159,7 @@ namespace Intersect.GameObjects.Maps
             IsClient = false;
         }
 
-        public MapBase(MapBase mapcopy) : base(mapcopy.Index)
+        public MapBase(MapBase mapcopy) : base(mapcopy.Id)
         {
             lock (MapLock)
             {
@@ -172,7 +181,7 @@ namespace Intersect.GameObjects.Maps
                                 {
                                     Layers[i].Tiles[x, y] = new Tile
                                     {
-                                        TilesetIndex = mapcopy.Layers[i].Tiles[x, y].TilesetIndex,
+                                        TilesetId = mapcopy.Layers[i].Tiles[x, y].TilesetId,
                                         X = mapcopy.Layers[i].Tiles[x, y].X,
                                         Y = mapcopy.Layers[i].Tiles[x, y].Y,
                                         Autotile = mapcopy.Layers[i].Tiles[x, y].Autotile

@@ -1,33 +1,35 @@
-﻿using Intersect.Enums;
+﻿using System;
+using Intersect.Enums;
 using Intersect.GameObjects.Conditions;
 using Intersect.Models;
 using Intersect.Utilities;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
+using Intersect.GameObjects.Events;
 
 namespace Intersect.GameObjects
 {
     public class ItemBase : DatabaseObject<ItemBase>
     {
         [Column("Animation")]
-        public int AnimationId { get; protected set; }
+        public Guid AnimationId { get; protected set; }
         [NotMapped]
         [JsonIgnore]
         public AnimationBase Animation
         {
             get => AnimationBase.Lookup.Get<AnimationBase>(AnimationId);
-            set => AnimationId = value?.Index ?? -1;
+            set => AnimationId = value?.Id ?? Guid.Empty;
         }
 
         [Column("AttackAnimation")]
         [JsonProperty]
-        public int AttackAnimationId { get; protected set; }
+        public Guid AttackAnimationId { get; protected set; }
         [NotMapped]
         [JsonIgnore]
         public AnimationBase AttackAnimation
         {
             get => AnimationBase.Lookup.Get<AnimationBase>(AttackAnimationId);
-            set => AttackAnimationId = value?.Index ?? -1;
+            set => AttackAnimationId = value?.Id ?? Guid.Empty;
         }
 
         public bool Bound { get; set; }
@@ -44,8 +46,27 @@ namespace Intersect.GameObjects
         
         public int SlotCount { get; set; }
 
-        public int SpellIndex { get; set; }
-        public int EventIndex { get; set; }
+        [Column("Spell")]
+        [JsonProperty]
+        public Guid SpellId { get; protected set; }
+        [NotMapped]
+        [JsonIgnore]
+        public SpellBase Spell
+        {
+            get => SpellBase.Lookup.Get<SpellBase>(SpellId);
+            set => SpellId = value?.Id ?? Guid.Empty;
+        }
+
+        [Column("Event")]
+        [JsonProperty]
+        public Guid EventId { get; protected set; }
+        [NotMapped]
+        [JsonIgnore]
+        public EventBase Event
+        {
+            get => EventBase.Lookup.Get<EventBase>(EventId);
+            set => EventId = value?.Id ?? Guid.Empty;
+        }
 
         public string Desc { get; set; } = "";
         public string FemalePaperdoll { get; set; } = "";
@@ -53,7 +74,18 @@ namespace Intersect.GameObjects
         public string MalePaperdoll { get; set; } = "";
         public string Pic { get; set; } = "";
         public int Price { get; set; }
-        public int Projectile { get; set; } = -1;
+
+        [Column("Projectile")]
+        [JsonProperty]
+        public Guid ProjectileId { get; protected set; }
+        [NotMapped]
+        [JsonIgnore]
+        public ProjectileBase Projectile
+        {
+            get => ProjectileBase.Lookup.Get<ProjectileBase>(ProjectileId);
+            set => ProjectileId = value?.Id ?? Guid.Empty;
+        }
+
         public int Scaling { get; set; }
         public int ScalingStat { get; set; }
         public int Speed { get; set; }
@@ -86,7 +118,7 @@ namespace Intersect.GameObjects
         public ItemBase() => Initialize();
 
         [JsonConstructor]
-        public ItemBase(int index) : base(index) => Initialize();
+        public ItemBase(Guid id) : base(id) => Initialize();
 
         private void Initialize()
         {
@@ -100,11 +132,6 @@ namespace Intersect.GameObjects
         public bool IsStackable()
         {
             return (ItemType == ItemTypes.Currency || Stackable) && ItemType != ItemTypes.Equipment && ItemType != ItemTypes.Bag;
-        }
-
-        public static ItemBase Get(int index)
-        {
-            return ItemBase.Lookup.Get<ItemBase>(index);
         }
     }
 

@@ -1,8 +1,10 @@
-﻿namespace Intersect.GameObjects.Maps
+﻿using System;
+
+namespace Intersect.GameObjects.Maps
 {
     public struct Tile
     {
-        public int TilesetIndex;
+        public Guid TilesetId;
         public int X;
         public int Y;
         public byte Autotile;

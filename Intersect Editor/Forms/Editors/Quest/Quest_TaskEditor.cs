@@ -30,11 +30,11 @@ namespace Intersect.Editor.Forms.Editors.Quest
                 case 0: //Event Driven
                     break;
                 case 1: //Gather Items
-                    cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item, mMyTask.Data1);
+                    cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item, mMyTask.Guid1);
                     nudItemAmount.Value = mMyTask.Data2;
                     break;
                 case 2: //Kill NPCS
-                    cmbNpc.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Npc, mMyTask.Data1);
+                    cmbNpc.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Npc, mMyTask.Guid1);
                     nudNpcQuantity.Value = mMyTask.Data2;
                     break;
             }
@@ -104,11 +104,11 @@ namespace Intersect.Editor.Forms.Editors.Quest
                     mMyTask.Data2 = 1;
                     break;
                 case 1: //Gather Items
-                    mMyTask.Data1 = Database.GameObjectIdFromList(GameObjectType.Item, cmbItem.SelectedIndex);
+                    mMyTask.Guid1 = Database.GameObjectIdFromList(GameObjectType.Item, cmbItem.SelectedIndex);
                     mMyTask.Data2 = (int) nudItemAmount.Value;
                     break;
                 case 2: //Kill Npcs
-                    mMyTask.Data1 = Database.GameObjectIdFromList(GameObjectType.Npc, cmbNpc.SelectedIndex);
+                    mMyTask.Guid1 = Database.GameObjectIdFromList(GameObjectType.Npc, cmbNpc.SelectedIndex);
                     mMyTask.Data2 = (int) nudNpcQuantity.Value;
                     break;
             }

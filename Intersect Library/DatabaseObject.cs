@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using Intersect.Collections;
 using Intersect.Enums;
+using Intersect.GameObjects;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
@@ -15,31 +16,17 @@ namespace Intersect.Models
 
         private string mBackup;
 
-        protected DatabaseObject() : this(Guid.Empty, -1)
-        {
-        }
-
-        protected DatabaseObject(int index) : this(Guid.NewGuid(), index)
-        {
-        }
-
-        protected DatabaseObject(Guid guid) : this(guid, Lookup.NextIndex)
+        protected DatabaseObject() : this(Guid.Empty)
         {
         }
 
 
         public static string[] Names => Lookup.Select(pair => pair.Value?.Name ?? "ERR_DELETED").ToArray();
 
-        public static int IdFromList(int listIndex) => listIndex < 0 ? -1 : (Lookup.ValueList?[listIndex]?.Index ?? -1);
+        public static Guid IdFromList(int listIndex) => listIndex < 0 ? Guid.Empty : listIndex > Lookup.KeyList.Count ? Guid.Empty : Lookup.KeyList[listIndex];
 
         public static TObject FromList(int listIndex) => listIndex < 0 ? null : listIndex > Lookup.ValueList.Count ? null : (TObject)Lookup.ValueList?[listIndex];
 
-        public static int ListIndex(int id)
-        {
-            var index = Lookup.IndexList?.IndexOf(id);
-            if (!index.HasValue) throw new ArgumentNullException();
-            return index.Value;
-        }
         public int ListIndex()
         {
             return ListIndex(Id);
@@ -50,11 +37,15 @@ namespace Intersect.Models
             return index;
         }
 
+        public static TObject Get(Guid id)
+        {
+            return Lookup.Get<TObject>(id);
+        }
+
         [JsonConstructor]
-        protected DatabaseObject(Guid guid, int index)
+        protected DatabaseObject(Guid guid)
         {
             Id = guid;
-            Index = index;
         }
 
         [NotNull] public static DatabaseObjectLookup Lookup => LookupUtils.GetLookup(typeof(TObject));
@@ -64,9 +55,6 @@ namespace Intersect.Models
 
         [JsonIgnore][NotMapped]
         public string DatabaseTable => Type.GetTable();
-
-        [JsonIgnore]//[NotMapped]
-        public int Index { get; protected set; }
 
         [JsonProperty(Order = -4)]
         [Column(Order = 0)]
@@ -92,7 +80,7 @@ namespace Intersect.Models
 
         public virtual void Delete() => Lookup.Delete((TObject) this);
 
-        public static string GetName(int index) => Lookup.Get(index)?.Name ?? "ERR_DELETED";
+        public static string GetName(Guid id) => Lookup.Get(id)?.Name ?? "ERR_DELETED";
 
         public static string[] GetNameList() =>
             Lookup.Select(pair => pair.Value?.Name ?? "ERR_DELETED").ToArray();

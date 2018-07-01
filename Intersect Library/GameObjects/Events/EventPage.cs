@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Intersect.GameObjects.Conditions;
 using Intersect.Utilities;
 using Newtonsoft.Json;
@@ -25,7 +26,7 @@ namespace Intersect.GameObjects.Events
             ProjectileHit,
         }
 
-        public int Animation = -1;
+        public Guid AnimationId;
         public List<CommandList> CommandLists = new List<CommandList>();
         public ConditionLists ConditionLists = new ConditionLists();
         public string Desc = "";
@@ -43,7 +44,7 @@ namespace Intersect.GameObjects.Events
         public int Passable;
         public int Trigger;
         public string TriggerCommand;
-        public int TriggerVal;
+        public Guid TriggerVal;
         public int WalkingAnimation = 1;
 
         public EventPage()
@@ -80,7 +81,7 @@ namespace Intersect.GameObjects.Events
             Passable = curBuffer.ReadInteger();
             Layer = curBuffer.ReadInteger();
             Trigger = curBuffer.ReadInteger();
-            TriggerVal = curBuffer.ReadInteger();
+            TriggerVal = curBuffer.ReadGuid();
             TriggerCommand = curBuffer.ReadString();
             FaceGraphic = curBuffer.ReadString();
             Graphic.Load(curBuffer);
@@ -88,7 +89,7 @@ namespace Intersect.GameObjects.Events
             DisablePreview = curBuffer.ReadInteger();
             DirectionFix = curBuffer.ReadInteger();
             WalkingAnimation = curBuffer.ReadInteger();
-            Animation = curBuffer.ReadInteger();
+            AnimationId = curBuffer.ReadGuid();
             InteractionFreeze = curBuffer.ReadInteger();
             var x = curBuffer.ReadInteger();
             for (var i = 0; i < x; i++)
@@ -108,7 +109,7 @@ namespace Intersect.GameObjects.Events
             myBuffer.WriteInteger(Passable);
             myBuffer.WriteInteger(Layer);
             myBuffer.WriteInteger(Trigger);
-            myBuffer.WriteInteger(TriggerVal);
+            myBuffer.WriteGuid(TriggerVal);
             myBuffer.WriteString(TriggerCommand);
             myBuffer.WriteString(TextUtils.SanitizeNone(FaceGraphic));
             Graphic.Save(myBuffer);
@@ -116,7 +117,7 @@ namespace Intersect.GameObjects.Events
             myBuffer.WriteInteger(DisablePreview);
             myBuffer.WriteInteger(DirectionFix);
             myBuffer.WriteInteger(WalkingAnimation);
-            myBuffer.WriteInteger(Animation);
+            myBuffer.WriteGuid(AnimationId);
             myBuffer.WriteInteger(InteractionFreeze);
             myBuffer.WriteInteger(CommandLists.Count);
             foreach (var commandList in CommandLists)

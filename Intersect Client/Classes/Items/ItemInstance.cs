@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using Intersect;
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -7,12 +8,12 @@ namespace Intersect_Client.Classes.Items
 {
     public class ItemInstance
     {
-        public int ItemNum = -1;
-        public int ItemVal;
+        public Guid ItemId;
+        public int Quantity;
         public int[] StatBoost = new int[(int) Stats.StatCount];
 
         [NotMapped]
-        public ItemBase Item => ItemBase.Lookup.Get<ItemBase>(ItemNum);
+        public ItemBase Item => ItemBase.Lookup.Get<ItemBase>(ItemId);
 
         public ItemInstance()
         {
@@ -20,8 +21,8 @@ namespace Intersect_Client.Classes.Items
 
         public void Load(ByteBuffer bf)
         {
-            ItemNum = bf.ReadInteger();
-            ItemVal = bf.ReadInteger();
+            ItemId = bf.ReadGuid();
+            Quantity = bf.ReadInteger();
             for (int i = 0; i < (int) Stats.StatCount; i++)
             {
                 StatBoost[i] = bf.ReadInteger();
@@ -32,8 +33,8 @@ namespace Intersect_Client.Classes.Items
         {
             ItemInstance newItem = new ItemInstance()
             {
-                ItemNum = ItemNum,
-                ItemVal = ItemVal
+                ItemId = ItemId,
+                Quantity = Quantity
             };
             for (int i = 0; i < (int) Stats.StatCount; i++)
             {

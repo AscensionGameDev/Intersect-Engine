@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using Intersect.Editor.Core;
 using Intersect.Editor.Forms;
@@ -41,7 +42,7 @@ namespace Intersect.Editor.General
         //Editor Variables
         public static MapInstance CurrentMap = null;
 
-        public static int LoadingMap = -1;
+        public static Guid LoadingMap = Guid.Empty;
         public static TilesetBase CurrentTileset = null;
         public static int CurSelX;
         public static int CurSelY;
@@ -98,8 +99,8 @@ namespace Intersect.Editor.General
         //Preview Fetching Variables
         public static bool FetchingMapPreviews = false;
 
-        public static List<int> MapsToFetch;
-        public static List<int> MapsToScreenshot = new List<int>();
+        public static List<Guid> MapsToFetch;
+        public static List<Guid> MapsToScreenshot = new List<Guid>();
         public static int FetchCount;
         public static FrmProgress PreviewProgressForm;
 

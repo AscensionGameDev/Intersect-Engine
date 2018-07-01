@@ -13,13 +13,13 @@ namespace Intersect.GameObjects
         public const int MAX_PROJECTILE_DIRECTIONS = 8;
 
         [Column("Ammo")]
-        public int AmmoItemId { get; protected set; } = -1;
+        public Guid AmmoItemId { get; protected set; } = Guid.Empty;
         [NotMapped]
         [JsonIgnore]
         public ItemBase Ammo
         {
             get => ItemBase.Lookup.Get<ItemBase>(AmmoItemId);
-            set => AmmoItemId = value?.Index ?? -1;
+            set => AmmoItemId = value?.Id ?? Guid.Empty;
         }
         public int AmmoRequired { get; set; } = 1;
 
@@ -57,18 +57,18 @@ namespace Intersect.GameObjects
         public int Speed { get; set; } = 1;
 
         [Column("Spell")]
-        public int SpellId { get; protected set; } = -1;
+        public Guid SpellId { get; protected set; } = Guid.Empty;
         [NotMapped]
         [JsonIgnore]
         public SpellBase Spell
         {
             get => SpellBase.Lookup.Get<SpellBase>(SpellId);
-            set => SpellId = value?.Index ?? -1;
+            set => SpellId = value?.Id ?? Guid.Empty;
         }
 
         //Init
         [JsonConstructor]
-        public ProjectileBase(int index) : base(index)
+        public ProjectileBase(Guid id) : base(id)
         {
             Name = "New Projectile";
             for (var x = 0; x < SPAWN_LOCATIONS_WIDTH; x++)
@@ -92,11 +92,6 @@ namespace Intersect.GameObjects
                 }
             }
         }
-
-        public static ProjectileBase Get(int index)
-        {
-            return ProjectileBase.Lookup.Get<ProjectileBase>(index);
-        }
     }
 
     public class Location
@@ -106,13 +101,13 @@ namespace Intersect.GameObjects
 
     public class ProjectileAnimation
     {
-        public int Animation = -1;
+        public Guid AnimationId;
         public bool AutoRotate;
         public int SpawnRange = 1;
 
-        public ProjectileAnimation(int animation, int spawnRange, bool autoRotate)
+        public ProjectileAnimation(Guid animationId, int spawnRange, bool autoRotate)
         {
-            Animation = animation;
+            AnimationId = animationId;
             SpawnRange = spawnRange;
             AutoRotate = autoRotate;
         }

@@ -2,6 +2,6 @@
 {
     public interface IGameObject<out TKey, TValue> where TValue : IGameObject<TKey, TValue>
     {
-        TKey Index { get; }
+        TKey Id { get; }
     }
 }

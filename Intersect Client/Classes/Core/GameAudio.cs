@@ -184,10 +184,10 @@ namespace Intersect.Client.Classes.Core
         }
 
         //Sounds
-        public static MapSound AddMapSound(string filename, int x, int y, int map, bool loop, int distance)
+        public static MapSound AddMapSound(string filename, int x, int y, Guid mapId, bool loop, int distance)
         {
             if (sGameSounds?.Count > 128) return null;
-            var sound = new MapSound(filename, x, y, map, loop, distance);
+            var sound = new MapSound(filename, x, y, mapId, loop, distance);
             sGameSounds?.Add(sound);
             return sound;
         }
@@ -214,23 +214,22 @@ namespace Intersect.Client.Classes.Core
         private int mDistance;
         private string mFilename;
         private bool mLoop;
-        private int mMap;
+        private Guid mMapId;
         private GameAudioInstance mSound;
         private float mVolume;
         private int mX;
         private int mY;
         public bool Loaded;
 
-        public MapSound(string filename, int x, int y, int map, bool loop, int distance)
+        public MapSound(string filename, int x, int y, Guid mapId, bool loop, int distance)
         {
             if (filename == null) return;
             mFilename = GameContentManager.RemoveExtension(filename).ToLower();
             mX = x;
             mY = y;
-            mMap = map;
+            mMapId = mapId;
             mLoop = loop;
             mDistance = distance;
-            mMap = map;
             GameAudioSource sound = Globals.ContentManager.GetSound(mFilename);
             if (sound != null && Globals.Database.SoundVolume > 0)
             {
@@ -242,11 +241,11 @@ namespace Intersect.Client.Classes.Core
             }
         }
 
-        public void UpdatePosition(int x, int y, int map)
+        public void UpdatePosition(int x, int y, Guid mapId)
         {
             mX = x;
             mY = y;
-            mMap = map;
+            mMapId = mapId;
         }
 
         public void Update()
@@ -266,19 +265,19 @@ namespace Intersect.Client.Classes.Core
 
         private void UpdateSoundVolume()
         {
-            if (mMap == 0)
+            if (mMapId == Guid.Empty)
             {
                 mSound.SetVolume(0);
                 return;
             }
-            var map = MapInstance.Lookup.Get<MapInstance>(mMap);
+            var map = MapInstance.Lookup.Get<MapInstance>(mMapId);
             if (map == null)
             {
                 Stop();
                 return;
             }
 
-            var sameMap = mMap == Globals.Me.CurrentMap;
+            var sameMap = mMapId == Globals.Me.CurrentMap;
             var inGrid = sameMap;
             if (!inGrid && Globals.Me.MapInstance != null)
             {
@@ -289,9 +288,9 @@ namespace Intersect.Client.Classes.Core
                     for (int y = gridY - 1; y <= gridY + 1; y++)
                     {
                         if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
-                            Globals.MapGrid[x, y] != -1)
+                            Globals.MapGrid[x, y] != Guid.Empty)
                         {
-                            if (Globals.MapGrid[x, y] == mMap)
+                            if (Globals.MapGrid[x, y] == mMapId)
                             {
                                 inGrid = true;
                                 break;
@@ -307,7 +306,7 @@ namespace Intersect.Client.Classes.Core
             }
             else
             {
-                if (mDistance > 0 && Globals.GridMaps.Contains(mMap))
+                if (mDistance > 0 && Globals.GridMaps.Contains(mMapId))
                 {
                     float volume = 100 - ((100 / mDistance) * CalculateSoundDistance());
                     if (volume < 0)
@@ -330,8 +329,7 @@ namespace Intersect.Client.Classes.Core
             float playery = Globals.Me.GetCenterPos().Y;
             float soundx = 0;
             float soundy = 0;
-            int mapNum = mMap;
-            var map = MapInstance.Lookup.Get<MapInstance>(mapNum);
+            var map = MapInstance.Lookup.Get<MapInstance>(mMapId);
             if (map != null)
             {
                 if (mX == -1 || mY == -1 || mDistance == -1)

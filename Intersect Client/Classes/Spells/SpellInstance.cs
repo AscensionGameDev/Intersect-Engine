@@ -1,17 +1,18 @@
-﻿using Intersect;
+﻿using System;
+using Intersect;
 
 namespace Intersect_Client.Classes.Spells
 {
     public class SpellInstance
     {
         public long SpellCd;
-        public int SpellNum = -1;
+        public Guid SpellId;
 
         public SpellInstance Clone()
         {
             SpellInstance newSpell = new SpellInstance()
             {
-                SpellNum = SpellNum,
+                SpellId = SpellId,
                 SpellCd = SpellCd
             };
             return newSpell;
@@ -19,13 +20,13 @@ namespace Intersect_Client.Classes.Spells
 
         public void Load(ByteBuffer bf)
         {
-            SpellNum = bf.ReadInteger();
+            SpellId = bf.ReadGuid();
         }
 
         public byte[] Data()
         {
             var bf = new ByteBuffer();
-            bf.WriteInteger(SpellNum);
+            bf.WriteGuid(SpellId);
             return bf.ToArray();
         }
     }

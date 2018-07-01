@@ -71,7 +71,7 @@ namespace Intersect.Server.Classes.Maps
         //Temporary Values
         [JsonIgnore]
         [NotMapped]
-        public List<int> SurroundingMaps = new List<int>();
+        public List<Guid> SurroundingMaps = new List<Guid>();
 
         [JsonIgnore]
         [NotMapped]
@@ -84,16 +84,16 @@ namespace Intersect.Server.Classes.Maps
         public long UpdateDelay = 100;
 
         //Init
-        public MapInstance() : base(-1, false)
+        public MapInstance() : base(Guid.NewGuid(), false)
         {
             Name = "New Map";
             Layers = null;
         }
 
         [JsonConstructor]
-        public MapInstance(int index) : base(index, false)
+        public MapInstance(Guid id) : base(id, false)
         {
-            if (index == -1)
+            if (id == Guid.Empty)
             {
                 return;
             }
@@ -215,16 +215,16 @@ namespace Intersect.Server.Classes.Maps
 
         public void SpawnItem(int x, int y, Item item, int amount)
         {
-            var itemBase = ItemBase.Lookup.Get<ItemBase>(item.ItemNum);
+            var itemBase = ItemBase.Lookup.Get<ItemBase>(item.Id);
             if (itemBase != null)
             {
-                MapItems.Add(new MapItem(item.ItemNum, item.ItemVal,item.BagId, item.Bag));
+                MapItems.Add(new MapItem(item.Id, item.Quantity,item.BagId, item.Bag));
                 MapItems[MapItems.Count - 1].X = x;
                 MapItems[MapItems.Count - 1].Y = y;
                 MapItems[MapItems.Count - 1].DespawnTime = Globals.System.GetTimeMs() + Options.ItemDespawnTime;
                 if (itemBase.ItemType == ItemTypes.Equipment)
                 {
-                    MapItems[MapItems.Count - 1].ItemVal = 1;
+                    MapItems[MapItems.Count - 1].Quantity = 1;
                     for (int i = 0; i < (int) Stats.StatCount; i++)
                     {
                         MapItems[MapItems.Count - 1].StatBoost[i] = item.StatBoost[i];
@@ -232,18 +232,18 @@ namespace Intersect.Server.Classes.Maps
                 }
                 else
                 {
-                    MapItems[MapItems.Count - 1].ItemVal = amount;
+                    MapItems[MapItems.Count - 1].Quantity = amount;
                 }
-                PacketSender.SendMapItemUpdate(Index, MapItems.Count - 1);
+                PacketSender.SendMapItemUpdate(Id, MapItems.Count - 1);
             }
         }
 
         private void SpawnAttributeItem(int x, int y)
         {
-            var item = ItemBase.Lookup.Get<ItemBase>(Attributes[x, y].Data1);
+            var item = ItemBase.Lookup.Get<ItemBase>(Attributes[x, y].Guid1);
             if (item != null)
             {
-                MapItems.Add(new MapItem(Attributes[x, y].Data1, Attributes[x, y].Data2));
+                MapItems.Add(new MapItem(Attributes[x, y].Guid1, Attributes[x, y].Data2));
                 MapItems[MapItems.Count - 1].X = x;
                 MapItems[MapItems.Count - 1].Y = y;
                 MapItems[MapItems.Count - 1].DespawnTime = -1;
@@ -251,14 +251,14 @@ namespace Intersect.Server.Classes.Maps
                 MapItems[MapItems.Count - 1].AttributeSpawnY = y;
                 if (item.ItemType == ItemTypes.Equipment)
                 {
-                    MapItems[MapItems.Count - 1].ItemVal = 1;
+                    MapItems[MapItems.Count - 1].Quantity = 1;
                     Random r = new Random();
                     for (int i = 0; i < (int) Stats.StatCount; i++)
                     {
                         MapItems[MapItems.Count - 1].StatBoost[i] = r.Next(-1 * item.StatGrowth, item.StatGrowth + 1);
                     }
                 }
-                PacketSender.SendMapItemUpdate(Index, MapItems.Count - 1);
+                PacketSender.SendMapItemUpdate(Id, MapItems.Count - 1);
             }
         }
 
@@ -266,8 +266,8 @@ namespace Intersect.Server.Classes.Maps
         {
             if (index < MapItems.Count && MapItems[index] != null)
             {
-                MapItems[index].ItemNum = -1;
-                PacketSender.SendMapItemUpdate(Index, index);
+                MapItems[index].Id = Guid.Empty;
+                PacketSender.SendMapItemUpdate(Id, index);
                 if (respawn)
                 {
                     if (MapItems[index].AttributeSpawnX > -1)
@@ -294,13 +294,55 @@ namespace Intersect.Server.Classes.Maps
             MapItems.Clear();
         }
 
+        public void DespawnNpcsOf(NpcBase npcBase)
+        {
+            var npcs = new List<Npc>();
+            foreach (var entity in mEntities)
+            {
+                if (entity.GetType() == typeof(Npc) && ((Npc)entity).Base == npcBase)
+                    npcs.Add((Npc)entity);
+            }
+            foreach (var en in npcs)
+            {
+                en.Die(0);
+            }
+        }
+
+        public void DespawnResourcesOf(ResourceBase resourceBase)
+        {
+            var resources = new List<Resource>();
+            foreach (var entity in mEntities)
+            {
+                if (entity.GetType() == typeof(Resource) && ((Resource)entity).Base == resourceBase)
+                    resources.Add((Resource)entity);
+            }
+            foreach (var en in resources)
+            {
+                en.Die(0);
+            }
+        }
+
+        public void DespawnProjectilesOf(ProjectileBase projectileBase)
+        {
+            var projectiles = new List<Projectile>();
+            foreach (var entity in mEntities)
+            {
+                if (entity.GetType() == typeof(Projectile) && ((Projectile)entity).Base == projectileBase)
+                    projectiles.Add((Projectile)entity);
+            }
+            foreach (var en in projectiles)
+            {
+                en.Die(0);
+            }
+        }
+
         public void DespawnItemsOf(ItemBase itemBase)
         {
             for (int i = 0; i < MapItems.Count; i++)
             {
                 if (MapItems[i] != null)
                 {
-                    if (ItemBase.Lookup.Get<ItemBase>(MapItems[i].ItemNum) == itemBase)
+                    if (ItemBase.Lookup.Get<ItemBase>(MapItems[i].Id) == itemBase)
                     {
                         RemoveItem(i, true);
                     }
@@ -313,7 +355,7 @@ namespace Intersect.Server.Classes.Maps
         {
             var tempResource = new ResourceSpawn()
             {
-                ResourceNum = Attributes[x, y].Data1,
+                ResourceId = Attributes[x, y].Guid1,
                 X = x,
                 Y = y,
                 Z = Attributes[x, y].Data2
@@ -335,7 +377,7 @@ namespace Intersect.Server.Classes.Maps
             {
                 int x = ResourceSpawns[i].X;
                 int y = ResourceSpawns[i].Y;
-                int index = -1;
+                Guid id = Guid.Empty;
                 MapResourceSpawn resourceSpawnInstance;
                 if (ResourceSpawnInstances.ContainsKey(ResourceSpawns[i]))
                 {
@@ -348,26 +390,25 @@ namespace Intersect.Server.Classes.Maps
                 }
                 if (resourceSpawnInstance.Entity == null)
                 {
-                    var resourceBase = ResourceBase.Lookup.Get<ResourceBase>(ResourceSpawns[i].ResourceNum);
+                    var resourceBase = ResourceBase.Lookup.Get<ResourceBase>(ResourceSpawns[i].ResourceId);
                     if (resourceBase != null)
                     {
-                        index = Globals.FindOpenEntity();
-                        Globals.Entities[index] = new Resource(index, resourceBase);
-                        resourceSpawnInstance.Entity = (Resource) Globals.Entities[index];
-                        Globals.Entities[index].X = ResourceSpawns[i].X;
-                        Globals.Entities[index].Y = ResourceSpawns[i].Y;
-                        Globals.Entities[index].Z = ResourceSpawns[i].Z;
-                        Globals.Entities[index].MapIndex = Index;
-                        mEntities.Add((Resource) Globals.Entities[index]);
+                        var res = new Resource(resourceBase);
+                        resourceSpawnInstance.Entity = res;
+                        res.X = ResourceSpawns[i].X;
+                        res.Y = ResourceSpawns[i].Y;
+                        res.Z = ResourceSpawns[i].Z;
+                        res.MapId = Id;
+                        mEntities.Add(res);
                     }
                 }
                 else
                 {
-                    index = resourceSpawnInstance.Entity.MyIndex;
+                    id = resourceSpawnInstance.Entity.Id;
                 }
-                if (index > -1)
+                if (id != Guid.Empty)
                 {
-                    ((Resource) Globals.Entities[index]).Spawn();
+                    resourceSpawnInstance.Entity.Spawn();
                 }
             }
         }
@@ -400,7 +441,7 @@ namespace Intersect.Server.Classes.Maps
             int x = 0;
             int y = 0;
             int dir = 0;
-            var npcBase = NpcBase.Lookup.Get<NpcBase>(Spawns[i].NpcNum);
+            var npcBase = NpcBase.Lookup.Get<NpcBase>(Spawns[i].NpcId);
             if (npcBase != null)
             {
                 MapNpcSpawn npcSpawnInstance;
@@ -423,7 +464,7 @@ namespace Intersect.Server.Classes.Maps
                 }
                 if (Spawns[i].X >= 0 && Spawns[i].Y >= 0)
                 {
-                    npcSpawnInstance.Entity = SpawnNpc(Spawns[i].X, Spawns[i].Y, dir, Spawns[i].NpcNum);
+                    npcSpawnInstance.Entity = SpawnNpc(Spawns[i].X, Spawns[i].Y, dir, Spawns[i].NpcId);
                 }
                 else
                 {
@@ -438,7 +479,7 @@ namespace Intersect.Server.Classes.Maps
                         x = 0;
                         y = 0;
                     }
-                    npcSpawnInstance.Entity = SpawnNpc(x, y, dir, Spawns[i].NpcNum);
+                    npcSpawnInstance.Entity = SpawnNpc(x, y, dir, Spawns[i].NpcId);
                 }
             }
         }
@@ -463,23 +504,21 @@ namespace Intersect.Server.Classes.Maps
             }
         }
 
-        public EntityInstance SpawnNpc(int tileX, int tileY, int dir, int npcNum, bool despawnable = false)
+        public EntityInstance SpawnNpc(int tileX, int tileY, int dir, Guid npcId, bool despawnable = false)
         {
-            var npcBase = NpcBase.Lookup.Get<NpcBase>(npcNum);
+            var npcBase = NpcBase.Lookup.Get<NpcBase>(npcId);
             if (npcBase != null)
             {
-                int entityIndex = Globals.FindOpenEntity();
-                Globals.Entities[entityIndex] = new Npc(entityIndex, npcBase, despawnable)
+                var npc = new Npc(npcBase, despawnable)
                 {
-                    MapIndex = Index,
+                    MapId = Id,
                     X = tileX,
                     Y = tileY,
                     Dir = dir
                 };
-
-                AddEntity((Npc) Globals.Entities[entityIndex]);
-                PacketSender.SendEntityDataToProximity(Globals.Entities[entityIndex]);
-                return (Npc) Globals.Entities[entityIndex];
+                AddEntity(npc);
+                PacketSender.SendEntityDataToProximity(npc);
+                return npc;
             }
             return null;
         }
@@ -493,7 +532,7 @@ namespace Intersect.Server.Classes.Maps
                 var evt = EventBase.Get(id);
                 if (evt != null & evt.IsGlobal == 1)
                 {
-                    GlobalEventInstances.Add(evt, new EventInstance(evt,Id, evt.Map, Index));
+                    GlobalEventInstances.Add(evt, new EventInstance(evt.Id, evt, Id));
                 }
             }
         }
@@ -531,16 +570,13 @@ namespace Intersect.Server.Classes.Maps
 
         //Spawn a projectile
         public void SpawnMapProjectile(EntityInstance owner, ProjectileBase projectile, SpellBase parentSpell,
-            ItemBase parentItem, int map, int x, int y, int z, int direction, EntityInstance target)
+            ItemBase parentItem, Guid mapId, int x, int y, int z, int direction, EntityInstance target)
         {
             lock (GetMapLock())
             {
-                int n = Globals.FindOpenEntity();
-                MapProjectiles.Add(new Projectile(n, owner, parentSpell, parentItem, projectile, map, x, y, z,
-                    direction,
-                    target));
-                Globals.Entities[n] = MapProjectiles[MapProjectiles.Count - 1];
-                PacketSender.SendEntityDataToProximity(Globals.Entities[n]);
+                var proj = new Projectile(owner, parentSpell, parentItem, projectile, Id, x, y, z, direction, target);
+                MapProjectiles.Add(proj);
+                PacketSender.SendEntityDataToProximity(proj);
             }
         }
 
@@ -670,12 +706,12 @@ namespace Intersect.Server.Classes.Maps
                         if (NpcSpawnInstances.ContainsKey(Spawns[i]))
                         {
                             MapNpcSpawn npcSpawnInstance = NpcSpawnInstances[Spawns[i]];
-                            if (npcSpawnInstance != null && !Globals.Entities.Contains(npcSpawnInstance.Entity))
+                            if (npcSpawnInstance != null && npcSpawnInstance.Entity.Dead)
                             {
                                 if (npcSpawnInstance.RespawnTime == -1)
                                 {
                                     npcSpawnInstance.RespawnTime = Globals.System.GetTimeMs() +
-                                                                   ((Npc) npcSpawnInstance.Entity).MyBase
+                                                                   ((Npc) npcSpawnInstance.Entity).Base
                                                                    .SpawnDuration *
                                                                    1000 - (Globals.System.GetTimeMs() - LastUpdateTime);
                                 }
@@ -698,7 +734,7 @@ namespace Intersect.Server.Classes.Maps
                                 if (resourceSpawnInstance.RespawnTime == -1)
                                 {
                                     resourceSpawnInstance.RespawnTime = Globals.System.GetTimeMs() +
-                                                                        resourceSpawnInstance.Entity.MyBase
+                                                                        resourceSpawnInstance.Entity.Base
                                                                             .SpawnDuration * 1000;
                                 }
                                 else if (resourceSpawnInstance.RespawnTime < Globals.System.GetTimeMs())
@@ -813,9 +849,9 @@ namespace Intersect.Server.Classes.Maps
                 //Send Entity Info to Everyone and Everyone to the Entity
                 SendMapEntitiesTo(player);
                 player.MyClient.SentMaps.Clear();
-                PacketSender.SendMapItems(player.MyClient, Index);
+                PacketSender.SendMapItems(player.MyClient, Id);
                 AddEntity(player);
-                player.LastMapEntered = Index;
+                player.LastMapEntered = Id;
                 if (SurroundingMaps.Count <= 0) return;
                 foreach (var t in SurroundingMaps)
                 {
@@ -832,16 +868,16 @@ namespace Intersect.Server.Classes.Maps
             if (player != null)
             {
                 PacketSender.SendMapEntitiesTo(player.MyClient, mEntities);
-                if (player.MapIndex == Index) player.SendEvents();
+                if (player.MapId == Id) player.SendEvents();
             }
         }
 
         public void ClearConnections(int side = -1)
         {
-            if (side == -1 || side == (int) Directions.Up) Up = -1;
-            if (side == -1 || side == (int) Directions.Down) Down = -1;
-            if (side == -1 || side == (int) Directions.Left) Left = -1;
-            if (side == -1 || side == (int) Directions.Right) Right = -1;
+            if (side == -1 || side == (int) Directions.Up) Up = Guid.Empty;
+            if (side == -1 || side == (int) Directions.Down) Down = Guid.Empty;
+            if (side == -1 || side == (int) Directions.Left) Left = Guid.Empty;
+            if (side == -1 || side == (int) Directions.Right) Right = Guid.Empty;
             LegacyDatabase.SaveGameDatabase();
         }
 
@@ -896,6 +932,11 @@ namespace Intersect.Server.Classes.Maps
             SpawnGlobalEvents();
             SpawnMapNpcs();
             SpawnMapResources();
+        }
+
+        public static MapInstance Get(Guid id)
+        {
+            return MapInstance.Lookup.Get<MapInstance>(id);
         }
 
         public override void Delete() => Lookup?.Delete(this);

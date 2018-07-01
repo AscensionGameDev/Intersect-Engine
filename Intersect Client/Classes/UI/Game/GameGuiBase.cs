@@ -1,4 +1,5 @@
-﻿using Intersect.Client.Classes.UI.Game.EntityPanel;
+﻿using System;
+using Intersect.Client.Classes.UI.Game.EntityPanel;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using IntersectClientExtras.Gwen.Control;
@@ -41,7 +42,7 @@ namespace Intersect.Client.Classes.UI.Game
         private bool mShouldOpenShop;
         private bool mShouldOpenTrading;
         private bool mShouldUpdateQuestLog = true;
-        private int mTradingTarget = -1;
+        private Guid mTradingTargetId;
         private TradingWindow mTradingWindow;
         public bool FocusChat;
 
@@ -202,10 +203,10 @@ namespace Intersect.Client.Classes.UI.Game
         }
 
         //Trading
-        public void NotifyOpenTrading(int index)
+        public void NotifyOpenTrading(Guid traderId)
         {
             mShouldOpenTrading = true;
-            mTradingTarget = index;
+            mTradingTargetId = traderId;
         }
 
         public void NotifyCloseTrading()
@@ -216,7 +217,7 @@ namespace Intersect.Client.Classes.UI.Game
         public void OpenTrading()
         {
             if (mTradingWindow != null) mTradingWindow.Close();
-            mTradingWindow = new TradingWindow(GameCanvas, mTradingTarget);
+            mTradingWindow = new TradingWindow(GameCanvas, mTradingTargetId);
             mShouldOpenTrading = false;
             Globals.InTrade = true;
         }

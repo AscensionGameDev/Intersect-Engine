@@ -53,15 +53,13 @@ namespace Intersect.Editor.Core
         //Game Object Handling
         public static string[] GetGameObjectList(GameObjectType type) => type.GetLookup()?.Names;
 
-        public static int GameObjectIdFromList(GameObjectType type, int listIndex) => listIndex < 0
-            ? -1
-            : (type.GetLookup()?.ValueList?[listIndex]?.Index ?? -1);
+        public static Guid GameObjectIdFromList(GameObjectType type, int listIndex) => listIndex < 0
+            ? Guid.Empty : listIndex > type.GetLookup().ValueList.Count ? Guid.Empty : (type.GetLookup()?.ValueList?[listIndex]?.Id ?? Guid.Empty);
 
-        public static int GameObjectListIndex(GameObjectType type, int id)
+        public static int GameObjectListIndex(GameObjectType type, Guid id)
         {
-            var index = type.GetLookup()?.IndexList?.IndexOf(id);
-            if (!index.HasValue) throw new ArgumentNullException();
-            return index.Value;
+            var index = type.GetLookup()?.KeyList?.IndexOf(id);
+            return index ?? -1;
         }
 
         //Map Cache DB
@@ -179,7 +177,7 @@ namespace Intersect.Editor.Core
             }
         }
 
-        public static int[] LoadMapCache(int id, int revision, int w, int h)
+        public static int[] LoadMapCache(Guid id, int revision, int w, int h)
         {
             var data = LoadMapCacheRaw(id, revision);
             if (data != null)
@@ -223,7 +221,7 @@ namespace Intersect.Editor.Core
             return null;
         }
 
-        public static Image LoadMapCacheLegacy(int id, int revision)
+        public static Image LoadMapCacheLegacy(Guid id, int revision)
         {
             var data = LoadMapCacheRaw(id, revision);
             if (data != null)
@@ -236,7 +234,7 @@ namespace Intersect.Editor.Core
             return null;
         }
 
-        public static byte[] LoadMapCacheRaw(int id, int revision)
+        public static byte[] LoadMapCacheRaw(Guid id, int revision)
         {
             var query = "SELECT * from " + MAP_CACHE_TABLE + " WHERE " + MAP_CACHE_ID + "=@" + MAP_CACHE_ID;
             if (revision > -1)
@@ -264,7 +262,7 @@ namespace Intersect.Editor.Core
             return null;
         }
 
-        public static void SaveMapCache(int id, int revision, byte[] data)
+        public static void SaveMapCache(Guid id, int revision, byte[] data)
         {
             var query = "INSERT OR REPLACE into " + MAP_CACHE_TABLE + " (" + MAP_CACHE_ID + "," +
                         MAP_CACHE_REVISION + "," + MAP_CACHE_DATA + ")" + " VALUES " + " (@" +
@@ -285,7 +283,7 @@ namespace Intersect.Editor.Core
             }
         }
 
-        public static void ClearMapCache(int id)
+        public static void ClearMapCache(Guid id)
         {
             var query = "UPDATE " + MAP_CACHE_TABLE + " SET " + MAP_CACHE_DATA + " = @" + MAP_CACHE_DATA + " WHERE " +
                         MAP_CACHE_ID + " = @" + MAP_CACHE_ID;

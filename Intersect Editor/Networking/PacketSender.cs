@@ -1,4 +1,5 @@
-﻿using Intersect.Editor.General;
+﻿using System;
+using Intersect.Editor.General;
 using Intersect.Editor.Maps;
 using Intersect.Enums;
 using Intersect.GameObjects.Maps.MapList;
@@ -27,11 +28,11 @@ namespace Intersect.Editor.Networking
             bf.Dispose();
         }
 
-        public static void SendNeedMap(int mapNum)
+        public static void SendNeedMap(Guid mapId)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.NeedMap);
-            bf.WriteLong(mapNum);
+            bf.WriteGuid(mapId);
             EditorNetwork.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -40,7 +41,7 @@ namespace Intersect.Editor.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.SaveMap);
-            bf.WriteInteger(map.Index);
+            bf.WriteGuid(map.Id);
             bf.WriteString(map.JsonData);
             var tileData = map.GenerateTileData();
             bf.WriteInteger(tileData.Length);
@@ -52,14 +53,14 @@ namespace Intersect.Editor.Networking
             bf.Dispose();
         }
 
-        public static void SendCreateMap(int location, int currentMap, MapListItem parent)
+        public static void SendCreateMap(int location, Guid currentMapId, MapListItem parent)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.CreateMap);
             bf.WriteInteger(location);
             if (location > -1)
             {
-                bf.WriteLong(currentMap);
+                bf.WriteGuid(currentMapId);
             }
             else
             {
@@ -73,12 +74,12 @@ namespace Intersect.Editor.Networking
                     if (parent.GetType() == typeof(MapListMap))
                     {
                         bf.WriteInteger(1);
-                        bf.WriteInteger(((MapListMap) parent).MapNum);
+                        bf.WriteGuid(((MapListMap) parent).MapId);
                     }
                     else
                     {
                         bf.WriteInteger(0);
-                        bf.WriteInteger(((MapListFolder) parent).FolderId);
+                        bf.WriteGuid(((MapListFolder) parent).FolderId);
                     }
                 }
             }
@@ -86,15 +87,15 @@ namespace Intersect.Editor.Networking
             bf.Dispose();
         }
 
-        public static void SendMapListMove(int srcType, int srcId, int destType, int destId)
+        public static void SendMapListMove(int srcType, Guid srcId, int destType, Guid destId)
         {
             ByteBuffer bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.MapListUpdate);
             bf.WriteInteger((int) MapListUpdates.MoveItem);
             bf.WriteInteger(srcType);
-            bf.WriteInteger(srcId);
+            bf.WriteGuid(srcId);
             bf.WriteInteger(destType);
-            bf.WriteInteger(destId);
+            bf.WriteGuid(destId);
             EditorNetwork.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -114,12 +115,12 @@ namespace Intersect.Editor.Networking
                 if (parent.GetType() == typeof(MapListMap))
                 {
                     bf.WriteInteger(1);
-                    bf.WriteInteger(((MapListMap) parent).MapNum);
+                    bf.WriteGuid(((MapListMap) parent).MapId);
                 }
                 else
                 {
                     bf.WriteInteger(0);
-                    bf.WriteInteger(((MapListFolder) parent).FolderId);
+                    bf.WriteGuid(((MapListFolder) parent).FolderId);
                 }
             }
             EditorNetwork.SendPacket(bf.ToArray());
@@ -134,12 +135,12 @@ namespace Intersect.Editor.Networking
             if (parent.GetType() == typeof(MapListMap))
             {
                 bf.WriteInteger(1);
-                bf.WriteInteger(((MapListMap) parent).MapNum);
+                bf.WriteGuid(((MapListMap) parent).MapId);
             }
             else
             {
                 bf.WriteInteger(0);
-                bf.WriteInteger(((MapListFolder) parent).FolderId);
+                bf.WriteGuid(((MapListFolder) parent).FolderId);
             }
             bf.WriteString(name);
             EditorNetwork.SendPacket(bf.ToArray());
@@ -154,42 +155,42 @@ namespace Intersect.Editor.Networking
             if (target.GetType() == typeof(MapListMap))
             {
                 bf.WriteInteger(1);
-                bf.WriteInteger(((MapListMap) target).MapNum);
+                bf.WriteGuid(((MapListMap) target).MapId);
             }
             else
             {
                 bf.WriteInteger(0);
-                bf.WriteInteger(((MapListFolder) target).FolderId);
+                bf.WriteGuid(((MapListFolder) target).FolderId);
             }
             EditorNetwork.SendPacket(bf.ToArray());
             bf.Dispose();
         }
 
-        public static void SendNeedGrid(int mapNum)
+        public static void SendNeedGrid(Guid mapId)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.NeedGrid);
-            bf.WriteLong(mapNum);
+            bf.WriteGuid(mapId);
             EditorNetwork.SendPacket(bf.ToArray());
             bf.Dispose();
         }
 
-        public static void SendUnlinkMap(int mapNum)
+        public static void SendUnlinkMap(Guid mapId)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.UnlinkMap);
-            bf.WriteLong(mapNum);
-            bf.WriteLong(Globals.CurrentMap.Index);
+            bf.WriteGuid(mapId);
+            bf.WriteGuid(Globals.CurrentMap.Id);
             EditorNetwork.SendPacket(bf.ToArray());
             bf.Dispose();
         }
 
-        public static void SendLinkMap(int adjacentMap, int linkMap, int gridX, int gridY)
+        public static void SendLinkMap(Guid adjacentMapId, Guid linkMapId, int gridX, int gridY)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.LinkMap);
-            bf.WriteLong(adjacentMap);
-            bf.WriteLong(linkMap);
+            bf.WriteGuid(adjacentMapId);
+            bf.WriteGuid(linkMapId);
             bf.WriteLong(gridX);
             bf.WriteLong(gridY);
             EditorNetwork.SendPacket(bf.ToArray());
@@ -220,7 +221,7 @@ namespace Intersect.Editor.Networking
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.DeleteGameObject);
             bf.WriteInteger((int) obj.Type);
-            bf.WriteInteger(obj.Index);
+            bf.WriteGuid(obj.Id);
             bf.WriteGuid(obj.Id);
             EditorNetwork.SendPacket(bf.ToArray());
             bf.Dispose();
@@ -231,7 +232,7 @@ namespace Intersect.Editor.Networking
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.SaveGameObject);
             bf.WriteInteger((int) obj.Type);
-            bf.WriteInteger(obj.Index);
+            bf.WriteGuid(obj.Id);
             bf.WriteGuid(obj.Id);
             bf.WriteString(obj.JsonData);
             EditorNetwork.SendPacket(bf.ToArray());
@@ -260,11 +261,11 @@ namespace Intersect.Editor.Networking
             bf.Dispose();
         }
 
-        public static void SendEnterMap(int mapNum)
+        public static void SendEnterMap(Guid mapId)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.EnterMap);
-            bf.WriteInteger(mapNum);
+            bf.WriteGuid(mapId);
             EditorNetwork.SendPacket(bf.ToArray());
             bf.Dispose();
         }

@@ -1,14 +1,16 @@
-﻿namespace Intersect_Client.Classes.Entities
+﻿using System;
+
+namespace Intersect_Client.Classes.Entities
 {
     public class EventHold
     {
-        public int EventIndex;
-        public int MapNum;
+        public Guid EventId;
+        public Guid MapId;
 
-        public EventHold(int mapNum, int eventIndex)
+        public EventHold(Guid eventId, Guid mapId)
         {
-            MapNum = mapNum;
-            EventIndex = eventIndex;
+            EventId = eventId;
+            MapId = mapId;
         }
     }
 }

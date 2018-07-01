@@ -57,13 +57,13 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             {
                 cmbVariable.Items.AddRange(Database.GetGameObjectList(GameObjectType.PlayerVariable));
                 cmbVariable.SelectedIndex =
-                    Database.GameObjectListIndex(GameObjectType.PlayerVariable, mMyCommand.Ints[1]);
+                    Database.GameObjectListIndex(GameObjectType.PlayerVariable, mMyCommand.Guids[1]);
             }
             else
             {
                 cmbVariable.Items.AddRange(Database.GetGameObjectList(GameObjectType.ServerVariable));
                 cmbVariable.SelectedIndex =
-                    Database.GameObjectListIndex(GameObjectType.ServerVariable, mMyCommand.Ints[1]);
+                    Database.GameObjectListIndex(GameObjectType.ServerVariable, mMyCommand.Guids[1]);
             }
             switch (mMyCommand.Ints[2])
             {
@@ -103,13 +103,13 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             if (rdoPlayerVariable.Checked)
             {
                 mMyCommand.Ints[0] = (int) SwitchVariableTypes.PlayerVariable;
-                mMyCommand.Ints[1] = Database.GameObjectIdFromList(GameObjectType.PlayerVariable,
+                mMyCommand.Guids[1] = Database.GameObjectIdFromList(GameObjectType.PlayerVariable,
                     cmbVariable.SelectedIndex);
             }
             if (rdoGlobalVariable.Checked)
             {
                 mMyCommand.Ints[0] = (int) SwitchVariableTypes.ServerVariable;
-                mMyCommand.Ints[1] = Database.GameObjectIdFromList(GameObjectType.ServerVariable,
+                mMyCommand.Guids[1] = Database.GameObjectIdFromList(GameObjectType.ServerVariable,
                     cmbVariable.SelectedIndex);
             }
             if (optSet.Checked)

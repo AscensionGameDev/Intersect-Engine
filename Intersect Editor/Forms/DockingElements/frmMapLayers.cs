@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using Intersect.Editor.ContentManagement;
 using Intersect.Editor.Core;
@@ -217,8 +218,7 @@ namespace Intersect.Editor.Forms.DockingElements
             if (TilesetBase.Lookup.Count > 0)
             {
                 if (Globals.MapLayersWindow.cmbTilesets.Items.Count > 0) Globals.MapLayersWindow.cmbTilesets.SelectedIndex = 0;
-                Globals.CurrentTileset =
-                    TilesetBase.Lookup.Get<TilesetBase>(Database.GameObjectListIndex(GameObjectType.Tileset, 0));
+                Globals.CurrentTileset = (TilesetBase)TilesetBase.Lookup.Values.ToArray()[0];
             }
         }
 
@@ -226,18 +226,18 @@ namespace Intersect.Editor.Forms.DockingElements
         {
             TilesetBase tSet = null;
             var tilesets = TilesetBase.Lookup;
-            var index = -1;
-            foreach (var tileset in tilesets.IndexClone)
+            var id = Guid.Empty;
+            foreach (var tileset in tilesets.Pairs)
             {
                 if (tileset.Value.Name.ToLower() == name.ToLower())
                 {
-                    index = tileset.Key;
+                    id = tileset.Key;
                     break;
                 }
             }
-            if (index > -1)
+            if (id != Guid.Empty)
             {
-                tSet = TilesetBase.Lookup.Get<TilesetBase>(index);
+                tSet = TilesetBase.Lookup.Get<TilesetBase>(id);
             }
             if (tSet != null)
             {
@@ -457,7 +457,7 @@ namespace Intersect.Editor.Forms.DockingElements
             else if (rbItem.Checked == true)
             {
                 tmpMap.Attributes[x, y].Value = (int) MapAttributes.Item;
-                tmpMap.Attributes[x, y].Data1 = Database.GameObjectIdFromList(GameObjectType.Item,
+                tmpMap.Attributes[x, y].Guid1 = Database.GameObjectIdFromList(GameObjectType.Item,
                     cmbItemAttribute.SelectedIndex);
                 tmpMap.Attributes[x, y].Data2 = (int) nudItemQuantity.Value;
             }
@@ -474,7 +474,7 @@ namespace Intersect.Editor.Forms.DockingElements
             else if (rbWarp.Checked == true)
             {
                 tmpMap.Attributes[x, y].Value = (int) MapAttributes.Warp;
-                tmpMap.Attributes[x, y].Data1 = MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapNum;
+                tmpMap.Attributes[x, y].Guid1 = MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapId;
                 tmpMap.Attributes[x, y].Data2 = (int) nudWarpX.Value;
                 tmpMap.Attributes[x, y].Data3 = (int) nudWarpY.Value;
                 tmpMap.Attributes[x, y].Data4 = (cmbDirection.SelectedIndex - 1).ToString();
@@ -490,7 +490,7 @@ namespace Intersect.Editor.Forms.DockingElements
             else if (rbResource.Checked == true)
             {
                 tmpMap.Attributes[x, y].Value = (int) MapAttributes.Resource;
-                tmpMap.Attributes[x, y].Data1 = Database.GameObjectIdFromList(GameObjectType.Resource,
+                tmpMap.Attributes[x, y].Guid1 = Database.GameObjectIdFromList(GameObjectType.Resource,
                     cmbResourceAttribute.SelectedIndex);
                 if (rbLevel1.Checked == true)
                 {
@@ -504,7 +504,7 @@ namespace Intersect.Editor.Forms.DockingElements
             else if (rbAnimation.Checked == true)
             {
                 tmpMap.Attributes[x, y].Value = (int) MapAttributes.Animation;
-                tmpMap.Attributes[x, y].Data1 = Database.GameObjectIdFromList(GameObjectType.Animation,
+                tmpMap.Attributes[x, y].Guid1 = Database.GameObjectIdFromList(GameObjectType.Animation,
                     cmbAnimationAttribute.SelectedIndex);
             }
             else if (rbGrappleStone.Checked == true)
@@ -538,7 +538,7 @@ namespace Intersect.Editor.Forms.DockingElements
             lstMapNpcs.Items.Clear();
             for (int i = 0; i < Globals.CurrentMap.Spawns.Count; i++)
             {
-                lstMapNpcs.Items.Add(NpcBase.GetName(Globals.CurrentMap.Spawns[i].NpcNum));
+                lstMapNpcs.Items.Add(NpcBase.GetName(Globals.CurrentMap.Spawns[i].NpcId));
             }
 
             // Don't select if there are no NPCs, to avoid crashes.
@@ -552,7 +552,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 {
                     cmbDir.SelectedIndex = Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Dir + 1;
                     cmbNpc.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Npc,
-                        Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcNum);
+                        Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcId);
                     if (Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].X >= 0)
                     {
                         rbDeclared.Checked = true;
@@ -574,13 +574,13 @@ namespace Intersect.Editor.Forms.DockingElements
             //Don't add nothing
             if (cmbNpc.SelectedIndex > -1)
             {
-                n.NpcNum = Database.GameObjectIdFromList(GameObjectType.Npc, cmbNpc.SelectedIndex);
+                n.NpcId = Database.GameObjectIdFromList(GameObjectType.Npc, cmbNpc.SelectedIndex);
                 n.X = -1;
                 n.Y = -1;
                 n.Dir = -1;
 
                 Globals.CurrentMap.Spawns.Add(n);
-                lstMapNpcs.Items.Add(NpcBase.GetName(n.NpcNum));
+                lstMapNpcs.Items.Add(NpcBase.GetName(n.NpcId));
                 lstMapNpcs.SelectedIndex = lstMapNpcs.Items.Count - 1;
             }
         }
@@ -596,7 +596,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 lstMapNpcs.Items.Clear();
                 for (int i = 0; i < Globals.CurrentMap.Spawns.Count; i++)
                 {
-                    lstMapNpcs.Items.Add(NpcBase.GetName(Globals.CurrentMap.Spawns[i].NpcNum));
+                    lstMapNpcs.Items.Add(NpcBase.GetName(Globals.CurrentMap.Spawns[i].NpcId));
                 }
 
                 if (lstMapNpcs.Items.Count > 0)
@@ -611,7 +611,7 @@ namespace Intersect.Editor.Forms.DockingElements
             if (lstMapNpcs.Items.Count > 0 && lstMapNpcs.SelectedIndex > -1)
             {
                 cmbNpc.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Npc,
-                    Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcNum);
+                    Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcId);
                 cmbDir.SelectedIndex = Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Dir + 1;
                 if (Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].X >= 0)
                 {
@@ -648,7 +648,7 @@ namespace Intersect.Editor.Forms.DockingElements
 
             if (lstMapNpcs.SelectedIndex >= 0)
             {
-                Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcNum =
+                Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcId =
                     Database.GameObjectIdFromList(GameObjectType.Npc, cmbNpc.SelectedIndex);
 
                 // Refresh List
@@ -656,7 +656,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 lstMapNpcs.Items.Clear();
                 for (int i = 0; i < Globals.CurrentMap.Spawns.Count; i++)
                 {
-                    lstMapNpcs.Items.Add(NpcBase.GetName(Globals.CurrentMap.Spawns[i].NpcNum));
+                    lstMapNpcs.Items.Add(NpcBase.GetName(Globals.CurrentMap.Spawns[i].NpcId));
                 }
                 lstMapNpcs.SelectedIndex = n;
             }
@@ -669,7 +669,7 @@ namespace Intersect.Editor.Forms.DockingElements
         private void btnVisualMapSelector_Click(object sender, EventArgs e)
         {
             FrmWarpSelection frmWarpSelection = new FrmWarpSelection();
-            frmWarpSelection.SelectTile(MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapNum, (int) nudWarpX.Value,
+            frmWarpSelection.SelectTile(MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapId, (int) nudWarpX.Value,
                 (int) nudWarpY.Value);
             frmWarpSelection.ShowDialog();
             if (frmWarpSelection.GetResult())
@@ -681,7 +681,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 }
                 for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
                 {
-                    if (MapList.GetOrderedMaps()[i].MapNum == frmWarpSelection.GetMap())
+                    if (MapList.GetOrderedMaps()[i].MapId == frmWarpSelection.GetMap())
                     {
                         cmbWarpMap.SelectedIndex = i;
                         break;

@@ -16,6 +16,7 @@ using Intersect.Server.Classes.Maps;
 using Intersect.Server.Classes.Networking;
 using Intersect.Server.Classes.Spells;
 using Intersect.Utilities;
+using Newtonsoft.Json;
 
 namespace Intersect.Server.Classes.Entities
 {
@@ -24,9 +25,12 @@ namespace Intersect.Server.Classes.Entities
     public class EntityInstance
     {
         public string Name { get; set; }
-        public Guid Map { get; set; }
-        //Going to be obsolete soon.
-        public int MapIndex { get; set; }
+        public Guid MapId { get; set; }
+
+        [JsonIgnore]
+        [NotMapped]
+        public MapInstance Map => MapInstance.Get(MapId);
+
         public int X { get; set; }
         public int Y { get; set; }
         public int Z { get; set; }
@@ -75,7 +79,7 @@ namespace Intersect.Server.Classes.Entities
 
 
         //Instance Values
-        [NotMapped] public int MyIndex;
+        [NotMapped] public Guid Id;
         [NotMapped] public bool Dead;
         
         //Combat
@@ -83,12 +87,12 @@ namespace Intersect.Server.Classes.Entities
         [NotMapped] public long AttackTimer;
         [NotMapped] public bool Blocking;
         [NotMapped] public EntityInstance CastTarget;
-        [NotMapped] public long CollisionIndex;
+        [NotMapped] public Guid CollisionIndex;
         [NotMapped] public long CombatTimer;
 
         //Visuals
         [NotMapped] public int HideName = 0;
-        [NotMapped] public List<int> Animations = new List<int>();
+        [NotMapped] public List<Guid> Animations = new List<Guid>();
 
         //DoT/HoT Spells
         [NotMapped] public List<DoTInstance> DoT = new List<DoTInstance>();
@@ -97,7 +101,6 @@ namespace Intersect.Server.Classes.Entities
         [NotMapped] public long MoveTimer;
         [NotMapped] public int Passable = 0;
         [NotMapped] public long RegenTimer = Globals.System.GetTimeMs();
-        [NotMapped] public long SpawnTime;
         [NotMapped] public int SpellCastSlot = 0;
 
 
@@ -111,22 +114,20 @@ namespace Intersect.Server.Classes.Entities
 
         [NotMapped] public bool IsDisposed { get; private set; }
 
-        public EntityInstance() : this(-1)
+        public EntityInstance() : this(Guid.NewGuid())
         {
             
         }
 
         //Initialization
-        public EntityInstance(int index)
+        public EntityInstance(Guid instanceId)
         {
             for (var I = 0; I < (int) Stats.StatCount; I++)
             {
                 Stat[I] = new EntityStat(I,this,null);
             }
 
-            MyIndex = index;
-
-            SpawnTime = Globals.System.GetTimeMs();
+            Id = instanceId;
         }
 
         public void Dispose()
@@ -197,7 +198,7 @@ namespace Intersect.Server.Classes.Entities
             var xOffset = 0;
             var yOffset = 0;
             //if (MoveTimer > Globals.System.GetTimeMs()) return -5;
-            var tile = new TileHelper(MapIndex, X, Y);
+            var tile = new TileHelper(MapId, X, Y);
             switch (moveDir)
             {
                 case 0: //Up
@@ -232,7 +233,7 @@ namespace Intersect.Server.Classes.Entities
 
             if (tile.Translate(xOffset, yOffset))
             {
-                var tileAttribute = MapInstance.Lookup.Get<MapInstance>(tile.GetMap())
+                var tileAttribute = MapInstance.Lookup.Get<MapInstance>(tile.GetMapId())
                     .Attributes[tile.GetX(), tile.GetY()];
                 if (tileAttribute != null)
                 {
@@ -268,8 +269,8 @@ namespace Intersect.Server.Classes.Entities
 
             if (Passable == 0)
             {
-                var targetMap = MapInstance.Lookup.Get<MapInstance>(tile.GetMap());
-                var mapEntities = MapInstance.Lookup.Get<MapInstance>(tile.GetMap()).GetEntities();
+                var targetMap = MapInstance.Lookup.Get<MapInstance>(tile.GetMapId());
+                var mapEntities = MapInstance.Lookup.Get<MapInstance>(tile.GetMapId()).GetEntities();
                 for (var i = 0; i < mapEntities.Count; i++)
                 {
                     var en = mapEntities[i];
@@ -277,7 +278,7 @@ namespace Intersect.Server.Classes.Entities
                         en.Passable == 0)
                     {
                         //Set a target if a projectile
-                        CollisionIndex = en.MyIndex;
+                        CollisionIndex = en.Id;
                         if (en.GetType() == typeof(Player))
                         {
                             if (this.GetType() == typeof(Player))
@@ -298,8 +299,8 @@ namespace Intersect.Server.Classes.Entities
                         {
                             //If determine if we should walk
                             var res = ((Resource) en);
-                            if ((!res.IsDead() && !res.MyBase.WalkableBefore) ||
-                                (res.IsDead() && !res.MyBase.WalkableAfter))
+                            if ((!res.IsDead() && !res.Base.WalkableBefore) ||
+                                (res.IsDead() && !res.Base.WalkableAfter))
                             {
                                 return (int) EntityTypes.Resource;
                             }
@@ -309,7 +310,7 @@ namespace Intersect.Server.Classes.Entities
                 //If this is an npc or other event.. if any global page exists that isn't passable then don't walk here!
                 if (this.GetType() != typeof(Player))
                 {
-                    foreach (var evt in MapInstance.Lookup.Get<MapInstance>(tile.GetMap()).GlobalEventInstances)
+                    foreach (var evt in MapInstance.Lookup.Get<MapInstance>(tile.GetMapId()).GlobalEventInstances)
                     {
                         foreach (var en in evt.Value.GlobalPageInstance)
                         {
@@ -533,7 +534,7 @@ namespace Intersect.Server.Classes.Entities
             Dir = moveDir;
             if (MoveTimer < Globals.System.GetTimeMs() && CastTime <= 0)
             {
-                var tile = new TileHelper(MapIndex, X, Y);
+                var tile = new TileHelper(MapId, X, Y);
                 switch (moveDir)
                 {
                     case 0: //Up
@@ -570,14 +571,14 @@ namespace Intersect.Server.Classes.Entities
                 {
                     X = tile.GetX();
                     Y = tile.GetY();
-                    if (MapIndex != tile.GetMap())
+                    if (MapId != tile.GetMapId())
                     {
-                        var oldMap = MapInstance.Lookup.Get<MapInstance>(MapIndex);
+                        var oldMap = MapInstance.Lookup.Get<MapInstance>(MapId);
                         if (oldMap != null) oldMap.RemoveEntity(this);
-                        var newMap = MapInstance.Lookup.Get<MapInstance>(tile.GetMap());
+                        var newMap = MapInstance.Lookup.Get<MapInstance>(tile.GetMapId());
                         if (newMap != null) newMap.AddEntity(this);
                     }
-                    MapIndex = tile.GetMap();
+                    MapId = tile.GetMapId();
                     if (dontUpdate == false)
                     {
                         if (GetType() == typeof(EventPageInstance))
@@ -596,7 +597,7 @@ namespace Intersect.Server.Classes.Entities
                             PacketSender.SendEntityMove(this, correction);
                         }
                         //Check if moving into a projectile.. if so this npc needs to be hit
-                        var myMap = MapInstance.Lookup.Get<MapInstance>(MapIndex);
+                        var myMap = MapInstance.Lookup.Get<MapInstance>(MapId);
                         if (myMap != null)
                         {
                             var localMaps = myMap.GetSurroundingMaps(true);
@@ -610,7 +611,7 @@ namespace Intersect.Server.Classes.Entities
                                         var proj = projectile;
                                         foreach (var spawn in proj.Spawns)
                                         {
-                                            if (spawn != null && spawn.Map == MapIndex && spawn.X == X &&
+                                            if (spawn != null && spawn.MapId == MapId && spawn.X == X &&
                                                 spawn.Y == Y && spawn.Z == Z)
                                             {
                                                 if (spawn.HitEntity(this))
@@ -627,9 +628,9 @@ namespace Intersect.Server.Classes.Entities
                     }
                     if (TryToChangeDimension() && dontUpdate == true)
                     {
-                        PacketSender.UpdateEntityZDimension(MyIndex, Z);
+                        PacketSender.UpdateEntityZDimension(this, Z);
                     }
-                    var attribute = MapInstance.Lookup.Get<MapInstance>(MapIndex).Attributes[X, Y];
+                    var attribute = MapInstance.Lookup.Get<MapInstance>(MapId).Attributes[X, Y];
                     if (this.GetType() != typeof(EventPageInstance))
                     {
                         //Check for slide tiles
@@ -653,17 +654,16 @@ namespace Intersect.Server.Classes.Entities
             {
                 if (((EventPageInstance) this).Client != null)
                 {
-                    PacketSender.SendEntityDirTo(((EventPageInstance) this).Client, MyIndex, (int) EntityTypes.Event,
-                        Dir, MapIndex);
+                    PacketSender.SendEntityDirTo(((EventPageInstance) this).Client, Id, (int) EntityTypes.Event, Dir, MapId);
                 }
                 else
                 {
-                    PacketSender.SendEntityDir(MyIndex, (int) EntityTypes.Event, Dir, MapIndex);
+                    PacketSender.SendEntityDir(Id, (int) EntityTypes.Event, Dir, MapId);
                 }
             }
             else
             {
-                PacketSender.SendEntityDir(MyIndex, (int) EntityTypes.GlobalEntity, Dir, MapIndex);
+                PacketSender.SendEntityDir(Id, (int) EntityTypes.GlobalEntity, Dir, MapId);
             }
         }
 
@@ -674,7 +674,7 @@ namespace Intersect.Server.Classes.Entities
             {
                 if (Y < Options.MapHeight && Y >= 0)
                 {
-                    var attribute = MapInstance.Lookup.Get<MapInstance>(MapIndex)
+                    var attribute = MapInstance.Lookup.Get<MapInstance>(MapId)
                         .Attributes[X, Y];
                     if (attribute != null && attribute.Value == (int) MapAttributes.ZDimension)
                     {
@@ -693,25 +693,25 @@ namespace Intersect.Server.Classes.Entities
         public int GetDirectionTo(EntityInstance target)
         {
             int xDiff = 0, yDiff = 0;
-            var myGrid = MapInstance.Lookup.Get<MapInstance>(MapIndex).MapGrid;
+            var myGrid = MapInstance.Lookup.Get<MapInstance>(MapId).MapGrid;
             //Loop through surrouding maps to generate a array of open and blocked points.
-            for (var x = MapInstance.Lookup.Get<MapInstance>(MapIndex).MapGridX - 1;
-                x <= MapInstance.Lookup.Get<MapInstance>(MapIndex).MapGridX + 1;
+            for (var x = MapInstance.Lookup.Get<MapInstance>(MapId).MapGridX - 1;
+                x <= MapInstance.Lookup.Get<MapInstance>(MapId).MapGridX + 1;
                 x++)
             {
                 if (x == -1 || x >= LegacyDatabase.MapGrids[myGrid].Width) continue;
-                for (var y = MapInstance.Lookup.Get<MapInstance>(MapIndex).MapGridY - 1;
-                    y <= MapInstance.Lookup.Get<MapInstance>(MapIndex).MapGridY + 1;
+                for (var y = MapInstance.Lookup.Get<MapInstance>(MapId).MapGridY - 1;
+                    y <= MapInstance.Lookup.Get<MapInstance>(MapId).MapGridY + 1;
                     y++)
                 {
                     if (y == -1 || y >= LegacyDatabase.MapGrids[myGrid].Height) continue;
-                    if (LegacyDatabase.MapGrids[myGrid].MyGrid[x, y] > -1 &&
-                        LegacyDatabase.MapGrids[myGrid].MyGrid[x, y] == target.MapIndex)
+                    if (LegacyDatabase.MapGrids[myGrid].MyGrid[x, y] != Guid.Empty &&
+                        LegacyDatabase.MapGrids[myGrid].MyGrid[x, y] == target.MapId)
                     {
-                        xDiff = (MapInstance.Lookup.Get<MapInstance>(MapIndex).MapGridX - x) * Options.MapWidth +
+                        xDiff = (MapInstance.Lookup.Get<MapInstance>(MapId).MapGridX - x) * Options.MapWidth +
                                 target.X -
                                 X;
-                        yDiff = (MapInstance.Lookup.Get<MapInstance>(MapIndex).MapGridY - y) * Options.MapHeight +
+                        yDiff = (MapInstance.Lookup.Get<MapInstance>(MapId).MapGridY - y) * Options.MapHeight +
                                 target.Y -
                                 Y;
                         if (Math.Abs(xDiff) > Math.Abs(yDiff))
@@ -754,13 +754,13 @@ namespace Intersect.Server.Classes.Entities
                 if (blocking == 1 && !Blocking && AttackTimer < Globals.System.GetTimeMs())
                 {
                     Blocking = true;
-                    PacketSender.SendEntityAttack(this, (int) EntityTypes.GlobalEntity, MapIndex, -1);
+                    PacketSender.SendEntityAttack(this, (int) EntityTypes.GlobalEntity, MapId, -1);
                 }
                 else if (blocking == 0 && Blocking)
                 {
                     Blocking = false;
                     AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
-                    PacketSender.SendEntityAttack(this, (int) EntityTypes.GlobalEntity, MapIndex, 0);
+                    PacketSender.SendEntityAttack(this, (int) EntityTypes.GlobalEntity, MapId, 0);
                 }
             }
         }
@@ -895,11 +895,11 @@ namespace Intersect.Server.Classes.Entities
             {
                 if (GetType() == typeof(Player) && enemy.GetType() == typeof(Player))
                 {
-                    if (MapInstance.Lookup.Get<MapInstance>(MapIndex).ZoneType == MapZones.Safe)
+                    if (MapInstance.Lookup.Get<MapInstance>(MapId).ZoneType == MapZones.Safe)
                     {
                         return;
                     }
-                    if (MapInstance.Lookup.Get<MapInstance>(enemy.MapIndex).ZoneType == MapZones.Safe)
+                    if (MapInstance.Lookup.Get<MapInstance>(enemy.MapId).ZoneType == MapZones.Safe)
                     {
                         return;
                     }
@@ -912,11 +912,11 @@ namespace Intersect.Server.Classes.Entities
             //If projectile, check if a splash spell is applied
             if (projectile != null)
             {
-                if (projectile.SpellId > -1)
+                if (projectile.SpellId != Guid.Empty)
                 {
                     var s = projectile.Spell;
                     if (s != null)
-                        HandleAoESpell(projectile.SpellId, s.HitRadius, enemy.MapIndex, enemy.X, enemy.Y,
+                        HandleAoESpell(projectile.SpellId, s.HitRadius, enemy.MapId, enemy.X, enemy.Y,
                             null);
 
                     //Check that the npc has not been destroyed by the splash spell
@@ -944,8 +944,8 @@ namespace Intersect.Server.Classes.Entities
             if (enemy?.GetType() == typeof(Resource)) return;
             if (spellBase == null) return;
 
-            var deadAnimations = new List<KeyValuePair<int, int>>();
-            var aliveAnimations = new List<KeyValuePair<int, int>>();
+            var deadAnimations = new List<KeyValuePair<Guid, int>>();
+            var aliveAnimations = new List<KeyValuePair<Guid, int>>();
 
             //Only count safe zones and friendly fire if its a dangerous spell! (If one has been used)
             if (spellBase.Friendly == 0 && spellBase.TargetType != (int) SpellTargetTypes.Self)
@@ -970,11 +970,11 @@ namespace Intersect.Server.Classes.Entities
                 //Check if either the attacker or the defender is in a "safe zone" (Only apply if combat is PVP)
                 if (enemy.GetType() == typeof(Player) && GetType() == typeof(Player))
                 {
-                    if (MapInstance.Lookup.Get<MapInstance>(MapIndex).ZoneType == MapZones.Safe)
+                    if (MapInstance.Lookup.Get<MapInstance>(MapId).ZoneType == MapZones.Safe)
                     {
                         return;
                     }
-                    if (MapInstance.Lookup.Get<MapInstance>(enemy.MapIndex).ZoneType == MapZones.Safe)
+                    if (MapInstance.Lookup.Get<MapInstance>(enemy.MapId).ZoneType == MapZones.Safe)
                     {
                         return;
                     }
@@ -997,10 +997,10 @@ namespace Intersect.Server.Classes.Entities
                 if (enemy.GetType() != GetType()) return; //Don't let players aoe heal npcs. Don't let npcs aoe heal players.
             }
 
-            if (spellBase.HitAnimationId > -1)
+            if (spellBase.HitAnimationId != Guid.Empty)
             {
-                deadAnimations.Add(new KeyValuePair<int, int>(spellBase.HitAnimationId, (int) Directions.Up));
-                aliveAnimations.Add(new KeyValuePair<int, int>(spellBase.HitAnimationId, (int) Directions.Up));
+                deadAnimations.Add(new KeyValuePair<Guid, int>(spellBase.HitAnimationId, (int) Directions.Up));
+                aliveAnimations.Add(new KeyValuePair<Guid, int>(spellBase.HitAnimationId, (int) Directions.Up));
             }
 
             var damageHealth = spellBase.VitalDiff[0];
@@ -1035,7 +1035,7 @@ namespace Intersect.Server.Classes.Entities
                 var doTFound = false;
                 for (var i = 0; i < enemy.DoT.Count; i++)
                 {
-                    if (enemy.DoT[i].SpellBase.Index == spellBase.Index ||
+                    if (enemy.DoT[i].SpellBase.Id == spellBase.Id ||
                         enemy.DoT[i].Target == this)
                     {
                         doTFound = true;
@@ -1043,7 +1043,7 @@ namespace Intersect.Server.Classes.Entities
                 }
                 if (doTFound == false) //no duplicate DoT/HoT spells.
                 {
-                    new DoTInstance(this, spellBase.Index, enemy);
+                    new DoTInstance(this, spellBase.Id, enemy);
                 }
             }
         }
@@ -1055,7 +1055,7 @@ namespace Intersect.Server.Classes.Entities
         }
 
         //Attack using a weapon or unarmed
-        public virtual void TryAttack(EntityInstance enemy, int baseDamage, DamageType damageType, Stats scalingStat, int scaling, int critChance, double critMultiplier, List<KeyValuePair<int, int>> deadAnimations = null, List<KeyValuePair<int, int>> aliveAnimations = null, ItemBase weapon = null)
+        public virtual void TryAttack(EntityInstance enemy, int baseDamage, DamageType damageType, Stats scalingStat, int scaling, int critChance, double critMultiplier, List<KeyValuePair<Guid, int>> deadAnimations = null, List<KeyValuePair<Guid, int>> aliveAnimations = null, ItemBase weapon = null)
         {
             if ((AttackTimer > Globals.System.GetTimeMs() || Blocking)) return;
 
@@ -1068,11 +1068,11 @@ namespace Intersect.Server.Classes.Entities
             //Check if either the attacker or the defender is in a "safe zone" (Only apply if combat is PVP)
             if (enemy.GetType() == typeof(Player) && GetType() == typeof(Player))
             {
-                if (MapInstance.Lookup.Get<MapInstance>(MapIndex).ZoneType == MapZones.Safe)
+                if (MapInstance.Lookup.Get<MapInstance>(MapId).ZoneType == MapZones.Safe)
                 {
                     return;
                 }
-                if (MapInstance.Lookup.Get<MapInstance>(enemy.MapIndex).ZoneType == MapZones.Safe)
+                if (MapInstance.Lookup.Get<MapInstance>(enemy.MapId).ZoneType == MapZones.Safe)
                 {
                     return;
                 }
@@ -1088,7 +1088,7 @@ namespace Intersect.Server.Classes.Entities
                     if (status.Type == (int) StatusTypes.Stun || status.Type == (int) StatusTypes.Blind)
                     {
                         PacketSender.SendActionMsg(this, Strings.Combat.miss, CustomColors.Missed);
-                        PacketSender.SendEntityAttack(this, (int) EntityTypes.GlobalEntity, MapIndex,
+                        PacketSender.SendEntityAttack(this, (int) EntityTypes.GlobalEntity, MapId,
                             CalculateAttackTime());
                         return;
                     }
@@ -1103,20 +1103,20 @@ namespace Intersect.Server.Classes.Entities
         }
 
         public void Attack(EntityInstance enemy, int baseDamage, int secondaryDamage, DamageType damageType, Stats scalingStat,
-            int scaling, int critChance, double critMultiplier, List<KeyValuePair<int, int>> deadAnimations = null,
-            List<KeyValuePair<int, int>> aliveAnimations = null, ItemBase weapon = null)
+            int scaling, int critChance, double critMultiplier, List<KeyValuePair<Guid, int>> deadAnimations = null,
+            List<KeyValuePair<Guid, int>> aliveAnimations = null, ItemBase weapon = null)
         {
             if (enemy == null) return;
 
             //No Matter what, if we attack the entitiy, make them chase us
             if (enemy.GetType() == typeof(Npc))
             {
-                if (((Npc) enemy).MyBase.Behavior == (int) NpcBehavior.Friendly) return;
+                if (((Npc) enemy).Base.Behavior == (int) NpcBehavior.Friendly) return;
                 ((Npc) enemy).AssignTarget(this);
 
                 //Check if there are any guards nearby
                 //TODO Loop through CurrentMap - SurroundingMaps Entity List instead of global entity list.
-                var mapEntities = MapInstance.Lookup.Get<MapInstance>(MapIndex).GetEntities();
+                var mapEntities = MapInstance.Lookup.Get<MapInstance>(MapId).GetEntities();
                 for (var n = 0; n < mapEntities.Count; n++)
                 {
                     if (mapEntities[n].GetType() == typeof(Npc))
@@ -1134,9 +1134,9 @@ namespace Intersect.Server.Classes.Entities
                             if (xMax >= Options.MapWidth) xMax = Options.MapWidth;
                             if (yMax >= Options.MapHeight) yMax = Options.MapHeight;
 
-                            if (x < Globals.Entities[MyIndex].X && xMax > Globals.Entities[MyIndex].X)
+                            if (x < X && xMax > X)
                             {
-                                if (y < Globals.Entities[MyIndex].Y && yMax > Globals.Entities[MyIndex].Y)
+                                if (y < Y && yMax > Y)
                                 {
                                     // In range, so make a target
                                     ((Npc) mapEntities[n]).AssignTarget(this);
@@ -1234,7 +1234,7 @@ namespace Intersect.Server.Classes.Entities
                 {
                     foreach (var anim in deadAnimations)
                     {
-                        PacketSender.SendAnimationToProximity(anim.Key, -1, -1, enemy.MapIndex, enemy.X,
+                        PacketSender.SendAnimationToProximity(anim.Key, -1, Guid.Empty, enemy.MapId, enemy.X,
                             enemy.Y, anim.Value);
                     }
                 }
@@ -1248,15 +1248,15 @@ namespace Intersect.Server.Classes.Entities
                 {
                     foreach (var anim in aliveAnimations)
                     {
-                        PacketSender.SendAnimationToProximity(anim.Key, 1, enemy.MyIndex, enemy.MapIndex, -1, -1,
+                        PacketSender.SendAnimationToProximity(anim.Key, 1, enemy.Id, enemy.MapId, -1, -1,
                             anim.Value);
                     }
                 }
             }
             // Add a timer before able to make the next move.
-            if (Globals.Entities[MyIndex] != null && Globals.Entities[MyIndex].GetType() == typeof(Npc))
+            if (GetType() == typeof(Npc))
             {
-                ((Npc) Globals.Entities[MyIndex]).MoveTimer = Globals.System.GetTimeMs() + (long) GetMovementTime();
+                ((Npc)this).MoveTimer = Globals.System.GetTimeMs() + (long) GetMovementTime();
             }
         }
 
@@ -1264,9 +1264,9 @@ namespace Intersect.Server.Classes.Entities
         {
         }
 
-        public virtual void CastSpell(int spellNum, int spellSlot = -1)
+        public virtual void CastSpell(Guid spellId, int spellSlot = -1)
         {
-            var spellBase = SpellBase.Lookup.Get<SpellBase>(spellNum);
+            var spellBase = SpellBase.Lookup.Get<SpellBase>(spellId);
             if (spellBase != null)
             {
                 switch (spellBase.SpellType)
@@ -1276,10 +1276,10 @@ namespace Intersect.Server.Classes.Entities
                         switch (spellBase.TargetType)
                         {
                             case (int) SpellTargetTypes.Self:
-                                if (spellBase.HitAnimationId > -1)
+                                if (spellBase.HitAnimationId != Guid.Empty)
                                 {
                                     PacketSender.SendAnimationToProximity(spellBase.HitAnimationId, 1,
-                                        MyIndex, MapIndex, 0, 0, Dir); //Target Type 1 will be global entity
+                                        Id, MapId, 0, 0, Dir); //Target Type 1 will be global entity
                                 }
                                 TryAttack(this, spellBase);
                                 break;
@@ -1287,7 +1287,7 @@ namespace Intersect.Server.Classes.Entities
                                 if (CastTarget == null) return;
                                 if (spellBase.HitRadius > 0) //Single target spells with AoE hit radius'
                                 {
-                                    HandleAoESpell(spellNum, spellBase.HitRadius, CastTarget.MapIndex,
+                                    HandleAoESpell(spellId, spellBase.HitRadius, CastTarget.MapId,
                                         CastTarget.X, CastTarget.Y, null);
                                 }
                                 else
@@ -1296,14 +1296,14 @@ namespace Intersect.Server.Classes.Entities
                                 }
                                 break;
                             case (int) SpellTargetTypes.AoE:
-                                HandleAoESpell(spellNum, spellBase.HitRadius, MapIndex, X, Y, null);
+                                HandleAoESpell(spellId, spellBase.HitRadius, MapId, X, Y, null);
                                 break;
                             case (int) SpellTargetTypes.Projectile:
                                 var projectileBase = spellBase.Projectile;
                                 if (projectileBase != null)
                                 {
-                                    MapInstance.Lookup.Get<MapInstance>(MapIndex).SpawnMapProjectile(this,
-                                        projectileBase, spellBase, null, MapIndex, X, Y, Z,
+                                    MapInstance.Lookup.Get<MapInstance>(MapId).SpawnMapProjectile(this,
+                                        projectileBase, spellBase, null, MapId, X, Y, Z,
                                         Dir, CastTarget);
                                 }
                                 break;
@@ -1314,12 +1314,12 @@ namespace Intersect.Server.Classes.Entities
                     case (int) SpellTypes.Warp:
                         if (GetType() == typeof(Player))
                         {
-                            Warp(spellBase.Data1, spellBase.Data2,
+                            Warp(spellBase.Guid1, spellBase.Data2,
                                 spellBase.Data3, spellBase.Data4);
                         }
                         break;
                     case (int) SpellTypes.WarpTo:
-                        HandleAoESpell(spellNum, spellBase.CastRange, MapIndex, X, Y, CastTarget);
+                        HandleAoESpell(spellId, spellBase.CastRange, MapId, X, Y, CastTarget);
                         break;
                     case (int) SpellTypes.Dash:
                         PacketSender.SendActionMsg(this, Strings.Combat.dash, CustomColors.Dash);
@@ -1351,9 +1351,9 @@ namespace Intersect.Server.Classes.Entities
             }
         }
 
-        private void HandleAoESpell(int spellNum, int range, int startMap, int startX, int startY, EntityInstance spellTarget)
+        private void HandleAoESpell(Guid spellId, int range, Guid startMapId, int startX, int startY, EntityInstance spellTarget)
         {
-            var spellBase = SpellBase.Lookup.Get<SpellBase>(spellNum);
+            var spellBase = SpellBase.Lookup.Get<SpellBase>(spellId);
             var targetsHit = new List<EntityInstance>();
             if (spellBase != null)
             {
@@ -1361,27 +1361,27 @@ namespace Intersect.Server.Classes.Entities
                 {
                     for (var y = startY - range; y <= startY + range; y++)
                     {
-                        var tempMap = MapInstance.Lookup.Get<MapInstance>(startMap);
+                        var tempMap = MapInstance.Lookup.Get<MapInstance>(startMapId);
                         var x2 = x;
                         var y2 = y;
 
-                        if (y < 0 && tempMap.Up > -1)
+                        if (y < 0 && tempMap.Up != Guid.Empty)
                         {
                             tempMap = MapInstance.Lookup.Get<MapInstance>(tempMap.Up);
                             y2 = Options.MapHeight + y;
                         }
-                        else if (y > Options.MapHeight - 1 && tempMap.Down > -1)
+                        else if (y > Options.MapHeight - 1 && tempMap.Down != Guid.Empty)
                         {
                             tempMap = MapInstance.Lookup.Get<MapInstance>(tempMap.Down);
                             y2 = Options.MapHeight - y;
                         }
 
-                        if (x < 0 && tempMap.Left > -1)
+                        if (x < 0 && tempMap.Left != Guid.Empty)
                         {
                             tempMap = MapInstance.Lookup.Get<MapInstance>(tempMap.Left);
                             x2 = Options.MapWidth + x;
                         }
-                        else if (x > Options.MapWidth - 1 && tempMap.Right > -1)
+                        else if (x > Options.MapWidth - 1 && tempMap.Right != Guid.Empty)
                         {
                             tempMap = MapInstance.Lookup.Get<MapInstance>(tempMap.Right);
                             x2 = Options.MapWidth - x;
@@ -1394,7 +1394,7 @@ namespace Intersect.Server.Classes.Entities
                             if (t == null || targetsHit.Contains(t)) continue;
                             if (t.GetType() == typeof(Player) || t.GetType() == typeof(Npc))
                             {
-                                if (t.MapIndex == tempMap.Index && t.X == x2 && t.Y == y2)
+                                if (t.MapId == tempMap.Id && t.X == x2 && t.Y == y2)
                                 {
                                     if (spellTarget == null || spellTarget == t)
                                     {
@@ -1409,7 +1409,7 @@ namespace Intersect.Server.Classes.Entities
                                         {
                                             if (spellTarget != null)
                                             {
-                                                Warp(spellTarget.MapIndex, spellTarget.X, spellTarget.Y,
+                                                Warp(spellTarget.MapId, spellTarget.X, spellTarget.Y,
                                                     Dir); //Spelltarget used to be Target. I don't know if this is correct or not.
                                             }
                                         }
@@ -1425,8 +1425,8 @@ namespace Intersect.Server.Classes.Entities
         //Check if the target is either up, down, left or right of the target on the correct Z dimension.
         protected bool IsOneBlockAway(EntityInstance target)
         {
-            var myTile = new TileHelper(MapIndex, X, Y);
-            var enemyTile = new TileHelper(target.MapIndex, target.X, target.Y);
+            var myTile = new TileHelper(MapId, X, Y);
+            var enemyTile = new TileHelper(target.MapId, target.X, target.Y);
             if (Z == target.Z)
             {
                 myTile.Translate(0, -1);
@@ -1446,8 +1446,8 @@ namespace Intersect.Server.Classes.Entities
         {
             if (IsOneBlockAway(target))
             {
-                var myTile = new TileHelper(MapIndex, X, Y);
-                var enemyTile = new TileHelper(target.MapIndex, target.X, target.Y);
+                var myTile = new TileHelper(MapId, X, Y);
+                var enemyTile = new TileHelper(target.MapId, target.X, target.Y);
                 myTile.Translate(0, -1);
                 if (myTile.Matches(enemyTile) && Dir == (int) Directions.Up) return true;
                 myTile.Translate(0, 2);
@@ -1464,8 +1464,8 @@ namespace Intersect.Server.Classes.Entities
         {
             if (target != null)
             {
-                var myMap = MapInstance.Lookup.Get<MapInstance>(MapIndex);
-                var targetMap = MapInstance.Lookup.Get<MapInstance>(target.MapIndex);
+                var myMap = MapInstance.Lookup.Get<MapInstance>(MapId);
+                var targetMap = MapInstance.Lookup.Get<MapInstance>(target.MapId);
                 if (myMap != null && targetMap != null)
                 {
                     //Calculate World Tile of Me
@@ -1491,11 +1491,11 @@ namespace Intersect.Server.Classes.Entities
         protected int DirToEnemy(EntityInstance target)
         {
             //Calculate World Tile of Me
-            var x1 = X + (MapInstance.Lookup.Get<MapInstance>(MapIndex).MapGridX * Options.MapWidth);
-            var y1 = Y + (MapInstance.Lookup.Get<MapInstance>(MapIndex).MapGridY * Options.MapHeight);
+            var x1 = X + (MapInstance.Lookup.Get<MapInstance>(MapId).MapGridX * Options.MapWidth);
+            var y1 = Y + (MapInstance.Lookup.Get<MapInstance>(MapId).MapGridY * Options.MapHeight);
             //Calculate world tile of target
-            var x2 = target.X + (MapInstance.Lookup.Get<MapInstance>(target.MapIndex).MapGridX * Options.MapWidth);
-            var y2 = target.Y + (MapInstance.Lookup.Get<MapInstance>(target.MapIndex).MapGridY * Options.MapHeight);
+            var x2 = target.X + (MapInstance.Lookup.Get<MapInstance>(target.MapId).MapGridX * Options.MapWidth);
+            var y2 = target.Y + (MapInstance.Lookup.Get<MapInstance>(target.MapId).MapGridY * Options.MapHeight);
             if (Math.Abs(x1 - x2) > Math.Abs(y1 - y2))
             {
                 //Left or Right
@@ -1523,14 +1523,14 @@ namespace Intersect.Server.Classes.Entities
         }
 
         //Check if the target is either up, down, left or right of the target on the correct Z dimension.
-        protected bool IsOneBlockAway(int map, int x, int y, int z = 0)
+        protected bool IsOneBlockAway(Guid mapId, int x, int y, int z = 0)
         {
             //Calculate World Tile of Me
-            var x1 = X + (MapInstance.Lookup.Get<MapInstance>(MapIndex).MapGridX * Options.MapWidth);
-            var y1 = Y + (MapInstance.Lookup.Get<MapInstance>(MapIndex).MapGridY * Options.MapHeight);
+            var x1 = X + (MapInstance.Lookup.Get<MapInstance>(MapId).MapGridX * Options.MapWidth);
+            var y1 = Y + (MapInstance.Lookup.Get<MapInstance>(MapId).MapGridY * Options.MapHeight);
             //Calculate world tile of target
-            var x2 = x + (MapInstance.Lookup.Get<MapInstance>(map).MapGridX * Options.MapWidth);
-            var y2 = y + (MapInstance.Lookup.Get<MapInstance>(map).MapGridY * Options.MapHeight);
+            var x2 = x + (MapInstance.Lookup.Get<MapInstance>(mapId).MapGridX * Options.MapWidth);
+            var y2 = y + (MapInstance.Lookup.Get<MapInstance>(mapId).MapGridY * Options.MapHeight);
             if (z == Z)
             {
                 if (y1 == y2)
@@ -1572,7 +1572,7 @@ namespace Intersect.Server.Classes.Entities
                     var item = Items[n];
                     if (item == null) continue;
 
-                    var itemBase = ItemBase.Lookup.Get<ItemBase>(item.ItemNum);
+                    var itemBase = ItemBase.Lookup.Get<ItemBase>(item.Id);
                     if (itemBase == null) continue;
 
 					//Don't lose bound items on death for players.
@@ -1586,15 +1586,15 @@ namespace Intersect.Server.Classes.Entities
 
                     if (Globals.Rand.Next(1, 101) >= dropitems) continue;
 
-                    var map = MapInstance.Lookup.Get<MapInstance>(MapIndex);
-                    map?.SpawnItem(X, Y, item, item.ItemVal);
+                    var map = MapInstance.Lookup.Get<MapInstance>(MapId);
+                    map?.SpawnItem(X, Y, item, item.Quantity);
 
                     var player = this as Player;
-                    player?.TakeItemsBySlot(n, item.ItemVal);
+                    player?.TakeItemsBySlot(n, item.Quantity);
                 }
             }
 
-            var currentMap = MapInstance.Lookup.Get<MapInstance>(MapIndex);
+            var currentMap = MapInstance.Lookup.Get<MapInstance>(MapId);
             if (currentMap != null)
             {
                 currentMap.ClearEntityTargetsOf(this);
@@ -1624,12 +1624,12 @@ namespace Intersect.Server.Classes.Entities
         }
 
         //Empty virtual functions for players
-        public virtual void Warp(int newMap, int newX, int newY, bool adminWarp = false)
+        public virtual void Warp(Guid newMapId, int newX, int newY, bool adminWarp = false)
         {
-            Warp(newMap, newX, newY, Dir, adminWarp);
+            Warp(newMapId, newX, newY, Dir, adminWarp);
         }
 
-        public virtual void Warp(int newMap, int newX, int newY, int newDir, bool adminWarp = false, int zOverride = 0, bool mapSave = false)
+        public virtual void Warp(Guid newMapId, int newX, int newY, int newDir, bool adminWarp = false, int zOverride = 0, bool mapSave = false)
         {
         }
 
@@ -1637,7 +1637,7 @@ namespace Intersect.Server.Classes.Entities
         public virtual byte[] Data()
         {
             var bf = new ByteBuffer();
-            bf.WriteInteger(MapIndex);
+            bf.WriteGuid(MapId);
             bf.WriteString(Name);
             bf.WriteString(Sprite);
             bf.WriteString(Face);
@@ -1651,7 +1651,7 @@ namespace Intersect.Server.Classes.Entities
             bf.WriteInteger(Animations.Count);
             for (var i = 0; i < Animations.Count; i++)
             {
-                bf.WriteInteger(Animations[i]);
+                bf.WriteGuid(Animations[i]);
             }
             for (var i = 0; i < (int) Vitals.VitalCount; i++)
             {
@@ -1662,7 +1662,7 @@ namespace Intersect.Server.Classes.Entities
             bf.WriteInteger(statuses.Count());
             foreach (var status in statuses)
             {
-                bf.WriteInteger(status.Value.Spell.Index);
+                bf.WriteGuid(status.Value.Spell.Id);
                 bf.WriteInteger(status.Value.Type);
                 bf.WriteString(status.Value.Data);
                 bf.WriteInteger((int) (status.Value.Duration - Globals.System.GetTimeMs()));
@@ -1684,7 +1684,7 @@ namespace Intersect.Server.Classes.Entities
                 }
                 else
                 {
-                    bf.WriteInteger(((Npc) this).MyBase.Behavior);
+                    bf.WriteInteger(((Npc) this).Base.Behavior);
                 }
             }
             else
@@ -1733,9 +1733,9 @@ namespace Intersect.Server.Classes.Entities
                 {
                     if (mPlayer.Equipment[i] >= 0 && mPlayer.Equipment[i] < Options.MaxInvItems)
                     {
-                        if (mPlayer.Items[mPlayer.Equipment[i]].ItemNum > -1)
+                        if (mPlayer.Items[mPlayer.Equipment[i]].Id != Guid.Empty)
                         {
-                            var item = ItemBase.Lookup.Get<ItemBase>(mPlayer.Items[mPlayer.Equipment[i]].ItemNum);
+                            var item = ItemBase.Lookup.Get<ItemBase>(mPlayer.Items[mPlayer.Equipment[i]].Id);
                             if (item != null)
                             {
                                 s += mPlayer.Items[mPlayer.Equipment[i]].StatBoost[mStatType] +
@@ -1813,9 +1813,9 @@ namespace Intersect.Server.Classes.Entities
         public SpellBase SpellBase;
         public EntityInstance Target { get; }
 
-        public DoTInstance(EntityInstance attacker, int spellNum, EntityInstance target)
+        public DoTInstance(EntityInstance attacker, Guid spellId, EntityInstance target)
         {
-            SpellBase = SpellBase.Lookup.Get<SpellBase>(spellNum);
+            SpellBase = SpellBase.Lookup.Get<SpellBase>(spellId);
 
             Attacker = attacker;
             Target = target;
@@ -1843,12 +1843,12 @@ namespace Intersect.Server.Classes.Entities
             if (CheckExpired()) return;
 
             if (mInterval > Globals.System.GetTimeMs()) return;
-            var deadAnimations = new List<KeyValuePair<int, int>>();
-            var aliveAnimations = new List<KeyValuePair<int, int>>();
-            if (SpellBase.HitAnimationId > -1)
+            var deadAnimations = new List<KeyValuePair<Guid, int>>();
+            var aliveAnimations = new List<KeyValuePair<Guid, int>>();
+            if (SpellBase.HitAnimationId != Guid.Empty)
             {
-                deadAnimations.Add(new KeyValuePair<int, int>(SpellBase.HitAnimationId, (int) Directions.Up));
-                aliveAnimations.Add(new KeyValuePair<int, int>(SpellBase.HitAnimationId, (int) Directions.Up));
+                deadAnimations.Add(new KeyValuePair<Guid, int>(SpellBase.HitAnimationId, (int) Directions.Up));
+                aliveAnimations.Add(new KeyValuePair<Guid, int>(SpellBase.HitAnimationId, (int) Directions.Up));
             }
 
             Attacker?.Attack(Target, SpellBase.VitalDiff[0], SpellBase.VitalDiff[1],
@@ -1925,7 +1925,7 @@ namespace Intersect.Server.Classes.Entities
                 return;
             } //Remove dash instance if no where to dash
             TransmittionTimer = Globals.System.GetTimeMs() + (long) ((float) Options.MaxDashSpeed / (float) Range);
-            PacketSender.SendEntityDash(en, en.MapIndex, en.X, en.Y,
+            PacketSender.SendEntityDash(en, en.MapId, en.X, en.Y,
                 (int) (Options.MaxDashSpeed * (Range / 10f)), Direction == Facing ? Direction : -Facing);
             en.MoveTimer = Globals.System.GetTimeMs() + Options.MaxDashSpeed;
         }

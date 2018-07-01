@@ -15,14 +15,14 @@ namespace Intersect.Server.Classes.Entities
         public bool IsDead;
 
         // Resource Number
-        public ResourceBase MyBase;
+        public ResourceBase Base;
 
         //Respawn
         public long RespawnTime = 0;
 
-        public Resource(int index, ResourceBase resource) : base(index)
+        public Resource(ResourceBase resource) : base()
         {
-            MyBase = resource;
+            Base = resource;
             Name = resource.Name;
             Sprite = resource.Initial.Graphic;
             SetMaxVital(Vitals.Health, Globals.Rand.Next(Math.Min(1, resource.MinHp),
@@ -35,20 +35,20 @@ namespace Intersect.Server.Classes.Entities
         public void Destroy(int dropitems = 0, EntityInstance killer = null)
         {
             Die(dropitems, killer);
-            PacketSender.SendEntityLeave(MyIndex, (int) EntityTypes.Resource, MapIndex);
+            PacketSender.SendEntityLeave(Id, (int) EntityTypes.Resource, MapId);
         }
 
         public override void Die(int dropitems = 100, EntityInstance killer = null)
         {
             base.Die(0, killer);
-            Sprite = MyBase.Exhausted.Graphic;
-            Passable = Convert.ToInt32(MyBase.WalkableAfter);
+            Sprite = Base.Exhausted.Graphic;
+            Passable = Convert.ToInt32(Base.WalkableAfter);
             IsDead = true;
             if (dropitems > 0)
             {
                 SpawnResourceItems(killer);
-                if (MyBase.AnimationId > -1)
-                    PacketSender.SendAnimationToProximity(MyBase.AnimationId, -1, -1, MapIndex, X, Y,
+                if (Base.AnimationId != Guid.Empty)
+                    PacketSender.SendAnimationToProximity(Base.AnimationId, -1, Guid.Empty, MapId, X, Y,
                         (int) Directions.Up);
             }
             PacketSender.SendEntityDataToProximity(this);
@@ -57,20 +57,20 @@ namespace Intersect.Server.Classes.Entities
 
         public void Spawn()
         {
-            Sprite = MyBase.Initial.Graphic;
-            SetMaxVital(Vitals.Health,Globals.Rand.Next(MyBase.MinHp, MyBase.MaxHp + 1));
+            Sprite = Base.Initial.Graphic;
+            SetMaxVital(Vitals.Health,Globals.Rand.Next(Base.MinHp, Base.MaxHp + 1));
             RestoreVital(Vitals.Health);
-            Passable = Convert.ToInt32(MyBase.WalkableBefore);
+            Passable = Convert.ToInt32(Base.WalkableBefore);
             Items.Clear();
 
             //Give Resource Drops
             var itemSlot = 0;
-            foreach (var drop in MyBase.Drops)
+            foreach (var drop in Base.Drops)
             {
-                if (Globals.Rand.Next(1, 10001) <= drop.Chance * 100 && ItemBase.Lookup.Get<ItemBase>(drop.ItemNum) != null)
+                if (Globals.Rand.Next(1, 10001) <= drop.Chance * 100 && ItemBase.Lookup.Get<ItemBase>(drop.ItemId) != null)
                 {
                     var slot = new InventorySlot(itemSlot);
-                    slot.Set(new Item(drop.ItemNum,drop.Amount));
+                    slot.Set(new Item(drop.ItemId,drop.Quantity));
                     Items.Add(slot);
                     itemSlot++;
                 }
@@ -90,11 +90,11 @@ namespace Intersect.Server.Classes.Entities
             {
                 for (int y = Y - 1; y <= Y + 1; y++)
                 {
-                    var tileHelper = new TileHelper(MapIndex, x, y);
+                    var tileHelper = new TileHelper(MapId, x, y);
                     if (tileHelper.TryFix())
                     {
                         //Tile is valid.. let's see if its open
-                        var map = MapInstance.Lookup.Get<MapInstance>(tileHelper.GetMap());
+                        var map = MapInstance.Lookup.Get<MapInstance>(tileHelper.GetMapId());
                         if (map != null)
                         {
                             if (!map.TileBlocked(tileHelper.GetX(), tileHelper.GetY()))
@@ -103,7 +103,7 @@ namespace Intersect.Server.Classes.Entities
                             }
                             else
                             {
-                                if (killer.MapIndex == tileHelper.GetMap() &&
+                                if (killer.MapId == tileHelper.GetMapId() &&
                                     killer.X == tileHelper.GetX() &&
                                     killer.Y == tileHelper.GetY())
                                 {
@@ -120,7 +120,7 @@ namespace Intersect.Server.Classes.Entities
                 //Prefer the players tile, otherwise choose randomly
                 for (int i = 0; i < tiles.Count; i++)
                 {
-                    if (tiles[i].GetMap() == killer.MapIndex && tiles[i].GetX() == killer.X &&
+                    if (tiles[i].GetMapId() == killer.MapId && tiles[i].GetX() == killer.X &&
                         tiles[i].GetY() == killer.Y)
                     {
                         selectedTile = tiles[i];
@@ -133,10 +133,10 @@ namespace Intersect.Server.Classes.Entities
                 // Drop items
                 foreach (var item in Items)
                 {
-                    if (ItemBase.Lookup.Get<ItemBase>(item.ItemNum) != null)
+                    if (ItemBase.Lookup.Get<ItemBase>(item.Id) != null)
                     {
-                        MapInstance.Lookup.Get<MapInstance>(selectedTile.GetMap())
-                            .SpawnItem(selectedTile.GetX(), selectedTile.GetY(), item, item.ItemVal);
+                        MapInstance.Lookup.Get<MapInstance>(selectedTile.GetMapId())
+                            .SpawnItem(selectedTile.GetX(), selectedTile.GetY(), item, item.Quantity);
                     }
                 }
             }
@@ -163,7 +163,7 @@ namespace Intersect.Server.Classes.Entities
             ByteBuffer myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(base.Data());
             myBuffer.WriteInteger(Convert.ToInt32(IsDead));
-            myBuffer.WriteInteger(MyBase.Index);
+            myBuffer.WriteGuid(Base.Id);
             return myBuffer.ToArray();
         }
 

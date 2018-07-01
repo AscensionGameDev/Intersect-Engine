@@ -29,7 +29,7 @@ namespace Intersect.Server.Classes.Entities
         //Moving
         public long LastRandomMove;
 
-        public NpcBase MyBase;
+        public NpcBase Base;
 
         //Targetting
         public EntityInstance MyTarget;
@@ -43,12 +43,12 @@ namespace Intersect.Server.Classes.Entities
         //Respawn/Despawn
         public long RespawnTime;
 
-        public Npc(int index, NpcBase myBase, bool despawnable = false) : base(index)
+        public Npc(NpcBase myBase, bool despawnable = false) : base()
         {
             Name = myBase.Name;
             Sprite = myBase.Sprite;
             Level = myBase.Level;
-            MyBase = myBase;
+            Base = myBase;
             Despawnable = despawnable;
 
             for (int I = 0; I < (int) Stats.StatCount; I++)
@@ -58,10 +58,10 @@ namespace Intersect.Server.Classes.Entities
             }
 
             var spellSlot = 0;
-            for (int I = 0; I < MyBase.Spells.Count; I++)
+            for (int I = 0; I < Base.Spells.Count; I++)
             {
                 var slot = new SpellSlot(spellSlot);
-                slot.Set(new Spell(MyBase.Spells[I]));
+                slot.Set(new Spell(Base.Spells[I]));
                 Spells.Add(slot);
                 spellSlot++;
             }
@@ -70,11 +70,11 @@ namespace Intersect.Server.Classes.Entities
             var itemSlot = 0;
             foreach (var drop in myBase.Drops)
             {
-                if (Globals.Rand.Next(1, 10001) <= drop.Chance * 100 && ItemBase.Lookup.Get<ItemBase>(drop.ItemNum) != null)
+                if (Globals.Rand.Next(1, 10001) <= drop.Chance * 100 && ItemBase.Lookup.Get<ItemBase>(drop.ItemId) != null)
                 {
                     var slot = new InventorySlot(itemSlot);
                     Items.Add(slot);
-                    slot.Set(new Item(drop.ItemNum, drop.Amount));
+                    slot.Set(new Item(drop.ItemId, drop.Quantity));
                     itemSlot++;
                 }
             }
@@ -97,15 +97,14 @@ namespace Intersect.Server.Classes.Entities
         public override void Die(int dropitems = 100, EntityInstance killer = null)
         {
             base.Die(dropitems, killer);
-            MapInstance.Lookup.Get<MapInstance>(MapIndex).RemoveEntity(this);
-            PacketSender.SendEntityLeave(MyIndex, (int) EntityTypes.GlobalEntity, MapIndex);
-            Globals.Entities[MyIndex] = null;
+            MapInstance.Lookup.Get<MapInstance>(MapId).RemoveEntity(this);
+            PacketSender.SendEntityLeave(Id, (int) EntityTypes.GlobalEntity, MapId);
         }
 
         //Targeting
         public void AssignTarget(EntityInstance en)
         {
-            if (MyBase.Behavior == (int) NpcBehavior.Friendly) return;
+            if (Base.Behavior == (int) NpcBehavior.Friendly) return;
             if (en.GetType() == typeof(Projectile))
             {
                 if (((Projectile) en).Owner != this) MyTarget = ((Projectile) en).Owner;
@@ -114,9 +113,9 @@ namespace Intersect.Server.Classes.Entities
             {
                 if (en.GetType() == typeof(Npc))
                 {
-                    if (((Npc)en).MyBase == MyBase)
+                    if (((Npc)en).Base == Base)
                     {
-                        if (MyBase.AttackAllies == false) return;
+                        if (Base.AttackAllies == false) return;
                     }
                 }
                 if (en.GetType() == typeof(Player))
@@ -140,7 +139,7 @@ namespace Intersect.Server.Classes.Entities
         public override bool CanAttack(EntityInstance en, SpellBase spell)
         {
             if (!base.CanAttack(en, spell)) return false;
-            if (en.GetType() == typeof(Npc) && ((Npc) en).MyBase.Behavior == (int) NpcBehavior.Friendly) return false;
+            if (en.GetType() == typeof(Npc) && ((Npc) en).Base.Behavior == (int) NpcBehavior.Friendly) return false;
             if (en.GetType() == typeof(EventPageInstance)) return false;
             //Check if the attacker is stunned or blinded.
             var statuses = Statuses.Values.ToArray();
@@ -169,23 +168,23 @@ namespace Intersect.Server.Classes.Entities
             if (!IsOneBlockAway(enemy)) return;
             if (!IsFacingTarget(enemy)) return;
 
-            var deadAnimations = new List<KeyValuePair<int, int>>();
-            var aliveAnimations = new List<KeyValuePair<int, int>>();
+            var deadAnimations = new List<KeyValuePair<Guid, int>>();
+            var aliveAnimations = new List<KeyValuePair<Guid, int>>();
 
-            if (MyBase.AttackAnimation != null)
+            if (Base.AttackAnimation != null)
             {
-                deadAnimations.Add(new KeyValuePair<int, int>(MyBase.AttackAnimationId, Dir));
-                aliveAnimations.Add(new KeyValuePair<int, int>(MyBase.AttackAnimationId, Dir));
+                deadAnimations.Add(new KeyValuePair<Guid, int>(Base.AttackAnimationId, Dir));
+                aliveAnimations.Add(new KeyValuePair<Guid, int>(Base.AttackAnimationId, Dir));
             }
 
             //We were forcing at LEAST 1hp base damage.. but then you can't have guards that won't hurt the player.
             //https://www.ascensiongamedev.com/community/bug_tracker/intersect/npc-set-at-0-attack-damage-still-damages-player-by-1-initially-r915/
             if (AttackTimer < Globals.System.GetTimeMs())
             {
-                base.TryAttack(enemy, MyBase.Damage, (DamageType) MyBase.DamageType,
-                    (Stats) MyBase.ScalingStat,
-                    MyBase.Scaling, MyBase.CritChance, Options.CritMultiplier, deadAnimations, aliveAnimations);
-                PacketSender.SendEntityAttack(this, (int) EntityTypes.GlobalEntity, MapIndex, CalculateAttackTime());
+                base.TryAttack(enemy, Base.Damage, (DamageType) Base.DamageType,
+                    (Stats) Base.ScalingStat,
+                    Base.Scaling, Base.CritChance, Options.CritMultiplier, deadAnimations, aliveAnimations);
+                PacketSender.SendEntityAttack(this, (int) EntityTypes.GlobalEntity, MapId, CalculateAttackTime());
             }
         }
 
@@ -194,16 +193,16 @@ namespace Intersect.Server.Classes.Entities
             //Check for NpcVsNpc Combat, both must be enabled and the attacker must have it as an enemy or attack all types of npc.
             if (!friendly)
             {
-                if (enemy != null && enemy.GetType() == typeof(Npc) && MyBase != null)
+                if (enemy != null && enemy.GetType() == typeof(Npc) && Base != null)
                 {
-                    if (((Npc) enemy).MyBase.NpcVsNpcEnabled == false)
+                    if (((Npc) enemy).Base.NpcVsNpcEnabled == false)
                         return false;
 
-                    if (MyBase.AttackAllies && ((Npc) enemy).MyBase == MyBase) return true;
+                    if (Base.AttackAllies && ((Npc) enemy).Base == Base) return true;
 
-                    for (int i = 0; i < MyBase.AggroList.Count; i++)
+                    for (int i = 0; i < Base.AggroList.Count; i++)
                     {
-                        if (NpcBase.Lookup.Get<NpcBase>(MyBase.AggroList[i]) == ((Npc) enemy).MyBase)
+                        if (NpcBase.Lookup.Get<NpcBase>(Base.AggroList[i]) == ((Npc) enemy).Base)
                         {
                             return true;
                         }
@@ -217,7 +216,7 @@ namespace Intersect.Server.Classes.Entities
             }
             else
             {
-                if (enemy != null && enemy.GetType() == typeof(Npc) && MyBase != null && ((Npc)enemy).MyBase == MyBase && MyBase.AttackAllies == false)
+                if (enemy != null && enemy.GetType() == typeof(Npc) && Base != null && ((Npc)enemy).Base == Base && Base.AttackAllies == false)
                 {
                     return true;
                 }
@@ -260,10 +259,10 @@ namespace Intersect.Server.Classes.Entities
 
                 if (cc == false)
                 {
-                    if (MyBase.Spells.Count > 0)
+                    if (Base.Spells.Count > 0)
                     {
-                        var s = Globals.Rand.Next(0, MyBase.Spells.Count); //Pick a random spell
-                        var spell = SpellBase.Lookup.Get<SpellBase>((MyBase.Spells[s]));
+                        var s = Globals.Rand.Next(0, Base.Spells.Count); //Pick a random spell
+                        var spell = SpellBase.Lookup.Get<SpellBase>((Base.Spells[s]));
                         var range = spell.CastRange;
                         if (spell != null)
                         {
@@ -307,7 +306,7 @@ namespace Intersect.Server.Classes.Entities
                                                 CastTarget = MyTarget;
                                             }
 
-                                            switch (MyBase.SpellFrequency)
+                                            switch (Base.SpellFrequency)
                                             {
                                                 case 0:
                                                     CastFreq = Globals.System.GetTimeMs() + 30000;
@@ -328,16 +327,15 @@ namespace Intersect.Server.Classes.Entities
 
                                             SpellCastSlot = s;
 
-                                            if (spell.CastAnimationId > -1)
+                                            if (spell.CastAnimationId != Guid.Empty)
                                             {
                                                 PacketSender.SendAnimationToProximity(spell.CastAnimationId, 1,
-                                                    MyIndex, MapIndex, 0, 0, Dir);
+                                                    Id, MapId, 0, 0, Dir);
                                                 //Target Type 1 will be global entity
                                             }
 
-                                            PacketSender.SendEntityVitals(Globals.Entities[MyIndex]);
-                                            PacketSender.SendEntityVitals(Globals.Entities[MyIndex]);
-                                            PacketSender.SendEntityCastTime(this, (MyBase.Spells[s]));
+                                            PacketSender.SendEntityVitals(this);
+                                            PacketSender.SendEntityCastTime(this, (Base.Spells[s]));
                                         }
                                     }
                                 }
@@ -351,11 +349,11 @@ namespace Intersect.Server.Classes.Entities
         //General Updating
         public override void Update(long timeMs)
         {
-            var curMapLink = MapIndex;
+            var curMapLink = MapId;
             base.Update(timeMs);
             if (MoveTimer < Globals.System.GetTimeMs())
             {
-                var targetMap = -1;
+                var targetMap = Guid.Empty;
                 var targetX = 0;
                 var targetY = 0;
                 //Check if there is a target, if so, run their ass down.
@@ -363,7 +361,7 @@ namespace Intersect.Server.Classes.Entities
                 {
                     if (!MyTarget.IsDead())
                     {
-                        targetMap = MyTarget.MapIndex;
+                        targetMap = MyTarget.MapId;
                         targetX = MyTarget.X;
                         targetY = MyTarget.Y;
                         var targetStatuses = MyTarget.Statuses.Values.ToArray();
@@ -371,7 +369,7 @@ namespace Intersect.Server.Classes.Entities
                         {
                             if (targetStatus.Type == (int) StatusTypes.Stealth)
                             {
-                                targetMap = -1;
+                                targetMap = Guid.Empty;
                                 targetX = 0;
                                 targetY = 0;
                             }
@@ -384,46 +382,46 @@ namespace Intersect.Server.Classes.Entities
                 }
                 else //Find a target if able
                 {
-                    if (Behaviour == (int) NpcBehavior.AttackOnSight || MyBase.AggroList.Count > -1)
+                    if (Behaviour == (int) NpcBehavior.AttackOnSight || Base.AggroList.Count > -1)
                         // Check if attack on sight or have other npc's to target
                     {
                         TryFindNewTarget();
                     }
                 }
 
-                if (targetMap > -1)
+                if (targetMap != Guid.Empty)
                 {
                     //Check if target map is on one of the surrounding maps, if not then we are not even going to look.
-                    if (targetMap != MapIndex)
+                    if (targetMap != MapId)
                     {
-                        if (MapInstance.Lookup.Get<MapInstance>(MapIndex).SurroundingMaps.Count > 0)
+                        if (MapInstance.Lookup.Get<MapInstance>(MapId).SurroundingMaps.Count > 0)
                         {
                             for (var x = 0;
-                                x < MapInstance.Lookup.Get<MapInstance>(MapIndex).SurroundingMaps.Count;
+                                x < MapInstance.Lookup.Get<MapInstance>(MapId).SurroundingMaps.Count;
                                 x++)
                             {
-                                if (MapInstance.Lookup.Get<MapInstance>(MapIndex).SurroundingMaps[x] == targetMap)
+                                if (MapInstance.Lookup.Get<MapInstance>(MapId).SurroundingMaps[x] == targetMap)
                                 {
                                     break;
                                 }
-                                if (x == MapInstance.Lookup.Get<MapInstance>(MapIndex).SurroundingMaps.Count - 1)
+                                if (x == MapInstance.Lookup.Get<MapInstance>(MapId).SurroundingMaps.Count - 1)
                                 {
-                                    targetMap = -1;
+                                    targetMap = Guid.Empty;
                                 }
                             }
                         }
                         else
                         {
-                            targetMap = -1;
+                            targetMap = Guid.Empty;
                         }
                     }
                 }
 
-                if (targetMap > -1)
+                if (targetMap != Guid.Empty)
                 {
                     if (mPathFinder.GetTarget() != null)
                     {
-                        if (targetMap != mPathFinder.GetTarget().TargetMap ||
+                        if (targetMap != mPathFinder.GetTarget().TargetMapId ||
                             targetX != mPathFinder.GetTarget().TargetX ||
                             targetY != mPathFinder.GetTarget().TargetY)
                         {
@@ -439,7 +437,7 @@ namespace Intersect.Server.Classes.Entities
                     if (mPathFinder.GetTarget() != null)
                     {
                         TryCastSpells();
-                        if (!IsOneBlockAway(mPathFinder.GetTarget().TargetMap, mPathFinder.GetTarget().TargetX,
+                        if (!IsOneBlockAway(mPathFinder.GetTarget().TargetMapId, mPathFinder.GetTarget().TargetX,
                             mPathFinder.GetTarget().TargetY))
                         {
                             switch (mPathFinder.Update(timeMs))
@@ -470,18 +468,18 @@ namespace Intersect.Server.Classes.Entities
                                     break;
                                 case PathfinderResult.OutOfRange:
                                     RemoveTarget();
-                                    targetMap = -1;
+                                    targetMap = Guid.Empty;
                                     break;
                                 case PathfinderResult.NoPathToTarget:
-                                    TryFindNewTarget((MyTarget != null ? MyTarget.MyIndex : -1));
-                                    targetMap = -1;
+                                    TryFindNewTarget((MyTarget != null ? MyTarget.Id : Guid.Empty));
+                                    targetMap = Guid.Empty;
                                     break;
                                 case PathfinderResult.Failure:
-                                    targetMap = -1;
+                                    targetMap = Guid.Empty;
                                     RemoveTarget();
                                     break;
                                 case PathfinderResult.Wait:
-                                    targetMap = -1;
+                                    targetMap = Guid.Empty;
                                     break;
                                 default:
                                     throw new ArgumentOutOfRangeException();
@@ -509,9 +507,9 @@ namespace Intersect.Server.Classes.Entities
                 }
 
                 //Move randomly
-                if (targetMap != -1) return;
+                if (targetMap != Guid.Empty) return;
                 if (LastRandomMove >= Globals.System.GetTimeMs()) return;
-                if (MyBase.Behavior == (int) NpcBehavior.Guard)
+                if (Base.Behavior == (int) NpcBehavior.Guard)
                 {
                     LastRandomMove = Globals.System.GetTimeMs() + Globals.Rand.Next(1000, 3000);
                     return;
@@ -537,22 +535,22 @@ namespace Intersect.Server.Classes.Entities
                 LastRandomMove = Globals.System.GetTimeMs() + Globals.Rand.Next(1000, 3000);
             }
             //If we switched maps, lets update the maps
-            if (curMapLink != MapIndex)
+            if (curMapLink != MapId)
             {
-                if (curMapLink != -1)
+                if (curMapLink == Guid.Empty)
                 {
                     MapInstance.Lookup.Get<MapInstance>(curMapLink).RemoveEntity(this);
                 }
-                if (MapIndex > -1)
+                if (MapId != Guid.Empty)
                 {
-                    MapInstance.Lookup.Get<MapInstance>(MapIndex).AddEntity(this);
+                    MapInstance.Lookup.Get<MapInstance>(MapId).AddEntity(this);
                 }
             }
         }
 
-        private void TryFindNewTarget(int avoidIndex = -1)
+        private void TryFindNewTarget(Guid avoidId = new Guid())
         {
-            var maps = MapInstance.Lookup.Get<MapInstance>(MapIndex).GetSurroundingMaps(true);
+            var maps = MapInstance.Lookup.Get<MapInstance>(MapId).GetSurroundingMaps(true);
             var possibleTargets = new List<EntityInstance>();
             int closestRange = Range + 1; //If the range is out of range we didn't find anything.
             int closestIndex = -1;
@@ -560,12 +558,12 @@ namespace Intersect.Server.Classes.Entities
             {
                 foreach (var entity in map.GetEntities())
                 {
-                    if (entity != null && entity.IsDead() == false && entity != this && entity.MyIndex != avoidIndex)
+                    if (entity != null && entity.IsDead() == false && entity != this && entity.Id != avoidId)
                     {
                         if ((entity.GetType() == typeof(Player)) &&
                             Behaviour == (int)NpcBehavior.AttackOnSight ||
                             (entity.GetType() == typeof(Npc) &&
-                             MyBase.AggroList.Contains(((Npc)entity).MyBase.Index)))
+                             Base.AggroList.Contains(((Npc)entity).Base.Id)))
                         {
                             var dist = GetDistanceTo(entity);
                             if (dist <= Range && dist < closestRange)
@@ -601,9 +599,9 @@ namespace Intersect.Server.Classes.Entities
             }
         }
 
-        public override void Warp(int newMap, int newX, int newY, int newDir, bool adminWarp = false, int zOverride = 0, bool mapSave = false)
+        public override void Warp(Guid newMapId, int newX, int newY, int newDir, bool adminWarp = false, int zOverride = 0, bool mapSave = false)
         {
-            var map = MapInstance.Lookup.Get<MapInstance>(newMap);
+            var map = MapInstance.Lookup.Get<MapInstance>(newMapId);
             if (map == null)
             {
                 return;
@@ -612,15 +610,15 @@ namespace Intersect.Server.Classes.Entities
             Y = newY;
             Z = zOverride;
             Dir = newDir;
-            if (newMap != MapIndex )
+            if (newMapId != MapId )
             {
-                var oldMap = MapInstance.Lookup.Get<MapInstance>(MapIndex);
+                var oldMap = MapInstance.Lookup.Get<MapInstance>(MapId);
                 if (oldMap != null)
                 {
                     oldMap.RemoveEntity(this);
                 }
-                PacketSender.SendEntityLeave(MyIndex, (int)EntityTypes.GlobalEntity, MapIndex);
-                MapIndex = newMap;
+                PacketSender.SendEntityLeave(Id, (int)EntityTypes.GlobalEntity, MapId);
+                MapId = newMapId;
                 PacketSender.SendEntityDataToProximity(this);
                 PacketSender.SendEntityPositionToAll(this);
             }

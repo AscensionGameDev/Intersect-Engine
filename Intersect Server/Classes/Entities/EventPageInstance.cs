@@ -58,11 +58,11 @@ namespace Intersect.Server.Classes.Entities
         public int Trigger;
         private int mWalkingAnim;
 
-        public EventPageInstance(EventBase myEvent, EventPage myPage, int mapIndex, int mapIndexNum, EventInstance eventIndex, Client client) : base(mapIndex)
+        public EventPageInstance(EventBase myEvent, EventPage myPage, Guid mapId, EventInstance eventIndex, Client client) : base(Guid.NewGuid())
         {
             BaseEvent = myEvent;
             MyPage = myPage;
-            MapIndex = mapIndexNum;
+            MapId = mapId;
             X = eventIndex.CurrentX;
             Y = eventIndex.CurrentY;
             Name = myEvent.Name;
@@ -106,9 +106,9 @@ namespace Intersect.Server.Classes.Entities
                         break;
                 }
             }
-            if (myPage.Animation > -1)
+            if (myPage.AnimationId != Guid.Empty)
             {
-                Animations.Add(myPage.Animation);
+                Animations.Add(myPage.AnimationId);
             }
             Face = MyPage.FaceGraphic;
             mPageNum = BaseEvent.Pages.IndexOf(MyPage);
@@ -116,13 +116,13 @@ namespace Intersect.Server.Classes.Entities
             SendToClient();
         }
 
-        public EventPageInstance(EventBase myEvent, EventPage myPage, int mapIndex, int mapIndexNum, EventInstance eventIndex,
-            Client client, EventPageInstance globalClone) : base(mapIndex)
+        public EventPageInstance(EventBase myEvent, EventPage myPage, Guid instanceId, Guid mapId, EventInstance eventIndex,
+            Client client, EventPageInstance globalClone) : base(instanceId)
         {
             BaseEvent = myEvent;
             GlobalClone = globalClone;
             MyPage = myPage;
-            MapIndex = mapIndexNum;
+            MapId = mapId;
             X = globalClone.X;
             Y = globalClone.Y;
             Name = myEvent.Name;
@@ -133,7 +133,6 @@ namespace Intersect.Server.Classes.Entities
             Trigger = MyPage.Trigger;
             Passable = globalClone.Passable;
             HideName = globalClone.HideName;
-            MapIndex = mapIndexNum;
             MyEventIndex = eventIndex;
             MoveRoute = globalClone.MoveRoute;
             mPathFinder = new Pathfinder(this);
@@ -166,9 +165,9 @@ namespace Intersect.Server.Classes.Entities
                         break;
                 }
             }
-            if (myPage.Animation > -1)
+            if (myPage.AnimationId != Guid.Empty)
             {
-                Animations.Add(myPage.Animation);
+                Animations.Add(myPage.AnimationId);
             }
             Face = MyPage.FaceGraphic;
             mPageNum = BaseEvent.Pages.IndexOf(MyPage);
@@ -279,11 +278,11 @@ namespace Intersect.Server.Classes.Entities
                             if (client != null && GlobalClone == null) //Local Event
                             {
                                 if (mPathFinder.GetTarget() == null ||
-                                    mPathFinder.GetTarget().TargetMap != client.Entity.MapIndex ||
+                                    mPathFinder.GetTarget().TargetMapId != client.Entity.MapId ||
                                     mPathFinder.GetTarget().TargetX != client.Entity.X ||
                                     mPathFinder.GetTarget().TargetY != client.Entity.Y)
                                 {
-                                    mPathFinder.SetTarget(new PathfinderTarget(client.Entity.MapIndex,
+                                    mPathFinder.SetTarget(new PathfinderTarget(client.Entity.MapId,
                                         client.Entity.X, client.Entity.Y));
                                 }
                                 //Todo check if next to or on top of player.. if so don't run pathfinder.
@@ -520,11 +519,10 @@ namespace Intersect.Server.Classes.Entities
                             break;
                         case MoveRouteEnum.SetAnimation:
                             Animations.Clear();
-                            var anim = AnimationBase.Lookup.Get<AnimationBase>(MoveRoute.Actions[MoveRoute.ActionIndex]
-                                .AnimationIndex);
+                            var anim = AnimationBase.Lookup.Get<AnimationBase>(MoveRoute.Actions[MoveRoute.ActionIndex].AnimationId);
                             if (anim != null)
                             {
-                                Animations.Add(MoveRoute.Actions[MoveRoute.ActionIndex].AnimationIndex);
+                                Animations.Add(MoveRoute.Actions[MoveRoute.ActionIndex].AnimationId);
                             }
                             shouldSendUpdate = true;
                             moved = true;
@@ -545,7 +543,6 @@ namespace Intersect.Server.Classes.Entities
                     if (shouldSendUpdate)
                     {
                         //Send Update
-                        SpawnTime = Globals.System.GetTimeMs();
                         SendToClient();
                     }
                     if (MoveTimer < Globals.System.GetTimeMs())
@@ -624,7 +621,7 @@ namespace Intersect.Server.Classes.Entities
             }
             if (GlobalClone != null)
             {
-                var map = MapInstance.Lookup.Get<MapInstance>(GlobalClone.MapIndex);
+                var map = MapInstance.Lookup.Get<MapInstance>(GlobalClone.MapId);
                 if (map == null || !map.FindEvent(GlobalClone.BaseEvent, GlobalClone)) return true;
             }
             return false;

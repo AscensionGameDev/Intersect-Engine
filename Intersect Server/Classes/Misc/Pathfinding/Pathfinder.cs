@@ -52,7 +52,7 @@ namespace Intersect.Server.Classes.Misc.Pathfinding
             var path = mPath;
             if (mWaitTime < timeMs)
             {
-                var currentMap = MapInstance.Lookup.Get<MapInstance>(mEntity.MapIndex);
+                var currentMap = MapInstance.Lookup.Get<MapInstance>(mEntity.MapId);
                 if (currentMap != null && mTarget != null)
                 {
                     var myGrid = currentMap.MapGrid;
@@ -72,9 +72,9 @@ namespace Intersect.Server.Classes.Misc.Pathfinding
                         for (var y = gridY - 1; y <= gridY + 1; y++)
                         {
                             if (y == -1 || y >= LegacyDatabase.MapGrids[myGrid].Height) continue;
-                            if (LegacyDatabase.MapGrids[myGrid].MyGrid[x, y] > -1)
+                            if (LegacyDatabase.MapGrids[myGrid].MyGrid[x, y] != Guid.Empty)
                             {
-                                if (LegacyDatabase.MapGrids[myGrid].MyGrid[x, y] == mTarget.TargetMap)
+                                if (LegacyDatabase.MapGrids[myGrid].MyGrid[x, y] == mTarget.TargetMapId)
                                 {
                                     targetX = (x - gridX + 1) * Options.MapWidth + mTarget.TargetX;
                                     targetY = (y - gridY + 1) * Options.MapHeight + mTarget.TargetY;
@@ -135,7 +135,7 @@ namespace Intersect.Server.Classes.Misc.Pathfinding
                                             continue;
                                         }
 
-                                        if (LegacyDatabase.MapGrids[myGrid].MyGrid[x, y] > -1)
+                                        if (LegacyDatabase.MapGrids[myGrid].MyGrid[x, y] != Guid.Empty)
                                         {
                                             var tmpMap =
                                                 MapInstance.Lookup.Get<MapInstance>(LegacyDatabase.MapGrids[myGrid]
@@ -195,8 +195,7 @@ namespace Intersect.Server.Classes.Misc.Pathfinding
                                                                 {
                                                                     for (int mapY = 0; mapY < Options.MapHeight; mapY++)
                                                                     {
-                                                                        var evt = player.EventExists(ev.MapIndex,
-                                                                            mapX, mapY);
+                                                                        var evt = player.EventExists(ev.MapId, mapX, mapY);
                                                                         if (evt != null)
                                                                         {
                                                                             if (evt.PageInstance != null &&

@@ -27,13 +27,13 @@ namespace Intersect.GameObjects
         public ResourceState Exhausted { get; set; }
 
         [Column("Animation")]
-        public int AnimationId { get; protected set; }
+        public Guid AnimationId { get; protected set; }
         [NotMapped]
         [JsonIgnore]
         public AnimationBase Animation
         {
             get => AnimationBase.Lookup.Get<AnimationBase>(AnimationId);
-            set => AnimationId = value?.Index ?? -1;
+            set => AnimationId = value?.Id ?? Guid.Empty;
         }
 
         // Drops
@@ -67,7 +67,7 @@ namespace Intersect.GameObjects
         public bool WalkableBefore { get; set; }
 
         [JsonConstructor]
-        public ResourceBase(int index) : base(index)
+        public ResourceBase(Guid id) : base(id)
         {
             Name = "New Resource";
         }
@@ -80,14 +80,9 @@ namespace Intersect.GameObjects
 
         public class ResourceDrop
         {
-            public int Amount;
+            public int Quantity;
             public double Chance;
-            public int ItemNum;
-        }
-
-        public static ResourceBase Get(int index)
-        {
-            return ResourceBase.Lookup.Get<ResourceBase>(index);
+            public Guid ItemId;
         }
     }
 }

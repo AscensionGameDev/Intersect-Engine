@@ -170,7 +170,7 @@ namespace Intersect.Client.Classes.Core
                 for (var y = gridY - 1; y <= gridY + 1; y++)
                 {
                     if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
-                        Globals.MapGrid[x, y] != -1)
+                        Globals.MapGrid[x, y] != Guid.Empty)
                     {
                         DrawMapPanorama(Globals.MapGrid[x, y]);
                     }
@@ -182,7 +182,7 @@ namespace Intersect.Client.Classes.Core
                 for (var y = gridY - 1; y <= gridY + 1; y++)
                 {
                     if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
-                        Globals.MapGrid[x, y] != -1)
+                        Globals.MapGrid[x, y] != Guid.Empty)
                     {
                         DrawMap(Globals.MapGrid[x, y], 0);
                     }
@@ -214,7 +214,7 @@ namespace Intersect.Client.Classes.Core
                 for (var y = gridY - 1; y <= gridY + 1; y++)
                 {
                     if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
-                        Globals.MapGrid[x, y] != -1)
+                        Globals.MapGrid[x, y] != Guid.Empty)
                     {
                         DrawMap(Globals.MapGrid[x, y], 1);
                     }
@@ -238,7 +238,7 @@ namespace Intersect.Client.Classes.Core
                 for (var y = gridY - 1; y <= gridY + 1; y++)
                 {
                     if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
-                        Globals.MapGrid[x, y] != -1)
+                        Globals.MapGrid[x, y] != Guid.Empty)
                     {
                         DrawMap(Globals.MapGrid[x, y], 2);
                     }
@@ -258,7 +258,7 @@ namespace Intersect.Client.Classes.Core
                 for (var y = gridY - 1; y <= gridY + 1; y++)
                 {
                     if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
-                        Globals.MapGrid[x, y] != -1)
+                        Globals.MapGrid[x, y] != Guid.Empty)
                     {
                         MapInstance map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid[x, y]);
                         if (map != null)
@@ -318,7 +318,7 @@ namespace Intersect.Client.Classes.Core
                 for (var y = gridY - 1; y <= gridY + 1; y++)
                 {
                     if (x < 0 || x >= Globals.MapGridWidth || y < 0 || y >= Globals.MapGridHeight ||
-                        Globals.MapGrid[x, y] == -1) continue;
+                        Globals.MapGrid[x, y] == Guid.Empty) continue;
                     var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid[x, y]);
                     map?.DrawActionMsgs();
                 }
@@ -395,7 +395,7 @@ namespace Intersect.Client.Classes.Core
                     for (int y = gridY - 1; y <= gridY + 1; y++)
                     {
                         if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
-                            Globals.MapGrid[x, y] != -1)
+                            Globals.MapGrid[x, y] != Guid.Empty)
                         {
                             var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid[x, y]);
                             if (map != null && !map.MapRendered)
@@ -426,7 +426,7 @@ namespace Intersect.Client.Classes.Core
                     for (int y = gridY - 1; y <= gridY + 1; y++)
                     {
                         if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
-                            Globals.MapGrid[x, y] != -1)
+                            Globals.MapGrid[x, y] != Guid.Empty)
                         {
                             var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid[x, y]);
                             if (map != null && map.MapRendered)
@@ -439,9 +439,9 @@ namespace Intersect.Client.Classes.Core
             }
         }
 
-        private static void DrawMap(int mapNum, int layer = 0)
+        private static void DrawMap(Guid mapId, int layer = 0)
         {
-            var map = MapInstance.Lookup.Get<MapInstance>(mapNum);
+            var map = MapInstance.Lookup.Get<MapInstance>(mapId);
             if (map == null) return;
             if (
                 !new FloatRect(map.GetX(), map.GetY(), Options.TileWidth * Options.MapWidth,
@@ -453,9 +453,9 @@ namespace Intersect.Client.Classes.Core
             }
         }
 
-        private static void DrawMapPanorama(int mapNum)
+        private static void DrawMapPanorama(Guid mapId)
         {
-            var map = MapInstance.Lookup.Get<MapInstance>(mapNum);
+            var map = MapInstance.Lookup.Get<MapInstance>(mapId);
             if (map != null)
             {
                 if (

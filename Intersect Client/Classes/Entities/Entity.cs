@@ -18,6 +18,9 @@ namespace Intersect_Client.Classes.Entities
 {
     public class Entity
     {
+        //Core Values
+        public Guid Id;
+
         //Chat
         private List<ChatBubble> mChatBubbles = new List<ChatBubble>();
 
@@ -45,7 +48,7 @@ namespace Intersect_Client.Classes.Entities
 
         public bool Blocking = false;
 
-        private int mCachedMapId = -1;
+        private Guid mCachedMapId;
         private MapInstance mCachedMapInstance;
 
         //Combat Status
@@ -63,7 +66,8 @@ namespace Intersect_Client.Classes.Entities
         public Queue<DashInstance> DashQueue = new Queue<DashInstance>();
         public long DashTimer;
 
-        public int[] Equipment = new int[Options.EquipmentSlots.Count];
+        public Guid[] Equipment = new Guid[Options.EquipmentSlots.Count];
+        public int[] MyEquipment = new int[Options.EquipmentSlots.Count];
 
         //Extras
         public string Face = "";
@@ -90,19 +94,15 @@ namespace Intersect_Client.Classes.Entities
 
         public float MoveTimer;
 
-        //Core Values
-        public int MyIndex;
-
-        public string MyName = "";
+        public string Name = "";
         public float OffsetX;
         public float OffsetY;
         public int Passable;
 
         //Rendering Variables
         public HashSet<Entity> RenderList;
-
-        public long SpawnTime;
-        public int SpellCast = 0;
+        
+        public Guid SpellCast;
         public SpellInstance[] Spells = new SpellInstance[Options.MaxPlayerSkills];
         public int[] Stat = new int[(int) Stats.StatCount];
 
@@ -115,11 +115,11 @@ namespace Intersect_Client.Classes.Entities
         public int[] Vital = new int[(int) Vitals.VitalCount];
         public int WalkFrame;
 
-        public Entity(int index, long spawnTime, ByteBuffer bf, bool isEvent = false)
+        public Entity(Guid id, ByteBuffer bf, bool isEvent = false)
         {
-            CurrentMap = -1;
-            SpawnTime = spawnTime;
-            if (index > -1 && !isEvent)
+            Id = id;
+            CurrentMap = Guid.Empty;
+            if (id != Guid.Empty && !isEvent)
             {
                 for (int i = 0; i < Options.MaxInvItems; i++)
                 {
@@ -131,11 +131,12 @@ namespace Intersect_Client.Classes.Entities
                 }
                 for (int i = 0; i < Options.EquipmentSlots.Count; i++)
                 {
-                    Equipment[i] = -1;
+                    Equipment[i] = Guid.Empty;
+                    MyEquipment[i] = -1;
                 }
             }
             AnimationTimer = Globals.System.GetTimeMs() + Globals.Random.Next(0, 500);
-            MyIndex = index;
+            //TODO Remove because fixed orrrrr change the exception text
             if (Options.EquipmentSlots.Count == 0) throw new Exception("What the fuck is going on!?!?!?!?!?!");
             Load(bf);
         }
@@ -184,7 +185,7 @@ namespace Intersect_Client.Classes.Entities
             }
         }
 
-        public virtual int CurrentMap { get; set; }
+        public virtual Guid CurrentMap { get; set; }
 
         public virtual EntityTypes GetEntityType()
         {
@@ -194,8 +195,8 @@ namespace Intersect_Client.Classes.Entities
         //Deserializing
         public virtual void Load(ByteBuffer bf)
         {
-            CurrentMap = bf.ReadInteger();
-            MyName = bf.ReadString();
+            CurrentMap = bf.ReadGuid();
+            Name = bf.ReadString();
             MySprite = bf.ReadString();
             Face = bf.ReadString();
             Level = bf.ReadInteger();
@@ -210,7 +211,7 @@ namespace Intersect_Client.Classes.Entities
             int animCount = bf.ReadInteger();
             for (int i = 0; i < animCount; i++)
             {
-                var anim = AnimationBase.Lookup.Get<AnimationBase>(bf.ReadInteger());
+                var anim = AnimationBase.Lookup.Get<AnimationBase>(bf.ReadGuid());
                 if (anim != null)
                     animsToAdd.Add(anim);
             }
@@ -225,7 +226,7 @@ namespace Intersect_Client.Classes.Entities
                 {
                     foreach (var addedAnim in animsToAdd)
                     {
-                        if (addedAnim.Index == anim.MyBase.Index)
+                        if (addedAnim.Id == anim.MyBase.Id)
                         {
                             animsToClear.Remove(anim);
                             animsToAdd.Remove(addedAnim);
@@ -246,7 +247,7 @@ namespace Intersect_Client.Classes.Entities
             Status.Clear();
             for (int i = 0; i < count; i++)
             {
-                Status.Add(new StatusInstance(bf.ReadInteger(), bf.ReadInteger(), bf.ReadString(), bf.ReadInteger(),
+                Status.Add(new StatusInstance(bf.ReadGuid(), bf.ReadInteger(), bf.ReadString(), bf.ReadInteger(),
                     bf.ReadInteger()));
             }
             for (var i = 0; i < (int) Stats.StatCount; i++)
@@ -260,14 +261,14 @@ namespace Intersect_Client.Classes.Entities
             //Status effects box update
             if (Globals.Me != null)
             {
-                if (MyIndex == Globals.Me.MyIndex)
+                if (Id == Globals.Me.Id)
                 {
                     if (Gui.GameUi != null)
                     {
                         Gui.GameUi.PlayerBox.UpdateStatuses = true;
                     }
                 }
-                else if (MyIndex > -1 && MyIndex == Globals.Me.TargetIndex)
+                else if (Id != Guid.Empty && Id == Globals.Me.TargetIndex)
                 {
                     Globals.Me.TargetBox.UpdateStatuses = true;
                 }
@@ -336,7 +337,7 @@ namespace Intersect_Client.Classes.Entities
                 LatestMap = map;
                 if ((map == null || !map.InView()))
                 {
-                    Globals.EntitiesToDispose.Add(MyIndex);
+                    Globals.EntitiesToDispose.Add(Id);
                     return false;
                 }
             }
@@ -525,7 +526,7 @@ namespace Intersect_Client.Classes.Entities
                 for (int y = gridY - 1; y <= gridY + 1; y++)
                 {
                     if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
-                        Globals.MapGrid[x, y] != -1)
+                        Globals.MapGrid[x, y] != Guid.Empty)
                     {
                         if (Globals.MapGrid[x, y] == CurrentMap)
                         {
@@ -677,27 +678,23 @@ namespace Intersect_Client.Classes.Entities
 						//Don't render the paperdolls if they have transformed.
 						if (sprite == MySprite && Equipment.Length == Options.EquipmentSlots.Count)
 						{
-							if (Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z])] > -1 &&
+							if (Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z])] != Guid.Empty &&
 								(this != Globals.Me ||
-									Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z])] <
+								 MyEquipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z])] <
 									Options.MaxInvItems))
 							{
-								var itemNum = -1;
+								var itemId = Guid.Empty;
 								if (this == Globals.Me)
 								{
-									itemNum =
-										Inventory[
-												Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z])
-												]]
-											.ItemNum;
+									itemId = Inventory[MyEquipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z])]].ItemId;
 								}
 								else
 								{
-									itemNum = Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z])];
+									itemId = Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z])];
 								}
-								if (ItemBase.Lookup.Get<ItemBase>(itemNum) != null)
+								if (ItemBase.Lookup.Get<ItemBase>(itemId) != null)
 								{
-									var itemdata = ItemBase.Lookup.Get<ItemBase>(itemNum);
+									var itemdata = ItemBase.Lookup.Get<ItemBase>(itemId);
 									if (Gender == 0)
 									{
 										DrawEquipment(itemdata.MalePaperdoll, alpha);
@@ -834,7 +831,7 @@ namespace Intersect_Client.Classes.Entities
 
         public virtual void DrawName(Color textColor, Color borderColor = null, Color backgroundColor = null)
         {
-            if (HideName == 1 || MyName.Trim().Length == 0)
+            if (HideName == 1 || Name.Trim().Length == 0)
             {
                 return;
             }
@@ -894,12 +891,12 @@ namespace Intersect_Client.Classes.Entities
             var y = GetTopPos() - 4;
             var x = (int) Math.Ceiling(GetCenterPos().X);
 
-            Pointf textSize = GameGraphics.Renderer.MeasureText(MyName, GameGraphics.GameFont, 1);
+            Pointf textSize = GameGraphics.Renderer.MeasureText(Name, GameGraphics.GameFont, 1);
 
             if (backgroundColor != Color.Transparent)
                 GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
                     new FloatRect((x - textSize.X / 2f) - 4, y, textSize.X + 8, textSize.Y), backgroundColor);
-            GameGraphics.Renderer.DrawString(MyName, GameGraphics.GameFont,
+            GameGraphics.Renderer.DrawString(Name, GameGraphics.GameFont,
                 (int) (x - (int) Math.Ceiling(textSize.X / 2f)), (int) (y), 1,
                 IntersectClientExtras.GenericClasses.Color.FromArgb(textColor.ToArgb()), true, null,
                 IntersectClientExtras.GenericClasses.Color.FromArgb(borderColor.ToArgb()));
@@ -1031,15 +1028,15 @@ namespace Intersect_Client.Classes.Entities
     public class StatusInstance
     {
         public string Data = "";
-        public int SpellNum;
+        public Guid SpellId;
         public long TimeRecevied = 0;
         public int TimeRemaining = 0;
         public int TotalDuration = 1;
         public int Type = -1;
 
-        public StatusInstance(int spellNum, int type, string data, int timeRemaining, int totalDuration)
+        public StatusInstance(Guid spellId, int type, string data, int timeRemaining, int totalDuration)
         {
-            SpellNum = spellNum;
+            SpellId = spellId;
             Type = type;
             Data = data;
             TimeRemaining = timeRemaining;
@@ -1052,7 +1049,7 @@ namespace Intersect_Client.Classes.Entities
     {
         private int mChangeDirection = -1;
         private int mDashTime;
-        private int mEndMap;
+        private Guid mEndMapId;
         private int mEndX;
         private float mEndXCoord;
         private int mEndY;
@@ -1061,10 +1058,10 @@ namespace Intersect_Client.Classes.Entities
         private float mStartXCoord;
         private float mStartYCoord;
 
-        public DashInstance(Entity en, int endMap, int endX, int endY, int dashTime, int changeDirection = -1)
+        public DashInstance(Entity en, Guid endMapId, int endX, int endY, int dashTime, int changeDirection = -1)
         {
             mChangeDirection = changeDirection;
-            mEndMap = endMap;
+            mEndMapId = endMapId;
             mEndX = endX;
             mEndY = endY;
             mDashTime = dashTime;
@@ -1073,15 +1070,15 @@ namespace Intersect_Client.Classes.Entities
         public void Start(Entity en)
         {
             if (MapInstance.Lookup.Get<MapInstance>(en.CurrentMap) == null ||
-                MapInstance.Lookup.Get<MapInstance>(mEndMap) == null ||
-                (mEndMap == en.CurrentMap) && (mEndX == en.CurrentX) && (mEndY == en.CurrentY))
+                MapInstance.Lookup.Get<MapInstance>(mEndMapId) == null ||
+                (mEndMapId == en.CurrentMap) && (mEndX == en.CurrentX) && (mEndY == en.CurrentY))
             {
                 en.Dashing = null;
             }
             else
             {
                 var startMap = MapInstance.Lookup.Get<MapInstance>(en.CurrentMap);
-                var endMap = MapInstance.Lookup.Get<MapInstance>(mEndMap);
+                var endMap = MapInstance.Lookup.Get<MapInstance>(mEndMapId);
                 mStartTime = Globals.System.GetTimeMs();
                 mStartXCoord = en.OffsetX;
                 mStartYCoord = en.OffsetY;
@@ -1124,7 +1121,7 @@ namespace Intersect_Client.Classes.Entities
                 en.Dashing = null;
                 en.OffsetX = 0;
                 en.OffsetY = 0;
-                en.CurrentMap = mEndMap;
+                en.CurrentMap = mEndMapId;
                 en.CurrentX = mEndX;
                 en.CurrentY = mEndY;
             }

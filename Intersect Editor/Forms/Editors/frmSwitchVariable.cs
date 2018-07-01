@@ -275,13 +275,13 @@ namespace Intersect.Editor.Forms.Editors
                 {
                     lblObject.Text = Strings.SwitchVariableEditor.playerswitch;
                     txtObjectName.Text = ((PlayerSwitchBase) mEditorItem).Name;
-                    lblId.Text = mEditorItem.Index.ToString();
+                    lblId.Text = mEditorItem.Id.ToString();
                 }
                 else if (rdoPlayerVariables.Checked)
                 {
                     lblObject.Text = Strings.SwitchVariableEditor.playervariable;
                     txtObjectName.Text = ((PlayerVariableBase) mEditorItem).Name;
-                    lblId.Text = mEditorItem.Index.ToString();
+                    lblId.Text = mEditorItem.Id.ToString();
                 }
                 else if (rdoGlobalSwitches.Checked)
                 {
@@ -290,7 +290,7 @@ namespace Intersect.Editor.Forms.Editors
                     cmbSwitchValue.Show();
                     cmbSwitchValue.SelectedIndex =
                         cmbSwitchValue.Items.IndexOf(((ServerSwitchBase) mEditorItem).Value.ToString());
-                    lblId.Text = mEditorItem.Index.ToString();
+                    lblId.Text = mEditorItem.Id.ToString();
                 }
                 else if (rdoGlobalVariables.Checked)
                 {
@@ -298,7 +298,7 @@ namespace Intersect.Editor.Forms.Editors
                     txtObjectName.Text = ((ServerVariableBase) mEditorItem).Name;
                     txtVariableVal.Show();
                     txtVariableVal.Text = ((ServerVariableBase) mEditorItem).Value.ToString();
-                    lblId.Text = mEditorItem.Index.ToString();
+                    lblId.Text = mEditorItem.Id.ToString();
                 }
             }
             else

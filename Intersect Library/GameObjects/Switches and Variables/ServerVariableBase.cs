@@ -1,4 +1,5 @@
-﻿using Intersect.Models;
+﻿using System;
+using Intersect.Models;
 using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
@@ -8,7 +9,7 @@ namespace Intersect.GameObjects
         public int Value { get; set; }
 
         [JsonConstructor]
-        public ServerVariableBase(int index) : base(index)
+        public ServerVariableBase(Guid id) : base(id)
         {
             Name = "New Global Variable";
         }

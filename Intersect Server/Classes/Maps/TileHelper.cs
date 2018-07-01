@@ -1,4 +1,5 @@
-﻿using Intersect.Enums;
+﻿using System;
+using Intersect.Enums;
 
 namespace Intersect.Server.Classes.Maps
 {
@@ -6,19 +7,19 @@ namespace Intersect.Server.Classes.Maps
 
     public class TileHelper
     {
-        private int mMapNum;
+        private Guid mMapId;
         private int mTileX;
         private int mTileY;
 
         /// <summary>
         ///     Creates a new tile helper instance in a position given.
         /// </summary>
-        /// <param name="mapNum"></param>
+        /// <param name="mapId"></param>
         /// <param name="tileX"></param>
         /// <param name="tileY"></param>
-        public TileHelper(int mapNum, int tileX, int tileY)
+        public TileHelper(Guid mapId, int tileX, int tileY)
         {
-            mMapNum = mapNum;
+            mMapId = mapId;
             mTileX = tileX;
             mTileY = tileY;
         }
@@ -49,48 +50,48 @@ namespace Intersect.Server.Classes.Maps
 
         public bool Matches(TileHelper other)
         {
-            if (GetMap() == other.GetMap() && GetX() == other.GetX() && GetY() == other.GetY()) return true;
+            if (GetMapId() == other.GetMapId() && GetX() == other.GetX() && GetY() == other.GetY()) return true;
             return false;
         }
 
         private bool TransitionMaps(int direction)
         {
-            if (!MapInstance.Lookup.IndexKeys.Contains(mMapNum)) return false;
-            int grid = MapInstance.Lookup.Get<MapInstance>(mMapNum).MapGrid;
-            int gridX = MapInstance.Lookup.Get<MapInstance>(mMapNum).MapGridX;
-            int gridY = MapInstance.Lookup.Get<MapInstance>(mMapNum).MapGridY;
+            if (!MapInstance.Lookup.Keys.Contains(mMapId)) return false;
+            int grid = MapInstance.Lookup.Get<MapInstance>(mMapId).MapGrid;
+            int gridX = MapInstance.Lookup.Get<MapInstance>(mMapId).MapGridX;
+            int gridY = MapInstance.Lookup.Get<MapInstance>(mMapId).MapGridY;
             switch (direction)
             {
                 case (int) Directions.Up:
-                    if (gridY > 0 && LegacyDatabase.MapGrids[grid].MyGrid[gridX, gridY - 1] > -1)
+                    if (gridY > 0 && LegacyDatabase.MapGrids[grid].MyGrid[gridX, gridY - 1] != Guid.Empty)
                     {
-                        mMapNum = LegacyDatabase.MapGrids[grid].MyGrid[gridX, gridY - 1];
+                        mMapId = LegacyDatabase.MapGrids[grid].MyGrid[gridX, gridY - 1];
                         mTileY += Options.MapHeight;
                         return true;
                     }
                     return false;
                 case (int) Directions.Down:
                     if (gridY + 1 < LegacyDatabase.MapGrids[grid].Height &&
-                        LegacyDatabase.MapGrids[grid].MyGrid[gridX, gridY + 1] > -1)
+                        LegacyDatabase.MapGrids[grid].MyGrid[gridX, gridY + 1] != Guid.Empty)
                     {
-                        mMapNum = LegacyDatabase.MapGrids[grid].MyGrid[gridX, gridY + 1];
+                        mMapId = LegacyDatabase.MapGrids[grid].MyGrid[gridX, gridY + 1];
                         mTileY -= Options.MapHeight;
                         return true;
                     }
                     return false;
                 case (int) Directions.Left:
-                    if (gridX > 0 && LegacyDatabase.MapGrids[grid].MyGrid[gridX - 1, gridY] > -1)
+                    if (gridX > 0 && LegacyDatabase.MapGrids[grid].MyGrid[gridX - 1, gridY] != Guid.Empty)
                     {
-                        mMapNum = LegacyDatabase.MapGrids[grid].MyGrid[gridX - 1, gridY];
+                        mMapId = LegacyDatabase.MapGrids[grid].MyGrid[gridX - 1, gridY];
                         mTileX += Options.MapWidth;
                         return true;
                     }
                     return false;
                 case (int) Directions.Right:
                     if (gridX + 1 < LegacyDatabase.MapGrids[grid].Width &&
-                        LegacyDatabase.MapGrids[grid].MyGrid[gridX + 1, gridY] > -1)
+                        LegacyDatabase.MapGrids[grid].MyGrid[gridX + 1, gridY] != Guid.Empty)
                     {
-                        mMapNum = LegacyDatabase.MapGrids[grid].MyGrid[gridX + 1, gridY];
+                        mMapId = LegacyDatabase.MapGrids[grid].MyGrid[gridX + 1, gridY];
                         mTileX -= Options.MapWidth;
                         return true;
                     }
@@ -102,8 +103,8 @@ namespace Intersect.Server.Classes.Maps
 
         private bool Fix()
         {
-            if (!MapInstance.Lookup.IndexKeys.Contains(mMapNum)) return false;
-            MapInstance curMap = MapInstance.Lookup.Get<MapInstance>(mMapNum);
+            if (!MapInstance.Lookup.Keys.Contains(mMapId)) return false;
+            MapInstance curMap = MapInstance.Lookup.Get<MapInstance>(mMapId);
             while (mTileX < 0)
             {
                 if (!TransitionMaps((int) Directions.Left)) return false;
@@ -123,9 +124,9 @@ namespace Intersect.Server.Classes.Maps
             return true;
         }
 
-        public int GetMap()
+        public Guid GetMapId()
         {
-            return mMapNum;
+            return mMapId;
         }
 
         public int GetX()
@@ -138,9 +139,9 @@ namespace Intersect.Server.Classes.Maps
             return mTileY;
         }
 
-        public static bool IsTileValid(int mapNum, int tileX, int tileY)
+        public static bool IsTileValid(Guid mapId, int tileX, int tileY)
         {
-            if (!MapInstance.Lookup.IndexKeys.Contains(mapNum)) return false;
+            if (!MapInstance.Lookup.Keys.Contains(mapId)) return false;
             if (tileX < 0 || tileX >= Options.MapWidth) return false;
             if (tileY < 0 || tileY >= Options.MapHeight) return false;
             return true;

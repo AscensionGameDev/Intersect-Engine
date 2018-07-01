@@ -126,7 +126,6 @@
     <Compile Include="AlphanumComparatorFast.cs" />
     <Compile Include="Collections\DatabaseObjectLookup.cs" />
     <Compile Include="Collections\IGameObjectLookup.cs" />
-    <Compile Include="Collections\IIndexLookup.cs" />
     <Compile Include="Collections\ILookup.cs" />
     <Compile Include="Collections\ReadOnlyDictionary.cs" />
     <Compile Include="Compression.cs" />
@@ -224,7 +223,6 @@
     <Compile Include="Models\LookupUtils.cs" />
     <Compile Include="Models\IDatabaseObject.cs" />
     <Compile Include="Models\IGameObject.cs" />
-    <Compile Include="Models\IIndexedGameObject.cs" />
     <Compile Include="Network\AbstractConnection.cs" />
     <Compile Include="Network\AbstractNetwork.cs" />
     <Compile Include="Network\AbstractPacket.cs" />

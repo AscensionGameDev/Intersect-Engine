@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Models;
 using Newtonsoft.Json;
@@ -18,12 +19,12 @@ namespace Intersect.GameObjects.Crafting
         public List<CraftIngredient> Ingredients = new List<CraftIngredient>();
 
         [JsonProperty(Order = -3)]
-        public int Item { get; set; } = -1;
+        public Guid ItemId { get; set; }
         [JsonProperty(Order = -2)]
         public int Time { get; set; }
 
         [JsonConstructor]
-        public CraftBase(int index) : base(index)
+        public CraftBase(Guid id) : base(id)
         {
             Name = "New Craft";
         }
@@ -37,18 +38,18 @@ namespace Intersect.GameObjects.Crafting
 
     public class CraftIngredient
     {
-        public int Item = -1;
+        public Guid ItemId;
         public int Quantity = 1;
 
-        public CraftIngredient(int item, int quantity)
+        public CraftIngredient(Guid itemId, int quantity)
         {
-            Item = item;
+            ItemId = itemId;
             Quantity = quantity;
         }
 
         public ItemBase GetItem()
         {
-            return ItemBase.Lookup.Get<ItemBase>(Item);
+            return ItemBase.Lookup.Get<ItemBase>(ItemId);
         }
     }
 }

@@ -1973,7 +1973,7 @@ Negative values for time to flow backwards.";
                 case 0: //Player Switch
                     var pValue = Strings.EventConditionDesc.False;
                     if (Convert.ToBoolean(cmd.Ints[2])) pValue = Strings.EventConditionDesc.True;
-                    return Strings.EventConditionDesc.playerswitch.ToString( PlayerSwitchBase.GetName(cmd.Ints[1]), pValue);
+                    return Strings.EventConditionDesc.playerswitch.ToString( PlayerSwitchBase.GetName(cmd.Guids[1]), pValue);
                 case 1: //Player Variables
                     var pVar = "";
                     switch (cmd.Ints[2])
@@ -1997,12 +1997,12 @@ Negative values for time to flow backwards.";
                             pVar = Strings.EventConditionDesc.notequal.ToString( cmd.Ints[3]);
                             break;
                     }
-                    return Strings.EventConditionDesc.playervariable.ToString( PlayerVariableBase.GetName(cmd.Ints[1]),
+                    return Strings.EventConditionDesc.playervariable.ToString( PlayerVariableBase.GetName(cmd.Guids[1]),
                         pVar);
                 case 2: //Global Switch
                     var gValue = Strings.EventConditionDesc.False;
                     if (Convert.ToBoolean(cmd.Ints[2])) gValue = Strings.EventConditionDesc.True;
-                    return Strings.EventConditionDesc.globalswitch.ToString( ServerSwitchBase.GetName(cmd.Ints[1]), gValue);
+                    return Strings.EventConditionDesc.globalswitch.ToString( ServerSwitchBase.GetName(cmd.Guids[1]), gValue);
                 case 3: //Global Variables
                     var gVar = "";
                     switch (cmd.Ints[2])
@@ -2026,14 +2026,14 @@ Negative values for time to flow backwards.";
                             gVar = Strings.EventConditionDesc.notequal.ToString( cmd.Ints[3]);
                             break;
                     }
-                    return Strings.EventConditionDesc.globalvariable.ToString( ServerVariableBase.GetName(cmd.Ints[1]),
+                    return Strings.EventConditionDesc.globalvariable.ToString( ServerVariableBase.GetName(cmd.Guids[1]),
                         gVar);
                 case 4: //Has Item
-                    return Strings.EventConditionDesc.hasitem.ToString( cmd.Ints[2], ItemBase.GetName(cmd.Ints[1]));
+                    return Strings.EventConditionDesc.hasitem.ToString( cmd.Ints[2], ItemBase.GetName(cmd.Guids[1]));
                 case 5: //Class Is
-                    return Strings.EventConditionDesc.Class.ToString( ClassBase.GetName(cmd.Ints[1]));
+                    return Strings.EventConditionDesc.Class.ToString( ClassBase.GetName(cmd.Guids[1]));
                 case 6: //Knows spell
-                    return Strings.EventConditionDesc.knowsspell.ToString( SpellBase.GetName(cmd.Ints[1]));
+                    return Strings.EventConditionDesc.knowsspell.ToString( SpellBase.GetName(cmd.Guids[1]));
                 case 7: //Level or Stat is
                     var pLvl = "";
                     switch (cmd.Ints[1])
@@ -2113,9 +2113,9 @@ Negative values for time to flow backwards.";
                     }
                     return Strings.EventConditionDesc.time.ToString( time1, time2);
                 case 11: //Can Start Quest...
-                    return Strings.EventConditionDesc.startquest.ToString( QuestBase.GetName(cmd.Ints[1]));
+                    return Strings.EventConditionDesc.startquest.ToString( QuestBase.GetName(cmd.Guids[1]));
                 case 12: //Quest In Progress...
-                    var quest = QuestBase.Lookup.Get<QuestBase>(cmd.Ints[1]);
+                    var quest = QuestBase.Lookup.Get<QuestBase>(cmd.Guids[1]);
                     if (quest != null)
                     {
                         QuestBase.QuestTask task = null;
@@ -2130,22 +2130,22 @@ Negative values for time to flow backwards.";
                         switch (cmd.Ints[2])
                         {
                             case 1:
-                                return Strings.EventConditionDesc.questinprogress.ToString( QuestBase.GetName(cmd.Ints[1]),
+                                return Strings.EventConditionDesc.questinprogress.ToString( QuestBase.GetName(cmd.Guids[1]),
                                     Strings.EventConditionDesc.beforetask.ToString( taskName));
                             case 2:
-                                return Strings.EventConditionDesc.questinprogress.ToString( QuestBase.GetName(cmd.Ints[1]),
+                                return Strings.EventConditionDesc.questinprogress.ToString( QuestBase.GetName(cmd.Guids[1]),
                                     Strings.EventConditionDesc.aftertask.ToString( taskName));
                             case 3:
-                                return Strings.EventConditionDesc.questinprogress.ToString( QuestBase.GetName(cmd.Ints[1]),
+                                return Strings.EventConditionDesc.questinprogress.ToString( QuestBase.GetName(cmd.Guids[1]),
                                     Strings.EventConditionDesc.ontask.ToString( taskName));
                             default:
-                                return Strings.EventConditionDesc.questinprogress.ToString( QuestBase.GetName(cmd.Ints[1]),
+                                return Strings.EventConditionDesc.questinprogress.ToString( QuestBase.GetName(cmd.Guids[1]),
                                     Strings.EventConditionDesc.onanytask);
                         }
                     }
-                    return Strings.EventConditionDesc.questinprogress.ToString( QuestBase.GetName(cmd.Ints[1]));
+                    return Strings.EventConditionDesc.questinprogress.ToString( QuestBase.GetName(cmd.Guids[1]));
                 case 13: //Quest Completed
-                    return Strings.EventConditionDesc.questcompleted.ToString( QuestBase.GetName(cmd.Ints[1]));
+                    return Strings.EventConditionDesc.questcompleted.ToString( QuestBase.GetName(cmd.Guids[1]));
                 case 14: //Player death
                     return Strings.EventConditionDesc.playerdeath;
                 case 15: //No NPCs on map

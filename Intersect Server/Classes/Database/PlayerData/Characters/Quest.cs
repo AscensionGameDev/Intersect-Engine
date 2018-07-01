@@ -13,7 +13,7 @@ namespace Intersect.Server.Classes.Database.PlayerData.Characters
         public Guid Id { get; private set; }
         public Guid CharacterId { get; private set; }
         public virtual Player Character { get; private set; }
-        public int QuestId { get; private set; }
+        public Guid QuestId { get; private set; }
         public int TaskId { get; set; }
         public int TaskProgress { get; set; }
         public int Completed { get; set; }
@@ -23,7 +23,7 @@ namespace Intersect.Server.Classes.Database.PlayerData.Characters
             
         }
 
-        public Quest(int id)
+        public Quest(Guid id)
         {
             QuestId = id;
         }

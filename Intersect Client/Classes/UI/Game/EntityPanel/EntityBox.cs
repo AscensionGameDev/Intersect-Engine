@@ -89,7 +89,7 @@ namespace Intersect.Client.Classes.UI.Game.EntityPanel
 
             EntityInfoPanel = new ImagePanel(EntityWindow, "EntityInfoPanel");
 
-            EntityName = new Label(EntityInfoPanel, "EntityNameLabel") { Text = myEntity?.MyName };
+            EntityName = new Label(EntityInfoPanel, "EntityNameLabel") { Text = myEntity?.Name };
             EntityLevel = new Label(EntityInfoPanel, "EntityLevelLabel");
             EntityNameAndLevel = new Label(EntityInfoPanel, "NameAndLevelLabel") { IsHidden = true };
             EntityMap = new Label(EntityInfoPanel, "EntityMapLabel");
@@ -138,12 +138,12 @@ namespace Intersect.Client.Classes.UI.Game.EntityPanel
 
             TradeLabel = new Button(EntityInfoPanel, "TradeButton");
             TradeLabel.SetText(Strings.EntityBox.trade);
-            TradeLabel.SetToolTipText(Strings.EntityBox.tradetip.ToString( MyEntity.MyName));
+            TradeLabel.SetToolTipText(Strings.EntityBox.tradetip.ToString( MyEntity.Name));
             TradeLabel.Clicked += tradeRequest_Clicked;
 
             PartyLabel = new Button(EntityInfoPanel, "PartyButton");
             PartyLabel.SetText(Strings.EntityBox.party);
-            PartyLabel.SetToolTipText(Strings.EntityBox.partytip.ToString(MyEntity.MyName));
+            PartyLabel.SetToolTipText(Strings.EntityBox.partytip.ToString(MyEntity.Name));
             PartyLabel.Clicked += invite_Clicked;
 
             EntityStatusPanel = new ImagePanel(EntityWindow, "StatusArea");
@@ -214,7 +214,7 @@ namespace Intersect.Client.Classes.UI.Game.EntityPanel
                     EntityMap.Hide();
                     break;
             }
-            EntityName.SetText(MyEntity.MyName);
+            EntityName.SetText(MyEntity.Name);
         }
 
         //Update
@@ -316,7 +316,7 @@ namespace Intersect.Client.Classes.UI.Game.EntityPanel
         {
             var levelString = Strings.EntityBox.level.ToString(MyEntity.Level);
             if (!EntityLevel.IsHidden) EntityLevel.Text = levelString;
-            if (!EntityNameAndLevel.IsHidden) EntityNameAndLevel.Text = Strings.EntityBox.NameAndLevel.ToString(MyEntity.MyName, levelString);
+            if (!EntityNameAndLevel.IsHidden) EntityNameAndLevel.Text = Strings.EntityBox.NameAndLevel.ToString(MyEntity.Name, levelString);
         }
 
         private void UpdateMap()
@@ -505,6 +505,22 @@ namespace Intersect.Client.Classes.UI.Game.EntityPanel
                     EntityFace.IsHidden = false;
                 }
                 var equipment = MyEntity.Equipment;
+                if (MyEntity == Globals.Me)
+                {
+                    for (int i = 0; i < MyEntity.MyEquipment.Length; i++)
+                    {
+                        var eqp = MyEntity.MyEquipment[i];
+                        if (eqp > -1 && eqp < Options.MaxInvItems)
+                        {
+                            equipment[i] = MyEntity.Inventory[eqp].ItemId;
+                        }
+                        else
+                        {
+                            equipment[i] = Guid.Empty;
+                        }
+                    }
+                }
+                
 				int n = 0;
                 for (int z = 0; z < Options.PaperdollOrder[1].Count; z++)
                 {
@@ -512,27 +528,12 @@ namespace Intersect.Client.Classes.UI.Game.EntityPanel
                     if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z]) > -1 &&
                         equipment.Length == Options.EquipmentSlots.Count)
                     {
-                        if (equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] > -1 &&
-                            (MyEntity != Globals.Me ||
-                             equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] <
-                             Options.MaxInvItems))
+                        if (equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] != Guid.Empty)
                         {
-                            var itemNum = -1;
-                            if (MyEntity == Globals.Me)
+                            var itemId = equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])];
+                            if (ItemBase.Lookup.Get<ItemBase>(itemId) != null)
                             {
-                                itemNum =
-                                    Globals.Me.Inventory[
-                                            equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])
-                                            ]]
-                                        .ItemNum;
-                            }
-                            else
-                            {
-                                itemNum = equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])];
-                            }
-                            if (ItemBase.Lookup.Get<ItemBase>(itemNum) != null)
-                            {
-                                var itemdata = ItemBase.Lookup.Get<ItemBase>(itemNum);
+                                var itemdata = ItemBase.Lookup.Get<ItemBase>(itemId);
                                 if (MyEntity.Gender == 0)
                                 {
                                     paperdoll = itemdata.MalePaperdoll;
@@ -604,7 +605,7 @@ namespace Intersect.Client.Classes.UI.Game.EntityPanel
         //Input Handlers
         void invite_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (Globals.Me.TargetIndex != -1 && Globals.Me.TargetIndex != Globals.Me.MyIndex)
+            if (Globals.Me.TargetIndex != Guid.Empty && Globals.Me.TargetIndex != Globals.Me.Id)
             {
                 PacketSender.SendPartyInvite(Globals.Me.TargetIndex);
             }
@@ -613,7 +614,7 @@ namespace Intersect.Client.Classes.UI.Game.EntityPanel
         //Input Handlers
         void tradeRequest_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (Globals.Me.TargetIndex != -1 && Globals.Me.TargetIndex != Globals.Me.MyIndex)
+            if (Globals.Me.TargetIndex != Guid.Empty && Globals.Me.TargetIndex != Globals.Me.Id)
             {
                 PacketSender.SendTradeRequest(Globals.Me.TargetIndex);
             }

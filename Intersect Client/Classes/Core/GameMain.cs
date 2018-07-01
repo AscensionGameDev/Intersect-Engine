@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Intersect.Config;
 using Intersect.GameObjects;
@@ -163,7 +164,7 @@ namespace Intersect.Client.Classes.Core
                     for (int y = gridY - 1; y <= gridY + 1; y++)
                     {
                         if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
-                            Globals.MapGrid[x, y] != -1)
+                            Globals.MapGrid[x, y] != Guid.Empty)
                         {
                             var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid[x, y]);
                             if (map != null)
@@ -212,7 +213,7 @@ namespace Intersect.Client.Classes.Core
                         for (int y = gridY - 1; y <= gridY + 1; y++)
                         {
                             if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
-                                Globals.MapGrid[x, y] != -1)
+                                Globals.MapGrid[x, y] != Guid.Empty)
                             {
                                 var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid[x, y]);
                                 if (map != null)
@@ -247,7 +248,7 @@ namespace Intersect.Client.Classes.Core
                         for (int y = gridY - 1; y <= gridY + 1; y++)
                         {
                             if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
-                                Globals.MapGrid[x, y] != -1)
+                                Globals.MapGrid[x, y] != Guid.Empty)
                             {
                                 var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid[x, y]);
                                 if (map == null &&
@@ -277,7 +278,7 @@ namespace Intersect.Client.Classes.Core
                 {
                     if (Globals.Entities.ContainsKey(Globals.EntitiesToDispose[i]))
                     {
-                        if (Globals.EntitiesToDispose[i] == Globals.Me.MyIndex) continue;
+                        if (Globals.EntitiesToDispose[i] == Globals.Me.Id) continue;
                         Globals.Entities[Globals.EntitiesToDispose[i]].Dispose();
                         Globals.Entities.Remove(Globals.EntitiesToDispose[i]);
                     }
@@ -305,13 +306,18 @@ namespace Intersect.Client.Classes.Core
             }
 
             //Remove Event Holds If Invalid
-            for (int i = 0; i < Globals.EventHolds.Count; i++)
+            var removeHolds = new List<Guid>();
+            foreach (var hold in Globals.EventHolds)
             {
-                if (Globals.EventHolds[i].MapNum != -1 &&
-                    MapInstance.Lookup.Get<MapInstance>(Globals.EventHolds[i].MapNum) == null)
+                //If hold.value is empty its a common event, ignore. Otherwise make sure we have the map else the hold doesnt matter
+                if (hold.Value != Guid.Empty && MapInstance.Lookup.Get<MapInstance>(hold.Value) == null)
                 {
-                    Globals.EventHolds.RemoveAt(i);
+                    removeHolds.Add(hold.Key);
                 }
+            }
+            foreach (var hold in removeHolds)
+            {
+                Globals.EventHolds.Remove(hold);
             }
 
             GameGraphics.UpdatePlayerLight();

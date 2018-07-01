@@ -460,23 +460,23 @@ namespace Intersect.Editor.Maps
                     Strings.General.none
                 };
                 WeatherList.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
-                var name = AnimationBase.GetName(mMyMap.Weather);
-                if (AnimationBase.Lookup.Get<AnimationBase>(mMyMap.Weather) == null) name = null;
+                var name = AnimationBase.GetName(mMyMap.WeatherAnimationId);
+                if (AnimationBase.Lookup.Get<AnimationBase>(mMyMap.WeatherAnimationId) == null) name = null;
                 return TextUtils.NullToNone(name);
             }
             set
             {
-                var intVal = -1;
+                var idVal = Guid.Empty;
                 if (!TextUtils.IsNone(value))
                 {
                     var animationNames = new List<string>(Database.GetGameObjectList(GameObjectType.Animation));
                     var index = animationNames.IndexOf(value);
-                    intVal = Database.GameObjectIdFromList(GameObjectType.Animation, index);
+                    idVal = Database.GameObjectIdFromList(GameObjectType.Animation, index);
                 }
-                if (mMyMap.Weather != intVal)
+                if (mMyMap.WeatherAnimationId != idVal)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    mMyMap.Weather = intVal;
+                    mMyMap.WeatherAnimation = AnimationBase.Get(idVal);
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }

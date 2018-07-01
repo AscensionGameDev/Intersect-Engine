@@ -1950,7 +1950,7 @@ namespace Intersect.GameObjects.Maps
         public bool CheckTileMatch(int layerNum, int x1, int y1, int x2, int y2, MapBase[,] surroundingMaps)
         {
             Tile targetTile;
-            targetTile.TilesetIndex = -1;
+            targetTile.TilesetId = Guid.Empty;
             targetTile.X = -1;
             targetTile.Y = -1;
             targetTile.Autotile = 0;
@@ -1999,7 +1999,7 @@ namespace Intersect.GameObjects.Maps
             }
 
             // check we//re a matching
-            if (sourceTile.TilesetIndex != targetTile.TilesetIndex)
+            if (sourceTile.TilesetId != targetTile.TilesetId)
             {
                 return false;
             }

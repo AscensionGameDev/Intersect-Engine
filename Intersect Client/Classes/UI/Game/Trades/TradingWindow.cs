@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Intersect;
 using Intersect.Client.Classes.UI.Game.Trades;
 using Intersect.GameObjects;
@@ -30,15 +31,15 @@ namespace Intersect_Client.Classes.UI.Game
         private Label mYourOffer;
 
         //Trader
-        public int EntityId;
+        public Guid EntityId;
 
         //Init
-        public TradingWindow(Canvas gameCanvas, int entityId)
+        public TradingWindow(Canvas gameCanvas, Guid entityId)
         {
             EntityId = entityId;
 
             mTradeWindow = new WindowControl(gameCanvas,
-                Strings.Trading.title.ToString(Globals.Entities[EntityId].MyName), false, "TradeWindow");
+                Strings.Trading.title.ToString(Globals.Entities[EntityId].Name), false, "TradeWindow");
             mTradeWindow.DisableResizing();
             Gui.InputBlockingElements.Add(mTradeWindow);
 
@@ -106,17 +107,17 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 for (int i = 0; i < Options.MaxInvItems; i++)
                 {
-                    if (Globals.Trade[n, i] != null && Globals.Trade[n, i].ItemNum > -1)
+                    if (Globals.Trade[n, i] != null && Globals.Trade[n, i].ItemId != Guid.Empty)
                     {
-                        var item = ItemBase.Lookup.Get<ItemBase>(Globals.Trade[n, i].ItemNum);
+                        var item = ItemBase.Lookup.Get<ItemBase>(Globals.Trade[n, i].ItemId);
                         if (item != null)
                         {
-                            g += (item.Price * Globals.Trade[n, i].ItemVal);
+                            g += (item.Price * Globals.Trade[n, i].Quantity);
                             TradeSegment[n].Items[i].Pnl.IsHidden = false;
                             if (item.IsStackable())
                             {
                                 TradeSegment[n].Values[i].IsHidden = false;
-                                TradeSegment[n].Values[i].Text = Globals.Trade[n, i].ItemVal.ToString();
+                                TradeSegment[n].Values[i].Text = Globals.Trade[n, i].Quantity.ToString();
                             }
                             else
                             {

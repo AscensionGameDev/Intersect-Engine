@@ -24,7 +24,7 @@ namespace Intersect.GameObjects
 
 
         [JsonConstructor]
-        public CraftingTableBase(int index) : base(index)
+        public CraftingTableBase(Guid id) : base(id)
         {
             Name = "New Table";
         }
@@ -35,5 +35,7 @@ namespace Intersect.GameObjects
         {
             Name = "New Table";
         }
+
+
     }
 }

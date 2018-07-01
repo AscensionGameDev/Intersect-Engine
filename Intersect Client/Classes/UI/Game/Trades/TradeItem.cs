@@ -16,7 +16,7 @@ namespace Intersect.Client.Classes.UI.Game.Trades
     {
         private static int sItemXPadding = 4;
         private static int sItemYPadding = 4;
-        private int mCurrentItem = -2;
+        private Guid mCurrentItemId;
         private ItemDescWindow mDescWindow;
         private int mMySide;
 
@@ -97,10 +97,10 @@ namespace Intersect.Client.Classes.UI.Game.Trades
                 mDescWindow.Dispose();
                 mDescWindow = null;
             }
-            if (ItemBase.Lookup.Get<ItemBase>(Globals.Trade[mMySide, mMySlot].ItemNum) != null)
+            if (ItemBase.Lookup.Get<ItemBase>(Globals.Trade[mMySide, mMySlot].ItemId) != null)
             {
                 mDescWindow = new ItemDescWindow(Globals.Trade[mMySide, mMySlot].Item,
-                    Globals.Trade[mMySide, mMySlot].ItemVal, mTradeWindow.X - 255, mTradeWindow.Y,
+                    Globals.Trade[mMySide, mMySlot].Quantity, mTradeWindow.X - 255, mTradeWindow.Y,
                     Globals.Trade[mMySide, mMySlot].StatBoost);
             }
         }
@@ -120,10 +120,10 @@ namespace Intersect.Client.Classes.UI.Game.Trades
         public void Update()
         {
             int n = mMySide;
-            if (Globals.Trade[n, mMySlot].ItemNum != mCurrentItem)
+            if (Globals.Trade[n, mMySlot].ItemId != mCurrentItemId)
             {
-                mCurrentItem = Globals.Trade[n, mMySlot].ItemNum;
-                var item = ItemBase.Lookup.Get<ItemBase>(Globals.Trade[n, mMySlot].ItemNum);
+                mCurrentItemId = Globals.Trade[n, mMySlot].ItemId;
+                var item = ItemBase.Lookup.Get<ItemBase>(Globals.Trade[n, mMySlot].ItemId);
                 if (item != null)
                 {
                     GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,

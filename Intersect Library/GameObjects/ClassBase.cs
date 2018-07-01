@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Enums;
+using Intersect.GameObjects.Maps;
 using Intersect.Models;
 using Intersect.Server.Utilities;
 using Intersect.Utilities;
@@ -16,7 +17,17 @@ namespace Intersect.GameObjects
         public const long DEFAULT_BASE_EXPERIENCE = 100;
         public const long DEFAULT_EXPERIENCE_INCREASE = 50;
 
-        public int AttackAnimation { get; set; }
+        [Column("AttackAnimation")]
+        [JsonProperty]
+        public Guid AttackAnimationId { get; protected set; }
+        [NotMapped]
+        [JsonIgnore]
+        public AnimationBase AttackAnimation
+        {
+            get => AnimationBase.Lookup.Get<AnimationBase>(AttackAnimationId);
+            set => AttackAnimationId = value?.Id ?? Guid.Empty;
+        }
+
         public int BasePoints { get; set; }
 
         public int CritChance { get; set; }
@@ -68,7 +79,17 @@ namespace Intersect.GameObjects
         public int ScalingStat { get; set; }
 
         //Spawn Info
-        public int SpawnMap { get; set; }
+        [Column("SpawnMap")]
+        [JsonProperty]
+        public Guid SpawnMapId { get; set; }
+        [NotMapped]
+        [JsonIgnore]
+        public MapBase SpawnMap
+        {
+            get => MapBase.Lookup.Get<MapBase>(SpawnMapId);
+            set => SpawnMapId = value?.Id ?? Guid.Empty;
+        }
+
         public int SpawnX { get; set; }
         public int SpawnY { get; set; }
         public int SpawnDir { get; set; }
@@ -163,7 +184,7 @@ namespace Intersect.GameObjects
         public int[] VitalRegen = new int[(int) Vitals.VitalCount];
 
         [JsonConstructor]
-        public ClassBase(int index) : base(index)
+        public ClassBase(Guid id) : base(id)
         {
             Name = "New Class";
 
@@ -185,34 +206,29 @@ namespace Intersect.GameObjects
         [Pure]
         public long ExperienceToNextLevel(int level)
             => ExperienceCurve.Calculate(level);
-
-        public static ClassBase Get(int index)
-        {
-            return ClassBase.Lookup.Get<ClassBase>(index);
-        }
     }
 
     public class ClassItem
     {
         [JsonProperty]
-        public int Item { get; set; }
+        public Guid Id { get; set; }
         public int Amount { get; set; }
         
         public ItemBase Get()
         {
-            return ItemBase.Lookup.Get<ItemBase>(Item);
+            return ItemBase.Lookup.Get<ItemBase>(Id);
         }
     }
 
     public class ClassSpell
     {
         [JsonProperty]
-        public int Spell { get; set; }
+        public Guid Id { get; set; }
         public int Level { get; set; }
 
         public SpellBase Get()
         {
-            return SpellBase.Lookup.Get<SpellBase>(Spell);
+            return SpellBase.Lookup.Get<SpellBase>(Id);
         }
     }
 

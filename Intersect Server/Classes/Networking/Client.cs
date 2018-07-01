@@ -51,9 +51,8 @@ namespace Intersect.Server.Classes.Networking
         //Network Variables
         private IConnection mConnection;
 
-        public int EditorMap = -1;
+        public Guid EditorMap = Guid.Empty;
         public Player Entity;
-        public int EntityIndex;
 
         //Client Properties
         public bool IsEditor;
@@ -61,23 +60,14 @@ namespace Intersect.Server.Classes.Networking
         private ConcurrentQueue<byte[]> mSendQueue = new ConcurrentQueue<byte[]>();
 
         //Sent Maps
-        public Dictionary<int, Tuple<long, int>> SentMaps = new Dictionary<int, Tuple<long, int>>();
+        public Dictionary<Guid, Tuple<long, int>> SentMaps = new Dictionary<Guid, Tuple<long, int>>();
+        
 
-        public Client(IConnection connection)
-            : this(Globals.FindOpenEntity(), connection)
-        {
-        }
-
-        public Client(int entIndex, IConnection connection = null)
+        public Client(IConnection connection = null)
         {
             this.mConnection = connection;
             mConnectTime = Globals.System.GetTimeMs();
             mConnectionTimeout = Globals.System.GetTimeMs() + mTimeout;
-            EntityIndex = entIndex;
-            if (EntityIndex > -1)
-            {
-                Entity = (Player) Globals.Entities[EntityIndex];
-            }
         }
 
         public void SetUser(User user)
@@ -87,11 +77,9 @@ namespace Intersect.Server.Classes.Networking
 
         public void LoadCharacter(Player character)
         {
-            //Entity = new Player(EntityIndex, this, character);
+            //Entity = new Player(Id, this, character);
             Entity = character;
-            Entity.MyIndex = EntityIndex;
             Entity.MyClient = this;
-            Globals.Entities[EntityIndex] = Entity;
         }
 
         private int mPacketCount = 0;
@@ -220,7 +208,6 @@ namespace Intersect.Server.Classes.Networking
             var client = new Client(connection);
             try
             {
-                Globals.Entities[client.EntityIndex] = null;
                 lock (Globals.ClientLock)
                 {
                     Globals.Clients.Add(client);
@@ -240,7 +227,7 @@ namespace Intersect.Server.Classes.Networking
 
             LegacyDatabase.SavePlayers();
             //Task.Run(() => LegacyDatabase.SaveCharacter(Entity));
-            var map = MapInstance.Lookup.Get<MapInstance>(Entity.MapIndex);
+            var map = MapInstance.Lookup.Get<MapInstance>(Entity.MapId);
             map?.RemoveEntity(Entity);
 
             //Update parties
@@ -258,15 +245,13 @@ namespace Intersect.Server.Classes.Networking
             }
             Entity.SpawnedNpcs.Clear();
 
-            PacketSender.SendEntityLeave(Entity.MyIndex, (int)EntityTypes.Player, Entity.MapIndex);
+            PacketSender.SendEntityLeave(Entity.Id, (int)EntityTypes.Player, Entity.MapId);
             if (!IsEditor)
             {
                 PacketSender.SendGlobalMsg(Strings.Player.left.ToString(Entity.Name, Options.GameName));
             }
             Entity.Dispose();
             Entity = null;
-            if (EntityIndex <= Globals.Entities.Count)
-                Globals.Entities[EntityIndex] = null;
         }
 
         public static void RemoveBeta4Client(IConnection connection)

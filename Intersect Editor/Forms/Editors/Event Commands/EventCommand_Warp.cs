@@ -22,7 +22,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
             {
                 cmbMap.Items.Add(MapList.GetOrderedMaps()[i].Name);
-                if (MapList.GetOrderedMaps()[i].MapNum == mMyCommand.Ints[0])
+                if (MapList.GetOrderedMaps()[i].MapId == mMyCommand.Guids[0])
                 {
                     cmbMap.SelectedIndex = i;
                 }
@@ -59,7 +59,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            mMyCommand.Ints[0] = MapList.GetOrderedMaps()[cmbMap.SelectedIndex].MapNum;
+            mMyCommand.Guids[0] = MapList.GetOrderedMaps()[cmbMap.SelectedIndex].MapId;
             mMyCommand.Ints[1] = scrlX.Value;
             mMyCommand.Ints[2] = scrlY.Value;
             mMyCommand.Ints[3] = cmbDirection.SelectedIndex;
@@ -84,14 +84,14 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         private void btnVisual_Click(object sender, EventArgs e)
         {
             FrmWarpSelection frmWarpSelection = new FrmWarpSelection();
-            frmWarpSelection.SelectTile(MapList.GetOrderedMaps()[cmbMap.SelectedIndex].MapNum, scrlX.Value,
+            frmWarpSelection.SelectTile(MapList.GetOrderedMaps()[cmbMap.SelectedIndex].MapId, scrlX.Value,
                 scrlY.Value);
             frmWarpSelection.ShowDialog();
             if (frmWarpSelection.GetResult())
             {
                 for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
                 {
-                    if (MapList.GetOrderedMaps()[i].MapNum == frmWarpSelection.GetMap())
+                    if (MapList.GetOrderedMaps()[i].MapId == frmWarpSelection.GetMap())
                     {
                         cmbMap.SelectedIndex = i;
                         break;

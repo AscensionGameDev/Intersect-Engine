@@ -144,8 +144,7 @@ namespace Intersect.Editor.Forms.Editors
                 pnlContainer.Show();
 
                 txtName.Text = mEditorItem.Name;
-                cmbDefaultCurrency.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item,
-                    mEditorItem.DefaultCurrency);
+                cmbDefaultCurrency.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item, mEditorItem.DefaultCurrencyId);
                 if (mEditorItem.BuyingWhitelist)
                 {
                     rdoBuyWhitelist.Checked = true;
@@ -203,7 +202,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             mChangingName = true;
             mEditorItem.Name = txtName.Text;
-            lstShops.Items[ShopBase.Lookup.IndexKeys.ToList().IndexOf(mEditorItem.Index)] = txtName.Text;
+            lstShops.Items[ShopBase.Lookup.Keys.ToList().IndexOf(mEditorItem.Id)] = txtName.Text;
             mChangingName = false;
         }
 
@@ -212,32 +211,21 @@ namespace Intersect.Editor.Forms.Editors
             lstSoldItems.Items.Clear();
             for (int i = 0; i < mEditorItem.SellingItems.Count; i++)
             {
-                lstSoldItems.Items.Add("Sell Item #" + (mEditorItem.SellingItems[i].ItemNum + 1) + " " +
-                                       ItemBase.GetName(mEditorItem.SellingItems[i].ItemNum) + " For (" +
-                                       mEditorItem.SellingItems[i].CostItemVal + ") Item #" +
-                                       (mEditorItem.SellingItems[i].CostItemNum + 1) + ". " +
-                                       ItemBase.GetName(mEditorItem.SellingItems[i].CostItemNum));
+                lstSoldItems.Items.Add("Sell Item " + ItemBase.GetName(mEditorItem.SellingItems[i].ItemId) + " For (" + mEditorItem.SellingItems[i].CostItemQuantity + ") Item " + ItemBase.GetName(mEditorItem.SellingItems[i].CostItemId));
             }
             lstBoughtItems.Items.Clear();
             if (mEditorItem.BuyingWhitelist)
             {
                 for (int i = 0; i < mEditorItem.BuyingItems.Count; i++)
                 {
-                    lstBoughtItems.Items.Add("Buy Item #" + (mEditorItem.BuyingItems[i].ItemNum + 1) +
-                                             " " +
-                                             ItemBase.GetName(mEditorItem.BuyingItems[i].ItemNum) + " For (" +
-                                             mEditorItem.BuyingItems[i].CostItemVal + ") Item #" +
-                                             (mEditorItem.BuyingItems[i].CostItemNum + 1) + ". " +
-                                             ItemBase.GetName(mEditorItem.BuyingItems[i].CostItemNum));
+                    lstBoughtItems.Items.Add("Buy Item " + ItemBase.GetName(mEditorItem.BuyingItems[i].ItemId) + " For (" + mEditorItem.BuyingItems[i].CostItemQuantity + ") Item " + ItemBase.GetName(mEditorItem.BuyingItems[i].CostItemId));
                 }
             }
             else
             {
                 for (int i = 0; i < mEditorItem.BuyingItems.Count; i++)
                 {
-                    lstBoughtItems.Items.Add("Don't Buy Item #" +
-                                             (mEditorItem.BuyingItems[i].ItemNum + 1) + " " +
-                                             ItemBase.GetName(mEditorItem.BuyingItems[i].ItemNum));
+                    lstBoughtItems.Items.Add("Don't Buy Item " + ItemBase.GetName(mEditorItem.BuyingItems[i].ItemId));
                 }
             }
         }
@@ -246,11 +234,11 @@ namespace Intersect.Editor.Forms.Editors
         {
             bool addedItem = false;
             int cost = (int) nudSellCost.Value;
-            ShopItem newItem = new ShopItem(ItemBase.Lookup.IndexKeys.ToList()[cmbAddSoldItem.SelectedIndex]
-                , ItemBase.Lookup.IndexKeys.ToList()[cmbSellFor.SelectedIndex], cost);
+            ShopItem newItem = new ShopItem(ItemBase.Lookup.Keys.ToList()[cmbAddSoldItem.SelectedIndex]
+                , ItemBase.Lookup.Keys.ToList()[cmbSellFor.SelectedIndex], cost);
             for (int i = 0; i < mEditorItem.SellingItems.Count; i++)
             {
-                if (mEditorItem.SellingItems[i].ItemNum == newItem.ItemNum)
+                if (mEditorItem.SellingItems[i].ItemId == newItem.ItemId)
                 {
                     mEditorItem.SellingItems[i] = newItem;
                     addedItem = true;
@@ -274,11 +262,11 @@ namespace Intersect.Editor.Forms.Editors
         {
             bool addedItem = false;
             int cost = (int) nudBuyAmount.Value;
-            ShopItem newItem = new ShopItem(ItemBase.Lookup.IndexKeys.ToList()[cmbAddBoughtItem.SelectedIndex],
-                ItemBase.Lookup.IndexKeys.ToList()[cmbBuyFor.SelectedIndex], cost);
+            ShopItem newItem = new ShopItem(ItemBase.Lookup.Keys.ToList()[cmbAddBoughtItem.SelectedIndex],
+                ItemBase.Lookup.Keys.ToList()[cmbBuyFor.SelectedIndex], cost);
             for (int i = 0; i < mEditorItem.BuyingItems.Count; i++)
             {
-                if (mEditorItem.BuyingItems[i].ItemNum == newItem.ItemNum)
+                if (mEditorItem.BuyingItems[i].ItemId == newItem.ItemId)
                 {
                     mEditorItem.BuyingItems[i] = newItem;
                     addedItem = true;
@@ -300,8 +288,8 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbDefaultCurrency_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.DefaultCurrency = Database.GameObjectIdFromList(GameObjectType.Item,
-                cmbDefaultCurrency.SelectedIndex);
+            mEditorItem.DefaultCurrency = ItemBase.Get(Database.GameObjectIdFromList(GameObjectType.Item,
+                cmbDefaultCurrency.SelectedIndex));
         }
 
         private void toolStripItemNew_Click(object sender, EventArgs e)

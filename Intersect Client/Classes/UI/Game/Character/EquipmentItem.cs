@@ -15,7 +15,7 @@ namespace Intersect.Client.Classes.UI.Game.Character
     public class EquipmentItem
     {
         private WindowControl mCharacterWindow;
-        private int mCurrentItem = -1;
+        private Guid mCurrentItemId;
         private ItemDescWindow mDescWindow;
         private int[] mStatBoost = new int[Options.MaxStats];
         private bool mTexLoaded;
@@ -65,7 +65,7 @@ namespace Intersect.Client.Classes.UI.Game.Character
                 mDescWindow = null;
             }
 
-            var item = ItemBase.Lookup.Get<ItemBase>(mCurrentItem);
+            var item = ItemBase.Lookup.Get<ItemBase>(mCurrentItemId);
             if (item == null) return;
             mDescWindow = new ItemDescWindow(item, 1, mCharacterWindow.X - 255, mCharacterWindow.Y, mStatBoost, item.Name);
         }
@@ -82,13 +82,13 @@ namespace Intersect.Client.Classes.UI.Game.Character
             return rect;
         }
 
-        public void Update(int currentItem, int[] statBoost)
+        public void Update(Guid currentItemId, int[] statBoost)
         {
-            if (currentItem != mCurrentItem || !mTexLoaded)
+            if (currentItemId != mCurrentItemId || !mTexLoaded)
             {
-                mCurrentItem = currentItem;
+                mCurrentItemId = currentItemId;
                 mStatBoost = statBoost;
-                var item = ItemBase.Lookup.Get<ItemBase>(mCurrentItem);
+                var item = ItemBase.Lookup.Get<ItemBase>(mCurrentItemId);
                 if (item != null)
                 {
                     GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,

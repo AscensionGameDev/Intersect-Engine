@@ -63,14 +63,14 @@ namespace Intersect_Client.Classes.UI.Game
             }
             for (int i = 0; i < Options.MaxInvItems; i++)
             {
-                var item = ItemBase.Lookup.Get<ItemBase>(Globals.Me.Inventory[i].ItemNum);
+                var item = ItemBase.Lookup.Get<ItemBase>(Globals.Me.Inventory[i].ItemId);
                 if (item != null)
                 {
                     Items[i].Pnl.IsHidden = false;
                     if (item.IsStackable())
                     {
                         mValues[i].IsHidden = false;
-                        mValues[i].Text = Globals.Me.Inventory[i].ItemVal.ToString();
+                        mValues[i].Text = Globals.Me.Inventory[i].Quantity.ToString();
                     }
                     else
                     {

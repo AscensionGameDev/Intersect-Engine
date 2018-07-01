@@ -9,7 +9,7 @@ namespace Intersect.GameObjects
         public bool Value { get; set; }
 
         [JsonConstructor]
-        public ServerSwitchBase(int index) : base(index)
+        public ServerSwitchBase(Guid id) : base(id)
         {
             Name = "New Global Switch";
         }

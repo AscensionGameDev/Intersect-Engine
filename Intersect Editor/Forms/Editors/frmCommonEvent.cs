@@ -42,7 +42,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            if (lstCommonEvents.SelectedIndex > -1 && EventBase.IdFromList(lstCommonEvents.SelectedIndex) > -1)
+            if (lstCommonEvents.SelectedIndex > -1 && EventBase.FromList(lstCommonEvents.SelectedIndex) != null)
             {
                 if (MessageBox.Show(Strings.CommoneEventEditor.deleteprompt, Strings.CommoneEventEditor.delete, MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {

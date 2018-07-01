@@ -31,7 +31,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             InitLocalization();
             cmbAnimation.Items.Clear();
             cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
-            cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Animation, mMyCommand.Ints[0]);
+            cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Animation, mMyCommand.Guids[0]);
             cmbConditionType.SelectedIndex = mMyCommand.Ints[1];
             nudWarpX.Maximum = Options.MapWidth;
             nudWarpY.Maximum = Options.MapHeight;
@@ -108,8 +108,8 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                     cmbMap.Items.Clear();
                     for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
                     {
-                        cmbMap.Items.Add(MapList.GetOrderedMaps()[i].MapNum + ". " + MapList.GetOrderedMaps()[i].Name);
-                        if (MapList.GetOrderedMaps()[i].MapNum == mMyCommand.Ints[2])
+                        cmbMap.Items.Add(MapList.GetOrderedMaps()[i].MapId + ". " + MapList.GetOrderedMaps()[i].Name);
+                        if (MapList.GetOrderedMaps()[i].MapId == mMyCommand.Guids[2])
                         {
                             cmbMap.SelectedIndex = i;
                         }
@@ -132,7 +132,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                             cmbEntities.Items.Add(evt.Key == mEditingEvent.Id
                                 ? Strings.EventPlayAnimation.This + " "
                                 : "" + evt.Value.Name);
-                            if (mMyCommand.Guids[0] == evt.Key) cmbEntities.SelectedIndex = cmbEntities.Items.Count - 1;
+                            if (mMyCommand.Guids[2] == evt.Key) cmbEntities.SelectedIndex = cmbEntities.Items.Count - 1;
                         }
                     }
                     UpdateSpawnPreview();
@@ -164,12 +164,12 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            mMyCommand.Ints[0] = Database.GameObjectIdFromList(GameObjectType.Animation, cmbAnimation.SelectedIndex);
+            mMyCommand.Guids[0] = Database.GameObjectIdFromList(GameObjectType.Animation, cmbAnimation.SelectedIndex);
             mMyCommand.Ints[1] = cmbConditionType.SelectedIndex;
             switch (mMyCommand.Ints[1])
             {
                 case 0: //Tile Spawn
-                    mMyCommand.Ints[2] = MapList.GetOrderedMaps()[cmbMap.SelectedIndex].MapNum;
+                    mMyCommand.Guids[2] = MapList.GetOrderedMaps()[cmbMap.SelectedIndex].MapId;
                     mMyCommand.Ints[3] = (int) nudWarpX.Value;
                     mMyCommand.Ints[4] = (int) nudWarpY.Value;
                     mMyCommand.Ints[5] = cmbDirection.SelectedIndex;
@@ -177,11 +177,11 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                 case 1: //On/Around Entity Spawn
                     if (cmbEntities.SelectedIndex == 0 || cmbEntities.SelectedIndex == -1)
                     {
-                        mMyCommand.Ints[2] = -1;
+                        mMyCommand.Guids[2] = Guid.Empty;
                     }
                     else
                     {
-                        mMyCommand.Guids[0] = mCurrentMap.LocalEvents.Keys.ToList()[cmbEntities.SelectedIndex - 1];
+                        mMyCommand.Guids[2] = mCurrentMap.LocalEvents.Keys.ToList()[cmbEntities.SelectedIndex - 1];
                     }
                     mMyCommand.Ints[3] = mSpawnX;
                     mMyCommand.Ints[4] = mSpawnY;
@@ -224,14 +224,14 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         private void btnVisual_Click(object sender, EventArgs e)
         {
             FrmWarpSelection frmWarpSelection = new FrmWarpSelection();
-            frmWarpSelection.SelectTile(MapList.GetOrderedMaps()[cmbMap.SelectedIndex].MapNum, (int) nudWarpX.Value,
+            frmWarpSelection.SelectTile(MapList.GetOrderedMaps()[cmbMap.SelectedIndex].MapId, (int) nudWarpX.Value,
                 (int) nudWarpY.Value);
             frmWarpSelection.ShowDialog();
             if (frmWarpSelection.GetResult())
             {
                 for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
                 {
-                    if (MapList.GetOrderedMaps()[i].MapNum == frmWarpSelection.GetMap())
+                    if (MapList.GetOrderedMaps()[i].MapId == frmWarpSelection.GetMap())
                     {
                         cmbMap.SelectedIndex = i;
                         break;

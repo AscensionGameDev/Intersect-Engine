@@ -27,7 +27,7 @@ namespace Intersect.Editor.Core
         {
             AppDomain.CurrentDomain.UnhandledException += Program.CurrentDomain_UnhandledException;
             Globals.MainForm.Visible = true;
-            Globals.MainForm.EnterMap(Globals.CurrentMap == null ? 0 : Globals.CurrentMap.Index);
+            Globals.MainForm.EnterMap(Globals.CurrentMap == null ? Guid.Empty : Globals.CurrentMap.Id);
             sMyForm = Globals.MainForm;
 
             if (sMapThread == null)

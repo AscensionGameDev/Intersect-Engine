@@ -42,7 +42,7 @@ namespace Intersect_Client.Classes.Entities
                 InfiniteLoop = loopForever;
                 AutoRotate = autoRotate;
                 mZDimension = zDimension;
-                mSound = GameAudio.AddMapSound(MyBase.Sound, 0, 0, 0, loopForever, 12);
+                mSound = GameAudio.AddMapSound(MyBase.Sound, 0, 0,Guid.Empty, loopForever, 12);
                 lock (GameGraphics.AnimationLock)
                 {
                     GameGraphics.LiveAnimations.Add(this);
@@ -204,13 +204,13 @@ namespace Intersect_Client.Classes.Entities
             }
         }
 
-        public void SetPosition(float worldX, float worldY, int mapx, int mapy, int map, int dir, int z = 0)
+        public void SetPosition(float worldX, float worldY, int mapx, int mapy, Guid mapId, int dir, int z = 0)
         {
             mRenderX = worldX;
             mRenderY = worldY;
             if (mSound != null)
             {
-                mSound.UpdatePosition(mapx, mapy, map);
+                mSound.UpdatePosition(mapx, mapy, mapId);
             }
             if (dir > -1) mRenderDir = dir;
             mZDimension = z;

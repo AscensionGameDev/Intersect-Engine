@@ -1,8 +1,10 @@
-﻿namespace Intersect.GameObjects.Maps
+﻿using System;
+
+namespace Intersect.GameObjects.Maps
 {
     public class ResourceSpawn
     {
-        public int ResourceNum;
+        public Guid ResourceId;
         public int X;
         public int Y;
         public int Z;

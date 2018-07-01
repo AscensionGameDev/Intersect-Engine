@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Intersect;
 using Intersect.Client.Classes.UI.Game.Bank;
 using Intersect.GameObjects;
@@ -69,16 +70,16 @@ namespace Intersect_Client.Classes.UI.Game
             Y = mBankWindow.Y;
             for (int i = 0; i < Options.MaxBankSlots; i++)
             {
-                if (Globals.Bank[i] != null && Globals.Bank[i].ItemNum > -1)
+                if (Globals.Bank[i] != null && Globals.Bank[i].ItemId != Guid.Empty)
                 {
-                    var item = ItemBase.Lookup.Get<ItemBase>(Globals.Bank[i].ItemNum);
+                    var item = ItemBase.Lookup.Get<ItemBase>(Globals.Bank[i].ItemId);
                     if (item != null)
                     {
                         Items[i].Pnl.IsHidden = false;
                         if (item.IsStackable())
                         {
                             mValues[i].IsHidden = false;
-                            mValues[i].Text = Globals.Bank[i].ItemVal.ToString();
+                            mValues[i].Text = Globals.Bank[i].Quantity.ToString();
                         }
                         else
                         {

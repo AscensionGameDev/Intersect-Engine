@@ -11,8 +11,7 @@ namespace Intersect.GameObjects.Events
 {
     public class EventBase : DatabaseObject<EventBase>
     {
-        public new string Index;
-        public int Map { get; set; } = -1;
+        public Guid MapId { get; set; }
         public int SpawnX { get; set; } = -1;
         public int SpawnY { get; set; } = -1;
         public bool CommonEvent { get; set; }
@@ -28,20 +27,6 @@ namespace Intersect.GameObjects.Events
         [NotMapped]
         public List<EventPage> Pages { get; set; } = new List<EventPage>();
 
-        public static EventBase Get(int index)
-        {
-            return EventBase.Lookup.Get<EventBase>(index);
-        }
-
-        public static EventBase Get(Guid id)
-        {
-            return EventBase.Lookup.Get<EventBase>(id);
-        }
-
-        internal EventBase(int id) : base(id)
-        {
-        }
-
         //EF Parameterless Constructor
         public EventBase()
         {
@@ -49,10 +34,10 @@ namespace Intersect.GameObjects.Events
         }
 
         [JsonConstructor]
-        public EventBase(Guid id, int map, int x, int y, bool isCommon = false, byte isGlobal = 0) : base(id)
+        public EventBase(Guid id, Guid mapId, int x, int y, bool isCommon = false, byte isGlobal = 0) : base(id)
         {
             Name = "";
-            Map = map;
+            MapId = mapId;
             if (isCommon) Name = "Common Event " + id;
             SpawnX = x;
             SpawnY = y;
@@ -86,12 +71,12 @@ namespace Intersect.GameObjects.Events
 
         public new static string[] Names => Lookup.Where(pair => ((EventBase)pair.Value)?.CommonEvent ?? false).Select(pair => pair.Value?.Name ?? "ERR_DELETED").ToArray();
 
-        public new static int IdFromList(int listIndex)
+        public new static Guid IdFromList(int listIndex)
         {
-            if (listIndex < 0) return -1;
+            if (listIndex < 0) return Guid.Empty;
             var commonEvents = Lookup.Where(pair => ((EventBase)pair.Value)?.CommonEvent ?? false).ToArray();
-            if (listIndex > commonEvents.Length) return -1;
-            return commonEvents[listIndex].Value?.Index ?? -1;
+            if (listIndex > commonEvents.Length) return Guid.Empty;
+            return commonEvents[listIndex].Value?.Id ?? Guid.Empty;
         }
 
         public new static EventBase FromList(int listIndex)

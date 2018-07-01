@@ -1,8 +1,10 @@
-﻿namespace Intersect.GameObjects.Events
+﻿using System;
+
+namespace Intersect.GameObjects.Events
 {
     public class MoveRouteAction
     {
-        public int AnimationIndex = -1;
+        public Guid AnimationId;
         public EventGraphic Graphic;
         public MoveRouteEnum Type;
 
@@ -15,7 +17,7 @@
             }
             else if (Type == MoveRouteEnum.SetAnimation)
             {
-                myBuffer.WriteInteger(AnimationIndex);
+                myBuffer.WriteGuid(AnimationId);
             }
         }
 
@@ -29,7 +31,7 @@
             }
             else if (Type == MoveRouteEnum.SetAnimation)
             {
-                AnimationIndex = myBuffer.ReadInteger();
+                AnimationId = myBuffer.ReadGuid();
             }
         }
 
@@ -46,7 +48,7 @@
             }
             else if (Type == MoveRouteEnum.SetAnimation)
             {
-                copy.AnimationIndex = AnimationIndex;
+                copy.AnimationId = AnimationId;
             }
             return copy;
         }

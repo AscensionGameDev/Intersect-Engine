@@ -222,7 +222,7 @@ namespace Intersect.Editor.Forms.Editors
                 lstSpells.Items.Clear();
                 for (int i = 0; i < mEditorItem.Spells.Count; i++)
                 {
-                    if (mEditorItem.Spells[i] != -1)
+                    if (mEditorItem.Spells[i] != Guid.Empty)
                     {
                         lstSpells.Items.Add(SpellBase.GetName(mEditorItem.Spells[i]));
                     }
@@ -243,7 +243,7 @@ namespace Intersect.Editor.Forms.Editors
                 lstAggro.Items.Clear();
                 for (int i = 0; i < mEditorItem.AggroList.Count; i++)
                 {
-                    if (mEditorItem.AggroList[i] != -1)
+                    if (mEditorItem.AggroList[i] != Guid.Empty)
                     {
                         lstAggro.Items.Add(NpcBase.GetName(mEditorItem.AggroList[i]));
                     }
@@ -273,7 +273,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             mChangingName = true;
             mEditorItem.Name = txtName.Text;
-            lstNpcs.Items[Database.GameObjectListIndex(GameObjectType.Npc, mEditorItem.Index)] = txtName.Text;
+            lstNpcs.Items[Database.GameObjectListIndex(GameObjectType.Npc, mEditorItem.Id)] = txtName.Text;
             mChangingName = false;
         }
 
@@ -312,13 +312,13 @@ namespace Intersect.Editor.Forms.Editors
             var drops = mEditorItem.Drops.ToArray();
             foreach (var drop in drops)
             {
-                if (ItemBase.Lookup.Get<ItemBase>(drop.ItemNum) == null) mEditorItem.Drops.Remove(drop);
+                if (ItemBase.Lookup.Get<ItemBase>(drop.ItemId) == null) mEditorItem.Drops.Remove(drop);
             }
             for (int i = 0; i < mEditorItem.Drops.Count; i++)
             {
-                if (mEditorItem.Drops[i].ItemNum != -1)
+                if (mEditorItem.Drops[i].ItemId != Guid.Empty)
                 {
-                    lstDrops.Items.Add(Strings.NpcEditor.dropdisplay.ToString(ItemBase.GetName(mEditorItem.Drops[i].ItemNum), mEditorItem.Drops[i].Amount, mEditorItem.Drops[i].Chance));
+                    lstDrops.Items.Add(Strings.NpcEditor.dropdisplay.ToString(ItemBase.GetName(mEditorItem.Drops[i].ItemId), mEditorItem.Drops[i].Quantity, mEditorItem.Drops[i].Chance));
                 }
                 else
                 {
@@ -376,7 +376,7 @@ namespace Intersect.Editor.Forms.Editors
             lstAggro.Items.Clear();
             for (int i = 0; i < mEditorItem.AggroList.Count; i++)
             {
-                if (mEditorItem.AggroList[i] != -1)
+                if (mEditorItem.AggroList[i] != Guid.Empty)
                 {
                     lstAggro.Items.Add(NpcBase.GetName(mEditorItem.AggroList[i]));
                 }
@@ -608,7 +608,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (lstDrops.SelectedIndex > -1 && lstDrops.SelectedIndex < mEditorItem.Drops.Count)
             {
-                mEditorItem.Drops[lstDrops.SelectedIndex].ItemNum = Database.GameObjectIdFromList(GameObjectType.Item, cmbDropItem.SelectedIndex - 1);
+                mEditorItem.Drops[lstDrops.SelectedIndex].ItemId = Database.GameObjectIdFromList(GameObjectType.Item, cmbDropItem.SelectedIndex - 1);
             }
             UpdateDropValues(true);
         }
@@ -616,7 +616,7 @@ namespace Intersect.Editor.Forms.Editors
         private void nudDropAmount_ValueChanged(object sender, EventArgs e)
         {
             if (lstDrops.SelectedIndex < lstDrops.Items.Count) return;
-            mEditorItem.Drops[(int)lstDrops.SelectedIndex].Amount = (int)nudDropAmount.Value;
+            mEditorItem.Drops[(int)lstDrops.SelectedIndex].Quantity = (int)nudDropAmount.Value;
             UpdateDropValues(true);
         }
 
@@ -624,8 +624,8 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (lstDrops.SelectedIndex > -1)
             {
-                cmbDropItem.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item, mEditorItem.Drops[lstDrops.SelectedIndex].ItemNum) + 1;
-                nudDropAmount.Value = mEditorItem.Drops[lstDrops.SelectedIndex].Amount;
+                cmbDropItem.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item, mEditorItem.Drops[lstDrops.SelectedIndex].ItemId) + 1;
+                nudDropAmount.Value = mEditorItem.Drops[lstDrops.SelectedIndex].Quantity;
                 nudDropChance.Value = (decimal)mEditorItem.Drops[lstDrops.SelectedIndex].Chance;
             }
         }
@@ -633,8 +633,8 @@ namespace Intersect.Editor.Forms.Editors
         private void btnDropAdd_Click(object sender, EventArgs e)
         {
             mEditorItem.Drops.Add(new NpcDrop());
-            mEditorItem.Drops[mEditorItem.Drops.Count - 1].ItemNum = Database.GameObjectIdFromList(GameObjectType.Item, cmbDropItem.SelectedIndex - 1);
-            mEditorItem.Drops[mEditorItem.Drops.Count - 1].Amount = (int)nudDropAmount.Value;
+            mEditorItem.Drops[mEditorItem.Drops.Count - 1].ItemId = Database.GameObjectIdFromList(GameObjectType.Item, cmbDropItem.SelectedIndex - 1);
+            mEditorItem.Drops[mEditorItem.Drops.Count - 1].Quantity = (int)nudDropAmount.Value;
             mEditorItem.Drops[mEditorItem.Drops.Count - 1].Chance = (double)nudDropChance.Value;
 
             UpdateDropValues();

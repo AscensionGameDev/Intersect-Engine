@@ -139,7 +139,7 @@ namespace Intersect.Client.Classes.UI.Game.Hotbar
                 mItemDescWindow = new ItemDescWindow(Globals.Me.Inventory[mCurrentItem].Item, 1,
                     mHotbarWindow.X + Pnl.X + 16 - 255 / 2, mHotbarWindow.Y + mHotbarWindow.Height + 2,
                     Globals.Me.Inventory[mCurrentItem].StatBoost,
-                    ItemBase.GetName(Globals.Me.Inventory[mCurrentItem].ItemNum));
+                    ItemBase.GetName(Globals.Me.Inventory[mCurrentItem].ItemId));
             }
             else if (mCurrentType == 1)
             {
@@ -148,7 +148,7 @@ namespace Intersect.Client.Classes.UI.Game.Hotbar
                     mSpellDescWindow.Dispose();
                     mSpellDescWindow = null;
                 }
-                mSpellDescWindow = new SpellDescWindow(Globals.Me.Spells[mCurrentItem].SpellNum,
+                mSpellDescWindow = new SpellDescWindow(Globals.Me.Spells[mCurrentItem].SpellId,
                     mHotbarWindow.X + Pnl.X + 16 - 255 / 2, mHotbarWindow.Y + mHotbarWindow.Height + 2);
             }
         }
@@ -181,7 +181,7 @@ namespace Intersect.Client.Classes.UI.Game.Hotbar
             if (Globals.Me.Hotbar[mYindex].Type == 0)
             {
                 if (Globals.Me.Hotbar[mYindex].Slot == -1 ||
-                    Globals.Me.Inventory[Globals.Me.Hotbar[mYindex].Slot].ItemNum == -1)
+                    Globals.Me.Inventory[Globals.Me.Hotbar[mYindex].Slot].ItemId != Guid.Empty)
                 {
                     Globals.Me.AddToHotbar(mYindex, -1, -1);
                 }
@@ -189,7 +189,7 @@ namespace Intersect.Client.Classes.UI.Game.Hotbar
             else if (Globals.Me.Hotbar[mYindex].Type == 1)
             {
                 if (Globals.Me.Hotbar[mYindex].Slot == -1 ||
-                    Globals.Me.Spells[Globals.Me.Hotbar[mYindex].Slot].SpellNum == -1)
+                    Globals.Me.Spells[Globals.Me.Hotbar[mYindex].Slot].SpellId != Guid.Empty)
                 {
                     Globals.Me.AddToHotbar(mYindex, -1, -1);
                 }
@@ -208,21 +208,21 @@ namespace Intersect.Client.Classes.UI.Game.Hotbar
                 mCurrentItem = Globals.Me.Hotbar[mYindex].Slot;
                 mCurrentType = Globals.Me.Hotbar[mYindex].Type;
                 if (mCurrentType == 0 && mCurrentItem > -1 &&
-                    ItemBase.Lookup.Get<ItemBase>(Globals.Me.Inventory[mCurrentItem].ItemNum) != null)
+                    ItemBase.Lookup.Get<ItemBase>(Globals.Me.Inventory[mCurrentItem].ItemId) != null)
                 {
                     mContentPanel.Show();
                     mContentPanel.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,
-                        ItemBase.Lookup.Get<ItemBase>(Globals.Me.Inventory[mCurrentItem].ItemNum).Pic);
+                        ItemBase.Lookup.Get<ItemBase>(Globals.Me.Inventory[mCurrentItem].ItemId).Pic);
                     mEquipPanel.IsHidden = !Globals.Me.IsEquipped(mCurrentItem);
                     mTexLoaded = true;
                     mIsEquipped = Globals.Me.IsEquipped(mCurrentItem);
                 }
                 else if (mCurrentType == 1 && mCurrentItem > -1 &&
-                         SpellBase.Lookup.Get<SpellBase>(Globals.Me.Spells[mCurrentItem].SpellNum) != null)
+                         SpellBase.Lookup.Get<SpellBase>(Globals.Me.Spells[mCurrentItem].SpellId) != null)
                 {
                     mContentPanel.Show();
                     mContentPanel.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell,
-                        SpellBase.Lookup.Get<SpellBase>(Globals.Me.Spells[mCurrentItem].SpellNum).Pic);
+                        SpellBase.Lookup.Get<SpellBase>(Globals.Me.Spells[mCurrentItem].SpellId).Pic);
                     mEquipPanel.IsHidden = true;
                     mIsFaded = Globals.Me.Spells[mCurrentItem].SpellCd > Globals.System.GetTimeMs();
                     if (mIsFaded)

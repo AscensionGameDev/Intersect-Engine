@@ -18,7 +18,7 @@ namespace Intersect.Client.Classes.UI.Game.EntityPanel
         private EntityBox mEntityBox;
 
         public ImagePanel Container;
-        private int mCurrentSpell = -1;
+        private Guid mCurrentSpellId;
 
         private int mYindex;
         public ImagePanel Pnl;
@@ -59,7 +59,7 @@ namespace Intersect.Client.Classes.UI.Game.EntityPanel
                 mDescWindow.Dispose();
                 mDescWindow = null;
             }
-            mDescWindow = new SpellDescWindow(mEntityBox.MyEntity.Status[mYindex].SpellNum,
+            mDescWindow = new SpellDescWindow(mEntityBox.MyEntity.Status[mYindex].SpellId,
                 mEntityBox.EntityWindow.X + 316, mEntityBox.EntityWindow.Y);
         }
 
@@ -79,14 +79,14 @@ namespace Intersect.Client.Classes.UI.Game.EntityPanel
         {
             if (mYindex < mEntityBox.MyEntity.Status.Count && mEntityBox.MyEntity.Status[mYindex] != null)
             {
-                var spell = SpellBase.Lookup.Get<SpellBase>(mEntityBox.MyEntity.Status[mYindex].SpellNum);
+                var spell = SpellBase.Lookup.Get<SpellBase>(mEntityBox.MyEntity.Status[mYindex].SpellId);
                 var timeDiff = Globals.System.GetTimeMs() - mEntityBox.MyEntity.Status[mYindex].TimeRecevied;
                 var remaining = mEntityBox.MyEntity.Status[mYindex].TimeRemaining - timeDiff;
                 var fraction = (float)((float)remaining / (float)mEntityBox.MyEntity.Status[mYindex].TotalDuration);
                 Debug.WriteLine(Pnl.RenderColor.A.ToString());
                 Pnl.RenderColor = new IntersectClientExtras.GenericClasses.Color((int)(fraction * 255f), 255, 255, 255);
                 Debug.WriteLine(Pnl.RenderColor.A.ToString());
-                if ((mTexLoaded != "" && spell == null) || (spell != null && mTexLoaded != spell.Pic) || mCurrentSpell != mEntityBox.MyEntity.Status[mYindex].SpellNum)
+                if ((mTexLoaded != "" && spell == null) || (spell != null && mTexLoaded != spell.Pic) || mCurrentSpellId != mEntityBox.MyEntity.Status[mYindex].SpellId)
                 {
                     if (spell != null)
                     {
@@ -105,7 +105,7 @@ namespace Intersect.Client.Classes.UI.Game.EntityPanel
                             }
                         }
                         mTexLoaded = spell.Pic;
-                        mCurrentSpell = mEntityBox.MyEntity.Status[mYindex].SpellNum;
+                        mCurrentSpellId = mEntityBox.MyEntity.Status[mYindex].SpellId;
                     }
                     else
                     {

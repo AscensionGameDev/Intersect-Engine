@@ -13,22 +13,22 @@ namespace Intersect.Server.Classes.Maps
         private int[] mTmpMaps;
         private Point mTopLeft = new Point(0, 0);
         public long Height;
-        public int[,] MyGrid;
-        public List<int> MyMaps = new List<int>();
+        public Guid[,] MyGrid;
+        public List<Guid> MyMaps = new List<Guid>();
         public long Width;
         public long XMax;
         public long XMin;
         public long YMax;
         public long YMin;
 
-        public MapGrid(int startMap, int myGridIndex)
+        public MapGrid(Guid startMapId, int myGridIndex)
         {
             mMyIndex = myGridIndex;
-            MapInstance.Lookup.Get<MapInstance>(startMap).MapGrid = myGridIndex;
-            MapInstance.Lookup.Get<MapInstance>(startMap).MapGridX = 0;
-            MapInstance.Lookup.Get<MapInstance>(startMap).MapGridY = 0;
+            MapInstance.Lookup.Get<MapInstance>(startMapId).MapGrid = myGridIndex;
+            MapInstance.Lookup.Get<MapInstance>(startMapId).MapGridX = 0;
+            MapInstance.Lookup.Get<MapInstance>(startMapId).MapGridY = 0;
             MyMaps.Clear();
-            CalculateBounds(MapInstance.Lookup.Get<MapInstance>(startMap), 0, 0);
+            CalculateBounds(MapInstance.Lookup.Get<MapInstance>(startMapId), 0, 0);
 
             Width = mBotRight.X - mTopLeft.X + 1;
             Height = mBotRight.Y - mTopLeft.Y + 1;
@@ -38,14 +38,14 @@ namespace Intersect.Server.Classes.Maps
             YMin = mTopLeft.Y - yoffset;
             XMax = mBotRight.X - xoffset + 1;
             YMax = mBotRight.Y - yoffset + 1;
-            MyGrid = new int[Width, Height];
-            List<int> tmpMaps = new List<int>();
+            MyGrid = new Guid[Width, Height];
+            List<Guid> tmpMaps = new List<Guid>();
             tmpMaps.AddRange(MyMaps.ToArray());
             for (var x = XMin; x < XMax; x++)
             {
                 for (var y = YMin; y < YMax; y++)
                 {
-                    MyGrid[x, y] = -1;
+                    MyGrid[x, y] = Guid.Empty;
                     for (int i = 0; i < tmpMaps.Count; i++)
                     {
                         if (MapInstance.Lookup.Get<MapInstance>(tmpMaps[i]).MapGridX + Math.Abs(mTopLeft.X) == x &&
@@ -69,11 +69,11 @@ namespace Intersect.Server.Classes.Maps
 
         private void CalculateBounds(MapInstance map, int x, int y)
         {
-            if (HasMap(map.Index, true))
+            if (HasMap(map.Id, true))
             {
                 return;
             }
-            MyMaps.Add(map.Index);
+            MyMaps.Add(map.Id);
             map.MapGridX = x;
             map.MapGridY = y;
             if (x < mTopLeft.X)
@@ -92,33 +92,33 @@ namespace Intersect.Server.Classes.Maps
             {
                 mBotRight.Y = y;
             }
-            if (MapInstance.Lookup.IndexKeys.Contains(map.Up) &&
-                MapInstance.Lookup.Get<MapInstance>(map.Up).Down == map.Index)
+            if (MapInstance.Lookup.Keys.Contains(map.Up) &&
+                MapInstance.Lookup.Get<MapInstance>(map.Up).Down == map.Id)
             {
                 CalculateBounds(MapInstance.Lookup.Get<MapInstance>(map.Up), x, y - 1);
             }
-            if (MapInstance.Lookup.IndexKeys.Contains(map.Down) &&
-                MapInstance.Lookup.Get<MapInstance>(map.Down).Up == map.Index)
+            if (MapInstance.Lookup.Keys.Contains(map.Down) &&
+                MapInstance.Lookup.Get<MapInstance>(map.Down).Up == map.Id)
             {
                 CalculateBounds(MapInstance.Lookup.Get<MapInstance>(map.Down), x, y + 1);
             }
-            if (MapInstance.Lookup.IndexKeys.Contains(map.Left) &&
-                MapInstance.Lookup.Get<MapInstance>(map.Left).Right == map.Index)
+            if (MapInstance.Lookup.Keys.Contains(map.Left) &&
+                MapInstance.Lookup.Get<MapInstance>(map.Left).Right == map.Id)
             {
                 CalculateBounds(MapInstance.Lookup.Get<MapInstance>(map.Left), x - 1, y);
             }
-            if (MapInstance.Lookup.IndexKeys.Contains(map.Right) &&
-                MapInstance.Lookup.Get<MapInstance>(map.Right).Left == map.Index)
+            if (MapInstance.Lookup.Keys.Contains(map.Right) &&
+                MapInstance.Lookup.Get<MapInstance>(map.Right).Left == map.Id)
             {
                 CalculateBounds(MapInstance.Lookup.Get<MapInstance>(map.Right), x + 1, y);
             }
         }
 
-        public bool HasMap(int mapNum, bool parent = false)
+        public bool HasMap(Guid mapId, bool parent = false)
         {
-            if (MyMaps.Contains(mapNum)) return true;
+            if (MyMaps.Contains(mapId)) return true;
             if (!parent) return false;
-            return LegacyDatabase.MapGrids.Any(t => t.HasMap(mapNum));
+            return LegacyDatabase.MapGrids.Any(t => t.HasMap(mapId));
         }
     }
 }

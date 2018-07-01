@@ -35,19 +35,19 @@ namespace Intersect_Client.Classes.Networking
             GameNetwork.SendPacket(bf.ToArray());
         }
 
-        public static void SendNeedMap(int mapNum)
+        public static void SendNeedMap(Guid mapId)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.NeedMap);
-            bf.WriteLong(mapNum);
+            bf.WriteGuid(mapId);
             GameNetwork.SendPacket(bf.ToArray());
-            if (MapInstance.MapRequests.ContainsKey(mapNum))
+            if (MapInstance.MapRequests.ContainsKey(mapId))
             {
-                MapInstance.MapRequests[mapNum] = Globals.System.GetTimeMs() + 3000;
+                MapInstance.MapRequests[mapId] = Globals.System.GetTimeMs() + 3000;
             }
             else
             {
-                MapInstance.MapRequests.Add(mapNum, Globals.System.GetTimeMs() + 3000);
+                MapInstance.MapRequests.Add(mapId, Globals.System.GetTimeMs() + 3000);
             }
         }
 
@@ -55,7 +55,7 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.SendMove);
-            bf.WriteInteger(Globals.Me.CurrentMap);
+            bf.WriteGuid(Globals.Me.CurrentMap);
             bf.WriteInteger(Globals.Me.CurrentX);
             bf.WriteInteger(Globals.Me.CurrentY);
             bf.WriteInteger(Globals.Me.Dir);
@@ -71,11 +71,11 @@ namespace Intersect_Client.Classes.Networking
             GameNetwork.SendPacket(bf.ToArray());
         }
 
-        public static void SendAttack(int index)
+        public static void SendAttack(Guid targetId)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.TryAttack);
-            bf.WriteLong(index);
+            bf.WriteGuid(targetId);
             GameNetwork.SendPacket(bf.ToArray());
         }
 
@@ -102,12 +102,11 @@ namespace Intersect_Client.Classes.Networking
             GameNetwork.SendPacket(bf.ToArray());
         }
 
-        public static void SendActivateEvent(int mapNum, int eventIndex)
+        public static void SendActivateEvent(Guid eventId)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.ActivateEvent);
-            bf.WriteInteger(mapNum);
-            bf.WriteInteger(eventIndex);
+            bf.WriteGuid(eventId);
             GameNetwork.SendPacket(bf.ToArray());
         }
 
@@ -115,8 +114,7 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.EventResponse);
-            bf.WriteInteger(ed.EventMap);
-            bf.WriteInteger(ed.EventIndex);
+            bf.WriteGuid(ed.EventId);
             bf.WriteInteger(response);
             Globals.EventDialogs.Remove(ed);
             GameNetwork.SendPacket(bf.ToArray());
@@ -134,12 +132,12 @@ namespace Intersect_Client.Classes.Networking
             GameNetwork.SendPacket(bf.ToArray());
         }
 
-        public static void SendCreateCharacter(string name, int Class, int sprite)
+        public static void SendCreateCharacter(string name, Guid classId, int sprite)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.CreateCharacter);
             bf.WriteString(name.Trim());
-            bf.WriteInteger(Class);
+            bf.WriteGuid(classId);
             bf.WriteInteger(sprite);
             GameNetwork.SendPacket(bf.ToArray());
         }
@@ -195,12 +193,12 @@ namespace Intersect_Client.Classes.Networking
             GameNetwork.SendPacket(bf.ToArray());
         }
 
-        public static void SendUseSpell(int slot, int target)
+        public static void SendUseSpell(int slot, Guid targetId)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.UseSpell);
             bf.WriteInteger(slot);
-            bf.WriteInteger(target);
+            bf.WriteGuid(targetId);
             GameNetwork.SendPacket(bf.ToArray());
         }
 
@@ -316,27 +314,27 @@ namespace Intersect_Client.Classes.Networking
             GameNetwork.SendPacket(bf.ToArray());
         }
 
-        public static void SendCraftItem(int index)
+        public static void SendCraftItem(Guid id)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.CraftItem);
-            bf.WriteInteger(index);
+            bf.WriteGuid(id);
             GameNetwork.SendPacket(bf.ToArray());
         }
 
-        public static void SendPartyInvite(int index)
+        public static void SendPartyInvite(Guid targetId)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.PartyInvite);
-            bf.WriteInteger(index);
+            bf.WriteGuid(targetId);
             GameNetwork.SendPacket(bf.ToArray());
         }
 
-        public static void SendPartyKick(int index)
+        public static void SendPartyKick(Guid targetId)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.PartyKick);
-            bf.WriteInteger(index);
+            bf.WriteGuid(targetId);
             GameNetwork.SendPacket(bf.ToArray());
         }
 
@@ -363,35 +361,35 @@ namespace Intersect_Client.Classes.Networking
             GameNetwork.SendPacket(bf.ToArray());
         }
 
-        public static void SendAcceptQuest(int questId)
+        public static void SendAcceptQuest(Guid questId)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.AcceptQuest);
-            bf.WriteInteger(questId);
+            bf.WriteGuid(questId);
             GameNetwork.SendPacket(bf.ToArray());
         }
 
-        public static void SendDeclineQuest(int questId)
+        public static void SendDeclineQuest(Guid questId)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.DeclineQuest);
-            bf.WriteInteger(questId);
+            bf.WriteGuid(questId);
             GameNetwork.SendPacket(bf.ToArray());
         }
 
-        public static void SendCancelQuest(int questId)
+        public static void SendCancelQuest(Guid questId)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.CancelQuest);
-            bf.WriteInteger(questId);
+            bf.WriteGuid(questId);
             GameNetwork.SendPacket(bf.ToArray());
         }
 
-        public static void SendTradeRequest(int index)
+        public static void SendTradeRequest(Guid targetId)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.TradeRequest);
-            bf.WriteInteger(index);
+            bf.WriteGuid(targetId);
             GameNetwork.SendPacket(bf.ToArray());
         }
 

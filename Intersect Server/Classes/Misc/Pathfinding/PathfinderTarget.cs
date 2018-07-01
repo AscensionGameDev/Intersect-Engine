@@ -1,14 +1,16 @@
-﻿namespace Intersect.Server.Classes.Misc.Pathfinding
+﻿using System;
+
+namespace Intersect.Server.Classes.Misc.Pathfinding
 {
     public class PathfinderTarget
     {
-        public int TargetMap;
+        public Guid TargetMapId;
         public int TargetX;
         public int TargetY;
 
-        public PathfinderTarget(int map, int x, int y)
+        public PathfinderTarget(Guid mapId, int x, int y)
         {
-            TargetMap = map;
+            TargetMapId = mapId;
             TargetX = x;
             TargetY = y;
         }

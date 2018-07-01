@@ -19,7 +19,7 @@ namespace Intersect.Client.Classes.UI.Game.Inventory
 {
     public class InventoryItem
     {
-        private int mCurrentItem = -2;
+        private Guid mCurrentItemId;
         private int mCurrentAmt = 0;
         private ItemDescWindow mDescWindow;
 
@@ -123,7 +123,7 @@ namespace Intersect.Client.Classes.UI.Game.Inventory
             if (Globals.GameShop == null)
             {
                 mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].Item,
-                    Globals.Me.Inventory[mMySlot].ItemVal, mInventoryWindow.X - 255, mInventoryWindow.Y,
+                    Globals.Me.Inventory[mMySlot].Quantity, mInventoryWindow.X - 255, mInventoryWindow.Y,
                     Globals.Me.Inventory[mMySlot].StatBoost);
             }
             else
@@ -134,7 +134,7 @@ namespace Intersect.Client.Classes.UI.Game.Inventory
                 {
                     var tmpShop = Globals.GameShop.BuyingItems[i];
 
-                    if (invItem.ItemNum == tmpShop.ItemNum)
+                    if (invItem.ItemId == tmpShop.ItemId)
                     {
                         shopItem = tmpShop;
                         break;
@@ -143,30 +143,30 @@ namespace Intersect.Client.Classes.UI.Game.Inventory
 
                 if (Globals.GameShop.BuyingWhitelist && shopItem != null)
                 {
-                    var hoveredItem = ItemBase.Lookup.Get<ItemBase>(shopItem.CostItemNum);
+                    var hoveredItem = ItemBase.Lookup.Get<ItemBase>(shopItem.CostItemId);
                     if (hoveredItem != null)
                     {
                         mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].Item,
-                            Globals.Me.Inventory[mMySlot].ItemVal, mInventoryWindow.X - 220, mInventoryWindow.Y,
+                            Globals.Me.Inventory[mMySlot].Quantity, mInventoryWindow.X - 220, mInventoryWindow.Y,
                             Globals.Me.Inventory[mMySlot].StatBoost, "",
-                            Strings.Shop.sellsfor.ToString( shopItem.CostItemVal, hoveredItem.Name));
+                            Strings.Shop.sellsfor.ToString( shopItem.CostItemQuantity, hoveredItem.Name));
                     }
                 }
                 else if (shopItem == null)
                 {
-                    var hoveredItem = ItemBase.Lookup.Get<ItemBase>(invItem.ItemNum);
-                    var costItem = ItemBase.Lookup.Get<ItemBase>(Globals.GameShop.DefaultCurrency);
+                    var hoveredItem = ItemBase.Lookup.Get<ItemBase>(invItem.ItemId);
+                    var costItem = Globals.GameShop.DefaultCurrency;
                     if (hoveredItem != null && costItem != null)
                     {
                         mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].Item,
-                            Globals.Me.Inventory[mMySlot].ItemVal, mInventoryWindow.X - 220, mInventoryWindow.Y,
+                            Globals.Me.Inventory[mMySlot].Quantity, mInventoryWindow.X - 220, mInventoryWindow.Y,
                             Globals.Me.Inventory[mMySlot].StatBoost, "",
                             Strings.Shop.sellsfor.ToString( hoveredItem.Price, costItem.Name));
                     }
                 }
                 else
                 {
-                    mDescWindow = new ItemDescWindow(invItem.Item, invItem.ItemVal, mInventoryWindow.X - 255,
+                    mDescWindow = new ItemDescWindow(invItem.Item, invItem.Quantity, mInventoryWindow.X - 255,
                         mInventoryWindow.Y, invItem.StatBoost, "", Strings.Shop.wontbuy);
                 }
             }
@@ -189,17 +189,17 @@ namespace Intersect.Client.Classes.UI.Game.Inventory
             bool equipped = false;
             for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {
-                if (Globals.Me.Equipment[i] == mMySlot)
+                if (Globals.Me.MyEquipment[i] == mMySlot)
                 {
                     equipped = true;
                 }
             }
-            var item = ItemBase.Lookup.Get<ItemBase>(Globals.Me.Inventory[mMySlot].ItemNum);
-            if (Globals.Me.Inventory[mMySlot].ItemNum != mCurrentItem || Globals.Me.Inventory[mMySlot].ItemVal != mCurrentAmt || equipped != mIsEquipped ||
+            var item = ItemBase.Lookup.Get<ItemBase>(Globals.Me.Inventory[mMySlot].ItemId);
+            if (Globals.Me.Inventory[mMySlot].ItemId != mCurrentItemId || Globals.Me.Inventory[mMySlot].Quantity != mCurrentAmt || equipped != mIsEquipped ||
                 (item == null && mTexLoaded != "") || (item != null && mTexLoaded != item.Pic))
             {
-                mCurrentItem = Globals.Me.Inventory[mMySlot].ItemNum;
-                mCurrentAmt = Globals.Me.Inventory[mMySlot].ItemVal;
+                mCurrentItemId = Globals.Me.Inventory[mMySlot].ItemId;
+                mCurrentAmt = Globals.Me.Inventory[mMySlot].Quantity;
                 mIsEquipped = equipped;
                 EquipPanel.IsHidden = !mIsEquipped;
                 if (item != null)

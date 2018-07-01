@@ -7,19 +7,19 @@ namespace Intersect.Server.Classes.Database
 {
     public class Spell
     {
-        public int SpellId { get; set; }
+        public Guid SpellId { get; set; }
         public long SpellCd { get; set; }
         
 
-        public static Spell None => new Spell(-1);
+        public static Spell None => new Spell(Guid.Empty);
 
         public Spell()
         {
         }
 
-        public Spell(int spellIndex)
+        public Spell(Guid spellId)
         {
-            SpellId = spellIndex;
+            SpellId = spellId;
         }
 
         public Spell Clone()
@@ -35,18 +35,18 @@ namespace Intersect.Server.Classes.Database
         public virtual void Set(Spell spell)
         {
             SpellId = spell.SpellId;
-            SpellCd = spell.SpellId;
+            SpellCd = spell.SpellCd;
         }
 
         public void Load(ByteBuffer bf)
         {
-            SpellId = bf.ReadInteger();
+            SpellId = bf.ReadGuid();
         }
 
         public byte[] Data()
         {
             var bf = new ByteBuffer();
-            bf.WriteInteger(SpellId);
+            bf.WriteGuid(SpellId);
             return bf.ToArray();
         }
     }

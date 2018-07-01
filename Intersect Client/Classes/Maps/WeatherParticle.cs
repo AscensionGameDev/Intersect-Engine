@@ -126,7 +126,7 @@ namespace Intersect.Client.Classes.Maps
             {
                 X = originalX + (xVelocity * (int)((Globals.System.GetTimeMs() - TransmittionTimer) / 10f));
                 Y = originalY + (yVelocity * (int)((Globals.System.GetTimeMs() - TransmittionTimer) / 10f));
-                animInstance.SetPosition(cameraSpawnX + X, cameraSpawnY + Y, -1, -1, -1, -1, 0);
+                animInstance.SetPosition(cameraSpawnX + X, cameraSpawnY + Y, -1, -1, Guid.Empty, -1, 0);
                 animInstance.Update();
             }
         }

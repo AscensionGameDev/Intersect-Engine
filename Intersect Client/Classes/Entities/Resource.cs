@@ -18,7 +18,7 @@ namespace Intersect_Client.Classes.Entities
         FloatRect mSrcRectangle = FloatRect.Empty;
         private bool _waitingForTilesets;
 
-        public Resource(int index, long spawnTime, ByteBuffer bf) : base(index, spawnTime, bf)
+        public Resource(Guid id, ByteBuffer bf) : base(id, bf)
         {
             mRenderPriority = 0;
         }
@@ -57,8 +57,8 @@ namespace Intersect_Client.Classes.Entities
         {
             base.Load(bf);
             IsDead = Convert.ToBoolean(bf.ReadInteger());
-            var baseIndex = bf.ReadInteger();
-            BaseResource = ResourceBase.Lookup.Get<ResourceBase>(baseIndex);
+            var baseId = bf.ReadGuid();
+            BaseResource = ResourceBase.Lookup.Get<ResourceBase>(baseId);
             HideName = 1;
             if (IsDead)
             {

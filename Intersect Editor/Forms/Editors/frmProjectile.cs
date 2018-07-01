@@ -194,7 +194,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             UpdateAnimations(true);
             cmbAnimation.SelectedIndex =
-                Database.GameObjectListIndex(GameObjectType.Animation, mEditorItem.Animations[index].Animation) + 1;
+                Database.GameObjectListIndex(GameObjectType.Animation, mEditorItem.Animations[index].AnimationId) + 1;
             scrlSpawnRange.Value = Math.Min(mEditorItem.Animations[index].SpawnRange, scrlSpawnRange.Maximum);
             chkRotation.Checked = mEditorItem.Animations[index].AutoRotate;
             UpdateAnimations(true);
@@ -208,7 +208,7 @@ namespace Intersect.Editor.Forms.Editors
             // if there are no animations, add one by default.
             if (mEditorItem.Animations.Count == 0)
             {
-                mEditorItem.Animations.Add(new ProjectileAnimation(-1, mEditorItem.Quantity, false));
+                mEditorItem.Animations.Add(new ProjectileAnimation(Guid.Empty, mEditorItem.Quantity, false));
             }
 
             //Update the spawn range maximum
@@ -228,11 +228,11 @@ namespace Intersect.Editor.Forms.Editors
             lstAnimations.Items.Clear();
             for (int i = 0; i < mEditorItem.Animations.Count; i++)
             {
-                if (mEditorItem.Animations[i].Animation != -1)
+                if (mEditorItem.Animations[i].AnimationId != Guid.Empty)
                 {
                     lstAnimations.Items.Add(Strings.ProjectileEditor.animationline.ToString(n,
                         mEditorItem.Animations[i].SpawnRange,
-                        AnimationBase.GetName(mEditorItem.Animations[i].Animation)));
+                        AnimationBase.GetName(mEditorItem.Animations[i].AnimationId)));
                 }
                 else
                 {
@@ -398,7 +398,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             mChangingName = true;
             mEditorItem.Name = txtName.Text;
-            lstProjectiles.Items[Database.GameObjectListIndex(GameObjectType.Projectile, mEditorItem.Index)] =
+            lstProjectiles.Items[Database.GameObjectListIndex(GameObjectType.Projectile, mEditorItem.Id)] =
                 txtName.Text;
             mChangingName = false;
         }
@@ -463,7 +463,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             //Clone the previous animation to save time, set the end point to always be the quantity of spawns.
             mEditorItem.Animations.Add(
-                new ProjectileAnimation(mEditorItem.Animations[mEditorItem.Animations.Count - 1].Animation,
+                new ProjectileAnimation(mEditorItem.Animations[mEditorItem.Animations.Count - 1].AnimationId,
                     mEditorItem.Quantity,
                     mEditorItem.Animations[mEditorItem.Animations.Count - 1].AutoRotate));
             UpdateAnimations();
@@ -601,7 +601,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.Animations[lstAnimations.SelectedIndex].Animation =
+            mEditorItem.Animations[lstAnimations.SelectedIndex].AnimationId =
                 Database.GameObjectIdFromList(GameObjectType.Animation, cmbAnimation.SelectedIndex - 1);
             UpdateAnimations();
         }

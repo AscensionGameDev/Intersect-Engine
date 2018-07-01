@@ -231,7 +231,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             mChangingName = true;
             mEditorItem.Name = txtName.Text;
-            lstAnimations.Items[Database.GameObjectListIndex(GameObjectType.Animation, mEditorItem.Index)] =
+            lstAnimations.Items[Database.GameObjectListIndex(GameObjectType.Animation, mEditorItem.Id)] =
                 txtName.Text;
             mChangingName = false;
         }

@@ -52,7 +52,7 @@ namespace Intersect.Editor.Forms.Editors
         private void txtEventname_TextChanged(object sender, EventArgs e)
         {
             MyEvent.Name = txtEventname.Text;
-            Text = Strings.EventEditor.title.ToString( MyEvent.Index, txtEventname.Text);
+            Text = Strings.EventEditor.title.ToString(MyEvent.Id, txtEventname.Text);
         }
 
         private void lstEventCommands_SelectedIndexChanged(object sender, EventArgs e)
@@ -315,8 +315,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            CurrentPage.Animation =
-                Database.GameObjectIdFromList(GameObjectType.Animation, cmbAnimation.SelectedIndex - 1);
+            CurrentPage.AnimationId = Database.GameObjectIdFromList(GameObjectType.Animation, cmbAnimation.SelectedIndex - 1);
         }
 
         private void chkIsGlobal_CheckedChanged(object sender, EventArgs e)
@@ -600,7 +599,7 @@ namespace Intersect.Editor.Forms.Editors
         /// <param name="pageNum">The index of the page to load.</param>
         public void LoadPage(int pageNum)
         {
-            Text = Strings.EventEditor.title.ToString( MyEvent.Index, txtEventname.Text);
+            Text = Strings.EventEditor.title.ToString(MyEvent.Id, txtEventname.Text);
             CurrentPageIndex = pageNum;
             if (MyEvent.Pages.Count == 0) MyEvent.Pages.Add(new EventPage());
             CurrentPage = MyEvent.Pages[pageNum];
@@ -638,8 +637,7 @@ namespace Intersect.Editor.Forms.Editors
                     lblTriggerVal.Show();
                     lblTriggerVal.Text = Strings.EventEditor.projectile;
                     cmbTriggerVal.Show();
-                    cmbTriggerVal.SelectedIndex =
-                        Database.GameObjectListIndex(GameObjectType.Projectile, CurrentPage.TriggerVal) + 1;
+                    cmbTriggerVal.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Projectile, CurrentPage.TriggerVal) + 1;
                 }
             }
             else
@@ -658,7 +656,7 @@ namespace Intersect.Editor.Forms.Editors
                 cmbPreviewFace.SelectedIndex = 0;
                 UpdateFacePreview();
             }
-            cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Animation, CurrentPage.Animation) +
+            cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Animation, CurrentPage.AnimationId) +
                                          1;
             chkHideName.Checked = Convert.ToBoolean(CurrentPage.HideName);
             chkDisableInspector.Checked = Convert.ToBoolean(CurrentPage.DisablePreview);
@@ -1048,13 +1046,13 @@ namespace Intersect.Editor.Forms.Editors
                     if (command.Ints[0] == (int) SwitchVariableTypes.PlayerSwitch)
                     {
                         return Strings.EventCommandList.playerswitch.ToString(
-                            PlayerSwitchBase.GetName(command.Ints[1]),
+                            PlayerSwitchBase.GetName(command.Guids[1]),
                             value);
                     }
                     else if (command.Ints[0] == (int) SwitchVariableTypes.ServerSwitch)
                     {
                         return Strings.EventCommandList.globalswitch.ToString(
-                            ServerSwitchBase.GetName(command.Ints[1]),
+                            ServerSwitchBase.GetName(command.Guids[1]),
                             value);
                     }
                     else
@@ -1084,12 +1082,12 @@ namespace Intersect.Editor.Forms.Editors
                     if (command.Ints[0] == (int) SwitchVariableTypes.PlayerVariable)
                     {
                         return Strings.EventCommandList.playervariable.ToString(
-                            PlayerVariableBase.GetName(command.Ints[1]), varvalue);
+                            PlayerVariableBase.GetName(command.Guids[1]), varvalue);
                     }
                     else if (command.Ints[0] == (int) SwitchVariableTypes.ServerVariable)
                     {
                         return Strings.EventCommandList.globalvariable.ToString(
-                            ServerVariableBase.GetName(command.Ints[1]), varvalue);
+                            ServerVariableBase.GetName(command.Guids[1]), varvalue);
                     }
                     else
                     {
@@ -1112,7 +1110,7 @@ namespace Intersect.Editor.Forms.Editors
                 case EventCommandType.GoToLabel:
                     return Strings.EventCommandList.gotolabel.ToString( command.Strs[0]);
                 case EventCommandType.StartCommonEvent:
-                    return Strings.EventCommandList.commonevent.ToString( EventBase.GetName(command.Ints[0]));
+                    return Strings.EventCommandList.commonevent.ToString( EventBase.GetName(command.Guids[0]));
                 case EventCommandType.RestoreHp:
                     return Strings.EventCommandList.restorehp;
                 case EventCommandType.RestoreMp:
@@ -1127,23 +1125,23 @@ namespace Intersect.Editor.Forms.Editors
                     if (command.Ints[0] == 0)
                     {
                         return Strings.EventCommandList.changespells.ToString(
-                            Strings.EventCommandList.teach.ToString( SpellBase.GetName(command.Ints[1])));
+                            Strings.EventCommandList.teach.ToString( SpellBase.GetName(command.Guids[1])));
                     }
                     else
                     {
                         return Strings.EventCommandList.changespells.ToString(
-                            Strings.EventCommandList.forget.ToString( SpellBase.GetName(command.Ints[1])));
+                            Strings.EventCommandList.forget.ToString( SpellBase.GetName(command.Guids[1])));
                     }
                 case EventCommandType.ChangeItems:
                     if (command.Ints[0] == 0)
                     {
                         return Strings.EventCommandList.changeitems.ToString(
-                            Strings.EventCommandList.give.ToString( ItemBase.GetName(command.Ints[1])));
+                            Strings.EventCommandList.give.ToString( ItemBase.GetName(command.Guids[1])));
                     }
                     else
                     {
                         return Strings.EventCommandList.changeitems.ToString(
-                            Strings.EventCommandList.take.ToString( ItemBase.GetName(command.Ints[1])));
+                            Strings.EventCommandList.take.ToString( ItemBase.GetName(command.Guids[1])));
                     }
                 case EventCommandType.ChangeSprite:
                     return Strings.EventCommandList.setsprite.ToString( command.Strs[0]);
@@ -1177,7 +1175,7 @@ namespace Intersect.Editor.Forms.Editors
                     var mapName = Strings.EventCommandList.mapnotfound;
                     for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
                     {
-                        if (MapList.GetOrderedMaps()[i].MapNum == command.Ints[0])
+                        if (MapList.GetOrderedMaps()[i].MapId == command.Guids[0])
                         {
                             mapName = MapList.GetOrderedMaps()[i].Name;
                         }
@@ -1230,15 +1228,15 @@ namespace Intersect.Editor.Forms.Editors
                         case 0: //On Map/Tile Selection
                             for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
                             {
-                                if (MapList.GetOrderedMaps()[i].MapNum == command.Ints[2])
+                                if (MapList.GetOrderedMaps()[i].MapId == command.Guids[2])
                                 {
-                                    return Strings.EventCommandList.spawnnpc.ToString( NpcBase.GetName(command.Ints[0]),
+                                    return Strings.EventCommandList.spawnnpc.ToString( NpcBase.GetName(command.Guids[0]),
                                         Strings.EventCommandList.spawnonmap.ToString( MapList.GetOrderedMaps()[i].Name,
                                             command.Ints[3], command.Ints[4],
                                             Strings.Directions.dir[command.Ints[5]]));
                                 }
                             }
-                            return Strings.EventCommandList.spawnnpc.ToString( NpcBase.GetName(command.Ints[0]),
+                            return Strings.EventCommandList.spawnnpc.ToString( NpcBase.GetName(command.Guids[0]),
                                 Strings.EventCommandList.spawnonmap.ToString(
                                     Strings.EventCommandList.mapnotfound, command.Ints[3], command.Ints[4],
                                     Strings.Directions.dir[command.Ints[5]]));
@@ -1247,22 +1245,22 @@ namespace Intersect.Editor.Forms.Editors
                             if (Convert.ToBoolean(command.Ints[5])) retain = Strings.EventCommandList.True;
                             if (command.Ints[2] == -1)
                             {
-                                return Strings.EventCommandList.spawnnpc.ToString( NpcBase.GetName(command.Ints[0]),
+                                return Strings.EventCommandList.spawnnpc.ToString( NpcBase.GetName(command.Guids[0]),
                                     Strings.EventCommandList.spawnonplayer.ToString( command.Ints[3], command.Ints[4],
                                         retain));
                             }
                             else
                             {
-                                if (MyMap.LocalEvents.ContainsKey(command.Guids[0]))
+                                if (MyMap.LocalEvents.ContainsKey(command.Guids[2]))
                                 {
-                                    return Strings.EventCommandList.spawnnpc.ToString( NpcBase.GetName(command.Ints[0]),
+                                    return Strings.EventCommandList.spawnnpc.ToString( NpcBase.GetName(command.Guids[0]),
                                         Strings.EventCommandList.spawnonevent.ToString( command.Ints[2],
-                                            MyMap.LocalEvents[command.Guids[0]].Name, command.Ints[3], command.Ints[4],
+                                            MyMap.LocalEvents[command.Guids[2]].Name, command.Ints[3], command.Ints[4],
                                             retain));
                                 }
                                 else
                                 {
-                                    return Strings.EventCommandList.spawnnpc.ToString( NpcBase.GetName(command.Ints[0]),
+                                    return Strings.EventCommandList.spawnnpc.ToString( NpcBase.GetName(command.Guids[0]),
                                         Strings.EventCommandList.spawnonevent.ToString( command.Ints[2],
                                             Strings.EventCommandList.deletedevent, command.Ints[3],
                                             command.Ints[4], retain));
@@ -1278,17 +1276,17 @@ namespace Intersect.Editor.Forms.Editors
                         case 0: //On Map/Tile Selection
                             for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
                             {
-                                if (MapList.GetOrderedMaps()[i].MapNum == command.Ints[2])
+                                if (MapList.GetOrderedMaps()[i].MapId == command.Guids[2])
                                 {
                                     return Strings.EventCommandList.playanimation.ToString(
-                                        AnimationBase.GetName(command.Ints[0]),
+                                        AnimationBase.GetName(command.Guids[0]),
                                         Strings.EventCommandList.animationonmap.ToString(
                                             MapList.GetOrderedMaps()[i].Name, command.Ints[3], command.Ints[4],
                                             Strings.Directions.dir[command.Ints[5]]));
                                 }
                             }
                             return Strings.EventCommandList.playanimation.ToString(
-                                AnimationBase.GetName(command.Ints[0]),
+                                AnimationBase.GetName(command.Guids[0]),
                                 Strings.EventCommandList.animationonmap.ToString(
                                     Strings.EventCommandList.mapnotfound, command.Ints[3], command.Ints[4],
                                     Strings.Directions.dir[command.Ints[5]]));
@@ -1310,24 +1308,24 @@ namespace Intersect.Editor.Forms.Editors
                             if (command.Ints[2] == -1)
                             {
                                 return Strings.EventCommandList.playanimation.ToString(
-                                    AnimationBase.GetName(command.Ints[0]),
+                                    AnimationBase.GetName(command.Guids[0]),
                                     Strings.EventCommandList.animationonplayer.ToString( command.Ints[3],
                                         command.Ints[4], spawnOpt));
                             }
                             else
                             {
-                                if (MyMap.LocalEvents.ContainsKey(command.Guids[0]))
+                                if (MyMap.LocalEvents.ContainsKey(command.Guids[2]))
                                 {
                                     return Strings.EventCommandList.playanimation.ToString(
-                                        AnimationBase.GetName(command.Ints[0]),
+                                        AnimationBase.GetName(command.Guids[0]),
                                         Strings.EventCommandList.animationonevent.ToString( (command.Ints[2]),
-                                            MyMap.LocalEvents[command.Guids[0]].Name, command.Ints[3],
+                                            MyMap.LocalEvents[command.Guids[2]].Name, command.Ints[3],
                                             command.Ints[4], spawnOpt));
                                 }
                                 else
                                 {
                                     return Strings.EventCommandList.playanimation.ToString(
-                                        AnimationBase.GetName(command.Ints[0]),
+                                        AnimationBase.GetName(command.Guids[0]),
                                         Strings.EventCommandList.animationonevent.ToString( (command.Ints[2]),
                                             Strings.EventCommandList.deletedevent, command.Ints[3],
                                             command.Ints[4], spawnOpt));
@@ -1352,24 +1350,24 @@ namespace Intersect.Editor.Forms.Editors
                 case EventCommandType.OpenBank:
                     return Strings.EventCommandList.openbank;
                 case EventCommandType.OpenShop:
-                    return Strings.EventCommandList.openshop.ToString( ShopBase.GetName(command.Ints[0]));
+                    return Strings.EventCommandList.openshop.ToString( ShopBase.GetName(command.Guids[0]));
                 case EventCommandType.OpenCraftingTable:
-                    return Strings.EventCommandList.opencrafting.ToString( CraftingTableBase.GetName(command.Ints[0]));
+                    return Strings.EventCommandList.opencrafting.ToString( CraftingTableBase.GetName(command.Guids[0]));
                 case EventCommandType.SetClass:
-                    return Strings.EventCommandList.setclass.ToString( ClassBase.GetName(command.Ints[0]));
+                    return Strings.EventCommandList.setclass.ToString( ClassBase.GetName(command.Guids[0]));
                 case EventCommandType.StartQuest:
                     if (command.Ints[1] == 0)
                     {
-                        return Strings.EventCommandList.startquest.ToString( QuestBase.GetName(command.Ints[0]),
+                        return Strings.EventCommandList.startquest.ToString( QuestBase.GetName(command.Guids[0]),
                             Strings.EventCommandList.forcedstart);
                     }
                     else
                     {
-                        return Strings.EventCommandList.startquest.ToString( QuestBase.GetName(command.Ints[0]),
+                        return Strings.EventCommandList.startquest.ToString( QuestBase.GetName(command.Guids[0]),
                             Strings.EventCommandList.showoffer);
                     }
                 case EventCommandType.CompleteQuestTask:
-                    var quest = QuestBase.Lookup.Get<QuestBase>(command.Ints[0]);
+                    var quest = QuestBase.Lookup.Get<QuestBase>(command.Guids[0]);
                     if (quest != null)
                     {
                         //Try to find task
@@ -1378,19 +1376,19 @@ namespace Intersect.Editor.Forms.Editors
                             if (task.Id == command.Ints[1])
                             {
                                 return Strings.EventCommandList.completetask.ToString(
-                                    QuestBase.GetName(command.Ints[0]), task.GetTaskString(Strings.TaskEditor.descriptions));
+                                    QuestBase.GetName(command.Guids[0]), task.GetTaskString(Strings.TaskEditor.descriptions));
                             }
                         }
                     }
-                    return Strings.EventCommandList.completetask.ToString( QuestBase.GetName(command.Ints[0]),
+                    return Strings.EventCommandList.completetask.ToString( QuestBase.GetName(command.Guids[0]),
                         Strings.EventCommandList.taskundefined);
                 case EventCommandType.EndQuest:
                     if (command.Ints[1] == 0)
                     {
-                        return Strings.EventCommandList.endquest.ToString( QuestBase.GetName(command.Ints[0]),
+                        return Strings.EventCommandList.endquest.ToString( QuestBase.GetName(command.Guids[0]),
                             Strings.EventCommandList.runcompletionevent);
                     }
-                    return Strings.EventCommandList.endquest.ToString( QuestBase.GetName(command.Ints[0]),
+                    return Strings.EventCommandList.endquest.ToString( QuestBase.GetName(command.Guids[0]),
                         Strings.EventCommandList.skipcompletionevent);
                 default:
                     return Strings.EventCommandList.unknown;

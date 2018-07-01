@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Intersect.Client.Classes.UI.Game.Bag;
 using Intersect.GameObjects;
 using Intersect.Client.Classes.Localization;
@@ -73,9 +74,9 @@ namespace Intersect_Client.Classes.UI.Game
             }
             for (int i = 0; i < Globals.Bag.Length; i++)
             {
-                if (Globals.Bag[i] != null && Globals.Bag[i].ItemNum > -1)
+                if (Globals.Bag[i] != null && Globals.Bag[i].ItemId != Guid.Empty)
                 {
-                    var item = ItemBase.Lookup.Get<ItemBase>(Globals.Bag[i].ItemNum);
+                    var item = ItemBase.Lookup.Get<ItemBase>(Globals.Bag[i].ItemId);
                     if (item != null)
                     {
                         Items[i].Pnl.IsHidden = false;
@@ -83,7 +84,7 @@ namespace Intersect_Client.Classes.UI.Game
                         if (item.IsStackable())
                         {
                             mValues[i].IsHidden = false;
-                            mValues[i].Text = Globals.Bag[i].ItemVal.ToString();
+                            mValues[i].Text = Globals.Bag[i].Quantity.ToString();
                         }
                         else
                         {

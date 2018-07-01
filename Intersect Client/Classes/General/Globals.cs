@@ -42,9 +42,9 @@ namespace Intersect_Client.Classes.General
         public static bool HasGameData = false;
 
         //Map/Chunk Array
-        public static int[,] MapGrid;
+        public static Guid[,] MapGrid;
 
-        public static List<int> GridMaps = new List<int>();
+        public static List<Guid> GridMaps = new List<Guid>();
         public static long MapGridWidth;
         public static long MapGridHeight;
         public static int[] MapRevision;
@@ -67,9 +67,9 @@ namespace Intersect_Client.Classes.General
 
         //Entities and stuff
         //public static List<Entity> Entities = new List<Entity>();
-        public static Dictionary<int, Entity> Entities = new Dictionary<int, Entity>();
+        public static Dictionary<Guid, Entity> Entities = new Dictionary<Guid, Entity>();
 
-        public static List<int> EntitiesToDispose = new List<int>();
+        public static List<Guid> EntitiesToDispose = new List<Guid>();
 
         //Bank
         public static ItemInstance[] Bank;
@@ -105,21 +105,22 @@ namespace Intersect_Client.Classes.General
         //Control Objects
         public static List<EventDialog> EventDialogs = new List<EventDialog>();
 
-        public static List<EventHold> EventHolds = new List<EventHold>();
-        public static List<int> QuestOffers = new List<int>();
+        //Event Guid and the Map its associated with
+        public static Dictionary<Guid,Guid> EventHolds = new Dictionary<Guid,Guid>();
+        public static List<Guid> QuestOffers = new List<Guid>();
         public static bool MoveRouteActive = false;
 
-        public static Entity GetEntity(int index, int type, long spawnTime)
+        public static Entity GetEntity(Guid id, int type)
         {
-            if (Entities.ContainsKey(index))
+            if (Entities.ContainsKey(id))
             {
-                if ((int) Entities[index].GetEntityType() == type && Entities[index].SpawnTime == spawnTime)
+                if ((int) Entities[id].GetEntityType() == type)
                 {
-                    EntitiesToDispose.Remove(Entities[index].MyIndex);
-                    return Entities[index];
+                    EntitiesToDispose.Remove(Entities[id].Id);
+                    return Entities[id];
                 }
-                Entities[index].Dispose();
-                Entities.Remove(index);
+                Entities[id].Dispose();
+                Entities.Remove(id);
             }
             return null;
         }

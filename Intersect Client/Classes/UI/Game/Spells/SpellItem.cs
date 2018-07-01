@@ -24,7 +24,7 @@ namespace Intersect.Client.Classes.UI.Game.Spells
         private bool mCanDrag;
         private long mClickTime;
         public ImagePanel Container;
-        private int mCurrentSpell = -1;
+        private Guid mCurrentSpellId;
         private Draggable mDragIcon;
         private bool mIconCd;
         public bool IsDragging;
@@ -89,7 +89,7 @@ namespace Intersect.Client.Classes.UI.Game.Spells
                 mDescWindow.Dispose();
                 mDescWindow = null;
             }
-            mDescWindow = new SpellDescWindow(Globals.Me.Spells[mYindex].SpellNum, mSpellWindow.X - 255,
+            mDescWindow = new SpellDescWindow(Globals.Me.Spells[mYindex].SpellId, mSpellWindow.X - 255,
                 mSpellWindow.Y);
         }
 
@@ -107,10 +107,10 @@ namespace Intersect.Client.Classes.UI.Game.Spells
 
         public void Update()
         {
-            var spell = SpellBase.Lookup.Get<SpellBase>(Globals.Me.Spells[mYindex].SpellNum);
+            var spell = SpellBase.Lookup.Get<SpellBase>(Globals.Me.Spells[mYindex].SpellId);
             if (!IsDragging &&
                 ((mTexLoaded != "" && spell == null) || (spell != null && mTexLoaded != spell.Pic) ||
-                 mCurrentSpell != Globals.Me.Spells[mYindex].SpellNum ||
+                 mCurrentSpellId != Globals.Me.Spells[mYindex].SpellId ||
                  mIconCd != (Globals.Me.Spells[mYindex].SpellCd > Globals.System.GetTimeMs())))
             {
                 if (spell != null)
@@ -137,7 +137,7 @@ namespace Intersect.Client.Classes.UI.Game.Spells
                         }
                     }
                     mTexLoaded = spell.Pic;
-                    mCurrentSpell = Globals.Me.Spells[mYindex].SpellNum;
+                    mCurrentSpellId = Globals.Me.Spells[mYindex].SpellId;
                     mIconCd = (Globals.Me.Spells[mYindex].SpellCd > Globals.System.GetTimeMs());
                 }
                 else

@@ -1,4 +1,5 @@
-﻿using Intersect.Models;
+﻿using System;
+using Intersect.Models;
 using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
@@ -6,7 +7,7 @@ namespace Intersect.GameObjects
     public class PlayerSwitchBase : DatabaseObject<PlayerSwitchBase>
     {
         [JsonConstructor]
-        public PlayerSwitchBase(int index) : base(index)
+        public PlayerSwitchBase(Guid id) : base(id)
         {
             Name = "New Player Switch";
         }

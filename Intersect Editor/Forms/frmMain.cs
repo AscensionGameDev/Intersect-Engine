@@ -326,10 +326,10 @@ namespace Intersect.Editor.Forms
             Application.Exit();
         }
 
-        public void EnterMap(int mapNum)
+        public void EnterMap(Guid mapId)
         {
-            Globals.CurrentMap = MapInstance.Lookup.Get<MapInstance>(mapNum);
-            Globals.LoadingMap = mapNum;
+            Globals.CurrentMap = MapInstance.Lookup.Get<MapInstance>(mapId);
+            Globals.LoadingMap = mapId;
             if (Globals.CurrentMap == null)
             {
                 Text = @"Intersect Editor";
@@ -343,9 +343,9 @@ namespace Intersect.Editor.Forms
             }
             Globals.MapEditorWindow.picMap.Visible = false;
             Globals.MapEditorWindow.ResetUndoRedoStates();
-            PacketSender.SendEnterMap(mapNum);
-            PacketSender.SendNeedMap(mapNum);
-            PacketSender.SendNeedGrid(mapNum);
+            PacketSender.SendEnterMap(mapId);
+            PacketSender.SendNeedMap(mapId);
+            PacketSender.SendNeedGrid(mapId);
             EditorGraphics.TilePreviewUpdated = true;
         }
 
@@ -823,7 +823,7 @@ namespace Intersect.Editor.Forms
             {
                 SaveMap();
             }
-            PacketSender.SendCreateMap(-1, Globals.CurrentMap.Index, null);
+            PacketSender.SendCreateMap(-1, Globals.CurrentMap.Id, null);
         }
 
         private void exportMapToolStripMenuItem_Click(object sender, EventArgs e)

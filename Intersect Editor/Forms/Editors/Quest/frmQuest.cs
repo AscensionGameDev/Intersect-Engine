@@ -200,7 +200,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
         {
             mChangingName = true;
             mEditorItem.Name = txtName.Text;
-            lstQuests.Items[Database.GameObjectListIndex(GameObjectType.Quest, mEditorItem.Index)] = txtName.Text;
+            lstQuests.Items[Database.GameObjectListIndex(GameObjectType.Quest, mEditorItem.Id)] = txtName.Text;
             mChangingName = false;
         }
 
@@ -238,7 +238,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
         private void btnAddTask_Click(object sender, EventArgs e)
         {
             var questTask = new QuestBase.QuestTask(mEditorItem.NextTaskId);
-            questTask.EdittingEvent = new EventBase(Guid.Empty, -1,0, 0, true);
+            questTask.EdittingEvent = new EventBase(Guid.Empty, Guid.Empty,0, 0, true);
             mEditorItem.AddEvents.Add(mEditorItem.NextTaskId, questTask.EdittingEvent);
             mEditorItem.NextTaskId = mEditorItem.NextTaskId + 1;
             if (OpenTaskEditor(questTask))

@@ -93,7 +93,7 @@ namespace Intersect.GameObjects.Maps.MapList
                     tmpMap = new MapListMap();
                     if (tmpMap.Load(myBuffer, gameMaps, isServer))
                     {
-                        if (gameMaps.IndexKeys.Contains(tmpMap.MapNum) || !isServer)
+                        if (gameMaps.Keys.Contains(tmpMap.MapId) || !isServer)
                         {
                             Items.Add(tmpMap);
                             sOrderedMaps.Add(tmpMap);
@@ -109,13 +109,13 @@ namespace Intersect.GameObjects.Maps.MapList
             return result;
         }
 
-        public void AddMap(int mapNum, DatabaseObjectLookup gameMaps)
+        public void AddMap(Guid mapId, DatabaseObjectLookup gameMaps)
         {
-            if (!gameMaps.IndexKeys.Contains(mapNum)) return;
+            if (!gameMaps.Keys.Contains(mapId)) return;
             var tmp = new MapListMap()
             {
-                Name = gameMaps[mapNum].Name,
-                MapNum = mapNum
+                Name = gameMaps[mapId].Name,
+                MapId = mapId
             };
             Items.Add(tmp);
         }
@@ -125,20 +125,12 @@ namespace Intersect.GameObjects.Maps.MapList
             var tmp = new MapListFolder()
             {
                 Name = folderName,
-                FolderId =
-                    int.Parse("" + mRand.Next(1, 10) + mRand.Next(0, 10) + mRand.Next(0, 10) + mRand.Next(0, 10) +
-                              mRand.Next(0, 10) + mRand.Next(0, 10) + mRand.Next(0, 10) + mRand.Next(0, 10))
+                FolderId = Guid.NewGuid()
             };
-            while (sMapList.FindFolderParent(tmp.FolderId, null) != null)
-            {
-                tmp.FolderId =
-                    int.Parse("" + mRand.Next(1, 10) + mRand.Next(0, 10) + mRand.Next(0, 10) + mRand.Next(0, 10) +
-                              mRand.Next(0, 10) + mRand.Next(0, 10) + mRand.Next(0, 10) + mRand.Next(0, 10));
-            }
             Items.Add(tmp);
         }
 
-        public MapListFolder FindDir(int folderId)
+        public MapListFolder FindDir(Guid folderId)
         {
             for (int i = 0; i < Items.Count; i++)
             {
@@ -157,20 +149,20 @@ namespace Intersect.GameObjects.Maps.MapList
             return null;
         }
 
-        public MapListMap FindMap(int mapNum)
+        public MapListMap FindMap(Guid mapId)
         {
             for (int i = 0; i < Items.Count; i++)
             {
                 if (Items[i].Type == 0)
                 {
-                    if (((MapListFolder) Items[i]).Children.FindMap(mapNum) != null)
+                    if (((MapListFolder) Items[i]).Children.FindMap(mapId) != null)
                     {
-                        return ((MapListFolder) Items[i]).Children.FindMap(mapNum);
+                        return ((MapListFolder) Items[i]).Children.FindMap(mapId);
                     }
                 }
                 else
                 {
-                    if (((MapListMap) Items[i]).MapNum == mapNum)
+                    if (((MapListMap) Items[i]).MapId == mapId)
                     {
                         return ((MapListMap) Items[i]);
                     }
@@ -179,20 +171,20 @@ namespace Intersect.GameObjects.Maps.MapList
             return null;
         }
 
-        public MapListFolder FindMapParent(int mapNum, MapListFolder parent)
+        public MapListFolder FindMapParent(Guid mapId, MapListFolder parent)
         {
             for (int i = 0; i < Items.Count; i++)
             {
                 if (Items[i].GetType() == typeof(MapListFolder))
                 {
-                    if (((MapListFolder) Items[i]).Children.FindMapParent(mapNum, (MapListFolder) Items[i]) != null)
+                    if (((MapListFolder) Items[i]).Children.FindMapParent(mapId, (MapListFolder) Items[i]) != null)
                     {
-                        return ((MapListFolder) Items[i]).Children.FindMapParent(mapNum, (MapListFolder) Items[i]);
+                        return ((MapListFolder) Items[i]).Children.FindMapParent(mapId, (MapListFolder) Items[i]);
                     }
                 }
                 else
                 {
-                    if (((MapListMap) Items[i]).MapNum == mapNum)
+                    if (((MapListMap) Items[i]).MapId == mapId)
                     {
                         return parent;
                     }
@@ -201,7 +193,7 @@ namespace Intersect.GameObjects.Maps.MapList
             return null;
         }
 
-        public MapListFolder FindFolderParent(int folderId, MapListFolder parent)
+        public MapListFolder FindFolderParent(Guid folderId, MapListFolder parent)
         {
             for (int i = 0; i < Items.Count; i++)
             {
@@ -221,7 +213,7 @@ namespace Intersect.GameObjects.Maps.MapList
             return null;
         }
 
-        public void HandleMove(int srcType, int srcId, int destType, int destId)
+        public void HandleMove(int srcType, Guid srcId, int destType, Guid destId)
         {
             MapListFolder sourceParent = null;
             MapListFolder destParent = null;
@@ -307,10 +299,10 @@ namespace Intersect.GameObjects.Maps.MapList
             //PacketSender.SendMapListToEditors();
         }
 
-        public void DeleteFolder(int folderid)
+        public void DeleteFolder(Guid folderId)
         {
-            MapListFolder parent = FindFolderParent(folderid, null);
-            MapListFolder self = FindDir(folderid);
+            MapListFolder parent = FindFolderParent(folderId, null);
+            MapListFolder self = FindDir(folderId);
             if (parent == null)
             {
                 sMapList.Items.AddRange(self.Children.Items);
@@ -323,10 +315,10 @@ namespace Intersect.GameObjects.Maps.MapList
             }
         }
 
-        public void DeleteMap(int mapNum)
+        public void DeleteMap(Guid mapid)
         {
-            MapListFolder parent = FindMapParent(mapNum, null);
-            MapListMap self = FindMap(mapNum);
+            MapListFolder parent = FindMapParent(mapid, null);
+            MapListMap self = FindMap(mapid);
             if (parent == null)
             {
                 sMapList.Items.Remove(self);
@@ -337,12 +329,12 @@ namespace Intersect.GameObjects.Maps.MapList
             }
         }
 
-        public int FindFirstMap()
+        public Guid FindFirstMap()
         {
-            int lowestMap = -1;
+            Guid lowestMap = Guid.Empty;
             if (sOrderedMaps.Count > 0)
             {
-                lowestMap = sOrderedMaps[0].MapNum;
+                lowestMap = sOrderedMaps[0].MapId;
             }
             return lowestMap;
         }

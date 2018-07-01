@@ -87,7 +87,7 @@ namespace Intersect.GameObjects
         public List<Guid> RemoveEvents = new List<Guid>(); //Events that need to be removed for the quest
 
         [JsonConstructor]
-        public QuestBase(int index) : base(index)
+        public QuestBase(Guid Id) : base(Id)
         {
             Name = "New Quest";
         }
@@ -130,6 +130,8 @@ namespace Intersect.GameObjects
             public EventBase EdittingEvent;
             public int Data1;
             public int Data2;
+            public Guid Guid1;
+            public Guid Guid2;
             public string Desc = "";
             public int Id;
             public int Objective;
@@ -148,18 +150,13 @@ namespace Intersect.GameObjects
                         taskString = descriptions[Objective].ToString(Desc);
                         break;
                     case 1: //Gather Items
-                        taskString = descriptions[Objective].ToString(ItemBase.GetName(Data1), Data2, Desc);
+                        taskString = descriptions[Objective].ToString(ItemBase.GetName(Guid1), Data2, Desc);
                         break;
                     case 2: //Kill Npcs
-                        taskString = descriptions[Objective].ToString(NpcBase.GetName(Data1), Data2, Desc);
+                        taskString = descriptions[Objective].ToString(NpcBase.GetName(Guid1), Data2, Desc);
                         break;
                 }
                 return taskString;
-            }
-
-            public static QuestBase Get(int index)
-            {
-                return QuestBase.Lookup.Get<QuestBase>(index);
             }
         }
 

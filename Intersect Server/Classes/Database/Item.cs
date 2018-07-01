@@ -12,8 +12,8 @@ namespace Intersect.Server.Classes.Database
     {
         public Guid? BagId { get; set; }
         public virtual Bag Bag { get; set; }
-        public int ItemNum { get; set; } = -1;
-        public int ItemVal { get; set; }
+        public Guid Id { get; set; } = Guid.Empty;
+        public int Quantity { get; set; }
 
         [Column("StatBoost")]
         public string StatBoostJson
@@ -33,31 +33,31 @@ namespace Intersect.Server.Classes.Database
 
         public static Item None => new Item();
 
-        public Item(int itemNum, int itemVal) : this(itemNum, itemVal, null,null)
+        public Item(Guid itemId, int itemVal) : this(itemId, itemVal, null,null)
         {
             
         }
 
-        public Item(int itemNum, int itemVal, Guid? bagId,Bag bag)
+        public Item(Guid itemId, int itemVal, Guid? bagId,Bag bag)
         {
-            ItemNum = itemNum;
-            ItemVal = itemVal;
+            Id = itemId;
+            Quantity = itemVal;
             BagId = bagId;
             Bag = bag;
-            if (ItemBase.Lookup.Get<ItemBase>(ItemNum) != null)
+            if (ItemBase.Lookup.Get<ItemBase>(Id) != null)
             {
-                if (ItemBase.Lookup.Get<ItemBase>(ItemNum).ItemType == ItemTypes.Equipment)
+                if (ItemBase.Lookup.Get<ItemBase>(Id).ItemType == ItemTypes.Equipment)
                 {
                     for (int i = 0; i < (int)Stats.StatCount; i++)
                     {
                         // TODO: What the fuck?
-                        StatBoost[i] = Globals.Rand.Next(-1 * ItemBase.Lookup.Get<ItemBase>(ItemNum).StatGrowth, ItemBase.Lookup.Get<ItemBase>(ItemNum).StatGrowth + 1);
+                        StatBoost[i] = Globals.Rand.Next(-1 * ItemBase.Lookup.Get<ItemBase>(Id).StatGrowth, ItemBase.Lookup.Get<ItemBase>(Id).StatGrowth + 1);
                     }
                 }
             }
         }
 
-        public Item(Item item) : this(item.ItemNum, item.ItemVal, item.BagId,item.Bag)
+        public Item(Item item) : this(item.Id, item.Quantity, item.BagId,item.Bag)
         {
             for (int i = 0; i < (int)Stats.StatCount; i++)
             {
@@ -67,8 +67,8 @@ namespace Intersect.Server.Classes.Database
 
         public virtual void Set(Item item)
         {
-            ItemNum = item.ItemNum;
-            ItemVal = item.ItemVal;
+            Id = item.Id;
+            Quantity = item.Quantity;
             BagId = item.BagId;
             Bag = item.Bag;
             for (int i = 0; i < (int)Stats.StatCount; i++)
@@ -80,8 +80,8 @@ namespace Intersect.Server.Classes.Database
         public byte[] Data()
         {
             var bf = new ByteBuffer();
-            bf.WriteInteger(ItemNum);
-            bf.WriteInteger(ItemVal);
+            bf.WriteGuid(Id);
+            bf.WriteInteger(Quantity);
             for (int i = 0; i < (int)Stats.StatCount; i++)
             {
                 bf.WriteInteger(StatBoost[i]);

@@ -92,7 +92,7 @@ namespace Intersect_Client.Classes.UI.Game
                 mZLabel.Text = Strings.Debug.z.ToString( Globals.Me.CurrentZ);
             }
             int entityCount = Globals.Entities.Count;
-            foreach (MapInstance map in MapInstance.Lookup.IndexValues)
+            foreach (MapInstance map in MapInstance.Lookup.Values)
             {
                 if (map != null) entityCount += map.LocalEntities.Count;
             }

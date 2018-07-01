@@ -1,11 +1,12 @@
-﻿using Intersect.Collections;
+﻿using System;
+using Intersect.Collections;
 
 namespace Intersect.GameObjects.Maps.MapList
 {
     public class MapListFolder : MapListItem
     {
         public MapList Children = new MapList();
-        public int FolderId = -1;
+        public Guid FolderId = Guid.Empty;
 
         public MapListFolder()
             : base()
@@ -17,7 +18,7 @@ namespace Intersect.GameObjects.Maps.MapList
         public void GetData(ByteBuffer myBuffer, DatabaseObjectLookup gameMaps)
         {
             base.GetData(myBuffer);
-            myBuffer.WriteInteger(FolderId);
+            myBuffer.WriteGuid(FolderId);
             myBuffer.WriteBytes(Children.Data(gameMaps));
         }
 
@@ -25,7 +26,7 @@ namespace Intersect.GameObjects.Maps.MapList
         {
             Children.Items.Clear();
             base.Load(myBuffer);
-            FolderId = myBuffer.ReadInteger();
+            FolderId = myBuffer.ReadGuid();
             return Children.Load(myBuffer, gameMaps, isServer, false);
         }
     }

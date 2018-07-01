@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Enums;
 using Intersect.GameObjects.Conditions;
 using Intersect.Models;
@@ -11,23 +12,23 @@ namespace Intersect.GameObjects
     {
         //Animations
         [Column("CastAnimation")]
-        public int CastAnimationId { get; protected set; }
+        public Guid CastAnimationId { get; protected set; }
         [NotMapped]
         [JsonIgnore]
         public AnimationBase CastAnimation
         {
             get => AnimationBase.Lookup.Get<AnimationBase>(CastAnimationId);
-            set => CastAnimationId = value?.Index ?? -1;
+            set => CastAnimationId = value?.Id ?? Guid.Empty;
         }
 
         [Column("HitAnimation")]
-        public int HitAnimationId { get; protected set; }
+        public Guid HitAnimationId { get; protected set; }
         [NotMapped]
         [JsonIgnore]
         public AnimationBase HitAnimation
         {
             get => AnimationBase.Lookup.Get<AnimationBase>(HitAnimationId);
-            set => HitAnimationId = value?.Index ?? -1;
+            set => HitAnimationId = value?.Id ?? Guid.Empty;
         }
 
         //Spell Times
@@ -56,22 +57,26 @@ namespace Intersect.GameObjects
         public int Data2 { get; set; }
         public int Data3 { get; set; }
         public int Data4 { get; set; }
+        public Guid Guid1 { get; set; }
+        public Guid Guid2 { get; set; }
+        public Guid Guid3 { get; set; }
+        public Guid Guid4 { get; set; }
         public string Data5 { get; set; } = "";
 
         public string Desc { get; set; } = "";
         public int Friendly { get; set; }
         public int HitRadius { get; set; }
         public string Pic { get; set; } = "";
-
+        
         //Extra Data, Teleport Coords, Custom Spells, Etc
         [Column("Projectile")]
-        public int ProjectileId { get; protected set; }
+        public Guid ProjectileId { get; protected set; }
         [NotMapped]
         [JsonIgnore]
         public ProjectileBase Projectile
         {
             get => ProjectileBase.Lookup.Get<ProjectileBase>(ProjectileId);
-            set => ProjectileId = value?.Index ?? -1;
+            set => ProjectileId = value?.Id ?? Guid.Empty;
         }
 
         public int Scaling { get; set; } = 100;
@@ -114,7 +119,7 @@ namespace Intersect.GameObjects
         public int[] VitalDiff = new int[(int)Vitals.VitalCount];
 
         [JsonConstructor]
-        public SpellBase(int index) : base(index)
+        public SpellBase(Guid id) : base(id)
         {
             Name = "New Spell";
         }
@@ -122,11 +127,6 @@ namespace Intersect.GameObjects
         public SpellBase()
         {
             Name = "New Spell";
-        }
-
-        public static SpellBase Get(int index)
-        {
-            return SpellBase.Lookup.Get<SpellBase>(index);
         }
     }
 }

@@ -325,7 +325,7 @@ namespace Intersect.Editor.Forms.Editors
                 grpWarp.Show();
                 for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
                 {
-                    if (MapList.GetOrderedMaps()[i].MapNum == mEditorItem.Data1)
+                    if (MapList.GetOrderedMaps()[i].MapId == mEditorItem.Guid1)
                     {
                         cmbWarpMap.SelectedIndex = i;
                         break;
@@ -355,7 +355,7 @@ namespace Intersect.Editor.Forms.Editors
             else if (cmbType.SelectedIndex == (int) SpellTypes.Event)
             {
                 grpEvent.Show();
-                cmbEvent.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Event, mEditorItem.Data1) +
+                cmbEvent.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Event, mEditorItem.Guid1) +
                                          1;
             }
         }
@@ -405,7 +405,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             mChangingName = true;
             mEditorItem.Name = txtName.Text;
-            lstSpells.Items[Database.GameObjectListIndex(GameObjectType.Spell, mEditorItem.Index)] = txtName.Text;
+            lstSpells.Items[Database.GameObjectListIndex(GameObjectType.Spell, mEditorItem.Id)] = txtName.Text;
             mChangingName = false;
         }
 
@@ -670,20 +670,20 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbEvent_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.Data1 = Database.GameObjectIdFromList(GameObjectType.Event, cmbEvent.SelectedIndex - 1);
+            mEditorItem.Guid1 = Database.GameObjectIdFromList(GameObjectType.Event, cmbEvent.SelectedIndex - 1);
         }
 
         private void btnVisualMapSelector_Click(object sender, EventArgs e)
         {
             FrmWarpSelection frmWarpSelection = new FrmWarpSelection();
-            frmWarpSelection.SelectTile(MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapNum, (int) nudWarpX.Value,
+            frmWarpSelection.SelectTile(MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapId, (int) nudWarpX.Value,
                 (int) nudWarpY.Value);
             frmWarpSelection.ShowDialog();
             if (frmWarpSelection.GetResult())
             {
                 for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
                 {
-                    if (MapList.GetOrderedMaps()[i].MapNum == frmWarpSelection.GetMap())
+                    if (MapList.GetOrderedMaps()[i].MapId == frmWarpSelection.GetMap())
                     {
                         cmbWarpMap.SelectedIndex = i;
                         break;
@@ -698,7 +698,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (cmbWarpMap.SelectedIndex > -1 && mEditorItem != null)
             {
-                mEditorItem.Data1 = MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapNum;
+                mEditorItem.Guid1 = MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapId;
             }
         }
 

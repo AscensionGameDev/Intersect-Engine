@@ -1,4 +1,5 @@
-﻿using Intersect;
+﻿using System;
+using Intersect;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect_Client.Classes.General;
@@ -14,8 +15,8 @@ namespace Intersect_Client.Classes.Entities
         private int mSpawnCount;
         private int mSpawnedAmount;
         private int mTotalSpawns;
-        private int mOwner;
-        public int ProjectileNum;
+        private Guid mOwner;
+        public Guid ProjectileId;
         private int mQuantity;
 
         // Individual Spawns
@@ -27,7 +28,7 @@ namespace Intersect_Client.Classes.Entities
         /// <summary>
         ///     The constructor for the inherated projectile class
         /// </summary>
-        public Projectile(int index, long spawnTime, ByteBuffer bf) : base(index, spawnTime, bf)
+        public Projectile(Guid id, ByteBuffer bf) : base(id, bf)
         {
             Vital[(int) Vitals.Health] = 1;
             MaxVital[(int) Vitals.Health] = 1;
@@ -40,11 +41,11 @@ namespace Intersect_Client.Classes.Entities
         {
             if (mLoaded) return;
             base.Load(bf);
-            ProjectileNum = bf.ReadInteger();
+            ProjectileId = bf.ReadGuid();
             Dir = bf.ReadInteger();
             Target = bf.ReadInteger();
-            mOwner = bf.ReadInteger();
-            mMyBase = ProjectileBase.Lookup.Get<ProjectileBase>(ProjectileNum);
+            mOwner = bf.ReadGuid();
+            mMyBase = ProjectileBase.Lookup.Get<ProjectileBase>(ProjectileId);
             if (mMyBase != null)
             {
                 for (int x = 0; x < ProjectileBase.SPAWN_LOCATIONS_WIDTH; x++)
@@ -106,7 +107,7 @@ namespace Intersect_Client.Classes.Entities
         private void AddProjectileSpawns()
         {
             int spawn = FindSpawnAnimationData();
-            AnimationBase animBase = AnimationBase.Lookup.Get<AnimationBase>(mMyBase.Animations[spawn].Animation);
+            AnimationBase animBase = AnimationBase.Lookup.Get<AnimationBase>(mMyBase.Animations[spawn].AnimationId);
 
             for (int x = 0; x < ProjectileBase.SPAWN_LOCATIONS_WIDTH; x++)
             {
@@ -317,16 +318,16 @@ namespace Intersect_Client.Classes.Entities
             {
                 for (int s = 0; s < mSpawnedAmount; s++)
                 {
-                    if (Spawns[s] != null && MapInstance.Lookup.Get<MapInstance>(Spawns[s].SpawnMap) != null)
+                    if (Spawns[s] != null && MapInstance.Lookup.Get<MapInstance>(Spawns[s].SpawnMapId) != null)
                     {
                         Spawns[s].OffsetX = GetRangeX(Spawns[s].Dir, GetDisplacement(Spawns[s].SpawnTime));
                         Spawns[s].OffsetY = GetRangeY(Spawns[s].Dir, GetDisplacement(Spawns[s].SpawnTime));
                         Spawns[s].Anim.SetPosition(
-                            MapInstance.Lookup.Get<MapInstance>(Spawns[s].SpawnMap).GetX() +
+                            MapInstance.Lookup.Get<MapInstance>(Spawns[s].SpawnMapId).GetX() +
                             Spawns[s].SpawnX * Options.TileWidth +
                             Spawns[s].OffsetX +
                             Options.TileWidth / 2,
-                            MapInstance.Lookup.Get<MapInstance>(Spawns[s].SpawnMap).GetY() +
+                            MapInstance.Lookup.Get<MapInstance>(Spawns[s].SpawnMapId).GetY() +
                             Spawns[s].SpawnY * Options.TileHeight +
                             Spawns[s].OffsetY +
                             Options.TileHeight / 2, CurrentX, CurrentY, CurrentMap,
@@ -348,12 +349,12 @@ namespace Intersect_Client.Classes.Entities
                 {
                     if (Spawns[i] != null && Globals.System.GetTimeMs() > Spawns[i].TransmittionTimer)
                     {
-                        var spawnMap = MapInstance.Lookup.Get<MapInstance>(Spawns[i].Map);
+                        var spawnMap = MapInstance.Lookup.Get<MapInstance>(Spawns[i].MapId);
                         if (spawnMap != null)
                         {
-                            int newx = Spawns[i].X + (int) GetRangeX(Spawns[i].Dir, 1);
-                            int newy = Spawns[i].Y + (int) GetRangeY(Spawns[i].Dir, 1);
-                            int newmap = Spawns[i].Map;
+                            var newx = Spawns[i].X + (int) GetRangeX(Spawns[i].Dir, 1);
+                            var newy = Spawns[i].Y + (int) GetRangeY(Spawns[i].Dir, 1);
+                            var newMapId = Spawns[i].MapId;
                             bool killSpawn = false;
 
                             Spawns[i].Distance++;
@@ -362,7 +363,7 @@ namespace Intersect_Client.Classes.Entities
                             {
                                 if (MapInstance.Lookup.Get<MapInstance>(spawnMap.Left) != null)
                                 {
-                                    newmap = spawnMap.Left;
+                                    newMapId = spawnMap.Left;
                                     newx = Options.MapWidth - 1;
                                 }
                                 else
@@ -374,7 +375,7 @@ namespace Intersect_Client.Classes.Entities
                             {
                                 if (MapInstance.Lookup.Get<MapInstance>(spawnMap.Right) != null)
                                 {
-                                    newmap = spawnMap.Right;
+                                    newMapId = spawnMap.Right;
                                     newx = 0;
                                 }
                                 else
@@ -386,7 +387,7 @@ namespace Intersect_Client.Classes.Entities
                             {
                                 if (MapInstance.Lookup.Get<MapInstance>(spawnMap.Up) != null)
                                 {
-                                    newmap = spawnMap.Up;
+                                    newMapId = spawnMap.Up;
                                     newy = Options.MapHeight - 1;
                                 }
                                 else
@@ -398,7 +399,7 @@ namespace Intersect_Client.Classes.Entities
                             {
                                 if (MapInstance.Lookup.Get<MapInstance>(spawnMap.Down) != null)
                                 {
-                                    newmap = spawnMap.Down;
+                                    newMapId = spawnMap.Down;
                                     newy = 0;
                                 }
                                 else
@@ -417,8 +418,8 @@ namespace Intersect_Client.Classes.Entities
 
                             Spawns[i].X = newx;
                             Spawns[i].Y = newy;
-                            Spawns[i].Map = newmap;
-                            var newMap = MapInstance.Lookup.Get<MapInstance>(newmap);
+                            Spawns[i].MapId = newMapId;
+                            var newMap = MapInstance.Lookup.Get<MapInstance>(newMapId);
 
                             //Check for Z-Dimension
                             if (newMap.Attributes[Spawns[i].X, Spawns[i].Y] != null)
@@ -452,21 +453,22 @@ namespace Intersect_Client.Classes.Entities
             }
             else
             {
-                Globals.Entities[MyIndex].Dispose();
+                Globals.Entities[Id].Dispose();
             }
         }
 
         private bool Collided(int i)
         {
             var killSpawn = false;
+            var blockedBy = Guid.Empty;
             int tileBlocked =
-                Globals.Me.IsTileBlocked(Spawns[i].X, Spawns[i].Y, CurrentZ, Spawns[i].Map, Spawns[i].ProjectileBase.IgnoreActiveResources, Spawns[i].ProjectileBase.IgnoreExhaustedResources);
+                Globals.Me.IsTileBlocked(Spawns[i].X, Spawns[i].Y, CurrentZ, Spawns[i].MapId, ref blockedBy, Spawns[i].ProjectileBase.IgnoreActiveResources, Spawns[i].ProjectileBase.IgnoreExhaustedResources);
 
             if (tileBlocked != -1)
             {
-                if (tileBlocked >= 0 && tileBlocked != mOwner && Globals.Entities.ContainsKey(tileBlocked))
+                if (tileBlocked == -6 && blockedBy != mOwner && Globals.Entities.ContainsKey(blockedBy))
                 {
-                    if (Globals.Entities[tileBlocked].GetType() == typeof(Resource))
+                    if (Globals.Entities[blockedBy].GetType() == typeof(Resource))
                     {
                         killSpawn = true;
                     }
@@ -521,14 +523,14 @@ namespace Intersect_Client.Classes.Entities
         public bool AutoRotate;
         public int Dir;
         public int Distance;
-        public int Map;
+        public Guid MapId;
 
         //Clientside variables
         public float OffsetX;
 
         public float OffsetY;
         public ProjectileBase ProjectileBase;
-        public int SpawnMap;
+        public Guid SpawnMapId;
         public long SpawnTime = Globals.System.GetTimeMs();
         public int SpawnX;
         public int SpawnY;
@@ -537,7 +539,7 @@ namespace Intersect_Client.Classes.Entities
         public int Y;
         public int Z;
 
-        public ProjectileSpawns(int dir, int x, int y, int z, int map, AnimationBase animBase, bool autoRotate,
+        public ProjectileSpawns(int dir, int x, int y, int z, Guid mapId, AnimationBase animBase, bool autoRotate,
             ProjectileBase projectileBase, Entity parent)
         {
             X = x;
@@ -545,8 +547,8 @@ namespace Intersect_Client.Classes.Entities
             SpawnX = X;
             SpawnY = Y;
             Z = z;
-            Map = map;
-            SpawnMap = Map;
+            MapId = mapId;
+            SpawnMapId = MapId;
             Dir = dir;
             Anim = new AnimationInstance(animBase, true, autoRotate, Z,parent);
             AutoRotate = autoRotate;

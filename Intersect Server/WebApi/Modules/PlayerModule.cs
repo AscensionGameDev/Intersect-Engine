@@ -27,9 +27,9 @@ namespace Intersect.Server.WebApi.Modules
                 {"level", player.Level},
                 {"experience", player.Exp},
                 {"experiencetnl", player.ExperienceToNextLevel},
-                {"classId", player.ClassIndex},
-                {"class", ClassBase.Lookup.Get<ClassBase>(player.ClassIndex)?.Name},
-                {"map", player.MapIndex},
+                {"classId", player.ClassId},
+                {"class", ClassBase.Lookup.Get<ClassBase>(player.ClassId)?.Name},
+                {"map", player.MapId},
                 {"location", new JObject {
                     {"x", player.X},
                     {"y", player.Y},

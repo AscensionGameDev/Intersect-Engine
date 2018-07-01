@@ -31,7 +31,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 {
                     SaveMap();
                 }
-                Globals.MainForm.EnterMap(((MapListMap) e.Node.Tag).MapNum);
+                Globals.MainForm.EnterMap(((MapListMap) e.Node.Tag).MapId);
             }
         }
 
@@ -140,18 +140,18 @@ namespace Intersect.Editor.Forms.DockingElements
             }
             if (mapTreeList.list.SelectedNode == null)
             {
-                PacketSender.SendCreateMap(-1, Globals.CurrentMap.Index, null);
+                PacketSender.SendCreateMap(-1, Globals.CurrentMap.Id, null);
             }
             else
             {
-                PacketSender.SendCreateMap(-1, Globals.CurrentMap.Index,
+                PacketSender.SendCreateMap(-1, Globals.CurrentMap.Id,
                     (MapListItem) mapTreeList.list.SelectedNode.Tag);
             }
         }
 
         private void toolSelectMap_Click(object sender, EventArgs e)
         {
-            mapTreeList.UpdateMapList(Globals.CurrentMap.Index);
+            mapTreeList.UpdateMapList(Globals.CurrentMap.Id);
         }
     }
 }

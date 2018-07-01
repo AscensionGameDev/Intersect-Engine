@@ -1,9 +1,11 @@
-﻿namespace Intersect.GameObjects.Maps
+﻿using System;
+
+namespace Intersect.GameObjects.Maps
 {
     public class NpcSpawn
     {
         public int Dir;
-        public int NpcNum;
+        public Guid NpcId;
         public int X;
         public int Y;
 
@@ -13,7 +15,7 @@
 
         public NpcSpawn(NpcSpawn copy)
         {
-            NpcNum = copy.NpcNum;
+            NpcId = copy.NpcId;
             X = copy.X;
             Y = copy.Y;
             Dir = copy.Dir;

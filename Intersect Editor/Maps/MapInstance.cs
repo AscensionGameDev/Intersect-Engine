@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
 using Intersect.Editor.Core;
@@ -7,10 +8,11 @@ using Intersect.Editor.General;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
+using Attribute = Intersect.GameObjects.Maps.Attribute;
 
 namespace Intersect.Editor.Maps
 {
-    public class MapInstance : MapBase, IGameObject<int, MapInstance>
+    public class MapInstance : MapBase, IGameObject<Guid, MapInstance>
     {
         private static MapInstances sLookup;
 
@@ -20,7 +22,7 @@ namespace Intersect.Editor.Maps
 
         private byte[] mLoadedData;
 
-        public MapInstance(int mapNum) : base(mapNum, false)
+        public MapInstance(Guid id) : base(id, false)
         {
             lock (MapLock)
             {
@@ -92,7 +94,7 @@ namespace Intersect.Editor.Maps
                     {
                         for (var y = 0; y < Options.MapHeight; y++)
                         {
-                            Layers[i].Tiles[x, y].TilesetIndex = bf.ReadInteger();
+                            Layers[i].Tiles[x, y].TilesetId = bf.ReadGuid();
                             Layers[i].Tiles[x, y].X = bf.ReadInteger();
                             Layers[i].Tiles[x, y].Y = bf.ReadInteger();
                             Layers[i].Tiles[x, y].Autotile = bf.ReadByte();
@@ -145,7 +147,7 @@ namespace Intersect.Editor.Maps
                 {
                     for (var y = 0; y < Options.MapHeight; y++)
                     {
-                        bf.WriteInteger(Layers[i].Tiles[x, y].TilesetIndex);
+                        bf.WriteGuid(Layers[i].Tiles[x, y].TilesetId);
                         bf.WriteInteger(Layers[i].Tiles[x, y].X);
                         bf.WriteInteger(Layers[i].Tiles[x, y].Y);
                         bf.WriteByte(Layers[i].Tiles[x, y].Autotile);
@@ -176,13 +178,13 @@ namespace Intersect.Editor.Maps
         }
 
         //Attribute/Animations
-        public AnimationInstance GetAttributeAnimation(Attribute attr, int animNum)
+        public AnimationInstance GetAttributeAnimation(Attribute attr, Guid animId)
         {
             if (attr == null) return null;
             if (!mAttributeAnimInstances.ContainsKey(attr))
             {
                 mAttributeAnimInstances.Add(attr,
-                    new AnimationInstance(AnimationBase.Lookup.Get<AnimationBase>(animNum), true));
+                    new AnimationInstance(AnimationBase.Lookup.Get<AnimationBase>(animId), true));
             }
             return mAttributeAnimInstances[attr];
         }
@@ -197,21 +199,20 @@ namespace Intersect.Editor.Maps
 
         public void Update()
         {
-            if (Globals.MapsToScreenshot.Contains(Index))
+            if (Globals.MapsToScreenshot.Contains(Id))
             {
                 if (Globals.MapGrid != null && Globals.MapGrid.Loaded)
                 {
-                    if (Globals.MapGrid.Contains(Index))
+                    if (Globals.MapGrid.Contains(Id))
                     {
                         for (int y = Globals.CurrentMap.MapGridY + 1; y >= Globals.CurrentMap.MapGridY - 1; y--)
                         {
                             for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
                             {
                                 if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 &&
-                                    y < Globals.MapGrid.GridHeight &&
-                                    Globals.MapGrid.Grid[x, y].Mapnum > -1)
+                                    y < Globals.MapGrid.GridHeight && Globals.MapGrid.Grid[x, y].MapId != Guid.Empty)
                                 {
-                                    var needMap = Lookup.Get(Globals.MapGrid.Grid[x, y].Mapnum);
+                                    var needMap = Lookup.Get(Globals.MapGrid.Grid[x, y].MapId);
                                     if (needMap == null) return;
                                 }
                             }
@@ -228,10 +229,10 @@ namespace Intersect.Editor.Maps
                             screenshotTexture.Save(ms, ImageFormat.Png);
                             ms.Close();
                         }
-                        Database.SaveMapCache(Index, Revision, ms.ToArray());
+                        Database.SaveMapCache(Id, Revision, ms.ToArray());
                     }
                     Globals.CurrentMap = prevMap;
-                    Globals.MapsToScreenshot.Remove(Index);
+                    Globals.MapsToScreenshot.Remove(Id);
 
                     //See if this map is around our current map, if not let's delete it
                     if (Globals.CurrentMap != null && Globals.MapGrid != null && Globals.MapGrid.Loaded)
@@ -242,7 +243,7 @@ namespace Intersect.Editor.Maps
                             {
                                 if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                                 {
-                                    if (Globals.MapGrid.Grid[x, y].Mapnum == Index) return;
+                                    if (Globals.MapGrid.Grid[x, y].MapId == Id) return;
                                 }
                             }
                         }
@@ -256,7 +257,7 @@ namespace Intersect.Editor.Maps
         public MapBase[,] GenerateAutotileGrid()
         {
             MapBase[,] mapBase = new MapBase[3, 3];
-            if (Globals.MapGrid != null && Globals.MapGrid.Contains(Index))
+            if (Globals.MapGrid != null && Globals.MapGrid.Contains(Id))
             {
                 for (int x = -1; x <= 1; x++)
                 {
@@ -272,7 +273,7 @@ namespace Intersect.Editor.Maps
                             }
                             else
                             {
-                                mapBase[x + 1, y + 1] = Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x1, y1].Mapnum);
+                                mapBase[x + 1, y + 1] = Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x1, y1].MapId);
                             }
                         }
                     }
@@ -292,7 +293,7 @@ namespace Intersect.Editor.Maps
 
         public void UpdateAdjacentAutotiles()
         {
-            if (Globals.MapGrid != null && Globals.MapGrid.Contains(Index))
+            if (Globals.MapGrid != null && Globals.MapGrid.Contains(Id))
             {
                 for (int x = -1; x <= 1; x++)
                 {
@@ -302,7 +303,7 @@ namespace Intersect.Editor.Maps
                         var y1 = MapGridY + y;
                         if (x1 >= 0 && y1 >= 0 && x1 < Globals.MapGrid.GridWidth && y1 < Globals.MapGrid.GridHeight)
                         {
-                            var map = Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x1, y1].Mapnum);
+                            var map = Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x1, y1].MapId);
                             if (map != null && map != this) map.InitAutotiles();
                         }
                     }

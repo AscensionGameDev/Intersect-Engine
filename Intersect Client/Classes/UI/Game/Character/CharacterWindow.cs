@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Intersect;
 using Intersect.Client.Classes.UI.Game.Character;
 using Intersect.Enums;
@@ -176,9 +177,8 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 return;
             }
-            mCharacterName.Text = Globals.Me.MyName;
-            mCharacterLevelAndClass.Text = Strings.Character.levelandclass.ToString( Globals.Me.Level,
-                ClassBase.GetName(Globals.Me.Class));
+            mCharacterName.Text = Globals.Me.Name;
+            mCharacterLevelAndClass.Text = Strings.Character.levelandclass.ToString( Globals.Me.Level, ClassBase.GetName(Globals.Me.Class));
 
             //Load Portrait
             //UNCOMMENT THIS LINE IF YOU'D RATHER HAVE A FACE HERE GameTexture faceTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face, Globals.Me.Face);
@@ -209,15 +209,14 @@ namespace Intersect_Client.Classes.UI.Game
                     var paperdoll = "";
                     if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z]) > -1)
                     {
-                        var equipment = Globals.Me.Equipment;
+                        var equipment = Globals.Me.MyEquipment;
                         if (equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] > -1 &&
-                            equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] <
-                            Options.MaxInvItems)
+                            equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] < Options.MaxInvItems)
                         {
                             var itemNum = Globals.Me.Inventory[
                                     equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])
                                     ]]
-                                .ItemNum;
+                                .ItemId;
                             if (ItemBase.Lookup.Get<ItemBase>(itemNum) != null)
                             {
                                 var itemdata = ItemBase.Lookup.Get<ItemBase>(itemNum);
@@ -292,21 +291,21 @@ namespace Intersect_Client.Classes.UI.Game
 
             for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {
-                if (Globals.Me.Equipment[i] > -1 && Globals.Me.Equipment[i] < Options.MaxInvItems)
+                if (Globals.Me.MyEquipment[i] > -1 && Globals.Me.MyEquipment[i] < Options.MaxInvItems)
                 {
-                    if (Globals.Me.Inventory[Globals.Me.Equipment[i]].ItemNum > -1)
+                    if (Globals.Me.Inventory[Globals.Me.MyEquipment[i]].ItemId != Guid.Empty)
                     {
-                        Items[i].Update(Globals.Me.Inventory[Globals.Me.Equipment[i]].ItemNum,
-                            Globals.Me.Inventory[Globals.Me.Equipment[i]].StatBoost);
+                        Items[i].Update(Globals.Me.Inventory[Globals.Me.MyEquipment[i]].ItemId,
+                            Globals.Me.Inventory[Globals.Me.MyEquipment[i]].StatBoost);
                     }
                     else
                     {
-                        Items[i].Update(-1, mEmptyStatBoost);
+                        Items[i].Update(Guid.Empty, mEmptyStatBoost);
                     }
                 }
                 else
                 {
-                    Items[i].Update(-1, mEmptyStatBoost);
+                    Items[i].Update(Guid.Empty, mEmptyStatBoost);
                 }
             }
         }

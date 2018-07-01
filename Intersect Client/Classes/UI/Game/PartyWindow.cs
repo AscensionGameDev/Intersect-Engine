@@ -77,7 +77,7 @@ namespace Intersect_Client.Classes.UI.Game
                     if (i < Globals.Me.Party.Count)
                     {
                         mKickButtons[i].SetToolTipText(Strings.Parties.kick.ToString(
-                            Globals.Entities[Globals.Me.Party[i].Index].MyName));
+                            Globals.Entities[Globals.Me.Party[i].Id].Name));
                     }
                     else
                     {
@@ -88,7 +88,7 @@ namespace Intersect_Client.Classes.UI.Game
                     //Only show the kick buttons if its you or you are the party leader
                     if (i < Globals.Me.Party.Count)
                     {
-                        if (Globals.Me.Party[0].Index == Globals.Me.MyIndex)
+                        if (Globals.Me.Party[0].Id == Globals.Me.Id)
                         {
                             mKickButtons[i].Show();
                         }
@@ -139,7 +139,7 @@ namespace Intersect_Client.Classes.UI.Game
                         if (i > 0) mKickButtons[i].Hide();
 
                         //Only show the kick buttons if its you or you are the party leader
-                        if (Globals.Me.Party[0].Index == Globals.Me.MyIndex && i > 0)
+                        if (Globals.Me.Party[0].Id == Globals.Me.Id && i > 0)
                         {
                             mKickButtons[i].Show();
                             mKickButtons[i].SetToolTipText(Strings.Parties.kick.ToString(Globals.Me.Party[i].Name));
@@ -178,7 +178,7 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 if (mKickButtons[i] == sender)
                 {
-                    PacketSender.SendPartyKick(i);
+                    PacketSender.SendPartyKick(Globals.Me.Party[i].Id);
                     return;
                 }
             }

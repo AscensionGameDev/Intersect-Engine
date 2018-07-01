@@ -9,8 +9,19 @@ namespace Intersect.GameObjects
     public class ShopBase : DatabaseObject<ShopBase>
     {
         public bool BuyingWhitelist { get; set; } = true;
-        public int DefaultCurrency { get; set; }
-        
+
+        //Spawn Info
+        [Column("DefaultCurrency")]
+        [JsonProperty]
+        public Guid DefaultCurrencyId { get; protected set; }
+        [NotMapped]
+        [JsonIgnore]
+        public ItemBase DefaultCurrency
+        {
+            get => ItemBase.Lookup.Get<ItemBase>(DefaultCurrencyId);
+            set => DefaultCurrencyId = value?.Id ?? Guid.Empty;
+        }
+
         [Column("BuyingItems")]
         [JsonIgnore]
         public string JsonBuyingItems
@@ -32,7 +43,7 @@ namespace Intersect.GameObjects
         public List<ShopItem> SellingItems = new List<ShopItem>();
 
         [JsonConstructor]
-        public ShopBase(int index) : base(index)
+        public ShopBase(Guid id) : base(id)
         {
             Name = "New Shop";
         }
@@ -42,43 +53,38 @@ namespace Intersect.GameObjects
         {
             Name = "New Shop";
         }
-
-        public static ShopBase Get(int index)
-        {
-            return ShopBase.Lookup.Get<ShopBase>(index);
-        }
     }
 
     public class ShopItem
     {
-        public int CostItemNum;
-        public int CostItemVal;
-        public int ItemNum;
+        public Guid CostItemId;
+        public int CostItemQuantity;
+        public Guid ItemId;
 
         [NotMapped]
-        public ItemBase Item => ItemBase.Lookup.Get<ItemBase>(ItemNum);
+        public ItemBase Item => ItemBase.Lookup.Get<ItemBase>(ItemId);
 
         public ShopItem(ByteBuffer myBuffer)
         {
-            ItemNum = myBuffer.ReadInteger();
-            CostItemNum = myBuffer.ReadInteger();
-            CostItemVal = myBuffer.ReadInteger();
+            ItemId = myBuffer.ReadGuid();
+            CostItemId = myBuffer.ReadGuid();
+            CostItemQuantity = myBuffer.ReadInteger();
         }
 
         [JsonConstructor]
-        public ShopItem(int itemNum, int costItemNum, int costVal)
+        public ShopItem(Guid itemId, Guid costItemId, int costVal)
         {
-            ItemNum = itemNum;
-            CostItemNum = costItemNum;
-            CostItemVal = costVal;
+            ItemId = itemId;
+            CostItemId = costItemId;
+            CostItemQuantity = costVal;
         }
 
         public byte[] Data()
         {
             ByteBuffer myBuffer = new ByteBuffer();
-            myBuffer.WriteInteger(ItemNum);
-            myBuffer.WriteInteger(CostItemNum);
-            myBuffer.WriteInteger(CostItemVal);
+            myBuffer.WriteGuid(ItemId);
+            myBuffer.WriteGuid(CostItemId);
+            myBuffer.WriteInteger(CostItemQuantity);
             return myBuffer.ToArray();
         }
     }
