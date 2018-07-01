@@ -8,6 +8,7 @@ namespace Intersect.GameObjects.Events
         public int[] Ints = new int[6];
         public EventMoveRoute Route;
         public string[] Strs = new string[6];
+        public Guid[] Guids = new Guid[3];
         public EventCommandType Type;
 
         public EventCommand()

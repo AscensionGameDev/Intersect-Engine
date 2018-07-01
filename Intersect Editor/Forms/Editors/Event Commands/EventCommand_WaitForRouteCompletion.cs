@@ -32,10 +32,10 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                 if (mEditingCommand.Ints[0] == -1) cmbEntities.SelectedIndex = -1;
                 foreach (var evt in mCurrentMap.LocalEvents)
                 {
-                    cmbEntities.Items.Add(evt.Key == mEditingEvent.Index
+                    cmbEntities.Items.Add(evt.Key == mEditingEvent.Id
                         ? Strings.EventWaitForRouteCompletion.This + " "
                         : "" + evt.Value.Name);
-                    if (mEditingCommand.Ints[0] == evt.Key) cmbEntities.SelectedIndex = cmbEntities.Items.Count - 1;
+                    if (mEditingCommand.Guids[0] == evt.Key) cmbEntities.SelectedIndex = cmbEntities.Items.Count - 1;
                 }
             }
             if (cmbEntities.SelectedIndex == -1 && cmbEntities.Items.Count > 0)
@@ -65,7 +65,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                 }
                 else
                 {
-                    mEditingCommand.Ints[0] = mCurrentMap.LocalEvents.Keys.ToList()[cmbEntities.SelectedIndex - 1];
+                    mEditingCommand.Guids[0] = mCurrentMap.LocalEvents.Keys.ToList()[cmbEntities.SelectedIndex - 1];
                 }
             }
             mEventEditor.FinishCommandEdit();

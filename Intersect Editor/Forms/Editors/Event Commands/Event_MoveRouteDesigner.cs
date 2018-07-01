@@ -65,11 +65,11 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                 if (mEditingCommand != null)
                 {
                     cmbTarget.Items.Add(Strings.EventMoveRoute.player);
-                    if (mEditingCommand.Route.Target == -1) cmbTarget.SelectedIndex = 0;
+                    if (mEditingCommand.Route.Target == Guid.Empty) cmbTarget.SelectedIndex = 0;
                 }
                 foreach (var evt in mCurrentMap.LocalEvents)
                 {
-                    cmbTarget.Items.Add(evt.Key == mEditingEvent.Index
+                    cmbTarget.Items.Add(evt.Key == mEditingEvent.Id
                         ? Strings.EventMoveRoute.thisevent.ToString()
                         : "" + evt.Value.Name);
                     if (mEditingCommand != null)
@@ -79,7 +79,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                     }
                     else
                     {
-                        if (mEditingRoute.Target == evt.Key || mEditingRoute.Target == -1)
+                        if (mEditingRoute.Target == evt.Key || mEditingRoute.Target == Guid.Empty)
                             cmbTarget.SelectedIndex = cmbTarget.Items.Count - 1;
                     }
                 }
@@ -197,14 +197,14 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         private void btnOkay_Click(object sender, EventArgs e)
         {
             mEditingRoute.CopyFrom(mTmpMoveRoute);
-            mEditingRoute.Target = -1;
+            mEditingRoute.Target = Guid.Empty;
             if (mEditingCommand != null)
             {
                 if (!mEditingEvent.CommonEvent)
                 {
                     if (cmbTarget.SelectedIndex == 0)
                     {
-                        mEditingRoute.Target = -1;
+                        mEditingRoute.Target = Guid.Empty;
                     }
                     else
                     {

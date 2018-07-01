@@ -444,7 +444,8 @@ namespace Intersect.Editor.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var type = (GameObjectType) bf.ReadInteger();
-            var id = bf.ReadInteger();
+            var index = bf.ReadInteger();
+            var id = bf.ReadGuid();
             var another = Convert.ToBoolean(bf.ReadInteger());
             var deleted = Convert.ToBoolean(bf.ReadInteger());
             var json = "";
@@ -455,23 +456,23 @@ namespace Intersect.Editor.Networking
                 case GameObjectType.Animation:
                     if (deleted)
                     {
-                        var anim = AnimationBase.Lookup.Get<AnimationBase>(id);
+                        var anim = AnimationBase.Lookup.Get<AnimationBase>(index);
                         anim.Delete();
                     }
                     else
                     {
-                        var anim = new AnimationBase(id);
+                        var anim = new AnimationBase(index);
                         anim.Load(json);
                         try
                         {
-                            AnimationBase.Lookup.Set(id, anim);
+                            AnimationBase.Lookup.Set(index, anim);
                         }
                         catch (Exception exception)
                         {
                             Log.Error($"Another mystery NPE. [Lookup={AnimationBase.Lookup}]");
                             if (exception.InnerException != null) Log.Error(exception.InnerException);
                             Log.Error(exception);
-                            Log.Error($"{nameof(id)}={id},{nameof(anim)}={anim}");
+                            Log.Error($"{nameof(index)}={index},{nameof(anim)}={anim}");
                             throw;
                         }
                     }
@@ -479,131 +480,131 @@ namespace Intersect.Editor.Networking
                 case GameObjectType.Class:
                     if (deleted)
                     {
-                        var cls = ClassBase.Lookup.Get<ClassBase>(id);
+                        var cls = ClassBase.Lookup.Get<ClassBase>(index);
                         cls.Delete();
                     }
                     else
                     {
-                        var cls = new ClassBase(id);
+                        var cls = new ClassBase(index);
                         cls.Load(json);
-                        ClassBase.Lookup.Set(id, cls);
+                        ClassBase.Lookup.Set(index, cls);
                     }
                     break;
                 case GameObjectType.Item:
                     if (deleted)
                     {
-                        var itm = ItemBase.Lookup.Get<ItemBase>(id);
+                        var itm = ItemBase.Lookup.Get<ItemBase>(index);
                         itm.Delete();
                     }
                     else
                     {
-                        var itm = new ItemBase(id);
+                        var itm = new ItemBase(index);
                         itm.Load(json);
-                        ItemBase.Lookup.Set(id, itm);
+                        ItemBase.Lookup.Set(index, itm);
                     }
                     break;
                 case GameObjectType.Npc:
                     if (deleted)
                     {
-                        var npc = NpcBase.Lookup.Get<NpcBase>(id);
+                        var npc = NpcBase.Lookup.Get<NpcBase>(index);
                         npc.Delete();
                     }
                     else
                     {
-                        var npc = new NpcBase(id);
+                        var npc = new NpcBase(index);
                         npc.Load(json);
-                        NpcBase.Lookup.Set(id, npc);
+                        NpcBase.Lookup.Set(index, npc);
                     }
                     break;
                 case GameObjectType.Projectile:
                     if (deleted)
                     {
-                        var proj = ProjectileBase.Lookup.Get<ProjectileBase>(id);
+                        var proj = ProjectileBase.Lookup.Get<ProjectileBase>(index);
                         proj.Delete();
                     }
                     else
                     {
-                        var proj = new ProjectileBase(id);
+                        var proj = new ProjectileBase(index);
                         proj.Load(json);
-                        ProjectileBase.Lookup.Set(id, proj);
+                        ProjectileBase.Lookup.Set(index, proj);
                     }
                     break;
                 case GameObjectType.Quest:
                     if (deleted)
                     {
-                        var qst = QuestBase.Lookup.Get<QuestBase>(id);
+                        var qst = QuestBase.Lookup.Get<QuestBase>(index);
                         qst.Delete();
                     }
                     else
                     {
-                        var qst = new QuestBase(id);
+                        var qst = new QuestBase(index);
                         qst.Load(json);
-                        QuestBase.Lookup.Set(id, qst);
+                        QuestBase.Lookup.Set(index, qst);
                     }
                     break;
                 case GameObjectType.Resource:
                     if (deleted)
                     {
-                        var res = ResourceBase.Lookup.Get<ResourceBase>(id);
+                        var res = ResourceBase.Lookup.Get<ResourceBase>(index);
                         res.Delete();
                     }
                     else
                     {
-                        var res = new ResourceBase(id);
+                        var res = new ResourceBase(index);
                         res.Load(json);
-                        ResourceBase.Lookup.Set(id, res);
+                        ResourceBase.Lookup.Set(index, res);
                     }
                     break;
                 case GameObjectType.Shop:
                     if (deleted)
                     {
-                        var shp = ShopBase.Lookup.Get<ShopBase>(id);
+                        var shp = ShopBase.Lookup.Get<ShopBase>(index);
                         shp.Delete();
                     }
                     else
                     {
-                        var shp = new ShopBase(id);
+                        var shp = new ShopBase(index);
                         shp.Load(json);
-                        ShopBase.Lookup.Set(id, shp);
+                        ShopBase.Lookup.Set(index, shp);
                     }
                     break;
                 case GameObjectType.Spell:
                     if (deleted)
                     {
-                        var spl = SpellBase.Lookup.Get<SpellBase>(id);
+                        var spl = SpellBase.Lookup.Get<SpellBase>(index);
                         spl.Delete();
                     }
                     else
                     {
-                        var spl = new SpellBase(id);
+                        var spl = new SpellBase(index);
                         spl.Load(json);
-                        SpellBase.Lookup.Set(id, spl);
+                        SpellBase.Lookup.Set(index, spl);
                     }
                     break;
                 case GameObjectType.CraftTables:
                     if (deleted)
                     {
-                        var cft = CraftingTableBase.Lookup.Get<CraftingTableBase>(id);
+                        var cft = CraftingTableBase.Lookup.Get<CraftingTableBase>(index);
                         cft.Delete();
                     }
                     else
                     {
-                        var cft = new CraftingTableBase(id);
+                        var cft = new CraftingTableBase(index);
                         cft.Load(json);
-                        CraftingTableBase.Lookup.Set(id, cft);
+                        CraftingTableBase.Lookup.Set(index, cft);
                     }
                     break;
                 case GameObjectType.Crafts:
                     if (deleted)
                     {
-                        var cft = CraftBase.Lookup.Get<CraftBase>(id);
+                        var cft = CraftBase.Lookup.Get<CraftBase>(index);
                         cft.Delete();
                     }
                     else
                     {
-                        var cft = new CraftBase(id);
+                        var cft = new CraftBase(index);
                         cft.Load(json);
-                        CraftBase.Lookup.Set(id, cft);
+                        CraftBase.Lookup.Set(index, cft);
                     }
                     break;
                 case GameObjectType.Map:
@@ -612,12 +613,12 @@ namespace Intersect.Editor.Networking
                 case GameObjectType.CommonEvent:
                     if (deleted)
                     {
-                        var evt = EventBase.Lookup.Get<EventBase>(id);
+                        var evt = EventBase.Lookup.Get<EventBase>(index);
                         evt.Delete();
                     }
                     else
                     {
-                        var evt = new EventBase(id, -1, -1, -1,true);
+                        var evt = new EventBase(id,true);
                         evt.Load(json);
                         EventBase.Lookup.Set(id, evt);
                     }
@@ -625,59 +626,59 @@ namespace Intersect.Editor.Networking
                 case GameObjectType.PlayerSwitch:
                     if (deleted)
                     {
-                        var pswtch = PlayerSwitchBase.Lookup.Get<PlayerSwitchBase>(id);
+                        var pswtch = PlayerSwitchBase.Lookup.Get<PlayerSwitchBase>(index);
                         pswtch.Delete();
                     }
                     else
                     {
-                        var pswtch = new PlayerSwitchBase(id);
+                        var pswtch = new PlayerSwitchBase(index);
                         pswtch.Load(json);
-                        PlayerSwitchBase.Lookup.Set(id, pswtch);
+                        PlayerSwitchBase.Lookup.Set(index, pswtch);
                     }
                     break;
                 case GameObjectType.PlayerVariable:
                     if (deleted)
                     {
-                        var pvar = PlayerVariableBase.Lookup.Get<PlayerVariableBase>(id);
+                        var pvar = PlayerVariableBase.Lookup.Get<PlayerVariableBase>(index);
                         pvar.Delete();
                     }
                     else
                     {
-                        var pvar = new PlayerVariableBase(id);
+                        var pvar = new PlayerVariableBase(index);
                         pvar.Load(json);
-                        PlayerVariableBase.Lookup.Set(id, pvar);
+                        PlayerVariableBase.Lookup.Set(index, pvar);
                     }
                     break;
                 case GameObjectType.ServerSwitch:
                     if (deleted)
                     {
-                        var sswtch = ServerSwitchBase.Lookup.Get<ServerSwitchBase>(id);
+                        var sswtch = ServerSwitchBase.Lookup.Get<ServerSwitchBase>(index);
                         sswtch.Delete();
                     }
                     else
                     {
-                        var sswtch = new ServerSwitchBase(id);
+                        var sswtch = new ServerSwitchBase(index);
                         sswtch.Load(json);
-                        ServerSwitchBase.Lookup.Set(id, sswtch);
+                        ServerSwitchBase.Lookup.Set(index, sswtch);
                     }
                     break;
                 case GameObjectType.ServerVariable:
                     if (deleted)
                     {
-                        var svar = ServerVariableBase.Lookup.Get<ServerVariableBase>(id);
+                        var svar = ServerVariableBase.Lookup.Get<ServerVariableBase>(index);
                         svar.Delete();
                     }
                     else
                     {
-                        var svar = new ServerVariableBase(id);
+                        var svar = new ServerVariableBase(index);
                         svar.Load(json);
-                        ServerVariableBase.Lookup.Set(id, svar);
+                        ServerVariableBase.Lookup.Set(index, svar);
                     }
                     break;
                 case GameObjectType.Tileset:
-                    var obj = new TilesetBase(id);
+                    var obj = new TilesetBase(index);
                     obj.Load(json);
-                    TilesetBase.Lookup.Set(id, obj);
+                    TilesetBase.Lookup.Set(index, obj);
                     if (Globals.HasGameData && !another) GameContentManager.LoadTilesets();
                     break;
                 default:

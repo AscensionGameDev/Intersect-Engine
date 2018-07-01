@@ -300,7 +300,7 @@ namespace Intersect.Server.Classes.Entities
                                     var foundEvent = EventExists(map.Index, mapEvent.SpawnX, mapEvent.SpawnY);
                                     if (foundEvent == null)
                                     {
-                                        var tmpEvent = new EventInstance(mEventCounter++, MyClient, mapEvent, map.Index)
+                                        var tmpEvent = new EventInstance(mEventCounter++,map.Id, MyClient, mapEvent, map.Index)
                                         {
                                             IsGlobal = mapEvent.IsGlobal == 1,
                                             MapNum = map.Index,
@@ -3226,11 +3226,11 @@ namespace Intersect.Server.Classes.Entities
             return null;
         }
 
-        public void TryActivateEvent(int mapNum, int eventIndex)
+        public void TryActivateEvent(int mapNum, Guid eventId)
         {
             foreach (var evt in EventLookup.Values)
             {
-                if (evt.MapNum == mapNum && evt.BaseEvent.MapId == eventIndex)
+                if (evt.MapNum == mapNum && evt.BaseEvent.Id == eventId)
                 {
                     if (evt.PageInstance == null) return;
                     if (evt.PageInstance.Trigger != 0) return;
@@ -3269,13 +3269,13 @@ namespace Intersect.Server.Classes.Entities
             }
         }
 
-        public void RespondToEvent(int mapNum, int eventIndex, int responseId)
+        public void RespondToEvent(int mapNum, Guid eventId, int responseId)
         {
             lock (mEventLock)
             {
                 foreach (var evt in EventLookup.Values)
                 {
-                    if (evt.MapNum == mapNum && evt.BaseEvent.MapId == eventIndex)
+                    if (evt.MapNum == mapNum && evt.BaseEvent.Id == eventId)
                     {
                         if (evt.CallStack.Count <= 0) return;
                         if (evt.CallStack.Peek().WaitingForResponse != CommandInstance.EventResponse.Dialogue)
@@ -3352,7 +3352,7 @@ namespace Intersect.Server.Classes.Entities
                 }
                 mCommonEventLaunches++;
                 var commonEventLaunch = mCommonEventLaunches;
-                var tmpEvent = new EventInstance(mEventCounter++, MyClient, baseEvent, -1)
+                var tmpEvent = new EventInstance(mEventCounter++,Guid.Empty,MyClient, baseEvent, -1)
                 {
                     MapNum = -1 * commonEventLaunch,
                     SpawnX = -1,
@@ -3364,7 +3364,7 @@ namespace Intersect.Server.Classes.Entities
                 {
                     if ((trigger == -1 || baseEvent.Pages[i].Trigger == trigger) && tmpEvent.CanSpawnPage(i, baseEvent))
                     {
-                        tmpEvent.PageInstance = new EventPageInstance(baseEvent, baseEvent.Pages[i], baseEvent.MapId, -1 * commonEventLaunch, tmpEvent, MyClient);
+                        tmpEvent.PageInstance = new EventPageInstance(baseEvent, baseEvent.Pages[i],-1 * commonEventLaunch, -1 * commonEventLaunch, tmpEvent, MyClient);
                         tmpEvent.PageIndex = i;
                         //Check for /command trigger
                         if (trigger == (int)EventPage.CommonEventTriggers.Command)

@@ -10,18 +10,9 @@ namespace Intersect.GameObjects.Events
 {
     public class EventBase : DatabaseObject<EventBase>
     {
-        [Column("Map")]
-        public int MapId { get; protected set; } = -1;
-        [NotMapped]
-        [JsonIgnore]
-        public MapBase Map
-        {
-            get => MapBase.Lookup.Get<MapBase>(MapId);
-            set => MapId = value?.Index ?? -1;
-        }
-
-        public int SpawnX { get; set; }
-        public int SpawnY { get; set; }
+        public int Map { get; set; } = -1;
+        public int SpawnX { get; set; } = -1;
+        public int SpawnY { get; set; } = -1;
         public bool CommonEvent { get; set; }
         public byte IsGlobal { get; set; }
 
@@ -56,11 +47,11 @@ namespace Intersect.GameObjects.Events
         }
 
         [JsonConstructor]
-        public EventBase(int index, int mapIndex, int x, int y, bool isCommon = false, byte isGlobal = 0) : base(index)
+        public EventBase(Guid id, int map, int x, int y, bool isCommon = false, byte isGlobal = 0) : base(id)
         {
             Name = "";
-            MapId = mapIndex;
-            if (isCommon) Name = "Common Event " + index;
+            Map = map;
+            if (isCommon) Name = "Common Event " + id;
             SpawnX = x;
             SpawnY = y;
             CommonEvent = isCommon;
@@ -68,16 +59,22 @@ namespace Intersect.GameObjects.Events
             Pages = new List<EventPage> {new EventPage()};
         }
 
-        public EventBase(int index,int mapIndex, EventBase copy) : base(index)
+        public EventBase(Guid id, bool isCommon = false) : base(id)
+        {
+            Name = "New Event";
+            Pages = new List<EventPage>();
+            CommonEvent = isCommon;
+        }
+
+        public EventBase(Guid id, EventBase copy) : base(id)
         {
             Name = "New Event";
             Pages = new List<EventPage>();
             Load(copy.JsonData);
             CommonEvent = copy.CommonEvent;
-            MapId = mapIndex;
         }
 
-        public EventBase(int index, string json, bool isCommon = false) : base(index)
+        public EventBase(Guid id, string json, bool isCommon = false) : base(id)
         {
             Name = "New Event";
             CommonEvent = isCommon;

@@ -116,10 +116,10 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                     {
                         foreach (var evt in mCurrentMap.LocalEvents)
                         {
-                            cmbEntities.Items.Add(evt.Key == mEditingEvent.Index
+                            cmbEntities.Items.Add(evt.Key == mEditingEvent.Id
                                 ? Strings.EventSpawnNpc.This + " "
                                 : "" + evt.Value.Name);
-                            if (mMyCommand.Ints[2] == evt.Key) cmbEntities.SelectedIndex = cmbEntities.Items.Count - 1;
+                            if (mMyCommand.Guids[0] == evt.Key) cmbEntities.SelectedIndex = cmbEntities.Items.Count - 1;
                         }
                     }
                     UpdateSpawnPreview();
@@ -167,7 +167,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                     }
                     else
                     {
-                        mMyCommand.Ints[2] = mCurrentMap.LocalEvents.Keys.ToList()[cmbEntities.SelectedIndex - 1];
+                        mMyCommand.Guids[0] = mCurrentMap.LocalEvents.Keys.ToList()[cmbEntities.SelectedIndex - 1];
                     }
                     mMyCommand.Ints[3] = mSpawnX;
                     mMyCommand.Ints[4] = mSpawnY;

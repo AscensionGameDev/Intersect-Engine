@@ -678,8 +678,7 @@ namespace Intersect.Editor.Forms.Editors
             }
             if (NewEvent)
             {
-                if (MyMap.EventIndex == MyEvent.Index + 1) MyMap.EventIndex--;
-                MyMap.LocalEvents.Remove(MyEvent.Index);
+                MyMap.LocalEvents.Remove(MyEvent.Id);
             }
             else
             {
@@ -1184,7 +1183,7 @@ namespace Intersect.Editor.Forms.Editors
                     }
                     return Strings.EventCommandList.warp.ToString( mapName, command.Ints[1], command.Ints[2], Strings.Directions.dir[command.Ints[3] - 1]);
                 case EventCommandType.SetMoveRoute:
-                    if (command.Route.Target == -1)
+                    if (command.Route.Target == Guid.Empty)
                     {
                         return Strings.EventCommandList.moveroute.ToString(
                             Strings.EventCommandList.moverouteplayer);
@@ -1209,11 +1208,11 @@ namespace Intersect.Editor.Forms.Editors
                         return Strings.EventCommandList.waitforroute.ToString(
                             Strings.EventCommandList.moverouteplayer);
                     }
-                    else if (MyMap.LocalEvents.ContainsKey(command.Ints[0]))
+                    else if (MyMap.LocalEvents.ContainsKey(command.Guids[0]))
                     {
                         return Strings.EventCommandList.waitforroute.ToString(
                             Strings.EventCommandList.moverouteevent.ToString( (command.Ints[0]),
-                                MyMap.LocalEvents[command.Ints[0]].Name));
+                                MyMap.LocalEvents[command.Guids[0]].Name));
                     }
                     else
                     {
@@ -1253,11 +1252,11 @@ namespace Intersect.Editor.Forms.Editors
                             }
                             else
                             {
-                                if (MyMap.LocalEvents.ContainsKey(command.Ints[2]))
+                                if (MyMap.LocalEvents.ContainsKey(command.Guids[0]))
                                 {
                                     return Strings.EventCommandList.spawnnpc.ToString( NpcBase.GetName(command.Ints[0]),
                                         Strings.EventCommandList.spawnonevent.ToString( command.Ints[2],
-                                            MyMap.LocalEvents[command.Ints[2]].Name, command.Ints[3], command.Ints[4],
+                                            MyMap.LocalEvents[command.Guids[0]].Name, command.Ints[3], command.Ints[4],
                                             retain));
                                 }
                                 else
@@ -1316,12 +1315,12 @@ namespace Intersect.Editor.Forms.Editors
                             }
                             else
                             {
-                                if (MyMap.LocalEvents.ContainsKey(command.Ints[2]))
+                                if (MyMap.LocalEvents.ContainsKey(command.Guids[0]))
                                 {
                                     return Strings.EventCommandList.playanimation.ToString(
                                         AnimationBase.GetName(command.Ints[0]),
                                         Strings.EventCommandList.animationonevent.ToString( (command.Ints[2]),
-                                            MyMap.LocalEvents[command.Ints[2]].Name, command.Ints[3],
+                                            MyMap.LocalEvents[command.Guids[0]].Name, command.Ints[3],
                                             command.Ints[4], spawnOpt));
                                 }
                                 else

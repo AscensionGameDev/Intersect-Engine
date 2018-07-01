@@ -43,11 +43,12 @@ namespace Intersect.Server.Classes.Entities
         //Special conditions
         public bool PlayerHasDied;
 
+        public Guid Map;
         public int SpawnX;
         public int SpawnY;
         public long WaitTimer;
 
-        public EventInstance(int index, Client client, EventBase baseEvent, int mapNum)
+        public EventInstance(int index, Guid map, Client client, EventBase baseEvent, int mapNum)
         {
             MapIndex = index;
             MyClient = client;
@@ -55,11 +56,12 @@ namespace Intersect.Server.Classes.Entities
             MyPlayer = client.Entity;
             SelfSwitch = new bool[4];
             BaseEvent = baseEvent;
+            Map = map;
             CurrentX = baseEvent.SpawnX;
             CurrentY = baseEvent.SpawnY;
         }
 
-        public EventInstance(EventBase baseEvent, int mapIndex, int mapNum) //Global constructor
+        public EventInstance(EventBase baseEvent,Guid map, int mapIndex, int mapNum) //Global constructor
         {
             IsGlobal = true;
             MapNum = mapNum;
@@ -67,6 +69,7 @@ namespace Intersect.Server.Classes.Entities
             MapIndex = mapIndex;
             SelfSwitch = new bool[4];
             GlobalPageInstance = new EventPageInstance[BaseEvent.Pages.Count];
+            Map = map;
             CurrentX = baseEvent.SpawnX;
             CurrentY = baseEvent.SpawnY;
             for (int i = 0; i < BaseEvent.Pages.Count; i++)
@@ -117,16 +120,16 @@ namespace Intersect.Server.Classes.Entities
                             CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
                         while (CallStack.Peek().WaitingForResponse == CommandInstance.EventResponse.None)
                         {
-                            if (CallStack.Peek().WaitingForRoute > -2)
+                            if (CallStack.Peek().WaitingForRoute != Guid.Empty)
                             {
-                                if (CallStack.Peek().WaitingForRoute == -1)
+                                if (CallStack.Peek().WaitingForRoute == MyPlayer.Id)
                                 {
                                     if (MyPlayer.MoveRoute == null ||
                                         (MyPlayer.MoveRoute.Complete &&
                                          MyPlayer.MoveTimer < Globals.System.GetTimeMs()))
                                     {
-                                        CallStack.Peek().WaitingForRoute = -2;
-                                        CallStack.Peek().WaitingForRouteMap = -1;
+                                        CallStack.Peek().WaitingForRoute = Guid.Empty;
+                                        CallStack.Peek().WaitingForRouteMap = Guid.Empty;
                                     }
                                 }
                                 else
@@ -134,17 +137,17 @@ namespace Intersect.Server.Classes.Entities
                                     //Check if the exist exists && if the move route is completed.
                                     foreach (var evt in MyPlayer.EventLookup.Values)
                                     {
-                                        if (evt.MapNum == CallStack.Peek().WaitingForRouteMap && evt.BaseEvent.MapId == CallStack.Peek().WaitingForRoute)
+                                        if (evt.Map == CallStack.Peek().WaitingForRouteMap && evt.BaseEvent.Id == CallStack.Peek().WaitingForRoute)
                                         {
                                             if (evt.PageInstance == null) break;
                                             if (!evt.PageInstance.MoveRoute.Complete) break;
-                                            CallStack.Peek().WaitingForRoute = -2;
-                                            CallStack.Peek().WaitingForRouteMap = -1;
+                                            CallStack.Peek().WaitingForRoute = Guid.Empty;
+                                            CallStack.Peek().WaitingForRouteMap = Guid.Empty;
                                             break;
                                         }
                                     }
                                 }
-                                if (CallStack.Peek().WaitingForRoute > -2) break;
+                                if (CallStack.Peek().WaitingForRoute != Guid.Empty) break;
                             }
                             else
                             {
@@ -199,7 +202,7 @@ namespace Intersect.Server.Classes.Entities
                         {
                             if (MapInstance.Lookup.Get<MapInstance>(MapNum).GetGlobalEventInstance(BaseEvent) != null)
                             {
-                                PageInstance = new EventPageInstance(BaseEvent, BaseEvent.Pages[i], BaseEvent.MapId,
+                                PageInstance = new EventPageInstance(BaseEvent, BaseEvent.Pages[i], BaseEvent.Map,
                                     MapNum, this, MyClient,
                                     MapInstance.Lookup.Get<MapInstance>(MapNum).GetGlobalEventInstance(BaseEvent)
                                         .GlobalPageInstance[i]);
@@ -209,7 +212,7 @@ namespace Intersect.Server.Classes.Entities
                         }
                         else
                         {
-                            PageInstance = new EventPageInstance(BaseEvent, BaseEvent.Pages[i], BaseEvent.MapId,
+                            PageInstance = new EventPageInstance(BaseEvent, BaseEvent.Pages[i], BaseEvent.Map,
                                 MapNum, this, MyClient);
                             sendLeave = false;
                             PageIndex = i;
@@ -222,11 +225,11 @@ namespace Intersect.Server.Classes.Entities
                 {
                     if (IsGlobal)
                     {
-                        PacketSender.SendEntityLeaveTo(MyClient, BaseEvent.MapId, (int) EntityTypes.Event, MapNum);
+                        PacketSender.SendEntityLeaveTo(MyClient, BaseEvent.Map, (int) EntityTypes.Event, MapNum);
                     }
                     else
                     {
-                        PacketSender.SendEntityLeaveTo(MyClient, BaseEvent.MapId, (int) EntityTypes.Event, MapNum);
+                        PacketSender.SendEntityLeaveTo(MyClient, BaseEvent.Map, (int) EntityTypes.Event, MapNum);
                     }
                 }
             }
@@ -612,7 +615,7 @@ namespace Intersect.Server.Classes.Entities
             {
                 case EventCommandType.ShowText:
                     PacketSender.SendEventDialog(MyClient, ParseEventText(command.Strs[0]), command.Strs[1], MapNum,
-                        BaseEvent.MapId);
+                        BaseEvent.Map);
                     CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.Dialogue;
                     CallStack.Peek().CommandIndex++;
                     break;
@@ -620,7 +623,7 @@ namespace Intersect.Server.Classes.Entities
                     PacketSender.SendEventDialog(MyClient, ParseEventText(command.Strs[0]),
                         ParseEventText(command.Strs[1]), ParseEventText(command.Strs[2]),
                         ParseEventText(command.Strs[3]), ParseEventText(command.Strs[4]), command.Strs[5], MapNum,
-                        BaseEvent.MapId);
+                        BaseEvent.Map);
                     CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.Dialogue;
                     CallStack.Peek().ResponseIndex = 1;
                     break;
@@ -917,7 +920,7 @@ namespace Intersect.Server.Classes.Entities
                     break;
                 case EventCommandType.SetMoveRoute:
                     if (CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[
-                            CallStack.Peek().CommandIndex].Route.Target == -1)
+                            CallStack.Peek().CommandIndex].Route.Target == Guid.Empty)
                     {
                         MyClient.Entity.MoveRoute = new EventMoveRoute();
                         MyClient.Entity.MoveRouteSetter = PageInstance;
@@ -930,7 +933,7 @@ namespace Intersect.Server.Classes.Entities
                     {
                         foreach (var evt in MyPlayer.EventLookup.Values)
                         {
-                            if (evt.BaseEvent.MapId == CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Route.Target)
+                            if (evt.BaseEvent.Id == CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Route.Target)
                             {
                                 if (evt.PageInstance != null)
                                 {
@@ -948,17 +951,17 @@ namespace Intersect.Server.Classes.Entities
                     if (CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[
                             CallStack.Peek().CommandIndex].Ints[0] == -1)
                     {
-                        CallStack.Peek().WaitingForRoute = -1;
-                        CallStack.Peek().WaitingForRouteMap = -1;
+                        CallStack.Peek().WaitingForRoute = MyPlayer.Id;
+                        CallStack.Peek().WaitingForRouteMap = MyPlayer.Map;
                     }
                     else
                     {
                         foreach (var evt in MyPlayer.EventLookup.Values)
                         {
-                            if (evt.BaseEvent.MapId == CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[0])
+                            if (evt.BaseEvent.Id == CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Guids[0])
                             {
-                                CallStack.Peek().WaitingForRoute = evt.BaseEvent.MapId;
-                                CallStack.Peek().WaitingForRouteMap = evt.MapNum;
+                                CallStack.Peek().WaitingForRoute = evt.BaseEvent.Id;
+                                CallStack.Peek().WaitingForRouteMap = evt.Map;
                                 break;
                             }
                         }
@@ -1005,7 +1008,7 @@ namespace Intersect.Server.Classes.Entities
                                 foreach (var evt in MyPlayer.EventLookup.Values)
                                 {
                                     if (evt.MapNum != this.MapNum) continue;
-                                    if (evt.BaseEvent.MapId == CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[2])
+                                    if (evt.BaseEvent.Id == CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Guids[0])
                                     {
                                         targetEntity = evt.PageInstance;
                                         break;
@@ -1116,7 +1119,7 @@ namespace Intersect.Server.Classes.Entities
                                 foreach (var evt in MyPlayer.EventLookup.Values)
                                 {
                                     if (evt.MapNum != this.MapNum) continue;
-                                    if (evt.BaseEvent.MapId == CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[2])
+                                    if (evt.BaseEvent.Id == CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Guids[0])
                                     {
                                         targetEntity = evt.PageInstance;
                                         break;
@@ -1426,8 +1429,8 @@ namespace Intersect.Server.Classes.Entities
         public EventPage Page;
         public int ResponseIndex = -1;
         public EventResponse WaitingForResponse = EventResponse.None;
-        public int WaitingForRoute = -2;
-        public int WaitingForRouteMap;
+        public Guid WaitingForRoute;
+        public Guid WaitingForRouteMap;
 
         public CommandInstance(EventPage page)
         {

@@ -21,6 +21,7 @@ using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Maps;
 using Intersect.Server.Classes.Spells;
 using Intersect.Utilities;
+using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
 using Newtonsoft.Json;
 
 namespace Intersect.Server.Classes.Networking
@@ -660,7 +661,7 @@ namespace Intersect.Server.Classes.Networking
             map.Load(bf.ReadString(), MapInstance.Lookup.Get<MapInstance>(mapNum).Revision + 1);
 
             //Event Fixing
-            var removedEvents = new List<int>();
+            var removedEvents = new List<Guid>();
             foreach (var id in map.EventIds)
             {
                 if (!map.LocalEvents.ContainsKey(id))
@@ -680,6 +681,7 @@ namespace Intersect.Server.Classes.Networking
                     dbObj = (EventBase)LegacyDatabase.AddGameObject(GameObjectType.CommonEvent, evt.Key);
                 }
                 JsonConvert.PopulateObject(evt.Value.JsonData, dbObj, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
+                if (!map.EventIds.Contains(evt.Key)) map.EventIds.Add(evt.Key);
             }
             map.LocalEvents.Clear();
 
@@ -1102,7 +1104,7 @@ namespace Intersect.Server.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            ((Player)(client.Entity)).TryActivateEvent(bf.ReadInteger(), bf.ReadInteger());
+            ((Player)(client.Entity)).TryActivateEvent(bf.ReadInteger(), bf.ReadGuid());
             bf.Dispose();
         }
 
@@ -1110,7 +1112,7 @@ namespace Intersect.Server.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            ((Player)(client.Entity)).RespondToEvent(bf.ReadInteger(), bf.ReadInteger(), bf.ReadInteger());
+            ((Player)(client.Entity)).RespondToEvent(bf.ReadInteger(), bf.ReadGuid(), bf.ReadInteger());
             bf.Dispose();
         }
 
@@ -2149,6 +2151,7 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteBytes(packet);
             var type = (GameObjectType)bf.ReadInteger();
             var id = bf.ReadInteger();
+            var guid = bf.ReadGuid();
             IDatabaseObject obj = null;
             switch (type)
             {
@@ -2188,7 +2191,7 @@ namespace Intersect.Server.Classes.Networking
                 case GameObjectType.Map:
                     break;
                 case GameObjectType.CommonEvent:
-                    obj = EventBase.Lookup.Get<EventBase>(id);
+                    obj = EventBase.Lookup.Get<EventBase>(guid);
                     break;
                 case GameObjectType.PlayerSwitch:
                     obj = PlayerSwitchBase.Lookup.Get<PlayerSwitchBase>(id);
@@ -2264,6 +2267,7 @@ namespace Intersect.Server.Classes.Networking
                     foreach (var evt in qst.AddEvents)
                     {
                         var evtb = (EventBase)LegacyDatabase.AddGameObject(GameObjectType.CommonEvent);
+                        evtb.CommonEvent = false;
                         qst.Tasks[evt.Key].CompletionEvent = evtb;
                         JsonConvert.PopulateObject(JsonConvert.SerializeObject(evt.Value),evtb, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
                     }

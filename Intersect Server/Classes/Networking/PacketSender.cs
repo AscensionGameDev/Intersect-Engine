@@ -1390,7 +1390,8 @@ namespace Intersect.Server.Classes.Networking
                     throw new Exception("Maps are not sent as batches, use the proper send map functions");
                 case GameObjectType.CommonEvent:
                     foreach (var obj in EventBase.Lookup)
-                        SendGameObject(client, obj.Value);
+                        if (((EventBase)obj.Value).CommonEvent)
+                            SendGameObject(client, obj.Value);
                     break;
                 case GameObjectType.PlayerSwitch:
                     foreach (var obj in PlayerSwitchBase.Lookup)
@@ -1436,6 +1437,7 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteLong((int)ServerPackets.GameObject);
             bf.WriteInteger((int)obj.Type);
             bf.WriteInteger(obj.Index);
+            bf.WriteGuid(obj.Id);
             bf.WriteInteger(Convert.ToInt32(another));
             bf.WriteInteger(Convert.ToInt32(deleted));
             if (!deleted) bf.WriteString(obj.JsonData);

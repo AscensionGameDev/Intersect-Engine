@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Intersect.GameObjects.Events
 {
@@ -9,7 +10,7 @@ namespace Intersect.GameObjects.Events
         public bool Complete;
         public bool IgnoreIfBlocked;
         public bool RepeatRoute;
-        public int Target = -1;
+        public Guid Target;
 
         public EventMoveRoute()
         {
@@ -17,7 +18,7 @@ namespace Intersect.GameObjects.Events
 
         public void Load(ByteBuffer myBuffer)
         {
-            Target = myBuffer.ReadInteger();
+            Target = myBuffer.ReadGuid();
             if (myBuffer.ReadByte() == 1)
             {
                 IgnoreIfBlocked = true;
@@ -44,7 +45,7 @@ namespace Intersect.GameObjects.Events
 
         public void Save(ByteBuffer myBuffer)
         {
-            myBuffer.WriteInteger(Target);
+            myBuffer.WriteGuid(Target);
             if (IgnoreIfBlocked)
             {
                 myBuffer.WriteByte(1);

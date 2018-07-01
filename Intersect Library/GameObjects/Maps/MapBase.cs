@@ -22,9 +22,6 @@ namespace Intersect.GameObjects.Maps
         [NotMapped]
         public MapAutotiles Autotiles;
 
-        //Server/Editor Only
-        public int EventIndex;
-
         //Temporary Values
         [JsonIgnore]
         [NotMapped]
@@ -71,13 +68,13 @@ namespace Intersect.GameObjects.Maps
         public string EventIdsJson
         {
             get => JsonConvert.SerializeObject(EventIds);
-            set => EventIds = JsonConvert.DeserializeObject<List<int>>(value);
+            set => EventIds = JsonConvert.DeserializeObject<List<Guid>>(value);
         }
         [NotMapped]
-        public List<int> EventIds = new List<int>();
+        public List<Guid> EventIds = new List<Guid>();
 
         [NotMapped]
-        public Dictionary<int,EventBase> LocalEvents = new Dictionary<int, EventBase>();
+        public Dictionary<Guid, EventBase> LocalEvents = new Dictionary<Guid, EventBase>();
 
         [Column("NpcSpawns")]
         [JsonIgnore]
@@ -209,7 +206,11 @@ namespace Intersect.GameObjects.Maps
                     {
                         Lights.Add(new LightBase(mapcopy.Lights[i]));
                     }
-                    EventIndex = mapcopy.EventIndex;
+                    foreach (var record in mapcopy.LocalEvents)
+                    {
+                        var evt = new EventBase(record.Key, record.Value.JsonData);
+                        LocalEvents.Add(record.Key,evt);
+                    }
                     EventIds.Clear();
                     EventIds.AddRange(mapcopy.EventIds.ToArray());
                 }

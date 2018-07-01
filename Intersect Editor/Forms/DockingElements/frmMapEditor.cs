@@ -403,7 +403,7 @@ namespace Intersect.Editor.Forms.DockingElements
                         EventBase tmpEvent;
                         if ((tmpEvent = Globals.CurrentMap.FindEventAt(Globals.CurTileX, Globals.CurTileY)) != null)
                         {
-                            Globals.CurrentMap.LocalEvents.Remove(tmpEvent.MapId);
+                            Globals.CurrentMap.LocalEvents.Remove(tmpEvent.Id);
                             mMapChanged = true;
                         }
                     }
@@ -982,9 +982,8 @@ namespace Intersect.Editor.Forms.DockingElements
                         Globals.CurrentMap.FindEventAt(Globals.CurTileX,
                             Globals.CurTileY)) == null)
                 {
-                    tmpEvent = new EventBase(-1,Globals.CurrentMap.EventIndex, Globals.CurTileX, Globals.CurTileY);
-                    Globals.CurrentMap.LocalEvents.Add(Globals.CurrentMap.EventIndex, tmpEvent);
-                    Globals.CurrentMap.EventIndex++;
+                    tmpEvent = new EventBase(Guid.NewGuid(), Globals.CurrentMap.Index,Globals.CurTileX, Globals.CurTileY);
+                    Globals.CurrentMap.LocalEvents.Add(tmpEvent.Id, tmpEvent);
                     tmpEventEditor = new FrmEvent(Globals.CurrentMap)
                     {
                         MyEvent = tmpEvent,
@@ -1561,15 +1560,14 @@ namespace Intersect.Editor.Forms.DockingElements
                             {
                                 if (tmpMap.FindEventAt(x0, y0) != null)
                                 {
-                                    tmpMap.LocalEvents.Remove(tmpMap.FindEventAt(x0, y0).MapId);
+                                    tmpMap.LocalEvents.Remove(tmpMap.FindEventAt(x0, y0).Id);
                                 }
-                                eventCopy = new EventBase(-1,tmpMap.EventIndex, Globals.SelectionSource.FindEventAt(x0 - dragxoffset, y0 - dragyoffset))
+                                eventCopy = new EventBase(Guid.NewGuid(), Globals.SelectionSource.FindEventAt(x0 - dragxoffset, y0 - dragyoffset))
                                 {
                                     SpawnX = x0,
                                     SpawnY = y0
                                 };
-                                tmpMap.LocalEvents.Add(tmpMap.EventIndex, eventCopy);
-                                tmpMap.EventIndex++;
+                                tmpMap.LocalEvents.Add(eventCopy.Id, eventCopy);
                             }
                         }
                     }
@@ -1698,7 +1696,7 @@ namespace Intersect.Editor.Forms.DockingElements
                         {
                             if (((MapInstance) tmpMap).FindEventAt(x0, y0) != null)
                             {
-                                tmpMap.LocalEvents.Remove(((MapInstance) tmpMap).FindEventAt(x0, y0).MapId);
+                                tmpMap.LocalEvents.Remove(((MapInstance) tmpMap).FindEventAt(x0, y0).Id);
                             }
                         }
                     }

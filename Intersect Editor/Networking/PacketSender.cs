@@ -221,6 +221,7 @@ namespace Intersect.Editor.Networking
             bf.WriteLong((int) ClientPackets.DeleteGameObject);
             bf.WriteInteger((int) obj.Type);
             bf.WriteInteger(obj.Index);
+            bf.WriteGuid(obj.Id);
             EditorNetwork.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -231,6 +232,7 @@ namespace Intersect.Editor.Networking
             bf.WriteLong((int) ClientPackets.SaveGameObject);
             bf.WriteInteger((int) obj.Type);
             bf.WriteInteger(obj.Index);
+            bf.WriteGuid(obj.Id);
             bf.WriteString(obj.JsonData);
             EditorNetwork.SendPacket(bf.ToArray());
             bf.Dispose();

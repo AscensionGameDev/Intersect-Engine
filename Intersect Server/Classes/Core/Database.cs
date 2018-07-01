@@ -552,8 +552,15 @@ namespace Intersect.Server.Classes.Core
             }
         }
 
-        public static IDatabaseObject AddGameObject(GameObjectType gameObjectType, int predefinedid = -1)
+        public static IDatabaseObject AddGameObject(GameObjectType gameObjectType)
         {
+            return AddGameObject(gameObjectType, Guid.Empty);
+        }
+
+        public static IDatabaseObject AddGameObject(GameObjectType gameObjectType, Guid predefinedid)
+        {
+            Guid id = Guid.NewGuid();
+            if (predefinedid != Guid.Empty) id = predefinedid;
             var insertQuery = $"INSERT into {gameObjectType.GetTable()} (" + "data" + ") VALUES (@" +
                               "data" + ")" + "; SELECT last_insert_rowid();";
             var index = -1;
@@ -563,7 +570,7 @@ namespace Intersect.Server.Classes.Core
                 cmd.Parameters.Add(new SqliteParameter("@" + "data", new byte[1]));
                 index = (int) ((long) sGameDbConnection.ExecuteScalar(cmd));
             }
-            if (predefinedid > -1) index = predefinedid;
+            
             if (index > -1)
             {
                 IDatabaseObject dbObj = null;
@@ -604,6 +611,8 @@ namespace Intersect.Server.Classes.Core
                         sGameDb.Quests.Add(objqw);
                         objqw.StartEvent = (EventBase)AddGameObject(GameObjectType.CommonEvent);
                         objqw.EndEvent = (EventBase)AddGameObject(GameObjectType.CommonEvent);
+                        objqw.StartEvent.CommonEvent = false;
+                        objqw.EndEvent.CommonEvent = false;
                         dbObj = objqw;
                         QuestBase.Lookup.Set(index, objqw);
                         break;
@@ -644,10 +653,10 @@ namespace Intersect.Server.Classes.Core
                         MapInstance.Lookup.Set(index, objw);
                         break;
                     case GameObjectType.CommonEvent:
-                        var objf = new EventBase(index, -1, -1, -1,true);
+                        var objf = new EventBase(id, true);
                         sGameDb.Events.Add(objf);
                         dbObj = objf;
-                        EventBase.Lookup.Set(index, objf);
+                        EventBase.Lookup.Set(id, objf);
                         break;
                     case GameObjectType.PlayerSwitch:
                         var objz = new PlayerSwitchBase(index);

@@ -24,8 +24,17 @@ namespace Intersect.Collections
         }
 
         [NotNull]
-        public string[] Names =>
-            this.Select(pair => pair.Value?.Name ?? "ERR_DELETED").ToArray();
+        public virtual string[] Names => this.Select(pair => pair.Value?.Name ?? "ERR_DELETED").ToArray();
+
+        public virtual int FromList(int listIndex) => listIndex < 0 ? -1 : (ValueList?[listIndex]?.Index ?? -1);
+
+        public virtual int ListIndex(int id)
+        {
+            var index = IndexList?.IndexOf(id);
+            if (!index.HasValue) throw new ArgumentNullException();
+            return index.Value;
+        }
+
 
         public virtual IDatabaseObject this[Guid id]
         {
@@ -100,7 +109,11 @@ namespace Intersect.Collections
         {
             get
             {
-                lock (mLock) return mIndexMap.Keys.Max() + 1;
+                lock (mLock)
+                {
+                    if (mIndexMap.Keys.Count == 0) return 1;
+                    return mIndexMap.Keys.Max() + 1;
+                }
             }
         }
 
