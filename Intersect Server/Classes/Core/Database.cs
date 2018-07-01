@@ -636,6 +636,7 @@ namespace Intersect.Server.Classes.Core
                 default:
                     throw new ArgumentOutOfRangeException(nameof(gameObjectType), gameObjectType, null);
             }
+            sGameDb.SaveChanges();
             return dbObj;
         }
 

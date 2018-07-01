@@ -78,9 +78,9 @@ namespace Intersect_Client.Classes.UI.Game
 
             mCharacterPortrait = new ImagePanel(mCharacterContainer);
 
-            PaperdollPanels = new ImagePanel[Options.EquipmentSlots.Count];
-            PaperdollTextures = new string[Options.EquipmentSlots.Count];
-            for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+            PaperdollPanels = new ImagePanel[Options.EquipmentSlots.Count + 1];
+            PaperdollTextures = new string[Options.EquipmentSlots.Count + 1];
+            for (int i = 0; i <= Options.EquipmentSlots.Count; i++)
             {
                 PaperdollPanels[i] = new ImagePanel(mCharacterContainer);
                 PaperdollTextures[i] = "";
@@ -213,10 +213,7 @@ namespace Intersect_Client.Classes.UI.Game
                         if (equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] > -1 &&
                             equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] < Options.MaxInvItems)
                         {
-                            var itemNum = Globals.Me.Inventory[
-                                    equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])
-                                    ]]
-                                .ItemId;
+                            var itemNum = Globals.Me.Inventory[equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])]].ItemId;
                             if (ItemBase.Lookup.Get<ItemBase>(itemNum) != null)
                             {
                                 var itemdata = ItemBase.Lookup.Get<ItemBase>(itemNum);

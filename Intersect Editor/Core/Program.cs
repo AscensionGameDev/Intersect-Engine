@@ -24,7 +24,7 @@ namespace Intersect.Editor.Classes
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             Application.ThreadException += Application_ThreadException;
-            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.Automatic);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 

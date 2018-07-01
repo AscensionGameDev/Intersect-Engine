@@ -865,7 +865,7 @@ namespace Intersect.Editor.Core
                         if (grid.ViewRect.IntersectsWith(renderRect))
                         {
                             if (x == 0 || y == 0 || x == grid.GridWidth + 1 || y == grid.GridHeight + 1 ||
-                                grid.Grid[x - 1, y - 1].MapId != Guid.Empty)
+                                grid.Grid[x - 1, y - 1].MapId == Guid.Empty)
                             {
                                 DrawTexture(GetWhiteTex(), new RectangleF(0, 0, 1, 1),
                                     new RectangleF(grid.ContentRect.X + x * grid.TileWidth,

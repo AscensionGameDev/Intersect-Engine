@@ -59,7 +59,7 @@ namespace Intersect.Editor.Networking
         }
 
         private static int sPacketCount = 0;
-        private static bool sDebugPackets = false;
+        private static bool sDebugPackets = true;
         public static void HandlePacket(ByteBuffer bf)
         {
             if (bf == null || bf.Length() == 0) return;
@@ -391,7 +391,7 @@ namespace Intersect.Editor.Networking
             {
                 Globals.MainForm.EnterMap(MapList.GetList().FindFirstMap());
             }
-            Globals.MapListWindow.BeginInvoke(Globals.MapListWindow.mapTreeList.MapListDelegate, -1, null);
+            Globals.MapListWindow.BeginInvoke(Globals.MapListWindow.mapTreeList.MapListDelegate, Guid.Empty, null);
             bf.Dispose();
         }
 

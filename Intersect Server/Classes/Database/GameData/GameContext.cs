@@ -81,6 +81,7 @@ namespace Intersect.Server.Classes.Database.GameData
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            optionsBuilder.EnableSensitiveDataLogging(true);
             switch (mConnection)
             {
                 case DatabaseUtils.DbProvider.Sqlite:

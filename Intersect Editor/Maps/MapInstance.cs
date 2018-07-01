@@ -68,7 +68,6 @@ namespace Intersect.Editor.Maps
                     Right = right;
                 }
                 Autotiles = new MapAutotiles(this);
-                InitAutotiles();
 
                 //Initialize Local Events
                 LocalEvents.Clear();

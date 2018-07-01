@@ -166,7 +166,7 @@ namespace Intersect.Editor.Core
         public static void CreateMapCacheTable()
         {
             var cmd = "CREATE TABLE " + MAP_CACHE_TABLE + " ("
-                      + MAP_CACHE_ID + " INTEGER PRIMARY KEY,"
+                      + MAP_CACHE_ID + " TEXT PRIMARY KEY,"
                       + MAP_CACHE_REVISION + " INTEGER,"
                       + MAP_CACHE_DATA + " BLOB"
                       + ");";
@@ -269,7 +269,7 @@ namespace Intersect.Editor.Core
                         MAP_CACHE_ID + ",@" + MAP_CACHE_REVISION + ",@" + MAP_CACHE_DATA + ");";
             using (SqliteCommand cmd = new SqliteCommand(query, sDbConnection))
             {
-                cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_ID, id));
+                cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_ID, id.ToString()));
                 cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_REVISION, revision));
                 if (data != null)
                 {
@@ -289,7 +289,7 @@ namespace Intersect.Editor.Core
                         MAP_CACHE_ID + " = @" + MAP_CACHE_ID;
             using (SqliteCommand cmd = new SqliteCommand(query, sDbConnection))
             {
-                cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_ID, id));
+                cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_ID, id.ToString()));
                 cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_DATA, null));
                 cmd.ExecuteNonQuery();
             }

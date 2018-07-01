@@ -17,7 +17,6 @@ namespace Intersect.Client.Classes.UI.Game
 
         //Menu Container
         private readonly ImagePanel mMenuContainer;
-
         [NotNull] private readonly ImagePanel mMenuBackground;
         [NotNull] private readonly Button mMenuButton;
 
@@ -86,8 +85,7 @@ namespace Intersect.Client.Classes.UI.Game
             mPartyButton = new Button(mPartyBackground, "PartyButton");
             mPartyButton.SetToolTipText(Strings.GameMenu.party);
             mPartyButton.Clicked += PartyBtn_Clicked;
-
-            //Go in reverse order from the right
+            
             mMenuBackground = new ImagePanel(mMenuContainer, "MenuContainer");
             mMenuButton = new Button(mMenuBackground, "MenuButton");
             mMenuButton.SetToolTipText(Strings.GameMenu.Menu);

@@ -180,7 +180,7 @@ namespace Intersect.Server.Classes.Maps
             //Else grab it (and maybe cache it)
             lock (GetMapLock())
             {
-                if (TileData == null) TileData = new byte[Options.LayerCount * Options.MapWidth * Options.MapHeight * 13];
+                if (TileData == null) TileData = new byte[Options.LayerCount * Options.MapWidth * Options.MapHeight * 25];
                 if (shouldCache)
                 {
                     TileAccessTime = Globals.System.GetTimeMs();

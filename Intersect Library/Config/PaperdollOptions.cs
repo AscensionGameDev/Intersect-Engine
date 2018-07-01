@@ -84,14 +84,17 @@ namespace Intersect.Config
         {
             foreach (var direction in Directions)
             {
+                var hasPlayer = false;
                 foreach (var item in direction)
                 {
-                    if (!equipment.Slots.Contains(item) & item != "Player")
+                    if (item == "Player") hasPlayer = true;
+                    if (!equipment.Slots.Contains(item) && item != "Player")
                     {
                         throw new Exception($"Config Error: Paperdoll item {item} does not exist in equipment slots!");
                     }
                 }
-
+                if (!hasPlayer)
+                    throw new Exception($"Config Error: Paperdoll direction {direction} does not have Player listed!");
             }
         }
     }
