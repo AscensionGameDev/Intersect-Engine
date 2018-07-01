@@ -222,6 +222,7 @@ Tick timer saved in server config.json.";
         public struct CommoneEventEditor
         {
             public static LocalizedString delete = @"Delete";
+            public static LocalizedString deleteprompt = @"Are you sure you want to delete this event? This action cannot be reverted!";
             public static LocalizedString events = @"Common Events";
             public static LocalizedString New = @"New";
             public static LocalizedString title = @"Common Event Editor";

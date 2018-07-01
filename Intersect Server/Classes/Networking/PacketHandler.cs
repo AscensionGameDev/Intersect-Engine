@@ -678,7 +678,7 @@ namespace Intersect.Server.Classes.Networking
                 var dbObj = EventBase.Get(evt.Key);
                 if (dbObj == null)
                 {
-                    dbObj = (EventBase)LegacyDatabase.AddGameObject(GameObjectType.CommonEvent, evt.Key);
+                    dbObj = (EventBase)LegacyDatabase.AddGameObject(GameObjectType.Event, evt.Key);
                 }
                 JsonConvert.PopulateObject(evt.Value.JsonData, dbObj, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
                 if (!map.EventIds.Contains(evt.Key)) map.EventIds.Add(evt.Key);
@@ -2056,6 +2056,7 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteBytes(packet);
             var type = (GameObjectType)bf.ReadInteger();
             var id = bf.ReadInteger();
+            var guid = bf.ReadGuid();
             // TODO: YO COME DO THIS
             IDatabaseObject obj = null;
             switch (type)
@@ -2101,8 +2102,8 @@ namespace Intersect.Server.Classes.Networking
                     break;
                 case GameObjectType.Map:
                     break;
-                case GameObjectType.CommonEvent:
-                    obj = EventBase.Lookup.Get<EventBase>(id);
+                case GameObjectType.Event:
+                    obj = EventBase.Lookup.Get<EventBase>(guid);
                     break;
                 case GameObjectType.PlayerSwitch:
                     obj = PlayerSwitchBase.Lookup.Get<PlayerSwitchBase>(id);
@@ -2190,7 +2191,7 @@ namespace Intersect.Server.Classes.Networking
                     break;
                 case GameObjectType.Map:
                     break;
-                case GameObjectType.CommonEvent:
+                case GameObjectType.Event:
                     obj = EventBase.Lookup.Get<EventBase>(guid);
                     break;
                 case GameObjectType.PlayerSwitch:
@@ -2266,7 +2267,7 @@ namespace Intersect.Server.Classes.Networking
                     }
                     foreach (var evt in qst.AddEvents)
                     {
-                        var evtb = (EventBase)LegacyDatabase.AddGameObject(GameObjectType.CommonEvent);
+                        var evtb = (EventBase)LegacyDatabase.AddGameObject(GameObjectType.Event);
                         evtb.CommonEvent = false;
                         qst.Tasks[evt.Key].CompletionEvent = evtb;
                         JsonConvert.PopulateObject(JsonConvert.SerializeObject(evt.Value),evtb, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });

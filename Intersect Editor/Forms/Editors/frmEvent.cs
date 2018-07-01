@@ -557,7 +557,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             mEventBackup = MyEvent.JsonData;
             txtEventname.Text = MyEvent.Name;
-            if (MyEvent.Index < 0)
+            if (MyEvent.Id != Guid.Empty)
             {
                 txtEventname.Enabled = false;
                 grpTriggers.Hide();
@@ -602,6 +602,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             Text = Strings.EventEditor.title.ToString( MyEvent.Index, txtEventname.Text);
             CurrentPageIndex = pageNum;
+            if (MyEvent.Pages.Count == 0) MyEvent.Pages.Add(new EventPage());
             CurrentPage = MyEvent.Pages[pageNum];
             for (int i = 0; i < mPageTabs.Count; i++)
             {
@@ -694,7 +695,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 CancelCommandEdit();
             }
-            if (MyEvent.CommonEvent && MyEvent.Index >= 0)
+            if (MyEvent.CommonEvent && MyEvent.Id != Guid.Empty)
             {
                 PacketSender.SendSaveObject(MyEvent);
             }

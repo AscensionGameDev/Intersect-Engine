@@ -389,7 +389,7 @@ namespace Intersect.Server.Classes.Core
                 case GameObjectType.Map:
                     MapBase.Lookup.Clear();
                     break;
-                case GameObjectType.CommonEvent:
+                case GameObjectType.Event:
                     EventBase.Lookup.Clear();
                     break;
                 case GameObjectType.PlayerSwitch:
@@ -503,11 +503,10 @@ namespace Intersect.Server.Classes.Core
                         MapInstance.Lookup.Set(map.Index, map);
                     }
                     break;
-                case GameObjectType.CommonEvent:
+                case GameObjectType.Event:
                     foreach (var evt in sGameDb.Events)
                     {
                         EventBase.Lookup.Set(evt.Id, evt);
-                        EventBase.Lookup.Set(evt.Index, evt);
                     }
                     break;
                 case GameObjectType.PlayerSwitch:
@@ -609,8 +608,8 @@ namespace Intersect.Server.Classes.Core
                     case GameObjectType.Quest:
                         var objqw = new QuestBase(index);
                         sGameDb.Quests.Add(objqw);
-                        objqw.StartEvent = (EventBase)AddGameObject(GameObjectType.CommonEvent);
-                        objqw.EndEvent = (EventBase)AddGameObject(GameObjectType.CommonEvent);
+                        objqw.StartEvent = (EventBase)AddGameObject(GameObjectType.Event);
+                        objqw.EndEvent = (EventBase)AddGameObject(GameObjectType.Event);
                         objqw.StartEvent.CommonEvent = false;
                         objqw.EndEvent.CommonEvent = false;
                         dbObj = objqw;
@@ -652,7 +651,7 @@ namespace Intersect.Server.Classes.Core
                         dbObj = objw;
                         MapInstance.Lookup.Set(index, objw);
                         break;
-                    case GameObjectType.CommonEvent:
+                    case GameObjectType.Event:
                         var objf = new EventBase(id, true);
                         sGameDb.Events.Add(objf);
                         dbObj = objf;
@@ -745,7 +744,7 @@ namespace Intersect.Server.Classes.Core
                 case GameObjectType.Map:
                     sGameDb.Maps.Remove((MapInstance) gameObject);
                     return;
-                case GameObjectType.CommonEvent:
+                case GameObjectType.Event:
                     sGameDb.Events.Remove((EventBase) gameObject);
                     return;
                 case GameObjectType.PlayerSwitch:

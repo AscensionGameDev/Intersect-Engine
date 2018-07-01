@@ -492,7 +492,7 @@ namespace Intersect.Server.Classes.Networking
             {
                 if ((GameObjectType)val == GameObjectType.Map) continue;
                 if (((GameObjectType)val == GameObjectType.Shop ||
-                     (GameObjectType)val == GameObjectType.CommonEvent ||
+                     (GameObjectType)val == GameObjectType.Event ||
                      (GameObjectType)val == GameObjectType.PlayerSwitch ||
                      (GameObjectType)val == GameObjectType.PlayerVariable ||
                      (GameObjectType)val == GameObjectType.ServerSwitch ||
@@ -1388,7 +1388,7 @@ namespace Intersect.Server.Classes.Networking
                     break;
                 case GameObjectType.Map:
                     throw new Exception("Maps are not sent as batches, use the proper send map functions");
-                case GameObjectType.CommonEvent:
+                case GameObjectType.Event:
                     foreach (var obj in EventBase.Lookup)
                         if (((EventBase)obj.Value).CommonEvent)
                             SendGameObject(client, obj.Value);

@@ -29,7 +29,7 @@ namespace Intersect.Editor.Forms.Editors
 
         protected override void GameObjectUpdatedDelegate(GameObjectType type)
         {
-            if (type == GameObjectType.CommonEvent)
+            if (type == GameObjectType.Event)
             {
                 ListCommonEvents();
             }
@@ -37,24 +37,16 @@ namespace Intersect.Editor.Forms.Editors
 
         private void btnNew_Click(object sender, EventArgs e)
         {
-            PacketSender.SendCreateObject(GameObjectType.CommonEvent);
+            PacketSender.SendCreateObject(GameObjectType.Event);
         }
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            if (lstCommonEvents.SelectedIndex > -1 &&
-                EventBase.Lookup.Get<EventBase>(
-                    Database.GameObjectIdFromList(GameObjectType.CommonEvent, lstCommonEvents.SelectedIndex)) !=
-                null)
+            if (lstCommonEvents.SelectedIndex > -1 && EventBase.IdFromList(lstCommonEvents.SelectedIndex) > -1)
             {
-                if (
-                    MessageBox.Show(
-                        "Are you sure you want to delete this game object? This action cannot be reverted!",
-                        "Delete Object", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (MessageBox.Show(Strings.CommoneEventEditor.deleteprompt, Strings.CommoneEventEditor.delete, MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
-                    PacketSender.SendDeleteObject(
-                        EventBase.Lookup.Get<EventBase>(Database.GameObjectIdFromList(GameObjectType.CommonEvent,
-                            lstCommonEvents.SelectedIndex)));
+                    PacketSender.SendDeleteObject(EventBase.FromList(lstCommonEvents.SelectedIndex));
                 }
             }
         }
@@ -62,7 +54,7 @@ namespace Intersect.Editor.Forms.Editors
         private void ListCommonEvents()
         {
             lstCommonEvents.Items.Clear();
-            lstCommonEvents.Items.AddRange(Database.GetGameObjectList(GameObjectType.CommonEvent));
+            lstCommonEvents.Items.AddRange(EventBase.Names);
         }
 
         private void lstCommonEvents_DoubleClick(object sender, EventArgs e)
@@ -71,9 +63,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 FrmEvent editor = new FrmEvent(null)
                 {
-                    MyEvent =
-                        EventBase.Lookup.Get<EventBase>(Database.GameObjectIdFromList(GameObjectType.CommonEvent,
-                            lstCommonEvents.SelectedIndex))
+                    MyEvent = EventBase.FromList(lstCommonEvents.SelectedIndex)
                 };
                 editor.InitEditor();
                 editor.ShowDialog();

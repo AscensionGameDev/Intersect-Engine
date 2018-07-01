@@ -94,7 +94,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
                 item.EndEvent.DeleteBackup();
                 foreach (var tsk in item.Tasks)
                 {
-                    if (tsk.CompletionEvent.Index > 0)
+                    if (tsk.CompletionEvent.Id != Guid.Empty)
                     {
                         tsk.CompletionEvent.RestoreBackup();
                     }
@@ -120,7 +120,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
                 PacketSender.SendSaveObject(item.EndEvent);
                 foreach (var tsk in item.Tasks)
                 {
-                    if (tsk.EdittingEvent.Index > 0)
+                    if (tsk.EdittingEvent.Id != Guid.Empty)
                     {
                         PacketSender.SendSaveObject(tsk.EdittingEvent);
                     }
@@ -284,7 +284,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
         {
             if (lstTasks.SelectedIndex > -1)
             {
-                mEditorItem.RemoveEvents.Add(mEditorItem.Tasks[lstTasks.SelectedIndex].CompletionEvent.Index);
+                mEditorItem.RemoveEvents.Add(mEditorItem.Tasks[lstTasks.SelectedIndex].CompletionEvent.Id);
                 if (mEditorItem.AddEvents.ContainsKey(mEditorItem.Tasks[lstTasks.SelectedIndex].Id))
                 {
                     mEditorItem.AddEvents.Remove(mEditorItem.Tasks[lstTasks.SelectedIndex].Id);

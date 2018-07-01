@@ -52,23 +52,23 @@ namespace Intersect.GameObjects
 
 
         [Column("StartEvent")]
-        public int StartEventId { get; set; }
+        public Guid StartEventId { get; set; }
         [NotMapped]
         [JsonIgnore]
         public EventBase StartEvent
         {
             get => EventBase.Get(StartEventId);
-            set => StartEventId = value.Index;
+            set => StartEventId = value.Id;
         }
 
         [Column("EndEvent")]
-        public int EndEventId { get;  set; }
+        public Guid EndEventId { get;  set; }
         [NotMapped]
         [JsonIgnore]
         public EventBase EndEvent
         {
             get => EventBase.Get(EndEventId);
-            set => EndEventId = value.Index;
+            set => EndEventId = value.Id;
         }
 
         [Column("Tasks")]
@@ -84,7 +84,7 @@ namespace Intersect.GameObjects
         [NotMapped]
         public Dictionary<int, EventBase> AddEvents = new Dictionary<int, EventBase>();  //Events that need to be added for the quest, int is task id
         [NotMapped]
-        public List<int> RemoveEvents = new List<int>(); //Events that need to be removed for the quest
+        public List<Guid> RemoveEvents = new List<Guid>(); //Events that need to be removed for the quest
 
         [JsonConstructor]
         public QuestBase(int index) : base(index)
@@ -118,12 +118,12 @@ namespace Intersect.GameObjects
 
         public class QuestTask
         {
-            public int CompletionEventId { get; set; }
+            public Guid CompletionEventId { get; set; }
             [JsonIgnore]
             public EventBase CompletionEvent
             {
                 get => EventBase.Get(CompletionEventId);
-                set => CompletionEventId = value.Index;
+                set => CompletionEventId = value.Id;
             }
             [NotMapped]
             [JsonIgnore]

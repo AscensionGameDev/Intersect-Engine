@@ -27,6 +27,29 @@ namespace Intersect.Models
         {
         }
 
+
+        public static string[] Names => Lookup.Select(pair => pair.Value?.Name ?? "ERR_DELETED").ToArray();
+
+        public static int IdFromList(int listIndex) => listIndex < 0 ? -1 : (Lookup.ValueList?[listIndex]?.Index ?? -1);
+
+        public static TObject FromList(int listIndex) => listIndex < 0 ? null : listIndex > Lookup.ValueList.Count ? null : (TObject)Lookup.ValueList?[listIndex];
+
+        public static int ListIndex(int id)
+        {
+            var index = Lookup.IndexList?.IndexOf(id);
+            if (!index.HasValue) throw new ArgumentNullException();
+            return index.Value;
+        }
+        public int ListIndex()
+        {
+            return ListIndex(Id);
+        }
+        public static int ListIndex(Guid id)
+        {
+            var index = Lookup.Keys.ToList().IndexOf(id);
+            return index;
+        }
+
         [JsonConstructor]
         protected DatabaseObject(Guid guid, int index)
         {

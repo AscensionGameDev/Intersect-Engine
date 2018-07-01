@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Maps;
 using Intersect.Models;
@@ -10,6 +11,7 @@ namespace Intersect.GameObjects.Events
 {
     public class EventBase : DatabaseObject<EventBase>
     {
+        public new string Index;
         public int Map { get; set; } = -1;
         public int SpawnX { get; set; } = -1;
         public int SpawnY { get; set; } = -1;
@@ -80,6 +82,36 @@ namespace Intersect.GameObjects.Events
             CommonEvent = isCommon;
             Pages = new List<EventPage>();
             Load(json);
+        }
+
+        public new static string[] Names => Lookup.Where(pair => ((EventBase)pair.Value)?.CommonEvent ?? false).Select(pair => pair.Value?.Name ?? "ERR_DELETED").ToArray();
+
+        public new static int IdFromList(int listIndex)
+        {
+            if (listIndex < 0) return -1;
+            var commonEvents = Lookup.Where(pair => ((EventBase)pair.Value)?.CommonEvent ?? false).ToArray();
+            if (listIndex > commonEvents.Length) return -1;
+            return commonEvents[listIndex].Value?.Index ?? -1;
+        }
+
+        public new static EventBase FromList(int listIndex)
+        {
+           return Get(IdFromList(listIndex));
+        }
+
+        public new static int ListIndex(Guid id)
+        {
+            var commonEvents = Lookup.Where(pair => ((EventBase)pair.Value)?.CommonEvent ?? false).ToArray();
+            for (int i = 0; i < commonEvents.Length; i++)
+            {
+                if (commonEvents[i].Key == id) return i;
+            }
+            return -1;
+        }
+
+        public new int ListIndex()
+        {
+            return ListIndex(Id);
         }
     }
 }

@@ -493,7 +493,7 @@ namespace Intersect.Server.Classes.Maps
                 var evt = EventBase.Get(id);
                 if (evt != null & evt.IsGlobal == 1)
                 {
-                    GlobalEventInstances.Add(evt, new EventInstance(evt,Id, evt.Index, Index));
+                    GlobalEventInstances.Add(evt, new EventInstance(evt,Id, evt.Map, Index));
                 }
             }
         }

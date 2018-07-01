@@ -32,7 +32,7 @@ namespace Intersect.Enums
 
         [GameObjectInfo(typeof(MapBase), "maps")] Map,
 
-        [GameObjectInfo(typeof(EventBase), "events")] CommonEvent,
+        [GameObjectInfo(typeof(EventBase), "events")] Event,
 
         [GameObjectInfo(typeof(PlayerSwitchBase), "player_switches")] PlayerSwitch,
 

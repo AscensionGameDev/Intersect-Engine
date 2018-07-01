@@ -610,10 +610,10 @@ namespace Intersect.Editor.Networking
                 case GameObjectType.Map:
                     //Handled in a different packet
                     break;
-                case GameObjectType.CommonEvent:
+                case GameObjectType.Event:
                     if (deleted)
                     {
-                        var evt = EventBase.Lookup.Get<EventBase>(index);
+                        var evt = EventBase.Lookup.Get<EventBase>(id);
                         evt.Delete();
                     }
                     else

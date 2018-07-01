@@ -92,7 +92,7 @@ namespace Intersect.Editor.Forms.Editors
             cmbHitAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
             cmbEvent.Items.Clear();
             cmbEvent.Items.Add(Strings.General.none);
-            cmbEvent.Items.AddRange(Database.GetGameObjectList(GameObjectType.CommonEvent));
+            cmbEvent.Items.AddRange(Database.GetGameObjectList(GameObjectType.Event));
 
             cmbSprite.Items.Clear();
             cmbSprite.Items.Add(Strings.General.none);
@@ -355,7 +355,7 @@ namespace Intersect.Editor.Forms.Editors
             else if (cmbType.SelectedIndex == (int) SpellTypes.Event)
             {
                 grpEvent.Show();
-                cmbEvent.SelectedIndex = Database.GameObjectListIndex(GameObjectType.CommonEvent, mEditorItem.Data1) +
+                cmbEvent.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Event, mEditorItem.Data1) +
                                          1;
             }
         }
@@ -670,7 +670,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbEvent_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.Data1 = Database.GameObjectIdFromList(GameObjectType.CommonEvent, cmbEvent.SelectedIndex - 1);
+            mEditorItem.Data1 = Database.GameObjectIdFromList(GameObjectType.Event, cmbEvent.SelectedIndex - 1);
         }
 
         private void btnVisualMapSelector_Click(object sender, EventArgs e)

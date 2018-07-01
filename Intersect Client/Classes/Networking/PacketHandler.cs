@@ -1408,7 +1408,7 @@ namespace Intersect_Client.Classes.Networking
                         if (Globals.HasGameData && !another)
                             Globals.ContentManager.LoadTilesets(TilesetBase.GetNameList());
                         break;
-                    case GameObjectType.CommonEvent:
+                    case GameObjectType.Event:
                         //Clients don't store event data, im an idiot.
                         break;
                     default:

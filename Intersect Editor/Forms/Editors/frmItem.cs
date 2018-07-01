@@ -107,7 +107,7 @@ namespace Intersect.Editor.Forms.Editors
             cmbTeachSpell.Items.AddRange(Database.GetGameObjectList(GameObjectType.Spell));
             cmbEvent.Items.Clear();
             cmbEvent.Items.Add(Strings.General.none);
-            cmbEvent.Items.AddRange(Database.GetGameObjectList(GameObjectType.CommonEvent));
+            cmbEvent.Items.AddRange(Database.GetGameObjectList(GameObjectType.Event));
             cmbMalePaperdoll.Items.Clear();
             cmbMalePaperdoll.Items.Add(Strings.General.none);
             cmbFemalePaperdoll.Items.Clear();
@@ -361,7 +361,7 @@ namespace Intersect.Editor.Forms.Editors
             }
             else if (cmbType.SelectedIndex == (int) ItemTypes.Event)
             {
-                cmbEvent.SelectedIndex = Database.GameObjectListIndex(GameObjectType.CommonEvent, mEditorItem.EventIndex) + 1;
+                cmbEvent.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Event, mEditorItem.EventIndex) + 1;
                 grpEvent.Visible = true;
             }
             else if (cmbType.SelectedIndex == (int) ItemTypes.Equipment)
@@ -623,7 +623,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbEvent_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.EventIndex = Database.GameObjectIdFromList(GameObjectType.CommonEvent, cmbEvent.SelectedIndex - 1);
+            mEditorItem.EventIndex = Database.GameObjectIdFromList(GameObjectType.Event, cmbEvent.SelectedIndex - 1);
         }
 
         private void cmbTeachSpell_SelectedIndexChanged(object sender, EventArgs e)

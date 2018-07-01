@@ -1030,7 +1030,7 @@ namespace Intersect.Editor.Forms
 
         private void commonEventEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PacketSender.SendOpenEditor(GameObjectType.CommonEvent);
+            PacketSender.SendOpenEditor(GameObjectType.Event);
         }
 
         private void switchVariableEditorToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1379,7 +1379,7 @@ namespace Intersect.Editor.Forms
                             mProjectileEditor.Show();
                         }
                         break;
-                    case GameObjectType.CommonEvent:
+                    case GameObjectType.Event:
                         if (mCommonEventEditor == null || mCommonEventEditor.Visible == false)
                         {
                             mCommonEventEditor = new FrmCommonEvent();
