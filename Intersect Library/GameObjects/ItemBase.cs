@@ -6,6 +6,7 @@ using Intersect.Utilities;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.GameObjects.Events;
+using Microsoft.EntityFrameworkCore;
 
 namespace Intersect.GameObjects
 {
@@ -134,13 +135,15 @@ namespace Intersect.GameObjects
             return (ItemType == ItemTypes.Currency || Stackable) && ItemType != ItemTypes.Equipment && ItemType != ItemTypes.Bag;
         }
     }
-
+    
+    [Owned]
     public class ConsumableData
     {
         public ConsumableType Type { get; set; }
         public int Value { get; set; }
     }
 
+    [Owned]
     public class EffectData
     {
         public EffectType Type { get; set; }
