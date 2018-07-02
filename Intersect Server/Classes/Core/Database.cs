@@ -8,6 +8,7 @@ using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Models;
 using Intersect.Server.Classes.Database;
+using Intersect.Server.Classes.Database.GameData;
 using Intersect.Server.Classes.Database.PlayerData;
 using Intersect.Server.Classes.Database.PlayerData.Characters;
 using Intersect.Server.Classes.Entities;
