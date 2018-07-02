@@ -258,6 +258,7 @@
     </Compile>
     <Compile Include="SharedConstants.cs" />
     <Compile Include="Utilities\Formula.cs" />
+    <Compile Include="Utilities\GameObjectTypeUtils.cs" />
     <Compile Include="Utilities\MathHelper.cs" />
     <Compile Include="Extensions\RandomExtensions.cs" />
     <Compile Include="Utilities\Retry.cs" />

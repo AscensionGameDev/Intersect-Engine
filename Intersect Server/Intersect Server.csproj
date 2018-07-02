@@ -423,6 +423,7 @@
     <Compile Include="WebApi\Authentication\UserIdentity.cs" />
     <Compile Include="WebApi\Bootstrapper.cs" />
     <Compile Include="WebApi\Modules\AuthModule.cs" />
+    <Compile Include="WebApi\Modules\GameObjectModule.cs" />
     <Compile Include="WebApi\Modules\PlayerModule.cs" />
     <Compile Include="WebApi\Modules\RootModule.cs" />
     <Compile Include="WebApi\Modules\InfoModule.cs" />

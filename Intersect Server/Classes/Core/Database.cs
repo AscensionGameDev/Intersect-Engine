@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using Intersect.Collections;
+﻿using Intersect.Collections;
 using Intersect.Config;
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -14,24 +6,25 @@ using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
-using Intersect.Server.Classes.Localization;
-using Intersect.Logging;
 using Intersect.Models;
 using Intersect.Server.Classes.Database;
-using Intersect.Server.Classes.Database.GameData;
 using Intersect.Server.Classes.Database.PlayerData;
 using Intersect.Server.Classes.Database.PlayerData.Characters;
 using Intersect.Server.Classes.Entities;
 using Intersect.Server.Classes.General;
+using Intersect.Server.Classes.Localization;
 using Intersect.Server.Classes.Maps;
 using Intersect.Server.Classes.Networking;
-using Intersect.Server.Database;
 using Intersect.Utilities;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
-using Mono.Data.Sqlite;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Intersect.Server.Classes.Core
 {
