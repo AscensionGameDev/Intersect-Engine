@@ -614,6 +614,7 @@ Tick timer saved in server config.json.";
             {
                 @"Equal To",
                 @"Greater Than or Equal To",
+                @"Less Than or Equal To",
                 @"Greater Than",
                 @"Less Than",
                 @"Does Not Equal"
@@ -711,7 +712,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString gender = @"Player's Gender is {00}";
             public static LocalizedString globalswitch = @"Global Switch {00} is {01}";
             public static LocalizedString globalvariable = @"Global Variable {00} {01}";
-            public static LocalizedString greater = @"is greather than {00}";
+            public static LocalizedString greater = @"is greater than {00}";
             public static LocalizedString greaterequal = @"is greater than or equal to {00}";
             public static LocalizedString hasitem = @"Player has at least {00} of Item {01}";
             public static LocalizedString knowsspell = @"Player knows Spell {00}";
@@ -1330,6 +1331,12 @@ Tick timer saved in server config.json.";
             public static LocalizedString view = @"View";
         }
 
+        public struct MapCacheProgress
+        {
+            public static LocalizedString title = @"Saving Map Cache";
+            public static LocalizedString remaining = @"{00} maps remaining.";
+        }
+
         public struct MapGrid
         {
             public static LocalizedString clearandfetch = @"Are you sure you want to clear the existing previews and fetch previews for each map on this grid? This could take several minutes based on the number of maps in this grid!";
@@ -1706,6 +1713,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString addsolditem = @"Add Selected";
             public static LocalizedString blacklist = @"Blacklist";
             public static LocalizedString buycost = @"Sell Amount:";
+            public static LocalizedString buydesc = @"Buy Item {00} For ({01}) Item {02}";
             public static LocalizedString buyfor = @"Buy For:";
             public static LocalizedString cancel = @"Cancel";
             public static LocalizedString copy = @"Copy Shop";
@@ -1713,6 +1721,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString delete = @"Delete Shop";
             public static LocalizedString deleteprompt = @"Are you sure you want to delete this shop? This action cannot be reverted!";
             public static LocalizedString deletetitle = @"Delete Item";
+            public static LocalizedString dontbuy = @"Don't Buy Item {00}";
             public static LocalizedString general = @"General";
             public static LocalizedString itemsboughtblacklist = @"Items Bought (Blacklist - Don't Buy Listed Items)  ";
             public static LocalizedString itemsboughtwhitelist = @"Items Bought (Whitelist - Buy Listed Items)  ";
@@ -1724,6 +1733,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString removesolditem = @"Remove Selected";
             public static LocalizedString save = @"Save";
             public static LocalizedString sellcost = @"Sell Cost:";
+            public static LocalizedString selldesc = @"Sell Item {00} For ({01}) Item {02}";
             public static LocalizedString sellfor = @"Sell for:";
             public static LocalizedString shops = @"Shops";
             public static LocalizedString title = @"Shop Editor";

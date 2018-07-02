@@ -211,21 +211,21 @@ namespace Intersect.Editor.Forms.Editors
             lstSoldItems.Items.Clear();
             for (int i = 0; i < mEditorItem.SellingItems.Count; i++)
             {
-                lstSoldItems.Items.Add("Sell Item " + ItemBase.GetName(mEditorItem.SellingItems[i].ItemId) + " For (" + mEditorItem.SellingItems[i].CostItemQuantity + ") Item " + ItemBase.GetName(mEditorItem.SellingItems[i].CostItemId));
+                lstSoldItems.Items.Add(Strings.ShopEditor.selldesc.ToString(ItemBase.GetName(mEditorItem.SellingItems[i].ItemId), mEditorItem.SellingItems[i].CostItemQuantity,ItemBase.GetName(mEditorItem.SellingItems[i].CostItemId)));
             }
             lstBoughtItems.Items.Clear();
             if (mEditorItem.BuyingWhitelist)
             {
                 for (int i = 0; i < mEditorItem.BuyingItems.Count; i++)
                 {
-                    lstBoughtItems.Items.Add("Buy Item " + ItemBase.GetName(mEditorItem.BuyingItems[i].ItemId) + " For (" + mEditorItem.BuyingItems[i].CostItemQuantity + ") Item " + ItemBase.GetName(mEditorItem.BuyingItems[i].CostItemId));
+                    lstBoughtItems.Items.Add(Strings.ShopEditor.buydesc.ToString(ItemBase.GetName(mEditorItem.BuyingItems[i].ItemId),mEditorItem.BuyingItems[i].CostItemQuantity,ItemBase.GetName(mEditorItem.BuyingItems[i].CostItemId)));
                 }
             }
             else
             {
                 for (int i = 0; i < mEditorItem.BuyingItems.Count; i++)
                 {
-                    lstBoughtItems.Items.Add("Don't Buy Item " + ItemBase.GetName(mEditorItem.BuyingItems[i].ItemId));
+                    lstBoughtItems.Items.Add(Strings.ShopEditor.dontbuy.ToString(ItemBase.GetName(mEditorItem.BuyingItems[i].ItemId)));
                 }
             }
         }

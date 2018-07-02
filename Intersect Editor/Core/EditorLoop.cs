@@ -109,7 +109,7 @@ namespace Intersect.Editor.Core
                         sProgressForm.Visible == false)
                     {
                         sProgressForm = new FrmProgress();
-                        sProgressForm.SetTitle("Saving Map Cache");
+                        sProgressForm.SetTitle(Strings.MapCacheProgress.title);
                         new Task((() => sProgressForm.ShowDialog())).Start();
                         while (Globals.MapsToScreenshot.Count > 0)
                         {
@@ -122,8 +122,7 @@ namespace Intersect.Editor.Core
                                         sProgressForm.BeginInvoke(
                                             (Action)
                                             (() =>
-                                                sProgressForm.SetProgress(
-                                                    Globals.MapsToScreenshot.Count + " maps remaining.", -1, false)));
+                                                sProgressForm.SetProgress(Strings.MapCacheProgress.remaining.ToString(Globals.MapsToScreenshot.Count), -1, false)));
                                     if (map != null)
                                     {
                                         map.Update();
@@ -134,8 +133,7 @@ namespace Intersect.Editor.Core
                             }
                             catch (Exception ex)
                             {
-                                Logging.Log.Error(ex,
-                                    "JC's Solution for UpdateMaps collection was modified bug did not work!");
+                                Logging.Log.Error(ex,"JC's Solution for UpdateMaps collection was modified bug did not work!");
                             }
                             Thread.Sleep(50);
                         }

@@ -2249,6 +2249,11 @@ namespace Intersect.Server.Classes.Networking
                     LegacyDatabase.DeteachOwnedType(((AnimationBase)obj).Upper);
                     LegacyDatabase.DeteachOwnedType(((AnimationBase)obj).Lower);
                 }
+                else if (type == GameObjectType.Item)
+                {
+                    LegacyDatabase.DeteachOwnedType(((ItemBase)obj).Consumable);
+                    LegacyDatabase.DeteachOwnedType(((ItemBase)obj).Effect);
+                }
 
                 JsonConvert.PopulateObject(bf.ReadString(), obj, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
                 
@@ -2263,6 +2268,11 @@ namespace Intersect.Server.Classes.Networking
                     //Must detach owned entities and reattach after json populates -_-
                     LegacyDatabase.AttachOwnedType(((AnimationBase)obj).Upper);
                     LegacyDatabase.AttachOwnedType(((AnimationBase)obj).Lower);
+                }
+                else if (type == GameObjectType.Item)
+                {
+                    LegacyDatabase.AttachOwnedType(((ItemBase)obj).Consumable);
+                    LegacyDatabase.AttachOwnedType(((ItemBase)obj).Effect);
                 }
                 else if (type == GameObjectType.Quest)
                 {
