@@ -70,7 +70,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (mChangingName) return;
             mEditorItem =
-                ShopBase.Lookup.Get<ShopBase>(
+                ShopBase.Get(
                     ShopBase.IdFromList(lstShops.SelectedIndex));
             UpdateEditor();
         }

@@ -299,7 +299,7 @@ namespace Intersect.Server.Classes.Entities
         {
             var killSpawn = MoveFragment(spawn, false);
             //Check Map Entities For Hits
-            var map = MapInstance.Lookup.Get<MapInstance>(spawn.MapId);
+            var map = MapInstance.Get(spawn.MapId);
             if (!killSpawn && map != null)
             {
                 Attribute attribute = map.Attributes[spawn.X, spawn.Y];
@@ -373,13 +373,13 @@ namespace Intersect.Server.Classes.Entities
                 newy = spawn.Y + GetRangeY(spawn.Dir, 1);
             }
             var killSpawn = false;
-            var map = MapInstance.Lookup.Get<MapInstance>(spawn.MapId);
+            var map = MapInstance.Get(spawn.MapId);
 
             if (newx < 0)
             {
-                if (MapInstance.Lookup.Get<MapInstance>(map.Left) != null)
+                if (MapInstance.Get(map.Left) != null)
                 {
-                    newMapId = MapInstance.Lookup.Get<MapInstance>(spawn.MapId).Left;
+                    newMapId = MapInstance.Get(spawn.MapId).Left;
                     newx = Options.MapWidth - 1;
                 }
                 else
@@ -389,9 +389,9 @@ namespace Intersect.Server.Classes.Entities
             }
             if (newx > Options.MapWidth - 1)
             {
-                if (MapInstance.Lookup.Get<MapInstance>(map.Right) != null)
+                if (MapInstance.Get(map.Right) != null)
                 {
-                    newMapId = MapInstance.Lookup.Get<MapInstance>(spawn.MapId).Right;
+                    newMapId = MapInstance.Get(spawn.MapId).Right;
                     newx = 0;
                 }
                 else
@@ -401,9 +401,9 @@ namespace Intersect.Server.Classes.Entities
             }
             if (newy < 0)
             {
-                if (MapInstance.Lookup.Get<MapInstance>(map.Up) != null)
+                if (MapInstance.Get(map.Up) != null)
                 {
-                    newMapId = MapInstance.Lookup.Get<MapInstance>(spawn.MapId).Up;
+                    newMapId = MapInstance.Get(spawn.MapId).Up;
                     newy = Options.MapHeight - 1;
                 }
                 else
@@ -413,9 +413,9 @@ namespace Intersect.Server.Classes.Entities
             }
             if (newy > Options.MapHeight - 1)
             {
-                if (MapInstance.Lookup.Get<MapInstance>(map.Down) != null)
+                if (MapInstance.Get(map.Down) != null)
                 {
-                    newMapId = MapInstance.Lookup.Get<MapInstance>(spawn.MapId).Down;
+                    newMapId = MapInstance.Get(spawn.MapId).Down;
                     newy = 0;
                 }
                 else
@@ -439,7 +439,7 @@ namespace Intersect.Server.Classes.Entities
                     Spawns[i] = null;
                 }
             }
-            MapInstance.Lookup.Get<MapInstance>(MapId).RemoveProjectile(this);
+            MapInstance.Get(MapId).RemoveProjectile(this);
             PacketSender.SendEntityLeave(Id, (int) EntityTypes.Projectile, MapId);
         }
 

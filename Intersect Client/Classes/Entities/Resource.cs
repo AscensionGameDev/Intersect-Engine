@@ -58,7 +58,7 @@ namespace Intersect_Client.Classes.Entities
             base.Load(bf);
             IsDead = Convert.ToBoolean(bf.ReadInteger());
             var baseId = bf.ReadGuid();
-            BaseResource = ResourceBase.Lookup.Get<ResourceBase>(baseId);
+            BaseResource = ResourceBase.Get(baseId);
             HideName = 1;
             if (IsDead)
             {

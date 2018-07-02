@@ -141,7 +141,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
         {
             if (mChangingName) return;
             mEditorItem =
-                QuestBase.Lookup.Get<QuestBase>(
+                QuestBase.Get(
                     QuestBase.IdFromList(lstQuests.SelectedIndex));
             UpdateEditor();
         }

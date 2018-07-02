@@ -183,7 +183,7 @@ namespace Intersect.Editor.Maps
             if (!mAttributeAnimInstances.ContainsKey(attr))
             {
                 mAttributeAnimInstances.Add(attr,
-                    new AnimationInstance(AnimationBase.Lookup.Get<AnimationBase>(animId), true));
+                    new AnimationInstance(AnimationBase.Get(animId), true));
             }
             return mAttributeAnimInstances[attr];
         }
@@ -347,6 +347,11 @@ namespace Intersect.Editor.Maps
                 }
             }
             return null;
+        }
+
+        public new static MapInstance Get(Guid id)
+        {
+            return MapInstance.Lookup.Get<MapInstance>(id);
         }
 
         public override void Delete() => Lookup?.Delete(this);

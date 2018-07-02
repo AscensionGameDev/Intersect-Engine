@@ -24,7 +24,7 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public AnimationBase AttackAnimation
         {
-            get => AnimationBase.Lookup.Get<AnimationBase>(AttackAnimationId);
+            get => AnimationBase.Get(AttackAnimationId);
             set => AttackAnimationId = value?.Id ?? Guid.Empty;
         }
 
@@ -86,7 +86,7 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public MapBase SpawnMap
         {
-            get => MapBase.Lookup.Get<MapBase>(SpawnMapId);
+            get => MapBase.Get(SpawnMapId);
             set => SpawnMapId = value?.Id ?? Guid.Empty;
         }
 
@@ -216,7 +216,7 @@ namespace Intersect.GameObjects
         
         public ItemBase Get()
         {
-            return ItemBase.Lookup.Get<ItemBase>(Id);
+            return ItemBase.Get(Id);
         }
     }
 
@@ -228,7 +228,7 @@ namespace Intersect.GameObjects
 
         public SpellBase Get()
         {
-            return SpellBase.Lookup.Get<SpellBase>(Id);
+            return SpellBase.Get(Id);
         }
     }
 

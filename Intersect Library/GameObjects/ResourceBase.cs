@@ -32,7 +32,7 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public AnimationBase Animation
         {
-            get => AnimationBase.Lookup.Get<AnimationBase>(AnimationId);
+            get => AnimationBase.Get(AnimationId);
             set => AnimationId = value?.Id ?? Guid.Empty;
         }
 

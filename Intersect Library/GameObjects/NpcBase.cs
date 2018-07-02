@@ -29,7 +29,7 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public AnimationBase AttackAnimation
         {
-            get => AnimationBase.Lookup.Get<AnimationBase>(AttackAnimationId);
+            get => AnimationBase.Get(AttackAnimationId);
             set => AttackAnimationId = value?.Id ?? Guid.Empty;
         }
         

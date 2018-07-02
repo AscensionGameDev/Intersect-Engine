@@ -214,9 +214,9 @@ namespace Intersect_Client.Classes.UI.Game
                             equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] < Options.MaxInvItems)
                         {
                             var itemNum = Globals.Me.Inventory[equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])]].ItemId;
-                            if (ItemBase.Lookup.Get<ItemBase>(itemNum) != null)
+                            if (ItemBase.Get(itemNum) != null)
                             {
-                                var itemdata = ItemBase.Lookup.Get<ItemBase>(itemNum);
+                                var itemdata = ItemBase.Get(itemNum);
                                 if (Globals.Me.Gender == 0)
                                 {
                                     paperdoll = itemdata.MalePaperdoll;

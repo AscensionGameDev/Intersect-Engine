@@ -279,7 +279,7 @@ namespace Intersect.Client.Classes.UI.Game
 
             if (Globals.QuestOffers.Count > 0)
             {
-                var quest = QuestBase.Lookup.Get<QuestBase>(Globals.QuestOffers[0]);
+                var quest = QuestBase.Get(Globals.QuestOffers[0]);
                 mQuestOfferWindow.Update(quest);
             }
             else

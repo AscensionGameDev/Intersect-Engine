@@ -270,7 +270,7 @@ namespace Intersect.Client.Classes.Core
                 mSound.SetVolume(0);
                 return;
             }
-            var map = MapInstance.Lookup.Get<MapInstance>(mMapId);
+            var map = MapInstance.Get(mMapId);
             if (map == null)
             {
                 Stop();
@@ -329,7 +329,7 @@ namespace Intersect.Client.Classes.Core
             float playery = Globals.Me.GetCenterPos().Y;
             float soundx = 0;
             float soundy = 0;
-            var map = MapInstance.Lookup.Get<MapInstance>(mMapId);
+            var map = MapInstance.Get(mMapId);
             if (map != null)
             {
                 if (mX == -1 || mY == -1 || mDistance == -1)

@@ -186,7 +186,7 @@ namespace Intersect_Client.Classes.UI.Game
             if (Crafting)
             {
                 var cancraft = true;
-                foreach (CraftIngredient c in CraftBase.Lookup.Get<CraftBase>(mCraftId).Ingredients)
+                foreach (CraftIngredient c in CraftBase.Get(mCraftId).Ingredients)
                 {
                     if (itemdict.ContainsKey(c.ItemId))
                     {
@@ -271,7 +271,7 @@ namespace Intersect_Client.Classes.UI.Game
             }
 
             var cancraft = true;
-            foreach (CraftIngredient c in CraftBase.Lookup.Get<CraftBase>(mCraftId).Ingredients)
+            foreach (CraftIngredient c in CraftBase.Get(mCraftId).Ingredients)
             {
                 if (itemdict.ContainsKey(c.ItemId))
                 {
@@ -313,7 +313,7 @@ namespace Intersect_Client.Classes.UI.Game
                 ListBoxRow tmpRow;
                 for (int i = 0; i < Globals.ActiveCraftingTable.Crafts.Count; i++)
                 {
-                    tmpRow = mRecipes.AddRow((i + 1) + ") " + ItemBase.GetName(CraftBase.Lookup.Get<CraftBase>(Globals.ActiveCraftingTable.Crafts[i]).ItemId));
+                    tmpRow = mRecipes.AddRow((i + 1) + ") " + ItemBase.GetName(CraftBase.Get(Globals.ActiveCraftingTable.Crafts[i]).ItemId));
                     tmpRow.UserData = Globals.ActiveCraftingTable.Crafts[i];
                     tmpRow.DoubleClicked += tmpNode_DoubleClicked;
                     tmpRow.Clicked += tmpNode_DoubleClicked;
@@ -327,14 +327,14 @@ namespace Intersect_Client.Classes.UI.Game
             if (Crafting == true)
             {
                 long i = Globals.System.GetTimeMs() - mBarTimer;
-                if (i > CraftBase.Lookup.Get<CraftBase>(mCraftId).Time)
+                if (i > CraftBase.Get(mCraftId).Time)
                 {
-                    i = CraftBase.Lookup.Get<CraftBase>(mCraftId).Time;
+                    i = CraftBase.Get(mCraftId).Time;
                     Crafting = false;
                     mCraftWindow.IsClosable = true;
                     LoadCraftItems(mCraftId);
                 }
-                decimal width = Convert.ToDecimal(i) / Convert.ToDecimal(CraftBase.Lookup.Get<CraftBase>(mCraftId).Time) *
+                decimal width = Convert.ToDecimal(i) / Convert.ToDecimal(CraftBase.Get(mCraftId).Time) *
                                 mBarContainer.Width;
                 mBar.Width = Convert.ToInt32(width);
             }

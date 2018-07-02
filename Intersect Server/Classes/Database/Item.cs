@@ -44,14 +44,14 @@ namespace Intersect.Server.Classes.Database
             Quantity = itemVal;
             BagId = bagId;
             Bag = bag;
-            if (ItemBase.Lookup.Get<ItemBase>(Id) != null)
+            if (ItemBase.Get(Id) != null)
             {
-                if (ItemBase.Lookup.Get<ItemBase>(Id).ItemType == ItemTypes.Equipment)
+                if (ItemBase.Get(Id).ItemType == ItemTypes.Equipment)
                 {
                     for (int i = 0; i < (int)Stats.StatCount; i++)
                     {
                         // TODO: What the fuck?
-                        StatBoost[i] = Globals.Rand.Next(-1 * ItemBase.Lookup.Get<ItemBase>(Id).StatGrowth, ItemBase.Lookup.Get<ItemBase>(Id).StatGrowth + 1);
+                        StatBoost[i] = Globals.Rand.Next(-1 * ItemBase.Get(Id).StatGrowth, ItemBase.Get(Id).StatGrowth + 1);
                     }
                 }
             }

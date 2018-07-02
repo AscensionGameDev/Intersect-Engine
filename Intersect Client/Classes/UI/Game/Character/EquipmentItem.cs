@@ -65,7 +65,7 @@ namespace Intersect.Client.Classes.UI.Game.Character
                 mDescWindow = null;
             }
 
-            var item = ItemBase.Lookup.Get<ItemBase>(mCurrentItemId);
+            var item = ItemBase.Get(mCurrentItemId);
             if (item == null) return;
             mDescWindow = new ItemDescWindow(item, 1, mCharacterWindow.X - 255, mCharacterWindow.Y, mStatBoost, item.Name);
         }
@@ -88,7 +88,7 @@ namespace Intersect.Client.Classes.UI.Game.Character
             {
                 mCurrentItemId = currentItemId;
                 mStatBoost = statBoost;
-                var item = ItemBase.Lookup.Get<ItemBase>(mCurrentItemId);
+                var item = ItemBase.Get(mCurrentItemId);
                 if (item != null)
                 {
                     GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,

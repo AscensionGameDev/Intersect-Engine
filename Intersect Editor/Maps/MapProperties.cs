@@ -461,7 +461,7 @@ namespace Intersect.Editor.Maps
                 };
                 WeatherList.AddRange(AnimationBase.Names);
                 var name = AnimationBase.GetName(mMyMap.WeatherAnimationId);
-                if (AnimationBase.Lookup.Get<AnimationBase>(mMyMap.WeatherAnimationId) == null) name = null;
+                if (AnimationBase.Get(mMyMap.WeatherAnimationId) == null) name = null;
                 return TextUtils.NullToNone(name);
             }
             set

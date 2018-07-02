@@ -143,7 +143,7 @@ namespace Intersect.Client.Classes.UI.Game.Inventory
 
                 if (Globals.GameShop.BuyingWhitelist && shopItem != null)
                 {
-                    var hoveredItem = ItemBase.Lookup.Get<ItemBase>(shopItem.CostItemId);
+                    var hoveredItem = ItemBase.Get(shopItem.CostItemId);
                     if (hoveredItem != null)
                     {
                         mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].Item,
@@ -154,7 +154,7 @@ namespace Intersect.Client.Classes.UI.Game.Inventory
                 }
                 else if (shopItem == null)
                 {
-                    var hoveredItem = ItemBase.Lookup.Get<ItemBase>(invItem.ItemId);
+                    var hoveredItem = ItemBase.Get(invItem.ItemId);
                     var costItem = Globals.GameShop.DefaultCurrency;
                     if (hoveredItem != null && costItem != null)
                     {
@@ -194,7 +194,7 @@ namespace Intersect.Client.Classes.UI.Game.Inventory
                     equipped = true;
                 }
             }
-            var item = ItemBase.Lookup.Get<ItemBase>(Globals.Me.Inventory[mMySlot].ItemId);
+            var item = ItemBase.Get(Globals.Me.Inventory[mMySlot].ItemId);
             if (Globals.Me.Inventory[mMySlot].ItemId != mCurrentItemId || Globals.Me.Inventory[mMySlot].Quantity != mCurrentAmt || equipped != mIsEquipped ||
                 (item == null && mTexLoaded != "") || (item != null && mTexLoaded != item.Pic))
             {

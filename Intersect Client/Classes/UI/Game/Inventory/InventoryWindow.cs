@@ -63,7 +63,7 @@ namespace Intersect_Client.Classes.UI.Game
             }
             for (int i = 0; i < Options.MaxInvItems; i++)
             {
-                var item = ItemBase.Lookup.Get<ItemBase>(Globals.Me.Inventory[i].ItemId);
+                var item = ItemBase.Get(Globals.Me.Inventory[i].ItemId);
                 if (item != null)
                 {
                     Items[i].Pnl.IsHidden = false;

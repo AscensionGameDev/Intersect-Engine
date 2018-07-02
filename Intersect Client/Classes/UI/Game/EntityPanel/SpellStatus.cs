@@ -79,7 +79,7 @@ namespace Intersect.Client.Classes.UI.Game.EntityPanel
         {
             if (mYindex < mEntityBox.MyEntity.Status.Count && mEntityBox.MyEntity.Status[mYindex] != null)
             {
-                var spell = SpellBase.Lookup.Get<SpellBase>(mEntityBox.MyEntity.Status[mYindex].SpellId);
+                var spell = SpellBase.Get(mEntityBox.MyEntity.Status[mYindex].SpellId);
                 var timeDiff = Globals.System.GetTimeMs() - mEntityBox.MyEntity.Status[mYindex].TimeRecevied;
                 var remaining = mEntityBox.MyEntity.Status[mYindex].TimeRemaining - timeDiff;
                 var fraction = (float)((float)remaining / (float)mEntityBox.MyEntity.Status[mYindex].TotalDuration);

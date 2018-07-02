@@ -72,7 +72,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (mChangingName) return;
             mEditorItem =
-                NpcBase.Lookup.Get<NpcBase>(NpcBase.IdFromList(lstNpcs.SelectedIndex));
+                NpcBase.Get(NpcBase.IdFromList(lstNpcs.SelectedIndex));
             UpdateEditor();
         }
 
@@ -311,7 +311,7 @@ namespace Intersect.Editor.Forms.Editors
             var drops = mEditorItem.Drops.ToArray();
             foreach (var drop in drops)
             {
-                if (ItemBase.Lookup.Get<ItemBase>(drop.ItemId) == null) mEditorItem.Drops.Remove(drop);
+                if (ItemBase.Get(drop.ItemId) == null) mEditorItem.Drops.Remove(drop);
             }
             for (int i = 0; i < mEditorItem.Drops.Count; i++)
             {

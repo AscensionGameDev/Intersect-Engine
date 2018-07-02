@@ -134,7 +134,7 @@ namespace Intersect.GameObjects.Maps
         [JsonIgnore]
         public AnimationBase WeatherAnimation
         {
-            get => AnimationBase.Lookup.Get<AnimationBase>(WeatherAnimationId);
+            get => AnimationBase.Get(WeatherAnimationId);
             set => WeatherAnimationId = value?.Id ?? Guid.Empty;
         }
         public int WeatherXSpeed { get; set;}

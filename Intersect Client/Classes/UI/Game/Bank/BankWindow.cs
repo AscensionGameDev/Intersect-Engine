@@ -72,7 +72,7 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 if (Globals.Bank[i] != null && Globals.Bank[i].ItemId != Guid.Empty)
                 {
-                    var item = ItemBase.Lookup.Get<ItemBase>(Globals.Bank[i].ItemId);
+                    var item = ItemBase.Get(Globals.Bank[i].ItemId);
                     if (item != null)
                     {
                         Items[i].Pnl.IsHidden = false;

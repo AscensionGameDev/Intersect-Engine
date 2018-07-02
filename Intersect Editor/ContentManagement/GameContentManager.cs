@@ -263,7 +263,7 @@ namespace Intersect.Editor.ContentManagement
             for (var i = 0; i < TilesetBase.Lookup.Count; i++)
             {
                 var tileset =
-                    TilesetBase.Lookup.Get<TilesetBase>(TilesetBase.IdFromList(i));
+                    TilesetBase.Get(TilesetBase.IdFromList(i));
                 if (File.Exists("resources/tilesets/" + tileset.Name))
                 {
                     try

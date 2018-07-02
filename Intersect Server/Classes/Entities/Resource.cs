@@ -67,7 +67,7 @@ namespace Intersect.Server.Classes.Entities
             var itemSlot = 0;
             foreach (var drop in Base.Drops)
             {
-                if (Globals.Rand.Next(1, 10001) <= drop.Chance * 100 && ItemBase.Lookup.Get<ItemBase>(drop.ItemId) != null)
+                if (Globals.Rand.Next(1, 10001) <= drop.Chance * 100 && ItemBase.Get(drop.ItemId) != null)
                 {
                     var slot = new InventorySlot(itemSlot);
                     slot.Set(new Item(drop.ItemId,drop.Quantity));
@@ -94,7 +94,7 @@ namespace Intersect.Server.Classes.Entities
                     if (tileHelper.TryFix())
                     {
                         //Tile is valid.. let's see if its open
-                        var map = MapInstance.Lookup.Get<MapInstance>(tileHelper.GetMapId());
+                        var map = MapInstance.Get(tileHelper.GetMapId());
                         if (map != null)
                         {
                             if (!map.TileBlocked(tileHelper.GetX(), tileHelper.GetY()))
@@ -133,9 +133,9 @@ namespace Intersect.Server.Classes.Entities
                 // Drop items
                 foreach (var item in Items)
                 {
-                    if (ItemBase.Lookup.Get<ItemBase>(item.Id) != null)
+                    if (ItemBase.Get(item.Id) != null)
                     {
-                        MapInstance.Lookup.Get<MapInstance>(selectedTile.GetMapId())
+                        MapInstance.Get(selectedTile.GetMapId())
                             .SpawnItem(selectedTile.GetX(), selectedTile.GetY(), item, item.Quantity);
                     }
                 }

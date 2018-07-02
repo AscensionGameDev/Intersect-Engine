@@ -52,7 +52,7 @@ namespace Intersect.Server.Classes.Misc.Pathfinding
             var path = mPath;
             if (mWaitTime < timeMs)
             {
-                var currentMap = MapInstance.Lookup.Get<MapInstance>(mEntity.MapId);
+                var currentMap = MapInstance.Get(mEntity.MapId);
                 if (currentMap != null && mTarget != null)
                 {
                     var myGrid = currentMap.MapGrid;
@@ -138,7 +138,7 @@ namespace Intersect.Server.Classes.Misc.Pathfinding
                                         if (LegacyDatabase.MapGrids[myGrid].MyGrid[x, y] != Guid.Empty)
                                         {
                                             var tmpMap =
-                                                MapInstance.Lookup.Get<MapInstance>(LegacyDatabase.MapGrids[myGrid]
+                                                MapInstance.Get(LegacyDatabase.MapGrids[myGrid]
                                                     .MyGrid[x, y]);
                                             if (tmpMap != null)
                                             {

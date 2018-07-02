@@ -195,7 +195,7 @@ namespace Intersect_Client.Classes.UI.Game
         private void QuestListItem_Clicked(Base sender, ClickedEventArgs arguments)
         {
             var questNum = (Guid) ((ListBoxRow) sender).UserData;
-            var quest = QuestBase.Lookup.Get<QuestBase>(questNum);
+            var quest = QuestBase.Get(questNum);
             if (quest != null)
             {
                 mSelectedQuest = quest;

@@ -75,7 +75,7 @@ namespace Intersect.Editor.Forms.Editors
         private void lstSpells_Click(object sender, EventArgs e)
         {
             if (mChangingName) return;
-            mEditorItem = SpellBase.Lookup.Get<SpellBase>(SpellBase.IdFromList(lstSpells.SelectedIndex));
+            mEditorItem = SpellBase.Get(SpellBase.IdFromList(lstSpells.SelectedIndex));
             UpdateEditor();
         }
 

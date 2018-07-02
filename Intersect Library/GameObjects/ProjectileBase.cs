@@ -18,7 +18,7 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public ItemBase Ammo
         {
-            get => ItemBase.Lookup.Get<ItemBase>(AmmoItemId);
+            get => ItemBase.Get(AmmoItemId);
             set => AmmoItemId = value?.Id ?? Guid.Empty;
         }
         public int AmmoRequired { get; set; } = 1;
@@ -62,7 +62,7 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public SpellBase Spell
         {
-            get => SpellBase.Lookup.Get<SpellBase>(SpellId);
+            get => SpellBase.Get(SpellId);
             set => SpellId = value?.Id ?? Guid.Empty;
         }
 

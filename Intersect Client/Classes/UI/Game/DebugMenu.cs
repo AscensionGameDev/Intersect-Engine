@@ -83,10 +83,10 @@ namespace Intersect_Client.Classes.UI.Game
             mFpsLabel.Text = Strings.Debug.fps.ToString( GameGraphics.Renderer.GetFps());
             mPingLabel.Text = Strings.Debug.ping.ToString( GameNetwork.Ping);
             mDrawsLabel.Text = Strings.Debug.draws.ToString( GameGraphics.DrawCalls);
-            if (MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap) != null)
+            if (MapInstance.Get(Globals.Me.CurrentMap) != null)
             {
                 mMapLabel.Text = Strings.Debug.map.ToString(
-                    MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).Name);
+                    MapInstance.Get(Globals.Me.CurrentMap).Name);
                 mXLabel.Text = Strings.Debug.x.ToString( Globals.Me.CurrentX);
                 mYLabel.Text = Strings.Debug.y.ToString( Globals.Me.CurrentY);
                 mZLabel.Text = Strings.Debug.z.ToString( Globals.Me.CurrentZ);

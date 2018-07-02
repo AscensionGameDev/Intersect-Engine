@@ -97,7 +97,7 @@ namespace Intersect.Client.Classes.UI.Game.Trades
                 mDescWindow.Dispose();
                 mDescWindow = null;
             }
-            if (ItemBase.Lookup.Get<ItemBase>(Globals.Trade[mMySide, mMySlot].ItemId) != null)
+            if (ItemBase.Get(Globals.Trade[mMySide, mMySlot].ItemId) != null)
             {
                 mDescWindow = new ItemDescWindow(Globals.Trade[mMySide, mMySlot].Item,
                     Globals.Trade[mMySide, mMySlot].Quantity, mTradeWindow.X - 255, mTradeWindow.Y,
@@ -123,7 +123,7 @@ namespace Intersect.Client.Classes.UI.Game.Trades
             if (Globals.Trade[n, mMySlot].ItemId != mCurrentItemId)
             {
                 mCurrentItemId = Globals.Trade[n, mMySlot].ItemId;
-                var item = ItemBase.Lookup.Get<ItemBase>(Globals.Trade[n, mMySlot].ItemId);
+                var item = ItemBase.Get(Globals.Trade[n, mMySlot].ItemId);
                 if (item != null)
                 {
                     GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,

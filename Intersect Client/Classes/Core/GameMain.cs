@@ -166,7 +166,7 @@ namespace Intersect.Client.Classes.Core
                         if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
                             Globals.MapGrid[x, y] != Guid.Empty)
                         {
-                            var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid[x, y]);
+                            var map = MapInstance.Get(Globals.MapGrid[x, y]);
                             if (map != null)
                             {
                                 if (map.MapLoaded == false)
@@ -193,7 +193,7 @@ namespace Intersect.Client.Classes.Core
                 }
             }
 
-            GameAudio.PlayMusic(MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).Music, 3, 3, true);
+            GameAudio.PlayMusic(MapInstance.Get(Globals.Me.CurrentMap).Music, 3, 3, true);
             Globals.GameState = GameStates.InGame;
             GameFade.FadeIn();
         }
@@ -204,10 +204,10 @@ namespace Intersect.Client.Classes.Core
             if (Globals.NeedsMaps)
             {
                 bool canShowWorld = true;
-                if (MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap) != null)
+                if (MapInstance.Get(Globals.Me.CurrentMap) != null)
                 {
-                    var gridX = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).MapGridX;
-                    var gridY = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).MapGridY;
+                    var gridX = MapInstance.Get(Globals.Me.CurrentMap).MapGridX;
+                    var gridY = MapInstance.Get(Globals.Me.CurrentMap).MapGridY;
                     for (int x = gridX - 1; x <= gridX + 1; x++)
                     {
                         for (int y = gridY - 1; y <= gridY + 1; y++)
@@ -215,7 +215,7 @@ namespace Intersect.Client.Classes.Core
                             if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
                                 Globals.MapGrid[x, y] != Guid.Empty)
                             {
-                                var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid[x, y]);
+                                var map = MapInstance.Get(Globals.MapGrid[x, y]);
                                 if (map != null)
                                 {
                                     if (map.MapLoaded == false || (ClientOptions.RenderCache && map.MapRendered == false))
@@ -239,10 +239,10 @@ namespace Intersect.Client.Classes.Core
             }
             else
             {
-                if (MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap) != null)
+                if (MapInstance.Get(Globals.Me.CurrentMap) != null)
                 {
-                    var gridX = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).MapGridX;
-                    var gridY = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).MapGridY;
+                    var gridX = MapInstance.Get(Globals.Me.CurrentMap).MapGridX;
+                    var gridY = MapInstance.Get(Globals.Me.CurrentMap).MapGridY;
                     for (int x = gridX - 1; x <= gridX + 1; x++)
                     {
                         for (int y = gridY - 1; y <= gridY + 1; y++)
@@ -250,7 +250,7 @@ namespace Intersect.Client.Classes.Core
                             if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
                                 Globals.MapGrid[x, y] != Guid.Empty)
                             {
-                                var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid[x, y]);
+                                var map = MapInstance.Get(Globals.MapGrid[x, y]);
                                 if (map == null &&
                                     (!MapInstance.MapRequests.ContainsKey(Globals.MapGrid[x, y]) ||
                                      MapInstance.MapRequests[Globals.MapGrid[x, y]] < Globals.System.GetTimeMs()))
@@ -310,7 +310,7 @@ namespace Intersect.Client.Classes.Core
             foreach (var hold in Globals.EventHolds)
             {
                 //If hold.value is empty its a common event, ignore. Otherwise make sure we have the map else the hold doesnt matter
-                if (hold.Value != Guid.Empty && MapInstance.Lookup.Get<MapInstance>(hold.Value) == null)
+                if (hold.Value != Guid.Empty && MapInstance.Get(hold.Value) == null)
                 {
                     removeHolds.Add(hold.Key);
                 }

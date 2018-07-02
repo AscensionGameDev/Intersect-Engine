@@ -121,7 +121,7 @@ namespace Intersect.Client.Classes.UI.Game.Bank
             if (Globals.Bank[mMySlot].ItemId != mCurrentItemId)
             {
                 mCurrentItemId = Globals.Bank[mMySlot].ItemId;
-                var item = ItemBase.Lookup.Get<ItemBase>(Globals.Bank[mMySlot].ItemId);
+                var item = ItemBase.Get(Globals.Bank[mMySlot].ItemId);
                 if (item != null)
                 {
                     GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,

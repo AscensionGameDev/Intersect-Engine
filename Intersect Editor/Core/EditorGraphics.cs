@@ -188,7 +188,7 @@ namespace Intersect.Editor.Core
                                     MapInstance map = null;
                                     try
                                     {
-                                        map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].MapId);
+                                        map = MapInstance.Get(Globals.MapGrid.Grid[x, y].MapId);
                                     }
                                     catch (Exception exception)
                                     {
@@ -229,7 +229,7 @@ namespace Intersect.Editor.Core
                                 if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                                 {
                                     var mapGridItem = Globals.MapGrid.Grid[x, y];
-                                    var map = MapInstance.Lookup.Get<MapInstance>(mapGridItem.MapId);
+                                    var map = MapInstance.Get(mapGridItem.MapId);
                                     if (map == null) continue;
                                     lock (map.MapLock)
                                     {
@@ -247,7 +247,7 @@ namespace Intersect.Editor.Core
                             {
                                 if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                                 {
-                                    var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].MapId);
+                                    var map = MapInstance.Get(Globals.MapGrid.Grid[x, y].MapId);
                                     if (map != null)
                                     {
                                         lock (map.MapLock)
@@ -269,7 +269,7 @@ namespace Intersect.Editor.Core
                             {
                                 if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                                 {
-                                    var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].MapId);
+                                    var map = MapInstance.Get(Globals.MapGrid.Grid[x, y].MapId);
                                     if (map != null)
                                     {
                                         lock (map.MapLock)
@@ -634,7 +634,7 @@ namespace Intersect.Editor.Core
                                     .IntersectsWith(new System.Drawing.Rectangle(0, 0, CurrentView.Width,
                                         CurrentView.Height)))
                             {
-                                var tilesetObj = TilesetBase.Lookup.Get<TilesetBase>(tmpMap.Layers[z].Tiles[x, y]
+                                var tilesetObj = TilesetBase.Get(tmpMap.Layers[z].Tiles[x, y]
                                     .TilesetId);
                                 try
                                 {
@@ -1059,7 +1059,7 @@ namespace Intersect.Editor.Core
                     if (tmpMap.Attributes[x, y] == null) continue;
                     if (tmpMap.Attributes[x, y].Value == (int) MapAttributes.Resource && !upper)
                     {
-                        var resource = ResourceBase.Lookup.Get<ResourceBase>(tmpMap.Attributes[x, y].Guid1);
+                        var resource = ResourceBase.Get(tmpMap.Attributes[x, y].Guid1);
                         if (resource == null) continue;
                         if (TextUtils.IsNone(resource.Initial.Graphic)) continue;
                         if (resource.Initial.GraphicFromTileset)
@@ -1098,7 +1098,7 @@ namespace Intersect.Editor.Core
                     }
                     else if (tmpMap.Attributes[x, y].Value == (int) MapAttributes.Animation)
                     {
-                        var animation = AnimationBase.Lookup.Get<AnimationBase>(tmpMap.Attributes[x, y].Guid1);
+                        var animation = AnimationBase.Get(tmpMap.Attributes[x, y].Guid1);
                         if (animation != null)
                         {
                             float xpos = x * Options.TileWidth + xoffset + Options.TileWidth / 2;
@@ -1153,7 +1153,7 @@ namespace Intersect.Editor.Core
                     {
                         if (x < 0 || x >= Globals.MapGrid.GridWidth) continue;
                         if (y < 0 || y >= Globals.MapGrid.GridHeight) continue;
-                        var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].MapId);
+                        var map = MapInstance.Get(Globals.MapGrid.Grid[x, y].MapId);
                         if (map == null) continue;
                         lock (map.MapLock)
                         {
@@ -1170,7 +1170,7 @@ namespace Intersect.Editor.Core
                     {
                         if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                         {
-                            var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].MapId);
+                            var map = MapInstance.Get(Globals.MapGrid.Grid[x, y].MapId);
                             if (map != null)
                             {
                                 lock (map.MapLock)
@@ -1191,7 +1191,7 @@ namespace Intersect.Editor.Core
                     {
                         if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                         {
-                            var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].MapId);
+                            var map = MapInstance.Get(Globals.MapGrid.Grid[x, y].MapId);
                             if (map != null)
                             {
                                 lock (map.MapLock)
@@ -1213,7 +1213,7 @@ namespace Intersect.Editor.Core
                     {
                         if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                         {
-                            var map = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x, y].MapId);
+                            var map = MapInstance.Get(Globals.MapGrid.Grid[x, y].MapId);
                             if (map != null)
                             {
                                 lock (map.MapLock)

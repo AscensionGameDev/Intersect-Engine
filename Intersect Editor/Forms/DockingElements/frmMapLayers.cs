@@ -237,7 +237,7 @@ namespace Intersect.Editor.Forms.DockingElements
             }
             if (id != Guid.Empty)
             {
-                tSet = TilesetBase.Lookup.Get<TilesetBase>(id);
+                tSet = TilesetBase.Get(id);
             }
             if (tSet != null)
             {

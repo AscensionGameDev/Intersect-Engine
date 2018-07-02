@@ -18,7 +18,7 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public ItemBase DefaultCurrency
         {
-            get => ItemBase.Lookup.Get<ItemBase>(DefaultCurrencyId);
+            get => ItemBase.Get(DefaultCurrencyId);
             set => DefaultCurrencyId = value?.Id ?? Guid.Empty;
         }
 
@@ -62,7 +62,7 @@ namespace Intersect.GameObjects
         public Guid ItemId;
 
         [NotMapped]
-        public ItemBase Item => ItemBase.Lookup.Get<ItemBase>(ItemId);
+        public ItemBase Item => ItemBase.Get(ItemId);
 
         public ShopItem(ByteBuffer myBuffer)
         {

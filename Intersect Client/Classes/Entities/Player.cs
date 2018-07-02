@@ -67,13 +67,13 @@ namespace Intersect_Client.Classes.Entities
             {
                 if (value != base.CurrentMap)
                 {
-                    var oldMap = MapInstance.Lookup.Get<MapInstance>(base.CurrentMap);
-                    var newMap = MapInstance.Lookup.Get<MapInstance>(value);
+                    var oldMap = MapInstance.Get(base.CurrentMap);
+                    var newMap = MapInstance.Get(value);
                     base.CurrentMap = value;
                     if (Globals.Me == this)
                     {
-                        if (MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap) != null)
-                            GameAudio.PlayMusic(MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).Music, 3, 3,
+                        if (MapInstance.Get(Globals.Me.CurrentMap) != null)
+                            GameAudio.PlayMusic(MapInstance.Get(Globals.Me.CurrentMap).Music, 3, 3,
                                 true);
                         if (newMap != null && oldMap != null)
                         {
@@ -170,18 +170,18 @@ namespace Intersect_Client.Classes.Entities
 
         public void TryDropItem(int index)
         {
-            if (ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemId) != null)
+            if (ItemBase.Get(Inventory[index].ItemId) != null)
             {
                 if (Inventory[index].Quantity > 1)
                 {
                     InputBox iBox = new InputBox(Strings.Inventory.dropitem,
                         Strings.Inventory.dropitemprompt.ToString(
-                            ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemId).Name),
+                            ItemBase.Get(Inventory[index].ItemId).Name),
                         true, InputBox.InputType.TextInput, DropItemInputBoxOkay, null, index);
                 }
                 else
                 {
-                    InputBox iBox = new InputBox(Strings.Inventory.dropitem, Strings.Inventory.dropprompt.ToString(ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemId).Name), true, InputBox.InputType.YesNo, DropInputBoxOkay, null, index);
+                    InputBox iBox = new InputBox(Strings.Inventory.dropitem, Strings.Inventory.dropprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true, InputBox.InputType.YesNo, DropInputBoxOkay, null, index);
                 }
             }
         }
@@ -242,7 +242,7 @@ namespace Intersect_Client.Classes.Entities
 				{
 					if (Inventory[MyEquipment[i]].ItemId != Guid.Empty)
 					{
-						var item = ItemBase.Lookup.Get<ItemBase>(Inventory[MyEquipment[i]].ItemId);
+						var item = ItemBase.Get(Inventory[MyEquipment[i]].ItemId);
 						if (item != null)
 						{
 							//Check for cooldown reduction
@@ -260,7 +260,7 @@ namespace Intersect_Client.Classes.Entities
 
 		public void TrySellItem(int index)
         {
-            if (ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemId) != null)
+            if (ItemBase.Get(Inventory[index].ItemId) != null)
             {
                 int foundItem = -1;
                 for (int i = 0; i < Globals.GameShop.BuyingItems.Count; i++)
@@ -278,13 +278,13 @@ namespace Intersect_Client.Classes.Entities
                     {
                         InputBox iBox = new InputBox(Strings.Shop.sellitem,
                             Strings.Shop.sellitemprompt.ToString(
-                                ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemId).Name), true,
+                                ItemBase.Get(Inventory[index].ItemId).Name), true,
                             InputBox.InputType.TextInput,
                             SellItemInputBoxOkay, null, index);
                     }
                     else
                     {
-                        InputBox iBox = new InputBox(Strings.Shop.sellitem, Strings.Shop.sellprompt.ToString(ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemId).Name), true, InputBox.InputType.YesNo, SellInputBoxOkay, null, index);
+                        InputBox iBox = new InputBox(Strings.Shop.sellitem, Strings.Shop.sellprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true, InputBox.InputType.YesNo, SellInputBoxOkay, null, index);
                     }
                 }
                 else
@@ -312,13 +312,13 @@ namespace Intersect_Client.Classes.Entities
         //bank
         public void TryDepositItem(int index)
         {
-            if (ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemId) != null)
+            if (ItemBase.Get(Inventory[index].ItemId) != null)
             {
                 if (Inventory[index].Quantity > 1)
                 {
                     InputBox iBox = new InputBox(Strings.Bank.deposititem,
                         Strings.Bank.deposititemprompt.ToString(
-                            ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemId).Name), true,
+                            ItemBase.Get(Inventory[index].ItemId).Name), true,
                         InputBox.InputType.TextInput,
                         DepositItemInputBoxOkay, null, index);
                 }
@@ -340,13 +340,13 @@ namespace Intersect_Client.Classes.Entities
 
         public void TryWithdrawItem(int index)
         {
-            if (Globals.Bank[index] != null && ItemBase.Lookup.Get<ItemBase>(Globals.Bank[index].ItemId) != null)
+            if (Globals.Bank[index] != null && ItemBase.Get(Globals.Bank[index].ItemId) != null)
             {
                 if (Globals.Bank[index].Quantity > 1)
                 {
                     InputBox iBox = new InputBox(Strings.Bank.withdrawitem,
                         Strings.Bank.withdrawitemprompt.ToString(
-                            ItemBase.Lookup.Get<ItemBase>(Globals.Bank[index].ItemId).Name),
+                            ItemBase.Get(Globals.Bank[index].ItemId).Name),
                         true, InputBox.InputType.TextInput, WithdrawItemInputBoxOkay, null, index);
                 }
                 else
@@ -368,13 +368,13 @@ namespace Intersect_Client.Classes.Entities
         //Bag
         public void TryStoreBagItem(int index)
         {
-            if (ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemId) != null)
+            if (ItemBase.Get(Inventory[index].ItemId) != null)
             {
                 if (Inventory[index].Quantity > 1)
                 {
                     InputBox iBox = new InputBox(Strings.Bags.storeitem,
                         Strings.Bags.storeitemprompt.ToString(
-                            ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemId).Name), true,
+                            ItemBase.Get(Inventory[index].ItemId).Name), true,
                         InputBox.InputType.TextInput,
                         StoreBagItemInputBoxOkay, null, index);
                 }
@@ -396,13 +396,13 @@ namespace Intersect_Client.Classes.Entities
 
         public void TryRetreiveBagItem(int index)
         {
-            if (Globals.Bag[index] != null && ItemBase.Lookup.Get<ItemBase>(Globals.Bag[index].ItemId) != null)
+            if (Globals.Bag[index] != null && ItemBase.Get(Globals.Bag[index].ItemId) != null)
             {
                 if (Globals.Bag[index].Quantity > 1)
                 {
                     InputBox iBox = new InputBox(Strings.Bags.retreiveitem,
                         Strings.Bags.retreiveitemprompt.ToString(
-                            ItemBase.Lookup.Get<ItemBase>(Globals.Bag[index].ItemId).Name),
+                            ItemBase.Get(Globals.Bag[index].ItemId).Name),
                         true, InputBox.InputType.TextInput, RetreiveBagItemInputBoxOkay, null, index);
                 }
                 else
@@ -424,13 +424,13 @@ namespace Intersect_Client.Classes.Entities
         //Trade
         public void TryTradeItem(int index)
         {
-            if (ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemId) != null)
+            if (ItemBase.Get(Inventory[index].ItemId) != null)
             {
                 if (Inventory[index].Quantity > 1)
                 {
                     InputBox iBox = new InputBox(Strings.Trading.offeritem,
                         Strings.Trading.offeritemprompt.ToString(
-                            ItemBase.Lookup.Get<ItemBase>(Inventory[index].ItemId).Name), true,
+                            ItemBase.Get(Inventory[index].ItemId).Name), true,
                         InputBox.InputType.TextInput,
                         TradeItemInputBoxOkay, null, index);
                 }
@@ -452,14 +452,14 @@ namespace Intersect_Client.Classes.Entities
 
         public void TryRevokeItem(int index)
         {
-            if (Globals.Trade[0, index] != null && ItemBase.Lookup.Get<ItemBase>(Globals.Trade[0, index].ItemId) !=
+            if (Globals.Trade[0, index] != null && ItemBase.Get(Globals.Trade[0, index].ItemId) !=
                 null)
             {
                 if (Globals.Trade[0, index].Quantity > 1)
                 {
                     InputBox iBox = new InputBox(Strings.Trading.revokeitem,
                         Strings.Trading.revokeitemprompt.ToString(
-                            ItemBase.Lookup.Get<ItemBase>(Globals.Trade[0, index].ItemId).Name), true,
+                            ItemBase.Get(Globals.Trade[0, index].ItemId).Name), true,
                         InputBox.InputType.TextInput, RevokeItemInputBoxOkay, null,
                         index);
                 }
@@ -489,11 +489,11 @@ namespace Intersect_Client.Classes.Entities
 
         public void TryForgetSpell(int index)
         {
-            if (SpellBase.Lookup.Get<SpellBase>(Spells[index].SpellId) != null)
+            if (SpellBase.Get(Spells[index].SpellId) != null)
             {
                 InputBox iBox = new InputBox(Strings.Spells.forgetspell,
                     Strings.Spells.forgetspellprompt.ToString(
-                        SpellBase.Lookup.Get<SpellBase>(Spells[index].SpellId).Name), true, InputBox.InputType.YesNo,
+                        SpellBase.Get(Spells[index].SpellId).Name), true, InputBox.InputType.YesNo,
                     ForgetSpellInputBoxOkay, null, index);
             }
         }
@@ -526,16 +526,16 @@ namespace Intersect_Client.Classes.Entities
             {
                 if (CurrentY < Options.MapHeight && CurrentY >= 0)
                 {
-                    if (MapInstance.Lookup.Get<MapInstance>(CurrentMap) != null &&
-                        MapInstance.Lookup.Get<MapInstance>(CurrentMap).Attributes[CurrentX, CurrentY] != null)
+                    if (MapInstance.Get(CurrentMap) != null &&
+                        MapInstance.Get(CurrentMap).Attributes[CurrentX, CurrentY] != null)
                     {
-                        if (MapInstance.Lookup.Get<MapInstance>(CurrentMap).Attributes[CurrentX, CurrentY].Value ==
+                        if (MapInstance.Get(CurrentMap).Attributes[CurrentX, CurrentY].Value ==
                             (int) MapAttributes.ZDimension)
                         {
-                            if (MapInstance.Lookup.Get<MapInstance>(CurrentMap).Attributes[CurrentX, CurrentY].Data1 >
+                            if (MapInstance.Get(CurrentMap).Attributes[CurrentX, CurrentY].Data1 >
                                 0)
                             {
-                                CurrentZ = MapInstance.Lookup.Get<MapInstance>(CurrentMap)
+                                CurrentZ = MapInstance.Get(CurrentMap)
                                                .Attributes[CurrentX, CurrentY].Data1 - 1;
                             }
                         }
@@ -595,8 +595,8 @@ namespace Intersect_Client.Classes.Entities
         {
             if (target != null)
             {
-                var myMap = MapInstance.Lookup.Get<MapInstance>(CurrentMap);
-                var targetMap = MapInstance.Lookup.Get<MapInstance>(target.CurrentMap);
+                var myMap = MapInstance.Get(CurrentMap);
+                var targetMap = MapInstance.Get(target.CurrentMap);
                 if (myMap != null && targetMap != null)
                 {
                     //Calculate World Tile of Me
@@ -663,7 +663,7 @@ namespace Intersect_Client.Classes.Entities
 
             if (Options.ShieldIndex > -1 && Globals.Me.MyEquipment[Options.ShieldIndex] > -1)
             {
-                var item = ItemBase.Lookup.Get<ItemBase>(Globals.Me.Inventory[Globals.Me.MyEquipment[Options.ShieldIndex]]
+                var item = ItemBase.Get(Globals.Me.Inventory[Globals.Me.MyEquipment[Options.ShieldIndex]]
                     .ItemId);
                 if (item != null)
                 {
@@ -757,10 +757,10 @@ namespace Intersect_Client.Classes.Entities
             var tmpX = x;
             var tmpY = y;
             var tmpI = -1;
-            if (MapInstance.Lookup.Get<MapInstance>(mapId) != null)
+            if (MapInstance.Get(mapId) != null)
             {
-                var gridX = MapInstance.Lookup.Get<MapInstance>(mapId).MapGridX;
-                var gridY = MapInstance.Lookup.Get<MapInstance>(mapId).MapGridY;
+                var gridX = MapInstance.Get(mapId).MapGridX;
+                var gridY = MapInstance.Get(mapId).MapGridY;
 
                 if (x < 0)
                 {
@@ -785,7 +785,7 @@ namespace Intersect_Client.Classes.Entities
 
                 if (gridX >= 0 && gridX < Globals.MapGridWidth && gridY >= 0 && gridY < Globals.MapGridHeight)
                 {
-                    if (MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid[gridX, gridY]) != null)
+                    if (MapInstance.Get(Globals.MapGrid[gridX, gridY]) != null)
                     {
                         x = tmpX;
                         y = tmpY;
@@ -918,7 +918,7 @@ namespace Intersect_Client.Classes.Entities
 
         public bool TryPickupItem()
         {
-            var map = MapInstance.Lookup.Get<MapInstance>(CurrentMap);
+            var map = MapInstance.Get(CurrentMap);
             if (map == null)
             {
                 return false;
@@ -1028,8 +1028,8 @@ namespace Intersect_Client.Classes.Entities
                         if (CurrentX < 0 || CurrentY < 0 || CurrentX > (Options.MapWidth - 1) ||
                             CurrentY > (Options.MapHeight - 1))
                         {
-                            var gridX = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).MapGridX;
-                            var gridY = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).MapGridY;
+                            var gridX = MapInstance.Get(Globals.Me.CurrentMap).MapGridX;
+                            var gridY = MapInstance.Get(Globals.Me.CurrentMap).MapGridY;
                             if (CurrentX < 0)
                             {
                                 gridX--;
@@ -1078,10 +1078,10 @@ namespace Intersect_Client.Classes.Entities
         public void FetchNewMaps()
         {
             if (Globals.MapGridWidth == 0 || Globals.MapGridHeight == 0) return;
-            if (MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap) != null)
+            if (MapInstance.Get(Globals.Me.CurrentMap) != null)
             {
-                var gridX = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).MapGridX;
-                var gridY = MapInstance.Lookup.Get<MapInstance>(Globals.Me.CurrentMap).MapGridY;
+                var gridX = MapInstance.Get(Globals.Me.CurrentMap).MapGridX;
+                var gridY = MapInstance.Get(Globals.Me.CurrentMap).MapGridY;
                 for (int x = gridX - 1; x <= gridX + 1; x++)
                 {
                     for (int y = gridY - 1; y <= gridY + 1; y++)
@@ -1089,7 +1089,7 @@ namespace Intersect_Client.Classes.Entities
                         if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
                             Globals.MapGrid[x, y] != Guid.Empty)
                         {
-                            if (MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid[x, y]) == null)
+                            if (MapInstance.Get(Globals.MapGrid[x, y]) == null)
                             {
                                 PacketSender.SendNeedMap(Globals.MapGrid[x, y]);
                             }
@@ -1111,7 +1111,7 @@ namespace Intersect_Client.Classes.Entities
         /// <returns></returns>
         public int IsTileBlocked(int x, int y, int z, Guid mapId, ref Guid blockedBy, bool ignoreAliveResources = true, bool ignoreDeadResources = true)
         {
-            var mapInstance = MapInstance.Lookup.Get<MapInstance>(mapId);
+            var mapInstance = MapInstance.Get(mapId);
             if (mapInstance == null) return -2;
             var gridX = mapInstance.MapGridX;
             var gridY = mapInstance.MapGridY;
@@ -1144,7 +1144,7 @@ namespace Intersect_Client.Classes.Entities
                 if (gridX < 0 || gridY < 0 || gridX >= Globals.MapGridWidth || gridY >= Globals.MapGridHeight)
                     return -2;
 
-                var gameMap = MapInstance.Lookup.Get<MapInstance>(Globals.MapGrid[gridX, gridY]);
+                var gameMap = MapInstance.Get(Globals.MapGrid[gridX, gridY]);
                 if (gameMap != null)
                 {
                     if (gameMap.Attributes[tmpX, tmpY] != null)
@@ -1207,7 +1207,7 @@ namespace Intersect_Client.Classes.Entities
                                 else if (en.Value.GetType() == typeof(Player))
                                 {
                                     //Return the entity key as this should block the player.  Only exception is if the MapZone this entity is on is passable.
-                                    var entityMap = MapInstance.Lookup.Get<MapInstance>(en.Value.CurrentMap);
+                                    var entityMap = MapInstance.Get(en.Value.CurrentMap);
                                     if (Options.PlayerPassable[(int) entityMap.ZoneType]) continue;
                                 }
                                 blockedBy = en.Key;
@@ -1216,9 +1216,9 @@ namespace Intersect_Client.Classes.Entities
                         }
                     }
                 }
-                if (MapInstance.Lookup.Get<MapInstance>(tmpMapId) != null)
+                if (MapInstance.Get(tmpMapId) != null)
                 {
-                    foreach (var en in MapInstance.Lookup.Get<MapInstance>(tmpMapId).LocalEntities)
+                    foreach (var en in MapInstance.Get(tmpMapId).LocalEntities)
                     {
                         if (en.Value == null) continue;
                         if (en.Value.CurrentMap == tmpMapId && en.Value.CurrentX == tmpX && en.Value.CurrentY == tmpY &&

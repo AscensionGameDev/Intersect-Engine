@@ -269,7 +269,7 @@ namespace Intersect_Client.Classes.Maps
                 {
                     if (Attributes[x, y] == null) continue;
                     if (Attributes[x, y].Value != (int) MapAttributes.Animation) continue;
-                    var anim = AnimationBase.Lookup.Get<AnimationBase>(Attributes[x, y].Guid1);
+                    var anim = AnimationBase.Get(Attributes[x, y].Guid1);
                     if (anim == null) continue;
                     if (!mAttributeAnimInstances.ContainsKey(Attributes[x, y]))
                     {
@@ -319,7 +319,7 @@ namespace Intersect_Client.Classes.Maps
         //Animations
         public void AddTileAnimation(Guid animId, int tileX, int tileY, int dir = -1)
         {
-            var animBase = AnimationBase.Lookup.Get<AnimationBase>(animId);
+            var animBase = AnimationBase.Get(animId);
             if (animBase == null) return;
             var anim = new MapAnimationInstance(animBase, tileX, tileY, dir);
             LocalAnimations.Add(anim);
@@ -405,7 +405,7 @@ namespace Intersect_Client.Classes.Maps
                 //Draw Map Items
                 foreach (var item in MapItems)
                 {
-                    var itemBase = ItemBase.Lookup.Get<ItemBase>(item.Value.ItemId);
+                    var itemBase = ItemBase.Get(item.Value.ItemId);
                     if (itemBase != null)
                     {
                         GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,
@@ -651,7 +651,7 @@ namespace Intersect_Client.Classes.Maps
         private void DrawTile(int x, int y, int layer, int animFrame, float xoffset, float yoffset,
             GameRenderTexture tex)
         {
-            var tileset = TilesetBase.Lookup.Get<TilesetBase>(Layers[layer].Tiles[x, y].TilesetId);
+            var tileset = TilesetBase.Get(Layers[layer].Tiles[x, y].TilesetId);
             if (tileset == null) return;
             GameTexture tilesetTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tileset,
                 tileset.Name);
@@ -835,7 +835,7 @@ namespace Intersect_Client.Classes.Maps
         public void DrawWeather()
         {
             if (Globals.Me == null || Lookup.Get(Globals.Me.CurrentMap) == null) return;
-            var anim = AnimationBase.Lookup.Get<AnimationBase>(WeatherAnimationId);
+            var anim = AnimationBase.Get(WeatherAnimationId);
 
             if (anim == null || WeatherIntensity == 0) { return; }
 
@@ -1046,6 +1046,11 @@ namespace Intersect_Client.Classes.Maps
                 LocalEntities.Remove(evt.Id);
                 evt.Dispose();
             }
+        }
+
+        public new static MapInstance Get(Guid id)
+        {
+            return MapInstance.Lookup.Get<MapInstance>(id);
         }
 
         public override void Delete()

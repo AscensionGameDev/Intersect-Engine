@@ -383,13 +383,13 @@ namespace Intersect.Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var mapId = bf.ReadGuid();
-            var map = MapInstance.Lookup.Get<MapInstance>(mapId);
+            var map = MapInstance.Get(mapId);
             if (map != null)
             {
                 PacketSender.SendMap(client, mapId);
                 if (!client.IsEditor && client.Entity != null && mapId == client.Entity.MapId)
                 {
-                    PacketSender.SendMapGrid(client, MapInstance.Lookup.Get<MapInstance>(mapId).MapGrid);
+                    PacketSender.SendMapGrid(client, MapInstance.Get(mapId).MapGrid);
                 }
             }
         }
@@ -650,9 +650,9 @@ namespace Intersect.Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var mapId = bf.ReadGuid();
-            var map = MapInstance.Lookup.Get<MapInstance>(mapId);
+            var map = MapInstance.Get(mapId);
             if (map == null) return;
-            map.Load(bf.ReadString(), MapInstance.Lookup.Get<MapInstance>(mapId).Revision + 1);
+            map.Load(bf.ReadString(), MapInstance.Get(mapId).Revision + 1);
 
             //Event Fixing
             var removedEvents = new List<Guid>();
@@ -715,7 +715,7 @@ namespace Intersect.Server.Classes.Networking
             {
                 var destType = bf.ReadInteger();
                 newMap = LegacyDatabase.AddGameObject(GameObjectType.Map).Id;
-                tmpMap = MapInstance.Lookup.Get<MapInstance>(newMap);
+                tmpMap = MapInstance.Get(newMap);
                 LegacyDatabase.GenerateMapGrids();
                 PacketSender.SendMap(client, newMap, true);
                 PacketSender.SendMapGridToAll(tmpMap.MapGrid);
@@ -759,54 +759,54 @@ namespace Intersect.Server.Classes.Networking
                 switch (location)
                 {
                     case 0:
-                        if (MapInstance.Lookup.Get<MapInstance>(MapInstance.Lookup.Get<MapInstance>(relativeMap).Up) ==
+                        if (MapInstance.Get(MapInstance.Get(relativeMap).Up) ==
                             null)
                         {
                             newMap = LegacyDatabase.AddGameObject(GameObjectType.Map).Id;
-                            tmpMap = MapInstance.Lookup.Get<MapInstance>(newMap);
-                            tmpMap.MapGrid = MapInstance.Lookup.Get<MapInstance>(relativeMap).MapGrid;
-                            tmpMap.MapGridX = MapInstance.Lookup.Get<MapInstance>(relativeMap).MapGridX;
-                            tmpMap.MapGridY = MapInstance.Lookup.Get<MapInstance>(relativeMap).MapGridY - 1;
-                            MapInstance.Lookup.Get<MapInstance>(relativeMap).Up = newMap;
+                            tmpMap = MapInstance.Get(newMap);
+                            tmpMap.MapGrid = MapInstance.Get(relativeMap).MapGrid;
+                            tmpMap.MapGridX = MapInstance.Get(relativeMap).MapGridX;
+                            tmpMap.MapGridY = MapInstance.Get(relativeMap).MapGridY - 1;
+                            MapInstance.Get(relativeMap).Up = newMap;
                         }
                         break;
 
                     case 1:
-                        if (MapInstance.Lookup.Get<MapInstance>(MapInstance.Lookup.Get<MapInstance>(relativeMap)
+                        if (MapInstance.Get(MapInstance.Get(relativeMap)
                                 .Down) == null)
                         {
                             newMap = LegacyDatabase.AddGameObject(GameObjectType.Map).Id;
-                            tmpMap = MapInstance.Lookup.Get<MapInstance>(newMap);
-                            tmpMap.MapGrid = MapInstance.Lookup.Get<MapInstance>(relativeMap).MapGrid;
-                            tmpMap.MapGridX = MapInstance.Lookup.Get<MapInstance>(relativeMap).MapGridX;
-                            tmpMap.MapGridY = MapInstance.Lookup.Get<MapInstance>(relativeMap).MapGridY + 1;
-                            MapInstance.Lookup.Get<MapInstance>(relativeMap).Down = newMap;
+                            tmpMap = MapInstance.Get(newMap);
+                            tmpMap.MapGrid = MapInstance.Get(relativeMap).MapGrid;
+                            tmpMap.MapGridX = MapInstance.Get(relativeMap).MapGridX;
+                            tmpMap.MapGridY = MapInstance.Get(relativeMap).MapGridY + 1;
+                            MapInstance.Get(relativeMap).Down = newMap;
                         }
                         break;
 
                     case 2:
-                        if (MapInstance.Lookup.Get<MapInstance>(MapInstance.Lookup.Get<MapInstance>(relativeMap)
+                        if (MapInstance.Get(MapInstance.Get(relativeMap)
                                 .Left) == null)
                         {
                             newMap = LegacyDatabase.AddGameObject(GameObjectType.Map).Id;
-                            tmpMap = MapInstance.Lookup.Get<MapInstance>(newMap);
-                            tmpMap.MapGrid = MapInstance.Lookup.Get<MapInstance>(relativeMap).MapGrid;
-                            tmpMap.MapGridX = MapInstance.Lookup.Get<MapInstance>(relativeMap).MapGridX - 1;
-                            tmpMap.MapGridY = MapInstance.Lookup.Get<MapInstance>(relativeMap).MapGridY;
-                            MapInstance.Lookup.Get<MapInstance>(relativeMap).Left = newMap;
+                            tmpMap = MapInstance.Get(newMap);
+                            tmpMap.MapGrid = MapInstance.Get(relativeMap).MapGrid;
+                            tmpMap.MapGridX = MapInstance.Get(relativeMap).MapGridX - 1;
+                            tmpMap.MapGridY = MapInstance.Get(relativeMap).MapGridY;
+                            MapInstance.Get(relativeMap).Left = newMap;
                         }
                         break;
 
                     case 3:
-                        if (MapInstance.Lookup.Get<MapInstance>(MapInstance.Lookup.Get<MapInstance>(relativeMap)
+                        if (MapInstance.Get(MapInstance.Get(relativeMap)
                                 .Right) == null)
                         {
                             newMap = LegacyDatabase.AddGameObject(GameObjectType.Map).Id;
-                            tmpMap = MapInstance.Lookup.Get<MapInstance>(newMap);
-                            tmpMap.MapGrid = MapInstance.Lookup.Get<MapInstance>(relativeMap).MapGrid;
-                            tmpMap.MapGridX = MapInstance.Lookup.Get<MapInstance>(relativeMap).MapGridX + 1;
-                            tmpMap.MapGridY = MapInstance.Lookup.Get<MapInstance>(relativeMap).MapGridY;
-                            MapInstance.Lookup.Get<MapInstance>(relativeMap).Right = newMap;
+                            tmpMap = MapInstance.Get(newMap);
+                            tmpMap.MapGrid = MapInstance.Get(relativeMap).MapGrid;
+                            tmpMap.MapGridX = MapInstance.Get(relativeMap).MapGridX + 1;
+                            tmpMap.MapGridY = MapInstance.Get(relativeMap).MapGridY;
+                            MapInstance.Get(relativeMap).Right = newMap;
                         }
                         break;
                 }
@@ -821,7 +821,7 @@ namespace Intersect.Server.Classes.Networking
                                 .MyGrid[tmpMap.MapGridX, tmpMap.MapGridY + 1];
                             if (tmpMap.Down != Guid.Empty)
                             {
-                                MapInstance.Lookup.Get<MapInstance>(tmpMap.Down).Up = newMap;
+                                MapInstance.Get(tmpMap.Down).Up = newMap;
                             }
                         }
                         if (tmpMap.MapGridY - 1 >= 0)
@@ -829,7 +829,7 @@ namespace Intersect.Server.Classes.Networking
                             tmpMap.Up = LegacyDatabase.MapGrids[tmpMap.MapGrid].MyGrid[tmpMap.MapGridX, tmpMap.MapGridY - 1];
                             if (tmpMap.Up != Guid.Empty)
                             {
-                                MapInstance.Lookup.Get<MapInstance>(tmpMap.Up).Down = newMap;
+                                MapInstance.Get(tmpMap.Up).Down = newMap;
                             }
                         }
                     }
@@ -842,7 +842,7 @@ namespace Intersect.Server.Classes.Networking
                                 .MyGrid[tmpMap.MapGridX - 1, tmpMap.MapGridY];
                             if (tmpMap.Left != Guid.Empty)
                             {
-                                MapInstance.Lookup.Get<MapInstance>(tmpMap.Left).Right = newMap;
+                                MapInstance.Get(tmpMap.Left).Right = newMap;
                             }
                         }
 
@@ -852,7 +852,7 @@ namespace Intersect.Server.Classes.Networking
                                 LegacyDatabase.MapGrids[tmpMap.MapGrid].MyGrid[tmpMap.MapGridX + 1, tmpMap.MapGridY];
                             if (tmpMap.Right != Guid.Empty)
                             {
-                                MapInstance.Lookup.Get<MapInstance>(tmpMap.Right).Left = newMap;
+                                MapInstance.Get(tmpMap.Right).Left = newMap;
                             }
                         }
                     }
@@ -860,7 +860,7 @@ namespace Intersect.Server.Classes.Networking
                     LegacyDatabase.SaveGameDatabase();
                     LegacyDatabase.GenerateMapGrids();
                     PacketSender.SendMap(client, newMap, true);
-                    PacketSender.SendMapGridToAll(MapInstance.Lookup.Get<MapInstance>(newMap).MapGrid);
+                    PacketSender.SendMapGridToAll(MapInstance.Get(newMap).MapGrid);
                     PacketSender.SendEnterMap(client, newMap);
                     var folderDir = MapList.GetList().FindMapParent(relativeMap, null);
                     if (folderDir != null)
@@ -953,15 +953,15 @@ namespace Intersect.Server.Classes.Networking
                 if (Options.WeaponIndex > -1)
                 {
                     if (client.Entity.Equipment[Options.WeaponIndex] >= 0 &&
-                        ItemBase.Lookup.Get<ItemBase>(client.Entity
+                        ItemBase.Get(client.Entity
                             .Items[client.Entity.Equipment[Options.WeaponIndex]].Id) !=
                         null)
                     {
-                        ItemBase weaponItem = ItemBase.Lookup.Get<ItemBase>(client.Entity
+                        ItemBase weaponItem = ItemBase.Get(client.Entity
                             .Items[client.Entity.Equipment[Options.WeaponIndex]].Id);
 
                         //Check for animation
-                        var attackAnim = ItemBase.Lookup.Get<ItemBase>(client.Entity.Items[client.Entity.Equipment[Options.WeaponIndex]].Id).AttackAnimation;
+                        var attackAnim = ItemBase.Get(client.Entity.Items[client.Entity.Equipment[Options.WeaponIndex]].Id).AttackAnimation;
                         if (attackAnim != null && attackingTile.TryFix())
                         {
                             PacketSender.SendAnimationToProximity(attackAnim.Id, -1, Guid.Empty, attackingTile.GetMapId(), attackingTile.GetX(), attackingTile.GetY(), client.Entity.Dir);
@@ -969,8 +969,8 @@ namespace Intersect.Server.Classes.Networking
 
                         var weaponInvSlot = client.Entity.Equipment[Options.WeaponIndex];
                         var invItem = client.Entity.Items[weaponInvSlot];
-                        var weapon = ItemBase.Lookup.Get<ItemBase>(invItem?.Id ?? Guid.Empty);
-                        var projectileBase = ProjectileBase.Lookup.Get<ProjectileBase>(weapon?.ProjectileId ?? Guid.Empty);
+                        var weapon = ItemBase.Get(invItem?.Id ?? Guid.Empty);
+                        var projectileBase = ProjectileBase.Get(weapon?.ProjectileId ?? Guid.Empty);
 
                         if (projectileBase != null)
                         {
@@ -1009,7 +1009,7 @@ namespace Intersect.Server.Classes.Networking
                                     CustomColors.NoAmmo);
                             }
 #endif
-                            MapInstance.Lookup.Get<MapInstance>(client.Entity.MapId)
+                            MapInstance.Get(client.Entity.MapId)
                                 .SpawnMapProjectile(client.Entity, projectileBase, null, weaponItem,
                                     client.Entity.MapId,
                                     client.Entity.X, client.Entity.Y, client.Entity.Z,
@@ -1039,7 +1039,7 @@ namespace Intersect.Server.Classes.Networking
 
                 if (unequippedAttack)
                 {
-                    var classBase = ClassBase.Lookup.Get<ClassBase>(client.Entity.ClassId);
+                    var classBase = ClassBase.Get(client.Entity.ClassId);
                     if (classBase != null)
                     {
                         //Check for animation
@@ -1176,7 +1176,7 @@ namespace Intersect.Server.Classes.Networking
             var classId = bf.ReadGuid();
             var sprite = bf.ReadInteger();
             var index = client.Id;
-            var classBase = ClassBase.Lookup.Get<ClassBase>(classId);
+            var classBase = ClassBase.Get(classId);
             if (classBase == null || classBase.Locked)
             {
                 PacketSender.SendLoginError(client, Strings.Account.invalidclass);
@@ -1227,7 +1227,7 @@ namespace Intersect.Server.Classes.Networking
 
                 foreach (var item in classBase.Items)
                 {
-                    if (ItemBase.Lookup.Get<ItemBase>(item.Id) != null)
+                    if (ItemBase.Get(item.Id) != null)
                     {
                         var tempItem = new Item(item.Id, item.Amount);
                         player.TryGiveItem(tempItem, false);
@@ -1244,19 +1244,19 @@ namespace Intersect.Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var index = bf.ReadInteger();
-            if (index < MapInstance.Lookup.Get<MapInstance>(client.Entity.MapId).MapItems.Count &&
-                MapInstance.Lookup.Get<MapInstance>(client.Entity.MapId).MapItems[index] != null)
+            if (index < MapInstance.Get(client.Entity.MapId).MapItems.Count &&
+                MapInstance.Get(client.Entity.MapId).MapItems[index] != null)
             {
-                if (MapInstance.Lookup.Get<MapInstance>(client.Entity.MapId).MapItems[index].X ==
+                if (MapInstance.Get(client.Entity.MapId).MapItems[index].X ==
                     client.Entity.X &&
-                    MapInstance.Lookup.Get<MapInstance>(client.Entity.MapId).MapItems[index].Y ==
+                    MapInstance.Get(client.Entity.MapId).MapItems[index].Y ==
                     client.Entity.Y)
                 {
                     if (
-                        client.Entity.TryGiveItem(MapInstance.Lookup.Get<MapInstance>(client.Entity.MapId) .MapItems[index]))
+                        client.Entity.TryGiveItem(MapInstance.Get(client.Entity.MapId) .MapItems[index]))
                     {
                         //Remove Item From Map
-                        MapInstance.Lookup.Get<MapInstance>(client.Entity.MapId).RemoveItem(index);
+                        MapInstance.Get(client.Entity.MapId).RemoveItem(index);
                     }
                 }
             }
@@ -1426,7 +1426,7 @@ namespace Intersect.Server.Classes.Networking
                     else if (destType == 1)
                     {
                         mapId = bf.ReadGuid();
-                        MapInstance.Lookup.Get<MapInstance>(mapId).Name = bf.ReadString();
+                        MapInstance.Get(mapId).Name = bf.ReadString();
                         LegacyDatabase.SaveGameDatabase();
                         PacketSender.SendMapListToAll();
                     }
@@ -1448,9 +1448,9 @@ namespace Intersect.Server.Classes.Networking
                             return;
                         }
                         mapId = bf.ReadGuid();
-                        var players = MapInstance.Lookup.Get<MapInstance>(mapId).GetPlayersOnMap();
+                        var players = MapInstance.Get(mapId).GetPlayersOnMap();
                         MapList.GetList().DeleteMap(mapId);
-                        LegacyDatabase.DeleteGameObject(MapInstance.Lookup.Get<MapInstance>(mapId));
+                        LegacyDatabase.DeleteGameObject(MapInstance.Get(mapId));
                         LegacyDatabase.SaveGameDatabase();
                         LegacyDatabase.GenerateMapGrids();
                         PacketSender.SendMapListToAll();
@@ -1746,7 +1746,7 @@ namespace Intersect.Server.Classes.Networking
             {
                 if (client.IsEditor)
                 {
-                    PacketSender.SendMapGrid(client, MapInstance.Lookup.Get<MapInstance>(mapId).MapGrid);
+                    PacketSender.SendMapGrid(client, MapInstance.Get(mapId).MapGrid);
                 }
             }
         }
@@ -1762,73 +1762,73 @@ namespace Intersect.Server.Classes.Networking
             {
                 if (client.IsEditor)
                 {
-                    if (MapInstance.Lookup.Get<MapInstance>(mapId) != null)
+                    if (MapInstance.Get(mapId) != null)
                     {
-                        MapInstance.Lookup.Get<MapInstance>(mapId).ClearConnections();
+                        MapInstance.Get(mapId).ClearConnections();
 
-                        int gridX = MapInstance.Lookup.Get<MapInstance>(mapId).MapGridX;
-                        int gridY = MapInstance.Lookup.Get<MapInstance>(mapId).MapGridY;
+                        int gridX = MapInstance.Get(mapId).MapGridX;
+                        int gridY = MapInstance.Get(mapId).MapGridY;
 
                         //Up
                         if (gridY - 1 >= 0 &&
-                            LegacyDatabase.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapId).MapGrid]
+                            LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid]
                                 .MyGrid[gridX, gridY - 1] != Guid.Empty)
                         {
                             if (
-                                MapInstance.Lookup.Get<MapInstance>(
-                                    LegacyDatabase.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapId).MapGrid]
+                                MapInstance.Get(
+                                    LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid]
                                         .MyGrid[gridX, gridY - 1]) !=
                                 null)
-                                MapInstance.Lookup.Get<MapInstance>(
-                                        LegacyDatabase.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapId).MapGrid]
+                                MapInstance.Get(
+                                        LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid]
                                             .MyGrid[gridX, gridY - 1])
                                     .ClearConnections((int)Directions.Down);
                         }
 
                         //Down
-                        if (gridY + 1 < LegacyDatabase.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapId).MapGrid].Height &&
-                            LegacyDatabase.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapId).MapGrid]
+                        if (gridY + 1 < LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid].Height &&
+                            LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid]
                                 .MyGrid[gridX, gridY + 1] != Guid.Empty)
                         {
                             if (
-                                MapInstance.Lookup.Get<MapInstance>(
-                                    LegacyDatabase.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapId).MapGrid]
+                                MapInstance.Get(
+                                    LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid]
                                         .MyGrid[gridX, gridY + 1]) !=
                                 null)
-                                MapInstance.Lookup.Get<MapInstance>(
-                                        LegacyDatabase.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapId).MapGrid]
+                                MapInstance.Get(
+                                        LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid]
                                             .MyGrid[gridX, gridY + 1])
                                     .ClearConnections((int)Directions.Up);
                         }
 
                         //Left
                         if (gridX - 1 >= 0 &&
-                            LegacyDatabase.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapId).MapGrid]
+                            LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid]
                                 .MyGrid[gridX - 1, gridY] != Guid.Empty)
                         {
                             if (
-                                MapInstance.Lookup.Get<MapInstance>(
-                                    LegacyDatabase.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapId).MapGrid]
+                                MapInstance.Get(
+                                    LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid]
                                         .MyGrid[gridX - 1, gridY]) !=
                                 null)
-                                MapInstance.Lookup.Get<MapInstance>(
-                                        LegacyDatabase.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapId).MapGrid]
+                                MapInstance.Get(
+                                        LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid]
                                             .MyGrid[gridX - 1, gridY])
                                     .ClearConnections((int)Directions.Right);
                         }
 
                         //Right
-                        if (gridX + 1 < LegacyDatabase.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapId).MapGrid].Width &&
-                            LegacyDatabase.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapId).MapGrid]
+                        if (gridX + 1 < LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid].Width &&
+                            LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid]
                                 .MyGrid[gridX + 1, gridY] != Guid.Empty)
                         {
                             if (
-                                MapInstance.Lookup.Get<MapInstance>(
-                                    LegacyDatabase.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapId).MapGrid]
+                                MapInstance.Get(
+                                    LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid]
                                         .MyGrid[gridX + 1, gridY]) !=
                                 null)
-                                MapInstance.Lookup.Get<MapInstance>(
-                                        LegacyDatabase.MapGrids[MapInstance.Lookup.Get<MapInstance>(mapId).MapGrid]
+                                MapInstance.Get(
+                                        LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid]
                                             .MyGrid[gridX + 1, gridY])
                                     .ClearConnections((int)Directions.Left);
                         }
@@ -1836,7 +1836,7 @@ namespace Intersect.Server.Classes.Networking
                         LegacyDatabase.GenerateMapGrids();
                         if (MapInstance.Lookup.Keys.Contains(curMapId))
                         {
-                            mapGrid = MapInstance.Lookup.Get<MapInstance>(curMapId).MapGrid;
+                            mapGrid = MapInstance.Get(curMapId).MapGrid;
                         }
                     }
                     PacketSender.SendMapGridToAll(mapGrid);
@@ -1857,12 +1857,12 @@ namespace Intersect.Server.Classes.Networking
                 MapInstance.Lookup.Keys.Contains(adjacentMap))
             {
                 //Clear to test if we can link.
-                int linkGrid = MapInstance.Lookup.Get<MapInstance>(linkMap).MapGrid;
-                int adjacentGrid = MapInstance.Lookup.Get<MapInstance>(adjacentMap).MapGrid;
+                int linkGrid = MapInstance.Get(linkMap).MapGrid;
+                int adjacentGrid = MapInstance.Get(adjacentMap).MapGrid;
                 if (linkGrid != adjacentGrid)
                 {
-                    long xOffset = MapInstance.Lookup.Get<MapInstance>(linkMap).MapGridX - gridX;
-                    long yOffset = MapInstance.Lookup.Get<MapInstance>(linkMap).MapGridY - gridY;
+                    long xOffset = MapInstance.Get(linkMap).MapGridX - gridX;
+                    long yOffset = MapInstance.Get(linkMap).MapGridY - gridY;
                     for (int x = 0; x < LegacyDatabase.MapGrids[adjacentGrid].Width; x++)
                     {
                         for (int y = 0; y < LegacyDatabase.MapGrids[adjacentGrid].Height; y++)
@@ -1908,7 +1908,7 @@ namespace Intersect.Server.Classes.Networking
                                         if (inXBounds && y - 1 >= 0 &&
                                             LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x, y - 1] != Guid.Empty)
                                         {
-                                            MapInstance.Lookup.Get<MapInstance>(
+                                            MapInstance.Get(
                                                     LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]).Up =
                                                 LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x, y - 1];
                                             MapInstance.Lookup
@@ -1920,7 +1920,7 @@ namespace Intersect.Server.Classes.Networking
                                         if (inXBounds && y + 1 < LegacyDatabase.MapGrids[adjacentGrid].Height &&
                                             LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x, y + 1] != Guid.Empty)
                                         {
-                                            MapInstance.Lookup.Get<MapInstance>(
+                                            MapInstance.Get(
                                                     LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]).Down =
                                                 LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x, y + 1];
                                             MapInstance.Lookup
@@ -1932,7 +1932,7 @@ namespace Intersect.Server.Classes.Networking
                                         if (inYBounds && x - 1 >= 0 &&
                                             LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x - 1, y] != Guid.Empty)
                                         {
-                                            MapInstance.Lookup.Get<MapInstance>(
+                                            MapInstance.Get(
                                                     LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]).Left =
                                                 LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x - 1, y];
                                             MapInstance.Lookup
@@ -1944,7 +1944,7 @@ namespace Intersect.Server.Classes.Networking
                                         if (inYBounds && x + 1 < LegacyDatabase.MapGrids[adjacentGrid].Width &&
                                             LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x + 1, y] != Guid.Empty)
                                         {
-                                            MapInstance.Lookup.Get<MapInstance>(
+                                            MapInstance.Get(
                                                     LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]).Right
                                                 =
                                                 LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x + 1, y];
@@ -1959,7 +1959,7 @@ namespace Intersect.Server.Classes.Networking
                         }
                         LegacyDatabase.SaveGameDatabase();
                         LegacyDatabase.GenerateMapGrids();
-                        PacketSender.SendMapGridToAll(MapInstance.Lookup.Get<MapInstance>(adjacentMap).MapGrid);
+                        PacketSender.SendMapGridToAll(MapInstance.Get(adjacentMap).MapGrid);
                     }
                 }
             }
@@ -2070,7 +2070,7 @@ namespace Intersect.Server.Classes.Networking
             switch (type)
             {
                 case GameObjectType.Animation:
-                    obj = AnimationBase.Lookup.Get<AnimationBase>(id);
+                    obj = AnimationBase.Get(id);
                     break;
                 case GameObjectType.Class:
                     if (ClassBase.Lookup.Count == 1)
@@ -2082,25 +2082,25 @@ namespace Intersect.Server.Classes.Networking
                     obj = DatabaseObject<ClassBase>.Lookup.Get(id);
                     break;
                 case GameObjectType.Item:
-                    obj = ItemBase.Lookup.Get<ItemBase>(id);
+                    obj = ItemBase.Get(id);
                     break;
                 case GameObjectType.Npc:
-                    obj = NpcBase.Lookup.Get<NpcBase>(id);
+                    obj = NpcBase.Get(id);
                     break;
                 case GameObjectType.Projectile:
-                    obj = ProjectileBase.Lookup.Get<ProjectileBase>(id);
+                    obj = ProjectileBase.Get(id);
                     break;
                 case GameObjectType.Quest:
-                    obj = QuestBase.Lookup.Get<QuestBase>(id);
+                    obj = QuestBase.Get(id);
                     break;
                 case GameObjectType.Resource:
-                    obj = ResourceBase.Lookup.Get<ResourceBase>(id);
+                    obj = ResourceBase.Get(id);
                     break;
                 case GameObjectType.Shop:
-                    obj = ShopBase.Lookup.Get<ShopBase>(id);
+                    obj = ShopBase.Get(id);
                     break;
                 case GameObjectType.Spell:
-                    obj = SpellBase.Lookup.Get<SpellBase>(id);
+                    obj = SpellBase.Get(id);
                     break;
                 case GameObjectType.CraftTables:
                     obj = DatabaseObject<CraftingTableBase>.Lookup.Get(id);
@@ -2111,19 +2111,19 @@ namespace Intersect.Server.Classes.Networking
                 case GameObjectType.Map:
                     break;
                 case GameObjectType.Event:
-                    obj = EventBase.Lookup.Get<EventBase>(id);
+                    obj = EventBase.Get(id);
                     break;
                 case GameObjectType.PlayerSwitch:
-                    obj = PlayerSwitchBase.Lookup.Get<PlayerSwitchBase>(id);
+                    obj = PlayerSwitchBase.Get(id);
                     break;
                 case GameObjectType.PlayerVariable:
-                    obj = PlayerVariableBase.Lookup.Get<PlayerVariableBase>(id);
+                    obj = PlayerVariableBase.Get(id);
                     break;
                 case GameObjectType.ServerSwitch:
-                    obj = ServerSwitchBase.Lookup.Get<ServerSwitchBase>(id);
+                    obj = ServerSwitchBase.Get(id);
                     break;
                 case GameObjectType.ServerVariable:
-                    obj = ServerVariableBase.Lookup.Get<ServerVariableBase>(id);
+                    obj = ServerVariableBase.Get(id);
                     break;
                 case GameObjectType.Tileset:
                     break;
@@ -2164,31 +2164,31 @@ namespace Intersect.Server.Classes.Networking
             switch (type)
             {
                 case GameObjectType.Animation:
-                    obj = AnimationBase.Lookup.Get<AnimationBase>(id);
+                    obj = AnimationBase.Get(id);
                     break;
                 case GameObjectType.Class:
                     obj = DatabaseObject<ClassBase>.Lookup.Get(id);
                     break;
                 case GameObjectType.Item:
-                    obj = ItemBase.Lookup.Get<ItemBase>(id);
+                    obj = ItemBase.Get(id);
                     break;
                 case GameObjectType.Npc:
-                    obj = NpcBase.Lookup.Get<NpcBase>(id);
+                    obj = NpcBase.Get(id);
                     break;
                 case GameObjectType.Projectile:
-                    obj = ProjectileBase.Lookup.Get<ProjectileBase>(id);
+                    obj = ProjectileBase.Get(id);
                     break;
                 case GameObjectType.Quest:
-                    obj = QuestBase.Lookup.Get<QuestBase>(id);
+                    obj = QuestBase.Get(id);
                     break;
                 case GameObjectType.Resource:
-                    obj = ResourceBase.Lookup.Get<ResourceBase>(id);
+                    obj = ResourceBase.Get(id);
                     break;
                 case GameObjectType.Shop:
-                    obj = ShopBase.Lookup.Get<ShopBase>(id);
+                    obj = ShopBase.Get(id);
                     break;
                 case GameObjectType.Spell:
-                    obj = SpellBase.Lookup.Get<SpellBase>(id);
+                    obj = SpellBase.Get(id);
                     break;
                 case GameObjectType.CraftTables:
                     obj = DatabaseObject<CraftingTableBase>.Lookup.Get(id);
@@ -2199,19 +2199,19 @@ namespace Intersect.Server.Classes.Networking
                 case GameObjectType.Map:
                     break;
                 case GameObjectType.Event:
-                    obj = EventBase.Lookup.Get<EventBase>(id);
+                    obj = EventBase.Get(id);
                     break;
                 case GameObjectType.PlayerSwitch:
-                    obj = PlayerSwitchBase.Lookup.Get<PlayerSwitchBase>(id);
+                    obj = PlayerSwitchBase.Get(id);
                     break;
                 case GameObjectType.PlayerVariable:
-                    obj = PlayerVariableBase.Lookup.Get<PlayerVariableBase>(id);
+                    obj = PlayerVariableBase.Get(id);
                     break;
                 case GameObjectType.ServerSwitch:
-                    obj = ServerSwitchBase.Lookup.Get<ServerSwitchBase>(id);
+                    obj = ServerSwitchBase.Get(id);
                     break;
                 case GameObjectType.ServerVariable:
-                    obj = ServerVariableBase.Lookup.Get<ServerVariableBase>(id);
+                    obj = ServerVariableBase.Get(id);
                     break;
                 case GameObjectType.Tileset:
                     break;

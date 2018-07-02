@@ -17,7 +17,7 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public AnimationBase Animation
         {
-            get => AnimationBase.Lookup.Get<AnimationBase>(AnimationId);
+            get => AnimationBase.Get(AnimationId);
             set => AnimationId = value?.Id ?? Guid.Empty;
         }
 
@@ -28,7 +28,7 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public AnimationBase AttackAnimation
         {
-            get => AnimationBase.Lookup.Get<AnimationBase>(AttackAnimationId);
+            get => AnimationBase.Get(AttackAnimationId);
             set => AttackAnimationId = value?.Id ?? Guid.Empty;
         }
 
@@ -53,7 +53,7 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public SpellBase Spell
         {
-            get => SpellBase.Lookup.Get<SpellBase>(SpellId);
+            get => SpellBase.Get(SpellId);
             set => SpellId = value?.Id ?? Guid.Empty;
         }
 
@@ -64,7 +64,7 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public EventBase Event
         {
-            get => EventBase.Lookup.Get<EventBase>(EventId);
+            get => EventBase.Get(EventId);
             set => EventId = value?.Id ?? Guid.Empty;
         }
 
@@ -82,7 +82,7 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public ProjectileBase Projectile
         {
-            get => ProjectileBase.Lookup.Get<ProjectileBase>(ProjectileId);
+            get => ProjectileBase.Get(ProjectileId);
             set => ProjectileId = value?.Id ?? Guid.Empty;
         }
 

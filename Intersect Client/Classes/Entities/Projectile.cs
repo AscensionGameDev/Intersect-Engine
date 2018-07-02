@@ -45,7 +45,7 @@ namespace Intersect_Client.Classes.Entities
             Dir = bf.ReadInteger();
             Target = bf.ReadInteger();
             mOwner = bf.ReadGuid();
-            mMyBase = ProjectileBase.Lookup.Get<ProjectileBase>(ProjectileId);
+            mMyBase = ProjectileBase.Get(ProjectileId);
             if (mMyBase != null)
             {
                 for (int x = 0; x < ProjectileBase.SPAWN_LOCATIONS_WIDTH; x++)
@@ -107,7 +107,7 @@ namespace Intersect_Client.Classes.Entities
         private void AddProjectileSpawns()
         {
             int spawn = FindSpawnAnimationData();
-            AnimationBase animBase = AnimationBase.Lookup.Get<AnimationBase>(mMyBase.Animations[spawn].AnimationId);
+            AnimationBase animBase = AnimationBase.Get(mMyBase.Animations[spawn].AnimationId);
 
             for (int x = 0; x < ProjectileBase.SPAWN_LOCATIONS_WIDTH; x++)
             {
@@ -318,16 +318,16 @@ namespace Intersect_Client.Classes.Entities
             {
                 for (int s = 0; s < mSpawnedAmount; s++)
                 {
-                    if (Spawns[s] != null && MapInstance.Lookup.Get<MapInstance>(Spawns[s].SpawnMapId) != null)
+                    if (Spawns[s] != null && MapInstance.Get(Spawns[s].SpawnMapId) != null)
                     {
                         Spawns[s].OffsetX = GetRangeX(Spawns[s].Dir, GetDisplacement(Spawns[s].SpawnTime));
                         Spawns[s].OffsetY = GetRangeY(Spawns[s].Dir, GetDisplacement(Spawns[s].SpawnTime));
                         Spawns[s].Anim.SetPosition(
-                            MapInstance.Lookup.Get<MapInstance>(Spawns[s].SpawnMapId).GetX() +
+                            MapInstance.Get(Spawns[s].SpawnMapId).GetX() +
                             Spawns[s].SpawnX * Options.TileWidth +
                             Spawns[s].OffsetX +
                             Options.TileWidth / 2,
-                            MapInstance.Lookup.Get<MapInstance>(Spawns[s].SpawnMapId).GetY() +
+                            MapInstance.Get(Spawns[s].SpawnMapId).GetY() +
                             Spawns[s].SpawnY * Options.TileHeight +
                             Spawns[s].OffsetY +
                             Options.TileHeight / 2, CurrentX, CurrentY, CurrentMap,
@@ -349,7 +349,7 @@ namespace Intersect_Client.Classes.Entities
                 {
                     if (Spawns[i] != null && Globals.System.GetTimeMs() > Spawns[i].TransmittionTimer)
                     {
-                        var spawnMap = MapInstance.Lookup.Get<MapInstance>(Spawns[i].MapId);
+                        var spawnMap = MapInstance.Get(Spawns[i].MapId);
                         if (spawnMap != null)
                         {
                             var newx = Spawns[i].X + (int) GetRangeX(Spawns[i].Dir, 1);
@@ -361,7 +361,7 @@ namespace Intersect_Client.Classes.Entities
 
                             if (newx < 0)
                             {
-                                if (MapInstance.Lookup.Get<MapInstance>(spawnMap.Left) != null)
+                                if (MapInstance.Get(spawnMap.Left) != null)
                                 {
                                     newMapId = spawnMap.Left;
                                     newx = Options.MapWidth - 1;
@@ -373,7 +373,7 @@ namespace Intersect_Client.Classes.Entities
                             }
                             if (newx > Options.MapWidth - 1)
                             {
-                                if (MapInstance.Lookup.Get<MapInstance>(spawnMap.Right) != null)
+                                if (MapInstance.Get(spawnMap.Right) != null)
                                 {
                                     newMapId = spawnMap.Right;
                                     newx = 0;
@@ -385,7 +385,7 @@ namespace Intersect_Client.Classes.Entities
                             }
                             if (newy < 0)
                             {
-                                if (MapInstance.Lookup.Get<MapInstance>(spawnMap.Up) != null)
+                                if (MapInstance.Get(spawnMap.Up) != null)
                                 {
                                     newMapId = spawnMap.Up;
                                     newy = Options.MapHeight - 1;
@@ -397,7 +397,7 @@ namespace Intersect_Client.Classes.Entities
                             }
                             if (newy > Options.MapHeight - 1)
                             {
-                                if (MapInstance.Lookup.Get<MapInstance>(spawnMap.Down) != null)
+                                if (MapInstance.Get(spawnMap.Down) != null)
                                 {
                                     newMapId = spawnMap.Down;
                                     newy = 0;
@@ -419,7 +419,7 @@ namespace Intersect_Client.Classes.Entities
                             Spawns[i].X = newx;
                             Spawns[i].Y = newy;
                             Spawns[i].MapId = newMapId;
-                            var newMap = MapInstance.Lookup.Get<MapInstance>(newMapId);
+                            var newMap = MapInstance.Get(newMapId);
 
                             //Check for Z-Dimension
                             if (newMap.Attributes[Spawns[i].X, Spawns[i].Y] != null)
@@ -503,7 +503,7 @@ namespace Intersect_Client.Classes.Entities
         /// </summary>
         public override void Draw()
         {
-            if (MapInstance.Lookup.Get<MapInstance>(CurrentMap) == null ||
+            if (MapInstance.Get(CurrentMap) == null ||
                 !Globals.GridMaps.Contains(CurrentMap)) return;
         }
 

@@ -52,7 +52,7 @@ namespace Intersect.Client.Classes.UI.Game.Crafting
 
         public void LoadItem()
         {
-            var item = ItemBase.Lookup.Get<ItemBase>(mIngredient.ItemId);
+            var item = ItemBase.Get(mIngredient.ItemId);
 
             if (item != null)
             {
@@ -106,7 +106,7 @@ namespace Intersect.Client.Classes.UI.Game.Crafting
             }
             if (mIngredient != null)
             {
-                DescWindow = new ItemDescWindow(ItemBase.Lookup.Get<ItemBase>(mIngredient.ItemId), mIngredient.Quantity, mCraftingWindow.X - 255,
+                DescWindow = new ItemDescWindow(ItemBase.Get(mIngredient.ItemId), mIngredient.Quantity, mCraftingWindow.X - 255,
                     mCraftingWindow.Y, new int[(int)Stats.StatCount]);
             }
         }

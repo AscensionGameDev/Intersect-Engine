@@ -198,9 +198,9 @@ namespace Intersect.Server.Classes.Entities
                     {
                         if (IsGlobal)
                         {
-                            if (MapInstance.Lookup.Get<MapInstance>(MapId).GetGlobalEventInstance(BaseEvent) != null)
+                            if (MapInstance.Get(MapId).GetGlobalEventInstance(BaseEvent) != null)
                             {
-                                PageInstance = new EventPageInstance(BaseEvent, BaseEvent.Pages[i],BaseEvent.Id,MapId, this, MyClient, MapInstance.Lookup.Get<MapInstance>(MapId).GetGlobalEventInstance(BaseEvent).GlobalPageInstance[i]);
+                                PageInstance = new EventPageInstance(BaseEvent, BaseEvent.Pages[i],BaseEvent.Id,MapId, this, MyClient, MapInstance.Get(MapId).GetGlobalEventInstance(BaseEvent).GlobalPageInstance[i]);
                                 sendLeave = false;
                                 PageIndex = i;
                             }
@@ -316,15 +316,15 @@ namespace Intersect.Server.Classes.Entities
                     break;
                 case 2: //Global Switch
                     var servSwitch = false;
-                    if (ServerSwitchBase.Lookup.Get<ServerSwitchBase>(conditionCommand.Guids[1]) != null)
-                        servSwitch = ServerSwitchBase.Lookup.Get<ServerSwitchBase>(conditionCommand.Guids[1]).Value;
+                    if (ServerSwitchBase.Get(conditionCommand.Guids[1]) != null)
+                        servSwitch = ServerSwitchBase.Get(conditionCommand.Guids[1]).Value;
                     if (servSwitch == Convert.ToBoolean(conditionCommand.Ints[2]))
                         return true;
                     break;
                 case 3: //Global Variable
                     var servVar = 0;
-                    if (ServerVariableBase.Lookup.Get<ServerVariableBase>(conditionCommand.Guids[1]) != null)
-                        servVar = ServerVariableBase.Lookup.Get<ServerVariableBase>(conditionCommand.Guids[1]).Value;
+                    if (ServerVariableBase.Get(conditionCommand.Guids[1]) != null)
+                        servVar = ServerVariableBase.Get(conditionCommand.Guids[1]).Value;
                     switch (conditionCommand.Ints[2]) //Comparator
                     {
                         case 0: //Equal to
@@ -408,7 +408,7 @@ namespace Intersect.Server.Classes.Entities
                     {
                         if (eventInstance.IsGlobal)
                         {
-                            var evts = MapInstance.Lookup.Get<MapInstance>(eventInstance.MapId).GlobalEventInstances
+                            var evts = MapInstance.Get(eventInstance.MapId).GlobalEventInstances
                                 .Values.ToList();
                             for (int i = 0; i < evts.Count; i++)
                             {
@@ -444,7 +444,7 @@ namespace Intersect.Server.Classes.Entities
                         return true;
                     }
                 case 11: //Can Start Quest
-                    var startQuest = QuestBase.Lookup.Get<QuestBase>(conditionCommand.Guids[1]);
+                    var startQuest = QuestBase.Get(conditionCommand.Guids[1]);
                     if (startQuest == questBase)
                     {
                         //We cannot check and see if we meet quest requirements if we are already checking to see if we meet quest requirements :P
@@ -456,7 +456,7 @@ namespace Intersect.Server.Classes.Entities
                     }
                     break;
                 case 12: //Quest In Progress
-                    var questInProgress = QuestBase.Lookup.Get<QuestBase>(conditionCommand.Guids[1]);
+                    var questInProgress = QuestBase.Get(conditionCommand.Guids[1]);
                     if (questInProgress != null)
                     {
                         return myPlayer.QuestInProgress(questInProgress, (QuestProgress) conditionCommand.Ints[2],
@@ -464,7 +464,7 @@ namespace Intersect.Server.Classes.Entities
                     }
                     break;
                 case 13: //Quest Completed
-                    var questCompleted = QuestBase.Lookup.Get<QuestBase>(conditionCommand.Guids[1]);
+                    var questCompleted = QuestBase.Get(conditionCommand.Guids[1]);
                     if (questCompleted != null)
                     {
                         return myPlayer.QuestCompleted(questCompleted);
@@ -480,7 +480,7 @@ namespace Intersect.Server.Classes.Entities
                     if (eventInstance != null)
                     {
                         if (eventInstance.NpcDeathTriggerd == true) return false; //Only call it once
-                        MapInstance m = MapInstance.Lookup.Get<MapInstance>(eventInstance.MapId);
+                        MapInstance m = MapInstance.Get(eventInstance.MapId);
                         for (int i = 0; i < m.Spawns.Count; i++)
                         {
                             if (m.NpcSpawnInstances.ContainsKey(m.Spawns[i]))
@@ -561,7 +561,7 @@ namespace Intersect.Server.Classes.Entities
                     if (m.Success)
                     {
                         //int id = Convert.ToInt32(m.Groups[1].Value);
-                        //var globalvar = ServerVariableBase.Lookup.Get<ServerVariableBase>(id);
+                        //var globalvar = ServerVariableBase.Get(id);
                         //if (globalvar != null)
                         //{
                         //    input = input.Replace(Strings.Events.globalvar + " " + m.Groups[1].Value,
@@ -580,7 +580,7 @@ namespace Intersect.Server.Classes.Entities
                     //if (m.Success)
                     //{
                     //    int id = Convert.ToInt32(m.Groups[1].Value);
-                    //    var globalswitch = ServerSwitchBase.Lookup.Get<ServerSwitchBase>(id);
+                    //    var globalswitch = ServerSwitchBase.Get(id);
                     //    if (globalswitch != null)
                     //    {
                     //        input = input.Replace(Strings.Events.globalswitch + " " + m.Groups[1].Value,
@@ -644,7 +644,7 @@ namespace Intersect.Server.Classes.Entities
                     }
                     else if (command.Ints[0] == (int) SwitchVariableTypes.ServerSwitch)
                     {
-                        var serverSwitch = ServerSwitchBase.Lookup.Get<ServerSwitchBase>(command.Guids[1]);
+                        var serverSwitch = ServerSwitchBase.Get(command.Guids[1]);
                         if (serverSwitch != null)
                         {
                             serverSwitch.Value = Convert.ToBoolean(command.Ints[2]);
@@ -674,7 +674,7 @@ namespace Intersect.Server.Classes.Entities
                     }
                     else if (command.Ints[0] == (int) SwitchVariableTypes.ServerVariable)
                     {
-                        var serverVarible = ServerVariableBase.Lookup.Get<ServerVariableBase>(command.Guids[1]);
+                        var serverVarible = ServerVariableBase.Get(command.Guids[1]);
                         if (serverVarible != null)
                         {
                             switch (command.Ints[2])
@@ -701,7 +701,7 @@ namespace Intersect.Server.Classes.Entities
                 case EventCommandType.SetSelfSwitch:
                     if (IsGlobal)
                     {
-                        var evts = MapInstance.Lookup.Get<MapInstance>(MapId).GlobalEventInstances.Values.ToList();
+                        var evts = MapInstance.Get(MapId).GlobalEventInstances.Values.ToList();
                         for (int i = 0; i < evts.Count; i++)
                         {
                             if (evts[i] != null && evts[i].BaseEvent == BaseEvent)
@@ -759,7 +759,7 @@ namespace Intersect.Server.Classes.Entities
                     break;
                 case EventCommandType.StartCommonEvent:
                     CallStack.Peek().CommandIndex++;
-                    var commonEvent = EventBase.Lookup.Get<EventBase>(command.Guids[0]);
+                    var commonEvent = EventBase.Get(command.Guids[0]);
                     if (commonEvent != null)
                     {
                         for (int i = 0; i < commonEvent.Pages.Count; i++)
@@ -1044,7 +1044,7 @@ namespace Intersect.Server.Classes.Entities
                     tile = new TileHelper(mapId, tileX, tileY);
                     if (tile.TryFix())
                     {
-                        var npc = MapInstance.Lookup.Get<MapInstance>(mapId)
+                        var npc = MapInstance.Get(mapId)
                             .SpawnNpc(tileX, tileY, direction, npcId, true);
                         MyPlayer.SpawnedNpcs.Add((Npc) npc);
                     }
@@ -1242,12 +1242,12 @@ namespace Intersect.Server.Classes.Entities
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.OpenCraftingTable:
-                    MyPlayer.OpenCraftingTable(CraftingTableBase.Lookup.Get<CraftingTableBase>(CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Guids[0]));
+                    MyPlayer.OpenCraftingTable(CraftingTableBase.Get(CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Guids[0]));
                     CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.Crafting;
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.SetClass:
-                    if (ClassBase.Lookup.Get<ClassBase>(CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Guids[0]) != null)
+                    if (ClassBase.Get(CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Guids[0]) != null)
                     {
                         MyPlayer.ClassId = CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Guids[0];
                     }
@@ -1256,7 +1256,7 @@ namespace Intersect.Server.Classes.Entities
                     break;
                 case EventCommandType.StartQuest:
                     success = false;
-                    var quest = QuestBase.Lookup.Get<QuestBase>(CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Guids[0]);
+                    var quest = QuestBase.Get(CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Guids[0]);
                     if (quest != null)
                     {
                         if (MyPlayer.CanStartQuest(quest))

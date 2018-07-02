@@ -57,9 +57,9 @@ namespace Intersect.Server.Classes.Maps
         private bool TransitionMaps(int direction)
         {
             if (!MapInstance.Lookup.Keys.Contains(mMapId)) return false;
-            int grid = MapInstance.Lookup.Get<MapInstance>(mMapId).MapGrid;
-            int gridX = MapInstance.Lookup.Get<MapInstance>(mMapId).MapGridX;
-            int gridY = MapInstance.Lookup.Get<MapInstance>(mMapId).MapGridY;
+            int grid = MapInstance.Get(mMapId).MapGrid;
+            int gridX = MapInstance.Get(mMapId).MapGridX;
+            int gridY = MapInstance.Get(mMapId).MapGridY;
             switch (direction)
             {
                 case (int) Directions.Up:
@@ -104,7 +104,7 @@ namespace Intersect.Server.Classes.Maps
         private bool Fix()
         {
             if (!MapInstance.Lookup.Keys.Contains(mMapId)) return false;
-            MapInstance curMap = MapInstance.Lookup.Get<MapInstance>(mMapId);
+            MapInstance curMap = MapInstance.Get(mMapId);
             while (mTileX < 0)
             {
                 if (!TransitionMaps((int) Directions.Left)) return false;

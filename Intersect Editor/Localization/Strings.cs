@@ -2115,7 +2115,7 @@ Negative values for time to flow backwards.";
                 case 11: //Can Start Quest...
                     return Strings.EventConditionDesc.startquest.ToString( QuestBase.GetName(cmd.Guids[1]));
                 case 12: //Quest In Progress...
-                    var quest = QuestBase.Lookup.Get<QuestBase>(cmd.Guids[1]);
+                    var quest = QuestBase.Get(cmd.Guids[1]);
                     if (quest != null)
                     {
                         QuestBase.QuestTask task = null;

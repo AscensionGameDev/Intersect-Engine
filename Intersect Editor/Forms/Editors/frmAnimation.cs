@@ -83,7 +83,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (mChangingName) return;
             mEditorItem =
-                AnimationBase.Lookup.Get<AnimationBase>(
+                AnimationBase.Get(
                     AnimationBase.IdFromList(lstAnimations.SelectedIndex));
             UpdateEditor();
         }

@@ -72,7 +72,7 @@ namespace Intersect.Editor.Forms.Editors
         private void lstProjectiles_Click(object sender, EventArgs e)
         {
             if (mChangingName) return;
-            mEditorItem = ProjectileBase.Lookup.Get<ProjectileBase>(ProjectileBase.IdFromList(lstProjectiles.SelectedIndex));
+            mEditorItem = ProjectileBase.Get(ProjectileBase.IdFromList(lstProjectiles.SelectedIndex));
             UpdateEditor();
         }
 

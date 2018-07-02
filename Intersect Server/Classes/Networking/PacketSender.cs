@@ -29,7 +29,7 @@ namespace Intersect.Server.Classes.Networking
             {
                 return;
             }
-            List<Player> players = MapInstance.Lookup.Get<MapInstance>(mapId).GetPlayersOnMap();
+            List<Player> players = MapInstance.Get(mapId).GetPlayersOnMap();
             foreach (var player in players)
             {
                 if (player != null && player.MyClient != except) player.MyClient.SendPacket(data);
@@ -43,9 +43,9 @@ namespace Intersect.Server.Classes.Networking
                 return;
             }
             SendDataToMap(mapId, data, except);
-            for (int i = 0; i < MapInstance.Lookup.Get<MapInstance>(mapId).SurroundingMaps.Count; i++)
+            for (int i = 0; i < MapInstance.Get(mapId).SurroundingMaps.Count; i++)
             {
-                SendDataToMap(MapInstance.Lookup.Get<MapInstance>(mapId).SurroundingMaps[i], data, except);
+                SendDataToMap(MapInstance.Get(mapId).SurroundingMaps[i], data, except);
             }
         }
 
@@ -106,7 +106,7 @@ namespace Intersect.Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.MapData);
             bf.WriteGuid(mapId);
-            var map = MapInstance.Lookup.Get<MapInstance>(mapId);
+            var map = MapInstance.Get(mapId);
             if (map == null)
             {
                 bf.WriteInteger(1);
@@ -216,13 +216,13 @@ namespace Intersect.Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.MapData);
             bf.WriteGuid(mapId);
-            if (MapInstance.Lookup.Get<MapInstance>(mapId) == null)
+            if (MapInstance.Get(mapId) == null)
             {
                 bf.WriteInteger(1);
             }
             else
             {
-                var map = MapInstance.Lookup.Get<MapInstance>(mapId);
+                var map = MapInstance.Get(mapId);
                 bf.WriteInteger(0);
                 bf.WriteString(map.JsonData);
                 var tileData = map.GetTileData(false);
@@ -838,13 +838,13 @@ namespace Intersect.Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.MapItems);
             bf.WriteGuid(mapId);
-            bf.WriteInteger(MapInstance.Lookup.Get<MapInstance>(mapId).MapItems.Count);
-            for (int i = 0; i < MapInstance.Lookup.Get<MapInstance>(mapId).MapItems.Count; i++)
+            bf.WriteInteger(MapInstance.Get(mapId).MapItems.Count);
+            for (int i = 0; i < MapInstance.Get(mapId).MapItems.Count; i++)
             {
-                if (MapInstance.Lookup.Get<MapInstance>(mapId).MapItems[i] != null)
+                if (MapInstance.Get(mapId).MapItems[i] != null)
                 {
                     bf.WriteInteger(i);
-                    bf.WriteBytes(MapInstance.Lookup.Get<MapInstance>(mapId).MapItems[i].Data());
+                    bf.WriteBytes(MapInstance.Get(mapId).MapItems[i].Data());
                 }
                 else
                 {
@@ -860,10 +860,10 @@ namespace Intersect.Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.MapItems);
             bf.WriteGuid(mapId);
-            bf.WriteInteger(MapInstance.Lookup.Get<MapInstance>(mapId).MapItems.Count);
-            for (int i = 0; i < MapInstance.Lookup.Get<MapInstance>(mapId).MapItems.Count; i++)
+            bf.WriteInteger(MapInstance.Get(mapId).MapItems.Count);
+            for (int i = 0; i < MapInstance.Get(mapId).MapItems.Count; i++)
             {
-                bf.WriteBytes(MapInstance.Lookup.Get<MapInstance>(mapId).MapItems[i].Data());
+                bf.WriteBytes(MapInstance.Get(mapId).MapItems[i].Data());
             }
             SendDataToProximity(mapId, bf.ToArray());
             bf.Dispose();
@@ -875,15 +875,15 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteLong((int)ServerPackets.MapItemUpdate);
             bf.WriteGuid(mapId);
             bf.WriteInteger(index);
-            if (MapInstance.Lookup.Get<MapInstance>(mapId).MapItems[index] == null ||
-                MapInstance.Lookup.Get<MapInstance>(mapId).MapItems[index].Id == Guid.Empty)
+            if (MapInstance.Get(mapId).MapItems[index] == null ||
+                MapInstance.Get(mapId).MapItems[index].Id == Guid.Empty)
             {
                 bf.WriteInteger(-1);
             }
             else
             {
                 bf.WriteInteger(1);
-                bf.WriteBytes(MapInstance.Lookup.Get<MapInstance>(mapId).MapItems[index].Data());
+                bf.WriteBytes(MapInstance.Get(mapId).MapItems[index].Data());
             }
             SendDataToProximity(mapId, bf.ToArray());
             bf.Dispose();
@@ -1033,9 +1033,9 @@ namespace Intersect.Server.Classes.Networking
                         {
                             Guid itemId = Guid.Empty;
 
-                            if (ItemBase.Lookup.Get<ItemBase>(itemId) != null)
+                            if (ItemBase.Get(itemId) != null)
                             {
-                                var itemdata = ItemBase.Lookup.Get<ItemBase>(itemId);
+                                var itemdata = ItemBase.Get(itemId);
                                 if (character.Gender == 0)
                                 {
                                     equipment[z] = itemdata.MalePaperdoll;
@@ -1106,7 +1106,7 @@ namespace Intersect.Server.Classes.Networking
             {
                 for (int y = 0; y < LegacyDatabase.MapGrids[gridIndex].Height; y++)
                 {
-                    if (MapInstance.Lookup.Get<MapInstance>(LegacyDatabase.MapGrids[gridIndex].MyGrid[x, y]) != null)
+                    if (MapInstance.Get(LegacyDatabase.MapGrids[gridIndex].MyGrid[x, y]) != null)
                     {
                         bf.WriteGuid(LegacyDatabase.MapGrids[gridIndex].MyGrid[x, y]);
                         if (client.IsEditor)
@@ -1506,7 +1506,7 @@ namespace Intersect.Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.EnterMap);
             bf.WriteGuid(mapId);
-            var map = MapInstance.Lookup.Get<MapInstance>(mapId);
+            var map = MapInstance.Get(mapId);
             if (!(map.MapGridX == -1 || map.MapGridY == -1))
             {
                 for (var y = map.MapGridY - 1; y < map.MapGridY + 2; y++)

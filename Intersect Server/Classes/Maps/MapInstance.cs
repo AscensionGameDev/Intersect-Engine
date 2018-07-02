@@ -215,7 +215,7 @@ namespace Intersect.Server.Classes.Maps
 
         public void SpawnItem(int x, int y, Item item, int amount)
         {
-            var itemBase = ItemBase.Lookup.Get<ItemBase>(item.Id);
+            var itemBase = ItemBase.Get(item.Id);
             if (itemBase != null)
             {
                 MapItems.Add(new MapItem(item.Id, item.Quantity,item.BagId, item.Bag));
@@ -240,7 +240,7 @@ namespace Intersect.Server.Classes.Maps
 
         private void SpawnAttributeItem(int x, int y)
         {
-            var item = ItemBase.Lookup.Get<ItemBase>(Attributes[x, y].Guid1);
+            var item = ItemBase.Get(Attributes[x, y].Guid1);
             if (item != null)
             {
                 MapItems.Add(new MapItem(Attributes[x, y].Guid1, Attributes[x, y].Data2));
@@ -342,7 +342,7 @@ namespace Intersect.Server.Classes.Maps
             {
                 if (MapItems[i] != null)
                 {
-                    if (ItemBase.Lookup.Get<ItemBase>(MapItems[i].Id) == itemBase)
+                    if (ItemBase.Get(MapItems[i].Id) == itemBase)
                     {
                         RemoveItem(i, true);
                     }
@@ -390,7 +390,7 @@ namespace Intersect.Server.Classes.Maps
                 }
                 if (resourceSpawnInstance.Entity == null)
                 {
-                    var resourceBase = ResourceBase.Lookup.Get<ResourceBase>(ResourceSpawns[i].ResourceId);
+                    var resourceBase = ResourceBase.Get(ResourceSpawns[i].ResourceId);
                     if (resourceBase != null)
                     {
                         var res = new Resource(resourceBase);
@@ -441,7 +441,7 @@ namespace Intersect.Server.Classes.Maps
             int x = 0;
             int y = 0;
             int dir = 0;
-            var npcBase = NpcBase.Lookup.Get<NpcBase>(Spawns[i].NpcId);
+            var npcBase = NpcBase.Get(Spawns[i].NpcId);
             if (npcBase != null)
             {
                 MapNpcSpawn npcSpawnInstance;
@@ -506,7 +506,7 @@ namespace Intersect.Server.Classes.Maps
 
         public EntityInstance SpawnNpc(int tileX, int tileY, int dir, Guid npcId, bool despawnable = false)
         {
-            var npcBase = NpcBase.Lookup.Get<NpcBase>(npcId);
+            var npcBase = NpcBase.Get(npcId);
             if (npcBase != null)
             {
                 var npc = new Npc(npcBase, despawnable)
@@ -936,7 +936,7 @@ namespace Intersect.Server.Classes.Maps
 
         public static MapInstance Get(Guid id)
         {
-            return MapInstance.Lookup.Get<MapInstance>(id);
+            return MapInstance.Get(id);
         }
 
         public override void Delete() => Lookup?.Delete(this);

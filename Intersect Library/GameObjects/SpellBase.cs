@@ -17,7 +17,7 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public AnimationBase CastAnimation
         {
-            get => AnimationBase.Lookup.Get<AnimationBase>(CastAnimationId);
+            get => AnimationBase.Get(CastAnimationId);
             set => CastAnimationId = value?.Id ?? Guid.Empty;
         }
 
@@ -27,7 +27,7 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public AnimationBase HitAnimation
         {
-            get => AnimationBase.Lookup.Get<AnimationBase>(HitAnimationId);
+            get => AnimationBase.Get(HitAnimationId);
             set => HitAnimationId = value?.Id ?? Guid.Empty;
         }
 
@@ -75,7 +75,7 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public ProjectileBase Projectile
         {
-            get => ProjectileBase.Lookup.Get<ProjectileBase>(ProjectileId);
+            get => ProjectileBase.Get(ProjectileId);
             set => ProjectileId = value?.Id ?? Guid.Empty;
         }
 

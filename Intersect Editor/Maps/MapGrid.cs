@@ -516,8 +516,8 @@ namespace Intersect.Editor.Maps
             {
                 //Fetch and screenshot this singular map
                 Database.SaveMapCache(mContextMap.MapId, mContextMap.Revision, null);
-                if (MapInstance.Lookup.Get<MapInstance>(mContextMap.MapId) != null)
-                    MapInstance.Lookup.Get<MapInstance>(mContextMap.MapId).Delete();
+                if (MapInstance.Get(mContextMap.MapId) != null)
+                    MapInstance.Get(mContextMap.MapId).Delete();
                 Globals.MapsToFetch = new List<Guid>() { mContextMap.MapId };
                 PacketSender.SendNeedMap(mContextMap.MapId);
             }

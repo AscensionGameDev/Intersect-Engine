@@ -109,7 +109,7 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     if (Globals.Trade[n, i] != null && Globals.Trade[n, i].ItemId != Guid.Empty)
                     {
-                        var item = ItemBase.Lookup.Get<ItemBase>(Globals.Trade[n, i].ItemId);
+                        var item = ItemBase.Get(Globals.Trade[n, i].ItemId);
                         if (item != null)
                         {
                             g += (item.Price * Globals.Trade[n, i].Quantity);

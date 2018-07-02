@@ -54,7 +54,7 @@ namespace Intersect.Client.Classes.UI.Game.Shop
         private void Pnl_RightClicked(Base sender, ClickedEventArgs arguments)
         {
             //Confirm the purchase
-            var item = ItemBase.Lookup.Get<ItemBase>(Globals.GameShop.SellingItems[mMySlot].ItemId);
+            var item = ItemBase.Get(Globals.GameShop.SellingItems[mMySlot].ItemId);
             if (item != null)
             {
                 if (item.IsStackable())
@@ -72,7 +72,7 @@ namespace Intersect.Client.Classes.UI.Game.Shop
 
         public void LoadItem()
         {
-            var item = ItemBase.Lookup.Get<ItemBase>(Globals.GameShop.SellingItems[mMySlot].ItemId);
+            var item = ItemBase.Get(Globals.GameShop.SellingItems[mMySlot].ItemId);
             if (item != null)
             {
                 GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Pic);
@@ -111,7 +111,7 @@ namespace Intersect.Client.Classes.UI.Game.Shop
                 mDescWindow.Dispose();
                 mDescWindow = null;
             }
-            var item = ItemBase.Lookup.Get<ItemBase>(Globals.GameShop.SellingItems[mMySlot].CostItemId);
+            var item = ItemBase.Get(Globals.GameShop.SellingItems[mMySlot].CostItemId);
             if (item != null)
                 mDescWindow = new ItemDescWindow(Globals.GameShop.SellingItems[mMySlot].Item, 1, mShopWindow.X - 255,
                     mShopWindow.Y, item.StatsGiven, "",

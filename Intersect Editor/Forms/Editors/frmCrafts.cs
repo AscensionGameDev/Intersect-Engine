@@ -56,7 +56,7 @@ namespace Intersect.Editor.Forms.Editors
         private void lstCrafts_Click(object sender, EventArgs e)
         {
             if (mChangingName) return;
-            mEditorItem = CraftBase.Lookup.Get<CraftBase>(CraftBase.IdFromList(lstCrafts.SelectedIndex));
+            mEditorItem = CraftBase.Get(CraftBase.IdFromList(lstCrafts.SelectedIndex));
             UpdateEditor();
         }
 

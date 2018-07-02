@@ -87,7 +87,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                     {
                         //Get Quest Task Here
                         var quest =
-                            QuestBase.Lookup.Get<QuestBase>(QuestBase.IdFromList(
+                            QuestBase.Get(QuestBase.IdFromList(
                                 cmbQuestInProgress.SelectedIndex));
                         if (quest != null)
                         {
@@ -457,7 +457,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                     {
                         //Get Quest Task Here
                         var quest =
-                            QuestBase.Lookup.Get<QuestBase>(QuestBase.IdFromList(
+                            QuestBase.Get(QuestBase.IdFromList(
                                 cmbQuestInProgress.SelectedIndex));
                         if (quest != null)
                         {
@@ -520,7 +520,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         {
             cmbQuestTask.Items.Clear();
             var quest =
-                QuestBase.Lookup.Get<QuestBase>(
+                QuestBase.Get(
                     QuestBase.IdFromList(cmbQuestInProgress.SelectedIndex));
             if (quest != null)
             {

@@ -78,7 +78,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (mChangingName) return;
             mEditorItem =
-                ItemBase.Lookup.Get<ItemBase>(
+                ItemBase.Get(
                     ItemBase.IdFromList(lstItems.SelectedIndex));
             UpdateEditor();
         }
@@ -590,7 +590,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbAttackAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.AttackAnimation = AnimationBase.Lookup.Get<AnimationBase>(AnimationBase.IdFromList(cmbAttackAnimation.SelectedIndex - 1));
+            mEditorItem.AttackAnimation = AnimationBase.Get(AnimationBase.IdFromList(cmbAttackAnimation.SelectedIndex - 1));
         }
 
         private void cmbDamageType_SelectedIndexChanged(object sender, EventArgs e)
@@ -616,7 +616,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.Animation = AnimationBase.Lookup.Get<AnimationBase>(AnimationBase.IdFromList(cmbAnimation.SelectedIndex - 1));
+            mEditorItem.Animation = AnimationBase.Get(AnimationBase.IdFromList(cmbAnimation.SelectedIndex - 1));
         }
 
         private void cmbEvent_SelectedIndexChanged(object sender, EventArgs e)

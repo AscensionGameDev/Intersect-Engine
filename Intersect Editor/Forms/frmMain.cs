@@ -328,7 +328,7 @@ namespace Intersect.Editor.Forms
 
         public void EnterMap(Guid mapId)
         {
-            Globals.CurrentMap = MapInstance.Lookup.Get<MapInstance>(mapId);
+            Globals.CurrentMap = MapInstance.Get(mapId);
             Globals.LoadingMap = mapId;
             if (Globals.CurrentMap == null)
             {

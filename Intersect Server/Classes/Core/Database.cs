@@ -294,7 +294,7 @@ namespace Intersect.Server.Classes.Core
             {
                 if (bag.Slots[i] != null)
                 {
-                    var item = ItemBase.Lookup.Get<ItemBase>(bag.Slots[i].Id);
+                    var item = ItemBase.Get(bag.Slots[i].Id);
                     if (item != null)
                     {
                         return false;

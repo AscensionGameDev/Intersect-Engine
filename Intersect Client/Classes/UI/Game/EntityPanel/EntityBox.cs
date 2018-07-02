@@ -531,9 +531,9 @@ namespace Intersect.Client.Classes.UI.Game.EntityPanel
                         if (equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] != Guid.Empty)
                         {
                             var itemId = equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])];
-                            if (ItemBase.Lookup.Get<ItemBase>(itemId) != null)
+                            if (ItemBase.Get(itemId) != null)
                             {
-                                var itemdata = ItemBase.Lookup.Get<ItemBase>(itemId);
+                                var itemdata = ItemBase.Get(itemId);
                                 if (MyEntity.Gender == 0)
                                 {
                                     paperdoll = itemdata.MalePaperdoll;

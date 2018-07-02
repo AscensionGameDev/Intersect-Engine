@@ -13,7 +13,7 @@ namespace Intersect_Client.Classes.Items
         public int[] StatBoost = new int[(int) Stats.StatCount];
 
         [NotMapped]
-        public ItemBase Item => ItemBase.Lookup.Get<ItemBase>(ItemId);
+        public ItemBase Item => ItemBase.Get(ItemId);
 
         public ItemInstance()
         {

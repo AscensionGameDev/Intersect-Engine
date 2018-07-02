@@ -49,7 +49,7 @@ namespace Intersect.GameObjects.Crafting
 
         public ItemBase GetItem()
         {
-            return ItemBase.Lookup.Get<ItemBase>(ItemId);
+            return ItemBase.Get(ItemId);
         }
     }
 }

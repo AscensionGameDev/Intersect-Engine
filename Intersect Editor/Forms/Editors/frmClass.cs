@@ -75,7 +75,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (mChangingName) return;
             mEditorItem =
-                ClassBase.Lookup.Get<ClassBase>(
+                ClassBase.Get(
                     ClassBase.IdFromList(lstClasses.SelectedIndex));
             UpdateEditor();
         }
@@ -931,7 +931,7 @@ namespace Intersect.Editor.Forms.Editors
             var spawnItems = mEditorItem.Items.ToArray();
             foreach (var spawnItem in spawnItems)
             {
-                if (ItemBase.Lookup.Get<ItemBase>(spawnItem.Id) == null) mEditorItem.Items.Remove(spawnItem);
+                if (ItemBase.Get(spawnItem.Id) == null) mEditorItem.Items.Remove(spawnItem);
             }
             for (int i = 0; i < mEditorItem.Items.Count; i++)
             {

@@ -70,7 +70,7 @@ namespace Intersect.Server.Classes.Entities
             var itemSlot = 0;
             foreach (var drop in myBase.Drops)
             {
-                if (Globals.Rand.Next(1, 10001) <= drop.Chance * 100 && ItemBase.Lookup.Get<ItemBase>(drop.ItemId) != null)
+                if (Globals.Rand.Next(1, 10001) <= drop.Chance * 100 && ItemBase.Get(drop.ItemId) != null)
                 {
                     var slot = new InventorySlot(itemSlot);
                     Items.Add(slot);
@@ -97,7 +97,7 @@ namespace Intersect.Server.Classes.Entities
         public override void Die(int dropitems = 100, EntityInstance killer = null)
         {
             base.Die(dropitems, killer);
-            MapInstance.Lookup.Get<MapInstance>(MapId).RemoveEntity(this);
+            MapInstance.Get(MapId).RemoveEntity(this);
             PacketSender.SendEntityLeave(Id, (int) EntityTypes.GlobalEntity, MapId);
         }
 
@@ -202,7 +202,7 @@ namespace Intersect.Server.Classes.Entities
 
                     for (int i = 0; i < Base.AggroList.Count; i++)
                     {
-                        if (NpcBase.Lookup.Get<NpcBase>(Base.AggroList[i]) == ((Npc) enemy).Base)
+                        if (NpcBase.Get(Base.AggroList[i]) == ((Npc) enemy).Base)
                         {
                             return true;
                         }
@@ -262,7 +262,7 @@ namespace Intersect.Server.Classes.Entities
                     if (Base.Spells.Count > 0)
                     {
                         var s = Globals.Rand.Next(0, Base.Spells.Count); //Pick a random spell
-                        var spell = SpellBase.Lookup.Get<SpellBase>((Base.Spells[s]));
+                        var spell = SpellBase.Get((Base.Spells[s]));
                         var range = spell.CastRange;
                         if (spell != null)
                         {
@@ -394,17 +394,17 @@ namespace Intersect.Server.Classes.Entities
                     //Check if target map is on one of the surrounding maps, if not then we are not even going to look.
                     if (targetMap != MapId)
                     {
-                        if (MapInstance.Lookup.Get<MapInstance>(MapId).SurroundingMaps.Count > 0)
+                        if (MapInstance.Get(MapId).SurroundingMaps.Count > 0)
                         {
                             for (var x = 0;
-                                x < MapInstance.Lookup.Get<MapInstance>(MapId).SurroundingMaps.Count;
+                                x < MapInstance.Get(MapId).SurroundingMaps.Count;
                                 x++)
                             {
-                                if (MapInstance.Lookup.Get<MapInstance>(MapId).SurroundingMaps[x] == targetMap)
+                                if (MapInstance.Get(MapId).SurroundingMaps[x] == targetMap)
                                 {
                                     break;
                                 }
-                                if (x == MapInstance.Lookup.Get<MapInstance>(MapId).SurroundingMaps.Count - 1)
+                                if (x == MapInstance.Get(MapId).SurroundingMaps.Count - 1)
                                 {
                                     targetMap = Guid.Empty;
                                 }
@@ -539,18 +539,18 @@ namespace Intersect.Server.Classes.Entities
             {
                 if (curMapLink == Guid.Empty)
                 {
-                    MapInstance.Lookup.Get<MapInstance>(curMapLink).RemoveEntity(this);
+                    MapInstance.Get(curMapLink).RemoveEntity(this);
                 }
                 if (MapId != Guid.Empty)
                 {
-                    MapInstance.Lookup.Get<MapInstance>(MapId).AddEntity(this);
+                    MapInstance.Get(MapId).AddEntity(this);
                 }
             }
         }
 
         private void TryFindNewTarget(Guid avoidId = new Guid())
         {
-            var maps = MapInstance.Lookup.Get<MapInstance>(MapId).GetSurroundingMaps(true);
+            var maps = MapInstance.Get(MapId).GetSurroundingMaps(true);
             var possibleTargets = new List<EntityInstance>();
             int closestRange = Range + 1; //If the range is out of range we didn't find anything.
             int closestIndex = -1;
@@ -601,7 +601,7 @@ namespace Intersect.Server.Classes.Entities
 
         public override void Warp(Guid newMapId, int newX, int newY, int newDir, bool adminWarp = false, int zOverride = 0, bool mapSave = false)
         {
-            var map = MapInstance.Lookup.Get<MapInstance>(newMapId);
+            var map = MapInstance.Get(newMapId);
             if (map == null)
             {
                 return;
@@ -612,7 +612,7 @@ namespace Intersect.Server.Classes.Entities
             Dir = newDir;
             if (newMapId != MapId )
             {
-                var oldMap = MapInstance.Lookup.Get<MapInstance>(MapId);
+                var oldMap = MapInstance.Get(MapId);
                 if (oldMap != null)
                 {
                     oldMap.RemoveEntity(this);

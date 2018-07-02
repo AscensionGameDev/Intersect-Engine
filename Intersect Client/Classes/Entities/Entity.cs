@@ -178,7 +178,7 @@ namespace Intersect_Client.Classes.Entities
                 }
                 else
                 {
-                    mCachedMapInstance = MapInstance.Lookup.Get<MapInstance>(CurrentMap);
+                    mCachedMapInstance = MapInstance.Get(CurrentMap);
                     mCachedMapId = CurrentMap;
                     return mCachedMapInstance;
                 }
@@ -211,7 +211,7 @@ namespace Intersect_Client.Classes.Entities
             int animCount = bf.ReadInteger();
             for (int i = 0; i < animCount; i++)
             {
-                var anim = AnimationBase.Lookup.Get<AnimationBase>(bf.ReadGuid());
+                var anim = AnimationBase.Get(bf.ReadGuid());
                 if (anim != null)
                     animsToAdd.Add(anim);
             }
@@ -333,7 +333,7 @@ namespace Intersect_Client.Classes.Entities
             }
             else
             {
-                map = MapInstance.Lookup.Get<MapInstance>(CurrentMap);
+                map = MapInstance.Get(CurrentMap);
                 LatestMap = map;
                 if ((map == null || !map.InView()))
                 {
@@ -563,7 +563,7 @@ namespace Intersect_Client.Classes.Entities
         //Rendering Functions
         public virtual void Draw()
         {
-            if (MapInstance.Lookup.Get<MapInstance>(CurrentMap) == null ||
+            if (MapInstance.Get(CurrentMap) == null ||
                 !Globals.GridMaps.Contains(CurrentMap)) return;
             FloatRect srcRectangle = new FloatRect();
             FloatRect destRectangle = new FloatRect();
@@ -603,7 +603,7 @@ namespace Intersect_Client.Classes.Entities
 
             if (Texture != null)
             {
-                var map = MapInstance.Lookup.Get<MapInstance>(CurrentMap);
+                var map = MapInstance.Get(CurrentMap);
                 if (Texture.GetHeight() / 4 > Options.TileHeight)
                 {
                     destRectangle.X = (map.GetX() + CurrentX * Options.TileWidth + OffsetX + Options.TileWidth / 2);
@@ -692,9 +692,9 @@ namespace Intersect_Client.Classes.Entities
 								{
 									itemId = Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z])];
 								}
-								if (ItemBase.Lookup.Get<ItemBase>(itemId) != null)
+								if (ItemBase.Get(itemId) != null)
 								{
-									var itemdata = ItemBase.Lookup.Get<ItemBase>(itemId);
+									var itemdata = ItemBase.Get(itemId);
 									if (Gender == 0)
 									{
 										DrawEquipment(itemdata.MalePaperdoll, alpha);
@@ -723,7 +723,7 @@ namespace Intersect_Client.Classes.Entities
 
         public virtual void DrawEquipment(string filename, int alpha)
         {
-            var map = MapInstance.Lookup.Get<MapInstance>(CurrentMap);
+            var map = MapInstance.Get(CurrentMap);
             if (map == null) return;
             FloatRect srcRectangle = new FloatRect();
             FloatRect destRectangle = new FloatRect();
@@ -930,7 +930,7 @@ namespace Intersect_Client.Classes.Entities
                 }
             }
 
-            var map = MapInstance.Lookup.Get<MapInstance>(CurrentMap);
+            var map = MapInstance.Get(CurrentMap);
             if (map == null)
             {
                 return;
@@ -960,11 +960,11 @@ namespace Intersect_Client.Classes.Entities
             {
                 return;
             }
-            if (MapInstance.Lookup.Get<MapInstance>(CurrentMap) == null)
+            if (MapInstance.Get(CurrentMap) == null)
             {
                 return;
             }
-            var castSpell = SpellBase.Lookup.Get<SpellBase>(SpellCast);
+            var castSpell = SpellBase.Get(SpellCast);
             if (castSpell != null)
             {
                 var width = Options.TileWidth;
@@ -992,7 +992,7 @@ namespace Intersect_Client.Classes.Entities
         public void DrawTarget(int priority)
         {
             if (GetType() == typeof(Projectile)) return;
-            var map = MapInstance.Lookup.Get<MapInstance>(CurrentMap);
+            var map = MapInstance.Get(CurrentMap);
             if (map == null) return;
             FloatRect srcRectangle = new FloatRect();
             FloatRect destRectangle = new FloatRect();
@@ -1069,16 +1069,16 @@ namespace Intersect_Client.Classes.Entities
 
         public void Start(Entity en)
         {
-            if (MapInstance.Lookup.Get<MapInstance>(en.CurrentMap) == null ||
-                MapInstance.Lookup.Get<MapInstance>(mEndMapId) == null ||
+            if (MapInstance.Get(en.CurrentMap) == null ||
+                MapInstance.Get(mEndMapId) == null ||
                 (mEndMapId == en.CurrentMap) && (mEndX == en.CurrentX) && (mEndY == en.CurrentY))
             {
                 en.Dashing = null;
             }
             else
             {
-                var startMap = MapInstance.Lookup.Get<MapInstance>(en.CurrentMap);
-                var endMap = MapInstance.Lookup.Get<MapInstance>(mEndMapId);
+                var startMap = MapInstance.Get(en.CurrentMap);
+                var endMap = MapInstance.Get(mEndMapId);
                 mStartTime = Globals.System.GetTimeMs();
                 mStartXCoord = en.OffsetX;
                 mStartYCoord = en.OffsetY;

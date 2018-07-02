@@ -52,7 +52,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (mChangingName) return;
             mEditorItem =
-                CraftingTableBase.Lookup.Get<CraftingTableBase>(
+                CraftingTableBase.Get(
                     CraftingTableBase.IdFromList(lstTables.SelectedIndex));
             UpdateEditor();
         }

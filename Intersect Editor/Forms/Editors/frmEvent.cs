@@ -1366,7 +1366,7 @@ namespace Intersect.Editor.Forms.Editors
                             Strings.EventCommandList.showoffer);
                     }
                 case EventCommandType.CompleteQuestTask:
-                    var quest = QuestBase.Lookup.Get<QuestBase>(command.Guids[0]);
+                    var quest = QuestBase.Get(command.Guids[0]);
                     if (quest != null)
                     {
                         //Try to find task
