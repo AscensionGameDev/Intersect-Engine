@@ -8,6 +8,7 @@ using Intersect.Server.Classes.Entities;
 using Intersect.Server.Classes.General;
 using Intersect.Utilities;
 using Nancy;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using ServerOptions = Intersect.Options;
@@ -52,6 +53,14 @@ namespace Intersect.Server.WebApi.Modules
                 if (Guid.TryParse(parameters.guid, out Guid guid))
                 {
                     var gameObject = type.GetLookup().Get(guid);
+                    var json = JsonConvert.SerializeObject(gameObject);
+                    var jsonBytes = Encoding.UTF8.GetBytes(json);
+                    return new Response
+                    {
+                        StatusCode = HttpStatusCode.OK,
+                        ContentType = "application/json",
+                        Contents = s => s.Write(jsonBytes, 0, jsonBytes.Length)
+                    };
                 }
 
                 var response = Response.AsJson(new { message = $"Invalid guid '{guid}'." });
