@@ -20,8 +20,8 @@ namespace Intersect.Server.WebApi.Modules
     {
         public GameObjectModule() : base("/objects")
         {
-            Get("/{type}/stats", (Sync)Get_Type_Guid);
-            Get("/{type}/{guid}", (Sync)Get_Type_Guid);
+            Get("/{type}/{guid:guid}", (Sync)Get_Type_Guid);
+            Get("/{type}/stats", (Sync)Get_Type_Stats);
         }
 
         private Response Get_Type_Stats(dynamic parameters)
@@ -32,6 +32,7 @@ namespace Intersect.Server.WebApi.Modules
                 var lookup = type.GetLookup();
                 return Response.AsJson(new
                 {
+                    type = type.ToString(),
                     count = lookup.Count
                 });
             }
