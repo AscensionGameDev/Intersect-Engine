@@ -20,8 +20,8 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             mEventEditor = editor;
             InitLocalization();
             cmbQuests.Items.Clear();
-            cmbQuests.Items.AddRange(Database.GetGameObjectList(GameObjectType.Quest));
-            cmbQuests.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Quest, refCommand.Guids[0]);
+            cmbQuests.Items.AddRange(QuestBase.Names);
+            cmbQuests.SelectedIndex = QuestBase.ListIndex(refCommand.Guids[0]);
         }
 
         private void InitLocalization()
@@ -35,12 +35,12 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            mMyCommand.Guids[0] = Database.GameObjectIdFromList(GameObjectType.Quest, cmbQuests.SelectedIndex);
+            mMyCommand.Guids[0] = QuestBase.IdFromList(cmbQuests.SelectedIndex);
             mMyCommand.Ints[1] = -1;
             if (cmbQuests.SelectedIndex > -1)
             {
                 var quest = QuestBase.Lookup.Get<QuestBase>(
-                    Database.GameObjectIdFromList(GameObjectType.Quest, cmbQuests.SelectedIndex));
+                    QuestBase.IdFromList(cmbQuests.SelectedIndex));
                 if (quest != null)
                 {
                     var i = -1;
@@ -69,7 +69,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             if (cmbQuests.SelectedIndex > -1)
             {
                 var quest = QuestBase.Lookup.Get<QuestBase>(
-                    Database.GameObjectIdFromList(GameObjectType.Quest, cmbQuests.SelectedIndex));
+                    QuestBase.IdFromList(cmbQuests.SelectedIndex));
                 if (quest != null)
                 {
                     lblTask.Show();

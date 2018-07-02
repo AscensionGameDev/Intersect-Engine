@@ -19,8 +19,8 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             mEventEditor = editor;
             InitLocalization();
             cmbEvent.Items.Clear();
-            cmbEvent.Items.AddRange(Database.GetGameObjectList(GameObjectType.Event));
-            cmbEvent.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Event, refCommand.Guids[0]);
+            cmbEvent.Items.AddRange(EventBase.Names);
+            cmbEvent.SelectedIndex = EventBase.ListIndex(refCommand.Guids[0]);
         }
 
         private void InitLocalization()
@@ -33,7 +33,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            mMyCommand.Guids[0] = Database.GameObjectIdFromList(GameObjectType.Event, cmbEvent.SelectedIndex);
+            mMyCommand.Guids[0] = EventBase.IdFromList(cmbEvent.SelectedIndex);
             mEventEditor.FinishCommandEdit();
         }
 

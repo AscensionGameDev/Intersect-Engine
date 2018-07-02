@@ -84,7 +84,7 @@ namespace Intersect.Editor.Forms.Editors
             if (mChangingName) return;
             mEditorItem =
                 AnimationBase.Lookup.Get<AnimationBase>(
-                    Database.GameObjectIdFromList(GameObjectType.Animation, lstAnimations.SelectedIndex));
+                    AnimationBase.IdFromList(lstAnimations.SelectedIndex));
             UpdateEditor();
         }
 
@@ -170,7 +170,7 @@ namespace Intersect.Editor.Forms.Editors
         public void InitEditor()
         {
             lstAnimations.Items.Clear();
-            lstAnimations.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
+            lstAnimations.Items.AddRange(AnimationBase.Names);
         }
 
         private void UpdateEditor()
@@ -231,7 +231,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             mChangingName = true;
             mEditorItem.Name = txtName.Text;
-            lstAnimations.Items[Database.GameObjectListIndex(GameObjectType.Animation, mEditorItem.Id)] =
+            lstAnimations.Items[AnimationBase.ListIndex(mEditorItem.Id)] =
                 txtName.Text;
             mChangingName = false;
         }

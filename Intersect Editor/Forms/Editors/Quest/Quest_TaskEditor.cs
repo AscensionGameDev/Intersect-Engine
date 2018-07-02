@@ -30,11 +30,11 @@ namespace Intersect.Editor.Forms.Editors.Quest
                 case 0: //Event Driven
                     break;
                 case 1: //Gather Items
-                    cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item, mMyTask.Guid1);
+                    cmbItem.SelectedIndex = ItemBase.ListIndex(mMyTask.Guid1);
                     nudItemAmount.Value = mMyTask.Data2;
                     break;
                 case 2: //Kill NPCS
-                    cmbNpc.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Npc, mMyTask.Guid1);
+                    cmbNpc.SelectedIndex = NpcBase.ListIndex(mMyTask.Guid1);
                     nudNpcQuantity.Value = mMyTask.Data2;
                     break;
             }
@@ -79,14 +79,14 @@ namespace Intersect.Editor.Forms.Editors.Quest
                 case 1: //Gather Items
                     grpGatherItems.Show();
                     cmbItem.Items.Clear();
-                    cmbItem.Items.AddRange(Database.GetGameObjectList(GameObjectType.Item));
+                    cmbItem.Items.AddRange(ItemBase.Names);
                     if (cmbItem.Items.Count > 0) cmbItem.SelectedIndex = 0;
                     nudItemAmount.Value = 1;
                     break;
                 case 2: //Kill Npcs
                     grpKillNpcs.Show();
                     cmbNpc.Items.Clear();
-                    cmbNpc.Items.AddRange(Database.GetGameObjectList(GameObjectType.Npc));
+                    cmbNpc.Items.AddRange(NpcBase.Names);
                     if (cmbNpc.Items.Count > 0) cmbNpc.SelectedIndex = 0;
                     nudNpcQuantity.Value = 1;
                     break;
@@ -104,11 +104,11 @@ namespace Intersect.Editor.Forms.Editors.Quest
                     mMyTask.Data2 = 1;
                     break;
                 case 1: //Gather Items
-                    mMyTask.Guid1 = Database.GameObjectIdFromList(GameObjectType.Item, cmbItem.SelectedIndex);
+                    mMyTask.Guid1 = ItemBase.IdFromList(cmbItem.SelectedIndex);
                     mMyTask.Data2 = (int) nudItemAmount.Value;
                     break;
                 case 2: //Kill Npcs
-                    mMyTask.Guid1 = Database.GameObjectIdFromList(GameObjectType.Npc, cmbNpc.SelectedIndex);
+                    mMyTask.Guid1 = NpcBase.IdFromList(cmbNpc.SelectedIndex);
                     mMyTask.Data2 = (int) nudNpcQuantity.Value;
                     break;
             }

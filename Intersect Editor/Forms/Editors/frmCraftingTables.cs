@@ -45,7 +45,7 @@ namespace Intersect.Editor.Forms.Editors
         public void InitEditor()
         {
             lstTables.Items.Clear();
-            lstTables.Items.AddRange(Database.GetGameObjectList(GameObjectType.CraftTables));
+            lstTables.Items.AddRange(CraftingTableBase.Names);
         }
 
         private void lstCrafts_Click(object sender, EventArgs e)
@@ -53,7 +53,7 @@ namespace Intersect.Editor.Forms.Editors
             if (mChangingName) return;
             mEditorItem =
                 CraftingTableBase.Lookup.Get<CraftingTableBase>(
-                    Database.GameObjectIdFromList(GameObjectType.CraftTables, lstTables.SelectedIndex));
+                    CraftingTableBase.IdFromList(lstTables.SelectedIndex));
             UpdateEditor();
         }
 
@@ -67,14 +67,14 @@ namespace Intersect.Editor.Forms.Editors
 
                 //Populate the checked list box
                 lstAvailableCrafts.Items.Clear();
-                lstAvailableCrafts.Items.AddRange(Database.GetGameObjectList(GameObjectType.Crafts));
+                lstAvailableCrafts.Items.AddRange(CraftBase.Names);
 
                 //Clean up crafts array
 
 
                 foreach (var val in mEditorItem.Crafts)
                 {
-                    var listIndex = Database.GameObjectListIndex(GameObjectType.Crafts, val);
+                    var listIndex = CraftBase.ListIndex(val);
                     if (listIndex > -1)
                     {
                         lstAvailableCrafts.SetItemCheckState(listIndex, CheckState.Checked);
@@ -266,7 +266,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 if (lstAvailableCrafts.CheckedIndices.Contains(i))
                 {
-                    mEditorItem.Crafts.Add(Database.GameObjectIdFromList(GameObjectType.Crafts,i));
+                    mEditorItem.Crafts.Add(CraftBase.IdFromList(i));
                 }
             }
         }

@@ -76,7 +76,7 @@ namespace Intersect.Editor.Forms.Editors
             if (mChangingName) return;
             mEditorItem =
                 ClassBase.Lookup.Get<ClassBase>(
-                    Database.GameObjectIdFromList(GameObjectType.Class, lstClasses.SelectedIndex));
+                    ClassBase.IdFromList(lstClasses.SelectedIndex));
             UpdateEditor();
         }
 
@@ -84,7 +84,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             mChangingName = true;
             mEditorItem.Name = txtName.Text;
-            lstClasses.Items[Database.GameObjectListIndex(GameObjectType.Class, mEditorItem.Id)] = txtName.Text;
+            lstClasses.Items[ClassBase.ListIndex(mEditorItem.Id)] = txtName.Text;
             mChangingName = false;
         }
 
@@ -105,7 +105,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             var n = new ClassSpell
             {
-                Id = Database.GameObjectIdFromList(GameObjectType.Spell, cmbSpell.SelectedIndex),
+                Id = SpellBase.IdFromList(cmbSpell.SelectedIndex),
                 Level = (int) nudLevel.Value
             };
 
@@ -151,7 +151,7 @@ namespace Intersect.Editor.Forms.Editors
                 cmbDamageType.SelectedIndex = mEditorItem.DamageType;
                 cmbScalingStat.SelectedIndex = mEditorItem.ScalingStat;
                 cmbAttackAnimation.SelectedIndex =
-                    Database.GameObjectListIndex(GameObjectType.Animation, mEditorItem.AttackAnimationId) + 1;
+                    AnimationBase.ListIndex(mEditorItem.AttackAnimationId) + 1;
 
                 //Regen
                 nudHPRegen.Value = mEditorItem.VitalRegen[(int) Vitals.Health];
@@ -181,8 +181,7 @@ namespace Intersect.Editor.Forms.Editors
                 if (lstSpells.Items.Count > 0)
                 {
                     lstSpells.SelectedIndex = 0;
-                    cmbSpell.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Spell,
-                        mEditorItem.Spells[lstSpells.SelectedIndex].Id);
+                    cmbSpell.SelectedIndex = SpellBase.ListIndex(mEditorItem.Spells[lstSpells.SelectedIndex].Id);
                     nudLevel.Value = mEditorItem.Spells[lstSpells.SelectedIndex].Level;
                 }
                 else
@@ -251,13 +250,13 @@ namespace Intersect.Editor.Forms.Editors
             cmbFace.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Face));
             cmbSpawnItem.Items.Clear();
             cmbSpawnItem.Items.Add(Strings.General.none);
-            cmbSpawnItem.Items.AddRange(Database.GetGameObjectList(GameObjectType.Item));
+            cmbSpawnItem.Items.AddRange(ItemBase.Names);
             cmbSpell.Items.Clear();
-            cmbSpell.Items.AddRange(Database.GetGameObjectList(GameObjectType.Spell));
+            cmbSpell.Items.AddRange(SpellBase.Names);
             nudLevel.Maximum = Options.MaxLevel;
             cmbAttackAnimation.Items.Clear();
             cmbAttackAnimation.Items.Add(Strings.General.none);
-            cmbAttackAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
+            cmbAttackAnimation.Items.AddRange(AnimationBase.Names);
             cmbScalingStat.Items.Clear();
             for (int x = 0; x < Options.MaxStats; x++)
             {
@@ -378,7 +377,7 @@ namespace Intersect.Editor.Forms.Editors
         public void InitEditor()
         {
             lstClasses.Items.Clear();
-            lstClasses.Items.AddRange(Database.GetGameObjectList(GameObjectType.Class));
+            lstClasses.Items.AddRange(ClassBase.Names);
             cmbWarpMap.Items.Clear();
             for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
             {
@@ -750,7 +749,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbAttackAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.AttackAnimation = AnimationBase.Get(Database.GameObjectIdFromList(GameObjectType.Animation, cmbAttackAnimation.SelectedIndex - 1));
+            mEditorItem.AttackAnimation = AnimationBase.Get(AnimationBase.IdFromList(cmbAttackAnimation.SelectedIndex - 1));
         }
 
         private void cmbDamageType_SelectedIndexChanged(object sender, EventArgs e)
@@ -767,9 +766,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (lstSpells.SelectedIndex > -1 && cmbSpell.SelectedIndex > -1)
             {
-                mEditorItem.Spells[lstSpells.SelectedIndex].Id = Database.GameObjectIdFromList(
-                    GameObjectType.Spell,
-                    cmbSpell.SelectedIndex);
+                mEditorItem.Spells[lstSpells.SelectedIndex].Id = SpellBase.IdFromList(cmbSpell.SelectedIndex);
                 UpdateSpellList();
             }
         }
@@ -778,8 +775,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (lstSpells.SelectedIndex > -1)
             {
-                cmbSpell.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Spell,
-                    mEditorItem.Spells[lstSpells.SelectedIndex].Id);
+                cmbSpell.SelectedIndex = SpellBase.ListIndex(mEditorItem.Spells[lstSpells.SelectedIndex].Id);
                 nudLevel.Value = mEditorItem.Spells[lstSpells.SelectedIndex].Level;
             }
         }
@@ -955,7 +951,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (lstSpawnItems.SelectedIndex > -1 && lstSpawnItems.SelectedIndex < mEditorItem.Items.Count)
             {
-                mEditorItem.Items[lstSpawnItems.SelectedIndex].Id = Database.GameObjectIdFromList(GameObjectType.Item, cmbSpawnItem.SelectedIndex - 1);
+                mEditorItem.Items[lstSpawnItems.SelectedIndex].Id = ItemBase.IdFromList(cmbSpawnItem.SelectedIndex - 1);
             }
             UpdateSpawnItemValues(true);
         }
@@ -971,7 +967,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (lstSpawnItems.SelectedIndex > -1)
             {
-                cmbSpawnItem.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item, mEditorItem.Items[lstSpawnItems.SelectedIndex].Id) + 1;
+                cmbSpawnItem.SelectedIndex = ItemBase.ListIndex(mEditorItem.Items[lstSpawnItems.SelectedIndex].Id) + 1;
                 nudSpawnItemAmount.Value = mEditorItem.Items[lstSpawnItems.SelectedIndex].Amount;
             }
         }
@@ -979,7 +975,7 @@ namespace Intersect.Editor.Forms.Editors
         private void btnSpawnItemAdd_Click(object sender, EventArgs e)
         {
             mEditorItem.Items.Add(new ClassItem());
-            mEditorItem.Items[mEditorItem.Items.Count - 1].Id = Database.GameObjectIdFromList(GameObjectType.Item, cmbSpawnItem.SelectedIndex - 1);
+            mEditorItem.Items[mEditorItem.Items.Count - 1].Id = ItemBase.IdFromList(cmbSpawnItem.SelectedIndex - 1);
             mEditorItem.Items[mEditorItem.Items.Count - 1].Amount = (int)nudSpawnItemAmount.Value;
 
             UpdateSpawnItemValues();

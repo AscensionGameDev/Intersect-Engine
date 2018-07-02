@@ -459,7 +459,7 @@ namespace Intersect.Editor.Maps
                 {
                     Strings.General.none
                 };
-                WeatherList.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
+                WeatherList.AddRange(AnimationBase.Names);
                 var name = AnimationBase.GetName(mMyMap.WeatherAnimationId);
                 if (AnimationBase.Lookup.Get<AnimationBase>(mMyMap.WeatherAnimationId) == null) name = null;
                 return TextUtils.NullToNone(name);
@@ -469,9 +469,9 @@ namespace Intersect.Editor.Maps
                 var idVal = Guid.Empty;
                 if (!TextUtils.IsNone(value))
                 {
-                    var animationNames = new List<string>(Database.GetGameObjectList(GameObjectType.Animation));
+                    var animationNames = new List<string>(AnimationBase.Names);
                     var index = animationNames.IndexOf(value);
-                    idVal = Database.GameObjectIdFromList(GameObjectType.Animation, index);
+                    idVal = AnimationBase.IdFromList(index);
                 }
                 if (mMyMap.WeatherAnimationId != idVal)
                 {
@@ -760,7 +760,7 @@ namespace Intersect.Editor.Maps
             {
                 Strings.General.none
             };
-            WeatherList.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
+            WeatherList.AddRange(AnimationBase.Names);
             return new StandardValuesCollection(WeatherList.ToArray());
         }
     }

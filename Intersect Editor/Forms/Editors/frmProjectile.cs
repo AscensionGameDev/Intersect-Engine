@@ -72,9 +72,7 @@ namespace Intersect.Editor.Forms.Editors
         private void lstProjectiles_Click(object sender, EventArgs e)
         {
             if (mChangingName) return;
-            mEditorItem =
-                ProjectileBase.Lookup.Get<ProjectileBase>(Database.GameObjectIdFromList(GameObjectType.Projectile,
-                    lstProjectiles.SelectedIndex));
+            mEditorItem = ProjectileBase.Lookup.Get<ProjectileBase>(ProjectileBase.IdFromList(lstProjectiles.SelectedIndex));
             UpdateEditor();
         }
 
@@ -83,15 +81,15 @@ namespace Intersect.Editor.Forms.Editors
             mDirectionGrid = new Bitmap("resources/misc/directions.png");
             cmbAnimation.Items.Clear();
             cmbAnimation.Items.Add(Strings.General.none);
-            cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
+            cmbAnimation.Items.AddRange(AnimationBase.Names);
 
             cmbItem.Items.Clear();
             cmbItem.Items.Add(Strings.General.none);
-            cmbItem.Items.AddRange(Database.GetGameObjectList(GameObjectType.Item));
+            cmbItem.Items.AddRange(ItemBase.Names);
 
             cmbSpell.Items.Clear();
             cmbSpell.Items.Add(Strings.General.none);
-            cmbSpell.Items.AddRange(Database.GetGameObjectList(GameObjectType.Spell));
+            cmbSpell.Items.AddRange(SpellBase.Names);
 
             InitLocalization();
             UpdateEditor();
@@ -144,7 +142,7 @@ namespace Intersect.Editor.Forms.Editors
         public void InitEditor()
         {
             lstProjectiles.Items.Clear();
-            lstProjectiles.Items.AddRange(Database.GetGameObjectList(GameObjectType.Projectile));
+            lstProjectiles.Items.AddRange(ProjectileBase.Names);
         }
 
         private void UpdateEditor()
@@ -158,7 +156,7 @@ namespace Intersect.Editor.Forms.Editors
                 nudSpawn.Value = mEditorItem.Delay;
                 nudAmount.Value = mEditorItem.Quantity;
                 nudRange.Value = mEditorItem.Range;
-                cmbSpell.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Spell, mEditorItem.SpellId) + 1;
+                cmbSpell.SelectedIndex = SpellBase.ListIndex(mEditorItem.SpellId) + 1;
                 nudKnockback.Value = mEditorItem.Knockback;
                 chkIgnoreMapBlocks.Checked = mEditorItem.IgnoreMapBlocks;
                 chkIgnoreActiveResources.Checked = mEditorItem.IgnoreActiveResources;
@@ -166,7 +164,7 @@ namespace Intersect.Editor.Forms.Editors
                 chkIgnoreZDimensionBlocks.Checked = mEditorItem.IgnoreZDimension;
                 chkHoming.Checked = mEditorItem.Homing;
                 chkGrapple.Checked = mEditorItem.GrappleHook;
-                cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item, mEditorItem.AmmoItemId) + 1;
+                cmbItem.SelectedIndex = ItemBase.ListIndex(mEditorItem.AmmoItemId) + 1;
                 nudConsume.Value = mEditorItem.AmmoRequired;
 
                 if (lstAnimations.SelectedIndex < 0)
@@ -194,7 +192,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             UpdateAnimations(true);
             cmbAnimation.SelectedIndex =
-                Database.GameObjectListIndex(GameObjectType.Animation, mEditorItem.Animations[index].AnimationId) + 1;
+                AnimationBase.ListIndex(mEditorItem.Animations[index].AnimationId) + 1;
             scrlSpawnRange.Value = Math.Min(mEditorItem.Animations[index].SpawnRange, scrlSpawnRange.Maximum);
             chkRotation.Checked = mEditorItem.Animations[index].AutoRotate;
             UpdateAnimations(true);
@@ -398,7 +396,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             mChangingName = true;
             mEditorItem.Name = txtName.Text;
-            lstProjectiles.Items[Database.GameObjectListIndex(GameObjectType.Projectile, mEditorItem.Id)] =
+            lstProjectiles.Items[ProjectileBase.ListIndex(mEditorItem.Id)] =
                 txtName.Text;
             mChangingName = false;
         }
@@ -596,13 +594,13 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbItem_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.Ammo = ItemBase.Get(Database.GameObjectIdFromList(GameObjectType.Item, cmbItem.SelectedIndex - 1));
+            mEditorItem.Ammo = ItemBase.Get(ItemBase.IdFromList(cmbItem.SelectedIndex - 1));
         }
 
         private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
             mEditorItem.Animations[lstAnimations.SelectedIndex].AnimationId =
-                Database.GameObjectIdFromList(GameObjectType.Animation, cmbAnimation.SelectedIndex - 1);
+                AnimationBase.IdFromList(cmbAnimation.SelectedIndex - 1);
             UpdateAnimations();
         }
 
@@ -641,7 +639,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (cmbSpell.SelectedIndex > 0)
             {
-                mEditorItem.Spell = SpellBase.Get(Database.GameObjectIdFromList(GameObjectType.Spell, cmbSpell.SelectedIndex - 1));
+                mEditorItem.Spell = SpellBase.Get(SpellBase.IdFromList(cmbSpell.SelectedIndex - 1));
             }
             else
             {

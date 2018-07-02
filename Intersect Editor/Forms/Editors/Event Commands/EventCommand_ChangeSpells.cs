@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using Intersect.Editor.Core;
 using Intersect.Editor.Localization;
 using Intersect.Enums;
+using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
@@ -21,9 +22,9 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             mCurrentPage = refPage;
             InitLocalization();
             cmbSpell.Items.Clear();
-            cmbSpell.Items.AddRange(Database.GetGameObjectList(GameObjectType.Spell));
+            cmbSpell.Items.AddRange(SpellBase.Names);
             cmbAction.SelectedIndex = mMyCommand.Ints[0];
-            cmbSpell.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Spell, mMyCommand.Guids[1]);
+            cmbSpell.SelectedIndex = SpellBase.ListIndex(mMyCommand.Guids[1]);
         }
 
         private void InitLocalization()
@@ -43,7 +44,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         private void btnSave_Click(object sender, EventArgs e)
         {
             mMyCommand.Ints[0] = cmbAction.SelectedIndex;
-            mMyCommand.Guids[1] = Database.GameObjectIdFromList(GameObjectType.Spell, cmbSpell.SelectedIndex);
+            mMyCommand.Guids[1] = SpellBase.IdFromList(cmbSpell.SelectedIndex);
             if (mMyCommand.Ints[4] == 0)
                 // command.Ints[4, and 5] are reserved for when the action succeeds or fails
             {

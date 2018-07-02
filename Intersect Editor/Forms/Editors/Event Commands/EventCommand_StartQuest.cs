@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using Intersect.Editor.Core;
 using Intersect.Editor.Localization;
 using Intersect.Enums;
+using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
@@ -21,8 +22,8 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             mEventEditor = editor;
             InitLocalization();
             cmbQuests.Items.Clear();
-            cmbQuests.Items.AddRange(Database.GetGameObjectList(GameObjectType.Quest));
-            cmbQuests.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Quest, refCommand.Guids[0]);
+            cmbQuests.Items.AddRange(QuestBase.Names);
+            cmbQuests.SelectedIndex = QuestBase.ListIndex(refCommand.Guids[0]);
             chkShowOfferWindow.Checked = Convert.ToBoolean(refCommand.Ints[1]);
         }
 
@@ -37,7 +38,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            mMyCommand.Guids[0] = Database.GameObjectIdFromList(GameObjectType.Quest, cmbQuests.SelectedIndex);
+            mMyCommand.Guids[0] = QuestBase.IdFromList(cmbQuests.SelectedIndex);
             mMyCommand.Ints[1] = Convert.ToInt32(chkShowOfferWindow.Checked);
             if (mMyCommand.Ints[4] == 0)
                 // command.Ints[4, and 5] are reserved for when the action succeeds or fails

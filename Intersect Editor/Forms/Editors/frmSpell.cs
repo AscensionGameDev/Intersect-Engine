@@ -12,6 +12,7 @@ using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Utilities;
 
@@ -74,25 +75,23 @@ namespace Intersect.Editor.Forms.Editors
         private void lstSpells_Click(object sender, EventArgs e)
         {
             if (mChangingName) return;
-            mEditorItem =
-                SpellBase.Lookup.Get<SpellBase>(
-                    Database.GameObjectIdFromList(GameObjectType.Spell, lstSpells.SelectedIndex));
+            mEditorItem = SpellBase.Lookup.Get<SpellBase>(SpellBase.IdFromList(lstSpells.SelectedIndex));
             UpdateEditor();
         }
 
         private void frmSpell_Load(object sender, EventArgs e)
         {
             cmbProjectile.Items.Clear();
-            cmbProjectile.Items.AddRange(Database.GetGameObjectList(GameObjectType.Projectile));
+            cmbProjectile.Items.AddRange(ProjectileBase.Names);
             cmbCastAnimation.Items.Clear();
             cmbCastAnimation.Items.Add(Strings.General.none);
-            cmbCastAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
+            cmbCastAnimation.Items.AddRange(AnimationBase.Names);
             cmbHitAnimation.Items.Clear();
             cmbHitAnimation.Items.Add(Strings.General.none);
-            cmbHitAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
+            cmbHitAnimation.Items.AddRange(AnimationBase.Names);
             cmbEvent.Items.Clear();
             cmbEvent.Items.Add(Strings.General.none);
-            cmbEvent.Items.AddRange(Database.GetGameObjectList(GameObjectType.Event));
+            cmbEvent.Items.AddRange(EventBase.Names);
 
             cmbSprite.Items.Clear();
             cmbSprite.Items.Add(Strings.General.none);
@@ -232,7 +231,7 @@ namespace Intersect.Editor.Forms.Editors
         public void InitEditor()
         {
             lstSpells.Items.Clear();
-            lstSpells.Items.AddRange(Database.GetGameObjectList(GameObjectType.Spell));
+            lstSpells.Items.AddRange(SpellBase.Names);
             cmbScalingStat.Items.Clear();
             for (var i = 0; i < Options.MaxStats; i++)
             {
@@ -253,10 +252,8 @@ namespace Intersect.Editor.Forms.Editors
                 nudCastDuration.Value = mEditorItem.CastDuration;
                 nudCooldownDuration.Value = mEditorItem.CooldownDuration;
 
-                cmbCastAnimation.SelectedIndex =
-                    Database.GameObjectListIndex(GameObjectType.Animation, mEditorItem.CastAnimationId) + 1;
-                cmbHitAnimation.SelectedIndex =
-                    Database.GameObjectListIndex(GameObjectType.Animation, mEditorItem.HitAnimationId) + 1;
+                cmbCastAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.CastAnimationId) + 1;
+                cmbHitAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.HitAnimationId) + 1;
 
                 cmbSprite.SelectedIndex = cmbSprite.FindString(TextUtils.NullToNone(mEditorItem.Pic));
                 if (cmbSprite.SelectedIndex > 0)
@@ -355,8 +352,7 @@ namespace Intersect.Editor.Forms.Editors
             else if (cmbType.SelectedIndex == (int) SpellTypes.Event)
             {
                 grpEvent.Show();
-                cmbEvent.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Event, mEditorItem.Guid1) +
-                                         1;
+                cmbEvent.SelectedIndex = EventBase.ListIndex(mEditorItem.Guid1) + 1;
             }
         }
 
@@ -397,7 +393,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 lblProjectile.Show();
                 cmbProjectile.Show();
-                cmbProjectile.SelectedIndex =  Database.GameObjectListIndex(GameObjectType.Projectile, mEditorItem.ProjectileId);
+                cmbProjectile.SelectedIndex =  ProjectileBase.ListIndex(mEditorItem.ProjectileId);
             }
         }
 
@@ -405,7 +401,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             mChangingName = true;
             mEditorItem.Name = txtName.Text;
-            lstSpells.Items[Database.GameObjectListIndex(GameObjectType.Spell, mEditorItem.Id)] = txtName.Text;
+            lstSpells.Items[SpellBase.ListIndex(mEditorItem.Id)] = txtName.Text;
             mChangingName = false;
         }
 
@@ -655,22 +651,22 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbCastAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.CastAnimation = AnimationBase.Get(Database.GameObjectIdFromList(GameObjectType.Animation, cmbCastAnimation.SelectedIndex - 1));
+            mEditorItem.CastAnimation = AnimationBase.Get(AnimationBase.IdFromList(cmbCastAnimation.SelectedIndex - 1));
         }
 
         private void cmbHitAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.HitAnimation = AnimationBase.Get(Database.GameObjectIdFromList(GameObjectType.Animation, cmbHitAnimation.SelectedIndex - 1));
+            mEditorItem.HitAnimation = AnimationBase.Get(AnimationBase.IdFromList(cmbHitAnimation.SelectedIndex - 1));
         }
 
         private void cmbProjectile_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.Projectile = ProjectileBase.Get(Database.GameObjectIdFromList(GameObjectType.Projectile, cmbProjectile.SelectedIndex));
+            mEditorItem.Projectile = ProjectileBase.Get(ProjectileBase.IdFromList(cmbProjectile.SelectedIndex));
         }
 
         private void cmbEvent_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.Guid1 = Database.GameObjectIdFromList(GameObjectType.Event, cmbEvent.SelectedIndex - 1);
+            mEditorItem.Guid1 = EventBase.IdFromList(cmbEvent.SelectedIndex - 1);
         }
 
         private void btnVisualMapSelector_Click(object sender, EventArgs e)

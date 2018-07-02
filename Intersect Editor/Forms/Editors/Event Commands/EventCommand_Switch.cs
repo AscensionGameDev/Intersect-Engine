@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using Intersect.Editor.Core;
 using Intersect.Editor.Localization;
 using Intersect.Enums;
+using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
@@ -48,15 +49,13 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             int switchCount = 0;
             if (rdoPlayerSwitch.Checked)
             {
-                cmbSetSwitch.Items.AddRange(Database.GetGameObjectList(GameObjectType.PlayerSwitch));
-                cmbSetSwitch.SelectedIndex =
-                    Database.GameObjectListIndex(GameObjectType.PlayerSwitch, mMyCommand.Guids[1]);
+                cmbSetSwitch.Items.AddRange(PlayerSwitchBase.Names);
+                cmbSetSwitch.SelectedIndex = PlayerSwitchBase.ListIndex(mMyCommand.Guids[1]);
             }
             else
             {
-                cmbSetSwitch.Items.AddRange(Database.GetGameObjectList(GameObjectType.ServerSwitch));
-                cmbSetSwitch.SelectedIndex =
-                    Database.GameObjectListIndex(GameObjectType.ServerSwitch, mMyCommand.Guids[1]);
+                cmbSetSwitch.Items.AddRange(ServerSwitchBase.Names);
+                cmbSetSwitch.SelectedIndex =ServerSwitchBase.ListIndex(mMyCommand.Guids[1]);
             }
             cmbSetSwitchVal.SelectedIndex = mMyCommand.Ints[2];
         }
@@ -66,14 +65,12 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             if (rdoPlayerSwitch.Checked)
             {
                 mMyCommand.Ints[0] = (int) SwitchVariableTypes.PlayerSwitch;
-                mMyCommand.Guids[1] =
-                    Database.GameObjectIdFromList(GameObjectType.PlayerSwitch, cmbSetSwitch.SelectedIndex);
+                mMyCommand.Guids[1] = PlayerSwitchBase.IdFromList(cmbSetSwitch.SelectedIndex);
             }
             if (rdoGlobalSwitch.Checked)
             {
                 mMyCommand.Ints[0] = (int) SwitchVariableTypes.ServerSwitch;
-                mMyCommand.Guids[1] =
-                    Database.GameObjectIdFromList(GameObjectType.ServerSwitch, cmbSetSwitch.SelectedIndex);
+                mMyCommand.Guids[1] = ServerSwitchBase.IdFromList(cmbSetSwitch.SelectedIndex);
             }
             mMyCommand.Ints[2] = cmbSetSwitchVal.SelectedIndex;
             mEventEditor.FinishCommandEdit();

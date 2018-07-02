@@ -28,10 +28,10 @@ namespace Intersect.Editor.Forms.Editors
             lstCrafts.GotFocus += itemList_FocusChanged;
             cmbResult.Items.Clear();
             cmbResult.Items.Add(Strings.General.none);
-            cmbResult.Items.AddRange(Database.GetGameObjectList(GameObjectType.Item));
+            cmbResult.Items.AddRange(ItemBase.Names);
             cmbIngredient.Items.Clear();
             cmbIngredient.Items.Add(Strings.General.none);
-            cmbIngredient.Items.AddRange(Database.GetGameObjectList(GameObjectType.Item));
+            cmbIngredient.Items.AddRange(ItemBase.Names);
         }
 
         protected override void GameObjectUpdatedDelegate(GameObjectType type)
@@ -50,13 +50,13 @@ namespace Intersect.Editor.Forms.Editors
         public void InitEditor()
         {
             lstCrafts.Items.Clear();
-            lstCrafts.Items.AddRange(Database.GetGameObjectList(GameObjectType.Crafts));
+            lstCrafts.Items.AddRange(CraftBase.Names);
         }
 
         private void lstCrafts_Click(object sender, EventArgs e)
         {
             if (mChangingName) return;
-            mEditorItem = CraftBase.Lookup.Get<CraftBase>(Database.GameObjectIdFromList(GameObjectType.Crafts, lstCrafts.SelectedIndex));
+            mEditorItem = CraftBase.Lookup.Get<CraftBase>(CraftBase.IdFromList(lstCrafts.SelectedIndex));
             UpdateEditor();
         }
 
@@ -70,7 +70,7 @@ namespace Intersect.Editor.Forms.Editors
 
                 //Populate ingredients and such
                 nudSpeed.Value = mEditorItem.Time;
-                cmbResult.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item, mEditorItem.ItemId) + 1;
+                cmbResult.SelectedIndex = ItemBase.ListIndex(mEditorItem.ItemId) + 1;
 
                 lstIngredients.Items.Clear();
                 cmbIngredient.Hide();
@@ -94,8 +94,7 @@ namespace Intersect.Editor.Forms.Editors
                 if (lstIngredients.Items.Count > 0)
                 {
                     lstIngredients.SelectedIndex = 0;
-                    cmbIngredient.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item,
-                                                      mEditorItem.Ingredients[lstIngredients.SelectedIndex].ItemId) + 1;
+                    cmbIngredient.SelectedIndex = ItemBase.ListIndex(mEditorItem.Ingredients[lstIngredients.SelectedIndex].ItemId) + 1;
                     nudQuantity.Value = mEditorItem.Ingredients[lstIngredients.SelectedIndex].Quantity;
                 }
 
@@ -301,8 +300,7 @@ namespace Intersect.Editor.Forms.Editors
                 nudQuantity.Show();
                 lblQuantity.Show();
                 lblIngredient.Show();
-                cmbIngredient.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item,
-                                                  mEditorItem.Ingredients[lstIngredients.SelectedIndex].ItemId) + 1;
+                cmbIngredient.SelectedIndex = ItemBase.ListIndex(mEditorItem.Ingredients[lstIngredients.SelectedIndex].ItemId) + 1;
                 nudQuantity.Value = mEditorItem.Ingredients[lstIngredients.SelectedIndex].Quantity;
             }
             else
@@ -327,7 +325,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbResult_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.ItemId = Database.GameObjectIdFromList(GameObjectType.Item, cmbResult.SelectedIndex - 1);
+            mEditorItem.ItemId = ItemBase.IdFromList(cmbResult.SelectedIndex - 1);
         }
 
         private void cmbIngredient_SelectedIndexChanged(object sender, EventArgs e)
@@ -335,7 +333,7 @@ namespace Intersect.Editor.Forms.Editors
             if (lstIngredients.SelectedIndex > -1)
             {
                 mEditorItem.Ingredients[lstIngredients.SelectedIndex].ItemId =
-                    Database.GameObjectIdFromList(GameObjectType.Item, cmbIngredient.SelectedIndex - 1);
+                    ItemBase.IdFromList(cmbIngredient.SelectedIndex - 1);
                 if (cmbIngredient.SelectedIndex > 0)
                 {
                     lstIngredients.Items[lstIngredients.SelectedIndex] = Strings.CraftsEditor.ingredientlistitem.ToString(

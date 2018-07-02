@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using Intersect.Editor.Core;
 using Intersect.Editor.Localization;
 using Intersect.Enums;
+using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 
 namespace Intersect.Editor.Forms.Editors.Event_Commands
@@ -21,9 +22,9 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             mCurrentPage = refPage;
             InitLocalization();
             cmbItem.Items.Clear();
-            cmbItem.Items.AddRange(Database.GetGameObjectList(GameObjectType.Item));
+            cmbItem.Items.AddRange(ItemBase.Names);
             cmbAction.SelectedIndex = mMyCommand.Ints[0];
-            cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item, mMyCommand.Guids[1]);
+            cmbItem.SelectedIndex = ItemBase.ListIndex(mMyCommand.Guids[1]);
             if (mMyCommand.Ints[2] < 1)
             {
                 nudGiveTakeAmount.Value = 1;
@@ -51,7 +52,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         private void btnSave_Click(object sender, EventArgs e)
         {
             mMyCommand.Ints[0] = cmbAction.SelectedIndex;
-            mMyCommand.Guids[1] = Database.GameObjectIdFromList(GameObjectType.Item, cmbItem.SelectedIndex);
+            mMyCommand.Guids[1] = ItemBase.IdFromList(cmbItem.SelectedIndex);
             mMyCommand.Ints[2] = (int) nudGiveTakeAmount.Value;
             if (mMyCommand.Ints[4] == 0)
                 // command.Ints[4, and 5] are reserved for when the action succeeds or fails

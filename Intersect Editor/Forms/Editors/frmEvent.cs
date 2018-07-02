@@ -315,7 +315,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            CurrentPage.AnimationId = Database.GameObjectIdFromList(GameObjectType.Animation, cmbAnimation.SelectedIndex - 1);
+            CurrentPage.AnimationId = AnimationBase.IdFromList(cmbAnimation.SelectedIndex - 1);
         }
 
         private void chkIsGlobal_CheckedChanged(object sender, EventArgs e)
@@ -566,7 +566,7 @@ namespace Intersect.Editor.Forms.Editors
             cmbPreviewFace.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Face));
             cmbAnimation.Items.Clear();
             cmbAnimation.Items.Add(Strings.General.none);
-            cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
+            cmbAnimation.Items.AddRange(AnimationBase.Names);
             if (MyEvent.CommonEvent)
             {
                 grpEntityOptions.Hide();
@@ -585,7 +585,7 @@ namespace Intersect.Editor.Forms.Editors
                 }
                 cmbTriggerVal.Items.Clear();
                 cmbTriggerVal.Items.Add(Strings.General.none);
-                cmbTriggerVal.Items.AddRange(Database.GetGameObjectList(GameObjectType.Projectile));
+                cmbTriggerVal.Items.AddRange(ProjectileBase.Names);
             }
             chkIsGlobal.Checked = Convert.ToBoolean(MyEvent.IsGlobal);
             if (MyEvent.CommonEvent) chkIsGlobal.Hide();
@@ -637,7 +637,7 @@ namespace Intersect.Editor.Forms.Editors
                     lblTriggerVal.Show();
                     lblTriggerVal.Text = Strings.EventEditor.projectile;
                     cmbTriggerVal.Show();
-                    cmbTriggerVal.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Projectile, CurrentPage.TriggerVal) + 1;
+                    cmbTriggerVal.SelectedIndex = ProjectileBase.ListIndex(CurrentPage.TriggerVal) + 1;
                 }
             }
             else
@@ -656,8 +656,7 @@ namespace Intersect.Editor.Forms.Editors
                 cmbPreviewFace.SelectedIndex = 0;
                 UpdateFacePreview();
             }
-            cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Animation, CurrentPage.AnimationId) +
-                                         1;
+            cmbAnimation.SelectedIndex = AnimationBase.ListIndex(CurrentPage.AnimationId) + 1;
             chkHideName.Checked = Convert.ToBoolean(CurrentPage.HideName);
             chkDisableInspector.Checked = Convert.ToBoolean(CurrentPage.DisablePreview);
             chkDirectionFix.Checked = Convert.ToBoolean(CurrentPage.DirectionFix);

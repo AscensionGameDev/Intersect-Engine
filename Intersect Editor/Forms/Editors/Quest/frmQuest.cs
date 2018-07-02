@@ -142,7 +142,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
             if (mChangingName) return;
             mEditorItem =
                 QuestBase.Lookup.Get<QuestBase>(
-                    Database.GameObjectIdFromList(GameObjectType.Quest, lstQuests.SelectedIndex));
+                    QuestBase.IdFromList(lstQuests.SelectedIndex));
             UpdateEditor();
         }
 
@@ -200,7 +200,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
         {
             mChangingName = true;
             mEditorItem.Name = txtName.Text;
-            lstQuests.Items[Database.GameObjectListIndex(GameObjectType.Quest, mEditorItem.Id)] = txtName.Text;
+            lstQuests.Items[QuestBase.ListIndex(mEditorItem.Id)] = txtName.Text;
             mChangingName = false;
         }
 

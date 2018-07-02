@@ -203,7 +203,7 @@ namespace Intersect.Editor.Forms.DockingElements
         {
             Globals.MapLayersWindow.cmbTilesets.Items.Clear();
             var tilesetList = new List<string>();
-            tilesetList.AddRange(Database.GetGameObjectList(GameObjectType.Tileset));
+            tilesetList.AddRange(TilesetBase.Names);
             tilesetList.Sort(new AlphanumComparatorFast());
             foreach (var filename in tilesetList)
             {
@@ -321,7 +321,7 @@ namespace Intersect.Editor.Forms.DockingElements
             HideAttributeMenus();
             grpItem.Visible = true;
             cmbItemAttribute.Items.Clear();
-            cmbItemAttribute.Items.AddRange(Database.GetGameObjectList(GameObjectType.Item));
+            cmbItemAttribute.Items.AddRange(ItemBase.Names);
             if (cmbItemAttribute.Items.Count > 0) cmbItemAttribute.SelectedIndex = 0;
         }
 
@@ -371,7 +371,7 @@ namespace Intersect.Editor.Forms.DockingElements
             HideAttributeMenus();
             grpResource.Visible = true;
             cmbResourceAttribute.Items.Clear();
-            cmbResourceAttribute.Items.AddRange(Database.GetGameObjectList(GameObjectType.Resource));
+            cmbResourceAttribute.Items.AddRange(ResourceBase.Names);
             if (cmbResourceAttribute.Items.Count > 0) cmbResourceAttribute.SelectedIndex = 0;
         }
 
@@ -457,8 +457,7 @@ namespace Intersect.Editor.Forms.DockingElements
             else if (rbItem.Checked == true)
             {
                 tmpMap.Attributes[x, y].Value = (int) MapAttributes.Item;
-                tmpMap.Attributes[x, y].Guid1 = Database.GameObjectIdFromList(GameObjectType.Item,
-                    cmbItemAttribute.SelectedIndex);
+                tmpMap.Attributes[x, y].Guid1 = ItemBase.IdFromList(cmbItemAttribute.SelectedIndex);
                 tmpMap.Attributes[x, y].Data2 = (int) nudItemQuantity.Value;
             }
             else if (rbZDimension.Checked == true)
@@ -490,8 +489,7 @@ namespace Intersect.Editor.Forms.DockingElements
             else if (rbResource.Checked == true)
             {
                 tmpMap.Attributes[x, y].Value = (int) MapAttributes.Resource;
-                tmpMap.Attributes[x, y].Guid1 = Database.GameObjectIdFromList(GameObjectType.Resource,
-                    cmbResourceAttribute.SelectedIndex);
+                tmpMap.Attributes[x, y].Guid1 = ResourceBase.IdFromList(cmbResourceAttribute.SelectedIndex);
                 if (rbLevel1.Checked == true)
                 {
                     tmpMap.Attributes[x, y].Data2 = 0;
@@ -504,8 +502,7 @@ namespace Intersect.Editor.Forms.DockingElements
             else if (rbAnimation.Checked == true)
             {
                 tmpMap.Attributes[x, y].Value = (int) MapAttributes.Animation;
-                tmpMap.Attributes[x, y].Guid1 = Database.GameObjectIdFromList(GameObjectType.Animation,
-                    cmbAnimationAttribute.SelectedIndex);
+                tmpMap.Attributes[x, y].Guid1 = AnimationBase.IdFromList(cmbAnimationAttribute.SelectedIndex);
             }
             else if (rbGrappleStone.Checked == true)
             {
@@ -532,7 +529,7 @@ namespace Intersect.Editor.Forms.DockingElements
         {
             // Update the list incase npcs have been modified since form load.
             cmbNpc.Items.Clear();
-            cmbNpc.Items.AddRange(Database.GetGameObjectList(GameObjectType.Npc));
+            cmbNpc.Items.AddRange(NpcBase.Names);
 
             // Add the map NPCs
             lstMapNpcs.Items.Clear();
@@ -551,8 +548,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 if (lstMapNpcs.SelectedIndex < Globals.CurrentMap.Spawns.Count)
                 {
                     cmbDir.SelectedIndex = Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Dir + 1;
-                    cmbNpc.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Npc,
-                        Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcId);
+                    cmbNpc.SelectedIndex = NpcBase.ListIndex(Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcId);
                     if (Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].X >= 0)
                     {
                         rbDeclared.Checked = true;
@@ -574,7 +570,7 @@ namespace Intersect.Editor.Forms.DockingElements
             //Don't add nothing
             if (cmbNpc.SelectedIndex > -1)
             {
-                n.NpcId = Database.GameObjectIdFromList(GameObjectType.Npc, cmbNpc.SelectedIndex);
+                n.NpcId = NpcBase.IdFromList(cmbNpc.SelectedIndex);
                 n.X = -1;
                 n.Y = -1;
                 n.Dir = -1;
@@ -610,8 +606,7 @@ namespace Intersect.Editor.Forms.DockingElements
         {
             if (lstMapNpcs.Items.Count > 0 && lstMapNpcs.SelectedIndex > -1)
             {
-                cmbNpc.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Npc,
-                    Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcId);
+                cmbNpc.SelectedIndex = NpcBase.ListIndex( Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcId);
                 cmbDir.SelectedIndex = Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Dir + 1;
                 if (Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].X >= 0)
                 {
@@ -649,7 +644,7 @@ namespace Intersect.Editor.Forms.DockingElements
             if (lstMapNpcs.SelectedIndex >= 0)
             {
                 Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcId =
-                    Database.GameObjectIdFromList(GameObjectType.Npc, cmbNpc.SelectedIndex);
+                    NpcBase.IdFromList(cmbNpc.SelectedIndex);
 
                 // Refresh List
                 n = lstMapNpcs.SelectedIndex;
@@ -697,7 +692,7 @@ namespace Intersect.Editor.Forms.DockingElements
             HideAttributeMenus();
             grpAnimation.Visible = true;
             cmbAnimationAttribute.Items.Clear();
-            cmbAnimationAttribute.Items.AddRange(Database.GetGameObjectList(GameObjectType.Animation));
+            cmbAnimationAttribute.Items.AddRange(AnimationBase.Names);
             if (cmbAnimationAttribute.Items.Count > 0) cmbAnimationAttribute.SelectedIndex = 0;
         }
 

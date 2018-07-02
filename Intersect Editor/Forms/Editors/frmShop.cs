@@ -71,14 +71,14 @@ namespace Intersect.Editor.Forms.Editors
             if (mChangingName) return;
             mEditorItem =
                 ShopBase.Lookup.Get<ShopBase>(
-                    Database.GameObjectIdFromList(GameObjectType.Shop, lstShops.SelectedIndex));
+                    ShopBase.IdFromList(lstShops.SelectedIndex));
             UpdateEditor();
         }
 
         public void InitEditor()
         {
             lstShops.Items.Clear();
-            lstShops.Items.AddRange(Database.GetGameObjectList(GameObjectType.Shop));
+            lstShops.Items.AddRange(ShopBase.Names);
         }
 
         private void frmShop_Load(object sender, EventArgs e)
@@ -144,7 +144,7 @@ namespace Intersect.Editor.Forms.Editors
                 pnlContainer.Show();
 
                 txtName.Text = mEditorItem.Name;
-                cmbDefaultCurrency.SelectedIndex = Database.GameObjectListIndex(GameObjectType.Item, mEditorItem.DefaultCurrencyId);
+                cmbDefaultCurrency.SelectedIndex = ItemBase.ListIndex(mEditorItem.DefaultCurrencyId);
                 if (mEditorItem.BuyingWhitelist)
                 {
                     rdoBuyWhitelist.Checked = true;
@@ -288,8 +288,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbDefaultCurrency_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.DefaultCurrency = ItemBase.Get(Database.GameObjectIdFromList(GameObjectType.Item,
-                cmbDefaultCurrency.SelectedIndex));
+            mEditorItem.DefaultCurrency = ItemBase.Get(ItemBase.IdFromList(cmbDefaultCurrency.SelectedIndex));
         }
 
         private void toolStripItemNew_Click(object sender, EventArgs e)

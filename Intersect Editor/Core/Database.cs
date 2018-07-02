@@ -50,18 +50,6 @@ namespace Intersect.Editor.Core
             File.WriteAllText("resources/config.json", ClientOptions.ToJson());
         }
 
-        //Game Object Handling
-        public static string[] GetGameObjectList(GameObjectType type) => type.GetLookup()?.Names;
-
-        public static Guid GameObjectIdFromList(GameObjectType type, int listIndex) => listIndex < 0
-            ? Guid.Empty : listIndex > type.GetLookup().ValueList.Count ? Guid.Empty : (type.GetLookup()?.ValueList?[listIndex]?.Id ?? Guid.Empty);
-
-        public static int GameObjectListIndex(GameObjectType type, Guid id)
-        {
-            var index = type.GetLookup()?.KeyList?.IndexOf(id);
-            return index ?? -1;
-        }
-
         //Map Cache DB
         public static void InitMapCache()
         {

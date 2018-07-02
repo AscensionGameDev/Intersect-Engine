@@ -235,7 +235,7 @@ namespace Intersect.Editor.ContentManagement
             Array.Sort(tilesets, new AlphanumComparatorFast());
             if (tilesets.Length > 0)
             {
-                var tilesetBaseList = Database.GetGameObjectList(GameObjectType.Tileset);
+                var tilesetBaseList = TilesetBase.Names;
                 for (var i = 0; i < tilesets.Length; i++)
                 {
                     tilesets[i] = tilesets[i].Replace("resources/tilesets\\", "");
@@ -263,7 +263,7 @@ namespace Intersect.Editor.ContentManagement
             for (var i = 0; i < TilesetBase.Lookup.Count; i++)
             {
                 var tileset =
-                    TilesetBase.Lookup.Get<TilesetBase>(Database.GameObjectIdFromList(GameObjectType.Tileset, i));
+                    TilesetBase.Lookup.Get<TilesetBase>(TilesetBase.IdFromList(i));
                 if (File.Exists("resources/tilesets/" + tileset.Name))
                 {
                     try
