@@ -145,7 +145,7 @@ namespace Intersect.Server.Classes.Entities
             var statuses = Statuses.Values.ToArray();
             foreach (var status in statuses)
             {
-                if (status.Type == (int) StatusTypes.Stun)
+                if (status.Type == StatusTypes.Stun)
                 {
                     return false;
                 }
@@ -156,7 +156,7 @@ namespace Intersect.Server.Classes.Entities
             }
             else if (en.GetType() == typeof(Npc))
             {
-                return CanNpcCombat(en, spell != null && spell.Friendly == 1) || en == this;
+                return CanNpcCombat(en, spell != null && spell.Combat.Friendly) || en == this;
             }
             return true;
         }
@@ -234,7 +234,7 @@ namespace Intersect.Server.Classes.Entities
             var statuses = Statuses.Values.ToArray();
             foreach (var status in statuses)
             {
-                if (status.Type == (int) StatusTypes.Stun)
+                if (status.Type == StatusTypes.Stun)
                 {
                     return;
                 }
@@ -250,7 +250,7 @@ namespace Intersect.Server.Classes.Entities
                 //Check if the NPC is silenced or stunned
                 foreach (var status in statuses)
                 {
-                    if (status.Type == (int) StatusTypes.Silence || status.Type == (int) StatusTypes.Stun)
+                    if (status.Type == StatusTypes.Silence || status.Type == StatusTypes.Stun)
                     {
                         cc = true;
                         break;
@@ -263,12 +263,12 @@ namespace Intersect.Server.Classes.Entities
                     {
                         var s = Globals.Rand.Next(0, Base.Spells.Count); //Pick a random spell
                         var spell = SpellBase.Get((Base.Spells[s]));
-                        var range = spell.CastRange;
+                        var range = spell.Combat.CastRange;
                         if (spell != null)
                         {
-                            var projectileBase = spell.Projectile;
+                            var projectileBase = spell.Combat.Projectile;
                             if (spell.SpellType == (int) SpellTypes.CombatSpell &&
-                                spell.TargetType == (int) SpellTargetTypes.Projectile && projectileBase != null &&
+                                spell.Combat.TargetType == (int) SpellTargetTypes.Projectile && projectileBase != null &&
                                 InRangeOf(MyTarget, projectileBase.Range))
                             {
                                 range = projectileBase.Range;
@@ -292,12 +292,12 @@ namespace Intersect.Server.Classes.Entities
                                 {
                                     if (Spells[s].SpellCd < Globals.System.GetTimeMs())
                                     {
-                                        if (spell.TargetType == (int)SpellTargetTypes.Self || spell.TargetType == (int)SpellTargetTypes.AoE || InRangeOf(MyTarget, range))
+                                        if (spell.Combat.TargetType == (int)SpellTargetTypes.Self || spell.Combat.TargetType == (int)SpellTargetTypes.AoE || InRangeOf(MyTarget, range))
                                         {
                                             CastTime = Globals.System.GetTimeMs() + spell.CastDuration;
                                             SubVital(Vitals.Mana, spell.VitalCost[(int) Vitals.Mana]);
                                             SubVital(Vitals.Health,spell.VitalCost[(int)Vitals.Health]);
-                                            if (spell.Friendly == 1 && spell.SpellType != (int)SpellTypes.WarpTo)
+                                            if (spell.Combat.Friendly && spell.SpellType != (int)SpellTypes.WarpTo)
                                             {
                                                 CastTarget = this;
                                             }
@@ -367,7 +367,7 @@ namespace Intersect.Server.Classes.Entities
                         var targetStatuses = MyTarget.Statuses.Values.ToArray();
                         foreach (var targetStatus in targetStatuses)
                         {
-                            if (targetStatus.Type == (int) StatusTypes.Stealth)
+                            if (targetStatus.Type == StatusTypes.Stealth)
                             {
                                 targetMap = Guid.Empty;
                                 targetX = 0;
@@ -452,8 +452,7 @@ namespace Intersect.Server.Classes.Entities
                                             var statuses = Statuses.Values.ToArray();
                                             foreach (var status in statuses)
                                             {
-                                                if (status.Type == (int) StatusTypes.Stun ||
-                                                    status.Type == (int) StatusTypes.Snare)
+                                                if (status.Type == StatusTypes.Stun || status.Type == StatusTypes.Snare)
                                                 {
                                                     return;
                                                 }
@@ -524,7 +523,7 @@ namespace Intersect.Server.Classes.Entities
                         var statuses = Statuses.Values.ToArray();
                         foreach (var status in statuses)
                         {
-                            if (status.Type == (int) StatusTypes.Stun || status.Type == (int) StatusTypes.Snare)
+                            if (status.Type == StatusTypes.Stun || status.Type == StatusTypes.Snare)
                             {
                                 return;
                             }

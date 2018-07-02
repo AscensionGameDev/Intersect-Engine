@@ -408,7 +408,7 @@ namespace Intersect.Server.Classes.Networking
             var statuses = client.Entity.Statuses.Values.ToArray();
             foreach (var status in statuses)
             {
-                if (status.Type == (int)StatusTypes.Stun || status.Type == (int)StatusTypes.Snare)
+                if (status.Type == StatusTypes.Stun || status.Type == StatusTypes.Snare)
                 {
                     bf.Dispose();
                     return;
@@ -682,9 +682,7 @@ namespace Intersect.Server.Classes.Networking
             var tileDataLength = bf.ReadInteger();
             var tileData = bf.ReadBytes(tileDataLength);
             if (map.TileData != null) map.TileData = tileData;
-            var attributeDataLength = bf.ReadInteger();
-            var attributeData = bf.ReadBytes(attributeDataLength);
-            map.LoadAttributes(attributeData);
+            map.AttributeData = bf.ReadString();
             LegacyDatabase.SaveGameDatabase();
             Globals.Clients?.ForEach(t =>
             {
@@ -887,7 +885,7 @@ namespace Intersect.Server.Classes.Networking
             var statuses = client.Entity.Statuses.Values.ToArray();
             foreach (var status in statuses)
             {
-                if (status.Type == (int)StatusTypes.Stun)
+                if (status.Type == StatusTypes.Stun)
                 {
                     PacketSender.SendPlayerMsg(client, Strings.Combat.stunblocking);
                     bf.Dispose();
@@ -919,12 +917,12 @@ namespace Intersect.Server.Classes.Networking
                 var statuses = client.Entity.Statuses.Values.ToArray();
                 foreach (var status in statuses)
                 {
-                    if (status.Type == (int)StatusTypes.Stun)
+                    if (status.Type == StatusTypes.Stun)
                     {
                         PacketSender.SendPlayerMsg(client, Strings.Combat.stunattacking);
                         return;
                     }
-                    if (status.Type == (int)StatusTypes.Blind)
+                    if (status.Type == StatusTypes.Blind)
                     {
                         PacketSender.SendActionMsg(client.Entity, Strings.Combat.miss,
                             CustomColors.Missed);
@@ -2227,14 +2225,6 @@ namespace Intersect.Server.Classes.Networking
                 {
                     Globals.KillItemsOf((ItemBase)obj);
                 }
-                else if (type == GameObjectType.Resource)
-                {
-                    Globals.KillResourcesOf((ResourceBase)obj);
-                    
-                    //Must detach owned entities and reattach after json populates -_-
-                    LegacyDatabase.DeteachOwnedType(((ResourceBase)obj).Initial);
-                    LegacyDatabase.DeteachOwnedType(((ResourceBase)obj).Exhausted);
-                }
                 else if (type == GameObjectType.Npc)
                 {
                     Globals.KillNpcsOf((NpcBase)obj);
@@ -2243,28 +2233,10 @@ namespace Intersect.Server.Classes.Networking
                 {
                     Globals.KillProjectilesOf((ProjectileBase)obj);
                 }
-                else if (type == GameObjectType.Animation)
-                {
-                    //Must detach owned entities and reattach after json populates -_-
-                    LegacyDatabase.DeteachOwnedType(((AnimationBase)obj).Upper);
-                    LegacyDatabase.DeteachOwnedType(((AnimationBase)obj).Lower);
-                }
 
                 JsonConvert.PopulateObject(bf.ReadString(), obj, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
                 
-                if (type == GameObjectType.Resource)
-                {
-                    //Must detach owned entities and reattach after json populates -_-
-                    LegacyDatabase.AttachOwnedType(((ResourceBase)obj).Initial);
-                    LegacyDatabase.AttachOwnedType(((ResourceBase)obj).Exhausted);
-                }
-                else if (type == GameObjectType.Animation)
-                {
-                    //Must detach owned entities and reattach after json populates -_-
-                    LegacyDatabase.AttachOwnedType(((AnimationBase)obj).Upper);
-                    LegacyDatabase.AttachOwnedType(((AnimationBase)obj).Lower);
-                }
-                else if (type == GameObjectType.Quest)
+                if (type == GameObjectType.Quest)
                 {
                     var qst = (QuestBase) obj;
                     foreach (var evt in qst.RemoveEvents)
@@ -2276,7 +2248,10 @@ namespace Intersect.Server.Classes.Networking
                     {
                         var evtb = (EventBase)LegacyDatabase.AddGameObject(GameObjectType.Event);
                         evtb.CommonEvent = false;
-                        qst.Tasks[evt.Key].CompletionEvent = evtb;
+                        foreach (var tsk in qst.Tasks)
+                        {
+                            if (tsk.Id == evt.Key) tsk.CompletionEvent = evtb;
+                        }
                         JsonConvert.PopulateObject(JsonConvert.SerializeObject(evt.Value),evtb, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
                     }
                     qst.AddEvents.Clear();

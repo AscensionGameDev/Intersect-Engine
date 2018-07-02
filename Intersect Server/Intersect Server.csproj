@@ -421,16 +421,6 @@
     <Compile Include="Database\PrimaryKeyDescriptor.cs" />
     <Compile Include="Database\TableDescriptor.cs" />
     <Compile Include="Database\UniqueConstraintDescriptor.cs" />
-    <Compile Include="Migrations\20180701213714_Initial.cs" />
-    <Compile Include="Migrations\20180701213714_Initial.designer.cs">
-      <DependentUpon>20180701213714_Initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20180701213728_Initial.cs" />
-    <Compile Include="Migrations\Game\20180701213728_Initial.designer.cs">
-      <DependentUpon>20180701213728_Initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\GameContextModelSnapshot.cs" />
-    <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserRights.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -493,7 +483,9 @@
       <Name>Intersect.Network</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Migrations\Game\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

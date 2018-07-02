@@ -529,14 +529,11 @@ namespace Intersect_Client.Classes.Entities
                     if (MapInstance.Get(CurrentMap) != null &&
                         MapInstance.Get(CurrentMap).Attributes[CurrentX, CurrentY] != null)
                     {
-                        if (MapInstance.Get(CurrentMap).Attributes[CurrentX, CurrentY].Value ==
-                            (int) MapAttributes.ZDimension)
+                        if (MapInstance.Get(CurrentMap).Attributes[CurrentX, CurrentY].Type ==  MapAttributes.ZDimension)
                         {
-                            if (MapInstance.Get(CurrentMap).Attributes[CurrentX, CurrentY].Data1 >
-                                0)
+                            if (MapInstance.Get(CurrentMap).Attributes[CurrentX, CurrentY].ZDimension.GatewayTo > 0)
                             {
-                                CurrentZ = MapInstance.Get(CurrentMap)
-                                               .Attributes[CurrentX, CurrentY].Data1 - 1;
+                                CurrentZ = MapInstance.Get(CurrentMap).Attributes[CurrentX, CurrentY].ZDimension.GatewayTo - 1;
                             }
                         }
                     }
@@ -1149,13 +1146,13 @@ namespace Intersect_Client.Classes.Entities
                 {
                     if (gameMap.Attributes[tmpX, tmpY] != null)
                     {
-                        if (gameMap.Attributes[tmpX, tmpY].Value == (int) MapAttributes.Blocked)
+                        if (gameMap.Attributes[tmpX, tmpY].Type == MapAttributes.Blocked)
                         {
                             return -2;
                         }
-                        else if (gameMap.Attributes[tmpX, tmpY].Value == (int) MapAttributes.ZDimension)
+                        else if (gameMap.Attributes[tmpX, tmpY].Type ==MapAttributes.ZDimension)
                         {
-                            if (gameMap.Attributes[tmpX, tmpY].Data2 - 1 == z)
+                            if (gameMap.Attributes[tmpX, tmpY].ZDimension.BlockedLevel - 1 == z)
                             {
                                 return -3;
                             }

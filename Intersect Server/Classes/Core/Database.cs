@@ -889,15 +889,5 @@ namespace Intersect.Server.Classes.Core
         {
             sPlayerDb.SaveChanges();
         }
-
-        public static void DeteachOwnedType([NotNull]object entity)
-        {
-            sGameDb.Entry(entity).State = EntityState.Detached;
-        }
-
-        public static void AttachOwnedType([NotNull]object entity)
-        {
-            sGameDb.Entry(entity).State = EntityState.Modified;
-        }
     }
 }

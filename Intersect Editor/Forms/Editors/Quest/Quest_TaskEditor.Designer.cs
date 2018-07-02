@@ -44,12 +44,12 @@ namespace Intersect.Editor.Forms.Editors.Quest
             this.cmbNpc = new DarkUI.Controls.DarkComboBox();
             this.lblNpc = new System.Windows.Forms.Label();
             this.lblNpcQuantity = new System.Windows.Forms.Label();
-            this.lblEventDriven = new System.Windows.Forms.Label();
             this.grpGatherItems = new DarkUI.Controls.DarkGroupBox();
             this.nudItemAmount = new DarkUI.Controls.DarkNumericUpDown();
             this.cmbItem = new DarkUI.Controls.DarkComboBox();
             this.lblItem = new System.Windows.Forms.Label();
             this.lblItemQuantity = new System.Windows.Forms.Label();
+            this.lblEventDriven = new System.Windows.Forms.Label();
             this.grpEditor.SuspendLayout();
             this.grpKillNpcs.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudNpcQuantity)).BeginInit();
@@ -225,7 +225,6 @@ namespace Intersect.Editor.Forms.Editors.Quest
             this.cmbNpc.Name = "cmbNpc";
             this.cmbNpc.Size = new System.Drawing.Size(116, 21);
             this.cmbNpc.TabIndex = 3;
-            this.cmbNpc.Text = "Equal To";
             this.cmbNpc.TextPadding = new System.Windows.Forms.Padding(2);
             // 
             // lblNpc
@@ -245,15 +244,6 @@ namespace Intersect.Editor.Forms.Editors.Quest
             this.lblNpcQuantity.Size = new System.Drawing.Size(46, 13);
             this.lblNpcQuantity.TabIndex = 0;
             this.lblNpcQuantity.Text = "Amount:";
-            // 
-            // lblEventDriven
-            // 
-            this.lblEventDriven.Location = new System.Drawing.Point(13, 126);
-            this.lblEventDriven.Name = "lblEventDriven";
-            this.lblEventDriven.Size = new System.Drawing.Size(226, 56);
-            this.lblEventDriven.TabIndex = 29;
-            this.lblEventDriven.Text = "Event Driven: The description should lead the player to an event. The event will " +
-    "then complete the task using the complete quest task command.";
             // 
             // grpGatherItems
             // 
@@ -335,7 +325,16 @@ namespace Intersect.Editor.Forms.Editors.Quest
             this.lblItemQuantity.TabIndex = 0;
             this.lblItemQuantity.Text = "Amount:";
             // 
-            // Quest_TaskEditor
+            // lblEventDriven
+            // 
+            this.lblEventDriven.Location = new System.Drawing.Point(13, 126);
+            this.lblEventDriven.Name = "lblEventDriven";
+            this.lblEventDriven.Size = new System.Drawing.Size(226, 56);
+            this.lblEventDriven.TabIndex = 29;
+            this.lblEventDriven.Text = "Event Driven: The description should lead the player to an event. The event will " +
+    "then complete the task using the complete quest task command.";
+            // 
+            // QuestTaskEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;

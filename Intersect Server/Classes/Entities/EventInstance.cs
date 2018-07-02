@@ -459,8 +459,7 @@ namespace Intersect.Server.Classes.Entities
                     var questInProgress = QuestBase.Get(conditionCommand.Guids[1]);
                     if (questInProgress != null)
                     {
-                        return myPlayer.QuestInProgress(questInProgress, (QuestProgress) conditionCommand.Ints[2],
-                            conditionCommand.Ints[3]);
+                        return myPlayer.QuestInProgress(questInProgress, (QuestProgress) conditionCommand.Ints[2], conditionCommand.Guids[3]);
                     }
                     break;
                 case 13: //Quest Completed
@@ -1303,11 +1302,8 @@ namespace Intersect.Server.Classes.Entities
                     }
                     break;
                 case EventCommandType.CompleteQuestTask:
-                    MyPlayer.CompleteQuestTask(
-                        CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
-                            .Commands[CallStack.Peek().CommandIndex].Guids[0],
-                        CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
-                            .Commands[CallStack.Peek().CommandIndex].Ints[1]);
+                    MyPlayer.CompleteQuestTask(CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex] .Commands[CallStack.Peek().CommandIndex].Guids[0],
+                        CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Guids[1]);
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.EndQuest:

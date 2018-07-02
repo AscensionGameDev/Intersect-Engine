@@ -441,8 +441,7 @@ namespace Intersect_Client.Classes.Networking
             var mapJson = bf.ReadString();
             var tileLength = bf.ReadInteger();
             var tileData = bf.ReadBytes(tileLength);
-            var attributeDataLength = bf.ReadInteger();
-            var attributeData = bf.ReadBytes(attributeDataLength);
+            var attributeData = bf.ReadString();
             var revision = bf.ReadInteger();
             var map = MapInstance.Get(mapId);
             if (map != null)
@@ -462,7 +461,7 @@ namespace Intersect_Client.Classes.Networking
             {
                 map.Load(mapJson);
                 map.LoadTileData(tileData);
-                map.LoadAttributes(attributeData);
+                map.AttributeData = attributeData;
                 if ((mapId) == Globals.Me.CurrentMap)
                 {
                     GameAudio.PlayMusic(map.Music, 3, 3, true);
@@ -759,12 +758,11 @@ namespace Intersect_Client.Classes.Networking
             }
 
             // Set the Z-Dimension if the player has moved up or down a dimension.
-            if (entityMap.Attributes[en.CurrentX, en.CurrentY] != null &&
-                entityMap.Attributes[en.CurrentX, en.CurrentY].Value == (int) MapAttributes.ZDimension)
+            if (entityMap.Attributes[en.CurrentX, en.CurrentY] != null && entityMap.Attributes[en.CurrentX, en.CurrentY].Type == MapAttributes.ZDimension)
             {
-                if (entityMap.Attributes[en.CurrentX, en.CurrentY].Data1 > 0)
+                if (entityMap.Attributes[en.CurrentX, en.CurrentY].ZDimension.GatewayTo > 0)
                 {
-                    en.CurrentZ = entityMap.Attributes[en.CurrentX, en.CurrentY].Data1 - 1;
+                    en.CurrentZ = entityMap.Attributes[en.CurrentX, en.CurrentY].ZDimension.GatewayTo - 1;
                 }
             }
         }
@@ -1586,7 +1584,7 @@ namespace Intersect_Client.Classes.Networking
                         QuestProgressStruct questProgress = new QuestProgressStruct()
                         {
                             Completed = bf.ReadInteger(),
-                            Task = bf.ReadInteger(),
+                            TaskId = bf.ReadGuid(),
                             TaskProgress = bf.ReadInteger()
                         };
                         if (Globals.Me.QuestProgress.ContainsKey(id))

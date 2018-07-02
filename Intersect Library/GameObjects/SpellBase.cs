@@ -2,14 +2,20 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Enums;
 using Intersect.GameObjects.Conditions;
+using Intersect.GameObjects.Events;
 using Intersect.Models;
 using Intersect.Utilities;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
     public class SpellBase : DatabaseObject<SpellBase>
     {
+        public byte SpellType { get; set; }
+        public string Desc { get; set; } = "";
+        public string Pic { get; set; } = "";
+
         //Animations
         [Column("CastAnimation")]
         public Guid CastAnimationId { get; protected set; }
@@ -33,6 +39,7 @@ namespace Intersect.GameObjects
 
         //Spell Times
         public int CastDuration { get; set; }
+        public int CooldownDuration { get; set; }
 
         //Requirements
         [Column("CastRequirements")]
@@ -45,32 +52,60 @@ namespace Intersect.GameObjects
         [NotMapped]
         public ConditionLists CastingReqs = new ConditionLists();
 
-        public int CastRange { get; set; }
-        public int CooldownDuration { get; set; }
-        public int Cost { get; set; }
+        //Combat Info
+        public SpellCombatData Combat { get; set; } = new SpellCombatData();
 
-        //Damage
-        public int CritChance { get; set; }
+        //Warp Info
+        public SpellWarpData Warp { get; set; } = new SpellWarpData();
 
-        public int DamageType { get; set; } = 1;
-        public int Data1 { get; set; }
-        public int Data2 { get; set; }
-        public int Data3 { get; set; }
-        public int Data4 { get; set; }
-        public Guid Guid1 { get; set; }
-        public Guid Guid2 { get; set; }
-        public Guid Guid3 { get; set; }
-        public Guid Guid4 { get; set; }
-        public string Data5 { get; set; } = "";
+        //Dash Info
+        public SpellDashOpts Dash { get; set; } = new SpellDashOpts();
 
-        public string Desc { get; set; } = "";
-        public int Friendly { get; set; }
-        public int HitRadius { get; set; }
-        public string Pic { get; set; } = "";
+        //Event Info
+        [Column("Event")]
+        public Guid EventId { get; set; }
+        [NotMapped]
+        [JsonIgnore]
+        public EventBase Event
+        {
+            get => EventBase.Get(EventId);
+            set => EventId = value?.Id ?? Guid.Empty;
+        }
+
+        //Costs
+        [Column("VitalCost")]
+        [JsonIgnore]
+        public string VitalCostJson
+        {
+            get => DatabaseUtils.SaveIntArray(VitalCost, (int)Vitals.VitalCount);
+            set => VitalCost = DatabaseUtils.LoadIntArray(value, (int)Vitals.VitalCount);
+        }
+        [NotMapped]
+        public int[] VitalCost = new int[(int) Vitals.VitalCount];
         
+        [JsonConstructor]
+        public SpellBase(Guid id) : base(id)
+        {
+            Name = "New Spell";
+        }
+
+        public SpellBase()
+        {
+            Name = "New Spell";
+        }
+    }
+
+    [Owned]
+    public class SpellCombatData
+    {
+        public int CritChance { get; set; }
+        public int DamageType { get; set; } = 1;
+        public int HitRadius { get; set; }
+        public bool Friendly { get; set; }
+        public int CastRange { get; set; }
         //Extra Data, Teleport Coords, Custom Spells, Etc
         [Column("Projectile")]
-        public Guid ProjectileId { get; protected set; }
+        public Guid ProjectileId { get; set; }
         [NotMapped]
         [JsonIgnore]
         public ProjectileBase Projectile
@@ -78,12 +113,16 @@ namespace Intersect.GameObjects
             get => ProjectileBase.Get(ProjectileId);
             set => ProjectileId = value?.Id ?? Guid.Empty;
         }
-
-        public int Scaling { get; set; } = 100;
-        public int ScalingStat { get; set; }
-        public byte SpellType { get; set; }
-        //Targetting Stuff
-        public int TargetType { get; set; }
+        //Heal/Damage
+        [Column("VitalDiff")]
+        [JsonIgnore]
+        public string VitalDiffJson
+        {
+            get => DatabaseUtils.SaveIntArray(VitalDiff, (int)Vitals.VitalCount);
+            set => VitalDiff = DatabaseUtils.LoadIntArray(value, (int)Vitals.VitalCount);
+        }
+        [NotMapped]
+        public int[] VitalDiff = new int[(int)Vitals.VitalCount];
 
         //Buff/Debuff Data
         [Column("StatDiff")]
@@ -96,37 +135,31 @@ namespace Intersect.GameObjects
         [NotMapped]
         public int[] StatDiff { get; set; } = new int[(int)Stats.StatCount];
 
-        //Costs
-        [Column("VitalCost")]
-        [JsonIgnore]
-        public string VitalCostJson
-        {
-            get => DatabaseUtils.SaveIntArray(VitalCost, (int)Vitals.VitalCount);
-            set => VitalCost = DatabaseUtils.LoadIntArray(value, (int)Vitals.VitalCount);
-        }
-        [NotMapped]
-        public int[] VitalCost = new int[(int) Vitals.VitalCount];
+        public int Scaling { get; set; } = 100;
+        public int ScalingStat { get; set; }
+        public int TargetType { get; set; }
+        public bool HoTDoT { get; set; }
+        public int HotDotInterval { get; set; }
+        public int Duration { get; set; }
+        public StatusTypes Effect { get; set; }
+        public string TransformSprite { get; set; }
+    }
 
-        //Heal/Damage
-        [Column("VitalDiff")]
-        [JsonIgnore]
-        public string VitalDiffJson
-        {
-            get => DatabaseUtils.SaveIntArray(VitalDiff, (int)Vitals.VitalCount);
-            set => VitalDiff = DatabaseUtils.LoadIntArray(value, (int)Vitals.VitalCount);
-        }
-        [NotMapped]
-        public int[] VitalDiff = new int[(int)Vitals.VitalCount];
+    [Owned]
+    public class SpellWarpData
+    {
+        public Guid MapId { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
+        public byte Dir { get; set; }
+    }
 
-        [JsonConstructor]
-        public SpellBase(Guid id) : base(id)
-        {
-            Name = "New Spell";
-        }
-
-        public SpellBase()
-        {
-            Name = "New Spell";
-        }
+    [Owned]
+    public class SpellDashOpts
+    {
+        public bool IgnoreMapBlocks { get; set; }
+        public bool IgnoreActiveResources { get; set; }
+        public bool IgnoreInactiveResources { get; set; }
+        public bool IgnoreZDimensionAttributes { get; set; }
     }
 }

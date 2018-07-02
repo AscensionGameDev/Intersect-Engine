@@ -145,13 +145,12 @@ namespace Intersect.Server.Classes.Maps
                 {
                     if (Attributes[x, y] != null)
                     {
-                        if (Attributes[x, y].Value == (int) MapAttributes.Blocked ||
-                            Attributes[x, y].Value == (int) MapAttributes.GrappleStone)
+                        if (Attributes[x, y].Type == MapAttributes.Blocked ||Attributes[x, y].Type == MapAttributes.GrappleStone)
                         {
                             blocks.Add(new Point(x, y));
                             npcBlocks.Add(new Point(x, y));
                         }
-                        else if (Attributes[x, y].Value == (int) MapAttributes.NpcAvoid)
+                        else if (Attributes[x, y].Type == MapAttributes.NpcAvoid)
                         {
                             npcBlocks.Add(new Point(x, y));
                         }
@@ -200,11 +199,11 @@ namespace Intersect.Server.Classes.Maps
                 {
                     if (Attributes[x, y] != null)
                     {
-                        if (Attributes[x, y].Value == (int) MapAttributes.Item)
+                        if (Attributes[x, y].Type == MapAttributes.Item)
                         {
                             SpawnAttributeItem(x, y);
                         }
-                        else if (Attributes[x, y].Value == (int) MapAttributes.Resource)
+                        else if (Attributes[x, y].Type == MapAttributes.Resource)
                         {
                             SpawnAttributeResource(x, y);
                         }
@@ -240,10 +239,10 @@ namespace Intersect.Server.Classes.Maps
 
         private void SpawnAttributeItem(int x, int y)
         {
-            var item = ItemBase.Get(Attributes[x, y].Guid1);
+            var item = ItemBase.Get(Attributes[x, y].Item.ItemId);
             if (item != null)
             {
-                MapItems.Add(new MapItem(Attributes[x, y].Guid1, Attributes[x, y].Data2));
+                MapItems.Add(new MapItem(Attributes[x, y].Item.ItemId, Attributes[x, y].Item.Quantity));
                 MapItems[MapItems.Count - 1].X = x;
                 MapItems[MapItems.Count - 1].Y = y;
                 MapItems[MapItems.Count - 1].DespawnTime = -1;
@@ -355,10 +354,10 @@ namespace Intersect.Server.Classes.Maps
         {
             var tempResource = new ResourceSpawn()
             {
-                ResourceId = Attributes[x, y].Guid1,
+                ResourceId = Attributes[x, y].Resource.ResourceId,
                 X = x,
                 Y = y,
-                Z = Attributes[x, y].Data2
+                Z = Attributes[x, y].Resource.SpawnLevel
             };
             ResourceSpawns.Add(tempResource);
         }
@@ -472,7 +471,7 @@ namespace Intersect.Server.Classes.Maps
                     {
                         x = Globals.Rand.Next(0, Options.MapWidth);
                         y = Globals.Rand.Next(0, Options.MapHeight);
-                        if (Attributes[x, y] == null || Attributes[x, y].Value == (int) MapAttributes.Walkable)
+                        if (Attributes[x, y] == null || Attributes[x, y].Type == (int) MapAttributes.Walkable)
                         {
                             break;
                         }
@@ -884,7 +883,7 @@ namespace Intersect.Server.Classes.Maps
         public bool TileBlocked(int x, int y)
         {
             //Check if tile is a blocked attribute
-            if (Attributes[x, y] != null && Attributes[x, y].Value == (int) MapAttributes.Blocked)
+            if (Attributes[x, y] != null && Attributes[x, y].Type == MapAttributes.Blocked)
             {
                 return true;
             }

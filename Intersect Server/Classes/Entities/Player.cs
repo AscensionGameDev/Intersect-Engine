@@ -588,17 +588,17 @@ namespace Intersect.Server.Classes.Entities
                     var quest = QuestBase.Get(questId);
                     if (quest != null)
                     {
-                        if (questProgress.TaskId > -1)
+                        if (questProgress.TaskId != Guid.Empty)
                         {
                             //Assume this quest is in progress. See if we can find the task in the quest
                             var questTask = quest.FindTask(questProgress.TaskId);
                             if (questTask != null)
                             {
                                 questProgress.TaskProgress++;
-                                if (questProgress.TaskProgress >= questTask.Data2)
+                                if (questProgress.TaskProgress >= questTask.Quantity)
                                 {
                                     questProgress.TaskProgress++;
-                                    if (questProgress.TaskProgress >= questTask.Data2)
+                                    if (questProgress.TaskProgress >= questTask.Quantity)
                                     {
                                         CompleteQuestTask(questId, questProgress.TaskId);
                                     }
@@ -607,7 +607,7 @@ namespace Intersect.Server.Classes.Entities
                                         PacketSender.SendQuestProgress(this, quest.Id);
                                         PacketSender.SendPlayerMsg(MyClient,
                                             Strings.Quests.npctask.ToString( quest.Name, questProgress.TaskProgress,
-                                                questTask.Data2, NpcBase.GetName(questTask.Guid1)));
+                                                questTask.Quantity, NpcBase.GetName(questTask.TargetId)));
                                 }
                             }
                         }
@@ -717,14 +717,14 @@ namespace Intersect.Server.Classes.Entities
             var statuses = Statuses.Values.ToArray();
             foreach (var status in statuses)
             {
-                if (status.Type == (int)StatusTypes.Stun)
+                if (status.Type == StatusTypes.Stun)
                 {
                     return false;
                 }
             }
             if (en.GetType() == typeof(Player))
             {
-                if (spell != null && spell.Friendly == 1)
+                if (spell != null && spell.Combat.Friendly)
                 {
                     return true;
                 }
@@ -963,7 +963,7 @@ namespace Intersect.Server.Classes.Entities
                 var statuses = Statuses.Values.ToArray();
                 foreach (var status in statuses)
                 {
-                    if (status.Type == (int)StatusTypes.Stun)
+                    if (status.Type == StatusTypes.Stun)
                     {
                         PacketSender.SendPlayerMsg(MyClient, Strings.Items.stunned);
                         return;
@@ -2646,12 +2646,12 @@ namespace Intersect.Server.Classes.Entities
                 var statuses = Statuses.Values.ToArray();
                 foreach (var status in statuses)
                 {
-                    if (status.Type == (int)StatusTypes.Silence)
+                    if (status.Type == StatusTypes.Silence)
                     {
                         PacketSender.SendPlayerMsg(MyClient, Strings.Combat.silenced);
                         return;
                     }
-                    if (status.Type == (int)StatusTypes.Stun)
+                    if (status.Type == StatusTypes.Stun)
                     {
                         PacketSender.SendPlayerMsg(MyClient, Strings.Combat.stunned);
                         return;
@@ -2660,9 +2660,9 @@ namespace Intersect.Server.Classes.Entities
 
                 //Check if the caster has the right ammunition if a projectile
                 if (spell.SpellType == (int)SpellTypes.CombatSpell &&
-                    spell.TargetType == (int)SpellTargetTypes.Projectile && spell.ProjectileId != Guid.Empty)
+                    spell.Combat.TargetType == (int)SpellTargetTypes.Projectile && spell.Combat.ProjectileId != Guid.Empty)
                 {
-                    var projectileBase = spell.Projectile;
+                    var projectileBase = spell.Combat.Projectile;
                     if (projectileBase == null) return;
                     if (projectileBase.AmmoItemId != Guid.Empty)
                     {
@@ -2676,19 +2676,16 @@ namespace Intersect.Server.Classes.Entities
                     }
                 }
 
-                if (target == null &&
-                    ((spell.SpellType == (int)SpellTypes.CombatSpell &&
-                      spell.TargetType == (int)SpellTargetTypes.Single) || spell.SpellType == (int)SpellTypes.WarpTo))
+                if (target == null && ((spell.SpellType == (int)SpellTypes.CombatSpell && spell.Combat.TargetType == (int)SpellTargetTypes.Single) || spell.SpellType == (int)SpellTypes.WarpTo))
                 {
                     PacketSender.SendActionMsg(this, Strings.Combat.notarget, CustomColors.NoTarget);
                     return;
                 }
 
                 //Check for range of a single target spell
-                if (spell.SpellType == (int)SpellTypes.CombatSpell &&
-                    spell.TargetType == (int)SpellTargetTypes.Single && Target != this)
+                if (spell.SpellType == (int)SpellTypes.CombatSpell && spell.Combat.TargetType == (int)SpellTargetTypes.Single && Target != this)
                 {
-                    if (!InRangeOf(Target, spell.CastRange))
+                    if (!InRangeOf(Target, spell.Combat.CastRange))
                     {
                         PacketSender.SendActionMsg(this, Strings.Combat.targetoutsiderange,
                             CustomColors.NoTarget);
@@ -2712,9 +2709,9 @@ namespace Intersect.Server.Classes.Entities
 
                                 //Check if the caster has the right ammunition if a projectile
                                 if (spell.SpellType == (int)SpellTypes.CombatSpell &&
-                                    spell.TargetType == (int)SpellTargetTypes.Projectile && spell.ProjectileId != Guid.Empty)
+                                    spell.Combat.TargetType == (int)SpellTargetTypes.Projectile && spell.Combat.ProjectileId != Guid.Empty)
                                 {
-                                    var projectileBase = spell.Projectile;
+                                    var projectileBase = spell.Combat.Projectile;
                                     if (projectileBase != null && projectileBase.AmmoItemId != Guid.Empty)
                                     {
                                         TakeItemsById(projectileBase.AmmoItemId, projectileBase.AmmoRequired);
@@ -2771,7 +2768,7 @@ namespace Intersect.Server.Classes.Entities
             {
                 if (spellBase.SpellType == (int)SpellTypes.Event)
                 {
-                    var evt = EventBase.Get(spellBase.Guid1);
+                    var evt = spellBase.Event;
                     if (evt != null)
                     {
                         StartCommonEvent(evt);
@@ -2873,7 +2870,7 @@ namespace Intersect.Server.Classes.Entities
             var questProgress = FindQuest(quest.Id);
             if (questProgress != null)
             {
-                if (questProgress.TaskId != -1 && quest.GetTaskIndex(questProgress.TaskId) != -1)
+                if (questProgress.TaskId != Guid.Empty && quest.GetTaskIndex(questProgress.TaskId) != -1)
                 {
                     return false;
                 }
@@ -2904,12 +2901,12 @@ namespace Intersect.Server.Classes.Entities
             return false;
         }
 
-        public bool QuestInProgress(QuestBase quest, QuestProgress progress, int taskId)
+        public bool QuestInProgress(QuestBase quest, QuestProgress progress, Guid taskId)
         {
             var questProgress = FindQuest(quest.Id);
             if (questProgress != null)
             {
-                if (questProgress.TaskId != -1 && quest.GetTaskIndex(questProgress.TaskId) != -1)
+                if (questProgress.TaskId != Guid.Empty && quest.GetTaskIndex(questProgress.TaskId) != -1)
                 {
                     switch (progress)
                     {
@@ -2978,9 +2975,9 @@ namespace Intersect.Server.Classes.Entities
                     };
                     Quests.Add(questProgress);
                 }
-                if (quest.Tasks[0].Objective == 1) //Gather Items
+                if (quest.Tasks[0].Objective == QuestObjective.GatherItems) //Gather Items
                 {
-                    UpdateGatherItemQuests(quest.Tasks[0].Guid1);
+                    UpdateGatherItemQuests(quest.Tasks[0].TargetId);
                 }
                 StartCommonEvent(EventBase.Get(quest.StartEventId));
                 PacketSender.SendPlayerMsg(MyClient, Strings.Quests.started.ToString( quest.Name),
@@ -3067,13 +3064,13 @@ namespace Intersect.Server.Classes.Entities
             var quest = QuestBase.Get(questId);
             if (quest != null)
             {
-                if (QuestInProgress(quest, QuestProgress.OnAnyTask, -1))
+                if (QuestInProgress(quest, QuestProgress.OnAnyTask, Guid.Empty))
                 {
                     //Cancel the quest somehow...
                     if (quest.Quitable == 1)
                     {
                         var questProgress = FindQuest(quest.Id);
-                        questProgress.TaskId = -1;
+                        questProgress.TaskId = Guid.Empty;
                         questProgress.TaskProgress = -1;
                         PacketSender.SendPlayerMsg(MyClient,
                             Strings.Quests.abandoned.ToString( QuestBase.GetName(questId)), Color.Red);
@@ -3083,7 +3080,7 @@ namespace Intersect.Server.Classes.Entities
             }
         }
 
-        public void CompleteQuestTask(Guid questId, int taskId)
+        public void CompleteQuestTask(Guid questId, Guid taskId)
         {
             var quest = QuestBase.Get(questId);
             if (quest != null)
@@ -3103,7 +3100,7 @@ namespace Intersect.Server.Classes.Entities
                                 {
                                     //Complete Quest
                                     questProgress.Completed = 1;
-                                    questProgress.TaskId = -1;
+                                    questProgress.TaskId = Guid.Empty;
                                     questProgress.TaskProgress = -1;
                                     if (quest.Tasks[i].CompletionEvent != null)
                                     {
@@ -3122,9 +3119,9 @@ namespace Intersect.Server.Classes.Entities
                                     {
                                         StartCommonEvent(quest.Tasks[i].CompletionEvent);
                                     }
-                                    if (quest.Tasks[i + 1].Objective == 1) //Gather Items
+                                    if (quest.Tasks[i + 1].Objective == QuestObjective.GatherItems)
                                     {
-                                        UpdateGatherItemQuests(quest.Tasks[i + 1].Guid1);
+                                        UpdateGatherItemQuests(quest.Tasks[i + 1].TargetId);
                                     }
                                     PacketSender.SendPlayerMsg(MyClient, Strings.Quests.updated.ToString( quest.Name),
                                         CustomColors.TaskUpdated);
@@ -3149,28 +3146,23 @@ namespace Intersect.Server.Classes.Entities
                     var quest = QuestBase.Get(questId);
                     if (quest != null)
                     {
-                        if (questProgress.TaskId > -1)
+                        if (questProgress.TaskId != Guid.Empty)
                         {
                             //Assume this quest is in progress. See if we can find the task in the quest
                             var questTask = quest.FindTask(questProgress.TaskId);
-                            if (questTask != null)
+                            if (questTask?.Objective == QuestObjective.GatherItems && questTask.TargetId == item.Id)
                             {
-                                if (questTask.Objective == 1 && questTask.Guid1 == item.Id) //gather items
+                                if (questProgress.TaskProgress != CountItems(item.Id))
                                 {
-                                    if (questProgress.TaskProgress != CountItems(item.Id))
+                                    questProgress.TaskProgress = CountItems(item.Id);
+                                    if (questProgress.TaskProgress >= questTask.Quantity)
                                     {
-                                        questProgress.TaskProgress = CountItems(item.Id);
-                                        if (questProgress.TaskProgress >= questTask.Data2)
-                                        {
-                                            CompleteQuestTask(questId, questProgress.TaskId);
-                                        }
-                                        else
-                                        {
-                                            PacketSender.SendQuestProgress(this, quest.Id);
-                                            PacketSender.SendPlayerMsg(MyClient,
-                                                Strings.Quests.itemtask.ToString( quest.Name, questProgress.TaskProgress,
-                                                    questTask.Data2, ItemBase.GetName(questTask.Guid1)));
-                                        }
+                                        CompleteQuestTask(questId, questProgress.TaskId);
+                                    }
+                                    else
+                                    {
+                                        PacketSender.SendQuestProgress(this, quest.Id);
+                                        PacketSender.SendPlayerMsg(MyClient, Strings.Quests.itemtask.ToString( quest.Name, questProgress.TaskProgress,questTask.Quantity, ItemBase.GetName(questTask.TargetId)));
                                     }
                                 }
                             }
@@ -3463,15 +3455,15 @@ namespace Intersect.Server.Classes.Entities
             base.Move(moveDir, client, dontUpdate, correction);
             // Check for a warp, if so warp the player.
             var attribute = MapInstance.Get(MapId).Attributes[X,Y];
-            if (attribute != null && attribute.Value == (int)MapAttributes.Warp)
+            if (attribute != null && attribute.Type == MapAttributes.Warp)
             {
-                if (Convert.ToInt32(attribute.Data4) == -1)
+                if (Convert.ToInt32(attribute.Warp.Dir) == -1)
                 {
-                    Warp(attribute.Guid1, attribute.Data2, attribute.Data3,Dir);
+                    Warp(attribute.Warp.MapId, attribute.Warp.X, attribute.Warp.Y,Dir);
                 }
                 else
                 {
-                    Warp(attribute.Guid1, attribute.Data2, attribute.Data3, Convert.ToInt32(attribute.Data4));
+                    Warp(attribute.Warp.MapId, attribute.Warp.X, attribute.Warp.Y, Convert.ToInt32(attribute.Warp.Dir));
                 }
             }
 

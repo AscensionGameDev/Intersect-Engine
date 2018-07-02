@@ -301,17 +301,16 @@ namespace Intersect.Server.Classes.Entities
                 //Check for Z-Dimension
                 if (!spawn.ProjectileBase.IgnoreZDimension)
                 {
-                    if (attribute != null && attribute.Value == (int) MapAttributes.ZDimension)
+                    if (attribute != null && attribute.Type == MapAttributes.ZDimension)
                     {
-                        if (attribute.Data1 > 0)
+                        if (attribute.ZDimension.GatewayTo > 0)
                         {
-                            spawn.Z = attribute.Data1 - 1;
+                            spawn.Z = attribute.ZDimension.GatewayTo - 1;
                         }
                     }
                 }
                 //Check for grapplehooks.
-                if (attribute != null && attribute.Value == (int) MapAttributes.GrappleStone &&
-                    Base.GrappleHook == true && !spawn.Parent.HasGrappled)
+                if (attribute != null && attribute.Type == MapAttributes.GrappleStone && Base.GrappleHook == true && !spawn.Parent.HasGrappled)
                 {
                     if (spawn.Dir <= 3) //Don't handle directional projectile grapplehooks
                     {
@@ -321,8 +320,7 @@ namespace Intersect.Server.Classes.Entities
                         killSpawn = true;
                     }
                 }
-                if (attribute != null && attribute.Value == (int) MapAttributes.Blocked &&
-                    !spawn.ProjectileBase.IgnoreMapBlocks)
+                if (attribute != null && attribute.Type == MapAttributes.Blocked && !spawn.ProjectileBase.IgnoreMapBlocks)
                 {
                     killSpawn = true;
                 }
@@ -529,7 +527,7 @@ namespace Intersect.Server.Classes.Entities
                 else //Any other Parent.Target
                 {
                     var ownerNpc = Parent.Owner as Npc;
-                    if (ownerNpc == null || ownerNpc.CanNpcCombat(targetEntity, Parent.Spell != null && Parent.Spell.Friendly == 1))
+                    if (ownerNpc == null || ownerNpc.CanNpcCombat(targetEntity, Parent.Spell != null && Parent.Spell.Combat.Friendly))
                     {
                         Parent.Owner.TryAttack(targetEntity, Parent.Base, Parent.Spell, Parent.Item, Dir);
                         if (Dir <= 3 && Parent.Base.GrappleHook && !Parent.HasGrappled) //Don't handle directional projectile grapplehooks

@@ -268,15 +268,14 @@ namespace Intersect_Client.Classes.Maps
                 for (var y = 0; y < Options.MapHeight; y++)
                 {
                     if (Attributes[x, y] == null) continue;
-                    if (Attributes[x, y].Value != (int) MapAttributes.Animation) continue;
-                    var anim = AnimationBase.Get(Attributes[x, y].Guid1);
+                    if (Attributes[x, y].Type != MapAttributes.Animation) continue;
+                    var anim = AnimationBase.Get(Attributes[x, y].Animation.AnimationId);
                     if (anim == null) continue;
                     if (!mAttributeAnimInstances.ContainsKey(Attributes[x, y]))
                     {
                         var animInstance = new AnimationInstance(anim, true);
                         animInstance.SetPosition(GetX() + x * Options.TileWidth + Options.TileWidth / 2,
-                            GetY() + y * Options.TileHeight + Options.TileHeight / 2, x, y,
-                            Id, 0);
+                            GetY() + y * Options.TileHeight + Options.TileHeight / 2, x, y,  Id, 0);
                         mAttributeAnimInstances.Add(Attributes[x, y], animInstance);
                     }
                     mAttributeAnimInstances[Attributes[x, y]].Update();
@@ -302,9 +301,9 @@ namespace Intersect_Client.Classes.Maps
                 for (var y = 0; y < Options.MapHeight; ++y)
                 {
                     var attribute = Attributes?[x, y];
-                    if (attribute?.Value != (int) MapAttributes.Sound) continue;
-                    if (TextUtils.IsNone(attribute.Data4)) continue;
-                    var sound = GameAudio.AddMapSound(attribute.Data4, x, y, Id, true, attribute.Data1);
+                    if (attribute?.Type != MapAttributes.Sound) continue;
+                    if (TextUtils.IsNone(attribute.Sound.File)) continue;
+                    var sound = GameAudio.AddMapSound(attribute.Sound.File, x, y, Id, true, attribute.Sound.Distance);
                     AttributeSounds?.Add(sound);
                 }
             }

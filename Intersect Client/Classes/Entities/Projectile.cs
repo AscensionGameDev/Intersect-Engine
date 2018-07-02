@@ -424,11 +424,11 @@ namespace Intersect_Client.Classes.Entities
                             //Check for Z-Dimension
                             if (newMap.Attributes[Spawns[i].X, Spawns[i].Y] != null)
                             {
-                                if (newMap.Attributes[Spawns[i].X, Spawns[i].Y].Value == (int) MapAttributes.ZDimension)
+                                if (newMap.Attributes[Spawns[i].X, Spawns[i].Y].Type == MapAttributes.ZDimension)
                                 {
-                                    if (newMap.Attributes[Spawns[i].X, Spawns[i].Y].Data1 > 0)
+                                    if (newMap.Attributes[Spawns[i].X, Spawns[i].Y].ZDimension.GatewayTo > 0)
                                     {
-                                        Spawns[i].Z = newMap.Attributes[Spawns[i].X, Spawns[i].Y].Data1 - 1;
+                                        Spawns[i].Z = newMap.Attributes[Spawns[i].X, Spawns[i].Y].ZDimension.GatewayTo - 1;
                                     }
                                 }
                             }

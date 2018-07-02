@@ -42,8 +42,7 @@ namespace Intersect_Client.Classes.UI.Game
 
             if (spell.SpellType == (int) SpellTypes.CombatSpell)
             {
-                spellType.Text = Strings.SpellDesc.targettypes[spell.TargetType].ToString(spell.CastRange,
-                    spell.HitRadius);
+                spellType.Text = Strings.SpellDesc.targettypes[spell.Combat.TargetType].ToString(spell.Combat.CastRange, spell.Combat.HitRadius);
             }
             if (spell.CastDuration > 0)
             {
@@ -89,15 +88,15 @@ namespace Intersect_Client.Classes.UI.Game
                 spellDesc.AddText(stats, spellDesc.RenderColor);
                 spellDesc.AddLineBreak();
 
-                if (spell.Data3 > 0)
+                if (spell.Combat.Effect > 0)
                 {
-                    spellDesc.AddText(Strings.SpellDesc.effectlist[spell.Data3], spellDesc.RenderColor);
+                    spellDesc.AddText(Strings.SpellDesc.effectlist[(int)spell.Combat.Effect], spellDesc.RenderColor);
                     spellDesc.AddLineBreak();
                 }
 
                 for (var i = 0; i < (int) Vitals.VitalCount; i++)
                 {
-                    var vitalDiff = spell.VitalDiff?[i] ?? 0;
+                    var vitalDiff = spell.Combat.VitalDiff?[i] ?? 0;
                     if (vitalDiff == 0) continue;
                     var vitalSymbol = vitalDiff < 0 ? Strings.SpellDesc.addsymbol : Strings.SpellDesc.removesymbol;
                     stats = Strings.SpellDesc.vitals[i].ToString(vitalSymbol, Math.Abs(vitalDiff));
@@ -105,18 +104,17 @@ namespace Intersect_Client.Classes.UI.Game
                     spellDesc.AddLineBreak();
                 }
 
-                if (spell.Data2 > 0)
+                if (spell.Combat.Duration > 0)
                 {
                     for (int i = 0; i < Options.MaxStats; i++)
                     {
-                        if (spell.StatDiff[i] != 0)
+                        if (spell.Combat.StatDiff[i] != 0)
                         {
-                            spellDesc.AddText(Strings.SpellDesc.stats[i].ToString((spell.StatDiff[i] > 0 ? Strings.SpellDesc.addsymbol.ToString() : Strings.SpellDesc.removesymbol.ToString()) + spell.StatDiff[i]), spellDesc.RenderColor);
+                            spellDesc.AddText(Strings.SpellDesc.stats[i].ToString((spell.Combat.StatDiff[i] > 0 ? Strings.SpellDesc.addsymbol.ToString() : Strings.SpellDesc.removesymbol.ToString()) + spell.Combat.StatDiff[i]), spellDesc.RenderColor);
                             spellDesc.AddLineBreak();
                         }
                     }
-                    spellDesc.AddText(Strings.SpellDesc.duration.ToString( (float) spell.Data2 / 10f),
-                        spellDesc.RenderColor);
+                    spellDesc.AddText(Strings.SpellDesc.duration.ToString( (float) spell.Combat.Duration / 10f), spellDesc.RenderColor);
                     spellDesc.AddLineBreak();
                 }
             }

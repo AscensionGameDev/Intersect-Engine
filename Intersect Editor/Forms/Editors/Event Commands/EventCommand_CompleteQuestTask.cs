@@ -49,7 +49,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                         i++;
                         if (i == cmbQuestTask.SelectedIndex)
                         {
-                            mMyCommand.Ints[1] = task.Id;
+                            mMyCommand.Guids[1] = task.Id;
                         }
                     }
                 }
@@ -68,8 +68,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             lblTask.Hide();
             if (cmbQuests.SelectedIndex > -1)
             {
-                var quest = QuestBase.Get(
-                    QuestBase.IdFromList(cmbQuests.SelectedIndex));
+                var quest = QuestBase.Get( QuestBase.IdFromList(cmbQuests.SelectedIndex));
                 if (quest != null)
                 {
                     lblTask.Show();
@@ -78,7 +77,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                     foreach (var task in quest.Tasks)
                     {
                         cmbQuestTask.Items.Add(task.GetTaskString(Strings.TaskEditor.descriptions));
-                        if (task.Id == mMyCommand.Ints[1])
+                        if (task.Id == mMyCommand.Guids[1])
                         {
                             cmbQuestTask.SelectedIndex = cmbQuestTask.Items.Count - 1;
                         }

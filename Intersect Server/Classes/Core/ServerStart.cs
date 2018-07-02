@@ -7,6 +7,8 @@ using System.Reflection;
 using System.Resources;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Intersect.Enums;
+using Intersect.GameObjects.Maps;
 using Intersect.Server.Classes.Localization;
 using Intersect.Logging;
 using Intersect.Network;
@@ -770,6 +772,11 @@ namespace Intersect.Server.Classes
                     }
                     else
                     {
+                        var att = new Intersect.GameObjects.Maps.Attribute();
+                        att.Item.ItemId = Guid.NewGuid();
+                        att.Type = MapAttributes.Item;
+                        att.Resource.SpawnLevel = 0;
+                        Console.WriteLine(att.Data());
                         Console.WriteLine(@"    " + Strings.Commandoutput.notfound);
                     }
                     Console.Write("> ");

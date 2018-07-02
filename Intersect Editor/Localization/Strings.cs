@@ -2130,7 +2130,7 @@ Negative values for time to flow backwards.";
                         QuestBase.QuestTask task = null;
                         foreach (var tsk in quest.Tasks)
                         {
-                            if (tsk.Id == cmd.Ints[3])
+                            if (tsk.Id == cmd.Guids[3])
                             {
                                 task = tsk;
                             }

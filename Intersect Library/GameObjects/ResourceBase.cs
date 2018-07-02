@@ -4,11 +4,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.GameObjects.Conditions;
 using Intersect.Models;
 using Intersect.Utilities;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-
+    [Owned]
     public class ResourceState
     {
         public string Graphic { get; set; } = null;

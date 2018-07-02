@@ -1372,7 +1372,7 @@ namespace Intersect.Editor.Forms.Editors
                         //Try to find task
                         foreach (var task in quest.Tasks)
                         {
-                            if (task.Id == command.Ints[1])
+                            if (task.Id == command.Guids[1])
                             {
                                 return Strings.EventCommandList.completetask.ToString(
                                     QuestBase.GetName(command.Guids[0]), task.GetTaskString(Strings.TaskEditor.descriptions));

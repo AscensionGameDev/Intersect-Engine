@@ -22,20 +22,20 @@ namespace Intersect.Editor.Forms.Editors.Quest
             mMyTask = refTask;
             mEventBackup = mMyTask.EdittingEvent.JsonData;
             InitLocalization();
-            cmbTaskType.SelectedIndex = mMyTask.Objective;
-            txtStartDesc.Text = mMyTask.Desc;
+            cmbTaskType.SelectedIndex = (int)mMyTask.Objective;
+            txtStartDesc.Text = mMyTask.Description;
             UpdateFormElements();
             switch (cmbTaskType.SelectedIndex)
             {
                 case 0: //Event Driven
                     break;
                 case 1: //Gather Items
-                    cmbItem.SelectedIndex = ItemBase.ListIndex(mMyTask.Guid1);
-                    nudItemAmount.Value = mMyTask.Data2;
+                    cmbItem.SelectedIndex = ItemBase.ListIndex(mMyTask.TargetId);
+                    nudItemAmount.Value = mMyTask.Quantity;
                     break;
                 case 2: //Kill NPCS
-                    cmbNpc.SelectedIndex = NpcBase.ListIndex(mMyTask.Guid1);
-                    nudNpcQuantity.Value = mMyTask.Data2;
+                    cmbNpc.SelectedIndex = NpcBase.ListIndex(mMyTask.TargetId);
+                    nudNpcQuantity.Value = mMyTask.Quantity;
                     break;
             }
         }
@@ -95,21 +95,21 @@ namespace Intersect.Editor.Forms.Editors.Quest
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            mMyTask.Objective = cmbTaskType.SelectedIndex;
-            mMyTask.Desc = txtStartDesc.Text;
+            mMyTask.Objective = (QuestObjective)cmbTaskType.SelectedIndex;
+            mMyTask.Description = txtStartDesc.Text;
             switch (mMyTask.Objective)
             {
-                case 0: //Event Driven
-                    mMyTask.Data1 = 0;
-                    mMyTask.Data2 = 1;
+                case QuestObjective.EventDriven: //Event Driven
+                    mMyTask.TargetId = Guid.Empty;
+                    mMyTask.Quantity = 1;
                     break;
-                case 1: //Gather Items
-                    mMyTask.Guid1 = ItemBase.IdFromList(cmbItem.SelectedIndex);
-                    mMyTask.Data2 = (int) nudItemAmount.Value;
+                case QuestObjective.GatherItems: //Gather Items
+                    mMyTask.TargetId = ItemBase.IdFromList(cmbItem.SelectedIndex);
+                    mMyTask.Quantity = (int) nudItemAmount.Value;
                     break;
-                case 2: //Kill Npcs
-                    mMyTask.Guid1 = NpcBase.IdFromList(cmbNpc.SelectedIndex);
-                    mMyTask.Data2 = (int) nudNpcQuantity.Value;
+                case QuestObjective.KillNpcs: //Kill Npcs
+                    mMyTask.TargetId = NpcBase.IdFromList(cmbNpc.SelectedIndex);
+                    mMyTask.Quantity = (int) nudNpcQuantity.Value;
                     break;
             }
             ParentForm.Close();

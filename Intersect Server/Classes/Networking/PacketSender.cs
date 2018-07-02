@@ -134,9 +134,7 @@ namespace Intersect.Server.Classes.Networking
                     var tileData = map.GetTileData(false);
                     bf.WriteInteger(tileData.Length);
                     bf.WriteBytes(tileData);
-                    var attributeData = map.AttributesData();
-                    bf.WriteInteger(attributeData.Length);
-                    bf.WriteBytes(attributeData);
+                    bf.WriteString(map.AttributeData);
                     bf.WriteInteger(map.MapGridX);
                     bf.WriteInteger(map.MapGridY);
                 }
@@ -167,9 +165,7 @@ namespace Intersect.Server.Classes.Networking
                     var tileData = map.GetTileData();
                     bf.WriteInteger(tileData.Length);
                     bf.WriteBytes(tileData);
-                    var attributeData = map.AttributesData();
-                    bf.WriteInteger(attributeData.Length);
-                    bf.WriteBytes(attributeData);
+                    bf.WriteString(map.AttributeData);
                     bf.WriteInteger(map.Revision);
                     bf.WriteInteger(map.MapGridX);
                     bf.WriteInteger(map.MapGridY);
@@ -228,9 +224,7 @@ namespace Intersect.Server.Classes.Networking
                 var tileData = map.GetTileData(false);
                 bf.WriteInteger(tileData.Length);
                 bf.WriteBytes(tileData);
-                var attributeData = map.AttributesData();
-                bf.WriteInteger(attributeData.Length);
-                bf.WriteBytes(attributeData);
+                bf.WriteString(map.AttributeData);
             }
             SendDataToEditors(bf.ToArray());
             bf.Dispose();
@@ -662,7 +656,7 @@ namespace Intersect.Server.Classes.Networking
             foreach (var status in statuses)
             {
                 bf.WriteGuid(status.Spell.Id);
-                bf.WriteInteger(status.Type);
+                bf.WriteInteger((int)status.Type);
                 bf.WriteString(status.Data);
                 bf.WriteInteger((int)(status.Duration - Globals.System.GetTimeMs()));
                 bf.WriteInteger((int)(status.Duration - status.StartTime));
@@ -712,7 +706,7 @@ namespace Intersect.Server.Classes.Networking
             foreach (var status in statuses)
             {
                 bf.WriteGuid(status.Spell.Id);
-                bf.WriteInteger(status.Type);
+                bf.WriteInteger((int)status.Type);
                 bf.WriteString(status.Data);
                 bf.WriteInteger((int)(status.Duration - Globals.System.GetTimeMs()));
                 bf.WriteInteger((int)(status.Duration - status.StartTime));
@@ -1672,7 +1666,7 @@ namespace Intersect.Server.Classes.Networking
                 bf.WriteGuid(quest.QuestId);
                 bf.WriteByte(1);
                 bf.WriteInteger(quest.Completed);
-                bf.WriteInteger(quest.TaskId);
+                bf.WriteGuid(quest.TaskId);
                 bf.WriteInteger(quest.TaskProgress);
             }
             SendDataTo(client, bf.ToArray());
@@ -1690,7 +1684,7 @@ namespace Intersect.Server.Classes.Networking
             {
                 bf.WriteByte(1);
                 bf.WriteInteger(questProgress.Completed);
-                bf.WriteInteger(questProgress.TaskId);
+                bf.WriteGuid(questProgress.TaskId);
                 bf.WriteInteger(questProgress.TaskProgress);
             }
             else

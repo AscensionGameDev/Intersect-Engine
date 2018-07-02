@@ -450,74 +450,72 @@ namespace Intersect.Editor.Forms.DockingElements
         public void PlaceAttribute(MapBase tmpMap, int x, int y)
         {
             tmpMap.Attributes[x, y] = new GameObjects.Maps.Attribute();
-            if (rbBlocked.Checked == true)
+            if (rbBlocked.Checked)
             {
-                tmpMap.Attributes[x, y].Value = (int) MapAttributes.Blocked;
+                tmpMap.Attributes[x, y].Type = MapAttributes.Blocked;
             }
-            else if (rbItem.Checked == true)
+            else if (rbItem.Checked)
             {
-                tmpMap.Attributes[x, y].Value = (int) MapAttributes.Item;
-                tmpMap.Attributes[x, y].Guid1 = ItemBase.IdFromList(cmbItemAttribute.SelectedIndex);
-                tmpMap.Attributes[x, y].Data2 = (int) nudItemQuantity.Value;
+                tmpMap.Attributes[x, y].Type = MapAttributes.Item;
+                tmpMap.Attributes[x, y].Item.ItemId = ItemBase.IdFromList(cmbItemAttribute.SelectedIndex);
+                tmpMap.Attributes[x, y].Item.Quantity = (int) nudItemQuantity.Value;
             }
-            else if (rbZDimension.Checked == true)
+            else if (rbZDimension.Checked)
             {
-                tmpMap.Attributes[x, y].Value = (int) MapAttributes.ZDimension;
-                tmpMap.Attributes[x, y].Data1 = GetEditorDimensionGateway();
-                tmpMap.Attributes[x, y].Data2 = GetEditorDimensionBlock();
+                tmpMap.Attributes[x, y].Type = MapAttributes.ZDimension;
+                tmpMap.Attributes[x, y].ZDimension.GatewayTo = GetEditorDimensionGateway();
+                tmpMap.Attributes[x, y].ZDimension.BlockedLevel = GetEditorDimensionBlock();
             }
-            else if (rbNPCAvoid.Checked == true)
+            else if (rbNPCAvoid.Checked)
             {
-                tmpMap.Attributes[x, y].Value = (int) MapAttributes.NpcAvoid;
+                tmpMap.Attributes[x, y].Type = MapAttributes.NpcAvoid;
             }
-            else if (rbWarp.Checked == true)
+            else if (rbWarp.Checked)
             {
-                tmpMap.Attributes[x, y].Value = (int) MapAttributes.Warp;
-                tmpMap.Attributes[x, y].Guid1 = MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapId;
-                tmpMap.Attributes[x, y].Data2 = (int) nudWarpX.Value;
-                tmpMap.Attributes[x, y].Data3 = (int) nudWarpY.Value;
-                tmpMap.Attributes[x, y].Data4 = (cmbDirection.SelectedIndex - 1).ToString();
+                tmpMap.Attributes[x, y].Type = MapAttributes.Warp;
+                tmpMap.Attributes[x, y].Warp.MapId = MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapId;
+                tmpMap.Attributes[x, y].Warp.X = (int) nudWarpX.Value;
+                tmpMap.Attributes[x, y].Warp.Y = (int) nudWarpY.Value;
+                tmpMap.Attributes[x, y].Warp.Dir = (byte)(cmbDirection.SelectedIndex - 1);
             }
-            else if (rbSound.Checked == true)
+            else if (rbSound.Checked)
             {
-                tmpMap.Attributes[x, y].Value = (int) MapAttributes.Sound;
-                tmpMap.Attributes[x, y].Data1 = (int) nudSoundDistance.Value;
-                tmpMap.Attributes[x, y].Data2 = 0;
-                tmpMap.Attributes[x, y].Data3 = 0;
-                tmpMap.Attributes[x, y].Data4 = TextUtils.SanitizeNone(cmbMapAttributeSound.Text);
+                tmpMap.Attributes[x, y].Type = MapAttributes.Sound;
+                tmpMap.Attributes[x, y].Sound.Distance = (int) nudSoundDistance.Value;
+                tmpMap.Attributes[x, y].Sound.File = TextUtils.SanitizeNone(cmbMapAttributeSound.Text);
             }
-            else if (rbResource.Checked == true)
+            else if (rbResource.Checked)
             {
-                tmpMap.Attributes[x, y].Value = (int) MapAttributes.Resource;
-                tmpMap.Attributes[x, y].Guid1 = ResourceBase.IdFromList(cmbResourceAttribute.SelectedIndex);
-                if (rbLevel1.Checked == true)
+                tmpMap.Attributes[x, y].Type = MapAttributes.Resource;
+                tmpMap.Attributes[x, y].Resource.ResourceId = ResourceBase.IdFromList(cmbResourceAttribute.SelectedIndex);
+                if (rbLevel1.Checked)
                 {
-                    tmpMap.Attributes[x, y].Data2 = 0;
+                    tmpMap.Attributes[x, y].Resource.SpawnLevel = 0;
                 }
                 else
                 {
-                    tmpMap.Attributes[x, y].Data2 = 1;
+                    tmpMap.Attributes[x, y].Resource.SpawnLevel = 1;
                 }
             }
-            else if (rbAnimation.Checked == true)
+            else if (rbAnimation.Checked)
             {
-                tmpMap.Attributes[x, y].Value = (int) MapAttributes.Animation;
-                tmpMap.Attributes[x, y].Guid1 = AnimationBase.IdFromList(cmbAnimationAttribute.SelectedIndex);
+                tmpMap.Attributes[x, y].Type = MapAttributes.Animation;
+                tmpMap.Attributes[x, y].Animation.AnimationId = AnimationBase.IdFromList(cmbAnimationAttribute.SelectedIndex);
             }
-            else if (rbGrappleStone.Checked == true)
+            else if (rbGrappleStone.Checked)
             {
-                tmpMap.Attributes[x, y].Value = (int) MapAttributes.GrappleStone;
+                tmpMap.Attributes[x, y].Type = MapAttributes.GrappleStone;
             }
-            else if (rbSlide.Checked == true)
+            else if (rbSlide.Checked)
             {
-                tmpMap.Attributes[x, y].Value = (int) MapAttributes.Slide;
-                tmpMap.Attributes[x, y].Data1 = cmbSlideDir.SelectedIndex;
+                tmpMap.Attributes[x, y].Type = MapAttributes.Slide;
+                tmpMap.Attributes[x, y].Slide.Direction = (byte)cmbSlideDir.SelectedIndex;
             }
         }
 
         public bool RemoveAttribute(MapBase tmpMap, int x, int y)
         {
-            if (tmpMap.Attributes[x, y] != null && tmpMap.Attributes[x, y].Value > 0)
+            if (tmpMap.Attributes[x, y] != null && tmpMap.Attributes[x, y].Type > 0)
             {
                 tmpMap.Attributes[x, y] = null;
                 return true;

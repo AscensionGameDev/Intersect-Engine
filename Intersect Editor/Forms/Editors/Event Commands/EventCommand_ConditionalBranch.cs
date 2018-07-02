@@ -93,7 +93,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                         {
                             for (int i = 0; i < quest.Tasks.Count; i++)
                             {
-                                if (quest.Tasks[i].Id == mMyCommand.Ints[3])
+                                if (quest.Tasks[i].Id == mMyCommand.Guids[3])
                                 {
                                     cmbQuestTask.SelectedIndex = i;
                                 }
@@ -463,7 +463,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                         {
                             if (cmbQuestTask.SelectedIndex > -1)
                             {
-                                mMyCommand.Ints[3] = quest.Tasks[cmbQuestTask.SelectedIndex].Id;
+                                mMyCommand.Guids[3] = quest.Tasks[cmbQuestTask.SelectedIndex].Id;
                             }
                         }
                     }

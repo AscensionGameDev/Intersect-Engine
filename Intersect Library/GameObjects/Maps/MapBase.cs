@@ -44,10 +44,10 @@ namespace Intersect.GameObjects.Maps
 
         [Column("Attributes")]
         [JsonIgnore]
-        public byte[] AttributeData
+        public string AttributeData
         {
-            get => AttributesData();
-            set => LoadAttributes(value);
+            get => JsonConvert.SerializeObject(Attributes);
+            set => Attributes = JsonConvert.DeserializeObject<Attribute[,]>(value);
         }
         [NotMapped]
         [JsonIgnore]
@@ -196,14 +196,7 @@ namespace Intersect.GameObjects.Maps
                         {
                             if (mapcopy.Attributes[x, y] != null)
                             {
-                                Attributes[x, y] = new Attribute
-                                {
-                                    Value = mapcopy.Attributes[x, y].Value,
-                                    Data1 = mapcopy.Attributes[x, y].Data1,
-                                    Data2 = mapcopy.Attributes[x, y].Data2,
-                                    Data3 = mapcopy.Attributes[x, y].Data3,
-                                    Data4 = mapcopy.Attributes[x, y].Data4
-                                };
+                                Attributes[x, y] = new Attribute(mapcopy.Attributes[x, y].Data());
                             }
                         }
                     }
@@ -224,62 +217,6 @@ namespace Intersect.GameObjects.Maps
                     EventIds.AddRange(mapcopy.EventIds.ToArray());
                 }
             }
-        }
-
-        public void LoadAttributes(byte[] data)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(data);
-            for (var x = 0; x < Options.MapWidth; x++)
-            {
-                for (var y = 0; y < Options.MapHeight; y++)
-                {
-                    int attributeType = bf.ReadInteger();
-                    if (attributeType > 0)
-                    {
-                        Attributes[x, y] = new Attribute
-                        {
-                            Value = attributeType,
-                            Data1 = bf.ReadInteger(),
-                            Data2 = bf.ReadInteger(),
-                            Data3 = bf.ReadInteger(),
-                            Data4 = bf.ReadString()
-                        };
-                    }
-                    else
-                    {
-                        Attributes[x, y] = null;
-                    }
-                }
-            }
-            bf.Dispose();
-        }
-
-        public byte[] AttributesData()
-        {
-            var bf = new ByteBuffer();
-            for (var x = 0; x < Options.MapWidth; x++)
-            {
-                for (var y = 0; y < Options.MapHeight; y++)
-                {
-                    if (Attributes[x, y] == null)
-                    {
-                        bf.WriteInteger(0);
-                    }
-                    else
-                    {
-                        bf.WriteInteger(Attributes[x, y].Value);
-                        if (Attributes[x, y].Value > 0)
-                        {
-                            bf.WriteInteger(Attributes[x, y].Data1);
-                            bf.WriteInteger(Attributes[x, y].Data2);
-                            bf.WriteInteger(Attributes[x, y].Data3);
-                            bf.WriteString(Attributes[x, y].Data4);
-                        }
-                    }
-                }
-            }
-            return bf.ToArray();
         }
 
         public class MapInstances : DatabaseObjectLookup

@@ -46,9 +46,7 @@ namespace Intersect.Editor.Networking
             var tileData = map.GenerateTileData();
             bf.WriteInteger(tileData.Length);
             bf.WriteBytes(tileData);
-            var attributeData = map.AttributesData();
-            bf.WriteInteger(attributeData.Length);
-            bf.WriteBytes(attributeData);
+            bf.WriteString(map.AttributeData);
             EditorNetwork.SendPacket(bf.ToArray());
             bf.Dispose();
         }

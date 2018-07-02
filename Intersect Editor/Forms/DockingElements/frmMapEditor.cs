@@ -1246,7 +1246,7 @@ namespace Intersect.Editor.Forms.DockingElements
             }
         }
 
-        private void SmartFillAttribute(int x, int y, byte[] data)
+        private void SmartFillAttribute(int x, int y, string data)
         {
             if (x < 0 || x >= Options.MapWidth || y < 0 || y >= Options.MapHeight)
             {
@@ -1332,9 +1332,9 @@ namespace Intersect.Editor.Forms.DockingElements
             }
         }
 
-        private void SmartEraseAttribute(int x, int y, int attribute)
+        private void SmartEraseAttribute(int x, int y, MapAttributes attribute)
         {
-            int a = 0;
+            MapAttributes a = MapAttributes.Walkable;
 
             if (x < 0 || x >= Options.MapWidth || y < 0 || y >= Options.MapHeight)
             {
@@ -1343,7 +1343,7 @@ namespace Intersect.Editor.Forms.DockingElements
 
             if (Globals.CurrentMap.Attributes[x, y] != null)
             {
-                a = Globals.CurrentMap.Attributes[x, y].Value;
+                a = Globals.CurrentMap.Attributes[x, y].Type;
             }
 
             if (a == attribute)
@@ -1359,11 +1359,11 @@ namespace Intersect.Editor.Forms.DockingElements
 
         public void SmartEraseAttributes(int x, int y)
         {
-            int attribute = 0;
+            MapAttributes attribute = MapAttributes.Walkable;
 
             if (Globals.CurrentMap.Attributes[x, y] != null)
             {
-                attribute = Globals.CurrentMap.Attributes[x, y].Value;
+                attribute = Globals.CurrentMap.Attributes[x, y].Type;
             }
             if (attribute > 0)
             {
@@ -1482,19 +1482,7 @@ namespace Intersect.Editor.Forms.DockingElements
                         {
                             if (Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset] != null)
                             {
-                                tmpMap.Attributes[x0, y0] = new GameObjects.Maps.Attribute()
-                                {
-                                    Value =
-                                        Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].Value,
-                                    Data1 =
-                                        Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].Data1,
-                                    Data2 =
-                                        Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].Data2,
-                                    Data3 =
-                                        Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].Data3,
-                                    Data4 =
-                                        Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].Data4
-                                };
+                                tmpMap.Attributes[x0, y0] = new GameObjects.Maps.Attribute(Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].Data());
                             }
                             else
                             {
@@ -1649,11 +1637,7 @@ namespace Intersect.Editor.Forms.DockingElements
                         {
                             if (tmpMap.Attributes[x0, y0] != null)
                             {
-                                tmpMap.Attributes[x0, y0].Value = 0;
-                                tmpMap.Attributes[x0, y0].Data1 = 0;
-                                tmpMap.Attributes[x0, y0].Data2 = 0;
-                                tmpMap.Attributes[x0, y0].Data3 = 0;
-                                tmpMap.Attributes[x0, y0].Data4 = "";
+                                tmpMap.Attributes[x0, y0] = new Intersect.GameObjects.Maps.Attribute();
                             }
                         }
 

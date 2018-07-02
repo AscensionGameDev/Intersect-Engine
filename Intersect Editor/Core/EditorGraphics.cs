@@ -749,18 +749,14 @@ namespace Intersect.Editor.Core
                         {
                             if (tmpMap.Attributes[x, y] != null)
                             {
-                                if (tmpMap.Attributes[x, y].Value > 0)
+                                if (tmpMap.Attributes[x, y].Type > 0)
                                 {
                                     var attributesTex = GameContentManager.GetTexture(GameContentManager.TextureType.Misc, "attributes.png");
                                     if (attributesTex != null)
                                     {
-                                        DrawTexture(attributesTex,
-                                            new RectangleF(0, (tmpMap.Attributes[x, y].Value - 1) * attributesTex.Width,
-                                                attributesTex.Width, attributesTex.Width),
-                                            new RectangleF(CurrentView.Left + x * Options.TileWidth,
-                                                CurrentView.Top + y * Options.TileHeight, Options.TileWidth,
-                                                Options.TileHeight), System.Drawing.Color.FromArgb(150, 255, 255, 255),
-                                            null);
+                                        DrawTexture(attributesTex, new RectangleF(0, ((int)tmpMap.Attributes[x, y].Type - 1) * attributesTex.Width, attributesTex.Width, attributesTex.Width),
+                                            new RectangleF(CurrentView.Left + x * Options.TileWidth, CurrentView.Top + y * Options.TileHeight, Options.TileWidth,
+                                                Options.TileHeight), System.Drawing.Color.FromArgb(150, 255, 255, 255), null);
                                     }
                                 }
                             }
@@ -1057,9 +1053,9 @@ namespace Intersect.Editor.Core
                 for (var x = x1; x < x2; x++)
                 {
                     if (tmpMap.Attributes[x, y] == null) continue;
-                    if (tmpMap.Attributes[x, y].Value == (int) MapAttributes.Resource && !upper)
+                    if (tmpMap.Attributes[x, y].Type == MapAttributes.Resource && !upper)
                     {
-                        var resource = ResourceBase.Get(tmpMap.Attributes[x, y].Guid1);
+                        var resource = ResourceBase.Get(tmpMap.Attributes[x, y].Resource.ResourceId);
                         if (resource == null) continue;
                         if (TextUtils.IsNone(resource.Initial.Graphic)) continue;
                         if (resource.Initial.GraphicFromTileset)
@@ -1096,9 +1092,9 @@ namespace Intersect.Editor.Core
                                 0, 0, (int)res.Width, (int)res.Height, renderTarget);
                         }
                     }
-                    else if (tmpMap.Attributes[x, y].Value == (int) MapAttributes.Animation)
+                    else if (tmpMap.Attributes[x, y].Type == MapAttributes.Animation)
                     {
-                        var animation = AnimationBase.Get(tmpMap.Attributes[x, y].Guid1);
+                        var animation = AnimationBase.Get(tmpMap.Attributes[x, y].Animation.AnimationId);
                         if (animation != null)
                         {
                             float xpos = x * Options.TileWidth + xoffset + Options.TileWidth / 2;

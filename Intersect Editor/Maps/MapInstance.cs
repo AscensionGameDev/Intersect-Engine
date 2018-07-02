@@ -117,11 +117,10 @@ namespace Intersect.Editor.Maps
             var mapJson = bf.ReadString();
             var tileDataLength = bf.ReadInteger();
             var tileData = bf.ReadBytes(tileDataLength);
-            var attributeDataLength = bf.ReadInteger();
-            var attributeData = bf.ReadBytes(attributeDataLength);
+            var attributeData = bf.ReadString();
             Load(mapJson, import);
             LoadTileData(tileData);
-            LoadAttributes(attributeData);
+            AttributeData = attributeData;
             bf.Dispose();
         }
 
@@ -132,8 +131,7 @@ namespace Intersect.Editor.Maps
             var tileData = GenerateTileData();
             bf.WriteInteger(tileData.Length);
             bf.WriteBytes(tileData);
-            bf.WriteInteger(AttributesData().Length);
-            bf.WriteBytes(AttributesData());
+            bf.WriteString(AttributeData);
             return bf.ToArray();
         }
 

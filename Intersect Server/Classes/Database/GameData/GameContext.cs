@@ -97,10 +97,6 @@ namespace Intersect.Server.Classes.Database.GameData
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<AnimationBase>().OwnsOne(p => p.Upper);
-            modelBuilder.Entity<AnimationBase>().OwnsOne(p => p.Lower);
-            modelBuilder.Entity<ResourceBase>().OwnsOne(p => p.Initial);
-            modelBuilder.Entity<ResourceBase>().OwnsOne(p => p.Exhausted);
         }
     }
 }

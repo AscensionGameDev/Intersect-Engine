@@ -267,12 +267,11 @@ namespace Intersect.Editor.Networking
                 var mapJson = bf.ReadString();
                 var tileLength = bf.ReadInteger();
                 var tileData = bf.ReadBytes(tileLength);
-                var attributeDataLength = bf.ReadInteger();
-                var attributeData = bf.ReadBytes(attributeDataLength);
+                var attributeData = bf.ReadString();
                 var map = new MapInstance(mapId);
                 map.Load(mapJson);
                 map.LoadTileData(tileData);
-                map.LoadAttributes(attributeData);
+                map.AttributeData = attributeData;
                 map.MapGridX = bf.ReadInteger();
                 map.MapGridY = bf.ReadInteger();
                 map.SaveStateAsUnchanged();
