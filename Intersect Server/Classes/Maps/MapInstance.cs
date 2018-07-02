@@ -936,7 +936,7 @@ namespace Intersect.Server.Classes.Maps
 
         public static MapInstance Get(Guid id)
         {
-            return MapInstance.Get(id);
+            return MapInstance.Lookup.Get<MapInstance>(id);
         }
 
         public override void Delete() => Lookup?.Delete(this);

@@ -115,7 +115,6 @@ namespace Intersect.Editor.Forms.Editors
             lblKnockback.Text = Strings.ProjectileEditor.knockback;
             lblSpell.Text = Strings.ProjectileEditor.spell;
             chkGrapple.Text = Strings.ProjectileEditor.grapple;
-            chkHoming.Text = Strings.ProjectileEditor.homing;
 
             grpSpawns.Text = Strings.ProjectileEditor.spawns;
 
@@ -162,7 +161,6 @@ namespace Intersect.Editor.Forms.Editors
                 chkIgnoreActiveResources.Checked = mEditorItem.IgnoreActiveResources;
                 chkIgnoreInactiveResources.Checked = mEditorItem.IgnoreExhaustedResources;
                 chkIgnoreZDimensionBlocks.Checked = mEditorItem.IgnoreZDimension;
-                chkHoming.Checked = mEditorItem.Homing;
                 chkGrapple.Checked = mEditorItem.GrappleHook;
                 cmbItem.SelectedIndex = ItemBase.ListIndex(mEditorItem.AmmoItemId) + 1;
                 nudConsume.Value = mEditorItem.AmmoRequired;
@@ -399,11 +397,6 @@ namespace Intersect.Editor.Forms.Editors
             lstProjectiles.Items[ProjectileBase.ListIndex(mEditorItem.Id)] =
                 txtName.Text;
             mChangingName = false;
-        }
-
-        private void chkHoming_CheckedChanged(object sender, EventArgs e)
-        {
-            mEditorItem.Homing = chkHoming.Checked;
         }
 
         private void chkRotation_CheckedChanged(object sender, EventArgs e)

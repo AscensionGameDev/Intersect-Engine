@@ -1596,7 +1596,6 @@ Tick timer saved in server config.json.";
             public static LocalizedString deleteprompt = @"Are you sure you want to delete this projectile? This action cannot be reverted!";
             public static LocalizedString deletetitle = @"Delete Projectile";
             public static LocalizedString grapple = @"Grapple hook?";
-            public static LocalizedString homing = @"Homing?";
             public static LocalizedString ignoreactiveresources = @"Active Resources";
             public static LocalizedString ignoreblocks = @"Map Blocks";
             public static LocalizedString ignoreinactiveresources = @"Inactive Resources";

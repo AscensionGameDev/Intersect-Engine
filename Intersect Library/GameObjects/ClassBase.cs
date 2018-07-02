@@ -99,8 +99,8 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public string JsonBaseStats
         {
-            get => JsonConvert.SerializeObject(BaseStat);
-            protected set => BaseStat = JsonConvert.DeserializeObject<int[]>(value);
+            get => DatabaseUtils.SaveIntArray(BaseStat, (int)Stats.StatCount);
+            set => BaseStat = DatabaseUtils.LoadIntArray(value, (int)Stats.StatCount);
         }
         [NotMapped]
         public int[] BaseStat = new int[(int)Stats.StatCount];
@@ -110,8 +110,8 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public string JsonBaseVitals
         {
-            get => JsonConvert.SerializeObject(BaseVital);
-            protected set => BaseVital = JsonConvert.DeserializeObject<int[]>(value);
+            get => DatabaseUtils.SaveIntArray(BaseVital, (int)Vitals.VitalCount);
+            set => BaseVital = DatabaseUtils.LoadIntArray(value, (int)Vitals.VitalCount);
         }
         [NotMapped]
         public int[] BaseVital = new int[(int)Vitals.VitalCount];
@@ -155,8 +155,8 @@ namespace Intersect.GameObjects
         [Column("StatIncreases")]
         public string StatIncreaseJson
         {
-            get => JsonConvert.SerializeObject(StatIncrease, Formatting.None);
-            protected set => StatIncrease = JsonConvert.DeserializeObject<int[]>(value);
+            get => DatabaseUtils.SaveIntArray(StatIncrease, (int)Stats.StatCount);
+            set => StatIncrease = DatabaseUtils.LoadIntArray(value, (int)Stats.StatCount);
         }
         [NotMapped]
         public int[] StatIncrease = new int[(int) Stats.StatCount];
@@ -166,8 +166,8 @@ namespace Intersect.GameObjects
         [Column("VitalIncreases")]
         public string VitalIncreaseJson
         {
-            get => JsonConvert.SerializeObject(VitalIncrease, Formatting.None);
-            protected set => VitalIncrease = JsonConvert.DeserializeObject<int[]>(value);
+            get => DatabaseUtils.SaveIntArray(VitalIncrease, (int)Vitals.VitalCount);
+            set => VitalIncrease = DatabaseUtils.LoadIntArray(value, (int)Vitals.VitalCount);
         }
         [NotMapped]
         public int[] VitalIncrease = new int[(int) Vitals.VitalCount];
@@ -177,8 +177,8 @@ namespace Intersect.GameObjects
         [Column("VitalRegen")]
         public string RegenJson
         {
-            get => JsonConvert.SerializeObject(VitalRegen, Formatting.None);
-            protected set => VitalRegen = JsonConvert.DeserializeObject<int[]>(value);
+            get => DatabaseUtils.SaveIntArray(VitalRegen, (int)Vitals.VitalCount);
+            set => VitalRegen = DatabaseUtils.LoadIntArray(value, (int)Vitals.VitalCount);
         }
         [NotMapped]
         public int[] VitalRegen = new int[(int) Vitals.VitalCount];

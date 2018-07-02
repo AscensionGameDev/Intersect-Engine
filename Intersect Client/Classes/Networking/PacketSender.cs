@@ -236,7 +236,7 @@ namespace Intersect_Client.Classes.Networking
         }
 
         public static void SendAdminAction(int action, string val1 = "", string val2 = "", string val3 = "",
-            string val4 = "")
+            string val4 = "", Guid val5 = new Guid())
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.AdminAction);
@@ -245,6 +245,7 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteString(val2);
             bf.WriteString(val3);
             bf.WriteString(val4);
+            bf.WriteGuid(val5);
             GameNetwork.SendPacket(bf.ToArray());
         }
 

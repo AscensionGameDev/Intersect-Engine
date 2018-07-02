@@ -59,7 +59,7 @@ namespace Intersect.Editor.Networking
         }
 
         private static int sPacketCount = 0;
-        private static bool sDebugPackets = true;
+        private static bool sDebugPackets = false;
         public static void HandlePacket(ByteBuffer bf)
         {
             if (bf == null || bf.Length() == 0) return;

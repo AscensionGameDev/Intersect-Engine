@@ -92,7 +92,7 @@ namespace Intersect.Server.Classes.Core
             }
             else
             {
-                throw new Exception("Learn to walk before you try to run there fella");
+                sGameDb = new GameContext(DatabaseUtils.DbProvider.MySql, $"server={Options.GameDb.Server};database={Options.GameDb.Database};user={Options.GameDb.Username};password={Options.GameDb.Password}");
             }
             sGameDb.Database.Migrate();
 
@@ -516,8 +516,8 @@ namespace Intersect.Server.Classes.Core
                 case GameObjectType.Tileset:
                     foreach (var psw in sGameDb.Tilesets)
                     {
-                        ServerVariableBase.Lookup.Set(psw.Id, psw);
-                        ServerVariableBase.Lookup.Set(psw.Id, psw);
+                        TilesetBase.Lookup.Set(psw.Id, psw);
+                        TilesetBase.Lookup.Set(psw.Id, psw);
                     }
                     break;
                 case GameObjectType.Time:

@@ -46,7 +46,6 @@ namespace Intersect.Editor.Forms.Editors
             this.lblAmount = new System.Windows.Forms.Label();
             this.chkGrapple = new DarkUI.Controls.DarkCheckBox();
             this.lblSpell = new System.Windows.Forms.Label();
-            this.chkHoming = new DarkUI.Controls.DarkCheckBox();
             this.lblName = new System.Windows.Forms.Label();
             this.txtName = new DarkUI.Controls.DarkTextBox();
             this.lblRange = new System.Windows.Forms.Label();
@@ -162,7 +161,6 @@ namespace Intersect.Editor.Forms.Editors
             this.grpProperties.Controls.Add(this.lblAmount);
             this.grpProperties.Controls.Add(this.chkGrapple);
             this.grpProperties.Controls.Add(this.lblSpell);
-            this.grpProperties.Controls.Add(this.chkHoming);
             this.grpProperties.Controls.Add(this.lblName);
             this.grpProperties.Controls.Add(this.txtName);
             this.grpProperties.Controls.Add(this.lblRange);
@@ -206,6 +204,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudKnockback.Name = "nudKnockback";
             this.nudKnockback.Size = new System.Drawing.Size(69, 20);
             this.nudKnockback.TabIndex = 45;
+            this.nudKnockback.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudKnockback.ValueChanged += new System.EventHandler(this.nudKnockback_ValueChanged);
             // 
             // nudRange
@@ -334,17 +337,6 @@ namespace Intersect.Editor.Forms.Editors
             this.lblSpell.Size = new System.Drawing.Size(74, 13);
             this.lblSpell.TabIndex = 24;
             this.lblSpell.Text = "Collision Spell:";
-            // 
-            // chkHoming
-            // 
-            this.chkHoming.AutoSize = true;
-            this.chkHoming.Location = new System.Drawing.Point(107, 229);
-            this.chkHoming.Name = "chkHoming";
-            this.chkHoming.Size = new System.Drawing.Size(68, 17);
-            this.chkHoming.TabIndex = 8;
-            this.chkHoming.Text = "Homing?";
-            this.chkHoming.Visible = false;
-            this.chkHoming.CheckedChanged += new System.EventHandler(this.chkHoming_CheckedChanged);
             // 
             // lblName
             // 
@@ -775,7 +767,7 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
-            // frmProjectile
+            // FrmProjectile
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -831,7 +823,6 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.Label lblName;
         private DarkTextBox txtName;
         private System.Windows.Forms.Label lblSpell;
-        private DarkCheckBox chkHoming;
         private DarkCheckBox chkGrapple;
         private DarkGroupBox grpAnimations;
         private DarkCheckBox chkRotation;

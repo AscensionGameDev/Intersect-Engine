@@ -266,8 +266,7 @@ namespace Intersect.Client.Classes.Core
 
                 if (Globals.Me.GetRealLocation(ref x, ref y, ref mapNum))
                 {
-                    PacketSender.SendAdminAction((int) AdminActions.WarpToLoc,
-                        Convert.ToString(mapNum), Convert.ToString(x), Convert.ToString(y));
+                    PacketSender.SendAdminAction((int) AdminActions.WarpToLoc, "", Convert.ToString(x), Convert.ToString(y),"",map.Id);
                 }
                 return;
             }

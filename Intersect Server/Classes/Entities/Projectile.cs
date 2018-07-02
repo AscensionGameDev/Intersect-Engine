@@ -44,11 +44,6 @@ namespace Intersect.Server.Classes.Entities
             Spell = parentSpell;
             Item = parentItem;
 
-            if (Base.Homing == true)
-            {
-                Target = target;
-            }
-
             Passable = 1;
             HideName = 1;
             for (int x = 0; x < ProjectileBase.SPAWN_LOCATIONS_WIDTH; x++)

@@ -35,7 +35,6 @@ namespace Intersect.GameObjects
 
         public int Delay { get; set; } = 1;
         public bool GrappleHook { get; set; }
-        public bool Homing { get; set; }
         public bool IgnoreActiveResources { get; set; }
         public bool IgnoreExhaustedResources { get; set; }
         public bool IgnoreMapBlocks { get; set; }
