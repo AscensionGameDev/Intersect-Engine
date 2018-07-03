@@ -116,7 +116,7 @@ namespace Intersect.Server.WebApi.Modules
 
         public static JArray OnlinePlayersArray => new JArray(OnlinePlayers?.Select(ToJson));
 
-        public PlayerModule() : base("/player")
+        public PlayerModule() : base("/players")
         {
             Get("/{name}", parameters =>
             {

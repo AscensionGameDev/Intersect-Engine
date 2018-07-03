@@ -11,14 +11,14 @@ namespace Intersect.Collections
 {
     public class DatabaseObjectLookup : IGameObjectLookup<IDatabaseObject>
     {
-        [NotNull] private readonly Dictionary<Guid, IDatabaseObject> mIdMap;
+        [NotNull] private readonly SortedDictionary<Guid, IDatabaseObject> mIdMap;
         [NotNull] private readonly object mLock;
 
         public DatabaseObjectLookup()
         {
             mLock = new object();
 
-            mIdMap = new Dictionary<Guid, IDatabaseObject>();
+            mIdMap = new SortedDictionary<Guid, IDatabaseObject>();
         }
 
         [NotNull]
@@ -86,6 +86,8 @@ namespace Intersect.Collections
         [NotNull] public virtual ICollection<KeyValuePair<Guid, IDatabaseObject>> Pairs => Clone;
         [NotNull] public virtual ICollection<Guid> Keys => mIdMap.Keys;
         [NotNull] public virtual ICollection<IDatabaseObject> Values => mIdMap.Values;
+
+        public bool IsEmpty => Count < 1;
 
         public virtual IDatabaseObject Get(Guid id) => TryGetValue(id, out IDatabaseObject value)
             ? value

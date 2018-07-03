@@ -10,7 +10,7 @@ namespace Intersect.Models
 {
     public static class LookupUtils
     {
-        private const string LOCK = "";
+        private static readonly object sLock = new object();
 
         private static Dictionary<Type, DatabaseObjectLookup> sLookupMap;
         private static Dictionary<Type, GameObjectType> sEnumMap;
@@ -26,7 +26,7 @@ namespace Intersect.Models
             if (type == null) throw new ArgumentNullException(nameof(type));
             if (LookupMap == null) throw new ArgumentNullException(nameof(LookupMap));
 
-            lock (LOCK)
+            lock (sLock)
             {
                 try
                 {

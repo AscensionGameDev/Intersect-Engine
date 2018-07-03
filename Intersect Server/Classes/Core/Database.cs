@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Management.Instrumentation;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -640,19 +641,19 @@ namespace Intersect.Server.Classes.Core
             {
                 case GameObjectType.Animation:
                     sGameDb.Animations.Remove((AnimationBase)gameObject);
-                    return;
+                    break;
                 case GameObjectType.Class:
                     sGameDb.Classes.Remove((ClassBase) gameObject);
-                    return;
+                    break;
                 case GameObjectType.Item:
                     sGameDb.Items.Remove((ItemBase)gameObject);
-                    return;
+                    break;
                 case GameObjectType.Npc:
                     sGameDb.Npcs.Remove((NpcBase) gameObject);
-                    return;
+                    break;
                 case GameObjectType.Projectile:
                     sGameDb.Projectiles.Remove((ProjectileBase) gameObject);
-                    return;
+                    break;
                 case GameObjectType.Quest:
                     sGameDb.Events.Remove(((QuestBase)gameObject).StartEvent);
                     sGameDb.Events.Remove(((QuestBase)gameObject).EndEvent);
@@ -661,45 +662,50 @@ namespace Intersect.Server.Classes.Core
                         sGameDb.Events.Remove(tsk.CompletionEvent);
                     }
                     sGameDb.Quests.Remove((QuestBase) gameObject);
-                    return;
+                    break;
                 case GameObjectType.Resource:
                     sGameDb.Resources.Remove((ResourceBase) gameObject);
-                    return;
+                    break;
                 case GameObjectType.Shop:
                     sGameDb.Shops.Remove((ShopBase) gameObject);
-                    return;
+                    break;
                 case GameObjectType.Spell:
                     sGameDb.Spells.Remove((SpellBase) gameObject);
-                    return;
+                    break;
                 case GameObjectType.CraftTables:
                     sGameDb.CraftingTables.Remove((CraftingTableBase)gameObject);
-                    return;
+                    break;
                 case GameObjectType.Crafts:
                     sGameDb.Crafts.Remove((CraftBase)gameObject);
-                    return;
+                    break;
                 case GameObjectType.Map:
                     sGameDb.Maps.Remove((MapInstance) gameObject);
-                    return;
+                    break;
                 case GameObjectType.Event:
                     sGameDb.Events.Remove((EventBase) gameObject);
-                    return;
+                    break;
                 case GameObjectType.PlayerSwitch:
                     sGameDb.PlayerSwitches.Remove((PlayerSwitchBase) gameObject);
-                    return;
+                    break;
                 case GameObjectType.PlayerVariable:
                     sGameDb.PlayerVariables.Remove((PlayerVariableBase) gameObject);
-                    return;
+                    break;
                 case GameObjectType.ServerSwitch:
                     sGameDb.ServerSwitches.Remove((ServerSwitchBase) gameObject);
-                    return;
+                    break;
                 case GameObjectType.ServerVariable:
                     sGameDb.ServerVariables.Remove((ServerVariableBase)gameObject);
-                    return;
+                    break;
                 case GameObjectType.Tileset:
                     sGameDb.Tilesets.Remove((TilesetBase) gameObject);
-                    return;
+                    break;
                 case GameObjectType.Time:
-                    return;
+                    break;
+            }
+
+            if (!gameObject.Type.GetLookup().Delete(gameObject))
+            {
+                throw new Exception();
             }
         }
 
