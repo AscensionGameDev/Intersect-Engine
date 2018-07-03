@@ -13,12 +13,6 @@ namespace Intersect.GameObjects.Maps
 
         //Special Flags
         public AttributeItemFlags Item { get; set; } = new AttributeItemFlags();
-
-        public bool ShouldSerializeItem()
-        {
-            return false;
-        } 
-        
         public AttributeZDimensionFlags ZDimension { get; set; } = new AttributeZDimensionFlags();
         public AttributeWarpFlags Warp { get; set; } = new AttributeWarpFlags();
         public AttributeSoundFlags  Sound { get; set; } = new AttributeSoundFlags();
