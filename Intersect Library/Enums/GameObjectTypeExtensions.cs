@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Intersect.Collections;
 using Intersect.Extensions;
 using Intersect.Models;
@@ -35,5 +36,11 @@ namespace Intersect.Enums
 
         public static DatabaseObjectLookup GetLookup(this GameObjectType gameObjectType)
             => LookupUtils.GetLookup(GetObjectType(gameObjectType));
+
+        public static IDatabaseObject CreateNew(this GameObjectType gameObjectType)
+        {
+            var instance = Activator.CreateInstance(AttributeMap?[gameObjectType]?.Type, new object[] { });
+            return instance as IDatabaseObject;
+        }
     }
 }

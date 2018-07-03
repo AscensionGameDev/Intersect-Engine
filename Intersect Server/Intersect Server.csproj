@@ -421,6 +421,11 @@
     <Compile Include="Database\PrimaryKeyDescriptor.cs" />
     <Compile Include="Database\TableDescriptor.cs" />
     <Compile Include="Database\UniqueConstraintDescriptor.cs" />
+    <Compile Include="Migrations\20180703015734_TestMigration.cs" />
+    <Compile Include="Migrations\20180703015734_TestMigration.designer.cs">
+      <DependentUpon>20180703015734_TestMigration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\GameContextModelSnapshot.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserRights.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

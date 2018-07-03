@@ -9,6 +9,7 @@ using Intersect.Utilities;
 using Nancy;
 using Nancy.Extensions;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Intersect.Server.WebApi.Modules
 {
@@ -178,7 +179,17 @@ namespace Intersect.Server.WebApi.Modules
                     var gameObject = type.GetLookup().Get(guid);
 
                     var body = Request.Body.AsString();
-                    JsonConvert.PopulateObject(body, gameObject);
+                    try
+                    {
+                        JsonConvert.PopulateObject(body, gameObject);
+                    }
+                    catch (Exception exception)
+                    {
+                        return Response.AsJson(new
+                        {
+                            message = exception.Message
+                        }, HttpStatusCode.BadRequest);
+                    }
 
                     var json = JsonConvert.SerializeObject(gameObject);
                     var jsonBytes = Encoding.UTF8.GetBytes(json);
@@ -207,24 +218,37 @@ namespace Intersect.Server.WebApi.Modules
             try
             {
                 GameObjectType type = GameObjectTypeUtils.TypeFromName(parameters.type);
-                var gameObject = LegacyDatabase.AddGameObject(type);
-                PacketSender.SendGameObjectToAll(gameObject);
 
                 var body = Request.Body.AsString();
                 if (string.IsNullOrWhiteSpace(body))
                 {
                     body = "{}";
                 }
-                JsonConvert.PopulateObject(body, gameObject);
 
-                var json = JsonConvert.SerializeObject(gameObject);
-                var jsonBytes = Encoding.UTF8.GetBytes(json);
-                return new Response
+                try
                 {
-                    StatusCode = HttpStatusCode.OK,
-                    ContentType = "application/json",
-                    Contents = s => s.Write(jsonBytes, 0, jsonBytes.Length)
-                };
+                    var gameObject = type.CreateNew();
+
+                    JsonConvert.PopulateObject(body, gameObject);
+                    LegacyDatabase.AddGameObject(type, gameObject);
+                    PacketSender.SendGameObjectToAll(gameObject);
+
+                    var json = JsonConvert.SerializeObject(gameObject);
+                    var jsonBytes = Encoding.UTF8.GetBytes(json);
+                    return new Response
+                    {
+                        StatusCode = HttpStatusCode.OK,
+                        ContentType = "application/json",
+                        Contents = s => s.Write(jsonBytes, 0, jsonBytes.Length)
+                    };
+                }
+                catch (Exception exception)
+                {
+                    return Response.AsJson(new
+                    {
+                        message = exception.Message
+                    }, HttpStatusCode.BadRequest);
+                }
             }
             catch (GameObjectTypeException exception)
             {
