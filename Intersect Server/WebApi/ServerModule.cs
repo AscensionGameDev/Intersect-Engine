@@ -51,7 +51,12 @@ namespace Intersect.Server.WebApi
 
         protected virtual IDictionary<MethodPathCode, object> DefaultResponse => null;
 
-        protected ServerModule(string modulePath) : base(modulePath)
+        public static string CreateAPIPath(string path, int version)
+        {
+            return $"/api/v{Math.Max(1, version)}{path}";
+        }
+
+        protected ServerModule(string modulePath, int version = 1) : base(CreateAPIPath(modulePath, version))
         {
             Secure();
         }
