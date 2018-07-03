@@ -600,8 +600,8 @@ namespace Intersect_Client.Classes.Networking
             en.CurrentX = bf.ReadInteger();
             en.CurrentY = bf.ReadInteger();
             en.Dir = bf.ReadInteger();
-            en.Passable = bf.ReadInteger();
-            en.HideName = bf.ReadInteger();
+            en.Passable = bf.ReadBoolean();
+            en.HideName = bf.ReadBoolean();
         }
 
         private static void HandleLeave(byte[] packet)
@@ -1302,7 +1302,7 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             string picture = bf.ReadString();
             int size = bf.ReadInteger();
-            bool clickable = Convert.ToBoolean(bf.ReadInteger());
+            bool clickable = bf.ReadBoolean();
             Gui.GameUi.ShowPicture(picture, size, clickable);
             bf.Dispose();
         }

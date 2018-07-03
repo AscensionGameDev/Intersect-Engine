@@ -32,8 +32,8 @@ namespace Intersect_Client.Classes.Entities
         {
             Vital[(int) Vitals.Health] = 1;
             MaxVital[(int) Vitals.Health] = 1;
-            HideName = 1;
-            Passable = 1;
+            HideName = true;
+            Passable = true;
             IsMoving = true;
         }
 

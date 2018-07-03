@@ -93,7 +93,7 @@ namespace Intersect.Editor.Forms.Editors
             txtListName.Text = list.Name;
             for (int i = 0; i < list.Conditions.Count; i++)
             {
-                lstConditions.Items.Add(Strings.GetEventConditionalDesc(list.Conditions[i]));
+                lstConditions.Items.Add(Strings.GetEventConditionalDesc((dynamic)list.Conditions[i]));
             }
         }
 
@@ -142,20 +142,17 @@ namespace Intersect.Editor.Forms.Editors
 
         private void btnAddCondition_Click(object sender, EventArgs e)
         {
-            var evtCommand = new EventCommand()
+            var condition = new PlayerSwitchCondition();
+            if (OpenConditionEditor(condition))
             {
-                Type = EventCommandType.ConditionalBranch
-            };
-            if (OpenConditionEditor(evtCommand))
-            {
-                mEdittingList.Conditions.Add(evtCommand);
+                mEdittingList.Conditions.Add(condition);
                 UpdateConditions(mEdittingList);
             }
         }
 
-        private bool OpenConditionEditor(EventCommand cmd)
+        private bool OpenConditionEditor(Condition condition)
         {
-            var cmdWindow = new EventCommandConditionalBranch(cmd, null, null);
+            var cmdWindow = new EventCommandConditionalBranch(condition, null, null);
             var frm = new Form
             {
                 Text = Strings.DynamicRequirements.conditioneditor,

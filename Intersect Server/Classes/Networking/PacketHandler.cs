@@ -674,7 +674,7 @@ namespace Intersect.Server.Classes.Networking
                 {
                     dbObj = (EventBase)LegacyDatabase.AddGameObject(GameObjectType.Event, evt.Key);
                 }
-                JsonConvert.PopulateObject(evt.Value.JsonData, dbObj, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
+                dbObj.Load(evt.Value.JsonData);
                 if (!map.EventIds.Contains(evt.Key)) map.EventIds.Add(evt.Key);
             }
             map.LocalEvents.Clear();
@@ -1101,7 +1101,7 @@ namespace Intersect.Server.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            ((Player)(client.Entity)).TryActivateEvent(bf.ReadGuid(), bf.ReadGuid());
+            ((Player)(client.Entity)).TryActivateEvent(bf.ReadGuid());
             bf.Dispose();
         }
 
@@ -1109,7 +1109,7 @@ namespace Intersect.Server.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            ((Player)(client.Entity)).RespondToEvent(bf.ReadGuid(), bf.ReadGuid(), bf.ReadInteger());
+            ((Player)(client.Entity)).RespondToEvent(bf.ReadGuid(), bf.ReadInteger());
             bf.Dispose();
         }
 

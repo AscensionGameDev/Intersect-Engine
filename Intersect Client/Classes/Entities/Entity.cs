@@ -73,7 +73,7 @@ namespace Intersect_Client.Classes.Entities
         public string Face = "";
 
         public int Gender = 0;
-        public int HideName;
+        public bool HideName;
 
         //Inventory/Spells/Equipment
         public ItemInstance[] Inventory = new ItemInstance[Options.MaxInvItems];
@@ -97,7 +97,7 @@ namespace Intersect_Client.Classes.Entities
         public string Name = "";
         public float OffsetX;
         public float OffsetY;
-        public int Passable;
+        public bool Passable;
 
         //Rendering Variables
         public HashSet<Entity> RenderList;
@@ -204,8 +204,8 @@ namespace Intersect_Client.Classes.Entities
             CurrentY = bf.ReadInteger();
             CurrentZ = bf.ReadInteger();
             Dir = bf.ReadInteger();
-            Passable = bf.ReadInteger();
-            HideName = bf.ReadInteger();
+            Passable = bf.ReadBoolean();
+            HideName = bf.ReadBoolean();
             var animsToClear = new List<AnimationInstance>();
             var animsToAdd = new List<AnimationBase>();
             int animCount = bf.ReadInteger();
@@ -831,7 +831,7 @@ namespace Intersect_Client.Classes.Entities
 
         public virtual void DrawName(Color textColor, Color borderColor = null, Color backgroundColor = null)
         {
-            if (HideName == 1 || Name.Trim().Length == 0)
+            if (HideName || Name.Trim().Length == 0)
             {
                 return;
             }
@@ -904,7 +904,7 @@ namespace Intersect_Client.Classes.Entities
 
         public void DrawHpBar()
         {
-            if (HideName == 1 && Vital[(int) Vitals.Health] == MaxVital[(int) Vitals.Health])
+            if (HideName && Vital[(int) Vitals.Health] == MaxVital[(int) Vitals.Health])
             {
                 return;
             }

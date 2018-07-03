@@ -13,7 +13,7 @@ namespace Intersect.Server.Classes.Database.PlayerData.Characters
         public Guid Id { get; private set; }
         public Guid CharacterId { get; private set; }
         public virtual Player Character { get; private set; }
-        public int VariableId { get; private set; }
+        public Guid VariableId { get; private set; }
         public int Value { get; set; }
 
         public Variable()
@@ -21,7 +21,7 @@ namespace Intersect.Server.Classes.Database.PlayerData.Characters
             
         }
 
-        public Variable(int id)
+        public Variable(Guid id)
         {
             VariableId = id;
         }

@@ -17,8 +17,7 @@ namespace Intersect.Editor.Maps
         private static MapInstances sLookup;
 
         //Map Attributes
-        private Dictionary<Attribute, AnimationInstance> mAttributeAnimInstances =
-            new Dictionary<Attribute, AnimationInstance>();
+        private Dictionary<Attribute, AnimationInstance> mAttributeAnimInstances = new Dictionary<Attribute, AnimationInstance>();
 
         private byte[] mLoadedData;
 

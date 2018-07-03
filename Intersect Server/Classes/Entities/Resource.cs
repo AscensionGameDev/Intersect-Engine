@@ -28,8 +28,8 @@ namespace Intersect.Server.Classes.Entities
             SetMaxVital(Vitals.Health, Globals.Rand.Next(Math.Min(1, resource.MinHp),
                 Math.Max(resource.MaxHp, Math.Min(1, resource.MinHp)) + 1));
             RestoreVital(Vitals.Health);
-            Passable = Convert.ToInt32(resource.WalkableBefore);
-            HideName = 1;
+            Passable = resource.WalkableBefore;
+            HideName = true;
         }
 
         public void Destroy(int dropitems = 0, EntityInstance killer = null)
@@ -42,7 +42,7 @@ namespace Intersect.Server.Classes.Entities
         {
             base.Die(0, killer);
             Sprite = Base.Exhausted.Graphic;
-            Passable = Convert.ToInt32(Base.WalkableAfter);
+            Passable = Base.WalkableAfter;
             IsDead = true;
             if (dropitems > 0)
             {
@@ -60,7 +60,7 @@ namespace Intersect.Server.Classes.Entities
             Sprite = Base.Initial.Graphic;
             SetMaxVital(Vitals.Health,Globals.Rand.Next(Base.MinHp, Base.MaxHp + 1));
             RestoreVital(Vitals.Health);
-            Passable = Convert.ToInt32(Base.WalkableBefore);
+            Passable = Base.WalkableBefore;
             Items.Clear();
 
             //Give Resource Drops

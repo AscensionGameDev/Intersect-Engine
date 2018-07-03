@@ -102,7 +102,7 @@ namespace Intersect_Client.Classes.Networking
             GameNetwork.SendPacket(bf.ToArray());
         }
 
-        public static void SendActivateEvent(Guid eventId)
+        public static void SendActivateEvent(Guid eventId, Guid mapId)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.ActivateEvent);

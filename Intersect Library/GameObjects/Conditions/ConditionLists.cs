@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Intersect.GameObjects.Conditions
 {
@@ -10,50 +11,19 @@ namespace Intersect.GameObjects.Conditions
         {
         }
 
-        public ConditionLists(ByteBuffer buff)
-        {
-            Load(buff);
-        }
-
-        public ConditionLists(byte[] data)
+        public ConditionLists(string data)
         {
             Load(data);
         }
 
-        public void Load(ByteBuffer buff)
+        public void Load(string data)
         {
-            Lists.Clear();
-            var count = buff.ReadInteger();
-            for (int i = 0; i < count; i++)
-            {
-                var lst = new ConditionList();
-                lst.Load(buff);
-                Lists.Add(lst);
-            }
+            JsonConvert.PopulateObject(data, this, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.Ignore, ObjectCreationHandling = ObjectCreationHandling.Replace });
         }
 
-        public void Load(byte[] data)
+        public string Data()
         {
-            var buff = new ByteBuffer();
-            buff.WriteBytes(data);
-            Load(buff);
-            buff.Dispose();
-        }
-
-        public void Save(ByteBuffer buff)
-        {
-            buff.WriteBytes(Data());
-        }
-
-        public byte[] Data()
-        {
-            var buff = new ByteBuffer();
-            buff.WriteInteger(Lists.Count);
-            for (int i = 0; i < Lists.Count; i++)
-            {
-                Lists[i].Save(buff);
-            }
-            return buff.ToArray();
+            return JsonConvert.SerializeObject(this, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.Ignore });
         }
     }
 }

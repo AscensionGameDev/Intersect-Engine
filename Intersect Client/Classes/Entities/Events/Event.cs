@@ -19,8 +19,8 @@ namespace Intersect_Client.Classes.Entities
 
         private string mCachedTilesetName;
         public string Desc = "";
-        public int DirectionFix;
-        public int DisablePreview;
+        public bool DirectionFix;
+        public bool DisablePreview;
         public string FaceGraphic = "";
         public string Graphic = "";
         public string GraphicFile = "";
@@ -35,7 +35,7 @@ namespace Intersect_Client.Classes.Entities
         private MapInstance mOldRenderMap;
         private int mOldRenderY;
         public int RenderLevel = 1;
-        public int WalkingAnim = 1;
+        public bool WalkingAnim = true;
 
         public Event(Guid id, int mapNum, ByteBuffer bf) : base(id, bf, true)
         {
@@ -55,10 +55,10 @@ namespace Intersect_Client.Classes.Entities
         public override void Load(ByteBuffer bf)
         {
             base.Load(bf);
-            HideName = bf.ReadInteger();
-            DirectionFix = bf.ReadInteger();
-            WalkingAnim = bf.ReadInteger();
-            DisablePreview = bf.ReadInteger();
+            HideName = bf.ReadBoolean();
+            DirectionFix = bf.ReadBoolean();
+            WalkingAnim = bf.ReadBoolean();
+            DisablePreview = bf.ReadBoolean();
             Desc = bf.ReadString();
             GraphicType = bf.ReadInteger();
             GraphicFile = bf.ReadString().ToLower();
@@ -77,7 +77,7 @@ namespace Intersect_Client.Classes.Entities
         public override bool Update()
         {
             bool success = base.Update();
-            if (WalkingAnim == 0) WalkFrame = 0;
+            if (!WalkingAnim) WalkFrame = 0;
             return success;
         }
 
@@ -103,7 +103,7 @@ namespace Intersect_Client.Classes.Entities
                         height = srcTexture.GetHeight() / 4;
                         width = srcTexture.GetWidth() / 4;
                         d = GraphicY;
-                        if (DirectionFix != 1)
+                        if (!DirectionFix)
                         {
                             switch (Dir)
                             {
@@ -122,7 +122,7 @@ namespace Intersect_Client.Classes.Entities
                             }
                         }
                         int frame = GraphicX;
-                        if (WalkingAnim == 1) frame = WalkFrame;
+                        if (WalkingAnim) frame = WalkFrame;
                         if (Options.AnimatedSprites.Contains(GraphicFile.ToLower()))
                         {
                             srcRectangle = new FloatRect(AnimationFrame * (int) entityTex.GetWidth() / 4,
@@ -253,7 +253,7 @@ namespace Intersect_Client.Classes.Entities
 
         public override void DrawName(Color textColor, Color borderColor, Color backgroundColor)
         {
-            if (HideName == 1 || Name.Trim().Length == 0)
+            if (HideName || Name.Trim().Length == 0)
             {
                 return;
             }

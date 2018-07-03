@@ -735,7 +735,7 @@ namespace Intersect_Client.Classes.Entities
                         if (en.Value.GetType() == typeof(Event))
                         {
                             //Talk to Event
-                            PacketSender.SendActivateEvent(en.Key);
+                            PacketSender.SendActivateEvent(en.Key, map);
                             AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
                             return true;
                         }
@@ -869,7 +869,7 @@ namespace Intersect_Client.Classes.Entities
                                 {
                                     if (en.Value == null) continue;
                                     if (en.Value.CurrentMap == mapId && en.Value.CurrentX == x &&
-                                        en.Value.CurrentY == y && ((Event) en.Value).DisablePreview == 0 &&
+                                        en.Value.CurrentY == y && !((Event) en.Value).DisablePreview &&
                                         (!en.Value.IsStealthed() || Globals.Me.IsInMyParty(en.Value)))
                                     {
                                         if (TargetBox != null)
@@ -1219,7 +1219,7 @@ namespace Intersect_Client.Classes.Entities
                     {
                         if (en.Value == null) continue;
                         if (en.Value.CurrentMap == tmpMapId && en.Value.CurrentX == tmpX && en.Value.CurrentY == tmpY &&
-                            en.Value.CurrentZ == CurrentZ && en.Value.Passable == 0)
+                            en.Value.CurrentZ == CurrentZ && !en.Value.Passable)
                         {
                             return -4;
                         }
@@ -1300,7 +1300,7 @@ namespace Intersect_Client.Classes.Entities
                 foreach (var en in eventMap.LocalEntities)
                 {
                     if (en.Value == null) continue;
-                    if (en.Value.CurrentMap == eventMap.Id && ((Event) en.Value).DisablePreview == 0 &&
+                    if (en.Value.CurrentMap == eventMap.Id && !((Event) en.Value).DisablePreview &&
                         (!en.Value.IsStealthed() || Globals.Me.IsInMyParty(en.Value)))
                     {
                         if (TargetType == 1 && TargetIndex == en.Value.Id)
@@ -1353,7 +1353,7 @@ namespace Intersect_Client.Classes.Entities
                                 {
                                     if (en.Value == null) continue;
                                     if (en.Value.CurrentMap == mapId && en.Value.CurrentX == x &&
-                                        en.Value.CurrentY == y && ((Event) en.Value).DisablePreview == 0 &&
+                                        en.Value.CurrentY == y && !((Event) en.Value).DisablePreview &&
                                         !en.Value.IsStealthed())
                                     {
                                         if (TargetType != 1 || TargetIndex != en.Value.Id)

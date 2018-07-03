@@ -1,0 +1,755 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using Intersect.Editor.Localization;
+using Intersect.Editor.Maps;
+using Intersect.Enums;
+using Intersect.GameObjects;
+using Intersect.GameObjects.Events;
+using Intersect.GameObjects.Events.Commands;
+using Intersect.GameObjects.Maps.MapList;
+
+namespace Intersect.Editor.Forms.Editors.Events
+{
+    public static class CommandPrinter
+    {
+        /// <summary>
+        ///     Takes a string and a length value. If the string is longer than the length it will cut the string and add a ...,
+        ///     otherwise it will return the original string.
+        /// </summary>
+        /// <param name="value">String to process.</param>
+        /// <param name="maxChars">Max length allowed for the string.</param>
+        /// <returns></returns>
+        private static string Truncate(string value, int maxChars)
+        {
+            return value.Length <= maxChars ? value : value.Substring(0, maxChars) + " ..";
+        }
+
+        /// <summary>
+        ///     Recursively prints the referenced command list and all of it's children.
+        /// </summary>
+        /// <param name="commandList">The command list to print.</param>
+        /// <param name="indent">The starting indent of commands in this list.</param>
+        public static void PrintCommandList(EventPage page, List<EventCommand> commandList, string indent, ListBox lstEventCommands, List<CommandListProperties> mCommandProperties, MapInstance map) //TODO: How we can simplify and clean this up?
+        {
+            CommandListProperties clp;
+            if (commandList.Count > 0)
+            {
+                for (var i = 0; i < commandList.Count; i++)
+                {
+                    switch (commandList[i].Type)
+                    {
+                        case EventCommandType.ShowOptions:
+                            var cmd = ((ShowOptionsCommand)commandList[i]);
+                            lstEventCommands.Items.Add(indent + Strings.EventCommandList.linestart + GetCommandText((dynamic)commandList[i],map));
+                            clp = new CommandListProperties
+                            {
+                                Editable = true,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Cmd = commandList[i],
+                                Type = commandList[i].Type
+                            };
+                            mCommandProperties.Add(clp);
+                            for (var x = 0; x < 4; x++)
+                            {
+                                if (cmd.Options[x].Trim().Length <= 0) continue;
+                                lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.whenoption.ToString(Truncate(cmd.Options[x], 20)));
+                                clp = new CommandListProperties
+                                {
+                                    Editable = false,
+                                    MyIndex = i,
+                                    MyList = commandList,
+                                    Type = commandList[i].Type,
+                                    Cmd = commandList[i]
+                                };
+                                mCommandProperties.Add(clp);
+                                PrintCommandList(page, page.CommandLists[cmd.BranchIds[x]], indent + "          ", lstEventCommands, mCommandProperties, map);
+                            }
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.endoptions);
+                            clp = new CommandListProperties
+                            {
+                                Editable = false,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Type = commandList[i].Type,
+                                Cmd = commandList[i]
+                            };
+
+                            mCommandProperties.Add(clp);
+                            break;
+                        case EventCommandType.ConditionalBranch:
+                            var cnd = ((ConditionalBranchCommand)commandList[i]);
+                            lstEventCommands.Items.Add(indent + Strings.EventCommandList.linestart + GetCommandText((dynamic)commandList[i], map));
+                            clp = new CommandListProperties
+                            {
+                                Editable = true,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Cmd = commandList[i],
+                                Type = commandList[i].Type
+                            };
+                            mCommandProperties.Add(clp);
+
+                            PrintCommandList(page, page.CommandLists[cnd.BranchIds[0]], indent + "          ", lstEventCommands, mCommandProperties, map);
+
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.conditionalelse);
+                            clp = new CommandListProperties
+                            {
+                                Editable = false,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Type = commandList[i].Type,
+                                Cmd = commandList[i]
+                            };
+                            mCommandProperties.Add(clp);
+
+                            PrintCommandList(page, page.CommandLists[cnd.BranchIds[1]], indent + "          ", lstEventCommands, mCommandProperties, map);
+
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.conditionalend);
+                            clp = new CommandListProperties
+                            {
+                                Editable = false,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Type = commandList[i].Type,
+                                Cmd = commandList[i]
+                            };
+
+                            mCommandProperties.Add(clp);
+                            break;
+                        case EventCommandType.ChangeSpells:
+                            var spl = ((ChangeSpellsCommand)commandList[i]);
+                            lstEventCommands.Items.Add(indent + Strings.EventCommandList.linestart + GetCommandText((dynamic)commandList[i], map));
+                            clp = new CommandListProperties
+                            {
+                                Editable = true,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Cmd = commandList[i],
+                                Type = commandList[i].Type
+                            };
+                            mCommandProperties.Add(clp);
+
+                            //When the spell was successfully taught:
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.spellsucceeded);
+                            clp = new CommandListProperties
+                            {
+                                Editable = false,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Type = commandList[i].Type,
+                                Cmd = commandList[i]
+                            };
+                            mCommandProperties.Add(clp);
+                            PrintCommandList(page, page.CommandLists[spl.BranchIds[0]], indent + "          ", lstEventCommands, mCommandProperties, map);
+
+                            //When the spell failed to be taught:
+                            lstEventCommands.Items.Add(indent + "      : " +
+                                                       Strings.EventCommandList.spellfailed);
+                            clp = new CommandListProperties
+                            {
+                                Editable = false,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Type = commandList[i].Type,
+                                Cmd = commandList[i]
+                            };
+                            mCommandProperties.Add(clp);
+                            PrintCommandList(page,page.CommandLists[spl.BranchIds[1]], indent + "          ",lstEventCommands,mCommandProperties,map);
+
+                            lstEventCommands.Items.Add(
+                                indent + "      : " + Strings.EventCommandList.endspell);
+                            clp = new CommandListProperties
+                            {
+                                Editable = false,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Type = commandList[i].Type,
+                                Cmd = commandList[i]
+                            };
+
+                            mCommandProperties.Add(clp);
+                            break;
+                        case EventCommandType.ChangeItems:
+                            var itm = ((ChangeItemsCommand)commandList[i]);
+                            lstEventCommands.Items.Add(indent + Strings.EventCommandList.linestart + GetCommandText((dynamic)commandList[i], map));
+                            clp = new CommandListProperties
+                            {
+                                Editable = true,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Cmd = commandList[i],
+                                Type = commandList[i].Type
+                            };
+                            mCommandProperties.Add(clp);
+
+                            //When the item(s) were successfully given/taken:
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.itemschanged);
+                            clp = new CommandListProperties
+                            {
+                                Editable = false,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Type = commandList[i].Type,
+                                Cmd = commandList[i]
+                            };
+                            mCommandProperties.Add(clp);
+                            PrintCommandList(page, page.CommandLists[itm.BranchIds[0]], indent + "          ", lstEventCommands, mCommandProperties, map);
+
+                            //When the items failed to be given/taken:
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.itemnotchanged);
+                            clp = new CommandListProperties
+                            {
+                                Editable = false,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Type = commandList[i].Type,
+                                Cmd = commandList[i]
+                            };
+                            mCommandProperties.Add(clp);
+                            PrintCommandList(page, page.CommandLists[itm.BranchIds[1]], indent + "          ", lstEventCommands, mCommandProperties, map);
+
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.enditemchange);
+                            clp = new CommandListProperties
+                            {
+                                Editable = false,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Type = commandList[i].Type,
+                                Cmd = commandList[i]
+                            };
+
+                            mCommandProperties.Add(clp);
+                            break;
+
+                        case EventCommandType.StartQuest:
+                            var qst = ((StartQuestCommand)commandList[i]);
+                            lstEventCommands.Items.Add(indent + Strings.EventCommandList.linestart + GetCommandText((dynamic)commandList[i], map));
+                            clp = new CommandListProperties
+                            {
+                                Editable = true,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Cmd = commandList[i],
+                                Type = commandList[i].Type
+                            };
+                            mCommandProperties.Add(clp);
+
+                            //When the quest is accepted/started successfully:
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.queststarted);
+                            clp = new CommandListProperties
+                            {
+                                Editable = false,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Type = commandList[i].Type,
+                                Cmd = commandList[i]
+                            };
+                            mCommandProperties.Add(clp);
+                            PrintCommandList(page, page.CommandLists[qst.BranchIds[0]], indent + "          ", lstEventCommands, mCommandProperties, map);
+
+                            //When the quest was declined or requirements not met:
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.questnotstarted);
+                            clp = new CommandListProperties
+                            {
+                                Editable = false,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Type = commandList[i].Type,
+                                Cmd = commandList[i]
+                            };
+                            mCommandProperties.Add(clp);
+                            PrintCommandList(page, page.CommandLists[qst.BranchIds[1]], indent + "          ", lstEventCommands, mCommandProperties, map);
+
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.endstartquest);
+                            clp = new CommandListProperties
+                            {
+                                Editable = false,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Type = commandList[i].Type,
+                                Cmd = commandList[i]
+                            };
+
+                            mCommandProperties.Add(clp);
+                            break;
+                        default:
+                            lstEventCommands.Items.Add(indent + Strings.EventCommandList.linestart + GetCommandText((dynamic)commandList[i],map));
+                            clp = new CommandListProperties
+                            {
+                                Editable = true,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Type = commandList[i].Type,
+                                Cmd = commandList[i]
+                            };
+                            mCommandProperties.Add(clp);
+                            break;
+                    }
+                }
+            }
+            lstEventCommands.Items.Add(indent + Strings.EventCommandList.linestart);
+            clp = new CommandListProperties { Editable = true, MyIndex = -1, MyList = commandList };
+            mCommandProperties.Add(clp);
+        }
+
+        //TODO: Bring this in and clean up the above later (AFTER we get everything else working and we can actually test our changes.)
+        //public static void PrintCommand(List<EventCommand> commandList, EventCommand command, string indent, ListBox lstEventCommands, List<CommandListProperties> mCommandProperties)
+        //{
+        //    lstEventCommands.Items.Add(indent + Strings.EventCommandList.linestart + GetCommandText(command));
+        //    var clp = new CommandListProperties
+        //    {
+        //        Editable = true,
+        //        MyIndex = commandList.IndexOf(command),
+        //        MyList = commandList,
+        //        Type = command.Type,
+        //        Cmd = command
+        //    };
+        //    mCommandProperties.Add(clp);
+        //}
+
+        private static string GetCommandText(ShowTextCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.showtext.ToString(Truncate(command.Text, 30));
+        }
+
+        private static string GetCommandText(ShowOptionsCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.showoptions.ToString(Truncate(command.Text, 30));
+        }
+
+        private static string GetCommandText(AddChatboxTextCommand command, MapInstance map)
+        {
+            var channel = "";
+            switch (command.Channel)
+            {
+                case 0: //Player
+                    channel += Strings.EventCommandList.chatplayer;
+                    break;
+                case 1: //Local
+                    channel += Strings.EventCommandList.chatlocal;
+                    break;
+                case 2: //Global
+                    channel += Strings.EventCommandList.chatglobal;
+                    break;
+            }
+            return Strings.EventCommandList.chatboxtext.ToString(channel, command.Channel, Truncate(command.Text, 20));
+        }
+
+        private static string GetCommandText(SetSwitchCommand command, MapInstance map)
+        {
+            var value = "";
+            value = Strings.EventCommandList.False;
+            if (command.Value)
+            {
+                value = Strings.EventCommandList.True;
+            }
+            if (command.SwitchType == SwitchTypes.PlayerSwitch)
+            {
+                return Strings.EventCommandList.playerswitch.ToString(PlayerSwitchBase.GetName(command.SwitchId),value);
+            }
+            else if (command.SwitchType == SwitchTypes.ServerSwitch)
+            {
+                return Strings.EventCommandList.globalswitch.ToString(ServerSwitchBase.GetName(command.SwitchId),value);
+            }
+            else
+            {
+                return Strings.EventCommandList.invalid;
+            }
+        }
+
+        private static string GetCommandText(SetVariableCommand command, MapInstance map)
+        {
+            var varvalue = "";
+            switch (command.ModType)
+            {
+                case VariableMods.Set:
+                    varvalue = Strings.EventCommandList.setvariable.ToString(command.Value);
+                    break;
+                case VariableMods.Add:
+                    varvalue = Strings.EventCommandList.addvariable.ToString(command.Value);
+                    break;
+                case VariableMods.Subtract:
+                    varvalue = Strings.EventCommandList.subtractvariable.ToString(command.Value);
+                    break;
+                case VariableMods.Random:
+                    varvalue = Strings.EventCommandList.randvariable.ToString(command.Value, command.HighValue);
+                    break;
+            }
+            if (command.VariableType == VariableTypes.PlayerVariable)
+            {
+                return Strings.EventCommandList.playervariable.ToString( PlayerVariableBase.GetName(command.VariableId), varvalue);
+            }
+            if (command.VariableType == VariableTypes.ServerVariable)
+            {
+                return Strings.EventCommandList.globalvariable.ToString(ServerVariableBase.GetName(command.VariableId), varvalue);
+            }
+            return Strings.EventCommandList.invalid;
+        }
+
+        private static string GetCommandText(SetSelfSwitchCommand command, MapInstance map)
+        {
+            var selfvalue = "";
+            selfvalue = Strings.EventCommandList.False;
+            if (command.Value)
+            {
+                selfvalue = Strings.EventCommandList.True;
+            }
+            return Strings.EventCommandList.selfswitch.ToString(Strings.EventCommandList.selfswitches[command.SwitchId], selfvalue);
+        }
+
+        private static string GetCommandText(ConditionalBranchCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.conditionalbranch.ToString(Strings.GetEventConditionalDesc((dynamic)command.Condition));
+        }
+
+        private static string GetCommandText(ExitEventProcessingCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.exitevent;
+        }
+
+        private static string GetCommandText(LabelCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.label.ToString(command.Label);
+        }
+
+        private static string GetCommandText(GoToLabelCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.gotolabel.ToString(command.Label);
+        }
+
+        private static string GetCommandText(StartCommmonEventCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.commonevent.ToString(EventBase.GetName(command.EventId));
+        }
+
+        private static string GetCommandText(RestoreHpCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.restorehp;
+        }
+
+        private static string GetCommandText(RestoreMpCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.restoremp;
+        }
+
+        private static string GetCommandText(LevelUpCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.levelup;
+        }
+
+        private static string GetCommandText(GiveExperienceCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.giveexp.ToString(command.Exp);
+        }
+
+        private static string GetCommandText(ChangeLevelCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.setlevel.ToString(command.Level);
+        }
+
+        private static string GetCommandText(ChangeSpellsCommand command, MapInstance map)
+        {
+            if (command.Add)
+                return Strings.EventCommandList.changespells.ToString(Strings.EventCommandList.teach.ToString(SpellBase.GetName(command.SpellId)));
+            return Strings.EventCommandList.changespells.ToString(Strings.EventCommandList.forget.ToString(SpellBase.GetName(command.SpellId)));
+        }
+
+        private static string GetCommandText(ChangeItemsCommand command, MapInstance map)
+        {
+            if (command.Add)
+                return Strings.EventCommandList.changeitems.ToString(Strings.EventCommandList.give.ToString(ItemBase.GetName(command.ItemId)));
+            return Strings.EventCommandList.changeitems.ToString(Strings.EventCommandList.take.ToString(ItemBase.GetName(command.ItemId)));
+        }
+
+        private static string GetCommandText(ChangeSpriteCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.setsprite.ToString(command.Sprite);
+        }
+
+        private static string GetCommandText(ChangeFaceCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.setface.ToString(command.Face);
+        }
+
+        private static string GetCommandText(ChangeGenderCommand command, MapInstance map)
+        {
+            if (command.Gender == 0)
+            {
+                return Strings.EventCommandList.setgender.ToString(Strings.EventCommandList.male);
+            }
+            else
+            {
+                return Strings.EventCommandList.setgender.ToString(Strings.EventCommandList.female);
+            }
+        }
+
+        private static string GetCommandText(SetAccessCommand command, MapInstance map)
+        {
+            switch (command.Power)
+            {
+                case 0:
+                    return Strings.EventCommandList.setaccess.ToString(Strings.EventCommandList.regularuser);
+                case 1:
+                    return Strings.EventCommandList.setaccess.ToString(Strings.EventCommandList.moderator);
+                case 2:
+                    return Strings.EventCommandList.setaccess.ToString(Strings.EventCommandList.admin);
+            }
+            return Strings.EventCommandList.setaccess.ToString(Strings.EventCommandList.unknownrole);
+        }
+
+        private static string GetCommandText(WarpCommand command, MapInstance map)
+        {
+            var mapName = Strings.EventCommandList.mapnotfound;
+            for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
+            {
+                if (MapList.GetOrderedMaps()[i].MapId == command.MapId)
+                {
+                    mapName = MapList.GetOrderedMaps()[i].Name;
+                }
+            }
+            return Strings.EventCommandList.warp.ToString(mapName, command.X, command.Y, Strings.Directions.dir[command.Dir - 1]);
+        }
+
+        private static string GetCommandText(SetMoveRouteCommand command, MapInstance map)
+        {
+            if (command.Route.Target == Guid.Empty)
+            {
+                return Strings.EventCommandList.moveroute.ToString(Strings.EventCommandList.moverouteplayer);
+            }
+            else
+            {
+                if (map.LocalEvents.ContainsKey(command.Route.Target))
+                {
+                    return Strings.EventCommandList.moveroute.ToString(Strings.EventCommandList.moverouteevent.ToString(map.LocalEvents[command.Route.Target].Name));
+                }
+                else
+                {
+                    return Strings.EventCommandList.moveroute.ToString(Strings.EventCommandList.deletedevent);
+                }
+            }
+        }
+
+        private static string GetCommandText(WaitForRouteCommand command, MapInstance map)
+        {
+            if (command.TargetId == Guid.Empty)
+            {
+                return Strings.EventCommandList.waitforroute.ToString(Strings.EventCommandList.moverouteplayer);
+            }
+            else if (map.LocalEvents.ContainsKey(command.TargetId))
+            {
+                return Strings.EventCommandList.waitforroute.ToString(Strings.EventCommandList.moverouteevent.ToString(map.LocalEvents[command.TargetId].Name));
+            }
+            else
+            {
+                return Strings.EventCommandList.waitforroute.ToString(Strings.EventCommandList.deletedevent);
+            }
+        }
+
+        private static string GetCommandText(HoldPlayerCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.holdplayer;
+        }
+
+        private static string GetCommandText(ReleasePlayerCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.releaseplayer;
+        }
+
+        private static string GetCommandText(SpawnNpcCommand command, MapInstance map)
+        {
+            if (command.MapId != Guid.Empty)
+            {
+                for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
+                {
+                    if (MapList.GetOrderedMaps()[i].MapId == command.MapId)
+                    {
+                        return Strings.EventCommandList.spawnnpc.ToString(NpcBase.GetName(command.NpcId), Strings.EventCommandList.spawnonmap.ToString(MapList.GetOrderedMaps()[i].Name,
+                            command.X, command.Y, Strings.Directions.dir[command.Dir]));
+                    }
+                }
+                return Strings.EventCommandList.spawnnpc.ToString(NpcBase.GetName(command.NpcId), Strings.EventCommandList.spawnonmap.ToString(
+                    Strings.EventCommandList.mapnotfound, command.X, command.Y, Strings.Directions.dir[command.Dir]));
+            }
+            else
+            {
+                var retain = Strings.EventCommandList.False;
+                //TODO: Possibly bugged -- test this.
+                if (Convert.ToBoolean(command.Dir)) retain = Strings.EventCommandList.True;
+                if (command.EntityId == Guid.Empty)
+                {
+                    return Strings.EventCommandList.spawnnpc.ToString(NpcBase.GetName(command.NpcId), Strings.EventCommandList.spawnonplayer.ToString(command.X, command.Y, retain));
+                }
+                else
+                {
+                    if (map.LocalEvents.ContainsKey(command.EntityId))
+                    {
+                        return Strings.EventCommandList.spawnnpc.ToString(NpcBase.GetName(command.NpcId), Strings.EventCommandList.spawnonevent.ToString(
+                            map.LocalEvents[command.EntityId].Name, command.X, command.Y, retain));
+                    }
+                    else
+                    {
+                        return Strings.EventCommandList.spawnnpc.ToString(NpcBase.GetName(command.NpcId), Strings.EventCommandList.spawnonevent.ToString(
+                            Strings.EventCommandList.deletedevent, command.X, command.Y, retain));
+                    }
+                }
+            }
+        }
+
+        private static string GetCommandText(DespawnNpcCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.despawnnpcs;
+        }
+
+        private static string GetCommandText(PlayAnimationCommand command, MapInstance map)
+        {
+            if (command.MapId != Guid.Empty)
+            {
+                for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
+                {
+                    if (MapList.GetOrderedMaps()[i].MapId == command.MapId)
+                    {
+                        return Strings.EventCommandList.playanimation.ToString(AnimationBase.GetName(command.AnimationId),Strings.EventCommandList.animationonmap.ToString(
+                                MapList.GetOrderedMaps()[i].Name, command.X, command.Y,Strings.Directions.dir[command.Dir]));
+                    }
+                }
+                return Strings.EventCommandList.playanimation.ToString(AnimationBase.GetName(command.AnimationId), Strings.EventCommandList.animationonmap.ToString(
+                        Strings.EventCommandList.mapnotfound, command.X, command.Y,Strings.Directions.dir[command.Dir]));
+            }
+            else
+            {
+                var spawnOpt = "";
+                switch (command.Dir)
+                {
+                    //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
+                    case 1:
+                        spawnOpt = Strings.EventCommandList.animationrelativedir;
+                        break;
+                    case 2:
+                        spawnOpt = Strings.EventCommandList.animationrotatedir;
+                        break;
+                    case 3:
+                        spawnOpt = Strings.EventCommandList.animationrelativerotate;
+                        break;
+                }
+                if (command.EntityId == Guid.Empty)
+                {
+                    return Strings.EventCommandList.playanimation.ToString(AnimationBase.GetName(command.AnimationId),
+                        Strings.EventCommandList.animationonplayer.ToString(command.X,command.Y, spawnOpt));
+                }
+                else
+                {
+                    if (map.LocalEvents.ContainsKey(command.EntityId))
+                    {
+                        return Strings.EventCommandList.playanimation.ToString(AnimationBase.GetName(command.AnimationId),Strings.EventCommandList.animationonevent.ToString(
+                            map.LocalEvents[command.EntityId].Name, command.X,command.Y, spawnOpt));
+                    }
+                    else
+                    {
+                        return Strings.EventCommandList.playanimation.ToString(AnimationBase.GetName(command.AnimationId),Strings.EventCommandList.animationonevent.ToString(
+                                Strings.EventCommandList.deletedevent, command.X,command.Y, spawnOpt));
+                    }
+                }
+            }
+        }
+
+        private static string GetCommandText(PlayBgmCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.playbgm.ToString(command.File);
+        }
+
+        private static string GetCommandText(FadeoutBgmCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.fadeoutbgm;
+            
+        }
+
+        private static string GetCommandText(PlaySoundCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.playsound.ToString(command.File);
+        }
+
+        private static string GetCommandText(StopSoundsCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.stopsounds;
+        }
+
+        private static string GetCommandText(ShowPictureCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.showpicture;
+        }
+
+        private static string GetCommandText(HidePictureCommmand command)
+        {
+            return Strings.EventCommandList.hidepicture;
+        }
+
+        private static string GetCommandText(WaitCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.wait.ToString(command.Time);
+        }
+
+        private static string GetCommandText(OpenBankCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.openbank;
+        }
+
+        private static string GetCommandText(OpenShopCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.openshop.ToString(ShopBase.GetName(command.ShopId));
+        }
+
+        private static string GetCommandText(OpenCraftingTableCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.opencrafting.ToString(CraftingTableBase.GetName(command.CraftingTableId));
+        }
+
+        private static string GetCommandText(SetClassCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.setclass.ToString(ClassBase.GetName(command.ClassId));
+        }
+
+        private static string GetCommandText(StartQuestCommand command, MapInstance map)
+        {
+            if (!command.Offer)
+            {
+                return Strings.EventCommandList.startquest.ToString(QuestBase.GetName(command.QuestId), Strings.EventCommandList.forcedstart);
+            }
+            else
+            {
+                return Strings.EventCommandList.startquest.ToString(QuestBase.GetName(command.QuestId), Strings.EventCommandList.showoffer);
+            }
+        }
+
+        private static string GetCommandText(CompleteQuestTaskCommand command, MapInstance map)
+        {
+            var quest = QuestBase.Get(command.QuestId);
+            if (quest != null)
+            {
+                //Try to find task
+                foreach (var task in quest.Tasks)
+                {
+                    if (task.Id == command.TaskId)
+                    {
+                        return Strings.EventCommandList.completetask.ToString(QuestBase.GetName(command.QuestId), task.GetTaskString(Strings.TaskEditor.descriptions));
+                    }
+                }
+            }
+            return Strings.EventCommandList.completetask.ToString(QuestBase.GetName(command.QuestId), Strings.EventCommandList.taskundefined);
+        }
+
+        private static string GetCommandText(EndQuestCommand command, MapInstance map)
+        {
+            if (!command.SkipCompletionEvent)
+            {
+                return Strings.EventCommandList.endquest.ToString(QuestBase.GetName(command.QuestId), Strings.EventCommandList.runcompletionevent);
+            }
+            return Strings.EventCommandList.endquest.ToString(QuestBase.GetName(command.QuestId), Strings.EventCommandList.skipcompletionevent);
+        }
+
+    }
+}

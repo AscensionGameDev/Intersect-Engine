@@ -1,63 +1,31 @@
 ﻿using System.Collections.Generic;
 using Intersect.GameObjects.Events;
+using Newtonsoft.Json;
 
 namespace Intersect.GameObjects.Conditions
 {
     public class ConditionList
     {
-        public List<EventCommand> Conditions = new List<EventCommand>(); //Long story.. just go with it.. okay?
+        public List<Condition> Conditions = new List<Condition>(); //Long story.. just go with it.. okay?
         public string Name = "New Condition List";
 
         public ConditionList()
         {
         }
 
-        public ConditionList(ByteBuffer buff)
-        {
-            Load(buff);
-        }
-
-        public ConditionList(byte[] data)
+        public ConditionList(string data)
         {
             Load(data);
         }
 
-        public void Load(ByteBuffer buff)
+        public void Load(string data)
         {
-            Name = buff.ReadString();
-            Conditions.Clear();
-            var count = buff.ReadInteger();
-            for (int i = 0; i < count; i++)
-            {
-                var cmd = new EventCommand();
-                cmd.Load(buff);
-                Conditions.Add(cmd);
-            }
+            JsonConvert.PopulateObject(data, this, new JsonSerializerSettings() {TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.Ignore, ObjectCreationHandling = ObjectCreationHandling.Replace});
         }
 
-        public void Load(byte[] data)
+        public string Data()
         {
-            var buff = new ByteBuffer();
-            buff.WriteBytes(data);
-            Load(buff);
-            buff.Dispose();
-        }
-
-        public void Save(ByteBuffer buff)
-        {
-            buff.WriteBytes(Data());
-        }
-
-        public byte[] Data()
-        {
-            var buff = new ByteBuffer();
-            buff.WriteString(Name);
-            buff.WriteInteger(Conditions.Count);
-            for (int i = 0; i < Conditions.Count; i++)
-            {
-                Conditions[i].Save(buff);
-            }
-            return buff.ToArray();
+            return JsonConvert.SerializeObject(this, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto,DefaultValueHandling = DefaultValueHandling.Ignore});
         }
     }
 }

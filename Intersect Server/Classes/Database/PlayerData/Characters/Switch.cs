@@ -13,7 +13,7 @@ namespace Intersect.Server.Classes.Database.PlayerData.Characters
         public Guid Id { get; private set; }
         public Guid CharacterId { get; private set; }
         public virtual Player Character { get; private set; }
-        public int SwitchId { get; private set; }
+        public Guid SwitchId { get; private set; }
         public bool Value { get; set; }
 
         public Switch()
@@ -21,7 +21,7 @@ namespace Intersect.Server.Classes.Database.PlayerData.Characters
             
         }
 
-        public Switch(int id)
+        public Switch(Guid id)
         {
             SwitchId = id;
         }

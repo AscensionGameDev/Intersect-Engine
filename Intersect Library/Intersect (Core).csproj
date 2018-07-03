@@ -168,6 +168,7 @@
     <Compile Include="Config\PlayerOptions.cs" />
     <Compile Include="GameObjects\Crafting\CraftBase.cs" />
     <Compile Include="GameObjects\Crafting\CraftingTableBase.cs" />
+    <Compile Include="GameObjects\Events\Condition.cs" />
     <Compile Include="Localization\LocalizedString.cs" />
     <Compile Include="Utilities\AlphanumComparator.cs" />
     <Compile Include="Utilities\DatabaseUtils.cs" />
@@ -178,8 +179,7 @@
     <Compile Include="GameObjects\Conditions\ConditionList.cs" />
     <Compile Include="GameObjects\Conditions\ConditionLists.cs" />
     <Compile Include="GameObjects\Events\Enums.cs" />
-    <Compile Include="GameObjects\Events\EventCommand.cs" />
-    <Compile Include="GameObjects\Events\EventCommandList.cs" />
+    <Compile Include="GameObjects\Events\Commands\EventCommands.cs" />
     <Compile Include="GameObjects\Events\EventGraphic.cs" />
     <Compile Include="GameObjects\Events\EventMoveRoute.cs" />
     <Compile Include="GameObjects\Events\EventPage.cs" />

@@ -76,7 +76,7 @@ namespace Intersect.Models
         }
 
         [JsonIgnore][NotMapped]
-        public virtual string JsonData => JsonConvert.SerializeObject(this,Formatting.Indented);
+        public virtual string JsonData => JsonConvert.SerializeObject(this,Formatting.Indented); //Should eventually be formatting.none
 
         public virtual void Delete() => Lookup.Delete((TObject) this);
 

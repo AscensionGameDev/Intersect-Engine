@@ -9,11 +9,13 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
+using Intersect.GameObjects.Events.Commands;
 using Intersect.Server.Classes.Localization;
 using Intersect.Server.Classes.Core;
 using Intersect.Server.Classes.Database;
 using Intersect.Server.Classes.Database.PlayerData;
 using Intersect.Server.Classes.Database.PlayerData.Characters;
+using Intersect.Server.Classes.Events;
 using Intersect.Server.Classes.General;
 
 using Intersect.Server.Classes.Maps;
@@ -625,7 +627,7 @@ namespace Intersect.Server.Classes.Entities
                 // Check that a resource is actually required.
                 var resource = ((Resource)enemy).Base;
                 //Check Dynamic Requirements
-                if (!EventInstance.MeetsConditionLists(resource.HarvestingRequirements, this, null))
+                if (!Conditions.MeetsConditionLists(resource.HarvestingRequirements, this, null))
                 {
                     PacketSender.SendPlayerMsg(MyClient, Strings.Combat.resourcereqs);
                     return;
@@ -668,7 +670,7 @@ namespace Intersect.Server.Classes.Entities
                 // Check that a resource is actually required.
                 var resource = ((Resource)enemy).Base;
                 //Check Dynamic Requirements
-                if (!EventInstance.MeetsConditionLists(resource.HarvestingRequirements, this, null))
+                if (!Conditions.MeetsConditionLists(resource.HarvestingRequirements, this, null))
                 {
                     PacketSender.SendPlayerMsg(MyClient, Strings.Combat.resourcereqs);
                     return;
@@ -984,7 +986,7 @@ namespace Intersect.Server.Classes.Entities
 					}
 				}
 
-				if (!EventInstance.MeetsConditionLists(itemBase.UsageRequirements, this, null))
+				if (!Conditions.MeetsConditionLists(itemBase.UsageRequirements, this, null))
                 {
                     PacketSender.SendPlayerMsg(MyClient, Strings.Items.dynamicreq);
                     return;
@@ -2636,7 +2638,7 @@ namespace Intersect.Server.Classes.Entities
             {
                 var spell = SpellBase.Get(spellNum);
 
-                if (!EventInstance.MeetsConditionLists(spell.CastingReqs, this, null))
+                if (!Conditions.MeetsConditionLists(spell.CastingReqs, this, null))
                 {
                     PacketSender.SendPlayerMsg(MyClient, Strings.Combat.dynamicreq);
                     return;
@@ -2880,7 +2882,7 @@ namespace Intersect.Server.Classes.Entities
                 }
             }
             //So the quest isn't started or we can repeat it.. let's make sure that we meet requirements.
-            if (!EventInstance.MeetsConditionLists(quest.Requirements, this, null, true, quest)) return false;
+            if (!Conditions.MeetsConditionLists(quest.Requirements, this, null, true, quest)) return false;
             if (quest.Tasks.Count == 0)
             {
                 return false;
@@ -3000,22 +3002,13 @@ namespace Intersect.Server.Classes.Entities
                         foreach (var evt in EventLookup.Values)
                         {
                             if (evt.CallStack.Count <= 0) continue;
-                            if (evt.CallStack.Peek().WaitingForResponse !=
-                                CommandInstance.EventResponse.Quest) continue;
-                            if (evt.CallStack.Peek().ResponseId == questId)
+                            var stackInfo = evt.CallStack.Peek();
+                            if (stackInfo.WaitingForResponse != CommandInstance.EventResponse.Quest) continue;
+                            if (stackInfo.ResponseId == questId)
                             {
-                                //Run success branch
-                                var tmpStack = new CommandInstance(evt.CallStack.Peek().Page)
-                                {
-                                    CommandIndex = 0,
-                                    ListIndex =
-                                        evt.CallStack.Peek().Page.CommandLists[
-                                            evt.CallStack.Peek().ListIndex].Commands[
-                                            evt.CallStack.Peek().CommandIndex].Ints[4]
-                                };
+                                var tmpStack = new CommandInstance(stackInfo.Page, ((StartQuestCommand)stackInfo.Command).BranchIds[0]);
                                 evt.CallStack.Peek().CommandIndex++;
-                                evt.CallStack.Peek().WaitingForResponse =
-                                    CommandInstance.EventResponse.None;
+                                evt.CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
                                 evt.CallStack.Push(tmpStack);
                             }
                         }
@@ -3036,22 +3029,14 @@ namespace Intersect.Server.Classes.Entities
                     foreach (var evt in EventLookup.Values)
                     {
                         if (evt.CallStack.Count <= 0) continue;
-                        if (evt.CallStack.Peek().WaitingForResponse != CommandInstance.EventResponse.Quest)
-                            continue;
-                        if (evt.CallStack.Peek().ResponseId == questId)
+                        var stackInfo = evt.CallStack.Peek();
+                        if (stackInfo.WaitingForResponse != CommandInstance.EventResponse.Quest) continue;
+                        if (stackInfo.ResponseId == questId)
                         {
                             //Run failure branch
-                            var tmpStack = new CommandInstance(evt.CallStack.Peek().Page)
-                            {
-                                CommandIndex = 0,
-                                ListIndex =
-                                    evt.CallStack.Peek().Page.CommandLists[
-                                        evt.CallStack.Peek().ListIndex].Commands[
-                                        evt.CallStack.Peek().CommandIndex].Ints[5]
-                            };
-                            evt.CallStack.Peek().CommandIndex++;
-                            evt.CallStack.Peek().WaitingForResponse =
-                                CommandInstance.EventResponse.None;
+                            var tmpStack = new CommandInstance(stackInfo.Page, ((StartQuestCommand) stackInfo.Command).BranchIds[1]);
+                            stackInfo.CommandIndex++;
+                            stackInfo.WaitingForResponse = CommandInstance.EventResponse.None;
                             evt.CallStack.Push(tmpStack);
                         }
                     }
@@ -3173,7 +3158,7 @@ namespace Intersect.Server.Classes.Entities
         }
 
         //Switches and Variables
-        private Switch GetSwitch(int id)
+        private Switch GetSwitch(Guid id)
         {
             foreach (var s in Switches)
             {
@@ -3181,13 +3166,13 @@ namespace Intersect.Server.Classes.Entities
             }
             return null;
         }
-        public bool GetSwitchValue(int id)
+        public bool GetSwitchValue(Guid id)
         {
             var s = GetSwitch(id);
             if (s == null) return false;
             return s.Value;
         }
-        public void SetSwitchValue(int id, bool value)
+        public void SetSwitchValue(Guid id, bool value)
         {
             var s = GetSwitch(id);
             if (s != null)
@@ -3203,7 +3188,7 @@ namespace Intersect.Server.Classes.Entities
                 Switches.Add(s);
             }
         }
-        private Variable GetVariable(int id)
+        private Variable GetVariable(Guid id)
         {
             foreach (var v in Variables)
             {
@@ -3211,13 +3196,13 @@ namespace Intersect.Server.Classes.Entities
             }
             return null;
         }
-        public int GetVariableValue(int id)
+        public int GetVariableValue(Guid id)
         {
             var v = GetVariable(id);
             if (v == null) return 0;
             return v.Value;
         }
-        public void SetVariableValue(int id, int value)
+        public void SetVariableValue(Guid id, int value)
         {
             var v = GetVariable(id);
             if (v != null)
@@ -3263,21 +3248,17 @@ namespace Intersect.Server.Classes.Entities
             return null;
         }
 
-        public void TryActivateEvent(Guid mapId, Guid eventId)
+        public void TryActivateEvent(Guid eventId)
         {
             foreach (var evt in EventLookup.Values)
             {
-                if (evt.MapId == mapId && evt.BaseEvent.Id == eventId)
+                if (evt.PageInstance.Id == eventId)
                 {
                     if (evt.PageInstance == null) return;
                     if (evt.PageInstance.Trigger != 0) return;
                     if (!IsEventOneBlockAway(evt)) return;
                     if (evt.CallStack.Count != 0) return;
-                    var newStack = new CommandInstance(evt.PageInstance.MyPage)
-                    {
-                        CommandIndex = 0,
-                        ListIndex = 0
-                    };
+                    var newStack = new CommandInstance(evt.PageInstance.MyPage);
                     evt.CallStack.Push(newStack);
                     if (!evt.IsGlobal)
                     {
@@ -3306,33 +3287,27 @@ namespace Intersect.Server.Classes.Entities
             }
         }
 
-        public void RespondToEvent(Guid mapId, Guid eventId, int responseId)
+        public void RespondToEvent(Guid eventId, int responseId)
         {
             lock (mEventLock)
             {
                 foreach (var evt in EventLookup.Values)
                 {
-                    if (evt.MapId == mapId && evt.BaseEvent.Id == eventId)
+                    if (evt.PageInstance.Id == eventId)
                     {
                         if (evt.CallStack.Count <= 0) return;
-                        if (evt.CallStack.Peek().WaitingForResponse != CommandInstance.EventResponse.Dialogue)
-                            return;
-                        if (evt.CallStack.Peek().ResponseId == Guid.Empty)
+                        var stackInfo = evt.CallStack.Peek();
+                        if (stackInfo.WaitingForResponse != CommandInstance.EventResponse.Dialogue) return;
+                        if (stackInfo.ResponseId == Guid.Empty)
                         {
-                            evt.CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
+                            stackInfo.WaitingForResponse = CommandInstance.EventResponse.None;
                         }
                         else
                         {
-                            var tmpStack = new CommandInstance(evt.CallStack.Peek().Page)
-                            {
-                                CommandIndex = 0,
-                                ListIndex =
-                                    evt.CallStack.Peek().Page.CommandLists[
-                                        evt.CallStack.Peek().ListIndex].Commands[
-                                        evt.CallStack.Peek().CommandIndex].Ints[responseId - 1]
-                            };
-                            evt.CallStack.Peek().CommandIndex++;
-                            evt.CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
+
+                            var tmpStack = new CommandInstance(stackInfo.Page, ((ShowOptionsCommand) stackInfo.Command).BranchIds[responseId - 1]);
+                            stackInfo.CommandIndex++;
+                            stackInfo.WaitingForResponse = CommandInstance.EventResponse.None;
                             evt.CallStack.Push(tmpStack);
                         }
                         return;
@@ -3402,7 +3377,7 @@ namespace Intersect.Server.Classes.Entities
                 //Try to Spawn a PageInstance.. if we can
                 for (var i = baseEvent.Pages.Count - 1; i >= 0; i--)
                 {
-                    if ((trigger == -1 || baseEvent.Pages[i].Trigger == trigger) && tmpEvent.CanSpawnPage(i, baseEvent))
+                    if ((trigger == -1 || baseEvent.Pages[i].Trigger == trigger) && Conditions.CanSpawnPage(baseEvent.Pages[i], this, null))
                     {
                         tmpEvent.PageInstance = new EventPageInstance(baseEvent, baseEvent.Pages[i],mapId, tmpEvent, MyClient);
                         tmpEvent.PageIndex = i;
@@ -3411,8 +3386,7 @@ namespace Intersect.Server.Classes.Entities
                         {
                             if (command.ToLower() == tmpEvent.PageInstance.MyPage.TriggerCommand.ToLower())
                             {
-                                var newStack =
-                                    new CommandInstance(tmpEvent.PageInstance.MyPage) { CommandIndex = 0, ListIndex = 0 };
+                                var newStack = new CommandInstance(tmpEvent.PageInstance.MyPage);
                                 tmpEvent.PageInstance.Param = param;
                                 tmpEvent.CallStack.Push(newStack);
                                 return true;
@@ -3420,8 +3394,7 @@ namespace Intersect.Server.Classes.Entities
                         }
                         else
                         {
-                            var newStack =
-                                new CommandInstance(tmpEvent.PageInstance.MyPage) { CommandIndex = 0, ListIndex = 0 };
+                            var newStack = new CommandInstance(tmpEvent.PageInstance.MyPage);
                             tmpEvent.CallStack.Push(newStack);
                             return true;
                         }
@@ -3480,11 +3453,7 @@ namespace Intersect.Server.Classes.Entities
                         {
                             if (evt.PageInstance.Trigger != 1) return;
                             if (evt.CallStack.Count != 0) return;
-                            var newStack = new CommandInstance(evt.PageInstance.MyPage)
-                            {
-                                CommandIndex = 0,
-                                ListIndex = 0
-                            };
+                            var newStack = new CommandInstance(evt.PageInstance.MyPage);
                             evt.CallStack.Push(newStack);
                         }
                     }

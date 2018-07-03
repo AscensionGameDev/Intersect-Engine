@@ -529,36 +529,37 @@ namespace Intersect.Server.Classes.Core
 
         public static IDatabaseObject AddGameObject(GameObjectType gameObjectType, Guid predefinedid)
         {
+            if (predefinedid == Guid.Empty) predefinedid = Guid.NewGuid();
             IDatabaseObject dbObj = null;
             switch (gameObjectType)
             {
                 case GameObjectType.Animation:
-                    dbObj = new AnimationBase();
+                    dbObj = new AnimationBase(predefinedid);
                     sGameDb.Animations.Add((AnimationBase)dbObj);
                     AnimationBase.Lookup.Set(dbObj.Id, dbObj);
                     break;
                 case GameObjectType.Class:
-                    dbObj = new ClassBase();
+                    dbObj = new ClassBase(predefinedid);
                     sGameDb.Classes.Add((ClassBase)dbObj);
                     ClassBase.Lookup.Set(dbObj.Id, dbObj);
                     break;
                 case GameObjectType.Item:
-                    dbObj = new ItemBase();
+                    dbObj = new ItemBase(predefinedid);
                     sGameDb.Items.Add((ItemBase)dbObj);
                     ItemBase.Lookup.Set(dbObj.Id, dbObj);
                     break;
                 case GameObjectType.Npc:
-                    dbObj = new NpcBase();
+                    dbObj = new NpcBase(predefinedid);
                     sGameDb.Npcs.Add((NpcBase)dbObj);
                     NpcBase.Lookup.Set(dbObj.Id, dbObj);
                     break;
                 case GameObjectType.Projectile:
-                    dbObj = new ProjectileBase();
+                    dbObj = new ProjectileBase(predefinedid);
                     sGameDb.Projectiles.Add((ProjectileBase)dbObj);
                     ProjectileBase.Lookup.Set(dbObj.Id, dbObj);
                     break;
                 case GameObjectType.Quest:
-                    dbObj = new QuestBase();
+                    dbObj = new QuestBase(predefinedid);
                     sGameDb.Quests.Add((QuestBase)dbObj);
                     ((QuestBase)dbObj).StartEvent = (EventBase)AddGameObject(GameObjectType.Event);
                     ((QuestBase)dbObj).EndEvent = (EventBase)AddGameObject(GameObjectType.Event);
@@ -567,62 +568,62 @@ namespace Intersect.Server.Classes.Core
                     QuestBase.Lookup.Set(dbObj.Id,dbObj);
                     break;
                 case GameObjectType.Resource:
-                    dbObj = new ResourceBase();
+                    dbObj = new ResourceBase(predefinedid);
                     sGameDb.Resources.Add((ResourceBase)dbObj);
                     ResourceBase.Lookup.Set(dbObj.Id, dbObj);
                     break;
                 case GameObjectType.Shop:
-                    dbObj = new ShopBase();
+                    dbObj = new ShopBase(predefinedid);
                     sGameDb.Shops.Add((ShopBase)dbObj);
                     ShopBase.Lookup.Set(dbObj.Id, dbObj);
                     break;
                 case GameObjectType.Spell:
-                    dbObj = new SpellBase();
+                    dbObj = new SpellBase(predefinedid);
                     sGameDb.Spells.Add((SpellBase)dbObj);
                     SpellBase.Lookup.Set(dbObj.Id, dbObj);
                     break;
                 case GameObjectType.CraftTables:
-                    dbObj = new CraftingTableBase();
+                    dbObj = new CraftingTableBase(predefinedid);
                     sGameDb.CraftingTables.Add((CraftingTableBase)dbObj);
                     CraftingTableBase.Lookup.Set(dbObj.Id, dbObj);
                     break;
                 case GameObjectType.Crafts:
-                    dbObj = new CraftBase();
+                    dbObj = new CraftBase(predefinedid);
                     sGameDb.Crafts.Add((CraftBase)dbObj);
                     CraftBase.Lookup.Set(dbObj.Id, dbObj);
                     break;
                 case GameObjectType.Map:
-                    dbObj = new MapInstance();
+                    dbObj = new MapInstance(predefinedid);
                     sGameDb.Maps.Add((MapInstance)dbObj);
                     MapInstance.Lookup.Set(dbObj.Id, dbObj);
                     break;
                 case GameObjectType.Event:
-                    dbObj = new EventBase();
+                    dbObj = new EventBase(predefinedid);
                     sGameDb.Events.Add((EventBase)dbObj);
                     EventBase.Lookup.Set(dbObj.Id, dbObj);
                     break;
                 case GameObjectType.PlayerSwitch:
-                    dbObj = new PlayerSwitchBase();
+                    dbObj = new PlayerSwitchBase(predefinedid);
                     sGameDb.PlayerSwitches.Add((PlayerSwitchBase)dbObj);
                     PlayerSwitchBase.Lookup.Set(dbObj.Id, dbObj);
                     break;
                 case GameObjectType.PlayerVariable:
-                    dbObj = new PlayerVariableBase();
+                    dbObj = new PlayerVariableBase(predefinedid);
                     sGameDb.PlayerVariables.Add((PlayerVariableBase)dbObj);
                     PlayerVariableBase.Lookup.Set(dbObj.Id, dbObj);
                     break;
                 case GameObjectType.ServerSwitch:
-                    dbObj = new ServerSwitchBase();
+                    dbObj = new ServerSwitchBase(predefinedid);
                     sGameDb.ServerSwitches.Add((ServerSwitchBase)dbObj);
                     ServerSwitchBase.Lookup.Set(dbObj.Id, dbObj);
                     break;
                 case GameObjectType.ServerVariable:
-                    dbObj = new ServerVariableBase();
+                    dbObj = new ServerVariableBase(predefinedid);
                     sGameDb.ServerVariables.Add((ServerVariableBase)dbObj);
                     ServerVariableBase.Lookup.Set(dbObj.Id, dbObj);
                     break;
                 case GameObjectType.Tileset:
-                    dbObj = new TilesetBase();
+                    dbObj = new TilesetBase(predefinedid);
                     sGameDb.Tilesets.Add((TilesetBase)dbObj);
                     TilesetBase.Lookup.Set(dbObj.Id, dbObj);
                     break;

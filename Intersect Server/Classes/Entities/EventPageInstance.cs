@@ -3,6 +3,7 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.Server.Classes.Database;
+using Intersect.Server.Classes.Events;
 using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Maps;
 using Intersect.Server.Classes.Misc.Pathfinding;
@@ -15,9 +16,20 @@ namespace Intersect.Server.Classes.Entities
         private Pathfinder mPathFinder;
         public EventBase BaseEvent;
         public Client Client;
-        private int mDirectionFix;
-        public int DisablePreview;
+        private bool mDirectionFix;
+        public bool DisablePreview;
         public EventPageInstance GlobalClone;
+
+        public int MovementType;
+        public EventInstance MyEventIndex;
+        public EventGraphic MyGraphic = new EventGraphic();
+        public EventPage MyPage;
+        private int mPageNum;
+        public string Param;
+        private int mRenderLevel = 1;
+        public int Trigger;
+        private bool mWalkingAnim;
+
         public int MovementFreq;
 
         private int mMovementSpeed;
@@ -47,16 +59,6 @@ namespace Intersect.Server.Classes.Entities
                 }
             }
         }
-
-        public int MovementType;
-        public EventInstance MyEventIndex;
-        public EventGraphic MyGraphic = new EventGraphic();
-        public EventPage MyPage;
-        private int mPageNum;
-        public string Param;
-        private int mRenderLevel = 1;
-        public int Trigger;
-        private int mWalkingAnim;
 
         public EventPageInstance(EventBase myEvent, EventPage myPage, Guid mapId, EventInstance eventIndex, Client client) : base(Guid.NewGuid())
         {
@@ -196,10 +198,10 @@ namespace Intersect.Server.Classes.Entities
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(base.Data());
-            bf.WriteInteger(HideName);
-            bf.WriteInteger(mDirectionFix);
-            bf.WriteInteger(mWalkingAnim);
-            bf.WriteInteger(DisablePreview);
+            bf.WriteBoolean(HideName);
+            bf.WriteBoolean(mDirectionFix);
+            bf.WriteBoolean(mWalkingAnim);
+            bf.WriteBoolean(DisablePreview);
             bf.WriteString(MyPage.Desc);
             bf.WriteInteger(MyGraphic.Type);
             bf.WriteString(MyGraphic.Filename);
@@ -241,8 +243,7 @@ namespace Intersect.Server.Classes.Entities
 
         public void Update(bool isActive, long timeMs)
         {
-            if (MoveTimer >= Globals.System.GetTimeMs() || GlobalClone != null ||
-                (isActive && MyPage.InteractionFreeze == 1)) return;
+            if (MoveTimer >= Globals.System.GetTimeMs() || GlobalClone != null ||  (isActive && MyPage.InteractionFreeze)) return;
             if (MovementType == 2 && MoveRoute != null)
             {
                 ProcessMoveRoute(Client, timeMs);
@@ -437,40 +438,40 @@ namespace Intersect.Server.Classes.Entities
                             moved = true;
                             break;
                         case MoveRouteEnum.WalkingAnimOn:
-                            mWalkingAnim = 1;
+                            mWalkingAnim = true;
                             shouldSendUpdate = true;
                             moved = true;
                             break;
                         case MoveRouteEnum.WalkingAnimOff:
-                            mWalkingAnim = 0;
+                            mWalkingAnim = false;
                             shouldSendUpdate = true;
                             moved = true;
                             break;
                         case MoveRouteEnum.DirectionFixOn:
-                            mDirectionFix = 1;
+                            mDirectionFix = true;
                             moved = true;
                             break;
                         case MoveRouteEnum.DirectionFixOff:
-                            mDirectionFix = 0;
+                            mDirectionFix = false;
                             moved = true;
                             break;
                         case MoveRouteEnum.WalkthroughOn:
-                            Passable = 1;
+                            Passable = true;
                             shouldSendUpdate = true;
                             moved = true;
                             break;
                         case MoveRouteEnum.WalkthroughOff:
-                            Passable = 0;
+                            Passable = false;
                             shouldSendUpdate = true;
                             moved = true;
                             break;
                         case MoveRouteEnum.ShowName:
-                            HideName = 0;
+                            HideName = false;
                             shouldSendUpdate = true;
                             moved = true;
                             break;
                         case MoveRouteEnum.HideName:
-                            HideName = 1;
+                            HideName = true;
                             shouldSendUpdate = true;
                             moved = true;
                             break;
@@ -610,11 +611,11 @@ namespace Intersect.Server.Classes.Entities
         public bool ShouldDespawn()
         {
             //Should despawn if conditions are not met OR an earlier page can spawn
-            if (!EventInstance.MeetsConditionLists(MyPage.ConditionLists, MyEventIndex.MyPlayer, MyEventIndex))
+            if (!Conditions.MeetsConditionLists(MyPage.ConditionLists, MyEventIndex.MyPlayer, MyEventIndex))
                 return true;
             for (int i = 0; i < BaseEvent.Pages.Count; i++)
             {
-                if (MyEventIndex.CanSpawnPage(i, BaseEvent))
+                if (Conditions.CanSpawnPage(BaseEvent.Pages[i],MyEventIndex.MyPlayer,MyEventIndex))
                 {
                     if (i > mPageNum) return true;
                 }

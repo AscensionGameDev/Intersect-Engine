@@ -80,6 +80,13 @@ namespace Intersect.GameObjects
         public List<QuestTask> Tasks = new List<QuestTask>();
 
         [NotMapped]
+        public string LocalEventsJson
+        {
+            get => JsonConvert.SerializeObject(AddEvents, Formatting.Indented, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.Ignore, ObjectCreationHandling = ObjectCreationHandling.Replace });
+            set => JsonConvert.PopulateObject(value, AddEvents, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.Ignore, ObjectCreationHandling = ObjectCreationHandling.Replace });
+        }
+        [NotMapped]
+        [JsonIgnore]
         public Dictionary<Guid, EventBase> AddEvents = new Dictionary<Guid, EventBase>();  //Events that need to be added for the quest, int is task id
         [NotMapped]
         public List<Guid> RemoveEvents = new List<Guid>(); //Events that need to be removed for the quest

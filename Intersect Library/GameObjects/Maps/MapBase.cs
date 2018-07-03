@@ -74,6 +74,13 @@ namespace Intersect.GameObjects.Maps
         public List<Guid> EventIds = new List<Guid>();
 
         [NotMapped]
+        public string LocalEventsJson
+        {
+            get => JsonConvert.SerializeObject(LocalEvents, Formatting.Indented, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.Ignore, ObjectCreationHandling = ObjectCreationHandling.Replace });
+            set => JsonConvert.PopulateObject(value, LocalEvents, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.Ignore, ObjectCreationHandling = ObjectCreationHandling.Replace });
+        }
+        [NotMapped]
+        [JsonIgnore]
         public Dictionary<Guid, EventBase> LocalEvents = new Dictionary<Guid, EventBase>();
 
         [Column("NpcSpawns")]

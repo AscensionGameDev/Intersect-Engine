@@ -363,8 +363,8 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteInteger(en.X);
             bf.WriteInteger(en.Y);
             bf.WriteInteger(en.Dir);
-            bf.WriteInteger(en.Passable);
-            bf.WriteInteger(en.HideName);
+            bf.WriteBoolean(en.Passable);
+            bf.WriteBoolean(en.HideName);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -383,8 +383,8 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteInteger(en.X);
             bf.WriteInteger(en.Y);
             bf.WriteInteger(en.Dir);
-            bf.WriteInteger(en.Passable);
-            bf.WriteInteger(en.HideName);
+            bf.WriteBoolean(en.Passable);
+            bf.WriteBoolean(en.HideName);
             SendDataToProximity(en.MapId, bf.ToArray());
             bf.Dispose();
         }
@@ -490,6 +490,12 @@ namespace Intersect.Server.Classes.Networking
                      (GameObjectType)val == GameObjectType.ServerVariable) && !client.IsEditor) continue;
                 SendGameObjects(client, (GameObjectType)val);
             }
+
+            if (!client.IsEditor)
+            {
+                SendGameObject(client, ClassBase.Get(client.Entity.ClassId));
+            }
+
             //Let the client/editor know they have everything now
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.GameData);
@@ -766,7 +772,7 @@ namespace Intersect.Server.Classes.Networking
             bf.Dispose();
         }
 
-        public static void SendEventDialog(Client client, string prompt, string face, Guid eventId)
+        public static void SendEventDialog(Player player, string prompt, string face, Guid eventId)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.EventDialog);
@@ -774,11 +780,11 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteString(face);
             bf.WriteInteger(0);
             bf.WriteGuid(eventId);
-            client.SendPacket(bf.ToArray());
+            player.MyClient.SendPacket(bf.ToArray());
             bf.Dispose();
         }
 
-        public static void SendEventDialog(Client client, string prompt, string opt1, string opt2, string opt3,
+        public static void SendEventDialog(Player player, string prompt, string opt1, string opt2, string opt3,
             string opt4, string face, Guid eventId)
         {
             var bf = new ByteBuffer();
@@ -791,7 +797,7 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteString(opt3);
             bf.WriteString(opt4);;
             bf.WriteGuid(eventId);
-            client.SendPacket(bf.ToArray());
+            player.MyClient.SendPacket(bf.ToArray());
             bf.Dispose();
         }
 
@@ -1230,13 +1236,13 @@ namespace Intersect.Server.Classes.Networking
             bf.Dispose();
         }
 
-        public static void SendShowPicture(Client client, string picture, int size, int clickable)
+        public static void SendShowPicture(Client client, string picture, int size, bool clickable)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.ShowPicture);
             bf.WriteString(picture);
             bf.WriteInteger(size);
-            bf.WriteInteger(clickable);
+            bf.WriteBoolean(clickable);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }

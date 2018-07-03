@@ -894,7 +894,7 @@ namespace Intersect.Server.Classes.Maps
                 if (entities[i] != null && entities[i].GetType() != typeof(Projectile))
                 {
                     //If Npc or Player then blocked.. if resource then check
-                    if (entities[i].Passable == 0 && entities[i].X == x && entities[i].Y == y)
+                    if (!entities[i].Passable && entities[i].X == x && entities[i].Y == y)
                     {
                         return true;
                     }
@@ -905,7 +905,7 @@ namespace Intersect.Server.Classes.Maps
             {
                 if (globalEvent.Value != null && globalEvent.Value.PageInstance != null)
                 {
-                    if (globalEvent.Value.PageInstance.Passable == 0 && globalEvent.Value.PageInstance.X == x &&
+                    if (!globalEvent.Value.PageInstance.Passable && globalEvent.Value.PageInstance.X == x &&
                         globalEvent.Value.PageInstance.Y == y)
                     {
                         return true;

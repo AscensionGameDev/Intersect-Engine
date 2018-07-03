@@ -21,8 +21,8 @@ namespace Intersect.GameObjects.Events
         [Column("Pages")]
         public string PagesJson
         {
-            get => JsonConvert.SerializeObject(Pages, Formatting.None);
-            protected set => Pages = JsonConvert.DeserializeObject<List<EventPage>>(value);
+            get => JsonConvert.SerializeObject(Pages, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.Ignore, ObjectCreationHandling = ObjectCreationHandling.Replace });
+            protected set => Pages = JsonConvert.DeserializeObject<List<EventPage>>(value, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.Ignore, ObjectCreationHandling = ObjectCreationHandling.Replace });
         }
         [NotMapped]
         public List<EventPage> Pages { get; set; } = new List<EventPage>();
@@ -98,5 +98,11 @@ namespace Intersect.GameObjects.Events
         {
             return ListIndex(Id);
         }
+
+        [JsonIgnore]
+        [NotMapped]
+        public override string JsonData => JsonConvert.SerializeObject(this, Formatting.Indented, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.Ignore, ObjectCreationHandling = ObjectCreationHandling.Replace });
+
+        public override void Load(string json) => JsonConvert.PopulateObject(json, this, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.Ignore, ObjectCreationHandling = ObjectCreationHandling.Replace });
     }
 }

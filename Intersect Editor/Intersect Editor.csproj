@@ -84,6 +84,7 @@
     <Compile Include="Core\Preferences.cs" />
     <Compile Include="Core\Program.cs" />
     <Compile Include="Entities\AnimationInstance.cs" />
+    <Compile Include="Forms\Editors\Events\CommandPrinter.cs" />
     <Compile Include="General\Enums.cs" />
     <Compile Include="General\Globals.cs" />
     <Compile Include="Localization\Strings.cs" />
@@ -144,214 +145,214 @@
     <Compile Include="Forms\Editors\EditorForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_ChangeFace.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeFace.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_ChangeFace.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeFace.Designer.cs">
       <DependentUpon>EventCommand_ChangeFace.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_ChangeGender.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeGender.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_ChangeGender.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeGender.Designer.cs">
       <DependentUpon>EventCommand_ChangeGender.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_ChangeItems.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeItems.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_ChangeItems.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeItems.Designer.cs">
       <DependentUpon>EventCommand_ChangeItems.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_ChangeLevel.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeLevel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_ChangeLevel.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeLevel.Designer.cs">
       <DependentUpon>EventCommand_ChangeLevel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_ChangeSpells.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeSpells.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_ChangeSpells.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeSpells.Designer.cs">
       <DependentUpon>EventCommand_ChangeSpells.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_ChangeSprite.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeSprite.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_ChangeSprite.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeSprite.Designer.cs">
       <DependentUpon>EventCommand_ChangeSprite.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_ChatboxText.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChatboxText.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_ChatboxText.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChatboxText.Designer.cs">
       <DependentUpon>EventCommand_ChatboxText.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_CompleteQuestTask.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_CompleteQuestTask.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_CompleteQuestTask.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_CompleteQuestTask.Designer.cs">
       <DependentUpon>EventCommand_CompleteQuestTask.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_ConditionalBranch.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ConditionalBranch.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_ConditionalBranch.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ConditionalBranch.Designer.cs">
       <DependentUpon>EventCommand_ConditionalBranch.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_EndQuest.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_EndQuest.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_EndQuest.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_EndQuest.Designer.cs">
       <DependentUpon>EventCommand_EndQuest.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_GiveExperience.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_GiveExperience.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_GiveExperience.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_GiveExperience.Designer.cs">
       <DependentUpon>EventCommand_GiveExperience.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_GotoLabel.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_GotoLabel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_GotoLabel.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_GotoLabel.Designer.cs">
       <DependentUpon>EventCommand_GotoLabel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_Label.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Label.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_Label.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Label.Designer.cs">
       <DependentUpon>EventCommand_Label.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_OpenCrafting.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_OpenCrafting.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_OpenCrafting.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_OpenCrafting.Designer.cs">
       <DependentUpon>EventCommand_OpenCrafting.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_OpenShop.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_OpenShop.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_OpenShop.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_OpenShop.Designer.cs">
       <DependentUpon>EventCommand_OpenShop.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_Options.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Options.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_Options.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Options.Designer.cs">
       <DependentUpon>EventCommand_Options.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_PlayAnimation.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_PlayAnimation.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_PlayAnimation.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_PlayAnimation.Designer.cs">
       <DependentUpon>EventCommand_PlayAnimation.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_PlayBgm.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_PlayBgm.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_PlayBgm.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_PlayBgm.Designer.cs">
       <DependentUpon>EventCommand_PlayBgm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_PlayBgs.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_PlayBgs.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_PlayBgs.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_PlayBgs.Designer.cs">
       <DependentUpon>EventCommand_PlayBgs.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_SelfSwitch.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_SelfSwitch.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_SelfSwitch.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_SelfSwitch.Designer.cs">
       <DependentUpon>EventCommand_SelfSwitch.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_SetAccess.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_SetAccess.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_SetAccess.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_SetAccess.Designer.cs">
       <DependentUpon>EventCommand_SetAccess.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_SetClass.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_SetClass.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_SetClass.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_SetClass.Designer.cs">
       <DependentUpon>EventCommand_SetClass.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_ShowPicture.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ShowPicture.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_ShowPicture.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ShowPicture.Designer.cs">
       <DependentUpon>EventCommand_ShowPicture.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_SpawnNpc.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_SpawnNpc.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_SpawnNpc.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_SpawnNpc.Designer.cs">
       <DependentUpon>EventCommand_SpawnNpc.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_StartCommonEvent.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_StartCommonEvent.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_StartCommonEvent.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_StartCommonEvent.Designer.cs">
       <DependentUpon>EventCommand_StartCommonEvent.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_StartQuest.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_StartQuest.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_StartQuest.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_StartQuest.Designer.cs">
       <DependentUpon>EventCommand_StartQuest.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_Switch.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Switch.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_Switch.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Switch.Designer.cs">
       <DependentUpon>EventCommand_Switch.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_Text.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Text.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_Text.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Text.Designer.cs">
       <DependentUpon>EventCommand_Text.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_Variable.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Variable.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_Variable.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Variable.Designer.cs">
       <DependentUpon>EventCommand_Variable.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_Wait.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Wait.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_Wait.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Wait.Designer.cs">
       <DependentUpon>EventCommand_Wait.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_WaitForRouteCompletion.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_WaitForRouteCompletion.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_WaitForRouteCompletion.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_WaitForRouteCompletion.Designer.cs">
       <DependentUpon>EventCommand_WaitForRouteCompletion.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_Warp.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Warp.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_Warp.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Warp.Designer.cs">
       <DependentUpon>EventCommand_Warp.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\Event_GraphicSelector.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\Event_GraphicSelector.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\Event_GraphicSelector.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\Event_GraphicSelector.Designer.cs">
       <DependentUpon>Event_GraphicSelector.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\Event_MoveRouteAnimationSelector.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\Event_MoveRouteAnimationSelector.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\Event_MoveRouteAnimationSelector.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\Event_MoveRouteAnimationSelector.Designer.cs">
       <DependentUpon>Event_MoveRouteAnimationSelector.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\Event_MoveRouteDesigner.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\Event_MoveRouteDesigner.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\Event_MoveRouteDesigner.Designer.cs">
+    <Compile Include="Forms\Editors\Events\Event Commands\Event_MoveRouteDesigner.Designer.cs">
       <DependentUpon>Event_MoveRouteDesigner.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Editors\frmAnimation.cs">
@@ -390,10 +391,10 @@
     <Compile Include="Forms\Editors\frmDynamicRequirements.Designer.cs">
       <DependentUpon>frmDynamicRequirements.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\frmEvent.cs">
+    <Compile Include="Forms\Editors\Events\frmEvent.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\frmEvent.Designer.cs">
+    <Compile Include="Forms\Editors\Events\frmEvent.Designer.cs">
       <DependentUpon>frmEvent.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Editors\frmItem.cs">
@@ -521,6 +522,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\Lidgren.Network.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Mono.Data.Sqlite, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <HintPath>..\packages\Mono.Data.Sqlite.Portable.1.0.3.5\lib\net4\Mono.Data.Sqlite.dll</HintPath>
     </Reference>
@@ -579,109 +581,109 @@
     <EmbeddedResource Include="Forms\DockingElements\frmMapProperties.resx">
       <DependentUpon>frmMapProperties.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_ChangeFace.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeFace.resx">
       <DependentUpon>EventCommand_ChangeFace.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_ChangeGender.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeGender.resx">
       <DependentUpon>EventCommand_ChangeGender.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_ChangeItems.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeItems.resx">
       <DependentUpon>EventCommand_ChangeItems.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_ChangeLevel.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeLevel.resx">
       <DependentUpon>EventCommand_ChangeLevel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_ChangeSpells.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeSpells.resx">
       <DependentUpon>EventCommand_ChangeSpells.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_ChangeSprite.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeSprite.resx">
       <DependentUpon>EventCommand_ChangeSprite.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_ChatboxText.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChatboxText.resx">
       <DependentUpon>EventCommand_ChatboxText.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_CompleteQuestTask.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_CompleteQuestTask.resx">
       <DependentUpon>EventCommand_CompleteQuestTask.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_ConditionalBranch.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ConditionalBranch.resx">
       <DependentUpon>EventCommand_ConditionalBranch.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_EndQuest.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_EndQuest.resx">
       <DependentUpon>EventCommand_EndQuest.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_GiveExperience.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_GiveExperience.resx">
       <DependentUpon>EventCommand_GiveExperience.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_GotoLabel.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_GotoLabel.resx">
       <DependentUpon>EventCommand_GotoLabel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_Label.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_Label.resx">
       <DependentUpon>EventCommand_Label.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_OpenCrafting.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_OpenCrafting.resx">
       <DependentUpon>EventCommand_OpenCrafting.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_OpenShop.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_OpenShop.resx">
       <DependentUpon>EventCommand_OpenShop.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_Options.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_Options.resx">
       <DependentUpon>EventCommand_Options.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_PlayAnimation.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_PlayAnimation.resx">
       <DependentUpon>EventCommand_PlayAnimation.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_PlayBgm.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_PlayBgm.resx">
       <DependentUpon>EventCommand_PlayBgm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_PlayBgs.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_PlayBgs.resx">
       <DependentUpon>EventCommand_PlayBgs.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_SelfSwitch.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_SelfSwitch.resx">
       <DependentUpon>EventCommand_SelfSwitch.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_SetAccess.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_SetAccess.resx">
       <DependentUpon>EventCommand_SetAccess.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_SetClass.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_SetClass.resx">
       <DependentUpon>EventCommand_SetClass.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_ShowPicture.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ShowPicture.resx">
       <DependentUpon>EventCommand_ShowPicture.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_SpawnNpc.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_SpawnNpc.resx">
       <DependentUpon>EventCommand_SpawnNpc.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_StartCommonEvent.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_StartCommonEvent.resx">
       <DependentUpon>EventCommand_StartCommonEvent.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_StartQuest.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_StartQuest.resx">
       <DependentUpon>EventCommand_StartQuest.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_Switch.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_Switch.resx">
       <DependentUpon>EventCommand_Switch.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_Text.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_Text.resx">
       <DependentUpon>EventCommand_Text.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_Variable.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_Variable.resx">
       <DependentUpon>EventCommand_Variable.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_Wait.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_Wait.resx">
       <DependentUpon>EventCommand_Wait.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_WaitForRouteCompletion.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_WaitForRouteCompletion.resx">
       <DependentUpon>EventCommand_WaitForRouteCompletion.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_Warp.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_Warp.resx">
       <DependentUpon>EventCommand_Warp.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\Event_GraphicSelector.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\Event_GraphicSelector.resx">
       <DependentUpon>Event_GraphicSelector.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\Event_MoveRouteAnimationSelector.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\Event_MoveRouteAnimationSelector.resx">
       <DependentUpon>Event_MoveRouteAnimationSelector.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\Event_MoveRouteDesigner.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\Event_MoveRouteDesigner.resx">
       <DependentUpon>Event_MoveRouteDesigner.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\frmAnimation.resx">
@@ -702,7 +704,7 @@
     <EmbeddedResource Include="Forms\Editors\frmDynamicRequirements.resx">
       <DependentUpon>frmDynamicRequirements.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\frmEvent.resx">
+    <EmbeddedResource Include="Forms\Editors\Events\frmEvent.resx">
       <DependentUpon>frmEvent.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\frmItem.resx">

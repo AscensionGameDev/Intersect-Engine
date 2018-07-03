@@ -181,7 +181,7 @@ namespace Intersect.Server.Classes.Misc.Pathfinding
                                                 if (mEntity.GetType() == typeof(EventPageInstance))
                                                 {
                                                     EventPageInstance ev = (EventPageInstance) mEntity;
-                                                    if (ev.Passable == 0 && ev.Client != null)
+                                                    if (!ev.Passable && ev.Client != null)
                                                         //Make sure this is a local event
                                                     {
                                                         Player player = ev.Client.Entity;
@@ -198,8 +198,7 @@ namespace Intersect.Server.Classes.Misc.Pathfinding
                                                                         var evt = player.EventExists(ev.MapId, mapX, mapY);
                                                                         if (evt != null)
                                                                         {
-                                                                            if (evt.PageInstance != null &&
-                                                                                evt.PageInstance.Passable == 0 && evt.PageInstance.X > -1 && evt.PageInstance.Y > -1)
+                                                                            if (evt.PageInstance != null && !evt.PageInstance.Passable && evt.PageInstance.X > -1 && evt.PageInstance.Y > -1)
                                                                             {
                                                                                 mapGrid[
                                                                                     ((x + 1) - gridX) * Options
@@ -218,14 +217,9 @@ namespace Intersect.Server.Classes.Misc.Pathfinding
                                                                 var playerEvents = player.EventLookup.Values;
                                                                 foreach (var evt in playerEvents)
                                                                 {
-                                                                    if (evt != null && evt.PageInstance != null &&
-                                                                        evt.PageInstance.Passable == 0 && evt.PageInstance.X > -1 && evt.PageInstance.Y > -1)
+                                                                    if (evt != null && evt.PageInstance != null && !evt.PageInstance.Passable && evt.PageInstance.X > -1 && evt.PageInstance.Y > -1)
                                                                     {
-                                                                        mapGrid[
-                                                                            ((x + 1) - gridX) * Options.MapWidth +
-                                                                            evt.PageInstance.X,
-                                                                            ((y + 1) - gridY) * Options.MapHeight +
-                                                                            evt.PageInstance.Y].IsWall = true;
+                                                                        mapGrid[ ((x + 1) - gridX) * Options.MapWidth + evt.PageInstance.X,((y + 1) - gridY) * Options.MapHeight +evt.PageInstance.Y].IsWall = true;
                                                                     }
                                                                 }
                                                             }

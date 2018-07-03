@@ -44,8 +44,8 @@ namespace Intersect.Server.Classes.Entities
             Spell = parentSpell;
             Item = parentItem;
 
-            Passable = 1;
-            HideName = 1;
+            Passable = true;
+            HideName = true;
             for (int x = 0; x < ProjectileBase.SPAWN_LOCATIONS_WIDTH; x++)
             {
                 for (int y = 0; y < ProjectileBase.SPAWN_LOCATIONS_HEIGHT; y++)

@@ -79,29 +79,29 @@ namespace Intersect.Server.Classes.Entities
 
 
         //Instance Values
-        [NotMapped] public Guid Id;
-        [NotMapped] public bool Dead;
+        [NotMapped] public Guid Id { get; set; }
+        [NotMapped] public bool Dead { get; set; }
 
         //Combat
-        [NotMapped] public long CastTime;
-        [NotMapped] public long AttackTimer;
-        [NotMapped] public bool Blocking;
-        [NotMapped] public EntityInstance CastTarget;
-        [NotMapped] public Guid CollisionIndex;
-        [NotMapped] public long CombatTimer;
+        [NotMapped] public long CastTime { get; set; }
+        [NotMapped] public long AttackTimer { get; set; }
+        [NotMapped] public bool Blocking { get; set; }
+        [NotMapped] public EntityInstance CastTarget { get; set; }
+        [NotMapped] public Guid CollisionIndex { get; set; }
+        [NotMapped] public long CombatTimer { get; set; }
 
         //Visuals
-        [NotMapped] public int HideName = 0;
-        [NotMapped] public List<Guid> Animations = new List<Guid>();
+        [NotMapped] public bool HideName { get; set; }
+        [NotMapped] public List<Guid> Animations { get; set; } = new List<Guid>();
 
         //DoT/HoT Spells
-        [NotMapped] public List<DoTInstance> DoT = new List<DoTInstance>();
-        [NotMapped] public EventMoveRoute MoveRoute = null;
-        [NotMapped] public EventPageInstance MoveRouteSetter = null;
-        [NotMapped] public long MoveTimer;
-        [NotMapped] public int Passable = 0;
-        [NotMapped] public long RegenTimer = Globals.System.GetTimeMs();
-        [NotMapped] public int SpellCastSlot = 0;
+        [NotMapped] public List<DoTInstance> DoT { get; set; } = new List<DoTInstance>();
+        [NotMapped] public EventMoveRoute MoveRoute { get; set; } = null;
+        [NotMapped] public EventPageInstance MoveRouteSetter { get; set; } = null;
+        [NotMapped] public long MoveTimer { get; set; }
+        [NotMapped] public bool Passable { get; set; } = false;
+        [NotMapped] public long RegenTimer { get; set; } = Globals.System.GetTimeMs();
+        [NotMapped] public int SpellCastSlot { get; set; } = 0;
 
 
 
@@ -266,15 +266,14 @@ namespace Intersect.Server.Classes.Entities
                 return -5; //Out of Bounds
             }
 
-            if (Passable == 0)
+            if (!Passable)
             {
                 var targetMap = MapInstance.Get(tile.GetMapId());
                 var mapEntities = MapInstance.Get(tile.GetMapId()).GetEntities();
                 for (var i = 0; i < mapEntities.Count; i++)
                 {
                     var en = mapEntities[i];
-                    if (en != null && en.X == tile.GetX() && en.Y == tile.GetY() && en.Z == Z &&
-                        en.Passable == 0)
+                    if (en != null && en.X == tile.GetX() && en.Y == tile.GetY() && en.Z == Z && !en.Passable)
                     {
                         //Set a target if a projectile
                         CollisionIndex = en.Id;
@@ -313,9 +312,7 @@ namespace Intersect.Server.Classes.Entities
                     {
                         foreach (var en in evt.Value.GlobalPageInstance)
                         {
-                            if (en != null && en.X == tile.GetX() && en.Y == tile.GetY() &&
-                                en.Z == Z &&
-                                en.Passable == 0)
+                            if (en != null && en.X == tile.GetX() && en.Y == tile.GetY() && en.Z == Z && !en.Passable)
                             {
                                 return (int)EntityTypes.Event;
                             }
@@ -1643,8 +1640,8 @@ namespace Intersect.Server.Classes.Entities
             bf.WriteInteger(Y);
             bf.WriteInteger(Z);
             bf.WriteInteger(Dir);
-            bf.WriteInteger(Passable);
-            bf.WriteInteger(HideName);
+            bf.WriteBoolean(Passable);
+            bf.WriteBoolean(HideName);
             bf.WriteInteger(Animations.Count);
             for (var i = 0; i < Animations.Count; i++)
             {

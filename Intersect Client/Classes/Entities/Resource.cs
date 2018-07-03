@@ -59,7 +59,7 @@ namespace Intersect_Client.Classes.Entities
             IsDead = Convert.ToBoolean(bf.ReadInteger());
             var baseId = bf.ReadGuid();
             BaseResource = ResourceBase.Get(baseId);
-            HideName = 1;
+            HideName = true;
             if (IsDead)
             {
                 MySprite = BaseResource?.Exhausted.Graphic;
