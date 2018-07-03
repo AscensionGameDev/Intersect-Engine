@@ -36,9 +36,9 @@ namespace Intersect.GameObjects.Events
         [JsonConstructor]
         public EventBase(Guid id, Guid mapId, int x, int y, bool isCommon = false, byte isGlobal = 0) : base(id)
         {
-            Name = "";
+            Name = "New Event";
             MapId = mapId;
-            if (isCommon) Name = "Common Event " + id;
+            if (isCommon) Name = "New Common Event";
             SpawnX = x;
             SpawnY = y;
             CommonEvent = isCommon;

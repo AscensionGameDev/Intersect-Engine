@@ -118,7 +118,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
         private void btnCancel_Click(object sender, EventArgs e)
         {
             Cancelled = true;
-            JsonConvert.PopulateObject(mEventBackup,mMyTask.EdittingEvent, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
+            mMyTask.EdittingEvent.Load(mEventBackup);
             ParentForm.Close();
         }
 
@@ -134,7 +134,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
             {
                 MyEvent = mMyTask.EdittingEvent
             };
-            editor.InitEditor();
+            editor.InitEditor(true,true);
             editor.ShowDialog();
             Globals.MainForm.BringToFront();
             BringToFront();

@@ -2234,7 +2234,7 @@ namespace Intersect.Server.Classes.Networking
                     Globals.KillProjectilesOf((ProjectileBase)obj);
                 }
 
-                JsonConvert.PopulateObject(bf.ReadString(), obj, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
+                obj.Load(bf.ReadString());
                 
                 if (type == GameObjectType.Quest)
                 {
@@ -2246,13 +2246,13 @@ namespace Intersect.Server.Classes.Networking
                     }
                     foreach (var evt in qst.AddEvents)
                     {
-                        var evtb = (EventBase)LegacyDatabase.AddGameObject(GameObjectType.Event);
+                        var evtb = (EventBase)LegacyDatabase.AddGameObject(GameObjectType.Event,evt.Key);
                         evtb.CommonEvent = false;
                         foreach (var tsk in qst.Tasks)
                         {
                             if (tsk.Id == evt.Key) tsk.CompletionEvent = evtb;
                         }
-                        JsonConvert.PopulateObject(JsonConvert.SerializeObject(evt.Value),evtb, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
+                        evtb.Load(evt.Value.JsonData);
                     }
                     qst.AddEvents.Clear();
                     qst.RemoveEvents.Clear();

@@ -823,7 +823,7 @@ Tick timer saved in server config.json.";
                 @"Faster",
                 @"Fastest",
             };
-            public static LocalizedString title = @"Event Editor - Event #{00}: {01}";
+            public static LocalizedString title = @"Event Editor - {00}";
             public static LocalizedString trigger = @"Trigger";
             public static LocalizedString[] triggers = new LocalizedString[]
             {

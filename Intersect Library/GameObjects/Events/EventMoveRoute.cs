@@ -1,16 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Intersect.GameObjects.Events
 {
     public class EventMoveRoute
     {
-        public int ActionIndex;
         public List<MoveRouteAction> Actions = new List<MoveRouteAction>();
-        public bool Complete;
         public bool IgnoreIfBlocked;
         public bool RepeatRoute;
         public Guid Target;
+
+        //Temp Values
+        [JsonIgnore]
+        public bool Complete;
+        [JsonIgnore]
+        public int ActionIndex;
 
         public EventMoveRoute()
         {

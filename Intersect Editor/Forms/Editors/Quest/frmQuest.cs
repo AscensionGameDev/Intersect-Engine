@@ -229,7 +229,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
         private void OpenQuestEvent(EventBase evt)
         {
             FrmEvent editor = new FrmEvent(null) {MyEvent = evt};
-            editor.InitEditor();
+            editor.InitEditor(true,true);
             editor.ShowDialog();
             Globals.MainForm.BringToFront();
             BringToFront();

@@ -65,7 +65,7 @@ namespace Intersect.Editor.Forms.Editors
                 {
                     MyEvent = EventBase.FromList(lstCommonEvents.SelectedIndex)
                 };
-                editor.InitEditor();
+                editor.InitEditor(false,false);
                 editor.ShowDialog();
                 ListCommonEvents();
                 Globals.MainForm.BringToFront();

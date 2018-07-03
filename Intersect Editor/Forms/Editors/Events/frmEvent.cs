@@ -45,7 +45,7 @@ namespace Intersect.Editor.Forms.Editors
         private void txtEventname_TextChanged(object sender, EventArgs e)
         {
             MyEvent.Name = txtEventname.Text;
-            Text = Strings.EventEditor.title.ToString(MyEvent.Id, txtEventname.Text);
+            Text = Strings.EventEditor.title.ToString(txtEventname.Text);
         }
 
         private void lstEventCommands_SelectedIndexChanged(object sender, EventArgs e)
@@ -58,6 +58,7 @@ namespace Intersect.Editor.Forms.Editors
             if (e.KeyCode != Keys.Delete) return;
             if (mCurrentCommand <= -1) return;
             if (!mCommandProperties[mCurrentCommand].Editable) return;
+            HandleRemoveCommand(mCommandProperties[mCurrentCommand].Cmd);
             mCommandProperties[mCurrentCommand].MyList.Remove(mCommandProperties[mCurrentCommand].Cmd);
             ListPageCommands();
         }
@@ -670,15 +671,12 @@ namespace Intersect.Editor.Forms.Editors
         ///     It also populates General lists in our editor (ie. switches/variables) for event spawning conditions.
         ///     If the event is a common event (not a map entity) we hide the entity Options on the form.
         /// </summary>
-        public void InitEditor()
+        public void InitEditor(bool disableNaming, bool disableTriggers)
         {
             mEventBackup = MyEvent.JsonData;
             txtEventname.Text = MyEvent.Name;
-            if (MyEvent.Id != Guid.Empty)
-            {
-                txtEventname.Enabled = false;
-                grpTriggers.Hide();
-            }
+            if (disableNaming) txtEventname.Enabled = false;
+            if (disableTriggers) grpTriggers.Hide();
             cmbPreviewFace.Items.Clear();
             cmbPreviewFace.Items.Add(Strings.General.none);
             cmbPreviewFace.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Face));
@@ -717,7 +715,7 @@ namespace Intersect.Editor.Forms.Editors
         /// <param name="pageNum">The index of the page to load.</param>
         public void LoadPage(int pageNum)
         {
-            Text = Strings.EventEditor.title.ToString(MyEvent.Id, txtEventname.Text);
+            Text = Strings.EventEditor.title.ToString(txtEventname.Text);
             CurrentPageIndex = pageNum;
             if (MyEvent.Pages.Count == 0) MyEvent.Pages.Add(new EventPage());
             CurrentPage = MyEvent.Pages[pageNum];
@@ -1026,10 +1024,12 @@ namespace Intersect.Editor.Forms.Editors
                 {
                     if (mIsInsert)
                     {
+                        HandleRemoveCommand(mCommandProperties[mCurrentCommand].MyList[mCommandProperties[mCurrentCommand].MyList.IndexOf(mCommandProperties[mCurrentCommand].Cmd) - 1]);
                         mCommandProperties[mCurrentCommand].MyList.RemoveAt(mCommandProperties[mCurrentCommand].MyList.IndexOf(mCommandProperties[mCurrentCommand].Cmd) - 1);
                     }
                     else
                     {
+                        HandleRemoveCommand(mCommandProperties[mCurrentCommand].MyList[mCommandProperties[mCurrentCommand].MyList.Count - 1]);
                         mCommandProperties[mCurrentCommand].MyList.RemoveAt(mCommandProperties[mCurrentCommand].MyList.Count - 1);
                     }
                 }
@@ -1041,6 +1041,34 @@ namespace Intersect.Editor.Forms.Editors
             }
             ListPageCommands();
             EnableButtons();
+        }
+
+        private void HandleRemoveCommand(EventCommand cmd)
+        {
+            //If we cancelled an insert for a command that created additional command lists we need to remove those orphaned list(s)
+            var branchesToRemove = new List<Guid>();
+            switch (cmd.Type)
+            {
+                case EventCommandType.ShowOptions:
+                    branchesToRemove.AddRange(((ShowOptionsCommand)cmd).BranchIds);
+                    break;
+                case EventCommandType.ConditionalBranch:
+                    branchesToRemove.AddRange(((ConditionalBranchCommand)cmd).BranchIds);
+                    break;
+                case EventCommandType.ChangeItems:
+                    branchesToRemove.AddRange(((ChangeItemsCommand)cmd).BranchIds);
+                    break;
+                case EventCommandType.ChangeSpells:
+                    branchesToRemove.AddRange(((ChangeSpellsCommand)cmd).BranchIds);
+                    break;
+                case EventCommandType.StartQuest:
+                    branchesToRemove.AddRange(((StartQuestCommand)cmd).BranchIds);
+                    break;
+            }
+            foreach (var branch in branchesToRemove)
+            {
+                CurrentPage.CommandLists.Remove(branch);
+            }
         }
 
         /// <summary>
@@ -1078,6 +1106,7 @@ namespace Intersect.Editor.Forms.Editors
             if (mCurrentCommand < 0 || mCurrentCommand >= mCommandProperties.Count) return;
             if (!mCommandProperties[mCurrentCommand].Editable) return;
             if (mCommandProperties[mCurrentCommand].MyIndex < 0 || mCommandProperties[mCurrentCommand].MyIndex >= mCommandProperties[mCurrentCommand].MyList.Count) return;
+            HandleRemoveCommand(mCommandProperties[mCurrentCommand].Cmd);
             mCommandProperties[mCurrentCommand].MyList.Remove(mCommandProperties[mCurrentCommand].Cmd);
             ListPageCommands();
         }
