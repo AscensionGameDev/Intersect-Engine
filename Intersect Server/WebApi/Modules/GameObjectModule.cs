@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Intersect.Enums;
+﻿using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Models;
 using Intersect.Server.Classes.Core;
@@ -11,7 +8,8 @@ using Intersect.Utilities;
 using Nancy;
 using Nancy.Extensions;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System;
+using System.Text;
 
 namespace Intersect.Server.WebApi.Modules
 {
