@@ -47,21 +47,12 @@ namespace Intersect.Server.WebApi
 
         protected virtual bool Secured => true;
 
-        protected virtual IDictionary<MethodPath, bool> RouteSecurity { get; set; }
+        protected virtual IDictionary<MethodPath, bool> RouteSecurity => null;
 
-        protected virtual IDictionary<MethodPathCode, object> DefaultResponse { get; set; }
+        protected virtual IDictionary<MethodPathCode, object> DefaultResponse => null;
 
         protected ServerModule(string modulePath) : base(modulePath)
         {
-            Initialize();
-        }
-
-        private void Initialize()
-        {
-            RouteSecurity = new Dictionary<MethodPath, bool>();
-
-            DefaultResponse = new Dictionary<MethodPathCode, object>();
-
             Secure();
         }
 
@@ -78,7 +69,7 @@ namespace Intersect.Server.WebApi
             var method = request.Method;
             if (method == null) return Forbid();
 
-            var path = request.Path;
+            var path = context.ResolvedRoute.Description.Path;
             if (path == null) return Forbid();
 
             var modulePath = ModulePath ?? "";
