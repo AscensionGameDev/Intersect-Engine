@@ -200,6 +200,14 @@ namespace Intersect.Editor.Forms.Editors.Quest
         {
             mChangingName = true;
             mEditorItem.Name = txtName.Text;
+            //Rename all events
+            mEditorItem.StartEvent.Name = Strings.QuestEditor.startevent.ToString(mEditorItem.Name);
+            mEditorItem.EndEvent.Name = Strings.QuestEditor.endevent.ToString(mEditorItem.Name);
+            foreach (var tsk in mEditorItem.Tasks)
+            {
+                if (tsk.CompletionEvent != null)
+                    tsk.CompletionEvent.Name = Strings.TaskEditor.completionevent.ToString(mEditorItem.Name);
+            }
             lstQuests.Items[QuestBase.ListIndex(mEditorItem.Id)] = txtName.Text;
             mChangingName = false;
         }
@@ -238,7 +246,8 @@ namespace Intersect.Editor.Forms.Editors.Quest
         private void btnAddTask_Click(object sender, EventArgs e)
         {
             var questTask = new QuestBase.QuestTask(Guid.NewGuid());
-            questTask.EdittingEvent = new EventBase(Guid.Empty, Guid.Empty,0, 0, true);
+            questTask.EdittingEvent = new EventBase(Guid.Empty, Guid.Empty,0, 0, false);
+            questTask.EdittingEvent.Name = Strings.TaskEditor.completionevent.ToString(mEditorItem.Name);
             mEditorItem.AddEvents.Add(questTask.Id, questTask.EdittingEvent);
             if (OpenTaskEditor(questTask))
             {
@@ -258,7 +267,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
 
         private bool OpenTaskEditor(QuestBase.QuestTask task)
         {
-            var cmdWindow = new QuestTaskEditor(task);
+            var cmdWindow = new QuestTaskEditor(mEditorItem,task);
             var frm = new Form
             {
                 Text = Strings.TaskEditor.title

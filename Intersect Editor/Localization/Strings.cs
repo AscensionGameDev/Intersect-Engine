@@ -1639,7 +1639,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString editendevent = @"Edit Quest Completion Event";
             public static LocalizedString editrequirements = @"Edit Quest Requirements";
             public static LocalizedString editstartevent = @"Edit Quest Start Event";
-            public static LocalizedString endevent = @"Quest {00} Completion Event";
+            public static LocalizedString endevent = @"Quest: {00} - Completion Event";
             public static LocalizedString general = @"General";
             public static LocalizedString inprogressdesc = @"In Progress Description:";
             public static LocalizedString logoptions = @"Quest Log Options";
@@ -1658,7 +1658,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString save = @"Save";
             public static LocalizedString showafter = @"Show in quest log after completing quest?";
             public static LocalizedString showbefore = @"Show in quest log before accepting quest?";
-            public static LocalizedString startevent = @"Quest {00} Start Event";
+            public static LocalizedString startevent = @"Quest: {00} - Start Event";
             public static LocalizedString tasks = @"Quest Tasks";
             public static LocalizedString title = @"Quest Editor";
             public static LocalizedString undo = @"Undo Changes";
@@ -1864,7 +1864,7 @@ Tick timer saved in server config.json.";
         public struct TaskEditor
         {
             public static LocalizedString cancel = @"Cancel";
-            public static LocalizedString completionevent = @"Task Completion Event";
+            public static LocalizedString completionevent = @"Quest: {00} - Task Completion Event";
             public static LocalizedString desc = @"Desc:";
             public static LocalizedString editcompletionevent = @"Edit Task Completion Event";
             public static LocalizedString editor = @"Task Editor";

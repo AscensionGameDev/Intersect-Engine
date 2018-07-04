@@ -1417,7 +1417,7 @@ namespace Intersect.Server.Classes.Networking
         public static void SendGameObject(Client client, IDatabaseObject obj, bool deleted = false,
             bool another = false)
         {
-            if (client == null) return;
+            if (client == null || obj == null) return;
 
             if (client.IsEditor)
             {

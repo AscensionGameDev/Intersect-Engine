@@ -10,6 +10,7 @@ namespace Intersect.Models
         string DatabaseTable { get; }
 
         string Name { get; set; }
+        long TimeCreated { get; set; }
         string JsonData { get; }
         void Load(string json);
 

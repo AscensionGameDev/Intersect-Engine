@@ -71,12 +71,16 @@ namespace Intersect.GameObjects
         public ResourceBase(Guid id) : base(id)
         {
             Name = "New Resource";
+            Initial = new ResourceState();
+            Exhausted = new ResourceState();
         }
 
         //EF wants NO PARAMETERS!!!!!
         public ResourceBase()
         {
             Name = "New Resource";
+            Initial = new ResourceState();
+            Exhausted = new ResourceState();
         }
 
         public class ResourceDrop

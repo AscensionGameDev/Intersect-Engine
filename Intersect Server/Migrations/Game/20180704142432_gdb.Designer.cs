@@ -6,10 +6,10 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Intersect.Server.Migrations
+namespace Intersect.Server.Migrations.Game
 {
     [DbContext(typeof(GameContext))]
-    [Migration("20180703214559_gdb")]
+    [Migration("20180704142432_gdb")]
     partial class gdb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,6 +32,8 @@ namespace Intersect.Server.Migrations
                     b.Property<string>("Name");
 
                     b.Property<string>("Sound");
+
+                    b.Property<long>("TimeCreated");
 
                     b.HasKey("Id");
 
@@ -100,6 +102,8 @@ namespace Intersect.Server.Migrations
                     b.Property<string>("StatIncreaseJson")
                         .HasColumnName("StatIncreases");
 
+                    b.Property<long>("TimeCreated");
+
                     b.Property<string>("VitalIncreaseJson")
                         .HasColumnName("VitalIncreases");
 
@@ -122,6 +126,8 @@ namespace Intersect.Server.Migrations
 
                     b.Property<int>("Time");
 
+                    b.Property<long>("TimeCreated");
+
                     b.HasKey("Id");
 
                     b.ToTable("Crafts");
@@ -136,6 +142,8 @@ namespace Intersect.Server.Migrations
                         .HasColumnName("Crafts");
 
                     b.Property<string>("Name");
+
+                    b.Property<long>("TimeCreated");
 
                     b.HasKey("Id");
 
@@ -161,6 +169,8 @@ namespace Intersect.Server.Migrations
                     b.Property<int>("SpawnX");
 
                     b.Property<int>("SpawnY");
+
+                    b.Property<long>("TimeCreated");
 
                     b.HasKey("Id");
 
@@ -228,6 +238,8 @@ namespace Intersect.Server.Migrations
 
                     b.Property<string>("StatsJson")
                         .HasColumnName("StatsGiven");
+
+                    b.Property<long>("TimeCreated");
 
                     b.Property<int>("Tool");
 
@@ -304,6 +316,8 @@ namespace Intersect.Server.Migrations
 
                     b.Property<string>("Sprite");
 
+                    b.Property<long>("TimeCreated");
+
                     b.HasKey("Id");
 
                     b.ToTable("Npcs");
@@ -316,6 +330,8 @@ namespace Intersect.Server.Migrations
 
                     b.Property<string>("Name");
 
+                    b.Property<long>("TimeCreated");
+
                     b.HasKey("Id");
 
                     b.ToTable("PlayerSwitches");
@@ -327,6 +343,8 @@ namespace Intersect.Server.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Name");
+
+                    b.Property<long>("TimeCreated");
 
                     b.HasKey("Id");
 
@@ -374,6 +392,8 @@ namespace Intersect.Server.Migrations
                     b.Property<Guid>("SpellId")
                         .HasColumnName("Spell");
 
+                    b.Property<long>("TimeCreated");
+
                     b.HasKey("Id");
 
                     b.ToTable("Projectiles");
@@ -414,6 +434,8 @@ namespace Intersect.Server.Migrations
                     b.Property<string>("TasksJson")
                         .HasColumnName("Tasks");
 
+                    b.Property<long>("TimeCreated");
+
                     b.HasKey("Id");
 
                     b.ToTable("Quests");
@@ -441,6 +463,8 @@ namespace Intersect.Server.Migrations
 
                     b.Property<int>("SpawnDuration");
 
+                    b.Property<long>("TimeCreated");
+
                     b.Property<int>("Tool");
 
                     b.Property<bool>("WalkableAfter");
@@ -459,6 +483,8 @@ namespace Intersect.Server.Migrations
 
                     b.Property<string>("Name");
 
+                    b.Property<long>("TimeCreated");
+
                     b.Property<bool>("Value");
 
                     b.HasKey("Id");
@@ -472,6 +498,8 @@ namespace Intersect.Server.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Name");
+
+                    b.Property<long>("TimeCreated");
 
                     b.Property<int>("Value");
 
@@ -497,6 +525,8 @@ namespace Intersect.Server.Migrations
                         .HasColumnName("SellingItems");
 
                     b.Property<string>("Name");
+
+                    b.Property<long>("TimeCreated");
 
                     b.HasKey("Id");
 
@@ -532,6 +562,8 @@ namespace Intersect.Server.Migrations
 
                     b.Property<byte>("SpellType");
 
+                    b.Property<long>("TimeCreated");
+
                     b.Property<string>("VitalCostJson")
                         .HasColumnName("VitalCost");
 
@@ -546,6 +578,8 @@ namespace Intersect.Server.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Name");
+
+                    b.Property<long>("TimeCreated");
 
                     b.HasKey("Id");
 
@@ -639,6 +673,8 @@ namespace Intersect.Server.Migrations
                     b.Property<string>("Sound");
 
                     b.Property<byte[]>("TileData");
+
+                    b.Property<long>("TimeCreated");
 
                     b.Property<Guid>("Up");
 

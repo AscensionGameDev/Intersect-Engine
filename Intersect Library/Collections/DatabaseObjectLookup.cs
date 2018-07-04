@@ -21,18 +21,6 @@ namespace Intersect.Collections
             mIdMap = new SortedDictionary<Guid, IDatabaseObject>();
         }
 
-        [NotNull]
-        public virtual string[] Names => this.Select(pair => pair.Value?.Name ?? "ERR_DELETED").ToArray();
-
-        public virtual Guid FromList(int listIndex) => listIndex < 0 ? Guid.Empty : listIndex > Keys.Count ? Guid.Empty : KeyList[listIndex];
-
-        public virtual int ListIndex(Guid id)
-        {
-            var index = Keys.ToList().IndexOf(id);
-            return index;
-        }
-
-
         public virtual IDatabaseObject this[Guid id]
         {
             get => Get(id);

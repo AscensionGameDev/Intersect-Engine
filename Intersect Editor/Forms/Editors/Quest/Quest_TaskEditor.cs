@@ -13,13 +13,15 @@ namespace Intersect.Editor.Forms.Editors.Quest
     public partial class QuestTaskEditor : UserControl
     {
         private string mEventBackup = null;
+        private QuestBase mMyQuest;
         private QuestBase.QuestTask mMyTask;
         public bool Cancelled;
 
-        public QuestTaskEditor(QuestBase.QuestTask refTask)
+        public QuestTaskEditor(QuestBase refQuest, QuestBase.QuestTask refTask)
         {
             InitializeComponent();
             mMyTask = refTask;
+            mMyQuest = refQuest;
             mEventBackup = mMyTask.EdittingEvent.JsonData;
             InitLocalization();
             cmbTaskType.SelectedIndex = (int)mMyTask.Objective;
@@ -129,7 +131,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
 
         private void btnEditTaskEvent_Click(object sender, EventArgs e)
         {
-            mMyTask.EdittingEvent.Name = Strings.TaskEditor.completionevent;
+            mMyTask.EdittingEvent.Name = Strings.TaskEditor.completionevent.ToString(mMyQuest.Name);
             FrmEvent editor = new FrmEvent(null)
             {
                 MyEvent = mMyTask.EdittingEvent

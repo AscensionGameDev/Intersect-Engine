@@ -6,10 +6,10 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Intersect.Server.Migrations.Player
+namespace Intersect.Server.Migrations
 {
     [DbContext(typeof(PlayerContext))]
-    [Migration("20180703214616_pdb")]
+    [Migration("20180704142417_pdb")]
     partial class pdb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

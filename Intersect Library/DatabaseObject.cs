@@ -14,6 +14,8 @@ namespace Intersect.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; protected set; }
 
+        public long TimeCreated { get; set; }
+
         private string mBackup;
 
         protected DatabaseObject() : this(Guid.Empty)
@@ -21,11 +23,12 @@ namespace Intersect.Models
         }
 
 
-        public static string[] Names => Lookup.Select(pair => pair.Value?.Name ?? "ERR_DELETED").ToArray();
+        public static string[] Names => Lookup.OrderBy(p => p.Value?.TimeCreated).Select(pair => pair.Value?.Name ?? "ERR_DELETED").ToArray();
 
-        public static Guid IdFromList(int listIndex) => listIndex < 0 ? Guid.Empty : listIndex > Lookup.KeyList.Count ? Guid.Empty : Lookup.KeyList[listIndex];
+        public static Guid IdFromList(int listIndex) => listIndex < 0 ? Guid.Empty : listIndex > Lookup.KeyList.Count ? Guid.Empty : Lookup.KeyList.OrderBy(pairs => Lookup[pairs].TimeCreated).ToArray()[listIndex];
 
-        public static TObject FromList(int listIndex) => listIndex < 0 ? null : listIndex > Lookup.ValueList.Count ? null : (TObject)Lookup.ValueList?[listIndex];
+        public static TObject FromList(int listIndex) => listIndex < 0 ? null : listIndex > Lookup.ValueList.Count ? null : (TObject)Lookup.ValueList?.OrderBy(pairs => pairs.TimeCreated).ToArray()[listIndex];
+
 
         public int ListIndex()
         {
@@ -46,6 +49,7 @@ namespace Intersect.Models
         protected DatabaseObject(Guid guid)
         {
             Id = guid;
+            TimeCreated = DateTime.Now.ToBinary();
         }
 
         [NotNull] public static DatabaseObjectLookup Lookup => LookupUtils.GetLookup(typeof(TObject));

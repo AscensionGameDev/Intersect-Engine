@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Intersect.Server.Migrations.Player
+namespace Intersect.Server.Migrations
 {
     public partial class pdb : Migration
     {

@@ -69,12 +69,12 @@ namespace Intersect.GameObjects.Events
             Load(json);
         }
 
-        public new static string[] Names => Lookup.Where(pair => ((EventBase)pair.Value)?.CommonEvent ?? false).Select(pair => pair.Value?.Name ?? "ERR_DELETED").ToArray();
+        public new static string[] Names => Lookup.Where(pair => ((EventBase)pair.Value)?.CommonEvent ?? false).OrderBy(p => p.Value?.TimeCreated).Select(pair => pair.Value?.Name ?? "ERR_DELETED").ToArray();
 
         public new static Guid IdFromList(int listIndex)
         {
             if (listIndex < 0) return Guid.Empty;
-            var commonEvents = Lookup.Where(pair => ((EventBase)pair.Value)?.CommonEvent ?? false).ToArray();
+            var commonEvents = Lookup.Where(pair => ((EventBase)pair.Value)?.CommonEvent ?? false).OrderBy(p => p.Value?.TimeCreated).ToArray();
             if (listIndex > commonEvents.Length) return Guid.Empty;
             return commonEvents[listIndex].Value?.Id ?? Guid.Empty;
         }
@@ -86,7 +86,7 @@ namespace Intersect.GameObjects.Events
 
         public new static int ListIndex(Guid id)
         {
-            var commonEvents = Lookup.Where(pair => ((EventBase)pair.Value)?.CommonEvent ?? false).ToArray();
+            var commonEvents = Lookup.Where(pair => ((EventBase)pair.Value)?.CommonEvent ?? false).OrderBy(p => p.Value?.TimeCreated).ToArray();
             for (int i = 0; i < commonEvents.Length; i++)
             {
                 if (commonEvents[i].Key == id) return i;

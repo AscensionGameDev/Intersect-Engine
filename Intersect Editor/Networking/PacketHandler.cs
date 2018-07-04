@@ -617,7 +617,7 @@ namespace Intersect.Editor.Networking
                     }
                     else
                     {
-                        var evt = new EventBase(id,true);
+                        var evt = new EventBase(id);
                         evt.Load(json);
                         EventBase.Lookup.Set(id, evt);
                     }

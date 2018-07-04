@@ -423,16 +423,16 @@
     <Compile Include="Database\PrimaryKeyDescriptor.cs" />
     <Compile Include="Database\TableDescriptor.cs" />
     <Compile Include="Database\UniqueConstraintDescriptor.cs" />
-    <Compile Include="Migrations\20180703214559_gdb.cs" />
-    <Compile Include="Migrations\20180703214559_gdb.designer.cs">
-      <DependentUpon>20180703214559_gdb.cs</DependentUpon>
+    <Compile Include="Migrations\20180704142417_pdb.cs" />
+    <Compile Include="Migrations\20180704142417_pdb.designer.cs">
+      <DependentUpon>20180704142417_pdb.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\GameContextModelSnapshot.cs" />
-    <Compile Include="Migrations\Player\20180703214616_pdb.cs" />
-    <Compile Include="Migrations\Player\20180703214616_pdb.designer.cs">
-      <DependentUpon>20180703214616_pdb.cs</DependentUpon>
+    <Compile Include="Migrations\Game\20180704142432_gdb.cs" />
+    <Compile Include="Migrations\Game\20180704142432_gdb.designer.cs">
+      <DependentUpon>20180704142432_gdb.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\Player\PlayerContextModelSnapshot.cs" />
+    <Compile Include="Migrations\Game\GameContextModelSnapshot.cs" />
+    <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserRights.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -496,7 +496,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Migrations\Game\" />
+    <Folder Include="Migrations\Player\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

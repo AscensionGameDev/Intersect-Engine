@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Intersect.Server.Migrations
+namespace Intersect.Server.Migrations.Game
 {
     public partial class gdb : Migration
     {
@@ -12,6 +12,7 @@ namespace Intersect.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
+                    TimeCreated = table.Column<long>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     Lower_Sprite = table.Column<string>(nullable: true),
                     Lower_FrameCount = table.Column<int>(nullable: false),
@@ -41,6 +42,7 @@ namespace Intersect.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
+                    TimeCreated = table.Column<long>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     AttackAnimation = table.Column<Guid>(nullable: false),
                     BasePoints = table.Column<int>(nullable: false),
@@ -77,6 +79,7 @@ namespace Intersect.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
+                    TimeCreated = table.Column<long>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     Crafts = table.Column<string>(nullable: true)
                 },
@@ -90,6 +93,7 @@ namespace Intersect.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
+                    TimeCreated = table.Column<long>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     Ingredients = table.Column<string>(nullable: true),
                     ItemId = table.Column<Guid>(nullable: false),
@@ -105,6 +109,7 @@ namespace Intersect.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
+                    TimeCreated = table.Column<long>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     MapId = table.Column<Guid>(nullable: false),
                     SpawnX = table.Column<int>(nullable: false),
@@ -123,6 +128,7 @@ namespace Intersect.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
+                    TimeCreated = table.Column<long>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     Animation = table.Column<Guid>(nullable: false),
                     AttackAnimation = table.Column<Guid>(nullable: false),
@@ -177,6 +183,7 @@ namespace Intersect.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
+                    TimeCreated = table.Column<long>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     TileData = table.Column<byte[]>(nullable: true),
                     Up = table.Column<Guid>(nullable: false),
@@ -223,6 +230,7 @@ namespace Intersect.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
+                    TimeCreated = table.Column<long>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     AggroList = table.Column<string>(nullable: true),
                     AttackAllies = table.Column<bool>(nullable: false),
@@ -255,6 +263,7 @@ namespace Intersect.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
+                    TimeCreated = table.Column<long>(nullable: false),
                     Name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -267,6 +276,7 @@ namespace Intersect.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
+                    TimeCreated = table.Column<long>(nullable: false),
                     Name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -279,6 +289,7 @@ namespace Intersect.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
+                    TimeCreated = table.Column<long>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     Ammo = table.Column<Guid>(nullable: false),
                     AmmoRequired = table.Column<int>(nullable: false),
@@ -306,6 +317,7 @@ namespace Intersect.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
+                    TimeCreated = table.Column<long>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     StartDesc = table.Column<string>(nullable: true),
                     BeforeDesc = table.Column<string>(nullable: true),
@@ -330,6 +342,7 @@ namespace Intersect.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
+                    TimeCreated = table.Column<long>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     Initial_Graphic = table.Column<string>(nullable: true),
                     Initial_GraphicFromTileset = table.Column<bool>(nullable: false),
@@ -363,6 +376,7 @@ namespace Intersect.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
+                    TimeCreated = table.Column<long>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     Value = table.Column<bool>(nullable: false)
                 },
@@ -376,6 +390,7 @@ namespace Intersect.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
+                    TimeCreated = table.Column<long>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     Value = table.Column<int>(nullable: false)
                 },
@@ -389,6 +404,7 @@ namespace Intersect.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
+                    TimeCreated = table.Column<long>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     BuyingWhitelist = table.Column<bool>(nullable: false),
                     DefaultCurrency = table.Column<Guid>(nullable: false),
@@ -405,6 +421,7 @@ namespace Intersect.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
+                    TimeCreated = table.Column<long>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     SpellType = table.Column<byte>(nullable: false),
                     Desc = table.Column<string>(nullable: true),
@@ -451,6 +468,7 @@ namespace Intersect.Server.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
+                    TimeCreated = table.Column<long>(nullable: false),
                     Name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
