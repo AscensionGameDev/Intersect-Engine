@@ -4,36 +4,9 @@ namespace Intersect.GameObjects.Events
 {
     public class MoveRouteAction
     {
-        public Guid AnimationId;
-        public EventGraphic Graphic;
-        public MoveRouteEnum Type;
-
-        public void Save(ByteBuffer myBuffer)
-        {
-            myBuffer.WriteInteger((int) Type);
-            if (Type == MoveRouteEnum.SetGraphic)
-            {
-                Graphic.Save(myBuffer);
-            }
-            else if (Type == MoveRouteEnum.SetAnimation)
-            {
-                myBuffer.WriteGuid(AnimationId);
-            }
-        }
-
-        public void Load(ByteBuffer myBuffer)
-        {
-            Type = (MoveRouteEnum) myBuffer.ReadInteger();
-            if (Type == MoveRouteEnum.SetGraphic)
-            {
-                Graphic = new EventGraphic();
-                Graphic.Load(myBuffer);
-            }
-            else if (Type == MoveRouteEnum.SetAnimation)
-            {
-                AnimationId = myBuffer.ReadGuid();
-            }
-        }
+        public Guid AnimationId { get; set; }
+        public EventGraphic Graphic { get; set; }
+        public MoveRouteEnum Type { get; set; }
 
         public MoveRouteAction Copy()
         {
