@@ -781,61 +781,65 @@ namespace Intersect.Server.Classes.Events
                 }
 
                 //Have to accept a numeric parameter after each of the following (player switch/var and server switch/var)
-                MatchCollection matches = Regex.Matches(input, Regex.Escape(Strings.Events.playervar) + " ([0-9]+)");
+                MatchCollection matches = Regex.Matches(input, Regex.Escape(Strings.Events.playervar) + @"{([^}]*)}");
                 foreach (Match m in matches)
                 {
                     if (m.Success)
                     {
-                        //int id = Convert.ToInt32(m.Groups[1].Value);
-                        //input = input.Replace(Strings.Events.playervar + " " + m.Groups[1].Value, player.GetVariableValue(id).ToString());
+                        var id = m.Groups[1].Value;
+                        foreach (var var in PlayerVariableBase.Lookup.Values)
+                        {
+                            if (id == ((PlayerVariableBase) var).TextId)
+                            {
+                                input = input.Replace(Strings.Events.playervar + "{" + m.Groups[1].Value + "}", player.GetVariableValue(var.Id).ToString());
+                            }
+                        }
                     }
                 }
-                matches = Regex.Matches(input, Regex.Escape(Strings.Events.playerswitch) + " ([0-9]+)");
+                matches = Regex.Matches(input, Regex.Escape(Strings.Events.playerswitch) + @"{([^}]*)}");
                 foreach (Match m in matches)
                 {
                     if (m.Success)
                     {
-                        //int id = Convert.ToInt32(m.Groups[1].Value);
-                        //input = input.Replace(Strings.Events.playerswitch + " " + m.Groups[1].Value,  player.GetSwitchValue(id).ToString());
+                        var id = m.Groups[1].Value;
+                        foreach (var var in PlayerSwitchBase.Lookup.Values)
+                        {
+                            if (id == ((PlayerSwitchBase)var).TextId)
+                            {
+                                input = input.Replace(Strings.Events.playerswitch + "{" + m.Groups[1].Value + "}", player.GetSwitchValue(var.Id).ToString());
+                            }
+                        }
                     }
                 }
-                matches = Regex.Matches(input, Regex.Escape(Strings.Events.globalvar) + " ([0-9]+)");
+                matches = Regex.Matches(input, Regex.Escape(Strings.Events.globalvar) + @"{([^}]*)}");
                 foreach (Match m in matches)
                 {
                     if (m.Success)
                     {
-                        //int id = Convert.ToInt32(m.Groups[1].Value);
-                        //var globalvar = ServerVariableBase.Get(id);
-                        //if (globalvar != null)
-                        //{
-                        //    input = input.Replace(Strings.Events.globalvar + " " + m.Groups[1].Value,
-                        //        globalvar.Value.ToString());
-                        //}
-                        //else
-                        //{
-                        //    input = input.Replace(Strings.Events.globalvar + " " + m.Groups[1].Value,
-                        //        0.ToString());
-                        //}
+                        var id = m.Groups[1].Value;
+                        foreach (var var in ServerVariableBase.Lookup.Values)
+                        {
+                            if (id == ((ServerVariableBase)var).TextId)
+                            {
+                                input = input.Replace(Strings.Events.globalvar + "{" + m.Groups[1].Value + "}", ((ServerVariableBase)var).Value.ToString());
+                            }
+                        }
                     }
                 }
-                matches = Regex.Matches(input, Regex.Escape(Strings.Events.globalswitch) + " ([0-9]+)");
+                matches = Regex.Matches(input, Regex.Escape(Strings.Events.globalswitch) + @"{([^}]*)}");
                 foreach (Match m in matches)
                 {
-                    //if (m.Success)
-                    //{
-                    //    int id = Convert.ToInt32(m.Groups[1].Value);
-                    //    var globalswitch = ServerSwitchBase.Get(id);
-                    //    if (globalswitch != null)
-                    //    {
-                    //        input = input.Replace(Strings.Events.globalswitch + " " + m.Groups[1].Value,
-                    //            globalswitch.Value.ToString());
-                    //    }
-                    //    else
-                    //    {
-                    //        input = input.Replace(Strings.Events.globalswitch + " " + m.Groups[1].Value,
-                    //            false.ToString());
-                    //    }
-                    //}
+                    if (m.Success)
+                    {
+                        var id = m.Groups[1].Value;
+                        foreach (var var in ServerSwitchBase.Lookup.Values)
+                        {
+                            if (id == ((ServerSwitchBase)var).TextId)
+                            {
+                                input = input.Replace(Strings.Events.globalswitch + "{" + m.Groups[1].Value + "}", ((ServerSwitchBase)var).Value.ToString());
+                            }
+                        }
+                    }
                 }
             }
             return input;

@@ -42,7 +42,6 @@ namespace Intersect.Editor.Forms.Editors
             this.btnNew = new DarkUI.Controls.DarkButton();
             this.btnDelete = new DarkUI.Controls.DarkButton();
             this.grpEditor = new DarkUI.Controls.DarkGroupBox();
-            this.lblId = new System.Windows.Forms.Label();
             this.lblValue = new System.Windows.Forms.Label();
             this.txtObjectName = new DarkUI.Controls.DarkTextBox();
             this.lblName = new System.Windows.Forms.Label();
@@ -51,6 +50,8 @@ namespace Intersect.Editor.Forms.Editors
             this.txtVariableVal = new DarkUI.Controls.DarkTextBox();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
+            this.txtId = new DarkUI.Controls.DarkTextBox();
+            this.lblId = new System.Windows.Forms.Label();
             this.grpTypes.SuspendLayout();
             this.grpList.SuspendLayout();
             this.grpEditor.SuspendLayout();
@@ -179,6 +180,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpEditor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpEditor.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpEditor.Controls.Add(this.txtId);
             this.grpEditor.Controls.Add(this.lblId);
             this.grpEditor.Controls.Add(this.lblValue);
             this.grpEditor.Controls.Add(this.txtObjectName);
@@ -189,25 +191,16 @@ namespace Intersect.Editor.Forms.Editors
             this.grpEditor.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpEditor.Location = new System.Drawing.Point(219, 73);
             this.grpEditor.Name = "grpEditor";
-            this.grpEditor.Size = new System.Drawing.Size(284, 111);
+            this.grpEditor.Size = new System.Drawing.Size(284, 127);
             this.grpEditor.TabIndex = 2;
             this.grpEditor.TabStop = false;
             this.grpEditor.Text = "Switch/Variable Editor";
             this.grpEditor.Visible = false;
             // 
-            // lblId
-            // 
-            this.lblId.Location = new System.Drawing.Point(209, 20);
-            this.lblId.Name = "lblId";
-            this.lblId.Size = new System.Drawing.Size(69, 13);
-            this.lblId.TabIndex = 6;
-            this.lblId.Text = "1";
-            this.lblId.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
             // lblValue
             // 
             this.lblValue.AutoSize = true;
-            this.lblValue.Location = new System.Drawing.Point(10, 69);
+            this.lblValue.Location = new System.Drawing.Point(10, 99);
             this.lblValue.Name = "lblValue";
             this.lblValue.Size = new System.Drawing.Size(37, 13);
             this.lblValue.TabIndex = 3;
@@ -218,9 +211,9 @@ namespace Intersect.Editor.Forms.Editors
             this.txtObjectName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.txtObjectName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtObjectName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.txtObjectName.Location = new System.Drawing.Point(54, 40);
+            this.txtObjectName.Location = new System.Drawing.Point(85, 40);
             this.txtObjectName.Name = "txtObjectName";
-            this.txtObjectName.Size = new System.Drawing.Size(224, 20);
+            this.txtObjectName.Size = new System.Drawing.Size(193, 20);
             this.txtObjectName.TabIndex = 2;
             this.txtObjectName.TextChanged += new System.EventHandler(this.txtObjectName_TextChanged);
             // 
@@ -259,9 +252,9 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbSwitchValue.Items.AddRange(new object[] {
             "False",
             "True"});
-            this.cmbSwitchValue.Location = new System.Drawing.Point(54, 66);
+            this.cmbSwitchValue.Location = new System.Drawing.Point(85, 96);
             this.cmbSwitchValue.Name = "cmbSwitchValue";
-            this.cmbSwitchValue.Size = new System.Drawing.Size(224, 21);
+            this.cmbSwitchValue.Size = new System.Drawing.Size(193, 21);
             this.cmbSwitchValue.TabIndex = 5;
             this.cmbSwitchValue.Text = "False";
             this.cmbSwitchValue.TextPadding = new System.Windows.Forms.Padding(2);
@@ -272,9 +265,9 @@ namespace Intersect.Editor.Forms.Editors
             this.txtVariableVal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.txtVariableVal.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtVariableVal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.txtVariableVal.Location = new System.Drawing.Point(54, 66);
+            this.txtVariableVal.Location = new System.Drawing.Point(85, 97);
             this.txtVariableVal.Name = "txtVariableVal";
-            this.txtVariableVal.Size = new System.Drawing.Size(224, 20);
+            this.txtVariableVal.Size = new System.Drawing.Size(193, 20);
             this.txtVariableVal.TabIndex = 4;
             this.txtVariableVal.TextChanged += new System.EventHandler(this.txtVariableVal_TextChanged);
             // 
@@ -299,7 +292,28 @@ namespace Intersect.Editor.Forms.Editors
             this.btnSave.Text = "Save";
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
-            // frmSwitchVariable
+            // txtId
+            // 
+            this.txtId.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtId.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtId.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.txtId.Location = new System.Drawing.Point(85, 66);
+            this.txtId.Name = "txtId";
+            this.txtId.Size = new System.Drawing.Size(193, 20);
+            this.txtId.TabIndex = 8;
+            this.txtId.TextChanged += new System.EventHandler(this.txtId_TextChanged);
+            this.txtId.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtId_KeyPress);
+            // 
+            // lblId
+            // 
+            this.lblId.AutoSize = true;
+            this.lblId.Location = new System.Drawing.Point(10, 69);
+            this.lblId.Name = "lblId";
+            this.lblId.Size = new System.Drawing.Size(69, 13);
+            this.lblId.TabIndex = 7;
+            this.lblId.Text = "Text Id:  \\pv ";
+            // 
+            // FrmSwitchVariable
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -348,6 +362,7 @@ namespace Intersect.Editor.Forms.Editors
         private DarkButton btnDelete;
         private DarkButton btnSave;
         private DarkButton btnCancel;
+        private DarkTextBox txtId;
         private System.Windows.Forms.Label lblId;
     }
 }

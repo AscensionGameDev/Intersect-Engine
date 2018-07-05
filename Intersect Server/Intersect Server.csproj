@@ -431,6 +431,10 @@
     <Compile Include="Migrations\Game\20180704142432_gdb.designer.cs">
       <DependentUpon>20180704142432_gdb.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\Game\20180705155752_SwitchVariableIds.cs" />
+    <Compile Include="Migrations\Game\20180705155752_SwitchVariableIds.designer.cs">
+      <DependentUpon>20180705155752_SwitchVariableIds.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Game\GameContextModelSnapshot.cs" />
     <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />
     <Compile Include="Models\User.cs" />
