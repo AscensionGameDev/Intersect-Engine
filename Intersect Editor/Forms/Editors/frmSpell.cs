@@ -135,7 +135,7 @@ namespace Intersect.Editor.Forms.Editors
             lblName.Text = Strings.SpellEditor.name;
             lblType.Text = Strings.SpellEditor.type;
             cmbType.Items.Clear();
-            for (int i = 0; i < Strings.SpellEditor.types.Length; i++)
+            for (int i = 0; i < Strings.SpellEditor.types.Count; i++)
             {
                 cmbType.Items.Add(Strings.SpellEditor.types[i]);
             }
@@ -156,7 +156,7 @@ namespace Intersect.Editor.Forms.Editors
             grpTargetInfo.Text = Strings.SpellEditor.targetting;
             lblTargetType.Text = Strings.SpellEditor.targettype;
             cmbTargetType.Items.Clear();
-            for (int i = 0; i < Strings.SpellEditor.targettypes.Length; i++)
+            for (int i = 0; i < Strings.SpellEditor.targettypes.Count; i++)
             {
                 cmbTargetType.Items.Add(Strings.SpellEditor.targettypes[i]);
             }
@@ -172,7 +172,7 @@ namespace Intersect.Editor.Forms.Editors
             lblManaDamage.Text = Strings.SpellEditor.mpdamage;
             chkFriendly.Text = Strings.SpellEditor.friendly;
             cmbDamageType.Items.Clear();
-            for (int i = 0; i < Strings.Combat.damagetypes.Length; i++)
+            for (int i = 0; i < Strings.Combat.damagetypes.Count; i++)
             {
                 cmbDamageType.Items.Add(Strings.Combat.damagetypes[i]);
             }
@@ -195,7 +195,7 @@ namespace Intersect.Editor.Forms.Editors
             grpEffect.Text = Strings.SpellEditor.effectgroup;
             lblEffect.Text = Strings.SpellEditor.effectlabel;
             cmbExtraEffect.Items.Clear();
-            for (int i = 0; i < Strings.SpellEditor.effects.Length; i++)
+            for (int i = 0; i < Strings.SpellEditor.effects.Count; i++)
             {
                 cmbExtraEffect.Items.Add(Strings.SpellEditor.effects[i]);
             }

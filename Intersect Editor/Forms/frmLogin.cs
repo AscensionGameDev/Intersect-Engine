@@ -36,7 +36,7 @@ namespace Intersect.Editor.Forms
             GameContentManager.CheckForResources();
             Database.LoadOptions();
             mOptionsLoaded = true;
-            Strings.Load(ClientOptions.Language);
+            Strings.Load();
             EditorLoopDelegate = EditorLoop.StartLoop;
             if (Preferences.LoadPreference("username").Trim().Length > 0)
             {

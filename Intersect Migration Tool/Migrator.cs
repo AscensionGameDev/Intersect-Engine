@@ -12,7 +12,7 @@ namespace Intersect.Migration
         {
             CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            Strings.Load(Database.GetLanguageFromConfig());
+            Strings.Load();
             Console.WriteLine(@"  _____       _                          _   ");
             Console.WriteLine(@" |_   _|     | |                        | |  ");
             Console.WriteLine(@"   | |  _ __ | |_ ___ _ __ ___  ___  ___| |_ ");

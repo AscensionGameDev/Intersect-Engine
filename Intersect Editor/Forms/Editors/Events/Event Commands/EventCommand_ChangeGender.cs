@@ -24,7 +24,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         {
             grpChangeGender.Text = Strings.EventChangeGender.title;
             cmbGender.Items.Clear();
-            for (int i = 0; i < Strings.EventChangeGender.genders.Length; i++)
+            for (int i = 0; i < Strings.EventChangeGender.genders.Count; i++)
             {
                 cmbGender.Items.Add(Strings.EventChangeGender.genders[i]);
             }

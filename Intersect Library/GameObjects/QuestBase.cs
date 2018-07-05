@@ -147,7 +147,7 @@ namespace Intersect.GameObjects
                 Id = id;
             }
 
-            public string GetTaskString(LocalizedString[] descriptions)
+            public string GetTaskString(Dictionary<int,LocalizedString> descriptions)
             {
                 var taskString = "";
                 switch (Objective)

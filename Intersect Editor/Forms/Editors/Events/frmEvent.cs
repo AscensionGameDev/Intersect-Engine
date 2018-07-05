@@ -610,26 +610,26 @@ namespace Intersect.Editor.Forms.Editors
             grpMovement.Text = Strings.EventEditor.movement;
             lblType.Text = Strings.EventEditor.movementtype;
             cmbMoveType.Items.Clear();
-            for (int i = 0; i < Strings.EventEditor.movementtypes.Length; i++)
+            for (int i = 0; i < Strings.EventEditor.movementtypes.Count; i++)
             {
                 cmbMoveType.Items.Add(Strings.EventEditor.movementtypes[i]);
             }
             btnSetRoute.Text = Strings.EventEditor.setroute;
             lblSpeed.Text = Strings.EventEditor.speed;
             cmbEventSpeed.Items.Clear();
-            for (int i = 0; i < Strings.EventEditor.speeds.Length; i++)
+            for (int i = 0; i < Strings.EventEditor.speeds.Count; i++)
             {
                 cmbEventSpeed.Items.Add(Strings.EventEditor.speeds[i]);
             }
             lblFreq.Text = Strings.EventEditor.frequency;
             cmbEventFreq.Items.Clear();
-            for (int i = 0; i < Strings.EventEditor.frequencies.Length; i++)
+            for (int i = 0; i < Strings.EventEditor.frequencies.Count; i++)
             {
                 cmbEventFreq.Items.Add(Strings.EventEditor.frequencies[i]);
             }
             lblLayer.Text = Strings.EventEditor.layer;
             cmbLayering.Items.Clear();
-            for (int i = 0; i < Strings.EventEditor.layers.Length; i++)
+            for (int i = 0; i < Strings.EventEditor.layers.Count; i++)
             {
                 cmbLayering.Items.Add(Strings.EventEditor.layers[i]);
             }
@@ -687,7 +687,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 grpEntityOptions.Hide();
                 cmbTrigger.Items.Clear();
-                for (int i = 0; i < Strings.EventEditor.commontriggers.Length; i++)
+                for (int i = 0; i < Strings.EventEditor.commontriggers.Count; i++)
                 {
                     cmbTrigger.Items.Add(Strings.EventEditor.commontriggers[i]);
                 }
@@ -695,7 +695,7 @@ namespace Intersect.Editor.Forms.Editors
             else
             {
                 cmbTrigger.Items.Clear();
-                for (int i = 0; i < Strings.EventEditor.triggers.Length; i++)
+                for (int i = 0; i < Strings.EventEditor.triggers.Count; i++)
                 {
                     cmbTrigger.Items.Add(Strings.EventEditor.triggers[i]);
                 }

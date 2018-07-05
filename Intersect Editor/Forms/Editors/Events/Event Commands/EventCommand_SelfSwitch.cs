@@ -26,7 +26,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             grpSelfSwitch.Text = Strings.EventSelfSwitch.title;
             lblSelfSwitch.Text = Strings.EventSelfSwitch.label;
             cmbSetSwitch.Items.Clear();
-            for (int i = 0; i < Strings.EventSelfSwitch.selfswitches.Length; i++)
+            for (int i = 0; i < Strings.EventSelfSwitch.selfswitches.Count; i++)
             {
                 cmbSetSwitch.Items.Add(Strings.EventSelfSwitch.selfswitches[i]);
             }

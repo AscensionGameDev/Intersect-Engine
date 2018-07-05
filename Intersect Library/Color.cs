@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Intersect.Localization;
 
 namespace Intersect
@@ -110,7 +111,7 @@ namespace Intersect
         public static Color Cyan => new Color(0, 255, 255);
         public static Color Pink => new Color(255, 192, 203);
 
-        public static Color FromName(string name, LocalizedString[] colors)
+        public static Color FromName(string name, Dictionary<int,LocalizedString> colors)
         {
             if (name == "Black" || name == colors[0])
             {

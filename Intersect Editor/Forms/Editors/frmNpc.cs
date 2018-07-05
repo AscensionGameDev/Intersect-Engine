@@ -120,7 +120,7 @@ namespace Intersect.Editor.Forms.Editors
             lblName.Text = Strings.NpcEditor.name;
             lblBehavior.Text = Strings.NpcEditor.behavior;
             cmbBehavior.Items.Clear();
-            for (int i = 0; i < Strings.NpcEditor.behaviors.Length; i++)
+            for (int i = 0; i < Strings.NpcEditor.behaviors.Count; i++)
             {
                 cmbBehavior.Items.Add(Strings.NpcEditor.behaviors[i]);
             }
@@ -144,7 +144,7 @@ namespace Intersect.Editor.Forms.Editors
             btnRemove.Text = Strings.NpcEditor.removespell;
             lblFreq.Text = Strings.NpcEditor.frequency;
             cmbFreq.Items.Clear();
-            for (int i = 0; i < Strings.NpcEditor.frequencies.Length; i++)
+            for (int i = 0; i < Strings.NpcEditor.frequencies.Count; i++)
             {
                 cmbFreq.Items.Add(Strings.NpcEditor.frequencies[i]);
             }
@@ -168,7 +168,7 @@ namespace Intersect.Editor.Forms.Editors
             lblCritChance.Text = Strings.NpcEditor.critchance;
             lblDamageType.Text = Strings.NpcEditor.damagetype;
             cmbDamageType.Items.Clear();
-            for (int i = 0; i < Strings.Combat.damagetypes.Length; i++)
+            for (int i = 0; i < Strings.Combat.damagetypes.Count; i++)
             {
                 cmbDamageType.Items.Add(Strings.Combat.damagetypes[i]);
             }

@@ -48,7 +48,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
 
             lblType.Text = Strings.TaskEditor.type;
             cmbTaskType.Items.Clear();
-            for (int i = 0; i < Strings.TaskEditor.types.Length; i++)
+            for (int i = 0; i < Strings.TaskEditor.types.Count; i++)
             {
                 cmbTaskType.Items.Add(Strings.TaskEditor.types[i]);
             }

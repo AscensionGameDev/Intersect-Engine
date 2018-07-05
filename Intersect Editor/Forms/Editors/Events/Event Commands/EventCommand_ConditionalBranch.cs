@@ -34,7 +34,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             lblType.Text = Strings.EventConditional.type;
 
             cmbConditionType.Items.Clear();
-            for (int i = 0; i < Strings.EventConditional.conditions.Length; i++)
+            for (int i = 0; i < Strings.EventConditional.conditions.Count; i++)
             {
                 cmbConditionType.Items.Add(Strings.EventConditional.conditions[i]);
             }
@@ -53,7 +53,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             lblComparator.Text = Strings.EventConditional.comparator;
             lblVariableValue.Text = Strings.EventConditional.value;
             cmbVariableMod.Items.Clear();
-            for (int i = 0; i < Strings.EventConditional.comparators.Length; i++)
+            for (int i = 0; i < Strings.EventConditional.comparators.Count; i++)
             {
                 cmbVariableMod.Items.Add(Strings.EventConditional.comparators[i]);
             }
@@ -83,7 +83,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                 cmbLevelStat.Items.Add(Strings.Combat.stats[i]);
             }
             cmbLevelComparator.Items.Clear();
-            for (int i = 0; i < Strings.EventConditional.comparators.Length; i++)
+            for (int i = 0; i < Strings.EventConditional.comparators.Count; i++)
             {
                 cmbLevelComparator.Items.Add(Strings.EventConditional.comparators[i]);
             }
@@ -123,7 +123,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             lblQuestProgress.Text = Strings.EventConditional.questprogress;
             lblQuestIs.Text = Strings.EventConditional.questis;
             cmbTaskModifier.Items.Clear();
-            for (int i = 0; i < Strings.EventConditional.questcomparators.Length; i++)
+            for (int i = 0; i < Strings.EventConditional.questcomparators.Count; i++)
             {
                 cmbTaskModifier.Items.Add(Strings.EventConditional.questcomparators[i]);
             }

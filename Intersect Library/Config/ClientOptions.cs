@@ -14,7 +14,6 @@ namespace Intersect.Config
         static ClientOptions() => sOptions = new ClientOptions();
 
         //Public Getters
-        public static string Language => sOptions.mLanguage;
         public static string ServerHost => sOptions.mHost;
         public static ushort ServerPort => sOptions.mPort;
         public static bool RenderCache => sOptions.mRenderCache;
@@ -23,9 +22,6 @@ namespace Intersect.Config
         public static string MenuMusic => sOptions.mMenuMusic;
         public static string MenuBackground => sOptions.mMenuBackground;
         public static List<string> IntroImages => sOptions.mIntroImages;
-
-        [JsonProperty("Language")]
-        protected string mLanguage = "English";
 
         [JsonProperty("Host")]
         protected string mHost = "localhost";

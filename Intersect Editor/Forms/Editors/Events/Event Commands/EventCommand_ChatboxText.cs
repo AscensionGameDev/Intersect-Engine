@@ -37,7 +37,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             lblChannel.Text = Strings.EventChatboxText.channel;
             lblCommands.Text = Strings.EventChatboxText.commands;
             cmbChannel.Items.Clear();
-            for (int i = 0; i < Strings.EventChatboxText.channels.Length; i++)
+            for (int i = 0; i < Strings.EventChatboxText.channels.Count; i++)
             {
                 cmbChannel.Items.Add(Strings.EventChatboxText.channels[i]);
             }

@@ -340,7 +340,7 @@ namespace Intersect.Editor.Forms.Editors
             lblCritChance.Text = Strings.ClassEditor.critchance;
             lblDamageType.Text = Strings.ClassEditor.damagetype;
             cmbDamageType.Items.Clear();
-            for (int i = 0; i < Strings.Combat.damagetypes.Length; i++)
+            for (int i = 0; i < Strings.Combat.damagetypes.Count; i++)
             {
                 cmbDamageType.Items.Add(Strings.Combat.damagetypes[i]);
             }

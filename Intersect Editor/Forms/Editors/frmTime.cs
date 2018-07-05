@@ -30,7 +30,7 @@ namespace Intersect.Editor.Forms.Editors
             grpSettings.Text = Strings.TimeEditor.settings;
             lblIntervals.Text = Strings.TimeEditor.interval;
             cmbIntervals.Items.Clear();
-            for (int i = 0; i < Strings.TimeEditor.intervals.Length; i++)
+            for (int i = 0; i < Strings.TimeEditor.intervals.Count; i++)
             {
                 cmbIntervals.Items.Add(Strings.TimeEditor.intervals[i]);
             }

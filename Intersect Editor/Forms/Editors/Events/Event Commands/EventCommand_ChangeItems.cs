@@ -42,7 +42,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             grpChangeItems.Text = Strings.EventChangeItems.title;
             lblAction.Text = Strings.EventChangeItems.action;
             cmbAction.Items.Clear();
-            for (int i = 0; i < Strings.EventChangeItems.actions.Length; i++)
+            for (int i = 0; i < Strings.EventChangeItems.actions.Count; i++)
             {
                 cmbAction.Items.Add(Strings.EventChangeItems.actions[i]);
             }

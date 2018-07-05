@@ -30,30 +30,6 @@ namespace Intersect.Migration
         private static SqliteConnection sDbConnection;
         private static object sDbLock = new object();
 
-        //Config Info
-        public static string GetLanguageFromConfig()
-        {
-            if (File.Exists("resources/config.xml"))
-            {
-                var options = new XmlDocument();
-                var configXml = File.ReadAllText("resources/config.xml");
-                try
-                {
-                    options.LoadXml(configXml);
-                    return GetXmlStr(options, "//Config/Language");
-                }
-                catch (Exception exception)
-                {
-                    Log.Trace(exception);
-                }
-            }
-            else if (File.Exists("resources/config.json"))
-            {
-                //TODO: Make sure migration tool can load language from new config.json
-            }
-            return "English";
-        }
-
         private static string GetXmlStr(XmlDocument xmlDoc, string xmlPath)
         {
             var selectSingleNode = xmlDoc.SelectSingleNode(xmlPath);

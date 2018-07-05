@@ -144,7 +144,7 @@ namespace Intersect.Editor.Forms.Editors
             lblName.Text = Strings.ItemEditor.name;
             lblType.Text = Strings.ItemEditor.type;
             cmbType.Items.Clear();
-            for (int i = 0; i < Strings.ItemEditor.types.Length; i++)
+            for (int i = 0; i < Strings.ItemEditor.types.Count; i++)
             {
                 cmbType.Items.Add(Strings.ItemEditor.types[i]);
             }
@@ -168,7 +168,7 @@ namespace Intersect.Editor.Forms.Editors
             lblBonusEffect.Text = Strings.ItemEditor.bonuseffect;
             lblEffectPercent.Text = Strings.ItemEditor.bonusamount;
             cmbEquipmentBonus.Items.Clear();
-            for (int i = 0; i < Strings.ItemEditor.bonuseffects.Length; i++)
+            for (int i = 0; i < Strings.ItemEditor.bonuseffects.Count; i++)
             {
                 cmbEquipmentBonus.Items.Add(Strings.ItemEditor.bonuseffects[i]);
             }
@@ -179,7 +179,7 @@ namespace Intersect.Editor.Forms.Editors
             lblCritChance.Text = Strings.ItemEditor.critchance;
             lblDamageType.Text = Strings.ItemEditor.damagetype;
             cmbDamageType.Items.Clear();
-            for (int i = 0; i < Strings.Combat.damagetypes.Length; i++)
+            for (int i = 0; i < Strings.Combat.damagetypes.Count; i++)
             {
                 cmbDamageType.Items.Add(Strings.Combat.damagetypes[i]);
             }
@@ -225,7 +225,7 @@ namespace Intersect.Editor.Forms.Editors
             cmbToolType.Items.Add(Strings.General.none);
             cmbToolType.Items.AddRange(Options.ToolTypes.ToArray());
             cmbEquipmentBonus.Items.Clear();
-            for (int i = 0; i < Strings.ItemEditor.bonuseffects.Length; i++)
+            for (int i = 0; i < Strings.ItemEditor.bonuseffects.Count; i++)
             {
                 cmbEquipmentBonus.Items.Add(Strings.ItemEditor.bonuseffects[i]);
             }

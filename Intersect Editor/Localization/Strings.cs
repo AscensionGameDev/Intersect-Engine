@@ -180,43 +180,43 @@ Tick timer saved in server config.json.";
 
         public struct Colors
         {
-            public static LocalizedString[] presets = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> presets = new Dictionary<int, LocalizedString>
             {
-                @"Black",
-                @"White",
-                @"Pink",
-                @"Blue",
-                @"Red",
-                @"Green",
-                @"Yellow",
-                @"Orange",
-                @"Purple",
-                @"Gray",
-                @"Cyan"
+                {0, @"Black"},
+                {1, @"White"},
+                {2, @"Pink"},
+                {3, @"Blue"},
+                {4, @"Red"},
+                {5, @"Green"},
+                {6, @"Yellow"},
+                {7, @"Orange"},
+                {8, @"Purple"},
+                {9, @"Gray"},
+                {10, @"Cyan"}
             };
         }
         
         public struct Combat
         {
-            public static LocalizedString[] damagetypes = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> damagetypes = new Dictionary<int, LocalizedString>
             {
-                @"Physical",
-                @"Magic",
-                @"True",
+                {0, @"Physical"},
+                {1, @"Magic"},
+                {2, @"True"},
             };
             public static LocalizedString exp = @"Experience";
-            public static LocalizedString[] stats = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> stats = new Dictionary<int, LocalizedString>
             {
-                @"Attack",
-                @"Ability Power",
-                @"Defense",
-                @"Magic Resist",
-                @"Speed",
+                {0, @"Attack"},
+                {1, @"Ability Power"},
+                {2, @"Defense"},
+                {3, @"Magic Resist"},
+                {4, @"Speed"},
             };
-            public static LocalizedString[] vitals = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> vitals = new Dictionary<int, LocalizedString>
             {
-                @"Health",
-                @"Mana",
+                {0, @"Health"},
+                {1, @"Mana"},
             };
         }
 
@@ -348,10 +348,10 @@ Tick timer saved in server config.json.";
         public struct EventChangeGender
         {
             public static LocalizedString cancel = @"Cancel";
-            public static LocalizedString[] genders = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> genders = new Dictionary<int, LocalizedString>
             {
-                @"Male",
-                @"Female"
+                {0, @"Male"},
+                {1, @"Female"}
             };
             public static LocalizedString label = @"Gender:";
             public static LocalizedString okay = @"Ok";
@@ -361,10 +361,10 @@ Tick timer saved in server config.json.";
         public struct EventChangeItems
         {
             public static LocalizedString action = @"Action:";
-            public static LocalizedString[] actions = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> actions = new Dictionary<int, LocalizedString>
             {
-                @"Give",
-                @"Take",
+                {0, @"Give"},
+                {1, @"Take"},
             };
             public static LocalizedString amount = @"Amount:";
             public static LocalizedString cancel = @"Cancel";
@@ -384,10 +384,10 @@ Tick timer saved in server config.json.";
         public struct EventChangeSpells
         {
             public static LocalizedString action = @"Action: ";
-            public static LocalizedString[] actions = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> actions = new Dictionary<int, LocalizedString>
             {
-                @"Add",
-                @"Remove,"
+                {0, @"Add"},
+                {1, @"Remove"}
             };
             public static LocalizedString cancel = @"Cancel";
             public static LocalizedString okay = @"Ok";
@@ -407,11 +407,11 @@ Tick timer saved in server config.json.";
         {
             public static LocalizedString cancel = @"Cancel";
             public static LocalizedString channel = @"Channel:";
-            public static LocalizedString[] channels = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> channels = new Dictionary<int, LocalizedString>
             {
-                @"Player",
-                @"Local",
-                @"Global",
+                {0, @"Player"},
+                {1, @"Local"},
+                {2, @"Global"},
             };
             public static LocalizedString color = @"Color:";
             public static LocalizedString commands = @"Chat Commands";
@@ -492,12 +492,12 @@ Tick timer saved in server config.json.";
             public static LocalizedString restoremp = @"Restore Player MP";
             public static LocalizedString runcompletionevent = @"Running Completion Event";
             public static LocalizedString selfswitch = @"Set Self Switch {00} to {01}";
-            public static LocalizedString[] selfswitches = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> selfswitches = new Dictionary<int, LocalizedString>
             {
-                @"A",
-                @"B",
-                @"C",
-                @"D",
+                {0, @"A"},
+                {1, @"B"},
+                {2, @"C"},
+                {3, @"D"},
             };
             public static LocalizedString setaccess = @"Set Player Access to {00}";
             public static LocalizedString setclass = @"Set Class [{00}]";
@@ -609,34 +609,34 @@ Tick timer saved in server config.json.";
             public static LocalizedString classis = @"Class Is";
             public static LocalizedString commoneventsonly = @"This condition works for Common Events activation only!";
             public static LocalizedString comparator = @"Comparator:";
-            public static LocalizedString[] comparators = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> comparators = new Dictionary<int, LocalizedString>
             {
-                @"Equal To",
-                @"Greater Than or Equal To",
-                @"Less Than or Equal To",
-                @"Greater Than",
-                @"Less Than",
-                @"Does Not Equal"
+                {0, @"Equal To"},
+                {1, @"Greater Than or Equal To"},
+                {2, @"Less Than or Equal To"},
+                {3, @"Greater Than"},
+                {4, @"Less Than"},
+                {5, @"Does Not Equal"}
             };
 
-            public static LocalizedString[] conditions = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> conditions = new Dictionary<int, LocalizedString>
             {
-                @"Player Switch is...",
-                @"Player Variable is...",
-                @"Global Switch is...",
-                @"Global Variable is...",
-                @"Has item...",
-                @"Class is...",
-                @"Knows spell...",
-                @"Level or Stat is....",
-                @"Self Switch is....",
-                @"Power level is....",
-                @"Time is between....",
-                @"Can Start Quest....",
-                @"Quest In Progress....",
-                @"Quest Completed....",
-                @"No NPCs on Map",
-                @"Gender is...",
+                {0, @"Player Switch is..."},
+                {1, @"Player Variable is..."},
+                {2, @"Global Switch is..."},
+                {3, @"Global Variable is..."},
+                {4, @"Has item..."},
+                {5, @"Class is..."},
+                {6, @"Knows spell..."},
+                {7, @"Level or Stat is...."},
+                {8, @"Self Switch is...."},
+                {9, @"Power level is...."},
+                {10, @"Time is between...."},
+                {11, @"Can Start Quest...."},
+                {12, @"Quest In Progress...."},
+                {13, @"Quest Completed...."},
+                {14, @"No NPCs on Map"},
+                {15, @"Gender is..."},
             };
             public static LocalizedString endrange = @"End Range:";
             public static LocalizedString False = @"False";
@@ -661,12 +661,12 @@ Tick timer saved in server config.json.";
             public static LocalizedString power0 = @"Mod or Admin";
             public static LocalizedString power1 = @"Admin";
             public static LocalizedString poweris = @"Power Is";
-            public static LocalizedString[] questcomparators = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> questcomparators = new Dictionary<int, LocalizedString>
             {
-                @"On Any Task",
-                @"Before Task...",
-                @"After Task...",
-                @"On Task...",
+                {0, @"On Any Task"},
+                {1, @"Before Task..."},
+                {2, @"After Task..."},
+                {3, @"On Task..."},
             };
             public static LocalizedString questcompleted = @"Quest Completed";
             public static LocalizedString questcompletedlabel = @"Quest:";
@@ -674,12 +674,12 @@ Tick timer saved in server config.json.";
             public static LocalizedString questis = @"Is:";
             public static LocalizedString questprogress = @"Quest:";
             public static LocalizedString selfswitch = @"Self Switch:";
-            public static LocalizedString[] selfswitches = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> selfswitches = new Dictionary<int, LocalizedString>
             {
-                @"A",
-                @"B",
-                @"C",
-                @"D",
+                {0, @"A"},
+                {1, @"B"},
+                {2, @"C"},
+                {3, @"D"},
             };
             public static LocalizedString selfswitchis = @"Self Switch Is";
             public static LocalizedString spell = @"Spell:";
@@ -730,12 +730,12 @@ Tick timer saved in server config.json.";
             public static LocalizedString questcompleted = @"Quest is Completed: {00}";
             public static LocalizedString questinprogress = @"Quest In Progress: {00} {01}";
             public static LocalizedString selfswitch = @"Self Switch {00} is {01}";
-            public static LocalizedString[] selfswitches = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> selfswitches = new Dictionary<int, LocalizedString>
             {
-                @"A",
-                @"B",
-                @"C",
-                @"D",
+                {0, @"A"},
+                {1, @"B"},
+                {2, @"C"},
+                {3, @"D"},
             };
             public static LocalizedString startquest = @"Can Start Quest: {00}";
             public static LocalizedString tasknotfound = @"Not Found";
@@ -752,14 +752,14 @@ Tick timer saved in server config.json.";
             public static LocalizedString clearpage = @"Clear Page";
             public static LocalizedString command = @"/Command: /";
             public static LocalizedString commandlist = @"Commands:";
-            public static LocalizedString[] commontriggers = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> commontriggers = new Dictionary<int, LocalizedString>
             {
-                @"None",
-                @"Login",
-                @"Level Up",
-                @"On Respawn",
-                @"/Command",
-                @"Autorun",
+                {0, @"None"},
+                {1, @"Login"},
+                {2, @"Level Up"},
+                {3, @"On Respawn"},
+                {4, @"/Command"},
+                {5, @"Autorun"},
             };
             public static LocalizedString conditions = @"Conditions";
             public static LocalizedString copypage = @"Copy Page";
@@ -774,13 +774,13 @@ Tick timer saved in server config.json.";
             public static LocalizedString extras = @"Extras:";
             public static LocalizedString face = @"Face:";
             public static LocalizedString frequency = @"Freq:";
-            public static LocalizedString[] frequencies = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> frequencies = new Dictionary<int, LocalizedString>
             {
-                @"Not Very Often",
-                @"Not Often",
-                @"Normal",
-                @"Often",
-                @"Very Often",
+                {0, @"Not Very Often"},
+                {1, @"Not Often"},
+                {2, @"Normal"},
+                {3, @"Often"},
+                {4, @"Very Often"},
             };
             public static LocalizedString general = @"General";
             public static LocalizedString global = @"Global Event";
@@ -790,19 +790,19 @@ Tick timer saved in server config.json.";
             public static LocalizedString inspectordesc = @"Inspector Description:";
             public static LocalizedString interactionfreeze = @"Interaction Freeze";
             public static LocalizedString layer = @"Layer:";
-            public static LocalizedString[] layers = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> layers = new Dictionary<int, LocalizedString>
             {
-                @"Below Player",
-                @"Same as Player",
-                @"Above Player",
+                {0, @"Below Player"},
+                {1, @"Same as Player"},
+                {2, @"Above Player"},
             };
             public static LocalizedString movement = @"Movement";
             public static LocalizedString movementtype = @"Type:";
-            public static LocalizedString[] movementtypes = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> movementtypes = new Dictionary<int, LocalizedString>
             {
-                @"None",
-                @"Random",
-                @"Move Route",
+                {0, @"None"},
+                {1, @"Random"},
+                {2, @"Move Route"},
             };
             public static LocalizedString name = @"Name:";
             public static LocalizedString newpage = @"New Page";
@@ -815,21 +815,21 @@ Tick timer saved in server config.json.";
             public static LocalizedString savedialogue = @"Do you want to save changes to this event?";
             public static LocalizedString setroute = @"Set Route...";
             public static LocalizedString speed = @"Speed:";
-            public static LocalizedString[] speeds = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> speeds = new Dictionary<int, LocalizedString>
             {
-                @"Slowest",
-                @"Slower",
-                @"Normal",
-                @"Faster",
-                @"Fastest",
+                {0, @"Slowest"},
+                {1, @"Slower"},
+                {2, @"Normal"},
+                {3, @"Faster"},
+                {4, @"Fastest"},
             };
             public static LocalizedString title = @"Event Editor - {00}";
             public static LocalizedString trigger = @"Trigger";
-            public static LocalizedString[] triggers = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> triggers = new Dictionary<int, LocalizedString>
             {
-                @"Action Button",
-                @"Player Touch",
-                @"Autorun",
+                {0, @"Action Button"},
+                {1, @"Player Touch"},
+                {2, @"Autorun"},
             };
             public static LocalizedString walkinganim = @"Walking Anim";
         }
@@ -1002,12 +1002,12 @@ Tick timer saved in server config.json.";
             public static LocalizedString False = @"False";
             public static LocalizedString label = @"Set Self Switch:";
             public static LocalizedString okay = @"Ok";
-            public static LocalizedString[] selfswitches = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> selfswitches = new Dictionary<int, LocalizedString>
             {
-                @"A",
-                @"B",
-                @"C",
-                @"D",
+                {0, @"A"},
+                {1, @"B"},
+                {2, @"C"},
+                {3, @"D"},
             };
             public static LocalizedString title = @"Set Self Switch";
             public static LocalizedString True = @"True";
@@ -1167,11 +1167,11 @@ Tick timer saved in server config.json.";
             public static LocalizedString basedamage = @"Base Damage:";
             public static LocalizedString bonusamount = @"Effect Amount (%):";
             public static LocalizedString bonuseffect = @"Bonus Effect:";
-            public static LocalizedString[] bonuseffects = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> bonuseffects = new Dictionary<int, LocalizedString>
             {
-                @"None",
-                @"Cooldown Reduction",
-                @"Life Steal",
+                {0, @"None"},
+                {1, @"Cooldown Reduction"},
+                {2, @"Life Steal"},
             };
             public static LocalizedString bonuses = @"Stat Bonuses";
             public static LocalizedString bonusrange = @"Stat Bonus Range (+-):";
@@ -1214,15 +1214,15 @@ Tick timer saved in server config.json.";
             public static LocalizedString tooltype = @"Tool Type:";
             public static LocalizedString twohanded = @"2 Hand";
             public static LocalizedString type = @"Type:";
-            public static LocalizedString[] types = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> types = new Dictionary<int, LocalizedString>
             {
-                @"None",
-                @"Equipment",
-                @"Consumable",
-                @"Currency",
-                @"Spell",
-                @"Event",
-                @"Bag",
+                {0, @"None"},
+                {1, @"Equipment"},
+                {2, @"Consumable"},
+                {3, @"Currency"},
+                {4, @"Spell"},
+                {5, @"Event"},
+                {6, @"Bag"},
             };
             public static LocalizedString undo = @"Undo Changes";
             public static LocalizedString undoprompt = @"Are you sure you want to undo changes made to this item? This action cannot be reverted!";
@@ -1475,10 +1475,11 @@ Tick timer saved in server config.json.";
             public static LocalizedString title = @"Map Properties";
 
             [NotNull]
-            public static LocalizedString[] zones = {
-                @"Normal",
-                @"Safe",
-                @"Arena",
+            public static Dictionary<int, LocalizedString> zones = new Dictionary<int, LocalizedString>
+            {
+                {0, @"Normal"},
+                {1, @"Safe"},
+                {2, @"Arena"},
             };
         }
 
@@ -1492,12 +1493,12 @@ Tick timer saved in server config.json.";
             public static LocalizedString attackanimation = @"Attack Animation:";
             public static LocalizedString basedamage = @"Base Damage:";
             public static LocalizedString behavior = @"Behavior:";
-            public static LocalizedString[] behaviors = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> behaviors = new Dictionary<int, LocalizedString>
             {
-                @"Attack when Attacked",
-                @"Attack on Sight",
-                @"Friendly",
-                @"Guard",
+                {0, @"Attack when Attacked"},
+                {1, @"Attack on Sight"},
+                {2, @"Friendly"},
+                {3, @"Guard"},
              };
             public static LocalizedString cancel = @"Cancel";
             public static LocalizedString combat = @"Combat";
@@ -1518,13 +1519,13 @@ Tick timer saved in server config.json.";
             public static LocalizedString enabled = @"Enabled?";
             public static LocalizedString exp = @"Exp:";
             public static LocalizedString frequency = @"Freq:";
-            public static LocalizedString[] frequencies = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> frequencies = new Dictionary<int, LocalizedString>
             {
-                @"Not Very Often",
-                @"Not Often",
-                @"Normal",
-                @"Often",
-                @"Very Often",
+                {0, @"Not Very Often"},
+                {1, @"Not Often"},
+                {2, @"Normal"},
+                {3, @"Often"},
+                {4, @"Very Often"},
             };
             public static LocalizedString general = @"General";
             public static LocalizedString hp = @"HP:";
@@ -1765,15 +1766,15 @@ Tick timer saved in server config.json.";
             public static LocalizedString deletetitle = @"Delete Spell";
             public static LocalizedString description = @"Desc:";
             public static LocalizedString duration = @"Stat Boost/Effect Duration";
-            public static LocalizedString[] effects = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> effects = new Dictionary<int, LocalizedString>
             {
-                @"None",
-                @"Silence",
-                @"Stun",
-                @"Snare",
-                @"Blind",
-                @"Stealth",
-                @"Transform",
+                {0, @"None"},
+                {1, @"Silence"},
+                {2, @"Stun"},
+                {3, @"Snare"},
+                {4, @"Blind"},
+                {5, @"Stealth"},
+                {6, @"Transform"},
             };
             public static LocalizedString effectgroup = @"Effect";
             public static LocalizedString effectlabel = @"Extra Effect:";
@@ -1810,23 +1811,23 @@ Tick timer saved in server config.json.";
             public static LocalizedString stats = @"Stat Modifiers";
             public static LocalizedString targetting = @"Targetting Info";
             public static LocalizedString targettype = @"Target Type:";
-            public static LocalizedString[] targettypes = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> targettypes = new Dictionary<int, LocalizedString>
             {
-                @"Self",
-                @"Single Target (includes self)",
-                @"AOE",
-                @"Linear (projectile)",
+                {0, @"Self"},
+                {1, @"Single Target (includes self)"},
+                {2, @"AOE"},
+                {3, @"Linear (projectile)"},
             };
             public static LocalizedString title = @"Spell Editor";
             public static LocalizedString transformsprite = @"Sprite:";
             public static LocalizedString type = @"Type:";
-            public static LocalizedString[] types = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> types = new Dictionary<int, LocalizedString>
             {
-                @"Combat Spell",
-                @"Warp to Map",
-                @"Warp to Target",
-                @"Dash",
-                @"Event",
+                {0, @"Combat Spell"},
+                {1, @"Warp to Map"},
+                {2, @"Warp to Target"},
+                {3, @"Dash"},
+                {4, @"Event"},
             };
             public static LocalizedString undo = @"Undo Changes";
             public static LocalizedString undoprompt = @"Are you sure you want to undo changes made to this spell? This action cannot be reverted!";
@@ -1878,17 +1879,17 @@ Tick timer saved in server config.json.";
             public static LocalizedString ok = @"Ok";
             public static LocalizedString title = @"Add/Edit Quest Task";
             public static LocalizedString type = @"Task Type:";
-            public static LocalizedString[] types = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> types = new Dictionary<int, LocalizedString>
             {
-                @"Event Driven",
-                @"Gather Item(s)",
-                @"Kill NPC(s)",
+                {0, @"Event Driven"},
+                {1, @"Gather Item(s)"},
+                {2, @"Kill NPC(s)"},
             };
-            public static LocalizedString[] descriptions = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> descriptions = new Dictionary<int, LocalizedString>
             {
-                @"Event Driven - {00}",
-                @"Gather Items [{00} x{01}] - {02}",
-                @"Kill Npc(s) [{00} x{01}] - {02}",
+                {0, @"Event Driven - {00}"},
+                {1, @"Gather Items [{00} x{01}] - {02}"},
+                {2, @"Kill Npc(s) [{00} x{01}] - {02}"},
             };
         }
 
@@ -1901,13 +1902,13 @@ Tick timer saved in server config.json.";
             public static LocalizedString cliff = @"Cliff           [VX Format]";
             public static LocalizedString fake = @"Fake         [VX Format]";
             public static LocalizedString layer = @"Layer:";
-            public static LocalizedString[] layers = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> layers = new Dictionary<int, LocalizedString>
             {
-                @"Ground",
-                @"Mask",
-                @"Mask 2",
-                @"Fringe",
-                @"Fringe 2",
+                {0, @"Ground"},
+                {1, @"Mask"},
+                {2, @"Mask 2"},
+                {3, @"Fringe"},
+                {4, @"Fringe 2"},
             };
             public static LocalizedString normal = @"Normal";
             public static LocalizedString tileset = @"Tileset:";
@@ -1921,20 +1922,20 @@ Tick timer saved in server config.json.";
             public static LocalizedString cancel = @"Cancel";
             public static LocalizedString colorpaneldesc = @"Double click the panel above to change the overlay color.";
             public static LocalizedString interval = @"Invervals:";
-            public static LocalizedString[] intervals = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> intervals = new Dictionary<int, LocalizedString>
             {
-                @"24 hours",
-                @"12 hours",
-                @"8 hours",
-                @"6 hours",
-                @"4 hours",
-                @"3 hours",
-                @"2 hours",
-                @"1 hour",
-                @"45 minutes",
-                @"30 minutes",
-                @"15 minutes",
-                @"10 minutes",
+                {0, @"24 hours"},
+                {1, @"12 hours"},
+                {2, @"8 hours"},
+                {3, @"6 hours"},
+                {4, @"4 hours"},
+                {5, @"3 hours"},
+                {6, @"2 hours"},
+                {7, @"1 hour"},
+                {8, @"45 minutes"},
+                {9, @"30 minutes"},
+                {10, @"15 minutes"},
+                {11, @"10 minutes"},
             };
             public static LocalizedString overlay = @"Range Overlay";
             public static LocalizedString rate = @"Time Rate:";
@@ -2191,91 +2192,68 @@ Negative values for time to flow backwards.";
         }
 
 
-        public static void Load(string language)
+        public static void Load()
         {
-            if (File.Exists(Path.Combine("resources", "languages", "Editor." + language + ".json")))
+            if (File.Exists(Path.Combine("resources", "languages", "editor_lang.json")))
             {
-                Dictionary<string, Dictionary<string, object>> strings =
-                    new Dictionary<string, Dictionary<string, object>>();
-                strings = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(
-                    File.ReadAllText(Path.Combine("resources", "languages", "Editor." + language + ".json")));
-                Type type = typeof(Strings);
+                var strings = new Dictionary<string, Dictionary<string, object>>();
+                strings = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(File.ReadAllText(Path.Combine("resources", "languages", "editor_lang.json")));
+                var type = typeof(Strings);
 
                 var fields = new List<Type>();
-                fields.AddRange(type.GetNestedTypes(System.Reflection.BindingFlags.Static |
-                                                 System.Reflection.BindingFlags.Public));
+                fields.AddRange(type.GetNestedTypes(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public));
 
                 foreach (var p in fields)
                 {
-                    if (strings.ContainsKey(p.Name))
+                    if (!strings.ContainsKey(p.Name)) continue;
+                    var dict = strings[p.Name];
+                    foreach (var fieldInfo in p.GetFields(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public))
                     {
-                        var dict = strings[p.Name];
-                        foreach (var p1 in p.GetFields(System.Reflection.BindingFlags.Static |
-                                                       System.Reflection.BindingFlags.Public))
+                        var fieldValue = fieldInfo.GetValue(null);
+                        if (!dict.ContainsKey(fieldInfo.Name)) continue;
+                        if (fieldValue is LocalizedString)
                         {
-                            if (dict.ContainsKey(p1.Name))
+                            fieldInfo.SetValue(null, new LocalizedString((string)dict[fieldInfo.Name.ToLower()]));
+                        }
+                        else if (fieldValue is Dictionary<int, LocalizedString>)
+                        {
+                            var existingDict = (Dictionary<int, LocalizedString>)fieldInfo.GetValue(null);
+                            var values = ((JObject)dict[fieldInfo.Name]).ToObject<Dictionary<int, string>>();
+                            var dic = values.ToDictionary<KeyValuePair<int, string>, int, LocalizedString>(val => val.Key, val => val.Value);
+                            foreach (var val in dic)
                             {
-                                if (p1.GetValue(null).GetType() == typeof(LocalizedString))
-                                {
-                                    p1.SetValue(null, new LocalizedString((string)dict[p1.Name]));
-                                }
-                                else if (p1.GetValue(null).GetType() == typeof(LocalizedString[]))
-                                {
-                                    string[] values = ((JArray)dict[p1.Name]).ToObject<string[]>();
-                                    List<LocalizedString> list = new List<LocalizedString>();
-                                    for (int i = 0; i < values.Length; i++)
-                                        list.Add(new LocalizedString(values[i]));
-                                    p1.SetValue(null, list.ToArray());
-                                }
-                                else if (p1.GetValue(null).GetType() == typeof(Dictionary<int, LocalizedString>))
-                                {
-                                    var dic = new Dictionary<int, LocalizedString>();
-                                    Dictionary<int, string> values = ((JObject)dict[p1.Name]).ToObject<Dictionary<int, string>>();
-                                    foreach (var val in values)
-                                    {
-                                        dic.Add(val.Key, val.Value);
-                                    }
-                                    p1.SetValue(null, dic);
-                                }
-                                else if (p1.GetValue(null).GetType() == typeof(Dictionary<string, LocalizedString>))
-                                {
-                                    var dic = new Dictionary<string, LocalizedString>();
-                                    Dictionary<string, string> values = ((JObject)dict[p1.Name]).ToObject<Dictionary<string, string>>();
-                                    foreach (var val in values)
-                                    {
-                                        dic.Add(val.Key, val.Value);
-                                    }
-                                    p1.SetValue(null, dic);
-                                }
+                                existingDict[val.Key] = val.Value;
+                            }
+                        }
+                        else if (fieldValue is Dictionary<string, LocalizedString>)
+                        {
+                            var existingDict = (Dictionary<string, LocalizedString>)fieldInfo.GetValue(null);
+                            var pairs = ((JObject)dict[fieldInfo.Name])?.ToObject<Dictionary<string, string>>() ?? new Dictionary<string, string>();
+                            foreach (var pair in pairs)
+                            {
+                                if (pair.Key == null) continue;
+                                existingDict[pair.Key.ToLower()] = pair.Value;
                             }
                         }
                     }
                 }
             }
-            Save(language);
+            Save();
         }
 
-        public static void Save(string language)
+        public static void Save()
         {
-            Dictionary<string, Dictionary<string, object>> strings =
-                new Dictionary<string, Dictionary<string, object>>();
-            Type type = typeof(Strings);
-            var fields = type.GetNestedTypes(System.Reflection.BindingFlags.Static |
-                                             System.Reflection.BindingFlags.Public);
+            var strings = new Dictionary<string, Dictionary<string, object>>();
+            var type = typeof(Strings);
+            var fields = type.GetNestedTypes(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
             foreach (var p in fields)
             {
                 var dict = new Dictionary<string, object>();
-                foreach (var p1 in p.GetFields(System.Reflection.BindingFlags.Static |
-                                               System.Reflection.BindingFlags.Public))
+                foreach (var p1 in p.GetFields(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public))
                 {
                     if (p1.GetValue(null).GetType() == typeof(LocalizedString))
                     {
-                        dict.Add(p1.Name, ((LocalizedString)p1.GetValue(null)).ToString());
-                    }
-                    else if (p1.GetValue(null).GetType() == typeof(LocalizedString[]))
-                    {
-                        string[] values = ((LocalizedString[])p1.GetValue(null)).Select(x => x.ToString()).ToArray();
-                        dict.Add(p1.Name, values);
+                        dict.Add(p1.Name.ToLower(), ((LocalizedString)p1.GetValue(null)).ToString());
                     }
                     else if (p1.GetValue(null).GetType() == typeof(Dictionary<int, LocalizedString>))
                     {
@@ -2291,7 +2269,7 @@ Negative values for time to flow backwards.";
                         var dic = new Dictionary<string, string>();
                         foreach (var val in (Dictionary<string, LocalizedString>)p1.GetValue(null))
                         {
-                            dic.Add(val.Key, val.Value.ToString());
+                            dic.Add(val.Key.ToLower(), val.Value.ToString());
                         }
                         dict.Add(p1.Name, dic);
                     }
@@ -2304,7 +2282,7 @@ Negative values for time to flow backwards.";
             {
                 Directory.CreateDirectory(languageDirectory);
             }
-            File.WriteAllText(Path.Combine(languageDirectory, "Editor." + language + ".json"), JsonConvert.SerializeObject(strings, Formatting.Indented));
+            File.WriteAllText(Path.Combine(languageDirectory, "editor_lang.json"), JsonConvert.SerializeObject(strings, Formatting.Indented));
         }
     }
 }

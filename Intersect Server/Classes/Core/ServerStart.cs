@@ -84,8 +84,7 @@ namespace Intersect.Server.Classes
                     }
                 }
             }
-
-            Strings.Load(Options.Language);
+            
             Console.WriteLine(@"  _____       _                          _   ");
             Console.WriteLine(@" |_   _|     | |                        | |  ");
             Console.WriteLine(@"   | |  _ __ | |_ ___ _ __ ___  ___  ___| |_ ");

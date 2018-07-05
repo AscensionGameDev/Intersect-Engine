@@ -91,91 +91,68 @@ namespace Intersect.Migration.Localization
 
 
 
-        public static void Load(string language)
+        public static void Load()
         {
-            if (File.Exists(Path.Combine("resources", "languages", "Migrator." + language + ".json")))
+            if (File.Exists(Path.Combine("resources", "languages", "migration_lang.json")))
             {
-                Dictionary<string, Dictionary<string, object>> strings =
-                    new Dictionary<string, Dictionary<string, object>>();
-                strings = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(
-                    File.ReadAllText(Path.Combine("resources", "languages", "Migrator." + language + ".json")));
-                Type type = typeof(Strings);
+                var strings = new Dictionary<string, Dictionary<string, object>>();
+                strings = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(File.ReadAllText(Path.Combine("resources", "languages", "migration_lang.json")));
+                var type = typeof(Strings);
 
                 var fields = new List<Type>();
-                fields.AddRange(type.GetNestedTypes(System.Reflection.BindingFlags.Static |
-                                                    System.Reflection.BindingFlags.Public));
+                fields.AddRange(type.GetNestedTypes(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public));
 
                 foreach (var p in fields)
                 {
-                    if (strings.ContainsKey(p.Name))
+                    if (!strings.ContainsKey(p.Name)) continue;
+                    var dict = strings[p.Name];
+                    foreach (var fieldInfo in p.GetFields(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public))
                     {
-                        var dict = strings[p.Name];
-                        foreach (var p1 in p.GetFields(System.Reflection.BindingFlags.Static |
-                                                       System.Reflection.BindingFlags.Public))
+                        var fieldValue = fieldInfo.GetValue(null);
+                        if (!dict.ContainsKey(fieldInfo.Name)) continue;
+                        if (fieldValue is LocalizedString)
                         {
-                            if (dict.ContainsKey(p1.Name))
+                            fieldInfo.SetValue(null, new LocalizedString((string)dict[fieldInfo.Name.ToLower()]));
+                        }
+                        else if (fieldValue is Dictionary<int, LocalizedString>)
+                        {
+                            var existingDict = (Dictionary<int, LocalizedString>)fieldInfo.GetValue(null);
+                            var values = ((JObject)dict[fieldInfo.Name]).ToObject<Dictionary<int, string>>();
+                            var dic = values.ToDictionary<KeyValuePair<int, string>, int, LocalizedString>(val => val.Key, val => val.Value);
+                            foreach (var val in dic)
                             {
-                                if (p1.GetValue(null).GetType() == typeof(LocalizedString))
-                                {
-                                    p1.SetValue(null, new LocalizedString((string)dict[p1.Name]));
-                                }
-                                else if (p1.GetValue(null).GetType() == typeof(LocalizedString[]))
-                                {
-                                    string[] values = ((JArray)dict[p1.Name]).ToObject<string[]>();
-                                    List<LocalizedString> list = new List<LocalizedString>();
-                                    for (int i = 0; i < values.Length; i++)
-                                        list.Add(new LocalizedString(values[i]));
-                                    p1.SetValue(null, list.ToArray());
-                                }
-                                else if (p1.GetValue(null).GetType() == typeof(Dictionary<int, LocalizedString>))
-                                {
-                                    var dic = new Dictionary<int, LocalizedString>();
-                                    Dictionary<int, string> values = ((JObject)dict[p1.Name]).ToObject<Dictionary<int, string>>();
-                                    foreach (var val in values)
-                                    {
-                                        dic.Add(val.Key, val.Value);
-                                    }
-                                    p1.SetValue(null, dic);
-                                }
-                                else if (p1.GetValue(null).GetType() == typeof(Dictionary<string, LocalizedString>))
-                                {
-                                    var dic = new Dictionary<string, LocalizedString>();
-                                    Dictionary<string, string> values = ((JObject)dict[p1.Name]).ToObject<Dictionary<string, string>>();
-                                    foreach (var val in values)
-                                    {
-                                        dic.Add(val.Key, val.Value);
-                                    }
-                                    p1.SetValue(null, dic);
-                                }
+                                existingDict[val.Key] = val.Value;
+                            }
+                        }
+                        else if (fieldValue is Dictionary<string, LocalizedString>)
+                        {
+                            var existingDict = (Dictionary<string, LocalizedString>)fieldInfo.GetValue(null);
+                            var pairs = ((JObject)dict[fieldInfo.Name])?.ToObject<Dictionary<string, string>>() ?? new Dictionary<string, string>();
+                            foreach (var pair in pairs)
+                            {
+                                if (pair.Key == null) continue;
+                                existingDict[pair.Key.ToLower()] = pair.Value;
                             }
                         }
                     }
                 }
             }
-            Save(language);
+            Save();
         }
 
-        public static void Save(string language)
+        public static void Save()
         {
-            Dictionary<string, Dictionary<string, object>> strings =
-                new Dictionary<string, Dictionary<string, object>>();
-            Type type = typeof(Strings);
-            var fields = type.GetNestedTypes(System.Reflection.BindingFlags.Static |
-                                             System.Reflection.BindingFlags.Public);
+            var strings = new Dictionary<string, Dictionary<string, object>>();
+            var type = typeof(Strings);
+            var fields = type.GetNestedTypes(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
             foreach (var p in fields)
             {
                 var dict = new Dictionary<string, object>();
-                foreach (var p1 in p.GetFields(System.Reflection.BindingFlags.Static |
-                                               System.Reflection.BindingFlags.Public))
+                foreach (var p1 in p.GetFields(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public))
                 {
                     if (p1.GetValue(null).GetType() == typeof(LocalizedString))
                     {
-                        dict.Add(p1.Name, ((LocalizedString)p1.GetValue(null)).ToString());
-                    }
-                    else if (p1.GetValue(null).GetType() == typeof(LocalizedString[]))
-                    {
-                        string[] values = ((LocalizedString[])p1.GetValue(null)).Select(x => x.ToString()).ToArray();
-                        dict.Add(p1.Name, values);
+                        dict.Add(p1.Name.ToLower(), ((LocalizedString)p1.GetValue(null)).ToString());
                     }
                     else if (p1.GetValue(null).GetType() == typeof(Dictionary<int, LocalizedString>))
                     {
@@ -191,14 +168,20 @@ namespace Intersect.Migration.Localization
                         var dic = new Dictionary<string, string>();
                         foreach (var val in (Dictionary<string, LocalizedString>)p1.GetValue(null))
                         {
-                            dic.Add(val.Key, val.Value.ToString());
+                            dic.Add(val.Key.ToLower(), val.Value.ToString());
                         }
                         dict.Add(p1.Name, dic);
                     }
                 }
                 strings.Add(p.Name, dict);
             }
-            File.WriteAllText(Path.Combine("resources", "languages", "Migrator." + language + ".json"), JsonConvert.SerializeObject(strings, Formatting.Indented));
+
+            var languageDirectory = Path.Combine("resources", "languages");
+            if (!Directory.Exists(languageDirectory))
+            {
+                Directory.CreateDirectory(languageDirectory);
+            }
+            File.WriteAllText(Path.Combine(languageDirectory, "migration_lang.json"), JsonConvert.SerializeObject(strings, Formatting.Indented));
         }
     }
 }

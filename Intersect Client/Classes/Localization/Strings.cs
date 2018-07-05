@@ -128,11 +128,11 @@ namespace Intersect.Client.Classes.Localization
 
         public struct Chatbox
         {
-            public static LocalizedString[] channels = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> channels = new Dictionary<int, LocalizedString>
             {
-                @"local",
-                @"global",
-                @"party",
+                {0, @"local"},
+                {1, @"global"},
+                {2,  @"party"},
             };
             public static LocalizedString channeladmin = @"admin";
             public static LocalizedString enterchat = @"Click here to chat.";
@@ -143,19 +143,19 @@ namespace Intersect.Client.Classes.Localization
 
         public struct Colors
         {
-            public static LocalizedString[] presets = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> presets = new Dictionary<int, LocalizedString>
             {
-                @"Black",
-                @"White",
-                @"Pink",
-                @"Blue",
-                @"Red",
-                @"Green",
-                @"Yellow",
-                @"Orange",
-                @"Purple",
-                @"Gray",
-                @"Cyan"
+                {0, @"Black"},
+                {1, @"White"},
+                {2, @"Pink"},
+                {3, @"Blue"},
+                {4, @"Red"},
+                {5, @"Green"},
+                {6, @"Yellow"},
+                {7, @"Orange"},
+                {8, @"Purple"},
+                {9, @"Gray"},
+                {10, @"Cyan"}
             };
         }
 
@@ -274,10 +274,7 @@ namespace Intersect.Client.Classes.Localization
             public static LocalizedString passwordinvalid = @"Password is invalid. Please use alphanumeric characters with a length between 4 and 20.";
             public static LocalizedString title = @"Error!";
             public static LocalizedString usernameinvalid = @"Username is invalid. Please use alphanumeric characters with a length between 2 and 20.";
-
-            public static LocalizedString LoadFile =
-                    @"Failed to load a {00}. Please send the game administrator a copy of your errors log file in the logs directory."
-                ;
+            public static LocalizedString LoadFile = @"Failed to load a {00}. Please send the game administrator a copy of your errors log file in the logs directory.";
         }
 
         public struct Words
@@ -340,30 +337,30 @@ namespace Intersect.Client.Classes.Localization
             public static LocalizedString damage = @"Base Damage: {00}";
             public static LocalizedString desc = @"Desc: {00}";
             public static LocalizedString effect = @"Bonus Effect: {00}% {01}";
-            public static LocalizedString[] effects = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> effects = new Dictionary<int, LocalizedString>
             {
-                @"Cooldown Reduction",
-                @"Lifesteal"
+                {0, @"Cooldown Reduction"},
+                {1, @"Lifesteal"}
             };
-            public static LocalizedString[] itemtypes = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> itemtypes = new Dictionary<int, LocalizedString>
             {
-                @"",
-                @"Equipment",
-                @"Consumable",
-                @"Currency",
-                @"Spell",
-                @"Special",
-                @"Bag",
+                {0, @"None"},
+                {1,@"Equipment"},
+                    {2,@"Consumable"},
+                    {3,@"Currency"},
+                    {4,@"Spell"},
+                    {5,@"Special"},
+                    {6,@"Bag"},
             };
             public static LocalizedString prereq = @"Prerequisites:";
             public static LocalizedString quantity = @"x{00}";
-            public static LocalizedString[] stats = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> stats = new Dictionary<int, LocalizedString>
             {
-                @"Attack: {00}",
-                @"Ability Power: {00}",
-                @"Defense: {00}",
-                @"Magic Resist: {00}",
-                @"Speed: {00}"
+                {0,@"Attack: {00}"},
+                {1,@"Ability Power: {00}"},
+                {2,@"Defense: {00}"},
+                {3,@"Magic Resist: {00}"},
+                {4, @"Speed: {00}"}
             };
             public static LocalizedString twohand = @"2H";
         }
@@ -702,51 +699,51 @@ namespace Intersect.Client.Classes.Localization
             public static LocalizedString cooldowntime = @"Cooldown: {00} Seconds";
             public static LocalizedString desc = @"Desc: {00}";
             public static LocalizedString duration = @"Duration: {00}s";
-            public static LocalizedString[] effectlist = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> effectlist = new Dictionary<int, LocalizedString>
             {
-                @"",
-                @"Silences Target",
-                @"Stuns Target",
-                @"Snares Target",
-                @"Blinds Target",
-                @"Stealths Target",
-                @"Transforms Target",
+                {0, @""},
+                {1,@"Silences Target"},
+                {2, @"Stuns Target"},
+                {3,@"Snares Target"},
+                {4,@"Blinds Target"},
+                {5,@"Stealths Target"},
+                {6,@"Transforms Target"},
             };
             public static LocalizedString effects = @"Effects:";
             public static LocalizedString prereqs = @"Prerequisites:";
             public static LocalizedString removesymbol = @"-";
-            public static LocalizedString[] spelltypes = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> spelltypes = new Dictionary<int, LocalizedString>
             {
-                @"Combat Spell",
-                @"Warp - Self Cast",
-                @"Warp - Self Cast",
-                @"Dash",
-                @"Special",
+                {0, @"Combat Spell"},
+                {1, @"Warp - Self Cast"},
+                {2, @"Warp - Self Cast"},
+                {3, @"Dash"},
+                {4, @"Special"},
             };
-            public static LocalizedString[] stats = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> stats = new Dictionary<int, LocalizedString>
             {
-                @"Attack: {00}",
-                @"Ability Power: {00}",
-                @"Defense: {00}",
-                @"Magic Resist: {00}",
-                @"Speed: {00}"
+                {0,@"Attack: {00}"},
+                {1, @"Ability Power: {00}"},
+                {2, @"Defense: {00}"},
+                {3, @"Magic Resist: {00}"},
+                {4, @"Speed: {00}"}
             };
-            public static LocalizedString[] targettypes = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> targettypes = new Dictionary<int, LocalizedString>
             {
-                @"Self Cast",
-                @"Targetted - Range: {00} Tiles",
-                @"AOE - Range: {00} Tiles - Radius: {01} Tiles",
-                @"Projectile - Range: {00} Tiles",
+                {0, @"Self Cast"},
+                {1, @"Targetted - Range: {00} Tiles"},
+                {2, @"AOE - Range: {00} Tiles - Radius: {01} Tiles"},
+                {3, @"Projectile - Range: {00} Tiles"},
             };
-            public static LocalizedString[] vitals = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> vitals = new Dictionary<int, LocalizedString>
             {
-                @"HP: {00}{01}",
-                @"MP: {00}{01}",
+                {0, @"HP: {00}{01}"},
+                {1, @"MP: {00}{01}"},
             };
-            public static LocalizedString[] vitalcosts = new LocalizedString[]
+            public static Dictionary<int, LocalizedString> vitalcosts = new Dictionary<int, LocalizedString>
             {
-                @"HP Cost: {00}",
-                @"MP Cost: {00}",
+                {0, @"HP Cost: {00}"},
+                {1, @"MP Cost: {00}"},
             };
         }
 
@@ -783,82 +780,68 @@ namespace Intersect.Client.Classes.Localization
             public static LocalizedString Close = @"Close";
         }
 
-        public static void Load(string language)
+        public static void Load()
         {
-            if (File.Exists(Path.Combine("resources", "languages", "Client." + language + ".json")))
+            if (File.Exists(Path.Combine("resources", "languages", "client_lang.json")))
             {
-                var strings =
-                    new Dictionary<string, Dictionary<string, object>>();
-                strings = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(
-                    File.ReadAllText(Path.Combine("resources", "languages", "Client." + language + ".json")));
+                var strings = new Dictionary<string, Dictionary<string, object>>();
+                strings = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(File.ReadAllText(Path.Combine("resources", "languages", "client_lang.json")));
                 var type = typeof(Strings);
 
                 var fields = new List<Type>();
-                fields.AddRange(type.GetNestedTypes(System.Reflection.BindingFlags.Static |
-                                                    System.Reflection.BindingFlags.Public));
+                fields.AddRange(type.GetNestedTypes(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public));
 
                 foreach (var p in fields)
                 {
                     if (!strings.ContainsKey(p.Name)) continue;
                     var dict = strings[p.Name];
-                    foreach (var fieldInfo in p.GetFields(System.Reflection.BindingFlags.Static |
-                                                   System.Reflection.BindingFlags.Public))
+                    foreach (var fieldInfo in p.GetFields(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public))
                     {
                         var fieldValue = fieldInfo.GetValue(null);
                         if (!dict.ContainsKey(fieldInfo.Name)) continue;
                         if (fieldValue is LocalizedString)
                         {
-                            fieldInfo.SetValue(null, new LocalizedString((string)dict[fieldInfo.Name]));
-                        }
-                        else if (fieldValue is LocalizedString[])
-                        {
-                            var values = ((JArray)dict[fieldInfo.Name]).ToObject<string[]>();
-                            fieldInfo.SetValue(null, values.Select(t => new LocalizedString(t)).ToArray());
+                            fieldInfo.SetValue(null, new LocalizedString((string)dict[fieldInfo.Name.ToLower()]));
                         }
                         else if (fieldValue is Dictionary<int, LocalizedString>)
                         {
+                            var existingDict = (Dictionary<int,LocalizedString>)fieldInfo.GetValue(null);
                             var values = ((JObject)dict[fieldInfo.Name]).ToObject<Dictionary<int, string>>();
                             var dic = values.ToDictionary<KeyValuePair<int, string>, int, LocalizedString>(val => val.Key, val => val.Value);
-                            fieldInfo.SetValue(null, dic);
+                            foreach (var val in dic)
+                            {
+                                existingDict[val.Key] = val.Value;
+                            }
                         }
                         else if (fieldValue is Dictionary<string, LocalizedString>)
                         {
-                            var dictionary = fieldValue as Dictionary<string, LocalizedString>;
+                            var existingDict = (Dictionary<string, LocalizedString>)fieldInfo.GetValue(null);
                             var pairs = ((JObject)dict[fieldInfo.Name])?.ToObject<Dictionary<string, string>>() ?? new Dictionary<string, string>();
                             foreach (var pair in pairs)
                             {
                                 if (pair.Key == null) continue;
-                                dictionary[pair.Key] = pair.Value;
+                                existingDict[pair.Key.ToLower()] = pair.Value;
                             }
-                            fieldInfo.SetValue(null, dictionary);
                         }
                     }
                 }
             }
-            Save(language);
+            Save();
         }
 
-        public static void Save(string language)
+        public static void Save()
         {
-            var strings =
-                new Dictionary<string, Dictionary<string, object>>();
+            var strings = new Dictionary<string, Dictionary<string, object>>();
             var type = typeof(Strings);
-            var fields = type.GetNestedTypes(System.Reflection.BindingFlags.Static |
-                                             System.Reflection.BindingFlags.Public);
+            var fields = type.GetNestedTypes(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
             foreach (var p in fields)
             {
                 var dict = new Dictionary<string, object>();
-                foreach (var p1 in p.GetFields(System.Reflection.BindingFlags.Static |
-                                               System.Reflection.BindingFlags.Public))
+                foreach (var p1 in p.GetFields(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public))
                 {
                     if (p1.GetValue(null).GetType() == typeof(LocalizedString))
                     {
-                        dict.Add(p1.Name, ((LocalizedString)p1.GetValue(null)).ToString());
-                    }
-                    else if (p1.GetValue(null).GetType() == typeof(LocalizedString[]))
-                    {
-                        var values = ((LocalizedString[])p1.GetValue(null)).Select(x => x.ToString()).ToArray();
-                        dict.Add(p1.Name, values);
+                        dict.Add(p1.Name.ToLower(), ((LocalizedString)p1.GetValue(null)).ToString());
                     }
                     else if (p1.GetValue(null).GetType() == typeof(Dictionary<int, LocalizedString>))
                     {
@@ -874,7 +857,7 @@ namespace Intersect.Client.Classes.Localization
                         var dic = new Dictionary<string, string>();
                         foreach (var val in (Dictionary<string, LocalizedString>)p1.GetValue(null))
                         {
-                            dic.Add(val.Key, val.Value.ToString());
+                            dic.Add(val.Key.ToLower(), val.Value.ToString());
                         }
                         dict.Add(p1.Name, dic);
                     }
@@ -887,7 +870,7 @@ namespace Intersect.Client.Classes.Localization
             {
                 Directory.CreateDirectory(languageDirectory);
             }
-            File.WriteAllText(Path.Combine(languageDirectory, "Client." + language + ".json"), JsonConvert.SerializeObject(strings, Formatting.Indented));
+            File.WriteAllText(Path.Combine(languageDirectory, "client_lang.json"), JsonConvert.SerializeObject(strings, Formatting.Indented));
         }
     }
 }

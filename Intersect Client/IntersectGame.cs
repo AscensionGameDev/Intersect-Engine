@@ -52,7 +52,7 @@ namespace Intersect.Client
             File.WriteAllText("resources/config.json", ClientOptions.ToJson());
 
             Globals.Database.LoadPreferences();
-            Strings.Load(ClientOptions.Language);
+            Strings.Load();
             
             Gui.ActiveFont = TextUtils.StripToLower(ClientOptions.Font);
             Globals.InputManager = new MonoInput(this);

@@ -14,7 +14,6 @@ namespace Intersect
         public bool ExportDatabaseSettings { get; set; }
 
         //Public Getters
-        public static string Language => _options._language;
         public static ushort ServerPort { get => _options._serverPort; set => _options._serverPort = value; }
         public static string GameName => _options._gameName;
         public static int MaxStatValue => _options.PlayerOpts.MaxStat;
@@ -74,10 +73,6 @@ namespace Intersect
         public const int LayerCount = 5;
         public const int MaxStats = 5;
         public const int MaxHotbar = 10;
-
-        //Game Settings
-        [JsonProperty("Language")]
-        protected string _language = "English";
 
         [JsonProperty("GameName")]
         protected string _gameName = "Intersect";

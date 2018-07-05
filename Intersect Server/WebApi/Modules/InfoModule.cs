@@ -27,7 +27,6 @@ namespace Intersect.Server.WebApi.Modules
             {
                 name = ServerOptions.GameName,
                 port = ServerOptions.ServerPort,
-                language = ServerOptions.Language
             }
         );
 
@@ -35,7 +34,6 @@ namespace Intersect.Server.WebApi.Modules
             {
                 name = ServerOptions.GameName,
                 port = ServerOptions.ServerPort,
-                language = ServerOptions.Language,
                 upnp = ServerOptions.UPnP,
                 openPortChecker = ServerOptions.OpenPortChecker,
                 player = new
