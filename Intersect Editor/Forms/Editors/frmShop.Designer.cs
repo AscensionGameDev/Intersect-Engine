@@ -209,6 +209,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudSellCost.Name = "nudSellCost";
             this.nudSellCost.Size = new System.Drawing.Size(171, 20);
             this.nudSellCost.TabIndex = 44;
+            this.nudSellCost.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // cmbSellFor
             // 
@@ -346,6 +351,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudBuyAmount.Name = "nudBuyAmount";
             this.nudBuyAmount.Size = new System.Drawing.Size(171, 20);
             this.nudBuyAmount.TabIndex = 45;
+            this.nudBuyAmount.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // cmbBuyFor
             // 
@@ -602,7 +612,7 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
-            // frmShop
+            // FrmShop
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -619,6 +629,7 @@ namespace Intersect.Editor.Forms.Editors
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.Name = "FrmShop";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Shop Editor";
             this.Load += new System.EventHandler(this.frmShop_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.form_KeyDown);

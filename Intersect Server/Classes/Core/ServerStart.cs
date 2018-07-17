@@ -1,4 +1,4 @@
-﻿#define websockets
+﻿//#define websockets
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -135,7 +135,9 @@ namespace Intersect.Server.Classes
             if (Options.UPnP && !args.Contains("noupnp"))
             {
                 UpnP.ConnectNatDevice().Wait(5000);
+#if websockets
                 UpnP.OpenServerPort(Options.ServerPort, Protocol.Tcp).Wait(5000);
+#endif
                 UpnP.OpenServerPort(Options.ServerPort, Protocol.Udp).Wait(5000);
                 Console.WriteLine();
             }
@@ -898,7 +900,7 @@ namespace Intersect.Server.Classes
             return true;
         }
 
-        #region "dependencies"
+#region "dependencies"
         private static void ClearDlls()
         {
             DeleteIfExists("libe_sqlite3.so");
@@ -1001,9 +1003,9 @@ namespace Intersect.Server.Classes
             }
             catch { return false; }
         }
-        #endregion
+#endregion
 
-        #region unmanaged
+#region unmanaged
         // Declare the SetConsoleCtrlHandler function
         // as external and receiving a delegate.
 
@@ -1025,6 +1027,6 @@ namespace Intersect.Server.Classes
             CtrlShutdownEvent
         }
 
-        #endregion
+#endregion
     }
 }

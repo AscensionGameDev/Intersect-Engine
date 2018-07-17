@@ -222,7 +222,7 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbSound.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbSound.FormattingEnabled = true;
             this.cmbSound.Items.AddRange(new object[] {
-                "None"});
+            "None"});
             this.cmbSound.Location = new System.Drawing.Point(60, 45);
             this.cmbSound.Name = "cmbSound";
             this.cmbSound.Size = new System.Drawing.Size(368, 21);
@@ -308,10 +308,10 @@ namespace Intersect.Editor.Forms.Editors
             this.nudLowerLoopCount.Size = new System.Drawing.Size(194, 20);
             this.nudLowerLoopCount.TabIndex = 25;
             this.nudLowerLoopCount.Value = new decimal(new int[] {
-                10,
-                0,
-                0,
-                0});
+            10,
+            0,
+            0,
+            0});
             this.nudLowerLoopCount.ValueChanged += new System.EventHandler(this.nudLowerLoopCount_ValueChanged);
             // 
             // nudLowerFrameDuration
@@ -320,10 +320,10 @@ namespace Intersect.Editor.Forms.Editors
             this.nudLowerFrameDuration.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudLowerFrameDuration.Location = new System.Drawing.Point(10, 363);
             this.nudLowerFrameDuration.Maximum = new decimal(new int[] {
-                -10,
-                4,
-                0,
-                0});
+            -10,
+            4,
+            0,
+            0});
             this.nudLowerFrameDuration.Minimum = new decimal(new int[] {
             10,
             0,
@@ -333,10 +333,10 @@ namespace Intersect.Editor.Forms.Editors
             this.nudLowerFrameDuration.Size = new System.Drawing.Size(194, 20);
             this.nudLowerFrameDuration.TabIndex = 24;
             this.nudLowerFrameDuration.Value = new decimal(new int[] {
-                100,
-                0,
-                0,
-                0});
+            100,
+            0,
+            0,
+            0});
             this.nudLowerFrameDuration.ValueChanged += new System.EventHandler(this.nudLowerFrameDuration_ValueChanged);
             // 
             // nudLowerFrameCount
@@ -350,18 +350,18 @@ namespace Intersect.Editor.Forms.Editors
             0,
             0});
             this.nudLowerFrameCount.Minimum = new decimal(new int[] {
-                1,
-                0,
-                0,
-                0});
+            1,
+            0,
+            0,
+            0});
             this.nudLowerFrameCount.Name = "nudLowerFrameCount";
             this.nudLowerFrameCount.Size = new System.Drawing.Size(194, 20);
             this.nudLowerFrameCount.TabIndex = 23;
             this.nudLowerFrameCount.Value = new decimal(new int[] {
-                1,
-                0,
-                0,
-                0});
+            1,
+            0,
+            0,
+            0});
             this.nudLowerFrameCount.ValueChanged += new System.EventHandler(this.nudLowerFrameCount_ValueChanged);
             // 
             // nudLowerVerticalFrames
@@ -375,18 +375,18 @@ namespace Intersect.Editor.Forms.Editors
             0,
             0});
             this.nudLowerVerticalFrames.Minimum = new decimal(new int[] {
-                1,
-                0,
-                0,
-                0});
+            1,
+            0,
+            0,
+            0});
             this.nudLowerVerticalFrames.Name = "nudLowerVerticalFrames";
             this.nudLowerVerticalFrames.Size = new System.Drawing.Size(194, 20);
             this.nudLowerVerticalFrames.TabIndex = 22;
             this.nudLowerVerticalFrames.Value = new decimal(new int[] {
-                1,
-                0,
-                0,
-                0});
+            1,
+            0,
+            0,
+            0});
             this.nudLowerVerticalFrames.ValueChanged += new System.EventHandler(this.nudLowerVerticalFrames_ValueChanged);
             // 
             // nudLowerHorizontalFrames
@@ -400,18 +400,18 @@ namespace Intersect.Editor.Forms.Editors
             0,
             0});
             this.nudLowerHorizontalFrames.Minimum = new decimal(new int[] {
-                1,
-                0,
-                0,
-                0});
+            1,
+            0,
+            0,
+            0});
             this.nudLowerHorizontalFrames.Name = "nudLowerHorizontalFrames";
             this.nudLowerHorizontalFrames.Size = new System.Drawing.Size(194, 20);
             this.nudLowerHorizontalFrames.TabIndex = 21;
             this.nudLowerHorizontalFrames.Value = new decimal(new int[] {
-                1,
-                0,
-                0,
-                0});
+            1,
+            0,
+            0,
+            0});
             this.nudLowerHorizontalFrames.ValueChanged += new System.EventHandler(this.nudLowerHorizontalFrames_ValueChanged);
             // 
             // grpLowerFrameOpts
@@ -551,7 +551,8 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbLowerGraphic.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbLowerGraphic.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbLowerGraphic.FormattingEnabled = true;
-            this.cmbLowerGraphic.Items.AddRange(new object[] {"//General/none"});
+            this.cmbLowerGraphic.Items.AddRange(new object[] {
+            "//General/none"});
             this.cmbLowerGraphic.Location = new System.Drawing.Point(54, 223);
             this.cmbLowerGraphic.Name = "cmbLowerGraphic";
             this.cmbLowerGraphic.Size = new System.Drawing.Size(149, 21);
@@ -634,10 +635,10 @@ namespace Intersect.Editor.Forms.Editors
             this.nudUpperLoopCount.Size = new System.Drawing.Size(194, 20);
             this.nudUpperLoopCount.TabIndex = 30;
             this.nudUpperLoopCount.Value = new decimal(new int[] {
-                10,
-                0,
-                0,
-                0});
+            10,
+            0,
+            0,
+            0});
             this.nudUpperLoopCount.ValueChanged += new System.EventHandler(this.nudUpperLoopCount_ValueChanged);
             // 
             // nudUpperFrameDuration
@@ -646,10 +647,10 @@ namespace Intersect.Editor.Forms.Editors
             this.nudUpperFrameDuration.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudUpperFrameDuration.Location = new System.Drawing.Point(6, 363);
             this.nudUpperFrameDuration.Maximum = new decimal(new int[] {
-                -10,
-                4,
-                0,
-                0});
+            -10,
+            4,
+            0,
+            0});
             this.nudUpperFrameDuration.Minimum = new decimal(new int[] {
             10,
             0,
@@ -659,10 +660,10 @@ namespace Intersect.Editor.Forms.Editors
             this.nudUpperFrameDuration.Size = new System.Drawing.Size(194, 20);
             this.nudUpperFrameDuration.TabIndex = 29;
             this.nudUpperFrameDuration.Value = new decimal(new int[] {
-                100,
-                0,
-                0,
-                0});
+            100,
+            0,
+            0,
+            0});
             this.nudUpperFrameDuration.ValueChanged += new System.EventHandler(this.nudUpperFrameDuration_ValueChanged);
             // 
             // nudUpperFrameCount
@@ -676,18 +677,18 @@ namespace Intersect.Editor.Forms.Editors
             0,
             0});
             this.nudUpperFrameCount.Minimum = new decimal(new int[] {
-                1,
-                0,
-                0,
-                0});
+            1,
+            0,
+            0,
+            0});
             this.nudUpperFrameCount.Name = "nudUpperFrameCount";
             this.nudUpperFrameCount.Size = new System.Drawing.Size(194, 20);
             this.nudUpperFrameCount.TabIndex = 28;
             this.nudUpperFrameCount.Value = new decimal(new int[] {
-                1,
-                0,
-                0,
-                0});
+            1,
+            0,
+            0,
+            0});
             this.nudUpperFrameCount.ValueChanged += new System.EventHandler(this.nudUpperFrameCount_ValueChanged);
             // 
             // nudUpperVerticalFrames
@@ -701,18 +702,18 @@ namespace Intersect.Editor.Forms.Editors
             0,
             0});
             this.nudUpperVerticalFrames.Minimum = new decimal(new int[] {
-                1,
-                0,
-                0,
-                0});
+            1,
+            0,
+            0,
+            0});
             this.nudUpperVerticalFrames.Name = "nudUpperVerticalFrames";
             this.nudUpperVerticalFrames.Size = new System.Drawing.Size(194, 20);
             this.nudUpperVerticalFrames.TabIndex = 27;
             this.nudUpperVerticalFrames.Value = new decimal(new int[] {
-                1,
-                0,
-                0,
-                0});
+            1,
+            0,
+            0,
+            0});
             this.nudUpperVerticalFrames.ValueChanged += new System.EventHandler(this.nudUpperVerticalFrames_ValueChanged);
             // 
             // nudUpperHorizontalFrames
@@ -726,18 +727,18 @@ namespace Intersect.Editor.Forms.Editors
             0,
             0});
             this.nudUpperHorizontalFrames.Minimum = new decimal(new int[] {
-                1,
-                0,
-                0,
-                0});
+            1,
+            0,
+            0,
+            0});
             this.nudUpperHorizontalFrames.Name = "nudUpperHorizontalFrames";
             this.nudUpperHorizontalFrames.Size = new System.Drawing.Size(194, 20);
             this.nudUpperHorizontalFrames.TabIndex = 26;
             this.nudUpperHorizontalFrames.Value = new decimal(new int[] {
-                1,
-                0,
-                0,
-                0});
+            1,
+            0,
+            0,
+            0});
             this.nudUpperHorizontalFrames.ValueChanged += new System.EventHandler(this.nudUpperHorizontalFrames_ValueChanged);
             // 
             // grpUpperPlayback
@@ -877,7 +878,8 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbUpperGraphic.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbUpperGraphic.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbUpperGraphic.FormattingEnabled = true;
-            this.cmbUpperGraphic.Items.AddRange(new object[] {"//General/none"});
+            this.cmbUpperGraphic.Items.AddRange(new object[] {
+            "//General/none"});
             this.cmbUpperGraphic.Location = new System.Drawing.Point(57, 223);
             this.cmbUpperGraphic.Name = "cmbUpperGraphic";
             this.cmbUpperGraphic.Size = new System.Drawing.Size(143, 21);
@@ -951,14 +953,14 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStrip.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.toolStrip.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-                this.toolStripItemNew,
-                this.toolStripSeparator1,
-                this.toolStripItemDelete,
-                this.toolStripSeparator2,
-                this.toolStripItemCopy,
-                this.toolStripItemPaste,
-                this.toolStripSeparator3,
-                this.toolStripItemUndo});
+            this.toolStripItemNew,
+            this.toolStripSeparator1,
+            this.toolStripItemDelete,
+            this.toolStripSeparator2,
+            this.toolStripItemCopy,
+            this.toolStripItemPaste,
+            this.toolStripSeparator3,
+            this.toolStripItemUndo});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Padding = new System.Windows.Forms.Padding(5, 0, 1, 0);
@@ -1069,6 +1071,7 @@ namespace Intersect.Editor.Forms.Editors
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.Name = "FrmAnimation";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Animation Editor";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frmAnimation_FormClosed);
             this.Load += new System.EventHandler(this.frmAnimation_Load);

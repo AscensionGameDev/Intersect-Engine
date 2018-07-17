@@ -88,7 +88,7 @@ namespace Intersect.Editor.Forms.Editors
             this.lstCommonEvents.SelectedIndexChanged += new System.EventHandler(this.lstCommonEvents_SelectedIndexChanged);
             this.lstCommonEvents.DoubleClick += new System.EventHandler(this.lstCommonEvents_DoubleClick);
             // 
-            // frmCommonEvent
+            // FrmCommonEvent
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -99,6 +99,7 @@ namespace Intersect.Editor.Forms.Editors
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "FrmCommonEvent";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Common Event Editor";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frmCommonEvent_FormClosed);
             this.grpCommonEvents.ResumeLayout(false);

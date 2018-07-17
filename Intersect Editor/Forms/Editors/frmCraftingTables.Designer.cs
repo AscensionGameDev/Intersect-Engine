@@ -293,7 +293,7 @@ namespace Intersect.Editor.Forms.Editors
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FrmCraftingTables";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Crafting Tables Editor";
             this.Load += new System.EventHandler(this.frmCrafting_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.form_KeyDown);

@@ -42,6 +42,8 @@ namespace Intersect.Editor.Forms.Editors
             this.btnNew = new DarkUI.Controls.DarkButton();
             this.btnDelete = new DarkUI.Controls.DarkButton();
             this.grpEditor = new DarkUI.Controls.DarkGroupBox();
+            this.txtId = new DarkUI.Controls.DarkTextBox();
+            this.lblId = new System.Windows.Forms.Label();
             this.lblValue = new System.Windows.Forms.Label();
             this.txtObjectName = new DarkUI.Controls.DarkTextBox();
             this.lblName = new System.Windows.Forms.Label();
@@ -50,8 +52,6 @@ namespace Intersect.Editor.Forms.Editors
             this.txtVariableVal = new DarkUI.Controls.DarkTextBox();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
-            this.txtId = new DarkUI.Controls.DarkTextBox();
-            this.lblId = new System.Windows.Forms.Label();
             this.grpTypes.SuspendLayout();
             this.grpList.SuspendLayout();
             this.grpEditor.SuspendLayout();
@@ -197,6 +197,27 @@ namespace Intersect.Editor.Forms.Editors
             this.grpEditor.Text = "Switch/Variable Editor";
             this.grpEditor.Visible = false;
             // 
+            // txtId
+            // 
+            this.txtId.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtId.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtId.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.txtId.Location = new System.Drawing.Point(85, 66);
+            this.txtId.Name = "txtId";
+            this.txtId.Size = new System.Drawing.Size(193, 20);
+            this.txtId.TabIndex = 8;
+            this.txtId.TextChanged += new System.EventHandler(this.txtId_TextChanged);
+            this.txtId.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtId_KeyPress);
+            // 
+            // lblId
+            // 
+            this.lblId.AutoSize = true;
+            this.lblId.Location = new System.Drawing.Point(10, 69);
+            this.lblId.Name = "lblId";
+            this.lblId.Size = new System.Drawing.Size(69, 13);
+            this.lblId.TabIndex = 7;
+            this.lblId.Text = "Text Id:  \\pv ";
+            // 
             // lblValue
             // 
             this.lblValue.AutoSize = true;
@@ -292,27 +313,6 @@ namespace Intersect.Editor.Forms.Editors
             this.btnSave.Text = "Save";
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
-            // txtId
-            // 
-            this.txtId.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.txtId.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtId.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.txtId.Location = new System.Drawing.Point(85, 66);
-            this.txtId.Name = "txtId";
-            this.txtId.Size = new System.Drawing.Size(193, 20);
-            this.txtId.TabIndex = 8;
-            this.txtId.TextChanged += new System.EventHandler(this.txtId_TextChanged);
-            this.txtId.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtId_KeyPress);
-            // 
-            // lblId
-            // 
-            this.lblId.AutoSize = true;
-            this.lblId.Location = new System.Drawing.Point(10, 69);
-            this.lblId.Name = "lblId";
-            this.lblId.Size = new System.Drawing.Size(69, 13);
-            this.lblId.TabIndex = 7;
-            this.lblId.Text = "Text Id:  \\pv ";
-            // 
             // FrmSwitchVariable
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -330,6 +330,7 @@ namespace Intersect.Editor.Forms.Editors
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "FrmSwitchVariable";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Switch and Variable Editor";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmSwitchVariable_FormClosing);
             this.grpTypes.ResumeLayout(false);

@@ -1927,6 +1927,7 @@ namespace Intersect.Editor.Forms.Editors
             this.KeyPreview = true;
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "FrmClass";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Class Editor";
             this.Load += new System.EventHandler(this.frmClass_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.form_KeyDown);

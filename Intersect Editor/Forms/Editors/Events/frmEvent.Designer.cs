@@ -1209,7 +1209,7 @@ namespace Intersect.Editor.Forms.Editors
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.Name = "FrmEvent";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Event Editor";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmEvent_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FrmEvent_FormClosed);

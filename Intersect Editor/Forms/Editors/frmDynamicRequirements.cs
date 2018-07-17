@@ -59,14 +59,12 @@ namespace Intersect.Editor.Forms.Editors
             }
             btnAddList.Text = Strings.DynamicRequirements.addlist;
             btnRemoveList.Text = Strings.DynamicRequirements.removelist;
-            btnSave.Text = Strings.DynamicRequirements.savelists;
-            btnCancel.Text = Strings.DynamicRequirements.cancellists;
+            btnSave.Text = Strings.DynamicRequirements.save;
+            btnCancel.Text = Strings.DynamicRequirements.cancel;
             grpConditionList.Text = Strings.DynamicRequirements.conditionlist;
             lblListName.Text = Strings.DynamicRequirements.listname;
             btnAddCondition.Text = Strings.DynamicRequirements.addcondition;
             btnRemoveCondition.Text = Strings.DynamicRequirements.removecondition;
-            btnConditionsOkay.Text = Strings.DynamicRequirements.saveconditions;
-            btnConditionsCancel.Text = Strings.DynamicRequirements.cancelconditions;
         }
 
         private void UpdateLists()
@@ -82,13 +80,12 @@ namespace Intersect.Editor.Forms.Editors
 
         private void UpdateConditions(ConditionList list)
         {
-            grpConditionLists.Hide();
             grpConditionList.Show();
             lstConditions.Items.Clear();
             if (list != mEdittingList)
             {
                 mSourceList = list;
-                mEdittingList = new ConditionList(mSourceList.Data());
+                mEdittingList = mSourceList;
             }
             txtListName.Text = list.Name;
             for (int i = 0; i < list.Conditions.Count; i++)
@@ -97,18 +94,12 @@ namespace Intersect.Editor.Forms.Editors
             }
         }
 
-        private void lstConditionLists_DoubleClick(object sender, EventArgs e)
-        {
-            if (lstConditionLists.SelectedIndex > -1)
-            {
-                UpdateConditions(mEdittingLists.Lists[lstConditionLists.SelectedIndex]);
-            }
-        }
-
         private void btnAddList_Click(object sender, EventArgs e)
         {
             var newList = new ConditionList();
             mEdittingLists.Lists.Add(newList);
+            UpdateLists();
+            lstConditionLists.SelectedIndex = lstConditionLists.Items.Count - 1;
             UpdateConditions(newList);
         }
 
@@ -126,6 +117,8 @@ namespace Intersect.Editor.Forms.Editors
             if (txtListName.Text.Trim().Length > 0)
             {
                 mEdittingList.Name = txtListName.Text;
+                if (mEdittingLists.Lists.IndexOf(mEdittingList) > -1)
+                    lstConditionLists.Items[mEdittingLists.Lists.IndexOf(mEdittingList)] = txtListName.Text;
             }
         }
 
@@ -133,8 +126,10 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (lstConditions.SelectedIndex > -1)
             {
-                if (OpenConditionEditor(mEdittingList.Conditions[lstConditions.SelectedIndex]))
+                var condition = OpenConditionEditor(mEdittingList.Conditions[lstConditions.SelectedIndex]);
+                if (condition != null)
                 {
+                    mEdittingList.Conditions[lstConditions.SelectedIndex] = condition;
                     UpdateConditions(mEdittingList);
                 }
             }
@@ -142,17 +137,17 @@ namespace Intersect.Editor.Forms.Editors
 
         private void btnAddCondition_Click(object sender, EventArgs e)
         {
-            var condition = new PlayerSwitchCondition();
-            if (OpenConditionEditor(condition))
+            var condition = OpenConditionEditor(new PlayerSwitchCondition());
+            if (condition != null)
             {
                 mEdittingList.Conditions.Add(condition);
                 UpdateConditions(mEdittingList);
             }
         }
 
-        private bool OpenConditionEditor(Condition condition)
+        private Condition OpenConditionEditor(Condition condition)
         {
-            var cmdWindow = new EventCommandConditionalBranch(condition, null, null);
+            var cmdWindow = new EventCommandConditionalBranch(condition, null, null,null);
             var frm = new Form
             {
                 Text = Strings.DynamicRequirements.conditioneditor,
@@ -166,7 +161,8 @@ namespace Intersect.Editor.Forms.Editors
             frm.Controls.Add(cmdWindow);
             cmdWindow.BringToFront();
             frm.ShowDialog();
-            return !cmdWindow.Cancelled;
+            if (cmdWindow.Cancelled) return null;
+            return cmdWindow.Condition;
         }
 
         private void btnRemoveCondition_Click(object sender, EventArgs e)
@@ -176,17 +172,6 @@ namespace Intersect.Editor.Forms.Editors
                 mEdittingList.Conditions.RemoveAt(lstConditions.SelectedIndex);
                 UpdateConditions(mEdittingList);
             }
-        }
-
-        private void btnConditionsOkay_Click(object sender, EventArgs e)
-        {
-            mSourceList.Load(mEdittingList.Data());
-            UpdateLists();
-        }
-
-        private void btnConditionsCancel_Click(object sender, EventArgs e)
-        {
-            UpdateLists();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -208,6 +193,14 @@ namespace Intersect.Editor.Forms.Editors
         private void lstConditions_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete) btnRemoveCondition_Click(null, null);
+        }
+
+        private void lstConditionLists_Click(object sender, EventArgs e)
+        {
+            if (lstConditionLists.SelectedIndex > -1)
+            {
+                UpdateConditions(mEdittingLists.Lists[lstConditionLists.SelectedIndex]);
+            }
         }
     }
 }

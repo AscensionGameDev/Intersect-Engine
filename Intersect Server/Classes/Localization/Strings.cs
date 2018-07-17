@@ -312,7 +312,7 @@ namespace Intersect.Server.Classes.Localization
             public static LocalizedString exit = @"Press any key to exit.";
             public static LocalizedString loading = @"Loading, please wait.";
             public static LocalizedString started = @"Server Started. Using Port #{00}";
-            public static LocalizedString support = @"For help, support, and updates visit: http://ascensiongamedev.com";
+            public static LocalizedString support = @"For help, support, and updates visit: https://www.ascensiongamedev.com";
             public static LocalizedString tagline = @"                          free 2d orpg engine";
             public static LocalizedString title = @"Intersect Server";
             public static LocalizedString version = @"Version {00}";

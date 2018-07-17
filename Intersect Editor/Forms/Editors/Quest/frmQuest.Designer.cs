@@ -613,7 +613,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
             this.KeyPreview = true;
             this.MinimizeBox = false;
             this.Name = "FrmQuest";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Quest Editor";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.form_KeyDown);
             this.grpQuests.ResumeLayout(false);

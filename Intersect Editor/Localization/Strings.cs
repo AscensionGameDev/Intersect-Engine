@@ -295,21 +295,19 @@ Tick timer saved in server config.json.";
         {
             public static LocalizedString addcondition = @"Add Condition";
             public static LocalizedString addlist = @"Add List";
-            public static LocalizedString cancelconditions = @"Cancel";
-            public static LocalizedString cancellists = @"Cancel";
+            public static LocalizedString cancel = @"Cancel";
             public static LocalizedString conditioneditor = @"Add/Edit Condition";
-            public static LocalizedString conditionlist = @"Condition List";
+            public static LocalizedString conditionlist = @"Conditiond";
             public static LocalizedString conditionlists = @"Condition Lists";
             public static LocalizedString instructionsevent = @"Below are condition lists. If conditions are met on any of the lists then the event can spawn/run.";
             public static LocalizedString instructionsitem = @"Below are condition lists. If conditions are met on any of the lists then the player can use the item.";
             public static LocalizedString instructionsquest = @"Below are condition lists. If conditions are met on any of the lists then the player can start the quest.";
             public static LocalizedString instructionsresource = @"Below are condition lists. If conditions are met on any of the lists then the player can harvest the resource.";
             public static LocalizedString instructionsspell = @"Below are condition lists. If conditions are met on any of the lists then the player can use cast the spell.";
-            public static LocalizedString listname = @"Name:";
+            public static LocalizedString listname = @"Desc:";
             public static LocalizedString removecondition = @"Remove Condition";
             public static LocalizedString removelist = @"Remove List";
-            public static LocalizedString saveconditions = @"Okay";
-            public static LocalizedString savelists = @"Save";
+            public static LocalizedString save = @"Save";
             public static LocalizedString title = @"Dynamic Requirements";
         }
 

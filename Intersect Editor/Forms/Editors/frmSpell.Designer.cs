@@ -436,6 +436,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudCooldownDuration.Name = "nudCooldownDuration";
             this.nudCooldownDuration.Size = new System.Drawing.Size(184, 20);
             this.nudCooldownDuration.TabIndex = 39;
+            this.nudCooldownDuration.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudCooldownDuration.ValueChanged += new System.EventHandler(this.nudCooldownDuration_ValueChanged);
             // 
             // nudCastDuration
@@ -451,6 +456,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudCastDuration.Name = "nudCastDuration";
             this.nudCastDuration.Size = new System.Drawing.Size(184, 20);
             this.nudCastDuration.TabIndex = 38;
+            this.nudCastDuration.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudCastDuration.ValueChanged += new System.EventHandler(this.nudCastDuration_ValueChanged);
             // 
             // nudMpCost
@@ -471,6 +481,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudMpCost.Name = "nudMpCost";
             this.nudMpCost.Size = new System.Drawing.Size(184, 20);
             this.nudMpCost.TabIndex = 37;
+            this.nudMpCost.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudMpCost.ValueChanged += new System.EventHandler(this.nudMpCost_ValueChanged);
             // 
             // nudHPCost
@@ -491,6 +506,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudHPCost.Name = "nudHPCost";
             this.nudHPCost.Size = new System.Drawing.Size(184, 20);
             this.nudHPCost.TabIndex = 36;
+            this.nudHPCost.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudHPCost.ValueChanged += new System.EventHandler(this.nudHPCost_ValueChanged);
             // 
             // lblMPCost
@@ -581,6 +601,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudHitRadius.Name = "nudHitRadius";
             this.nudHitRadius.Size = new System.Drawing.Size(206, 20);
             this.nudHitRadius.TabIndex = 35;
+            this.nudHitRadius.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudHitRadius.ValueChanged += new System.EventHandler(this.nudHitRadius_ValueChanged);
             // 
             // lblHitRadius
@@ -650,6 +675,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudCastRange.Name = "nudCastRange";
             this.nudCastRange.Size = new System.Drawing.Size(206, 20);
             this.nudCastRange.TabIndex = 36;
+            this.nudCastRange.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudCastRange.ValueChanged += new System.EventHandler(this.nudCastRange_ValueChanged);
             // 
             // lblProjectile
@@ -730,6 +760,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudTick.Name = "nudTick";
             this.nudTick.Size = new System.Drawing.Size(80, 20);
             this.nudTick.TabIndex = 40;
+            this.nudTick.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudTick.ValueChanged += new System.EventHandler(this.nudTick_ValueChanged);
             // 
             // chkHOTDOT
@@ -877,6 +912,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudBuffDuration.Name = "nudBuffDuration";
             this.nudBuffDuration.Size = new System.Drawing.Size(80, 20);
             this.nudBuffDuration.TabIndex = 39;
+            this.nudBuffDuration.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudBuffDuration.ValueChanged += new System.EventHandler(this.nudBuffDuration_ValueChanged);
             // 
             // lblBuffDuration
@@ -928,6 +968,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudSpd.Name = "nudSpd";
             this.nudSpd.Size = new System.Drawing.Size(77, 20);
             this.nudSpd.TabIndex = 52;
+            this.nudSpd.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudSpd.ValueChanged += new System.EventHandler(this.nudSpd_ValueChanged);
             // 
             // nudMR
@@ -948,6 +993,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudMR.Name = "nudMR";
             this.nudMR.Size = new System.Drawing.Size(79, 20);
             this.nudMR.TabIndex = 51;
+            this.nudMR.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudMR.ValueChanged += new System.EventHandler(this.nudMR_ValueChanged);
             // 
             // nudDef
@@ -968,6 +1018,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudDef.Name = "nudDef";
             this.nudDef.Size = new System.Drawing.Size(79, 20);
             this.nudDef.TabIndex = 50;
+            this.nudDef.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudDef.ValueChanged += new System.EventHandler(this.nudDef_ValueChanged);
             // 
             // nudMag
@@ -988,6 +1043,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudMag.Name = "nudMag";
             this.nudMag.Size = new System.Drawing.Size(77, 20);
             this.nudMag.TabIndex = 49;
+            this.nudMag.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudMag.ValueChanged += new System.EventHandler(this.nudMag_ValueChanged);
             // 
             // nudStr
@@ -1008,6 +1068,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudStr.Name = "nudStr";
             this.nudStr.Size = new System.Drawing.Size(77, 20);
             this.nudStr.TabIndex = 48;
+            this.nudStr.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudStr.ValueChanged += new System.EventHandler(this.nudStr_ValueChanged);
             // 
             // lblSpd
@@ -1093,6 +1158,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudCritChance.Name = "nudCritChance";
             this.nudCritChance.Size = new System.Drawing.Size(171, 20);
             this.nudCritChance.TabIndex = 61;
+            this.nudCritChance.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudCritChance.ValueChanged += new System.EventHandler(this.nudCritChance_ValueChanged);
             // 
             // nudScaling
@@ -1108,6 +1178,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudScaling.Name = "nudScaling";
             this.nudScaling.Size = new System.Drawing.Size(171, 20);
             this.nudScaling.TabIndex = 60;
+            this.nudScaling.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudScaling.ValueChanged += new System.EventHandler(this.nudScaling_ValueChanged);
             // 
             // nudMPDamage
@@ -1128,6 +1203,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudMPDamage.Name = "nudMPDamage";
             this.nudMPDamage.Size = new System.Drawing.Size(171, 20);
             this.nudMPDamage.TabIndex = 59;
+            this.nudMPDamage.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudMPDamage.ValueChanged += new System.EventHandler(this.nudMPDamage_ValueChanged);
             // 
             // nudHPDamage
@@ -1148,6 +1228,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudHPDamage.Name = "nudHPDamage";
             this.nudHPDamage.Size = new System.Drawing.Size(171, 20);
             this.nudHPDamage.TabIndex = 58;
+            this.nudHPDamage.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudHPDamage.ValueChanged += new System.EventHandler(this.nudHPDamage_ValueChanged);
             // 
             // cmbScalingStat
@@ -1383,6 +1468,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudWarpY.Name = "nudWarpY";
             this.nudWarpY.Size = new System.Drawing.Size(190, 20);
             this.nudWarpY.TabIndex = 35;
+            this.nudWarpY.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudWarpY.ValueChanged += new System.EventHandler(this.nudWarpY_ValueChanged);
             // 
             // nudWarpX
@@ -1393,6 +1483,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudWarpX.Name = "nudWarpX";
             this.nudWarpX.Size = new System.Drawing.Size(190, 20);
             this.nudWarpX.TabIndex = 34;
+            this.nudWarpX.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             this.nudWarpX.ValueChanged += new System.EventHandler(this.nudWarpX_ValueChanged);
             // 
             // btnVisualMapSelector
@@ -1685,7 +1780,7 @@ namespace Intersect.Editor.Forms.Editors
             this.lstSpells.SelectedIndexChanged += new System.EventHandler(this.lstSpells_Click);
             this.lstSpells.KeyDown += new System.Windows.Forms.KeyEventHandler(this.itemList_KeyDown);
             // 
-            // frmSpell
+            // FrmSpell
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -1702,6 +1797,7 @@ namespace Intersect.Editor.Forms.Editors
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.Name = "FrmSpell";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Spell Editor                       ";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frmSpell_FormClosed);
             this.Load += new System.EventHandler(this.frmSpell_Load);

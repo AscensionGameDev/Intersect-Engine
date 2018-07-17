@@ -478,7 +478,7 @@ namespace Intersect.Editor.Forms.Editors
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FrmCrafts";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Crafts Editor";
             this.Load += new System.EventHandler(this.frmCrafting_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.form_KeyDown);

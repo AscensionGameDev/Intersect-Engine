@@ -1369,6 +1369,7 @@ namespace Intersect.Editor.Forms.Editors
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.Name = "FrmNpc";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "NPC Editor";
             this.TopMost = true;
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frmNpc_FormClosed);

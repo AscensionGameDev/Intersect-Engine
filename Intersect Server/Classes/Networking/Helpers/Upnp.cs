@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Intersect.Logging;
 using Intersect.Server.Classes.Localization;
 using Open.Nat;
 
@@ -32,6 +33,8 @@ namespace Intersect.Server.Classes.Networking
             if (sDevice == null) return null;
             try
             {
+                Mapping map = await sDevice.GetSpecificMappingAsync(protocol, port);
+                if (map != null) await sDevice.DeletePortMapAsync(map);
                 await sDevice.CreatePortMapAsync(new Mapping(protocol, port, port));
                 switch (protocol)
                 {
@@ -50,11 +53,13 @@ namespace Intersect.Server.Classes.Networking
                 switch (protocol)
                 {
                     case Protocol.Tcp:
-                        Console.WriteLine(Strings.Upnp.failedforwardingtcp.ToString( port));
+                        Console.WriteLine(Strings.Upnp.failedforwardingtcp.ToString(port));
+                        Log.Error("UPnP Error Opening TCP Port " + port + Environment.NewLine + ex.ToString());
                         break;
 
                     case Protocol.Udp:
-                        Console.WriteLine(Strings.Upnp.failedforwardingudp.ToString( port));
+                        Console.WriteLine(Strings.Upnp.failedforwardingudp.ToString(port));
+                        Log.Error("UPnP Error Opening UDP Port " + port + Environment.NewLine + ex.ToString());
                         break;
                 }
             }

@@ -30,17 +30,15 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmDynamicRequirements));
             this.grpConditionLists = new DarkUI.Controls.DarkGroupBox();
-            this.btnCancel = new DarkUI.Controls.DarkButton();
-            this.btnSave = new DarkUI.Controls.DarkButton();
             this.btnRemoveList = new DarkUI.Controls.DarkButton();
             this.btnAddList = new DarkUI.Controls.DarkButton();
             this.lstConditionLists = new System.Windows.Forms.ListBox();
             this.lblInstructions = new System.Windows.Forms.Label();
+            this.btnCancel = new DarkUI.Controls.DarkButton();
+            this.btnSave = new DarkUI.Controls.DarkButton();
             this.grpConditionList = new DarkUI.Controls.DarkGroupBox();
             this.txtListName = new DarkUI.Controls.DarkTextBox();
             this.lblListName = new System.Windows.Forms.Label();
-            this.btnConditionsCancel = new DarkUI.Controls.DarkButton();
-            this.btnConditionsOkay = new DarkUI.Controls.DarkButton();
             this.btnRemoveCondition = new DarkUI.Controls.DarkButton();
             this.btnAddCondition = new DarkUI.Controls.DarkButton();
             this.lstConditions = new System.Windows.Forms.ListBox();
@@ -52,8 +50,6 @@
             // 
             this.grpConditionLists.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpConditionLists.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpConditionLists.Controls.Add(this.btnCancel);
-            this.grpConditionLists.Controls.Add(this.btnSave);
             this.grpConditionLists.Controls.Add(this.btnRemoveList);
             this.grpConditionLists.Controls.Add(this.btnAddList);
             this.grpConditionLists.Controls.Add(this.lstConditionLists);
@@ -61,30 +57,10 @@
             this.grpConditionLists.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpConditionLists.Location = new System.Drawing.Point(13, 12);
             this.grpConditionLists.Name = "grpConditionLists";
-            this.grpConditionLists.Size = new System.Drawing.Size(259, 237);
+            this.grpConditionLists.Size = new System.Drawing.Size(259, 208);
             this.grpConditionLists.TabIndex = 0;
             this.grpConditionLists.TabStop = false;
             this.grpConditionLists.Text = "Condition Lists";
-            // 
-            // btnCancel
-            // 
-            this.btnCancel.Location = new System.Drawing.Point(178, 208);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 5;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-            // 
-            // btnSave
-            // 
-            this.btnSave.Location = new System.Drawing.Point(97, 208);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Padding = new System.Windows.Forms.Padding(5);
-            this.btnSave.Size = new System.Drawing.Size(75, 23);
-            this.btnSave.TabIndex = 4;
-            this.btnSave.Text = "Save";
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // btnRemoveList
             // 
@@ -116,7 +92,7 @@
             this.lstConditionLists.Name = "lstConditionLists";
             this.lstConditionLists.Size = new System.Drawing.Size(243, 93);
             this.lstConditionLists.TabIndex = 1;
-            this.lstConditionLists.DoubleClick += new System.EventHandler(this.lstConditionLists_DoubleClick);
+            this.lstConditionLists.Click += new System.EventHandler(this.lstConditionLists_Click);
             this.lstConditionLists.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lstConditionLists_KeyDown);
             // 
             // lblInstructions
@@ -128,31 +104,49 @@
             this.lblInstructions.Text = "Below are condition lists. If conditions are met on any of the lists then the pla" +
     "yer can do XYZ.";
             // 
+            // btnCancel
+            // 
+            this.btnCancel.Location = new System.Drawing.Point(470, 230);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
+            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+            this.btnCancel.TabIndex = 5;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
+            // btnSave
+            // 
+            this.btnSave.Location = new System.Drawing.Point(389, 230);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Padding = new System.Windows.Forms.Padding(5);
+            this.btnSave.Size = new System.Drawing.Size(75, 23);
+            this.btnSave.TabIndex = 4;
+            this.btnSave.Text = "Save";
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
             // grpConditionList
             // 
             this.grpConditionList.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpConditionList.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpConditionList.Controls.Add(this.txtListName);
             this.grpConditionList.Controls.Add(this.lblListName);
-            this.grpConditionList.Controls.Add(this.btnConditionsCancel);
-            this.grpConditionList.Controls.Add(this.btnConditionsOkay);
             this.grpConditionList.Controls.Add(this.btnRemoveCondition);
             this.grpConditionList.Controls.Add(this.btnAddCondition);
             this.grpConditionList.Controls.Add(this.lstConditions);
             this.grpConditionList.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpConditionList.Location = new System.Drawing.Point(13, 12);
+            this.grpConditionList.Location = new System.Drawing.Point(286, 12);
             this.grpConditionList.Name = "grpConditionList";
-            this.grpConditionList.Size = new System.Drawing.Size(259, 237);
+            this.grpConditionList.Size = new System.Drawing.Size(259, 208);
             this.grpConditionList.TabIndex = 6;
             this.grpConditionList.TabStop = false;
-            this.grpConditionList.Text = "Condition List";
+            this.grpConditionList.Text = "Conditions";
             // 
             // txtListName
             // 
             this.txtListName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.txtListName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtListName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.txtListName.Location = new System.Drawing.Point(51, 18);
+            this.txtListName.Location = new System.Drawing.Point(51, 22);
             this.txtListName.Name = "txtListName";
             this.txtListName.Size = new System.Drawing.Size(201, 20);
             this.txtListName.TabIndex = 7;
@@ -161,31 +155,11 @@
             // lblListName
             // 
             this.lblListName.AutoSize = true;
-            this.lblListName.Location = new System.Drawing.Point(7, 20);
+            this.lblListName.Location = new System.Drawing.Point(7, 24);
             this.lblListName.Name = "lblListName";
-            this.lblListName.Size = new System.Drawing.Size(38, 13);
+            this.lblListName.Size = new System.Drawing.Size(35, 13);
             this.lblListName.TabIndex = 6;
-            this.lblListName.Text = "Name:";
-            // 
-            // btnConditionsCancel
-            // 
-            this.btnConditionsCancel.Location = new System.Drawing.Point(178, 208);
-            this.btnConditionsCancel.Name = "btnConditionsCancel";
-            this.btnConditionsCancel.Padding = new System.Windows.Forms.Padding(5);
-            this.btnConditionsCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnConditionsCancel.TabIndex = 5;
-            this.btnConditionsCancel.Text = "Cancel";
-            this.btnConditionsCancel.Click += new System.EventHandler(this.btnConditionsCancel_Click);
-            // 
-            // btnConditionsOkay
-            // 
-            this.btnConditionsOkay.Location = new System.Drawing.Point(97, 208);
-            this.btnConditionsOkay.Name = "btnConditionsOkay";
-            this.btnConditionsOkay.Padding = new System.Windows.Forms.Padding(5);
-            this.btnConditionsOkay.Size = new System.Drawing.Size(75, 23);
-            this.btnConditionsOkay.TabIndex = 4;
-            this.btnConditionsOkay.Text = "Okay";
-            this.btnConditionsOkay.Click += new System.EventHandler(this.btnConditionsOkay_Click);
+            this.lblListName.Text = "Desc:";
             // 
             // btnRemoveCondition
             // 
@@ -213,19 +187,21 @@
             this.lstConditions.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.lstConditions.ForeColor = System.Drawing.Color.Gainsboro;
             this.lstConditions.FormattingEnabled = true;
-            this.lstConditions.Location = new System.Drawing.Point(10, 46);
+            this.lstConditions.Location = new System.Drawing.Point(10, 59);
             this.lstConditions.Name = "lstConditions";
-            this.lstConditions.Size = new System.Drawing.Size(243, 106);
+            this.lstConditions.Size = new System.Drawing.Size(243, 93);
             this.lstConditions.TabIndex = 1;
             this.lstConditions.DoubleClick += new System.EventHandler(this.lstConditions_DoubleClick);
             this.lstConditions.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lstConditions_KeyDown);
             // 
-            // frmDynamicRequirements
+            // FrmDynamicRequirements
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.ClientSize = new System.Drawing.Size(284, 261);
+            this.ClientSize = new System.Drawing.Size(553, 262);
+            this.Controls.Add(this.btnSave);
+            this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.grpConditionList);
             this.Controls.Add(this.grpConditionLists);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -252,8 +228,6 @@
         private System.Windows.Forms.ListBox lstConditionLists;
         private System.Windows.Forms.Label lblInstructions;
         private DarkUI.Controls.DarkGroupBox grpConditionList;
-        private DarkUI.Controls.DarkButton btnConditionsCancel;
-        private DarkUI.Controls.DarkButton btnConditionsOkay;
         private DarkUI.Controls.DarkButton btnRemoveCondition;
         private DarkUI.Controls.DarkButton btnAddCondition;
         private System.Windows.Forms.ListBox lstConditions;

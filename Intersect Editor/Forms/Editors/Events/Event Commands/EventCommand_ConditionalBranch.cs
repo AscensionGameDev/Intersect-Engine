@@ -12,20 +12,22 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
     public partial class EventCommandConditionalBranch : UserControl
     {
         private readonly FrmEvent mEventEditor;
+        private ConditionalBranchCommand mEventCommand;
         private EventPage mCurrentPage;
-        private Condition mMyCondtion;
+        public Condition Condition;
         public bool Cancelled;
 
-        public EventCommandConditionalBranch(Condition refCommand, EventPage refPage, FrmEvent editor)
+        public EventCommandConditionalBranch(Condition refCommand, EventPage refPage, FrmEvent editor, ConditionalBranchCommand command)
         {
             InitializeComponent();
-            mMyCondtion = refCommand;
+            Condition = refCommand;
             mEventEditor = editor;
+            mEventCommand = command;
             mCurrentPage = refPage;
+            cmbConditionType.SelectedIndex = (int)Condition.Type;
+            UpdateFormElements(refCommand.Type);
             InitLocalization();
-            cmbConditionType.SelectedIndex = (int)mMyCondtion.Type;
-            UpdateFormElements();
-            SetupFormValues((dynamic) refCommand);
+            SetupFormValues((dynamic)refCommand);
         }
 
         private void InitLocalization()
@@ -144,7 +146,91 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             btnCancel.Text = Strings.EventConditional.cancel;
         }
 
-        private void UpdateFormElements()
+        private void ConditionTypeChanged(ConditionTypes type)
+        {
+            switch (type)
+            {
+                case ConditionTypes.PlayerSwitch:
+                    Condition = new PlayerSwitchCondition();
+                    if (cmbSwitch.Items.Count > 0) cmbSwitch.SelectedIndex = 0;
+                    cmbSwitchVal.SelectedIndex = 0;
+                    break;
+                case ConditionTypes.PlayerVariable:
+                    Condition = new PlayerVariableCondition();
+                    if (cmbVariable.Items.Count > 0) cmbVariable.SelectedIndex = 0;
+                    cmbVariableMod.SelectedIndex = 0;
+                    txtVariableVal.Text = @"0";
+                    break;
+                case ConditionTypes.ServerSwitch:
+                    Condition = new ServerSwitchCondition();
+                    if (cmbSwitch.Items.Count > 0) cmbSwitch.SelectedIndex = 0;
+                    cmbSwitchVal.SelectedIndex = 0;
+                    break;
+                case ConditionTypes.ServerVariable:
+                    Condition = new ServerVariableCondition();
+                    if (cmbVariable.Items.Count > 0) cmbVariable.SelectedIndex = 0;
+                    cmbVariableMod.SelectedIndex = 0;
+                    txtVariableVal.Text = @"0";
+                    break;
+                case ConditionTypes.HasItem:
+                    Condition = new HasItemCondition();
+                    if (cmbItem.Items.Count > 0) cmbItem.SelectedIndex = 0;
+                    nudItemAmount.Value = 1;
+                    break;
+                case ConditionTypes.ClassIs:
+                    Condition = new ClassIsCondition();
+                    if (cmbClass.Items.Count > 0) cmbClass.SelectedIndex = 0;
+                    break;
+                case ConditionTypes.KnowsSpell:
+                    Condition = new KnowsSpellCondition();
+                    if (cmbSpell.Items.Count > 0) cmbSpell.SelectedIndex = 0;
+                    break;
+                case ConditionTypes.LevelOrStat:
+                    Condition = new LevelOrStatCondition();
+                    cmbLevelComparator.SelectedIndex = 0;
+                    cmbLevelStat.SelectedIndex = 0;
+                    nudLevelStatValue.Value = 0;
+                    break;
+                case ConditionTypes.SelfSwitch:
+                    Condition = new SelfSwitchCondition();
+                    cmbSelfSwitch.SelectedIndex = 0;
+                    cmbSelfSwitchVal.SelectedIndex = 0;
+                    break;
+                case ConditionTypes.PowerIs:
+                    Condition = new PowerIsCondition();
+                    cmbPower.SelectedIndex = 0;
+                    break;
+                case ConditionTypes.TimeBetween:
+                    Condition = new TimeBetweenCondition();
+                    cmbTime1.SelectedIndex = 0;
+                    cmbTime2.SelectedIndex = 0;
+                    break;
+                case ConditionTypes.CanStartQuest:
+                    Condition = new CanStartQuestCondition();
+                    if (cmbStartQuest.Items.Count > 0) cmbStartQuest.SelectedIndex = 0;
+                    break;
+                case ConditionTypes.QuestInProgress:
+                    Condition = new QuestInProgressCondition();
+                    if (cmbQuestInProgress.Items.Count > 0) cmbQuestInProgress.SelectedIndex = 0;
+                    cmbTaskModifier.SelectedIndex = 0;
+                    break;
+                case ConditionTypes.QuestCompleted:
+                    Condition = new QuestCompletedCondition();
+                    if (cmbCompletedQuest.Items.Count > 0) cmbCompletedQuest.SelectedIndex = 0;
+                    break;
+                case ConditionTypes.NoNpcsOnMap:
+                    Condition = new NoNpcsOnMapCondition();
+                    break;
+                case ConditionTypes.GenderIs:
+                    Condition = new GenderIsCondition();
+                    cmbGender.SelectedIndex = 0;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private void UpdateFormElements(ConditionTypes type)
         {
             grpSwitch.Hide();
             grpPlayerVariable.Hide();
@@ -159,142 +245,101 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             grpQuestInProgress.Hide();
             grpQuestCompleted.Hide();
             grpGender.Hide();
-            if (cmbConditionType.SelectedIndex != (int) mMyCondtion.Type)
+            switch (type)
             {
-                switch ((ConditionTypes) cmbConditionType.SelectedIndex)
-                {
-                    case ConditionTypes.PlayerSwitch:
-                        mMyCondtion = new PlayerSwitchCondition();
-                        grpSwitch.Text = Strings.EventConditional.playerswitch;
-                        grpSwitch.Show();
-                        cmbSwitch.Items.Clear();
-                        cmbSwitch.Items.AddRange(PlayerSwitchBase.Names);
-                        if (cmbSwitch.Items.Count > 0) cmbSwitch.SelectedIndex = 0;
-                        cmbSwitchVal.SelectedIndex = 0;
-                        break;
-                    case ConditionTypes.PlayerVariable:
-                        mMyCondtion = new PlayerVariableCondition();
-                        grpPlayerVariable.Text = Strings.EventConditional.playervariable;
-                        grpPlayerVariable.Show();
-                        cmbVariable.Items.Clear();
-                        cmbVariable.Items.AddRange(PlayerVariableBase.Names);
-                        if (cmbVariable.Items.Count > 0) cmbVariable.SelectedIndex = 0;
-                        cmbVariableMod.SelectedIndex = 0;
-                        txtVariableVal.Text = @"0";
-                        break;
-                    case ConditionTypes.ServerSwitch:
-                        mMyCondtion = new ServerSwitchCondition();
-                        grpPlayerVariable.Text = Strings.EventConditional.globalswitch;
-                        grpSwitch.Show();
-                        cmbSwitch.Items.Clear();
-                        cmbSwitch.Items.AddRange(ServerSwitchBase.Names);
-                        if (cmbSwitch.Items.Count > 0) cmbSwitch.SelectedIndex = 0;
-                        cmbSwitchVal.SelectedIndex = 0;
-                        break;
-                    case ConditionTypes.ServerVariable:
-                        mMyCondtion = new ServerVariableCondition();
-                        grpPlayerVariable.Text = Strings.EventConditional.globalvariable;
-                        grpPlayerVariable.Show();
-                        cmbVariable.Items.Clear();
-                        cmbVariable.Items.AddRange(ServerVariableBase.Names);
-                        if (cmbVariable.Items.Count > 0) cmbVariable.SelectedIndex = 0;
-                        cmbVariableMod.SelectedIndex = 0;
-                        txtVariableVal.Text = @"0";
-                        break;
-                    case ConditionTypes.HasItem:
-                        mMyCondtion = new HasItemCondition();
-                        grpHasItem.Show();
-                        cmbItem.Items.Clear();
-                        cmbItem.Items.AddRange(ItemBase.Names);
-                        if (cmbItem.Items.Count > 0) cmbItem.SelectedIndex = 0;
-                        nudItemAmount.Value = 1;
-                        break;
-                    case ConditionTypes.ClassIs:
-                        mMyCondtion = new ClassIsCondition();
-                        grpClass.Show();
-                        cmbClass.Items.Clear();
-                        cmbClass.Items.AddRange(ClassBase.Names);
-                        if (cmbClass.Items.Count > 0) cmbClass.SelectedIndex = 0;
-                        break;
-                    case ConditionTypes.KnowsSpell:
-                        mMyCondtion = new KnowsSpellCondition();
-                        grpSpell.Show();
-                        cmbSpell.Items.Clear();
-                        cmbSpell.Items.AddRange(SpellBase.Names);
-                        if (cmbSpell.Items.Count > 0) cmbSpell.SelectedIndex = 0;
-                        break;
-                    case ConditionTypes.LevelOrStat:
-                        mMyCondtion = new LevelOrStatCondition();
-                        grpLevelStat.Show();
-                        cmbLevelComparator.SelectedIndex = 0;
-                        cmbLevelStat.SelectedIndex = 0;
-                        nudLevelStatValue.Value = 0;
-                        break;
-                    case ConditionTypes.SelfSwitch:
-                        mMyCondtion = new SelfSwitchCondition();
-                        grpSelfSwitch.Show();
-                        cmbSelfSwitch.SelectedIndex = 0;
-                        cmbSelfSwitchVal.SelectedIndex = 0;
-                        break;
-                    case ConditionTypes.PowerIs:
-                        mMyCondtion = new PowerIsCondition();
-                        grpPowerIs.Show();
-                        cmbPower.SelectedIndex = 0;
-                        break;
-                    case ConditionTypes.TimeBetween:
-                        mMyCondtion = new TimeBetweenCondition();
-                        grpTime.Show();
-                        cmbTime1.Items.Clear();
-                        cmbTime2.Items.Clear();
-                        var time = new DateTime(2000, 1, 1, 0, 0, 0);
-                        for (int i = 0; i < 1440; i += TimeBase.GetTimeBase().RangeInterval)
-                        {
-                            var addRange = time.ToString("h:mm:ss tt") + " " + Strings.EventConditional.to + " ";
-                            time = time.AddMinutes(TimeBase.GetTimeBase().RangeInterval);
-                            addRange += time.ToString("h:mm:ss tt");
-                            cmbTime1.Items.Add(addRange);
-                            cmbTime2.Items.Add(addRange);
-                        }
-                        cmbTime1.SelectedIndex = 0;
-                        cmbTime2.SelectedIndex = 0;
-                        break;
-                    case ConditionTypes.CanStartQuest:
-                        mMyCondtion = new CanStartQuestCondition();
-                        grpStartQuest.Show();
-                        cmbStartQuest.Items.Clear();
-                        cmbStartQuest.Items.AddRange(QuestBase.Names);
-                        if (cmbStartQuest.Items.Count > 0) cmbStartQuest.SelectedIndex = 0;
-                        break;
-                    case ConditionTypes.QuestInProgress:
-                        mMyCondtion = new QuestInProgressCondition();
-                        grpQuestInProgress.Show();
-                        cmbQuestInProgress.Items.Clear();
-                        cmbQuestInProgress.Items.AddRange(QuestBase.Names);
-                        if (cmbQuestInProgress.Items.Count > 0) cmbQuestInProgress.SelectedIndex = 0;
-                        cmbTaskModifier.SelectedIndex = 0;
-                        break;
-                    case ConditionTypes.QuestCompleted:
-                        mMyCondtion = new QuestCompletedCondition();
-                        grpQuestCompleted.Show();
-                        cmbCompletedQuest.Items.Clear();
-                        cmbCompletedQuest.Items.AddRange(QuestBase.Names);
-                        if (cmbCompletedQuest.Items.Count > 0) cmbCompletedQuest.SelectedIndex = 0;
-                        break;
-                    case ConditionTypes.NoNpcsOnMap:
-                        mMyCondtion = new NoNpcsOnMapCondition();
-                        grpGender.Show();
-                        cmbGender.SelectedIndex = 0;
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+                case ConditionTypes.PlayerSwitch:
+                    grpSwitch.Text = Strings.EventConditional.playerswitch;
+                    grpSwitch.Show();
+                    cmbSwitch.Items.Clear();
+                    cmbSwitch.Items.AddRange(PlayerSwitchBase.Names);
+                    break;
+                case ConditionTypes.PlayerVariable:
+                    grpPlayerVariable.Text = Strings.EventConditional.playervariable;
+                    grpPlayerVariable.Show();
+                    cmbVariable.Items.Clear();
+                    cmbVariable.Items.AddRange(PlayerVariableBase.Names);
+                    break;
+                case ConditionTypes.ServerSwitch:
+                    grpSwitch.Text = Strings.EventConditional.globalswitch;
+                    grpSwitch.Show();
+                    cmbSwitch.Items.Clear();
+                    cmbSwitch.Items.AddRange(ServerSwitchBase.Names);
+                    break;
+                case ConditionTypes.ServerVariable:
+                    grpPlayerVariable.Text = Strings.EventConditional.globalvariable;
+                    grpPlayerVariable.Show();
+                    cmbVariable.Items.Clear();
+                    cmbVariable.Items.AddRange(ServerVariableBase.Names);
+                    break;
+                case ConditionTypes.HasItem:
+                    grpHasItem.Show();
+                    cmbItem.Items.Clear();
+                    cmbItem.Items.AddRange(ItemBase.Names);
+                    break;
+                case ConditionTypes.ClassIs:
+                    grpClass.Show();
+                    cmbClass.Items.Clear();
+                    cmbClass.Items.AddRange(ClassBase.Names);
+                    break;
+                case ConditionTypes.KnowsSpell:
+                    grpSpell.Show();
+                    cmbSpell.Items.Clear();
+                    cmbSpell.Items.AddRange(SpellBase.Names);
+                    break;
+                case ConditionTypes.LevelOrStat:
+                    grpLevelStat.Show();
+                    break;
+                case ConditionTypes.SelfSwitch:
+                    grpSelfSwitch.Show();
+                    break;
+                case ConditionTypes.PowerIs:
+                    grpPowerIs.Show();
+                    break;
+                case ConditionTypes.TimeBetween:
+                    grpTime.Show();
+                    cmbTime1.Items.Clear();
+                    cmbTime2.Items.Clear();
+                    var time = new DateTime(2000, 1, 1, 0, 0, 0);
+                    for (int i = 0; i < 1440; i += TimeBase.GetTimeBase().RangeInterval)
+                    {
+                        var addRange = time.ToString("h:mm:ss tt") + " " + Strings.EventConditional.to + " ";
+                        time = time.AddMinutes(TimeBase.GetTimeBase().RangeInterval);
+                        addRange += time.ToString("h:mm:ss tt");
+                        cmbTime1.Items.Add(addRange);
+                        cmbTime2.Items.Add(addRange);
+                    }
+                    break;
+                case ConditionTypes.CanStartQuest:
+                    grpStartQuest.Show();
+                    cmbStartQuest.Items.Clear();
+                    cmbStartQuest.Items.AddRange(QuestBase.Names);
+                    break;
+                case ConditionTypes.QuestInProgress:
+                    grpQuestInProgress.Show();
+                    cmbQuestInProgress.Items.Clear();
+                    cmbQuestInProgress.Items.AddRange(QuestBase.Names);
+                    break;
+                case ConditionTypes.QuestCompleted:
+                    grpQuestCompleted.Show();
+                    cmbCompletedQuest.Items.Clear();
+                    cmbCompletedQuest.Items.AddRange(QuestBase.Names);
+                    break;
+                case ConditionTypes.NoNpcsOnMap:
+                    break;
+                case ConditionTypes.GenderIs:
+                    grpGender.Show();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            SaveFormValues((dynamic) mMyCondtion);
-            
+            SaveFormValues((dynamic)Condition);
+
+            if (mEventCommand != null) mEventCommand.Condition = Condition;
+
             if (mEventEditor != null)
             {
                 mEventEditor.FinishCommandEdit();
@@ -317,7 +362,8 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void cmbConditionType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            UpdateFormElements();
+            UpdateFormElements((ConditionTypes)cmbConditionType.SelectedIndex);
+            if (((ConditionTypes)cmbConditionType.SelectedIndex) != Condition.Type) ConditionTypeChanged((ConditionTypes)cmbConditionType.SelectedIndex);
         }
 
         private void cmbTaskModifier_SelectedIndexChanged(object sender, EventArgs e)
@@ -499,7 +545,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void SaveFormValues(KnowsSpellCondition condition)
         {
-           condition.SpellId = SpellBase.IdFromList(cmbSpell.SelectedIndex);
+            condition.SpellId = SpellBase.IdFromList(cmbSpell.SelectedIndex);
         }
 
         private void SaveFormValues(LevelOrStatCondition condition)
@@ -509,7 +555,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             condition.ComparingLevel = cmbLevelStat.SelectedIndex == 0;
             if (!condition.ComparingLevel)
             {
-                condition.Stat = (Stats) (cmbLevelStat.SelectedIndex - 1);
+                condition.Stat = (Stats)(cmbLevelStat.SelectedIndex - 1);
             }
         }
 
@@ -532,7 +578,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void SaveFormValues(CanStartQuestCondition condition)
         {
-           condition.QuestId = QuestBase.IdFromList(cmbStartQuest.SelectedIndex);
+            condition.QuestId = QuestBase.IdFromList(cmbStartQuest.SelectedIndex);
         }
 
         private void SaveFormValues(QuestInProgressCondition condition)
@@ -543,7 +589,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             if (cmbTaskModifier.SelectedIndex != 0)
             {
                 //Get Quest Task Here
-                var quest =  QuestBase.Get(QuestBase.IdFromList(cmbQuestInProgress.SelectedIndex));
+                var quest = QuestBase.Get(QuestBase.IdFromList(cmbQuestInProgress.SelectedIndex));
                 if (quest != null)
                 {
                     if (cmbQuestTask.SelectedIndex > -1)

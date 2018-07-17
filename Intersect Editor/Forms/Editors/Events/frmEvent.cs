@@ -860,7 +860,7 @@ namespace Intersect.Editor.Forms.Editors
                     cmdWindow = new EventCommandSelfSwitch((SetSelfSwitchCommand)command, this);
                     break;
                 case EventCommandType.ConditionalBranch:
-                    cmdWindow = new EventCommandConditionalBranch(((ConditionalBranchCommand)command).Condition, CurrentPage, this);
+                    cmdWindow = new EventCommandConditionalBranch(((ConditionalBranchCommand)command).Condition, CurrentPage, this, (ConditionalBranchCommand)command);
                     break;
                 case EventCommandType.ExitEventProcess:
                     //No editor
