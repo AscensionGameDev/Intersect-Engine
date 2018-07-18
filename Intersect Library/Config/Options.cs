@@ -48,6 +48,8 @@ namespace Intersect
         public static bool UPnP => _options._upnp;
         public static bool OpenPortChecker => _options._portChecker;
         public static bool ProgressSavedMessages => _options.PlayerOpts.ProgressSavedMessages;
+        public static bool ApiEnabled => _options._api;
+        public static ushort ApiPort => _options._apiPort;
         public static DatabaseOptions PlayerDb => _options.PlayerDatabase;
         public static DatabaseOptions GameDb => _options.GameDatabase;
 
@@ -79,6 +81,12 @@ namespace Intersect
 
         [JsonProperty("ServerPort")]
         protected ushort _serverPort = 5400;
+
+        [JsonProperty("UseApi")]
+        protected bool _api = true;
+
+        [JsonProperty("ApiPort")]
+        protected ushort _apiPort = 5401;
 
         [JsonProperty("UPnP")]
         protected bool _upnp = true;

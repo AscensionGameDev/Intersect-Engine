@@ -354,6 +354,7 @@
       <HintPath>..\packages\System.ValueTuple.4.4.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.XML" />
     <Reference Include="websocket-sharp">
       <HintPath>.\websocket-sharp.dll</HintPath>
@@ -401,6 +402,7 @@
     <Compile Include="Classes\Misc\Pathfinding\PriorityQueue.cs" />
     <Compile Include="Classes\Networking\Client.cs" />
     <Compile Include="Classes\Entities\Npc.cs" />
+    <Compile Include="Classes\Networking\Helpers\NetDebug.cs" />
     <Compile Include="Classes\Networking\PacketHandler.cs" />
     <Compile Include="Classes\General\Globals.cs" />
     <Compile Include="Classes\Networking\PacketSender.cs" />

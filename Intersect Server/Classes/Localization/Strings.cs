@@ -217,6 +217,7 @@ namespace Intersect.Server.Classes.Localization
             public static LocalizedString mutehelp = @"mutes a player preventing them from talking";
             public static LocalizedString muteusage = @"Usage: mute [username] [duration (days)] [IP Ban? ({00}/{01})] [reason] {02}";
             public static LocalizedString muteuser = @"console";
+            public static LocalizedString netdebug = @"netdebug";
             public static LocalizedString onlinelist = @"onlinelist";
             public static LocalizedString onlinelisthelp = @"shows all players online";
             public static LocalizedString power = @"power";
@@ -308,10 +309,11 @@ namespace Intersect.Server.Classes.Localization
 
         public struct Intro
         {
+            public static LocalizedString api = @"Starting API on TCP Port #{00}";
             public static LocalizedString consoleactive = @"Type exit to shutdown the server, or help for a list of commands.";
             public static LocalizedString exit = @"Press any key to exit.";
             public static LocalizedString loading = @"Loading, please wait.";
-            public static LocalizedString started = @"Server Started. Using Port #{00}";
+            public static LocalizedString started = @"Server Started. Using UDP Port #{00}";
             public static LocalizedString support = @"For help, support, and updates visit: https://www.ascensiongamedev.com";
             public static LocalizedString tagline = @"                          free 2d orpg engine";
             public static LocalizedString title = @"Intersect Server";
@@ -338,6 +340,13 @@ namespace Intersect.Server.Classes.Localization
             public static LocalizedString linkfail = @"Map Link Failure";
             public static LocalizedString linkfailerror = @"Failed to link map {00} to map {01}. If this merge were to happen, maps {02} and {03} would occupy the same space in the world.";
             public static LocalizedString newfolder = @"New Folder";
+        }
+
+        public struct NetDebug
+        {
+            public static LocalizedString pleasewait = @"Please wait while network diagnostics run....";
+            public static LocalizedString hastebin = @"Network Debug information uploaded to {00} (copied to clipboard) share this link with AGD when requesting for help getting your game online!";
+            public static LocalizedString savedtofile = @"Network Debug information saved to netdebug.txt! Upload that file and share it with AGD when requesting for help getting your game online!";
         }
 
         public struct Networking

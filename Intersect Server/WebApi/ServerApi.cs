@@ -23,7 +23,7 @@ namespace Intersect.Server.WebApi
         [NotNull]
         public IAuthorizationProvider AuthorizationProvider { get; }
 
-        public ServerApi()
+        public ServerApi(ushort port)
         {
             Instance = this;
 
@@ -36,7 +36,7 @@ namespace Intersect.Server.WebApi
                     UnhandledExceptionCallback = exception => ServerStart.ProcessUnhandledException(this, exception),
                     UrlReservations = new UrlReservations { CreateAutomatically = true }
                 },
-                new Uri("http://localhost:5300")
+                new Uri("http://localhost:" + port)
                 );
         }
 

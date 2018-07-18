@@ -18,6 +18,7 @@ using Intersect.Server.Classes.Core;
 using Intersect.Server.Classes.Database.PlayerData;
 using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Networking;
+using Intersect.Server.Classes.Networking.Helpers;
 using Intersect.Server.Network;
 using Intersect.Server.WebApi;
 using Open.Nat;
@@ -26,7 +27,6 @@ using Intersect.Utilities;
 namespace Intersect.Server.Classes
 {
     using Database = Intersect.Server.Classes.Core.LegacyDatabase;
-
     public class ServerStart
     {
         private static bool sErrorHalt = true;
@@ -54,7 +54,7 @@ namespace Intersect.Server.Classes
             Log.Error("Failed to extract Nancy, terminating startup.");
             Environment.Exit(-0x1001);
         }
-
+        
         public static void Start(string[] args)
         {
             if (RunningOnWindows()) SetConsoleCtrlHandler(ConsoleCtrlCheck, true);
@@ -84,7 +84,8 @@ namespace Intersect.Server.Classes
                     }
                 }
             }
-            
+            Console.Clear();
+            Console.WriteLine();
             Console.WriteLine(@"  _____       _                          _   ");
             Console.WriteLine(@" |_   _|     | |                        | |  ");
             Console.WriteLine(@"   | |  _ __ | |_ ___ _ __ ___  ___  ___| |_ ");
@@ -102,8 +103,12 @@ namespace Intersect.Server.Classes
                 Console.ReadKey();
                 return;
             }
-            serverApi = new ServerApi();
-            serverApi.Start();
+            if (Options.ApiEnabled)
+            {
+                Console.WriteLine(Strings.Intro.api.ToString(Options.ApiPort));
+                serverApi = new ServerApi(Options.ApiPort);
+                serverApi.Start();
+            }
             CustomColors.Load();
             Console.WriteLine(Strings.Commandoutput.playercount.ToString(LegacyDatabase.RegisteredPlayers));
             Console.WriteLine(Strings.Commandoutput.gametime.ToString( ServerTime.GetTime().ToString("F")));
@@ -225,6 +230,10 @@ namespace Intersect.Server.Classes
                                 Strings.Commands.commandinfo));
                         }
                     }
+                    else if (commandsplit[0] == Strings.Commands.netdebug) //Output network debug info
+                    {
+                        NetDebug.GenerateDebugFile();
+                    }    
                     else if (commandsplit[0] == Strings.Commands.onlinelist) //Online List Command
                     {
                         Console.WriteLine(string.Format("{0,-10}", Strings.Commandoutput.listid) +
@@ -773,11 +782,6 @@ namespace Intersect.Server.Classes
                     }
                     else
                     {
-                        var att = new Intersect.GameObjects.Maps.Attribute();
-                        att.Item.ItemId = Guid.NewGuid();
-                        att.Type = MapAttributes.Item;
-                        att.Resource.SpawnLevel = 0;
-                        Console.WriteLine(att.Data());
                         Console.WriteLine(@"    " + Strings.Commandoutput.notfound);
                     }
                     Console.Write("> ");
