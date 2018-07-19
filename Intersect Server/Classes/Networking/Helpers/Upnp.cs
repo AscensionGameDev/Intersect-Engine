@@ -42,7 +42,7 @@ namespace Intersect.Server.Classes.Networking
             {
                 Mapping map = await sDevice.GetSpecificMappingAsync(protocol, port);
                 if (map != null) await sDevice.DeletePortMapAsync(map);
-                await sDevice.CreatePortMapAsync(new Mapping(protocol, port, port));
+                await sDevice.CreatePortMapAsync(new Mapping(protocol, port, port,"Intersect Engine"));
                 switch (protocol)
                 {
                     case Protocol.Tcp:

@@ -34,16 +34,26 @@ namespace Intersect.Server.Classes.Networking.Helpers
                 IPEndPoint endPoint = socket.LocalEndPoint as IPEndPoint;
                 localIP = endPoint.Address.ToString();
             }
-            sb.AppendLine("External IP: " + (!string.IsNullOrEmpty(externalIp) ? externalIp : UpnP.GetExternalIp() + " (Guess)"));
+            sb.AppendLine("External IP (from AGD): " + externalIp);
+            if (Options.UPnP && !string.IsNullOrEmpty(UpnP.GetExternalIp()))
+            {
+                sb.AppendLine("Routers IP (from UPnP): " +  UpnP.GetExternalIp());
+                if (string.IsNullOrEmpty(externalIp)) externalIp = UpnP.GetExternalIp();
+            }
             sb.AppendLine("Internal IP: " + localIP);
             sb.AppendLine("Server Port: " + Options.ServerPort);
             sb.AppendLine();
             var canConnectVia127 = CheckServerPlayerCount("127.0.0.1", Options.ServerPort) > -1;
-            sb.AppendLine("Server Status (connecting to self via 127.0.0.1:" + Options.ServerPort + "): " + (canConnectVia127 ? "Online" : "Offline"));
+            sb.AppendLine("Server Status (connecting to self via localhost: 127.0.0.1:" + Options.ServerPort + "): " + (canConnectVia127 ? "Online" : "Offline"));
             var canConnectViaInternalIp = CheckServerPlayerCount(localIP, Options.ServerPort) > -1;
-            sb.AppendLine("Server Status (connecting to self via " + localIP + ":" + Options.ServerPort + "): " + (canConnectViaInternalIp ? "Online" : "Offline"));
+            sb.AppendLine("Server Status (connecting to self via internal ip: " + localIP + ":" + Options.ServerPort + "): " + (canConnectViaInternalIp ? "Online" : "Offline"));
+            if (Options.UPnP && !string.IsNullOrEmpty(UpnP.GetExternalIp()))
+            {
+                var canConnectViaRouterIp = CheckServerPlayerCount(UpnP.GetExternalIp(), Options.ServerPort) > -1;
+                sb.AppendLine("Server Status (connecting to self via router ip (from UPnP): " + UpnP.GetExternalIp() + ":" + Options.ServerPort + "): " + (canConnectViaRouterIp ? "Online" : "Offline"));
+            }
             var canConnectViaExternalIp = CheckServerPlayerCount(externalIp, Options.ServerPort) > -1;
-            sb.AppendLine("Server Status (connecting to self via " + externalIp + ":" + Options.ServerPort + "): " + (canConnectViaExternalIp ? "Online" : "Offline"));
+            sb.AppendLine("Server Status (connecting to self via external ip (from AGD): " + externalIp + ":" + Options.ServerPort + "): " + (canConnectViaExternalIp ? "Online" : "Offline"));
             sb.AppendLine("Server Status (as seen by AGD): " + (serverAccessible ? "Online" : "Offline"));
             sb.AppendLine();
             if (Options.UPnP)
@@ -117,6 +127,7 @@ namespace Intersect.Server.Classes.Networking.Helpers
         private static int CheckServerPlayerCount(string ip, int port)
         {
             var players = -1;
+            if (string.IsNullOrEmpty(ip)) return -1;
             var config = new NetPeerConfiguration("AGD_CanYouSeeMee");
             var client = new NetClient(config);
             try
