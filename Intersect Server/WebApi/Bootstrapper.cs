@@ -25,7 +25,7 @@ namespace Intersect.Server.WebApi
             {
                 pipelineContext?.Response?.Headers?.Add("Access-Control-Allow-Headers", "Authorization");
                 pipelineContext?.Response?.Headers?.Add("Access-Control-Allow-Origin", "*");
-                pipelineContext?.Response?.Headers?.Add("Access-Control-Allow-Methods", "POST,GET,DELETE,PUT,OPTIONS");
+                pipelineContext?.Response?.Headers?.Add("Access-Control-Allow-Methods", "POST,GET,DELETE,PUT,OPTIONS,PATCH");
                 pipelineContext?.Response?.Headers?.Add("Access-Control-Request-Headers", "Authorization");
                 pipelineContext?.Response?.Headers?.Add("WWW-Authenticate", "Bearer");
             });

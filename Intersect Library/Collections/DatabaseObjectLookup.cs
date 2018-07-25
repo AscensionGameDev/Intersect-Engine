@@ -46,7 +46,7 @@ namespace Intersect.Collections
             {
                 lock (mLock)
                 {
-                    return mIdMap.Values.ToList();
+                    return mIdMap.Values.OrderBy(value => value.TimeCreated).ToList();
                 }
             }
         }

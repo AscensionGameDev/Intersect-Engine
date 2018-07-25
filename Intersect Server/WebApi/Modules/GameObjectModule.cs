@@ -118,7 +118,7 @@ namespace Intersect.Server.WebApi.Modules
 
                 var count = Math.Min(pageSize, lookup.Count - page * pageSize);
 
-                return Response.AsJson(new
+                var json = JsonConvert.SerializeObject(new
                 {
                     totalCount = lookup.Count,
                     count,
@@ -126,6 +126,13 @@ namespace Intersect.Server.WebApi.Modules
                     pageSize,
                     objects = lookup.ValueList.GetRange(page * pageSize, count)
                 });
+                var jsonBytes = Encoding.UTF8.GetBytes(json);
+                return new Response
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    ContentType = "application/json",
+                    Contents = s => s.Write(jsonBytes, 0, jsonBytes.Length)
+                };
             }
             catch (GameObjectTypeException exception)
             {
