@@ -36,7 +36,7 @@ namespace Intersect.Server.WebApi
                     UnhandledExceptionCallback = exception => ServerStart.ProcessUnhandledException(this, exception),
                     UrlReservations = new UrlReservations { CreateAutomatically = true }
                 },
-                new Uri("http://localhost:" + port)
+                new Uri($"http://localhost:{port}")
                 );
         }
 
