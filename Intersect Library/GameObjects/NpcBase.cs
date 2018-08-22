@@ -99,6 +99,17 @@ namespace Intersect.GameObjects
         [NotMapped]
         public int[] Stats = new int[(int) Enums.Stats.StatCount];
 
+        //Vital Regen %
+        [JsonIgnore]
+        [Column("VitalRegen")]
+        public string RegenJson
+        {
+            get => DatabaseUtils.SaveIntArray(VitalRegen, (int)Vitals.VitalCount);
+            set => VitalRegen = DatabaseUtils.LoadIntArray(value, (int)Vitals.VitalCount);
+        }
+        [NotMapped]
+        public int[] VitalRegen = new int[(int)Vitals.VitalCount];
+
         [JsonConstructor]
         public NpcBase(Guid id) : base(id)
         {

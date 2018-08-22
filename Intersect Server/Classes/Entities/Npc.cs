@@ -583,7 +583,8 @@ namespace Intersect.Server.Classes.Entities
 
         public override void ProcessRegen()
         {
-            //For now give npcs/resources 10% health back every regen tick... in the future we should put per-npc and per-resource regen settings into their respective editors.
+            if (Base == null) return;
+
             foreach (Vitals vital in Enum.GetValues(typeof(Vitals)))
             {
                 if (vital >= Vitals.VitalCount) continue;
@@ -593,7 +594,8 @@ namespace Intersect.Server.Classes.Entities
                 var maxVitalValue = GetMaxVital(vital);
                 if (vitalValue >= maxVitalValue) continue;
 
-                var regenValue = (int)Math.Max(1, maxVitalValue * .1f);
+                var vitalRegenRate = Base.VitalRegen[vitalId] / 100f;
+                var regenValue = (int)Math.Max(1, maxVitalValue * vitalRegenRate) * Math.Abs(Math.Sign(vitalRegenRate));
                 AddVital(vital, regenValue);
             }
         }

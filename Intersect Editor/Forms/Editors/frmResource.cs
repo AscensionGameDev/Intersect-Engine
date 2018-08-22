@@ -178,6 +178,10 @@ namespace Intersect.Editor.Forms.Editors
             btnDropAdd.Text = Strings.ResourceEditor.dropadd;
             btnDropRemove.Text = Strings.ResourceEditor.dropremove;
 
+            grpRegen.Text = Strings.ResourceEditor.regen;
+            lblHpRegen.Text = Strings.ResourceEditor.hpregen;
+            lblRegenHint.Text = Strings.ResourceEditor.regenhint;
+
             grpGraphics.Text = Strings.ResourceEditor.graphics;
             lblPic.Text = Strings.ResourceEditor.initialgraphic;
             lblPic2.Text = Strings.ResourceEditor.exhaustedgraphic;
@@ -204,15 +208,15 @@ namespace Intersect.Editor.Forms.Editors
                 txtName.Text = mEditorItem.Name;
                 cmbToolType.SelectedIndex = mEditorItem.Tool + 1;
                 nudSpawnDuration.Value = mEditorItem.SpawnDuration;
-                cmbAnimation.SelectedIndex =
-                    AnimationBase.ListIndex(mEditorItem.AnimationId) +
-                    1;
+                cmbAnimation.SelectedIndex =  AnimationBase.ListIndex(mEditorItem.AnimationId) + 1;
                 nudMinHp.Value = mEditorItem.MinHp;
                 nudMaxHp.Value = mEditorItem.MaxHp;
                 chkWalkableBefore.Checked = mEditorItem.WalkableBefore;
                 chkWalkableAfter.Checked = mEditorItem.WalkableAfter;
                 chkInitialFromTileset.Checked = mEditorItem.Initial.GraphicFromTileset;
                 chkExhaustedFromTileset.Checked = mEditorItem.Exhausted.GraphicFromTileset;
+                //Regen
+                nudHpRegen.Value = mEditorItem.VitalRegen;
                 PopulateInitialGraphicList();
                 PopulateExhaustedGraphicList();
                 UpdateDropValues();
@@ -745,6 +749,11 @@ namespace Intersect.Editor.Forms.Editors
                 mEditorItem.Exhausted.Height = tmpY - mEditorItem.Exhausted.Y;
             }
             Render();
+        }
+
+        private void nudHpRegen_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.VitalRegen = (int)nudHpRegen.Value;
         }
     }
 }

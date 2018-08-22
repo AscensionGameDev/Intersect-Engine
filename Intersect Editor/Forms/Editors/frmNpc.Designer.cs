@@ -65,6 +65,12 @@ namespace Intersect.Editor.Forms.Editors
             this.lblHP = new System.Windows.Forms.Label();
             this.lblExp = new System.Windows.Forms.Label();
             this.pnlContainer = new System.Windows.Forms.Panel();
+            this.grpRegen = new DarkUI.Controls.DarkGroupBox();
+            this.nudMpRegen = new DarkUI.Controls.DarkNumericUpDown();
+            this.nudHpRegen = new DarkUI.Controls.DarkNumericUpDown();
+            this.lblHpRegen = new System.Windows.Forms.Label();
+            this.lblManaRegen = new System.Windows.Forms.Label();
+            this.lblRegenHint = new System.Windows.Forms.Label();
             this.grpDrops = new DarkUI.Controls.DarkGroupBox();
             this.btnDropRemove = new DarkUI.Controls.DarkButton();
             this.btnDropAdd = new DarkUI.Controls.DarkButton();
@@ -131,6 +137,9 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudMag)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudStr)).BeginInit();
             this.pnlContainer.SuspendLayout();
+            this.grpRegen.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMpRegen)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudHpRegen)).BeginInit();
             this.grpDrops.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudDropAmount)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDropChance)).BeginInit();
@@ -647,6 +656,7 @@ namespace Intersect.Editor.Forms.Editors
             // pnlContainer
             // 
             this.pnlContainer.AutoScroll = true;
+            this.pnlContainer.Controls.Add(this.grpRegen);
             this.pnlContainer.Controls.Add(this.grpDrops);
             this.pnlContainer.Controls.Add(this.grpCombat);
             this.pnlContainer.Controls.Add(this.grpNpcVsNpc);
@@ -657,6 +667,83 @@ namespace Intersect.Editor.Forms.Editors
             this.pnlContainer.Name = "pnlContainer";
             this.pnlContainer.Size = new System.Drawing.Size(464, 529);
             this.pnlContainer.TabIndex = 17;
+            // 
+            // grpRegen
+            // 
+            this.grpRegen.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpRegen.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpRegen.Controls.Add(this.nudMpRegen);
+            this.grpRegen.Controls.Add(this.nudHpRegen);
+            this.grpRegen.Controls.Add(this.lblHpRegen);
+            this.grpRegen.Controls.Add(this.lblManaRegen);
+            this.grpRegen.Controls.Add(this.lblRegenHint);
+            this.grpRegen.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpRegen.Location = new System.Drawing.Point(3, 225);
+            this.grpRegen.Margin = new System.Windows.Forms.Padding(2);
+            this.grpRegen.Name = "grpRegen";
+            this.grpRegen.Padding = new System.Windows.Forms.Padding(2);
+            this.grpRegen.Size = new System.Drawing.Size(206, 99);
+            this.grpRegen.TabIndex = 31;
+            this.grpRegen.TabStop = false;
+            this.grpRegen.Text = "Regen";
+            // 
+            // nudMpRegen
+            // 
+            this.nudMpRegen.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudMpRegen.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudMpRegen.Location = new System.Drawing.Point(8, 69);
+            this.nudMpRegen.Name = "nudMpRegen";
+            this.nudMpRegen.Size = new System.Drawing.Size(86, 20);
+            this.nudMpRegen.TabIndex = 31;
+            this.nudMpRegen.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudMpRegen.ValueChanged += new System.EventHandler(this.nudMpRegen_ValueChanged);
+            // 
+            // nudHpRegen
+            // 
+            this.nudHpRegen.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudHpRegen.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudHpRegen.Location = new System.Drawing.Point(8, 31);
+            this.nudHpRegen.Name = "nudHpRegen";
+            this.nudHpRegen.Size = new System.Drawing.Size(86, 20);
+            this.nudHpRegen.TabIndex = 30;
+            this.nudHpRegen.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudHpRegen.ValueChanged += new System.EventHandler(this.nudHpRegen_ValueChanged);
+            // 
+            // lblHpRegen
+            // 
+            this.lblHpRegen.AutoSize = true;
+            this.lblHpRegen.Location = new System.Drawing.Point(5, 17);
+            this.lblHpRegen.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblHpRegen.Name = "lblHpRegen";
+            this.lblHpRegen.Size = new System.Drawing.Size(42, 13);
+            this.lblHpRegen.TabIndex = 26;
+            this.lblHpRegen.Text = "HP: (%)";
+            // 
+            // lblManaRegen
+            // 
+            this.lblManaRegen.AutoSize = true;
+            this.lblManaRegen.Location = new System.Drawing.Point(5, 54);
+            this.lblManaRegen.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblManaRegen.Name = "lblManaRegen";
+            this.lblManaRegen.Size = new System.Drawing.Size(54, 13);
+            this.lblManaRegen.TabIndex = 27;
+            this.lblManaRegen.Text = "Mana: (%)";
+            // 
+            // lblRegenHint
+            // 
+            this.lblRegenHint.Location = new System.Drawing.Point(102, 26);
+            this.lblRegenHint.Name = "lblRegenHint";
+            this.lblRegenHint.Size = new System.Drawing.Size(100, 72);
+            this.lblRegenHint.TabIndex = 0;
+            this.lblRegenHint.Text = "% of HP/Mana to restore per tick.\r\n\r\nTick timer saved in server config.json.";
             // 
             // grpDrops
             // 
@@ -1021,7 +1108,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpNpcVsNpc.Controls.Add(this.chkAttackAllies);
             this.grpNpcVsNpc.Controls.Add(this.chkEnabled);
             this.grpNpcVsNpc.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpNpcVsNpc.Location = new System.Drawing.Point(3, 428);
+            this.grpNpcVsNpc.Location = new System.Drawing.Point(3, 531);
             this.grpNpcVsNpc.Name = "grpNpcVsNpc";
             this.grpNpcVsNpc.Size = new System.Drawing.Size(206, 234);
             this.grpNpcVsNpc.TabIndex = 29;
@@ -1123,7 +1210,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpSpells.Controls.Add(this.btnAdd);
             this.grpSpells.Controls.Add(this.lstSpells);
             this.grpSpells.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpSpells.Location = new System.Drawing.Point(2, 226);
+            this.grpSpells.Location = new System.Drawing.Point(2, 329);
             this.grpSpells.Name = "grpSpells";
             this.grpSpells.Size = new System.Drawing.Size(207, 193);
             this.grpSpells.TabIndex = 28;
@@ -1393,6 +1480,10 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudMag)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudStr)).EndInit();
             this.pnlContainer.ResumeLayout(false);
+            this.grpRegen.ResumeLayout(false);
+            this.grpRegen.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMpRegen)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudHpRegen)).EndInit();
             this.grpDrops.ResumeLayout(false);
             this.grpDrops.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudDropAmount)).EndInit();
@@ -1497,5 +1588,11 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.Label lblDropAmount;
         private System.Windows.Forms.Label lblDropChance;
         private System.Windows.Forms.Label lblDropItem;
+        private DarkGroupBox grpRegen;
+        private DarkNumericUpDown nudMpRegen;
+        private DarkNumericUpDown nudHpRegen;
+        private System.Windows.Forms.Label lblHpRegen;
+        private System.Windows.Forms.Label lblManaRegen;
+        private System.Windows.Forms.Label lblRegenHint;
     }
 }

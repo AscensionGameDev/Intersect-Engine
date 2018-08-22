@@ -6,6 +6,7 @@ using Intersect.Models;
 using Intersect.Utilities;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Intersect.Enums;
 
 namespace Intersect.GameObjects
 {
@@ -58,6 +59,9 @@ namespace Intersect.GameObjects
         }
         [NotMapped]
         public ConditionLists HarvestingRequirements = new ConditionLists();
+
+        //Vital Regen %
+        public int VitalRegen { get; set; }
 
 
         public int MaxHp { get; set; }

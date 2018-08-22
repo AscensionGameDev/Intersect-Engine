@@ -138,6 +138,11 @@ namespace Intersect.Editor.Forms.Editors
             lblMR.Text = Strings.NpcEditor.magicresist;
             lblExp.Text = Strings.NpcEditor.exp;
 
+            grpRegen.Text = Strings.NpcEditor.regen;
+            lblHpRegen.Text = Strings.NpcEditor.hpregen;
+            lblManaRegen.Text = Strings.NpcEditor.mpregen;
+            lblRegenHint.Text = Strings.NpcEditor.regenhint;
+
             grpSpells.Text = Strings.NpcEditor.spells;
             lblSpell.Text = Strings.NpcEditor.spell;
             btnAdd.Text = Strings.NpcEditor.addspell;
@@ -217,6 +222,10 @@ namespace Intersect.Editor.Forms.Editors
                 cmbScalingStat.SelectedIndex = mEditorItem.ScalingStat;
                 cmbAttackAnimation.SelectedIndex =
                     AnimationBase.ListIndex(mEditorItem.AttackAnimationId) + 1;
+
+                //Regen
+                nudHpRegen.Value = mEditorItem.VitalRegen[(int)Vitals.Health];
+                nudMpRegen.Value = mEditorItem.VitalRegen[(int)Vitals.Mana];
 
                 // Add the spells to the list
                 lstSpells.Items.Clear();
@@ -657,6 +666,16 @@ namespace Intersect.Editor.Forms.Editors
         private void nudLevel_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.Level = (int)nudLevel.Value;
+        }
+
+        private void nudHpRegen_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.VitalRegen[(int)Vitals.Health] = (int)nudHpRegen.Value;
+        }
+
+        private void nudMpRegen_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.VitalRegen[(int)Vitals.Mana] = (int)nudMpRegen.Value;
         }
     }
 }

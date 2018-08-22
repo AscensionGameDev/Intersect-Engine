@@ -7,6 +7,7 @@ using Intersect.Server.Classes.Database.PlayerData.Characters;
 using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Maps;
 using Intersect.Server.Classes.Networking;
+using System.Diagnostics;
 
 namespace Intersect.Server.Classes.Entities
 {
@@ -148,12 +149,18 @@ namespace Intersect.Server.Classes.Entities
             //For now give npcs/resources 10% health back every regen tick... in the future we should put per-npc and per-resource regen settings into their respective editors.
             if (!IsDead)
             {
-                foreach (Vitals vital in Enum.GetValues(typeof(Vitals)))
+                if (Base == null) return;
+
+                var vital = Vitals.Health;
+
+                var vitalId = (int)vital;
+                var vitalValue = GetVital(vital);
+                var maxVitalValue = GetMaxVital(vital);
+                if (vitalValue < maxVitalValue)
                 {
-                    if ((int) vital < (int) Vitals.VitalCount && !IsFullVital(vital))
-                    {
-                        AddVital(vital, (int) ((float) GetMaxVital(vital) * .1f));
-                    }
+                    var vitalRegenRate = Base.VitalRegen / 100f;
+                    var regenValue = (int)Math.Max(1, maxVitalValue * vitalRegenRate) * Math.Abs(Math.Sign(vitalRegenRate));
+                    AddVital(vital, regenValue);
                 }
             }
         }

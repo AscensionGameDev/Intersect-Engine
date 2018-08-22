@@ -1527,14 +1527,20 @@ Tick timer saved in server config.json.";
             };
             public static LocalizedString general = @"General";
             public static LocalizedString hp = @"HP:";
+            public static LocalizedString hpregen = @"HP (%);";
             public static LocalizedString magicresist = @"Magic Resist:";
             public static LocalizedString mana = @"Mana:";
+            public static LocalizedString mpregen = @"MP (%):";
             public static LocalizedString name = @"Name:";
             public static LocalizedString New = @"New Npc";
             public static LocalizedString npc = @"NPC:";
             public static LocalizedString npcs = @"Npcs";
             public static LocalizedString npcvsnpc = @"NPC vs NPC Combat/Hostility  ";
             public static LocalizedString paste = @"Paste Npc";
+            public static LocalizedString regen = @"Regen";
+            public static LocalizedString regenhint = @"% of HP/Mana to restore per tick.
+
+Tick timer saved in server config.json.";
             public static LocalizedString removehostility = @"Remove";
             public static LocalizedString removespell = @"Remove";
             public static LocalizedString save = @"Save";
@@ -1683,12 +1689,17 @@ Tick timer saved in server config.json.";
             public static LocalizedString exhaustedgraphic = @"Exhausted Graphic:";
             public static LocalizedString general = @"General";
             public static LocalizedString graphics = @"Graphics";
+            public static LocalizedString hpregen = @"HP (%);";
             public static LocalizedString initialgraphic = @"Initial Graphic:";
             public static LocalizedString maxhp = @"Max HP:";
             public static LocalizedString minhp = @"Min HP:";
             public static LocalizedString name = @"Name:";
             public static LocalizedString New = @"New Resource";
             public static LocalizedString paste = @"Paste Resource";
+            public static LocalizedString regen = @"Regen";
+            public static LocalizedString regenhint = @"% of HP to restore per tick.
+
+Tick timer saved in server config.json.";
             public static LocalizedString requirements = @"Harvesting Requirements";
             public static LocalizedString resources = @"Resources";
             public static LocalizedString save = @"Save";

@@ -416,7 +416,7 @@ namespace Intersect.Server.Classes.Entities
             Debug.Assert(ClassBase.Lookup != null, "ClassBase.Lookup != null");
 
             var playerClass = ClassBase.Get(ClassId);
-            if (playerClass?.VitalRegen == null) return; ;
+            if (playerClass?.VitalRegen == null) return;
 
             foreach (Vitals vital in Enum.GetValues(typeof(Vitals)))
             {
