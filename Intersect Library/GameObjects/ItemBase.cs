@@ -109,10 +109,9 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public string JsonUsageRequirements
         {
-            get => JsonConvert.SerializeObject(UsageRequirements);
-            set => UsageRequirements = JsonConvert.DeserializeObject<ConditionLists>(value);
+            get => UsageRequirements.Data();
+            set => UsageRequirements.Load(value);
         }
-
         [NotMapped]
         public ConditionLists UsageRequirements = new ConditionLists();
 

@@ -46,8 +46,8 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public string JsonCastRequirements
         {
-            get => JsonConvert.SerializeObject(CastingReqs);
-            set => CastingReqs = JsonConvert.DeserializeObject<ConditionLists>(value);
+            get => CastingReqs.Data();
+            set => CastingReqs.Load(value);
         }
         [NotMapped]
         public ConditionLists CastingReqs = new ConditionLists();

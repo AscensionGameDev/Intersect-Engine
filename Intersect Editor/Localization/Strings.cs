@@ -301,6 +301,10 @@ Tick timer saved in server config.json.";
             public static LocalizedString conditionlists = @"Condition Lists";
             public static LocalizedString instructionsevent = @"Below are condition lists. If conditions are met on any of the lists then the event can spawn/run.";
             public static LocalizedString instructionsitem = @"Below are condition lists. If conditions are met on any of the lists then the player can use the item.";
+            public static LocalizedString instructionsnpcfriend = @"Below are condition lists. If conditions are met on any of the lists then the npc will be friendly/protect the player and cannot be hurt by the player.";
+            public static LocalizedString instructionsnpcattackonsight = @"Below are condition lists. If conditions are met on any of the lists player will be attacked on sight.";
+            public static LocalizedString instructionsnpcdontattackonsight = @"Below are condition lists. If conditions are met on any of the lists then the player will not be attacked on sight by this npc.";
+            public static LocalizedString instructionsnpccanbeattacked = @"Below are condition lists. If there are conditions, and they are not met, then the player will not be able to attack this npc.";
             public static LocalizedString instructionsquest = @"Below are condition lists. If conditions are met on any of the lists then the player can start the quest.";
             public static LocalizedString instructionsresource = @"Below are condition lists. If conditions are met on any of the lists then the player can harvest the resource.";
             public static LocalizedString instructionsspell = @"Below are condition lists. If conditions are met on any of the lists then the player can use cast the spell.";
@@ -1486,20 +1490,17 @@ Tick timer saved in server config.json.";
             public static LocalizedString abilitypower = @"Ability Pwr:";
             public static LocalizedString addhostility = @"Add";
             public static LocalizedString addspell = @"Add";
+            public static LocalizedString aggressive = @"Aggressive";
             public static LocalizedString attack = @"Attack:";
             public static LocalizedString attackallies = @"Attack Allies?";
             public static LocalizedString attackanimation = @"Attack Animation:";
+            public static LocalizedString attackonsightconditions = @"Attack Player on Sight";
             public static LocalizedString basedamage = @"Base Damage:";
             public static LocalizedString behavior = @"Behavior:";
-            public static Dictionary<int, LocalizedString> behaviors = new Dictionary<int, LocalizedString>
-            {
-                {0, @"Attack when Attacked"},
-                {1, @"Attack on Sight"},
-                {2, @"Friendly"},
-                {3, @"Guard"},
-             };
             public static LocalizedString cancel = @"Cancel";
             public static LocalizedString combat = @"Combat";
+            public static LocalizedString commonevents = @"Common Events";
+            public static LocalizedString conditions = @"Conditions";
             public static LocalizedString copy = @"Copy Npc";
             public static LocalizedString critchance = @"Crit Chance (%):";
             public static LocalizedString damagetype = @"Damage Type:";
@@ -1507,6 +1508,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString delete = @"Delete Npc";
             public static LocalizedString deleteprompt = @"Are you sure you want to delete this npc? This action cannot be reverted!";
             public static LocalizedString deletetitle = @"Delete Item";
+            public static LocalizedString dontattackonsightconditions = @"Should Not Attack Player on Sight";
             public static LocalizedString drops = @"Drops";
             public static LocalizedString dropitem = @"Item:";
             public static LocalizedString dropamount = @"Amount:";
@@ -1516,6 +1518,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString dropdisplay = @"{00} x{01} - {02}%";
             public static LocalizedString enabled = @"Enabled?";
             public static LocalizedString exp = @"Exp:";
+            public static LocalizedString flee = @"Flee Health %";
+            public static LocalizedString focusdamagedealer = @"Focus Highest Damage Dealer:";
             public static LocalizedString frequency = @"Freq:";
             public static Dictionary<int, LocalizedString> frequencies = new Dictionary<int, LocalizedString>
             {
@@ -1530,13 +1534,24 @@ Tick timer saved in server config.json.";
             public static LocalizedString hpregen = @"HP (%);";
             public static LocalizedString magicresist = @"Magic Resist:";
             public static LocalizedString mana = @"Mana:";
+            public static LocalizedString movement = @"Movement";
+            public static Dictionary<int, LocalizedString> movements = new Dictionary<int, LocalizedString>
+            {
+                {0, @"Move Randomly"},
+                {1, @"Turn Randomly"},
+                {2, @"Stand Still"},
+            };
             public static LocalizedString mpregen = @"MP (%):";
             public static LocalizedString name = @"Name:";
             public static LocalizedString New = @"New Npc";
             public static LocalizedString npc = @"NPC:";
             public static LocalizedString npcs = @"Npcs";
             public static LocalizedString npcvsnpc = @"NPC vs NPC Combat/Hostility  ";
+            public static LocalizedString ondeathevent = @"On Death (for killer):";
+            public static LocalizedString ondeathpartyevent = @"On Death (for party):";
             public static LocalizedString paste = @"Paste Npc";
+            public static LocalizedString playercanattackconditions = @"Player Can Attack (Default: True)";
+            public static LocalizedString playerfriendprotectorconditions = @"Player Friend/Protector";
             public static LocalizedString regen = @"Regen";
             public static LocalizedString regenhint = @"% of HP/Mana to restore per tick.
 
@@ -1553,6 +1568,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString spells = @"Spells";
             public static LocalizedString sprite = @"Sprite";
             public static LocalizedString stats = @"Stats:";
+            public static LocalizedString swarm = @"Swarm";
             public static LocalizedString title = @"Npc Editor";
             public static LocalizedString undo = @"Undo Changes";
             public static LocalizedString undoprompt = @"Are you sure you want to undo changes made to this npc? This action cannot be reverted!";

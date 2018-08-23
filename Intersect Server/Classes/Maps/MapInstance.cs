@@ -214,10 +214,10 @@ namespace Intersect.Server.Classes.Maps
 
         public void SpawnItem(int x, int y, Item item, int amount)
         {
-            var itemBase = ItemBase.Get(item.Id);
+            var itemBase = ItemBase.Get(item.ItemId);
             if (itemBase != null)
             {
-                MapItems.Add(new MapItem(item.Id, item.Quantity,item.BagId, item.Bag));
+                MapItems.Add(new MapItem(item.ItemId, item.Quantity,item.BagId, item.Bag));
                 MapItems[MapItems.Count - 1].X = x;
                 MapItems[MapItems.Count - 1].Y = y;
                 MapItems[MapItems.Count - 1].DespawnTime = Globals.System.GetTimeMs() + Options.ItemDespawnTime;
@@ -265,7 +265,7 @@ namespace Intersect.Server.Classes.Maps
         {
             if (index < MapItems.Count && MapItems[index] != null)
             {
-                MapItems[index].Id = Guid.Empty;
+                MapItems[index].ItemId = Guid.Empty;
                 PacketSender.SendMapItemUpdate(Id, index);
                 if (respawn)
                 {
@@ -341,7 +341,7 @@ namespace Intersect.Server.Classes.Maps
             {
                 if (MapItems[i] != null)
                 {
-                    if (ItemBase.Get(MapItems[i].Id) == itemBase)
+                    if (ItemBase.Get(MapItems[i].ItemId) == itemBase)
                     {
                         RemoveItem(i, true);
                     }
@@ -529,7 +529,7 @@ namespace Intersect.Server.Classes.Maps
             foreach (var id in EventIds)
             {
                 var evt = EventBase.Get(id);
-                if (evt != null & evt.IsGlobal == 1)
+                if (evt != null && evt.IsGlobal == 1)
                 {
                     GlobalEventInstances.Add(evt, new EventInstance(evt.Id, evt, Id));
                 }
@@ -826,10 +826,17 @@ namespace Intersect.Server.Classes.Maps
             return false;
         }
 
-        public List<EntityInstance> GetEntities()
+        public List<EntityInstance> GetEntities(bool includeSurroundingMaps = false)
         {
             var entities = new List<EntityInstance>();
             entities.AddRange(mEntities.ToArray());
+            if (includeSurroundingMaps)
+            {
+                foreach (var map in GetSurroundingMaps(false))
+                {
+                    entities.AddRange(map.GetEntities());
+                }
+            }
             return entities;
         }
 

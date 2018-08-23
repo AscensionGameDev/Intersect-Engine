@@ -425,21 +425,21 @@
     <Compile Include="Database\PrimaryKeyDescriptor.cs" />
     <Compile Include="Database\TableDescriptor.cs" />
     <Compile Include="Database\UniqueConstraintDescriptor.cs" />
-    <Compile Include="Migrations\20180704142417_pdb.cs" />
-    <Compile Include="Migrations\20180704142417_pdb.designer.cs">
-      <DependentUpon>20180704142417_pdb.cs</DependentUpon>
+    <Compile Include="Migrations\20180823214020_Initial.cs" />
+    <Compile Include="Migrations\20180823214020_Initial.designer.cs">
+      <DependentUpon>20180823214020_Initial.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\Game\20180704142432_gdb.cs" />
-    <Compile Include="Migrations\Game\20180704142432_gdb.designer.cs">
-      <DependentUpon>20180704142432_gdb.cs</DependentUpon>
+    <Compile Include="Migrations\Game\20180822221819_Initial.cs" />
+    <Compile Include="Migrations\Game\20180822221819_Initial.designer.cs">
+      <DependentUpon>20180822221819_Initial.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\Game\20180705155752_SwitchVariableIds.cs" />
-    <Compile Include="Migrations\Game\20180705155752_SwitchVariableIds.designer.cs">
-      <DependentUpon>20180705155752_SwitchVariableIds.cs</DependentUpon>
+    <Compile Include="Migrations\Game\20180822230957_FocusDamageDealers.cs" />
+    <Compile Include="Migrations\Game\20180822230957_FocusDamageDealers.designer.cs">
+      <DependentUpon>20180822230957_FocusDamageDealers.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\Game\20180822003206_NpcResourceRegens.cs" />
-    <Compile Include="Migrations\Game\20180822003206_NpcResourceRegens.designer.cs">
-      <DependentUpon>20180822003206_NpcResourceRegens.cs</DependentUpon>
+    <Compile Include="Migrations\Game\20180822231032_FocusDamageDealers1.cs" />
+    <Compile Include="Migrations\Game\20180822231032_FocusDamageDealers1.designer.cs">
+      <DependentUpon>20180822231032_FocusDamageDealers1.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\GameContextModelSnapshot.cs" />
     <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />

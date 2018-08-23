@@ -64,7 +64,7 @@
             // 
             // btnRemoveList
             // 
-            this.btnRemoveList.Location = new System.Drawing.Point(141, 158);
+            this.btnRemoveList.Location = new System.Drawing.Point(141, 177);
             this.btnRemoveList.Name = "btnRemoveList";
             this.btnRemoveList.Padding = new System.Windows.Forms.Padding(5);
             this.btnRemoveList.Size = new System.Drawing.Size(112, 23);
@@ -74,7 +74,7 @@
             // 
             // btnAddList
             // 
-            this.btnAddList.Location = new System.Drawing.Point(10, 158);
+            this.btnAddList.Location = new System.Drawing.Point(10, 177);
             this.btnAddList.Name = "btnAddList";
             this.btnAddList.Padding = new System.Windows.Forms.Padding(5);
             this.btnAddList.Size = new System.Drawing.Size(112, 23);
@@ -88,7 +88,7 @@
             this.lstConditionLists.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.lstConditionLists.ForeColor = System.Drawing.Color.Gainsboro;
             this.lstConditionLists.FormattingEnabled = true;
-            this.lstConditionLists.Location = new System.Drawing.Point(10, 59);
+            this.lstConditionLists.Location = new System.Drawing.Point(10, 78);
             this.lstConditionLists.Name = "lstConditionLists";
             this.lstConditionLists.Size = new System.Drawing.Size(243, 93);
             this.lstConditionLists.TabIndex = 1;
@@ -99,7 +99,7 @@
             // 
             this.lblInstructions.Location = new System.Drawing.Point(7, 20);
             this.lblInstructions.Name = "lblInstructions";
-            this.lblInstructions.Size = new System.Drawing.Size(246, 35);
+            this.lblInstructions.Size = new System.Drawing.Size(246, 55);
             this.lblInstructions.TabIndex = 0;
             this.lblInstructions.Text = "Below are condition lists. If conditions are met on any of the lists then the pla" +
     "yer can do XYZ.";
@@ -163,7 +163,7 @@
             // 
             // btnRemoveCondition
             // 
-            this.btnRemoveCondition.Location = new System.Drawing.Point(141, 159);
+            this.btnRemoveCondition.Location = new System.Drawing.Point(140, 178);
             this.btnRemoveCondition.Name = "btnRemoveCondition";
             this.btnRemoveCondition.Padding = new System.Windows.Forms.Padding(5);
             this.btnRemoveCondition.Size = new System.Drawing.Size(112, 23);
@@ -173,7 +173,7 @@
             // 
             // btnAddCondition
             // 
-            this.btnAddCondition.Location = new System.Drawing.Point(10, 159);
+            this.btnAddCondition.Location = new System.Drawing.Point(9, 178);
             this.btnAddCondition.Name = "btnAddCondition";
             this.btnAddCondition.Padding = new System.Windows.Forms.Padding(5);
             this.btnAddCondition.Size = new System.Drawing.Size(112, 23);
@@ -187,7 +187,7 @@
             this.lstConditions.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.lstConditions.ForeColor = System.Drawing.Color.Gainsboro;
             this.lstConditions.FormattingEnabled = true;
-            this.lstConditions.Location = new System.Drawing.Point(10, 59);
+            this.lstConditions.Location = new System.Drawing.Point(9, 78);
             this.lstConditions.Name = "lstConditions";
             this.lstConditions.Size = new System.Drawing.Size(243, 93);
             this.lstConditions.TabIndex = 1;

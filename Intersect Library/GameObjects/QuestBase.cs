@@ -42,8 +42,8 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public string JsonRequirements
         {
-            get => JsonConvert.SerializeObject(Requirements);
-            set => Requirements = JsonConvert.DeserializeObject<ConditionLists>(value);
+            get => Requirements.Data();
+            set => Requirements.Load(value);
         }
         [NotMapped]
         public ConditionLists Requirements { get; set; } = new ConditionLists();

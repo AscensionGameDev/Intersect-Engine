@@ -12,7 +12,7 @@ namespace Intersect.Server.Classes.Database
     {
         public Guid? BagId { get; set; }
         public virtual Bag Bag { get; set; }
-        public Guid Id { get; set; } = Guid.Empty;
+        public Guid ItemId { get; set; } = Guid.Empty;
         public int Quantity { get; set; }
 
         [Column("StatBoost")]
@@ -40,24 +40,24 @@ namespace Intersect.Server.Classes.Database
 
         public Item(Guid itemId, int itemVal, Guid? bagId,Bag bag)
         {
-            Id = itemId;
+            ItemId = itemId;
             Quantity = itemVal;
             BagId = bagId;
             Bag = bag;
-            if (ItemBase.Get(Id) != null)
+            if (ItemBase.Get(ItemId) != null)
             {
-                if (ItemBase.Get(Id).ItemType == ItemTypes.Equipment)
+                if (ItemBase.Get(ItemId).ItemType == ItemTypes.Equipment)
                 {
                     for (int i = 0; i < (int)Stats.StatCount; i++)
                     {
                         // TODO: What the fuck?
-                        StatBoost[i] = Globals.Rand.Next(-1 * ItemBase.Get(Id).StatGrowth, ItemBase.Get(Id).StatGrowth + 1);
+                        StatBoost[i] = Globals.Rand.Next(-1 * ItemBase.Get(ItemId).StatGrowth, ItemBase.Get(ItemId).StatGrowth + 1);
                     }
                 }
             }
         }
 
-        public Item(Item item) : this(item.Id, item.Quantity, item.BagId,item.Bag)
+        public Item(Item item) : this(item.ItemId, item.Quantity, item.BagId,item.Bag)
         {
             for (int i = 0; i < (int)Stats.StatCount; i++)
             {
@@ -67,7 +67,7 @@ namespace Intersect.Server.Classes.Database
 
         public virtual void Set(Item item)
         {
-            Id = item.Id;
+            ItemId = item.ItemId;
             Quantity = item.Quantity;
             BagId = item.BagId;
             Bag = item.Bag;
@@ -80,7 +80,7 @@ namespace Intersect.Server.Classes.Database
         public byte[] Data()
         {
             var bf = new ByteBuffer();
-            bf.WriteGuid(Id);
+            bf.WriteGuid(ItemId);
             bf.WriteInteger(Quantity);
             for (int i = 0; i < (int)Stats.StatCount; i++)
             {

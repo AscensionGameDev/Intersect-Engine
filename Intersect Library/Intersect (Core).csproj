@@ -155,6 +155,7 @@
     <Compile Include="Enums\MapListUpdates.cs" />
     <Compile Include="Enums\MapZones.cs" />
     <Compile Include="Enums\NpcBehavior.cs" />
+    <Compile Include="Enums\NpcMovement.cs" />
     <Compile Include="Enums\QuestObjective.cs" />
     <Compile Include="Enums\ServerPackets.cs" />
     <Compile Include="Enums\SpellTargetTypes.cs" />
