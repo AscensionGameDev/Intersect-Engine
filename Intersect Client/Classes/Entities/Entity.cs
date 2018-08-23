@@ -968,9 +968,9 @@ namespace Intersect_Client.Classes.Entities
             if (castSpell != null)
             {
                 var width = Options.TileWidth;
-                var fillWidth = ((castSpell.CastDuration * 100 -
+                var fillWidth = ((castSpell.CastDuration -
                                   (CastTime - Globals.System.GetTimeMs())) /
-                                 (float) (castSpell.CastDuration * 100) * width);
+                                 (float) (castSpell.CastDuration) * width);
                 var y = (int) Math.Ceiling(GetCenterPos().Y);
                 var x = (int) Math.Ceiling(GetCenterPos().X);
                 GameTexture entityTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity,

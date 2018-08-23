@@ -2679,21 +2679,24 @@ namespace Intersect.Server.Classes.Entities
                     return;
                 }
 
-                //Check if the caster is silenced or stunned
-                var statuses = Statuses.Values.ToArray();
-                foreach (var status in statuses)
-                {
-                    if (status.Type == StatusTypes.Silence)
-                    {
-                        PacketSender.SendPlayerMsg(MyClient, Strings.Combat.silenced);
-                        return;
-                    }
-                    if (status.Type == StatusTypes.Stun)
-                    {
-                        PacketSender.SendPlayerMsg(MyClient, Strings.Combat.stunned);
-                        return;
-                    }
-                }
+				//Check if the caster is silenced or stunned. Clense casts break the rule.
+				if (spell.Combat.Effect != StatusTypes.Cleanse)
+				{
+					var statuses = Statuses.Values.ToArray();
+					foreach (var status in statuses)
+					{
+						if (status.Type == StatusTypes.Silence)
+						{
+							PacketSender.SendPlayerMsg(MyClient, Strings.Combat.silenced);
+							return;
+						}
+						if (status.Type == StatusTypes.Stun)
+						{
+							PacketSender.SendPlayerMsg(MyClient, Strings.Combat.stunned);
+							return;
+						}
+					}
+				}
 
                 //Check if the caster has the right ammunition if a projectile
                 if (spell.SpellType == (int)SpellTypes.CombatSpell &&

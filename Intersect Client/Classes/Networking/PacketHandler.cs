@@ -1133,7 +1133,7 @@ namespace Intersect_Client.Classes.Networking
             if (SpellBase.Get(spellId) != null && Globals.Entities.ContainsKey(entityId))
             {
                 Globals.Entities[entityId].CastTime = Globals.System.GetTimeMs() +
-                                                       SpellBase.Get(spellId).CastDuration * 100;
+                                                       SpellBase.Get(spellId).CastDuration;
                 Globals.Entities[entityId].SpellCast = spellId;
             }
             bf.Dispose();
@@ -1150,7 +1150,7 @@ namespace Intersect_Client.Classes.Networking
                 Globals.Me.Spells[spellSlot].SpellCd = Globals.System.GetTimeMs() +
                                                        (int)(SpellBase.Lookup
                                                             .Get<SpellBase>(Globals.Me.Spells[spellSlot].SpellId)
-                                                            .CooldownDuration * 100 * cooldownReduction);
+                                                            .CooldownDuration * cooldownReduction);
             }
             bf.Dispose();
         }

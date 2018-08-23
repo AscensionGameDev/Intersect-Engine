@@ -141,8 +141,10 @@ namespace Intersect.Server.Classes.Localization
                 {3, @"SNARED!"},
                 {4, @"BLINDED!"},
                 {5, @"STEALTH!"},
-                {6, @"TRANSFORMED!"}
-            };
+                {6, @"TRANSFORMED!"},
+				{7, @"CLEANSED!"},
+				{8, @"INVULNERABLE!"}
+			};
             public static LocalizedString stunattacking = @"You are stunned and can't attack.";
             public static LocalizedString stunblocking = @"You are stunned and can't block.";
             public static LocalizedString stunned = @"You cannot cast this ability whilst stunned.";

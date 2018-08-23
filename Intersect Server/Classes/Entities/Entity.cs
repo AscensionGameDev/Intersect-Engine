@@ -1903,6 +1903,7 @@ namespace Intersect.Server.Classes.Entities
 				{
 					if (status.Type == StatusTypes.Cleanse)
 					{
+						PacketSender.SendActionMsg(en, Strings.Combat.status[(int)Type], CustomColors.Cleanse);
 						return;
 					}
 				}
