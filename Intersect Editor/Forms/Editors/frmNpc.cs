@@ -11,6 +11,7 @@ using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Utilities;
+using Intersect.GameObjects.Events;
 
 namespace Intersect.Editor.Forms.Editors
 {
@@ -91,6 +92,12 @@ namespace Intersect.Editor.Forms.Editors
             cmbAttackAnimation.Items.Clear();
             cmbAttackAnimation.Items.Add(Strings.General.none);
             cmbAttackAnimation.Items.AddRange(AnimationBase.Names);
+            cmbOnDeathEventKiller.Items.Clear();
+            cmbOnDeathEventKiller.Items.Add(Strings.General.none);
+            cmbOnDeathEventKiller.Items.Add(EventBase.Names);
+            cmbOnDeathEventParty.Items.Clear();
+            cmbOnDeathEventParty.Items.Add(Strings.General.none);
+            cmbOnDeathEventParty.Items.Add(EventBase.Names);
             cmbScalingStat.Items.Clear();
             for (int x = 0; x < Options.MaxStats; x++)
             {
@@ -118,15 +125,31 @@ namespace Intersect.Editor.Forms.Editors
 
             grpGeneral.Text = Strings.NpcEditor.general;
             lblName.Text = Strings.NpcEditor.name;
-            lblBehavior.Text = Strings.NpcEditor.behavior;
-            cmbBehavior.Items.Clear();
-            for (int i = 0; i < Strings.NpcEditor.behaviors.Count; i++)
-            {
-                cmbBehavior.Items.Add(Strings.NpcEditor.behaviors[i]);
-            }
+            grpBehavior.Text = Strings.NpcEditor.behavior;
+            
             lblPic.Text = Strings.NpcEditor.sprite;
             lblSpawnDuration.Text = Strings.NpcEditor.spawnduration;
+
+            //Behavior
+            lblAggressive.Text = Strings.NpcEditor.aggressive;
             lblSightRange.Text = Strings.NpcEditor.sightrange;
+            lblMovement.Text = Strings.NpcEditor.movement;
+            cmbMovement.Items.Clear();
+            for (int i = 0; i < Strings.NpcEditor.movements.Count; i++)
+            {
+                cmbMovement.Items.Add(Strings.NpcEditor.movements[i]);
+            }
+            lblSwarm.Text = Strings.NpcEditor.swarm;
+            lblFlee.Text = Strings.NpcEditor.flee;
+            grpConditions.Text = Strings.NpcEditor.conditions;
+            btnPlayerFriendProtectorCond.Text = Strings.NpcEditor.playerfriendprotectorconditions;
+            btnAttackOnSightCond.Text = Strings.NpcEditor.attackonsightconditions;
+            btnPlayerCanAttackCond.Text = Strings.NpcEditor.playercanattackconditions;
+            lblFocusDamageDealer.Text = Strings.NpcEditor.focusdamagedealer;
+
+            grpCommonEvents.Text = Strings.NpcEditor.commonevents;
+            lblOnDeathEventKiller.Text = Strings.NpcEditor.ondeathevent;
+            lblOnDeathEventParty.Text = Strings.NpcEditor.ondeathpartyevent;
 
             grpStats.Text = Strings.NpcEditor.stats;
             lblHP.Text = Strings.NpcEditor.hp;
@@ -198,11 +221,30 @@ namespace Intersect.Editor.Forms.Editors
                 pnlContainer.Show();
 
                 txtName.Text = mEditorItem.Name;
-                cmbBehavior.SelectedIndex = Math.Min(mEditorItem.Behavior, cmbBehavior.Items.Count - 1);
                 cmbSprite.SelectedIndex = cmbSprite.FindString(TextUtils.NullToNone(mEditorItem.Sprite));
                 nudLevel.Value = mEditorItem.Level;
-                nudSightRange.Value = mEditorItem.SightRange;
                 nudSpawnDuration.Value = mEditorItem.SpawnDuration;
+
+                //Behavior
+                chkAggressive.Checked = mEditorItem.Aggressive;
+                if (mEditorItem.Aggressive)
+                {
+                    btnAttackOnSightCond.Text = Strings.NpcEditor.dontattackonsightconditions;
+                }
+                else
+                {
+                    btnAttackOnSightCond.Text = Strings.NpcEditor.attackonsightconditions;
+                }
+                nudSightRange.Value = mEditorItem.SightRange;
+                cmbMovement.SelectedIndex = Math.Min(mEditorItem.Movement, cmbMovement.Items.Count - 1);
+                chkSwarm.Checked = mEditorItem.Swarm;
+                nudFlee.Value = mEditorItem.FleeHealthPercentage;
+                chkFocusDamageDealer.Checked = mEditorItem.FocusHighestDamageDealer;
+
+                //Common Events
+                cmbOnDeathEventKiller.SelectedIndex = EventBase.ListIndex(mEditorItem.OnDeathEventId) + 1;
+                cmbOnDeathEventParty.SelectedIndex = EventBase.ListIndex(mEditorItem.OnDeathPartyEventId) + 1;
+
                 nudStr.Value = mEditorItem.Stats[(int)Stats.Attack];
                 nudMag.Value = mEditorItem.Stats[(int)Stats.AbilityPower];
                 nudDef.Value = mEditorItem.Stats[(int)Stats.Defense];
@@ -283,11 +325,6 @@ namespace Intersect.Editor.Forms.Editors
             mEditorItem.Name = txtName.Text;
             lstNpcs.Items[NpcBase.ListIndex(mEditorItem.Id)] = txtName.Text;
             mChangingName = false;
-        }
-
-        private void cmbBehavior_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            mEditorItem.Behavior = (byte)cmbBehavior.SelectedIndex;
         }
 
         private void cmbSprite_SelectedIndexChanged(object sender, EventArgs e)
@@ -676,6 +713,79 @@ namespace Intersect.Editor.Forms.Editors
         private void nudMpRegen_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.VitalRegen[(int)Vitals.Mana] = (int)nudMpRegen.Value;
+        }
+
+        private void chkAggressive_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Aggressive = chkAggressive.Checked;
+            if (mEditorItem.Aggressive)
+            {
+                btnAttackOnSightCond.Text = Strings.NpcEditor.dontattackonsightconditions;
+            }
+            else
+            {
+                btnAttackOnSightCond.Text = Strings.NpcEditor.attackonsightconditions;
+            }
+        }
+
+        private void cmbMovement_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Movement = (byte)cmbMovement.SelectedIndex;
+        }
+
+        private void chkSwarm_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Swarm = chkSwarm.Checked;
+        }
+
+        private void nudFlee_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.FleeHealthPercentage = (byte)nudFlee.Value;
+        }
+
+        private void btnPlayerFriendProtectorCond_Click(object sender, EventArgs e)
+        {
+            var frm = new FrmDynamicRequirements(mEditorItem.PlayerFriendConditions, RequirementType.NpcFriend);
+            frm.TopMost = true;
+            frm.ShowDialog();
+        }
+
+        private void btnAttackOnSightCond_Click(object sender, EventArgs e)
+        {
+            if (chkAggressive.Checked)
+            {
+                var frm = new FrmDynamicRequirements(mEditorItem.AttackOnSightConditions, RequirementType.NpcDontAttackOnSight);
+                frm.TopMost = true;
+                frm.ShowDialog();
+            }
+            else
+            {
+                var frm = new FrmDynamicRequirements(mEditorItem.AttackOnSightConditions, RequirementType.NpcAttackOnSight);
+                frm.TopMost = true;
+                frm.ShowDialog();
+            }
+        }
+
+        private void btnPlayerCanAttackCond_Click(object sender, EventArgs e)
+        {
+            var frm = new FrmDynamicRequirements(mEditorItem.PlayerCanAttackConditions, RequirementType.NpcCanBeAttacked);
+            frm.TopMost = true;
+            frm.ShowDialog();
+        }
+
+        private void cmbOnDeathEventKiller_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.OnDeathEvent = EventBase.Get(EventBase.IdFromList(cmbOnDeathEventKiller.SelectedIndex - 1));
+        }
+
+        private void cmbOnDeathEventParty_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.OnDeathPartyEvent = EventBase.Get(EventBase.IdFromList(cmbOnDeathEventParty.SelectedIndex - 1));
+        }
+
+        private void chkFocusDamageDealer_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.FocusHighestDamageDealer = chkFocusDamageDealer.Checked;
         }
     }
 }

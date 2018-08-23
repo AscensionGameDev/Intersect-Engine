@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Intersect.Server.Migrations
 {
     [DbContext(typeof(PlayerContext))]
-    [Migration("20180704142417_pdb")]
-    partial class pdb
+    [Migration("20180823214020_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -61,6 +61,8 @@ namespace Intersect.Server.Migrations
 
                     b.Property<Guid?>("BagId");
 
+                    b.Property<Guid>("ItemId");
+
                     b.Property<Guid>("ParentBagId");
 
                     b.Property<int>("Quantity");
@@ -87,6 +89,8 @@ namespace Intersect.Server.Migrations
                     b.Property<Guid?>("BagId");
 
                     b.Property<Guid>("CharacterId");
+
+                    b.Property<Guid>("ItemId");
 
                     b.Property<int>("Quantity");
 
@@ -150,6 +154,8 @@ namespace Intersect.Server.Migrations
                     b.Property<Guid?>("BagId");
 
                     b.Property<Guid>("CharacterId");
+
+                    b.Property<Guid>("ItemId");
 
                     b.Property<int>("Quantity");
 

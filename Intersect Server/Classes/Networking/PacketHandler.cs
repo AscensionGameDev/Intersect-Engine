@@ -952,14 +952,14 @@ namespace Intersect.Server.Classes.Networking
                 {
                     if (client.Entity.Equipment[Options.WeaponIndex] >= 0 &&
                         ItemBase.Get(client.Entity
-                            .Items[client.Entity.Equipment[Options.WeaponIndex]].Id) !=
+                            .Items[client.Entity.Equipment[Options.WeaponIndex]].ItemId) !=
                         null)
                     {
                         ItemBase weaponItem = ItemBase.Get(client.Entity
-                            .Items[client.Entity.Equipment[Options.WeaponIndex]].Id);
+                            .Items[client.Entity.Equipment[Options.WeaponIndex]].ItemId);
 
                         //Check for animation
-                        var attackAnim = ItemBase.Get(client.Entity.Items[client.Entity.Equipment[Options.WeaponIndex]].Id).AttackAnimation;
+                        var attackAnim = ItemBase.Get(client.Entity.Items[client.Entity.Equipment[Options.WeaponIndex]].ItemId).AttackAnimation;
                         if (attackAnim != null && attackingTile.TryFix())
                         {
                             PacketSender.SendAnimationToProximity(attackAnim.Id, -1, Guid.Empty, attackingTile.GetMapId(), attackingTile.GetX(), attackingTile.GetY(), client.Entity.Dir);
@@ -967,7 +967,7 @@ namespace Intersect.Server.Classes.Networking
 
                         var weaponInvSlot = client.Entity.Equipment[Options.WeaponIndex];
                         var invItem = client.Entity.Items[weaponInvSlot];
-                        var weapon = ItemBase.Get(invItem?.Id ?? Guid.Empty);
+                        var weapon = ItemBase.Get(invItem?.ItemId ?? Guid.Empty);
                         var projectileBase = ProjectileBase.Get(weapon?.ProjectileId ?? Guid.Empty);
 
                         if (projectileBase != null)
@@ -2234,7 +2234,8 @@ namespace Intersect.Server.Classes.Networking
                     Globals.KillProjectilesOf((ProjectileBase)obj);
                 }
 
-                obj.Load(bf.ReadString());
+                var json = bf.ReadString();
+                obj.Load(json);
                 
                 if (type == GameObjectType.Quest)
                 {

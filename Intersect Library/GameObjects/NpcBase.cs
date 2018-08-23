@@ -5,6 +5,8 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Utilities;
+using Intersect.GameObjects.Events;
+using Intersect.GameObjects.Conditions;
 
 namespace Intersect.GameObjects
 {
@@ -33,12 +35,71 @@ namespace Intersect.GameObjects
             set => AttackAnimationId = value?.Id ?? Guid.Empty;
         }
         
-        public byte Behavior { get; set; }
-        public int CritChance { get; set; }
+        //Behavior
+        public bool Aggressive { get; set; }
+        public byte Movement { get; set; }
+        public bool Swarm { get; set; }
+        public byte FleeHealthPercentage { get; set; }
+        public bool FocusHighestDamageDealer { get; set; } = true;
+
+        //Conditions
+        [Column("PlayerFriendConditions")]
+        [JsonIgnore]
+        public string PlayerFriendConditionsJson
+        {
+            get => PlayerFriendConditions.Data();
+            set => PlayerFriendConditions.Load(value);
+        }
+        [NotMapped]
+        public ConditionLists PlayerFriendConditions = new ConditionLists();
+        
+
+        [Column("AttackOnSightConditions")]
+        [JsonIgnore]
+        public string AttackOnSightConditionsJson
+        {
+            get => AttackOnSightConditions.Data();
+            set => AttackOnSightConditions.Load(value);
+        }
+        [NotMapped]
+        public ConditionLists AttackOnSightConditions = new ConditionLists();
+
+        [Column("PlayerCanAttackConditions")]
+        [JsonIgnore]
+        public string PlayerCanAttackConditionsJson
+        {
+            get => PlayerCanAttackConditions.Data();
+            set => PlayerCanAttackConditions.Load(value);
+        }
+        [NotMapped]
+        public ConditionLists PlayerCanAttackConditions = new ConditionLists();
+        
 
         //Combat
         public int Damage { get; set; } = 1;
         public int DamageType { get; set; }
+        public int CritChance { get; set; }
+
+        //Common Events
+        [Column("OnDeathEvent")]
+        public Guid OnDeathEventId { get; protected set; }
+        [NotMapped]
+        [JsonIgnore]
+        public EventBase OnDeathEvent
+        {
+            get => EventBase.Get(OnDeathEventId);
+            set => OnDeathEventId = value?.Id ?? Guid.Empty;
+        }
+
+        [Column("OnDeathPartyEvent")]
+        public Guid OnDeathPartyEventId { get; protected set; }
+        [NotMapped]
+        [JsonIgnore]
+        public EventBase OnDeathPartyEvent
+        {
+            get => EventBase.Get(OnDeathPartyEventId);
+            set => OnDeathPartyEventId = value?.Id ?? Guid.Empty;
+        }
 
         //Drops
         [Column("Drops")]

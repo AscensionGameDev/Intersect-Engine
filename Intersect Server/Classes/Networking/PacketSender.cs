@@ -287,6 +287,11 @@ namespace Intersect.Server.Classes.Networking
             {
                 SendPlayerEquipmentTo(client, (Player)en);
             }
+
+            if (en.GetType() == typeof(Npc))
+            {
+                SendNpcAggressionTo(client.Entity,(Npc)en);
+            }
         }
 
         public static void SendMapEntitiesTo(Client client, List<EntityInstance> entities)
@@ -309,6 +314,14 @@ namespace Intersect.Server.Classes.Networking
             client.SendPacket(buff.ToArray());
 
             SendMapEntityEquipmentTo(client, sendEntities); //Send the equipment of each player
+
+            for (int i = 0; i < sendEntities.Count; i++)
+            {
+                if (sendEntities[i].GetType() == typeof(Npc))
+                {
+                    SendNpcAggressionTo(client.Entity, (Npc)sendEntities[i]);
+                }
+            }
         }
 
         public static void SendMapEntityEquipmentTo(Client client, List<EntityInstance> entities)
@@ -346,6 +359,11 @@ namespace Intersect.Server.Classes.Networking
             if (en.GetType() == typeof(Player))
             {
                 SendPlayerEquipmentToProximity((Player)en);
+            }
+
+            if (en.GetType() == typeof(Npc))
+            {
+                SendNpcAggressionToProximity((Npc)en);
             }
         }
 
@@ -395,21 +413,45 @@ namespace Intersect.Server.Classes.Networking
             {
                 return;
             }
+            var map = en.Map;
+            foreach (var mp in en.Map.GetSurroundingMaps(true))
+            {
+                var players = mp.GetPlayersOnMap();
+                foreach (var pl in players)
+                {
+                    SendNpcAggressionTo(pl, en);
+                }
+            }
+        }
+
+        public static void SendNpcAggressionTo(Player en, Npc npc)
+        {
+            if (en == null || npc == null) return;
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.NpcAggression);
-            bf.WriteGuid(en.Id);
+            bf.WriteGuid(npc.Id);
 
             //Declare Aggression state
-            if (en.MyTarget != null)
+            if (npc.MyTarget != null)
             {
                 bf.WriteInteger(-1);
             }
             else
             {
-                bf.WriteInteger(en.Base.Behavior);
+                //TODO (0 is attack when attacked, 1 is attack on sight, 2 is friendly, 3 is guard)
+                var aggression = 0;
+                if (npc.IsFriend(en) || !en.CanAttack(npc, null))
+                {
+                    aggression = 2;
+                }
+                else if (npc.ShouldAttackPlayerOnSight(en))
+                {
+                    aggression = 1;
+                }
+                bf.WriteInteger(aggression);
             }
 
-            SendDataToProximity(en.MapId, bf.ToArray());
+            SendDataTo(en.MyClient, bf.ToArray());
             bf.Dispose();
         }
 
@@ -876,7 +918,7 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteGuid(mapId);
             bf.WriteInteger(index);
             if (MapInstance.Get(mapId).MapItems[index] == null ||
-                MapInstance.Get(mapId).MapItems[index].Id == Guid.Empty)
+                MapInstance.Get(mapId).MapItems[index].ItemId == Guid.Empty)
             {
                 bf.WriteInteger(-1);
             }
@@ -938,13 +980,13 @@ namespace Intersect.Server.Classes.Networking
                 }
                 else
                 {
-                    if (en.Equipment[i] == -1 || en.Items[en.Equipment[i]].Id == Guid.Empty)
+                    if (en.Equipment[i] == -1 || en.Items[en.Equipment[i]].ItemId == Guid.Empty)
                     {
                         bf.WriteGuid(Guid.Empty);
                     }
                     else
                     {
-                        bf.WriteGuid(en.Items[en.Equipment[i]].Id);
+                        bf.WriteGuid(en.Items[en.Equipment[i]].ItemId);
                     }
                 }
             }
@@ -959,13 +1001,13 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteGuid(en.MyClient.Id);
             for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {
-                if (en.Equipment[i] == -1 || en.Items[en.Equipment[i]].Id == Guid.Empty)
+                if (en.Equipment[i] == -1 || en.Items[en.Equipment[i]].ItemId == Guid.Empty)
                 {
                     bf.WriteGuid(Guid.Empty);
                 }
                 else
                 {
-                    bf.WriteGuid(en.Items[en.Equipment[i]].Id);
+                    bf.WriteGuid(en.Items[en.Equipment[i]].ItemId);
                 }
             }
             SendDataToProximity(en.MapId, bf.ToArray(), en.MyClient);
@@ -1318,7 +1360,7 @@ namespace Intersect.Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.BankUpdate);
             bf.WriteInteger(slot);
-            if (client.Entity.Bank[slot] == null || client.Entity.Bank[slot].Id == Guid.Empty ||
+            if (client.Entity.Bank[slot] == null || client.Entity.Bank[slot].ItemId == Guid.Empty ||
                 client.Entity.Bank[slot].Quantity <= 0)
             {
                 bf.WriteInteger(0);
@@ -1717,7 +1759,7 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteGuid(trader.Id);
             bf.WriteInteger(slot);
             if (trader.Trading.Offer[slot] == null ||
-                trader.Trading.Offer[slot].Id == Guid.Empty ||
+                trader.Trading.Offer[slot].ItemId == Guid.Empty ||
                 trader.Trading.Offer[slot].Quantity <= 0)
             {
                 bf.WriteInteger(0);
@@ -1786,7 +1828,7 @@ namespace Intersect.Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.BagUpdate);
             bf.WriteInteger(slot);
-            if (item == null || item.Id == Guid.Empty || item.Quantity <= 0)
+            if (item == null || item.ItemId == Guid.Empty || item.Quantity <= 0)
             {
                 bf.WriteInteger(0);
             }

@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Intersect.Server.Migrations.Game
 {
     [DbContext(typeof(GameContext))]
-    [Migration("20180822003206_NpcResourceRegens")]
-    partial class NpcResourceRegens
+    [Migration("20180822231032_FocusDamageDealers1")]
+    partial class FocusDamageDealers1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -268,12 +268,15 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<bool>("Aggressive");
+
                     b.Property<bool>("AttackAllies");
 
                     b.Property<Guid>("AttackAnimationId")
                         .HasColumnName("AttackAnimation");
 
-                    b.Property<byte>("Behavior");
+                    b.Property<string>("AttackOnSightConditionsJson")
+                        .HasColumnName("AttackOnSightConditions");
 
                     b.Property<string>("CraftsJson")
                         .HasColumnName("Spells");
@@ -285,6 +288,10 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<int>("DamageType");
 
                     b.Property<long>("Experience");
+
+                    b.Property<byte>("FleeHealthPercentage");
+
+                    b.Property<bool>("FocusHighestDamageDealer");
 
                     b.Property<string>("JsonAggroList")
                         .HasColumnName("AggroList");
@@ -300,9 +307,23 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<int>("Level");
 
+                    b.Property<byte>("Movement");
+
                     b.Property<string>("Name");
 
                     b.Property<bool>("NpcVsNpcEnabled");
+
+                    b.Property<Guid>("OnDeathEventId")
+                        .HasColumnName("OnDeathEvent");
+
+                    b.Property<Guid>("OnDeathPartyEventId")
+                        .HasColumnName("OnDeathPartyEvent");
+
+                    b.Property<string>("PlayerCanAttackConditionsJson")
+                        .HasColumnName("PlayerCanAttackConditions");
+
+                    b.Property<string>("PlayerFriendConditionsJson")
+                        .HasColumnName("PlayerFriendConditions");
 
                     b.Property<string>("RegenJson")
                         .HasColumnName("VitalRegen");
@@ -318,6 +339,8 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<int>("SpellFrequency");
 
                     b.Property<string>("Sprite");
+
+                    b.Property<bool>("Swarm");
 
                     b.Property<long>("TimeCreated");
 

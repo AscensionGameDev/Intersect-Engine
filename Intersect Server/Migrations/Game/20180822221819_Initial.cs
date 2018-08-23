@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Intersect.Server.Migrations.Game
 {
-    public partial class gdb : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -235,10 +235,18 @@ namespace Intersect.Server.Migrations.Game
                     AggroList = table.Column<string>(nullable: true),
                     AttackAllies = table.Column<bool>(nullable: false),
                     AttackAnimation = table.Column<Guid>(nullable: false),
-                    Behavior = table.Column<byte>(nullable: false),
-                    CritChance = table.Column<int>(nullable: false),
+                    Aggressive = table.Column<bool>(nullable: false),
+                    Movement = table.Column<byte>(nullable: false),
+                    Swarm = table.Column<bool>(nullable: false),
+                    FleeHealthPercentage = table.Column<byte>(nullable: false),
+                    PlayerFriendConditions = table.Column<string>(nullable: true),
+                    AttackOnSightConditions = table.Column<string>(nullable: true),
+                    PlayerCanAttackConditions = table.Column<string>(nullable: true),
                     Damage = table.Column<int>(nullable: false),
                     DamageType = table.Column<int>(nullable: false),
+                    CritChance = table.Column<int>(nullable: false),
+                    OnDeathEvent = table.Column<Guid>(nullable: false),
+                    OnDeathPartyEvent = table.Column<Guid>(nullable: false),
                     Drops = table.Column<string>(nullable: true),
                     Experience = table.Column<long>(nullable: false),
                     Level = table.Column<int>(nullable: false),
@@ -251,7 +259,8 @@ namespace Intersect.Server.Migrations.Game
                     SpellFrequency = table.Column<int>(nullable: false),
                     Spells = table.Column<string>(nullable: true),
                     Sprite = table.Column<string>(nullable: true),
-                    Stats = table.Column<string>(nullable: true)
+                    Stats = table.Column<string>(nullable: true),
+                    VitalRegen = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -264,7 +273,8 @@ namespace Intersect.Server.Migrations.Game
                 {
                     Id = table.Column<Guid>(nullable: false),
                     TimeCreated = table.Column<long>(nullable: false),
-                    Name = table.Column<string>(nullable: true)
+                    Name = table.Column<string>(nullable: true),
+                    TextId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -277,7 +287,8 @@ namespace Intersect.Server.Migrations.Game
                 {
                     Id = table.Column<Guid>(nullable: false),
                     TimeCreated = table.Column<long>(nullable: false),
-                    Name = table.Column<string>(nullable: true)
+                    Name = table.Column<string>(nullable: true),
+                    TextId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -359,6 +370,7 @@ namespace Intersect.Server.Migrations.Game
                     Animation = table.Column<Guid>(nullable: false),
                     Drops = table.Column<string>(nullable: true),
                     HarvestingRequirements = table.Column<string>(nullable: true),
+                    VitalRegen = table.Column<int>(nullable: false),
                     MaxHp = table.Column<int>(nullable: false),
                     MinHp = table.Column<int>(nullable: false),
                     SpawnDuration = table.Column<int>(nullable: false),
@@ -378,6 +390,7 @@ namespace Intersect.Server.Migrations.Game
                     Id = table.Column<Guid>(nullable: false),
                     TimeCreated = table.Column<long>(nullable: false),
                     Name = table.Column<string>(nullable: true),
+                    TextId = table.Column<string>(nullable: true),
                     Value = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
@@ -392,6 +405,7 @@ namespace Intersect.Server.Migrations.Game
                     Id = table.Column<Guid>(nullable: false),
                     TimeCreated = table.Column<long>(nullable: false),
                     Name = table.Column<string>(nullable: true),
+                    TextId = table.Column<string>(nullable: true),
                     Value = table.Column<int>(nullable: false)
                 },
                 constraints: table =>

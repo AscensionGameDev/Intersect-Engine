@@ -14,7 +14,11 @@ namespace Intersect.Editor.Forms.Editors
         Resource,
         Spell,
         Event,
-        Quest
+        Quest,
+        NpcFriend,
+        NpcAttackOnSight,
+        NpcDontAttackOnSight,
+        NpcCanBeAttacked,
     }
 
     public partial class FrmDynamicRequirements : Form
@@ -53,6 +57,18 @@ namespace Intersect.Editor.Forms.Editors
                     break;
                 case RequirementType.Quest:
                     lblInstructions.Text = Strings.DynamicRequirements.instructionsquest;
+                    break;
+                case RequirementType.NpcFriend:
+                    lblInstructions.Text = Strings.DynamicRequirements.instructionsnpcfriend;
+                    break;
+                case RequirementType.NpcAttackOnSight:
+                    lblInstructions.Text = Strings.DynamicRequirements.instructionsnpcattackonsight;
+                    break;
+                case RequirementType.NpcDontAttackOnSight:
+                    lblInstructions.Text = Strings.DynamicRequirements.instructionsnpcdontattackonsight;
+                    break;
+                case RequirementType.NpcCanBeAttacked:
+                    lblInstructions.Text = Strings.DynamicRequirements.instructionsnpccanbeattacked;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
@@ -160,6 +176,7 @@ namespace Intersect.Editor.Forms.Editors
             };
             frm.Controls.Add(cmdWindow);
             cmdWindow.BringToFront();
+            frm.TopMost = true;
             frm.ShowDialog();
             if (cmdWindow.Cancelled) return null;
             return cmdWindow.Condition;

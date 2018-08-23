@@ -54,8 +54,8 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public string JsonHarvestingRequirements
         {
-            get => JsonConvert.SerializeObject(HarvestingRequirements);
-            set => HarvestingRequirements = JsonConvert.DeserializeObject<ConditionLists>(value);
+            get => HarvestingRequirements.Data();
+            set => HarvestingRequirements.Load(value);
         }
         [NotMapped]
         public ConditionLists HarvestingRequirements = new ConditionLists();

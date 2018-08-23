@@ -59,6 +59,8 @@ namespace Intersect.Server.Migrations
 
                     b.Property<Guid?>("BagId");
 
+                    b.Property<Guid>("ItemId");
+
                     b.Property<Guid>("ParentBagId");
 
                     b.Property<int>("Quantity");
@@ -85,6 +87,8 @@ namespace Intersect.Server.Migrations
                     b.Property<Guid?>("BagId");
 
                     b.Property<Guid>("CharacterId");
+
+                    b.Property<Guid>("ItemId");
 
                     b.Property<int>("Quantity");
 
@@ -148,6 +152,8 @@ namespace Intersect.Server.Migrations
                     b.Property<Guid?>("BagId");
 
                     b.Property<Guid>("CharacterId");
+
+                    b.Property<Guid>("ItemId");
 
                     b.Property<int>("Quantity");
 

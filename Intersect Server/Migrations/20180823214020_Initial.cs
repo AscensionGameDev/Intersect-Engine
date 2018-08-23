@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Intersect.Server.Migrations
 {
-    public partial class pdb : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -42,6 +42,7 @@ namespace Intersect.Server.Migrations
                 columns: table => new
                 {
                     BagId = table.Column<Guid>(nullable: true),
+                    ItemId = table.Column<Guid>(nullable: false),
                     Quantity = table.Column<int>(nullable: false),
                     StatBoost = table.Column<string>(nullable: true),
                     Id = table.Column<Guid>(nullable: false),
@@ -151,6 +152,7 @@ namespace Intersect.Server.Migrations
                 columns: table => new
                 {
                     BagId = table.Column<Guid>(nullable: true),
+                    ItemId = table.Column<Guid>(nullable: false),
                     Quantity = table.Column<int>(nullable: false),
                     StatBoost = table.Column<string>(nullable: true),
                     Id = table.Column<Guid>(nullable: false),
@@ -225,6 +227,7 @@ namespace Intersect.Server.Migrations
                 columns: table => new
                 {
                     BagId = table.Column<Guid>(nullable: true),
+                    ItemId = table.Column<Guid>(nullable: false),
                     Quantity = table.Column<int>(nullable: false),
                     StatBoost = table.Column<string>(nullable: true),
                     Id = table.Column<Guid>(nullable: false),

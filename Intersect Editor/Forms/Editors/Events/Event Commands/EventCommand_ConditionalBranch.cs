@@ -20,6 +20,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         public EventCommandConditionalBranch(Condition refCommand, EventPage refPage, FrmEvent editor, ConditionalBranchCommand command)
         {
             InitializeComponent();
+            if (refCommand == null) refCommand = new PlayerSwitchCondition();
             Condition = refCommand;
             mEventEditor = editor;
             mEventCommand = command;

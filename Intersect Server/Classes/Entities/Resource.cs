@@ -134,7 +134,7 @@ namespace Intersect.Server.Classes.Entities
                 // Drop items
                 foreach (var item in Items)
                 {
-                    if (ItemBase.Get(item.Id) != null)
+                    if (ItemBase.Get(item.ItemId) != null)
                     {
                         MapInstance.Get(selectedTile.GetMapId())
                             .SpawnItem(selectedTile.GetX(), selectedTile.GetY(), item, item.Quantity);

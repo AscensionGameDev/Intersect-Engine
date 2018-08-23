@@ -289,7 +289,7 @@ namespace Intersect.Server.Classes.Core
             {
                 if (bag.Slots[i] != null)
                 {
-                    var item = ItemBase.Get(bag.Slots[i].Id);
+                    var item = ItemBase.Get(bag.Slots[i].ItemId);
                     if (item != null)
                     {
                         return false;
@@ -757,6 +757,11 @@ namespace Intersect.Server.Classes.Core
             GenerateMapGrids();
             LoadMapFolders();
             CheckAllMapConnections();
+
+            foreach (var map in MapInstance.Lookup)
+            {
+                ((MapInstance)map.Value).Initialize();
+            }
         }
 
         private static void OnClassesLoaded()

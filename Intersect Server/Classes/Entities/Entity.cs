@@ -1104,45 +1104,6 @@ namespace Intersect.Server.Classes.Entities
         {
             if (enemy == null) return;
 
-            //No Matter what, if we attack the entitiy, make them chase us
-            if (enemy.GetType() == typeof(Npc))
-            {
-                if (((Npc)enemy).Base.Behavior == (int)NpcBehavior.Friendly) return;
-                ((Npc)enemy).AssignTarget(this);
-
-                //Check if there are any guards nearby
-                //TODO Loop through CurrentMap - SurroundingMaps Entity List instead of global entity list.
-                var mapEntities = MapInstance.Get(MapId).GetEntities();
-                for (var n = 0; n < mapEntities.Count; n++)
-                {
-                    if (mapEntities[n].GetType() == typeof(Npc))
-                    {
-                        if (((Npc)mapEntities[n]).Behaviour == 3) // Type guard
-                        {
-                            var x = mapEntities[n].X - ((Npc)mapEntities[n]).Range;
-                            var y = mapEntities[n].Y - ((Npc)mapEntities[n]).Range;
-                            var xMax = mapEntities[n].X + ((Npc)mapEntities[n]).Range;
-                            var yMax = mapEntities[n].Y + ((Npc)mapEntities[n]).Range;
-
-                            //Check that not going out of the map boundaries
-                            if (x < 0) x = 0;
-                            if (y < 0) y = 0;
-                            if (xMax >= Options.MapWidth) xMax = Options.MapWidth;
-                            if (yMax >= Options.MapHeight) yMax = Options.MapHeight;
-
-                            if (x < X && xMax > X)
-                            {
-                                if (y < Y && yMax > Y)
-                                {
-                                    // In range, so make a target
-                                    ((Npc)mapEntities[n]).AssignTarget(this);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
 			//Invulnerability
 			var statuses = enemy.Statuses.Values.ToArray();
 			foreach (var status in statuses)
@@ -1194,6 +1155,39 @@ namespace Intersect.Server.Classes.Entities
                             break;
                     }
                     enemy.CombatTimer = Globals.System.GetTimeMs() + 5000;
+
+                    //No Matter what, if we attack the entitiy, make them chase us
+                    if (enemy.GetType() == typeof(Npc))
+                    {
+                        var dmgMap = ((Npc)enemy).DamageMap;
+                        if (dmgMap.ContainsKey(this))
+                        {
+                            dmgMap[this] += baseDamage;
+                        }
+                        else
+                        {
+                            dmgMap[this] = baseDamage;
+                        }
+                        long dmg = baseDamage;
+                        var target = this;
+                        foreach (var pair in dmgMap)
+                        {
+                            if (pair.Value > dmg)
+                            {
+                                target = pair.Key;
+                                dmg = pair.Value;
+                            }
+                        }
+                        if (((Npc)enemy).Base.FocusHighestDamageDealer)
+                        {
+                            ((Npc)enemy).AssignTarget(target);
+                        }
+                        else
+                        {
+                            ((Npc)enemy).AssignTarget(this);
+                        }
+                    }
+                    enemy.NotifySwarm(this);
                 }
                 else if (baseDamage < 0 && !enemy.IsFullVital(Vitals.Health))
                 {
@@ -1500,6 +1494,11 @@ namespace Intersect.Server.Classes.Entities
             return false;
         }
 
+        public virtual void NotifySwarm(EntityInstance attacker)
+        {
+
+        }
+
         protected int DirToEnemy(EntityInstance target)
         {
             //Calculate World Tile of Me
@@ -1584,7 +1583,7 @@ namespace Intersect.Server.Classes.Entities
                     var item = Items[n];
                     if (item == null) continue;
 
-                    var itemBase = ItemBase.Get(item.Id);
+                    var itemBase = ItemBase.Get(item.ItemId);
                     if (itemBase == null) continue;
 
                     //Don't lose bound items on death for players.
@@ -1696,7 +1695,9 @@ namespace Intersect.Server.Classes.Entities
                 }
                 else
                 {
-                    bf.WriteInteger(((Npc)this).Base.Behavior);
+                    //0 Atttack when attacked, 1 attack on sight, 2 friendly, 3 guard
+                    //TODO fix this with new npc behaviors
+                    bf.WriteInteger(0);
                 }
             }
             else
@@ -1745,9 +1746,9 @@ namespace Intersect.Server.Classes.Entities
                 {
                     if (mPlayer.Equipment[i] >= 0 && mPlayer.Equipment[i] < Options.MaxInvItems)
                     {
-                        if (mPlayer.Items[mPlayer.Equipment[i]].Id != Guid.Empty)
+                        if (mPlayer.Items[mPlayer.Equipment[i]].ItemId != Guid.Empty)
                         {
-                            var item = ItemBase.Get(mPlayer.Items[mPlayer.Equipment[i]].Id);
+                            var item = ItemBase.Get(mPlayer.Items[mPlayer.Equipment[i]].ItemId);
                             if (item != null)
                             {
                                 s += mPlayer.Items[mPlayer.Equipment[i]].StatBoost[mStatType] +
