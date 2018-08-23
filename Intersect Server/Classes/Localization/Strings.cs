@@ -106,7 +106,8 @@ namespace Intersect.Server.Classes.Localization
             public static LocalizedString channelingnoattack = @"You are currently channeling a spell, you cannot attack.";
             public static LocalizedString cooldown = @"This skill is on cooldown.";
             public static LocalizedString critical = @"CRITICAL HIT!";
-            public static Dictionary<int, LocalizedString> damagetypes = new Dictionary<int, LocalizedString>
+			public static LocalizedString invulnerable = @"INVULNERABLE!";
+			public static Dictionary<int, LocalizedString> damagetypes = new Dictionary<int, LocalizedString>
             {
                 {0, @"Physical"},
                 {1, @"Magic"},

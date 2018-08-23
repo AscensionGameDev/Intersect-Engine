@@ -9,5 +9,7 @@ namespace Intersect.Enums
         Blind = 4,
         Stealth = 5,
         Transform = 6,
+		Cleanse = 7,
+		Invulnerable = 8,
     }
 }

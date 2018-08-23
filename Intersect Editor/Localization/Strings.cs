@@ -1784,7 +1784,9 @@ Tick timer saved in server config.json.";
                 {4, @"Blind"},
                 {5, @"Stealth"},
                 {6, @"Transform"},
-            };
+				{7, @"Cleanse"},
+				{8, @"Invulnerable"},
+			};
             public static LocalizedString effectgroup = @"Effect";
             public static LocalizedString effectlabel = @"Extra Effect:";
             public static LocalizedString Event = @"Event";

@@ -61,7 +61,8 @@ namespace Intersect
         public static Color MagicDamage = new Color(255, 255, 0, 255);
         public static Color TrueDamage = new Color(255, 255, 255, 255);
         public static Color Heal = new Color(255, 0, 255, 0);
-        public static Color AddMana = new Color(255, 0, 0, 255);
+		public static Color Invulnerable = new Color(255, 255, 0, 0);
+		public static Color AddMana = new Color(255, 0, 0, 255);
         public static Color RemoveMana = new Color(255, 255, 127, 80);
         public static Color Dash = new Color(255, 0, 0, 255);
         public static Color NoAmmo = Color.Red;
