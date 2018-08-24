@@ -1110,8 +1110,26 @@ namespace Intersect.Server.Classes.Entities
         {
             if (enemy == null) return;
 
-            //Is this a critical hit?
-            if (Globals.Rand.Next(1, 101) > critChance)
+			//Invulnerability
+			var statuses = enemy.Statuses.Values.ToArray();
+			foreach (var status in statuses)
+			{
+				if (status.Type == StatusTypes.Invulnerable)
+				{
+					PacketSender.SendActionMsg(enemy, Strings.Combat.invulnerable, CustomColors.Invulnerable);
+
+					// Add a timer before able to make the next move.
+					if (GetType() == typeof(Npc))
+					{
+						((Npc)this).MoveTimer = Globals.System.GetTimeMs() + (long)GetMovementTime();
+					}
+
+					return;
+				}
+			}
+
+			//Is this a critical hit?
+			if (Globals.Rand.Next(1, 101) > critChance)
             {
                 critMultiplier = 1;
             }
@@ -1877,7 +1895,27 @@ namespace Intersect.Server.Classes.Entities
             Duration = Globals.System.GetTimeMs() + duration;
             StartTime = Globals.System.GetTimeMs();
             Data = data;
-            if (en.Statuses.ContainsKey(spell))
+
+			//If new Cleanse spell, remove all over status effects.
+			if (Type == StatusTypes.Cleanse)
+			{
+				en.Statuses.Clear();
+			}
+			else
+			{
+				//If user has a cleanse on, don't add status
+				var statuses = en.Statuses.Values.ToArray();
+				foreach (var status in statuses)
+				{
+					if (status.Type == StatusTypes.Cleanse)
+					{
+						PacketSender.SendActionMsg(en, Strings.Combat.status[(int)Type], CustomColors.Cleanse);
+						return;
+					}
+				}
+			}
+
+			if (en.Statuses.ContainsKey(spell))
             {
                 en.Statuses[spell].Duration = Duration;
                 en.Statuses[spell].StartTime = StartTime;
@@ -1886,6 +1924,7 @@ namespace Intersect.Server.Classes.Entities
             {
                 en.Statuses.Add(Spell, this);
             }
+
             PacketSender.SendEntityVitals(mEntity);
         }
 

@@ -708,7 +708,9 @@ namespace Intersect.Client.Classes.Localization
                 {4,@"Blinds Target"},
                 {5,@"Stealths Target"},
                 {6,@"Transforms Target"},
-            };
+				{7,@"Cleanses Target"},
+				{8,@"Target becomes Invulnerable"},
+			};
             public static LocalizedString effects = @"Effects:";
             public static LocalizedString prereqs = @"Prerequisites:";
             public static LocalizedString removesymbol = @"-";

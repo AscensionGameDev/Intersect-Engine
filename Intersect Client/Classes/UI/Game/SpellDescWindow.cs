@@ -46,7 +46,8 @@ namespace Intersect_Client.Classes.UI.Game
             }
             if (spell.CastDuration > 0)
             {
-                spellDesc.AddText(Strings.SpellDesc.casttime.ToString( ((float) spell.CastDuration / 10f)),
+				float castDuration = (float)spell.CastDuration / 1000f;
+				spellDesc.AddText(Strings.SpellDesc.casttime.ToString(castDuration),
                     spellDesc.RenderColor);
                 spellDesc.AddLineBreak();
                 spellDesc.AddLineBreak();
@@ -54,7 +55,8 @@ namespace Intersect_Client.Classes.UI.Game
             if (spell.CooldownDuration > 0)
             {
 				decimal cdr = 1 - (Globals.Me.GetCooldownReduction() / 100);
-				spellDesc.AddText(Strings.SpellDesc.cooldowntime.ToString( ((float) (spell.CooldownDuration * cdr) / 10f)),
+				float cd = ((float)(spell.CooldownDuration * cdr) / 1000f);
+				spellDesc.AddText(Strings.SpellDesc.cooldowntime.ToString(cd),
                     spellDesc.RenderColor);
                 spellDesc.AddLineBreak();
                 spellDesc.AddLineBreak();
@@ -114,7 +116,8 @@ namespace Intersect_Client.Classes.UI.Game
                             spellDesc.AddLineBreak();
                         }
                     }
-                    spellDesc.AddText(Strings.SpellDesc.duration.ToString( (float) spell.Combat.Duration / 10f), spellDesc.RenderColor);
+					float duration = (float)spell.Combat.Duration / 1000f;
+					spellDesc.AddText(Strings.SpellDesc.duration.ToString(duration), spellDesc.RenderColor);
                     spellDesc.AddLineBreak();
                 }
             }
