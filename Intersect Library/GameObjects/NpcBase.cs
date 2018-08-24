@@ -82,7 +82,7 @@ namespace Intersect.GameObjects
 
         //Common Events
         [Column("OnDeathEvent")]
-        public Guid OnDeathEventId { get; protected set; }
+        public Guid OnDeathEventId { get; set; }
         [NotMapped]
         [JsonIgnore]
         public EventBase OnDeathEvent
@@ -92,7 +92,7 @@ namespace Intersect.GameObjects
         }
 
         [Column("OnDeathPartyEvent")]
-        public Guid OnDeathPartyEventId { get; protected set; }
+        public Guid OnDeathPartyEventId { get; set; }
         [NotMapped]
         [JsonIgnore]
         public EventBase OnDeathPartyEvent

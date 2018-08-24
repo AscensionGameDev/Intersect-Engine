@@ -42,7 +42,7 @@ namespace Intersect.Server.Classes.Entities
 
         //Character Info
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; private set; }
+        public new Guid Id { get; private set; }
 
         //Name, X, Y, Dir, Etc all in the base Entity Class
         public Guid ClassId { get; set; }
@@ -171,6 +171,16 @@ namespace Intersect.Server.Classes.Entities
         }
 
         public Player()
+        {
+            
+        }
+
+        public override Guid GetId()
+        {
+            return Id;
+        }
+
+        public void Online()
         {
             OnlinePlayers.Add(Id, this);
         }
@@ -564,20 +574,33 @@ namespace Intersect.Server.Classes.Entities
         {
             if (en.GetType() == typeof(Npc))
             {
+                var npcBase = ((Npc)en).Base;
+                var playerEvent = npcBase.OnDeathEvent;
+                var partyEvent = npcBase.OnDeathPartyEvent;
+
                 if (Party.Count > 0) //If in party, split the exp.
                 {
                     for (var i = 0; i < Party.Count; i++)
                     {
                         //TODO: Only share experience with party members on the 9 surrounding maps....
-                        Party[i].GiveExperience(((Npc)en).Base.Experience / Party.Count);
+                        Party[i].GiveExperience(npcBase.Experience / Party.Count);
                         Party[i].UpdateQuestKillTasks(en);
+                        if (partyEvent != null)
+                        {
+                            if (!(playerEvent != null && Party[i] == this))
+                            {
+                                Party[i].StartCommonEvent(partyEvent);
+                            }
+                        }
                     }
                 }
                 else
                 {
-                    GiveExperience(((Npc)en).Base.Experience);
+                    GiveExperience(npcBase.Experience);
                     UpdateQuestKillTasks(en);
                 }
+
+                if (playerEvent != null) StartCommonEvent(playerEvent);
             }
         }
 

@@ -1300,8 +1300,7 @@ namespace Intersect_Client.Classes.Entities
                 foreach (var en in eventMap.LocalEntities)
                 {
                     if (en.Value == null) continue;
-                    if (en.Value.CurrentMap == eventMap.Id && !((Event) en.Value).DisablePreview &&
-                        (!en.Value.IsStealthed() || Globals.Me.IsInMyParty(en.Value)))
+                    if (en.Value.CurrentMap == eventMap.Id && !((Event) en.Value).DisablePreview && (!en.Value.IsStealthed() || Globals.Me.IsInMyParty(en.Value)))
                     {
                         if (TargetType == 1 && TargetIndex == en.Value.Id)
                         {
@@ -1320,46 +1319,32 @@ namespace Intersect_Client.Classes.Entities
                 {
                     if (y >= map.GetY() && y <= map.GetY() + (Options.MapHeight * Options.TileHeight))
                     {
-                        //Remove the offsets to just be dealing with pixels within the map selected
-                        x -= (int) map.GetX();
-                        y -= (int) map.GetY();
-
-                        //transform pixel format to tile format
-                        x /= Options.TileWidth;
-                        y /= Options.TileHeight;
                         var mapId = map.Id;
 
-                        if (GetRealLocation(ref x, ref y, ref mapId))
+                        foreach (var en in Globals.Entities)
                         {
-                            foreach (var en in Globals.Entities)
+                            if (en.Value == null) continue;
+                            if (en.Value.CurrentMap == mapId && !en.Value.IsStealthed() && en.Value.WorldPos.Contains(x,y))
                             {
-                                if (en.Value == null) continue;
-                                if (en.Value.CurrentMap == mapId && en.Value.CurrentX == x && en.Value.CurrentY == y &&
-                                    !en.Value.IsStealthed())
+                                if (en.Value.GetType() != typeof(Projectile) && en.Value.GetType() != typeof(Resource))
                                 {
-                                    if (en.Value.GetType() != typeof(Projectile) &&
-                                        en.Value.GetType() != typeof(Resource))
+                                    if (TargetType != 0 || TargetIndex != en.Value.Id)
                                     {
-                                        if (TargetType != 0 || TargetIndex != en.Value.Id)
-                                        {
-                                            en.Value.DrawTarget((int) TargetTypes.Hover);
-                                        }
+                                        en.Value.DrawTarget((int)TargetTypes.Hover);
                                     }
                                 }
                             }
-                            foreach (MapInstance eventMap in MapInstance.Lookup.Values)
+                        }
+                        foreach (MapInstance eventMap in MapInstance.Lookup.Values)
+                        {
+                            foreach (var en in eventMap.LocalEntities)
                             {
-                                foreach (var en in eventMap.LocalEntities)
+                                if (en.Value == null) continue;
+                                if (en.Value.CurrentMap == mapId && !((Event)en.Value).DisablePreview && !en.Value.IsStealthed() && en.Value.WorldPos.Contains(x, y))
                                 {
-                                    if (en.Value == null) continue;
-                                    if (en.Value.CurrentMap == mapId && en.Value.CurrentX == x &&
-                                        en.Value.CurrentY == y && !((Event) en.Value).DisablePreview &&
-                                        !en.Value.IsStealthed())
+                                    if (TargetType != 1 || TargetIndex != en.Value.Id)
                                     {
-                                        if (TargetType != 1 || TargetIndex != en.Value.Id)
-                                        {
-                                            en.Value.DrawTarget((int) TargetTypes.Hover);
-                                        }
+                                        en.Value.DrawTarget((int)TargetTypes.Hover);
                                     }
                                 }
                             }

@@ -94,10 +94,10 @@ namespace Intersect.Editor.Forms.Editors
             cmbAttackAnimation.Items.AddRange(AnimationBase.Names);
             cmbOnDeathEventKiller.Items.Clear();
             cmbOnDeathEventKiller.Items.Add(Strings.General.none);
-            cmbOnDeathEventKiller.Items.Add(EventBase.Names);
+            cmbOnDeathEventKiller.Items.AddRange(EventBase.Names);
             cmbOnDeathEventParty.Items.Clear();
             cmbOnDeathEventParty.Items.Add(Strings.General.none);
-            cmbOnDeathEventParty.Items.Add(EventBase.Names);
+            cmbOnDeathEventParty.Items.AddRange(EventBase.Names);
             cmbScalingStat.Items.Clear();
             for (int x = 0; x < Options.MaxStats; x++)
             {

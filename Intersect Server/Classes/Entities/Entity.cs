@@ -79,7 +79,8 @@ namespace Intersect.Server.Classes.Entities
 
 
         //Instance Values
-        [NotMapped] public Guid Id { get; set; }
+        private Guid _id;
+        [NotMapped] public Guid Id { get => GetId(); set => _id = value; }
         [NotMapped] public bool Dead { get; set; }
 
         //Combat
@@ -117,6 +118,11 @@ namespace Intersect.Server.Classes.Entities
         public EntityInstance() : this(Guid.NewGuid())
         {
 
+        }
+
+        public virtual Guid GetId()
+        {
+            return _id;
         }
 
         //Initialization

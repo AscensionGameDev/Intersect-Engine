@@ -83,6 +83,7 @@ namespace Intersect_Client.Classes.Entities
 
         public override void Draw()
         {
+            WorldPos.Reset();
             if (MapInstance.Get(CurrentMap) == null ||
                 !Globals.GridMaps.Contains(CurrentMap)) return;
             var map = MapInstance.Get(CurrentMap);
@@ -184,6 +185,7 @@ namespace Intersect_Client.Classes.Entities
                 destRectangle.Y = (int) Math.Ceiling(destRectangle.Y);
                 destRectangle.Width = srcRectangle.Width;
                 destRectangle.Height = srcRectangle.Height;
+                WorldPos = destRectangle;
                 GameGraphics.DrawGameTexture(srcTexture, srcRectangle, destRectangle, Intersect.Color.White);
             }
         }

@@ -1058,14 +1058,29 @@ namespace Intersect_Client.Classes.Networking
                 var entity = Globals.Entities[entityId];
                 if (entity != null)
                 {
-                    for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+                    if (entity == Globals.Me)
                     {
-                        if (entity.Equipment.Length <= i)
+                        for (int i = 0; i < Options.EquipmentSlots.Count; i++)
                         {
-                            Log.Debug($"Bad equipment index, aborting ({i}/{entity.Equipment.Length}).");
-                            break;
+                            if (entity.Equipment.Length <= i)
+                            {
+                                Log.Debug($"Bad equipment index, aborting ({i}/{entity.Equipment.Length}).");
+                                break;
+                            }
+                            entity.MyEquipment[i] = bf.ReadInteger();
                         }
-                        entity.Equipment[i] = bf.ReadGuid();
+                    }
+                    else
+                    {
+                        for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+                        {
+                            if (entity.Equipment.Length <= i)
+                            {
+                                Log.Debug($"Bad equipment index, aborting ({i}/{entity.Equipment.Length}).");
+                                break;
+                            }
+                            entity.Equipment[i] = bf.ReadGuid();
+                        }
                     }
                 }
             }
@@ -1508,7 +1523,7 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             string leader = bf.ReadString();
-            int leaderId = bf.ReadInteger();
+            Guid leaderId = bf.ReadGuid();
             InputBox iBox = new InputBox(Strings.Parties.partyinvite,
                 Strings.Parties.inviteprompt.ToString( leader), true, InputBox.InputType.YesNo,
                 PacketSender.SendPartyAccept,
@@ -1660,7 +1675,7 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             string partner = bf.ReadString();
-            int partnerId = bf.ReadInteger();
+            Guid partnerId = bf.ReadGuid();
             InputBox iBox = new InputBox(Strings.Trading.traderequest,
                 Strings.Trading.requestprompt.ToString( partner), true, InputBox.InputType.YesNo,
                 PacketSender.SendTradeRequestAccept,

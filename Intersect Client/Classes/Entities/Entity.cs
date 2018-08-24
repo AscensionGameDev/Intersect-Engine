@@ -101,6 +101,7 @@ namespace Intersect_Client.Classes.Entities
 
         //Rendering Variables
         public HashSet<Entity> RenderList;
+        public FloatRect WorldPos = new FloatRect();
         
         public Guid SpellCast;
         public SpellInstance[] Spells = new SpellInstance[Options.MaxPlayerSkills];
@@ -563,8 +564,8 @@ namespace Intersect_Client.Classes.Entities
         //Rendering Functions
         public virtual void Draw()
         {
-            if (MapInstance.Get(CurrentMap) == null ||
-                !Globals.GridMaps.Contains(CurrentMap)) return;
+            WorldPos.Reset();
+            if (MapInstance.Get(CurrentMap) == null ||  !Globals.GridMaps.Contains(CurrentMap)) return;
             FloatRect srcRectangle = new FloatRect();
             FloatRect destRectangle = new FloatRect();
             var d = 0;
@@ -661,8 +662,10 @@ namespace Intersect_Client.Classes.Entities
                 }
                 destRectangle.Width = srcRectangle.Width;
                 destRectangle.Height = srcRectangle.Height;
-				//GameGraphics.DrawGameTexture(Texture, srcRectangle, destRectangle,
-				//    new Intersect.Color(alpha, 255, 255, 255));
+                //GameGraphics.DrawGameTexture(Texture, srcRectangle, destRectangle,
+                //    new Intersect.Color(alpha, 255, 255, 255));
+
+                WorldPos = destRectangle;
 
 				//Order the layers of paperdolls and sprites
 				for (int z = 0; z < Options.PaperdollOrder[Dir].Count; z++)

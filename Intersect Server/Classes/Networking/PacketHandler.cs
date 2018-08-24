@@ -363,6 +363,7 @@ namespace Intersect.Server.Classes.Networking
                 else if (client.Characters?.Count > 0)
                 {
                     client.LoadCharacter(client.Characters.First());
+                    client.Entity.Online();
                     PacketSender.SendJoinGame(client);
                 }
                 else
@@ -1233,6 +1234,7 @@ namespace Intersect.Server.Classes.Networking
                 }
 
                 LegacyDatabase.SavePlayers();
+                player.Online();
             }
             bf.Dispose();
         }
@@ -2043,6 +2045,11 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteBytes(packet);
             var type = (GameObjectType)bf.ReadInteger();
             var obj = LegacyDatabase.AddGameObject(type);
+            if (type == GameObjectType.Event)
+            {
+                ((EventBase)obj).CommonEvent = true;
+                LegacyDatabase.SaveGameDatabase();
+            }
             PacketSender.SendGameObjectToAll(obj);
             bf.Dispose();
         }
@@ -2691,6 +2698,7 @@ namespace Intersect.Server.Classes.Networking
             {
                 client.LoadCharacter(character);
                 PacketSender.SendJoinGame(client);
+                client.Entity.Online();
             }
             bf.Dispose();
         }
