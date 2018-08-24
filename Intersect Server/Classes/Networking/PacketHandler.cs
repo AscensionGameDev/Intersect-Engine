@@ -1194,7 +1194,9 @@ namespace Intersect.Server.Classes.Networking
                 client.Entity = player;
                 player.Name = name;
                 player.ClassId = classId;
-                if (classBase.Sprites.Count > 0)
+				player.Level = 1;
+
+				if (classBase.Sprites.Count > 0)
                 {
                     player.Sprite = classBase.Sprites[sprite].Sprite;
                     player.Face = classBase.Sprites[sprite].Face;
@@ -1203,14 +1205,12 @@ namespace Intersect.Server.Classes.Networking
                 PacketSender.SendJoinGame(client);
                 player.WarpToSpawn();
 
-                player.SetMaxVital(Vitals.Health, classBase.BaseVital[(int)Vitals.Health]);
-                player.SetMaxVital(Vitals.Mana, classBase.BaseVital[(int)Vitals.Mana]);
                 player.SetVital(Vitals.Health, classBase.BaseVital[(int)Vitals.Health]);
                 player.SetVital(Vitals.Mana, classBase.BaseVital[(int)Vitals.Mana]);
 
                 for (int i = 0; i < (int)Stats.StatCount; i++)
                 {
-                    player.Stat[i].Stat = classBase.BaseStat[i];
+					player.Stat[i].Stat = 0;
                 }
                 player.StatPoints = classBase.BasePoints;
 
