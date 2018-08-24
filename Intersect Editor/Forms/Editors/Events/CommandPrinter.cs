@@ -404,7 +404,14 @@ namespace Intersect.Editor.Forms.Editors.Events
 
         private static string GetCommandText(ConditionalBranchCommand command, MapInstance map)
         {
-            return Strings.EventCommandList.conditionalbranch.ToString(Strings.GetEventConditionalDesc((dynamic)command.Condition));
+            if (command.Condition.Negated)
+            {
+                return Strings.EventCommandList.conditionalbranch.ToString(Strings.EventConditionDesc.negated.ToString(Strings.GetEventConditionalDesc((dynamic)command.Condition)));
+            }
+            else
+            {
+                return Strings.EventCommandList.conditionalbranch.ToString(Strings.GetEventConditionalDesc((dynamic)command.Condition));
+            }
         }
 
         private static string GetCommandText(ExitEventProcessingCommand command, MapInstance map)

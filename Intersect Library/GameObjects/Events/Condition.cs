@@ -25,11 +25,13 @@ namespace Intersect.GameObjects.Events
         QuestCompleted,
         NoNpcsOnMap,
         GenderIs,
+        MapIs,
     }
 
     public class Condition
     {
         public virtual ConditionTypes Type { get; }
+        public bool Negated { get; set; }
     }
 
     public class PlayerSwitchCondition : Condition
@@ -88,6 +90,7 @@ namespace Intersect.GameObjects.Events
         public Stats Stat { get; set; }
         public VariableComparators Comparator { get; set; } = VariableComparators.Equal;
         public int Value { get; set; }
+        public bool IgnoreBuffs { get; set; }
     }
 
     public class SelfSwitchCondition : Condition
@@ -138,5 +141,11 @@ namespace Intersect.GameObjects.Events
     {
         public override ConditionTypes Type { get; } = ConditionTypes.GenderIs;
         public byte Gender { get; set; }
+    }
+
+    public class MapIsCondition : Condition
+    {
+        public override ConditionTypes Type { get; } = ConditionTypes.MapIs;
+        public Guid MapId { get; set; }
     }
 }

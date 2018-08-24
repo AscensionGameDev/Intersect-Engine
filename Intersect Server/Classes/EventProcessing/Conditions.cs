@@ -52,7 +52,9 @@ namespace Intersect.Server.Classes.Events
         {
             for (int i = 0; i < list.Conditions.Count; i++)
             {
-                if (!MeetsCondition((dynamic)list.Conditions[i], player, eventInstance, questBase)) return false;
+                var meetsCondition = MeetsCondition((dynamic)list.Conditions[i], player, eventInstance, questBase);
+                if (list.Conditions[i].Negated) meetsCondition = !meetsCondition;
+                if (!meetsCondition) return false;
             }
             return true;
         }
@@ -161,7 +163,8 @@ namespace Intersect.Server.Classes.Events
             }
             else
             {
-                lvlStat = player.Stat[(int)condition.Stat].Stat;
+                lvlStat = player.Stat[(int)condition.Stat].Value();
+                if (condition.IgnoreBuffs) lvlStat = player.Stat[(int)condition.Stat].Stat;
             }
             switch (condition.Comparator) //Comparator
             {
@@ -260,6 +263,11 @@ namespace Intersect.Server.Classes.Events
         public static bool MeetsCondition(GenderIsCondition condition, Player player, EventInstance eventInstance, QuestBase questBase)
         {
             return player.Gender == condition.Gender;
+        }
+
+        public static bool MeetsCondition(MapIsCondition condition, Player player, EventInstance eventInstance, QuestBase questBase)
+        {
+            return player.MapId == condition.MapId;
         }
     }
 }

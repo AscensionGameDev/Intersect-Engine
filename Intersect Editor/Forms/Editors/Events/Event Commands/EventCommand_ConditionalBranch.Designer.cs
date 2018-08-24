@@ -32,6 +32,9 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EventCommandConditionalBranch));
             this.grpConditional = new DarkUI.Controls.DarkGroupBox();
+            this.grpMapIs = new DarkUI.Controls.DarkGroupBox();
+            this.btnSelectMap = new DarkUI.Controls.DarkButton();
+            this.chkNegated = new DarkUI.Controls.DarkCheckBox();
             this.grpGender = new DarkUI.Controls.DarkGroupBox();
             this.cmbGender = new DarkUI.Controls.DarkComboBox();
             this.lblGender = new System.Windows.Forms.Label();
@@ -69,13 +72,6 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.grpStartQuest = new DarkUI.Controls.DarkGroupBox();
             this.lblStartQuest = new System.Windows.Forms.Label();
             this.cmbStartQuest = new DarkUI.Controls.DarkComboBox();
-            this.grpLevelStat = new DarkUI.Controls.DarkGroupBox();
-            this.nudLevelStatValue = new DarkUI.Controls.DarkNumericUpDown();
-            this.cmbLevelStat = new DarkUI.Controls.DarkComboBox();
-            this.lblLevelOrStat = new System.Windows.Forms.Label();
-            this.lblLvlStatValue = new System.Windows.Forms.Label();
-            this.cmbLevelComparator = new DarkUI.Controls.DarkComboBox();
-            this.lblLevelComparator = new System.Windows.Forms.Label();
             this.grpTime = new DarkUI.Controls.DarkGroupBox();
             this.lblEndRange = new System.Windows.Forms.Label();
             this.lblStartRange = new System.Windows.Forms.Label();
@@ -96,7 +92,16 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.grpClass = new DarkUI.Controls.DarkGroupBox();
             this.cmbClass = new DarkUI.Controls.DarkComboBox();
             this.lblClass = new System.Windows.Forms.Label();
+            this.grpLevelStat = new DarkUI.Controls.DarkGroupBox();
+            this.chkStatIgnoreBuffs = new DarkUI.Controls.DarkCheckBox();
+            this.nudLevelStatValue = new DarkUI.Controls.DarkNumericUpDown();
+            this.cmbLevelStat = new DarkUI.Controls.DarkComboBox();
+            this.lblLevelOrStat = new System.Windows.Forms.Label();
+            this.lblLvlStatValue = new System.Windows.Forms.Label();
+            this.cmbLevelComparator = new DarkUI.Controls.DarkComboBox();
+            this.lblLevelComparator = new System.Windows.Forms.Label();
             this.grpConditional.SuspendLayout();
+            this.grpMapIs.SuspendLayout();
             this.grpGender.SuspendLayout();
             this.grpHasItem.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudItemAmount)).BeginInit();
@@ -105,20 +110,21 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.grpQuestCompleted.SuspendLayout();
             this.grpQuestInProgress.SuspendLayout();
             this.grpStartQuest.SuspendLayout();
-            this.grpLevelStat.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudLevelStatValue)).BeginInit();
             this.grpTime.SuspendLayout();
             this.grpPowerIs.SuspendLayout();
             this.grpSelfSwitch.SuspendLayout();
             this.grpSpell.SuspendLayout();
             this.grpClass.SuspendLayout();
+            this.grpLevelStat.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudLevelStatValue)).BeginInit();
             this.SuspendLayout();
             // 
             // grpConditional
             // 
             this.grpConditional.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpConditional.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpConditional.Controls.Add(this.grpLevelStat);
+            this.grpConditional.Controls.Add(this.grpMapIs);
+            this.grpConditional.Controls.Add(this.chkNegated);
             this.grpConditional.Controls.Add(this.grpGender);
             this.grpConditional.Controls.Add(this.btnSave);
             this.grpConditional.Controls.Add(this.cmbConditionType);
@@ -135,13 +141,45 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.grpConditional.Controls.Add(this.grpSelfSwitch);
             this.grpConditional.Controls.Add(this.grpSpell);
             this.grpConditional.Controls.Add(this.grpClass);
+            this.grpConditional.Controls.Add(this.grpLevelStat);
             this.grpConditional.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpConditional.Location = new System.Drawing.Point(3, 3);
             this.grpConditional.Name = "grpConditional";
-            this.grpConditional.Size = new System.Drawing.Size(256, 202);
+            this.grpConditional.Size = new System.Drawing.Size(256, 243);
             this.grpConditional.TabIndex = 17;
             this.grpConditional.TabStop = false;
             this.grpConditional.Text = "Conditional";
+            // 
+            // grpMapIs
+            // 
+            this.grpMapIs.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpMapIs.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpMapIs.Controls.Add(this.btnSelectMap);
+            this.grpMapIs.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpMapIs.Location = new System.Drawing.Point(10, 41);
+            this.grpMapIs.Name = "grpMapIs";
+            this.grpMapIs.Size = new System.Drawing.Size(236, 61);
+            this.grpMapIs.TabIndex = 35;
+            this.grpMapIs.TabStop = false;
+            this.grpMapIs.Text = "Map Is...";
+            // 
+            // btnSelectMap
+            // 
+            this.btnSelectMap.Location = new System.Drawing.Point(9, 21);
+            this.btnSelectMap.Name = "btnSelectMap";
+            this.btnSelectMap.Padding = new System.Windows.Forms.Padding(5);
+            this.btnSelectMap.Size = new System.Drawing.Size(214, 23);
+            this.btnSelectMap.TabIndex = 21;
+            this.btnSelectMap.Text = "Select Map";
+            this.btnSelectMap.Click += new System.EventHandler(this.btnSelectMap_Click);
+            // 
+            // chkNegated
+            // 
+            this.chkNegated.Location = new System.Drawing.Point(173, 186);
+            this.chkNegated.Name = "chkNegated";
+            this.chkNegated.Size = new System.Drawing.Size(72, 17);
+            this.chkNegated.TabIndex = 34;
+            this.chkNegated.Text = "Negated";
             // 
             // grpGender
             // 
@@ -189,7 +227,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(9, 168);
+            this.btnSave.Location = new System.Drawing.Point(12, 214);
             this.btnSave.Name = "btnSave";
             this.btnSave.Padding = new System.Windows.Forms.Padding(5);
             this.btnSave.Size = new System.Drawing.Size(75, 23);
@@ -248,7 +286,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(90, 168);
+            this.btnCancel.Location = new System.Drawing.Point(91, 214);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
@@ -715,119 +753,6 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.cmbStartQuest.Text = null;
             this.cmbStartQuest.TextPadding = new System.Windows.Forms.Padding(2);
             // 
-            // grpLevelStat
-            // 
-            this.grpLevelStat.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.grpLevelStat.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpLevelStat.Controls.Add(this.nudLevelStatValue);
-            this.grpLevelStat.Controls.Add(this.cmbLevelStat);
-            this.grpLevelStat.Controls.Add(this.lblLevelOrStat);
-            this.grpLevelStat.Controls.Add(this.lblLvlStatValue);
-            this.grpLevelStat.Controls.Add(this.cmbLevelComparator);
-            this.grpLevelStat.Controls.Add(this.lblLevelComparator);
-            this.grpLevelStat.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpLevelStat.Location = new System.Drawing.Point(9, 40);
-            this.grpLevelStat.Name = "grpLevelStat";
-            this.grpLevelStat.Size = new System.Drawing.Size(236, 122);
-            this.grpLevelStat.TabIndex = 28;
-            this.grpLevelStat.TabStop = false;
-            this.grpLevelStat.Text = "Level or Stat is...";
-            // 
-            // nudLevelStatValue
-            // 
-            this.nudLevelStatValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudLevelStatValue.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudLevelStatValue.Location = new System.Drawing.Point(79, 87);
-            this.nudLevelStatValue.Maximum = new decimal(new int[] {
-            100000,
-            0,
-            0,
-            0});
-            this.nudLevelStatValue.Name = "nudLevelStatValue";
-            this.nudLevelStatValue.Size = new System.Drawing.Size(152, 20);
-            this.nudLevelStatValue.TabIndex = 8;
-            this.nudLevelStatValue.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // cmbLevelStat
-            // 
-            this.cmbLevelStat.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbLevelStat.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbLevelStat.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbLevelStat.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbLevelStat.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbLevelStat.ButtonIcon")));
-            this.cmbLevelStat.DrawDropdownHoverOutline = false;
-            this.cmbLevelStat.DrawFocusRectangle = false;
-            this.cmbLevelStat.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbLevelStat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbLevelStat.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbLevelStat.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbLevelStat.FormattingEnabled = true;
-            this.cmbLevelStat.Items.AddRange(new object[] {
-            "Level",
-            "Attack",
-            "Defense",
-            "Speed",
-            "Ability Power",
-            "Magic Resist"});
-            this.cmbLevelStat.Location = new System.Drawing.Point(79, 23);
-            this.cmbLevelStat.Name = "cmbLevelStat";
-            this.cmbLevelStat.Size = new System.Drawing.Size(151, 21);
-            this.cmbLevelStat.TabIndex = 7;
-            this.cmbLevelStat.Text = "Level";
-            this.cmbLevelStat.TextPadding = new System.Windows.Forms.Padding(2);
-            // 
-            // lblLevelOrStat
-            // 
-            this.lblLevelOrStat.AutoSize = true;
-            this.lblLevelOrStat.Location = new System.Drawing.Point(7, 25);
-            this.lblLevelOrStat.Name = "lblLevelOrStat";
-            this.lblLevelOrStat.Size = new System.Drawing.Size(70, 13);
-            this.lblLevelOrStat.TabIndex = 6;
-            this.lblLevelOrStat.Text = "Level or Stat:";
-            // 
-            // lblLvlStatValue
-            // 
-            this.lblLvlStatValue.AutoSize = true;
-            this.lblLvlStatValue.Location = new System.Drawing.Point(10, 89);
-            this.lblLvlStatValue.Name = "lblLvlStatValue";
-            this.lblLvlStatValue.Size = new System.Drawing.Size(37, 13);
-            this.lblLvlStatValue.TabIndex = 4;
-            this.lblLvlStatValue.Text = "Value:";
-            // 
-            // cmbLevelComparator
-            // 
-            this.cmbLevelComparator.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbLevelComparator.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbLevelComparator.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbLevelComparator.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbLevelComparator.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbLevelComparator.ButtonIcon")));
-            this.cmbLevelComparator.DrawDropdownHoverOutline = false;
-            this.cmbLevelComparator.DrawFocusRectangle = false;
-            this.cmbLevelComparator.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbLevelComparator.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbLevelComparator.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbLevelComparator.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbLevelComparator.FormattingEnabled = true;
-            this.cmbLevelComparator.Location = new System.Drawing.Point(79, 53);
-            this.cmbLevelComparator.Name = "cmbLevelComparator";
-            this.cmbLevelComparator.Size = new System.Drawing.Size(151, 21);
-            this.cmbLevelComparator.TabIndex = 3;
-            this.cmbLevelComparator.Text = null;
-            this.cmbLevelComparator.TextPadding = new System.Windows.Forms.Padding(2);
-            // 
-            // lblLevelComparator
-            // 
-            this.lblLevelComparator.AutoSize = true;
-            this.lblLevelComparator.Location = new System.Drawing.Point(7, 55);
-            this.lblLevelComparator.Name = "lblLevelComparator";
-            this.lblLevelComparator.Size = new System.Drawing.Size(64, 13);
-            this.lblLevelComparator.TabIndex = 2;
-            this.lblLevelComparator.Text = "Comparator:";
-            // 
             // grpTime
             // 
             this.grpTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
@@ -1123,7 +1048,129 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.lblClass.TabIndex = 2;
             this.lblClass.Text = "Class:";
             // 
-            // EventCommand_ConditionalBranch
+            // grpLevelStat
+            // 
+            this.grpLevelStat.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpLevelStat.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpLevelStat.Controls.Add(this.chkStatIgnoreBuffs);
+            this.grpLevelStat.Controls.Add(this.nudLevelStatValue);
+            this.grpLevelStat.Controls.Add(this.cmbLevelStat);
+            this.grpLevelStat.Controls.Add(this.lblLevelOrStat);
+            this.grpLevelStat.Controls.Add(this.lblLvlStatValue);
+            this.grpLevelStat.Controls.Add(this.cmbLevelComparator);
+            this.grpLevelStat.Controls.Add(this.lblLevelComparator);
+            this.grpLevelStat.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpLevelStat.Location = new System.Drawing.Point(9, 40);
+            this.grpLevelStat.Name = "grpLevelStat";
+            this.grpLevelStat.Size = new System.Drawing.Size(236, 140);
+            this.grpLevelStat.TabIndex = 28;
+            this.grpLevelStat.TabStop = false;
+            this.grpLevelStat.Text = "Level or Stat is...";
+            // 
+            // chkStatIgnoreBuffs
+            // 
+            this.chkStatIgnoreBuffs.Location = new System.Drawing.Point(13, 115);
+            this.chkStatIgnoreBuffs.Name = "chkStatIgnoreBuffs";
+            this.chkStatIgnoreBuffs.Size = new System.Drawing.Size(211, 17);
+            this.chkStatIgnoreBuffs.TabIndex = 32;
+            this.chkStatIgnoreBuffs.Text = "Ignore equipment & spell buffs.";
+            // 
+            // nudLevelStatValue
+            // 
+            this.nudLevelStatValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudLevelStatValue.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudLevelStatValue.Location = new System.Drawing.Point(79, 87);
+            this.nudLevelStatValue.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.nudLevelStatValue.Name = "nudLevelStatValue";
+            this.nudLevelStatValue.Size = new System.Drawing.Size(152, 20);
+            this.nudLevelStatValue.TabIndex = 8;
+            this.nudLevelStatValue.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // cmbLevelStat
+            // 
+            this.cmbLevelStat.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbLevelStat.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbLevelStat.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbLevelStat.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbLevelStat.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbLevelStat.ButtonIcon")));
+            this.cmbLevelStat.DrawDropdownHoverOutline = false;
+            this.cmbLevelStat.DrawFocusRectangle = false;
+            this.cmbLevelStat.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbLevelStat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbLevelStat.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbLevelStat.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbLevelStat.FormattingEnabled = true;
+            this.cmbLevelStat.Items.AddRange(new object[] {
+            "Level",
+            "Attack",
+            "Defense",
+            "Speed",
+            "Ability Power",
+            "Magic Resist"});
+            this.cmbLevelStat.Location = new System.Drawing.Point(79, 23);
+            this.cmbLevelStat.Name = "cmbLevelStat";
+            this.cmbLevelStat.Size = new System.Drawing.Size(151, 21);
+            this.cmbLevelStat.TabIndex = 7;
+            this.cmbLevelStat.Text = "Level";
+            this.cmbLevelStat.TextPadding = new System.Windows.Forms.Padding(2);
+            // 
+            // lblLevelOrStat
+            // 
+            this.lblLevelOrStat.AutoSize = true;
+            this.lblLevelOrStat.Location = new System.Drawing.Point(7, 25);
+            this.lblLevelOrStat.Name = "lblLevelOrStat";
+            this.lblLevelOrStat.Size = new System.Drawing.Size(70, 13);
+            this.lblLevelOrStat.TabIndex = 6;
+            this.lblLevelOrStat.Text = "Level or Stat:";
+            // 
+            // lblLvlStatValue
+            // 
+            this.lblLvlStatValue.AutoSize = true;
+            this.lblLvlStatValue.Location = new System.Drawing.Point(10, 89);
+            this.lblLvlStatValue.Name = "lblLvlStatValue";
+            this.lblLvlStatValue.Size = new System.Drawing.Size(37, 13);
+            this.lblLvlStatValue.TabIndex = 4;
+            this.lblLvlStatValue.Text = "Value:";
+            // 
+            // cmbLevelComparator
+            // 
+            this.cmbLevelComparator.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbLevelComparator.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbLevelComparator.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbLevelComparator.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbLevelComparator.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbLevelComparator.ButtonIcon")));
+            this.cmbLevelComparator.DrawDropdownHoverOutline = false;
+            this.cmbLevelComparator.DrawFocusRectangle = false;
+            this.cmbLevelComparator.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbLevelComparator.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbLevelComparator.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbLevelComparator.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbLevelComparator.FormattingEnabled = true;
+            this.cmbLevelComparator.Location = new System.Drawing.Point(79, 53);
+            this.cmbLevelComparator.Name = "cmbLevelComparator";
+            this.cmbLevelComparator.Size = new System.Drawing.Size(151, 21);
+            this.cmbLevelComparator.TabIndex = 3;
+            this.cmbLevelComparator.Text = null;
+            this.cmbLevelComparator.TextPadding = new System.Windows.Forms.Padding(2);
+            // 
+            // lblLevelComparator
+            // 
+            this.lblLevelComparator.AutoSize = true;
+            this.lblLevelComparator.Location = new System.Drawing.Point(7, 55);
+            this.lblLevelComparator.Name = "lblLevelComparator";
+            this.lblLevelComparator.Size = new System.Drawing.Size(64, 13);
+            this.lblLevelComparator.TabIndex = 2;
+            this.lblLevelComparator.Text = "Comparator:";
+            // 
+            // EventCommandConditionalBranch
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -1131,9 +1178,10 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpConditional);
             this.Name = "EventCommandConditionalBranch";
-            this.Size = new System.Drawing.Size(262, 208);
+            this.Size = new System.Drawing.Size(262, 249);
             this.grpConditional.ResumeLayout(false);
             this.grpConditional.PerformLayout();
+            this.grpMapIs.ResumeLayout(false);
             this.grpGender.ResumeLayout(false);
             this.grpGender.PerformLayout();
             this.grpHasItem.ResumeLayout(false);
@@ -1149,9 +1197,6 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.grpQuestInProgress.PerformLayout();
             this.grpStartQuest.ResumeLayout(false);
             this.grpStartQuest.PerformLayout();
-            this.grpLevelStat.ResumeLayout(false);
-            this.grpLevelStat.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudLevelStatValue)).EndInit();
             this.grpTime.ResumeLayout(false);
             this.grpTime.PerformLayout();
             this.grpPowerIs.ResumeLayout(false);
@@ -1162,6 +1207,9 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.grpSpell.PerformLayout();
             this.grpClass.ResumeLayout(false);
             this.grpClass.PerformLayout();
+            this.grpLevelStat.ResumeLayout(false);
+            this.grpLevelStat.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudLevelStatValue)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1233,5 +1281,9 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         private System.Windows.Forms.Label lblGender;
         private DarkNumericUpDown nudItemAmount;
         private DarkNumericUpDown nudLevelStatValue;
+        private DarkCheckBox chkStatIgnoreBuffs;
+        private DarkCheckBox chkNegated;
+        private DarkGroupBox grpMapIs;
+        private DarkButton btnSelectMap;
     }
 }

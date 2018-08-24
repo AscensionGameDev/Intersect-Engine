@@ -28,6 +28,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             cmbConditionType.SelectedIndex = (int)Condition.Type;
             UpdateFormElements(refCommand.Type);
             InitLocalization();
+            chkNegated.Checked = refCommand.Negated;
             SetupFormValues((dynamic)refCommand);
         }
 
@@ -41,6 +42,8 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             {
                 cmbConditionType.Items.Add(Strings.EventConditional.conditions[i]);
             }
+
+            chkNegated.Text = Strings.EventConditional.negated;
 
             //Player Switch
             grpSwitch.Text = Strings.EventConditional.playerswitch;
@@ -90,6 +93,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             {
                 cmbLevelComparator.Items.Add(Strings.EventConditional.comparators[i]);
             }
+            chkStatIgnoreBuffs.Text = Strings.EventConditional.ignorestatbuffs;
 
             //Self Switch Is
             grpSelfSwitch.Text = Strings.EventConditional.selfswitchis;
@@ -143,6 +147,10 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             cmbGender.Items.Add(Strings.EventConditional.male);
             cmbGender.Items.Add(Strings.EventConditional.female);
 
+            //Map Is
+            grpMapIs.Text = Strings.EventConditional.mapis;
+            btnSelectMap.Text = Strings.EventConditional.selectmap;
+
             btnSave.Text = Strings.EventConditional.okay;
             btnCancel.Text = Strings.EventConditional.cancel;
         }
@@ -191,6 +199,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                     cmbLevelComparator.SelectedIndex = 0;
                     cmbLevelStat.SelectedIndex = 0;
                     nudLevelStatValue.Value = 0;
+                    chkStatIgnoreBuffs.Checked = false;
                     break;
                 case ConditionTypes.SelfSwitch:
                     Condition = new SelfSwitchCondition();
@@ -226,6 +235,10 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                     Condition = new GenderIsCondition();
                     cmbGender.SelectedIndex = 0;
                     break;
+                case ConditionTypes.MapIs:
+                    Condition = new MapIsCondition();
+                    btnSelectMap.Tag = Guid.Empty;
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -246,6 +259,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             grpQuestInProgress.Hide();
             grpQuestCompleted.Hide();
             grpGender.Hide();
+            grpMapIs.Hide();
             switch (type)
             {
                 case ConditionTypes.PlayerSwitch:
@@ -330,6 +344,9 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                 case ConditionTypes.GenderIs:
                     grpGender.Show();
                     break;
+                case ConditionTypes.MapIs:
+                    grpMapIs.Show();
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -338,6 +355,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         private void btnSave_Click(object sender, EventArgs e)
         {
             SaveFormValues((dynamic)Condition);
+            Condition.Negated = chkNegated.Checked;
 
             if (mEventCommand != null) mEventCommand.Condition = Condition;
 
@@ -395,6 +413,19 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             }
         }
 
+        private void btnSelectMap_Click(object sender, EventArgs e)
+        {
+            FrmWarpSelection frmWarpSelection = new FrmWarpSelection();
+            frmWarpSelection.InitForm(false, null);
+            frmWarpSelection.SelectTile((Guid)btnSelectMap.Tag, 0, 0);
+            frmWarpSelection.TopMost = true;
+            frmWarpSelection.ShowDialog();
+            if (frmWarpSelection.GetResult())
+            {
+                btnSelectMap.Tag = frmWarpSelection.GetMap();
+            }
+        }
+
 
         #region "SetupFormValues"
         private void SetupFormValues(PlayerSwitchCondition condition)
@@ -444,6 +475,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             cmbLevelComparator.SelectedIndex = (int)condition.Comparator;
             nudLevelStatValue.Value = condition.Value;
             cmbLevelStat.SelectedIndex = condition.ComparingLevel ? 0 : (int)condition.Stat + 1;
+            chkStatIgnoreBuffs.Checked = condition.IgnoreBuffs;
         }
 
         private void SetupFormValues(SelfSwitchCondition condition)
@@ -502,6 +534,11 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         {
             cmbGender.SelectedIndex = condition.Gender;
         }
+
+        private void SetupFormValues(MapIsCondition condition)
+        {
+            btnSelectMap.Tag = condition.MapId;
+        }
         #endregion
 
         #region "SaveFormValues"
@@ -558,6 +595,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             {
                 condition.Stat = (Stats)(cmbLevelStat.SelectedIndex - 1);
             }
+            condition.IgnoreBuffs = chkStatIgnoreBuffs.Checked;
         }
 
         private void SaveFormValues(SelfSwitchCondition condition)
@@ -615,6 +653,14 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         {
             condition.Gender = (byte)cmbGender.SelectedIndex;
         }
+
+        private void SaveFormValues(MapIsCondition condition)
+        {
+            condition.MapId = (Guid)btnSelectMap.Tag;
+        }
+
         #endregion
+
+
     }
 }

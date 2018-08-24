@@ -641,6 +641,7 @@ Tick timer saved in server config.json.";
                 {13, @"Quest Completed...."},
                 {14, @"No NPCs on Map"},
                 {15, @"Gender is..."},
+                {16, @"Map is..."},
             };
             public static LocalizedString endrange = @"End Range:";
             public static LocalizedString False = @"False";
@@ -651,6 +652,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString globalvariable = @"Global Variable";
             public static LocalizedString hasatleast = @"Has at least:";
             public static LocalizedString hasitem = @"Has Item";
+            public static LocalizedString ignorestatbuffs = @"Ignore equipment & spell buffs.";
             public static LocalizedString item = @"Item:";
             public static LocalizedString knowsspell = @"Knows Spell";
             public static LocalizedString level = @"Level";
@@ -658,6 +660,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString levelstatitem = @"Level or Stat:";
             public static LocalizedString levelstatvalue = @"Value:";
             public static LocalizedString male = @"Male";
+            public static LocalizedString mapis = @"Map Is...";
+            public static LocalizedString negated = @"Negated";
             public static LocalizedString okay = @"Ok";
             public static LocalizedString playerswitch = @"Player Switch";
             public static LocalizedString playervariable = @"Player Variable";
@@ -677,6 +681,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString questinprogress = @"Quest In Progress";
             public static LocalizedString questis = @"Is:";
             public static LocalizedString questprogress = @"Quest:";
+            public static LocalizedString selectmap = @"Select Map";
             public static LocalizedString selfswitch = @"Self Switch:";
             public static Dictionary<int, LocalizedString> selfswitches = new Dictionary<int, LocalizedString>
             {
@@ -722,7 +727,10 @@ Tick timer saved in server config.json.";
             public static LocalizedString level = @"Level";
             public static LocalizedString levelorstat = @"{00} {01}";
             public static LocalizedString male = @"Male";
+            public static LocalizedString map = @"Player's Map is {00}";
+            public static LocalizedString mapnotfound = @"NOT FOUND";
             public static LocalizedString modadmin = @"Mod or Admin";
+            public static LocalizedString negated = @"NOT [{00}]";
             public static LocalizedString nonpcsonmap = @"No NPCs on the map";
             public static LocalizedString notequal = @"does not equal {00}";
             public static LocalizedString onanytask = @", On Any Task";
@@ -2224,6 +2232,13 @@ Negative values for time to flow backwards.";
         public static string GetEventConditionalDesc(GenderIsCondition condition)
         {
             return Strings.EventConditionDesc.gender.ToString((condition.Gender == 0? Strings.EventConditionDesc.male : Strings.EventConditionDesc.female));
+        }
+
+        public static string GetEventConditionalDesc(MapIsCondition condition)
+        {
+            var map = Intersect.GameObjects.Maps.MapList.MapList.GetList().FindMap(condition.MapId);
+            if (map != null)  return Strings.EventConditionDesc.map.ToString(map.Name);
+            return Strings.EventConditionDesc.map.ToString(EventConditionDesc.mapnotfound);
         }
 
 

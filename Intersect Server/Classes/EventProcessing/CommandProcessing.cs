@@ -161,6 +161,7 @@ namespace Intersect.Server.Classes.Events
         private static void ProcessCommand(ConditionalBranchCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
         {
             var success = Conditions.MeetsCondition((dynamic)command.Condition, player, instance, null);
+            if (command.Condition.Negated) success = !success;
             List<EventCommand> newCommandList = null;
             if (success && stackInfo.Page.CommandLists.ContainsKey(command.BranchIds[0])) newCommandList = stackInfo.Page.CommandLists[command.BranchIds[0]];
             if (!success && stackInfo.Page.CommandLists.ContainsKey(command.BranchIds[1])) newCommandList = stackInfo.Page.CommandLists[command.BranchIds[1]];

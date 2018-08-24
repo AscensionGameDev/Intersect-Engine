@@ -106,7 +106,14 @@ namespace Intersect.Editor.Forms.Editors
             txtListName.Text = list.Name;
             for (int i = 0; i < list.Conditions.Count; i++)
             {
-                lstConditions.Items.Add(Strings.GetEventConditionalDesc((dynamic)list.Conditions[i]));
+                if (list.Conditions[i].Negated)
+                {
+                    lstConditions.Items.Add(Strings.EventConditionDesc.negated.ToString(Strings.GetEventConditionalDesc((dynamic)list.Conditions[i])));
+                }
+                else
+                {
+                    lstConditions.Items.Add(Strings.GetEventConditionalDesc((dynamic)list.Conditions[i]));
+                }
             }
         }
 
