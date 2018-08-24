@@ -13,7 +13,8 @@ namespace Intersect.Server.Classes.Localization
         public struct Account
         {
             public static LocalizedString badaccess = @"Access denied! Invalid power level!";
-            public static LocalizedString badlogin = @"Username or password incorrect.";
+			public static LocalizedString outofdateversion = @"Version out of date. Upgrade to the latest version before connecting to the server.";
+			public static LocalizedString badlogin = @"Username or password incorrect.";
             public static LocalizedString banned = @"{00} has been banned!";
             public static LocalizedString banstatus = @"Your account has been banned since: {00} by {01}. Ban expires: {02}. Reason for ban: {03}";
             public static LocalizedString characterexists = @"An account with this character name exists. Please choose another.";

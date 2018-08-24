@@ -23,6 +23,7 @@ using Intersect.Server.Classes.Spells;
 using Intersect.Utilities;
 using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
 using Newtonsoft.Json;
+using System.Reflection;
 
 namespace Intersect.Server.Classes.Networking
 {
@@ -312,8 +313,16 @@ namespace Intersect.Server.Classes.Networking
                 var index = client.Id;
                 var username = bf.ReadString();
                 var password = bf.ReadString();
+				var version = bf.ReadString();
 
-                if (!LegacyDatabase.AccountExists(username))
+				//Check version matches, if not deny access and force user to update
+				if (version != Assembly.GetExecutingAssembly().GetName().Version.ToString())
+				{
+					PacketSender.SendLoginError(client, Strings.Account.outofdateversion);
+					return;
+				}
+
+				if (!LegacyDatabase.AccountExists(username))
                 {
                     PacketSender.SendLoginError(client, Strings.Account.badlogin);
                     return;
@@ -607,7 +616,16 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteBytes(packet);
             var usr = bf.ReadString();
             var pass = bf.ReadString();
-            if (!LegacyDatabase.AccountExists(usr))
+			var version = bf.ReadString();
+
+			//Check version matches, if not deny access and force user to update
+			if (version != Assembly.GetExecutingAssembly().GetName().Version.ToString())
+			{
+				PacketSender.SendLoginError(client, Strings.Account.outofdateversion);
+				return;
+			}
+
+			if (!LegacyDatabase.AccountExists(usr))
             {
                 PacketSender.SendLoginError(client, Strings.Account.badlogin);
                 return;
