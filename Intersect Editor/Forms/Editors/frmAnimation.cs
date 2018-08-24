@@ -148,6 +148,7 @@ namespace Intersect.Editor.Forms.Editors
             grpLowerFrameOpts.Text = Strings.AnimationEditor.lowerframeoptions;
             btnLowerClone.Text = Strings.AnimationEditor.lowerclone;
             chkDisableLowerRotations.Text = Strings.AnimationEditor.disablelowerrotations;
+            chkRenderAbovePlayer.Text = Strings.AnimationEditor.renderaboveplayer;
 
             grpUpper.Text = Strings.AnimationEditor.uppergroup;
             lblUpperGraphic.Text = Strings.AnimationEditor.uppergraphic;
@@ -162,6 +163,7 @@ namespace Intersect.Editor.Forms.Editors
             grpUpperFrameOpts.Text = Strings.AnimationEditor.upperframeoptions;
             btnUpperClone.Text = Strings.AnimationEditor.upperclone;
             chkDisableUpperRotations.Text = Strings.AnimationEditor.disableupperrotations;
+            chkRenderBelowFringe.Text = Strings.AnimationEditor.renderbelowfringe;
 
             btnSave.Text = Strings.AnimationEditor.save;
             btnCancel.Text = Strings.AnimationEditor.cancel;
@@ -208,6 +210,9 @@ namespace Intersect.Editor.Forms.Editors
 
                 chkDisableLowerRotations.Checked = mEditorItem.Lower.DisableRotations;
                 chkDisableUpperRotations.Checked = mEditorItem.Upper.DisableRotations;
+
+                chkRenderAbovePlayer.Checked = mEditorItem.Lower.AlternateRenderLayer;
+                chkRenderBelowFringe.Checked = mEditorItem.Upper.AlternateRenderLayer;
 
                 LoadLowerLight();
                 DrawLowerFrame();
@@ -702,6 +707,16 @@ namespace Intersect.Editor.Forms.Editors
         private void chkDisableUpperRotations_CheckedChanged(object sender, EventArgs e)
         {
             mEditorItem.Upper.DisableRotations = chkDisableUpperRotations.Checked;
+        }
+
+        private void chkRenderAbovePlayer_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Lower.AlternateRenderLayer = chkRenderAbovePlayer.Checked;
+        }
+
+        private void chkRenderBelowFringe_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Upper.AlternateRenderLayer = chkRenderBelowFringe.Checked;
         }
     }
 }

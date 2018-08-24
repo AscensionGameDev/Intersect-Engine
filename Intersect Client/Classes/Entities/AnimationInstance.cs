@@ -54,9 +54,11 @@ namespace Intersect_Client.Classes.Entities
             }
         }
 
-        public void Draw(bool upper = false)
+        public void Draw(bool upper = false, bool alternate = false)
         {
             if (Hidden) return;
+            if (!upper && alternate != MyBase.Lower.AlternateRenderLayer) return;
+            if (upper && alternate != MyBase.Upper.AlternateRenderLayer) return;
             var rotationDegrees = 0f;
             var dontRotate = upper && MyBase.Upper.DisableRotations || !upper && MyBase.Lower.DisableRotations;
             if ((AutoRotate || mRenderDir != -1) && !dontRotate)

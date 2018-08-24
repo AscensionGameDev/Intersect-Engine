@@ -233,8 +233,9 @@ namespace Intersect.Editor.Core
                                     if (map == null) continue;
                                     lock (map.MapLock)
                                     {
-                                        DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX,
-                                            y - Globals.CurrentMap.MapGridY, false, null, false);
+                                        DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY, false, null, false, false);
+                                        DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY, false, null, false, true);
+                                        DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY, false, null, true, true);
                                     }
                                 }
                             }
@@ -274,8 +275,7 @@ namespace Intersect.Editor.Core
                                     {
                                         lock (map.MapLock)
                                         {
-                                            DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX,
-                                                y - Globals.CurrentMap.MapGridY, false, null, true);
+                                            DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX,y - Globals.CurrentMap.MapGridY, false, null, true,false);
                                         }
                                     }
                                 }
@@ -1005,7 +1005,7 @@ namespace Intersect.Editor.Core
         }
 
         private static void DrawMapAttributes(MapInstance map, int gridX, int gridY, bool screenShotting,
-            RenderTarget2D renderTarget, bool upper)
+            RenderTarget2D renderTarget, bool upper, bool alternate)
         {
             if (!screenShotting && HideResources)
             {
@@ -1053,7 +1053,7 @@ namespace Intersect.Editor.Core
                 for (var x = x1; x < x2; x++)
                 {
                     if (tmpMap.Attributes[x, y] == null) continue;
-                    if (tmpMap.Attributes[x, y].Type == MapAttributes.Resource && !upper)
+                    if (tmpMap.Attributes[x, y].Type == MapAttributes.Resource && !upper && !alternate)
                     {
                         var resource = ResourceBase.Get(tmpMap.Attributes[x, y].Resource.ResourceId);
                         if (resource == null) continue;
@@ -1116,7 +1116,7 @@ namespace Intersect.Editor.Core
                                 }
                                 animInstance.Update();
                                 animInstance.SetPosition((int) xpos, (int) ypos, 0);
-                                animInstance.Draw(renderTarget, upper);
+                                animInstance.Draw(renderTarget, upper, alternate);
                             }
                             tmpMap = tmpMapOld;
                         }
@@ -1171,9 +1171,9 @@ namespace Intersect.Editor.Core
                             {
                                 lock (map.MapLock)
                                 {
-                                    DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX,
-                                        y - Globals.CurrentMap.MapGridY,
-                                        true, sScreenShotRenderTexture, false);
+                                    DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY, true, sScreenShotRenderTexture, false, false);
+                                    DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY, true, sScreenShotRenderTexture, false, true);
+                                    DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY, true, sScreenShotRenderTexture, true, true);
                                 }
                             }
                         }
@@ -1214,9 +1214,7 @@ namespace Intersect.Editor.Core
                             {
                                 lock (map.MapLock)
                                 {
-                                    DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX,
-                                        y - Globals.CurrentMap.MapGridY,
-                                        true, sScreenShotRenderTexture, true);
+                                    DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX,y - Globals.CurrentMap.MapGridY,true, sScreenShotRenderTexture, true,false);
                                 }
                             }
                         }
@@ -1228,15 +1226,13 @@ namespace Intersect.Editor.Core
                 lock (Globals.CurrentMap.MapLock)
                 {
                     //Draw this map
-                    DrawMap(Globals.CurrentMap, 0, 0, true, 0,
-                        sScreenShotRenderTexture);
-                    DrawMapAttributes(Globals.CurrentMap, 0, 0,
-                        true, sScreenShotRenderTexture, false);
+                    DrawMap(Globals.CurrentMap, 0, 0, true, 0,sScreenShotRenderTexture);
+                    DrawMapAttributes(Globals.CurrentMap, 0, 0, true, sScreenShotRenderTexture, false,false);
+                    DrawMapAttributes(Globals.CurrentMap, 0, 0, true, sScreenShotRenderTexture, false,true);
+                    DrawMapAttributes(Globals.CurrentMap, 0, 0, true, sScreenShotRenderTexture, true,true);
                     //Draw this map
-                    DrawMap(Globals.CurrentMap, 0, 0, true, 1,
-                        sScreenShotRenderTexture);
-                    DrawMapAttributes(Globals.CurrentMap, 0, 0,
-                        true, sScreenShotRenderTexture, true);
+                    DrawMap(Globals.CurrentMap, 0, 0, true, 1,sScreenShotRenderTexture);
+                    DrawMapAttributes(Globals.CurrentMap, 0, 0, true, sScreenShotRenderTexture, true,false);
                 }
             }
             if (!Database.GridHideFog)

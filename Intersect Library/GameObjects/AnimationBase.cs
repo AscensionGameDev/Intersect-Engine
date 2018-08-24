@@ -34,6 +34,8 @@ namespace Intersect.GameObjects
 
         public bool DisableRotations { get; set; }
 
+        public bool AlternateRenderLayer { get; set; }
+
         [NotMapped]
         public LightBase[] Lights { get; set; }
     }

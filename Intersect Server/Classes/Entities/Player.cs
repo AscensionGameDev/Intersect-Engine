@@ -36,6 +36,7 @@ namespace Intersect.Server.Classes.Entities
         //Online Players List
         private static Dictionary<Guid, Player> OnlinePlayers = new Dictionary<Guid, Player>();
         public static Player Find(Guid id) => OnlinePlayers.ContainsKey(id) ? OnlinePlayers[id] : null;
+        public static int OnlineCount => OnlinePlayers.Count;
 
         //Account
         public virtual User Account { get; private set; }

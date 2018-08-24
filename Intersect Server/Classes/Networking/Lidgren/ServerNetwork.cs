@@ -7,6 +7,7 @@ using Intersect.Network;
 using Intersect.Server.Classes.Networking;
 using JetBrains.Annotations;
 using Lidgren.Network;
+using Intersect.Server.Classes.Entities;
 
 namespace Intersect.Server.Network
 {
@@ -65,7 +66,7 @@ namespace Intersect.Server.Network
             {
                 case "status":
                     var response = peer.CreateMessage();
-                    response.WriteVariableInt32(peer.ConnectionsCount);
+                    response.WriteVariableInt32(Player.OnlineCount);
                     peer.SendUnconnectedMessage(response, message.SenderEndPoint);
                     break;
             }

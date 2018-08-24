@@ -47,6 +47,8 @@ namespace Intersect.Editor.Localization
             public static LocalizedString name = @"Name:";
             public static LocalizedString New = @"New Animation";
             public static LocalizedString paste = @"Paste Animation";
+            public static LocalizedString renderaboveplayer = @"Render Above Player";
+            public static LocalizedString renderbelowfringe = @"Render Below Fringe";
             public static LocalizedString save = @"Save";
             public static LocalizedString simulatedarkness = @"Simulate Darkness: {00}";
             public static LocalizedString sound = @"Sound:";

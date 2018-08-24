@@ -209,6 +209,15 @@ namespace Intersect.Client.Classes.Core
                 }
             }
 
+            lock (AnimationLock)
+            {
+                foreach (AnimationInstance animInstance in LiveAnimations)
+                {
+                    animInstance.Draw(false,true);
+                    animInstance.Draw(true, true);
+                }
+            }
+
             for (var x = gridX - 1; x <= gridX + 1; x++)
             {
                 for (var y = gridY - 1; y <= gridY + 1; y++)

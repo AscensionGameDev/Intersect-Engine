@@ -441,6 +441,10 @@
     <Compile Include="Migrations\Game\20180822231032_FocusDamageDealers1.designer.cs">
       <DependentUpon>20180822231032_FocusDamageDealers1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\Game\20180824015235_AnimationLayersUpdated.cs" />
+    <Compile Include="Migrations\Game\20180824015235_AnimationLayersUpdated.designer.cs">
+      <DependentUpon>20180824015235_AnimationLayersUpdated.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Game\GameContextModelSnapshot.cs" />
     <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />
     <Compile Include="Models\User.cs" />

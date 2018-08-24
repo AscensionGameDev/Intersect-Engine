@@ -34,8 +34,10 @@ namespace Intersect.Editor.Entities
             mInfiniteLoop = loopForever;
         }
 
-        public void Draw(RenderTarget2D target, bool upper = false)
+        public void Draw(RenderTarget2D target, bool upper = false, bool alternate = false)
         {
+            if (!upper && alternate != MyBase.Lower.AlternateRenderLayer) return;
+            if (upper && alternate != MyBase.Upper.AlternateRenderLayer) return;
             if (!upper)
             {
                 //Draw Lower

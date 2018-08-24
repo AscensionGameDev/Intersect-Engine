@@ -43,6 +43,7 @@ namespace Intersect.Editor.Forms.Editors
             this.lblName = new System.Windows.Forms.Label();
             this.txtName = new DarkUI.Controls.DarkTextBox();
             this.grpLower = new DarkUI.Controls.DarkGroupBox();
+            this.chkRenderAbovePlayer = new DarkUI.Controls.DarkCheckBox();
             this.chkDisableLowerRotations = new DarkUI.Controls.DarkCheckBox();
             this.nudLowerLoopCount = new DarkUI.Controls.DarkNumericUpDown();
             this.nudLowerFrameDuration = new DarkUI.Controls.DarkNumericUpDown();
@@ -65,6 +66,7 @@ namespace Intersect.Editor.Forms.Editors
             this.lblLowerGraphic = new System.Windows.Forms.Label();
             this.picLowerAnimation = new System.Windows.Forms.PictureBox();
             this.grpUpper = new DarkUI.Controls.DarkGroupBox();
+            this.chkRenderBelowFringe = new DarkUI.Controls.DarkCheckBox();
             this.chkDisableUpperRotations = new DarkUI.Controls.DarkCheckBox();
             this.nudUpperLoopCount = new DarkUI.Controls.DarkNumericUpDown();
             this.nudUpperFrameDuration = new DarkUI.Controls.DarkNumericUpDown();
@@ -255,6 +257,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpLower.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpLower.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpLower.Controls.Add(this.chkRenderAbovePlayer);
             this.grpLower.Controls.Add(this.chkDisableLowerRotations);
             this.grpLower.Controls.Add(this.nudLowerLoopCount);
             this.grpLower.Controls.Add(this.nudLowerFrameDuration);
@@ -278,6 +281,16 @@ namespace Intersect.Editor.Forms.Editors
             this.grpLower.TabIndex = 19;
             this.grpLower.TabStop = false;
             this.grpLower.Text = "Lower Layer (Below Target)";
+            // 
+            // chkRenderAbovePlayer
+            // 
+            this.chkRenderAbovePlayer.AutoSize = true;
+            this.chkRenderAbovePlayer.Location = new System.Drawing.Point(134, 424);
+            this.chkRenderAbovePlayer.Name = "chkRenderAbovePlayer";
+            this.chkRenderAbovePlayer.Size = new System.Drawing.Size(127, 17);
+            this.chkRenderAbovePlayer.TabIndex = 27;
+            this.chkRenderAbovePlayer.Text = "Render Above Player";
+            this.chkRenderAbovePlayer.CheckedChanged += new System.EventHandler(this.chkRenderAbovePlayer_CheckedChanged);
             // 
             // chkDisableLowerRotations
             // 
@@ -582,6 +595,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpUpper.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpUpper.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpUpper.Controls.Add(this.chkRenderBelowFringe);
             this.grpUpper.Controls.Add(this.chkDisableUpperRotations);
             this.grpUpper.Controls.Add(this.nudUpperLoopCount);
             this.grpUpper.Controls.Add(this.nudUpperFrameDuration);
@@ -605,6 +619,16 @@ namespace Intersect.Editor.Forms.Editors
             this.grpUpper.TabIndex = 20;
             this.grpUpper.TabStop = false;
             this.grpUpper.Text = "Upper Layer (Above Target)";
+            // 
+            // chkRenderBelowFringe
+            // 
+            this.chkRenderBelowFringe.AutoSize = true;
+            this.chkRenderBelowFringe.Location = new System.Drawing.Point(139, 424);
+            this.chkRenderBelowFringe.Name = "chkRenderBelowFringe";
+            this.chkRenderBelowFringe.Size = new System.Drawing.Size(125, 17);
+            this.chkRenderBelowFringe.TabIndex = 31;
+            this.chkRenderBelowFringe.Text = "Render Below Fringe";
+            this.chkRenderBelowFringe.CheckedChanged += new System.EventHandler(this.chkRenderBelowFringe_CheckedChanged);
             // 
             // chkDisableUpperRotations
             // 
@@ -1179,5 +1203,7 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.Timer tmrRender;
         private DarkCheckBox chkDisableLowerRotations;
         private DarkCheckBox chkDisableUpperRotations;
+        private DarkCheckBox chkRenderAbovePlayer;
+        private DarkCheckBox chkRenderBelowFringe;
     }
 }
