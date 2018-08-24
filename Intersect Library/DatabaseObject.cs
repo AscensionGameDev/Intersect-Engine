@@ -36,7 +36,7 @@ namespace Intersect.Models
         }
         public static int ListIndex(Guid id)
         {
-            var index = Lookup.Keys.ToList().IndexOf(id);
+            var index = Lookup.KeyList.OrderBy(pairs => Lookup[pairs].TimeCreated).ToList().IndexOf(id);
             return index;
         }
 

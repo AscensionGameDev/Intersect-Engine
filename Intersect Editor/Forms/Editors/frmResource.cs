@@ -12,6 +12,7 @@ using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Utilities;
+using Intersect.GameObjects.Events;
 
 namespace Intersect.Editor.Forms.Editors
 {
@@ -186,6 +187,9 @@ namespace Intersect.Editor.Forms.Editors
             lblPic.Text = Strings.ResourceEditor.initialgraphic;
             lblPic2.Text = Strings.ResourceEditor.exhaustedgraphic;
 
+            grpCommonEvent.Text = Strings.ResourceEditor.commonevent;
+            lblEvent.Text = Strings.ResourceEditor.harvestevent;
+
             btnSave.Text = Strings.ResourceEditor.save;
             btnCancel.Text = Strings.ResourceEditor.cancel;
         }
@@ -197,6 +201,9 @@ namespace Intersect.Editor.Forms.Editors
             cmbToolType.Items.Clear();
             cmbToolType.Items.Add(Strings.General.none);
             cmbToolType.Items.AddRange(Options.ToolTypes.ToArray());
+            cmbEvent.Items.Clear();
+            cmbEvent.Items.Add(Strings.General.none);
+            cmbEvent.Items.AddRange(EventBase.Names);
         }
 
         private void UpdateEditor()
@@ -215,6 +222,7 @@ namespace Intersect.Editor.Forms.Editors
                 chkWalkableAfter.Checked = mEditorItem.WalkableAfter;
                 chkInitialFromTileset.Checked = mEditorItem.Initial.GraphicFromTileset;
                 chkExhaustedFromTileset.Checked = mEditorItem.Exhausted.GraphicFromTileset;
+                cmbEvent.SelectedIndex = EventBase.ListIndex(mEditorItem.EventId) + 1;
                 //Regen
                 nudHpRegen.Value = mEditorItem.VitalRegen;
                 PopulateInitialGraphicList();
@@ -754,6 +762,11 @@ namespace Intersect.Editor.Forms.Editors
         private void nudHpRegen_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.VitalRegen = (int)nudHpRegen.Value;
+        }
+
+        private void cmbEvent_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Event = EventBase.Get(EventBase.IdFromList(cmbEvent.SelectedIndex - 1));
         }
     }
 }

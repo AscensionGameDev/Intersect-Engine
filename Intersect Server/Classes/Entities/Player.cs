@@ -603,6 +603,14 @@ namespace Intersect.Server.Classes.Entities
 
                 if (playerEvent != null) StartCommonEvent(playerEvent);
             }
+            else if (en.GetType() == typeof(Resource))
+            {
+                var resourceBase = ((Resource)en).Base;
+                if (resourceBase.Event != null)
+                {
+                    StartCommonEvent(resourceBase.Event);
+                }
+            }
         }
 
         public void UpdateQuestKillTasks(EntityInstance en)

@@ -7,6 +7,7 @@ using Intersect.Utilities;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Intersect.Enums;
+using Intersect.GameObjects.Events;
 
 namespace Intersect.GameObjects
 {
@@ -29,7 +30,7 @@ namespace Intersect.GameObjects
         public ResourceState Exhausted { get; set; }
 
         [Column("Animation")]
-        public Guid AnimationId { get; protected set; }
+        public Guid AnimationId { get; set; }
         [NotMapped]
         [JsonIgnore]
         public AnimationBase Animation
@@ -59,6 +60,17 @@ namespace Intersect.GameObjects
         }
         [NotMapped]
         public ConditionLists HarvestingRequirements = new ConditionLists();
+
+        [Column("Event")]
+        [JsonProperty]
+        public Guid EventId { get; set; }
+        [NotMapped]
+        [JsonIgnore]
+        public EventBase Event
+        {
+            get => EventBase.Get(EventId);
+            set => EventId = value?.Id ?? Guid.Empty;
+        }
 
         //Vital Regen %
         public int VitalRegen { get; set; }

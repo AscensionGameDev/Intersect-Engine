@@ -236,8 +236,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             mChangingName = true;
             mEditorItem.Name = txtName.Text;
-            lstAnimations.Items[AnimationBase.ListIndex(mEditorItem.Id)] =
-                txtName.Text;
+            lstAnimations.Items[AnimationBase.ListIndex(mEditorItem.Id)] = txtName.Text;
             mChangingName = false;
         }
 
@@ -272,13 +271,12 @@ namespace Intersect.Editor.Forms.Editors
         {
             LightBase[] newArray;
             scrlLowerFrame.Maximum = (int) nudLowerFrameCount.Value;
-            if (mEditorItem.Lower.FrameCount !=
-                mEditorItem.Lower.Lights.Length)
+            if (mEditorItem.Lower.Lights == null || mEditorItem.Lower.FrameCount != mEditorItem.Lower.Lights.Length)
             {
                 newArray = new LightBase[mEditorItem.Lower.FrameCount];
                 for (int i = 0; i < newArray.Length; i++)
                 {
-                    if (i < mEditorItem.Lower.Lights.Length)
+                    if (mEditorItem.Lower.Lights != null && i < mEditorItem.Lower.Lights.Length)
                     {
                         newArray[i] = mEditorItem.Lower.Lights[i];
                     }
@@ -295,13 +293,12 @@ namespace Intersect.Editor.Forms.Editors
         {
             LightBase[] newArray;
             scrlUpperFrame.Maximum = (int) nudUpperFrameCount.Value;
-            if (mEditorItem.Upper.FrameCount !=
-                mEditorItem.Upper.Lights.Length)
+            if (mEditorItem.Upper.Lights == null || mEditorItem.Upper.FrameCount != mEditorItem.Upper.Lights.Length)
             {
                 newArray = new LightBase[mEditorItem.Upper.FrameCount];
                 for (int i = 0; i < newArray.Length; i++)
                 {
-                    if (i < mEditorItem.Upper.Lights.Length)
+                    if (mEditorItem.Upper.Lights != null && i < mEditorItem.Upper.Lights.Length)
                     {
                         newArray[i] = mEditorItem.Upper.Lights[i];
                     }

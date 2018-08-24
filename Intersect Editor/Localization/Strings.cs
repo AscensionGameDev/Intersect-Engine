@@ -1693,6 +1693,7 @@ Tick timer saved in server config.json.";
         {
             public static LocalizedString animation = @"Animation:";
             public static LocalizedString cancel = @"Cancel";
+            public static LocalizedString commonevent = @"Common Event";
             public static LocalizedString copy = @"Copy Resource";
             public static LocalizedString delete = @"Delete Resource";
             public static LocalizedString deleteprompt = @"Are you sure you want to delete this resource? This action cannot be reverted!";
@@ -1707,6 +1708,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString exhaustedgraphic = @"Exhausted Graphic:";
             public static LocalizedString general = @"General";
             public static LocalizedString graphics = @"Graphics";
+            public static LocalizedString harvestevent = @"Event:";
             public static LocalizedString hpregen = @"HP (%);";
             public static LocalizedString initialgraphic = @"Initial Graphic:";
             public static LocalizedString maxhp = @"Max HP:";

@@ -49,7 +49,7 @@ namespace Intersect.GameObjects
 
         [Column("Spell")]
         [JsonProperty]
-        public Guid SpellId { get; protected set; }
+        public Guid SpellId { get;  set; }
         [NotMapped]
         [JsonIgnore]
         public SpellBase Spell
@@ -60,7 +60,7 @@ namespace Intersect.GameObjects
 
         [Column("Event")]
         [JsonProperty]
-        public Guid EventId { get; protected set; }
+        public Guid EventId { get; set; }
         [NotMapped]
         [JsonIgnore]
         public EventBase Event
@@ -78,7 +78,7 @@ namespace Intersect.GameObjects
 
         [Column("Projectile")]
         [JsonProperty]
-        public Guid ProjectileId { get; protected set; }
+        public Guid ProjectileId { get; set; }
         [NotMapped]
         [JsonIgnore]
         public ProjectileBase Projectile

@@ -12,12 +12,6 @@ namespace Intersect.GameObjects
     {
         public AnimationLayer()
         {
-            Lights = new LightBase[FrameCount];
-
-            for (var frame = 0; frame < FrameCount; ++frame)
-            {
-                Lights[frame] = new LightBase();
-            }
         }
 
         public string Sprite { get; set; } = "";
