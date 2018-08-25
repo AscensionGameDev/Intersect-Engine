@@ -444,8 +444,25 @@ namespace Intersect.Server.Classes.Entities
             }
         }
 
-        //Leveling
-        public void SetLevel(int level, bool resetExperience = false)
+		public override int GetMaxVital(int vital)
+		{
+			ClassBase myclass = ClassBase.Get(this.ClassId);
+			if (myclass.IncreasePercentage == 1)
+			{
+				return (int)(myclass.BaseVital[vital] * Math.Pow(1 + ((double)myclass.VitalIncrease[vital] / 100), Level - 1));
+			}
+			else
+			{
+				return myclass.BaseVital[vital] + (myclass.VitalIncrease[vital] * (Level - 1));
+			}
+		}
+		public override int GetMaxVital(Vitals vital)
+		{
+			return GetMaxVital((int)vital);
+		}
+
+		//Leveling
+		public void SetLevel(int level, bool resetExperience = false)
         {
             if (level < 1) return;
             Level = Math.Min(Options.MaxLevel, level);
@@ -466,46 +483,6 @@ namespace Intersect.Server.Classes.Entities
                     var myclass = ClassBase.Get(ClassId);
                     if (myclass != null)
                     {
-                        foreach (Vitals vital in Enum.GetValues(typeof(Vitals)))
-                        {
-                            if ((int)vital < (int)Vitals.VitalCount)
-                            {
-                                var maxVital = GetMaxVital(vital);
-                                if (myclass.IncreasePercentage == 1)
-                                {
-                                    maxVital = (int)(GetMaxVital(vital) * (1f + ((float)myclass.VitalIncrease[(int)vital] / 100f)));
-                                }
-                                else
-                                {
-                                    maxVital = GetMaxVital(vital) + myclass.VitalIncrease[(int)vital];
-                                }
-                                var vitalDiff = maxVital - GetMaxVital(vital);
-                                SetMaxVital(vital, maxVital);
-                                AddVital(vital, vitalDiff);
-                            }
-                        }
-
-                        foreach (Stats stat in Enum.GetValues(typeof(Stats)))
-                        {
-                            if ((int)stat < (int)Stats.StatCount)
-                            {
-                                var newStat = Stat[(int)stat].Stat;
-                                if (myclass.IncreasePercentage == 1)
-                                {
-                                    newStat =
-                                        (int)
-                                        (Stat[(int)stat].Stat *
-                                         (1f + ((float)myclass.StatIncrease[(int)stat] / 100f)));
-                                }
-                                else
-                                {
-                                    newStat = Stat[(int)stat].Stat + myclass.StatIncrease[(int)stat];
-                                }
-                                var statDiff = newStat - Stat[(int)stat].Stat;
-                                AddStat(stat, statDiff);
-                            }
-                        }
-
                         foreach (var spell in myclass.Spells)
                         {
                             if (spell.Level == Level)

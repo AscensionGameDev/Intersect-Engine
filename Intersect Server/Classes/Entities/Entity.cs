@@ -47,14 +47,6 @@ namespace Intersect.Server.Classes.Entities
         }
         [NotMapped]
         public int[] _vital { get; set; } = new int[(int)Enums.Vitals.VitalCount];
-
-
-        [Column("MaxVitals")]
-        public string MaxVitalsJson
-        {
-            get => DatabaseUtils.SaveIntArray(_maxVital, (int)Enums.Vitals.VitalCount);
-            set => _maxVital = DatabaseUtils.LoadIntArray(value, (int)Enums.Vitals.VitalCount);
-        }
         [NotMapped]
         private int[] _maxVital = new int[(int)Vitals.VitalCount];
 
@@ -128,9 +120,12 @@ namespace Intersect.Server.Classes.Entities
         //Initialization
         public EntityInstance(Guid instanceId)
         {
-            for (var I = 0; I < (int)Stats.StatCount; I++)
+			Player tempPlayer = null;
+			if (this.GetType() == typeof(Player)) { tempPlayer = (Player)this; }
+
+			for (var I = 0; I < (int)Stats.StatCount; I++)
             {
-                Stat[I] = new EntityStat(I, this, null);
+                Stat[I] = new EntityStat(I, this, tempPlayer);
             }
 
             Id = instanceId;
@@ -798,11 +793,11 @@ namespace Intersect.Server.Classes.Entities
         {
             SetVital((int)vital, value);
         }
-        public int GetMaxVital(int vital)
+        public virtual int GetMaxVital(int vital)
         {
             return _maxVital[vital];
         }
-        public int GetMaxVital(Vitals vital)
+        public virtual int GetMaxVital(Vitals vital)
         {
             return GetMaxVital((int)vital);
         }
@@ -1739,14 +1734,23 @@ namespace Intersect.Server.Classes.Entities
         {
             var s = Stat;
 
-            var buffs = mBuff.Values.ToArray();
-            foreach (var buff in buffs)
-            {
-                s += buff.Buff;
-            }
-
             if (mPlayer != null)
             {
+				ClassBase playerClass = ClassBase.Get(mPlayer.ClassId);
+
+				//Add class base stats
+				s += playerClass.BaseStat[mStatType];
+
+				//Add class stat scaling
+				if (playerClass.IncreasePercentage != 0) //% increase per level
+				{
+					s = (int)(s * Math.Pow(1 + ((double)playerClass.StatIncrease[mStatType] / 100), mPlayer.Level - 1));
+				}
+				else //Static value increase per level
+				{
+					s += playerClass.StatIncrease[mStatType] * (mPlayer.Level - 1);
+				}
+
                 //Add up player equipment values
                 for (var i = 0; i < Options.EquipmentSlots.Count; i++)
                 {
@@ -1765,7 +1769,14 @@ namespace Intersect.Server.Classes.Entities
                 }
             }
 
-            if (s <= 0)
+			//Add buffs
+			var buffs = mBuff.Values.ToArray();
+			foreach (var buff in buffs)
+			{
+				s += buff.Buff;
+			}
+
+			if (s <= 0)
                 s = 1; //No 0 or negative stats, will give errors elsewhere in the code (especially divide by 0 errors).
             return s;
         }

@@ -11,6 +11,7 @@ using IntersectClientExtras.Gwen.Control.EventArguments;
 using IntersectClientExtras.Input;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
+using System.Reflection;
 
 namespace Intersect_Client.Classes.UI.Menu
 {
@@ -181,7 +182,7 @@ namespace Intersect_Client.Classes.UI.Menu
             }
 
             GameFade.FadeOut();
-            PacketSender.SendLogin(mUsernameTextbox?.Text, password);
+            PacketSender.SendLogin(mUsernameTextbox?.Text, password, Assembly.GetExecutingAssembly().GetName().Version.ToString());
             SaveCredentials();
             Globals.WaitingOnServer = true;
         }
