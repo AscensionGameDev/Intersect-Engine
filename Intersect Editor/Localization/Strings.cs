@@ -123,6 +123,7 @@ namespace Intersect.Editor.Localization
             public static LocalizedString combat = @"Combat (Unarmed)";
             public static LocalizedString copy = @"Copy Class";
             public static LocalizedString critchance = @"Crit Chance (%):";
+            public static LocalizedString critmultiplier = @"Crit Multiplier (Default 1.5x):";
             public static LocalizedString damagetype = @"Damage Type:";
             public static LocalizedString delete = @"Delete Class";
             public static LocalizedString deleteprompt = @"Are you sure you want to delete this class? This action cannot be reverted!";
@@ -1174,6 +1175,15 @@ Tick timer saved in server config.json.";
             public static LocalizedString animation = @"Animation:";
             public static LocalizedString attackanimation = @"Attack Animation:";
             public static LocalizedString attackbonus = @"Attack:";
+            public static LocalizedString attackspeed = @"Attack Speed";
+            public static LocalizedString attackspeedmodifier = @"Modifier:";
+            public static Dictionary<int, LocalizedString> attackspeedmodifiers = new Dictionary<int, LocalizedString>
+            {
+                {0, @"Disabled"},
+                {1, @"Static (ms)"},
+                {2, @"Percentage"},
+            };
+            public static LocalizedString attackspeedvalue = @"Value:";
             public static LocalizedString bagpanel = @"Bag:";
             public static LocalizedString bagslots = @"Bag Slots:";
             public static LocalizedString basedamage = @"Base Damage:";
@@ -1191,8 +1201,10 @@ Tick timer saved in server config.json.";
             public static LocalizedString cancel = @"Cancel";
             public static LocalizedString consumeablepanel = @"Consumable";
             public static LocalizedString consumeinterval = @"Interval:";
+            public static LocalizedString cooldown = @"Cooldown (ms):";
             public static LocalizedString copy = @"Copy Item";
             public static LocalizedString critchance = @"Crit Chance (%):";
+            public static LocalizedString critmultiplier = @"Crit Multiplier (Default 1.5x):";
             public static LocalizedString damagetype = @"Damage Type:";
             public static LocalizedString defensebonus = @"Defense:";
             public static LocalizedString delete = @"Delete Item";
@@ -1200,13 +1212,16 @@ Tick timer saved in server config.json.";
             public static LocalizedString deletetitle = @"Delete Item";
             public static LocalizedString description = @"Desc:";
             public static LocalizedString equipment = @"Equipment";
+            public static LocalizedString equipmentanimation = @"Equipment Animation:";
             public static LocalizedString Event = @"Event:";
             public static LocalizedString eventpanel = @"Event";
             public static LocalizedString femalepaperdoll = @"Female Paperdoll:";
             public static LocalizedString general = @"General";
+            public static LocalizedString health = @"Health:";
             public static LocalizedString items = @"Items";
             public static LocalizedString magicresistbonus = @"Magic Resist:";
             public static LocalizedString malepaperdoll = @"Male Paperdoll:";
+            public static LocalizedString mana = @"Mana:";
             public static LocalizedString name = @"Name:";
             public static LocalizedString New = @"New Item";
             public static LocalizedString paste = @"Paste Item";
@@ -1240,6 +1255,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString undoprompt = @"Are you sure you want to undo changes made to this item? This action cannot be reverted!";
             public static LocalizedString undotitle = @"Undo Changes";
             public static LocalizedString vital = @"Vital:";
+            public static LocalizedString vitalbonuses = @"Vital Bonuses";
             public static LocalizedString weaponproperties = @"Weapon Properties";
         }
 
@@ -1513,6 +1529,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString conditions = @"Conditions";
             public static LocalizedString copy = @"Copy Npc";
             public static LocalizedString critchance = @"Crit Chance (%):";
+            public static LocalizedString critmultiplier = @"Crit Multiplier (Default 1.5x):";
             public static LocalizedString damagetype = @"Damage Type:";
             public static LocalizedString defense = @"Defense:";
             public static LocalizedString delete = @"Delete Npc";
@@ -1792,6 +1809,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString copy = @"Copy Spell";
             public static LocalizedString cost = @"Spell Cost:";
             public static LocalizedString critchance = @"Crit Chance (%):";
+            public static LocalizedString critmultiplier = @"Crit Multiplier (Default 1.5x):";
             public static LocalizedString damagegroup = @"Damage";
             public static LocalizedString damagetype = @"Damage Type:";
             public static LocalizedString dash = @"Dash";

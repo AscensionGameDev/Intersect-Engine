@@ -18,9 +18,9 @@ namespace Intersect.Server.Classes.General
 
         private const string FORMULAS_FILE = "resources/formulas.json";
 
-        public string PhysicalDamage = "Random(((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * .975, ((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * 1.025) * (100 / (100 + V_Defense))";
-        public string MagicDamage =  "Random(((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * .975, ((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * 1.025) * (100 / (100 + V_MagicResist))";
-        public string TrueDamage = "Random(((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * .975, ((BaseDamage + (ScalingStat * ScaleFactor))) * CritFactor * 1.025)";
+        public string PhysicalDamage = "Random(((BaseDamage + (ScalingStat * ScaleFactor))) * CritMultiplier * .975, ((BaseDamage + (ScalingStat * ScaleFactor))) * CritMultiplier * 1.025) * (100 / (100 + V_Defense))";
+        public string MagicDamage = "Random(((BaseDamage + (ScalingStat * ScaleFactor))) * CritMultiplier * .975, ((BaseDamage + (ScalingStat * ScaleFactor))) * CritMultiplier * 1.025) * (100 / (100 + V_MagicResist))";
+        public string TrueDamage = "Random(((BaseDamage + (ScalingStat * ScaleFactor))) * CritMultiplier * .975, ((BaseDamage + (ScalingStat * ScaleFactor))) * CritMultiplier * 1.025)";
 
         public static void LoadFormulas()
         {
@@ -70,7 +70,7 @@ namespace Intersect.Server.Classes.General
                 e.Parameters["BaseDamage"] = baseDamage;
                 e.Parameters["ScalingStat"] = attacker.Stat[(int) scalingStat].Value();
                 e.Parameters["ScaleFactor"] = scaling / 100f;
-                e.Parameters["CritFactor"] = critMultiplier;
+                e.Parameters["CritMultiplier"] = critMultiplier;
                 e.Parameters["A_Attack"] = attacker.Stat[(int) Stats.Attack].Value();
                 e.Parameters["A_Defense"] = attacker.Stat[(int) Stats.Defense].Value();
                 e.Parameters["A_Speed"] = attacker.Stat[(int) Stats.Speed].Value();

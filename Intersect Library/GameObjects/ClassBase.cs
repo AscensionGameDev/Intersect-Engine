@@ -31,6 +31,7 @@ namespace Intersect.GameObjects
         public int BasePoints { get; set; }
 
         public int CritChance { get; set; }
+        public double CritMultiplier { get; set; } = 1.5;
 
         //Combat
         public int Damage { get; set; } = 1;

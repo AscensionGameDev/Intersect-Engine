@@ -13,7 +13,7 @@ namespace Intersect.GameObjects
     public class ItemBase : DatabaseObject<ItemBase>
     {
         [Column("Animation")]
-        public Guid AnimationId { get; protected set; }
+        public Guid AnimationId { get; set; }
         [NotMapped]
         [JsonIgnore]
         public AnimationBase Animation
@@ -24,7 +24,7 @@ namespace Intersect.GameObjects
 
         [Column("AttackAnimation")]
         [JsonProperty]
-        public Guid AttackAnimationId { get; protected set; }
+        public Guid AttackAnimationId { get; set; }
         [NotMapped]
         [JsonIgnore]
         public AnimationBase AttackAnimation
@@ -33,10 +33,24 @@ namespace Intersect.GameObjects
             set => AttackAnimationId = value?.Id ?? Guid.Empty;
         }
 
+        [Column("EquipmentAnimation")]
+        public Guid EquipmentAnimationId { get; set; }
+        [NotMapped]
+        [JsonIgnore]
+        public AnimationBase EquipmentAnimation
+        {
+            get => AnimationBase.Get(EquipmentAnimationId);
+            set => EquipmentAnimationId = value?.Id ?? Guid.Empty;
+        }
+
         public bool Bound { get; set; }
         public int CritChance { get; set; }
+        public double CritMultiplier { get; set; } = 1.5;
+        public int Cooldown { get; set; }
         public int Damage { get; set; }
         public int DamageType { get; set; }
+        public int AttackSpeedModifier { get; set; }
+        public int AttackSpeedValue { get; set; }
 
         public ConsumableData Consumable { get; set; }
 
@@ -93,6 +107,16 @@ namespace Intersect.GameObjects
         public bool Stackable { get; set; }
         public int StatGrowth { get; set; }
         public int Tool { get; set; } = -1;
+
+        [Column("VitalsGiven")]
+        [JsonIgnore]
+        public string VitalsJson
+        {
+            get => DatabaseUtils.SaveIntArray(VitalsGiven, (int)Vitals.VitalCount);
+            set => StatsGiven = DatabaseUtils.LoadIntArray(value, (int)Vitals.VitalCount);
+        }
+        [NotMapped]
+        public int[] VitalsGiven { get; set; }
 
         [Column("StatsGiven")]
         [JsonIgnore]

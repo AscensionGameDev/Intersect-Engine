@@ -99,6 +99,7 @@ namespace Intersect.GameObjects
     public class SpellCombatData
     {
         public int CritChance { get; set; }
+        public double CritMultiplier { get; set; } = 1.5;
         public int DamageType { get; set; } = 1;
         public int HitRadius { get; set; }
         public bool Friendly { get; set; }

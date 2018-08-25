@@ -11,6 +11,7 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.Utilities;
+using System.Linq;
 
 namespace Intersect.Editor.Forms.Editors
 {
@@ -103,6 +104,9 @@ namespace Intersect.Editor.Forms.Editors
             cmbAnimation.Items.Clear();
             cmbAnimation.Items.Add(Strings.General.none);
             cmbAnimation.Items.AddRange(AnimationBase.Names);
+            cmbEquipmentAnimation.Items.Clear();
+            cmbEquipmentAnimation.Items.Add(Strings.General.none);
+            cmbEquipmentAnimation.Items.AddRange(AnimationBase.Names);
             cmbTeachSpell.Items.Clear();
             cmbTeachSpell.Items.Add(Strings.General.none);
             cmbTeachSpell.Items.AddRange(SpellBase.Names);
@@ -167,6 +171,7 @@ namespace Intersect.Editor.Forms.Editors
             lblRange.Text = Strings.ItemEditor.bonusrange;
             lblBonusEffect.Text = Strings.ItemEditor.bonuseffect;
             lblEffectPercent.Text = Strings.ItemEditor.bonusamount;
+            lblEquipmentAnimation.Text = Strings.ItemEditor.equipmentanimation;
             cmbEquipmentBonus.Items.Clear();
             for (int i = 0; i < Strings.ItemEditor.bonuseffects.Count; i++)
             {
@@ -177,6 +182,7 @@ namespace Intersect.Editor.Forms.Editors
             chk2Hand.Text = Strings.ItemEditor.twohanded;
             lblDamage.Text = Strings.ItemEditor.basedamage;
             lblCritChance.Text = Strings.ItemEditor.critchance;
+            lblCritMultiplier.Text = Strings.ItemEditor.critmultiplier;
             lblDamageType.Text = Strings.ItemEditor.damagetype;
             cmbDamageType.Items.Clear();
             for (int i = 0; i < Strings.Combat.damagetypes.Count; i++)
@@ -189,6 +195,21 @@ namespace Intersect.Editor.Forms.Editors
             lblProjectile.Text = Strings.ItemEditor.projectile;
             lblToolType.Text = Strings.ItemEditor.tooltype;
 
+            lblCooldown.Text = Strings.ItemEditor.cooldown;
+
+            grpVitalBonuses.Text = Strings.ItemEditor.vitalbonuses;
+            lblHealthBonus.Text = Strings.ItemEditor.health;
+            lblManaBonus.Text = Strings.ItemEditor.mana;
+
+            grpAttackSpeed.Text = Strings.ItemEditor.attackspeed;
+            lblAttackSpeedModifier.Text = Strings.ItemEditor.attackspeedmodifier;
+            lblAttackSpeedValue.Text = Strings.ItemEditor.attackspeedvalue;
+            cmbAttackSpeedModifier.Items.Clear();
+            foreach (var val in Strings.ItemEditor.attackspeedmodifiers.Values)
+            {
+                cmbAttackSpeedModifier.Items.Add(val.ToString());
+            }
+            
             lblMalePaperdoll.Text = Strings.ItemEditor.malepaperdoll;
             lblFemalePaperdoll.Text = Strings.ItemEditor.femalepaperdoll;
 
@@ -244,14 +265,20 @@ namespace Intersect.Editor.Forms.Editors
                 txtDesc.Text = mEditorItem.Desc;
                 cmbType.SelectedIndex = (int) mEditorItem.ItemType;
                 cmbPic.SelectedIndex = cmbPic.FindString(TextUtils.NullToNone(mEditorItem.Pic));
+                cmbEquipmentAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.EquipmentAnimationId) + 1;
                 nudPrice.Value = mEditorItem.Price;
                 nudStr.Value = mEditorItem.StatsGiven[0];
                 nudMag.Value = mEditorItem.StatsGiven[1];
                 nudDef.Value = mEditorItem.StatsGiven[2];
                 nudMR.Value = mEditorItem.StatsGiven[3];
                 nudSpd.Value = mEditorItem.StatsGiven[4];
+                nudHealthBonus.Value = mEditorItem.VitalsGiven[0];
+                nudManaBonus.Value = mEditorItem.VitalsGiven[1];
                 nudDamage.Value = mEditorItem.Damage;
                 nudCritChance.Value = mEditorItem.CritChance;
+                nudCritMultiplier.Value = (decimal)mEditorItem.CritMultiplier;
+                cmbAttackSpeedModifier.SelectedIndex = mEditorItem.AttackSpeedModifier;
+                nudAttackSpeedValue.Value = mEditorItem.AttackSpeedValue;
                 nudScaling.Value = mEditorItem.Scaling;
                 nudRange.Value = mEditorItem.StatGrowth;
                 chkBound.Checked = Convert.ToBoolean(mEditorItem.Bound);
@@ -303,11 +330,10 @@ namespace Intersect.Editor.Forms.Editors
                 cmbScalingStat.SelectedIndex = mEditorItem.ScalingStat;
 
                 //External References
-                cmbProjectile.SelectedIndex =
-                    ProjectileBase.ListIndex(mEditorItem.ProjectileId) + 1;
-                cmbAnimation.SelectedIndex =
-                    AnimationBase.ListIndex(mEditorItem.AnimationId) +
-                    1;
+                cmbProjectile.SelectedIndex = ProjectileBase.ListIndex(mEditorItem.ProjectileId) + 1;
+                cmbAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.AnimationId) + 1;
+
+                nudCooldown.Value = mEditorItem.Cooldown;
 
                 if (mChanged.IndexOf(mEditorItem) == -1)
                 {
@@ -702,6 +728,42 @@ namespace Intersect.Editor.Forms.Editors
         private void chkStackable_CheckedChanged(object sender, EventArgs e)
         {
             mEditorItem.Stackable = chkStackable.Checked;
+        }
+
+        private void nudCritMultiplier_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.CritMultiplier = (double)nudCritMultiplier.Value;
+        }
+
+        private void nudCooldown_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Cooldown = (int)nudCooldown.Value;
+        }
+
+        private void nudHealthBonus_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.VitalsGiven[0] = (int)nudHealthBonus.Value;
+        }
+
+        private void nudManaBonus_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.VitalsGiven[1] = (int)nudManaBonus.Value;
+        }
+
+        private void cmbEquipmentAnimation_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.EquipmentAnimation = AnimationBase.Get(AnimationBase.IdFromList(cmbEquipmentAnimation.SelectedIndex - 1));
+        }
+
+        private void cmbAttackSpeedModifier_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.AttackSpeedModifier = cmbAttackSpeedModifier.SelectedIndex;
+            nudAttackSpeedValue.Enabled = cmbAttackSpeedModifier.SelectedIndex > 0;
+        }
+
+        private void nudAttackSpeedValue_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.AttackSpeedValue = (int)nudAttackSpeedValue.Value;
         }
     }
 }

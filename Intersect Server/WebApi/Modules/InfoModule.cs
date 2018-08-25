@@ -73,8 +73,6 @@ namespace Intersect.Server.WebApi.Modules
                     minAttackRate = ServerOptions.Combat.MinAttackRate,
                     maxAttackRate = ServerOptions.Combat.MaxAttackRate,
                     blockingSlow = ServerOptions.Combat.BlockingSlow,
-                    critChance = ServerOptions.Combat.CritChance,
-                    critMultiplier = ServerOptions.Combat.CritMultiplier,
                     maxDashSpeed = ServerOptions.Combat.MaxDashSpeed
                 },
                 map = new

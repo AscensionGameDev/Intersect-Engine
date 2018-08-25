@@ -167,6 +167,7 @@ namespace Intersect.Editor.Forms.Editors
             grpCombat.Text = Strings.SpellEditor.combatspell;
             grpDamage.Text = Strings.SpellEditor.damagegroup;
             lblCritChance.Text = Strings.SpellEditor.critchance;
+            lblCritMultiplier.Text = Strings.SpellEditor.critmultiplier;
             lblDamageType.Text = Strings.SpellEditor.damagetype;
             lblHPDamage.Text = Strings.SpellEditor.hpdamage;
             lblManaDamage.Text = Strings.SpellEditor.mpdamage;
@@ -310,6 +311,7 @@ namespace Intersect.Editor.Forms.Editors
                 cmbScalingStat.SelectedIndex = mEditorItem.Combat.ScalingStat;
                 nudScaling.Value = mEditorItem.Combat.Scaling;
                 nudCritChance.Value = mEditorItem.Combat.CritChance;
+                nudCritMultiplier.Value = (decimal)mEditorItem.Combat.CritMultiplier;
 
                 chkHOTDOT.Checked = mEditorItem.Combat.HoTDoT;
                 nudBuffDuration.Value = mEditorItem.Combat.Duration;
@@ -792,6 +794,11 @@ namespace Intersect.Editor.Forms.Editors
         private void nudCastRange_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.Combat.CastRange = (int) nudCastRange.Value;
+        }
+
+        private void nudCritMultiplier_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Combat.CritMultiplier = (double)nudCritMultiplier.Value;
         }
     }
 }

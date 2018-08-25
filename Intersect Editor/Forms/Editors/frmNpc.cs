@@ -194,6 +194,7 @@ namespace Intersect.Editor.Forms.Editors
             grpCombat.Text = Strings.NpcEditor.combat;
             lblDamage.Text = Strings.NpcEditor.basedamage;
             lblCritChance.Text = Strings.NpcEditor.critchance;
+            lblCritMultiplier.Text = Strings.NpcEditor.critmultiplier;
             lblDamageType.Text = Strings.NpcEditor.damagetype;
             cmbDamageType.Items.Clear();
             for (int i = 0; i < Strings.Combat.damagetypes.Count; i++)
@@ -259,6 +260,7 @@ namespace Intersect.Editor.Forms.Editors
                 //Combat
                 nudDamage.Value = mEditorItem.Damage;
                 nudCritChance.Value = mEditorItem.CritChance;
+                nudCritMultiplier.Value = (decimal)mEditorItem.CritMultiplier;
                 nudScaling.Value = mEditorItem.Scaling;
                 cmbDamageType.SelectedIndex = mEditorItem.DamageType;
                 cmbScalingStat.SelectedIndex = mEditorItem.ScalingStat;
@@ -786,6 +788,11 @@ namespace Intersect.Editor.Forms.Editors
         private void chkFocusDamageDealer_CheckedChanged(object sender, EventArgs e)
         {
             mEditorItem.FocusHighestDamageDealer = chkFocusDamageDealer.Checked;
+        }
+
+        private void nudCritMultiplier_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.CritMultiplier = (double)nudCritMultiplier.Value;
         }
     }
 }

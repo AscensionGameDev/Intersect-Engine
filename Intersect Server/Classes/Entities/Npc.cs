@@ -194,7 +194,7 @@ namespace Intersect.Server.Classes.Entities
             {
                 base.TryAttack(enemy, Base.Damage, (DamageType) Base.DamageType,
                     (Stats) Base.ScalingStat,
-                    Base.Scaling, Base.CritChance, Options.CritMultiplier, deadAnimations, aliveAnimations);
+                    Base.Scaling, Base.CritChance, Base.CritMultiplier, deadAnimations, aliveAnimations);
                 PacketSender.SendEntityAttack(this, (int) EntityTypes.GlobalEntity, MapId, CalculateAttackTime());
             }
         }

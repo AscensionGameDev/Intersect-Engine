@@ -725,7 +725,7 @@ namespace Intersect.Server.Classes.Entities
             {
                 base.TryAttack(enemy, weapon.Damage, (DamageType)weapon.DamageType,
                     (Stats)weapon.ScalingStat,
-                    weapon.Scaling, weapon.CritChance, Options.CritMultiplier, null, null, weapon);
+                    weapon.Scaling, weapon.CritChance, weapon.CritMultiplier, null, null, weapon);
             }
             else
             {
@@ -734,12 +734,12 @@ namespace Intersect.Server.Classes.Entities
                 {
                     base.TryAttack(enemy, classBase.Damage,
                         (DamageType)classBase.DamageType, (Stats)classBase.ScalingStat,
-                        classBase.Scaling, classBase.CritChance, Options.CritMultiplier);
+                        classBase.Scaling, classBase.CritChance, classBase.CritMultiplier);
                 }
                 else
                 {
                     base.TryAttack(enemy, 1, (DamageType)DamageType.Physical, Stats.Attack,
-                        100, 10, Options.CritMultiplier);
+                        100, 10, 1.5);
                 }
             }
             PacketSender.SendEntityAttack(this, (int)EntityTypes.GlobalEntity, MapId, CalculateAttackTime());

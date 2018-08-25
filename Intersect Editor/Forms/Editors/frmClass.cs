@@ -147,6 +147,7 @@ namespace Intersect.Editor.Forms.Editors
                 //Combat
                 nudDamage.Value = mEditorItem.Damage;
                 nudCritChance.Value = mEditorItem.CritChance;
+                nudCritMultiplier.Value = (decimal)mEditorItem.CritMultiplier;
                 nudScaling.Value = mEditorItem.Scaling;
                 cmbDamageType.SelectedIndex = mEditorItem.DamageType;
                 cmbScalingStat.SelectedIndex = mEditorItem.ScalingStat;
@@ -338,6 +339,7 @@ namespace Intersect.Editor.Forms.Editors
             grpCombat.Text = Strings.ClassEditor.combat;
             lblDamage.Text = Strings.ClassEditor.basedamage;
             lblCritChance.Text = Strings.ClassEditor.critchance;
+            lblCritMultiplier.Text = Strings.ClassEditor.critmultiplier;
             lblDamageType.Text = Strings.ClassEditor.damagetype;
             cmbDamageType.Items.Clear();
             for (int i = 0; i < Strings.Combat.damagetypes.Count; i++)
@@ -990,6 +992,11 @@ namespace Intersect.Editor.Forms.Editors
                 mEditorItem.Items.RemoveAt(i);
             }
             UpdateSpawnItemValues(true);
+        }
+
+        private void nudCritMultiplier_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.CritMultiplier = (double)nudCritMultiplier.Value;
         }
     }
 }

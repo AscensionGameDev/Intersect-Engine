@@ -908,7 +908,7 @@ namespace Intersect.Server.Classes.Entities
                     if (((Player)this).InParty((Player)enemy) == true) return;
                 }
                 Attack(enemy, parentItem.Damage, 0, (DamageType)parentItem.DamageType, (Stats)parentItem.ScalingStat,
-                    parentItem.Scaling, parentItem.CritChance, Options.CritMultiplier);
+                    parentItem.Scaling, parentItem.CritChance, parentItem.CritMultiplier);
             }
 
             //If projectile, check if a splash spell is applied
@@ -1010,7 +1010,7 @@ namespace Intersect.Server.Classes.Entities
 
             Attack(enemy, damageHealth, damageMana, (DamageType)spellBase.Combat.DamageType,
                 (Stats)spellBase.Combat.ScalingStat,
-                spellBase.Combat.Scaling, spellBase.Combat.CritChance, Options.CritMultiplier, deadAnimations, aliveAnimations);
+                spellBase.Combat.Scaling, spellBase.Combat.CritChance, spellBase.Combat.CritMultiplier, deadAnimations, aliveAnimations);
 
             var statBuffTime = -1;
             for (var i = 0; i < (int)Stats.StatCount; i++)
@@ -1872,7 +1872,7 @@ namespace Intersect.Server.Classes.Entities
 
             Attacker?.Attack(Target, SpellBase.Combat.VitalDiff[0], SpellBase.Combat.VitalDiff[1],
                 (DamageType)SpellBase.Combat.DamageType, (Stats)SpellBase.Combat.ScalingStat, SpellBase.Combat.Scaling,
-                SpellBase.Combat.CritChance, Options.CritMultiplier, deadAnimations, aliveAnimations);
+                SpellBase.Combat.CritChance, SpellBase.Combat.CritMultiplier, deadAnimations, aliveAnimations);
             mInterval = Globals.System.GetTimeMs() + SpellBase.Combat.HotDotInterval;
             Count--;
         }

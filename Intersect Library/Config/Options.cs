@@ -34,8 +34,6 @@ namespace Intersect
         public static int MinAttackRate => _options.CombatOpts.MinAttackRate;
         public static int MaxAttackRate => _options.CombatOpts.MaxAttackRate;
         public static int BlockingSlow => _options.CombatOpts.BlockingSlow;
-        public static int CritChance => _options.CombatOpts.CritChance;
-        public static int CritMultiplier => _options.CombatOpts.CritMultiplier;
         public static int MaxDashSpeed => _options.CombatOpts.MaxDashSpeed;
         public static int GameBorderStyle => _options.MapOpts.GameBorderStyle;
         public static int ItemRepawnTime => _options.MapOpts.ItemSpawnTime;

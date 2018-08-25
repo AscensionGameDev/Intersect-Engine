@@ -449,6 +449,10 @@
     <Compile Include="Migrations\Game\20180824021946_ResourceDeathEvents.designer.cs">
       <DependentUpon>20180824021946_ResourceDeathEvents.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\Game\20180825090026_CritAndItemChanges.cs" />
+    <Compile Include="Migrations\Game\20180825090026_CritAndItemChanges.designer.cs">
+      <DependentUpon>20180825090026_CritAndItemChanges.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Game\GameContextModelSnapshot.cs" />
     <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />
     <Compile Include="Models\User.cs" />
