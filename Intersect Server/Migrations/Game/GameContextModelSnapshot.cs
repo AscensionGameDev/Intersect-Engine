@@ -21,12 +21,6 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("JsonLowerLights")
-                        .HasColumnName("Lower_Lights");
-
-                    b.Property<string>("JsonUpperLights")
-                        .HasColumnName("Upper_Lights");
-
                     b.Property<string>("Name");
 
                     b.Property<string>("Sound");
@@ -763,6 +757,8 @@ namespace Intersect.Server.Migrations.Game
 
                             b1.Property<int>("FrameSpeed");
 
+                            b1.Property<string>("Light");
+
                             b1.Property<int>("LoopCount");
 
                             b1.Property<string>("Sprite");
@@ -790,6 +786,8 @@ namespace Intersect.Server.Migrations.Game
                             b1.Property<int>("FrameCount");
 
                             b1.Property<int>("FrameSpeed");
+
+                            b1.Property<string>("Light");
 
                             b1.Property<int>("LoopCount");
 

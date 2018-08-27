@@ -24,6 +24,7 @@ using Intersect_Client.Classes.UI.Game;
 using Intersect_Client.Classes.UI.Game.Chat;
 using Intersect_Client.Classes.UI.Menu;
 using Color = IntersectClientExtras.GenericClasses.Color;
+using System.Linq;
 
 namespace Intersect_Client.Classes.Networking
 {
@@ -1450,7 +1451,7 @@ namespace Intersect_Client.Classes.Networking
             Globals.MapGrid = new Guid[Globals.MapGridWidth, Globals.MapGridHeight];
             if (clearKnownMaps)
             {
-                foreach (var map in MapInstance.Lookup.Values)
+                foreach (var map in MapInstance.Lookup.Values.ToArray())
                 {
                     ((MapInstance) map).Dispose();
                 }

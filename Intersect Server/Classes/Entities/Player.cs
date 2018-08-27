@@ -112,6 +112,10 @@ namespace Intersect.Server.Classes.Entities
                     Hotbar.Add(new HotbarSlot(i));
                 }
             }
+            for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+            {
+                Equipment[i] = -1;
+            }
         }
 
 
@@ -447,19 +451,56 @@ namespace Intersect.Server.Classes.Entities
 		public override int GetMaxVital(int vital)
 		{
 			ClassBase myclass = ClassBase.Get(this.ClassId);
-			if (myclass.IncreasePercentage == 1)
-			{
-				return (int)(myclass.BaseVital[vital] * Math.Pow(1 + ((double)myclass.VitalIncrease[vital] / 100), Level - 1));
-			}
-			else
-			{
-				return myclass.BaseVital[vital] + (myclass.VitalIncrease[vital] * (Level - 1));
-			}
+            var classVital = 20;
+            if (myclass != null)
+            {
+                if (myclass.IncreasePercentage == 1)
+                {
+                    classVital = (int)(myclass.BaseVital[vital] * Math.Pow(1 + ((double)myclass.VitalIncrease[vital] / 100), Level - 1));
+                }
+                else
+                {
+                    classVital = myclass.BaseVital[vital] + (myclass.VitalIncrease[vital] * (Level - 1));
+                }
+            }
+
+            //Loop through equipment and see if any items grant vital buffs
+            for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+            {
+                if (Equipment[i] >= 0 && Equipment[i] < Options.MaxInvItems)
+                {
+                    if (Items[Equipment[i]].ItemId != Guid.Empty)
+                    {
+                        var item = ItemBase.Get(Items[Equipment[i]].ItemId);
+                        if (item != null)
+                        {
+                            classVital += item.VitalsGiven[vital];
+                        }
+                    }
+                }
+            }
+
+            //Must have at least 1 hp and no less than 0 mp
+            if (vital == (int)Vitals.Health)
+            {
+                classVital = Math.Max(classVital, 1);
+            }
+            else if (vital == (int)Vitals.Mana)
+            {
+                classVital = Math.Max(classVital, 0);
+            }
+            return classVital;
 		}
 		public override int GetMaxVital(Vitals vital)
 		{
 			return GetMaxVital((int)vital);
 		}
+        public void FixVitals()
+        {
+            //If add/remove equipment then our vitals might exceed the new max.. this should fix those cases.
+            SetVital(Vitals.Health, GetVital(Vitals.Health));
+            SetVital(Vitals.Mana, GetVital(Vitals.Mana));
+        }
 
 		//Leveling
 		public void SetLevel(int level, bool resetExperience = false)
@@ -1024,6 +1065,7 @@ namespace Intersect.Server.Classes.Entities
                         if (Equipment[i] == slot)
                         {
                             Equipment[i] = -1;
+                            FixVitals();
                             PacketSender.SendPlayerEquipmentToProximity(this);
                             PacketSender.SendEntityStats(this);
                             return;
@@ -1127,6 +1169,7 @@ namespace Intersect.Server.Classes.Entities
                                 Equipment[itemBase.EquipmentSlot] = slot;
                             }
                         }
+                        FixVitals();
                         PacketSender.SendPlayerEquipmentToProximity(this);
                         PacketSender.SendEntityStats(this);
                         if (equipped) return;
@@ -2835,6 +2878,7 @@ namespace Intersect.Server.Classes.Entities
         public void UnequipItem(int slot)
         {
             Equipment[slot] = -1;
+            FixVitals();
             PacketSender.SendPlayerEquipmentToProximity(this);
             PacketSender.SendEntityStats(this);
         }
@@ -2848,7 +2892,9 @@ namespace Intersect.Server.Classes.Entities
                 else if (Equipment[i] == item2)
                     Equipment[i] = item1;
             }
+            FixVitals();
             PacketSender.SendPlayerEquipmentToProximity(this);
+            PacketSender.SendEntityStats(this);
         }
 
         public void EquipmentProcessItemLoss(int slot)
@@ -2858,6 +2904,7 @@ namespace Intersect.Server.Classes.Entities
                 if (Equipment[i] == slot)
                     Equipment[i] = -1;
             }
+            FixVitals();
             PacketSender.SendPlayerEquipmentToProximity(this);
             PacketSender.SendEntityStats(this);
         }

@@ -12,6 +12,12 @@ namespace Intersect.GameObjects
     {
         public AnimationLayer()
         {
+            Lights = new LightBase[FrameCount];
+
+            for (var frame = 0; frame < FrameCount; ++frame)
+            {
+                Lights[frame] = new LightBase();
+            }
         }
 
         public string Sprite { get; set; } = "";
@@ -30,6 +36,13 @@ namespace Intersect.GameObjects
 
         public bool AlternateRenderLayer { get; set; }
 
+        [JsonIgnore]
+        public string Light
+        {
+            get => JsonConvert.SerializeObject(Lights);
+            set => Lights = JsonConvert.DeserializeObject<LightBase[]>(value);
+        }
+
         [NotMapped]
         public LightBase[] Lights { get; set; }
     }
@@ -38,20 +51,6 @@ namespace Intersect.GameObjects
     {
         public AnimationLayer Lower { get; set; }
         public AnimationLayer Upper { get; set; }
-
-        [Column("Lower_Lights")]
-        public string JsonLowerLights
-        {
-            get => JsonConvert.SerializeObject(Lower.Lights);
-            set => Lower.Lights = JsonConvert.DeserializeObject<LightBase[]>(value);
-        }
-
-        [Column("Upper_Lights")]
-        public string JsonUpperLights
-        {
-            get => JsonConvert.SerializeObject(Upper.Lights);
-            set => Upper.Lights = JsonConvert.DeserializeObject<LightBase[]>(value);
-        }
 
         //Misc
         public string Sound { get; set; }

@@ -68,6 +68,7 @@ namespace Intersect_Client.Classes.Entities
 
         public Guid[] Equipment = new Guid[Options.EquipmentSlots.Count];
         public int[] MyEquipment = new int[Options.EquipmentSlots.Count];
+        public AnimationInstance[] EquipmentAnimations = new AnimationInstance[Options.EquipmentSlots.Count];
 
         //Extras
         public string Face = "";
@@ -445,6 +446,58 @@ namespace Intersect_Client.Classes.Entities
                     IsMoving = false;
                 }
             }
+
+            //Check to see if we should start or stop equipment animations
+            if (Equipment.Length == Options.EquipmentSlots.Count)
+            {
+                for (int z = 0; z < Options.EquipmentSlots.Count; z++)
+                {
+                    if (Equipment[z] != Guid.Empty && (this != Globals.Me || MyEquipment[z] < Options.MaxInvItems))
+                    {
+                        var itemId = Guid.Empty;
+                        if (this == Globals.Me)
+                        {
+                            var slot = MyEquipment[z];
+                            if (slot > -1)
+                                itemId = Inventory[slot].ItemId;
+                        }
+                        else
+                        {
+                            itemId = Equipment[z];
+                        }
+                        var itm = ItemBase.Get(itemId);
+                        AnimationBase anim = null;
+                        if (itm != null)
+                        {
+                            anim = itm.EquipmentAnimation;
+                        }
+                        if (anim != null)
+                        {
+                            if (EquipmentAnimations[z] != null && EquipmentAnimations[z].MyBase != anim)
+                            {
+                                EquipmentAnimations[z].Dispose();
+                                Animations.Remove(EquipmentAnimations[z]);
+                                EquipmentAnimations[z] = null;
+                            }
+                            if (EquipmentAnimations[z] == null)
+                            {
+                                EquipmentAnimations[z] = new AnimationInstance(anim, true, true, -1, this);
+                                Animations.Add(EquipmentAnimations[z]);
+                            }
+                        }
+                        else
+                        {
+                            if (EquipmentAnimations[z] != null)
+                            {
+                                EquipmentAnimations[z].Dispose();
+                                Animations.Remove(EquipmentAnimations[z]);
+                                EquipmentAnimations[z] = null;
+                            }
+                        }
+                    }
+                }
+            }
+
             foreach (AnimationInstance animInstance in Animations)
             {
                 animInstance.Update();
@@ -673,8 +726,7 @@ namespace Intersect_Client.Classes.Entities
 					//Check for player
 					if (Options.PaperdollOrder[Dir][z] == "Player")
 					{
-						GameGraphics.DrawGameTexture(Texture, srcRectangle, destRectangle,
-							new Intersect.Color(alpha, 255, 255, 255));
+						GameGraphics.DrawGameTexture(Texture, srcRectangle, destRectangle, new Intersect.Color(alpha, 255, 255, 255));
 					}
 					else if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z]) > -1)
 					{
@@ -689,7 +741,9 @@ namespace Intersect_Client.Classes.Entities
 								var itemId = Guid.Empty;
 								if (this == Globals.Me)
 								{
-									itemId = Inventory[MyEquipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z])]].ItemId;
+                                    var slot = MyEquipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z])];
+                                    if (slot > -1)
+                                        itemId = Inventory[slot].ItemId;
 								}
 								else
 								{
@@ -782,8 +836,7 @@ namespace Intersect_Client.Classes.Entities
                 }
                 destRectangle.Width = srcRectangle.Width;
                 destRectangle.Height = srcRectangle.Height;
-                GameGraphics.DrawGameTexture(paperdollTex, srcRectangle, destRectangle,
-                    new Intersect.Color(alpha, 255, 255, 255));
+                GameGraphics.DrawGameTexture(paperdollTex, srcRectangle, destRectangle, new Intersect.Color(alpha, 255, 255, 255));
             }
         }
 

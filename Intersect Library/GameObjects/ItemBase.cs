@@ -113,7 +113,7 @@ namespace Intersect.GameObjects
         public string VitalsJson
         {
             get => DatabaseUtils.SaveIntArray(VitalsGiven, (int)Vitals.VitalCount);
-            set => StatsGiven = DatabaseUtils.LoadIntArray(value, (int)Vitals.VitalCount);
+            set => VitalsGiven = DatabaseUtils.LoadIntArray(value, (int)Vitals.VitalCount);
         }
         [NotMapped]
         public int[] VitalsGiven { get; set; }
