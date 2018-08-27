@@ -538,7 +538,7 @@ namespace Intersect_Client.Classes.Entities
             return true;
         }
 
-        public int CalculateAttackTime()
+        public virtual int CalculateAttackTime()
         {
             return
                 (int)

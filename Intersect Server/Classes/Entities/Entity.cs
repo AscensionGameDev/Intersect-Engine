@@ -734,7 +734,7 @@ namespace Intersect.Server.Classes.Entities
         }
 
         //Combat
-        public int CalculateAttackTime()
+        public virtual int CalculateAttackTime()
         {
             return
                 (int)

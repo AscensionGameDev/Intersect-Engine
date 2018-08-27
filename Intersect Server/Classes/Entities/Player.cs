@@ -824,6 +824,30 @@ namespace Intersect.Server.Classes.Entities
             }
         }
 
+        public override int CalculateAttackTime()
+        {
+            ItemBase weapon = null;
+            var attackTime = base.CalculateAttackTime();
+            if (Options.WeaponIndex < Equipment.Length && Equipment[Options.WeaponIndex] >= 0)
+            {
+                weapon = ItemBase.Get(Items[Equipment[Options.WeaponIndex]].ItemId);
+            }
+
+            if (weapon != null)
+            {
+                if (weapon.AttackSpeedModifier == 1) // Static
+                {
+                    attackTime = weapon.AttackSpeedValue;
+                }
+                else if (weapon.AttackSpeedModifier == 2) //Percentage
+                {
+                    attackTime = (int)(attackTime * (100f / weapon.AttackSpeedValue));
+                }
+            }
+            attackTime -= 32; //Account for lag/ping... we might base this off actual ping down the line at some point.
+            return attackTime;
+        }
+
         //Warping
         public override void Warp(Guid newMapId, int newX, int newY, bool adminWarp = false)
         {

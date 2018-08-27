@@ -937,6 +937,40 @@ namespace Intersect_Client.Classes.Entities
             return ExperienceToNextLevel;
         }
 
+        public override int CalculateAttackTime()
+        {
+            ItemBase weapon = null;
+            var attackTime = base.CalculateAttackTime();
+            if (this == Globals.Me)
+            {
+                if (Options.WeaponIndex < Equipment.Length && MyEquipment[Options.WeaponIndex] >= 0)
+                {
+                    weapon = ItemBase.Get(Inventory[MyEquipment[Options.WeaponIndex]].ItemId);
+                }
+            }
+            else
+            {
+                if (Options.WeaponIndex < Equipment.Length && Equipment[Options.WeaponIndex] != Guid.Empty)
+                {
+                    weapon = ItemBase.Get(Equipment[Options.WeaponIndex]);
+                }
+            }
+
+
+            if (weapon != null)
+            {
+                if (weapon.AttackSpeedModifier == 1) // Static
+                {
+                    attackTime = weapon.AttackSpeedValue;
+                }
+                else if (weapon.AttackSpeedModifier == 2) //Percentage
+                {
+                    attackTime = (int)(attackTime * (100f / weapon.AttackSpeedValue));
+                }
+            }
+            return attackTime;
+        }
+
         //Movement Processing
         private void ProcessDirectionalInput()
         {
