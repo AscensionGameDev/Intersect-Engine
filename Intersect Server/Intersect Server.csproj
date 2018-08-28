@@ -453,6 +453,10 @@
     <Compile Include="Migrations\Game\20180825090026_CritAndItemChanges.designer.cs">
       <DependentUpon>20180825090026_CritAndItemChanges.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\Game\20180828081038_AddOptResourcesBelowEntities.cs" />
+    <Compile Include="Migrations\Game\20180828081038_AddOptResourcesBelowEntities.designer.cs">
+      <DependentUpon>20180828081038_AddOptResourcesBelowEntities.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Game\GameContextModelSnapshot.cs" />
     <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />
     <Compile Include="Models\User.cs" />

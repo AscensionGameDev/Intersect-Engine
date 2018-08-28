@@ -734,7 +734,7 @@ namespace Intersect.Server.Classes.Maps
                                 {
                                     resourceSpawnInstance.RespawnTime = Globals.System.GetTimeMs() +
                                                                         resourceSpawnInstance.Entity.Base
-                                                                            .SpawnDuration * 1000;
+                                                                            .SpawnDuration;
                                 }
                                 else if (resourceSpawnInstance.RespawnTime < Globals.System.GetTimeMs())
                                 {

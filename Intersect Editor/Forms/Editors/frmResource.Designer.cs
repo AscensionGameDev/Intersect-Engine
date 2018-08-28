@@ -63,6 +63,9 @@ namespace Intersect.Editor.Forms.Editors
             this.lblPic = new System.Windows.Forms.Label();
             this.tmrRender = new System.Windows.Forms.Timer(this.components);
             this.pnlContainer = new System.Windows.Forms.Panel();
+            this.grpCommonEvent = new DarkUI.Controls.DarkGroupBox();
+            this.cmbEvent = new DarkUI.Controls.DarkComboBox();
+            this.lblEvent = new System.Windows.Forms.Label();
             this.grpRegen = new DarkUI.Controls.DarkGroupBox();
             this.nudHpRegen = new DarkUI.Controls.DarkNumericUpDown();
             this.lblHpRegen = new System.Windows.Forms.Label();
@@ -88,9 +91,8 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
-            this.grpCommonEvent = new DarkUI.Controls.DarkGroupBox();
-            this.cmbEvent = new DarkUI.Controls.DarkComboBox();
-            this.lblEvent = new System.Windows.Forms.Label();
+            this.chkInitialBelowEntities = new DarkUI.Controls.DarkCheckBox();
+            this.chkExhaustedBelowEntities = new DarkUI.Controls.DarkCheckBox();
             this.grpResources.SuspendLayout();
             this.grpGeneral.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudMaxHp)).BeginInit();
@@ -102,13 +104,13 @@ namespace Intersect.Editor.Forms.Editors
             this.initalGraphicContainer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picInitialResource)).BeginInit();
             this.pnlContainer.SuspendLayout();
+            this.grpCommonEvent.SuspendLayout();
             this.grpRegen.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudHpRegen)).BeginInit();
             this.grpDrops.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudDropAmount)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDropChance)).BeginInit();
             this.toolStrip.SuspendLayout();
-            this.grpCommonEvent.SuspendLayout();
             this.SuspendLayout();
             // 
             // grpResources
@@ -365,6 +367,8 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpGraphics.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpGraphics.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpGraphics.Controls.Add(this.chkExhaustedBelowEntities);
+            this.grpGraphics.Controls.Add(this.chkInitialBelowEntities);
             this.grpGraphics.Controls.Add(this.chkExhaustedFromTileset);
             this.grpGraphics.Controls.Add(this.chkInitialFromTileset);
             this.grpGraphics.Controls.Add(this.exhaustedGraphicContainer);
@@ -524,6 +528,53 @@ namespace Intersect.Editor.Forms.Editors
             this.pnlContainer.Size = new System.Drawing.Size(731, 458);
             this.pnlContainer.TabIndex = 18;
             this.pnlContainer.Visible = false;
+            // 
+            // grpCommonEvent
+            // 
+            this.grpCommonEvent.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpCommonEvent.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpCommonEvent.Controls.Add(this.cmbEvent);
+            this.grpCommonEvent.Controls.Add(this.lblEvent);
+            this.grpCommonEvent.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpCommonEvent.Location = new System.Drawing.Point(462, 116);
+            this.grpCommonEvent.Margin = new System.Windows.Forms.Padding(2);
+            this.grpCommonEvent.Name = "grpCommonEvent";
+            this.grpCommonEvent.Padding = new System.Windows.Forms.Padding(2);
+            this.grpCommonEvent.Size = new System.Drawing.Size(244, 69);
+            this.grpCommonEvent.TabIndex = 33;
+            this.grpCommonEvent.TabStop = false;
+            this.grpCommonEvent.Text = "Common Event";
+            // 
+            // cmbEvent
+            // 
+            this.cmbEvent.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbEvent.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbEvent.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbEvent.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbEvent.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbEvent.ButtonIcon")));
+            this.cmbEvent.DrawDropdownHoverOutline = false;
+            this.cmbEvent.DrawFocusRectangle = false;
+            this.cmbEvent.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbEvent.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbEvent.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbEvent.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbEvent.FormattingEnabled = true;
+            this.cmbEvent.Location = new System.Drawing.Point(8, 35);
+            this.cmbEvent.Name = "cmbEvent";
+            this.cmbEvent.Size = new System.Drawing.Size(195, 21);
+            this.cmbEvent.TabIndex = 19;
+            this.cmbEvent.Text = null;
+            this.cmbEvent.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbEvent.SelectedIndexChanged += new System.EventHandler(this.cmbEvent_SelectedIndexChanged);
+            // 
+            // lblEvent
+            // 
+            this.lblEvent.AutoSize = true;
+            this.lblEvent.Location = new System.Drawing.Point(5, 18);
+            this.lblEvent.Name = "lblEvent";
+            this.lblEvent.Size = new System.Drawing.Size(38, 13);
+            this.lblEvent.TabIndex = 18;
+            this.lblEvent.Text = "Event:";
             // 
             // grpRegen
             // 
@@ -840,51 +891,23 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
-            // grpCommonEvent
+            // chkInitialBelowEntities
             // 
-            this.grpCommonEvent.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpCommonEvent.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpCommonEvent.Controls.Add(this.cmbEvent);
-            this.grpCommonEvent.Controls.Add(this.lblEvent);
-            this.grpCommonEvent.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpCommonEvent.Location = new System.Drawing.Point(462, 116);
-            this.grpCommonEvent.Margin = new System.Windows.Forms.Padding(2);
-            this.grpCommonEvent.Name = "grpCommonEvent";
-            this.grpCommonEvent.Padding = new System.Windows.Forms.Padding(2);
-            this.grpCommonEvent.Size = new System.Drawing.Size(244, 69);
-            this.grpCommonEvent.TabIndex = 33;
-            this.grpCommonEvent.TabStop = false;
-            this.grpCommonEvent.Text = "Common Event";
+            this.chkInitialBelowEntities.Location = new System.Drawing.Point(245, 13);
+            this.chkInitialBelowEntities.Name = "chkInitialBelowEntities";
+            this.chkInitialBelowEntities.Size = new System.Drawing.Size(98, 21);
+            this.chkInitialBelowEntities.TabIndex = 34;
+            this.chkInitialBelowEntities.Text = "Below Entities";
+            this.chkInitialBelowEntities.CheckedChanged += new System.EventHandler(this.chkInitialBelowEntities_CheckedChanged);
             // 
-            // cmbEvent
+            // chkExhaustedBelowEntities
             // 
-            this.cmbEvent.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbEvent.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbEvent.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbEvent.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbEvent.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbEvent.ButtonIcon")));
-            this.cmbEvent.DrawDropdownHoverOutline = false;
-            this.cmbEvent.DrawFocusRectangle = false;
-            this.cmbEvent.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbEvent.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbEvent.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbEvent.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbEvent.FormattingEnabled = true;
-            this.cmbEvent.Location = new System.Drawing.Point(8, 35);
-            this.cmbEvent.Name = "cmbEvent";
-            this.cmbEvent.Size = new System.Drawing.Size(195, 21);
-            this.cmbEvent.TabIndex = 19;
-            this.cmbEvent.TextPadding = new System.Windows.Forms.Padding(2);
-            this.cmbEvent.SelectedIndexChanged += new System.EventHandler(this.cmbEvent_SelectedIndexChanged);
-            // 
-            // lblEvent
-            // 
-            this.lblEvent.AutoSize = true;
-            this.lblEvent.Location = new System.Drawing.Point(5, 18);
-            this.lblEvent.Name = "lblEvent";
-            this.lblEvent.Size = new System.Drawing.Size(38, 13);
-            this.lblEvent.TabIndex = 18;
-            this.lblEvent.Text = "Event:";
+            this.chkExhaustedBelowEntities.Location = new System.Drawing.Point(597, 13);
+            this.chkExhaustedBelowEntities.Name = "chkExhaustedBelowEntities";
+            this.chkExhaustedBelowEntities.Size = new System.Drawing.Size(98, 21);
+            this.chkExhaustedBelowEntities.TabIndex = 35;
+            this.chkExhaustedBelowEntities.Text = "Below Entities";
+            this.chkExhaustedBelowEntities.CheckedChanged += new System.EventHandler(this.chkExhaustedBelowEntities_CheckedChanged);
             // 
             // FrmResource
             // 
@@ -920,6 +943,8 @@ namespace Intersect.Editor.Forms.Editors
             this.initalGraphicContainer.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picInitialResource)).EndInit();
             this.pnlContainer.ResumeLayout(false);
+            this.grpCommonEvent.ResumeLayout(false);
+            this.grpCommonEvent.PerformLayout();
             this.grpRegen.ResumeLayout(false);
             this.grpRegen.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudHpRegen)).EndInit();
@@ -929,8 +954,6 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudDropChance)).EndInit();
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
-            this.grpCommonEvent.ResumeLayout(false);
-            this.grpCommonEvent.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -996,5 +1019,7 @@ namespace Intersect.Editor.Forms.Editors
         private DarkGroupBox grpCommonEvent;
         private DarkComboBox cmbEvent;
         private System.Windows.Forms.Label lblEvent;
+        private DarkCheckBox chkExhaustedBelowEntities;
+        private DarkCheckBox chkInitialBelowEntities;
     }
 }

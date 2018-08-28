@@ -6,6 +6,8 @@ using Intersect.GameObjects;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.Maps;
+using System.Collections.Generic;
 
 namespace Intersect_Client.Classes.Entities
 {
@@ -98,6 +100,61 @@ namespace Intersect_Client.Classes.Entities
                 }
             }
             return result;
+        }
+
+        public override HashSet<Entity> DetermineRenderOrder(HashSet<Entity> renderList, MapInstance map)
+        {
+            if (IsDead && !BaseResource.Exhausted.RenderBelowEntities) return base.DetermineRenderOrder(renderList, map);
+            if (!IsDead && !BaseResource.Initial.RenderBelowEntities) return base.DetermineRenderOrder(renderList, map);
+            //Otherwise we are alive or dead and we want to render below players/npcs
+            if (renderList != null)
+            {
+                renderList.Remove(this);
+            }
+
+            if (map == null || Globals.Me == null || Globals.Me.MapInstance == null)
+            {
+                return null;
+            }
+            var gridX = Globals.Me.MapInstance.MapGridX;
+            var gridY = Globals.Me.MapInstance.MapGridY;
+            for (int x = gridX - 1; x <= gridX + 1; x++)
+            {
+                for (int y = gridY - 1; y <= gridY + 1; y++)
+                {
+                    if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
+                        Globals.MapGrid[x, y] != Guid.Empty)
+                    {
+                        if (Globals.MapGrid[x, y] == CurrentMap)
+                        {
+                            var priority = mRenderPriority;
+                            if (CurrentZ != 0)
+                            {
+                                priority += 3;
+                            }
+                            if (y == gridY - 1)
+                            {
+                                GameGraphics.RenderingEntities[priority, CurrentY].Add(this);
+                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight + CurrentY];
+                                return renderList;
+                            }
+                            else if (y == gridY)
+                            {
+                                GameGraphics.RenderingEntities[priority, Options.MapHeight + CurrentY].Add(this);
+                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight * 2 + CurrentY];
+                                return renderList;
+                            }
+                            else
+                            {
+                                GameGraphics.RenderingEntities[priority, Options.MapHeight * 2 + CurrentY].Add(this);
+                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight * 3 + CurrentY];
+                                return renderList;
+                            }
+                        }
+                    }
+                }
+            }
+            return renderList;
         }
 
         private void CalculateRenderBounds()

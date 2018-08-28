@@ -31,6 +31,7 @@ namespace Intersect.Editor.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmProgress));
             this.lblStatus = new System.Windows.Forms.Label();
             this.tmrUpdater = new System.Windows.Forms.Timer(this.components);
             this.btnCancel = new DarkUI.Controls.DarkButton();
@@ -71,7 +72,7 @@ namespace Intersect.Editor.Forms
             this.progressBar.Size = new System.Drawing.Size(256, 23);
             this.progressBar.TabIndex = 1;
             // 
-            // frmProgress
+            // FrmProgress
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -82,6 +83,7 @@ namespace Intersect.Editor.Forms
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.lblStatus);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FrmProgress";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Doing Work";

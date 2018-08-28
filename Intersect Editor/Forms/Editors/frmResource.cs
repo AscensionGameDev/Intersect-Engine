@@ -187,6 +187,11 @@ namespace Intersect.Editor.Forms.Editors
             lblPic.Text = Strings.ResourceEditor.initialgraphic;
             lblPic2.Text = Strings.ResourceEditor.exhaustedgraphic;
 
+            chkExhaustedBelowEntities.Text = Strings.ResourceEditor.belowentities;
+            chkInitialBelowEntities.Text = Strings.ResourceEditor.belowentities;
+            chkInitialFromTileset.Text = Strings.ResourceEditor.fromtileset;
+            chkExhaustedFromTileset.Text = Strings.ResourceEditor.fromtileset;
+
             grpCommonEvent.Text = Strings.ResourceEditor.commonevent;
             lblEvent.Text = Strings.ResourceEditor.harvestevent;
 
@@ -223,6 +228,8 @@ namespace Intersect.Editor.Forms.Editors
                 chkInitialFromTileset.Checked = mEditorItem.Initial.GraphicFromTileset;
                 chkExhaustedFromTileset.Checked = mEditorItem.Exhausted.GraphicFromTileset;
                 cmbEvent.SelectedIndex = EventBase.ListIndex(mEditorItem.EventId) + 1;
+                chkInitialBelowEntities.Checked = mEditorItem.Initial.RenderBelowEntities;
+                chkExhaustedBelowEntities.Checked = mEditorItem.Exhausted.RenderBelowEntities;
                 //Regen
                 nudHpRegen.Value = mEditorItem.VitalRegen;
                 PopulateInitialGraphicList();
@@ -767,6 +774,16 @@ namespace Intersect.Editor.Forms.Editors
         private void cmbEvent_SelectedIndexChanged(object sender, EventArgs e)
         {
             mEditorItem.Event = EventBase.Get(EventBase.IdFromList(cmbEvent.SelectedIndex - 1));
+        }
+
+        private void chkInitialBelowEntities_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Initial.RenderBelowEntities = chkInitialBelowEntities.Checked;
+        }
+
+        private void chkExhaustedBelowEntities_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Exhausted.RenderBelowEntities = chkExhaustedBelowEntities.Checked;
         }
     }
 }

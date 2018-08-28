@@ -1717,6 +1717,7 @@ Tick timer saved in server config.json.";
         public struct ResourceEditor
         {
             public static LocalizedString animation = @"Animation:";
+            public static LocalizedString belowentities = @"Below Entities";
             public static LocalizedString cancel = @"Cancel";
             public static LocalizedString commonevent = @"Common Event";
             public static LocalizedString copy = @"Copy Resource";
@@ -1731,6 +1732,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString dropremove = @"Remove";
             public static LocalizedString dropdisplay = @"{00} x{01} - {02}%";
             public static LocalizedString exhaustedgraphic = @"Exhausted Graphic:";
+            public static LocalizedString fromtileset = @"From Tileset";
             public static LocalizedString general = @"General";
             public static LocalizedString graphics = @"Graphics";
             public static LocalizedString harvestevent = @"Event:";
@@ -1748,7 +1750,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString requirements = @"Harvesting Requirements";
             public static LocalizedString resources = @"Resources";
             public static LocalizedString save = @"Save";
-            public static LocalizedString spawnduration = @"Spawn Duration:";
+            public static LocalizedString spawnduration = @"Spawn Duration: (ms)";
             public static LocalizedString title = @"Resource Editor";
             public static LocalizedString tooltype = @"Tool Type:";
             public static LocalizedString undo = @"Undo Changes";

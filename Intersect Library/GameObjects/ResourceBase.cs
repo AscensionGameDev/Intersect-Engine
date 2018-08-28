@@ -15,6 +15,7 @@ namespace Intersect.GameObjects
     public class ResourceState
     {
         public string Graphic { get; set; } = null;
+        public bool RenderBelowEntities { get; set; }
         public bool GraphicFromTileset { get; set; }
         public int X { get; set; }
         public int Y { get; set; }
