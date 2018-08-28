@@ -181,7 +181,7 @@ namespace Intersect.Client.Classes.UI.Game.Hotbar
             if (Globals.Me.Hotbar[mYindex].Type == 0)
             {
                 if (Globals.Me.Hotbar[mYindex].Slot == -1 ||
-                    Globals.Me.Inventory[Globals.Me.Hotbar[mYindex].Slot].ItemId != Guid.Empty)
+                    Globals.Me.Inventory[Globals.Me.Hotbar[mYindex].Slot].ItemId == Guid.Empty)
                 {
                     Globals.Me.AddToHotbar(mYindex, -1, -1);
                 }
@@ -189,7 +189,7 @@ namespace Intersect.Client.Classes.UI.Game.Hotbar
             else if (Globals.Me.Hotbar[mYindex].Type == 1)
             {
                 if (Globals.Me.Hotbar[mYindex].Slot == -1 ||
-                    Globals.Me.Spells[Globals.Me.Hotbar[mYindex].Slot].SpellId != Guid.Empty)
+                    Globals.Me.Spells[Globals.Me.Hotbar[mYindex].Slot].SpellId == Guid.Empty)
                 {
                     Globals.Me.AddToHotbar(mYindex, -1, -1);
                 }
@@ -197,13 +197,12 @@ namespace Intersect.Client.Classes.UI.Game.Hotbar
             if (Globals.Me.Hotbar[mYindex].Type != mCurrentType || Globals.Me.Hotbar[mYindex].Slot != mCurrentItem ||
                 mTexLoaded == false || //Basics
                 (Globals.Me.Hotbar[mYindex].Type == 1 && Globals.Me.Hotbar[mYindex].Slot > -1 &&
-                 (Globals.Me.Spells[Globals.Me.Hotbar[mYindex].Slot].SpellCd > Globals.System.GetTimeMs()) &&
-                 mIsFaded == false) || //Is Spell, on CD and not faded
-                (Globals.Me.Hotbar[mYindex].Type == 1 && Globals.Me.Hotbar[mYindex].Slot > -1 &&
-                 (Globals.Me.Spells[Globals.Me.Hotbar[mYindex].Slot].SpellCd <= Globals.System.GetTimeMs()) &&
-                 mIsFaded == true) || //Is Spell, not on CD and faded
+                 (Globals.Me.Spells[Globals.Me.Hotbar[mYindex].Slot].SpellCd > Globals.System.GetTimeMs() != mIsFaded))
+                 || //Is Spell, on CD and fade is incorrect
                 (Globals.Me.Hotbar[mYindex].Type == 0 && Globals.Me.Hotbar[mYindex].Slot > -1 &&
-                 Globals.Me.IsEquipped(mCurrentItem) != mIsEquipped))
+                 Globals.Me.IsEquipped(mCurrentItem) != mIsEquipped) ||  //Is Item, equip icon doesn't match equipped status
+                (Globals.Me.Hotbar[mYindex].Type == 0 && Globals.Me.Hotbar[mYindex].Slot > -1 &&
+                 Globals.Me.ItemOnCd(Globals.Me.Hotbar[mYindex].Slot) != mIsFaded)) //Item on cd and fade is incorrect
             {
                 mCurrentItem = Globals.Me.Hotbar[mYindex].Slot;
                 mCurrentType = Globals.Me.Hotbar[mYindex].Type;
@@ -214,6 +213,7 @@ namespace Intersect.Client.Classes.UI.Game.Hotbar
                     mContentPanel.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,
                         ItemBase.Get(Globals.Me.Inventory[mCurrentItem].ItemId).Pic);
                     mEquipPanel.IsHidden = !Globals.Me.IsEquipped(mCurrentItem);
+                    mIsFaded = Globals.Me.ItemOnCd(mCurrentItem);
                     mTexLoaded = true;
                     mIsEquipped = Globals.Me.IsEquipped(mCurrentItem);
                 }
@@ -225,14 +225,6 @@ namespace Intersect.Client.Classes.UI.Game.Hotbar
                         SpellBase.Get(Globals.Me.Spells[mCurrentItem].SpellId).Pic);
                     mEquipPanel.IsHidden = true;
                     mIsFaded = Globals.Me.Spells[mCurrentItem].SpellCd > Globals.System.GetTimeMs();
-                    if (mIsFaded)
-                    {
-                        mContentPanel.RenderColor = new IntersectClientExtras.GenericClasses.Color(100, 255, 255, 255);
-                    }
-                    else
-                    {
-                        mContentPanel.RenderColor = IntersectClientExtras.GenericClasses.Color.White;
-                    }
                     mTexLoaded = true;
                     mIsEquipped = false;
                 }
@@ -241,6 +233,14 @@ namespace Intersect.Client.Classes.UI.Game.Hotbar
                     mContentPanel.Hide();
                     mTexLoaded = true;
                     mIsEquipped = false;
+                }
+                if (mIsFaded)
+                {
+                    mContentPanel.RenderColor = new IntersectClientExtras.GenericClasses.Color(100, 255, 255, 255);
+                }
+                else
+                {
+                    mContentPanel.RenderColor = IntersectClientExtras.GenericClasses.Color.White;
                 }
             }
             if (mCurrentType > -1 && mCurrentItem > -1)

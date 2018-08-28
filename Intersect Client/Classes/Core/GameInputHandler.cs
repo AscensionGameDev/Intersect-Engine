@@ -116,7 +116,7 @@ namespace Intersect.Client.Classes.Core
                             case Controls.Hotkey9:
                             case Controls.Hotkey0:
                                 var index = control - Controls.Hotkey1;
-                                if (0 < index && index < Gui.GameUi?.Hotbar?.Items?.Count)
+                                if (0 <= index && index < Gui.GameUi?.Hotbar?.Items?.Count)
                                 {
                                     Gui.GameUi?.Hotbar?.Items?[index]?.Activate();
                                 }

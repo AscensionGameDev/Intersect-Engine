@@ -155,8 +155,11 @@ namespace Intersect_Client.Classes.Networking
                     case ServerPackets.CastTime:
                         HandleCastTime(bf.ReadBytes(bf.Length()));
                         break;
-                    case ServerPackets.SendSpellCooldown:
+                    case ServerPackets.SpellCooldown:
                         HandleSpellCooldown(bf.ReadBytes(bf.Length()));
+                        break;
+                    case ServerPackets.ItemCooldown:
+                        HandleItemCooldown(bf.ReadBytes(bf.Length()));
                         break;
                     case ServerPackets.Experience:
                         HandleExperience(bf.ReadBytes(bf.Length()));
@@ -1167,6 +1170,27 @@ namespace Intersect_Client.Classes.Networking
                                                        (int)(SpellBase.Lookup
                                                             .Get<SpellBase>(Globals.Me.Spells[spellSlot].SpellId)
                                                             .CooldownDuration * cooldownReduction);
+            }
+            bf.Dispose();
+        }
+
+        private static void HandleItemCooldown(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            Guid itemId = bf.ReadGuid();
+            var item = ItemBase.Get(itemId);
+            if (item != null)
+            {
+                decimal cooldownReduction = (1 - (decimal)(Globals.Me.GetCooldownReduction() / 100));
+                if (Globals.Me.ItemCooldowns.ContainsKey(itemId))
+                {
+                    Globals.Me.ItemCooldowns[itemId] = Globals.System.GetTimeMs() + (long)(item.Cooldown * cooldownReduction);
+                }
+                else
+                {
+                    Globals.Me.ItemCooldowns.Add(itemId, Globals.System.GetTimeMs() + (long)(item.Cooldown * cooldownReduction));
+                }
             }
             bf.Dispose();
         }

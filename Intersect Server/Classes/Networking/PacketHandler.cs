@@ -1208,6 +1208,10 @@ namespace Intersect.Server.Classes.Networking
                 var player = new Player();
                 client.Characters.Add(player);
                 player.FixLists();
+                for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+                {
+                    player.Equipment[i] = -1;
+                }
                 client.LoadCharacter(player);
 
                 client.Entity = player;

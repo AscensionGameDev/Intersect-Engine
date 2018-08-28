@@ -1183,8 +1183,17 @@ namespace Intersect.Server.Classes.Networking
         public static void SendSpellCooldown(Client client, int spellSlot)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)ServerPackets.SendSpellCooldown);
+            bf.WriteLong((int)ServerPackets.SpellCooldown);
             bf.WriteLong(spellSlot);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendItemCooldown(Client client, Guid itemId)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ServerPackets.ItemCooldown);
+            bf.WriteGuid(itemId);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }

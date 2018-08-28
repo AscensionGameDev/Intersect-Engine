@@ -32,6 +32,7 @@ namespace Intersect_Client.Classes.Entities
         public long ExperienceToNextLevel = 0;
         public List<FriendInstance> Friends = new List<FriendInstance>();
         public HotbarInstance[] Hotbar = new HotbarInstance[Options.MaxHotbar];
+        public Dictionary<Guid, long> ItemCooldowns = new Dictionary<Guid, long>();
 
         private List<PartyMember> mParty;
 
@@ -214,7 +215,7 @@ namespace Intersect_Client.Classes.Entities
 
         public void TryUseItem(int index)
         {
-            if (Globals.GameShop == null && Globals.InBank == false & Globals.InTrade == false)
+            if (Globals.GameShop == null && Globals.InBank == false && Globals.InTrade == false && !ItemOnCd(index))
             {
                 PacketSender.SendUseItem(index);
             }
@@ -227,6 +228,20 @@ namespace Intersect_Client.Classes.Entities
                 if (MyEquipment[i] == slot)
                 {
                     return true;
+                }
+            }
+            return false;
+        }
+
+        public bool ItemOnCd(int slot)
+        {
+            if (Inventory[slot] != null)
+            {
+                var itm = Inventory[slot];
+                if (itm.ItemId != Guid.Empty)
+                {
+                    if (ItemCooldowns.ContainsKey(itm.ItemId) && ItemCooldowns[itm.ItemId] > Globals.System.GetTimeMs())
+                        return true;
                 }
             }
             return false;

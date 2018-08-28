@@ -96,10 +96,6 @@ namespace Intersect.Server.Classes.Entities
         [NotMapped] public long RegenTimer { get; set; } = Globals.System.GetTimeMs();
         [NotMapped] public int SpellCastSlot { get; set; } = 0;
 
-
-
-
-
         //Status effects
         [NotMapped] public Dictionary<SpellBase, StatusInstance> Statuses = new Dictionary<SpellBase, StatusInstance>();
 

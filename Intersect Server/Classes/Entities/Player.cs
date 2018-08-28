@@ -112,10 +112,6 @@ namespace Intersect.Server.Classes.Entities
                     Hotbar.Add(new HotbarSlot(i));
                 }
             }
-            for (var i = 0; i < Options.EquipmentSlots.Count; i++)
-            {
-                Equipment[i] = -1;
-            }
         }
 
 
@@ -146,6 +142,8 @@ namespace Intersect.Server.Classes.Entities
         [NotMapped] public Player PartyRequester;
         [NotMapped] public Dictionary<Player, long> PartyRequests = new Dictionary<Player, long>();
         [NotMapped] public List<Guid> QuestOffers = new List<Guid>();
+        //Item Cooldowns
+        [NotMapped] public Dictionary<Guid, long> ItemCooldowns = new Dictionary<Guid, long>();
         //Event Spawned Npcs
         [NotMapped] public List<Npc> SpawnedNpcs = new List<Npc>();
         [NotMapped] public Trading Trading;
@@ -1084,6 +1082,7 @@ namespace Intersect.Server.Classes.Entities
                 // Unequip items even if you do not meet the requirements. 
                 // (Need this for silly devs who give people items and then later add restrictions...)
                 if (itemBase.ItemType == ItemTypes.Equipment)
+                {
                     for (var i = 0; i < Options.EquipmentSlots.Count; i++)
                     {
                         if (Equipment[i] == slot)
@@ -1095,10 +1094,18 @@ namespace Intersect.Server.Classes.Entities
                             return;
                         }
                     }
+                }
 
                 if (!Conditions.MeetsConditionLists(itemBase.UsageRequirements, this, null))
                 {
                     PacketSender.SendPlayerMsg(MyClient, Strings.Items.dynamicreq);
+                    return;
+                }
+
+                if (ItemCooldowns.ContainsKey(itemBase.Id) && ItemCooldowns[itemBase.Id] > Globals.System.GetTimeMs())
+                {
+                    //Cooldown warning!
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Items.cooldown);
                     return;
                 }
 
@@ -1219,6 +1226,19 @@ namespace Intersect.Server.Classes.Entities
                 if (itemBase.Animation != null)
                 {
                     PacketSender.SendAnimationToProximity(itemBase.Animation.Id, 1, base.Id, MapId, 0, 0, Dir); //Target Type 1 will be global entity
+                }
+                if (itemBase.Cooldown > 0)
+                {
+                    decimal cooldownReduction = (1 - ((decimal)((Player)this).GetCooldownReduction() / 100));
+                    if (ItemCooldowns.ContainsKey(itemBase.Id))
+                    {
+                        ItemCooldowns[itemBase.Id] = Globals.System.GetTimeMs() + (long)(itemBase.Cooldown * cooldownReduction);
+                    }
+                    else
+                    {
+                        ItemCooldowns.Add(itemBase.Id, Globals.System.GetTimeMs() + (long)(itemBase.Cooldown * cooldownReduction));
+                    }
+                    PacketSender.SendItemCooldown(MyClient, itemBase.Id);
                 }
             }
         }

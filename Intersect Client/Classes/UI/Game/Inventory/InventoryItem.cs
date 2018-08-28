@@ -39,6 +39,7 @@ namespace Intersect.Client.Classes.UI.Game.Inventory
         private Draggable mDragIcon;
         public ImagePanel EquipPanel;
         public bool IsDragging;
+        private bool mIconCd;
 
         //Mouse Event Variables
         private bool mMouseOver;
@@ -196,7 +197,7 @@ namespace Intersect.Client.Classes.UI.Game.Inventory
             }
             var item = ItemBase.Get(Globals.Me.Inventory[mMySlot].ItemId);
             if (Globals.Me.Inventory[mMySlot].ItemId != mCurrentItemId || Globals.Me.Inventory[mMySlot].Quantity != mCurrentAmt || equipped != mIsEquipped ||
-                (item == null && mTexLoaded != "") || (item != null && mTexLoaded != item.Pic))
+                (item == null && mTexLoaded != "") || (item != null && mTexLoaded != item.Pic) || mIconCd != Globals.Me.ItemOnCd(mMySlot))
             {
                 mCurrentItemId = Globals.Me.Inventory[mMySlot].ItemId;
                 mCurrentAmt = Globals.Me.Inventory[mMySlot].Quantity;
@@ -209,6 +210,14 @@ namespace Intersect.Client.Classes.UI.Game.Inventory
                     if (itemTex != null)
                     {
                         Pnl.Texture = itemTex;
+                        if (Globals.Me.ItemOnCd(mMySlot))
+                        {
+                            Pnl.RenderColor = new IntersectClientExtras.GenericClasses.Color(100, 255, 255, 255);
+                        }
+                        else
+                        {
+                            Pnl.RenderColor = new IntersectClientExtras.GenericClasses.Color(255, 255, 255, 255);
+                        }
                     }
                     else
                     {
@@ -218,6 +227,7 @@ namespace Intersect.Client.Classes.UI.Game.Inventory
                         }
                     }
                     mTexLoaded = item.Pic;
+                    mIconCd = Globals.Me.ItemOnCd(mMySlot);
                 }
                 else
                 {

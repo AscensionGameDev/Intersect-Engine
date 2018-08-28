@@ -329,6 +329,7 @@ namespace Intersect.Server.Classes.Localization
         {
             public static LocalizedString bound = @"You cannot drop this item.";
             public static LocalizedString cannotuse = @"You cannot use this item!";
+            public static LocalizedString cooldown = @"You must wait before using this item again!";
             public static LocalizedString dynamicreq = @"You do not meet the requirements to use this item!";
             public static LocalizedString equipped = @"You cannot drop equipped items.";
             public static LocalizedString notenough = @"Not enough {00}s!";
