@@ -18,14 +18,13 @@ namespace Intersect.Editor.Networking
             bf.Dispose();
         }
 
-        public static void SendLogin(string username, string password, string version)
+        public static void SendLogin(string username, string password)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.EditorLogin);
             bf.WriteString(username);
             bf.WriteString(password);
-			bf.WriteString(version);
-			EditorNetwork.SendPacket(bf.ToArray());
+            EditorNetwork.SendPacket(bf.ToArray());
             bf.Dispose();
         }
 

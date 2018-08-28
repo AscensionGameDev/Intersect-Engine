@@ -19,13 +19,12 @@ namespace Intersect_Client.Classes.Networking
             GameNetwork.SendPacket(bf.ToArray());
         }
 
-        public static void SendLogin(string username, string password, string version)
+        public static void SendLogin(string username, string password)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.Login);
             bf.WriteString(username.ToLower().Trim());
             bf.WriteString(password.Trim());
-			bf.WriteString(version);
             GameNetwork.SendPacket(bf.ToArray());
         }
 

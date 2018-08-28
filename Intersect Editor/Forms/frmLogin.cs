@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
@@ -101,13 +100,13 @@ namespace Intersect.Editor.Forms
                 var sha = new SHA256Managed();
                 if (mSavedPassword != "")
                 {
-                    PacketSender.SendLogin(txtUsername.Text.Trim(), mSavedPassword, Assembly.GetExecutingAssembly().GetName().Version.ToString());
+                    PacketSender.SendLogin(txtUsername.Text.Trim(), mSavedPassword);
                 }
                 else
                 {
                     PacketSender.SendLogin(txtUsername.Text.Trim(),
                         BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(txtPassword.Text.Trim())))
-                            .Replace("-", ""), Assembly.GetExecutingAssembly().GetName().Version.ToString());
+                            .Replace("-", ""));
                 }
             }
         }
