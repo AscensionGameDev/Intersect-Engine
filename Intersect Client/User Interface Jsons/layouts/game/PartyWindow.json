@@ -20,7 +20,7 @@
   "InactiveColor": "",
   "Closable": true,
   "Titlebar": {
-    "Bounds": "0,0,10,24",
+    "Bounds": "0,0,211,24",
     "Padding": "0,0,0,0",
     "AlignmentEdgeDistances": "0,0,0,0",
     "Margin": "0,0,0,0",
@@ -37,39 +37,7 @@
     "NormalImage": "",
     "HoveredImage": "",
     "ClickedImage": "",
-    "DisabledImage": "",
-    "Children": {
-      "CloseButton": {
-        "Bounds": "0,0,20,20",
-        "Padding": "3,3,3,3",
-        "AlignmentEdgeDistances": "0,0,0,0",
-        "Margin": "0,0,0,0",
-        "RenderColor": "255,255,255,255",
-        "Alignments": "",
-        "DrawBackground": true,
-        "MinimumSize": "1,1",
-        "MaximumSize": "20,20",
-        "Disabled": false,
-        "Hidden": false,
-        "RestrictToParent": false,
-        "MouseInputEnabled": true,
-        "HideToolTip": false,
-        "TextColor": "0,255,255,255",
-        "HoveredTextColor": "",
-        "ClickedTextColor": "",
-        "DisabledTextColor": "",
-        "TextAlign": "Center",
-        "TextPadding": "3,3,3,3",
-        "AutoSizeToContents": false,
-        "Font": "arial,10",
-        "TextScale": 1.0,
-        "NormalImage": "closenormal.png",
-        "HoveredImage": "closehover.png",
-        "ClickedImage": "closeclicked.png",
-        "DisabledImage": "",
-        "CenterImage": false
-      }
-    }
+    "DisabledImage": ""
   },
   "Title": {
     "Bounds": "0,0,44,22",
@@ -89,7 +57,7 @@
     "TextColor": "0,255,255,255",
     "HoveredTextColor": "",
     "ClickedTextColor": "",
-    "DisabledTextColor": "",
+    "DisabledTextColor": "255,90,90,90",
     "TextAlign": "Left, CenterV",
     "TextPadding": "0,0,0,0",
     "AutoSizeToContents": true,
@@ -97,24 +65,24 @@
     "TextScale": 1.0
   },
   "CloseButton": {
-    "Bounds": "0,0,20,20",
-    "Padding": "3,3,3,3",
+    "Bounds": "191,1,20,20",
+    "Padding": "3,3,0,3",
     "AlignmentEdgeDistances": "0,0,0,0",
     "Margin": "0,0,0,0",
     "RenderColor": "255,255,255,255",
-    "Alignments": "",
+    "Alignments": "Top,Right",
     "DrawBackground": true,
     "MinimumSize": "1,1",
     "MaximumSize": "20,20",
     "Disabled": false,
     "Hidden": false,
-    "RestrictToParent": false,
+    "RestrictToParent": true,
     "MouseInputEnabled": true,
     "HideToolTip": false,
     "TextColor": "0,255,255,255",
     "HoveredTextColor": "",
     "ClickedTextColor": "",
-    "DisabledTextColor": "",
+    "DisabledTextColor": "255,90,90,90",
     "TextAlign": "Center",
     "TextPadding": "3,3,3,3",
     "AutoSizeToContents": false,
@@ -124,7 +92,11 @@
     "HoveredImage": "closehover.png",
     "ClickedImage": "closeclicked.png",
     "DisabledImage": "",
-    "CenterImage": false
+    "CenterImage": false,
+    "HoverSound": null,
+    "MouseUpSound": null,
+    "MouseDownSound": null,
+    "ClickSound": null
   },
   "InnerPanel": {
     "Bounds": "0,0,10,10",
@@ -157,8 +129,7 @@
         "RestrictToParent": false,
         "MouseInputEnabled": true,
         "HideToolTip": false,
-        "Texture": "partyleader.png",
-        "TextureSourceRect": "0,0,34,34"
+        "Texture": "partyleader.png"
       },
       "MemberName0": {
         "Bounds": "4,4,1,10",
@@ -178,7 +149,7 @@
         "TextColor": "255,255,255,255",
         "HoveredTextColor": "",
         "ClickedTextColor": "",
-        "DisabledTextColor": "",
+        "DisabledTextColor": "255,90,90,90",
         "TextAlign": "Left, Top",
         "TextPadding": "0,0,0,0",
         "AutoSizeToContents": true,
@@ -201,7 +172,6 @@
         "MouseInputEnabled": true,
         "HideToolTip": false,
         "Texture": "emptybar.png",
-        "TextureSourceRect": "0,0,183,183",
         "Children": {
           "HealthBar0": {
             "Bounds": "0,0,0,25",
@@ -218,8 +188,7 @@
             "RestrictToParent": false,
             "MouseInputEnabled": true,
             "HideToolTip": false,
-            "Texture": "lifebar.png",
-            "TextureSourceRect": "0,0,183,183"
+            "Texture": "lifebar.png"
           }
         }
       },
@@ -241,7 +210,7 @@
         "TextColor": "255,255,255,255",
         "HoveredTextColor": "",
         "ClickedTextColor": "",
-        "DisabledTextColor": "",
+        "DisabledTextColor": "255,90,90,90",
         "TextAlign": "Left, Top",
         "TextPadding": "0,0,0,0",
         "AutoSizeToContents": true,
@@ -264,7 +233,6 @@
         "MouseInputEnabled": true,
         "HideToolTip": false,
         "Texture": "emptybar.png",
-        "TextureSourceRect": "0,0,183,183",
         "Children": {
           "HealthBar1": {
             "Bounds": "0,0,0,25",
@@ -281,8 +249,7 @@
             "RestrictToParent": false,
             "MouseInputEnabled": true,
             "HideToolTip": false,
-            "Texture": "lifebar.png",
-            "TextureSourceRect": "0,0,183,183"
+            "Texture": "lifebar.png"
           }
         }
       },
@@ -304,7 +271,7 @@
         "TextColor": "0,255,255,255",
         "HoveredTextColor": "",
         "ClickedTextColor": "",
-        "DisabledTextColor": "",
+        "DisabledTextColor": "255,90,90,90",
         "TextAlign": "Center",
         "TextPadding": "3,3,3,3",
         "AutoSizeToContents": false,
@@ -314,7 +281,11 @@
         "HoveredImage": "partykick.png",
         "ClickedImage": "partykick.png",
         "DisabledImage": "",
-        "CenterImage": false
+        "CenterImage": false,
+        "HoverSound": null,
+        "MouseUpSound": null,
+        "MouseDownSound": null,
+        "ClickSound": null
       },
       "MemberName2": {
         "Bounds": "4,124,1,10",
@@ -334,7 +305,7 @@
         "TextColor": "255,255,255,255",
         "HoveredTextColor": "",
         "ClickedTextColor": "",
-        "DisabledTextColor": "",
+        "DisabledTextColor": "255,90,90,90",
         "TextAlign": "Left, Top",
         "TextPadding": "0,0,0,0",
         "AutoSizeToContents": true,
@@ -357,7 +328,6 @@
         "MouseInputEnabled": true,
         "HideToolTip": false,
         "Texture": "emptybar.png",
-        "TextureSourceRect": "0,0,183,183",
         "Children": {
           "HealthBar2": {
             "Bounds": "0,0,0,25",
@@ -374,8 +344,7 @@
             "RestrictToParent": false,
             "MouseInputEnabled": true,
             "HideToolTip": false,
-            "Texture": "lifebar.png",
-            "TextureSourceRect": "0,0,183,183"
+            "Texture": "lifebar.png"
           }
         }
       },
@@ -397,7 +366,7 @@
         "TextColor": "0,255,255,255",
         "HoveredTextColor": "",
         "ClickedTextColor": "",
-        "DisabledTextColor": "",
+        "DisabledTextColor": "255,90,90,90",
         "TextAlign": "Center",
         "TextPadding": "3,3,3,3",
         "AutoSizeToContents": false,
@@ -407,7 +376,11 @@
         "HoveredImage": "partykick.png",
         "ClickedImage": "partykick.png",
         "DisabledImage": "",
-        "CenterImage": false
+        "CenterImage": false,
+        "HoverSound": null,
+        "MouseUpSound": null,
+        "MouseDownSound": null,
+        "ClickSound": null
       },
       "MemberName3": {
         "Bounds": "4,184,1,10",
@@ -427,7 +400,7 @@
         "TextColor": "255,255,255,255",
         "HoveredTextColor": "",
         "ClickedTextColor": "",
-        "DisabledTextColor": "",
+        "DisabledTextColor": "255,90,90,90",
         "TextAlign": "Left, Top",
         "TextPadding": "0,0,0,0",
         "AutoSizeToContents": true,
@@ -450,7 +423,6 @@
         "MouseInputEnabled": true,
         "HideToolTip": false,
         "Texture": "emptybar.png",
-        "TextureSourceRect": "0,0,183,183",
         "Children": {
           "HealthBar3": {
             "Bounds": "0,0,0,25",
@@ -467,8 +439,7 @@
             "RestrictToParent": false,
             "MouseInputEnabled": true,
             "HideToolTip": false,
-            "Texture": "lifebar.png",
-            "TextureSourceRect": "0,0,183,183"
+            "Texture": "lifebar.png"
           }
         }
       },
@@ -490,7 +461,7 @@
         "TextColor": "0,255,255,255",
         "HoveredTextColor": "",
         "ClickedTextColor": "",
-        "DisabledTextColor": "",
+        "DisabledTextColor": "255,90,90,90",
         "TextAlign": "Center",
         "TextPadding": "3,3,3,3",
         "AutoSizeToContents": false,
@@ -500,7 +471,11 @@
         "HoveredImage": "partykick.png",
         "ClickedImage": "partykick.png",
         "DisabledImage": "",
-        "CenterImage": false
+        "CenterImage": false,
+        "HoverSound": null,
+        "MouseUpSound": null,
+        "MouseDownSound": null,
+        "ClickSound": null
       },
       "LeavePartyButton": {
         "Bounds": "178,252,34,34",
@@ -520,7 +495,7 @@
         "TextColor": "0,255,255,255",
         "HoveredTextColor": "",
         "ClickedTextColor": "",
-        "DisabledTextColor": "",
+        "DisabledTextColor": "255,90,90,90",
         "TextAlign": "Center",
         "TextPadding": "3,3,3,3",
         "AutoSizeToContents": false,
@@ -530,7 +505,11 @@
         "HoveredImage": "partyleave.png",
         "ClickedImage": "partyleave.png",
         "DisabledImage": "",
-        "CenterImage": false
+        "CenterImage": false,
+        "HoverSound": null,
+        "MouseUpSound": null,
+        "MouseDownSound": null,
+        "ClickSound": null
       }
     }
   }

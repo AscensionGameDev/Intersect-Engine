@@ -20,7 +20,7 @@
   "InactiveColor": "",
   "Closable": true,
   "Titlebar": {
-    "Bounds": "0,0,10,24",
+    "Bounds": "0,0,211,24",
     "Padding": "0,0,0,0",
     "AlignmentEdgeDistances": "0,0,0,0",
     "Margin": "0,0,0,0",
@@ -37,39 +37,7 @@
     "NormalImage": "",
     "HoveredImage": "",
     "ClickedImage": "",
-    "DisabledImage": "",
-    "Children": {
-      "CloseButton": {
-        "Bounds": "0,0,20,20",
-        "Padding": "3,3,3,3",
-        "AlignmentEdgeDistances": "0,0,0,0",
-        "Margin": "0,0,0,0",
-        "RenderColor": "255,255,255,255",
-        "Alignments": "",
-        "DrawBackground": true,
-        "MinimumSize": "1,1",
-        "MaximumSize": "20,20",
-        "Disabled": false,
-        "Hidden": false,
-        "RestrictToParent": false,
-        "MouseInputEnabled": true,
-        "HideToolTip": false,
-        "TextColor": "0,255,255,255",
-        "HoveredTextColor": "",
-        "ClickedTextColor": "",
-        "DisabledTextColor": "",
-        "TextAlign": "Center",
-        "TextPadding": "3,3,3,3",
-        "AutoSizeToContents": false,
-        "Font": "arial,10",
-        "TextScale": 1.0,
-        "NormalImage": "closenormal.png",
-        "HoveredImage": "closehover.png",
-        "ClickedImage": "closeclicked.png",
-        "DisabledImage": "",
-        "CenterImage": false
-      }
-    }
+    "DisabledImage": ""
   },
   "Title": {
     "Bounds": "0,0,89,22",
@@ -89,7 +57,7 @@
     "TextColor": "0,255,255,255",
     "HoveredTextColor": "",
     "ClickedTextColor": "",
-    "DisabledTextColor": "",
+    "DisabledTextColor": "255,90,90,90",
     "TextAlign": "Left, CenterV",
     "TextPadding": "0,0,0,0",
     "AutoSizeToContents": true,
@@ -97,24 +65,24 @@
     "TextScale": 1.0
   },
   "CloseButton": {
-    "Bounds": "0,0,20,20",
-    "Padding": "3,3,3,3",
+    "Bounds": "191,1,20,20",
+    "Padding": "3,3,0,3",
     "AlignmentEdgeDistances": "0,0,0,0",
     "Margin": "0,0,0,0",
     "RenderColor": "255,255,255,255",
-    "Alignments": "",
+    "Alignments": "Top,Right",
     "DrawBackground": true,
     "MinimumSize": "1,1",
     "MaximumSize": "20,20",
     "Disabled": false,
     "Hidden": false,
-    "RestrictToParent": false,
+    "RestrictToParent": true,
     "MouseInputEnabled": true,
     "HideToolTip": false,
     "TextColor": "0,255,255,255",
     "HoveredTextColor": "",
     "ClickedTextColor": "",
-    "DisabledTextColor": "",
+    "DisabledTextColor": "255,90,90,90",
     "TextAlign": "Center",
     "TextPadding": "3,3,3,3",
     "AutoSizeToContents": false,
@@ -124,7 +92,11 @@
     "HoveredImage": "closehover.png",
     "ClickedImage": "closeclicked.png",
     "DisabledImage": "",
-    "CenterImage": false
+    "CenterImage": false,
+    "HoverSound": null,
+    "MouseUpSound": null,
+    "MouseDownSound": null,
+    "ClickSound": null
   },
   "InnerPanel": {
     "Bounds": "0,0,10,10",
@@ -209,7 +181,7 @@
             "TextColor": "0,255,255,255",
             "HoveredTextColor": "",
             "ClickedTextColor": "",
-            "DisabledTextColor": "",
+            "DisabledTextColor": "255,90,90,90",
             "TextAlign": "Center",
             "TextPadding": "3,3,3,3",
             "AutoSizeToContents": false,
@@ -219,7 +191,11 @@
             "HoveredImage": "",
             "ClickedImage": "",
             "DisabledImage": "",
-            "CenterImage": false
+            "CenterImage": false,
+            "HoverSound": null,
+            "MouseUpSound": null,
+            "MouseDownSound": null,
+            "ClickSound": null
           },
           "Bar": {
             "Bounds": "0,0,10,10",
@@ -259,7 +235,7 @@
             "TextColor": "0,255,255,255",
             "HoveredTextColor": "",
             "ClickedTextColor": "",
-            "DisabledTextColor": "",
+            "DisabledTextColor": "255,90,90,90",
             "TextAlign": "Center",
             "TextPadding": "3,3,3,3",
             "AutoSizeToContents": false,
@@ -269,7 +245,11 @@
             "HoveredImage": "",
             "ClickedImage": "",
             "DisabledImage": "",
-            "CenterImage": false
+            "CenterImage": false,
+            "HoverSound": null,
+            "MouseUpSound": null,
+            "MouseDownSound": null,
+            "ClickSound": null
           }
         },
         "VerticalScrollBar": {
@@ -305,7 +285,7 @@
             "TextColor": "0,255,255,255",
             "HoveredTextColor": "",
             "ClickedTextColor": "",
-            "DisabledTextColor": "",
+            "DisabledTextColor": "255,90,90,90",
             "TextAlign": "Center",
             "TextPadding": "3,3,3,3",
             "AutoSizeToContents": false,
@@ -315,7 +295,11 @@
             "HoveredImage": "uparrowhover.png",
             "ClickedImage": "uparrowclicked.png",
             "DisabledImage": "",
-            "CenterImage": false
+            "CenterImage": false,
+            "HoverSound": null,
+            "MouseUpSound": null,
+            "MouseDownSound": null,
+            "ClickSound": null
           },
           "Bar": {
             "Bounds": "0,0,10,10",
@@ -355,7 +339,7 @@
             "TextColor": "0,255,255,255",
             "HoveredTextColor": "",
             "ClickedTextColor": "",
-            "DisabledTextColor": "",
+            "DisabledTextColor": "255,90,90,90",
             "TextAlign": "Center",
             "TextPadding": "3,3,3,3",
             "AutoSizeToContents": false,
@@ -365,7 +349,11 @@
             "HoveredImage": "downarrowhover.png",
             "ClickedImage": "downarrowclicked.png",
             "DisabledImage": "",
-            "CenterImage": false
+            "CenterImage": false,
+            "HoverSound": null,
+            "MouseUpSound": null,
+            "MouseDownSound": null,
+            "ClickSound": null
           }
         },
         "SizeToContents": false,
@@ -390,7 +378,7 @@
         "TextColor": "255,255,255,255",
         "HoveredTextColor": "",
         "ClickedTextColor": "",
-        "DisabledTextColor": "",
+        "DisabledTextColor": "255,90,90,90",
         "TextAlign": "CenterH",
         "TextPadding": "0,0,0,0",
         "AutoSizeToContents": false,
@@ -415,7 +403,7 @@
         "TextColor": "255,255,255,255",
         "HoveredTextColor": "",
         "ClickedTextColor": "",
-        "DisabledTextColor": "",
+        "DisabledTextColor": "255,90,90,90",
         "TextAlign": "CenterH",
         "TextPadding": "0,0,0,0",
         "AutoSizeToContents": false,
@@ -489,7 +477,7 @@
             "TextColor": "0,255,255,255",
             "HoveredTextColor": "",
             "ClickedTextColor": "",
-            "DisabledTextColor": "",
+            "DisabledTextColor": "255,90,90,90",
             "TextAlign": "Center",
             "TextPadding": "3,3,3,3",
             "AutoSizeToContents": false,
@@ -499,7 +487,11 @@
             "HoveredImage": "",
             "ClickedImage": "",
             "DisabledImage": "",
-            "CenterImage": false
+            "CenterImage": false,
+            "HoverSound": null,
+            "MouseUpSound": null,
+            "MouseDownSound": null,
+            "ClickSound": null
           },
           "Bar": {
             "Bounds": "0,0,10,10",
@@ -539,7 +531,7 @@
             "TextColor": "0,255,255,255",
             "HoveredTextColor": "",
             "ClickedTextColor": "",
-            "DisabledTextColor": "",
+            "DisabledTextColor": "255,90,90,90",
             "TextAlign": "Center",
             "TextPadding": "3,3,3,3",
             "AutoSizeToContents": false,
@@ -549,7 +541,11 @@
             "HoveredImage": "",
             "ClickedImage": "",
             "DisabledImage": "",
-            "CenterImage": false
+            "CenterImage": false,
+            "HoverSound": null,
+            "MouseUpSound": null,
+            "MouseDownSound": null,
+            "ClickSound": null
           }
         },
         "VerticalScrollBar": {
@@ -585,7 +581,7 @@
             "TextColor": "0,255,255,255",
             "HoveredTextColor": "",
             "ClickedTextColor": "",
-            "DisabledTextColor": "",
+            "DisabledTextColor": "255,90,90,90",
             "TextAlign": "Center",
             "TextPadding": "3,3,3,3",
             "AutoSizeToContents": false,
@@ -595,7 +591,11 @@
             "HoveredImage": "uparrowhover.png",
             "ClickedImage": "uparrowclicked.png",
             "DisabledImage": "",
-            "CenterImage": false
+            "CenterImage": false,
+            "HoverSound": null,
+            "MouseUpSound": null,
+            "MouseDownSound": null,
+            "ClickSound": null
           },
           "Bar": {
             "Bounds": "0,0,10,10",
@@ -635,7 +635,7 @@
             "TextColor": "0,255,255,255",
             "HoveredTextColor": "",
             "ClickedTextColor": "",
-            "DisabledTextColor": "",
+            "DisabledTextColor": "255,90,90,90",
             "TextAlign": "Center",
             "TextPadding": "3,3,3,3",
             "AutoSizeToContents": false,
@@ -645,7 +645,11 @@
             "HoveredImage": "downarrowhover.png",
             "ClickedImage": "downarrowclicked.png",
             "DisabledImage": "",
-            "CenterImage": false
+            "CenterImage": false,
+            "HoverSound": null,
+            "MouseUpSound": null,
+            "MouseDownSound": null,
+            "ClickSound": null
           }
         }
       },
@@ -667,7 +671,7 @@
         "TextColor": "255,255,255,255",
         "HoveredTextColor": "",
         "ClickedTextColor": "",
-        "DisabledTextColor": "",
+        "DisabledTextColor": "255,90,90,90",
         "TextAlign": "Left, Top",
         "TextPadding": "0,0,0,0",
         "AutoSizeToContents": true,
@@ -692,7 +696,7 @@
         "TextColor": "0,255,255,255",
         "HoveredTextColor": "",
         "ClickedTextColor": "",
-        "DisabledTextColor": "",
+        "DisabledTextColor": "255,90,90,90",
         "TextAlign": "Center",
         "TextPadding": "3,3,3,3",
         "AutoSizeToContents": false,
@@ -702,7 +706,11 @@
         "HoveredImage": "leftarrowhover.png",
         "ClickedImage": "leftarrowclicked.png",
         "DisabledImage": "",
-        "CenterImage": false
+        "CenterImage": false,
+        "HoverSound": null,
+        "MouseUpSound": null,
+        "MouseDownSound": null,
+        "ClickSound": null
       },
       "AbandonQuestButton": {
         "Bounds": "159,256,49,18",
@@ -722,7 +730,7 @@
         "TextColor": "255,30,30,30",
         "HoveredTextColor": "255,20,20,20",
         "ClickedTextColor": "255,215,215,215",
-        "DisabledTextColor": "",
+        "DisabledTextColor": "255,90,90,90",
         "TextAlign": "Center",
         "TextPadding": "3,3,3,3",
         "AutoSizeToContents": false,
@@ -732,7 +740,11 @@
         "HoveredImage": "quithover.png",
         "ClickedImage": "quitclicked.png",
         "DisabledImage": "",
-        "CenterImage": false
+        "CenterImage": false,
+        "HoverSound": null,
+        "MouseUpSound": null,
+        "MouseDownSound": null,
+        "ClickSound": null
       }
     }
   }

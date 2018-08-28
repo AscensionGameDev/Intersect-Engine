@@ -20,7 +20,7 @@
   "InactiveColor": "",
   "Closable": true,
   "Titlebar": {
-    "Bounds": "0,0,10,24",
+    "Bounds": "0,0,398,24",
     "Padding": "0,0,0,0",
     "AlignmentEdgeDistances": "0,0,0,0",
     "Margin": "0,0,0,0",
@@ -40,7 +40,7 @@
     "DisabledImage": ""
   },
   "Title": {
-    "Bounds": "0,0,125,22",
+    "Bounds": "0,0,78,22",
     "Padding": "0,0,0,0",
     "AlignmentEdgeDistances": "0,0,0,0",
     "Margin": "0,0,0,0",
@@ -57,7 +57,7 @@
     "TextColor": "0,255,255,255",
     "HoveredTextColor": "",
     "ClickedTextColor": "",
-    "DisabledTextColor": "",
+    "DisabledTextColor": "255,90,90,90",
     "TextAlign": "Left, CenterV",
     "TextPadding": "0,0,0,0",
     "AutoSizeToContents": true,
@@ -65,24 +65,24 @@
     "TextScale": 1.0
   },
   "CloseButton": {
-    "Bounds": "0,0,20,20",
-    "Padding": "3,3,3,3",
+    "Bounds": "191,1,20,20",
+    "Padding": "3,3,0,3",
     "AlignmentEdgeDistances": "0,0,0,0",
     "Margin": "0,0,0,0",
     "RenderColor": "255,255,255,255",
-    "Alignments": "",
+    "Alignments": "Top,Right",
     "DrawBackground": true,
     "MinimumSize": "1,1",
     "MaximumSize": "20,20",
     "Disabled": false,
     "Hidden": false,
-    "RestrictToParent": false,
+    "RestrictToParent": true,
     "MouseInputEnabled": true,
     "HideToolTip": false,
     "TextColor": "0,255,255,255",
     "HoveredTextColor": "",
     "ClickedTextColor": "",
-    "DisabledTextColor": "",
+    "DisabledTextColor": "255,90,90,90",
     "TextAlign": "Center",
     "TextPadding": "3,3,3,3",
     "AutoSizeToContents": false,
@@ -92,7 +92,11 @@
     "HoveredImage": "closehover.png",
     "ClickedImage": "closeclicked.png",
     "DisabledImage": "",
-    "CenterImage": false
+    "CenterImage": false,
+    "HoverSound": null,
+    "MouseUpSound": null,
+    "MouseDownSound": null,
+    "ClickSound": null
   },
   "InnerPanel": {
     "Bounds": "0,0,10,10",
@@ -177,7 +181,7 @@
             "TextColor": "0,255,255,255",
             "HoveredTextColor": "",
             "ClickedTextColor": "",
-            "DisabledTextColor": "",
+            "DisabledTextColor": "255,90,90,90",
             "TextAlign": "Center",
             "TextPadding": "3,3,3,3",
             "AutoSizeToContents": false,
@@ -187,7 +191,11 @@
             "HoveredImage": "",
             "ClickedImage": "",
             "DisabledImage": "",
-            "CenterImage": false
+            "CenterImage": false,
+            "HoverSound": null,
+            "MouseUpSound": null,
+            "MouseDownSound": null,
+            "ClickSound": null
           },
           "Bar": {
             "Bounds": "0,0,10,10",
@@ -227,7 +235,7 @@
             "TextColor": "0,255,255,255",
             "HoveredTextColor": "",
             "ClickedTextColor": "",
-            "DisabledTextColor": "",
+            "DisabledTextColor": "255,90,90,90",
             "TextAlign": "Center",
             "TextPadding": "3,3,3,3",
             "AutoSizeToContents": false,
@@ -237,7 +245,11 @@
             "HoveredImage": "",
             "ClickedImage": "",
             "DisabledImage": "",
-            "CenterImage": false
+            "CenterImage": false,
+            "HoverSound": null,
+            "MouseUpSound": null,
+            "MouseDownSound": null,
+            "ClickSound": null
           }
         },
         "VerticalScrollBar": {
@@ -273,7 +285,7 @@
             "TextColor": "0,255,255,255",
             "HoveredTextColor": "",
             "ClickedTextColor": "",
-            "DisabledTextColor": "",
+            "DisabledTextColor": "255,90,90,90",
             "TextAlign": "Center",
             "TextPadding": "3,3,3,3",
             "AutoSizeToContents": false,
@@ -283,7 +295,11 @@
             "HoveredImage": "uparrowhover.png",
             "ClickedImage": "uparrowclicked.png",
             "DisabledImage": "",
-            "CenterImage": false
+            "CenterImage": false,
+            "HoverSound": null,
+            "MouseUpSound": null,
+            "MouseDownSound": null,
+            "ClickSound": null
           },
           "Bar": {
             "Bounds": "0,0,10,10",
@@ -323,7 +339,7 @@
             "TextColor": "0,255,255,255",
             "HoveredTextColor": "",
             "ClickedTextColor": "",
-            "DisabledTextColor": "",
+            "DisabledTextColor": "255,90,90,90",
             "TextAlign": "Center",
             "TextPadding": "3,3,3,3",
             "AutoSizeToContents": false,
@@ -333,7 +349,11 @@
             "HoveredImage": "downarrowhover.png",
             "ClickedImage": "downarrowclicked.png",
             "DisabledImage": "",
-            "CenterImage": false
+            "CenterImage": false,
+            "HoverSound": null,
+            "MouseUpSound": null,
+            "MouseDownSound": null,
+            "ClickSound": null
           }
         }
       },
@@ -355,7 +375,7 @@
         "TextColor": "255,255,255,255",
         "HoveredTextColor": "",
         "ClickedTextColor": "",
-        "DisabledTextColor": "",
+        "DisabledTextColor": "255,90,90,90",
         "TextAlign": "Left, Top",
         "TextPadding": "0,0,0,0",
         "AutoSizeToContents": true,
@@ -380,7 +400,7 @@
         "TextColor": "255,255,255,255",
         "HoveredTextColor": "",
         "ClickedTextColor": "",
-        "DisabledTextColor": "",
+        "DisabledTextColor": "255,90,90,90",
         "TextAlign": "Left, Top",
         "TextPadding": "0,0,0,0",
         "AutoSizeToContents": true,
@@ -405,7 +425,7 @@
         "TextColor": "255,255,255,255",
         "HoveredTextColor": "",
         "ClickedTextColor": "",
-        "DisabledTextColor": "",
+        "DisabledTextColor": "255,90,90,90",
         "TextAlign": "Left, Top",
         "TextPadding": "0,0,0,0",
         "AutoSizeToContents": true,
@@ -479,7 +499,7 @@
             "TextColor": "0,255,255,255",
             "HoveredTextColor": "",
             "ClickedTextColor": "",
-            "DisabledTextColor": "",
+            "DisabledTextColor": "255,90,90,90",
             "TextAlign": "Center",
             "TextPadding": "3,3,3,3",
             "AutoSizeToContents": false,
@@ -489,7 +509,11 @@
             "HoveredImage": "",
             "ClickedImage": "",
             "DisabledImage": "",
-            "CenterImage": false
+            "CenterImage": false,
+            "HoverSound": null,
+            "MouseUpSound": null,
+            "MouseDownSound": null,
+            "ClickSound": null
           },
           "Bar": {
             "Bounds": "0,0,10,10",
@@ -529,7 +553,7 @@
             "TextColor": "0,255,255,255",
             "HoveredTextColor": "",
             "ClickedTextColor": "",
-            "DisabledTextColor": "",
+            "DisabledTextColor": "255,90,90,90",
             "TextAlign": "Center",
             "TextPadding": "3,3,3,3",
             "AutoSizeToContents": false,
@@ -539,7 +563,11 @@
             "HoveredImage": "",
             "ClickedImage": "",
             "DisabledImage": "",
-            "CenterImage": false
+            "CenterImage": false,
+            "HoverSound": null,
+            "MouseUpSound": null,
+            "MouseDownSound": null,
+            "ClickSound": null
           }
         },
         "VerticalScrollBar": {
@@ -575,7 +603,7 @@
             "TextColor": "0,255,255,255",
             "HoveredTextColor": "",
             "ClickedTextColor": "",
-            "DisabledTextColor": "",
+            "DisabledTextColor": "255,90,90,90",
             "TextAlign": "Center",
             "TextPadding": "3,3,3,3",
             "AutoSizeToContents": false,
@@ -585,7 +613,11 @@
             "HoveredImage": "uparrowhover.png",
             "ClickedImage": "uparrowclicked.png",
             "DisabledImage": "",
-            "CenterImage": false
+            "CenterImage": false,
+            "HoverSound": null,
+            "MouseUpSound": null,
+            "MouseDownSound": null,
+            "ClickSound": null
           },
           "Bar": {
             "Bounds": "0,0,10,10",
@@ -625,7 +657,7 @@
             "TextColor": "0,255,255,255",
             "HoveredTextColor": "",
             "ClickedTextColor": "",
-            "DisabledTextColor": "",
+            "DisabledTextColor": "255,90,90,90",
             "TextAlign": "Center",
             "TextPadding": "3,3,3,3",
             "AutoSizeToContents": false,
@@ -635,7 +667,11 @@
             "HoveredImage": "downarrowhover.png",
             "ClickedImage": "downarrowclicked.png",
             "DisabledImage": "",
-            "CenterImage": false
+            "CenterImage": false,
+            "HoverSound": null,
+            "MouseUpSound": null,
+            "MouseDownSound": null,
+            "ClickSound": null
           }
         },
         "SizeToContents": false,
@@ -658,7 +694,6 @@
         "MouseInputEnabled": true,
         "HideToolTip": false,
         "Texture": "",
-        "TextureSourceRect": "0,0,0,0",
         "Children": {
           "ProgressBar": {
             "Bounds": "0,0,0,34",
@@ -675,8 +710,7 @@
             "RestrictToParent": false,
             "MouseInputEnabled": true,
             "HideToolTip": false,
-            "Texture": "craftbar.png",
-            "TextureSourceRect": "0,0,100,100"
+            "Texture": "craftbar.png"
           }
         }
       },
@@ -698,7 +732,7 @@
         "TextColor": "255,30,30,30",
         "HoveredTextColor": "255,20,20,20",
         "ClickedTextColor": "255,215,215,215",
-        "DisabledTextColor": "",
+        "DisabledTextColor": "255,90,90,90",
         "TextAlign": "Center",
         "TextPadding": "3,3,3,3",
         "AutoSizeToContents": false,
@@ -708,7 +742,11 @@
         "HoveredImage": "smallbuttonhover.png",
         "ClickedImage": "smallbuttonclicked.png",
         "DisabledImage": "",
-        "CenterImage": false
+        "CenterImage": false,
+        "HoverSound": null,
+        "MouseUpSound": null,
+        "MouseDownSound": null,
+        "ClickSound": null
       }
     }
   }

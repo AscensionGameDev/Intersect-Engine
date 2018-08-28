@@ -19,6 +19,7 @@ namespace Intersect_Client.Classes.UI.Game
         private TextBox mChatboxInput;
         private ListBox mChatboxMessages;
         private ScrollBar mChatboxScrollBar;
+        private Label mChatboxText;
 
         private Button mChatboxSendButton;
 
@@ -58,11 +59,17 @@ namespace Intersect_Client.Classes.UI.Game
                 menuItem.UserData = 3;
             }
 
+            mChatboxText = new Label(mChatboxWindow);
+            mChatboxText.Name = "ChatboxText";
+            mChatboxText.Font = mChatboxWindow.Parent.Skin.DefaultFont;
+
             mChatboxSendButton = new Button(mChatboxWindow, "ChatboxSendButton");
             mChatboxSendButton.Text = Strings.Chatbox.send;
             mChatboxSendButton.Clicked += ChatBoxSendBtn_Clicked;
 
             mChatboxWindow.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
+
+            mChatboxText.IsHidden = true;
         }
 
         //Update
@@ -80,10 +87,11 @@ namespace Intersect_Client.Classes.UI.Game
                 var msg = msgs[i];
                 var myText = Gui.WrapText(msg.GetMessage(),
                     mChatboxMessages.Width - mChatboxMessages.GetVerticalScrollBar().Width - 8,
-                    mChatboxWindow.Parent.Skin.DefaultFont);
+                    mChatboxText.Font);
                 foreach (var t in myText)
                 {
                     var rw = mChatboxMessages.AddRow(t.Trim());
+                    rw.SetTextFont(mChatboxText.Font);
                     rw.SetTextColor(msg.GetColor());
                     rw.ShouldDrawBackground = false;
                     rw.UserData = msg.GetTarget();
