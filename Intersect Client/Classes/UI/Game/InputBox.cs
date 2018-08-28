@@ -4,6 +4,7 @@ using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
+using Intersect.Client.Classes.Core;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -75,7 +76,7 @@ namespace Intersect_Client.Classes.UI.Game
         {
             if (!mInitialized)
             {
-                mMyWindow.LoadJsonUi(_uiStage, true);
+                mMyWindow.LoadJsonUi(_uiStage, GameGraphics.Renderer.GetResolutionString(), true);
                 var text = Gui.WrapText(mPrompt, mPromptLabel.Width, mPromptLabel.Font);
                 int y = mPromptLabel.Y;
                 foreach (string s in text)

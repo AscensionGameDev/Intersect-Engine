@@ -6,6 +6,7 @@ using Intersect.Client.Classes.Localization;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.General;
+using Intersect.Client.Classes.Core;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -32,7 +33,7 @@ namespace Intersect_Client.Classes.UI.Game
 
             RichLabel spellDesc = new RichLabel(mDescWindow, "SpellDesc");
             //Load this up now so we know what color to make the text when filling out the desc
-            mDescWindow.LoadJsonUi(GameContentManager.UI.InGame);
+            mDescWindow.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
             if (spell.Desc.Length > 0)
             {
                 spellDesc.AddText(Strings.SpellDesc.desc.ToString( spell.Desc), spellDesc.RenderColor);
@@ -122,7 +123,7 @@ namespace Intersect_Client.Classes.UI.Game
                 }
             }
             //Load Again for positioning purposes.
-            mDescWindow.LoadJsonUi(GameContentManager.UI.InGame);
+            mDescWindow.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
             icon.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell, spell.Pic);
             spellDesc.SizeToChildren(false, true);
             mDescWindow.SetPosition(x, y);

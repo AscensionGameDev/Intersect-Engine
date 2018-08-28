@@ -7,6 +7,7 @@ using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using Newtonsoft.Json;
+using Intersect.Client.Classes.Core;
 
 namespace Intersect_Client.Classes.UI.Menu
 {
@@ -49,7 +50,7 @@ namespace Intersect_Client.Classes.UI.Menu
             mBackBtn.SetText(Strings.Credits.back);
             mBackBtn.Clicked += BackBtn_Clicked;
 
-            mCreditsWindow.LoadJsonUi(GameContentManager.UI.Menu);
+            mCreditsWindow.LoadJsonUi(GameContentManager.UI.Menu,GameGraphics.Renderer.GetResolutionString());
         }
 
         private void BackBtn_Clicked(Base sender, ClickedEventArgs arguments)

@@ -11,6 +11,7 @@ using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 using Point = IntersectClientExtras.GenericClasses.Point;
+using Intersect.Client.Classes.Core;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -61,7 +62,7 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 TradeSegment.Add(new TradeSegment(this, mTradeWindow, i));
             }
-            mTradeWindow.LoadJsonUi(GameContentManager.UI.InGame);
+            mTradeWindow.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
 
             for (int i = 0; i < 2; i++)
             {

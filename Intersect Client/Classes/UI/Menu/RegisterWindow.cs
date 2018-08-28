@@ -107,7 +107,7 @@ namespace Intersect_Client.Classes.UI.Menu
             mBackBtn.SetText(Strings.Registration.back);
             mBackBtn.Clicked += BackBtn_Clicked;
 
-            mRegistrationPanel.LoadJsonUi(GameContentManager.UI.Menu);
+            mRegistrationPanel.LoadJsonUi(GameContentManager.UI.Menu, GameGraphics.Renderer.GetResolutionString());
         }
 
         //Methods

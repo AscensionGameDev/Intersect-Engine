@@ -11,6 +11,7 @@ using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.UI.Game.Chat;
+using Intersect.Client.Classes.Core;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -76,7 +77,7 @@ namespace Intersect_Client.Classes.UI.Game
             mCraft.SetText(Strings.Crafting.craft);
             mCraft.Clicked += craft_Clicked;
 
-            mCraftWindow.LoadJsonUi(GameContentManager.UI.InGame);
+            mCraftWindow.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
 
             Gui.InputBlockingElements.Add(mCraftWindow);
 
@@ -121,7 +122,7 @@ namespace Intersect_Client.Classes.UI.Game
             };
             mCombinedItem.Setup("CraftedItemIcon");
 
-            mCombinedItem.Container.LoadJsonUi(GameContentManager.UI.InGame);
+            mCombinedItem.Container.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
             mCombinedItem.LoadItem();
 
             for (int i = 0; i < mItems.Count; i++)
@@ -169,7 +170,7 @@ namespace Intersect_Client.Classes.UI.Game
                 lblTemp.Text = onHand + "/" + craft.Ingredients[i].Quantity;
                 mValues.Add(lblTemp);
 
-                mItems[i].Container.LoadJsonUi(GameContentManager.UI.InGame);
+                mItems[i].Container.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
                 mItems[i].LoadItem();
 
                 var xPadding = mItems[i].Container.Padding.Left + mItems[i].Container.Padding.Right;

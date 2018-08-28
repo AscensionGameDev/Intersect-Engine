@@ -13,6 +13,7 @@ using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 using Color = IntersectClientExtras.GenericClasses.Color;
+using Intersect.Client.Classes.Core;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -119,7 +120,7 @@ namespace Intersect_Client.Classes.UI.Game
 
             mPointsLabel = new Label(mCharacterWindow, "PointsLabel");
 
-            mCharacterWindow.LoadJsonUi(GameContentManager.UI.InGame);
+            mCharacterWindow.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
         }
 
         //Update Button Event Handlers
@@ -156,7 +157,7 @@ namespace Intersect_Client.Classes.UI.Game
                 Items[i].Pnl = new ImagePanel(mEquipmentContainer, "EquipmentBox");
                 Items[i].Setup();
 
-                Items[i].Pnl.LoadJsonUi(GameContentManager.UI.InGame);
+                Items[i].Pnl.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
 
                 Items[i].Pnl
                     .SetPosition(

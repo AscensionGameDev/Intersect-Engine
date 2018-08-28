@@ -4,6 +4,7 @@ using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.UI;
 using Intersect_Client.Classes.UI.Game;
+using Intersect.Client.Classes.Core;
 
 namespace Intersect.Client.Classes.UI.Game.Trades
 {
@@ -52,7 +53,7 @@ namespace Intersect.Client.Classes.UI.Game.Trades
                 Values.Add(new Label(Items[i].Container, "TradeValue"));
                 Values[i].Text = "";
 
-                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame);
+                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
 
                 var xPadding = Items[i].Container.Padding.Left + Items[i].Container.Padding.Right;
                 var yPadding = Items[i].Container.Padding.Top + Items[i].Container.Padding.Bottom;

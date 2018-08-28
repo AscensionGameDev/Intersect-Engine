@@ -6,6 +6,7 @@ using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
+using Intersect.Client.Classes.Core;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -41,7 +42,7 @@ namespace Intersect_Client.Classes.UI.Game
 
             UpdateList();
 
-            mFriendsWindow.LoadJsonUi(GameContentManager.UI.InGame);
+            mFriendsWindow.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
         }
 
         //Methods

@@ -221,7 +221,7 @@ namespace Intersect_Client.Classes.UI
             GameInputHandler.KeyDown += OnKeyDown;
             GameInputHandler.MouseDown += OnKeyDown;
 
-            mOptionsPanel.LoadJsonUi(mainMenu == null ? GameContentManager.UI.InGame : GameContentManager.UI.Menu);
+            mOptionsPanel.LoadJsonUi(mainMenu == null ? GameContentManager.UI.InGame : GameContentManager.UI.Menu, GameGraphics.Renderer.GetResolutionString());
         }
 
         private void Key2_Clicked(Base sender, ClickedEventArgs arguments)

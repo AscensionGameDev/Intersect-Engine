@@ -8,6 +8,7 @@ using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.UI.Game;
+using Intersect.Client.Classes.Core;
 
 namespace Intersect_Client.Classes.UI.Menu
 {
@@ -94,7 +95,7 @@ namespace Intersect_Client.Classes.UI.Menu
             mNewButton.SetText(Strings.CharacterSelection.New);
             mNewButton.Clicked += _newButton_Clicked;
 
-            mCharacterSelectionPanel.LoadJsonUi(GameContentManager.UI.Menu);
+            mCharacterSelectionPanel.LoadJsonUi(GameContentManager.UI.Menu, GameGraphics.Renderer.GetResolutionString());
         }
 
         //Methods

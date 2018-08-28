@@ -4,6 +4,7 @@ using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Input;
 using IntersectClientExtras.Input;
 using Intersect_Client.Classes.General;
+using Intersect.Client.Classes.Core;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -14,7 +15,7 @@ namespace Intersect_Client.Classes.UI.Game
         public Draggable(int x, int y, GameTexture tex)
         {
             mPnl = new ImagePanel(Gui.GameUi.GameCanvas, "Draggable");
-            mPnl.LoadJsonUi(GameContentManager.UI.InGame);
+            mPnl.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
             mPnl.SetPosition(InputHandler.MousePosition.X - mPnl.Width / 2,
                 InputHandler.MousePosition.Y - mPnl.Height / 2);
             mPnl.Texture = tex;

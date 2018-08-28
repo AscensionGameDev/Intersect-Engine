@@ -8,6 +8,7 @@ using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.Networking;
 using JetBrains.Annotations;
 using UIColor = IntersectClientExtras.GenericClasses.Color;
+using Intersect.Client.Classes.Core;
 
 namespace Intersect.Client.Classes.UI.Game
 {
@@ -137,7 +138,7 @@ namespace Intersect.Client.Classes.UI.Game
             mClose.Clicked += Close_Clicked;
 
         
-            mContainer.LoadJsonUi(GameContentManager.UI.InGame);
+            mContainer.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
 
             mGoToCharacterSelect.IsHidden = !GoToCharacterSelectEnabled;
             mLogout.IsHidden = !LogoutEnabled;

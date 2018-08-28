@@ -25,7 +25,7 @@ namespace Intersect_Client.Classes.UI.Game
         {
             HotbarWindow = new ImagePanel(gameCanvas, "HotbarWindow");
             InitHotbarItems();
-            HotbarWindow.LoadJsonUi(GameContentManager.UI.InGame);
+            HotbarWindow.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
         }
 
         private void InitHotbarItems()

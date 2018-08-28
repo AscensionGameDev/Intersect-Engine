@@ -8,6 +8,7 @@ using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.General;
 using Point = IntersectClientExtras.GenericClasses.Point;
+using Intersect.Client.Classes.Core;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -34,7 +35,7 @@ namespace Intersect_Client.Classes.UI.Game
 
             mItemContainer = new ScrollControl(mInventoryWindow, "ItemsContainer");
             mItemContainer.EnableScroll(false, true);
-            mInventoryWindow.LoadJsonUi(GameContentManager.UI.InGame);
+            mInventoryWindow.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
         }
 
         //Location
@@ -103,7 +104,7 @@ namespace Intersect_Client.Classes.UI.Game
                 mValues.Add(new Label(Items[i].Container, "InventoryItemValue"));
                 mValues[i].Text = "";
 
-                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame);
+                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
 
                 var xPadding = Items[i].Container.Padding.Left + Items[i].Container.Padding.Right;
                 var yPadding = Items[i].Container.Padding.Top + Items[i].Container.Padding.Bottom;

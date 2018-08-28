@@ -13,6 +13,7 @@ using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.UI;
 using JetBrains.Annotations;
+using Intersect.Client.Classes.Core;
 
 namespace Intersect.Client.Classes.UI.Game.EntityPanel
 {
@@ -152,7 +153,7 @@ namespace Intersect.Client.Classes.UI.Game.EntityPanel
 
             SetEntity(myEntity);
 
-            EntityWindow.LoadJsonUi(GameContentManager.UI.InGame);
+            EntityWindow.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
 
             mLastUpdateTime = Globals.System.GetTimeMs();
         }
@@ -299,7 +300,7 @@ namespace Intersect.Client.Classes.UI.Game.EntityPanel
                 }
                 Items[i].Setup();
                 
-                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame);
+                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
                 Items[i].Container.Name = "";
 
                 var xPadding = Items[i].Container.Padding.Left + Items[i].Container.Padding.Right;

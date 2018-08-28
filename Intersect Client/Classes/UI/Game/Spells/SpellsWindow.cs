@@ -8,6 +8,7 @@ using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.General;
 using Point = IntersectClientExtras.GenericClasses.Point;
+using Intersect.Client.Classes.Core;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -38,7 +39,7 @@ namespace Intersect_Client.Classes.UI.Game
 
             mItemContainer = new ScrollControl(mSpellWindow, "SpellsContainer");
             mItemContainer.EnableScroll(false, true);
-            mSpellWindow.LoadJsonUi(GameContentManager.UI.InGame);
+            mSpellWindow.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
         }
 
         //Methods
@@ -81,7 +82,7 @@ namespace Intersect_Client.Classes.UI.Game
                 Items[i].Container = new ImagePanel(mItemContainer, "Spell");
                 Items[i].Setup();
                 
-                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame);
+                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
 
                 var xPadding = Items[i].Container.Padding.Left + Items[i].Container.Padding.Right;
                 var yPadding = Items[i].Container.Padding.Top + Items[i].Container.Padding.Bottom;

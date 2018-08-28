@@ -62,7 +62,7 @@ namespace Intersect_Client.Classes.UI.Game
             mChatboxSendButton.Text = Strings.Chatbox.send;
             mChatboxSendButton.Clicked += ChatBoxSendBtn_Clicked;
 
-            mChatboxWindow.LoadJsonUi(GameContentManager.UI.InGame);
+            mChatboxWindow.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
         }
 
         //Update

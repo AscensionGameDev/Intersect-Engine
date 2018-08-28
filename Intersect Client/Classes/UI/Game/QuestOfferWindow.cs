@@ -5,6 +5,7 @@ using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
+using Intersect.Client.Classes.Core;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -49,7 +50,7 @@ namespace Intersect_Client.Classes.UI.Game
             mDeclineButton.SetText(Strings.QuestOffer.decline);
             mDeclineButton.Clicked += _declineButton_Clicked;
 
-            mQuestOfferWindow.LoadJsonUi(GameContentManager.UI.InGame);
+            mQuestOfferWindow.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
             Gui.InputBlockingElements.Add(mQuestOfferWindow);
         }
 

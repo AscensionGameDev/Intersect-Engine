@@ -6,6 +6,7 @@ using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
+using Intersect.Client.Classes.Core;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -121,7 +122,7 @@ namespace Intersect_Client.Classes.UI.Game
                             break;
                     }
 
-                    mEventDialogWindow.LoadJsonUi(GameContentManager.UI.InGame);
+                    mEventDialogWindow.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
 
                     if (faceTex != null)
                     {

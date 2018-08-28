@@ -437,6 +437,11 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             return mScreenWidth;
         }
 
+        public override string GetResolutionString()
+        {
+            return mScreenWidth + "x" + mScreenHeight;
+        }
+
         public override List<string> GetValidVideoModes()
         {
             if (mValidVideoModes != null) return mValidVideoModes;

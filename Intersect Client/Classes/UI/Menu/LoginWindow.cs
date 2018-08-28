@@ -93,7 +93,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
             LoadCredentials();
 
-            mLoginWindow.LoadJsonUi(GameContentManager.UI.Menu);
+            mLoginWindow.LoadJsonUi(GameContentManager.UI.Menu, GameGraphics.Renderer.GetResolutionString());
         }
 
         private void _usernameTextbox_Clicked(Base sender, ClickedEventArgs arguments)

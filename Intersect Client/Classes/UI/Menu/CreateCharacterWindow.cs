@@ -135,7 +135,7 @@ namespace Intersect_Client.Classes.UI.Menu
             mCreateButton.SetText(Strings.CharacterCreation.create);
             mCreateButton.Clicked += CreateButton_Clicked;
 
-            mCharCreationPanel.LoadJsonUi(GameContentManager.UI.Menu);
+            mCharCreationPanel.LoadJsonUi(GameContentManager.UI.Menu, GameGraphics.Renderer.GetResolutionString());
         }
 
         public void Init()

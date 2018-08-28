@@ -7,6 +7,7 @@ using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.UI;
 using Intersect_Client.Classes.UI.Game;
 using JetBrains.Annotations;
+using Intersect.Client.Classes.Core;
 
 namespace Intersect.Client.Classes.UI.Game
 {
@@ -91,7 +92,7 @@ namespace Intersect.Client.Classes.UI.Game
             mMenuButton.SetToolTipText(Strings.GameMenu.Menu);
             mMenuButton.Clicked += MenuButtonClicked;
 
-            mMenuContainer.LoadJsonUi(GameContentManager.UI.InGame);
+            mMenuContainer.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
 
             //Assign Window References
             mPartyWindow = new PartyWindow(gameCanvas);
