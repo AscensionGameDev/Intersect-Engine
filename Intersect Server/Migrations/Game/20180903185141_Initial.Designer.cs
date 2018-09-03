@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Intersect.Server.Migrations.Game
 {
     [DbContext(typeof(GameContext))]
-    [Migration("20180822231032_FocusDamageDealers1")]
-    partial class FocusDamageDealers1
+    [Migration("20180903185141_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -22,12 +22,6 @@ namespace Intersect.Server.Migrations.Game
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
-
-                    b.Property<string>("JsonLowerLights")
-                        .HasColumnName("Lower_Lights");
-
-                    b.Property<string>("JsonUpperLights")
-                        .HasColumnName("Upper_Lights");
 
                     b.Property<string>("Name");
 
@@ -53,6 +47,8 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<int>("BasePoints");
 
                     b.Property<int>("CritChance");
+
+                    b.Property<double>("CritMultiplier");
 
                     b.Property<int>("Damage");
 
@@ -188,15 +184,26 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<Guid>("AttackAnimationId")
                         .HasColumnName("AttackAnimation");
 
+                    b.Property<int>("AttackSpeedModifier");
+
+                    b.Property<int>("AttackSpeedValue");
+
                     b.Property<bool>("Bound");
 
+                    b.Property<int>("Cooldown");
+
                     b.Property<int>("CritChance");
+
+                    b.Property<double>("CritMultiplier");
 
                     b.Property<int>("Damage");
 
                     b.Property<int>("DamageType");
 
                     b.Property<string>("Desc");
+
+                    b.Property<Guid>("EquipmentAnimationId")
+                        .HasColumnName("EquipmentAnimation");
 
                     b.Property<int>("EquipmentSlot");
 
@@ -245,6 +252,9 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<bool>("TwoHanded");
 
+                    b.Property<string>("VitalsJson")
+                        .HasColumnName("VitalsGiven");
+
                     b.HasKey("Id");
 
                     b.ToTable("Items");
@@ -282,6 +292,8 @@ namespace Intersect.Server.Migrations.Game
                         .HasColumnName("Spells");
 
                     b.Property<int>("CritChance");
+
+                    b.Property<double>("CritMultiplier");
 
                     b.Property<int>("Damage");
 
@@ -478,6 +490,9 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<Guid>("AnimationId")
                         .HasColumnName("Animation");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnName("Event");
 
                     b.Property<string>("JsonDrops")
                         .HasColumnName("Drops");
@@ -736,11 +751,15 @@ namespace Intersect.Server.Migrations.Game
                         {
                             b1.Property<Guid>("AnimationBaseId");
 
+                            b1.Property<bool>("AlternateRenderLayer");
+
                             b1.Property<bool>("DisableRotations");
 
                             b1.Property<int>("FrameCount");
 
                             b1.Property<int>("FrameSpeed");
+
+                            b1.Property<string>("Light");
 
                             b1.Property<int>("LoopCount");
 
@@ -762,11 +781,15 @@ namespace Intersect.Server.Migrations.Game
                         {
                             b1.Property<Guid>("AnimationBaseId");
 
+                            b1.Property<bool>("AlternateRenderLayer");
+
                             b1.Property<bool>("DisableRotations");
 
                             b1.Property<int>("FrameCount");
 
                             b1.Property<int>("FrameSpeed");
+
+                            b1.Property<string>("Light");
 
                             b1.Property<int>("LoopCount");
 
@@ -832,6 +855,8 @@ namespace Intersect.Server.Migrations.Game
 
                             b1.Property<int>("Height");
 
+                            b1.Property<bool>("RenderBelowEntities");
+
                             b1.Property<int>("Width");
 
                             b1.Property<int>("X");
@@ -855,6 +880,8 @@ namespace Intersect.Server.Migrations.Game
                             b1.Property<bool>("GraphicFromTileset");
 
                             b1.Property<int>("Height");
+
+                            b1.Property<bool>("RenderBelowEntities");
 
                             b1.Property<int>("Width");
 
@@ -880,6 +907,8 @@ namespace Intersect.Server.Migrations.Game
                             b1.Property<int>("CastRange");
 
                             b1.Property<int>("CritChance");
+
+                            b1.Property<double>("CritMultiplier");
 
                             b1.Property<int>("DamageType");
 
