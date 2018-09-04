@@ -1100,6 +1100,7 @@ namespace Intersect.Server.Classes.Entities
             int scaling, int critChance, double critMultiplier, List<KeyValuePair<Guid, int>> deadAnimations = null,
             List<KeyValuePair<Guid, int>> aliveAnimations = null, ItemBase weapon = null)
         {
+	        bool damagingAttack = (baseDamage > 0);
             if (enemy == null) return;
 
 			//Invulnerability
@@ -1134,6 +1135,9 @@ namespace Intersect.Server.Classes.Entities
             if (baseDamage != 0)
             {
                 baseDamage = Formulas.CalculateDamage(baseDamage, damageType, scalingStat, scaling, critMultiplier, this, enemy);
+
+	            if (baseDamage < 0 && damagingAttack) { baseDamage = 0; }
+
                 if (baseDamage > 0 && enemy.HasVital(Vitals.Health))
                 {
                     enemy.SubVital(Vitals.Health, (int)baseDamage);
@@ -1195,9 +1199,11 @@ namespace Intersect.Server.Classes.Entities
             }
             if (secondaryDamage != 0)
             {
-                secondaryDamage = Formulas.CalculateDamage(secondaryDamage, damageType, scalingStat, scaling,
-                    critMultiplier, this, enemy);
-                if (secondaryDamage > 0 && enemy.HasVital(Vitals.Mana))
+                secondaryDamage = Formulas.CalculateDamage(secondaryDamage, damageType, scalingStat, scaling, critMultiplier, this, enemy);
+
+	            if (secondaryDamage < 0 && damagingAttack) { secondaryDamage = 0; }
+
+				if (secondaryDamage > 0 && enemy.HasVital(Vitals.Mana))
                 {
                     //If we took damage lets reset our combat timer
                     enemy.SubVital(Vitals.Mana, (int)secondaryDamage);

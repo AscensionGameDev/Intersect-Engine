@@ -193,6 +193,7 @@ namespace Intersect.Client.Classes.UI.Game.Inventory
                 if (Globals.Me.MyEquipment[i] == mMySlot)
                 {
                     equipped = true;
+	                break;
                 }
             }
             var item = ItemBase.Get(Globals.Me.Inventory[mMySlot].ItemId);

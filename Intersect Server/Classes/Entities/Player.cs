@@ -1297,7 +1297,18 @@ namespace Intersect.Server.Classes.Entities
                 if (item?.ItemId != itemId)
                     continue;
 
-                if (item.Quantity <= 1)
+				//Remove equipment
+	            for (var x = 0; x < Options.EquipmentSlots.Count; x++)
+	            {
+		            if (Equipment[x] == item.Slot)
+		            {
+			            Equipment[x] = -1;
+			            PacketSender.SendPlayerEquipmentToProximity(this);
+			            break;
+		            }
+	            }
+
+				if (item.Quantity <= 1)
                 {
                     amount -= 1;
                     Items[i].Set(Item.None);

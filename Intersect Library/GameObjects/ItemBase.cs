@@ -149,7 +149,8 @@ namespace Intersect.GameObjects
             Name = "New Item";
             Speed = 10; // Set to 10 by default.
             StatsGiven = new int[(int)Stats.StatCount];
-            Consumable = new ConsumableData();
+	        VitalsGiven = new int[(int)Vitals.VitalCount];
+			Consumable = new ConsumableData();
             Effect = new EffectData();
         }
 

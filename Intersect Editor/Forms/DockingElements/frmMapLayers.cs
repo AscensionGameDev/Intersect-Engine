@@ -254,6 +254,8 @@ namespace Intersect.Editor.Forms.DockingElements
                         picTileset.Width = tilesetTex.Width;
                         picTileset.Height = tilesetTex.Height;
                     }
+
+	                cmbTilesets.SelectedItem = name;
                     CreateSwapChain();
                 }
             }
