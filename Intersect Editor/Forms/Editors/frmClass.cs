@@ -939,7 +939,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 if (mEditorItem.Items[i].Id != Guid.Empty)
                 {
-                    lstSpawnItems.Items.Add(Strings.ClassEditor.spawnitemdisplay.ToString(ItemBase.GetName(mEditorItem.Items[i].Id), mEditorItem.Items[i].Amount));
+                    lstSpawnItems.Items.Add(Strings.ClassEditor.spawnitemdisplay.ToString(ItemBase.GetName(mEditorItem.Items[i].Id), mEditorItem.Items[i].Quantity));
                 }
                 else
                 {
@@ -961,7 +961,7 @@ namespace Intersect.Editor.Forms.Editors
         private void nudSpawnItemAmount_ValueChanged(object sender, EventArgs e)
         {
             if (lstSpawnItems.SelectedIndex < lstSpawnItems.Items.Count) return;
-            mEditorItem.Items[(int)lstSpawnItems.SelectedIndex].Amount = (int)nudSpawnItemAmount.Value;
+            mEditorItem.Items[(int)lstSpawnItems.SelectedIndex].Quantity = (int)nudSpawnItemAmount.Value;
             UpdateSpawnItemValues(true);
         }
 
@@ -970,7 +970,7 @@ namespace Intersect.Editor.Forms.Editors
             if (lstSpawnItems.SelectedIndex > -1)
             {
                 cmbSpawnItem.SelectedIndex = ItemBase.ListIndex(mEditorItem.Items[lstSpawnItems.SelectedIndex].Id) + 1;
-                nudSpawnItemAmount.Value = mEditorItem.Items[lstSpawnItems.SelectedIndex].Amount;
+                nudSpawnItemAmount.Value = mEditorItem.Items[lstSpawnItems.SelectedIndex].Quantity;
             }
         }
 
@@ -978,7 +978,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             mEditorItem.Items.Add(new ClassItem());
             mEditorItem.Items[mEditorItem.Items.Count - 1].Id = ItemBase.IdFromList(cmbSpawnItem.SelectedIndex - 1);
-            mEditorItem.Items[mEditorItem.Items.Count - 1].Amount = (int)nudSpawnItemAmount.Value;
+            mEditorItem.Items[mEditorItem.Items.Count - 1].Quantity = (int)nudSpawnItemAmount.Value;
 
             UpdateSpawnItemValues();
         }

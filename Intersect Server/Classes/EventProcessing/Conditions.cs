@@ -190,6 +190,15 @@ namespace Intersect.Server.Classes.Events
             return false;
         }
 
+        public static bool MeetsCondition(SelfSwitchCondition condition, Player player, EventInstance eventInstance, QuestBase questBase)
+        {
+            if (eventInstance != null)
+            {
+                return eventInstance.SelfSwitch[condition.SwitchIndex] == condition.Value;
+            }
+            return false;
+        }
+
         public static bool MeetsCondition(PowerIsCondition condition, Player player, EventInstance eventInstance, QuestBase questBase)
         {
             return player.MyClient.Access > condition.Power;

@@ -488,7 +488,7 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             var id = bf.ReadGuid();
             var entityType = bf.ReadInteger();
-            var mapNum = bf.ReadInteger(false);
+            var mapId = bf.ReadGuid(false);
             if (entityType != (int) EntityTypes.Event)
             {
                 var en = Globals.GetEntity(id, entityType);
@@ -517,7 +517,8 @@ namespace Intersect_Client.Classes.Networking
             }
             else
             {
-                new Event(id, mapNum, bf);
+                var map = MapInstance.Get(mapId);
+                map?.AddEvent(id, bf);
             }
         }
 
@@ -530,7 +531,6 @@ namespace Intersect_Client.Classes.Networking
             {
                 var id = bf.ReadGuid();
                 var entityType = bf.ReadInteger();
-                var mapNum = bf.ReadInteger(false);
                 if (entityType != (int) EntityTypes.Event)
                 {
                     var en = Globals.GetEntity(id, entityType);
@@ -559,7 +559,7 @@ namespace Intersect_Client.Classes.Networking
                 }
                 else
                 {
-                    new Event(id, mapNum, bf);
+                    new Event(id, bf);
                 }
             }
         }

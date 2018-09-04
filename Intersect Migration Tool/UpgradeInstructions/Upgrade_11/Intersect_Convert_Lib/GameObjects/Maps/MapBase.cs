@@ -107,7 +107,6 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_11.Intersect_Convert_L
         public int Left { get; set; } = -1;
         public int Right { get; set; } = -1;
         public int Revision { get; set; }
-        [JsonIgnore]
         public Attribute[,] Attributes { get; set; } = new Attribute[Options.MapWidth, Options.MapHeight];
         public List<LightBase> Lights { get; set; } = new List<LightBase>();
         public Dictionary<int, EventBase> Events { get; set; } = new Dictionary<int, EventBase>();

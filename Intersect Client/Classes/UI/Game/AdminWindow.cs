@@ -457,7 +457,7 @@ namespace Intersect_Client.Classes.UI.Game
 
         void tmpNode_DoubleClicked(Base sender, ClickedEventArgs arguments)
         {
-            PacketSender.SendAdminAction((int) AdminActions.WarpTo, ((TreeNode) sender).UserData.ToString(), "");
+            PacketSender.SendAdminAction((int) AdminActions.WarpTo,"","","","",(Guid)((TreeNode) sender).UserData);
         }
 
         public void Update()

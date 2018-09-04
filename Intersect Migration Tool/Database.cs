@@ -156,9 +156,7 @@ namespace Intersect.Migration
                         IncrementDatabaseVersion();
                         break;
                     case 11:
-                        sDbConnection.Close();
-                        sDbConnection = null;
-                        var upgrade11 = new Upgrade11();
+                        var upgrade11 = new Upgrade11(sDbConnection);
                         upgrade11.Upgrade();
                         break;
                     default:

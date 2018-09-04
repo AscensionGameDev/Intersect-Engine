@@ -106,6 +106,9 @@ namespace Intersect_Client.Classes.UI.Game
 
                 Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
 
+                if (Items[i].EquipPanel.Texture == null)
+                    Items[i].EquipPanel.Texture = GameGraphics.Renderer.GetWhiteTexture();
+
                 var xPadding = Items[i].Container.Padding.Left + Items[i].Container.Padding.Right;
                 var yPadding = Items[i].Container.Padding.Top + Items[i].Container.Padding.Bottom;
                 Items[i].Container.SetPosition( (i % (mItemContainer.Width / (Items[i].Container.Width + xPadding))) * (Items[i].Container.Width + xPadding) + xPadding,

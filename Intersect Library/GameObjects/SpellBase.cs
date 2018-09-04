@@ -12,13 +12,13 @@ namespace Intersect.GameObjects
 {
     public class SpellBase : DatabaseObject<SpellBase>
     {
-        public byte SpellType { get; set; }
+        public SpellTypes SpellType { get; set; }
         public string Desc { get; set; } = "";
         public string Pic { get; set; } = "";
 
         //Animations
         [Column("CastAnimation")]
-        public Guid CastAnimationId { get; protected set; }
+        public Guid CastAnimationId { get; set; }
         [NotMapped]
         [JsonIgnore]
         public AnimationBase CastAnimation
@@ -28,7 +28,7 @@ namespace Intersect.GameObjects
         }
 
         [Column("HitAnimation")]
-        public Guid HitAnimationId { get; protected set; }
+        public Guid HitAnimationId { get; set; }
         [NotMapped]
         [JsonIgnore]
         public AnimationBase HitAnimation
@@ -138,7 +138,7 @@ namespace Intersect.GameObjects
 
         public int Scaling { get; set; } = 100;
         public int ScalingStat { get; set; }
-        public int TargetType { get; set; }
+        public SpellTargetTypes TargetType { get; set; }
         public bool HoTDoT { get; set; }
         public int HotDotInterval { get; set; }
         public int Duration { get; set; }

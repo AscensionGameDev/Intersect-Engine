@@ -12,7 +12,7 @@ namespace Intersect.GameObjects
 
         [JsonIgnore]
         [Column("DaylightHues")]
-        public string RegenJson
+        public string DaylightHuesJson
         {
             get => JsonConvert.SerializeObject(DaylightHues, Formatting.None);
             protected set => DaylightHues = JsonConvert.DeserializeObject<Color[]>(value);

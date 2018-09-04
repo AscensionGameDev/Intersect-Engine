@@ -62,6 +62,11 @@ namespace Intersect.Server.Classes.Maps
         [NotMapped]
         public Dictionary<NpcSpawn, MapNpcSpawn> NpcSpawnInstances = new Dictionary<NpcSpawn, MapNpcSpawn>();
         private List<Player> mPlayers = new List<Player>();
+        
+
+        [NotMapped]
+        [JsonIgnore]
+        public List<ResourceSpawn> ResourceSpawns { get; set; } = new List<ResourceSpawn>();
 
         [JsonIgnore]
         [NotMapped]
@@ -783,6 +788,14 @@ namespace Intersect.Server.Classes.Maps
             Debug.Assert(Lookup != null, "Lookup != null");
             var maps = SurroundingMaps?.Select(mapNum => Lookup.Get<MapInstance>(mapNum)).Where(map => map != null).ToList() ?? new List<MapInstance>();
             if (includingSelf) maps.Add(this);
+            return maps;
+        }
+
+        public List<Guid> GetSurroundingMapIds(bool includingSelf = false)
+        {
+            var maps = new List<Guid>();
+            if (includingSelf) maps.Add(Id);
+            maps.AddRange(SurroundingMaps.ToArray());
             return maps;
         }
 

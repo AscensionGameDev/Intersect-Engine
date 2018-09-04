@@ -100,8 +100,8 @@ namespace Intersect_Client.Classes.UI.Menu
             mOptionsButton = new Button(mMenuWindow, "OptionsButton");
             mOptionsButton.Clicked += OptionsButton_Clicked;
             mOptionsButton.SetText(Strings.MainMenu.options);
-            if (!string.IsNullOrEmpty(Strings.MainMenu.options))
-                mOptionsButton.SetToolTipText(Strings.MainMenu.options);
+            if (!string.IsNullOrEmpty(Strings.MainMenu.optionstooltip))
+                mOptionsButton.SetToolTipText(Strings.MainMenu.optionstooltip);
 
             mMenuWindow.LoadJsonUi(GameContentManager.UI.Menu, GameGraphics.Renderer.GetResolutionString());
 

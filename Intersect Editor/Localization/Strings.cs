@@ -1589,7 +1589,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString scalingamount = @"Scaling Amount (%):";
             public static LocalizedString scalingstat = @"Scaling Stat:";
             public static LocalizedString sightrange = @"Sight Range:";
-            public static LocalizedString spawnduration = @"Spawn Duration:";
+            public static LocalizedString spawnduration = @"Spawn Duration: (ms)";
             public static LocalizedString speed = @"Speed:";
             public static LocalizedString spell = @"Spell:";
             public static LocalizedString spells = @"Spells";
@@ -1822,7 +1822,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString deleteprompt = @"Are you sure you want to delete this spell? This action cannot be reverted!";
             public static LocalizedString deletetitle = @"Delete Spell";
             public static LocalizedString description = @"Desc:";
-            public static LocalizedString duration = @"Stat Boost/Effect Duration";
+            public static LocalizedString duration = @"Duration: (ms)";
             public static Dictionary<int, LocalizedString> effects = new Dictionary<int, LocalizedString>
             {
                 {0, @"None"},

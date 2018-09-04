@@ -107,22 +107,23 @@ namespace Intersect.Server.Classes.Entities
                     //Check to see if we should process event commands
                     if (CallStack.Count > 0)
                     {
-                        if (CallStack.Peek().WaitingForResponse == CommandInstance.EventResponse.Shop && MyPlayer.InShop == null) CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
-                        if (CallStack.Peek().WaitingForResponse == CommandInstance.EventResponse.Crafting && MyPlayer.CraftingTableId == Guid.Empty) CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
-                        if (CallStack.Peek().WaitingForResponse == CommandInstance.EventResponse.Bank && MyPlayer.InBank == false) CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
-                        if (CallStack.Peek().WaitingForResponse == CommandInstance.EventResponse.Quest && !MyPlayer.QuestOffers.Contains(CallStack.Peek().ResponseId)) CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
-                        while (CallStack.Peek().WaitingForResponse == CommandInstance.EventResponse.None)
+                        var curStack = CallStack.Peek();
+                        if (curStack.WaitingForResponse == CommandInstance.EventResponse.Shop && MyPlayer.InShop == null) curStack.WaitingForResponse = CommandInstance.EventResponse.None;
+                        if (curStack.WaitingForResponse == CommandInstance.EventResponse.Crafting && MyPlayer.CraftingTableId == Guid.Empty) curStack.WaitingForResponse = CommandInstance.EventResponse.None;
+                        if (curStack.WaitingForResponse == CommandInstance.EventResponse.Bank && MyPlayer.InBank == false) curStack.WaitingForResponse = CommandInstance.EventResponse.None;
+                        if (curStack.WaitingForResponse == CommandInstance.EventResponse.Quest && !MyPlayer.QuestOffers.Contains(((StartQuestCommand)curStack.WaitingOnCommand).QuestId)) curStack.WaitingForResponse = CommandInstance.EventResponse.None;
+                        while (curStack.WaitingForResponse == CommandInstance.EventResponse.None && !PageInstance.ShouldDespawn())
                         {
-                            if (CallStack.Peek().WaitingForRoute != Guid.Empty)
+                            if (curStack.WaitingForRoute != Guid.Empty)
                             {
-                                if (CallStack.Peek().WaitingForRoute == MyPlayer.Id)
+                                if (curStack.WaitingForRoute == MyPlayer.Id)
                                 {
                                     if (MyPlayer.MoveRoute == null ||
                                         (MyPlayer.MoveRoute.Complete &&
                                          MyPlayer.MoveTimer < Globals.System.GetTimeMs()))
                                     {
-                                        CallStack.Peek().WaitingForRoute = Guid.Empty;
-                                        CallStack.Peek().WaitingForRouteMap = Guid.Empty;
+                                        curStack.WaitingForRoute = Guid.Empty;
+                                        curStack.WaitingForRouteMap = Guid.Empty;
                                     }
                                 }
                                 else
@@ -130,22 +131,21 @@ namespace Intersect.Server.Classes.Entities
                                     //Check if the exist exists && if the move route is completed.
                                     foreach (var evt in MyPlayer.EventLookup.Values)
                                     {
-                                        if (evt.MapId == CallStack.Peek().WaitingForRouteMap && evt.BaseEvent.Id == CallStack.Peek().WaitingForRoute)
+                                        if (evt.MapId == curStack.WaitingForRouteMap && evt.BaseEvent.Id == curStack.WaitingForRoute)
                                         {
                                             if (evt.PageInstance == null) break;
                                             if (!evt.PageInstance.MoveRoute.Complete) break;
-                                            CallStack.Peek().WaitingForRoute = Guid.Empty;
-                                            CallStack.Peek().WaitingForRouteMap = Guid.Empty;
+                                            curStack.WaitingForRoute = Guid.Empty;
+                                            curStack.WaitingForRouteMap = Guid.Empty;
                                             break;
                                         }
                                     }
                                 }
-                                if (CallStack.Peek().WaitingForRoute != Guid.Empty) break;
+                                if (curStack.WaitingForRoute != Guid.Empty) break;
                             }
                             else
                             {
-                                if (CallStack.Peek().CommandIndex >=
-                                    CallStack.Peek().CommandList.Count)
+                                if (curStack.CommandIndex >= curStack.CommandList.Count)
                                 {
                                     CallStack.Pop();
                                 }
@@ -153,7 +153,7 @@ namespace Intersect.Server.Classes.Entities
                                 {
                                     if (WaitTimer < Globals.System.GetTimeMs())
                                     {
-                                        CommandProcessing.ProcessCommand(CallStack.Peek().Command,MyPlayer,this);
+                                        CommandProcessing.ProcessCommand(curStack.Command,MyPlayer,this);
                                     }
                                     else
                                     {
@@ -167,6 +167,7 @@ namespace Intersect.Server.Classes.Entities
                                     break;
                                 }
                             }
+                            curStack = CallStack.Peek();
                         }
                     }
                     else
@@ -208,14 +209,7 @@ namespace Intersect.Server.Classes.Entities
 
                 if (sendLeave)
                 {
-                    if (IsGlobal)
-                    {
-                        PacketSender.SendEntityLeaveTo(MyClient, Id, (int) EntityTypes.Event, MapId);
-                    }
-                    else
-                    {
-                        PacketSender.SendEntityLeaveTo(MyClient, Id, (int) EntityTypes.Event, MapId);
-                    }
+                    PacketSender.SendEntityLeaveTo(MyClient, BaseEvent.Id, (int)EntityTypes.Event, MapId);
                 }
             }
         }
@@ -247,9 +241,13 @@ namespace Intersect.Server.Classes.Entities
         public Guid CommandListId;
         public List<EventCommand> CommandList;
 
-        public EventPage Page;
-        public Guid ResponseId;
         public EventResponse WaitingForResponse = EventResponse.None;
+        public EventCommand WaitingOnCommand = null;
+        public Guid[] BranchIds = null; //Potential Branches for Commands that require responses such as ShowingOptions or Offering a Quest
+
+        public EventPage Page;
+
+
         public Guid WaitingForRoute;
         public Guid WaitingForRouteMap;
 
@@ -272,6 +270,7 @@ namespace Intersect.Server.Classes.Entities
             Page = page;
             CommandList = page.CommandLists[commandListId];
             CommandIndex = listIndex;
+
         }
     }
 }

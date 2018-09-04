@@ -29,7 +29,7 @@ namespace Intersect_Client.Classes.UI.Game
             spellName.Text = spell.Name;
 
             Label spellType = new Label(mDescWindow, "SpellType");
-            spellType.Text = Strings.SpellDesc.spelltypes[spell.SpellType];
+            spellType.Text = Strings.SpellDesc.spelltypes[(int)spell.SpellType];
 
             RichLabel spellDesc = new RichLabel(mDescWindow, "SpellDesc");
             //Load this up now so we know what color to make the text when filling out the desc
@@ -43,7 +43,7 @@ namespace Intersect_Client.Classes.UI.Game
 
             if (spell.SpellType == (int) SpellTypes.CombatSpell)
             {
-                spellType.Text = Strings.SpellDesc.targettypes[spell.Combat.TargetType].ToString(spell.Combat.CastRange, spell.Combat.HitRadius);
+                spellType.Text = Strings.SpellDesc.targettypes[(int)spell.Combat.TargetType].ToString(spell.Combat.CastRange, spell.Combat.HitRadius);
             }
             if (spell.CastDuration > 0)
             {

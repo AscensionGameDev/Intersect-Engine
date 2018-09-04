@@ -278,9 +278,7 @@ namespace Intersect.Server.Classes.Entities
                         if (spell != null)
                         {
                             var projectileBase = spell.Combat.Projectile;
-                            if (spell.SpellType == (int) SpellTypes.CombatSpell &&
-                                spell.Combat.TargetType == (int) SpellTargetTypes.Projectile && projectileBase != null &&
-                                InRangeOf(MyTarget, projectileBase.Range))
+                            if (spell.SpellType == SpellTypes.CombatSpell && spell.Combat.TargetType == SpellTargetTypes.Projectile && projectileBase != null && InRangeOf(MyTarget, projectileBase.Range))
                             {
                                 range = projectileBase.Range;
                                 if (DirToEnemy(MyTarget) != Dir)
@@ -303,12 +301,12 @@ namespace Intersect.Server.Classes.Entities
                                 {
                                     if (Spells[s].SpellCd < Globals.System.GetTimeMs())
                                     {
-                                        if (spell.Combat.TargetType == (int)SpellTargetTypes.Self || spell.Combat.TargetType == (int)SpellTargetTypes.AoE || InRangeOf(MyTarget, range))
+                                        if (spell.Combat.TargetType == SpellTargetTypes.Self || spell.Combat.TargetType == SpellTargetTypes.AoE || InRangeOf(MyTarget, range))
                                         {
                                             CastTime = Globals.System.GetTimeMs() + spell.CastDuration;
                                             SubVital(Vitals.Mana, spell.VitalCost[(int) Vitals.Mana]);
                                             SubVital(Vitals.Health,spell.VitalCost[(int)Vitals.Health]);
-                                            if (spell.Combat.Friendly && spell.SpellType != (int)SpellTypes.WarpTo)
+                                            if (spell.Combat.Friendly && spell.SpellType != SpellTypes.WarpTo)
                                             {
                                                 CastTarget = this;
                                             }

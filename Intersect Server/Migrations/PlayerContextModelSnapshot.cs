@@ -311,6 +311,8 @@ namespace Intersect.Server.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<Guid?>("AccountId");
+
                     b.Property<Guid>("ClassId");
 
                     b.Property<int>("Dir");
@@ -329,9 +331,6 @@ namespace Intersect.Server.Migrations
                     b.Property<int>("Level");
 
                     b.Property<Guid>("MapId");
-
-                    b.Property<string>("MaxVitalsJson")
-                        .HasColumnName("MaxVitals");
 
                     b.Property<string>("Name");
 
@@ -352,6 +351,8 @@ namespace Intersect.Server.Migrations
                     b.Property<int>("Z");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
 
                     b.ToTable("Characters");
                 });
@@ -463,8 +464,7 @@ namespace Intersect.Server.Migrations
                 {
                     b.HasOne("Intersect.Server.Classes.Database.PlayerData.User", "Account")
                         .WithMany("Characters")
-                        .HasForeignKey("Id")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("AccountId");
                 });
 #pragma warning restore 612, 618
         }

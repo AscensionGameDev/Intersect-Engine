@@ -41,10 +41,6 @@ namespace Intersect.Server.Classes.Entities
         //Account
         public virtual User Account { get; private set; }
 
-        //Character Info
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public new Guid Id { get; private set; }
-
         //Name, X, Y, Dir, Etc all in the base Entity Class
         public Guid ClassId { get; set; }
         public int Gender { get; set; }
@@ -178,11 +174,6 @@ namespace Intersect.Server.Classes.Entities
             
         }
 
-        public override Guid GetId()
-        {
-            return Id;
-        }
-
         public void Online()
         {
             OnlinePlayers.Add(Id, this);
@@ -222,7 +213,7 @@ namespace Intersect.Server.Classes.Entities
             //Check for autorun common events and run them
             foreach (EventBase evt in EventBase.Lookup.Values)
             {
-                if (evt != null)
+                if (evt != null && evt.CommonEvent)
                 {
                     StartCommonEvent(evt, (int)EventPage.CommonEventTriggers.Autorun);
                 }
@@ -360,7 +351,7 @@ namespace Intersect.Server.Classes.Entities
                         eventFound = true;
                     }
                     if (eventFound) continue;
-                    PacketSender.SendEntityLeaveTo(MyClient, evt.MapId, (int)EntityTypes.Event, evt.MapId);
+                    PacketSender.SendEntityLeaveTo(MyClient, evt.BaseEvent.Id, (int)EntityTypes.Event, evt.MapId);
                     EventLookup.TryRemove(evt.Id, out EventInstance z);
                 }
             }
@@ -864,9 +855,10 @@ namespace Intersect.Server.Classes.Entities
             Y = newY;
             Z = zOverride;
             Dir = newDir;
+            var newSurroundingMaps = map.GetSurroundingMapIds(true);
             foreach (var evt in EventLookup.Values.ToArray())
             {
-                if (evt.MapId != Guid.Empty && (evt.MapId != newMapId || mapSave))
+                if (evt.MapId != Guid.Empty && (!newSurroundingMaps.Contains(evt.MapId) || mapSave))
                 {
                     EventLookup.TryRemove(evt.Id, out EventInstance z);
                 }
@@ -2795,8 +2787,7 @@ namespace Intersect.Server.Classes.Entities
 				}
 
                 //Check if the caster has the right ammunition if a projectile
-                if (spell.SpellType == (int)SpellTypes.CombatSpell &&
-                    spell.Combat.TargetType == (int)SpellTargetTypes.Projectile && spell.Combat.ProjectileId != Guid.Empty)
+                if (spell.SpellType == SpellTypes.CombatSpell && spell.Combat.TargetType == SpellTargetTypes.Projectile && spell.Combat.ProjectileId != Guid.Empty)
                 {
                     var projectileBase = spell.Combat.Projectile;
                     if (projectileBase == null) return;
@@ -2812,14 +2803,14 @@ namespace Intersect.Server.Classes.Entities
                     }
                 }
 
-                if (target == null && ((spell.SpellType == (int)SpellTypes.CombatSpell && spell.Combat.TargetType == (int)SpellTargetTypes.Single) || spell.SpellType == (int)SpellTypes.WarpTo))
+                if (target == null && ((spell.SpellType == SpellTypes.CombatSpell && spell.Combat.TargetType == SpellTargetTypes.Single) || spell.SpellType == SpellTypes.WarpTo))
                 {
                     PacketSender.SendActionMsg(this, Strings.Combat.notarget, CustomColors.NoTarget);
                     return;
                 }
 
                 //Check for range of a single target spell
-                if (spell.SpellType == (int)SpellTypes.CombatSpell && spell.Combat.TargetType == (int)SpellTargetTypes.Single && Target != this)
+                if (spell.SpellType == (int)SpellTypes.CombatSpell && spell.Combat.TargetType == SpellTargetTypes.Single && Target != this)
                 {
                     if (!InRangeOf(Target, spell.Combat.CastRange))
                     {
@@ -2844,8 +2835,7 @@ namespace Intersect.Server.Classes.Entities
                                 CastTarget = Target;
 
                                 //Check if the caster has the right ammunition if a projectile
-                                if (spell.SpellType == (int)SpellTypes.CombatSpell &&
-                                    spell.Combat.TargetType == (int)SpellTargetTypes.Projectile && spell.Combat.ProjectileId != Guid.Empty)
+                                if (spell.SpellType == SpellTypes.CombatSpell && spell.Combat.TargetType == SpellTargetTypes.Projectile && spell.Combat.ProjectileId != Guid.Empty)
                                 {
                                     var projectileBase = spell.Combat.Projectile;
                                     if (projectileBase != null && projectileBase.AmmoItemId != Guid.Empty)
@@ -2902,7 +2892,7 @@ namespace Intersect.Server.Classes.Entities
             var spellBase = SpellBase.Get(spellId);
             if (spellBase != null)
             {
-                if (spellBase.SpellType == (int)SpellTypes.Event)
+                if (spellBase.SpellType == SpellTypes.Event)
                 {
                     var evt = spellBase.Event;
                     if (evt != null)
@@ -3142,10 +3132,9 @@ namespace Intersect.Server.Classes.Entities
                             if (evt.CallStack.Count <= 0) continue;
                             var stackInfo = evt.CallStack.Peek();
                             if (stackInfo.WaitingForResponse != CommandInstance.EventResponse.Quest) continue;
-                            if (stackInfo.ResponseId == questId)
+                            if (((StartQuestCommand)stackInfo.WaitingOnCommand).QuestId == questId)
                             {
-                                var tmpStack = new CommandInstance(stackInfo.Page, ((StartQuestCommand)stackInfo.Command).BranchIds[0]);
-                                evt.CallStack.Peek().CommandIndex++;
+                                var tmpStack = new CommandInstance(stackInfo.Page, stackInfo.BranchIds[0]);
                                 evt.CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
                                 evt.CallStack.Push(tmpStack);
                             }
@@ -3169,11 +3158,10 @@ namespace Intersect.Server.Classes.Entities
                         if (evt.CallStack.Count <= 0) continue;
                         var stackInfo = evt.CallStack.Peek();
                         if (stackInfo.WaitingForResponse != CommandInstance.EventResponse.Quest) continue;
-                        if (stackInfo.ResponseId == questId)
+                        if (((StartQuestCommand)stackInfo.WaitingOnCommand).QuestId == questId)
                         {
                             //Run failure branch
-                            var tmpStack = new CommandInstance(stackInfo.Page, ((StartQuestCommand)stackInfo.Command).BranchIds[1]);
-                            stackInfo.CommandIndex++;
+                            var tmpStack = new CommandInstance(stackInfo.Page, stackInfo.BranchIds[1]);
                             stackInfo.WaitingForResponse = CommandInstance.EventResponse.None;
                             evt.CallStack.Push(tmpStack);
                         }
@@ -3390,9 +3378,8 @@ namespace Intersect.Server.Classes.Entities
         {
             foreach (var evt in EventLookup.Values)
             {
-                if (evt.PageInstance.Id == eventId)
+                if (evt.PageInstance != null && evt.PageInstance.Id == eventId)
                 {
-                    if (evt.PageInstance == null) return;
                     if (evt.PageInstance.Trigger != 0) return;
                     if (!IsEventOneBlockAway(evt)) return;
                     if (evt.CallStack.Count != 0) return;
@@ -3431,21 +3418,15 @@ namespace Intersect.Server.Classes.Entities
             {
                 foreach (var evt in EventLookup.Values)
                 {
-                    if (evt.PageInstance.Id == eventId)
+                    if (evt.PageInstance != null && evt.PageInstance.Id == eventId)
                     {
                         if (evt.CallStack.Count <= 0) return;
                         var stackInfo = evt.CallStack.Peek();
                         if (stackInfo.WaitingForResponse != CommandInstance.EventResponse.Dialogue) return;
-                        if (stackInfo.ResponseId == Guid.Empty)
+                        stackInfo.WaitingForResponse = CommandInstance.EventResponse.None;
+                        if (stackInfo.WaitingOnCommand != null && stackInfo.WaitingOnCommand.Type == EventCommandType.ShowOptions)
                         {
-                            stackInfo.WaitingForResponse = CommandInstance.EventResponse.None;
-                        }
-                        else
-                        {
-
-                            var tmpStack = new CommandInstance(stackInfo.Page, ((ShowOptionsCommand)stackInfo.Command).BranchIds[responseId - 1]);
-                            stackInfo.CommandIndex++;
-                            stackInfo.WaitingForResponse = CommandInstance.EventResponse.None;
+                            var tmpStack = new CommandInstance(stackInfo.Page, stackInfo.BranchIds[responseId - 1]);
                             evt.CallStack.Push(tmpStack);
                         }
                         return;
@@ -3494,6 +3475,7 @@ namespace Intersect.Server.Classes.Entities
         public bool StartCommonEvent(EventBase baseEvent, int trigger = -1, string command = "", string param = "")
         {
             if (baseEvent == null) return false;
+            if (!baseEvent.CommonEvent && baseEvent.MapId != Guid.Empty) return false;
             lock (mEventLock)
             {
                 foreach (var evt in EventLookup.Values)

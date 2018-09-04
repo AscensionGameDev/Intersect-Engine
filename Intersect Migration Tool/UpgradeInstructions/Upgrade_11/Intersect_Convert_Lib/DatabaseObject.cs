@@ -35,10 +35,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_11.Intersect_Convert_L
 
         [JsonIgnore]
         public string DatabaseTable => Type.GetTable();
-
-        [JsonIgnore]
+        
         public Guid Guid { get; }
-        [JsonIgnore]
         public int Index { get; }
         [JsonProperty(Order = -4)]
         public string Name { get; set; }
@@ -62,7 +60,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_11.Intersect_Convert_L
         public abstract byte[] BinaryData { get; }
 
         [JsonIgnore]
-        public virtual string JsonData => JsonConvert.SerializeObject(this);
+        public virtual string JsonData => JsonConvert.SerializeObject(this, Formatting.Indented);
 
         public virtual void Delete() => Lookup.Delete((TObject) this);
 

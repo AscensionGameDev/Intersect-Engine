@@ -72,7 +72,8 @@ namespace Intersect.Server.Classes.Entities
 
         //Instance Values
         private Guid _id;
-        [NotMapped] public Guid Id { get => GetId(); set => _id = value; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get => GetId(); set => _id = value; }
         [NotMapped] public bool Dead { get; set; }
 
         //Combat
@@ -1276,11 +1277,11 @@ namespace Intersect.Server.Classes.Entities
             {
                 switch (spellBase.SpellType)
                 {
-                    case (int)SpellTypes.CombatSpell:
+                    case SpellTypes.CombatSpell:
 
                         switch (spellBase.Combat.TargetType)
                         {
-                            case (int)SpellTargetTypes.Self:
+                            case SpellTargetTypes.Self:
                                 if (spellBase.HitAnimationId != Guid.Empty)
                                 {
                                     PacketSender.SendAnimationToProximity(spellBase.HitAnimationId, 1,
@@ -1288,7 +1289,7 @@ namespace Intersect.Server.Classes.Entities
                                 }
                                 TryAttack(this, spellBase);
                                 break;
-                            case (int)SpellTargetTypes.Single:
+                            case SpellTargetTypes.Single:
                                 if (CastTarget == null) return;
                                 if (spellBase.Combat.HitRadius > 0) //Single target spells with AoE hit radius'
                                 {
@@ -1300,10 +1301,10 @@ namespace Intersect.Server.Classes.Entities
                                     TryAttack(CastTarget, spellBase);
                                 }
                                 break;
-                            case (int)SpellTargetTypes.AoE:
+                            case SpellTargetTypes.AoE:
                                 HandleAoESpell(spellId, spellBase.Combat.HitRadius, MapId, X, Y, null);
                                 break;
-                            case (int)SpellTargetTypes.Projectile:
+                            case SpellTargetTypes.Projectile:
                                 var projectileBase = spellBase.Combat.Projectile;
                                 if (projectileBase != null)
                                 {
@@ -1316,21 +1317,21 @@ namespace Intersect.Server.Classes.Entities
                                 break;
                         }
                         break;
-                    case (int)SpellTypes.Warp:
+                    case SpellTypes.Warp:
                         if (GetType() == typeof(Player))
                         {
                             Warp(spellBase.Warp.MapId, spellBase.Warp.X, spellBase.Warp.Y, spellBase.Warp.Dir);
                         }
                         break;
-                    case (int)SpellTypes.WarpTo:
+                    case SpellTypes.WarpTo:
                         HandleAoESpell(spellId, spellBase.Combat.CastRange, MapId, X, Y, CastTarget);
                         break;
-                    case (int)SpellTypes.Dash:
+                    case SpellTypes.Dash:
                         PacketSender.SendActionMsg(this, Strings.Combat.dash, CustomColors.Dash);
                         var dash = new DashInstance(this, spellBase.Combat.CastRange, Dir, Convert.ToBoolean(spellBase.Dash.IgnoreMapBlocks),
                             Convert.ToBoolean(spellBase.Dash.IgnoreActiveResources), Convert.ToBoolean(spellBase.Dash.IgnoreInactiveResources), Convert.ToBoolean(spellBase.Dash.IgnoreZDimensionAttributes));
                         break;
-                    case (int)SpellTypes.Event:
+                    case SpellTypes.Event:
                         //Handled at the player level
                         break;
                     default:
@@ -1734,31 +1735,34 @@ namespace Intersect.Server.Classes.Entities
             {
 				ClassBase playerClass = ClassBase.Get(mPlayer.ClassId);
 
-				//Add class base stats
-				s += playerClass.BaseStat[mStatType];
-
-				//Add class stat scaling
-				if (playerClass.IncreasePercentage != 0) //% increase per level
-				{
-					s = (int)(s * Math.Pow(1 + ((double)playerClass.StatIncrease[mStatType] / 100), mPlayer.Level - 1));
-				}
-				else //Static value increase per level
-				{
-					s += playerClass.StatIncrease[mStatType] * (mPlayer.Level - 1);
-				}
-
-                //Add up player equipment values
-                for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+                if (playerClass != null)
                 {
-                    if (mPlayer.Equipment[i] >= 0 && mPlayer.Equipment[i] < Options.MaxInvItems)
+                    //Add class base stats
+                    s += playerClass.BaseStat[mStatType];
+
+                    //Add class stat scaling
+                    if (playerClass.IncreasePercentage != 0) //% increase per level
                     {
-                        if (mPlayer.Items[mPlayer.Equipment[i]].ItemId != Guid.Empty)
+                        s = (int) (s * Math.Pow(1 + ((double) playerClass.StatIncrease[mStatType] / 100), mPlayer.Level - 1));
+                    }
+                    else //Static value increase per level
+                    {
+                        s += playerClass.StatIncrease[mStatType] * (mPlayer.Level - 1);
+                    }
+
+                    //Add up player equipment values
+                    for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+                    {
+                        if (mPlayer.Equipment[i] >= 0 && mPlayer.Equipment[i] < Options.MaxInvItems)
                         {
-                            var item = ItemBase.Get(mPlayer.Items[mPlayer.Equipment[i]].ItemId);
-                            if (item != null)
+                            if (mPlayer.Items[mPlayer.Equipment[i]].ItemId != Guid.Empty)
                             {
-                                s += mPlayer.Items[mPlayer.Equipment[i]].StatBoost[mStatType] +
-                                     item.StatsGiven[mStatType];
+                                var item = ItemBase.Get(mPlayer.Items[mPlayer.Equipment[i]].ItemId);
+                                if (item != null)
+                                {
+                                    s += mPlayer.Items[mPlayer.Equipment[i]].StatBoost[mStatType] +
+                                         item.StatsGiven[mStatType];
+                                }
                             }
                         }
                     }

@@ -100,13 +100,6 @@ namespace Intersect.Server.Classes.Core
         {
             sPlayerDb.SaveChanges();
         }
-        
-
-        //Players General
-        public static void LoadPlayerDatabase()
-        {
-            Console.WriteLine(Strings.Database.usingsqlite);
-        }
 
         public static Client GetPlayerClient([NotNull] string username)
         {

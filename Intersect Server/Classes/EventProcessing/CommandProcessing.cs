@@ -25,26 +25,24 @@ namespace Intersect.Server.Classes.Events
         {
             var stackInfo = instance.CallStack.Peek();
             stackInfo.WaitingForResponse = CommandInstance.EventResponse.None;
-            stackInfo.ResponseId = Guid.Empty;
+            stackInfo.WaitingOnCommand = null;
+            stackInfo.BranchIds = null;
+            
+            ProcessCommand((dynamic)command, player, instance, instance.CallStack.Peek(), instance.CallStack);
 
-            var advanceStack = true;
-            ProcessCommand((dynamic)command, player, instance, instance.CallStack.Peek(), ref instance.CallStack, ref advanceStack);
-
-            if (command.Type != EventCommandType.ShowOptions)
-                stackInfo.CommandIndex++;
+            stackInfo.CommandIndex++;
         }
 
         //Show Text Command
-        private static void ProcessCommand(ShowTextCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(ShowTextCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             PacketSender.SendEventDialog(player, ParseEventText(command.Text, player, instance), command.Face, instance.PageInstance.Id);
             stackInfo.WaitingForResponse = CommandInstance.EventResponse.Dialogue;
         }
 
         //Show Options Command
-        private static void ProcessCommand(ShowOptionsCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(ShowOptionsCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            advanceStack = false;
             var txt = ParseEventText(command.Text, player, instance);
             var opt1 = ParseEventText(command.Options[0], player, instance);
             var opt2 = ParseEventText(command.Options[1], player, instance);
@@ -52,10 +50,12 @@ namespace Intersect.Server.Classes.Events
             var opt4 = ParseEventText(command.Options[3], player, instance);
             PacketSender.SendEventDialog(player, txt, opt1, opt2, opt3, opt4, command.Face, instance.PageInstance.Id);
             stackInfo.WaitingForResponse = CommandInstance.EventResponse.Dialogue;
+            stackInfo.WaitingOnCommand = command;
+            stackInfo.BranchIds = command.BranchIds;
         }
 
         //Show Add Chatbox Text Command
-        private static void ProcessCommand(AddChatboxTextCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(AddChatboxTextCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             var txt = ParseEventText(command.Text, player, instance);
             var color = Color.FromName(command.Color, Strings.Colors.presets);
@@ -74,13 +74,13 @@ namespace Intersect.Server.Classes.Events
         }
 
         //Set Switch Command
-        private static void ProcessCommand(SetSwitchCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(SetSwitchCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             if (command.SwitchType == SwitchTypes.PlayerSwitch)
             {
                 player.SetSwitchValue(command.SwitchId, command.Value);
             }
-            else if (command.SwitchType == SwitchTypes.PlayerSwitch)
+            else if (command.SwitchType == SwitchTypes.ServerSwitch)
             {
                 var serverSwitch = ServerSwitchBase.Get(command.SwitchId);
                 if (serverSwitch != null)
@@ -92,7 +92,7 @@ namespace Intersect.Server.Classes.Events
         }
 
         //Set Variable Commands
-        private static void ProcessCommand(SetVariableCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(SetVariableCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             if (command.VariableType == VariableTypes.PlayerVariable)
             {
@@ -138,7 +138,7 @@ namespace Intersect.Server.Classes.Events
         }
 
         //Set Self Switch Command
-        private static void ProcessCommand(SetSelfSwitchCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(SetSelfSwitchCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             if (instance.IsGlobal)
             {
@@ -158,7 +158,7 @@ namespace Intersect.Server.Classes.Events
         }
 
         //Conditional Branch Command
-        private static void ProcessCommand(ConditionalBranchCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(ConditionalBranchCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             var success = Conditions.MeetsCondition((dynamic)command.Condition, player, instance, null);
             if (command.Condition.Negated) success = !success;
@@ -175,19 +175,19 @@ namespace Intersect.Server.Classes.Events
         }
 
         //Exit Event Process Command
-        private static void ProcessCommand(ExitEventProcessingCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(ExitEventProcessingCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             callStack.Clear();
         }
 
         //Label Command
-        private static void ProcessCommand(LabelCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(LabelCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             return; //Do Nothing.. just a label
         }
 
         //Go To Label Command
-        private static void ProcessCommand(GoToLabelCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(GoToLabelCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             //Recursively search through commands for the label, and create a brand new call stack based on where that label is located.
             Stack<CommandInstance> newCallStack = LoadLabelCallstack(command.Label, stackInfo.Page);
@@ -198,7 +198,7 @@ namespace Intersect.Server.Classes.Events
         }
 
         //Start Common Event Command
-        private static void ProcessCommand(StartCommmonEventCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(StartCommmonEventCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             var commonEvent = EventBase.Get(command.EventId);
             if (commonEvent != null)
@@ -215,37 +215,37 @@ namespace Intersect.Server.Classes.Events
         }
 
         //Restore Hp Command
-        private static void ProcessCommand(RestoreHpCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(RestoreHpCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             player.RestoreVital(Vitals.Health);
         }
 
         //Restore Mp Command
-        private static void ProcessCommand(RestoreMpCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(RestoreMpCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             player.RestoreVital(Vitals.Mana);
         }
 
         //Level Up Command
-        private static void ProcessCommand(LevelUpCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(LevelUpCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             player.LevelUp();
         }
 
         //Give Experience Command
-        private static void ProcessCommand(GiveExperienceCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(GiveExperienceCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             player.GiveExperience(command.Exp);
         }
 
         //Change Level Command
-        private static void ProcessCommand(ChangeLevelCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(ChangeLevelCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             player.SetLevel(command.Level, true);
         }
 
         //Change Spells Command
-        private static void ProcessCommand(ChangeSpellsCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(ChangeSpellsCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             //0 is add, 1 is remove
             var success = false;
@@ -274,7 +274,7 @@ namespace Intersect.Server.Classes.Events
         }
 
         //Change Items Command
-        private static void ProcessCommand(ChangeItemsCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(ChangeItemsCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             var success = false;
             if (command.Add) //Try to give item
@@ -298,28 +298,28 @@ namespace Intersect.Server.Classes.Events
         }
 
         //Change Sprite Command
-        private static void ProcessCommand(ChangeSpriteCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(ChangeSpriteCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             player.Sprite = command.Sprite;
             PacketSender.SendEntityDataToProximity(player);
         }
 
         //Change Face Command
-        private static void ProcessCommand(ChangeFaceCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(ChangeFaceCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             player.Face = command.Face;
             PacketSender.SendEntityDataToProximity(player);
         }
 
         //Change Gender Command
-        private static void ProcessCommand(ChangeGenderCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(ChangeGenderCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             player.Gender = command.Gender;
             PacketSender.SendEntityDataToProximity(player);
         }
 
         //Set Access Command (wtf why would we even allow this? lol)
-        private static void ProcessCommand(SetAccessCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(SetAccessCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             player.MyClient.Access = command.Power;
             PacketSender.SendEntityDataToProximity(player);
@@ -327,13 +327,13 @@ namespace Intersect.Server.Classes.Events
         }
 
         //Warp Player Command
-        private static void ProcessCommand(WarpCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(WarpCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             player.Warp(command.MapId,command.X,command.Y,command.Dir == 0 ? player.Dir : command.Dir - 1);
         }
 
         //Set Move Route Command
-        private static void ProcessCommand(SetMoveRouteCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(SetMoveRouteCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             if (command.Route.Target == Guid.Empty)
             {
@@ -361,7 +361,7 @@ namespace Intersect.Server.Classes.Events
         }
 
         //Wait for Route Completion Command
-        private static void ProcessCommand(WaitForRouteCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(WaitForRouteCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             if (command.TargetId == Guid.Empty)
             {
@@ -383,7 +383,7 @@ namespace Intersect.Server.Classes.Events
         }
 
         //Spawn Npc Command
-        private static void ProcessCommand(SpawnNpcCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(SpawnNpcCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             var npcId = command.NpcId;
             var mapId = command.MapId;
@@ -455,7 +455,7 @@ namespace Intersect.Server.Classes.Events
         }
 
         //Despawn Npcs Command
-        private static void ProcessCommand(DespawnNpcCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(DespawnNpcCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             var entities = player.SpawnedNpcs.ToArray();
             for (int i = 0; i < entities.Length; i++)
@@ -472,7 +472,7 @@ namespace Intersect.Server.Classes.Events
         }
 
         //Play Animation Command
-        private static void ProcessCommand(PlayAnimationCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(PlayAnimationCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             //Playing an animations requires a target type/target or just a tile.
             //We need an animation number and whether or not it should rotate (and the direction I guess)
@@ -545,84 +545,84 @@ namespace Intersect.Server.Classes.Events
         }
 
         //Hold Player Command
-        private static void ProcessCommand(HoldPlayerCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(HoldPlayerCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             instance.HoldingPlayer = true;
             PacketSender.SendHoldPlayer(player.MyClient, instance.BaseEvent.Id, instance.BaseEvent.MapId);
         }
 
         //Release Player Command
-        private static void ProcessCommand(ReleasePlayerCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(ReleasePlayerCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             instance.HoldingPlayer = false;
             PacketSender.SendReleasePlayer(player.MyClient, instance.BaseEvent.Id);
         }
 
         //Play Bgm Command
-        private static void ProcessCommand(PlayBgmCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(PlayBgmCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             PacketSender.SendPlayMusic(player.MyClient, command.File);
         }
 
         //Fadeout Bgm Command
-        private static void ProcessCommand(FadeoutBgmCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(FadeoutBgmCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             PacketSender.SendFadeMusic(player.MyClient);
         }
 
         //Play Sound Command
-        private static void ProcessCommand(PlaySoundCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(PlaySoundCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             PacketSender.SendPlaySound(player.MyClient, command.File);
         }
 
         //Stop Sounds Command
-        private static void ProcessCommand(StopSoundsCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(StopSoundsCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             PacketSender.SendStopSounds(player.MyClient);
         }
 
         //Show Picture Command
-        private static void ProcessCommand(ShowPictureCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(ShowPictureCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             PacketSender.SendShowPicture(player.MyClient, command.File, command.Size, command.Clickable);
         }
 
         //Hide Picture Command
-        private static void ProcessCommand(HidePictureCommmand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(HidePictureCommmand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             PacketSender.SendHidePicture(player.MyClient);
         }
 
         //Wait Command
-        private static void ProcessCommand(WaitCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(WaitCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             instance.WaitTimer = Globals.System.GetTimeMs() + command.Time;
         }
 
         //Open Bank Command
-        private static void ProcessCommand(OpenBankCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(OpenBankCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             player.OpenBank();
             callStack.Peek().WaitingForResponse = CommandInstance.EventResponse.Bank;
         }
 
         //Open Shop Command
-        private static void ProcessCommand(OpenShopCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(OpenShopCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             player.OpenShop(ShopBase.Get(command.ShopId));
             callStack.Peek().WaitingForResponse = CommandInstance.EventResponse.Shop;
         }
 
         //Open Crafting Table Command
-        private static void ProcessCommand(OpenCraftingTableCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(OpenCraftingTableCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             player.OpenCraftingTable(CraftingTableBase.Get(command.CraftingTableId));
             callStack.Peek().WaitingForResponse = CommandInstance.EventResponse.Crafting;
         }
 
         //Set Class Command
-        private static void ProcessCommand(SetClassCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(SetClassCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             if (ClassBase.Get(command.ClassId) != null)
             {
@@ -632,7 +632,7 @@ namespace Intersect.Server.Classes.Events
         }
 
         //Start Quest Command
-        private static void ProcessCommand(StartQuestCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(StartQuestCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             var success = false;
             var quest = QuestBase.Get(command.QuestId);
@@ -644,8 +644,8 @@ namespace Intersect.Server.Classes.Events
                     {
                         player.OfferQuest(quest);
                         stackInfo.WaitingForResponse = CommandInstance.EventResponse.Quest;
-                        advanceStack = false;
-                        stackInfo.ResponseId = quest.Id;
+                        stackInfo.BranchIds = command.BranchIds;
+                        stackInfo.WaitingOnCommand = command;
                         return;
                     }
                     else
@@ -668,13 +668,13 @@ namespace Intersect.Server.Classes.Events
         }
 
         //Complete Quest Task Command
-        private static void ProcessCommand(CompleteQuestTaskCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(CompleteQuestTaskCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             player.CompleteQuestTask(command.QuestId, command.TaskId);
         }
 
         //End Quest Command
-        private static void ProcessCommand(EndQuestCommand command, Player player, EventInstance instance, CommandInstance stackInfo, ref Stack<CommandInstance> callStack, ref bool advanceStack)
+        private static void ProcessCommand(EndQuestCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             //TODO :(
         }

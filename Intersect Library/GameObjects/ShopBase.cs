@@ -13,7 +13,7 @@ namespace Intersect.GameObjects
         //Spawn Info
         [Column("DefaultCurrency")]
         [JsonProperty]
-        public Guid DefaultCurrencyId { get; protected set; }
+        public Guid DefaultCurrencyId { get; set; }
         [NotMapped]
         [JsonIgnore]
         public ItemBase DefaultCurrency

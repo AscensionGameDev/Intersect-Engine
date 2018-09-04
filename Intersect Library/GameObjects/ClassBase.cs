@@ -19,7 +19,7 @@ namespace Intersect.GameObjects
 
         [Column("AttackAnimation")]
         [JsonProperty]
-        public Guid AttackAnimationId { get; protected set; }
+        public Guid AttackAnimationId { get; set; }
         [NotMapped]
         [JsonIgnore]
         public AnimationBase AttackAnimation
@@ -213,7 +213,7 @@ namespace Intersect.GameObjects
     {
         [JsonProperty]
         public Guid Id { get; set; }
-        public int Amount { get; set; }
+        public int Quantity { get; set; }
         
         public ItemBase Get()
         {

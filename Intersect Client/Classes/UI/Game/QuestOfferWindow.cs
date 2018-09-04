@@ -42,7 +42,7 @@ namespace Intersect_Client.Classes.UI.Game
 
             //Accept Button
             mAcceptButton = new Button(mQuestOfferWindow, "AcceptButton");
-            mAcceptButton.SetText(Strings.QuestOffer.title);
+            mAcceptButton.SetText(Strings.QuestOffer.accept);
             mAcceptButton.Clicked += _acceptButton_Clicked;
 
             //Decline Button

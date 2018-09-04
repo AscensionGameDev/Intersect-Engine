@@ -1016,34 +1016,20 @@ namespace Intersect_Client.Classes.Maps
         }
 
         //Events
-        public void AddEvent(Event evt)
+        public void AddEvent(Guid evtId, ByteBuffer bf)
         {
-            if (MapLoaded && (!LocalEntities.ContainsKey(evt.Id)))
+            if (MapLoaded)
             {
-                mEvents.Add(evt);
-                if (LocalEntities.ContainsKey(evt.Id))
+                if (LocalEntities.ContainsKey(evtId))
                 {
-                    LocalEntities[evt.Id].Dispose();
-                    LocalEntities[evt.Id] = evt;
+                    LocalEntities[evtId].Load(bf);
                 }
                 else
                 {
-                    LocalEntities.Add(evt.Id, evt);
+                    var evt = new Event(evtId,bf);
+                    LocalEntities.Add(evtId,evt);
+                    mEvents.Add(evt);
                 }
-            }
-            else
-            {
-                evt.Dispose();
-            }
-        }
-
-        public void RemoveEvent(Event evt)
-        {
-            mEvents.Remove(evt);
-            if (LocalEntities.ContainsKey(evt.Id))
-            {
-                LocalEntities.Remove(evt.Id);
-                evt.Dispose();
             }
         }
 

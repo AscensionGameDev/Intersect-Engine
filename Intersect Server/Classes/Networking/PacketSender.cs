@@ -971,7 +971,7 @@ namespace Intersect.Server.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.PlayerEquipment);
-            bf.WriteGuid(en.MyClient.Id);
+            bf.WriteGuid(en.Id);
             for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {
                 if (client.Entity == en)
@@ -998,7 +998,7 @@ namespace Intersect.Server.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.PlayerEquipment);
-            bf.WriteGuid(en.MyClient.Id);
+            bf.WriteGuid(en.Id);
             for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {
                 if (en.Equipment[i] == -1 || en.Items[en.Equipment[i]].ItemId == Guid.Empty)
@@ -1161,7 +1161,7 @@ namespace Intersect.Server.Classes.Networking
                     }
                     else
                     {
-                        bf.WriteInteger(-1);
+                        bf.WriteGuid(Guid.Empty);
                     }
                 }
             }

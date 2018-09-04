@@ -46,8 +46,8 @@ namespace Intersect.GameObjects.Maps
         [JsonIgnore]
         public string AttributeData
         {
-            get => JsonConvert.SerializeObject(Attributes);
-            set => Attributes = JsonConvert.DeserializeObject<Attribute[,]>(value);
+            get => JsonConvert.SerializeObject(Attributes, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
+            set => Attributes = JsonConvert.DeserializeObject<Attribute[,]>(value, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
         }
         [NotMapped]
         [JsonIgnore]
@@ -76,8 +76,8 @@ namespace Intersect.GameObjects.Maps
         [NotMapped]
         public string LocalEventsJson
         {
-            get => JsonConvert.SerializeObject(LocalEvents, Formatting.Indented, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.Ignore, ObjectCreationHandling = ObjectCreationHandling.Replace });
-            set => JsonConvert.PopulateObject(value, LocalEvents, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.Ignore, ObjectCreationHandling = ObjectCreationHandling.Replace });
+            get => JsonConvert.SerializeObject(LocalEvents, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
+            set => JsonConvert.PopulateObject(value, LocalEvents, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
         }
         [NotMapped]
         [JsonIgnore]
@@ -92,16 +92,6 @@ namespace Intersect.GameObjects.Maps
         }
         [NotMapped]
         public List<NpcSpawn> Spawns { get; set; } = new List<NpcSpawn>();
-
-        [Column("ResourceSpawns")]
-        [JsonIgnore]
-        public string ResourceSpawnsJson
-        {
-            get => JsonConvert.SerializeObject(ResourceSpawns);
-            set => ResourceSpawns = JsonConvert.DeserializeObject<List<ResourceSpawn>>(value);
-        }
-        [NotMapped]
-        public List<ResourceSpawn> ResourceSpawns { get; set; } = new List<ResourceSpawn>();
 
         //Properties
         public string Music { get; set; } = null;

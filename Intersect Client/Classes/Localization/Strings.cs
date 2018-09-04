@@ -346,11 +346,11 @@ namespace Intersect.Client.Classes.Localization
             {
                 {0, @"None"},
                 {1,@"Equipment"},
-                    {2,@"Consumable"},
-                    {3,@"Currency"},
-                    {4,@"Spell"},
-                    {5,@"Special"},
-                    {6,@"Bag"},
+                {2,@"Consumable"},
+                {3,@"Currency"},
+                {4,@"Spell"},
+                {5,@"Special"},
+                {6,@"Bag"},
             };
             public static LocalizedString prereq = @"Prerequisites:";
             public static LocalizedString quantity = @"x{00}";
@@ -587,6 +587,7 @@ namespace Intersect.Client.Classes.Localization
             public static LocalizedString exit = @"Exit";
             public static LocalizedString login = @"Login";
             public static LocalizedString options = @"";
+            public static LocalizedString optionstooltip = @"";
             public static LocalizedString register = @"Register";
             public static LocalizedString title = @"Main Menu";
         }
@@ -708,9 +709,9 @@ namespace Intersect.Client.Classes.Localization
                 {4,@"Blinds Target"},
                 {5,@"Stealths Target"},
                 {6,@"Transforms Target"},
-				{7,@"Cleanses Target"},
-				{8,@"Target becomes Invulnerable"},
-			};
+                {7,@"Cleanses Target"},
+                {8,@"Target becomes Invulnerable"},
+            };
             public static LocalizedString effects = @"Effects:";
             public static LocalizedString prereqs = @"Prerequisites:";
             public static LocalizedString removesymbol = @"-";
@@ -807,7 +808,7 @@ namespace Intersect.Client.Classes.Localization
                         }
                         else if (fieldValue is Dictionary<int, LocalizedString>)
                         {
-                            var existingDict = (Dictionary<int,LocalizedString>)fieldInfo.GetValue(null);
+                            var existingDict = (Dictionary<int, LocalizedString>)fieldInfo.GetValue(null);
                             var values = ((JObject)dict[fieldInfo.Name]).ToObject<Dictionary<int, string>>();
                             var dic = values.ToDictionary<KeyValuePair<int, string>, int, LocalizedString>(val => val.Key, val => val.Value);
                             foreach (var val in dic)

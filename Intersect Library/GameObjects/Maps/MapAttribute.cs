@@ -33,7 +33,7 @@ namespace Intersect.GameObjects.Maps
         public string Data()
         {
             var serializationSettings = new JsonSerializerSettings();
-            serializationSettings.DefaultValueHandling = DefaultValueHandling.Ignore;
+            serializationSettings.DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate;
             serializationSettings.NullValueHandling = NullValueHandling.Ignore;
 
             //Not sure how to clear out the empty stuff
@@ -76,7 +76,7 @@ namespace Intersect.GameObjects.Maps
         public Guid MapId { get; set; }
         public int X { get; set; }
         public int Y { get; set; }
-        public byte Dir { get; set; }
+        public int Dir { get; set; }
     }
 
     public class AttributeSoundFlags

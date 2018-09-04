@@ -37,13 +37,8 @@ namespace Intersect_Client.Classes.Entities
         public int RenderLevel = 1;
         public bool WalkingAnim = true;
 
-        public Event(Guid id, int mapNum, ByteBuffer bf) : base(id, bf, true)
+        public Event(Guid id, ByteBuffer bf) : base(id, bf, true)
         {
-            var map = MapInstance.Get(CurrentMap);
-            if (map != null)
-            {
-                map.AddEvent(this);
-            }
             mRenderPriority = 1;
         }
 

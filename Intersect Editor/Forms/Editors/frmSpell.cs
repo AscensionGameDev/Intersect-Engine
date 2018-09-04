@@ -248,7 +248,7 @@ namespace Intersect.Editor.Forms.Editors
 
                 txtName.Text = mEditorItem.Name;
                 txtDesc.Text = mEditorItem.Desc;
-                cmbType.SelectedIndex = mEditorItem.SpellType;
+                cmbType.SelectedIndex = (int)mEditorItem.SpellType;
 
                 nudCastDuration.Value = mEditorItem.CastDuration;
                 nudCooldownDuration.Value = mEditorItem.CooldownDuration;
@@ -295,7 +295,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 grpTargetInfo.Show();
                 grpCombat.Show();
-                cmbTargetType.SelectedIndex = mEditorItem.Combat.TargetType;
+                cmbTargetType.SelectedIndex = (int)mEditorItem.Combat.TargetType;
                 UpdateTargetTypePanel();
 
                 nudHPDamage.Value = mEditorItem.Combat.VitalDiff[(int) Vitals.Health];
@@ -409,9 +409,9 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cmbType.SelectedIndex != mEditorItem.SpellType)
+            if (cmbType.SelectedIndex != (int)mEditorItem.SpellType)
             {
-                mEditorItem.SpellType = (byte) cmbType.SelectedIndex;
+                mEditorItem.SpellType = (SpellTypes)cmbType.SelectedIndex;
                 UpdateSpellTypePanels();
             }
         }
@@ -424,7 +424,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbTargetType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.Combat.TargetType = cmbTargetType.SelectedIndex;
+            mEditorItem.Combat.TargetType = (SpellTargetTypes)cmbTargetType.SelectedIndex;
             UpdateTargetTypePanel();
         }
 

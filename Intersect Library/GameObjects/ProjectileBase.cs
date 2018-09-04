@@ -13,7 +13,7 @@ namespace Intersect.GameObjects
         public const int MAX_PROJECTILE_DIRECTIONS = 8;
 
         [Column("Ammo")]
-        public Guid AmmoItemId { get; protected set; } = Guid.Empty;
+        public Guid AmmoItemId { get; set; } = Guid.Empty;
         [NotMapped]
         [JsonIgnore]
         public ItemBase Ammo
@@ -56,7 +56,7 @@ namespace Intersect.GameObjects
         public int Speed { get; set; } = 1;
 
         [Column("Spell")]
-        public Guid SpellId { get; protected set; } = Guid.Empty;
+        public Guid SpellId { get; set; } = Guid.Empty;
         [NotMapped]
         [JsonIgnore]
         public SpellBase Spell

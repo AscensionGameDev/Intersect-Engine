@@ -21,12 +21,12 @@ namespace Intersect.GameObjects.Conditions
 
         public void Load(string data)
         {
-            JsonConvert.PopulateObject(data, this, new JsonSerializerSettings() {TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.Ignore, ObjectCreationHandling = ObjectCreationHandling.Replace});
+            JsonConvert.PopulateObject(data, this, new JsonSerializerSettings() {TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace});
         }
 
         public string Data()
         {
-            return JsonConvert.SerializeObject(this, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto,DefaultValueHandling = DefaultValueHandling.Ignore});
+            return JsonConvert.SerializeObject(this, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto,DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate });
         }
     }
 }

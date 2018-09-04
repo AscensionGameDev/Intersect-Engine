@@ -425,37 +425,13 @@
     <Compile Include="Database\PrimaryKeyDescriptor.cs" />
     <Compile Include="Database\TableDescriptor.cs" />
     <Compile Include="Database\UniqueConstraintDescriptor.cs" />
-    <Compile Include="Migrations\20180823214020_Initial.cs" />
-    <Compile Include="Migrations\20180823214020_Initial.designer.cs">
-      <DependentUpon>20180823214020_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\20180904095245_Initial.cs" />
+    <Compile Include="Migrations\20180904095245_Initial.designer.cs">
+      <DependentUpon>20180904095245_Initial.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\Game\20180822221819_Initial.cs" />
-    <Compile Include="Migrations\Game\20180822221819_Initial.designer.cs">
-      <DependentUpon>20180822221819_Initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20180822230957_FocusDamageDealers.cs" />
-    <Compile Include="Migrations\Game\20180822230957_FocusDamageDealers.designer.cs">
-      <DependentUpon>20180822230957_FocusDamageDealers.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20180822231032_FocusDamageDealers1.cs" />
-    <Compile Include="Migrations\Game\20180822231032_FocusDamageDealers1.designer.cs">
-      <DependentUpon>20180822231032_FocusDamageDealers1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20180824015235_AnimationLayersUpdated.cs" />
-    <Compile Include="Migrations\Game\20180824015235_AnimationLayersUpdated.designer.cs">
-      <DependentUpon>20180824015235_AnimationLayersUpdated.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20180824021946_ResourceDeathEvents.cs" />
-    <Compile Include="Migrations\Game\20180824021946_ResourceDeathEvents.designer.cs">
-      <DependentUpon>20180824021946_ResourceDeathEvents.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20180825090026_CritAndItemChanges.cs" />
-    <Compile Include="Migrations\Game\20180825090026_CritAndItemChanges.designer.cs">
-      <DependentUpon>20180825090026_CritAndItemChanges.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20180828081038_AddOptResourcesBelowEntities.cs" />
-    <Compile Include="Migrations\Game\20180828081038_AddOptResourcesBelowEntities.designer.cs">
-      <DependentUpon>20180828081038_AddOptResourcesBelowEntities.cs</DependentUpon>
+    <Compile Include="Migrations\Game\20180831135701_Initial.cs" />
+    <Compile Include="Migrations\Game\20180831135701_Initial.designer.cs">
+      <DependentUpon>20180831135701_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\GameContextModelSnapshot.cs" />
     <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />

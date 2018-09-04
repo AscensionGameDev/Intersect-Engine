@@ -609,7 +609,7 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<string>("Pic");
 
-                    b.Property<byte>("SpellType");
+                    b.Property<int>("SpellType");
 
                     b.Property<long>("TimeCreated");
 
@@ -640,12 +640,12 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("DaylightHuesJson")
+                        .HasColumnName("DaylightHues");
+
                     b.Property<int>("RangeInterval");
 
                     b.Property<float>("Rate");
-
-                    b.Property<string>("RegenJson")
-                        .HasColumnName("DaylightHues");
 
                     b.Property<bool>("SyncTime");
 

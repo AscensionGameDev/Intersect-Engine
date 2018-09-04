@@ -26,7 +26,7 @@ namespace Intersect.GameObjects
         public bool AttackAllies { get; set; }
 
         [Column("AttackAnimation")]
-        public Guid AttackAnimationId { get; protected set; }
+        public Guid AttackAnimationId { get; set; }
         [NotMapped]
         [JsonIgnore]
         public AnimationBase AttackAnimation

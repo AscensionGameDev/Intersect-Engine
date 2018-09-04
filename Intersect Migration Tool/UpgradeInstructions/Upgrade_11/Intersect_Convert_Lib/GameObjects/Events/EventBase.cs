@@ -19,7 +19,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_11.Intersect_Convert_L
             SpawnY = y;
             CommonEvent = isCommon;
             IsGlobal = isGlobal;
-            MyPages = new List<EventPage> {new EventPage()};
+            MyPages = new List<EventPage>();
         }
 
         public EventBase(int index, EventBase copy) : base(index)

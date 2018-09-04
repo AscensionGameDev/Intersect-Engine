@@ -1085,7 +1085,11 @@ namespace Intersect.Server.Classes.Networking
             {
                 PacketSender.SendPlayerMsg(client, Strings.Player.adminjoined, CustomColors.AdminJoined);
             }
-            player.Warp(player.MapId, player.X,player.Y, player.Dir, false, player.Z);
+
+            if (player.MapId == Guid.Empty)
+                player.WarpToSpawn();
+            else
+                player.Warp(player.MapId, player.X,player.Y, player.Dir, false, player.Z);
             PacketSender.SendEntityDataTo(client, player);
 
             //Search for login activated events and run them
@@ -1188,15 +1192,14 @@ namespace Intersect.Server.Classes.Networking
             else
             {
                 var player = new Player();
+                player.Id = Guid.NewGuid();
                 client.Characters.Add(player);
                 player.FixLists();
                 for (var i = 0; i < Options.EquipmentSlots.Count; i++)
                 {
                     player.Equipment[i] = -1;
                 }
-                client.LoadCharacter(player);
-
-                client.Entity = player;
+                
                 player.Name = name;
                 player.ClassId = classId;
 				player.Level = 1;
@@ -1207,8 +1210,8 @@ namespace Intersect.Server.Classes.Networking
                     player.Face = classBase.Sprites[sprite].Face;
                     player.Gender = classBase.Sprites[sprite].Gender;
                 }
-                PacketSender.SendJoinGame(client);
-                player.WarpToSpawn();
+
+                client.LoadCharacter(player);
 
                 player.SetVital(Vitals.Health, classBase.BaseVital[(int)Vitals.Health]);
                 player.SetVital(Vitals.Mana, classBase.BaseVital[(int)Vitals.Mana]);
@@ -1218,6 +1221,9 @@ namespace Intersect.Server.Classes.Networking
 					player.Stat[i].Stat = 0;
                 }
                 player.StatPoints = classBase.BasePoints;
+
+                PacketSender.SendJoinGame(client);
+                player.Online();
 
                 for (int i = 0; i < classBase.Spells.Count; i++)
                 {
@@ -1232,13 +1238,12 @@ namespace Intersect.Server.Classes.Networking
                 {
                     if (ItemBase.Get(item.Id) != null)
                     {
-                        var tempItem = new Item(item.Id, item.Amount);
+                        var tempItem = new Item(item.Id, item.Quantity);
                         player.TryGiveItem(tempItem, false);
                     }
                 }
 
                 LegacyDatabase.SavePlayers();
-                player.Online();
             }
             bf.Dispose();
         }

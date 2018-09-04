@@ -154,7 +154,7 @@ namespace Intersect_Client.Classes.UI.Game
             for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {
                 Items.Add(new EquipmentItem(i, mCharacterWindow));
-                Items[i].Pnl = new ImagePanel(mEquipmentContainer, "EquipmentBox");
+                Items[i].Pnl = new ImagePanel(mEquipmentContainer, "EquipmentItem");
                 Items[i].Setup();
 
                 Items[i].Pnl.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());

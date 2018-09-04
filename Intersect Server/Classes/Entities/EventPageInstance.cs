@@ -63,6 +63,7 @@ namespace Intersect.Server.Classes.Entities
         public EventPageInstance(EventBase myEvent, EventPage myPage, Guid mapId, EventInstance eventIndex, Client client) : base(Guid.NewGuid())
         {
             BaseEvent = myEvent;
+            Id = BaseEvent.Id;
             MyPage = myPage;
             MapId = mapId;
             X = eventIndex.CurrentX;
@@ -122,6 +123,7 @@ namespace Intersect.Server.Classes.Entities
             Client client, EventPageInstance globalClone) : base(instanceId)
         {
             BaseEvent = myEvent;
+            Id = BaseEvent.Id;
             GlobalClone = globalClone;
             MyPage = myPage;
             MapId = mapId;
@@ -612,6 +614,8 @@ namespace Intersect.Server.Classes.Entities
         {
             //Should despawn if conditions are not met OR an earlier page can spawn
             if (!Conditions.MeetsConditionLists(MyPage.ConditionLists, MyEventIndex.MyPlayer, MyEventIndex))
+                return true;
+            if (Map != null && !Map.GetSurroundingMaps(true).Contains(MyEventIndex.MyPlayer.Map))
                 return true;
             for (int i = 0; i < BaseEvent.Pages.Count; i++)
             {

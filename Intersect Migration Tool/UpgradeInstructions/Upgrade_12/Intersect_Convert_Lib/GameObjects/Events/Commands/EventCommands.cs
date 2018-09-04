@@ -1,0 +1,392 @@
+﻿using System;
+using System.Collections.Generic;
+using Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_Lib.Enums;
+
+namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_Lib.GameObjects.Events.Commands
+{
+    public abstract class EventCommand
+    {
+        public abstract EventCommandType Type { get; }
+    }
+
+    public class ShowTextCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.ShowText;
+        public string Text { get; set; } = "";
+        public string Face { get; set; } = "";
+    }
+
+    public class ShowOptionsCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.ShowOptions;
+        public string Text { get; set; } = "";
+        public string[] Options { get; set; } = new string[4];
+        //Id of the command list(s) you follow when a particular option is selected
+        public Guid[] BranchIds { get; set; } = new Guid[4]; 
+        public string Face { get; set; } = "";
+
+        //For Json Deserialization
+        public ShowOptionsCommand()
+        {
+
+        }
+
+        public ShowOptionsCommand(Dictionary<Guid, List<EventCommand>> commandLists)
+        {
+            for (int i = 0; i < BranchIds.Length; i++)
+            {
+                BranchIds[i] = Guid.NewGuid();
+                commandLists.Add(BranchIds[i], new List<EventCommand>());
+            }
+        }
+    }
+
+    public class AddChatboxTextCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.AddChatboxText;
+        public string Text { get; set; } = "";
+        public string Color { get; set; } = "";
+        public int Channel { get; set; } = 0; //0 = Player, 1 = Local, 2 = Global
+    }
+
+    public class SetSwitchCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.SetSwitch;
+        public SwitchTypes SwitchType { get; set; } = SwitchTypes.PlayerSwitch;
+        public Guid SwitchId { get; set; }
+        public bool Value { get; set; } 
+    }
+
+    public class SetVariableCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.SetVariable;
+        public VariableTypes VariableType { get; set; } = VariableTypes.PlayerVariable;
+        public Guid VariableId { get; set; }
+        public VariableMods ModType { get; set; } = VariableMods.Set;
+        public int Value { get; set; }
+        public int HighValue { get; set; }
+    }
+
+    public class SetSelfSwitchCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.SetSelfSwitch;
+        public int SwitchId { get; set; }  //0 through 3
+        public bool Value { get; set; }
+    }
+
+    public class ConditionalBranchCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.ConditionalBranch;
+        public Condition Condition { get; set; }
+        public Guid[] BranchIds { get; set; } = new Guid[2]; //Branch[0] is the event commands to execute when the condition is met, Branch[1] is for when it's not.
+
+        //For Json Deserialization
+        public ConditionalBranchCommand()
+        {
+
+        }
+
+        public ConditionalBranchCommand(Dictionary<Guid,List<EventCommand>> commandLists)
+        {
+            for (int i = 0; i < BranchIds.Length; i++)
+            {
+                BranchIds[i] = Guid.NewGuid();
+                commandLists.Add(BranchIds[i], new List<EventCommand>());
+            }
+        }
+    }
+
+    public class ExitEventProcessingCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.ExitEventProcess;
+    }
+
+    public class LabelCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.Label;
+        public string Label { get; set; }
+    }
+
+    public class GoToLabelCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.GoToLabel;
+        public string Label { get; set; }
+    }
+
+    public class StartCommmonEventCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.StartCommonEvent;
+        public Guid EventId { get; set; }
+    }
+
+    public class RestoreHpCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.RestoreHp;
+    }
+
+    public class RestoreMpCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.RestoreMp;
+    }
+
+    public class LevelUpCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.LevelUp;
+    }
+
+    public class GiveExperienceCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.GiveExperience;
+        public long Exp { get; set; }
+    }
+
+    public class ChangeLevelCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.ChangeLevel;
+        public int Level { get; set; }
+    }
+
+    public class ChangeSpellsCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.ChangeSpells;
+        public Guid SpellId { get; set; }
+        public bool Add { get; set; } //If !Add then Remove
+        public Guid[] BranchIds { get; set; } = new Guid[2]; //Branch[0] is the event commands to execute when taught/removed successfully, Branch[1] is for when it's not.
+
+        //For Json Deserialization
+        public ChangeSpellsCommand()
+        {
+
+        }
+
+        public ChangeSpellsCommand(Dictionary<Guid, List<EventCommand>> commandLists)
+        {
+            for (int i = 0; i < BranchIds.Length; i++)
+            {
+                BranchIds[i] = Guid.NewGuid();
+                commandLists.Add(BranchIds[i], new List<EventCommand>());
+            }
+        }
+    }
+
+    public class ChangeItemsCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.ChangeItems;
+        public Guid ItemId { get; set; }
+        public bool Add { get; set; } //If !Add then Remove
+        public int Quantity { get; set; }
+        public Guid[] BranchIds { get; set; } = new Guid[2]; //Branch[0] is the event commands to execute when given/taken successfully, Branch[1] is for when they're not.
+
+        //For Json Deserialization
+        public ChangeItemsCommand()
+        {
+
+        }
+
+        public ChangeItemsCommand(Dictionary<Guid, List<EventCommand>> commandLists)
+        {
+            for (int i = 0; i < BranchIds.Length; i++)
+            {
+                BranchIds[i] = Guid.NewGuid();
+                commandLists.Add(BranchIds[i], new List<EventCommand>());
+            }
+        }
+    }
+
+    public class ChangeSpriteCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.ChangeSprite;
+        public string Sprite { get; set; } = "";
+    }
+
+    public class ChangeFaceCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.ChangeFace;
+        public string Face { get; set; } = "";
+    }
+
+    public class ChangeGenderCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.ChangeGender;
+        public byte Gender { get; set; }
+    }
+
+    public class SetAccessCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.SetAccess;
+        public byte Power { get; set; }
+    }
+
+    public class WarpCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.WarpPlayer;
+        public Guid MapId { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
+        public byte Dir { get; set; }
+    }
+
+    public class SetMoveRouteCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.SetMoveRoute;
+        public Guid TargetId { get; set; }
+        public EventMoveRoute Route { get; set; } = new EventMoveRoute();
+    }
+
+    public class WaitForRouteCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.WaitForRouteCompletion;
+        public Guid TargetId { get; set; }
+    }
+
+    public class SpawnNpcCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.SpawnNpc;
+        public Guid NpcId { get; set; }
+        public byte Dir { get; set; }
+
+        //Tile Spawn Variables  (Will spawn on map tile if mapid is not empty)
+        public Guid MapId { get; set; }
+
+        //Entity Spawn Variables (Will spawn on/around entity if entityId is not empty)
+        public Guid EntityId { get; set; }
+
+        //Map Coords or Coords Centered around player to spawn at
+        public int X { get; set; }
+        public int Y { get; set; }
+    }
+
+    public class DespawnNpcCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.DespawnNpc;
+        //No parameters, only despawns npcs that have been spawned via events for the player
+    }
+
+    public class PlayAnimationCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.PlayAnimation;
+        public Guid AnimationId { get; set; }
+        public byte Dir { get; set; }
+
+        //Tile Spawn Variables  (Will spawn on map tile if mapid is not empty)
+        public Guid MapId { get; set; }
+
+        //Entity Spawn Variables (Will spawn on/around entity if entityId is not empty)
+        public Guid EntityId { get; set; }
+
+        //Map Coords or Coords Centered around player to spawn at
+        public int X { get; set; }
+        public int Y { get; set; }
+    }
+
+    public class HoldPlayerCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.HoldPlayer;
+    }
+
+    public class ReleasePlayerCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.ReleasePlayer;
+    }
+
+    public class PlayBgmCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.PlayBgm;
+        public string File { get; set; } = "";
+    }
+
+    public class FadeoutBgmCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.FadeoutBgm;
+    }
+
+    public class PlaySoundCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.PlaySound;
+        public string File { get; set; } = "";
+    }
+
+    public class StopSoundsCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.StopSounds;
+    }
+
+    public class ShowPictureCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.ShowPicture;
+        public string File { get; set; } = "";
+        public int Size { get; set; } //Original = 0, Full Screen, Half Screen, Stretch To Fit  //TODO Enum this?
+        public bool Clickable { get; set; }
+    }
+
+    public class HidePictureCommmand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.HidePicture;
+    }
+
+    public class WaitCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.Wait;
+        public int Time { get; set; }
+    }
+
+    public class OpenBankCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.OpenBank;
+    }
+
+    public class OpenShopCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.OpenShop;
+        public Guid ShopId { get; set; }
+    }
+
+    public class OpenCraftingTableCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.OpenCraftingTable;
+        public Guid CraftingTableId { get; set; }
+    }
+
+    public class SetClassCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.SetClass;
+        public Guid ClassId { get; set; }
+    }
+
+    public class StartQuestCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.StartQuest;
+        public Guid QuestId { get; set; }
+        public bool Offer { get; set; } //Show the offer screen and give the player a chance to decline the quest
+        public Guid[] BranchIds { get; set; } = new Guid[2]; //Branch[0] is the event commands to execute when quest is started successfully, Branch[1] is for when it's not.
+
+        //For Json Deserialization
+        public StartQuestCommand()
+        {
+
+        }
+
+        public StartQuestCommand(Dictionary<Guid, List<EventCommand>> commandLists)
+        {
+            for (int i = 0; i < BranchIds.Length; i++)
+            {
+                BranchIds[i] = Guid.NewGuid();
+                commandLists.Add(BranchIds[i], new List<EventCommand>());
+            }
+        }
+    }
+
+    public class CompleteQuestTaskCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.CompleteQuestTask;
+        public Guid QuestId { get; set; }
+        public Guid TaskId { get; set; }
+    }
+
+    public class EndQuestCommand : EventCommand
+    {
+        public override EventCommandType Type {get;} = EventCommandType.EndQuest;
+        public Guid QuestId { get; set; }
+        public bool SkipCompletionEvent { get; set; }
+    }
+}

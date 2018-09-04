@@ -50,7 +50,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_11.Intersect_Convert_L
 
         public static string GetTimeJson()
         {
-            return JsonConvert.SerializeObject(sTimeBase);
+            return JsonConvert.SerializeObject(sTimeBase, Formatting.Indented);
         }
 
         public void ResetColors()
