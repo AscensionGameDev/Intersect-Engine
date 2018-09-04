@@ -1,8 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_Lib.Database.GameData;
 
 namespace Intersect.Migration.Migrations.Game
 {
@@ -207,7 +205,6 @@ namespace Intersect.Migration.Migrations.Game
                     Lights = table.Column<string>(nullable: true),
                     Events = table.Column<string>(nullable: true),
                     NpcSpawns = table.Column<string>(nullable: true),
-                    ResourceSpawns = table.Column<string>(nullable: true),
                     Music = table.Column<string>(nullable: true),
                     Sound = table.Column<string>(nullable: true),
                     IsIndoors = table.Column<bool>(nullable: false),

@@ -206,13 +206,13 @@
     <Compile Include="Database.cs" />
     <Compile Include="Localization\Strings.cs" />
     <Compile Include="Main.cs" />
-    <Compile Include="Migrations\20180823214020_Initial.cs" />
-    <Compile Include="Migrations\20180823214020_Initial.Designer.cs">
-      <DependentUpon>20180823214020_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\20180904231211_Initial.cs" />
+    <Compile Include="Migrations\20180904231211_Initial.Designer.cs">
+      <DependentUpon>20180904231211_Initial.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\Game\20180831135701_Initial.cs" />
-    <Compile Include="Migrations\Game\20180831135701_Initial.Designer.cs">
-      <DependentUpon>20180831135701_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\Game\20180904231124_Initial.cs" />
+    <Compile Include="Migrations\Game\20180904231124_Initial.Designer.cs">
+      <DependentUpon>20180904231124_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\GameContextModelSnapshot.cs" />
     <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />

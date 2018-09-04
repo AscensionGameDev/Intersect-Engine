@@ -94,6 +94,7 @@ namespace Intersect.Migration.Migrations
                 columns: table => new
                 {
                     Dir = table.Column<int>(nullable: false),
+                    Id = table.Column<Guid>(nullable: false),
                     Level = table.Column<int>(nullable: false),
                     MapId = table.Column<Guid>(nullable: false),
                     X = table.Column<int>(nullable: false),
@@ -103,9 +104,8 @@ namespace Intersect.Migration.Migrations
                     Sprite = table.Column<string>(nullable: true),
                     Face = table.Column<string>(nullable: true),
                     Vitals = table.Column<string>(nullable: true),
-                    MaxVitals = table.Column<string>(nullable: true),
                     Stats = table.Column<string>(nullable: true),
-                    Id = table.Column<Guid>(nullable: false),
+                    AccountId = table.Column<Guid>(nullable: true),
                     ClassId = table.Column<Guid>(nullable: false),
                     Gender = table.Column<int>(nullable: false),
                     Exp = table.Column<long>(nullable: false),
@@ -117,11 +117,11 @@ namespace Intersect.Migration.Migrations
                 {
                     table.PrimaryKey("PK_Characters", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Characters_Users_Id",
-                        column: x => x.Id,
+                        name: "FK_Characters_Users_AccountId",
+                        column: x => x.AccountId,
                         principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -421,6 +421,11 @@ namespace Intersect.Migration.Migrations
                 table: "Character_Variables",
                 columns: new[] { "VariableId", "CharacterId" },
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Characters_AccountId",
+                table: "Characters",
+                column: "AccountId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Mutes_PlayerId",

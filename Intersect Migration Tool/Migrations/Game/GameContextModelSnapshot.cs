@@ -712,9 +712,6 @@ namespace Intersect.Migration.Migrations.Game
 
                     b.Property<int>("RHue");
 
-                    b.Property<string>("ResourceSpawnsJson")
-                        .HasColumnName("ResourceSpawns");
-
                     b.Property<int>("Revision");
 
                     b.Property<Guid>("Right");

@@ -425,13 +425,13 @@
     <Compile Include="Database\PrimaryKeyDescriptor.cs" />
     <Compile Include="Database\TableDescriptor.cs" />
     <Compile Include="Database\UniqueConstraintDescriptor.cs" />
-    <Compile Include="Migrations\20180904095245_Initial.cs" />
-    <Compile Include="Migrations\20180904095245_Initial.designer.cs">
-      <DependentUpon>20180904095245_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\20180904231211_Initial.cs" />
+    <Compile Include="Migrations\20180904231211_Initial.designer.cs">
+      <DependentUpon>20180904231211_Initial.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\Game\20180831135701_Initial.cs" />
-    <Compile Include="Migrations\Game\20180831135701_Initial.designer.cs">
-      <DependentUpon>20180831135701_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\Game\20180904231124_Initial.cs" />
+    <Compile Include="Migrations\Game\20180904231124_Initial.designer.cs">
+      <DependentUpon>20180904231124_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\GameContextModelSnapshot.cs" />
     <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />

@@ -204,7 +204,6 @@ namespace Intersect.Server.Migrations.Game
                     Lights = table.Column<string>(nullable: true),
                     Events = table.Column<string>(nullable: true),
                     NpcSpawns = table.Column<string>(nullable: true),
-                    ResourceSpawns = table.Column<string>(nullable: true),
                     Music = table.Column<string>(nullable: true),
                     Sound = table.Column<string>(nullable: true),
                     IsIndoors = table.Column<bool>(nullable: false),

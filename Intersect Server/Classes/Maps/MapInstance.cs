@@ -124,6 +124,7 @@ namespace Intersect.Server.Classes.Maps
             lock (mMapLock)
             {
                 CacheMapBlocks();
+                DespawnEverything();
                 RespawnEverything();
             }
         }
@@ -135,8 +136,6 @@ namespace Intersect.Server.Classes.Maps
                 DespawnEverything();
                 base.Load(json);
                 if (keepRevision > -1) Revision = keepRevision;
-                CacheMapBlocks();
-                RespawnEverything();
             }
         }
 
@@ -545,6 +544,18 @@ namespace Intersect.Server.Classes.Maps
         {
             //Kill global events on map (make sure processing stops for online players)
             //Gonna rely on GC for now
+            var players = new List<Player>();
+            foreach (var map in GetSurroundingMaps(true))
+            {
+                players.AddRange(map.GetPlayersOnMap().ToArray());
+            }
+            foreach (var evt in GlobalEventInstances.ToArray())
+            {
+                foreach (var player in players)
+                {
+                    player.RemoveEvent(evt.Value.BaseEvent.Id);
+                }
+            }
             GlobalEventInstances.Clear();
         }
 
@@ -951,6 +962,7 @@ namespace Intersect.Server.Classes.Maps
             SpawnGlobalEvents();
             SpawnMapNpcs();
             SpawnMapResources();
+            SpawnGlobalEvents();
         }
 
         public static MapInstance Get(Guid id)

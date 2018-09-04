@@ -685,6 +685,7 @@ namespace Intersect.Server.Classes.Networking
             if (map.TileData != null) map.TileData = tileData;
             map.AttributeData = bf.ReadString();
             LegacyDatabase.SaveGameDatabase();
+            map.Initialize();
             Globals.Clients?.ForEach(t =>
             {
                 if (t?.IsEditor ?? false) PacketSender.SendMapList(t);
@@ -1326,12 +1327,9 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteBytes(packet);
             var slot = bf.ReadInteger();
             var target = bf.ReadGuid();
+            var casted = false;
 
-            if (target == Guid.Empty)
-            {
-                client.Entity.UseSpell(slot, null);
-            }
-            else
+            if (target != Guid.Empty)
             {
                 foreach (var map in client.Entity.Map.GetSurroundingMaps(true))
                 {
@@ -1340,11 +1338,14 @@ namespace Intersect.Server.Classes.Networking
                         if (en.Id == target)
                         {
                             client.Entity.UseSpell(slot, en);
+                            casted = true;
                             break;
                         }
                     }
                 }
             }
+
+            if (!casted) client.Entity.UseSpell(slot, null);
             bf.Dispose();
         }
 

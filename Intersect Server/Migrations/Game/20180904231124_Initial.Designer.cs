@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Intersect.Server.Migrations.Game
 {
     [DbContext(typeof(GameContext))]
-    [Migration("20180831135701_Initial")]
+    [Migration("20180904231124_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -713,9 +713,6 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<int>("PlayerLightSize");
 
                     b.Property<int>("RHue");
-
-                    b.Property<string>("ResourceSpawnsJson")
-                        .HasColumnName("ResourceSpawns");
 
                     b.Property<int>("Revision");
 

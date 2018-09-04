@@ -357,6 +357,13 @@ namespace Intersect.Server.Classes.Entities
             }
         }
 
+        public void RemoveEvent(Guid id)
+        {
+            EventInstance outInstance;
+            EventLookup.TryRemove(id, out outInstance);
+            PacketSender.SendEntityLeaveTo(MyClient,id, (int)EntityTypes.Event, Id);
+        }
+
         //Sending Data
         public override byte[] Data()
         {
