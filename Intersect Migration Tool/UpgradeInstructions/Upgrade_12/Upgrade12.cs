@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Intersect.Enums;
 using Intersect.Migration.UpgradeInstructions.Upgrade_12;
 using Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_Lib.GameObjects.Events;
 using Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_Lib;
@@ -147,9 +148,9 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
             Options.Combat.MaxDashSpeed = Upgrade_11.Intersect_Convert_Lib.Options.MaxDashSpeed;
             Options.Map.GameBorderStyle = Upgrade_11.Intersect_Convert_Lib.Options.GameBorderStyle;
             Options.Map.ZDimensionVisible = Upgrade_11.Intersect_Convert_Lib.Options.ZDimensionVisible;
-            Options.Map.MapWidth = Upgrade_11.Intersect_Convert_Lib.Options.MapWidth;
+            Options.Map.Width = Upgrade_11.Intersect_Convert_Lib.Options.MapWidth;
             Options.Map.TileWidth = Upgrade_11.Intersect_Convert_Lib.Options.TileWidth;
-            Options.Map.MapHeight = Upgrade_11.Intersect_Convert_Lib.Options.MapHeight;
+            Options.Map.Height = Upgrade_11.Intersect_Convert_Lib.Options.MapHeight;
             Options.Map.TileHeight = Upgrade_11.Intersect_Convert_Lib.Options.TileHeight;
             Options.Player.ProgressSavedMessages = false;
             Options._options._apiPort = Options.ServerPort;
@@ -190,23 +191,21 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
 
             //TODO
             //-------------
-            //Convert Event IsGlobal to bool and rename to Global
-            //Rename Event MyPages to Pages
-            //Change EventPage Graphic Type to an enum instead of an int
-            //Change EventPage Layer, MovementType, MovementFreq, Trigger to enum
+            //Convert Event IsGlobal to bool and rename to Global - Done?
+            //Change EventPage Graphic Type to an enum instead of an int - Done?
+            //Change EventPage Layer, MovementType, MovementFreq, MovementSpeed, Trigger to enum
             //Make AddChatboxText Channel an Enum
-            //Make player/server variables longs
             //Make Change Gender Command Gender an enum
             //Make Set Access Command Access an enum
+            //Make player/server variables longs
             //Maybe make Warp Dir an enum
             //Remove TargetId from EventMoveRouteCommand
             //Rename Spell CastingReqs to CastingRequirements
             //Change Quest LogBefore/After/Quitable/Repeatable to bools
-            //Rename any Desc to Description
             //Rename Options MapWidth/Mapheight to just width and height
             //Disable api by default -- set api port to server port by default
             //Change map npc spawn dir to byte
-
+            //Rename any Desc to Description
 
             sGameDb.SaveChanges();
             sPlayerDb.SaveChanges();
@@ -248,20 +247,20 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
 
                 itm.Name = data["Name"].ToString();
 
-                itm.BeforeDesc = data["BeforeDesc"].ToString();
-                itm.EndDesc = data["EndDesc"].ToString();
+                itm.BeforeDescription = data["BeforeDesc"].ToString();
+                itm.EndDescription = data["EndDesc"].ToString();
 
                 var endEventId = Guid.NewGuid();
                 itm.EndEventId = endEventId;
                 ImportEvent(endEventId, data["EndEvent"].ToString(), Guid.Empty, -1, -1, null);
 
-                itm.InProgressDesc = data["InProgressDesc"].ToString();
-                itm.LogAfterComplete = (byte)int.Parse(data["LogAfterComplete"].ToString());
-                itm.LogBeforeOffer = (byte)int.Parse(data["LogBeforeOffer"].ToString());
-                itm.Quitable = (byte)int.Parse(data["Quitable"].ToString());
-                itm.Repeatable = (byte)int.Parse(data["Repeatable"].ToString());
+                itm.InProgressDescription = data["InProgressDesc"].ToString();
+                itm.LogAfterComplete = Convert.ToBoolean(int.Parse(data["LogAfterComplete"].ToString()));
+                itm.LogBeforeOffer = Convert.ToBoolean(int.Parse(data["LogBeforeOffer"].ToString()));
+                itm.Quitable = Convert.ToBoolean(int.Parse(data["Quitable"].ToString()));
+                itm.Repeatable = Convert.ToBoolean(int.Parse(data["Repeatable"].ToString()));
                 itm.Requirements = ImportConditionLists(data["Requirements"].ToString());
-                itm.StartDesc = data["StartDesc"].ToString();
+                itm.StartDescription = data["StartDesc"].ToString();
 
                 var startEventId = Guid.NewGuid();
                 itm.StartEventId = startEventId;
@@ -375,7 +374,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
                                     att.Warp.MapId = GetGuid(GameObjectType.Map, data1);
                                     att.Warp.X = data2;
                                     att.Warp.Y = data3;
-                                    att.Warp.Dir = int.Parse(data4);
+                                    att.Warp.Direction = (WarpDirection)int.Parse(data4);
                                     break;
                                 case MapAttributes.Sound:
                                     att.Type = MapAttributes.Sound;
@@ -438,7 +437,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
                     spn.NpcId = GetGuid(GameObjectType.Npc, int.Parse(spawn["NpcNum"].ToString()));
                     spn.X = int.Parse(spawn["X"].ToString());
                     spn.Y = int.Parse(spawn["Y"].ToString());
-                    spn.Dir = int.Parse(spawn["Dir"].ToString());
+                    spn.Direction = (NpcSpawnDirection)(int.Parse(spawn["Dir"].ToString()) + 1);
                     itm.Spawns.Add(spn);
                 }
 
@@ -529,7 +528,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
                             var cCmd = new AddChatboxTextCommand();
                             cCmd.Text = strs[0];
                             cCmd.Color = strs[1];
-                            cCmd.Channel = ints[0];
+                            cCmd.Channel = (ChatboxChannel)ints[0];
                             newCmd = cCmd;
                             break;
                         case EventCommandType.SetSwitch:
@@ -654,12 +653,12 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
                             break;
                         case EventCommandType.ChangeGender:
                             var rCmd = new ChangeGenderCommand();
-                            rCmd.Gender = (byte)ints[0];
+                            rCmd.Gender = (Gender)ints[0];
                             newCmd = rCmd;
                             break;
                         case EventCommandType.SetAccess:
                             var sCmd = new SetAccessCommand();
-                            sCmd.Power = (byte) ints[0];
+                            sCmd.Access = (Access) ints[0];
                             newCmd = sCmd;
                             break;
                         case EventCommandType.WarpPlayer:
@@ -667,7 +666,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
                             tCmd.MapId = GetGuid(GameObjectType.Map, ints[0]);
                             tCmd.X = ints[1];
                             tCmd.Y = ints[2];
-                            tCmd.Dir = (byte)ints[3];
+                            tCmd.Direction = (WarpDirection)ints[3];
                             newCmd = tCmd;
                             break;
                         case EventCommandType.SetMoveRoute:
@@ -830,7 +829,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
                     graphic = new EventGraphic();
                     graphic.Filename = action["Graphic"]["Filename"].ToString();
                     graphic.Height = int.Parse(action["Graphic"]["Height"].ToString());
-                    graphic.Type = int.Parse(action["Graphic"]["Type"].ToString());
+                    graphic.Type = (EventGraphicType)int.Parse(action["Graphic"]["Type"].ToString());
                     graphic.Width = int.Parse(action["Graphic"]["Width"].ToString());
                     graphic.X = int.Parse(action["Graphic"]["X"].ToString());
                     graphic.Y = int.Parse(action["Graphic"]["Y"].ToString());
@@ -969,7 +968,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
                     break;
                 case 16:
                     var pCnd = new GenderIsCondition();
-                    pCnd.Gender = (byte) ints[1];
+                    pCnd.Gender = (Gender) ints[1];
                     cnd = pCnd;
                     break;
             }
@@ -1005,27 +1004,34 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
             page.AnimationId = GetGuid(GameObjectType.Animation, int.Parse(data["Animation"].ToString()));
             page.CommandLists = ImportCommandLists(data["CommandLists"].ToString(), mapEvents);
             page.ConditionLists = ImportConditionLists(data["ConditionLists"].ToString());
-            page.Desc = data["Desc"].ToString();
+            page.Description = data["Desc"].ToString();
             page.DirectionFix = Convert.ToBoolean(int.Parse(data["DirectionFix"].ToString()));
             page.DisablePreview = Convert.ToBoolean(int.Parse(data["DisablePreview"].ToString()));
             page.FaceGraphic = data["FaceGraphic"].ToString();
             page.Graphic.Filename = data["Graphic"]["Filename"].ToString();
             page.Graphic.Height = int.Parse(data["Graphic"]["Height"].ToString());
-            page.Graphic.Type = int.Parse(data["Graphic"]["Type"].ToString());
+            page.Graphic.Type = (EventGraphicType)int.Parse(data["Graphic"]["Type"].ToString());
             page.Graphic.Width = int.Parse(data["Graphic"]["Width"].ToString());
             page.Graphic.X = int.Parse(data["Graphic"]["X"].ToString());
             page.Graphic.Y = int.Parse(data["Graphic"]["Y"].ToString());
             page.HideName = Convert.ToBoolean(int.Parse(data["HideName"].ToString()));
             page.InteractionFreeze = Convert.ToBoolean(int.Parse(data["InteractionFreeze"].ToString()));
-            page.Layer = int.Parse(data["Layer"].ToString());
-            page.MovementFreq = int.Parse(data["MovementFreq"].ToString());
-            page.MovementSpeed = int.Parse(data["MovementSpeed"].ToString());
-            page.MovementType = int.Parse(data["MovementType"].ToString());
+            page.Layer = (EventRenderLayer)int.Parse(data["Layer"].ToString());
+            page.Movement.Frequency = (EventMovementFrequency)int.Parse(data["MovementFreq"].ToString());
+            page.Movement.Speed = (EventMovementSpeed)int.Parse(data["MovementSpeed"].ToString());
+            page.Movement.Type = (EventMovementType)int.Parse(data["MovementType"].ToString());
 
-            page.MoveRoute = ImportMoveRoute(data["MoveRoute"].ToString(), mapEvents);
+            page.Movement.Route = ImportMoveRoute(data["MoveRoute"].ToString(), mapEvents);
             
             page.Passable = Convert.ToBoolean(int.Parse(data["Passable"].ToString()));
-            page.Trigger = int.Parse(data["Trigger"].ToString());
+            if (evt.CommonEvent)
+            {
+                page.CommonTrigger = (CommonEventTrigger)int.Parse(data["Trigger"].ToString());
+            }
+            else
+            {
+                page.Trigger = (EventTrigger)int.Parse(data["Trigger"].ToString());
+            }
             page.TriggerCommand = data["TriggerCommand"].ToString();
             page.TriggerVal = Guid.Empty;
             page.WalkingAnimation = Convert.ToBoolean(int.Parse(data["WalkingAnimation"].ToString()));
@@ -1037,7 +1043,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
             var data = JObject.Parse(json);
             evt.Name = data["Name"].ToString();
             evt.TimeCreated = TimeCreated;
-            evt.IsGlobal = byte.Parse(data["IsGlobal"].ToString());
+            evt.Global = Convert.ToBoolean(int.Parse(data["IsGlobal"].ToString()));
 
             var pages = JArray.Parse(data["MyPages"].ToString());
 
@@ -1193,7 +1199,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
                 itm.CastAnimationId = GetGuid(GameObjectType.Animation, int.Parse(data["CastAnimation"].ToString()));
                 itm.CastDuration = int.Parse(data["CastDuration"].ToString());
 
-                itm.CastingReqs = ImportConditionLists(data["CastingReqs"].ToString());
+                itm.CastingRequirements = ImportConditionLists(data["CastingReqs"].ToString());
 
                 itm.Combat.CastRange = int.Parse(data["CastRange"].ToString());
                 itm.CooldownDuration = int.Parse(data["CooldownDuration"].ToString());
@@ -1201,11 +1207,11 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
                 itm.Combat.CritChance = int.Parse(data["CritChance"].ToString());
                 itm.Combat.DamageType = int.Parse(data["DamageType"].ToString());
                 //DataX handled in switch statement below
-                itm.Desc = data["Desc"].ToString();
+                itm.Description = data["Desc"].ToString();
                 itm.Combat.Friendly = Convert.ToBoolean(int.Parse(data["Friendly"].ToString()));
                 itm.HitAnimationId = GetGuid(GameObjectType.Animation, int.Parse(data["HitAnimation"].ToString()));
                 itm.Combat.HitRadius = int.Parse(data["HitRadius"].ToString());
-                itm.Pic = data["Pic"].ToString();
+                itm.Icon = data["Pic"].ToString();
                 itm.Combat.ProjectileId = GetGuid(GameObjectType.Projectile, int.Parse(data["Projectile"].ToString()));
                 itm.Combat.Scaling = int.Parse(data["Scaling"].ToString());
                 itm.Combat.ScalingStat = int.Parse(data["ScalingStat"].ToString());
@@ -1268,13 +1274,13 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
 
                 //DataX values handled in switch statement below
 
-                itm.Desc = data["Desc"].ToString();
+                itm.Description = data["Desc"].ToString();
                 itm.FemalePaperdoll = data["FemalePaperdoll"].ToString();
 
                 itm.ItemType = (ItemTypes)int.Parse(data["ItemType"].ToString());
 
                 itm.MalePaperdoll = data["MalePaperdoll"].ToString();
-                itm.Pic = data["Pic"].ToString();
+                itm.Icon = data["Pic"].ToString();
                 itm.Price = int.Parse(data["Price"].ToString());
                 itm.ProjectileId = GetGuid(GameObjectType.Projectile, int.Parse(data["Projectile"].ToString()));
                 itm.Scaling = int.Parse(data["Scaling"].ToString());

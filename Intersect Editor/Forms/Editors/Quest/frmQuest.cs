@@ -164,10 +164,10 @@ namespace Intersect.Editor.Forms.Editors.Quest
                 pnlContainer.Show();
 
                 txtName.Text = mEditorItem.Name;
-                txtBeforeDesc.Text = mEditorItem.BeforeDesc;
-                txtStartDesc.Text = mEditorItem.StartDesc;
-                txtInProgressDesc.Text = mEditorItem.InProgressDesc;
-                txtEndDesc.Text = mEditorItem.EndDesc;
+                txtBeforeDesc.Text = mEditorItem.BeforeDescription;
+                txtStartDesc.Text = mEditorItem.StartDescription;
+                txtInProgressDesc.Text = mEditorItem.InProgressDescription;
+                txtEndDesc.Text = mEditorItem.EndDescription;
 
                 chkRepeatable.Checked = Convert.ToBoolean(mEditorItem.Repeatable);
                 chkQuittable.Checked = Convert.ToBoolean(mEditorItem.Quitable);
@@ -214,12 +214,12 @@ namespace Intersect.Editor.Forms.Editors.Quest
 
         private void txtStartDesc_TextChanged(object sender, EventArgs e)
         {
-            mEditorItem.StartDesc = txtStartDesc.Text;
+            mEditorItem.StartDescription = txtStartDesc.Text;
         }
 
         private void txtEndDesc_TextChanged(object sender, EventArgs e)
         {
-            mEditorItem.EndDesc = txtEndDesc.Text;
+            mEditorItem.EndDescription = txtEndDesc.Text;
         }
 
         private void btnEditStartEvent_Click(object sender, EventArgs e)
@@ -326,17 +326,17 @@ namespace Intersect.Editor.Forms.Editors.Quest
 
         private void txtInProgressDesc_TextChanged(object sender, EventArgs e)
         {
-            mEditorItem.InProgressDesc = txtInProgressDesc.Text;
+            mEditorItem.InProgressDescription = txtInProgressDesc.Text;
         }
 
         private void chkRepeatable_CheckedChanged(object sender, EventArgs e)
         {
-            mEditorItem.Repeatable = Convert.ToByte(chkRepeatable.Checked);
+            mEditorItem.Repeatable = chkRepeatable.Checked;
         }
 
         private void chkQuittable_CheckedChanged(object sender, EventArgs e)
         {
-            mEditorItem.Quitable = Convert.ToByte(chkQuittable.Checked);
+            mEditorItem.Quitable = chkQuittable.Checked;
         }
 
         private void lstTasks_DoubleClick(object sender, EventArgs e)
@@ -352,17 +352,17 @@ namespace Intersect.Editor.Forms.Editors.Quest
 
         private void txtBeforeDesc_TextChanged(object sender, EventArgs e)
         {
-            mEditorItem.BeforeDesc = txtBeforeDesc.Text;
+            mEditorItem.BeforeDescription = txtBeforeDesc.Text;
         }
 
         private void chkLogBeforeOffer_CheckedChanged(object sender, EventArgs e)
         {
-            mEditorItem.LogBeforeOffer = Convert.ToByte(chkLogBeforeOffer.Checked);
+            mEditorItem.LogBeforeOffer = chkLogBeforeOffer.Checked;
         }
 
         private void chkLogAfterComplete_CheckedChanged(object sender, EventArgs e)
         {
-            mEditorItem.LogAfterComplete = Convert.ToByte(chkLogAfterComplete.Checked);
+            mEditorItem.LogAfterComplete = chkLogAfterComplete.Checked;
         }
 
         private void toolStripItemNew_Click(object sender, EventArgs e)

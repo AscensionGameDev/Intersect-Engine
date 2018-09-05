@@ -9,7 +9,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_L
         //See https://www.ascensiongamedev.com/topic/749-event-text-variables/ for usage info.
         public string TextId { get; set; }
 
-        public int Value { get; set; }
+        public long Value { get; set; }
 
         [JsonConstructor]
         public ServerVariableBase(Guid id) : base(id)

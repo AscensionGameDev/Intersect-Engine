@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Intersect.Enums;
 using JetBrains.Annotations;
 
 namespace Intersect.Server.Models
@@ -55,14 +56,14 @@ namespace Intersect.Server.Models
                 .Select(property => property?.Name).ToList();
         }
 
-        public static UserRights FromLegacyPowers(long power)
+        public static UserRights FromLegacyPowers(Access access)
         {
-            switch (power)
+            switch (access)
             {
-                case 1:
+                case Access.Moderator:
                     return UserRights.Moderation;
 
-                case 2:
+                case Access.Admin:
                     return UserRights.All;
 
                 default:

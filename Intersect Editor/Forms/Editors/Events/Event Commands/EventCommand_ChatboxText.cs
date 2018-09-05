@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
+using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
 
@@ -26,7 +27,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             }
             cmbColor.SelectedIndex = cmbColor.Items.IndexOf(mMyCommand.Color);
             if (cmbColor.SelectedIndex == -1) cmbColor.SelectedIndex = 0;
-            cmbChannel.SelectedIndex = mMyCommand.Channel;
+            cmbChannel.SelectedIndex = (int)mMyCommand.Channel;
         }
 
         private void InitLocalization()
@@ -49,7 +50,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         {
             mMyCommand.Text = txtAddText.Text;
             mMyCommand.Color = cmbColor.Text;
-            mMyCommand.Channel= cmbChannel.SelectedIndex;
+            mMyCommand.Channel= (ChatboxChannel)cmbChannel.SelectedIndex;
             mEventEditor.FinishCommandEdit();
         }
 

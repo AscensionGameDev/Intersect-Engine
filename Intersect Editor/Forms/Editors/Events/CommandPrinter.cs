@@ -327,13 +327,13 @@ namespace Intersect.Editor.Forms.Editors.Events
             var channel = "";
             switch (command.Channel)
             {
-                case 0: //Player
+                case ChatboxChannel.Player:
                     channel += Strings.EventCommandList.chatplayer;
                     break;
-                case 1: //Local
+                case ChatboxChannel.Local:
                     channel += Strings.EventCommandList.chatlocal;
                     break;
-                case 2: //Global
+                case ChatboxChannel.Global:
                     channel += Strings.EventCommandList.chatglobal;
                     break;
             }
@@ -497,13 +497,13 @@ namespace Intersect.Editor.Forms.Editors.Events
 
         private static string GetCommandText(SetAccessCommand command, MapInstance map)
         {
-            switch (command.Power)
+            switch (command.Access)
             {
-                case 0:
+                case Access.None:
                     return Strings.EventCommandList.setaccess.ToString(Strings.EventCommandList.regularuser);
-                case 1:
+                case Access.Moderator:
                     return Strings.EventCommandList.setaccess.ToString(Strings.EventCommandList.moderator);
-                case 2:
+                case Access.Admin:
                     return Strings.EventCommandList.setaccess.ToString(Strings.EventCommandList.admin);
             }
             return Strings.EventCommandList.setaccess.ToString(Strings.EventCommandList.unknownrole);
@@ -519,7 +519,7 @@ namespace Intersect.Editor.Forms.Editors.Events
                     mapName = MapList.GetOrderedMaps()[i].Name;
                 }
             }
-            return Strings.EventCommandList.warp.ToString(mapName, command.X, command.Y, Strings.Directions.dir[command.Dir - 1]);
+            return Strings.EventCommandList.warp.ToString(mapName, command.X, command.Y, Strings.Directions.dir[(int)command.Direction - 1]);
         }
 
         private static string GetCommandText(SetMoveRouteCommand command, MapInstance map)

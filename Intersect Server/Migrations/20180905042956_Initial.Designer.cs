@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Intersect.Server.Migrations
 {
     [DbContext(typeof(PlayerContext))]
-    [Migration("20180904231211_Initial")]
+    [Migration("20180905042956_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -180,7 +180,7 @@ namespace Intersect.Server.Migrations
 
                     b.Property<Guid>("CharacterId");
 
-                    b.Property<int>("Completed");
+                    b.Property<bool>("Completed");
 
                     b.Property<Guid>("QuestId");
 
@@ -246,7 +246,7 @@ namespace Intersect.Server.Migrations
 
                     b.Property<Guid>("CharacterId");
 
-                    b.Property<int>("Value");
+                    b.Property<long>("Value");
 
                     b.Property<Guid>("VariableId");
 

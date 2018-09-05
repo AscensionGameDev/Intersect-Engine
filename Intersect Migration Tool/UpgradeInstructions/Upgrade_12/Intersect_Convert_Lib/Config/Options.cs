@@ -38,8 +38,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_L
         public static int ItemRepawnTime => _options.MapOpts.ItemSpawnTime;
         public static int ItemDespawnTime => _options.MapOpts.ItemDespawnTime;
         public static bool ZDimensionVisible => _options.MapOpts.ZDimensionVisible;
-        public static int MapWidth => _options.MapOpts.MapWidth;
-        public static int MapHeight => _options.MapOpts.MapHeight;
+        public static int MapWidth => _options.MapOpts.Width;
+        public static int MapHeight => _options.MapOpts.Height;
         public static int TileWidth => _options.MapOpts.TileWidth;
         public static int TileHeight => _options.MapOpts.TileHeight;
         public static bool UPnP => _options._upnp;
@@ -80,10 +80,10 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_L
         public ushort _serverPort = 5400;
 
         [JsonProperty("UseApi")]
-        public bool _api = true;
+        public bool _api;
 
         [JsonProperty("ApiPort")]
-        public ushort _apiPort = 5401;
+        public ushort _apiPort = 5400; //This makes sense because the server uses udp and the api can use tcp
 
         [JsonProperty("UPnP")]
         public bool _upnp = true;

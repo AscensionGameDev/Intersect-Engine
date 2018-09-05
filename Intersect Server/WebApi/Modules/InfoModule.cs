@@ -81,8 +81,8 @@ namespace Intersect.Server.WebApi.Modules
                     itemSpawnTime = ServerOptions.Map.ItemSpawnTime,
                     itemDespawnTime = ServerOptions.Map.ItemDespawnTime,
                     zDimensionVisible = ServerOptions.Map.ZDimensionVisible,
-                    mapWidth = ServerOptions.Map.MapWidth,
-                    mapHeight = ServerOptions.Map.MapHeight,
+                    width = ServerOptions.Map.Width,
+                    height = ServerOptions.Map.Height,
                     tileWidth = ServerOptions.Map.TileWidth,
                     tileHeight = ServerOptions.Map.TileHeight
                 }

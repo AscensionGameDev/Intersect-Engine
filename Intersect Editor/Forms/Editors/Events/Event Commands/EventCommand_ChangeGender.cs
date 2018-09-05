@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using Intersect.Editor.Localization;
+using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
 
@@ -17,7 +18,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             mMyCommand = refCommand;
             mEventEditor = editor;
             InitLocalization();
-            cmbGender.SelectedIndex = mMyCommand.Gender;
+            cmbGender.SelectedIndex = (int)mMyCommand.Gender;
         }
 
         private void InitLocalization()
@@ -35,7 +36,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            mMyCommand.Gender = (byte)cmbGender.SelectedIndex;
+            mMyCommand.Gender = (Gender)cmbGender.SelectedIndex;
             mEventEditor.FinishCommandEdit();
         }
 

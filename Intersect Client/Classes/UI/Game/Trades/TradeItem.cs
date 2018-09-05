@@ -127,7 +127,7 @@ namespace Intersect.Client.Classes.UI.Game.Trades
                 if (item != null)
                 {
                     GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,
-                        item.Pic);
+                        item.Icon);
                     if (itemTex != null)
                     {
                         Pnl.Texture = itemTex;

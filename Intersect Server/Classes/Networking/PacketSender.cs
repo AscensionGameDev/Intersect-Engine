@@ -849,7 +849,7 @@ namespace Intersect.Server.Classes.Networking
             DatabaseObjectLookup gameMaps = new DatabaseObjectLookup();
             foreach (var pair in MapInstance.Lookup.Pairs) gameMaps.Set(pair.Key, pair.Value);
             bf.WriteLong((int)ServerPackets.MapList);
-            bf.WriteBytes(MapList.GetList().Data(gameMaps));
+            bf.WriteString(MapList.GetList().JsonData);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -860,7 +860,7 @@ namespace Intersect.Server.Classes.Networking
             DatabaseObjectLookup gameMaps = new DatabaseObjectLookup();
             foreach (var pair in MapInstance.Lookup.Pairs) gameMaps.Set(pair.Key, pair.Value);
             bf.WriteLong((int)ServerPackets.MapList);
-            bf.WriteBytes(MapList.GetList().Data(gameMaps));
+            bf.WriteString(MapList.GetList().JsonData);
             SendDataToAll(bf.ToArray());
             bf.Dispose();
         }
@@ -1722,7 +1722,7 @@ namespace Intersect.Server.Classes.Networking
             {
                 bf.WriteGuid(quest.QuestId);
                 bf.WriteByte(1);
-                bf.WriteInteger(quest.Completed);
+                bf.WriteBoolean(quest.Completed);
                 bf.WriteGuid(quest.TaskId);
                 bf.WriteInteger(quest.TaskProgress);
             }
@@ -1740,7 +1740,7 @@ namespace Intersect.Server.Classes.Networking
             if (questProgress != null)
             {
                 bf.WriteByte(1);
-                bf.WriteInteger(questProgress.Completed);
+                bf.WriteBoolean(questProgress.Completed);
                 bf.WriteGuid(questProgress.TaskId);
                 bf.WriteInteger(questProgress.TaskProgress);
             }

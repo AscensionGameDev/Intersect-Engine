@@ -76,7 +76,7 @@ namespace Intersect.GameObjects.Maps
         public Guid MapId { get; set; }
         public int X { get; set; }
         public int Y { get; set; }
-        public int Dir { get; set; }
+        public WarpDirection Direction { get; set; } = WarpDirection.Retain;
     }
 
     public class AttributeSoundFlags

@@ -118,12 +118,12 @@ namespace Intersect.Server.Classes.Core
             return null;
         }
 
-        public static void SetPlayerPower([NotNull] string username, int power)
+        public static void SetPlayerAccess([NotNull] string username, Access access)
         {
             var user = GetUser(username);
             if (user != null)
             {
-                user.Access = power;
+                user.Access = access;
                 sPlayerDb.SaveChanges();
             }
             else
@@ -196,10 +196,10 @@ namespace Intersect.Server.Classes.Core
                 BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password + salt)))
                     .Replace("-", "");
 
-            var access = 0;
+            var access = Access.None;
             if (RegisteredPlayers== 0)
             {
-                access = 2;
+                access = Access.Admin;
             }
 
             var user = new User()
@@ -234,11 +234,9 @@ namespace Intersect.Server.Classes.Core
             return false;
         }
 
-        public static int CheckPower([NotNull] string username)
+        public static Access CheckAccess([NotNull] string username)
         {
-            int power = 0;
-            power = sPlayerDb.Users.Where(p => string.Equals(p.Name.Trim(), username.Trim(), StringComparison.CurrentCultureIgnoreCase)).Select(p => p.Access).First();
-            return power;
+            return sPlayerDb.Users.Where(p => string.Equals(p.Name.Trim(), username.Trim(), StringComparison.CurrentCultureIgnoreCase)).Select(p => p.Access).First();
         }
 
         public static bool LoadUser([NotNull] Client client, [NotNull] string username)
@@ -767,12 +765,12 @@ namespace Intersect.Server.Classes.Core
                 var defaultMale = new ClassSprite()
                 {
                     Sprite = "1.png",
-                    Gender = 0
+                    Gender = Gender.Male
                 };
                 var defaultFemale = new ClassSprite()
                 {
                     Sprite = "2.png",
-                    Gender = 1
+                    Gender = Gender.Female
                 };
                 cls.Sprites.Add(defaultMale);
                 cls.Sprites.Add(defaultFemale);
@@ -897,9 +895,10 @@ namespace Intersect.Server.Classes.Core
             {
                 if (MapList.GetList().FindMap(map.Value.Id) == null)
                 {
-                    MapList.GetList().AddMap(map.Value.Id, MapBase.Lookup);
+                    MapList.GetList().AddMap(map.Value.Id,map.Value.TimeCreated, MapBase.Lookup);
                 }
             }
+            MapList.GetList().PostLoad(MapBase.Lookup, true, true);
             SaveGameDatabase();
             PacketSender.SendMapListToAll();
         }

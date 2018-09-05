@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Intersect.Migration.Migrations.Game
+namespace Intersect.Server.Migrations.Game
 {
     [DbContext(typeof(GameContext))]
     partial class GameContextModelSnapshot : ModelSnapshot
@@ -151,7 +151,7 @@ namespace Intersect.Migration.Migrations.Game
 
                     b.Property<bool>("CommonEvent");
 
-                    b.Property<byte>("IsGlobal");
+                    b.Property<bool>("Global");
 
                     b.Property<Guid>("MapId");
 
@@ -198,7 +198,7 @@ namespace Intersect.Migration.Migrations.Game
 
                     b.Property<int>("DamageType");
 
-                    b.Property<string>("Desc");
+                    b.Property<string>("Description");
 
                     b.Property<Guid>("EquipmentAnimationId")
                         .HasColumnName("EquipmentAnimation");
@@ -210,6 +210,8 @@ namespace Intersect.Migration.Migrations.Game
 
                     b.Property<string>("FemalePaperdoll");
 
+                    b.Property<string>("Icon");
+
                     b.Property<int>("ItemType");
 
                     b.Property<string>("JsonUsageRequirements")
@@ -218,8 +220,6 @@ namespace Intersect.Migration.Migrations.Game
                     b.Property<string>("MalePaperdoll");
 
                     b.Property<string>("Name");
-
-                    b.Property<string>("Pic");
 
                     b.Property<int>("Price");
 
@@ -263,8 +263,8 @@ namespace Intersect.Migration.Migrations.Game
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<byte[]>("FoldersBlob")
-                        .HasColumnName("FoldersBlob");
+                    b.Property<string>("JsonData")
+                        .HasColumnName("JsonData");
 
                     b.HasKey("Id");
 
@@ -444,29 +444,29 @@ namespace Intersect.Migration.Migrations.Game
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("BeforeDesc");
+                    b.Property<string>("BeforeDescription");
 
-                    b.Property<string>("EndDesc");
+                    b.Property<string>("EndDescription");
 
                     b.Property<Guid>("EndEventId")
                         .HasColumnName("EndEvent");
 
-                    b.Property<string>("InProgressDesc");
+                    b.Property<string>("InProgressDescription");
 
                     b.Property<string>("JsonRequirements")
                         .HasColumnName("Requirements");
 
-                    b.Property<byte>("LogAfterComplete");
+                    b.Property<bool>("LogAfterComplete");
 
-                    b.Property<byte>("LogBeforeOffer");
+                    b.Property<bool>("LogBeforeOffer");
 
                     b.Property<string>("Name");
 
-                    b.Property<byte>("Quitable");
+                    b.Property<bool>("Quitable");
 
-                    b.Property<byte>("Repeatable");
+                    b.Property<bool>("Repeatable");
 
-                    b.Property<string>("StartDesc");
+                    b.Property<string>("StartDescription");
 
                     b.Property<Guid>("StartEventId")
                         .HasColumnName("StartEvent");
@@ -550,7 +550,7 @@ namespace Intersect.Migration.Migrations.Game
 
                     b.Property<long>("TimeCreated");
 
-                    b.Property<int>("Value");
+                    b.Property<long>("Value");
 
                     b.HasKey("Id");
 
@@ -594,7 +594,7 @@ namespace Intersect.Migration.Migrations.Game
 
                     b.Property<int>("CooldownDuration");
 
-                    b.Property<string>("Desc");
+                    b.Property<string>("Description");
 
                     b.Property<Guid>("EventId")
                         .HasColumnName("Event");
@@ -602,12 +602,12 @@ namespace Intersect.Migration.Migrations.Game
                     b.Property<Guid>("HitAnimationId")
                         .HasColumnName("HitAnimation");
 
+                    b.Property<string>("Icon");
+
                     b.Property<string>("JsonCastRequirements")
                         .HasColumnName("CastRequirements");
 
                     b.Property<string>("Name");
-
-                    b.Property<string>("Pic");
 
                     b.Property<int>("SpellType");
 

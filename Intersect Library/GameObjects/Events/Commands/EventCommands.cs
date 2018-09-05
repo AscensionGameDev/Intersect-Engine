@@ -46,7 +46,7 @@ namespace Intersect.GameObjects.Events.Commands
         public override EventCommandType Type {get;} = EventCommandType.AddChatboxText;
         public string Text { get; set; } = "";
         public string Color { get; set; } = "";
-        public int Channel { get; set; } = 0; //0 = Player, 1 = Local, 2 = Global
+        public ChatboxChannel Channel { get; set; } = ChatboxChannel.Player;
     }
 
     public class SetSwitchCommand : EventCommand
@@ -208,13 +208,13 @@ namespace Intersect.GameObjects.Events.Commands
     public class ChangeGenderCommand : EventCommand
     {
         public override EventCommandType Type {get;} = EventCommandType.ChangeGender;
-        public byte Gender { get; set; }
+        public Gender Gender { get; set; } = Gender.Male;
     }
 
     public class SetAccessCommand : EventCommand
     {
         public override EventCommandType Type {get;} = EventCommandType.SetAccess;
-        public byte Power { get; set; }
+        public Access Access { get; set; }
     }
 
     public class WarpCommand : EventCommand
@@ -223,13 +223,12 @@ namespace Intersect.GameObjects.Events.Commands
         public Guid MapId { get; set; }
         public int X { get; set; }
         public int Y { get; set; }
-        public byte Dir { get; set; }
+        public WarpDirection Direction { get; set; } = WarpDirection.Retain;
     }
 
     public class SetMoveRouteCommand : EventCommand
     {
         public override EventCommandType Type {get;} = EventCommandType.SetMoveRoute;
-        public Guid TargetId { get; set; }
         public EventMoveRoute Route { get; set; } = new EventMoveRoute();
     }
 

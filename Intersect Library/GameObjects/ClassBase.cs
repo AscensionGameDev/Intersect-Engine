@@ -236,7 +236,7 @@ namespace Intersect.GameObjects
     public class ClassSprite
     {
         public string Face = "";
-        public byte Gender;
+        public Gender Gender;
         public string Sprite = "";
     }
 }

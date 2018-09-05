@@ -478,7 +478,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 tmpMap.Attributes[x, y].Warp.MapId = MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapId;
                 tmpMap.Attributes[x, y].Warp.X = (int) nudWarpX.Value;
                 tmpMap.Attributes[x, y].Warp.Y = (int) nudWarpY.Value;
-                tmpMap.Attributes[x, y].Warp.Dir = (byte)(cmbDirection.SelectedIndex - 1);
+                tmpMap.Attributes[x, y].Warp.Direction = (WarpDirection)(cmbDirection.SelectedIndex);
             }
             else if (rbSound.Checked)
             {
@@ -547,7 +547,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 lstMapNpcs.SelectedIndex = 0;
                 if (lstMapNpcs.SelectedIndex < Globals.CurrentMap.Spawns.Count)
                 {
-                    cmbDir.SelectedIndex = Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Dir + 1;
+                    cmbDir.SelectedIndex = (int)Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Direction;
                     cmbNpc.SelectedIndex = NpcBase.ListIndex(Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcId);
                     if (Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].X >= 0)
                     {
@@ -573,7 +573,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 n.NpcId = NpcBase.IdFromList(cmbNpc.SelectedIndex);
                 n.X = -1;
                 n.Y = -1;
-                n.Dir = -1;
+                n.Direction = NpcSpawnDirection.Random;
 
                 Globals.CurrentMap.Spawns.Add(n);
                 lstMapNpcs.Items.Add(NpcBase.GetName(n.NpcId));
@@ -607,7 +607,7 @@ namespace Intersect.Editor.Forms.DockingElements
             if (lstMapNpcs.Items.Count > 0 && lstMapNpcs.SelectedIndex > -1)
             {
                 cmbNpc.SelectedIndex = NpcBase.ListIndex( Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcId);
-                cmbDir.SelectedIndex = Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Dir + 1;
+                cmbDir.SelectedIndex = (int)Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Direction;
                 if (Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].X >= 0)
                 {
                     rbDeclared.Checked = true;
@@ -625,7 +625,7 @@ namespace Intersect.Editor.Forms.DockingElements
             {
                 Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].X = -1;
                 Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Y = -1;
-                Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Dir = -1;
+                Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Direction = NpcSpawnDirection.Random;
             }
         }
 
@@ -633,7 +633,7 @@ namespace Intersect.Editor.Forms.DockingElements
         {
             if (lstMapNpcs.SelectedIndex >= 0)
             {
-                Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Dir = cmbDir.SelectedIndex - 1;
+                Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Direction = NpcSpawnDirection.Random;
             }
         }
 

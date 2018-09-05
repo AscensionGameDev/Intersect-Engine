@@ -136,7 +136,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_L
     public class GenderIsCondition : Condition
     {
         public override ConditionTypes Type { get; } = ConditionTypes.GenderIs;
-        public byte Gender { get; set; }
+        public Gender Gender { get; set; } = Gender.Male;
     }
 
     public class MapIsCondition : Condition

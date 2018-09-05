@@ -555,8 +555,7 @@ namespace Intersect.Server.Classes
                                             string user = Globals.Clients[i].Entity.Name.ToLower();
                                             if (user == commandsplit[1].ToLower())
                                             {
-                                                LegacyDatabase.SetPlayerPower(Globals.Clients[i].Name,
-                                                    int.Parse(commandsplit[2]));
+                                                LegacyDatabase.SetPlayerAccess(Globals.Clients[i].Name, (Access)int.Parse(commandsplit[2]));
                                                 PacketSender.SendEntityDataToProximity(Globals.Clients[i].Entity);
                                                 if (Globals.Clients[i].Access > 0)
                                                 {
@@ -616,25 +615,17 @@ namespace Intersect.Server.Classes
                                         {
                                             if (LegacyDatabase.AccountExists(commandsplit[1]))
                                             {
-                                                LegacyDatabase.SetPlayerPower(commandsplit[1],
-                                                    int.Parse(commandsplit[2]));
-                                                Console.WriteLine(@"    " +
-                                                                  Strings.Commandoutput.powerchanged.ToString(
-                                                                      commandsplit[1]));
+                                                LegacyDatabase.SetPlayerAccess(commandsplit[1], (Access)int.Parse(commandsplit[2]));
+                                                Console.WriteLine(@"    " + Strings.Commandoutput.powerchanged.ToString(commandsplit[1]));
                                             }
                                             else
                                             {
-                                                Console.WriteLine(@"    " +
-                                                                  Strings.Account.notfound.ToString(
-                                                                      commandsplit[1]));
+                                                Console.WriteLine(@"    " + Strings.Account.notfound.ToString(commandsplit[1]));
                                             }
                                         }
                                         catch (Exception)
                                         {
-                                            Console.WriteLine(@"    " +
-                                                              Strings.Commandoutput.parseerror.ToString(
-                                                                  commandsplit[0],
-                                                                  Strings.Commands.commandinfo));
+                                            Console.WriteLine(@"    " + Strings.Commandoutput.parseerror.ToString(commandsplit[0], Strings.Commands.commandinfo));
                                         }
                                     }
                                     else

@@ -1,4 +1,5 @@
-﻿using Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_Lib.Utilities;
+﻿using Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_Lib.Enums;
+using Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_Lib.Utilities;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_Lib.GameObjects.Events
 {
@@ -6,14 +7,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_L
     {
         public string Filename;
         public int Height;
-        public int Type;
+        public EventGraphicType Type;
         public int Width;
         public int X;
         public int Y;
 
         public EventGraphic()
         {
-            Type = 0;
+            Type = EventGraphicType.None;
             Filename = "";
             X = -1;
             Y = -1;
@@ -23,7 +24,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_L
 
         public void Load(ByteBuffer curBuffer)
         {
-            Type = curBuffer.ReadInteger();
+            Type = (EventGraphicType)curBuffer.ReadInteger();
             Filename = curBuffer.ReadString();
             X = curBuffer.ReadInteger();
             Y = curBuffer.ReadInteger();
@@ -33,7 +34,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_L
 
         public void Save(ByteBuffer curBuffer)
         {
-            curBuffer.WriteInteger(Type);
+            curBuffer.WriteInteger((int)Type);
             curBuffer.WriteString(TextUtils.SanitizeNone(Filename));
             curBuffer.WriteInteger(X);
             curBuffer.WriteInteger(Y);

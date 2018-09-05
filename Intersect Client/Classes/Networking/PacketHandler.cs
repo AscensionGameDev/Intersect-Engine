@@ -25,6 +25,7 @@ using Intersect_Client.Classes.UI.Game.Chat;
 using Intersect_Client.Classes.UI.Menu;
 using Color = IntersectClientExtras.GenericClasses.Color;
 using System.Linq;
+using Intersect.GameObjects.Maps;
 
 namespace Intersect_Client.Classes.Networking
 {
@@ -685,7 +686,8 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            MapList.GetList().Load(bf, new DatabaseObjectLookup(), false);
+            MapList.GetList().JsonData = bf.ReadString();
+            MapList.GetList().PostLoad(MapBase.Lookup, false, true);
             //If admin window is open update it
             bf.Dispose();
         }
@@ -1623,7 +1625,7 @@ namespace Intersect_Client.Classes.Networking
                     {
                         QuestProgressStruct questProgress = new QuestProgressStruct()
                         {
-                            Completed = bf.ReadInteger(),
+                            Completed = bf.ReadBoolean(),
                             TaskId = bf.ReadGuid(),
                             TaskProgress = bf.ReadInteger()
                         };

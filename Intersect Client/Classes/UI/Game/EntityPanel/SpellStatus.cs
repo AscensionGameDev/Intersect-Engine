@@ -86,12 +86,12 @@ namespace Intersect.Client.Classes.UI.Game.EntityPanel
                 Debug.WriteLine(Pnl.RenderColor.A.ToString());
                 Pnl.RenderColor = new IntersectClientExtras.GenericClasses.Color((int)(fraction * 255f), 255, 255, 255);
                 Debug.WriteLine(Pnl.RenderColor.A.ToString());
-                if ((mTexLoaded != "" && spell == null) || (spell != null && mTexLoaded != spell.Pic) || mCurrentSpellId != mEntityBox.MyEntity.Status[mYindex].SpellId)
+                if ((mTexLoaded != "" && spell == null) || (spell != null && mTexLoaded != spell.Icon) || mCurrentSpellId != mEntityBox.MyEntity.Status[mYindex].SpellId)
                 {
                     if (spell != null)
                     {
                         GameTexture spellTex =
-                            Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell, spell.Pic);
+                            Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell, spell.Icon);
                         if (spellTex != null)
                         {
                             Pnl.Texture = spellTex;
@@ -104,7 +104,7 @@ namespace Intersect.Client.Classes.UI.Game.EntityPanel
                                 Pnl.Texture = null;
                             }
                         }
-                        mTexLoaded = spell.Pic;
+                        mTexLoaded = spell.Icon;
                         mCurrentSpellId = mEntityBox.MyEntity.Status[mYindex].SpellId;
                     }
                     else

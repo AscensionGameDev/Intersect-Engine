@@ -34,9 +34,9 @@ namespace Intersect_Client.Classes.UI.Game
             RichLabel spellDesc = new RichLabel(mDescWindow, "SpellDesc");
             //Load this up now so we know what color to make the text when filling out the desc
             mDescWindow.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
-            if (spell.Desc.Length > 0)
+            if (spell.Description.Length > 0)
             {
-                spellDesc.AddText(Strings.SpellDesc.desc.ToString( spell.Desc), spellDesc.RenderColor);
+                spellDesc.AddText(Strings.SpellDesc.desc.ToString( spell.Description), spellDesc.RenderColor);
                 spellDesc.AddLineBreak();
                 spellDesc.AddLineBreak();
             }
@@ -124,7 +124,7 @@ namespace Intersect_Client.Classes.UI.Game
             }
             //Load Again for positioning purposes.
             mDescWindow.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
-            icon.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell, spell.Pic);
+            icon.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell, spell.Icon);
             spellDesc.SizeToChildren(false, true);
             mDescWindow.SetPosition(x, y);
         }

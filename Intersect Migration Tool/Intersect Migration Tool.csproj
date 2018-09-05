@@ -206,13 +206,13 @@
     <Compile Include="Database.cs" />
     <Compile Include="Localization\Strings.cs" />
     <Compile Include="Main.cs" />
-    <Compile Include="Migrations\20180904231211_Initial.cs" />
-    <Compile Include="Migrations\20180904231211_Initial.Designer.cs">
-      <DependentUpon>20180904231211_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\20180905042956_Initial.cs" />
+    <Compile Include="Migrations\20180905042956_Initial.Designer.cs">
+      <DependentUpon>20180905042956_Initial.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\Game\20180904231124_Initial.cs" />
-    <Compile Include="Migrations\Game\20180904231124_Initial.Designer.cs">
-      <DependentUpon>20180904231124_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\Game\20180905042857_Initial.cs" />
+    <Compile Include="Migrations\Game\20180905042857_Initial.Designer.cs">
+      <DependentUpon>20180905042857_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\GameContextModelSnapshot.cs" />
     <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />
@@ -979,21 +979,32 @@
     <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Database\PlayerData\PlayerContext.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Database\PlayerData\User.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Database\Spell.cs" />
+    <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Enums\Access.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Enums\AdminActions.cs" />
+    <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Enums\ChatboxChannel.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Enums\ClientPackets.cs" />
+    <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Enums\CommonEventTrigger.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Enums\ConsumableType.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Enums\DamageType.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Enums\Directions.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Enums\EffectType.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Enums\EntityTypes.cs" />
+    <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Enums\EventGraphicType.cs" />
+    <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Enums\EventMovementFrequency.cs" />
+    <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Enums\EventMovementSpeed.cs" />
+    <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Enums\EventMovementType.cs" />
+    <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Enums\EventRenderLayer.cs" />
+    <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Enums\EventTrigger.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Enums\GameObjectType.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Enums\GameObjectTypeExtensions.cs" />
+    <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Enums\Gender.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Enums\ItemTypes.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Enums\MapAttributes.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Enums\MapListUpdates.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Enums\MapZones.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Enums\NpcBehavior.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Enums\NpcMovement.cs" />
+    <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Enums\NpcSpawnDirection.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Enums\QuestObjective.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Enums\ServerPackets.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Enums\SpellTargetTypes.cs" />
@@ -1003,6 +1014,7 @@
     <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Enums\SwitchVariableTypes.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Enums\TargetTypes.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Enums\Vitals.cs" />
+    <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Enums\WarpDirection.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Extensions\GameObjectInfoAttribute.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\Extensions\RandomExtensions.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\GameObjects\AnimationBase.cs" />
@@ -1016,6 +1028,7 @@
     <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\GameObjects\Events\Enums.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\GameObjects\Events\EventBase.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\GameObjects\Events\EventGraphic.cs" />
+    <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\GameObjects\Events\EventMovement.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\GameObjects\Events\EventMoveRoute.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\GameObjects\Events\EventPage.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_12\Intersect_Convert_Lib\GameObjects\Events\MoveRouteAction.cs" />

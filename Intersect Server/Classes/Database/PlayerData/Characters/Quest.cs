@@ -16,7 +16,7 @@ namespace Intersect.Server.Classes.Database.PlayerData.Characters
         public Guid QuestId { get; private set; }
         public Guid TaskId { get; set; }
         public int TaskProgress { get; set; }
-        public int Completed { get; set; }
+        public bool Completed { get; set; }
 
         public Quest()
         {

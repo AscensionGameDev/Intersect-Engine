@@ -56,7 +56,7 @@ namespace Intersect.Client.Classes.UI.Game.Crafting
 
             if (item != null)
             {
-                GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Pic);
+                GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Icon);
                 if (itemTex != null)
                 {
                     Pnl.Texture = itemTex;

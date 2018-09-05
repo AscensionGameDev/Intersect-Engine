@@ -13,8 +13,8 @@ namespace Intersect.GameObjects
     public class SpellBase : DatabaseObject<SpellBase>
     {
         public SpellTypes SpellType { get; set; }
-        public string Desc { get; set; } = "";
-        public string Pic { get; set; } = "";
+        public string Description { get; set; } = "";
+        public string Icon { get; set; } = "";
 
         //Animations
         [Column("CastAnimation")]
@@ -46,11 +46,11 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public string JsonCastRequirements
         {
-            get => CastingReqs.Data();
-            set => CastingReqs.Load(value);
+            get => CastingRequirements.Data();
+            set => CastingRequirements.Load(value);
         }
         [NotMapped]
-        public ConditionLists CastingReqs = new ConditionLists();
+        public ConditionLists CastingRequirements { get; set; } = new ConditionLists();
 
         //Combat Info
         public SpellCombatData Combat { get; set; } = new SpellCombatData();

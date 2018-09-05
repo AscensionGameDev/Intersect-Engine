@@ -1,10 +1,11 @@
 ﻿using System;
+using Intersect.Enums;
 
 namespace Intersect.GameObjects.Maps
 {
     public class NpcSpawn
     {
-        public int Dir;
+        public NpcSpawnDirection Direction;
         public Guid NpcId;
         public int X;
         public int Y;
@@ -18,7 +19,7 @@ namespace Intersect.GameObjects.Maps
             NpcId = copy.NpcId;
             X = copy.X;
             Y = copy.Y;
-            Dir = copy.Dir;
+            Direction = copy.Direction;
         }
     }
 }

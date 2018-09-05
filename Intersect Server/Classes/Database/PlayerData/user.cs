@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using Intersect.Enums;
 using Intersect.Server.Classes.Entities;
 using Microsoft.EntityFrameworkCore;
 // ReSharper disable UnusedAutoPropertyAccessor.Local
@@ -17,7 +18,7 @@ namespace Intersect.Server.Classes.Database.PlayerData
         public string Salt { get; set; }
         public string Password { get; set; }
         public string Email { get; set; }
-        public int Access { get; set; }
+        public Access Access { get; set; }
         public string PasswordResetCode { get; set; }
         public DateTime? PasswordResetTime { get; set; }
 

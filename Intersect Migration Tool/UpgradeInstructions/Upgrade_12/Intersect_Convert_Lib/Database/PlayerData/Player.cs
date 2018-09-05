@@ -37,7 +37,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_L
 
         //Name, X, Y, Dir, Etc all in the base Entity Class
         public Guid ClassId { get; set; }
-        public int Gender { get; set; }
+        public Gender Gender { get; set; }
         public long Exp { get; set; }
 
         public int StatPoints { get; set; }

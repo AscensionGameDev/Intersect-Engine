@@ -471,11 +471,11 @@ namespace Intersect.Server.Classes.Networking
 
                 if (cmd == Strings.Chat.localcmd || cmd == "/0")
                 {
-                    if (client.Access == 2)
+                    if (client.Access == Access.Admin)
                     {
                         PacketSender.SendProximityMsg(Strings.Chat.local.ToString(client.Entity.Name, msg), player.MapId, CustomColors.AdminLocalChat, client.Entity.Name);
                     }
-                    else if (client.Access == 1)
+                    else if (client.Access == Access.Moderator)
                     {
                         PacketSender.SendProximityMsg(Strings.Chat.local.ToString(client.Entity.Name, msg), player.MapId, CustomColors.ModLocalChat, client.Entity.Name);
                     }
@@ -487,12 +487,12 @@ namespace Intersect.Server.Classes.Networking
                 }
                 else if (cmd == Strings.Chat.allcmd || cmd == "/1" || cmd == Strings.Chat.globalcmd)
                 {
-                    if (client.Access == 2)
+                    if (client.Access == Access.Admin)
                     {
                         PacketSender.SendGlobalMsg(Strings.Chat.Global.ToString(client.Entity.Name, msg),
                             CustomColors.AdminGlobalChat, client.Entity.Name);
                     }
-                    else if (client.Access == 1)
+                    else if (client.Access == Access.Moderator)
                     {
                         PacketSender.SendGlobalMsg(Strings.Chat.Global.ToString(client.Entity.Name, msg),
                             CustomColors.ModGlobalChat, client.Entity.Name);
@@ -585,8 +585,7 @@ namespace Intersect.Server.Classes.Networking
                     {
                         if ((EventBase)evt.Value != null)
                         {
-                            if (client.Entity.StartCommonEvent((EventBase)evt.Value,
-                                    (int)EventPage.CommonEventTriggers.Command, splitString[0].TrimStart('/'), msg) ==
+                            if (client.Entity.StartCommonEvent((EventBase)evt.Value, CommonEventTrigger.SlashCommand, splitString[0].TrimStart('/'), msg) ==
                                 true)
                             {
                                 return; //Found our /command, exit now :)
@@ -620,7 +619,7 @@ namespace Intersect.Server.Classes.Networking
                 return;
             }
 
-            if (LegacyDatabase.CheckPower(usr) != 2)
+            if (LegacyDatabase.CheckAccess(usr) != Access.Admin)
             {
                 PacketSender.SendLoginError(client, Strings.Account.badaccess);
                 return;
@@ -723,7 +722,7 @@ namespace Intersect.Server.Classes.Networking
                 destType = -1;
                 if (destType == -1)
                 {
-                    MapList.GetList().AddMap(newMap, MapBase.Lookup);
+                    MapList.GetList().AddMap(newMap, tmpMap.TimeCreated, MapBase.Lookup);
                 }
                 LegacyDatabase.SaveGameDatabase();
                 PacketSender.SendMapListToAll();
@@ -865,11 +864,11 @@ namespace Intersect.Server.Classes.Networking
                     var folderDir = MapList.GetList().FindMapParent(relativeMap, null);
                     if (folderDir != null)
                     {
-                        folderDir.Children.AddMap(newMap, MapBase.Lookup);
+                        folderDir.Children.AddMap(newMap, MapInstance.Get(newMap).TimeCreated, MapBase.Lookup);
                     }
                     else
                     {
-                        MapList.GetList().AddMap(newMap, MapBase.Lookup);
+                        MapList.GetList().AddMap(newMap, MapInstance.Get(newMap).TimeCreated, MapBase.Lookup);
                     }
                     LegacyDatabase.SaveGameDatabase();
                     PacketSender.SendMapListToAll();
@@ -1078,11 +1077,11 @@ namespace Intersect.Server.Classes.Networking
             ((Player)client.Entity).InGame = true;
             PacketSender.SendTimeTo(client);
             PacketSender.SendGameData(client);
-            if (client.Access == 1)
+            if (client.Access == Access.Moderator)
             {
                 PacketSender.SendPlayerMsg(client, Strings.Player.modjoined, CustomColors.ModJoined);
             }
-            else if (client.Access == 2)
+            else if (client.Access == Access.Admin)
             {
                 PacketSender.SendPlayerMsg(client, Strings.Player.adminjoined, CustomColors.AdminJoined);
             }
@@ -1098,7 +1097,7 @@ namespace Intersect.Server.Classes.Networking
             {
                 if (evt != null)
                 {
-                    player.StartCommonEvent(evt, (int)EventPage.CommonEventTriggers.JoinGame);
+                    player.StartCommonEvent(evt, CommonEventTrigger.Login);
                 }
             }
         }
@@ -1612,7 +1611,7 @@ namespace Intersect.Server.Classes.Networking
                     PacketSender.SendPlayerMsg(client, Strings.Player.offline);
                     break;
                 case (int)AdminActions.SetAccess:
-                    int p;
+                    var access = Access.None;
                     for (int i = 0; i < Globals.Clients.Count; i++)
                     {
                         if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
@@ -1621,28 +1620,28 @@ namespace Intersect.Server.Classes.Networking
                             {
                                 if (val1.ToLower() != client.Entity.Name.ToLower()) //Can't increase your own power!
                                 {
-                                    if (client.Access == 2)
+                                    if (client.Access == Access.Admin)
                                     {
                                         if (val2 == "Admin")
                                         {
-                                            p = 2;
+                                            access = Access.Admin;
                                         }
                                         else if (val2 == "Moderator")
                                         {
-                                            p = 1;
+                                            access = Access.Moderator;
                                         }
                                         else
                                         {
-                                            p = 0;
+                                            access = Access.None;
                                         }
 
                                         var targetClient = Globals.Clients[i];
-                                        targetClient.Access = p;
-                                        if (targetClient.Access == 2)
+                                        targetClient.Access = access;
+                                        if (targetClient.Access == Access.Admin)
                                         {
                                             PacketSender.SendGlobalMsg(Strings.Player.admin.ToString(val1));
                                         }
-                                        else if (targetClient.Access == 1)
+                                        else if (targetClient.Access == Access.Moderator)
                                         {
                                             PacketSender.SendGlobalMsg(Strings.Player.mod.ToString(val1));
                                         }

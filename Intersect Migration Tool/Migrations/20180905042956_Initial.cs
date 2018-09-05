@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Intersect.Server.Migrations
 {
-    public partial class Initial : Migration
+    public partial class Initial : Microsoft.EntityFrameworkCore.Migrations.Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -260,7 +260,7 @@ namespace Intersect.Server.Migrations
                     QuestId = table.Column<Guid>(nullable: false),
                     TaskId = table.Column<Guid>(nullable: false),
                     TaskProgress = table.Column<int>(nullable: false),
-                    Completed = table.Column<int>(nullable: false)
+                    Completed = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -321,7 +321,7 @@ namespace Intersect.Server.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     CharacterId = table.Column<Guid>(nullable: false),
                     VariableId = table.Column<Guid>(nullable: false),
-                    Value = table.Column<int>(nullable: false)
+                    Value = table.Column<long>(nullable: false)
                 },
                 constraints: table =>
                 {

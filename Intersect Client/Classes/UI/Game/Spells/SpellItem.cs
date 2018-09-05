@@ -109,14 +109,14 @@ namespace Intersect.Client.Classes.UI.Game.Spells
         {
             var spell = SpellBase.Get(Globals.Me.Spells[mYindex].SpellId);
             if (!IsDragging &&
-                ((mTexLoaded != "" && spell == null) || (spell != null && mTexLoaded != spell.Pic) ||
+                ((mTexLoaded != "" && spell == null) || (spell != null && mTexLoaded != spell.Icon) ||
                  mCurrentSpellId != Globals.Me.Spells[mYindex].SpellId ||
                  mIconCd != (Globals.Me.Spells[mYindex].SpellCd > Globals.System.GetTimeMs())))
             {
                 if (spell != null)
                 {
                     GameTexture spellTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell,
-                        spell.Pic);
+                        spell.Icon);
                     if (spellTex != null)
                     {
                         Pnl.Texture = spellTex;
@@ -136,7 +136,7 @@ namespace Intersect.Client.Classes.UI.Game.Spells
                             Pnl.Texture = null;
                         }
                     }
-                    mTexLoaded = spell.Pic;
+                    mTexLoaded = spell.Icon;
                     mCurrentSpellId = Globals.Me.Spells[mYindex].SpellId;
                     mIconCd = (Globals.Me.Spells[mYindex].SpellCd > Globals.System.GetTimeMs());
                 }

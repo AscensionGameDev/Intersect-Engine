@@ -1689,7 +1689,7 @@ namespace Intersect.Server.Classes.Entities
             }
             if (GetType() == typeof(Player)) //helps the client identify admins if entity is a player.
             {
-                bf.WriteInteger(((Player)this).MyClient.Access);
+                bf.WriteInteger((int)((Player)this).MyClient.Access);
             }
             else if (GetType() == typeof(Npc)) //Helps the client identify NPC Behavior
             {

@@ -19,6 +19,7 @@ using Intersect.Server.Classes.Maps;
 using Intersect.Server.Classes.Networking;
 using Intersect.Server.Classes.Spells;
 using Intersect.GameObjects.Events.Commands;
+using Intersect.Server.Classes.EventProcessing;
 
 namespace Intersect.Server.Classes.Entities
 {
@@ -35,7 +36,7 @@ namespace Intersect.Server.Classes.Entities
         public int CurrentY;
         public EventPageInstance[] GlobalPageInstance;
         public bool HoldingPlayer;
-        public bool IsGlobal;
+        public bool Global;
         public Guid MapId;
         public Client MyClient;
         public Player MyPlayer;
@@ -67,7 +68,7 @@ namespace Intersect.Server.Classes.Entities
         public EventInstance(Guid instanceId, EventBase baseEvent,Guid map) //Global constructor
         {
             Id = instanceId;
-            IsGlobal = true;
+            Global = true;
             MapId = map;
             BaseEvent = baseEvent;
             SelfSwitch = new bool[4];
@@ -101,7 +102,7 @@ namespace Intersect.Server.Classes.Entities
                 }
                 else
                 {
-                    if (!IsGlobal)
+                    if (!Global)
                         PageInstance.Update(CallStack.Count > 0, timeMs); //Process movement and stuff that is client specific
 
                     //Check to see if we should process event commands
@@ -172,7 +173,7 @@ namespace Intersect.Server.Classes.Entities
                     }
                     else
                     {
-                        if (PageInstance.Trigger == 2)
+                        if (PageInstance.Trigger == EventTrigger.Autorun)
                         {
                             var newStack = new CommandInstance(PageInstance.MyPage);
                             CallStack.Push(newStack);
@@ -188,7 +189,7 @@ namespace Intersect.Server.Classes.Entities
                 {
                     if (Conditions.CanSpawnPage(BaseEvent.Pages[i],MyPlayer,this))
                     {
-                        if (IsGlobal)
+                        if (Global)
                         {
                             if (MapInstance.Get(MapId).GetGlobalEventInstance(BaseEvent) != null)
                             {

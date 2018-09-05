@@ -385,7 +385,8 @@ namespace Intersect.Editor.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            MapList.GetList().Load(bf, MapBase.Lookup, false, true);
+            MapList.GetList().JsonData = bf.ReadString();
+            MapList.GetList().PostLoad(MapBase.Lookup, false, true);
             if (Globals.CurrentMap == null)
             {
                 Globals.MainForm.EnterMap(MapList.GetList().FindFirstMap());

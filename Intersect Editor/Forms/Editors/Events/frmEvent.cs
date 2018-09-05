@@ -118,14 +118,14 @@ namespace Intersect.Editor.Forms.Editors
             graphics = Graphics.FromImage(destBitmap);
             graphics.Clear(System.Drawing.Color.FromArgb(60, 63, 65));
 
-            if (CurrentPage.Graphic.Type == 1) //Sprite
+            if (CurrentPage.Graphic.Type == EventGraphicType.Sprite)
             {
                 if (File.Exists("resources/entities/" + CurrentPage.Graphic.Filename))
                 {
                     sourceBitmap = new Bitmap("resources/entities/" + CurrentPage.Graphic.Filename);
                 }
             }
-            else if (CurrentPage.Graphic.Type == 2) //Tileset
+            else if (CurrentPage.Graphic.Type == EventGraphicType.Tileset)
             {
                 if (File.Exists("resources/tilesets/" + CurrentPage.Graphic.Filename))
                 {
@@ -134,7 +134,7 @@ namespace Intersect.Editor.Forms.Editors
             }
             if (sourceBitmap != null)
             {
-                if (CurrentPage.Graphic.Type == 1)
+                if (CurrentPage.Graphic.Type == EventGraphicType.Sprite)
                 {
                     graphics.DrawImage(sourceBitmap,
                         new Rectangle(pnlPreview.Width / 2 - (sourceBitmap.Width / 4) / 2,
@@ -144,7 +144,7 @@ namespace Intersect.Editor.Forms.Editors
                             CurrentPage.Graphic.Y * sourceBitmap.Height / 4, sourceBitmap.Width / 4,
                             sourceBitmap.Height / 4), GraphicsUnit.Pixel);
                 }
-                else if (CurrentPage.Graphic.Type == 2)
+                else if (CurrentPage.Graphic.Type == EventGraphicType.Tileset)
                 {
                     graphics.DrawImage(sourceBitmap,
                         new Rectangle(
@@ -313,7 +313,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void chkIsGlobal_CheckedChanged(object sender, EventArgs e)
         {
-            MyEvent.IsGlobal = Convert.ToByte(chkIsGlobal.Checked);
+            MyEvent.Global = chkIsGlobal.Checked;
         }
 
         private void lblCloseCommands_Click(object sender, EventArgs e)
@@ -703,7 +703,7 @@ namespace Intersect.Editor.Forms.Editors
                 cmbTriggerVal.Items.Add(Strings.General.none);
                 cmbTriggerVal.Items.AddRange(ProjectileBase.Names);
             }
-            chkIsGlobal.Checked = Convert.ToBoolean(MyEvent.IsGlobal);
+            chkIsGlobal.Checked = Convert.ToBoolean(MyEvent.Global);
             if (MyEvent.CommonEvent) chkIsGlobal.Hide();
             UpdateTabControl();
             LoadPage(0);
@@ -730,8 +730,8 @@ namespace Intersect.Editor.Forms.Editors
                     mPageTabs[i].BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
                 }
             }
-            cmbMoveType.SelectedIndex = CurrentPage.MovementType;
-            if (CurrentPage.MovementType == 2)
+            cmbMoveType.SelectedIndex = (int)CurrentPage.Movement.Type;
+            if (CurrentPage.Movement.Type == EventMovementType.MoveRoute)
             {
                 btnSetRoute.Enabled = true;
             }
@@ -739,26 +739,23 @@ namespace Intersect.Editor.Forms.Editors
             {
                 btnSetRoute.Enabled = false;
             }
-            cmbEventSpeed.SelectedIndex = CurrentPage.MovementSpeed;
-            cmbEventFreq.SelectedIndex = CurrentPage.MovementFreq;
+            cmbEventSpeed.SelectedIndex = (int)CurrentPage.Movement.Speed;
+            cmbEventFreq.SelectedIndex = (int)CurrentPage.Movement.Frequency;
             chkWalkThrough.Checked = Convert.ToBoolean(CurrentPage.Passable);
-            cmbLayering.SelectedIndex = CurrentPage.Layer;
-            cmbTrigger.SelectedIndex = CurrentPage.Trigger;
-            cmbTriggerVal.Hide();
-            lblTriggerVal.Hide();
-            if (!MyEvent.CommonEvent)
+            cmbLayering.SelectedIndex = (int)CurrentPage.Layer;
+            if (MyEvent.CommonEvent)
             {
-                if (cmbTrigger.SelectedIndex == (int) EventPage.EventTriggers.ProjectileHit)
-                {
-                    lblTriggerVal.Show();
-                    lblTriggerVal.Text = Strings.EventEditor.projectile;
-                    cmbTriggerVal.Show();
-                    cmbTriggerVal.SelectedIndex = ProjectileBase.ListIndex(CurrentPage.TriggerVal) + 1;
-                }
+                cmbTrigger.SelectedIndex = (int)CurrentPage.CommonTrigger;
             }
             else
             {
-                if (cmbTrigger.SelectedIndex == (int) EventPage.CommonEventTriggers.Command)
+                cmbTrigger.SelectedIndex = (int)CurrentPage.Trigger;
+            }
+            cmbTriggerVal.Hide();
+            lblTriggerVal.Hide();
+            if (MyEvent.CommonEvent)
+            {
+                if (cmbTrigger.SelectedIndex == (int) CommonEventTrigger.SlashCommand)
                 {
                     txtCommand.Show();
                     txtCommand.Text = CurrentPage.TriggerCommand;
@@ -778,7 +775,7 @@ namespace Intersect.Editor.Forms.Editors
             chkDirectionFix.Checked = Convert.ToBoolean(CurrentPage.DirectionFix);
             chkWalkingAnimation.Checked = Convert.ToBoolean(CurrentPage.WalkingAnimation);
             chkInteractionFreeze.Checked = Convert.ToBoolean(CurrentPage.InteractionFreeze);
-            txtDesc.Text = CurrentPage.Desc;
+            txtDesc.Text = CurrentPage.Description;
             ListPageCommands();
             UpdateEventPreview();
             EnableButtons();
@@ -1117,8 +1114,8 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbMoveType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            CurrentPage.MovementType = cmbMoveType.SelectedIndex;
-            if (CurrentPage.MovementType == 2)
+            CurrentPage.Movement.Type = (EventMovementType)cmbMoveType.SelectedIndex;
+            if (CurrentPage.Movement.Type == EventMovementType.MoveRoute)
             {
                 btnSetRoute.Enabled = true;
             }
@@ -1130,18 +1127,17 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbEventSpeed_SelectedIndexChanged(object sender, EventArgs e)
         {
-            CurrentPage.MovementSpeed = cmbEventSpeed.SelectedIndex;
+            CurrentPage.Movement.Speed = (EventMovementSpeed)cmbEventSpeed.SelectedIndex;
         }
 
         private void cmbEventFreq_SelectedIndexChanged(object sender, EventArgs e)
         {
-            CurrentPage.MovementFreq = cmbEventFreq.SelectedIndex;
+            CurrentPage.Movement.Frequency = (EventMovementFrequency)cmbEventFreq.SelectedIndex;
         }
 
         private void btnSetRoute_Click(object sender, EventArgs e)
         {
-            EventMoveRouteDesigner moveRouteDesigner = new EventMoveRouteDesigner(this, mCurrentMap, MyEvent,
-                CurrentPage.MoveRoute);
+            EventMoveRouteDesigner moveRouteDesigner = new EventMoveRouteDesigner(this, mCurrentMap, MyEvent, CurrentPage.Movement.Route);
             Controls.Add(moveRouteDesigner);
             moveRouteDesigner.BringToFront();
             moveRouteDesigner.Size = ClientSize;
@@ -1158,30 +1154,23 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbLayering_SelectedIndexChanged(object sender, EventArgs e)
         {
-            CurrentPage.Layer = cmbLayering.SelectedIndex;
+            CurrentPage.Layer = (EventRenderLayer)cmbLayering.SelectedIndex;
         }
 
         private void cmbTrigger_SelectedIndexChanged(object sender, EventArgs e)
         {
-            CurrentPage.Trigger = cmbTrigger.SelectedIndex;
+            if (MyEvent.CommonEvent)
+                CurrentPage.CommonTrigger = (CommonEventTrigger) cmbTrigger.SelectedIndex;
+            else
+                CurrentPage.Trigger = (EventTrigger) cmbTrigger.SelectedIndex;
             cmbTriggerVal.Hide();
             lblTriggerVal.Hide();
             txtCommand.Hide();
             lblCommand.Hide();
 
-            if (!MyEvent.CommonEvent)
+            if (MyEvent.CommonEvent)
             {
-                if (cmbTrigger.SelectedIndex == (int) EventPage.EventTriggers.ProjectileHit)
-                {
-                    cmbTriggerVal.Show();
-                    lblTriggerVal.Show();
-                    lblTriggerVal.Text = Strings.EventEditor.projectile;
-                    cmbTriggerVal.SelectedIndex = 0;
-                }
-            }
-            else
-            {
-                if (cmbTrigger.SelectedIndex == (int) EventPage.CommonEventTriggers.Command)
+                if (cmbTrigger.SelectedIndex == (int)CommonEventTrigger.SlashCommand)
                 {
                     txtCommand.Show();
                     txtCommand.Text = CurrentPage.TriggerCommand;
@@ -1217,7 +1206,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void txtDesc_TextChanged(object sender, EventArgs e)
         {
-            CurrentPage.Desc = txtDesc.Text;
+            CurrentPage.Description = txtDesc.Text;
         }
 
         private void chkDisablePreview_CheckedChanged(object sender, EventArgs e)

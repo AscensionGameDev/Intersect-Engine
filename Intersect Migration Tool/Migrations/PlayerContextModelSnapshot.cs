@@ -178,7 +178,7 @@ namespace Intersect.Server.Migrations
 
                     b.Property<Guid>("CharacterId");
 
-                    b.Property<int>("Completed");
+                    b.Property<bool>("Completed");
 
                     b.Property<Guid>("QuestId");
 
@@ -244,7 +244,7 @@ namespace Intersect.Server.Migrations
 
                     b.Property<Guid>("CharacterId");
 
-                    b.Property<int>("Value");
+                    b.Property<long>("Value");
 
                     b.Property<Guid>("VariableId");
 

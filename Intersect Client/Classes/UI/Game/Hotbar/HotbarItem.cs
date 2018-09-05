@@ -211,7 +211,7 @@ namespace Intersect.Client.Classes.UI.Game.Hotbar
                 {
                     mContentPanel.Show();
                     mContentPanel.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,
-                        ItemBase.Get(Globals.Me.Inventory[mCurrentItem].ItemId).Pic);
+                        ItemBase.Get(Globals.Me.Inventory[mCurrentItem].ItemId).Icon);
                     mEquipPanel.IsHidden = !Globals.Me.IsEquipped(mCurrentItem);
                     mIsFaded = Globals.Me.ItemOnCd(mCurrentItem);
                     mTexLoaded = true;
@@ -222,7 +222,7 @@ namespace Intersect.Client.Classes.UI.Game.Hotbar
                 {
                     mContentPanel.Show();
                     mContentPanel.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell,
-                        SpellBase.Get(Globals.Me.Spells[mCurrentItem].SpellId).Pic);
+                        SpellBase.Get(Globals.Me.Spells[mCurrentItem].SpellId).Icon);
                     mEquipPanel.IsHidden = true;
                     mIsFaded = Globals.Me.Spells[mCurrentItem].SpellCd > Globals.System.GetTimeMs();
                     mTexLoaded = true;

@@ -408,7 +408,7 @@ namespace Intersect_Client.Classes.Maps
                     if (itemBase != null)
                     {
                         GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,
-                            itemBase.Pic);
+                            itemBase.Icon);
                         if (itemTex != null)
                         {
                             GameGraphics.DrawGameTexture(itemTex, GetX() + item.Value.X * Options.TileWidth,

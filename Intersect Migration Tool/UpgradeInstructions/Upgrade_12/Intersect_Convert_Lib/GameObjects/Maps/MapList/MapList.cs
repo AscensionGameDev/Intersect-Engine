@@ -13,22 +13,51 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_L
         public Guid Id { get; protected set; }
         private static MapList sMapList = new MapList();
         private static List<MapListMap> sOrderedMaps = new List<MapListMap>();
-        private Random mRand = new Random();
+
+        [NotMapped]
+        public List<MapListItem> Items { get; set; } = new List<MapListItem>();
 
         [JsonIgnore]
-        [Column("FoldersBlob")]
-        public byte[] FoldersBlob
+        [Column("JsonData")]
+        public string JsonData
         {
-            get => this.Data(MapBase.Lookup);
-            protected set
-            {
-                var bf = new ByteBuffer();
-                bf.WriteBytes(value);
-                this.Load(bf,MapBase.Lookup,true,true);
-            }
+            get => JsonConvert.SerializeObject(this, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
+            set => JsonConvert.PopulateObject(value, this, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
         }
-        [NotMapped]
-        public List<MapListItem> Items = new List<MapListItem>();
+
+        public void PostLoad(DatabaseObjectLookup gameMaps, bool isServer = true, bool isTopLevel = false)
+        {
+            if (isTopLevel) sOrderedMaps.Clear();
+            foreach (var itm in Items.ToArray())
+            {
+                if (itm.Type == 0)
+                {
+                    var dirItm = (MapListFolder)itm;
+                    dirItm.PostLoad(gameMaps, isServer);
+                }
+                else
+                {
+                    var mapItm = (MapListMap)itm;
+                    var removed = false;
+                    if (isServer)
+                    {
+                        if (gameMaps.Get<MapBase>(mapItm.MapId) == null)
+                        {
+                            Items.Remove(itm);
+                            removed = true;
+                        }
+                    }
+
+                    if (!removed)
+                    {
+                        mapItm.PostLoad(gameMaps, isServer);
+                        sOrderedMaps.Add(mapItm);
+                    }
+                }
+            }
+            if (isTopLevel)
+                sOrderedMaps.Sort();
+        }
 
         public static void SetList(MapList list)
         {
@@ -44,77 +73,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_L
             return sOrderedMaps;
         }
 
-        public byte[] Data(DatabaseObjectLookup gameMaps)
-        {
-            ByteBuffer myBuffer = new ByteBuffer();
-            myBuffer.WriteInteger(Items.Count);
-            foreach (MapListItem item in Items)
-            {
-                if (item.GetType() == typeof(MapListMap))
-                {
-                    ((MapListMap) item).GetData(myBuffer, gameMaps);
-                }
-                else
-                {
-                    ((MapListFolder) item).GetData(myBuffer, gameMaps);
-                }
-            }
-            return myBuffer.ToArray();
-        }
-
-        public bool Load(ByteBuffer myBuffer, DatabaseObjectLookup gameMaps, bool isServer = true,
-            bool isTopLevel = false)
-        {
-            if (isTopLevel) sOrderedMaps.Clear();
-            Items.Clear();
-            int count = myBuffer.ReadInteger();
-            int type = -1;
-            MapListMap tmpMap;
-            MapListFolder tmpDir;
-            bool result = true;
-            for (int i = 0; i < count; i++)
-            {
-                type = myBuffer.ReadInteger();
-                if (type == 0)
-                {
-                    tmpDir = new MapListFolder();
-                    if (tmpDir.Load(myBuffer, gameMaps, isServer))
-                    {
-                        Items.Add(tmpDir);
-                    }
-                    else
-                    {
-                        result = false;
-                    }
-                }
-                else if (type == 1)
-                {
-                    tmpMap = new MapListMap();
-                    if (tmpMap.Load(myBuffer, gameMaps, isServer))
-                    {
-                        if (gameMaps.Keys.Contains(tmpMap.MapId) || !isServer)
-                        {
-                            Items.Add(tmpMap);
-                            sOrderedMaps.Add(tmpMap);
-                        }
-                    }
-                    else
-                    {
-                        result = false;
-                    }
-                }
-            }
-            sOrderedMaps.Sort();
-            return result;
-        }
-
-        public void AddMap(Guid mapId, DatabaseObjectLookup gameMaps)
+        public void AddMap(Guid mapId, long timeCreated, DatabaseObjectLookup gameMaps)
         {
             if (!gameMaps.Keys.Contains(mapId)) return;
             var tmp = new MapListMap()
             {
                 Name = gameMaps[mapId].Name,
-                MapId = mapId
+                MapId = mapId,
+                TimeCreated = timeCreated
             };
             Items.Add(tmp);
         }
@@ -135,13 +101,13 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_L
             {
                 if (Items[i].Type == 0)
                 {
-                    if (((MapListFolder) Items[i]).FolderId == folderId)
+                    if (((MapListFolder)Items[i]).FolderId == folderId)
                     {
-                        return ((MapListFolder) Items[i]);
+                        return ((MapListFolder)Items[i]);
                     }
-                    if (((MapListFolder) Items[i]).Children.FindDir(folderId) != null)
+                    if (((MapListFolder)Items[i]).Children.FindDir(folderId) != null)
                     {
-                        return ((MapListFolder) Items[i]).Children.FindDir(folderId);
+                        return ((MapListFolder)Items[i]).Children.FindDir(folderId);
                     }
                 }
             }
@@ -154,16 +120,16 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_L
             {
                 if (Items[i].Type == 0)
                 {
-                    if (((MapListFolder) Items[i]).Children.FindMap(mapId) != null)
+                    if (((MapListFolder)Items[i]).Children.FindMap(mapId) != null)
                     {
-                        return ((MapListFolder) Items[i]).Children.FindMap(mapId);
+                        return ((MapListFolder)Items[i]).Children.FindMap(mapId);
                     }
                 }
                 else
                 {
-                    if (((MapListMap) Items[i]).MapId == mapId)
+                    if (((MapListMap)Items[i]).MapId == mapId)
                     {
-                        return ((MapListMap) Items[i]);
+                        return ((MapListMap)Items[i]);
                     }
                 }
             }
@@ -176,14 +142,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_L
             {
                 if (Items[i].GetType() == typeof(MapListFolder))
                 {
-                    if (((MapListFolder) Items[i]).Children.FindMapParent(mapId, (MapListFolder) Items[i]) != null)
+                    if (((MapListFolder)Items[i]).Children.FindMapParent(mapId, (MapListFolder)Items[i]) != null)
                     {
-                        return ((MapListFolder) Items[i]).Children.FindMapParent(mapId, (MapListFolder) Items[i]);
+                        return ((MapListFolder)Items[i]).Children.FindMapParent(mapId, (MapListFolder)Items[i]);
                     }
                 }
                 else
                 {
-                    if (((MapListMap) Items[i]).MapId == mapId)
+                    if (((MapListMap)Items[i]).MapId == mapId)
                     {
                         return parent;
                     }
@@ -198,14 +164,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_L
             {
                 if (Items[i].GetType() == typeof(MapListFolder))
                 {
-                    if (((MapListFolder) Items[i]).FolderId == folderId)
+                    if (((MapListFolder)Items[i]).FolderId == folderId)
                     {
                         return parent;
                     }
-                    if (((MapListFolder) Items[i]).Children.FindFolderParent(folderId, (MapListFolder) Items[i]) !=
+                    if (((MapListFolder)Items[i]).Children.FindFolderParent(folderId, (MapListFolder)Items[i]) !=
                         null)
                     {
-                        return ((MapListFolder) Items[i]).Children.FindFolderParent(folderId, (MapListFolder) Items[i]);
+                        return ((MapListFolder)Items[i]).Children.FindFolderParent(folderId, (MapListFolder)Items[i]);
                     }
                 }
             }
@@ -276,7 +242,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_L
             {
                 if (destType == 0)
                 {
-                    ((MapListFolder) dest).Children.Items.Add(source);
+                    ((MapListFolder)dest).Children.Items.Add(source);
                     sourceList.Items.Remove(source);
                 }
                 else

@@ -92,7 +92,7 @@ namespace Intersect.Client.Classes.UI.Game.Character
                 if (item != null)
                 {
                     GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,
-                        item.Pic);
+                        item.Icon);
                     if (itemTex != null)
                     {
                         ContentPanel.Show();

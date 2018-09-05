@@ -43,7 +43,7 @@ namespace Intersect.Server.Classes.Entities
 
         //Name, X, Y, Dir, Etc all in the base Entity Class
         public Guid ClassId { get; set; }
-        public int Gender { get; set; }
+        public Gender Gender { get; set; }
         public long Exp { get; set; }
 
         public int StatPoints { get; set; }
@@ -215,7 +215,7 @@ namespace Intersect.Server.Classes.Entities
             {
                 if (evt != null && evt.CommonEvent)
                 {
-                    StartCommonEvent(evt, (int)EventPage.CommonEventTriggers.Autorun);
+                    StartCommonEvent(evt, CommonEventTrigger.Autorun);
                 }
             }
 
@@ -304,7 +304,7 @@ namespace Intersect.Server.Classes.Entities
                                     {
                                         var tmpEvent = new EventInstance(Guid.NewGuid(), map.Id, MyClient, mapEvent)
                                         {
-                                            IsGlobal = mapEvent.IsGlobal == 1,
+                                            Global = mapEvent.Global,
                                             MapId = map.Id,
                                             SpawnX = mapEvent.SpawnX,
                                             SpawnY = mapEvent.SpawnY
@@ -369,7 +369,7 @@ namespace Intersect.Server.Classes.Entities
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(base.Data());
-            bf.WriteInteger(Gender);
+            bf.WriteInteger((int)Gender);
             bf.WriteGuid(ClassId);
             return bf.ToArray();
         }
@@ -400,7 +400,7 @@ namespace Intersect.Server.Classes.Entities
             {
                 if (evt != null)
                 {
-                    StartCommonEvent(evt, (int)EventPage.CommonEventTriggers.OnRespawn);
+                    StartCommonEvent(evt, CommonEventTrigger.OnRespawn);
                 }
             }
         }
@@ -556,7 +556,7 @@ namespace Intersect.Server.Classes.Entities
             {
                 if (evt != null)
                 {
-                    StartCommonEvent(evt, (int)EventPage.CommonEventTriggers.LevelUp);
+                    StartCommonEvent(evt, CommonEventTrigger.LevelUp);
                 }
             }
         }
@@ -2779,7 +2779,7 @@ namespace Intersect.Server.Classes.Entities
             {
                 var spell = SpellBase.Get(spellNum);
 
-                if (!Conditions.MeetsConditionLists(spell.CastingReqs, this, null))
+                if (!Conditions.MeetsConditionLists(spell.CastingRequirements, this, null))
                 {
                     PacketSender.SendPlayerMsg(MyClient, Strings.Combat.dynamicreq);
                     return;
@@ -3022,7 +3022,7 @@ namespace Intersect.Server.Classes.Entities
                 {
                     return false;
                 }
-                if (questProgress.Completed == 1 && quest.Repeatable == 0)
+                if (questProgress.Completed && !quest.Repeatable)
                 {
                     return false;
                 }
@@ -3041,7 +3041,7 @@ namespace Intersect.Server.Classes.Entities
             var questProgress = FindQuest(quest.Id);
             if (questProgress != null)
             {
-                if (questProgress.Completed == 1)
+                if (questProgress.Completed)
                 {
                     return true;
                 }
@@ -3196,7 +3196,7 @@ namespace Intersect.Server.Classes.Entities
                 if (QuestInProgress(quest, QuestProgress.OnAnyTask, Guid.Empty))
                 {
                     //Cancel the quest somehow...
-                    if (quest.Quitable == 1)
+                    if (quest.Quitable)
                     {
                         var questProgress = FindQuest(quest.Id);
                         questProgress.TaskId = Guid.Empty;
@@ -3228,7 +3228,7 @@ namespace Intersect.Server.Classes.Entities
                                 if (i == quest.Tasks.Count - 1)
                                 {
                                     //Complete Quest
-                                    questProgress.Completed = 1;
+                                    questProgress.Completed = true;
                                     questProgress.TaskId = Guid.Empty;
                                     questProgress.TaskProgress = -1;
                                     if (quest.Tasks[i].CompletionEvent != null)
@@ -3340,13 +3340,13 @@ namespace Intersect.Server.Classes.Entities
             }
             return null;
         }
-        public int GetVariableValue(Guid id)
+        public long GetVariableValue(Guid id)
         {
             var v = GetVariable(id);
             if (v == null) return 0;
             return v.Value;
         }
-        public void SetVariableValue(Guid id, int value)
+        public void SetVariableValue(Guid id, long value)
         {
             var v = GetVariable(id);
             if (v != null)
@@ -3403,7 +3403,7 @@ namespace Intersect.Server.Classes.Entities
                     if (evt.CallStack.Count != 0) return;
                     var newStack = new CommandInstance(evt.PageInstance.MyPage);
                     evt.CallStack.Push(newStack);
-                    if (!evt.IsGlobal)
+                    if (!evt.Global)
                     {
                         evt.PageInstance.TurnTowardsPlayer();
                     }
@@ -3490,7 +3490,7 @@ namespace Intersect.Server.Classes.Entities
             }
         }
 
-        public bool StartCommonEvent(EventBase baseEvent, int trigger = -1, string command = "", string param = "")
+        public bool StartCommonEvent(EventBase baseEvent, CommonEventTrigger trigger = CommonEventTrigger.None, string command = "", string param = "")
         {
             if (baseEvent == null) return false;
             if (!baseEvent.CommonEvent && baseEvent.MapId != Guid.Empty) return false;
@@ -3515,12 +3515,12 @@ namespace Intersect.Server.Classes.Entities
                 //Try to Spawn a PageInstance.. if we can
                 for (var i = baseEvent.Pages.Count - 1; i >= 0; i--)
                 {
-                    if ((trigger == -1 || baseEvent.Pages[i].Trigger == trigger) && Conditions.CanSpawnPage(baseEvent.Pages[i], this, null))
+                    if ((trigger == CommonEventTrigger.None || baseEvent.Pages[i].CommonTrigger == trigger) && Conditions.CanSpawnPage(baseEvent.Pages[i], this, null))
                     {
                         tmpEvent.PageInstance = new EventPageInstance(baseEvent, baseEvent.Pages[i], mapId, tmpEvent, MyClient);
                         tmpEvent.PageIndex = i;
                         //Check for /command trigger
-                        if (trigger == (int)EventPage.CommonEventTriggers.Command)
+                        if (trigger == CommonEventTrigger.SlashCommand)
                         {
                             if (command.ToLower() == tmpEvent.PageInstance.MyPage.TriggerCommand.ToLower())
                             {
@@ -3568,13 +3568,13 @@ namespace Intersect.Server.Classes.Entities
             var attribute = MapInstance.Get(MapId).Attributes[X, Y];
             if (attribute != null && attribute.Type == MapAttributes.Warp)
             {
-                if (Convert.ToInt32(attribute.Warp.Dir) == -1)
+                if (attribute.Warp.Direction == WarpDirection.Retain)
                 {
                     Warp(attribute.Warp.MapId, attribute.Warp.X, attribute.Warp.Y, Dir);
                 }
                 else
                 {
-                    Warp(attribute.Warp.MapId, attribute.Warp.X, attribute.Warp.Y, Convert.ToInt32(attribute.Warp.Dir));
+                    Warp(attribute.Warp.MapId, attribute.Warp.X, attribute.Warp.Y, (int)attribute.Warp.Direction - 1);
                 }
             }
 
@@ -3589,7 +3589,7 @@ namespace Intersect.Server.Classes.Entities
                             evt.PageInstance.Y == Y &&
                             evt.PageInstance.Z == Z)
                         {
-                            if (evt.PageInstance.Trigger != 1) return;
+                            if (evt.PageInstance.Trigger != EventTrigger.PlayerTouch) return;
                             if (evt.CallStack.Count != 0) return;
                             var newStack = new CommandInstance(evt.PageInstance.MyPage);
                             evt.CallStack.Push(newStack);

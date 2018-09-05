@@ -10,8 +10,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_L
         public int ItemSpawnTime = 15000;
         public int ItemDespawnTime = 15000;
         public bool ZDimensionVisible;
-        public int MapWidth = 32;
-        public int MapHeight = 26;
+        public int Width = 32;
+        public int Height = 26;
         public int TileWidth = 32;
         public int TileHeight = 32;
 
@@ -24,7 +24,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_L
 
         public void Validate()
         {
-            if (MapWidth < 10 || MapWidth > 64 || MapHeight < 10 || MapHeight > 64)
+            if (Width < 10 || Width > 64 || Height < 10 || Height > 64)
             {
                 throw new Exception("Config Error: Map size out of bounds! (All values should be > 10 and < 64)");
             }

@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using DarkUI.Controls;
 using Intersect.Editor.Localization;
+using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
 using Intersect.GameObjects.Maps.MapList;
@@ -38,7 +39,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             scrlY.Value = mMyCommand.Y;
             lblX.Text = Strings.Warping.x.ToString(scrlX.Value);
             lblY.Text = Strings.Warping.y.ToString(scrlY.Value);
-            cmbDirection.SelectedIndex = mMyCommand.Dir;
+            cmbDirection.SelectedIndex = (int)mMyCommand.Direction;
         }
 
         private void InitLocalization()
@@ -63,7 +64,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             mMyCommand.MapId = MapList.GetOrderedMaps()[cmbMap.SelectedIndex].MapId;
             mMyCommand.X = scrlX.Value;
             mMyCommand.Y = scrlY.Value;
-            mMyCommand.Dir = (byte)cmbDirection.SelectedIndex;
+            mMyCommand.Direction = (WarpDirection)cmbDirection.SelectedIndex;
             mEventEditor.FinishCommandEdit();
         }
 

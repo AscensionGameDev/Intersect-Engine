@@ -206,8 +206,8 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                     cmbSelfSwitch.SelectedIndex = 0;
                     cmbSelfSwitchVal.SelectedIndex = 0;
                     break;
-                case ConditionTypes.PowerIs:
-                    Condition = new PowerIsCondition();
+                case ConditionTypes.AccessIs:
+                    Condition = new AccessIsCondition();
                     cmbPower.SelectedIndex = 0;
                     break;
                 case ConditionTypes.TimeBetween:
@@ -307,7 +307,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                 case ConditionTypes.SelfSwitch:
                     grpSelfSwitch.Show();
                     break;
-                case ConditionTypes.PowerIs:
+                case ConditionTypes.AccessIs:
                     grpPowerIs.Show();
                     break;
                 case ConditionTypes.TimeBetween:
@@ -484,9 +484,9 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             cmbSelfSwitchVal.SelectedIndex = Convert.ToInt32(condition.Value);
         }
 
-        private void SetupFormValues(PowerIsCondition condition)
+        private void SetupFormValues(AccessIsCondition condition)
         {
-            cmbPower.SelectedIndex = condition.Power;
+            cmbPower.SelectedIndex = (int)condition.Access;
         }
 
         private void SetupFormValues(TimeBetweenCondition condition)
@@ -532,7 +532,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void SetupFormValues(GenderIsCondition condition)
         {
-            cmbGender.SelectedIndex = condition.Gender;
+            cmbGender.SelectedIndex = (int)condition.Gender;
         }
 
         private void SetupFormValues(MapIsCondition condition)
@@ -604,9 +604,9 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             condition.Value = Convert.ToBoolean(cmbSelfSwitchVal.SelectedIndex);
         }
 
-        private void SaveFormValues(PowerIsCondition condition)
+        private void SaveFormValues(AccessIsCondition condition)
         {
-            condition.Power = (byte)cmbPower.SelectedIndex;
+            condition.Access = (Access)cmbPower.SelectedIndex;
         }
 
         private void SaveFormValues(TimeBetweenCondition condition)
@@ -651,7 +651,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
 
         private void SaveFormValues(GenderIsCondition condition)
         {
-            condition.Gender = (byte)cmbGender.SelectedIndex;
+            condition.Gender = (Gender)cmbGender.SelectedIndex;
         }
 
         private void SaveFormValues(MapIsCondition condition)

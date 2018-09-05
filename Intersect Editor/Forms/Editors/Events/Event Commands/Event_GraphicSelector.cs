@@ -41,7 +41,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             mNewRouteAction = newMoveRouteAction;
             mLoading = false;
             InitLocalization();
-            cmbGraphicType.SelectedIndex = mEditingGraphic.Type;
+            cmbGraphicType.SelectedIndex = (int)mEditingGraphic.Type;
             mTmpGraphic.CopyFrom(mEditingGraphic);
             UpdatePreview();
         }
@@ -63,7 +63,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         private void GraphicTypeUpdated()
         {
             mTmpGraphic.Filename = "";
-            mTmpGraphic.Type = 0;
+            mTmpGraphic.Type = EventGraphicType.None;
             mTmpGraphic.X = 0;
             mTmpGraphic.Y = 0;
             mTmpGraphic.Width = -1;
@@ -76,7 +76,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             }
             else if (cmbGraphicType.SelectedIndex == 1) //Sprite
             {
-                mTmpGraphic.Type = 1;
+                mTmpGraphic.Type = EventGraphicType.Sprite;
                 cmbGraphic.Show();
                 lblGraphic.Show();
                 cmbGraphic.Items.Clear();
@@ -85,7 +85,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             }
             else if (cmbGraphicType.SelectedIndex == 2) //Tileset
             {
-                mTmpGraphic.Type = 2;
+                mTmpGraphic.Type = EventGraphicType.Tileset;
                 mTmpGraphic.Width = 0;
                 mTmpGraphic.Height = 0;
                 lblGraphic.Show();

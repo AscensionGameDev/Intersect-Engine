@@ -101,7 +101,7 @@ namespace Intersect.Server.Classes.Events
 
         public static bool MeetsCondition(ServerVariableCondition condition, Player player, EventInstance eventInstance, QuestBase questBase)
         {
-            var varVal = 0;
+            long varVal = 0;
             if (ServerVariableBase.Get(condition.VariableId) != null) varVal = ServerVariableBase.Get(condition.VariableId).Value;
             switch (condition.Comparator) //Comparator
             {
@@ -199,9 +199,9 @@ namespace Intersect.Server.Classes.Events
             return false;
         }
 
-        public static bool MeetsCondition(PowerIsCondition condition, Player player, EventInstance eventInstance, QuestBase questBase)
+        public static bool MeetsCondition(AccessIsCondition condition, Player player, EventInstance eventInstance, QuestBase questBase)
         {
-            return player.MyClient.Access > condition.Power;
+            return player.MyClient.Access > condition.Access;
         }
 
         public static bool MeetsCondition(TimeBetweenCondition condition, Player player, EventInstance eventInstance, QuestBase questBase)

@@ -29,9 +29,9 @@ namespace Intersect.Server.Classes.Networking
         public string Password => User?.Password;
         public string Salt => User?.Salt;
 
-        public int Access
+        public Access Access
         {
-            get => User?.Access ?? -1;
+            get => User?.Access ?? Access.None;
             set
             {
                 if (User == null) return;

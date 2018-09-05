@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Intersect.Server.Migrations.Game
 {
-    public partial class Initial : Migration
+    public partial class Initial : Microsoft.EntityFrameworkCore.Migrations.Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -118,7 +118,7 @@ namespace Intersect.Server.Migrations.Game
                     SpawnX = table.Column<int>(nullable: false),
                     SpawnY = table.Column<int>(nullable: false),
                     CommonEvent = table.Column<bool>(nullable: false),
-                    IsGlobal = table.Column<byte>(nullable: false),
+                    Global = table.Column<bool>(nullable: false),
                     Pages = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -153,11 +153,11 @@ namespace Intersect.Server.Migrations.Game
                     SlotCount = table.Column<int>(nullable: false),
                     Spell = table.Column<Guid>(nullable: false),
                     Event = table.Column<Guid>(nullable: false),
-                    Desc = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
                     FemalePaperdoll = table.Column<string>(nullable: true),
                     ItemType = table.Column<int>(nullable: false),
                     MalePaperdoll = table.Column<string>(nullable: true),
-                    Pic = table.Column<string>(nullable: true),
+                    Icon = table.Column<string>(nullable: true),
                     Price = table.Column<int>(nullable: false),
                     Projectile = table.Column<Guid>(nullable: false),
                     Scaling = table.Column<int>(nullable: false),
@@ -180,7 +180,7 @@ namespace Intersect.Server.Migrations.Game
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    FoldersBlob = table.Column<byte[]>(nullable: true)
+                    JsonData = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -340,14 +340,14 @@ namespace Intersect.Server.Migrations.Game
                     Id = table.Column<Guid>(nullable: false),
                     TimeCreated = table.Column<long>(nullable: false),
                     Name = table.Column<string>(nullable: true),
-                    StartDesc = table.Column<string>(nullable: true),
-                    BeforeDesc = table.Column<string>(nullable: true),
-                    EndDesc = table.Column<string>(nullable: true),
-                    InProgressDesc = table.Column<string>(nullable: true),
-                    LogAfterComplete = table.Column<byte>(nullable: false),
-                    LogBeforeOffer = table.Column<byte>(nullable: false),
-                    Quitable = table.Column<byte>(nullable: false),
-                    Repeatable = table.Column<byte>(nullable: false),
+                    StartDescription = table.Column<string>(nullable: true),
+                    BeforeDescription = table.Column<string>(nullable: true),
+                    EndDescription = table.Column<string>(nullable: true),
+                    InProgressDescription = table.Column<string>(nullable: true),
+                    LogAfterComplete = table.Column<bool>(nullable: false),
+                    LogBeforeOffer = table.Column<bool>(nullable: false),
+                    Quitable = table.Column<bool>(nullable: false),
+                    Repeatable = table.Column<bool>(nullable: false),
                     Requirements = table.Column<string>(nullable: true),
                     StartEvent = table.Column<Guid>(nullable: false),
                     EndEvent = table.Column<Guid>(nullable: false),
@@ -419,7 +419,7 @@ namespace Intersect.Server.Migrations.Game
                     TimeCreated = table.Column<long>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     TextId = table.Column<string>(nullable: true),
-                    Value = table.Column<int>(nullable: false)
+                    Value = table.Column<long>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -451,8 +451,8 @@ namespace Intersect.Server.Migrations.Game
                     TimeCreated = table.Column<long>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     SpellType = table.Column<int>(nullable: false),
-                    Desc = table.Column<string>(nullable: true),
-                    Pic = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
+                    Icon = table.Column<string>(nullable: true),
                     CastAnimation = table.Column<Guid>(nullable: false),
                     HitAnimation = table.Column<Guid>(nullable: false),
                     CastDuration = table.Column<int>(nullable: false),

@@ -18,7 +18,7 @@ namespace Intersect.GameObjects.Events
         KnowsSpell,
         LevelOrStat,
         SelfSwitch, //Only works for events.. not for checking if you can destroy a resource or something like that
-        PowerIs,
+        AccessIs,
         TimeBetween,
         CanStartQuest,
         QuestInProgress,
@@ -100,10 +100,10 @@ namespace Intersect.GameObjects.Events
         public bool Value { get; set; }
     }
 
-    public class PowerIsCondition : Condition
+    public class AccessIsCondition : Condition
     {
-        public override ConditionTypes Type { get; } = ConditionTypes.PowerIs;
-        public byte Power { get; set; }
+        public override ConditionTypes Type { get; } = ConditionTypes.AccessIs;
+        public Access Access { get; set; }
     }
 
     public class TimeBetweenCondition : Condition
@@ -140,7 +140,7 @@ namespace Intersect.GameObjects.Events
     public class GenderIsCondition : Condition
     {
         public override ConditionTypes Type { get; } = ConditionTypes.GenderIs;
-        public byte Gender { get; set; }
+        public Gender Gender { get; set; } = Gender.Male;
     }
 
     public class MapIsCondition : Condition

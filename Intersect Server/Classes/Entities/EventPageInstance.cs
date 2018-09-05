@@ -19,21 +19,19 @@ namespace Intersect.Server.Classes.Entities
         private bool mDirectionFix;
         public bool DisablePreview;
         public EventPageInstance GlobalClone;
-
-        public int MovementType;
         public EventInstance MyEventIndex;
         public EventGraphic MyGraphic = new EventGraphic();
         public EventPage MyPage;
         private int mPageNum;
         public string Param;
-        private int mRenderLevel = 1;
-        public int Trigger;
+        private EventRenderLayer mRenderLayer = EventRenderLayer.SameAsPlayer;
+        public EventTrigger Trigger;
         private bool mWalkingAnim;
 
-        public int MovementFreq;
-
-        private int mMovementSpeed;
-        public int MovementSpeed
+        public EventMovementType MovementType;
+        public EventMovementFrequency MovementFreq;
+        private EventMovementSpeed mMovementSpeed;
+        public EventMovementSpeed MovementSpeed
         {
             get { return mMovementSpeed; }
             set
@@ -41,19 +39,19 @@ namespace Intersect.Server.Classes.Entities
                 mMovementSpeed = value;
                 switch (mMovementSpeed)
                 {
-                    case 0:
+                    case EventMovementSpeed.Slowest:
                         Stat[(int) Stats.Speed].Stat = 2;
                         break;
-                    case 1:
+                    case EventMovementSpeed.Slower:
                         Stat[(int) Stats.Speed].Stat = 5;
                         break;
-                    case 2:
+                    case EventMovementSpeed.Normal:
                         Stat[(int) Stats.Speed].Stat = 20;
                         break;
-                    case 3:
+                    case EventMovementSpeed.Faster:
                         Stat[(int)Stats.Speed].Stat = 30;
                         break;
-                    case 4:
+                    case EventMovementSpeed.Fastest:
                         Stat[(int)Stats.Speed].Stat = 40;
                         break;
                 }
@@ -69,18 +67,18 @@ namespace Intersect.Server.Classes.Entities
             X = eventIndex.CurrentX;
             Y = eventIndex.CurrentY;
             Name = myEvent.Name;
-            MovementType = MyPage.MovementType;
-            MovementFreq = MyPage.MovementFreq;
-            MovementSpeed = MyPage.MovementSpeed;
+            MovementType = MyPage.Movement.Type;
+            MovementFreq = MyPage.Movement.Frequency;
+            MovementSpeed = MyPage.Movement.Speed;
             DisablePreview = MyPage.DisablePreview;
             Trigger = MyPage.Trigger;
             Passable = MyPage.Passable;
             HideName = MyPage.HideName;
             MyEventIndex = eventIndex;
             MoveRoute = new EventMoveRoute();
-            MoveRoute.CopyFrom(MyPage.MoveRoute);
+            MoveRoute.CopyFrom(MyPage.Movement.Route);
             mPathFinder = new Pathfinder(this);
-            SetMovementSpeed(MyPage.MovementSpeed);
+            SetMovementSpeed(MyPage.Movement.Speed);
             MyGraphic.Type = MyPage.Graphic.Type;
             MyGraphic.Filename = MyPage.Graphic.Filename;
             MyGraphic.X = MyPage.Graphic.X;
@@ -90,8 +88,8 @@ namespace Intersect.Server.Classes.Entities
             Sprite = MyPage.Graphic.Filename;
             mDirectionFix = MyPage.DirectionFix;
             mWalkingAnim = MyPage.WalkingAnimation;
-            mRenderLevel = MyPage.Layer;
-            if (MyGraphic.Type == 1)
+            mRenderLayer = MyPage.Layer;
+            if (MyGraphic.Type == EventGraphicType.Sprite)
             {
                 switch (MyGraphic.Y)
                 {
@@ -119,8 +117,7 @@ namespace Intersect.Server.Classes.Entities
             SendToClient();
         }
 
-        public EventPageInstance(EventBase myEvent, EventPage myPage, Guid instanceId, Guid mapId, EventInstance eventIndex,
-            Client client, EventPageInstance globalClone) : base(instanceId)
+        public EventPageInstance(EventBase myEvent, EventPage myPage, Guid instanceId, Guid mapId, EventInstance eventIndex, Client client, EventPageInstance globalClone) : base(instanceId)
         {
             BaseEvent = myEvent;
             Id = BaseEvent.Id;
@@ -140,7 +137,7 @@ namespace Intersect.Server.Classes.Entities
             MyEventIndex = eventIndex;
             MoveRoute = globalClone.MoveRoute;
             mPathFinder = new Pathfinder(this);
-            SetMovementSpeed(MyPage.MovementSpeed);
+            SetMovementSpeed(MyPage.Movement.Speed);
             MyGraphic.Type = globalClone.MyGraphic.Type;
             MyGraphic.Filename = globalClone.MyGraphic.Filename;
             MyGraphic.X = globalClone.MyGraphic.X;
@@ -150,8 +147,8 @@ namespace Intersect.Server.Classes.Entities
             Sprite = MyPage.Graphic.Filename;
             mDirectionFix = MyPage.DirectionFix;
             mWalkingAnim = MyPage.WalkingAnimation;
-            mRenderLevel = MyPage.Layer;
-            if (globalClone.MyGraphic.Type == 1)
+            mRenderLayer = MyPage.Layer;
+            if (globalClone.MyGraphic.Type == EventGraphicType.Sprite)
             {
                 switch (MyPage.Graphic.Y)
                 {
@@ -204,14 +201,14 @@ namespace Intersect.Server.Classes.Entities
             bf.WriteBoolean(mDirectionFix);
             bf.WriteBoolean(mWalkingAnim);
             bf.WriteBoolean(DisablePreview);
-            bf.WriteString(MyPage.Desc);
-            bf.WriteInteger(MyGraphic.Type);
+            bf.WriteString(MyPage.Description);
+            bf.WriteInteger((int)MyGraphic.Type);
             bf.WriteString(MyGraphic.Filename);
             bf.WriteInteger(MyGraphic.X);
             bf.WriteInteger(MyGraphic.Y);
             bf.WriteInteger(MyGraphic.Width);
             bf.WriteInteger(MyGraphic.Height);
-            bf.WriteInteger(mRenderLevel);
+            bf.WriteInteger((int)mRenderLayer);
             return bf.ToArray();
         }
 
@@ -221,24 +218,24 @@ namespace Intersect.Server.Classes.Entities
             //do nothing
         }
 
-        public void SetMovementSpeed(int speed)
+        public void SetMovementSpeed(EventMovementSpeed speed)
         {
             switch (speed)
             {
-                case 0:
-                    Stat[2].Stat = 5;
+                case EventMovementSpeed.Slowest:
+                    Stat[(int)Stats.Speed].Stat = 5;
                     break;
-                case 1:
-                    Stat[2].Stat = 10;
+                case EventMovementSpeed.Slower:
+                    Stat[(int)Stats.Speed].Stat = 10;
                     break;
-                case 2:
-                    Stat[2].Stat = 20;
+                case EventMovementSpeed.Normal:
+                    Stat[(int)Stats.Speed].Stat = 20;
                     break;
-                case 3:
-                    Stat[2].Stat = 30;
+                case EventMovementSpeed.Faster:
+                    Stat[(int)Stats.Speed].Stat = 30;
                     break;
-                case 4:
-                    Stat[2].Stat = 40;
+                case EventMovementSpeed.Fastest:
+                    Stat[(int)Stats.Speed].Stat = 40;
                     break;
             }
         }
@@ -246,13 +243,13 @@ namespace Intersect.Server.Classes.Entities
         public void Update(bool isActive, long timeMs)
         {
             if (MoveTimer >= Globals.System.GetTimeMs() || GlobalClone != null ||  (isActive && MyPage.InteractionFreeze)) return;
-            if (MovementType == 2 && MoveRoute != null)
+            if (MovementType == EventMovementType.MoveRoute && MoveRoute != null)
             {
                 ProcessMoveRoute(Client, timeMs);
             }
             else
             {
-                if (MovementType == 1) //Random
+                if (MovementType == EventMovementType.Random) //Random
                 {
                     if (Globals.Rand.Next(0, 2) != 0) return;
                     var dir = Globals.Rand.Next(0, 4);
@@ -395,48 +392,48 @@ namespace Intersect.Server.Classes.Entities
                             }
                             break;
                         case MoveRouteEnum.SetSpeedSlowest:
-                            SetMovementSpeed(0);
+                            SetMovementSpeed(EventMovementSpeed.Slowest);
                             shouldSendUpdate = true;
                             moved = true;
                             break;
                         case MoveRouteEnum.SetSpeedSlower:
-                            SetMovementSpeed(1);
+                            SetMovementSpeed(EventMovementSpeed.Slower);
                             shouldSendUpdate = true;
                             moved = true;
                             break;
                         case MoveRouteEnum.SetSpeedNormal:
-                            SetMovementSpeed(2);
+                            SetMovementSpeed(EventMovementSpeed.Normal);
                             shouldSendUpdate = true;
                             moved = true;
                             break;
                         case MoveRouteEnum.SetSpeedFaster:
-                            SetMovementSpeed(3);
+                            SetMovementSpeed(EventMovementSpeed.Faster);
                             shouldSendUpdate = true;
                             moved = true;
                             break;
                         case MoveRouteEnum.SetSpeedFastest:
-                            SetMovementSpeed(4);
+                            SetMovementSpeed(EventMovementSpeed.Fastest);
                             shouldSendUpdate = true;
                             moved = true;
                             break;
                         case MoveRouteEnum.SetFreqLowest:
-                            MovementFreq = 0;
+                            MovementFreq = EventMovementFrequency.Lowest;
                             moved = true;
                             break;
                         case MoveRouteEnum.SetFreqLower:
-                            MovementFreq = 1;
+                            MovementFreq = EventMovementFrequency.Lower;
                             moved = true;
                             break;
                         case MoveRouteEnum.SetFreqNormal:
-                            MovementFreq = 2;
+                            MovementFreq = EventMovementFrequency.Normal;
                             moved = true;
                             break;
                         case MoveRouteEnum.SetFreqHigher:
-                            MovementFreq = 3;
+                            MovementFreq = EventMovementFrequency.Higher;
                             moved = true;
                             break;
                         case MoveRouteEnum.SetFreqHighest:
-                            MovementFreq = 4;
+                            MovementFreq = EventMovementFrequency.Highest;
                             moved = true;
                             break;
                         case MoveRouteEnum.WalkingAnimOn:
@@ -478,17 +475,17 @@ namespace Intersect.Server.Classes.Entities
                             moved = true;
                             break;
                         case MoveRouteEnum.SetLevelBelow:
-                            mRenderLevel = 0;
+                            mRenderLayer = EventRenderLayer.BelowPlayer;
                             shouldSendUpdate = true;
                             moved = true;
                             break;
                         case MoveRouteEnum.SetLevelNormal:
-                            mRenderLevel = 1;
+                            mRenderLayer = EventRenderLayer.SameAsPlayer;
                             shouldSendUpdate = true;
                             moved = true;
                             break;
                         case MoveRouteEnum.SetLevelAbove:
-                            mRenderLevel = 2;
+                            mRenderLayer = EventRenderLayer.AbovePlayer;
                             shouldSendUpdate = true;
                             moved = true;
                             break;
@@ -499,7 +496,7 @@ namespace Intersect.Server.Classes.Entities
                             MyGraphic.Y = MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.Y;
                             MyGraphic.Width = MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.Width;
                             MyGraphic.Height = MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.Height;
-                            if (MyGraphic.Type == 1)
+                            if (MyGraphic.Type == EventGraphicType.Sprite)
                             {
                                 switch (MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.Y)
                                 {
@@ -561,15 +558,15 @@ namespace Intersect.Server.Classes.Entities
         {
             switch (MovementFreq)
             {
-                case 0:
+                case EventMovementFrequency.Lowest:
                     return 4000;
-                case 1:
+                case EventMovementFrequency.Lower:
                     return 2000;
-                case 2:
+                case EventMovementFrequency.Normal:
                     return 1000;
-                case 3:
+                case EventMovementFrequency.Higher:
                     return 500;
-                case 4:
+                case EventMovementFrequency.Highest:
                     return 250;
                 default:
                     return 1000;

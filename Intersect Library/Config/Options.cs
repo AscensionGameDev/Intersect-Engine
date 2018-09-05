@@ -39,8 +39,8 @@ namespace Intersect
         public static int ItemRepawnTime => _options.MapOpts.ItemSpawnTime;
         public static int ItemDespawnTime => _options.MapOpts.ItemDespawnTime;
         public static bool ZDimensionVisible => _options.MapOpts.ZDimensionVisible;
-        public static int MapWidth => _options.MapOpts.MapWidth;
-        public static int MapHeight => _options.MapOpts.MapHeight;
+        public static int MapWidth => _options.MapOpts.Width;
+        public static int MapHeight => _options.MapOpts.Height;
         public static int TileWidth => _options.MapOpts.TileWidth;
         public static int TileHeight => _options.MapOpts.TileHeight;
         public static bool UPnP => _options._upnp;
@@ -81,10 +81,10 @@ namespace Intersect
         protected ushort _serverPort = 5400;
 
         [JsonProperty("UseApi")]
-        protected bool _api = true;
+        protected bool _api;
 
         [JsonProperty("ApiPort")]
-        protected ushort _apiPort = 5401;
+        protected ushort _apiPort = 5400; //This makes sense because the server uses udp and the api can use tcp
 
         [JsonProperty("UPnP")]
         protected bool _upnp = true;

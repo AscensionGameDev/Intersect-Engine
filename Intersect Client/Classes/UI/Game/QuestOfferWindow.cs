@@ -84,17 +84,17 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 Show();
                 mQuestTitle.Text = quest.Name;
-                if (mQuestOfferText != quest.StartDesc)
+                if (mQuestOfferText != quest.StartDescription)
                 {
                     mQuestPromptLabel.ClearText();
                     mQuestPromptLabel.Width = mQuestPromptArea.Width -
                                               mQuestPromptArea.GetVerticalScrollBar().Width;
-                    mQuestPromptLabel.AddText(quest.StartDesc, mQuestPromptTemplate.TextColor,
+                    mQuestPromptLabel.AddText(quest.StartDescription, mQuestPromptTemplate.TextColor,
                         mQuestPromptTemplate.CurAlignments.Count > 0
                             ? mQuestPromptTemplate.CurAlignments[0]
                             : Alignments.Left, mQuestPromptTemplate.Font);
                     mQuestPromptLabel.SizeToChildren(false, true);
-                    mQuestOfferText = quest.StartDesc;
+                    mQuestOfferText = quest.StartDescription;
                 }
             }
         }

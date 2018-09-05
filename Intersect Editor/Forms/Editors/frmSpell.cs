@@ -247,7 +247,7 @@ namespace Intersect.Editor.Forms.Editors
                 pnlContainer.Show();
 
                 txtName.Text = mEditorItem.Name;
-                txtDesc.Text = mEditorItem.Desc;
+                txtDesc.Text = mEditorItem.Description;
                 cmbType.SelectedIndex = (int)mEditorItem.SpellType;
 
                 nudCastDuration.Value = mEditorItem.CastDuration;
@@ -256,7 +256,7 @@ namespace Intersect.Editor.Forms.Editors
                 cmbCastAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.CastAnimationId) + 1;
                 cmbHitAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.HitAnimationId) + 1;
 
-                cmbSprite.SelectedIndex = cmbSprite.FindString(TextUtils.NullToNone(mEditorItem.Pic));
+                cmbSprite.SelectedIndex = cmbSprite.FindString(TextUtils.NullToNone(mEditorItem.Icon));
                 if (cmbSprite.SelectedIndex > 0)
                 {
                     picSpell.BackgroundImage = Image.FromFile("resources/spells/" + cmbSprite.Text);
@@ -418,7 +418,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbSprite_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.Pic = cmbSprite.Text;
+            mEditorItem.Icon = cmbSprite.Text;
             picSpell.BackgroundImage = cmbSprite.SelectedIndex > 0 ? Image.FromFile("resources/spells/" + cmbSprite.Text) : null;
         }
 
@@ -435,7 +435,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void txtDesc_TextChanged(object sender, EventArgs e)
         {
-            mEditorItem.Desc = txtDesc.Text;
+            mEditorItem.Description = txtDesc.Text;
         }
 
         private void cmbExtraEffect_SelectedIndexChanged(object sender, EventArgs e)
@@ -643,7 +643,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void btnDynamicRequirements_Click(object sender, EventArgs e)
         {
-            var frm = new FrmDynamicRequirements(mEditorItem.CastingReqs, RequirementType.Spell);
+            var frm = new FrmDynamicRequirements(mEditorItem.CastingRequirements, RequirementType.Spell);
             frm.ShowDialog();
         }
 

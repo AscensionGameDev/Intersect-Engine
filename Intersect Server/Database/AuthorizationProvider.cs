@@ -54,14 +54,14 @@ namespace Intersect.Server.Database
             if (!Classes.Core.LegacyDatabase.CheckPassword(username, password))
                 throw new ArgumentException("Invalid credentials.");
 
-            var power = Classes.Core.LegacyDatabase.CheckPower(username);
+            var access = Classes.Core.LegacyDatabase.CheckAccess(username);
             var passwordHashBytes = BitConverter.GetBytes(password.GetHashCode());
             var user = new User
             {
                 Name = username,
                 Password = password,
-                Rights = UserRightsHelper.FromLegacyPowers(power),
-                Guid = new Guid(username.GetHashCode(), BitConverter.ToInt16(passwordHashBytes, 0), BitConverter.ToInt16(passwordHashBytes, 2), BitConverter.GetBytes(power))
+                Rights = UserRightsHelper.FromLegacyPowers(access),
+                Guid = new Guid(username.GetHashCode(), BitConverter.ToInt16(passwordHashBytes, 0), BitConverter.ToInt16(passwordHashBytes, 2), BitConverter.GetBytes((int)access))
             };
 
             var token = new JwtToken

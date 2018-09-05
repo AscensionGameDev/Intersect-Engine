@@ -1,19 +1,20 @@
-﻿using Intersect.Utilities;
+﻿using Intersect.Enums;
+using Intersect.Utilities;
 
 namespace Intersect.GameObjects.Events
 {
     public class EventGraphic
     {
+        public EventGraphicType Type;
         public string Filename;
         public int Height;
-        public int Type;
         public int Width;
         public int X;
         public int Y;
 
         public EventGraphic()
         {
-            Type = 0;
+            Type = EventGraphicType.None;
             Filename = "";
             X = -1;
             Y = -1;
@@ -23,7 +24,7 @@ namespace Intersect.GameObjects.Events
 
         public void Load(ByteBuffer curBuffer)
         {
-            Type = curBuffer.ReadInteger();
+            Type = (EventGraphicType)curBuffer.ReadInteger();
             Filename = curBuffer.ReadString();
             X = curBuffer.ReadInteger();
             Y = curBuffer.ReadInteger();
@@ -33,7 +34,7 @@ namespace Intersect.GameObjects.Events
 
         public void Save(ByteBuffer curBuffer)
         {
-            curBuffer.WriteInteger(Type);
+            curBuffer.WriteInteger((int)Type);
             curBuffer.WriteString(TextUtils.SanitizeNone(Filename));
             curBuffer.WriteInteger(X);
             curBuffer.WriteInteger(Y);

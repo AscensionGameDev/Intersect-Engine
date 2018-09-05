@@ -262,9 +262,9 @@ namespace Intersect.Editor.Forms.Editors
                 pnlContainer.Show();
 
                 txtName.Text = mEditorItem.Name;
-                txtDesc.Text = mEditorItem.Desc;
+                txtDesc.Text = mEditorItem.Description;
                 cmbType.SelectedIndex = (int) mEditorItem.ItemType;
-                cmbPic.SelectedIndex = cmbPic.FindString(TextUtils.NullToNone(mEditorItem.Pic));
+                cmbPic.SelectedIndex = cmbPic.FindString(TextUtils.NullToNone(mEditorItem.Icon));
                 cmbEquipmentAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.EquipmentAnimationId) + 1;
                 nudPrice.Value = mEditorItem.Price;
                 nudStr.Value = mEditorItem.StatsGiven[0];
@@ -427,7 +427,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbPic_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.Pic = cmbPic.SelectedIndex < 1 ? null : cmbPic.Text;
+            mEditorItem.Icon = cmbPic.SelectedIndex < 1 ? null : cmbPic.Text;
             if (cmbPic.SelectedIndex > 0)
             {
                 picItem.BackgroundImage = System.Drawing.Image.FromFile("resources/items/" + cmbPic.Text);
@@ -459,7 +459,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void txtDesc_TextChanged(object sender, EventArgs e)
         {
-            mEditorItem.Desc = txtDesc.Text;
+            mEditorItem.Description = txtDesc.Text;
         }
 
         private void cmbEquipmentSlot_SelectedIndexChanged(object sender, EventArgs e)

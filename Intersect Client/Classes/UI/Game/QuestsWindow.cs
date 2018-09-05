@@ -101,11 +101,10 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 if (Globals.Me.QuestProgress.ContainsKey(mSelectedQuest.Id))
                 {
-                    if (Globals.Me.QuestProgress[mSelectedQuest.Id].Completed == 1 &&
-                        Globals.Me.QuestProgress[mSelectedQuest.Id].TaskId == Guid.Empty)
+                    if (Globals.Me.QuestProgress[mSelectedQuest.Id].Completed && Globals.Me.QuestProgress[mSelectedQuest.Id].TaskId == Guid.Empty)
                     {
                         //Completed
-                        if (mSelectedQuest.LogAfterComplete == 0)
+                        if (!mSelectedQuest.LogAfterComplete)
                         {
                             mSelectedQuest = null;
                             UpdateSelectedQuest();
@@ -117,7 +116,7 @@ namespace Intersect_Client.Classes.UI.Game
                         if (Globals.Me.QuestProgress[mSelectedQuest.Id].TaskId == Guid.Empty)
                         {
                             //Not Started
-                            if (mSelectedQuest.LogBeforeOffer == 0)
+                            if (!mSelectedQuest.LogBeforeOffer)
                             {
                                 mSelectedQuest = null;
                                 UpdateSelectedQuest();
@@ -126,7 +125,7 @@ namespace Intersect_Client.Classes.UI.Game
                         return;
                     }
                 }
-                if (mSelectedQuest.LogBeforeOffer == 0)
+                if (!mSelectedQuest.LogBeforeOffer)
                 {
                     mSelectedQuest = null;
                     UpdateSelectedQuest();
@@ -152,16 +151,16 @@ namespace Intersect_Client.Classes.UI.Game
                             }
                             else
                             {
-                                if (Globals.Me.QuestProgress[quest.Id].Completed == 1)
+                                if (Globals.Me.QuestProgress[quest.Id].Completed)
                                 {
-                                    if (quest.LogAfterComplete == 1)
+                                    if (quest.LogAfterComplete)
                                     {
                                         AddQuestToList(quest.Name, Color.Green, quest.Id);
                                     }
                                 }
                                 else
                                 {
-                                    if (quest.LogBeforeOffer == 1)
+                                    if (quest.LogBeforeOffer)
                                     {
                                         AddQuestToList(quest.Name, Color.Red, quest.Id);
                                     }
@@ -170,7 +169,7 @@ namespace Intersect_Client.Classes.UI.Game
                         }
                         else
                         {
-                            if (quest.LogBeforeOffer == 1)
+                            if (quest.LogBeforeOffer)
                             {
                                 AddQuestToList(quest.Name, Color.Red, quest.Id);
                             }
@@ -230,9 +229,9 @@ namespace Intersect_Client.Classes.UI.Game
                         //In Progress
                         mQuestStatus.SetText(Strings.QuestLog.inprogress);
                         mQuestStatus.SetTextColor(Color.Yellow, Label.ControlState.Normal);
-                        if (mSelectedQuest.InProgressDesc.Length > 0)
+                        if (mSelectedQuest.InProgressDescription.Length > 0)
                         {
-                            mQuestDescLabel.AddText(mSelectedQuest.InProgressDesc, Color.White, Alignments.Left,
+                            mQuestDescLabel.AddText(mSelectedQuest.InProgressDescription, Color.White, Alignments.Left,
                                 mQuestDescTemplateLabel.Font);
                             mQuestDescLabel.AddLineBreak();
                             mQuestDescLabel.AddLineBreak();
@@ -269,32 +268,32 @@ namespace Intersect_Client.Classes.UI.Game
                                 }
                             }
                         }
-                        if (mSelectedQuest.Quitable == 1)
+                        if (mSelectedQuest.Quitable)
                         {
                             mQuitButton.Show();
                         }
                     }
                     else
                     {
-                        if (Globals.Me.QuestProgress[mSelectedQuest.Id].Completed == 1)
+                        if (Globals.Me.QuestProgress[mSelectedQuest.Id].Completed)
                         {
                             //Completed
-                            if (mSelectedQuest.LogAfterComplete == 1)
+                            if (mSelectedQuest.LogAfterComplete)
                             {
                                 mQuestStatus.SetText(Strings.QuestLog.completed);
                                 mQuestStatus.SetTextColor(Color.Green, Label.ControlState.Normal);
-                                mQuestDescLabel.AddText(mSelectedQuest.EndDesc, Color.White, Alignments.Left,
+                                mQuestDescLabel.AddText(mSelectedQuest.EndDescription, Color.White, Alignments.Left,
                                     mQuestDescTemplateLabel.Font);
                             }
                         }
                         else
                         {
                             //Not Started
-                            if (mSelectedQuest.LogBeforeOffer == 1)
+                            if (mSelectedQuest.LogBeforeOffer)
                             {
                                 mQuestStatus.SetText(Strings.QuestLog.notstarted);
                                 mQuestStatus.SetTextColor(Color.Red, Label.ControlState.Normal);
-                                mQuestDescLabel.AddText(mSelectedQuest.BeforeDesc, Color.White, Alignments.Left,
+                                mQuestDescLabel.AddText(mSelectedQuest.BeforeDescription, Color.White, Alignments.Left,
                                     mQuestDescTemplateLabel.Font);
                                 mQuitButton?.Hide();
                             }
@@ -304,11 +303,11 @@ namespace Intersect_Client.Classes.UI.Game
                 else
                 {
                     //Not Started
-                    if (mSelectedQuest.LogBeforeOffer == 1)
+                    if (mSelectedQuest.LogBeforeOffer)
                     {
                         mQuestStatus.SetText(Strings.QuestLog.notstarted);
                         mQuestStatus.SetTextColor(Color.Red, Label.ControlState.Normal);
-                        mQuestDescLabel.AddText(mSelectedQuest.BeforeDesc, Color.White, Alignments.Left,
+                        mQuestDescLabel.AddText(mSelectedQuest.BeforeDescription, Color.White, Alignments.Left,
                             mQuestDescTemplateLabel.Font);
                     }
                 }

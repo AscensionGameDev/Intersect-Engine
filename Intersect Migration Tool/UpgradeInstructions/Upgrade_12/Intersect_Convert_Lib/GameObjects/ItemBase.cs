@@ -82,11 +82,11 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_L
             set => EventId = value?.Id ?? Guid.Empty;
         }
 
-        public string Desc { get; set; } = "";
+        public string Description { get; set; } = "";
         public string FemalePaperdoll { get; set; } = "";
         public ItemTypes ItemType { get; set; }
         public string MalePaperdoll { get; set; } = "";
-        public string Pic { get; set; } = "";
+        public string Icon { get; set; } = "";
         public int Price { get; set; }
 
         [Column("Projectile")]

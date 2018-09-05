@@ -15,19 +15,9 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_L
             Type = 0;
         }
 
-        public void GetData(ByteBuffer myBuffer, DatabaseObjectLookup gameMaps)
+        public void PostLoad(DatabaseObjectLookup gameMaps, bool isServer = true)
         {
-            base.GetData(myBuffer);
-            myBuffer.WriteGuid(FolderId);
-            myBuffer.WriteBytes(Children.Data(gameMaps));
-        }
-
-        public bool Load(ByteBuffer myBuffer, DatabaseObjectLookup gameMaps, bool isServer = true)
-        {
-            Children.Items.Clear();
-            base.Load(myBuffer);
-            FolderId = myBuffer.ReadGuid();
-            return Children.Load(myBuffer, gameMaps, isServer, false);
+            Children.PostLoad(gameMaps, isServer, false);
         }
     }
 }

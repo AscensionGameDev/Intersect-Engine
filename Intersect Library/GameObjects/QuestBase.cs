@@ -21,21 +21,21 @@ namespace Intersect.GameObjects
     public struct QuestProgressStruct
     {
         public Guid TaskId;
-        public int Completed;
+        public bool Completed;
         public int TaskProgress;
     }
 
     public class QuestBase : DatabaseObject<QuestBase>
     {
         //Basic Quest Properties
-        public string StartDesc { get; set; } = "";
-        public string BeforeDesc { get; set; } = "";
-        public string EndDesc { get; set; } = "";
-        public string InProgressDesc { get; set; } = "";
-        public byte LogAfterComplete { get; set; }
-        public byte LogBeforeOffer { get; set; }
-        public byte Quitable { get; set; }
-        public byte Repeatable { get; set; }
+        public string StartDescription { get; set; } = "";
+        public string BeforeDescription { get; set; } = "";
+        public string EndDescription { get; set; } = "";
+        public string InProgressDescription { get; set; } = "";
+        public bool LogAfterComplete { get; set; }
+        public bool LogBeforeOffer { get; set; }
+        public bool Quitable { get; set; }
+        public bool Repeatable { get; set; }
 
         //Requirements - Store with json
         [Column("Requirements")]

@@ -55,9 +55,9 @@ namespace Intersect_Client.Classes.UI.Game
                 RichLabel itemDesc = new RichLabel(mDescWindow, "ItemDescription");
                 //Load this up now so we know what color to make the text when filling out the desc
                 mDescWindow.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
-                if (item.Desc.Length > 0)
+                if (item.Description.Length > 0)
                 {
-                    itemDesc.AddText(Strings.ItemDesc.desc.ToString( item.Desc), itemDesc.RenderColor);
+                    itemDesc.AddText(Strings.ItemDesc.desc.ToString( item.Description), itemDesc.RenderColor);
                     itemDesc.AddLineBreak();
                     itemDesc.AddLineBreak();
                 }
@@ -94,7 +94,7 @@ namespace Intersect_Client.Classes.UI.Game
 
                 //Load Again for positioning purposes.
                 mDescWindow.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
-                var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Pic);
+                var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Icon);
                 if (itemTex != null)
                 {
                     icon.Texture = itemTex;

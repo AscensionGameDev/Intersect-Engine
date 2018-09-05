@@ -410,7 +410,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (lstSprites.Items.Count > 0)
             {
-                mEditorItem.Sprites[lstSprites.SelectedIndex].Gender = 0;
+                mEditorItem.Sprites[lstSprites.SelectedIndex].Gender = Gender.Male;
 
                 RefreshSpriteList();
             }
@@ -420,7 +420,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (lstSprites.Items.Count > 0)
             {
-                mEditorItem.Sprites[lstSprites.SelectedIndex].Gender = 1;
+                mEditorItem.Sprites[lstSprites.SelectedIndex].Gender = Gender.Female;
 
                 RefreshSpriteList();
             }

@@ -457,9 +457,9 @@ namespace Intersect.Server.Classes.Maps
                     npcSpawnInstance = new MapNpcSpawn();
                     NpcSpawnInstances.Add(Spawns[i], npcSpawnInstance);
                 }
-                if (Spawns[i].Dir >= 0)
+                if (Spawns[i].Direction != NpcSpawnDirection.Random)
                 {
-                    dir = Spawns[i].Dir;
+                    dir = (int)Spawns[i].Direction - 1;
                 }
                 else
                 {
@@ -533,7 +533,7 @@ namespace Intersect.Server.Classes.Maps
             foreach (var id in EventIds)
             {
                 var evt = EventBase.Get(id);
-                if (evt != null && evt.IsGlobal == 1)
+                if (evt != null && evt.Global)
                 {
                     GlobalEventInstances.Add(evt, new EventInstance(evt.Id, evt, Id));
                 }

@@ -215,7 +215,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_L
     public class ClassSprite
     {
         public string Face = "";
-        public byte Gender;
+        public Gender Gender;
         public string Sprite = "";
     }
 }

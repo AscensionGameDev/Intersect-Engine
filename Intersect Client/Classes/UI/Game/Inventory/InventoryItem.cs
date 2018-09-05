@@ -198,7 +198,7 @@ namespace Intersect.Client.Classes.UI.Game.Inventory
             }
             var item = ItemBase.Get(Globals.Me.Inventory[mMySlot].ItemId);
             if (Globals.Me.Inventory[mMySlot].ItemId != mCurrentItemId || Globals.Me.Inventory[mMySlot].Quantity != mCurrentAmt || equipped != mIsEquipped ||
-                (item == null && mTexLoaded != "") || (item != null && mTexLoaded != item.Pic) || mIconCd != Globals.Me.ItemOnCd(mMySlot))
+                (item == null && mTexLoaded != "") || (item != null && mTexLoaded != item.Icon) || mIconCd != Globals.Me.ItemOnCd(mMySlot))
             {
                 mCurrentItemId = Globals.Me.Inventory[mMySlot].ItemId;
                 mCurrentAmt = Globals.Me.Inventory[mMySlot].Quantity;
@@ -207,7 +207,7 @@ namespace Intersect.Client.Classes.UI.Game.Inventory
                 if (item != null)
                 {
                     GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,
-                        item.Pic);
+                        item.Icon);
                     if (itemTex != null)
                     {
                         Pnl.Texture = itemTex;
@@ -227,7 +227,7 @@ namespace Intersect.Client.Classes.UI.Game.Inventory
                             Pnl.Texture = null;
                         }
                     }
-                    mTexLoaded = item.Pic;
+                    mTexLoaded = item.Icon;
                     mIconCd = Globals.Me.ItemOnCd(mMySlot);
                 }
                 else

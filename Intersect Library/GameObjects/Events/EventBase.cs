@@ -15,7 +15,7 @@ namespace Intersect.GameObjects.Events
         public int SpawnX { get; set; } = -1;
         public int SpawnY { get; set; } = -1;
         public bool CommonEvent { get; set; }
-        public byte IsGlobal { get; set; }
+        public bool Global { get; set; }
 
         [JsonIgnore]
         [Column("Pages")]
@@ -34,7 +34,7 @@ namespace Intersect.GameObjects.Events
         }
 
         [JsonConstructor]
-        public EventBase(Guid id, Guid mapId, int x, int y, bool isCommon = false, byte isGlobal = 0) : base(id)
+        public EventBase(Guid id, Guid mapId, int x, int y, bool isCommon = false, bool isGlobal = false) : base(id)
         {
             Name = "New Event";
             MapId = mapId;
@@ -42,7 +42,7 @@ namespace Intersect.GameObjects.Events
             SpawnX = x;
             SpawnY = y;
             CommonEvent = isCommon;
-            IsGlobal = isGlobal;
+            Global = isGlobal;
             Pages = new List<EventPage> {new EventPage()};
         }
 

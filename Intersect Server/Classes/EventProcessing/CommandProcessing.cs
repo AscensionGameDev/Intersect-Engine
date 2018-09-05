@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
@@ -12,12 +10,13 @@ using Intersect.GameObjects.Events.Commands;
 using Intersect.Server.Classes.Core;
 using Intersect.Server.Classes.Database;
 using Intersect.Server.Classes.Entities;
+using Intersect.Server.Classes.Events;
 using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Localization;
 using Intersect.Server.Classes.Maps;
 using Intersect.Server.Classes.Networking;
 
-namespace Intersect.Server.Classes.Events
+namespace Intersect.Server.Classes.EventProcessing
 {
     public static class CommandProcessing
     {
@@ -61,13 +60,13 @@ namespace Intersect.Server.Classes.Events
             var color = Color.FromName(command.Color, Strings.Colors.presets);
             switch (command.Channel)
             {
-                case 0: //Player
+                case ChatboxChannel.Player:
                     PacketSender.SendPlayerMsg(player.MyClient, txt, color);
                     break;
-                case 1: //Local
+                case ChatboxChannel.Local:
                     PacketSender.SendProximityMsg(txt, player.MapId, color);
                     break;
-                case 2: //Global
+                case ChatboxChannel.Global:
                     PacketSender.SendGlobalMsg(txt, color);
                     break;
             }
@@ -140,7 +139,7 @@ namespace Intersect.Server.Classes.Events
         //Set Self Switch Command
         private static void ProcessCommand(SetSelfSwitchCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            if (instance.IsGlobal)
+            if (instance.Global)
             {
                 var evts = MapInstance.Get(instance.MapId).GlobalEventInstances.Values.ToList();
                 for (int i = 0; i < evts.Count; i++)
@@ -321,7 +320,7 @@ namespace Intersect.Server.Classes.Events
         //Set Access Command (wtf why would we even allow this? lol)
         private static void ProcessCommand(SetAccessCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            player.MyClient.Access = command.Power;
+            player.MyClient.Access = command.Access;
             PacketSender.SendEntityDataToProximity(player);
             PacketSender.SendPlayerMsg(player.MyClient, Strings.Player.powerchanged, Color.Red);
         }
@@ -329,7 +328,7 @@ namespace Intersect.Server.Classes.Events
         //Warp Player Command
         private static void ProcessCommand(WarpCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            player.Warp(command.MapId,command.X,command.Y,command.Dir == 0 ? player.Dir : command.Dir - 1);
+            player.Warp(command.MapId,command.X,command.Y,command.Direction == WarpDirection.Retain ? player.Dir : (int)command.Direction - 1);
         }
 
         //Set Move Route Command
@@ -351,9 +350,9 @@ namespace Intersect.Server.Classes.Events
                         if (evt.PageInstance != null)
                         {
                             evt.PageInstance.MoveRoute.CopyFrom(command.Route);
-                            evt.PageInstance.MovementType = 2;
+                            evt.PageInstance.MovementType = EventMovementType.MoveRoute;
                             if (evt.PageInstance.GlobalClone != null)
-                                evt.PageInstance.GlobalClone.MovementType = 2;
+                                evt.PageInstance.GlobalClone.MovementType = EventMovementType.MoveRoute;
                         }
                     }
                 }

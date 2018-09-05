@@ -2161,9 +2161,9 @@ Negative values for time to flow backwards.";
             return Strings.EventConditionDesc.selfswitch.ToString(Strings.EventConditionDesc.selfswitches[condition.SwitchIndex], sValue);
         }
 
-        public static string GetEventConditionalDesc(PowerIsCondition condition)
+        public static string GetEventConditionalDesc(AccessIsCondition condition)
         {
-            if (condition.Power == 0)
+            if (condition.Access == Access.None)
             {
                 return Strings.EventConditionDesc.power.ToString(Strings.EventConditionDesc.modadmin);
             }
