@@ -6,6 +6,7 @@ using Intersect.Migration.UpgradeInstructions.Upgrade_11.Intersect_Convert_Lib.E
 using Intersect.Migration.UpgradeInstructions.Upgrade_11.Intersect_Convert_Lib.GameObjects;
 using Intersect.Migration.UpgradeInstructions.Upgrade_11.Intersect_Convert_Lib.GameObjects.Events;
 using Intersect.Migration.UpgradeInstructions.Upgrade_11.Intersect_Convert_Lib.GameObjects.Maps;
+using Intersect.Migration.UpgradeInstructions.Upgrade_11.Intersect_Convert_Lib.GameObjects.Maps.MapList;
 using Intersect.Migration.UpgradeInstructions.Upgrade_11.Intersect_Convert_Lib.GameObjects.Switches_and_Variables;
 using Intersect.Migration.UpgradeInstructions.Upgrade_11.Intersect_Convert_Lib.Models;
 using Intersect.Migration.UpgradeInstructions.Upgrade_12;
@@ -14,6 +15,143 @@ using Log = Intersect.Migration.UpgradeInstructions.Upgrade_11.Intersect_Convert
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_11
 {
+    public class User11
+    {
+        public int id;
+        public string user;
+        public string pass;
+        public string salt;
+        public string email;
+        public int power;
+    }
+
+    public class Character11
+    {
+        public int id;
+        public int userid;
+        public string name;
+        public int map;
+        public int x;
+        public int y;
+        public int z;
+        public int dir;
+        public string sprite;
+        public string face;
+        public int classid;
+        public int gender;
+        public int level;
+        public long exp;
+        public int[] vitals;
+        public int[] maxvitals;
+        public int[] stats;
+        public int statpoints;
+        public int[] equipment;
+        public long last_online;
+    }
+
+    public class Ban11
+    {
+        public int playerid;
+        public long bantime;
+        public int accountid;
+        public long unbantime;
+        public string ip;
+        public string reason;
+        public string banner;
+    }
+
+    public class Mute11
+    {
+        public int playerid;
+        public long mutetime;
+        public int accountid;
+        public long unmutetime;
+        public string ip;
+        public string reason;
+        public string muter;
+    }
+
+    public class Friend11
+    {
+        public int owner_id;
+        public int friend_id;
+    }
+
+    public class PSwitch11
+    {
+        public int playerid;
+        public int switchid;
+        public bool value;
+    }
+
+    public class PVar11
+    {
+        public int playerid;
+        public int variableid;
+        public int value;
+    }
+
+    public class Quest11
+    {
+        public int playerid;
+        public int questid;
+        public int taskid;
+        public int taskprogress;
+        public bool completed;
+    }
+
+    public class Spell11
+    {
+        public int playerid;
+        public int slot;
+        public int spellid;
+        public int spellcd;
+    }
+
+    public class Bag11
+    {
+        public int bagid;
+        public int slots;
+    }
+
+    public class Inventory11
+    {
+        public int playerid;
+        public int slot;
+        public int itemnum;
+        public int itemval;
+        public int[] itemstats;
+        public int item_bag_id;
+    }
+
+    public class Bank11
+    {
+        public int playerid;
+        public int slot;
+        public int itemnum;
+        public int itemval;
+        public int[] itemstats;
+        public int item_bag_id;
+    }
+
+    public class BagItem11
+    {
+        public int bagid;
+        public int slot;
+        public int itemnum;
+        public int itemval;
+        public int[] itemstats;
+        public int item_bag_id;
+    }
+
+    public class Hotbar11
+    {
+        public int playerid;
+        public int slot;
+        public int type;
+        public int itemslot;
+    }
+
     public class Upgrade11
     {
         //Database Variables
@@ -56,6 +194,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_11
         private const string MAP_ATTRIBUTES_TABLE = "map_attributes";
         private const string MAP_ATTRIBUTES_MAP_ID = "map_id";
         private const string MAP_ATTRIBUTES_DATA = "data";
+        
+        private const string MAP_LIST_DATA = "data";
 
         //Map Tiles Table
         private const string MAP_TILES_TABLE = "map_tiles";
@@ -82,6 +222,20 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_11
         private int craftTablesIndex = 1;
 
         Dictionary<GameObjectType,Dictionary<int,string>> objs = new Dictionary<GameObjectType, Dictionary<int, string>>();
+        Dictionary<int,User11> Users = new Dictionary<int, User11>();
+        private Dictionary<int, Character11> Characters = new Dictionary<int, Character11>();
+        private List<Ban11> Bans = new List<Ban11>();
+        private List<Mute11> Mutes = new List<Mute11>();
+        private List<Friend11> Friends = new List<Friend11>();
+        private List<PSwitch11> Switches = new List<PSwitch11>();
+        private List<PVar11> Variables = new List<PVar11>();
+        private List<Quest11> Quests = new List<Quest11>();
+        private List<Spell11> Spells = new List<Spell11>();
+        private List<Bag11> Bags = new List<Bag11>();
+        private List<Inventory11> Items = new List<Inventory11>();
+        private List<Bank11> Bank = new List<Bank11>();
+        private List<BagItem11> BagItems = new List<BagItem11>();
+        private List<Hotbar11> Hotbar = new List<Hotbar11>();
 
         public Upgrade11(SqliteConnection conn)
         {
@@ -94,21 +248,460 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_11
             ServerOptions.LoadOptions();
             LoadAllGameObjects();
             LoadTime();
+            LoadMapFolders();
 
             objs.Remove(GameObjectType.Bench);
             objs[GameObjectType.Time].Add(0, TimeBase.GetTimeJson());
 
-            var up12 = new Upgrade12(objs);
+            //Time to load all player data into memory
+            LoadUsers();
+            LoadCharacters();
+            LoadBans();
+            LoadMutes();
+            LoadFriends();
+            LoadPSwitches();
+            LoadPVariables();
+            LoadQuests();
+            LoadSpells();
+            LoadBags();
+            LoadInventories();
+            LoadBanks();
+            LoadBagItems();
+            LoadHotbar();
+
+            var up12 = new Upgrade12(objs, MapList.GetList(), Users, Characters, Bans, Mutes, Friends, Switches,Variables, Quests, Spells, Bags,Items,Bank,BagItems, Hotbar);
             up12.Upgrade();
         }
 
-        private void IncrementDatabaseVersion(SqliteConnection dbConn)
+        private void LoadHotbar()
         {
-            var cmd = "UPDATE " + INFO_TABLE + " SET " + DB_VERSION + " = " + (12) + ";";
-            using (var createCommand = dbConn.CreateCommand())
+            lock (_dbLock)
             {
-                createCommand.CommandText = cmd;
-                createCommand.ExecuteNonQuery();
+                var query = "SELECT * from char_hotbar;";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    using (var dataReader = cmd.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var usr = new Hotbar11()
+                            {
+                                playerid = Convert.ToInt32(dataReader["char_id"]),
+                                slot = Convert.ToInt32(dataReader["slot"]),
+                                type = Convert.ToInt32(dataReader["type"]),
+                                itemslot = Convert.ToInt32(dataReader["itemslot"]),
+                            };
+                            Hotbar.Add(usr);
+                        }
+                    }
+                }
+            }
+
+        }
+
+        private void LoadBagItems()
+        {
+            var commaSep = new char[1];
+            commaSep[0] = ',';
+            lock (_dbLock)
+            {
+                var query = "SELECT * from bag_items;";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    using (var dataReader = cmd.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var usr = new BagItem11()
+                            {
+                                bagid = Convert.ToInt32(dataReader["bag_id"]),
+                                slot = Convert.ToInt32(dataReader["slot"]),
+                                itemnum = Convert.ToInt32(dataReader["itemnum"]),
+                                itemval = Convert.ToInt32(dataReader["itemval"]),
+                                item_bag_id = Convert.ToInt32(dataReader["item_bag_id"]),
+                            };
+                            var statsString = dataReader["itemstats"].ToString();
+                            var stats = statsString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
+                            usr.itemstats = new int[(int)Stats.StatCount];
+                            for (var i = 0; i < (int)Stats.StatCount && i < stats.Length; i++)
+                            {
+                                usr.itemstats[i] = int.Parse(stats[i]);
+                                if (usr.itemstats[i] > Options.MaxStatValue) usr.itemstats[i] = Options.MaxStatValue;
+                            }
+                            BagItems.Add(usr);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void LoadBanks()
+        {
+            var commaSep = new char[1];
+            commaSep[0] = ',';
+            lock (_dbLock)
+            {
+                var query = "SELECT * from char_bank;";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    using (var dataReader = cmd.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var usr = new Bank11()
+                            {
+                                playerid = Convert.ToInt32(dataReader["char_id"]),
+                                slot = Convert.ToInt32(dataReader["slot"]),
+                                itemnum = Convert.ToInt32(dataReader["itemnum"]),
+                                itemval = Convert.ToInt32(dataReader["itemval"]),
+                                item_bag_id = Convert.ToInt32(dataReader["item_bag_id"]),
+                            };
+                            var statsString = dataReader["itemstats"].ToString();
+                            var stats = statsString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
+                            usr.itemstats = new int[(int)Stats.StatCount];
+                            for (var i = 0; i < (int)Stats.StatCount && i < stats.Length; i++)
+                            {
+                                usr.itemstats[i] = int.Parse(stats[i]);
+                                if (usr.itemstats[i] > Options.MaxStatValue) usr.itemstats[i] = Options.MaxStatValue;
+                            }
+                            Bank.Add(usr);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void LoadInventories()
+        {
+            var commaSep = new char[1];
+            commaSep[0] = ',';
+            lock (_dbLock)
+            {
+                var query = "SELECT * from char_inventory;";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    using (var dataReader = cmd.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var usr = new Inventory11()
+                            {
+                                playerid = Convert.ToInt32(dataReader["char_id"]),
+                                slot = Convert.ToInt32(dataReader["slot"]),
+                                itemnum = Convert.ToInt32(dataReader["itemnum"]),
+                                itemval = Convert.ToInt32(dataReader["itemval"]),
+                                item_bag_id = Convert.ToInt32(dataReader["item_bag_id"]),
+                            };
+                            var statsString = dataReader["itemstats"].ToString();
+                            var stats = statsString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
+                            usr.itemstats = new int[(int)Stats.StatCount];
+                            for (var i = 0; i < (int)Stats.StatCount && i < stats.Length; i++)
+                            {
+                                usr.itemstats[i] = int.Parse(stats[i]);
+                                if (usr.itemstats[i] > Options.MaxStatValue) usr.itemstats[i] = Options.MaxStatValue;
+                            }
+                            Items.Add(usr);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void LoadBags()
+        {
+            lock (_dbLock)
+            {
+                var query = "SELECT * from bags;";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    using (var dataReader = cmd.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var usr = new Bag11()
+                            {
+                                bagid = Convert.ToInt32(dataReader["bag_id"]),
+                                slots = Convert.ToInt32(dataReader["slot_count"]),
+                            };
+                            Bags.Add(usr);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void LoadSpells()
+        {
+            lock (_dbLock)
+            {
+                var query = "SELECT * from char_spells;";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    using (var dataReader = cmd.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var usr = new Spell11()
+                            {
+                                playerid = Convert.ToInt32(dataReader["char_id"]),
+                                slot = Convert.ToInt32(dataReader["slot"]),
+                                spellid = Convert.ToInt32(dataReader["spellnum"]),
+                                spellcd = Convert.ToInt32(dataReader["spellcd"]),
+                            };
+                            Spells.Add(usr);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void LoadQuests()
+        {
+            lock (_dbLock)
+            {
+                var query = "SELECT * from char_quests;";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    using (var dataReader = cmd.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var usr = new Quest11()
+                            {
+                                playerid = Convert.ToInt32(dataReader["char_id"]),
+                                questid = Convert.ToInt32(dataReader["quest_id"]),
+                                taskid = Convert.ToInt32(dataReader["task"]),
+                                taskprogress = Convert.ToInt32(dataReader["task_progress"]),
+                                completed = Convert.ToBoolean(dataReader["completed"])
+                            };
+                            Quests.Add(usr);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void LoadPVariables()
+        {
+            lock (_dbLock)
+            {
+                var query = "SELECT * from char_variables;";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    using (var dataReader = cmd.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var usr = new PVar11()
+                            {
+                                playerid = Convert.ToInt32(dataReader["char_id"]),
+                                variableid = Convert.ToInt32(dataReader["slot"]),
+                                value = Convert.ToInt32(dataReader["val"])
+                            };
+                            Variables.Add(usr);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void LoadPSwitches()
+        {
+            lock (_dbLock)
+            {
+                var query = "SELECT * from char_switches;";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    using (var dataReader = cmd.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var usr = new PSwitch11()
+                            {
+                                playerid = Convert.ToInt32(dataReader["char_id"]),
+                                switchid = Convert.ToInt32(dataReader["slot"]),
+                                value = Convert.ToBoolean(dataReader["val"])
+                            };
+                            Switches.Add(usr);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void LoadFriends()
+        {
+            lock (_dbLock)
+            {
+                var query = "SELECT * from char_friends;";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    using (var dataReader = cmd.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var usr = new Friend11()
+                            {
+                                owner_id = Convert.ToInt32(dataReader["char_id"]),
+                                friend_id = Convert.ToInt32(dataReader["friend_id"]),
+                            };
+                            Friends.Add(usr);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void LoadMutes()
+        {
+            lock (_dbLock)
+            {
+                var query = "SELECT * from mutes;";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    using (var dataReader = cmd.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var usr = new Mute11()
+                            {
+                                playerid = Convert.ToInt32(dataReader["id"]),
+                                mutetime = Convert.ToInt64(dataReader["time"]),
+                                accountid = Convert.ToInt32(dataReader["user"]),
+                                ip = dataReader["ip"].ToString(),
+                                unmutetime = Convert.ToInt64(dataReader["duration"]),
+                                reason = dataReader["reason"].ToString(),
+                                muter = dataReader["banner"].ToString()
+                            };
+                            Mutes.Add(usr);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void LoadBans()
+        {
+            lock (_dbLock)
+            {
+                var query = "SELECT * from bans;";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    using (var dataReader = cmd.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var usr = new Ban11()
+                            {
+                                playerid = Convert.ToInt32(dataReader["id"]),
+                                bantime = Convert.ToInt64(dataReader["time"]),
+                                accountid = Convert.ToInt32(dataReader["user"]),
+                                ip = dataReader["ip"].ToString(),
+                                unbantime = Convert.ToInt64(dataReader["duration"]),
+                                reason = dataReader["reason"].ToString(),
+                                banner = dataReader["banner"].ToString()
+                            };
+                            Bans.Add(usr);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void LoadUsers()
+        {
+            lock (_dbLock)
+            {
+                var query = "SELECT * from users;";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    using (var dataReader = cmd.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var usr = new User11()
+                            {
+                                id = Convert.ToInt32(dataReader["id"]),
+                                user = dataReader["user"].ToString(),
+                                pass = dataReader["pass"].ToString(),
+                                salt = dataReader["salt"].ToString(),
+                                email = dataReader["email"].ToString(),
+                                power = Convert.ToInt32(dataReader["power"])
+                            };
+                            Users.Add(usr.id,usr);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void LoadCharacters()
+        {
+            var commaSep = new char[1];
+            commaSep[0] = ',';
+            lock (_dbLock)
+            {
+                var query = "SELECT * from characters where deleted = 0;";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    using (var dataReader = cmd.ExecuteReader())
+                    {
+                        while (dataReader.Read())
+                        {
+                            var usr = new Character11()
+                            {
+                                id = Convert.ToInt32(dataReader["id"]),
+                                userid = Convert.ToInt32(dataReader["user_id"]),
+                                name = dataReader["name"].ToString(),
+                                map = Convert.ToInt32(dataReader["map"]),
+                                x = Convert.ToInt32(dataReader["x"]),
+                                y = Convert.ToInt32(dataReader["y"]),
+                                z = Convert.ToInt32(dataReader["z"]),
+                                dir = Convert.ToInt32(dataReader["dir"]),
+                                sprite = dataReader["sprite"].ToString(),
+                                face = dataReader["face"].ToString(),
+                                classid = Convert.ToInt32(dataReader["class"]),
+                                gender = Convert.ToInt32(dataReader["gender"]),
+                                level = Convert.ToInt32(dataReader["level"]),
+                                exp = Convert.ToInt32(dataReader["exp"]),
+                                statpoints = Convert.ToInt32(dataReader["statpoints"]),
+                                last_online = Convert.ToInt64(dataReader["last_online"])
+                            };
+
+                            var maxVitalString = dataReader["maxvitals"].ToString();
+                            var maxVitals = maxVitalString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
+                            usr.maxvitals = new int[(int)Vitals.VitalCount];
+                            usr.vitals = new int[(int)Vitals.VitalCount];
+                            for (var i = 0; i < (int)Vitals.VitalCount && i < maxVitals.Length; i++)
+                            {
+                                usr.maxvitals[i] = int.Parse(maxVitals[i]);
+                            }
+                            var vitalString = dataReader["vitals"].ToString();
+                            var vitals = vitalString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
+                            for (var i = 0; i < (int)Vitals.VitalCount && i < vitals.Length; i++)
+                            {
+                                usr.vitals[i] = int.Parse(vitals[i]);
+                            }
+                            var statsString = dataReader["stats"].ToString();
+                            var stats = statsString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
+                            usr.stats = new int[(int)Stats.StatCount];
+                            for (var i = 0; i < (int)Stats.StatCount && i < stats.Length; i++)
+                            {
+                                usr.stats[i] = int.Parse(stats[i]);
+                                if (usr.stats[i] > Options.MaxStatValue) usr.stats[i] = Options.MaxStatValue;
+                            }
+                            var equipmentString = dataReader["equipment"].ToString();
+                            var equipment = equipmentString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
+                            usr.equipment = new int[(int)Options.EquipmentSlots.Count];
+                            for (var i = 0; i < (int)Options.EquipmentSlots.Count && i < equipment.Length; i++)
+                            {
+                                usr.equipment[i] = int.Parse(equipment[i]);
+                            }
+
+                            Characters.Add(usr.id, usr);
+                        }
+                    }
+                }
             }
         }
 
@@ -528,6 +1121,41 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_11
                 }
             }
             var json = TimeBase.GetTimeJson();
+        }
+
+        //Map Folders
+        private void LoadMapFolders()
+        {
+            var query = $"SELECT * from {MAP_LIST_TABLE};";
+            using (var cmd = new SqliteCommand(query, _dbConnection))
+            {
+                using (var dataReader = cmd.ExecuteReader())
+                {
+                    if (dataReader.HasRows)
+                    {
+                        while (dataReader.Read())
+                        {
+                            if (dataReader[MAP_LIST_DATA].GetType() != typeof(DBNull))
+                            {
+                                var data = (byte[])dataReader[MAP_LIST_DATA];
+                                if (data.Length > 1)
+                                {
+                                    var myBuffer = new ByteBuffer();
+                                    myBuffer.WriteBytes(data);
+                                    MapList.GetList().Load(myBuffer, MapBase.Lookup, true, true);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            foreach (var map in MapBase.Lookup)
+            {
+                if (MapList.GetList().FindMap(map.Value.Index) == null)
+                {
+                    MapList.GetList().AddMap(map.Value.Index, MapBase.Lookup);
+                }
+            }
         }
 
         public byte[] GetMapTiles(int index)

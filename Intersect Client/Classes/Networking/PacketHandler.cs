@@ -1848,9 +1848,8 @@ namespace Intersect_Client.Classes.Networking
             for (int i = 0; i < charCount; i++)
             {
                 var id = bf.ReadGuid();
-                characters.Add(new Character(id, bf.ReadString(), bf.ReadString(), bf.ReadString(),
-                    bf.ReadInteger(), bf.ReadString()));
-                for (int x = 0; x < Options.EquipmentSlots.Count; x++)
+                characters.Add(new Character(id, bf.ReadString(), bf.ReadString(), bf.ReadString(), bf.ReadInteger(), bf.ReadString()));
+                for (int x = 0; x < Options.EquipmentSlots.Count + 1; x++)
                 {
                     characters[characters.Count - 1].Equipment[x] = bf.ReadString();
                 }

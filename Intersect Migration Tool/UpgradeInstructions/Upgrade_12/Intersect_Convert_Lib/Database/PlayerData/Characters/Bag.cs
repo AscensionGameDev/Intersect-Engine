@@ -12,7 +12,7 @@ namespace Intersect.Server.Classes.Database.PlayerData.Characters
     public class Bag
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; private set; }
+        public Guid Id { get; set; }
         public int SlotCount { get; private set; }
 
         public virtual List<BagSlot> Slots { get; set; } = new List<BagSlot>();

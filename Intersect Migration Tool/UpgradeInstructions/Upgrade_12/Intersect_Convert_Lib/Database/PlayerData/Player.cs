@@ -33,7 +33,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_L
 
         //Character Info
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public new Guid Id { get; private set; }
+        [Column(Order = 0)]
+        public new Guid Id { get; set; }
 
         //Name, X, Y, Dir, Etc all in the base Entity Class
         public Guid ClassId { get; set; }

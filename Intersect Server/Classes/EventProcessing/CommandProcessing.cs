@@ -753,8 +753,7 @@ namespace Intersect.Server.Classes.EventProcessing
                 input = input.Replace(Strings.Events.playernamecommand, player.Name);
                 input = input.Replace(Strings.Events.eventnamecommand, instance.PageInstance.Name);
                 input = input.Replace(Strings.Events.commandparameter, instance.PageInstance.Param);
-                if (input.Contains(Strings.Events.onlinelistcommand) ||
-                    input.Contains(Strings.Events.onlinecountcommand))
+                if (input.Contains(Strings.Events.onlinelistcommand) || input.Contains(Strings.Events.onlinecountcommand))
                 {
                     var onlineList = Globals.OnlineList;
                     input = input.Replace(Strings.Events.onlinecountcommand, onlineList.Count.ToString());

@@ -66,10 +66,6 @@ namespace Intersect_Client.Classes.UI.Menu
             //Character Container
             mCharacterContainer = new ImagePanel(mCharacterSelectionPanel, "CharacterContainer");
 
-            //Character sprite
-            mCharacterPortrait = new ImagePanel(mCharacterContainer);
-            mCharacterPortrait.SetSize(48, 48);
-
             //Next char Button
             mNextCharButton = new Button(mCharacterContainer, "NextCharacterButton");
             mNextCharButton.Clicked += _nextCharButton_Clicked;
@@ -141,6 +137,19 @@ namespace Intersect_Client.Classes.UI.Menu
                 mDeleteButton.Show();
                 mNewButton.Hide();
 
+                for (int i = 0; i < Options.EquipmentSlots.Count + 1; i++)
+                {
+                    if (Characters[mSelectedChar].Equipment[i] == "Player")
+                    {
+                        mCharacterPortrait = mPaperdollPortraits[i];
+                    }
+                }
+
+                if (mCharacterPortrait == null)
+                {
+                    mCharacterPortrait = mPaperdollPortraits[0];
+                }
+
                 mCharacterPortrait.Texture =
                     Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face,
                         Characters[mSelectedChar].Face);
@@ -172,20 +181,28 @@ namespace Intersect_Client.Classes.UI.Menu
 
                         for (int i = 0; i < Options.EquipmentSlots.Count; i++)
                         {
-                            mPaperdollPortraits[i].Texture =
-                                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Paperdoll,
-                                    Characters[mSelectedChar].Equipment[i]);
-                            if (mPaperdollPortraits[i].Texture != null)
+                            if (mPaperdollPortraits[i] != mCharacterPortrait)
                             {
-                                mPaperdollPortraits[i].Show();
-                                mPaperdollPortraits[i].SetTextureRect(0, 0,
-                                    mPaperdollPortraits[i].Texture.GetWidth() / 4,
-                                    mPaperdollPortraits[i].Texture.GetHeight() / 4);
-                                mPaperdollPortraits[i].SetSize(mPaperdollPortraits[i].Texture.GetWidth() / 4,
-                                    mPaperdollPortraits[i].Texture.GetHeight() / 4);
-                                mPaperdollPortraits[i].SetPosition(
-                                    mCharacterContainer.Width / 2 - mPaperdollPortraits[i].Width / 2,
-                                    mCharacterContainer.Height / 2 - mPaperdollPortraits[i].Height / 2);
+                                mPaperdollPortraits[i].Texture =
+                                    Globals.ContentManager.GetTexture(GameContentManager.TextureType.Paperdoll,
+                                        Characters[mSelectedChar].Equipment[i]);
+                                if (mPaperdollPortraits[i].Texture != null)
+                                {
+                                    mPaperdollPortraits[i].Show();
+                                    mPaperdollPortraits[i].SetTextureRect(0, 0,
+                                        mPaperdollPortraits[i].Texture.GetWidth() / 4,
+                                        mPaperdollPortraits[i].Texture.GetHeight() / 4);
+                                    mPaperdollPortraits[i].SetSize(mPaperdollPortraits[i].Texture.GetWidth() / 4,
+                                        mPaperdollPortraits[i].Texture.GetHeight() / 4);
+                                    mPaperdollPortraits[i].SetPosition(
+                                        mCharacterContainer.Width / 2 - mPaperdollPortraits[i].Width / 2,
+                                        mCharacterContainer.Height / 2 - mPaperdollPortraits[i].Height / 2);
+                                }
+                            }
+                            else
+                            {
+                                if (mPaperdollPortraits[i].Texture != null)
+                                    mPaperdollPortraits[i].Show();
                             }
                         }
                     }
@@ -266,7 +283,7 @@ namespace Intersect_Client.Classes.UI.Menu
     public class Character
     {
         public string Class = "";
-        public string[] Equipment = new string[Options.EquipmentSlots.Count];
+        public string[] Equipment = new string[Options.EquipmentSlots.Count + 1];
         public bool Exists = false;
         public string Face = "";
         public Guid Id;
@@ -281,10 +298,11 @@ namespace Intersect_Client.Classes.UI.Menu
 
         public Character(Guid id, string name, string sprite, string face, int level, string charClass)
         {
-            for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+            for (int i = 0; i < Options.EquipmentSlots.Count + 1; i++)
             {
                 Equipment[i] = "";
             }
+            Equipment[0] = "Player";
             Id = id;
             Name = name;
             Sprite = sprite;
@@ -296,10 +314,11 @@ namespace Intersect_Client.Classes.UI.Menu
 
         public Character()
         {
-            for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+            for (int i = 0; i < Options.EquipmentSlots.Count + 1; i++)
             {
                 Equipment[i] = "";
             }
+            Equipment[0] = "Player";
         }
     }
 }

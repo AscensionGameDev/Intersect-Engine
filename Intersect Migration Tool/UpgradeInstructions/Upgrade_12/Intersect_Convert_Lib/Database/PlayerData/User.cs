@@ -12,11 +12,14 @@ namespace Intersect.Server.Classes.Database.PlayerData
     public class User
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; private set; }
+        [Column(Order = 0)]
+        public Guid Id { get; set; }
 
+        [Column(Order = 1)]
         public string Name { get; set; }
         public string Salt { get; set; }
         public string Password { get; set; }
+        [Column(Order = 2)]
         public string Email { get; set; }
         public Access Access { get; set; }
         public string PasswordResetCode { get; set; }

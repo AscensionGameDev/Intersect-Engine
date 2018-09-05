@@ -13,12 +13,12 @@ namespace Intersect.Server.Classes.Database.PlayerData
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; private set; }
         public Guid PlayerId { get; private set; }
-        public virtual User Player { get; private set; }
-        public string Ip { get; private set; }
-        public DateTime StartTime { get; private set; }
+        public virtual User Player { get;  set; }
+        public string Ip { get;  set; }
+        public DateTime StartTime { get;  set; }
         public DateTime EndTime { get; set; }
-        public string Reason { get; private set; }
-        public string Banner { get; private set; }
+        public string Reason { get;  set; }
+        public string Banner { get;  set; }
 
         public Ban() { }
 

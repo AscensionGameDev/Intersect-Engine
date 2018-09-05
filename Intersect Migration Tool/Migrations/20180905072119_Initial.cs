@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Intersect.Server.Migrations
+namespace Intersect.Migration.Migrations
 {
     public partial class Initial : Microsoft.EntityFrameworkCore.Migrations.Migration
     {

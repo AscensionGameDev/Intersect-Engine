@@ -60,8 +60,7 @@ namespace Intersect.Server.Classes.Database.PlayerData
         {
             modelBuilder.Entity<User>()
                 .HasMany(b => b.Characters)
-                .WithOne(p => p.Account)
-                .HasForeignKey(p => p.Id);
+                .WithOne(p => p.Account);
 
             modelBuilder.Entity<Player>().HasMany(b => b.Friends).WithOne(p => p.Owner);
 

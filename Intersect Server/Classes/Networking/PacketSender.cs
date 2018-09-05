@@ -1031,7 +1031,7 @@ namespace Intersect.Server.Classes.Networking
             for (int i = 0; i < Options.MaxHotbar; i++)
             {
                 bf.WriteInteger(client.Entity.Hotbar[i].Type);
-                bf.WriteInteger(client.Entity.Hotbar[i].Slot);
+                bf.WriteInteger(client.Entity.Hotbar[i].ItemSlot);
             }
             SendDataTo(client, bf.ToArray());
             bf.Dispose();
@@ -1051,7 +1051,7 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteLong((int)ServerPackets.PlayerCharacters);
             bf.WriteInteger(client.Characters.Count);
             bf.WriteBoolean(client.Characters.Count < Options.MaxCharacters);
-            foreach (var character in client.Characters)
+            foreach (var character in client.Characters.OrderByDescending(p => p.LastOnline))
             {
                 bf.WriteGuid(character.Id);
                 bf.WriteString(character.Name);
@@ -1062,18 +1062,15 @@ namespace Intersect.Server.Classes.Networking
 
 
                 var equipmentArray = character.Equipment;
-                var equipment = new string[Options.EquipmentSlots.Count];
+                var equipment = new string[Options.EquipmentSlots.Count + 1];
                 //Draw the equipment/paperdolls
                 for (var z = 0; z < Options.PaperdollOrder[1].Count; z++)
                 {
                     if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z]) > -1)
                     {
-                        if (equipmentArray[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] >
-                            -1 && equipmentArray[
-                                Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] <
-                            Options.MaxInvItems)
+                        if (equipmentArray[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] > -1 && equipmentArray[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] < Options.MaxInvItems)
                         {
-                            Guid itemId = Guid.Empty;
+                            Guid itemId = character.Items[equipmentArray[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])]].ItemId;
 
                             if (ItemBase.Get(itemId) != null)
                             {
@@ -1089,9 +1086,16 @@ namespace Intersect.Server.Classes.Networking
                             }
                         }
                     }
+                    else
+                    {
+                        if (Options.PaperdollOrder[1][z] == "Player")
+                        {
+                            equipment[z] = "Player";
+                        }
+                    }
                 }
 
-                for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+                for (int i = 0; i < Options.EquipmentSlots.Count + 1; i++)
                 {
                     bf.WriteString(equipment[i]);
                 }

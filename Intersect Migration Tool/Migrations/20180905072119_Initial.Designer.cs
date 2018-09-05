@@ -6,10 +6,10 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Intersect.Server.Migrations
+namespace Intersect.Migration.Migrations
 {
     [DbContext(typeof(PlayerContext))]
-    [Migration("20180905042956_Initial")]
+    [Migration("20180905072119_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

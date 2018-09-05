@@ -15,6 +15,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_L
 {
     public class EntityInstance
     {
+        [Column(Order = 1)]
         public string Name { get; set; }
         public Guid MapId { get; set; }
 

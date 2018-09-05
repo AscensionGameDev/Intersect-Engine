@@ -24,6 +24,7 @@ namespace Intersect.Server.Classes.Entities
 
     public class EntityInstance
     {
+        [Column(Order = 1)]
         public string Name { get; set; }
         public Guid MapId { get; set; }
 
@@ -73,6 +74,7 @@ namespace Intersect.Server.Classes.Entities
         //Instance Values
         private Guid _id;
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Column(Order = 0)]
         public Guid Id { get => GetId(); set => _id = value; }
         [NotMapped] public bool Dead { get; set; }
 

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Intersect.Enums;
@@ -18,17 +19,22 @@ using Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_Lib.G
 using Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_Lib.GameObjects.Events;
 using Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_Lib.GameObjects.Events.Commands;
 using Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_Lib.GameObjects.Maps;
+using Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_Lib.GameObjects.Maps.MapList;
 using Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_Lib.GameObjects.Switches_and_Variables;
 using Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_Lib.Utilities;
 using Intersect.Server.Classes.Database.PlayerData;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Remotion.Linq.Parsing.Structure.IntermediateModel;
 using EventBase = Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_Lib.GameObjects.Events.EventBase;
 using EventCommandType = Intersect.Migration.UpgradeInstructions.Upgrade_11.Intersect_Convert_Lib.GameObjects.Events.EventCommandType;
 using EventMoveRoute = Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_Lib.GameObjects.Events.EventMoveRoute;
 using EventPage = Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_Lib.GameObjects.Events.EventPage;
 using ShopBase = Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_Lib.GameObjects.ShopBase;
+using Intersect.Migration.UpgradeInstructions.Upgrade_11;
+using Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_Lib.Database.PlayerData;
+using Intersect.Server.Classes.Database.PlayerData.Characters;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
 {
@@ -43,6 +49,24 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
     {
         Dictionary<GameObjectType, Dictionary<int, string>> objs = new Dictionary<GameObjectType, Dictionary<int, string>>();
         Dictionary<Guid,Dictionary<int,Guid>> questTaskIds = new Dictionary<Guid, Dictionary<int, Guid>>();
+        private Dictionary<int, User11> OldUsers;
+        private Dictionary<int, User> UserMap = new Dictionary<int, User>();
+        private Dictionary<int, Character11> OldCharacters;
+        private Dictionary<int, Player> CharacterMap = new Dictionary<int, Player>();
+        private List<Ban11> OldBans = new List<Ban11>();
+        private List<Mute11> OldMutes = new List<Mute11>();
+        private List<Friend11> OldFriends = new List<Friend11>();
+        private List<PSwitch11> OldSwitches = new List<PSwitch11>();
+        private List<PVar11> OldVariables = new List<PVar11>();
+        private List<Quest11> OldQuests = new List<Quest11>();
+        private List<Spell11> OldSpells = new List<Spell11>();
+        private List<Bag11> OldBags = new List<Bag11>();
+        private List<Inventory11> OldItems = new List<Inventory11>();
+        private List<Bank11> OldBanks = new List<Bank11>();
+        private List<BagItem11> OldBagItems = new List<BagItem11>();
+        private List<Hotbar11> OldHotbar = new List<Hotbar11>();
+        private Dictionary<int, Bag> BagMap = new Dictionary<int, Bag>();
+        private Intersect.Migration.UpgradeInstructions.Upgrade_11.Intersect_Convert_Lib.GameObjects.Maps.MapList.MapList oldMapList;
         private PlayerContext sPlayerDb;
         private GameContext sGameDb;
         private const string GameDbFilename = "resources/gamedata.db";
@@ -58,7 +82,9 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
             }
         }
 
-        public Upgrade12(Dictionary<Intersect.Migration.UpgradeInstructions.Upgrade_11.Intersect_Convert_Lib.Enums.GameObjectType, Dictionary<int, string>> up11objs)
+        public Upgrade12(Dictionary<Intersect.Migration.UpgradeInstructions.Upgrade_11.Intersect_Convert_Lib.Enums.GameObjectType, Dictionary<int, string>> up11objs, Intersect.Migration.UpgradeInstructions.Upgrade_11.Intersect_Convert_Lib.GameObjects.Maps.MapList.MapList mapList,
+            Dictionary<int,User11> oldUsers, Dictionary<int,Character11> oldCharacters, List<Ban11> oldBans, List<Mute11> oldMutes, List<Friend11> oldFriends, List<PSwitch11> oldSwitches, List<PVar11> oldVariables,
+            List<Quest11> oldQuests, List<Spell11> oldSpells, List<Bag11> oldBags, List<Inventory11> oldItems, List<Bank11> oldBanks, List<BagItem11> oldBagItems, List<Hotbar11> oldHotbar)
         {
 
             if (File.Exists(GameDbFilename)) File.Delete(GameDbFilename);
@@ -71,6 +97,22 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
                     typ = (GameObjectType)Enum.Parse(typeof(GameObjectType), val.Key.ToString());
                 objs.Add(typ,val.Value);
             }
+
+            oldMapList = mapList;
+            OldUsers = oldUsers;
+            OldCharacters = oldCharacters;
+            OldBans = oldBans;
+            OldMutes = oldMutes;
+            OldFriends = oldFriends;
+            OldSwitches = oldSwitches;
+            OldVariables = oldVariables;
+            OldQuests = oldQuests;
+            OldSpells = oldSpells;
+            OldBags = oldBags;
+            OldItems = oldItems;
+            OldBanks = oldBanks;
+            OldBagItems = oldBagItems;
+            OldHotbar = oldHotbar;
 
             //TODO: On screen prompts to see if they want to use sqlite or mysql...
             //We will officially recommend sqlite for BOTH since the api will be available... but this will be their call. Going back and forth will be difficult to say the least.
@@ -180,37 +222,315 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
             ImportEvents(objs[GameObjectType.Event]);
             ImportQuests(objs[GameObjectType.Quest]);
             ImportMaps(objs[GameObjectType.Map]);
+            ImportMapFolders();
 
-            //EASY - But will take time
-            //--------------------------
+            //--------------------------------------------------------------
 
-            //HARD & Will take absolutely forever:
-            //------------------------------------
-            //Map List
+            //Player Data!!
 
+            //--------------------------------------------------------------
 
-            //TODO
-            //-------------
-            //Convert Event IsGlobal to bool and rename to Global - Done?
-            //Change EventPage Graphic Type to an enum instead of an int - Done?
-            //Change EventPage Layer, MovementType, MovementFreq, MovementSpeed, Trigger to enum
-            //Make AddChatboxText Channel an Enum
-            //Make Change Gender Command Gender an enum
-            //Make Set Access Command Access an enum
-            //Make player/server variables longs
-            //Maybe make Warp Dir an enum
-            //Remove TargetId from EventMoveRouteCommand
-            //Rename Spell CastingReqs to CastingRequirements
-            //Change Quest LogBefore/After/Quitable/Repeatable to bools
-            //Rename Options MapWidth/Mapheight to just width and height
-            //Disable api by default -- set api port to server port by default
-            //Change map npc spawn dir to byte
-            //Rename any Desc to Description
+            ImportUsers();
+            ImportCharacters();
+            ImportBans();
+            ImportMutes();
+            ImportFriends();
+            ImportPSwitches();
+            ImportPVariables();
+            ImportPQuests();
+            ImportPSpells();
+            ImportBags();
+            ImportPItems();
+            ImportBankItems();
+            ImportBagItems();
+            ImportHotbar();
+            
 
             sGameDb.SaveChanges();
             sPlayerDb.SaveChanges();
+            Console.WriteLine("Done converting to new db! Hit any key to continue");
+            Console.ReadKey();
+            Environment.Exit(-1);
         }
 
+        #region "PlayerData"
+        private void ImportHotbar()
+        {
+            foreach (var bn in OldHotbar)
+            {
+                if (CharacterMap.ContainsKey(bn.playerid))
+                {
+                    var player = CharacterMap[bn.playerid];
+                    var slot = player.Hotbar[bn.slot];
+                    slot.Type = bn.type;
+                    slot.ItemSlot = bn.itemslot;
+                }
+            }
+        }
+        private void ImportBagItems()
+        {
+            foreach (var bn in OldBagItems)
+            {
+                if (BagMap.ContainsKey(bn.bagid) && GetGuid(GameObjectType.Item, bn.itemnum) != Guid.Empty)
+                {
+                    var slot = BagMap[bn.bagid].Slots[bn.slot];
+                    slot.ItemId = GetGuid(GameObjectType.Item, bn.itemnum);
+                    slot.Quantity = bn.itemval;
+                    slot.StatBoost = bn.itemstats;
+                    var item = sGameDb.Items.Find(GetGuid(GameObjectType.Item, bn.itemnum));
+                    if (item.ItemType == ItemTypes.Bag && bn.bagid != bn.item_bag_id)
+                    {
+                        if (BagMap.ContainsKey(bn.item_bag_id))
+                        {
+                            slot.Bag = BagMap[bn.item_bag_id];
+                        }
+                    }
+                }
+            }
+        }
+        private void ImportBankItems()
+        {
+            foreach (var bn in OldBanks)
+            {
+                if (CharacterMap.ContainsKey(bn.playerid) && GetGuid(GameObjectType.Item, bn.itemnum) != Guid.Empty)
+                {
+                    var player = CharacterMap[bn.playerid];
+                    var slot = player.Bank[bn.slot];
+                    slot.ItemId = GetGuid(GameObjectType.Item, bn.itemnum);
+                    slot.Quantity = bn.itemval;
+                    slot.StatBoost = bn.itemstats;
+                    var item = sGameDb.Items.Find(GetGuid(GameObjectType.Item, bn.itemnum));
+                    if (item.ItemType == ItemTypes.Bag)
+                    {
+                        if (BagMap.ContainsKey(bn.item_bag_id))
+                        {
+                            slot.Bag = BagMap[bn.item_bag_id];
+                        }
+                    }
+                }
+            }
+        }
+        private void ImportPItems()
+        {
+            foreach (var bn in OldItems)
+            {
+                if (CharacterMap.ContainsKey(bn.playerid) && GetGuid(GameObjectType.Item, bn.itemnum) != Guid.Empty)
+                {
+                    var player = CharacterMap[bn.playerid];
+                    var slot = player.Items[bn.slot];
+                    slot.ItemId = GetGuid(GameObjectType.Item, bn.itemnum);
+                    slot.Quantity = bn.itemval;
+                    slot.StatBoost = bn.itemstats;
+                    var item = sGameDb.Items.Find(GetGuid(GameObjectType.Item, bn.itemnum));
+                    if (item.ItemType == ItemTypes.Bag)
+                    {
+                        if (BagMap.ContainsKey(bn.item_bag_id))
+                        {
+                            slot.Bag = BagMap[bn.item_bag_id];
+                        }
+                    }
+                }
+            }
+        }
+        private void ImportBags()
+        {
+            foreach (var bn in OldBags)
+            {
+                var bag = new Bag(bn.slots);
+                bag.Id = Guid.NewGuid();
+                BagMap.Add(bn.bagid,bag);
+                sPlayerDb.Bags.Add(bag);
+            }
+        }
+        private void ImportPSpells()
+        {
+            foreach (var bn in OldSpells)
+            {
+                if (CharacterMap.ContainsKey(bn.playerid) && GetGuid(GameObjectType.Spell, bn.spellid) != Guid.Empty)
+                {
+                    var player = CharacterMap[bn.playerid];
+                    var slot = player.Spells[bn.slot];
+                    slot.SpellId = GetGuid(GameObjectType.Spell, bn.spellid);
+                    slot.SpellCd = bn.spellcd;
+                }
+            }
+        }
+        private void ImportPQuests()
+        {
+            foreach (var bn in OldQuests)
+            {
+                if (CharacterMap.ContainsKey(bn.playerid) && GetGuid(GameObjectType.Quest, bn.questid) != Guid.Empty)
+                {
+                    var fr = new Quest(GetGuid(GameObjectType.Quest, bn.questid));
+                    fr.TaskId = GetQuestTaskId(GetGuid(GameObjectType.Quest, bn.questid), bn.taskid);
+                    fr.TaskProgress = bn.taskprogress;
+                    fr.Completed = bn.completed;
+                    CharacterMap[bn.playerid].Quests.Add(fr);
+                }
+            }
+        }
+        private void ImportPVariables()
+        {
+            foreach (var bn in OldVariables)
+            {
+                if (CharacterMap.ContainsKey(bn.playerid) && GetGuid(GameObjectType.PlayerVariable, bn.variableid) != Guid.Empty)
+                {
+                    var fr = new Variable(GetGuid(GameObjectType.PlayerVariable, bn.variableid));
+                    fr.Value = bn.value;
+                    CharacterMap[bn.playerid].Variables.Add(fr);
+                }
+            }
+        }
+        private void ImportPSwitches()
+        {
+            foreach (var bn in OldSwitches)
+            {
+                if (CharacterMap.ContainsKey(bn.playerid) && GetGuid(GameObjectType.PlayerSwitch,bn.switchid) != Guid.Empty)
+                {
+                    var fr = new Switch(GetGuid(GameObjectType.PlayerSwitch, bn.switchid));
+                    fr.Value = bn.value;
+                    CharacterMap[bn.playerid].Switches.Add(fr);
+                }
+            }
+        }
+        private void ImportFriends()
+        {
+            foreach (var bn in OldFriends)
+            {
+                if (CharacterMap.ContainsKey(bn.owner_id) && CharacterMap.ContainsKey(bn.friend_id))
+                {
+                    var fr = new Friend();
+                    fr.Owner = CharacterMap[bn.owner_id];
+                    fr.Target = CharacterMap[bn.friend_id];
+                    sPlayerDb.Character_Friends.Add(fr);
+                }
+            }
+        }
+        private void ImportMutes()
+        {
+            foreach (var bn in OldMutes)
+            {
+                if (UserMap.ContainsKey(bn.accountid))
+                {
+                    var usr = UserMap[bn.accountid];
+                    var mute = new Mute();
+                    mute.Muter = bn.muter;
+                    mute.Ip = bn.ip;
+                    mute.EndTime = DateTime.FromBinary(bn.unmutetime);
+                    mute.StartTime = DateTime.FromBinary(bn.mutetime);
+                    mute.Player = usr;
+                    mute.Reason = bn.reason;
+                    sPlayerDb.Mutes.Add(mute);
+                }
+            }
+        }
+        private void ImportBans()
+        {
+            foreach (var bn in OldBans)
+            {
+                if (UserMap.ContainsKey(bn.accountid))
+                {
+                    var usr = UserMap[bn.accountid];
+                    var ban = new Ban();
+                    ban.Banner = bn.banner;
+                    ban.Ip = bn.ip;
+                    ban.EndTime = DateTime.FromBinary(bn.unbantime);
+                    ban.StartTime = DateTime.FromBinary(bn.bantime);
+                    ban.Player = usr;
+                    ban.Reason = bn.reason;
+                    sPlayerDb.Bans.Add(ban);
+                }
+            }
+        }
+        private void ImportCharacters()
+        {
+            foreach (var usr in OldCharacters)
+            {
+                var old = usr.Value;
+                var pl = new Player();
+                pl.FixLists();
+                pl.Id = Guid.NewGuid();
+                CharacterMap.Add(usr.Key, pl);
+
+                pl.Name = old.name;
+                pl.MapId = GetGuid(GameObjectType.Map, old.map);
+                pl.X = old.x;
+                pl.Y = old.y;
+                pl.Z = old.z;
+                pl.Dir = old.dir;
+                pl.Sprite = old.sprite;
+                pl.Face = old.face;
+                pl.ClassId = GetGuid(GameObjectType.Class, old.classid);
+                pl.Gender = (Gender)old.gender;
+                pl.Level = old.level;
+                pl.Exp = old.exp;
+                pl._vital = old.vitals;
+
+                //TODO: Math here in order to decouple player stats from class base stats (yuck!)
+                pl.BaseStat = old.stats;
+                pl.StatPoints = old.statpoints;
+                pl.Equipment = old.equipment;
+                pl.LastOnline = DateTime.FromBinary(old.last_online);
+
+                if (UserMap.ContainsKey(old.userid))
+                {
+                    UserMap[old.userid].Characters.Add(pl);
+                }
+            }
+        }
+        private void ImportUsers()
+        {
+            foreach (var usr in OldUsers)
+            {
+                var newUsr = new User();
+                newUsr.Id = Guid.NewGuid();
+                UserMap.Add(usr.Key,newUsr);
+                newUsr.Name = usr.Value.user;
+                newUsr.Access = (Access) usr.Value.power;
+                newUsr.Password = usr.Value.pass;
+                newUsr.Salt = usr.Value.salt;
+                newUsr.Email = usr.Value.email;
+                sPlayerDb.Users.Add(newUsr);
+            }
+        }
+        #endregion
+
+        #region "GameData"
+        private void ImportMapFolders()
+        {
+            var mapList = new MapList();
+            ImportMapListItems(mapList.Items, oldMapList.Items);
+            sGameDb.MapFolders.Add(mapList);
+        }
+        private void ImportMapListItems(List<MapListItem> addTo, List<Upgrade_11.Intersect_Convert_Lib.GameObjects.Maps.MapList.MapListItem> addFrom)
+        {
+            foreach (var itm in addFrom)
+            {
+                if (itm.Type == 0) //Folder
+                {
+                    var folder = (Upgrade_11.Intersect_Convert_Lib.GameObjects.Maps.MapList.MapListFolder) itm;
+                    var newFolder = new MapListFolder();
+                    newFolder.Name = folder.Name;
+                    newFolder.FolderId = Guid.NewGuid();
+                    ImportMapListItems(newFolder.Children.Items,folder.Children.Items);
+                    addTo.Add(newFolder);
+                }
+                else if (itm.Type == 1) //Map
+                {
+                    var map = (Upgrade_11.Intersect_Convert_Lib.GameObjects.Maps.MapList.MapListMap)itm;
+                    var newMap = new MapListMap();
+                    newMap.Name = map.Name;
+                    newMap.MapId = GetGuid(GameObjectType.Map, map.MapNum);
+                    newMap.Type = 1;
+                    var mapFromDb = sGameDb.Maps.Find(newMap.MapId);
+                    if (mapFromDb != null)
+                    {
+                        newMap.TimeCreated = mapFromDb.TimeCreated;
+                        addTo.Add(newMap);
+                    }
+                }
+            }
+        }
         private Guid GetQuestTaskId(Guid questId, int taskId)
         {
             if (questTaskIds.ContainsKey(questId))
@@ -469,7 +789,47 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
                 sGameDb.Maps.Add(itm);
             }
         }
-
+        private string FixEventText(string input)
+        {
+            //Have to accept a numeric parameter after each of the following (player switch/var and server switch/var)
+            MatchCollection matches = Regex.Matches(input, Regex.Escape(@"\pv" + " ([0-9]+)"));
+            foreach (Match m in matches)
+            {
+                if (m.Success)
+                {
+                    int id = Convert.ToInt32(m.Groups[1].Value);
+                    input = input.Replace(@"\pv " + id, @"\pv{" + id + "}");
+                }
+            }
+            matches = Regex.Matches(input, Regex.Escape(@"\ps" + " ([0-9]+)"));
+            foreach (Match m in matches)
+            {
+                if (m.Success)
+                {
+                    int id = Convert.ToInt32(m.Groups[1].Value);
+                    input = input.Replace(@"\ps " + id, @"\ps{" + id + "}");
+                }
+            }
+            matches = Regex.Matches(input, Regex.Escape(@"\gv" + " ([0-9]+)"));
+            foreach (Match m in matches)
+            {
+                if (m.Success)
+                {
+                    int id = Convert.ToInt32(m.Groups[1].Value);
+                    input = input.Replace(@"\gv " + id, @"\gv{" + id + "}");
+                }
+            }
+            matches = Regex.Matches(input, Regex.Escape(@"\gs" + " ([0-9]+)"));
+            foreach (Match m in matches)
+            {
+                if (m.Success)
+                {
+                    int id = Convert.ToInt32(m.Groups[1].Value);
+                    input = input.Replace(@"\gs " + id, @"\gs{" + id + "}");
+                }
+            }
+            return input;
+        }
         private Dictionary<Guid, List<EventCommand>> ImportCommandLists(string json, Dictionary<int, Guid> mapEvents)
         {
             var importLists = new List<Guid>();
@@ -501,17 +861,17 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
                             break;
                         case EventCommandType.ShowText:
                             var aCmd = new ShowTextCommand();
-                            aCmd.Text = strs[0];
+                            aCmd.Text = FixEventText(strs[0]);
                             aCmd.Face = strs[1];
                             newCmd = aCmd;
                             break;
                         case EventCommandType.ShowOptions:
                             var bCmd = new ShowOptionsCommand();
-                            bCmd.Text = strs[0];
-                            bCmd.Options[0]  = strs[1];
-                            bCmd.Options[1] = strs[2];
-                            bCmd.Options[2] = strs[3];
-                            bCmd.Options[3] = strs[4];
+                            bCmd.Text = FixEventText(strs[0]);
+                            bCmd.Options[0]  = FixEventText(strs[1]);
+                            bCmd.Options[1] = FixEventText(strs[2]);
+                            bCmd.Options[2] = FixEventText(strs[3]);
+                            bCmd.Options[3] = FixEventText(strs[4]);
                             bCmd.Face = strs[5];
                             bCmd.BranchIds[0] = listIds[ints[0]];
                             bCmd.BranchIds[1] = listIds[ints[1]];
@@ -526,7 +886,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
                             break;
                         case EventCommandType.AddChatboxText:
                             var cCmd = new AddChatboxTextCommand();
-                            cCmd.Text = strs[0];
+                            cCmd.Text = FixEventText(strs[0]);
                             cCmd.Color = strs[1];
                             cCmd.Channel = (ChatboxChannel)ints[0];
                             newCmd = cCmd;
@@ -1664,7 +2024,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
 
             sGameDb.Add(tb);
         }
-
+        #endregion
         private Guid GetGuid(GameObjectType typ, int index)
         {
             if (objs.ContainsKey(typ))

@@ -11,8 +11,8 @@ namespace Intersect.Server.Classes.Database.PlayerData.Characters
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; private set; }
-        public virtual Player Owner { get; private set; }
-        public virtual Player Target { get; private set; }
+        public virtual Player Owner { get; set; }
+        public virtual Player Target { get; set; }
 
         public Friend()
         {
