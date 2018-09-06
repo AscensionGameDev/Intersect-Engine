@@ -1,6 +1,6 @@
 namespace Intersect.Enums
 {
-    public enum MapAttributes
+    public enum MapAttributes : byte
     {
         Walkable = 0,
         Blocked,

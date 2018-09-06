@@ -682,7 +682,8 @@ namespace Intersect.Server.Classes.Networking
             var tileDataLength = bf.ReadInteger();
             var tileData = bf.ReadBytes(tileDataLength);
             if (map.TileData != null) map.TileData = tileData;
-            map.AttributeData = bf.ReadString();
+            var attributeLength = bf.ReadInteger();
+            map.AttributeData = bf.ReadBytes(attributeLength);
             LegacyDatabase.SaveGameDatabase();
             map.Initialize();
             Globals.Clients?.ForEach(t =>

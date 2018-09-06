@@ -8,9 +8,8 @@ namespace Intersect.Enums
 {
     public enum ConsumableType : byte
     {
-        None = 0,
-        Health = 1,
-        Mana = 2,
-        Experience = 3
+        Health = 0,
+        Mana = 1,
+        Experience = 2
     }
 }

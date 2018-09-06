@@ -44,10 +44,10 @@ namespace Intersect.GameObjects.Maps
 
         [Column("Attributes")]
         [JsonIgnore]
-        public string AttributeData
+        public byte[] AttributeData
         {
-            get => JsonConvert.SerializeObject(Attributes, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
-            set => Attributes = JsonConvert.DeserializeObject<Attribute[,]>(value, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
+            get => Compression.CompressPacket(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(Attributes, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace })));
+            set => Attributes = JsonConvert.DeserializeObject<Attribute[,]>(System.Text.Encoding.UTF8.GetString(Compression.DecompressPacket(value)), new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
         }
         [NotMapped]
         [JsonIgnore]
@@ -191,10 +191,7 @@ namespace Intersect.GameObjects.Maps
                     {
                         for (var y = 0; y < Options.MapHeight; y++)
                         {
-                            if (mapcopy.Attributes[x, y] != null)
-                            {
-                                Attributes[x, y] = new Attribute(mapcopy.Attributes[x, y].Data());
-                            }
+                            Attributes[x, y] = new Attribute(mapcopy.Attributes[x, y].Data());
                         }
                     }
                     for (var i = 0; i < mapcopy.Spawns.Count; i++)

@@ -73,7 +73,7 @@ namespace Intersect.Collections
 
         [NotNull] public virtual ICollection<KeyValuePair<Guid, IDatabaseObject>> Pairs => Clone;
         [NotNull] public virtual ICollection<Guid> Keys => mIdMap.Keys;
-        [NotNull] public virtual ICollection<IDatabaseObject> Values => mIdMap.Values;
+        [NotNull] public virtual ICollection<IDatabaseObject> Values => mIdMap.Values.OrderBy(p => p.TimeCreated).ToArray();
 
         public bool IsEmpty => Count < 1;
 

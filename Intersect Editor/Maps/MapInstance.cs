@@ -81,7 +81,7 @@ namespace Intersect.Editor.Maps
         public void LoadTileData(byte[] packet)
         {
             var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
+            bf.WriteBytes(Compression.DecompressPacket(packet));
             lock (MapLock)
             {
                 Layers = new TileArray[Options.LayerCount];
@@ -116,7 +116,8 @@ namespace Intersect.Editor.Maps
             var mapJson = bf.ReadString();
             var tileDataLength = bf.ReadInteger();
             var tileData = bf.ReadBytes(tileDataLength);
-            var attributeData = bf.ReadString();
+            var attributeDataLength = bf.ReadInteger();
+            var attributeData = bf.ReadBytes(attributeDataLength);
             Load(mapJson, import);
             LoadTileData(tileData);
             AttributeData = attributeData;
@@ -130,7 +131,9 @@ namespace Intersect.Editor.Maps
             var tileData = GenerateTileData();
             bf.WriteInteger(tileData.Length);
             bf.WriteBytes(tileData);
-            bf.WriteString(AttributeData);
+            var attributeData = AttributeData;
+            bf.WriteInteger(attributeData.Length);
+            bf.WriteBytes(attributeData);
             return bf.ToArray();
         }
 
@@ -150,7 +153,7 @@ namespace Intersect.Editor.Maps
                     }
                 }
             }
-            return bf.ToArray();
+            return Compression.CompressPacket(bf.ToArray());
         }
 
         public bool Changed()

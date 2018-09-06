@@ -643,20 +643,23 @@ namespace Intersect.Server.Classes.Entities
                         var questTask = quest.FindTask(questProgress.TaskId);
                         if (questTask != null)
                         {
-                            questProgress.TaskProgress++;
-                            if (questProgress.TaskProgress >= questTask.Quantity)
+                            if (questTask.Objective == QuestObjective.KillNpcs && questTask.TargetId == npc.Base.Id)
                             {
                                 questProgress.TaskProgress++;
                                 if (questProgress.TaskProgress >= questTask.Quantity)
                                 {
-                                    CompleteQuestTask(questId, questProgress.TaskId);
-                                }
-                                else
-                                {
-                                    PacketSender.SendQuestProgress(this, quest.Id);
-                                    PacketSender.SendPlayerMsg(MyClient,
-                                        Strings.Quests.npctask.ToString(quest.Name, questProgress.TaskProgress,
-                                            questTask.Quantity, NpcBase.GetName(questTask.TargetId)));
+                                    questProgress.TaskProgress++;
+                                    if (questProgress.TaskProgress >= questTask.Quantity)
+                                    {
+                                        CompleteQuestTask(questId, questProgress.TaskId);
+                                    }
+                                    else
+                                    {
+                                        PacketSender.SendQuestProgress(this, quest.Id);
+                                        PacketSender.SendPlayerMsg(MyClient,
+                                            Strings.Quests.npctask.ToString(quest.Name, questProgress.TaskProgress,
+                                                questTask.Quantity, NpcBase.GetName(questTask.TargetId)));
+                                    }
                                 }
                             }
                         }
@@ -1116,8 +1119,8 @@ namespace Intersect.Server.Classes.Entities
                         return;
                     case ItemTypes.Consumable:
                         var negative = itemBase.Consumable.Value < 0;
-                        var symbol = negative ? Strings.Combat.addsymbol : Strings.Combat.removesymbol;
-                        var number = $"${symbol}${itemBase.Consumable.Value}";
+                        var symbol = negative ? Strings.Combat.removesymbol : Strings.Combat.addsymbol;
+                        var number = $"{symbol}{itemBase.Consumable.Value}";
                         var color = CustomColors.Heal;
                         var die = false;
 
@@ -1141,9 +1144,6 @@ namespace Intersect.Server.Classes.Entities
                             case ConsumableType.Experience:
                                 GiveExperience(itemBase.Consumable.Value);
                                 color = CustomColors.Experience;
-                                break;
-
-                            case ConsumableType.None:
                                 break;
 
                             default:

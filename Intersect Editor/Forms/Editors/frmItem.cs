@@ -226,7 +226,7 @@ namespace Intersect.Editor.Forms.Editors
             lblVital.Text = Strings.ItemEditor.vital;
             lblInterval.Text = Strings.ItemEditor.consumeinterval;
             cmbConsume.Items.Clear();
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < (int)Vitals.VitalCount; i++)
             {
                 cmbConsume.Items.Add(Strings.Combat.vitals[i]);
             }
@@ -358,7 +358,7 @@ namespace Intersect.Editor.Forms.Editors
 
             if ((int) mEditorItem.ItemType != cmbType.SelectedIndex)
             {
-                mEditorItem.Consumable.Type = ConsumableType.None;
+                mEditorItem.Consumable.Type = ConsumableType.Health;
                 mEditorItem.Consumable.Value = 0;
 
                 mEditorItem.TwoHanded = false;

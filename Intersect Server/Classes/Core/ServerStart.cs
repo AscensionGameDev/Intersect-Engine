@@ -103,12 +103,6 @@ namespace Intersect.Server.Classes
                 Console.ReadKey();
                 return;
             }
-            if (Options.ApiEnabled)
-            {
-                Console.WriteLine(Strings.Intro.api.ToString(Options.ApiPort));
-                serverApi = new ServerApi(Options.ApiPort);
-                serverApi.Start();
-            }
             CustomColors.Load();
             Console.WriteLine(Strings.Commandoutput.playercount.ToString(LegacyDatabase.RegisteredPlayers));
             Console.WriteLine(Strings.Commandoutput.gametime.ToString( ServerTime.GetTime().ToString("F")));
@@ -144,7 +138,20 @@ namespace Intersect.Server.Classes
                 UpnP.OpenServerPort(Options.ServerPort, Protocol.Tcp).Wait(5000);
 #endif
                 UpnP.OpenServerPort(Options.ServerPort, Protocol.Udp).Wait(5000);
+
+                if (Options.ApiEnabled)
+                {
+                    UpnP.OpenServerPort(Options.ApiPort, Protocol.Tcp).Wait(5000);
+                }
+
                 Console.WriteLine();
+            }
+
+            if (Options.ApiEnabled)
+            {
+                Console.WriteLine(Strings.Intro.api.ToString(Options.ApiPort));
+                serverApi = new ServerApi(Options.ApiPort);
+                serverApi.Start();
             }
 
             //Check to see if AGD can see this server. If so let the owner know :)

@@ -11,17 +11,56 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_L
         public MapAttributes Type { get; set; }
 
         //Special Flags
-        public AttributeItemFlags Item { get; set; } = new AttributeItemFlags();
-        public AttributeZDimensionFlags ZDimension { get; set; } = new AttributeZDimensionFlags();
-        public AttributeWarpFlags Warp { get; set; } = new AttributeWarpFlags();
-        public AttributeSoundFlags  Sound { get; set; } = new AttributeSoundFlags();
-        public AttributeResourceFlags Resource { get; set; } = new AttributeResourceFlags();
-        public AttributeAnimationFlags Animation { get; set; } = new AttributeAnimationFlags();
-        public AttributeSlideFlags Slide { get; set; } = new AttributeSlideFlags();
+        public AttributeItemFlags Item { get; set; }
+        public AttributeZDimensionFlags ZDimension { get; set; }
+        public AttributeWarpFlags Warp { get; set; }
+        public AttributeSoundFlags  Sound { get; set; }
+        public AttributeResourceFlags Resource { get; set; }
+        public AttributeAnimationFlags Animation { get; set; }
+        public AttributeSlideFlags Slide { get; set; } 
 
         public Attribute()
         {
             
+        }
+
+        public static Attribute CreateAttribute(MapAttributes type)
+        {
+            var att = new Attribute();
+            att.Type = type;
+            switch (type)
+            {
+                case MapAttributes.Walkable:
+                    return null;
+                case MapAttributes.Blocked:
+                    break;
+                case MapAttributes.Item:
+                    att.Item = new AttributeItemFlags();
+                    break;
+                case MapAttributes.ZDimension:
+                    att.ZDimension = new AttributeZDimensionFlags();
+                    break;
+                case MapAttributes.NpcAvoid:
+                    break;
+                case MapAttributes.Warp:
+                    att.Warp = new AttributeWarpFlags();
+                    break;
+                case MapAttributes.Sound:
+                    att.Sound = new AttributeSoundFlags();
+                    break;
+                case MapAttributes.Resource:
+                    att.Resource = new AttributeResourceFlags();
+                    break;
+                case MapAttributes.Animation:
+                    att.Animation = new AttributeAnimationFlags();
+                    break;
+                case MapAttributes.GrappleStone:
+                    break;
+                case MapAttributes.Slide:
+                    att.Slide = new AttributeSlideFlags();
+                    break;
+            }
+            return att;
         }
 
         public Attribute(string json)

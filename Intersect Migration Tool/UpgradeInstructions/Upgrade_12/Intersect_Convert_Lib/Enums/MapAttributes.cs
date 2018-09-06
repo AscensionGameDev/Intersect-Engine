@@ -1,6 +1,6 @@
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_Lib.Enums
 {
-    public enum MapAttributes
+    public enum MapAttributes : byte
     {
         Walkable = 0,
         Blocked,

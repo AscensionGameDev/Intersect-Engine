@@ -131,10 +131,12 @@ namespace Intersect.Server.Classes.Networking
                         if (evt != null) SendGameObject(client, evt);
                     }
                     bf.WriteString(map.JsonData);
-                    var tileData = map.GetTileData(false);
+                    var tileData = map.TileData;
                     bf.WriteInteger(tileData.Length);
                     bf.WriteBytes(tileData);
-                    bf.WriteString(map.AttributeData);
+                    var attributeData = map.AttributeData;
+                    bf.WriteInteger(attributeData.Length);
+                    bf.WriteBytes(attributeData);
                     bf.WriteInteger(map.MapGridX);
                     bf.WriteInteger(map.MapGridY);
                 }
@@ -162,10 +164,12 @@ namespace Intersect.Server.Classes.Networking
                     }
 
                     bf.WriteString(map.JsonData);
-                    var tileData = map.GetTileData();
+                    var tileData = map.TileData;
                     bf.WriteInteger(tileData.Length);
                     bf.WriteBytes(tileData);
-                    bf.WriteString(map.AttributeData);
+                    var attributeData = map.AttributeData;
+                    bf.WriteInteger(attributeData.Length);
+                    bf.WriteBytes(attributeData);
                     bf.WriteInteger(map.Revision);
                     bf.WriteInteger(map.MapGridX);
                     bf.WriteInteger(map.MapGridY);
@@ -221,10 +225,12 @@ namespace Intersect.Server.Classes.Networking
                 var map = MapInstance.Get(mapId);
                 bf.WriteInteger(0);
                 bf.WriteString(map.JsonData);
-                var tileData = map.GetTileData(false);
+                var tileData = map.TileData;
                 bf.WriteInteger(tileData.Length);
                 bf.WriteBytes(tileData);
-                bf.WriteString(map.AttributeData);
+                var attributeData = map.AttributeData;
+                bf.WriteInteger(attributeData.Length);
+                bf.WriteBytes(attributeData);
             }
             SendDataToEditors(bf.ToArray());
             bf.Dispose();

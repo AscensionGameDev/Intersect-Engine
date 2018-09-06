@@ -15,6 +15,7 @@ using Intersect.GameObjects.Maps.MapList;
 using Intersect.Utilities;
 using Microsoft.Xna.Framework.Graphics;
 using WeifenLuo.WinFormsUI.Docking;
+using Attribute = Intersect.GameObjects.Maps.Attribute;
 
 namespace Intersect.Editor.Forms.DockingElements
 {
@@ -378,7 +379,7 @@ namespace Intersect.Editor.Forms.DockingElements
         }
 
         // Used for returning an integer value depending on which radio button is selected on the forms. This is merely used to make PlaceAtrribute less messy.
-        private int GetEditorDimensionGateway()
+        private byte GetEditorDimensionGateway()
         {
             if (rbGateway1.Checked == true)
             {
@@ -391,7 +392,7 @@ namespace Intersect.Editor.Forms.DockingElements
             return 0;
         }
 
-        private int GetEditorDimensionBlock()
+        private byte GetEditorDimensionBlock()
         {
             if (rbBlock1.Checked == true)
             {
@@ -451,44 +452,43 @@ namespace Intersect.Editor.Forms.DockingElements
 
         public void PlaceAttribute(MapBase tmpMap, int x, int y)
         {
-            tmpMap.Attributes[x, y] = new GameObjects.Maps.Attribute();
             if (rbBlocked.Checked)
             {
-                tmpMap.Attributes[x, y].Type = MapAttributes.Blocked;
+                tmpMap.Attributes[x, y] = GameObjects.Maps.Attribute.CreateAttribute(MapAttributes.Blocked);
             }
             else if (rbItem.Checked)
             {
-                tmpMap.Attributes[x, y].Type = MapAttributes.Item;
+                tmpMap.Attributes[x, y] = GameObjects.Maps.Attribute.CreateAttribute(MapAttributes.Item);
                 tmpMap.Attributes[x, y].Item.ItemId = ItemBase.IdFromList(cmbItemAttribute.SelectedIndex);
                 tmpMap.Attributes[x, y].Item.Quantity = (int) nudItemQuantity.Value;
             }
             else if (rbZDimension.Checked)
             {
-                tmpMap.Attributes[x, y].Type = MapAttributes.ZDimension;
+                tmpMap.Attributes[x, y] = GameObjects.Maps.Attribute.CreateAttribute(MapAttributes.ZDimension);
                 tmpMap.Attributes[x, y].ZDimension.GatewayTo = GetEditorDimensionGateway();
                 tmpMap.Attributes[x, y].ZDimension.BlockedLevel = GetEditorDimensionBlock();
             }
             else if (rbNPCAvoid.Checked)
             {
-                tmpMap.Attributes[x, y].Type = MapAttributes.NpcAvoid;
+                tmpMap.Attributes[x, y] = GameObjects.Maps.Attribute.CreateAttribute(MapAttributes.NpcAvoid);
             }
             else if (rbWarp.Checked)
             {
-                tmpMap.Attributes[x, y].Type = MapAttributes.Warp;
+                tmpMap.Attributes[x, y] = GameObjects.Maps.Attribute.CreateAttribute(MapAttributes.Warp);
                 tmpMap.Attributes[x, y].Warp.MapId = MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapId;
-                tmpMap.Attributes[x, y].Warp.X = (int) nudWarpX.Value;
-                tmpMap.Attributes[x, y].Warp.Y = (int) nudWarpY.Value;
+                tmpMap.Attributes[x, y].Warp.X = (byte) nudWarpX.Value;
+                tmpMap.Attributes[x, y].Warp.Y = (byte) nudWarpY.Value;
                 tmpMap.Attributes[x, y].Warp.Direction = (WarpDirection)(cmbDirection.SelectedIndex);
             }
             else if (rbSound.Checked)
             {
-                tmpMap.Attributes[x, y].Type = MapAttributes.Sound;
-                tmpMap.Attributes[x, y].Sound.Distance = (int) nudSoundDistance.Value;
+                tmpMap.Attributes[x, y] = GameObjects.Maps.Attribute.CreateAttribute(MapAttributes.Sound);
+                tmpMap.Attributes[x, y].Sound.Distance = (byte) nudSoundDistance.Value;
                 tmpMap.Attributes[x, y].Sound.File = TextUtils.SanitizeNone(cmbMapAttributeSound.Text);
             }
             else if (rbResource.Checked)
             {
-                tmpMap.Attributes[x, y].Type = MapAttributes.Resource;
+                tmpMap.Attributes[x, y] = GameObjects.Maps.Attribute.CreateAttribute(MapAttributes.Resource);
                 tmpMap.Attributes[x, y].Resource.ResourceId = ResourceBase.IdFromList(cmbResourceAttribute.SelectedIndex);
                 if (rbLevel1.Checked)
                 {
@@ -501,25 +501,25 @@ namespace Intersect.Editor.Forms.DockingElements
             }
             else if (rbAnimation.Checked)
             {
-                tmpMap.Attributes[x, y].Type = MapAttributes.Animation;
+                tmpMap.Attributes[x, y] = GameObjects.Maps.Attribute.CreateAttribute(MapAttributes.Animation);
                 tmpMap.Attributes[x, y].Animation.AnimationId = AnimationBase.IdFromList(cmbAnimationAttribute.SelectedIndex);
             }
             else if (rbGrappleStone.Checked)
             {
-                tmpMap.Attributes[x, y].Type = MapAttributes.GrappleStone;
+                tmpMap.Attributes[x, y] = GameObjects.Maps.Attribute.CreateAttribute(MapAttributes.GrappleStone);
             }
             else if (rbSlide.Checked)
             {
-                tmpMap.Attributes[x, y].Type = MapAttributes.Slide;
+                tmpMap.Attributes[x, y] = GameObjects.Maps.Attribute.CreateAttribute(MapAttributes.Slide);
                 tmpMap.Attributes[x, y].Slide.Direction = (byte)cmbSlideDir.SelectedIndex;
             }
         }
 
         public bool RemoveAttribute(MapBase tmpMap, int x, int y)
         {
-            if (tmpMap.Attributes[x, y] != null && tmpMap.Attributes[x, y].Type > 0)
+            if (tmpMap.Attributes[x, y].Type != MapAttributes.Walkable)
             {
-                tmpMap.Attributes[x, y] = null;
+                tmpMap.Attributes[x, y] = Attribute.CreateAttribute(MapAttributes.Walkable);
                 return true;
             }
             return false;

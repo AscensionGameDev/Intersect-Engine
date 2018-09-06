@@ -661,7 +661,7 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<int>("AHue");
 
-                    b.Property<string>("AttributeData")
+                    b.Property<byte[]>("AttributeData")
                         .HasColumnName("Attributes");
 
                     b.Property<int>("BHue");

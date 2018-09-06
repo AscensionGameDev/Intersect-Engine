@@ -200,7 +200,7 @@ namespace Intersect.Server.Migrations.Game
                     Left = table.Column<Guid>(nullable: false),
                     Right = table.Column<Guid>(nullable: false),
                     Revision = table.Column<int>(nullable: false),
-                    Attributes = table.Column<string>(nullable: true),
+                    Attributes = table.Column<byte[]>(nullable: true),
                     Lights = table.Column<string>(nullable: true),
                     Events = table.Column<string>(nullable: true),
                     NpcSpawns = table.Column<string>(nullable: true),

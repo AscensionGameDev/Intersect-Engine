@@ -72,6 +72,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
         private const string GameDbFilename = "resources/gamedata.db";
         private const string PlayersDbFilename = "resources/playerdata.db";
         private long _tc = DateTime.Now.ToBinary();
+        private bool playerDbSqlite = true;
+        private bool gameDbSqlite = true;
 
         private long TimeCreated
         {
@@ -116,9 +118,6 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
 
             //TODO: On screen prompts to see if they want to use sqlite or mysql...
             //We will officially recommend sqlite for BOTH since the api will be available... but this will be their call. Going back and forth will be difficult to say the least.
-
-            var playerDbSqlite = true;
-            var gameDbSqlite = true;
 
             //MySql Connection Settings
             var playerDbMySqlConnInfo = new MySqlDbConnInfo();
@@ -244,8 +243,11 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
             ImportBankItems();
             ImportBagItems();
             ImportHotbar();
-            
 
+            sGameDb.SaveChanges();
+            sPlayerDb.SaveChanges();
+            if (gameDbSqlite) sGameDb.Database.ExecuteSqlCommand("VACUUM;");
+            if (playerDbSqlite) sPlayerDb.Database.ExecuteSqlCommand("VACUUM;");
             sGameDb.SaveChanges();
             sPlayerDb.SaveChanges();
             Console.WriteLine("Done converting to new db! Hit any key to continue");
@@ -642,7 +644,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
                         }
                     }
                 }
-                itm.TileData = bfNew.ToArray();
+                itm.TileData = Compression.CompressPacket(bfNew.ToArray());
 
                 itm.Up = GetGuid(GameObjectType.Map, int.Parse(data["Up"].ToString()));
                 itm.Down = GetGuid(GameObjectType.Map, int.Parse(data["Down"].ToString()));
@@ -667,7 +669,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
                             var data2 = int.Parse(attributes[x][y]["Data2"].ToString());
                             var data3 = int.Parse(attributes[x][y]["Data3"].ToString());
                             var data4 = attributes[x][y]["Data4"].ToString();
-                            Intersect_Convert_Lib.GameObjects.Maps.Attribute att = new Intersect_Convert_Lib.GameObjects.Maps.Attribute();
+                            Intersect_Convert_Lib.GameObjects.Maps.Attribute att = Intersect_Convert_Lib.GameObjects.Maps.Attribute.CreateAttribute((MapAttributes)value);
                             switch ((MapAttributes) value)
                             {
                                 case MapAttributes.Walkable:
@@ -1809,7 +1811,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
                 itm.Initial.Graphic = data["InitialGraphic"].ToString();
                 itm.MaxHp = int.Parse(data["MaxHp"].ToString());
                 itm.MinHp = int.Parse(data["MinHp"].ToString());
-                itm.SpawnDuration = int.Parse(data["SpawnDuration"].ToString());
+                itm.SpawnDuration = int.Parse(data["SpawnDuration"].ToString()) * 1000;
                 itm.Tool = int.Parse(data["Tool"].ToString());
                 itm.WalkableAfter = bool.Parse(data["WalkableAfter"].ToString());
                 itm.WalkableBefore = bool.Parse(data["WalkableBefore"].ToString());

@@ -446,7 +446,8 @@ namespace Intersect_Client.Classes.Networking
             var mapJson = bf.ReadString();
             var tileLength = bf.ReadInteger();
             var tileData = bf.ReadBytes(tileLength);
-            var attributeData = bf.ReadString();
+            var attributeLength = bf.ReadInteger();
+            var attributeData = bf.ReadBytes(attributeLength);
             var revision = bf.ReadInteger();
             var map = MapInstance.Get(mapId);
             if (map != null)

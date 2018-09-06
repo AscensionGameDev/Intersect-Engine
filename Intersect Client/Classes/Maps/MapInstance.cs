@@ -141,7 +141,7 @@ namespace Intersect_Client.Classes.Maps
         public void LoadTileData(byte[] packet)
         {
             var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
+            bf.WriteBytes(Compression.DecompressPacket(packet));
             Layers = new TileArray[Options.LayerCount];
             for (var i = 0; i < Options.LayerCount; i++)
             {

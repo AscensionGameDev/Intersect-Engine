@@ -138,6 +138,10 @@ namespace Intersect.Editor.Core
                             Thread.Sleep(50);
                         }
                         Globals.MapGrid.ResetForm();
+                        while (!sProgressForm.IsHandleCreated)
+                        {
+                            Thread.Sleep(50);
+                        }
                         sProgressForm.BeginInvoke(new Action(() => sProgressForm.Close()));
                     }
                 }

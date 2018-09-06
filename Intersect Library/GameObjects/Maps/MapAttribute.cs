@@ -4,29 +4,72 @@ using System.ComponentModel;
 using Intersect.Enums;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
 
 namespace Intersect.GameObjects.Maps
 {
-    public class Attribute
+    public struct Attribute
     {
         public MapAttributes Type { get; set; }
 
         //Special Flags
-        public AttributeItemFlags Item { get; set; } = new AttributeItemFlags();
-        public AttributeZDimensionFlags ZDimension { get; set; } = new AttributeZDimensionFlags();
-        public AttributeWarpFlags Warp { get; set; } = new AttributeWarpFlags();
-        public AttributeSoundFlags  Sound { get; set; } = new AttributeSoundFlags();
-        public AttributeResourceFlags Resource { get; set; } = new AttributeResourceFlags();
-        public AttributeAnimationFlags Animation { get; set; } = new AttributeAnimationFlags();
-        public AttributeSlideFlags Slide { get; set; } = new AttributeSlideFlags();
+        public AttributeItemFlags Item { get; set; }
+        public AttributeZDimensionFlags ZDimension { get; set; }
+        public AttributeWarpFlags Warp { get; set; }
+        public AttributeSoundFlags  Sound { get; set; }
+        public AttributeResourceFlags Resource { get; set; }
+        public AttributeAnimationFlags Animation { get; set; }
+        public AttributeSlideFlags Slide { get; set; }
 
-        public Attribute()
+        public static Attribute CreateAttribute(MapAttributes type)
         {
-            
+            Attribute att = new Attribute();
+            att.Type = type;
+            switch (type)
+            {
+                case MapAttributes.Walkable:
+                    break;
+                case MapAttributes.Blocked:
+                    break;
+                case MapAttributes.Item:
+                    att.Item = new AttributeItemFlags();
+                    break;
+                case MapAttributes.ZDimension:
+                    att.ZDimension = new AttributeZDimensionFlags();
+                    break;
+                case MapAttributes.NpcAvoid:
+                    break;
+                case MapAttributes.Warp:
+                    att.Warp = new AttributeWarpFlags();
+                    break;
+                case MapAttributes.Sound:
+                    att.Sound = new AttributeSoundFlags();
+                    break;
+                case MapAttributes.Resource:
+                    att.Resource = new AttributeResourceFlags();
+                    break;
+                case MapAttributes.Animation:
+                    att.Animation = new AttributeAnimationFlags();
+                    break;
+                case MapAttributes.GrappleStone:
+                    break;
+                case MapAttributes.Slide:
+                    att.Slide = new AttributeSlideFlags();
+                    break;
+            }
+            return att;
         }
 
         public Attribute(string json)
         {
+            this.Type = MapAttributes.Walkable;
+            this.Animation = null;
+            this.Item = null;
+            this.Resource = null;
+            this.Slide = null;
+            this.Sound = null;
+            this.Warp = null;
+            this.ZDimension = null;
             Load(json);
         }
 
@@ -67,28 +110,28 @@ namespace Intersect.GameObjects.Maps
 
     public class AttributeZDimensionFlags
     {
-        public int GatewayTo { get; set; }
-        public int BlockedLevel { get; set; }
+        public byte GatewayTo { get; set; }
+        public byte BlockedLevel { get; set; }
     }
 
     public class AttributeWarpFlags
     {
         public Guid MapId { get; set; }
-        public int X { get; set; }
-        public int Y { get; set; }
+        public byte X { get; set; }
+        public byte Y { get; set; }
         public WarpDirection Direction { get; set; } = WarpDirection.Retain;
     }
 
     public class AttributeSoundFlags
     {
         public string File { get; set; }
-        public int Distance { get; set; }
+        public byte Distance { get; set; }
     }
 
     public class AttributeResourceFlags
     {
         public Guid ResourceId { get; set; }
-        public int SpawnLevel { get; set; }
+        public byte SpawnLevel { get; set; }
     }
 
     public class AttributeAnimationFlags

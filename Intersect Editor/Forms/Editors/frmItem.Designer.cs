@@ -1574,11 +1574,11 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.pnlContainer.AutoScroll = true;
             this.pnlContainer.Controls.Add(this.grpGeneral);
+            this.pnlContainer.Controls.Add(this.grpConsumable);
+            this.pnlContainer.Controls.Add(this.grpEvent);
             this.pnlContainer.Controls.Add(this.grpEquipment);
             this.pnlContainer.Controls.Add(this.grpBags);
             this.pnlContainer.Controls.Add(this.grpSpell);
-            this.pnlContainer.Controls.Add(this.grpConsumable);
-            this.pnlContainer.Controls.Add(this.grpEvent);
             this.pnlContainer.Location = new System.Drawing.Point(221, 34);
             this.pnlContainer.Name = "pnlContainer";
             this.pnlContainer.Size = new System.Drawing.Size(463, 442);

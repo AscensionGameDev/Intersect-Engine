@@ -171,28 +171,6 @@ namespace Intersect.Server.Classes.Maps
             return mNpcMapBlocks;
         }
 
-        //Get Map Packet
-        public string GetMapPacket(bool forClient)
-        {
-            return JsonData;
-        }
-
-        public byte[] GetTileData(bool shouldCache = true)
-        {
-            //If the tile data is cached then send it
-            //Else grab it (and maybe cache it)
-            lock (GetMapLock())
-            {
-                if (TileData == null) TileData = new byte[Options.LayerCount * Options.MapWidth * Options.MapHeight * 25];
-                if (shouldCache)
-                {
-                    TileAccessTime = Globals.System.GetTimeMs();
-                }
-                return TileData;
-            }
-            return null;
-        }
-
         //Items & Resources
         private void SpawnAttributeItems()
         {
@@ -402,6 +380,7 @@ namespace Intersect.Server.Classes.Maps
                         res.Y = ResourceSpawns[i].Y;
                         res.Z = ResourceSpawns[i].Z;
                         res.MapId = Id;
+                        id = res.Id;
                         mEntities.Add(res);
                     }
                 }
@@ -495,7 +474,6 @@ namespace Intersect.Server.Classes.Maps
                 npcSpawn.Value.Entity.Die(0);
             }
             NpcSpawnInstances.Clear();
-            Spawns.Clear();
             //Kill any other npcs on this map (only players should remain)
             var entities = mEntities.ToArray();
             foreach (var entity in entities)
