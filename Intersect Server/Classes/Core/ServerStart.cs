@@ -796,9 +796,8 @@ namespace Intersect.Server.Classes
 
         private static void ShutDown()
         {
-            LegacyDatabase.SavePlayers();
-
-            serverApi.Stop();
+            LegacyDatabase.SavePlayerDatabaseAsync();
+            serverApi?.Stop();
             Globals.ServerStarted = false;
             SocketServer?.Dispose();
         }

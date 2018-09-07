@@ -10,6 +10,7 @@ using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
+using Intersect.GameObjects.Maps;
 using Intersect.Server.Classes.Localization;
 using Intersect.Server.Classes.Core;
 using Intersect.Server.Classes.Database;
@@ -3568,13 +3569,14 @@ namespace Intersect.Server.Classes.Entities
             var attribute = MapInstance.Get(MapId).Attributes[X, Y];
             if (attribute != null && attribute.Type == MapAttributes.Warp)
             {
-                if (attribute.Warp.Direction == WarpDirection.Retain)
+                var warpAtt = (MapWarpAttribute) attribute;
+                if (warpAtt.Direction == WarpDirection.Retain)
                 {
-                    Warp(attribute.Warp.MapId, attribute.Warp.X, attribute.Warp.Y, Dir);
+                    Warp(warpAtt.MapId, warpAtt.X, warpAtt.Y, Dir);
                 }
                 else
                 {
-                    Warp(attribute.Warp.MapId, attribute.Warp.X, attribute.Warp.Y, (int)attribute.Warp.Direction - 1);
+                    Warp(warpAtt.MapId, warpAtt.X, warpAtt.Y, (int)warpAtt.Direction - 1);
                 }
             }
 

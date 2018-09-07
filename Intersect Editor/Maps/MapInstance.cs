@@ -8,7 +8,7 @@ using Intersect.Editor.General;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
-using Attribute = Intersect.GameObjects.Maps.Attribute;
+using MapAttribute = Intersect.GameObjects.Maps.MapAttribute;
 
 namespace Intersect.Editor.Maps
 {
@@ -17,7 +17,7 @@ namespace Intersect.Editor.Maps
         private static MapInstances sLookup;
 
         //Map Attributes
-        private Dictionary<Attribute, AnimationInstance> mAttributeAnimInstances = new Dictionary<Attribute, AnimationInstance>();
+        private Dictionary<MapAttribute, AnimationInstance> mAttributeAnimInstances = new Dictionary<MapAttribute, AnimationInstance>();
 
         private byte[] mLoadedData;
 
@@ -177,7 +177,7 @@ namespace Intersect.Editor.Maps
         }
 
         //Attribute/Animations
-        public AnimationInstance GetAttributeAnimation(Attribute attr, Guid animId)
+        public AnimationInstance GetAttributeAnimation(MapAttribute attr, Guid animId)
         {
             if (attr == null) return null;
             if (!mAttributeAnimInstances.ContainsKey(attr))
@@ -188,7 +188,7 @@ namespace Intersect.Editor.Maps
             return mAttributeAnimInstances[attr];
         }
 
-        public void SetAttributeAnimation(Attribute attribute, AnimationInstance animationInstance)
+        public void SetAttributeAnimation(MapAttribute attribute, AnimationInstance animationInstance)
         {
             if (mAttributeAnimInstances.ContainsKey(attribute))
             {

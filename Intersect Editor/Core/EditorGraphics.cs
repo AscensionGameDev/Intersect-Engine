@@ -1055,7 +1055,7 @@ namespace Intersect.Editor.Core
                     if (tmpMap.Attributes[x, y] == null) continue;
                     if (tmpMap.Attributes[x, y].Type == MapAttributes.Resource && !upper && !alternate)
                     {
-                        var resource = ResourceBase.Get(tmpMap.Attributes[x, y].Resource.ResourceId);
+                        var resource = ResourceBase.Get(((MapResourceAttribute)tmpMap.Attributes[x, y]).ResourceId);
                         if (resource == null) continue;
                         if (TextUtils.IsNone(resource.Initial.Graphic)) continue;
                         if (resource.Initial.GraphicFromTileset)
@@ -1094,7 +1094,7 @@ namespace Intersect.Editor.Core
                     }
                     else if (tmpMap.Attributes[x, y].Type == MapAttributes.Animation)
                     {
-                        var animation = AnimationBase.Get(tmpMap.Attributes[x, y].Animation.AnimationId);
+                        var animation = AnimationBase.Get(((MapAnimationAttribute)tmpMap.Attributes[x, y]).AnimationId);
                         if (animation != null)
                         {
                             float xpos = x * Options.TileWidth + xoffset + Options.TileWidth / 2;

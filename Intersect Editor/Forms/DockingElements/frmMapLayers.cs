@@ -15,7 +15,7 @@ using Intersect.GameObjects.Maps.MapList;
 using Intersect.Utilities;
 using Microsoft.Xna.Framework.Graphics;
 using WeifenLuo.WinFormsUI.Docking;
-using Attribute = Intersect.GameObjects.Maps.Attribute;
+using MapAttribute = Intersect.GameObjects.Maps.MapAttribute;
 
 namespace Intersect.Editor.Forms.DockingElements
 {
@@ -454,64 +454,64 @@ namespace Intersect.Editor.Forms.DockingElements
         {
             if (rbBlocked.Checked)
             {
-                tmpMap.Attributes[x, y] = GameObjects.Maps.Attribute.CreateAttribute(MapAttributes.Blocked);
+                tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.Blocked);
             }
             else if (rbItem.Checked)
             {
-                tmpMap.Attributes[x, y] = GameObjects.Maps.Attribute.CreateAttribute(MapAttributes.Item);
-                tmpMap.Attributes[x, y].Item.ItemId = ItemBase.IdFromList(cmbItemAttribute.SelectedIndex);
-                tmpMap.Attributes[x, y].Item.Quantity = (int) nudItemQuantity.Value;
+                tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.Item);
+                ((MapItemAttribute)tmpMap.Attributes[x, y]).ItemId = ItemBase.IdFromList(cmbItemAttribute.SelectedIndex);
+                ((MapItemAttribute)tmpMap.Attributes[x, y]).Quantity = (int) nudItemQuantity.Value;
             }
             else if (rbZDimension.Checked)
             {
-                tmpMap.Attributes[x, y] = GameObjects.Maps.Attribute.CreateAttribute(MapAttributes.ZDimension);
-                tmpMap.Attributes[x, y].ZDimension.GatewayTo = GetEditorDimensionGateway();
-                tmpMap.Attributes[x, y].ZDimension.BlockedLevel = GetEditorDimensionBlock();
+                tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.ZDimension);
+                ((MapZDimensionAttribute)tmpMap.Attributes[x, y]).GatewayTo = GetEditorDimensionGateway();
+                ((MapZDimensionAttribute)tmpMap.Attributes[x, y]).BlockedLevel = GetEditorDimensionBlock();
             }
             else if (rbNPCAvoid.Checked)
             {
-                tmpMap.Attributes[x, y] = GameObjects.Maps.Attribute.CreateAttribute(MapAttributes.NpcAvoid);
+                tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.NpcAvoid);
             }
             else if (rbWarp.Checked)
             {
-                tmpMap.Attributes[x, y] = GameObjects.Maps.Attribute.CreateAttribute(MapAttributes.Warp);
-                tmpMap.Attributes[x, y].Warp.MapId = MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapId;
-                tmpMap.Attributes[x, y].Warp.X = (byte) nudWarpX.Value;
-                tmpMap.Attributes[x, y].Warp.Y = (byte) nudWarpY.Value;
-                tmpMap.Attributes[x, y].Warp.Direction = (WarpDirection)(cmbDirection.SelectedIndex);
+                tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.Warp);
+                ((MapWarpAttribute)tmpMap.Attributes[x, y]).MapId = MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapId;
+                ((MapWarpAttribute)tmpMap.Attributes[x, y]).X = (byte) nudWarpX.Value;
+                ((MapWarpAttribute)tmpMap.Attributes[x, y]).Y = (byte) nudWarpY.Value;
+                ((MapWarpAttribute)tmpMap.Attributes[x, y]).Direction = (WarpDirection)(cmbDirection.SelectedIndex);
             }
             else if (rbSound.Checked)
             {
-                tmpMap.Attributes[x, y] = GameObjects.Maps.Attribute.CreateAttribute(MapAttributes.Sound);
-                tmpMap.Attributes[x, y].Sound.Distance = (byte) nudSoundDistance.Value;
-                tmpMap.Attributes[x, y].Sound.File = TextUtils.SanitizeNone(cmbMapAttributeSound.Text);
+                tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.Sound);
+                ((MapSoundAttribute)tmpMap.Attributes[x, y]).Distance = (byte) nudSoundDistance.Value;
+                ((MapSoundAttribute)tmpMap.Attributes[x, y]).File = TextUtils.SanitizeNone(cmbMapAttributeSound.Text);
             }
             else if (rbResource.Checked)
             {
-                tmpMap.Attributes[x, y] = GameObjects.Maps.Attribute.CreateAttribute(MapAttributes.Resource);
-                tmpMap.Attributes[x, y].Resource.ResourceId = ResourceBase.IdFromList(cmbResourceAttribute.SelectedIndex);
+                tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.Resource);
+                ((MapResourceAttribute)tmpMap.Attributes[x, y]).ResourceId = ResourceBase.IdFromList(cmbResourceAttribute.SelectedIndex);
                 if (rbLevel1.Checked)
                 {
-                    tmpMap.Attributes[x, y].Resource.SpawnLevel = 0;
+                    ((MapResourceAttribute)tmpMap.Attributes[x, y]).SpawnLevel = 0;
                 }
                 else
                 {
-                    tmpMap.Attributes[x, y].Resource.SpawnLevel = 1;
+                    ((MapResourceAttribute)tmpMap.Attributes[x, y]).SpawnLevel = 1;
                 }
             }
             else if (rbAnimation.Checked)
             {
-                tmpMap.Attributes[x, y] = GameObjects.Maps.Attribute.CreateAttribute(MapAttributes.Animation);
-                tmpMap.Attributes[x, y].Animation.AnimationId = AnimationBase.IdFromList(cmbAnimationAttribute.SelectedIndex);
+                tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.Animation);
+                ((MapAnimationAttribute)tmpMap.Attributes[x, y]).AnimationId = AnimationBase.IdFromList(cmbAnimationAttribute.SelectedIndex);
             }
             else if (rbGrappleStone.Checked)
             {
-                tmpMap.Attributes[x, y] = GameObjects.Maps.Attribute.CreateAttribute(MapAttributes.GrappleStone);
+                tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.GrappleStone);
             }
             else if (rbSlide.Checked)
             {
-                tmpMap.Attributes[x, y] = GameObjects.Maps.Attribute.CreateAttribute(MapAttributes.Slide);
-                tmpMap.Attributes[x, y].Slide.Direction = (byte)cmbSlideDir.SelectedIndex;
+                tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.Slide);
+                ((MapSlideAttribute)tmpMap.Attributes[x, y]).Direction = (byte)cmbSlideDir.SelectedIndex;
             }
         }
 
@@ -519,7 +519,7 @@ namespace Intersect.Editor.Forms.DockingElements
         {
             if (tmpMap.Attributes[x, y].Type != MapAttributes.Walkable)
             {
-                tmpMap.Attributes[x, y] = Attribute.CreateAttribute(MapAttributes.Walkable);
+                tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.Walkable);
                 return true;
             }
             return false;

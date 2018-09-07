@@ -46,13 +46,13 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_L
         [JsonIgnore]
         public byte[] AttributeData
         {
-            get => Compression.CompressPacket(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(Attributes, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace })));
-            set => Attributes = JsonConvert.DeserializeObject<Attribute[,]>(System.Text.Encoding.UTF8.GetString(Compression.DecompressPacket(value)), new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
+            get => Compression.CompressPacket(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(Attributes, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace }).Replace("Intersect Migration Tool", "Intersect Core").Replace("Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_Lib", "Intersect")));
+            set => Attributes = JsonConvert.DeserializeObject<MapAttribute[,]>(System.Text.Encoding.UTF8.GetString(Compression.DecompressPacket(value)), new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
         }
 
         [NotMapped]
         [JsonIgnore]
-        public Attribute[,] Attributes { get; set; } = new Attribute[Options.MapWidth, Options.MapHeight];
+        public MapAttribute[,] Attributes { get; set; } = new MapAttribute[Options.MapWidth, Options.MapHeight];
 
         [Column("Lights")]
         [JsonIgnore]
@@ -194,7 +194,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_L
                         {
                             if (mapcopy.Attributes[x, y] != null)
                             {
-                                Attributes[x, y] = new Attribute(mapcopy.Attributes[x, y].Data());
+                                Attributes[x, y] = MapAttribute.CloneJson(mapcopy.Attributes[x, y]);
                             }
                         }
                     }

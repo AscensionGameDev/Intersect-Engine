@@ -225,7 +225,7 @@ namespace Intersect.Server.Classes.Networking
         {
             if (Entity == null) return;
 
-            LegacyDatabase.SavePlayers();
+            LegacyDatabase.SavePlayerDatabaseAsync();
             //Task.Run(() => LegacyDatabase.SaveCharacter(Entity));
             var map = MapInstance.Get(Entity.MapId);
             map?.RemoveEntity(Entity);

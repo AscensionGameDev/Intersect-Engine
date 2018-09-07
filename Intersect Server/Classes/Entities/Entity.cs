@@ -6,6 +6,7 @@ using System.Linq;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
+using Intersect.GameObjects.Maps;
 using Intersect.Server.Classes.Localization;
 using Intersect.Server.Classes.Core;
 using Intersect.Server.Classes.Database;
@@ -239,11 +240,11 @@ namespace Intersect.Server.Classes.Entities
                 {
                     if (tileAttribute.Type == MapAttributes.Blocked) return -2;
                     if (tileAttribute.Type == MapAttributes.NpcAvoid && GetType() == typeof(Npc)) return -2;
-                    if (tileAttribute.Type == MapAttributes.ZDimension && tileAttribute.ZDimension.BlockedLevel > 0 && tileAttribute.ZDimension.BlockedLevel - 1 == Z) return -3;
+                    if (tileAttribute.Type == MapAttributes.ZDimension && ((MapZDimensionAttribute)tileAttribute).BlockedLevel > 0 && ((MapZDimensionAttribute)tileAttribute).BlockedLevel - 1 == Z) return -3;
                     if (tileAttribute.Type == MapAttributes.Slide)
                     {
                         if (this.GetType() == typeof(EventPageInstance)) return -4;
-                        switch (tileAttribute.Slide.Direction)
+                        switch (((MapSlideAttribute)tileAttribute).Direction)
                         {
                             case 1:
                                 if (moveDir == 1) return -4;
@@ -632,9 +633,9 @@ namespace Intersect.Server.Classes.Entities
                         //Check for slide tiles
                         if (attribute != null && attribute.Type == MapAttributes.Slide)
                         {
-                            if (attribute.Slide.Direction > 0)
+                            if (((MapSlideAttribute)attribute).Direction > 0)
                             {
-                                Dir = attribute.Slide.Direction - 1;
+                                Dir = ((MapSlideAttribute)attribute).Direction - 1;
                             } //If sets direction, set it.
                             var dash = new DashInstance(this, 1, Dir);
                         }
@@ -674,9 +675,9 @@ namespace Intersect.Server.Classes.Entities
                         .Attributes[X, Y];
                     if (attribute != null && attribute.Type == MapAttributes.ZDimension)
                     {
-                        if (attribute.ZDimension.GatewayTo > 0)
+                        if (((MapZDimensionAttribute)attribute).GatewayTo > 0)
                         {
-                            Z = attribute.ZDimension.GatewayTo - 1;
+                            Z = ((MapZDimensionAttribute)attribute).GatewayTo - 1;
                             return true;
                         }
                     }

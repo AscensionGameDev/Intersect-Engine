@@ -34,8 +34,8 @@ namespace Intersect_Client.Classes.Maps
         public static Dictionary<Guid, long> MapRequests = new Dictionary<Guid, long>();
 
         //Map Attributes
-        private Dictionary<Intersect.GameObjects.Maps.Attribute, AnimationInstance> mAttributeAnimInstances =
-            new Dictionary<Intersect.GameObjects.Maps.Attribute, AnimationInstance>();
+        private Dictionary<Intersect.GameObjects.Maps.MapAttribute, AnimationInstance> mAttributeAnimInstances =
+            new Dictionary<Intersect.GameObjects.Maps.MapAttribute, AnimationInstance>();
 
         protected float mCurFogIntensity;
         protected float mFogCurrentX;

@@ -669,55 +669,45 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
                             var data2 = int.Parse(attributes[x][y]["Data2"].ToString());
                             var data3 = int.Parse(attributes[x][y]["Data3"].ToString());
                             var data4 = attributes[x][y]["Data4"].ToString();
-                            Intersect_Convert_Lib.GameObjects.Maps.Attribute att = Intersect_Convert_Lib.GameObjects.Maps.Attribute.CreateAttribute((MapAttributes)value);
+                            Intersect_Convert_Lib.GameObjects.Maps.MapAttribute att = Intersect_Convert_Lib.GameObjects.Maps.MapAttribute.CreateAttribute((MapAttributes)value);
                             switch ((MapAttributes) value)
                             {
                                 case MapAttributes.Walkable:
                                     att = null;
                                     break;
                                 case MapAttributes.Blocked:
-                                    att.Type = MapAttributes.Blocked;
                                     break;
                                 case MapAttributes.Item:
-                                    att.Type = MapAttributes.Item;
-                                    att.Item.ItemId = GetGuid(GameObjectType.Item, data1);
-                                    att.Item.Quantity = data2;
+                                    ((MapItemAttribute)att).ItemId = GetGuid(GameObjectType.Item, data1);
+                                    ((MapItemAttribute)att).Quantity = data2;
                                     break;
                                 case MapAttributes.ZDimension:
-                                    att.Type = MapAttributes.ZDimension;
-                                    att.ZDimension.GatewayTo = data1;
-                                    att.ZDimension.BlockedLevel = data2;
+                                    ((MapZDimensionAttribute)att).GatewayTo = data1;
+                                    ((MapZDimensionAttribute)att).BlockedLevel = data2;
                                     break;
                                 case MapAttributes.NpcAvoid:
-                                    att.Type = MapAttributes.NpcAvoid;
                                     break;
                                 case MapAttributes.Warp:
-                                    att.Type = MapAttributes.Warp;
-                                    att.Warp.MapId = GetGuid(GameObjectType.Map, data1);
-                                    att.Warp.X = data2;
-                                    att.Warp.Y = data3;
-                                    att.Warp.Direction = (WarpDirection)int.Parse(data4);
+                                    ((MapWarpAttribute)att).MapId = GetGuid(GameObjectType.Map, data1);
+                                    ((MapWarpAttribute)att).X = data2;
+                                    ((MapWarpAttribute)att).Y = data3;
+                                    ((MapWarpAttribute)att).Direction = (WarpDirection)int.Parse(data4);
                                     break;
                                 case MapAttributes.Sound:
-                                    att.Type = MapAttributes.Sound;
-                                    att.Sound.File = data4;
-                                    att.Sound.Distance = data1;
+                                    ((MapSoundAttribute)att).File = data4;
+                                    ((MapSoundAttribute)att).Distance = data1;
                                     break;
                                 case MapAttributes.Resource:
-                                    att.Type = MapAttributes.Resource;
-                                    att.Resource.ResourceId = GetGuid(GameObjectType.Resource, data1);
-                                    att.Resource.SpawnLevel = data2;
+                                    ((MapResourceAttribute)att).ResourceId = GetGuid(GameObjectType.Resource, data1);
+                                    ((MapResourceAttribute)att).SpawnLevel = data2;
                                     break;
                                 case MapAttributes.Animation:
-                                    att.Type = MapAttributes.Animation;
-                                    att.Animation.AnimationId = GetGuid(GameObjectType.Animation, data1);
+                                    ((MapAnimationAttribute)att).AnimationId = GetGuid(GameObjectType.Animation, data1);
                                     break;
                                 case MapAttributes.GrappleStone:
-                                    att.Type = MapAttributes.GrappleStone;
                                     break;
                                 case MapAttributes.Slide:
-                                    att.Type = MapAttributes.Slide;
-                                    att.Slide.Direction = (byte) data1;
+                                    ((MapSlideAttribute)att).Direction = (byte) data1;
                                     break;
                                 default:
                                     throw new ArgumentOutOfRangeException();

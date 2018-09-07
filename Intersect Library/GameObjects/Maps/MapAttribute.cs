@@ -8,139 +8,174 @@ using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
 
 namespace Intersect.GameObjects.Maps
 {
-    public struct Attribute
+
+    public abstract class MapAttribute
     {
-        public MapAttributes Type { get; set; }
+        public abstract MapAttributes Type { get; }
 
-        //Special Flags
-        public AttributeItemFlags Item { get; set; }
-        public AttributeZDimensionFlags ZDimension { get; set; }
-        public AttributeWarpFlags Warp { get; set; }
-        public AttributeSoundFlags  Sound { get; set; }
-        public AttributeResourceFlags Resource { get; set; }
-        public AttributeAnimationFlags Animation { get; set; }
-        public AttributeSlideFlags Slide { get; set; }
-
-        public static Attribute CreateAttribute(MapAttributes type)
+        public MapAttribute()
         {
-            Attribute att = new Attribute();
-            att.Type = type;
+
+        }
+
+        public static MapAttribute CreateAttribute(MapAttributes type)
+        {
             switch (type)
             {
                 case MapAttributes.Walkable:
-                    break;
+                    return null;
                 case MapAttributes.Blocked:
-                    break;
+                    return new MapBlockedAttribute();
                 case MapAttributes.Item:
-                    att.Item = new AttributeItemFlags();
-                    break;
+                    return new MapItemAttribute();
                 case MapAttributes.ZDimension:
-                    att.ZDimension = new AttributeZDimensionFlags();
-                    break;
+                    return new MapZDimensionAttribute();
                 case MapAttributes.NpcAvoid:
-                    break;
+                    return new MapNpcAvoidAttribute();
                 case MapAttributes.Warp:
-                    att.Warp = new AttributeWarpFlags();
-                    break;
+                    return new MapWarpAttribute();
                 case MapAttributes.Sound:
-                    att.Sound = new AttributeSoundFlags();
-                    break;
+                    return new MapSoundAttribute();
                 case MapAttributes.Resource:
-                    att.Resource = new AttributeResourceFlags();
-                    break;
+                    return new MapResourceAttribute();
                 case MapAttributes.Animation:
-                    att.Animation = new AttributeAnimationFlags();
-                    break;
+                    return new MapAnimationAttribute();
                 case MapAttributes.GrappleStone:
-                    break;
+                    return new MapGrappleStoneAttribute();
                 case MapAttributes.Slide:
-                    att.Slide = new AttributeSlideFlags();
-                    break;
+                    return new MapSlideAttribute();
             }
-            return att;
+            return null;
         }
 
-        public Attribute(string json)
+        public virtual MapAttribute Clone()
         {
-            this.Type = MapAttributes.Walkable;
-            this.Animation = null;
-            this.Item = null;
-            this.Resource = null;
-            this.Slide = null;
-            this.Sound = null;
-            this.Warp = null;
-            this.ZDimension = null;
-            Load(json);
+            return CreateAttribute(this.Type);
         }
 
         public string Data()
         {
-            var serializationSettings = new JsonSerializerSettings();
-            serializationSettings.DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate;
-            serializationSettings.NullValueHandling = NullValueHandling.Ignore;
-
-            //Not sure how to clear out the empty stuff
-            var jObject = JObject.FromObject(this, JsonSerializer.Create(serializationSettings));
-            
-            var keystoRemove = new List<string>();
-            foreach (var key in jObject)
-            {
-                if (key.Value.Type == JTokenType.Object && !key.Value.HasValues)
-                {
-                    keystoRemove.Add(key.Key);
-                }
-            }
-            foreach (var key in keystoRemove)
-                jObject.Remove(key);
-
-            return JsonConvert.SerializeObject(jObject, serializationSettings);
-        }
-
-        public void Load(string json)
-        {
-            JsonConvert.PopulateObject(json, this);
+            return JsonConvert.SerializeObject(this);
         }
     }
 
-    public class AttributeItemFlags
+    public class MapBlockedAttribute : MapAttribute
     {
+        public override MapAttributes Type { get; } = MapAttributes.Blocked;
+    }
+
+    public class MapItemAttribute : MapAttribute
+    {
+        public override MapAttributes Type { get; } = MapAttributes.Item;
         public Guid ItemId { get; set; }
         public int Quantity { get; set; }
+
+        public override MapAttribute Clone()
+        {
+            var att = (MapItemAttribute)base.Clone();
+            att.ItemId = ItemId;
+            att.Quantity = Quantity;
+            return att;
+        }
     }
 
-    public class AttributeZDimensionFlags
+    public class MapZDimensionAttribute : MapAttribute
     {
+        public override MapAttributes Type { get; } = MapAttributes.ZDimension;
         public byte GatewayTo { get; set; }
         public byte BlockedLevel { get; set; }
+
+        public override MapAttribute Clone()
+        {
+            var att = (MapZDimensionAttribute)base.Clone();
+            att.GatewayTo  = GatewayTo;
+            att.BlockedLevel = BlockedLevel;
+            return att;
+        }
     }
 
-    public class AttributeWarpFlags
+    public class MapNpcAvoidAttribute : MapAttribute
     {
+        public override MapAttributes Type { get; } = MapAttributes.NpcAvoid;
+    }
+
+    public class MapWarpAttribute : MapAttribute
+    {
+        public override MapAttributes Type { get; } = MapAttributes.Warp;
         public Guid MapId { get; set; }
         public byte X { get; set; }
         public byte Y { get; set; }
         public WarpDirection Direction { get; set; } = WarpDirection.Retain;
+
+        public override MapAttribute Clone()
+        {
+            var att = (MapWarpAttribute)base.Clone();
+            att.MapId = MapId;
+            att.X = X;
+            att.Y = Y;
+            att.Direction = Direction;
+            return att;
+        }
     }
 
-    public class AttributeSoundFlags
+    public class MapSoundAttribute : MapAttribute
     {
+        public override MapAttributes Type { get; } = MapAttributes.Sound;
         public string File { get; set; }
         public byte Distance { get; set; }
+
+        public override MapAttribute Clone()
+        {
+            var att = (MapSoundAttribute)base.Clone();
+            att.File = File;
+            att.Distance = Distance;
+            return att;
+        }
     }
 
-    public class AttributeResourceFlags
+    public class MapResourceAttribute : MapAttribute
     {
+        public override MapAttributes Type { get; } = MapAttributes.Resource;
         public Guid ResourceId { get; set; }
         public byte SpawnLevel { get; set; }
+
+        public override MapAttribute Clone()
+        {
+            var att = (MapResourceAttribute)base.Clone();
+            att.ResourceId = ResourceId;
+            att.SpawnLevel = SpawnLevel;
+            return att;
+        }
     }
 
-    public class AttributeAnimationFlags
+    public class MapAnimationAttribute : MapAttribute
     {
+        public override MapAttributes Type { get; } = MapAttributes.Animation;
         public Guid AnimationId { get; set; }
+
+        public override MapAttribute Clone()
+        {
+            var att = (MapAnimationAttribute)base.Clone();
+            att.AnimationId = AnimationId;
+            return att;
+        }
     }
 
-    public class AttributeSlideFlags
+    public class MapGrappleStoneAttribute : MapAttribute
     {
+        public override MapAttributes Type { get; } = MapAttributes.GrappleStone;
+    }
+
+    public class MapSlideAttribute : MapAttribute
+    {
+        public override MapAttributes Type { get; } = MapAttributes.Slide;
         public byte Direction { get; set; }
+
+        public override MapAttribute Clone()
+        {
+            var att = (MapSlideAttribute)base.Clone();
+            att.Direction = Direction;
+            return att;
+        }
     }
 }

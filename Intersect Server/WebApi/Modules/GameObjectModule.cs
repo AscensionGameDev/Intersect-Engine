@@ -214,7 +214,7 @@ namespace Intersect.Server.WebApi.Modules
             }
 
             LegacyDatabase.DeleteGameObject(gameObject);
-            LegacyDatabase.SaveGameDatabase();
+            LegacyDatabase.SaveGameDatabaseAsync();
             PacketSender.SendGameObjectToAll(gameObject, true);
 
             return true;

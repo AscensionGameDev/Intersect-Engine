@@ -35,7 +35,7 @@ namespace Intersect.Server.Classes.Maps
 
         [JsonIgnore] [NotMapped] public Dictionary<EventBase, EventInstance> GlobalEventInstances = new Dictionary<EventBase, EventInstance>();
         [JsonIgnore] [NotMapped] public List<MapItemSpawn> ItemRespawns = new List<MapItemSpawn>();
-        [NotMapped] private Point[] mMapBlocks;
+        [NotMapped] private BytePoint[] mMapBlocks;
 
         //Location of Map in the current grid
         [JsonIgnore]
@@ -57,7 +57,7 @@ namespace Intersect.Server.Classes.Maps
         [NotMapped]
         public List<Projectile> MapProjectiles = new List<Projectile>();
 
-        private Point[] mNpcMapBlocks;
+        private BytePoint[] mNpcMapBlocks;
         [JsonIgnore]
         [NotMapped]
         public Dictionary<NpcSpawn, MapNpcSpawn> NpcSpawnInstances = new Dictionary<NpcSpawn, MapNpcSpawn>();
@@ -141,22 +141,22 @@ namespace Intersect.Server.Classes.Maps
 
         private void CacheMapBlocks()
         {
-            var blocks = new List<Point>();
-            var npcBlocks = new List<Point>();
-            for (int x = 0; x < Options.MapWidth; x++)
+            var blocks = new List<BytePoint>();
+            var npcBlocks = new List<BytePoint>();
+            for (byte x = 0; x < Options.MapWidth; x++)
             {
-                for (int y = 0; y < Options.MapHeight; y++)
+                for (byte y = 0; y < Options.MapHeight; y++)
                 {
                     if (Attributes[x, y] != null)
                     {
                         if (Attributes[x, y].Type == MapAttributes.Blocked ||Attributes[x, y].Type == MapAttributes.GrappleStone)
                         {
-                            blocks.Add(new Point(x, y));
-                            npcBlocks.Add(new Point(x, y));
+                            blocks.Add(new BytePoint(x, y));
+                            npcBlocks.Add(new BytePoint(x, y));
                         }
                         else if (Attributes[x, y].Type == MapAttributes.NpcAvoid)
                         {
-                            npcBlocks.Add(new Point(x, y));
+                            npcBlocks.Add(new BytePoint(x, y));
                         }
                     }
                 }
@@ -165,7 +165,7 @@ namespace Intersect.Server.Classes.Maps
             mNpcMapBlocks = npcBlocks.ToArray();
         }
 
-        public Point[] GetCachedBlocks(bool isPlayer)
+        public BytePoint[] GetCachedBlocks(bool isPlayer)
         {
             if (isPlayer) return mMapBlocks;
             return mNpcMapBlocks;
@@ -221,10 +221,10 @@ namespace Intersect.Server.Classes.Maps
 
         private void SpawnAttributeItem(int x, int y)
         {
-            var item = ItemBase.Get(Attributes[x, y].Item.ItemId);
+            var item = ItemBase.Get(((MapItemAttribute)Attributes[x, y]).ItemId);
             if (item != null)
             {
-                MapItems.Add(new MapItem(Attributes[x, y].Item.ItemId, Attributes[x, y].Item.Quantity));
+                MapItems.Add(new MapItem(((MapItemAttribute)Attributes[x, y]).ItemId, ((MapItemAttribute)Attributes[x, y]).Quantity));
                 MapItems[MapItems.Count - 1].X = x;
                 MapItems[MapItems.Count - 1].Y = y;
                 MapItems[MapItems.Count - 1].DespawnTime = -1;
@@ -336,10 +336,10 @@ namespace Intersect.Server.Classes.Maps
         {
             var tempResource = new ResourceSpawn()
             {
-                ResourceId = Attributes[x, y].Resource.ResourceId,
+                ResourceId = ((MapResourceAttribute)Attributes[x, y]).ResourceId,
                 X = x,
                 Y = y,
-                Z = Attributes[x, y].Resource.SpawnLevel
+                Z = ((MapResourceAttribute)Attributes[x, y]).SpawnLevel
             };
             ResourceSpawns.Add(tempResource);
         }
@@ -886,7 +886,7 @@ namespace Intersect.Server.Classes.Maps
             if (side == -1 || side == (int) Directions.Down) Down = Guid.Empty;
             if (side == -1 || side == (int) Directions.Left) Left = Guid.Empty;
             if (side == -1 || side == (int) Directions.Right) Right = Guid.Empty;
-            LegacyDatabase.SaveGameDatabase();
+            LegacyDatabase.SaveGameDatabaseAsync();
         }
 
         public bool TileBlocked(int x, int y)

@@ -6,136 +6,130 @@ using Newtonsoft.Json.Linq;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_Lib.GameObjects.Maps
 {
-    public class Attribute
+    public abstract class MapAttribute
     {
-        public MapAttributes Type { get; set; }
+        public abstract MapAttributes Type { get; }
 
-        //Special Flags
-        public AttributeItemFlags Item { get; set; }
-        public AttributeZDimensionFlags ZDimension { get; set; }
-        public AttributeWarpFlags Warp { get; set; }
-        public AttributeSoundFlags  Sound { get; set; }
-        public AttributeResourceFlags Resource { get; set; }
-        public AttributeAnimationFlags Animation { get; set; }
-        public AttributeSlideFlags Slide { get; set; } 
-
-        public Attribute()
+        public MapAttribute()
         {
-            
+
         }
 
-        public static Attribute CreateAttribute(MapAttributes type)
+        public static MapAttribute CreateAttribute(MapAttributes type)
         {
-            var att = new Attribute();
-            att.Type = type;
             switch (type)
             {
                 case MapAttributes.Walkable:
                     return null;
                 case MapAttributes.Blocked:
-                    break;
+                    return new MapBlockedAttribute();
                 case MapAttributes.Item:
-                    att.Item = new AttributeItemFlags();
-                    break;
+                    return new MapItemAttribute();
                 case MapAttributes.ZDimension:
-                    att.ZDimension = new AttributeZDimensionFlags();
-                    break;
+                    return new MapZDimensionAttribute();
                 case MapAttributes.NpcAvoid:
-                    break;
+                    return new MapNpcAvoidAttribute();
                 case MapAttributes.Warp:
-                    att.Warp = new AttributeWarpFlags();
-                    break;
+                    return new MapWarpAttribute();
                 case MapAttributes.Sound:
-                    att.Sound = new AttributeSoundFlags();
-                    break;
+                    return new MapSoundAttribute();
                 case MapAttributes.Resource:
-                    att.Resource = new AttributeResourceFlags();
-                    break;
+                    return new MapResourceAttribute();
                 case MapAttributes.Animation:
-                    att.Animation = new AttributeAnimationFlags();
-                    break;
+                    return new MapAnimationAttribute();
                 case MapAttributes.GrappleStone:
-                    break;
+                    return new MapGrappleStoneAttribute();
                 case MapAttributes.Slide:
-                    att.Slide = new AttributeSlideFlags();
-                    break;
+                    return new MapSlideAttribute();
             }
-            return att;
+            return null;
         }
 
-        public Attribute(string json)
+        /// <summary>
+        /// Perform a deep Copy of the object, using Json as a serialisation method. NOTE: Private members are not cloned using this method.
+        /// </summary>
+        /// <typeparam name="T">The type of object being copied.</typeparam>
+        /// <param name="source">The object instance to copy.</param>
+        /// <returns>The copied object.</returns>
+        public static T CloneJson<T>(T source)
         {
-            Load(json);
-        }
-
-        public string Data()
-        {
-            var serializationSettings = new JsonSerializerSettings();
-            serializationSettings.DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate;
-            serializationSettings.NullValueHandling = NullValueHandling.Ignore;
-
-            //Not sure how to clear out the empty stuff
-            var jObject = JObject.FromObject(this, JsonSerializer.Create(serializationSettings));
-            
-            var keystoRemove = new List<string>();
-            foreach (var key in jObject)
+            // Don't serialize a null object, simply return the default for that object
+            if (Object.ReferenceEquals(source, null))
             {
-                if (key.Value.Type == JTokenType.Object && !key.Value.HasValues)
-                {
-                    keystoRemove.Add(key.Key);
-                }
+                return default(T);
             }
-            foreach (var key in keystoRemove)
-                jObject.Remove(key);
 
-            return JsonConvert.SerializeObject(jObject, serializationSettings);
-        }
+            // initialize inner objects individually
+            // for example in default constructor some list property initialized with some values,
+            // but in 'source' these items are cleaned -
+            // without ObjectCreationHandling.Replace default constructor values will be added to result
+            var deserializeSettings = new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace };
 
-        public void Load(string json)
-        {
-            JsonConvert.PopulateObject(json, this);
+            return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(source), deserializeSettings);
         }
     }
 
-    public class AttributeItemFlags
+    public class MapBlockedAttribute : MapAttribute
     {
+        public override MapAttributes Type { get; } = MapAttributes.Blocked;
+    }
+
+    public class MapItemAttribute : MapAttribute
+    {
+        public override MapAttributes Type { get; } = MapAttributes.Item;
         public Guid ItemId { get; set; }
         public int Quantity { get; set; }
     }
 
-    public class AttributeZDimensionFlags
+    public class MapZDimensionAttribute : MapAttribute
     {
+        public override MapAttributes Type { get; } = MapAttributes.ZDimension;
         public int GatewayTo { get; set; }
         public int BlockedLevel { get; set; }
     }
 
-    public class AttributeWarpFlags
+    public class MapNpcAvoidAttribute : MapAttribute
     {
+        public override MapAttributes Type { get; } = MapAttributes.NpcAvoid;
+    }
+
+    public class MapWarpAttribute : MapAttribute
+    {
+        public override MapAttributes Type { get; } = MapAttributes.Warp;
         public Guid MapId { get; set; }
         public int X { get; set; }
         public int Y { get; set; }
         public WarpDirection Direction { get; set; } = WarpDirection.Retain;
     }
 
-    public class AttributeSoundFlags
+    public class MapSoundAttribute : MapAttribute
     {
+        public override MapAttributes Type { get; } = MapAttributes.Sound;
         public string File { get; set; }
         public int Distance { get; set; }
     }
 
-    public class AttributeResourceFlags
+    public class MapResourceAttribute : MapAttribute
     {
+        public override MapAttributes Type { get; } = MapAttributes.Resource;
         public Guid ResourceId { get; set; }
         public int SpawnLevel { get; set; }
     }
 
-    public class AttributeAnimationFlags
+    public class MapAnimationAttribute : MapAttribute
     {
+        public override MapAttributes Type { get; } = MapAttributes.Animation;
         public Guid AnimationId { get; set; }
     }
 
-    public class AttributeSlideFlags
+    public class MapGrappleStoneAttribute : MapAttribute
     {
+        public override MapAttributes Type { get; } = MapAttributes.GrappleStone;
+    }
+
+    public class MapSlideAttribute : MapAttribute
+    {
+        public override MapAttributes Type { get; } = MapAttributes.Slide;
         public byte Direction { get; set; }
     }
 }

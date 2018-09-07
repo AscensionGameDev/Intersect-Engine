@@ -2,11 +2,12 @@
 using System.Linq;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.GameObjects.Maps;
 using Intersect.Server.Classes.Database;
 using Intersect.Server.Classes.General;
 using Intersect.Server.Classes.Maps;
 using Intersect.Server.Classes.Networking;
-using Attribute = Intersect.GameObjects.Maps.Attribute;
+using MapAttribute = Intersect.GameObjects.Maps.MapAttribute;
 
 namespace Intersect.Server.Classes.Entities
 {
@@ -297,15 +298,15 @@ namespace Intersect.Server.Classes.Entities
             var map = MapInstance.Get(spawn.MapId);
             if (!killSpawn && map != null)
             {
-                Attribute attribute = map.Attributes[spawn.X, spawn.Y];
+                MapAttribute attribute = map.Attributes[spawn.X, spawn.Y];
                 //Check for Z-Dimension
                 if (!spawn.ProjectileBase.IgnoreZDimension)
                 {
                     if (attribute != null && attribute.Type == MapAttributes.ZDimension)
                     {
-                        if (attribute.ZDimension.GatewayTo > 0)
+                        if (((MapZDimensionAttribute)attribute).GatewayTo > 0)
                         {
-                            spawn.Z = attribute.ZDimension.GatewayTo - 1;
+                            spawn.Z = ((MapZDimensionAttribute)attribute).GatewayTo - 1;
                         }
                     }
                 }

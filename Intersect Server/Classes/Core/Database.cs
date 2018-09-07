@@ -27,6 +27,7 @@ using System.Linq;
 using System.Management.Instrumentation;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Intersect.Server.Classes.Core
 {
@@ -37,13 +38,13 @@ namespace Intersect.Server.Classes.Core
         private const string PlayersDbFilename = "resources/playerdata.db";
 
         private static PlayerContext sPlayerDb;
-
         private static GameContext sGameDb;
 
         public static object MapGridLock = new object();
         public static List<MapGrid> MapGrids = new List<MapGrid>();
 
-        public static object SqlConnectionLock = new object();
+        private static object mSavingGameLock = new object();
+        private static object mSavingPlayerLock = new object();
 
         //Check Directories
         public static void CheckDirectories()
@@ -89,16 +90,12 @@ namespace Intersect.Server.Classes.Core
             {
                 sGameDb = new GameContext(DatabaseUtils.DbProvider.MySql, $"server={Options.GameDb.Server};database={Options.GameDb.Database};user={Options.GameDb.Username};password={Options.GameDb.Password}");
             }
+
             sGameDb.Database.Migrate();
 
             LoadAllGameObjects();
             LoadTime();
             return true;
-        }
-
-        public static void SavePlayers()
-        {
-            sPlayerDb.SaveChanges();
         }
 
         public static Client GetPlayerClient([NotNull] string username)
@@ -124,7 +121,7 @@ namespace Intersect.Server.Classes.Core
             if (user != null)
             {
                 user.Access = access;
-                sPlayerDb.SaveChanges();
+                SavePlayerDatabaseAsync();
             }
             else
             {
@@ -212,7 +209,7 @@ namespace Intersect.Server.Classes.Core
             };
             sPlayerDb.Users.Add(user);
             client.SetUser(user);
-            sPlayerDb.SaveChanges();
+            SavePlayerDatabaseAsync();
         }
 
         public static bool CheckPassword([NotNull] string username, [NotNull] string password)
@@ -261,13 +258,6 @@ namespace Intersect.Server.Classes.Core
         }
 
         //Bags
-        public static Bag CreateBag(int slotCount)
-        {
-            var bag = new Bag(slotCount);
-            sPlayerDb.Bags.Add(bag);
-            return bag;
-        }
-
         public static Bag GetBag(Item item)
         {
             if (item.BagId == null) return null;
@@ -299,7 +289,6 @@ namespace Intersect.Server.Classes.Core
                 Debug.Assert(value != null, "value != null");
                 var type = (GameObjectType) value;
                 if (type == GameObjectType.Time) continue;
-
                 LoadGameObjects(type);
                 switch ((GameObjectType) value)
                 {
@@ -406,13 +395,11 @@ namespace Intersect.Server.Classes.Core
                     foreach (var npc in sGameDb.Npcs)
                     {
                         NpcBase.Lookup.Set(npc.Id, npc);
-                        NpcBase.Lookup.Set(npc.Id, npc);
                     }
                     break;
                 case GameObjectType.Projectile:
                     foreach (var proj in sGameDb.Projectiles)
                     {
-                        ProjectileBase.Lookup.Set(proj.Id, proj);
                         ProjectileBase.Lookup.Set(proj.Id, proj);
                     }
                     break;
@@ -420,13 +407,11 @@ namespace Intersect.Server.Classes.Core
                     foreach (var qst in sGameDb.Quests)
                     {
                         QuestBase.Lookup.Set(qst.Id, qst);
-                        QuestBase.Lookup.Set(qst.Id, qst);
                     }
                     break;
                 case GameObjectType.Resource:
                     foreach (var res in sGameDb.Resources)
                     {
-                        ResourceBase.Lookup.Set(res.Id, res);
                         ResourceBase.Lookup.Set(res.Id, res);
                     }
                     break;
@@ -434,13 +419,11 @@ namespace Intersect.Server.Classes.Core
                     foreach (var shp in sGameDb.Shops)
                     {
                         ShopBase.Lookup.Set(shp.Id, shp);
-                        ShopBase.Lookup.Set(shp.Id, shp);
                     }
                     break;
                 case GameObjectType.Spell:
                     foreach (var spl in sGameDb.Spells)
                     {
-                        SpellBase.Lookup.Set(spl.Id, spl);
                         SpellBase.Lookup.Set(spl.Id, spl);
                     }
                     break;
@@ -448,20 +431,18 @@ namespace Intersect.Server.Classes.Core
                     foreach (var craft in sGameDb.CraftingTables)
                     {
                         CraftingTableBase.Lookup.Set(craft.Id, craft);
-                        CraftingTableBase.Lookup.Set(craft.Id, craft);
                     }
                     break;
                 case GameObjectType.Crafts:
                     foreach (var craft in sGameDb.Crafts)
                     {
                         CraftBase.Lookup.Set(craft.Id, craft);
-                        CraftBase.Lookup.Set(craft.Id, craft);
                     }
                     break;
                 case GameObjectType.Map:
-                    foreach (var map in sGameDb.Maps)
+                    var maps = sGameDb.Maps.ToArray();
+                    foreach (var map in maps)
                     {
-                        MapInstance.Lookup.Set(map.Id, map);
                         MapInstance.Lookup.Set(map.Id, map);
                     }
                     break;
@@ -475,13 +456,11 @@ namespace Intersect.Server.Classes.Core
                     foreach (var psw in sGameDb.PlayerSwitches)
                     {
                         PlayerSwitchBase.Lookup.Set(psw.Id, psw);
-                        PlayerSwitchBase.Lookup.Set(psw.Id, psw);
                     }
                     break;
                 case GameObjectType.PlayerVariable:
                     foreach (var psw in sGameDb.PlayerVariables)
                     {
-                        PlayerVariableBase.Lookup.Set(psw.Id, psw);
                         PlayerVariableBase.Lookup.Set(psw.Id, psw);
                     }
                     break;
@@ -489,20 +468,17 @@ namespace Intersect.Server.Classes.Core
                     foreach (var psw in sGameDb.ServerSwitches)
                     {
                         ServerSwitchBase.Lookup.Set(psw.Id, psw);
-                        ServerSwitchBase.Lookup.Set(psw.Id, psw);
                     }
                     break;
                 case GameObjectType.ServerVariable:
                     foreach (var psw in sGameDb.ServerVariables)
                     {
                         ServerVariableBase.Lookup.Set(psw.Id, psw);
-                        ServerVariableBase.Lookup.Set(psw.Id, psw);
                     }
                     break;
                 case GameObjectType.Tileset:
                     foreach (var psw in sGameDb.Tilesets)
                     {
-                        TilesetBase.Lookup.Set(psw.Id, psw);
                         TilesetBase.Lookup.Set(psw.Id, psw);
                     }
                     break;
@@ -782,7 +758,7 @@ namespace Intersect.Server.Classes.Core
                 {
                     cls.BaseStat[i] = 20;
                 }
-                SaveGameDatabase();
+                SaveGameDatabaseAsync();
             }
         }
 
@@ -899,7 +875,7 @@ namespace Intersect.Server.Classes.Core
                 }
             }
             MapList.GetList().PostLoad(MapBase.Lookup, true, true);
-            SaveGameDatabase();
+            SaveGameDatabaseAsync();
             PacketSender.SendMapListToAll();
         }
 
@@ -919,14 +895,30 @@ namespace Intersect.Server.Classes.Core
             ServerTime.Init();
         }
 
-        public static void SaveGameDatabase()
+        public static void SaveGameDatabaseAsync()
         {
-            sGameDb.SaveChanges();
+            Task.Run(new Action(SaveGameDb));
         }
 
-        public static void SavePlayerDatabase()
+        public static void SavePlayerDatabaseAsync()
         {
-            sPlayerDb.SaveChanges();
+            Task.Run(new Action(SavePlayerDb));
+        }
+
+        private static void SaveGameDb()
+        {
+            lock (mSavingGameLock)
+            {
+                sGameDb.SaveChangesAsync();
+            }
+        }
+
+        private static void SavePlayerDb()
+        {
+            lock (mSavingPlayerLock)
+            {
+                sPlayerDb.SaveChangesAsync();
+            }
         }
     }
 }

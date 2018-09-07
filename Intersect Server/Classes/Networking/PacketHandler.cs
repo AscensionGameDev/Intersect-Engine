@@ -684,7 +684,7 @@ namespace Intersect.Server.Classes.Networking
             if (map.TileData != null) map.TileData = tileData;
             var attributeLength = bf.ReadInteger();
             map.AttributeData = bf.ReadBytes(attributeLength);
-            LegacyDatabase.SaveGameDatabase();
+            LegacyDatabase.SaveGameDatabaseAsync();
             map.Initialize();
             Globals.Clients?.ForEach(t =>
             {
@@ -725,7 +725,7 @@ namespace Intersect.Server.Classes.Networking
                 {
                     MapList.GetList().AddMap(newMap, tmpMap.TimeCreated, MapBase.Lookup);
                 }
-                LegacyDatabase.SaveGameDatabase();
+                LegacyDatabase.SaveGameDatabaseAsync();
                 PacketSender.SendMapListToAll();
                 /*else if (destType == 0)
                 {
@@ -857,7 +857,7 @@ namespace Intersect.Server.Classes.Networking
                         }
                     }
 
-                    LegacyDatabase.SaveGameDatabase();
+                    LegacyDatabase.SaveGameDatabaseAsync();
                     LegacyDatabase.GenerateMapGrids();
                     PacketSender.SendMap(client, newMap, true);
                     PacketSender.SendMapGridToAll(MapInstance.Get(newMap).MapGrid);
@@ -871,7 +871,7 @@ namespace Intersect.Server.Classes.Networking
                     {
                         MapList.GetList().AddMap(newMap, MapInstance.Get(newMap).TimeCreated, MapBase.Lookup);
                     }
-                    LegacyDatabase.SaveGameDatabase();
+                    LegacyDatabase.SaveGameDatabaseAsync();
                     PacketSender.SendMapListToAll();
                 }
             }
@@ -1244,7 +1244,7 @@ namespace Intersect.Server.Classes.Networking
                     }
                 }
 
-                LegacyDatabase.SavePlayers();
+                LegacyDatabase.SavePlayerDatabaseAsync();
             }
             bf.Dispose();
         }
@@ -1437,7 +1437,7 @@ namespace Intersect.Server.Classes.Networking
                     {
                         mapId = bf.ReadGuid();
                         MapInstance.Get(mapId).Name = bf.ReadString();
-                        LegacyDatabase.SaveGameDatabase();
+                        LegacyDatabase.SaveGameDatabaseAsync();
                         PacketSender.SendMapListToAll();
                     }
                     break;
@@ -1461,7 +1461,7 @@ namespace Intersect.Server.Classes.Networking
                         var players = MapInstance.Get(mapId).GetPlayersOnMap();
                         MapList.GetList().DeleteMap(mapId);
                         LegacyDatabase.DeleteGameObject(MapInstance.Get(mapId));
-                        LegacyDatabase.SaveGameDatabase();
+                        LegacyDatabase.SaveGameDatabaseAsync();
                         LegacyDatabase.GenerateMapGrids();
                         PacketSender.SendMapListToAll();
                         foreach (var player in players)
@@ -1473,7 +1473,7 @@ namespace Intersect.Server.Classes.Networking
                     break;
             }
             PacketSender.SendMapListToAll();
-            LegacyDatabase.SaveGameDatabase();
+            LegacyDatabase.SaveGameDatabaseAsync();
             bf.Dispose();
         }
 
@@ -1967,7 +1967,7 @@ namespace Intersect.Server.Classes.Networking
                                 }
                             }
                         }
-                        LegacyDatabase.SaveGameDatabase();
+                        LegacyDatabase.SaveGameDatabaseAsync();
                         LegacyDatabase.GenerateMapGrids();
                         PacketSender.SendMapGridToAll(MapInstance.Get(adjacentMap).MapGrid);
                     }
@@ -2058,7 +2058,7 @@ namespace Intersect.Server.Classes.Networking
             if (type == GameObjectType.Event)
             {
                 ((EventBase)obj).CommonEvent = true;
-                LegacyDatabase.SaveGameDatabase();
+                LegacyDatabase.SaveGameDatabaseAsync();
             }
             PacketSender.SendGameObjectToAll(obj);
             bf.Dispose();
@@ -2163,7 +2163,7 @@ namespace Intersect.Server.Classes.Networking
                     Globals.KillNpcsOf((NpcBase)obj);
                 }
                 LegacyDatabase.DeleteGameObject(obj);
-                LegacyDatabase.SaveGameDatabase();
+                LegacyDatabase.SaveGameDatabaseAsync();
                 PacketSender.SendGameObjectToAll(obj, true);
             }
             bf.Dispose();
@@ -2277,7 +2277,7 @@ namespace Intersect.Server.Classes.Networking
                 }
 
                 PacketSender.SendGameObjectToAll(obj, false);
-                LegacyDatabase.SaveGameDatabase();
+                LegacyDatabase.SaveGameDatabaseAsync();
             }
             bf.Dispose();
         }
@@ -2287,7 +2287,7 @@ namespace Intersect.Server.Classes.Networking
             if (client.IsEditor)
             {
                 TimeBase.GetTimeBase().LoadTimeBase(packet);
-                LegacyDatabase.SaveGameDatabase();
+                LegacyDatabase.SaveGameDatabaseAsync();
                 ServerTime.Init();
                 PacketSender.SendTimeBaseToAllEditors();
             }
@@ -2527,7 +2527,7 @@ namespace Intersect.Server.Classes.Networking
                     if (type == GameObjectType.Tileset)
                     {
                         ((TilesetBase)obj).Name = value;
-                        LegacyDatabase.SaveGameDatabase();
+                        LegacyDatabase.SaveGameDatabaseAsync();
                     }
                     PacketSender.SendGameObjectToAll(obj, false, i != count - 1);
                 }

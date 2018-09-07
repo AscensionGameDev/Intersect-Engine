@@ -1253,7 +1253,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 return;
             }
 
-            GameObjects.Maps.Attribute attribute = Globals.CurrentMap.Attributes[x, y];
+            GameObjects.Maps.MapAttribute attribute = Globals.CurrentMap.Attributes[x, y];
             var thisData = attribute?.Data();
 
             if (thisData == data)
@@ -1269,7 +1269,7 @@ namespace Intersect.Editor.Forms.DockingElements
 
         public void SmartFillAttributes(int x, int y)
         {
-            GameObjects.Maps.Attribute attribute = Globals.CurrentMap.Attributes[x, y];
+            GameObjects.Maps.MapAttribute attribute = Globals.CurrentMap.Attributes[x, y];
             var data = attribute?.Data();
             SmartFillAttribute(x, y, data);
 
@@ -1482,7 +1482,7 @@ namespace Intersect.Editor.Forms.DockingElements
                         {
                             if (Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset] != null)
                             {
-                                tmpMap.Attributes[x0, y0] = new GameObjects.Maps.Attribute(Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].Data());
+                                tmpMap.Attributes[x0, y0] = Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].Clone();
                             }
                             else
                             {
@@ -1637,7 +1637,7 @@ namespace Intersect.Editor.Forms.DockingElements
                         {
                             if (tmpMap.Attributes[x0, y0] != null)
                             {
-                                tmpMap.Attributes[x0, y0] = new Intersect.GameObjects.Maps.Attribute();
+                                tmpMap.Attributes[x0, y0] = null;
                             }
                         }
 
