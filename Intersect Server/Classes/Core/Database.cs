@@ -95,6 +95,7 @@ namespace Intersect.Server.Classes.Core
 
             LoadAllGameObjects();
             LoadTime();
+            SaveGameDatabaseAsync();
             return true;
         }
 
@@ -758,7 +759,6 @@ namespace Intersect.Server.Classes.Core
                 {
                     cls.BaseStat[i] = 20;
                 }
-                SaveGameDatabaseAsync();
             }
         }
 
@@ -875,7 +875,6 @@ namespace Intersect.Server.Classes.Core
                 }
             }
             MapList.GetList().PostLoad(MapBase.Lookup, true, true);
-            SaveGameDatabaseAsync();
             PacketSender.SendMapListToAll();
         }
 

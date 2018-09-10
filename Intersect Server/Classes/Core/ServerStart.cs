@@ -1,15 +1,13 @@
 ﻿//#define websockets
+
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Resources;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Intersect.Enums;
-using Intersect.GameObjects.Maps;
-using Intersect.Server.Classes.Localization;
 using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Crypto;
@@ -17,16 +15,18 @@ using Intersect.Network.Crypto.Formats;
 using Intersect.Server.Classes.Core;
 using Intersect.Server.Classes.Database.PlayerData;
 using Intersect.Server.Classes.General;
+using Intersect.Server.Classes.Localization;
 using Intersect.Server.Classes.Networking;
 using Intersect.Server.Classes.Networking.Helpers;
 using Intersect.Server.Network;
 using Intersect.Server.WebApi;
-using Open.Nat;
 using Intersect.Utilities;
+using Open.Nat;
 
 namespace Intersect.Server.Classes
 {
-    using Database = Intersect.Server.Classes.Core.LegacyDatabase;
+    using Database = LegacyDatabase;
+
     public class ServerStart
     {
         private static bool sErrorHalt = true;
@@ -39,28 +39,10 @@ namespace Intersect.Server.Classes
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
         }
 
-        private static void ExtractSQLite()
-        {
-            //Place sqlite3.dll where it's needed.
-            var dllname = Environment.Is64BitProcess ? "sqlite3x64.dll" : "sqlite3x86.dll";
-            if (ReflectionUtils.ExtractResource($"Intersect.Server.Resources.{dllname}", "sqlite3.dll")) return;
-            Log.Error("Failed to extract sqlite library, terminating startup.");
-            Environment.Exit(-0x1000);
-        }
-
-        private static void ExtractNancy()
-        {
-            if (ReflectionUtils.ExtractCosturaResource("costura.nancy.dll.compressed", "Nancy.dll")) return;
-            Log.Error("Failed to extract Nancy, terminating startup.");
-            Environment.Exit(-0x1001);
-        }
-        
         public static void Start(string[] args)
         {
             if (RunningOnWindows()) SetConsoleCtrlHandler(ConsoleCtrlCheck, true);
             Console.CancelKeyPress += Console_CancelKeyPress;
-
-            ExtractSQLite();
 
             LegacyDatabase.CheckDirectories();
             Thread logicThread;
@@ -71,19 +53,13 @@ namespace Intersect.Server.Classes
                 return;
             }
 
-            ExtractNancy();
-
             foreach (var arg in args)
-            {
                 if (arg.Contains("port="))
                 {
-                    ushort port = Options.ServerPort;
-                    if (ushort.TryParse(arg.Split("=".ToCharArray())[1],out port))
-                    {
-                        Options.ServerPort = port;
-                    }
+                    var port = Options.ServerPort;
+                    if (ushort.TryParse(arg.Split("=".ToCharArray())[1], out port)) Options.ServerPort = port;
                 }
-            }
+
             Console.Clear();
             Console.WriteLine();
             Console.WriteLine(@"  _____       _                          _   ");
@@ -94,18 +70,20 @@ namespace Intersect.Server.Classes
             Console.WriteLine(@" |_____|_| |_|\__\___|_|  |___/\___|\___|\__|");
             Console.WriteLine(Strings.Intro.tagline);
             Console.WriteLine(@"Copyright (C) 2018  Ascension Game Dev");
-            Console.WriteLine(Strings.Intro.version.ToString( Assembly.GetExecutingAssembly().GetName().Version));
+            Console.WriteLine(Strings.Intro.version.ToString(Assembly.GetExecutingAssembly().GetName().Version));
             Console.WriteLine(Strings.Intro.support);
             Console.WriteLine(Strings.Intro.loading);
             Formulas.LoadFormulas();
+            ExportDependencies();
             if (!LegacyDatabase.InitDatabase())
             {
                 Console.ReadKey();
                 return;
             }
+
             CustomColors.Load();
             Console.WriteLine(Strings.Commandoutput.playercount.ToString(LegacyDatabase.RegisteredPlayers));
-            Console.WriteLine(Strings.Commandoutput.gametime.ToString( ServerTime.GetTime().ToString("F")));
+            Console.WriteLine(Strings.Commandoutput.gametime.ToString(ServerTime.GetTime().ToString("F")));
             ServerTime.Update();
             Log.Global.AddOutput(new ConsoleOutput(Debugger.IsAttached ? LogLevel.All : LogLevel.Error));
             var assembly = Assembly.GetExecutingAssembly();
@@ -116,18 +94,15 @@ namespace Intersect.Server.Classes
                 SocketServer = new ServerNetwork(new NetworkConfiguration(Options.ServerPort), rsaKey.Parameters);
             }
 
-            var packetHander = new PacketHandler();
-            SocketServer.Handlers[PacketCode.BinaryPacket] = packetHander.HandlePacket;
+            var packetHandler = new PacketHandler();
+            SocketServer.Handlers[PacketCode.BinaryPacket] = packetHandler.HandlePacket;
 
 #if websockets
             WebSocketNetwork.Init(Options.ServerPort);
             Console.WriteLine(Strings.Intro.websocketstarted.ToString( Options.ServerPort));
 #endif
 
-            if (!SocketServer.Listen())
-            {
-                Log.Error("An error occurred while attempting to connect.");
-            }
+            if (!SocketServer.Listen()) Log.Error("An error occurred while attempting to connect.");
 
             Console.WriteLine();
 
@@ -139,10 +114,7 @@ namespace Intersect.Server.Classes
 #endif
                 UpnP.OpenServerPort(Options.ServerPort, Protocol.Udp).Wait(5000);
 
-                if (Options.ApiEnabled)
-                {
-                    UpnP.OpenServerPort(Options.ApiPort, Protocol.Tcp).Wait(5000);
-                }
+                if (Options.ApiEnabled) UpnP.OpenServerPort(Options.ApiPort, Protocol.Tcp).Wait(5000);
 
                 Console.WriteLine();
             }
@@ -152,6 +124,8 @@ namespace Intersect.Server.Classes
                 Console.WriteLine(Strings.Intro.api.ToString(Options.ApiPort));
                 serverApi = new ServerApi(Options.ApiPort);
                 serverApi.Start();
+                Console.WriteLine();
+                DeleteIfExists("Nancy.dll");
             }
 
             //Check to see if AGD can see this server. If so let the owner know :)
@@ -161,7 +135,7 @@ namespace Intersect.Server.Classes
                 var serverAccessible = PortChecker.CanYouSeeMe(Options.ServerPort, out externalIp);
 
                 Console.WriteLine(Strings.Portchecking.connectioninfo);
-                if (!String.IsNullOrEmpty(externalIp))
+                if (!string.IsNullOrEmpty(externalIp))
                 {
                     Console.WriteLine(Strings.Portchecking.publicip, externalIp);
                     Console.WriteLine(Strings.Portchecking.publicport, Options.ServerPort);
@@ -188,32 +162,32 @@ namespace Intersect.Server.Classes
                 {
                     Console.WriteLine(Strings.Portchecking.notconnected);
                 }
+
                 Console.WriteLine();
             }
-            Console.WriteLine(Strings.Intro.started.ToString( Options.ServerPort));
+
+            Console.WriteLine(Strings.Intro.started.ToString(Options.ServerPort));
 
             logicThread = new Thread(() => ServerLoop.RunServerLoop());
             logicThread.Start();
-            if (args.Contains("nohalt"))
-            {
-                sErrorHalt = false;
-            }
+            if (args.Contains("nohalt")) sErrorHalt = false;
             if (!args.Contains("noconsole"))
             {
                 Console.WriteLine(Strings.Intro.consoleactive);
                 Console.Write("> ");
-                string command = Console.ReadLine();
+                var command = Console.ReadLine();
                 while (true)
                 {
-                    bool userFound = false;
-                    string ip = "";
+                    var userFound = false;
+                    var ip = "";
                     if (command == null)
                     {
                         ShutDown();
                         return;
                     }
+
                     command = command.Trim();
-                    string[] commandsplit = command.Split(' ');
+                    var commandsplit = command.Split(' ');
 
                     if (commandsplit[0] == Strings.Commands.announcement) //Announcement Command
                     {
@@ -221,9 +195,7 @@ namespace Intersect.Server.Classes
                         {
                             if (commandsplit[1] == Strings.Commands.commandinfo)
                             {
-                                Console.WriteLine(@"    " +
-                                                  Strings.Commands.announcementusage.ToString(
-                                                      Strings.Commands.commandinfo));
+                                Console.WriteLine(@"    " + Strings.Commands.announcementusage.ToString(Strings.Commands.commandinfo));
                                 Console.WriteLine(@"    " + Strings.Commands.announcementdesc);
                             }
                             else
@@ -233,32 +205,23 @@ namespace Intersect.Server.Classes
                         }
                         else
                         {
-                            Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(
-                                Strings.Commands.commandinfo));
+                            Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
                         }
                     }
                     else if (commandsplit[0] == Strings.Commands.netdebug) //Output network debug info
                     {
                         NetDebug.GenerateDebugFile();
-                    }    
+                    }
                     else if (commandsplit[0] == Strings.Commands.onlinelist) //Online List Command
                     {
-                        Console.WriteLine(string.Format("{0,-10}", Strings.Commandoutput.listid) +
-                                          string.Format("{0,-28}", Strings.Commandoutput.listaccount) +
-                                          string.Format("{0,-28}", Strings.Commandoutput.listcharacter));
+                        Console.WriteLine(string.Format("{0,-10}", Strings.Commandoutput.listid) + string.Format("{0,-28}", Strings.Commandoutput.listaccount) + string.Format("{0,-28}", Strings.Commandoutput.listcharacter));
                         Console.WriteLine(new string('-', 66));
-                        for (int i = 0; i < Globals.Clients.Count; i++)
-                        {
+                        for (var i = 0; i < Globals.Clients.Count; i++)
                             if (Globals.Clients[i] != null)
                             {
-                                var name = Globals.Clients[i].Entity != null
-                                    ? Globals.Clients[i].Entity.Name
-                                    : "";
-                                Console.WriteLine(string.Format("{0,-10}", "#" + i) +
-                                                  string.Format("{0,-28}", Globals.Clients[i].Name) +
-                                                  string.Format("{0,-28}", name));
+                                var name = Globals.Clients[i].Entity != null ? Globals.Clients[i].Entity.Name : "";
+                                Console.WriteLine(string.Format("{0,-10}", "#" + i) + string.Format("{0,-28}", Globals.Clients[i].Name) + string.Format("{0,-28}", name));
                             }
-                        }
                     }
                     else if (commandsplit[0] == Strings.Commands.kill) //Kill Command
                     {
@@ -266,42 +229,31 @@ namespace Intersect.Server.Classes
                         {
                             if (commandsplit[1] == Strings.Commands.commandinfo)
                             {
-                                Console.WriteLine(@"    " +
-                                                  Strings.Commands.killusage.ToString(
-                                                      Strings.Commands.commandinfo));
+                                Console.WriteLine(@"    " + Strings.Commands.killusage.ToString(Strings.Commands.commandinfo));
                                 Console.WriteLine(@"    " + Strings.Commands.killdesc);
                             }
                             else
                             {
-                                for (int i = 0; i < Globals.Clients.Count; i++)
-                                {
+                                for (var i = 0; i < Globals.Clients.Count; i++)
                                     if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                                     {
-                                        string user = Globals.Clients[i].Entity.Name.ToLower();
+                                        var user = Globals.Clients[i].Entity.Name.ToLower();
                                         if (user == commandsplit[1].ToLower())
                                         {
                                             Globals.Clients[i].Entity.Die();
-                                            PacketSender.SendGlobalMsg(@"    " +
-                                                                       Strings.Player.serverkilled.ToString(
-                                                                           Globals.Clients[i].Entity.Name));
-                                            Console.WriteLine(@"    " +
-                                                              Strings.Commandoutput.killsuccess.ToString(
-                                                                  Globals.Clients[i].Entity.Name));
+                                            PacketSender.SendGlobalMsg(@"    " + Strings.Player.serverkilled.ToString(Globals.Clients[i].Entity.Name));
+                                            Console.WriteLine(@"    " + Strings.Commandoutput.killsuccess.ToString(Globals.Clients[i].Entity.Name));
                                             userFound = true;
                                             break;
                                         }
                                     }
-                                }
-                                if (userFound == false)
-                                {
-                                    Console.WriteLine(@"    " + Strings.Player.offline);
-                                }
+
+                                if (userFound == false) Console.WriteLine(@"    " + Strings.Player.offline);
                             }
                         }
                         else
                         {
-                            Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(
-                                Strings.Commands.commandinfo));
+                            Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
                         }
                     }
                     else if (commandsplit[0] == Strings.Commands.kick) //Kick Command
@@ -310,41 +262,31 @@ namespace Intersect.Server.Classes
                         {
                             if (commandsplit[1] == Strings.Commands.commandinfo)
                             {
-                                Console.WriteLine(@"    " +
-                                                  Strings.Commands.kickusage.ToString(
-                                                      Strings.Commands.commandinfo));
+                                Console.WriteLine(@"    " + Strings.Commands.kickusage.ToString(Strings.Commands.commandinfo));
                                 Console.WriteLine(@"    " + Strings.Commands.kickdesc);
                             }
                             else
                             {
-                                for (int i = 0; i < Globals.Clients.Count; i++)
-                                {
+                                for (var i = 0; i < Globals.Clients.Count; i++)
                                     if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                                     {
-                                        string user = Globals.Clients[i].Entity.Name.ToLower();
+                                        var user = Globals.Clients[i].Entity.Name.ToLower();
                                         if (user == commandsplit[1].ToLower())
                                         {
-                                            PacketSender.SendGlobalMsg(Strings.Player.serverkicked.ToString(
-                                                Globals.Clients[i].Entity.Name));
-                                            Console.WriteLine(@"    " +
-                                                              Strings.Player.serverkicked.ToString(
-                                                                  Globals.Clients[i].Entity.Name));
+                                            PacketSender.SendGlobalMsg(Strings.Player.serverkicked.ToString(Globals.Clients[i].Entity.Name));
+                                            Console.WriteLine(@"    " + Strings.Player.serverkicked.ToString(Globals.Clients[i].Entity.Name));
                                             Globals.Clients[i].Disconnect(); //Kick em'
                                             userFound = true;
                                             break;
                                         }
                                     }
-                                }
-                                if (userFound == false)
-                                {
-                                    Console.WriteLine(@"    " + Strings.Player.offline);
-                                }
+
+                                if (userFound == false) Console.WriteLine(@"    " + Strings.Player.offline);
                             }
                         }
                         else
                         {
-                            Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(
-                                Strings.Commands.commandinfo));
+                            Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
                         }
                     }
                     else if (commandsplit[0] == Strings.Commands.unban) //Unban Command
@@ -353,9 +295,7 @@ namespace Intersect.Server.Classes
                         {
                             if (commandsplit[1] == Strings.Commands.commandinfo)
                             {
-                                Console.WriteLine(@"    " +
-                                                  Strings.Commands.unbanusage.ToString(
-                                                      Strings.Commands.commandinfo));
+                                Console.WriteLine(@"    " + Strings.Commands.unbanusage.ToString(Strings.Commands.commandinfo));
                                 Console.WriteLine(@"    " + Strings.Commands.unbandesc);
                             }
                             else
@@ -364,19 +304,17 @@ namespace Intersect.Server.Classes
                                 if (unbannedUser != null)
                                 {
                                     Ban.DeleteBan(unbannedUser);
-                                    Console.WriteLine(
-                                        @"    " + Strings.Account.unbanned.ToString( commandsplit[1]));
+                                    Console.WriteLine(@"    " + Strings.Account.unbanned.ToString(commandsplit[1]));
                                 }
                                 else
                                 {
-                                    Console.WriteLine("    " + Strings.Account.notfound.ToString( commandsplit[1]));
+                                    Console.WriteLine("    " + Strings.Account.notfound.ToString(commandsplit[1]));
                                 }
                             }
                         }
                         else
                         {
-                            Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(
-                                Strings.Commands.commandinfo));
+                            Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
                         }
                     }
                     else if (commandsplit[0] == Strings.Commands.ban) //Ban Command
@@ -385,64 +323,42 @@ namespace Intersect.Server.Classes
                         {
                             if (commandsplit[1] == Strings.Commands.commandinfo)
                             {
-                                Console.WriteLine(@"    " +
-                                                  Strings.Commands.banusage.ToString(
-                                                      Strings.Commands.True,
-                                                      Strings.Commands.False,
-                                                      Strings.Commands.commandinfo));
+                                Console.WriteLine(@"    " + Strings.Commands.banusage.ToString(Strings.Commands.True, Strings.Commands.False, Strings.Commands.commandinfo));
                                 Console.WriteLine(@"    " + Strings.Commands.bandesc);
                             }
                             else
                             {
                                 if (commandsplit.Length > 3)
                                 {
-                                    for (int i = 0; i < Globals.Clients.Count; i++)
-                                    {
+                                    for (var i = 0; i < Globals.Clients.Count; i++)
                                         if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                                         {
-                                            string user = Globals.Clients[i].Entity.Name.ToLower();
+                                            var user = Globals.Clients[i].Entity.Name.ToLower();
                                             if (user == commandsplit[1].ToLower())
                                             {
-                                                string reason = "";
-                                                for (int n = 4; n < commandsplit.Length; n++)
-                                                {
-                                                    reason += commandsplit[n] + " ";
-                                                }
-                                                if (commandsplit[3] == Strings.Commands.True)
-                                                {
-                                                    ip = Globals.Clients[i].GetIp();
-                                                }
-                                                Ban.AddBan(Globals.Clients[i],
-                                                    Convert.ToInt32(commandsplit[2]),
-                                                    reason,
-                                                    Strings.Commands.banuser, ip);
-                                                PacketSender.SendGlobalMsg(Strings.Account.banned.ToString(
-                                                    Globals.Clients[i].Entity.Name));
-                                                Console.WriteLine(@"    " +
-                                                                  Strings.Account.banned.ToString(
-                                                                      Globals.Clients[i].Entity.Name));
+                                                var reason = "";
+                                                for (var n = 4; n < commandsplit.Length; n++) reason += commandsplit[n] + " ";
+                                                if (commandsplit[3] == Strings.Commands.True) ip = Globals.Clients[i].GetIp();
+                                                Ban.AddBan(Globals.Clients[i], Convert.ToInt32(commandsplit[2]), reason, Strings.Commands.banuser, ip);
+                                                PacketSender.SendGlobalMsg(Strings.Account.banned.ToString(Globals.Clients[i].Entity.Name));
+                                                Console.WriteLine(@"    " + Strings.Account.banned.ToString(Globals.Clients[i].Entity.Name));
                                                 Globals.Clients[i].Disconnect(); //Kick em'
                                                 userFound = true;
                                                 break;
                                             }
                                         }
-                                    }
-                                    if (userFound == false)
-                                    {
-                                        Console.WriteLine(@"    " + Strings.Player.offline);
-                                    }
+
+                                    if (userFound == false) Console.WriteLine(@"    " + Strings.Player.offline);
                                 }
                                 else
                                 {
-                                    Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(
-                                        Strings.Commands.commandinfo));
+                                    Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
                                 }
                             }
                         }
                         else
                         {
-                            Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(
-                                Strings.Commands.commandinfo));
+                            Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
                         }
                     }
                     else if (commandsplit[0] == Strings.Commands.unmute) //Unmute Command
@@ -451,9 +367,7 @@ namespace Intersect.Server.Classes
                         {
                             if (commandsplit[1] == Strings.Commands.commandinfo)
                             {
-                                Console.WriteLine(@"    " +
-                                                  Strings.Commands.unmuteusage.ToString(
-                                                      Strings.Commands.commandinfo));
+                                Console.WriteLine(@"    " + Strings.Commands.unmuteusage.ToString(Strings.Commands.commandinfo));
                                 Console.WriteLine(@"    " + Strings.Commands.unmutedesc);
                             }
                             else
@@ -472,8 +386,7 @@ namespace Intersect.Server.Classes
                         }
                         else
                         {
-                            Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(
-                                Strings.Commands.commandinfo));
+                            Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
                         }
                     }
                     else if (commandsplit[0] == Strings.Commands.mute) //Mute Command
@@ -482,62 +395,41 @@ namespace Intersect.Server.Classes
                         {
                             if (commandsplit[1] == Strings.Commands.commandinfo)
                             {
-                                Console.WriteLine(@"    " +
-                                                  Strings.Commands.muteusage.ToString(
-                                                      Strings.Commands.True,
-                                                      Strings.Commands.False,
-                                                      Strings.Commands.commandinfo));
+                                Console.WriteLine(@"    " + Strings.Commands.muteusage.ToString(Strings.Commands.True, Strings.Commands.False, Strings.Commands.commandinfo));
                                 Console.WriteLine(@"    " + Strings.Commands.mutedesc);
                             }
                             else
                             {
                                 if (commandsplit.Length > 3)
                                 {
-                                    for (int i = 0; i < Globals.Clients.Count; i++)
-                                    {
+                                    for (var i = 0; i < Globals.Clients.Count; i++)
                                         if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                                         {
-                                            string user = Globals.Clients[i].Entity.Name.ToLower();
+                                            var user = Globals.Clients[i].Entity.Name.ToLower();
                                             if (user == commandsplit[1].ToLower())
                                             {
-                                                string reason = "";
-                                                for (int n = 4; n < commandsplit.Length; n++)
-                                                {
-                                                    reason += commandsplit[n] + " ";
-                                                }
-                                                if (commandsplit[3] == Strings.Commands.True)
-                                                {
-                                                    ip = Globals.Clients[i].GetIp();
-                                                }
-                                                Mute.AddMute(Globals.Clients[i],
-                                                    Convert.ToInt32(commandsplit[2]),
-                                                    reason, Strings.Commands.muteuser, ip);
-                                                PacketSender.SendGlobalMsg(Strings.Account.muted.ToString(
-                                                    Globals.Clients[i].Entity.Name));
-                                                Console.WriteLine(@"    " +
-                                                                  Strings.Account.muted.ToString(
-                                                                      Globals.Clients[i].Entity.Name));
+                                                var reason = "";
+                                                for (var n = 4; n < commandsplit.Length; n++) reason += commandsplit[n] + " ";
+                                                if (commandsplit[3] == Strings.Commands.True) ip = Globals.Clients[i].GetIp();
+                                                Mute.AddMute(Globals.Clients[i], Convert.ToInt32(commandsplit[2]), reason, Strings.Commands.muteuser, ip);
+                                                PacketSender.SendGlobalMsg(Strings.Account.muted.ToString(Globals.Clients[i].Entity.Name));
+                                                Console.WriteLine(@"    " + Strings.Account.muted.ToString(Globals.Clients[i].Entity.Name));
                                                 userFound = true;
                                                 break;
                                             }
                                         }
-                                    }
-                                    if (userFound == false)
-                                    {
-                                        Console.WriteLine(@"    " + Strings.Player.offline);
-                                    }
+
+                                    if (userFound == false) Console.WriteLine(@"    " + Strings.Player.offline);
                                 }
                                 else
                                 {
-                                    Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(
-                                        Strings.Commands.commandinfo));
+                                    Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
                                 }
                             }
                         }
                         else
                         {
-                            Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(
-                                Strings.Commands.commandinfo));
+                            Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
                         }
                     }
                     else if (commandsplit[0] == Strings.Commands.power) //Power Command
@@ -546,59 +438,43 @@ namespace Intersect.Server.Classes
                         {
                             if (commandsplit[1] == Strings.Commands.commandinfo)
                             {
-                                Console.WriteLine(@"    " +
-                                                  Strings.Commands.powerusage.ToString(
-                                                      Strings.Commands.commandinfo));
+                                Console.WriteLine(@"    " + Strings.Commands.powerusage.ToString(Strings.Commands.commandinfo));
                                 Console.WriteLine(@"    " + Strings.Commands.powerdesc);
                             }
                             else
                             {
                                 if (commandsplit.Length > 2)
                                 {
-                                    for (int i = 0; i < Globals.Clients.Count; i++)
-                                    {
+                                    for (var i = 0; i < Globals.Clients.Count; i++)
                                         if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                                         {
-                                            string user = Globals.Clients[i].Entity.Name.ToLower();
+                                            var user = Globals.Clients[i].Entity.Name.ToLower();
                                             if (user == commandsplit[1].ToLower())
                                             {
-                                                LegacyDatabase.SetPlayerAccess(Globals.Clients[i].Name, (Access)int.Parse(commandsplit[2]));
+                                                LegacyDatabase.SetPlayerAccess(Globals.Clients[i].Name, (Access) int.Parse(commandsplit[2]));
                                                 PacketSender.SendEntityDataToProximity(Globals.Clients[i].Entity);
                                                 if (Globals.Clients[i].Access > 0)
-                                                {
-                                                    PacketSender.SendGlobalMsg(Strings.Player.admin.ToString(
-                                                        Globals.Clients[i].Entity.Name));
-                                                }
+                                                    PacketSender.SendGlobalMsg(Strings.Player.admin.ToString(Globals.Clients[i].Entity.Name));
                                                 else
-                                                {
-                                                    PacketSender.SendGlobalMsg(Strings.Player.deadmin.ToString(
-                                                        Globals.Clients[i].Entity.Name));
-                                                }
-                                                Console.WriteLine(@"    " +
-                                                                  Strings.Commandoutput.powerchanged.ToString(
-                                                                      Globals.Clients[i].Entity.Name));
+                                                    PacketSender.SendGlobalMsg(Strings.Player.deadmin.ToString(Globals.Clients[i].Entity.Name));
+                                                Console.WriteLine(@"    " + Strings.Commandoutput.powerchanged.ToString(Globals.Clients[i].Entity.Name));
 
                                                 userFound = true;
                                                 break;
                                             }
                                         }
-                                    }
-                                    if (userFound == false)
-                                    {
-                                        Console.WriteLine(@"    " + Strings.Player.offline);
-                                    }
+
+                                    if (userFound == false) Console.WriteLine(@"    " + Strings.Player.offline);
                                 }
                                 else
                                 {
-                                    Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(
-                                        Strings.Commands.commandinfo));
+                                    Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
                                 }
                             }
                         }
                         else
                         {
-                            Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(
-                                Strings.Commands.commandinfo));
+                            Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
                         }
                     }
                     else if (commandsplit[0] == Strings.Commands.poweracc) //Power Account Command
@@ -607,9 +483,7 @@ namespace Intersect.Server.Classes
                         {
                             if (commandsplit[1] == Strings.Commands.commandinfo)
                             {
-                                Console.WriteLine(@"    " +
-                                                  Strings.Commands.poweraccusage.ToString(
-                                                      Strings.Commands.commandinfo));
+                                Console.WriteLine(@"    " + Strings.Commands.poweraccusage.ToString(Strings.Commands.commandinfo));
                                 Console.WriteLine(@"    " + Strings.Commands.poweraccdesc);
                             }
                             else
@@ -617,12 +491,11 @@ namespace Intersect.Server.Classes
                                 if (commandsplit.Length > 2)
                                 {
                                     if (commandsplit.Length > 2)
-                                    {
                                         try
                                         {
                                             if (LegacyDatabase.AccountExists(commandsplit[1]))
                                             {
-                                                LegacyDatabase.SetPlayerAccess(commandsplit[1], (Access)int.Parse(commandsplit[2]));
+                                                LegacyDatabase.SetPlayerAccess(commandsplit[1], (Access) int.Parse(commandsplit[2]));
                                                 Console.WriteLine(@"    " + Strings.Commandoutput.powerchanged.ToString(commandsplit[1]));
                                             }
                                             else
@@ -634,26 +507,18 @@ namespace Intersect.Server.Classes
                                         {
                                             Console.WriteLine(@"    " + Strings.Commandoutput.parseerror.ToString(commandsplit[0], Strings.Commands.commandinfo));
                                         }
-                                    }
                                     else
-                                    {
-                                        Console.WriteLine(@"    " +
-                                                          Strings.Commandoutput.syntaxerror.ToString(
-                                                              commandsplit[0],
-                                                              Strings.Commands.commandinfo));
-                                    }
+                                        Console.WriteLine(@"    " + Strings.Commandoutput.syntaxerror.ToString(commandsplit[0], Strings.Commands.commandinfo));
                                 }
                                 else
                                 {
-                                    Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(
-                                        Strings.Commands.commandinfo));
+                                    Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
                                 }
                             }
                         }
                         else
                         {
-                            Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(
-                                Strings.Commands.commandinfo));
+                            Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
                         }
                     }
                     else if (commandsplit[0] == Strings.Commands.cps) //CPS Command
@@ -662,9 +527,7 @@ namespace Intersect.Server.Classes
                         {
                             if (commandsplit[1] == Strings.Commands.commandinfo)
                             {
-                                Console.WriteLine(@"    " +
-                                                  Strings.Commands.cpsusage.ToString(
-                                                      Strings.Commands.commandinfo));
+                                Console.WriteLine(@"    " + Strings.Commands.cpsusage.ToString(Strings.Commands.commandinfo));
                                 Console.WriteLine(@"    " + Strings.Commands.cpsdesc);
                             }
                             else if (commandsplit[1] == Strings.Commands.cpslock)
@@ -678,18 +541,13 @@ namespace Intersect.Server.Classes
                             else if (commandsplit[1] == Strings.Commands.cpsstatus)
                             {
                                 if (Globals.CpsLock)
-                                {
                                     Console.WriteLine(Strings.Commandoutput.cpslocked);
-                                }
                                 else
-                                {
                                     Console.WriteLine(Strings.Commandoutput.cpsunlocked);
-                                }
                             }
                             else
                             {
-                                Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(
-                                    Strings.Commands.commandinfo));
+                                Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
                             }
                         }
                         else
@@ -703,15 +561,12 @@ namespace Intersect.Server.Classes
                         {
                             if (commandsplit[1] == Strings.Commands.commandinfo)
                             {
-                                Console.WriteLine(@"    " +
-                                                  Strings.Commands.exitusage.ToString(
-                                                      Strings.Commands.commandinfo));
+                                Console.WriteLine(@"    " + Strings.Commands.exitusage.ToString(Strings.Commands.commandinfo));
                                 Console.WriteLine(@"    " + Strings.Commands.exitdesc);
                             }
                             else
                             {
-                                Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(
-                                    Strings.Commands.commandinfo));
+                                Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
                             }
                         }
                         else
@@ -726,62 +581,38 @@ namespace Intersect.Server.Classes
                         {
                             if (commandsplit[1] == Strings.Commands.commandinfo)
                             {
-                                Console.WriteLine(@"    " +
-                                                  Strings.Commands.helpusage.ToString(
-                                                      Strings.Commands.commandinfo));
+                                Console.WriteLine(@"    " + Strings.Commands.helpusage.ToString(Strings.Commands.commandinfo));
                                 Console.WriteLine(@"    " + Strings.Commands.helpdesc);
                             }
                             else
                             {
-                                Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(
-                                    Strings.Commands.commandinfo));
+                                Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
                             }
                         }
                         else
                         {
                             Console.WriteLine(@"    " + Strings.Commandoutput.helpheader);
-                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.help) +
-                                              " - " + Strings.Commands.helphelp);
-                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.exit) +
-                                              " - " + Strings.Commands.exithelp);
-                            Console.WriteLine(@"    " +
-                                              string.Format("{0,-20}", Strings.Commands.announcement) +
-                                              " - " +
-                                              Strings.Commands.announcementhelp);
-                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.cps) +
-                                              " - " +
-                                              Strings.Commands.cpshelp);
-                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.power) +
-                                              " - " + Strings.Commands.powerhelp);
-                            Console.WriteLine(
-                                @"    " + string.Format("{0,-20}", Strings.Commands.poweracc) +
-                                " - " + Strings.Commands.poweracchelp);
-                            Console.WriteLine(
-                                @"    " + string.Format("{0,-20}", Strings.Commands.onlinelist) +
-                                " - " + Strings.Commands.onlinelisthelp);
-                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.kick) +
-                                              " - " + Strings.Commands.kickhelp);
-                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.ban) +
-                                              " - " +
-                                              Strings.Commands.banhelp);
-                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.unban) +
-                                              " - " + Strings.Commands.unbanhelp);
-                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.mute) +
-                                              " - " + Strings.Commands.mutehelp);
-                            Console.WriteLine(
-                                @"    " + string.Format("{0,-20}", Strings.Commands.unmute) +
-                                " - " + Strings.Commands.unmutehelp);
-                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.kill) +
-                                              " - " + Strings.Commands.killhelp);
-                            Console.WriteLine(@"    " +
-                                              Strings.Commandoutput.helpfooter.ToString(
-                                                  Strings.Commands.commandinfo));
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.help) + " - " + Strings.Commands.helphelp);
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.exit) + " - " + Strings.Commands.exithelp);
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.announcement) + " - " + Strings.Commands.announcementhelp);
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.cps) + " - " + Strings.Commands.cpshelp);
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.power) + " - " + Strings.Commands.powerhelp);
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.poweracc) + " - " + Strings.Commands.poweracchelp);
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.onlinelist) + " - " + Strings.Commands.onlinelisthelp);
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.kick) + " - " + Strings.Commands.kickhelp);
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.ban) + " - " + Strings.Commands.banhelp);
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.unban) + " - " + Strings.Commands.unbanhelp);
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.mute) + " - " + Strings.Commands.mutehelp);
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.unmute) + " - " + Strings.Commands.unmutehelp);
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.kill) + " - " + Strings.Commands.killhelp);
+                            Console.WriteLine(@"    " + Strings.Commandoutput.helpfooter.ToString(Strings.Commands.commandinfo));
                         }
                     }
                     else
                     {
                         Console.WriteLine(@"    " + Strings.Commandoutput.notfound);
                     }
+
                     Console.Write("> ");
                     command = Console.ReadLine();
                 }
@@ -817,19 +648,10 @@ namespace Intersect.Server.Classes
 
             //Try Loading from libs/server first
             var libsFolder = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, "libs", "server");
-            if (File.Exists(Path.Combine(libsFolder, filename)))
-            {
-                return Assembly.LoadFile(Path.Combine(libsFolder, filename));
-            }
-            else
-            {
-                string archSpecificPath = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
-                    Environment.Is64BitProcess
-                        ? Path.Combine("libs", "server", "x64")
-                        : Path.Combine("libs", "server", "x86"),
-                    filename);
-                return File.Exists(archSpecificPath) ? Assembly.LoadFile(archSpecificPath) : null;
-            }
+            if (File.Exists(Path.Combine(libsFolder, filename))) return Assembly.LoadFile(Path.Combine(libsFolder, filename));
+
+            var archSpecificPath = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase, Environment.Is64BitProcess ? Path.Combine("libs", "server", "x64") : Path.Combine("libs", "server", "x86"), filename);
+            return File.Exists(archSpecificPath) ? Assembly.LoadFile(archSpecificPath) : null;
         }
 
         public static void ProcessUnhandledException(object sender, Exception exception)
@@ -853,6 +675,7 @@ namespace Intersect.Server.Classes
                 {
                     Console.WriteLine(Strings.Errors.errorservercrashnohalt);
                 }
+
                 ShutDown();
                 return;
             }
@@ -862,8 +685,8 @@ namespace Intersect.Server.Classes
 
         private static bool RunningOnWindows()
         {
-            OperatingSystem os = Environment.OSVersion;
-            PlatformID pid = os.Platform;
+            var os = Environment.OSVersion;
+            var pid = os.Platform;
             switch (pid)
             {
                 case PlatformID.Win32NT:
@@ -872,6 +695,7 @@ namespace Intersect.Server.Classes
                 case PlatformID.WinCE:
                     return true;
             }
+
             return false;
         }
 
@@ -896,16 +720,19 @@ namespace Intersect.Server.Classes
                 case CtrlTypes.CtrlShutdownEvent:
                     ShutDown();
                     break;
-
             }
+
             return true;
         }
 
-#region "dependencies"
+        #region "dependencies"
+
         private static void ClearDlls()
         {
             DeleteIfExists("libe_sqlite3.so");
             DeleteIfExists("e_sqlite3.dll");
+            DeleteIfExists("libe_sqlite3.dylib");
+            DeleteIfExists("Nancy.dll");
         }
 
         private static string ReadProcessOutput(string name)
@@ -932,29 +759,32 @@ namespace Intersect.Server.Classes
                 output = output.Trim();
                 return output;
             }
-            catch { return ""; }
+            catch
+            {
+                return "";
+            }
         }
 
         private static void ExportDependencies()
         {
             ClearDlls();
 
-            //Place sqlite3.dll where it's needed.
-            var dllname = Environment.Is64BitProcess ? "sqlite3x64.dll" : "sqlite3x86.dll";
-            if (!ReflectionUtils.ExtractResource($"Intersect.Server.Resources.{dllname}", "sqlite3.dll"))
-            {
-                Log.Error("Failed to extract sqlite library, terminating startup.");
-                Environment.Exit(-0x1000);
-            }
+            string dllname = "";
 
             var os = Environment.OSVersion;
             var platformId = os.Platform;
             if (platformId == PlatformID.Unix)
             {
                 var unixName = ReadProcessOutput("uname");
-                if (unixName?.Contains("Darwin") ?? false)
+                if (unixName?.Contains("Darwin") ?? false) platformId = PlatformID.MacOSX;
+            }
+
+            if (Options.ApiEnabled)
+            {
+                if (!ReflectionUtils.ExtractCosturaResource("costura.nancy.dll.compressed", "Nancy.dll"))
                 {
-                    platformId = PlatformID.MacOSX;
+                    Log.Error("Failed to extract Nancy, terminating startup.");
+                    Environment.Exit(-0x1001);
                 }
             }
 
@@ -964,16 +794,22 @@ namespace Intersect.Server.Classes
                 case PlatformID.Win32S:
                 case PlatformID.Win32Windows:
                 case PlatformID.WinCE:
-                    //Place e_sqlite3.dll where it's needed.
+                    //Place sqlite3.dll where it's needed.
                     dllname = Environment.Is64BitProcess ? "e_sqlite3x64.dll" : "e_sqlite3x86.dll";
                     if (!ReflectionUtils.ExtractResource($"Intersect.Server.Resources.{dllname}", "e_sqlite3.dll"))
                     {
-                        Log.Error("Failed to extract e_sqlite library, terminating startup.");
+                        Log.Error("Failed to extract sqlite library, terminating startup.");
                         Environment.Exit(-0x1000);
                     }
+
                     break;
 
                 case PlatformID.MacOSX:
+                    if (!ReflectionUtils.ExtractResource("Intersect.Server.Resources.libe_sqlite3.dylib", "libe_sqlite3.dylib"))
+                    {
+                        Log.Error("Failed to extract lib_sqlite3.dylib, terminating startup.");
+                        Environment.Exit(-0x1001);
+                    }
                     break;
 
                 case PlatformID.Xbox:
@@ -987,6 +823,7 @@ namespace Intersect.Server.Classes
                         Log.Error("Failed to extract libe_sqlite.so library, terminating startup.");
                         Environment.Exit(-0x1000);
                     }
+
                     break;
 
                 default:
@@ -1002,11 +839,16 @@ namespace Intersect.Server.Classes
                 if (File.Exists(filename)) File.Delete(filename);
                 return true;
             }
-            catch { return false; }
+            catch
+            {
+                return false;
+            }
         }
-#endregion
 
-#region unmanaged
+        #endregion
+
+        #region unmanaged
+
         // Declare the SetConsoleCtrlHandler function
         // as external and receiving a delegate.
 
@@ -1028,6 +870,6 @@ namespace Intersect.Server.Classes
             CtrlShutdownEvent
         }
 
-#endregion
+        #endregion
     }
 }
