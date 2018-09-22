@@ -2,6 +2,7 @@
 using Intersect;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.GameObjects.Maps;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Maps;
 using Graphics = Intersect.Client.Classes.Core.GameGraphics;
@@ -426,9 +427,9 @@ namespace Intersect_Client.Classes.Entities
                             {
                                 if (newMap.Attributes[Spawns[i].X, Spawns[i].Y].Type == MapAttributes.ZDimension)
                                 {
-                                    if (newMap.Attributes[Spawns[i].X, Spawns[i].Y].ZDimension.GatewayTo > 0)
+                                    if (((MapZDimensionAttribute)(newMap.Attributes[Spawns[i].X, Spawns[i].Y])).GatewayTo > 0)
                                     {
-                                        Spawns[i].Z = newMap.Attributes[Spawns[i].X, Spawns[i].Y].ZDimension.GatewayTo - 1;
+                                        Spawns[i].Z = ((MapZDimensionAttribute)(newMap.Attributes[Spawns[i].X, Spawns[i].Y])).GatewayTo - 1;
                                     }
                                 }
                             }

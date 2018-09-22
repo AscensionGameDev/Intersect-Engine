@@ -767,9 +767,9 @@ namespace Intersect_Client.Classes.Networking
             // Set the Z-Dimension if the player has moved up or down a dimension.
             if (entityMap.Attributes[en.CurrentX, en.CurrentY] != null && entityMap.Attributes[en.CurrentX, en.CurrentY].Type == MapAttributes.ZDimension)
             {
-                if (entityMap.Attributes[en.CurrentX, en.CurrentY].ZDimension.GatewayTo > 0)
+                if (((MapZDimensionAttribute)entityMap.Attributes[en.CurrentX, en.CurrentY]).GatewayTo > 0)
                 {
-                    en.CurrentZ = entityMap.Attributes[en.CurrentX, en.CurrentY].ZDimension.GatewayTo - 1;
+                    en.CurrentZ = ((MapZDimensionAttribute)entityMap.Attributes[en.CurrentX, en.CurrentY]).GatewayTo - 1;
                 }
             }
         }

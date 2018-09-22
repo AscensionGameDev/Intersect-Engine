@@ -133,6 +133,14 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_L
             return true;
         }
 
+        public static void SaveToDisk()
+        {
+            _options.ExportDatabaseSettings = true;
+            File.WriteAllText("resources/config.json", JsonConvert.SerializeObject(_options, Formatting.Indented));
+            _options.ExportDatabaseSettings = false;
+            optionsCompressed = JsonConvert.SerializeObject(_options);
+        }
+
         public static byte[] GetOptionsData()
         {
             var bf = new ByteBuffer();

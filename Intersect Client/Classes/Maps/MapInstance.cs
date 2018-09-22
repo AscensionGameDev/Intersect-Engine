@@ -269,7 +269,7 @@ namespace Intersect_Client.Classes.Maps
                 {
                     if (Attributes[x, y] == null) continue;
                     if (Attributes[x, y].Type != MapAttributes.Animation) continue;
-                    var anim = AnimationBase.Get(Attributes[x, y].Animation.AnimationId);
+                    var anim = AnimationBase.Get(((MapAnimationAttribute)Attributes[x, y]).AnimationId);
                     if (anim == null) continue;
                     if (!mAttributeAnimInstances.ContainsKey(Attributes[x, y]))
                     {
@@ -302,8 +302,8 @@ namespace Intersect_Client.Classes.Maps
                 {
                     var attribute = Attributes?[x, y];
                     if (attribute?.Type != MapAttributes.Sound) continue;
-                    if (TextUtils.IsNone(attribute.Sound.File)) continue;
-                    var sound = GameAudio.AddMapSound(attribute.Sound.File, x, y, Id, true, attribute.Sound.Distance);
+                    if (TextUtils.IsNone(((MapSoundAttribute)attribute).File)) continue;
+                    var sound = GameAudio.AddMapSound(((MapSoundAttribute)attribute).File, x, y, Id, true, ((MapSoundAttribute)attribute).Distance);
                     AttributeSounds?.Add(sound);
                 }
             }

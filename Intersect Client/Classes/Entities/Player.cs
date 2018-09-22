@@ -7,6 +7,7 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Client.Classes.Localization;
 using Intersect.Client.Classes.UI.Game.EntityPanel;
+using Intersect.GameObjects.Maps;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Items;
 using Intersect_Client.Classes.Maps;
@@ -546,9 +547,9 @@ namespace Intersect_Client.Classes.Entities
                     {
                         if (MapInstance.Get(CurrentMap).Attributes[CurrentX, CurrentY].Type ==  MapAttributes.ZDimension)
                         {
-                            if (MapInstance.Get(CurrentMap).Attributes[CurrentX, CurrentY].ZDimension.GatewayTo > 0)
+                            if (((MapZDimensionAttribute)MapInstance.Get(CurrentMap).Attributes[CurrentX, CurrentY]).GatewayTo > 0)
                             {
-                                CurrentZ = MapInstance.Get(CurrentMap).Attributes[CurrentX, CurrentY].ZDimension.GatewayTo - 1;
+                                CurrentZ = ((MapZDimensionAttribute)MapInstance.Get(CurrentMap).Attributes[CurrentX, CurrentY]).GatewayTo - 1;
                             }
                         }
                     }
@@ -1201,7 +1202,7 @@ namespace Intersect_Client.Classes.Entities
                         }
                         else if (gameMap.Attributes[tmpX, tmpY].Type ==MapAttributes.ZDimension)
                         {
-                            if (gameMap.Attributes[tmpX, tmpY].ZDimension.BlockedLevel - 1 == z)
+                            if (((MapZDimensionAttribute)gameMap.Attributes[tmpX, tmpY]).BlockedLevel - 1 == z)
                             {
                                 return -3;
                             }

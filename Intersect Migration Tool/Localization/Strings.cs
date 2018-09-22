@@ -89,6 +89,42 @@ namespace Intersect.Migration.Localization
             public static LocalizedString updated = @"Database successfully updated to version {00}.";
         }
 
+        public struct Migration
+        {
+            public static LocalizedString newdatabase = @"Starting in Beta 5, Intersect introduces several database changes.
+ - Player data and server data are now being split into multiple databases.
+ - You may choose Sqlite or Mysql as the engine for each database.
+
+We highly recommend choosing Sqlite (a local file) for both databases. 
+
+Using a networked Mysql instance for player data is okay but Mysql is highly discouraged for game data.
+
+The following prompts will walk you through required configuration steps and bring your new databases online.";
+
+            public static LocalizedString presstocontinue = @"Press any key to continue...";
+            public static LocalizedString playerdb = @"Let's start with the player database, which database engine would you like to use?";
+            public static LocalizedString playerdbsqlite = @"   [1] Sqlite (Local, easy, no setup required!)";
+            public static LocalizedString playerdbmysql = @"   [2] Mysql (Networked, and for advanced users only!)";
+            public static LocalizedString gamedbsqlite = @"   [1] Sqlite (Local, easy, no setup required!)";
+            public static LocalizedString gamedbmysql = @"   [2] Mysql (Networked, for advanced users only, and strongly discouraged for game data!)";
+            public static LocalizedString gamedb = @"Now we need to setup the game database, this contains big chunks of data like maps. Which database engine would you like to use? (Sqlite highly recommended!)";
+            public static LocalizedString invalidinput = @"Invalid input!";
+            public static LocalizedString entermysqlinfo = @"Please enter your Mysql connection parameters:";
+            public static LocalizedString mysqlhost = @"Host: ";
+            public static LocalizedString mysqlport = @"Port: ";
+            public static LocalizedString mysqldatabase = @"Database: ";
+            public static LocalizedString mysqluser = @"User: ";
+            public static LocalizedString mysqlpass = @"Password: ";
+            public static LocalizedString mysqlconnecting = @"Please wait, attempting to connect to database...  ";
+            public static LocalizedString mysqlconnected = @"Connected!";
+            public static LocalizedString mysqlnotempty = @"Database must be empty before migration! Please delete any tables before proceeding!";
+            public static LocalizedString mysqlconnectionerror = @"Error opening db connection! Error: {00}";
+            public static LocalizedString mysqltryagain = @"Would you like to try entering your connection info again? (y/n)  ";
+            public static LocalizedString tryagaincharacter = @"y";
+            public static LocalizedString mysqlsetupcancelled = @"Mysql setup cancelled.";
+            public static LocalizedString migratingpleasewait = @"Starting migration, please wait! This might take several minutes....";
+            public static LocalizedString upgradecomplete = @"Database migrated successfully! Feel free to delete this migration tool. Press any key to exit!";
+        }
 
 
         public static void Load()

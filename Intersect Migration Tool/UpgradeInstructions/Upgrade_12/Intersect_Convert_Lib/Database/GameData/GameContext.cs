@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_Lib.GameObjects;
 using Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_Lib.GameObjects.Crafting;
 using Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_Lib.GameObjects.Events;
@@ -91,6 +92,29 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_L
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        public bool IsEmpty()
+        {
+            using (var command = Database.GetDbConnection().CreateCommand())
+            {
+                if (mConnection == DatabaseUtils.DbProvider.MySql)
+                {
+                    command.CommandText = "show tables;";
+                }
+                else if (mConnection == DatabaseUtils.DbProvider.Sqlite)
+                {
+                    command.CommandText = "SELECT name FROM sqlite_master WHERE type='table';";
+                }
+                command.CommandType = CommandType.Text;
+
+                Database.OpenConnection();
+
+                using (var result = command.ExecuteReader())
+                {
+                    return !result.HasRows;
+                }
             }
         }
 

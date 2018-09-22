@@ -35,6 +35,7 @@ using ShopBase = Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Co
 using Intersect.Migration.UpgradeInstructions.Upgrade_11;
 using Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_Lib.Database.PlayerData;
 using Intersect.Server.Classes.Database.PlayerData.Characters;
+using Intersect.Migration.Localization;
 
 namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
 {
@@ -72,8 +73,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
         private const string GameDbFilename = "resources/gamedata.db";
         private const string PlayersDbFilename = "resources/playerdata.db";
         private long _tc = DateTime.Now.ToBinary();
-        private bool playerDbSqlite = true;
-        private bool gameDbSqlite = true;
+        private DatabaseOptions playerDbOptions = null;
+        private DatabaseOptions gameDbOptions = null;
 
         private long TimeCreated
         {
@@ -118,33 +119,180 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
 
             //TODO: On screen prompts to see if they want to use sqlite or mysql...
             //We will officially recommend sqlite for BOTH since the api will be available... but this will be their call. Going back and forth will be difficult to say the least.
+            Console.WriteLine();
+            Console.WriteLine(Strings.Migration.newdatabase);
+            Console.WriteLine();
+            Console.WriteLine(Strings.Migration.presstocontinue);
+            Console.ReadKey(true);
 
-            //MySql Connection Settings
-            var playerDbMySqlConnInfo = new MySqlDbConnInfo();
-            var gameDbMySqlConnInfo = new MySqlDbConnInfo();
+            //Get Player DB Config
+            while (playerDbOptions == null)
+            {
+                Console.WriteLine();
+                Console.WriteLine(Strings.Migration.playerdb);
+                Console.WriteLine(Strings.Migration.playerdbsqlite);
+                Console.WriteLine(Strings.Migration.playerdbmysql);
+                Console.WriteLine();
+                Console.Write("> ");
+                var input = Console.ReadKey();
+                Console.WriteLine();
+                Console.WriteLine();
+                if (input.KeyChar == '1')
+                {
+                    playerDbOptions = new DatabaseOptions();
+                    playerDbOptions.Type = DatabaseOptions.DatabaseType.sqlite;
+                }
+                else if (input.KeyChar == '2')
+                {
+                    playerDbOptions = GetMysqlDbOptions();
+                }
+                else
+                {
+                    Console.WriteLine(Strings.Migration.invalidinput);
+                }
+            }
 
+            Console.WriteLine();
 
+            //Get Game DB Config
+            while (gameDbOptions == null)
+            {
+                Console.WriteLine();
+                Console.WriteLine(Strings.Migration.gamedb);
+                Console.WriteLine(Strings.Migration.gamedbsqlite);
+                Console.WriteLine(Strings.Migration.gamedbmysql);
+                Console.WriteLine();
+                Console.Write("> ");
+                var input = Console.ReadKey();
+                Console.WriteLine();
+                Console.WriteLine();
+                if (input.KeyChar == '1')
+                {
+                    gameDbOptions = new DatabaseOptions();
+                    gameDbOptions.Type = DatabaseOptions.DatabaseType.sqlite;
+                }
+                else if (input.KeyChar == '2')
+                {
+                    gameDbOptions = GetMysqlDbOptions();
+                }
+                else
+                {
+                    Console.WriteLine(Strings.Migration.invalidinput);
+                }
+            }
+
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine(Strings.Migration.migratingpleasewait);
 
             //Connect to new player database
-            if (playerDbSqlite)
+            if (playerDbOptions.Type == DatabaseOptions.DatabaseType.sqlite)
             {
                 sPlayerDb = new PlayerContext(DatabaseUtils.DbProvider.Sqlite, $"Data Source={PlayersDbFilename}");
             }
             else
             {
-                sPlayerDb = new PlayerContext(DatabaseUtils.DbProvider.MySql, $"server={playerDbMySqlConnInfo.Server}:{playerDbMySqlConnInfo.Port};database={playerDbMySqlConnInfo.Database};user={playerDbMySqlConnInfo.User};password={playerDbMySqlConnInfo.Password}");
+                sPlayerDb = new PlayerContext(DatabaseUtils.DbProvider.MySql, $"server={playerDbOptions.Server};port={playerDbOptions.Port};database={playerDbOptions.Database};user={playerDbOptions.Username};password={playerDbOptions.Password}");
             }
+            sPlayerDb.Database.EnsureDeleted();
             sPlayerDb.Database.Migrate();
 
-            if (gameDbSqlite)
+            if (gameDbOptions.Type == DatabaseOptions.DatabaseType.sqlite)
             {
                 sGameDb = new GameContext(DatabaseUtils.DbProvider.Sqlite, $"Data Source={GameDbFilename}");
             }
             else
             {
-                sGameDb = new GameContext(DatabaseUtils.DbProvider.MySql, $"server={gameDbMySqlConnInfo.Server}:{gameDbMySqlConnInfo.Port};database={gameDbMySqlConnInfo.Database};user={gameDbMySqlConnInfo.User};password={gameDbMySqlConnInfo.Password}");
+                sGameDb = new GameContext(DatabaseUtils.DbProvider.MySql, $"server={gameDbOptions.Server};port={gameDbOptions.Port};database={gameDbOptions.Database};user={gameDbOptions.Username};password={gameDbOptions.Password}");
             }
+            sGameDb.Database.EnsureDeleted();
             sGameDb.Database.Migrate();
+        }
+
+        private DatabaseOptions GetMysqlDbOptions()
+        {
+            DatabaseOptions options = null;
+            Console.WriteLine(Strings.Migration.entermysqlinfo);
+            Console.Write(Strings.Migration.mysqlhost);
+            var host = Console.ReadLine().Trim();
+            Console.Write(Strings.Migration.mysqlport);
+            var portinput = Console.ReadLine().Trim();
+            if (string.IsNullOrEmpty(portinput)) portinput = "3306";
+            var port = int.Parse(portinput);
+            Console.Write(Strings.Migration.mysqldatabase);
+            var database = Console.ReadLine().Trim();
+            Console.Write(Strings.Migration.mysqluser);
+            var user = Console.ReadLine().Trim();
+            Console.Write(Strings.Migration.mysqlpass);
+            var pass = GetPassword();
+
+            Console.WriteLine();
+            Console.Write(Strings.Migration.mysqlconnecting);
+            var connString = $"server={host};port={port};database={database};user={user};password={pass}";
+            try
+            {
+                var context = new GameContext(DatabaseUtils.DbProvider.MySql, connString);
+                Console.Write(Strings.Migration.mysqlconnected);
+                if (context.IsEmpty())
+                {
+                    options = new DatabaseOptions();
+                    options.Type = DatabaseOptions.DatabaseType.mysql;
+                    options.Server = host;
+                    options.Port = port;
+                    options.Database = database;
+                    options.Username = user;
+                    options.Password = pass;
+                }
+                else
+                {
+                    Console.WriteLine();
+                    Console.WriteLine(Strings.Migration.mysqlnotempty);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine();
+                Console.WriteLine(Strings.Migration.mysqlconnectionerror.ToString(ex));
+                Console.WriteLine();
+                Console.WriteLine(Strings.Migration.mysqltryagain);
+                var key = Console.ReadKey().KeyChar;
+                Console.WriteLine();
+                if (key.ToString() != Strings.Migration.tryagaincharacter)
+                {
+                    Console.WriteLine(Strings.Migration.mysqlsetupcancelled);
+                }
+            }
+            return options;
+        }
+
+        //Code taken from Stackoverflow on 9/20/2018
+        //Answer by Dai and Damian Leszczyński - Vash
+        //https://stackoverflow.com/questions/3404421/password-masking-console-application
+        public static string GetPassword()
+        {
+            var pwd = "";
+            while (true)
+            {
+                ConsoleKeyInfo i = Console.ReadKey(true);
+                if (i.Key == ConsoleKey.Enter)
+                {
+                    break;
+                }
+                else if (i.Key == ConsoleKey.Backspace)
+                {
+                    if (pwd.Length > 0)
+                    {
+                        pwd.Remove(pwd.Length - 2, 1);
+                        Console.Write("\b \b");
+                    }
+                }
+                else if (i.KeyChar != '\u0000') // KeyChar == '\u0000' if the key pressed does not correspond to a printable character, e.g. F1, Pause-Break, etc
+                {
+                    pwd = pwd + i.KeyChar;
+                    Console.Write("*");
+                }
+            }
+            return pwd;
         }
 
         public void Upgrade()
@@ -195,8 +343,10 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
             Options.Map.TileHeight = Upgrade_11.Intersect_Convert_Lib.Options.TileHeight;
             Options.Player.ProgressSavedMessages = false;
             Options._options._apiPort = Options.ServerPort;
+            Options._options.PlayerDatabase = playerDbOptions;
+            Options._options.GameDatabase = gameDbOptions;
 
-            File.WriteAllText("resources/config.json", JsonConvert.SerializeObject(Options._options, Formatting.Indented));
+            Options.SaveToDisk();
 
 
             //Generate Quest Task Ids
@@ -246,11 +396,11 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
 
             sGameDb.SaveChanges();
             sPlayerDb.SaveChanges();
-            if (gameDbSqlite) sGameDb.Database.ExecuteSqlCommand("VACUUM;");
-            if (playerDbSqlite) sPlayerDb.Database.ExecuteSqlCommand("VACUUM;");
+            if (gameDbOptions.Type == DatabaseOptions.DatabaseType.sqlite) sGameDb.Database.ExecuteSqlCommand("VACUUM;");
+            if (playerDbOptions.Type == DatabaseOptions.DatabaseType.sqlite) sPlayerDb.Database.ExecuteSqlCommand("VACUUM;");
             sGameDb.SaveChanges();
             sPlayerDb.SaveChanges();
-            Console.WriteLine("Done converting to new db! Hit any key to continue");
+            Console.WriteLine(Strings.Migration.upgradecomplete);
             Console.ReadKey();
             Environment.Exit(-1);
         }
@@ -2030,14 +2180,5 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
             }
             return Guid.Empty;
         }
-    }
-
-    public class MySqlDbConnInfo
-    {
-        public string Server;
-        public string User;
-        public string Password;
-        public int Port;
-        public string Database;
     }
 }

@@ -532,8 +532,8 @@ namespace Intersect.Server.Classes.Entities
                                 }
                             }
                         }
+                        StatPoints += myclass.PointIncrease;
                     }
-                    StatPoints += myclass.PointIncrease;
                 }
             }
 

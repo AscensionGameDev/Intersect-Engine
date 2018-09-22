@@ -54,6 +54,11 @@ namespace Intersect.Server.Classes.Core
             }
 
             //Server is shutting down!!
+            LegacyDatabase.SavePlayerDatabaseAsync();
+            LegacyDatabase.SaveGameDatabaseAsync();
+            Globals.Api?.Stop();
+            Globals.Network?.Dispose();
+            Globals.ServerStopped = true;
             //TODO gracefully disconnect all clients
         }
     }

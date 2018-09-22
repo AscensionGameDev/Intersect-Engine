@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Intersect.Config;
 using Intersect.Enums;
 using Intersect.Logging;
 using Intersect.Network;
@@ -30,8 +31,6 @@ namespace Intersect.Server.Classes
     public class ServerStart
     {
         private static bool sErrorHalt = true;
-        private static ServerApi serverApi;
-        public static ServerNetwork SocketServer;
 
         static ServerStart()
         {
@@ -91,18 +90,18 @@ namespace Intersect.Server.Classes
             {
                 var rsaKey = EncryptionKey.FromStream<RsaKey>(stream);
                 Debug.Assert(rsaKey != null, "rsaKey != null");
-                SocketServer = new ServerNetwork(new NetworkConfiguration(Options.ServerPort), rsaKey.Parameters);
+                Globals.Network = new ServerNetwork(new NetworkConfiguration(Options.ServerPort), rsaKey.Parameters);
             }
 
             var packetHandler = new PacketHandler();
-            SocketServer.Handlers[PacketCode.BinaryPacket] = packetHandler.HandlePacket;
+            Globals.Network.Handlers[PacketCode.BinaryPacket] = packetHandler.HandlePacket;
 
 #if websockets
             WebSocketNetwork.Init(Options.ServerPort);
             Console.WriteLine(Strings.Intro.websocketstarted.ToString( Options.ServerPort));
 #endif
 
-            if (!SocketServer.Listen()) Log.Error("An error occurred while attempting to connect.");
+            if (!Globals.Network.Listen()) Log.Error("An error occurred while attempting to connect.");
 
             Console.WriteLine();
 
@@ -122,8 +121,8 @@ namespace Intersect.Server.Classes
             if (Options.ApiEnabled)
             {
                 Console.WriteLine(Strings.Intro.api.ToString(Options.ApiPort));
-                serverApi = new ServerApi(Options.ApiPort);
-                serverApi.Start();
+                Globals.Api = new ServerApi(Options.ApiPort);
+                Globals.Api.Start();
                 Console.WriteLine();
                 DeleteIfExists("Nancy.dll");
             }
@@ -575,6 +574,74 @@ namespace Intersect.Server.Classes
                             return;
                         }
                     }
+                    else if (commandsplit[0] == Strings.Commands.migrate) //Migrate Command
+                    {
+                        if (commandsplit.Length > 1)
+                        {
+                            if (commandsplit[1] == Strings.Commands.commandinfo)
+                            {
+                                Console.WriteLine(@"    " + Strings.Commands.migrateusage.ToString(Strings.Commands.commandinfo));
+                                Console.WriteLine(@"    " + Strings.Commands.migratedesc);
+                            }
+                            else
+                            {
+                                Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine();
+                            Console.WriteLine(Strings.Migration.selectdb);
+                            Console.WriteLine();
+                            Console.WriteLine(Strings.Migration.selectgamedb.ToString(Options.GameDb.Type == DatabaseOptions.DatabaseType.sqlite ? Strings.Migration.currentlysqlite : Strings.Migration.currentlymysql));
+                            Console.WriteLine(Strings.Migration.selectplayerdb.ToString(Options.PlayerDb.Type == DatabaseOptions.DatabaseType.sqlite ? Strings.Migration.currentlysqlite : Strings.Migration.currentlymysql));
+                            Console.WriteLine();
+                            Console.WriteLine(Strings.Migration.cancel);
+                            Console.Write("> ");
+                            var selection = Console.ReadKey().KeyChar;
+                            Console.WriteLine();
+                            DatabaseOptions db = null;
+                            if (selection.ToString() == Strings.Migration.selectgamedbkey.ToString())
+                            {
+                                db = Options.GameDb;
+                            }
+                            else if (selection.ToString() == Strings.Migration.selectplayerdbkey.ToString())
+                            {
+                                db = Options.PlayerDb;
+                            }
+                            if (db != null)
+                            {
+                                var dbString = db == Options.GameDb ? Strings.Migration.gamedb : Strings.Migration.playerdb;
+                                Console.WriteLine();
+                                Console.WriteLine(Strings.Migration.selectdbengine.ToString(dbString));
+                                Console.WriteLine(Strings.Migration.migratetosqlite);
+                                Console.WriteLine(Strings.Migration.migratetomysql);
+                                Console.WriteLine();
+                                Console.WriteLine(Strings.Migration.cancel);
+                                Console.Write("> ");
+                                selection = Console.ReadKey().KeyChar;
+                                Console.WriteLine();
+                                DatabaseOptions.DatabaseType dbengine = DatabaseOptions.DatabaseType.sqlite;
+                                if (selection.ToString() == Strings.Migration.selectsqlitekey.ToString() || selection.ToString() == Strings.Migration.selectmysqlkey.ToString())
+                                {
+                                    if (selection.ToString() == Strings.Migration.selectmysqlkey.ToString()) dbengine = DatabaseOptions.DatabaseType.mysql;
+                                    if (db.Type == dbengine)
+                                    {
+                                        var engineString = dbengine == DatabaseOptions.DatabaseType.sqlite ? Strings.Migration.sqlite : Strings.Migration.mysql;
+                                        Console.WriteLine();
+                                        Console.WriteLine(Strings.Migration.alreadyusingengine.ToString(dbString, engineString));
+                                        Console.WriteLine();
+                                    }
+                                    else
+                                    {
+                                        LegacyDatabase.Migrate(db, dbengine);
+                                    }
+                                }
+                            }
+                            
+
+                        }
+                    }
                     else if (commandsplit[0] == Strings.Commands.help) //Help Command
                     {
                         if (commandsplit.Length > 1)
@@ -605,6 +672,7 @@ namespace Intersect.Server.Classes
                             Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.mute) + " - " + Strings.Commands.mutehelp);
                             Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.unmute) + " - " + Strings.Commands.unmutehelp);
                             Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.kill) + " - " + Strings.Commands.killhelp);
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.migrate) + " - " + Strings.Commands.migratehelp);
                             Console.WriteLine(@"    " + Strings.Commandoutput.helpfooter.ToString(Strings.Commands.commandinfo));
                         }
                     }
@@ -628,9 +696,11 @@ namespace Intersect.Server.Classes
         private static void ShutDown()
         {
             LegacyDatabase.SavePlayerDatabaseAsync();
-            serverApi?.Stop();
+            LegacyDatabase.SaveGameDatabaseAsync();
+            Globals.Api?.Stop();
             Globals.ServerStarted = false;
-            SocketServer?.Dispose();
+            Globals.Network?.Dispose();
+            Globals.ServerStopped = true;
         }
 
         private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)

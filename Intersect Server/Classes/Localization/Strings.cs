@@ -215,6 +215,10 @@ namespace Intersect.Server.Classes.Localization
             public static LocalizedString killdesc = @"Desc: Kills a player on the server.";
             public static LocalizedString killhelp = @"kills a player on the server";
             public static LocalizedString killusage = @"Usage: kill [username] {00}";
+            public static LocalizedString migrate = @"migrate";
+            public static LocalizedString migratedesc = @"Desc: Walks you through migrating your player or game database between sqlite and mysql.";
+            public static LocalizedString migratehelp = @"walks you through migrating your player or game database between sqlite and mysql";
+            public static LocalizedString migrateusage = @"Usage: migrate";
             public static LocalizedString mute = @"mute";
             public static LocalizedString mutedesc = @"Desc: mutes a player preventing them from talking.";
             public static LocalizedString mutehelp = @"mutes a player preventing them from talking";
@@ -344,6 +348,45 @@ namespace Intersect.Server.Classes.Localization
             public static LocalizedString linkfail = @"Map Link Failure";
             public static LocalizedString linkfailerror = @"Failed to link map {00} to map {01}. If this merge were to happen, maps {02} and {03} would occupy the same space in the world.";
             public static LocalizedString newfolder = @"New Folder";
+        }
+
+        public struct Migration
+        {
+            public static LocalizedString cancel = @"   Press any other key to cancel migration.";
+            public static LocalizedString currentlymysql = @"currently using MySql";
+            public static LocalizedString currentlysqlite = @"currently using Sqlite";
+            public static LocalizedString gamedb = @"Game";
+            public static LocalizedString selectdb = @"Which database would you like to migrate:";
+            public static LocalizedString selectgamedb = "   [1] Game Database ({00})  -  Sqlite Strongly Recommended!";
+            public static LocalizedString selectplayerdb = "   [2] Player Database ({00})";
+            public static LocalizedString selectgamedbkey = @"1";
+            public static LocalizedString selectplayerdbkey = @"2";
+            public static LocalizedString selectdbengine = @"Select which engine to migrate the {00} database to:";
+            public static LocalizedString sqlite = @"Sqlite";
+            public static LocalizedString migratetosqlite = @"   [1] Sqlite";
+            public static LocalizedString migratetomysql = @"   [2] Mysql";
+            public static LocalizedString mysql = @"Mysql";
+            public static LocalizedString playerdb = @"Player";
+            public static LocalizedString selectsqlitekey = @"1";
+            public static LocalizedString selectmysqlkey = @"2";
+            public static LocalizedString alreadyusingengine = @"   Migration Error: {00} database is already using {01}!";
+            public static LocalizedString startingmigration = @"Starting migration, please wait! (This could take several minutes depending on the size of your game)";
+            public static LocalizedString entermysqlinfo = @"Please enter your Mysql connection parameters:";
+            public static LocalizedString mysqlhost = @"Host: ";
+            public static LocalizedString mysqlport = @"Port: ";
+            public static LocalizedString mysqldatabase = @"Database: ";
+            public static LocalizedString mysqluser = @"User: ";
+            public static LocalizedString mysqlpass = @"Password: ";
+            public static LocalizedString mysqlconnecting = @"Please wait, attempting to connect to database...";
+            public static LocalizedString mysqlnotempty = @"Database must be empty before migration! Please delete any tables before proceeding! Migration Cancelled.";
+            public static LocalizedString mysqlconnectionerror = @"Error opening db connection! Error: {00}";
+            public static LocalizedString mysqltryagain = @"Would you like to try entering your connection info again? (y/n)  ";
+            public static LocalizedString tryagaincharacter = @"y";
+            public static LocalizedString migrationcancelled = @"Migration Cancelled";
+            public static LocalizedString sqlitealreadyexists = @"{00} already exists, overwrite? (y/n)  ";
+            public static LocalizedString overwritecharacter = @"y";
+            public static LocalizedString stoppingserver = @"Please wait, stopping server, and saving current database...";
+            public static LocalizedString migrationcomplete = @"Migration complete! Press any key to exit.";
         }
 
         public struct NetDebug

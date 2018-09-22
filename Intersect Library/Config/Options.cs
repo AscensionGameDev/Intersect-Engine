@@ -48,8 +48,18 @@ namespace Intersect
         public static bool ProgressSavedMessages => _options.PlayerOpts.ProgressSavedMessages;
         public static bool ApiEnabled => _options._api;
         public static ushort ApiPort => _options._apiPort;
-        public static DatabaseOptions PlayerDb => _options.PlayerDatabase;
-        public static DatabaseOptions GameDb => _options.GameDatabase;
+
+        public static DatabaseOptions PlayerDb
+        {
+            get { return _options.PlayerDatabase; }
+            set { _options.PlayerDatabase = value; }
+        }
+
+        public static DatabaseOptions GameDb
+        {
+            get { return _options.GameDatabase; }
+            set { _options.GameDatabase = value; }
+        }
 
 
         [NotNull]
@@ -132,6 +142,14 @@ namespace Intersect
             _options.ExportDatabaseSettings = false;
             optionsCompressed = JsonConvert.SerializeObject(_options);
             return true;
+        }
+
+        public static void SaveToDisk()
+        {
+            _options.ExportDatabaseSettings = true;
+            File.WriteAllText("resources/config.json", JsonConvert.SerializeObject(_options, Formatting.Indented));
+            _options.ExportDatabaseSettings = false;
+            optionsCompressed = JsonConvert.SerializeObject(_options);
         }
 
         public static byte[] GetOptionsData()
