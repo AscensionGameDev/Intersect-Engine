@@ -49,12 +49,13 @@ namespace Intersect.Editor.Forms.Editors
             this.lblName = new System.Windows.Forms.Label();
             this.lblObject = new System.Windows.Forms.Label();
             this.cmbSwitchValue = new DarkUI.Controls.DarkComboBox();
-            this.txtVariableVal = new DarkUI.Controls.DarkTextBox();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
+            this.nudVariableValue = new DarkUI.Controls.DarkNumericUpDown();
             this.grpTypes.SuspendLayout();
             this.grpList.SuspendLayout();
             this.grpEditor.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudVariableValue)).BeginInit();
             this.SuspendLayout();
             // 
             // grpTypes
@@ -180,6 +181,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpEditor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpEditor.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpEditor.Controls.Add(this.nudVariableValue);
             this.grpEditor.Controls.Add(this.txtId);
             this.grpEditor.Controls.Add(this.lblId);
             this.grpEditor.Controls.Add(this.lblValue);
@@ -187,7 +189,6 @@ namespace Intersect.Editor.Forms.Editors
             this.grpEditor.Controls.Add(this.lblName);
             this.grpEditor.Controls.Add(this.lblObject);
             this.grpEditor.Controls.Add(this.cmbSwitchValue);
-            this.grpEditor.Controls.Add(this.txtVariableVal);
             this.grpEditor.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpEditor.Location = new System.Drawing.Point(219, 73);
             this.grpEditor.Name = "grpEditor";
@@ -202,7 +203,7 @@ namespace Intersect.Editor.Forms.Editors
             this.txtId.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.txtId.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtId.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.txtId.Location = new System.Drawing.Point(85, 66);
+            this.txtId.Location = new System.Drawing.Point(85, 68);
             this.txtId.Name = "txtId";
             this.txtId.Size = new System.Drawing.Size(193, 20);
             this.txtId.TabIndex = 8;
@@ -281,17 +282,6 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbSwitchValue.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbSwitchValue.SelectedIndexChanged += new System.EventHandler(this.cmbSwitchValue_SelectedIndexChanged);
             // 
-            // txtVariableVal
-            // 
-            this.txtVariableVal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.txtVariableVal.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtVariableVal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.txtVariableVal.Location = new System.Drawing.Point(85, 97);
-            this.txtVariableVal.Name = "txtVariableVal";
-            this.txtVariableVal.Size = new System.Drawing.Size(193, 20);
-            this.txtVariableVal.TabIndex = 4;
-            this.txtVariableVal.TextChanged += new System.EventHandler(this.txtVariableVal_TextChanged);
-            // 
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
@@ -312,6 +302,26 @@ namespace Intersect.Editor.Forms.Editors
             this.btnSave.TabIndex = 51;
             this.btnSave.Text = "Save";
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // nudVariableValue
+            // 
+            this.nudVariableValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudVariableValue.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudVariableValue.Location = new System.Drawing.Point(85, 97);
+            this.nudVariableValue.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.nudVariableValue.Name = "nudVariableValue";
+            this.nudVariableValue.Size = new System.Drawing.Size(193, 20);
+            this.nudVariableValue.TabIndex = 60;
+            this.nudVariableValue.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudVariableValue.ValueChanged += new System.EventHandler(this.nudVariableValue_ValueChanged);
             // 
             // FrmSwitchVariable
             // 
@@ -338,6 +348,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpList.ResumeLayout(false);
             this.grpEditor.ResumeLayout(false);
             this.grpEditor.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudVariableValue)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -353,7 +364,6 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.ListBox lstObjects;
         private DarkGroupBox grpEditor;
         private DarkComboBox cmbSwitchValue;
-        private DarkTextBox txtVariableVal;
         private System.Windows.Forms.Label lblValue;
         private DarkTextBox txtObjectName;
         private System.Windows.Forms.Label lblName;
@@ -365,5 +375,6 @@ namespace Intersect.Editor.Forms.Editors
         private DarkButton btnCancel;
         private DarkTextBox txtId;
         private System.Windows.Forms.Label lblId;
+        private DarkNumericUpDown nudVariableValue;
     }
 }

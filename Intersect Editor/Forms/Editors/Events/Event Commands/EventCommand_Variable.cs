@@ -22,6 +22,10 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             mEventEditor = editor;
             mLoading = true;
             InitLocalization();
+            cmbSetGlobalVar.Items.Clear();
+            cmbSetGlobalVar.Items.AddRange(ServerVariableBase.Names);
+            cmbSetPlayerVar.Items.Clear();
+            cmbSetPlayerVar.Items.AddRange(PlayerVariableBase.Names);
             if (mMyCommand.VariableType == VariableTypes.ServerVariable)
             {
                 rdoGlobalVariable.Checked = true;
@@ -45,6 +49,9 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             optAdd.Text = Strings.EventSetVariable.add;
             optSubtract.Text = Strings.EventSetVariable.subtract;
             optRandom.Text = Strings.EventSetVariable.random;
+            optSystemTime.Text = Strings.EventSetVariable.systemtime;
+            optPlayerVar.Text = Strings.EventSetVariable.playervariablevalue;
+            optGlobalVar.Text = Strings.EventSetVariable.globalvariablevalue;
             lblRandomLow.Text = Strings.EventSetVariable.randomlow;
             lblRandomHigh.Text = Strings.EventSetVariable.randomhigh;
             btnSave.Text = Strings.EventSetVariable.okay;
@@ -84,6 +91,17 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                     nudLow.Value = mMyCommand.Value;
                     nudHigh.Value = mMyCommand.HighValue;
                     break;
+                case VariableMods.SystemTime:
+                    optSystemTime.Checked = true;
+                    break;
+                case VariableMods.DupPlayerVar:
+                    optPlayerVar.Checked = true;
+                    cmbSetPlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(mMyCommand.DupVariableId);
+                    break;
+                case VariableMods.DupGlobalVar:
+                    optGlobalVar.Checked = true;
+                    cmbSetGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(mMyCommand.DupVariableId);
+                    break;
             }
             UpdateFormElements();
         }
@@ -95,6 +113,8 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             nudSubtract.Enabled = optSubtract.Checked;
             nudLow.Enabled = optRandom.Checked;
             nudHigh.Enabled = optRandom.Checked;
+            cmbSetPlayerVar.Enabled = optPlayerVar.Checked;
+            cmbSetGlobalVar.Enabled = optGlobalVar.Checked;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -137,6 +157,21 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                     mMyCommand.HighValue = n;
                 }
             }
+            else if (optSystemTime.Checked)
+            {
+                mMyCommand.ModType = VariableMods.SystemTime;
+            }
+            else if (optPlayerVar.Checked)
+            {
+                mMyCommand.ModType = VariableMods.DupPlayerVar;
+                mMyCommand.DupVariableId = PlayerVariableBase.IdFromList(cmbSetPlayerVar.SelectedIndex);
+            }
+            else if (optGlobalVar.Checked)
+            {
+                mMyCommand.ModType = VariableMods.DupGlobalVar;
+                mMyCommand.DupVariableId = ServerVariableBase.IdFromList(cmbSetGlobalVar.SelectedIndex);
+            }
+            
             mEventEditor.FinishCommandEdit();
         }
 
@@ -161,6 +196,21 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         }
 
         private void optRandom_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateFormElements();
+        }
+
+        private void optSystemTime_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateFormElements();
+        }
+
+        private void optPlayerVar_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateFormElements();
+        }
+
+        private void optGlobalVar_CheckedChanged(object sender, EventArgs e)
         {
             UpdateFormElements();
         }

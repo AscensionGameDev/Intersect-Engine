@@ -448,6 +448,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString conditionalend = @"End Branch";
             public static LocalizedString deletedevent = @"Deleted Event!";
             public static LocalizedString despawnnpcs = @"Despawn NPCs";
+            public static LocalizedString dupglobalvariable = @"Global Variable: {00}'s Value";
+            public static LocalizedString dupplayervariable = @"Player Variable: {00}'s Value";
             public static LocalizedString enditemchange = @"End Item Change";
             public static LocalizedString endoptions = @"End Options";
             public static LocalizedString endquest = @"End Quest [{00}, {01}]";
@@ -525,6 +527,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString startquest = @"Start Quest [{00}, {01}]";
             public static LocalizedString stopsounds = @"Stop Sounds";
             public static LocalizedString subtractvariable = @"Subtract {00}";
+            public static LocalizedString systemtimevariable = @"System Time (ms)";
             public static LocalizedString take = @"Take: Item {00}";
             public static LocalizedString taskundefined = @"Undefined";
             public static LocalizedString teach = @"Teach: Spell {00}";
@@ -651,6 +654,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString genderis = @"Gender Is..";
             public static LocalizedString globalswitch = @"Global Switch";
             public static LocalizedString globalvariable = @"Global Variable";
+            public static LocalizedString globalvariablevalue = @"Global Variable Value: ";
             public static LocalizedString hasatleast = @"Has at least:";
             public static LocalizedString hasitem = @"Has Item";
             public static LocalizedString ignorestatbuffs = @"Ignore equipment & spell buffs.";
@@ -666,6 +670,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString okay = @"Ok";
             public static LocalizedString playerswitch = @"Player Switch";
             public static LocalizedString playervariable = @"Player Variable";
+            public static LocalizedString playervariablevalue = @"Player Variable Value: ";
             public static LocalizedString power = @"Power:";
             public static LocalizedString power0 = @"Mod or Admin";
             public static LocalizedString power1 = @"Admin";
@@ -703,7 +708,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString to = @"to";
             public static LocalizedString True = @"True";
             public static LocalizedString type = @"Condition Type:";
-            public static LocalizedString value = @"Value:";
+            public static LocalizedString value = @"Static Value:";
             public static LocalizedString variable = @"Variable:";
         }
 
@@ -718,7 +723,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString female = @"Female";
             public static LocalizedString gender = @"Player's Gender is {00}";
             public static LocalizedString globalswitch = @"Global Switch {00} is {01}";
-            public static LocalizedString globalvariable = @"Global Variable {00} {01}";
+            public static LocalizedString globalvariable = @"Global Variable: {00} {01}";
+            public static LocalizedString globalvariablevalue = @"Global Variable: {00}'s Value";
             public static LocalizedString greater = @"is greater than {00}";
             public static LocalizedString greaterequal = @"is greater than or equal to {00}";
             public static LocalizedString hasitem = @"Player has at least {00} of Item {01}";
@@ -738,7 +744,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString ontask = @", On Task: {00}";
             public static LocalizedString playerdeath = @"Player Death";
             public static LocalizedString playerswitch = @"Player Switch {00} is {01}";
-            public static LocalizedString playervariable = @"Player Variable {00} {01}";
+            public static LocalizedString playervariable = @"Player Variable: {00} {01}";
+            public static LocalizedString playervariablevalue = @"Player Variable: {00}'s Value";
             public static LocalizedString power = @"Player's Power is {00}";
             public static LocalizedString questcompleted = @"Quest is Completed: {00}";
             public static LocalizedString questinprogress = @"Quest In Progress: {00} {01}";
@@ -1071,14 +1078,17 @@ Tick timer saved in server config.json.";
             public static LocalizedString add = @"Add";
             public static LocalizedString cancel = @"Cancel";
             public static LocalizedString global = @"Global Variable";
+            public static LocalizedString globalvariablevalue = @"Global Variable Value: ";
             public static LocalizedString label = @"Variable:";
             public static LocalizedString okay = @"Ok";
             public static LocalizedString player = @"Player Variable";
+            public static LocalizedString playervariablevalue = @"Player Variable Value: ";
             public static LocalizedString random = @"Random";
             public static LocalizedString randomhigh = @"High:";
             public static LocalizedString randomlow = @"Low:";
             public static LocalizedString set = @"Set";
             public static LocalizedString subtract = @"Subtract";
+            public static LocalizedString systemtime = @"System Time (ms)";
             public static LocalizedString title = @"Set Variable";
         }
 
@@ -2045,25 +2055,40 @@ Negative values for time to flow backwards.";
         public static string GetEventConditionalDesc(PlayerVariableCondition condition)
         {
             var pVar = "";
+            var value = "";
+
+            switch (condition.CompareType)
+            {
+                case VariableCompareTypes.StaticValue:
+                    value = condition.Value.ToString();
+                    break;
+                case VariableCompareTypes.PlayerVariable:
+                    value = Strings.EventConditionDesc.playervariablevalue.ToString(PlayerVariableBase.GetName(condition.CompareVariableId));
+                    break;
+                case VariableCompareTypes.GlobalVariable:
+                    value = Strings.EventConditionDesc.globalvariablevalue.ToString(ServerVariableBase.GetName(condition.CompareVariableId));
+                    break;
+            }
+
             switch (condition.Comparator)
             {
                 case VariableComparators.Equal:
-                    pVar = Strings.EventConditionDesc.equal.ToString(condition.Value);
+                    pVar = Strings.EventConditionDesc.equal.ToString(value);
                     break;
                 case VariableComparators.GreaterOrEqual:
-                    pVar = Strings.EventConditionDesc.greaterequal.ToString(condition.Value);
+                    pVar = Strings.EventConditionDesc.greaterequal.ToString(value);
                     break;
                 case VariableComparators.LesserOrEqual:
-                    pVar = Strings.EventConditionDesc.lessthanequal.ToString(condition.Value);
+                    pVar = Strings.EventConditionDesc.lessthanequal.ToString(value);
                     break;
                 case VariableComparators.Greater:
-                    pVar = Strings.EventConditionDesc.greater.ToString(condition.Value);
+                    pVar = Strings.EventConditionDesc.greater.ToString(value);
                     break;
                 case VariableComparators.Less:
-                    pVar = Strings.EventConditionDesc.lessthan.ToString(condition.Value);
+                    pVar = Strings.EventConditionDesc.lessthan.ToString(value);
                     break;
                 case VariableComparators.NotEqual:
-                    pVar = Strings.EventConditionDesc.notequal.ToString(condition.Value);
+                    pVar = Strings.EventConditionDesc.notequal.ToString(value);
                     break;
             }
             return Strings.EventConditionDesc.playervariable.ToString(PlayerVariableBase.GetName(condition.VariableId), pVar);
@@ -2079,25 +2104,40 @@ Negative values for time to flow backwards.";
         public static string GetEventConditionalDesc(ServerVariableCondition condition)
         {
             var pVar = "";
+            var value = "";
+
+            switch (condition.CompareType)
+            {
+                case VariableCompareTypes.StaticValue:
+                    value = condition.Value.ToString();
+                    break;
+                case VariableCompareTypes.PlayerVariable:
+                    value = Strings.EventConditionDesc.playervariablevalue.ToString(PlayerVariableBase.GetName(condition.CompareVariableId));
+                    break;
+                case VariableCompareTypes.GlobalVariable:
+                    value = Strings.EventConditionDesc.globalvariablevalue.ToString(ServerVariableBase.GetName(condition.CompareVariableId));
+                    break;
+            }
+
             switch (condition.Comparator)
             {
                 case VariableComparators.Equal:
-                    pVar = Strings.EventConditionDesc.equal.ToString(condition.Value);
+                    pVar = Strings.EventConditionDesc.equal.ToString(value);
                     break;
                 case VariableComparators.GreaterOrEqual:
-                    pVar = Strings.EventConditionDesc.greaterequal.ToString(condition.Value);
+                    pVar = Strings.EventConditionDesc.greaterequal.ToString(value);
                     break;
                 case VariableComparators.LesserOrEqual:
-                    pVar = Strings.EventConditionDesc.lessthanequal.ToString(condition.Value);
+                    pVar = Strings.EventConditionDesc.lessthanequal.ToString(value);
                     break;
                 case VariableComparators.Greater:
-                    pVar = Strings.EventConditionDesc.greater.ToString(condition.Value);
+                    pVar = Strings.EventConditionDesc.greater.ToString(value);
                     break;
                 case VariableComparators.Less:
-                    pVar = Strings.EventConditionDesc.lessthan.ToString(condition.Value);
+                    pVar = Strings.EventConditionDesc.lessthan.ToString(value);
                     break;
                 case VariableComparators.NotEqual:
-                    pVar = Strings.EventConditionDesc.notequal.ToString(condition.Value);
+                    pVar = Strings.EventConditionDesc.notequal.ToString(value);
                     break;
             }
             return Strings.EventConditionDesc.globalvariable.ToString(ServerVariableBase.GetName(condition.VariableId), pVar);
@@ -2267,7 +2307,7 @@ Negative values for time to flow backwards.";
             if (File.Exists(Path.Combine("resources", "editor_strings.json")))
             {
                 var strings = new Dictionary<string, Dictionary<string, object>>();
-                strings = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(File.ReadAllText(Path.Combine("resources", "languages", "editor_lang.json")));
+                strings = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(File.ReadAllText(Path.Combine("resources", "editor_strings.json")));
                 var type = typeof(Strings);
 
                 var fields = new List<Type>();

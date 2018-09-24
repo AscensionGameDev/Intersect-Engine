@@ -65,6 +65,7 @@ namespace Intersect.GameObjects.Events.Commands
         public VariableMods ModType { get; set; } = VariableMods.Set;
         public int Value { get; set; }
         public int HighValue { get; set; }
+        public Guid DupVariableId { get; set; }
     }
 
     public class SetSelfSwitchCommand : EventCommand

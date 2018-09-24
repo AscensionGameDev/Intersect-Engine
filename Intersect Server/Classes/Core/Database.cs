@@ -636,7 +636,7 @@ namespace Intersect.Server.Classes.Core
                 default:
                     throw new ArgumentOutOfRangeException(nameof(gameObjectType), gameObjectType, null);
             }
-            sGameDb.SaveChanges();
+            SaveGameDatabaseAsync();
             return dbObj;
         }
 
@@ -797,7 +797,7 @@ namespace Intersect.Server.Classes.Core
             }
             if (updated)
             {
-                sGameDb.SaveChanges();
+                SaveGameDatabaseAsync();
                 PacketSender.SendMapToEditors(map.Id);
             }
         }

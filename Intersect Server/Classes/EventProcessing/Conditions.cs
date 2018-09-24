@@ -68,25 +68,44 @@ namespace Intersect.Server.Classes.Events
         public static bool MeetsCondition(PlayerVariableCondition condition, Player player, EventInstance eventInstance, QuestBase questBase)
         {
             var varVal = player.GetVariableValue(condition.VariableId);
+            long compareAgainst = 0;
+
+            switch (condition.CompareType)
+            {
+                case VariableCompareTypes.StaticValue:
+                    compareAgainst = condition.Value;
+                    break;
+                case VariableCompareTypes.PlayerVariable:
+                    var pvar = PlayerVariableBase.Get(condition.CompareVariableId);
+                    if (pvar == null) return false;
+                    compareAgainst = player.GetVariableValue(condition.CompareVariableId);
+                    break;
+                case VariableCompareTypes.GlobalVariable:
+                    var gvar = ServerVariableBase.Get(condition.CompareVariableId);
+                    if (gvar == null) return false;
+                    compareAgainst = gvar.Value;
+                    break;
+            }
+
             switch (condition.Comparator) //Comparator
             {
                 case VariableComparators.Equal:
-                    if (varVal == condition.Value) return true;
+                    if (varVal == compareAgainst) return true;
                     break;
                 case VariableComparators.GreaterOrEqual:
-                    if (varVal >= condition.Value) return true;
+                    if (varVal >= compareAgainst) return true;
                     break;
                 case VariableComparators.LesserOrEqual:
-                    if (varVal <= condition.Value) return true;
+                    if (varVal <= compareAgainst) return true;
                     break;
                 case VariableComparators.Greater:
-                    if (varVal > condition.Value) return true;
+                    if (varVal > compareAgainst) return true;
                     break;
                 case VariableComparators.Less:
-                    if (varVal < condition.Value) return true;
+                    if (varVal < compareAgainst) return true;
                     break;
                 case VariableComparators.NotEqual:
-                    if (varVal != condition.Value) return true;
+                    if (varVal != compareAgainst) return true;
                     break;
             }
             return false;
@@ -103,25 +122,44 @@ namespace Intersect.Server.Classes.Events
         {
             long varVal = 0;
             if (ServerVariableBase.Get(condition.VariableId) != null) varVal = ServerVariableBase.Get(condition.VariableId).Value;
+            long compareAgainst = 0;
+
+            switch (condition.CompareType)
+            {
+                case VariableCompareTypes.StaticValue:
+                    compareAgainst = condition.Value;
+                    break;
+                case VariableCompareTypes.PlayerVariable:
+                    var pvar = PlayerVariableBase.Get(condition.CompareVariableId);
+                    if (pvar == null) return false;
+                    compareAgainst = player.GetVariableValue(condition.CompareVariableId);
+                    break;
+                case VariableCompareTypes.GlobalVariable:
+                    var gvar = ServerVariableBase.Get(condition.CompareVariableId);
+                    if (gvar == null) return false;
+                    compareAgainst = gvar.Value;
+                    break;
+            }
+            
             switch (condition.Comparator) //Comparator
             {
                 case VariableComparators.Equal:
-                    if (varVal == condition.Value) return true;
+                    if (varVal == compareAgainst) return true;
                     break;
                 case VariableComparators.GreaterOrEqual:
-                    if (varVal >= condition.Value) return true;
+                    if (varVal >= compareAgainst) return true;
                     break;
                 case VariableComparators.LesserOrEqual:
-                    if (varVal <= condition.Value) return true;
+                    if (varVal <= compareAgainst) return true;
                     break;
                 case VariableComparators.Greater:
-                    if (varVal > condition.Value) return true;
+                    if (varVal > compareAgainst) return true;
                     break;
                 case VariableComparators.Less:
-                    if (varVal < condition.Value) return true;
+                    if (varVal < compareAgainst) return true;
                     break;
                 case VariableComparators.NotEqual:
-                    if (varVal != condition.Value) return true;
+                    if (varVal != compareAgainst) return true;
                     break;
             }
             return false;

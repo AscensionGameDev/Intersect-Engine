@@ -26,7 +26,10 @@ namespace Intersect.Enums
         Set = 0,
         Add,
         Subtract,
-        Random
+        Random,
+        SystemTime,
+        DupPlayerVar,
+        DupGlobalVar,
     }
 
     public enum VariableComparators
@@ -37,5 +40,12 @@ namespace Intersect.Enums
         Greater,
         Less,
         NotEqual
+    }
+
+    public enum VariableCompareTypes
+    {
+        StaticValue = 0,
+        PlayerVariable,
+        GlobalVariable
     }
 }

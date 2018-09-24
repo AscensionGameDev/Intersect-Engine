@@ -379,6 +379,15 @@ namespace Intersect.Editor.Forms.Editors.Events
                 case VariableMods.Random:
                     varvalue = Strings.EventCommandList.randvariable.ToString(command.Value, command.HighValue);
                     break;
+                case VariableMods.SystemTime:
+                    varvalue = Strings.EventCommandList.systemtimevariable;
+                    break;
+                case VariableMods.DupPlayerVar:
+                    varvalue = Strings.EventCommandList.dupplayervariable.ToString(PlayerVariableBase.GetName(command.DupVariableId));
+                    break;
+                case VariableMods.DupGlobalVar:
+                    varvalue = Strings.EventCommandList.dupglobalvariable.ToString(ServerVariableBase.GetName(command.DupVariableId));
+                    break;
             }
             if (command.VariableType == VariableTypes.PlayerVariable)
             {

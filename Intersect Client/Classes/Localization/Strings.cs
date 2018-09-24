@@ -789,7 +789,7 @@ namespace Intersect.Client.Classes.Localization
             if (File.Exists(Path.Combine("resources", "client_strings.json")))
             {
                 var strings = new Dictionary<string, Dictionary<string, object>>();
-                strings = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(File.ReadAllText(Path.Combine("resources", "languages", "client_lang.json")));
+                strings = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(File.ReadAllText(Path.Combine("resources", "client_strings.json")));
                 var type = typeof(Strings);
 
                 var fields = new List<Type>();

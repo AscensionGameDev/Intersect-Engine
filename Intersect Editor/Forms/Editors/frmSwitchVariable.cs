@@ -22,6 +22,8 @@ namespace Intersect.Editor.Forms.Editors
             ApplyHooks();
             InitializeComponent();
             InitLocalization();
+            nudVariableValue.Minimum = long.MinValue;
+            nudVariableValue.Maximum = long.MaxValue;
         }
 
         private void InitLocalization()
@@ -195,7 +197,7 @@ namespace Intersect.Editor.Forms.Editors
             lstObjects.Items.Clear();
             grpEditor.Hide();
             cmbSwitchValue.Hide();
-            txtVariableVal.Hide();
+            nudVariableValue.Hide();
             if (rdoPlayerSwitch.Checked)
             {
                 lstObjects.Items.AddRange(PlayerSwitchBase.Names);
@@ -281,14 +283,16 @@ namespace Intersect.Editor.Forms.Editors
                     cmbSwitchValue.Show();
                     cmbSwitchValue.SelectedIndex =
                         cmbSwitchValue.Items.IndexOf(((ServerSwitchBase)mEditorItem).Value.ToString());
+                    lblValue.Show();
                 }
                 else if (rdoGlobalVariables.Checked)
                 {
                     lblObject.Text = Strings.SwitchVariableEditor.globalvariable;
                     txtObjectName.Text = ((ServerVariableBase)mEditorItem).Name;
                     txtId.Text = ((ServerVariableBase)mEditorItem).TextId;
-                    txtVariableVal.Show();
-                    txtVariableVal.Text = ((ServerVariableBase)mEditorItem).Value.ToString();
+                    nudVariableValue.Show();
+                    nudVariableValue.Value = ((ServerVariableBase) mEditorItem).Value;
+                    lblValue.Show();
                 }
             }
             else
@@ -335,22 +339,6 @@ namespace Intersect.Editor.Forms.Editors
                 {
                     var obj = ServerVariableBase.Get(ServerVariableBase.IdFromList(lstObjects.SelectedIndex));
                     lstObjects.Items[lstObjects.SelectedIndex] = obj.Name + "  =  " + obj.Value;
-                }
-            }
-        }
-
-        private void txtVariableVal_TextChanged(object sender, EventArgs e)
-        {
-            if (lstObjects.SelectedIndex > -1)
-            {
-                if (rdoGlobalVariables.Checked)
-                {
-                    if (int.TryParse(txtVariableVal.Text, out int readInt))
-                    {
-                        var obj = ServerVariableBase.Get(ServerVariableBase.IdFromList(lstObjects.SelectedIndex));
-                        obj.Value = readInt;
-                        UpdateSelection();
-                    }
                 }
             }
         }
@@ -411,6 +399,22 @@ namespace Intersect.Editor.Forms.Editors
                 {
                     var obj = ServerVariableBase.Get(ServerVariableBase.IdFromList(lstObjects.SelectedIndex));
                     obj.TextId = txtId.Text;
+                }
+            }
+        }
+
+        private void nudVariableValue_ValueChanged(object sender, EventArgs e)
+        {
+            if (lstObjects.SelectedIndex > -1)
+            {
+                if (rdoGlobalVariables.Checked)
+                {
+                    var obj = ServerVariableBase.Get(ServerVariableBase.IdFromList(lstObjects.SelectedIndex));
+                    if (obj != null)
+                    {
+                        obj.Value = (long) nudVariableValue.Value;
+                        UpdateSelection();
+                    }
                 }
             }
         }

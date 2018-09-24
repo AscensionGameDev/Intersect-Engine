@@ -53,8 +53,6 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.cmbSwitch = new DarkUI.Controls.DarkComboBox();
             this.lblSwitch = new System.Windows.Forms.Label();
             this.grpPlayerVariable = new DarkUI.Controls.DarkGroupBox();
-            this.txtVariableVal = new DarkUI.Controls.DarkTextBox();
-            this.lblVariableValue = new System.Windows.Forms.Label();
             this.cmbVariableMod = new DarkUI.Controls.DarkComboBox();
             this.lblComparator = new System.Windows.Forms.Label();
             this.cmbVariable = new DarkUI.Controls.DarkComboBox();
@@ -100,6 +98,12 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.lblLvlStatValue = new System.Windows.Forms.Label();
             this.cmbLevelComparator = new DarkUI.Controls.DarkComboBox();
             this.lblLevelComparator = new System.Windows.Forms.Label();
+            this.cmbCompareGlobalVar = new DarkUI.Controls.DarkComboBox();
+            this.cmbComparePlayerVar = new DarkUI.Controls.DarkComboBox();
+            this.rdoVarCompareGlobalVar = new DarkUI.Controls.DarkRadioButton();
+            this.rdoVarComparePlayerVar = new DarkUI.Controls.DarkRadioButton();
+            this.rdoVarCompareStaticValue = new DarkUI.Controls.DarkRadioButton();
+            this.nudVariableValue = new DarkUI.Controls.DarkNumericUpDown();
             this.grpConditional.SuspendLayout();
             this.grpMapIs.SuspendLayout();
             this.grpGender.SuspendLayout();
@@ -117,21 +121,18 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.grpClass.SuspendLayout();
             this.grpLevelStat.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudLevelStatValue)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudVariableValue)).BeginInit();
             this.SuspendLayout();
             // 
             // grpConditional
             // 
             this.grpConditional.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpConditional.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpConditional.Controls.Add(this.grpMapIs);
             this.grpConditional.Controls.Add(this.chkNegated);
-            this.grpConditional.Controls.Add(this.grpGender);
             this.grpConditional.Controls.Add(this.btnSave);
             this.grpConditional.Controls.Add(this.cmbConditionType);
             this.grpConditional.Controls.Add(this.lblType);
             this.grpConditional.Controls.Add(this.btnCancel);
-            this.grpConditional.Controls.Add(this.grpHasItem);
-            this.grpConditional.Controls.Add(this.grpSwitch);
             this.grpConditional.Controls.Add(this.grpPlayerVariable);
             this.grpConditional.Controls.Add(this.grpQuestCompleted);
             this.grpConditional.Controls.Add(this.grpQuestInProgress);
@@ -142,10 +143,14 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.grpConditional.Controls.Add(this.grpSpell);
             this.grpConditional.Controls.Add(this.grpClass);
             this.grpConditional.Controls.Add(this.grpLevelStat);
+            this.grpConditional.Controls.Add(this.grpMapIs);
+            this.grpConditional.Controls.Add(this.grpGender);
+            this.grpConditional.Controls.Add(this.grpHasItem);
+            this.grpConditional.Controls.Add(this.grpSwitch);
             this.grpConditional.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpConditional.Location = new System.Drawing.Point(3, 3);
             this.grpConditional.Name = "grpConditional";
-            this.grpConditional.Size = new System.Drawing.Size(256, 243);
+            this.grpConditional.Size = new System.Drawing.Size(281, 278);
             this.grpConditional.TabIndex = 17;
             this.grpConditional.TabStop = false;
             this.grpConditional.Text = "Conditional";
@@ -158,7 +163,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.grpMapIs.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpMapIs.Location = new System.Drawing.Point(10, 41);
             this.grpMapIs.Name = "grpMapIs";
-            this.grpMapIs.Size = new System.Drawing.Size(236, 61);
+            this.grpMapIs.Size = new System.Drawing.Size(261, 61);
             this.grpMapIs.TabIndex = 35;
             this.grpMapIs.TabStop = false;
             this.grpMapIs.Text = "Map Is...";
@@ -168,14 +173,14 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.btnSelectMap.Location = new System.Drawing.Point(9, 21);
             this.btnSelectMap.Name = "btnSelectMap";
             this.btnSelectMap.Padding = new System.Windows.Forms.Padding(5);
-            this.btnSelectMap.Size = new System.Drawing.Size(214, 23);
+            this.btnSelectMap.Size = new System.Drawing.Size(244, 23);
             this.btnSelectMap.TabIndex = 21;
             this.btnSelectMap.Text = "Select Map";
             this.btnSelectMap.Click += new System.EventHandler(this.btnSelectMap_Click);
             // 
             // chkNegated
             // 
-            this.chkNegated.Location = new System.Drawing.Point(173, 186);
+            this.chkNegated.Location = new System.Drawing.Point(199, 220);
             this.chkNegated.Name = "chkNegated";
             this.chkNegated.Size = new System.Drawing.Size(72, 17);
             this.chkNegated.TabIndex = 34;
@@ -190,7 +195,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.grpGender.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpGender.Location = new System.Drawing.Point(10, 42);
             this.grpGender.Name = "grpGender";
-            this.grpGender.Size = new System.Drawing.Size(236, 51);
+            this.grpGender.Size = new System.Drawing.Size(261, 51);
             this.grpGender.TabIndex = 33;
             this.grpGender.TabStop = false;
             this.grpGender.Text = "Gender Is...";
@@ -211,7 +216,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.cmbGender.FormattingEnabled = true;
             this.cmbGender.Location = new System.Drawing.Point(79, 17);
             this.cmbGender.Name = "cmbGender";
-            this.cmbGender.Size = new System.Drawing.Size(141, 21);
+            this.cmbGender.Size = new System.Drawing.Size(174, 21);
             this.cmbGender.TabIndex = 1;
             this.cmbGender.Text = null;
             this.cmbGender.TextPadding = new System.Windows.Forms.Padding(2);
@@ -227,7 +232,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(12, 214);
+            this.btnSave.Location = new System.Drawing.Point(12, 248);
             this.btnSave.Name = "btnSave";
             this.btnSave.Padding = new System.Windows.Forms.Padding(5);
             this.btnSave.Size = new System.Drawing.Size(75, 23);
@@ -269,7 +274,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             "Gender is..."});
             this.cmbConditionType.Location = new System.Drawing.Point(88, 13);
             this.cmbConditionType.Name = "cmbConditionType";
-            this.cmbConditionType.Size = new System.Drawing.Size(157, 21);
+            this.cmbConditionType.Size = new System.Drawing.Size(183, 21);
             this.cmbConditionType.TabIndex = 22;
             this.cmbConditionType.Text = "Player Switch is...";
             this.cmbConditionType.TextPadding = new System.Windows.Forms.Padding(2);
@@ -286,7 +291,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(91, 214);
+            this.btnCancel.Location = new System.Drawing.Point(113, 248);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
@@ -305,7 +310,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.grpHasItem.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpHasItem.Location = new System.Drawing.Point(9, 40);
             this.grpHasItem.Name = "grpHasItem";
-            this.grpHasItem.Size = new System.Drawing.Size(236, 83);
+            this.grpHasItem.Size = new System.Drawing.Size(262, 83);
             this.grpHasItem.TabIndex = 25;
             this.grpHasItem.TabStop = false;
             this.grpHasItem.Text = "Has Item";
@@ -321,7 +326,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             0,
             0});
             this.nudItemAmount.Name = "nudItemAmount";
-            this.nudItemAmount.Size = new System.Drawing.Size(116, 20);
+            this.nudItemAmount.Size = new System.Drawing.Size(150, 20);
             this.nudItemAmount.TabIndex = 4;
             this.nudItemAmount.Value = new decimal(new int[] {
             0,
@@ -345,7 +350,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.cmbItem.FormattingEnabled = true;
             this.cmbItem.Location = new System.Drawing.Point(104, 52);
             this.cmbItem.Name = "cmbItem";
-            this.cmbItem.Size = new System.Drawing.Size(116, 21);
+            this.cmbItem.Size = new System.Drawing.Size(150, 21);
             this.cmbItem.TabIndex = 3;
             this.cmbItem.Text = null;
             this.cmbItem.TextPadding = new System.Windows.Forms.Padding(2);
@@ -379,7 +384,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.grpSwitch.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpSwitch.Location = new System.Drawing.Point(9, 40);
             this.grpSwitch.Name = "grpSwitch";
-            this.grpSwitch.Size = new System.Drawing.Size(236, 89);
+            this.grpSwitch.Size = new System.Drawing.Size(262, 89);
             this.grpSwitch.TabIndex = 23;
             this.grpSwitch.TabStop = false;
             this.grpSwitch.Text = "Player Switch";
@@ -403,9 +408,9 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             "True"});
             this.cmbSwitchVal.Location = new System.Drawing.Point(79, 52);
             this.cmbSwitchVal.Name = "cmbSwitchVal";
-            this.cmbSwitchVal.Size = new System.Drawing.Size(141, 21);
+            this.cmbSwitchVal.Size = new System.Drawing.Size(175, 21);
             this.cmbSwitchVal.TabIndex = 3;
-            this.cmbSwitchVal.Text = null;
+            this.cmbSwitchVal.Text = "False";
             this.cmbSwitchVal.TextPadding = new System.Windows.Forms.Padding(2);
             // 
             // lblSwitchIs
@@ -433,7 +438,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.cmbSwitch.FormattingEnabled = true;
             this.cmbSwitch.Location = new System.Drawing.Point(79, 17);
             this.cmbSwitch.Name = "cmbSwitch";
-            this.cmbSwitch.Size = new System.Drawing.Size(141, 21);
+            this.cmbSwitch.Size = new System.Drawing.Size(175, 21);
             this.cmbSwitch.TabIndex = 1;
             this.cmbSwitch.Text = null;
             this.cmbSwitch.TextPadding = new System.Windows.Forms.Padding(2);
@@ -451,8 +456,12 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             // 
             this.grpPlayerVariable.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpPlayerVariable.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpPlayerVariable.Controls.Add(this.txtVariableVal);
-            this.grpPlayerVariable.Controls.Add(this.lblVariableValue);
+            this.grpPlayerVariable.Controls.Add(this.nudVariableValue);
+            this.grpPlayerVariable.Controls.Add(this.cmbCompareGlobalVar);
+            this.grpPlayerVariable.Controls.Add(this.cmbComparePlayerVar);
+            this.grpPlayerVariable.Controls.Add(this.rdoVarCompareGlobalVar);
+            this.grpPlayerVariable.Controls.Add(this.rdoVarComparePlayerVar);
+            this.grpPlayerVariable.Controls.Add(this.rdoVarCompareStaticValue);
             this.grpPlayerVariable.Controls.Add(this.cmbVariableMod);
             this.grpPlayerVariable.Controls.Add(this.lblComparator);
             this.grpPlayerVariable.Controls.Add(this.cmbVariable);
@@ -460,29 +469,10 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.grpPlayerVariable.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpPlayerVariable.Location = new System.Drawing.Point(9, 40);
             this.grpPlayerVariable.Name = "grpPlayerVariable";
-            this.grpPlayerVariable.Size = new System.Drawing.Size(236, 122);
+            this.grpPlayerVariable.Size = new System.Drawing.Size(262, 174);
             this.grpPlayerVariable.TabIndex = 24;
             this.grpPlayerVariable.TabStop = false;
             this.grpPlayerVariable.Text = "Player Variable";
-            // 
-            // txtVariableVal
-            // 
-            this.txtVariableVal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.txtVariableVal.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtVariableVal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.txtVariableVal.Location = new System.Drawing.Point(79, 89);
-            this.txtVariableVal.Name = "txtVariableVal";
-            this.txtVariableVal.Size = new System.Drawing.Size(141, 20);
-            this.txtVariableVal.TabIndex = 5;
-            // 
-            // lblVariableValue
-            // 
-            this.lblVariableValue.AutoSize = true;
-            this.lblVariableValue.Location = new System.Drawing.Point(7, 92);
-            this.lblVariableValue.Name = "lblVariableValue";
-            this.lblVariableValue.Size = new System.Drawing.Size(37, 13);
-            this.lblVariableValue.TabIndex = 4;
-            this.lblVariableValue.Text = "Value:";
             // 
             // cmbVariableMod
             // 
@@ -505,11 +495,11 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             "Greater Than",
             "Less Than",
             "Does Not Equal"});
-            this.cmbVariableMod.Location = new System.Drawing.Point(79, 52);
+            this.cmbVariableMod.Location = new System.Drawing.Point(113, 52);
             this.cmbVariableMod.Name = "cmbVariableMod";
             this.cmbVariableMod.Size = new System.Drawing.Size(141, 21);
             this.cmbVariableMod.TabIndex = 3;
-            this.cmbVariableMod.Text = null;
+            this.cmbVariableMod.Text = "Equal To";
             this.cmbVariableMod.TextPadding = new System.Windows.Forms.Padding(2);
             // 
             // lblComparator
@@ -535,7 +525,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.cmbVariable.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbVariable.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbVariable.FormattingEnabled = true;
-            this.cmbVariable.Location = new System.Drawing.Point(79, 17);
+            this.cmbVariable.Location = new System.Drawing.Point(113, 17);
             this.cmbVariable.Name = "cmbVariable";
             this.cmbVariable.Size = new System.Drawing.Size(141, 21);
             this.cmbVariable.TabIndex = 1;
@@ -560,7 +550,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.grpQuestCompleted.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpQuestCompleted.Location = new System.Drawing.Point(9, 40);
             this.grpQuestCompleted.Name = "grpQuestCompleted";
-            this.grpQuestCompleted.Size = new System.Drawing.Size(236, 71);
+            this.grpQuestCompleted.Size = new System.Drawing.Size(262, 71);
             this.grpQuestCompleted.TabIndex = 32;
             this.grpQuestCompleted.TabStop = false;
             this.grpQuestCompleted.Text = "Quest Completed:";
@@ -591,7 +581,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.cmbCompletedQuest.FormattingEnabled = true;
             this.cmbCompletedQuest.Location = new System.Drawing.Point(92, 18);
             this.cmbCompletedQuest.Name = "cmbCompletedQuest";
-            this.cmbCompletedQuest.Size = new System.Drawing.Size(138, 21);
+            this.cmbCompletedQuest.Size = new System.Drawing.Size(162, 21);
             this.cmbCompletedQuest.TabIndex = 3;
             this.cmbCompletedQuest.Text = null;
             this.cmbCompletedQuest.TextPadding = new System.Windows.Forms.Padding(2);
@@ -609,7 +599,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.grpQuestInProgress.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpQuestInProgress.Location = new System.Drawing.Point(8, 40);
             this.grpQuestInProgress.Name = "grpQuestInProgress";
-            this.grpQuestInProgress.Size = new System.Drawing.Size(236, 122);
+            this.grpQuestInProgress.Size = new System.Drawing.Size(263, 122);
             this.grpQuestInProgress.TabIndex = 32;
             this.grpQuestInProgress.TabStop = false;
             this.grpQuestInProgress.Text = "Quest In Progress:";
@@ -641,7 +631,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.cmbQuestTask.FormattingEnabled = true;
             this.cmbQuestTask.Location = new System.Drawing.Point(92, 83);
             this.cmbQuestTask.Name = "cmbQuestTask";
-            this.cmbQuestTask.Size = new System.Drawing.Size(138, 21);
+            this.cmbQuestTask.Size = new System.Drawing.Size(163, 21);
             this.cmbQuestTask.TabIndex = 8;
             this.cmbQuestTask.Text = null;
             this.cmbQuestTask.TextPadding = new System.Windows.Forms.Padding(2);
@@ -662,7 +652,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.cmbTaskModifier.FormattingEnabled = true;
             this.cmbTaskModifier.Location = new System.Drawing.Point(92, 50);
             this.cmbTaskModifier.Name = "cmbTaskModifier";
-            this.cmbTaskModifier.Size = new System.Drawing.Size(138, 21);
+            this.cmbTaskModifier.Size = new System.Drawing.Size(163, 21);
             this.cmbTaskModifier.TabIndex = 7;
             this.cmbTaskModifier.Text = null;
             this.cmbTaskModifier.TextPadding = new System.Windows.Forms.Padding(2);
@@ -702,7 +692,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.cmbQuestInProgress.FormattingEnabled = true;
             this.cmbQuestInProgress.Location = new System.Drawing.Point(92, 18);
             this.cmbQuestInProgress.Name = "cmbQuestInProgress";
-            this.cmbQuestInProgress.Size = new System.Drawing.Size(138, 21);
+            this.cmbQuestInProgress.Size = new System.Drawing.Size(163, 21);
             this.cmbQuestInProgress.TabIndex = 3;
             this.cmbQuestInProgress.Text = null;
             this.cmbQuestInProgress.TextPadding = new System.Windows.Forms.Padding(2);
@@ -717,7 +707,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.grpStartQuest.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpStartQuest.Location = new System.Drawing.Point(9, 40);
             this.grpStartQuest.Name = "grpStartQuest";
-            this.grpStartQuest.Size = new System.Drawing.Size(236, 71);
+            this.grpStartQuest.Size = new System.Drawing.Size(262, 71);
             this.grpStartQuest.TabIndex = 31;
             this.grpStartQuest.TabStop = false;
             this.grpStartQuest.Text = "Can Start Quest:";
@@ -748,7 +738,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.cmbStartQuest.FormattingEnabled = true;
             this.cmbStartQuest.Location = new System.Drawing.Point(92, 18);
             this.cmbStartQuest.Name = "cmbStartQuest";
-            this.cmbStartQuest.Size = new System.Drawing.Size(138, 21);
+            this.cmbStartQuest.Size = new System.Drawing.Size(162, 21);
             this.cmbStartQuest.TabIndex = 3;
             this.cmbStartQuest.Text = null;
             this.cmbStartQuest.TextPadding = new System.Windows.Forms.Padding(2);
@@ -765,7 +755,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.grpTime.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpTime.Location = new System.Drawing.Point(10, 40);
             this.grpTime.Name = "grpTime";
-            this.grpTime.Size = new System.Drawing.Size(236, 105);
+            this.grpTime.Size = new System.Drawing.Size(261, 105);
             this.grpTime.TabIndex = 30;
             this.grpTime.TabStop = false;
             this.grpTime.Text = "Time is between:";
@@ -805,7 +795,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.cmbTime2.FormattingEnabled = true;
             this.cmbTime2.Location = new System.Drawing.Point(92, 70);
             this.cmbTime2.Name = "cmbTime2";
-            this.cmbTime2.Size = new System.Drawing.Size(138, 21);
+            this.cmbTime2.Size = new System.Drawing.Size(161, 21);
             this.cmbTime2.TabIndex = 4;
             this.cmbTime2.Text = null;
             this.cmbTime2.TextPadding = new System.Windows.Forms.Padding(2);
@@ -826,7 +816,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.cmbTime1.FormattingEnabled = true;
             this.cmbTime1.Location = new System.Drawing.Point(92, 18);
             this.cmbTime1.Name = "cmbTime1";
-            this.cmbTime1.Size = new System.Drawing.Size(138, 21);
+            this.cmbTime1.Size = new System.Drawing.Size(161, 21);
             this.cmbTime1.TabIndex = 3;
             this.cmbTime1.Text = null;
             this.cmbTime1.TextPadding = new System.Windows.Forms.Padding(2);
@@ -849,7 +839,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.grpPowerIs.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpPowerIs.Location = new System.Drawing.Point(9, 41);
             this.grpPowerIs.Name = "grpPowerIs";
-            this.grpPowerIs.Size = new System.Drawing.Size(236, 51);
+            this.grpPowerIs.Size = new System.Drawing.Size(262, 51);
             this.grpPowerIs.TabIndex = 25;
             this.grpPowerIs.TabStop = false;
             this.grpPowerIs.Text = "Power Is...";
@@ -870,7 +860,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.cmbPower.FormattingEnabled = true;
             this.cmbPower.Location = new System.Drawing.Point(79, 17);
             this.cmbPower.Name = "cmbPower";
-            this.cmbPower.Size = new System.Drawing.Size(141, 21);
+            this.cmbPower.Size = new System.Drawing.Size(175, 21);
             this.cmbPower.TabIndex = 1;
             this.cmbPower.Text = null;
             this.cmbPower.TextPadding = new System.Windows.Forms.Padding(2);
@@ -895,7 +885,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.grpSelfSwitch.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpSelfSwitch.Location = new System.Drawing.Point(9, 40);
             this.grpSelfSwitch.Name = "grpSelfSwitch";
-            this.grpSelfSwitch.Size = new System.Drawing.Size(236, 89);
+            this.grpSelfSwitch.Size = new System.Drawing.Size(262, 89);
             this.grpSelfSwitch.TabIndex = 29;
             this.grpSelfSwitch.TabStop = false;
             this.grpSelfSwitch.Text = "Self Switch";
@@ -916,7 +906,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.cmbSelfSwitchVal.FormattingEnabled = true;
             this.cmbSelfSwitchVal.Location = new System.Drawing.Point(79, 52);
             this.cmbSelfSwitchVal.Name = "cmbSelfSwitchVal";
-            this.cmbSelfSwitchVal.Size = new System.Drawing.Size(141, 21);
+            this.cmbSelfSwitchVal.Size = new System.Drawing.Size(177, 21);
             this.cmbSelfSwitchVal.TabIndex = 3;
             this.cmbSelfSwitchVal.Text = null;
             this.cmbSelfSwitchVal.TextPadding = new System.Windows.Forms.Padding(2);
@@ -946,7 +936,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.cmbSelfSwitch.FormattingEnabled = true;
             this.cmbSelfSwitch.Location = new System.Drawing.Point(79, 17);
             this.cmbSelfSwitch.Name = "cmbSelfSwitch";
-            this.cmbSelfSwitch.Size = new System.Drawing.Size(141, 21);
+            this.cmbSelfSwitch.Size = new System.Drawing.Size(177, 21);
             this.cmbSelfSwitch.TabIndex = 1;
             this.cmbSelfSwitch.Text = null;
             this.cmbSelfSwitch.TextPadding = new System.Windows.Forms.Padding(2);
@@ -969,7 +959,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.grpSpell.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpSpell.Location = new System.Drawing.Point(9, 40);
             this.grpSpell.Name = "grpSpell";
-            this.grpSpell.Size = new System.Drawing.Size(236, 52);
+            this.grpSpell.Size = new System.Drawing.Size(262, 52);
             this.grpSpell.TabIndex = 26;
             this.grpSpell.TabStop = false;
             this.grpSpell.Text = "Knows Spell";
@@ -990,7 +980,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.cmbSpell.FormattingEnabled = true;
             this.cmbSpell.Location = new System.Drawing.Point(79, 18);
             this.cmbSpell.Name = "cmbSpell";
-            this.cmbSpell.Size = new System.Drawing.Size(151, 21);
+            this.cmbSpell.Size = new System.Drawing.Size(175, 21);
             this.cmbSpell.TabIndex = 3;
             this.cmbSpell.Text = null;
             this.cmbSpell.TextPadding = new System.Windows.Forms.Padding(2);
@@ -1013,7 +1003,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.grpClass.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpClass.Location = new System.Drawing.Point(9, 40);
             this.grpClass.Name = "grpClass";
-            this.grpClass.Size = new System.Drawing.Size(236, 52);
+            this.grpClass.Size = new System.Drawing.Size(262, 52);
             this.grpClass.TabIndex = 27;
             this.grpClass.TabStop = false;
             this.grpClass.Text = "Class is";
@@ -1034,7 +1024,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.cmbClass.FormattingEnabled = true;
             this.cmbClass.Location = new System.Drawing.Point(79, 18);
             this.cmbClass.Name = "cmbClass";
-            this.cmbClass.Size = new System.Drawing.Size(151, 21);
+            this.cmbClass.Size = new System.Drawing.Size(175, 21);
             this.cmbClass.TabIndex = 3;
             this.cmbClass.Text = null;
             this.cmbClass.TextPadding = new System.Windows.Forms.Padding(2);
@@ -1062,7 +1052,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.grpLevelStat.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpLevelStat.Location = new System.Drawing.Point(9, 40);
             this.grpLevelStat.Name = "grpLevelStat";
-            this.grpLevelStat.Size = new System.Drawing.Size(236, 140);
+            this.grpLevelStat.Size = new System.Drawing.Size(262, 140);
             this.grpLevelStat.TabIndex = 28;
             this.grpLevelStat.TabStop = false;
             this.grpLevelStat.Text = "Level or Stat is...";
@@ -1086,7 +1076,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             0,
             0});
             this.nudLevelStatValue.Name = "nudLevelStatValue";
-            this.nudLevelStatValue.Size = new System.Drawing.Size(152, 20);
+            this.nudLevelStatValue.Size = new System.Drawing.Size(178, 20);
             this.nudLevelStatValue.TabIndex = 8;
             this.nudLevelStatValue.Value = new decimal(new int[] {
             0,
@@ -1117,7 +1107,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             "Magic Resist"});
             this.cmbLevelStat.Location = new System.Drawing.Point(79, 23);
             this.cmbLevelStat.Name = "cmbLevelStat";
-            this.cmbLevelStat.Size = new System.Drawing.Size(151, 21);
+            this.cmbLevelStat.Size = new System.Drawing.Size(177, 21);
             this.cmbLevelStat.TabIndex = 7;
             this.cmbLevelStat.Text = "Level";
             this.cmbLevelStat.TextPadding = new System.Windows.Forms.Padding(2);
@@ -1156,7 +1146,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.cmbLevelComparator.FormattingEnabled = true;
             this.cmbLevelComparator.Location = new System.Drawing.Point(79, 53);
             this.cmbLevelComparator.Name = "cmbLevelComparator";
-            this.cmbLevelComparator.Size = new System.Drawing.Size(151, 21);
+            this.cmbLevelComparator.Size = new System.Drawing.Size(177, 21);
             this.cmbLevelComparator.TabIndex = 3;
             this.cmbLevelComparator.Text = null;
             this.cmbLevelComparator.TextPadding = new System.Windows.Forms.Padding(2);
@@ -1170,6 +1160,101 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.lblLevelComparator.TabIndex = 2;
             this.lblLevelComparator.Text = "Comparator:";
             // 
+            // cmbCompareGlobalVar
+            // 
+            this.cmbCompareGlobalVar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbCompareGlobalVar.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbCompareGlobalVar.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbCompareGlobalVar.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbCompareGlobalVar.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbCompareGlobalVar.ButtonIcon")));
+            this.cmbCompareGlobalVar.DrawDropdownHoverOutline = false;
+            this.cmbCompareGlobalVar.DrawFocusRectangle = false;
+            this.cmbCompareGlobalVar.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbCompareGlobalVar.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbCompareGlobalVar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbCompareGlobalVar.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbCompareGlobalVar.FormattingEnabled = true;
+            this.cmbCompareGlobalVar.Location = new System.Drawing.Point(144, 146);
+            this.cmbCompareGlobalVar.Name = "cmbCompareGlobalVar";
+            this.cmbCompareGlobalVar.Size = new System.Drawing.Size(110, 21);
+            this.cmbCompareGlobalVar.TabIndex = 48;
+            this.cmbCompareGlobalVar.Text = null;
+            this.cmbCompareGlobalVar.TextPadding = new System.Windows.Forms.Padding(2);
+            // 
+            // cmbComparePlayerVar
+            // 
+            this.cmbComparePlayerVar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbComparePlayerVar.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbComparePlayerVar.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbComparePlayerVar.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbComparePlayerVar.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbComparePlayerVar.ButtonIcon")));
+            this.cmbComparePlayerVar.DrawDropdownHoverOutline = false;
+            this.cmbComparePlayerVar.DrawFocusRectangle = false;
+            this.cmbComparePlayerVar.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbComparePlayerVar.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbComparePlayerVar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbComparePlayerVar.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbComparePlayerVar.FormattingEnabled = true;
+            this.cmbComparePlayerVar.Location = new System.Drawing.Point(144, 119);
+            this.cmbComparePlayerVar.Name = "cmbComparePlayerVar";
+            this.cmbComparePlayerVar.Size = new System.Drawing.Size(110, 21);
+            this.cmbComparePlayerVar.TabIndex = 47;
+            this.cmbComparePlayerVar.Text = null;
+            this.cmbComparePlayerVar.TextPadding = new System.Windows.Forms.Padding(2);
+            // 
+            // rdoVarCompareGlobalVar
+            // 
+            this.rdoVarCompareGlobalVar.AutoSize = true;
+            this.rdoVarCompareGlobalVar.Location = new System.Drawing.Point(8, 147);
+            this.rdoVarCompareGlobalVar.Name = "rdoVarCompareGlobalVar";
+            this.rdoVarCompareGlobalVar.Size = new System.Drawing.Size(129, 17);
+            this.rdoVarCompareGlobalVar.TabIndex = 46;
+            this.rdoVarCompareGlobalVar.Text = "Global Variable Value:";
+            this.rdoVarCompareGlobalVar.CheckedChanged += new System.EventHandler(this.rdoVarCompareGlobalVar_CheckedChanged);
+            // 
+            // rdoVarComparePlayerVar
+            // 
+            this.rdoVarComparePlayerVar.AutoSize = true;
+            this.rdoVarComparePlayerVar.Location = new System.Drawing.Point(8, 120);
+            this.rdoVarComparePlayerVar.Name = "rdoVarComparePlayerVar";
+            this.rdoVarComparePlayerVar.Size = new System.Drawing.Size(128, 17);
+            this.rdoVarComparePlayerVar.TabIndex = 45;
+            this.rdoVarComparePlayerVar.Text = "Player Variable Value:";
+            this.rdoVarComparePlayerVar.CheckedChanged += new System.EventHandler(this.rdoVarComparePlayerVar_CheckedChanged);
+            // 
+            // rdoVarCompareStaticValue
+            // 
+            this.rdoVarCompareStaticValue.Location = new System.Drawing.Point(8, 92);
+            this.rdoVarCompareStaticValue.Name = "rdoVarCompareStaticValue";
+            this.rdoVarCompareStaticValue.Size = new System.Drawing.Size(96, 17);
+            this.rdoVarCompareStaticValue.TabIndex = 44;
+            this.rdoVarCompareStaticValue.Text = "Static Value:";
+            this.rdoVarCompareStaticValue.CheckedChanged += new System.EventHandler(this.rdoVarCompareStaticValue_CheckedChanged);
+            // 
+            // nudVariableValue
+            // 
+            this.nudVariableValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudVariableValue.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudVariableValue.Location = new System.Drawing.Point(113, 92);
+            this.nudVariableValue.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+            this.nudVariableValue.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+            this.nudVariableValue.Name = "nudVariableValue";
+            this.nudVariableValue.Size = new System.Drawing.Size(141, 20);
+            this.nudVariableValue.TabIndex = 49;
+            this.nudVariableValue.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
             // EventCommandConditionalBranch
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1178,7 +1263,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpConditional);
             this.Name = "EventCommandConditionalBranch";
-            this.Size = new System.Drawing.Size(262, 249);
+            this.Size = new System.Drawing.Size(287, 284);
             this.grpConditional.ResumeLayout(false);
             this.grpConditional.PerformLayout();
             this.grpMapIs.ResumeLayout(false);
@@ -1210,6 +1295,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             this.grpLevelStat.ResumeLayout(false);
             this.grpLevelStat.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudLevelStatValue)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudVariableValue)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1231,8 +1317,6 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         private System.Windows.Forms.Label lblComparator;
         private DarkComboBox cmbVariable;
         private System.Windows.Forms.Label lblVariable;
-        private DarkTextBox txtVariableVal;
-        private System.Windows.Forms.Label lblVariableValue;
         private DarkGroupBox grpHasItem;
         private DarkComboBox cmbItem;
         private System.Windows.Forms.Label lblItem;
@@ -1285,5 +1369,11 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         private DarkCheckBox chkNegated;
         private DarkGroupBox grpMapIs;
         private DarkButton btnSelectMap;
+        internal DarkComboBox cmbCompareGlobalVar;
+        internal DarkComboBox cmbComparePlayerVar;
+        internal DarkRadioButton rdoVarCompareGlobalVar;
+        internal DarkRadioButton rdoVarComparePlayerVar;
+        internal DarkRadioButton rdoVarCompareStaticValue;
+        private DarkNumericUpDown nudVariableValue;
     }
 }

@@ -28,6 +28,8 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             cmbConditionType.SelectedIndex = (int)Condition.Type;
             UpdateFormElements(refCommand.Type);
             InitLocalization();
+            nudVariableValue.Minimum = long.MinValue;
+            nudVariableValue.Maximum = long.MaxValue;
             chkNegated.Checked = refCommand.Negated;
             SetupFormValues((dynamic)refCommand);
         }
@@ -57,7 +59,9 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             grpPlayerVariable.Text = Strings.EventConditional.playervariable;
             lblVariable.Text = Strings.EventConditional.variable;
             lblComparator.Text = Strings.EventConditional.comparator;
-            lblVariableValue.Text = Strings.EventConditional.value;
+            rdoVarCompareStaticValue.Text = Strings.EventConditional.value;
+            rdoVarComparePlayerVar.Text = Strings.EventConditional.playervariablevalue;
+            rdoVarCompareGlobalVar.Text = Strings.EventConditional.globalvariablevalue;
             cmbVariableMod.Items.Clear();
             for (int i = 0; i < Strings.EventConditional.comparators.Count; i++)
             {
@@ -168,7 +172,8 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                     Condition = new PlayerVariableCondition();
                     if (cmbVariable.Items.Count > 0) cmbVariable.SelectedIndex = 0;
                     cmbVariableMod.SelectedIndex = 0;
-                    txtVariableVal.Text = @"0";
+                    rdoVarCompareStaticValue.Checked = true;
+                    nudVariableValue.Value = 0;
                     break;
                 case ConditionTypes.ServerSwitch:
                     Condition = new ServerSwitchCondition();
@@ -179,7 +184,8 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                     Condition = new ServerVariableCondition();
                     if (cmbVariable.Items.Count > 0) cmbVariable.SelectedIndex = 0;
                     cmbVariableMod.SelectedIndex = 0;
-                    txtVariableVal.Text = @"0";
+                    rdoVarCompareStaticValue.Checked = true;
+                    nudVariableValue.Value = 0;
                     break;
                 case ConditionTypes.HasItem:
                     Condition = new HasItemCondition();
@@ -244,6 +250,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
             }
         }
 
+
         private void UpdateFormElements(ConditionTypes type)
         {
             grpSwitch.Hide();
@@ -273,6 +280,10 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                     grpPlayerVariable.Show();
                     cmbVariable.Items.Clear();
                     cmbVariable.Items.AddRange(PlayerVariableBase.Names);
+                    cmbCompareGlobalVar.Items.Clear();
+                    cmbCompareGlobalVar.Items.AddRange(ServerVariableBase.Names);
+                    cmbComparePlayerVar.Items.Clear();
+                    cmbComparePlayerVar.Items.AddRange(PlayerVariableBase.Names);
                     break;
                 case ConditionTypes.ServerSwitch:
                     grpSwitch.Text = Strings.EventConditional.globalswitch;
@@ -285,6 +296,10 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
                     grpPlayerVariable.Show();
                     cmbVariable.Items.Clear();
                     cmbVariable.Items.AddRange(ServerVariableBase.Names);
+                    cmbCompareGlobalVar.Items.Clear();
+                    cmbCompareGlobalVar.Items.AddRange(ServerVariableBase.Names);
+                    cmbComparePlayerVar.Items.Clear();
+                    cmbComparePlayerVar.Items.AddRange(PlayerVariableBase.Names);
                     break;
                 case ConditionTypes.HasItem:
                     grpHasItem.Show();
@@ -427,6 +442,29 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         }
 
 
+        private void rdoVarCompareStaticValue_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateVariableElements();
+        }
+
+        private void rdoVarComparePlayerVar_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateVariableElements();
+        }
+
+        private void rdoVarCompareGlobalVar_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateVariableElements();
+        }
+
+        private void UpdateVariableElements()
+        {
+            nudVariableValue.Enabled = rdoVarCompareStaticValue.Checked;
+            cmbComparePlayerVar.Enabled = rdoVarComparePlayerVar.Checked;
+            cmbCompareGlobalVar.Enabled = rdoVarCompareGlobalVar.Checked;
+        }
+
+
         #region "SetupFormValues"
         private void SetupFormValues(PlayerSwitchCondition condition)
         {
@@ -438,7 +476,23 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         {
             cmbVariable.SelectedIndex = PlayerVariableBase.ListIndex(condition.VariableId);
             cmbVariableMod.SelectedIndex = (int)condition.Comparator;
-            txtVariableVal.Text = condition.Value.ToString();
+            switch (condition.CompareType)
+            {
+                case VariableCompareTypes.StaticValue:
+                    rdoVarCompareStaticValue.Checked = true;
+                    nudVariableValue.Value = condition.Value;
+                    break;
+                case VariableCompareTypes.PlayerVariable:
+                    rdoVarComparePlayerVar.Checked = true;
+                    cmbComparePlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(condition.CompareVariableId);
+                    break;
+                case VariableCompareTypes.GlobalVariable:
+                    rdoVarCompareGlobalVar.Checked = true;
+                    cmbCompareGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(condition.CompareVariableId);
+                    break;
+            }
+
+            UpdateVariableElements();
         }
 
         private void SetupFormValues(ServerSwitchCondition condition)
@@ -451,7 +505,22 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         {
             cmbVariable.SelectedIndex = ServerVariableBase.ListIndex(condition.VariableId);
             cmbVariableMod.SelectedIndex = (int)condition.Comparator;
-            txtVariableVal.Text = condition.Value.ToString();
+            switch (condition.CompareType)
+            {
+                case VariableCompareTypes.StaticValue:
+                    rdoVarCompareStaticValue.Checked = true;
+                    nudVariableValue.Value = condition.Value;
+                    break;
+                case VariableCompareTypes.PlayerVariable:
+                    rdoVarComparePlayerVar.Checked = true;
+                    cmbComparePlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(condition.CompareVariableId);
+                    break;
+                case VariableCompareTypes.GlobalVariable:
+                    rdoVarCompareGlobalVar.Checked = true;
+                    cmbCompareGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(condition.CompareVariableId);
+                    break;
+            }
+            UpdateVariableElements();
         }
 
         private void SetupFormValues(HasItemCondition condition)
@@ -552,8 +621,21 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         {
             condition.VariableId = PlayerVariableBase.IdFromList(cmbVariable.SelectedIndex);
             condition.Comparator = (VariableComparators)cmbVariableMod.SelectedIndex;
-            int.TryParse(txtVariableVal.Text, out int n);
-            condition.Value = n;
+            if (rdoVarCompareStaticValue.Checked)
+            {
+                condition.CompareType = VariableCompareTypes.StaticValue;
+                condition.Value = (long) nudVariableValue.Value;
+            }
+            else if (rdoVarComparePlayerVar.Checked)
+            {
+                condition.CompareType = VariableCompareTypes.PlayerVariable;
+                condition.CompareVariableId = PlayerVariableBase.IdFromList(cmbComparePlayerVar.SelectedIndex);
+            }
+            else
+            {
+                condition.CompareType = VariableCompareTypes.GlobalVariable;
+                condition.CompareVariableId = ServerVariableBase.IdFromList(cmbCompareGlobalVar.SelectedIndex);
+            }
         }
 
         private void SaveFormValues(ServerSwitchCondition condition)
@@ -566,8 +648,21 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         {
             condition.VariableId = ServerVariableBase.IdFromList(cmbVariable.SelectedIndex);
             condition.Comparator = (VariableComparators)cmbVariableMod.SelectedIndex;
-            int.TryParse(txtVariableVal.Text, out int n);
-            condition.Value = n;
+            if (rdoVarCompareStaticValue.Checked)
+            {
+                condition.CompareType = VariableCompareTypes.StaticValue;
+                condition.Value = (long)nudVariableValue.Value;
+            }
+            else if (rdoVarComparePlayerVar.Checked)
+            {
+                condition.CompareType = VariableCompareTypes.PlayerVariable;
+                condition.CompareVariableId = PlayerVariableBase.IdFromList(cmbComparePlayerVar.SelectedIndex);
+            }
+            else
+            {
+                condition.CompareType = VariableCompareTypes.GlobalVariable;
+                condition.CompareVariableId = ServerVariableBase.IdFromList(cmbCompareGlobalVar.SelectedIndex);
+            }
         }
 
         private void SaveFormValues(HasItemCondition condition)
@@ -658,6 +753,7 @@ namespace Intersect.Editor.Forms.Editors.Event_Commands
         {
             condition.MapId = (Guid)btnSelectMap.Tag;
         }
+
 
         #endregion
 

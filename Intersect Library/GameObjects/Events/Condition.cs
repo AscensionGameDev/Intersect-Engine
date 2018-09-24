@@ -46,7 +46,9 @@ namespace Intersect.GameObjects.Events
         public override ConditionTypes Type { get; } = ConditionTypes.PlayerVariable;
         public Guid VariableId { get; set; }
         public VariableComparators Comparator { get; set; } = VariableComparators.Equal;
-        public int Value { get; set; }
+        public VariableCompareTypes CompareType { get; set; } = VariableCompareTypes.StaticValue;
+        public long Value { get; set; }
+        public Guid CompareVariableId { get; set; }
     }
 
     public class ServerSwitchCondition : Condition
@@ -61,7 +63,9 @@ namespace Intersect.GameObjects.Events
         public override ConditionTypes Type { get; } = ConditionTypes.ServerVariable;
         public Guid VariableId { get; set; }
         public VariableComparators Comparator { get; set; } = VariableComparators.Equal;
-        public int Value { get; set; }
+        public VariableCompareTypes CompareType { get; set; } = VariableCompareTypes.StaticValue;
+        public long Value { get; set; }
+        public Guid CompareVariableId { get; set; }
     }
 
     public class HasItemCondition : Condition

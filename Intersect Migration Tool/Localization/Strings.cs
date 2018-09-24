@@ -132,7 +132,7 @@ The following prompts will walk you through required configuration steps and bri
             if (File.Exists(Path.Combine("resources", "migrator_strings.json")))
             {
                 var strings = new Dictionary<string, Dictionary<string, object>>();
-                strings = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(File.ReadAllText(Path.Combine("resources", "languages", "migration_lang.json")));
+                strings = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(File.ReadAllText(Path.Combine("resources", "migrator_strings.json")));
                 var type = typeof(Strings);
 
                 var fields = new List<Type>();
