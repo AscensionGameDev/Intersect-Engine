@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Resources;
+using Intersect.Client.Classes.Localization;
 
 namespace Intersect.Client
 {
@@ -37,7 +38,7 @@ namespace Intersect.Client
             {
                 if (ex.InnerException != null && ex.InnerException.GetType().Name == "NoSuitableGraphicsDeviceException")
                 {
-                    System.Windows.Forms.MessageBox.Show(@"OpenGL Initialialization Error! Try updating your graphics drivers! Make sure you're not using remote desktop software. Visit https://goo.gl/RSP3ts for more information.");
+                    System.Windows.Forms.MessageBox.Show(Strings.Errors.openglerror);
                     Environment.Exit(-1);
                 }
                 var type = Type.GetType("Intersect.Client.IntersectGame", true);

@@ -54,8 +54,8 @@ namespace Intersect.Server.Classes.Core
             }
 
             //Server is shutting down!!
-            LegacyDatabase.SavePlayerDatabaseAsync();
-            LegacyDatabase.SaveGameDatabaseAsync();
+            LegacyDatabase.SavePlayerDatabase();
+            LegacyDatabase.SaveGameDatabase();
             Globals.Api?.Stop();
             Globals.Network?.Dispose();
             Globals.ServerStopped = true;

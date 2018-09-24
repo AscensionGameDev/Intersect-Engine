@@ -129,7 +129,7 @@ The following prompts will walk you through required configuration steps and bri
 
         public static void Load()
         {
-            if (File.Exists(Path.Combine("resources", "languages", "migration_lang.json")))
+            if (File.Exists(Path.Combine("resources", "migrator_strings.json")))
             {
                 var strings = new Dictionary<string, Dictionary<string, object>>();
                 strings = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(File.ReadAllText(Path.Combine("resources", "languages", "migration_lang.json")));
@@ -212,12 +212,12 @@ The following prompts will walk you through required configuration steps and bri
                 strings.Add(p.Name, dict);
             }
 
-            var languageDirectory = Path.Combine("resources", "languages");
+            var languageDirectory = Path.Combine("resources");
             if (!Directory.Exists(languageDirectory))
             {
                 Directory.CreateDirectory(languageDirectory);
             }
-            File.WriteAllText(Path.Combine(languageDirectory, "migration_lang.json"), JsonConvert.SerializeObject(strings, Formatting.Indented));
+            File.WriteAllText(Path.Combine(languageDirectory, "migrator_strings.json"), JsonConvert.SerializeObject(strings, Formatting.Indented));
         }
     }
 }

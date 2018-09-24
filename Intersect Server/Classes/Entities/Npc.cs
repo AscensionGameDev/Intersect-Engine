@@ -51,10 +51,10 @@ namespace Intersect.Server.Classes.Entities
             Base = myBase;
             Despawnable = despawnable;
 
-            for (int I = 0; I < (int) Stats.StatCount; I++)
+            for (int i= 0; i < (int) Stats.StatCount; i++)
             {
-                BaseStat[I] = myBase.Stats[I];
-                Stat[I] = new EntityStat(I,this,null);
+                BaseStats[i] = myBase.Stats[i];
+                Stat[i] = new EntityStat((Stats)i,this);
             }
 
             var spellSlot = 0;

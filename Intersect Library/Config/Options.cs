@@ -45,7 +45,6 @@ namespace Intersect
         public static int TileHeight => _options.MapOpts.TileHeight;
         public static bool UPnP => _options._upnp;
         public static bool OpenPortChecker => _options._portChecker;
-        public static bool ProgressSavedMessages => _options.PlayerOpts.ProgressSavedMessages;
         public static bool ApiEnabled => _options._api;
         public static ushort ApiPort => _options._apiPort;
 

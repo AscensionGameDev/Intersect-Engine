@@ -92,7 +92,7 @@ namespace Intersect.Server.Classes.Database.PlayerData
                 character.Items = character.Items.OrderBy(p => p.Slot).ToList();
                 character.Bank = character.Bank.OrderBy(p => p.Slot).ToList();
                 character.Spells = character.Spells.OrderBy(p => p.Slot).ToList();
-                character.Hotbar = character.Hotbar.OrderBy(p => p.Slot).ToList();
+                character.Hotbar = character.Hotbar.OrderBy(p => p.Index).ToList();
             }
             return character;
         }

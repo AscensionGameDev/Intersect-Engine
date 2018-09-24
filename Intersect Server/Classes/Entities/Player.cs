@@ -451,7 +451,7 @@ namespace Intersect.Server.Classes.Entities
             var classVital = 20;
             if (myclass != null)
             {
-                if (myclass.IncreasePercentage == 1)
+                if (myclass.IncreasePercentage)
                 {
                     classVital = (int)(myclass.BaseVital[vital] * Math.Pow(1 + ((double)myclass.VitalIncrease[vital] / 100), Level - 1));
                 }
@@ -505,6 +505,7 @@ namespace Intersect.Server.Classes.Entities
             if (level < 1) return;
             Level = Math.Min(Options.MaxLevel, level);
             if (resetExperience) Exp = 0;
+            RecalculateStatsAndPoints();
             PacketSender.SendEntityDataToProximity(this);
             PacketSender.SendExperience(MyClient);
         }
@@ -532,7 +533,6 @@ namespace Intersect.Server.Classes.Entities
                                 }
                             }
                         }
-                        StatPoints += myclass.PointIncrease;
                     }
                 }
             }
@@ -548,11 +548,12 @@ namespace Intersect.Server.Classes.Entities
                 PacketSender.SendPlayerMsg(MyClient, Strings.Player.statpoints.ToString(StatPoints),
                     CustomColors.StatPoints, Name);
             }
+            RecalculateStatsAndPoints();
             PacketSender.SendExperience(MyClient);
             PacketSender.SendPointsTo(MyClient);
             PacketSender.SendEntityDataToProximity(this);
 
-            //Search for login activated events and run them
+            //Search for level up activated events and run them
             foreach (EventBase evt in EventBase.Lookup.Values)
             {
                 if (evt != null)
@@ -848,6 +849,81 @@ namespace Intersect.Server.Classes.Entities
             return attackTime;
         }
 
+        public override int GetStatBuffs(Stats statType)
+        {
+            var s = 0;
+            //Add up player equipment values
+            for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+            {
+                if (Equipment[i] >= 0 && Equipment[i] < Options.MaxInvItems)
+                {
+                    if (Items[Equipment[i]].ItemId != Guid.Empty)
+                    {
+                        var item = ItemBase.Get(Items[Equipment[i]].ItemId);
+                        if (item != null)
+                        {
+                            s += Items[Equipment[i]].StatBuffs[(int)statType] + item.StatsGiven[(int)statType];
+                        }
+                    }
+                }
+            }
+            return s;
+        }
+
+        public void RecalculateStatsAndPoints()
+        {
+            ClassBase playerClass = ClassBase.Get(ClassId);
+
+            if (playerClass != null)
+            {
+                for (int i = 0; i < (int) Stats.StatCount; i++)
+                {
+                    var s = playerClass.BaseStat[i];
+                    //Add class stat scaling
+                    if (playerClass.IncreasePercentage) //% increase per level
+                    {
+                        s = (int)(s * Math.Pow(1 + ((double)playerClass.StatIncrease[i] / 100), Level - 1));
+                    }
+                    else //Static value increase per level
+                    {
+                        s += playerClass.StatIncrease[i] * (Level - 1);
+                    }
+
+                    BaseStats[i] = s;
+                }
+
+                //Handle Changes in Points
+                var currentPoints = StatPoints + StatPointAllocations.Sum();
+                var expectedPoints = playerClass.BasePoints + playerClass.PointIncrease * (Level - 1);
+                if (expectedPoints > currentPoints)
+                {
+                    StatPoints += (expectedPoints - currentPoints);
+                }
+                else if (expectedPoints < currentPoints)
+                {
+                    var removePoints = currentPoints - expectedPoints;
+                    StatPoints -= removePoints;
+                    if (StatPoints < 0)
+                    {
+                        removePoints = Math.Abs(StatPoints);
+                        StatPoints = 0;
+                    }
+
+                    var i = 0;
+                    while (removePoints > 0 && StatPointAllocations.Sum() > 0)
+                    {
+                        if (StatPointAllocations[i] > 0)
+                        {
+                            StatPointAllocations[i]--;
+                            removePoints--;
+                        }
+                        i++;
+                        if (i >= (int) Stats.StatCount) i = 0;
+                    }
+                }
+            }
+        }
+
         //Warping
         public override void Warp(Guid newMapId, int newX, int newY, bool adminWarp = false)
         {
@@ -1011,7 +1087,6 @@ namespace Intersect.Server.Classes.Entities
             PacketSender.SendInventoryItemUpdate(MyClient, item1);
             PacketSender.SendInventoryItemUpdate(MyClient, item2);
             EquipmentProcessItemSwap(item1, item2);
-            HotbarProcessItemSwap(item1, item2);
         }
 
         public void DropItems(int slot, int amount)
@@ -1176,7 +1251,14 @@ namespace Intersect.Server.Classes.Entities
                                 if (Options.WeaponIndex > -1)
                                 {
                                     //If we are equipping a 2hand weapon, remove the shield
-                                    Equipment[Options.WeaponIndex] = itemBase.TwoHanded ? -1 : slot;
+                                    Equipment[Options.WeaponIndex] = slot;
+                                    if (itemBase.TwoHanded)
+                                    {
+                                        if (Options.ShieldIndex > -1)
+                                        {
+                                            Equipment[Options.ShieldIndex] = -1;
+                                        }
+                                    }
                                 }
                             }
                             else if (itemBase.EquipmentSlot == Options.ShieldIndex)
@@ -2763,7 +2845,6 @@ namespace Intersect.Server.Classes.Entities
             Spells[spell1].Set(tmpInstance);
             PacketSender.SendPlayerSpellUpdate(MyClient, spell1);
             PacketSender.SendPlayerSpellUpdate(MyClient, spell2);
-            HotbarProcessSpellSwap(spell1, spell2);
         }
 
         public void ForgetSpell(int spellSlot)
@@ -2965,51 +3046,53 @@ namespace Intersect.Server.Classes.Entities
         //Stats
         public void UpgradeStat(int statIndex)
         {
-            if (Stat[statIndex].Stat < Options.MaxStatValue && StatPoints > 0)
+            if (Stat[statIndex].Stat + StatPointAllocations[statIndex] < Options.MaxStatValue && StatPoints > 0)
             {
-                Stat[statIndex].Stat++;
+                StatPointAllocations[statIndex]++;
                 StatPoints--;
                 PacketSender.SendEntityStats(this);
                 PacketSender.SendPointsTo(MyClient);
             }
         }
 
-        public void AddStat(Stats stat, int amount)
-        {
-            Stat[(int)stat].Stat += amount;
-            if (Stat[(int)stat].Stat < 0) Stat[(int)stat].Stat = 0;
-            if (Stat[(int)stat].Stat > Options.MaxStatValue) Stat[(int)stat].Stat = Options.MaxStatValue;
-        }
-
         //HotbarSlot
         public void HotbarChange(int index, int type, int slot)
         {
-            Hotbar[index].Type = type;
-            Hotbar[index].ItemSlot = slot;
-        }
-
-        public void HotbarProcessItemSwap(int item1, int item2)
-        {
-            for (var i = 0; i < Options.MaxHotbar; i++)
+            Hotbar[index].ItemOrSpellId = Guid.Empty;
+            Hotbar[index].BagId = Guid.Empty;
+            Hotbar[index].PreferredStatBuffs = new int[(int) Stats.StatCount];
+            if (type == 0) //Item
             {
-                if (Hotbar[i].Type == 0 && Hotbar[i].Slot == item1)
-                    Hotbar[i].ItemSlot = item2;
-                else if (Hotbar[i].Type == 0 && Hotbar[i].Slot == item2)
-                    Hotbar[i].ItemSlot = item1;
+                var item = Items[slot];
+                if (item != null)
+                {
+                    Hotbar[index].ItemOrSpellId = item.ItemId;
+                    Hotbar[index].BagId = item.BagId ?? Guid.Empty;
+                    Hotbar[index].PreferredStatBuffs = item.StatBuffs;
+                }
             }
-            PacketSender.SendHotbarSlots(MyClient);
-        }
-
-        public void HotbarProcessSpellSwap(int spell1, int spell2)
-        {
-            for (var i = 0; i < Options.MaxHotbar; i++)
+            else if (type == 1) //Spell
             {
-                if (Hotbar[i].Type == 1 && Hotbar[i].Slot == spell1)
-                    Hotbar[i].ItemSlot = spell2;
-                else if (Hotbar[i].Type == 1 && Hotbar[i].Slot == spell2)
-                    Hotbar[i].ItemSlot = spell1;
+                var spell = Spells[slot];
+                if (spell != null)
+                {
+                    Hotbar[index].ItemOrSpellId = spell.SpellId;
+                }
             }
-            PacketSender.SendHotbarSlots(MyClient);
+        }
+        public void HotbarSwap(int index, int swapIndex)
+        {
+            var itemId = Hotbar[index].ItemOrSpellId;
+            var bagId = Hotbar[index].BagId;
+            var stats = Hotbar[index].PreferredStatBuffs;
+
+            Hotbar[index].ItemOrSpellId = Hotbar[swapIndex].ItemOrSpellId;
+            Hotbar[index].BagId = Hotbar[swapIndex].BagId;
+            Hotbar[index].PreferredStatBuffs = Hotbar[swapIndex].PreferredStatBuffs;
+
+            Hotbar[swapIndex].ItemOrSpellId = itemId;
+            Hotbar[swapIndex].BagId = bagId;
+            Hotbar[swapIndex].PreferredStatBuffs = stats;
         }
 
         //Quests
@@ -3600,12 +3683,6 @@ namespace Intersect.Server.Classes.Entities
                 }
             }
         }
-    }
-
-    public class HotbarInstance
-    {
-        public int Slot = -1;
-        public int Type = -1;
     }
 
     public struct Trading : IDisposable

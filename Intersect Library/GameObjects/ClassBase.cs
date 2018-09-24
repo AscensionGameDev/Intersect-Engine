@@ -65,7 +65,7 @@ namespace Intersect.GameObjects
         }
 
         //Level Up Info
-        public int IncreasePercentage { get; set; }
+        public bool IncreasePercentage { get; set; }
 
         [JsonIgnore]
         [NotMapped]

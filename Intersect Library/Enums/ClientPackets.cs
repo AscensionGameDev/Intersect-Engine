@@ -27,6 +27,7 @@ namespace Intersect.Enums
         UnequipItem,
         UpgradeStat,
         HotbarChange,
+        HotbarSwap,
         MapListUpdate,
         CreateCharacter,
         OpenAdminWindow,

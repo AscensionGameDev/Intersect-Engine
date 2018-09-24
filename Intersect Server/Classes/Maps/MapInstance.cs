@@ -208,7 +208,7 @@ namespace Intersect.Server.Classes.Maps
                     MapItems[MapItems.Count - 1].Quantity = 1;
                     for (int i = 0; i < (int) Stats.StatCount; i++)
                     {
-                        MapItems[MapItems.Count - 1].StatBoost[i] = item.StatBoost[i];
+                        MapItems[MapItems.Count - 1].StatBuffs[i] = item.StatBuffs[i];
                     }
                 }
                 else
@@ -236,7 +236,7 @@ namespace Intersect.Server.Classes.Maps
                     Random r = new Random();
                     for (int i = 0; i < (int) Stats.StatCount; i++)
                     {
-                        MapItems[MapItems.Count - 1].StatBoost[i] = r.Next(-1 * item.StatGrowth, item.StatGrowth + 1);
+                        MapItems[MapItems.Count - 1].StatBuffs[i] = r.Next(-1 * item.StatGrowth, item.StatGrowth + 1);
                     }
                 }
                 PacketSender.SendMapItemUpdate(Id, MapItems.Count - 1);

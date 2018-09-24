@@ -9,6 +9,5 @@
         public int MaxBank = 100;
         public int MaxCharacters = 1;
         public int ItemDropChance = 0;
-        public bool ProgressSavedMessages = true;
     }
 }

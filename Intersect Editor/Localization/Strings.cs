@@ -2264,7 +2264,7 @@ Negative values for time to flow backwards.";
 
         public static void Load()
         {
-            if (File.Exists(Path.Combine("resources", "languages", "editor_lang.json")))
+            if (File.Exists(Path.Combine("resources", "editor_strings.json")))
             {
                 var strings = new Dictionary<string, Dictionary<string, object>>();
                 strings = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(File.ReadAllText(Path.Combine("resources", "languages", "editor_lang.json")));
@@ -2347,12 +2347,12 @@ Negative values for time to flow backwards.";
                 strings.Add(p.Name, dict);
             }
 
-            var languageDirectory = Path.Combine("resources", "languages");
+            var languageDirectory = Path.Combine("resources");
             if (!Directory.Exists(languageDirectory))
             {
                 Directory.CreateDirectory(languageDirectory);
             }
-            File.WriteAllText(Path.Combine(languageDirectory, "editor_lang.json"), JsonConvert.SerializeObject(strings, Formatting.Indented));
+            File.WriteAllText(Path.Combine(languageDirectory, "editor_strings.json"), JsonConvert.SerializeObject(strings, Formatting.Indented));
         }
     }
 }

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Intersect.Server.Migrations.Game
+namespace Intersect.Migration.Migrations.Game
 {
     [DbContext(typeof(GameContext))]
     partial class GameContextModelSnapshot : ModelSnapshot

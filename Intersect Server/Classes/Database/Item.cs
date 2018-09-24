@@ -15,14 +15,14 @@ namespace Intersect.Server.Classes.Database
         public Guid ItemId { get; set; } = Guid.Empty;
         public int Quantity { get; set; }
 
-        [Column("StatBoost")]
-        public string StatBoostJson
+        [Column("StatBuffs")]
+        public string StatBuffsJson
         {
-            get => DatabaseUtils.SaveIntArray(StatBoost, (int)Enums.Stats.StatCount);
-            set => StatBoost = DatabaseUtils.LoadIntArray(value, (int)Enums.Stats.StatCount);
+            get => DatabaseUtils.SaveIntArray(StatBuffs, (int)Enums.Stats.StatCount);
+            set => StatBuffs = DatabaseUtils.LoadIntArray(value, (int)Enums.Stats.StatCount);
         }
         [NotMapped]
-        public int[] StatBoost { get; set; } = new int[(int)Enums.Stats.StatCount];
+        public int[] StatBuffs { get; set; } = new int[(int)Enums.Stats.StatCount];
 
 
 
@@ -51,7 +51,7 @@ namespace Intersect.Server.Classes.Database
                     for (int i = 0; i < (int)Stats.StatCount; i++)
                     {
                         // TODO: What the fuck?
-                        StatBoost[i] = Globals.Rand.Next(-1 * ItemBase.Get(ItemId).StatGrowth, ItemBase.Get(ItemId).StatGrowth + 1);
+                        StatBuffs[i] = Globals.Rand.Next(-1 * ItemBase.Get(ItemId).StatGrowth, ItemBase.Get(ItemId).StatGrowth + 1);
                     }
                 }
             }
@@ -61,7 +61,7 @@ namespace Intersect.Server.Classes.Database
         {
             for (int i = 0; i < (int)Stats.StatCount; i++)
             {
-                StatBoost[i] = item.StatBoost[i];
+                StatBuffs[i] = item.StatBuffs[i];
             }
         }
 
@@ -73,7 +73,7 @@ namespace Intersect.Server.Classes.Database
             Bag = item.Bag;
             for (int i = 0; i < (int)Stats.StatCount; i++)
             {
-                StatBoost[i] = item.StatBoost[i];
+                StatBuffs[i] = item.StatBuffs[i];
             }
         }
 
@@ -84,8 +84,9 @@ namespace Intersect.Server.Classes.Database
             bf.WriteInteger(Quantity);
             for (int i = 0; i < (int)Stats.StatCount; i++)
             {
-                bf.WriteInteger(StatBoost[i]);
+                bf.WriteInteger(StatBuffs[i]);
             }
+            bf.WriteGuid(BagId ?? Guid.Empty);
             return bf.ToArray();
         }
 

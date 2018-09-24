@@ -205,9 +205,9 @@
     <Compile Include="Database.cs" />
     <Compile Include="Localization\Strings.cs" />
     <Compile Include="Main.cs" />
-    <Compile Include="Migrations\20180905072119_Initial.cs" />
-    <Compile Include="Migrations\20180905072119_Initial.Designer.cs">
-      <DependentUpon>20180905072119_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\20180923140701_Initial.cs" />
+    <Compile Include="Migrations\20180923140701_Initial.Designer.cs">
+      <DependentUpon>20180923140701_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\20180905042857_Initial.cs" />
     <Compile Include="Migrations\Game\20180905042857_Initial.Designer.cs">
@@ -1124,7 +1124,6 @@
     <EmbeddedResource Include="Resources\sqlite3x86.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Migrations\Player\" />
     <Folder Include="UpgradeInstructions\Upgrade_09\Intersect_Convert_Lib\Factories\" />
     <Folder Include="UpgradeInstructions\Upgrade_10\Intersect_Convert_Lib\Resources\" />
     <Folder Include="UpgradeInstructions\Upgrade_11\Intersect_Convert_Lib\Resources\" />

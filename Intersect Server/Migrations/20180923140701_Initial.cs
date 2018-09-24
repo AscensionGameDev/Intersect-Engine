@@ -44,7 +44,7 @@ namespace Intersect.Server.Migrations
                     BagId = table.Column<Guid>(nullable: true),
                     ItemId = table.Column<Guid>(nullable: false),
                     Quantity = table.Column<int>(nullable: false),
-                    StatBoost = table.Column<string>(nullable: true),
+                    StatBuffs = table.Column<string>(nullable: true),
                     Id = table.Column<Guid>(nullable: false),
                     ParentBagId = table.Column<Guid>(nullable: false),
                     Slot = table.Column<int>(nullable: false)
@@ -93,18 +93,19 @@ namespace Intersect.Server.Migrations
                 name: "Characters",
                 columns: table => new
                 {
-                    Dir = table.Column<int>(nullable: false),
-                    Id = table.Column<Guid>(nullable: false),
-                    Level = table.Column<int>(nullable: false),
+                    Name = table.Column<string>(nullable: true),
                     MapId = table.Column<Guid>(nullable: false),
                     X = table.Column<int>(nullable: false),
                     Y = table.Column<int>(nullable: false),
                     Z = table.Column<int>(nullable: false),
-                    Name = table.Column<string>(nullable: true),
+                    Dir = table.Column<int>(nullable: false),
                     Sprite = table.Column<string>(nullable: true),
                     Face = table.Column<string>(nullable: true),
+                    Level = table.Column<int>(nullable: false),
                     Vitals = table.Column<string>(nullable: true),
-                    Stats = table.Column<string>(nullable: true),
+                    BaseStats = table.Column<string>(nullable: true),
+                    StatPointAllocations = table.Column<string>(nullable: true),
+                    Id = table.Column<Guid>(nullable: false),
                     AccountId = table.Column<Guid>(nullable: true),
                     ClassId = table.Column<Guid>(nullable: false),
                     Gender = table.Column<int>(nullable: false),
@@ -154,7 +155,7 @@ namespace Intersect.Server.Migrations
                     BagId = table.Column<Guid>(nullable: true),
                     ItemId = table.Column<Guid>(nullable: false),
                     Quantity = table.Column<int>(nullable: false),
-                    StatBoost = table.Column<string>(nullable: true),
+                    StatBuffs = table.Column<string>(nullable: true),
                     Id = table.Column<Guid>(nullable: false),
                     CharacterId = table.Column<Guid>(nullable: false),
                     Slot = table.Column<int>(nullable: false)
@@ -207,9 +208,10 @@ namespace Intersect.Server.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     CharacterId = table.Column<Guid>(nullable: false),
-                    Slot = table.Column<int>(nullable: false),
-                    Type = table.Column<int>(nullable: false),
-                    ItemSlot = table.Column<int>(nullable: false)
+                    Index = table.Column<int>(nullable: false),
+                    ItemOrSpellId = table.Column<Guid>(nullable: false),
+                    BagId = table.Column<Guid>(nullable: false),
+                    PreferredStatBuffs = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -229,7 +231,7 @@ namespace Intersect.Server.Migrations
                     BagId = table.Column<Guid>(nullable: true),
                     ItemId = table.Column<Guid>(nullable: false),
                     Quantity = table.Column<int>(nullable: false),
-                    StatBoost = table.Column<string>(nullable: true),
+                    StatBuffs = table.Column<string>(nullable: true),
                     Id = table.Column<Guid>(nullable: false),
                     CharacterId = table.Column<Guid>(nullable: false),
                     Slot = table.Column<int>(nullable: false)
@@ -277,8 +279,8 @@ namespace Intersect.Server.Migrations
                 name: "Character_Spells",
                 columns: table => new
                 {
-                    SpellCd = table.Column<long>(nullable: false),
                     SpellId = table.Column<Guid>(nullable: false),
+                    SpellCd = table.Column<long>(nullable: false),
                     Id = table.Column<Guid>(nullable: false),
                     CharacterId = table.Column<Guid>(nullable: false),
                     Slot = table.Column<int>(nullable: false)

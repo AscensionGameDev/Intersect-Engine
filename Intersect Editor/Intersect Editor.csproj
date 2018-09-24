@@ -582,6 +582,9 @@
     <EmbeddedResource Include="Forms\DockingElements\frmMapProperties.resx">
       <DependentUpon>frmMapProperties.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\EditorForm.resx">
+      <DependentUpon>EditorForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeFace.resx">
       <DependentUpon>EventCommand_ChangeFace.cs</DependentUpon>
     </EmbeddedResource>

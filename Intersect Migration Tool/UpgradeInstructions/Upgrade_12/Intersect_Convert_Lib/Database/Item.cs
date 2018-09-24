@@ -15,14 +15,15 @@ namespace Intersect.Server.Classes.Database
         public Guid ItemId { get; set; } = Guid.Empty;
         public int Quantity { get; set; }
 
-        [Column("StatBoost")]
-        public string StatBoostJson
+
+        [Column("StatBuffs")]
+        public string StatBuffsJson
         {
-            get => DatabaseUtils.SaveIntArray(StatBoost, (int)Stats.StatCount);
-            set => StatBoost = DatabaseUtils.LoadIntArray(value, (int)Stats.StatCount);
+            get => DatabaseUtils.SaveIntArray(StatBuffs, (int)Stats.StatCount);
+            set => StatBuffs = DatabaseUtils.LoadIntArray(value, (int)Stats.StatCount);
         }
         [NotMapped]
-        public int[] StatBoost { get; set; } = new int[(int)Stats.StatCount];
+        public int[] StatBuffs { get; set; } = new int[(int)Stats.StatCount];
 
 
 
@@ -39,7 +40,7 @@ namespace Intersect.Server.Classes.Database
             Bag = item.Bag;
             for (int i = 0; i < (int)Stats.StatCount; i++)
             {
-                StatBoost[i] = item.StatBoost[i];
+                StatBuffs[i] = item.StatBuffs[i];
             }
         }
 
@@ -50,7 +51,7 @@ namespace Intersect.Server.Classes.Database
             bf.WriteInteger(Quantity);
             for (int i = 0; i < (int)Stats.StatCount; i++)
             {
-                bf.WriteInteger(StatBoost[i]);
+                bf.WriteInteger(StatBuffs[i]);
             }
             return bf.ToArray();
         }

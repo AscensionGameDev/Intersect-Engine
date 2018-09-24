@@ -39,7 +39,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_L
         private int[] _maxVital = new int[(int)Vitals.VitalCount];
 
 
-        [Column("Stats")]
+        [Column("BaseStats")]
         public string StatsJson
         {
             get => DatabaseUtils.SaveIntArray(BaseStat, (int)Enums.Stats.StatCount);

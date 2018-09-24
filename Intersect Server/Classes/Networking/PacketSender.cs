@@ -1036,8 +1036,18 @@ namespace Intersect.Server.Classes.Networking
             bf.WriteLong((int)ServerPackets.HotbarSlots);
             for (int i = 0; i < Options.MaxHotbar; i++)
             {
-                bf.WriteInteger(client.Entity.Hotbar[i].Type);
-                bf.WriteInteger(client.Entity.Hotbar[i].ItemSlot);
+                bf.WriteGuid(client.Entity.Hotbar[i].ItemOrSpellId);
+                bf.WriteGuid(client.Entity.Hotbar[i].BagId);
+                if (client.Entity.Hotbar[i].PreferredStatBuffs != null)
+                {
+                    bf.WriteBoolean(true);
+                    for (var s = 0; s < (int)Stats.StatCount; s++)
+                        bf.WriteInteger(client.Entity.Hotbar[i].PreferredStatBuffs[s]);
+                }
+                else
+                {
+                    bf.WriteBoolean(false);
+                }
             }
             SendDataTo(client, bf.ToArray());
             bf.Dispose();

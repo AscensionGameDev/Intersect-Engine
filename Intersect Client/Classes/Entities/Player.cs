@@ -222,6 +222,53 @@ namespace Intersect_Client.Classes.Entities
             }
         }
 
+        public int FindHotbarItem(HotbarInstance hotbarInstance)
+        {
+            var bestMatch = -1;
+
+            if (hotbarInstance.ItemOrSpellId != Guid.Empty)
+            {
+                for (int i = 0; i < Inventory.Length; i++)
+                {
+                    var itm = Inventory[i];
+                    if (itm != null && itm.ItemId == hotbarInstance.ItemOrSpellId)
+                    {
+                        bestMatch = i;
+                        var itemBase = ItemBase.Get(itm.ItemId);
+                        if (itemBase != null)
+                        {
+                            if (itemBase.ItemType == ItemTypes.Bag)
+                            {
+                                if (hotbarInstance.BagId == itm.BagId)
+                                    break;
+                            }
+                            else if (itemBase.ItemType == ItemTypes.Equipment)
+                            {
+                                if (hotbarInstance.PreferredStats != null)
+                                {
+                                    var statMatch = true;
+                                    for (int s = 0; s < hotbarInstance.PreferredStats.Length; s++)
+                                    {
+                                        if (itm.StatBoost[s] != hotbarInstance.PreferredStats[s])
+                                            statMatch = false;
+                                    }
+
+                                    if (statMatch)
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return bestMatch;
+        }
+
         public bool IsEquipped(int slot)
         {
             for (int i = 0; i < Options.EquipmentSlots.Count; i++)
@@ -527,12 +574,74 @@ namespace Intersect_Client.Classes.Entities
             }
         }
 
+        public void TryUseSpell(Guid spellId)
+        {
+            if (spellId == Guid.Empty) return;
+            for (int i = 0; i < Spells.Length; i++)
+            {
+                if (Spells[i].SpellId == spellId)
+                {
+                    TryUseSpell(i);
+                    return;
+                }
+            }
+        }
+
+        public int FindHotbarSpell(HotbarInstance hotbarInstance)
+        {
+            if (hotbarInstance.ItemOrSpellId != Guid.Empty && SpellBase.Get(hotbarInstance.ItemOrSpellId) != null)
+            {
+                for (int i = 0; i < Spells.Length; i++)
+                {
+                    if (Spells[i].SpellId == hotbarInstance.ItemOrSpellId)
+                    {
+                        return i;
+                    }
+                }
+            }
+            return -1;
+        }
+
         //Hotbar Processing
         public void AddToHotbar(int hotbarSlot, int itemType, int itemSlot)
         {
-            Hotbar[hotbarSlot].Type = itemType;
-            Hotbar[hotbarSlot].Slot = itemSlot;
-            PacketSender.SendHotbarChange(hotbarSlot);
+            Hotbar[hotbarSlot].ItemOrSpellId = Guid.Empty;
+            Hotbar[hotbarSlot].PreferredStats = new int[(int) Stats.StatCount];
+            if (itemType == 0)
+            {
+                var item = Inventory[itemSlot];
+                if (item != null)
+                {
+                    Hotbar[hotbarSlot].ItemOrSpellId = item.ItemId;
+                    Hotbar[hotbarSlot].PreferredStats = item.StatBoost;
+                }
+            }
+            else if (itemType == 1)
+            {
+                var spell = Spells[itemSlot];
+                if (spell != null)
+                {
+                    Hotbar[hotbarSlot].ItemOrSpellId = spell.SpellId;
+                }
+            }
+            PacketSender.SendHotbarChange(hotbarSlot, itemType, itemSlot);
+        }
+
+        public void HotbarSwap(int index, int swapIndex)
+        {
+            var itemId = Hotbar[index].ItemOrSpellId;
+            var bagId = Hotbar[index].BagId;
+            var stats = Hotbar[index].PreferredStats;
+
+            Hotbar[index].ItemOrSpellId = Hotbar[swapIndex].ItemOrSpellId;
+            Hotbar[index].BagId = Hotbar[swapIndex].BagId;
+            Hotbar[index].PreferredStats = Hotbar[swapIndex].PreferredStats;
+
+            Hotbar[swapIndex].ItemOrSpellId = itemId;
+            Hotbar[swapIndex].BagId = bagId;
+            Hotbar[swapIndex].PreferredStats = stats;
+
+            PacketSender.SendHotbarSwap(index, swapIndex);
         }
 
         // Change the dimension if the player is on a gateway
@@ -1415,7 +1524,8 @@ namespace Intersect_Client.Classes.Entities
 
     public class HotbarInstance
     {
-        public int Slot = -1;
-        public int Type = -1;
+        public Guid ItemOrSpellId = Guid.Empty;
+        public Guid BagId = Guid.Empty;
+        public int[] PreferredStats = new int[(int)Stats.StatCount];
     }
 }

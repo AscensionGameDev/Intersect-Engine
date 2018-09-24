@@ -33,6 +33,8 @@ namespace Intersect.Client
             //Setup an error handler
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
+            Strings.Load();
+
             var graphics = new GraphicsDeviceManager(this);
 
             Content.RootDirectory = "";
@@ -52,7 +54,6 @@ namespace Intersect.Client
             File.WriteAllText("resources/config.json", ClientOptions.ToJson());
 
             Globals.Database.LoadPreferences();
-            Strings.Load();
             
             Gui.ActiveFont = TextUtils.StripToLower(ClientOptions.Font);
             Globals.InputManager = new MonoInput(this);
@@ -74,8 +75,7 @@ namespace Intersect.Client
         public static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs exception)
         {
             Log.Error((Exception) exception?.ExceptionObject);
-            MessageBox.Show(
-                @"The Intersect Client has encountered an error and must close. Error information can be found in logs/errors.log");
+            MessageBox.Show(Strings.Errors.errorencountered);
             Environment.Exit(-1);
         }
 

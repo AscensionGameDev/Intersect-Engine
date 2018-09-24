@@ -44,10 +44,13 @@ namespace Intersect.Server.Classes
             Console.CancelKeyPress += Console_CancelKeyPress;
 
             LegacyDatabase.CheckDirectories();
+
+            Strings.Load();
+
             Thread logicThread;
             if (!Options.LoadFromDisk())
             {
-                Console.WriteLine("Failed to load server options! Press any key to shut down.");
+                Console.WriteLine(Strings.Errors.errorloadingconfig);
                 Console.ReadKey();
                 return;
             }
@@ -695,8 +698,11 @@ namespace Intersect.Server.Classes
 
         private static void ShutDown()
         {
-            LegacyDatabase.SavePlayerDatabaseAsync();
-            LegacyDatabase.SaveGameDatabaseAsync();
+            Console.WriteLine();
+            Console.WriteLine(Strings.Commands.exiting);
+            Console.WriteLine();
+            LegacyDatabase.SavePlayerDatabase();
+            LegacyDatabase.SaveGameDatabase();
             Globals.Api?.Stop();
             Globals.ServerStarted = false;
             Globals.Network?.Dispose();

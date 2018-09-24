@@ -33,10 +33,10 @@ namespace Intersect.Editor.Forms
         private void frmLogin_Load(object sender, EventArgs e)
         {
             AppDomain.CurrentDomain.UnhandledException += Program.CurrentDomain_UnhandledException;
+            Strings.Load();
             GameContentManager.CheckForResources();
             Database.LoadOptions();
             mOptionsLoaded = true;
-            Strings.Load();
             EditorLoopDelegate = EditorLoop.StartLoop;
             if (Preferences.LoadPreference("username").Trim().Length > 0)
             {

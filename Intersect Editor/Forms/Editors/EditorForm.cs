@@ -48,5 +48,19 @@ namespace Intersect.Editor.Forms.Editors
         protected virtual void GameObjectUpdatedDelegate(GameObjectType type)
         {
         }
+
+        private void InitializeComponent()
+        {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditorForm));
+            this.SuspendLayout();
+            // 
+            // EditorForm
+            // 
+            this.ClientSize = new System.Drawing.Size(284, 261);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Name = "EditorForm";
+            this.ResumeLayout(false);
+
+        }
     }
 }

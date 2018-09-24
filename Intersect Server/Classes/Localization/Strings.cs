@@ -200,6 +200,7 @@ namespace Intersect.Server.Classes.Localization
             public static LocalizedString exit = @"exit";
             public static LocalizedString exitdesc = @"Desc: Closes down the server.";
             public static LocalizedString exithelp = @"closes the server";
+            public static LocalizedString exiting = @"Server is now closing. Please wait while your game and player data is saved!";
             public static LocalizedString exitusage = @"Usage: exit {00}";
             public static LocalizedString False = @"false";
             public static LocalizedString help = @"help";
@@ -266,6 +267,7 @@ namespace Intersect.Server.Classes.Localization
 
         public struct Errors
         {
+            public static LocalizedString errorloadingconfig = @"Failed to load server options! Press any key to shut down.";
             public static LocalizedString errorlogged = @"An error was logged into errors.log";
             public static LocalizedString errorservercrash = @"The Intersect server has encountered an error and must close. Error information can be found in resources/logs/errors.log. Press any key to exit.";
             public static LocalizedString errorservercrashnohalt = @"The Intersect server has encountered an error and must close. Error information can be found in resources/logs/errors.log.";
@@ -438,7 +440,6 @@ namespace Intersect.Server.Classes.Localization
             public static LocalizedString notarget = @"You need to select a valid target.";
             public static LocalizedString offline = @"User not online!";
             public static LocalizedString powerchanged = @"Your power has been modified!";
-            public static LocalizedString saved = @"Your progress has been automatically saved.";
             public static LocalizedString serverkicked = @"{00} has been kicked by the server!";
             public static LocalizedString serverkilled = @"{00} has been killed by the server!";
             public static LocalizedString spelltaughtlevelup = @"You've learned the {00} spell!";
@@ -517,7 +518,7 @@ namespace Intersect.Server.Classes.Localization
 
         public static void Load()
         {
-            if (File.Exists(Path.Combine("resources", "languages", "server_lang.json")))
+            if (File.Exists(Path.Combine("resources", "server_strings.json")))
             {
                 var strings = new Dictionary<string, Dictionary<string, object>>();
                 strings = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(File.ReadAllText(Path.Combine("resources", "languages", "server_lang.json")));
@@ -600,12 +601,12 @@ namespace Intersect.Server.Classes.Localization
                 strings.Add(p.Name, dict);
             }
 
-            var languageDirectory = Path.Combine("resources", "languages");
+            var languageDirectory = Path.Combine("resources");
             if (!Directory.Exists(languageDirectory))
             {
                 Directory.CreateDirectory(languageDirectory);
             }
-            File.WriteAllText(Path.Combine(languageDirectory, "server_lang.json"), JsonConvert.SerializeObject(strings, Formatting.Indented));
+            File.WriteAllText(Path.Combine(languageDirectory, "server_strings.json"), JsonConvert.SerializeObject(strings, Formatting.Indented));
         }
     }
 }

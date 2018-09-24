@@ -278,6 +278,7 @@ namespace Intersect.Editor.Forms.Editors
             this.Controls.Add(this.lblTimes);
             this.Controls.Add(this.lstTimes);
             this.DoubleBuffered = true;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FrmTime";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Time Editor (Day/Night Settings)";

@@ -218,13 +218,22 @@ namespace Intersect_Client.Classes.Networking
             GameNetwork.SendPacket(bf.ToArray());
         }
 
-        public static void SendHotbarChange(int slot)
+        public static void SendHotbarChange(int index, int type, int slot)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.HotbarChange);
+            bf.WriteInteger(index);
+            bf.WriteInteger(type);
             bf.WriteInteger(slot);
-            bf.WriteInteger(Globals.Me.Hotbar[slot].Type);
-            bf.WriteInteger(Globals.Me.Hotbar[slot].Slot);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
+
+        public static void SendHotbarSwap(int index, int swapIndex)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ClientPackets.HotbarSwap);
+            bf.WriteInteger(index);
+            bf.WriteInteger(swapIndex);
             GameNetwork.SendPacket(bf.ToArray());
         }
 

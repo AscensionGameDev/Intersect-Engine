@@ -26,6 +26,12 @@ namespace Intersect_Client.Classes.UI.Game
             HotbarWindow = new ImagePanel(gameCanvas, "HotbarWindow");
             InitHotbarItems();
             HotbarWindow.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
+
+            for (int i = 0; i < Items.Count; i++)
+            {
+                if (Items[i].EquipPanel.Texture == null)
+                    Items[i].EquipPanel.Texture = GameGraphics.Renderer.GetWhiteTexture();
+            }
         }
 
         private void InitHotbarItems()
@@ -35,9 +41,9 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 Items.Add(new HotbarItem(i, HotbarWindow));
                 Items[i].Pnl = new ImagePanel(HotbarWindow, "HotbarContainer" + i);
+                Items[i].Setup();
                 Items[i].KeyLabel = new Label(Items[i].Pnl, "HotbarLabel" + i);
                 Items[i].KeyLabel.SetText(Strings.Keys.keydict[Enum.GetName(typeof(Keys), GameControls.ActiveControls.ControlMapping[Controls.Hotkey1 + i].Key1).ToLower()]);
-                Items[i].Setup();
             }
         }
 

@@ -51,6 +51,8 @@ namespace Intersect.Editor.Forms.Editors
             this.lblName = new System.Windows.Forms.Label();
             this.txtName = new DarkUI.Controls.DarkTextBox();
             this.grpGraphics = new DarkUI.Controls.DarkGroupBox();
+            this.chkExhaustedBelowEntities = new DarkUI.Controls.DarkCheckBox();
+            this.chkInitialBelowEntities = new DarkUI.Controls.DarkCheckBox();
             this.chkExhaustedFromTileset = new DarkUI.Controls.DarkCheckBox();
             this.chkInitialFromTileset = new DarkUI.Controls.DarkCheckBox();
             this.exhaustedGraphicContainer = new System.Windows.Forms.Panel();
@@ -91,8 +93,6 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
-            this.chkInitialBelowEntities = new DarkUI.Controls.DarkCheckBox();
-            this.chkExhaustedBelowEntities = new DarkUI.Controls.DarkCheckBox();
             this.grpResources.SuspendLayout();
             this.grpGeneral.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudMaxHp)).BeginInit();
@@ -384,6 +384,24 @@ namespace Intersect.Editor.Forms.Editors
             this.grpGraphics.TabIndex = 16;
             this.grpGraphics.TabStop = false;
             this.grpGraphics.Text = "Graphics";
+            // 
+            // chkExhaustedBelowEntities
+            // 
+            this.chkExhaustedBelowEntities.Location = new System.Drawing.Point(597, 13);
+            this.chkExhaustedBelowEntities.Name = "chkExhaustedBelowEntities";
+            this.chkExhaustedBelowEntities.Size = new System.Drawing.Size(98, 21);
+            this.chkExhaustedBelowEntities.TabIndex = 35;
+            this.chkExhaustedBelowEntities.Text = "Below Entities";
+            this.chkExhaustedBelowEntities.CheckedChanged += new System.EventHandler(this.chkExhaustedBelowEntities_CheckedChanged);
+            // 
+            // chkInitialBelowEntities
+            // 
+            this.chkInitialBelowEntities.Location = new System.Drawing.Point(245, 13);
+            this.chkInitialBelowEntities.Name = "chkInitialBelowEntities";
+            this.chkInitialBelowEntities.Size = new System.Drawing.Size(98, 21);
+            this.chkInitialBelowEntities.TabIndex = 34;
+            this.chkInitialBelowEntities.Text = "Below Entities";
+            this.chkInitialBelowEntities.CheckedChanged += new System.EventHandler(this.chkInitialBelowEntities_CheckedChanged);
             // 
             // chkExhaustedFromTileset
             // 
@@ -891,24 +909,6 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
-            // chkInitialBelowEntities
-            // 
-            this.chkInitialBelowEntities.Location = new System.Drawing.Point(245, 13);
-            this.chkInitialBelowEntities.Name = "chkInitialBelowEntities";
-            this.chkInitialBelowEntities.Size = new System.Drawing.Size(98, 21);
-            this.chkInitialBelowEntities.TabIndex = 34;
-            this.chkInitialBelowEntities.Text = "Below Entities";
-            this.chkInitialBelowEntities.CheckedChanged += new System.EventHandler(this.chkInitialBelowEntities_CheckedChanged);
-            // 
-            // chkExhaustedBelowEntities
-            // 
-            this.chkExhaustedBelowEntities.Location = new System.Drawing.Point(597, 13);
-            this.chkExhaustedBelowEntities.Name = "chkExhaustedBelowEntities";
-            this.chkExhaustedBelowEntities.Size = new System.Drawing.Size(98, 21);
-            this.chkExhaustedBelowEntities.TabIndex = 35;
-            this.chkExhaustedBelowEntities.Text = "Below Entities";
-            this.chkExhaustedBelowEntities.CheckedChanged += new System.EventHandler(this.chkExhaustedBelowEntities_CheckedChanged);
-            // 
             // FrmResource
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -923,6 +923,7 @@ namespace Intersect.Editor.Forms.Editors
             this.Controls.Add(this.grpResources);
             this.Controls.Add(this.pnlContainer);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.Name = "FrmResource";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

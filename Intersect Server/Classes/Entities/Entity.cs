@@ -52,15 +52,24 @@ namespace Intersect.Server.Classes.Entities
         [NotMapped]
         private int[] _maxVital = new int[(int)Vitals.VitalCount];
 
-
-        [Column("Stats")]
+        //Stats based on npc settings, class settings, etc for quick calculations
+        [Column("BaseStats")]
         public string StatsJson
         {
-            get => DatabaseUtils.SaveIntArray(BaseStat, (int)Enums.Stats.StatCount);
-            set => BaseStat = DatabaseUtils.LoadIntArray(value, (int)Enums.Stats.StatCount);
+            get => DatabaseUtils.SaveIntArray(BaseStats, (int)Enums.Stats.StatCount);
+            set => BaseStats = DatabaseUtils.LoadIntArray(value, (int)Enums.Stats.StatCount);
         }
         [NotMapped]
-        public int[] BaseStat { get; set; } = new int[(int)Enums.Stats.StatCount];
+        public int[] BaseStats { get; set; } = new int[(int)Enums.Stats.StatCount];
+
+        [Column("StatPointAllocations")]
+        public string StatPointsJson
+        {
+            get => DatabaseUtils.SaveIntArray(StatPointAllocations, (int)Enums.Stats.StatCount);
+            set => StatPointAllocations = DatabaseUtils.LoadIntArray(value, (int)Enums.Stats.StatCount);
+        }
+        [NotMapped]
+        public int[] StatPointAllocations { get; set; } = new int[(int)Enums.Stats.StatCount];
 
         //Inventory
         public virtual List<InventorySlot> Items { get; set; } = new List<InventorySlot>();
@@ -120,14 +129,10 @@ namespace Intersect.Server.Classes.Entities
         //Initialization
         public EntityInstance(Guid instanceId)
         {
-			Player tempPlayer = null;
-			if (this.GetType() == typeof(Player)) { tempPlayer = (Player)this; }
-
-			for (var I = 0; I < (int)Stats.StatCount; I++)
+			for (var i = 0; i < (int)Stats.StatCount; i++)
             {
-                Stat[I] = new EntityStat(I, this, tempPlayer);
+                Stat[i] = new EntityStat((Stats)i, this);
             }
-
             Id = instanceId;
         }
 
@@ -743,7 +748,6 @@ namespace Intersect.Server.Classes.Entities
                  ((Options.MinAttackRate - Options.MaxAttackRate) *
                   (((float)Options.MaxStatValue - Stat[(int)Stats.Speed].Value()) / (float)Options.MaxStatValue)));
         }
-
         public void TryBlock(int blocking)
         {
             if (AttackTimer < Globals.System.GetTimeMs())
@@ -761,12 +765,10 @@ namespace Intersect.Server.Classes.Entities
                 }
             }
         }
-
         public virtual int GetWeaponDamage()
         {
             return 0;
         }
-
         public virtual bool CanAttack(EntityInstance en, SpellBase spell)
         {
             if (CastTime > 0) return false;
@@ -844,6 +846,11 @@ namespace Intersect.Server.Classes.Entities
             var maxVitalValue = GetMaxVital(vitalId);
             var safeAmount = Math.Min(amount, GetVital(vital));
             SetVital(vital, GetVital(vital) - safeAmount);
+        }
+        //Stats
+        public virtual int GetStatBuffs(Stats statType)
+        {
+            return 0;
         }
 
         //Attacking with projectile
@@ -1718,21 +1725,19 @@ namespace Intersect.Server.Classes.Entities
     public class EntityStat
     {
         private EntityInstance mOwner;
-        private Player mPlayer;
-        private int mStatType;
+        private Stats mStatType;
         private Dictionary<SpellBase, EntityBuff> mBuff = new Dictionary<SpellBase, EntityBuff>();
         private bool mChanged;
 
         public int Stat
         {
-            get => mOwner.BaseStat[mStatType];
-            set => mOwner.BaseStat[mStatType] = value;
+            get => mOwner.BaseStats[(int)mStatType];
+            set => mOwner.BaseStats[(int)mStatType] = value;
         }
 
-        public EntityStat(int statType, EntityInstance owner, Player player)
+        public EntityStat(Stats statType, EntityInstance owner)
         {
             mOwner = owner;
-            mPlayer = player;
             mStatType = statType;
         }
 
@@ -1740,43 +1745,8 @@ namespace Intersect.Server.Classes.Entities
         {
             var s = Stat;
 
-            if (mPlayer != null)
-            {
-				ClassBase playerClass = ClassBase.Get(mPlayer.ClassId);
-
-                if (playerClass != null)
-                {
-                    //Add class base stats
-                    s += playerClass.BaseStat[mStatType];
-
-                    //Add class stat scaling
-                    if (playerClass.IncreasePercentage != 0) //% increase per level
-                    {
-                        s = (int) (s * Math.Pow(1 + ((double) playerClass.StatIncrease[mStatType] / 100), mPlayer.Level - 1));
-                    }
-                    else //Static value increase per level
-                    {
-                        s += playerClass.StatIncrease[mStatType] * (mPlayer.Level - 1);
-                    }
-
-                    //Add up player equipment values
-                    for (var i = 0; i < Options.EquipmentSlots.Count; i++)
-                    {
-                        if (mPlayer.Equipment[i] >= 0 && mPlayer.Equipment[i] < Options.MaxInvItems)
-                        {
-                            if (mPlayer.Items[mPlayer.Equipment[i]].ItemId != Guid.Empty)
-                            {
-                                var item = ItemBase.Get(mPlayer.Items[mPlayer.Equipment[i]].ItemId);
-                                if (item != null)
-                                {
-                                    s += mPlayer.Items[mPlayer.Equipment[i]].StatBoost[mStatType] +
-                                         item.StatsGiven[mStatType];
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            s += mOwner.StatPointAllocations[(int) mStatType];
+            s += mOwner.GetStatBuffs(mStatType);
 
 			//Add buffs
 			var buffs = mBuff.Values.ToArray();

@@ -14,7 +14,7 @@ namespace Intersect.Server.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.1-rtm-30846");
+                .HasAnnotation("ProductVersion", "2.1.2-rtm-30932");
 
             modelBuilder.Entity("Intersect.Server.Classes.Database.PlayerData.Ban", b =>
                 {
@@ -67,8 +67,8 @@ namespace Intersect.Server.Migrations
 
                     b.Property<int>("Slot");
 
-                    b.Property<string>("StatBoostJson")
-                        .HasColumnName("StatBoost");
+                    b.Property<string>("StatBuffsJson")
+                        .HasColumnName("StatBuffs");
 
                     b.HasKey("Id");
 
@@ -94,8 +94,8 @@ namespace Intersect.Server.Migrations
 
                     b.Property<int>("Slot");
 
-                    b.Property<string>("StatBoostJson")
-                        .HasColumnName("StatBoost");
+                    b.Property<string>("StatBuffsJson")
+                        .HasColumnName("StatBuffs");
 
                     b.HasKey("Id");
 
@@ -129,13 +129,16 @@ namespace Intersect.Server.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<Guid>("BagId");
+
                     b.Property<Guid>("CharacterId");
 
-                    b.Property<int>("ItemSlot");
+                    b.Property<int>("Index");
 
-                    b.Property<int>("Slot");
+                    b.Property<Guid>("ItemOrSpellId");
 
-                    b.Property<int>("Type");
+                    b.Property<string>("StatBuffsJson")
+                        .HasColumnName("PreferredStatBuffs");
 
                     b.HasKey("Id");
 
@@ -159,8 +162,8 @@ namespace Intersect.Server.Migrations
 
                     b.Property<int>("Slot");
 
-                    b.Property<string>("StatBoostJson")
-                        .HasColumnName("StatBoost");
+                    b.Property<string>("StatBuffsJson")
+                        .HasColumnName("StatBuffs");
 
                     b.HasKey("Id");
 
@@ -338,8 +341,11 @@ namespace Intersect.Server.Migrations
 
                     b.Property<int>("StatPoints");
 
+                    b.Property<string>("StatPointsJson")
+                        .HasColumnName("StatPointAllocations");
+
                     b.Property<string>("StatsJson")
-                        .HasColumnName("Stats");
+                        .HasColumnName("BaseStats");
 
                     b.Property<string>("VitalsJson")
                         .HasColumnName("Vitals");

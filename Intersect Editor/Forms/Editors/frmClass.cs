@@ -163,7 +163,7 @@ namespace Intersect.Editor.Forms.Editors
                 nudExpIncrease.Value = mEditorItem.ExpIncrease;
 
                 //Stat Increases
-                if (mEditorItem.IncreasePercentage == 0)
+                if (!mEditorItem.IncreasePercentage)
                 {
                     rdoStaticIncrease.Checked = true;
                 }
@@ -639,13 +639,13 @@ namespace Intersect.Editor.Forms.Editors
 
         private void rdoPercentageIncrease_CheckedChanged(object sender, EventArgs e)
         {
-            mEditorItem.IncreasePercentage = Convert.ToInt32(rdoPercentageIncrease.Checked);
+            mEditorItem.IncreasePercentage = rdoPercentageIncrease.Checked;
             UpdateIncreases();
         }
 
         private void rdoStaticIncrease_CheckedChanged(object sender, EventArgs e)
         {
-            mEditorItem.IncreasePercentage = Convert.ToInt32(rdoPercentageIncrease.Checked);
+            mEditorItem.IncreasePercentage = rdoPercentageIncrease.Checked;
             UpdateIncreases();
         }
 

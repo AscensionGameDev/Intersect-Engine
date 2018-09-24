@@ -1128,8 +1128,15 @@ namespace Intersect_Client.Classes.Networking
                 {
                     Log.Error(BitConverter.ToString(packet));
                 }
-                hotbarEntry.Type = bf.ReadInteger();
-                hotbarEntry.Slot = bf.ReadInteger();
+                hotbarEntry.ItemOrSpellId = bf.ReadGuid();
+                hotbarEntry.BagId = bf.ReadGuid();
+                var hasStats = bf.ReadBoolean();
+                hotbarEntry.PreferredStats = new int[(int)Stats.StatCount];
+                if (hasStats)
+                {
+                    for (int s = 0; s < (int)Stats.StatCount; s++)
+                        hotbarEntry.PreferredStats[s] = bf.ReadInteger();
+                }
             }
             bf.Dispose();
         }

@@ -905,6 +905,16 @@ namespace Intersect.Server.Classes.Core
             Task.Run(new Action(SavePlayerDb));
         }
 
+        public static void SaveGameDatabase()
+        {
+            SaveGameDb();
+        }
+
+        public static void SavePlayerDatabase()
+        {
+            SavePlayerDb();
+        }
+
         private static void SaveGameDb()
         {
             lock (mSavingGameLock)

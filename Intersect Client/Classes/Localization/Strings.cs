@@ -268,9 +268,10 @@ namespace Intersect.Client.Classes.Localization
 
         public struct Errors
         {
+            public static LocalizedString errorencountered = @"The Intersect Client has encountered an error and must close. Error information can be found in logs/errors.log";
             public static LocalizedString notconnected = @"Not connected to the game server. Is it online?";
             public static LocalizedString notsupported = @"Not Supported!";
-            public static LocalizedString openglerror = @"This platform is not supported. Intersect requires OpenGL 3.0 compatible drivers, or either ARB_framebuffer_object or EXT_framebuffer_object extensions. Upgrading your graphic drivers may resolve this problem.";
+            public static LocalizedString openglerror = @"OpenGL Initialialization Error! Try updating your graphics drivers! Make sure you're not using remote desktop software. Visit https://goo.gl/RSP3ts for more information.";
             public static LocalizedString passwordinvalid = @"Password is invalid. Please use alphanumeric characters with a length between 4 and 20.";
             public static LocalizedString title = @"Error!";
             public static LocalizedString usernameinvalid = @"Username is invalid. Please use alphanumeric characters with a length between 2 and 20.";
@@ -785,7 +786,7 @@ namespace Intersect.Client.Classes.Localization
 
         public static void Load()
         {
-            if (File.Exists(Path.Combine("resources", "languages", "client_lang.json")))
+            if (File.Exists(Path.Combine("resources", "client_strings.json")))
             {
                 var strings = new Dictionary<string, Dictionary<string, object>>();
                 strings = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(File.ReadAllText(Path.Combine("resources", "languages", "client_lang.json")));
@@ -868,12 +869,12 @@ namespace Intersect.Client.Classes.Localization
                 strings.Add(p.Name, dict);
             }
 
-            var languageDirectory = Path.Combine("resources", "languages");
+            var languageDirectory = Path.Combine("resources");
             if (!Directory.Exists(languageDirectory))
             {
                 Directory.CreateDirectory(languageDirectory);
             }
-            File.WriteAllText(Path.Combine(languageDirectory, "client_lang.json"), JsonConvert.SerializeObject(strings, Formatting.Indented));
+            File.WriteAllText(Path.Combine(languageDirectory, "client_strings.json"), JsonConvert.SerializeObject(strings, Formatting.Indented));
         }
     }
 }

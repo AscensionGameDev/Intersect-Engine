@@ -414,8 +414,20 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
                 {
                     var player = CharacterMap[bn.playerid];
                     var slot = player.Hotbar[bn.slot];
-                    slot.Type = bn.type;
-                    slot.ItemSlot = bn.itemslot;
+                    if (bn.type == 0 && bn.itemslot > -1)
+                    {
+                        var itm = player.Items[bn.itemslot];
+                        slot.ItemOrSpellId = itm.ItemId;
+                        slot.BagId = itm.BagId ?? Guid.Empty;
+                        slot.PreferredStatBuffs = itm.StatBuffs;
+                    }
+                    else if (bn.type == 1 && bn.itemslot > -1)
+                    {
+                        var spl = player.Spells[bn.itemslot];
+                        slot.ItemOrSpellId = spl.SpellId;
+                        slot.BagId = Guid.Empty;
+                        slot.PreferredStatBuffs = new int[(int) Stats.StatCount];
+                    }
                 }
             }
         }
@@ -428,7 +440,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
                     var slot = BagMap[bn.bagid].Slots[bn.slot];
                     slot.ItemId = GetGuid(GameObjectType.Item, bn.itemnum);
                     slot.Quantity = bn.itemval;
-                    slot.StatBoost = bn.itemstats;
+                    slot.StatBuffs = bn.itemstats;
                     var item = sGameDb.Items.Find(GetGuid(GameObjectType.Item, bn.itemnum));
                     if (item.ItemType == ItemTypes.Bag && bn.bagid != bn.item_bag_id)
                     {
@@ -450,7 +462,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
                     var slot = player.Bank[bn.slot];
                     slot.ItemId = GetGuid(GameObjectType.Item, bn.itemnum);
                     slot.Quantity = bn.itemval;
-                    slot.StatBoost = bn.itemstats;
+                    slot.StatBuffs = bn.itemstats;
                     var item = sGameDb.Items.Find(GetGuid(GameObjectType.Item, bn.itemnum));
                     if (item.ItemType == ItemTypes.Bag)
                     {
@@ -472,7 +484,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
                     var slot = player.Items[bn.slot];
                     slot.ItemId = GetGuid(GameObjectType.Item, bn.itemnum);
                     slot.Quantity = bn.itemval;
-                    slot.StatBoost = bn.itemstats;
+                    slot.StatBuffs = bn.itemstats;
                     var item = sGameDb.Items.Find(GetGuid(GameObjectType.Item, bn.itemnum));
                     if (item.ItemType == ItemTypes.Bag)
                     {

@@ -143,6 +143,9 @@ namespace Intersect.Server.Classes.Networking
                 case ClientPackets.HotbarChange:
                     HandleHotbarChange(client, packet);
                     break;
+                case ClientPackets.HotbarSwap:
+                    HandleHotbarSwap(client, packet);
+                    break;
                 case ClientPackets.MapListUpdate:
                     HandleMapListUpdate(client, packet);
                     break;
@@ -1075,6 +1078,7 @@ namespace Intersect.Server.Classes.Networking
         private static void HandleEnterGame(Client client, byte[] packet)
         {
             var player = client.Entity;
+            player.RecalculateStatsAndPoints();
             ((Player)client.Entity).InGame = true;
             PacketSender.SendTimeTo(client);
             PacketSender.SendGameData(client);
@@ -1375,6 +1379,16 @@ namespace Intersect.Server.Classes.Networking
             var type = bf.ReadInteger();
             var slot = bf.ReadInteger();
             client.Entity.HotbarChange(index, type, slot);
+            bf.Dispose();
+        }
+
+        private static void HandleHotbarSwap(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var index = bf.ReadInteger();
+            var swapIndex = bf.ReadInteger();
+            client.Entity.HotbarSwap(index, swapIndex);
             bf.Dispose();
         }
 

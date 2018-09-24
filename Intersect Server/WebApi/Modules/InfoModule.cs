@@ -45,7 +45,6 @@ namespace Intersect.Server.WebApi.Modules
                     maxBank = ServerOptions.Player.MaxBank,
                     maxCharacters = ServerOptions.Player.MaxCharacters,
                     itemDropChance = ServerOptions.Player.ItemDropChance,
-                    progressSavedMessages = ServerOptions.Player.ProgressSavedMessages
                 },
                 passability = new
                 {

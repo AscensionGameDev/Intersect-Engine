@@ -11,6 +11,7 @@ namespace Intersect_Client.Classes.Items
         public Guid ItemId;
         public int Quantity;
         public int[] StatBoost = new int[(int) Stats.StatCount];
+        public Guid BagId;
 
         [NotMapped]
         public ItemBase Item => ItemBase.Get(ItemId);
@@ -27,6 +28,7 @@ namespace Intersect_Client.Classes.Items
             {
                 StatBoost[i] = bf.ReadInteger();
             }
+            BagId = bf.ReadGuid();
         }
 
         public ItemInstance Clone()
@@ -34,7 +36,8 @@ namespace Intersect_Client.Classes.Items
             ItemInstance newItem = new ItemInstance()
             {
                 ItemId = ItemId,
-                Quantity = Quantity
+                Quantity = Quantity,
+                BagId = BagId
             };
             for (int i = 0; i < (int) Stats.StatCount; i++)
             {
