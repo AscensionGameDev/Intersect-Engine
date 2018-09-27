@@ -186,14 +186,10 @@ namespace Intersect.Server.Classes.Core
             var rng = new RNGCryptoServiceProvider();
             var buff = new byte[20];
             rng.GetBytes(buff);
-            var salt =
-                BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(Convert.ToBase64String(buff))))
-                    .Replace("-", "");
+            var salt = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(Convert.ToBase64String(buff)))).Replace("-", "");
 
             //Hash the Password
-            var pass =
-                BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password + salt)))
-                    .Replace("-", "");
+            var pass = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password + salt))).Replace("-", "");
 
             var access = Access.None;
             if (RegisteredPlayers== 0)
@@ -222,9 +218,7 @@ namespace Intersect.Server.Classes.Core
                 var sha = new SHA256Managed();
                 var pass = user.Password;
                 var salt = user.Salt;
-                var temppass =
-                    BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password + salt)))
-                        .Replace("-", "");
+                var temppass = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password + salt))).Replace("-", "");
                 if (temppass == pass)
                 {
                     return true;
@@ -636,7 +630,12 @@ namespace Intersect.Server.Classes.Core
                 default:
                     throw new ArgumentOutOfRangeException(nameof(gameObjectType), gameObjectType, null);
             }
-            SaveGameDatabaseAsync();
+
+            if (Globals.ServerStarted)
+            {
+                SaveGameDatabaseAsync();
+            }
+
             return dbObj;
         }
 
@@ -862,7 +861,6 @@ namespace Intersect.Server.Classes.Core
             if (mapFolders == null)
             {
                 sGameDb.MapFolders.Add(MapList.GetList());
-                sGameDb.SaveChanges();
             }
             else
             {
@@ -886,7 +884,6 @@ namespace Intersect.Server.Classes.Core
             if (time == null)
             {
                 sGameDb.Time.Add(TimeBase.GetTimeBase());
-                sGameDb.SaveChanges();
             }
             else
             {

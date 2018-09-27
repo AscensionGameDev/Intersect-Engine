@@ -64,6 +64,7 @@ namespace Intersect_Client.Classes.General
         public static GameStates GameState = GameStates.Intro; //0 for Intro, 1 to Menu, 2 for in game
 
         public static bool GameLoaded;
+        public static bool ConnectionLost;
 
         //Entities and stuff
         //public static List<Entity> Entities = new List<Entity>();

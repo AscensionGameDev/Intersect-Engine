@@ -276,6 +276,7 @@ namespace Intersect.Client.Classes.Localization
             public static LocalizedString title = @"Error!";
             public static LocalizedString usernameinvalid = @"Username is invalid. Please use alphanumeric characters with a length between 2 and 20.";
             public static LocalizedString LoadFile = @"Failed to load a {00}. Please send the game administrator a copy of your errors log file in the logs directory.";
+            public static LocalizedString lostconnection = @"Lost connection to the game server. Please make sure you're connected to the internet and try again!";
         }
 
         public struct Words
@@ -774,11 +775,11 @@ namespace Intersect.Client.Classes.Localization
             public static LocalizedString youroffer = @"Your offer:";
         }
 
-        public struct IngameMenu
+        public struct EscapeMenu
         {
             public static LocalizedString Title = @"Menu";
             public static LocalizedString Options = @"Options";
-            public static LocalizedString GoToCharacterSelect = @"Go to Character Select";
+            public static LocalizedString CharacterSelect = @"Character Select";
             public static LocalizedString Logout = @"Logout";
             public static LocalizedString ExitToDesktop = @"Exit to Desktop";
             public static LocalizedString Close = @"Close";

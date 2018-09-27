@@ -146,6 +146,13 @@ namespace Intersect.GameObjects.Maps
         public MapBase(Guid id, bool isClient) : base(id)
         {
             Name = "New Map";
+
+            //Fill Tile Data with Nulled/Empty Data
+            /* Each tile has a Guid for tileset, x and y integer for source tile in the set, and a byte for the tile type.
+             * A Guid is 16 bytes, and the integers are both 4 bytes each, and the final byte is just 1 byte.
+             * So the blob size is going to be LayerCount * MapWidth * MapHeight * (16 + 4 + 4 + 1)*/
+            TileData = Compression.CompressPacket(new byte[Options.LayerCount * Options.MapWidth * Options.MapHeight * 25]);
+
             IsClient = isClient;
         }
 

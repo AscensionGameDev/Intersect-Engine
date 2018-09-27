@@ -41,5 +41,10 @@ namespace Intersect_Client.Classes.UI.Game.Chat
         {
             return sGameMessages;
         }
+
+        public static void ClearMessages()
+        {
+            sGameMessages.Clear();
+        }
     }
 }

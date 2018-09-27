@@ -1497,7 +1497,7 @@ Tick timer saved in server config.json.";
                 {"musicdesc", @"Looping background music for this map."},
                 {"namedesc", @"The name of this map."},
                 {"overlaygraphicdesc", @"This is an image that appears above the map. (Not shown in editor.)"},
-                {"panormadesc", @"This is an image that appears behind the map. It can be seen where no tiles are placed."},
+                {"panoramadesc", @"This is an image that appears behind the map. It can be seen where no tiles are placed."},
                 {"playerlightcolordesc", @"Which color is the players light? (Default: White)"},
                 {"playerlightexpanddesc", @"How far into the light does the effect start fading? (0.00 to 1.00)"},
                 {"playerlightintensitydesc", @"How strong the light is at its brightest point. (0 to 255)"},

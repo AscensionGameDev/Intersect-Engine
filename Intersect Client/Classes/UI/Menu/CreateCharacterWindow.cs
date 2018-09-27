@@ -11,6 +11,7 @@ using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
+using Intersect_Client.Classes.UI.Game.Chat;
 
 namespace Intersect_Client.Classes.UI.Menu
 {
@@ -53,6 +54,8 @@ namespace Intersect_Client.Classes.UI.Menu
 
         private Button mNextSpriteButton;
         private Button mPrevSpriteButton;
+
+        public bool IsHidden => mCharCreationPanel.IsHidden;
 
         //Init
         public CreateCharacterWindow(Canvas parent, MainMenu mainMenu, ImagePanel parentPanel)
@@ -151,11 +154,22 @@ namespace Intersect_Client.Classes.UI.Menu
                 }
             }
             LoadClass();
-            Update();
+            UpdateDisplay();
+        }
+
+        public void Update()
+        {
+            if (!GameNetwork.Connected)
+            {
+                Hide();
+                mMainMenu.Show();
+                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.lostconnection));
+                return;
+            }
         }
 
         //Methods
-        public void Update()
+        private void UpdateDisplay()
         {
             var isFace = true;
             if (GetClass() != null && mDisplaySpriteIndex != -1)
@@ -331,7 +345,7 @@ namespace Intersect_Client.Classes.UI.Menu
                     mDisplaySpriteIndex = -1;
                 }
             }
-            Update();
+            UpdateDisplay();
         }
 
         private void _nextSpriteButton_Clicked(Base sender, ClickedEventArgs arguments)
@@ -365,7 +379,7 @@ namespace Intersect_Client.Classes.UI.Menu
                     mDisplaySpriteIndex = -1;
                 }
             }
-            Update();
+            UpdateDisplay();
         }
 
         void TryCreateCharacter(int gender)
@@ -388,6 +402,7 @@ namespace Intersect_Client.Classes.UI.Menu
                         mFemaleSprites[mDisplaySpriteIndex].Key);
                 }
                 Globals.WaitingOnServer = true;
+                ChatboxMsg.ClearMessages();
             }
             else
             {
@@ -412,7 +427,7 @@ namespace Intersect_Client.Classes.UI.Menu
         void classCombobox_ItemSelected(Base control, ItemSelectedEventArgs args)
         {
             LoadClass();
-            Update();
+            UpdateDisplay();
         }
 
         void maleChk_Checked(Base sender, EventArgs arguments)
@@ -420,7 +435,7 @@ namespace Intersect_Client.Classes.UI.Menu
             mMaleChk.IsChecked = true;
             mFemaleChk.IsChecked = false;
             ResetSprite();
-            Update();
+            UpdateDisplay();
         }
 
         void femaleChk_Checked(Base sender, EventArgs arguments)
@@ -428,7 +443,7 @@ namespace Intersect_Client.Classes.UI.Menu
             mFemaleChk.IsChecked = true;
             mMaleChk.IsChecked = false;
             ResetSprite();
-            Update();
+            UpdateDisplay();
         }
 
         void CreateButton_Clicked(Base sender, ClickedEventArgs arguments)

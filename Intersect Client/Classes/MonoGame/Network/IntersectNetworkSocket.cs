@@ -57,7 +57,7 @@ namespace Intersect.Client.Classes.MonoGame.Network
 
         public override void SendData(byte[] data)
         {
-            if (ClientLidgrenNetwork != null)
+            if (ClientLidgrenNetwork != null && ClientLidgrenNetwork.IsConnected)
             {
                 var buffer = new ByteBuffer();
                 buffer.WriteBytes(data);

@@ -54,10 +54,10 @@ namespace Intersect.Server.Classes.Core
             }
 
             //Server is shutting down!!
+            Globals.Network?.Dispose();
             LegacyDatabase.SavePlayerDatabase();
             LegacyDatabase.SaveGameDatabase();
             Globals.Api?.Stop();
-            Globals.Network?.Dispose();
             Globals.ServerStopped = true;
             //TODO gracefully disconnect all clients
         }

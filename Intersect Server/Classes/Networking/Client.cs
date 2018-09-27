@@ -186,6 +186,7 @@ namespace Intersect.Server.Classes.Networking
         {
             if (mConnection != null)
             {
+                Logout();
                 mConnection.Dispose();
                 return;
             }

@@ -379,7 +379,14 @@ namespace Intersect.Server.Classes.Networking
 
         private static void HandleLogout(Client client, byte[] packet)
         {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var charSelect = bf.ReadBoolean();
             client?.Logout();
+            if (Options.MaxCharacters > 1 && charSelect)
+            {
+                PacketSender.SendPlayerCharacters(client);
+            }
         }
 
         private static void HandleNeedMap(Client client, byte[] packet)

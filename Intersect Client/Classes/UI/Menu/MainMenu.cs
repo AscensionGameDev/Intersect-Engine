@@ -138,6 +138,11 @@ namespace Intersect_Client.Classes.UI.Menu
             {
                 CreateCharacterCreation();
             }
+
+            if (!mLoginWindow.IsHidden) mLoginWindow.Update();
+            if (!mCreateCharacterWindow.IsHidden) mCreateCharacterWindow.Update();
+            if (!mRegisterWindow.IsHidden) mRegisterWindow.Update();
+            if (!mSelectCharacterWindow.IsHidden) mSelectCharacterWindow.Update();
             mOptionsWindow.Update();
         }
 

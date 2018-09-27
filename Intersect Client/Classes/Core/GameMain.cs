@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Intersect.Client.Classes.Localization;
 using Intersect.Config;
 using Intersect.GameObjects;
 using IntersectClientExtras.File_Management;
@@ -9,6 +10,7 @@ using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Maps;
 using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.UI;
+using Intersect_Client.Classes.UI.Game.Chat;
 
 // ReSharper disable All
 
@@ -199,7 +201,14 @@ namespace Intersect.Client.Classes.Core
         }
 
         private static void ProcessGame()
-        { 
+        {
+            if (Globals.ConnectionLost)
+            {
+                GameMain.Logout(false);
+                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.lostconnection));
+                Globals.ConnectionLost = false;
+                return;
+            }
             //If we are waiting on maps, lets see if we have them
             if (Globals.NeedsMaps)
             {
@@ -330,12 +339,17 @@ namespace Intersect.Client.Classes.Core
             GameAudio.StopMusic(3f);
         }
 
-        public static void Logout()
+        public static void Logout(bool characterSelect)
         {
-            PacketSender.SendLogout();
+            GameAudio.StopMusic(3f);
+            GameFade.FadeOut();
+            PacketSender.SendLogout(characterSelect);
             Globals.LoggedIn = false;
-            Gui.MenuUi.Reset();
+            Globals.WaitingOnServer = false;
             Globals.GameState = GameStates.Menu;
+            Globals.JoiningGame = false;
+            Gui.InitGwen();
+            GameFade.FadeIn();
         }
     }
 }

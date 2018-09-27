@@ -11,6 +11,7 @@ using IntersectClientExtras.Gwen.Control.EventArguments;
 using IntersectClientExtras.Input;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
+using Intersect_Client.Classes.UI.Game.Chat;
 
 namespace Intersect_Client.Classes.UI.Menu
 {
@@ -40,6 +41,8 @@ namespace Intersect_Client.Classes.UI.Menu
         private TextBox mUsernameTextbox;
 
         private bool mUseSavedPass;
+
+        public bool IsHidden => mLoginWindow.IsHidden;
 
         //Init
         public LoginWindow(Canvas parent, MainMenu mainMenu, ImagePanel parentPanel)
@@ -104,6 +107,12 @@ namespace Intersect_Client.Classes.UI.Menu
         //Methods
         public void Update()
         {
+            if (!GameNetwork.Connected)
+            {
+                Hide();
+                mMainMenu.Show();
+                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.lostconnection));
+            }
         }
 
         public void Hide()
@@ -184,6 +193,7 @@ namespace Intersect_Client.Classes.UI.Menu
             PacketSender.SendLogin(mUsernameTextbox?.Text, password);
             SaveCredentials();
             Globals.WaitingOnServer = true;
+            ChatboxMsg.ClearMessages();
         }
 
         private void LoadCredentials()

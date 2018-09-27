@@ -8,6 +8,7 @@ using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
+using Intersect_Client.Classes.UI.Game.Chat;
 
 namespace Intersect_Client.Classes.UI.Menu
 {
@@ -39,6 +40,8 @@ namespace Intersect_Client.Classes.UI.Menu
         private ImagePanel mUsernameBackground;
         private Label mUsernameLabel;
         private TextBox mUsernameTextbox;
+
+        public bool IsHidden => mRegistrationPanel.IsHidden;
 
         //Init
         public RegisterWindow(Canvas parent, MainMenu mainMenu, ImagePanel parentPanel)
@@ -113,6 +116,12 @@ namespace Intersect_Client.Classes.UI.Menu
         //Methods
         public void Update()
         {
+            if (!GameNetwork.Connected)
+            {
+                Hide();
+                mMainMenu.Show();
+                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.lostconnection));
+            }
         }
 
         public void Show()
@@ -146,6 +155,7 @@ namespace Intersect_Client.Classes.UI.Menu
                                 PacketSender.SendCreateAccount(mUsernameTextbox.Text, mPasswordTextbox.Text,
                                     mEmailTextbox.Text);
                                 Globals.WaitingOnServer = true;
+                                ChatboxMsg.ClearMessages();
                             }
                             else
                             {

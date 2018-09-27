@@ -36,7 +36,7 @@ namespace Intersect.Client.Classes.Core
             if (GameControls.ControlHasKey(Controls.OpenMenu, key))
             {
                 if (Globals.GameState != GameStates.InGame) return;
-                Gui.GameUi?.IngameMenu?.ToggleHidden();
+                Gui.GameUi?.EscapeMenu?.ToggleHidden();
             }
             
             if (Gui.HasInputFocus())

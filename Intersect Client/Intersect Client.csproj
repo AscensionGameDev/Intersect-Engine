@@ -97,7 +97,7 @@
     <Compile Include="Classes\UI\Game\Crafting\RecipeItem.cs" />
     <Compile Include="Classes\UI\Game\EntityPanel\SpellStatus.cs" />
     <Compile Include="Classes\UI\Game\Hotbar\HotbarItem.cs" />
-    <Compile Include="Classes\UI\Game\IngameMenu.cs" />
+    <Compile Include="Classes\UI\Game\EscapeMenu.cs" />
     <Compile Include="Classes\UI\Game\Inventory\InventoryItem.cs" />
     <Compile Include="Classes\UI\Game\PictureWindow.cs" />
     <Compile Include="Classes\UI\Game\Shop\ShopItem.cs" />

@@ -28,10 +28,11 @@ namespace Intersect_Client.Classes.Networking
             GameNetwork.SendPacket(bf.ToArray());
         }
 
-        public static void SendLogout()
+        public static void SendLogout(bool characterSelect = false)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ClientPackets.Logout);
+            bf.WriteBoolean(characterSelect);
             GameNetwork.SendPacket(bf.ToArray());
         }
 

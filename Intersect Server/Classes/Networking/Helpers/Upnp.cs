@@ -63,14 +63,14 @@ namespace Intersect.Server.Classes.Networking
                 {
                     case Protocol.Tcp:
                         Console.WriteLine(Strings.Upnp.failedforwardingtcp.ToString(port));
-                        Log.Error("UPnP Error Opening TCP Port " + port + Environment.NewLine + ex.ToString());
-                        sLog.AppendLine("UPnP Error Opening TCP Port " + port + Environment.NewLine + ex.ToString());
+                        Log.Warn("UPnP Could Not Open TCP Port " + port + Environment.NewLine + ex.ToString());
+                        sLog.AppendLine("UPnP Could Not Open TCP Port " + port + Environment.NewLine + ex.ToString());
                         break;
 
                     case Protocol.Udp:
                         Console.WriteLine(Strings.Upnp.failedforwardingudp.ToString(port));
-                        Log.Error("UPnP Error Opening UDP Port " + port + Environment.NewLine + ex.ToString());
-                        sLog.AppendLine("UPnP Error Opening UDP Port " + port + Environment.NewLine + ex.ToString());
+                        Log.Warn("UPnP Could Not Open UDP Port " + port + Environment.NewLine + ex.ToString());
+                        sLog.AppendLine("UPnP Could Not Open UDP Port " + port + Environment.NewLine + ex.ToString());
                         break;
                 }
             }

@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using Intersect;
+using Intersect.Client.Classes.Core;
+using Intersect.Client.Classes.Localization;
 using Intersect.Config;
 using Intersect.Logging;
 using IntersectClientExtras.Network;
@@ -83,7 +86,9 @@ namespace Intersect_Client.Classes.Networking
             sConnected = false;
             if (Globals.GameState == GameStates.InGame || Globals.GameState == GameStates.Loading)
             {
-                Globals.IsRunning = false;
+                Globals.ConnectionLost = true;
+                MySocket?.Disconnect("");
+                TryConnect();
             }
             else
             {

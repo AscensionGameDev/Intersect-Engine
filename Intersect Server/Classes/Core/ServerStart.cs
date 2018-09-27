@@ -170,6 +170,8 @@ namespace Intersect.Server.Classes
 
             Console.WriteLine(Strings.Intro.started.ToString(Options.ServerPort));
 
+            Globals.ServerStarted = true;
+
             logicThread = new Thread(() => ServerLoop.RunServerLoop());
             logicThread.Start();
             if (args.Contains("nohalt")) sErrorHalt = false;
@@ -698,6 +700,7 @@ namespace Intersect.Server.Classes
 
         private static void ShutDown()
         {
+            Globals.Network?.Dispose();
             Console.WriteLine();
             Console.WriteLine(Strings.Commands.exiting);
             Console.WriteLine();
@@ -705,7 +708,6 @@ namespace Intersect.Server.Classes
             LegacyDatabase.SaveGameDatabase();
             Globals.Api?.Stop();
             Globals.ServerStarted = false;
-            Globals.Network?.Dispose();
             Globals.ServerStopped = true;
         }
 

@@ -100,6 +100,7 @@ namespace Intersect.Server.Classes.Maps
         {
             if (id == Guid.Empty)
             {
+
                 return;
             }
             Layers = null;

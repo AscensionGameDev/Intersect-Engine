@@ -134,7 +134,6 @@ namespace Intersect.Server.Classes.Entities
         [NotMapped] public ShopBase InShop;
         [NotMapped] public Guid LastMapEntered = Guid.Empty;
         [NotMapped] public Client MyClient;
-        [NotMapped] public long MyId = -1;
         [NotMapped] public List<Player> Party = new List<Player>();
         [NotMapped] public Player PartyRequester;
         [NotMapped] public Dictionary<Player, long> PartyRequests = new Dictionary<Player, long>();
@@ -177,12 +176,23 @@ namespace Intersect.Server.Classes.Entities
 
         public void Online()
         {
+            IsDisposed = false;
+            mSentMap = false;
             OnlinePlayers.Add(Id, this);
+        }
+
+        public override void Dispose()
+        {
+            if (!IsDisposed)
+            {
+                base.Dispose();
+                if (OnlinePlayers.ContainsKey(Id)) OnlinePlayers.Remove(Id);
+            }
         }
 
         ~Player()
         {
-            OnlinePlayers.Remove(Id);
+            if (OnlinePlayers.ContainsKey(Id)) OnlinePlayers.Remove(Id);
         }
 
         //Update
@@ -2735,10 +2745,10 @@ namespace Intersect.Server.Classes.Entities
                     PacketSender.SendPlayerMsg(remainder.MyClient, Strings.Parties.disbanded,
                         CustomColors.Error);
                 }
+                PacketSender.SendPlayerMsg(MyClient, Strings.Parties.left, CustomColors.Error);
             }
             Party.Clear();
             PacketSender.SendParty(MyClient);
-            PacketSender.SendPlayerMsg(MyClient, Strings.Parties.left, CustomColors.Error);
         }
 
         public bool InParty(Player member)

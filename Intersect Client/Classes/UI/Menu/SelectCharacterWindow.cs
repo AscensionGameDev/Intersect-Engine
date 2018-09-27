@@ -9,6 +9,7 @@ using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.UI.Game;
 using Intersect.Client.Classes.Core;
+using Intersect_Client.Classes.UI.Game.Chat;
 
 namespace Intersect_Client.Classes.UI.Menu
 {
@@ -41,6 +42,8 @@ namespace Intersect_Client.Classes.UI.Menu
 
         //Selected Char
         private int mSelectedChar = 0;
+
+        public bool IsHidden => mCharacterSelectionPanel.IsHidden;
 
         //Init
         public SelectCharacterWindow(Canvas parent, MainMenu mainMenu, ImagePanel parentPanel)
@@ -94,8 +97,19 @@ namespace Intersect_Client.Classes.UI.Menu
             mCharacterSelectionPanel.LoadJsonUi(GameContentManager.UI.Menu, GameGraphics.Renderer.GetResolutionString());
         }
 
+
         //Methods
         public void Update()
+        {
+            if (!GameNetwork.Connected)
+            {
+                Hide();
+                mMainMenu.Show();
+                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.lostconnection));
+            }
+        }
+
+        private void UpdateDisplay()
         {
             var isFace = true;
 
@@ -224,7 +238,7 @@ namespace Intersect_Client.Classes.UI.Menu
         public void Show()
         {
             mSelectedChar = 0;
-            Update();
+            UpdateDisplay();
             mCharacterSelectionPanel.Show();
         }
 
@@ -240,7 +254,7 @@ namespace Intersect_Client.Classes.UI.Menu
             {
                 mSelectedChar = Characters.Count - 1;
             }
-            Update();
+            UpdateDisplay();
         }
 
         private void _nextCharButton_Clicked(Base sender, ClickedEventArgs arguments)
@@ -250,11 +264,12 @@ namespace Intersect_Client.Classes.UI.Menu
             {
                 mSelectedChar = 0;
             }
-            Update();
+            UpdateDisplay();
         }
 
         private void _playButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
+            ChatboxMsg.ClearMessages();
             PacketSender.PlayGame(Characters[mSelectedChar].Id);
         }
 
@@ -271,7 +286,7 @@ namespace Intersect_Client.Classes.UI.Menu
         {
             PacketSender.DeleteChar((Guid)(((InputBox) sender).UserData));
             mSelectedChar = 0;
-            Update();
+            UpdateDisplay();
         }
 
         private void _newButton_Clicked(Base sender, ClickedEventArgs arguments)

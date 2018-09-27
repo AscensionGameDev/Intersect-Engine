@@ -16,7 +16,7 @@ namespace Intersect.Client.Classes.UI.Game
         public Canvas GameCanvas { get; }
 
         [NotNull]
-        public IngameMenu IngameMenu { get; }
+        public EscapeMenu EscapeMenu { get; }
 
         private AdminWindow mAdminWindow;
         private BagWindow mBagWindow;
@@ -54,7 +54,7 @@ namespace Intersect.Client.Classes.UI.Game
         public GameGuiBase([NotNull] Canvas myCanvas)
         {
             GameCanvas = myCanvas;
-            IngameMenu = new IngameMenu(GameCanvas) { IsHidden = true };
+            EscapeMenu = new EscapeMenu(GameCanvas) { IsHidden = true };
 
             InitGameGui();
         }
@@ -252,12 +252,6 @@ namespace Intersect.Client.Classes.UI.Game
         public void AdminWindowSelectName(string name)
         {
             mAdminWindow.SetName(name);
-        }
-
-        public bool ToggleIngameMenu()
-        {
-            IngameMenu.ToggleHidden();
-            return !IngameMenu.IsHidden;
         }
 
         public void Draw()

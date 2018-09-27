@@ -23,7 +23,7 @@ namespace Intersect.Server.Classes.Entities
 {
     using LegacyDatabase = Intersect.Server.Classes.Core.LegacyDatabase;
 
-    public class EntityInstance
+    public class EntityInstance : IDisposable
     {
         [Column(Order = 1)]
         public string Name { get; set; }
@@ -114,7 +114,7 @@ namespace Intersect.Server.Classes.Entities
 
         [NotMapped] public EntityInstance Target = null;
 
-        [NotMapped] public bool IsDisposed { get; private set; }
+        [NotMapped] public bool IsDisposed { get; protected set; }
 
         public EntityInstance() : this(Guid.NewGuid())
         {
@@ -136,7 +136,7 @@ namespace Intersect.Server.Classes.Entities
             Id = instanceId;
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             if (!IsDisposed)
             {
