@@ -3,21 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect Server", "Intersect Server\Intersect Server.csproj", "{9FFC7331-87BE-403B-82A0-B86D3CCE7C53}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect.Server", "Intersect.Server\Intersect.Server.csproj", "{9FFC7331-87BE-403B-82A0-B86D3CCE7C53}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect (Core)", "Intersect Library\Intersect (Core).csproj", "{BC304B43-1F2C-4454-9EDC-48F47357CA94}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect (Core)", "Intersect (Core)\Intersect (Core).csproj", "{BC304B43-1F2C-4454-9EDC-48F47357CA94}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect Client", "Intersect Client\Intersect Client.csproj", "{2240F3DD-3694-4606-B181-F204CBBCB971}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect.Client", "Intersect.Client\Intersect.Client.csproj", "{2240F3DD-3694-4606-B181-F204CBBCB971}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect Editor", "Intersect Editor\Intersect Editor.csproj", "{5AC53DF1-8152-466D-B7D0-238657F013F7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect.Editor", "Intersect.Editor\Intersect.Editor.csproj", "{5AC53DF1-8152-466D-B7D0-238657F013F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect Migration Tool", "Intersect Migration Tool\Intersect Migration Tool.csproj", "{EA272B71-4AA3-4602-8AD9-24CE529AB2C3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect.Migration.Tool", "Intersect.Migration.Tool\Intersect.Migration.Tool.csproj", "{EA272B71-4AA3-4602-8AD9-24CE529AB2C3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect.Network", "Intersect.Network\Intersect.Network.csproj", "{E8F288CB-51DF-4D9D-A3B3-A61BD4FD3F45}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect.Utilities", "Intersect.Utilities\Intersect.Utilities.csproj", "{6757FDD0-8A95-4CEC-BBC0-83A3DACA58FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntersectClientExtras", "..\Intersect-Client-Extras\IntersectClientExtras\IntersectClientExtras.csproj", "{40973F13-3339-4548-9008-FF76A0C8CD79}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect.Client.Framework", "Intersect.Client.Framework\Intersect.Client.Framework.csproj", "{40973F13-3339-4548-9008-FF76A0C8CD79}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect.Tests", "Intersect.Tests\Intersect.Tests.csproj", "{4030D4D5-9DC6-496D-9763-9A41DD1DECBE}"
 EndProject

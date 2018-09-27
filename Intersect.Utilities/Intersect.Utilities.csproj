@@ -79,7 +79,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Intersect Library\Intersect %28Core%29.csproj">
+    <ProjectReference Include="..\Intersect %28Core%29\Intersect %28Core%29.csproj">
       <Project>{BC304B43-1F2C-4454-9EDC-48F47357CA94}</Project>
       <Name>Intersect %28Core%29</Name>
     </ProjectReference>
