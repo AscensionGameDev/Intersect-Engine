@@ -16,85 +16,22 @@ namespace Intersect.Server.WebApi.Modules
 
     public class GameObjectModule : ServerModule
     {
-#if DEBUG
-        protected override bool Secured => false;
-#endif
-
         public GameObjectModule() : base("/objects")
         {
             Get("/{type}", (Sync)Get_Type_List);
-
             Get("/{type}/{guid:guid}", (Sync)Get_Type_Guid);
-            Delete("/{type}/{guid:guid}", (Sync)Delete_Type_Guid);
-            Patch("/{type}/{guid:guid}", (Sync)Patch_Type_Guid);
-            Post("/{type}", (Sync)Post_Type);
-
-#if DEBUG
-            Get("/{type}/{guid:guid}/delete", (Sync)Debug_Type_Guid_Delete);
-            Get("/{type}/create", (Sync)Debug_Type_Create);
-#endif
-
             Get("/{type}/stats", (Sync)Get_Type_Stats);
-        }
 
+
+            //Disabling for now. I do not want to allow editing of game objects outside of our editor which already does the job very well.
 #if DEBUG
-        private Response Debug_Type_Guid_Delete(dynamic parameters)
-        {
-            if (Request.Query.all != true)
-            {
-                return Delete_Type_Guid(parameters);
-            }
-
-            try
-            {
-                GameObjectType type = GameObjectTypeUtils.TypeFromName(parameters.type);
-                var lookup = type.GetLookup();
-
-                lookup.ValueList.ForEach(gameObject => DeleteObject(type, gameObject));
-
-                return Response.AsJson(new
-                {
-                    success = true,
-                    count = lookup.Count
-                });
-            }
-            catch (GameObjectTypeException exception)
-            {
-                var response = Response.AsJson(new { message = exception.Message });
-                response.StatusCode = HttpStatusCode.NotFound;
-                return response;
-            }
-        }
-
-        private Response Debug_Type_Create(dynamic parameters)
-        {
-
-            try
-            {
-                GameObjectType type = GameObjectTypeUtils.TypeFromName(parameters.type);
-
-                var count = Request.Query.count.HasValue ? MathHelper.Clamp(Request.Query.count, 0, 100) : 1;
-                var objects = new IDatabaseObject[count];
-                for (var i = 0; i < count; ++i)
-                {
-                    objects[i] = LegacyDatabase.AddGameObject(type);
-                }
-
-                return Response.AsJson(new
-                {
-                    success = true,
-                    count,
-                    objects = objects
-                });
-            }
-            catch (GameObjectTypeException exception)
-            {
-                var response = Response.AsJson(new { message = exception.Message });
-                response.StatusCode = HttpStatusCode.NotFound;
-                return response;
-            }
-        }
+            //Delete("/{type}/{guid:guid}", (Sync)Delete_Type_Guid);
+            //Patch("/{type}/{guid:guid}", (Sync)Patch_Type_Guid);
+            //Post("/{type}", (Sync)Post_Type);
+            //Get("/{type}/{guid:guid}/delete", (Sync)Debug_Type_Guid_Delete);
+            //Get("/{type}/create", (Sync)Debug_Type_Create);
 #endif
+        }
 
         private Response Get_Type_List(dynamic parameters)
         {
@@ -182,6 +119,65 @@ namespace Intersect.Server.WebApi.Modules
                 var response = Response.AsJson(new { message = $"Invalid guid '{guid}'." });
                 response.StatusCode = HttpStatusCode.NotFound;
                 return response;
+            }
+            catch (GameObjectTypeException exception)
+            {
+                var response = Response.AsJson(new { message = exception.Message });
+                response.StatusCode = HttpStatusCode.NotFound;
+                return response;
+            }
+        }
+
+
+#if DEBUG
+        private Response Debug_Type_Guid_Delete(dynamic parameters)
+        {
+            if (Request.Query.all != true)
+            {
+                return Delete_Type_Guid(parameters);
+            }
+
+            try
+            {
+                GameObjectType type = GameObjectTypeUtils.TypeFromName(parameters.type);
+                var lookup = type.GetLookup();
+
+                lookup.ValueList.ForEach(gameObject => DeleteObject(type, gameObject));
+
+                return Response.AsJson(new
+                {
+                    success = true,
+                    count = lookup.Count
+                });
+            }
+            catch (GameObjectTypeException exception)
+            {
+                var response = Response.AsJson(new { message = exception.Message });
+                response.StatusCode = HttpStatusCode.NotFound;
+                return response;
+            }
+        }
+
+        private Response Debug_Type_Create(dynamic parameters)
+        {
+
+            try
+            {
+                GameObjectType type = GameObjectTypeUtils.TypeFromName(parameters.type);
+
+                var count = Request.Query.count.HasValue ? MathHelper.Clamp(Request.Query.count, 0, 100) : 1;
+                var objects = new IDatabaseObject[count];
+                for (var i = 0; i < count; ++i)
+                {
+                    objects[i] = LegacyDatabase.AddGameObject(type);
+                }
+
+                return Response.AsJson(new
+                {
+                    success = true,
+                    count,
+                    objects = objects
+                });
             }
             catch (GameObjectTypeException exception)
             {
@@ -333,5 +329,7 @@ namespace Intersect.Server.WebApi.Modules
                 return response;
             }
         }
+#endif
+
     }
 }

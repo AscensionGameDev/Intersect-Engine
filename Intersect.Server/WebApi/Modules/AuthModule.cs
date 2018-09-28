@@ -37,11 +37,6 @@ namespace Intersect.Server.WebApi.Modules
             Post("/", args => RequestAuthorization(args));
             Delete("/", args => RevokeAuthorization(args));
 
-#if DEBUG
-            Get("/request", args => RequestAuthorization(args));
-            Get("/revoke", args => RevokeAuthorization(args));
-#endif
-
             Get("/access", args =>
             {
                 var userIdentity = Context?.CurrentUser?.Identity as UserIdentity;
@@ -56,11 +51,6 @@ namespace Intersect.Server.WebApi.Modules
             string username = Request?.Form?.username;
             string password = Request?.Form?.password;
 
-#if DEBUG
-            username = username ?? Request?.Query?.username;
-            password = password ?? Request?.Query?.password;
-#endif
-
             JwtToken token;
             try
             {
@@ -71,7 +61,7 @@ namespace Intersect.Server.WebApi.Modules
                 return new Response
                 {
                     StatusCode = HttpStatusCode.Unauthorized,
-                    ReasonPhrase = exception.Message ?? "Invalid credentials."
+                    ReasonPhrase = exception.Message ?? "Invalid credentials or api access not permitted."
                 };
             }
 
@@ -83,10 +73,6 @@ namespace Intersect.Server.WebApi.Modules
                 Headers =
                 {
                     {"Authorization", $"Bearer {AuthorizationProvider.Encode(token)}"},
-
-#if DEBUG
-                    {"Set-Cookie", $"__isid={AuthorizationProvider.Encode(token)}; Path=/"}
-#endif
                 }
             };
         }
@@ -94,10 +80,6 @@ namespace Intersect.Server.WebApi.Modules
         private Response RevokeAuthorization(dynamic args)
         {
             var authorization = Request?.Headers?.Authorization;
-
-#if DEBUG
-            authorization = authorization ?? Request?.Query?.authorization;
-#endif
 
             var token = AuthorizationProvider.Decode(authorization);
             var statusCode = HttpStatusCode.InternalServerError;

@@ -120,8 +120,7 @@ namespace Intersect.Server.WebApi.Modules
         {
             Get("/{name}", parameters =>
             {
-                var playerEntity = OnlinePlayers?.Find(entity => string.Equals(entity?.Name, parameters?.name,
-                    StringComparison.InvariantCultureIgnoreCase));
+                var playerEntity = LegacyDatabase.GetCharacter((string)parameters?.name);
                 if (playerEntity == null)
                     return new JObject
                     {

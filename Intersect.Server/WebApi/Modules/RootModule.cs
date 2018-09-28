@@ -11,7 +11,6 @@ namespace Intersect.Server.WebApi.Modules
                 var identity = Context.CurrentUser;
                 return new HtmlResponse(Nancy.HttpStatusCode.NotFound);
             });
-            //Options("/", args => )
         }
     }
 }

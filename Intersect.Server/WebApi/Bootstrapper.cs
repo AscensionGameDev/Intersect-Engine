@@ -34,13 +34,6 @@ namespace Intersect.Server.WebApi
             {
                 var authorizationHeader = ctx?.Request?.Headers?.Authorization;
 
-#if DEBUG
-                if (string.IsNullOrWhiteSpace(authorizationHeader))
-                {
-                    authorizationHeader = ctx?.Request?.Headers?.Cookie?.ToList().Find(cookie => string.Equals("__isid", cookie?.Name))?.Value;
-                }
-#endif
-
                 try
                 {
                     var token = mAuthorizationProvider?.Decode(authorizationHeader);

@@ -53,10 +53,10 @@ namespace Intersect.Server.WebApi.Authentication
             if (!LegacyDatabase.CheckPassword(username, password))
                 throw new ArgumentException("Invalid credentials.");
 
-            var access = LegacyDatabase.CheckAccess(username);
-            var passwordHashBytes = BitConverter.GetBytes(password.GetHashCode());
-
             var user = LegacyDatabase.GetUser(username);
+
+            if (!user.Power.Api)
+                throw new ArgumentException("API access not permitted for user!");
 
             var token = new JwtToken
             {
