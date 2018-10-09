@@ -41,8 +41,8 @@ namespace Intersect.Server.Database.PlayerData
 
         public static bool operator ==(UserRights b1, UserRights b2)
         {
-            if (null == b1)
-                return (null == b2);
+            if (null == (object)b1)
+                return (null == (object)b2);
 
             return b1.Equals(b2);
         }
