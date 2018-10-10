@@ -139,7 +139,7 @@ namespace Intersect.Server.Entities
         [NotMapped] public List<Npc> SpawnedNpcs = new List<Npc>();
         [NotMapped] public Trading Trading;
 
-        [NotMapped]
+		[NotMapped]
         public bool IsValidPlayer
         {
             get
@@ -2380,7 +2380,10 @@ namespace Intersect.Server.Entities
         //Trading
         public void InviteToTrade(Player fromPlayer)
         {
-            if (fromPlayer.Trading.Requests.ContainsKey(this))
+			if (Trading.Requests == null) Trading = new Trading(this);
+			if (fromPlayer.Trading.Requests == null) fromPlayer.Trading = new Trading(fromPlayer);
+
+			if (fromPlayer.Trading.Requests.ContainsKey(this))
             {
                 fromPlayer.Trading.Requests.Remove(this);
             }

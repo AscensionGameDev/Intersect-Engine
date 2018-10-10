@@ -153,7 +153,7 @@ namespace Intersect.Server.Entities
             }
             if (en.GetType() == typeof(Resource))
             {
-                return false;
+				if (!en.Passable) return false;
             }
             else if (en.GetType() == typeof(Npc))
             {

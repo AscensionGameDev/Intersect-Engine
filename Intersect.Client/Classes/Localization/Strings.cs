@@ -771,7 +771,7 @@ namespace Intersect.Client.Localization
             public static LocalizedString revokeitemprompt = @"How many/much {00} would you like to revoke?";
             public static LocalizedString theiroffer = @"Their offer:";
             public static LocalizedString title = @"Trading with {00}";
-            public static LocalizedString traderequest = @"Party Invite";
+            public static LocalizedString traderequest = @"Trading Invite";
             public static LocalizedString value = @"Value: {00}";
             public static LocalizedString youroffer = @"Your offer:";
         }
