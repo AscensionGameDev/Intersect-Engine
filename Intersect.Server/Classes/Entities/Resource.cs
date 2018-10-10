@@ -58,6 +58,7 @@ namespace Intersect.Server.Entities
         public void Spawn()
         {
             Sprite = Base.Initial.Graphic;
+            if (Base.MaxHp < Base.MinHp) Base.MaxHp = Base.MinHp;
             SetMaxVital(Vitals.Health,Globals.Rand.Next(Base.MinHp, Base.MaxHp + 1));
             RestoreVital(Vitals.Health);
             Passable = Base.WalkableBefore;

@@ -38,7 +38,11 @@ namespace Intersect.Client
             {
                 if (ex.InnerException != null && ex.InnerException.GetType().Name == "NoSuitableGraphicsDeviceException")
                 {
-                    System.Windows.Forms.MessageBox.Show(Strings.Errors.openglerror);
+                    System.Windows.Forms.MessageBox.Show(Strings.Errors.openglerror.ToString(Strings.Errors.opengllink));
+                    if (!string.IsNullOrEmpty(Strings.Errors.opengllink.ToString()))
+                    {
+                        Process.Start(Strings.Errors.opengllink.ToString());
+                    }
                     Environment.Exit(-1);
                 }
                 var type = Type.GetType("Intersect.Client.IntersectGame", true);

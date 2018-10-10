@@ -36,7 +36,7 @@ namespace Intersect.Server.Database.PlayerData
             Ban = true,
             Kick = true,
             Mute = true,
-            Api = true
+            Api = false
         };
 
         public static bool operator ==(UserRights b1, UserRights b2)

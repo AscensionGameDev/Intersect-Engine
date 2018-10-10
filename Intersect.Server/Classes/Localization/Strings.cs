@@ -159,6 +159,8 @@ namespace Intersect.Server.Localization
 
         public struct Commandoutput
         {
+            public static LocalizedString apigranted = @"{00} now has api access!";
+            public static LocalizedString apirevoked = @"{00} has had their api access revoked!";
             public static LocalizedString cps = @"Current CPS: {00}";
             public static LocalizedString cpslocked = @"CPS Locked";
             public static LocalizedString cpsunlocked = @"CPS Unlocked";
@@ -197,6 +199,10 @@ namespace Intersect.Server.Localization
             public static LocalizedString cpsstatus = @"status";
             public static LocalizedString cpsunlock = @"unlock";
             public static LocalizedString cpsusage = @"Usage: cps [status] [lock] [unlock] {00}";
+            public static LocalizedString api = @"api";
+            public static LocalizedString apidesc = @"Desc: Sets the api access (enabled/disabled) of a selected account. 1 is enabled, 0 is disabled";
+            public static LocalizedString apihelp = @"enables or disables api access for an account";
+            public static LocalizedString apiusage = @"Usage: api [account] [1/0]";
             public static LocalizedString exit = @"exit";
             public static LocalizedString exitdesc = @"Desc: Closes down the server.";
             public static LocalizedString exithelp = @"closes the server";

@@ -192,7 +192,7 @@ namespace Intersect.Server
             var rights = UserRights.None;
             if (RegisteredPlayers== 0)
             {
-                rights = UserRights.All;
+                rights = UserRights.Admin;
             }
 
             var user = new User()

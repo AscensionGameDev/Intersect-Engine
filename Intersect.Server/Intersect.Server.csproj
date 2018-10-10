@@ -260,8 +260,8 @@
     <Reference Include="Mono.Data.Sqlite, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <HintPath>..\packages\Mono.Data.Sqlite.Portable.1.0.3.5\lib\net4\Mono.Data.Sqlite.dll</HintPath>
     </Reference>
-    <Reference Include="MySqlConnector, Version=0.44.1.0, Culture=neutral, PublicKeyToken=d33d3e53aa5f8c92, processorArchitecture=MSIL">
-      <HintPath>..\packages\MySqlConnector.0.44.1\lib\net461\MySqlConnector.dll</HintPath>
+    <Reference Include="MySqlConnector, Version=0.45.1.0, Culture=neutral, PublicKeyToken=d33d3e53aa5f8c92, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySqlConnector.0.45.1\lib\net461\MySqlConnector.dll</HintPath>
     </Reference>
     <Reference Include="Nancy, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Nancy.2.0.0-pre1904\lib\net452\Nancy.dll</HintPath>
@@ -454,8 +454,10 @@
     <EmbeddedResource Include="private-intersect.bek" />
     <None Include="app.config" />
     <None Include="packages.config" />
-    <EmbeddedResource Include="Resources\libe_sqlite3.so" />
+    <EmbeddedResource Include="Resources\libe_sqlite3_x64.so" />
     <EmbeddedResource Include="Resources\libe_sqlite3.dylib" />
+    <EmbeddedResource Include="Resources\libe_sqlite3_alpine.so" />
+    <EmbeddedResource Include="Resources\libe_sqlite3_x86.so" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\e_sqlite3x64.dll" />

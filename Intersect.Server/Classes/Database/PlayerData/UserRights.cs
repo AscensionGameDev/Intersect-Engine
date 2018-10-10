@@ -30,19 +30,18 @@ namespace Intersect.Server.Database.PlayerData
             Mute = true
         };
 
-        public static UserRights All => new UserRights
+        public static UserRights Admin => new UserRights
         {
             Editor = true,
             Ban = true,
             Kick = true,
-            Mute = true,
-            Api = true
+            Mute = true
         };
 
         public static bool operator ==(UserRights b1, UserRights b2)
         {
-            if (null == b1)
-                return (null == b2);
+            if (null == (object)b1)
+                return (null == (object)b2);
 
             return b1.Equals(b2);
         }
@@ -78,21 +77,6 @@ namespace Intersect.Server.Database.PlayerData
             return UserRightsPermissions
                 .FindAll(property => (bool) (property?.GetValue(userRights, null) ?? false) == permitted)
                 .Select(property => property?.Name).ToList();
-        }
-
-        public static UserRights FromLegacyPowers(Access access)
-        {
-            switch (access)
-            {
-                case Access.Moderator:
-                    return UserRights.Moderation;
-
-                case Access.Admin:
-                    return UserRights.All;
-
-                default:
-                    return UserRights.None;
-            }
         }
     }
 }

@@ -271,7 +271,8 @@ namespace Intersect.Client.Localization
             public static LocalizedString errorencountered = @"The Intersect Client has encountered an error and must close. Error information can be found in logs/errors.log";
             public static LocalizedString notconnected = @"Not connected to the game server. Is it online?";
             public static LocalizedString notsupported = @"Not Supported!";
-            public static LocalizedString openglerror = @"OpenGL Initialialization Error! Try updating your graphics drivers! Make sure you're not using remote desktop software. Visit https://goo.gl/RSP3ts for more information.";
+            public static LocalizedString openglerror = @"OpenGL Initialialization Error! Try updating your graphics drivers! Make sure you're not using remote desktop software. Visit {00} (may open automatically) for more information.";
+            public static LocalizedString opengllink = @"https://goo.gl/RSP3ts";
             public static LocalizedString passwordinvalid = @"Password is invalid. Please use alphanumeric characters with a length between 4 and 20.";
             public static LocalizedString title = @"Error!";
             public static LocalizedString usernameinvalid = @"Username is invalid. Please use alphanumeric characters with a length between 2 and 20.";

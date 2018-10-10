@@ -1459,8 +1459,8 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
                     cnd = iCnd;
                     break;
                 case 9:
-                    var jCnd = new PowerIsCondition();
-                    jCnd.Power = (byte) ints[1];
+                    var jCnd = new AccessIsCondition();
+                    jCnd.Access = (byte) ints[1];
                     cnd = jCnd;
                     break;
                 case 10:

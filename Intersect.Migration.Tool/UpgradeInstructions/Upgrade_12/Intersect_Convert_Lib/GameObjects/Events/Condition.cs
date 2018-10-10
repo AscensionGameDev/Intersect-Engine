@@ -96,10 +96,10 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_L
         public bool Value { get; set; }
     }
 
-    public class PowerIsCondition : Condition
+    public class AccessIsCondition : Condition
     {
         public override ConditionTypes Type { get; } = ConditionTypes.PowerIs;
-        public byte Power { get; set; }
+        public byte Access { get; set; }
     }
 
     public class TimeBetweenCondition : Condition

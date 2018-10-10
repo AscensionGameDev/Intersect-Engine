@@ -1695,7 +1695,7 @@ namespace Intersect.Server.Entities
             }
             if (GetType() == typeof(Player)) //helps the client identify admins if entity is a player.
             {
-                if (((Player) this).MyClient.Power == UserRights.All)
+                if (((Player) this).MyClient.Power == UserRights.Admin)
                 {
                     bf.WriteInteger((int)Access.Admin);
                 }

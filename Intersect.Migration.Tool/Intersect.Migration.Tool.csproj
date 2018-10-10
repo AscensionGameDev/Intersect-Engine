@@ -129,8 +129,8 @@
     <Reference Include="Mono.Data.Sqlite, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <HintPath>..\packages\Mono.Data.Sqlite.Portable.1.0.3.5\lib\net4\Mono.Data.Sqlite.dll</HintPath>
     </Reference>
-    <Reference Include="MySqlConnector, Version=0.44.1.0, Culture=neutral, PublicKeyToken=d33d3e53aa5f8c92, processorArchitecture=MSIL">
-      <HintPath>..\packages\MySqlConnector.0.44.1\lib\net461\MySqlConnector.dll</HintPath>
+    <Reference Include="MySqlConnector, Version=0.45.1.0, Culture=neutral, PublicKeyToken=d33d3e53aa5f8c92, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySqlConnector.0.45.1\lib\net461\MySqlConnector.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -1117,12 +1117,18 @@
     <Compile Include="UpgradeInstructions\Upgrade_12\Upgrade12.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\e_sqlite3x64.dll" />
+    <EmbeddedResource Include="Resources\e_sqlite3x86.dll" />
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="FodyWeavers.xml" />
     <Content Include="IntersectLogo.ico" />
     <EmbeddedResource Include="Resources\sqlite3x64.dll" />
     <EmbeddedResource Include="Resources\sqlite3x86.dll" />
+    <EmbeddedResource Include="Resources\libe_sqlite3.dylib" />
+    <EmbeddedResource Include="Resources\libe_sqlite3_alpine.so" />
+    <EmbeddedResource Include="Resources\libe_sqlite3_x64.so" />
+    <EmbeddedResource Include="Resources\libe_sqlite3_x86.so" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="UpgradeInstructions\Upgrade_09\Intersect_Convert_Lib\Factories\" />

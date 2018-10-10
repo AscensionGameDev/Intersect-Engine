@@ -353,7 +353,7 @@ namespace Intersect.Server.EventProcessing
                     player.MyClient.Power = UserRights.Moderation;
                     break;
                 case Access.Admin:
-                    player.MyClient.Power = UserRights.All;
+                    player.MyClient.Power = UserRights.Admin;
                     break;
                 default:
                     player.MyClient.Power = UserRights.None;

@@ -73,7 +73,7 @@ namespace Intersect.Server
             Console.WriteLine(Strings.Intro.support);
             Console.WriteLine(Strings.Intro.loading);
             Formulas.LoadFormulas();
-            ExportDependencies();
+            ExportDependencies(args);
             if (!LegacyDatabase.InitDatabase())
             {
                 Console.ReadKey();
@@ -459,7 +459,7 @@ namespace Intersect.Server
                                                         power = UserRights.Moderation;
                                                         break;
                                                     case Access.Admin:
-                                                        power = UserRights.All;
+                                                        power = UserRights.Admin;
                                                         break;
                                                 }
                                                 LegacyDatabase.SetPlayerPower(Globals.Clients[i].Name, power);
@@ -476,6 +476,60 @@ namespace Intersect.Server
                                         }
 
                                     if (userFound == false) Console.WriteLine(@"    " + Strings.Player.offline);
+                                }
+                                else
+                                {
+                                    Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
+                        }
+                    }
+                    else if (commandsplit[0] == Strings.Commands.api) //API Command
+                    {
+                        if (commandsplit.Length > 1)
+                        {
+                            if (commandsplit[1] == Strings.Commands.commandinfo)
+                            {
+                                Console.WriteLine(@"    " + Strings.Commands.api.ToString(Strings.Commands.commandinfo));
+                                Console.WriteLine(@"    " + Strings.Commands.apidesc);
+                            }
+                            else
+                            {
+                                if (commandsplit.Length > 2)
+                                {
+                                    if (commandsplit.Length > 2)
+                                        try
+                                        {
+                                            if (LegacyDatabase.AccountExists(commandsplit[1]))
+                                            {
+                                                var access = Convert.ToBoolean(int.Parse(commandsplit[2]));
+                                                var account = LegacyDatabase.GetUser(commandsplit[1]);
+                                                account.Power.Api = access;
+                                                if (access)
+                                                {
+                                                    Console.WriteLine(@"    " + Strings.Commandoutput.apigranted.ToString(commandsplit[1]));
+                                                }
+                                                else
+                                                {
+                                                    Console.WriteLine(@"    " + Strings.Commandoutput.apirevoked.ToString(commandsplit[1]));
+                                                }
+                                                LegacyDatabase.SavePlayerDatabaseAsync();
+                                            }
+                                            else
+                                            {
+                                                Console.WriteLine(@"    " + Strings.Account.notfound.ToString(commandsplit[1]));
+                                            }
+                                        }
+                                        catch (Exception)
+                                        {
+                                            Console.WriteLine(@"    " + Strings.Commandoutput.parseerror.ToString(commandsplit[0], Strings.Commands.commandinfo));
+                                        }
+                                    else
+                                        Console.WriteLine(@"    " + Strings.Commandoutput.syntaxerror.ToString(commandsplit[0], Strings.Commands.commandinfo));
                                 }
                                 else
                                 {
@@ -513,7 +567,7 @@ namespace Intersect.Server
                                                         power = UserRights.Moderation;
                                                         break;
                                                     case Access.Admin:
-                                                        power = UserRights.All;
+                                                        power = UserRights.Admin;
                                                         break;
                                                 }
                                                 LegacyDatabase.SetPlayerPower(commandsplit[1], power);
@@ -683,6 +737,7 @@ namespace Intersect.Server
                             Console.WriteLine(@"    " + Strings.Commandoutput.helpheader);
                             Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.help) + " - " + Strings.Commands.helphelp);
                             Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.exit) + " - " + Strings.Commands.exithelp);
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.api) + " - " + Strings.Commands.apihelp);
                             Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.announcement) + " - " + Strings.Commands.announcementhelp);
                             Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.cps) + " - " + Strings.Commands.cpshelp);
                             Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.power) + " - " + Strings.Commands.powerhelp);
@@ -753,6 +808,17 @@ namespace Intersect.Server
         {
             Log.Error($"Received unhandled exception from {sender}.");
             Log.Error(exception);
+            if (exception.InnerException != null)
+            {
+                Log.Error($"Inner Exception?");
+                Log.Error(exception.InnerException);
+
+                if (exception.InnerException.InnerException != null)
+                {
+                    Log.Error($"Inner Exception? Inner Exception?");
+                    Log.Error(exception.InnerException.InnerException);
+                }
+            }
         }
 
         //Really basic error handler for debugging purposes
@@ -860,7 +926,7 @@ namespace Intersect.Server
             }
         }
 
-        private static void ExportDependencies()
+        private static void ExportDependencies(string[] args)
         {
             ClearDlls();
 
@@ -912,8 +978,9 @@ namespace Intersect.Server
 
                 case PlatformID.Unix:
                     //Place libe_sqlite3.so where it's needed.
-                    dllname = "libe_sqlite3.so";
-                    if (!ReflectionUtils.ExtractResource($"Intersect.Server.Resources.{dllname}", "libe_sqlite.so"))
+                    dllname =  Environment.Is64BitProcess ? "libe_sqlite3_x64.so" : "libe_sqlite3_x86.so";
+                    if (args.Contains("alpine")) dllname = "libe_sqlite3_alpine.so";
+                    if (!ReflectionUtils.ExtractResource($"Intersect.Server.Resources.{dllname}", "libe_sqlite3.so"))
                     {
                         Log.Error("Failed to extract libe_sqlite.so library, terminating startup.");
                         Environment.Exit(-0x1000);

@@ -476,7 +476,7 @@ namespace Intersect.Server.Networking
 
                 if (cmd == Strings.Chat.localcmd || cmd == "/0")
                 {
-                    if (client.Power == UserRights.All)
+                    if (client.Power == UserRights.Admin)
                     {
                         PacketSender.SendProximityMsg(Strings.Chat.local.ToString(client.Entity.Name, msg), player.MapId, CustomColors.AdminLocalChat, client.Entity.Name);
                     }
@@ -492,7 +492,7 @@ namespace Intersect.Server.Networking
                 }
                 else if (cmd == Strings.Chat.allcmd || cmd == "/1" || cmd == Strings.Chat.globalcmd)
                 {
-                    if (client.Power == UserRights.All)
+                    if (client.Power == UserRights.Admin)
                     {
                         PacketSender.SendGlobalMsg(Strings.Chat.Global.ToString(client.Entity.Name, msg),
                             CustomColors.AdminGlobalChat, client.Entity.Name);
@@ -1637,11 +1637,11 @@ namespace Intersect.Server.Networking
                             {
                                 if (val1.ToLower() != client.Entity.Name.ToLower()) //Can't increase your own power!
                                 {
-                                    if (client.Power == UserRights.All)
+                                    if (client.Power == UserRights.Admin)
                                     {
                                         if (val2 == "Admin")
                                         {
-                                            power = UserRights.All;
+                                            power = UserRights.Admin;
                                         }
                                         else if (val2 == "Moderator")
                                         {
@@ -1650,7 +1650,7 @@ namespace Intersect.Server.Networking
 
                                         var targetClient = Globals.Clients[i];
                                         targetClient.Power = power;
-                                        if (targetClient.Power == UserRights.All)
+                                        if (targetClient.Power == UserRights.Admin)
                                         {
                                             PacketSender.SendGlobalMsg(Strings.Player.admin.ToString(val1));
                                         }
