@@ -474,6 +474,16 @@ namespace Intersect.Client.Networking
                 map.HoldUp = bf.ReadInteger();
                 map.HoldDown = bf.ReadInteger();
                 map.Autotiles.InitAutotiles(map.GenerateAutotileGrid());
+
+                if (Globals.PendingEvents.ContainsKey(mapId))
+                {
+                    foreach (var evt in Globals.PendingEvents[mapId])
+                    {
+                        map.AddEvent(evt.Key, evt.Value);
+                    }
+
+                    Globals.PendingEvents[mapId].Clear();
+                }
             }
             if (MapInstance.OnMapLoaded != null) MapInstance.OnMapLoaded(map);
             Globals.Me.FetchNewMaps();
@@ -515,7 +525,23 @@ namespace Intersect.Client.Networking
             else
             {
                 var map = MapInstance.Get(mapId);
-                map?.AddEvent(id, bf);
+                if (map != null)
+                {
+                    map?.AddEvent(id, bf);
+                }
+                else
+                {
+                    var dict = Globals.PendingEvents.ContainsKey(mapId) ? Globals.PendingEvents[mapId] : new Dictionary<Guid, ByteBuffer>();
+                    if (dict.ContainsKey(id))
+                    {
+                        dict[id] = bf;
+                    }
+                    else
+                    {
+                        dict.Add(id,bf);
+                    }
+                    if (!Globals.PendingEvents.ContainsKey(mapId)) Globals.PendingEvents.Add(mapId,dict);
+                }
             }
         }
 

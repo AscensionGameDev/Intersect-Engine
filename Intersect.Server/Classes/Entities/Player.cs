@@ -112,32 +112,41 @@ namespace Intersect.Server.Entities
 
 
         //TODO: Clean all of this stuff up
+        //Temporary Values
+        [NotMapped] public Client MyClient;
+        [NotMapped] public bool InGame;
         [NotMapped] private bool mSentMap;
+        [NotMapped] private int mCommonEventLaunches = 0;
+        [NotMapped] private object mEventLock = new object();
+        [NotMapped] public Guid LastMapEntered = Guid.Empty;
+        [NotMapped] public ConcurrentDictionary<Guid, EventInstance> EventLookup = new ConcurrentDictionary<Guid, EventInstance>();
+        //Event Spawned Npcs
+        [NotMapped] public List<Npc> SpawnedNpcs = new List<Npc>();
+        //Chat
         [NotMapped] public Player ChatTarget = null;
+        //Trading
+        [NotMapped] public Trading Trading;
+        //Quests
+        [NotMapped] public List<Guid> QuestOffers = new List<Guid>();
+        //Crafting
+        [NotMapped] public Guid CraftingTableId = Guid.Empty;
         [NotMapped] public int CraftIndex = -1;
         [NotMapped] public long CraftTimer = 0;
-        //Temporary Values
-        [NotMapped] private object mEventLock = new object();
-        [NotMapped] public ConcurrentDictionary<Guid, EventInstance> EventLookup = new ConcurrentDictionary<Guid, EventInstance>();
-        [NotMapped] private int mCommonEventLaunches = 0;
-        [NotMapped] public Player FriendRequester;
-        [NotMapped] public Dictionary<Player, long> FriendRequests = new Dictionary<Player, long>();
-        [NotMapped] public Bag InBag;
-        [NotMapped] public bool InBank;
-        [NotMapped] public Guid CraftingTableId = Guid.Empty;
-        [NotMapped] public bool InGame;
-        [NotMapped] public ShopBase InShop;
-        [NotMapped] public Guid LastMapEntered = Guid.Empty;
-        [NotMapped] public Client MyClient;
+        //Parties
         [NotMapped] public List<Player> Party = new List<Player>();
         [NotMapped] public Player PartyRequester;
         [NotMapped] public Dictionary<Player, long> PartyRequests = new Dictionary<Player, long>();
-        [NotMapped] public List<Guid> QuestOffers = new List<Guid>();
+        //Friends
+        [NotMapped] public Player FriendRequester;
+        [NotMapped] public Dictionary<Player, long> FriendRequests = new Dictionary<Player, long>();
+        //Bag/Shops/etc
+        [NotMapped] public Bag InBag;
+        [NotMapped] public bool InBank;
+        [NotMapped] public ShopBase InShop;
         //Item Cooldowns
         [NotMapped] public Dictionary<Guid, long> ItemCooldowns = new Dictionary<Guid, long>();
-        //Event Spawned Npcs
-        [NotMapped] public List<Npc> SpawnedNpcs = new List<Npc>();
-        [NotMapped] public Trading Trading;
+
+
 
 		[NotMapped]
         public bool IsValidPlayer
@@ -183,6 +192,55 @@ namespace Intersect.Server.Entities
                 base.Dispose();
                 if (OnlinePlayers.ContainsKey(Id)) OnlinePlayers.Remove(Id);
             }
+        }
+
+        public void Logout()
+        {
+            var map = MapInstance.Get(MapId);
+            map?.RemoveEntity(this);
+
+            //Update parties
+            LeaveParty();
+
+            //Update trade
+            CancelTrade();
+
+            mSentMap = false;
+            ChatTarget = null;
+
+            //Clear all event spawned NPC's
+            var entities = SpawnedNpcs.ToArray();
+            foreach (var t in entities)
+            {
+                if (t == null || t.GetType() != typeof(Npc)) continue;
+                if (t.Despawnable) t.Die(0);
+            }
+            SpawnedNpcs.Clear();
+
+            lock (mEventLock)
+            {
+                EventLookup.Clear();
+            }
+
+            InGame = false;
+            mSentMap = false;
+            mCommonEventLaunches = 0;
+            LastMapEntered = Guid.Empty;
+            ChatTarget = null;
+            QuestOffers.Clear();
+            CraftingTableId = Guid.Empty;
+            CraftIndex = -1;
+            CraftTimer = 0;
+            PartyRequester = null;
+            PartyRequests.Clear();
+            FriendRequester = null;
+            FriendRequests.Clear();
+            InBag = null;
+            InBank = false;
+            InShop = null;
+            ItemCooldowns.Clear();
+
+            PacketSender.SendEntityLeave(Id, (int)EntityTypes.Player, MapId);
         }
 
         ~Player()

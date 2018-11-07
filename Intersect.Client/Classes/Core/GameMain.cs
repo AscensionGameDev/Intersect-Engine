@@ -10,6 +10,7 @@ using Intersect.Client.Networking;
 using Intersect.Client.UI;
 using Intersect.Config;
 using Intersect.GameObjects;
+using Intersect.GameObjects.Maps;
 
 // ReSharper disable All
 
@@ -347,6 +348,26 @@ namespace Intersect.Client
             Globals.WaitingOnServer = false;
             Globals.GameState = GameStates.Menu;
             Globals.JoiningGame = false;
+            Globals.NeedsMaps = true;
+
+            //Dump Game Objects
+            Globals.Me = null;
+            Globals.HasGameData = false;
+            foreach (var map in MapInstance.Lookup)
+            {
+                var mp = (MapInstance) map.Value;
+                mp.Dispose(false, true);
+            }
+            MapBase.Lookup.Clear();
+            MapInstance.Lookup.Clear();
+
+            Globals.Entities.Clear();
+            Globals.MapGrid = null;
+            Globals.GridMaps.Clear();
+            Globals.EventDialogs.Clear();
+            Globals.EventHolds.Clear();
+            Globals.PendingEvents.Clear();
+
             Gui.InitGwen();
             GameFade.FadeIn();
         }

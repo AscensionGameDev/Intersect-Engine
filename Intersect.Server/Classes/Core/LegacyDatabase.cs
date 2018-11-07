@@ -916,7 +916,7 @@ namespace Intersect.Server
         {
             lock (mSavingGameLock)
             {
-                sGameDb.SaveChangesAsync();
+                sGameDb.SaveChanges();
             }
         }
 
@@ -924,7 +924,7 @@ namespace Intersect.Server
         {
             lock (mSavingPlayerLock)
             {
-                sPlayerDb.SaveChangesAsync();
+                sPlayerDb.SaveChanges();
             }
         }
 

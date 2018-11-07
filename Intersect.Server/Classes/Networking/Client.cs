@@ -225,26 +225,9 @@ namespace Intersect.Server.Networking
             if (Entity == null) return;
 
             LegacyDatabase.SavePlayerDatabaseAsync();
-            //Task.Run(() => LegacyDatabase.SaveCharacter(Entity));
-            var map = MapInstance.Get(Entity.MapId);
-            map?.RemoveEntity(Entity);
+           
+            Entity.Logout();
 
-            //Update parties
-            Entity.LeaveParty();
-
-            //Update trade
-            Entity.CancelTrade();
-
-            //Clear all event spawned NPC's
-            var entities = Entity.SpawnedNpcs.ToArray();
-            foreach (var t in entities)
-            {
-                if (t == null || t.GetType() != typeof(Npc)) continue;
-                if (t.Despawnable) t.Die(0);
-            }
-            Entity.SpawnedNpcs.Clear();
-
-            PacketSender.SendEntityLeave(Entity.Id, (int)EntityTypes.Player, Entity.MapId);
             if (!IsEditor)
             {
                 PacketSender.SendGlobalMsg(Strings.Player.left.ToString(Entity.Name, Options.GameName));
