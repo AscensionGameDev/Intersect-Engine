@@ -1,5 +1,5 @@
 {
-  "Bounds": "450,558,350,42",
+  "Bounds": "1016,726,350,42",
   "Padding": "0,0,8,8",
   "AlignmentEdgeDistances": "0,0,0,0",
   "Margin": "0,0,0,0",
@@ -374,7 +374,7 @@
           "AutoSizeToContents": false,
           "Font": null,
           "TextScale": 1.0,
-          "NormalImage": "optionsicon.png",
+          "NormalImage": "menuicon.png",
           "HoveredImage": null,
           "ClickedImage": null,
           "DisabledImage": null,
