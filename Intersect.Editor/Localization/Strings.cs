@@ -2390,9 +2390,8 @@ Negative values for time to flow backwards.";
             var languageDirectory = Path.Combine("resources");
             if (!Directory.Exists(languageDirectory))
             {
-                Directory.CreateDirectory(languageDirectory);
+                File.WriteAllText(Path.Combine(languageDirectory, "editor_strings.json"), JsonConvert.SerializeObject(strings, Formatting.Indented));
             }
-            File.WriteAllText(Path.Combine(languageDirectory, "editor_strings.json"), JsonConvert.SerializeObject(strings, Formatting.Indented));
         }
     }
 }

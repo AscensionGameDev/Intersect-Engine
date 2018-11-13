@@ -45,6 +45,15 @@ namespace Intersect.Client
                     }
                     Environment.Exit(-1);
                 }
+                if (ex.InnerException != null && ex.InnerException.GetType().Name == "NoAudioHardwareException")
+                {
+                    System.Windows.Forms.MessageBox.Show(Strings.Errors.openalerror.ToString(Strings.Errors.openallink));
+                    if (!string.IsNullOrEmpty(Strings.Errors.openallink.ToString()))
+                    {
+                        Process.Start(Strings.Errors.openallink.ToString());
+                    }
+                    Environment.Exit(-1);
+                }
                 var type = Type.GetType("Intersect.Client.IntersectGame", true);
                 Debug.Assert(type != null, "type != null");
                 MethodInfo staticMethodInfo = type.GetMethod("CurrentDomain_UnhandledException");

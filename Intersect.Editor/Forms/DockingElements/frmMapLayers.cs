@@ -516,9 +516,9 @@ namespace Intersect.Editor.Forms.DockingElements
 
         public bool RemoveAttribute(MapBase tmpMap, int x, int y)
         {
-            if (tmpMap.Attributes[x, y].Type != MapAttributes.Walkable)
+            if (tmpMap.Attributes[x, y] != null && tmpMap.Attributes[x, y].Type != MapAttributes.Walkable)
             {
-                tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.Walkable);
+                tmpMap.Attributes[x, y] = null;
                 return true;
             }
             return false;
@@ -632,7 +632,7 @@ namespace Intersect.Editor.Forms.DockingElements
         {
             if (lstMapNpcs.SelectedIndex >= 0)
             {
-                Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Direction = NpcSpawnDirection.Random;
+                Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Direction = (NpcSpawnDirection)cmbDir.SelectedIndex;
             }
         }
 
