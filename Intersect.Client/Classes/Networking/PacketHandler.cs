@@ -1549,6 +1549,7 @@ namespace Intersect.Client.Networking
 
         private static void HandleParty(byte[] packet)
         {
+            if (Globals.Me == null || Globals.Me.Party == null) return;
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             int count = bf.ReadInteger();
@@ -1857,7 +1858,7 @@ namespace Intersect.Client.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             string partner = bf.ReadString();
-            int partnerId = bf.ReadInteger();
+            Guid partnerId = bf.ReadGuid();
             InputBox iBox = new InputBox(Strings.Friends.request,
                 Strings.Friends.requestprompt.ToString( partner), true, InputBox.InputType.YesNo,
                 PacketSender.SendFriendRequestAccept,

@@ -149,10 +149,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
         public void InitEditor()
         {
             lstQuests.Items.Clear();
-            foreach (var quest in QuestBase.Lookup)
-            {
-                lstQuests.Items.Add(quest.Value.Name);
-            }
+            lstQuests.Items.AddRange(QuestBase.Names);
 
             UpdateEditor();
         }

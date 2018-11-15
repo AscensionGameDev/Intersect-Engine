@@ -32,7 +32,6 @@ namespace Intersect.Server
 {
     public static class LegacyDatabase
     {
-        public const string DIRECTORY_BACKUPS = "resources/backups";
         private const string GameDbFilename = "resources/gamedata.db";
         private const string PlayersDbFilename = "resources/playerdata.db";
 
@@ -50,12 +49,6 @@ namespace Intersect.Server
         {
             if (!Directory.Exists("resources"))
                 Directory.CreateDirectory("resources");
-
-            if (!Directory.Exists(DIRECTORY_BACKUPS))
-                Directory.CreateDirectory(DIRECTORY_BACKUPS);
-
-            if (!Directory.Exists(Path.Combine("resources", "languages")))
-                Directory.CreateDirectory(Path.Combine("resources", "languages"));
         }
 
         //As of now Database writes only occur on player saving & when editors make game changes
@@ -246,11 +239,6 @@ namespace Intersect.Server
         public static void DeleteCharacter(Guid characterId)
         {
             sPlayerDb.Characters.Remove(sPlayerDb.Characters.Find(characterId));
-        }
-
-        public static void DeleteCharacterFriend([NotNull] Player player, [NotNull] Player friend)
-        {
-            sPlayerDb.Character_Friends.Remove(sPlayerDb.Character_Friends.SingleOrDefault(p => p.Owner == player && p.Target == friend));
         }
 
         //Bags

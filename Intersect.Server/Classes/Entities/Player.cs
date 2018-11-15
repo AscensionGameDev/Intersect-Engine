@@ -32,6 +32,7 @@ namespace Intersect.Server.Entities
         //Online Players List
         private static Dictionary<Guid, Player> OnlinePlayers = new Dictionary<Guid, Player>();
         public static Player Find(Guid id) => OnlinePlayers.ContainsKey(id) ? OnlinePlayers[id] : null;
+        public static Player Find(string charName) => OnlinePlayers.Values.FirstOrDefault(s => s.Name.ToLower().Trim() == charName.ToLower().Trim());
         public static int OnlineCount => OnlinePlayers.Count;
 
         //Account
@@ -130,7 +131,7 @@ namespace Intersect.Server.Entities
         [NotMapped] public List<Guid> QuestOffers = new List<Guid>();
         //Crafting
         [NotMapped] public Guid CraftingTableId = Guid.Empty;
-        [NotMapped] public int CraftIndex = -1;
+        [NotMapped] public Guid CraftId = Guid.Empty;
         [NotMapped] public long CraftTimer = 0;
         //Parties
         [NotMapped] public List<Player> Party = new List<Player>();
@@ -229,7 +230,7 @@ namespace Intersect.Server.Entities
             ChatTarget = null;
             QuestOffers.Clear();
             CraftingTableId = Guid.Empty;
-            CraftIndex = -1;
+            CraftId = Guid.Empty;
             CraftTimer = 0;
             PartyRequester = null;
             PartyRequests.Clear();
@@ -256,19 +257,26 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            if (CraftingTableId != Guid.Empty && CraftIndex > -1)
+            if (CraftingTableId != Guid.Empty && CraftId != Guid.Empty)
             {
                 var b = CraftingTableBase.Get(CraftingTableId);
-                if (CraftTimer + CraftBase.Get(b.Crafts[CraftIndex]).Time < timeMs)
+                if (b.Crafts.Contains(CraftId))
                 {
-                    CraftItem(CraftIndex);
+                    if (CraftTimer + CraftBase.Get(CraftId).Time < timeMs)
+                    {
+                        CraftItem(CraftId);
+                    }
+                    else
+                    {
+                        if (!CheckCrafting(CraftId))
+                        {
+                            CraftId = Guid.Empty;
+                        }
+                    }
                 }
                 else
                 {
-                    if (!CheckCrafting(CraftIndex))
-                    {
-                        CraftIndex = -1;
-                    }
+                    CraftId = Guid.Empty;
                 }
             }
 
@@ -713,18 +721,14 @@ namespace Intersect.Server.Entities
                                 questProgress.TaskProgress++;
                                 if (questProgress.TaskProgress >= questTask.Quantity)
                                 {
-                                    questProgress.TaskProgress++;
-                                    if (questProgress.TaskProgress >= questTask.Quantity)
-                                    {
-                                        CompleteQuestTask(questId, questProgress.TaskId);
-                                    }
-                                    else
-                                    {
-                                        PacketSender.SendQuestProgress(this, quest.Id);
-                                        PacketSender.SendPlayerMsg(MyClient,
-                                            Strings.Quests.npctask.ToString(quest.Name, questProgress.TaskProgress,
-                                                questTask.Quantity, NpcBase.GetName(questTask.TargetId)));
-                                    }
+                                    CompleteQuestTask(questId, questProgress.TaskId);
+                                }
+                                else
+                                {
+                                    PacketSender.SendQuestProgress(this, quest.Id);
+                                    PacketSender.SendPlayerMsg(MyClient,
+                                        Strings.Quests.npctask.ToString(quest.Name, questProgress.TaskProgress,
+                                            questTask.Quantity, NpcBase.GetName(questTask.TargetId)));
                                 }
                             }
                         }
@@ -1162,6 +1166,17 @@ namespace Intersect.Server.Entities
                     PacketSender.SendPlayerMsg(MyClient, Strings.Items.bound, CustomColors.ItemBound);
                     return;
                 }
+
+                if (itemBase.ItemType == ItemTypes.Bag)
+                {
+                    var bag = LegacyDatabase.GetBag(Items[slot]);
+                    if (bag != null && !LegacyDatabase.BagEmpty(bag))
+                    {
+                        PacketSender.SendPlayerMsg(MyClient, Strings.Bags.dropnotempty, CustomColors.Error);
+                        return;
+                    }
+                }
+
                 for (var i = 0; i < Options.EquipmentSlots.Count; i++)
                 {
                     if (Equipment[i] == slot)
@@ -1792,7 +1807,7 @@ namespace Intersect.Server.Entities
 
         public void CloseCraftingTable()
         {
-            if (CraftingTableId != Guid.Empty && CraftIndex == -1)
+            if (CraftingTableId != Guid.Empty && CraftId == Guid.Empty)
             {
                 CraftingTableId = Guid.Empty;
                 PacketSender.SendCloseCraftingTable(MyClient);
@@ -1800,7 +1815,7 @@ namespace Intersect.Server.Entities
         }
 
         //Craft a new item
-        public void CraftItem(int index)
+        public void CraftItem(Guid id)
         {
             if (CraftingTableId != Guid.Empty)
             {
@@ -1828,7 +1843,7 @@ namespace Intersect.Server.Entities
                 }
 
                 //Check the player actually has the items
-                foreach (var c in CraftBase.Get(CraftingTableBase.Get(CraftingTableId).Crafts[index]).Ingredients)
+                foreach (var c in CraftBase.Get(id).Ingredients)
                 {
                     if (itemdict.ContainsKey(c.ItemId))
                     {
@@ -1838,19 +1853,19 @@ namespace Intersect.Server.Entities
                         }
                         else
                         {
-                            CraftIndex = -1;
+                            CraftId = Guid.Empty;
                             return;
                         }
                     }
                     else
                     {
-                        CraftIndex = -1;
+                        CraftId = Guid.Empty;
                         return;
                     }
                 }
 
                 //Take the items
-                foreach (var c in CraftBase.Get(CraftingTableBase.Get(CraftingTableId).Crafts[index]).Ingredients)
+                foreach (var c in CraftBase.Get(id).Ingredients)
                 {
                     if (!TakeItemsById(c.ItemId, c.Quantity))
                     {
@@ -1859,17 +1874,17 @@ namespace Intersect.Server.Entities
                             Items[i].Set(invbackup[i]);
                         }
                         PacketSender.SendInventory(MyClient);
-                        CraftIndex = -1;
+                        CraftId = Guid.Empty;
                         return;
                     }
                 }
 
                 //Give them the craft
-                if (TryGiveItem(new Item(CraftBase.Get(CraftingTableBase.Get(CraftingTableId).Crafts[index]).ItemId, 1)))
+                if (TryGiveItem(new Item(CraftBase.Get(id).ItemId, 1)))
                 {
                     PacketSender.SendPlayerMsg(MyClient,
                         Strings.Crafting.crafted.ToString(
-                            ItemBase.GetName(CraftBase.Get(CraftingTableBase.Get(CraftingTableId).Crafts[index]).ItemId)),
+                            ItemBase.GetName(CraftBase.Get(id).ItemId)),
                         CustomColors.Crafted);
                 }
                 else
@@ -1881,14 +1896,14 @@ namespace Intersect.Server.Entities
                     PacketSender.SendInventory(MyClient);
                     PacketSender.SendPlayerMsg(MyClient,
                         Strings.Crafting.nospace.ToString(
-                            ItemBase.GetName(CraftBase.Get(CraftingTableBase.Get(CraftingTableId).Crafts[index]).ItemId)),
+                            ItemBase.GetName(CraftBase.Get(id).ItemId)),
                         CustomColors.Error);
                 }
-                CraftIndex = -1;
+                CraftId = Guid.Empty;
             }
         }
 
-        public bool CheckCrafting(int index)
+        public bool CheckCrafting(Guid id)
         {
             //See if we have lost the items needed for our current craft, if so end the crafting session
             //Quickly Look through the inventory and create a catalog of what items we have, and how many
@@ -1909,7 +1924,7 @@ namespace Intersect.Server.Entities
             }
 
             //Check the player actually has the items
-            foreach (var c in CraftBase.Get(CraftingTableBase.Get(CraftingTableId).Crafts[index]).Ingredients)
+            foreach (var c in CraftBase.Get(id).Ingredients)
             {
                 if (itemdict.ContainsKey(c.ItemId))
                 {
@@ -2105,7 +2120,7 @@ namespace Intersect.Server.Entities
                 Items[inventorySlot].Quantity += amount;
                 if (amount >= bankSlotItem.Quantity)
                 {
-                    Bank[slot] = null;
+                    Bank[slot].Set(Item.None);
                 }
                 else
                 {
@@ -2131,7 +2146,7 @@ namespace Intersect.Server.Entities
             }
             else
             {
-                Bank[item2] = null;
+                Bank[item2].Set(Item.None);
             }
             if (tmpInstance != null)
             {
@@ -2139,7 +2154,7 @@ namespace Intersect.Server.Entities
             }
             else
             {
-                Bank[item1] = null;
+                Bank[item1].Set(Item.None);
             }
             PacketSender.SendBankUpdate(MyClient, item1);
             PacketSender.SendBankUpdate(MyClient, item2);
@@ -2223,6 +2238,12 @@ namespace Intersect.Server.Entities
                         return;
                     }
 
+                    if (itemBase.ItemType == ItemTypes.Bag)
+                    {
+                        PacketSender.SendPlayerMsg(MyClient,Strings.Bags.baginbag, CustomColors.Error);
+                        return;
+                    }
+
                     //Find a spot in the bag for it!
                     if (itemBase.IsStackable())
                     {
@@ -2253,7 +2274,7 @@ namespace Intersect.Server.Entities
                     //Either a non stacking item, or we couldn't find the item already existing in the players inventory
                     for (var i = 0; i < bag.SlotCount; i++)
                     {
-                        if (bag.Slots[i].ItemId == Guid.Empty)
+                        if (bag.Slots[i] == null || bag.Slots[i].ItemId == Guid.Empty)
                         {
                             bag.Slots[i].Set(Items[slot]);
                             bag.Slots[i].Quantity = amount;
@@ -2352,7 +2373,7 @@ namespace Intersect.Server.Entities
                     Items[inventorySlot].Quantity += amount;
                     if (amount >= bag.Slots[slot].Quantity)
                     {
-                        bag.Slots[slot] = null;
+                        bag.Slots[slot].Set(Item.None);
                     }
                     else
                     {
@@ -2382,7 +2403,7 @@ namespace Intersect.Server.Entities
             }
             else
             {
-                bag.Slots[item2] = null;
+                bag.Slots[item2].Set(Item.None);
             }
             if (tmpInstance != null)
             {
@@ -2390,7 +2411,7 @@ namespace Intersect.Server.Entities
             }
             else
             {
-                bag.Slots[item1] = null;
+                bag.Slots[item1].Set(Item.None);
             }
             PacketSender.SendBagUpdate(MyClient, item1, bag.Slots[item1]);
             PacketSender.SendBagUpdate(MyClient, item2, bag.Slots[item2]);
@@ -2433,6 +2454,12 @@ namespace Intersect.Server.Entities
         {
             var friend = new Friend(this, character);
             Friends.Add(friend);
+        }
+
+        public void RemoveFriend(Player character)
+        {
+            var friend = Friends.FirstOrDefault(f => f.Target == character);
+            if (friend != null) Friends.Remove(friend);
         }
 
         //Trading
@@ -2739,37 +2766,37 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public void KickParty(int target)
+        public void KickParty(Guid target)
         {
             if (Party.Count > 0 && Party[0] == this)
             {
-                if (target > 0 && target < Party.Count)
+                if (target != Guid.Empty)
                 {
-                    var oldMember = Party[target];
-                    oldMember.Party = new List<Player>();
-                    PacketSender.SendParty(oldMember.MyClient);
-                    PacketSender.SendPlayerMsg(oldMember.MyClient, Strings.Parties.kicked,
-                        CustomColors.Error);
-                    Party.RemoveAt(target);
+                    var oldMember = Party.Where(p => p.Id == target).FirstOrDefault();
+                    if (oldMember != null)
+                    {
+                        oldMember.Party = new List<Player>();
+                        PacketSender.SendParty(oldMember.MyClient);
+                        PacketSender.SendPlayerMsg(oldMember.MyClient, Strings.Parties.kicked, CustomColors.Error);
+                        Party.Remove(oldMember);
 
-                    if (Party.Count > 1) //Need atleast 2 party members to function
-                    {
-                        //Update all members of the party with the new list
-                        for (var i = 0; i < Party.Count; i++)
+                        if (Party.Count > 1) //Need atleast 2 party members to function
                         {
-                            Party[i].Party = Party;
-                            PacketSender.SendParty(Party[i].MyClient);
-                            PacketSender.SendPlayerMsg(Party[i].MyClient,
-                                Strings.Parties.memberkicked.ToString(oldMember.Name), CustomColors.Error);
+                            //Update all members of the party with the new list
+                            for (var i = 0; i < Party.Count; i++)
+                            {
+                                Party[i].Party = Party;
+                                PacketSender.SendParty(Party[i].MyClient);
+                                PacketSender.SendPlayerMsg(Party[i].MyClient, Strings.Parties.memberkicked.ToString(oldMember.Name), CustomColors.Error);
+                            }
                         }
-                    }
-                    else if (Party.Count > 0) //Check if anyone is left on their own
-                    {
-                        var remainder = Party[0];
-                        remainder.Party.Clear();
-                        PacketSender.SendParty(remainder.MyClient);
-                        PacketSender.SendPlayerMsg(remainder.MyClient, Strings.Parties.disbanded,
-                            CustomColors.Error);
+                        else if (Party.Count > 0) //Check if anyone is left on their own
+                        {
+                            var remainder = Party[0];
+                            remainder.Party.Clear();
+                            PacketSender.SendParty(remainder.MyClient);
+                            PacketSender.SendPlayerMsg(remainder.MyClient, Strings.Parties.disbanded, CustomColors.Error);
+                        }
                     }
                 }
             }
@@ -2990,7 +3017,7 @@ namespace Intersect.Server.Entities
                 {
                     if (spell.VitalCost[(int)Vitals.Health] <= GetVital(Vitals.Health))
                     {
-                        if (Spells[spellSlot].SpellCd < Globals.System.GetTimeMs())
+                        if (Spells[spellSlot].SpellCd < Globals.System.RealTimeMs())
                         {
                             if (CastTime < Globals.System.GetTimeMs())
                             {
@@ -3697,7 +3724,7 @@ namespace Intersect.Server.Entities
         public override int CanMove(int moveDir)
         {
             //If crafting or locked by event return blocked 
-            if (CraftingTableId != Guid.Empty && CraftIndex > -1)
+            if (CraftingTableId != Guid.Empty && CraftId != Guid.Empty)
             {
                 return -5;
             }

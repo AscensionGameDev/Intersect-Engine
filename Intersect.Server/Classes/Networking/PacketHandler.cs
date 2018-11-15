@@ -2021,7 +2021,7 @@ namespace Intersect.Server.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            client.Entity.CraftIndex = bf.ReadInteger();
+            client.Entity.CraftId = bf.ReadGuid();
             client.Entity.CraftTimer = Globals.System.GetTimeMs();
             bf.Dispose();
         }
@@ -2370,7 +2370,7 @@ namespace Intersect.Server.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            int target = bf.ReadInteger();
+            Guid target = bf.ReadGuid();
             client.Entity.KickParty(target);
             bf.Dispose();
         }
@@ -2631,8 +2631,8 @@ namespace Intersect.Server.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var target = bf.ReadGuid();
-            if (client.Entity.FriendRequester != null && client.Entity.FriendRequester.Id == target)
+            var target = Player.Find(bf.ReadGuid());
+            if (client.Entity.FriendRequester == target)
             {
                 if (client.Entity.FriendRequester.IsValidPlayer)
                 {
@@ -2702,9 +2702,11 @@ namespace Intersect.Server.Networking
                 var character = LegacyDatabase.GetCharacter((Guid)charId);
                 if (character != null && client.Entity.HasFriend(character))
                 {
-                    LegacyDatabase.DeleteCharacterFriend(client.Entity, character);
+                    client.Entity.RemoveFriend(character);
+                    character.RemoveFriend(client.Entity);
                     PacketSender.SendPlayerMsg(client, Strings.Friends.remove, CustomColors.Declined);
                     PacketSender.SendFriends(client);
+                    if (character.MyClient != null) PacketSender.SendFriends(character.MyClient);
                 }
             }
             bf.Dispose();

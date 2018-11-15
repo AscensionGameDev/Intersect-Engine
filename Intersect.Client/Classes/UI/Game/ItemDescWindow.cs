@@ -40,7 +40,7 @@ namespace Intersect.Client.UI.Game
                 itemType.Text = Strings.ItemDesc.itemtypes[(int)item.ItemType];
                 itemValue.SetText(valueLabel);
 
-                if (item.ItemType == ItemTypes.Equipment)
+                if (item.ItemType == ItemTypes.Equipment && item.EquipmentSlot > 0 && item.EquipmentSlot < Options.EquipmentSlots.Count)
                 {
                     itemType.Text = Options.EquipmentSlots[item.EquipmentSlot];
                     if (item.EquipmentSlot == Options.WeaponIndex && item.TwoHanded)
@@ -102,7 +102,7 @@ namespace Intersect.Client.UI.Game
 
         public void Dispose()
         {
-            Gui.GameUi.GameCanvas.RemoveChild(mDescWindow, false);
+            Gui.GameUi?.GameCanvas?.RemoveChild(mDescWindow, false);
             mDescWindow.Dispose();
         }
     }

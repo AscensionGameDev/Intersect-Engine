@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Resources;
-using Intersect.Client.Localization;
 
 namespace Intersect.Client
 {
@@ -15,6 +14,11 @@ namespace Intersect.Client
     /// </summary>
     public static class Program
     {
+        public static string OpenGLError = "";
+        public static string OpenGLLink = "";
+        public static string OpenALError = "";
+        public static string OpenALLink = "";
+
         /// <summary>
         ///     The main entry point for the application.
         /// </summary>
@@ -38,19 +42,19 @@ namespace Intersect.Client
             {
                 if (ex.InnerException != null && ex.InnerException.GetType().Name == "NoSuitableGraphicsDeviceException")
                 {
-                    System.Windows.Forms.MessageBox.Show(Strings.Errors.openglerror.ToString(Strings.Errors.opengllink));
-                    if (!string.IsNullOrEmpty(Strings.Errors.opengllink.ToString()))
+                    System.Windows.Forms.MessageBox.Show(String.Format(OpenGLError,OpenGLLink));
+                    if (!string.IsNullOrEmpty(OpenGLLink))
                     {
-                        Process.Start(Strings.Errors.opengllink.ToString());
+                        Process.Start(OpenGLLink);
                     }
                     Environment.Exit(-1);
                 }
                 if (ex.InnerException != null && ex.InnerException.GetType().Name == "NoAudioHardwareException")
                 {
-                    System.Windows.Forms.MessageBox.Show(Strings.Errors.openalerror.ToString(Strings.Errors.openallink));
-                    if (!string.IsNullOrEmpty(Strings.Errors.openallink.ToString()))
+                    System.Windows.Forms.MessageBox.Show(String.Format(OpenALError,OpenALLink));
+                    if (!string.IsNullOrEmpty(OpenALLink))
                     {
-                        Process.Start(Strings.Errors.openallink.ToString());
+                        Process.Start(OpenALLink);
                     }
                     Environment.Exit(-1);
                 }

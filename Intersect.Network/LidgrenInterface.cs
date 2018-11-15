@@ -488,7 +488,7 @@ namespace Intersect.Network
 
                 case NetIncomingMessageType.UnconnectedData:
                     OnUnconnectedMessage?.Invoke(mPeer, message);
-                    Log.Diagnostic($"{message.MessageType}: {message}");
+                    Log.Diagnostic($"Net Incoming Message: {message.MessageType}: {message}");
                     break;
 
                 case NetIncomingMessageType.ConnectionApproval:
@@ -548,31 +548,31 @@ namespace Intersect.Network
                 }
 
                 case NetIncomingMessageType.VerboseDebugMessage:
-                    Log.Diagnostic($"{message.MessageType}: {message.ReadString()}");
+                    Log.Diagnostic($"Net Incoming Message: {message.MessageType}: {message.ReadString()}");
                     break;
 
                 case NetIncomingMessageType.DebugMessage:
-                    Log.Debug($"{message.MessageType}: {message.ReadString()}");
+                    Log.Debug($"Net Incoming Message: {message.MessageType}: {message.ReadString()}");
                     break;
 
                 case NetIncomingMessageType.WarningMessage:
-                    Log.Warn($"{message.MessageType}: {message.ReadString()}");
+                    Log.Warn($"Net Incoming Message: {message.MessageType}: {message.ReadString()}");
                     break;
 
                 case NetIncomingMessageType.ErrorMessage:
                 case NetIncomingMessageType.Error:
-                    Log.Error($"{message.MessageType}: {message.ReadString()}");
+                    Log.Error($"Net Incoming Message: {message.MessageType}: {message.ReadString()}");
                     break;
 
                 case NetIncomingMessageType.Receipt:
-                    Log.Info($"{message.MessageType}: {message.ReadString()}");
+                    Log.Info($"Net Incoming Message: {message.MessageType}: {message.ReadString()}");
                     break;
 
                 case NetIncomingMessageType.DiscoveryRequest:
                 case NetIncomingMessageType.DiscoveryResponse:
                 case NetIncomingMessageType.NatIntroductionSuccess:
                 case NetIncomingMessageType.ConnectionLatencyUpdated:
-                    Log.Diagnostic($"{message.MessageType}: {message}");
+                    Log.Diagnostic($"Net Incoming Message: {message.MessageType}: {message}");
                     break;
 
                 default:

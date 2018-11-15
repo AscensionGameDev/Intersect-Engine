@@ -1358,7 +1358,7 @@ namespace Intersect.Server.Entities
                         cooldownReduction = (1 - ((decimal)((Player)this).GetCooldownReduction() / 100));
                     }
 
-                    Spells[spellSlot].SpellCd = Globals.System.GetTimeMs() + (int)(spellBase.CooldownDuration * cooldownReduction);
+                    Spells[spellSlot].SpellCd = Globals.System.RealTimeMs() + (int)(spellBase.CooldownDuration * cooldownReduction);
                     if (GetType() == typeof(Player))
                     {
                         PacketSender.SendSpellCooldown(((Player)this).MyClient, spellSlot);

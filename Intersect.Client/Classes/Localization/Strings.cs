@@ -834,6 +834,12 @@ namespace Intersect.Client.Localization
                     }
                 }
             }
+
+            Program.OpenGLLink = Errors.opengllink.ToString();
+            Program.OpenGLError = Errors.openglerror.ToString();
+            Program.OpenALLink = Errors.openallink.ToString();
+            Program.OpenALError = Errors.openalerror.ToString();
+
             Save();
         }
 

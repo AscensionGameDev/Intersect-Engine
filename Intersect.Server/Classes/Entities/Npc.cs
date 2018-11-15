@@ -297,7 +297,7 @@ namespace Intersect.Server.Entities
                             {
                                 if (spell.VitalCost[(int) Vitals.Health] <= GetVital(Vitals.Health))
                                 {
-                                    if (Spells[s].SpellCd < Globals.System.GetTimeMs())
+                                    if (Spells[s].SpellCd < Globals.System.RealTimeMs())
                                     {
                                         if (spell.Combat.TargetType == SpellTargetTypes.Self || spell.Combat.TargetType == SpellTargetTypes.AoE || InRangeOf(MyTarget, range))
                                         {

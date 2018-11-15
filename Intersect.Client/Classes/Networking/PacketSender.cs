@@ -512,7 +512,7 @@ namespace Intersect.Client.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.FriendRequestAccept);
-            bf.WriteInteger((int) ((InputBox) sender).UserData);
+            bf.WriteGuid((Guid) ((InputBox) sender).UserData);
             GameNetwork.SendPacket(bf.ToArray());
         }
 
@@ -520,7 +520,7 @@ namespace Intersect.Client.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int) ClientPackets.FriendRequestDecline);
-            bf.WriteInteger((int) ((InputBox) sender).UserData);
+            bf.WriteGuid((Guid) ((InputBox) sender).UserData);
             GameNetwork.SendPacket(bf.ToArray());
         }
 

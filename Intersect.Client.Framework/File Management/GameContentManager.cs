@@ -250,7 +250,23 @@ namespace Intersect.Client.Framework.File_Management
                 if (File.Exists(path)) return File.ReadAllText(path);
             }
             path = Path.Combine(dir, name + ".json");
-            if (File.Exists(path)) return File.ReadAllText(path);
+            if (File.Exists(path))
+            {
+                var i = 0;
+                while (true)
+                {
+                    try
+                    {
+                        return File.ReadAllText(path);
+                    }
+                    catch (Exception ex)
+                    {
+                        i++;
+                        if (i > 10) throw;
+                        System.Threading.Thread.Sleep(50);
+                    }
+                }
+            }
             return "";
         }
 

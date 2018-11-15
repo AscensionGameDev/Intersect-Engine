@@ -36,9 +36,11 @@ namespace Intersect.Server.Localization
 
         public struct Bags
         {
+            public static LocalizedString baginbag = @"You cannot store a bag inside another bag!";
             public static LocalizedString baginself = @"You cannot store a bag in within itself!";
             public static LocalizedString bagnospace = @"There is no space left in your bag for that item!";
             public static LocalizedString depositinvalid = @"Invalid item selected to store!";
+            public static LocalizedString dropnotempty = @"You cannot drop a bag unless it's empty!";
             public static LocalizedString inventorynospace = @"There is no space left in your inventory for that item!";
             public static LocalizedString onlysellempty = @"Cannot sell bag unless it's empty!";
             public static LocalizedString onlytradeempty = @"Cannot trade bag unless it's empty!";

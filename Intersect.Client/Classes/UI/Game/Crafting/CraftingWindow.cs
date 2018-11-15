@@ -46,8 +46,7 @@ namespace Intersect.Client.UI.Game.Crafting
 
         public CraftingWindow(Canvas gameCanvas)
         {
-            mCraftWindow = new WindowControl(gameCanvas, Strings.Crafting.title, false,
-                "CraftingWindow");
+            mCraftWindow = new WindowControl(gameCanvas, Strings.Crafting.title, false, "CraftingWindow");
             mCraftWindow.DisableResizing();
 
             mItemContainer = new ScrollControl(mCraftWindow, "IngredientsContainer");
@@ -115,7 +114,7 @@ namespace Intersect.Client.UI.Game.Crafting
             
             mCombinedItem = new RecipeItem(this, new CraftIngredient(craft.ItemId, 0))
             {
-                Container = new ImagePanel(mCraftWindow, "CraftedItemContainer")
+                Container = new ImagePanel(mCraftWindow, "CraftedItem")
             };
             mCombinedItem.Setup("CraftedItemIcon");
 
