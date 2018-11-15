@@ -1,0 +1,166 @@
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
+using Intersect.Enums;
+using Intersect.GameObjects.Conditions;
+using Intersect.GameObjects.Events;
+using Intersect.Models;
+using Intersect.Utilities;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+
+namespace Intersect.GameObjects
+{
+    public class SpellBase : DatabaseObject<SpellBase>
+    {
+        public SpellTypes SpellType { get; set; }
+        public string Description { get; set; } = "";
+        public string Icon { get; set; } = "";
+
+        //Animations
+        [Column("CastAnimation")]
+        public Guid CastAnimationId { get; set; }
+        [NotMapped]
+        [JsonIgnore]
+        public AnimationBase CastAnimation
+        {
+            get => AnimationBase.Get(CastAnimationId);
+            set => CastAnimationId = value?.Id ?? Guid.Empty;
+        }
+
+        [Column("HitAnimation")]
+        public Guid HitAnimationId { get; set; }
+        [NotMapped]
+        [JsonIgnore]
+        public AnimationBase HitAnimation
+        {
+            get => AnimationBase.Get(HitAnimationId);
+            set => HitAnimationId = value?.Id ?? Guid.Empty;
+        }
+
+        //Spell Times
+        public int CastDuration { get; set; }
+        public int CooldownDuration { get; set; }
+
+        //Requirements
+        [Column("CastRequirements")]
+        [JsonIgnore]
+        public string JsonCastRequirements
+        {
+            get => CastingRequirements.Data();
+            set => CastingRequirements.Load(value);
+        }
+        [NotMapped]
+        public ConditionLists CastingRequirements { get; set; } = new ConditionLists();
+
+        //Combat Info
+        public SpellCombatData Combat { get; set; } = new SpellCombatData();
+
+        //Warp Info
+        public SpellWarpData Warp { get; set; } = new SpellWarpData();
+
+        //Dash Info
+        public SpellDashOpts Dash { get; set; } = new SpellDashOpts();
+
+        //Event Info
+        [Column("Event")]
+        public Guid EventId { get; set; }
+        [NotMapped]
+        [JsonIgnore]
+        public EventBase Event
+        {
+            get => EventBase.Get(EventId);
+            set => EventId = value?.Id ?? Guid.Empty;
+        }
+
+        //Costs
+        [Column("VitalCost")]
+        [JsonIgnore]
+        public string VitalCostJson
+        {
+            get => DatabaseUtils.SaveIntArray(VitalCost, (int)Vitals.VitalCount);
+            set => VitalCost = DatabaseUtils.LoadIntArray(value, (int)Vitals.VitalCount);
+        }
+        [NotMapped]
+        public int[] VitalCost = new int[(int) Vitals.VitalCount];
+        
+        [JsonConstructor]
+        public SpellBase(Guid id) : base(id)
+        {
+            Name = "New Spell";
+        }
+
+        public SpellBase()
+        {
+            Name = "New Spell";
+        }
+    }
+
+    [Owned]
+    public class SpellCombatData
+    {
+        public int CritChance { get; set; }
+        public double CritMultiplier { get; set; } = 1.5;
+        public int DamageType { get; set; } = 1;
+        public int HitRadius { get; set; }
+        public bool Friendly { get; set; }
+        public int CastRange { get; set; }
+        //Extra Data, Teleport Coords, Custom Spells, Etc
+        [Column("Projectile")]
+        public Guid ProjectileId { get; set; }
+        [NotMapped]
+        [JsonIgnore]
+        public ProjectileBase Projectile
+        {
+            get => ProjectileBase.Get(ProjectileId);
+            set => ProjectileId = value?.Id ?? Guid.Empty;
+        }
+        //Heal/Damage
+        [Column("VitalDiff")]
+        [JsonIgnore]
+        public string VitalDiffJson
+        {
+            get => DatabaseUtils.SaveIntArray(VitalDiff, (int)Vitals.VitalCount);
+            set => VitalDiff = DatabaseUtils.LoadIntArray(value, (int)Vitals.VitalCount);
+        }
+        [NotMapped]
+        public int[] VitalDiff = new int[(int)Vitals.VitalCount];
+
+        //Buff/Debuff Data
+        [Column("StatDiff")]
+        [JsonIgnore]
+        public string StatDiffJson
+        {
+            get => DatabaseUtils.SaveIntArray(StatDiff, (int)Stats.StatCount);
+            set => StatDiff = DatabaseUtils.LoadIntArray(value, (int)Stats.StatCount);
+        }
+        [NotMapped]
+        public int[] StatDiff { get; set; } = new int[(int)Stats.StatCount];
+
+        public int Scaling { get; set; } = 100;
+        public int ScalingStat { get; set; }
+        public SpellTargetTypes TargetType { get; set; }
+        public bool HoTDoT { get; set; }
+        public int HotDotInterval { get; set; }
+        public int Duration { get; set; }
+        public StatusTypes Effect { get; set; }
+        public string TransformSprite { get; set; }
+    }
+
+    [Owned]
+    public class SpellWarpData
+    {
+        public Guid MapId { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
+        public byte Dir { get; set; }
+    }
+
+    [Owned]
+    public class SpellDashOpts
+    {
+        public bool IgnoreMapBlocks { get; set; }
+        public bool IgnoreActiveResources { get; set; }
+        public bool IgnoreInactiveResources { get; set; }
+        public bool IgnoreZDimensionAttributes { get; set; }
+    }
+}
