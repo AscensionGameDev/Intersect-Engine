@@ -998,12 +998,12 @@ namespace Intersect.GameObjects.Maps
 
                 while (tileLayer == 0 && i < Options.MapHeight * 2)
                 {
-                    if (CheckTileMatch(layerNum, x, y, x - 1, i, surroundingMaps))
+                    if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
                     {
                         tileLayer = 2;
                     }
 
-                    if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
+                    if (CheckTileMatch(layerNum, x, y, x - 1, i, surroundingMaps))
                     {
                         tileLayer = 1;
                     }
@@ -1048,14 +1048,9 @@ namespace Intersect.GameObjects.Maps
                 situation = AUTO_TILE_VERTICAL;
             }
             // Fill
-            if (tmpTile[2] && tmpTile[3])
+            if ((tmpTile[2] && tmpTile[3]) || (tileLayer == 1))
             {
                 situation = AUTO_TILE_FILL;
-            }
-            // Inner
-            if ((!tmpTile[2] && !tmpTile[3]))
-            {
-                situation = AUTO_TILE_INNER;
             }
 
             //Horizontal
@@ -1067,21 +1062,7 @@ namespace Intersect.GameObjects.Maps
             //check for edge of cliff for cliff layering.
             if (tileLayer == 2)
             {
-                if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps))
-                {
-                    situation = AUTO_TILE_VERTICAL;
-                }
-                else
-                {
-                    if (!CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps))
-                    {
-                        situation = AUTO_TILE_HORIZONTAL;
-                    }
-                    else
-                    {
-                        situation = AUTO_TILE_FILL;
-                    }
-                }
+                situation = AUTO_TILE_VERTICAL;
             }
 
             if (!tmpTile[2] && tmpTile[3] && tmpTile[1])
@@ -1139,12 +1120,12 @@ namespace Intersect.GameObjects.Maps
 
                 while (tileLayer == 0 && i < Options.MapHeight * 2)
                 {
-                    if (CheckTileMatch(layerNum, x, y, x + 1, i, surroundingMaps))
+                    if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
                     {
                         tileLayer = 2;
                     }
 
-                    if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
+                    if (CheckTileMatch(layerNum, x, y, x + 1, i, surroundingMaps))
                     {
                         tileLayer = 1;
                     }
@@ -1189,14 +1170,9 @@ namespace Intersect.GameObjects.Maps
                 situation = AUTO_TILE_VERTICAL;
             }
             // Fill
-            if (tmpTile[1] && tmpTile[3])
+            if ((tmpTile[1] && tmpTile[3]) || (tileLayer == 1))
             {
                 situation = AUTO_TILE_FILL;
-            }
-            // Inner
-            if (!tmpTile[1] && !tmpTile[3])
-            {
-                situation = AUTO_TILE_INNER;
             }
 
             //Horizontal
@@ -1208,21 +1184,7 @@ namespace Intersect.GameObjects.Maps
             //check for edge of cliff for cliff layering.
             if (tileLayer == 2)
             {
-                if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps))
-                {
-                    situation = AUTO_TILE_VERTICAL;
-                }
-                else
-                {
-                    if (!CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps))
-                    {
-                        situation = AUTO_TILE_HORIZONTAL;
-                    }
-                    else
-                    {
-                        situation = AUTO_TILE_FILL;
-                    }
-                }
+                situation = AUTO_TILE_VERTICAL;
             }
 
             if (!tmpTile[1] && tmpTile[3] && tmpTile[2])
@@ -1283,12 +1245,12 @@ namespace Intersect.GameObjects.Maps
                 {
                     if (CheckTileMatch(layerNum, x, y, x - 1, i, surroundingMaps))
                     {
-                        tileLayer = 2;
+                        tileLayer = 1;
                     }
 
                     if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
                     {
-                        tileLayer = 1;
+                        tileLayer = 2;
                     }
 
                     i++;
@@ -1320,38 +1282,31 @@ namespace Intersect.GameObjects.Maps
                 tmpTile[4] = true;
             }
 
+            //Vertical check for edge of cliff for cliff layering.
+            if (!tmpTile[1] && tmpTile[3])
+            {
+                situation = AUTO_TILE_VERTICAL;
+            }
+
+            // Fill
+            if ((tmpTile[1] && tmpTile[3]) || (tileLayer == 1))
+            {
+                situation = AUTO_TILE_FILL;
+            }
+
+            // Vertical
+            if (tileLayer == 2) situation = AUTO_TILE_VERTICAL;
+
             // Calculate Situation - Horizontal
             if (tmpTile[1] && !tmpTile[3])
             {
                 situation = AUTO_TILE_HORIZONTAL;
             }
-            // Vertical
-            if (!tmpTile[1] && tmpTile[3])
-            {
-                situation = AUTO_TILE_VERTICAL;
-            }
-            // Fill
-            if (tmpTile[1] && tmpTile[3])
-            {
-                situation = AUTO_TILE_FILL;
-            }
+
             // Inner
             if (!tmpTile[1] && !tmpTile[3])
             {
                 situation = AUTO_TILE_INNER;
-            }
-
-            //check for edge of cliff for cliff layering.
-            if (tileLayer == 2)
-            {
-                if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps))
-                {
-                    situation = AUTO_TILE_VERTICAL;
-                }
-                else
-                {
-                    situation = AUTO_TILE_FILL;
-                }
             }
 
             // Actually place the subtile
@@ -1407,12 +1362,12 @@ namespace Intersect.GameObjects.Maps
                 {
                     if (CheckTileMatch(layerNum, x, y, x + 1, i, surroundingMaps))
                     {
-                        tileLayer = 2;
+                        tileLayer = 1;
                     }
 
                     if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
                     {
-                        tileLayer = 1;
+                        tileLayer = 2;
                     }
 
                     i++;
@@ -1444,39 +1399,31 @@ namespace Intersect.GameObjects.Maps
                 tmpTile[4] = true;
             }
 
-            // Calculate Situation -  Horizontal
-            if (!tmpTile[1] && tmpTile[3])
-            {
-                situation = AUTO_TILE_HORIZONTAL;
-            }
             // Vertical
             if (tmpTile[1] && !tmpTile[3])
             {
                 situation = AUTO_TILE_VERTICAL;
             }
+
             // Fill
-            if (tmpTile[1] && tmpTile[3])
+            if ((tmpTile[1] && tmpTile[3]) || (tileLayer == 1))
             {
                 situation = AUTO_TILE_FILL;
             }
+
+            // Vertical
+            if (tileLayer == 2) situation = AUTO_TILE_VERTICAL;
+
+            // Calculate Situation -  Horizontal
+            if (!tmpTile[1] && tmpTile[3])
+            {
+                situation = AUTO_TILE_HORIZONTAL;
+            }
+
             // Inner
             if (!tmpTile[1] && !tmpTile[3])
             {
                 situation = AUTO_TILE_INNER;
-            }
-
-            //check for edge of cliff for cliff layering.
-            if (tileLayer == 2)
-            {
-                if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps))
-                {
-                    situation = AUTO_TILE_VERTICAL;
-                }
-                else
-                {
-                    situation = AUTO_TILE_FILL;
-                    situation = AUTO_TILE_FILL;
-                }
             }
 
             // Actually place the subtile
