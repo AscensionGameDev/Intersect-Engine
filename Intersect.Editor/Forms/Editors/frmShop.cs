@@ -201,7 +201,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             mChangingName = true;
             mEditorItem.Name = txtName.Text;
-            lstShops.Items[ShopBase.Lookup.Keys.ToList().IndexOf(mEditorItem.Id)] = txtName.Text;
+            lstShops.Items[ShopBase.ListIndex(mEditorItem.Id)] = txtName.Text;
             mChangingName = false;
         }
 

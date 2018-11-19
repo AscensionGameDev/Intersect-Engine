@@ -23,7 +23,7 @@ namespace Intersect.GameObjects.Events
         public EventRenderLayer Layer { get; set; } = EventRenderLayer.SameAsPlayer;
         public EventMovement Movement { get; set; } = new EventMovement();
         public bool Passable { get; set; }
-        public EventTrigger Trigger { get; set; } = EventTrigger.PlayerTouch;
+        public EventTrigger Trigger { get; set; } = EventTrigger.ActionButton;
         public CommonEventTrigger CommonTrigger { get; set; } = CommonEventTrigger.None;
         public string TriggerCommand { get; set; }
         public Guid TriggerVal { get; set; }
