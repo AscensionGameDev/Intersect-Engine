@@ -129,7 +129,6 @@ namespace Intersect.Client.Maps
             JsonConvert.PopulateObject(json, this, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
             MapLoaded = true;
             Autotiles = new MapAutotiles(this);
-            CreateMapSounds();
             MapRendered = false;
             OnMapLoaded += HandleMapLoaded;
             if (MapRequests.ContainsKey(Id)) MapRequests.Remove(Id);
@@ -290,7 +289,7 @@ namespace Intersect.Client.Maps
         }
 
         //Sound Functions
-        private void CreateMapSounds()
+        public void CreateMapSounds()
         {
             ClearAttributeSounds();
             for (var x = 0; x < Options.MapWidth; ++x)

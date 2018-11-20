@@ -463,6 +463,7 @@ namespace Intersect.Client.Networking
                 map.Load(mapJson);
                 map.LoadTileData(tileData);
                 map.AttributeData = attributeData;
+                map.CreateMapSounds();
                 if ((mapId) == Globals.Me.CurrentMap)
                 {
                     GameAudio.PlayMusic(map.Music, 3, 3, true);
