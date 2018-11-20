@@ -1065,7 +1065,7 @@ namespace Intersect.GameObjects.Maps
                 situation = AUTO_TILE_VERTICAL;
             }
 
-            if (!tmpTile[2] && tmpTile[3] && tmpTile[1])
+            if (!tmpTile[2] && tileLayer != 1)
             {
                 situation = AUTO_TILE_INNER;
             }
@@ -1141,7 +1141,7 @@ namespace Intersect.GameObjects.Maps
             }
 
             // North East
-            if (CheckTileMatch(layerNum, x, y, x + 1, y - 1, surroundingMaps))
+            if (CheckTileMatch(layerNum, x, y, x + 1, y + 1, surroundingMaps))
             {
                 tmpTile[2] = true;
             }
@@ -1187,7 +1187,7 @@ namespace Intersect.GameObjects.Maps
                 situation = AUTO_TILE_VERTICAL;
             }
 
-            if (!tmpTile[1] && tmpTile[3] && tmpTile[2])
+            if (!tmpTile[1] && tileLayer != 1)
             {
                 situation = AUTO_TILE_INNER;
             }
