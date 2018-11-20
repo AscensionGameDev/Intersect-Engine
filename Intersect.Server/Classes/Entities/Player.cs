@@ -779,7 +779,7 @@ namespace Intersect.Server.Entities
             if (enemy.GetType() == typeof(EventPageInstance)) return;
 
             ItemBase weapon = null;
-            if (Options.WeaponIndex < Equipment.Length && Equipment[Options.WeaponIndex] >= 0)
+            if (Options.WeaponIndex > -1 && Options.WeaponIndex < Equipment.Length && Equipment[Options.WeaponIndex] >= 0)
             {
                 weapon = ItemBase.Get(Items[Equipment[Options.WeaponIndex]].ItemId);
             }
@@ -1332,7 +1332,7 @@ namespace Intersect.Server.Entities
                                     Equipment[Options.WeaponIndex] = slot;
                                     if (itemBase.TwoHanded)
                                     {
-                                        if (Options.ShieldIndex > -1)
+                                        if (Options.ShieldIndex > -1 && Options.ShieldIndex < Equipment.Length)
                                         {
                                             Equipment[Options.ShieldIndex] = -1;
                                         }
@@ -1343,7 +1343,7 @@ namespace Intersect.Server.Entities
                             {
                                 if (Options.ShieldIndex > -1)
                                 {
-                                    if (Equipment[Options.WeaponIndex] > -1)
+                                    if (Options.WeaponIndex > -1 && Equipment[Options.WeaponIndex] > -1)
                                     {
                                         //If we have a 2-hand weapon, remove it to equip this new shield
                                         var item = ItemBase.Get(Items[Equipment[Options.WeaponIndex]].ItemId);

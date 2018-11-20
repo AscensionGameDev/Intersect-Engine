@@ -1,4 +1,5 @@
 ﻿using Intersect.Client.Framework.Gwen.Control;
+using Intersect.Client.Framework.Gwen.Input;
 
 namespace Intersect.Client.Framework.Gwen.ControlInternal
 {
@@ -18,6 +19,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
             MouseInputEnabled = true;
             ShouldDrawBackground = true;
             SetBounds(0, 0, GetCanvas().Width, GetCanvas().Height);
+            GetCanvas().Input_MouseMoved(InputHandler.MousePosition.X, InputHandler.MousePosition.Y, 0, 0);
         }
 
         /// <summary>

@@ -4,6 +4,7 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
+using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
@@ -105,6 +106,10 @@ namespace Intersect.Client.UI.Game.Shop
 
         void pnl_HoverEnter(Base sender, EventArgs arguments)
         {
+            if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
+            {
+                return;
+            }
             if (mDescWindow != null)
             {
                 mDescWindow.Dispose();

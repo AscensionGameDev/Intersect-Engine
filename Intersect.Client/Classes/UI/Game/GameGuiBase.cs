@@ -272,6 +272,7 @@ namespace Intersect.Client.UI.Game
             mShouldUpdateQuestLog = false;
             Hotbar.Update();
             mDebugMenu.Update();
+            EscapeMenu.Update();
             if (PlayerBox != null)
             {
                 PlayerBox.Update();

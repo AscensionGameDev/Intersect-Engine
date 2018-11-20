@@ -52,10 +52,12 @@ namespace Intersect.Editor.Forms.Editors.Events
         private void lstEventCommands_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode != Keys.Delete) return;
-            if (mCurrentCommand <= -1) return;
+            if (mCurrentCommand < 0 || mCurrentCommand >= mCommandProperties.Count) return;
             if (!mCommandProperties[mCurrentCommand].Editable) return;
+            if (mCommandProperties[mCurrentCommand].MyIndex < 0 || mCommandProperties[mCurrentCommand].MyIndex >= mCommandProperties[mCurrentCommand].MyList.Count) return;
             HandleRemoveCommand(mCommandProperties[mCurrentCommand].Cmd);
             mCommandProperties[mCurrentCommand].MyList.Remove(mCommandProperties[mCurrentCommand].Cmd);
+            mCurrentCommand = -1;
             ListPageCommands();
         }
 
@@ -1101,6 +1103,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             if (mCommandProperties[mCurrentCommand].MyIndex < 0 || mCommandProperties[mCurrentCommand].MyIndex >= mCommandProperties[mCurrentCommand].MyList.Count) return;
             HandleRemoveCommand(mCommandProperties[mCurrentCommand].Cmd);
             mCommandProperties[mCurrentCommand].MyList.Remove(mCommandProperties[mCurrentCommand].Cmd);
+            mCurrentCommand = -1;
             ListPageCommands();
         }
 

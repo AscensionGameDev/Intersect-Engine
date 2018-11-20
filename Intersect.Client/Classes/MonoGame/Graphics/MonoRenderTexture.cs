@@ -14,7 +14,7 @@ namespace Intersect.Client.MonoGame.Graphics
         public MonoRenderTexture(GraphicsDevice graphicsDevice, int width, int height) : base(width, height)
         {
             mRenderTexture = new RenderTarget2D(
-                graphicsDevice, width, height, true,
+                graphicsDevice, width, height, false,
                 graphicsDevice.PresentationParameters.BackBufferFormat,
                 graphicsDevice.PresentationParameters.DepthStencilFormat,
                 graphicsDevice.PresentationParameters.MultiSampleCount,

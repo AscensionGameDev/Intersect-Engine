@@ -1091,7 +1091,7 @@ namespace Intersect.Client.Entities
                     attackTime = (int)(attackTime * (100f / weapon.AttackSpeedValue));
                 }
             }
-            return attackTime;
+            return attackTime - 60; //subtracting 60 to account for a moderate ping to the server so some attacks dont get cancelled.
         }
 
         //Movement Processing
