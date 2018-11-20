@@ -939,7 +939,6 @@ namespace Intersect.Server.Maps
             SpawnGlobalEvents();
             SpawnMapNpcs();
             SpawnMapResources();
-            SpawnGlobalEvents();
         }
 
         public static MapInstance Get(Guid id)

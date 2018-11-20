@@ -1066,14 +1066,14 @@ namespace Intersect.Client.Entities
             var attackTime = base.CalculateAttackTime();
             if (this == Globals.Me)
             {
-                if (Options.WeaponIndex < Equipment.Length && MyEquipment[Options.WeaponIndex] >= 0)
+                if (Options.WeaponIndex > -1 && Options.WeaponIndex < Equipment.Length && MyEquipment[Options.WeaponIndex] >= 0)
                 {
                     weapon = ItemBase.Get(Inventory[MyEquipment[Options.WeaponIndex]].ItemId);
                 }
             }
             else
             {
-                if (Options.WeaponIndex < Equipment.Length && Equipment[Options.WeaponIndex] != Guid.Empty)
+                if (Options.WeaponIndex > -1 && Options.WeaponIndex < Equipment.Length && Equipment[Options.WeaponIndex] != Guid.Empty)
                 {
                     weapon = ItemBase.Get(Equipment[Options.WeaponIndex]);
                 }

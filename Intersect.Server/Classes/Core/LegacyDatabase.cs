@@ -87,6 +87,8 @@ namespace Intersect.Server
 
             LoadAllGameObjects();
             LoadTime();
+            OnClassesLoaded();
+            OnMapsLoaded();
             SaveGameDatabaseAsync();
             return true;
         }
@@ -274,16 +276,6 @@ namespace Intersect.Server
                 var type = (GameObjectType) value;
                 if (type == GameObjectType.Time) continue;
                 LoadGameObjects(type);
-                switch ((GameObjectType) value)
-                {
-                    case GameObjectType.Class:
-                        OnClassesLoaded();
-                        break;
-
-                    case GameObjectType.Map:
-                        OnMapsLoaded();
-                        break;
-                }
             }
         }
 
