@@ -8,6 +8,7 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Anim;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
+using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.Framework.Gwen.Input;
 using Newtonsoft.Json;
@@ -896,7 +897,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             Base canvas = mParent;
             if (canvas == null)
                 return null;
-
+            
             return canvas.GetCanvas();
         }
 
@@ -1033,6 +1034,8 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         public virtual void BringToFront()
         {
+            if (mParent != null && mParent.GetType() == typeof(Modal))
+                ((Modal)mParent).BringToFront();
             if (mActualParent == null)
                 return;
             if (mActualParent.mChildren.Last() == this)

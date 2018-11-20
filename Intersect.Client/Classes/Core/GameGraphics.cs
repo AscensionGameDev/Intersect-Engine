@@ -686,6 +686,7 @@ namespace Intersect.Client
             if (Globals.Me == null)
             {
                 CurrentView = new FloatRect(0, 0, Renderer.GetScreenWidth(), Renderer.GetScreenHeight());
+                Renderer.SetView(CurrentView);
                 return;
             }
             var map = MapInstance.Get(Globals.Me.CurrentMap);

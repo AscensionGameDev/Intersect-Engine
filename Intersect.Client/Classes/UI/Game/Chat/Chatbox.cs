@@ -41,6 +41,7 @@ namespace Intersect.Client.UI.Game.Chat
             mChatboxInput.SubmitPressed += ChatBoxInput_SubmitPressed;
             mChatboxInput.Text = GetDefaultInputText();
             mChatboxInput.Clicked += ChatBoxInput_Clicked;
+            mChatboxInput.IsTabable = false;
             Gui.FocusElements.Add(mChatboxInput);
 
             mChannelCombobox = new ComboBox(mChatboxWindow, "ChatChannelCombobox");

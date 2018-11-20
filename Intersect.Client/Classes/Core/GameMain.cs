@@ -367,6 +367,7 @@ namespace Intersect.Client
             Globals.EventDialogs.Clear();
             Globals.EventHolds.Clear();
             Globals.PendingEvents.Clear();
+            
 
             Gui.InitGwen();
             GameFade.FadeIn();

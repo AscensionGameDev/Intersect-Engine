@@ -312,11 +312,6 @@ namespace Intersect.Editor.Forms.Editors
             0,
             0,
             0});
-            this.nudLowerLoopCount.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
             this.nudLowerLoopCount.Name = "nudLowerLoopCount";
             this.nudLowerLoopCount.Size = new System.Drawing.Size(194, 20);
             this.nudLowerLoopCount.TabIndex = 25;
@@ -647,11 +642,6 @@ namespace Intersect.Editor.Forms.Editors
             this.nudUpperLoopCount.Location = new System.Drawing.Point(6, 398);
             this.nudUpperLoopCount.Maximum = new decimal(new int[] {
             2147483647,
-            0,
-            0,
-            0});
-            this.nudUpperLoopCount.Minimum = new decimal(new int[] {
-            1,
             0,
             0,
             0});

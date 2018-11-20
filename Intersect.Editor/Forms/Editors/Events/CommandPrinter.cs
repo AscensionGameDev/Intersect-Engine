@@ -699,7 +699,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             return Strings.EventCommandList.showpicture;
         }
 
-        private static string GetCommandText(HidePictureCommmand command)
+        private static string GetCommandText(HidePictureCommmand command, MapInstance map)
         {
             return Strings.EventCommandList.hidepicture;
         }

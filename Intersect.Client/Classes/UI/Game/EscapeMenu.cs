@@ -81,6 +81,16 @@ namespace Intersect.Client.UI.Game
             if (IsHidden) RemoveModal();
             else MakeModal(true);
             base.Invalidate();
+            if (Gui.GameUi != null && Gui.GameUi.GameCanvas != null)
+            {
+                Gui.GameUi.GameCanvas.MouseInputEnabled = false;
+                Gui.GameUi.GameCanvas.MouseInputEnabled = true;
+            }
+        }
+
+        public void Update()
+        {
+            if (!IsHidden) BringToFront();
         }
 
         private void Options_Clicked(Base sender, ClickedEventArgs arguments)
