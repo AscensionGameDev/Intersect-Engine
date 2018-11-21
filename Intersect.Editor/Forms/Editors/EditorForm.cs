@@ -23,8 +23,11 @@ namespace Intersect.Editor.Forms.Editors
                 var action = (Action<GameObjectType>) FireGameObjectUpdatedDelegate;
                 try
                 {
-                    if (InvokeRequired) Invoke(action, type);
-                    else action(type);
+                    if (!this.Disposing && !this.IsDisposed)
+                    {
+                        if (InvokeRequired) Invoke(action, type);
+                        else action(type);
+                    }
                 }
                 catch (Exception e)
                 {

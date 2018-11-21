@@ -154,6 +154,8 @@ namespace Intersect.Client.UI.Game.EntityPanel
 
             EntityWindow.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
 
+            EntityWindow.Hide();
+
             mLastUpdateTime = Globals.System.GetTimeMs();
         }
 

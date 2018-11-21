@@ -153,6 +153,7 @@ namespace Intersect.Client
                                 break;
 
                             case Controls.OpenSettings:
+                                Gui.GameUi?.EscapeMenu?.OpenSettings();
                                 break;
 
                             case Controls.OpenDebugger:

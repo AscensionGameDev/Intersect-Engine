@@ -1450,7 +1450,8 @@ namespace Intersect.Client.Networking
                 var id = bf.ReadGuid();
                 var another = Convert.ToBoolean(bf.ReadInteger());
                 var deleted = Convert.ToBoolean(bf.ReadInteger());
-                var json = bf.ReadString();
+                var json = "";
+                if (!deleted) json = bf.ReadString();
 
                 switch (type)
                 {

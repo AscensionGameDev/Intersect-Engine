@@ -754,20 +754,24 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            if (closestEntity == null) return;
-
-            if (TargetBox != null)
+            if (TargetBox != null && closestEntity != TargetBox.MyEntity)
             {
                 TargetBox.Dispose();
                 TargetBox = null;
             }
-            if (closestEntity.GetType() == typeof(Player))
+
+            if (closestEntity == null) return;
+
+            if (TargetBox == null)
             {
-                TargetBox = new EntityBox(Gui.GameUi.GameCanvas, EntityTypes.Player, closestEntity);
-            }
-            else
-            {
-                TargetBox = new EntityBox(Gui.GameUi.GameCanvas, EntityTypes.GlobalEntity, closestEntity);
+                if (closestEntity.GetType() == typeof(Player))
+                {
+                    TargetBox = new EntityBox(Gui.GameUi.GameCanvas, EntityTypes.Player, closestEntity);
+                }
+                else
+                {
+                    TargetBox = new EntityBox(Gui.GameUi.GameCanvas, EntityTypes.GlobalEntity, closestEntity);
+                }
             }
 
             TargetIndex = closestEntity.Id;

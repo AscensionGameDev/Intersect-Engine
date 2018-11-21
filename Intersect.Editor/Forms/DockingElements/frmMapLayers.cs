@@ -345,8 +345,6 @@ namespace Intersect.Editor.Forms.DockingElements
 
         private void rbWarp_CheckedChanged(object sender, EventArgs e)
         {
-            HideAttributeMenus();
-            grpWarp.Visible = true;
             nudWarpX.Maximum = Options.MapWidth;
             nudWarpY.Maximum = Options.MapHeight;
             cmbWarpMap.Items.Clear();
@@ -356,6 +354,9 @@ namespace Intersect.Editor.Forms.DockingElements
             }
             cmbWarpMap.SelectedIndex = 0;
             cmbDirection.SelectedIndex = 0;
+            if (!rbWarp.Checked) return;
+            HideAttributeMenus();
+            grpWarp.Visible = true;
         }
 
         private void rbSound_CheckedChanged(object sender, EventArgs e)
@@ -370,11 +371,12 @@ namespace Intersect.Editor.Forms.DockingElements
 
         private void rbResource_CheckedChanged(object sender, EventArgs e)
         {
-            HideAttributeMenus();
-            grpResource.Visible = true;
             cmbResourceAttribute.Items.Clear();
             cmbResourceAttribute.Items.AddRange(ResourceBase.Names);
             if (cmbResourceAttribute.Items.Count > 0) cmbResourceAttribute.SelectedIndex = 0;
+            if (!rbResource.Checked) return;
+            HideAttributeMenus();
+            grpResource.Visible = true;
         }
 
         // Used for returning an integer value depending on which radio button is selected on the forms. This is merely used to make PlaceAtrribute less messy.
@@ -688,11 +690,12 @@ namespace Intersect.Editor.Forms.DockingElements
 
         private void rbAnimation_CheckedChanged(object sender, EventArgs e)
         {
-            HideAttributeMenus();
-            grpAnimation.Visible = true;
             cmbAnimationAttribute.Items.Clear();
             cmbAnimationAttribute.Items.AddRange(AnimationBase.Names);
             if (cmbAnimationAttribute.Items.Count > 0) cmbAnimationAttribute.SelectedIndex = 0;
+            if (!rbAnimation.Checked) return;
+            HideAttributeMenus();
+            grpAnimation.Visible = true;
         }
 
         private void frmMapLayers_Load(object sender, EventArgs e)
@@ -871,6 +874,12 @@ namespace Intersect.Editor.Forms.DockingElements
             pnlLights.Hide();
             pnlEvents.Hide();
             pnlNpcs.Hide();
+
+            //Force Game Object Lists to Refresh
+            rbAnimation_CheckedChanged(null, null);
+            rbWarp_CheckedChanged(null, null);
+            rbResource_CheckedChanged(null, null);
+
             if (Globals.EditingLight != null)
             {
                 Globals.MapLayersWindow.lightEditor.Cancel();

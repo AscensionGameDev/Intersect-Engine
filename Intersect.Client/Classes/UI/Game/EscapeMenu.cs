@@ -99,6 +99,12 @@ namespace Intersect.Client.UI.Game
             Gui.GameUi?.EscapeMenu?.Hide();
         }
 
+        public void OpenSettings()
+        {
+            mOptionsWindow.Show();
+            Gui.GameUi?.EscapeMenu?.Hide();
+        }
+
         private static void GoToCharacterSelect_Clicked(Base sender, ClickedEventArgs arguments)
         {
             GameMain.Logout(true);
