@@ -721,31 +721,30 @@ namespace Intersect.Client.Entities
 				//Order the layers of paperdolls and sprites
 				for (int z = 0; z < Options.PaperdollOrder[Dir].Count; z++)
 				{
-					//Check for player
-					if (Options.PaperdollOrder[Dir][z] == "Player")
+				    var paperdoll = Options.PaperdollOrder[Dir][z];
+				    var equipSlot = Options.EquipmentSlots.IndexOf(paperdoll);
+                    //Check for player
+                    if (paperdoll == "Player")
 					{
 						GameGraphics.DrawGameTexture(Texture, srcRectangle, destRectangle, new Intersect.Color(alpha, 255, 255, 255));
 					}
-					else if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z]) > -1)
+					else if (equipSlot > -1)
 					{
 						//Don't render the paperdolls if they have transformed.
 						if (sprite == MySprite && Equipment.Length == Options.EquipmentSlots.Count)
 						{
-							if (Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z])] != Guid.Empty &&
-								(this != Globals.Me ||
-								 MyEquipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z])] <
-									Options.MaxInvItems))
+							if ((Equipment[equipSlot] != Guid.Empty && this != Globals.Me) || MyEquipment[equipSlot] < Options.MaxInvItems)
 							{
 								var itemId = Guid.Empty;
 								if (this == Globals.Me)
 								{
-                                    var slot = MyEquipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z])];
+                                    var slot = MyEquipment[equipSlot];
                                     if (slot > -1)
                                         itemId = Inventory[slot].ItemId;
 								}
 								else
 								{
-									itemId = Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[Dir][z])];
+									itemId = Equipment[equipSlot];
 								}
 								if (ItemBase.Get(itemId) != null)
 								{

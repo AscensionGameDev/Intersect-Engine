@@ -1728,9 +1728,9 @@ namespace Intersect.Editor.Forms.DockingElements
 					selH = Math.Abs(selH);
 				}
 
-				for (int x = 0; x < selW; x++)
+				for (int x = 0; x <= selW; x++)
 				{
-					for (int y = 0; y < selH; y++)
+					for (int y = 0; y <= selH; y++)
 					{
 						for (int i = 0; i < Options.LayerCount; i++)
 						{
@@ -1800,9 +1800,9 @@ namespace Intersect.Editor.Forms.DockingElements
 					selH = Math.Abs(selH);
 				}
 
-				for (int x = 0; x < selW; x++)
+				for (int x = 0; x <= selW; x++)
 				{
-					for (int y = 0; y < selH; y++)
+					for (int y = 0; y <= selH; y++)
 					{
 						for (int i = 0; i < Options.LayerCount; i++)
 						{

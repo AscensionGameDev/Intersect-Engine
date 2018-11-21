@@ -868,7 +868,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
                                     ((MapWarpAttribute)att).MapId = GetGuid(GameObjectType.Map, data1);
                                     ((MapWarpAttribute)att).X = data2;
                                     ((MapWarpAttribute)att).Y = data3;
-                                    ((MapWarpAttribute)att).Direction = (WarpDirection)int.Parse(data4);
+                                    ((MapWarpAttribute)att).Direction = (WarpDirection)(int.Parse(data4) + 1);
                                     break;
                                 case MapAttributes.Sound:
                                     ((MapSoundAttribute)att).File = data4;

@@ -127,6 +127,7 @@ namespace Intersect.Client.UI.Menu
             if (mPaperdollPortraits == null)
             {
                 mPaperdollPortraits = new ImagePanel[Options.EquipmentSlots.Count];
+                mCharacterPortrait = new ImagePanel(mCharacterContainer);
                 for (int i = 0; i < Options.EquipmentSlots.Count; i++)
                 {
                     mPaperdollPortraits[i] = new ImagePanel(mCharacterContainer);
