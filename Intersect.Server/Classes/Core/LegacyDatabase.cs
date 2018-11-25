@@ -640,10 +640,13 @@ namespace Intersect.Server
                     break;
                 case GameObjectType.Quest:
                     sGameDb.Events.Remove(((QuestBase)gameObject).StartEvent);
+                    EventBase.Lookup.Delete(((QuestBase)gameObject).StartEvent);
                     sGameDb.Events.Remove(((QuestBase)gameObject).EndEvent);
+                    EventBase.Lookup.Delete(((QuestBase)gameObject).EndEvent);
                     foreach (var tsk in ((QuestBase) gameObject).Tasks)
                     {
                         sGameDb.Events.Remove(tsk.CompletionEvent);
+                        EventBase.Lookup.Delete(tsk.CompletionEvent);
                     }
                     sGameDb.Quests.Remove((QuestBase) gameObject);
                     break;
@@ -664,6 +667,7 @@ namespace Intersect.Server
                     break;
                 case GameObjectType.Map:
                     sGameDb.Maps.Remove((MapInstance) gameObject);
+                    MapInstance.Lookup.Delete(gameObject);
                     break;
                 case GameObjectType.Event:
                     sGameDb.Events.Remove((EventBase) gameObject);
@@ -687,9 +691,12 @@ namespace Intersect.Server
                     break;
             }
 
-            if (!gameObject.Type.GetLookup().Delete(gameObject))
+            if (gameObject.Type.GetLookup().Values.Contains(gameObject))
             {
-                throw new Exception();
+                if (!gameObject.Type.GetLookup().Delete(gameObject))
+                {
+                    throw new Exception();
+                }
             }
         }
 

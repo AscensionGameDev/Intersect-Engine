@@ -100,7 +100,6 @@ namespace Intersect.Client.MonoGame.Graphics
             mGraphics.PreferredBackBufferWidth = width;
             mGraphics.PreferredBackBufferHeight = height;
             mGraphics.SynchronizeWithVerticalRetrace = (Globals.Database.TargetFps == 0);
-            mGraphics.ApplyChanges();
 
             if (Globals.Database.TargetFps == 1)
             {
@@ -118,10 +117,10 @@ namespace Intersect.Client.MonoGame.Graphics
             {
                 mGame.TargetElapsedTime = new TimeSpan(333333 / 4);
             }
-            else
-            {
-                mGame.IsFixedTimeStep = false;
-            }
+            mGame.IsFixedTimeStep = Globals.Database.TargetFps > 0;
+
+            mGraphics.ApplyChanges();
+
             mDisplayWidth = currentDisplayMode.Width;
             mDisplayHeight = currentDisplayMode.Height;
             mGameWindow.Position = new Microsoft.Xna.Framework.Point((mDisplayWidth - mScreenWidth) / 2,

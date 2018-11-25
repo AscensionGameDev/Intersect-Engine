@@ -132,7 +132,7 @@ namespace Intersect.Client.UI
             {
                 MenuUi.Draw();
             }
-            else if (Globals.GameState == GameStates.InGame && !HideUi)
+            else if (Globals.GameState == GameStates.InGame && ((!Gui.GameUi?.EscapeMenu?.IsHidden ?? true) || !HideUi))
             {
                 GameUi.Draw();
             }

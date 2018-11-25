@@ -107,6 +107,17 @@ namespace Intersect.Editor.Forms.DockingElements
             CreateSwapChain();
         }
 
+        public void UnloadMap()
+        {
+            if (InvokeRequired)
+            {
+                Invoke((MethodInvoker)delegate { UnloadMap(); });
+                return;
+            }
+            picMap.Visible = false;
+            ResetUndoRedoStates();
+        }
+
         //Undo/Redo Functions
         public void ResetUndoRedoStates()
         {

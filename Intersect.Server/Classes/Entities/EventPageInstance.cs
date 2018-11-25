@@ -195,6 +195,20 @@ namespace Intersect.Server.Entities
         public override byte[] Data()
         {
             var bf = new ByteBuffer();
+
+            if (GlobalClone != null)
+            {
+                Sprite = GlobalClone.Sprite;
+                Face = GlobalClone.Face;
+                Level = GlobalClone.Level;
+                X = GlobalClone.X;
+                Y = GlobalClone.Y;
+                Z = GlobalClone.Z;
+                Dir = GlobalClone.Dir;
+                Passable = GlobalClone.Passable;
+                HideName = GlobalClone.HideName;
+            }
+
             bf.WriteBytes(base.Data());
             bf.WriteBoolean(HideName);
             bf.WriteBoolean(mDirectionFix);

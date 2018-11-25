@@ -87,14 +87,11 @@ namespace Intersect.Editor.Forms.Editors
             cmbBuyFor.Items.Clear();
             cmbSellFor.Items.Clear();
             cmbDefaultCurrency.Items.Clear();
-            foreach (var item in ItemBase.Lookup)
-            {
-                cmbAddBoughtItem.Items.Add(item.Value.Name);
-                cmbAddSoldItem.Items.Add(item.Value.Name);
-                cmbBuyFor.Items.Add(item.Value.Name);
-                cmbSellFor.Items.Add(item.Value.Name);
-                cmbDefaultCurrency.Items.Add(item.Value.Name);
-            }
+            cmbAddBoughtItem.Items.AddRange(ItemBase.Names);
+            cmbAddSoldItem.Items.AddRange(ItemBase.Names);
+            cmbBuyFor.Items.AddRange(ItemBase.Names);
+            cmbSellFor.Items.AddRange(ItemBase.Names);
+            cmbDefaultCurrency.Items.AddRange(ItemBase.Names);
             if (cmbAddBoughtItem.Items.Count > 0) cmbAddBoughtItem.SelectedIndex = 0;
             if (cmbAddSoldItem.Items.Count > 0) cmbAddSoldItem.SelectedIndex = 0;
             if (cmbBuyFor.Items.Count > 0) cmbBuyFor.SelectedIndex = 0;
@@ -233,8 +230,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             bool addedItem = false;
             int cost = (int) nudSellCost.Value;
-            ShopItem newItem = new ShopItem(ItemBase.Lookup.Keys.ToList()[cmbAddSoldItem.SelectedIndex]
-                , ItemBase.Lookup.Keys.ToList()[cmbSellFor.SelectedIndex], cost);
+            ShopItem newItem = new ShopItem(ItemBase.IdFromList(cmbAddSoldItem.SelectedIndex), ItemBase.IdFromList(cmbSellFor.SelectedIndex), cost);
             for (int i = 0; i < mEditorItem.SellingItems.Count; i++)
             {
                 if (mEditorItem.SellingItems[i].ItemId == newItem.ItemId)
@@ -261,8 +257,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             bool addedItem = false;
             int cost = (int) nudBuyAmount.Value;
-            ShopItem newItem = new ShopItem(ItemBase.Lookup.Keys.ToList()[cmbAddBoughtItem.SelectedIndex],
-                ItemBase.Lookup.Keys.ToList()[cmbBuyFor.SelectedIndex], cost);
+            ShopItem newItem = new ShopItem(ItemBase.IdFromList(cmbAddBoughtItem.SelectedIndex),ItemBase.IdFromList(cmbBuyFor.SelectedIndex), cost);
             for (int i = 0; i < mEditorItem.BuyingItems.Count; i++)
             {
                 if (mEditorItem.BuyingItems[i].ItemId == newItem.ItemId)
@@ -287,7 +282,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbDefaultCurrency_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.DefaultCurrency = ItemBase.Get(ItemBase.IdFromList(cmbDefaultCurrency.SelectedIndex));
+            mEditorItem.DefaultCurrency = ItemBase.FromList(cmbDefaultCurrency.SelectedIndex);
         }
 
         private void toolStripItemNew_Click(object sender, EventArgs e)

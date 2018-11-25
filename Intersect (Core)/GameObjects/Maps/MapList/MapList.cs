@@ -23,7 +23,7 @@ namespace Intersect.GameObjects.Maps.MapList
         [Column("JsonData")]
         public string JsonData
         {
-            get => JsonConvert.SerializeObject(this, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
+            get => JsonConvert.SerializeObject(this, new JsonSerializerSettings() {TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace});
             set => JsonConvert.PopulateObject(value,this, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
         }
 

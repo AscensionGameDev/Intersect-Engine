@@ -68,6 +68,14 @@ namespace Intersect.Editor.Forms.Controls
                 srcId = ((MapListFolder) draggedNode.Tag).FolderId;
             }
 
+            var parent = targetNode;
+            while (parent != null)
+            {
+                if (parent == draggedNode)
+                    return;
+                parent = parent.Parent;
+            }
+
             // Confirm that the node at the drop location is not 
             // the dragged node and that target node isn't null
             // (for example if you drag outside the control)

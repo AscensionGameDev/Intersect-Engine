@@ -108,8 +108,9 @@ namespace Intersect.Editor
                         sProgressForm.Visible == false)
                     {
                         sProgressForm = new FrmProgress();
+
                         sProgressForm.SetTitle(Strings.MapCacheProgress.title);
-                        new Task((() => sProgressForm.ShowDialog())).Start();
+                        new Task((() => sProgressForm.ShowDialog(Globals.MainForm))).Start();
                         while (Globals.MapsToScreenshot.Count > 0)
                         {
                             try

@@ -174,6 +174,10 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
             {
                 p = Skin.Renderer.MeasureText(Font, TextOverride ?? String, mScale);
             }
+            else
+            {
+                p.Y = Skin.Renderer.MeasureText(Font, "|", mScale).Y;
+            }
 
             if (p.X == Width && p.Y == Height)
                 return;

@@ -691,10 +691,6 @@ namespace Intersect.Server.Networking
             map.AttributeData = bf.ReadBytes(attributeLength);
             LegacyDatabase.SaveGameDatabaseAsync();
             map.Initialize();
-            Globals.Clients?.ForEach(t =>
-            {
-                if (t?.IsEditor ?? false) PacketSender.SendMapList(t);
-            });
             var players = new List<Player>();
             foreach (var surrMap in map.GetSurroundingMaps(true))
             {
@@ -706,6 +702,7 @@ namespace Intersect.Server.Networking
                 PacketSender.SendMap(player.MyClient, mapId);
             }
             PacketSender.SendMap(client, mapId, true); //Sends map to everyone/everything in proximity
+            PacketSender.SendMapListToAll();
             bf.Dispose();
         }
 

@@ -42,6 +42,10 @@ namespace Intersect.Client
             {
                 if (ex.InnerException != null && ex.InnerException.GetType().Name == "NoSuitableGraphicsDeviceException")
                 {
+                    var txt = "NoSuitableGraphicsDeviceException" + Environment.NewLine;
+                    txt += ex.InnerException.ToString();
+                    txt += ex.InnerException.InnerException.ToString();
+                    File.WriteAllText("gfxerror.txt", txt);
                     System.Windows.Forms.MessageBox.Show(String.Format(OpenGLError,OpenGLLink));
                     if (!string.IsNullOrEmpty(OpenGLLink))
                     {

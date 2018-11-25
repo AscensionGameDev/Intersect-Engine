@@ -75,8 +75,24 @@ namespace Intersect.Client.Entities
             return EntityTypes.Resource;
         }
 
+        public override void Dispose()
+        {
+            if (RenderList != null)
+            {
+                RenderList.Remove(this);
+                RenderList = null;
+            }
+            ClearAnimations(null);
+            mDisposed = true;
+        }
+
         public override bool Update()
         {
+            if (mDisposed)
+            {
+                LatestMap = null;
+                return false;
+            }
             if (!mHasRenderBounds)
             {
                 CalculateRenderBounds();
@@ -110,6 +126,8 @@ namespace Intersect.Client.Entities
                 renderList.Remove(this);
             }
 
+
+
             if (map == null || Globals.Me == null || Globals.Me.MapInstance == null)
             {
                 return null;
@@ -139,13 +157,13 @@ namespace Intersect.Client.Entities
                             else if (y == gridY)
                             {
                                 GameGraphics.RenderingEntities[priority, Options.MapHeight + CurrentY].Add(this);
-                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight * 2 + CurrentY];
+                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight + CurrentY];
                                 return renderList;
                             }
                             else
                             {
                                 GameGraphics.RenderingEntities[priority, Options.MapHeight * 2 + CurrentY].Add(this);
-                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight * 3 + CurrentY];
+                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight * 2 + CurrentY];
                                 return renderList;
                             }
                         }

@@ -21,6 +21,11 @@ namespace Intersect.GameObjects.Maps.MapList
                 if (gameMaps.Keys.Contains(MapId))
                     gameMaps[MapId].Name = Name;
             }
+            else
+            {
+                if (gameMaps.Keys.Contains(MapId))
+                    Name = gameMaps[MapId].Name;
+            }
         }
 
         public int CompareTo(MapListMap obj)

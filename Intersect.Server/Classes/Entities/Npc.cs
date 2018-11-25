@@ -358,6 +358,16 @@ namespace Intersect.Server.Entities
         {
             var curMapLink = MapId;
             base.Update(timeMs);
+
+            var statuses = Statuses.Values.ToArray();
+            foreach (var status in statuses)
+            {
+                if (status.Type == StatusTypes.Stun)
+                {
+                    return;
+                }
+            }
+
             //TODO Clear Damage Map if out of combat (target is null and combat timer is to the point that regen has started)
             if (Target == null && Globals.System.GetTimeMs() > CombatTimer && Globals.System.GetTimeMs() > RegenTimer)
             {
@@ -505,7 +515,7 @@ namespace Intersect.Server.Entities
                                         if (CanMove(dir) == -1 || CanMove(dir) == -4)
                                         {
                                             //check if NPC is snared or stunned
-                                            var statuses = Statuses.Values.ToArray();
+                                            statuses = Statuses.Values.ToArray();
                                             foreach (var status in statuses)
                                             {
                                                 if (status.Type == StatusTypes.Stun || status.Type == StatusTypes.Snare)
@@ -564,7 +574,7 @@ namespace Intersect.Server.Entities
                                 if (CanMove(dir) == -1 || CanMove(dir) == -4)
                                 {
                                     //check if NPC is snared or stunned
-                                    var statuses = Statuses.Values.ToArray();
+                                    statuses = Statuses.Values.ToArray();
                                     foreach (var status in statuses)
                                     {
                                         if (status.Type == StatusTypes.Stun || status.Type == StatusTypes.Snare)
@@ -619,7 +629,7 @@ namespace Intersect.Server.Entities
                     if (CanMove(i) == -1)
                     {
                         //check if NPC is snared or stunned
-                        var statuses = Statuses.Values.ToArray();
+                        statuses = Statuses.Values.ToArray();
                         foreach (var status in statuses)
                         {
                             if (status.Type == StatusTypes.Stun || status.Type == StatusTypes.Snare)
@@ -698,6 +708,7 @@ namespace Intersect.Server.Entities
 
         public bool ShouldAttackPlayerOnSight(Player en)
         {
+            if (IsFriend(en)) return false;
             if (Base.Aggressive)
             {
                 if (Base.AttackOnSightConditions.Lists.Count > 0 && Conditions.MeetsConditionLists(Base.AttackOnSightConditions, en, null)) return false;

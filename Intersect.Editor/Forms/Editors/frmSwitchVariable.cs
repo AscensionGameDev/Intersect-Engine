@@ -280,8 +280,7 @@ namespace Intersect.Editor.Forms.Editors
                     txtObjectName.Text = ((ServerSwitchBase)mEditorItem).Name;
                     txtId.Text = ((ServerSwitchBase)mEditorItem).TextId;
                     cmbSwitchValue.Show();
-                    cmbSwitchValue.SelectedIndex =
-                        cmbSwitchValue.Items.IndexOf(((ServerSwitchBase)mEditorItem).Value.ToString());
+                    cmbSwitchValue.SelectedIndex = Convert.ToInt32(((ServerSwitchBase)mEditorItem).Value);
                     lblValue.Show();
                 }
                 else if (rdoGlobalVariables.Checked)

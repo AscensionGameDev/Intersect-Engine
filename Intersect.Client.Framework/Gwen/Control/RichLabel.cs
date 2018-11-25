@@ -159,7 +159,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
 
             // Wrap
-            if (x + p.X >= Width)
+            if (x + p.X > Width)
             {
                 CreateNewline(ref x, ref y, lineHeight);
             }

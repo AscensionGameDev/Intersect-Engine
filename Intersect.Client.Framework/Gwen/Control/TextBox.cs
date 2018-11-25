@@ -583,12 +583,12 @@ namespace Intersect.Client.Framework.Gwen.Control
             int idealx = (int) (-caretPos + Width * 0.5f);
 
             // Don't show too much whitespace to the right
-            if (idealx + TextWidth < Width - TextPadding.Right)
-                idealx = -TextWidth + (Width - TextPadding.Right);
+            if (idealx + TextWidth < Width - TextPadding.Right - Padding.Right)
+                idealx = -TextWidth + (Width - TextPadding.Right - Padding.Right);
 
             // Or the left
-            if (idealx > TextPadding.Left)
-                idealx = TextPadding.Left;
+            if (idealx > TextPadding.Left + Padding.Left)
+                idealx = TextPadding.Left + Padding.Left;
 
             SetTextPosition(idealx, TextY);
         }

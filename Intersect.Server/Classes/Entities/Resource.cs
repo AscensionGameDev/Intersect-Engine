@@ -165,6 +165,11 @@ namespace Intersect.Server.Entities
             }
         }
 
+        public override bool IsPassable()
+        {
+            return (IsDead & Base.WalkableAfter) || (!IsDead && Base.WalkableBefore);
+        }
+
         public override byte[] Data()
         {
             ByteBuffer myBuffer = new ByteBuffer();

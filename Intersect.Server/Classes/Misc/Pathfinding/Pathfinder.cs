@@ -43,8 +43,7 @@ namespace Intersect.Server.Misc.Pathfinding
         public PathfinderResult Update(long timeMs)
         {
             //TODO: Pull this out into server config :) 
-            var pathfindingRange =
-                Math.Max(Options.MapWidth, Options.MapHeight); //Search as far as 1 map out.. maximum.
+            var pathfindingRange = Math.Max(Options.MapWidth, Options.MapHeight); //Search as far as 1 map out.. maximum.
             //Do lots of logic eventually leading up to an A* pathfinding run if needed.
             PathfinderResult returnVal;
             PathNode[,] mapGrid;
@@ -155,11 +154,8 @@ namespace Intersect.Server.Misc.Pathfinding
                                                 //Block of Players, Npcs, and Resources
                                                 foreach (var en in tmpMap.GetEntities())
                                                 {
-                                                    mapGrid[
-                                                                ((x + 1) - gridX) * Options.MapWidth + en.X,
-                                                                ((y + 1) - gridY) * Options.MapHeight + en.Y]
-                                                            .IsWall =
-                                                        true;
+                                                    if (!en.IsPassable())
+                                                        mapGrid[((x + 1) - gridX) * Options.MapWidth + en.X,((y + 1) - gridY) * Options.MapHeight + en.Y].IsWall = true;
                                                 }
 
                                                 //Block Global Events if they are not passable.

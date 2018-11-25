@@ -135,6 +135,7 @@ namespace Intersect.Client.UI.Game
                         var vitalMaxHp = Globals.Me.Party[i].MaxVital[(int)Vitals.Health];
                         var ratioHp = ((float)vitalHp) / ((float)vitalMaxHp);
                         ratioHp = Math.Min(1, Math.Max(0, ratioHp));
+                        mBar[i].SetTextureRect(0, 0, Convert.ToInt32(mBar[i].Texture.GetWidth() * ratioHp), mBar[i].Texture.GetHeight());
                         mBar[i].SetSize(Convert.ToInt32(ratioHp * mBarContainer[i].Width), mBarContainer[i].Height);
                         if (i > 0) mKickButtons[i].Hide();
 

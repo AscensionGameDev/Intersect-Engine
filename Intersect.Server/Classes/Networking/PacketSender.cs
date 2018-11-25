@@ -554,7 +554,7 @@ namespace Intersect.Server.Networking
 
         public static void SendGlobalMsg(string message, string target = "")
         {
-            SendGlobalMsg(message, CustomColors.GlobalMsg, target);
+            SendGlobalMsg(message, CustomColors.AnnouncementChat, target);
         }
 
         public static void SendGlobalMsg(string message, Color clr, string target = "")
@@ -866,6 +866,7 @@ namespace Intersect.Server.Networking
             DatabaseObjectLookup gameMaps = new DatabaseObjectLookup();
             foreach (var pair in MapInstance.Lookup.Pairs) gameMaps.Set(pair.Key, pair.Value);
             bf.WriteLong((int)ServerPackets.MapList);
+            MapList.GetList().PostLoad(MapInstance.Lookup,true,true);
             bf.WriteString(MapList.GetList().JsonData);
             SendDataToAll(bf.ToArray());
             bf.Dispose();

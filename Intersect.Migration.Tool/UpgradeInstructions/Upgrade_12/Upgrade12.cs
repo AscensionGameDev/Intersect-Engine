@@ -1655,7 +1655,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
                 itm.Scaling = int.Parse(data["Scaling"].ToString());
                 itm.ScalingStat = int.Parse(data["ScalingStat"].ToString());
                 itm.SightRange = int.Parse(data["SightRange"].ToString());
-                itm.SpawnDuration = int.Parse(data["SpawnDuration"].ToString());
+                itm.SpawnDuration = int.Parse(data["SpawnDuration"].ToString()) * 1000;
                 itm.SpellFrequency = int.Parse(data["SpellFrequency"].ToString());
 
                 var spells = JsonConvert.DeserializeObject<int[]>(data["Spells"].ToString());

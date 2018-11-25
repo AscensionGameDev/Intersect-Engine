@@ -180,10 +180,6 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public virtual void ProcessRegen()
-        {
-        }
-
         //Movement
         /// <summary>
         ///     Determines if this entity can move in the direction given.
@@ -299,8 +295,7 @@ namespace Intersect.Server.Entities
                         {
                             //If determine if we should walk
                             var res = ((Resource)en);
-                            if ((!res.IsDead() && !res.Base.WalkableBefore) ||
-                                (res.IsDead() && !res.Base.WalkableAfter))
+                            if ((!res.IsDead() && !res.Base.WalkableBefore) || (res.IsDead() && !res.Base.WalkableAfter))
                             {
                                 return (int)EntityTypes.Resource;
                             }
@@ -501,12 +496,17 @@ namespace Intersect.Server.Entities
                         MoveRoute.Complete = true;
                     }
                 }
-                if (MoveTimer < Globals.System.GetTimeMs())
+                if (moved && MoveTimer < Globals.System.GetTimeMs())
                 {
                     MoveTimer = Globals.System.GetTimeMs() + (long)GetMovementTime();
                 }
             }
             return true;
+        }
+
+        public virtual bool IsPassable()
+        {
+            return Passable;
         }
 
         //Returns the amount of time required to traverse 1 tile
@@ -769,6 +769,9 @@ namespace Intersect.Server.Entities
         {
             if (CastTime > 0) return false;
             return true;
+        }
+        public virtual void ProcessRegen()
+        {
         }
 
         public int GetVital(int vital)

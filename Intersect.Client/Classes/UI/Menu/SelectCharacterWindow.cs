@@ -143,9 +143,7 @@ namespace Intersect.Client.UI.Menu
             if (Characters[mSelectedChar] != null)
             {
                 mCharnameLabel.SetText(Strings.CharacterSelection.name.ToString(Characters[mSelectedChar].Name));
-                mInfoLabel.SetText(Strings.CharacterSelection.info.ToString(Characters[mSelectedChar].Level,
-                    Characters[mSelectedChar].Class));
-                mInfoLabel.Show();
+                mInfoLabel.SetText(Strings.CharacterSelection.info.ToString(Characters[mSelectedChar].Level,  Characters[mSelectedChar].Class));
                 mPlayButton.Show();
                 mDeleteButton.Show();
                 mNewButton.Hide();
@@ -163,14 +161,10 @@ namespace Intersect.Client.UI.Menu
                     mCharacterPortrait = mPaperdollPortraits[0];
                 }
 
-                mCharacterPortrait.Texture =
-                    Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face,
-                        Characters[mSelectedChar].Face);
+                mCharacterPortrait.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face, Characters[mSelectedChar].Face);
                 if (mCharacterPortrait.Texture == null)
                 {
-                    mCharacterPortrait.Texture =
-                        Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity,
-                            Characters[mSelectedChar].Sprite);
+                    mCharacterPortrait.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, Characters[mSelectedChar].Sprite);
                     isFace = false;
                 }
 
@@ -178,10 +172,10 @@ namespace Intersect.Client.UI.Menu
                 {
                     if (isFace)
                     {
-                        mCharacterPortrait.SetTextureRect(0, 0, mCharacterPortrait.Texture.GetWidth(),
-                            mCharacterPortrait.Texture.GetHeight());
-                        mCharacterPortrait.SetSize(64, 64);
-                        mCharacterPortrait.SetPosition(5, 5);
+                        mCharacterPortrait.SetTextureRect(0, 0, mCharacterPortrait.Texture.GetWidth(), mCharacterPortrait.Texture.GetHeight());
+                        mCharacterPortrait.SetSize(mCharacterContainer.Width - mCharacterContainer.Padding.Left - mCharacterContainer.Padding.Right,mCharacterContainer.Height - mCharacterContainer.Padding.Top - mCharacterContainer.Padding.Bottom);
+                        mCharacterPortrait.SetPosition(mCharacterContainer.Padding.Left,mCharacterContainer.Padding.Top);
+                        mCharacterPortrait.Show();
                     }
                     else
                     {
@@ -228,7 +222,7 @@ namespace Intersect.Client.UI.Menu
                 mNewButton.Show();
 
                 mCharnameLabel.SetText(Strings.CharacterSelection.empty);
-                mInfoLabel.Hide();
+                mInfoLabel.SetText("");
 
                 mCharacterPortrait.Texture = null;
             }

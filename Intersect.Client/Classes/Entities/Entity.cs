@@ -24,7 +24,7 @@ namespace Intersect.Client.Entities
 
         private int mDir;
 
-        private bool mDisposed;
+        protected bool mDisposed;
 
         private long mLastUpdate;
 
@@ -45,9 +45,6 @@ namespace Intersect.Client.Entities
         public long AttackTimer = 0;
 
         public bool Blocking = false;
-
-        private Guid mCachedMapId;
-        private MapInstance mCachedMapInstance;
 
         //Combat Status
         public long CastTime = 0;
@@ -172,16 +169,7 @@ namespace Intersect.Client.Entities
         {
             get
             {
-                if (mCachedMapId == CurrentMap && mCachedMapInstance != null)
-                {
-                    return mCachedMapInstance;
-                }
-                else
-                {
-                    mCachedMapInstance = MapInstance.Get(CurrentMap);
-                    mCachedMapId = CurrentMap;
-                    return mCachedMapInstance;
-                }
+                return MapInstance.Get(CurrentMap);
             }
         }
 

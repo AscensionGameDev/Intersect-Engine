@@ -704,8 +704,7 @@ namespace Intersect.Server.Maps
                                 {
                                     npcSpawnInstance.RespawnTime = Globals.System.GetTimeMs() +
                                                                    ((Npc) npcSpawnInstance.Entity).Base
-                                                                   .SpawnDuration *
-                                                                   1000 - (Globals.System.GetTimeMs() - LastUpdateTime);
+                                                                   .SpawnDuration - (Globals.System.GetTimeMs() - LastUpdateTime);
                                 }
                                 else if (npcSpawnInstance.RespawnTime < Globals.System.GetTimeMs())
                                 {

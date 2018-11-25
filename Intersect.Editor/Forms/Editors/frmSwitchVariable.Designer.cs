@@ -42,6 +42,7 @@ namespace Intersect.Editor.Forms.Editors
             this.btnNew = new DarkUI.Controls.DarkButton();
             this.btnDelete = new DarkUI.Controls.DarkButton();
             this.grpEditor = new DarkUI.Controls.DarkGroupBox();
+            this.nudVariableValue = new DarkUI.Controls.DarkNumericUpDown();
             this.txtId = new DarkUI.Controls.DarkTextBox();
             this.lblId = new System.Windows.Forms.Label();
             this.lblValue = new System.Windows.Forms.Label();
@@ -51,7 +52,6 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbSwitchValue = new DarkUI.Controls.DarkComboBox();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
-            this.nudVariableValue = new DarkUI.Controls.DarkNumericUpDown();
             this.grpTypes.SuspendLayout();
             this.grpList.SuspendLayout();
             this.grpEditor.SuspendLayout();
@@ -181,7 +181,6 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpEditor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpEditor.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpEditor.Controls.Add(this.nudVariableValue);
             this.grpEditor.Controls.Add(this.txtId);
             this.grpEditor.Controls.Add(this.lblId);
             this.grpEditor.Controls.Add(this.lblValue);
@@ -189,6 +188,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpEditor.Controls.Add(this.lblName);
             this.grpEditor.Controls.Add(this.lblObject);
             this.grpEditor.Controls.Add(this.cmbSwitchValue);
+            this.grpEditor.Controls.Add(this.nudVariableValue);
             this.grpEditor.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpEditor.Location = new System.Drawing.Point(219, 73);
             this.grpEditor.Name = "grpEditor";
@@ -197,6 +197,26 @@ namespace Intersect.Editor.Forms.Editors
             this.grpEditor.TabStop = false;
             this.grpEditor.Text = "Switch/Variable Editor";
             this.grpEditor.Visible = false;
+            // 
+            // nudVariableValue
+            // 
+            this.nudVariableValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudVariableValue.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudVariableValue.Location = new System.Drawing.Point(85, 97);
+            this.nudVariableValue.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.nudVariableValue.Name = "nudVariableValue";
+            this.nudVariableValue.Size = new System.Drawing.Size(193, 20);
+            this.nudVariableValue.TabIndex = 60;
+            this.nudVariableValue.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudVariableValue.ValueChanged += new System.EventHandler(this.nudVariableValue_ValueChanged);
             // 
             // txtId
             // 
@@ -302,26 +322,6 @@ namespace Intersect.Editor.Forms.Editors
             this.btnSave.TabIndex = 51;
             this.btnSave.Text = "Save";
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-            // 
-            // nudVariableValue
-            // 
-            this.nudVariableValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudVariableValue.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudVariableValue.Location = new System.Drawing.Point(85, 97);
-            this.nudVariableValue.Maximum = new decimal(new int[] {
-            10000,
-            0,
-            0,
-            0});
-            this.nudVariableValue.Name = "nudVariableValue";
-            this.nudVariableValue.Size = new System.Drawing.Size(193, 20);
-            this.nudVariableValue.TabIndex = 60;
-            this.nudVariableValue.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.nudVariableValue.ValueChanged += new System.EventHandler(this.nudVariableValue_ValueChanged);
             // 
             // FrmSwitchVariable
             // 

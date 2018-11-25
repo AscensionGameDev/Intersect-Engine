@@ -327,6 +327,11 @@ namespace Intersect.Editor.Forms
 
         public void EnterMap(Guid mapId)
         {
+            if (InvokeRequired)
+            {
+                Invoke((MethodInvoker)delegate { EnterMap(mapId); });
+                return;
+            }
             Globals.CurrentMap = MapInstance.Get(mapId);
             Globals.LoadingMap = mapId;
             if (Globals.CurrentMap == null)
@@ -340,8 +345,7 @@ namespace Intersect.Editor.Forms
                     Globals.MapPropertiesWindow.Init(Globals.CurrentMap);
                 }
             }
-            Globals.MapEditorWindow.picMap.Visible = false;
-            Globals.MapEditorWindow.ResetUndoRedoStates();
+            Globals.MapEditorWindow.UnloadMap();
             PacketSender.SendEnterMap(mapId);
             PacketSender.SendNeedMap(mapId);
             PacketSender.SendNeedGrid(mapId);

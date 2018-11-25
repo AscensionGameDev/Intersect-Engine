@@ -331,8 +331,10 @@ namespace Intersect.Client.UI.Game.Crafting
                     mCraftWindow.IsClosable = true;
                     LoadCraftItems(mCraftId);
                 }
-                decimal width = Convert.ToDecimal(i) / Convert.ToDecimal(CraftBase.Get(mCraftId).Time) *
-                                mBarContainer.Width;
+
+                decimal ratio = Convert.ToDecimal(i) / Convert.ToDecimal(CraftBase.Get(mCraftId).Time);
+                decimal width =  ratio * mBarContainer.Width;
+                mBar.SetTextureRect(0, 0, Convert.ToInt32(ratio * mBar.Texture.GetWidth()), mBar.Texture.GetHeight());
                 mBar.Width = Convert.ToInt32(width);
             }
         }

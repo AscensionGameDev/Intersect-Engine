@@ -358,6 +358,11 @@ namespace Intersect.Client
                 var mp = (MapInstance) map.Value;
                 mp.Dispose(false, true);
             }
+
+            foreach (var en in Globals.Entities.ToArray())
+            {
+                en.Value.Dispose();
+            }
             MapBase.Lookup.Clear();
             MapInstance.Lookup.Clear();
 

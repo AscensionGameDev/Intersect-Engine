@@ -1,4 +1,5 @@
-﻿using Intersect.Enums;
+﻿using System.Linq;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Conditions;
 using Intersect.GameObjects.Events;
@@ -162,7 +163,7 @@ namespace Intersect.Server.EventProcessing
 
         public static bool MeetsCondition(HasItemCondition condition, Player player, EventInstance eventInstance, QuestBase questBase)
         {
-            if (player.FindItem(condition.ItemId, condition.Quantity) > -1)
+            if (player.CountItems(condition.ItemId) >= condition.Quantity)
             {
                 return true;
             }
@@ -227,7 +228,21 @@ namespace Intersect.Server.EventProcessing
         {
             if (eventInstance != null)
             {
-                return eventInstance.SelfSwitch[condition.SwitchIndex] == condition.Value;
+                if (eventInstance.Global)
+                {
+                    var evts = MapInstance.Get(eventInstance.MapId).GlobalEventInstances.Values.ToList();
+                    for (int i = 0; i < evts.Count; i++)
+                    {
+                        if (evts[i] != null && evts[i].BaseEvent == eventInstance.BaseEvent)
+                        {
+                            return evts[i].SelfSwitch[condition.SwitchIndex] == condition.Value;
+                        }
+                    }
+                }
+                else
+                {
+                    return eventInstance.SelfSwitch[condition.SwitchIndex] == condition.Value;
+                }
             }
             return false;
         }

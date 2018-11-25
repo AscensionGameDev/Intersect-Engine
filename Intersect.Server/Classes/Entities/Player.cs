@@ -3575,7 +3575,7 @@ namespace Intersect.Server.Entities
             {
                 if (evt.PageInstance != null && evt.PageInstance.Id == eventId)
                 {
-                    if (evt.PageInstance.Trigger != 0) return;
+                    if (evt.PageInstance.Trigger != EventTrigger.ActionButton) return;
                     if (!IsEventOneBlockAway(evt)) return;
                     if (evt.CallStack.Count != 0) return;
                     var newStack = new CommandInstance(evt.PageInstance.MyPage);
@@ -3760,12 +3760,12 @@ namespace Intersect.Server.Entities
             {
                 if (evt.MapId == MapId)
                 {
-                    if (evt.PageInstance != null)
+                    if (evt.PageInstance != null && evt.PageInstance.MapId == MapId)
                     {
-                        if (evt.PageInstance.MapId == MapId &&
-                            evt.PageInstance.X == X &&
-                            evt.PageInstance.Y == Y &&
-                            evt.PageInstance.Z == Z)
+                        var x = evt.PageInstance.GlobalClone?.X ?? evt.PageInstance.X;
+                        var y = evt.PageInstance.GlobalClone?.Y ?? evt.PageInstance.Y;
+                        var z = evt.PageInstance.GlobalClone?.Z ?? evt.PageInstance.Z;
+                        if (x == X && y == Y &&  z == Z)
                         {
                             if (evt.PageInstance.Trigger != EventTrigger.PlayerTouch) return;
                             if (evt.CallStack.Count != 0) return;
