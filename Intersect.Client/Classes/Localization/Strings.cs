@@ -268,6 +268,8 @@ namespace Intersect.Client.Localization
 
         public struct Errors
         {
+            public static LocalizedString displaynotsupported = @"Invalid Display Configuration!";
+            public static LocalizedString displaynotsupportederror = @"Fullscreen {00} resolution is not supported on this device!";
             public static LocalizedString errorencountered = @"The Intersect Client has encountered an error and must close. Error information can be found in logs/errors.log";
             public static LocalizedString notconnected = @"Not connected to the game server. Is it online?";
             public static LocalizedString notsupported = @"Not Supported!";

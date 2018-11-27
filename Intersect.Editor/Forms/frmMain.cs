@@ -325,6 +325,16 @@ namespace Intersect.Editor.Forms
             Application.Exit();
         }
 
+        public void ShowDialogForm(Form form)
+        {
+            if (InvokeRequired)
+            {
+                Invoke((MethodInvoker)delegate { ShowDialogForm(form); });
+                return;
+            }
+            form.ShowDialog(this);
+        }
+
         public void EnterMap(Guid mapId)
         {
             if (InvokeRequired)

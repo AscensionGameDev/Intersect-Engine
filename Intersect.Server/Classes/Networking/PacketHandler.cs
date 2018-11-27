@@ -1038,6 +1038,10 @@ namespace Intersect.Server.Networking
 #endif
                     }
                 }
+                else
+                {
+                    unequippedAttack = true;
+                }
 
                 if (unequippedAttack)
                 {

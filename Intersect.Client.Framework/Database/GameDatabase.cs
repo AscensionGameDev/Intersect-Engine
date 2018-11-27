@@ -32,7 +32,6 @@ namespace Intersect.Client.Framework.Database
             SoundVolume = LoadPreference("SoundVolume", 25);
             TargetResolution = LoadPreference("Resolution", 0);
             TargetFps = LoadPreference("Fps", 0);
-
             FullScreen = LoadPreference("Fullscreen", false);
             HideOthersOnWindowOpen = LoadPreference("HideOthersOnWindowOpen", true);
         }
@@ -45,7 +44,6 @@ namespace Intersect.Client.Framework.Database
             SavePreference("Resolution", TargetResolution.ToString());
             SavePreference("Fps", TargetFps.ToString());
             SavePreference("HideOthersOnWindowOpen", HideOthersOnWindowOpen.ToString());
-
         }
 
         public abstract bool LoadConfig();
