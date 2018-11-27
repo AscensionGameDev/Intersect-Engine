@@ -92,7 +92,28 @@ namespace Intersect.Client.MonoGame.Graphics
         public void UpdateGraphicsState(int width, int height)
         {
             var currentDisplayMode = mGraphics.GraphicsDevice.Adapter.CurrentDisplayMode;
+
+            if (Globals.Database.FullScreen)
+            {
+                var supported = false;
+                foreach (var mode in mGraphics.GraphicsDevice.Adapter.SupportedDisplayModes)
+                {
+                    if (mode.Width == width && mode.Height == height)
+                    {
+                        supported = true;
+                    }
+                }
+
+                if (!supported)
+                {
+                    Globals.Database.FullScreen = false;
+                    Globals.Database.SavePreferences();
+                    Gui.MsgboxErrors.Add(new KeyValuePair<string, string>(Strings.Errors.displaynotsupported,Strings.Errors.displaynotsupportederror.ToString(width + "x" + height)));
+                }
+            }
+
             var fsChanged = mGraphics.IsFullScreen != Globals.Database.FullScreen && !Globals.Database.FullScreen;
+
             mGraphics.IsFullScreen = Globals.Database.FullScreen;
             if (fsChanged) mGraphics.ApplyChanges();
             mScreenWidth = width;
@@ -127,6 +148,7 @@ namespace Intersect.Client.MonoGame.Graphics
                 (mDisplayHeight - mScreenHeight) / 2);
             mOldDisplayMode = currentDisplayMode;
             if (fsChanged) mFsChangedTimer = Globals.System.GetTimeMs() + 1000;
+            if (fsChanged) mDisplayModeChanged = true;
         }
 
         public void CreateWhiteTexture()
