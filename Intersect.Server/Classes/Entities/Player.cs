@@ -3732,9 +3732,29 @@ namespace Intersect.Server.Entities
             {
                 if (evt.HoldingPlayer) return -5;
             }
-            //TODO Check if any events are blocking us
             return base.CanMove(moveDir);
         }
+
+        protected override int IsTileWalkable(MapInstance map, int x, int y, int z)
+        {
+            if (base.IsTileWalkable(map, x, y, z) == -1)
+            {
+                foreach (var evt in EventLookup.Values)
+                {
+                    if (evt.PageInstance != null)
+                    {
+                        var instance = evt.PageInstance;
+                        if (instance.GlobalClone != null) instance = instance.GlobalClone;
+                        if (instance.Map == map && instance.X == x && instance.Y == y && instance.Z == z && !instance.Passable)
+                        {
+                            return (int) EntityTypes.Event;
+                        }
+                    }
+                }
+            }
+            return -1;
+        }
+
 
         public override void Move(int moveDir, Client client, bool dontUpdate = false, bool correction = false)
         {

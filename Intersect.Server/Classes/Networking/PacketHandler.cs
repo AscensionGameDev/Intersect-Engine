@@ -428,7 +428,8 @@ namespace Intersect.Server.Networking
                 return;
             }
             bf.Dispose();
-            if ((player.CanMove(dir) == -1 || player.CanMove(dir) == -4) && client.Entity.MoveRoute == null)
+            var canMove = player.CanMove(dir);
+            if ((canMove == -1 || canMove == -4) && client.Entity.MoveRoute == null)
             {
                 player.Move(dir, client, false);
                 if (player.MoveTimer > Globals.System.GetTimeMs())

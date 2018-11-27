@@ -129,6 +129,11 @@ namespace Intersect.Server.Maps
             return mMapId;
         }
 
+        public MapInstance GetMap()
+        {
+            return MapInstance.Get(mMapId);
+        }
+
         public int GetX()
         {
             return mTileX;

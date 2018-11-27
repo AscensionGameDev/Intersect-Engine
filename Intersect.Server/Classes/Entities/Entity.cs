@@ -318,6 +318,14 @@ namespace Intersect.Server.Entities
                 }
             }
 
+            return IsTileWalkable(tile.GetMap(),tile.GetX(),tile.GetY(),Z);
+        }
+
+        protected virtual int IsTileWalkable(MapInstance map, int x, int y, int z)
+        {
+            //Out of bounds if no map
+            if (map == null) return -5;
+            //Otherwise fine
             return -1;
         }
 
