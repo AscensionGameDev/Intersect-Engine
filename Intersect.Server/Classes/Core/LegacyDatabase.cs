@@ -901,6 +901,7 @@ namespace Intersect.Server
 
         private static void SaveGameDb()
         {
+            if (sGameDb == null) return;
             lock (mSavingGameLock)
             {
                 sGameDb.SaveChanges();
@@ -909,6 +910,7 @@ namespace Intersect.Server
 
         private static void SavePlayerDb()
         {
+            if (sPlayerDb == null) return;
             lock (mSavingPlayerLock)
             {
                 sPlayerDb.SaveChanges();
