@@ -115,7 +115,7 @@ namespace Intersect.Client
         //Music
         public static void PlayMusic(string filename, float fadeout = 0f, float fadein = 0f, bool loop = false)
         {
-            if (filename == null) return;
+            if (filename == null) filename = "";
             filename = GameContentManager.RemoveExtension(filename);
             if (sMyMusic != null)
             {

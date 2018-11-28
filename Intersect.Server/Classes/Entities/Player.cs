@@ -848,9 +848,8 @@ namespace Intersect.Server.Entities
             {
                 if (spell != null && spell.Combat.Friendly)
                 {
-                    return true;
+                    return false;
                 }
-                return false;
             }
             else if (en.GetType() == typeof(Resource))
             {
@@ -896,7 +895,7 @@ namespace Intersect.Server.Entities
         {
             ItemBase weapon = null;
             var attackTime = base.CalculateAttackTime();
-            if (Options.WeaponIndex < Equipment.Length && Equipment[Options.WeaponIndex] >= 0)
+            if (Options.WeaponIndex > -1 && Options.WeaponIndex < Equipment.Length && Equipment[Options.WeaponIndex] >= 0)
             {
                 weapon = ItemBase.Get(Items[Equipment[Options.WeaponIndex]].ItemId);
             }
