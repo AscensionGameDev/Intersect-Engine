@@ -21,6 +21,7 @@ namespace Intersect.Client
 
         public static void OnKeyPressed(Keys key)
         {
+            if (key == Keys.None) return;
             var consumeKey = false;
 
             KeyDown?.Invoke(key);

@@ -13,9 +13,11 @@
 
         private Resolution(string resolution) : this()
         {
+            ushort x;
+            ushort y;
             var split = resolution?.Split('x', ',', ' ', '/', '-', '_', '.', '~');
-            if (ushort.TryParse(split?[0], out ushort x)) X = x;
-            if (ushort.TryParse(split?[1], out ushort y)) Y = y;
+            if (ushort.TryParse(split?[0], out x)) X = x;
+            if (ushort.TryParse(split?[1], out y)) Y = y;
         }
 
         public static Resolution Parse(string resolution)

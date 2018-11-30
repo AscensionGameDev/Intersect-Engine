@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Enums;
 using Intersect.GameObjects;
 
@@ -11,8 +10,7 @@ namespace Intersect.Client.Items
         public int Quantity;
         public int[] StatBoost = new int[(int) Stats.StatCount];
         public Guid BagId;
-
-        [NotMapped]
+        
         public ItemBase Item => ItemBase.Get(ItemId);
 
         public ItemInstance()

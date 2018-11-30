@@ -148,6 +148,7 @@ namespace Intersect.Client
 
         public static bool ControlHasKey(Controls control, Keys key)
         {
+            if (key == Keys.None) return false;
             if (!(ActiveControls?.ControlMapping.ContainsKey(control) ?? false)) return false;
             var mapping = ActiveControls.ControlMapping[control];
             return (mapping?.Key1 == key || mapping?.Key2 == key);
