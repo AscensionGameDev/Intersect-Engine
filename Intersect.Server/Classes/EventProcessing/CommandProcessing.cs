@@ -219,7 +219,12 @@ namespace Intersect.Server.EventProcessing
             Stack<CommandInstance> newCallStack = LoadLabelCallstack(command.Label, stackInfo.Page);
             if (newCallStack != null)
             {
-                callStack = newCallStack;
+                newCallStack.Reverse();
+                callStack.Clear();
+                foreach (var itm in newCallStack)
+                {
+                    callStack.Push(itm);
+                }
             }
         }
 

@@ -38,6 +38,9 @@ namespace Intersect.Server
         private static PlayerContext sPlayerDb;
         private static GameContext sGameDb;
 
+        private static Task sSaveGameDbTask;
+        private static Task sSavePlayerDbTask;
+
         public static object MapGridLock = new object();
         public static List<MapGrid> MapGrids = new List<MapGrid>();
 
@@ -881,12 +884,24 @@ namespace Intersect.Server
 
         public static void SaveGameDatabaseAsync()
         {
-            Task.Run(new Action(SaveGameDb));
+            if ((sSaveGameDbTask == null) || !(sSaveGameDbTask.IsCompleted == false ||
+                                              sSaveGameDbTask.Status == TaskStatus.Running ||
+                                              sSaveGameDbTask.Status == TaskStatus.WaitingToRun ||
+                                              sSaveGameDbTask.Status == TaskStatus.WaitingForActivation))
+            {
+                sSaveGameDbTask = Task.Factory.StartNew(SaveGameDb);
+            }
         }
 
         public static void SavePlayerDatabaseAsync()
         {
-            Task.Run(new Action(SavePlayerDb));
+            if ((sSavePlayerDbTask == null) || !(sSavePlayerDbTask.IsCompleted == false ||
+                                                 sSavePlayerDbTask.Status == TaskStatus.Running ||
+                                                 sSavePlayerDbTask.Status == TaskStatus.WaitingToRun ||
+                                                 sSavePlayerDbTask.Status == TaskStatus.WaitingForActivation))
+            {
+                sSavePlayerDbTask = Task.Factory.StartNew(SavePlayerDb);
+            }
         }
 
         public static void SaveGameDatabase()

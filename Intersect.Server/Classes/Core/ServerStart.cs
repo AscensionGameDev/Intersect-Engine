@@ -19,6 +19,9 @@ using Intersect.Server.Localization;
 using Intersect.Server.Networking;
 using Intersect.Server.Networking.Helpers;
 using Intersect.Server.Networking.Lidgren;
+#if websockets
+using Intersect.Server.Networking.Websockets;
+#endif
 using Intersect.Server.WebApi;
 using Intersect.Utilities;
 using Open.Nat;
@@ -98,7 +101,7 @@ namespace Intersect.Server
 
 #if websockets
             WebSocketNetwork.Init(Options.ServerPort);
-            Console.WriteLine(Strings.Intro.websocketstarted.ToString( Options.ServerPort));
+            Console.WriteLine(Strings.Intro.websocketstarted.ToString(Options.ServerPort));
 #endif
 
             if (!Globals.Network.Listen()) Log.Error("An error occurred while attempting to connect.");

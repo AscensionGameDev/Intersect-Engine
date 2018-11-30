@@ -2737,6 +2737,13 @@ namespace Intersect.Server.Networking
             var character = LegacyDatabase.GetUserCharacter(client.User, charId);
             if (character != null)
             {
+                foreach (var chr in client.Characters.ToArray())
+                {
+                    if (chr.Id == charId)
+                    {
+                        client.Characters.Remove(chr);
+                    }
+                }
                 LegacyDatabase.DeleteCharacter(charId);
             }
             PacketSender.SendLoginError(client, Strings.Account.deletechar, Strings.Account.deleted);
