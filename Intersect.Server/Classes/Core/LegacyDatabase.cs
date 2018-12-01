@@ -515,103 +515,106 @@ namespace Intersect.Server
 
         public static IDatabaseObject AddGameObject(GameObjectType gameObjectType, [NotNull] IDatabaseObject dbObj)
         {
-            switch (gameObjectType)
+            lock (mSavingGameLock)
             {
-                case GameObjectType.Animation:
-                    sGameDb.Animations.Add((AnimationBase)dbObj);
-                    AnimationBase.Lookup.Set(dbObj.Id, dbObj);
-                    break;
+                switch (gameObjectType)
+                {
+                    case GameObjectType.Animation:
+                        sGameDb.Animations.Add((AnimationBase) dbObj);
+                        AnimationBase.Lookup.Set(dbObj.Id, dbObj);
+                        break;
 
-                case GameObjectType.Class:
-                    sGameDb.Classes.Add((ClassBase)dbObj);
-                    ClassBase.Lookup.Set(dbObj.Id, dbObj);
-                    break;
+                    case GameObjectType.Class:
+                        sGameDb.Classes.Add((ClassBase) dbObj);
+                        ClassBase.Lookup.Set(dbObj.Id, dbObj);
+                        break;
 
-                case GameObjectType.Item:
-                    sGameDb.Items.Add((ItemBase)dbObj);
-                    ItemBase.Lookup.Set(dbObj.Id, dbObj);
-                    break;
+                    case GameObjectType.Item:
+                        sGameDb.Items.Add((ItemBase) dbObj);
+                        ItemBase.Lookup.Set(dbObj.Id, dbObj);
+                        break;
 
-                case GameObjectType.Npc:
-                    sGameDb.Npcs.Add((NpcBase)dbObj);
-                    NpcBase.Lookup.Set(dbObj.Id, dbObj);
-                    break;
+                    case GameObjectType.Npc:
+                        sGameDb.Npcs.Add((NpcBase) dbObj);
+                        NpcBase.Lookup.Set(dbObj.Id, dbObj);
+                        break;
 
-                case GameObjectType.Projectile:
-                    sGameDb.Projectiles.Add((ProjectileBase)dbObj);
-                    ProjectileBase.Lookup.Set(dbObj.Id, dbObj);
-                    break;
+                    case GameObjectType.Projectile:
+                        sGameDb.Projectiles.Add((ProjectileBase) dbObj);
+                        ProjectileBase.Lookup.Set(dbObj.Id, dbObj);
+                        break;
 
-                case GameObjectType.Quest:
-                    sGameDb.Quests.Add((QuestBase)dbObj);
-                    QuestBase.Lookup.Set(dbObj.Id, dbObj);
-                    break;
+                    case GameObjectType.Quest:
+                        sGameDb.Quests.Add((QuestBase) dbObj);
+                        QuestBase.Lookup.Set(dbObj.Id, dbObj);
+                        break;
 
-                case GameObjectType.Resource:
-                    sGameDb.Resources.Add((ResourceBase)dbObj);
-                    ResourceBase.Lookup.Set(dbObj.Id, dbObj);
-                    break;
+                    case GameObjectType.Resource:
+                        sGameDb.Resources.Add((ResourceBase) dbObj);
+                        ResourceBase.Lookup.Set(dbObj.Id, dbObj);
+                        break;
 
-                case GameObjectType.Shop:
-                    sGameDb.Shops.Add((ShopBase)dbObj);
-                    ShopBase.Lookup.Set(dbObj.Id, dbObj);
-                    break;
+                    case GameObjectType.Shop:
+                        sGameDb.Shops.Add((ShopBase) dbObj);
+                        ShopBase.Lookup.Set(dbObj.Id, dbObj);
+                        break;
 
-                case GameObjectType.Spell:
-                    sGameDb.Spells.Add((SpellBase)dbObj);
-                    SpellBase.Lookup.Set(dbObj.Id, dbObj);
-                    break;
+                    case GameObjectType.Spell:
+                        sGameDb.Spells.Add((SpellBase) dbObj);
+                        SpellBase.Lookup.Set(dbObj.Id, dbObj);
+                        break;
 
-                case GameObjectType.CraftTables:
-                    sGameDb.CraftingTables.Add((CraftingTableBase)dbObj);
-                    CraftingTableBase.Lookup.Set(dbObj.Id, dbObj);
-                    break;
+                    case GameObjectType.CraftTables:
+                        sGameDb.CraftingTables.Add((CraftingTableBase) dbObj);
+                        CraftingTableBase.Lookup.Set(dbObj.Id, dbObj);
+                        break;
 
-                case GameObjectType.Crafts:
-                    sGameDb.Crafts.Add((CraftBase)dbObj);
-                    CraftBase.Lookup.Set(dbObj.Id, dbObj);
-                    break;
+                    case GameObjectType.Crafts:
+                        sGameDb.Crafts.Add((CraftBase) dbObj);
+                        CraftBase.Lookup.Set(dbObj.Id, dbObj);
+                        break;
 
-                case GameObjectType.Map:
-                    sGameDb.Maps.Add((MapInstance)dbObj);
-                    MapInstance.Lookup.Set(dbObj.Id, dbObj);
-                    break;
+                    case GameObjectType.Map:
+                        sGameDb.Maps.Add((MapInstance) dbObj);
+                        MapInstance.Lookup.Set(dbObj.Id, dbObj);
+                        break;
 
-                case GameObjectType.Event:
-                    sGameDb.Events.Add((EventBase)dbObj);
-                    EventBase.Lookup.Set(dbObj.Id, dbObj);
-                    break;
+                    case GameObjectType.Event:
+                        sGameDb.Events.Add((EventBase) dbObj);
+                        EventBase.Lookup.Set(dbObj.Id, dbObj);
+                        break;
 
-                case GameObjectType.PlayerSwitch:
-                    sGameDb.PlayerSwitches.Add((PlayerSwitchBase)dbObj);
-                    PlayerSwitchBase.Lookup.Set(dbObj.Id, dbObj);
-                    break;
+                    case GameObjectType.PlayerSwitch:
+                        sGameDb.PlayerSwitches.Add((PlayerSwitchBase) dbObj);
+                        PlayerSwitchBase.Lookup.Set(dbObj.Id, dbObj);
+                        break;
 
-                case GameObjectType.PlayerVariable:
-                    sGameDb.PlayerVariables.Add((PlayerVariableBase)dbObj);
-                    PlayerVariableBase.Lookup.Set(dbObj.Id, dbObj);
-                    break;
+                    case GameObjectType.PlayerVariable:
+                        sGameDb.PlayerVariables.Add((PlayerVariableBase) dbObj);
+                        PlayerVariableBase.Lookup.Set(dbObj.Id, dbObj);
+                        break;
 
-                case GameObjectType.ServerSwitch:
-                    sGameDb.ServerSwitches.Add((ServerSwitchBase)dbObj);
-                    ServerSwitchBase.Lookup.Set(dbObj.Id, dbObj);
-                    break;
+                    case GameObjectType.ServerSwitch:
+                        sGameDb.ServerSwitches.Add((ServerSwitchBase) dbObj);
+                        ServerSwitchBase.Lookup.Set(dbObj.Id, dbObj);
+                        break;
 
-                case GameObjectType.ServerVariable:
-                    sGameDb.ServerVariables.Add((ServerVariableBase)dbObj);
-                    ServerVariableBase.Lookup.Set(dbObj.Id, dbObj);
-                    break;
+                    case GameObjectType.ServerVariable:
+                        sGameDb.ServerVariables.Add((ServerVariableBase) dbObj);
+                        ServerVariableBase.Lookup.Set(dbObj.Id, dbObj);
+                        break;
 
-                case GameObjectType.Tileset:
-                    sGameDb.Tilesets.Add((TilesetBase)dbObj);
-                    TilesetBase.Lookup.Set(dbObj.Id, dbObj);
-                    break;
+                    case GameObjectType.Tileset:
+                        sGameDb.Tilesets.Add((TilesetBase) dbObj);
+                        TilesetBase.Lookup.Set(dbObj.Id, dbObj);
+                        break;
 
-                case GameObjectType.Time:
-                    break;
+                    case GameObjectType.Time:
+                        break;
 
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(gameObjectType), gameObjectType, null);
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(gameObjectType), gameObjectType, null);
+                }
             }
 
             if (Globals.ServerStarted)
@@ -624,81 +627,85 @@ namespace Intersect.Server
 
         public static void DeleteGameObject(IDatabaseObject gameObject)
         {
-            switch (gameObject.Type)
+            lock (mSavingGameLock)
             {
-                case GameObjectType.Animation:
-                    sGameDb.Animations.Remove((AnimationBase)gameObject);
-                    break;
-                case GameObjectType.Class:
-                    sGameDb.Classes.Remove((ClassBase) gameObject);
-                    break;
-                case GameObjectType.Item:
-                    sGameDb.Items.Remove((ItemBase)gameObject);
-                    break;
-                case GameObjectType.Npc:
-                    sGameDb.Npcs.Remove((NpcBase) gameObject);
-                    break;
-                case GameObjectType.Projectile:
-                    sGameDb.Projectiles.Remove((ProjectileBase) gameObject);
-                    break;
-                case GameObjectType.Quest:
-                    sGameDb.Events.Remove(((QuestBase)gameObject).StartEvent);
-                    EventBase.Lookup.Delete(((QuestBase)gameObject).StartEvent);
-                    sGameDb.Events.Remove(((QuestBase)gameObject).EndEvent);
-                    EventBase.Lookup.Delete(((QuestBase)gameObject).EndEvent);
-                    foreach (var tsk in ((QuestBase) gameObject).Tasks)
-                    {
-                        sGameDb.Events.Remove(tsk.CompletionEvent);
-                        EventBase.Lookup.Delete(tsk.CompletionEvent);
-                    }
-                    sGameDb.Quests.Remove((QuestBase) gameObject);
-                    break;
-                case GameObjectType.Resource:
-                    sGameDb.Resources.Remove((ResourceBase) gameObject);
-                    break;
-                case GameObjectType.Shop:
-                    sGameDb.Shops.Remove((ShopBase) gameObject);
-                    break;
-                case GameObjectType.Spell:
-                    sGameDb.Spells.Remove((SpellBase) gameObject);
-                    break;
-                case GameObjectType.CraftTables:
-                    sGameDb.CraftingTables.Remove((CraftingTableBase)gameObject);
-                    break;
-                case GameObjectType.Crafts:
-                    sGameDb.Crafts.Remove((CraftBase)gameObject);
-                    break;
-                case GameObjectType.Map:
-                    sGameDb.Maps.Remove((MapInstance) gameObject);
-                    MapInstance.Lookup.Delete(gameObject);
-                    break;
-                case GameObjectType.Event:
-                    sGameDb.Events.Remove((EventBase) gameObject);
-                    break;
-                case GameObjectType.PlayerSwitch:
-                    sGameDb.PlayerSwitches.Remove((PlayerSwitchBase) gameObject);
-                    break;
-                case GameObjectType.PlayerVariable:
-                    sGameDb.PlayerVariables.Remove((PlayerVariableBase) gameObject);
-                    break;
-                case GameObjectType.ServerSwitch:
-                    sGameDb.ServerSwitches.Remove((ServerSwitchBase) gameObject);
-                    break;
-                case GameObjectType.ServerVariable:
-                    sGameDb.ServerVariables.Remove((ServerVariableBase)gameObject);
-                    break;
-                case GameObjectType.Tileset:
-                    sGameDb.Tilesets.Remove((TilesetBase) gameObject);
-                    break;
-                case GameObjectType.Time:
-                    break;
-            }
-
-            if (gameObject.Type.GetLookup().Values.Contains(gameObject))
-            {
-                if (!gameObject.Type.GetLookup().Delete(gameObject))
+                switch (gameObject.Type)
                 {
-                    throw new Exception();
+                    case GameObjectType.Animation:
+                        sGameDb.Animations.Remove((AnimationBase) gameObject);
+                        break;
+                    case GameObjectType.Class:
+                        sGameDb.Classes.Remove((ClassBase) gameObject);
+                        break;
+                    case GameObjectType.Item:
+                        sGameDb.Items.Remove((ItemBase) gameObject);
+                        break;
+                    case GameObjectType.Npc:
+                        sGameDb.Npcs.Remove((NpcBase) gameObject);
+                        break;
+                    case GameObjectType.Projectile:
+                        sGameDb.Projectiles.Remove((ProjectileBase) gameObject);
+                        break;
+                    case GameObjectType.Quest:
+                        sGameDb.Events.Remove(((QuestBase) gameObject).StartEvent);
+                        EventBase.Lookup.Delete(((QuestBase) gameObject).StartEvent);
+                        sGameDb.Events.Remove(((QuestBase) gameObject).EndEvent);
+                        EventBase.Lookup.Delete(((QuestBase) gameObject).EndEvent);
+                        foreach (var tsk in ((QuestBase) gameObject).Tasks)
+                        {
+                            sGameDb.Events.Remove(tsk.CompletionEvent);
+                            EventBase.Lookup.Delete(tsk.CompletionEvent);
+                        }
+
+                        sGameDb.Quests.Remove((QuestBase) gameObject);
+                        break;
+                    case GameObjectType.Resource:
+                        sGameDb.Resources.Remove((ResourceBase) gameObject);
+                        break;
+                    case GameObjectType.Shop:
+                        sGameDb.Shops.Remove((ShopBase) gameObject);
+                        break;
+                    case GameObjectType.Spell:
+                        sGameDb.Spells.Remove((SpellBase) gameObject);
+                        break;
+                    case GameObjectType.CraftTables:
+                        sGameDb.CraftingTables.Remove((CraftingTableBase) gameObject);
+                        break;
+                    case GameObjectType.Crafts:
+                        sGameDb.Crafts.Remove((CraftBase) gameObject);
+                        break;
+                    case GameObjectType.Map:
+                        sGameDb.Maps.Remove((MapInstance) gameObject);
+                        MapInstance.Lookup.Delete(gameObject);
+                        break;
+                    case GameObjectType.Event:
+                        sGameDb.Events.Remove((EventBase) gameObject);
+                        break;
+                    case GameObjectType.PlayerSwitch:
+                        sGameDb.PlayerSwitches.Remove((PlayerSwitchBase) gameObject);
+                        break;
+                    case GameObjectType.PlayerVariable:
+                        sGameDb.PlayerVariables.Remove((PlayerVariableBase) gameObject);
+                        break;
+                    case GameObjectType.ServerSwitch:
+                        sGameDb.ServerSwitches.Remove((ServerSwitchBase) gameObject);
+                        break;
+                    case GameObjectType.ServerVariable:
+                        sGameDb.ServerVariables.Remove((ServerVariableBase) gameObject);
+                        break;
+                    case GameObjectType.Tileset:
+                        sGameDb.Tilesets.Remove((TilesetBase) gameObject);
+                        break;
+                    case GameObjectType.Time:
+                        break;
+                }
+
+                if (gameObject.Type.GetLookup().Values.Contains(gameObject))
+                {
+                    if (!gameObject.Type.GetLookup().Delete(gameObject))
+                    {
+                        throw new Exception();
+                    }
                 }
             }
         }

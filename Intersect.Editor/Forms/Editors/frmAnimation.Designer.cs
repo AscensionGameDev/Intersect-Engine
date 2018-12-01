@@ -333,7 +333,7 @@ namespace Intersect.Editor.Forms.Editors
             0,
             0});
             this.nudLowerFrameDuration.Minimum = new decimal(new int[] {
-            10,
+            1,
             0,
             0,
             0});
@@ -666,7 +666,7 @@ namespace Intersect.Editor.Forms.Editors
             0,
             0});
             this.nudUpperFrameDuration.Minimum = new decimal(new int[] {
-            10,
+            1,
             0,
             0,
             0});

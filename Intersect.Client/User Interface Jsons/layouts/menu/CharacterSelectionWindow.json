@@ -92,7 +92,7 @@
     },
     "CharacterContainer": {
       "Bounds": "219,120,74,74",
-      "Padding": "0,0,0,0",
+      "Padding": "5,5,5,5",
       "AlignmentEdgeDistances": "0,0,0,0",
       "Margin": "0,0,0,0",
       "RenderColor": "255,255,255,255",

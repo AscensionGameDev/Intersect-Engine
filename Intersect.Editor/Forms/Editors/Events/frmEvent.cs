@@ -290,7 +290,7 @@ namespace Intersect.Editor.Forms.Editors.Events
 
         private void btnCopyPage_Click(object sender, EventArgs e)
         {
-            mPageCopy = JsonConvert.SerializeObject(CurrentPage);
+            mPageCopy = JsonConvert.SerializeObject(CurrentPage, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate });
             EnableButtons();
         }
 
@@ -299,7 +299,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             if (mPageCopy != null)
             {
                 MyEvent.Pages[CurrentPageIndex] = new EventPage();
-                JsonConvert.PopulateObject(mPageCopy, MyEvent.Pages[CurrentPageIndex],new JsonSerializerSettings() {ObjectCreationHandling = ObjectCreationHandling.Replace});
+                JsonConvert.PopulateObject(mPageCopy, MyEvent.Pages[CurrentPageIndex], new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
                 LoadPage(CurrentPageIndex);
             }
         }

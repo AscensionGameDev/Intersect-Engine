@@ -110,9 +110,10 @@ namespace Intersect
 
         [JsonProperty("Equipment")]
         public EquipmentOptions EquipmentOpts = new EquipmentOptions();
-        
+
 
         //Constantly Animated Sprites
+        [JsonProperty("AnimatedSprites")]
         protected List<string> _animatedSprites = new List<string>();
 
         [JsonProperty("Combat")]

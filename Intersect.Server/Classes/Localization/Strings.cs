@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Intersect.Localization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -529,7 +530,7 @@ namespace Intersect.Server.Localization
             if (File.Exists(Path.Combine("resources", "server_strings.json")))
             {
                 var strings = new Dictionary<string, Dictionary<string, object>>();
-                strings = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(File.ReadAllText(Path.Combine("resources", "server_strings.json")));
+                strings = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(File.ReadAllText(Path.Combine("resources", "server_strings.json"), Encoding.UTF8));
                 var type = typeof(Strings);
 
                 var fields = new List<Type>();
@@ -614,7 +615,7 @@ namespace Intersect.Server.Localization
             {
                 Directory.CreateDirectory(languageDirectory);
             }
-            File.WriteAllText(Path.Combine(languageDirectory, "server_strings.json"), JsonConvert.SerializeObject(strings, Formatting.Indented));
+            File.WriteAllText(Path.Combine(languageDirectory, "server_strings.json"), JsonConvert.SerializeObject(strings, Formatting.Indented), Encoding.UTF8);
         }
     }
 }

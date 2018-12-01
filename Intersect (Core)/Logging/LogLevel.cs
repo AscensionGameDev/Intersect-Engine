@@ -2,6 +2,7 @@
 {
     public enum LogLevel : byte
     {
+        None,
         Error,
         Warn,
         Info,

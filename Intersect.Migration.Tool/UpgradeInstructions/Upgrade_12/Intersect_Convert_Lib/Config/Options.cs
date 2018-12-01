@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
@@ -103,6 +104,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_L
 
 
         //Constantly Animated Sprites
+        [JsonProperty("AnimatedSprites")]
         public List<string> _animatedSprites = new List<string>();
 
         [JsonProperty("Combat")]
@@ -124,10 +126,10 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_L
             if (!Directory.Exists("resources")) Directory.CreateDirectory("resources");
             if (File.Exists("resources/config.json"))
             {
-                _options = JsonConvert.DeserializeObject<Options>(File.ReadAllText("resources/config.json"));
+                _options = JsonConvert.DeserializeObject<Options>(File.ReadAllText("resources/config.json", Encoding.UTF8));
             }
             _options.ExportDatabaseSettings = true;
-            File.WriteAllText("resources/config.json", JsonConvert.SerializeObject(_options,Formatting.Indented));
+            File.WriteAllText("resources/config.json", JsonConvert.SerializeObject(_options,Formatting.Indented), Encoding.UTF8);
             _options.ExportDatabaseSettings = false;
             optionsCompressed = JsonConvert.SerializeObject(_options);
             return true;
@@ -136,7 +138,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12.Intersect_Convert_L
         public static void SaveToDisk()
         {
             _options.ExportDatabaseSettings = true;
-            File.WriteAllText("resources/config.json", JsonConvert.SerializeObject(_options, Formatting.Indented));
+            File.WriteAllText("resources/config.json", JsonConvert.SerializeObject(_options, Formatting.Indented), Encoding.UTF8);
             _options.ExportDatabaseSettings = false;
             optionsCompressed = JsonConvert.SerializeObject(_options);
         }
