@@ -40,6 +40,7 @@ namespace Intersect.Server.Database.PlayerData
 
         public virtual List<Player> Characters { get; set; } = new List<Player>();
 
+        private static Func<PlayerContext, string, User> _getUser =
             EF.CompileQuery((PlayerContext context, string username) =>
                 context.Users
                     .Include(p => p.Characters).ThenInclude(c => c.Bank)
