@@ -469,7 +469,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (mEditorItem != null && mCopiedItem != null && lstResources.Focused)
             {
-                mEditorItem.Load(mCopiedItem);
+                mEditorItem.Load(mCopiedItem, true);
                 UpdateEditor();
             }
         }

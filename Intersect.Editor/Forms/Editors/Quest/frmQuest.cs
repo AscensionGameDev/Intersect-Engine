@@ -393,7 +393,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
         {
             if (mEditorItem != null && mCopiedItem != null && lstQuests.Focused)
             {
-                mEditorItem.Load(mCopiedItem);
+                mEditorItem.Load(mCopiedItem, true);
                 UpdateEditor();
             }
         }

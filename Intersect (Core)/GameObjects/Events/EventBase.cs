@@ -103,6 +103,11 @@ namespace Intersect.GameObjects.Events
         [NotMapped]
         public override string JsonData => JsonConvert.SerializeObject(this, Formatting.Indented, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
 
-        public override void Load(string json) => JsonConvert.PopulateObject(json, this, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
+        public override void Load(string json, bool keepCreationTime = false)
+        {
+            var oldTime = TimeCreated;
+            JsonConvert.PopulateObject(json, this, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
+            if (keepCreationTime) TimeCreated = oldTime;
+        }
     }
 }
