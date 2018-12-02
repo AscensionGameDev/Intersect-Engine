@@ -911,8 +911,7 @@ namespace Intersect.Server.Entities
                     attackTime = (int)(attackTime * (100f / weapon.AttackSpeedValue));
                 }
             }
-            attackTime -= 32; //Account for lag/ping... we might base this off actual ping down the line at some point.
-            return attackTime;
+            return attackTime - 60; //subtracting 60 to account for a moderate ping to the server so some attacks dont get cancelled.
         }
 
         public override int GetStatBuffs(Stats statType)

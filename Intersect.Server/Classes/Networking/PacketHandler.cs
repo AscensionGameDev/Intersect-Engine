@@ -311,12 +311,6 @@ namespace Intersect.Server.Networking
                 var username = bf.ReadString();
                 var password = bf.ReadString();
 
-                if (!LegacyDatabase.AccountExists(username))
-                {
-                    PacketSender.SendLoginError(client, Strings.Account.badlogin);
-                    return;
-                }
-
                 if (!LegacyDatabase.CheckPassword(username, password))
                 {
                     PacketSender.SendLoginError(client, Strings.Account.badlogin);

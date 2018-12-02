@@ -40,19 +40,54 @@ namespace Intersect.Server.Database.PlayerData
 
         public virtual List<Player> Characters { get; set; } = new List<Player>();
 
+            EF.CompileQuery((PlayerContext context, string username) =>
+                context.Users
+                    .Include(p => p.Characters).ThenInclude(c => c.Bank)
+                    .Include(p => p.Characters).ThenInclude(c => c.Friends).ThenInclude(c => c.Target)
+                    .Include(p => p.Characters).ThenInclude(c => c.Hotbar)
+                    .Include(p => p.Characters).ThenInclude(c => c.Quests)
+                    .Include(p => p.Characters).ThenInclude(c => c.Switches)
+                    .Include(p => p.Characters).ThenInclude(c => c.Variables)
+                    .Include(p => p.Characters).ThenInclude(c => c.Items)
+                    .Include(p => p.Characters).ThenInclude(c => c.Spells)
+                    .Include(p => p.Characters).ThenInclude(c => c.Bank)
+                    .FirstOrDefault(c => c.Name.ToLower() == username.ToLower()));
+
+        private static Func<PlayerContext, Guid, Player> _getPlayerById =
+            EF.CompileQuery((PlayerContext context, Guid id) =>
+                context.Characters
+                    .Include(p => p.Bank)
+                    .Include(p => p.Friends)
+                    .ThenInclude(p => p.Target)
+                    .Include(p => p.Hotbar)
+                    .Include(p => p.Quests)
+                    .Include(p => p.Switches)
+                    .Include(p => p.Variables)
+                    .Include(p => p.Items)
+                    .Include(p => p.Spells)
+                    .FirstOrDefault(c => c.Id == id));
+
+        private static Func<PlayerContext, string, Player> _getPlayerByName =
+            EF.CompileQuery((PlayerContext context, string name) =>
+                context.Characters
+                    .Include(p => p.Bank)
+                    .Include(p => p.Friends)
+                    .ThenInclude(p => p.Target)
+                    .Include(p => p.Hotbar)
+                    .Include(p => p.Quests)
+                    .Include(p => p.Switches)
+                    .Include(p => p.Variables)
+                    .Include(p => p.Items)
+                    .Include(p => p.Spells)
+                    .FirstOrDefault(c => c.Name.ToLower() == name.ToLower()));
+
         public static User GetUser(PlayerContext context, string username)
         {
-            var user = context.Users.Where(p => p.Name.ToLower() == username.ToLower())
-                .Include(p => p.Characters)
-                .SingleOrDefault();
-            if (user != null)
+            var user = _getUser(context, username);
+            foreach (var chr in user.Characters)
             {
-                foreach (var character in user.Characters)
-                {
-                    GetCharacter(context, character.Id);
-                }
-            }
-            return user;
+                LoadCharacter(chr);
+            } return user;
         }
 
         public void SetMuted(bool muted, string reason)
@@ -73,27 +108,18 @@ namespace Intersect.Server.Database.PlayerData
 
         public static Player GetCharacter(PlayerContext context, Guid id)
         {
-            return GetCharacter(context, p => p.Id == id);
+            var chr = LoadCharacter(_getPlayerById(context, id));
+            return chr;
         }
 
         public static Player GetCharacter(PlayerContext context, string name)
         {
-            return GetCharacter(context, p => p.Name.ToLower() == name.ToLower());
+            var chr = LoadCharacter(_getPlayerByName(context, name));
+            return chr;
         }
 
-        public static Player GetCharacter(PlayerContext context, System.Linq.Expressions.Expression<Func<Player, bool>> predicate)
+        public static Player LoadCharacter(Player character)
         {
-            var character = context.Characters.Where(predicate)
-                .Include(p => p.Bank)
-                .Include(p => p.Friends)
-                .ThenInclude(p => p.Target)
-                .Include(p => p.Hotbar)
-                .Include(p => p.Quests)
-                .Include(p => p.Switches)
-                .Include(p => p.Variables)
-                .Include(p => p.Items)
-                .Include(p => p.Spells)
-                .SingleOrDefault();
             if (character != null)
             {
                 character.FixLists();

@@ -208,7 +208,7 @@ namespace Intersect.Server
 
         public static bool CheckPassword([NotNull] string username, [NotNull] string password)
         {
-            var user = GetUser(username);
+            var user = sPlayerDb.Users.Where(p => p.Name.ToLower() == username.ToLower()).Select(p => new { p.Password, p.Salt }).FirstOrDefault();
             if (user != null)
             {
                 var sha = new SHA256Managed();
