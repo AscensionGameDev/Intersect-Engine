@@ -808,7 +808,7 @@ namespace Intersect.Client.Localization
                     foreach (var fieldInfo in p.GetFields(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public))
                     {
                         var fieldValue = fieldInfo.GetValue(null);
-                        if (!dict.ContainsKey(fieldInfo.Name)) continue;
+                        if (!dict.ContainsKey(fieldInfo.Name.ToLower())) continue;
                         if (fieldValue is LocalizedString)
                         {
                             fieldInfo.SetValue(null, new LocalizedString((string)dict[fieldInfo.Name.ToLower()]));

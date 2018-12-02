@@ -365,7 +365,7 @@ namespace Intersect.Server.Entities
                         //Check to see if we can spawn events, if already spawned.. update them.
                         lock (mEventLock)
                         {
-                            foreach (var evtId in map.EventIds)
+                            foreach (var evtId in map.EventIds.ToArray())
                             {
                                 var mapEvent = EventBase.Get(evtId);
                                 if (mapEvent != null)
