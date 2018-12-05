@@ -2634,15 +2634,22 @@ namespace Intersect.Server.Entities
                 PacketSender.SendPlayerMsg(MyClient, Strings.Trading.inventorynospace, CustomColors.Error);
             }
 
+            if (amount > Trading.Offer[slot].Quantity)
+                amount = Trading.Offer[slot].Quantity;
+
             /* Move the items to the inventory */
             amount = Math.Min(amount, int.MaxValue - Items[inventorySlot].Quantity);
 
             if (Items[inventorySlot] == null || Items[inventorySlot].ItemId == Guid.Empty || Items[inventorySlot].Quantity < 0)
             {
                 Items[inventorySlot].Set(Trading.Offer[slot]);
+                Items[inventorySlot].Quantity = amount;
+            }
+            else
+            {
+                Items[inventorySlot].Quantity += amount;
             }
 
-            Items[inventorySlot].Quantity += amount;
             if (amount >= Trading.Offer[slot].Quantity)
             {
                 Trading.Offer[slot] = null;
