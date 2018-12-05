@@ -3438,6 +3438,27 @@ namespace Intersect.Server.Entities
             }
         }
 
+        public void CompleteQuest(Guid questId, bool skipCompletionEvent)
+        {
+            var quest = QuestBase.Get(questId);
+            if (quest != null)
+            {
+                var questProgress = FindQuest(questId);
+                if (questProgress != null)
+                {
+                    //Complete Quest
+                    questProgress.Completed = true;
+                    questProgress.TaskId = Guid.Empty;
+                    questProgress.TaskProgress = -1;
+                    if (!skipCompletionEvent)
+                    {
+                        StartCommonEvent(EventBase.Get(quest.EndEventId));
+                        PacketSender.SendPlayerMsg(MyClient, Strings.Quests.completed.ToString(quest.Name), Color.Green);
+                    }
+                }
+            }
+        }
+
         private void UpdateGatherItemQuests(Guid itemId)
         {
             //If any quests demand that this item be gathered then let's handle it

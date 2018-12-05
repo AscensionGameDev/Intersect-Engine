@@ -220,7 +220,12 @@ namespace Intersect.Server.EventProcessing
             if (newCallStack != null)
             {
                 newCallStack.Reverse();
-                callStack.Clear();
+                while (callStack.Peek().CommandListId != Guid.Empty)
+                {
+                    callStack.Pop();
+                }
+                //also pop the current event
+                callStack.Pop();
                 foreach (var itm in newCallStack)
                 {
                     callStack.Push(itm);
@@ -718,7 +723,7 @@ namespace Intersect.Server.EventProcessing
         //End Quest Command
         private static void ProcessCommand(EndQuestCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            //TODO :(
+            player.CompleteQuest(command.QuestId, command.SkipCompletionEvent);
         }
 
         private static Stack<CommandInstance> LoadLabelCallstack(string label, EventPage currentPage)
