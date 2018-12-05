@@ -223,7 +223,7 @@ namespace Intersect.Editor.Forms.Editors
 
             grpConsumable.Text = Strings.ItemEditor.consumeablepanel;
             lblVital.Text = Strings.ItemEditor.vital;
-            lblInterval.Text = Strings.ItemEditor.consumeinterval;
+            lblInterval.Text = Strings.ItemEditor.consumeamount;
             cmbConsume.Items.Clear();
             for (int i = 0; i < (int)Vitals.VitalCount; i++)
             {

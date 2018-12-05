@@ -410,7 +410,8 @@ namespace Intersect.Server.Entities
                     }
                     else
                     {
-                        RemoveTarget();
+                        if (CastTime <= 0)
+                            RemoveTarget();
                     }
                 }
                 else //Find a target if able
@@ -610,7 +611,7 @@ namespace Intersect.Server.Entities
 
                 //Move randomly
                 if (targetMap != Guid.Empty) return;
-                if (LastRandomMove >= Globals.System.GetTimeMs()) return;
+                if (LastRandomMove >= Globals.System.GetTimeMs() || CastTime > 0) return;
                 if (Base.Movement == (int)NpcMovement.StandStill)
                 {
                     LastRandomMove = Globals.System.GetTimeMs() + Globals.Rand.Next(1000, 3000);

@@ -241,9 +241,9 @@ namespace Intersect.Server
             return false;
         }
         
-        public static void DeleteCharacter(Guid characterId)
+        public static void DeleteCharacter(Player chr)
         {
-            sPlayerDb.Characters.Remove(sPlayerDb.Characters.Find(characterId));
+            sPlayerDb.Characters.Remove(chr);
         }
 
         //Bags

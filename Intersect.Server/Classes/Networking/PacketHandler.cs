@@ -2736,9 +2736,9 @@ namespace Intersect.Server.Networking
                     if (chr.Id == charId)
                     {
                         client.Characters.Remove(chr);
+                        LegacyDatabase.DeleteCharacter(chr);
                     }
                 }
-                LegacyDatabase.DeleteCharacter(charId);
             }
             PacketSender.SendLoginError(client, Strings.Account.deletechar, Strings.Account.deleted);
             PacketSender.SendPlayerCharacters(client);

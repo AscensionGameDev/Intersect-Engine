@@ -1210,7 +1210,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString bound = @"Bound?";
             public static LocalizedString cancel = @"Cancel";
             public static LocalizedString consumeablepanel = @"Consumable";
-            public static LocalizedString consumeinterval = @"Interval:";
+            public static LocalizedString consumeamount = @"Amount:";
             public static LocalizedString cooldown = @"Cooldown (ms):";
             public static LocalizedString copy = @"Copy Item";
             public static LocalizedString critchance = @"Crit Chance (%):";

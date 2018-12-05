@@ -20,14 +20,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             cmbQuests.Items.Clear();
             cmbQuests.Items.AddRange(QuestBase.Names);
             cmbQuests.SelectedIndex = QuestBase.ListIndex(refCommand.QuestId);
-            chkRunCompletionTask.Checked = !refCommand.SkipCompletionEvent;
+            chkSkipCompletionEvent.Checked = refCommand.SkipCompletionEvent;
         }
 
         private void InitLocalization()
         {
             grpEndQuest.Text = Strings.EventEndQuest.title;
             lblQuest.Text = Strings.EventEndQuest.label;
-            chkRunCompletionTask.Text = Strings.EventEndQuest.skipcompletion;
+            chkSkipCompletionEvent.Text = Strings.EventEndQuest.skipcompletion;
             btnSave.Text = Strings.EventEndQuest.okay;
             btnCancel.Text = Strings.EventEndQuest.cancel;
         }
@@ -35,7 +35,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void btnSave_Click(object sender, EventArgs e)
         {
             mMyCommand.QuestId = QuestBase.IdFromList(cmbQuests.SelectedIndex);
-            mMyCommand.SkipCompletionEvent = !chkRunCompletionTask.Checked;
+            mMyCommand.SkipCompletionEvent = chkSkipCompletionEvent.Checked;
             mEventEditor.FinishCommandEdit();
         }
 
