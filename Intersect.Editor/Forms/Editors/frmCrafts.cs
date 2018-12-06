@@ -220,7 +220,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (mEditorItem != null && mCopiedItem != null && lstCrafts.Focused)
             {
-                mEditorItem.Load(mCopiedItem);
+                mEditorItem.Load(mCopiedItem, true);
                 UpdateEditor();
             }
         }

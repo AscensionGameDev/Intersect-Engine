@@ -1210,7 +1210,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString bound = @"Bound?";
             public static LocalizedString cancel = @"Cancel";
             public static LocalizedString consumeablepanel = @"Consumable";
-            public static LocalizedString consumeinterval = @"Interval:";
+            public static LocalizedString consumeamount = @"Amount:";
             public static LocalizedString cooldown = @"Cooldown (ms):";
             public static LocalizedString copy = @"Copy Item";
             public static LocalizedString critchance = @"Crit Chance (%):";
@@ -2320,7 +2320,7 @@ Negative values for time to flow backwards.";
                     foreach (var fieldInfo in p.GetFields(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public))
                     {
                         var fieldValue = fieldInfo.GetValue(null);
-                        if (!dict.ContainsKey(fieldInfo.Name)) continue;
+                        if (!dict.ContainsKey(fieldInfo.Name.ToLower())) continue;
                         if (fieldValue is LocalizedString)
                         {
                             fieldInfo.SetValue(null, new LocalizedString((string)dict[fieldInfo.Name.ToLower()]));

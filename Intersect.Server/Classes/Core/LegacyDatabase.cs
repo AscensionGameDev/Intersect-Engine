@@ -208,7 +208,7 @@ namespace Intersect.Server
 
         public static bool CheckPassword([NotNull] string username, [NotNull] string password)
         {
-            var user = GetUser(username);
+            var user = sPlayerDb.Users.Where(p => p.Name.ToLower() == username.ToLower()).Select(p => new { p.Password, p.Salt }).FirstOrDefault();
             if (user != null)
             {
                 var sha = new SHA256Managed();
@@ -241,9 +241,9 @@ namespace Intersect.Server
             return false;
         }
         
-        public static void DeleteCharacter(Guid characterId)
+        public static void DeleteCharacter(Player chr)
         {
-            sPlayerDb.Characters.Remove(sPlayerDb.Characters.Find(characterId));
+            sPlayerDb.Characters.Remove(chr);
         }
 
         //Bags

@@ -62,7 +62,12 @@ namespace Intersect.Models
         [Column(Order = 0)]
         public string Name { get; set; }
 
-        public virtual void Load(string json) => JsonConvert.PopulateObject(json, this, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
+        public virtual void Load(string json, bool keepCreationTime = false)
+        {
+            var oldTime = TimeCreated;
+            JsonConvert.PopulateObject(json, this, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
+            if (keepCreationTime) TimeCreated = oldTime;
+        }
        // public virtual void Load(string json);
 
 

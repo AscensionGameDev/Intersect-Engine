@@ -40,7 +40,7 @@
     "DisabledImage": ""
   },
   "Title": {
-    "Bounds": "0,0,78,22",
+    "Bounds": "0,0,42,30",
     "Padding": "4,4,4,4",
     "AlignmentEdgeDistances": "0,0,0,0",
     "Margin": "0,0,0,0",
@@ -65,7 +65,7 @@
     "TextScale": 1.0
   },
   "CloseButton": {
-    "Bounds": "191,1,20,20",
+    "Bounds": "153,1,20,20",
     "Padding": "3,3,0,3",
     "AlignmentEdgeDistances": "0,0,0,0",
     "Margin": "0,0,0,0",
@@ -97,35 +97,6 @@
     "MouseUpSound": null,
     "MouseDownSound": null,
     "ClickSound": null
-  },
-    "Bounds": "0,0,20,20",
-    "Padding": "3,3,3,3",
-    "AlignmentEdgeDistances": "0,0,0,0",
-    "Margin": "0,0,0,0",
-    "RenderColor": "255,255,255,255",
-    "Alignments": "",
-    "DrawBackground": true,
-    "MinimumSize": "1,1",
-    "MaximumSize": "20,20",
-    "Disabled": false,
-    "Hidden": false,
-    "RestrictToParent": false,
-    "MouseInputEnabled": true,
-    "HideToolTip": false,
-    "TextColor": "0,255,255,255",
-    "HoveredTextColor": "",
-    "ClickedTextColor": "",
-    "DisabledTextColor": "",
-    "TextAlign": "Center",
-    "TextPadding": "3,3,3,3",
-    "AutoSizeToContents": false,
-    "Font": "arial,10",
-    "TextScale": 1.0,
-    "NormalImage": "closenormal.png",
-    "HoveredImage": "closehover.png",
-    "ClickedImage": "closeclicked.png",
-    "DisabledImage": "",
-    "CenterImage": false
   },
   "InnerPanel": {
     "Bounds": "0,0,10,10",
@@ -210,7 +181,7 @@
             "TextColor": "0,255,255,255",
             "HoveredTextColor": "",
             "ClickedTextColor": "",
-            "DisabledTextColor": "",
+            "DisabledTextColor": "255,90,90,90",
             "TextAlign": "Center",
             "TextPadding": "3,3,3,3",
             "AutoSizeToContents": false,
@@ -220,7 +191,11 @@
             "HoveredImage": "",
             "ClickedImage": "",
             "DisabledImage": "",
-            "CenterImage": false
+            "CenterImage": false,
+            "HoverSound": null,
+            "MouseUpSound": null,
+            "MouseDownSound": null,
+            "ClickSound": null
           },
           "Bar": {
             "Bounds": "0,0,10,10",
@@ -260,7 +235,7 @@
             "TextColor": "0,255,255,255",
             "HoveredTextColor": "",
             "ClickedTextColor": "",
-            "DisabledTextColor": "",
+            "DisabledTextColor": "255,90,90,90",
             "TextAlign": "Center",
             "TextPadding": "3,3,3,3",
             "AutoSizeToContents": false,
@@ -270,7 +245,11 @@
             "HoveredImage": "",
             "ClickedImage": "",
             "DisabledImage": "",
-            "CenterImage": false
+            "CenterImage": false,
+            "HoverSound": null,
+            "MouseUpSound": null,
+            "MouseDownSound": null,
+            "ClickSound": null
           }
         },
         "VerticalScrollBar": {
@@ -306,7 +285,7 @@
             "TextColor": "0,255,255,255",
             "HoveredTextColor": "",
             "ClickedTextColor": "",
-            "DisabledTextColor": "",
+            "DisabledTextColor": "255,90,90,90",
             "TextAlign": "Center",
             "TextPadding": "3,3,3,3",
             "AutoSizeToContents": false,
@@ -316,7 +295,11 @@
             "HoveredImage": "uparrowhover.png",
             "ClickedImage": "uparrowclicked.png",
             "DisabledImage": "",
-            "CenterImage": false
+            "CenterImage": false,
+            "HoverSound": null,
+            "MouseUpSound": null,
+            "MouseDownSound": null,
+            "ClickSound": null
           },
           "Bar": {
             "Bounds": "0,0,10,10",
@@ -356,7 +339,7 @@
             "TextColor": "0,255,255,255",
             "HoveredTextColor": "",
             "ClickedTextColor": "",
-            "DisabledTextColor": "",
+            "DisabledTextColor": "255,90,90,90",
             "TextAlign": "Center",
             "TextPadding": "3,3,3,3",
             "AutoSizeToContents": false,
@@ -366,7 +349,11 @@
             "HoveredImage": "downarrowhover.png",
             "ClickedImage": "downarrowclicked.png",
             "DisabledImage": "",
-            "CenterImage": false
+            "CenterImage": false,
+            "HoverSound": null,
+            "MouseUpSound": null,
+            "MouseDownSound": null,
+            "ClickSound": null
           }
         }
       }

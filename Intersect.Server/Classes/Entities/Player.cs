@@ -365,7 +365,7 @@ namespace Intersect.Server.Entities
                         //Check to see if we can spawn events, if already spawned.. update them.
                         lock (mEventLock)
                         {
-                            foreach (var evtId in map.EventIds)
+                            foreach (var evtId in map.EventIds.ToArray())
                             {
                                 var mapEvent = EventBase.Get(evtId);
                                 if (mapEvent != null)
@@ -911,8 +911,7 @@ namespace Intersect.Server.Entities
                     attackTime = (int)(attackTime * (100f / weapon.AttackSpeedValue));
                 }
             }
-            attackTime -= 32; //Account for lag/ping... we might base this off actual ping down the line at some point.
-            return attackTime;
+            return attackTime - 60; //subtracting 60 to account for a moderate ping to the server so some attacks dont get cancelled.
         }
 
         public override int GetStatBuffs(Stats statType)
@@ -2635,15 +2634,22 @@ namespace Intersect.Server.Entities
                 PacketSender.SendPlayerMsg(MyClient, Strings.Trading.inventorynospace, CustomColors.Error);
             }
 
+            if (amount > Trading.Offer[slot].Quantity)
+                amount = Trading.Offer[slot].Quantity;
+
             /* Move the items to the inventory */
             amount = Math.Min(amount, int.MaxValue - Items[inventorySlot].Quantity);
 
             if (Items[inventorySlot] == null || Items[inventorySlot].ItemId == Guid.Empty || Items[inventorySlot].Quantity < 0)
             {
                 Items[inventorySlot].Set(Trading.Offer[slot]);
+                Items[inventorySlot].Quantity = amount;
+            }
+            else
+            {
+                Items[inventorySlot].Quantity += amount;
             }
 
-            Items[inventorySlot].Quantity += amount;
             if (amount >= Trading.Offer[slot].Quantity)
             {
                 Trading.Offer[slot] = null;
@@ -3435,6 +3441,27 @@ namespace Intersect.Server.Entities
                         }
                     }
                     PacketSender.SendQuestProgress(this, questId);
+                }
+            }
+        }
+
+        public void CompleteQuest(Guid questId, bool skipCompletionEvent)
+        {
+            var quest = QuestBase.Get(questId);
+            if (quest != null)
+            {
+                var questProgress = FindQuest(questId);
+                if (questProgress != null)
+                {
+                    //Complete Quest
+                    questProgress.Completed = true;
+                    questProgress.TaskId = Guid.Empty;
+                    questProgress.TaskProgress = -1;
+                    if (!skipCompletionEvent)
+                    {
+                        StartCommonEvent(EventBase.Get(quest.EndEventId));
+                        PacketSender.SendPlayerMsg(MyClient, Strings.Quests.completed.ToString(quest.Name), Color.Green);
+                    }
                 }
             }
         }

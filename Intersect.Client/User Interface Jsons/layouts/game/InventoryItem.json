@@ -47,7 +47,7 @@
           "Disabled": false,
           "Hidden": false,
           "RestrictToParent": false,
-          "MouseInputEnabled": true,
+          "MouseInputEnabled": false,
           "HideToolTip": false,
           "Texture": "",
           "TextureSourceRect": "0,0,0,0"

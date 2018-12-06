@@ -311,12 +311,6 @@ namespace Intersect.Server.Networking
                 var username = bf.ReadString();
                 var password = bf.ReadString();
 
-                if (!LegacyDatabase.AccountExists(username))
-                {
-                    PacketSender.SendLoginError(client, Strings.Account.badlogin);
-                    return;
-                }
-
                 if (!LegacyDatabase.CheckPassword(username, password))
                 {
                     PacketSender.SendLoginError(client, Strings.Account.badlogin);
@@ -2742,9 +2736,9 @@ namespace Intersect.Server.Networking
                     if (chr.Id == charId)
                     {
                         client.Characters.Remove(chr);
+                        LegacyDatabase.DeleteCharacter(chr);
                     }
                 }
-                LegacyDatabase.DeleteCharacter(charId);
             }
             PacketSender.SendLoginError(client, Strings.Account.deletechar, Strings.Account.deleted);
             PacketSender.SendPlayerCharacters(client);

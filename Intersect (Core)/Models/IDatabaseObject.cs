@@ -12,7 +12,7 @@ namespace Intersect.Models
         string Name { get; set; }
         long TimeCreated { get; set; }
         string JsonData { get; }
-        void Load(string json);
+        void Load(string json, bool keepCreationTime = false);
 
         void MakeBackup();
         void RestoreBackup();

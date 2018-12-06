@@ -457,7 +457,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
         {
             foreach (var bn in OldBanks)
             {
-                if (CharacterMap.ContainsKey(bn.playerid) && GetGuid(GameObjectType.Item, bn.itemnum) != Guid.Empty)
+                if (CharacterMap.ContainsKey(bn.playerid) && GetGuid(GameObjectType.Item, bn.itemnum) != Guid.Empty && bn.slot < Options.MaxBankSlots)
                 {
                     var player = CharacterMap[bn.playerid];
                     var slot = player.Bank[bn.slot];
@@ -479,7 +479,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
         {
             foreach (var bn in OldItems)
             {
-                if (CharacterMap.ContainsKey(bn.playerid) && GetGuid(GameObjectType.Item, bn.itemnum) != Guid.Empty)
+                if (CharacterMap.ContainsKey(bn.playerid) && GetGuid(GameObjectType.Item, bn.itemnum) != Guid.Empty && bn.slot < Options.MaxInvItems)
                 {
                     var player = CharacterMap[bn.playerid];
                     var slot = player.Items[bn.slot];
@@ -511,7 +511,7 @@ namespace Intersect.Migration.UpgradeInstructions.Upgrade_12
         {
             foreach (var bn in OldSpells)
             {
-                if (CharacterMap.ContainsKey(bn.playerid) && GetGuid(GameObjectType.Spell, bn.spellid) != Guid.Empty)
+                if (CharacterMap.ContainsKey(bn.playerid) && GetGuid(GameObjectType.Spell, bn.spellid) != Guid.Empty && bn.slot < Options.MaxPlayerSkills)
                 {
                     var player = CharacterMap[bn.playerid];
                     var slot = player.Spells[bn.slot];

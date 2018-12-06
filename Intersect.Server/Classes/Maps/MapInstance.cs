@@ -113,7 +113,7 @@ namespace Intersect.Server.Maps
             return mMapLock;
         }
 
-        public override void Load(string json)
+        public override void Load(string json, bool keepCreationTime = true)
         {
             Load(json, -1);
         }

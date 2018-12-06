@@ -514,7 +514,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (mEditorItem != null && mCopiedItem != null && lstProjectiles.Focused)
             {
-                mEditorItem.Load(mCopiedItem);
+                mEditorItem.Load(mCopiedItem, true);
                 UpdateEditor();
             }
         }

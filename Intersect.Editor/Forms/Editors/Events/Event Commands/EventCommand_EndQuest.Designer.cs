@@ -31,7 +31,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void InitializeComponent()
         {
             this.grpEndQuest = new DarkUI.Controls.DarkGroupBox();
-            this.chkRunCompletionTask = new DarkUI.Controls.DarkCheckBox();
+            this.chkSkipCompletionEvent = new DarkUI.Controls.DarkCheckBox();
             this.cmbQuests = new DarkUI.Controls.DarkComboBox();
             this.lblQuest = new System.Windows.Forms.Label();
             this.btnCancel = new DarkUI.Controls.DarkButton();
@@ -43,7 +43,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             this.grpEndQuest.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpEndQuest.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpEndQuest.Controls.Add(this.chkRunCompletionTask);
+            this.grpEndQuest.Controls.Add(this.chkSkipCompletionEvent);
             this.grpEndQuest.Controls.Add(this.cmbQuests);
             this.grpEndQuest.Controls.Add(this.lblQuest);
             this.grpEndQuest.Controls.Add(this.btnCancel);
@@ -58,13 +58,13 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             // chkRunCompletionTask
             // 
-            this.chkRunCompletionTask.AutoSize = true;
-            this.chkRunCompletionTask.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.chkRunCompletionTask.Location = new System.Drawing.Point(7, 46);
-            this.chkRunCompletionTask.Name = "chkRunCompletionTask";
-            this.chkRunCompletionTask.Size = new System.Drawing.Size(166, 17);
-            this.chkRunCompletionTask.TabIndex = 23;
-            this.chkRunCompletionTask.Text = "Do not run completion event?";
+            this.chkSkipCompletionEvent.AutoSize = true;
+            this.chkSkipCompletionEvent.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.chkSkipCompletionEvent.Location = new System.Drawing.Point(7, 46);
+            this.chkSkipCompletionEvent.Name = "chkSkipCompletionEvent";
+            this.chkSkipCompletionEvent.Size = new System.Drawing.Size(166, 17);
+            this.chkSkipCompletionEvent.TabIndex = 23;
+            this.chkSkipCompletionEvent.Text = "Do not run completion event?";
             // 
             // cmbQuests
             // 
@@ -131,6 +131,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private DarkButton btnSave;
         private System.Windows.Forms.Label lblQuest;
         private DarkComboBox cmbQuests;
-        private DarkCheckBox chkRunCompletionTask;
+        private DarkCheckBox chkSkipCompletionEvent;
     }
 }

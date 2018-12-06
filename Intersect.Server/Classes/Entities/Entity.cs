@@ -1236,7 +1236,7 @@ namespace Intersect.Server.Entities
             }
 
             //Check for lifesteal
-            if (GetType() == typeof(Player))
+            if (GetType() == typeof(Player) && enemy.GetType() != typeof(Resource))
             {
                 decimal lifesteal = ((Player)this).GetLifeSteal() / 100;
                 decimal healthRecovered = lifesteal * baseDamage;
