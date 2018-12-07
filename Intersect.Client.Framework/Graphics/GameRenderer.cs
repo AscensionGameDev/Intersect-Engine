@@ -42,7 +42,7 @@ namespace Intersect.Client.Framework.Graphics
 
         public abstract GameFont LoadFont(string filename);
 
-        public abstract void DrawTexture(GameTexture tex, FloatRect srcRectangle, FloatRect targetRect,
+        public abstract void DrawTexture(GameTexture tex, float sx, float sy, float sw, float sh, float tx, float ty, float tw, float th,
             Color renderColor,
             GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.None,
             GameShader shader = null, float rotationDegrees = 0.0f, bool isUi = false, bool drawImmediate = false);
@@ -65,6 +65,10 @@ namespace Intersect.Client.Framework.Graphics
 
         public abstract void DrawString(string text, GameFont gameFont, float x, float y, float fontScale, Color fontColor, bool worldPos = true, GameRenderTexture renderTexture = null, Color borderColor = null);
         public abstract void DrawString(string text, GameFont gameFont, float x, float y, float fontScale, Color fontColor, bool worldPos, GameRenderTexture renderTexture, FloatRect clipRect, Color borderColor = null);
+
+        //Buffers
+        public abstract GameTileBuffer CreateTileBuffer();
+        public abstract void DrawTileBuffer(GameTileBuffer buffer);
 
         public abstract void Close();
 

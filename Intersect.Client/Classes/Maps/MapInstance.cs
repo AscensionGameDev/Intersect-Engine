@@ -121,6 +121,11 @@ namespace Intersect.Client.Maps
 
         //Map Sounds
         public MapSound BackgroundSound { get; set; }
+
+        private bool mTexturesFound = false;
+        private GameTileBuffer mLowerBuffer;
+        private GameTileBuffer mMiddleBuffer;
+        private GameTileBuffer mUpperBuffer;
         
         //Load
         public void Load(string json)
@@ -156,12 +161,37 @@ namespace Intersect.Client.Maps
             bf.Dispose();
         }
 
+        private void CacheTextures()
+        {
+            if (mTexturesFound == false && GameContentManager.Current.TilesetsLoaded)
+            {
+                for (var i = 0; i < Options.LayerCount; i++)
+                {
+                    for (var x = 0; x < Options.MapWidth; x++)
+                    {
+                        for (var y = 0; y < Options.MapHeight; y++)
+                        {
+                            var tileset = TilesetBase.Get(Layers[i].Tiles[x, y].TilesetId);
+                            if (tileset != null)
+                            {
+                                GameTexture tilesetTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tileset, tileset.Name);
+                                Layers[i].Tiles[x, y].TilesetTex = tilesetTex;
+                            }
+                        }
+                    }
+                }
+
+                mTexturesFound = true;
+            }
+        }
+
         //Updating
         public void Update(bool isLocal)
         {
             if (isLocal)
             {
                 mLastUpdateTime = Globals.System.GetTimeMs() + 10000;
+                UpdateMapAttributes();
                 if (BackgroundSound == null && !TextUtils.IsNone(Sound))
                 {
                     BackgroundSound = GameAudio.AddMapSound(Sound, -1, -1, Id, true, 10);
@@ -259,22 +289,25 @@ namespace Intersect.Client.Maps
         //Attribute References
         private void UpdateMapAttributes()
         {
-            for (var x = 0; x < Options.MapWidth; x++)
+            var width = Options.MapWidth;
+            var height = Options.MapHeight;
+            for (var x = 0; x < width; x++)
             {
-                for (var y = 0; y < Options.MapHeight; y++)
+                for (var y = 0; y < height; y++)
                 {
-                    if (Attributes[x, y] == null) continue;
-                    if (Attributes[x, y].Type != MapAttributes.Animation) continue;
-                    var anim = AnimationBase.Get(((MapAnimationAttribute)Attributes[x, y]).AnimationId);
+                    var att = Attributes[x, y];
+                    if (att == null) continue;
+                    if (att.Type != MapAttributes.Animation) continue;
+                    var anim = AnimationBase.Get(((MapAnimationAttribute)att).AnimationId);
                     if (anim == null) continue;
-                    if (!mAttributeAnimInstances.ContainsKey(Attributes[x, y]))
+                    if (!mAttributeAnimInstances.ContainsKey(att))
                     {
                         var animInstance = new AnimationInstance(anim, true);
                         animInstance.SetPosition(GetX() + x * Options.TileWidth + Options.TileWidth / 2,
                             GetY() + y * Options.TileHeight + Options.TileHeight / 2, x, y,  Id, 0);
-                        mAttributeAnimInstances.Add(Attributes[x, y], animInstance);
+                        mAttributeAnimInstances.Add(att, animInstance);
                     }
-                    mAttributeAnimInstances[Attributes[x, y]].Update();
+                    mAttributeAnimInstances[att].Update();
                 }
             }
         }
@@ -351,6 +384,8 @@ namespace Intersect.Client.Maps
         public void Draw(int layer = 0)
         {
             if (!MapLoaded) return;
+            CacheTextures();
+            if (!mTexturesFound) return;
             if (mReRenderMap)
             {
                 MapRendered = false;
@@ -365,18 +400,36 @@ namespace Intersect.Client.Maps
                 switch (layer)
                 {
                     case 0:
-                        for (int i = 0; i < 3; i++)
+                        if (mLowerBuffer == null)
                         {
-                            DrawMapLayer(null, i, Globals.AnimFrame, GetX(), GetY());
+                            mLowerBuffer = GameGraphics.Renderer.CreateTileBuffer();
+                            for (int i = 0; i < 3; i++)
+                            {
+                                DrawMapLayer(null, i, Globals.AnimFrame, GetX(), GetY(),mLowerBuffer);
+                            }
+                            mLowerBuffer.SetData();
                         }
+                        GameGraphics.Renderer.DrawTileBuffer(mLowerBuffer);
                         break;
 
                     case 1:
-                        DrawMapLayer(null, 3, Globals.AnimFrame, GetX(), GetY());
+                        if (mMiddleBuffer == null)
+                        {
+                            mMiddleBuffer = GameGraphics.Renderer.CreateTileBuffer();
+                            DrawMapLayer(null, 3, Globals.AnimFrame, GetX(), GetY(), mMiddleBuffer);
+                            mMiddleBuffer.SetData();
+                        }
+                        GameGraphics.Renderer.DrawTileBuffer(mMiddleBuffer);
                         break;
 
                     case 2:
-                        DrawMapLayer(null, 4, Globals.AnimFrame, GetX(), GetY());
+                        if (mUpperBuffer == null)
+                        {
+                            mUpperBuffer = GameGraphics.Renderer.CreateTileBuffer();
+                            DrawMapLayer(null, 4, Globals.AnimFrame, GetX(), GetY(),mUpperBuffer);
+                            mUpperBuffer.SetData();
+                        }
+                        GameGraphics.Renderer.DrawTileBuffer(mUpperBuffer);
                         break;
                 }
             }
@@ -421,7 +474,6 @@ namespace Intersect.Client.Maps
                     var y = GetY() + (light.TileY * Options.TileHeight + light.OffsetY) + Options.TileHeight / 2f;
                     GameGraphics.AddLight((int) x, (int) y, (int) w, light.Intensity, light.Expand, light.Color);
                 }
-                UpdateMapAttributes();
             }
         }
 
@@ -559,14 +611,14 @@ namespace Intersect.Client.Maps
                 {
                     foreach (var pnt in points)
                     {
-                        DrawTile(pnt.X, pnt.Y, layer, animFrame, 0, 0, textures[animFrame]);
+                        DrawTile(pnt.X, pnt.Y, layer, animFrame, 0, 0, textures[animFrame],null);
                     }
                 }
             }
         }
 
         private void DrawAutoTile(int layerNum, float destX, float destY, int quarterNum, int x, int y, int forceFrame,
-            GameRenderTexture tex, GameTexture tileset)
+            GameRenderTexture tex, GameTexture tileset, GameTileBuffer buffer)
         {
             int yOffset = 0, xOffset = 0;
 
@@ -589,19 +641,32 @@ namespace Intersect.Client.Maps
                     yOffset = -Options.TileHeight;
                     break;
             }
-            GameGraphics.DrawGameTexture(tileset, destX, destY,
-                (int) Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X + xOffset,
-                (int) Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y + yOffset,
-                Options.TileWidth / 2, Options.TileHeight / 2, tex);
+            if (buffer == null)
+            {
+                GameGraphics.DrawGameTexture(tileset, destX, destY,
+                    (int)Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X + xOffset,
+                    (int)Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y + yOffset,
+                    Options.TileWidth / 2, Options.TileHeight / 2, tex);
+            }
+            else
+            {
+                if (!buffer.AddTile(tileset, destX, destY,
+                    (int)Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X + xOffset,
+                    (int)Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y + yOffset,
+                    Options.TileWidth / 2, Options.TileHeight / 2))
+                {
+                    throw new Exception("Failed to add tile to buffer!");
+                }
+            }
         }
 
-        private void DrawMapLayer(GameRenderTexture tex, int layer, int animFrame, float xoffset = 0, float yoffset = 0)
+        private void DrawMapLayer(GameRenderTexture tex, int layer, int animFrame, float xoffset = 0, float yoffset = 0, GameTileBuffer buffer = null)
         {
             int xmin = 0;
             int xmax = Options.MapWidth;
             int ymin = 0;
             int ymax = Options.MapHeight;
-            if (!ClientOptions.RenderCache)
+            if (!ClientOptions.RenderCache && buffer == null)
             {
                 if (GetX() < GameGraphics.CurrentView.Left)
                 {
@@ -609,10 +674,7 @@ namespace Intersect.Client.Maps
                 }
                 if (GetX() + (xmax * 32) > GameGraphics.CurrentView.Left + GameGraphics.CurrentView.Width)
                 {
-                    xmax -=
-                        (int)
-                        (Math.Floor(((GetX() + (xmax * 32)) -
-                                     (GameGraphics.CurrentView.Left + GameGraphics.CurrentView.Width)) / 32));
+                    xmax -= (int) (Math.Floor(((GetX() + (xmax * 32)) - (GameGraphics.CurrentView.Left + GameGraphics.CurrentView.Width)) / 32));
                 }
                 if (GetY() < GameGraphics.CurrentView.Top)
                 {
@@ -620,10 +682,7 @@ namespace Intersect.Client.Maps
                 }
                 if (GetY() + (ymax * 32) > GameGraphics.CurrentView.Top + GameGraphics.CurrentView.Height)
                 {
-                    ymax -=
-                        (int)
-                        (Math.Floor(((GetY() + (ymax * 32)) -
-                                     (GameGraphics.CurrentView.Top + GameGraphics.CurrentView.Height)) / 32));
+                    ymax -= (int)(Math.Floor(((GetY() + (ymax * 32)) - (GameGraphics.CurrentView.Top + GameGraphics.CurrentView.Height)) / 32));
                 }
                 xmin -= 2;
                 if (xmin < 0) xmin = 0;
@@ -638,37 +697,44 @@ namespace Intersect.Client.Maps
             {
                 for (var y = ymin; y < ymax; y++)
                 {
-                    DrawTile(x, y, layer, animFrame, xoffset, yoffset, tex);
+                    DrawTile(x, y, layer, animFrame, xoffset, yoffset, tex,buffer);
                 }
             }
         }
 
         private void DrawTile(int x, int y, int layer, int animFrame, float xoffset, float yoffset,
-            GameRenderTexture tex)
+            GameRenderTexture tex, GameTileBuffer buffer)
         {
-            var tileset = TilesetBase.Get(Layers[layer].Tiles[x, y].TilesetId);
-            if (tileset == null) return;
-            GameTexture tilesetTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tileset,
-                tileset.Name);
-            if (tilesetTex == null) return;
+            if (Layers[layer].Tiles[x, y].TilesetTex == null) return;
+            GameTexture tilesetTex = (GameTexture)Layers[layer].Tiles[x, y].TilesetTex;
             switch (Autotiles.Autotile[x, y].Layer[layer].RenderState)
             {
                 case MapAutotiles.RENDER_STATE_NORMAL:
-                    GameGraphics.DrawGameTexture(tilesetTex, x * Options.TileWidth + xoffset,
-                        y * Options.TileHeight + yoffset, Layers[layer].Tiles[x, y].X * Options.TileWidth,
-                        Layers[layer].Tiles[x, y].Y * Options.TileHeight, Options.TileWidth, Options.TileHeight, tex);
+                    if (buffer == null)
+                    {
+                        GameGraphics.DrawGameTexture(tilesetTex, x * Options.TileWidth + xoffset,
+                            y * Options.TileHeight + yoffset, Layers[layer].Tiles[x, y].X * Options.TileWidth,
+                            Layers[layer].Tiles[x, y].Y * Options.TileHeight, Options.TileWidth, Options.TileHeight, tex);
+                    }
+                    else
+                    {
+                        if (!buffer.AddTile(tilesetTex, x * Options.TileWidth + xoffset, y * Options.TileHeight + yoffset, Layers[layer].Tiles[x, y].X * Options.TileWidth, Layers[layer].Tiles[x, y].Y * Options.TileHeight, Options.TileWidth, Options.TileHeight))
+                        {
+                            throw new Exception("Failed to add tile to buffer!");
+                        }
+                    }
                     break;
                 case MapAutotiles.RENDER_STATE_AUTOTILE:
                     DrawAutoTile(layer, x * Options.TileWidth + xoffset, y * Options.TileHeight + yoffset, 1, x, y,
-                        animFrame, tex, tilesetTex);
+                        animFrame, tex, tilesetTex, buffer);
                     DrawAutoTile(layer, x * Options.TileWidth + (Options.TileWidth / 2) + xoffset,
-                        y * Options.TileHeight + yoffset, 2, x, y, animFrame, tex, tilesetTex);
+                        y * Options.TileHeight + yoffset, 2, x, y, animFrame, tex, tilesetTex, buffer);
                     DrawAutoTile(layer, x * Options.TileWidth + xoffset,
                         y * Options.TileHeight + (Options.TileHeight / 2) + yoffset, 3, x, y, animFrame, tex,
-                        tilesetTex);
+                        tilesetTex, buffer);
                     DrawAutoTile(layer, +x * Options.TileWidth + (Options.TileWidth / 2) + xoffset,
                         y * Options.TileHeight + (Options.TileHeight / 2) + yoffset, 4, x, y, animFrame, tex,
-                        tilesetTex);
+                        tilesetTex, buffer);
                     break;
             }
         }
@@ -676,7 +742,8 @@ namespace Intersect.Client.Maps
         //Map Caching (Only used if Options.RenderCaching is true)
         public bool PreRenderMap()
         {
-            if (!Globals.HasGameData) return false;
+            CacheTextures();
+            if (!Globals.HasGameData || !mTexturesFound) return false;
             GameGraphics.PreRenderedMapLayer = true;
             if (mPreRenderStage < 3)
             {

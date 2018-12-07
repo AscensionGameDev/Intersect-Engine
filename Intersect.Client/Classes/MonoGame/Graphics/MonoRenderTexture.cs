@@ -1,5 +1,6 @@
 ﻿using Intersect.Client.Framework.Graphics;
 using Microsoft.Xna.Framework.Graphics;
+using NotImplementedException = System.NotImplementedException;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace Intersect.Client.MonoGame.Graphics
@@ -50,6 +51,11 @@ namespace Intersect.Client.MonoGame.Graphics
             Microsoft.Xna.Framework.Color[] pixel = new Microsoft.Xna.Framework.Color[1];
             mRenderTexture.GetData(0, new Rectangle(x1, y1, 1, 1), pixel, 0, 1);
             return new Framework.GenericClasses.Color(pixel[0].A, pixel[0].R, pixel[0].G, pixel[0].B);
+        }
+
+        public override GameTexturePackFrame GetTexturePackFrame()
+        {
+            return null;
         }
 
         public override bool Begin()

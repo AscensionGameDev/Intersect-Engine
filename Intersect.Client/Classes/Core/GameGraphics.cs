@@ -1107,10 +1107,11 @@ namespace Intersect.Client
             GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.None,
             GameShader shader = null, float rotationDegrees = 0.0f, bool drawImmediate = false)
         {
-            var destRectangle = new FloatRect(dx, dy, w, h);
-            var srcRectangle = new FloatRect(sx, sy, w, h);
-            DrawGameTexture(tex, srcRectangle, destRectangle, Color.White, renderTarget, blendMode, shader,
-                rotationDegrees, drawImmediate);
+            if (tex == null) return;
+            Renderer.DrawTexture(tex, sx,sy,w,h,dx,dy,w,h,
+                Framework.GenericClasses.Color.White, renderTarget, blendMode,
+                shader,
+                rotationDegrees, false, drawImmediate);
         }
 
         public static void DrawGameTexture(GameTexture tex, FloatRect srcRectangle, FloatRect targetRect,
@@ -1119,7 +1120,7 @@ namespace Intersect.Client
             GameShader shader = null, float rotationDegrees = 0.0f, bool drawImmediate = false)
         {
             if (tex == null) return;
-            Renderer.DrawTexture(tex, srcRectangle, targetRect,
+            Renderer.DrawTexture(tex,srcRectangle.X,srcRectangle.Y,srcRectangle.Width,srcRectangle.Height,targetRect.X,targetRect.Y,targetRect.Width,targetRect.Height,
                 Framework.GenericClasses.Color.FromArgb(renderColor.A, renderColor.R, renderColor.G, renderColor.B), renderTarget, blendMode,
                 shader,
                 rotationDegrees,false,drawImmediate);

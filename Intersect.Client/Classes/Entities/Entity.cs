@@ -112,6 +112,8 @@ namespace Intersect.Client.Entities
         public int[] Vital = new int[(int) Vitals.VitalCount];
         public int WalkFrame;
 
+        protected Pointf mCenterPos = Pointf.Empty;
+
         public Entity(Guid id, ByteBuffer bf, bool isEvent = false)
         {
             Id = id;
@@ -520,6 +522,8 @@ namespace Intersect.Client.Entities
                 AnimationFrame++;
                 if (AnimationFrame >= 4) AnimationFrame = 0;
             }
+
+            CalculateCenterPos();
             mLastUpdate = Globals.System.GetTimeMs();
             return true;
         }
@@ -825,13 +829,8 @@ namespace Intersect.Client.Entities
             }
         }
 
-        //returns the point on the screen that is the center of the player sprite
-        public virtual Pointf GetCenterPos()
+        protected virtual void CalculateCenterPos()
         {
-            if (LatestMap == null)
-            {
-                return new Pointf(0, 0);
-            }
             Pointf pos = new Pointf(LatestMap.GetX() + CurrentX * Options.TileWidth + OffsetX + Options.TileWidth / 2,
                 LatestMap.GetY() + CurrentY * Options.TileHeight + OffsetY + Options.TileHeight / 2);
             if (Texture != null)
@@ -839,7 +838,19 @@ namespace Intersect.Client.Entities
                 pos.Y += Options.TileHeight / 2;
                 pos.Y -= Texture.GetHeight() / 4 / 2;
             }
-            return pos;
+
+            mCenterPos = pos;
+        }
+
+        //returns the point on the screen that is the center of the player sprite
+        public Pointf GetCenterPos()
+        {
+            if (LatestMap == null)
+            {
+                return new Pointf(0, 0);
+            }
+
+            return mCenterPos;
         }
 
         public virtual float GetTopPos(int overrideHeight = 0)

@@ -138,13 +138,13 @@ namespace Intersect.Client.Framework.Gwen.Renderer
             }
             if (mRenderTarget == null)
             {
-                mRenderer.DrawTexture(mRenderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
-                    new FloatRect(rect.X, rect.Y, rect.Width, rect.Height), mColor,
+                mRenderer.DrawTexture(mRenderer.GetWhiteTexture(), 0, 0, 1, 1,
+                    rect.X, rect.Y, rect.Width, rect.Height, mColor,
                     mRenderTarget, GameBlendModes.None, null, 0f, true);
             }
             else
             {
-                mRenderer.DrawTexture(mRenderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), rect, mColor,
+                mRenderer.DrawTexture(mRenderer.GetWhiteTexture(), 0, 0, 1, 1, rect.X,rect.Y,rect.Width,rect.Height, mColor,
                     mRenderTarget, GameBlendModes.None, null, 0f, true);
             }
         }
@@ -225,13 +225,13 @@ namespace Intersect.Client.Framework.Gwen.Renderer
             //v2 /= tex.GetHeight();
             if (mRenderTarget == null)
             {
-                mRenderer.DrawTexture(tex, new FloatRect(u1, v1, u2 - u1, v2 - v1),
-                    new FloatRect(rect.X, rect.Y, rect.Width, rect.Height),
+                mRenderer.DrawTexture(tex, u1, v1, u2 - u1, v2 - v1,
+                    rect.X, rect.Y, rect.Width, rect.Height,
                     mColor, mRenderTarget, GameBlendModes.None, null, 0f, true);
             }
             else
             {
-                mRenderer.DrawTexture(tex, new FloatRect(u1, v1, u2 - u1, v2 - v1), rect,
+                mRenderer.DrawTexture(tex, u1, v1, u2 - u1, v2 - v1, rect.X,rect.Y,rect.Width,rect.Height,
                     mColor, mRenderTarget, GameBlendModes.None, null, 0f, true);
             }
         }

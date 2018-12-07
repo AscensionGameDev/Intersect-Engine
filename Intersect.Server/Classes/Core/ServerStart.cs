@@ -1,4 +1,4 @@
-﻿//#define websockets
+﻿#define websockets
 
 using System;
 using System.Diagnostics;

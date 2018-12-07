@@ -13,6 +13,7 @@ namespace Intersect.Client.MonoGame.Graphics
     public class MonoTexture : GameTexture
     {
         private GraphicsDevice mGraphicsDevice;
+        private GameTexturePackFrame mPackFrame;
         private int mHeight = -1;
         private long mLastAccessTime;
         private bool mLoadError;
@@ -28,8 +29,22 @@ namespace Intersect.Client.MonoGame.Graphics
             mName = Path.GetFileName(filename);
         }
 
+        public MonoTexture(GraphicsDevice graphicsDevice, string filename, GameTexturePackFrame packFrame)
+        {
+            mGraphicsDevice = graphicsDevice;
+            mPath = filename;
+            mName = Path.GetFileName(filename);
+            mPackFrame = packFrame;
+            mWidth = packFrame.SourceRect.Width;
+            mHeight = packFrame.SourceRect.Height;
+        }
+
         public void LoadTexture()
         {
+            if (mPackFrame != null)
+            {
+                ((MonoTexture) mPackFrame.PackTexture).LoadTexture();
+            }
             mLoadError = true;
             if (!File.Exists(mPath)) return;
             using (var fileStream = new FileStream(mPath, FileMode.Open, FileAccess.Read, FileShare.Read))
@@ -83,6 +98,7 @@ namespace Intersect.Client.MonoGame.Graphics
 
         public override object GetTexture()
         {
+            if (mPackFrame != null) return mPackFrame.PackTexture.GetTexture();
             ResetAccessTime();
 
             if (mTexture == null)
@@ -108,6 +124,11 @@ namespace Intersect.Client.MonoGame.Graphics
             var pixel = new Microsoft.Xna.Framework.Color[1];
             mTexture?.GetData(0, new Rectangle(x1, y1, 1, 1), pixel, 0, 1);
             return new Framework.GenericClasses.Color(pixel[0].A, pixel[0].R, pixel[0].G, pixel[0].B);
+        }
+
+        public override GameTexturePackFrame GetTexturePackFrame()
+        {
+            return mPackFrame;
         }
 
         public void Update()

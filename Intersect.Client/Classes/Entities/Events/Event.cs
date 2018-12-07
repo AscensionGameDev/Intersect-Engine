@@ -251,6 +251,7 @@ namespace Intersect.Client.Entities.Events
             {
                 return;
             }
+            if (!WorldPos.IntersectsWith(GameGraphics.Renderer.GetView())) return;
             if (MapInstance.Get(CurrentMap) == null ||
                 !Globals.GridMaps.Contains(CurrentMap)) return;
             var y = (int) Math.Ceiling(GetCenterPos().Y);
@@ -304,12 +305,13 @@ namespace Intersect.Client.Entities.Events
                 Framework.GenericClasses.Color.FromArgb(CustomColors.EventNameBorder.ToArgb()));
         }
 
-        public override Pointf GetCenterPos()
+        protected override void CalculateCenterPos()
         {
             var map = MapInstance.Get(CurrentMap);
             if (map == null)
             {
-                return new Pointf(0, 0);
+                mCenterPos = Pointf.Empty;
+                return;
             }
             Pointf pos = new Pointf(map.GetX() + CurrentX * Options.TileWidth + OffsetX + Options.TileWidth / 2,
                 map.GetY() + CurrentY * Options.TileHeight + OffsetY + Options.TileHeight / 2);
@@ -347,7 +349,8 @@ namespace Intersect.Client.Entities.Events
                     }
                     break;
             }
-            return pos;
+
+            mCenterPos = pos;
         }
 
         ~Event()

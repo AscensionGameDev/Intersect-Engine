@@ -52,6 +52,7 @@ namespace Intersect.Client
             lock (Globals.GameLock)
             {
                 GameNetwork.Update();
+                Globals.System.Update();
                 GameFade.Update();
                 Gui.ToggleInput(Globals.GameState != GameStates.Intro);
 

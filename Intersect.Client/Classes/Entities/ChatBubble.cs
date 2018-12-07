@@ -92,9 +92,9 @@ namespace Intersect.Client.Entities
                     for (int y1 = 0; y1 < mTextureBounds.Height / 8; y1++)
                     {
                         GameGraphics.Renderer.DrawTexture(mBubbleTex,
-                            new FloatRect(mTexSections[x1, y1].X * 8, mTexSections[x1, y1].Y * 8, 8, 8),
-                            new FloatRect(x - mTextureBounds.Width / 2 + (x1 * 8),
-                                y - mTextureBounds.Height - yoffset + (y1 * 8), 8, 8),
+                           mTexSections[x1, y1].X * 8, mTexSections[x1, y1].Y * 8, 8, 8,
+                            x - mTextureBounds.Width / 2 + (x1 * 8),
+                                y - mTextureBounds.Height - yoffset + (y1 * 8), 8, 8,
                             Framework.GenericClasses.Color.White);
                     }
                 }
