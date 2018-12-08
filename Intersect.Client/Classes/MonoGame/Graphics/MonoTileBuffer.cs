@@ -96,6 +96,7 @@ namespace Intersect.Client.Classes.MonoGame.Graphics
         {
             if (vertexBuffer != null) return false;
             if (vertices.Count == 0) return true;
+            TileBufferCount++;
             vertexBuffer = new VertexBuffer(mGraphicsDevice, typeof(VertexPositionTexture), vertices.Count, BufferUsage.WriteOnly);
             indexBuffer = new IndexBuffer(mGraphicsDevice, typeof(short), indices.Count, BufferUsage.WriteOnly);
             vertexBuffer.SetData(vertices.ToArray());
@@ -109,7 +110,10 @@ namespace Intersect.Client.Classes.MonoGame.Graphics
         {
             if (vertexBuffer != null);
             vertexBuffer.Dispose();
+            vertexBuffer = null;
             indexBuffer.Dispose();
+            TileBufferCount--;
+            indexBuffer = null;
             disposed = true;
         }
     }

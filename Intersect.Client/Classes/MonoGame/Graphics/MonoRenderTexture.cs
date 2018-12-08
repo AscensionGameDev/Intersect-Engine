@@ -21,6 +21,7 @@ namespace Intersect.Client.MonoGame.Graphics
                 graphicsDevice.PresentationParameters.MultiSampleCount,
                 RenderTargetUsage.PreserveContents
             );
+            RenderTextureCount++;
             mGraphicsDevice = graphicsDevice;
             mWidth = width;
             mHeight = height;
@@ -70,9 +71,20 @@ namespace Intersect.Client.MonoGame.Graphics
 
         public override void Clear(Framework.GenericClasses.Color color)
         {
+            ((MonoRenderer)GameGraphics.Renderer).EndSpriteBatch();
             mGraphicsDevice.SetRenderTarget(mRenderTexture);
             mGraphicsDevice.Clear(MonoRenderer.ConvertColor(color));
             mGraphicsDevice.SetRenderTarget(null);
+        }
+
+        public override void Dispose()
+        {
+            if (mRenderTexture != null)
+            {
+                mRenderTexture.Dispose();
+                mRenderTexture = null;
+                RenderTextureCount--;
+            }
         }
     }
 }

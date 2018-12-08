@@ -608,7 +608,8 @@ namespace Intersect.Client.Entities
         public virtual void Draw()
         {
             WorldPos.Reset();
-            if (MapInstance.Get(CurrentMap) == null ||  !Globals.GridMaps.Contains(CurrentMap)) return;
+            var map = MapInstance.Get(CurrentMap);
+            if (map == null ||  !Globals.GridMaps.Contains(CurrentMap)) return;
             FloatRect srcRectangle = new FloatRect();
             FloatRect destRectangle = new FloatRect();
             var d = 0;
@@ -647,7 +648,6 @@ namespace Intersect.Client.Entities
 
             if (Texture != null)
             {
-                var map = MapInstance.Get(CurrentMap);
                 if (Texture.GetHeight() / 4 > Options.TileHeight)
                 {
                     destRectangle.X = (map.GetX() + CurrentX * Options.TileWidth + OffsetX + Options.TileWidth / 2);
@@ -738,16 +738,16 @@ namespace Intersect.Client.Entities
 								{
 									itemId = Equipment[equipSlot];
 								}
-								if (ItemBase.Get(itemId) != null)
+							    var item = ItemBase.Get(itemId);
+								if (item != null)
 								{
-									var itemdata = ItemBase.Get(itemId);
 									if (Gender == 0)
 									{
-										DrawEquipment(itemdata.MalePaperdoll, alpha);
+										DrawEquipment(item.MalePaperdoll, alpha);
 									}
 									else
 									{
-										DrawEquipment(itemdata.FemalePaperdoll, alpha);
+										DrawEquipment(item.FemalePaperdoll, alpha);
 									}
 								}
 							}

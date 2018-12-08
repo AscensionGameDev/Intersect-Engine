@@ -86,6 +86,7 @@ namespace Intersect.Client.UI.Game.EntityPanel
             EntityType = entityType;
             PlayerBox = playerBox;
             EntityWindow = playerBox ? new ImagePanel(gameCanvas, "PlayerBox") : new ImagePanel(gameCanvas, "TargetBox");
+            EntityWindow.ShouldCacheToTexture = true;
 
             EntityInfoPanel = new ImagePanel(EntityWindow, "EntityInfoPanel");
 

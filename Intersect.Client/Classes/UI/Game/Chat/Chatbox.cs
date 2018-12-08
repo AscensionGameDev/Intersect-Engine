@@ -36,6 +36,7 @@ namespace Intersect.Client.UI.Game.Chat
             mChatboxWindow = new ImagePanel(gameCanvas, "ChatboxWindow");
             mChatboxMessages = new ListBox(mChatboxWindow, "MessageList");
             mChatboxMessages.EnableScroll(false, true);
+            mChatboxWindow.ShouldCacheToTexture = true;
 
             mChatboxInput = new TextBox(mChatboxWindow, "ChatboxInputField");
             mChatboxInput.SubmitPressed += ChatBoxInput_SubmitPressed;

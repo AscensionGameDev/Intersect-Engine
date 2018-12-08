@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 
 namespace Intersect.Client.Framework.Gwen.Renderer
 {
-    public class IntersectRenderer : Base
+    public class IntersectRenderer : Base, ICacheToTexture
     {
         private bool mClipping = false;
 
@@ -265,14 +266,22 @@ namespace Intersect.Client.Framework.Gwen.Renderer
 
         #region Implementation of ICacheToTexture
 
-        /* private Dictionary<Control.Base, RenderTexture> m_RT;
-        private Stack<RenderTexture> m_Stack;
-        private RenderTexture m_RealRT;
+        /// <summary>
+        /// Cache to texture provider.
+        /// </summary>
+        public override ICacheToTexture Ctt
+        {
+            get { return this; }
+        }
+
+        private Dictionary<Control.Base, GameRenderTexture> m_RT;
+        private Stack<GameRenderTexture> m_Stack;
+        private GameRenderTexture m_RealRT;
 
         public void Initialize()
         {
-            m_RT = new Dictionary<Control.Base, RenderTexture>();
-            m_Stack = new Stack<RenderTexture>();
+            m_RT = new Dictionary<Control.Base, GameRenderTexture>();
+            m_Stack = new Stack<GameRenderTexture>();
         }
 
         public void ShutDown()
@@ -288,9 +297,11 @@ namespace Intersect.Client.Framework.Gwen.Renderer
         /// <param name="control">Control to be rendered.</param>
         public void SetupCacheTexture(Control.Base control)
         {
-            m_RealRT = m_Target;
-            m_Stack.Push(m_Target); // save current RT
-            m_Target = m_RT[control]; // make cache current RT
+            m_RealRT = mRenderTarget;
+            m_Stack.Push(mRenderTarget); // save current RT
+            mRenderTarget = m_RT[control]; // make cache current RT
+            mRenderTarget.Begin();
+            mRenderTarget.Clear(Color.Transparent);
         }
 
         /// <summary>
@@ -299,7 +310,8 @@ namespace Intersect.Client.Framework.Gwen.Renderer
         /// <param name="control">Control to be rendered.</param>
         public void FinishCacheTexture(Control.Base control)
         {
-            m_Target = m_Stack.Pop();
+            mRenderTarget.End();
+            mRenderTarget = m_Stack.Pop();
         }
 
         /// <summary>
@@ -308,13 +320,14 @@ namespace Intersect.Client.Framework.Gwen.Renderer
         /// <param name="control">Control to be rendered.</param>
         public void DrawCachedControlTexture(Control.Base control)
         {
-            RenderTexture ri = m_RT[control];
+            GameRenderTexture ri = m_RT[control];
             //ri.Display();
-            RenderTarget rt = m_Target;
-            m_Target = m_RealRT;
-            DrawTexturedRect(ri.Texture, control.Bounds, Color.White);
+            GameRenderTexture rt = mRenderTarget;
+            mRenderTarget = m_RealRT;
+            mColor = Color.White;
+            DrawTexturedRect(ri, control.Bounds, Color.White);
             //DrawMissingImage(control.Bounds);
-            m_Target = rt;
+            mRenderTarget = rt;
         }
 
         /// <summary>
@@ -326,14 +339,21 @@ namespace Intersect.Client.Framework.Gwen.Renderer
             // initialize cache RT
             if (!m_RT.ContainsKey(control))
             {
-                m_RT[control] = new RenderTexture((uint)control.Width, (uint)control.Height);
-                View view = new View(new FloatRect(0, 0, control.Width, control.Height));
-                //view.Viewport = new FloatRect(0, control.Height, control.Width, control.Height);
-                m_RT[control].SetView(view);
+                m_RT[control] = mRenderer.CreateRenderTexture(control.Width, control.Height);
+                m_RT[control].Clear(Color.Transparent);
             }
 
-            RenderTexture ri = m_RT[control];
-            ri.Display();
+            GameRenderTexture ri = m_RT[control];
+        }
+
+        public void DisposeCachedTexture(Control.Base control)
+        {
+            if (m_RT.ContainsKey(control))
+            {
+                var rt = m_RT[control];
+                rt.Dispose();
+                m_RT.Remove(control);
+            }
         }
 
         public void UpdateControlCacheTexture(Control.Base control)
@@ -345,7 +365,7 @@ namespace Intersect.Client.Framework.Gwen.Renderer
         {
             throw new NotImplementedException();
         }
-        */
+        
 
         #endregion
     }

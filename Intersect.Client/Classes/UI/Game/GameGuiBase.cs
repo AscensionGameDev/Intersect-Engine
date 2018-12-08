@@ -321,6 +321,7 @@ namespace Intersect.Client.UI.Game
                     mBankWindow.Update();
                 }
             }
+
             mShouldCloseBank = false;
 
             //Bag Update
@@ -393,6 +394,12 @@ namespace Intersect.Client.UI.Game
                 FocusChat = false;
             }
             GameCanvas.RenderCanvas();
+        }
+
+        //Dispose
+        public void Dispose()
+        {
+            if (GameCanvas != null) GameCanvas.Dispose();
         }
     }
 }

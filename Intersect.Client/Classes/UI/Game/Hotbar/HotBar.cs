@@ -20,6 +20,7 @@ namespace Intersect.Client.UI.Game.Hotbar
         public HotBarWindow(Canvas gameCanvas)
         {
             HotbarWindow = new ImagePanel(gameCanvas, "HotbarWindow");
+            HotbarWindow.ShouldCacheToTexture = true;
             InitHotbarItems();
             HotbarWindow.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
 

@@ -30,6 +30,8 @@
         void CreateControlCacheTexture(Control.Base control);
 
         void UpdateControlCacheTexture(Control.Base control);
+
+        void DisposeCachedTexture(Control.Base control);
         void SetRenderer(Base renderer);
     }
 }

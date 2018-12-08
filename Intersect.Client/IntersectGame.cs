@@ -36,6 +36,10 @@ namespace Intersect.Client
             Strings.Load();
 
             var graphics = new GraphicsDeviceManager(this);
+            graphics.PreparingDeviceSettings += (object s, PreparingDeviceSettingsEventArgs args) =>
+            {
+                args.GraphicsDeviceInformation.PresentationParameters.RenderTargetUsage = RenderTargetUsage.PreserveContents;
+            };
 
             Content.RootDirectory = "";
             IsMouseVisible = true;

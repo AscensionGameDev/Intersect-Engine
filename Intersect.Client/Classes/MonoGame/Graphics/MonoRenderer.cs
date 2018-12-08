@@ -454,7 +454,7 @@ namespace Intersect.Client.MonoGame.Graphics
                 mFps = mFpsCount;
                 mFpsCount = 0;
                 mFpsTimer = Globals.System.GetTimeMs() + 1000;
-                mGameWindow.Title = Strings.Main.gamename + " fps: " + mFps;
+                mGameWindow.Title = Strings.Main.gamename + " fps: " + mFps + " rts: " + GameRenderTexture.RenderTextureCount + " vbos: " + GameTileBuffer.TileBufferCount;
             }
 
             foreach (var texture in mAllTextures)

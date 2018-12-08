@@ -841,6 +841,11 @@ namespace Intersect.Client.Framework.Gwen.Control
             ////debug.print("Control.Base: Disposing {0} {1:X}", this, GetHashCode());
             if (mDisposed) return;
 
+            Renderer.ICacheToTexture cache = Skin.Renderer.Ctt;
+
+            if (ShouldCacheToTexture && cache != null)
+                cache.DisposeCachedTexture(this);
+
             if (InputHandler.HoveredControl == this)
                 InputHandler.HoveredControl = null;
 
@@ -1942,7 +1947,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 Pos dock = child.Dock;
 
-                if (!(0 != (dock & Pos.Fill)))
+                if (0 == (dock & Pos.Fill))
                     continue;
 
                 Margin margin = child.Margin;

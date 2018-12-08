@@ -16,7 +16,6 @@ namespace Intersect.Config
         //Public Getters
         public static string ServerHost => sOptions.mHost;
         public static ushort ServerPort => sOptions.mPort;
-        public static bool RenderCache => sOptions.mRenderCache;
         public static string Font => sOptions.mFont;
         public static int ChatLines => sOptions.mChatLines;
         public static string MenuMusic => sOptions.mMenuMusic;
@@ -28,9 +27,6 @@ namespace Intersect.Config
 
         [JsonProperty("Port")]
         protected ushort mPort = 5400;
-
-        [JsonProperty("RenderCache")]
-        protected bool mRenderCache = true;
 
         [JsonProperty("Font")]
         protected string mFont = "arial";

@@ -148,52 +148,10 @@ namespace Intersect.Client
         private static void ProcessLoading()
         {
             if (Globals.Me == null || Globals.Me.MapInstance == null) return;
-            if (!_createdMapTextures)
-            {
-                if (ClientOptions.RenderCache) GameGraphics.CreateMapTextures(9 * 18);
-                _createdMapTextures = true;
-            }
             if (!_loadedTilesets && Globals.HasGameData)
             {
                 Globals.ContentManager.LoadTilesets(TilesetBase.GetNameList());
                 _loadedTilesets = true;
-            }
-            if (ClientOptions.RenderCache && Globals.Me != null && Globals.Me.MapInstance != null)
-            {
-                var gridX = Globals.Me.MapInstance.MapGridX;
-                var gridY = Globals.Me.MapInstance.MapGridY;
-                for (int x = gridX - 1; x <= gridX + 1; x++)
-                {
-                    for (int y = gridY - 1; y <= gridY + 1; y++)
-                    {
-                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
-                            Globals.MapGrid[x, y] != Guid.Empty)
-                        {
-                            var map = MapInstance.Get(Globals.MapGrid[x, y]);
-                            if (map != null)
-                            {
-                                if (map.MapLoaded == false)
-                                {
-                                    return;
-                                }
-                                else if (map.MapRendered == false && ClientOptions.RenderCache == true)
-                                {
-                                    lock (map.MapLock)
-                                    {
-                                        while (!map.MapRendered)
-                                            if (!map.PreRenderMap())
-                                                break;
-                                    }
-                                    return;
-                                }
-                            }
-                            else
-                            {
-                                return;
-                            }
-                        }
-                    }
-                }
             }
 
             GameAudio.PlayMusic(MapInstance.Get(Globals.Me.CurrentMap).Music, 3, 3, true);
@@ -228,7 +186,7 @@ namespace Intersect.Client
                                 var map = MapInstance.Get(Globals.MapGrid[x, y]);
                                 if (map != null)
                                 {
-                                    if (map.MapLoaded == false || (ClientOptions.RenderCache && map.MapRendered == false))
+                                    if (map.MapLoaded == false)
                                     {
                                         canShowWorld = false;
                                     }
