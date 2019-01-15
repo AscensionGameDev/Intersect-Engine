@@ -21,6 +21,8 @@ namespace Intersect.Client.Classes.MonoGame.Graphics
 
         private List<VertexPositionTexture> vertices = new List<VertexPositionTexture>();
         private List<short> indices = new List<short>();
+        private Dictionary<Tuple<float, float>, int> verticeDict = new Dictionary<Tuple<float, float>, int>();
+        private bool updatesPending = false;
 
         private GraphicsDevice mGraphicsDevice;
 
@@ -58,6 +60,7 @@ namespace Intersect.Client.Classes.MonoGame.Graphics
             float bottom = (srcY + srcH) * textureSizeY;
             float top = srcY * textureSizeY;
 
+            verticeDict.Add(new Tuple<float, float>(x,y), vertices.Count);
             vertices.Add(new VertexPositionTexture(new Vector3(x, y + srcH, 0), new Vector2(left, bottom)));
             vertices.Add(new VertexPositionTexture(new Vector3(x, y, 0), new Vector2(left, top)));
             vertices.Add(new VertexPositionTexture(new Vector3(x + srcW, y + srcH, 0), new Vector2(right, bottom)));
@@ -75,6 +78,8 @@ namespace Intersect.Client.Classes.MonoGame.Graphics
             vertexCount += 4;
             return true;
         }
+
+
 
         public void Draw(BasicEffect basicEffect, FloatRect view)
         {
@@ -94,15 +99,20 @@ namespace Intersect.Client.Classes.MonoGame.Graphics
 
         public override bool SetData()
         {
-            if (vertexBuffer != null) return false;
+            if (vertexBuffer != null && !updatesPending) return false;
             if (vertices.Count == 0) return true;
             TileBufferCount++;
-            vertexBuffer = new VertexBuffer(mGraphicsDevice, typeof(VertexPositionTexture), vertices.Count, BufferUsage.WriteOnly);
-            indexBuffer = new IndexBuffer(mGraphicsDevice, typeof(short), indices.Count, BufferUsage.WriteOnly);
+            if (vertexBuffer == null)
+            {
+                vertexBuffer = new VertexBuffer(mGraphicsDevice, typeof(VertexPositionTexture), vertices.Count, BufferUsage.WriteOnly);
+                indexBuffer = new IndexBuffer(mGraphicsDevice, typeof(short), indices.Count, BufferUsage.WriteOnly);
+            }
             vertexBuffer.SetData(vertices.ToArray());
-            indexBuffer.SetData(indices.ToArray());
-            vertices.Clear();
-            indices.Clear();
+            if (!updatesPending)
+            {
+                indexBuffer.SetData(indices.ToArray());
+            }
+            updatesPending = false;
             return true;
         }
 
@@ -115,6 +125,48 @@ namespace Intersect.Client.Classes.MonoGame.Graphics
             TileBufferCount--;
             indexBuffer = null;
             disposed = true;
+        }
+
+        public override bool UpdateTile(float x, float y, int srcX, int srcY, int srcW, int srcH)
+        {
+            var key = new Tuple<float, float>(x, y);
+            var vertexIndex = -1;
+            if (verticeDict.ContainsKey(key))
+            {
+                vertexIndex = verticeDict[key];
+            }
+            if (vertexIndex == -1) return false;
+            var platformTex = Texture?.GetTexture();
+            if (platformTex == null) return false;
+            if (Texture == null) return false;
+            if (Texture.GetTexture() != platformTex) return false;
+            if (vertexBuffer == null) return false;
+
+            var pack = Texture.GetTexturePackFrame();
+            if (pack != null)
+            {
+                srcX += pack.Rect.X;
+                srcY += pack.Rect.Y;
+            }
+
+            var texture = (Texture2D)Texture.GetTexture();
+
+            float textureSizeX = 1f / texture.Width;
+            float textureSizeY = 1f / texture.Height;
+
+            float left = srcX * textureSizeX;
+            float right = (srcX + srcW) * textureSizeX;
+            float bottom = (srcY + srcH) * textureSizeY;
+            float top = srcY * textureSizeY;
+
+            vertices[vertexIndex++] = new VertexPositionTexture(new Vector3(x, y + srcH, 0), new Vector2(left, bottom));
+            vertices[vertexIndex++] = new VertexPositionTexture(new Vector3(x, y, 0), new Vector2(left, top));
+            vertices[vertexIndex++] = new VertexPositionTexture(new Vector3(x + srcW, y + srcH, 0), new Vector2(right, bottom));
+            vertices[vertexIndex] = new VertexPositionTexture(new Vector3(x + srcW, y, 0), new Vector2(right, top));
+
+            updatesPending = true;
+
+            return true;
         }
     }
 }

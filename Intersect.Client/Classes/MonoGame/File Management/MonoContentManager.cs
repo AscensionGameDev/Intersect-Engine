@@ -137,8 +137,7 @@ namespace Intersect.Client.MonoGame.File_Management
             mTilesetDict.Clear();
             foreach (var t in tilesetnames)
             {
-                if (t != "" && File.Exists(Path.Combine("resources", "tilesets", t)) &&
-                    !mTilesetDict.ContainsKey(t.ToLower()))
+                if (t != "" && (File.Exists(Path.Combine("resources", "tilesets", t)) || GameTexturePacks.GetFrame(Path.Combine("resources", "tilesets", t.ToLower())) != null) && !mTilesetDict.ContainsKey(t.ToLower()))
                 {
                     mTilesetDict.Add(t.ToLower(), GameGraphics.Renderer.LoadTexture(Path.Combine("resources", "tilesets", t)));
                 }
@@ -193,6 +192,19 @@ namespace Intersect.Client.MonoGame.File_Management
             {
                 string filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar).ToLower();
                 dict.Add(filename, GameGraphics.Renderer.LoadTexture(Path.Combine(dir, filename)));
+            }
+
+            var packItems = GameTexturePacks.GetFolderFrames(directory);
+            if (packItems != null)
+            {
+                foreach (var itm in packItems)
+                {
+                    var filename = Path.GetFileName(itm.Filename.ToLower());
+                    if (!dict.ContainsKey(filename))
+                    {
+                        dict.Add(filename,GameGraphics.Renderer.LoadTexture(Path.Combine(dir,filename)));
+                    }
+                }
             }
         }
 

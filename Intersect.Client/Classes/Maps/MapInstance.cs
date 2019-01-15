@@ -95,6 +95,7 @@ namespace Intersect.Client.Maps
 
         private bool mTexturesFound = false;
         private GameTileBuffer[][][] mTileBuffers; //Array is layer, autotile frame, buffer index
+        private Dictionary<object,GameTileBuffer[]>[] mTileBufferDict = new Dictionary<object, GameTileBuffer[]>[Options.LayerCount];
 
 
         //Initialization
@@ -115,7 +116,7 @@ namespace Intersect.Client.Maps
             JsonConvert.PopulateObject(json, this, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace });
             MapLoaded = true;
             Autotiles = new MapAutotiles(this);
-            //OnMapLoaded += HandleMapLoaded;
+            OnMapLoaded += HandleMapLoaded;
             if (MapRequests.ContainsKey(Id)) MapRequests.Remove(Id);
         }
 
@@ -219,6 +220,111 @@ namespace Intersect.Client.Maps
                 }
             }
             return false;
+        }
+
+        private void HandleMapLoaded(MapInstance map)
+        {
+            //See if this new map is on the same grid as us
+            List<GameTileBuffer> updatedBuffers = new List<GameTileBuffer>();
+            if (map != this && Globals.GridMaps.Contains(map.Id) && Globals.GridMaps.Contains(Id))
+            {
+                var surroundingMaps = GenerateAutotileGrid();
+                if (map.MapGridX == MapGridX - 1)
+                {
+                    if (map.MapGridY == MapGridY - 1)
+                    {
+                        //Check Northwest
+                        updatedBuffers.AddRange(CheckAutotile(0, 0, surroundingMaps));
+                    }
+                    else if (map.MapGridY == MapGridY)
+                    {
+                        //Check West
+                        for (int y = 0; y < Options.MapHeight; y++)
+                        {
+                            updatedBuffers.AddRange(CheckAutotile(0, y, surroundingMaps));
+                        }
+                    }
+                    else if (map.MapGridY == MapGridY + 1)
+                    {
+                        //Check Southwest
+                        updatedBuffers.AddRange(CheckAutotile(0, Options.MapHeight - 1, surroundingMaps));
+                    }
+                }
+                else if (map.MapGridX == MapGridX)
+                {
+                    if (map.MapGridY == MapGridY - 1)
+                    {
+                        //Check North
+                        for (int x = 0; x < Options.MapWidth; x++)
+                        {
+                            updatedBuffers.AddRange(CheckAutotile(x, 0, surroundingMaps));
+                        }
+                    }
+                    else if (map.MapGridY == MapGridY + 1)
+                    {
+                        //Check South
+                        for (int x = 0; x < Options.MapWidth; x++)
+                        {
+                            updatedBuffers.AddRange(CheckAutotile(x, Options.MapHeight - 1, surroundingMaps));
+                        }
+                    }
+                }
+                else if (map.MapGridX == MapGridX + 1)
+                {
+                    if (map.MapGridY == MapGridY - 1)
+                    {
+                        //Check Northeast
+                        updatedBuffers.AddRange(CheckAutotile(Options.MapWidth - 1, Options.MapHeight, surroundingMaps));
+                    }
+                    else if (map.MapGridY == MapGridY)
+                    {
+                        //Check East
+                        for (int y = 0; y < Options.MapHeight; y++)
+                        {
+                            updatedBuffers.AddRange(CheckAutotile(Options.MapWidth - 1, y, surroundingMaps));
+                        }
+                    }
+                    else if (map.MapGridY == MapGridY + 1)
+                    {
+                        //Check Southeast
+                        updatedBuffers.AddRange(CheckAutotile(Options.MapWidth - 1, Options.MapHeight - 1, surroundingMaps));
+                    }
+                }
+            }
+            foreach (var buffer in updatedBuffers)
+                buffer.SetData();
+        }
+
+        private GameTileBuffer[] CheckAutotile(int x, int y, MapBase[,] surroundingMaps)
+        {
+            var updated = new List<GameTileBuffer>();
+            for (int layer = 0; layer < 5; layer++)
+            {
+                if (Autotiles.UpdateAutoTile(x, y, layer, surroundingMaps))
+                {
+                    //Find the VBO, update it.
+                    var tileBuffer = mTileBufferDict[layer];
+                    var tile = Layers[layer].Tiles[x, y];
+                    if (tile.TilesetTex == null) continue;
+                    GameTexture tilesetTex = (GameTexture)tile.TilesetTex;
+                    var platformTex = tilesetTex.GetTexture();
+                    if (tileBuffer.ContainsKey(platformTex))
+                    {
+                        for (var autotileFrame = 0; autotileFrame < 3; autotileFrame++)
+                        {
+                            var buffer = tileBuffer[platformTex][autotileFrame];
+                            var xoffset = GetX();
+                            var yoffset = GetY();
+                            DrawAutoTile(layer, x * Options.TileWidth + xoffset, y * Options.TileHeight + yoffset, 1, x, y, autotileFrame, tilesetTex, buffer,true);
+                            DrawAutoTile(layer, x * Options.TileWidth + (Options.TileWidth / 2) + xoffset, y * Options.TileHeight + yoffset, 2, x, y, autotileFrame, tilesetTex, buffer,true);
+                            DrawAutoTile(layer, x * Options.TileWidth + xoffset, y * Options.TileHeight + (Options.TileHeight / 2) + yoffset, 3, x, y, autotileFrame, tilesetTex, buffer,true);
+                            DrawAutoTile(layer, +x * Options.TileWidth + (Options.TileWidth / 2) + xoffset, y * Options.TileHeight + (Options.TileHeight / 2) + yoffset, 4, x, y, autotileFrame, tilesetTex, buffer,true);
+                            if (!updated.Contains(buffer)) updated.Add(buffer);
+                        }
+                    }
+                }
+            }
+            return updated.ToArray();
         }
 
         //Helper Functions
@@ -343,13 +449,7 @@ namespace Intersect.Client.Maps
             LocalAnimations?.Clear();
             ClearMapAttributes();
         }
-
-        public void FixAutotiles()
-        {
-            DestroyVBOs();
-            BuildVBOs();
-        }
-
+        
         public void BuildVBOs()
         {
             for (int i = 0; i < Options.LayerCount; i++)
@@ -443,7 +543,7 @@ namespace Intersect.Client.Maps
             }
         }
 
-        private void DrawAutoTile(int layerNum, float destX, float destY, int quarterNum, int x, int y, int forceFrame, GameTexture tileset, GameTileBuffer buffer)
+        private void DrawAutoTile(int layerNum, float destX, float destY, int quarterNum, int x, int y, int forceFrame, GameTexture tileset, GameTileBuffer buffer, bool update = false)
         {
             int yOffset = 0, xOffset = 0;
             // calculate the offset
@@ -466,16 +566,26 @@ namespace Intersect.Client.Maps
                     break;
             }
 
-
-            if (!buffer.AddTile(tileset, destX, destY,
-                (int)Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X + xOffset,
-                (int)Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y + yOffset,
-                Options.TileWidth / 2, Options.TileHeight / 2))
+            if (update)
             {
-                throw new Exception("Failed to add tile to VBO!");
+                if (!buffer.UpdateTile(destX, destY,
+                    (int)Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X + xOffset,
+                    (int)Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y + yOffset,
+                    Options.TileWidth / 2, Options.TileHeight / 2))
+                {
+                    throw new Exception("Failed to update tile to VBO!");
+                }
             }
-
-
+            else
+            {
+                if (!buffer.AddTile(tileset, destX, destY,
+                    (int)Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X + xOffset,
+                    (int)Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y + yOffset,
+                    Options.TileWidth / 2, Options.TileHeight / 2))
+                {
+                    throw new Exception("Failed to add tile to VBO!");
+                }
+            }
         }
 
         private GameTileBuffer[][] DrawMapLayer(int layer, float xoffset = 0, float yoffset = 0)
@@ -542,6 +652,7 @@ namespace Intersect.Client.Maps
                     outputBuffers[i][x] = valueArrays[x][i];
             }
 
+            mTileBufferDict[layer] = tileBuffers;
             return outputBuffers;
         }
 
