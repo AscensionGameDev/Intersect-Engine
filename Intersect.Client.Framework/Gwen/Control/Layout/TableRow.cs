@@ -91,6 +91,7 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
                         {
                             // last column fills remaining space
                             mColumns[i].Dock = Pos.Fill;
+                            mColumns[i].AutoSizeToContents = false;
                         }
                         else
                         {

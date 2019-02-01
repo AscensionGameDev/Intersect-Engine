@@ -121,7 +121,8 @@ namespace Intersect.Editor.Forms
             this.reportBugToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip = new DarkUI.Controls.DarkMenuStrip();
-            this.externalToolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.packClientTexturesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.menuStrip.SuspendLayout();
@@ -589,7 +590,7 @@ namespace Intersect.Editor.Forms
             // 
             this.saveMapToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.saveMapToolStripMenuItem.Name = "saveMapToolStripMenuItem";
-            this.saveMapToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveMapToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveMapToolStripMenuItem.Text = "Save Map";
             this.saveMapToolStripMenuItem.Click += new System.EventHandler(this.saveMapToolStripMenuItem_Click);
             // 
@@ -597,7 +598,7 @@ namespace Intersect.Editor.Forms
             // 
             this.newMapToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.newMapToolStripMenuItem.Name = "newMapToolStripMenuItem";
-            this.newMapToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.newMapToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.newMapToolStripMenuItem.Text = "New Map";
             this.newMapToolStripMenuItem.ToolTipText = "Create a new, unconnected map.";
             this.newMapToolStripMenuItem.Click += new System.EventHandler(this.NewMapToolStripMenuItem_Click);
@@ -606,7 +607,7 @@ namespace Intersect.Editor.Forms
             // 
             this.importMapToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.importMapToolStripMenuItem.Name = "importMapToolStripMenuItem";
-            this.importMapToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.importMapToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.importMapToolStripMenuItem.Text = "Import Map";
             this.importMapToolStripMenuItem.Visible = false;
             this.importMapToolStripMenuItem.Click += new System.EventHandler(this.importMapToolStripMenuItem_Click);
@@ -615,7 +616,7 @@ namespace Intersect.Editor.Forms
             // 
             this.exportMapToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.exportMapToolStripMenuItem.Name = "exportMapToolStripMenuItem";
-            this.exportMapToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exportMapToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exportMapToolStripMenuItem.Text = "Export Map";
             this.exportMapToolStripMenuItem.Visible = false;
             this.exportMapToolStripMenuItem.Click += new System.EventHandler(this.exportMapToolStripMenuItem_Click);
@@ -624,7 +625,7 @@ namespace Intersect.Editor.Forms
             // 
             this.optionsToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.optionsToolStripMenuItem.Text = "Options";
             this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
@@ -632,7 +633,7 @@ namespace Intersect.Editor.Forms
             // 
             this.exitToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -989,7 +990,7 @@ namespace Intersect.Editor.Forms
             this.editToolStripMenuItem,
             this.viewToolStripMenuItem,
             this.contentEditorsToolStripMenuItem,
-            this.externalToolsToolStripMenuItem,
+            this.toolsToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
@@ -998,13 +999,22 @@ namespace Intersect.Editor.Forms
             this.menuStrip.TabIndex = 1;
             this.menuStrip.Text = "menuStrip1";
             // 
-            // externalToolsToolStripMenuItem
+            // toolsToolStripMenuItem
             // 
-            this.externalToolsToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.externalToolsToolStripMenuItem.Name = "externalToolsToolStripMenuItem";
-            this.externalToolsToolStripMenuItem.Size = new System.Drawing.Size(91, 20);
-            this.externalToolsToolStripMenuItem.Text = "External Tools";
-            this.externalToolsToolStripMenuItem.Visible = false;
+            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.packClientTexturesToolStripMenuItem});
+            this.toolsToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
+            this.toolsToolStripMenuItem.Text = "Tools";
+            // 
+            // packClientTexturesToolStripMenuItem
+            // 
+            this.packClientTexturesToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.packClientTexturesToolStripMenuItem.Name = "packClientTexturesToolStripMenuItem";
+            this.packClientTexturesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.packClientTexturesToolStripMenuItem.Text = "Pack Client Textures";
+            this.packClientTexturesToolStripMenuItem.Click += new System.EventHandler(this.packClientTexturesToolStripMenuItem_Click);
             // 
             // FrmMain
             // 
@@ -1120,10 +1130,11 @@ namespace Intersect.Editor.Forms
 		private ToolStripMenuItem reportBugToolStripMenuItem;
 		private ToolStripMenuItem aboutToolStripMenuItem;
 		private DarkMenuStrip menuStrip;
-		private ToolStripMenuItem externalToolsToolStripMenuItem;
+		private ToolStripMenuItem toolsToolStripMenuItem;
 		private ToolStripButton toolStripBtnFlipHorizontal;
 		private ToolStripButton toolStripBtnFlipVertical;
 		private ToolStripSeparator toolStripSeparator13;
 		private ToolStripMenuItem craftsEditorToolStripMenuItem;
-	}
+        private ToolStripMenuItem packClientTexturesToolStripMenuItem;
+    }
 }

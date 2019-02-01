@@ -4,6 +4,8 @@ namespace Intersect.Client.Framework.Graphics
 {
     public abstract class GameRenderTexture : GameTexture
     {
+        public static int RenderTextureCount { get; set; } = 0;
+
         public GameRenderTexture(int width, int height)
         {
         }
@@ -30,5 +32,7 @@ namespace Intersect.Client.Framework.Graphics
         public abstract void Clear(Color color);
 
         public abstract override object GetTexture();
+
+        public abstract void Dispose();
     }
 }

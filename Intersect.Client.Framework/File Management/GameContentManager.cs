@@ -33,6 +33,7 @@ namespace Intersect.Client.Framework.File_Management
 
         public static GameContentManager Current;
         public bool TilesetsLoaded = false;
+        protected Dictionary<string,GameTexture> mTexturePackDict = new Dictionary<string, GameTexture>();
         protected Dictionary<string, GameTexture> mAnimationDict = new Dictionary<string, GameTexture>();
         protected Dictionary<string, GameTexture> mEntityDict = new Dictionary<string, GameTexture>();
         protected Dictionary<string, GameTexture> mFaceDict = new Dictionary<string, GameTexture>();
@@ -60,6 +61,7 @@ namespace Intersect.Client.Framework.File_Management
         //Content Loading
         public void LoadAll()
         {
+            LoadTexturePacks();
             LoadEntities();
             LoadItems();
             LoadAnimations();
@@ -75,6 +77,7 @@ namespace Intersect.Client.Framework.File_Management
             LoadShaders();
         }
 
+        public abstract void LoadTexturePacks();
         public abstract void LoadTilesets(string[] tilesetnames);
         public abstract void LoadItems();
         public abstract void LoadEntities();

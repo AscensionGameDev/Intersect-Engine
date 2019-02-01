@@ -63,11 +63,8 @@ namespace Intersect.Client
 
         //Cache the Y based rendering
         public static HashSet<Entity>[,] RenderingEntities;
-
-        public static bool PreRenderedMapLayer;
+        
         public static object GfxLock = new object();
-        public static List<GameRenderTexture> MapReleaseQueue = new List<GameRenderTexture>();
-        public static List<GameRenderTexture> FreeMapTextures = new List<GameRenderTexture>();
 
         //Animations
         public static List<AnimationInstance> LiveAnimations = new List<AnimationInstance>();
@@ -119,7 +116,6 @@ namespace Intersect.Client
             if (currentMap == null) return;
             if (Globals.NeedsMaps)
             {
-                TryPreRendering(false);
                 return;
             }
             if (GridSwitched)
@@ -159,8 +155,6 @@ namespace Intersect.Client
             }
 
             ClearDarknessTexture();
-            TryPreRendering();
-            FixAutotiles();
             GenerateLightMap();
 
             var gridX = currentMap.MapGridX;
@@ -287,7 +281,7 @@ namespace Intersect.Client
             DrawOverlay();
 
             DrawDarkness();
-            
+
             for (int y = 0; y < Options.MapHeight * 5; y++)
             {
                 for (int x = 0; x < 3; x++)
@@ -304,7 +298,7 @@ namespace Intersect.Client
                     }
                 }
             }
-            
+
             for (int y = 0; y < Options.MapHeight * 5; y++)
             {
                 for (int x = 3; x < 6; x++)
@@ -359,7 +353,6 @@ namespace Intersect.Client
             MapsDrawn = 0;
             EntitiesDrawn = 0;
             LightsDrawn = 0;
-            PreRenderedMapLayer = false;
 
             UpdateView();
 
@@ -391,61 +384,6 @@ namespace Intersect.Client
             if (takingScreenshot)
             {
                 Renderer.EndScreenshot();
-            }
-        }
-
-        private static void TryPreRendering(bool takeItEasy = true)
-        {
-            if (ClientOptions.RenderCache && Globals.Me != null && Globals.Me.MapInstance != null)
-            {
-                var gridX = Globals.Me.MapInstance.MapGridX;
-                var gridY = Globals.Me.MapInstance.MapGridY;
-                for (int x = gridX - 1; x <= gridX + 1; x++)
-                {
-                    for (int y = gridY - 1; y <= gridY + 1; y++)
-                    {
-                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
-                            Globals.MapGrid[x, y] != Guid.Empty)
-                        {
-                            var map = MapInstance.Get(Globals.MapGrid[x, y]);
-                            if (map != null && !map.MapRendered)
-                            {
-                                if (!PreRenderedMapLayer || !takeItEasy)
-                                {
-                                    lock (map.MapLock)
-                                    {
-                                        if (!map.PreRenderMap()) return;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        private static void FixAutotiles()
-        {
-            if (ClientOptions.RenderCache && Globals.Me != null &&
-                MapInstance.Get(Globals.Me.CurrentMap) != null)
-            {
-                var gridX = MapInstance.Get(Globals.Me.CurrentMap).MapGridX;
-                var gridY = MapInstance.Get(Globals.Me.CurrentMap).MapGridY;
-                for (int x = gridX - 1; x <= gridX + 1; x++)
-                {
-                    for (int y = gridY - 1; y <= gridY + 1; y++)
-                    {
-                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
-                            Globals.MapGrid[x, y] != Guid.Empty)
-                        {
-                            var map = MapInstance.Get(Globals.MapGrid[x, y]);
-                            if (map != null && map.MapRendered)
-                            {
-                                map.FixAutotiles();
-                            }
-                        }
-                    }
-                }
             }
         }
 
@@ -749,34 +687,6 @@ namespace Intersect.Client
                 CurrentView = new FloatRect(0, 0, Renderer.GetScreenWidth(), Renderer.GetScreenHeight());
             }
             Renderer.SetView(CurrentView);
-        }
-
-        public static void CreateMapTextures(int count)
-        {
-            for (int i = 0; i < count; i++)
-            {
-                ReleaseMapTexture(Renderer.CreateRenderTexture(Options.TileWidth * Options.MapWidth,
-                    Options.TileHeight * Options.MapHeight));
-            }
-        }
-
-        public static bool GetMapTexture(ref GameRenderTexture replaceme)
-        {
-            if (FreeMapTextures.Count > 0)
-            {
-                replaceme = FreeMapTextures[0];
-                FreeMapTextures.RemoveAt(0);
-                return true;
-            }
-            return false;
-        }
-
-        public static void ReleaseMapTexture(GameRenderTexture releaseTex)
-        {
-            if (releaseTex.SetActive(false))
-            {
-                FreeMapTextures.Add(releaseTex);
-            }
         }
 
         //Lighting
@@ -1107,10 +1017,11 @@ namespace Intersect.Client
             GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.None,
             GameShader shader = null, float rotationDegrees = 0.0f, bool drawImmediate = false)
         {
-            var destRectangle = new FloatRect(dx, dy, w, h);
-            var srcRectangle = new FloatRect(sx, sy, w, h);
-            DrawGameTexture(tex, srcRectangle, destRectangle, Color.White, renderTarget, blendMode, shader,
-                rotationDegrees, drawImmediate);
+            if (tex == null) return;
+            Renderer.DrawTexture(tex, sx,sy,w,h,dx,dy,w,h,
+                Framework.GenericClasses.Color.White, renderTarget, blendMode,
+                shader,
+                rotationDegrees, false, drawImmediate);
         }
 
         public static void DrawGameTexture(GameTexture tex, FloatRect srcRectangle, FloatRect targetRect,
@@ -1119,7 +1030,7 @@ namespace Intersect.Client
             GameShader shader = null, float rotationDegrees = 0.0f, bool drawImmediate = false)
         {
             if (tex == null) return;
-            Renderer.DrawTexture(tex, srcRectangle, targetRect,
+            Renderer.DrawTexture(tex,srcRectangle.X,srcRectangle.Y,srcRectangle.Width,srcRectangle.Height,targetRect.X,targetRect.Y,targetRect.Width,targetRect.Height,
                 Framework.GenericClasses.Color.FromArgb(renderColor.A, renderColor.R, renderColor.G, renderColor.B), renderTarget, blendMode,
                 shader,
                 rotationDegrees,false,drawImmediate);

@@ -8,10 +8,13 @@ using System.Text;
 using System.Windows.Forms;
 using Intersect.Client.Forms;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Localization;
 using Intersect.Client.MonoGame.Audio;
 using Intersect.Client.MonoGame.Graphics;
+using Newtonsoft.Json.Linq;
+using DialogResult = System.Windows.Forms.DialogResult;
 
 namespace Intersect.Client.MonoGame.File_Management
 {
@@ -134,14 +137,45 @@ namespace Intersect.Client.MonoGame.File_Management
             mTilesetDict.Clear();
             foreach (var t in tilesetnames)
             {
-                if (t != "" && File.Exists(Path.Combine("resources", "tilesets", t)) &&
-                    !mTilesetDict.ContainsKey(t.ToLower()))
+                if (t != "" && (File.Exists(Path.Combine("resources", "tilesets", t)) || GameTexturePacks.GetFrame(Path.Combine("resources", "tilesets", t.ToLower())) != null) && !mTilesetDict.ContainsKey(t.ToLower()))
                 {
-                    mTilesetDict.Add(t.ToLower(),
-                        GameGraphics.Renderer.LoadTexture(Path.Combine("resources", "tilesets", t)));
+                    mTilesetDict.Add(t.ToLower(), GameGraphics.Renderer.LoadTexture(Path.Combine("resources", "tilesets", t)));
                 }
             }
             TilesetsLoaded = true;
+        }
+
+        public override void LoadTexturePacks()
+        {
+            mTexturePackDict.Clear();
+            var dir = Path.Combine("resources", "packs");
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+            var items = Directory.GetFiles(dir, "*.json");
+            for (int i = 0; i < items.Length; i++)
+            {
+                var json = File.ReadAllText(items[i]);
+                var obj = JObject.Parse(json);
+                JArray frames = (JArray)obj["frames"];
+                var img = obj["meta"]["image"].ToString();
+                if (File.Exists(Path.Combine("resources", "packs", img)))
+                {
+                    var platformText = GameGraphics.Renderer.LoadTexture(Path.Combine("resources", "packs", img));
+                    if (platformText != null)
+                    {
+                        foreach (var frame in frames)
+                        {
+                            var filename = frame["filename"].ToString();
+                            var sourceRect = new Rectangle(int.Parse(frame["frame"]["x"].ToString()), int.Parse(frame["frame"]["y"].ToString()), int.Parse(frame["frame"]["w"].ToString()), int.Parse(frame["frame"]["h"].ToString()));
+                            var rotated = bool.Parse(frame["rotated"].ToString());
+                            var sourceSize = new Rectangle(int.Parse(frame["spriteSourceSize"]["x"].ToString()), int.Parse(frame["spriteSourceSize"]["y"].ToString()), int.Parse(frame["spriteSourceSize"]["w"].ToString()), int.Parse(frame["spriteSourceSize"]["h"].ToString()));
+                            GameTexturePacks.AddFrame(new GameTexturePackFrame(filename, sourceRect, rotated, sourceSize, platformText));
+                        }
+                    }
+                }
+            }
         }
 
         public void LoadTextureGroup(string directory, Dictionary<string, GameTexture> dict)
@@ -157,6 +191,19 @@ namespace Intersect.Client.MonoGame.File_Management
             {
                 string filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar).ToLower();
                 dict.Add(filename, GameGraphics.Renderer.LoadTexture(Path.Combine(dir, filename)));
+            }
+
+            var packItems = GameTexturePacks.GetFolderFrames(directory);
+            if (packItems != null)
+            {
+                foreach (var itm in packItems)
+                {
+                    var filename = Path.GetFileName(itm.Filename.ToLower());
+                    if (!dict.ContainsKey(filename))
+                    {
+                        dict.Add(filename,GameGraphics.Renderer.LoadTexture(Path.Combine(dir,filename)));
+                    }
+                }
             }
         }
 

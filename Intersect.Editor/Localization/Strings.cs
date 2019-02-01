@@ -1337,6 +1337,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString npceditor = @"Npc Editor";
             public static LocalizedString options = @"Options";
             public static LocalizedString overlay = @"Overlay";
+            public static LocalizedString packtextures = @"Pack Client Textures";
             public static LocalizedString paste = @"Paste";
             public static LocalizedString pen = @"Pen Tool";
             public static LocalizedString postquestion = @"Post Question";
@@ -1361,6 +1362,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString tilepreview = @"Tile Preview";
             public static LocalizedString timeeditor = @"Time Editor";
             public static LocalizedString title = @"Intersect Editor - {00}";
+            public static LocalizedString tools = @"Tools";
             public static LocalizedString toolsdir = @"tools";
             public static LocalizedString undo = @"Undo";
             public static LocalizedString view = @"View";
@@ -1964,6 +1966,16 @@ Tick timer saved in server config.json.";
                 {1, @"Gather Items [{00} x{01}] - {02}"},
                 {2, @"Kill Npc(s) [{00} x{01}] - {02}"},
             };
+        }
+
+        public struct TexturePacking
+        {
+            public static LocalizedString title = "Packing textures, please wait!";
+            public static LocalizedString deleting = "Deleting old packs...";
+            public static LocalizedString collecting = "Creating packing list...";
+            public static LocalizedString calculating = "Calculating rects...";
+            public static LocalizedString exporting = "Exporting textures...";
+            public static LocalizedString done = "Done!";
         }
 
         public struct Tiles

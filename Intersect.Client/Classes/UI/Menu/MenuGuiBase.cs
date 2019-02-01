@@ -35,5 +35,11 @@ namespace Intersect.Client.UI.Menu
         {
             mShouldReset = true;
         }
+
+        //Dispose
+        public void Dispose()
+        {
+            if (mMenuCanvas != null) mMenuCanvas.Dispose();
+        }
     }
 }

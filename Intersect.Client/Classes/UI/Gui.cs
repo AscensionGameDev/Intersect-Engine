@@ -55,6 +55,9 @@ namespace Intersect.Client.UI
                 DefaultFont = Globals.ContentManager.GetFont(ActiveFont, 10)
             };
 
+            if (MenuUi != null) MenuUi.Dispose();
+            if (GameUi != null) GameUi.Dispose();
+
             // Create a Canvas (it's root, on which all other GWEN controls are created)
             sMenuCanvas = new Canvas(sGwenSkin, "MainMenu")
             {
@@ -88,6 +91,7 @@ namespace Intersect.Client.UI
             FocusElements = new List<Framework.Gwen.Control.Base>();
             InputBlockingElements = new List<Framework.Gwen.Control.Base>();
             ErrorMsgHandler = new ErrorMessageHandler(sMenuCanvas, sGameCanvas);
+
             if (Globals.GameState == GameStates.Intro || Globals.GameState == GameStates.Menu)
             {
                 MenuUi = new MenuGuiBase(sMenuCanvas);

@@ -27,6 +27,7 @@ namespace Intersect.Client
     /// </summary>
     public class IntersectGame : Game
     {
+        private double mLastUpdateTime = 0;
         public IntersectGame()
         {
             //Setup an error handler
@@ -35,6 +36,10 @@ namespace Intersect.Client
             Strings.Load();
 
             var graphics = new GraphicsDeviceManager(this);
+            graphics.PreparingDeviceSettings += (object s, PreparingDeviceSettingsEventArgs args) =>
+            {
+                args.GraphicsDeviceInformation.PresentationParameters.RenderTargetUsage = RenderTargetUsage.PreserveContents;
+            };
 
             Content.RootDirectory = "";
             IsMouseVisible = true;
@@ -107,9 +112,14 @@ namespace Intersect.Client
         {
             if (Globals.IsRunning)
             {
-                lock (Globals.GameLock)
+                if (mLastUpdateTime < gameTime.TotalGameTime.TotalMilliseconds)
                 {
-                    GameMain.Update();
+                    lock (Globals.GameLock)
+                    {
+                        GameMain.Update();
+                    }
+
+                    mLastUpdateTime = gameTime.TotalGameTime.TotalMilliseconds + (1000/60f);
                 }
             }
             base.Update(gameTime);

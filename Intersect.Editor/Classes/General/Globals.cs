@@ -102,6 +102,7 @@ namespace Intersect.Editor.General
         public static List<Guid> MapsToScreenshot = new List<Guid>();
         public static int FetchCount;
         public static FrmProgress PreviewProgressForm;
+        public static FrmProgress PackingProgressForm;
 
         public static LightBase BackupLight;
         public static LightBase EditingLight;
