@@ -37,6 +37,11 @@ namespace Intersect.Editor.ContentManagement
             }
         }
 
+        public string GetPath()
+        {
+            return mPath;
+        }
+
         public void ResetAccessTime()
         {
             mLastAccessTime = Globals.System.GetTimeMs() + 15000;

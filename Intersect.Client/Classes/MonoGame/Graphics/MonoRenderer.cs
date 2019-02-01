@@ -409,8 +409,26 @@ namespace Intersect.Client.MonoGame.Graphics
             var pack = tex.GetTexturePackFrame();
             if (pack != null)
             {
-                sx += pack.Rect.X;
-                sy += pack.Rect.Y;
+                if (pack.Rotated)
+                {
+                    rotationDegrees -= 90;
+                    var z = tw;
+                    tw = th;
+                    th = z;
+
+                    z = sx;
+                    sx = pack.Rect.Right - sy - sh;
+                    sy = pack.Rect.Top + z;
+
+                    z = sw;
+                    sw = sh;
+                    sh = z;
+                }
+                else
+                {
+                    sx += pack.Rect.X;
+                    sy += pack.Rect.Y;
+                }
             }
 
 
@@ -418,9 +436,9 @@ namespace Intersect.Client.MonoGame.Graphics
             if (Math.Abs(rotationDegrees) > 0.01)
             {
                 rotationDegrees = (float) ((Math.PI / 180) * rotationDegrees);
-                origin = new Vector2(sw / 2, sh / 2);
-                tx += sw / 2;
-                ty += sh / 2;
+                origin = new Vector2(sx + sw / 2f, sy + sh / 2f);
+                tx += origin.Y;
+                ty -= origin.X - tw;
             }
             if (renderTarget == null)
             {

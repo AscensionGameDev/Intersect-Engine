@@ -170,9 +170,8 @@ namespace Intersect.Client.MonoGame.File_Management
                             var filename = frame["filename"].ToString();
                             var sourceRect = new Rectangle(int.Parse(frame["frame"]["x"].ToString()), int.Parse(frame["frame"]["y"].ToString()), int.Parse(frame["frame"]["w"].ToString()), int.Parse(frame["frame"]["h"].ToString()));
                             var rotated = bool.Parse(frame["rotated"].ToString());
-                            var trimmed = bool.Parse(frame["trimmed"].ToString());
                             var sourceSize = new Rectangle(int.Parse(frame["spriteSourceSize"]["x"].ToString()), int.Parse(frame["spriteSourceSize"]["y"].ToString()), int.Parse(frame["spriteSourceSize"]["w"].ToString()), int.Parse(frame["spriteSourceSize"]["h"].ToString()));
-                            GameTexturePacks.AddFrame(new GameTexturePackFrame(filename, sourceRect, rotated, trimmed, sourceSize, platformText));
+                            GameTexturePacks.AddFrame(new GameTexturePackFrame(filename, sourceRect, rotated, sourceSize, platformText));
                         }
                     }
                 }

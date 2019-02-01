@@ -48,16 +48,14 @@ namespace Intersect.Client.Framework.Graphics
         public string Filename { get; set; }
         public Rectangle Rect { get; set; }
         public bool Rotated { get; set; }
-        public bool Trimmed { get; set; }
         public Rectangle SourceRect { get; set; }
         public GameTexture PackTexture { get; set; }
 
-        public GameTexturePackFrame(string filename, Rectangle rect, bool rotated, bool trimmed, Rectangle sourceSpriteRect, GameTexture packTexture)
+        public GameTexturePackFrame(string filename, Rectangle rect, bool rotated, Rectangle sourceSpriteRect, GameTexture packTexture)
         {
             Filename = filename.Replace('/','\\');
             Rect = rect;
             Rotated = rotated;
-            Trimmed = trimmed;
             SourceRect = sourceSpriteRect;
             PackTexture = packTexture;
         }

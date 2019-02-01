@@ -50,11 +50,13 @@ namespace Intersect.Editor.ContentManagement
 
         //Game Content
         public static List<GameTexture> AllTextures = new List<GameTexture>();
+        public static List<GameTexture> TilesetTextures = new List<GameTexture>();
+        public static List<GameTexture> FogTextures = new List<GameTexture>();
 
         static IDictionary<string, GameTexture> sTilesetDict = new Dictionary<string, GameTexture>();
         static IDictionary<string, GameTexture> sItemDict = new Dictionary<string, GameTexture>();
         static IDictionary<string, GameTexture> sEntityDict = new Dictionary<string, GameTexture>();
-        static IDictionary<string, GameTexture> sPellDict = new Dictionary<string, GameTexture>();
+        static IDictionary<string, GameTexture> sSpellDict = new Dictionary<string, GameTexture>();
         static IDictionary<string, GameTexture> sAnimationDict = new Dictionary<string, GameTexture>();
         static IDictionary<string, GameTexture> sFaceDict = new Dictionary<string, GameTexture>();
         static IDictionary<string, GameTexture> sImageDict = new Dictionary<string, GameTexture>();
@@ -63,9 +65,9 @@ namespace Intersect.Editor.ContentManagement
         static IDictionary<string, GameTexture> sPaperdollDict = new Dictionary<string, GameTexture>();
         static IDictionary<string, GameTexture> sGuiDict = new Dictionary<string, GameTexture>();
         static IDictionary<string, GameTexture> sMiscDict = new Dictionary<string, GameTexture>();
-        static IDictionary<string, Effect> sHaderDict = new Dictionary<string, Effect>();
+        static IDictionary<string, Effect> sShaderDict = new Dictionary<string, Effect>();
         static IDictionary<string, object> sMusicDict = new Dictionary<string, object>();
-        static IDictionary<string, object> sOundDict = new Dictionary<string, object>();
+        static IDictionary<string, object> sSoundDict = new Dictionary<string, object>();
 
         //Resource Downloader
         public static void CheckForResources()
@@ -180,16 +182,16 @@ namespace Intersect.Editor.ContentManagement
             container.AddService(typeof(IGraphicsDeviceService),
                 new DummyGraphicsDeviceManager(EditorGraphics.GetGraphicsDevice()));
             sContentManger = new ContentManager(container, "");
-            LoadItems();
             LoadEntities();
             LoadSpells();
             LoadAnimations();
-            LoadFaces();
             LoadImages();
             LoadFogs();
             LoadResources();
             LoadPaperdolls();
-            //NO GUI
+            LoadGui();
+            LoadFaces();
+            LoadItems();
             LoadMisc();
             LoadShaders();
             LoadSounds();
@@ -258,6 +260,7 @@ namespace Intersect.Editor.ContentManagement
             }
 
             sTilesetDict.Clear();
+            TilesetTextures.Clear();
             var badTilesets = new List<string>();
             for (var i = 0; i < TilesetBase.Lookup.Count; i++)
             {
@@ -268,6 +271,7 @@ namespace Intersect.Editor.ContentManagement
                     try
                     {
                         sTilesetDict[tileset.Name.ToLower()] = new GameTexture("resources/tilesets/" + tileset.Name);
+                        TilesetTextures.Add(sTilesetDict[tileset.Name.ToLower()]);
                     }
                     catch (Exception exception)
                     {
@@ -315,7 +319,7 @@ namespace Intersect.Editor.ContentManagement
 
         private static void LoadSpells()
         {
-            LoadTextureGroup("spells", sPellDict);
+            LoadTextureGroup("spells", sSpellDict);
         }
 
         private static void LoadAnimations()
@@ -333,9 +337,16 @@ namespace Intersect.Editor.ContentManagement
             LoadTextureGroup("images", sImageDict);
         }
 
+        private static void LoadGui()
+        {
+            LoadTextureGroup("gui", sGuiDict);
+        }
+
         private static void LoadFogs()
         {
             LoadTextureGroup("fogs", sFogDict);
+            FogTextures.Clear();
+            FogTextures.AddRange(sFogDict.Values.ToArray());
         }
 
         private static void LoadResources()
@@ -355,7 +366,7 @@ namespace Intersect.Editor.ContentManagement
 
         public static void LoadShaders()
         {
-            sHaderDict.Clear();
+            sShaderDict.Clear();
             if (!Directory.Exists("resources/" + "shaders"))
             {
                 Directory.CreateDirectory("resources/" + "shaders");
@@ -364,14 +375,14 @@ namespace Intersect.Editor.ContentManagement
             for (int i = 0; i < items.Length; i++)
             {
                 string filename = items[i].Replace("resources/" + "shaders" + "\\", "").ToLower();
-                sHaderDict.Add(filename,
+                sShaderDict.Add(filename,
                     sContentManger.Load<Effect>(RemoveExtension("resources/" + "shaders" + "/" + filename)));
             }
         }
 
         public static void LoadSounds()
         {
-            sOundDict.Clear();
+            sSoundDict.Clear();
             if (!Directory.Exists("resources/" + "sounds"))
             {
                 Directory.CreateDirectory("resources/" + "sounds");
@@ -380,7 +391,7 @@ namespace Intersect.Editor.ContentManagement
             for (int i = 0; i < items.Length; i++)
             {
                 string filename = items[i].Replace("resources/" + "sounds" + "\\", "").ToLower();
-                sOundDict.Add(filename, null); //TODO Sound Playback
+                sSoundDict.Add(filename, null); //TODO Sound Playback
             }
         }
 
@@ -429,7 +440,7 @@ namespace Intersect.Editor.ContentManagement
                     textureDict = sEntityDict;
                     break;
                 case TextureType.Spell:
-                    textureDict = sPellDict;
+                    textureDict = sSpellDict;
                     break;
                 case TextureType.Animation:
                     textureDict = sAnimationDict;
@@ -476,8 +487,8 @@ namespace Intersect.Editor.ContentManagement
                 return null;
             }
 
-            if (sHaderDict == null) return null;
-            return sHaderDict.TryGetValue(name.ToLower(), out Effect effect) ? effect : null;
+            if (sShaderDict == null) return null;
+            return sShaderDict.TryGetValue(name.ToLower(), out Effect effect) ? effect : null;
         }
 
         public static object GetMusic(string name)
@@ -500,8 +511,8 @@ namespace Intersect.Editor.ContentManagement
                 return null;
             }
 
-            if (sOundDict == null) return null;
-            return sOundDict.TryGetValue(name.ToLower(), out object sound) ? sound : null;
+            if (sSoundDict == null) return null;
+            return sSoundDict.TryGetValue(name.ToLower(), out object sound) ? sound : null;
         }
 
         public static string[] GetSmartSortedTextureNames(TextureType type) => SmartSort(GetTextureNames(type));
@@ -522,7 +533,7 @@ namespace Intersect.Editor.ContentManagement
                     textureDict = sEntityDict;
                     break;
                 case TextureType.Spell:
-                    textureDict = sPellDict;
+                    textureDict = sSpellDict;
                     break;
                 case TextureType.Animation:
                     textureDict = sAnimationDict;
@@ -564,7 +575,7 @@ namespace Intersect.Editor.ContentManagement
 
         public static string[] SmartSortedMusicNames => SmartSort(MusicNames);
 
-        public static string[] SoundNames => sOundDict?.Keys.ToArray();
+        public static string[] SoundNames => sSoundDict?.Keys.ToArray();
 
         public static string[] SmartSortedSoundNames => SmartSort(SoundNames);
 

@@ -42,12 +42,28 @@ namespace Intersect.Client.Classes.MonoGame.Graphics
             if (Texture == null) Texture = tex;
             else if (Texture.GetTexture() != platformTex) return false;
             if (vertexBuffer != null) return false;
-            
+
+            var rotated = false;
             var pack = tex.GetTexturePackFrame();
             if (pack != null)
             {
-                srcX += pack.Rect.X;
-                srcY += pack.Rect.Y;
+                if (pack.Rotated)
+                {
+                    rotated = true;
+
+                    var z = srcX;
+                    srcX = pack.Rect.Right - srcY - srcH;
+                    srcY = pack.Rect.Top + z;
+
+                    z = srcW;
+                    srcW = srcH;
+                    srcH = z;
+                }
+                else
+                {
+                    srcX += pack.Rect.X;
+                    srcY += pack.Rect.Y;
+                }
             }
 
             var texture = (Texture2D) tex.GetTexture();
@@ -61,10 +77,21 @@ namespace Intersect.Client.Classes.MonoGame.Graphics
             float top = srcY * textureSizeY;
 
             verticeDict.Add(new Tuple<float, float>(x,y), vertices.Count);
-            vertices.Add(new VertexPositionTexture(new Vector3(x, y + srcH, 0), new Vector2(left, bottom)));
-            vertices.Add(new VertexPositionTexture(new Vector3(x, y, 0), new Vector2(left, top)));
-            vertices.Add(new VertexPositionTexture(new Vector3(x + srcW, y + srcH, 0), new Vector2(right, bottom)));
-            vertices.Add(new VertexPositionTexture(new Vector3(x + srcW, y, 0), new Vector2(right, top)));
+
+            if (rotated)
+            {
+                vertices.Add(new VertexPositionTexture(new Vector3(x, y + srcH, 0), new Vector2(left, top)));
+                vertices.Add(new VertexPositionTexture(new Vector3(x, y, 0), new Vector2(right, top)));
+                vertices.Add(new VertexPositionTexture(new Vector3(x + srcW, y + srcH, 0), new Vector2(left, bottom)));
+                vertices.Add(new VertexPositionTexture(new Vector3(x + srcW, y, 0), new Vector2(right, bottom)));
+            }
+            else
+            {
+                vertices.Add(new VertexPositionTexture(new Vector3(x, y + srcH, 0), new Vector2(left, bottom)));
+                vertices.Add(new VertexPositionTexture(new Vector3(x, y, 0), new Vector2(left, top)));
+                vertices.Add(new VertexPositionTexture(new Vector3(x + srcW, y + srcH, 0), new Vector2(right, bottom)));
+                vertices.Add(new VertexPositionTexture(new Vector3(x + srcW, y, 0), new Vector2(right, top)));
+            }
 
 
             indices.Add((short)(vertexCount));
@@ -143,10 +170,26 @@ namespace Intersect.Client.Classes.MonoGame.Graphics
             if (vertexBuffer == null) return false;
 
             var pack = Texture.GetTexturePackFrame();
+            var rotated = false;
             if (pack != null)
             {
-                srcX += pack.Rect.X;
-                srcY += pack.Rect.Y;
+                if (pack.Rotated)
+                {
+                    rotated = true;
+
+                    var z = srcX;
+                    srcX = pack.Rect.Right - srcY - srcH;
+                    srcY = pack.Rect.Top + z;
+
+                    z = srcW;
+                    srcW = srcH;
+                    srcH = z;
+                }
+                else
+                {
+                    srcX += pack.Rect.X;
+                    srcY += pack.Rect.Y;
+                }
             }
 
             var texture = (Texture2D)Texture.GetTexture();
@@ -159,10 +202,20 @@ namespace Intersect.Client.Classes.MonoGame.Graphics
             float bottom = (srcY + srcH) * textureSizeY;
             float top = srcY * textureSizeY;
 
-            vertices[vertexIndex++] = new VertexPositionTexture(new Vector3(x, y + srcH, 0), new Vector2(left, bottom));
-            vertices[vertexIndex++] = new VertexPositionTexture(new Vector3(x, y, 0), new Vector2(left, top));
-            vertices[vertexIndex++] = new VertexPositionTexture(new Vector3(x + srcW, y + srcH, 0), new Vector2(right, bottom));
-            vertices[vertexIndex] = new VertexPositionTexture(new Vector3(x + srcW, y, 0), new Vector2(right, top));
+            if (rotated)
+            {
+                vertices[vertexIndex++] = new VertexPositionTexture(new Vector3(x, y + srcH, 0), new Vector2(left, top));
+                vertices[vertexIndex++] = new VertexPositionTexture(new Vector3(x, y, 0), new Vector2(right,top));
+                vertices[vertexIndex++] = new VertexPositionTexture(new Vector3(x + srcW, y + srcH, 0), new Vector2(left, bottom));
+                vertices[vertexIndex] = new VertexPositionTexture(new Vector3(x + srcW, y, 0), new Vector2(right,bottom));
+            }
+            else
+            {
+                vertices[vertexIndex++] = new VertexPositionTexture(new Vector3(x, y + srcH, 0), new Vector2(left, bottom));
+                vertices[vertexIndex++] = new VertexPositionTexture(new Vector3(x, y, 0), new Vector2(left, top));
+                vertices[vertexIndex++] = new VertexPositionTexture(new Vector3(x + srcW, y + srcH, 0), new Vector2(right, bottom));
+                vertices[vertexIndex] = new VertexPositionTexture(new Vector3(x + srcW, y, 0), new Vector2(right, top));
+            }
 
             updatesPending = true;
 

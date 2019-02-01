@@ -41,9 +41,11 @@ namespace Intersect.Client.MonoGame.Graphics
 
         public void LoadTexture()
         {
+            if (mTexture != null) return;
             if (mPackFrame != null)
             {
                 ((MonoTexture) mPackFrame.PackTexture).LoadTexture();
+                return;
             }
             mLoadError = true;
             if (!File.Exists(mPath)) return;
@@ -121,8 +123,27 @@ namespace Intersect.Client.MonoGame.Graphics
                 return Framework.GenericClasses.Color.White;
             }
 
+            var tex = mTexture;
+
+            var pack = GetTexturePackFrame();
+            if (pack != null)
+            {
+                tex = (Texture2D)mPackFrame.PackTexture.GetTexture();
+                if (pack.Rotated)
+                {
+                    var z = x1;
+                    x1 = pack.Rect.Right - y1 - pack.Rect.Height;
+                    y1 = pack.Rect.Top + z;
+                }
+                else
+                {
+                    x1 += pack.Rect.X;
+                    y1 += pack.Rect.Y;
+                }
+            }
+
             var pixel = new Microsoft.Xna.Framework.Color[1];
-            mTexture?.GetData(0, new Rectangle(x1, y1, 1, 1), pixel, 0, 1);
+            tex?.GetData(0, new Rectangle(x1, y1, 1, 1), pixel, 0, 1);
             return new Framework.GenericClasses.Color(pixel[0].A, pixel[0].R, pixel[0].G, pixel[0].B);
         }
 
