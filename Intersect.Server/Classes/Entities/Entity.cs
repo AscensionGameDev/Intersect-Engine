@@ -1120,8 +1120,17 @@ namespace Intersect.Server.Entities
 	        bool damagingAttack = (baseDamage > 0);
             if (enemy == null) return;
 
-			//Invulnerability
-			var statuses = enemy.Statuses.Values.ToArray();
+            //Remove stealth
+            foreach (var status in this.Statuses.Values.ToArray())
+            {
+                if (status.Type == StatusTypes.Stealth)
+                {
+                    status.RemoveStatus();
+                }
+            }
+
+            //Invulnerability
+            var statuses = enemy.Statuses.Values.ToArray();
 			foreach (var status in statuses)
 			{
 				if (status.Type == StatusTypes.Invulnerable)
@@ -1314,6 +1323,16 @@ namespace Intersect.Server.Entities
                                 break;
                             case SpellTargetTypes.Single:
                                 if (CastTarget == null) return;
+
+                                //If target has stealthed we cannot hit the spell.
+                                foreach (var status in CastTarget.Statuses.Values.ToArray())
+                                {
+                                    if (status.Type == StatusTypes.Stealth)
+                                    {
+                                        return;
+                                    }
+                                }
+
                                 if (spellBase.Combat.HitRadius > 0) //Single target spells with AoE hit radius'
                                 {
                                     HandleAoESpell(spellId, spellBase.Combat.HitRadius, CastTarget.MapId,
