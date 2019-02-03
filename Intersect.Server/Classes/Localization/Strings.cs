@@ -33,6 +33,7 @@ namespace Intersect.Server.Localization
             public static LocalizedString notfound = @"Error: Account {00} was not found!";
             public static LocalizedString unbanned = @"Account {00} has been unbanned!";
             public static LocalizedString unmuted = @"{00} has been unmuted!";
+            public static LocalizedString adminonly = @"The server is currently allowing only admins to connect. Come back later!";
         }
 
         public struct Bags
@@ -225,6 +226,16 @@ namespace Intersect.Server.Localization
             public static LocalizedString killdesc = @"Desc: Kills a player on the server.";
             public static LocalizedString killhelp = @"kills a player on the server";
             public static LocalizedString killusage = @"Usage: kill [username] {00}";
+            public static LocalizedString makeprivate = @"makeprivate";
+            public static LocalizedString makeprivatedesc = @"Desc: Makes the server private and can only be accessed by admins.";
+            public static LocalizedString makeprivatehelp = @"Makes the server private and can only be accessed by admins.";
+            public static LocalizedString makeprivateusage = @"Usage: makeprivate";
+            public static LocalizedString madeprivate = @"The server has now been made private and can only be accessed by admins. To change this use the makepublic command or edit the adminonly field in config.json";
+            public static LocalizedString makepublic = @"makepublic";
+            public static LocalizedString makepublicdesc = @"Desc: Makes the server public to all players.";
+            public static LocalizedString makepublichelp = @"Makes the server public to all players.";
+            public static LocalizedString makepublicusage = @"Usage: makepublic";
+            public static LocalizedString madepublic = @"The server has now been made public and can be accessed by all players. To change this use the makepublic command or edit the adminonly field in config.json";
             public static LocalizedString migrate = @"migrate";
             public static LocalizedString migratedesc = @"Desc: Walks you through migrating your player or game database between sqlite and mysql.";
             public static LocalizedString migratehelp = @"walks you through migrating your player or game database between sqlite and mysql";

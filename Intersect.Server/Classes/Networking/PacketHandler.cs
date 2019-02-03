@@ -343,6 +343,16 @@ namespace Intersect.Server.Networking
                     return;
                 }
 
+                //Check that server is in admin only mode
+                if (Options.AdminOnly)
+                {
+                    if (client.Power == UserRights.None)
+                    {
+                        PacketSender.SendLoginError(client, Strings.Account.adminonly);
+                        return;
+                    }
+                }
+
                 //Check Mute Status and Load into user property
                 Mute.CheckMute(client.User, client.GetIp());
 
@@ -1152,6 +1162,16 @@ namespace Intersect.Server.Networking
                 {
                     LegacyDatabase.CreateAccount(client, username, password, email);
                     PacketSender.SendServerConfig(client);
+
+                    //Check that server is in admin only mode
+                    if (Options.AdminOnly)
+                    {
+                        if (client.Power == UserRights.None)
+                        {
+                            PacketSender.SendLoginError(client, Strings.Account.adminonly);
+                            return;
+                        }
+                    }
 
                     //Character selection if more than one.
                     if (Options.MaxCharacters > 1)

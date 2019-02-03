@@ -47,6 +47,7 @@ namespace Intersect
         public static bool OpenPortChecker => _options._portChecker;
         public static bool ApiEnabled => _options._api;
         public static ushort ApiPort => _options._apiPort;
+        public static bool AdminOnly { get => _options._adminOnly; set => _options._adminOnly = value; }
 
         public static DatabaseOptions PlayerDb
         {
@@ -88,6 +89,9 @@ namespace Intersect
 
         [JsonProperty("ServerPort")]
         protected ushort _serverPort = 5400;
+
+        [JsonProperty("AdminOnly")]
+        protected bool _adminOnly = false;
 
         [JsonProperty("UseApi")]
         protected bool _api;
