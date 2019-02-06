@@ -2767,7 +2767,7 @@ namespace Intersect.Server.Networking
 
         private static void HandleCreateNewChar(Client client, byte[] packet)
         {
-            if (client.Characters.Count < Options.MaxCharacters)
+            if (client?.Characters?.Count < Options.MaxCharacters)
             {
                 PacketSender.SendGameObjects(client, GameObjectType.Class);
                 PacketSender.SendCreateCharacter(client);
