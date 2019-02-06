@@ -114,7 +114,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     cmbMap.Items.Clear();
                     for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
                     {
-                        cmbMap.Items.Add(MapList.GetOrderedMaps()[i].MapId + ". " + MapList.GetOrderedMaps()[i].Name);
+                        cmbMap.Items.Add($@"{MapList.GetOrderedMaps()[i].Name} ({MapList.GetOrderedMaps()[i].MapId})");
                         if (MapList.GetOrderedMaps()[i].MapId == mMyCommand.MapId)
                         {
                             cmbMap.SelectedIndex = i;
