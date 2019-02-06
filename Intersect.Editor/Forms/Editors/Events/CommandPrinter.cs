@@ -630,7 +630,7 @@ namespace Intersect.Editor.Forms.Editors.Events
                     if (MapList.GetOrderedMaps()[i].MapId == command.MapId)
                     {
                         return Strings.EventCommandList.playanimation.ToString(AnimationBase.GetName(command.AnimationId),Strings.EventCommandList.animationonmap.ToString(
-                                MapList.GetOrderedMaps()[i].Name, command.X, command.Y,Strings.Directions.dir[command.Dir]));
+                                MapList.GetOrderedMaps()[i].Name, command.X, command.Y,Strings.Directions.dir[(sbyte)command.Dir]));
                     }
                 }
                 return Strings.EventCommandList.playanimation.ToString(AnimationBase.GetName(command.AnimationId), Strings.EventCommandList.animationonmap.ToString(
