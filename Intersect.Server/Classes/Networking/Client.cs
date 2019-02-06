@@ -50,7 +50,7 @@ namespace Intersect.Server.Networking
         private IConnection mConnection;
 
         public Guid EditorMap = Guid.Empty;
-        public Player Entity;
+        public Player Entity { get; set; }
 
         //Client Properties
         public bool IsEditor;

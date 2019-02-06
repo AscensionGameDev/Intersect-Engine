@@ -30,7 +30,7 @@ namespace Intersect.Server.Entities
     public class Player : EntityInstance
     {
         //Online Players List
-        private static Dictionary<Guid, Player> OnlinePlayers = new Dictionary<Guid, Player>();
+        [NotNull] private static readonly Dictionary<Guid, Player> OnlinePlayers = new Dictionary<Guid, Player>();
         public static Player Find(Guid id) => OnlinePlayers.ContainsKey(id) ? OnlinePlayers[id] : null;
         public static Player Find(string charName) => OnlinePlayers.Values.FirstOrDefault(s => s.Name.ToLower().Trim() == charName.ToLower().Trim());
         public static int OnlineCount => OnlinePlayers.Count;
@@ -178,19 +178,32 @@ namespace Intersect.Server.Entities
             
         }
 
-        public void Online()
+        public void SetOnline()
         {
             IsDisposed = false;
             mSentMap = false;
+            if (OnlinePlayers.TryGetValue(Id, out var player))
+            {
+                if (player != this)
+                {
+                    throw new InvalidOperationException($@"A player with the id {Id} is already listed as online.");
+                }
+            }
             OnlinePlayers.Add(Id, this);
         }
 
         public override void Dispose()
         {
-            if (!IsDisposed)
+            if (IsDisposed)
             {
-                base.Dispose();
-                if (OnlinePlayers.ContainsKey(Id)) OnlinePlayers.Remove(Id);
+                return;
+            }
+
+            base.Dispose();
+
+            if (OnlinePlayers?.ContainsKey(Id) ?? false)
+            {
+                OnlinePlayers.Remove(Id);
             }
         }
 

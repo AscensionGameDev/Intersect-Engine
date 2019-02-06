@@ -365,7 +365,7 @@ namespace Intersect.Server.Networking
                 else if (client.Characters?.Count > 0)
                 {
                     client.LoadCharacter(client.Characters.First());
-                    client.Entity.Online();
+                    client.Entity.SetOnline();
                     PacketSender.SendJoinGame(client);
                 }
                 else
@@ -1246,7 +1246,7 @@ namespace Intersect.Server.Networking
                 player.StatPoints = classBase.BasePoints;
 
                 PacketSender.SendJoinGame(client);
-                player.Online();
+                player.SetOnline();
 
                 for (int i = 0; i < classBase.Spells.Count; i++)
                 {
@@ -2736,9 +2736,19 @@ namespace Intersect.Server.Networking
             var character = LegacyDatabase.GetUserCharacter(client.User, charId);
             if (character != null)
             {
+
                 client.LoadCharacter(character);
-                PacketSender.SendJoinGame(client);
-                client.Entity.Online();
+                try
+                {
+                    client.Entity?.SetOnline();
+                    PacketSender.SendJoinGame(client);
+                }
+                catch (Exception exception)
+                {
+                    Log.Warn(exception);
+                    PacketSender.SendLoginError(client, Strings.Account.loadfail);
+                    client.Logout();
+                }
             }
             bf.Dispose();
         }
