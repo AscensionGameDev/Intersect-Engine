@@ -164,14 +164,13 @@ namespace Intersect.Server.Entities
         }
 
         [NotMapped]
-        public long ExperienceToNextLevel
+        public long ExperienceToNextLevel => GetExperienceToNextLevel(Level);
+
+        private long GetExperienceToNextLevel(int level)
         {
-            get
-            {
-                if (Level >= Options.MaxLevel) return -1;
-                var classBase = ClassBase.Get(ClassId);
-                return classBase?.ExperienceToNextLevel(Level) ?? ClassBase.DEFAULT_BASE_EXPERIENCE;
-            }
+            if (level >= Options.MaxLevel) return -1;
+            var classBase = ClassBase.Get(ClassId);
+            return classBase?.ExperienceToNextLevel(level) ?? ClassBase.DEFAULT_BASE_EXPERIENCE;
         }
 
         public Player()
@@ -647,9 +646,9 @@ namespace Intersect.Server.Entities
         private bool CheckLevelUp()
         {
             var levelCount = 0;
-            while (Exp >= ExperienceToNextLevel && ExperienceToNextLevel > 0)
+            while (Exp >= GetExperienceToNextLevel(Level + levelCount) && GetExperienceToNextLevel(Level + levelCount) > 0)
             {
-                Exp -= ExperienceToNextLevel;
+                Exp -= GetExperienceToNextLevel(Level + levelCount);
                 levelCount++;
             }
             if (levelCount <= 0) return false;
