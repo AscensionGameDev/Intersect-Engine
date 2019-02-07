@@ -855,7 +855,7 @@ namespace Intersect.Server.Networking
             DatabaseObjectLookup gameMaps = new DatabaseObjectLookup();
             foreach (var pair in MapInstance.Lookup.Pairs) gameMaps.Set(pair.Key, pair.Value);
             bf.WriteLong((int)ServerPackets.MapList);
-            bf.WriteString(MapList.GetList().JsonData);
+            bf.WriteString(MapList.List.JsonData);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -866,8 +866,8 @@ namespace Intersect.Server.Networking
             DatabaseObjectLookup gameMaps = new DatabaseObjectLookup();
             foreach (var pair in MapInstance.Lookup.Pairs) gameMaps.Set(pair.Key, pair.Value);
             bf.WriteLong((int)ServerPackets.MapList);
-            MapList.GetList().PostLoad(MapInstance.Lookup,true,true);
-            bf.WriteString(MapList.GetList().JsonData);
+            MapList.List.PostLoad(MapInstance.Lookup,true,true);
+            bf.WriteString(MapList.List.JsonData);
             SendDataToAll(bf.ToArray());
             bf.Dispose();
         }
@@ -1906,7 +1906,7 @@ namespace Intersect.Server.Networking
                         if (friend.Target.Name.ToLower() == c.Entity.Name.ToLower())
                         {
                             online.Add(friend.Target.Name);
-                            map.Add(MapList.GetList().FindMap(friend.Target.MapId).Name);
+                            map.Add(MapList.List.FindMap(friend.Target.MapId).Name);
                             found = true;
                             break;
                         }

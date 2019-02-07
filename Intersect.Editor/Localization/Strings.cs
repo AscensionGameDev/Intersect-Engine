@@ -2308,7 +2308,7 @@ Negative values for time to flow backwards.";
 
         public static string GetEventConditionalDesc(MapIsCondition condition)
         {
-            var map = Intersect.GameObjects.Maps.MapList.MapList.GetList().FindMap(condition.MapId);
+            var map = Intersect.GameObjects.Maps.MapList.MapList.List.FindMap(condition.MapId);
             if (map != null)  return Strings.EventConditionDesc.map.ToString(map.Name);
             return Strings.EventConditionDesc.map.ToString(EventConditionDesc.mapnotfound);
         }

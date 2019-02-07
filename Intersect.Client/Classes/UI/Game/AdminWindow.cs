@@ -271,7 +271,7 @@ namespace Intersect.Client.UI.Game
         {
             mMapList.Dispose();
             CreateMapList();
-            AddMapListToTree(MapList.GetList(), null);
+            AddMapListToTree(MapList.List, null);
         }
 
         private void AddMapListToTree(MapList mapList, TreeNode parent)
@@ -279,10 +279,10 @@ namespace Intersect.Client.UI.Game
             TreeNode tmpNode;
             if (mChkChronological.IsChecked)
             {
-                for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
+                for (int i = 0; i < MapList.OrderedMaps.Count; i++)
                 {
-                    tmpNode = mMapList.AddNode(MapList.GetOrderedMaps()[i].Name);
-                    tmpNode.UserData = (MapList.GetOrderedMaps()[i]).MapId;
+                    tmpNode = mMapList.AddNode(MapList.OrderedMaps[i].Name);
+                    tmpNode.UserData = (MapList.OrderedMaps[i]).MapId;
                     tmpNode.DoubleClicked += tmpNode_DoubleClicked;
                     tmpNode.Clicked += tmpNode_DoubleClicked;
                 }

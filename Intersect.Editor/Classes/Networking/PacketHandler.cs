@@ -256,7 +256,7 @@ namespace Intersect.Editor.Networking
                 {
                     if (Globals.CurrentMap == MapInstance.Get(mapId))
                     {
-                        Globals.MainForm.EnterMap(MapList.GetList().FindFirstMap());
+                        Globals.MainForm.EnterMap(MapList.List.FindFirstMap());
                     }
                     MapInstance.Get(mapId).Delete();
                 }
@@ -385,11 +385,11 @@ namespace Intersect.Editor.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            MapList.GetList().JsonData = bf.ReadString();
-            MapList.GetList().PostLoad(MapBase.Lookup, false, true);
+            MapList.List.JsonData = bf.ReadString();
+            MapList.List.PostLoad(MapBase.Lookup, false, true);
             if (Globals.CurrentMap == null)
             {
-                Globals.MainForm.EnterMap(MapList.GetList().FindFirstMap());
+                Globals.MainForm.EnterMap(MapList.List.FindFirstMap());
             }
             Globals.MapListWindow.BeginInvoke(Globals.MapListWindow.mapTreeList.MapListDelegate, Guid.Empty, null);
             bf.Dispose();

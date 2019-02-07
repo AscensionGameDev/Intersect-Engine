@@ -106,7 +106,7 @@ namespace Intersect.Editor.Forms.Editors
             nudWarpY.Maximum = (int) Options.MapHeight;
 
             cmbWarpMap.Items.Clear();
-            cmbWarpMap.Items.AddRange(MapList.GetOrderedMaps().Select(map => map?.Name).ToArray());
+            cmbWarpMap.Items.AddRange(MapList.OrderedMaps.Select(map => map?.Name).ToArray());
             cmbWarpMap.SelectedIndex = 0;
 
             nudStr.Maximum = Options.MaxStatValue;
@@ -321,9 +321,9 @@ namespace Intersect.Editor.Forms.Editors
             else if (cmbType.SelectedIndex == (int) SpellTypes.Warp)
             {
                 grpWarp.Show();
-                for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
+                for (int i = 0; i < MapList.OrderedMaps.Count; i++)
                 {
-                    if (MapList.GetOrderedMaps()[i].MapId == mEditorItem.Warp.MapId)
+                    if (MapList.OrderedMaps[i].MapId == mEditorItem.Warp.MapId)
                     {
                         cmbWarpMap.SelectedIndex = i;
                         break;
@@ -669,14 +669,14 @@ namespace Intersect.Editor.Forms.Editors
         private void btnVisualMapSelector_Click(object sender, EventArgs e)
         {
             FrmWarpSelection frmWarpSelection = new FrmWarpSelection();
-            frmWarpSelection.SelectTile(MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapId, (int) nudWarpX.Value,
+            frmWarpSelection.SelectTile(MapList.OrderedMaps[cmbWarpMap.SelectedIndex].MapId, (int) nudWarpX.Value,
                 (int) nudWarpY.Value);
             frmWarpSelection.ShowDialog();
             if (frmWarpSelection.GetResult())
             {
-                for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
+                for (int i = 0; i < MapList.OrderedMaps.Count; i++)
                 {
-                    if (MapList.GetOrderedMaps()[i].MapId == frmWarpSelection.GetMap())
+                    if (MapList.OrderedMaps[i].MapId == frmWarpSelection.GetMap())
                     {
                         cmbWarpMap.SelectedIndex = i;
                         break;
@@ -691,7 +691,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (cmbWarpMap.SelectedIndex > -1 && mEditorItem != null)
             {
-                mEditorItem.Warp.MapId = MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapId;
+                mEditorItem.Warp.MapId = MapList.OrderedMaps[cmbWarpMap.SelectedIndex].MapId;
             }
         }
 

@@ -706,8 +706,8 @@ namespace Intersect.Client.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            MapList.GetList().JsonData = bf.ReadString();
-            MapList.GetList().PostLoad(MapBase.Lookup, false, true);
+            MapList.List.JsonData = bf.ReadString();
+            MapList.List.PostLoad(MapBase.Lookup, false, true);
             //If admin window is open update it
             bf.Dispose();
         }

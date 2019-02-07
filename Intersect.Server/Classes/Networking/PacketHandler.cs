@@ -730,7 +730,7 @@ namespace Intersect.Server.Networking
                 destType = -1;
                 if (destType == -1)
                 {
-                    MapList.GetList().AddMap(newMap, tmpMap.TimeCreated, MapBase.Lookup);
+                    MapList.List.AddMap(newMap, tmpMap.TimeCreated, MapBase.Lookup);
                 }
                 LegacyDatabase.SaveGameDatabaseAsync();
                 PacketSender.SendMapListToAll();
@@ -869,14 +869,14 @@ namespace Intersect.Server.Networking
                     PacketSender.SendMap(client, newMap, true);
                     PacketSender.SendMapGridToAll(MapInstance.Get(newMap).MapGrid);
                     PacketSender.SendEnterMap(client, newMap);
-                    var folderDir = MapList.GetList().FindMapParent(relativeMap, null);
+                    var folderDir = MapList.List.FindMapParent(relativeMap, null);
                     if (folderDir != null)
                     {
                         folderDir.Children.AddMap(newMap, MapInstance.Get(newMap).TimeCreated, MapBase.Lookup);
                     }
                     else
                     {
-                        MapList.GetList().AddMap(newMap, MapInstance.Get(newMap).TimeCreated, MapBase.Lookup);
+                        MapList.List.AddMap(newMap, MapInstance.Get(newMap).TimeCreated, MapBase.Lookup);
                     }
                     LegacyDatabase.SaveGameDatabaseAsync();
                     PacketSender.SendMapListToAll();
@@ -1421,21 +1421,21 @@ namespace Intersect.Server.Networking
             switch (type)
             {
                 case (int)MapListUpdates.MoveItem:
-                    MapList.GetList().HandleMove(bf.ReadInteger(), bf.ReadGuid(), bf.ReadInteger(), bf.ReadGuid());
+                    MapList.List.HandleMove(bf.ReadInteger(), bf.ReadGuid(), bf.ReadInteger(), bf.ReadGuid());
                     break;
                 case (int)MapListUpdates.AddFolder:
                     destType = bf.ReadInteger();
                     parent = null;
                     if (destType == -1)
                     {
-                        MapList.GetList().AddFolder(Strings.Mapping.newfolder);
+                        MapList.List.AddFolder(Strings.Mapping.newfolder);
                     }
                     else if (destType == 0)
                     {
-                        parent = MapList.GetList().FindDir(bf.ReadGuid());
+                        parent = MapList.List.FindDir(bf.ReadGuid());
                         if (parent == null)
                         {
-                            MapList.GetList().AddFolder(Strings.Mapping.newfolder);
+                            MapList.List.AddFolder(Strings.Mapping.newfolder);
                         }
                         else
                         {
@@ -1445,10 +1445,10 @@ namespace Intersect.Server.Networking
                     else if (destType == 1)
                     {
                         mapId = bf.ReadGuid();
-                        parent = MapList.GetList().FindMapParent(mapId, null);
+                        parent = MapList.List.FindMapParent(mapId, null);
                         if (parent == null)
                         {
-                            MapList.GetList().AddFolder(Strings.Mapping.newfolder);
+                            MapList.List.AddFolder(Strings.Mapping.newfolder);
                         }
                         else
                         {
@@ -1461,7 +1461,7 @@ namespace Intersect.Server.Networking
                     parent = null;
                     if (destType == 0)
                     {
-                        parent = MapList.GetList().FindDir(bf.ReadGuid());
+                        parent = MapList.List.FindDir(bf.ReadGuid());
                         parent.Name = bf.ReadString();
                         PacketSender.SendMapListToAll();
                     }
@@ -1478,7 +1478,7 @@ namespace Intersect.Server.Networking
                     parent = null;
                     if (destType == 0)
                     {
-                        MapList.GetList().DeleteFolder(bf.ReadGuid());
+                        MapList.List.DeleteFolder(bf.ReadGuid());
                         PacketSender.SendMapListToAll();
                     }
                     else if (destType == 1)
@@ -1491,7 +1491,7 @@ namespace Intersect.Server.Networking
                         }
                         mapId = bf.ReadGuid();
                         var players = MapInstance.Get(mapId).GetPlayersOnMap();
-                        MapList.GetList().DeleteMap(mapId);
+                        MapList.List.DeleteMap(mapId);
                         LegacyDatabase.DeleteGameObject(MapInstance.Get(mapId));
                         LegacyDatabase.SaveGameDatabaseAsync();
                         LegacyDatabase.GenerateMapGrids();
