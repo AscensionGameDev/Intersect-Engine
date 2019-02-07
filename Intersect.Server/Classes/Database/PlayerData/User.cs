@@ -85,10 +85,23 @@ namespace Intersect.Server.Database.PlayerData
         public static User GetUser(PlayerContext context, string username)
         {
             var user = _getUser(context, username);
+
+            if (user == null)
+            {
+                return null;
+            }
+
+            if (user.Characters == null)
+            {
+                return user;
+            }
+
             foreach (var chr in user.Characters)
             {
                 LoadCharacter(chr);
-            } return user;
+            }
+
+            return user;
         }
 
         public void SetMuted(bool muted, string reason)
