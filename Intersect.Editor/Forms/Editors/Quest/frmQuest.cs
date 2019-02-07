@@ -113,23 +113,35 @@ namespace Intersect.Editor.Forms.Editors.Quest
         private void btnSave_Click(object sender, EventArgs e)
         {
             //Send Changed items
-            foreach (var item in mChanged)
+            mChanged?.ForEach(item =>
             {
+                if (item == null)
+                {
+                    return;
+                }
+
                 PacketSender.SendSaveObject(item);
                 PacketSender.SendSaveObject(item.StartEvent);
                 PacketSender.SendSaveObject(item.EndEvent);
-                foreach (var tsk in item.Tasks)
+                item.Tasks?.ForEach(tsk =>
                 {
+                    if (tsk?.EdittingEvent == null)
+                    {
+                        return;
+                    }
+
                     if (tsk.EdittingEvent.Id != Guid.Empty)
                     {
                         PacketSender.SendSaveObject(tsk.EdittingEvent);
                     }
+
                     tsk.EdittingEvent.DeleteBackup();
-                }
-                item.StartEvent.DeleteBackup();
-                item.EndEvent.DeleteBackup();
+                });
+
+                item.StartEvent?.DeleteBackup();
+                item.EndEvent?.DeleteBackup();
                 item.DeleteBackup();
-            }
+            });
 
             mEditorItem = null;
             Hide();
