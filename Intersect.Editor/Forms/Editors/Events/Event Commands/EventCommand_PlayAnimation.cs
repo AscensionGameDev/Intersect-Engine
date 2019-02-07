@@ -112,10 +112,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 case 0: //Tile Spawn
                     grpTileSpawn.Show();
                     cmbMap.Items.Clear();
-                    for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
+                    for (int i = 0; i < MapList.OrderedMaps.Count; i++)
                     {
-                        cmbMap.Items.Add($@"{MapList.GetOrderedMaps()[i].Name} ({MapList.GetOrderedMaps()[i].MapId})");
-                        if (MapList.GetOrderedMaps()[i].MapId == mMyCommand.MapId)
+                        cmbMap.Items.Add($@"{MapList.OrderedMaps[i].Name} ({MapList.OrderedMaps[i].MapId})");
+                        if (MapList.OrderedMaps[i].MapId == mMyCommand.MapId)
                         {
                             cmbMap.SelectedIndex = i;
                         }
@@ -175,7 +175,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             {
                 case 0: //Tile Spawn
                     mMyCommand.EntityId = Guid.Empty;
-                    mMyCommand.MapId = MapList.GetOrderedMaps()[cmbMap.SelectedIndex].MapId;
+                    mMyCommand.MapId = MapList.OrderedMaps[cmbMap.SelectedIndex].MapId;
                     mMyCommand.X = (int) nudWarpX.Value;
                     mMyCommand.Y = (int) nudWarpY.Value;
                     mMyCommand.Dir = (byte)cmbDirection.SelectedIndex;
@@ -230,14 +230,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void btnVisual_Click(object sender, EventArgs e)
         {
             FrmWarpSelection frmWarpSelection = new FrmWarpSelection();
-            frmWarpSelection.SelectTile(MapList.GetOrderedMaps()[cmbMap.SelectedIndex].MapId, (int) nudWarpX.Value,
+            frmWarpSelection.SelectTile(MapList.OrderedMaps[cmbMap.SelectedIndex].MapId, (int) nudWarpX.Value,
                 (int) nudWarpY.Value);
             frmWarpSelection.ShowDialog();
             if (frmWarpSelection.GetResult())
             {
-                for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
+                for (int i = 0; i < MapList.OrderedMaps.Count; i++)
                 {
-                    if (MapList.GetOrderedMaps()[i].MapId == frmWarpSelection.GetMap())
+                    if (MapList.OrderedMaps[i].MapId == frmWarpSelection.GetMap())
                     {
                         cmbMap.SelectedIndex = i;
                         break;
