@@ -307,10 +307,20 @@ namespace Intersect.Client.UI.Game.Crafting
         {
             if (!mInitialized)
             {
-                ListBoxRow tmpRow;
-                for (int i = 0; i < Globals.ActiveCraftingTable.Crafts.Count; i++)
+                for (var i = 0; i < Globals.ActiveCraftingTable?.Crafts?.Count; ++i)
                 {
-                    tmpRow = mRecipes.AddRow((i + 1) + ") " + ItemBase.GetName(CraftBase.Get(Globals.ActiveCraftingTable.Crafts[i]).ItemId));
+                    var activeCraft = CraftBase.Get(Globals.ActiveCraftingTable.Crafts[i]);
+                    if (activeCraft == null)
+                    {
+                        continue;
+                    }
+
+                    var tmpRow = mRecipes?.AddRow((i + 1) + ") " + ItemBase.GetName(activeCraft.ItemId));
+                    if (tmpRow == null)
+                    {
+                        continue;
+                    }
+
                     tmpRow.UserData = Globals.ActiveCraftingTable.Crafts[i];
                     tmpRow.DoubleClicked += tmpNode_DoubleClicked;
                     tmpRow.Clicked += tmpNode_DoubleClicked;
@@ -318,25 +328,46 @@ namespace Intersect.Client.UI.Game.Crafting
                 }
 
                 //Load the craft data
-                if (Globals.ActiveCraftingTable.Crafts.Count > 0) LoadCraftItems(Globals.ActiveCraftingTable.Crafts[0]);
+                if (Globals.ActiveCraftingTable?.Crafts?.Count > 0)
+                {
+                    LoadCraftItems(Globals.ActiveCraftingTable.Crafts[0]);
+                }
                 mInitialized = true;
             }
-            if (Crafting == true)
-            {
-                long i = Globals.System.GetTimeMs() - mBarTimer;
-                if (i > CraftBase.Get(mCraftId).Time)
-                {
-                    i = CraftBase.Get(mCraftId).Time;
-                    Crafting = false;
-                    mCraftWindow.IsClosable = true;
-                    LoadCraftItems(mCraftId);
-                }
 
-                decimal ratio = Convert.ToDecimal(i) / Convert.ToDecimal(CraftBase.Get(mCraftId).Time);
-                decimal width =  ratio * mBarContainer.Width;
-                mBar.SetTextureRect(0, 0, Convert.ToInt32(ratio * mBar.Texture.GetWidth()), mBar.Texture.GetHeight());
-                mBar.Width = Convert.ToInt32(width);
+            if (!Crafting)
+            {
+                return;
             }
+
+            var craft = CraftBase.Get(mCraftId);
+            if (craft == null)
+            {
+                return;
+            }
+
+            var delta = Globals.System.GetTimeMs() - mBarTimer;
+            if (delta > craft.Time)
+            {
+                delta = craft.Time;
+                Crafting = false;
+                if (mCraftWindow != null)
+                {
+                    mCraftWindow.IsClosable = true;
+                }
+                LoadCraftItems(mCraftId);
+            }
+
+            var ratio = craft.Time == 0 ? 0 : Convert.ToDecimal(delta) / Convert.ToDecimal(craft.Time);
+            var width = ratio * mBarContainer?.Width ?? 0;
+
+            if (mBar == null)
+            {
+                return;
+            }
+
+            mBar.SetTextureRect(0, 0, Convert.ToInt32(ratio * mBar.Texture?.GetWidth() ?? 0), mBar.Texture?.GetHeight() ?? 0);
+            mBar.Width = Convert.ToInt32(width);
         }
     }
 }
