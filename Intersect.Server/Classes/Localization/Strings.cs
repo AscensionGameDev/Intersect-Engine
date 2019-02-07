@@ -16,7 +16,7 @@ namespace Intersect.Server.Localization
             public static LocalizedString badaccess = @"Access denied! Invalid power level!";
             public static LocalizedString badlogin = @"Username or password incorrect.";
             public static LocalizedString banned = @"{00} has been banned!";
-            public static LocalizedString banstatus = @"Your account has been banned since: {00} by {01}. Ban expires: {02}. Reason for ban: {03}";
+            public static LocalizedString banstatus = @"Your account has been banned since: {00} (UTC) by {01}. Ban expires: {02} (UTC). Reason for ban: {03}";
             public static LocalizedString characterexists = @"An account with this character name exists. Please choose another.";
             public static LocalizedString deletechar = @"The character has been deleted.";
             public static LocalizedString deleted = @"Delete Character";

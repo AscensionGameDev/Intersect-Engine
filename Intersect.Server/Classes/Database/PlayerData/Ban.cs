@@ -51,6 +51,7 @@ namespace Intersect.Server.Database.PlayerData
 
         public static string CheckBan([NotNull] User user, string ip)
         {
+            // TODO: Move this off of the server so that ban dates can be formatted in local time.
             var ban = PlayerContext.Current?.Bans?.SingleOrDefault(p => p.Player == user) ??
                       PlayerContext.Current?.Bans?.SingleOrDefault(p => p.Ip == ip);
             return ban != null ? Strings.Account.banstatus.ToString(ban.StartTime, ban.Banner, ban.EndTime, ban.Reason) : null;

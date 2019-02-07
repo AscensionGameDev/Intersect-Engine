@@ -7,6 +7,7 @@ using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 using Intersect.Server.Networking.Lidgren;
 using Intersect.Server.WebApi;
+using JetBrains.Annotations;
 
 namespace Intersect.Server.General
 {
@@ -24,9 +25,9 @@ namespace Intersect.Server.General
         public static bool ServerStopped;
         public static ServerSystem System = new ServerSystem();
 
-        public static object ClientLock = new object();
-        public static List<Client> Clients = new List<Client>();
-        public static IDictionary<Guid, Client> ClientLookup = new Dictionary<Guid, Client>();
+        [NotNull] public static readonly object ClientLock = new object();
+        [NotNull] public static readonly List<Client> Clients = new List<Client>();
+        [NotNull] public static readonly IDictionary<Guid, Client> ClientLookup = new Dictionary<Guid, Client>();
 
         //Game helping stuff
         public static Random Rand = new Random();

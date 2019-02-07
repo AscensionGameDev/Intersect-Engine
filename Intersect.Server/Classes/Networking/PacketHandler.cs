@@ -319,7 +319,7 @@ namespace Intersect.Server.Networking
 
                 lock (Globals.ClientLock)
                 {
-                    Globals.Clients?.ForEach(user =>
+                    Globals.Clients.ForEach(user =>
                     {
                         if (user == client) return;
                         if (user?.IsEditor ?? false) return;
