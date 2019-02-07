@@ -6,6 +6,7 @@ using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.Models;
 using Intersect.Utilities;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace Intersect.GameObjects.Maps
@@ -58,10 +59,19 @@ namespace Intersect.GameObjects.Maps
         public string LightsJson
         {
             get => JsonConvert.SerializeObject(Lights);
-            set => Lights = JsonConvert.DeserializeObject<List<LightBase>>(value);
+            set
+            {
+                Lights.Clear();
+                var lights = JsonConvert.DeserializeObject<List<LightBase>>(value);
+                if (lights != null)
+                {
+                    Lights.AddRange(lights);
+                }
+            }
         }
         [NotMapped]
-        public List<LightBase> Lights { get; set; } = new List<LightBase>();
+        [NotNull]
+        public readonly List<LightBase> Lights = new List<LightBase>();
 
         [Column("Events")]
         [JsonIgnore]
@@ -77,21 +87,32 @@ namespace Intersect.GameObjects.Maps
         public string LocalEventsJson
         {
             get => JsonConvert.SerializeObject(LocalEvents, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
-            set => JsonConvert.PopulateObject(value, LocalEvents, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
+            set => JsonConvert.PopulateObject(value, LocalEvents, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
         }
         [NotMapped]
         [JsonIgnore]
-        public Dictionary<Guid, EventBase> LocalEvents = new Dictionary<Guid, EventBase>();
+        [NotNull]
+        public readonly Dictionary<Guid, EventBase> LocalEvents = new Dictionary<Guid, EventBase>();
 
         [Column("NpcSpawns")]
         [JsonIgnore]
         public string NpcSpawnsJson
         {
             get => JsonConvert.SerializeObject(Spawns);
-            set => Spawns = JsonConvert.DeserializeObject<List<NpcSpawn>>(value);
+            set
+            {
+                Spawns.Clear();
+
+                var spawns = JsonConvert.DeserializeObject<List<NpcSpawn>>(value);
+                if (spawns != null)
+                {
+                    Spawns.AddRange(spawns);
+                }
+            }
         }
         [NotMapped]
-        public List<NpcSpawn> Spawns { get; set; } = new List<NpcSpawn>();
+        [NotNull]
+        public readonly List<NpcSpawn> Spawns  = new List<NpcSpawn>();
 
         //Properties
         public string Music { get; set; } = null;
@@ -163,17 +184,23 @@ namespace Intersect.GameObjects.Maps
             IsClient = false;
         }
 
-        public MapBase(MapBase mapcopy) : base(mapcopy.Id)
+        public MapBase(MapBase mapBase)
+            : base(mapBase?.Id ?? Guid.Empty)
         {
-            lock (MapLock)
+            if (mapBase == null)
             {
-                lock (mapcopy.MapLock)
+                return;
+            }
+
+            lock (MapLock ?? throw new ArgumentNullException(nameof(MapLock), @"this"))
+            {
+                lock (mapBase.MapLock ?? throw new ArgumentNullException(nameof(mapBase.MapLock), nameof(mapBase)))
                 {
-                    ByteBuffer bf = new ByteBuffer();
-                    Name = mapcopy.Name;
-                    Brightness = mapcopy.Brightness;
-                    IsIndoors = mapcopy.IsIndoors;
-                    if (Layers != null && mapcopy.Layers != null)
+                    var bf = new ByteBuffer();
+                    Name = mapBase.Name;
+                    Brightness = mapBase.Brightness;
+                    IsIndoors = mapBase.IsIndoors;
+                    if (Layers != null && mapBase.Layers != null)
                     {
                         if (Layers.Length < Options.LayerCount) Layers = new TileArray[Options.LayerCount];
                         for (var i = 0; i < Options.LayerCount; i++)
@@ -185,10 +212,10 @@ namespace Intersect.GameObjects.Maps
                                 {
                                     Layers[i].Tiles[x, y] = new Tile
                                     {
-                                        TilesetId = mapcopy.Layers[i].Tiles[x, y].TilesetId,
-                                        X = mapcopy.Layers[i].Tiles[x, y].X,
-                                        Y = mapcopy.Layers[i].Tiles[x, y].Y,
-                                        Autotile = mapcopy.Layers[i].Tiles[x, y].Autotile
+                                        TilesetId = mapBase.Layers[i].Tiles[x, y].TilesetId,
+                                        X = mapBase.Layers[i].Tiles[x, y].X,
+                                        Y = mapBase.Layers[i].Tiles[x, y].Y,
+                                        Autotile = mapBase.Layers[i].Tiles[x, y].Autotile
                                     };
                                 }
                             }
@@ -198,31 +225,40 @@ namespace Intersect.GameObjects.Maps
                     {
                         for (var y = 0; y < Options.MapHeight; y++)
                         {
-                            if (mapcopy.Attributes[x, y] == null)
+                            if (Attributes == null)
+                            {
+                                continue;
+                            }
+
+                            if (mapBase.Attributes?[x, y] == null)
                             {
                                 Attributes[x, y] = null;
                             }
                             else
                             {
-                                Attributes[x, y] = mapcopy.Attributes[x, y].Clone();
+                                Attributes[x, y] = mapBase.Attributes[x, y].Clone();
                             }
                         }
                     }
-                    for (var i = 0; i < mapcopy.Spawns.Count; i++)
+                    for (var i = 0; i < mapBase.Spawns?.Count; i++)
                     {
-                        Spawns.Add(new NpcSpawn(mapcopy.Spawns[i]));
+                        Spawns.Add(new NpcSpawn(mapBase.Spawns[i]));
                     }
-                    for (var i = 0; i < mapcopy.Lights.Count; i++)
+                    for (var i = 0; i < mapBase.Lights?.Count; i++)
                     {
-                        Lights.Add(new LightBase(mapcopy.Lights[i]));
+                        Lights.Add(new LightBase(mapBase.Lights[i]));
                     }
-                    foreach (var record in mapcopy.LocalEvents)
+
+
+
+                    foreach (var record in mapBase.LocalEvents)
                     {
-                        var evt = new EventBase(record.Key, record.Value.JsonData);
-                        LocalEvents.Add(record.Key,evt);
+                        var evt = new EventBase(record.Key, record.Value?.JsonData);
+                        LocalEvents?.Add(record.Key, evt);
                     }
-                    EventIds.Clear();
-                    EventIds.AddRange(mapcopy.EventIds.ToArray());
+
+                    EventIds?.Clear();
+                    EventIds?.AddRange(mapBase.EventIds?.ToArray() ?? new Guid[] {});
                 }
             }
         }
