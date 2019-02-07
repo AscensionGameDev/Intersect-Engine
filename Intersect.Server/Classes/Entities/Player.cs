@@ -2678,23 +2678,28 @@ namespace Intersect.Server.Entities
 
         public void ReturnTradeItems()
         {
-            if (Trading.Counterparty == null) return;
-
-            for (var i = 0; i < Options.MaxInvItems; i++)
+            if (Trading.Counterparty == null)
             {
-                if (Trading.Offer[i].ItemId != Guid.Empty)
-                {
-                    if (!TryGiveItem(new Item(Trading.Offer[i])))
-                    {
-                        MapInstance.Get(MapId)
-                            .SpawnItem(X, Y, Trading.Offer[i], Trading.Offer[i].Quantity);
-                        PacketSender.SendPlayerMsg(MyClient, Strings.Trading.itemsdropped,
-                            CustomColors.Error);
-                    }
-                    Trading.Offer[i].ItemId = Guid.Empty;
-                    Trading.Offer[i].Quantity = 0;
-                }
+                return;
             }
+
+            foreach (var offer in Trading.Offer)
+            {
+                if (offer == null || offer.ItemId == Guid.Empty)
+                {
+                    continue;
+                }
+
+                if (!TryGiveItem(new Item(offer)))
+                {
+                    MapInstance.Get(MapId)?.SpawnItem(X, Y, offer, offer.Quantity);
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Trading.itemsdropped, CustomColors.Error);
+                }
+
+                offer.ItemId = Guid.Empty;
+                offer.Quantity = 0;
+            }
+
             PacketSender.SendInventory(MyClient);
         }
 
