@@ -639,29 +639,26 @@ namespace Intersect.Client.Networking
             var id = bf.ReadGuid();
             var type = bf.ReadInteger();
             var mapId = bf.ReadGuid();
-            if (id == Globals.Me.Id && type < (int) EntityTypes.Event)
+            if (id == Globals.Me?.Id && type < (int) EntityTypes.Event)
             {
                 return;
             }
             if (type != (int) EntityTypes.Event)
             {
-                if (Globals.Entities.ContainsKey(id))
+                if (Globals.Entities?.ContainsKey(id) ?? false)
                 {
-                    Globals.Entities[id].Dispose();
-                    Globals.EntitiesToDispose.Add(id);
+                    Globals.Entities[id]?.Dispose();
+                    Globals.EntitiesToDispose?.Add(id);
                 }
             }
             else
             {
                 var map = MapInstance.Get(mapId);
-                if (map != null)
+                if (map?.LocalEntities?.ContainsKey(id) ?? false)
                 {
-                    if (map.LocalEntities.ContainsKey(id))
-                    {
-                        map.LocalEntities[id].Dispose();
-                        map.LocalEntities[id] = null;
-                        map.LocalEntities.Remove(id);
-                    }
+                    map.LocalEntities[id]?.Dispose();
+                    map.LocalEntities[id] = null;
+                    map.LocalEntities.Remove(id);
                 }
             }
         }
