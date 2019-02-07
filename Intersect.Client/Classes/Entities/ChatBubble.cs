@@ -47,7 +47,7 @@ namespace Intersect.Client.Entities
             if (mTextureBounds.Width == 0)
             {
                 //Gotta Calculate Bounds
-                for (int i = mText.Length - 1; i > -1; i--)
+                for (var i = (mText?.Length ?? 0) - 1; i > -1; i--)
                 {
                     var textSize = GameGraphics.Renderer.MeasureText(mText[i], GameGraphics.GameFont, 1);
                     if (textSize.X > mTextureBounds.Width) mTextureBounds.Width = (int) textSize.X + 16;
