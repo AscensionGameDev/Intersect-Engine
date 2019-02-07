@@ -196,16 +196,34 @@ namespace Intersect.Editor.Forms.Editors.Quest
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             mChangingName = true;
-            mEditorItem.Name = txtName.Text;
-            //Rename all events
-            mEditorItem.StartEvent.Name = Strings.QuestEditor.startevent.ToString(mEditorItem.Name);
-            mEditorItem.EndEvent.Name = Strings.QuestEditor.endevent.ToString(mEditorItem.Name);
-            foreach (var tsk in mEditorItem.Tasks)
+            if (mEditorItem != null)
             {
-                if (tsk.CompletionEvent != null)
-                    tsk.CompletionEvent.Name = Strings.TaskEditor.completionevent.ToString(mEditorItem.Name);
+                mEditorItem.Name = txtName?.Text ?? "";
+                //Rename all events
+                if (mEditorItem.StartEvent != null)
+                {
+                    mEditorItem.StartEvent.Name = Strings.QuestEditor.startevent.ToString(mEditorItem.Name);
+                }
+
+                if (mEditorItem.EndEvent != null)
+                {
+                    mEditorItem.EndEvent.Name = Strings.QuestEditor.endevent.ToString(mEditorItem.Name);
+                }
+
+                if (mEditorItem.Tasks != null)
+                {
+                    foreach (var tsk in mEditorItem.Tasks)
+                    {
+                        if (tsk.CompletionEvent != null)
+                            tsk.CompletionEvent.Name = Strings.TaskEditor.completionevent.ToString(mEditorItem.Name);
+                    }
+                }
+
+                if (lstQuests != null)
+                {
+                    lstQuests.Items[QuestBase.ListIndex(mEditorItem.Id)] = txtName?.Text ?? "";
+                }
             }
-            lstQuests.Items[QuestBase.ListIndex(mEditorItem.Id)] = txtName.Text;
             mChangingName = false;
         }
 
