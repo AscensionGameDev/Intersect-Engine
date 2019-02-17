@@ -207,6 +207,8 @@
     <Compile Include="GameObjects\Events\Condition.cs" />
     <Compile Include="GameObjects\Events\EventMovement.cs" />
     <Compile Include="Localization\LocalizedString.cs" />
+    <Compile Include="Threading\ConcurrentInstance.cs" />
+    <Compile Include="Threading\Threaded.cs" />
     <Compile Include="Utilities\AlphanumComparator.cs" />
     <Compile Include="Utilities\DatabaseUtils.cs" />
     <Compile Include="Utilities\ExperienceCurve.cs" />

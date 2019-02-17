@@ -1,0 +1,88 @@
+﻿namespace Intersect.Threading
+{
+    using JetBrains.Annotations;
+    using System;
+    using System.Threading;
+
+    public class ConcurrentInstance<TInstance> where TInstance : class
+    {
+        [NotNull] private readonly object mLock;
+
+        private TInstance mInstance;
+
+        [NotNull]
+        public TInstance Instance => mInstance ?? throw new InvalidOperationException();
+
+        public ConcurrentInstance()
+        {
+            mLock = new object();
+        }
+
+        public void ClearWith([NotNull] TInstance instance, [NotNull] Action action)
+        {
+            Acquire();
+
+            if (mInstance != instance)
+            {
+                Monitor.Exit(mLock);
+            }
+
+            action.Invoke();
+
+            Clear(instance);
+
+            Release();
+        }
+
+        public void Acquire()
+        {
+            Monitor.Enter(mLock);
+        }
+
+        public void Release()
+        {
+            if (!Monitor.IsEntered(mLock))
+            {
+                return;
+            }
+
+            Monitor.Pulse(mLock);
+            Monitor.Exit(mLock);
+        }
+
+        public void Set([NotNull] TInstance instance)
+        {
+            if (!Monitor.TryEnter(mLock, 1000))
+            {
+                throw new InvalidOperationException();
+            }
+
+            try
+            {
+                if (mInstance != null)
+                {
+                    Monitor.Wait(mLock);
+                }
+
+                mInstance = instance;
+            }
+            finally
+            {
+                Release();
+            }
+        }
+
+        public void Clear([NotNull] TInstance instance)
+        {
+            if (mInstance == instance)
+            {
+                mInstance = null;
+            }
+        }
+
+        public static implicit operator TInstance([NotNull] ConcurrentInstance<TInstance> concurrentInstance)
+        {
+            return concurrentInstance.mInstance;
+        }
+    }
+}

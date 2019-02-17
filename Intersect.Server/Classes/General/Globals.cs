@@ -21,8 +21,6 @@ namespace Intersect.Server.General
         public static long Cps = 0;
 
         public static bool CpsLock = true;
-        public static bool ServerStarted;
-        public static bool ServerStopped;
         public static ServerSystem System = new ServerSystem();
 
         [NotNull] public static readonly object ClientLock = new object();

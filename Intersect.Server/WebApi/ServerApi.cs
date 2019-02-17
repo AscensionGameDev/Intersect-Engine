@@ -31,7 +31,7 @@ namespace Intersect.Server.WebApi
                 new Bootstrapper(AuthorizationProvider),
                 new HostConfiguration
                 {
-                    UnhandledExceptionCallback = exception => ServerStart.ProcessUnhandledException(this, exception),
+                    UnhandledExceptionCallback = exception => Intersect.Server.Core.Bootstrapper.ProcessUnhandledException(this, exception),
                     UrlReservations = new UrlReservations { CreateAutomatically = true }
                 },
                 new Uri($"http://localhost:{port}")
