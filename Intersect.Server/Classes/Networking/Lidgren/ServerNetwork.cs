@@ -22,7 +22,6 @@ namespace Intersect.Server.Networking.Lidgren
             lidgrenInterface.OnConnectionApproved += HandleInterfaceOnConnectonApproved;
             lidgrenInterface.OnDisconnected += HandleInterfaceOnDisconnected;
             lidgrenInterface.OnUnconnectedMessage += HandleOnUnconnectedMessage;
-            //lidgrenInterface.OnUnconnectedMessage += HandleUnconnectedMessageReceived;
             AddNetworkLayerInterface(lidgrenInterface);
         }
 

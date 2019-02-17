@@ -34,18 +34,7 @@ namespace Intersect.Server
     {
         public static void Start(string[] args)
         {
-            Console.CancelKeyPress += Console_CancelKeyPress;
-
             LegacyDatabase.CheckDirectories();
-
-            Strings.Load();
-
-            if (!Options.LoadFromDisk())
-            {
-                Console.WriteLine(Strings.Errors.errorloadingconfig);
-                Console.ReadKey();
-                return;
-            }
 
             foreach (var arg in args)
                 if (arg.Contains("port="))
@@ -80,23 +69,24 @@ namespace Intersect.Server
             Console.WriteLine(Strings.Commandoutput.gametime.ToString(ServerTime.GetTime().ToString("F")));
             ServerTime.Update();
             Log.Global.AddOutput(new ConsoleOutput(Debugger.IsAttached ? LogLevel.All : LogLevel.Error));
-            var assembly = Assembly.GetExecutingAssembly();
-            using (var stream = assembly.GetManifestResourceStream("Intersect.Server.private-intersect.bek"))
-            {
-                var rsaKey = EncryptionKey.FromStream<RsaKey>(stream);
-                Debug.Assert(rsaKey != null, "rsaKey != null");
-                Globals.Network = new ServerNetwork(new NetworkConfiguration(Options.ServerPort), rsaKey.Parameters);
-            }
+            //var assembly = Assembly.GetExecutingAssembly();
+            //using (var stream = assembly.GetManifestResourceStream("Intersect.Server.private-intersect.bek"))
+            //{
+            //    var rsaKey = EncryptionKey.FromStream<RsaKey>(stream);
+            //    Debug.Assert(rsaKey != null, "rsaKey != null");
+            //    Globals.Network = new ServerNetwork(new NetworkConfiguration(Options.ServerPort), rsaKey.Parameters);
+            //}
 
-            var packetHandler = new PacketHandler();
-            Globals.Network.Handlers[PacketCode.BinaryPacket] = packetHandler.HandlePacket;
+            //var packetHandler = new PacketHandler();
+            //Globals.Network.Handlers[PacketCode.BinaryPacket] = packetHandler.HandlePacket;
 
 #if websockets
             WebSocketNetwork.Init(Options.ServerPort);
             Console.WriteLine(Strings.Intro.websocketstarted.ToString(Options.ServerPort));
 #endif
 
-            if (!Globals.Network.Listen()) Log.Error("An error occurred while attempting to connect.");
+            //if (!Globals.Network.Listen()) Log.Error("An error occurred while attempting to connect.");
+            ServerContext.Instance.NetworkListen();
 
             Console.WriteLine();
 
@@ -800,13 +790,6 @@ namespace Intersect.Server
                 Console.Write("> ");
                 command = Console.ReadLine();
             }*/
-        }
-
-        private static void Console_CancelKeyPress([NotNull] object sender, [NotNull] ConsoleCancelEventArgs cancelEvent)
-        {
-            ServerContext.Instance.Dispose();
-            //Shutdown();
-            cancelEvent.Cancel = true;
         }
 
         internal static void Shutdown(bool showExiting = true)

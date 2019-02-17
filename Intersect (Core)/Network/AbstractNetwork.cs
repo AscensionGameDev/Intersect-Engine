@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -10,10 +11,6 @@ namespace Intersect.Network
 {
     public abstract class AbstractNetwork : INetwork
     {
-        protected readonly IDictionary<Guid, IConnection> mConnections;
-
-        private readonly IDictionary<PacketCode, HandlePacket> mHandlers;
-
         private readonly List<INetworkLayerInterface> mNetworkLayerInterfaces;
         private bool mDisposed;
 
@@ -23,38 +20,44 @@ namespace Intersect.Network
 
             mNetworkLayerInterfaces = new List<INetworkLayerInterface>();
 
-            mConnections = CreateDictionaryLegacy<Guid, IConnection>();
+            ConnectionLookup = new ConcurrentDictionary<Guid, IConnection>();
 
             Configuration = configuration;
 
-            mHandlers = new SortedDictionary<PacketCode, HandlePacket>();
+            Handlers = new SortedDictionary<PacketCode, HandlePacket>();
             PacketFactories = new HashSet<IPacketFactory> {ReflectablePacketFactory.Instance};
         }
 
-        public ICollection<IConnection> Connections => mConnections?.Values;
-        public IDictionary<Guid, IConnection> ConnectionLookup => mConnections;
-        public IDictionary<PacketCode, HandlePacket> Handlers => mHandlers;
+        [NotNull]
+        public ICollection<IConnection> Connections => ConnectionLookup.Values;
+
+        [NotNull]
+        public IDictionary<Guid, IConnection> ConnectionLookup { get; }
+
+        [NotNull]
+        public IDictionary<PacketCode, HandlePacket> Handlers { get; }
+
         protected ICollection<IPacketFactory> PacketFactories { get; }
-        public int ConnectionCount => Connections?.Count ?? 0;
+
+        public int ConnectionCount => Connections.Count;
 
         public NetworkConfiguration Configuration { get; }
         public abstract Guid Guid { get; }
 
-        public bool AddConnection(IConnection connection)
+        public bool AddConnection([NotNull] IConnection connection)
         {
-            if (connection == null) throw new ArgumentNullException();
-            if (mConnections?.ContainsKey(connection.Guid) ?? false)
+            if (ConnectionLookup.ContainsKey(connection.Guid))
+            {
                 return false;
+            }
 
-            mConnections?.Add(connection.Guid, connection);
+            ConnectionLookup.Add(connection.Guid, connection);
             return true;
         }
 
-        public bool RemoveConnection(IConnection connection)
+        public bool RemoveConnection([NotNull] IConnection connection)
         {
-            if (connection == null) throw new ArgumentNullException();
-            if (connection.IsConnected) return false;
-            return mConnections?.Remove(connection.Guid) ?? false;
+            return !connection.IsConnected && ConnectionLookup.Remove(connection.Guid);
         }
 
         public void Dispose()
@@ -68,7 +71,7 @@ namespace Intersect.Network
             if (!Disconnect("disposing"))
                 Log.Error("Error disconnecting while disposing.");
 
-            mConnections?.Clear();
+            ConnectionLookup.Clear();
         }
 
         public bool Disconnect(string message = "") => Disconnect(Connections, message);
@@ -106,10 +109,12 @@ namespace Intersect.Network
 
         public IConnection FindConnection(Guid guid)
         {
-            Debug.Assert(ConnectionLookup != null, "ConnectionLookup != null");
-            if (ConnectionLookup.TryGetValue(guid, out IConnection connection)) return connection;
+            if (ConnectionLookup.TryGetValue(guid, out var connection))
+            {
+                return connection;
+            }
 
-            Log.Diagnostic($"Could not find connection for guid {guid}.");
+            Log.Diagnostic($"Could not find connection {guid}.");
             return null;
         }
 
@@ -118,41 +123,49 @@ namespace Intersect.Network
             return FindConnection(guid) as TConnection;
         }
 
-        public TConnection FindConnection<TConnection>(Func<TConnection, bool> selector)
+        public TConnection FindConnection<TConnection>([NotNull] Func<TConnection, bool> selector)
             where TConnection : class, IConnection
         {
-            Debug.Assert(selector != null, "selector != null");
-            var connections = FindConnections<TConnection>();
-            Debug.Assert(connections != null, "connections != null");
-            return connections.FirstOrDefault(selector);
+            return FindConnections<TConnection>().FirstOrDefault(selector);
         }
 
-        public ICollection<IConnection> FindConnections(ICollection<Guid> guids)
+        public ICollection<IConnection> FindConnections([NotNull] ICollection<Guid> guids)
         {
-            var connections = new List<IConnection>(guids?.Count ?? 0);
-            connections.AddRange((guids ?? new Guid[0]).Select(FindConnection).Where(connection => connection != null));
-            return connections;
+            return guids.Select(FindConnection).Where(connection => connection != null).ToList();
         }
 
+        [NotNull]
         public ICollection<TConnection> FindConnections<TConnection>() where TConnection : class, IConnection
         {
-            return Connections?.OfType<TConnection>().ToList();
+            return Connections.OfType<TConnection>().ToList();
         }
 
         protected void AddNetworkLayerInterface(INetworkLayerInterface networkLayerInterface)
         {
-            if (mNetworkLayerInterfaces == null) throw new ArgumentNullException(nameof(mNetworkLayerInterfaces));
-            if (networkLayerInterface == null) throw new ArgumentNullException(nameof(networkLayerInterface));
+            if (mNetworkLayerInterfaces == null)
+            {
+                throw new ArgumentNullException(nameof(mNetworkLayerInterfaces));
+            }
+
+            if (networkLayerInterface == null)
+            {
+                throw new ArgumentNullException(nameof(networkLayerInterface));
+            }
+
             networkLayerInterface.OnPacketAvailable += HandleInboundMessageAvailable;
             mNetworkLayerInterfaces.Add(networkLayerInterface);
         }
 
         private void HandleInboundMessageAvailable(INetworkLayerInterface sender)
         {
-            if (sender == null) throw new ArgumentNullException(nameof(sender));
-            if (!sender.TryGetInboundBuffer(out IBuffer buffer, out IConnection connection))
+            if (sender == null)
             {
-                Log.Error($"Failed to obtain packet when told a packet was available.");
+                throw new ArgumentNullException(nameof(sender));
+            }
+
+            if (!sender.TryGetInboundBuffer(out var buffer, out var connection))
+            {
+                Log.Error("Failed to obtain packet when told a packet was available.");
                 return;
             }
 
@@ -230,10 +243,13 @@ namespace Intersect.Network
             if (!(handler?.Invoke(packet) ?? false))
             {
                 Log.Debug($"Error invoking handler for packet type {packetCode} (handler={handler}).");
-                return;
             }
-
-            //Log.Diagnostic($"Handled inbound {packet.Code} successfully.");
+#if DIAGNOSTIC_EXTREME
+            else
+            {
+                Log.Diagnostic($"Handled inbound {packet.Code} successfully.");
+            }
+#endif
         }
 
         protected abstract IDictionary<TKey, TValue> CreateDictionaryLegacy<TKey, TValue>();
