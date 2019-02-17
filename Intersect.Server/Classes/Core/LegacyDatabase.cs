@@ -15,6 +15,7 @@ using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Models;
+using Intersect.Server.Core;
 using Intersect.Server.Database;
 using Intersect.Server.Database.GameData;
 using Intersect.Server.Database.PlayerData;
@@ -617,7 +618,7 @@ namespace Intersect.Server
                 }
             }
 
-            if (Globals.ServerStarted)
+            if (ServerContext.Instance.IsStarted)
             {
                 SaveGameDatabaseAsync();
             }
@@ -1066,9 +1067,9 @@ namespace Intersect.Server
             Console.WriteLine(Strings.Migration.stoppingserver);
 
             //This variable will end the server loop and save any pending changes
-            Globals.ServerStarted = false;
+            ServerContext.Instance.RequestShutdown();
 
-            while (!Globals.ServerStopped)
+            while (ServerContext.Instance.IsRunning)
             {
                 System.Threading.Thread.Sleep(100);
             }

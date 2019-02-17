@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Intersect.Server.Core;
 using Intersect.Server.General;
 using Intersect.Server.Maps;
 
@@ -16,7 +17,7 @@ namespace Intersect.Server
             long minuteTimer = 0;
             DateTime lastDbUpdate = DateTime.Now;
             long dbBackupMinutes = 120;
-            while (Globals.ServerStarted)
+            while (ServerContext.IsRunningSafe)
             {
                 //TODO: If there are no players online then loop slower and save the poor cpu
                 var timeMs = Globals.System.GetTimeMs();
@@ -52,12 +53,9 @@ namespace Intersect.Server
                 }
             }
 
+            ServerContext.Instance.Dispose();
             //Server is shutting down!!
-            Globals.Network?.Dispose();
-            LegacyDatabase.SavePlayerDatabase();
-            LegacyDatabase.SaveGameDatabase();
-            Globals.Api?.Stop();
-            Globals.ServerStopped = true;
+            //ServerStatic.Shutdown(false);
             //TODO gracefully disconnect all clients
         }
     }

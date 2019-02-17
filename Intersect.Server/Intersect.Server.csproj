@@ -177,6 +177,9 @@
     <OutputPath>..\build\debug\server\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CommandLine, Version=2.4.3.0, Culture=neutral, PublicKeyToken=de6f01bd326f8c32, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommandLineParser.2.4.3\lib\netstandard2.0\CommandLine.dll</HintPath>
+    </Reference>
     <Reference Include="Costura, Version=3.1.2.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
       <HintPath>..\packages\Costura.Fody.3.1.2\lib\net46\Costura.dll</HintPath>
     </Reference>
@@ -363,7 +366,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\Core\ServerStart.cs" />
+    <Compile Include="Classes\Core\ServerStatic.cs" />
     <Compile Include="Classes\Core\ServerSystem.cs" />
     <Compile Include="Classes\Database\GameData\GameContext.cs" />
     <Compile Include="Classes\Database\PlayerData\Ban.cs" />
@@ -420,6 +423,13 @@
     <Compile Include="Classes\Spells\SpellInstance.cs" />
     <Compile Include="Classes\Networking\Lidgren\ServerNetwork.cs" />
     <Compile Include="Classes\Networking\Lidgren\ThreadYieldNet40.cs" />
+    <Compile Include="Core\ApplicationContext.cs" />
+    <Compile Include="Core\Bootstrapper.cs" />
+    <Compile Include="Core\CommandLineOptions.cs" />
+    <Compile Include="Core\IApplicationContext.cs" />
+    <Compile Include="Core\ServerConsole.cs" />
+    <Compile Include="Core\ServerContext.cs" />
+    <Compile Include="Core\ServerLogic.cs" />
     <Compile Include="Migrations\20180927161502_InitialPlayerDb.cs" />
     <Compile Include="Migrations\20180927161502_InitialPlayerDb.designer.cs">
       <DependentUpon>20180927161502_InitialPlayerDb.cs</DependentUpon>
@@ -495,7 +505,9 @@
       <Name>Intersect.Network</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
