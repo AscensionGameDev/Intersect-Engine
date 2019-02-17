@@ -17,6 +17,8 @@ namespace Intersect.Server.Core
         {
             AppDomain.CurrentDomain.AssemblyResolve += OnAssemblyResolve;
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+
+            Console.CancelKeyPress += OnConsoleCancelKeyPress;
         }
 
         private static ServerContext sContext;
@@ -26,6 +28,15 @@ namespace Intersect.Server.Core
             if (RunningOnWindows())
             {
                 SetConsoleCtrlHandler(ConsoleCtrlCheck, true);
+            }
+
+            Strings.Load();
+
+            if (!Options.LoadFromDisk())
+            {
+                Console.WriteLine(Strings.Errors.errorloadingconfig);
+                Console.ReadKey();
+                return;
             }
 
             var commandLineOptions = ParseCommandLineArgs(args);
@@ -43,6 +54,17 @@ namespace Intersect.Server.Core
                            errors => null
                        ) ?? throw new InvalidOperationException();
         }
+
+        #region System Console
+
+        private static void OnConsoleCancelKeyPress([NotNull] object sender, [NotNull] ConsoleCancelEventArgs cancelEvent)
+        {
+            ServerContext.Instance.Dispose();
+            //Shutdown();
+            cancelEvent.Cancel = true;
+        }
+
+        #endregion
 
         #region AppDomain
 
@@ -180,18 +202,22 @@ return null;
 
         private static bool RunningOnWindows()
         {
-            var os = Environment.OSVersion;
-            var pid = os.Platform;
-            switch (pid)
+            switch (Environment.OSVersion.Platform)
             {
                 case PlatformID.Win32NT:
                 case PlatformID.Win32S:
                 case PlatformID.Win32Windows:
                 case PlatformID.WinCE:
                     return true;
-            }
 
-            return false;
+                case PlatformID.MacOSX:
+                case PlatformID.Unix:
+                case PlatformID.Xbox:
+                    return false;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         #endregion

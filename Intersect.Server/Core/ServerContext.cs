@@ -1,10 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Intersect.Logging;
+using Intersect.Network;
+using Intersect.Network.Crypto;
+using Intersect.Network.Crypto.Formats;
+using Intersect.Server.General;
+using Intersect.Server.Networking;
+using Intersect.Server.Networking.Lidgren;
 using JetBrains.Annotations;
 
 namespace Intersect.Server.Core
@@ -42,17 +50,72 @@ namespace Intersect.Server.Core
         [NotNull]
         public ServerLogic ServerLogic { get; }
 
+        [NotNull]
+        public ServerNetwork Network { get; }
+
         public ServerContext([NotNull] CommandLineOptions startupOptions)
         {
             StartupOptions = startupOptions;
 
             ServerConsole = new ServerConsole();
             ServerLogic = new ServerLogic();
+
+            Network = CreateNetwork();
         }
 
-        #region Threads
+        #region Network
 
-        protected override void InternalStart()
+        [NotNull]
+        private ServerNetwork CreateNetwork()
+        {
+            ServerNetwork network;
+
+            #region Apply CLI Options
+
+            Options.ServerPort = StartupOptions.ValidPort(Options.ServerPort);
+
+            #endregion
+
+            #region Create Network
+
+            var assembly = Assembly.GetExecutingAssembly();
+            using (var stream = assembly.GetManifestResourceStream("Intersect.Server.private-intersect.bek"))
+            {
+                var rsaKey = EncryptionKey.FromStream<RsaKey>(stream);
+                Debug.Assert(rsaKey != null, "rsaKey != null");
+                network = new ServerNetwork(new NetworkConfiguration(Options.ServerPort), rsaKey.Parameters);
+            }
+
+            #endregion
+
+            #region Configure Packet Handlers
+
+            var packetHandler = new PacketHandler();
+            network.Handlers[PacketCode.BinaryPacket] = packetHandler.HandlePacket;
+
+            #endregion
+
+            return network;
+        }
+
+        #region Listen
+
+        internal void NetworkListen()
+        {
+            // TODO: Move this into InternalStart()
+            if (!Network.Listen())
+            {
+                Log.Error("An error occurred while attempting to connect.");
+            }
+        }
+
+        #endregion
+
+    #endregion
+
+    #region Startup
+
+    protected override void InternalStart()
         {
             try
             {
@@ -62,6 +125,12 @@ namespace Intersect.Server.Core
                 }
 
                 ThreadLogic = ServerLogic.Start();
+
+                // TODO: Move Network.Listen() to here from CreateNetwork()
+                //if (!Network.Listen())
+                //{
+                //    Log.Error("An error occurred while attempting to connect.");
+                //}
             }
             catch (Exception exception)
             {
@@ -80,6 +149,26 @@ namespace Intersect.Server.Core
             if (disposing)
             {
                 ServerStatic.Shutdown();
+
+                if (ThreadConsole?.IsAlive ?? false)
+                {
+                    if (!ThreadConsole.Join(1000))
+                    {
+
+                        ThreadConsole.Abort();
+                    }
+                }
+
+
+                if (ThreadLogic?.IsAlive ?? false)
+                {
+                    if (!ThreadLogic.Join(10000))
+                    {
+                        ThreadLogic.Abort();
+                    }
+                }
+
+                Network.Dispose();
             }
 
             base.Dispose(disposing);
