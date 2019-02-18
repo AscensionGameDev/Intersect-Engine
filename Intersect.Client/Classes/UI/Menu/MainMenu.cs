@@ -107,10 +107,10 @@ namespace Intersect.Client.UI.Menu
             mLoginWindow = new LoginWindow(menuCanvas, this, mMenuWindow);
             //Register Controls
             mRegisterWindow = new RegisterWindow(menuCanvas, this, mMenuWindow);
-            //Character Creation Controls
-            mCreateCharacterWindow = new CreateCharacterWindow(mMenuCanvas, this, mMenuWindow);
             //Character Selection Controls
             mSelectCharacterWindow = new SelectCharacterWindow(mMenuCanvas, this, mMenuWindow);
+            //Character Creation Controls
+            mCreateCharacterWindow = new CreateCharacterWindow(mMenuCanvas, this, mMenuWindow,mSelectCharacterWindow);
             //Credits Controls
             mCreditsWindow = new CreditsWindow(mMenuCanvas, this);
 

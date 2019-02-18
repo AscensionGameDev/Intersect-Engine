@@ -112,6 +112,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                 new JProperty("Bounds", Rectangle.ToString(mBounds)),
                 new JProperty("Padding", Padding.ToString(mPadding)),
                 new JProperty("AlignmentEdgeDistances", Padding.ToString(mAlignmentDistance)),
+                new JProperty("AlignmentTransform",Point.ToString(mAlignmentTransform)),
                 new JProperty("Margin", Margin.ToString(mMargin)),
                 new JProperty("RenderColor", Color.ToString(mColor)),
                 new JProperty("Alignments", string.Join(",", alignments.ToArray())),
@@ -206,6 +207,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["Bounds"] != null) SetBounds(Rectangle.FromString((string)obj["Bounds"]));
             if (obj["Padding"] != null) Padding = Padding.FromString((string)obj["Padding"]);
             if (obj["AlignmentEdgeDistances"] != null) mAlignmentDistance = Padding.FromString((string)obj["AlignmentEdgeDistances"]);
+            if (obj["AlignmentTransform"] != null) mAlignmentTransform = Point.FromString((string)obj["AlignmentTransform"]);
             if (obj["Margin"] != null) Margin = Margin.FromString((string)obj["Margin"]);
             if (obj["RenderColor"] != null) RenderColor = Color.FromString((string)obj["RenderColor"]);
             if (obj["DrawBackground"] != null) ShouldDrawBackground = (bool)obj["DrawBackground"];
@@ -275,7 +277,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                 }
             });
 
-            MoveTo(X, Y, true);
+            MoveTo(X + mAlignmentTransform.X, Y + mAlignmentTransform.Y, true);
             Children?.ForEach(child => child?.ProcessAlignments());
         }
 
@@ -291,6 +293,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         private Rectangle mInnerBounds;
         private Padding mPadding;
         private Padding mAlignmentDistance;
+        private Point mAlignmentTransform;
         private Margin mMargin;
         private Color mColor;
 

@@ -80,8 +80,17 @@ namespace Intersect.Client.Framework.Gwen.Control
         public override void LoadJson(JToken obj)
         {
             base.LoadJson(obj);
-            if (obj["Label"] != null) mLabel.LoadJson(obj["Label"]);
-            if (obj["Checkbox"] != null) mCheckBox.LoadJson(obj["Checkbox"]);
+            if (obj["Label"] != null)
+            {
+                mLabel.Dock = Pos.None;
+                mLabel.LoadJson(obj["Label"]);
+            }
+
+            if (obj["Checkbox"] != null)
+            {
+                mCheckBox.Dock = Pos.None;
+                mCheckBox.LoadJson(obj["Checkbox"]);
+            }
         }
 
         /// <summary>

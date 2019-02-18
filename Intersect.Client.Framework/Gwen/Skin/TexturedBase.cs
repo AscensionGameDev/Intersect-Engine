@@ -1075,10 +1075,10 @@ namespace Intersect.Client.Framework.Gwen.Skin
                 Renderer.DrawColor = control.RenderColor;
                 if (horizontal)
                 {
-                    rect.X += (int) (barSize * 0.5);
-                    rect.Width -= barSize;
-                    rect.Y += (int) (rect.Height * 0.5 - 1);
-                    rect.Height = 1;
+                    //rect.X += (int) (barSize * 0.5);
+                    //rect.Width -= barSize;
+                    //rect.Y += (int) (rect.Height * 0.5 - 1);
+                    //rect.Height = 1;
                     //DrawSliderNotchesH(rect, numNotches, barSize * 0.5f);
                     //Renderer.DrawFilledRect(rect);
                     Renderer.DrawColor = control.RenderColor;
@@ -1086,10 +1086,10 @@ namespace Intersect.Client.Framework.Gwen.Skin
                     return;
                 }
 
-                rect.Y += (int) (barSize * 0.5);
-                rect.Height -= barSize;
-                rect.X += (int) (rect.Width * 0.5 - 1);
-                rect.Width = 1;
+                //rect.Y += (int) (barSize * 0.5);
+                //rect.Height -= barSize;
+                //rect.X += (int) (rect.Width * 0.5 - 1);
+                //rect.Width = 1;
                 //DrawSliderNotchesV(rect, numNotches, barSize * 0.4f);
                 //Renderer.DrawFilledRect(rect);
                 Renderer.DrawColor = control.RenderColor;

@@ -48,7 +48,7 @@ namespace Intersect.Client.UI.Game
             Gui.InputBlockingElements.Add(mMyWindow);
 
             mTextboxBg = new ImagePanel(mMyWindow, "Textbox");
-            mTextbox = new TextBoxNumeric(mTextboxBg);
+            mTextbox = new TextBoxNumeric(mTextboxBg, "TextboxText");
             mTextbox.Focus();
 
             if (inputtype != InputType.TextInput)
