@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Intersect.IO;
+﻿using Intersect.IO;
 using JetBrains.Annotations;
+using System;
+using System.IO;
+using System.Text;
 
 namespace Intersect
 {
@@ -338,7 +335,6 @@ namespace Intersect
             }
 
             var result = WaitContext.BufferedReadLine(WaitOut.TextWriter.Write, ReadKey);
-            //var result = WaitContext.Wait(WaitOut.TextWriter.Write, ReadLine);
 
             WaitContext.Clear();
 
