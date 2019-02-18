@@ -111,11 +111,11 @@ namespace Intersect.Server.Core
 
         #endregion
 
-    #endregion
+        #endregion
 
-    #region Startup
+        #region Startup
 
-    protected override void InternalStart()
+        protected override void InternalStart()
         {
             try
             {
@@ -154,11 +154,9 @@ namespace Intersect.Server.Core
                 {
                     if (!ThreadConsole.Join(1000))
                     {
-
                         ThreadConsole.Abort();
                     }
                 }
-
 
                 if (ThreadLogic?.IsAlive ?? false)
                 {
