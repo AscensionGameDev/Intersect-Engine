@@ -22,7 +22,7 @@ namespace Intersect.Server.Core
         [Option("no-upnp", Default = false, Required = false)]
         public bool NoNatPunchthrough { get; }
 
-        [Option('p', "port", Default = 0, Required = false)]
+        [Option('p', "port", Default = (ushort)0, Required = false)]
         public ushort Port { get; }
 
         public ushort ValidPort(ushort defaultPort)
