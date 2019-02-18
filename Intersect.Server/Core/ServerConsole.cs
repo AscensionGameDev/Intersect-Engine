@@ -18,9 +18,10 @@ namespace Intersect.Server.Core
     {
         protected override void ThreadStart()
         {
+            Console.WaitPrefix = "> ";
             Console.WriteLine(Strings.Intro.consoleactive);
-            Console.Write("> ");
-            var command = Console.ReadLine();
+            //Console.Write("> ");
+            var command = Console.ReadLine(true);
             while (ServerContext.Instance.IsRunning)
             {
                 var userFound = false;
@@ -559,8 +560,8 @@ namespace Intersect.Server.Core
                         Console.WriteLine(Strings.Migration.selectplayerdb.ToString(Options.PlayerDb.Type == DatabaseOptions.DatabaseType.sqlite ? Strings.Migration.currentlysqlite : Strings.Migration.currentlymysql));
                         Console.WriteLine();
                         Console.WriteLine(Strings.Migration.cancel);
-                        Console.Write("> ");
-                        var selection = Console.ReadKey().KeyChar;
+                        //Console.Write("> ");
+                        var selection = Console.ReadKeyWait().KeyChar;
                         Console.WriteLine();
                         DatabaseOptions db = null;
                         if (selection.ToString() == Strings.Migration.selectgamedbkey.ToString())
@@ -580,8 +581,8 @@ namespace Intersect.Server.Core
                             Console.WriteLine(Strings.Migration.migratetomysql);
                             Console.WriteLine();
                             Console.WriteLine(Strings.Migration.cancel);
-                            Console.Write("> ");
-                            selection = Console.ReadKey().KeyChar;
+                            //Console.Write("> ");
+                            selection = Console.ReadKeyWait().KeyChar;
                             Console.WriteLine();
                             DatabaseOptions.DatabaseType dbengine = DatabaseOptions.DatabaseType.sqlite;
                             if (selection.ToString() == Strings.Migration.selectsqlitekey.ToString() || selection.ToString() == Strings.Migration.selectmysqlkey.ToString())
@@ -646,8 +647,8 @@ namespace Intersect.Server.Core
                     Console.WriteLine(@"    " + Strings.Commandoutput.notfound);
                 }
 
-                Console.Write("> ");
-                command = Console.ReadLine();
+                //Console.Write("> ");
+                command = Console.ReadLine(true);
             }
         }
     }

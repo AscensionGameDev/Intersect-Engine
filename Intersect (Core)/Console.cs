@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Intersect.IO;
 using JetBrains.Annotations;
 
 namespace Intersect
@@ -29,6 +30,13 @@ namespace Intersect
         {
             //Instance = new Console();
             SystemConsole.CancelKeyPress += (sender, args) => CancelKeyPress?.Invoke(sender, args);
+
+            WaitContext = new ConsoleWaitContext();
+
+            Error = new ConsoleWaitWriter(WaitContext, Error);
+
+            WaitOut = new ConsoleWaitWriter(WaitContext, Out);
+            Out = WaitOut;
         }
 
         //#endregion
@@ -292,87 +300,44 @@ namespace Intersect
 
         #region Wait
 
-        private static int WaitCursorLeft { get; set; }
-
-        private static int WaitCursorTop { get; set; }
-
         [NotNull]
-        private static readonly object WaitLock = new object();
+        private static ConsoleWaitContext WaitContext { get; }
+        
+        [NotNull]
+        private static ConsoleWaitWriter WaitOut { get; }
 
-        public static bool IsWaitingRead { get; private set; }
-
-        public static string WaitPrefix { get; set; }
-
-        private static void ResetWaitCursor()
+        public static string WaitPrefix
         {
-            if (!IsWaitingRead)
-            {
-                return;
-            }
-
-            var onCurrentLine = CursorTop == WaitCursorTop;
-
-            var realColumnCursor = onCurrentLine ? WaitCursorLeft : 0;
-            var currentLineCursor = CursorTop;
-            SetCursorPosition(realColumnCursor, CursorTop);
-            SystemConsole.Write(new string(' ', WaitPrefix?.Length ?? 0));
-            SetCursorPosition(realColumnCursor, currentLineCursor);
-
-            if (onCurrentLine)
-            {
-                return;
-            }
-
-            CursorLeft = WaitCursorLeft;
-            CursorTop = WaitCursorTop;
-        }
-
-        private static void WriteWaitPrefix()
-        {
-            if (!IsWaitingRead)
-            {
-                return;
-            }
-
-            WaitCursorLeft = CursorLeft;
-            WaitCursorTop = CursorTop;
-
-            if (string.IsNullOrEmpty(WaitPrefix))
-            {
-                return;
-            }
-
-            SystemConsole.Write(WaitPrefix);
+            get => WaitContext.WaitPrefix;
+            set => WaitContext.WaitPrefix = value;
         }
 
         // TODO: Implement Wait ReadKey
+        public static ConsoleKeyInfo ReadKeyWait()
+        {
+            WaitContext.Check();
+
+            var result = WaitContext.Wait(WaitOut.TextWriter.Write, ReadKey);
+
+            WaitContext.Clear();
+
+            return result;
+        }
 
         // TODO: Implement Wait Read
 
         public static string ReadLine(bool withPrefix)
         {
-            if (IsWaitingRead)
-            {
-                throw new InvalidOperationException("Already waiting on a Read*() operation.");
-            }
+            WaitContext.Check();
 
             if (!withPrefix)
             {
                 return ReadLine();
             }
 
-            lock (WaitLock)
-            {
-                IsWaitingRead = true;
-                WriteWaitPrefix();
-            }
+            var result = WaitContext.Wait(WaitOut.TextWriter.Write, ReadLine);
 
-            var result = ReadLine();
-
-            lock (WaitLock)
-            {
-                IsWaitingRead = false;
-            }
+            WaitContext.Clear();
 
             return result;
         }
@@ -387,10 +352,7 @@ namespace Intersect
         {
             SystemConsole.Clear();
 
-            if (IsWaitingRead)
-            {
-                WriteWaitPrefix();
-            }
+            WaitContext.WritePrefix(Out.Write);
         }
 
         #region WriteLine
@@ -399,9 +361,7 @@ namespace Intersect
         /// <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
         public static void WriteLine()
         {
-            ResetWaitCursor();
             SystemConsole.WriteLine();
-            WriteWaitPrefix();
         }
 
         /// <summary>Writes the text representation of the specified array of objects, followed by the current line terminator, to the standard output stream using the specified format information.</summary>
@@ -413,9 +373,7 @@ namespace Intersect
         /// <exception cref="T:System.FormatException">The format specification in <paramref name="format" /> is invalid. </exception>
         public static void WriteLine([NotNull] string format, [NotNull] params object[] arg)
         {
-            ResetWaitCursor();
             SystemConsole.WriteLine(format, arg);
-            WriteWaitPrefix();
         }
 
         /// <summary>Writes the specified array of Unicode characters, followed by the current line terminator, to the standard output stream.</summary>
@@ -423,9 +381,7 @@ namespace Intersect
         /// <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
         public static void WriteLine(char[] buffer)
         {
-            ResetWaitCursor();
             SystemConsole.WriteLine(buffer);
-            WriteWaitPrefix();
         }
 
         /// <summary>Writes the specified subarray of Unicode characters, followed by the current line terminator, to the standard output stream.</summary>
@@ -441,9 +397,7 @@ namespace Intersect
         /// <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
         public static void WriteLine([NotNull] char[] buffer, int index, int count)
         {
-            ResetWaitCursor();
             SystemConsole.WriteLine(buffer, index, count);
-            WriteWaitPrefix();
         }
 
         /// <summary>Writes the text representation of the specified Boolean value, followed by the current line terminator, to the standard output stream.</summary>
@@ -451,9 +405,7 @@ namespace Intersect
         /// <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
         public static void WriteLine(bool value)
         {
-            ResetWaitCursor();
             SystemConsole.WriteLine(value);
-            WriteWaitPrefix();
         }
 
         /// <summary>Writes the specified Unicode character, followed by the current line terminator, value to the standard output stream.</summary>
@@ -461,9 +413,7 @@ namespace Intersect
         /// <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
         public static void WriteLine(char value)
         {
-            ResetWaitCursor();
             SystemConsole.WriteLine(value);
-            WriteWaitPrefix();
         }
 
         /// <summary>Writes the text representation of the specified <see cref="T:System.Decimal" /> value, followed by the current line terminator, to the standard output stream.</summary>
@@ -471,9 +421,7 @@ namespace Intersect
         /// <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
         public static void WriteLine(decimal value)
         {
-            ResetWaitCursor();
             SystemConsole.WriteLine(value);
-            WriteWaitPrefix();
         }
 
         /// <summary>Writes the text representation of the specified double-precision floating-point value, followed by the current line terminator, to the standard output stream.</summary>
@@ -481,9 +429,7 @@ namespace Intersect
         /// <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
         public static void WriteLine(double value)
         {
-            ResetWaitCursor();
             SystemConsole.WriteLine(value);
-            WriteWaitPrefix();
         }
 
         /// <summary>Writes the text representation of the specified single-precision floating-point value, followed by the current line terminator, to the standard output stream.</summary>
@@ -491,9 +437,7 @@ namespace Intersect
         /// <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
         public static void WriteLine(float value)
         {
-            ResetWaitCursor();
             SystemConsole.WriteLine(value);
-            WriteWaitPrefix();
         }
 
         /// <summary>Writes the text representation of the specified 32-bit signed integer value, followed by the current line terminator, to the standard output stream.</summary>
@@ -501,9 +445,7 @@ namespace Intersect
         /// <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
         public static void WriteLine(int value)
         {
-            ResetWaitCursor();
             SystemConsole.WriteLine(value);
-            WriteWaitPrefix();
         }
 
         /// <summary>Writes the text representation of the specified 32-bit unsigned integer value, followed by the current line terminator, to the standard output stream.</summary>
@@ -511,9 +453,7 @@ namespace Intersect
         /// <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
         public static void WriteLine(uint value)
         {
-            ResetWaitCursor();
             SystemConsole.WriteLine(value);
-            WriteWaitPrefix();
         }
 
         /// <summary>Writes the text representation of the specified 64-bit signed integer value, followed by the current line terminator, to the standard output stream.</summary>
@@ -521,9 +461,7 @@ namespace Intersect
         /// <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
         public static void WriteLine(long value)
         {
-            ResetWaitCursor();
             SystemConsole.WriteLine(value);
-            WriteWaitPrefix();
         }
 
         /// <summary>Writes the text representation of the specified 64-bit unsigned integer value, followed by the current line terminator, to the standard output stream.</summary>
@@ -531,9 +469,7 @@ namespace Intersect
         /// <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
         public static void WriteLine(ulong value)
         {
-            ResetWaitCursor();
             SystemConsole.WriteLine(value);
-            WriteWaitPrefix();
         }
 
         /// <summary>Writes the text representation of the specified object, followed by the current line terminator, to the standard output stream.</summary>
@@ -541,9 +477,7 @@ namespace Intersect
         /// <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
         public static void WriteLine(object value)
         {
-            ResetWaitCursor();
             SystemConsole.WriteLine(value);
-            WriteWaitPrefix();
         }
 
         /// <summary>Writes the specified string value, followed by the current line terminator, to the standard output stream.</summary>
@@ -551,9 +485,7 @@ namespace Intersect
         /// <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
         public static void WriteLine(string value)
         {
-            ResetWaitCursor();
             SystemConsole.WriteLine(value);
-            WriteWaitPrefix();
         }
 
         #endregion
@@ -569,9 +501,7 @@ namespace Intersect
         /// <exception cref="T:System.FormatException">The format specification in <paramref name="format" /> is invalid. </exception>
         public static void Write([NotNull] string format, [NotNull] params object[] arg)
         {
-            ResetWaitCursor();
             SystemConsole.Write(format, arg);
-            WriteWaitPrefix();
         }
 
         /// <summary>Writes the specified array of Unicode characters to the standard output stream.</summary>
@@ -579,9 +509,7 @@ namespace Intersect
         /// <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
         public static void Write(char[] buffer)
         {
-            ResetWaitCursor();
             SystemConsole.Write(buffer);
-            WriteWaitPrefix();
         }
 
         /// <summary>Writes the specified subarray of Unicode characters to the standard output stream.</summary>
@@ -597,9 +525,7 @@ namespace Intersect
         /// <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
         public static void Write([NotNull] char[] buffer, int index, int count)
         {
-            ResetWaitCursor();
             SystemConsole.Write(buffer, index, count);
-            WriteWaitPrefix();
         }
 
         /// <summary>Writes the text representation of the specified Boolean value to the standard output stream.</summary>
@@ -607,9 +533,7 @@ namespace Intersect
         /// <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
         public static void Write(bool value)
         {
-            ResetWaitCursor();
             SystemConsole.Write(value);
-            WriteWaitPrefix();
         }
 
         /// <summary>Writes the specified Unicode character value to the standard output stream.</summary>
@@ -617,9 +541,7 @@ namespace Intersect
         /// <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
         public static void Write(char value)
         {
-            ResetWaitCursor();
             SystemConsole.Write(value);
-            WriteWaitPrefix();
         }
 
         /// <summary>Writes the text representation of the specified double-precision floating-point value to the standard output stream.</summary>
@@ -627,9 +549,7 @@ namespace Intersect
         /// <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
         public static void Write(double value)
         {
-            ResetWaitCursor();
             SystemConsole.Write(value);
-            WriteWaitPrefix();
         }
 
         /// <summary>Writes the text representation of the specified <see cref="T:System.Decimal" /> value to the standard output stream.</summary>
@@ -637,9 +557,7 @@ namespace Intersect
         /// <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
         public static void Write(decimal value)
         {
-            ResetWaitCursor();
             SystemConsole.Write(value);
-            WriteWaitPrefix();
         }
 
         /// <summary>Writes the text representation of the specified single-precision floating-point value to the standard output stream.</summary>
@@ -647,9 +565,7 @@ namespace Intersect
         /// <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
         public static void Write(float value)
         {
-            ResetWaitCursor();
             SystemConsole.Write(value);
-            WriteWaitPrefix();
         }
 
         /// <summary>Writes the text representation of the specified 32-bit signed integer value to the standard output stream.</summary>
@@ -657,9 +573,7 @@ namespace Intersect
         /// <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
         public static void Write(int value)
         {
-            ResetWaitCursor();
             SystemConsole.Write(value);
-            WriteWaitPrefix();
         }
 
         /// <summary>Writes the text representation of the specified 32-bit unsigned integer value to the standard output stream.</summary>
@@ -667,9 +581,7 @@ namespace Intersect
         /// <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
         public static void Write(uint value)
         {
-            ResetWaitCursor();
             SystemConsole.Write(value);
-            WriteWaitPrefix();
         }
 
         /// <summary>Writes the text representation of the specified 64-bit signed integer value to the standard output stream.</summary>
@@ -677,9 +589,7 @@ namespace Intersect
         /// <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
         public static void Write(long value)
         {
-            ResetWaitCursor();
             SystemConsole.Write(value);
-            WriteWaitPrefix();
         }
 
         /// <summary>Writes the text representation of the specified 64-bit unsigned integer value to the standard output stream.</summary>
@@ -687,9 +597,7 @@ namespace Intersect
         /// <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
         public static void Write(ulong value)
         {
-            ResetWaitCursor();
             SystemConsole.Write(value);
-            WriteWaitPrefix();
         }
 
         /// <summary>Writes the text representation of the specified object to the standard output stream.</summary>
@@ -697,9 +605,7 @@ namespace Intersect
         /// <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
         public static void Write(object value)
         {
-            ResetWaitCursor();
             SystemConsole.Write(value);
-            WriteWaitPrefix();
         }
 
         /// <summary>Writes the specified string value to the standard output stream.</summary>
@@ -707,9 +613,7 @@ namespace Intersect
         /// <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
         public static void Write(string value)
         {
-            ResetWaitCursor();
             SystemConsole.Write(value);
-            WriteWaitPrefix();
         }
 
         #endregion

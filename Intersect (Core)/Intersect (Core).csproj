@@ -165,6 +165,8 @@
     <Compile Include="Crypto\RsaUtils.cs" />
     <Compile Include="CustomColors.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
+    <Compile Include="IO\ConsoleWaitContext.cs" />
+    <Compile Include="IO\ConsoleWaitWriter.cs" />
     <Compile Include="Models\DatabaseObject.cs" />
     <Compile Include="Enums\Access.cs" />
     <Compile Include="Enums\AdminActions.cs" />
