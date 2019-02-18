@@ -148,6 +148,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AlphanumComparatorFast.cs" />
+    <Compile Include="Core\ApplicationContext.cs" />
+    <Compile Include="Core\IApplicationContext.cs" />
     <Compile Include="BytePoint.cs" />
     <Compile Include="Collections\DatabaseObjectLookup.cs" />
     <Compile Include="Collections\IGameObjectLookup.cs" />
