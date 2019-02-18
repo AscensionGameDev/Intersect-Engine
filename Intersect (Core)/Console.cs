@@ -337,7 +337,8 @@ namespace Intersect
                 return ReadLine();
             }
 
-            var result = WaitContext.Wait(WaitOut.TextWriter.Write, ReadLine);
+            var result = WaitContext.BufferedReadLine(WaitOut.TextWriter.Write, ReadKey);
+            //var result = WaitContext.Wait(WaitOut.TextWriter.Write, ReadLine);
 
             WaitContext.Clear();
 
