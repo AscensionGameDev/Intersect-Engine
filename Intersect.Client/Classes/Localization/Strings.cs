@@ -103,10 +103,12 @@ namespace Intersect.Client.Localization
 
         public struct CharacterCreation
         {
+            public static LocalizedString back = @"Back";
             public static LocalizedString Class = @"Class:";
             public static LocalizedString create = @"Create";
             public static LocalizedString female = @"Female";
             public static LocalizedString gender = @"Gender:";
+            public static LocalizedString hint = @"Customize" + Environment.NewLine + "Your Character";
             public static LocalizedString invalidname = @"Character name is invalid. Please use alphanumeric characters with a length between 2 and 20.";
             public static LocalizedString male = @"Male";
             public static LocalizedString name = @"Char Name:";
