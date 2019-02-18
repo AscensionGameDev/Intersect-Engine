@@ -16,6 +16,7 @@ namespace Intersect.Server.General
         //Api
         public static ServerApi Api { get; set; }
 
+        [NotNull]
         public static ServerTiming Timing { get; } = new ServerTiming();
 
         public static long Cps = 0;
