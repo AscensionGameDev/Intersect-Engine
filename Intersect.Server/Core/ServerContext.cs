@@ -9,6 +9,7 @@ using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
+using Intersect.Core;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking.Helpers;

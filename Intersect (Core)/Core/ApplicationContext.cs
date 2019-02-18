@@ -1,9 +1,8 @@
-﻿using Intersect.Threading;
+﻿using System;
+using Intersect.Threading;
 using JetBrains.Annotations;
-using System;
-using System.Windows.Forms;
 
-namespace Intersect.Server.Core
+namespace Intersect.Core
 {
     public abstract class ApplicationContext<TContext> : IApplicationContext where TContext : ApplicationContext<TContext>
     {
@@ -62,7 +61,7 @@ namespace Intersect.Server.Core
         {
             if (IsDisposed)
             {
-                throw new ObjectDisposedException(nameof(ApplicationContext));
+                throw new ObjectDisposedException(typeof(TContext).Name);
             }
 
             lock (this)

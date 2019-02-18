@@ -26,8 +26,17 @@ namespace Intersect.Utilities
             Scripts.Add(script.Name, script);
         }
 
+        private static void NameOfGeneric<TGeneric>()
+        {
+            Console.WriteLine(typeof(TGeneric).Name);
+            Console.Read();
+        }
+
         static void Main(string[] args)
         {
+            NameOfGeneric<Program>();
+            return;
+
             new Thread(() =>
             {
                 Thread.Sleep(1000);
