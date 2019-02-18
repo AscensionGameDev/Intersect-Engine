@@ -89,7 +89,7 @@ namespace Intersect.Server.WebApi.Modules
 
         private Response Get_Stats(dynamic parameters) => Response.AsJson(new
             {
-                uptime = Globals.Timing.TimeMs ?? -1,
+                uptime = Globals.Timing.TimeMs,
                 cps = Globals.Cps,
                 connectedClients = Globals.Clients?.Count,
                 onlineCount = Globals.OnlineList?.Count
