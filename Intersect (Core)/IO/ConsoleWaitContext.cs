@@ -59,9 +59,9 @@ namespace Intersect.IO
             }
 
             var onCurrentLine = Console.CursorTop == WaitCursorTop;
-
             var realColumnCursor = onCurrentLine ? WaitCursorLeft : 0;
             var currentLineCursor = Console.CursorTop;
+
             Console.SetCursorPosition(realColumnCursor, Console.CursorTop);
             write(new string(' ', WaitPrefix?.Length ?? 0));
             Console.SetCursorPosition(realColumnCursor, currentLineCursor);
