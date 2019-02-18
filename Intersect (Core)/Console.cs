@@ -328,6 +328,8 @@ namespace Intersect
 
         public static string ReadLine(bool withPrefix)
         {
+            // TODO: Actually write a ReadLine that saves the input buffer so that when a Write inevitably happens the input isn't obliterated off the screen (while it still persists in memory).
+
             WaitContext.Check();
 
             if (!withPrefix)
