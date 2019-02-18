@@ -188,7 +188,7 @@ namespace Intersect.Server.Entities
 
             //We were forcing at LEAST 1hp base damage.. but then you can't have guards that won't hurt the player.
             //https://www.ascensiongamedev.com/community/bug_tracker/intersect/npc-set-at-0-attack-damage-still-damages-player-by-1-initially-r915/
-            if (AttackTimer < Globals.System.GetTimeMs())
+            if (AttackTimer < Globals.Timing.TimeMs)
             {
                 base.TryAttack(enemy, Base.Damage, (DamageType) Base.DamageType,
                     (Stats) Base.ScalingStat,
@@ -249,11 +249,11 @@ namespace Intersect.Server.Entities
                 }
             }
             //Check if NPC is casting a spell
-            if (CastTime > Globals.System.GetTimeMs())
+            if (CastTime > Globals.Timing.TimeMs)
             {
                 return; //can't move while casting
             }
-            else if (CastFreq < Globals.System.GetTimeMs()) //Try to cast a new spell
+            else if (CastFreq < Globals.Timing.TimeMs) //Try to cast a new spell
             {
                 var cc = false;
                 //Check if the NPC is silenced or stunned
@@ -281,13 +281,13 @@ namespace Intersect.Server.Entities
                                 range = projectileBase.Range;
                                 if (DirToEnemy(MyTarget) != Dir)
                                 {
-                                    if (LastRandomMove >= Globals.System.GetTimeMs()) return;
+                                    if (LastRandomMove >= Globals.Timing.TimeMs) return;
                                     var dirToEnemy = DirToEnemy(MyTarget);
                                     if (dirToEnemy != -1)
                                     {
                                         //Face the target -- next frame fire -- then go on with life
                                         ChangeDir(dirToEnemy); // Gotta get dir to enemy
-                                        LastRandomMove = Globals.System.GetTimeMs() + Globals.Rand.Next(1000, 3000);
+                                        LastRandomMove = Globals.Timing.TimeMs + Globals.Rand.Next(1000, 3000);
                                     }
                                     return;
                                 }
@@ -297,11 +297,11 @@ namespace Intersect.Server.Entities
                             {
                                 if (spell.VitalCost[(int) Vitals.Health] <= GetVital(Vitals.Health))
                                 {
-                                    if (Spells[s].SpellCd < Globals.System.RealTimeMs())
+                                    if (Spells[s].SpellCd < Globals.Timing.RealTimeMs)
                                     {
                                         if (spell.Combat.TargetType == SpellTargetTypes.Self || spell.Combat.TargetType == SpellTargetTypes.AoE || InRangeOf(MyTarget, range))
                                         {
-                                            CastTime = Globals.System.GetTimeMs() + spell.CastDuration;
+                                            CastTime = Globals.Timing.TimeMs + spell.CastDuration;
                                             SubVital(Vitals.Mana, spell.VitalCost[(int) Vitals.Mana]);
                                             SubVital(Vitals.Health,spell.VitalCost[(int)Vitals.Health]);
                                             if (spell.Combat.Friendly && spell.SpellType != SpellTypes.WarpTo)
@@ -316,19 +316,19 @@ namespace Intersect.Server.Entities
                                             switch (Base.SpellFrequency)
                                             {
                                                 case 0:
-                                                    CastFreq = Globals.System.GetTimeMs() + 30000;
+                                                    CastFreq = Globals.Timing.TimeMs + 30000;
                                                     break;
                                                 case 1:
-                                                    CastFreq = Globals.System.GetTimeMs() + 15000;
+                                                    CastFreq = Globals.Timing.TimeMs + 15000;
                                                     break;
                                                 case 2:
-                                                    CastFreq = Globals.System.GetTimeMs() + 8000;
+                                                    CastFreq = Globals.Timing.TimeMs + 8000;
                                                     break;
                                                 case 3:
-                                                    CastFreq = Globals.System.GetTimeMs() + 4000;
+                                                    CastFreq = Globals.Timing.TimeMs + 4000;
                                                     break;
                                                 case 4:
-                                                    CastFreq = Globals.System.GetTimeMs() + 2000;
+                                                    CastFreq = Globals.Timing.TimeMs + 2000;
                                                     break;
                                             }
 
@@ -369,7 +369,7 @@ namespace Intersect.Server.Entities
             }
 
             //TODO Clear Damage Map if out of combat (target is null and combat timer is to the point that regen has started)
-            if (Target == null && Globals.System.GetTimeMs() > CombatTimer && Globals.System.GetTimeMs() > RegenTimer)
+            if (Target == null && Globals.Timing.TimeMs > CombatTimer && Globals.Timing.TimeMs > RegenTimer)
             {
                 DamageMap.Clear();
             }
@@ -384,7 +384,7 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            if (MoveTimer < Globals.System.GetTimeMs())
+            if (MoveTimer < Globals.Timing.TimeMs)
             {
                 var targetMap = Guid.Empty;
                 var targetX = 0;
@@ -611,16 +611,16 @@ namespace Intersect.Server.Entities
 
                 //Move randomly
                 if (targetMap != Guid.Empty) return;
-                if (LastRandomMove >= Globals.System.GetTimeMs() || CastTime > 0) return;
+                if (LastRandomMove >= Globals.Timing.TimeMs || CastTime > 0) return;
                 if (Base.Movement == (int)NpcMovement.StandStill)
                 {
-                    LastRandomMove = Globals.System.GetTimeMs() + Globals.Rand.Next(1000, 3000);
+                    LastRandomMove = Globals.Timing.TimeMs + Globals.Rand.Next(1000, 3000);
                     return;
                 }
                 else if (Base.Movement == (int)NpcMovement.TurnRandomly)
                 {
                     ChangeDir(Globals.Rand.Next(0, 4));
-                    LastRandomMove = Globals.System.GetTimeMs() + Globals.Rand.Next(1000, 3000);
+                    LastRandomMove = Globals.Timing.TimeMs + Globals.Rand.Next(1000, 3000);
                     return;
                 }
                 var i = Globals.Rand.Next(0, 1);
@@ -641,9 +641,9 @@ namespace Intersect.Server.Entities
                         Move(i, null);
                     }
                 }
-                LastRandomMove = Globals.System.GetTimeMs() + Globals.Rand.Next(1000, 3000);
+                LastRandomMove = Globals.Timing.TimeMs + Globals.Rand.Next(1000, 3000);
 
-                if (fleeing) LastRandomMove = Globals.System.GetTimeMs() + (long)GetMovementTime();
+                if (fleeing) LastRandomMove = Globals.Timing.TimeMs + (long)GetMovementTime();
             }
             //If we switched maps, lets update the maps
             if (curMapLink != MapId)

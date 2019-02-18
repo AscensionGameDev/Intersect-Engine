@@ -201,7 +201,7 @@ namespace Intersect.Server.Maps
                 MapItems.Add(new MapItem(item.ItemId, item.Quantity,item.BagId, item.Bag));
                 MapItems[MapItems.Count - 1].X = x;
                 MapItems[MapItems.Count - 1].Y = y;
-                MapItems[MapItems.Count - 1].DespawnTime = Globals.System.GetTimeMs() + Options.ItemDespawnTime;
+                MapItems[MapItems.Count - 1].DespawnTime = Globals.Timing.TimeMs + Options.ItemDespawnTime;
                 if (itemBase.ItemType == ItemTypes.Equipment)
                 {
                     MapItems[MapItems.Count - 1].Quantity = 1;
@@ -255,7 +255,7 @@ namespace Intersect.Server.Maps
                         ItemRespawns.Add(new MapItemSpawn());
                         ItemRespawns[ItemRespawns.Count - 1].AttributeSpawnX = MapItems[index].AttributeSpawnX;
                         ItemRespawns[ItemRespawns.Count - 1].AttributeSpawnY = MapItems[index].AttributeSpawnY;
-                        ItemRespawns[ItemRespawns.Count - 1].RespawnTime = Globals.System.GetTimeMs() +
+                        ItemRespawns[ItemRespawns.Count - 1].RespawnTime = Globals.Timing.TimeMs +
                                                                            Options.ItemRepawnTime;
                     }
                 }
@@ -702,11 +702,11 @@ namespace Intersect.Server.Maps
                             {
                                 if (npcSpawnInstance.RespawnTime == -1)
                                 {
-                                    npcSpawnInstance.RespawnTime = Globals.System.GetTimeMs() +
+                                    npcSpawnInstance.RespawnTime = Globals.Timing.TimeMs +
                                                                    ((Npc) npcSpawnInstance.Entity).Base
-                                                                   .SpawnDuration - (Globals.System.GetTimeMs() - LastUpdateTime);
+                                                                   .SpawnDuration - (Globals.Timing.TimeMs - LastUpdateTime);
                                 }
-                                else if (npcSpawnInstance.RespawnTime < Globals.System.GetTimeMs())
+                                else if (npcSpawnInstance.RespawnTime < Globals.Timing.TimeMs)
                                 {
                                     SpawnMapNpc(i);
                                     npcSpawnInstance.RespawnTime = -1;
@@ -724,11 +724,11 @@ namespace Intersect.Server.Maps
                             {
                                 if (resourceSpawnInstance.RespawnTime == -1)
                                 {
-                                    resourceSpawnInstance.RespawnTime = Globals.System.GetTimeMs() +
+                                    resourceSpawnInstance.RespawnTime = Globals.Timing.TimeMs +
                                                                         resourceSpawnInstance.Entity.Base
                                                                             .SpawnDuration;
                                 }
-                                else if (resourceSpawnInstance.RespawnTime < Globals.System.GetTimeMs())
+                                else if (resourceSpawnInstance.RespawnTime < Globals.Timing.TimeMs)
                                 {
                                     SpawnMapResource(i);
                                     resourceSpawnInstance.RespawnTime = -1;

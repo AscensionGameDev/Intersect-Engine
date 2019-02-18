@@ -86,7 +86,7 @@ namespace Intersect.Server.Entities
                 }
             }
             mQuantity++;
-            mSpawnTime = Globals.System.GetTimeMs() + Base.Delay;
+            mSpawnTime = Globals.Timing.TimeMs + Base.Delay;
         }
 
         private int FindProjectileRotationX(int direction, int x, int y)
@@ -202,7 +202,7 @@ namespace Intersect.Server.Entities
 
         public void Update()
         {
-            if (mQuantity < Base.Quantity && Globals.System.GetTimeMs() > mSpawnTime)
+            if (mQuantity < Base.Quantity && Globals.Timing.TimeMs > mSpawnTime)
             {
                 AddProjectileSpawns();
             }
@@ -253,7 +253,7 @@ namespace Intersect.Server.Entities
             {
                 for (int i = 0; i < mSpawnedAmount; i++)
                 {
-                    if (Spawns[i] != null && Globals.System.GetTimeMs() > Spawns[i].TransmittionTimer)
+                    if (Spawns[i] != null && Globals.Timing.TimeMs > Spawns[i].TransmittionTimer)
                     {
                         var killSpawn = MoveFragment(Spawns[i]);
                         if (!killSpawn) killSpawn = CheckForCollision(Spawns[i]);
@@ -340,7 +340,7 @@ namespace Intersect.Server.Entities
                     {
                         if (z == entities.Count - 1)
                         {
-                            spawn.TransmittionTimer = Globals.System.GetTimeMs() +
+                            spawn.TransmittionTimer = Globals.Timing.TimeMs +
                                                       (long)
                                                       ((float) Base.Speed / (float) Base.Range);
                             if (spawn.Distance >= Base.Range)
@@ -467,7 +467,7 @@ namespace Intersect.Server.Entities
         public Guid MapId;
         public Projectile Parent;
         public ProjectileBase ProjectileBase;
-        public long TransmittionTimer = Globals.System.GetTimeMs();
+        public long TransmittionTimer = Globals.Timing.TimeMs;
         public int X;
         public int Y;
         public int Z;
@@ -481,7 +481,7 @@ namespace Intersect.Server.Entities
             Dir = dir;
             ProjectileBase = projectileBase;
             Parent = parent;
-            TransmittionTimer = Globals.System.GetTimeMs() +
+            TransmittionTimer = Globals.Timing.TimeMs +
                                 (long) ((float) ProjectileBase.Speed / (float) ProjectileBase.Range);
         }
 
