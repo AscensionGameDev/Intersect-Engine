@@ -779,7 +779,7 @@ namespace Intersect.Server.Entities
 
         public override void TryAttack(EntityInstance enemy)
         {
-            if (CastTime >= Globals.System.GetTimeMs())
+            if (CastTime >= Globals.Timing.TimeMs)
             {
                 PacketSender.SendPlayerMsg(MyClient, Strings.Combat.channelingnoattack);
                 return;
@@ -1273,7 +1273,7 @@ namespace Intersect.Server.Entities
                     return;
                 }
 
-                if (ItemCooldowns.ContainsKey(itemBase.Id) && ItemCooldowns[itemBase.Id] > Globals.System.GetTimeMs())
+                if (ItemCooldowns.ContainsKey(itemBase.Id) && ItemCooldowns[itemBase.Id] > Globals.Timing.TimeMs)
                 {
                     //Cooldown warning!
                     PacketSender.SendPlayerMsg(MyClient, Strings.Items.cooldown);
@@ -1407,11 +1407,11 @@ namespace Intersect.Server.Entities
                     decimal cooldownReduction = (1 - ((decimal)((Player)this).GetCooldownReduction() / 100));
                     if (ItemCooldowns.ContainsKey(itemBase.Id))
                     {
-                        ItemCooldowns[itemBase.Id] = Globals.System.GetTimeMs() + (long)(itemBase.Cooldown * cooldownReduction);
+                        ItemCooldowns[itemBase.Id] = Globals.Timing.TimeMs + (long)(itemBase.Cooldown * cooldownReduction);
                     }
                     else
                     {
-                        ItemCooldowns.Add(itemBase.Id, Globals.System.GetTimeMs() + (long)(itemBase.Cooldown * cooldownReduction));
+                        ItemCooldowns.Add(itemBase.Id, Globals.Timing.TimeMs + (long)(itemBase.Cooldown * cooldownReduction));
                     }
                     PacketSender.SendItemCooldown(MyClient, itemBase.Id);
                 }
@@ -2439,7 +2439,7 @@ namespace Intersect.Server.Entities
             {
                 fromPlayer.FriendRequests.Remove(this);
             }
-            if (!FriendRequests.ContainsKey(fromPlayer) || !(FriendRequests[fromPlayer] > Globals.System.GetTimeMs()))
+            if (!FriendRequests.ContainsKey(fromPlayer) || !(FriendRequests[fromPlayer] > Globals.Timing.TimeMs))
             {
                 if (Trading.Requester == null && PartyRequester == null && FriendRequester == null)
                 {
@@ -2487,7 +2487,7 @@ namespace Intersect.Server.Entities
             {
                 fromPlayer.Trading.Requests.Remove(this);
             }
-            if (Trading.Requests.ContainsKey(fromPlayer) && Trading.Requests[fromPlayer] > Globals.System.GetTimeMs())
+            if (Trading.Requests.ContainsKey(fromPlayer) && Trading.Requests[fromPlayer] > Globals.Timing.TimeMs)
             {
                 PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Trading.alreadydenied,
                     CustomColors.Error);
@@ -2729,7 +2729,7 @@ namespace Intersect.Server.Entities
             {
                 fromPlayer.PartyRequests.Remove(this);
             }
-            if (PartyRequests.ContainsKey(fromPlayer) && PartyRequests[fromPlayer] > Globals.System.GetTimeMs())
+            if (PartyRequests.ContainsKey(fromPlayer) && PartyRequests[fromPlayer] > Globals.Timing.TimeMs)
             {
                 PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Parties.alreadydenied,
                     CustomColors.Error);
@@ -3056,11 +3056,11 @@ namespace Intersect.Server.Entities
                 {
                     if (spell.VitalCost[(int)Vitals.Health] <= GetVital(Vitals.Health))
                     {
-                        if (Spells[spellSlot].SpellCd < Globals.System.RealTimeMs())
+                        if (Spells[spellSlot].SpellCd < Globals.Timing.RealTimeMs)
                         {
-                            if (CastTime < Globals.System.GetTimeMs())
+                            if (CastTime < Globals.Timing.TimeMs)
                             {
-                                CastTime = Globals.System.GetTimeMs() + spell.CastDuration;
+                                CastTime = Globals.Timing.TimeMs + spell.CastDuration;
                                 SubVital(Vitals.Mana, spell.VitalCost[(int)Vitals.Mana]);
                                 SubVital(Vitals.Health, spell.VitalCost[(int)Vitals.Health]);
                                 SpellCastSlot = spellSlot;
@@ -3084,7 +3084,7 @@ namespace Intersect.Server.Entities
                                 PacketSender.SendEntityVitals(this);
 
                                 //Check if cast should be instance
-                                if (Globals.System.GetTimeMs() >= CastTime)
+                                if (Globals.Timing.TimeMs >= CastTime)
                                 {
                                     //Cast now!
                                     CastTime = 0;

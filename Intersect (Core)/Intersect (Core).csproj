@@ -161,9 +161,11 @@
     <Compile Include="Config\MapOptions.cs" />
     <Compile Include="Config\PaperdollOptions.cs" />
     <Compile Include="Config\PassabilityOptions.cs" />
+    <Compile Include="Console.cs" />
     <Compile Include="Config\SmtpSettings.cs" />
     <Compile Include="Crypto\RsaUtils.cs" />
     <Compile Include="CustomColors.cs" />
+    <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Models\DatabaseObject.cs" />
     <Compile Include="Enums\Access.cs" />
     <Compile Include="Enums\AdminActions.cs" />

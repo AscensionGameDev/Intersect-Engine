@@ -7,6 +7,9 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using CommandLine;
+using Intersect.Server.General;
+using Intersect.Server.Networking.Helpers;
+using Intersect.Utilities;
 using JetBrains.Annotations;
 
 namespace Intersect.Server.Core
@@ -25,6 +28,41 @@ namespace Intersect.Server.Core
 
         public static void Start(params string[] args)
         {
+            PreContextSetup(args);
+
+            var commandLineOptions = ParseCommandLineArgs(args);
+            sContext = new ServerContext(commandLineOptions);
+
+            ServerContext.Instance.Start();
+        }
+
+        [NotNull]
+        private static CommandLineOptions ParseCommandLineArgs(params string[] args)
+        {
+            return new Parser(settings =>
+                       {
+                           if (settings == null)
+                           {
+                               throw new ArgumentNullException(
+                                   nameof(settings),
+                                   @"If this is null the CommandLineParser dependency is likely broken."
+                               );
+                           }
+
+                           settings.IgnoreUnknownArguments = true;
+                           settings.MaximumDisplayWidth = Console.BufferWidth;
+                       })
+                       .ParseArguments<CommandLineOptions>(args)
+                       .MapResult(
+                           commandLineOptions => commandLineOptions,
+                           errors => null
+                       ) ?? throw new InvalidOperationException();
+        }
+
+        #region Pre-Context
+
+        private static void PreContextSetup(params string[] args)
+        {
             if (RunningOnWindows())
             {
                 SetConsoleCtrlHandler(ConsoleCtrlCheck, true);
@@ -39,25 +77,254 @@ namespace Intersect.Server.Core
                 return;
             }
 
-            var commandLineOptions = ParseCommandLineArgs(args);
-            sContext = new ServerContext(commandLineOptions);
-            ServerStatic.Start(args);
+            LegacyDatabase.CheckDirectories();
+
+            if (args != null)
+            {
+                foreach (var arg in args)
+                {
+                    if (string.IsNullOrWhiteSpace(arg) || !arg.Contains("port="))
+                    {
+                        continue;
+                    }
+
+                    if (ushort.TryParse(arg.Split("=".ToCharArray())[1], out var port))
+                    {
+                        Options.ServerPort = port;
+                    }
+                }
+
+                if (args.Contains("noupnp"))
+                {
+                    Options.NoPunchthrough = true;
+                }
+
+                if (args.Contains("noportcheck"))
+                {
+                    Options.NoNetworkCheck = true;
+                }
+            }
+
+            PrintIntroduction();
+
+            ExportDependencies(args);
+
+            Formulas.LoadFormulas();
+
+            CustomColors.Load();
+
+            if (!LegacyDatabase.InitDatabase())
+            {
+                Console.ReadKey();
+                return;
+            }
+
+            Console.WriteLine(Strings.Commandoutput.playercount.ToString(LegacyDatabase.RegisteredPlayers));
+            Console.WriteLine(Strings.Commandoutput.gametime.ToString(ServerTime.GetTime().ToString("F")));
+
+            ServerTime.Update();
+
+            Log.Global.AddOutput(new ConsoleOutput(Debugger.IsAttached ? LogLevel.All : LogLevel.Error));
         }
 
-        [NotNull]
-        private static CommandLineOptions ParseCommandLineArgs(params string[] args)
+        private static void PrintIntroduction()
         {
-            return new Parser()
-                       .ParseArguments<CommandLineOptions>(args)
-                       .MapResult(
-                           commandLineOptions => commandLineOptions,
-                           errors => null
-                       ) ?? throw new InvalidOperationException();
+            Console.Clear();
+            Console.WriteLine();
+            Console.WriteLine(@"  _____       _                          _   ");
+            Console.WriteLine(@" |_   _|     | |                        | |  ");
+            Console.WriteLine(@"   | |  _ __ | |_ ___ _ __ ___  ___  ___| |_ ");
+            Console.WriteLine(@"   | | | '_ \| __/ _ \ '__/ __|/ _ \/ __| __|");
+            Console.WriteLine(@"  _| |_| | | | ||  __/ |  \__ \  __/ (__| |_ ");
+            Console.WriteLine(@" |_____|_| |_|\__\___|_|  |___/\___|\___|\__|");
+            Console.WriteLine(Strings.Intro.tagline);
+            Console.WriteLine(@"Copyright (C) 2018  Ascension Game Dev");
+            Console.WriteLine(Strings.Intro.version.ToString(Assembly.GetExecutingAssembly().GetName().Version));
+            Console.WriteLine(Strings.Intro.support);
+            Console.WriteLine(Strings.Intro.loading);
         }
+
+        #endregion
+
+        #region Networking
+
+        internal static void CheckNetwork()
+        {
+            //Check to see if AGD can see this server. If so let the owner know :)
+            if (Options.OpenPortChecker && !Options.NoNetworkCheck)
+            {
+                var serverAccessible = PortChecker.CanYouSeeMe(Options.ServerPort, out var externalIp);
+
+                Console.WriteLine(Strings.Portchecking.connectioninfo);
+                if (!string.IsNullOrEmpty(externalIp))
+                {
+                    Console.WriteLine(Strings.Portchecking.publicip, externalIp);
+                    Console.WriteLine(Strings.Portchecking.publicport, Options.ServerPort);
+
+                    Console.WriteLine();
+                    if (serverAccessible)
+                    {
+                        Console.WriteLine(Strings.Portchecking.accessible);
+                        Console.WriteLine(Strings.Portchecking.letothersjoin);
+                    }
+                    else
+                    {
+                        Console.WriteLine(Strings.Portchecking.notaccessible);
+                        Console.WriteLine(Strings.Portchecking.debuggingsteps);
+                        Console.WriteLine(Strings.Portchecking.checkfirewalls);
+                        Console.WriteLine(Strings.Portchecking.checkantivirus);
+                        Console.WriteLine(Strings.Portchecking.screwed);
+                        Console.WriteLine();
+                        if (!UpnP.ForwardingSucceeded())
+                        {
+                            Console.WriteLine(Strings.Portchecking.checkrouterupnp);
+                        }
+                    }
+                }
+                else
+                {
+                    Console.WriteLine(Strings.Portchecking.notconnected);
+                }
+
+                Console.WriteLine();
+            }
+
+            Console.WriteLine(Strings.Intro.started.ToString(Options.ServerPort));
+        }
+
+        #endregion
+
+        #region Dependencies
+
+        private static void ClearDlls()
+        {
+            DeleteIfExists("libe_sqlite3.so");
+            DeleteIfExists("e_sqlite3.dll");
+            DeleteIfExists("libe_sqlite3.dylib");
+            DeleteIfExists("Nancy.dll");
+        }
+
+        private static string ReadProcessOutput(string name)
+        {
+            try
+            {
+                Debug.Assert(name != null, "name != null");
+                var p = new Process
+                {
+                    StartInfo =
+                    {
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        FileName = name
+                    }
+                };
+                p.Start();
+                // Do not wait for the child process to exit before
+                // reading to the end of its redirected stream.
+                // p.WaitForExit();
+                // Read the output stream first and then wait.
+                var output = p.StandardOutput.ReadToEnd();
+                p.WaitForExit();
+                output = output.Trim();
+                return output;
+            }
+            catch
+            {
+                return "";
+            }
+        }
+
+        internal static bool DeleteIfExists(string filename)
+        {
+            try
+            {
+                Debug.Assert(filename != null, "filename != null");
+                if (File.Exists(filename)) File.Delete(filename);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static void ExportDependencies(params string[] args)
+        {
+            ClearDlls();
+
+            var platformId = Environment.OSVersion.Platform;
+            if (platformId == PlatformID.Unix)
+            {
+                var unixName = ReadProcessOutput("uname") ?? "";
+                if (unixName.Contains("Darwin"))
+                {
+                    platformId = PlatformID.MacOSX;
+                }
+            }
+
+            if (Options.ApiEnabled)
+            {
+                if (!ReflectionUtils.ExtractCosturaResource("costura.nancy.dll.compressed", "Nancy.dll"))
+                {
+                    Log.Error("Failed to extract Nancy, terminating startup.");
+                    Environment.Exit(-0x1001);
+                }
+            }
+
+            string sqliteResourceName = null;
+            string sqliteFileName = null;
+            switch (platformId)
+            {
+                case PlatformID.Win32NT:
+                case PlatformID.Win32S:
+                case PlatformID.Win32Windows:
+                case PlatformID.WinCE:
+                    sqliteResourceName = Environment.Is64BitProcess ? "e_sqlite3x64.dll" : "e_sqlite3x86.dll";
+                    sqliteFileName = "e_sqlite3.dll";
+                    break;
+
+                case PlatformID.MacOSX:
+                    sqliteResourceName = "libe_sqlite3.dylib";
+                    sqliteFileName = "libe_sqlite3.dylib";
+                    break;
+
+                case PlatformID.Unix:
+                    sqliteResourceName = Environment.Is64BitProcess ? "libe_sqlite3_x64.so" : "libe_sqlite3_x86.so";
+                    if (args?.Contains("alpine") ?? false)
+                    {
+                        sqliteResourceName = "libe_sqlite3_alpine.so";
+                    }
+                    sqliteFileName = "libe_sqlite3.so";
+                    break;
+
+                case PlatformID.Xbox:
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(platformId));
+            }
+
+            if (string.IsNullOrWhiteSpace(sqliteResourceName) || string.IsNullOrWhiteSpace(sqliteFileName))
+            {
+                return;
+            }
+
+            sqliteResourceName = $"Intersect.Server.Resources.{sqliteResourceName}";
+            if (ReflectionUtils.ExtractResource(sqliteResourceName, sqliteFileName))
+            {
+                return;
+            }
+
+            Log.Error($"Failed to extract {sqliteFileName} library, terminating startup.");
+            Environment.Exit(-0x1000);
+        }
+
+        #endregion
 
         #region System Console
 
-        private static void OnConsoleCancelKeyPress([NotNull] object sender, [NotNull] ConsoleCancelEventArgs cancelEvent)
+        private static void OnConsoleCancelKeyPress([NotNull] object sender,
+            [NotNull] ConsoleCancelEventArgs cancelEvent)
         {
             ServerContext.Instance.Dispose();
             //Shutdown();
@@ -73,12 +340,12 @@ namespace Intersect.Server.Core
             // Ignore missing resources
             if (args.Name?.Contains(".resources") ?? false)
             {
-                
-return null;
+                return null;
             }
 
             // check for assemblies already loaded
-            var assembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(fodAssembly => fodAssembly?.FullName == args.Name);
+            var assembly = AppDomain.CurrentDomain.GetAssemblies()
+                .FirstOrDefault(fodAssembly => fodAssembly?.FullName == args.Name);
             if (assembly != null)
             {
                 return assembly;

@@ -255,7 +255,7 @@ namespace Intersect.Server.Entities
 
         public void Update(bool isActive, long timeMs)
         {
-            if (MoveTimer >= Globals.System.GetTimeMs() || GlobalClone != null ||  (isActive && MyPage.InteractionFreeze)) return;
+            if (MoveTimer >= Globals.Timing.TimeMs || GlobalClone != null ||  (isActive && MyPage.InteractionFreeze)) return;
             if (MovementType == EventMovementType.MoveRoute && MoveRoute != null)
             {
                 ProcessMoveRoute(Client, timeMs);
@@ -269,7 +269,7 @@ namespace Intersect.Server.Entities
                     if (CanMove(dir) == -1)
                     {
                         Move(dir, Client);
-                        MoveTimer = Globals.System.GetTimeMs() + (long) GetMovementTime();
+                        MoveTimer = Globals.Timing.TimeMs + (long) GetMovementTime();
                     }
                 }
             }
@@ -558,9 +558,9 @@ namespace Intersect.Server.Entities
                         //Send Update
                         SendToClient();
                     }
-                    if (MoveTimer < Globals.System.GetTimeMs())
+                    if (MoveTimer < Globals.Timing.TimeMs)
                     {
-                        MoveTimer = Globals.System.GetTimeMs() + (long) GetMovementTime();
+                        MoveTimer = Globals.Timing.TimeMs + (long) GetMovementTime();
                     }
                 }
             }

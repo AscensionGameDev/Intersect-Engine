@@ -15,13 +15,11 @@ namespace Intersect.Server.General
     {
         //Api
         public static ServerApi Api { get; set; }
-        public static ServerNetwork Network { get; set; }
 
-        //Console Variables
+        public static ServerTiming Timing { get; } = new ServerTiming();
+
         public static long Cps = 0;
-
         public static bool CpsLock = true;
-        public static ServerSystem System = new ServerSystem();
 
         [NotNull] public static readonly object ClientLock = new object();
         [NotNull] public static readonly List<Client> Clients = new List<Client>();

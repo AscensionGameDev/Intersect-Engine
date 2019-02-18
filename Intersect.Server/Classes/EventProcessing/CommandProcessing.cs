@@ -700,7 +700,7 @@ namespace Intersect.Server.EventProcessing
         //Wait Command
         private static void ProcessCommand(WaitCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            instance.WaitTimer = Globals.System.GetTimeMs() + command.Time;
+            instance.WaitTimer = Globals.Timing.TimeMs + command.Time;
         }
 
         //Open Bank Command

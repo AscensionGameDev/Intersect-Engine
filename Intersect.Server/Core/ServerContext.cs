@@ -9,6 +9,14 @@ using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
+using Intersect.Server.General;
+using Intersect.Server.Localization;
+using Intersect.Server.Networking.Helpers;
+using Intersect.Server.WebApi;
+using Open.Nat;
+#if WEBSOCKETS
+using Intersect.Server.Networking.Websockets;
+#endif
 
 namespace Intersect.Server.Core
 {
@@ -95,13 +103,49 @@ namespace Intersect.Server.Core
 
         #region Listen
 
-        internal void NetworkListen()
+        private void InternalStartNetworking()
         {
-            // TODO: Move this into InternalStart()
             if (!Network.Listen())
             {
                 Log.Error("An error occurred while attempting to connect.");
             }
+
+#if WEBSOCKETS
+            WebSocketNetwork.Init(Options.ServerPort);
+            Console.WriteLine(Strings.Intro.websocketstarted.ToString(Options.ServerPort));
+#endif
+
+            Console.WriteLine();
+
+            if (!Options.UPnP || Options.NoPunchthrough)
+            {
+                return;
+            }
+
+            UpnP.ConnectNatDevice().Wait(5000);
+#if WEBSOCKETS
+            UpnP.OpenServerPort(Options.ServerPort, Protocol.Tcp).Wait(5000);
+#endif
+            UpnP.OpenServerPort(Options.ServerPort, Protocol.Udp).Wait(5000);
+
+            if (Options.ApiEnabled)
+            {
+                UpnP.OpenServerPort(Options.ApiPort, Protocol.Tcp).Wait(5000);
+            }
+
+            Console.WriteLine();
+
+            if (Options.ApiEnabled)
+            {
+                // TODO: API needs to be owned by the context, and rewritten to WebAPI2
+                Console.WriteLine(Strings.Intro.api.ToString(Options.ApiPort));
+                Globals.Api = new ServerApi(Options.ApiPort);
+                Globals.Api.Start();
+                Console.WriteLine();
+                Bootstrapper.DeleteIfExists("Nancy.dll");
+            }
+
+            Bootstrapper.CheckNetwork();
         }
 
         #endregion
@@ -114,18 +158,14 @@ namespace Intersect.Server.Core
         {
             try
             {
+                InternalStartNetworking();
+
                 if (!StartupOptions.DoNotShowConsole)
                 {
                     ThreadConsole = ServerConsole.Start();
                 }
 
                 ThreadLogic = ServerLogic.Start();
-
-                // TODO: Move Network.Listen() to here from CreateNetwork()
-                //if (!Network.Listen())
-                //{
-                //    Log.Error("An error occurred while attempting to connect.");
-                //}
             }
             catch (Exception exception)
             {
@@ -143,7 +183,23 @@ namespace Intersect.Server.Core
         {
             if (disposing)
             {
-                ServerStatic.Shutdown();
+                #region CLEAN THIS UP
+                // TODO: This may actually be fine here? Might want to move it into Bootstrapper though as "PrintShutdown()"
+                Console.WriteLine();
+                Console.WriteLine(Strings.Commands.exiting);
+                Console.WriteLine();
+
+                // Except this line, this line is fine.
+                Network.Dispose();
+
+                // TODO: This probably also needs to not be a global, but will require more work to clean up.
+                LegacyDatabase.SavePlayerDatabase();
+                LegacyDatabase.SaveGameDatabase();
+
+                // TODO: This needs to not be a global. I'm also in the middle of rewriting the API anyway.
+                Globals.Api?.Stop();
+
+                #endregion
 
                 if (ThreadConsole?.IsAlive ?? false)
                 {
@@ -160,8 +216,6 @@ namespace Intersect.Server.Core
                         ThreadLogic.Abort();
                     }
                 }
-
-                Network.Dispose();
             }
 
             base.Dispose(disposing);

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using Intersect.Utilities.Scripts;
 
 namespace Intersect.Utilities
@@ -27,6 +28,25 @@ namespace Intersect.Utilities
 
         static void Main(string[] args)
         {
+            new Thread(() =>
+            {
+                Thread.Sleep(1000);
+                Console.WriteLine("321Test123");
+            }).Start();
+            Console.WaitPrefix = "> ";
+            Console.WriteLine("Test");
+            Console.ReadLine(true);
+            Console.Write("1234Test4321");
+            new Thread(() =>
+            {
+                Thread.Sleep(1000);
+                Console.WriteLine("xyzzy90210");
+                Thread.Sleep(1000);
+                Console.WriteLine("noonoo");
+            }).Start();
+            Console.ReadLine(true);
+            return;
+
             if (Scripts.Count < 1)
             {
                 Environment.Exit(-1);

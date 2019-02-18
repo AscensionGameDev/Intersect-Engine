@@ -64,8 +64,8 @@ namespace Intersect.Server.Networking
         public Client(IConnection connection = null)
         {
             this.mConnection = connection;
-            mConnectTime = Globals.System.GetTimeMs();
-            mConnectionTimeout = Globals.System.GetTimeMs() + mTimeout;
+            mConnectTime = Globals.Timing.TimeMs;
+            mConnectionTimeout = Globals.Timing.TimeMs + mTimeout;
             PacketSender.SendServerConfig(this);
         }
 
@@ -177,7 +177,7 @@ namespace Intersect.Server.Networking
         {
             if (mConnection != null)
             {
-                mConnectionTimeout = Globals.System.GetTimeMs() + mTimeout;
+                mConnectionTimeout = Globals.Timing.TimeMs + mTimeout;
             }
         }
 

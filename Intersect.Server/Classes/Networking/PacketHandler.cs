@@ -443,10 +443,10 @@ namespace Intersect.Server.Networking
             if ((canMove == -1 || canMove == -4) && client.Entity.MoveRoute == null)
             {
                 player.Move(dir, client, false);
-                if (player.MoveTimer > Globals.System.GetTimeMs())
+                if (player.MoveTimer > Globals.Timing.TimeMs)
                 {
                     //TODO: Make this based moreso on the players current ping instead of a flat value that can be abused
-                    player.MoveTimer = Globals.System.GetTimeMs() +  (long)(player.GetMovementTime() * .75f);
+                    player.MoveTimer = Globals.Timing.TimeMs +  (long)(player.GetMovementTime() * .75f);
                 }
             }
             else
@@ -929,7 +929,7 @@ namespace Intersect.Server.Networking
                 buffer.WriteBytes(packet);
                 var target = buffer.ReadGuid();
 
-                if (client.Entity.CastTime >= Globals.System.GetTimeMs())
+                if (client.Entity.CastTime >= Globals.Timing.TimeMs)
                 {
                     PacketSender.SendPlayerMsg(client, Strings.Combat.channelingnoattack);
                     return;
@@ -2056,7 +2056,7 @@ namespace Intersect.Server.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             client.Entity.CraftId = bf.ReadGuid();
-            client.Entity.CraftTimer = Globals.System.GetTimeMs();
+            client.Entity.CraftTimer = Globals.Timing.TimeMs;
             bf.Dispose();
         }
 
@@ -2387,13 +2387,13 @@ namespace Intersect.Server.Networking
 
                     if (client.Entity.PartyRequests.ContainsKey(client.Entity.PartyRequester))
                     {
-                        client.Entity.PartyRequests[client.Entity.PartyRequester] = Globals.System.GetTimeMs() +
+                        client.Entity.PartyRequests[client.Entity.PartyRequester] = Globals.Timing.TimeMs +
                                                                                     Player.REQUEST_DECLINE_TIMEOUT;
                     }
                     else
                     {
                         client.Entity.PartyRequests.Add(client.Entity.PartyRequester,
-                            Globals.System.GetTimeMs() + Player.REQUEST_DECLINE_TIMEOUT);
+                            Globals.Timing.TimeMs + Player.REQUEST_DECLINE_TIMEOUT);
                     }
                 }
                 client.Entity.PartyRequester = null;
@@ -2492,13 +2492,13 @@ namespace Intersect.Server.Networking
                         Strings.Trading.declined.ToString(client.Entity.Name), CustomColors.Declined);
                     if (client.Entity.Trading.Requests.ContainsKey(client.Entity.Trading.Requester))
                     {
-                        client.Entity.Trading.Requests[client.Entity.Trading.Requester] = Globals.System.GetTimeMs() +
+                        client.Entity.Trading.Requests[client.Entity.Trading.Requester] = Globals.Timing.TimeMs +
                                                                                     Player.REQUEST_DECLINE_TIMEOUT;
                     }
                     else
                     {
                         client.Entity.Trading.Requests.Add(client.Entity.Trading.Requester,
-                            Globals.System.GetTimeMs() + Player.REQUEST_DECLINE_TIMEOUT);
+                            Globals.Timing.TimeMs + Player.REQUEST_DECLINE_TIMEOUT);
                     }
                 }
                 client.Entity.Trading.Requester = null;
@@ -2673,12 +2673,12 @@ namespace Intersect.Server.Networking
                     if (client.Entity.FriendRequests.ContainsKey(client.Entity.FriendRequester))
                     {
                         client.Entity.FriendRequests[client.Entity.FriendRequester] =
-                            Globals.System.GetTimeMs() + Player.REQUEST_DECLINE_TIMEOUT;
+                            Globals.Timing.TimeMs + Player.REQUEST_DECLINE_TIMEOUT;
                     }
                     else
                     {
                         client.Entity.FriendRequests.Add(client.Entity.FriendRequester,
-                            Globals.System.GetTimeMs() + Player.REQUEST_DECLINE_TIMEOUT);
+                            Globals.Timing.TimeMs + Player.REQUEST_DECLINE_TIMEOUT);
                     }
                 }
                 client.Entity.FriendRequester = null;
