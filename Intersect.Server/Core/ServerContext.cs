@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Intersect.Logging;
+﻿using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Crypto;
 using Intersect.Network.Crypto.Formats;
-using Intersect.Server.General;
 using Intersect.Server.Networking;
 using Intersect.Server.Networking.Lidgren;
 using JetBrains.Annotations;
+using System;
+using System.Diagnostics;
+using System.Reflection;
+using System.Threading;
 
 namespace Intersect.Server.Core
 {
