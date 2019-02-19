@@ -35,7 +35,7 @@ namespace Intersect.IO
             }
         }
 
-        public string BufferedReadLine([NotNull] Action<string> write, [NotNull] Func<ConsoleKeyInfo> readKey)
+        public string BufferedReadLine([NotNull] Action<string> write, [NotNull] Action writeLine, [NotNull] Func<ConsoleKeyInfo> readKey)
         {
             return Wait(write, () =>
             {
@@ -46,6 +46,7 @@ namespace Intersect.IO
                     var keyInfo = readKey();
                     if (keyInfo.Key == ConsoleKey.Enter)
                     {
+                        writeLine();
                         break;
                     }
 
@@ -146,8 +147,7 @@ namespace Intersect.IO
                 return;
             }
 
-            write(WaitPrefix);
-            write(new string(InputBuffer.ToArray()));
+            write(WaitPrefix + new string(InputBuffer.ToArray()));
         }
 
         public async Task WritePrefixAsync([NotNull] Func<string, Task> writeAsync)
