@@ -15,6 +15,8 @@ namespace Intersect.IO
         [NotNull]
         internal TextWriter TextWriter { get; }
 
+        internal bool SkipNextWriteChar { get; set; }
+
         public override Encoding Encoding => TextWriter.Encoding;
 
         public override IFormatProvider FormatProvider => TextWriter.FormatProvider;
@@ -139,9 +141,22 @@ namespace Intersect.IO
 
         public override void Write(char value)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            var skip = SkipNextWriteChar;
+            if (skip)
+            {
+                SkipNextWriteChar = false;
+            }
+            else
+            {
+                WaitContext.ResetWaitCursor(TextWriter.Write);
+            }
+
             TextWriter.Write(value);
-            WaitContext.WritePrefix(TextWriter.Write);
+
+            if (!skip)
+            {
+                WaitContext.WritePrefix(TextWriter.Write);
+            }
         }
 
         public override void Write(bool value)

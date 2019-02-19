@@ -239,6 +239,7 @@ namespace Intersect
 
         public static ConsoleKeyInfo ReadKey()
         {
+            WaitOut.SkipNextWriteChar = true;
             return SystemConsole.ReadKey();
         }
 
@@ -334,7 +335,7 @@ namespace Intersect
                 return ReadLine();
             }
 
-            var result = WaitContext.BufferedReadLine(WaitOut.TextWriter.Write, ReadKey);
+            var result = WaitContext.BufferedReadLine(WaitOut.TextWriter.Write, WaitOut.TextWriter.WriteLine, ReadKey);
 
             WaitContext.Clear();
 
