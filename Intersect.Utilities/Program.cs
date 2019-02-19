@@ -32,8 +32,40 @@ namespace Intersect.Utilities
             Console.Read();
         }
 
+        private static void Enumerators()
+        {
+            var defaults = new Dictionary<int, string>()
+            {
+                {0, "test"},
+                {2, "test"},
+                {3, "test"},
+                {1, "test"}
+            };
+
+            var values = new Dictionary<int, string>()
+            {
+                {3, "taest"},
+                {2, "taest"},
+                {1, "taest"}
+            };
+
+            using (var enumeratorDefaults = defaults.GetEnumerator())
+            {
+                using (var enumeratorValues = values.GetEnumerator())
+                {
+                    Console.WriteLine(defaults.Count);
+                    Console.WriteLine(values.Count);
+                }
+            }
+        }
+
         static void Main(string[] args)
         {
+            //Enumerators();
+            //return;
+            Strings.Load();
+            return;
+
             NameOfGeneric<Program>();
             return;
 
