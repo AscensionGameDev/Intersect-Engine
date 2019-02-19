@@ -14,6 +14,7 @@ using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
+using Intersect.Logging;
 using Intersect.Models;
 using Intersect.Server.Database;
 using Intersect.Server.Database.GameData;
@@ -898,6 +899,10 @@ namespace Intersect.Server
             {
                 sSaveGameDbTask = Task.Factory.StartNew(SaveGameDb);
             }
+            else
+            {
+                Log.Error("DB Save Ignored - Save Task Already Processing");
+            }
         }
 
         public static void SavePlayerDatabaseAsync()
@@ -924,18 +929,26 @@ namespace Intersect.Server
         private static void SaveGameDb()
         {
             if (sGameDb == null) return;
+            var sw = new Stopwatch();
             lock (mSavingGameLock)
             {
+                sw.Start();
                 sGameDb.SaveChanges();
+                sw.Stop();
+                Log.Info("Game DB Save - Took " + sw.ElapsedMilliseconds + "ms to complete.");
             }
         }
 
         private static void SavePlayerDb()
         {
             if (sPlayerDb == null) return;
+            var sw = new Stopwatch();
             lock (mSavingPlayerLock)
             {
+                sw.Start();
                 sPlayerDb.SaveChanges();
+                sw.Stop();
+                Log.Info("Player DB Save - Took " + sw.ElapsedMilliseconds + "ms to complete.");
             }
         }
 

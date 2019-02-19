@@ -42,16 +42,31 @@ namespace Intersect.GameObjects.Maps
         public Guid Right { get; set; }
         public int Revision { get; set; }
 
+        //Cached Att Data
+        private byte[] mCachedAttributeData = null;
+
         [Column("Attributes")]
         [JsonIgnore]
         public byte[] AttributeData
         {
-            get => Compression.CompressPacket(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(Attributes, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace })));
+            get => mCachedAttributeData;
             set => Attributes = JsonConvert.DeserializeObject<MapAttribute[,]>(System.Text.Encoding.UTF8.GetString(Compression.DecompressPacket(value)), new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
         }
+
+        //Map Attributes
+        private MapAttribute[,] mAttributes = new MapAttribute[Options.MapWidth, Options.MapHeight];
+
         [NotMapped]
         [JsonIgnore]
-        public MapAttribute[,] Attributes { get; set; } = new MapAttribute[Options.MapWidth, Options.MapHeight];
+        public MapAttribute[,] Attributes
+        {
+            get => mAttributes;
+            set
+            {
+                mAttributes = value;
+                mCachedAttributeData = Compression.CompressPacket(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(Attributes, new JsonSerializerSettings() {TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace})));
+            }
+        }
 
         [Column("Lights")]
         [JsonIgnore]
