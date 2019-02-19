@@ -102,8 +102,8 @@
       <HintPath>..\packages\ncalc.1.3.8\lib\NCalc.dll</HintPath>
     </Reference>
     <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
-    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Remotion.Linq, Version=2.2.0.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
       <HintPath>..\packages\Remotion.Linq.2.2.0\lib\net45\Remotion.Linq.dll</HintPath>
@@ -169,6 +169,10 @@
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="IO\ConsoleWaitContext.cs" />
     <Compile Include="IO\ConsoleWaitWriter.cs" />
+    <Compile Include="Localization\LocaleCommand.cs" />
+    <Compile Include="Localization\LocaleDictionary.cs" />
+    <Compile Include="Localization\Localized.cs" />
+    <Compile Include="Localization\LocaleNamespace.cs" />
     <Compile Include="Models\DatabaseObject.cs" />
     <Compile Include="Enums\Access.cs" />
     <Compile Include="Enums\AdminActions.cs" />
