@@ -5,21 +5,65 @@ using System.Text;
 using System.Threading.Tasks;
 using Intersect.Config;
 using Intersect.Enums;
+using Intersect.Logging;
+using Intersect.Server.Core.Commands;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking;
 using Intersect.Server.Networking.Helpers;
 using Intersect.Threading;
+using JetBrains.Annotations;
 
 namespace Intersect.Server.Core
 {
     internal sealed class ServerConsole : Threaded
     {
+        [NotNull]
+        public CommandParser Parser { get; }
+
+        public ServerConsole()
+        {
+            Parser = new CommandParser();
+            Parser.Register<ExitCommand>();
+        }
+
         protected override void ThreadStart()
         {
             Console.WaitPrefix = "> ";
             Console.WriteLine(Strings.Intro.consoleactive);
+
+            while (ServerContext.Instance.IsRunning)
+            {
+                var line = Console.ReadLine(true)?.Trim();
+
+                if (line == null)
+                {
+                    ServerContext.Instance.RequestShutdown();
+                    break;
+                }
+
+                if (string.IsNullOrEmpty(line))
+                {
+                    continue;
+                }
+
+                var result = Parser.Parse(line.Split(' '));
+                if (result.Arguments is CommandError error)
+                {
+                    Log.Error(error.Exception, error.Message);
+                }
+                else
+                {
+                    if (result.Command == null)
+                    {
+                        throw new InvalidOperationException();
+                    }
+
+                    result.Command.Handle(ServerContext.Instance, result.Arguments);
+                }
+            }
+            return;
             //Console.Write("> ");
             var command = Console.ReadLine(true);
             while (ServerContext.Instance.IsRunning)

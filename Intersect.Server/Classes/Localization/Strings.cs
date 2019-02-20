@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Intersect.Server.Core;
 
 namespace Intersect.Server.Localization
 {
@@ -344,70 +345,70 @@ namespace Intersect.Server.Localization
 
         public sealed class CommandoutputNamespace : LocaleNamespace
         {
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString apigranted = @"{00} now has api access!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString apirevoked = @"{00} has had their api access revoked!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString cps = @"Current CPS: {00}";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString cpslocked = @"CPS Locked";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString cpsunlocked = @"CPS Unlocked";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString gametime = @"Game time is now: {00}";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString helpfooter =
                 @"Type in any command followed by {00} for parameters and usage information.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString helpheader = @"List of available commands:";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString invalidparameters =
                 @"Invalid parameters provided! Use {00} to get more info about a command.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString killsuccess = @"{00} has been killed!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString listaccount = @"Account";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString listcharacter = @"Character";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString listid = @"ID";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString notfound =
                 @"Command not recoginized. Enter help for a list of commands. Remember console commands are case sensitive!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString parseerror =
                 @"Parse Error: Parameter could not be read. Type {00} {01} for usage information.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString playercount = @"Server has {00} registered players.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString powerchanged = @"{00} has had their power updated!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString powerlevel = @"{00}'s power has been set to {01}!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString syntaxerror =
                 @"Syntax Error: Expected parameter not found. Type {00} {01} for usage information.";
         }
 
-        public sealed class CommandsNamespace : LocaleNamespace
+        public sealed class CommandsNamespace : LocaleCommandNamespace
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString cpslock = @"lock";
@@ -419,19 +420,28 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString cpsunlock = @"unlock";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString exiting = @"Server is now closing. Please wait while your game and player data is saved!";
+            public readonly LocalizedString exiting =
+                @"Server is now closing. Please wait while your game and player data is saved!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString commandinfo = @"/?";
+            public readonly LocalizedString commandinfo = CommandParser.HelpArgumentShort;
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString ParserErrorOccurred = CommandParser.ParserErrorMessage;
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString CommandNotFound = CommandParser.CommandNotFoundMessage;
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString invalid = @"Invalid /command.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString madeprivate = @"The server has now been made private and can only be accessed by admins. To change this use the makepublic command or edit the adminonly field in config.json";
+            public readonly LocalizedString madeprivate =
+                @"The server has now been made private and can only be accessed by admins. To change this use the makepublic command or edit the adminonly field in config.json";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString madepublic = @"The server has now been made public and can be accessed by all players. To change this use the makepublic command or edit the adminonly field in config.json";
+            public readonly LocalizedString madepublic =
+                @"The server has now been made public and can be accessed by all players. To change this use the makepublic command or edit the adminonly field in config.json";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString banuser = @"console";
@@ -445,8 +455,8 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString True = @"true";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull] public readonly LocaleCommand Announcement = new LocaleCommand
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocaleCommand Announcement = new LocaleCommand
             {
                 Name = @"announcement",
                 Description = @"Desc: Sends a global message to all users playing the game.",
@@ -454,8 +464,8 @@ namespace Intersect.Server.Localization
                 Usage = @"Usage: announcement [message] {00}"
             };
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull] public readonly LocaleCommand Ban = new LocaleCommand
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocaleCommand Ban = new LocaleCommand
             {
                 Name = @"ban",
                 Description = @"Desc: Bans a player from the server.",
@@ -463,26 +473,28 @@ namespace Intersect.Server.Localization
                 Usage = @"Usage: ban [username] [duration (days)] [IP Ban? ({00}/{01})] [reason] {02}"
             };
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull] public readonly LocaleCommand Cps = new LocaleCommand
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocaleCommand Cps = new LocaleCommand
             {
                 Name = @"cps",
-                Description = @"Desc: Prints the current CPS. The status flag tells if the server loop is locked or unlocked. The lock flag locks the cps while the unlock flag unlocks it.",
+                Description =
+                    @"Desc: Prints the current CPS. The status flag tells if the server loop is locked or unlocked. The lock flag locks the cps while the unlock flag unlocks it.",
                 Help = @"prints the current server cps",
                 Usage = @"Usage: cps [status] [lock] [unlock] {00}"
             };
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull] public readonly LocaleCommand Api = new LocaleCommand
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocaleCommand Api = new LocaleCommand
             {
                 Name = @"api",
-                Description = @"Desc: Sets the api access (enabled/disabled) of a selected account. 1 is enabled, 0 is disabled",
+                Description =
+                    @"Desc: Sets the api access (enabled/disabled) of a selected account. 1 is enabled, 0 is disabled",
                 Help = @"enables or disables api access for an account",
                 Usage = @"Usage: api [account] [1/0]"
             };
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull] public readonly LocaleCommand Exit = new LocaleCommand
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocaleCommand Exit = new LocaleCommand
             {
                 Name = @"exit",
                 Description = @"Desc: Closes down the server.",
@@ -490,8 +502,8 @@ namespace Intersect.Server.Localization
                 Usage = @"Usage: exit {00}"
             };
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull] public readonly LocaleCommand Help = new LocaleCommand
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocaleCommand Help = new LocaleCommand
             {
                 Name = @"help",
                 Description = @"help",
@@ -499,8 +511,8 @@ namespace Intersect.Server.Localization
                 Usage = @"help"
             };
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull] public readonly LocaleCommand Kick = new LocaleCommand
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocaleCommand Kick = new LocaleCommand
             {
                 Name = @"kick",
                 Description = @"Desc: Kicks a player from the server.",
@@ -508,8 +520,8 @@ namespace Intersect.Server.Localization
                 Usage = @"Usage: kick [username] {00}"
             };
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull] public readonly LocaleCommand Kill = new LocaleCommand
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocaleCommand Kill = new LocaleCommand
             {
                 Name = @"kill",
                 Description = @"Desc: Kills a player on the server.",
@@ -517,8 +529,8 @@ namespace Intersect.Server.Localization
                 Usage = @"Usage: kill [username] {00}"
             };
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull] public readonly LocaleCommand MakePrivate = new LocaleCommand
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocaleCommand MakePrivate = new LocaleCommand
             {
                 Name = @"makeprivate",
                 Description = @"Desc: Makes the server private and can only be accessed by admins.",
@@ -526,8 +538,8 @@ namespace Intersect.Server.Localization
                 Usage = @"Usage: makeprivate"
             };
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull] public readonly LocaleCommand MakePublic = new LocaleCommand
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocaleCommand MakePublic = new LocaleCommand
             {
                 Name = @"makepublic",
                 Description = @"Desc: Makes the server public to all players.",
@@ -535,17 +547,18 @@ namespace Intersect.Server.Localization
                 Usage = @"Usage: makepublic"
             };
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull] public readonly LocaleCommand Migrate = new LocaleCommand
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocaleCommand Migrate = new LocaleCommand
             {
                 Name = @"migrate",
-                Description = @"Desc: Walks you through migrating your player or game database between sqlite and mysql.",
+                Description =
+                    @"Desc: Walks you through migrating your player or game database between sqlite and mysql.",
                 Help = @"walks you through migrating your player or game database between sqlite and mysql",
                 Usage = @"Usage: migrate"
             };
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull] public readonly LocaleCommand Mute = new LocaleCommand
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocaleCommand Mute = new LocaleCommand
             {
                 Name = @"mute",
                 Description = @"Desc: mutes a player preventing them from talking.",
@@ -553,39 +566,41 @@ namespace Intersect.Server.Localization
                 Usage = @"Usage: mute [username] [duration (days)] [IP Ban? ({00}/{01})] [reason] {02}"
             };
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull] public readonly LocaleCommand NetDebug = new LocaleCommand
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocaleCommand NetDebug = new LocaleCommand
             {
                 Name = @"netdebug",
             };
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull] public readonly LocaleCommand OnlineList = new LocaleCommand
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocaleCommand OnlineList = new LocaleCommand
             {
                 Name = @"onlinelist",
                 Help = @"shows all players online"
             };
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull] public readonly LocaleCommand Power = new LocaleCommand
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocaleCommand Power = new LocaleCommand
             {
                 Name = @"power",
-                Description = @"Desc: Sets the power or access of a selected account. Power 0 is regular user. Power 1 is in-game moderator. Power 2 is owner/designer and allows editor access.",
+                Description =
+                    @"Desc: Sets the power or access of a selected account. Power 0 is regular user. Power 1 is in-game moderator. Power 2 is owner/designer and allows editor access.",
                 Help = @"sets the administrative access of a user",
                 Usage = @"Usage: power [username] [level] {00}"
             };
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull] public readonly LocaleCommand PowerAccount = new LocaleCommand
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocaleCommand PowerAccount = new LocaleCommand
             {
                 Name = @"poweracc",
-                Description = @"Desc: Sets the power or access of a selected account. Power 0 is regular user. Power 1 is in-game moderator. Power 2 is owner/designer and allows editor access.",
+                Description =
+                    @"Desc: Sets the power or access of a selected account. Power 0 is regular user. Power 1 is in-game moderator. Power 2 is owner/designer and allows editor access.",
                 Help = @"sets the administrative access of an account",
                 Usage = @"Usage: power [login] [level] {00}"
             };
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull] public readonly LocaleCommand Unban = new LocaleCommand
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocaleCommand Unban = new LocaleCommand
             {
                 Name = @"unban",
                 Description = @"Desc: Unbans a player from the server.",
@@ -593,8 +608,8 @@ namespace Intersect.Server.Localization
                 Usage = @"Usage: unban [account] {00}"
             };
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull] public readonly LocaleCommand Unmute = new LocaleCommand
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocaleCommand Unmute = new LocaleCommand
             {
                 Name = @"unmute",
                 Description = @"Desc: unmutes a player allowing them to talk.",

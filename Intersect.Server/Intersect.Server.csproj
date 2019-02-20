@@ -424,6 +424,9 @@
     <Compile Include="Classes\Networking\Lidgren\ThreadYieldNet40.cs" />
     <Compile Include="Core\Bootstrapper.cs" />
     <Compile Include="Core\CommandLineOptions.cs" />
+    <Compile Include="Core\Command.cs" />
+    <Compile Include="Core\CommandParser.cs" />
+    <Compile Include="Core\Commands\ExitCommand.cs" />
     <Compile Include="Core\ServerConsole.cs" />
     <Compile Include="Core\ServerContext.cs" />
     <Compile Include="Core\ServerLogic.cs" />

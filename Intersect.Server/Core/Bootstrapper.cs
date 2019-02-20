@@ -124,7 +124,7 @@ namespace Intersect.Server.Core
 
             ServerTime.Update();
 
-            Log.Global.AddOutput(new ConsoleOutput(Debugger.IsAttached ? LogLevel.All : LogLevel.Error));
+            Log.Global.AddOutput(new ConciseConsoleOutput(Debugger.IsAttached ? LogLevel.All : LogLevel.Error));
         }
 
         private static void PrintIntroduction()

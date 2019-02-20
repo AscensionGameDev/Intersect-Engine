@@ -170,9 +170,11 @@
     <Compile Include="IO\ConsoleWaitContext.cs" />
     <Compile Include="IO\ConsoleWaitWriter.cs" />
     <Compile Include="Localization\LocaleCommand.cs" />
+    <Compile Include="Localization\LocaleCommandNamespace.cs" />
     <Compile Include="Localization\LocaleDictionary.cs" />
     <Compile Include="Localization\Localized.cs" />
     <Compile Include="Localization\LocaleNamespace.cs" />
+    <Compile Include="Logging\ConciseConsoleOutput.cs" />
     <Compile Include="Models\DatabaseObject.cs" />
     <Compile Include="Enums\Access.cs" />
     <Compile Include="Enums\AdminActions.cs" />
