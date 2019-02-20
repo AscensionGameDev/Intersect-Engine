@@ -17,7 +17,7 @@ namespace Intersect.Server
             long minuteTimer = 0;
             DateTime lastDbUpdate = DateTime.Now;
             long dbBackupMinutes = 120;
-            while (ServerContext.IsRunningSafe)
+            while (ServerContext.Instance.IsRunning)
             {
                 //TODO: If there are no players online then loop slower and save the poor cpu
                 var timeMs = Globals.Timing.TimeMs;

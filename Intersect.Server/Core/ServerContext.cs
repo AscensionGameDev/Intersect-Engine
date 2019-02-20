@@ -23,21 +23,6 @@ namespace Intersect.Server.Core
 {
     internal sealed class ServerContext : ApplicationContext<ServerContext>
     {
-        public static bool IsRunningSafe
-        {
-            get
-            {
-                try
-                {
-                    return Instance.IsRunning && !Instance.IsShutdownRequested;
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
-            }
-        }
-
         #region Threads
 
         private Thread ThreadConsole { get; set; }

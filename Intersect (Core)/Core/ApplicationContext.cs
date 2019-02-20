@@ -6,6 +6,8 @@ namespace Intersect.Core
 {
     public abstract class ApplicationContext<TContext> : IApplicationContext where TContext : ApplicationContext<TContext>
     {
+        private bool mIsRunning;
+
         #region Instance Management
 
         [NotNull]
@@ -30,7 +32,11 @@ namespace Intersect.Core
 
         public bool IsStarted { get; private set; }
 
-        public bool IsRunning { get; private set; }
+        public bool IsRunning
+        {
+            get => mIsRunning && !IsShutdownRequested;
+            private set => mIsRunning = value;
+        }
 
         public bool IsShutdownRequested { get; private set; }
 

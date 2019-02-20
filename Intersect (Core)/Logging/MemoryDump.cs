@@ -15,8 +15,8 @@ namespace Intersect.Logging
 
         public static string DumpDirectory
         {
-            get { return Path.Combine(Environment.CurrentDirectory, sDumpDirectory); }
-            set { sDumpDirectory = value; }
+            get => Path.Combine(Environment.CurrentDirectory, sDumpDirectory ?? "");
+            set => sDumpDirectory = value;
         }
 
         private static void EnsureDirectory()

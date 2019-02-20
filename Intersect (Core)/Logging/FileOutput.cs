@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using JetBrains.Annotations;
 
 namespace Intersect.Logging
 {
@@ -49,29 +50,43 @@ namespace Intersect.Logging
             }
         }
 
+        [NotNull]
         private StreamWriter Writer
         {
             get
             {
-                if (mWriter == null)
+                if (mWriter != null)
                 {
-                    var directory = Path.IsPathRooted(mFilename)
-                        ? Path.GetDirectoryName(mFilename)
-                        : "logs";
-                    EnsureOutputDirectory(directory);
-                    mWriter = new StreamWriter(
-                        Path.Combine(directory, mFilename),
-                        Append, Encoding.UTF8)
-                    {
-                        AutoFlush = true
-                    };
+                    return mWriter;
                 }
+
+                var directory = Path.IsPathRooted(mFilename)
+                    ? Path.GetDirectoryName(mFilename)
+                    : "logs";
+
+                EnsureOutputDirectory(directory);
+                mWriter = new StreamWriter(
+                    Path.Combine(directory, mFilename),
+                    Append, Encoding.UTF8)
+                {
+                    AutoFlush = true
+                };
 
                 return mWriter;
             }
         }
 
         public LogLevel LogLevel { get; set; }
+
+        private void InternalWrite(LogLevel logLevel, string message)
+        {
+            if (LogLevel < logLevel)
+            {
+                return;
+            }
+
+            Writer.WriteLine(message);
+        }
 
         public void Write(string tag, LogLevel logLevel, string message)
         {
@@ -84,7 +99,7 @@ namespace Intersect.Logging
                 ? $"{DateTime.UtcNow.ToString(TIMESTAMP_FORMAT)} [{logLevel}] {message}"
                 : $"{DateTime.UtcNow.ToString(TIMESTAMP_FORMAT)} [{logLevel}] {tag}: {message}";
 
-            Writer.WriteLine(line);
+            InternalWrite(logLevel, message);
         }
 
         public void Write(string tag, LogLevel logLevel, string format,
@@ -95,16 +110,32 @@ namespace Intersect.Logging
 
         public void Write(string tag, LogLevel logLevel, Exception exception, string message)
         {
-            Write(tag, logLevel, $"Message: {exception?.Message}");
-            Write(tag, logLevel, $"Stack Trace: {exception?.StackTrace}");
-            if (exception?.InnerException != null)
+            if (exception != null)
             {
-                Write(tag, logLevel, $"Stack Trace: {exception.InnerException?.StackTrace}");
+                Write(tag, logLevel, $"Message: {exception.Message}");
+
+                if (exception.StackTrace != null)
+                {
+                    Write(tag, logLevel, "Stack Trace:");
+                    InternalWrite(logLevel, exception.StackTrace);
+                }
+
+                if (exception.InnerException != null)
+                {
+                    Write(tag, logLevel, $"Caused by: {exception.InnerException.Message}");
+                    Write(tag, logLevel, "Stack Trace:");
+                    InternalWrite(logLevel, exception.InnerException.StackTrace);
+                }
             }
+
             Write(tag, logLevel, $"Time: {DateTime.UtcNow}");
-            if (!string.IsNullOrEmpty(message)) Write(tag, logLevel, $"Note: {message}");
-            Writer?.WriteLine(Spacer);
-            Writer?.Flush();
+            if (!string.IsNullOrEmpty(message))
+            {
+                Write(tag, logLevel, $"Note: {message}");
+            }
+
+            Writer.WriteLine(Spacer);
+            Writer.Flush();
         }
 
         private static void EnsureOutputDirectory(string path)
@@ -119,16 +150,18 @@ namespace Intersect.Logging
 
         public void Flush()
         {
-            if (mWriter != null)
+            if (mWriter == null)
             {
-                try
-                {
-                    mWriter.Flush();
-                }
-                catch (ObjectDisposedException)
-                {
-                    /* Ignore this exception */
-                }
+                return;
+            }
+
+            try
+            {
+                mWriter.Flush();
+            }
+            catch (ObjectDisposedException)
+            {
+                /* Ignore this exception */
             }
         }
 
@@ -136,18 +169,20 @@ namespace Intersect.Logging
         {
             Flush();
 
-            if (mWriter != null)
+            if (mWriter == null)
             {
-                try
-                {
-                    mWriter.Close();
-                }
-                catch (ObjectDisposedException)
-                {
-                    /* Ignore this exception */
-                }
-                mWriter = null;
+                return;
             }
+
+            try
+            {
+                mWriter.Close();
+            }
+            catch (ObjectDisposedException)
+            {
+                /* Ignore this exception */
+            }
+            mWriter = null;
         }
     }
 }
