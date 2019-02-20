@@ -35,22 +35,82 @@ namespace Intersect.IO
             }
         }
 
-        public string BufferedReadLine([NotNull] Action<string> write, [NotNull] Action writeLine, [NotNull] Func<ConsoleKeyInfo> readKey)
+        public string BufferedReadLine([NotNull] Action<string> write, [NotNull] Action writeLine,
+            [NotNull] Func<ConsoleKeyInfo> readKey)
         {
             return Wait(write, () =>
             {
                 InputBuffer.Clear();
 
-                while (true)
+                var finished = false;
+                while (!finished)
                 {
                     var keyInfo = readKey();
-                    if (keyInfo.Key == ConsoleKey.Enter)
+                    var bufferPosition = Math.Max(
+                        0,
+                        Math.Min(
+                            InputBuffer.Count,
+                            Console.BufferWidth * (Console.CursorTop - WaitCursorTop) +
+                            (Console.CursorLeft - WaitCursorLeft) - (WaitPrefix?.Length ?? 0)
+                        )
+                    );
+
+                    switch (keyInfo.Key)
                     {
-                        writeLine();
-                        break;
+                        case ConsoleKey.Enter:
+                            writeLine();
+                            finished = true;
+                            break;
+
+                        case ConsoleKey.Backspace:
+                            if (bufferPosition > -1 && bufferPosition < InputBuffer.Count)
+                            {
+                                InputBuffer.RemoveAt(bufferPosition);
+                            }
+                            else
+                            {
+                                if (Console.CursorLeft + 1 >= Console.BufferWidth)
+                                {
+                                    ++Console.CursorTop;
+                                }
+
+                                Console.CursorLeft = (Console.CursorLeft + 1) % Console.BufferWidth;
+                            }
+
+                            break;
+
+                        case ConsoleKey.Delete:
+                            if (bufferPosition + 1 < InputBuffer.Count)
+                            {
+                                InputBuffer.RemoveAt(bufferPosition + 1);
+                            }
+                            else
+                            {
+                                if (Console.CursorLeft - 1 < 0)
+                                {
+                                    --Console.CursorTop;
+                                }
+
+                                Console.CursorLeft =
+                                    (Console.CursorLeft + Console.BufferWidth - 1) % Console.BufferWidth;
+                            }
+                            break;
+
+                        // TODO: Input history
+                        case ConsoleKey.UpArrow:
+                        case ConsoleKey.DownArrow:
+                        case ConsoleKey.LeftArrow:
+                        case ConsoleKey.RightArrow:
+                            break;
+
+                        default:
+                            InputBuffer.Add(keyInfo.KeyChar);
+                            break;
                     }
 
-                    InputBuffer.Add(keyInfo.KeyChar);
+                    // TODO: Soft cursor reset and prefix rewrite
+                    //ResetWaitCursor(write);
+                    //WritePrefix(write);
                 }
 
                 var line = new string(InputBuffer.ToArray());
