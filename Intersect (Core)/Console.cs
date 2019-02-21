@@ -48,6 +48,12 @@ namespace Intersect
             set => Context.InputHistoryEnabled = value;
         }
 
+        public static int InputHistoryLength
+        {
+            get => Context.InputHistoryLength;
+            set => Context.InputHistoryLength = value;
+        }
+
         #endregion
 
         #region Color
