@@ -36,8 +36,8 @@ namespace Intersect.Server
         private const string GameDbFilename = "resources/gamedata.db";
         private const string PlayersDbFilename = "resources/playerdata.db";
 
-        private static PlayerContext sPlayerDb;
-        private static GameContext sGameDb;
+        private static PlayerContext sPlayerDb { get; set; }
+        private static GameContext sGameDb { get; set; }
 
         private static Task sSaveGameDbTask;
         private static Task sSavePlayerDbTask;
@@ -516,7 +516,12 @@ namespace Intersect.Server
 
         public static IDatabaseObject AddGameObject(GameObjectType gameObjectType, [NotNull] IDatabaseObject dbObj)
         {
-            lock (mSavingGameLock)
+            if (sGameDb == null)
+            {
+                throw new ArgumentNullException(nameof(sGameDb));
+            }
+
+            lock (mSavingGameLock ?? throw new ArgumentNullException(nameof(mSavingGameLock)))
             {
                 switch (gameObjectType)
                 {

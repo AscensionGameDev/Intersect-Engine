@@ -36,6 +36,11 @@ namespace Intersect.Server.Core
             var commandLineOptions = ParseCommandLineArgs(args);
             sContext = new ServerContext(commandLineOptions);
 
+            if (!PostContextSetup())
+            {
+                return;
+            }
+
             ServerContext.Instance.Start();
         }
 
@@ -123,6 +128,11 @@ namespace Intersect.Server.Core
 
             CustomColors.Load();
 
+            return true;
+        }
+
+        private static bool PostContextSetup()
+        {
             if (!LegacyDatabase.InitDatabase())
             {
                 Console.ReadKey();
