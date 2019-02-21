@@ -195,7 +195,8 @@ namespace Intersect
         public static void SetCursorPosition(int left, int top)
         {
             var position = Math.Max(0, top * BufferWidth + left);
-            SystemConsole.SetCursorPosition(position % BufferWidth, position / BufferWidth);
+            var bufferWidth = BufferWidth == 0 ? 1 : BufferWidth;
+            SystemConsole.SetCursorPosition(position % bufferWidth, position / bufferWidth);
         }
 
 #endregion
