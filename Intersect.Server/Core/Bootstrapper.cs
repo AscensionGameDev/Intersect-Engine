@@ -1,16 +1,16 @@
-﻿using Intersect.Logging;
+﻿using CommandLine;
+using Intersect.Logging;
+using Intersect.Server.General;
 using Intersect.Server.Localization;
+using Intersect.Server.Networking.Helpers;
+using Intersect.Utilities;
+using JetBrains.Annotations;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using CommandLine;
-using Intersect.Server.General;
-using Intersect.Server.Networking.Helpers;
-using Intersect.Utilities;
-using JetBrains.Annotations;
 
 namespace Intersect.Server.Core
 {
@@ -42,6 +42,7 @@ namespace Intersect.Server.Core
             }
 
             ServerContext.Instance.Start();
+            Log.Info("Bootstrapper exited.");
         }
 
         [NotNull]
@@ -413,9 +414,9 @@ namespace Intersect.Server.Core
         }
 
         //Really basic error handler for debugging purposes
-        public static void OnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEvent)
+        public static void OnUnhandledException([NotNull] object sender, [NotNull] UnhandledExceptionEventArgs unhandledExceptionEvent)
         {
-            ProcessUnhandledException(sender, unhandledExceptionEvent?.ExceptionObject as Exception);
+            ProcessUnhandledException(sender, unhandledExceptionEvent.ExceptionObject as Exception ?? throw new InvalidOperationException());
             if (!(unhandledExceptionEvent?.IsTerminating ?? false))
             {
                 Console.WriteLine(Strings.Errors.errorlogged);
@@ -431,7 +432,10 @@ namespace Intersect.Server.Core
                 Console.ReadKey();
             }
 
-            sContext?.Dispose();
+            if (!(sContext?.IsDisposed ?? true))
+            {
+                sContext?.Dispose();
+            }
         }
 
         #endregion
