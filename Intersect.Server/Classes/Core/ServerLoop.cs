@@ -53,7 +53,7 @@ namespace Intersect.Server
                 }
             }
 
-            ServerContext.Instance.Dispose();
+            ServerContext.Instance.RequestShutdown();
             //Server is shutting down!!
             //ServerStatic.Shutdown(false);
             //TODO gracefully disconnect all clients

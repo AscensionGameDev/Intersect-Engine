@@ -15,6 +15,7 @@ namespace Intersect.Server.Networking.Websockets
 
         public static void Stop()
         {
+            sListener?.Stop();
         }
     }
 

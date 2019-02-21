@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Intersect.Threading;
 using JetBrains.Annotations;
 
@@ -6,6 +8,8 @@ namespace Intersect.Core
 {
     public abstract class ApplicationContext<TContext> : IApplicationContext where TContext : ApplicationContext<TContext>
     {
+        [NotNull] private object mShutdownLock;
+
         private bool mIsRunning;
 
         #region Instance Management
@@ -43,6 +47,7 @@ namespace Intersect.Core
         protected ApplicationContext()
         {
             ConcurrentInstance.Set(This);
+            mShutdownLock = new object();
         }
 
         public void Start()
@@ -52,13 +57,40 @@ namespace Intersect.Core
             IsRunning = true;
 
             InternalStart();
+
+            lock (mShutdownLock)
+            {
+                Monitor.Wait(mShutdownLock);
+            }
         }
 
         protected abstract void InternalStart();
 
-        public void RequestShutdown()
+        public void RequestShutdown(bool join = false)
         {
-            IsShutdownRequested = true;
+            lock (this)
+            {
+                if (IsDisposed || IsDisposing || IsShutdownRequested)
+                {
+                    return;
+                }
+
+                IsShutdownRequested = true;
+                var disposeTask = Task.Run(() =>
+                {
+                    Dispose();
+
+                    lock (mShutdownLock)
+                    {
+                        Monitor.PulseAll(mShutdownLock);
+                    }
+                });
+
+                if (join)
+                {
+                    disposeTask.Wait();
+                }
+            }
         }
 
         #region Dispose
