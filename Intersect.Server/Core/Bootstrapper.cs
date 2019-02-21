@@ -28,7 +28,10 @@ namespace Intersect.Server.Core
 
         public static void Start(params string[] args)
         {
-            PreContextSetup(args);
+            if (!PreContextSetup(args))
+            {
+                return;
+            }
 
             var commandLineOptions = ParseCommandLineArgs(args);
             sContext = new ServerContext(commandLineOptions);
@@ -61,20 +64,27 @@ namespace Intersect.Server.Core
 
         #region Pre-Context
 
-        private static void PreContextSetup(params string[] args)
+        private static bool PreContextSetup(params string[] args)
         {
             if (RunningOnWindows())
             {
                 SetConsoleCtrlHandler(ConsoleCtrlCheck, true);
             }
 
-            Strings.Load();
+            Log.Global.AddOutput(new ConciseConsoleOutput(Debugger.IsAttached ? LogLevel.All : LogLevel.Error));
+
+            if (!Strings.Load())
+            {
+                Console.WriteLine(Strings.Errors.ErrorLoadingStrings);
+                Console.ReadKey();
+                return false;
+            }
 
             if (!Options.LoadFromDisk())
             {
                 Console.WriteLine(Strings.Errors.errorloadingconfig);
                 Console.ReadKey();
-                return;
+                return false;
             }
 
             LegacyDatabase.CheckDirectories();
@@ -116,7 +126,7 @@ namespace Intersect.Server.Core
             if (!LegacyDatabase.InitDatabase())
             {
                 Console.ReadKey();
-                return;
+                return false;
             }
 
             Console.WriteLine(Strings.Commandoutput.playercount.ToString(LegacyDatabase.RegisteredPlayers));
@@ -124,7 +134,7 @@ namespace Intersect.Server.Core
 
             ServerTime.Update();
 
-            Log.Global.AddOutput(new ConciseConsoleOutput(Debugger.IsAttached ? LogLevel.All : LogLevel.Error));
+            return true;
         }
 
         private static void PrintIntroduction()

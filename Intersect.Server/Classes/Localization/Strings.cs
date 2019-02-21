@@ -149,7 +149,7 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString announcementcmd = @"/announcement";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty("global", NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString Global = @"[GLOBAL] {00}: {01}";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -173,7 +173,7 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString pmcmd = @"/pm";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty("private", NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString Private = @"[PM] {00}: {01}";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -641,7 +641,7 @@ namespace Intersect.Server.Localization
 
         public sealed class DatabaseNamespace : LocaleNamespace
         {
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty("default", NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString Default = @"Default";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -671,21 +671,31 @@ namespace Intersect.Server.Localization
         public sealed class ErrorsNamespace : LocaleNamespace
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
+            public readonly LocalizedString ErrorLoadingStrings =
+                @"Failed to load strings! Press any key to shut down.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
             public readonly LocalizedString errorloadingconfig =
                 @"Failed to load server options! Press any key to shut down.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
             public readonly LocalizedString errorlogged = @"An error was logged into errors.log";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
             public readonly LocalizedString errorservercrash =
                 @"The Intersect server has encountered an error and must close. Error information can be found in resources/logs/errors.log. Press any key to exit.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
             public readonly LocalizedString errorservercrashnohalt =
                 @"The Intersect server has encountered an error and must close. Error information can be found in resources/logs/errors.log.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
             public readonly LocalizedString warpfail = @"Failed to warp player to new map -- warping to spawn.";
         }
 
@@ -1313,7 +1323,7 @@ namespace Intersect.Server.Localization
 
         public static bool Load()
         {
-            var filepath = Path.Combine("server_strings.json");
+            var filepath = Path.Combine("resources", "server_strings.json");
 
             // Really don't want two JsonSave() return points...
             // ReSharper disable once InvertIf
@@ -1338,7 +1348,7 @@ namespace Intersect.Server.Localization
         {
             try
             {
-                var filepath = Path.Combine("server_strings.json");
+                var filepath = Path.Combine("resources", "server_strings.json");
                 var json = JsonConvert.SerializeObject(Root, Formatting.Indented, new LocalizedStringConverter());
                 File.WriteAllText(filepath, json, Encoding.UTF8);
                 return true;
@@ -1362,51 +1372,52 @@ namespace Intersect.Server.Localization
         [NotNull]
         private static RootNamespace Root { get; set; }
 
+        // ReSharper disable MemberHidesStaticFromOuterClass
         private sealed class RootNamespace : LocaleNamespace
         {
-            [NotNull] public readonly AccountNamespace AccountNamespace = new AccountNamespace();
+            [NotNull] public readonly AccountNamespace Account = new AccountNamespace();
 
-            [NotNull] public readonly BagsNamespace BagsNamespace = new BagsNamespace();
+            [NotNull] public readonly BagsNamespace Bags = new BagsNamespace();
 
-            [NotNull] public readonly BanksNamespace BanksNamespace = new BanksNamespace();
+            [NotNull] public readonly BanksNamespace Banks = new BanksNamespace();
 
-            [NotNull] public readonly ChatNamespace ChatNamespace = new ChatNamespace();
+            [NotNull] public readonly ChatNamespace Chat = new ChatNamespace();
 
-            [NotNull] public readonly ClassesNamespace ClassesNamespace = new ClassesNamespace();
+            [NotNull] public readonly ClassesNamespace Classes = new ClassesNamespace();
 
-            [NotNull] public readonly ColorsNamespace ColorsNamespace = new ColorsNamespace();
+            [NotNull] public readonly ColorsNamespace Colors = new ColorsNamespace();
 
-            [NotNull] public readonly CombatNamespace CombatNamespace = new CombatNamespace();
+            [NotNull] public readonly CombatNamespace Combat = new CombatNamespace();
 
-            [NotNull] public readonly CommandoutputNamespace CommandoutputNamespace = new CommandoutputNamespace();
+            [NotNull] public readonly CommandoutputNamespace Commandoutput = new CommandoutputNamespace();
 
-            [NotNull] public readonly CommandsNamespace CommandsNamespace = new CommandsNamespace();
+            [NotNull] public readonly CommandsNamespace Commands = new CommandsNamespace();
 
-            [NotNull] public readonly CraftingNamespace CraftingNamespace = new CraftingNamespace();
+            [NotNull] public readonly CraftingNamespace Crafting = new CraftingNamespace();
 
-            [NotNull] public readonly DatabaseNamespace DatabaseNamespace = new DatabaseNamespace();
+            [NotNull] public readonly DatabaseNamespace Database = new DatabaseNamespace();
 
-            [NotNull] public readonly ErrorsNamespace ErrorsNamespace = new ErrorsNamespace();
+            [NotNull] public readonly ErrorsNamespace Errors = new ErrorsNamespace();
 
-            [NotNull] public readonly EventsNamespace EventsNamespace = new EventsNamespace();
+            [NotNull] public readonly EventsNamespace Events = new EventsNamespace();
 
-            [NotNull] public readonly FormulasNamespace FormulasNamespace = new FormulasNamespace();
+            [NotNull] public readonly FormulasNamespace Formulas = new FormulasNamespace();
 
-            [NotNull] public readonly FriendsNamespace FriendsNamespace = new FriendsNamespace();
+            [NotNull] public readonly FriendsNamespace Friends = new FriendsNamespace();
 
-            [NotNull] public readonly GeneralNamespace GeneralNamespace = new GeneralNamespace();
+            [NotNull] public readonly GeneralNamespace General = new GeneralNamespace();
 
-            [NotNull] public readonly IntroNamespace IntroNamespace = new IntroNamespace();
+            [NotNull] public readonly IntroNamespace Intro = new IntroNamespace();
 
-            [NotNull] public readonly ItemsNamespace ItemsNamespace = new ItemsNamespace();
+            [NotNull] public readonly ItemsNamespace Items = new ItemsNamespace();
 
-            [NotNull] public readonly MappingNamespace MappingNamespace = new MappingNamespace();
+            [NotNull] public readonly MappingNamespace Mapping = new MappingNamespace();
 
-            [NotNull] public readonly MigrationNamespace MigrationNamespace = new MigrationNamespace();
+            [NotNull] public readonly MigrationNamespace Migration = new MigrationNamespace();
 
-            [NotNull] public readonly NetDebugNamespace NetDebugNamespace = new NetDebugNamespace();
+            [NotNull] public readonly NetDebugNamespace NetDebug = new NetDebugNamespace();
 
-            [NotNull] public readonly NetworkingNamespace NetworkingNamespace = new NetworkingNamespace();
+            [NotNull] public readonly NetworkingNamespace Networking = new NetworkingNamespace();
 
             [NotNull] public readonly NotificationsNamespace NotificationsNamespace = new NotificationsNamespace();
 
@@ -1418,88 +1429,89 @@ namespace Intersect.Server.Localization
 
             [NotNull] public readonly PlayerNamespace PlayerNamespace = new PlayerNamespace();
 
-            [NotNull] public readonly PortcheckingNamespace PortcheckingNamespace = new PortcheckingNamespace();
+            [NotNull] public readonly PortcheckingNamespace Portchecking = new PortcheckingNamespace();
 
-            [NotNull] public readonly QuestsNamespace QuestsNamespace = new QuestsNamespace();
+            [NotNull] public readonly QuestsNamespace Quests = new QuestsNamespace();
 
-            [NotNull] public readonly RegexNamespace RegexNamespace = new RegexNamespace();
+            [NotNull] public readonly RegexNamespace Regex = new RegexNamespace();
 
-            [NotNull] public readonly ShopsNamespace ShopsNamespace = new ShopsNamespace();
+            [NotNull] public readonly ShopsNamespace Shops = new ShopsNamespace();
 
-            [NotNull] public readonly TradingNamespace TradingNamespace = new TradingNamespace();
+            [NotNull] public readonly TradingNamespace Trading = new TradingNamespace();
 
-            [NotNull] public readonly UpnpNamespace UpnpNamespace = new UpnpNamespace();
+            [NotNull] public readonly UpnpNamespace Upnp = new UpnpNamespace();
         }
+        // ReSharper restore MemberHidesStaticFromOuterClass
 
         #endregion
 
         #region Namespace Exposure
 
         [NotNull]
-        public static AccountNamespace Account => Root.AccountNamespace;
+        public static AccountNamespace Account => Root.Account;
 
         [NotNull]
-        public static BagsNamespace Bags => Root.BagsNamespace;
+        public static BagsNamespace Bags => Root.Bags;
 
         [NotNull]
-        public static BanksNamespace Banks => Root.BanksNamespace;
+        public static BanksNamespace Banks => Root.Banks;
 
         [NotNull]
-        public static ChatNamespace Chat => Root.ChatNamespace;
+        public static ChatNamespace Chat => Root.Chat;
 
         [NotNull]
-        public static ClassesNamespace Classes => Root.ClassesNamespace;
+        public static ClassesNamespace Classes => Root.Classes;
 
         [NotNull]
-        public static ColorsNamespace Colors => Root.ColorsNamespace;
+        public static ColorsNamespace Colors => Root.Colors;
 
         [NotNull]
-        public static CombatNamespace Combat => Root.CombatNamespace;
+        public static CombatNamespace Combat => Root.Combat;
 
         [NotNull]
-        public static CommandoutputNamespace Commandoutput => Root.CommandoutputNamespace;
+        public static CommandoutputNamespace Commandoutput => Root.Commandoutput;
 
         [NotNull]
-        public static CommandsNamespace Commands => Root.CommandsNamespace;
+        public static CommandsNamespace Commands => Root.Commands;
 
         [NotNull]
-        public static CraftingNamespace Crafting => Root.CraftingNamespace;
+        public static CraftingNamespace Crafting => Root.Crafting;
 
         [NotNull]
-        public static DatabaseNamespace Database => Root.DatabaseNamespace;
+        public static DatabaseNamespace Database => Root.Database;
 
         [NotNull]
-        public static ErrorsNamespace Errors => Root.ErrorsNamespace;
+        public static ErrorsNamespace Errors => Root.Errors;
 
         [NotNull]
-        public static EventsNamespace Events => Root.EventsNamespace;
+        public static EventsNamespace Events => Root.Events;
 
         [NotNull]
-        public static FormulasNamespace Formulas => Root.FormulasNamespace;
+        public static FormulasNamespace Formulas => Root.Formulas;
 
         [NotNull]
-        public static FriendsNamespace Friends => Root.FriendsNamespace;
+        public static FriendsNamespace Friends => Root.Friends;
 
         [NotNull]
-        public static GeneralNamespace General => Root.GeneralNamespace;
+        public static GeneralNamespace General => Root.General;
 
         [NotNull]
-        public static IntroNamespace Intro => Root.IntroNamespace;
+        public static IntroNamespace Intro => Root.Intro;
 
         [NotNull]
-        public static ItemsNamespace Items => Root.ItemsNamespace;
+        public static ItemsNamespace Items => Root.Items;
 
         [NotNull]
-        public static MappingNamespace Mapping => Root.MappingNamespace;
+        public static MappingNamespace Mapping => Root.Mapping;
 
         [NotNull]
-        public static MigrationNamespace Migration => Root.MigrationNamespace;
+        public static MigrationNamespace Migration => Root.Migration;
 
         [NotNull]
-        public static NetDebugNamespace NetDebug => Root.NetDebugNamespace;
+        public static NetDebugNamespace NetDebug => Root.NetDebug;
 
         [NotNull]
-        public static NetworkingNamespace Networking => Root.NetworkingNamespace;
+        public static NetworkingNamespace Networking => Root.Networking;
 
         [NotNull]
         public static NotificationsNamespace Notifications => Root.NotificationsNamespace;
@@ -1515,22 +1527,22 @@ namespace Intersect.Server.Localization
         public static PlayerNamespace Player => Root.PlayerNamespace;
 
         [NotNull]
-        public static PortcheckingNamespace Portchecking => Root.PortcheckingNamespace;
+        public static PortcheckingNamespace Portchecking => Root.Portchecking;
 
         [NotNull]
-        public static QuestsNamespace Quests => Root.QuestsNamespace;
+        public static QuestsNamespace Quests => Root.Quests;
 
         [NotNull]
-        public static RegexNamespace Regex => Root.RegexNamespace;
+        public static RegexNamespace Regex => Root.Regex;
 
         [NotNull]
-        public static ShopsNamespace Shops => Root.ShopsNamespace;
+        public static ShopsNamespace Shops => Root.Shops;
 
         [NotNull]
-        public static TradingNamespace Trading => Root.TradingNamespace;
+        public static TradingNamespace Trading => Root.Trading;
 
         [NotNull]
-        public static UpnpNamespace Upnp => Root.UpnpNamespace;
+        public static UpnpNamespace Upnp => Root.Upnp;
 
         #endregion
     }

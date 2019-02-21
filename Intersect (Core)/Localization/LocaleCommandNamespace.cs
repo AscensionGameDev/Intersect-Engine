@@ -4,14 +4,17 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
+using Newtonsoft.Json;
 
 namespace Intersect.Localization
 {
     public class LocaleCommandNamespace : LocaleNamespace
     {
+        [JsonIgnore]
         [NotNull]
         public IList<LocaleCommand> Commands { get; }
 
+        [JsonIgnore]
         [NotNull]
         public IDictionary<string, LocaleCommand> Lookup { get; }
 
