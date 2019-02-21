@@ -24,18 +24,22 @@ namespace Intersect.Server.Core
 
         public ServerConsole()
         {
+            Console.WaitPrefix = "> ";
+
             Parser = new CommandParser();
             Parser.Register<ExitCommand>();
         }
 
         protected override void ThreadStart()
         {
-            Console.WaitPrefix = "> ";
             Console.WriteLine(Strings.Intro.consoleactive);
 
             while (ServerContext.Instance.IsRunning)
             {
-                var line = Console.ReadLine(true)?.Trim();
+#if !CONSOLE_EXTENSIONS
+                Console.Write(Console.WaitPrefix);
+#endif
+                var line = Console.ReadLine()?.Trim();
 
                 if (line == null)
                 {
