@@ -168,8 +168,8 @@
     <Compile Include="Crypto\RsaUtils.cs" />
     <Compile Include="CustomColors.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
-    <Compile Include="IO\ConsoleWaitContext.cs" />
-    <Compile Include="IO\ConsoleWaitWriter.cs" />
+    <Compile Include="IO\ConsoleContext.cs" />
+    <Compile Include="IO\ConsoleWriter.cs" />
     <Compile Include="Localization\LocaleCommand.cs" />
     <Compile Include="Localization\LocaleCommandNamespace.cs" />
     <Compile Include="Localization\LocaleDictionary.cs" />

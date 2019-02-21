@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Intersect.IO
 {
-    public class ConsoleWaitWriter : TextWriter
+    public class ConsoleWriter : TextWriter
     {
         [NotNull]
-        protected ConsoleWaitContext WaitContext { get; }
+        protected ConsoleContext Context { get; }
 
         [NotNull]
         internal TextWriter TextWriter { get; }
@@ -26,12 +26,12 @@ namespace Intersect.IO
             set => TextWriter.NewLine = value;
         }
 
-        public ConsoleWaitWriter(
-            [NotNull] ConsoleWaitContext waitContext,
+        public ConsoleWriter(
+            [NotNull] ConsoleContext context,
             [NotNull] TextWriter textWriter
         )
         {
-            WaitContext = waitContext;
+            Context = context;
             TextWriter = textWriter;
         }
 
@@ -95,44 +95,44 @@ namespace Intersect.IO
 
         public override void Write(char[] buffer)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.Write(buffer);
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         public override void Write(char[] buffer, int index, int count)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.Write(buffer, index, count);
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         public override void Write(string format, object arg0)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.Write(format, arg0);
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         public override void Write(string format, object arg0, object arg1)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.Write(format, arg0, arg1);
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         public override void Write(string format, object arg0, object arg1, object arg2)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.Write(format, arg0, arg1, arg2);
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         public override void Write(string format, params object[] arg)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.Write(format, arg);
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         #endregion
@@ -148,85 +148,80 @@ namespace Intersect.IO
             }
             else
             {
-                WaitContext.ResetWaitCursor(TextWriter.Write);
-            }
-
-            TextWriter.Write(value);
-
-            if (!skip)
-            {
-                WaitContext.WritePrefix(TextWriter.Write);
+                Context.ResetWaitCursor(TextWriter.Write);
+                TextWriter.Write(value);
+                Context.WritePrefix(TextWriter.Write);
             }
         }
 
         public override void Write(bool value)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.Write(value);
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         public override void Write(int value)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.Write(value);
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         public override void Write(uint value)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.Write(value);
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         public override void Write(long value)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.Write(value);
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         public override void Write(ulong value)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.Write(value);
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         public override void Write(float value)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.Write(value);
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         public override void Write(double value)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.Write(value);
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         public override void Write(decimal value)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.Write(value);
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         public override void Write(string value)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.Write(value);
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         public override void Write(object value)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.Write(value);
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         #endregion
@@ -235,35 +230,35 @@ namespace Intersect.IO
 
         public override async Task WriteAsync(char value)
         {
-            await WaitContext.ResetWaitCursorAsync(TextWriter.WriteAsync);
+            await Context.ResetWaitCursorAsync(TextWriter.WriteAsync);
             var task = TextWriter.WriteAsync(value);
             if (task != null)
             {
                 await task;
             }
-            await WaitContext.WritePrefixAsync(TextWriter.WriteAsync);
+            await Context.WritePrefixAsync(TextWriter.WriteAsync);
         }
 
         public override async Task WriteAsync(string value)
         {
-            await WaitContext.ResetWaitCursorAsync(TextWriter.WriteAsync);
+            await Context.ResetWaitCursorAsync(TextWriter.WriteAsync);
             var task = TextWriter.WriteAsync(value);
             if (task != null)
             {
                 await task;
             }
-            await WaitContext.WritePrefixAsync(TextWriter.WriteAsync);
+            await Context.WritePrefixAsync(TextWriter.WriteAsync);
         }
 
         public override async Task WriteAsync(char[] buffer, int index, int count)
         {
-            await WaitContext.ResetWaitCursorAsync(TextWriter.WriteAsync);
+            await Context.ResetWaitCursorAsync(TextWriter.WriteAsync);
             var task = TextWriter.WriteAsync(buffer, index, count);
             if (task != null)
             {
                 await task;
             }
-            await WaitContext.WritePrefixAsync(TextWriter.WriteAsync);
+            await Context.WritePrefixAsync(TextWriter.WriteAsync);
         }
 
         #endregion
@@ -272,132 +267,132 @@ namespace Intersect.IO
 
         public override void WriteLine(char[] buffer)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.WriteLine(buffer);
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         public override void WriteLine(char[] buffer, int index, int count)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.WriteLine(buffer, index, count);
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         public override void WriteLine(string format, object arg0)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.WriteLine(format, arg0);
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         public override void WriteLine(string format, object arg0, object arg1)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.WriteLine(format, arg0, arg1);
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         public override void WriteLine(string format, object arg0, object arg1, object arg2)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.WriteLine(format, arg0, arg1, arg2);
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         public override void WriteLine(string format, params object[] arg)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.WriteLine(format, arg);
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         #endregion
 
         public override void WriteLine()
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.WriteLine();
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         #region WriteLine(value)
 
         public override void WriteLine(char value)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.WriteLine(value);
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         public override void WriteLine(bool value)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.WriteLine(value);
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         public override void WriteLine(int value)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.WriteLine(value);
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         public override void WriteLine(uint value)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.WriteLine(value);
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         public override void WriteLine(long value)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.WriteLine(value);
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         public override void WriteLine(ulong value)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.WriteLine(value);
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         public override void WriteLine(float value)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.WriteLine(value);
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         public override void WriteLine(double value)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.WriteLine(value);
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         public override void WriteLine(decimal value)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.WriteLine(value);
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         public override void WriteLine(string value)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.WriteLine(value);
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         public override void WriteLine(object value)
         {
-            WaitContext.ResetWaitCursor(TextWriter.Write);
+            Context.ResetWaitCursor(TextWriter.Write);
             TextWriter.WriteLine(value);
-            WaitContext.WritePrefix(TextWriter.Write);
+            Context.WritePrefix(TextWriter.Write);
         }
 
         #endregion
@@ -406,46 +401,46 @@ namespace Intersect.IO
 
         public override async Task WriteLineAsync(char value)
         {
-            await WaitContext.ResetWaitCursorAsync(TextWriter.WriteAsync);
+            await Context.ResetWaitCursorAsync(TextWriter.WriteAsync);
             var task = TextWriter.WriteLineAsync(value);
             if (task != null)
             {
                 await task;
             }
-            await WaitContext.WritePrefixAsync(TextWriter.WriteAsync);
+            await Context.WritePrefixAsync(TextWriter.WriteAsync);
         }
 
         public override async Task WriteLineAsync(string value)
         {
-            await WaitContext.ResetWaitCursorAsync(TextWriter.WriteAsync);
+            await Context.ResetWaitCursorAsync(TextWriter.WriteAsync);
             var task = TextWriter.WriteLineAsync(value);
             if (task != null)
             {
                 await task;
             }
-            await WaitContext.WritePrefixAsync(TextWriter.WriteAsync);
+            await Context.WritePrefixAsync(TextWriter.WriteAsync);
         }
 
         public override async Task WriteLineAsync(char[] buffer, int index, int count)
         {
-            await WaitContext.ResetWaitCursorAsync(TextWriter.WriteAsync);
+            await Context.ResetWaitCursorAsync(TextWriter.WriteAsync);
             var task = TextWriter.WriteLineAsync(buffer, index, count);
             if (task != null)
             {
                 await task;
             }
-            await WaitContext.WritePrefixAsync(TextWriter.WriteAsync);
+            await Context.WritePrefixAsync(TextWriter.WriteAsync);
         }
 
         public override async Task WriteLineAsync()
         {
-            await WaitContext.ResetWaitCursorAsync(TextWriter.WriteAsync);
+            await Context.ResetWaitCursorAsync(TextWriter.WriteAsync);
             var task = TextWriter.WriteLineAsync();
             if (task != null)
             {
                 await task;
             }
-            await WaitContext.WritePrefixAsync(TextWriter.WriteAsync);
+            await Context.WritePrefixAsync(TextWriter.WriteAsync);
         }
 
         #endregion

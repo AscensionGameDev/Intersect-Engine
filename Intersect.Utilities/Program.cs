@@ -61,10 +61,26 @@ namespace Intersect.Utilities
 
         static void Main(string[] args)
         {
+            {
+                Console.InputHistoryEnabled = true;
+                Console.WaitPrefix = "> ";
+                string line;
+                while (null != (line = Console.ReadLine(true)))
+                {
+                    if (line == "exit")
+                    {
+                        break;
+                    }
+
+                    Console.WriteLine("Received: " + line);
+                }
+            }
+            return;
+
             //Enumerators();
             //return;
-            Strings.Load();
-            return;
+            //Strings.Load();
+            //return;
 
             NameOfGeneric<Program>();
             return;
