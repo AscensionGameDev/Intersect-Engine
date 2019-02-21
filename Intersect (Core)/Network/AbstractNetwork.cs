@@ -69,7 +69,11 @@ namespace Intersect.Network
             }
 
             if (!Disconnect("disposing"))
+            {
                 Log.Error("Error disconnecting while disposing.");
+            }
+
+            mNetworkLayerInterfaces?.ForEach(networkLayerInterface => networkLayerInterface?.Dispose());
 
             ConnectionLookup.Clear();
         }

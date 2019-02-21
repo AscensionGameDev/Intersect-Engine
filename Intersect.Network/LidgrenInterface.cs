@@ -623,5 +623,42 @@ namespace Intersect.Network
             mPeer.Connections?.ForEach(connection => connection?.Disconnect(message));
             return true;
         }
+
+        private bool IsDisposing { get; set; }
+
+        public bool IsDisposed { get; private set; }
+
+        public void Dispose()
+        {
+            if (IsDisposed)
+            {
+                throw new ObjectDisposedException(nameof(LidgrenInterface));
+            }
+
+            if (IsDisposing)
+            {
+                return;
+            }
+
+            IsDisposing = true;
+
+            switch (mPeer.Status)
+            {
+                case NetPeerStatus.NotRunning:
+                case NetPeerStatus.ShutdownRequested:
+                    break;
+
+                case NetPeerStatus.Running:
+                case NetPeerStatus.Starting:
+                    mPeer.Shutdown(@"Terminating.");
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(mPeer.Status));
+            }
+
+            IsDisposed = true;
+            IsDisposing = false;
+        }
     }
 }

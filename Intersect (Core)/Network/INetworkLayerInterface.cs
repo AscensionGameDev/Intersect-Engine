@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Intersect.Memory;
 
 namespace Intersect.Network
@@ -7,7 +8,7 @@ namespace Intersect.Network
 
     public delegate void HandleConnectionEvent(INetworkLayerInterface sender, IConnection connection);
 
-    public interface INetworkLayerInterface
+    public interface INetworkLayerInterface : IDisposable
     {
         HandlePacketAvailable OnPacketAvailable { get; set; }
 
