@@ -10,7 +10,6 @@ namespace Intersect.Server
     /// </summary>
     public static class MainClass
     {
-        [STAThread]
         public static void Main(string[] args)
         {
             CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
