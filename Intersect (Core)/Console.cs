@@ -28,17 +28,27 @@ namespace Intersect
             //Instance = new Console();
             SystemConsole.CancelKeyPress += (sender, args) => CancelKeyPress?.Invoke(sender, args);
 
-            WaitContext = new ConsoleWaitContext();
+            Context = new ConsoleContext();
 
-            Error = new ConsoleWaitWriter(WaitContext, Error);
+            Error = new ConsoleWriter(Context, Error);
 
-            WaitOut = new ConsoleWaitWriter(WaitContext, Out);
-            Out = WaitOut;
+            ContextOut = new ConsoleWriter(Context, Out);
+            Out = ContextOut;
         }
 
         //#endregion
 
         #region Instance
+
+        #region Extensions
+
+        public static bool InputHistoryEnabled
+        {
+            get => Context.InputHistoryEnabled;
+            set => Context.InputHistoryEnabled = value;
+        }
+
+        #endregion
 
         #region Color
 
@@ -143,10 +153,27 @@ namespace Intersect
         public static int CursorLeft
         {
             get => SystemConsole.CursorLeft;
-            set => SystemConsole.CursorLeft = value;
+            set
+            {
+                var top = SystemConsole.CursorTop;
+                var left = value;
+
+                if (left < 0)
+                {
+                    --top;
+                    left += BufferWidth;
+                }
+                else if (left > BufferWidth)
+                {
+                    ++top;
+                    left -= BufferWidth;
+                }
+
+                SetCursorPosition(left, top);
+            }
         }
 
-        public static  int CursorTop
+        public static int CursorTop
         {
             get => SystemConsole.CursorTop;
             set => SystemConsole.CursorTop = value;
@@ -154,7 +181,8 @@ namespace Intersect
 
         public static void SetCursorPosition(int left, int top)
         {
-            SystemConsole.SetCursorPosition(left, top);
+            var position = Math.Max(0, top * BufferWidth + left);
+            SystemConsole.SetCursorPosition(position % BufferWidth, position / BufferWidth);
         }
 
         #endregion
@@ -244,7 +272,7 @@ namespace Intersect
 
         private static ConsoleKeyInfo ReadKeySkipPrint()
         {
-            WaitOut.SkipNextWriteChar = true;
+            ContextOut.SkipNextWriteChar = true;
             return ReadKey();
         }
 
@@ -304,25 +332,25 @@ namespace Intersect
         #region Wait
 
         [NotNull]
-        private static ConsoleWaitContext WaitContext { get; }
+        private static ConsoleContext Context { get; }
         
         [NotNull]
-        private static ConsoleWaitWriter WaitOut { get; }
+        private static ConsoleWriter ContextOut { get; }
 
         public static string WaitPrefix
         {
-            get => WaitContext.WaitPrefix;
-            set => WaitContext.WaitPrefix = value;
+            get => Context.WaitPrefix;
+            set => Context.WaitPrefix = value;
         }
 
         // TODO: Implement Wait ReadKey
         public static ConsoleKeyInfo ReadKeyWait()
         {
-            WaitContext.Check();
+            Context.Check();
 
-            var result = WaitContext.Wait(WaitOut.TextWriter.Write, ReadKey);
+            var result = Context.Wait(ContextOut.TextWriter.Write, ReadKey);
 
-            WaitContext.Clear();
+            Context.Clear();
 
             return result;
         }
@@ -333,16 +361,16 @@ namespace Intersect
         {
             // TODO: Actually write a ReadLine that saves the input buffer so that when a Write inevitably happens the input isn't obliterated off the screen (while it still persists in memory).
 
-            WaitContext.Check();
+            Context.Check();
 
             if (!withPrefix)
             {
                 return ReadLine();
             }
 
-            var result = WaitContext.BufferedReadLine(WaitOut.TextWriter.Write, WaitOut.TextWriter.WriteLine, ReadKeySkipPrint);
+            var result = Context.BufferedReadLine(ContextOut.TextWriter.Write, ContextOut.TextWriter.WriteLine, ReadKeySkipPrint);
 
-            WaitContext.Clear();
+            Context.Clear();
 
             return result;
         }
@@ -357,7 +385,7 @@ namespace Intersect
         {
             SystemConsole.Clear();
 
-            WaitContext.WritePrefix(Out.Write);
+            Context.WritePrefix(Out.Write);
         }
 
         #region WriteLine
