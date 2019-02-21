@@ -1,4 +1,7 @@
-﻿namespace Intersect.Threading
+﻿using System.Diagnostics;
+using Intersect.Logging;
+
+namespace Intersect.Threading
 {
     using JetBrains.Annotations;
     using System;
@@ -20,18 +23,26 @@
 
         public void ClearWith([NotNull] TInstance instance, [NotNull] Action action)
         {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+            Log.Info($@"Acquiring context lock... ({stopwatch.ElapsedMilliseconds}ms)");
             Acquire();
+            Log.Info($@"Acquired. ({stopwatch.ElapsedMilliseconds}ms)");
 
             if (mInstance != instance)
             {
+                Log.Info($@"Exiting lock... ({stopwatch.ElapsedMilliseconds}ms)");
                 Monitor.Exit(mLock);
             }
 
             action.Invoke();
 
+            Log.Info($@"Clearing instance... ({stopwatch.ElapsedMilliseconds}ms)");
             Clear(instance);
 
+            Log.Info($@"Releasing context lock... ({stopwatch.ElapsedMilliseconds}ms)");
             Release();
+            Log.Info($@"Released. ({stopwatch.ElapsedMilliseconds}ms)");
         }
 
         public void Acquire()

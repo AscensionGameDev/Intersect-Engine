@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Intersect.Logging;
 using Intersect.Threading;
 using JetBrains.Annotations;
 
@@ -61,6 +63,7 @@ namespace Intersect.Core
             lock (mShutdownLock)
             {
                 Monitor.Wait(mShutdownLock);
+                Log.Info("Application context exited.");
             }
         }
 
@@ -119,8 +122,13 @@ namespace Intersect.Core
 
         private void InternalDispose()
         {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+            Log.Info($@"Beginning context dispose. ({stopwatch.ElapsedMilliseconds}ms)");
             Dispose(true);
+            Log.Info($@"GC.SuppressFinalize ({stopwatch.ElapsedMilliseconds}ms)");
             GC.SuppressFinalize(this);
+            Log.Info($@"InternalDispose() completed. ({stopwatch.ElapsedMilliseconds}ms)");
 
             IsDisposed = true;
         }
