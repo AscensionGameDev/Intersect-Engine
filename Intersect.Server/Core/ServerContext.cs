@@ -167,6 +167,9 @@ namespace Intersect.Server.Core
 
         protected override void Dispose(bool disposing)
         {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             if (disposing)
             {
                 #region CLEAN THIS UP
@@ -175,20 +178,30 @@ namespace Intersect.Server.Core
                 Console.WriteLine(Strings.Commands.exiting);
                 Console.WriteLine();
 
+#if WEBSOCKETS
+                Log.Info("Shutting down websockets..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
+                WebSocketNetwork.Stop();
+#endif
+
                 // Except this line, this line is fine.
+                Log.Info("Disposing network..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
                 Network.Dispose();
 
                 // TODO: This probably also needs to not be a global, but will require more work to clean up.
+                Log.Info("Saving player database..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
                 LegacyDatabase.SavePlayerDatabase();
+                Log.Info("Saving game database..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
                 LegacyDatabase.SaveGameDatabase();
 
                 // TODO: This needs to not be a global. I'm also in the middle of rewriting the API anyway.
+                Log.Info("Shutting down the API..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
                 Globals.Api?.Stop();
 
                 #endregion
 
                 if (ThreadConsole?.IsAlive ?? false)
                 {
+                    Log.Info("Shutting down the console thread..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
                     if (!ThreadConsole.Join(1000))
                     {
                         ThreadConsole.Abort();
@@ -197,6 +210,7 @@ namespace Intersect.Server.Core
 
                 if (ThreadLogic?.IsAlive ?? false)
                 {
+                    Log.Info("Shutting down the logic thread..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
                     if (!ThreadLogic.Join(10000))
                     {
                         ThreadLogic.Abort();
@@ -204,7 +218,9 @@ namespace Intersect.Server.Core
                 }
             }
 
+            Log.Info("Base dispose." + $" ({stopwatch.ElapsedMilliseconds}ms)");
             base.Dispose(disposing);
+            Log.Info("Finished disposing server context." + $" ({stopwatch.ElapsedMilliseconds}ms)");
         }
 
         #endregion

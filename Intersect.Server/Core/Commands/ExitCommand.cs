@@ -16,7 +16,7 @@ namespace Intersect.Server.Core.Commands
                 Console.WriteLine(@"    " + Strings.Commands.Exit.Description);
             } else if (arguments.UnknownArguments.IsEmpty)
             {
-                context.Dispose();
+                context.RequestShutdown();
             }
             else
             {

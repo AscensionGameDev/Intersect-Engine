@@ -346,7 +346,7 @@ namespace Intersect.Server.Core
         private static void OnConsoleCancelKeyPress([NotNull] object sender,
             [NotNull] ConsoleCancelEventArgs cancelEvent)
         {
-            ServerContext.Instance.Dispose();
+            ServerContext.Instance.RequestShutdown(true);
             //Shutdown();
             cancelEvent.Cancel = true;
         }
@@ -470,13 +470,13 @@ namespace Intersect.Server.Core
                     break;
 
                 case CtrlTypes.CtrlCloseEvent:
-                    ServerContext.Instance.Dispose();
+                    ServerContext.Instance.RequestShutdown(true);
                     //Shutdown();
                     break;
 
                 case CtrlTypes.CtrlLogoffEvent:
                 case CtrlTypes.CtrlShutdownEvent:
-                    ServerContext.Instance.Dispose();
+                    ServerContext.Instance.RequestShutdown(true);
                     //Shutdown();
                     break;
 
