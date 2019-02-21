@@ -70,7 +70,7 @@ namespace Intersect.Server.Core
             var assembly = Assembly.GetExecutingAssembly();
             using (var stream = assembly.GetManifestResourceStream("Intersect.Server.private-intersect.bek"))
             {
-                var rsaKey = EncryptionKey.FromStream<RsaKey>(stream);
+                var rsaKey = EncryptionKey.FromStream<RsaKey>(stream ?? throw new InvalidOperationException());
                 Debug.Assert(rsaKey != null, "rsaKey != null");
                 network = new ServerNetwork(new NetworkConfiguration(Options.ServerPort), rsaKey.Parameters);
             }
