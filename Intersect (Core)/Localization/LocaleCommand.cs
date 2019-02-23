@@ -5,47 +5,13 @@ using System;
 namespace Intersect.Localization
 {
     [Serializable]
-    public class LocaleCommand : LocaleNamespace
+    public class LocaleCommand : LocaleDescribableToken
     {
-        [JsonProperty(nameof(Name), NullValueHandling = NullValueHandling.Ignore)]
-        private LocalizedString mName;
-
-        [JsonProperty(nameof(Description), NullValueHandling = NullValueHandling.Ignore)]
-        private LocalizedString mDescription;
-
-        [JsonProperty(nameof(Help), NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(nameof(Help), NullValueHandling = NullValueHandling.Ignore)] [CanBeNull]
         private LocalizedString mHelp;
 
-        [JsonProperty(nameof(Usage), NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(nameof(Usage), NullValueHandling = NullValueHandling.Ignore)] [CanBeNull]
         private LocalizedString mUsage;
-
-        [NotNull]
-        [JsonIgnore]
-        public LocalizedString Name
-        {
-            get => mName ?? throw new InvalidOperationException();
-            set
-            {
-                if (mName == null)
-                {
-                    mName = value;
-                }
-            }
-        }
-
-        [NotNull]
-        [JsonIgnore]
-        public LocalizedString Description
-        {
-            get => mDescription ?? "";
-            set
-            {
-                if (mDescription == null)
-                {
-                    mDescription = value;
-                }
-            }
-        }
 
         [NotNull]
         [JsonIgnore]
@@ -84,17 +50,10 @@ namespace Intersect.Localization
             [CanBeNull] string description = null,
             [CanBeNull] string help = null,
             [CanBeNull] string usage = null
-        )
+        ) : base(name, description)
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException($@"Parameter '{nameof(name)}' cannot be null or whitespace.");
-            }
-
-            Name = name.Trim();
-            Description = description?.Trim() ?? "";
-            Help = help?.Trim() ?? "";
-            Usage = usage?.Trim() ?? "";
+            mHelp = help?.Trim();
+            mUsage = usage?.Trim();
         }
     }
 }

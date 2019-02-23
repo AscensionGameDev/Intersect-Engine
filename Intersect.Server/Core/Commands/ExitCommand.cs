@@ -1,20 +1,31 @@
-﻿using Intersect.Server.Localization;
+﻿using Intersect.Server.Core.Arguments;
+using Intersect.Server.Localization;
+using JetBrains.Annotations;
+using System;
 
 namespace Intersect.Server.Core.Commands
 {
     internal sealed class ExitCommand : ServerCommand
     {
-        public ExitCommand() : base(Strings.Commands.Exit)
+        [NotNull]
+        private HelpArgument Help => FindArgument<HelpArgument>() ?? throw new InvalidOperationException($@"Unable to find argument type {typeof(HelpArgument).FullName}.");
+
+        public ExitCommand() : base(
+            Strings.Commands.Exit,
+            new HelpArgument()
+        )
         {
         }
 
-        public override void Handle(ServerContext context, HelpArguments arguments)
+        protected override void Handle(ServerContext context, ParserResult result)
         {
-            if (arguments.Help)
+            var help = result.Parsed.Find(Help);
+            if (help)
             {
                 Console.WriteLine(@"    " + Strings.Commands.Exit.Usage.ToString(Strings.Commands.commandinfo));
                 Console.WriteLine(@"    " + Strings.Commands.Exit.Description);
-            } else if (arguments.UnknownArguments.IsEmpty)
+            }
+            else if (result.Unhandled.IsEmpty)
             {
                 context.RequestShutdown();
             }

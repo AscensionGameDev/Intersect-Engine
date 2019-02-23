@@ -409,6 +409,19 @@ namespace Intersect.Utilities
 
         public sealed class CommandsNamespace : LocaleNamespace
         {
+            public sealed class ArgumentsNamespace : LocaleNamespace
+            {
+                [NotNull] public readonly LocaleArgument Help = new LocaleArgument
+                {
+                    Name = @"help",
+                    ShortName = 'h',
+                    Description = @"Shows help information for this command"
+                };
+            }
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull] public readonly ArgumentsNamespace Arguments = new ArgumentsNamespace();
+
             [NotNull] public readonly LocaleCommand Announcement = new LocaleCommand
             {
                 Name = @"announcement",
@@ -1139,93 +1152,123 @@ namespace Intersect.Utilities
 
         private sealed class RootNamespace : LocaleNamespace
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             [NotNull]
             public readonly AccountNamespace AccountNamespace = new AccountNamespace();
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             [NotNull]
             public readonly BagsNamespace BagsNamespace = new BagsNamespace();
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             [NotNull]
             public readonly BanksNamespace BanksNamespace = new BanksNamespace();
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             [NotNull]
             public readonly ChatNamespace ChatNamespace = new ChatNamespace();
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             [NotNull]
             public readonly ClassesNamespace ClassesNamespace = new ClassesNamespace();
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             [NotNull]
             public readonly ColorsNamespace ColorsNamespace = new ColorsNamespace();
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             [NotNull]
             public readonly CombatNamespace CombatNamespace = new CombatNamespace();
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             [NotNull]
             public readonly CommandoutputNamespace CommandoutputNamespace = new CommandoutputNamespace();
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             [NotNull]
             public readonly CommandsNamespace CommandsNamespace = new CommandsNamespace();
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             [NotNull]
             public readonly CraftingNamespace CraftingNamespace = new CraftingNamespace();
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             [NotNull]
             public readonly DatabaseNamespace DatabaseNamespace = new DatabaseNamespace();
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             [NotNull]
             public readonly ErrorsNamespace ErrorsNamespace = new ErrorsNamespace();
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             [NotNull]
             public readonly EventsNamespace EventsNamespace = new EventsNamespace();
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             [NotNull]
             public readonly FormulasNamespace FormulasNamespace = new FormulasNamespace();
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             [NotNull]
             public readonly FriendsNamespace FriendsNamespace = new FriendsNamespace();
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             [NotNull]
             public readonly GeneralNamespace GeneralNamespace = new GeneralNamespace();
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             [NotNull]
             public readonly IntroNamespace IntroNamespace = new IntroNamespace();
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             [NotNull]
             public readonly ItemsNamespace ItemsNamespace = new ItemsNamespace();
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             [NotNull]
             public readonly MappingNamespace MappingNamespace = new MappingNamespace();
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             [NotNull]
             public readonly MigrationNamespace MigrationNamespace = new MigrationNamespace();
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             [NotNull]
             public readonly NetDebugNamespace NetDebugNamespace = new NetDebugNamespace();
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             [NotNull]
             public readonly NetworkingNamespace NetworkingNamespace = new NetworkingNamespace();
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             [NotNull]
             public readonly PartiesNamespace PartiesNamespace = new PartiesNamespace();
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             [NotNull]
             public readonly PlayerNamespace PlayerNamespace = new PlayerNamespace();
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             [NotNull]
             public readonly PortcheckingNamespace PortcheckingNamespace = new PortcheckingNamespace();
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             [NotNull]
             public readonly QuestsNamespace QuestsNamespace = new QuestsNamespace();
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             [NotNull]
             public readonly RegexNamespace RegexNamespace = new RegexNamespace();
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             [NotNull]
             public readonly ShopsNamespace ShopsNamespace = new ShopsNamespace();
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             [NotNull]
             public readonly TradingNamespace TradingNamespace = new TradingNamespace();
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             [NotNull]
             public readonly UpnpNamespace UpnpNamespace = new UpnpNamespace();
         }
