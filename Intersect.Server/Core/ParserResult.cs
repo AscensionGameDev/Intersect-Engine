@@ -17,6 +17,7 @@ namespace Intersect.Server.Core
         [NotNull]
         public ArgumentValues Unhandled { get; }
 
+        [NotNull]
         public ImmutableList<ParserError> Errors { get; }
 
         public ParserResult(

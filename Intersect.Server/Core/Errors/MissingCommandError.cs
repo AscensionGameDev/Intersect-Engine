@@ -8,7 +8,7 @@ namespace Intersect.Server.Core.Errors
         [NotNull]
         public string CommandName { get; }
 
-        private MissingCommandError(
+        protected MissingCommandError(
             [NotNull] string commandName,
             [NotNull] string message
         ) : base(message)

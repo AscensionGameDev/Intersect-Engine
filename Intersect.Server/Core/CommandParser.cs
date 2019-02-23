@@ -325,7 +325,7 @@ namespace Intersect.Server.Core
 
                                 errors.Add(
                                     new ParserError(
-                                        $@"Failed to parsed '{valuePart}' for argument '{cleanArgName}.",
+                                        $@"Failed to parse '{valuePart}' for argument '{cleanArgName}.",
                                         false
                                     )
                                 );
@@ -340,7 +340,7 @@ namespace Intersect.Server.Core
                 {
                     if (!TryParseArgument(argument.ValueType, argument.DefaultValue, cleanArgValue, out var value))
                     {
-                        errors.Add(new ParserError($@"Error parsing argument {cleanArgName} ({cleanArgValue})", false));
+                        errors.Add(new ParserError($@"{cleanArgName}: Invalid argument value format '{cleanArgValue}'.", false));
                     }
 
                     values.Add(value);
@@ -385,76 +385,95 @@ namespace Intersect.Server.Core
         {
             switch (defaultValue)
             {
+                case bool defaultParsed:
+                {
+                    var success = bool.TryParse(source, out var value);
+                    parsed = success ? value : defaultParsed;
+                    return success;
+                }
+
                 case byte defaultParsed:
                 {
-                    parsed = byte.TryParse(source, out var value) ? value : defaultParsed;
-                    return true;
+                    var success = byte.TryParse(source, out var value);
+                    parsed = success ? value : defaultParsed;
+                    return success;
                 }
 
                 case sbyte defaultParsed:
                 {
-                    parsed = sbyte.TryParse(source, out var value) ? value : defaultParsed;
-                    return true;
+                    var success = sbyte.TryParse(source, out var value);
+                    parsed = success ? value : defaultParsed;
+                    return success;
                 }
 
                 case ushort defaultParsed:
                 {
-                    parsed = ushort.TryParse(source, out var value) ? value : defaultParsed;
-                    return true;
+                    var success = ushort.TryParse(source, out var value);
+                    parsed = success ? value : defaultParsed;
+                    return success;
                 }
 
                 case short defaultParsed:
                 {
-                    parsed = short.TryParse(source, out var value) ? value : defaultParsed;
-                    return true;
+                    var success = short.TryParse(source, out var value);
+                    parsed = success ? value : defaultParsed;
+                    return success;
                 }
 
                 case uint defaultParsed:
                 {
-                    parsed = uint.TryParse(source, out var value) ? value : defaultParsed;
-                    return true;
+                    var success = uint.TryParse(source, out var value);
+                    parsed = success ? value : defaultParsed;
+                    return success;
                 }
 
                 case int defaultParsed:
                 {
-                    parsed = int.TryParse(source, out var value) ? value : defaultParsed;
-                    return true;
+                    var success = int.TryParse(source, out var value);
+                    parsed = success ? value : defaultParsed;
+                    return success;
                 }
 
                 case ulong defaultParsed:
                 {
-                    parsed = ulong.TryParse(source, out var value) ? value : defaultParsed;
-                    return true;
+                    var success = ulong.TryParse(source, out var value);
+                    parsed = success ? value : defaultParsed;
+                    return success;
                 }
 
                 case long defaultParsed:
                 {
-                    parsed = long.TryParse(source, out var value) ? value : defaultParsed;
-                    return true;
+                    var success = long.TryParse(source, out var value);
+                    parsed = success ? value : defaultParsed;
+                    return success;
                 }
 
                 case float defaultParsed:
                 {
-                    parsed = float.TryParse(source, out var value) ? value : defaultParsed;
-                    return true;
+                    var success = float.TryParse(source, out var value);
+                    parsed = success ? value : defaultParsed;
+                    return success;
                 }
 
                 case double defaultParsed:
                 {
-                    parsed = double.TryParse(source, out var value) ? value : defaultParsed;
-                    return true;
+                    var success = double.TryParse(source, out var value);
+                    parsed = success ? value : defaultParsed;
+                    return success;
                 }
 
                 case decimal defaultParsed:
                 {
-                    parsed = decimal.TryParse(source, out var value) ? value : defaultParsed;
-                    return true;
+                    var success = decimal.TryParse(source, out var value);
+                    parsed = success ? value : defaultParsed;
+                    return success;
                 }
 
                 case char defaultParsed:
                 {
-                    parsed = char.TryParse(source, out var value) ? value : defaultParsed;
-                    return true;
+                    var success = char.TryParse(source, out var value);
+                    parsed = success ? value : defaultParsed;
+                    return success;
                 }
 
                 case string defaultParsed:
