@@ -424,6 +424,9 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly ArgumentsNamespace Arguments = new ArgumentsNamespace();
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly CommandParsingNamespace Parsing = new CommandParsingNamespace();
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString cpslock = @"lock";
 
@@ -438,13 +441,7 @@ namespace Intersect.Server.Localization
                 @"Server is now closing. Please wait while your game and player data is saved!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString commandinfo = CommandParser.HelpArgumentShort;
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString ParserErrorOccurred = CommandParser.ParserErrorMessage;
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString CommandNotFound = CommandParser.CommandNotFoundMessage;
+            public readonly LocalizedString commandinfo = @"/?";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString invalid = @"Invalid /command.";

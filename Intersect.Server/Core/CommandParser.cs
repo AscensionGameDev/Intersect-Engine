@@ -1,72 +1,127 @@
-﻿using JetBrains.Annotations;
+﻿using Intersect.Localization;
+using Intersect.Server.Core.Errors;
+using JetBrains.Annotations;
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Intersect.Localization;
-using Intersect.Server.Core.Arguments;
-using Intersect.Server.Core.Errors;
-using Nancy.Json;
-using Newtonsoft.Json;
 
 namespace Intersect.Server.Core
 {
-    public class CommandParser
+    public sealed class CommandParsingNamespace : LocaleNamespace
     {
-        public static void ValidatePrefix(string prefix)
-        {
-            if (string.IsNullOrWhiteSpace(prefix))
-            {
-                throw new ArgumentException(@"Prefix cannot be null, empty, or whitespace.");
-            }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+        public readonly CommandParserErrorsNamespace Errors = new CommandParserErrorsNamespace();
+    }
 
-            if (prefix.Contains('='))
-            {
-                throw new ArgumentException(@"Prefixes cannot contain '='.");
-            }
-
-            if (prefix.Contains(' ') || prefix.Contains('\n') || prefix.Contains('\r') || prefix.Contains('\t'))
-            {
-                throw new ArgumentException(@"Prefixes cannot contain whitespace.");
-            }
-
-            if (prefix.Contains('\0'))
-            {
-                throw new ArgumentException(@"Prefixes cannot contain the null character.");
-            }
-        }
-
-        [NotNull] public static readonly string ParserErrorMessage =
+    public sealed class CommandParserErrorsNamespace : LocaleNamespace
+    {
+        /// <summary>
+        /// Generic parser error message.
+        /// </summary>
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+        public readonly LocalizedString GenericError =
             @"An error occurred while trying to parse the command.";
 
-        [NotNull] public static readonly string CommandNotFoundMessage =
-            @"The command '{00}' was not found.";
+        /// <summary>
+        /// No input was provided.
+        /// </summary>
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+        public readonly LocalizedString NoInput =
+            @"No input was provided. If this is not the case, please report this error.";
 
-        [NotNull] public static readonly string HelpArgumentShort = @"/?";
+        /// <summary>
+        /// Command not found for the given name.
+        /// </summary>
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+        public readonly LocalizedString CommandNotFound =
+            @"The command '{00}' is not recoginized. Enter '{01}' for a list of commands.";
+
+        /// <summary>
+        /// Named argument is not valid for the given command.
+        /// </summary>
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+        public readonly LocalizedString UnhandledNamedArgument =
+            @"The argument '{00}' is not accepted for the command '{01}'.";
+
+        /// <summary>
+        /// Named argument is required but missing for the given command.
+        /// </summary>
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+        public readonly LocalizedString MissingNamedArgument =
+            @"The argument '{00}{01}' is required for the command '{02}' but is missing.";
+
+        /// <summary>
+        /// Named argument was specified multiple times.
+        /// </summary>
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+        public readonly LocalizedString DuplicateNamedArgument = @"The argument '{00}' was specified more than once.";
+
+        /// <summary>
+        /// Positional argument is not valid for the given command.
+        /// </summary>
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+        public readonly LocalizedString UnhandledPositionalArgument =
+            @"The argument '{00}' in position {01} is not accepted for the command '{02}'.";
+
+        /// <summary>
+        /// The value provided is not valid for this argument.
+        /// </summary>
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+        public readonly LocalizedString
+            InvalidArgumentValue = @"The value '{00}' is not valid for the argument '{01}'.";
+
+        /// <summary>
+        /// The value provided is not valid for this argument, expected one of the specified type.
+        /// </summary>
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+        public readonly LocalizedString InvalidArgumentValueWithType =
+            @"The value '{00}' is not valid for the argument '{01}' (expected type '{02}').";
+
+        /// <summary>
+        /// Flag argument is provided a value, but they do not accept them.
+        /// </summary>
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+        public readonly LocalizedString FlagArgumentsIgnoreValue =
+            @"'{00}' is a flag argument and will ignore provided values.";
+
+        /// <summary>
+        /// Argument matches neither the short nor long argument name format and is not positional.
+        /// </summary>
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+        public readonly LocalizedString BadArgumentFormat =
+            @"The argument '{00}' is not a valid short or long-form argument.";
+
+        /// <summary>
+        /// Argument matches both the short and long argument name formats.
+        ///
+        /// Note that should not actually be possible.
+        /// </summary>
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+        public readonly LocalizedString IllegalArgumentFormat =
+            @"The argument '{00}' matches both the short and long-form argument formats (e.g. '{01}h' and '{02}help').";
+    }
+
+    public delegate CommandParsingNamespace CommandParserLocalizationProvider();
+
+    public class CommandParser
+    {
+        [NotNull] protected static readonly CommandParsingNamespace DefaultLocalization;
+
+        static CommandParser()
+        {
+            DefaultLocalization = new CommandParsingNamespace();
+        }
+
+        [CanBeNull]
+        public CommandParserLocalizationProvider LocalizationProvider { get; set; }
 
         [NotNull] public static readonly string DefaultPrefixShort = @"-";
-
         [NotNull] public static readonly string DefaultPrefixLong = @"--";
 
         [NotNull] private string mPrefixShort = DefaultPrefixShort;
         [NotNull] private string mPrefixLong = DefaultPrefixLong;
-
-        private LocalizedString mErrorMessage;
-        private LocalizedString mNotFoundMesssage;
-
-        [NotNull]
-        public LocalizedString ErrorMessage
-        {
-            get => mErrorMessage ?? ParserErrorMessage;
-            set => mErrorMessage = value;
-        }
-
-        [NotNull]
-        public LocalizedString NotFoundMesssage
-        {
-            get => mNotFoundMesssage ?? CommandNotFoundMessage;
-            set => mNotFoundMesssage = value;
-        }
 
         [NotNull]
         public string PrefixShort
@@ -107,6 +162,10 @@ namespace Intersect.Server.Core
                 mPrefixLong = value;
             }
         }
+
+        [NotNull]
+        protected CommandParsingNamespace Localization =>
+            LocalizationProvider?.Invoke() ?? DefaultLocalization;
 
         [NotNull]
         protected IDictionary<string, ICommand> Lookup { get; }
@@ -179,7 +238,7 @@ namespace Intersect.Server.Core
             if (cleanArgs.Count < 1)
             {
                 return new ParserError(
-                    ErrorMessage,
+                    Localization.Errors.NoInput,
                     new ArgumentException(
                         @"No argument values were provided so unable to find a command.",
                         nameof(args)
@@ -191,7 +250,7 @@ namespace Intersect.Server.Core
             var command = Find(commandName ?? throw new InvalidOperationException());
             if (command == null)
             {
-                return MissingCommandError.Create(commandName, NotFoundMesssage).AsResult();
+                return MissingCommandError.Create(commandName, Localization.Errors.CommandNotFound).AsResult();
             }
 
             if (cleanArgs.Count < 2)
@@ -203,7 +262,7 @@ namespace Intersect.Server.Core
                 }
 
                 return new ParserError(
-                    ErrorMessage,
+                    Localization.Errors.GenericError,
                     new InvalidOperationException(
                         $@"Failed to construct default arguments for command of type {command.GetType().FullName}."
                     )
@@ -211,7 +270,6 @@ namespace Intersect.Server.Core
             }
 
             IDictionary<ICommandArgument, ArgumentValues> parsed = new Dictionary<ICommandArgument, ArgumentValues>();
-            IList<object> unhandled = new List<object>();
             IList<ParserError> errors = new List<ParserError>();
 
             cleanArgs.Skip(1).ToList().ForEach(cleanArg =>
@@ -241,7 +299,7 @@ namespace Intersect.Server.Core
                 {
                     errors.Add(
                         new ParserError(
-                            $@"'{cleanArg}' is not a valid argument/argument-value. Positional arguments are not yet supported, and named arguments do not contain spaces."
+                            Localization.Errors.BadArgumentFormat.ToString(cleanArg)
                         )
                     );
                     return;
@@ -251,7 +309,7 @@ namespace Intersect.Server.Core
                 {
                     errors.Add(
                         new ParserError(
-                            $@"'{cleanArg}' somehow can be both a short name or a long name, but this should not be possible. This indicates a logic error, please report this. PrefixShort ='{PrefixShort}' PrefixLong='{PrefixLong}'"
+                            Localization.Errors.IllegalArgumentFormat.ToString(cleanArg, PrefixShort, PrefixLong)
                         )
                     );
                     return;
@@ -259,14 +317,19 @@ namespace Intersect.Server.Core
 
                 var cleanArgParts = cleanArg.Split('=');
                 var cleanArgName = cleanArgParts[0] ?? "";
-
                 var argument = canBeShortName
                     ? command.FindArgument(cleanArgName[PrefixShort.Length])
                     : command.FindArgument(cleanArgName.Substring(PrefixLong.Length));
 
                 if (argument == null)
                 {
-                    unhandled.Add(cleanArg);
+                    errors.Add(
+                        UnhandledArgumentError.Create(
+                            command.Name,
+                            cleanArgName,
+                            Localization.Errors.UnhandledNamedArgument
+                        )
+                    );
                     return;
                 }
 
@@ -275,7 +338,8 @@ namespace Intersect.Server.Core
                 {
                     if (!argument.AllowsMultiple)
                     {
-                        errors.Add(new ParserError($@"Duplicate argument '{cleanArgName}'.", false));
+                        errors.Add(new ParserError(Localization.Errors.DuplicateNamedArgument.ToString(cleanArgName),
+                            false));
                         return;
                     }
 
@@ -293,7 +357,7 @@ namespace Intersect.Server.Core
                     {
                         errors.Add(
                             new ParserError(
-                                $@"'{cleanArgName}' is a flag argument and will ignore provided values.",
+                                Localization.Errors.FlagArgumentsIgnoreValue.ToString(cleanArgName),
                                 false
                             )
                         );
@@ -323,12 +387,28 @@ namespace Intersect.Server.Core
                                     return parsedPart;
                                 }
 
-                                errors.Add(
-                                    new ParserError(
-                                        $@"Failed to parse '{valuePart}' for argument '{cleanArgName}.",
-                                        false
-                                    )
-                                );
+                                if (argument.ValueType != typeof(object))
+                                {
+                                    errors.Add(
+                                        new ParserError(
+                                            Localization.Errors.InvalidArgumentValueWithType.ToString(
+                                                valuePart,
+                                                cleanArgName,
+                                                argument.ValueType.Name
+                                            ),
+                                            false
+                                        )
+                                    );
+                                }
+                                else
+                                {
+                                    errors.Add(
+                                        new ParserError(
+                                            Localization.Errors.InvalidArgumentValue.ToString(valuePart, cleanArgName),
+                                            false
+                                        )
+                                    );
+                                }
 
                                 return defaultValue;
                             });
@@ -340,7 +420,28 @@ namespace Intersect.Server.Core
                 {
                     if (!TryParseArgument(argument.ValueType, argument.DefaultValue, cleanArgValue, out var value))
                     {
-                        errors.Add(new ParserError($@"{cleanArgName}: Invalid argument value format '{cleanArgValue}'.", false));
+                        if (argument.ValueType != typeof(object))
+                        {
+                            errors.Add(
+                                new ParserError(
+                                    Localization.Errors.InvalidArgumentValueWithType.ToString(
+                                        cleanArgValue,
+                                        cleanArgName,
+                                        argument.ValueType.Name
+                                    ),
+                                    false
+                                )
+                            );
+                        }
+                        else
+                        {
+                            errors.Add(
+                                new ParserError(
+                                    Localization.Errors.InvalidArgumentValue.ToString(cleanArgValue, cleanArgName),
+                                    false
+                                )
+                            );
+                        }
                     }
 
                     values.Add(value);
@@ -349,7 +450,21 @@ namespace Intersect.Server.Core
                 parsed[argument] = new ArgumentValues(values);
             });
 
-            return new ParserResult(command, new ArgumentValuesMap(parsed), new ArgumentValues(unhandled), errors);
+            foreach (var argument in command.Arguments)
+            {
+                if (!argument.IsRequired || parsed.ContainsKey(argument))
+                {
+                    continue;
+                }
+
+                errors.Add(
+                    new ParserError(
+                        Localization.Errors.MissingNamedArgument.ToString(PrefixLong, argument.Name, command.Name)
+                    )
+                );
+            }
+
+            return new ParserResult(command, new ArgumentValuesMap(parsed), errors);
         }
 
         [CanBeNull]
@@ -375,7 +490,6 @@ namespace Intersect.Server.Core
                 : new ArgumentValues(argument.DefaultValue);
         }
 
-        [CanBeNull]
         protected virtual bool TryParseArgument(
             [NotNull] Type type,
             [CanBeNull] object defaultValue,
@@ -484,12 +598,13 @@ namespace Intersect.Server.Core
 
                 default:
                 {
-                    return TryParse(type, defaultValue, source, out parsed);
+                    return TryParseType(type, defaultValue, source, out parsed);
                 }
             }
         }
 
-        protected virtual bool TryParse([NotNull] Type type, [CanBeNull] object defaultValue, [NotNull] string source,
+        protected virtual bool TryParseType([NotNull] Type type, [CanBeNull] object defaultValue,
+            [NotNull] string source,
             out object parsed)
         {
             if (type == typeof(string))
@@ -507,6 +622,29 @@ namespace Intersect.Server.Core
             {
                 parsed = defaultValue;
                 return false;
+            }
+        }
+
+        public static void ValidatePrefix(string prefix)
+        {
+            if (string.IsNullOrWhiteSpace(prefix))
+            {
+                throw new ArgumentException(@"Prefix cannot be null, empty, or whitespace.");
+            }
+
+            if (prefix.Contains('='))
+            {
+                throw new ArgumentException(@"Prefixes cannot contain '='.");
+            }
+
+            if (prefix.Contains(' ') || prefix.Contains('\n') || prefix.Contains('\r') || prefix.Contains('\t'))
+            {
+                throw new ArgumentException(@"Prefixes cannot contain whitespace.");
+            }
+
+            if (prefix.Contains('\0'))
+            {
+                throw new ArgumentException(@"Prefixes cannot contain the null character.");
             }
         }
     }

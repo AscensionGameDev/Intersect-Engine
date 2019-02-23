@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using Intersect.Core;
 using Intersect.Localization;
+using Intersect.Logging;
 using JetBrains.Annotations;
 
 namespace Intersect.Server.Core
@@ -58,13 +59,27 @@ namespace Intersect.Server.Core
 
             Localization = localization;
         }
-
+        
+        [CanBeNull]
         protected TArgument FindArgument<TArgument>()
         {
             return mArguments
                 .Where(argument => argument?.GetType() == typeof(TArgument))
                 .Cast<TArgument>()
                 .FirstOrDefault();
+        }
+
+        [NotNull]
+        protected TArgument FindArgumentOrThrow<TArgument>()
+        {
+            var argument = FindArgument<TArgument>();
+
+            if (argument == null)
+            {
+                throw new InvalidOperationException($@"Unable to find argument type {typeof(TArgument).FullName}.");
+            }
+
+            return argument;
         }
 
         public void Handle(IApplicationContext context, ParserResult result)

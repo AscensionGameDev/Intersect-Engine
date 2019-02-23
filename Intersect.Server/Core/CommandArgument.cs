@@ -24,12 +24,15 @@ namespace Intersect.Server.Core
 
         public string Delimeter { get; protected set; }
 
+        public bool IsRequired { get; }
+
         [NotNull]
         public LocaleArgument Localization { get; }
 
-        protected CommandArgument([NotNull] LocaleArgument localization)
+        protected CommandArgument([NotNull] LocaleArgument localization, bool required = false)
         {
             Localization = localization;
+            IsRequired = required;
         }
 
         public TValue DefaultValueAsType()

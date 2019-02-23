@@ -55,7 +55,7 @@ namespace Intersect.Server.Core
 
                 var result = Parser.Parse(line.Split(' '));
                 var fatalError = false;
-                result.Errors?.ForEach(error =>
+                result.Errors.ForEach(error =>
                 {
                     if (error == null)
                     {
@@ -63,9 +63,9 @@ namespace Intersect.Server.Core
                     }
 
                     fatalError = error.IsFatal;
-                    if (!error.IsFatal || error is MissingCommandError)
+                    if (!error.IsFatal || error is MissingCommandError || error is UnhandledArgumentError)
                     {
-                        Log.Warn(error.Message);
+                        Console.WriteLine(error.Message);
                     }
                     else
                     {

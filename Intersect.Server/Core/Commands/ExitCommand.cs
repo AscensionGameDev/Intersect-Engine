@@ -8,7 +8,7 @@ namespace Intersect.Server.Core.Commands
     internal sealed class ExitCommand : ServerCommand
     {
         [NotNull]
-        private HelpArgument Help => FindArgument<HelpArgument>() ?? throw new InvalidOperationException($@"Unable to find argument type {typeof(HelpArgument).FullName}.");
+        private HelpArgument Help => FindArgumentOrThrow<HelpArgument>();
 
         public ExitCommand() : base(
             Strings.Commands.Exit,
@@ -19,20 +19,14 @@ namespace Intersect.Server.Core.Commands
 
         protected override void Handle(ServerContext context, ParserResult result)
         {
-            var help = result.Parsed.Find(Help);
-            if (help)
+            if (result.Find(Help))
             {
                 Console.WriteLine(@"    " + Strings.Commands.Exit.Usage.ToString(Strings.Commands.commandinfo));
                 Console.WriteLine(@"    " + Strings.Commands.Exit.Description);
+                return;
             }
-            else if (result.Unhandled.IsEmpty)
-            {
-                context.RequestShutdown();
-            }
-            else
-            {
-                Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
-            }
+
+            context.RequestShutdown();
         }
     }
 }

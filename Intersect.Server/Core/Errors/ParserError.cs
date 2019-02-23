@@ -51,5 +51,10 @@ namespace Intersect.Server.Core.Errors
         {
             return new ParserResult<TCommand>(command, this);
         }
+
+        public override string ToString()
+        {
+            return Message;
+        }
     }
 }
