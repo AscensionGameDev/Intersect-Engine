@@ -170,6 +170,8 @@
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="IO\ConsoleContext.cs" />
     <Compile Include="IO\ConsoleWriter.cs" />
+    <Compile Include="Localization\LocaleDescribableToken.cs" />
+    <Compile Include="Localization\LocaleToken.cs" />
     <Compile Include="Localization\LocaleCommand.cs" />
     <Compile Include="Localization\LocaleCommandNamespace.cs" />
     <Compile Include="Localization\LocaleDictionary.cs" />
@@ -326,6 +328,7 @@
     <Compile Include="Utilities\ReflectionUtils.cs" />
     <Compile Include="Utilities\ValueUtils.cs" />
     <Compile Include="Utilities\VersionHelper.cs" />
+    <Compile Include="Localization\LocaleArgument.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

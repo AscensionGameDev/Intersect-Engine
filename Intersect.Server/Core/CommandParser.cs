@@ -1,30 +1,112 @@
 ﻿using JetBrains.Annotations;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Intersect.Localization;
+using Intersect.Server.Core.Arguments;
+using Intersect.Server.Core.Errors;
+using Nancy.Json;
+using Newtonsoft.Json;
 
 namespace Intersect.Server.Core
 {
     public class CommandParser
     {
-        [NotNull]
-        public static readonly string ParserErrorMessage =
+        public static void ValidatePrefix(string prefix)
+        {
+            if (string.IsNullOrWhiteSpace(prefix))
+            {
+                throw new ArgumentException(@"Prefix cannot be null, empty, or whitespace.");
+            }
+
+            if (prefix.Contains('='))
+            {
+                throw new ArgumentException(@"Prefixes cannot contain '='.");
+            }
+
+            if (prefix.Contains(' ') || prefix.Contains('\n') || prefix.Contains('\r') || prefix.Contains('\t'))
+            {
+                throw new ArgumentException(@"Prefixes cannot contain whitespace.");
+            }
+
+            if (prefix.Contains('\0'))
+            {
+                throw new ArgumentException(@"Prefixes cannot contain the null character.");
+            }
+        }
+
+        [NotNull] public static readonly string ParserErrorMessage =
             @"An error occurred while trying to parse the command.";
 
-        [NotNull]
-        public static readonly string CommandNotFoundMessage =
+        [NotNull] public static readonly string CommandNotFoundMessage =
             @"The command '{00}' was not found.";
 
+        [NotNull] public static readonly string HelpArgumentShort = @"/?";
+
+        [NotNull] public static readonly string DefaultPrefixShort = @"-";
+
+        [NotNull] public static readonly string DefaultPrefixLong = @"--";
+
+        [NotNull] private string mPrefixShort = DefaultPrefixShort;
+        [NotNull] private string mPrefixLong = DefaultPrefixLong;
+
+        private LocalizedString mErrorMessage;
+        private LocalizedString mNotFoundMesssage;
+
         [NotNull]
-        public static readonly string HelpArgumentShort = @"/?";
+        public LocalizedString ErrorMessage
+        {
+            get => mErrorMessage ?? ParserErrorMessage;
+            set => mErrorMessage = value;
+        }
 
-        public string ErrorMessage { get; set; } = ParserErrorMessage;
+        [NotNull]
+        public LocalizedString NotFoundMesssage
+        {
+            get => mNotFoundMesssage ?? CommandNotFoundMessage;
+            set => mNotFoundMesssage = value;
+        }
 
-        public string NotFoundMesssage { get; set; } = CommandNotFoundMessage;
+        [NotNull]
+        public string PrefixShort
+        {
+            get => mPrefixShort;
+            set
+            {
+                if (value == mPrefixLong)
+                {
+                    throw new ArgumentException(
+                        $@"Cannot set the short prefix to the same value as the long prefix ({value}).",
+                        nameof(value)
+                    );
+                }
 
-        public string HelpShort { get; set; } = HelpArgumentShort;
+                ValidatePrefix(value);
 
-        public string HelpLong { get; set; } = null;
+                mPrefixShort = value;
+            }
+        }
+
+        [NotNull]
+        public string PrefixLong
+        {
+            get => mPrefixLong;
+            set
+            {
+                if (value == mPrefixShort)
+                {
+                    throw new ArgumentException(
+                        $@"Cannot set the long prefix to the same value as the short prefix ({value}).",
+                        nameof(value)
+                    );
+                }
+
+                ValidatePrefix(value);
+
+                mPrefixLong = value;
+            }
+        }
 
         [NotNull]
         protected IDictionary<string, ICommand> Lookup { get; }
@@ -83,14 +165,12 @@ namespace Intersect.Server.Core
         [NotNull]
         public virtual ParserResult Parse([NotNull] params string[] args)
         {
-            return Parse(null, args);
+            return Parse(args as IEnumerable<string>);
         }
 
         [NotNull]
-        public virtual ParserResult Parse([CanBeNull] Type argumentsType, [NotNull] params string[] args)
+        public virtual ParserResult Parse([NotNull] IEnumerable<string> args)
         {
-            var resolvedArgumentsType = argumentsType;
-
             var cleanArgs = args
                 .Select(arg => arg?.Trim())
                 .Where(arg => !string.IsNullOrEmpty(arg))
@@ -98,27 +178,11 @@ namespace Intersect.Server.Core
 
             if (cleanArgs.Count < 1)
             {
-                if (resolvedArgumentsType == null)
-                {
-                    return new CommandError(
-                        ErrorMessage,
-                        new ArgumentNullException(
-                            nameof(argumentsType),
-                            @"No arguments were provided and the target arguments type is null."
-                        )
-                    ).AsResult();
-                }
-
-                var constructedArguments = ConstructDefaultArguments(resolvedArgumentsType);
-                if (constructedArguments != null)
-                {
-                    return constructedArguments.AsResult();
-                }
-
-                return new CommandError(
+                return new ParserError(
                     ErrorMessage,
-                    new InvalidOperationException(
-                        $@"Failed to construct default arguments of type {resolvedArgumentsType.Name} ({resolvedArgumentsType.FullName})."
+                    new ArgumentException(
+                        @"No argument values were provided so unable to find a command.",
+                        nameof(args)
                     )
                 ).AsResult();
             }
@@ -127,96 +191,304 @@ namespace Intersect.Server.Core
             var command = Find(commandName ?? throw new InvalidOperationException());
             if (command == null)
             {
-                return new CommandError(string.Format(NotFoundMesssage ?? CommandNotFoundMessage, commandName)).AsResult();
-            }
-
-            if (resolvedArgumentsType == null)
-            {
-                resolvedArgumentsType = command.ArgumentsType;
-            }
-            else if (resolvedArgumentsType != command.ArgumentsType)
-            {
-                return new CommandError(
-                    ErrorMessage,
-                    new InvalidCastException(
-                        $@"Arguments type mismatch between the provided type {resolvedArgumentsType.Name} and the declared type {command.ArgumentsType.Name}."
-                    )
-                ).AsResult(command);
+                return MissingCommandError.Create(commandName, NotFoundMesssage).AsResult();
             }
 
             if (cleanArgs.Count < 2)
             {
-                var constructedArguments = ConstructDefaultArguments(resolvedArgumentsType);
+                var constructedArguments = ConstructDefaultArguments(command.Arguments);
                 if (constructedArguments != null)
                 {
                     return constructedArguments.AsResult(command);
                 }
 
-                return new CommandError(
+                return new ParserError(
                     ErrorMessage,
                     new InvalidOperationException(
-                        $@"Failed to construct default arguments of type {resolvedArgumentsType.Name} ({resolvedArgumentsType.FullName})."
+                        $@"Failed to construct default arguments for command of type {command.GetType().FullName}."
                     )
                 ).AsResult(command);
             }
 
-            if (resolvedArgumentsType == typeof(HelpArguments))
+            IDictionary<ICommandArgument, ArgumentValues> parsed = new Dictionary<ICommandArgument, ArgumentValues>();
+            IList<object> unhandled = new List<object>();
+            IList<ParserError> errors = new List<ParserError>();
+
+            cleanArgs.Skip(1).ToList().ForEach(cleanArg =>
             {
-                var isHelp = string.Equals(cleanArgs[1], HelpShort, StringComparison.Ordinal) ||
-                             string.Equals(cleanArgs[1], HelpLong, StringComparison.Ordinal);
+                if (cleanArg == null)
+                {
+                    throw new InvalidOperationException(@"None of the cleaned arguments should be null at this point.");
+                }
 
-                var unknownArguments =
-                    cleanArgs.Count < 3 ? new List<string>() : cleanArgs.GetRange(2, cleanArgs.Count - 2);
+                var canBeShortName = cleanArg.StartsWith(PrefixShort);
+                if (canBeShortName)
+                {
+                    var expectedLength = PrefixShort.Length + 1;
+                    var actualLength = cleanArg.Contains('=') ? cleanArg.IndexOf('=') : cleanArg.Length;
+                    canBeShortName = expectedLength == actualLength;
+                }
 
-                return new HelpArguments(isHelp, unknownArguments).AsResult(command);
-            }
+                var canBeLongName = cleanArg.StartsWith(PrefixLong);
+                if (canBeLongName)
+                {
+                    var actualLength = cleanArg.Length;
+                    var maximumInvalidLength = PrefixLong.Length + (cleanArg.Contains('=') ? 2 : 1);
+                    canBeLongName = actualLength > maximumInvalidLength;
+                }
 
-            throw new Exception();
-        }
+                if (!canBeShortName && !canBeLongName)
+                {
+                    errors.Add(
+                        new ParserError(
+                            $@"'{cleanArg}' is not a valid argument/argument-value. Positional arguments are not yet supported, and named arguments do not contain spaces."
+                        )
+                    );
+                    return;
+                }
 
-        [NotNull]
-        public virtual ParserResult<TArguments> Parse<TArguments>([NotNull] params string[] args)
-            where TArguments : ICommandArguments
-        {
-            var result = Parse(typeof(TArguments), args);
-            return new ParserResult<TArguments>(result.Command, (TArguments) result.Arguments);
+                if (canBeShortName && canBeLongName)
+                {
+                    errors.Add(
+                        new ParserError(
+                            $@"'{cleanArg}' somehow can be both a short name or a long name, but this should not be possible. This indicates a logic error, please report this. PrefixShort ='{PrefixShort}' PrefixLong='{PrefixLong}'"
+                        )
+                    );
+                    return;
+                }
+
+                var cleanArgParts = cleanArg.Split('=');
+                var cleanArgName = cleanArgParts[0] ?? "";
+
+                var argument = canBeShortName
+                    ? command.FindArgument(cleanArgName[PrefixShort.Length])
+                    : command.FindArgument(cleanArgName.Substring(PrefixLong.Length));
+
+                if (argument == null)
+                {
+                    unhandled.Add(cleanArg);
+                    return;
+                }
+
+                List<object> values;
+                if (parsed.TryGetValue(argument, out var argumentValues))
+                {
+                    if (!argument.AllowsMultiple)
+                    {
+                        errors.Add(new ParserError($@"Duplicate argument '{cleanArgName}'.", false));
+                        return;
+                    }
+
+                    values = argumentValues.Values.ToList();
+                }
+                else
+                {
+                    values = new List<object>();
+                }
+
+                var cleanArgValue = (cleanArgParts.Length == 2 ? cleanArgParts[1] : null) ?? "";
+                if (argument.IsFlag)
+                {
+                    if (!string.IsNullOrEmpty(cleanArgValue))
+                    {
+                        errors.Add(
+                            new ParserError(
+                                $@"'{cleanArgName}' is a flag argument and will ignore provided values.",
+                                false
+                            )
+                        );
+                    }
+
+                    values.Add(true);
+                }
+                else if (argument.IsCollection)
+                {
+                    if (argument.Delimeter == null)
+                    {
+                    }
+                    else
+                    {
+                        var defaultValue = argument.ValueTypeDefault;
+                        var parsedPartValues = cleanArgValue
+                            .Split(new[] {argument.Delimeter}, StringSplitOptions.None)
+                            .Select(valuePart =>
+                            {
+                                if (string.IsNullOrEmpty(valuePart))
+                                {
+                                    return defaultValue;
+                                }
+
+                                if (TryParseArgument(argument.ValueType, defaultValue, valuePart, out var parsedPart))
+                                {
+                                    return parsedPart;
+                                }
+
+                                errors.Add(
+                                    new ParserError(
+                                        $@"Failed to parsed '{valuePart}' for argument '{cleanArgName}.",
+                                        false
+                                    )
+                                );
+
+                                return defaultValue;
+                            });
+
+                        values.AddRange(parsedPartValues);
+                    }
+                }
+                else
+                {
+                    if (!TryParseArgument(argument.ValueType, argument.DefaultValue, cleanArgValue, out var value))
+                    {
+                        errors.Add(new ParserError($@"Error parsing argument {cleanArgName} ({cleanArgValue})", false));
+                    }
+
+                    values.Add(value);
+                }
+
+                parsed[argument] = new ArgumentValues(values);
+            });
+
+            return new ParserResult(command, new ArgumentValuesMap(parsed), new ArgumentValues(unhandled), errors);
         }
 
         [CanBeNull]
-        protected virtual ICommandArguments ConstructDefaultArguments([NotNull] Type argumentsType)
+        protected virtual ArgumentValuesMap ConstructDefaultArguments([NotNull] IList<ICommandArgument> arguments)
         {
-            if (argumentsType.IsAbstract || argumentsType.IsInterface)
-            {
-                return new CommandError(
-                    ErrorMessage,
-                    new InvalidOperationException(
-                        $@"Cannot register abstract/interface arguments type {argumentsType.Name} ({argumentsType.FullName})."
+            return new ArgumentValuesMap(
+                arguments
+                    .Where(argument => argument != null)
+                    .Select(
+                        argument => new KeyValuePair<ICommandArgument, ArgumentValues>(
+                            argument,
+                            ConstructDefaultArgument(argument)
+                        )
                     )
-                );
-            }
-
-            var defaultConstructor = argumentsType.GetConstructor(Type.EmptyTypes);
-            if (defaultConstructor == null)
-            {
-                return new CommandError(
-                    ErrorMessage,
-                    new InvalidOperationException(
-                        $@"No default constructor for arguments type {argumentsType.Name} ({argumentsType.FullName})."
-                    )
-                );
-            }
-
-            if (defaultConstructor.Invoke(new object[0]) is ICommandArguments arguments)
-            {
-                return arguments;
-            }
-
-            return new CommandError(
-                ErrorMessage,
-                new InvalidOperationException(
-                    $@"Failed to construct arguments type {argumentsType.Name} ({argumentsType.FullName})."
-                )
             );
+        }
+
+        [NotNull]
+        protected virtual ArgumentValues ConstructDefaultArgument([NotNull] ICommandArgument argument)
+        {
+            return argument.ValueType.IsArray
+                ? new ArgumentValues((argument.DefaultValue as IEnumerable)?.Cast<object>())
+                : new ArgumentValues(argument.DefaultValue);
+        }
+
+        [CanBeNull]
+        protected virtual bool TryParseArgument(
+            [NotNull] Type type,
+            [CanBeNull] object defaultValue,
+            [NotNull] string source,
+            out object parsed
+        )
+        {
+            switch (defaultValue)
+            {
+                case byte defaultParsed:
+                {
+                    parsed = byte.TryParse(source, out var value) ? value : defaultParsed;
+                    return true;
+                }
+
+                case sbyte defaultParsed:
+                {
+                    parsed = sbyte.TryParse(source, out var value) ? value : defaultParsed;
+                    return true;
+                }
+
+                case ushort defaultParsed:
+                {
+                    parsed = ushort.TryParse(source, out var value) ? value : defaultParsed;
+                    return true;
+                }
+
+                case short defaultParsed:
+                {
+                    parsed = short.TryParse(source, out var value) ? value : defaultParsed;
+                    return true;
+                }
+
+                case uint defaultParsed:
+                {
+                    parsed = uint.TryParse(source, out var value) ? value : defaultParsed;
+                    return true;
+                }
+
+                case int defaultParsed:
+                {
+                    parsed = int.TryParse(source, out var value) ? value : defaultParsed;
+                    return true;
+                }
+
+                case ulong defaultParsed:
+                {
+                    parsed = ulong.TryParse(source, out var value) ? value : defaultParsed;
+                    return true;
+                }
+
+                case long defaultParsed:
+                {
+                    parsed = long.TryParse(source, out var value) ? value : defaultParsed;
+                    return true;
+                }
+
+                case float defaultParsed:
+                {
+                    parsed = float.TryParse(source, out var value) ? value : defaultParsed;
+                    return true;
+                }
+
+                case double defaultParsed:
+                {
+                    parsed = double.TryParse(source, out var value) ? value : defaultParsed;
+                    return true;
+                }
+
+                case decimal defaultParsed:
+                {
+                    parsed = decimal.TryParse(source, out var value) ? value : defaultParsed;
+                    return true;
+                }
+
+                case char defaultParsed:
+                {
+                    parsed = char.TryParse(source, out var value) ? value : defaultParsed;
+                    return true;
+                }
+
+                case string defaultParsed:
+                {
+                    parsed = string.IsNullOrWhiteSpace(source) ? defaultParsed : source;
+                    return true;
+                }
+
+                default:
+                {
+                    return TryParse(type, defaultValue, source, out parsed);
+                }
+            }
+        }
+
+        protected virtual bool TryParse([NotNull] Type type, [CanBeNull] object defaultValue, [NotNull] string source,
+            out object parsed)
+        {
+            if (type == typeof(string))
+            {
+                parsed = source;
+                return true;
+            }
+
+            try
+            {
+                parsed = JsonConvert.DeserializeObject(source);
+                return true;
+            }
+            catch (Exception)
+            {
+                parsed = defaultValue;
+                return false;
+            }
         }
     }
 }

@@ -427,11 +427,14 @@
     <Compile Include="Classes\Spells\SpellInstance.cs" />
     <Compile Include="Classes\Networking\Lidgren\ServerNetwork.cs" />
     <Compile Include="Classes\Networking\Lidgren\ThreadYieldNet40.cs" />
+    <Compile Include="Core\ArgumentValues.cs" />
+    <Compile Include="Core\ArgumentValuesMap.cs" />
     <Compile Include="Core\Bootstrapper.cs" />
     <Compile Include="Core\CommandLineOptions.cs" />
     <Compile Include="Core\Command.cs" />
     <Compile Include="Core\CommandParser.cs" />
     <Compile Include="Core\Commands\ExitCommand.cs" />
+    <Compile Include="Core\Errors\MissingCommandError.cs" />
     <Compile Include="Core\ServerConsole.cs" />
     <Compile Include="Core\ServerContext.cs" />
     <Compile Include="Core\ServerLogic.cs" />
@@ -473,6 +476,14 @@
     <Compile Include="WebApi\Modules\InfoModule.cs" />
     <Compile Include="WebApi\ServerApi.cs" />
     <Compile Include="WebApi\ServerModule.cs" />
+    <Compile Include="Core\Attributes\ArgumentAttribute.cs" />
+    <Compile Include="Core\Arguments\HelpArgument.cs" />
+    <Compile Include="Core\Errors\ParserError.cs" />
+    <Compile Include="Core\ICommand.cs" />
+    <Compile Include="Core\ICommandArgument.cs" />
+    <Compile Include="Core\ParserResult.cs" />
+    <Compile Include="Core\ServerCommand.cs" />
+    <Compile Include="Core\CommandArgument.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="private-intersect.bek" />

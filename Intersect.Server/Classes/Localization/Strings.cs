@@ -422,6 +422,20 @@ namespace Intersect.Server.Localization
 
         public sealed class CommandsNamespace : LocaleCommandNamespace
         {
+            public sealed class ArgumentsNamespace : LocaleNamespace
+            {
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+                public readonly LocaleArgument Help = new LocaleArgument
+                {
+                    Name = @"help",
+                    ShortName = 'h',
+                    Description = @"Shows help information for this command"
+                };
+            }
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly ArgumentsNamespace Arguments = new ArgumentsNamespace();
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString cpslock = @"lock";
 
@@ -670,32 +684,26 @@ namespace Intersect.Server.Localization
 
         public sealed class ErrorsNamespace : LocaleNamespace
         {
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString ErrorLoadingStrings =
                 @"Failed to load strings! Press any key to shut down.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString errorloadingconfig =
                 @"Failed to load server options! Press any key to shut down.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString errorlogged = @"An error was logged into errors.log";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString errorservercrash =
                 @"The Intersect server has encountered an error and must close. Error information can be found in resources/logs/errors.log. Press any key to exit.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString errorservercrashnohalt =
                 @"The Intersect server has encountered an error and must close. Error information can be found in resources/logs/errors.log.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString warpfail = @"Failed to warp player to new map -- warping to spawn.";
         }
 

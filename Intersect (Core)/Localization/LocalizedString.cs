@@ -44,6 +44,7 @@ namespace Intersect.Localization
             return mValue;
         }
 
+        [NotNull]
         public string ToString(params object[] args)
         {
             try

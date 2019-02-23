@@ -15,14 +15,25 @@ namespace Intersect.Localization
         [NotNull] private readonly IDictionary<TKey, TValue> mValues;
 
         public LocaleDictionary(
-            [NotNull] IDictionary<TKey, TValue> defaults,
-            [CanBeNull] IDictionary<TKey, TValue> values = null
+            [CanBeNull] IEnumerable<KeyValuePair<TKey, TValue>> defaults = null,
+            [CanBeNull] IEnumerable<KeyValuePair<TKey, TValue>> values = null
         )
         {
-            mDefaults = new SortedDictionary<TKey, TValue>(defaults);
+            mDefaults = defaults == null
+                ? new SortedDictionary<TKey, TValue>()
+                : new SortedDictionary<TKey, TValue>(
+                    defaults is IDictionary<TKey, TValue> dictionaryDefaults
+                        ? dictionaryDefaults
+                        : defaults.ToDictionary(pair => pair.Key, pair => pair.Value)
+                );
+
             mValues = values == null
                 ? new SortedDictionary<TKey, TValue>()
-                : new SortedDictionary<TKey, TValue>(values);
+                : new SortedDictionary<TKey, TValue>(
+                    values is IDictionary<TKey, TValue> dictionaryValues
+                        ? dictionaryValues
+                        : values.ToDictionary(pair => pair.Key, pair => pair.Value)
+                );
         }
 
         public TValue this[TKey key]
@@ -31,7 +42,17 @@ namespace Intersect.Localization
                 ? backingValue
                 : mDefaults[key];
 
-            set => mValues[key] = value ?? mDefaults[key];
+            set
+            {
+                if (!mDefaults.ContainsKey(key))
+                {
+                    throw new InvalidOperationException(
+                        $@"Cannot add value with key {key.ToString()} because it is not a valid key for this dictionary."
+                    );
+                }
+
+                mValues[key] = value;
+            }
         }
 
         public int Count => mDefaults.Count;
@@ -75,6 +96,13 @@ namespace Intersect.Localization
 
         public void Add(TKey key, TValue value)
         {
+            if (!mDefaults.ContainsKey(key))
+            {
+                throw new InvalidOperationException(
+                    $@"Cannot add value with key {key.ToString()} because it is not a valid key for this dictionary."
+                );
+            }
+
             mValues.Add(key, value);
         }
 
