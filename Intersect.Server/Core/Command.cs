@@ -69,7 +69,7 @@ namespace Intersect.Server.Core
 
         public void Handle(IApplicationContext context, ParserResult result)
         {
-            if (!result.Errors.IsEmpty)
+            if (result.Errors.Any(error => error?.IsFatal ?? false))
             {
                 throw new InvalidOperationException(
                     @"Errors should have been handled before invoking ICommand.Handle()."
