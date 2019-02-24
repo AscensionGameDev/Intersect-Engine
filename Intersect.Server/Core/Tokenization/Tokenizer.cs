@@ -42,15 +42,16 @@ namespace Intersect.Server.Core.Tokenization
                 }
                 else
                 {
-                    tokens.Add(ExtractToken(input, ref position, Settings.Delimeter, 0));
+                    tokens.Add(ExtractToken(input, ref position, Settings.Delimeter));
                 }
             }
 
             return tokens;
         }
 
-        public string ExtractToken([NotNull] string input, ref int position, char delimeter, int offset = 1)
+        public string ExtractToken([NotNull] string input, ref int position, char delimeter)
         {
+            var offset = input[position] == delimeter ? 1 : 0;
             var start = position + offset;
             var next = input.IndexOf(delimeter, start);
             if (next == -1)
