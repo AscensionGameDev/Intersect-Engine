@@ -424,12 +424,22 @@ namespace Intersect.Server.Localization
         {
             public sealed class ArgumentsNamespace : LocaleNamespace
             {
-                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+                [NotNull]
                 public readonly LocaleArgument Help = new LocaleArgument
                 {
                     Name = @"help",
                     ShortName = 'h',
                     Description = @"Shows help information for this command"
+                };
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+                [NotNull]
+                public readonly LocaleArgument AnnouncementsMessage = new LocaleArgument
+                {
+                    Name = @"message",
+                    ShortName = 'm',
+                    Description = @"The message to send."
                 };
             }
 

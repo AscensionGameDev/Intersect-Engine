@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 
 namespace Intersect.Server.Core
 {
-    internal abstract class ServerCommand : Command<ServerContext>
+    internal abstract class ServerCommand : HelpableCommand<ServerContext>
     {
         protected ServerCommand(
             [NotNull] LocaleCommand localization,

@@ -1,12 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Intersect.Localization;
+using JetBrains.Annotations;
 
 namespace Intersect.Server.Core.Arguments
 {
-    public class MessageArgument
+    public class MessageArgument : CommandArgument<string>
     {
+        public MessageArgument(
+            [NotNull] LocaleArgument localization,
+            bool required = false,
+            bool positional = false
+        ) : base(localization, required, positional)
+        {
+        }
     }
 }

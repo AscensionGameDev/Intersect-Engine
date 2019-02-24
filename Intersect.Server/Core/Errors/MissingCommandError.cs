@@ -1,4 +1,5 @@
 ﻿using Intersect.Localization;
+using Intersect.Server.Localization;
 using JetBrains.Annotations;
 
 namespace Intersect.Server.Core.Errors
@@ -22,7 +23,7 @@ namespace Intersect.Server.Core.Errors
             [NotNull] LocalizedString message
         )
         {
-            return new MissingCommandError(commandName, message.ToString(commandName));
+            return new MissingCommandError(commandName, message.ToString(commandName, Strings.Commands.Help.Name));
         }
     }
 }
