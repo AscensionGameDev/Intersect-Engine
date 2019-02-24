@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace Intersect.Server.Core
@@ -233,14 +234,13 @@ namespace Intersect.Server.Core
         [NotNull]
         public virtual ParserResult Parse([NotNull] string line)
         {
-            var tokens = Tokenizer.Tokenize(line);
-
-            var cleanArgs = tokens
+            var tokens = Tokenizer
+                .Tokenize(line)
                 .Select(token => token?.Trim())
                 .Where(token => token != null)
                 .ToList();
 
-            if (cleanArgs.Count < 1)
+            if (tokens.Count < 1)
             {
                 return new ParserError(
                     Localization.Errors.NoInput,
@@ -251,7 +251,7 @@ namespace Intersect.Server.Core
                 ).AsResult();
             }
 
-            var commandName = cleanArgs[0];
+            var commandName = tokens[0];
             var command = Find(commandName ?? throw new InvalidOperationException());
             if (command == null)
             {
@@ -278,7 +278,7 @@ namespace Intersect.Server.Core
             IDictionary<ICommandArgument, ArgumentValues> parsed = new Dictionary<ICommandArgument, ArgumentValues>();
             IList<ParserError> errors = new List<ParserError>();
 
-            cleanArgs.Skip(1).ToList().ForEach(cleanArg =>
+            tokens.Skip(1).ToList().ForEach(cleanArg =>
             {
                 if (cleanArg == null)
                 {
@@ -367,6 +367,7 @@ namespace Intersect.Server.Core
                             )
                         );
                     }
+
                     return;
                 }
 
@@ -497,7 +498,13 @@ namespace Intersect.Server.Core
 
             foreach (var argument in command.Arguments)
             {
-                if (!argument.IsRequired || parsed.ContainsKey(argument))
+                if (!argument.IsRequired(new ParserContext
+                {
+                    Command = command,
+                    Tokens = tokens.ToImmutableList(),
+                    Errors = errors.ToImmutableList(),
+                    Parsed = parsed.ToImmutableDictionary()
+                }) || parsed.ContainsKey(argument))
                 {
                     continue;
                 }

@@ -440,6 +440,7 @@
     <Compile Include="Core\Commands\ExitCommand.cs" />
     <Compile Include="Core\Errors\MissingCommandError.cs" />
     <Compile Include="Core\Errors\UnhandledArgumentError.cs" />
+    <Compile Include="Core\ParserContext.cs" />
     <Compile Include="Core\ServerConsole.cs" />
     <Compile Include="Core\ServerContext.cs" />
     <Compile Include="Core\ServerLogic.cs" />

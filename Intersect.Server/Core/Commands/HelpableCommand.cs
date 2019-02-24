@@ -24,6 +24,16 @@ namespace Intersect.Server.Core.Commands
         {
         }
 
+        protected static bool RequiredIfNotHelp(ParserContext context)
+        {
+            if (context.Command is HelpableCommand<TContext> command)
+            {
+                return !context.Parsed?.ContainsKey(command.Help) ?? false;
+            }
+
+            return false;
+        }
+
         protected override void Handle(TContext context, ParserResult result)
         {
             if (result.Find(Help))

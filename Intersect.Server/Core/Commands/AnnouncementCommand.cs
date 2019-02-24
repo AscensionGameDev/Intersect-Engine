@@ -1,4 +1,5 @@
-﻿using Intersect.Server.Core.Arguments;
+﻿using Intersect.Core;
+using Intersect.Server.Core.Arguments;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking;
 using JetBrains.Annotations;
@@ -12,7 +13,11 @@ namespace Intersect.Server.Core.Commands
 
         public AnnouncementCommand() : base(
             Strings.Commands.Announcement,
-            new MessageArgument(Strings.Commands.Arguments.AnnouncementsMessage, true, true)
+            new MessageArgument(
+                Strings.Commands.Arguments.AnnouncementsMessage,
+                RequiredIfNotHelp,
+                true
+            )
         )
         {
         }

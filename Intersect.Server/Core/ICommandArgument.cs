@@ -25,7 +25,7 @@ namespace Intersect.Server.Core
 
         bool IsFlag { get; }
 
-        bool IsRequired { get; }
+        bool IsRequired(ParserContext parserContext);
 
         bool IsPositional { get; }
 

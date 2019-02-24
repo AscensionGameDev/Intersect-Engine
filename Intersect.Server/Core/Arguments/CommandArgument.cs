@@ -4,6 +4,8 @@ using JetBrains.Annotations;
 
 namespace Intersect.Server.Core.Arguments
 {
+    public delegate bool ArgumentRequiredPredicate(ParserContext parserContext);
+
     public abstract class CommandArgument<TValue> : ICommandArgument
     {
         public char ShortName => Localization.ShortName;
@@ -24,18 +26,37 @@ namespace Intersect.Server.Core.Arguments
 
         public string Delimeter { get; protected set; }
 
-        public bool IsRequired { get; }
+        private readonly bool mRequired;
+
+        private ArgumentRequiredPredicate mRequiredPredicate;
+
+        public bool IsRequired(ParserContext parserContext) => mRequiredPredicate?.Invoke(parserContext) ?? mRequired;
 
         public bool IsPositional { get; }
 
         [NotNull]
         public LocaleArgument Localization { get; }
 
-        protected CommandArgument([NotNull] LocaleArgument localization, bool required = false, bool positional = false)
+        protected CommandArgument(
+            [NotNull] LocaleArgument localization,
+            bool required = false,
+            bool positional = false
+        )
         {
             Localization = localization;
-            IsRequired = required;
             IsPositional = positional;
+            mRequired = required;
+        }
+
+        protected CommandArgument(
+            [NotNull] LocaleArgument localization,
+            [NotNull] ArgumentRequiredPredicate requiredPredicate,
+            bool positional = false
+        )
+        {
+            Localization = localization;
+            IsPositional = positional;
+            mRequiredPredicate = requiredPredicate;
         }
 
         public TValue DefaultValueAsType()
@@ -45,7 +66,7 @@ namespace Intersect.Server.Core.Arguments
 
         public TDefaultValue DefaultValueAsType<TDefaultValue>()
         {
-            return DefaultValue == null ? default(TDefaultValue) : (TDefaultValue)DefaultValue;
+            return DefaultValue == null ? default(TDefaultValue) : (TDefaultValue) DefaultValue;
         }
     }
 
