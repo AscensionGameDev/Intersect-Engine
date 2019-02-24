@@ -11,6 +11,12 @@ namespace Intersect.Server.Core
         ImmutableList<ICommandArgument> Arguments { get; }
 
         [NotNull]
+        ImmutableList<ICommandArgument> NamedArguments { get; }
+
+        [NotNull]
+        ImmutableList<ICommandArgument> PositionalArguments { get; }
+
+        [NotNull]
         Type ContextType { get; }
 
         [NotNull]

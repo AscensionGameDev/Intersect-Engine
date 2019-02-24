@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using Intersect.Server.Core.Arguments;
 using Intersect.Server.Core.Errors;
 using JetBrains.Annotations;
 

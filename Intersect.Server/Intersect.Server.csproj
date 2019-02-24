@@ -427,12 +427,15 @@
     <Compile Include="Classes\Spells\SpellInstance.cs" />
     <Compile Include="Classes\Networking\Lidgren\ServerNetwork.cs" />
     <Compile Include="Classes\Networking\Lidgren\ThreadYieldNet40.cs" />
+    <Compile Include="Core\Arguments\MessageArgument.cs" />
+    <Compile Include="Core\Arguments\PositionalArgument.cs" />
     <Compile Include="Core\ArgumentValues.cs" />
     <Compile Include="Core\ArgumentValuesMap.cs" />
     <Compile Include="Core\Bootstrapper.cs" />
     <Compile Include="Core\CommandLineOptions.cs" />
-    <Compile Include="Core\Command.cs" />
+    <Compile Include="Core\Commands\Command.cs" />
     <Compile Include="Core\CommandParser.cs" />
+    <Compile Include="Core\Commands\AnnouncementCommand.cs" />
     <Compile Include="Core\Commands\ExitCommand.cs" />
     <Compile Include="Core\Errors\MissingCommandError.cs" />
     <Compile Include="Core\Errors\UnhandledArgumentError.cs" />
@@ -484,7 +487,7 @@
     <Compile Include="Core\ICommandArgument.cs" />
     <Compile Include="Core\ParserResult.cs" />
     <Compile Include="Core\ServerCommand.cs" />
-    <Compile Include="Core\CommandArgument.cs" />
+    <Compile Include="Core\Arguments\CommandArgument.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="private-intersect.bek" />

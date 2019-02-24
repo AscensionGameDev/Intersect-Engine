@@ -4,22 +4,22 @@ using System.Collections.Immutable;
 using System.Linq;
 using Intersect.Core;
 using Intersect.Localization;
-using Intersect.Logging;
 using JetBrains.Annotations;
 
-namespace Intersect.Server.Core
+namespace Intersect.Server.Core.Commands
 {
     public abstract class Command<TContext> : ICommand
         where TContext : IApplicationContext
     {
-        [NotNull] private readonly IList<ICommandArgument> mArguments;
-
         [NotNull] private readonly IDictionary<char, ICommandArgument> mShortNameLookup;
 
         [NotNull] private readonly IDictionary<string, ICommandArgument> mNameLookup;
 
-        public ImmutableList<ICommandArgument> Arguments =>
-            mArguments.ToImmutableList() ?? throw new InvalidOperationException();
+        public ImmutableList<ICommandArgument> Arguments { get; }
+
+        public ImmutableList<ICommandArgument> NamedArguments { get; }
+
+        public ImmutableList<ICommandArgument> PositionalArguments { get; }
 
         public Type ContextType => typeof(TContext);
 
@@ -27,12 +27,12 @@ namespace Intersect.Server.Core
 
         public ICommandArgument FindArgument(char shortName)
         {
-            return mArguments.FirstOrDefault(argument => argument?.ShortName == shortName);
+            return Arguments.FirstOrDefault(argument => argument?.ShortName == shortName);
         }
 
         public ICommandArgument FindArgument(string name)
         {
-            return mArguments.FirstOrDefault(argument => argument?.Name == name);
+            return Arguments.FirstOrDefault(argument => argument?.Name == name);
         }
 
         [NotNull]
@@ -43,27 +43,39 @@ namespace Intersect.Server.Core
             [CanBeNull] params ICommandArgument[] arguments
         )
         {
-            mArguments = new List<ICommandArgument>((arguments ?? new ICommandArgument[0]).Where(argument => argument != null));
+            Localization = localization;
 
-            mShortNameLookup = mArguments.ToDictionary(
+            var argumentList = new List<ICommandArgument>((arguments ?? new ICommandArgument[0]).Where(argument => argument != null));
+
+            Arguments = argumentList.ToImmutableList() ?? throw new InvalidOperationException();
+
+            NamedArguments = argumentList.Where(argument =>
+                                      !argument?.IsPositional ??
+                                      throw new InvalidOperationException(@"No null arguments should be in the list.")
+                                  ).ToImmutableList() ?? throw new InvalidOperationException();
+
+            PositionalArguments = argumentList.Where(argument =>
+                                      argument?.IsPositional ??
+                                      throw new InvalidOperationException(@"No null arguments should be in the list.")
+                                  ).ToImmutableList() ?? throw new InvalidOperationException();
+
+            mShortNameLookup = NamedArguments.ToDictionary(
                 argument => argument?.ShortName ??
                             throw new InvalidOperationException(@"No null arguments should be in the list."),
                 argument => argument
             );
 
-            mNameLookup = mArguments.ToDictionary(
+            mNameLookup = NamedArguments.ToDictionary(
                 argument => argument?.Name ??
                             throw new InvalidOperationException(@"No null arguments should be in the list."),
                 argument => argument
             );
-
-            Localization = localization;
         }
-        
+
         [CanBeNull]
         protected TArgument FindArgument<TArgument>()
         {
-            return mArguments
+            return Arguments
                 .Where(argument => argument?.GetType() == typeof(TArgument))
                 .Cast<TArgument>()
                 .FirstOrDefault();

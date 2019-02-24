@@ -27,6 +27,8 @@ namespace Intersect.Server.Core
 
         bool IsRequired { get; }
 
+        bool IsPositional { get; }
+
         [CanBeNull]
         string Delimeter { get; }
 
