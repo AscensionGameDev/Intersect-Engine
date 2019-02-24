@@ -269,6 +269,7 @@ namespace Intersect.Server.Core
                 ).AsResult(command);
             }
 
+            var positionalArguments = 0;
             IDictionary<ICommandArgument, ArgumentValues> parsed = new Dictionary<ICommandArgument, ArgumentValues>();
             IList<ParserError> errors = new List<ParserError>();
 
@@ -295,14 +296,22 @@ namespace Intersect.Server.Core
                     canBeLongName = actualLength > maximumInvalidLength;
                 }
 
+                var isPositional = false;
                 if (!canBeShortName && !canBeLongName)
                 {
-                    errors.Add(
-                        new ParserError(
-                            Localization.Errors.BadArgumentFormat.ToString(cleanArg)
-                        )
-                    );
-                    return;
+                    if (positionalArguments < command.PositionalArguments.Count)
+                    {
+                        isPositional = true;
+                    }
+                    else
+                    {
+                        errors.Add(
+                            new ParserError(
+                                Localization.Errors.BadArgumentFormat.ToString(cleanArg)
+                            )
+                        );
+                        return;
+                    }
                 }
 
                 if (canBeShortName && canBeLongName)
@@ -317,19 +326,37 @@ namespace Intersect.Server.Core
 
                 var cleanArgParts = cleanArg.Split('=');
                 var cleanArgName = cleanArgParts[0] ?? "";
-                var argument = canBeShortName
-                    ? command.FindArgument(cleanArgName[PrefixShort.Length])
-                    : command.FindArgument(cleanArgName.Substring(PrefixLong.Length));
+                var cleanArgValue = (cleanArgParts.Length == 2 ? cleanArgParts[1] : null) ?? "";
+
+                var argument = isPositional
+                    ? command.PositionalArguments[positionalArguments]
+                    : canBeShortName
+                        ? command.FindArgument(cleanArgName[PrefixShort.Length])
+                        : command.FindArgument(cleanArgName.Substring(PrefixLong.Length));
 
                 if (argument == null)
                 {
-                    errors.Add(
-                        UnhandledArgumentError.Create(
-                            command.Name,
-                            cleanArgName,
-                            Localization.Errors.UnhandledNamedArgument
-                        )
-                    );
+                    if (isPositional)
+                    {
+                        errors.Add(
+                            UnhandledArgumentError.Create(
+                                command.Name,
+                                positionalArguments,
+                                cleanArgValue,
+                                Localization.Errors.UnhandledPositionalArgument
+                            )
+                        );
+                    }
+                    else
+                    {
+                        errors.Add(
+                            UnhandledArgumentError.Create(
+                                command.Name,
+                                cleanArgName,
+                                Localization.Errors.UnhandledNamedArgument
+                            )
+                        );
+                    }
                     return;
                 }
 
@@ -338,8 +365,12 @@ namespace Intersect.Server.Core
                 {
                     if (!argument.AllowsMultiple)
                     {
-                        errors.Add(new ParserError(Localization.Errors.DuplicateNamedArgument.ToString(cleanArgName),
-                            false));
+                        errors.Add(
+                            new ParserError(
+                                Localization.Errors.DuplicateNamedArgument.ToString(cleanArgName),
+                                false
+                            )
+                        );
                         return;
                     }
 
@@ -350,7 +381,6 @@ namespace Intersect.Server.Core
                     values = new List<object>();
                 }
 
-                var cleanArgValue = (cleanArgParts.Length == 2 ? cleanArgParts[1] : null) ?? "";
                 if (argument.IsFlag)
                 {
                     if (!string.IsNullOrEmpty(cleanArgValue))
@@ -448,6 +478,11 @@ namespace Intersect.Server.Core
                 }
 
                 parsed[argument] = new ArgumentValues(values);
+
+                if (isPositional)
+                {
+                    ++positionalArguments;
+                }
             });
 
             foreach (var argument in command.Arguments)

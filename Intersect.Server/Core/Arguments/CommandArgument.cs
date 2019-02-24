@@ -1,8 +1,8 @@
-﻿using Intersect.Localization;
+﻿using System;
+using Intersect.Localization;
 using JetBrains.Annotations;
-using System;
 
-namespace Intersect.Server.Core
+namespace Intersect.Server.Core.Arguments
 {
     public abstract class CommandArgument<TValue> : ICommandArgument
     {
@@ -26,13 +26,16 @@ namespace Intersect.Server.Core
 
         public bool IsRequired { get; }
 
+        public bool IsPositional { get; }
+
         [NotNull]
         public LocaleArgument Localization { get; }
 
-        protected CommandArgument([NotNull] LocaleArgument localization, bool required = false)
+        protected CommandArgument([NotNull] LocaleArgument localization, bool required = false, bool positional = false)
         {
             Localization = localization;
             IsRequired = required;
+            IsPositional = positional;
         }
 
         public TValue DefaultValueAsType()
