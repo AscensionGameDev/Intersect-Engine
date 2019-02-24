@@ -70,7 +70,7 @@ namespace Intersect.Server.Core
                     }
                     else
                     {
-                        Log.Error(error.Exception, error.Message);
+                        Log.Warn(error.Exception, error.Message);
                     }
                 });
 
