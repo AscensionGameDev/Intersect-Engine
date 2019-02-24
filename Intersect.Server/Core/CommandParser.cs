@@ -1,5 +1,6 @@
 ﻿using Intersect.Localization;
 using Intersect.Server.Core.Errors;
+using Intersect.Server.Core.Tokenization;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using System;
@@ -170,9 +171,17 @@ namespace Intersect.Server.Core
         [NotNull]
         protected IDictionary<string, ICommand> Lookup { get; }
 
-        public CommandParser()
+        [NotNull]
+        public Tokenizer Tokenizer { get; }
+
+        public CommandParser() : this(Tokenizer.DefaultSettings)
+        {
+        }
+
+        public CommandParser(TokenizerSettings tokenizerSettings)
         {
             Lookup = new Dictionary<string, ICommand>();
+            Tokenizer = new Tokenizer(tokenizerSettings);
         }
 
         public virtual bool Register<TCommand>() where TCommand : ICommand
@@ -222,17 +231,13 @@ namespace Intersect.Server.Core
         }
 
         [NotNull]
-        public virtual ParserResult Parse([NotNull] params string[] args)
+        public virtual ParserResult Parse([NotNull] string line)
         {
-            return Parse(args as IEnumerable<string>);
-        }
+            var tokens = Tokenizer.Tokenize(line);
 
-        [NotNull]
-        public virtual ParserResult Parse([NotNull] IEnumerable<string> args)
-        {
-            var cleanArgs = args
-                .Select(arg => arg?.Trim())
-                .Where(arg => !string.IsNullOrEmpty(arg))
+            var cleanArgs = tokens
+                .Select(token => token?.Trim())
+                .Where(token => token != null)
                 .ToList();
 
             if (cleanArgs.Count < 1)
@@ -241,7 +246,7 @@ namespace Intersect.Server.Core
                     Localization.Errors.NoInput,
                     new ArgumentException(
                         @"No argument values were provided so unable to find a command.",
-                        nameof(args)
+                        nameof(tokens)
                     )
                 ).AsResult();
             }
@@ -253,21 +258,21 @@ namespace Intersect.Server.Core
                 return MissingCommandError.Create(commandName, Localization.Errors.CommandNotFound).AsResult();
             }
 
-            if (cleanArgs.Count < 2)
-            {
-                var constructedArguments = ConstructDefaultArguments(command.Arguments);
-                if (constructedArguments != null)
-                {
-                    return constructedArguments.AsResult(command);
-                }
+            //if (cleanArgs.Count < 2)
+            //{
+            //    var constructedArguments = ConstructDefaultArguments(command.Arguments);
+            //    if (constructedArguments != null)
+            //    {
+            //        return constructedArguments.AsResult(command);
+            //    }
 
-                return new ParserError(
-                    Localization.Errors.GenericError,
-                    new InvalidOperationException(
-                        $@"Failed to construct default arguments for command of type {command.GetType().FullName}."
-                    )
-                ).AsResult(command);
-            }
+            //    return new ParserError(
+            //        Localization.Errors.GenericError,
+            //        new InvalidOperationException(
+            //            $@"Failed to construct default arguments for command of type {command.GetType().FullName}."
+            //        )
+            //    ).AsResult(command);
+            //}
 
             var positionalArguments = 0;
             IDictionary<ICommandArgument, ArgumentValues> parsed = new Dictionary<ICommandArgument, ArgumentValues>();
@@ -327,6 +332,11 @@ namespace Intersect.Server.Core
                 var cleanArgParts = cleanArg.Split('=');
                 var cleanArgName = cleanArgParts[0] ?? "";
                 var cleanArgValue = (cleanArgParts.Length == 2 ? cleanArgParts[1] : null) ?? "";
+
+                if (isPositional)
+                {
+                    cleanArgValue = cleanArgName;
+                }
 
                 var argument = isPositional
                     ? command.PositionalArguments[positionalArguments]

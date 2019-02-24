@@ -425,6 +425,7 @@
     <Compile Include="Classes\Spells\SpellInstance.cs" />
     <Compile Include="Classes\Networking\Lidgren\ServerNetwork.cs" />
     <Compile Include="Classes\Networking\Lidgren\ThreadYieldNet40.cs" />
+    <Compile Include="Core\Commands\HelpableCommand.cs" />
     <Compile Include="Core\Arguments\MessageArgument.cs" />
     <Compile Include="Core\Arguments\PositionalArgument.cs" />
     <Compile Include="Core\ArgumentValues.cs" />
@@ -440,6 +441,8 @@
     <Compile Include="Core\ServerConsole.cs" />
     <Compile Include="Core\ServerContext.cs" />
     <Compile Include="Core\ServerLogic.cs" />
+    <Compile Include="Core\Tokenization\Tokenizer.cs" />
+    <Compile Include="Core\Tokenization\TokenizerSettings.cs" />
     <Compile Include="Migrations\20180927161502_InitialPlayerDb.cs" />
     <Compile Include="Migrations\20180927161502_InitialPlayerDb.designer.cs">
       <DependentUpon>20180927161502_InitialPlayerDb.cs</DependentUpon>

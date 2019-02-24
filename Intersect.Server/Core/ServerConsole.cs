@@ -29,6 +29,7 @@ namespace Intersect.Server.Core
 
             Parser = new CommandParser();
             Parser.Register<ExitCommand>();
+            Parser.Register<AnnouncementCommand>();
         }
 
         protected override void ThreadStart()
@@ -53,7 +54,7 @@ namespace Intersect.Server.Core
                     continue;
                 }
 
-                var result = Parser.Parse(line.Split(' '));
+                var result = Parser.Parse(line);
                 var fatalError = false;
                 result.Errors.ForEach(error =>
                 {

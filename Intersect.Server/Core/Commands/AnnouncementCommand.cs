@@ -1,5 +1,6 @@
 ﻿using Intersect.Server.Core.Arguments;
 using Intersect.Server.Localization;
+using Intersect.Server.Networking;
 using JetBrains.Annotations;
 
 namespace Intersect.Server.Core.Commands
@@ -7,25 +8,18 @@ namespace Intersect.Server.Core.Commands
     internal sealed class AnnouncementCommand : ServerCommand
     {
         [NotNull]
-        private HelpArgument Help => FindArgumentOrThrow<HelpArgument>();
+        private MessageArgument Message => FindArgumentOrThrow<MessageArgument>();
 
         public AnnouncementCommand() : base(
-            Strings.Commands.Exit,
-            new HelpArgument()
+            Strings.Commands.Announcement,
+            new MessageArgument(Strings.Commands.Arguments.AnnouncementsMessage, true, true)
         )
         {
         }
 
-        protected override void Handle(ServerContext context, ParserResult result)
+        protected override void HandleValue(ServerContext context, ParserResult result)
         {
-            if (result.Find(Help))
-            {
-                Console.WriteLine(@"    " + Strings.Commands.Exit.Usage.ToString(Strings.Commands.commandinfo));
-                Console.WriteLine(@"    " + Strings.Commands.Exit.Description);
-                return;
-            }
-
-            context.RequestShutdown();
+            PacketSender.SendGlobalMsg(result.Find(Message));
         }
     }
 }
