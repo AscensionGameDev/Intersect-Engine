@@ -108,7 +108,8 @@ namespace Intersect.Client.Localization
             public static LocalizedString create = @"Create";
             public static LocalizedString female = @"Female";
             public static LocalizedString gender = @"Gender:";
-            public static LocalizedString hint = @"Customize" + Environment.NewLine + "Your Character";
+            public static LocalizedString hint = @"Customize";
+            public static LocalizedString hint2 = @"Your Character";
             public static LocalizedString invalidname = @"Character name is invalid. Please use alphanumeric characters with a length between 2 and 20.";
             public static LocalizedString male = @"Male";
             public static LocalizedString name = @"Char Name:";
@@ -122,8 +123,9 @@ namespace Intersect.Client.Localization
             public static LocalizedString deletetitle = @"Delete {00}";
             public static LocalizedString empty = @"Empty Character Slot";
             public static LocalizedString info = @"Level {00} {01}";
+            public static LocalizedString logout = @"Logout";
             public static LocalizedString name = @"{00}";
-            public static LocalizedString New = @"New Character";
+            public static LocalizedString New = @"New";
             public static LocalizedString play = @"Use";
             public static LocalizedString title = @"Select a Character";
         }
@@ -297,6 +299,15 @@ namespace Intersect.Client.Localization
         public struct EventWindow
         {
             public static LocalizedString Continue = @"Continue";
+        }
+
+        public struct ForgotPass
+        {
+            public static LocalizedString back = @"Back";
+            public static LocalizedString hint = @"If your account exists we will send you a temporary password reset code.";
+            public static LocalizedString label = @"Enter your username or email below:";
+            public static LocalizedString submit = @"Submit";
+            public static LocalizedString title = @"Password Reset";
         }
 
         public struct Friends
@@ -578,6 +589,7 @@ namespace Intersect.Client.Localization
         public struct Login
         {
             public static LocalizedString back = @"Back";
+            public static LocalizedString forgot = @"Forgot Password?";
             public static LocalizedString login = @"Login";
             public static LocalizedString password = @"Password:";
             public static LocalizedString savepass = @"Save Password";
@@ -669,6 +681,16 @@ namespace Intersect.Client.Localization
             public static LocalizedString register = @"Register";
             public static LocalizedString title = @"Register";
             public static LocalizedString username = @"Username:";
+        }
+
+        public struct ResetPass
+        {
+            public static LocalizedString back = @"Cancel";
+            public static LocalizedString code = @"Enter the reset code that was sent to you:";
+            public static LocalizedString password = @"New Password:";
+            public static LocalizedString password2 = @"Confirm Password:";
+            public static LocalizedString submit = @"Submit";
+            public static LocalizedString title = @"Password Reset";
         }
 
         public struct Resources
