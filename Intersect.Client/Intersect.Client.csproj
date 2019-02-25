@@ -108,6 +108,8 @@
     <Compile Include="Classes\UI\Menu\CreateCharacterWindow.cs" />
     <Compile Include="Classes\UI\Menu\CreditsParser.cs" />
     <Compile Include="Classes\UI\Menu\CreditsWindow.cs" />
+    <Compile Include="Classes\UI\Menu\ResetPasswordWindow.cs" />
+    <Compile Include="Classes\UI\Menu\ForgotPasswordWindow.cs" />
     <Compile Include="MathHelper.cs" />
     <Compile Include="Classes\MonoGame\Audio\MonoMusicInstance.cs" />
     <Compile Include="Classes\MonoGame\Audio\MonoMusicSource.cs" />

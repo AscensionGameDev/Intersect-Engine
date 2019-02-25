@@ -24,6 +24,7 @@ namespace Intersect.Client.UI.Menu
 
         private Label mCharCreationHeader;
         private Label mHintLabel;
+        private Label mHint2Label;
 
         //Controls
         private ImagePanel mCharCreationPanel;
@@ -98,6 +99,11 @@ namespace Intersect.Client.UI.Menu
             mHintLabel = new Label(mCharCreationPanel, "HintLabel");
             mHintLabel.SetText(Strings.CharacterCreation.hint);
             mHintLabel.IsHidden = true;
+
+            //Hint2 Label
+            mHint2Label = new Label(mCharCreationPanel, "Hint2Label");
+            mHint2Label.SetText(Strings.CharacterCreation.hint2);
+            mHint2Label.IsHidden = true;
 
             //Character Container
             mCharacterContainer = new ImagePanel(mCharCreationPanel, "CharacterContainer");
