@@ -1,4 +1,6 @@
 ﻿using System;
+using Intersect.Threading;
+using JetBrains.Annotations;
 
 namespace Intersect.Core
 {
@@ -10,6 +12,9 @@ namespace Intersect.Core
 
         bool IsRunning { get; }
 
-        void Start();
+        void Start(bool lockUntilShutdown = true);
+
+        [NotNull]
+        LockingActionQueue StartWithActionQueue();
     }
 }

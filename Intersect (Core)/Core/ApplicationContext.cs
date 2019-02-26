@@ -12,6 +12,8 @@ namespace Intersect.Core
     {
         [NotNull] private object mShutdownLock;
 
+        private bool mNeedsLockPulse;
+
         private bool mIsRunning;
 
         #region Instance Management
@@ -52,7 +54,7 @@ namespace Intersect.Core
             mShutdownLock = new object();
         }
 
-        public void Start()
+        public void Start(bool lockUntilShutdown = true)
         {
             IsStarted = true;
 
@@ -60,11 +62,27 @@ namespace Intersect.Core
 
             InternalStart();
 
+            mNeedsLockPulse = lockUntilShutdown;
+
+            if (!mNeedsLockPulse)
+            {
+                return;
+            }
+
             lock (mShutdownLock)
             {
                 Monitor.Wait(mShutdownLock);
-                Log.Info("Application context exited.");
+                Log.Diagnostic("Application context exited.");
             }
+        }
+
+        public LockingActionQueue StartWithActionQueue()
+        {
+            Start(false);
+
+            mNeedsLockPulse = true;
+
+            return new LockingActionQueue(mShutdownLock);
         }
 
         protected abstract void InternalStart();

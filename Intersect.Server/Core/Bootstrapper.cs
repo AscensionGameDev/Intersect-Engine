@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Intersect.Threading;
 
 namespace Intersect.Server.Core
 {
@@ -25,6 +26,9 @@ namespace Intersect.Server.Core
         }
 
         private static ServerContext sContext;
+
+        [NotNull]
+        public static LockingActionQueue MainThread { get; private set; }
 
         public static void Start(params string[] args)
         {
@@ -41,8 +45,13 @@ namespace Intersect.Server.Core
                 return;
             }
 
-            ServerContext.Instance.Start();
-            Log.Info("Bootstrapper exited.");
+            MainThread = ServerContext.Instance.StartWithActionQueue();
+            Action action;
+            while (null != (action = MainThread.NextAction))
+            {
+                action.Invoke();
+            }
+            Log.Diagnostic("Bootstrapper exited.");
         }
 
         [NotNull]
