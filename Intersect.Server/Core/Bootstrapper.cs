@@ -83,7 +83,7 @@ namespace Intersect.Server.Core
         {
             if (RunningOnWindows())
             {
-                SetConsoleCtrlHandler(ConsoleCtrlCheck, true);
+                SetConsoleCtrlHandler(ConsoleCtrlHandler, true);
             }
 
             Log.Global.AddOutput(new ConciseConsoleOutput(Debugger.IsAttached ? LogLevel.All : LogLevel.Error));
@@ -472,25 +472,26 @@ namespace Intersect.Server.Core
             CtrlShutdownEvent
         }
 
+        [NotNull]
+        private static readonly HandlerRoutine ConsoleCtrlHandler = ConsoleCtrlCheck;
+
         private static bool ConsoleCtrlCheck(CtrlTypes ctrlType)
         {
-            // Put your own handler here
             switch (ctrlType)
             {
                 case CtrlTypes.CtrlCEvent:
                 case CtrlTypes.CtrlBreakEvent:
-                    //Handled Elsewhere
+                    // Handled Elsewhere
                     break;
 
                 case CtrlTypes.CtrlCloseEvent:
-                    ServerContext.Instance.RequestShutdown(true);
-                    //Shutdown();
-                    break;
-
                 case CtrlTypes.CtrlLogoffEvent:
                 case CtrlTypes.CtrlShutdownEvent:
-                    ServerContext.Instance.RequestShutdown(true);
-                    //Shutdown();
+                    // We can't just request a shutdown -- from testing the
+                    // Dispose() task never actually runs soon enough so the
+                    // operating system kills the application before it
+                    // actually does any clean-up and data persistence.
+                    ServerContext.Instance.Dispose();
                     break;
 
                 default:

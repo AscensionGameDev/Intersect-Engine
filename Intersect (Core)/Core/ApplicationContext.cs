@@ -97,7 +97,7 @@ namespace Intersect.Core
                 }
 
                 IsShutdownRequested = true;
-                var disposeTask = Task.Run(() =>
+                var disposeTask = new Task(() =>
                 {
                     Dispose();
 
@@ -106,6 +106,8 @@ namespace Intersect.Core
                         Monitor.PulseAll(mShutdownLock);
                     }
                 });
+
+                disposeTask.Start();
 
                 if (join)
                 {
