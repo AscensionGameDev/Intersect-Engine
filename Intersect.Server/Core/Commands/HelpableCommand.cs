@@ -1,10 +1,9 @@
-﻿using System.Linq;
-using Intersect.Core;
+﻿using Intersect.Core;
 using Intersect.Localization;
 using Intersect.Server.Core.Arguments;
 using Intersect.Server.Localization;
-using Intersect.Server.Networking;
 using JetBrains.Annotations;
+using System.Linq;
 
 namespace Intersect.Server.Core.Commands
 {
