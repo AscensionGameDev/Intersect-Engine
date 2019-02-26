@@ -1,11 +1,11 @@
-﻿using Intersect.Core;
+﻿using System.Linq;
+using Intersect.Core;
 using Intersect.Localization;
-using Intersect.Server.Core.Arguments;
+using Intersect.Server.Core.CommandParsing.Arguments;
 using Intersect.Server.Localization;
 using JetBrains.Annotations;
-using System.Linq;
 
-namespace Intersect.Server.Core.Commands
+namespace Intersect.Server.Core.CommandParsing.Commands
 {
     public abstract class HelpableCommand<TContext> : Command<TContext>
         where TContext : IApplicationContext

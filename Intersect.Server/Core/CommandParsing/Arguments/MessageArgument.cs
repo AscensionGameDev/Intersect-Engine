@@ -1,8 +1,7 @@
-﻿using System;
-using Intersect.Localization;
+﻿using Intersect.Localization;
 using JetBrains.Annotations;
 
-namespace Intersect.Server.Core.Arguments
+namespace Intersect.Server.Core.CommandParsing.Arguments
 {
     public class MessageArgument : CommandArgument<string>
     {

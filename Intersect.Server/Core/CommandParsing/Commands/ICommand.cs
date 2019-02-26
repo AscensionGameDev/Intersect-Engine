@@ -1,9 +1,10 @@
-﻿using Intersect.Core;
-using JetBrains.Annotations;
-using System;
+﻿using System;
 using System.Collections.Immutable;
+using Intersect.Core;
+using Intersect.Server.Core.CommandParsing.Arguments;
+using JetBrains.Annotations;
 
-namespace Intersect.Server.Core
+namespace Intersect.Server.Core.CommandParsing.Commands
 {
     public interface ICommand
     {

@@ -1,4 +1,5 @@
-﻿using Intersect.Server.Localization;
+﻿using Intersect.Server.Core.CommandParsing;
+using Intersect.Server.Localization;
 
 namespace Intersect.Server.Core.Commands
 {
