@@ -28,6 +28,8 @@ namespace Intersect.Server.Core
             Parser = new CommandParser();
             Parser.Register<ExitCommand>();
             Parser.Register<AnnouncementCommand>();
+            Parser.Register<NetDebugCommand>();
+            Parser.Register<OnlineListCommand>();
         }
 
         protected override void ThreadStart()
