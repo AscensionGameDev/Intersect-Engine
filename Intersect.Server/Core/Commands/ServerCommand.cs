@@ -1,8 +1,9 @@
 ﻿using Intersect.Localization;
-using Intersect.Server.Core.Commands;
+using Intersect.Server.Core.CommandParsing.Arguments;
+using Intersect.Server.Core.CommandParsing.Commands;
 using JetBrains.Annotations;
 
-namespace Intersect.Server.Core
+namespace Intersect.Server.Core.Commands
 {
     internal abstract class ServerCommand : HelpableCommand<ServerContext>
     {

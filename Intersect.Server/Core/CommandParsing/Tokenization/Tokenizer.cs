@@ -1,8 +1,8 @@
-﻿using JetBrains.Annotations;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Immutable;
+using JetBrains.Annotations;
 
-namespace Intersect.Server.Core.Tokenization
+namespace Intersect.Server.Core.CommandParsing.Tokenization
 {
     public class Tokenizer
     {

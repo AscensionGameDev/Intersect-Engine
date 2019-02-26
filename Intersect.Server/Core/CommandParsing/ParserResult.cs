@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using Intersect.Server.Core.Arguments;
-using Intersect.Server.Core.Errors;
+using Intersect.Server.Core.CommandParsing.Arguments;
+using Intersect.Server.Core.CommandParsing.Commands;
+using Intersect.Server.Core.CommandParsing.Errors;
 using JetBrains.Annotations;
 
-namespace Intersect.Server.Core
+namespace Intersect.Server.Core.CommandParsing
 {
     public class ParserResult<TCommand>
         where TCommand : ICommand

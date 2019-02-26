@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Immutable;
+using Intersect.Server.Core.CommandParsing.Commands;
 using JetBrains.Annotations;
 
-namespace Intersect.Server.Core.Errors
+namespace Intersect.Server.Core.CommandParsing.Errors
 {
     public class ParserError
     {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace Intersect.Server.Core.Tokenization
+namespace Intersect.Server.Core.CommandParsing.Tokenization
 {
     public struct TokenizerSettings
     {

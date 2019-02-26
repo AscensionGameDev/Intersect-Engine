@@ -1,6 +1,6 @@
 ﻿using Intersect.Server.Localization;
 
-namespace Intersect.Server.Core.Arguments
+namespace Intersect.Server.Core.CommandParsing.Arguments
 {
     public class HelpArgument : CommandArgument<bool>
     {

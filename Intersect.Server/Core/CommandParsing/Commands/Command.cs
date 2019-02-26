@@ -4,9 +4,10 @@ using System.Collections.Immutable;
 using System.Linq;
 using Intersect.Core;
 using Intersect.Localization;
+using Intersect.Server.Core.CommandParsing.Arguments;
 using JetBrains.Annotations;
 
-namespace Intersect.Server.Core.Commands
+namespace Intersect.Server.Core.CommandParsing.Commands
 {
     public abstract class Command<TContext> : ICommand
         where TContext : IApplicationContext

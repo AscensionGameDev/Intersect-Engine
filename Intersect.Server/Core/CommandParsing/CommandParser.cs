@@ -1,15 +1,17 @@
-﻿using Intersect.Localization;
-using Intersect.Server.Core.Errors;
-using Intersect.Server.Core.Tokenization;
-using JetBrains.Annotations;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using Intersect.Localization;
+using Intersect.Server.Core.CommandParsing.Arguments;
+using Intersect.Server.Core.CommandParsing.Commands;
+using Intersect.Server.Core.CommandParsing.Errors;
+using Intersect.Server.Core.CommandParsing.Tokenization;
+using JetBrains.Annotations;
+using Newtonsoft.Json;
 
-namespace Intersect.Server.Core
+namespace Intersect.Server.Core.CommandParsing
 {
     public sealed class CommandParsingNamespace : LocaleNamespace
     {

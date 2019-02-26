@@ -1,10 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Intersect.Server.Core.Arguments;
+using Intersect.Server.Core.CommandParsing.Commands;
 using JetBrains.Annotations;
 
-namespace Intersect.Server.Core
+namespace Intersect.Server.Core.CommandParsing.Arguments
 {
     public sealed class ArgumentValuesMap : IEnumerable<KeyValuePair<ICommandArgument, ArgumentValues>>
     {

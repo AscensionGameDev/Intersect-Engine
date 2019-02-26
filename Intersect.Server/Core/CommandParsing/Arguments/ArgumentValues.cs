@@ -1,11 +1,11 @@
-﻿using JetBrains.Annotations;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using JetBrains.Annotations;
 
-namespace Intersect.Server.Core
+namespace Intersect.Server.Core.CommandParsing.Arguments
 {
     public sealed class ArgumentValues : IEnumerable<object>
     {

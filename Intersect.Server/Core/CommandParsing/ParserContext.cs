@@ -1,7 +1,9 @@
-﻿using Intersect.Server.Core.Errors;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
+using Intersect.Server.Core.CommandParsing.Arguments;
+using Intersect.Server.Core.CommandParsing.Commands;
+using Intersect.Server.Core.CommandParsing.Errors;
 
-namespace Intersect.Server.Core
+namespace Intersect.Server.Core.CommandParsing
 {
     public struct ParserContext
     {

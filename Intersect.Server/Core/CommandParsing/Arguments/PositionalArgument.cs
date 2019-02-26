@@ -1,7 +1,7 @@
 ﻿using Intersect.Localization;
 using JetBrains.Annotations;
 
-namespace Intersect.Server.Core.Arguments
+namespace Intersect.Server.Core.CommandParsing.Arguments
 {
     public abstract class PositionalArgument<TValue> : CommandArgument<TValue>
     {

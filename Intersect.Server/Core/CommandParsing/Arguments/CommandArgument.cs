@@ -2,7 +2,7 @@
 using Intersect.Localization;
 using JetBrains.Annotations;
 
-namespace Intersect.Server.Core.Arguments
+namespace Intersect.Server.Core.CommandParsing.Arguments
 {
     public delegate bool ArgumentRequiredPredicate(ParserContext parserContext);
 
