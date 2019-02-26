@@ -2,8 +2,8 @@
 using Intersect.Enums;
 using Intersect.Logging;
 using Intersect.Server.Core.CommandParsing;
-using Intersect.Server.Core.CommandParsing.Commands;
 using Intersect.Server.Core.CommandParsing.Errors;
+using Intersect.Server.Core.Commands;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
@@ -12,7 +12,6 @@ using Intersect.Server.Networking.Helpers;
 using Intersect.Threading;
 using JetBrains.Annotations;
 using System;
-using Intersect.Server.Core.Commands;
 
 namespace Intersect.Server.Core
 {
@@ -26,8 +25,9 @@ namespace Intersect.Server.Core
             Console.WaitPrefix = "> ";
 
             Parser = new CommandParser();
-            Parser.Register<ExitCommand>();
             Parser.Register<AnnouncementCommand>();
+            Parser.Register<ExitCommand>();
+            Parser.Register<HelpCommand>();
             Parser.Register<NetDebugCommand>();
             Parser.Register<OnlineListCommand>();
         }
@@ -97,47 +97,7 @@ namespace Intersect.Server.Core
                 command = command.Trim();
                 var commandsplit = command.Split(' ');
 
-                if (commandsplit[0] == Strings.Commands.Announcement.Name) //Announcement Command
-                {
-                    if (commandsplit.Length > 1)
-                    {
-                        if (commandsplit[1] == Strings.Commands.commandinfo)
-                        {
-                            Console.WriteLine(
-                                @"    " + Strings.Commands.Announcement.Usage.ToString(Strings.Commands.commandinfo));
-                            Console.WriteLine(@"    " + Strings.Commands.Announcement.Description);
-                        }
-                        else
-                        {
-                            PacketSender.SendGlobalMsg(command.Remove(0, 12));
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine(
-                            Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
-                    }
-                }
-                else if (commandsplit[0] == Strings.Commands.NetDebug.Name) //Output network debug info
-                {
-                    NetDebug.GenerateDebugFile();
-                }
-                else if (commandsplit[0] == Strings.Commands.OnlineList.Name) //Online List Command
-                {
-                    Console.WriteLine(string.Format("{0,-10}", Strings.Commandoutput.listid) +
-                                      string.Format("{0,-28}", Strings.Commandoutput.listaccount) +
-                                      string.Format("{0,-28}", Strings.Commandoutput.listcharacter));
-                    Console.WriteLine(new string('-', 66));
-                    for (var i = 0; i < Globals.Clients.Count; i++)
-                        if (Globals.Clients[i] != null)
-                        {
-                            var name = Globals.Clients[i].Entity != null ? Globals.Clients[i].Entity.Name : "";
-                            Console.WriteLine(string.Format("{0,-10}", "#" + i) +
-                                              string.Format("{0,-28}", Globals.Clients[i].Name) +
-                                              string.Format("{0,-28}", name));
-                        }
-                }
-                else if (commandsplit[0] == Strings.Commands.Kill.Name) //Kill Command
+                if (commandsplit[0] == Strings.Commands.Kill.Name) //Kill Command
                 {
                     if (commandsplit.Length > 1)
                     {
@@ -750,63 +710,6 @@ namespace Intersect.Server.Core
                                 }
                             }
                         }
-                    }
-                }
-                else if (commandsplit[0] == Strings.Commands.Help.Name) //Help Command
-                {
-                    if (commandsplit.Length > 1)
-                    {
-                        if (commandsplit[1] == Strings.Commands.commandinfo)
-                        {
-                            Console.WriteLine(
-                                @"    " + Strings.Commands.Help.Usage.ToString(Strings.Commands.commandinfo));
-                            Console.WriteLine(@"    " + Strings.Commands.Help.Description);
-                        }
-                        else
-                        {
-                            Console.WriteLine(
-                                Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine(@"    " + Strings.Commandoutput.helpheader);
-                        Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.Help.Name) + " - " +
-                                          Strings.Commands.Help.Help);
-                        Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.Exit.Name) + " - " +
-                                          Strings.Commands.Exit.Help);
-                        Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.Api.Name) + " - " +
-                                          Strings.Commands.Api.Help);
-                        Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.Announcement.Name) +
-                                          " - " + Strings.Commands.Announcement.Help);
-                        Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.Cps.Name) + " - " +
-                                          Strings.Commands.Cps.Help);
-                        Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.Power.Name) + " - " +
-                                          Strings.Commands.Power.Help);
-                        Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.PowerAccount.Name) +
-                                          " - " + Strings.Commands.PowerAccount.Help);
-                        Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.OnlineList.Name) + " - " +
-                                          Strings.Commands.OnlineList.Help);
-                        Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.Kick.Name) + " - " +
-                                          Strings.Commands.Kick.Help);
-                        Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.Ban.Name) + " - " +
-                                          Strings.Commands.Ban.Help);
-                        Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.Unban.Name) + " - " +
-                                          Strings.Commands.Unban.Help);
-                        Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.Mute.Name) + " - " +
-                                          Strings.Commands.Mute.Help);
-                        Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.Unmute.Name) + " - " +
-                                          Strings.Commands.Unmute.Help);
-                        Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.Kill.Name) + " - " +
-                                          Strings.Commands.Kill.Help);
-                        Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.MakePrivate.Name) +
-                                          " - " + Strings.Commands.MakePrivate.Help);
-                        Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.MakePublic.Name) + " - " +
-                                          Strings.Commands.MakePublic.Help);
-                        Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.Migrate.Name) + " - " +
-                                          Strings.Commands.Migrate.Help);
-                        Console.WriteLine(
-                            @"    " + Strings.Commandoutput.helpfooter.ToString(Strings.Commands.commandinfo));
                     }
                 }
                 else

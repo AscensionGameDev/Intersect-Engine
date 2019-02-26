@@ -8,53 +8,50 @@ using Newtonsoft.Json;
 
 namespace Intersect.Localization
 {
-    public class LocaleCommandNamespace : LocaleNamespace
+    public abstract class LocaleCommandNamespace : LocaleNamespace
     {
         [JsonIgnore]
         [NotNull]
-        public IList<LocaleCommand> Commands { get; }
+        public ImmutableList<LocaleCommand> CommandList { get; }
 
         [JsonIgnore]
         [NotNull]
-        public IDictionary<string, LocaleCommand> Lookup { get; }
+        public IDictionary<string, LocaleCommand> CommandLookup { get; }
 
-        public LocaleCommandNamespace()
+        protected LocaleCommandNamespace()
         {
-            Commands = GetType()
-                           .GetMembers(BindingFlags.Public | BindingFlags.Instance)
-                           .Where(member => typeof(LocaleCommand).IsAssignableFrom(member.ReflectedType))
-                           .Select(member =>
-                           {
-                               switch (member)
-                               {
-                                   case PropertyInfo property:
-                                       return property.GetValue(this);
+            var commands = GetType()
+                .GetMembers(BindingFlags.Public | BindingFlags.Instance)
+                .Select(member =>
+                {
+                    switch (member)
+                    {
+                        case FieldInfo fieldInfo:
+                            return fieldInfo.GetValue(this) as LocaleCommand;
 
-                                   case FieldInfo field:
-                                       return field.GetValue(this);
+                        case PropertyInfo propertyInfo:
+                            return propertyInfo.GetValue(this) as LocaleCommand;
 
-                                   default:
-                                       throw new ArgumentException(
-                                           $@"Invalid command member type {member.MemberType}.",
-                                           nameof(member)
-                                       );
-                               }
-                           })
-                           .Select(command => command as LocaleCommand)
-                           .ToList()
-                           .ToImmutableList() ?? throw new InvalidOperationException();
+                        default:
+                            return null;
+                    }
+                })
+                .Where(command => command != null)
+                .ToList();
 
-            Lookup = Commands
-                         .Select(command =>
-                         {
-                             if (command == null)
-                             {
-                                 throw new InvalidOperationException();
-                             }
+            CommandList = commands.ToImmutableList() ?? throw new InvalidOperationException();
 
-                             return new KeyValuePair<string, LocaleCommand>(command.Name, command);
-                         })
-                         .ToImmutableDictionary() ?? throw new InvalidOperationException();
+            CommandLookup = commands
+                                .Select(command =>
+                                {
+                                    if (command == null)
+                                    {
+                                        throw new InvalidOperationException();
+                                    }
+
+                                    return new KeyValuePair<string, LocaleCommand>(command.Name, command);
+                                })
+                                .ToImmutableDictionary() ?? throw new InvalidOperationException();
         }
     }
 }
