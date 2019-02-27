@@ -3,28 +3,24 @@ using JetBrains.Annotations;
 
 namespace Intersect.Server.Core.CommandParsing.Arguments
 {
-    public class MessageArgument : CommandArgument<string>
+    public class VariableArgument<TValue> : CommandArgument<TValue>
     {
-        public MessageArgument(
+        public VariableArgument(
             [NotNull] LocaleArgument localization,
             bool required = false,
             bool positional = false,
             bool allowsMultiple = false
-        ) : base(localization, required, positional)
+        ) : base(localization, required, positional, allowsMultiple)
         {
-            AllowsMultiple = allowsMultiple;
         }
 
-        public MessageArgument(
+        public VariableArgument(
             [NotNull] LocaleArgument localization,
             [NotNull] ArgumentRequiredPredicate requiredPredicate,
             bool positional = false,
             bool allowsMultiple = false
-        ) : base(localization, requiredPredicate, positional)
+        ) : base(localization, requiredPredicate, positional, allowsMultiple)
         {
-            AllowsMultiple = allowsMultiple;
         }
-
-        public override bool AllowsMultiple { get; }
     }
 }

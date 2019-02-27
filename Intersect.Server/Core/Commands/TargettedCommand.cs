@@ -9,7 +9,7 @@ namespace Intersect.Server.Core.Commands
     internal abstract class TargettedCommand<TTarget> : ServerCommand
     {
         [NotNull]
-        private MessageArgument Target => FindArgumentOrThrow<MessageArgument>();
+        private VariableArgument<string> Target => FindArgumentOrThrow<VariableArgument<string>>();
 
         protected TargettedCommand(
             [NotNull] LocaleCommand command,
@@ -17,7 +17,7 @@ namespace Intersect.Server.Core.Commands
             [NotNull] params ICommandArgument[] arguments
         ) : base(
             command,
-            arguments.Prepend(new MessageArgument(argument, RequiredIfNotHelp, true))
+            arguments.Prepend(new VariableArgument<string>(argument, RequiredIfNotHelp, true))
         )
         {
         }

@@ -12,15 +12,15 @@ namespace Intersect.Server.Core.Commands
     {
         [NotNull]
         // TODO: Make this into a VariableArgument<int>
-        private MessageArgument Duration => FindArgumentOrThrow<MessageArgument>(1);
+        private VariableArgument<int> Duration => FindArgumentOrThrow<VariableArgument<int>>();
 
         [NotNull]
         // TODO: Make this into a VariableArgument<bool>
-        private MessageArgument Ip => FindArgumentOrThrow<MessageArgument>(2);
+        private VariableArgument<bool> Ip => FindArgumentOrThrow<VariableArgument<bool>>();
 
         [NotNull]
         // TODO: Refactor MessageArgument into a VariableArgument<string>
-        private MessageArgument Reason => FindArgumentOrThrow<MessageArgument>(3);
+        private VariableArgument<string> Reason => FindArgumentOrThrow<VariableArgument<string>>(1);
 
         protected ModeratorActionCommand(
             [NotNull] LocaleCommand command,
@@ -31,9 +31,9 @@ namespace Intersect.Server.Core.Commands
         ) : base(
             command,
             target,
-            new MessageArgument(duration, RequiredIfNotHelp, true),
-            new MessageArgument(ip, RequiredIfNotHelp, true),
-            new MessageArgument(reason, RequiredIfNotHelp, true)
+            new VariableArgument<int>(duration, RequiredIfNotHelp, true),
+            new VariableArgument<bool>(ip, RequiredIfNotHelp, true),
+            new VariableArgument<string>(reason, RequiredIfNotHelp, true)
         )
         {
         }
@@ -46,8 +46,8 @@ namespace Intersect.Server.Core.Commands
                 return;
             }
 
-            var duration = Convert.ToInt32(result.Find(Duration));
-            var ip = string.Equals(result.Find(Ip), Strings.Commands.True, StringComparison.Ordinal);
+            var duration = result.Find(Duration);
+            var ip = result.Find(Ip);
             var reason = result.Find(Reason) ?? "";
             // TODO: Refactor the global/console messages into ModeratorActionCommand
             HandleClient(context, target, duration, ip, reason);
