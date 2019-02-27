@@ -441,6 +441,7 @@
     <Compile Include="Core\CommandParsing\ParserContext.cs" />
     <Compile Include="Core\Commands\HelpCommand.cs" />
     <Compile Include="Core\Commands\KickCommand.cs" />
+    <Compile Include="Core\Commands\MigrateCommand.cs" />
     <Compile Include="Core\Commands\MakePublicCommand.cs" />
     <Compile Include="Core\Commands\MakePrivateCommand.cs" />
     <Compile Include="Core\Commands\TargetClientCommand.cs" />

@@ -32,6 +32,7 @@ namespace Intersect.Server.Core
             Parser.Register<KillCommand>();
             Parser.Register<MakePrivateCommand>();
             Parser.Register<MakePublicCommand>();
+            Parser.Register<MigrateCommand>();
             Parser.Register<NetDebugCommand>();
             Parser.Register<OnlineListCommand>();
         }
@@ -492,86 +493,6 @@ namespace Intersect.Server.Core
                     else
                     {
                         Console.WriteLine(Strings.Commandoutput.cps.ToString(Globals.Cps));
-                    }
-                }
-                else if (commandsplit[0] == Strings.Commands.Migrate.Name) //Migrate Command
-                {
-                    if (commandsplit.Length > 1)
-                    {
-                        if (commandsplit[1] == Strings.Commands.commandinfo)
-                        {
-                            Console.WriteLine(
-                                @"    " + Strings.Commands.Migrate.Usage.ToString(Strings.Commands.commandinfo));
-                            Console.WriteLine(@"    " + Strings.Commands.Migrate.Description);
-                        }
-                        else
-                        {
-                            Console.WriteLine(
-                                Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine();
-                        Console.WriteLine(Strings.Migration.selectdb);
-                        Console.WriteLine();
-                        Console.WriteLine(Strings.Migration.selectgamedb.ToString(
-                            Options.GameDb.Type == DatabaseOptions.DatabaseType.sqlite
-                                ? Strings.Migration.currentlysqlite
-                                : Strings.Migration.currentlymysql));
-                        Console.WriteLine(Strings.Migration.selectplayerdb.ToString(
-                            Options.PlayerDb.Type == DatabaseOptions.DatabaseType.sqlite
-                                ? Strings.Migration.currentlysqlite
-                                : Strings.Migration.currentlymysql));
-                        Console.WriteLine();
-                        Console.WriteLine(Strings.Migration.cancel);
-                        //Console.Write("> ");
-                        var selection = Console.ReadKeyWait().KeyChar;
-                        Console.WriteLine();
-                        DatabaseOptions db = null;
-                        if (selection.ToString() == Strings.Migration.selectgamedbkey.ToString())
-                        {
-                            db = Options.GameDb;
-                        }
-                        else if (selection.ToString() == Strings.Migration.selectplayerdbkey.ToString())
-                        {
-                            db = Options.PlayerDb;
-                        }
-
-                        if (db != null)
-                        {
-                            var dbString = db == Options.GameDb ? Strings.Migration.gamedb : Strings.Migration.playerdb;
-                            Console.WriteLine();
-                            Console.WriteLine(Strings.Migration.selectdbengine.ToString(dbString));
-                            Console.WriteLine(Strings.Migration.migratetosqlite);
-                            Console.WriteLine(Strings.Migration.migratetomysql);
-                            Console.WriteLine();
-                            Console.WriteLine(Strings.Migration.cancel);
-                            //Console.Write("> ");
-                            selection = Console.ReadKeyWait().KeyChar;
-                            Console.WriteLine();
-                            DatabaseOptions.DatabaseType dbengine = DatabaseOptions.DatabaseType.sqlite;
-                            if (selection.ToString() == Strings.Migration.selectsqlitekey.ToString() ||
-                                selection.ToString() == Strings.Migration.selectmysqlkey.ToString())
-                            {
-                                if (selection.ToString() == Strings.Migration.selectmysqlkey.ToString())
-                                    dbengine = DatabaseOptions.DatabaseType.mysql;
-                                if (db.Type == dbengine)
-                                {
-                                    var engineString = dbengine == DatabaseOptions.DatabaseType.sqlite
-                                        ? Strings.Migration.sqlite
-                                        : Strings.Migration.mysql;
-                                    Console.WriteLine();
-                                    Console.WriteLine(
-                                        Strings.Migration.alreadyusingengine.ToString(dbString, engineString));
-                                    Console.WriteLine();
-                                }
-                                else
-                                {
-                                    LegacyDatabase.Migrate(db, dbengine);
-                                }
-                            }
-                        }
                     }
                 }
                 else
