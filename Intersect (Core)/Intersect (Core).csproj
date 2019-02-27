@@ -166,6 +166,7 @@
     <Compile Include="Console.cs" />
     <Compile Include="Crypto\RsaUtils.cs" />
     <Compile Include="CustomColors.cs" />
+    <Compile Include="Extensions\ArrayExtensions.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="IO\ConsoleContext.cs" />
     <Compile Include="IO\ConsoleWriter.cs" />

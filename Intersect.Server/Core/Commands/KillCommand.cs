@@ -1,4 +1,5 @@
-﻿using Intersect.Server.Localization;
+﻿using Intersect.Server.Core.CommandParsing;
+using Intersect.Server.Localization;
 using Intersect.Server.Networking;
 
 namespace Intersect.Server.Core.Commands
@@ -12,7 +13,7 @@ namespace Intersect.Server.Core.Commands
         {
         }
 
-        protected override void HandleTarget(ServerContext context, Client target)
+        protected override void HandleTarget(ServerContext context, ParserResult result, Client target)
         {
             if (target?.Entity == null)
             {

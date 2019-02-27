@@ -436,12 +436,15 @@
     <Compile Include="Core\CommandParsing\CommandParser.cs" />
     <Compile Include="Core\CommandParsing\ParserResultExtensions.cs" />
     <Compile Include="Core\Commands\AnnouncementCommand.cs" />
+    <Compile Include="Core\Commands\ModeratorActionCommand.cs" />
+    <Compile Include="Core\Commands\MuteCommand.cs" />
     <Compile Include="Core\Commands\ExitCommand.cs" />
     <Compile Include="Core\CommandParsing\Errors\MissingCommandError.cs" />
     <Compile Include="Core\CommandParsing\Errors\UnhandledArgumentError.cs" />
     <Compile Include="Core\CommandParsing\ParserContext.cs" />
     <Compile Include="Core\Commands\HelpCommand.cs" />
     <Compile Include="Core\Commands\KickCommand.cs" />
+    <Compile Include="Core\Commands\BanCommand.cs" />
     <Compile Include="Core\Commands\UnmuteCommand.cs" />
     <Compile Include="Core\Commands\UnbanCommand.cs" />
     <Compile Include="Core\Commands\MigrateCommand.cs" />
