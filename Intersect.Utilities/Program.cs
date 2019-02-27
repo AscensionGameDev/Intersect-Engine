@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using Intersect.Enums;
 using Intersect.Utilities.Scripts;
 
 namespace Intersect.Utilities
@@ -59,8 +60,43 @@ namespace Intersect.Utilities
             }
         }
 
+        private enum ByteEnum : byte
+        {
+            X,
+            Z
+        }
+
+        private enum IntEnum : int
+        {
+            O,
+            P
+        }
+
         static void Main(string[] args)
         {
+            {
+                var type = typeof(Access);
+                var valueType = Access.Admin.GetType();
+                var bet = typeof(ByteEnum);
+                var iet = typeof(IntEnum);
+                var toParseA = "Admin";
+                var toParseN = "2";
+                switch ((object)Access.Admin)
+                {
+                    case byte dbyte:
+                        return;
+
+                    case int dint:
+                        return;
+
+                    case Enum denum:
+                        return;
+
+                    default:
+                        return;
+                }
+                return;
+            }
             {
                 Console.InputHistoryEnabled = true;
                 Console.WaitPrefix = "> ";

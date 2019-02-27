@@ -28,7 +28,7 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
 
         private readonly bool mRequired;
 
-        private ArgumentRequiredPredicate mRequiredPredicate;
+        private readonly ArgumentRequiredPredicate mRequiredPredicate;
 
         public bool IsRequired(ParserContext parserContext) => mRequiredPredicate?.Invoke(parserContext) ?? mRequired;
 
