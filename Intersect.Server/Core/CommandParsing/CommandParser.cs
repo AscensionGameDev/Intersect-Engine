@@ -650,6 +650,20 @@ namespace Intersect.Server.Core.CommandParsing
                     return true;
                 }
 
+                case Enum defaultParsed:
+                {
+                    try
+                    {
+                        parsed = Enum.Parse(type, source);
+                        return true;
+                    }
+                    catch (Exception)
+                    {
+                        parsed = defaultParsed;
+                        return false;
+                    }
+                }
+
                 default:
                 {
                     return TryParseType(type, defaultValue, source, out parsed);
