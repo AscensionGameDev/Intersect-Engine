@@ -98,46 +98,7 @@ namespace Intersect.Server.Core
                 command = command.Trim();
                 var commandsplit = command.Split(' ');
 
-                if (commandsplit[0] == Strings.Commands.Kill.Name) //Kill Command
-                {
-                    if (commandsplit.Length > 1)
-                    {
-                        if (commandsplit[1] == Strings.Commands.commandinfo)
-                        {
-                            Console.WriteLine(
-                                @"    " + Strings.Commands.Kill.Usage.ToString(Strings.Commands.commandinfo));
-                            Console.WriteLine(@"    " + Strings.Commands.Kill.Description);
-                        }
-                        else
-                        {
-                            for (var i = 0; i < Globals.Clients.Count; i++)
-                                if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
-                                {
-                                    var user = Globals.Clients[i].Entity.Name.ToLower();
-                                    if (user == commandsplit[1].ToLower())
-                                    {
-                                        Globals.Clients[i].Entity.Die();
-                                        PacketSender.SendGlobalMsg(
-                                            @"    " + Strings.Player.serverkilled.ToString(Globals.Clients[i].Entity
-                                                .Name));
-                                        Console.WriteLine(
-                                            @"    " + Strings.Commandoutput.killsuccess.ToString(Globals.Clients[i]
-                                                .Entity.Name));
-                                        userFound = true;
-                                        break;
-                                    }
-                                }
-
-                            if (userFound == false) Console.WriteLine(@"    " + Strings.Player.offline);
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine(
-                            Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
-                    }
-                }
-                else if (commandsplit[0] == Strings.Commands.Kick.Name) //Kick Command
+                if (commandsplit[0] == Strings.Commands.Kick.Name) //Kick Command
                 {
                     if (commandsplit.Length > 1)
                     {

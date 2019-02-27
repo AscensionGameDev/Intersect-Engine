@@ -15,18 +15,15 @@ namespace Intersect.Server.Core.Commands
 
         public KillCommand() : base(
             Strings.Commands.Kill,
-            new MessageArgument(
-                Strings.Commands.Arguments.KillName,
-                RequiredIfNotHelp,
-                true
-            )
+            new MessageArgument(Strings.Commands.Arguments.KillName, RequiredIfNotHelp, true)
         )
         {
         }
 
         protected override void HandleValue(ServerContext context, ParserResult result)
         {
-            var target = Globals.Clients.Find(client => string.Equals(client?.Entity?.Name, result.Find(Message), StringComparison.OrdinalIgnoreCase));
+            var target = Globals.Clients.Find(client =>
+                string.Equals(client?.Entity?.Name, result.Find(Message), StringComparison.OrdinalIgnoreCase));
             if (target != null)
             {
                 target.Entity?.Die();
