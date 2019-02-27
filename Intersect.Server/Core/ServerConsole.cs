@@ -35,6 +35,8 @@ namespace Intersect.Server.Core
             Parser.Register<MigrateCommand>();
             Parser.Register<NetDebugCommand>();
             Parser.Register<OnlineListCommand>();
+            Parser.Register<UnbanCommand>();
+            Parser.Register<UnmuteCommand>();
         }
 
         protected override void ThreadStart()
@@ -102,37 +104,7 @@ namespace Intersect.Server.Core
                 command = command.Trim();
                 var commandsplit = command.Split(' ');
 
-                if (commandsplit[0] == Strings.Commands.Unban.Name) //Unban Command
-                {
-                    if (commandsplit.Length > 1)
-                    {
-                        if (commandsplit[1] == Strings.Commands.commandinfo)
-                        {
-                            Console.WriteLine(
-                                @"    " + Strings.Commands.Unban.Usage.ToString(Strings.Commands.commandinfo));
-                            Console.WriteLine(@"    " + Strings.Commands.Unban.Description);
-                        }
-                        else
-                        {
-                            var unbannedUser = LegacyDatabase.GetUser(commandsplit[1]);
-                            if (unbannedUser != null)
-                            {
-                                Ban.DeleteBan(unbannedUser);
-                                Console.WriteLine(@"    " + Strings.Account.unbanned.ToString(commandsplit[1]));
-                            }
-                            else
-                            {
-                                Console.WriteLine("    " + Strings.Account.notfound.ToString(commandsplit[1]));
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine(
-                            Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
-                    }
-                }
-                else if (commandsplit[0] == Strings.Commands.Ban.Name) //Ban Command
+                if (commandsplit[0] == Strings.Commands.Ban.Name) //Ban Command
                 {
                     if (commandsplit.Length > 1)
                     {
@@ -176,36 +148,6 @@ namespace Intersect.Server.Core
                             {
                                 Console.WriteLine(
                                     Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine(
-                            Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
-                    }
-                }
-                else if (commandsplit[0] == Strings.Commands.Unmute.Name) //Unmute Command
-                {
-                    if (commandsplit.Length > 1)
-                    {
-                        if (commandsplit[1] == Strings.Commands.commandinfo)
-                        {
-                            Console.WriteLine(
-                                @"    " + Strings.Commands.Unmute.Usage.ToString(Strings.Commands.commandinfo));
-                            Console.WriteLine(@"    " + Strings.Commands.Unmute.Description);
-                        }
-                        else
-                        {
-                            var unmutedUser = LegacyDatabase.GetUser(commandsplit[1]);
-                            if (unmutedUser != null)
-                            {
-                                Mute.DeleteMute(unmutedUser);
-                                Console.WriteLine(@"    " + Strings.Account.unmuted.ToString(unmutedUser.Name));
-                            }
-                            else
-                            {
-                                Console.WriteLine(@"    " + Strings.Account.notfound);
                             }
                         }
                     }

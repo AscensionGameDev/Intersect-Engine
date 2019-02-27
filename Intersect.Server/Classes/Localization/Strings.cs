@@ -15,73 +15,73 @@ namespace Intersect.Server.Localization
     {
         public sealed class AccountNamespace : LocaleNamespace
         {
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString badaccess = @"Access denied! Invalid power level!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString badlogin = @"Username or password incorrect.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString banned = @"{00} has been banned!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString banstatus =
                 @"Your account has been banned since: {00} (UTC) by {01}. Ban expires: {02} (UTC). Reason for ban: {03}";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString characterexists =
                 @"An account with this character name exists. Please choose another.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString deletechar = @"The character has been deleted.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString deleted = @"Delete Character";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString doesnotexist = @"Account does not exist.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString emailexists = @"An account with this email address already exists.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString exists = @"Account already exists!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString invalidclass = @"Invalid class selected. Try again.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString invalidemail =
                 @"The chosen email does not meet requirements set by the server.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString invalidname =
                 @"The chosen name does not meet requirements set by the server.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString loadfail = @"Failed to load account. Please try logging in again.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString maxchars =
                 @"You have already created the maximum number of characters. Delete one before creating a new one.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString muted = @"{00} has been muted!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString mutestatus =
                 @"Your account has been muted since: {00} by {01}. Mute expires: {02}. Reason for mute: {03}";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString notfound = @"Error: Account {00} was not found!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString unbanned = @"Account {00} has been unbanned!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString unmuted = @"{00} has been unmuted!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString adminonly =
                 @"The server is currently allowing only admins to connect. Come back later!";
         }
@@ -437,6 +437,30 @@ namespace Intersect.Server.Localization
                 public readonly LocaleArgument KillTarget = new LocaleArgument
                 {
                     Description = @"the name of the player to kill"
+                };
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+                public readonly LocaleArgument TargetBan = new LocaleArgument
+                {
+                    Description = @"the name of the player to ban"
+                };
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+                public readonly LocaleArgument TargetMute = new LocaleArgument
+                {
+                    Description = @"the name of the player to mute"
+                };
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+                public readonly LocaleArgument TargetUnban = new LocaleArgument
+                {
+                    Description = @"the name of the player to unban"
+                };
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+                public readonly LocaleArgument TargetUnmute = new LocaleArgument
+                {
+                    Description = @"the name of the player to unmute"
                 };
             }
 
