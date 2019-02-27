@@ -1,4 +1,5 @@
-﻿using Intersect.Localization;
+﻿using Intersect.Extensions;
+using Intersect.Localization;
 using Intersect.Server.Core.CommandParsing;
 using Intersect.Server.Core.CommandParsing.Arguments;
 using JetBrains.Annotations;
@@ -8,26 +9,27 @@ namespace Intersect.Server.Core.Commands
     internal abstract class TargettedCommand<TTarget> : ServerCommand
     {
         [NotNull]
-        private MessageArgument Message => FindArgumentOrThrow<MessageArgument>();
+        private MessageArgument Target => FindArgumentOrThrow<MessageArgument>();
 
         protected TargettedCommand(
             [NotNull] LocaleCommand command,
-            [NotNull] LocaleArgument argument
+            [NotNull] LocaleArgument argument,
+            [NotNull] params ICommandArgument[] arguments
         ) : base(
             command,
-            new MessageArgument(argument, RequiredIfNotHelp, true)
+            arguments.Prepend(new MessageArgument(argument, RequiredIfNotHelp, true))
         )
         {
         }
 
         protected override void HandleValue(ServerContext context, ParserResult result)
         {
-            var target = FindTarget(context, result.Find(Message));
-            HandleTarget(context, target);
+            var target = FindTarget(context, result, result.Find(Target));
+            HandleTarget(context, result, target);
         }
 
-        protected abstract TTarget FindTarget([NotNull] ServerContext context, [CanBeNull] string targetName);
+        protected abstract TTarget FindTarget([NotNull] ServerContext context, [NotNull] ParserResult result, [CanBeNull] string targetName);
 
-        protected abstract void HandleTarget([NotNull] ServerContext context, [CanBeNull] TTarget target);
+        protected abstract void HandleTarget([NotNull] ServerContext context, [NotNull] ParserResult result, [CanBeNull] TTarget target);
     }
 }

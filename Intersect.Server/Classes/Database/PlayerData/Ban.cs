@@ -42,10 +42,10 @@ namespace Intersect.Server.Database.PlayerData
 
         public static void DeleteBan([NotNull] User user)
         {
-            var ban = PlayerContext.Current?.Mutes?.SingleOrDefault(p => p.Player == user);
+            var ban = PlayerContext.Current?.Bans?.SingleOrDefault(p => p.Player == user);
             if (ban != null)
             {
-                PlayerContext.Current.Mutes.Remove(ban);
+                PlayerContext.Current.Bans.Remove(ban);
             }
         }
 

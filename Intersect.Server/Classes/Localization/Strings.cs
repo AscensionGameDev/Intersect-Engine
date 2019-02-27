@@ -440,6 +440,42 @@ namespace Intersect.Server.Localization
                 };
 
                 [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+                public readonly LocaleArgument DurationBan = new LocaleArgument
+                {
+                    Description = @"the duration to ban"
+                };
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+                public readonly LocaleArgument DurationMute = new LocaleArgument
+                {
+                    Description = @"the duration to mute"
+                };
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+                public readonly LocaleArgument IpBan = new LocaleArgument
+                {
+                    Description = @"if it is an IP ban"
+                };
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+                public readonly LocaleArgument IpMute = new LocaleArgument
+                {
+                    Description = @"if it is an IP mute"
+                };
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+                public readonly LocaleArgument ReasonBan = new LocaleArgument
+                {
+                    Description = @"the reason for the ban"
+                };
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+                public readonly LocaleArgument ReasonMute = new LocaleArgument
+                {
+                    Description = @"the reason for the mute"
+                };
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
                 public readonly LocaleArgument TargetKick = new LocaleArgument
                 {
                     Description = @"the name of the player to kick"
@@ -482,43 +518,43 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly CommandParsingNamespace Parsing = new CommandParsingNamespace();
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString cpslock = @"lock";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString cpsstatus = @"status";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString cpsunlock = @"unlock";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString exiting =
                 @"Server is now closing. Please wait while your game and player data is saved!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString commandinfo = @"/?";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString invalid = @"Invalid /command.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString madeprivate =
                 @"The server has now been made private and can only be accessed by admins. To change this use the makepublic command or edit the adminonly field in config.json";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString madepublic =
                 @"The server has now been made public and can be accessed by all players. To change this use the makepublic command or edit the adminonly field in config.json";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString banuser = @"console";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString muteuser = @"console";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString False = @"false";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString True = @"true";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]

@@ -1,5 +1,4 @@
-﻿using Intersect.Config;
-using Intersect.Enums;
+﻿using Intersect.Enums;
 using Intersect.Logging;
 using Intersect.Server.Core.CommandParsing;
 using Intersect.Server.Core.CommandParsing.Errors;
@@ -8,7 +7,6 @@ using Intersect.Server.Database.PlayerData;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking;
-using Intersect.Server.Networking.Helpers;
 using Intersect.Threading;
 using JetBrains.Annotations;
 using System;
@@ -26,6 +24,7 @@ namespace Intersect.Server.Core
 
             Parser = new CommandParser();
             Parser.Register<AnnouncementCommand>();
+            Parser.Register<BanCommand>();
             Parser.Register<ExitCommand>();
             Parser.Register<HelpCommand>();
             Parser.Register<KickCommand>();
@@ -33,6 +32,7 @@ namespace Intersect.Server.Core
             Parser.Register<MakePrivateCommand>();
             Parser.Register<MakePublicCommand>();
             Parser.Register<MigrateCommand>();
+            Parser.Register<MuteCommand>();
             Parser.Register<NetDebugCommand>();
             Parser.Register<OnlineListCommand>();
             Parser.Register<UnbanCommand>();
@@ -104,112 +104,7 @@ namespace Intersect.Server.Core
                 command = command.Trim();
                 var commandsplit = command.Split(' ');
 
-                if (commandsplit[0] == Strings.Commands.Ban.Name) //Ban Command
-                {
-                    if (commandsplit.Length > 1)
-                    {
-                        if (commandsplit[1] == Strings.Commands.commandinfo)
-                        {
-                            Console.WriteLine(@"    " + Strings.Commands.Ban.Usage.ToString(Strings.Commands.True,
-                                                  Strings.Commands.False, Strings.Commands.commandinfo));
-                            Console.WriteLine(@"    " + Strings.Commands.Ban.Description);
-                        }
-                        else
-                        {
-                            if (commandsplit.Length > 3)
-                            {
-                                for (var i = 0; i < Globals.Clients.Count; i++)
-                                    if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
-                                    {
-                                        var user = Globals.Clients[i].Entity.Name.ToLower();
-                                        if (user == commandsplit[1].ToLower())
-                                        {
-                                            var reason = "";
-                                            for (var n = 4; n < commandsplit.Length; n++)
-                                                reason += commandsplit[n] + " ";
-                                            if (commandsplit[3] == Strings.Commands.True)
-                                                ip = Globals.Clients[i].GetIp();
-                                            Ban.AddBan(Globals.Clients[i], Convert.ToInt32(commandsplit[2]), reason,
-                                                Strings.Commands.banuser, ip);
-                                            PacketSender.SendGlobalMsg(
-                                                Strings.Account.banned.ToString(Globals.Clients[i].Entity.Name));
-                                            Console.WriteLine(
-                                                @"    " + Strings.Account.banned.ToString(
-                                                    Globals.Clients[i].Entity.Name));
-                                            Globals.Clients[i].Disconnect(); //Kick em'
-                                            userFound = true;
-                                            break;
-                                        }
-                                    }
-
-                                if (userFound == false) Console.WriteLine(@"    " + Strings.Player.offline);
-                            }
-                            else
-                            {
-                                Console.WriteLine(
-                                    Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine(
-                            Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
-                    }
-                }
-                else if (commandsplit[0] == Strings.Commands.Mute.Name) //Mute Command
-                {
-                    if (commandsplit.Length > 1)
-                    {
-                        if (commandsplit[1] == Strings.Commands.commandinfo)
-                        {
-                            Console.WriteLine(@"    " + Strings.Commands.Mute.Usage.ToString(Strings.Commands.True,
-                                                  Strings.Commands.False, Strings.Commands.commandinfo));
-                            Console.WriteLine(@"    " + Strings.Commands.Mute.Description);
-                        }
-                        else
-                        {
-                            if (commandsplit.Length > 3)
-                            {
-                                for (var i = 0; i < Globals.Clients.Count; i++)
-                                    if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
-                                    {
-                                        var user = Globals.Clients[i].Entity.Name.ToLower();
-                                        if (user == commandsplit[1].ToLower())
-                                        {
-                                            var reason = "";
-                                            for (var n = 4; n < commandsplit.Length; n++)
-                                                reason += commandsplit[n] + " ";
-                                            if (commandsplit[3] == Strings.Commands.True)
-                                                ip = Globals.Clients[i].GetIp();
-                                            Mute.AddMute(Globals.Clients[i], Convert.ToInt32(commandsplit[2]), reason,
-                                                Strings.Commands.muteuser, ip);
-                                            PacketSender.SendGlobalMsg(
-                                                Strings.Account.muted.ToString(Globals.Clients[i].Entity.Name));
-                                            Console.WriteLine(
-                                                @"    " + Strings.Account.muted.ToString(Globals.Clients[i].Entity
-                                                    .Name));
-                                            userFound = true;
-                                            break;
-                                        }
-                                    }
-
-                                if (userFound == false) Console.WriteLine(@"    " + Strings.Player.offline);
-                            }
-                            else
-                            {
-                                Console.WriteLine(
-                                    Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine(
-                            Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
-                    }
-                }
-                else if (commandsplit[0] == Strings.Commands.Power.Name) //Power Command
+                if (commandsplit[0] == Strings.Commands.Power.Name) //Power Command
                 {
                     if (commandsplit.Length > 1)
                     {

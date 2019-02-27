@@ -10,17 +10,15 @@ namespace Intersect.Server.Core.Commands
 {
     internal abstract class TargetClientCommand : TargettedCommand<Client>
     {
-        [NotNull]
-        private MessageArgument Message => FindArgumentOrThrow<MessageArgument>();
-
         protected TargetClientCommand(
             [NotNull] LocaleCommand command,
-            [NotNull] LocaleArgument argument
-        ) : base(command, argument)
+            [NotNull] LocaleArgument argument,
+            [NotNull] params ICommandArgument[] arguments
+        ) : base(command, argument, arguments)
         {
         }
 
-        protected override Client FindTarget(ServerContext context, string targetName)
+        protected override Client FindTarget(ServerContext context, ParserResult result, string targetName)
         {
             if (string.IsNullOrWhiteSpace(targetName))
             {
