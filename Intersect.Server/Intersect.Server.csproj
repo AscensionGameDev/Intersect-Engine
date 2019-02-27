@@ -442,6 +442,8 @@
     <Compile Include="Core\CommandParsing\Errors\UnhandledArgumentError.cs" />
     <Compile Include="Core\CommandParsing\ParserContext.cs" />
     <Compile Include="Core\Commands\HelpCommand.cs" />
+    <Compile Include="Core\Commands\KickCommand.cs" />
+    <Compile Include="Core\Commands\TargetClientCommand.cs" />
     <Compile Include="Core\Commands\KillCommand.cs" />
     <Compile Include="Core\Commands\NetDebugCommand.cs" />
     <Compile Include="Core\Commands\OnlineListCommand.cs" />
