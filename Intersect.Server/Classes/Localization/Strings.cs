@@ -425,8 +425,7 @@ namespace Intersect.Server.Localization
         {
             public sealed class ArgumentsNamespace : LocaleNamespace
             {
-                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-                [NotNull]
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
                 public readonly LocaleArgument Help = new LocaleArgument
                 {
                     Name = @"help",
@@ -434,13 +433,16 @@ namespace Intersect.Server.Localization
                     Description = @"Shows help information for this command"
                 };
 
-                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-                [NotNull]
-                public readonly LocaleArgument AnnouncementsMessage = new LocaleArgument
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+                public readonly LocaleArgument AnnouncementMessage = new LocaleArgument
                 {
-                    Name = @"message",
-                    ShortName = 'm',
-                    Description = @"The message to send."
+                    Description = @"the message to send"
+                };
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+                public readonly LocaleArgument KillName = new LocaleArgument
+                {
+                    Description = @"the username of the player to kill"
                 };
             }
 
@@ -1094,81 +1096,81 @@ namespace Intersect.Server.Localization
 
         public sealed class PlayerNamespace : LocaleNamespace
         {
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString admin = @"{00} has been given administrative powers!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString adminjoined =
                 @"You are an administrator! Press Insert at any time to access the administration menu or F2 for debug information.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString adminsetpower = @"Only admins can set power!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString beenwarpedto = @"You have been warped to {00}.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString changeownpower = @"You cannot alter your own power!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString deadmin = @"{00} has had their administrative powers revoked!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString demod = @"{00} has had their moderation powers revoked!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString haswarpedto = @"{00} has been warped to you.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString joined = @"{00} has joined {01}.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString kicked = @"{00} has been kicked by {01}!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString killed = @"{00} has been killed by {01}!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString left = @"{00} has left {01}.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString levelup = @"You have leveled up! You are now level {00}!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString mod = @"{00} has been given moderation powers!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString modjoined =
                 @"You are a moderator! Press Insert at any time to access the administration menu or F2 for debug information.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString notarget = @"You need to select a valid target.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString offline = @"User not online!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString powerchanged = @"Your power has been modified!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString serverkicked = @"{00} has been kicked by the server!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString serverkilled = @"{00} has been killed by the server!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString spelltaughtlevelup = @"You've learned the {00} spell!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString statpoints = @"You have {00} stat points available to be spent!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString targetoutsiderange = @"Target not in range.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString warpedto = @"Warped to {00}.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString warpedtoyou = @"{00} warped to you.";
         }
 
