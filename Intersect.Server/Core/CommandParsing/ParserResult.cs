@@ -83,19 +83,4 @@ namespace Intersect.Server.Core.CommandParsing
         {
         }
     }
-
-    public static class ParserResultExtensions
-    {
-        [CanBeNull]
-        public static TValue Find<TValue>([NotNull] this ParserResult result, [NotNull] CommandArgument<TValue> argument)
-        {
-            return result.Parsed.Find(argument);
-        }
-
-        [CanBeNull]
-        public static IEnumerable<TValues> FindAll<TValues>([NotNull] this ParserResult result, [NotNull] ArrayCommandArgument<TValues> argument)
-        {
-            return result.Parsed.FindAll(argument);
-        }
-    }
 }

@@ -440,13 +440,13 @@ namespace Intersect.Server.Localization
                 };
 
                 [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-                public readonly LocaleArgument KickTarget = new LocaleArgument
+                public readonly LocaleArgument TargetKick = new LocaleArgument
                 {
                     Description = @"the name of the player to kick"
                 };
 
                 [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-                public readonly LocaleArgument KillTarget = new LocaleArgument
+                public readonly LocaleArgument TargetKill = new LocaleArgument
                 {
                     Description = @"the name of the player to kill"
                 };

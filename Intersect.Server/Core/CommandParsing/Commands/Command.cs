@@ -74,18 +74,18 @@ namespace Intersect.Server.Core.CommandParsing.Commands
         }
 
         [CanBeNull]
-        protected TArgument FindArgument<TArgument>()
+        protected TArgument FindArgument<TArgument>(int index = 0)
         {
             return Arguments
                 .Where(argument => argument?.GetType() == typeof(TArgument))
                 .Cast<TArgument>()
-                .FirstOrDefault();
+                .ElementAtOrDefault(index);
         }
 
         [NotNull]
-        protected TArgument FindArgumentOrThrow<TArgument>()
+        protected TArgument FindArgumentOrThrow<TArgument>(int index = 0)
         {
-            var argument = FindArgument<TArgument>();
+            var argument = FindArgument<TArgument>(index);
 
             if (argument == null)
             {

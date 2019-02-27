@@ -7,7 +7,7 @@ namespace Intersect.Server.Core.Commands
     {
         public KillCommand() : base(
             Strings.Commands.Kill,
-            Strings.Commands.Arguments.KillTarget
+            Strings.Commands.Arguments.TargetKill
         )
         {
         }

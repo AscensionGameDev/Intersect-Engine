@@ -33,9 +33,9 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        public TValue ToTypedValue<TValue>()
+        public TValue ToTypedValue<TValue>(int index = 0)
         {
-            if (mValues.FirstOrDefault() is TValue typedValue)
+            if (mValues.ElementAtOrDefault(index) is TValue typedValue)
             {
                 return typedValue;
             }

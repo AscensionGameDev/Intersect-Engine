@@ -7,7 +7,7 @@ namespace Intersect.Server.Core.Commands
     {
         public KickCommand() : base(
             Strings.Commands.Kick,
-            Strings.Commands.Arguments.KickTarget
+            Strings.Commands.Arguments.TargetKick
         )
         {
         }

@@ -72,15 +72,24 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
 
     public abstract class ArrayCommandArgument<TValue> : CommandArgument<TValue>
     {
-        public override bool AllowsMultiple => true;
+        public int Count { get; }
+
+        public override bool AllowsMultiple => Count > 1;
 
         public override bool IsCollection => true;
 
         protected ArrayCommandArgument(
             [NotNull] LocaleArgument localization,
+            int count,
             [CanBeNull] string delimeter = null
         ) : base(localization)
         {
+            if (count < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(count));
+            }
+
+            Count = count;
             Delimeter = delimeter;
         }
     }

@@ -26,10 +26,10 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
         }
 
         [CanBeNull]
-        public TValue Find<TValue>([NotNull] ICommandArgument argument)
+        public TValue Find<TValue>([NotNull] ICommandArgument argument, int index = 0)
         {
             var argumentValues = Find(argument);
-            return argumentValues == null ? argument.DefaultValueAsType<TValue>() : argumentValues.ToTypedValue<TValue>();
+            return argumentValues == null ? argument.DefaultValueAsType<TValue>() : argumentValues.ToTypedValue<TValue>(index);
         }
 
         [CanBeNull]
@@ -39,9 +39,9 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
         }
 
         [CanBeNull]
-        public TValue Find<TValue>([NotNull] CommandArgument<TValue> argument)
+        public TValue Find<TValue>([NotNull] CommandArgument<TValue> argument, int index = 0)
         {
-            return Find<TValue>(argument as ICommandArgument);
+            return Find<TValue>(argument as ICommandArgument, index);
         }
 
         [CanBeNull]
