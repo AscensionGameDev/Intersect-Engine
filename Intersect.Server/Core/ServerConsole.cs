@@ -30,6 +30,8 @@ namespace Intersect.Server.Core
             Parser.Register<HelpCommand>();
             Parser.Register<KickCommand>();
             Parser.Register<KillCommand>();
+            Parser.Register<MakePrivateCommand>();
+            Parser.Register<MakePublicCommand>();
             Parser.Register<NetDebugCommand>();
             Parser.Register<OnlineListCommand>();
         }
@@ -327,48 +329,6 @@ namespace Intersect.Server.Core
                             Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
                     }
                 }
-                else if (commandsplit[0] == Strings.Commands.MakePrivate.Name)
-                {
-                    if (commandsplit.Length > 1)
-                    {
-                        if (commandsplit[1] == Strings.Commands.commandinfo)
-                        {
-                            Console.WriteLine(
-                                @"    " + Strings.Commands.Api.Name.ToString(Strings.Commands.commandinfo));
-                            Console.WriteLine(@"    " + Strings.Commands.MakePrivate.Description);
-                        }
-                        else
-                        {
-                            Console.WriteLine(@"    " + Strings.Commands.MakePrivate.Usage);
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine(@"    " + Strings.Commands.madeprivate);
-                        Options.AdminOnly = true;
-                        Options.SaveToDisk();
-                    }
-                }
-                else if (commandsplit[0] == Strings.Commands.MakePublic.Name)
-                {
-                    if (commandsplit.Length > 1)
-                    {
-                        if (commandsplit[1] == Strings.Commands.commandinfo)
-                        {
-                            Console.WriteLine(@"    " + Strings.Commands.MakePublic.Description);
-                        }
-                        else
-                        {
-                            Console.WriteLine(@"    " + Strings.Commands.MakePublic.Usage);
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine(@"    " + Strings.Commands.madepublic);
-                        Options.AdminOnly = false;
-                        Options.SaveToDisk();
-                    }
-                }
                 else if (commandsplit[0] == Strings.Commands.Api.Name) //API Command
                 {
                     if (commandsplit.Length > 1)
@@ -532,29 +492,6 @@ namespace Intersect.Server.Core
                     else
                     {
                         Console.WriteLine(Strings.Commandoutput.cps.ToString(Globals.Cps));
-                    }
-                }
-                else if (commandsplit[0] == Strings.Commands.Exit.Name) //Exit Command
-                {
-                    if (commandsplit.Length > 1)
-                    {
-                        if (commandsplit[1] == Strings.Commands.commandinfo)
-                        {
-                            Console.WriteLine(
-                                @"    " + Strings.Commands.Exit.Usage.ToString(Strings.Commands.commandinfo));
-                            Console.WriteLine(@"    " + Strings.Commands.Exit.Description);
-                        }
-                        else
-                        {
-                            Console.WriteLine(
-                                Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
-                        }
-                    }
-                    else
-                    {
-                        ServerContext.Instance.Dispose();
-                        //ServerStatic.Shutdown();
-                        return;
                     }
                 }
                 else if (commandsplit[0] == Strings.Commands.Migrate.Name) //Migrate Command
