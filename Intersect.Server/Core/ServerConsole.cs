@@ -28,6 +28,7 @@ namespace Intersect.Server.Core
             Parser.Register<AnnouncementCommand>();
             Parser.Register<ExitCommand>();
             Parser.Register<HelpCommand>();
+            Parser.Register<KillCommand>();
             Parser.Register<NetDebugCommand>();
             Parser.Register<OnlineListCommand>();
         }

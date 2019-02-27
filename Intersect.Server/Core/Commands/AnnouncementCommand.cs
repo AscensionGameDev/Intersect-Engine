@@ -14,7 +14,7 @@ namespace Intersect.Server.Core.Commands
         public AnnouncementCommand() : base(
             Strings.Commands.Announcement,
             new MessageArgument(
-                Strings.Commands.Arguments.AnnouncementsMessage,
+                Strings.Commands.Arguments.AnnouncementMessage,
                 RequiredIfNotHelp,
                 true
             )
