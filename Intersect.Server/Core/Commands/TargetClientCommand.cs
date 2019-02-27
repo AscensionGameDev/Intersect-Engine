@@ -8,7 +8,7 @@ using System;
 
 namespace Intersect.Server.Core.Commands
 {
-    internal abstract class TargetClientCommand : ServerCommand
+    internal abstract class TargetClientCommand : TargettedCommand<Client>
     {
         [NotNull]
         private MessageArgument Message => FindArgumentOrThrow<MessageArgument>();
@@ -16,14 +16,11 @@ namespace Intersect.Server.Core.Commands
         protected TargetClientCommand(
             [NotNull] LocaleCommand command,
             [NotNull] LocaleArgument argument
-        ) : base(
-            command,
-            new MessageArgument(argument, RequiredIfNotHelp, true)
-        )
+        ) : base(command, argument)
         {
         }
 
-        protected virtual Client FindPlayer([NotNull] ServerContext context, [CanBeNull] string targetName)
+        protected override Client FindTarget([NotNull] ServerContext context, [CanBeNull] string targetName)
         {
             if (string.IsNullOrWhiteSpace(targetName))
             {
@@ -36,13 +33,5 @@ namespace Intersect.Server.Core.Commands
                 return string.Equals(playerName, targetName, StringComparison.OrdinalIgnoreCase);
             });
         }
-
-        protected override void HandleValue(ServerContext context, ParserResult result)
-        {
-            var target = FindPlayer(context, result.Find(Message));
-            HandleTarget(context, target);
-        }
-
-        protected abstract void HandleTarget([NotNull] ServerContext context, [CanBeNull] Client target);
     }
 }
