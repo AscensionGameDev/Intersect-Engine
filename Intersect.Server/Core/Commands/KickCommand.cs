@@ -3,11 +3,11 @@ using Intersect.Server.Networking;
 
 namespace Intersect.Server.Core.Commands
 {
-    internal sealed class KillCommand : TargetClientCommand
+    internal sealed class KickCommand : TargetClientCommand
     {
-        public KillCommand() : base(
-            Strings.Commands.Kill,
-            Strings.Commands.Arguments.KillTarget
+        public KickCommand() : base(
+            Strings.Commands.Kick,
+            Strings.Commands.Arguments.KickTarget
         )
         {
         }
@@ -20,9 +20,10 @@ namespace Intersect.Server.Core.Commands
                 return;
             }
 
-            target.Entity.Die();
-            PacketSender.SendGlobalMsg($@"    {Strings.Player.serverkilled.ToString(target.Entity.Name)}");
-            Console.WriteLine($@"    {Strings.Commandoutput.killsuccess.ToString(target.Entity.Name)}");
+            var name = target.Entity.Name;
+            target.Disconnect();
+            PacketSender.SendGlobalMsg(Strings.Player.serverkicked.ToString(name));
+            Console.WriteLine($@"    {Strings.Player.serverkicked.ToString(name)}");
         }
     }
 }

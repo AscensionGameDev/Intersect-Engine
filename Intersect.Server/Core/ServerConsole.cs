@@ -28,6 +28,7 @@ namespace Intersect.Server.Core
             Parser.Register<AnnouncementCommand>();
             Parser.Register<ExitCommand>();
             Parser.Register<HelpCommand>();
+            Parser.Register<KickCommand>();
             Parser.Register<KillCommand>();
             Parser.Register<NetDebugCommand>();
             Parser.Register<OnlineListCommand>();
@@ -98,45 +99,7 @@ namespace Intersect.Server.Core
                 command = command.Trim();
                 var commandsplit = command.Split(' ');
 
-                if (commandsplit[0] == Strings.Commands.Kick.Name) //Kick Command
-                {
-                    if (commandsplit.Length > 1)
-                    {
-                        if (commandsplit[1] == Strings.Commands.commandinfo)
-                        {
-                            Console.WriteLine(
-                                @"    " + Strings.Commands.Kick.Usage.ToString(Strings.Commands.commandinfo));
-                            Console.WriteLine(@"    " + Strings.Commands.Kick.Description);
-                        }
-                        else
-                        {
-                            for (var i = 0; i < Globals.Clients.Count; i++)
-                                if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
-                                {
-                                    var user = Globals.Clients[i].Entity.Name.ToLower();
-                                    if (user == commandsplit[1].ToLower())
-                                    {
-                                        PacketSender.SendGlobalMsg(
-                                            Strings.Player.serverkicked.ToString(Globals.Clients[i].Entity.Name));
-                                        Console.WriteLine(
-                                            @"    " + Strings.Player.serverkicked.ToString(Globals.Clients[i].Entity
-                                                .Name));
-                                        Globals.Clients[i].Disconnect(); //Kick em'
-                                        userFound = true;
-                                        break;
-                                    }
-                                }
-
-                            if (userFound == false) Console.WriteLine(@"    " + Strings.Player.offline);
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine(
-                            Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
-                    }
-                }
-                else if (commandsplit[0] == Strings.Commands.Unban.Name) //Unban Command
+                if (commandsplit[0] == Strings.Commands.Unban.Name) //Unban Command
                 {
                     if (commandsplit.Length > 1)
                     {
