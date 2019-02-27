@@ -427,8 +427,8 @@
     <Compile Include="Classes\Spells\SpellInstance.cs" />
     <Compile Include="Classes\Networking\Lidgren\ServerNetwork.cs" />
     <Compile Include="Classes\Networking\Lidgren\ThreadYieldNet40.cs" />
+    <Compile Include="Core\CommandParsing\Arguments\VariableArgument.cs" />
     <Compile Include="Core\CommandParsing\Commands\HelpableCommand.cs" />
-    <Compile Include="Core\CommandParsing\Arguments\MessageArgument.cs" />
     <Compile Include="Core\CommandParsing\Arguments\PositionalArgument.cs" />
     <Compile Include="Core\CommandParsing\Arguments\ArgumentValues.cs" />
     <Compile Include="Core\CommandParsing\Arguments\ArgumentValuesMap.cs" />

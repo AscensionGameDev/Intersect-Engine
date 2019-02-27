@@ -17,6 +17,14 @@ namespace Intersect.Server.Core.CommandParsing
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
         public readonly CommandParserErrorsNamespace Errors = new CommandParserErrorsNamespace();
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+        public readonly LocalizedString ValueTrue =
+            @"true";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+        public readonly LocalizedString ValueFalse =
+            @"false";
     }
 
     public sealed class CommandParserErrorsNamespace : LocaleNamespace
@@ -556,6 +564,22 @@ namespace Intersect.Server.Core.CommandParsing
                 case bool defaultParsed:
                 {
                     var success = bool.TryParse(source, out var value);
+                    if (!success)
+                    {
+                        if (string.Equals(Localization.ValueTrue.ToString(), source,
+                            StringComparison.OrdinalIgnoreCase))
+                        {
+                            success = true;
+                            value = true;
+                        }
+                        else if (string.Equals(Localization.ValueFalse.ToString(), source,
+                            StringComparison.OrdinalIgnoreCase))
+                        {
+                            success = true;
+                            value = false;
+                        }
+                    }
+
                     parsed = success ? value : defaultParsed;
                     return success;
                 }

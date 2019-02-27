@@ -20,7 +20,7 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
 
         public virtual bool IsFlag => false;
 
-        public virtual bool AllowsMultiple => false;
+        public virtual bool AllowsMultiple { get; }
 
         public virtual bool IsCollection => false;
 
@@ -40,23 +40,27 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
         protected CommandArgument(
             [NotNull] LocaleArgument localization,
             bool required = false,
-            bool positional = false
+            bool positional = false,
+            bool allowsMultiple = false
         )
         {
             Localization = localization;
             IsPositional = positional;
             mRequired = required;
+            AllowsMultiple = allowsMultiple;
         }
 
         protected CommandArgument(
             [NotNull] LocaleArgument localization,
             [NotNull] ArgumentRequiredPredicate requiredPredicate,
-            bool positional = false
+            bool positional = false,
+            bool allowsMultiple = false
         )
         {
             Localization = localization;
             IsPositional = positional;
             mRequiredPredicate = requiredPredicate;
+            AllowsMultiple = allowsMultiple;
         }
 
         public TValue DefaultValueAsType()

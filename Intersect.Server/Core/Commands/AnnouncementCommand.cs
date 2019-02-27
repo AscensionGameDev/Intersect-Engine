@@ -9,11 +9,11 @@ namespace Intersect.Server.Core.Commands
     internal sealed class AnnouncementCommand : ServerCommand
     {
         [NotNull]
-        private MessageArgument Message => FindArgumentOrThrow<MessageArgument>();
+        private VariableArgument<string> Message => FindArgumentOrThrow<VariableArgument<string>>();
 
         public AnnouncementCommand() : base(
             Strings.Commands.Announcement,
-            new MessageArgument(
+            new VariableArgument<string>(
                 Strings.Commands.Arguments.AnnouncementMessage,
                 RequiredIfNotHelp,
                 true
