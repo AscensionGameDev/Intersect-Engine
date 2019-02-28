@@ -437,6 +437,7 @@
     <Compile Include="Core\CommandLineOptions.cs" />
     <Compile Include="Core\CommandParsing\Commands\Command.cs" />
     <Compile Include="Core\CommandParsing\CommandParser.cs" />
+    <Compile Include="Core\CommandParsing\Errors\MissingArgumentError.cs" />
     <Compile Include="Core\CommandParsing\ParserResultExtensions.cs" />
     <Compile Include="Core\CommandParsing\ParserSettings.cs" />
     <Compile Include="Core\Commands\AnnouncementCommand.cs" />

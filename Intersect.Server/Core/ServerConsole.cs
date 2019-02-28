@@ -7,6 +7,7 @@ using Intersect.Server.Localization;
 using Intersect.Threading;
 using JetBrains.Annotations;
 using System;
+using System.Linq;
 
 namespace Intersect.Server.Core
 {
@@ -66,28 +67,52 @@ namespace Intersect.Server.Core
                 }
 
                 var result = Parser.Parse(line);
-                var fatalError = false;
-                result.Errors.ForEach(error =>
+                if (result.Missing.IsEmpty)
                 {
-                    if (error == null)
+                    var fatalError = false;
+                    result.Errors.ForEach(error =>
                     {
-                        return;
-                    }
+                        if (error == null)
+                        {
+                            return;
+                        }
 
-                    fatalError = error.IsFatal;
-                    if (!error.IsFatal || error is MissingCommandError || error is UnhandledArgumentError)
-                    {
-                        Console.WriteLine(error.Message);
-                    }
-                    else
-                    {
-                        Log.Warn(error.Exception, error.Message);
-                    }
-                });
+                        fatalError = error.IsFatal;
+                        if (error is MissingArgumentError)
+                        {
+                            return;
+                        }
 
-                if (!fatalError)
+                        if (!error.IsFatal || error is MissingCommandError || error is UnhandledArgumentError)
+                        {
+                            Console.WriteLine(error.Message);
+                        }
+                        else
+                        {
+                            Log.Warn(error.Exception, error.Message);
+                        }
+                    });
+
+                    if (!fatalError)
+                    {
+                        result.Command?.Handle(ServerContext.Instance, result);
+                    }
+                }
+                else
                 {
-                    result.Command?.Handle(ServerContext.Instance, result);
+                    Console.WriteLine(
+                        Strings.Commands.Parsing.Errors.MissingArguments.ToString(
+                            string.Join(
+                                Strings.Commands.Parsing.Errors.MissingArgumentsDelimeter,
+                                result.Missing.Select(argument =>
+                                    Strings.Commands.Parsing.Errors.MissingArgumentNameTypeFormat.ToString(
+                                        argument?.Name,
+                                        argument?.ValueType.Name
+                                    )
+                                )
+                            )
+                        )
+                    );
                 }
             }
 

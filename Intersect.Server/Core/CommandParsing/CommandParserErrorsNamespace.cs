@@ -96,8 +96,30 @@ namespace Intersect.Server.Core.CommandParsing
         ///
         /// Note that should not actually be possible.
         /// </summary>
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [NotNull]
         public readonly LocalizedString IllegalArgumentFormat =
             @"The argument '{00}' matches both the short and long-form argument formats (e.g. '{01}h' and '{02}help').";
+
+        /// <summary>
+        /// Required arguments were missing.
+        /// </summary>
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [NotNull]
+        public readonly LocalizedString MissingArguments = @"Missing one or more arguments: {00}";
+
+        /// <summary>
+        /// Format for displaying the name and type of the missing argument.
+        /// </summary>
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [NotNull]
+        public readonly LocalizedString MissingArgumentNameTypeFormat = @"{00} ({01})";
+
+        /// <summary>
+        /// List delimeter for missing arguments.
+        /// </summary>
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [NotNull]
+        public readonly LocalizedString MissingArgumentsDelimeter = @", ";
     }
 }

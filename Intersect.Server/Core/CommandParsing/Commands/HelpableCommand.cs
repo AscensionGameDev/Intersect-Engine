@@ -36,6 +36,7 @@ namespace Intersect.Server.Core.CommandParsing.Commands
         {
             if (result.Find(Help))
             {
+                // TODO: Fix crash on IP ban thing, not sure how I want to handle the true/false part of the string
                 Console.WriteLine(
                     $@"    {Localization.Usage.ToString(result.Parsed.Find(Help as ICommandArgument)?.ArgumentName)}");
                 Console.WriteLine($@"    {Localization.Description}");
