@@ -18,8 +18,14 @@ namespace Intersect.Server.Core.Commands
 
         protected override void HandleClient(ServerContext context, Client target, int duration, bool ip, string reason)
         {
+            if (target.Entity == null)
+            {
+                Console.WriteLine($@"    {Strings.Player.offline}");
+                return;
+            }
+
             // TODO: Refactor the global/console messages into ModeratorActionCommand
-            var name = target.Entity?.Name;
+            var name = target.Entity.Name;
             Ban.AddBan(target, duration, reason, Strings.Commands.banuser, ip ? target.GetIp() : "");
             target.Disconnect();
             PacketSender.SendGlobalMsg(Strings.Account.banned.ToString(name));

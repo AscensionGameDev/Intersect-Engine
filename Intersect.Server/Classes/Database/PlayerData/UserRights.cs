@@ -21,8 +21,10 @@ namespace Intersect.Server.Database.PlayerData
 
         public bool IsModerator => Ban || Mute || Kick;
 
+        [NotNull]
         public static UserRights None => new UserRights();
 
+        [NotNull]
         public static UserRights Moderation => new UserRights
         {
             Ban = true,
@@ -30,6 +32,7 @@ namespace Intersect.Server.Database.PlayerData
             Mute = true
         };
 
+        [NotNull]
         public static UserRights Admin => new UserRights
         {
             Editor = true,
@@ -77,6 +80,28 @@ namespace Intersect.Server.Database.PlayerData
             return UserRightsPermissions
                 .FindAll(property => (bool) (property?.GetValue(userRights, null) ?? false) == permitted)
                 .Select(property => property?.Name).ToList();
+        }
+    }
+
+    public static class AccessExtensions
+    {
+        [NotNull]
+        public static UserRights AsUserRights(this Access access)
+        {
+            switch (access)
+            {
+                case Access.Admin:
+                    return UserRights.Admin;
+
+                case Access.Moderator:
+                    return UserRights.Moderation;
+
+                case Access.None:
+                    return UserRights.None;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(access), access, null);
+            }
         }
     }
 }

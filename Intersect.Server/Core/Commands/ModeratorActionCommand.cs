@@ -11,15 +11,12 @@ namespace Intersect.Server.Core.Commands
     internal abstract class ModeratorActionCommand : TargetClientCommand
     {
         [NotNull]
-        // TODO: Make this into a VariableArgument<int>
         private VariableArgument<int> Duration => FindArgumentOrThrow<VariableArgument<int>>();
 
         [NotNull]
-        // TODO: Make this into a VariableArgument<bool>
         private VariableArgument<bool> Ip => FindArgumentOrThrow<VariableArgument<bool>>();
 
         [NotNull]
-        // TODO: Refactor MessageArgument into a VariableArgument<string>
         private VariableArgument<string> Reason => FindArgumentOrThrow<VariableArgument<string>>(1);
 
         protected ModeratorActionCommand(
@@ -42,7 +39,7 @@ namespace Intersect.Server.Core.Commands
         {
             if (target == null)
             {
-                Console.WriteLine(@"    " + Strings.Player.offline);
+                Console.WriteLine($@"    {Strings.Player.offline}");
                 return;
             }
 

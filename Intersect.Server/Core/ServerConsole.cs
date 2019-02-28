@@ -25,6 +25,7 @@ namespace Intersect.Server.Core
             Parser = new CommandParser();
             Parser.Register<AnnouncementCommand>();
             Parser.Register<BanCommand>();
+            Parser.Register<CpsCommand>();
             Parser.Register<ExitCommand>();
             Parser.Register<HelpCommand>();
             Parser.Register<KickCommand>();
@@ -35,6 +36,8 @@ namespace Intersect.Server.Core
             Parser.Register<MuteCommand>();
             Parser.Register<NetDebugCommand>();
             Parser.Register<OnlineListCommand>();
+            Parser.Register<PowerAccountCommand>();
+            Parser.Register<PowerCommand>();
             Parser.Register<UnbanCommand>();
             Parser.Register<UnmuteCommand>();
         }
@@ -104,70 +107,7 @@ namespace Intersect.Server.Core
                 command = command.Trim();
                 var commandsplit = command.Split(' ');
 
-                if (commandsplit[0] == Strings.Commands.Power.Name) //Power Command
-                {
-                    if (commandsplit.Length > 1)
-                    {
-                        if (commandsplit[1] == Strings.Commands.commandinfo)
-                        {
-                            Console.WriteLine(
-                                @"    " + Strings.Commands.Power.Usage.ToString(Strings.Commands.commandinfo));
-                            Console.WriteLine(@"    " + Strings.Commands.Power.Description);
-                        }
-                        else
-                        {
-                            if (commandsplit.Length > 2)
-                            {
-                                for (var i = 0; i < Globals.Clients.Count; i++)
-                                    if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
-                                    {
-                                        var user = Globals.Clients[i].Entity.Name.ToLower();
-                                        if (user == commandsplit[1].ToLower())
-                                        {
-                                            var power = UserRights.None;
-                                            switch ((Access) int.Parse(commandsplit[2]))
-                                            {
-                                                case Access.Moderator:
-                                                    power = UserRights.Moderation;
-                                                    break;
-                                                case Access.Admin:
-                                                    power = UserRights.Admin;
-                                                    break;
-                                            }
-
-                                            LegacyDatabase.SetPlayerPower(Globals.Clients[i].Name, power);
-                                            PacketSender.SendEntityDataToProximity(Globals.Clients[i].Entity);
-                                            if (power != UserRights.None)
-                                                PacketSender.SendGlobalMsg(
-                                                    Strings.Player.admin.ToString(Globals.Clients[i].Entity.Name));
-                                            else
-                                                PacketSender.SendGlobalMsg(
-                                                    Strings.Player.deadmin.ToString(Globals.Clients[i].Entity.Name));
-                                            Console.WriteLine(
-                                                @"    " + Strings.Commandoutput.powerchanged.ToString(Globals.Clients[i]
-                                                    .Entity.Name));
-
-                                            userFound = true;
-                                            break;
-                                        }
-                                    }
-
-                                if (userFound == false) Console.WriteLine(@"    " + Strings.Player.offline);
-                            }
-                            else
-                            {
-                                Console.WriteLine(
-                                    Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine(
-                            Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
-                    }
-                }
-                else if (commandsplit[0] == Strings.Commands.Api.Name) //API Command
+                if (commandsplit[0] == Strings.Commands.Api.Name) //API Command
                 {
                     if (commandsplit.Length > 1)
                     {
@@ -201,70 +141,6 @@ namespace Intersect.Server.Core
                                             }
 
                                             LegacyDatabase.SavePlayerDatabaseAsync();
-                                        }
-                                        else
-                                        {
-                                            Console.WriteLine(
-                                                @"    " + Strings.Account.notfound.ToString(commandsplit[1]));
-                                        }
-                                    }
-                                    catch (Exception)
-                                    {
-                                        Console.WriteLine(
-                                            @"    " + Strings.Commandoutput.parseerror.ToString(commandsplit[0],
-                                                Strings.Commands.commandinfo));
-                                    }
-                                else
-                                    Console.WriteLine(
-                                        @"    " + Strings.Commandoutput.syntaxerror.ToString(commandsplit[0],
-                                            Strings.Commands.commandinfo));
-                            }
-                            else
-                            {
-                                Console.WriteLine(
-                                    Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine(
-                            Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
-                    }
-                }
-                else if (commandsplit[0] == Strings.Commands.PowerAccount.Name) //Power Account Command
-                {
-                    if (commandsplit.Length > 1)
-                    {
-                        if (commandsplit[1] == Strings.Commands.commandinfo)
-                        {
-                            Console.WriteLine(
-                                @"    " + Strings.Commands.PowerAccount.Usage.ToString(Strings.Commands.commandinfo));
-                            Console.WriteLine(@"    " + Strings.Commands.PowerAccount.Description);
-                        }
-                        else
-                        {
-                            if (commandsplit.Length > 2)
-                            {
-                                if (commandsplit.Length > 2)
-                                    try
-                                    {
-                                        if (LegacyDatabase.AccountExists(commandsplit[1]))
-                                        {
-                                            var power = UserRights.None;
-                                            switch ((Access) int.Parse(commandsplit[2]))
-                                            {
-                                                case Access.Moderator:
-                                                    power = UserRights.Moderation;
-                                                    break;
-                                                case Access.Admin:
-                                                    power = UserRights.Admin;
-                                                    break;
-                                            }
-
-                                            LegacyDatabase.SetPlayerPower(commandsplit[1], power);
-                                            Console.WriteLine(
-                                                @"    " + Strings.Commandoutput.powerchanged.ToString(commandsplit[1]));
                                         }
                                         else
                                         {

@@ -128,6 +128,21 @@ namespace Intersect.Server
             }
         }
 
+        public static bool SetPlayerPower([CanBeNull] User user, UserRights power)
+        {
+            if (user != null)
+            {
+                user.Power = power;
+                SavePlayerDatabaseAsync();
+                return true;
+            }
+            else
+            {
+                Console.WriteLine(Strings.Account.doesnotexist);
+                return false;
+            }
+        }
+
         //User Info
         public static bool AccountExists([NotNull] string accountname)
         {

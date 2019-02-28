@@ -435,6 +435,15 @@ namespace Intersect.Server.Core.CommandParsing
 
                                 if (TryParseArgument(argument.ValueType, defaultValue, valuePart, out var parsedPart))
                                 {
+                                    if (!argument.IsValueAllowed(parsedPart))
+                                    {
+                                        errors.Add(
+                                            new ParserError(
+                                                Localization.Errors.InvalidArgumentValue.ToString(valuePart, cleanArgName)
+                                            )
+                                        );
+                                    }
+
                                     return parsedPart;
                                 }
 
@@ -495,10 +504,21 @@ namespace Intersect.Server.Core.CommandParsing
                         }
                     }
 
+                    if (!argument.IsValueAllowed(value))
+                    {
+                        errors.Add(
+                            new ParserError(
+                                // TODO: DisallowedArgumentValue message instead
+                                Localization.Errors.InvalidArgumentValue.ToString(value, cleanArgName)
+                            )
+                        );
+                    }
+
+
                     values.Add(value);
                 }
 
-                parsed[argument] = new ArgumentValues(values);
+                parsed[argument] = new ArgumentValues(cleanArgName, values);
 
                 if (isPositional)
                 {
@@ -506,19 +526,26 @@ namespace Intersect.Server.Core.CommandParsing
                 }
             });
 
+            var parserContext = new ParserContext
+            {
+                Command = command,
+                Tokens = tokens.ToImmutableList(),
+                Errors = errors.ToImmutableList(),
+                Parsed = parsed.ToImmutableDictionary()
+            };
             foreach (var argument in command.Arguments)
             {
-                if (!argument.IsRequired(new ParserContext
+                if (!argument.IsRequired(parserContext) || parsed.ContainsKey(argument))
                 {
-                    Command = command,
-                    Tokens = tokens.ToImmutableList(),
-                    Errors = errors.ToImmutableList(),
-                    Parsed = parsed.ToImmutableDictionary()
-                }) || parsed.ContainsKey(argument))
-                {
+                    if (!parsed.ContainsKey(argument))
+                    {
+                        parsed[argument] = ConstructDefaultArgument(argument);
+                    }
                     continue;
                 }
 
+
+                // TODO: Positional?
                 errors.Add(
                     new ParserError(
                         Localization.Errors.MissingNamedArgument.ToString(PrefixLong, argument.Name, command.Name)
@@ -547,9 +574,10 @@ namespace Intersect.Server.Core.CommandParsing
         [NotNull]
         protected virtual ArgumentValues ConstructDefaultArgument([NotNull] ICommandArgument argument)
         {
+            var argumentName = argument.ShortName == '\0' ? PrefixShort + argument.ShortName : PrefixLong + argument.Name;
             return argument.ValueType.IsArray
-                ? new ArgumentValues((argument.DefaultValue as IEnumerable)?.Cast<object>())
-                : new ArgumentValues(argument.DefaultValue);
+                ? new ArgumentValues(argumentName, (argument.DefaultValue as IEnumerable)?.Cast<object>())
+                : new ArgumentValues(argumentName, argument.DefaultValue);
         }
 
         protected virtual bool TryParseArgument(

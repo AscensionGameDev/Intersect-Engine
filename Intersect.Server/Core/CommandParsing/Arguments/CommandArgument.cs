@@ -16,7 +16,7 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
 
         public object ValueTypeDefault => default(TValue);
 
-        public object DefaultValue => default(TValue);
+        public object DefaultValue { get; }
 
         public virtual bool IsFlag => false;
 
@@ -41,26 +41,30 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
             [NotNull] LocaleArgument localization,
             bool required = false,
             bool positional = false,
-            bool allowsMultiple = false
+            bool allowsMultiple = false,
+            TValue defaultValue = default(TValue)
         )
         {
             Localization = localization;
             IsPositional = positional;
             mRequired = required;
             AllowsMultiple = allowsMultiple;
+            DefaultValue = defaultValue;
         }
 
         protected CommandArgument(
             [NotNull] LocaleArgument localization,
             [NotNull] ArgumentRequiredPredicate requiredPredicate,
             bool positional = false,
-            bool allowsMultiple = false
+            bool allowsMultiple = false,
+            TValue defaultValue = default(TValue)
         )
         {
             Localization = localization;
             IsPositional = positional;
             mRequiredPredicate = requiredPredicate;
             AllowsMultiple = allowsMultiple;
+            DefaultValue = defaultValue;
         }
 
         public TValue DefaultValueAsType()
@@ -71,6 +75,11 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
         public TDefaultValue DefaultValueAsType<TDefaultValue>()
         {
             return DefaultValue == null ? default(TDefaultValue) : (TDefaultValue) DefaultValue;
+        }
+
+        public virtual bool IsValueAllowed(object value)
+        {
+            return true;
         }
     }
 

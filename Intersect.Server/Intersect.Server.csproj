@@ -425,6 +425,7 @@
     <Compile Include="Classes\Spells\SpellInstance.cs" />
     <Compile Include="Classes\Networking\Lidgren\ServerNetwork.cs" />
     <Compile Include="Classes\Networking\Lidgren\ThreadYieldNet40.cs" />
+    <Compile Include="Core\CommandParsing\Arguments\EnumArgument.cs" />
     <Compile Include="Core\CommandParsing\Arguments\VariableArgument.cs" />
     <Compile Include="Core\CommandParsing\Commands\HelpableCommand.cs" />
     <Compile Include="Core\CommandParsing\Arguments\PositionalArgument.cs" />
@@ -436,6 +437,9 @@
     <Compile Include="Core\CommandParsing\CommandParser.cs" />
     <Compile Include="Core\CommandParsing\ParserResultExtensions.cs" />
     <Compile Include="Core\Commands\AnnouncementCommand.cs" />
+    <Compile Include="Core\Commands\CpsCommand.cs" />
+    <Compile Include="Core\Commands\PowerAccountCommand.cs" />
+    <Compile Include="Core\Commands\PowerCommand.cs" />
     <Compile Include="Core\Commands\ModeratorActionCommand.cs" />
     <Compile Include="Core\Commands\MuteCommand.cs" />
     <Compile Include="Core\Commands\ExitCommand.cs" />
