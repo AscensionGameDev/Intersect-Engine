@@ -34,5 +34,7 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
 
         [CanBeNull]
         TValue DefaultValueAsType<TValue>();
+
+        bool IsValueAllowed([CanBeNull] object value);
     }
 }

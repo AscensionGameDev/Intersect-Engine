@@ -9,8 +9,9 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
             [NotNull] LocaleArgument localization,
             bool required = false,
             bool positional = false,
-            bool allowsMultiple = false
-        ) : base(localization, required, positional, allowsMultiple)
+            bool allowsMultiple = false,
+            TValue defaultValue = default(TValue)
+        ) : base(localization, required, positional, allowsMultiple, defaultValue)
         {
         }
 
@@ -18,8 +19,9 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
             [NotNull] LocaleArgument localization,
             [NotNull] ArgumentRequiredPredicate requiredPredicate,
             bool positional = false,
-            bool allowsMultiple = false
-        ) : base(localization, requiredPredicate, positional, allowsMultiple)
+            bool allowsMultiple = false,
+            TValue defaultValue = default(TValue)
+        ) : base(localization, requiredPredicate, positional, allowsMultiple, defaultValue)
         {
         }
     }

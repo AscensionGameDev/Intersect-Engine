@@ -18,10 +18,17 @@ namespace Intersect.Server.Core.Commands
 
         protected override void HandleClient(ServerContext context, Client target, int duration, bool ip, string reason)
         {
+            if (target.Entity == null)
+            {
+                Console.WriteLine($@"    {Strings.Player.offline}");
+                return;
+            }
+
             // TODO: Refactor the global/console messages into ModeratorActionCommand
+            var name = target.Entity.Name;
             Mute.AddMute(target, duration, reason, Strings.Commands.muteuser, ip ? target.GetIp() : "");
-            PacketSender.SendGlobalMsg(Strings.Account.muted.ToString(target.Entity?.Name));
-            Console.WriteLine($@"    {Strings.Account.muted.ToString(target.Entity?.Name)}");
+            PacketSender.SendGlobalMsg(Strings.Account.muted.ToString(name));
+            Console.WriteLine($@"    {Strings.Account.muted.ToString(name)}");
         }
     }
 }

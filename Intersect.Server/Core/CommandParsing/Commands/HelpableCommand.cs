@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using Intersect.Core;
+﻿using Intersect.Core;
+using Intersect.Extensions;
 using Intersect.Localization;
 using Intersect.Server.Core.CommandParsing.Arguments;
 using Intersect.Server.Localization;
@@ -15,10 +15,10 @@ namespace Intersect.Server.Core.CommandParsing.Commands
 
         protected HelpableCommand(
             [NotNull] LocaleCommand localization,
-            [CanBeNull] params ICommandArgument[] arguments
+            [NotNull] params ICommandArgument[] arguments
             ) : base(
             localization,
-            new [] { new HelpArgument() }.Concat(arguments ?? new ICommandArgument[0]).ToArray()
+            arguments.Prepend(new HelpArgument())
         )
         {
         }
@@ -37,8 +37,9 @@ namespace Intersect.Server.Core.CommandParsing.Commands
         {
             if (result.Find(Help))
             {
-                Console.WriteLine(@"    " + Localization.Usage.ToString(Strings.Commands.commandinfo));
-                Console.WriteLine(@"    " + Localization.Description);
+                Console.WriteLine(
+                    $@"    {Localization.Usage.ToString(result.Parsed.Find(Help as ICommandArgument)?.ArgumentName)}");
+                Console.WriteLine($@"    {Localization.Description}");
                 return;
             }
 

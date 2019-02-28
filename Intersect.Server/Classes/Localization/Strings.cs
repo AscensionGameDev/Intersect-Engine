@@ -439,6 +439,26 @@ namespace Intersect.Server.Localization
                     Description = @"the message to send"
                 };
 
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+                [NotNull]
+                public readonly LocaleArgument CpsOperation = new LocaleArgument
+                {
+                    Name = @"operation",
+                    Description = @"one of the following: status, lock, unlock"
+                };
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+                [NotNull]
+                public readonly LocalizedString CpsLock = @"lock";
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+                [NotNull]
+                public readonly LocalizedString CpsStatus = @"status";
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+                [NotNull]
+                public readonly LocalizedString CpsUnlock = @"unlock";
+
                 [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
                 public readonly LocaleArgument DurationBan = new LocaleArgument
                 {
@@ -461,6 +481,13 @@ namespace Intersect.Server.Localization
                 public readonly LocaleArgument IpMute = new LocaleArgument
                 {
                     Description = @"if it is an IP mute"
+                };
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+                [NotNull]
+                public readonly LocaleArgument Power = new LocaleArgument
+                {
+                    Description = @"the access level to assign"
                 };
 
                 [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
@@ -493,10 +520,25 @@ namespace Intersect.Server.Localization
                     Description = @"the name of the player to ban"
                 };
 
-                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+                [NotNull]
                 public readonly LocaleArgument TargetMute = new LocaleArgument
                 {
                     Description = @"the name of the player to mute"
+                };
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+                [NotNull]
+                public readonly LocaleArgument TargetPower = new LocaleArgument
+                {
+                    Description = @"the name of the player to change the access of"
+                };
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+                [NotNull]
+                public readonly LocaleArgument TargetPowerAccount = new LocaleArgument
+                {
+                    Description = @"the name of the acount to change the access of"
                 };
 
                 [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
@@ -582,7 +624,7 @@ namespace Intersect.Server.Localization
                 Description =
                     @"Desc: Prints the current CPS. The status flag tells if the server loop is locked or unlocked. The lock flag locks the cps while the unlock flag unlocks it.",
                 Help = @"prints the current server cps",
-                Usage = @"Usage: cps [status] [lock] [unlock] {00}"
+                Usage = @"Usage: cps [status|lock|unlock] {00}"
             };
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]

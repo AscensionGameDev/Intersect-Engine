@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
 using Intersect.Enums;
 using Intersect.Logging;
 using Intersect.Network;
@@ -11,8 +6,12 @@ using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Entities;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
-using Intersect.Server.Maps;
 using Lidgren.Network;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text;
 
 namespace Intersect.Server.Networking
 {
@@ -21,6 +20,7 @@ namespace Intersect.Server.Networking
     public class Client
     {
         //Game Incorperation Variables
+
         public string Name => User?.Name;
         public string Email => User?.Email;
         public Guid Id => User?.Id ?? Guid.Empty;
