@@ -441,6 +441,7 @@
     <Compile Include="Core\CommandParsing\ParserResultExtensions.cs" />
     <Compile Include="Core\CommandParsing\ParserSettings.cs" />
     <Compile Include="Core\Commands\AnnouncementCommand.cs" />
+    <Compile Include="Core\Commands\ApiCommand.cs" />
     <Compile Include="Core\Commands\CpsCommand.cs" />
     <Compile Include="Core\Commands\PowerAccountCommand.cs" />
     <Compile Include="Core\Commands\PowerCommand.cs" />

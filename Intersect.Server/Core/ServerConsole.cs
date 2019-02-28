@@ -25,7 +25,9 @@ namespace Intersect.Server.Core
                     localization: Strings.Commands.Parsing
                 )
             );
+
             Parser.Register<AnnouncementCommand>();
+            Parser.Register<ApiCommand>();
             Parser.Register<BanCommand>();
             Parser.Register<CpsCommand>();
             Parser.Register<ExitCommand>();
@@ -114,97 +116,6 @@ namespace Intersect.Server.Core
                         )
                     );
                 }
-            }
-
-            return;
-            //Console.Write("> ");
-            var command = Console.ReadLine(true);
-            while (ServerContext.Instance.IsRunning)
-            {
-                var userFound = false;
-                var ip = "";
-                if (command == null)
-                {
-                    ServerContext.Instance.Dispose();
-                    //ServerStatic.Shutdown();
-                    return;
-                }
-
-                command = command.Trim();
-                var commandsplit = command.Split(' ');
-
-                if (commandsplit[0] == Strings.Commands.Api.Name) //API Command
-                {
-                    if (commandsplit.Length > 1)
-                    {
-                        if (commandsplit[1] == Strings.Commands.commandinfo)
-                        {
-                            Console.WriteLine(@"    " + Strings.Commands.Api.Description);
-                        }
-                        else
-                        {
-                            if (commandsplit.Length > 2)
-                            {
-                                if (commandsplit.Length > 2)
-                                    try
-                                    {
-                                        if (LegacyDatabase.AccountExists(commandsplit[1]))
-                                        {
-                                            var access = Convert.ToBoolean(int.Parse(commandsplit[2]));
-                                            var account = LegacyDatabase.GetUser(commandsplit[1]);
-                                            account.Power.Api = access;
-                                            if (access)
-                                            {
-                                                Console.WriteLine(
-                                                    @"    " + Strings.Commandoutput.apigranted
-                                                        .ToString(commandsplit[1]));
-                                            }
-                                            else
-                                            {
-                                                Console.WriteLine(
-                                                    @"    " + Strings.Commandoutput.apirevoked
-                                                        .ToString(commandsplit[1]));
-                                            }
-
-                                            LegacyDatabase.SavePlayerDatabaseAsync();
-                                        }
-                                        else
-                                        {
-                                            Console.WriteLine(
-                                                @"    " + Strings.Account.notfound.ToString(commandsplit[1]));
-                                        }
-                                    }
-                                    catch (Exception)
-                                    {
-                                        Console.WriteLine(
-                                            @"    " + Strings.Commandoutput.parseerror.ToString(commandsplit[0],
-                                                Strings.Commands.commandinfo));
-                                    }
-                                else
-                                    Console.WriteLine(
-                                        @"    " + Strings.Commandoutput.syntaxerror.ToString(commandsplit[0],
-                                            Strings.Commands.commandinfo));
-                            }
-                            else
-                            {
-                                Console.WriteLine(
-                                    Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine(
-                            Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
-                    }
-                }
-                else
-                {
-                    Console.WriteLine(@"    " + Strings.Commandoutput.notfound);
-                }
-
-                //Console.Write("> ");
-                command = Console.ReadLine(true);
             }
         }
     }
