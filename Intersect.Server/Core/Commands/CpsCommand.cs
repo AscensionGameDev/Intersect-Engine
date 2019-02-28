@@ -28,15 +28,15 @@ namespace Intersect.Server.Core.Commands
         protected override void HandleValue(ServerContext context, ParserResult result)
         {
             var operation = result.Find(Operation);
-            if (operation == Strings.Commands.cpslock)
+            if (operation == Strings.Commands.Arguments.CpsLock)
             {
                 Globals.CpsLock = true;
             }
-            else if (operation == Strings.Commands.cpsunlock)
+            else if (operation == Strings.Commands.Arguments.CpsUnlock)
             {
                 Globals.CpsLock = false;
             }
-            //else if (operation == Strings.Commands.cpsstatus)
+            //else if (operation == Strings.Commands.Arguments.CpsStatus)
             //{
             //    Console.WriteLine(Globals.CpsLock
             //        ? Strings.Commandoutput.cpslocked

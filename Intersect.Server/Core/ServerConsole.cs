@@ -1,12 +1,9 @@
-﻿using Intersect.Enums;
-using Intersect.Logging;
+﻿using Intersect.Logging;
 using Intersect.Server.Core.CommandParsing;
 using Intersect.Server.Core.CommandParsing.Errors;
 using Intersect.Server.Core.Commands;
-using Intersect.Server.Database.PlayerData;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
-using Intersect.Server.Networking;
 using Intersect.Threading;
 using JetBrains.Annotations;
 using System;
@@ -22,7 +19,11 @@ namespace Intersect.Server.Core
         {
             Console.WaitPrefix = "> ";
 
-            Parser = new CommandParser();
+            Parser = new CommandParser(
+                new ParserSettings(
+                    localization: Strings.Commands.Parsing
+                )
+            );
             Parser.Register<AnnouncementCommand>();
             Parser.Register<BanCommand>();
             Parser.Register<CpsCommand>();
@@ -170,42 +171,6 @@ namespace Intersect.Server.Core
                     {
                         Console.WriteLine(
                             Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
-                    }
-                }
-                else if (commandsplit[0] == Strings.Commands.Cps.Name) //CPS Command
-                {
-                    if (commandsplit.Length > 1)
-                    {
-                        if (commandsplit[1] == Strings.Commands.commandinfo)
-                        {
-                            Console.WriteLine(
-                                @"    " + Strings.Commands.Cps.Usage.ToString(Strings.Commands.commandinfo));
-                            Console.WriteLine(@"    " + Strings.Commands.Cps.Description);
-                        }
-                        else if (commandsplit[1] == Strings.Commands.cpslock)
-                        {
-                            Globals.CpsLock = true;
-                        }
-                        else if (commandsplit[1] == Strings.Commands.cpsunlock)
-                        {
-                            Globals.CpsLock = false;
-                        }
-                        else if (commandsplit[1] == Strings.Commands.cpsstatus)
-                        {
-                            if (Globals.CpsLock)
-                                Console.WriteLine(Strings.Commandoutput.cpslocked);
-                            else
-                                Console.WriteLine(Strings.Commandoutput.cpsunlocked);
-                        }
-                        else
-                        {
-                            Console.WriteLine(
-                                Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine(Strings.Commandoutput.cps.ToString(Globals.Cps));
                     }
                 }
                 else

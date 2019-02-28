@@ -1,25 +1,18 @@
-﻿using System.Collections.Generic;
-using System.Collections.Immutable;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
+using System.Collections.Generic;
 
 namespace Intersect.Server.Core.CommandParsing.Tokenization
 {
     public class Tokenizer
     {
-        public static TokenizerSettings DefaultSettings => new TokenizerSettings
-        {
-            AllowQuotedStrings = true,
-            Delimeter = ' ',
-            QuotationMarks = new [] { '"' }.ToImmutableArray()
-        };
-
+        [NotNull]
         public TokenizerSettings Settings { get; }
 
-        public Tokenizer() : this(DefaultSettings)
+        public Tokenizer() : this(TokenizerSettings.Default)
         {
         }
 
-        public Tokenizer(TokenizerSettings settings)
+        public Tokenizer([NotNull] TokenizerSettings settings)
         {
             Settings = settings;
         }
@@ -36,7 +29,8 @@ namespace Intersect.Server.Core.CommandParsing.Tokenization
                 if (Settings.AllowQuotedStrings && Settings.QuotationMarks.Contains(chr))
                 {
                     tokens.Add(ExtractToken(input, ref position, chr));
-                } else if (chr == Settings.Delimeter)
+                }
+                else if (chr == Settings.Delimeter)
                 {
                     tokens.Add(ExtractToken(input, ref position, chr));
                 }
@@ -58,6 +52,7 @@ namespace Intersect.Server.Core.CommandParsing.Tokenization
             {
                 next = input.Length;
             }
+
             position = next + 1;
 
             var length = next - start;
