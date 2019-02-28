@@ -9,6 +9,8 @@ namespace Intersect.Server.Database.PlayerData
 {
     public class UserRights
     {
+        private readonly int mHashCode = new Random().Next();
+
         public bool Editor { get; set; }
 
         public bool Ban { get; set; }
@@ -43,8 +45,10 @@ namespace Intersect.Server.Database.PlayerData
 
         public static bool operator ==(UserRights b1, UserRights b2)
         {
-            if (null == (object)b1)
-                return (null == (object)b2);
+            if (b1 is null || b2 is null)
+            {
+                return b1 is null && b2 is null;
+            }
 
             return b1.Equals(b2);
         }
@@ -56,14 +60,18 @@ namespace Intersect.Server.Database.PlayerData
 
         public override bool Equals(object obj)
         {
-            if (obj.GetType() == typeof(UserRights))
-            {
-                var rights = (UserRights) obj;
-                return (Editor == rights.Editor && Ban == rights.Ban && Kick == rights.Kick && Mute == rights.Mute && Api == rights.Api);
-            }
-            return false;
+            return obj is UserRights userRights && Equals(userRights);
         }
-        
+
+        protected bool Equals([NotNull] UserRights other)
+        {
+            return Editor == other.Editor && Ban == other.Ban && Kick == other.Kick && Mute == other.Mute && Api == other.Api;
+        }
+
+        public override int GetHashCode()
+        {
+            return mHashCode;
+        }
     }
 
     public static class UserRightsHelper

@@ -433,6 +433,14 @@ namespace Intersect.Server.Localization
                     Description = @"Shows help information for this command"
                 };
 
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+                [NotNull]
+                public readonly LocaleArgument AccessBoolean = new LocaleArgument
+                {
+                    Name = @"access",
+                    Description = @"whether or not to grant/revoke access"
+                };
+
                 [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
                 public readonly LocaleArgument AnnouncementMessage = new LocaleArgument
                 {
@@ -508,6 +516,14 @@ namespace Intersect.Server.Localization
                 {
                     Name = @"reason",
                     Description = @"the reason for the mute"
+                };
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+                [NotNull]
+                public readonly LocaleArgument TargetApi = new LocaleArgument
+                {
+                    Name = @"account-name",
+                    Description = @"the name of the acount to change the API access of"
                 };
 
                 [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]

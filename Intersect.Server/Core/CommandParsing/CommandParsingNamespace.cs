@@ -16,5 +16,8 @@ namespace Intersect.Server.Core.CommandParsing
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
         public readonly LocalizedString ValueFalse =
             @"false";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+        public readonly LocaleDictionary<string, LocalizedString> TypeNames = new LocaleDictionary<string, LocalizedString>();
     }
 }

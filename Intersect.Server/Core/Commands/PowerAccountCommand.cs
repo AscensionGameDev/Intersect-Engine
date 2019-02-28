@@ -14,7 +14,7 @@ namespace Intersect.Server.Core.Commands
 
         public PowerAccountCommand() : base(
             Strings.Commands.PowerAccount,
-            Strings.Commands.Arguments.TargetPower,
+            Strings.Commands.Arguments.TargetPowerAccount,
             new VariableArgument<Access>(Strings.Commands.Arguments.Power, RequiredIfNotHelp, true)
         )
         {
