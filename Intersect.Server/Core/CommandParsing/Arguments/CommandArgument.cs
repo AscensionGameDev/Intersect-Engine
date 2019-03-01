@@ -12,11 +12,15 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
 
         public string Name => Localization.Name;
 
+        public string Description => Localization.Description;
+
         public Type ValueType => typeof(TValue);
 
         public object ValueTypeDefault => default(TValue);
 
         public object DefaultValue { get; }
+
+        public bool HasShortName => ShortName != '\0';
 
         public virtual bool IsFlag => false;
 
@@ -26,11 +30,13 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
 
         public string Delimeter { get; protected set; }
 
-        private readonly bool mRequired;
-
         private readonly ArgumentRequiredPredicate mRequiredPredicate;
 
-        public bool IsRequired(ParserContext parserContext) => mRequiredPredicate?.Invoke(parserContext) ?? mRequired;
+        public bool IsRequirementConditional => mRequiredPredicate != null;
+
+        public bool IsRequiredByDefault { get; }
+
+        public bool IsRequired(ParserContext parserContext) => mRequiredPredicate?.Invoke(parserContext) ?? IsRequiredByDefault;
 
         public bool IsPositional { get; }
 
@@ -47,7 +53,7 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
         {
             Localization = localization;
             IsPositional = positional;
-            mRequired = required;
+            IsRequiredByDefault = required;
             AllowsMultiple = allowsMultiple;
             DefaultValue = defaultValue;
         }
@@ -62,6 +68,7 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
         {
             Localization = localization;
             IsPositional = positional;
+            IsRequiredByDefault = true;
             mRequiredPredicate = requiredPredicate;
             AllowsMultiple = allowsMultiple;
             DefaultValue = defaultValue;

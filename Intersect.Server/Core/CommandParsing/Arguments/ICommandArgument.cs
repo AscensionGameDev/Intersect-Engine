@@ -11,6 +11,9 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
         string Name { get; }
 
         [NotNull]
+        string Description { get; }
+
+        [NotNull]
         Type ValueType { get; }
 
         [CanBeNull]
@@ -19,11 +22,17 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
         [CanBeNull]
         object DefaultValue { get; }
 
+        bool HasShortName { get; }
+
         bool AllowsMultiple { get; }
 
         bool IsCollection { get; }
 
         bool IsFlag { get; }
+
+        bool IsRequirementConditional { get; }
+
+        bool IsRequiredByDefault { get; }
 
         bool IsRequired(ParserContext parserContext);
 

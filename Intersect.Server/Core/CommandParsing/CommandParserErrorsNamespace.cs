@@ -109,13 +109,6 @@ namespace Intersect.Server.Core.CommandParsing
         public readonly LocalizedString MissingArguments = @"Missing one or more arguments: {00}";
 
         /// <summary>
-        /// Format for displaying the name and type of the missing argument.
-        /// </summary>
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        [NotNull]
-        public readonly LocalizedString MissingArgumentNameTypeFormat = @"{00} ({01})";
-
-        /// <summary>
         /// List delimeter for missing arguments.
         /// </summary>
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

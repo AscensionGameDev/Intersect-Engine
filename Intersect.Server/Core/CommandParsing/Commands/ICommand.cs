@@ -12,6 +12,9 @@ namespace Intersect.Server.Core.CommandParsing.Commands
         ImmutableList<ICommandArgument> Arguments { get; }
 
         [NotNull]
+        ImmutableList<ICommandArgument> UnsortedArguments { get; }
+
+        [NotNull]
         ImmutableList<ICommandArgument> NamedArguments { get; }
 
         [NotNull]
@@ -23,10 +26,17 @@ namespace Intersect.Server.Core.CommandParsing.Commands
         [NotNull]
         string Name { get; }
 
+        [NotNull]
+        string Description { get; }
+
         ICommandArgument FindArgument(char shortName);
 
         ICommandArgument FindArgument([NotNull] string name);
 
         void Handle([NotNull] IApplicationContext context, [NotNull] ParserResult result);
+
+        [NotNull]
+        string FormatUsage([NotNull] ParserSettings parserSettings, ParserContext parserContext,
+            bool formatPrint = false);
     }
 }

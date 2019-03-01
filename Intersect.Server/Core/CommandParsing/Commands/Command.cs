@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Text;
 using Intersect.Core;
 using Intersect.Localization;
 using Intersect.Server.Core.CommandParsing.Arguments;
@@ -12,11 +13,9 @@ namespace Intersect.Server.Core.CommandParsing.Commands
     public abstract class Command<TContext> : ICommand
         where TContext : IApplicationContext
     {
-        [NotNull] private readonly IDictionary<char, ICommandArgument> mShortNameLookup;
-
-        [NotNull] private readonly IDictionary<string, ICommandArgument> mNameLookup;
-
         public ImmutableList<ICommandArgument> Arguments { get; }
+
+        public ImmutableList<ICommandArgument> UnsortedArguments { get; }
 
         public ImmutableList<ICommandArgument> NamedArguments { get; }
 
@@ -25,6 +24,8 @@ namespace Intersect.Server.Core.CommandParsing.Commands
         public Type ContextType => typeof(TContext);
 
         public string Name => Localization.Name;
+
+        public string Description => Localization.Description;
 
         public ICommandArgument FindArgument(char shortName)
         {
@@ -47,6 +48,37 @@ namespace Intersect.Server.Core.CommandParsing.Commands
             Localization = localization;
 
             var argumentList = new List<ICommandArgument>((arguments ?? new ICommandArgument[0]).Where(argument => argument != null));
+            UnsortedArguments = argumentList.ToImmutableList();
+
+            argumentList.Sort((a, b) =>
+            {
+                if (a == null)
+                {
+                    return 1;
+                }
+
+                if (b == null)
+                {
+                    return -1;
+                }
+
+                if (a.IsRequiredByDefault && !b.IsRequiredByDefault)
+                {
+                    return -1;
+                }
+
+                if (!a.IsRequiredByDefault && b.IsRequiredByDefault)
+                {
+                    return 1;
+                }
+
+                if (a.IsPositional)
+                {
+                    return b.IsPositional ? 0 : 1;
+                }
+
+                return b.IsPositional ? -1 : 0;
+            });
 
             Arguments = argumentList.ToImmutableList() ?? throw new InvalidOperationException();
 
@@ -59,18 +91,62 @@ namespace Intersect.Server.Core.CommandParsing.Commands
                                       argument?.IsPositional ??
                                       throw new InvalidOperationException(@"No null arguments should be in the list.")
                                   ).ToImmutableList() ?? throw new InvalidOperationException();
+        }
 
-            mShortNameLookup = NamedArguments.ToDictionary(
-                argument => argument?.ShortName ??
-                            throw new InvalidOperationException(@"No null arguments should be in the list."),
-                argument => argument
-            );
+        public string FormatUsage(ParserSettings parserSettings, ParserContext parserContext, bool formatPrint = false)
+        {
+            var usageBuilder = new StringBuilder(Name);
 
-            mNameLookup = NamedArguments.ToDictionary(
-                argument => argument?.Name ??
-                            throw new InvalidOperationException(@"No null arguments should be in the list."),
-                argument => argument
-            );
+            Arguments.ForEach(argument =>
+            {
+                if (argument == null)
+                {
+                    return;
+                }
+
+                var argumentUsageBuilder = new StringBuilder(argument.Name);
+                if (!argument.IsPositional)
+                {
+                    argumentUsageBuilder.Insert(0, parserSettings.PrefixLong);
+                }
+
+                if (!argument.IsFlag)
+                {
+                    var typeName = argument.ValueType.Name;
+                    if (parserSettings.Localization.TypeNames.TryGetValue(typeName, out var localizedType))
+                    {
+                        typeName = localizedType;
+                    }
+
+                    if (argument.IsPositional)
+                    {
+                        argumentUsageBuilder.Append(parserSettings.Localization.Formatting.Type.ToString(typeName));
+                    }
+                    else
+                    {
+                        argumentUsageBuilder.Append('=');
+                        argumentUsageBuilder.Append(typeName);
+                    }
+                }
+
+                var argumentUsage = argumentUsageBuilder.ToString();
+                if (!argument.IsRequired(parserContext))
+                {
+                    argumentUsage = parserSettings.Localization.Formatting.Optional.ToString(argumentUsage);
+                }
+
+                usageBuilder.Append(' ');
+                usageBuilder.Append(argumentUsage);
+            });
+
+            var usage = usageBuilder.ToString().Trim();
+
+            if (formatPrint)
+            {
+                usage = parserSettings.Localization.Formatting.Usage.ToString(usage);
+            }
+
+            return usage;
         }
 
         [CanBeNull]
