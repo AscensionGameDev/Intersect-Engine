@@ -396,6 +396,7 @@
     <Compile Include="Classes\EventProcessing\Conditions.cs" />
     <Compile Include="Classes\General\Formulas.cs" />
     <Compile Include="Classes\General\ServerTime.cs" />
+    <Compile Include="Classes\Localization\CommandsNamespace.cs" />
     <Compile Include="Classes\Localization\Strings.cs" />
     <Compile Include="Classes\Maps\MapInstance.cs" />
     <Compile Include="Classes\Maps\MapItemInstance.cs" />
@@ -428,6 +429,7 @@
     <Compile Include="Core\CommandParsing\Arguments\EnumArgument.cs" />
     <Compile Include="Core\CommandParsing\Arguments\VariableArgument.cs" />
     <Compile Include="Core\CommandParsing\CommandParserErrorsNamespace.cs" />
+    <Compile Include="Core\CommandParsing\CommandParserFormattingNamespace.cs" />
     <Compile Include="Core\CommandParsing\CommandParsingNamespace.cs" />
     <Compile Include="Core\CommandParsing\Commands\HelpableCommand.cs" />
     <Compile Include="Core\CommandParsing\Arguments\PositionalArgument.cs" />

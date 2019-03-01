@@ -9,7 +9,7 @@ namespace Intersect.Server.Core.Commands
     {
         protected ServerCommand(
             [NotNull] LocaleCommand localization,
-            [CanBeNull] params ICommandArgument[] arguments
+            [NotNull] params ICommandArgument[] arguments
         ) : base(localization, arguments)
         {
         }

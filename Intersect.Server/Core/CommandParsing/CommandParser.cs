@@ -15,7 +15,7 @@ namespace Intersect.Server.Core.CommandParsing
     public sealed class CommandParser
     {
         [NotNull]
-        public ParserSettings ParserSettings { get; }
+        public ParserSettings Settings { get; }
 
         [NotNull]
         public Tokenizer Tokenizer { get; }
@@ -27,10 +27,10 @@ namespace Intersect.Server.Core.CommandParsing
         {
         }
 
-        public CommandParser([NotNull] ParserSettings parserSettings)
+        public CommandParser([NotNull] ParserSettings settings)
         {
-            ParserSettings = parserSettings;
-            Tokenizer = new Tokenizer(parserSettings.TokenizerSettings);
+            Settings = settings;
+            Tokenizer = new Tokenizer(settings.TokenizerSettings);
             Lookup = new Dictionary<string, ICommand>();
         }
 
@@ -91,7 +91,7 @@ namespace Intersect.Server.Core.CommandParsing
 
             if (tokens.Count < 1)
             {
-                return new ParserError(ParserSettings.Localization.Errors.NoInput,
+                return new ParserError(Settings.Localization.Errors.NoInput,
                     new ArgumentException(
                         @"No argument values were provided so unable to find a command.",
                         nameof(tokens)
@@ -103,7 +103,7 @@ namespace Intersect.Server.Core.CommandParsing
             var command = Find(commandName ?? throw new InvalidOperationException());
             if (command == null)
             {
-                return MissingCommandError.Create(commandName, ParserSettings.Localization.Errors.CommandNotFound).AsResult();
+                return MissingCommandError.Create(commandName, Settings.Localization.Errors.CommandNotFound).AsResult();
             }
 
             var positionalArguments = 0;
@@ -117,19 +117,19 @@ namespace Intersect.Server.Core.CommandParsing
                     throw new InvalidOperationException(@"None of the cleaned arguments should be null at this point.");
                 }
 
-                var canBeShortName = cleanArg.StartsWith(ParserSettings.PrefixShort);
+                var canBeShortName = cleanArg.StartsWith(Settings.PrefixShort);
                 if (canBeShortName)
                 {
-                    var expectedLength = ParserSettings.PrefixShort.Length + 1;
+                    var expectedLength = Settings.PrefixShort.Length + 1;
                     var actualLength = cleanArg.Contains('=') ? cleanArg.IndexOf('=') : cleanArg.Length;
                     canBeShortName = expectedLength == actualLength;
                 }
 
-                var canBeLongName = cleanArg.StartsWith(ParserSettings.PrefixLong);
+                var canBeLongName = cleanArg.StartsWith(Settings.PrefixLong);
                 if (canBeLongName)
                 {
                     var actualLength = cleanArg.Length;
-                    var maximumInvalidLength = ParserSettings.PrefixLong.Length + (cleanArg.Contains('=') ? 2 : 1);
+                    var maximumInvalidLength = Settings.PrefixLong.Length + (cleanArg.Contains('=') ? 2 : 1);
                     canBeLongName = actualLength > maximumInvalidLength;
                 }
 
@@ -143,7 +143,7 @@ namespace Intersect.Server.Core.CommandParsing
                     else
                     {
                         errors.Add(
-                            new ParserError(ParserSettings.Localization.Errors.BadArgumentFormat.ToString(cleanArg)
+                            new ParserError(Settings.Localization.Errors.BadArgumentFormat.ToString(cleanArg)
                             )
                         );
                         return;
@@ -153,7 +153,7 @@ namespace Intersect.Server.Core.CommandParsing
                 if (canBeShortName && canBeLongName)
                 {
                     errors.Add(
-                        new ParserError(ParserSettings.Localization.Errors.IllegalArgumentFormat.ToString(cleanArg, ParserSettings.PrefixShort, ParserSettings.PrefixLong)
+                        new ParserError(Settings.Localization.Errors.IllegalArgumentFormat.ToString(cleanArg, Settings.PrefixShort, Settings.PrefixLong)
                         )
                     );
                     return;
@@ -171,8 +171,8 @@ namespace Intersect.Server.Core.CommandParsing
                 var argument = isPositional
                     ? command.PositionalArguments[positionalArguments]
                     : canBeShortName
-                        ? command.FindArgument(cleanArgName[ParserSettings.PrefixShort.Length])
-                        : command.FindArgument(cleanArgName.Substring(ParserSettings.PrefixLong.Length));
+                        ? command.FindArgument(cleanArgName[Settings.PrefixShort.Length])
+                        : command.FindArgument(cleanArgName.Substring(Settings.PrefixLong.Length));
 
                 if (argument == null)
                 {
@@ -183,7 +183,7 @@ namespace Intersect.Server.Core.CommandParsing
                                 command.Name,
                                 positionalArguments,
                                 cleanArgValue,
-                                ParserSettings.Localization.Errors.UnhandledPositionalArgument
+                                Settings.Localization.Errors.UnhandledPositionalArgument
                             )
                         );
                     }
@@ -193,7 +193,7 @@ namespace Intersect.Server.Core.CommandParsing
                             UnhandledArgumentError.Create(
                                 command.Name,
                                 cleanArgName,
-                                ParserSettings.Localization.Errors.UnhandledNamedArgument
+                                Settings.Localization.Errors.UnhandledNamedArgument
                             )
                         );
                     }
@@ -207,7 +207,7 @@ namespace Intersect.Server.Core.CommandParsing
                     if (!argument.AllowsMultiple)
                     {
                         errors.Add(
-                            new ParserError(ParserSettings.Localization.Errors.DuplicateNamedArgument.ToString(cleanArgName),
+                            new ParserError(Settings.Localization.Errors.DuplicateNamedArgument.ToString(cleanArgName),
                                 false
                             )
                         );
@@ -226,7 +226,7 @@ namespace Intersect.Server.Core.CommandParsing
                     if (!string.IsNullOrEmpty(cleanArgValue))
                     {
                         errors.Add(
-                            new ParserError(ParserSettings.Localization.Errors.FlagArgumentsIgnoreValue.ToString(cleanArgName),
+                            new ParserError(Settings.Localization.Errors.FlagArgumentsIgnoreValue.ToString(cleanArgName),
                                 false
                             )
                         );
@@ -256,7 +256,7 @@ namespace Intersect.Server.Core.CommandParsing
                                     if (!argument.IsValueAllowed(parsedPart))
                                     {
                                         errors.Add(
-                                            new ParserError(ParserSettings.Localization.Errors.InvalidArgumentValue.ToString(valuePart, cleanArgName)
+                                            new ParserError(Settings.Localization.Errors.InvalidArgumentValue.ToString(valuePart, cleanArgName)
                                             )
                                         );
                                     }
@@ -267,7 +267,7 @@ namespace Intersect.Server.Core.CommandParsing
                                 if (argument.ValueType != typeof(object))
                                 {
                                     errors.Add(
-                                        new ParserError(ParserSettings.Localization.Errors.InvalidArgumentValueWithType.ToString(
+                                        new ParserError(Settings.Localization.Errors.InvalidArgumentValueWithType.ToString(
                                                 valuePart,
                                                 cleanArgName,
                                                 argument.ValueType.Name
@@ -279,7 +279,7 @@ namespace Intersect.Server.Core.CommandParsing
                                 else
                                 {
                                     errors.Add(
-                                        new ParserError(ParserSettings.Localization.Errors.InvalidArgumentValue.ToString(valuePart, cleanArgName),
+                                        new ParserError(Settings.Localization.Errors.InvalidArgumentValue.ToString(valuePart, cleanArgName),
                                             false
                                         )
                                     );
@@ -298,7 +298,7 @@ namespace Intersect.Server.Core.CommandParsing
                         if (argument.ValueType != typeof(object))
                         {
                             errors.Add(
-                                new ParserError(ParserSettings.Localization.Errors.InvalidArgumentValueWithType.ToString(
+                                new ParserError(Settings.Localization.Errors.InvalidArgumentValueWithType.ToString(
                                         cleanArgValue,
                                         cleanArgName,
                                         argument.ValueType.Name
@@ -310,7 +310,7 @@ namespace Intersect.Server.Core.CommandParsing
                         else
                         {
                             errors.Add(
-                                new ParserError(ParserSettings.Localization.Errors.InvalidArgumentValue.ToString(cleanArgValue, cleanArgName),
+                                new ParserError(Settings.Localization.Errors.InvalidArgumentValue.ToString(cleanArgValue, cleanArgName),
                                     false
                                 )
                             );
@@ -322,7 +322,7 @@ namespace Intersect.Server.Core.CommandParsing
                         errors.Add(
                             new ParserError(
                                 // TODO: DisallowedArgumentValue message instead
-                                ParserSettings.Localization.Errors.InvalidArgumentValue.ToString(value, cleanArgName)
+                                Settings.Localization.Errors.InvalidArgumentValue.ToString(value, cleanArgName)
                             )
                         );
                     }
@@ -347,6 +347,7 @@ namespace Intersect.Server.Core.CommandParsing
                 Parsed = parsed.ToImmutableDictionary()
             };
 
+            var omitted = new List<ICommandArgument>();
             var missing = new List<ICommandArgument>();
             foreach (var argument in command.Arguments)
             {
@@ -355,6 +356,7 @@ namespace Intersect.Server.Core.CommandParsing
                     if (!parsed.ContainsKey(argument))
                     {
                         parsed[argument] = ConstructDefaultArgument(argument);
+                        omitted.Add(argument);
                     }
 
                     continue;
@@ -364,7 +366,7 @@ namespace Intersect.Server.Core.CommandParsing
                 {
                     errors.Add(
                         MissingArgumentError.Create(
-                            ParserSettings.Localization.Errors.MissingPositionalArgument,
+                            Settings.Localization.Errors.MissingPositionalArgument,
                             argument.Name,
                             commandName
                         )
@@ -374,7 +376,7 @@ namespace Intersect.Server.Core.CommandParsing
                 {
                     errors.Add(
                         MissingArgumentError.Create(
-                            ParserSettings.PrefixLong,
+                            Settings.PrefixLong,
                             argument.Name,
                             commandName
                         )
@@ -384,7 +386,7 @@ namespace Intersect.Server.Core.CommandParsing
                 missing.Add(argument);
             }
 
-            return new ParserResult(command, new ArgumentValuesMap(parsed), errors, missing);
+            return new ParserResult(command, new ArgumentValuesMap(parsed), errors, missing, omitted);
         }
 
         [CanBeNull]
@@ -405,7 +407,7 @@ namespace Intersect.Server.Core.CommandParsing
         [NotNull]
         private ArgumentValues ConstructDefaultArgument([NotNull] ICommandArgument argument)
         {
-            var argumentName = argument.ShortName == '\0' ? ParserSettings.PrefixShort + argument.ShortName : ParserSettings.PrefixLong + argument.Name;
+            var argumentName = argument.ShortName == '\0' ? Settings.PrefixShort + argument.ShortName : Settings.PrefixLong + argument.Name;
             return argument.ValueType.IsArray
                 ? new ArgumentValues(argumentName, (argument.DefaultValue as IEnumerable)?.Cast<object>())
                 : new ArgumentValues(argumentName, argument.DefaultValue);
@@ -425,13 +427,13 @@ namespace Intersect.Server.Core.CommandParsing
                     var success = bool.TryParse(source, out var value);
                     if (!success)
                     {
-                        if (string.Equals(ParserSettings.Localization.ValueTrue.ToString(), source,
+                        if (string.Equals(Settings.Localization.ValueTrue.ToString(), source,
                             StringComparison.OrdinalIgnoreCase))
                         {
                             success = true;
                             value = true;
                         }
-                        else if (string.Equals(ParserSettings.Localization.ValueFalse.ToString(), source,
+                        else if (string.Equals(Settings.Localization.ValueFalse.ToString(), source,
                             StringComparison.OrdinalIgnoreCase))
                         {
                             success = true;

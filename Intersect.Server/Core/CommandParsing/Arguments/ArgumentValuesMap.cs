@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Intersect.Server.Core.CommandParsing.Commands;
 using JetBrains.Annotations;
@@ -12,10 +14,16 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
 
         public ArgumentValuesMap([CanBeNull] IEnumerable<KeyValuePair<ICommandArgument, ArgumentValues>> pairs = null)
         {
-            mValuesMap = pairs?.ToDictionary(pair => pair.Key, pair => pair.Value) ?? new Dictionary<ICommandArgument, ArgumentValues>();
+            mValuesMap = pairs?.ToDictionary(pair => pair.Key, pair => pair.Value) ??
+                         new Dictionary<ICommandArgument, ArgumentValues>();
         }
 
-        public IEnumerator<KeyValuePair<ICommandArgument, ArgumentValues>> GetEnumerator() => mValuesMap.GetEnumerator();
+        [NotNull]
+        public ImmutableDictionary<ICommandArgument, ArgumentValues> Values =>
+            mValuesMap.ToImmutableDictionary() ?? throw new InvalidOperationException();
+
+        public IEnumerator<KeyValuePair<ICommandArgument, ArgumentValues>> GetEnumerator() =>
+            mValuesMap.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
@@ -29,7 +37,9 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
         public TValue Find<TValue>([NotNull] ICommandArgument argument, int index = 0)
         {
             var argumentValues = Find(argument);
-            return argumentValues == null ? argument.DefaultValueAsType<TValue>() : argumentValues.ToTypedValue<TValue>(index);
+            return argumentValues == null
+                ? argument.DefaultValueAsType<TValue>()
+                : argumentValues.ToTypedValue<TValue>(index);
         }
 
         [CanBeNull]

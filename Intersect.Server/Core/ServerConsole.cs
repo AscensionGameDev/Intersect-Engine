@@ -2,12 +2,11 @@
 using Intersect.Server.Core.CommandParsing;
 using Intersect.Server.Core.CommandParsing.Errors;
 using Intersect.Server.Core.Commands;
-using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Threading;
 using JetBrains.Annotations;
-using System;
 using System.Linq;
+using Intersect.Server.Core.CommandParsing.Commands;
 
 namespace Intersect.Server.Core
 {
@@ -69,6 +68,7 @@ namespace Intersect.Server.Core
                 }
 
                 var result = Parser.Parse(line);
+                var shouldHelp = result.Command is IHelpableCommand helpable && result.Find(helpable.Help);
                 if (result.Missing.IsEmpty)
                 {
                     var fatalError = false;
@@ -97,7 +97,10 @@ namespace Intersect.Server.Core
 
                     if (!fatalError)
                     {
-                        result.Command?.Handle(ServerContext.Instance, result);
+                        if (!shouldHelp)
+                        {
+                            result.Command?.Handle(ServerContext.Instance, result);
+                        }
                     }
                 }
                 else
@@ -107,15 +110,83 @@ namespace Intersect.Server.Core
                             string.Join(
                                 Strings.Commands.Parsing.Errors.MissingArgumentsDelimeter,
                                 result.Missing.Select(argument =>
-                                    Strings.Commands.Parsing.Errors.MissingArgumentNameTypeFormat.ToString(
-                                        argument?.Name,
-                                        argument?.ValueType.Name
-                                    )
+                                    {
+                                        var typeName = argument?.ValueType.Name ?? Strings.Commands.Parsing.TypeUnknown;
+                                        if (Strings.Commands.Parsing.TypeNames.TryGetValue(typeName,
+                                            out var localizedType))
+                                        {
+                                            typeName = localizedType;
+                                        }
+
+                                        return argument?.Name +
+                                               Strings.Commands.Parsing.Formatting.Type.ToString(typeName);
+                                    }
                                 )
                             )
                         )
                     );
                 }
+
+                if (result.Command == null)
+                {
+                    continue;
+                }
+
+                var command = result.Command;
+                Console.WriteLine(command.FormatUsage(Parser.Settings, result.AsContext(true), true));
+
+                if (!shouldHelp)
+                {
+                    continue;
+                }
+
+                Console.WriteLine($@"    {command.Description}");
+                Console.WriteLine();
+
+                var requiredBuffer = command.Arguments.Count == 1
+                    ? ""
+                    : new string(' ', Strings.Commands.RequiredInfo.ToString().Length);
+                command.UnsortedArguments.ForEach(argument =>
+                {
+                    if (argument == null)
+                    {
+                        return;
+                    }
+
+                    var shortName = argument.HasShortName ? argument.ShortName.ToString() : null;
+                    var name = argument.Name;
+
+                    var typeName = argument.ValueType.Name;
+                    if (argument.IsFlag)
+                    {
+                        typeName = Strings.Commands.FlagInfo;
+                    }
+                    else if (Strings.Commands.Parsing.TypeNames.TryGetValue(typeName, out var localizedType))
+                    {
+                        typeName = localizedType;
+                    }
+
+                    if (!argument.IsPositional)
+                    {
+                        shortName = Parser.Settings.PrefixShort + shortName;
+                        name = Parser.Settings.PrefixLong + name;
+                    }
+
+                    var names = string.Join(
+                        ", ", new[] {shortName, name}.Where(nameString => !string.IsNullOrWhiteSpace(nameString))
+                    );
+
+                    var required = argument.IsRequiredByDefault
+                        ? Strings.Commands.RequiredInfo.ToString()
+                        : requiredBuffer;
+
+                    var descriptionSegment =
+                        string.IsNullOrEmpty(argument.Description) ? "" : $@" - {argument.Description}";
+
+                    Console.WriteLine($@"    {names,-16} {typeName,-12} {required}{descriptionSegment}");
+                });
+
+                Console.WriteLine();
             }
         }
     }

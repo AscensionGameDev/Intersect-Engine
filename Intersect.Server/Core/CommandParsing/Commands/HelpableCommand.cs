@@ -6,11 +6,16 @@ using JetBrains.Annotations;
 
 namespace Intersect.Server.Core.CommandParsing.Commands
 {
-    public abstract class HelpableCommand<TContext> : Command<TContext>
-        where TContext : IApplicationContext
+    public interface IHelpableCommand : ICommand
     {
         [NotNull]
-        protected HelpArgument Help => FindArgumentOrThrow<HelpArgument>();
+        HelpArgument Help { get; }
+    }
+
+    public abstract class HelpableCommand<TContext> : Command<TContext>, IHelpableCommand
+        where TContext : IApplicationContext
+    {
+        public HelpArgument Help => FindArgumentOrThrow<HelpArgument>();
 
         protected HelpableCommand(
             [NotNull] LocaleCommand localization,
@@ -36,10 +41,6 @@ namespace Intersect.Server.Core.CommandParsing.Commands
         {
             if (result.Find(Help))
             {
-                // TODO: Fix crash on IP ban thing, not sure how I want to handle the true/false part of the string
-                Console.WriteLine(
-                    $@"    {Localization.Usage.ToString(result.Parsed.Find(Help as ICommandArgument)?.ArgumentName)}");
-                Console.WriteLine($@"    {Localization.Description}");
                 return;
             }
 
