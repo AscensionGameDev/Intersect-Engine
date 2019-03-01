@@ -10,10 +10,9 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
 using Intersect.Core;
-using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking.Helpers;
-using Intersect.Server.WebApi;
+using Intersect.Server.Web.RestApi;
 using Open.Nat;
 #if WEBSOCKETS
 using Intersect.Server.Networking.Websockets;
@@ -42,12 +41,16 @@ namespace Intersect.Server.Core
         [NotNull]
         public ServerNetwork Network { get; }
 
+        [NotNull]
+        public RestApi RestApi { get; }
+
         public ServerContext([NotNull] CommandLineOptions startupOptions)
         {
             StartupOptions = startupOptions;
 
             ServerConsole = new ServerConsole();
             ServerLogic = new ServerLogic();
+            RestApi = new RestApi();
 
             Network = CreateNetwork();
         }
@@ -123,12 +126,9 @@ namespace Intersect.Server.Core
 
             if (Options.ApiEnabled)
             {
-                // TODO: API needs to be owned by the context, and rewritten to WebAPI2
                 Console.WriteLine(Strings.Intro.api.ToString(Options.ApiPort));
-                Globals.Api = new ServerApi(Options.ApiPort);
-                Globals.Api.Start();
+                RestApi.Start();
                 Console.WriteLine();
-                Bootstrapper.DeleteIfExists("Nancy.dll");
             }
 
             Bootstrapper.CheckNetwork();
@@ -195,7 +195,7 @@ namespace Intersect.Server.Core
 
                 // TODO: This needs to not be a global. I'm also in the middle of rewriting the API anyway.
                 Log.Info("Shutting down the API..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
-                Globals.Api?.Stop();
+                RestApi.Dispose();
 
                 #endregion
 

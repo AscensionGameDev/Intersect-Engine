@@ -231,7 +231,6 @@ namespace Intersect.Server.Core
             DeleteIfExists("libe_sqlite3.so");
             DeleteIfExists("e_sqlite3.dll");
             DeleteIfExists("libe_sqlite3.dylib");
-            DeleteIfExists("Nancy.dll");
         }
 
         private static string ReadProcessOutput(string name)
@@ -289,15 +288,6 @@ namespace Intersect.Server.Core
                 if (unixName.Contains("Darwin"))
                 {
                     platformId = PlatformID.MacOSX;
-                }
-            }
-
-            if (Options.ApiEnabled)
-            {
-                if (!ReflectionUtils.ExtractCosturaResource("costura.nancy.dll.compressed", "Nancy.dll"))
-                {
-                    Log.Error("Failed to extract Nancy, terminating startup.");
-                    Environment.Exit(-0x1001);
                 }
             }
 

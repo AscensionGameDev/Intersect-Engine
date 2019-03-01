@@ -263,23 +263,20 @@
     <Reference Include="Microsoft.Extensions.Primitives, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Extensions.Primitives.2.1.1\lib\netstandard2.0\Microsoft.Extensions.Primitives.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Owin, Version=2.0.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.2.0.2\lib\net45\Microsoft.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.HttpListener, Version=2.0.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Host.HttpListener.2.0.2\lib\net45\Microsoft.Owin.Host.HttpListener.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Hosting, Version=2.0.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Hosting.2.0.2\lib\net45\Microsoft.Owin.Hosting.dll</HintPath>
+    </Reference>
     <Reference Include="Mono.Data.Sqlite, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <HintPath>..\packages\Mono.Data.Sqlite.Portable.1.0.3.5\lib\net4\Mono.Data.Sqlite.dll</HintPath>
     </Reference>
     <Reference Include="MySqlConnector, Version=0.45.1.0, Culture=neutral, PublicKeyToken=d33d3e53aa5f8c92, processorArchitecture=MSIL">
       <HintPath>..\packages\MySqlConnector.0.45.1\lib\net461\MySqlConnector.dll</HintPath>
-    </Reference>
-    <Reference Include="Nancy, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nancy.2.0.0-pre1904\lib\net452\Nancy.dll</HintPath>
-    </Reference>
-    <Reference Include="Nancy.Authentication.Stateless, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nancy.Authentication.Stateless.2.0.0-pre1904\lib\net452\Nancy.Authentication.Stateless.dll</HintPath>
-    </Reference>
-    <Reference Include="Nancy.Hosting.Self, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nancy.Hosting.Self.2.0.0-pre1904\lib\net452\Nancy.Hosting.Self.dll</HintPath>
-    </Reference>
-    <Reference Include="Nancy.ViewEngines.Markdown, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nancy.ViewEngines.Markdown.2.0.0-pre1904\lib\net452\Nancy.ViewEngines.Markdown.dll</HintPath>
     </Reference>
     <Reference Include="NCalc, Version=1.3.8.0, Culture=neutral, PublicKeyToken=973cde3f1cafed03, processorArchitecture=MSIL">
       <HintPath>..\packages\ncalc.1.3.8\lib\NCalc.dll</HintPath>
@@ -290,6 +287,9 @@
     </Reference>
     <Reference Include="Open.Nat">
       <HintPath>..\lib\Open.Nat.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
     <Reference Include="Pomelo.EntityFrameworkCore.MySql, Version=2.1.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Pomelo.EntityFrameworkCore.MySql.2.1.2\lib\netstandard2.0\Pomelo.EntityFrameworkCore.MySql.dll</HintPath>
@@ -339,8 +339,8 @@
       <HintPath>..\packages\System.Memory.4.5.1\lib\netstandard2.0\System.Memory.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.Net.Http.Formatting, Version=5.2.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.6\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.7\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
     <Reference Include="System.Numerics" />
     <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -362,6 +362,12 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Http, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.7\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.Owin, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Owin.5.2.7\lib\net45\System.Web.Http.Owin.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.XML" />
     <Reference Include="websocket-sharp, Version=1.0.2.59611, Culture=neutral, PublicKeyToken=5660b08a1845a91e, processorArchitecture=MSIL">
@@ -477,7 +483,8 @@
       <DependentUpon>20180927161502_InitialPlayerDb.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />
-    <Compile Include="WebApi\Authentication\AuthorizationProvider.cs" />
+    <Compile Include="Web\RestApi\MediaTypeFormatterExtensions.cs" />
+    <Compile Include="Web\RestApi\RestApi.cs" />
     <Compile Include="Migrations\Game\20180905042857_Initial.cs" />
     <Compile Include="Migrations\Game\20180905042857_Initial.Designer.cs">
       <DependentUpon>20180905042857_Initial.cs</DependentUpon>
@@ -491,17 +498,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Utilities\SortHelper.cs" />
-    <Compile Include="WebApi\Authentication\IAuthorizationProvider.cs" />
-    <Compile Include="WebApi\Authentication\JwtToken.cs" />
-    <Compile Include="WebApi\Authentication\UserIdentity.cs" />
-    <Compile Include="WebApi\Bootstrapper.cs" />
-    <Compile Include="WebApi\Modules\AuthModule.cs" />
-    <Compile Include="WebApi\Modules\GameObjectModule.cs" />
-    <Compile Include="WebApi\Modules\PlayerModule.cs" />
-    <Compile Include="WebApi\Modules\RootModule.cs" />
-    <Compile Include="WebApi\Modules\InfoModule.cs" />
-    <Compile Include="WebApi\ServerApi.cs" />
-    <Compile Include="WebApi\ServerModule.cs" />
     <Compile Include="Core\CommandParsing\Arguments\HelpArgument.cs" />
     <Compile Include="Core\CommandParsing\Errors\ParserError.cs" />
     <Compile Include="Core\CommandParsing\Commands\ICommand.cs" />
@@ -509,6 +505,9 @@
     <Compile Include="Core\CommandParsing\ParserResult.cs" />
     <Compile Include="Core\Commands\ServerCommand.cs" />
     <Compile Include="Core\CommandParsing\Arguments\CommandArgument.cs" />
+    <Compile Include="Web\RestApi\RouteProviders\VersionedRouteProvider.cs" />
+    <Compile Include="Web\RestApi\Routes\RootInfoController.cs" />
+    <Compile Include="Web\RestApi\Routes\V1\InfoController.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="private-intersect.bek" />

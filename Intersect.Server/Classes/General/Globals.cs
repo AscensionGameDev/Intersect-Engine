@@ -5,17 +5,12 @@ using Intersect.GameObjects;
 using Intersect.Server.Entities;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
-using Intersect.Server.Networking.Lidgren;
-using Intersect.Server.WebApi;
 using JetBrains.Annotations;
 
 namespace Intersect.Server.General
 {
     public static class Globals
     {
-        //Api
-        public static ServerApi Api { get; set; }
-
         [NotNull]
         public static ServerTiming Timing { get; } = new ServerTiming();
 
