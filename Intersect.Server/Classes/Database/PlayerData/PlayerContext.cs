@@ -3,6 +3,7 @@ using System.Data;
 using Intersect.Server.Database.PlayerData.Characters;
 using Intersect.Server.Entities;
 using Intersect.Utilities;
+using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Intersect.Server.Database.PlayerData
@@ -11,20 +12,20 @@ namespace Intersect.Server.Database.PlayerData
     {
         public static PlayerContext Current { get; private set; }
 
-        public DbSet<User> Users { get; set; }
-        public DbSet<Player> Characters { get; set; }
-        public DbSet<Friend> Character_Friends { get; set; }
-        public DbSet<SpellSlot> Character_Spells { get; set; }
-        public DbSet<Switch> Character_Switches { get; set; }
-        public DbSet<Variable> Character_Variables { get; set; }
-        public DbSet<HotbarSlot> Character_Hotbar { get; set; }
-        public DbSet<Quest> Character_Quests { get; set; }
-        public DbSet<Bag> Bags { get; set; }
-        public DbSet<InventorySlot> Character_Items { get; set; }
-        public DbSet<BankSlot> Character_Bank { get; set; }
-        public DbSet<BagSlot> Bag_Items { get; set; }
-        public DbSet<Mute> Mutes { get; set; }
-        public DbSet<Ban> Bans { get; set; }
+        [NotNull] public DbSet<User> Users { get; set; }
+        [NotNull] public DbSet<Player> Characters { get; set; }
+        [NotNull] public DbSet<Friend> Character_Friends { get; set; }
+        [NotNull] public DbSet<SpellSlot> Character_Spells { get; set; }
+        [NotNull] public DbSet<Switch> Character_Switches { get; set; }
+        [NotNull] public DbSet<Variable> Character_Variables { get; set; }
+        [NotNull] public DbSet<HotbarSlot> Character_Hotbar { get; set; }
+        [NotNull] public DbSet<Quest> Character_Quests { get; set; }
+        [NotNull] public DbSet<Bag> Bags { get; set; }
+        [NotNull] public DbSet<InventorySlot> Character_Items { get; set; }
+        [NotNull] public DbSet<BankSlot> Character_Bank { get; set; }
+        [NotNull] public DbSet<BagSlot> Bag_Items { get; set; }
+        [NotNull] public DbSet<Mute> Mutes { get; set; }
+        [NotNull] public DbSet<Ban> Bans { get; set; }
 
         private DatabaseUtils.DbProvider mConnection = DatabaseUtils.DbProvider.Sqlite;
         private string mConnectionString = @"Data Source=resources/playerdata.db";

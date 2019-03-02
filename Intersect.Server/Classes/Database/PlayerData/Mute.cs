@@ -38,23 +38,37 @@ namespace Intersect.Server.Database.PlayerData
         }
 
         //Bans and Mutes
-        public static void AddMute([NotNull] Client player, int duration, [NotNull] string reason,
+        public static bool AddMute([NotNull] Client player, int duration, [NotNull] string reason,
             [NotNull] string muter, string ip)
         {
+            if (PlayerContext.Current == null)
+            {
+                return false;
+            }
+
             var mute = new Mute(player.User, ip, reason, duration, muter);
             PlayerContext.Current.Mutes.Add(mute);
+            PlayerContext.Current.SaveChanges();
             player.User.SetMuted(true,
                 Strings.Account.mutestatus.ToString(mute.StartTime, mute.Muter, mute.EndTime, mute.Reason));
+            return true;
         }
 
-        public static void DeleteMute([NotNull] User user)
+        public static bool DeleteMute([NotNull] User user)
         {
+            if (PlayerContext.Current == null)
+            {
+                return false;
+            }
+
             var mute = PlayerContext.Current.Mutes.SingleOrDefault(p => p.Player == user);
             if (mute != null)
             {
                 PlayerContext.Current.Mutes.Remove(mute);
+                PlayerContext.Current.SaveChanges();
             }
             user.SetMuted(false, "");
+            return true;
         }
 
         public static string CheckMute([NotNull] User user, string ip)
