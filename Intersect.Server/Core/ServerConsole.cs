@@ -100,6 +100,7 @@ namespace Intersect.Server.Core
                         if (!shouldHelp)
                         {
                             result.Command?.Handle(ServerContext.Instance, result);
+                            continue;
                         }
                     }
                 }
