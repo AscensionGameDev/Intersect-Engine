@@ -53,14 +53,14 @@ namespace Intersect.Server.Localization
                 public readonly LocaleArgument DurationBan = new LocaleArgument
                 {
                     Name = @"duration",
-                    Description = @"the duration to ban"
+                    Description = @"the duration to ban (in days)"
                 };
 
                 [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
                 public readonly LocaleArgument DurationMute = new LocaleArgument
                 {
                     Name = @"duration",
-                    Description = @"the duration to mute"
+                    Description = @"the duration to mute (in days)"
                 };
 
                 [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
@@ -212,7 +212,7 @@ namespace Intersect.Server.Localization
             {
                 Name = @"api",
                 Description =
-                    @"Sets the api access (enabled/disabled) of a selected account. 1 is enabled, 0 is disabled",
+                    @"Sets the api access (enabled/disabled) of a selected account. true is enabled, false is disabled",
                 Help = @"enables or disables api access for an account",
                 Usage = @"Usage: api [account] [1/0]"
             };
