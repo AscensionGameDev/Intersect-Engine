@@ -34,26 +34,40 @@ namespace Intersect.Server.Database.PlayerData
             Banner = banner;
         }
 
-        public static void AddBan(Client player, int duration, string reason, string banner, string ip)
+        public static bool AddBan([NotNull] Client player, int duration, string reason, [NotNull] string banner, string ip)
         {
-            var ban = new Ban(player?.User, ip, reason, duration, banner);
-            PlayerContext.Current?.Bans?.Add(ban);
+            if (PlayerContext.Current == null)
+            {
+                return false;
+            }
+
+            var ban = new Ban(player.User, ip, reason, duration, banner);
+            PlayerContext.Current.Bans.Add(ban);
+            PlayerContext.Current.SaveChanges();
+            return true;
         }
 
-        public static void DeleteBan([NotNull] User user)
+        public static bool DeleteBan([NotNull] User user)
         {
-            var ban = PlayerContext.Current?.Bans?.SingleOrDefault(p => p.Player == user);
+            if (PlayerContext.Current == null)
+            {
+                return false;
+            }
+
+            var ban = PlayerContext.Current.Bans.SingleOrDefault(p => p.Player == user);
             if (ban != null)
             {
                 PlayerContext.Current.Bans.Remove(ban);
+                PlayerContext.Current.SaveChanges();
             }
+            return true;
         }
 
         public static string CheckBan([NotNull] User user, string ip)
         {
             // TODO: Move this off of the server so that ban dates can be formatted in local time.
-            var ban = PlayerContext.Current?.Bans?.SingleOrDefault(p => p.Player == user) ??
-                      PlayerContext.Current?.Bans?.SingleOrDefault(p => p.Ip == ip);
+            var ban = PlayerContext.Current?.Bans.SingleOrDefault(p => p.Player == user) ??
+                      PlayerContext.Current?.Bans.SingleOrDefault(p => p.Ip == ip);
             return ban != null ? Strings.Account.banstatus.ToString(ban.StartTime, ban.Banner, ban.EndTime, ban.Reason) : null;
         }
     }
