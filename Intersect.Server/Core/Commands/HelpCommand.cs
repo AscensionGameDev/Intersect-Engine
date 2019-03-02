@@ -1,14 +1,17 @@
 ﻿using Intersect.Server.Core.CommandParsing;
 using Intersect.Server.Localization;
+using JetBrains.Annotations;
 
 namespace Intersect.Server.Core.Commands
 {
     internal sealed class HelpCommand : ServerCommand
     {
-        public HelpCommand() : base(
-            Strings.Commands.Help
-        )
+        [NotNull]
+        private ParserSettings ParserSettings { get; }
+
+        public HelpCommand([NotNull] ParserSettings parserSettings) : base(Strings.Commands.Help)
         {
+            ParserSettings = parserSettings;
         }
 
         protected override void HandleValue(ServerContext context, ParserResult result)
@@ -20,7 +23,11 @@ namespace Intersect.Server.Core.Commands
                 Console.WriteLine($@"    {command?.Name,-20} - {command?.Help}");
             });
 
-            Console.WriteLine($@"    {Strings.Commandoutput.helpfooter.ToString(Strings.Commands.commandinfo)}");
+            var helpArgument = Help.HasShortName
+                ? ParserSettings.PrefixShort + Help.ShortName.ToString()
+                : ParserSettings.PrefixLong + Help.Name;
+
+            Console.WriteLine($@"    {Strings.Commandoutput.helpfooter.ToString(helpArgument)}");
         }
     }
 }

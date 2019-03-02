@@ -34,7 +34,7 @@ namespace Intersect.Server.Core.CommandParsing
             Lookup = new Dictionary<string, ICommand>();
         }
 
-        public bool Register<TCommand>() where TCommand : ICommand
+        public bool Register<TCommand>([CanBeNull] params object[] args) where TCommand : ICommand
         {
             var commandType = typeof(TCommand);
             if (commandType.IsAbstract || commandType.IsInterface)
@@ -43,8 +43,9 @@ namespace Intersect.Server.Core.CommandParsing
                     $@"Cannot register abstract/interface command type {commandType.Name} ({commandType.FullName})."
                 );
             }
-
-            var defaultConstructor = commandType.GetConstructor(Type.EmptyTypes);
+            
+            var constructorTypes = args?.Select(arg => arg?.GetType() ?? typeof(object)).ToArray() ?? Type.EmptyTypes;
+            var defaultConstructor = commandType.GetConstructor(constructorTypes);
             if (defaultConstructor == null)
             {
                 throw new InvalidOperationException(
@@ -52,15 +53,14 @@ namespace Intersect.Server.Core.CommandParsing
                 );
             }
 
-            var command = defaultConstructor.Invoke(new object[0]) as ICommand;
-            if (command == null)
+            if (defaultConstructor.Invoke(args ?? new object[0]) is ICommand command)
             {
-                throw new InvalidOperationException(
-                    $@"Failed to construct command type {commandType.Name} ({commandType.FullName})."
-                );
+                return Register(command);
             }
 
-            return Register(command);
+            throw new InvalidOperationException(
+                $@"Failed to construct command type {commandType.Name} ({commandType.FullName})."
+            );
         }
 
         public bool Register([NotNull] ICommand command)

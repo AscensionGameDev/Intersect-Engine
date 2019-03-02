@@ -30,7 +30,7 @@ namespace Intersect.Server.Core
             Parser.Register<BanCommand>();
             Parser.Register<CpsCommand>();
             Parser.Register<ExitCommand>();
-            Parser.Register<HelpCommand>();
+            Parser.Register<HelpCommand>(Parser.Settings);
             Parser.Register<KickCommand>();
             Parser.Register<KillCommand>();
             Parser.Register<MakePrivateCommand>();
