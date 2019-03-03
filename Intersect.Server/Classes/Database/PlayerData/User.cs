@@ -5,6 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using JetBrains.Annotations;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 
@@ -118,6 +121,21 @@ namespace Intersect.Server.Database.PlayerData
         public string GetMuteReason()
         {
             return mMuteStatus;
+        }
+
+        public bool IsPasswordValid([NotNull] string password)
+        {
+            if (string.IsNullOrEmpty(password))
+            {
+                return false;
+            }
+
+            using (var sha = new SHA256Managed())
+            {
+                var digest = sha.ComputeHash(Encoding.UTF8.GetBytes(password + Salt));
+                var hashword = BitConverter.ToString(digest).Replace("-", "");
+                return string.Equals(Password, hashword, StringComparison.Ordinal);
+            }
         }
 
         public static Player GetCharacter(PlayerContext context, Guid id)

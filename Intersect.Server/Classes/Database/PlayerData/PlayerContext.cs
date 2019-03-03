@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Data;
+using System.Threading;
+using System.Threading.Tasks;
+using Intersect.Server.Classes.Database.PlayerData.Api;
 using Intersect.Server.Database.PlayerData.Characters;
 using Intersect.Server.Entities;
 using Intersect.Utilities;
@@ -26,6 +29,7 @@ namespace Intersect.Server.Database.PlayerData
         [NotNull] public DbSet<BagSlot> Bag_Items { get; set; }
         [NotNull] public DbSet<Mute> Mutes { get; set; }
         [NotNull] public DbSet<Ban> Bans { get; set; }
+        [NotNull] public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         private DatabaseUtils.DbProvider mConnection = DatabaseUtils.DbProvider.Sqlite;
         private string mConnectionString = @"Data Source=resources/playerdata.db";
@@ -40,6 +44,20 @@ namespace Intersect.Server.Database.PlayerData
             mConnection = connection;
             mConnectionString = connectionString;
             Current = this;
+        }
+
+        internal async ValueTask Commit(bool commit = false, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            if (!commit)
+            {
+                return;
+            }
+
+            var task = SaveChangesAsync(cancellationToken);
+            if (task != null)
+            {
+                await task;
+            }
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

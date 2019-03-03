@@ -1,14 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using Intersect.Enums;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 
 namespace Intersect.Server.Database.PlayerData
 {
     public class UserRights
     {
+        [NotNull] private static readonly Type UserRightsType = typeof(UserRights);
+
+        [NotNull]
+        private static readonly List<PropertyInfo> UserRightsPermissions = UserRightsType
+            .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            .Where(propertyInfo => propertyInfo.CanWrite)
+            .Where(propertyInfo => propertyInfo.PropertyType == typeof(bool))
+            .ToList();
+
         private readonly int mHashCode = new Random().Next();
 
         public bool Editor { get; set; }
@@ -21,6 +32,7 @@ namespace Intersect.Server.Database.PlayerData
 
         public bool Api { get; set; }
 
+        [JsonIgnore]
         public bool IsModerator => Ban || Mute || Kick;
 
         [NotNull]
@@ -42,6 +54,9 @@ namespace Intersect.Server.Database.PlayerData
             Kick = true,
             Mute = true
         };
+
+        [NotNull]
+        public ImmutableList<string> Roles => EnumeratePermissions();
 
         public static bool operator ==(UserRights b1, UserRights b2)
         {
@@ -65,29 +80,22 @@ namespace Intersect.Server.Database.PlayerData
 
         protected bool Equals([NotNull] UserRights other)
         {
-            return Editor == other.Editor && Ban == other.Ban && Kick == other.Kick && Mute == other.Mute && Api == other.Api;
+            return Editor == other.Editor && Ban == other.Ban && Kick == other.Kick && Mute == other.Mute &&
+                   Api == other.Api;
         }
 
         public override int GetHashCode()
         {
             return mHashCode;
         }
-    }
-
-    public static class UserRightsHelper
-    {
-        [NotNull]
-        private static readonly Type UserRightsType = typeof(UserRights);
 
         [NotNull]
-        private static readonly List<PropertyInfo> UserRightsPermissions = UserRightsType
-            .GetProperties(BindingFlags.Public | BindingFlags.Instance).ToList();
-
-        public static List<string> EnumeratePermissions(this UserRights userRights, bool permitted = true)
+        internal ImmutableList<string> EnumeratePermissions(bool permitted = true)
         {
             return UserRightsPermissions
-                .FindAll(property => (bool) (property?.GetValue(userRights, null) ?? false) == permitted)
-                .Select(property => property?.Name).ToList();
+                       .Where(property => permitted == (bool)(property?.GetValue(this, null) ?? false))
+                       .Select(property => property?.Name)
+                       .ToImmutableList() ?? throw new InvalidOperationException();
         }
     }
 

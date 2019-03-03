@@ -1,13 +1,15 @@
-﻿using System;
-using System.Web.Http;
+﻿using Intersect.Server.Web.RestApi.Authentication;
+using Intersect.Server.Web.RestApi.Authentication.OAuth;
 using Intersect.Server.Web.RestApi.RouteProviders;
 using JetBrains.Annotations;
 using Microsoft.Owin.Hosting;
 using Owin;
+using System;
+using System.Web.Http;
 
 namespace Intersect.Server.Web.RestApi
 {
-    internal sealed class RestApi : IDisposable
+    internal sealed class RestApi : IDisposable, IAppConfigurationProvider
     {
         [NotNull]
         public static StartOptions DefaultStartOptions => new StartOptions(
@@ -25,36 +27,37 @@ namespace Intersect.Server.Web.RestApi
         [NotNull]
         public StartOptions StartOptions { get; }
 
+        [NotNull] private AuthenticationProvider AuthenticationProvider { get; }
+
         public RestApi() : this(DefaultStartOptions)
         {
-
         }
 
         public RestApi([NotNull] StartOptions startOptions)
         {
             StartOptions = startOptions;
+            AuthenticationProvider = new OAuthProvider(this);
         }
 
         public void Start()
         {
-            mWebAppHandle = WebApp.Start<Startup>(StartOptions);
+            mWebAppHandle = WebApp.Start(StartOptions, Configure);
         }
 
-        internal sealed class Startup
+        public void Configure(IAppBuilder appBuilder)
         {
-            public void Configuration(IAppBuilder appBuilder)
-            {
-                // Configure Web API for self-host. 
-                var config = new HttpConfiguration();
+            // Configure Web API for self-host. 
+            var config = new HttpConfiguration();
 
-                // Map routes
-                config.MapHttpAttributeRoutes(new VersionedRouteProvider());
+            AuthenticationProvider.Configure(appBuilder);
 
-                // Make JSON the default response type for browsers
-                config.Formatters?.JsonFormatter?.Map("accept", "text/html", "application/json");
+            // Map routes
+            config.MapHttpAttributeRoutes(new VersionedRouteProvider());
 
-                appBuilder.UseWebApi(config);
-            }
+            // Make JSON the default response type for browsers
+            config.Formatters?.JsonFormatter?.Map("accept", "text/html", "application/json");
+
+            appBuilder.UseWebApi(config);
         }
 
         public void Dispose()

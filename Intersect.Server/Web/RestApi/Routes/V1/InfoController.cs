@@ -4,8 +4,19 @@ using Intersect.Server.General;
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
     [RoutePrefix("info")]
-    public class InfoController : ApiController
+    public sealed class InfoController : ApiController
     {
+        [Route("authorized")]
+        [HttpGet]
+        [Authorize]
+        public object Authorized()
+        {
+            return new
+            {
+                authorized = true
+            };
+        }
+
         [Route]
         [HttpGet]
         public object Default()

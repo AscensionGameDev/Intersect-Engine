@@ -222,6 +222,7 @@
     <Compile Include="GameObjects\Events\Condition.cs" />
     <Compile Include="GameObjects\Events\EventMovement.cs" />
     <Compile Include="Localization\LocalizedString.cs" />
+    <Compile Include="Security\Claims\IntersectClaimTypes.cs" />
     <Compile Include="Threading\ConcurrentInstance.cs" />
     <Compile Include="Threading\LockingActionQueue.cs" />
     <Compile Include="Threading\Threaded.cs" />
