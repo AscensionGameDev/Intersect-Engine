@@ -85,14 +85,12 @@ namespace Intersect.Server.Core
                             return;
                         }
 
-                        if (!error.IsFatal || error is MissingCommandError || error is UnhandledArgumentError)
+                        if (error.Exception != null)
                         {
-                            Console.WriteLine(error.Message);
+                            Log.Warn(error.Exception);
                         }
-                        else
-                        {
-                            Log.Warn(error.Exception, error.Message);
-                        }
+
+                        Console.WriteLine(error.Message);
                     });
 
                     if (!fatalError)

@@ -203,8 +203,7 @@ namespace Intersect.Server.Localization
             {
                 Name = @"announcement",
                 Description = @"Sends a global message to all users playing the game.",
-                Help = @"sends a global message to all players",
-                Usage = @"Usage: announcement [message] {00}"
+                Help = @"sends a global message to all players"
             };
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
@@ -213,8 +212,7 @@ namespace Intersect.Server.Localization
                 Name = @"api",
                 Description =
                     @"Sets the api access (enabled/disabled) of a selected account. true is enabled, false is disabled",
-                Help = @"enables or disables api access for an account",
-                Usage = @"Usage: api [account] [1/0]"
+                Help = @"enables or disables api access for an account"
             };
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
@@ -222,8 +220,7 @@ namespace Intersect.Server.Localization
             {
                 Name = @"ban",
                 Description = @"Bans a player from the server.",
-                Help = @"bans a player from the server",
-                Usage = @"Usage: ban [username] [duration (days)] [IP Ban? ({00}/{01})] [reason] {02}"
+                Help = @"bans a player from the server"
             };
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
@@ -232,8 +229,7 @@ namespace Intersect.Server.Localization
                 Name = @"cps",
                 Description =
                     @"Prints the current CPS. The status flag tells if the server loop is locked or unlocked. The lock flag locks the cps while the unlock flag unlocks it.",
-                Help = @"prints the current server cps",
-                Usage = @"Usage: cps [status|lock|unlock] {00}"
+                Help = @"prints the current server cps"
             };
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
@@ -241,8 +237,7 @@ namespace Intersect.Server.Localization
             {
                 Name = @"exit",
                 Description = @"Closes down the server.",
-                Help = @"closes the server",
-                Usage = @"Usage: exit {00}"
+                Help = @"closes the server"
             };
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
@@ -250,8 +245,7 @@ namespace Intersect.Server.Localization
             {
                 Name = @"help",
                 Description = @"help",
-                Help = @"displays list of available commands",
-                Usage = @"help"
+                Help = @"displays list of available commands"
             };
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
@@ -259,8 +253,7 @@ namespace Intersect.Server.Localization
             {
                 Name = @"kick",
                 Description = @"Kicks a player from the server.",
-                Help = @"kicks a player from the server",
-                Usage = @"Usage: kick [username] {00}"
+                Help = @"kicks a player from the server"
             };
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
@@ -268,8 +261,7 @@ namespace Intersect.Server.Localization
             {
                 Name = @"kill",
                 Description = @"Kills a player on the server.",
-                Help = @"kills a player on the server",
-                Usage = @"Usage: kill [username] {00}"
+                Help = @"kills a player on the server"
             };
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
@@ -277,8 +269,7 @@ namespace Intersect.Server.Localization
             {
                 Name = @"makeprivate",
                 Description = @"Makes the server private and can only be accessed by admins.",
-                Help = @"Makes the server private and can only be accessed by admins.",
-                Usage = @"Usage: makeprivate"
+                Help = @"Makes the server private and can only be accessed by admins."
             };
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
@@ -286,8 +277,7 @@ namespace Intersect.Server.Localization
             {
                 Name = @"makepublic",
                 Description = @"Makes the server public to all players.",
-                Help = @"Makes the server public to all players.",
-                Usage = @"Usage: makepublic"
+                Help = @"Makes the server public to all players."
             };
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
@@ -296,8 +286,7 @@ namespace Intersect.Server.Localization
                 Name = @"migrate",
                 Description =
                     @"Walks you through migrating your player or game database between sqlite and mysql.",
-                Help = @"walks you through migrating your player or game database between sqlite and mysql",
-                Usage = @"Usage: migrate"
+                Help = @"walks you through migrating your player or game database between sqlite and mysql"
             };
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
@@ -305,8 +294,7 @@ namespace Intersect.Server.Localization
             {
                 Name = @"mute",
                 Description = @"mutes a player preventing them from talking.",
-                Help = @"mutes a player preventing them from talking",
-                Usage = @"Usage: mute [username] [duration (days)] [IP Ban? ({00}/{01})] [reason] {02}"
+                Help = @"mutes a player preventing them from talking"
             };
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
@@ -328,8 +316,7 @@ namespace Intersect.Server.Localization
                 Name = @"power",
                 Description =
                     @"Sets the power or access of a selected account. Power 0 is regular user. Power 1 is in-game moderator. Power 2 is owner/designer and allows editor access.",
-                Help = @"sets the administrative access of a user",
-                Usage = @"Usage: power [username] [level] {00}"
+                Help = @"sets the administrative access of a user"
             };
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
@@ -338,8 +325,7 @@ namespace Intersect.Server.Localization
                 Name = @"poweracc",
                 Description =
                     @"Sets the power or access of a selected account. Power 0 is regular user. Power 1 is in-game moderator. Power 2 is owner/designer and allows editor access.",
-                Help = @"sets the administrative access of an account",
-                Usage = @"Usage: power [login] [level] {00}"
+                Help = @"sets the administrative access of an account"
             };
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
@@ -347,8 +333,7 @@ namespace Intersect.Server.Localization
             {
                 Name = @"unban",
                 Description = @"Unbans a player from the server.",
-                Help = @"unbans a player from the server",
-                Usage = @"Usage: unban [account] {00}"
+                Help = @"unbans a player from the server"
             };
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
@@ -356,8 +341,7 @@ namespace Intersect.Server.Localization
             {
                 Name = @"unmute",
                 Description = @"unmutes a player allowing them to talk.",
-                Help = @"unmutes a player allowing them to talk",
-                Usage = @"Usage: unmute [username] {00}"
+                Help = @"unmutes a player allowing them to talk"
             };
         }
     }

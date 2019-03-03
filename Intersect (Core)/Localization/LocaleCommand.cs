@@ -10,9 +10,6 @@ namespace Intersect.Localization
         [JsonProperty(nameof(Help), NullValueHandling = NullValueHandling.Ignore)] [CanBeNull]
         private LocalizedString mHelp;
 
-        [JsonProperty(nameof(Usage), NullValueHandling = NullValueHandling.Ignore)] [CanBeNull]
-        private LocalizedString mUsage;
-
         [NotNull]
         [JsonIgnore]
         public LocalizedString Help
@@ -27,20 +24,6 @@ namespace Intersect.Localization
             }
         }
 
-        [NotNull]
-        [JsonIgnore]
-        public LocalizedString Usage
-        {
-            get => mUsage ?? "";
-            set
-            {
-                if (mUsage == null)
-                {
-                    mUsage = value;
-                }
-            }
-        }
-
         public LocaleCommand()
         {
         }
@@ -48,12 +31,10 @@ namespace Intersect.Localization
         public LocaleCommand(
             [NotNull] string name,
             [CanBeNull] string description = null,
-            [CanBeNull] string help = null,
-            [CanBeNull] string usage = null
+            [CanBeNull] string help = null
         ) : base(name, description)
         {
             mHelp = help?.Trim();
-            mUsage = usage?.Trim();
         }
     }
 }
