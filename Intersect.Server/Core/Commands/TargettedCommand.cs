@@ -9,7 +9,7 @@ namespace Intersect.Server.Core.Commands
     internal abstract class TargettedCommand<TTarget> : ServerCommand
     {
         [NotNull]
-        private VariableArgument<string> Target => FindArgumentOrThrow<VariableArgument<string>>();
+        protected VariableArgument<string> Target => FindArgumentOrThrow<VariableArgument<string>>();
 
         protected TargettedCommand(
             [NotNull] LocaleCommand command,
