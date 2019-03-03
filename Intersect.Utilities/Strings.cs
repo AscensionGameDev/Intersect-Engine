@@ -421,22 +421,6 @@ namespace Intersect.Utilities
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             [NotNull] public readonly ArgumentsNamespace Arguments = new ArgumentsNamespace();
-
-            [NotNull] public readonly LocaleCommand Announcement = new LocaleCommand
-            {
-                Name = @"announcement",
-                Description = @"Desc: Sends a global message to all users playing the game.",
-                Help = @"sends a global message to all players",
-                Usage = @"Usage: announcement [message] {00}"
-            };
-
-            [NotNull] public readonly LocaleCommand Exit = new LocaleCommand
-            {
-                Name = @"exit",
-                Description = @"Desc: Closes down the server.",
-                Help = @"closes the server",
-                Usage = @"Usage: exit {00}"
-            };
         }
 
         public sealed class CraftingNamespace : LocaleNamespace

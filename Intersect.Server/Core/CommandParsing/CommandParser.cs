@@ -110,26 +110,28 @@ namespace Intersect.Server.Core.CommandParsing
             var parsed = new Dictionary<ICommandArgument, ArgumentValues>();
             var errors = new List<ParserError>();
 
-            tokens.Skip(1).ToList().ForEach(cleanArg =>
+            for (var tokenIndex = 1; tokenIndex < tokens.Count; ++tokenIndex)
             {
-                if (cleanArg == null)
+                var token = tokens[tokenIndex];
+
+                if (token == null)
                 {
                     throw new InvalidOperationException(@"None of the cleaned arguments should be null at this point.");
                 }
 
-                var canBeShortName = cleanArg.StartsWith(Settings.PrefixShort);
+                var canBeShortName = token.StartsWith(Settings.PrefixShort);
                 if (canBeShortName)
                 {
                     var expectedLength = Settings.PrefixShort.Length + 1;
-                    var actualLength = cleanArg.Contains('=') ? cleanArg.IndexOf('=') : cleanArg.Length;
+                    var actualLength = token.Contains('=') ? token.IndexOf('=') : token.Length;
                     canBeShortName = expectedLength == actualLength;
                 }
 
-                var canBeLongName = cleanArg.StartsWith(Settings.PrefixLong);
+                var canBeLongName = token.StartsWith(Settings.PrefixLong);
                 if (canBeLongName)
                 {
-                    var actualLength = cleanArg.Length;
-                    var maximumInvalidLength = Settings.PrefixLong.Length + (cleanArg.Contains('=') ? 2 : 1);
+                    var actualLength = token.Length;
+                    var maximumInvalidLength = Settings.PrefixLong.Length + (token.Contains('=') ? 2 : 1);
                     canBeLongName = actualLength > maximumInvalidLength;
                 }
 
@@ -143,23 +145,23 @@ namespace Intersect.Server.Core.CommandParsing
                     else
                     {
                         errors.Add(
-                            new ParserError(Settings.Localization.Errors.BadArgumentFormat.ToString(cleanArg)
+                            new ParserError(Settings.Localization.Errors.BadArgumentFormat.ToString(token)
                             )
                         );
-                        return;
+                        continue;
                     }
                 }
 
                 if (canBeShortName && canBeLongName)
                 {
                     errors.Add(
-                        new ParserError(Settings.Localization.Errors.IllegalArgumentFormat.ToString(cleanArg, Settings.PrefixShort, Settings.PrefixLong)
+                        new ParserError(Settings.Localization.Errors.IllegalArgumentFormat.ToString(token, Settings.PrefixShort, Settings.PrefixLong)
                         )
                     );
-                    return;
+                    continue;
                 }
 
-                var cleanArgParts = cleanArg.Split('=');
+                var cleanArgParts = token.Split('=');
                 var cleanArgName = cleanArgParts[0] ?? "";
                 var cleanArgValue = (cleanArgParts.Length == 2 ? cleanArgParts[1] : null) ?? "";
 
@@ -198,7 +200,15 @@ namespace Intersect.Server.Core.CommandParsing
                         );
                     }
 
-                    return;
+                    continue;
+                }
+
+                var argumentDisplayName = isPositional ? argument.Name : cleanArgName;
+
+                var typeName = argument.ValueType.Name;
+                if (Settings.Localization.TypeNames.TryGetValue(typeName, out var localizedType))
+                {
+                    typeName = localizedType;
                 }
 
                 List<object> values;
@@ -207,11 +217,11 @@ namespace Intersect.Server.Core.CommandParsing
                     if (!argument.AllowsMultiple)
                     {
                         errors.Add(
-                            new ParserError(Settings.Localization.Errors.DuplicateNamedArgument.ToString(cleanArgName),
+                            new ParserError(Settings.Localization.Errors.DuplicateNamedArgument.ToString(argumentDisplayName),
                                 false
                             )
                         );
-                        return;
+                        continue;
                     }
 
                     values = argumentValues.Values.ToList();
@@ -226,7 +236,7 @@ namespace Intersect.Server.Core.CommandParsing
                     if (!string.IsNullOrEmpty(cleanArgValue))
                     {
                         errors.Add(
-                            new ParserError(Settings.Localization.Errors.FlagArgumentsIgnoreValue.ToString(cleanArgName),
+                            new ParserError(Settings.Localization.Errors.FlagArgumentsIgnoreValue.ToString(argumentDisplayName),
                                 false
                             )
                         );
@@ -243,7 +253,7 @@ namespace Intersect.Server.Core.CommandParsing
                     {
                         var defaultValue = argument.ValueTypeDefault;
                         var parsedPartValues = cleanArgValue
-                            .Split(new[] {argument.Delimeter}, StringSplitOptions.None)
+                            .Split(new[] { argument.Delimeter }, StringSplitOptions.None)
                             .Select(valuePart =>
                             {
                                 if (string.IsNullOrEmpty(valuePart))
@@ -256,7 +266,7 @@ namespace Intersect.Server.Core.CommandParsing
                                     if (!argument.IsValueAllowed(parsedPart))
                                     {
                                         errors.Add(
-                                            new ParserError(Settings.Localization.Errors.InvalidArgumentValue.ToString(valuePart, cleanArgName)
+                                            new ParserError(Settings.Localization.Errors.InvalidArgumentValue.ToString(valuePart, argumentDisplayName)
                                             )
                                         );
                                     }
@@ -269,8 +279,8 @@ namespace Intersect.Server.Core.CommandParsing
                                     errors.Add(
                                         new ParserError(Settings.Localization.Errors.InvalidArgumentValueWithType.ToString(
                                                 valuePart,
-                                                cleanArgName,
-                                                argument.ValueType.Name
+                                                argumentDisplayName,
+                                                typeName
                                             ),
                                             false
                                         )
@@ -279,7 +289,7 @@ namespace Intersect.Server.Core.CommandParsing
                                 else
                                 {
                                     errors.Add(
-                                        new ParserError(Settings.Localization.Errors.InvalidArgumentValue.ToString(valuePart, cleanArgName),
+                                        new ParserError(Settings.Localization.Errors.InvalidArgumentValue.ToString(valuePart, argumentDisplayName),
                                             false
                                         )
                                     );
@@ -300,17 +310,17 @@ namespace Intersect.Server.Core.CommandParsing
                             errors.Add(
                                 new ParserError(Settings.Localization.Errors.InvalidArgumentValueWithType.ToString(
                                         cleanArgValue,
-                                        cleanArgName,
-                                        argument.ValueType.Name
+                                        argumentDisplayName,
+                                        typeName
                                     ),
-                                    false
+                                    true
                                 )
                             );
                         }
                         else
                         {
                             errors.Add(
-                                new ParserError(Settings.Localization.Errors.InvalidArgumentValue.ToString(cleanArgValue, cleanArgName),
+                                new ParserError(Settings.Localization.Errors.InvalidArgumentValue.ToString(cleanArgValue, argumentDisplayName),
                                     false
                                 )
                             );
@@ -322,7 +332,7 @@ namespace Intersect.Server.Core.CommandParsing
                         errors.Add(
                             new ParserError(
                                 // TODO: DisallowedArgumentValue message instead
-                                Settings.Localization.Errors.InvalidArgumentValue.ToString(value, cleanArgName)
+                                Settings.Localization.Errors.InvalidArgumentValue.ToString(value, argumentDisplayName)
                             )
                         );
                     }
@@ -331,13 +341,13 @@ namespace Intersect.Server.Core.CommandParsing
                     values.Add(value);
                 }
 
-                parsed[argument] = new ArgumentValues(cleanArgName, values);
+                parsed[argument] = new ArgumentValues(argumentDisplayName, values);
 
                 if (isPositional)
                 {
                     ++positionalArguments;
                 }
-            });
+            }
 
             var parserContext = new ParserContext
             {

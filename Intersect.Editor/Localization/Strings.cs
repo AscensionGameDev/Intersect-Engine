@@ -42,7 +42,7 @@ namespace Intersect.Editor.Localization
             public static LocalizedString disablelowerrotations = @"Disable Rotations";
             public static LocalizedString lowerplay = @"Play Lower Animation";
             public static LocalizedString lowerplayback = @"Playback";
-            public static LocalizedString lowerstop = @"Stop Upper Animation";
+            public static LocalizedString lowerstop = @"Stop Lower Animation";
             public static LocalizedString lowerverticalframes = @"Graphic Vertical Frames:";
             public static LocalizedString name = @"Name:";
             public static LocalizedString New = @"New Animation";

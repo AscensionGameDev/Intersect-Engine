@@ -1,4 +1,6 @@
-﻿using Intersect.Config;
+﻿using System;
+using Intersect.Config;
+using Intersect.Logging;
 using Intersect.Server.Core.CommandParsing;
 using Intersect.Server.Localization;
 
@@ -79,7 +81,14 @@ namespace Intersect.Server.Core.Commands
             }
             else
             {
-                LegacyDatabase.Migrate(db, dbengine);
+                try
+                {
+                    LegacyDatabase.Migrate(db, dbengine);
+                }
+                catch (Exception exception)
+                {
+                    Log.Error(exception);
+                }
             }
         }
     }
