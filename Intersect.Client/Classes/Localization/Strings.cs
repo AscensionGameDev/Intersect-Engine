@@ -758,8 +758,8 @@ namespace Intersect.Client.Localization
             public static Dictionary<int, LocalizedString> spelltypes = new Dictionary<int, LocalizedString>
             {
                 {0, @"Combat Spell"},
-                {1, @"Warp - Self Cast"},
-                {2, @"Warp - Self Cast"},
+                {1, @"Warp to Map"},
+                {2, @"Warp to Target"},
                 {3, @"Dash"},
                 {4, @"Special"},
             };
