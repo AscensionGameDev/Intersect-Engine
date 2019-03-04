@@ -1,5 +1,6 @@
 ﻿using System.Web.Http;
 using Intersect.Server.General;
+using Intersect.Server.Web.RestApi.Attributes;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
@@ -19,6 +20,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
         [Route]
         [HttpGet]
+        [ConfigurableAuthorize]
         public object Default()
         {
             return new
@@ -30,6 +32,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
         [Route("config")]
         [HttpGet]
+        [ConfigurableAuthorize]
         public object Config()
         {
             return new

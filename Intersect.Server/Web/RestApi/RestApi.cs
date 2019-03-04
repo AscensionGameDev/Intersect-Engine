@@ -5,7 +5,11 @@ using JetBrains.Annotations;
 using Microsoft.Owin.Hosting;
 using Owin;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Web.Http;
+using System.Web.Http.Routing;
 
 namespace Intersect.Server.Web.RestApi
 {
@@ -53,11 +57,32 @@ namespace Intersect.Server.Web.RestApi
 
             // Map routes
             config.MapHttpAttributeRoutes(new VersionedRouteProvider());
+            config.EnsureInitialized();
+
+            Func<IHttpRoute, object> map = null;
+            map = route =>
+            {
+                var flagInternal = BindingFlags.NonPublic | BindingFlags.Instance;
+                var subroutes =
+                    route?.GetType().GetProperty("SubRoutes", flagInternal)?.GetValue(route) as IReadOnlyCollection<IHttpRoute>;
+
+                //var parsedRoute = route?.GetType().GetProperty("ParsedRoute", flagInternal)?.GetValue(route) as 
+
+                return new
+                {
+                    routeTemplate = route?.RouteTemplate,
+                    subroutes = subroutes?.Select(map).ToList()
+                };
+            };
+
+            var routeNames = config.Routes?.Select(map).ToList();
 
             // Make JSON the default response type for browsers
             config.Formatters?.JsonFormatter?.Map("accept", "text/html", "application/json");
 
             appBuilder.UseWebApi(config);
+
+            appBuilder.ToString();
         }
 
         public void Dispose()

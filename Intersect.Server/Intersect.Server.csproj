@@ -90,6 +90,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
     <Optimize>false</Optimize>
+    <DocumentationFile>..\build\debug\server\Intersect Server.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'NoFody|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -498,6 +499,7 @@
       <DependentUpon>20190303044742_RefreshTokensAddClientId.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />
+    <Compile Include="Web\RestApi\Attributes\ConfigurableAuthorizeAttribute.cs" />
     <Compile Include="Web\RestApi\Authentication\AuthenticationProvider.cs" />
     <Compile Include="Web\RestApi\Authentication\OAuth\OAuthProvider.cs" />
     <Compile Include="Web\RestApi\Authentication\OAuth\Providers\BearerAuthenticationProvider.cs" />
@@ -529,6 +531,7 @@
     <Compile Include="Web\RestApi\RouteProviders\VersionedRouteProvider.cs" />
     <Compile Include="Web\RestApi\Routes\OAuthController.cs" />
     <Compile Include="Web\RestApi\Routes\RootInfoController.cs" />
+    <Compile Include="Web\RestApi\Routes\V1\DemoController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\InfoController.cs" />
   </ItemGroup>
   <ItemGroup>
