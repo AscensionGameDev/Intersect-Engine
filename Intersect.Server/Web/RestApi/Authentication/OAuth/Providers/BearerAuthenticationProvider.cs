@@ -48,6 +48,7 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
             if (ticket.Properties?.ExpiresUtc < DateTime.UtcNow)
             {
                 context.SetError("access_token_expired");
+                return;
             }
 
             if (refreshToken.ClientId != clientId || refreshToken.UserId != userId)
