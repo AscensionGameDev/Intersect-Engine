@@ -85,6 +85,34 @@ namespace Intersect.Server.Classes.Database.PlayerData.Api
             return task == null ? null : await task;
         }
 
+        public static async ValueTask<RefreshToken> FindForToken([CanBeNull] string token)
+        {
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                return null;
+            }
+
+            var task = PlayerContext.Current?
+                    .RefreshTokens?
+                    .ToAsyncEnumerable()
+                    .Where(queryToken => string.Equals(queryToken?.Ticket, token, StringComparison.Ordinal))
+                    .FirstOrDefault();
+
+            if (task == null)
+            {
+                return null;
+            }
+
+            var refreshToken = await task;
+            if (refreshToken == null || DateTime.UtcNow < refreshToken.Expires)
+            {
+                return refreshToken;
+            }
+
+            await Remove(refreshToken, true);
+            return null;
+        }
+
         public static ValueTask<IQueryable<RefreshToken>> FindForClient(Guid clientId)
         {
             var tokenQuery = PlayerContext.Current?.RefreshTokens?.Where(queryToken => queryToken.ClientId == clientId);

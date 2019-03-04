@@ -1,11 +1,10 @@
-﻿using Intersect.Security.Claims;
+﻿using Intersect.Logging;
+using Intersect.Security.Claims;
 using Intersect.Server.Classes.Database.PlayerData.Api;
 using JetBrains.Annotations;
 using Microsoft.Owin.Security.Infrastructure;
 using System;
 using System.Threading.Tasks;
-
-using Intersect.Logging;
 
 namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
 {
@@ -26,21 +25,21 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
                 return;
             }
 
-            var properties = context.Ticket?.Properties?.Dictionary;
+            var properties = context.Ticket?.Properties;
             if (properties == null)
             {
                 return;
-            }
-
-            if (!Guid.TryParse(properties["client_id"], out var clientId))
-            {
-                Log.Diagnostic("Received invalid client id '{0}'.", properties["as:client_id"]);
             }
 
             var identity = context.Ticket.Identity;
             if (identity == null)
             {
                 return;
+            }
+
+            if (!Guid.TryParse(identity.FindFirst(IntersectClaimTypes.ClientId)?.Value, out var clientId))
+            {
+                Log.Diagnostic("Received invalid client id '{0}'.", identity.FindFirst(IntersectClaimTypes.UserId)?.Value);
             }
 
             var identifier = identity.FindFirst(IntersectClaimTypes.UserId)?.Value;
@@ -52,7 +51,8 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
             var userName = identity.FindFirst(IntersectClaimTypes.UserName)?.Value;
 
             var issued = DateTime.UtcNow;
-            var tokenLifeTime = context.OwinContext.Get<int>("as:clientRefreshTokenLifeTime");
+            var tokenLifeTime = context.OwinContext.Get<int>("as:clientRefreshTokenLifetime");
+            var ticketId = context.OwinContext.Get<string>("ticket_id");
             var expires = issued.AddMinutes(tokenLifeTime);
 
             var token = new RefreshToken
@@ -61,13 +61,12 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
                 ClientId = clientId,
                 Subject = userName,
                 Issued = issued,
-                Expires = expires
+                Expires = expires,
+                Ticket = ticketId
             };
 
-            context.Ticket.Properties.IssuedUtc = issued;
-            context.Ticket.Properties.ExpiresUtc = expires;
-
-            token.Ticket = context.SerializeTicket();
+            properties.IssuedUtc = issued;
+            properties.ExpiresUtc = expires;
 
             if (await RefreshToken.Add(token, true))
             {

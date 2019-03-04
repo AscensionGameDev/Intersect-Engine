@@ -1,8 +1,10 @@
 ﻿using Intersect.Server.Classes.Database.PlayerData.Api;
 using System;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Description;
 
 namespace Intersect.Server.Web.RestApi.Routes
 {
@@ -11,17 +13,20 @@ namespace Intersect.Server.Web.RestApi.Routes
     {
         [Authorize]
         [HttpDelete]
-        [Route("revoke/{tokenId:guid}")]
-        public async ValueTask<IHttpActionResult> DeleteToken(Guid tokenId)
+        [Route("token/{tokenId:guid}")]
+        public IHttpActionResult DeleteToken(Guid tokenId)
         {
             if (User?.Identity == null)
             {
                 return Unauthorized();
             }
 
-            if (await RefreshToken.Remove(tokenId, true))
+            if (RefreshToken.Remove(tokenId, true).GetAwaiter().GetResult())
             {
-                return Ok();
+                return Ok(new
+                {
+                    revoked_refresh_token = tokenId
+                });
             }
 
             return StatusCode(HttpStatusCode.Gone);

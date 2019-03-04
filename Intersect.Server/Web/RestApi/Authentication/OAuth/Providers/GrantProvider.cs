@@ -111,6 +111,12 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
                 return;
             }
 
+            if (!user.Power?.Api ?? true)
+            {
+                context.SetError("insufficient_permissions");
+                return;
+            }
+
 #if DEBUG
             owinContext.Set("as:clientRefreshTokenLifetime", 15);
 #else
@@ -122,76 +128,44 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
                 Log.Diagnostic("Received invalid client id '{0}'.", context.ClientId);
             }
 
+            var ticketId = Guid.NewGuid().ToString();
+            owinContext.Set("ticket_id", ticketId);
+
             var identity = new ClaimsIdentity(options.AuthenticationType);
             identity.AddClaim(new Claim(IntersectClaimTypes.UserId, user.Id.ToString()));
             identity.AddClaim(new Claim(IntersectClaimTypes.UserName, user.Name));
             identity.AddClaim(new Claim(IntersectClaimTypes.Email, user.Email));
             identity.AddClaim(new Claim(IntersectClaimTypes.ClientId, clientId.ToString()));
+            identity.AddClaim(new Claim(IntersectClaimTypes.TicketId, ticketId));
 
             if (user.Power != null)
             {
                 identity.AddClaims(user.Power.Roles.Select(role => new Claim(IntersectClaimTypes.Role, role)));
             }
 
-            var ticketProperties = new AuthenticationProperties(
-                new Dictionary<string, string>
-                {
-                    {"client_id", clientId.ToString()},
-                    {"username", user.Name}
-                }
-            );
-
+            var ticketProperties = new AuthenticationProperties();
             var ticket = new AuthenticationTicket(identity, ticketProperties);
             context.Validated(ticket);
         }
 
-        public override async Task MatchEndpoint(OAuthMatchEndpointContext context)
+        public override Task TokenEndpoint(OAuthTokenEndpointContext context)
         {
-            if (context == null)
+            if (context?.Properties?.Dictionary == null || context.AdditionalResponseParameters == null)
             {
-                return;
+                return Task.FromResult(0);
             }
 
-            var requestPath = context.Request?.Path;
-            if (requestPath == null)
+            var properties = context.Properties.Dictionary.ToList();
+            var parameters = context.AdditionalResponseParameters;
+            properties.ForEach(pair =>
             {
-                context.MatchesNothing();
-                return;
-            }
-
-            if (requestPath == context.Options?.TokenEndpointPath)
-            {
-                context.MatchesTokenEndpoint();
-            }
-            else
-            {
-                //context.MatchesTokenEndpoint();
-                context.MatchesAuthorizeEndpoint();
-            }
-        }
-
-        public override async Task TokenEndpoint(OAuthTokenEndpointContext context)
-        {
-            if (context?.Properties?.Dictionary != null && context.AdditionalResponseParameters != null)
-            {
-                var properties = context.Properties.Dictionary.ToList();
-                var parameters = context.AdditionalResponseParameters;
-                properties.ForEach(pair =>
+                if (!string.IsNullOrWhiteSpace(pair.Key))
                 {
-                    if (!string.IsNullOrWhiteSpace(pair.Key))
-                    {
-                        parameters.Add(pair.Key, pair.Value);
-                    }
-                });
-            }
+                    parameters.Add(pair.Key, pair.Value);
+                }
+            });
 
-            // ReSharper disable once PossibleNullReferenceException
-            await base.TokenEndpoint(context);
-        }
-
-        public override Task TokenEndpointResponse(OAuthTokenEndpointResponseContext context)
-        {
-            return base.TokenEndpointResponse(context);
+            return Task.FromResult(0);
         }
 
         public override Task ValidateAuthorizeRequest(OAuthValidateAuthorizeRequestContext context)
@@ -236,55 +210,11 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
 #endif
                     context.Validated();
                     return;
-                    if (!context.TryGetBasicCredentials(out var clientId, out var clientSecret))
-                    {
-                        if (!context.TryGetFormCredentials(out clientId, out clientSecret))
-                        {
-                            context.SetError("credentials_missing");
-                            return;
-                        }
-                    }
-
-#if DEBUG
-                    if (parameters["raw"] != null && !string.IsNullOrEmpty(clientSecret))
-                    {
-                        using (var sha = new SHA256Managed())
-                        {
-                            var digest = sha.ComputeHash(Encoding.UTF8.GetBytes(clientSecret));
-                            clientSecret = BitConverter.ToString(digest).Replace("-", "");
-                        }
-                    }
-#endif
-
-                    if (string.IsNullOrWhiteSpace(clientId) || string.IsNullOrWhiteSpace(clientSecret))
-                    {
-                        context.SetError("credentials_missing");
-                        return;
-                    }
-
-                    clientId = clientId.Trim();
-
-                    var user = LegacyDatabase.GetUser(clientId);
-                    if (!user?.IsPasswordValid(clientSecret) ?? true)
-                    {
-                        context.SetError("credentials_invalid");
-                        return;
-                    }
-
-#if DEBUG
-                    owinContext.Set("as:clientRefreshTokenLifetime", 15);
-#else
-                    owinContext.Set("as:clientRefreshTokenLifetime", 10080);
-#endif
-
-                    break;
 
                 default:
                     context.SetError("grant_type_invalid");
                     return;
             }
-
-            context.Validated();
         }
 
         public override async Task ValidateClientRedirectUri(OAuthValidateClientRedirectUriContext context)

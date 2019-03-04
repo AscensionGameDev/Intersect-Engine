@@ -13,13 +13,11 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth
     internal class OAuthProvider : AuthenticationProvider
     {
         [NotNull] private OAuthAuthorizationServerProvider OAuthAuthorizationServerProvider { get; }
-        [NotNull] private AuthenticationTokenProvider AccessTokenProvider { get; }
         [NotNull] private AuthenticationTokenProvider RefreshTokenProvider { get; }
 
         public OAuthProvider([NotNull] RestApi restApi) : base(restApi)
         {
             OAuthAuthorizationServerProvider = new GrantProvider(this);
-            AccessTokenProvider = new AccessTokenProvider(this);
             RefreshTokenProvider = new RefreshTokenProvider(this);
         }
 
@@ -38,18 +36,15 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth
 #endif
 
                 Provider = OAuthAuthorizationServerProvider,
-                AuthorizationCodeProvider = AccessTokenProvider,
                 RefreshTokenProvider = RefreshTokenProvider
 
             };
 
             appBuilder.UseOAuthAuthorizationServer(oauthOptions);
-            appBuilder.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions());
-        }
-
-        public async Task<bool> AddRefreshToken(RefreshToken refreshToken)
-        {
-            return false;
+            appBuilder.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions
+            {
+                Provider = new BearerAuthenticationProvider()
+            });
         }
     }
 }

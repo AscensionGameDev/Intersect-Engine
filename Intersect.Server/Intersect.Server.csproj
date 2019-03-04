@@ -500,7 +500,7 @@
     <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />
     <Compile Include="Web\RestApi\Authentication\AuthenticationProvider.cs" />
     <Compile Include="Web\RestApi\Authentication\OAuth\OAuthProvider.cs" />
-    <Compile Include="Web\RestApi\Authentication\OAuth\Providers\AccessTokenProvider.cs" />
+    <Compile Include="Web\RestApi\Authentication\OAuth\Providers\BearerAuthenticationProvider.cs" />
     <Compile Include="Web\RestApi\Authentication\OAuth\Providers\GrantProvider.cs" />
     <Compile Include="Web\RestApi\Authentication\OAuth\Providers\RefreshTokenProvider.cs" />
     <Compile Include="Web\RestApi\IAppConfigurationProvider.cs" />

@@ -10,6 +10,8 @@
 
         public const string Role = "intersect:security:claims:role";
 
+        public const string TicketId = "intersect:security:claims:ticket_id";
+
         public const string UserId = "intersect:security:claims:user_id";
 
         public const string UserName = "intersect:security:claims:user_name";
