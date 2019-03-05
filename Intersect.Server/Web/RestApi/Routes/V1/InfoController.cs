@@ -5,6 +5,7 @@ using Intersect.Server.Web.RestApi.Attributes;
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
     [RoutePrefix("info")]
+    [ConfigurableAuthorize]
     public sealed class InfoController : ApiController
     {
         [Route("authorized")]
@@ -20,7 +21,6 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
         [Route]
         [HttpGet]
-        [ConfigurableAuthorize]
         public object Default()
         {
             return new
@@ -32,7 +32,6 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
         [Route("config")]
         [HttpGet]
-        [ConfigurableAuthorize]
         public object Config()
         {
             return new

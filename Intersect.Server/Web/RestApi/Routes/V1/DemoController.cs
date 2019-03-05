@@ -1,74 +1,54 @@
-﻿using System.Web.Http;
-using Intersect.Server.General;
-using Intersect.Server.Web.RestApi.Attributes;
+﻿using Intersect.Server.Web.RestApi.Attributes;
+using System.Web.Http;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
+
+    [ConfigurableAuthorize]
     [RoutePrefix("demo")]
     public sealed class DemoController : ApiController
     {
-        [Route("authorized")]
-        [HttpGet]
-        [Authorize]
-        public object Authorized()
-        {
-            return new
-            {
-                authorized = true
-            };
-        }
 
         [Route]
         [HttpGet]
-        [ConfigurableAuthorize]
-        public object Default()
+        [AllowAnonymous]
+        public string Default()
         {
-            return new
-            {
-                name = Options.GameName,
-                port = Options.ServerPort,
-            };
+            return "GET:demo";
         }
 
-        [Route("config")]
+        [Route("authorize")]
         [HttpGet]
-        [ConfigurableAuthorize]
-        public object Config()
+        [Authorize]
+        public object Authorize()
         {
-            return new
-            {
-                name = Options.GameName,
-                port = Options.ServerPort,
-                upnp = Options.UPnP,
-                openPortChecker = Options.OpenPortChecker
-            };
+            return "GET:demo/authorize";
         }
 
-        [Route("config/{param}")]
+        [Route("configurable_authorize")]
         [HttpGet]
         [ConfigurableAuthorize]
-        public object Param(string param)
+        public string ConfigurableAuthorize()
         {
-            return new
-            {
-                name = Options.GameName,
-                port = Options.ServerPort,
-                upnp = Options.UPnP,
-                openPortChecker = Options.OpenPortChecker
-            };
+            return "GET:demo/configurable_authorize";
         }
 
-        [Route("stats")]
+        [Route("configurable_authorize/{param}")]
         [HttpGet]
-        public object Stats()
+        [ConfigurableAuthorize]
+        public string ConfigurableAuthorize(string param)
         {
-            return new
-            {
-                uptime = Globals.Timing.TimeMs,
-                cps = Globals.Cps,
-                connectedClients = Globals.Clients?.Count,
-                onlineCount = Globals.OnlineList?.Count
-            };
+            return "GET:demo/configurable_authorize:" + param;
         }
+
+        [Route("configurable_authorize/{*param}")]
+        [HttpGet]
+        [ConfigurableAuthorize]
+        public string ConfigurableAuthorizeParams(string param)
+        {
+            return "GET:demo/configurable_authorize:" + param;
+        }
+
     }
+
 }

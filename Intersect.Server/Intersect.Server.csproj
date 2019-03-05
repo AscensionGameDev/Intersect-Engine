@@ -184,8 +184,8 @@
     <Reference Include="Costura, Version=3.1.2.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
       <HintPath>..\packages\Costura.Fody.3.1.2\lib\net46\Costura.dll</HintPath>
     </Reference>
-    <Reference Include="JetBrains.Annotations, Version=2018.2.1.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
-      <HintPath>..\packages\JetBrains.Annotations.2018.2.1\lib\net20\JetBrains.Annotations.dll</HintPath>
+    <Reference Include="JetBrains.Annotations, Version=2018.3.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\packages\JetBrains.Annotations.2018.3.0\lib\net20\JetBrains.Annotations.dll</HintPath>
     </Reference>
     <Reference Include="jose-jwt, Version=2.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\jose-jwt.2.4.0\lib\net40\jose-jwt.dll</HintPath>
@@ -505,6 +505,7 @@
     <Compile Include="Web\RestApi\Authentication\OAuth\Providers\BearerAuthenticationProvider.cs" />
     <Compile Include="Web\RestApi\Authentication\OAuth\Providers\GrantProvider.cs" />
     <Compile Include="Web\RestApi\Authentication\OAuth\Providers\RefreshTokenProvider.cs" />
+    <Compile Include="Web\RestApi\Configuration\ApiConfiguration.cs" />
     <Compile Include="Web\RestApi\IAppConfigurationProvider.cs" />
     <Compile Include="Web\RestApi\MediaTypeFormatterExtensions.cs" />
     <Compile Include="Web\RestApi\RestApi.cs" />
@@ -532,7 +533,11 @@
     <Compile Include="Web\RestApi\Routes\OAuthController.cs" />
     <Compile Include="Web\RestApi\Routes\RootInfoController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\DemoController.cs" />
+    <Compile Include="Web\RestApi\Routes\V1\DocController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\InfoController.cs" />
+    <Compile Include="Web\RestApi\Services\AuthorizedRoutesService.cs" />
+    <Compile Include="Web\RestApi\Services\IAuthorizedRoutesService.cs" />
+    <Compile Include="Web\RestApi\Services\IntersectServiceDependencyResolver.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="private-intersect.bek" />
