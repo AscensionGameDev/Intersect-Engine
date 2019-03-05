@@ -119,8 +119,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     };
 
                 default:
+                    // TODO: Make this not show detail if it has multiple differing branches (e.g. if looking at /api/v1/ don't show detail when there's /api/v1/doc/* and /api/v1/info/*)
                     var showDetail = descriptions.All(
-                        description => description?.RelativePath?.IndexOf('/', path?.Length ?? 0) < 1
+                        description => description?.RelativePath?.Split('/').Length - (description?.ParameterDescriptions?.Count + 1) <= segments.Length
                     );
 
                     // TODO: ABSOLUTELY REWRITE THIS SO THIS STUFF IS SOMEHOW PRE-CALCULATED AND NOT USING DYNAMICS!!! I AM LOOKING AT YOU, ME, MR. AUTHOR OF THIS GARBAGE PILE. -panda
