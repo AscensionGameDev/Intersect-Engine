@@ -711,13 +711,17 @@ namespace Intersect.Client.Localization
             {
                 {0, @""},
                 {1,@"Silences Target"},
-                {2, @"Stuns Target"},
+                {2,@"Stuns Target" },
                 {3,@"Snares Target"},
                 {4,@"Blinds Target"},
                 {5,@"Stealths Target"},
                 {6,@"Transforms Target"},
                 {7,@"Cleanses Target"},
                 {8,@"Target becomes Invulnerable"},
+                {9,@"Shields Target"},
+                {10,@"Makes the target fall asleep"},
+                {11,@"Applies an On Hit effect to the target"},
+
             };
             public static LocalizedString effects = @"Effects:";
             public static LocalizedString prereqs = @"Prerequisites:";
@@ -744,6 +748,7 @@ namespace Intersect.Client.Localization
                 {1, @"Targetted - Range: {00} Tiles"},
                 {2, @"AOE - Range: {00} Tiles - Radius: {01} Tiles"},
                 {3, @"Projectile - Range: {00} Tiles"},
+                {4, @"On Hit"},
             };
             public static Dictionary<int, LocalizedString> vitals = new Dictionary<int, LocalizedString>
             {

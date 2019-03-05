@@ -147,11 +147,17 @@ namespace Intersect.Server.Localization
                 {5, @"STEALTH!"},
                 {6, @"TRANSFORMED!"},
 				{7, @"CLEANSED!"},
-				{8, @"INVULNERABLE!"}
-			};
+				{8, @"INVULNERABLE!"},
+                {9, @"SHIELD!"},
+                {10, @"SLEEP!"},
+                {11, @"ON HIT!"},
+            };
             public static LocalizedString stunattacking = @"You are stunned and can't attack.";
+            public static LocalizedString sleepattacking = @"You are asleep and can't attack.";
             public static LocalizedString stunblocking = @"You are stunned and can't block.";
+            public static LocalizedString sleepblocking = @"You are asleep and can't block.";
             public static LocalizedString stunned = @"You cannot cast this ability whilst stunned.";
+            public static LocalizedString sleep = @"You cannot cast this ability whilst asleep";
             public static LocalizedString targetoutsiderange = @"Target is out of range!";
             public static LocalizedString toolrequired = @"You require a {00} to interact with this resource!";
             public static Dictionary<int, LocalizedString> vitals = new Dictionary<int, LocalizedString>
@@ -361,6 +367,7 @@ namespace Intersect.Server.Localization
             public static LocalizedString notimplemented = @"Use of this item type is not yet implemented.";
             public static LocalizedString statreq = @"You do not possess the correct combat stats to use this item.";
             public static LocalizedString stunned = @"You cannot use this item whilst stunned.";
+            public static LocalizedString sleep = @"You cannot use this item whilst asleep.";
         }
 
         public struct Mapping

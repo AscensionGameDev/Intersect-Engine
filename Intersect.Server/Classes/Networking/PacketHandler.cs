@@ -418,7 +418,7 @@ namespace Intersect.Server.Networking
             var statuses = client.Entity.Statuses.Values.ToArray();
             foreach (var status in statuses)
             {
-                if (status.Type == StatusTypes.Stun || status.Type == StatusTypes.Snare)
+                if (status.Type == StatusTypes.Stun || status.Type == StatusTypes.Snare || status.Type == StatusTypes.Sleep)
                 {
                     bf.Dispose();
                     return;
@@ -900,6 +900,12 @@ namespace Intersect.Server.Networking
                     bf.Dispose();
                     return;
                 }
+                if (status.Type == StatusTypes.Sleep)
+                {
+                    PacketSender.SendPlayerMsg(client, Strings.Combat.sleepblocking);
+                    bf.Dispose();
+                    return;
+                }
             }
 
             client.Entity.TryBlock(bf.ReadInteger());
@@ -929,6 +935,11 @@ namespace Intersect.Server.Networking
                     if (status.Type == StatusTypes.Stun)
                     {
                         PacketSender.SendPlayerMsg(client, Strings.Combat.stunattacking);
+                        return;
+                    }
+                    if (status.Type == StatusTypes.Sleep)
+                    {
+                        PacketSender.SendPlayerMsg(client, Strings.Combat.sleepattacking);
                         return;
                     }
                     if (status.Type == StatusTypes.Blind)

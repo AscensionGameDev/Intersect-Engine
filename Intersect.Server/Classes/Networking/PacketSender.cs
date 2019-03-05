@@ -714,6 +714,14 @@ namespace Intersect.Server.Networking
                 bf.WriteString(status.Data);
                 bf.WriteInteger((int)(status.Duration - Globals.System.GetTimeMs()));
                 bf.WriteInteger((int)(status.Duration - status.StartTime));
+
+                if (status.Type == StatusTypes.Shield)
+                {
+                    for (var i = 0; i < (int)Vitals.VitalCount; i++)
+                    {
+                        bf.WriteInteger(status.shield[i]);
+                    }
+                }
             }
             //If player and in party send vitals to party just in case party members are not in the proximity
             if (en.GetType() == typeof(Player))

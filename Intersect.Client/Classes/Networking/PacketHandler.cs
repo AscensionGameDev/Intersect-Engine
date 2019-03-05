@@ -836,6 +836,15 @@ namespace Intersect.Client.Networking
             {
                 en.Status.Add(new StatusInstance(bf.ReadGuid(), bf.ReadInteger(), bf.ReadString(), bf.ReadInteger(),
                     bf.ReadInteger()));
+
+                //Check for a shield
+                if (en.Status[i].Type == (int)StatusTypes.Shield)
+                {
+                    for (var s = 0; s < (int)Vitals.VitalCount; s++)
+                    {
+                        en.Status[i].Shield[s] = bf.ReadInteger();
+                    }
+                }
             }
 
             if (Gui.GameUi != null)

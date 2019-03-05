@@ -144,6 +144,9 @@ namespace Intersect.GameObjects
         public int Duration { get; set; }
         public StatusTypes Effect { get; set; }
         public string TransformSprite { get; set; }
+
+        [Column("OnHit")]
+        public int OnHitDuration { get; set; }
     }
 
     [Owned]

@@ -289,6 +289,16 @@ namespace Intersect.GameObjects.Events.Commands
         public override EventCommandType Type {get;} = EventCommandType.ReleasePlayer;
     }
 
+    public class HidePlayerCommand : EventCommand
+    {
+        public override EventCommandType Type { get; } = EventCommandType.HidePlayer;
+    }
+
+    public class ShowPlayerCommand : EventCommand
+    {
+        public override EventCommandType Type { get; } = EventCommandType.ShowPlayer;
+    }
+
     public class PlayBgmCommand : EventCommand
     {
         public override EventCommandType Type {get;} = EventCommandType.PlayBgm;

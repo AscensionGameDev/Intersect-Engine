@@ -622,6 +622,16 @@ namespace Intersect.Editor.Forms.Editors.Events
             return Strings.EventCommandList.releaseplayer;
         }
 
+        private static string GetCommandText(HidePlayerCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.hideplayer;
+        }
+
+        private static string GetCommandText(ShowPlayerCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.showplayer;
+        }
+
         private static string GetCommandText(SpawnNpcCommand command, MapInstance map)
         {
             if (command == null)

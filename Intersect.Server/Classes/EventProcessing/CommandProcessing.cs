@@ -605,6 +605,22 @@ namespace Intersect.Server.EventProcessing
             PacketSender.SendReleasePlayer(player.MyClient, instance.BaseEvent.Id);
         }
 
+        //Hide Player Command
+        private static void ProcessCommand(HidePlayerCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
+        {
+            player.HideEntity = true;
+            player.HideName = true;
+            PacketSender.SendEntityDataToProximity(player);
+        }
+
+        //Show Player Command
+        private static void ProcessCommand(ShowPlayerCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
+        {
+            player.HideEntity = false;
+            player.HideName = false;
+            PacketSender.SendEntityDataToProximity(player);
+        }
+
         //Play Bgm Command
         private static void ProcessCommand(PlayBgmCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {

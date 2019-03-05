@@ -851,7 +851,7 @@ namespace Intersect.Server.Entities
             var statuses = Statuses.Values.ToArray();
             foreach (var status in statuses)
             {
-                if (status.Type == StatusTypes.Stun)
+                if (status.Type == StatusTypes.Stun || status.Type == StatusTypes.Sleep)
                 {
                     return false;
                 }
@@ -1241,6 +1241,11 @@ namespace Intersect.Server.Entities
                     if (status.Type == StatusTypes.Stun)
                     {
                         PacketSender.SendPlayerMsg(MyClient, Strings.Items.stunned);
+                        return;
+                    }
+                    if (status.Type == StatusTypes.Sleep)
+                    {
+                        PacketSender.SendPlayerMsg(MyClient, Strings.Items.sleep);
                         return;
                     }
                 }
@@ -2998,6 +3003,11 @@ namespace Intersect.Server.Entities
 							PacketSender.SendPlayerMsg(MyClient, Strings.Combat.stunned);
 							return;
 						}
+                        if (status.Type == StatusTypes.Sleep)
+                        {
+                            PacketSender.SendPlayerMsg(MyClient, Strings.Combat.sleep);
+                            return;
+                        }
 					}
 				}
 

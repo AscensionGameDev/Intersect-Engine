@@ -11,5 +11,8 @@ namespace Intersect.Enums
         Transform = 6,
 		Cleanse = 7,
 		Invulnerable = 8,
+        Shield = 9,
+        Sleep = 10,
+        OnHit = 11,
     }
 }

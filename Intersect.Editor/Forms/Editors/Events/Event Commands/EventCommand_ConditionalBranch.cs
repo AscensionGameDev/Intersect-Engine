@@ -72,6 +72,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             lblItemQuantity.Text = Strings.EventConditional.hasatleast;
             lblItem.Text = Strings.EventConditional.item;
 
+            //Has Item Equipped
+            grpEquippedItem.Text = Strings.EventConditional.hasitemequipped;
+            lblEquippedItem.Text = Strings.EventConditional.item;
+
             //Class is
             grpClass.Text = Strings.EventConditional.classis;
             lblClass.Text = Strings.EventConditional.Class;
@@ -244,6 +248,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     Condition = new MapIsCondition();
                     btnSelectMap.Tag = Guid.Empty;
                     break;
+                case ConditionTypes.IsItemEquipped:
+                    Condition = new IsItemEquippedCondition();
+                    if (cmbEquippedItem.Items.Count > 0) cmbEquippedItem.SelectedIndex = 0;
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -266,6 +274,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             grpQuestCompleted.Hide();
             grpGender.Hide();
             grpMapIs.Hide();
+            grpEquippedItem.Hide();
             switch (type)
             {
                 case ConditionTypes.PlayerSwitch:
@@ -360,6 +369,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     break;
                 case ConditionTypes.MapIs:
                     grpMapIs.Show();
+                    break;
+                case ConditionTypes.IsItemEquipped:
+                    grpEquippedItem.Show();
+                    cmbEquippedItem.Items.Clear();
+                    cmbEquippedItem.Items.AddRange(ItemBase.Names);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -607,6 +621,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
             btnSelectMap.Tag = condition.MapId;
         }
+
+        private void SetupFormValues(IsItemEquippedCondition condition)
+        {
+            cmbEquippedItem.SelectedIndex = ItemBase.ListIndex(condition.ItemId);
+        }
         #endregion
 
         #region "SaveFormValues"
@@ -753,9 +772,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             condition.MapId = (Guid)btnSelectMap.Tag;
         }
 
+        private void SaveFormValues(IsItemEquippedCondition condition)
+        {
+            condition.ItemId = ItemBase.IdFromList(cmbEquippedItem.SelectedIndex);
+        }
 
         #endregion
-
-
     }
 }
