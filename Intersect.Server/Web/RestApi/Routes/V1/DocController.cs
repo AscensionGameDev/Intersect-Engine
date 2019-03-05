@@ -47,6 +47,12 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 .Where(
                     description =>
                     {
+                        if (typeof(DemoController) ==
+                            description?.ActionDescriptor?.ControllerDescriptor?.ControllerType)
+                        {
+                            return false;
+                        }
+
                         if (string.IsNullOrWhiteSpace(description?.RelativePath))
                         {
                             return false;
@@ -63,7 +69,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                         }
 
                         var descriptionSegments = description.RelativePath.Split('/');
-                        if (Math.Max(segments.Length, 1) + 1 >= descriptionSegments.Length)
+                        if (Math.Max(segments.Length, 1) + 1 >= descriptionSegments.Length - (description.ParameterDescriptions?.Count ?? 0))
                         {
                             pathSegments.Add(description.RelativePath);
                             return true;
@@ -71,7 +77,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
                         var partialDescriptionPath = "";
                         for (var segmentIndex = 0;
-                            segmentIndex < descriptionSegments.Length && segmentIndex < Math.Max(segments.Length, 1) + 1;
+                            segmentIndex < descriptionSegments.Length &&
+                            segmentIndex < Math.Max(segments.Length, 1) + 1;
                             ++segmentIndex)
                         {
                             if (!string.IsNullOrWhiteSpace(partialDescriptionPath))
@@ -88,14 +95,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 )
                 .ToList();
 
-            var displaySegments = pathSegments
-                .GroupBy(pathSegment => pathSegment)
+            var displaySegments = pathSegments.GroupBy(pathSegment => pathSegment)
                 .Select(
                     group =>
                     {
                         dynamic expando = new ExpandoObject();
                         expando.path = group?.FirstOrDefault();
-                        expando.count = group?.Count();
+                        expando.children = group?.Count();
                         return expando;
                     }
                 )
@@ -117,6 +123,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                         description => description?.RelativePath?.IndexOf('/', path?.Length ?? 0) < 1
                     );
 
+                    // TODO: ABSOLUTELY REWRITE THIS SO THIS STUFF IS SOMEHOW PRE-CALCULATED AND NOT USING DYNAMICS!!! I AM LOOKING AT YOU, ME, MR. AUTHOR OF THIS GARBAGE PILE. -panda
                     return displaySegments
                         .Concat(
                             descriptions.Select(
@@ -124,16 +131,38 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                             )
                         )
                         .Where(displaySegment => displaySegment != null)
-                        // TODO: Either scrap this or reinstate it.
-                        //.GroupBy(displaySegment => displaySegment.path)
-                        //.Select(
-                        //    group => group.OrderByDescending(
-                        //            member => ((IDictionary<string, object>) member)?.ContainsKey("method") ?? false
-                        //                ? member.method
-                        //                : null
-                        //        )
-                        //        .First()
-                        //)
+                        .GroupBy(displaySegment => displaySegment.path)
+                        .SelectMany(
+                            group => group.Select(
+                                    member =>
+                                    {
+                                        var lookup = (IDictionary<string, object>) member;
+                                        var score = 0;
+                                        var hasMethod = false;
+
+                                        if (lookup?.ContainsKey("method") ?? false)
+                                        {
+                                            hasMethod = true;
+                                            score = 1;
+                                        }
+                                        else if (lookup?.ContainsKey("children") ?? false)
+                                        {
+                                            score = member.children;
+                                        }
+
+                                        return new
+                                        {
+                                            member,
+                                            score,
+                                            hasMethod
+                                        };
+                                    }
+                                )
+                                .GroupBy(compound => compound.score)
+                                .Select(subgroup => subgroup.OrderByDescending(compound => compound.hasMethod).First())
+                                .OrderBy(compound => compound?.score)
+                        )
+                        .Select(compound => compound.member)
                         .OrderBy(displaySegment => displaySegment?.path)
                         .ToArray();
             }
