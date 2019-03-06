@@ -37,33 +37,34 @@ namespace Intersect.Server.Entities
         public string Face { get; set; }
         public int Level { get; set; }
 
-        [Column("Vitals")]
+        [JsonIgnore, Column("Vitals")]
         public string VitalsJson
         {
             get => DatabaseUtils.SaveIntArray(_vital, (int)Enums.Vitals.VitalCount);
             set => _vital = DatabaseUtils.LoadIntArray(value, (int)Enums.Vitals.VitalCount);
         }
-        [NotMapped]
+        [JsonProperty("Vitals"), NotMapped]
         public int[] _vital { get; set; } = new int[(int)Enums.Vitals.VitalCount];
-        [NotMapped]
+        [JsonProperty("MaxVitals"), NotMapped]
         private int[] _maxVital = new int[(int)Vitals.VitalCount];
 
         //Stats based on npc settings, class settings, etc for quick calculations
-        [Column("BaseStats")]
+        [JsonIgnore, Column("BaseStats")]
         public string StatsJson
         {
             get => DatabaseUtils.SaveIntArray(BaseStats, (int)Enums.Stats.StatCount);
             set => BaseStats = DatabaseUtils.LoadIntArray(value, (int)Enums.Stats.StatCount);
         }
         [NotMapped]
-        public int[] BaseStats { get; set; } = new int[(int)Enums.Stats.StatCount];
+        public int[] BaseStats { get; set; } = new int[(int)Enums.Stats.StatCount]; // TODO: Why can this be BaseStats while Vitals is _vital and MaxVitals is _maxVital?
 
-        [Column("StatPointAllocations")]
+        [JsonIgnore, Column("StatPointAllocations")]
         public string StatPointsJson
         {
             get => DatabaseUtils.SaveIntArray(StatPointAllocations, (int)Enums.Stats.StatCount);
             set => StatPointAllocations = DatabaseUtils.LoadIntArray(value, (int)Enums.Stats.StatCount);
         }
+
         [NotMapped]
         public int[] StatPointAllocations { get; set; } = new int[(int)Enums.Stats.StatCount];
 

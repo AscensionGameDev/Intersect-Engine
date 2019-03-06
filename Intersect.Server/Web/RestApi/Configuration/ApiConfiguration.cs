@@ -45,9 +45,11 @@ namespace Intersect.Server.Web.RestApi.Configuration
         public IReadOnlyDictionary<string, object> RouteAuthorization =>
             new ReadOnlyDictionary<string, object>(mRouteAuthorization);
 
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public bool Enabled { get; private set; }
+
         private ApiConfiguration()
         {
-            Hosts = ImmutableArray.Create(new[] {"http://localhost:5401"});
             mRouteAuthorization = new Dictionary<string, object>();
 
             using (var csp = new System.Security.Cryptography.AesCryptoServiceProvider())
@@ -56,6 +58,9 @@ namespace Intersect.Server.Web.RestApi.Configuration
                 csp.GenerateKey();
                 DataProtectionKey = BitConverter.ToString(csp.Key).Replace("-", "");
             }
+
+            Enabled = false;
+            Hosts = ImmutableArray.Create(new[] { "http://localhost:5401" });
         }
 
         #region Static

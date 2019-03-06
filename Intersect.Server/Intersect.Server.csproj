@@ -556,6 +556,8 @@
     <Compile Include="Web\RestApi\Services\AuthorizedRoutesService.cs" />
     <Compile Include="Web\RestApi\Services\IAuthorizedRoutesService.cs" />
     <Compile Include="Web\RestApi\Services\IntersectServiceDependencyResolver.cs" />
+    <Compile Include="Web\RestApi\Routes\V1\UserController.cs" />
+    <Compile Include="Web\RestApi\Routes\V1\PlayerController.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="private-intersect.bek" />

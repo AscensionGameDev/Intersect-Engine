@@ -20,6 +20,7 @@ using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 using Switch = Intersect.Server.Database.PlayerData.Characters.Switch;
 
 namespace Intersect.Server.Entities
@@ -36,7 +37,7 @@ namespace Intersect.Server.Entities
         public static int OnlineCount => OnlinePlayers.Count;
 
         //Account
-        public virtual User Account { get; private set; }
+        [JsonIgnore] public virtual User Account { get; private set; }
 
         //Name, X, Y, Dir, Etc all in the base Entity Class
         public Guid ClassId { get; set; }
@@ -51,6 +52,7 @@ namespace Intersect.Server.Entities
             get => DatabaseUtils.SaveIntArray(Equipment, Options.EquipmentSlots.Count);
             set => Equipment = DatabaseUtils.LoadIntArray(value, Options.EquipmentSlots.Count);
         }
+
         [NotMapped]
         public int[] Equipment { get; set; } = new int[Options.EquipmentSlots.Count];
 
@@ -111,57 +113,96 @@ namespace Intersect.Server.Entities
         //5 minute timeout before someone can send a trade/party request after it has been declined
         [NotMapped] public const long REQUEST_DECLINE_TIMEOUT = 300000;  //TODO: Server option this bitch. JC is a lazy fuck
 
-
         //TODO: Clean all of this stuff up
-        //Temporary Values
-        [NotMapped] public Client MyClient;
+        #region Temporary Values
+
         [NotMapped] public bool InGame;
-        [NotMapped] private bool mSentMap;
-        [NotMapped] private int mCommonEventLaunches = 0;
-        [NotMapped] private object mEventLock = new object();
         [NotMapped] public Guid LastMapEntered = Guid.Empty;
-        [NotMapped] public ConcurrentDictionary<Guid, EventInstance> EventLookup = new ConcurrentDictionary<Guid, EventInstance>();
-        //Event Spawned Npcs
-        [NotMapped] public List<Npc> SpawnedNpcs = new List<Npc>();
-        //Chat
-        [NotMapped] public Player ChatTarget = null;
-        //Trading
-        [NotMapped] public Trading Trading;
-        //Quests
+
+        [JsonIgnore, NotMapped] public Client MyClient;
+
+        [JsonIgnore, NotMapped] private bool mSentMap;
+        [JsonIgnore, NotMapped] private int mCommonEventLaunches = 0;
+        [JsonIgnore, NotMapped] private object mEventLock = new object();
+        [JsonIgnore, NotMapped] public ConcurrentDictionary<Guid, EventInstance> EventLookup = new ConcurrentDictionary<Guid, EventInstance>();
+
+        #endregion
+
+        #region Event Spawned Npcs
+
+        [JsonIgnore] [NotMapped] public List<Npc> SpawnedNpcs = new List<Npc>();
+
+        #endregion
+
+        #region Chat
+
+        [JsonIgnore] [NotMapped] public Player ChatTarget = null;
+
+        #endregion
+
+        #region Trading
+
+        [JsonProperty(nameof(Trading))] private Guid JsonTradingId => Trading.Counterparty?.Id ?? Guid.Empty;
+
+        [JsonIgnore, NotMapped] public Trading Trading;
+
+        #endregion
+
+        #region Quests
+
         [NotMapped] public List<Guid> QuestOffers = new List<Guid>();
-        //Crafting
+
+        #endregion
+
+        #region Crafting
+
         [NotMapped] public Guid CraftingTableId = Guid.Empty;
         [NotMapped] public Guid CraftId = Guid.Empty;
         [NotMapped] public long CraftTimer = 0;
-        //Parties
-        [NotMapped] public List<Player> Party = new List<Player>();
-        [NotMapped] public Player PartyRequester;
-        [NotMapped] public Dictionary<Player, long> PartyRequests = new Dictionary<Player, long>();
-        //Friends
-        [NotMapped] public Player FriendRequester;
-        [NotMapped] public Dictionary<Player, long> FriendRequests = new Dictionary<Player, long>();
-        //Bag/Shops/etc
-        [NotMapped] public Bag InBag;
+
+        #endregion
+
+        #region Parties
+
+        [JsonProperty(nameof(Party))] private List<Guid> JsonPartyIds => Party.Select(partyMember => partyMember?.Id ?? Guid.Empty).ToList();
+        [JsonProperty(nameof(PartyRequester))] private Guid JsonPartyRequesterId => PartyRequester?.Id ?? Guid.Empty;
+        [JsonProperty(nameof(PartyRequests))] private Dictionary<Guid, long> JsonPartyRequests => PartyRequests.ToDictionary(pair => pair.Key?.Id ?? Guid.Empty, pair => pair.Value);
+
+        [JsonIgnore, NotMapped] public List<Player> Party = new List<Player>();
+        [JsonIgnore, NotMapped] public Player PartyRequester;
+        [JsonIgnore, NotMapped] public Dictionary<Player, long> PartyRequests = new Dictionary<Player, long>();
+
+        #endregion
+
+        #region Friends
+
+        [JsonProperty(nameof(FriendRequester))] private Guid JsonFriendRequesterId => FriendRequester?.Id ?? Guid.Empty;
+        [JsonProperty(nameof(FriendRequests))] private Dictionary<Guid, long> JsonFriendRequests => FriendRequests.ToDictionary(pair => pair.Key?.Id ?? Guid.Empty, pair => pair.Value);
+
+        [JsonIgnore, NotMapped] public Player FriendRequester;
+        [JsonIgnore, NotMapped] public Dictionary<Player, long> FriendRequests = new Dictionary<Player, long>();
+
+        #endregion
+
+        #region Bag/Shops/etc
+
+        [JsonProperty(nameof(InBag))] private bool JsonInBag => InBag != null;
+        [JsonProperty(nameof(InShop))] private bool JsonInShop => InShop != null;
+
+        [JsonIgnore, NotMapped] public Bag InBag;
+        [JsonIgnore, NotMapped] public ShopBase InShop;
+
         [NotMapped] public bool InBank;
-        [NotMapped] public ShopBase InShop;
-        //Item Cooldowns
+
+        #endregion
+
+        #region Item Cooldowns
+
         [NotMapped] public Dictionary<Guid, long> ItemCooldowns = new Dictionary<Guid, long>();
 
+        #endregion
 
-
-		[NotMapped]
-        public bool IsValidPlayer
-        {
-            get
-            {
-                if (IsDisposed)
-                {
-                    return false;
-                }
-
-                return (MyClient != null && MyClient.Entity == this);
-            }
-        }
+        [JsonIgnore, ] public bool IsValidPlayer => !IsDisposed && MyClient?.Entity == this;
 
         [NotMapped]
         public long ExperienceToNextLevel => GetExperienceToNextLevel(Level);
@@ -173,10 +214,7 @@ namespace Intersect.Server.Entities
             return classBase?.ExperienceToNextLevel(level) ?? ClassBase.DEFAULT_BASE_EXPERIENCE;
         }
 
-        public Player()
-        {
-            
-        }
+        public Player() { }
 
         public void SetOnline()
         {

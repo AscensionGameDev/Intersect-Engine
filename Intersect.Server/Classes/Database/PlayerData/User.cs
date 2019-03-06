@@ -21,8 +21,8 @@ namespace Intersect.Server.Database.PlayerData
 
         [Column(Order = 1)]
         public string Name { get; set; }
-        public string Salt { get; set; }
-        public string Password { get; set; }
+        [JsonIgnore] public string Salt { get; set; }
+        [JsonIgnore] public string Password { get; set; }
         [Column(Order = 2)]
         public string Email { get; set; }
         [Column("Power")]
@@ -56,6 +56,20 @@ namespace Intersect.Server.Database.PlayerData
                     .Include(p => p.Characters).ThenInclude(c => c.Spells)
                     .Include(p => p.Characters).ThenInclude(c => c.Bank)
                     .FirstOrDefault(c => c.Name.ToLower() == username.ToLower()));
+
+        private static Func<PlayerContext, Guid, User> _getUserById =
+            EF.CompileQuery((PlayerContext context, Guid id) =>
+                context.Users
+                    .Include(p => p.Characters).ThenInclude(c => c.Bank)
+                    .Include(p => p.Characters).ThenInclude(c => c.Friends).ThenInclude(c => c.Target)
+                    .Include(p => p.Characters).ThenInclude(c => c.Hotbar)
+                    .Include(p => p.Characters).ThenInclude(c => c.Quests)
+                    .Include(p => p.Characters).ThenInclude(c => c.Switches)
+                    .Include(p => p.Characters).ThenInclude(c => c.Variables)
+                    .Include(p => p.Characters).ThenInclude(c => c.Items)
+                    .Include(p => p.Characters).ThenInclude(c => c.Spells)
+                    .Include(p => p.Characters).ThenInclude(c => c.Bank)
+                    .FirstOrDefault(c => c.Id == id));
 
         private static Func<PlayerContext, Guid, Player> _getPlayerById =
             EF.CompileQuery((PlayerContext context, Guid id) =>
@@ -161,6 +175,46 @@ namespace Intersect.Server.Database.PlayerData
                 character.Hotbar = character.Hotbar.OrderBy(p => p.Index).ToList();
             }
             return character;
+        }
+
+        public static User FindByName(string username)
+        {
+            return FindByName(PlayerContext.Current, username);
+        }
+
+        public static User FindByName(PlayerContext playerContext, string username)
+        {
+            if (playerContext == null)
+            {
+                return null;
+            }
+
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                return null;
+            }
+
+            return _getUser(playerContext, username);
+        }
+
+        public static User FindById(Guid userId)
+        {
+            return FindById(PlayerContext.Current, userId);
+        }
+
+        public static User FindById(PlayerContext playerContext, Guid userId)
+        {
+            if (playerContext == null)
+            {
+                return null;
+            }
+
+            if (userId == Guid.Empty)
+            {
+                return null;
+            }
+
+            return _getUserById(playerContext, userId);
         }
     }
 }
