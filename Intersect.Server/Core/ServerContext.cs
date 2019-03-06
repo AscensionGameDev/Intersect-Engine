@@ -106,6 +106,13 @@ namespace Intersect.Server.Core
 
             Console.WriteLine();
 
+            if (Options.ApiEnabled)
+            {
+                Console.WriteLine(Strings.Intro.api.ToString(Options.ApiPort));
+                RestApi.Start();
+                Console.WriteLine();
+            }
+
             if (!Options.UPnP || Options.NoPunchthrough)
             {
                 return;
@@ -123,13 +130,6 @@ namespace Intersect.Server.Core
             }
 
             Console.WriteLine();
-
-            if (Options.ApiEnabled)
-            {
-                Console.WriteLine(Strings.Intro.api.ToString(Options.ApiPort));
-                RestApi.Start();
-                Console.WriteLine();
-            }
 
             Bootstrapper.CheckNetwork();
         }
