@@ -1,11 +1,4 @@
-﻿using Intersect.IO.FileSystem;
-using Intersect.Logging;
-
-using JetBrains.Annotations;
-
-using Newtonsoft.Json;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
@@ -13,6 +6,10 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Intersect.IO.FileSystem;
+using Intersect.Logging;
+using JetBrains.Annotations;
+using Newtonsoft.Json;
 
 namespace Intersect.Server.Web.RestApi.Configuration
 {
@@ -30,7 +27,6 @@ namespace Intersect.Server.Web.RestApi.Configuration
             set => mHosts = value.IsDefaultOrEmpty ? ImmutableArray.Create(new[] {"http://localhost:5401"}) : value;
         }
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         [JsonIgnore]
         public ImmutableArray<int> Ports
         {
@@ -41,6 +37,9 @@ namespace Intersect.Server.Web.RestApi.Configuration
         [JsonProperty(nameof(RouteAuthorization), NullValueHandling = NullValueHandling.Ignore)]
         private Dictionary<string, object> mRouteAuthorization;
 
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [NotNull] public string DataProtectionKey { get; private set; }
+
         [JsonIgnore]
         [NotNull]
         public IReadOnlyDictionary<string, object> RouteAuthorization =>
@@ -50,6 +49,13 @@ namespace Intersect.Server.Web.RestApi.Configuration
         {
             Hosts = ImmutableArray.Create(new[] {"http://localhost:5401"});
             mRouteAuthorization = new Dictionary<string, object>();
+
+            using (var csp = new System.Security.Cryptography.AesCryptoServiceProvider())
+            {
+                csp.KeySize = 256;
+                csp.GenerateKey();
+                DataProtectionKey = BitConverter.ToString(csp.Key).Replace("-", "");
+            }
         }
 
         #region Static

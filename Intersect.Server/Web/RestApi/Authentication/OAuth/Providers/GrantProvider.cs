@@ -29,13 +29,6 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
             OAuthProvider = oAuthProvider;
         }
 
-        //public override async Task GrantClientCredentials([NotNull] OAuthGrantClientCredentialsContext context)
-        //{
-        //    var identity = new ClaimsIdentity(new GenericIdentity(context.ClientId, OAuthDefaults.AuthenticationType), context.Scope.Select(x => new Claim("urn:oauth:scope", x)));
-
-        //    context.Validated(identity);
-        //}
-
         public override Task AuthorizationEndpointResponse(OAuthAuthorizationEndpointResponseContext context)
         {
             return base.AuthorizationEndpointResponse(context);
@@ -168,11 +161,6 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
             return Task.FromResult(0);
         }
 
-        public override Task ValidateAuthorizeRequest(OAuthValidateAuthorizeRequestContext context)
-        {
-            return base.ValidateAuthorizeRequest(context);
-        }
-
         public override async Task ValidateClientAuthentication(
             [NotNull] OAuthValidateClientAuthenticationContext context)
         {
@@ -215,16 +203,6 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
                     context.SetError("grant_type_invalid");
                     return;
             }
-        }
-
-        public override async Task ValidateClientRedirectUri(OAuthValidateClientRedirectUriContext context)
-        {
-            context?.Validated();
-        }
-
-        public override async Task ValidateTokenRequest([NotNull] OAuthValidateTokenRequestContext context)
-        {
-            context.Validated();
         }
     }
 }

@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Threading.Tasks;
-using Intersect.Server.Classes.Database.PlayerData.Api;
 using Intersect.Server.Web.RestApi.Authentication.OAuth.Providers;
 using JetBrains.Annotations;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Infrastructure;
 using Microsoft.Owin.Security.OAuth;
 using Owin;
+using Owin.Security.AesDataProtectorProvider;
 
 namespace Intersect.Server.Web.RestApi.Authentication.OAuth
 {
@@ -23,9 +22,10 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth
 
         public override void Configure(IAppBuilder appBuilder)
         {
-            var oauthOptions = new OAuthAuthorizationServerOptions
+            appBuilder.UseAesDataProtectorProvider();
+
+            appBuilder.UseOAuthAuthorizationServer(new OAuthAuthorizationServerOptions
             {
-                //AuthorizeEndpointPath = new PathString("/api/oauth/authorize"),
                 TokenEndpointPath = new PathString("/api/oauth/token"),
                 ApplicationCanDisplayErrors = true,
 #if DEBUG
@@ -34,13 +34,10 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth
 #else
                 AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(60),
 #endif
-
                 Provider = OAuthAuthorizationServerProvider,
                 RefreshTokenProvider = RefreshTokenProvider
+            });
 
-            };
-
-            appBuilder.UseOAuthAuthorizationServer(oauthOptions);
             appBuilder.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions
             {
                 Provider = new BearerAuthenticationProvider()
