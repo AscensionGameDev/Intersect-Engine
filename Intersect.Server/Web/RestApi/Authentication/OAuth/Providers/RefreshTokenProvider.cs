@@ -52,7 +52,7 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
 
             var issued = DateTime.UtcNow;
             var tokenLifeTime = context.OwinContext.Get<int>("as:clientRefreshTokenLifetime");
-            var ticketId = context.OwinContext.Get<string>("ticket_id");
+            var ticketId = context.OwinContext.Get<Guid>("ticket_id");
             var expires = issued.AddMinutes(tokenLifeTime);
 
             var token = new RefreshToken
@@ -62,11 +62,13 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
                 Subject = userName,
                 Issued = issued,
                 Expires = expires,
-                Ticket = ticketId
+                TicketId = ticketId
             };
 
             properties.IssuedUtc = issued;
             properties.ExpiresUtc = expires;
+
+            token.Ticket = context.SerializeTicket();
 
             if (await RefreshToken.Add(token, true))
             {
@@ -74,19 +76,23 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
             }
         }
 
-        public override Task ReceiveAsync(AuthenticationTokenReceiveContext context)
+        public override async Task ReceiveAsync(AuthenticationTokenReceiveContext context)
         {
-            return base.ReceiveAsync(context);
-        }
+            if (!Guid.TryParse(context.Token, out var refreshTokenId))
+            {
+                return;
+            }
 
-        public override void Create(AuthenticationTokenCreateContext context)
-        {
-            throw new NotImplementedException();
-        }
+            var refreshToken = await RefreshToken.Find(refreshTokenId);
 
-        public override void Receive(AuthenticationTokenReceiveContext context)
-        {
-            throw new NotImplementedException();
+            if (refreshToken == null)
+            {
+                return;
+            }
+
+            context.DeserializeTicket(refreshToken.Ticket);
+
+            context.Ticket.ToString();
         }
     }
 }

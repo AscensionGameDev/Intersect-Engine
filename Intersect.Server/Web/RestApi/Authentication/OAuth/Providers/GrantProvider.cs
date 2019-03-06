@@ -121,7 +121,7 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
                 Log.Diagnostic("Received invalid client id '{0}'.", context.ClientId);
             }
 
-            var ticketId = Guid.NewGuid().ToString();
+            var ticketId = Guid.NewGuid();
             owinContext.Set("ticket_id", ticketId);
 
             var identity = new ClaimsIdentity(options.AuthenticationType);
@@ -129,7 +129,7 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
             identity.AddClaim(new Claim(IntersectClaimTypes.UserName, user.Name));
             identity.AddClaim(new Claim(IntersectClaimTypes.Email, user.Email));
             identity.AddClaim(new Claim(IntersectClaimTypes.ClientId, clientId.ToString()));
-            identity.AddClaim(new Claim(IntersectClaimTypes.TicketId, ticketId));
+            identity.AddClaim(new Claim(IntersectClaimTypes.TicketId, ticketId.ToString()));
 
             if (user.Power != null)
             {
@@ -191,11 +191,15 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
             {
                 case "password":
 #if DEBUG
-                    if (parameters["raw"] != null)
+                    if (parameters["prehash"] != null)
                     {
                         context.OwinContext?.Set(KEY_PREHASH, true);
                     }
 #endif
+                    context.Validated();
+                    return;
+
+                case "refresh_token":
                     context.Validated();
                     return;
 

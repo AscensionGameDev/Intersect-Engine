@@ -37,8 +37,13 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
             }
 
             var claimTicketId = identity.FindFirst(IntersectClaimTypes.TicketId);
+            if (!Guid.TryParse(claimTicketId?.Value, out var ticketId))
+            {
+                context.SetError("invalid_ticket_id");
+                return;
+            }
 
-            var refreshToken = await RefreshToken.FindForToken(claimTicketId?.Value);
+            var refreshToken = await RefreshToken.FindForTicket(ticketId);
             if (refreshToken == null)
             {
                 context.Rejected();

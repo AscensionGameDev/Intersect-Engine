@@ -33,6 +33,9 @@ namespace Intersect.Server.Classes.Database.PlayerData.Api
         public DateTime Expires { get; set; }
 
         [Required]
+        public Guid TicketId { get; set; }
+
+        [Required]
         public string Ticket { get; set; }
 
         public static async ValueTask<bool> Add(
@@ -85,9 +88,9 @@ namespace Intersect.Server.Classes.Database.PlayerData.Api
             return task == null ? null : await task;
         }
 
-        public static async ValueTask<RefreshToken> FindForToken([CanBeNull] string token)
+        public static async ValueTask<RefreshToken> FindForTicket([CanBeNull] Guid ticketId)
         {
-            if (string.IsNullOrWhiteSpace(token))
+            if (ticketId == Guid.Empty)
             {
                 return null;
             }
@@ -95,7 +98,7 @@ namespace Intersect.Server.Classes.Database.PlayerData.Api
             var task = PlayerContext.Current?
                     .RefreshTokens?
                     .ToAsyncEnumerable()
-                    .Where(queryToken => string.Equals(queryToken?.Ticket, token, StringComparison.Ordinal))
+                    .Where(queryToken => queryToken?.TicketId == ticketId)
                     .FirstOrDefault();
 
             if (task == null)
