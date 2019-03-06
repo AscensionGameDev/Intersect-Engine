@@ -8,6 +8,7 @@ using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Database.PlayerData.Characters;
+using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;

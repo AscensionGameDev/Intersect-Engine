@@ -9,6 +9,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Intersect.Logging;
 using Intersect.Server.Core;
 using Intersect.Server.Localization;
 using Lidgren.Network;
@@ -161,9 +162,9 @@ namespace Intersect.Server.Networking.Helpers
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-
+                Log.Warn(exception);
             }
             finally
             {

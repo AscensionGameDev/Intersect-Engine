@@ -29,8 +29,6 @@ namespace Intersect.Server.Networking.Lidgren
         public HandleConnectionEvent OnConnectionApproved { get; set; }
         public HandleConnectionEvent OnDisconnected { get; set; }
 
-        public override Guid Guid { get; }
-
         public bool Listen()
         {
             StartInterfaces();

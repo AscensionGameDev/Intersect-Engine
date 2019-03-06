@@ -7,7 +7,7 @@ using Intersect.Enums;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
-namespace Intersect.Server.Database.PlayerData
+namespace Intersect.Server.Database.PlayerData.Security
 {
     public class UserRights
     {

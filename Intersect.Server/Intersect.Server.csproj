@@ -532,7 +532,6 @@
       <DependentUpon>20180905042857_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\GameContextModelSnapshot.cs" />
-    <Compile Include="Classes\Database\PlayerData\UserRights.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -558,6 +557,7 @@
     <Compile Include="Web\RestApi\Services\IntersectServiceDependencyResolver.cs" />
     <Compile Include="Web\RestApi\Routes\V1\UserController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\PlayerController.cs" />
+    <Compile Include="Classes\Database\PlayerData\Security\UserRights.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="private-intersect.bek" />
@@ -605,6 +605,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Extensions\" />
+    <Folder Include="Classes\Database\PlayerData\Security\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

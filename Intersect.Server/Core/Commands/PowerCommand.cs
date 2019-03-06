@@ -2,6 +2,7 @@
 using Intersect.Server.Core.CommandParsing;
 using Intersect.Server.Core.CommandParsing.Arguments;
 using Intersect.Server.Database.PlayerData;
+using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking;
 using JetBrains.Annotations;

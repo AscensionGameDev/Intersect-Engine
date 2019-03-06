@@ -42,7 +42,8 @@ namespace Intersect.Network
         public int ConnectionCount => Connections.Count;
 
         public NetworkConfiguration Configuration { get; }
-        public abstract Guid Guid { get; }
+
+        public Guid Guid { get; protected set; }
 
         public bool AddConnection([NotNull] IConnection connection)
         {

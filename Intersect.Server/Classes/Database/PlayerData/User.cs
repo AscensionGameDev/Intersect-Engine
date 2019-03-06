@@ -8,6 +8,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using JetBrains.Annotations;
+using Intersect.Server.Database.PlayerData.Security;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 

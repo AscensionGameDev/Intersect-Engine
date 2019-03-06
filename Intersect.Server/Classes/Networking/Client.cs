@@ -3,6 +3,7 @@ using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Packets.Reflectable;
 using Intersect.Server.Database.PlayerData;
+using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities;
 using Intersect.Server.General;
 using Intersect.Server.Localization;

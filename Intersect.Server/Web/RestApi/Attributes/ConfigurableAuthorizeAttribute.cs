@@ -41,5 +41,10 @@ namespace Intersect.Server.Web.RestApi.Attributes
         {
             base.HandleUnauthorizedRequest(actionContext);
         }
+
+        public ConfigurableAuthorizeAttribute() : base()
+        {
+
+        }
     }
 }

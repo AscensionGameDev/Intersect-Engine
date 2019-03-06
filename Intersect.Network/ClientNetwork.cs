@@ -12,12 +12,10 @@ namespace Intersect.Network
     {
         private readonly LidgrenInterface mLidgrenInterface;
 
-        private Guid mGuid;
-
         public ClientNetwork([NotNull] NetworkConfiguration configuration, RSAParameters rsaParameters)
             : base(configuration)
         {
-            mGuid = Guid.Empty;
+            Guid = Guid.Empty;
 
             IsConnected = false;
             IsServerOnline = false;
@@ -48,8 +46,6 @@ namespace Intersect.Network
                 return (int) (1000 * connection.NetConnection.AverageRoundtripTime);
             }
         }
-
-        public override Guid Guid => mGuid;
 
         public bool Connect()
         {
@@ -99,7 +95,7 @@ namespace Intersect.Network
             StopInterfaces("closing");
         }
 
-        internal void AssignGuid(Guid guid) => mGuid = guid;
+        internal void AssignGuid(Guid guid) => Guid = guid;
 
         protected override IDictionary<TKey, TValue> CreateDictionaryLegacy<TKey, TValue>()
         {
