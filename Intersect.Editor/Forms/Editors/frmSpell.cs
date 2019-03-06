@@ -142,6 +142,7 @@ namespace Intersect.Editor.Forms.Editors
             lblDesc.Text = Strings.SpellEditor.description;
             lblCastAnimation.Text = Strings.SpellEditor.castanimation;
             lblHitAnimation.Text = Strings.SpellEditor.hitanimation;
+            chkBound.Text = Strings.SpellEditor.bound;
 
             grpRequirements.Text = Strings.SpellEditor.requirements;
             btnDynamicRequirements.Text = Strings.SpellEditor.requirementsbutton;
@@ -223,7 +224,6 @@ namespace Intersect.Editor.Forms.Editors
             btnVisualMapSelector.Text = Strings.Warping.visual;
 
             grpEvent.Text = Strings.SpellEditor.Event;
-            lblEvent.Text = Strings.SpellEditor.eventlabel;
 
             btnSave.Text = Strings.SpellEditor.save;
             btnCancel.Text = Strings.SpellEditor.cancel;
@@ -255,6 +255,8 @@ namespace Intersect.Editor.Forms.Editors
 
                 cmbCastAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.CastAnimationId) + 1;
                 cmbHitAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.HitAnimationId) + 1;
+
+                chkBound.Checked = mEditorItem.Bound;
 
                 cmbSprite.SelectedIndex = cmbSprite.FindString(TextUtils.NullToNone(mEditorItem.Icon));
                 if (cmbSprite.SelectedIndex > 0)
@@ -291,7 +293,8 @@ namespace Intersect.Editor.Forms.Editors
             grpEvent.Hide();
             cmbTargetType.Enabled = true;
 
-            if (cmbType.SelectedIndex == (int) SpellTypes.CombatSpell || cmbType.SelectedIndex == (int)SpellTypes.WarpTo)
+            if (cmbType.SelectedIndex == (int) SpellTypes.CombatSpell || cmbType.SelectedIndex == (int)SpellTypes.WarpTo ||
+                cmbType.SelectedIndex == (int)SpellTypes.Event)
             {
                 grpTargetInfo.Show();
                 grpCombat.Show();
@@ -344,7 +347,7 @@ namespace Intersect.Editor.Forms.Editors
                 chkIgnoreInactiveResources.Checked = mEditorItem.Dash.IgnoreInactiveResources;
                 chkIgnoreZDimensionBlocks.Checked = mEditorItem.Dash.IgnoreZDimensionAttributes;
             }
-            else if (cmbType.SelectedIndex == (int) SpellTypes.Event)
+            if (cmbType.SelectedIndex == (int) SpellTypes.Event)
             {
                 grpEvent.Show();
                 cmbEvent.SelectedIndex = EventBase.ListIndex(mEditorItem.EventId) + 1;
@@ -814,6 +817,11 @@ namespace Intersect.Editor.Forms.Editors
         private void nudOnHitDuration_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.Combat.OnHitDuration = (int)nudOnHitDuration.Value;
+        }
+
+        private void chkBound_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Bound = chkBound.Checked;
         }
     }
 }

@@ -40,6 +40,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
             grpSetVariable.Text = Strings.EventSetVariable.title;
             grpVariableSelection.Text = Strings.EventSetVariable.label;
+            grpRandom.Text = Strings.EventSetVariable.randomdesc;
             lblVariable.Text = Strings.EventSetVariable.label;
             rdoGlobalVariable.Text = Strings.EventSetVariable.global;
             rdoPlayerVariable.Text = Strings.EventSetVariable.player;
@@ -74,15 +75,18 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             {
                 case VariableMods.Set:
                     optSet.Checked = true;
-                    nudSet.Value = mMyCommand.Value;
+                    optStaticVal.Checked = true;
+                    nudValue.Value = mMyCommand.Value;
                     break;
                 case VariableMods.Add:
                     optAdd.Checked = true;
-                    nudAdd.Value = mMyCommand.Value;
+                    optStaticVal.Checked = true;
+                    nudValue.Value = mMyCommand.Value;
                     break;
                 case VariableMods.Subtract:
                     optSubtract.Checked = true;
-                    nudSubtract.Value = mMyCommand.Value;
+                    optStaticVal.Checked = true;
+                    nudValue.Value = mMyCommand.Value;
                     break;
                 case VariableMods.Random:
                     optRandom.Checked = true;
@@ -93,10 +97,32 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     optSystemTime.Checked = true;
                     break;
                 case VariableMods.DupPlayerVar:
+                    optSet.Checked = true;
                     optPlayerVar.Checked = true;
                     cmbSetPlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(mMyCommand.DupVariableId);
                     break;
                 case VariableMods.DupGlobalVar:
+                    optSet.Checked = true;
+                    optGlobalVar.Checked = true;
+                    cmbSetGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(mMyCommand.DupVariableId);
+                    break;
+                case VariableMods.AddPlayerVar:
+                    optAdd.Checked = true;
+                    optPlayerVar.Checked = true;
+                    cmbSetPlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(mMyCommand.DupVariableId);
+                    break;
+                case VariableMods.AddGlobalVar:
+                    optAdd.Checked = true;
+                    optGlobalVar.Checked = true;
+                    cmbSetGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(mMyCommand.DupVariableId);
+                    break;
+                case VariableMods.SubtractPlayerVar:
+                    optSubtract.Checked = true;
+                    optPlayerVar.Checked = true;
+                    cmbSetPlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(mMyCommand.DupVariableId);
+                    break;
+                case VariableMods.SubtractGlobalVar:
+                    optSubtract.Checked = true;
                     optGlobalVar.Checked = true;
                     cmbSetGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(mMyCommand.DupVariableId);
                     break;
@@ -106,13 +132,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void UpdateFormElements()
         {
-            nudSet.Enabled = optSet.Checked;
-            nudAdd.Enabled = optAdd.Checked;
-            nudSubtract.Enabled = optSubtract.Checked;
-            nudLow.Enabled = optRandom.Checked;
-            nudHigh.Enabled = optRandom.Checked;
-            cmbSetPlayerVar.Enabled = optPlayerVar.Checked;
-            cmbSetGlobalVar.Enabled = optGlobalVar.Checked;
+            grpRandom.Visible = optRandom.Checked;
+            grpRegularValues.Visible = optAdd.Checked | optSubtract.Checked | optSet.Checked;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -128,20 +149,20 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 mMyCommand.VariableType = VariableTypes.ServerVariable;
                 mMyCommand.VariableId = ServerVariableBase.IdFromList(cmbVariable.SelectedIndex);
             }
-            if (optSet.Checked)
+            if (optSet.Checked && optStaticVal.Checked)
             {
                 mMyCommand.ModType = VariableMods.Set;
-                mMyCommand.Value = (int) nudSet.Value;
+                mMyCommand.Value = (int)nudValue.Value;
             }
-            else if (optAdd.Checked)
+            else if (optAdd.Checked && optStaticVal.Checked)
             {
                 mMyCommand.ModType = VariableMods.Add;
-                mMyCommand.Value = (int) nudAdd.Value;
+                mMyCommand.Value = (int)nudValue.Value;
             }
-            else if (optSubtract.Checked)
+            else if (optSubtract.Checked && optStaticVal.Checked)
             {
                 mMyCommand.ModType = VariableMods.Subtract;
-                mMyCommand.Value = (int) nudSubtract.Value;
+                mMyCommand.Value = (int)nudValue.Value;
             }
             else if (optRandom.Checked)
             {
@@ -161,12 +182,34 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             }
             else if (optPlayerVar.Checked)
             {
-                mMyCommand.ModType = VariableMods.DupPlayerVar;
+                if (optSet.Checked)
+                {
+                    mMyCommand.ModType = VariableMods.DupPlayerVar;
+                }
+                else if (optAdd.Checked)
+                {
+                    mMyCommand.ModType = VariableMods.AddPlayerVar;
+                }
+                else
+                {
+                    mMyCommand.ModType = VariableMods.SubtractPlayerVar;
+                }
                 mMyCommand.DupVariableId = PlayerVariableBase.IdFromList(cmbSetPlayerVar.SelectedIndex);
             }
             else if (optGlobalVar.Checked)
             {
-                mMyCommand.ModType = VariableMods.DupGlobalVar;
+                if (optSet.Checked)
+                {
+                    mMyCommand.ModType = VariableMods.DupGlobalVar;
+                }
+                else if (optAdd.Checked)
+                {
+                    mMyCommand.ModType = VariableMods.AddGlobalVar;
+                }
+                else
+                {
+                    mMyCommand.ModType = VariableMods.SubtractGlobalVar;
+                }
                 mMyCommand.DupVariableId = ServerVariableBase.IdFromList(cmbSetGlobalVar.SelectedIndex);
             }
             
@@ -218,7 +261,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             InitEditor();
             if (!mLoading && cmbVariable.Items.Count > 0) cmbVariable.SelectedIndex = 0;
             if (!mLoading) optSet.Checked = true;
-            if (!mLoading) nudSet.Value = 0;
+            if (!mLoading) nudValue.Value = 0;
         }
 
         private void rdoGlobalVariable_CheckedChanged(object sender, EventArgs e)
@@ -226,7 +269,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             InitEditor();
             if (!mLoading && cmbVariable.Items.Count > 0) cmbVariable.SelectedIndex = 0;
             if (!mLoading) optSet.Checked = true;
-            if (!mLoading) nudSet.Value = 0;
+            if (!mLoading) nudValue.Value = 0;
         }
     }
 }

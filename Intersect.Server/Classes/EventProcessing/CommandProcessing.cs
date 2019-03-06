@@ -122,6 +122,26 @@ namespace Intersect.Server.EventProcessing
                             player.SetVariableValue(command.VariableId, serverVariable.Value);
                         }
                         break;
+                    case VariableMods.AddPlayerVar:
+                        player.SetVariableValue(command.VariableId, player.GetVariableValue(command.VariableId) + player.GetVariableValue(command.DupVariableId));
+                        break;
+                    case VariableMods.AddGlobalVar:
+                        var asv = ServerVariableBase.Get(command.DupVariableId);
+                        if (asv != null)
+                        {
+                            player.SetVariableValue(command.VariableId, player.GetVariableValue(command.VariableId) + asv.Value);
+                        }
+                        break;
+                    case VariableMods.SubtractPlayerVar:
+                        player.SetVariableValue(command.VariableId, player.GetVariableValue(command.VariableId) - player.GetVariableValue(command.DupVariableId));
+                        break;
+                    case VariableMods.SubtractGlobalVar:
+                        var ssv = ServerVariableBase.Get(command.DupVariableId);
+                        if (ssv != null)
+                        {
+                            player.SetVariableValue(command.VariableId, player.GetVariableValue(command.VariableId) - ssv.Value);
+                        }
+                        break;
                 }
             }
             else if (command.VariableType == VariableTypes.ServerVariable)
@@ -155,6 +175,26 @@ namespace Intersect.Server.EventProcessing
                             if (dupServerVariable != null)
                             {
                                 serverVariable.Value = dupServerVariable.Value;
+                            }
+                            break;
+                        case VariableMods.AddPlayerVar:
+                            serverVariable.Value += player.GetVariableValue(command.DupVariableId);
+                            break;
+                        case VariableMods.AddGlobalVar:
+                            var asv = ServerVariableBase.Get(command.DupVariableId);
+                            if (asv != null)
+                            {
+                                serverVariable.Value += asv.Value;
+                            }
+                            break;
+                        case VariableMods.SubtractPlayerVar:
+                            serverVariable.Value -= player.GetVariableValue(command.DupVariableId);
+                            break;
+                        case VariableMods.SubtractGlobalVar:
+                            var ssv = ServerVariableBase.Get(command.DupVariableId);
+                            if (ssv != null)
+                            {
+                                serverVariable.Value -= ssv.Value;
                             }
                             break;
                     }

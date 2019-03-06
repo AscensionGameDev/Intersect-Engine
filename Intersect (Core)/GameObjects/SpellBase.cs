@@ -41,6 +41,9 @@ namespace Intersect.GameObjects
         public int CastDuration { get; set; }
         public int CooldownDuration { get; set; }
 
+        //Spell Bound
+        public bool Bound { get; set; }
+
         //Requirements
         [Column("CastRequirements")]
         [JsonIgnore]

@@ -1345,6 +1345,7 @@ namespace Intersect.Server.Entities
                 switch (spellBase.SpellType)
                 {
                     case SpellTypes.CombatSpell:
+                    case SpellTypes.Event:
 
                         switch (spellBase.Combat.TargetType)
                         {
@@ -1416,9 +1417,6 @@ namespace Intersect.Server.Entities
                         PacketSender.SendActionMsg(this, Strings.Combat.dash, CustomColors.Dash);
                         var dash = new DashInstance(this, spellBase.Combat.CastRange, Dir, Convert.ToBoolean(spellBase.Dash.IgnoreMapBlocks),
                             Convert.ToBoolean(spellBase.Dash.IgnoreActiveResources), Convert.ToBoolean(spellBase.Dash.IgnoreInactiveResources), Convert.ToBoolean(spellBase.Dash.IgnoreZDimensionAttributes));
-                        break;
-                    case SpellTypes.Event:
-                        //Handled at the player level
                         break;
                     default:
                         break;

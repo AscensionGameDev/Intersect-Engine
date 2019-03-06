@@ -415,6 +415,22 @@ namespace Intersect.Editor.Forms.Editors.Events
                     varvalue = Strings.EventCommandList.dupglobalvariable.ToString(
                         ServerVariableBase.GetName(command.DupVariableId));
                     break;
+                case VariableMods.AddPlayerVar:
+                    varvalue = Strings.EventCommandList.addplayervariable.ToString(
+                        PlayerVariableBase.GetName(command.DupVariableId));
+                    break;
+                case VariableMods.AddGlobalVar:
+                    varvalue = Strings.EventCommandList.addglobalvariable.ToString(
+                        ServerVariableBase.GetName(command.DupVariableId));
+                    break;
+                case VariableMods.SubtractPlayerVar:
+                    varvalue = Strings.EventCommandList.subtractplayervariable.ToString(
+                        PlayerVariableBase.GetName(command.DupVariableId));
+                    break;
+                case VariableMods.SubtractGlobalVar:
+                    varvalue = Strings.EventCommandList.subtractglobalvariable.ToString(
+                        ServerVariableBase.GetName(command.DupVariableId));
+                    break;
             }
 
             if (command.VariableType == VariableTypes.PlayerVariable)

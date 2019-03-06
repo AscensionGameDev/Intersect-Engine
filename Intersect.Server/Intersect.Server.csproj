@@ -428,6 +428,10 @@
     <Compile Include="Migrations\Game\20190303234637_SpellUpgrades_OnHit_Shields.Designer.cs">
       <DependentUpon>20190303234637_SpellUpgrades_OnHit_Shields.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\Game\20190306224847_BoundSpells.cs" />
+    <Compile Include="Migrations\Game\20190306224847_BoundSpells.Designer.cs">
+      <DependentUpon>20190306224847_BoundSpells.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />
     <Compile Include="WebApi\Authentication\AuthorizationProvider.cs" />
     <Compile Include="Migrations\Game\20180905042857_Initial.cs" />

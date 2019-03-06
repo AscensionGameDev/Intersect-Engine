@@ -2969,8 +2969,15 @@ namespace Intersect.Server.Entities
 
         public void ForgetSpell(int spellSlot)
         {
-            Spells[spellSlot].Set(Spell.None);
-            PacketSender.SendPlayerSpellUpdate(MyClient, spellSlot);
+            if (!SpellBase.Get(Spells[spellSlot].SpellId).Bound)
+            {
+                Spells[spellSlot].Set(Spell.None);
+                PacketSender.SendPlayerSpellUpdate(MyClient, spellSlot);
+            }
+            else
+            {
+                PacketSender.SendPlayerMsg(MyClient, Strings.Combat.tryforgetboundspell);
+            }
         }
 
         public void UseSpell(int spellSlot, EntityInstance target)

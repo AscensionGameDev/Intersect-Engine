@@ -158,6 +158,7 @@ namespace Intersect.Server.Localization
             public static LocalizedString sleepblocking = @"You are asleep and can't block.";
             public static LocalizedString stunned = @"You cannot cast this ability whilst stunned.";
             public static LocalizedString sleep = @"You cannot cast this ability whilst asleep";
+            public static LocalizedString tryforgetboundspell = @"You cannot forget this spell.";
             public static LocalizedString targetoutsiderange = @"Target is out of range!";
             public static LocalizedString toolrequired = @"You require a {00} to interact with this resource!";
             public static Dictionary<int, LocalizedString> vitals = new Dictionary<int, LocalizedString>
