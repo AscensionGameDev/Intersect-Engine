@@ -14,13 +14,13 @@ namespace Intersect.Immutability
             get => mValue;
             set
             {
-                if (!mInitialized)
+                if (mInitialized)
                 {
-                    mInitialized = true;
-                    mValue = value;
+                    throw new InvalidOperationException(@"Trying to modify immutable value after initialization.");
                 }
 
-                throw new InvalidOperationException(@"Trying to modify immutable value after initialization.");
+                mInitialized = true;
+                mValue = value;
             }
         }
 

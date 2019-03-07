@@ -23,21 +23,24 @@ namespace Intersect.Logging
 
         static Log()
         {
-            var normalFileOutput = new FileOutput();
-            var errorsFileOutput = new FileOutput($"errors-{ExecutableName}.log", LogLevel.Error);
+            var outputs = ImmutableList.Create<ILogOutput>(
+                new FileOutput(),
+                new FileOutput($"errors-{ExecutableName}.log", LogLevel.Error),
+                new ConciseConsoleOutput()
+            ) ?? throw new InvalidOperationException();
 
             Pretty = new Logger(new LogConfiguration
             {
                 Pretty = true,
                 LogLevel = LogConfiguration.Default.LogLevel,
-                Outputs = ImmutableList.Create(normalFileOutput, errorsFileOutput)
+                Outputs = outputs
             });
 
             Default = new Logger(new LogConfiguration
             {
                 Pretty = false,
                 LogLevel = LogConfiguration.Default.LogLevel,
-                Outputs = ImmutableList.Create(normalFileOutput, errorsFileOutput)
+                Outputs = outputs
             });
         }
 

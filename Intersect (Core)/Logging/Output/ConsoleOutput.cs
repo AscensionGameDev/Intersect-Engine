@@ -28,22 +28,22 @@ namespace Intersect.Logging.Output
                 writer = Console.Error;
             }
 
-            writer.WriteLine(configuration.Formatter.Format(configuration, logLevel, DateTime.UtcNow, exception, format, args));
+            writer.Write(configuration.Formatter.Format(configuration, logLevel, DateTime.UtcNow, exception, format, args));
 
             writer.Flush();
         }
 
         public void Write(LogConfiguration configuration, LogLevel logLevel, string message)
-            => InternalWrite(configuration, LogLevel, null, message);
+            => InternalWrite(configuration, logLevel, null, message);
 
         public void Write(LogConfiguration configuration, LogLevel logLevel, string format, params object[] args)
-            => InternalWrite(configuration, LogLevel, null, format, args);
+            => InternalWrite(configuration, logLevel, null, format, args);
 
         public void Write(LogConfiguration configuration, LogLevel logLevel, Exception exception, string message)
-            => InternalWrite(configuration, LogLevel, exception, message);
+            => InternalWrite(configuration, logLevel, exception, message);
 
         public void Write(LogConfiguration configuration, LogLevel logLevel, Exception exception, string format, params object[] args)
-            => InternalWrite(configuration, LogLevel, exception, format, args);
+            => InternalWrite(configuration, logLevel, exception, format, args);
 
         private static void Flush()
         {

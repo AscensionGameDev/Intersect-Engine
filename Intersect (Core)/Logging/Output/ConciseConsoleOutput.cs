@@ -14,7 +14,7 @@ namespace Intersect.Logging.Output
 
         public LogLevel LogLevel { get; set; }
 
-        private void InternalWrite(LogConfiguration configuration, LogLevel logLevel, Exception exception, [NotNull] string format, params object[] args)
+        private void InternalWrite([NotNull] LogConfiguration configuration, LogLevel logLevel, Exception exception, [NotNull] string format, params object[] args)
         {
             if (LogLevel < logLevel)
             {
@@ -29,28 +29,31 @@ namespace Intersect.Logging.Output
 
             if (string.IsNullOrEmpty(format))
             {
-                writer.WriteLine(configuration.Formatter.Format(configuration, logLevel, DateTime.UtcNow, null, exception.Message));
+                writer.Write(configuration.Formatter.Format(configuration, logLevel, DateTime.UtcNow, exception, null));
             }
             else
             {
-                writer.WriteLine(configuration.Formatter.Format(configuration, logLevel, DateTime.UtcNow, null, format, args));
-                writer.WriteLine(configuration.Formatter.Format(configuration, logLevel, DateTime.UtcNow, null, @"See logs for more information."));
+                writer.Write(configuration.Formatter.Format(configuration, logLevel, DateTime.UtcNow, null, format, args));
+                if (exception != null)
+                {
+                    writer.Write(configuration.Formatter.Format(configuration, logLevel, DateTime.UtcNow, null, @"See logs for more information."));
+                }
             }
 
             writer.Flush();
         }
 
         public void Write(LogConfiguration configuration, LogLevel logLevel, string message)
-            => InternalWrite(configuration, LogLevel, null, message);
+            => InternalWrite(configuration, logLevel, null, message);
 
         public void Write(LogConfiguration configuration, LogLevel logLevel, string format, params object[] args)
-            => InternalWrite(configuration, LogLevel, null, format, args);
+            => InternalWrite(configuration, logLevel, null, format, args);
 
         public void Write(LogConfiguration configuration, LogLevel logLevel, Exception exception, string message)
-            => InternalWrite(configuration, LogLevel, exception, message);
+            => InternalWrite(configuration, logLevel, exception, message);
 
         public void Write(LogConfiguration configuration, LogLevel logLevel, Exception exception, string format, params object[] args)
-            => InternalWrite(configuration, LogLevel, exception, format, args);
+            => InternalWrite(configuration, logLevel, exception, format, args);
 
         private static void Flush()
         {

@@ -87,10 +87,6 @@ namespace Intersect.Server.Core
                 SetConsoleCtrlHandler(ConsoleCtrlHandler, true);
             }
 
-            var consoleOutput = new ConciseConsoleOutput(Debugger.IsAttached ? LogLevel.All : LogLevel.Error);
-            Log.Pretty.AddOutput(consoleOutput);
-            Log.Default.AddOutput(consoleOutput);
-
             if (!Strings.Load())
             {
                 Console.WriteLine(Strings.Errors.ErrorLoadingStrings);

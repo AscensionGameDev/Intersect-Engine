@@ -16,6 +16,7 @@ namespace Intersect.Logging.Formatting
             TimestampFormat = DefaultTimestampFormat;
         }
 
+        [NotNull]
         private string FormatPrefix([NotNull] LogConfiguration configuration, LogLevel logLevel, DateTime dateTime)
         {
             var builder = new StringBuilder();
@@ -32,6 +33,7 @@ namespace Intersect.Logging.Formatting
                 builder.Append(' ');
             }
 
+            // ReSharper disable once InvertIf
             if (!string.IsNullOrEmpty(configuration.Tag))
             {
                 builder.Append(configuration.Tag);
@@ -41,7 +43,7 @@ namespace Intersect.Logging.Formatting
             return builder.ToString();
         }
 
-        private void FormatLine([NotNull] StringBuilder builder, [NotNull] string prefix, [NotNull] string message, params object[] args)
+        private static void FormatLine([NotNull] StringBuilder builder, [NotNull] string prefix, [NotNull] string message, params object[] args)
         {
             builder.Append(prefix);
 
@@ -57,7 +59,7 @@ namespace Intersect.Logging.Formatting
             builder.AppendLine();
         }
 
-        private void FormatLine([NotNull] StringBuilder builder, [CanBeNull] string prefix, [NotNull] Exception exception, bool recurse = true)
+        private static void FormatLine([NotNull] StringBuilder builder, [CanBeNull] string prefix, [NotNull] Exception exception, bool recurse = true)
         {
             if (!string.IsNullOrWhiteSpace(prefix))
             {
@@ -87,8 +89,15 @@ namespace Intersect.Logging.Formatting
             var prefix = FormatPrefix(configuration, logLevel, dateTime);
             var builder = new StringBuilder();
 
-            FormatLine(builder, prefix, message, args);
-            FormatLine(builder, prefix, exception);
+            if (message != null)
+            {
+                FormatLine(builder, prefix, message, args);
+            }
+
+            if (exception != null)
+            {
+                FormatLine(builder, prefix, exception);
+            }
 
             return builder.ToString();
         }

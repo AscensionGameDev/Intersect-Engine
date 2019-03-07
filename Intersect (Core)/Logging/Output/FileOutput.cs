@@ -12,8 +12,6 @@ namespace Intersect.Logging.Output
     public class FileOutput : ILogOutput
     {
 
-        private const string TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss.fff";
-
         private static readonly string Spacer = Environment.NewLine + new string('-', 80) + Environment.NewLine;
 
         [NotNull]
@@ -82,7 +80,7 @@ namespace Intersect.Logging.Output
 
         public LogLevel LogLevel { get; set; }
 
-        private void InternalWrite(LogConfiguration configuration, LogLevel logLevel, Exception exception, [NotNull] string format, params object[] args)
+        private void InternalWrite([NotNull] LogConfiguration configuration, LogLevel logLevel, Exception exception, [NotNull] string format, params object[] args)
         {
             if (LogLevel < logLevel)
             {
@@ -90,22 +88,22 @@ namespace Intersect.Logging.Output
             }
 
             var line = configuration.Formatter.Format(configuration, logLevel, DateTime.UtcNow, exception, format, args);
-            Writer.WriteLine(line);
-            Writer.WriteLine(Spacer);
+            Writer.Write(line);
+            Writer.Write(Spacer);
             Writer.Flush();
         }
 
         public void Write(LogConfiguration configuration, LogLevel logLevel, string message)
-            => InternalWrite(configuration, LogLevel, null, message);
+            => InternalWrite(configuration, logLevel, null, message);
 
         public void Write(LogConfiguration configuration, LogLevel logLevel, string format, params object[] args)
-            => InternalWrite(configuration, LogLevel, null, format, args);
+            => InternalWrite(configuration, logLevel, null, format, args);
 
         public void Write(LogConfiguration configuration, LogLevel logLevel, Exception exception, string message)
-            => InternalWrite(configuration, LogLevel, exception, message);
+            => InternalWrite(configuration, logLevel, exception, message);
 
         public void Write(LogConfiguration configuration, LogLevel logLevel, Exception exception, string format, params object[] args)
-            => InternalWrite(configuration, LogLevel, exception, format, args);
+            => InternalWrite(configuration, logLevel, exception, format, args);
 
         ~FileOutput()
         {

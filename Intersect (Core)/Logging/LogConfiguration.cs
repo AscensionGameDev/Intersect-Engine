@@ -28,10 +28,10 @@ namespace Intersect.Logging
             Tag = null
         };
 
-        private static readonly ILogFormatter DefaultFormatter = new DefaultFormatter();
+        [NotNull] private static readonly ILogFormatter DefaultFormatter = new DefaultFormatter();
 
-        private static readonly ImmutableList<ILogFormatter> DefaultFormatters = ImmutableList.Create<ILogFormatter>();
-        private static readonly ImmutableList<ILogOutput> DefaultOutputs = ImmutableList.Create<ILogOutput>();
+        [NotNull] private static readonly ImmutableList<ILogFormatter> DefaultFormatters = ImmutableList.Create<ILogFormatter>() ?? throw new InvalidOperationException();
+        [NotNull] private static readonly ImmutableList<ILogOutput> DefaultOutputs = ImmutableList.Create<ILogOutput>() ?? throw new InvalidOperationException();
 
         private Immutable<IReadOnlyList<ILogFormatter>> mFormatters;
         private Immutable<LogLevel> mLogLevel;
@@ -40,7 +40,7 @@ namespace Intersect.Logging
         private Immutable<string> mTag;
 
         [NotNull]
-        public ILogFormatter Formatter => mFormatters.Value.FirstOrDefault() ?? DefaultFormatter;
+        public ILogFormatter Formatter => mFormatters.Value?.FirstOrDefault() ?? DefaultFormatter;
 
         [NotNull]
         public IReadOnlyList<ILogFormatter> Formatters
