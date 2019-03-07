@@ -1,60 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
 
 using JetBrains.Annotations;
 
 namespace Intersect.Logging
 {
 
-    public class Logger
+    public class Logger : ILogger
     {
 
-        public Logger() : this(LoggerConfiguration.Default) { }
+        public Logger() : this(LogConfiguration.Default) { }
 
         public Logger(string tag = null) : this(
-            new LoggerConfiguration {Tag = string.IsNullOrEmpty(tag?.Trim()) ? null : tag}
+            new LogConfiguration {Tag = string.IsNullOrEmpty(tag?.Trim()) ? null : tag}
         )
         {
         }
 
-        public Logger([NotNull] LoggerConfiguration configuration)
+        public Logger([NotNull] LogConfiguration configuration)
         {
-            InternalOutputs = new List<ILogOutput>();
             Configuration = configuration;
         }
 
-        [NotNull] private LoggerConfiguration mConfiguration;
-
         [NotNull]
-        public LoggerConfiguration Configuration
-        {
-            get => mConfiguration.Clone();
-            set => mConfiguration = value.Clone();
-        }
-
-        [NotNull]
-        protected IList<ILogOutput> InternalOutputs { get; }
-
-        [NotNull]
-        public virtual IList<ILogOutput> Outputs =>
-            InternalOutputs.ToImmutableList() ?? throw new InvalidOperationException();
-
-        public virtual bool AddOutput([NotNull] ILogOutput output)
-        {
-            if (InternalOutputs.Contains(output))
-            {
-                return false;
-            }
-
-            InternalOutputs.Add(output);
-            return true;
-        }
-
-        public virtual bool RemoveOutput([NotNull] ILogOutput output)
-        {
-            return InternalOutputs.Contains(output) && InternalOutputs.Remove(output);
-        }
+        public LogConfiguration Configuration { get; set; }
 
         public virtual void Write(LogLevel logLevel, string message)
         {
@@ -63,7 +31,7 @@ namespace Intersect.Logging
                 return;
             }
 
-            foreach (var output in Outputs)
+            foreach (var output in Configuration.Outputs)
             {
                 output.Write(Configuration, logLevel, message);
             }
@@ -76,7 +44,7 @@ namespace Intersect.Logging
                 return;
             }
 
-            foreach (var output in Outputs)
+            foreach (var output in Configuration.Outputs)
             {
                 output.Write(Configuration, logLevel, format, args);
             }
@@ -89,7 +57,7 @@ namespace Intersect.Logging
                 return;
             }
 
-            foreach (var output in Outputs)
+            foreach (var output in Configuration.Outputs)
             {
                 output.Write(Configuration, logLevel, exception, message);
             }

@@ -180,10 +180,9 @@
     <Compile Include="Localization\LocaleDictionary.cs" />
     <Compile Include="Localization\Localized.cs" />
     <Compile Include="Localization\LocaleNamespace.cs" />
-    <Compile Include="Logging\ConciseConsoleOutput.cs" />
-    <Compile Include="Logging\Formatting\BasicFormatter.cs" />
+    <Compile Include="Logging\Formatting\DefaultFormatter.cs" />
     <Compile Include="Logging\Formatting\ILogFormatter.cs" />
-    <Compile Include="Logging\LoggerConfiguration.cs" />
+    <Compile Include="Logging\LogConfiguration.cs" />
     <Compile Include="Models\DatabaseObject.cs" />
     <Compile Include="Enums\Access.cs" />
     <Compile Include="Enums\AdminActions.cs" />
@@ -275,10 +274,7 @@
     <Compile Include="Color.cs" />
     <Compile Include="GameObjects\TilesetBase.cs" />
     <Compile Include="GameObjects\TimeBase.cs" />
-    <Compile Include="Logging\ConsoleOutput.cs" />
     <Compile Include="Memory\IBuffer.cs" />
-    <Compile Include="Logging\FileOutput.cs" />
-    <Compile Include="Logging\ILogOutput.cs" />
     <Compile Include="Logging\Log.cs" />
     <Compile Include="Logging\Logger.cs" />
     <Compile Include="Logging\LogLevel.cs" />
@@ -337,6 +333,12 @@
     <Compile Include="Utilities\ValueUtils.cs" />
     <Compile Include="Utilities\VersionHelper.cs" />
     <Compile Include="Localization\LocaleArgument.cs" />
+    <Compile Include="Logging\ILogger.cs" />
+    <Compile Include="Immutability\Immutable.cs" />
+    <Compile Include="Logging\Output\ConciseConsoleOutput.cs" />
+    <Compile Include="Logging\Output\ConsoleOutput.cs" />
+    <Compile Include="Logging\Output\FileOutput.cs" />
+    <Compile Include="Logging\Output\ILogOutput.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -347,6 +349,7 @@
   <ItemGroup>
     <Folder Include="Factories\" />
     <Folder Include="Logging\Output\" />
+    <Folder Include="Immutability\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

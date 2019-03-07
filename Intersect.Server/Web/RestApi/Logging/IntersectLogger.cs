@@ -1,13 +1,14 @@
 ﻿using Intersect.Logging;
-using Microsoft.Owin.Logging;
 using System;
 using System.Diagnostics;
 
 using JetBrains.Annotations;
+using System.Collections.Immutable;
+using Intersect.Logging.Output;
 
 namespace Intersect.Server.Web.RestApi.Logging
 {
-    internal sealed class IntersectLogger : ILogger
+    internal sealed class IntersectLogger : Microsoft.Owin.Logging.ILogger
     {
         [NotNull]
         public Logger Logger { get; }
@@ -18,8 +19,11 @@ namespace Intersect.Server.Web.RestApi.Logging
         internal IntersectLogger([NotNull] string name)
         {
             Name = string.IsNullOrWhiteSpace(name) ? "OWIN" : name;
-            Logger = new Logger(Name);
-            Logger.AddOutput(new FileOutput(Log.SuggestFilename(null, null, Name + ".api")));
+            Logger = new Logger(new LogConfiguration
+            {
+                Tag = Name,
+                Outputs = ImmutableList.Create(new FileOutput(Log.SuggestFilename(null, null, Name + ".api")))
+            });
         }
 
         /// <inheritdoc />

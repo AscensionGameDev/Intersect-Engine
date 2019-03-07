@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -88,7 +88,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Intersect %28Core%29\Intersect %28Core%29.csproj">
       <Project>{BC304B43-1F2C-4454-9EDC-48F47357CA94}</Project>
-      <Name>Intersect %28Core%29</Name>
+      <Name>Intersect (Core)</Name>
     </ProjectReference>
     <ProjectReference Include="..\Intersect.Network\Intersect.Network.csproj">
       <Project>{E8F288CB-51DF-4D9D-A3B3-A61BD4FD3F45}</Project>

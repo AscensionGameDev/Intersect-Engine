@@ -6,6 +6,7 @@ using Intersect.Client.Framework.Network;
 using Intersect.Client.Networking;
 using Intersect.Config;
 using Intersect.Logging;
+using Intersect.Logging.Output;
 using Intersect.Network;
 using Intersect.Network.Crypto;
 using Intersect.Network.Crypto.Formats;

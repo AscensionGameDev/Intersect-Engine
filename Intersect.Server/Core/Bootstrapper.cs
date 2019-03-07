@@ -12,6 +12,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Intersect.Threading;
+using Intersect.Logging.Output;
 
 namespace Intersect.Server.Core
 {

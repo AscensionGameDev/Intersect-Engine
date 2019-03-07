@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
-
+using Intersect.Logging.Output;
 using JetBrains.Annotations;
 
 namespace Intersect.Logging
@@ -25,13 +26,19 @@ namespace Intersect.Logging
             var normalFileOutput = new FileOutput();
             var errorsFileOutput = new FileOutput($"errors-{ExecutableName}.log", LogLevel.Error);
 
-            Pretty = new Logger(new LoggerConfiguration { Pretty = true, LogLevel = LoggerConfiguration.Default.LogLevel });
-            Pretty.AddOutput(normalFileOutput);
-            Pretty.AddOutput(errorsFileOutput);
+            Pretty = new Logger(new LogConfiguration
+            {
+                Pretty = true,
+                LogLevel = LogConfiguration.Default.LogLevel,
+                Outputs = ImmutableList.Create(normalFileOutput, errorsFileOutput)
+            });
 
-            Default = new Logger();
-            Default.AddOutput(normalFileOutput);
-            Default.AddOutput(errorsFileOutput);
+            Default = new Logger(new LogConfiguration
+            {
+                Pretty = false,
+                LogLevel = LogConfiguration.Default.LogLevel,
+                Outputs = ImmutableList.Create(normalFileOutput, errorsFileOutput)
+            });
         }
 
         [NotNull]
