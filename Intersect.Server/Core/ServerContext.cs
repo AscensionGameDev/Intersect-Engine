@@ -103,6 +103,8 @@ namespace Intersect.Server.Core
 
         private void InternalStartNetworking()
         {
+            Console.WriteLine();
+
             if (!Network.Listen())
             {
                 Log.Error("An error occurred while attempting to connect.");
@@ -110,16 +112,16 @@ namespace Intersect.Server.Core
 
 #if WEBSOCKETS
             WebSocketNetwork.Init(Options.ServerPort);
-            Log.Info(Strings.Intro.websocketstarted.ToString(Options.ServerPort));
+            Log.Pretty.Info(Strings.Intro.websocketstarted.ToString(Options.ServerPort));
 #endif
             RestApi.Start();
-
-            Console.WriteLine();
 
             if (!Options.UPnP || Options.NoPunchthrough)
             {
                 return;
             }
+
+            Console.WriteLine();
 
             UpnP.ConnectNatDevice().Wait(5000);
 #if WEBSOCKETS

@@ -1,34 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+
 using JetBrains.Annotations;
 
 namespace Intersect.Logging
 {
+
     public class Logger
     {
-        public Logger(string tag = null)
+
+        public Logger() : this(LoggerConfiguration.Default) { }
+
+        public Logger(string tag = null) : this(
+            new LoggerConfiguration {Tag = string.IsNullOrEmpty(tag?.Trim()) ? null : tag}
+        )
+        {
+        }
+
+        public Logger([NotNull] LoggerConfiguration configuration)
         {
             InternalOutputs = new List<ILogOutput>();
+            Configuration = configuration;
+        }
 
-#if DEBUG
-            LogLevel = LogLevel.All;
-#else
-            LogLevel = LogLevel.Info;
-#endif
+        [NotNull] private LoggerConfiguration mConfiguration;
 
-            Tag = (string.IsNullOrEmpty(tag) ? null : tag);
+        [NotNull]
+        public LoggerConfiguration Configuration
+        {
+            get => mConfiguration.Clone();
+            set => mConfiguration = value.Clone();
         }
 
         [NotNull]
         protected IList<ILogOutput> InternalOutputs { get; }
 
         [NotNull]
-        public virtual IList<ILogOutput> Outputs => InternalOutputs.ToImmutableList() ?? throw new InvalidOperationException();
-
-        public LogLevel LogLevel { get; set; }
-
-        public string Tag { get; set; }
+        public virtual IList<ILogOutput> Outputs =>
+            InternalOutputs.ToImmutableList() ?? throw new InvalidOperationException();
 
         public virtual bool AddOutput([NotNull] ILogOutput output)
         {
@@ -39,7 +49,6 @@ namespace Intersect.Logging
 
             InternalOutputs.Add(output);
             return true;
-
         }
 
         public virtual bool RemoveOutput([NotNull] ILogOutput output)
@@ -49,56 +58,56 @@ namespace Intersect.Logging
 
         public virtual void Write(LogLevel logLevel, string message)
         {
-            if (LogLevel < logLevel)
+            if (Configuration.LogLevel < logLevel)
             {
                 return;
             }
 
             foreach (var output in Outputs)
             {
-                output.Write(Tag, logLevel, message);
+                output.Write(Configuration, logLevel, message);
             }
         }
 
         public virtual void Write(LogLevel logLevel, string format, params object[] args)
         {
-            if (LogLevel < logLevel)
+            if (Configuration.LogLevel < logLevel)
             {
                 return;
             }
 
             foreach (var output in Outputs)
             {
-                output.Write(Tag, logLevel, format, args);
+                output.Write(Configuration, logLevel, format, args);
             }
         }
 
         public virtual void Write(LogLevel logLevel, Exception exception, string message = null)
         {
-            if (LogLevel < logLevel)
+            if (Configuration.LogLevel < logLevel)
             {
                 return;
             }
 
             foreach (var output in Outputs)
             {
-                output.Write(Tag, logLevel, exception, message);
+                output.Write(Configuration, logLevel, exception, message);
             }
         }
 
         public virtual void Write(string message)
         {
-            Write(LogLevel, message);
+            Write(Configuration.LogLevel, message);
         }
 
         public virtual void Write(string format, params object[] args)
         {
-            Write(LogLevel, format, args);
+            Write(Configuration.LogLevel, format, args);
         }
 
         public virtual void Write(Exception exception, string message = null)
         {
-            Write(LogLevel, exception, message);
+            Write(Configuration.LogLevel, exception, message);
         }
 
         public virtual void All(string message)
@@ -226,5 +235,7 @@ namespace Intersect.Logging
         {
             Write(LogLevel.Verbose, exception, message);
         }
+
     }
+
 }

@@ -1,10 +1,13 @@
 ﻿using System;
+
 using JetBrains.Annotations;
 
 namespace Intersect.Logging
 {
+
     public class ConsoleOutput : ILogOutput
     {
+
         private const string TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss.fff";
 
         public ConsoleOutput(LogLevel logLevel = LogLevel.All)
@@ -14,46 +17,55 @@ namespace Intersect.Logging
 
         public LogLevel LogLevel { get; set; }
 
-        public void Write(string tag, LogLevel logLevel, string message)
+        public void Write(LoggerConfiguration configuration, LogLevel logLevel, string message)
         {
             if (LogLevel < logLevel)
             {
                 return;
             }
 
-            var line = string.IsNullOrEmpty(tag)
-                ? $"{DateTime.UtcNow.ToString(TIMESTAMP_FORMAT)} [{logLevel}] {message}"
-                : $"{DateTime.UtcNow.ToString(TIMESTAMP_FORMAT)} [{logLevel}] {tag}: {message}";
+            var prefix = configuration.Pretty ? "" : $"{DateTime.UtcNow.ToString(TIMESTAMP_FORMAT)} [{logLevel}]";
+            var line = string.IsNullOrEmpty(configuration.Tag)
+                ? $"{prefix} {message}"
+                : $"{prefix} {configuration.Tag}: {message}";
 
             if (LogLevel < LogLevel.Info)
             {
-                Console.Error.WriteLine(line);
+                Console.Error.WriteLine(line.TrimStart());
             }
             else
             {
-                Console.Out.WriteLine(line);
+                Console.Out.WriteLine(line.TrimStart());
             }
         }
 
-        public void Write(string tag, LogLevel logLevel, [NotNull] string format,
-             [NotNull] params object[] args)
-            => Write(tag, logLevel, string.Format(format, args));
+        public void Write(
+            LoggerConfiguration configuration,
+            LogLevel logLevel,
+            [NotNull] string format,
+            [NotNull] params object[] args
+        ) => Write(configuration, logLevel, string.Format(format, args));
 
-        public void Write(string tag, LogLevel logLevel, Exception exception, string message = null)
+        public void Write(
+            LoggerConfiguration configuration,
+            LogLevel logLevel,
+            Exception exception,
+            string message = null
+        )
         {
-            Write(tag, logLevel, $"Message: {exception?.Message}");
-            Write(tag, logLevel, $"Stack Trace: {exception?.StackTrace}");
+            Write(configuration, logLevel, $"Message: {exception?.Message}");
+            Write(configuration, logLevel, $"Stack Trace: {exception?.StackTrace}");
 
             if (exception?.InnerException != null)
             {
-                Write(tag, logLevel, $"Stack Trace: {exception.InnerException?.StackTrace}");
+                Write(configuration, logLevel, $"Stack Trace: {exception.InnerException?.StackTrace}");
             }
 
-            Write(tag, logLevel, $"Time: {DateTime.UtcNow}");
+            Write(configuration, logLevel, $"Time: {DateTime.UtcNow}");
 
             if (!string.IsNullOrEmpty(message))
             {
-                Write(tag, logLevel, $"Note: {message}");
+                Write(configuration, logLevel, $"Note: {message}");
             }
 
             Flush();
@@ -69,5 +81,7 @@ namespace Intersect.Logging
         {
             Flush();
         }
+
     }
+
 }

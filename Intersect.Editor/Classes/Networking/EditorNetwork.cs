@@ -23,7 +23,7 @@ namespace Intersect.Editor.Networking
         {
             if (EditorLidgrenNetwork == null)
             {
-                Log.Global.AddOutput(new ConsoleOutput());
+                Log.Default.AddOutput(new ConsoleOutput());
                 var config = new NetworkConfiguration(ClientOptions.ServerHost, ClientOptions.ServerPort);
                 var assembly = Assembly.GetExecutingAssembly();
                 using (var stream = assembly.GetManifestResourceStream("Intersect.Editor.public-intersect.bek"))

@@ -20,7 +20,7 @@ namespace Intersect.Client.MonoGame.Network
 
         public IntersectNetworkSocket()
         {
-            Log.Global.AddOutput(new ConsoleOutput());
+            Log.Default.AddOutput(new ConsoleOutput());
         }
 
         public override void Connect(string host, int port)

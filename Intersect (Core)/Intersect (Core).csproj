@@ -181,6 +181,9 @@
     <Compile Include="Localization\Localized.cs" />
     <Compile Include="Localization\LocaleNamespace.cs" />
     <Compile Include="Logging\ConciseConsoleOutput.cs" />
+    <Compile Include="Logging\Formatting\BasicFormatter.cs" />
+    <Compile Include="Logging\Formatting\ILogFormatter.cs" />
+    <Compile Include="Logging\LoggerConfiguration.cs" />
     <Compile Include="Models\DatabaseObject.cs" />
     <Compile Include="Enums\Access.cs" />
     <Compile Include="Enums\AdminActions.cs" />
@@ -343,6 +346,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Factories\" />
+    <Folder Include="Logging\Output\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

@@ -64,7 +64,7 @@ namespace Intersect.Server.Web.RestApi
                 return;
             }
 
-            Configuration.Hosts.ToList().ForEach(host => Log.Info(Strings.Intro.api.ToString(host)));
+            Configuration.Hosts.ToList().ForEach(host => Log.Pretty.Info(Strings.Intro.api.ToString(host)));
             mWebAppHandle = WebApp.Start(StartOptions, Configure);
         }
 

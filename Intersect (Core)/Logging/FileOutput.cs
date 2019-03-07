@@ -92,49 +92,50 @@ namespace Intersect.Logging
             Writer.WriteLine(message);
         }
 
-        public void Write(string tag, LogLevel logLevel, string message)
+        public void Write(LoggerConfiguration configuration, LogLevel logLevel, string message)
         {
             if (LogLevel < logLevel)
             {
                 return;
             }
 
-            var line = string.IsNullOrEmpty(tag)
-                ? $"{DateTime.UtcNow.ToString(TIMESTAMP_FORMAT)} [{logLevel}] {message}"
-                : $"{DateTime.UtcNow.ToString(TIMESTAMP_FORMAT)} [{logLevel}] {tag}: {message}";
+            var prefix = configuration.Pretty ? "" : $"{DateTime.UtcNow.ToString(TIMESTAMP_FORMAT)} [{logLevel}]";
+            var line = string.IsNullOrEmpty(configuration.Tag)
+                ? $"{prefix} {message}"
+                : $"{prefix} {configuration.Tag}: {message}";
 
-            InternalWrite(logLevel, line);
+            InternalWrite(logLevel, line.TrimStart());
         }
 
-        public void Write(string tag, LogLevel logLevel, [NotNull] string format, [NotNull] params object[] args)
+        public void Write(LoggerConfiguration configuration, LogLevel logLevel, [NotNull] string format, [NotNull] params object[] args)
         {
-            Write(tag, logLevel, string.Format(format, args));
+            Write(configuration, logLevel, string.Format(format, args));
         }
 
-        public void Write(string tag, LogLevel logLevel, Exception exception, string message)
+        public void Write(LoggerConfiguration configuration, LogLevel logLevel, Exception exception, string message)
         {
             if (exception != null)
             {
-                Write(tag, logLevel, $"Message: {exception.Message}");
+                Write(configuration, logLevel, $"Message: {exception.Message}");
 
                 if (exception.StackTrace != null)
                 {
-                    Write(tag, logLevel, "Stack Trace:");
+                    Write(configuration, logLevel, "Stack Trace:");
                     InternalWrite(logLevel, exception.StackTrace);
                 }
 
                 if (exception.InnerException != null)
                 {
-                    Write(tag, logLevel, $"Caused by: {exception.InnerException.Message}");
-                    Write(tag, logLevel, "Stack Trace:");
+                    Write(configuration, logLevel, $"Caused by: {exception.InnerException.Message}");
+                    Write(configuration, logLevel, "Stack Trace:");
                     InternalWrite(logLevel, exception.InnerException.StackTrace);
                 }
             }
 
-            Write(tag, logLevel, $"Time: {DateTime.UtcNow}");
+            Write(configuration, logLevel, $"Time: {DateTime.UtcNow}");
             if (!string.IsNullOrEmpty(message))
             {
-                Write(tag, logLevel, $"Note: {message}");
+                Write(configuration, logLevel, $"Note: {message}");
             }
 
             Writer.WriteLine(Spacer);

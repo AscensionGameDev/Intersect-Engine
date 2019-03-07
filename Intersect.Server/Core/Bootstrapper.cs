@@ -86,7 +86,9 @@ namespace Intersect.Server.Core
                 SetConsoleCtrlHandler(ConsoleCtrlHandler, true);
             }
 
-            Log.Global.AddOutput(new ConciseConsoleOutput(Debugger.IsAttached ? LogLevel.All : LogLevel.Error));
+            var consoleOutput = new ConciseConsoleOutput(Debugger.IsAttached ? LogLevel.All : LogLevel.Error);
+            Log.Pretty.AddOutput(consoleOutput);
+            Log.Default.AddOutput(consoleOutput);
 
             if (!Strings.Load())
             {
@@ -132,6 +134,8 @@ namespace Intersect.Server.Core
 
             PrintIntroduction();
 
+            Console.WriteLine();
+
             ExportDependencies(args);
 
             Formulas.LoadFormulas();
@@ -148,6 +152,8 @@ namespace Intersect.Server.Core
                 Console.ReadKey();
                 return false;
             }
+
+            Console.WriteLine();
 
             Console.WriteLine(Strings.Commandoutput.playercount.ToString(LegacyDatabase.RegisteredPlayers));
             Console.WriteLine(Strings.Commandoutput.gametime.ToString(ServerTime.GetTime().ToString("F")));

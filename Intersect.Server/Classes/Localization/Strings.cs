@@ -1,19 +1,24 @@
 ﻿using Intersect.Localization;
 using Intersect.Logging;
+
 using JetBrains.Annotations;
+
 using Newtonsoft.Json;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Intersect.Server.Core;
 
 namespace Intersect.Server.Localization
 {
+
     public static partial class Strings
     {
+
         public sealed class AccountNamespace : LocaleNamespace
         {
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString badaccess = @"Access denied! Invalid power level!";
 
@@ -83,10 +88,12 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString adminonly =
                 @"The server is currently allowing only admins to connect. Come back later!";
+
         }
 
         public sealed class BagsNamespace : LocaleNamespace
         {
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString baginbag = @"You cannot store a bag inside another bag!";
 
@@ -114,10 +121,12 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString withdrawinvalid = @"Invalid item selected to retreive!";
+
         }
 
         public sealed class BanksNamespace : LocaleNamespace
         {
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString banknospace = @"There is no space left in your bank for that item!";
 
@@ -130,10 +139,12 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString withdrawinvalid = @"Invalid item selected to withdraw!";
+
         }
 
         public sealed class ChatNamespace : LocaleNamespace
         {
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString admin = @"[ADMIN] {00}: {01}";
 
@@ -181,20 +192,24 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString replycmd = @"/reply";
+
         }
 
         public sealed class ClassesNamespace : LocaleNamespace
         {
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString lastclass = @"Last Class";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString lastclasserror =
                 @"Failed to delete class, you must have at least one class at all times!";
+
         }
 
         public sealed class ColorsNamespace : LocaleNamespace
         {
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocaleDictionary<int, LocalizedString> presets = new LocaleDictionary<int, LocalizedString>(
                 new Dictionary<int, LocalizedString>
@@ -212,10 +227,12 @@ namespace Intersect.Server.Localization
                     {10, @"Cyan"}
                 }
             );
+
         }
 
         public sealed class CombatNamespace : LocaleNamespace
         {
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString exp = @"Experience";
 
@@ -341,10 +358,12 @@ namespace Intersect.Server.Localization
                     {1, @"Mana"}
                 }
             );
+
         }
 
         public sealed class CommandoutputNamespace : LocaleNamespace
         {
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString apigranted = @"{00} now has api access!";
 
@@ -406,19 +425,23 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString syntaxerror =
                 @"Syntax Error: Expected parameter not found. Type {00} {01} for usage information.";
+
         }
 
         public sealed class CraftingNamespace : LocaleNamespace
         {
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString crafted = @"You successfully crafted {00}!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString nospace = @"You do not have enough inventory space to craft {00}!";
+
         }
 
         public sealed class DatabaseNamespace : LocaleNamespace
         {
+
             [JsonProperty("default", NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString Default = @"Default";
 
@@ -444,13 +467,15 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString usingsqlite = @"Using SQLite Database for account and data storage.";
+
         }
 
         public sealed class ErrorsNamespace : LocaleNamespace
         {
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString ErrorLoadingStrings =
-                @"Failed to load strings! Press any key to shut down.";
+            public readonly LocalizedString
+                ErrorLoadingStrings = @"Failed to load strings! Press any key to shut down.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString errorloadingconfig =
@@ -469,10 +494,12 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString warpfail = @"Failed to warp player to new map -- warping to spawn.";
+
         }
 
         public sealed class EventsNamespace : LocaleNamespace
         {
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString commandparameter = @"\param";
 
@@ -520,10 +547,12 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString timesecond = @"\second";
+
         }
 
         public sealed class FormulasNamespace : LocaleNamespace
         {
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString loadfailed = @"Failed to load formulas! Press any key to shut down.";
 
@@ -533,10 +562,12 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString syntax =
                 @"Error loading formulas! Please make sure the file exists and is free on syntax errors.";
+
         }
 
         public sealed class FriendsNamespace : LocaleNamespace
         {
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString accept = @"{00} has accepted your friend request!";
 
@@ -554,61 +585,58 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString sent = @"Friend request sent.";
+
         }
 
         public sealed class GeneralNamespace : LocaleNamespace
         {
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull]
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString none = @"None";
+
         }
 
         public sealed class IntroNamespace : LocaleNamespace
         {
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString api = @"API listening on '{00}'.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString consoleactive =
                 @"Type exit to shutdown the server, or help for a list of commands.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString exit = @"Press any key to exit.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString loading = @"Loading, please wait.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString started = @"Server Started. Using UDP Port #{00}";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString support =
                 @"For help, support, and updates visit: https://www.ascensiongamedev.com";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString tagline = @"                          free 2d orpg engine";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString title = @"Intersect Server";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            [NotNull]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString version = @"Version {00}";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString websocketstarted =
                 @"Websocket listener started for Unity WebGL Clients using Port #{00}";
+
         }
 
         public sealed class ItemsNamespace : LocaleNamespace
         {
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString bound = @"You cannot drop this item.";
 
@@ -635,10 +663,12 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString stunned = @"You cannot use this item whilst stunned.";
+
         }
 
         public sealed class MappingNamespace : LocaleNamespace
         {
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString lastmap = @"Last Map";
 
@@ -655,10 +685,12 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString newfolder = @"New Folder";
+
         }
 
         public sealed class MigrationNamespace : LocaleNamespace
         {
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString cancel = @"   Press any other key to cancel migration.";
 
@@ -769,10 +801,12 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString migrationcomplete = @"Migration complete! Press any key to exit.";
+
         }
 
         public sealed class NetDebugNamespace : LocaleNamespace
         {
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString pleasewait = @"Please wait while network diagnostics run....";
 
@@ -783,20 +817,24 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString savedtofile =
                 @"Network Debug information saved to netdebug.txt! Upload that file and share it with AGD when requesting for help getting your game online!";
+
         }
 
         public sealed class NetworkingNamespace : LocaleNamespace
         {
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString badpacket =
                 @"Error handling client packet. Disconnecting client. More info logged to errors.log";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString disconnected = @"Client disconnected.";
+
         }
 
         public sealed class PartiesNamespace : LocaleNamespace
         {
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString alreadydenied = @"Your party invitation has already been rejected!";
 
@@ -834,10 +872,12 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString notinparty = @"You are not in a party.";
+
         }
 
         public sealed class PlayerNamespace : LocaleNamespace
         {
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString admin = @"{00} has been given administrative powers!";
 
@@ -914,10 +954,12 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString warpedtoyou = @"{00} warped to you.";
+
         }
 
         public sealed class PortcheckingNamespace : LocaleNamespace
         {
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString accessible = @"Your game is accesible to the public!";
 
@@ -960,10 +1002,12 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString screwed =
                 @"   3. If on a college campus, or within a business network you likely do not have permission to open ports or host games in which case you are screwed!";
+
         }
 
         public sealed class QuestsNamespace : LocaleNamespace
         {
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString abandoned = @"Quest Abandoned: {00}!";
 
@@ -987,10 +1031,12 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString updated = @"Quest: {00} updated!";
+
         }
 
         public sealed class RegexNamespace : LocaleNamespace
         {
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString email =
                 @"^(([\w-]+\.)+[\w-]+|([a-zA-Z]{1}|[\w-]{2,}))@((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|([a-zA-Z]+[\w-]+\.)+[a-zA-Z]{2,4})$";
@@ -1001,10 +1047,12 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString username = @"^[a-zA-Z0-9]{2,20}$";
+
         }
 
         public sealed class ShopsNamespace : LocaleNamespace
         {
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString bound = @"This item is bound to you and cannot be sold!";
 
@@ -1016,10 +1064,12 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString inventoryfull = @"You do not have space to purchase that item!";
+
         }
 
         public sealed class TradingNamespace : LocaleNamespace
         {
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString accepted = @"The trade was successful!";
 
@@ -1051,32 +1101,35 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString tradenospace = @"There is no space left in the trade window for that item!";
+
         }
 
         public sealed class UpnpNamespace : LocaleNamespace
         {
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString failedforwardingtcp =
                 @"Failed to automatically port forward tcp port {00} using UPnP. (UPnP possibly disabled in your router settings, or this port might already be forwarded!)";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString failedforwardingudp =
                 @"Failed to automatically port forward udp port {00} using UPnP. (UPnP possibly disabled in your router settings, or this port might already be forwarded!)";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString
                 forwardedtcp = @"Successfully auto port forwarded tcp port {00} using UPnP.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString
                 forwardedudp = @"Successfully auto port forwarded udp port {00} using UPnP.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString initializationfailed =
                 @"UPnP Service Initialization Failed. You might not have a router, or UPnP on your router might be disabled.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString initialized = @"UPnP Service Initialization Succeeded";
+
         }
 
         #region Serialization
@@ -1136,6 +1189,7 @@ namespace Intersect.Server.Localization
         // ReSharper disable MemberHidesStaticFromOuterClass
         private sealed class RootNamespace : LocaleNamespace
         {
+
             [NotNull] public readonly AccountNamespace Account = new AccountNamespace();
 
             [NotNull] public readonly BagsNamespace Bags = new BagsNamespace();
@@ -1195,7 +1249,9 @@ namespace Intersect.Server.Localization
             [NotNull] public readonly TradingNamespace Trading = new TradingNamespace();
 
             [NotNull] public readonly UpnpNamespace Upnp = new UpnpNamespace();
+
         }
+
         // ReSharper restore MemberHidesStaticFromOuterClass
 
         #endregion
@@ -1293,5 +1349,7 @@ namespace Intersect.Server.Localization
         public static UpnpNamespace Upnp => Root.Upnp;
 
         #endregion
+
     }
+
 }

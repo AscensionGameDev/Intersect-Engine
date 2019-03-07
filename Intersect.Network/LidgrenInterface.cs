@@ -154,7 +154,7 @@ namespace Intersect.Network
         {
             if (mNetwork.Configuration.IsServer)
             {
-                Log.Info($"Listening on {mPeerConfiguration.LocalAddress}:{mPeerConfiguration.Port}.");
+                Log.Pretty.Info($"Listening on {mPeerConfiguration.LocalAddress}:{mPeerConfiguration.Port}.");
                 mPeer.Start();
                 return;
             }
