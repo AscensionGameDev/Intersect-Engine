@@ -1,17 +1,22 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+
+using Intersect.IO.FileSystem;
+
 using JetBrains.Annotations;
 
 namespace Intersect.Logging
 {
+
     public class FileOutput : ILogOutput
     {
+
         private const string TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss.fff";
 
-        private static readonly string Spacer =
-            Environment.NewLine + new string('-', 80) + Environment.NewLine;
+        private static readonly string Spacer = Environment.NewLine + new string('-', 80) + Environment.NewLine;
 
+        [NotNull]
         private string mFilename;
 
         private StreamWriter mWriter;
@@ -21,21 +26,19 @@ namespace Intersect.Logging
         {
         }
 
-        public FileOutput(string filename, LogLevel logLevel,
-            bool append = true)
+        public FileOutput(string filename, LogLevel logLevel, bool append = true)
         {
-            Filename = string.IsNullOrEmpty(filename)
-                ? Log.SuggestFilename()
-                : filename;
+            Filename = string.IsNullOrEmpty(filename) ? Log.SuggestFilename() : filename;
             LogLevel = logLevel;
             Append = append;
         }
 
         public bool Append { get; set; }
 
+        [NotNull]
         public string Filename
         {
-            get { return mFilename; }
+            get => mFilename;
             set
             {
                 if (string.IsNullOrEmpty(value))
@@ -60,14 +63,15 @@ namespace Intersect.Logging
                     return mWriter;
                 }
 
-                var directory = Path.IsPathRooted(mFilename)
-                    ? Path.GetDirectoryName(mFilename)
-                    : "logs";
+                var directory = Path.IsPathRooted(mFilename) ? Path.GetDirectoryName(mFilename) : null;
+                directory = string.IsNullOrWhiteSpace(directory) ? "logs" : directory;
 
-                EnsureOutputDirectory(directory);
-                mWriter = new StreamWriter(
-                    Path.Combine(directory, mFilename),
-                    Append, Encoding.UTF8)
+                if (!FileSystemHelper.EnsureDirectoryExists(directory))
+                {
+                    throw new InvalidOperationException("The logger directory could not be created or is a file.");
+                }
+
+                mWriter = new StreamWriter(Path.Combine(directory, mFilename), Append, Encoding.UTF8)
                 {
                     AutoFlush = true
                 };
@@ -99,11 +103,10 @@ namespace Intersect.Logging
                 ? $"{DateTime.UtcNow.ToString(TIMESTAMP_FORMAT)} [{logLevel}] {message}"
                 : $"{DateTime.UtcNow.ToString(TIMESTAMP_FORMAT)} [{logLevel}] {tag}: {message}";
 
-            InternalWrite(logLevel, message);
+            InternalWrite(logLevel, line);
         }
 
-        public void Write(string tag, LogLevel logLevel, string format,
-            params object[] args)
+        public void Write(string tag, LogLevel logLevel, [NotNull] string format, [NotNull] params object[] args)
         {
             Write(tag, logLevel, string.Format(format, args));
         }
@@ -136,11 +139,6 @@ namespace Intersect.Logging
 
             Writer.WriteLine(Spacer);
             Writer.Flush();
-        }
-
-        private static void EnsureOutputDirectory(string path)
-        {
-            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
         }
 
         ~FileOutput()
@@ -182,7 +180,10 @@ namespace Intersect.Logging
             {
                 /* Ignore this exception */
             }
+
             mWriter = null;
         }
+
     }
+
 }

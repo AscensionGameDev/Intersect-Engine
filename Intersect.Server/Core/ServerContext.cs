@@ -4,27 +4,36 @@ using Intersect.Network.Crypto;
 using Intersect.Network.Crypto.Formats;
 using Intersect.Server.Networking;
 using Intersect.Server.Networking.Lidgren;
+
 using JetBrains.Annotations;
+
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
+
 using Intersect.Core;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking.Helpers;
 using Intersect.Server.Web.RestApi;
+
 using Open.Nat;
 #if WEBSOCKETS
 using Intersect.Server.Networking.Websockets;
+
 #endif
 
 namespace Intersect.Server.Core
 {
+
     internal sealed class ServerContext : ApplicationContext<ServerContext>
     {
+
         #region Threads
 
         private Thread ThreadConsole { get; set; }
+
         private Thread ThreadLogic { get; set; }
 
         #endregion
@@ -101,17 +110,11 @@ namespace Intersect.Server.Core
 
 #if WEBSOCKETS
             WebSocketNetwork.Init(Options.ServerPort);
-            Console.WriteLine(Strings.Intro.websocketstarted.ToString(Options.ServerPort));
+            Log.Info(Strings.Intro.websocketstarted.ToString(Options.ServerPort));
 #endif
+            RestApi.Start();
 
             Console.WriteLine();
-
-            if (Options.ApiEnabled)
-            {
-                Console.WriteLine(Strings.Intro.api.ToString(Options.ApiPort));
-                RestApi.Start();
-                Console.WriteLine();
-            }
 
             if (!Options.UPnP || Options.NoPunchthrough)
             {
@@ -124,9 +127,10 @@ namespace Intersect.Server.Core
 #endif
             UpnP.OpenServerPort(Options.ServerPort, Protocol.Udp).Wait(5000);
 
-            if (Options.ApiEnabled)
+            if (RestApi.IsStarted)
             {
-                UpnP.OpenServerPort(Options.ApiPort, Protocol.Tcp).Wait(5000);
+                RestApi.Configuration.Ports.ToList()
+                    .ForEach(port => UpnP.OpenServerPort(port, Protocol.Tcp).Wait(5000));
             }
 
             Console.WriteLine();
@@ -173,6 +177,7 @@ namespace Intersect.Server.Core
             if (disposing)
             {
                 #region CLEAN THIS UP
+
                 // TODO: This may actually be fine here? Might want to move it into Bootstrapper though as "PrintShutdown()"
                 Console.WriteLine();
                 Console.WriteLine(Strings.Commands.exiting);
@@ -224,5 +229,7 @@ namespace Intersect.Server.Core
         }
 
         #endregion
+
     }
+
 }

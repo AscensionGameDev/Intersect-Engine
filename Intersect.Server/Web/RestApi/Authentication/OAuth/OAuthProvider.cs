@@ -1,5 +1,7 @@
 ﻿using System;
 using Intersect.Server.Web.RestApi.Authentication.OAuth.Providers;
+using Intersect.Server.Web.RestApi.Configuration;
+
 using JetBrains.Annotations;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Infrastructure;
@@ -14,10 +16,10 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth
         [NotNull] private OAuthAuthorizationServerProvider OAuthAuthorizationServerProvider { get; }
         [NotNull] private AuthenticationTokenProvider RefreshTokenProvider { get; }
 
-        public OAuthProvider([NotNull] RestApi restApi) : base(restApi)
+        public OAuthProvider([NotNull] ApiConfiguration configuration) : base(configuration)
         {
-            OAuthAuthorizationServerProvider = new GrantProvider(this);
-            RefreshTokenProvider = new RefreshTokenProvider(this);
+            OAuthAuthorizationServerProvider = new GrantProvider(Configuration);
+            RefreshTokenProvider = new RefreshTokenProvider(Configuration);
         }
 
         public override void Configure(IAppBuilder appBuilder)

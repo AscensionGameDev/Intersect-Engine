@@ -1,15 +1,17 @@
-﻿using JetBrains.Annotations;
+﻿using Intersect.Server.Web.RestApi.Configuration;
+
+using JetBrains.Annotations;
 using Owin;
 
 namespace Intersect.Server.Web.RestApi.Authentication
 {
     internal abstract class AuthenticationProvider : IAppConfigurationProvider
     {
-        [NotNull] protected RestApi RestApi { get; }
+        [NotNull] protected ApiConfiguration Configuration { get; }
 
-        protected AuthenticationProvider([NotNull] RestApi restApi)
+        protected AuthenticationProvider([NotNull] ApiConfiguration configuration)
         {
-            RestApi = restApi;
+            Configuration = configuration;
         }
 
         public abstract void Configure(IAppBuilder appBuilder);

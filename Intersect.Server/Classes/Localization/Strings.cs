@@ -559,41 +559,50 @@ namespace Intersect.Server.Localization
         public sealed class GeneralNamespace : LocaleNamespace
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
             public readonly LocalizedString none = @"None";
         }
 
         public sealed class IntroNamespace : LocaleNamespace
         {
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString api = @"Starting API on TCP Port #{00}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString api = @"API listening on '{00}'.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
             public readonly LocalizedString consoleactive =
                 @"Type exit to shutdown the server, or help for a list of commands.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
             public readonly LocalizedString exit = @"Press any key to exit.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
             public readonly LocalizedString loading = @"Loading, please wait.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
             public readonly LocalizedString started = @"Server Started. Using UDP Port #{00}";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
             public readonly LocalizedString support =
                 @"For help, support, and updates visit: https://www.ascensiongamedev.com";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
             public readonly LocalizedString tagline = @"                          free 2d orpg engine";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
             public readonly LocalizedString title = @"Intersect Server";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
             public readonly LocalizedString version = @"Version {00}";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString websocketstarted =
                 @"Websocket listener started for Unity WebGL Clients using Port #{00}";
         }

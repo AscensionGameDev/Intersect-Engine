@@ -4,18 +4,22 @@ using Intersect.Server.Classes.Database.PlayerData.Api;
 using JetBrains.Annotations;
 using Microsoft.Owin.Security.Infrastructure;
 using System;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+
+using Intersect.Server.Web.RestApi.Configuration;
 
 namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
 {
 
     internal class RefreshTokenProvider : AuthenticationTokenProvider
     {
-        [NotNull] private OAuthProvider OAuthProvider { get; }
+        [NotNull] private ApiConfiguration Configuration { get; }
 
-        public RefreshTokenProvider([NotNull] OAuthProvider oAuthProvider)
+        public RefreshTokenProvider([NotNull] ApiConfiguration configuration)
         {
-            OAuthProvider = oAuthProvider;
+            Configuration = configuration;
         }
 
         public override async Task CreateAsync([NotNull] AuthenticationTokenCreateContext context)
@@ -51,9 +55,31 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
             var userName = identity.FindFirst(IntersectClaimTypes.UserName)?.Value;
 
             var issued = DateTime.UtcNow;
-            var tokenLifeTime = context.OwinContext.Get<int>("as:clientRefreshTokenLifetime");
+            var expires = issued.AddMinutes(Configuration.RefreshTokenLifetime);
+
             var ticketId = context.OwinContext.Get<Guid>("ticket_id");
-            var expires = issued.AddMinutes(tokenLifeTime);
+            if (ticketId == Guid.Empty)
+            {
+                identity
+                    .FindAll(IntersectClaimTypes.TicketId)?
+                    .ToList()
+                    .ForEach(
+                        claim =>
+                        {
+                            if (!Guid.TryParse(claim?.Value, out var guid) || guid == Guid.Empty)
+                            {
+                                identity.TryRemoveClaim(claim);
+                            }
+                        }
+                    );
+
+                var ticketIdClaim = identity.FindFirst(IntersectClaimTypes.TicketId);
+                if (ticketIdClaim == null || !Guid.TryParse(ticketIdClaim.Value, out ticketId))
+                {
+                    ticketId = Guid.NewGuid();
+                    identity.AddClaim(new Claim(IntersectClaimTypes.TicketId, ticketId.ToString()));
+                }
+            }
 
             var token = new RefreshToken
             {
@@ -78,7 +104,7 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
 
         public override async Task ReceiveAsync(AuthenticationTokenReceiveContext context)
         {
-            if (!Guid.TryParse(context.Token, out var refreshTokenId))
+            if (!Guid.TryParse(context?.Token, out var refreshTokenId))
             {
                 return;
             }
@@ -90,9 +116,7 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
                 return;
             }
 
-            context.DeserializeTicket(refreshToken.Ticket);
-
-            context.Ticket.ToString();
+            context?.DeserializeTicket(refreshToken.Ticket);
         }
     }
 }

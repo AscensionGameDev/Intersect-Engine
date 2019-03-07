@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Intersect.Logging;
+using Intersect.Security.Claims;
+using Intersect.Server.Web.RestApi.Configuration;
 using JetBrains.Annotations;
+using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.OAuth;
+using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
-
-using Intersect.Logging;
-using Intersect.Security.Claims;
-using Intersect.Server.Database.PlayerData;
-using Microsoft.Owin.Security;
 
 namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
 {
@@ -22,11 +19,11 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
         [NotNull] private const string KEY_PREHASH = "intersect:prehash";
 
         [NotNull]
-        private OAuthProvider OAuthProvider { get; }
+        private ApiConfiguration Configuration { get; }
 
-        public GrantProvider([NotNull] OAuthProvider oAuthProvider)
+        public GrantProvider([NotNull] ApiConfiguration configuration)
         {
-            OAuthProvider = oAuthProvider;
+            Configuration = configuration;
         }
 
         public override Task AuthorizationEndpointResponse(OAuthAuthorizationEndpointResponseContext context)
@@ -54,9 +51,9 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
             return base.GrantCustomExtension(context);
         }
 
-        public override Task GrantRefreshToken(OAuthGrantRefreshTokenContext context)
+        public override async Task GrantRefreshToken(OAuthGrantRefreshTokenContext context)
         {
-            return base.GrantRefreshToken(context);
+            context?.Validated(context.Ticket);
         }
 
         public override async Task GrantResourceOwnerCredentials(
@@ -109,12 +106,6 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
                 context.SetError("insufficient_permissions");
                 return;
             }
-
-#if DEBUG
-            owinContext.Set("as:clientRefreshTokenLifetime", 15);
-#else
-            owinContext.Set("as:clientRefreshTokenLifetime", 10080);
-#endif
 
             if (!Guid.TryParse(context.ClientId, out var clientId))
             {

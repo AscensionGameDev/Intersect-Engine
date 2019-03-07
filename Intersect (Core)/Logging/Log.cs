@@ -1,20 +1,26 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+
 using JetBrains.Annotations;
 
 namespace Intersect.Logging
 {
+
     public static class Log
     {
+
+        [NotNull]
         private static string ExecutableName =>
             Path.GetFileNameWithoutExtension(Process.GetCurrentProcess().MainModule.FileName);
 
-        public static string SuggestFilename(DateTime? time = null)
-            => $"{ExecutableName}-{time ?? DateTime.Now:yyyy_MM_dd-HH_mm_ss_fff}.log";
+        [NotNull]
+        public static string SuggestFilename(DateTime? time = null, [CanBeNull] string prefix = null, [CanBeNull] string extensionPrefix = null) =>
+            $"{prefix?.Trim() ?? ""}{ExecutableName}-{time ?? DateTime.Now:yyyy_MM_dd-HH_mm_ss_fff}{(string.IsNullOrWhiteSpace(extensionPrefix) ? "" : "." + extensionPrefix)}.log";
 
         #region Global
 
+        [CanBeNull]
         private static Logger sGlobal;
 
         [NotNull]
@@ -22,11 +28,14 @@ namespace Intersect.Logging
         {
             get
             {
-                if (sGlobal != null) return sGlobal;
+                if (sGlobal != null)
+                {
+                    return sGlobal;
+                }
+
                 sGlobal = new Logger();
                 sGlobal.AddOutput(new FileOutput());
                 sGlobal.AddOutput(new FileOutput($"errors-{ExecutableName}.log", LogLevel.Error));
-                // TODO: Add console output
 
                 return sGlobal;
             }
@@ -183,5 +192,7 @@ namespace Intersect.Logging
         }
 
         #endregion
+
     }
+
 }

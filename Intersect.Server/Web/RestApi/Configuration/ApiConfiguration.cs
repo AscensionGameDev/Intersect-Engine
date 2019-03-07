@@ -17,6 +17,12 @@ namespace Intersect.Server.Web.RestApi.Configuration
     public sealed class ApiConfiguration
     {
 
+#if DEBUG
+        public const uint DefaultRefreshTokenLifetime = 15;
+#else
+        public const uint DefaultRefreshTokenLifetime = 10080;
+#endif
+
         [JsonIgnore] private ImmutableArray<string> mHosts;
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -48,6 +54,14 @@ namespace Intersect.Server.Web.RestApi.Configuration
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public bool Enabled { get; private set; }
 
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public bool DebugMode { get; private set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Include)]
+        [DefaultValue(DefaultRefreshTokenLifetime)]
+        public uint RefreshTokenLifetime { get; private set; }
+
+
         private ApiConfiguration()
         {
             mRouteAuthorization = new Dictionary<string, object>();
@@ -60,10 +74,12 @@ namespace Intersect.Server.Web.RestApi.Configuration
             }
 
             Enabled = false;
+            DebugMode = false;
             Hosts = ImmutableArray.Create(new[] { "http://localhost:5401" });
+            RefreshTokenLifetime = DefaultRefreshTokenLifetime;
         }
 
-        #region Static
+#region Static
 
         public const string DefaultPath = @"resources/config/api.config.json";
 
@@ -116,7 +132,7 @@ namespace Intersect.Server.Web.RestApi.Configuration
             }
         }
 
-        #endregion
+#endregion
 
     }
 
