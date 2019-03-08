@@ -901,7 +901,7 @@ namespace Intersect.Server
             }
             else
             {
-                Log.Error("DB Save Ignored - Save Task Already Processing");
+                Log.Debug("DB Save Ignored - Save Task Already Processing");
             }
         }
 
