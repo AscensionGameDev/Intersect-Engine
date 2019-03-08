@@ -17,6 +17,7 @@ using Intersect.Server.Entities;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;
+using Intersect.Server.Notifications;
 using Intersect.Utilities;
 
 namespace Intersect.Server.Networking
@@ -290,6 +291,12 @@ namespace Intersect.Server.Networking
                     break;
                 case ClientPackets.CreateNewChar:
                     HandleCreateNewChar(client, packet);
+                    break;
+                case ClientPackets.RequestPassReset:
+                    HandleRequestPassReset(client, packet);
+                    break;
+                case ClientPackets.ResetPass:
+                    HandleResetPass(client, packet);
                     break;
                 default:
                     break;
@@ -2757,5 +2764,56 @@ namespace Intersect.Server.Networking
                 PacketSender.SendLoginError(client, Strings.Account.maxchars);
             }
         }
+
+        private static void HandleRequestPassReset(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var nameEmail = bf.ReadString();
+            
+            //Find account with that name or email
+            var userName = LegacyDatabase.UsernameFromEmail(nameEmail);
+            if (string.IsNullOrEmpty(userName)) userName = nameEmail;
+            if (LegacyDatabase.AccountExists(userName))
+            {
+                //Send reset email
+                var user = LegacyDatabase.GetUser(userName);
+                var email = new PasswordResetEmail(user);
+                email.Send();
+            }
+
+            bf.Dispose();
+        }
+
+        private static void HandleResetPass(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var nameEmail = bf.ReadString();
+            var code = bf.ReadString();
+            var hashedPass = bf.ReadString();
+
+            //Find account with that name or email
+            var success = false;
+            var userName = LegacyDatabase.UsernameFromEmail(nameEmail);
+            if (string.IsNullOrEmpty(userName)) userName = nameEmail;
+            if (LegacyDatabase.AccountExists(userName))
+            {
+                //Reset Password
+                var user = LegacyDatabase.GetUser(userName);
+                if (user.PasswordResetCode.ToLower().Trim() == code.ToLower().Trim() && user.PasswordResetTime > DateTime.UtcNow)
+                {
+                    user.PasswordResetCode = "";
+                    user.PasswordResetTime = DateTime.MinValue;
+                    LegacyDatabase.ResetPass(user, hashedPass);
+                    success = true;
+                }
+            }
+
+            PacketSender.SendPasswordResetResult(client, success);
+
+            bf.Dispose();
+        }
+
     }
 }

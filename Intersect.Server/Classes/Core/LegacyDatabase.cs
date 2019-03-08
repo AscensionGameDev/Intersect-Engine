@@ -133,6 +133,11 @@ namespace Intersect.Server
             return sPlayerDb.Users.Any(p => string.Equals(p.Name.Trim(), accountname.Trim(), StringComparison.CurrentCultureIgnoreCase));
         }
 
+        public static string UsernameFromEmail([NotNull] string email)
+        {
+            return sPlayerDb.Users.FirstOrDefault(p => string.Equals(p.Email.Trim(), email.Trim(), StringComparison.CurrentCultureIgnoreCase))?.Name;
+        }
+
         public static User GetUser([NotNull] string username)
         {
             return User.GetUser(sPlayerDb, username);
@@ -203,6 +208,24 @@ namespace Intersect.Server
             };
             sPlayerDb.Users.Add(user);
             client.SetUser(user);
+            SavePlayerDatabaseAsync();
+        }
+
+        public static void ResetPass(User user, string hashedPass)
+        {
+            var sha = new SHA256Managed();
+
+            //Generate a Salt
+            var rng = new RNGCryptoServiceProvider();
+            var buff = new byte[20];
+            rng.GetBytes(buff);
+            var salt = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(Convert.ToBase64String(buff)))).Replace("-", "");
+
+            //Hash the Password
+            var pass = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(hashedPass + salt))).Replace("-", "");
+
+            user.Salt = salt;
+            user.Password = pass;
             SavePlayerDatabaseAsync();
         }
 

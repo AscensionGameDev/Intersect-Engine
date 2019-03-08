@@ -11,7 +11,7 @@ namespace Intersect
         private static Options _options;
 
         [JsonIgnore]
-        public bool ExportDatabaseSettings { get; set; }
+        public bool SendingToClient { get; set; } = true;
 
         //Public Getters
         public static ushort ServerPort { get => _options._serverPort; set => _options._serverPort = value; }
@@ -47,6 +47,9 @@ namespace Intersect
         public static bool OpenPortChecker => _options._portChecker;
         public static bool ApiEnabled => _options._api;
         public static ushort ApiPort => _options._apiPort;
+        public static SmtpSettings Smtp => _options.SmtpSettings;
+        public static int PasswordResetExpirationMinutes => _options._passResetExpirationMin;
+        public static bool SmtpValid => _options._smtpValid;
 
         public static DatabaseOptions PlayerDb
         {
@@ -122,6 +125,12 @@ namespace Intersect
         [JsonProperty("Map")]
         public MapOptions MapOpts = new MapOptions();
 
+        [JsonProperty("ValidPasswordResetTimeMinutes")]
+        protected ushort _passResetExpirationMin = 30;
+
+        [JsonProperty("SmtpValid")]
+        protected bool _smtpValid { get; set; }
+        public SmtpSettings SmtpSettings = new SmtpSettings();
         public DatabaseOptions PlayerDatabase = new DatabaseOptions();
         public DatabaseOptions GameDatabase = new DatabaseOptions();
 
@@ -137,18 +146,19 @@ namespace Intersect
             {
                 _options = JsonConvert.DeserializeObject<Options>(File.ReadAllText("resources/config.json"));
             }
-            _options.ExportDatabaseSettings = true;
+            _options.SendingToClient = false;
             File.WriteAllText("resources/config.json", JsonConvert.SerializeObject(_options,Formatting.Indented));
-            _options.ExportDatabaseSettings = false;
+            _options.SendingToClient = true;
+            _options._smtpValid = Smtp.IsValid();
             optionsCompressed = JsonConvert.SerializeObject(_options);
             return true;
         }
 
         public static void SaveToDisk()
         {
-            _options.ExportDatabaseSettings = true;
+            _options.SendingToClient = false;
             File.WriteAllText("resources/config.json", JsonConvert.SerializeObject(_options, Formatting.Indented));
-            _options.ExportDatabaseSettings = false;
+            _options.SendingToClient = true;
             optionsCompressed = JsonConvert.SerializeObject(_options);
         }
 
@@ -166,12 +176,22 @@ namespace Intersect
 
         public bool ShouldSerializePlayerDatabase()
         {
-            return ExportDatabaseSettings;
+            return !SendingToClient;
         }
 
         public bool ShouldSerializeGameDatabase()
         {
-            return ExportDatabaseSettings;
+            return !SendingToClient;
+        }
+
+        public bool ShouldSerializeSmtpSettings()
+        {
+            return !SendingToClient;
+        }
+
+        public bool ShouldSerializeSmtpValid()
+        {
+            return SendingToClient;
         }
     }
 }

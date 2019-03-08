@@ -79,5 +79,7 @@ namespace Intersect.Enums
         PlayGame,
         DeleteChar,
         CreateNewChar,
+        RequestPassReset,
+        ResetPass
     }
 }
