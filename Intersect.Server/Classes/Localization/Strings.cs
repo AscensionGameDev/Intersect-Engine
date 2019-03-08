@@ -432,6 +432,17 @@ namespace Intersect.Server.Localization
             public static LocalizedString disconnected = @"Client disconnected.";
         }
 
+        public struct Notifications
+        {
+            public static LocalizedString product = @"Intersect Game Engine";
+            public static LocalizedString copyright = "Copyright (C) 2019 Ascension Game Dev, All Rights Reserved";
+        }
+
+        public struct PasswordResetNotification
+        {
+            public static LocalizedString subject = @"Intersect Game Engine - Password Reset Code";
+        }
+
         public struct Parties
         {
             public static LocalizedString alreadydenied = @"Your party invitation has already been rejected!";

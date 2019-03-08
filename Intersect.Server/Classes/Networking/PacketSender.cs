@@ -1954,5 +1954,14 @@ namespace Intersect.Server.Networking
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
+
+        public static void SendPasswordResetResult(Client client, bool result)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((long)ServerPackets.PasswordResetResult);
+            bf.WriteBoolean(result);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
     }
 }

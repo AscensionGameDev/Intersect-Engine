@@ -105,7 +105,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <returns>Newly created control.</returns>
         public virtual MenuItem AddItem(string label, string name = "", object userData = null)
         {
-            MenuItem item = mMenu.AddItem(label, null);
+            MenuItem item = mMenu.AddItem(label, null,"","",this.Font);
             item.Name = name;
             item.Selected += OnItemSelected;
             item.UserData = userData;

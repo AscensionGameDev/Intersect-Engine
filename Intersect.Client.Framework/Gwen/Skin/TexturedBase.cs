@@ -568,9 +568,9 @@ namespace Intersect.Client.Framework.Gwen.Skin
         {
             if (!control.ShouldDrawBackground)
                 return;
-
-            if (submenuOpen || control.IsHovered)
-                mTextures.Menu.Hover.Draw(Renderer, control.RenderBounds, control.RenderColor);
+            
+            //if (submenuOpen || control.IsHovered)
+            //    mTextures.Menu.Hover.Draw(Renderer, control.RenderBounds, control.RenderColor);
 
             if (isChecked)
                 mTextures.Menu.Check.Draw(Renderer,
@@ -586,6 +586,60 @@ namespace Intersect.Client.Framework.Gwen.Skin
         {
             if (!control.ShouldDrawBackground)
                 return;
+
+            if (((Menu) control).GetTemplate() != null)
+            {
+                var renderImg = ((Menu) control).GetTemplate();
+                //Draw Top Left Corner
+                Renderer.DrawTexturedRect(renderImg,
+                    new Rectangle(control.RenderBounds.X, control.RenderBounds.Y, 2, 2), control.RenderColor, 0, 0,
+                    2f / renderImg.GetWidth(), 2f / renderImg.GetHeight());
+                //Draw Top
+                Renderer.DrawTexturedRect(renderImg,
+                    new Rectangle(control.RenderBounds.X + 2, control.RenderBounds.Y,
+                        control.RenderBounds.Width - 4, 2), control.RenderColor, 2f / renderImg.GetWidth(), 0,
+                    (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 2f / renderImg.GetHeight());
+                //Draw Top Right Corner
+                Renderer.DrawTexturedRect(renderImg,
+                    new Rectangle(control.RenderBounds.Right - 2, control.RenderBounds.Y, 2, 2),
+                    control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 0, 1f,
+                    2f / renderImg.GetHeight());
+                //Draw Left
+                Renderer.DrawTexturedRect(renderImg,
+                    new Rectangle(control.RenderBounds.X, control.RenderBounds.Y + 2, 2,
+                        control.RenderBounds.Height - 4), control.RenderColor, 0, 2f / renderImg.GetHeight(),
+                    2f / renderImg.GetWidth(), (renderImg.GetHeight() - 2f) / renderImg.GetHeight());
+                //Draw Middle
+                Renderer.DrawTexturedRect(renderImg,
+                    new Rectangle(control.RenderBounds.X + 2, control.RenderBounds.Y + 2,
+                        control.RenderBounds.Width - 4, control.RenderBounds.Height - 4), control.RenderColor,
+                    2f / renderImg.GetWidth(), 2f / renderImg.GetHeight(),
+                    (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
+                    (renderImg.GetHeight() - 2f) / renderImg.GetHeight());
+                //Draw Right
+                Renderer.DrawTexturedRect(renderImg,
+                    new Rectangle(control.RenderBounds.Width - 2, control.RenderBounds.Y + 2, 2,
+                        control.RenderBounds.Height - 4), control.RenderColor,
+                    (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 2f / renderImg.GetHeight(), 1,
+                    (renderImg.GetHeight() - 2f) / renderImg.GetHeight());
+                // Draw Bottom Left Corner
+                Renderer.DrawTexturedRect(renderImg,
+                    new Rectangle(control.RenderBounds.X, control.RenderBounds.Bottom - 2, 2, 2),
+                    control.RenderColor, 0, (renderImg.GetHeight() - 2f) / renderImg.GetHeight(),
+                    2f / renderImg.GetWidth(), 1f);
+                //Draw Bottom
+                Renderer.DrawTexturedRect(renderImg,
+                    new Rectangle(control.RenderBounds.X + 2, control.RenderBounds.Bottom - 2,
+                        control.RenderBounds.Width - 4, 2), control.RenderColor, 2f / renderImg.GetWidth(),
+                    (renderImg.GetHeight() - 2f) / renderImg.GetHeight(),
+                    (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 1f);
+                //Draw Bottom Right Corner
+                Renderer.DrawTexturedRect(renderImg,
+                    new Rectangle(control.RenderBounds.Right - 2, control.RenderBounds.Bottom - 2, 2, 2),
+                    control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
+                    (renderImg.GetHeight() - 2f) / renderImg.GetHeight(), 1f, 1f);
+                return;
+            }
 
             if (!paddingDisabled)
             {
@@ -817,6 +871,61 @@ namespace Intersect.Client.Framework.Gwen.Skin
         {
             if (!control.ShouldDrawBackground)
                 return;
+
+            if (((ScrollBar)control).GetTemplate() != null)
+            {
+                var renderImg = ((ScrollBar)control).GetTemplate();
+                //Draw Top Left Corner
+                Renderer.DrawTexturedRect(renderImg,
+                    new Rectangle(control.RenderBounds.X, control.RenderBounds.Y, 2, 2), control.RenderColor, 0, 0,
+                    2f / renderImg.GetWidth(), 2f / renderImg.GetHeight());
+                //Draw Top
+                Renderer.DrawTexturedRect(renderImg,
+                    new Rectangle(control.RenderBounds.X + 2, control.RenderBounds.Y,
+                        control.RenderBounds.Width - 4, 2), control.RenderColor, 2f / renderImg.GetWidth(), 0,
+                    (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 2f / renderImg.GetHeight());
+                //Draw Top Right Corner
+                Renderer.DrawTexturedRect(renderImg,
+                    new Rectangle(control.RenderBounds.Right - 2, control.RenderBounds.Y, 2, 2),
+                    control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 0, 1f,
+                    2f / renderImg.GetHeight());
+                //Draw Left
+                Renderer.DrawTexturedRect(renderImg,
+                    new Rectangle(control.RenderBounds.X, control.RenderBounds.Y + 2, 2,
+                        control.RenderBounds.Height - 4), control.RenderColor, 0, 2f / renderImg.GetHeight(),
+                    2f / renderImg.GetWidth(), (renderImg.GetHeight() - 2f) / renderImg.GetHeight());
+                //Draw Middle
+                Renderer.DrawTexturedRect(renderImg,
+                    new Rectangle(control.RenderBounds.X + 2, control.RenderBounds.Y + 2,
+                        control.RenderBounds.Width - 4, control.RenderBounds.Height - 4), control.RenderColor,
+                    2f / renderImg.GetWidth(), 2f / renderImg.GetHeight(),
+                    (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
+                    (renderImg.GetHeight() - 2f) / renderImg.GetHeight());
+                //Draw Right
+                Renderer.DrawTexturedRect(renderImg,
+                    new Rectangle(control.RenderBounds.Width - 2, control.RenderBounds.Y + 2, 2,
+                        control.RenderBounds.Height - 4), control.RenderColor,
+                    (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 2f / renderImg.GetHeight(), 1,
+                    (renderImg.GetHeight() - 2f) / renderImg.GetHeight());
+                // Draw Bottom Left Corner
+                Renderer.DrawTexturedRect(renderImg,
+                    new Rectangle(control.RenderBounds.X, control.RenderBounds.Bottom - 2, 2, 2),
+                    control.RenderColor, 0, (renderImg.GetHeight() - 2f) / renderImg.GetHeight(),
+                    2f / renderImg.GetWidth(), 1f);
+                //Draw Bottom
+                Renderer.DrawTexturedRect(renderImg,
+                    new Rectangle(control.RenderBounds.X + 2, control.RenderBounds.Bottom - 2,
+                        control.RenderBounds.Width - 4, 2), control.RenderColor, 2f / renderImg.GetWidth(),
+                    (renderImg.GetHeight() - 2f) / renderImg.GetHeight(),
+                    (renderImg.GetWidth() - 2f) / renderImg.GetWidth(), 1f);
+                //Draw Bottom Right Corner
+                Renderer.DrawTexturedRect(renderImg,
+                    new Rectangle(control.RenderBounds.Right - 2, control.RenderBounds.Bottom - 2, 2, 2),
+                    control.RenderColor, (renderImg.GetWidth() - 2f) / renderImg.GetWidth(),
+                    (renderImg.GetHeight() - 2f) / renderImg.GetHeight(), 1f, 1f);
+                return;
+            }
+
             if (horizontal)
                 mTextures.Scroller.TrackH.Draw(Renderer, control.RenderBounds, control.RenderColor);
             else

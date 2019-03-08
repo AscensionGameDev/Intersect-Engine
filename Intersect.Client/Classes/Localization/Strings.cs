@@ -607,7 +607,7 @@ namespace Intersect.Client.Localization
             public static LocalizedString credits = @"Credits";
             public static LocalizedString exit = @"Exit";
             public static LocalizedString login = @"Login";
-            public static LocalizedString options = @"";
+            public static LocalizedString options = @"Settings";
             public static LocalizedString optionstooltip = @"";
             public static LocalizedString register = @"Register";
             public static LocalizedString title = @"Main Menu";
@@ -687,9 +687,14 @@ namespace Intersect.Client.Localization
         {
             public static LocalizedString back = @"Cancel";
             public static LocalizedString code = @"Enter the reset code that was sent to you:";
+            public static LocalizedString fail = @"Error!";
+            public static LocalizedString failmsg = @"The reset code was not valid, has expired, or the account does not exist!";
+            public static LocalizedString inputcode = @"Please enter your password reset code.";
             public static LocalizedString password = @"New Password:";
             public static LocalizedString password2 = @"Confirm Password:";
             public static LocalizedString submit = @"Submit";
+            public static LocalizedString success = @"Success!";
+            public static LocalizedString successmsg = @"Your password has been reset!";
             public static LocalizedString title = @"Password Reset";
         }
 

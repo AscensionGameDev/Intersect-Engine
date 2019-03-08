@@ -417,6 +417,8 @@
     <Compile Include="Classes\Networking\Helpers\UPnP.cs" />
     <Compile Include="Classes\Networking\Websockets\WebSocketConnection.cs" />
     <Compile Include="Classes\Networking\Websockets\WebSocketNetwork.cs" />
+    <Compile Include="Classes\Notifications\Notification.cs" />
+    <Compile Include="Classes\Notifications\ResetPassword.cs" />
     <Compile Include="Classes\Spells\SpellInstance.cs" />
     <Compile Include="Classes\Networking\Lidgren\ServerNetwork.cs" />
     <Compile Include="Classes\Networking\Lidgren\ThreadYieldNet40.cs" />

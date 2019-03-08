@@ -62,14 +62,14 @@ namespace Intersect.Client.UI.Menu
             {
                 AutoSizeToContents = true,
                 ShouldDrawBackground = true,
-                Text = Strings.Server.StatusLabel.ToString(sNetworkStatus.ToLocalizedString()),
+                Text = Strings.Server.StatusLabel.ToString(ActiveNetworkStatus.ToLocalizedString()),
             };
             mServerStatusLabel.SetTextColor(Framework.GenericClasses.Color.White, Label.ControlState.Normal);
             mServerStatusLabel.AddAlignment(Alignments.Bottom);
             mServerStatusLabel.AddAlignment(Alignments.Left);
             mServerStatusLabel.ProcessAlignments();
 
-            sNetworkStatusChanged += HandleNetworkStatusChanged;
+            NetworkStatusChanged += HandleNetworkStatusChanged;
 
             //Menu Header
             mMenuHeader = new Label(mMenuWindow, "Title");
@@ -127,7 +127,7 @@ namespace Intersect.Client.UI.Menu
         ~MainMenu()
         {
             // ReSharper disable once DelegateSubtraction
-            sNetworkStatusChanged -= HandleNetworkStatusChanged;
+            NetworkStatusChanged -= HandleNetworkStatusChanged;
         }
 
         //Methods
@@ -195,10 +195,11 @@ namespace Intersect.Client.UI.Menu
             mLoginWindow.Show();
         }
 
-        public void OpenResetPassword()
+        public void OpenResetPassword(string nameEmail)
         {
             Reset();
             Hide();
+            mResetPasswordWindow.Target = nameEmail;
             mResetPasswordWindow.Show();
         }
 
@@ -263,42 +264,42 @@ namespace Intersect.Client.UI.Menu
 
         private void HandleNetworkStatusChanged()
         {
-            mServerStatusLabel.Text = Strings.Server.StatusLabel.ToString(sNetworkStatus.ToLocalizedString());
+            mServerStatusLabel.Text = Strings.Server.StatusLabel.ToString(ActiveNetworkStatus.ToLocalizedString());
             UpdateDisabled();
         }
 
         private void UpdateDisabled()
         {
-            mLoginButton.IsDisabled = sNetworkStatus != NetworkStatus.Online;
-            mRegisterButton.IsDisabled = sNetworkStatus != NetworkStatus.Online;
+            mLoginButton.IsDisabled = ActiveNetworkStatus != NetworkStatus.Online;
+            mRegisterButton.IsDisabled = ActiveNetworkStatus != NetworkStatus.Online;
         }
         
-        private static NetworkStatus sNetworkStatus;
-        private static NetworkStatusHandler sNetworkStatusChanged;
+        public static NetworkStatus ActiveNetworkStatus;
+        public static NetworkStatusHandler NetworkStatusChanged;
 
         public static void OnNetworkConnecting()
         {
-            sNetworkStatus = NetworkStatus.Connecting;
+            ActiveNetworkStatus = NetworkStatus.Connecting;
         }
 
         public static void OnNetworkConnected()
         {
-            sNetworkStatus = NetworkStatus.Online;
-            sNetworkStatusChanged?.Invoke();
+            ActiveNetworkStatus = NetworkStatus.Online;
+            NetworkStatusChanged?.Invoke();
         }
 
         public static void OnNetworkDisconnected()
         {
-            sNetworkStatus = NetworkStatus.Offline;
-            sNetworkStatusChanged?.Invoke();
+            ActiveNetworkStatus = NetworkStatus.Offline;
+            NetworkStatusChanged?.Invoke();
         }
 
         public static void OnNetworkFailed(bool denied)
         {
-            sNetworkStatus = denied ? NetworkStatus.Failed : NetworkStatus.Connecting;
-            sNetworkStatusChanged?.Invoke();
+            ActiveNetworkStatus = denied ? NetworkStatus.Failed : NetworkStatus.Connecting;
+            NetworkStatusChanged?.Invoke();
         }
 
-        private delegate void NetworkStatusHandler();
+        public delegate void NetworkStatusHandler();
     }
 }
