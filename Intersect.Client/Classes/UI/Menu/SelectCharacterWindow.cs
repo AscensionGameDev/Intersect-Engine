@@ -37,6 +37,7 @@ namespace Intersect.Client.UI.Menu
         private Button mPlayButton;
         private Button mPrevCharButton;
         public List<Character> Characters = new List<Character>();
+        private Button mLogoutButton;
 
         //Selected Char
         private int mSelectedChar = 0;
@@ -91,6 +92,12 @@ namespace Intersect.Client.UI.Menu
             mNewButton = new Button(mCharacterSelectionPanel, "NewButton");
             mNewButton.SetText(Strings.CharacterSelection.New);
             mNewButton.Clicked += _newButton_Clicked;
+
+            //Logout Button
+            mLogoutButton = new Button(mCharacterSelectionPanel,"LogoutButton");
+            mLogoutButton.SetText(Strings.CharacterSelection.logout);
+            mLogoutButton.IsHidden = true;
+            mLogoutButton.Clicked += mLogoutButton_Clicked;
 
             mCharacterSelectionPanel.LoadJsonUi(GameContentManager.UI.Menu, GameGraphics.Renderer.GetResolutionString());
         }
@@ -238,6 +245,11 @@ namespace Intersect.Client.UI.Menu
         public void Hide()
         {
             mCharacterSelectionPanel.Hide();
+        }
+
+        private void mLogoutButton_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            mMainMenu.Reset();
         }
 
         private void _prevCharButton_Clicked(Base sender, ClickedEventArgs arguments)

@@ -31,6 +31,9 @@ namespace Intersect.Client.UI.Menu
         private readonly Button mRegisterButton;
         private readonly RegisterWindow mRegisterWindow;
 
+        private readonly ForgotPasswordWindow mForgotPasswordWindow;
+        private readonly ResetPasswordWindow mResetPasswordWindow;
+
         private readonly SelectCharacterWindow mSelectCharacterWindow;
         private bool mShouldOpenCharacterCreation;
         private bool mShouldOpenCharacterSelection;
@@ -107,10 +110,14 @@ namespace Intersect.Client.UI.Menu
             mLoginWindow = new LoginWindow(menuCanvas, this, mMenuWindow);
             //Register Controls
             mRegisterWindow = new RegisterWindow(menuCanvas, this, mMenuWindow);
-            //Character Creation Controls
-            mCreateCharacterWindow = new CreateCharacterWindow(mMenuCanvas, this, mMenuWindow);
+            //Forgot Password Controls
+            mForgotPasswordWindow = new ForgotPasswordWindow(menuCanvas, this, mMenuWindow);
+            //Reset Password Controls
+            mResetPasswordWindow = new ResetPasswordWindow(menuCanvas, this, mMenuWindow);
             //Character Selection Controls
             mSelectCharacterWindow = new SelectCharacterWindow(mMenuCanvas, this, mMenuWindow);
+            //Character Creation Controls
+            mCreateCharacterWindow = new CreateCharacterWindow(mMenuCanvas, this, mMenuWindow,mSelectCharacterWindow);
             //Credits Controls
             mCreditsWindow = new CreditsWindow(mMenuCanvas, this);
 
@@ -148,6 +155,8 @@ namespace Intersect.Client.UI.Menu
             mRegisterWindow.Hide();
             mOptionsWindow.Hide();
             mCreditsWindow.Hide();
+            mForgotPasswordWindow.Hide();
+            mResetPasswordWindow.Hide();
             if (mCreateCharacterWindow != null) mCreateCharacterWindow.Hide();
             if (mSelectCharacterWindow != null) mSelectCharacterWindow.Hide();
             mMenuWindow.Show();
@@ -170,6 +179,27 @@ namespace Intersect.Client.UI.Menu
         {
             mShouldOpenCharacterSelection = true;
             mSelectCharacterWindow.Characters = characters;
+        }
+
+        public void NotifyOpenForgotPassword()
+        {
+            Reset();
+            Hide();
+            mForgotPasswordWindow.Show();
+        }
+
+        public void NotifyOpenLogin()
+        {
+            Reset();
+            Hide();
+            mLoginWindow.Show();
+        }
+
+        public void OpenResetPassword()
+        {
+            Reset();
+            Hide();
+            mResetPasswordWindow.Show();
         }
 
         public void CreateCharacterSelection()
