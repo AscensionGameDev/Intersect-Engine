@@ -70,6 +70,7 @@ namespace Intersect.Client.Entities
 
         public int Gender = 0;
         public bool HideName;
+        public bool HideEntity = false;
 
         //Inventory/Spells/Equipment
         public ItemInstance[] Inventory = new ItemInstance[Options.MaxInvItems];
@@ -196,6 +197,7 @@ namespace Intersect.Client.Entities
             Dir = bf.ReadInteger();
             Passable = bf.ReadBoolean();
             HideName = bf.ReadBoolean();
+            HideEntity = bf.ReadBoolean();
             var animsToClear = new List<AnimationInstance>();
             var animsToAdd = new List<AnimationBase>();
             int animCount = bf.ReadInteger();
@@ -607,6 +609,7 @@ namespace Intersect.Client.Entities
         //Rendering Functions
         public virtual void Draw()
         {
+            if (HideEntity) return; //Don't draw if the entity is hidden
             WorldPos.Reset();
             var map = MapInstance.Get(CurrentMap);
             if (map == null ||  !Globals.GridMaps.Contains(CurrentMap)) return;
@@ -956,18 +959,23 @@ namespace Intersect.Client.Entities
 
         public void DrawHpBar()
         {
-            if (HideName && Vital[(int) Vitals.Health] == MaxVital[(int) Vitals.Health])
+            if (HideName && HideEntity) return;
+            if (Vital[(int)Vitals.Health] <= 0) return;
+
+            var maxVital = MaxVital[(int)Vitals.Health];
+            int shieldSize = 0;
+
+            //Check for shields
+            foreach (var status in Status)
             {
-                return;
+                if (status.Type == (int)StatusTypes.Shield)
+                {
+                    shieldSize += status.Shield[(int)Vitals.Health];
+                    maxVital += status.Shield[(int)Vitals.Health];
+                }
             }
-            if (Vital[(int)Vitals.Health] == MaxVital[(int)Vitals.Health])
-            {
-                return;
-            }
-            if (Vital[(int) Vitals.Health] <= 0)
-            {
-                return;
-            }
+
+            if (Vital[(int)Vitals.Health] == MaxVital[(int)Vitals.Health] && shieldSize <= 0) return;
 
             //Check for stealth amoungst status effects.
             for (var n = 0; n < Status.Count; n++)
@@ -988,9 +996,15 @@ namespace Intersect.Client.Entities
                 return;
             }
             var width = Options.TileWidth;
-            var fillRatio = ((float) Vital[(int) Vitals.Health] / MaxVital[(int) Vitals.Health]);
-            fillRatio = Math.Min(1, Math.Max(0, fillRatio));
-            var fillWidth = fillRatio * width;
+
+            var hpfillRatio = ((float) Vital[(int) Vitals.Health] / maxVital);
+            hpfillRatio = Math.Min(1, Math.Max(0, hpfillRatio));
+            var hpfillWidth = hpfillRatio * width;
+
+            var shieldfillRatio = ((float)shieldSize / maxVital);
+            shieldfillRatio = Math.Min(1, Math.Max(0, shieldfillRatio));
+            var shieldfillWidth = shieldfillRatio * width;
+
             var y = (int) Math.Ceiling(GetCenterPos().Y);
             var x = (int) Math.Ceiling(GetCenterPos().X);
             GameTexture entityTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, MySprite);
@@ -1003,7 +1017,11 @@ namespace Intersect.Client.Entities
             GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
                 new FloatRect((int) (x - 1 - width / 2), (int) (y - 1), width, 6), CustomColors.HpBackground);
             GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
-                new FloatRect((int) (x - width / 2), (int) (y), fillWidth - 2, 4), CustomColors.HpForeground);
+                new FloatRect((int) (x - width / 2), (int) (y), hpfillWidth - 2, 4), CustomColors.HpForeground);
+
+            if (shieldSize > 0) //Check for a shield to render
+                GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
+                    new FloatRect((int)(x - width / 2) + hpfillWidth - 2, (int)(y), shieldfillWidth, 4), CustomColors.ShieldForeground);
         }
 
         public void DrawCastingBar()
@@ -1085,6 +1103,7 @@ namespace Intersect.Client.Entities
         public int TimeRemaining = 0;
         public int TotalDuration = 1;
         public int Type = -1;
+        public int[] Shield = new int[(int)Vitals.VitalCount];
 
         public StatusInstance(Guid spellId, int type, string data, int timeRemaining, int totalDuration)
         {

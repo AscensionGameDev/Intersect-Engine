@@ -106,7 +106,7 @@ namespace Intersect.Editor.Forms.Editors
             nudWarpY.Maximum = (int) Options.MapHeight;
 
             cmbWarpMap.Items.Clear();
-            cmbWarpMap.Items.AddRange(MapList.GetOrderedMaps().Select(map => map?.Name).ToArray());
+            cmbWarpMap.Items.AddRange(MapList.OrderedMaps.Select(map => map?.Name).ToArray());
             cmbWarpMap.SelectedIndex = 0;
 
             nudStr.Maximum = Options.MaxStatValue;
@@ -162,6 +162,7 @@ namespace Intersect.Editor.Forms.Editors
             lblCastRange.Text = Strings.SpellEditor.castrange;
             lblProjectile.Text = Strings.SpellEditor.projectile;
             lblHitRadius.Text = Strings.SpellEditor.hitradius;
+            lblOnHitDuration.Text = Strings.SpellEditor.onhitduration;
 
             grpCombat.Text = Strings.SpellEditor.combatspell;
             grpDamage.Text = Strings.SpellEditor.damagegroup;
@@ -290,7 +291,7 @@ namespace Intersect.Editor.Forms.Editors
             grpEvent.Hide();
             cmbTargetType.Enabled = true;
 
-            if (cmbType.SelectedIndex == (int) SpellTypes.CombatSpell)
+            if (cmbType.SelectedIndex == (int) SpellTypes.CombatSpell || cmbType.SelectedIndex == (int)SpellTypes.WarpTo)
             {
                 grpTargetInfo.Show();
                 grpCombat.Show();
@@ -321,9 +322,9 @@ namespace Intersect.Editor.Forms.Editors
             else if (cmbType.SelectedIndex == (int) SpellTypes.Warp)
             {
                 grpWarp.Show();
-                for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
+                for (int i = 0; i < MapList.OrderedMaps.Count; i++)
                 {
-                    if (MapList.GetOrderedMaps()[i].MapId == mEditorItem.Warp.MapId)
+                    if (MapList.OrderedMaps[i].MapId == mEditorItem.Warp.MapId)
                     {
                         cmbWarpMap.SelectedIndex = i;
                         break;
@@ -332,13 +333,6 @@ namespace Intersect.Editor.Forms.Editors
                 nudWarpX.Value = mEditorItem.Warp.X;
                 nudWarpY.Value = mEditorItem.Warp.Y;
                 cmbDirection.SelectedIndex = mEditorItem.Warp.Dir;
-            }
-            else if (cmbType.SelectedIndex == (int) SpellTypes.WarpTo)
-            {
-                grpTargetInfo.Show();
-                cmbTargetType.SelectedIndex = (int) SpellTargetTypes.Single;
-                cmbTargetType.Enabled = false;
-                UpdateTargetTypePanel();
             }
             else if (cmbType.SelectedIndex == (int) SpellTypes.Dash)
             {
@@ -355,6 +349,14 @@ namespace Intersect.Editor.Forms.Editors
                 grpEvent.Show();
                 cmbEvent.SelectedIndex = EventBase.ListIndex(mEditorItem.EventId) + 1;
             }
+
+            if (cmbType.SelectedIndex == (int)SpellTypes.WarpTo)
+            {
+                grpTargetInfo.Show();
+                cmbTargetType.SelectedIndex = (int)SpellTargetTypes.Single;
+                cmbTargetType.Enabled = false;
+                UpdateTargetTypePanel();
+            }
         }
 
         private void UpdateTargetTypePanel()
@@ -365,6 +367,9 @@ namespace Intersect.Editor.Forms.Editors
             nudCastRange.Hide();
             lblProjectile.Hide();
             cmbProjectile.Hide();
+            lblOnHitDuration.Hide();
+            nudOnHitDuration.Hide();
+
             if (cmbTargetType.SelectedIndex == (int) SpellTargetTypes.Single)
             {
                 lblCastRange.Show();
@@ -395,6 +400,12 @@ namespace Intersect.Editor.Forms.Editors
                 lblProjectile.Show();
                 cmbProjectile.Show();
                 cmbProjectile.SelectedIndex =  ProjectileBase.ListIndex(mEditorItem.Combat.ProjectileId);
+            }
+            if (cmbTargetType.SelectedIndex == (int)SpellTargetTypes.OnHit)
+            {
+                lblOnHitDuration.Show();
+                nudOnHitDuration.Show();
+                nudOnHitDuration.Value = mEditorItem.Combat.OnHitDuration;
             }
         }
 
@@ -669,14 +680,14 @@ namespace Intersect.Editor.Forms.Editors
         private void btnVisualMapSelector_Click(object sender, EventArgs e)
         {
             FrmWarpSelection frmWarpSelection = new FrmWarpSelection();
-            frmWarpSelection.SelectTile(MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapId, (int) nudWarpX.Value,
+            frmWarpSelection.SelectTile(MapList.OrderedMaps[cmbWarpMap.SelectedIndex].MapId, (int) nudWarpX.Value,
                 (int) nudWarpY.Value);
             frmWarpSelection.ShowDialog();
             if (frmWarpSelection.GetResult())
             {
-                for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
+                for (int i = 0; i < MapList.OrderedMaps.Count; i++)
                 {
-                    if (MapList.GetOrderedMaps()[i].MapId == frmWarpSelection.GetMap())
+                    if (MapList.OrderedMaps[i].MapId == frmWarpSelection.GetMap())
                     {
                         cmbWarpMap.SelectedIndex = i;
                         break;
@@ -691,7 +702,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (cmbWarpMap.SelectedIndex > -1 && mEditorItem != null)
             {
-                mEditorItem.Warp.MapId = MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapId;
+                mEditorItem.Warp.MapId = MapList.OrderedMaps[cmbWarpMap.SelectedIndex].MapId;
             }
         }
 
@@ -798,6 +809,11 @@ namespace Intersect.Editor.Forms.Editors
         private void nudCritMultiplier_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.Combat.CritMultiplier = (double)nudCritMultiplier.Value;
+        }
+
+        private void nudOnHitDuration_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Combat.OnHitDuration = (int)nudOnHitDuration.Value;
         }
     }
 }

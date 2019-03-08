@@ -9,7 +9,6 @@ namespace Intersect.Server.Database.PlayerData
 {
     public class PlayerContext : DbContext
     {
-        
         public static PlayerContext Current { get; private set; }
 
         public DbSet<User> Users { get; set; }

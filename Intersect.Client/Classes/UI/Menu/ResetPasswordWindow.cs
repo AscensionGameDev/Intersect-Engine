@@ -44,7 +44,7 @@ namespace Intersect.Client.UI.Menu
 
         //The username or email of the acc we are resetting the pass for
         public string Target { set; get; } = "";
-
+      
         //Init
         public ResetPasswordWindow(Canvas parent, MainMenu mainMenu, ImagePanel parentPanel)
         {

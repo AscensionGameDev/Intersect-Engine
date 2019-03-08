@@ -642,29 +642,26 @@ namespace Intersect.Client.Networking
             var id = bf.ReadGuid();
             var type = bf.ReadInteger();
             var mapId = bf.ReadGuid();
-            if (id == Globals.Me.Id && type < (int) EntityTypes.Event)
+            if (id == Globals.Me?.Id && type < (int) EntityTypes.Event)
             {
                 return;
             }
             if (type != (int) EntityTypes.Event)
             {
-                if (Globals.Entities.ContainsKey(id))
+                if (Globals.Entities?.ContainsKey(id) ?? false)
                 {
-                    Globals.Entities[id].Dispose();
-                    Globals.EntitiesToDispose.Add(id);
+                    Globals.Entities[id]?.Dispose();
+                    Globals.EntitiesToDispose?.Add(id);
                 }
             }
             else
             {
                 var map = MapInstance.Get(mapId);
-                if (map != null)
+                if (map?.LocalEntities?.ContainsKey(id) ?? false)
                 {
-                    if (map.LocalEntities.ContainsKey(id))
-                    {
-                        map.LocalEntities[id].Dispose();
-                        map.LocalEntities[id] = null;
-                        map.LocalEntities.Remove(id);
-                    }
+                    map.LocalEntities[id]?.Dispose();
+                    map.LocalEntities[id] = null;
+                    map.LocalEntities.Remove(id);
                 }
             }
         }
@@ -712,8 +709,8 @@ namespace Intersect.Client.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            MapList.GetList().JsonData = bf.ReadString();
-            MapList.GetList().PostLoad(MapBase.Lookup, false, true);
+            MapList.List.JsonData = bf.ReadString();
+            MapList.List.PostLoad(MapBase.Lookup, false, true);
             //If admin window is open update it
             bf.Dispose();
         }
@@ -842,6 +839,15 @@ namespace Intersect.Client.Networking
             {
                 en.Status.Add(new StatusInstance(bf.ReadGuid(), bf.ReadInteger(), bf.ReadString(), bf.ReadInteger(),
                     bf.ReadInteger()));
+
+                //Check for a shield
+                if (en.Status[i].Type == (int)StatusTypes.Shield)
+                {
+                    for (var s = 0; s < (int)Vitals.VitalCount; s++)
+                    {
+                        en.Status[i].Shield[s] = bf.ReadInteger();
+                    }
+                }
             }
 
             if (Gui.GameUi != null)

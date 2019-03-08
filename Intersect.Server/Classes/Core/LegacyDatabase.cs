@@ -880,20 +880,20 @@ namespace Intersect.Server
             var mapFolders = sGameDb.MapFolders.FirstOrDefault();
             if (mapFolders == null)
             {
-                sGameDb.MapFolders.Add(MapList.GetList());
+                sGameDb.MapFolders.Add(MapList.List);
             }
             else
             {
-                MapList.SetList(mapFolders);
+                MapList.List = mapFolders;
             }
             foreach (var map in MapBase.Lookup)
             {
-                if (MapList.GetList().FindMap(map.Value.Id) == null)
+                if (MapList.List.FindMap(map.Value.Id) == null)
                 {
-                    MapList.GetList().AddMap(map.Value.Id,map.Value.TimeCreated, MapBase.Lookup);
+                    MapList.List.AddMap(map.Value.Id,map.Value.TimeCreated, MapBase.Lookup);
                 }
             }
-            MapList.GetList().PostLoad(MapBase.Lookup, true, true);
+            MapList.List.PostLoad(MapBase.Lookup, true, true);
             PacketSender.SendMapListToAll();
         }
 

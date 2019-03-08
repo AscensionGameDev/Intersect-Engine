@@ -1203,13 +1203,13 @@ namespace Intersect.Editor
                 }
 
                 //Draw the upper resources/animations
-                for (int y = Globals.CurrentMap.MapGridY - 1; y <= Globals.CurrentMap.MapGridY + 1; y++)
+                for (var y = Globals.CurrentMap.MapGridY - 1; y <= Globals.CurrentMap.MapGridY + 1; y++)
                 {
-                    for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
+                    for (var x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
                     {
                         if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                         {
-                            var map = MapInstance.Get(Globals.MapGrid.Grid[x, y].MapId);
+                            var map = MapInstance.Get(Globals.MapGrid.Grid?[x, y]?.MapId ?? Guid.Empty);
                             if (map != null)
                             {
                                 lock (map.MapLock)

@@ -509,6 +509,12 @@ namespace Intersect.Editor.Forms.Editors.Events
                 case EventCommandType.HidePicture:
                     tmpCommand = new HidePictureCommmand();
                     break;
+                case EventCommandType.HidePlayer:
+                    tmpCommand = new HidePlayerCommand();
+                    break;
+                case EventCommandType.ShowPlayer:
+                    tmpCommand = new ShowPlayerCommand();
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -917,6 +923,10 @@ namespace Intersect.Editor.Forms.Editors.Events
                     break;
                 case EventCommandType.ReleasePlayer:
                     break;
+                case EventCommandType.HidePlayer:
+                    break;
+                case EventCommandType.ShowPlayer:
+                    break;
                 case EventCommandType.SpawnNpc:
                     cmdWindow = new EventCommandSpawnNpc(this, mCurrentMap, MyEvent, (SpawnNpcCommand)command);
                     break;
@@ -1244,6 +1254,7 @@ namespace Intersect.Editor.Forms.Editors.Events
         }
 
         #endregion
+
     }
 
     public class CommandListProperties

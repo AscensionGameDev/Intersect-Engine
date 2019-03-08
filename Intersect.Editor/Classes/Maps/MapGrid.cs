@@ -143,11 +143,11 @@ namespace Intersect.Editor.Maps
                 }
                 //Get a list of maps -- if they are not in this grid.
                 mLinkMaps.Clear();
-                for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
+                for (int i = 0; i < MapList.OrderedMaps.Count; i++)
                 {
-                    if (!gridMaps.Contains(MapList.GetOrderedMaps()[i].MapId))
+                    if (!gridMaps.Contains(MapList.OrderedMaps[i].MapId))
                     {
-                        mLinkMaps.Add(MapList.GetOrderedMaps()[i].MapId);
+                        mLinkMaps.Add(MapList.OrderedMaps[i].MapId);
                     }
                 }
                 mMaxZoom = 1f; //Real Size

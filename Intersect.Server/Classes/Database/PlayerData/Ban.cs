@@ -36,24 +36,25 @@ namespace Intersect.Server.Database.PlayerData
 
         public static void AddBan(Client player, int duration, string reason, string banner, string ip)
         {
-            var ban = new Ban(player.User, ip, reason, duration, banner);
-            PlayerContext.Current.Bans.Add(ban);
+            var ban = new Ban(player?.User, ip, reason, duration, banner);
+            PlayerContext.Current?.Bans?.Add(ban);
         }
 
         public static void DeleteBan([NotNull] User user)
         {
-            PlayerContext.Current.Mutes.Remove(PlayerContext.Current.Mutes.SingleOrDefault(p => p.Player == user));
+            var ban = PlayerContext.Current?.Mutes?.SingleOrDefault(p => p.Player == user);
+            if (ban != null)
+            {
+                PlayerContext.Current.Mutes.Remove(ban);
+            }
         }
 
         public static string CheckBan([NotNull] User user, string ip)
         {
-            Ban ban = PlayerContext.Current.Bans.SingleOrDefault(p => p.Player == user);
-            if (ban == null) ban = PlayerContext.Current.Bans.SingleOrDefault(p => p.Ip == ip);
-            if (ban != null)
-            {
-                return Strings.Account.banstatus.ToString(ban.StartTime, ban.Banner, ban.EndTime, ban.Reason);
-            }
-            return null;
+            // TODO: Move this off of the server so that ban dates can be formatted in local time.
+            var ban = PlayerContext.Current?.Bans?.SingleOrDefault(p => p.Player == user) ??
+                      PlayerContext.Current?.Bans?.SingleOrDefault(p => p.Ip == ip);
+            return ban != null ? Strings.Account.banstatus.ToString(ban.StartTime, ban.Banner, ban.EndTime, ban.Reason) : null;
         }
     }
 }

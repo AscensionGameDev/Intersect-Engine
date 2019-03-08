@@ -12,6 +12,7 @@ using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.Logging;
 using JetBrains.Annotations;
 
 namespace Intersect.Client.UI.Game.EntityPanel
@@ -491,9 +492,16 @@ namespace Intersect.Client.UI.Game.EntityPanel
                 Align.Center(EntityFace);
                 mCurrentSprite = MyEntity.Face;
                 EntityFace.IsHidden = false;
-                for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+                for (var i = 0; i < Options.EquipmentSlots?.Count; i++)
                 {
-                    PaperdollPanels[i].Hide();
+                    if (PaperdollPanels == null)
+                    {
+                        Log.Warn($@"{nameof(PaperdollPanels)} is null.");
+                    } else if (PaperdollPanels[i] == null)
+                    {
+                        Log.Warn($@"{nameof(PaperdollPanels)}[{i}] is null.");
+                    }
+                    PaperdollPanels?[i]?.Hide();
                 }
             }
             else if (entityTex != null && faceTex == null || (faceTex != null && faceTex != EntityFace.Texture))

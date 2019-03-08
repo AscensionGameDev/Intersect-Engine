@@ -113,23 +113,35 @@ namespace Intersect.Editor.Forms.Editors.Quest
         private void btnSave_Click(object sender, EventArgs e)
         {
             //Send Changed items
-            foreach (var item in mChanged)
+            mChanged?.ForEach(item =>
             {
+                if (item == null)
+                {
+                    return;
+                }
+
                 PacketSender.SendSaveObject(item);
                 PacketSender.SendSaveObject(item.StartEvent);
                 PacketSender.SendSaveObject(item.EndEvent);
-                foreach (var tsk in item.Tasks)
+                item.Tasks?.ForEach(tsk =>
                 {
+                    if (tsk?.EdittingEvent == null)
+                    {
+                        return;
+                    }
+
                     if (tsk.EdittingEvent.Id != Guid.Empty)
                     {
                         PacketSender.SendSaveObject(tsk.EdittingEvent);
                     }
+
                     tsk.EdittingEvent.DeleteBackup();
-                }
-                item.StartEvent.DeleteBackup();
-                item.EndEvent.DeleteBackup();
+                });
+
+                item.StartEvent?.DeleteBackup();
+                item.EndEvent?.DeleteBackup();
                 item.DeleteBackup();
-            }
+            });
 
             mEditorItem = null;
             Hide();
@@ -196,16 +208,34 @@ namespace Intersect.Editor.Forms.Editors.Quest
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             mChangingName = true;
-            mEditorItem.Name = txtName.Text;
-            //Rename all events
-            mEditorItem.StartEvent.Name = Strings.QuestEditor.startevent.ToString(mEditorItem.Name);
-            mEditorItem.EndEvent.Name = Strings.QuestEditor.endevent.ToString(mEditorItem.Name);
-            foreach (var tsk in mEditorItem.Tasks)
+            if (mEditorItem != null)
             {
-                if (tsk.CompletionEvent != null)
-                    tsk.CompletionEvent.Name = Strings.TaskEditor.completionevent.ToString(mEditorItem.Name);
+                mEditorItem.Name = txtName?.Text ?? "";
+                //Rename all events
+                if (mEditorItem.StartEvent != null)
+                {
+                    mEditorItem.StartEvent.Name = Strings.QuestEditor.startevent.ToString(mEditorItem.Name);
+                }
+
+                if (mEditorItem.EndEvent != null)
+                {
+                    mEditorItem.EndEvent.Name = Strings.QuestEditor.endevent.ToString(mEditorItem.Name);
+                }
+
+                if (mEditorItem.Tasks != null)
+                {
+                    foreach (var tsk in mEditorItem.Tasks)
+                    {
+                        if (tsk.CompletionEvent != null)
+                            tsk.CompletionEvent.Name = Strings.TaskEditor.completionevent.ToString(mEditorItem.Name);
+                    }
+                }
+
+                if (lstQuests != null)
+                {
+                    lstQuests.Items[QuestBase.ListIndex(mEditorItem.Id)] = txtName?.Text ?? "";
+                }
             }
-            lstQuests.Items[QuestBase.ListIndex(mEditorItem.Id)] = txtName.Text;
             mChangingName = false;
         }
 

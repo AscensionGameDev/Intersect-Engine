@@ -33,7 +33,9 @@ namespace Intersect.Editor.Forms.Editors.Events
         /// </summary>
         /// <param name="commandList">The command list to print.</param>
         /// <param name="indent">The starting indent of commands in this list.</param>
-        public static void PrintCommandList(EventPage page, List<EventCommand> commandList, string indent, ListBox lstEventCommands, List<CommandListProperties> mCommandProperties, MapInstance map) //TODO: How we can simplify and clean this up?
+        public static void PrintCommandList(EventPage page, List<EventCommand> commandList, string indent,
+            ListBox lstEventCommands, List<CommandListProperties> mCommandProperties,
+            MapInstance map) //TODO: How we can simplify and clean this up?
         {
             CommandListProperties clp;
             if (commandList.Count > 0)
@@ -43,8 +45,9 @@ namespace Intersect.Editor.Forms.Editors.Events
                     switch (commandList[i].Type)
                     {
                         case EventCommandType.ShowOptions:
-                            var cmd = ((ShowOptionsCommand)commandList[i]);
-                            lstEventCommands.Items.Add(indent + Strings.EventCommandList.linestart + GetCommandText((dynamic)commandList[i],map));
+                            var cmd = ((ShowOptionsCommand) commandList[i]);
+                            lstEventCommands.Items.Add(indent + Strings.EventCommandList.linestart +
+                                                       GetCommandText((dynamic) commandList[i], map));
                             clp = new CommandListProperties
                             {
                                 Editable = true,
@@ -57,7 +60,9 @@ namespace Intersect.Editor.Forms.Editors.Events
                             for (var x = 0; x < 4; x++)
                             {
                                 if (cmd.Options[x].Trim().Length <= 0) continue;
-                                lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.whenoption.ToString(Truncate(cmd.Options[x], 20)));
+                                lstEventCommands.Items.Add(indent + "      : " +
+                                                           Strings.EventCommandList.whenoption.ToString(
+                                                               Truncate(cmd.Options[x], 20)));
                                 clp = new CommandListProperties
                                 {
                                     Editable = false,
@@ -67,8 +72,10 @@ namespace Intersect.Editor.Forms.Editors.Events
                                     Cmd = commandList[i]
                                 };
                                 mCommandProperties.Add(clp);
-                                PrintCommandList(page, page.CommandLists[cmd.BranchIds[x]], indent + "          ", lstEventCommands, mCommandProperties, map);
+                                PrintCommandList(page, page.CommandLists[cmd.BranchIds[x]], indent + "          ",
+                                    lstEventCommands, mCommandProperties, map);
                             }
+
                             lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.endoptions);
                             clp = new CommandListProperties
                             {
@@ -82,8 +89,9 @@ namespace Intersect.Editor.Forms.Editors.Events
                             mCommandProperties.Add(clp);
                             break;
                         case EventCommandType.ConditionalBranch:
-                            var cnd = ((ConditionalBranchCommand)commandList[i]);
-                            lstEventCommands.Items.Add(indent + Strings.EventCommandList.linestart + GetCommandText((dynamic)commandList[i], map));
+                            var cnd = ((ConditionalBranchCommand) commandList[i]);
+                            lstEventCommands.Items.Add(indent + Strings.EventCommandList.linestart +
+                                                       GetCommandText((dynamic) commandList[i], map));
                             clp = new CommandListProperties
                             {
                                 Editable = true,
@@ -94,7 +102,8 @@ namespace Intersect.Editor.Forms.Editors.Events
                             };
                             mCommandProperties.Add(clp);
 
-                            PrintCommandList(page, page.CommandLists[cnd.BranchIds[0]], indent + "          ", lstEventCommands, mCommandProperties, map);
+                            PrintCommandList(page, page.CommandLists[cnd.BranchIds[0]], indent + "          ",
+                                lstEventCommands, mCommandProperties, map);
 
                             lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.conditionalelse);
                             clp = new CommandListProperties
@@ -107,7 +116,8 @@ namespace Intersect.Editor.Forms.Editors.Events
                             };
                             mCommandProperties.Add(clp);
 
-                            PrintCommandList(page, page.CommandLists[cnd.BranchIds[1]], indent + "          ", lstEventCommands, mCommandProperties, map);
+                            PrintCommandList(page, page.CommandLists[cnd.BranchIds[1]], indent + "          ",
+                                lstEventCommands, mCommandProperties, map);
 
                             lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.conditionalend);
                             clp = new CommandListProperties
@@ -122,8 +132,9 @@ namespace Intersect.Editor.Forms.Editors.Events
                             mCommandProperties.Add(clp);
                             break;
                         case EventCommandType.ChangeSpells:
-                            var spl = ((ChangeSpellsCommand)commandList[i]);
-                            lstEventCommands.Items.Add(indent + Strings.EventCommandList.linestart + GetCommandText((dynamic)commandList[i], map));
+                            var spl = ((ChangeSpellsCommand) commandList[i]);
+                            lstEventCommands.Items.Add(indent + Strings.EventCommandList.linestart +
+                                                       GetCommandText((dynamic) commandList[i], map));
                             clp = new CommandListProperties
                             {
                                 Editable = true,
@@ -145,7 +156,8 @@ namespace Intersect.Editor.Forms.Editors.Events
                                 Cmd = commandList[i]
                             };
                             mCommandProperties.Add(clp);
-                            PrintCommandList(page, page.CommandLists[spl.BranchIds[0]], indent + "          ", lstEventCommands, mCommandProperties, map);
+                            PrintCommandList(page, page.CommandLists[spl.BranchIds[0]], indent + "          ",
+                                lstEventCommands, mCommandProperties, map);
 
                             //When the spell failed to be taught:
                             lstEventCommands.Items.Add(indent + "      : " +
@@ -159,7 +171,8 @@ namespace Intersect.Editor.Forms.Editors.Events
                                 Cmd = commandList[i]
                             };
                             mCommandProperties.Add(clp);
-                            PrintCommandList(page,page.CommandLists[spl.BranchIds[1]], indent + "          ",lstEventCommands,mCommandProperties,map);
+                            PrintCommandList(page, page.CommandLists[spl.BranchIds[1]], indent + "          ",
+                                lstEventCommands, mCommandProperties, map);
 
                             lstEventCommands.Items.Add(
                                 indent + "      : " + Strings.EventCommandList.endspell);
@@ -175,8 +188,9 @@ namespace Intersect.Editor.Forms.Editors.Events
                             mCommandProperties.Add(clp);
                             break;
                         case EventCommandType.ChangeItems:
-                            var itm = ((ChangeItemsCommand)commandList[i]);
-                            lstEventCommands.Items.Add(indent + Strings.EventCommandList.linestart + GetCommandText((dynamic)commandList[i], map));
+                            var itm = ((ChangeItemsCommand) commandList[i]);
+                            lstEventCommands.Items.Add(indent + Strings.EventCommandList.linestart +
+                                                       GetCommandText((dynamic) commandList[i], map));
                             clp = new CommandListProperties
                             {
                                 Editable = true,
@@ -198,7 +212,8 @@ namespace Intersect.Editor.Forms.Editors.Events
                                 Cmd = commandList[i]
                             };
                             mCommandProperties.Add(clp);
-                            PrintCommandList(page, page.CommandLists[itm.BranchIds[0]], indent + "          ", lstEventCommands, mCommandProperties, map);
+                            PrintCommandList(page, page.CommandLists[itm.BranchIds[0]], indent + "          ",
+                                lstEventCommands, mCommandProperties, map);
 
                             //When the items failed to be given/taken:
                             lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.itemnotchanged);
@@ -211,7 +226,8 @@ namespace Intersect.Editor.Forms.Editors.Events
                                 Cmd = commandList[i]
                             };
                             mCommandProperties.Add(clp);
-                            PrintCommandList(page, page.CommandLists[itm.BranchIds[1]], indent + "          ", lstEventCommands, mCommandProperties, map);
+                            PrintCommandList(page, page.CommandLists[itm.BranchIds[1]], indent + "          ",
+                                lstEventCommands, mCommandProperties, map);
 
                             lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.enditemchange);
                             clp = new CommandListProperties
@@ -227,8 +243,9 @@ namespace Intersect.Editor.Forms.Editors.Events
                             break;
 
                         case EventCommandType.StartQuest:
-                            var qst = ((StartQuestCommand)commandList[i]);
-                            lstEventCommands.Items.Add(indent + Strings.EventCommandList.linestart + GetCommandText((dynamic)commandList[i], map));
+                            var qst = ((StartQuestCommand) commandList[i]);
+                            lstEventCommands.Items.Add(indent + Strings.EventCommandList.linestart +
+                                                       GetCommandText((dynamic) commandList[i], map));
                             clp = new CommandListProperties
                             {
                                 Editable = true,
@@ -250,7 +267,8 @@ namespace Intersect.Editor.Forms.Editors.Events
                                 Cmd = commandList[i]
                             };
                             mCommandProperties.Add(clp);
-                            PrintCommandList(page, page.CommandLists[qst.BranchIds[0]], indent + "          ", lstEventCommands, mCommandProperties, map);
+                            PrintCommandList(page, page.CommandLists[qst.BranchIds[0]], indent + "          ",
+                                lstEventCommands, mCommandProperties, map);
 
                             //When the quest was declined or requirements not met:
                             lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.questnotstarted);
@@ -263,7 +281,8 @@ namespace Intersect.Editor.Forms.Editors.Events
                                 Cmd = commandList[i]
                             };
                             mCommandProperties.Add(clp);
-                            PrintCommandList(page, page.CommandLists[qst.BranchIds[1]], indent + "          ", lstEventCommands, mCommandProperties, map);
+                            PrintCommandList(page, page.CommandLists[qst.BranchIds[1]], indent + "          ",
+                                lstEventCommands, mCommandProperties, map);
 
                             lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.endstartquest);
                             clp = new CommandListProperties
@@ -278,7 +297,8 @@ namespace Intersect.Editor.Forms.Editors.Events
                             mCommandProperties.Add(clp);
                             break;
                         default:
-                            lstEventCommands.Items.Add(indent + Strings.EventCommandList.linestart + GetCommandText((dynamic)commandList[i],map));
+                            lstEventCommands.Items.Add(indent + Strings.EventCommandList.linestart +
+                                                       GetCommandText((dynamic) commandList[i], map));
                             clp = new CommandListProperties
                             {
                                 Editable = true,
@@ -292,8 +312,9 @@ namespace Intersect.Editor.Forms.Editors.Events
                     }
                 }
             }
+
             lstEventCommands.Items.Add(indent + Strings.EventCommandList.linestart);
-            clp = new CommandListProperties { Editable = true, MyIndex = -1, MyList = commandList };
+            clp = new CommandListProperties {Editable = true, MyIndex = -1, MyList = commandList};
             mCommandProperties.Add(clp);
         }
 
@@ -337,6 +358,7 @@ namespace Intersect.Editor.Forms.Editors.Events
                     channel += Strings.EventCommandList.chatglobal;
                     break;
             }
+
             return Strings.EventCommandList.chatboxtext.ToString(channel, command.Channel, Truncate(command.Text, 20));
         }
 
@@ -348,13 +370,16 @@ namespace Intersect.Editor.Forms.Editors.Events
             {
                 value = Strings.EventCommandList.True;
             }
+
             if (command.SwitchType == SwitchTypes.PlayerSwitch)
             {
-                return Strings.EventCommandList.playerswitch.ToString(PlayerSwitchBase.GetName(command.SwitchId),value);
+                return Strings.EventCommandList.playerswitch.ToString(PlayerSwitchBase.GetName(command.SwitchId),
+                    value);
             }
             else if (command.SwitchType == SwitchTypes.ServerSwitch)
             {
-                return Strings.EventCommandList.globalswitch.ToString(ServerSwitchBase.GetName(command.SwitchId),value);
+                return Strings.EventCommandList.globalswitch.ToString(ServerSwitchBase.GetName(command.SwitchId),
+                    value);
             }
             else
             {
@@ -383,20 +408,27 @@ namespace Intersect.Editor.Forms.Editors.Events
                     varvalue = Strings.EventCommandList.systemtimevariable;
                     break;
                 case VariableMods.DupPlayerVar:
-                    varvalue = Strings.EventCommandList.dupplayervariable.ToString(PlayerVariableBase.GetName(command.DupVariableId));
+                    varvalue = Strings.EventCommandList.dupplayervariable.ToString(
+                        PlayerVariableBase.GetName(command.DupVariableId));
                     break;
                 case VariableMods.DupGlobalVar:
-                    varvalue = Strings.EventCommandList.dupglobalvariable.ToString(ServerVariableBase.GetName(command.DupVariableId));
+                    varvalue = Strings.EventCommandList.dupglobalvariable.ToString(
+                        ServerVariableBase.GetName(command.DupVariableId));
                     break;
             }
+
             if (command.VariableType == VariableTypes.PlayerVariable)
             {
-                return Strings.EventCommandList.playervariable.ToString( PlayerVariableBase.GetName(command.VariableId), varvalue);
+                return Strings.EventCommandList.playervariable.ToString(PlayerVariableBase.GetName(command.VariableId),
+                    varvalue);
             }
+
             if (command.VariableType == VariableTypes.ServerVariable)
             {
-                return Strings.EventCommandList.globalvariable.ToString(ServerVariableBase.GetName(command.VariableId), varvalue);
+                return Strings.EventCommandList.globalvariable.ToString(ServerVariableBase.GetName(command.VariableId),
+                    varvalue);
             }
+
             return Strings.EventCommandList.invalid;
         }
 
@@ -408,18 +440,23 @@ namespace Intersect.Editor.Forms.Editors.Events
             {
                 selfvalue = Strings.EventCommandList.True;
             }
-            return Strings.EventCommandList.selfswitch.ToString(Strings.EventCommandList.selfswitches[command.SwitchId], selfvalue);
+
+            return Strings.EventCommandList.selfswitch.ToString(Strings.EventCommandList.selfswitches[command.SwitchId],
+                selfvalue);
         }
 
         private static string GetCommandText(ConditionalBranchCommand command, MapInstance map)
         {
             if (command.Condition.Negated)
             {
-                return Strings.EventCommandList.conditionalbranch.ToString(Strings.EventConditionDesc.negated.ToString(Strings.GetEventConditionalDesc((dynamic)command.Condition)));
+                return Strings.EventCommandList.conditionalbranch.ToString(
+                    Strings.EventConditionDesc.negated.ToString(
+                        Strings.GetEventConditionalDesc((dynamic) command.Condition)));
             }
             else
             {
-                return Strings.EventCommandList.conditionalbranch.ToString(Strings.GetEventConditionalDesc((dynamic)command.Condition));
+                return Strings.EventCommandList.conditionalbranch.ToString(
+                    Strings.GetEventConditionalDesc((dynamic) command.Condition));
             }
         }
 
@@ -471,15 +508,19 @@ namespace Intersect.Editor.Forms.Editors.Events
         private static string GetCommandText(ChangeSpellsCommand command, MapInstance map)
         {
             if (command.Add)
-                return Strings.EventCommandList.changespells.ToString(Strings.EventCommandList.teach.ToString(SpellBase.GetName(command.SpellId)));
-            return Strings.EventCommandList.changespells.ToString(Strings.EventCommandList.forget.ToString(SpellBase.GetName(command.SpellId)));
+                return Strings.EventCommandList.changespells.ToString(
+                    Strings.EventCommandList.teach.ToString(SpellBase.GetName(command.SpellId)));
+            return Strings.EventCommandList.changespells.ToString(
+                Strings.EventCommandList.forget.ToString(SpellBase.GetName(command.SpellId)));
         }
 
         private static string GetCommandText(ChangeItemsCommand command, MapInstance map)
         {
             if (command.Add)
-                return Strings.EventCommandList.changeitems.ToString(Strings.EventCommandList.give.ToString(ItemBase.GetName(command.ItemId)));
-            return Strings.EventCommandList.changeitems.ToString(Strings.EventCommandList.take.ToString(ItemBase.GetName(command.ItemId)));
+                return Strings.EventCommandList.changeitems.ToString(
+                    Strings.EventCommandList.give.ToString(ItemBase.GetName(command.ItemId)));
+            return Strings.EventCommandList.changeitems.ToString(
+                Strings.EventCommandList.take.ToString(ItemBase.GetName(command.ItemId)));
         }
 
         private static string GetCommandText(ChangeSpriteCommand command, MapInstance map)
@@ -515,20 +556,23 @@ namespace Intersect.Editor.Forms.Editors.Events
                 case Access.Admin:
                     return Strings.EventCommandList.setaccess.ToString(Strings.EventCommandList.admin);
             }
+
             return Strings.EventCommandList.setaccess.ToString(Strings.EventCommandList.unknownrole);
         }
 
         private static string GetCommandText(WarpCommand command, MapInstance map)
         {
             var mapName = Strings.EventCommandList.mapnotfound;
-            for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
+            for (int i = 0; i < MapList.OrderedMaps.Count; i++)
             {
-                if (MapList.GetOrderedMaps()[i].MapId == command.MapId)
+                if (MapList.OrderedMaps[i].MapId == command.MapId)
                 {
-                    mapName = MapList.GetOrderedMaps()[i].Name;
+                    mapName = MapList.OrderedMaps[i].Name;
                 }
             }
-            return Strings.EventCommandList.warp.ToString(mapName, command.X, command.Y, Strings.Directions.dir[(int)command.Direction - 1]);
+
+            return Strings.EventCommandList.warp.ToString(mapName, command.X, command.Y,
+                Strings.Directions.dir[(int) command.Direction - 1]);
         }
 
         private static string GetCommandText(SetMoveRouteCommand command, MapInstance map)
@@ -541,7 +585,8 @@ namespace Intersect.Editor.Forms.Editors.Events
             {
                 if (map.LocalEvents.ContainsKey(command.Route.Target))
                 {
-                    return Strings.EventCommandList.moveroute.ToString(Strings.EventCommandList.moverouteevent.ToString(map.LocalEvents[command.Route.Target].Name));
+                    return Strings.EventCommandList.moveroute.ToString(
+                        Strings.EventCommandList.moverouteevent.ToString(map.LocalEvents[command.Route.Target].Name));
                 }
                 else
                 {
@@ -558,7 +603,8 @@ namespace Intersect.Editor.Forms.Editors.Events
             }
             else if (map.LocalEvents.ContainsKey(command.TargetId))
             {
-                return Strings.EventCommandList.waitforroute.ToString(Strings.EventCommandList.moverouteevent.ToString(map.LocalEvents[command.TargetId].Name));
+                return Strings.EventCommandList.waitforroute.ToString(
+                    Strings.EventCommandList.moverouteevent.ToString(map.LocalEvents[command.TargetId].Name));
             }
             else
             {
@@ -576,42 +622,73 @@ namespace Intersect.Editor.Forms.Editors.Events
             return Strings.EventCommandList.releaseplayer;
         }
 
+        private static string GetCommandText(HidePlayerCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.hideplayer;
+        }
+
+        private static string GetCommandText(ShowPlayerCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.showplayer;
+        }
+
         private static string GetCommandText(SpawnNpcCommand command, MapInstance map)
         {
+            if (command == null)
+            {
+                return null;
+            }
+
             if (command.MapId != Guid.Empty)
             {
-                for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
+                foreach (var orderedMap in MapList.OrderedMaps)
                 {
-                    if (MapList.GetOrderedMaps()[i].MapId == command.MapId)
+                    if (orderedMap == null)
                     {
-                        return Strings.EventCommandList.spawnnpc.ToString(NpcBase.GetName(command.NpcId), Strings.EventCommandList.spawnonmap.ToString(MapList.GetOrderedMaps()[i].Name,
-                            command.X, command.Y, Strings.Directions.dir[command.Dir]));
+                        continue;
+                    }
+
+                    if (orderedMap.MapId == command.MapId)
+                    {
+                        return Strings.EventCommandList.spawnnpc.ToString(
+                            NpcBase.GetName(command.NpcId),
+                            Strings.EventCommandList.spawnonmap.ToString(
+                                orderedMap.Name,
+                                command.X,
+                                command.Y,
+                                Strings.Directions.dir?[(sbyte) command.Dir]
+                            )
+                        );
                     }
                 }
-                return Strings.EventCommandList.spawnnpc.ToString(NpcBase.GetName(command.NpcId), Strings.EventCommandList.spawnonmap.ToString(
-                    Strings.EventCommandList.mapnotfound, command.X, command.Y, Strings.Directions.dir[command.Dir]));
+
+                return Strings.EventCommandList.spawnnpc.ToString(NpcBase.GetName(command.NpcId),
+                    Strings.EventCommandList.spawnonmap.ToString(
+                        Strings.EventCommandList.mapnotfound, command.X, command.Y,
+                        Strings.Directions.dir[command.Dir]));
+            }
+
+            var retain = Strings.EventCommandList.False;
+            //TODO: Possibly bugged -- test this.
+            if (Convert.ToBoolean(command.Dir)) retain = Strings.EventCommandList.True;
+            if (command.EntityId == Guid.Empty)
+            {
+                return Strings.EventCommandList.spawnnpc.ToString(NpcBase.GetName(command.NpcId),
+                    Strings.EventCommandList.spawnonplayer.ToString(command.X, command.Y, retain));
             }
             else
             {
-                var retain = Strings.EventCommandList.False;
-                //TODO: Possibly bugged -- test this.
-                if (Convert.ToBoolean(command.Dir)) retain = Strings.EventCommandList.True;
-                if (command.EntityId == Guid.Empty)
+                if (map.LocalEvents.ContainsKey(command.EntityId))
                 {
-                    return Strings.EventCommandList.spawnnpc.ToString(NpcBase.GetName(command.NpcId), Strings.EventCommandList.spawnonplayer.ToString(command.X, command.Y, retain));
+                    return Strings.EventCommandList.spawnnpc.ToString(NpcBase.GetName(command.NpcId),
+                        Strings.EventCommandList.spawnonevent.ToString(
+                            map.LocalEvents[command.EntityId].Name, command.X, command.Y, retain));
                 }
                 else
                 {
-                    if (map.LocalEvents.ContainsKey(command.EntityId))
-                    {
-                        return Strings.EventCommandList.spawnnpc.ToString(NpcBase.GetName(command.NpcId), Strings.EventCommandList.spawnonevent.ToString(
-                            map.LocalEvents[command.EntityId].Name, command.X, command.Y, retain));
-                    }
-                    else
-                    {
-                        return Strings.EventCommandList.spawnnpc.ToString(NpcBase.GetName(command.NpcId), Strings.EventCommandList.spawnonevent.ToString(
+                    return Strings.EventCommandList.spawnnpc.ToString(NpcBase.GetName(command.NpcId),
+                        Strings.EventCommandList.spawnonevent.ToString(
                             Strings.EventCommandList.deletedevent, command.X, command.Y, retain));
-                    }
                 }
             }
         }
@@ -625,16 +702,22 @@ namespace Intersect.Editor.Forms.Editors.Events
         {
             if (command.MapId != Guid.Empty)
             {
-                for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
+                for (int i = 0; i < MapList.OrderedMaps.Count; i++)
                 {
-                    if (MapList.GetOrderedMaps()[i].MapId == command.MapId)
+                    if (MapList.OrderedMaps[i].MapId == command.MapId)
                     {
-                        return Strings.EventCommandList.playanimation.ToString(AnimationBase.GetName(command.AnimationId),Strings.EventCommandList.animationonmap.ToString(
-                                MapList.GetOrderedMaps()[i].Name, command.X, command.Y,Strings.Directions.dir[command.Dir]));
+                        return Strings.EventCommandList.playanimation.ToString(
+                            AnimationBase.GetName(command.AnimationId),
+                            Strings.EventCommandList.animationonmap.ToString(
+                                MapList.OrderedMaps[i].Name, command.X, command.Y,
+                                Strings.Directions.dir[(sbyte) command.Dir]));
                     }
                 }
-                return Strings.EventCommandList.playanimation.ToString(AnimationBase.GetName(command.AnimationId), Strings.EventCommandList.animationonmap.ToString(
-                        Strings.EventCommandList.mapnotfound, command.X, command.Y,Strings.Directions.dir[command.Dir]));
+
+                return Strings.EventCommandList.playanimation.ToString(AnimationBase.GetName(command.AnimationId),
+                    Strings.EventCommandList.animationonmap.ToString(
+                        Strings.EventCommandList.mapnotfound, command.X, command.Y,
+                        Strings.Directions.dir[command.Dir]));
             }
             else
             {
@@ -652,22 +735,27 @@ namespace Intersect.Editor.Forms.Editors.Events
                         spawnOpt = Strings.EventCommandList.animationrelativerotate;
                         break;
                 }
+
                 if (command.EntityId == Guid.Empty)
                 {
                     return Strings.EventCommandList.playanimation.ToString(AnimationBase.GetName(command.AnimationId),
-                        Strings.EventCommandList.animationonplayer.ToString(command.X,command.Y, spawnOpt));
+                        Strings.EventCommandList.animationonplayer.ToString(command.X, command.Y, spawnOpt));
                 }
                 else
                 {
                     if (map.LocalEvents.ContainsKey(command.EntityId))
                     {
-                        return Strings.EventCommandList.playanimation.ToString(AnimationBase.GetName(command.AnimationId),Strings.EventCommandList.animationonevent.ToString(
-                            map.LocalEvents[command.EntityId].Name, command.X,command.Y, spawnOpt));
+                        return Strings.EventCommandList.playanimation.ToString(
+                            AnimationBase.GetName(command.AnimationId),
+                            Strings.EventCommandList.animationonevent.ToString(
+                                map.LocalEvents[command.EntityId].Name, command.X, command.Y, spawnOpt));
                     }
                     else
                     {
-                        return Strings.EventCommandList.playanimation.ToString(AnimationBase.GetName(command.AnimationId),Strings.EventCommandList.animationonevent.ToString(
-                                Strings.EventCommandList.deletedevent, command.X,command.Y, spawnOpt));
+                        return Strings.EventCommandList.playanimation.ToString(
+                            AnimationBase.GetName(command.AnimationId),
+                            Strings.EventCommandList.animationonevent.ToString(
+                                Strings.EventCommandList.deletedevent, command.X, command.Y, spawnOpt));
                     }
                 }
             }
@@ -681,7 +769,6 @@ namespace Intersect.Editor.Forms.Editors.Events
         private static string GetCommandText(FadeoutBgmCommand command, MapInstance map)
         {
             return Strings.EventCommandList.fadeoutbgm;
-            
         }
 
         private static string GetCommandText(PlaySoundCommand command, MapInstance map)
@@ -733,11 +820,13 @@ namespace Intersect.Editor.Forms.Editors.Events
         {
             if (!command.Offer)
             {
-                return Strings.EventCommandList.startquest.ToString(QuestBase.GetName(command.QuestId), Strings.EventCommandList.forcedstart);
+                return Strings.EventCommandList.startquest.ToString(QuestBase.GetName(command.QuestId),
+                    Strings.EventCommandList.forcedstart);
             }
             else
             {
-                return Strings.EventCommandList.startquest.ToString(QuestBase.GetName(command.QuestId), Strings.EventCommandList.showoffer);
+                return Strings.EventCommandList.startquest.ToString(QuestBase.GetName(command.QuestId),
+                    Strings.EventCommandList.showoffer);
             }
         }
 
@@ -751,21 +840,26 @@ namespace Intersect.Editor.Forms.Editors.Events
                 {
                     if (task.Id == command.TaskId)
                     {
-                        return Strings.EventCommandList.completetask.ToString(QuestBase.GetName(command.QuestId), task.GetTaskString(Strings.TaskEditor.descriptions));
+                        return Strings.EventCommandList.completetask.ToString(QuestBase.GetName(command.QuestId),
+                            task.GetTaskString(Strings.TaskEditor.descriptions));
                     }
                 }
             }
-            return Strings.EventCommandList.completetask.ToString(QuestBase.GetName(command.QuestId), Strings.EventCommandList.taskundefined);
+
+            return Strings.EventCommandList.completetask.ToString(QuestBase.GetName(command.QuestId),
+                Strings.EventCommandList.taskundefined);
         }
 
         private static string GetCommandText(EndQuestCommand command, MapInstance map)
         {
             if (!command.SkipCompletionEvent)
             {
-                return Strings.EventCommandList.endquest.ToString(QuestBase.GetName(command.QuestId), Strings.EventCommandList.runcompletionevent);
+                return Strings.EventCommandList.endquest.ToString(QuestBase.GetName(command.QuestId),
+                    Strings.EventCommandList.runcompletionevent);
             }
-            return Strings.EventCommandList.endquest.ToString(QuestBase.GetName(command.QuestId), Strings.EventCommandList.skipcompletionevent);
-        }
 
+            return Strings.EventCommandList.endquest.ToString(QuestBase.GetName(command.QuestId),
+                Strings.EventCommandList.skipcompletionevent);
+        }
     }
 }

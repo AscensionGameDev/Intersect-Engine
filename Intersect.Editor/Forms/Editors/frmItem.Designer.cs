@@ -568,10 +568,15 @@ namespace Intersect.Editor.Forms.Editors
             this.nudHealthBonus.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudHealthBonus.Location = new System.Drawing.Point(12, 37);
             this.nudHealthBonus.Maximum = new decimal(new int[] {
-            255,
+            999999999,
             0,
             0,
             0});
+            this.nudHealthBonus.Minimum = new decimal(new int[] {
+            999999999,
+            0,
+            0,
+            -2147483648});
             this.nudHealthBonus.Name = "nudHealthBonus";
             this.nudHealthBonus.Size = new System.Drawing.Size(78, 20);
             this.nudHealthBonus.TabIndex = 48;

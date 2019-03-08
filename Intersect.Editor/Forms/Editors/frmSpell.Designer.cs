@@ -58,6 +58,8 @@ namespace Intersect.Editor.Forms.Editors
             this.grpRequirements = new DarkUI.Controls.DarkGroupBox();
             this.btnDynamicRequirements = new DarkUI.Controls.DarkButton();
             this.grpTargetInfo = new DarkUI.Controls.DarkGroupBox();
+            this.nudOnHitDuration = new DarkUI.Controls.DarkNumericUpDown();
+            this.lblOnHitDuration = new System.Windows.Forms.Label();
             this.nudHitRadius = new DarkUI.Controls.DarkNumericUpDown();
             this.lblHitRadius = new System.Windows.Forms.Label();
             this.cmbTargetType = new DarkUI.Controls.DarkComboBox();
@@ -151,6 +153,7 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudHPCost)).BeginInit();
             this.grpRequirements.SuspendLayout();
             this.grpTargetInfo.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudOnHitDuration)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudHitRadius)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudCastRange)).BeginInit();
             this.grpCombat.SuspendLayout();
@@ -579,6 +582,8 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpTargetInfo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpTargetInfo.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpTargetInfo.Controls.Add(this.nudOnHitDuration);
+            this.grpTargetInfo.Controls.Add(this.lblOnHitDuration);
             this.grpTargetInfo.Controls.Add(this.nudHitRadius);
             this.grpTargetInfo.Controls.Add(this.lblHitRadius);
             this.grpTargetInfo.Controls.Add(this.cmbTargetType);
@@ -590,11 +595,40 @@ namespace Intersect.Editor.Forms.Editors
             this.grpTargetInfo.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpTargetInfo.Location = new System.Drawing.Point(215, 58);
             this.grpTargetInfo.Name = "grpTargetInfo";
-            this.grpTargetInfo.Size = new System.Drawing.Size(225, 149);
+            this.grpTargetInfo.Size = new System.Drawing.Size(225, 192);
             this.grpTargetInfo.TabIndex = 19;
             this.grpTargetInfo.TabStop = false;
             this.grpTargetInfo.Text = "Targetting Info";
             this.grpTargetInfo.Visible = false;
+            // 
+            // nudOnHitDuration
+            // 
+            this.nudOnHitDuration.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudOnHitDuration.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudOnHitDuration.Location = new System.Drawing.Point(11, 159);
+            this.nudOnHitDuration.Maximum = new decimal(new int[] {
+            -100,
+            49,
+            0,
+            0});
+            this.nudOnHitDuration.Name = "nudOnHitDuration";
+            this.nudOnHitDuration.Size = new System.Drawing.Size(206, 20);
+            this.nudOnHitDuration.TabIndex = 38;
+            this.nudOnHitDuration.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudOnHitDuration.ValueChanged += new System.EventHandler(this.nudOnHitDuration_ValueChanged);
+            // 
+            // lblOnHitDuration
+            // 
+            this.lblOnHitDuration.AutoSize = true;
+            this.lblOnHitDuration.Location = new System.Drawing.Point(8, 143);
+            this.lblOnHitDuration.Name = "lblOnHitDuration";
+            this.lblOnHitDuration.Size = new System.Drawing.Size(72, 13);
+            this.lblOnHitDuration.TabIndex = 37;
+            this.lblOnHitDuration.Text = "Duration (ms):";
             // 
             // nudHitRadius
             // 
@@ -638,7 +672,8 @@ namespace Intersect.Editor.Forms.Editors
             "Self",
             "Single Target (includes self)",
             "AOE",
-            "Linear (projectile)"});
+            "Linear (projectile)",
+            "On Hit"});
             this.cmbTargetType.Location = new System.Drawing.Point(9, 32);
             this.cmbTargetType.Name = "cmbTargetType";
             this.cmbTargetType.Size = new System.Drawing.Size(206, 21);
@@ -838,7 +873,10 @@ namespace Intersect.Editor.Forms.Editors
             "Stealth",
             "Transform",
             "Cleanse",
-            "Invulnerable"});
+            "Invulnerable",
+            "Shield",
+            "Sleep",
+            "On Hit"});
             this.cmbExtraEffect.Location = new System.Drawing.Point(5, 31);
             this.cmbExtraEffect.Name = "cmbExtraEffect";
             this.cmbExtraEffect.Size = new System.Drawing.Size(80, 21);
@@ -1857,6 +1895,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpRequirements.ResumeLayout(false);
             this.grpTargetInfo.ResumeLayout(false);
             this.grpTargetInfo.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudOnHitDuration)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudHitRadius)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudCastRange)).EndInit();
             this.grpCombat.ResumeLayout(false);
@@ -2012,5 +2051,7 @@ namespace Intersect.Editor.Forms.Editors
         private DarkNumericUpDown nudCastRange;
         private DarkNumericUpDown nudCritMultiplier;
         private System.Windows.Forms.Label lblCritMultiplier;
+        private DarkNumericUpDown nudOnHitDuration;
+        private System.Windows.Forms.Label lblOnHitDuration;
     }
 }

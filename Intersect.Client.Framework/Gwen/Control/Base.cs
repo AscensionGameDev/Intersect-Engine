@@ -155,19 +155,19 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             try
             {
-                JObject obj = JsonConvert.DeserializeObject<JObject>(GameContentManager.Current.GetUIJson(stage, Name, resolution));
+                var obj = JsonConvert.DeserializeObject<JObject>(GameContentManager.Current?.GetUIJson(stage, Name, resolution));
                 if (obj != null)
                 {
                     LoadJson(obj);
                     ProcessAlignments();
                 }
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
                 //Log JSON UI Loading Error
-                throw new Exception("Error loading json ui for " + Name,ex);
+                throw new Exception("Error loading json ui for " + CanonicalName, exception);
             }
-            GameContentManager.Current.SaveUIJson(stage, Name, GetJsonUI(),resolution);
+            GameContentManager.Current?.SaveUIJson(stage, Name, GetJsonUI(), resolution);
         }
 
         public virtual void LoadJson(JToken obj)
@@ -668,6 +668,11 @@ namespace Intersect.Client.Framework.Gwen.Control
             get => mCacheToTexture;
             set => mCacheToTexture = value;
         }
+
+        /// <summary>
+        ///     Gets the control's internal canonical name.
+        /// </summary>
+        public string CanonicalName => mParent == null ? Name : mParent.Name + "." + Name;
 
         /// <summary>
         ///     Gets or sets the control's internal name.

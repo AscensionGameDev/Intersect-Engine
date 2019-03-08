@@ -50,6 +50,7 @@ namespace Intersect
         public static SmtpSettings Smtp => _options.SmtpSettings;
         public static int PasswordResetExpirationMinutes => _options._passResetExpirationMin;
         public static bool SmtpValid => _options._smtpValid;
+        public static bool AdminOnly { get => _options._adminOnly; set => _options._adminOnly = value; }
 
         public static DatabaseOptions PlayerDb
         {
@@ -91,6 +92,9 @@ namespace Intersect
 
         [JsonProperty("ServerPort")]
         protected ushort _serverPort = 5400;
+
+        [JsonProperty("AdminOnly")]
+        protected bool _adminOnly = false;
 
         [JsonProperty("UseApi")]
         protected bool _api;

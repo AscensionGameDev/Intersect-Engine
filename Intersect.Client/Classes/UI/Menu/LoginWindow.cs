@@ -121,12 +121,14 @@ namespace Intersect.Client.UI.Menu
         //Methods
         public void Update()
         {
-            if (!GameNetwork.Connected)
+            if (GameNetwork.Connected)
             {
-                Hide();
-                mMainMenu.Show();
-                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.lostconnection));
+                return;
             }
+
+            Hide();
+            mMainMenu.Show();
+            Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.lostconnection));
         }
 
         public void Hide()

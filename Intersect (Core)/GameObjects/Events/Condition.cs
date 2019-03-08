@@ -26,6 +26,7 @@ namespace Intersect.GameObjects.Events
         NoNpcsOnMap,
         GenderIs,
         MapIs,
+        IsItemEquipped,
     }
 
     public class Condition
@@ -151,5 +152,11 @@ namespace Intersect.GameObjects.Events
     {
         public override ConditionTypes Type { get; } = ConditionTypes.MapIs;
         public Guid MapId { get; set; }
+    }
+
+    public class IsItemEquippedCondition : Condition
+    {
+        public override ConditionTypes Type { get; } = ConditionTypes.IsItemEquipped;
+        public Guid ItemId { get; set; }
     }
 }

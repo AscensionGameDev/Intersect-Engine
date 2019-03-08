@@ -467,6 +467,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString globalvariable = @"Set Global Variable {00} ({01})";
             public static LocalizedString gotolabel = @"Go to Label {00}";
             public static LocalizedString hidepicture = @"Hide Picture";
+            public static LocalizedString hideplayer = @"Hide Player";
             public static LocalizedString holdplayer = @"Hold Player";
             public static LocalizedString invalid = @"Invalid Command";
             public static LocalizedString itemnotchanged = @"Item(s) Not Given/Taken (Doesn't have/Inventory full)";
@@ -499,6 +500,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString restoremp = @"Restore Player MP";
             public static LocalizedString runcompletionevent = @"Running Completion Event";
             public static LocalizedString selfswitch = @"Set Self Switch {00} to {01}";
+            public static LocalizedString showplayer = @"Show Player";
             public static Dictionary<int, LocalizedString> selfswitches = new Dictionary<int, LocalizedString>
             {
                 {0, @"A"},
@@ -596,6 +598,8 @@ Tick timer saved in server config.json.";
                 {"wait", @"Wait..."},
                 {"waitmoveroute", @"Wait for Route Completion"},
                 {"warpplayer", @"Warp Player"},
+                {"hideplayer", @"Hide Player"},
+                {"showplayer", @"Show Player"},
             };
         }
 
@@ -646,6 +650,7 @@ Tick timer saved in server config.json.";
                 {14, @"No NPCs on Map"},
                 {15, @"Gender is..."},
                 {16, @"Map is..."},
+                {17, @"Item Equipped is..."},
             };
             public static LocalizedString endrange = @"End Range:";
             public static LocalizedString False = @"False";
@@ -657,6 +662,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString globalvariablevalue = @"Global Variable Value: ";
             public static LocalizedString hasatleast = @"Has at least:";
             public static LocalizedString hasitem = @"Has Item";
+            public static LocalizedString hasitemequipped = @"Has Equipped Item";
             public static LocalizedString ignorestatbuffs = @"Ignore equipment & spell buffs.";
             public static LocalizedString item = @"Item:";
             public static LocalizedString knowsspell = @"Knows Spell";
@@ -728,6 +734,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString greater = @"is greater than {00}";
             public static LocalizedString greaterequal = @"is greater than or equal to {00}";
             public static LocalizedString hasitem = @"Player has at least {00} of Item {01}";
+            public static LocalizedString hasitemequipped = @"Player has Item {00} equipped";
             public static LocalizedString knowsspell = @"Player knows Spell {00}";
             public static LocalizedString lessthan = @"is less than {00}";
             public static LocalizedString lessthanequal = @"is less than or equal to {00}";
@@ -1846,7 +1853,10 @@ Tick timer saved in server config.json.";
                 {6, @"Transform"},
 				{7, @"Cleanse"},
 				{8, @"Invulnerable"},
-			};
+                {9, @"Shield"},
+                {10, @"Sleep"},
+                {11, @"OnHit"},
+            };
             public static LocalizedString effectgroup = @"Effect";
             public static LocalizedString effectlabel = @"Extra Effect:";
             public static LocalizedString Event = @"Event";
@@ -1855,6 +1865,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString general = @"General";
             public static LocalizedString hitanimation = @"Hit Animation:";
             public static LocalizedString hitradius = @"Hit Radius:";
+            public static LocalizedString onhitduration = @"Duration (ms):";
             public static LocalizedString hotdot = @"Heal/Damage Over Time";
             public static LocalizedString hotdottick = @"Tick (ms):";
             public static LocalizedString hpcost = @"HP Cost:";
@@ -1888,6 +1899,7 @@ Tick timer saved in server config.json.";
                 {1, @"Single Target (includes self)"},
                 {2, @"AOE"},
                 {3, @"Linear (projectile)"},
+                {4, @"On Hit"},
             };
             public static LocalizedString title = @"Spell Editor";
             public static LocalizedString transformsprite = @"Sprite:";
@@ -2160,6 +2172,11 @@ Negative values for time to flow backwards.";
             return Strings.EventConditionDesc.hasitem.ToString(condition.Quantity, ItemBase.GetName(condition.ItemId));
         }
 
+        public static string GetEventConditionalDesc(IsItemEquippedCondition condition)
+        {
+            return Strings.EventConditionDesc.hasitemequipped.ToString(ItemBase.GetName(condition.ItemId));
+        }
+
         public static string GetEventConditionalDesc(ClassIsCondition condition)
         {
             return Strings.EventConditionDesc.Class.ToString(ClassBase.GetName(condition.ClassId));
@@ -2308,7 +2325,7 @@ Negative values for time to flow backwards.";
 
         public static string GetEventConditionalDesc(MapIsCondition condition)
         {
-            var map = Intersect.GameObjects.Maps.MapList.MapList.GetList().FindMap(condition.MapId);
+            var map = Intersect.GameObjects.Maps.MapList.MapList.List.FindMap(condition.MapId);
             if (map != null)  return Strings.EventConditionDesc.map.ToString(map.Name);
             return Strings.EventConditionDesc.map.ToString(EventConditionDesc.mapnotfound);
         }

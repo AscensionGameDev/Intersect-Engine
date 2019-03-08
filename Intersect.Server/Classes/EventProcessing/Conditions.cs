@@ -335,5 +335,20 @@ namespace Intersect.Server.EventProcessing
         {
             return player.MapId == condition.MapId;
         }
+
+        public static bool MeetsCondition(IsItemEquippedCondition condition, Player player, EventInstance eventInstance, QuestBase questBase)
+        {
+            for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+            {
+                if (player.Equipment[i] >= 0)
+                {
+                    if (player.Items[player.Equipment[i]].ItemId == condition.ItemId)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
     }
 }

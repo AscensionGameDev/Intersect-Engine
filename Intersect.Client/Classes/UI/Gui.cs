@@ -9,6 +9,7 @@ using Intersect.Client.Framework.Gwen.Skin;
 using Intersect.Client.General;
 using Intersect.Client.UI.Game;
 using Intersect.Client.UI.Menu;
+using JetBrains.Annotations;
 using Base = Intersect.Client.Framework.Gwen.Renderer.Base;
 
 namespace Intersect.Client.UI
@@ -23,7 +24,10 @@ namespace Intersect.Client.UI
         private static Canvas sGameCanvas;
         private static Canvas sMenuCanvas;
         private static TexturedBase sGwenSkin;
-        public static List<KeyValuePair<string, string>> MsgboxErrors = new List<KeyValuePair<string, string>>();
+
+        [NotNull]
+        public static readonly List<KeyValuePair<string, string>> MsgboxErrors = new List<KeyValuePair<string, string>>();
+
         public static bool SetupHandlers;
 
         public static GameGuiBase GameUi;

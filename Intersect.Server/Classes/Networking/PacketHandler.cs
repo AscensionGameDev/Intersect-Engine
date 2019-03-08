@@ -326,7 +326,7 @@ namespace Intersect.Server.Networking
 
                 lock (Globals.ClientLock)
                 {
-                    Globals.Clients?.ForEach(user =>
+                    Globals.Clients.ForEach(user =>
                     {
                         if (user == client) return;
                         if (user?.IsEditor ?? false) return;
@@ -350,6 +350,16 @@ namespace Intersect.Server.Networking
                     return;
                 }
 
+                //Check that server is in admin only mode
+                if (Options.AdminOnly)
+                {
+                    if (client.Power == UserRights.None)
+                    {
+                        PacketSender.SendLoginError(client, Strings.Account.adminonly);
+                        return;
+                    }
+                }
+
                 //Check Mute Status and Load into user property
                 Mute.CheckMute(client.User, client.GetIp());
 
@@ -362,7 +372,7 @@ namespace Intersect.Server.Networking
                 else if (client.Characters?.Count > 0)
                 {
                     client.LoadCharacter(client.Characters.First());
-                    client.Entity.Online();
+                    client.Entity.SetOnline();
                     PacketSender.SendJoinGame(client);
                 }
                 else
@@ -415,7 +425,7 @@ namespace Intersect.Server.Networking
             var statuses = client.Entity.Statuses.Values.ToArray();
             foreach (var status in statuses)
             {
-                if (status.Type == StatusTypes.Stun || status.Type == StatusTypes.Snare)
+                if (status.Type == StatusTypes.Stun || status.Type == StatusTypes.Snare || status.Type == StatusTypes.Sleep)
                 {
                     bf.Dispose();
                     return;
@@ -727,7 +737,7 @@ namespace Intersect.Server.Networking
                 destType = -1;
                 if (destType == -1)
                 {
-                    MapList.GetList().AddMap(newMap, tmpMap.TimeCreated, MapBase.Lookup);
+                    MapList.List.AddMap(newMap, tmpMap.TimeCreated, MapBase.Lookup);
                 }
                 LegacyDatabase.SaveGameDatabaseAsync();
                 PacketSender.SendMapListToAll();
@@ -866,14 +876,14 @@ namespace Intersect.Server.Networking
                     PacketSender.SendMap(client, newMap, true);
                     PacketSender.SendMapGridToAll(MapInstance.Get(newMap).MapGrid);
                     PacketSender.SendEnterMap(client, newMap);
-                    var folderDir = MapList.GetList().FindMapParent(relativeMap, null);
+                    var folderDir = MapList.List.FindMapParent(relativeMap, null);
                     if (folderDir != null)
                     {
                         folderDir.Children.AddMap(newMap, MapInstance.Get(newMap).TimeCreated, MapBase.Lookup);
                     }
                     else
                     {
-                        MapList.GetList().AddMap(newMap, MapInstance.Get(newMap).TimeCreated, MapBase.Lookup);
+                        MapList.List.AddMap(newMap, MapInstance.Get(newMap).TimeCreated, MapBase.Lookup);
                     }
                     LegacyDatabase.SaveGameDatabaseAsync();
                     PacketSender.SendMapListToAll();
@@ -894,6 +904,12 @@ namespace Intersect.Server.Networking
                 if (status.Type == StatusTypes.Stun)
                 {
                     PacketSender.SendPlayerMsg(client, Strings.Combat.stunblocking);
+                    bf.Dispose();
+                    return;
+                }
+                if (status.Type == StatusTypes.Sleep)
+                {
+                    PacketSender.SendPlayerMsg(client, Strings.Combat.sleepblocking);
                     bf.Dispose();
                     return;
                 }
@@ -926,6 +942,11 @@ namespace Intersect.Server.Networking
                     if (status.Type == StatusTypes.Stun)
                     {
                         PacketSender.SendPlayerMsg(client, Strings.Combat.stunattacking);
+                        return;
+                    }
+                    if (status.Type == StatusTypes.Sleep)
+                    {
+                        PacketSender.SendPlayerMsg(client, Strings.Combat.sleepattacking);
                         return;
                     }
                     if (status.Type == StatusTypes.Blind)
@@ -1160,6 +1181,16 @@ namespace Intersect.Server.Networking
                     LegacyDatabase.CreateAccount(client, username, password, email);
                     PacketSender.SendServerConfig(client);
 
+                    //Check that server is in admin only mode
+                    if (Options.AdminOnly)
+                    {
+                        if (client.Power == UserRights.None)
+                        {
+                            PacketSender.SendLoginError(client, Strings.Account.adminonly);
+                            return;
+                        }
+                    }
+
                     //Character selection if more than one.
                     if (Options.MaxCharacters > 1)
                     {
@@ -1233,7 +1264,7 @@ namespace Intersect.Server.Networking
                 player.StatPoints = classBase.BasePoints;
 
                 PacketSender.SendJoinGame(client);
-                player.Online();
+                player.SetOnline();
 
                 for (int i = 0; i < classBase.Spells.Count; i++)
                 {
@@ -1408,21 +1439,21 @@ namespace Intersect.Server.Networking
             switch (type)
             {
                 case (int)MapListUpdates.MoveItem:
-                    MapList.GetList().HandleMove(bf.ReadInteger(), bf.ReadGuid(), bf.ReadInteger(), bf.ReadGuid());
+                    MapList.List.HandleMove(bf.ReadInteger(), bf.ReadGuid(), bf.ReadInteger(), bf.ReadGuid());
                     break;
                 case (int)MapListUpdates.AddFolder:
                     destType = bf.ReadInteger();
                     parent = null;
                     if (destType == -1)
                     {
-                        MapList.GetList().AddFolder(Strings.Mapping.newfolder);
+                        MapList.List.AddFolder(Strings.Mapping.newfolder);
                     }
                     else if (destType == 0)
                     {
-                        parent = MapList.GetList().FindDir(bf.ReadGuid());
+                        parent = MapList.List.FindDir(bf.ReadGuid());
                         if (parent == null)
                         {
-                            MapList.GetList().AddFolder(Strings.Mapping.newfolder);
+                            MapList.List.AddFolder(Strings.Mapping.newfolder);
                         }
                         else
                         {
@@ -1432,10 +1463,10 @@ namespace Intersect.Server.Networking
                     else if (destType == 1)
                     {
                         mapId = bf.ReadGuid();
-                        parent = MapList.GetList().FindMapParent(mapId, null);
+                        parent = MapList.List.FindMapParent(mapId, null);
                         if (parent == null)
                         {
-                            MapList.GetList().AddFolder(Strings.Mapping.newfolder);
+                            MapList.List.AddFolder(Strings.Mapping.newfolder);
                         }
                         else
                         {
@@ -1448,7 +1479,7 @@ namespace Intersect.Server.Networking
                     parent = null;
                     if (destType == 0)
                     {
-                        parent = MapList.GetList().FindDir(bf.ReadGuid());
+                        parent = MapList.List.FindDir(bf.ReadGuid());
                         parent.Name = bf.ReadString();
                         PacketSender.SendMapListToAll();
                     }
@@ -1465,7 +1496,7 @@ namespace Intersect.Server.Networking
                     parent = null;
                     if (destType == 0)
                     {
-                        MapList.GetList().DeleteFolder(bf.ReadGuid());
+                        MapList.List.DeleteFolder(bf.ReadGuid());
                         PacketSender.SendMapListToAll();
                     }
                     else if (destType == 1)
@@ -1478,7 +1509,7 @@ namespace Intersect.Server.Networking
                         }
                         mapId = bf.ReadGuid();
                         var players = MapInstance.Get(mapId).GetPlayersOnMap();
-                        MapList.GetList().DeleteMap(mapId);
+                        MapList.List.DeleteMap(mapId);
                         LegacyDatabase.DeleteGameObject(MapInstance.Get(mapId));
                         LegacyDatabase.SaveGameDatabaseAsync();
                         LegacyDatabase.GenerateMapGrids();
@@ -2723,9 +2754,19 @@ namespace Intersect.Server.Networking
             var character = LegacyDatabase.GetUserCharacter(client.User, charId);
             if (character != null)
             {
+
                 client.LoadCharacter(character);
-                PacketSender.SendJoinGame(client);
-                client.Entity.Online();
+                try
+                {
+                    client.Entity?.SetOnline();
+                    PacketSender.SendJoinGame(client);
+                }
+                catch (Exception exception)
+                {
+                    Log.Warn(exception);
+                    PacketSender.SendLoginError(client, Strings.Account.loadfail);
+                    client.Logout();
+                }
             }
             bf.Dispose();
         }
@@ -2754,7 +2795,7 @@ namespace Intersect.Server.Networking
 
         private static void HandleCreateNewChar(Client client, byte[] packet)
         {
-            if (client.Characters.Count < Options.MaxCharacters)
+            if (client?.Characters?.Count < Options.MaxCharacters)
             {
                 PacketSender.SendGameObjects(client, GameObjectType.Class);
                 PacketSender.SendCreateCharacter(client);

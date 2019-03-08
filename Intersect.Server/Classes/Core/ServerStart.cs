@@ -491,13 +491,53 @@ namespace Intersect.Server
                             Console.WriteLine(Strings.Commandoutput.invalidparameters.ToString(Strings.Commands.commandinfo));
                         }
                     }
-                    else if (commandsplit[0] == Strings.Commands.api) //API Command
+                    else if (commandsplit[0] == Strings.Commands.makeprivate)
                     {
                         if (commandsplit.Length > 1)
                         {
                             if (commandsplit[1] == Strings.Commands.commandinfo)
                             {
                                 Console.WriteLine(@"    " + Strings.Commands.api.ToString(Strings.Commands.commandinfo));
+                                Console.WriteLine(@"    " + Strings.Commands.makeprivatedesc);
+                            }
+                            else
+                            {
+                                Console.WriteLine(@"    " + Strings.Commands.makeprivateusage);
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine(@"    " + Strings.Commands.madeprivate);
+                            Options.AdminOnly = true;
+                            Options.SaveToDisk();
+                        }
+                    }
+                    else if (commandsplit[0] == Strings.Commands.makepublic)
+                    {
+                        if (commandsplit.Length > 1)
+                        {
+                            if (commandsplit[1] == Strings.Commands.commandinfo)
+                            {
+                                Console.WriteLine(@"    " + Strings.Commands.makepublicdesc);
+                            }
+                            else
+                            {
+                                Console.WriteLine(@"    " + Strings.Commands.makepublicusage);
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine(@"    " + Strings.Commands.madepublic);
+                            Options.AdminOnly = false;
+                            Options.SaveToDisk();
+                        }
+                    }
+                    else if (commandsplit[0] == Strings.Commands.api) //API Command
+                    {
+                        if (commandsplit.Length > 1)
+                        {
+                            if (commandsplit[1] == Strings.Commands.commandinfo)
+                            {
                                 Console.WriteLine(@"    " + Strings.Commands.apidesc);
                             }
                             else
@@ -717,7 +757,7 @@ namespace Intersect.Server
                                     }
                                 }
                             }
-                            
+
 
                         }
                     }
@@ -752,6 +792,8 @@ namespace Intersect.Server
                             Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.mute) + " - " + Strings.Commands.mutehelp);
                             Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.unmute) + " - " + Strings.Commands.unmutehelp);
                             Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.kill) + " - " + Strings.Commands.killhelp);
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.makeprivate) + " - " + Strings.Commands.makeprivatehelp);
+                            Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.makepublic) + " - " + Strings.Commands.makepublichelp);
                             Console.WriteLine(@"    " + string.Format("{0,-20}", Strings.Commands.migrate) + " - " + Strings.Commands.migratehelp);
                             Console.WriteLine(@"    " + Strings.Commandoutput.helpfooter.ToString(Strings.Commands.commandinfo));
                         }

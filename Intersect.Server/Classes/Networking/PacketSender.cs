@@ -714,6 +714,14 @@ namespace Intersect.Server.Networking
                 bf.WriteString(status.Data);
                 bf.WriteInteger((int)(status.Duration - Globals.System.GetTimeMs()));
                 bf.WriteInteger((int)(status.Duration - status.StartTime));
+
+                if (status.Type == StatusTypes.Shield)
+                {
+                    for (var i = 0; i < (int)Vitals.VitalCount; i++)
+                    {
+                        bf.WriteInteger(status.shield[i]);
+                    }
+                }
             }
             //If player and in party send vitals to party just in case party members are not in the proximity
             if (en.GetType() == typeof(Player))
@@ -855,7 +863,7 @@ namespace Intersect.Server.Networking
             DatabaseObjectLookup gameMaps = new DatabaseObjectLookup();
             foreach (var pair in MapInstance.Lookup.Pairs) gameMaps.Set(pair.Key, pair.Value);
             bf.WriteLong((int)ServerPackets.MapList);
-            bf.WriteString(MapList.GetList().JsonData);
+            bf.WriteString(MapList.List.JsonData);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -866,8 +874,8 @@ namespace Intersect.Server.Networking
             DatabaseObjectLookup gameMaps = new DatabaseObjectLookup();
             foreach (var pair in MapInstance.Lookup.Pairs) gameMaps.Set(pair.Key, pair.Value);
             bf.WriteLong((int)ServerPackets.MapList);
-            MapList.GetList().PostLoad(MapInstance.Lookup,true,true);
-            bf.WriteString(MapList.GetList().JsonData);
+            MapList.List.PostLoad(MapInstance.Lookup,true,true);
+            bf.WriteString(MapList.List.JsonData);
             SendDataToAll(bf.ToArray());
             bf.Dispose();
         }
@@ -1906,7 +1914,7 @@ namespace Intersect.Server.Networking
                         if (friend.Target.Name.ToLower() == c.Entity.Name.ToLower())
                         {
                             online.Add(friend.Target.Name);
-                            map.Add(MapList.GetList().FindMap(friend.Target.MapId).Name);
+                            map.Add(MapList.List.FindMap(friend.Target.MapId).Name);
                             found = true;
                             break;
                         }

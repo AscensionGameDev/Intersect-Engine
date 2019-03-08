@@ -30,7 +30,7 @@ namespace Intersect.Server.Entities
     public class Player : EntityInstance
     {
         //Online Players List
-        private static Dictionary<Guid, Player> OnlinePlayers = new Dictionary<Guid, Player>();
+        [NotNull] private static readonly Dictionary<Guid, Player> OnlinePlayers = new Dictionary<Guid, Player>();
         public static Player Find(Guid id) => OnlinePlayers.ContainsKey(id) ? OnlinePlayers[id] : null;
         public static Player Find(string charName) => OnlinePlayers.Values.FirstOrDefault(s => s.Name.ToLower().Trim() == charName.ToLower().Trim());
         public static int OnlineCount => OnlinePlayers.Count;
@@ -164,14 +164,13 @@ namespace Intersect.Server.Entities
         }
 
         [NotMapped]
-        public long ExperienceToNextLevel
+        public long ExperienceToNextLevel => GetExperienceToNextLevel(Level);
+
+        private long GetExperienceToNextLevel(int level)
         {
-            get
-            {
-                if (Level >= Options.MaxLevel) return -1;
-                var classBase = ClassBase.Get(ClassId);
-                return classBase?.ExperienceToNextLevel(Level) ?? ClassBase.DEFAULT_BASE_EXPERIENCE;
-            }
+            if (level >= Options.MaxLevel) return -1;
+            var classBase = ClassBase.Get(ClassId);
+            return classBase?.ExperienceToNextLevel(level) ?? ClassBase.DEFAULT_BASE_EXPERIENCE;
         }
 
         public Player()
@@ -179,19 +178,32 @@ namespace Intersect.Server.Entities
             
         }
 
-        public void Online()
+        public void SetOnline()
         {
             IsDisposed = false;
             mSentMap = false;
+            if (OnlinePlayers.TryGetValue(Id, out var player))
+            {
+                if (player != this)
+                {
+                    throw new InvalidOperationException($@"A player with the id {Id} is already listed as online.");
+                }
+            }
             OnlinePlayers.Add(Id, this);
         }
 
         public override void Dispose()
         {
-            if (!IsDisposed)
+            if (IsDisposed)
             {
-                base.Dispose();
-                if (OnlinePlayers.ContainsKey(Id)) OnlinePlayers.Remove(Id);
+                return;
+            }
+
+            base.Dispose();
+
+            if (OnlinePlayers?.ContainsKey(Id) ?? false)
+            {
+                OnlinePlayers.Remove(Id);
             }
         }
 
@@ -647,9 +659,9 @@ namespace Intersect.Server.Entities
         private bool CheckLevelUp()
         {
             var levelCount = 0;
-            while (Exp >= ExperienceToNextLevel && ExperienceToNextLevel > 0)
+            while (Exp >= GetExperienceToNextLevel(Level + levelCount) && GetExperienceToNextLevel(Level + levelCount) > 0)
             {
-                Exp -= ExperienceToNextLevel;
+                Exp -= GetExperienceToNextLevel(Level + levelCount);
                 levelCount++;
             }
             if (levelCount <= 0) return false;
@@ -839,7 +851,7 @@ namespace Intersect.Server.Entities
             var statuses = Statuses.Values.ToArray();
             foreach (var status in statuses)
             {
-                if (status.Type == StatusTypes.Stun)
+                if (status.Type == StatusTypes.Stun || status.Type == StatusTypes.Sleep)
                 {
                     return false;
                 }
@@ -1229,6 +1241,11 @@ namespace Intersect.Server.Entities
                     if (status.Type == StatusTypes.Stun)
                     {
                         PacketSender.SendPlayerMsg(MyClient, Strings.Items.stunned);
+                        return;
+                    }
+                    if (status.Type == StatusTypes.Sleep)
+                    {
+                        PacketSender.SendPlayerMsg(MyClient, Strings.Items.sleep);
                         return;
                     }
                 }
@@ -2666,23 +2683,28 @@ namespace Intersect.Server.Entities
 
         public void ReturnTradeItems()
         {
-            if (Trading.Counterparty == null) return;
-
-            for (var i = 0; i < Options.MaxInvItems; i++)
+            if (Trading.Counterparty == null)
             {
-                if (Trading.Offer[i].ItemId != Guid.Empty)
-                {
-                    if (!TryGiveItem(new Item(Trading.Offer[i])))
-                    {
-                        MapInstance.Get(MapId)
-                            .SpawnItem(X, Y, Trading.Offer[i], Trading.Offer[i].Quantity);
-                        PacketSender.SendPlayerMsg(MyClient, Strings.Trading.itemsdropped,
-                            CustomColors.Error);
-                    }
-                    Trading.Offer[i].ItemId = Guid.Empty;
-                    Trading.Offer[i].Quantity = 0;
-                }
+                return;
             }
+
+            foreach (var offer in Trading.Offer)
+            {
+                if (offer == null || offer.ItemId == Guid.Empty)
+                {
+                    continue;
+                }
+
+                if (!TryGiveItem(new Item(offer)))
+                {
+                    MapInstance.Get(MapId)?.SpawnItem(X, Y, offer, offer.Quantity);
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Trading.itemsdropped, CustomColors.Error);
+                }
+
+                offer.ItemId = Guid.Empty;
+                offer.Quantity = 0;
+            }
+
             PacketSender.SendInventory(MyClient);
         }
 
@@ -2981,6 +3003,11 @@ namespace Intersect.Server.Entities
 							PacketSender.SendPlayerMsg(MyClient, Strings.Combat.stunned);
 							return;
 						}
+                        if (status.Type == StatusTypes.Sleep)
+                        {
+                            PacketSender.SendPlayerMsg(MyClient, Strings.Combat.sleep);
+                            return;
+                        }
 					}
 				}
 
