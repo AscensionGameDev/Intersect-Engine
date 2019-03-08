@@ -546,5 +546,23 @@ namespace Intersect.Client.Networking
             bf.WriteLong((int) ClientPackets.CreateNewChar);
             GameNetwork.SendPacket(bf.ToArray());
         }
+
+        public static void RequestPasswordReset(string nameEmail)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ClientPackets.RequestPassReset);
+            bf.WriteString(nameEmail);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
+
+        public static void ResetPassword(string nameEmail, string code, string hashedPass)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ClientPackets.ResetPass);
+            bf.WriteString(nameEmail);
+            bf.WriteString(code);
+            bf.WriteString(hashedPass);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
     }
 }

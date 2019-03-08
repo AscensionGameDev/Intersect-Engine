@@ -108,6 +108,7 @@ namespace Intersect.Client.UI.Menu
         public void Show()
         {
             mResetWindow.IsHidden = false;
+            mInputTextbox.Text = "";
         }
 
         void BackBtn_Clicked(Base sender, ClickedEventArgs arguments)
@@ -128,11 +129,6 @@ namespace Intersect.Client.UI.Menu
 
         public void TrySendCode()
         {
-            if (Globals.WaitingOnServer)
-            {
-                return;
-            }
-
             if (!GameNetwork.Connected)
             {
                 Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.notconnected));
@@ -145,10 +141,8 @@ namespace Intersect.Client.UI.Menu
                 return;
             }
 
-            Gui.MenuUi.MainMenu.OpenResetPassword();
-            //PacketSender.SendLogin(mInputTextbox?.Text, password);
-            Globals.WaitingOnServer = true;
-            ChatboxMsg.ClearMessages();
+            Gui.MenuUi.MainMenu.OpenResetPassword(mInputTextbox?.Text);
+            PacketSender.RequestPasswordReset(mInputTextbox?.Text);
         }
     }
 }

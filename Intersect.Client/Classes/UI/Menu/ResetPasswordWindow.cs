@@ -42,6 +42,9 @@ namespace Intersect.Client.UI.Menu
 
         public bool IsHidden => mResetWindow.IsHidden;
 
+        //The username or email of the acc we are resetting the pass for
+        public string Target { set; get; } = "";
+      
         //Init
         public ResetPasswordWindow(Canvas parent, MainMenu mainMenu, ImagePanel parentPanel)
         {
@@ -125,6 +128,9 @@ namespace Intersect.Client.UI.Menu
         public void Show()
         {
             mResetWindow.IsHidden = false;
+            mCodeInputTextbox.Text = "";
+            mPasswordTextbox.Text = "";
+            mPasswordTextbox2.Text = "";
         }
 
         void BackBtn_Clicked(Base sender, ClickedEventArgs arguments)
@@ -166,14 +172,25 @@ namespace Intersect.Client.UI.Menu
                 return;
             }
 
-            if (!FieldChecking.IsValidUsername(mCodeInputTextbox?.Text, Strings.Regex.username) && !FieldChecking.IsWellformedEmailAddress(mCodeInputTextbox?.Text, Strings.Regex.email))
+            if (string.IsNullOrEmpty(mCodeInputTextbox?.Text))
             {
-                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.usernameinvalid));
+                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.ResetPass.inputcode));
                 return;
             }
 
-            Gui.MenuUi.MainMenu.OpenResetPassword();
-            //PacketSender.SendLogin(mInputTextbox?.Text, password);
+            if (mPasswordTextbox.Text!= mPasswordTextbox2.Text)
+            {
+                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Registration.passwordmatch));
+                return;
+            }
+
+            if (!FieldChecking.IsValidPassword(mPasswordTextbox.Text, Strings.Regex.password))
+            {
+                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.passwordinvalid));
+                return;
+            }
+            var sha = new SHA256Managed();
+            PacketSender.ResetPassword(Target,mCodeInputTextbox?.Text, BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(mPasswordTextbox.Text.Trim()))).Replace("-", ""));
             Globals.WaitingOnServer = true;
             ChatboxMsg.ClearMessages();
         }
