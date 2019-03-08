@@ -69,48 +69,55 @@ namespace Intersect.Server.Maps
 
         private void CalculateBounds(MapInstance map, int x, int y)
         {
-            if (HasMap(map.Id, true))
+            var maps = new Stack<Tuple<MapInstance, int, int>>();
+            maps.Push(new Tuple<MapInstance, int, int>(map,x,y));
+            while (maps.Count > 0)
             {
-                return;
-            }
-            MyMaps.Add(map.Id);
-            map.MapGridX = x;
-            map.MapGridY = y;
-            if (x < mTopLeft.X)
-            {
-                mTopLeft.X = x;
-            }
-            if (y < mTopLeft.Y)
-            {
-                mTopLeft.Y = y;
-            }
-            if (x > mBotRight.X)
-            {
-                mBotRight.X = x;
-            }
-            if (y > mBotRight.Y)
-            {
-                mBotRight.Y = y;
-            }
-            if (MapInstance.Lookup.Keys.Contains(map.Up) &&
-                MapInstance.Get(map.Up).Down == map.Id)
-            {
-                CalculateBounds(MapInstance.Get(map.Up), x, y - 1);
-            }
-            if (MapInstance.Lookup.Keys.Contains(map.Down) &&
-                MapInstance.Get(map.Down).Up == map.Id)
-            {
-                CalculateBounds(MapInstance.Get(map.Down), x, y + 1);
-            }
-            if (MapInstance.Lookup.Keys.Contains(map.Left) &&
-                MapInstance.Get(map.Left).Right == map.Id)
-            {
-                CalculateBounds(MapInstance.Get(map.Left), x - 1, y);
-            }
-            if (MapInstance.Lookup.Keys.Contains(map.Right) &&
-                MapInstance.Get(map.Right).Left == map.Id)
-            {
-                CalculateBounds(MapInstance.Get(map.Right), x + 1, y);
+                var curMap = maps.Pop();
+                map = curMap.Item1;
+                x = curMap.Item2;
+                y = curMap.Item3;
+
+                if (HasMap(map.Id, true))
+                {
+                    continue;
+                }
+
+                MyMaps.Add(map.Id);
+                map.MapGridX = x;
+                map.MapGridY = y;
+                if (x < mTopLeft.X)
+                {
+                    mTopLeft.X = x;
+                }
+                if (y < mTopLeft.Y)
+                {
+                    mTopLeft.Y = y;
+                }
+                if (x > mBotRight.X)
+                {
+                    mBotRight.X = x;
+                }
+                if (y > mBotRight.Y)
+                {
+                    mBotRight.Y = y;
+                }
+                if (MapInstance.Lookup.Keys.Contains(map.Up) && MapInstance.Get(map.Up).Down == map.Id)
+                {
+                    maps.Push(new Tuple<MapInstance, int, int>(MapInstance.Get(map.Up),x,y-1));
+                }
+                if (MapInstance.Lookup.Keys.Contains(map.Down) && MapInstance.Get(map.Down).Up == map.Id)
+                {
+                    maps.Push(new Tuple<MapInstance, int, int>(MapInstance.Get(map.Down), x, y + 1));
+                }
+                if (MapInstance.Lookup.Keys.Contains(map.Left) && MapInstance.Get(map.Left).Right == map.Id)
+                {
+                    maps.Push(new Tuple<MapInstance, int, int>(MapInstance.Get(map.Left), x -1, y));
+                }
+                if (MapInstance.Lookup.Keys.Contains(map.Right) && MapInstance.Get(map.Right).Left == map.Id)
+                {
+                    maps.Push(new Tuple<MapInstance, int, int>(MapInstance.Get(map.Right), x + 1, y));
+                }
             }
         }
 

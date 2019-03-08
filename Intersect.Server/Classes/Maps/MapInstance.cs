@@ -60,7 +60,7 @@ namespace Intersect.Server.Maps
         [NotMapped]
         public Dictionary<NpcSpawn, MapNpcSpawn> NpcSpawnInstances = new Dictionary<NpcSpawn, MapNpcSpawn>();
         private List<Player> mPlayers = new List<Player>();
-        
+
 
         [NotMapped]
         [JsonIgnore]
@@ -104,7 +104,7 @@ namespace Intersect.Server.Maps
             Layers = null;
         }
 
-    public new static MapInstances Lookup => (sLookup = (sLookup ?? new MapInstances(MapBase.Lookup)));
+        public new static MapInstances Lookup => (sLookup = (sLookup ?? new MapInstances(MapBase.Lookup)));
 
         //GameObject Functions
 
@@ -148,7 +148,7 @@ namespace Intersect.Server.Maps
                 {
                     if (Attributes[x, y] != null)
                     {
-                        if (Attributes[x, y].Type == MapAttributes.Blocked ||Attributes[x, y].Type == MapAttributes.GrappleStone)
+                        if (Attributes[x, y].Type == MapAttributes.Blocked || Attributes[x, y].Type == MapAttributes.GrappleStone)
                         {
                             blocks.Add(new BytePoint(x, y));
                             npcBlocks.Add(new BytePoint(x, y));
@@ -198,14 +198,14 @@ namespace Intersect.Server.Maps
             var itemBase = ItemBase.Get(item.ItemId);
             if (itemBase != null)
             {
-                MapItems.Add(new MapItem(item.ItemId, item.Quantity,item.BagId, item.Bag));
+                MapItems.Add(new MapItem(item.ItemId, item.Quantity, item.BagId, item.Bag));
                 MapItems[MapItems.Count - 1].X = x;
                 MapItems[MapItems.Count - 1].Y = y;
                 MapItems[MapItems.Count - 1].DespawnTime = Globals.System.GetTimeMs() + Options.ItemDespawnTime;
                 if (itemBase.ItemType == ItemTypes.Equipment)
                 {
                     MapItems[MapItems.Count - 1].Quantity = 1;
-                    for (int i = 0; i < (int) Stats.StatCount; i++)
+                    for (int i = 0; i < (int)Stats.StatCount; i++)
                     {
                         MapItems[MapItems.Count - 1].StatBuffs[i] = item.StatBuffs[i];
                     }
@@ -233,7 +233,7 @@ namespace Intersect.Server.Maps
                 {
                     MapItems[MapItems.Count - 1].Quantity = 1;
                     Random r = new Random();
-                    for (int i = 0; i < (int) Stats.StatCount; i++)
+                    for (int i = 0; i < (int)Stats.StatCount; i++)
                     {
                         MapItems[MapItems.Count - 1].StatBuffs[i] = r.Next(-1 * item.StatGrowth, item.StatGrowth + 1);
                     }
@@ -453,7 +453,7 @@ namespace Intersect.Server.Maps
                     {
                         x = Globals.Rand.Next(0, Options.MapWidth);
                         y = Globals.Rand.Next(0, Options.MapHeight);
-                        if (Attributes[x, y] == null || Attributes[x, y].Type == (int) MapAttributes.Walkable)
+                        if (Attributes[x, y] == null || Attributes[x, y].Type == (int)MapAttributes.Walkable)
                         {
                             break;
                         }
@@ -601,7 +601,7 @@ namespace Intersect.Server.Maps
                         mEntities.Add(en);
                         if (en.GetType() == typeof(Player))
                         {
-                            mPlayers.Add((Player) en);
+                            mPlayers.Add((Player)en);
                         }
                     }
                 }
@@ -615,7 +615,7 @@ namespace Intersect.Server.Maps
                 mEntities.Remove(en);
                 if (mPlayers.Contains(en))
                 {
-                    mPlayers.Remove((Player) en);
+                    mPlayers.Remove((Player)en);
                 }
             }
         }
@@ -634,9 +634,9 @@ namespace Intersect.Server.Maps
             {
                 foreach (var entity in mEntities)
                 {
-                    if (entity.GetType() == typeof(Npc) && ((Npc) entity).MyTarget == en)
+                    if (entity.GetType() == typeof(Npc) && ((Npc)entity).MyTarget == en)
                     {
-                        ((Npc) entity).RemoveTarget();
+                        ((Npc)entity).RemoveTarget();
                     }
                 }
             }
@@ -703,7 +703,7 @@ namespace Intersect.Server.Maps
                                 if (npcSpawnInstance.RespawnTime == -1)
                                 {
                                     npcSpawnInstance.RespawnTime = Globals.System.GetTimeMs() +
-                                                                   ((Npc) npcSpawnInstance.Entity).Base
+                                                                   ((Npc)npcSpawnInstance.Entity).Base
                                                                    .SpawnDuration - (Globals.System.GetTimeMs() - LastUpdateTime);
                                 }
                                 else if (npcSpawnInstance.RespawnTime < Globals.System.GetTimeMs())
@@ -880,10 +880,10 @@ namespace Intersect.Server.Maps
 
         public void ClearConnections(int side = -1)
         {
-            if (side == -1 || side == (int) Directions.Up) Up = Guid.Empty;
-            if (side == -1 || side == (int) Directions.Down) Down = Guid.Empty;
-            if (side == -1 || side == (int) Directions.Left) Left = Guid.Empty;
-            if (side == -1 || side == (int) Directions.Right) Right = Guid.Empty;
+            if (side == -1 || side == (int)Directions.Up) Up = Guid.Empty;
+            if (side == -1 || side == (int)Directions.Down) Down = Guid.Empty;
+            if (side == -1 || side == (int)Directions.Left) Left = Guid.Empty;
+            if (side == -1 || side == (int)Directions.Right) Right = Guid.Empty;
             LegacyDatabase.SaveGameDatabaseAsync();
         }
 
