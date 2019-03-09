@@ -28,16 +28,13 @@ namespace Intersect.Server.Entities
     using LegacyDatabase = LegacyDatabase;
 
     [Table("Characters")]
-    public class Player : EntityInstance
+    public partial class Player : EntityInstance
     {
         //Online Players List
         [NotNull] private static readonly Dictionary<Guid, Player> OnlinePlayers = new Dictionary<Guid, Player>();
-        public static Player Find(Guid id) => OnlinePlayers.ContainsKey(id) ? OnlinePlayers[id] : null;
-        public static Player Find(string charName) => OnlinePlayers.Values.FirstOrDefault(s => s.Name.ToLower().Trim() == charName.ToLower().Trim());
+        public static Player FindOnline(Guid id) => OnlinePlayers.ContainsKey(id) ? OnlinePlayers[id] : null;
+        public static Player FindOnline(string charName) => OnlinePlayers.Values.FirstOrDefault(s => s.Name.ToLower().Trim() == charName.ToLower().Trim());
         public static int OnlineCount => OnlinePlayers.Count;
-
-        //Account
-        [JsonIgnore] public virtual User Account { get; private set; }
 
         //Name, X, Y, Dir, Etc all in the base Entity Class
         public Guid ClassId { get; set; }
@@ -60,53 +57,49 @@ namespace Intersect.Server.Entities
         public DateTime? LastOnline { get; set; }
 
         //Bank
+        [NotNull]
         public virtual List<BankSlot> Bank { get; set; } = new List<BankSlot>();
 
         //Friends
+        [NotNull]
         public virtual List<Friend> Friends { get; set; } = new List<Friend>();
 
         //HotBar
+        [NotNull]
         public virtual List<HotbarSlot> Hotbar { get; set; } = new List<HotbarSlot>();
 
         //Quests
+        [NotNull]
         public virtual List<Quest> Quests { get; set; } = new List<Quest>();
 
         //Switches
+        [NotNull]
         public virtual List<Switch> Switches { get; set; } = new List<Switch>();
 
         //Variables
+        [NotNull]
         public virtual List<Variable> Variables { get; set; } = new List<Variable>();
 
-        public void FixLists()
+        public bool ValidateLists()
         {
-            if (Spells.Count < Options.MaxPlayerSkills)
-            {
-                for (int i = Spells.Count; i < Options.MaxPlayerSkills; i++)
-                {
-                    Spells.Add(new SpellSlot(i));
-                }
-            }
-            if (Items.Count < Options.MaxInvItems)
-            {
-                for (int i = Items.Count; i < Options.MaxInvItems; i++)
-                {
-                    Items.Add(new InventorySlot(i));
-                }
-            }
-            if (Bank.Count < Options.MaxBankSlots)
-            {
-                for (int i = Bank.Count; i < Options.MaxBankSlots; i++)
-                {
-                    Bank.Add(new BankSlot(i));
-                }
-            }
+            var changes = false;
+
+            changes |= SlotHelper.ValidateSlots(Spells, Options.MaxPlayerSkills);
+            changes |= SlotHelper.ValidateSlots(Items, Options.MaxInvItems);
+            changes |= SlotHelper.ValidateSlots(Bank, Options.MaxBankSlots);
+
             if (Hotbar.Count < Options.MaxHotbar)
             {
+                Hotbar.Sort((a, b) => a?.Index - b?.Index ?? 0);
                 for (var i = Hotbar.Count; i < Options.MaxHotbar; i++)
                 {
                     Hotbar.Add(new HotbarSlot(i));
                 }
+                changes = true;
             }
+
+
+            return changes;
         }
 
 

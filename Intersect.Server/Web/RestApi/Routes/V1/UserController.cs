@@ -53,7 +53,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             return Database.PlayerData.User
                 .FindByName(userName)
-                .Characters;
+                .Players;
         }
 
         [Route("{userId:guid}/players")]
@@ -68,7 +68,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             return Database.PlayerData.User
                 .FindById(userId)
-                .Characters;
+                .Players;
         }
 
         [Route("{userName}/players/{playerName}")]
@@ -83,7 +83,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             return Database.PlayerData.User
                 .FindByName(userName)
-                .Characters
+                .Players
                 .FirstOrDefault(player => string.Equals(player?.Name, playerName, StringComparison.Ordinal));
         }
 
@@ -99,7 +99,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             return Database.PlayerData.User
                 .FindById(userId)?
-                .Characters
+                .Players
                 .FirstOrDefault(player => player?.Id == playerId);
         }
     }

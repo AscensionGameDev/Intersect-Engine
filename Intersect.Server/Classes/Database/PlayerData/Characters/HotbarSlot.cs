@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 
 namespace Intersect.Server.Database.PlayerData.Characters
 {
+    // TODO: Implement ISlot
     public class HotbarSlot
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

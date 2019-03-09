@@ -355,7 +355,7 @@ namespace Intersect.Server.Networking
                 }
 
                 //Check Mute Status and Load into user property
-                Mute.CheckMute(client.User, client.GetIp());
+                Mute.FindMuteReason(client.User, client.GetIp());
 
                 PacketSender.SendServerConfig(client);
                 //Character selection if more than one.
@@ -1218,7 +1218,7 @@ namespace Intersect.Server.Networking
                 var player = new Player();
                 player.Id = Guid.NewGuid();
                 client.Characters.Add(player);
-                player.FixLists();
+                player.ValidateLists();
                 for (var i = 0; i < Options.EquipmentSlots.Count; i++)
                 {
                     player.Equipment[i] = -1;
@@ -1701,7 +1701,7 @@ namespace Intersect.Server.Networking
                     var unmutedUser = LegacyDatabase.GetUser(val1);
                     if (unmutedUser != null)
                     {
-                        Mute.DeleteMute(unmutedUser);
+                        Mute.Remove(unmutedUser);
                         PacketSender.SendPlayerMsg(client, Strings.Account.unmuted.ToString(val1));
                     }
                     else
@@ -1713,7 +1713,7 @@ namespace Intersect.Server.Networking
                     var unbannedUser = LegacyDatabase.GetUser(val1);
                     if (unbannedUser != null)
                     {
-                        Ban.DeleteBan(unbannedUser);
+                        Ban.Remove(unbannedUser);
                         PacketSender.SendPlayerMsg(client, Strings.Account.unbanned.ToString(val1));
                     }
                     else
@@ -1730,12 +1730,12 @@ namespace Intersect.Server.Networking
                             {
                                 if (Convert.ToBoolean(val4) == true)
                                 {
-                                    Mute.AddMute(Globals.Clients[i], Convert.ToInt32(val2), val3,
+                                    Mute.Add(Globals.Clients[i], Convert.ToInt32(val2), val3,
                                         client.Entity.Name, Globals.Clients[i].GetIp());
                                 }
                                 else
                                 {
-                                    Mute.AddMute(Globals.Clients[i], Convert.ToInt32(val2), val3,
+                                    Mute.Add(Globals.Clients[i], Convert.ToInt32(val2), val3,
                                         client.Entity.Name, "");
                                 }
                                 PacketSender.SendGlobalMsg(Strings.Account.muted.ToString(
@@ -1755,12 +1755,12 @@ namespace Intersect.Server.Networking
                             {
                                 if (Convert.ToBoolean(val4) == true)
                                 {
-                                    Ban.AddBan(Globals.Clients[i], Convert.ToInt32(val2), val3,
+                                    Ban.Add(Globals.Clients[i], Convert.ToInt32(val2), val3,
                                         client.Entity.Name, Globals.Clients[i].GetIp());
                                 }
                                 else
                                 {
-                                    Ban.AddBan(Globals.Clients[i], Convert.ToInt32(val2), val3,
+                                    Ban.Add(Globals.Clients[i], Convert.ToInt32(val2), val3,
                                         client.Entity.Name, "");
                                 }
 
@@ -2326,7 +2326,7 @@ namespace Intersect.Server.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var target = Player.Find(bf.ReadGuid());
+            var target = Player.FindOnline(bf.ReadGuid());
             if (target == null) return;
             if (target.Id != client.Entity.Id)
             {
@@ -2428,7 +2428,7 @@ namespace Intersect.Server.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var target = Player.Find(bf.ReadGuid());
+            var target = Player.FindOnline(bf.ReadGuid());
             if (target == null) return;
             if (target.Id != client.Entity.Id)
             {
@@ -2621,7 +2621,7 @@ namespace Intersect.Server.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var target = Player.Find(bf.ReadGuid());
+            var target = Player.FindOnline(bf.ReadGuid());
             if (target == null) return;
             if (target.Id != client.Entity.Id)
             {
@@ -2648,7 +2648,7 @@ namespace Intersect.Server.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var target = Player.Find(bf.ReadGuid());
+            var target = Player.FindOnline(bf.ReadGuid());
             if (client.Entity.FriendRequester == target)
             {
                 if (client.Entity.FriendRequester.IsValidPlayer)
@@ -2680,7 +2680,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            var character = LegacyDatabase.GetCharacter(name);
+            var character = LegacyDatabase.GetPlayer(name);
             if (character != null)
             {
                 if (!client.Entity.HasFriend(character))
@@ -2716,7 +2716,7 @@ namespace Intersect.Server.Networking
 
             if (charId != null)
             {
-                var character = LegacyDatabase.GetCharacter((Guid)charId);
+                var character = LegacyDatabase.GetPlayer((Guid)charId);
                 if (character != null && client.Entity.HasFriend(character))
                 {
                     client.Entity.RemoveFriend(character);

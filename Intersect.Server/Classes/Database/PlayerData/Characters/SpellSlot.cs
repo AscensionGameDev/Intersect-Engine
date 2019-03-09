@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace Intersect.Server.Database.PlayerData.Characters
 {
-    public class SpellSlot : Spell
+    public class SpellSlot : Spell, ISlot
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; private set; }

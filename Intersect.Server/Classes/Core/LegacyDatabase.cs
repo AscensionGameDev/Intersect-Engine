@@ -157,7 +157,7 @@ namespace Intersect.Server
 
         public static Player GetUserCharacter(User user, Guid characterId)
         {
-            foreach (var character in user.Characters)
+            foreach (var character in user.Players)
             {
                 if (character.Id == characterId) return character;
             }
@@ -179,14 +179,14 @@ namespace Intersect.Server
             return PlayerContext.Characters.Where(p => string.Equals(p.Name.Trim(), name.Trim(), StringComparison.CurrentCultureIgnoreCase))?.First()?.Id;
         }
 
-        public static Player GetCharacter(Guid id)
+        public static Player GetPlayer(Guid playerId)
         {
-            return User.GetCharacter(PlayerContext, id);
+            return Player.Load(playerId, PlayerContext);
         }
 
-        public static Player GetCharacter(string name)
+        public static Player GetPlayer([NotNull] string playerName)
         {
-            return User.GetCharacter(PlayerContext, name);
+            return Player.Load(playerName, PlayerContext);
         }
 
         public static long RegisteredPlayers => PlayerContext.Users.Count();

@@ -40,7 +40,7 @@ namespace Intersect.Server.Networking
 
         public User User { get; private set; }
 
-        public List<Player> Characters => User?.Characters;
+        public List<Player> Characters => User?.Players;
 
         private long mConnectionTimeout;
 

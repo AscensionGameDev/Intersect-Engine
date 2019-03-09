@@ -78,8 +78,8 @@ namespace Intersect.Server.Database.PlayerData
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>()
-                .HasMany(b => b.Characters)
-                .WithOne(p => p.Account);
+                .HasMany(b => b.Players)
+                .WithOne(p => p.User);
 
             modelBuilder.Entity<Player>().HasMany(b => b.Friends).WithOne(p => p.Owner);
 
@@ -106,8 +106,8 @@ namespace Intersect.Server.Database.PlayerData
             modelBuilder.Entity<BagSlot>().HasOne(b => b.Bag);
             modelBuilder.Entity<BankSlot>().HasOne(b => b.Bag);
 
-            modelBuilder.Entity<Ban>().HasOne(b => b.Player);
-            modelBuilder.Entity<Mute>().HasOne(b => b.Player);
+            modelBuilder.Entity<Ban>().HasOne(b => b.User);
+            modelBuilder.Entity<Mute>().HasOne(b => b.User);
 
         }
 

@@ -21,7 +21,7 @@ namespace Intersect.Server.Core.Commands
                 return;
             }
 
-            Ban.DeleteBan(target);
+            Ban.Remove(target);
             Console.WriteLine($@"    {Strings.Account.unbanned.ToString(target.Name)}");
         }
     }

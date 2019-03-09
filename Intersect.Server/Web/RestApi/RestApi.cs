@@ -13,9 +13,11 @@ using Owin;
 using System;
 using System.Linq;
 using System.Web.Http;
+using System.Web.Http.Routing;
 
 using Intersect.Logging;
 using Intersect.Server.Localization;
+using Intersect.Server.Web.RestApi.Constraints;
 using Intersect.Server.Web.RestApi.Logging;
 
 using Microsoft.Owin.Logging;
@@ -81,8 +83,11 @@ namespace Intersect.Server.Web.RestApi
 
             AuthenticationProvider.Configure(appBuilder);
 
+            var constraintResolver = new DefaultInlineConstraintResolver();
+            constraintResolver.ConstraintMap?.Add("AdminActions", typeof(AdminActionsConstraint));
+
             // Map routes
-            config.MapHttpAttributeRoutes(new VersionedRouteProvider());
+            config.MapHttpAttributeRoutes(constraintResolver, new VersionedRouteProvider());
             config.DependencyResolver = new IntersectServiceDependencyResolver(Configuration, config);
 
             // Make JSON the default response type for browsers

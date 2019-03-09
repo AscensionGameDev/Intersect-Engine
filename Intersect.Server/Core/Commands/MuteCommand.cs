@@ -26,7 +26,7 @@ namespace Intersect.Server.Core.Commands
 
             // TODO: Refactor the global/console messages into ModeratorActionCommand
             var name = target.Entity.Name;
-            Mute.AddMute(target, duration, reason, Strings.Commands.muteuser, ip ? target.GetIp() : "");
+            Mute.Add(target, duration, reason, Strings.Commands.muteuser, ip ? target.GetIp() : "");
             PacketSender.SendGlobalMsg(Strings.Account.muted.ToString(name));
             Console.WriteLine($@"    {Strings.Account.muted.ToString(name)}");
         }

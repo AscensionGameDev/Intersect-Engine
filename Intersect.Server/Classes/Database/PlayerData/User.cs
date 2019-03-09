@@ -42,81 +42,58 @@ namespace Intersect.Server.Database.PlayerData
         private string mMuteStatus { get; set; }
 
 
-        public virtual List<Player> Characters { get; set; } = new List<Player>();
+        [Column("Characters")]
+        public virtual List<Player> Players { get; set; } = new List<Player>();
 
-        private static Func<PlayerContext, string, User> _getUser =
+        [NotNull]
+        private static readonly Func<PlayerContext, string, User> QueryUserByName =
             EF.CompileQuery((PlayerContext context, string username) =>
                 context.Users
-                    .Include(p => p.Characters).ThenInclude(c => c.Bank)
-                    .Include(p => p.Characters).ThenInclude(c => c.Friends).ThenInclude(c => c.Target)
-                    .Include(p => p.Characters).ThenInclude(c => c.Hotbar)
-                    .Include(p => p.Characters).ThenInclude(c => c.Quests)
-                    .Include(p => p.Characters).ThenInclude(c => c.Switches)
-                    .Include(p => p.Characters).ThenInclude(c => c.Variables)
-                    .Include(p => p.Characters).ThenInclude(c => c.Items)
-                    .Include(p => p.Characters).ThenInclude(c => c.Spells)
-                    .Include(p => p.Characters).ThenInclude(c => c.Bank)
-                    .FirstOrDefault(c => c.Name.ToLower() == username.ToLower()));
+                    .Include(p => p.Players).ThenInclude(c => c.Bank)
+                    .Include(p => p.Players).ThenInclude(c => c.Friends).ThenInclude(c => c.Target)
+                    .Include(p => p.Players).ThenInclude(c => c.Hotbar)
+                    .Include(p => p.Players).ThenInclude(c => c.Quests)
+                    .Include(p => p.Players).ThenInclude(c => c.Switches)
+                    .Include(p => p.Players).ThenInclude(c => c.Variables)
+                    .Include(p => p.Players).ThenInclude(c => c.Items)
+                    .Include(p => p.Players).ThenInclude(c => c.Spells)
+                    .Include(p => p.Players).ThenInclude(c => c.Bank)
+                    .FirstOrDefault(user => user.Name.ToLower() == username.ToLower()))
+            ?? throw new InvalidOperationException();
 
-        private static Func<PlayerContext, Guid, User> _getUserById =
+        [NotNull]
+        private static readonly Func<PlayerContext, Guid, User> QueryUserById =
             EF.CompileQuery((PlayerContext context, Guid id) =>
                 context.Users
-                    .Include(p => p.Characters).ThenInclude(c => c.Bank)
-                    .Include(p => p.Characters).ThenInclude(c => c.Friends).ThenInclude(c => c.Target)
-                    .Include(p => p.Characters).ThenInclude(c => c.Hotbar)
-                    .Include(p => p.Characters).ThenInclude(c => c.Quests)
-                    .Include(p => p.Characters).ThenInclude(c => c.Switches)
-                    .Include(p => p.Characters).ThenInclude(c => c.Variables)
-                    .Include(p => p.Characters).ThenInclude(c => c.Items)
-                    .Include(p => p.Characters).ThenInclude(c => c.Spells)
-                    .Include(p => p.Characters).ThenInclude(c => c.Bank)
-                    .FirstOrDefault(c => c.Id == id));
-
-        private static Func<PlayerContext, Guid, Player> _getPlayerById =
-            EF.CompileQuery((PlayerContext context, Guid id) =>
-                context.Characters
-                    .Include(p => p.Bank)
-                    .Include(p => p.Friends)
-                    .ThenInclude(p => p.Target)
-                    .Include(p => p.Hotbar)
-                    .Include(p => p.Quests)
-                    .Include(p => p.Switches)
-                    .Include(p => p.Variables)
-                    .Include(p => p.Items)
-                    .Include(p => p.Spells)
-                    .FirstOrDefault(c => c.Id == id));
-
-        private static Func<PlayerContext, string, Player> _getPlayerByName =
-            EF.CompileQuery((PlayerContext context, string name) =>
-                context.Characters
-                    .Include(p => p.Bank)
-                    .Include(p => p.Friends)
-                    .ThenInclude(p => p.Target)
-                    .Include(p => p.Hotbar)
-                    .Include(p => p.Quests)
-                    .Include(p => p.Switches)
-                    .Include(p => p.Variables)
-                    .Include(p => p.Items)
-                    .Include(p => p.Spells)
-                    .FirstOrDefault(c => c.Name.ToLower() == name.ToLower()));
+                    .Include(p => p.Players).ThenInclude(c => c.Bank)
+                    .Include(p => p.Players).ThenInclude(c => c.Friends).ThenInclude(c => c.Target)
+                    .Include(p => p.Players).ThenInclude(c => c.Hotbar)
+                    .Include(p => p.Players).ThenInclude(c => c.Quests)
+                    .Include(p => p.Players).ThenInclude(c => c.Switches)
+                    .Include(p => p.Players).ThenInclude(c => c.Variables)
+                    .Include(p => p.Players).ThenInclude(c => c.Items)
+                    .Include(p => p.Players).ThenInclude(c => c.Spells)
+                    .Include(p => p.Players).ThenInclude(c => c.Bank)
+                    .FirstOrDefault(user => user.Id == id))
+            ?? throw new InvalidOperationException();
 
         public static User GetUser(PlayerContext context, string username)
         {
-            var user = _getUser(context, username);
+            var user = QueryUserByName(context, username);
 
             if (user == null)
             {
                 return null;
             }
 
-            if (user.Characters == null)
+            if (user.Players == null)
             {
                 return user;
             }
 
-            foreach (var chr in user.Characters)
+            foreach (var player in user.Players)
             {
-                LoadCharacter(chr);
+                Player.Load(player);
             }
 
             return user;
@@ -153,31 +130,6 @@ namespace Intersect.Server.Database.PlayerData
             }
         }
 
-        public static Player GetCharacter(PlayerContext context, Guid id)
-        {
-            var chr = LoadCharacter(_getPlayerById(context, id));
-            return chr;
-        }
-
-        public static Player GetCharacter(PlayerContext context, string name)
-        {
-            var chr = LoadCharacter(_getPlayerByName(context, name));
-            return chr;
-        }
-
-        public static Player LoadCharacter(Player character)
-        {
-            if (character != null)
-            {
-                character.FixLists();
-                character.Items = character.Items.OrderBy(p => p.Slot).ToList();
-                character.Bank = character.Bank.OrderBy(p => p.Slot).ToList();
-                character.Spells = character.Spells.OrderBy(p => p.Slot).ToList();
-                character.Hotbar = character.Hotbar.OrderBy(p => p.Index).ToList();
-            }
-            return character;
-        }
-
         public static User FindByName(string username)
         {
             return FindByName(PlayerContext.Current, username);
@@ -195,7 +147,7 @@ namespace Intersect.Server.Database.PlayerData
                 return null;
             }
 
-            return _getUser(playerContext, username);
+            return QueryUserByName(playerContext, username);
         }
 
         public static User FindById(Guid userId)
@@ -215,7 +167,7 @@ namespace Intersect.Server.Database.PlayerData
                 return null;
             }
 
-            return _getUserById(playerContext, userId);
+            return QueryUserById(playerContext, userId);
         }
     }
 }

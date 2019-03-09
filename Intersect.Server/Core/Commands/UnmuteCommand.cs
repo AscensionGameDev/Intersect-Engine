@@ -21,7 +21,7 @@ namespace Intersect.Server.Core.Commands
                 return;
             }
 
-            Mute.DeleteMute(target);
+            Mute.Remove(target);
             Console.WriteLine($@"    {Strings.Account.unmuted.ToString(target.Name)}");
         }
     }

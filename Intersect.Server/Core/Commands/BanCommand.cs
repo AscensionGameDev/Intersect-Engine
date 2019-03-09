@@ -26,7 +26,7 @@ namespace Intersect.Server.Core.Commands
 
             // TODO: Refactor the global/console messages into ModeratorActionCommand
             var name = target.Entity.Name;
-            Ban.AddBan(target, duration, reason, Strings.Commands.banuser, ip ? target.GetIp() : "");
+            Ban.Add(target, duration, reason, Strings.Commands.banuser, ip ? target.GetIp() : "");
             target.Disconnect();
             PacketSender.SendGlobalMsg(Strings.Account.banned.ToString(name));
             Console.WriteLine($@"    {Strings.Account.banned.ToString(name)}");

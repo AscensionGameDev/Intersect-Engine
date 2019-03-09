@@ -14,13 +14,16 @@ using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
+
+using JetBrains.Annotations;
+
 using Newtonsoft.Json;
 
 namespace Intersect.Server.Entities
 {
     using LegacyDatabase = LegacyDatabase;
 
-    public class EntityInstance : IDisposable
+    public partial class EntityInstance : IDisposable
     {
         [Column(Order = 1)]
         public string Name { get; set; }
@@ -70,9 +73,11 @@ namespace Intersect.Server.Entities
         public int[] StatPointAllocations { get; set; } = new int[(int)Enums.Stats.StatCount];
 
         //Inventory
+        [NotNull]
         public virtual List<InventorySlot> Items { get; set; } = new List<InventorySlot>();
 
         //Spells
+        [NotNull]
         public virtual List<SpellSlot> Spells { get; set; } = new List<SpellSlot>();
 
         [NotMapped]
