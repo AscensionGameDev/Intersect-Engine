@@ -346,6 +346,9 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString toolrequired = @"You require a {00} to interact with this resource!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString tryforgetboundspell = @"You cannot forget this spell.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocaleDictionary<int, LocalizedString> vitals = new LocaleDictionary<int, LocalizedString>(
                 new Dictionary<int, LocalizedString>
                 {
