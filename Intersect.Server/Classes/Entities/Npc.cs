@@ -146,7 +146,7 @@ namespace Intersect.Server.Entities
             var statuses = Statuses.Values.ToArray();
             foreach (var status in statuses)
             {
-                if (status.Type == StatusTypes.Stun)
+                if (status.Type == StatusTypes.Stun || status.Type == StatusTypes.Sleep)
                 {
                     return false;
                 }
@@ -243,7 +243,7 @@ namespace Intersect.Server.Entities
             var statuses = Statuses.Values.ToArray();
             foreach (var status in statuses)
             {
-                if (status.Type == StatusTypes.Stun)
+                if (status.Type == StatusTypes.Stun || status.Type == StatusTypes.Sleep)
                 {
                     return;
                 }
@@ -259,7 +259,7 @@ namespace Intersect.Server.Entities
                 //Check if the NPC is silenced or stunned
                 foreach (var status in statuses)
                 {
-                    if (status.Type == StatusTypes.Silence || status.Type == StatusTypes.Stun)
+                    if (status.Type == StatusTypes.Silence || status.Type == StatusTypes.Stun || status.Type == StatusTypes.Sleep)
                     {
                         cc = true;
                         break;
@@ -362,7 +362,7 @@ namespace Intersect.Server.Entities
             var statuses = Statuses.Values.ToArray();
             foreach (var status in statuses)
             {
-                if (status.Type == StatusTypes.Stun)
+                if (status.Type == StatusTypes.Stun || status.Type == StatusTypes.Sleep)
                 {
                     return;
                 }
@@ -519,7 +519,7 @@ namespace Intersect.Server.Entities
                                             statuses = Statuses.Values.ToArray();
                                             foreach (var status in statuses)
                                             {
-                                                if (status.Type == StatusTypes.Stun || status.Type == StatusTypes.Snare)
+                                                if (status.Type == StatusTypes.Stun || status.Type == StatusTypes.Snare || status.Type == StatusTypes.Sleep)
                                                 {
                                                     return;
                                                 }
@@ -578,7 +578,7 @@ namespace Intersect.Server.Entities
                                     statuses = Statuses.Values.ToArray();
                                     foreach (var status in statuses)
                                     {
-                                        if (status.Type == StatusTypes.Stun || status.Type == StatusTypes.Snare)
+                                        if (status.Type == StatusTypes.Stun || status.Type == StatusTypes.Snare || status.Type == StatusTypes.Sleep)
                                         {
                                             return;
                                         }
@@ -633,7 +633,7 @@ namespace Intersect.Server.Entities
                         statuses = Statuses.Values.ToArray();
                         foreach (var status in statuses)
                         {
-                            if (status.Type == StatusTypes.Stun || status.Type == StatusTypes.Snare)
+                            if (status.Type == StatusTypes.Stun || status.Type == StatusTypes.Snare || status.Type == StatusTypes.Sleep)
                             {
                                 return;
                             }

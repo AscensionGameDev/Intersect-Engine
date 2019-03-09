@@ -243,7 +243,7 @@ namespace Intersect.Client.MonoGame.Graphics
                     shader.ResetChanged();
                 }
                 mSpriteBatch.Begin(drawImmediate ? SpriteSortMode.Immediate : SpriteSortMode.Deferred, blend,
-                    null, null, rs, useEffect,
+                    SamplerState.PointWrap, null, rs, useEffect,
                     Matrix.CreateRotationZ(0f) * Matrix.CreateScale(new Vector3(1, 1, 1)) *
                     Matrix.CreateTranslation(-view.X, -view.Y, 0));
                 mCurrentSpriteView = view;
@@ -472,7 +472,7 @@ namespace Intersect.Client.MonoGame.Graphics
                 mFps = mFpsCount;
                 mFpsCount = 0;
                 mFpsTimer = Globals.System.GetTimeMs() + 1000;
-                mGameWindow.Title = Strings.Main.gamename + " fps: " + mFps + " rts: " + GameRenderTexture.RenderTextureCount + " vbos: " + GameTileBuffer.TileBufferCount;
+                mGameWindow.Title = Strings.Main.gamename;
             }
 
             foreach (var texture in mAllTextures)

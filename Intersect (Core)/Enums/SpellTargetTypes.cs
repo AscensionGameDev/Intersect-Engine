@@ -6,5 +6,6 @@ namespace Intersect.Enums
         Single = 1,
         AoE = 2,
         Projectile = 3,
+        OnHit = 4,
     }
 }

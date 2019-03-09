@@ -21,7 +21,6 @@ using Intersect.Server.Web.RestApi;
 using Open.Nat;
 #if WEBSOCKETS
 using Intersect.Server.Networking.Websockets;
-
 #endif
 
 namespace Intersect.Server.Core

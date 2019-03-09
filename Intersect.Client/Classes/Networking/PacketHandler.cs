@@ -295,6 +295,9 @@ namespace Intersect.Client.Networking
                     case ServerPackets.Shit:
                         HandleShit(bf.ReadBytes(bf.Length()));
                         break;
+                    case ServerPackets.PasswordResetResult:
+                        HandlePasswordResetResult(bf.ReadBytes(bf.Length()));
+                        break;
                     default:
                         Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                         break;
@@ -836,6 +839,15 @@ namespace Intersect.Client.Networking
             {
                 en.Status.Add(new StatusInstance(bf.ReadGuid(), bf.ReadInteger(), bf.ReadString(), bf.ReadInteger(),
                     bf.ReadInteger()));
+
+                //Check for a shield
+                if (en.Status[i].Type == (int)StatusTypes.Shield)
+                {
+                    for (var s = 0; s < (int)Vitals.VitalCount; s++)
+                    {
+                        en.Status[i].Shield[s] = bf.ReadInteger();
+                    }
+                }
             }
 
             if (Gui.GameUi != null)
@@ -1900,6 +1912,27 @@ namespace Intersect.Client.Networking
 
             public double ShitRate => Taken / (Elapsed / (double) TimeSpan.TicksPerSecond);
             public double DataRate => Totalsize / (Elapsed / (double) TimeSpan.TicksPerSecond);
+        }
+
+        private static void HandlePasswordResetResult(byte[] packet)
+        {
+            List<Character> characters = new List<Character>();
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var result = bf.ReadBoolean();
+            if (result)
+            {
+                //Show Success Message and Open Login Screen
+                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>(Strings.ResetPass.success, Strings.ResetPass.successmsg));
+                Gui.MenuUi.MainMenu.NotifyOpenLogin();
+            }
+            else
+            {
+                //Show Error Message
+                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>(Strings.ResetPass.fail, Strings.ResetPass.failmsg));
+            }
+            bf.Dispose();
+            Globals.WaitingOnServer = false;
         }
     }
 }

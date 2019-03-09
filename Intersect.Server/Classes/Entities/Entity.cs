@@ -101,6 +101,7 @@ namespace Intersect.Server.Entities
 
         //Visuals
         [NotMapped] public bool HideName { get; set; }
+        [NotMapped] public bool HideEntity { get; set; } = false;
         [NotMapped] public List<Guid> Animations { get; set; } = new List<Guid>();
 
         //DoT/HoT Spells
@@ -856,6 +857,16 @@ namespace Intersect.Server.Entities
         {
             if (vital >= Vitals.VitalCount) return;
 
+            //Check for any shields.
+            var statuses = Statuses.Values.ToArray();
+            foreach (var status in statuses)
+            {
+                if (status.Type == StatusTypes.Shield)
+                {
+                    status.DamageShield(vital, ref amount);
+                }
+            }
+
             var vitalId = (int)vital;
             var maxVitalValue = GetMaxVital(vitalId);
             var safeAmount = Math.Min(amount, GetVital(vital));
@@ -924,7 +935,7 @@ namespace Intersect.Server.Entities
                     if (((Player)this).InParty((Player)enemy) == true) return;
                 }
                 Attack(enemy, parentItem.Damage, 0, (DamageType)parentItem.DamageType, (Stats)parentItem.ScalingStat,
-                    parentItem.Scaling, parentItem.CritChance, parentItem.CritMultiplier);
+                    parentItem.Scaling, parentItem.CritChance, parentItem.CritMultiplier, null, null, true);
             }
 
             //If projectile, check if a splash spell is applied
@@ -957,7 +968,7 @@ namespace Intersect.Server.Entities
         }
 
         //Attacking with spell
-        public virtual void TryAttack(EntityInstance enemy, SpellBase spellBase)
+        public virtual void TryAttack(EntityInstance enemy, SpellBase spellBase, bool onHitTrigger = false)
         {
             if (enemy?.GetType() == typeof(Resource)) return;
             if (spellBase == null) return;
@@ -969,7 +980,7 @@ namespace Intersect.Server.Entities
             if (!spellBase.Combat.Friendly && spellBase.Combat.TargetType != (int)SpellTargetTypes.Self)
             {
                 //If about to hit self with an unfriendly spell (maybe aoe?) return
-                if (enemy == this) return;
+                if (enemy == this && spellBase.Combat.Effect != StatusTypes.OnHit) return;
 
                 //Check for parties and safe zones, friendly fire off (unless its healing)
                 if (enemy.GetType() == typeof(Player) && GetType() == typeof(Player))
@@ -1021,13 +1032,6 @@ namespace Intersect.Server.Entities
                 aliveAnimations.Add(new KeyValuePair<Guid, int>(spellBase.HitAnimationId, (int)Directions.Up));
             }
 
-            var damageHealth = spellBase.Combat.VitalDiff[0];
-            var damageMana = spellBase.Combat.VitalDiff[1];
-
-            Attack(enemy, damageHealth, damageMana, (DamageType)spellBase.Combat.DamageType,
-                (Stats)spellBase.Combat.ScalingStat,
-                spellBase.Combat.Scaling, spellBase.Combat.CritChance, spellBase.Combat.CritMultiplier, deadAnimations, aliveAnimations);
-
             var statBuffTime = -1;
             for (var i = 0; i < (int)Stats.StatCount; i++)
             {
@@ -1036,16 +1040,29 @@ namespace Intersect.Server.Entities
                     statBuffTime = spellBase.Combat.Duration;
             }
 
-            //Handle other status effects
-            if (spellBase.Combat.Effect > 0)
+            if (spellBase.Combat.Effect > 0) //Handle status effects
             {
-                new StatusInstance(enemy, spellBase, spellBase.Combat.Effect, spellBase.Combat.Duration, spellBase.Combat.TransformSprite);
-                PacketSender.SendActionMsg(enemy, Strings.Combat.status[(int)spellBase.Combat.Effect], CustomColors.Status);
+                //Check for onhit effect to avoid the onhit effect recycling.
+                if (!(onHitTrigger && spellBase.Combat.Effect == StatusTypes.OnHit))
+                {
+                    new StatusInstance(enemy, spellBase, spellBase.Combat.Effect, spellBase.Combat.Duration, spellBase.Combat.TransformSprite);
+                    PacketSender.SendActionMsg(enemy, Strings.Combat.status[(int)spellBase.Combat.Effect], CustomColors.Status);
+
+                    //If an onhit or shield status bail out as we don't want to do any damage.
+                    if (spellBase.Combat.Effect == StatusTypes.OnHit || spellBase.Combat.Effect == StatusTypes.Shield) return;
+                }
             }
             else
             {
                 if (statBuffTime > -1) new StatusInstance(enemy, spellBase, spellBase.Combat.Effect, statBuffTime, "");
             }
+
+            var damageHealth = spellBase.Combat.VitalDiff[0];
+            var damageMana = spellBase.Combat.VitalDiff[1];
+
+            Attack(enemy, damageHealth, damageMana, (DamageType)spellBase.Combat.DamageType,
+                (Stats)spellBase.Combat.ScalingStat,
+                spellBase.Combat.Scaling, spellBase.Combat.CritChance, spellBase.Combat.CritMultiplier, deadAnimations, aliveAnimations);
 
             //Handle DoT/HoT spells]
             if (spellBase.Combat.HoTDoT)
@@ -1103,7 +1120,7 @@ namespace Intersect.Server.Entities
                 var statuses = Statuses.Values.ToArray();
                 foreach (var status in statuses)
                 {
-                    if (status.Type == StatusTypes.Stun || status.Type == StatusTypes.Blind)
+                    if (status.Type == StatusTypes.Stun || status.Type == StatusTypes.Blind || status.Type == StatusTypes.Sleep)
                     {
                         PacketSender.SendActionMsg(this, Strings.Combat.miss, CustomColors.Missed);
                         PacketSender.SendEntityAttack(this, (int)EntityTypes.GlobalEntity, MapId,
@@ -1114,7 +1131,7 @@ namespace Intersect.Server.Entities
             }
 
             Attack(enemy, baseDamage, 0, damageType, scalingStat, scaling, critChance, critMultiplier, deadAnimations,
-                aliveAnimations, weapon);
+                aliveAnimations, true);
 
             //If we took damage lets reset our combat timer
             enemy.CombatTimer = Globals.Timing.TimeMs + 5000;
@@ -1122,7 +1139,7 @@ namespace Intersect.Server.Entities
 
         public void Attack(EntityInstance enemy, int baseDamage, int secondaryDamage, DamageType damageType, Stats scalingStat,
             int scaling, int critChance, double critMultiplier, List<KeyValuePair<Guid, int>> deadAnimations = null,
-            List<KeyValuePair<Guid, int>> aliveAnimations = null, ItemBase weapon = null)
+            List<KeyValuePair<Guid, int>> aliveAnimations = null, bool isAutoAttack = false)
         {
 	        bool damagingAttack = (baseDamage > 0);
             if (enemy == null) return;
@@ -1297,11 +1314,29 @@ namespace Intersect.Server.Entities
                             anim.Value);
                     }
                 }
+
+                //Check for any onhit damage bonus effects!
+                CheckForOnhitAttack(enemy, isAutoAttack);
             }
             // Add a timer before able to make the next move.
             if (GetType() == typeof(Npc))
             {
                 ((Npc)this).MoveTimer = Globals.Timing.TimeMs + (long)GetMovementTime();
+            }
+        }
+
+        void CheckForOnhitAttack(EntityInstance enemy, bool isAutoAttack)
+        {
+            if (isAutoAttack) //Ignore spell damage.
+            {
+                foreach (var status in this.Statuses.Values.ToArray())
+                {
+                    if (status.Type == StatusTypes.OnHit)
+                    {
+                        TryAttack(enemy, status.Spell, true);
+                        status.RemoveStatus();
+                    }
+                }
             }
         }
 
@@ -1317,6 +1352,7 @@ namespace Intersect.Server.Entities
                 switch (spellBase.SpellType)
                 {
                     case SpellTypes.CombatSpell:
+                    case SpellTypes.Event:
 
                         switch (spellBase.Combat.TargetType)
                         {
@@ -1362,6 +1398,15 @@ namespace Intersect.Server.Entities
                                         Dir, CastTarget);
                                 }
                                 break;
+                            case SpellTargetTypes.OnHit:
+                                if (spellBase.HitAnimationId != Guid.Empty)
+                                {
+                                    PacketSender.SendAnimationToProximity(spellBase.HitAnimationId, 1,
+                                        Id, MapId, 0, 0, Dir); //Target Type 1 will be global entity
+                                }
+
+                                new StatusInstance(this, spellBase, StatusTypes.OnHit, spellBase.Combat.OnHitDuration, spellBase.Combat.TransformSprite);
+                                break;
                             default:
                                 break;
                         }
@@ -1379,9 +1424,6 @@ namespace Intersect.Server.Entities
                         PacketSender.SendActionMsg(this, Strings.Combat.dash, CustomColors.Dash);
                         var dash = new DashInstance(this, spellBase.Combat.CastRange, Dir, Convert.ToBoolean(spellBase.Dash.IgnoreMapBlocks),
                             Convert.ToBoolean(spellBase.Dash.IgnoreActiveResources), Convert.ToBoolean(spellBase.Dash.IgnoreInactiveResources), Convert.ToBoolean(spellBase.Dash.IgnoreZDimensionAttributes));
-                        break;
-                    case SpellTypes.Event:
-                        //Handled at the player level
                         break;
                     default:
                         break;
@@ -1452,13 +1494,9 @@ namespace Intersect.Server.Entities
                                     if (spellTarget == null || spellTarget == t)
                                     {
                                         targetsHit.Add(t);
-                                        //Warp or attack.
-                                        if (spellBase.SpellType == (int)SpellTypes.CombatSpell)
-                                        {
-                                            TryAttack(t, spellBase);
-                                            if (spellTarget != null) return;
-                                        }
-                                        else
+
+                                        //Check to handle a warp to spell
+                                        if (spellBase.SpellType == SpellTypes.WarpTo)
                                         {
                                             if (spellTarget != null)
                                             {
@@ -1466,6 +1504,8 @@ namespace Intersect.Server.Entities
                                                     Dir); //Spelltarget used to be Target. I don't know if this is correct or not.
                                             }
                                         }
+
+                                        TryAttack(t, spellBase); //Handle damage
                                     }
                                 }
                             }
@@ -1706,6 +1746,7 @@ namespace Intersect.Server.Entities
             bf.WriteInteger(Dir);
             bf.WriteBoolean(Passable);
             bf.WriteBoolean(HideName);
+            bf.WriteBoolean(HideEntity);
             bf.WriteInteger(Animations.Count);
             for (var i = 0; i < Animations.Count; i++)
             {
@@ -1920,6 +1961,7 @@ namespace Intersect.Server.Entities
         private EntityInstance mEntity;
         public long StartTime;
         public StatusTypes Type;
+        public int[] shield { get; set; } = new int[(int)Enums.Vitals.VitalCount];
 
         public StatusInstance(EntityInstance en, SpellBase spell, StatusTypes type, int duration, string data)
         {
@@ -1929,6 +1971,15 @@ namespace Intersect.Server.Entities
             Duration = Globals.Timing.TimeMs + duration;
             StartTime = Globals.Timing.TimeMs;
             Data = data;
+
+            if (type == StatusTypes.Shield)
+            {
+                for (int i = (int)Vitals.Health; i < (int)Vitals.VitalCount; i++)
+                {
+                    if (spell.Combat.VitalDiff[i] > 0)
+                        shield[i] = spell.Combat.VitalDiff[i] + ((spell.Combat.Scaling * en.Stat[spell.Combat.ScalingStat].Stat) / 100);
+                }
+            }
 
 			//If new Cleanse spell, remove all over status effects.
 			if (Type == StatusTypes.Cleanse)
@@ -1968,12 +2019,40 @@ namespace Intersect.Server.Entities
             {
                 RemoveStatus();
             }
+
+            //If shield check for out of hp
+            if (Type == StatusTypes.Shield)
+            {
+                for (int i = (int)Vitals.Health; i < (int)Vitals.VitalCount; i++)
+                {
+                    if (shield[i] > 0) return;
+                }
+                RemoveStatus();
+            }
         }
 
         public void RemoveStatus()
         {
             mEntity.Statuses.Remove(Spell);
             PacketSender.SendEntityVitals(mEntity);
+        }
+
+        public void DamageShield(Vitals vital, ref int amount)
+        {
+            if (Type == StatusTypes.Shield)
+            {
+                shield[(int)vital] -= amount;
+                if (shield[(int)vital] <= 0)
+                {
+                    amount = -shield[(int)vital]; //Return piercing damage.
+                    shield[(int)vital] = 0;
+                    TryRemoveStatus();
+                }
+                else
+                {
+                    amount = 0; //Sheild is stronger than the damage dealt, so no piercing damage.
+                }
+            }
         }
     }
 

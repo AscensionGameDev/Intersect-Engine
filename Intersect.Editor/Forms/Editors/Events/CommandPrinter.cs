@@ -415,6 +415,22 @@ namespace Intersect.Editor.Forms.Editors.Events
                     varvalue = Strings.EventCommandList.dupglobalvariable.ToString(
                         ServerVariableBase.GetName(command.DupVariableId));
                     break;
+                case VariableMods.AddPlayerVar:
+                    varvalue = Strings.EventCommandList.addplayervariable.ToString(
+                        PlayerVariableBase.GetName(command.DupVariableId));
+                    break;
+                case VariableMods.AddGlobalVar:
+                    varvalue = Strings.EventCommandList.addglobalvariable.ToString(
+                        ServerVariableBase.GetName(command.DupVariableId));
+                    break;
+                case VariableMods.SubtractPlayerVar:
+                    varvalue = Strings.EventCommandList.subtractplayervariable.ToString(
+                        PlayerVariableBase.GetName(command.DupVariableId));
+                    break;
+                case VariableMods.SubtractGlobalVar:
+                    varvalue = Strings.EventCommandList.subtractglobalvariable.ToString(
+                        ServerVariableBase.GetName(command.DupVariableId));
+                    break;
             }
 
             if (command.VariableType == VariableTypes.PlayerVariable)
@@ -620,6 +636,16 @@ namespace Intersect.Editor.Forms.Editors.Events
         private static string GetCommandText(ReleasePlayerCommand command, MapInstance map)
         {
             return Strings.EventCommandList.releaseplayer;
+        }
+
+        private static string GetCommandText(HidePlayerCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.hideplayer;
+        }
+
+        private static string GetCommandText(ShowPlayerCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.showplayer;
         }
 
         private static string GetCommandText(SpawnNpcCommand command, MapInstance map)

@@ -715,6 +715,14 @@ namespace Intersect.Server.Networking
                 bf.WriteString(status.Data);
                 bf.WriteInteger((int)(status.Duration - Globals.Timing.TimeMs));
                 bf.WriteInteger((int)(status.Duration - status.StartTime));
+
+                if (status.Type == StatusTypes.Shield)
+                {
+                    for (var i = 0; i < (int)Vitals.VitalCount; i++)
+                    {
+                        bf.WriteInteger(status.shield[i]);
+                    }
+                }
             }
             //If player and in party send vitals to party just in case party members are not in the proximity
             if (en.GetType() == typeof(Player))
@@ -1944,6 +1952,15 @@ namespace Intersect.Server.Networking
             bf.WriteLong((long)ServerPackets.FriendRequest);
             bf.WriteString(partner.Name);
             bf.WriteGuid(partner.Id);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendPasswordResetResult(Client client, bool result)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((long)ServerPackets.PasswordResetResult);
+            bf.WriteBoolean(result);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }

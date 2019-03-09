@@ -14,6 +14,7 @@ using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
+using Intersect.Logging;
 using Intersect.Models;
 using Intersect.Server.Core;
 using Intersect.Server.Database;
@@ -150,6 +151,11 @@ namespace Intersect.Server
             return PlayerContext.Users.Any(p => string.Equals(p.Name.Trim(), accountname.Trim(), StringComparison.CurrentCultureIgnoreCase));
         }
 
+        public static string UsernameFromEmail([NotNull] string email)
+        {
+            return PlayerContext.Users.FirstOrDefault(p => string.Equals(p.Email.Trim(), email.Trim(), StringComparison.CurrentCultureIgnoreCase))?.Name;
+        }
+
         public static User GetUser([NotNull] string username)
         {
             return User.GetUser(PlayerContext, username);
@@ -220,6 +226,24 @@ namespace Intersect.Server
             };
             PlayerContext.Users.Add(user);
             client.SetUser(user);
+            SavePlayerDatabaseAsync();
+        }
+
+        public static void ResetPass(User user, string hashedPass)
+        {
+            var sha = new SHA256Managed();
+
+            //Generate a Salt
+            var rng = new RNGCryptoServiceProvider();
+            var buff = new byte[20];
+            rng.GetBytes(buff);
+            var salt = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(Convert.ToBase64String(buff)))).Replace("-", "");
+
+            //Hash the Password
+            var pass = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(hashedPass + salt))).Replace("-", "");
+
+            user.Salt = salt;
+            user.Password = pass;
             SavePlayerDatabaseAsync();
         }
 
@@ -920,6 +944,10 @@ namespace Intersect.Server
             {
                 sSaveGameDbTask = Task.Factory.StartNew(SaveGameDb);
             }
+            else
+            {
+                Log.Debug("DB Save Ignored - Save Task Already Processing");
+            }
         }
 
         public static void SavePlayerDatabaseAsync()
@@ -946,18 +974,26 @@ namespace Intersect.Server
         private static void SaveGameDb()
         {
             if (sGameDb == null) return;
+            var sw = new Stopwatch();
             lock (mSavingGameLock)
             {
+                sw.Start();
                 sGameDb.SaveChanges();
+                sw.Stop();
+                Log.Info("Game DB Save - Took " + sw.ElapsedMilliseconds + "ms to complete.");
             }
         }
 
         private static void SavePlayerDb()
         {
             if (PlayerContext == null) return;
+            var sw = new Stopwatch();
             lock (mSavingPlayerLock)
             {
+                sw.Start();
                 PlayerContext.SaveChanges();
+                sw.Stop();
+                Log.Info("Player DB Save - Took " + sw.ElapsedMilliseconds + "ms to complete.");
             }
         }
 

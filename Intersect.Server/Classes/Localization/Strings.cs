@@ -336,6 +336,15 @@ namespace Intersect.Server.Localization
             );
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString sleepattacking = @"You are asleep and can't attack.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString sleepblocking = @"You are asleep and can't block.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString sleep = @"You cannot cast this ability whilst asleep";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString stunattacking = @"You are stunned and can't attack.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -349,6 +358,9 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString toolrequired = @"You require a {00} to interact with this resource!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString tryforgetboundspell = @"You cannot forget this spell.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocaleDictionary<int, LocalizedString> vitals = new LocaleDictionary<int, LocalizedString>(
@@ -659,6 +671,9 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString notimplemented = @"Use of this item type is not yet implemented.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString sleep = @"You cannot use this item whilst asleep.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString statreq = @"You do not possess the correct combat stats to use this item.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -832,6 +847,17 @@ namespace Intersect.Server.Localization
 
         }
 
+        public sealed class NotificationsNamespace : LocaleNamespace
+        {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
+            public readonly LocalizedString product = @"Intersect Game Engine";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
+            public readonly LocalizedString copyright = "Copyright (C) 2019 Ascension Game Dev, All Rights Reserved";
+        }
+
         public sealed class PartiesNamespace : LocaleNamespace
         {
 
@@ -873,6 +899,13 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString notinparty = @"You are not in a party.";
 
+        }
+
+        public sealed class PasswordResetNotificationNamespace : LocaleNamespace
+        {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
+            public readonly LocalizedString subject = @"Intersect Game Engine - Password Reset Code";
         }
 
         public sealed class PlayerNamespace : LocaleNamespace
@@ -1234,7 +1267,13 @@ namespace Intersect.Server.Localization
 
             [NotNull] public readonly NetworkingNamespace Networking = new NetworkingNamespace();
 
+            [NotNull] public readonly NotificationsNamespace NotificationsNamespace = new NotificationsNamespace();
+
             [NotNull] public readonly PartiesNamespace Parties = new PartiesNamespace();
+
+            [NotNull]
+            public readonly PasswordResetNotificationNamespace PasswordResetNotificationNamespace =
+                new PasswordResetNotificationNamespace();
 
             [NotNull] public readonly PlayerNamespace Player = new PlayerNamespace();
 
@@ -1325,7 +1364,14 @@ namespace Intersect.Server.Localization
         public static NetworkingNamespace Networking => Root.Networking;
 
         [NotNull]
+        public static NotificationsNamespace Notifications => Root.NotificationsNamespace;
+
+        [NotNull]
         public static PartiesNamespace Parties => Root.Parties;
+
+        [NotNull]
+        public static PasswordResetNotificationNamespace PasswordResetNotification =>
+            Root.PasswordResetNotificationNamespace;
 
         [NotNull]
         public static PlayerNamespace Player => Root.Player;

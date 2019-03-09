@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Linq;
+using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 using Newtonsoft.Json.Linq;
@@ -18,6 +21,9 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected float mNudgeAmount;
         protected float mScrollAmount;
         protected float mViewableContentSize;
+
+        private GameTexture mBackgroundTemplateTex;
+        private string mBackgroundTemplateFilename;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ScrollBar" /> class.
@@ -97,6 +103,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         public override JObject GetJson()
         {
             var obj = base.GetJson();
+            obj.Add("BackgroundTemplate", mBackgroundTemplateFilename);
             obj.Add("UpOrLeftButton", mScrollButton[0].GetJson());
             obj.Add("Bar", mBar.GetJson());
             obj.Add("DownOrRightButton", mScrollButton[1].GetJson());
@@ -106,9 +113,26 @@ namespace Intersect.Client.Framework.Gwen.Control
         public override void LoadJson(JToken obj)
         {
             base.LoadJson(obj);
+            if (obj["BackgroundTemplate"] != null) SetBackgroundTemplate(GameContentManager.Current.GetTexture(GameContentManager.TextureType.Gui, (string)obj["BackgroundTemplate"]), (string)obj["BackgroundTemplate"]);
             if (obj["UpOrLeftButton"] != null) mScrollButton[0].LoadJson(obj["UpOrLeftButton"]);
             if (obj["Bar"] != null) mBar.LoadJson(obj["Bar"]);
             if (obj["DownOrRightButton"] != null) mScrollButton[1].LoadJson(obj["DownOrRightButton"]);
+        }
+
+        public GameTexture GetTemplate()
+        {
+            return mBackgroundTemplateTex;
+        }
+
+        public void SetBackgroundTemplate(GameTexture texture, string fileName)
+        {
+            if (texture == null && !string.IsNullOrWhiteSpace(fileName))
+            {
+                texture = GameContentManager.Current?.GetTexture(GameContentManager.TextureType.Gui, fileName);
+            }
+
+            mBackgroundTemplateFilename = fileName;
+            mBackgroundTemplateTex = texture;
         }
 
 

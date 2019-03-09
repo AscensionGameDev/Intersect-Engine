@@ -117,5 +117,9 @@
         //Pictures
         ShowPicture,
         HidePicture,
+
+        //Hide/show player
+        HidePlayer,
+        ShowPlayer,
     }
 }

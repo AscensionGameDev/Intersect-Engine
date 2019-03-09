@@ -30,6 +30,10 @@ namespace Intersect.Enums
         SystemTime,
         DupPlayerVar,
         DupGlobalVar,
+        AddPlayerVar,
+        AddGlobalVar,
+        SubtractPlayerVar,
+        SubtractGlobalVar,
     }
 
     public enum VariableComparators

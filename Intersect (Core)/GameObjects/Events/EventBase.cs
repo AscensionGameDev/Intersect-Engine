@@ -17,15 +17,30 @@ namespace Intersect.GameObjects.Events
         public bool CommonEvent { get; set; }
         public bool Global { get; set; }
 
+        //Cached Pages Data
+        private string mCachedPagesData = null;
+
         [JsonIgnore]
         [Column("Pages")]
         public string PagesJson
         {
-            get => JsonConvert.SerializeObject(Pages, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
+            get => mCachedPagesData;
             protected set => Pages = JsonConvert.DeserializeObject<List<EventPage>>(value, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
         }
+
+        //Event Pages
+        private List<EventPage> mPages = new List<EventPage>();
+
         [NotMapped]
-        public List<EventPage> Pages { get; set; } = new List<EventPage>();
+        public List<EventPage> Pages
+        {
+            get => mPages;
+            set
+            {
+                mPages = value;
+                mCachedPagesData = JsonConvert.SerializeObject(Pages, new JsonSerializerSettings() {TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace});
+            }
+        }
 
         //EF Parameterless Constructor
         public EventBase()

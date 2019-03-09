@@ -14,7 +14,7 @@ namespace Intersect.Server.Migrations.Game
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.1-rtm-30846");
+                .HasAnnotation("ProductVersion", "2.1.3-rtm-32065");
 
             modelBuilder.Entity("Intersect.GameObjects.AnimationBase", b =>
                 {
@@ -54,7 +54,7 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<long>("ExpIncrease");
 
-                    b.Property<int>("IncreasePercentage");
+                    b.Property<bool>("IncreasePercentage");
 
                     b.Property<string>("JsonBaseStats")
                         .HasColumnName("BaseStats");
@@ -587,6 +587,8 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<bool>("Bound");
+
                     b.Property<Guid>("CastAnimationId")
                         .HasColumnName("CastAnimation");
 
@@ -654,7 +656,7 @@ namespace Intersect.Server.Migrations.Game
                     b.ToTable("Time");
                 });
 
-            modelBuilder.Entity("Intersect.Server.Classes.Maps.MapInstance", b =>
+            modelBuilder.Entity("Intersect.Server.Maps.MapInstance", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
@@ -918,6 +920,9 @@ namespace Intersect.Server.Migrations.Game
                             b1.Property<bool>("HoTDoT");
 
                             b1.Property<int>("HotDotInterval");
+
+                            b1.Property<int>("OnHitDuration")
+                                .HasColumnName("OnHit");
 
                             b1.Property<Guid>("ProjectileId")
                                 .HasColumnName("Projectile");

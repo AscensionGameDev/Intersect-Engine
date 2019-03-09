@@ -13,6 +13,7 @@ namespace Intersect
         public static Color HpBackground = Color.Black;
         public static Color CastingForeground = Color.Cyan;
         public static Color CastingBackground = Color.Black;
+        public static Color ShieldForeground = Color.White;
 
         public static Color EventName = Color.White;
         public static Color EventNameBorder = Color.Black;

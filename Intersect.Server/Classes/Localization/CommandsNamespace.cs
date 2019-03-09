@@ -67,14 +67,14 @@ namespace Intersect.Server.Localization
                 public readonly LocaleArgument IpBan = new LocaleArgument
                 {
                     Name = @"ip-ban",
-                    Description = @"if it is an IP ban"
+                    Description = @"if it is an IP ban (true/false)"
                 };
 
                 [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
                 public readonly LocaleArgument IpMute = new LocaleArgument
                 {
                     Name = @"ip-ban",
-                    Description = @"if it is an IP mute"
+                    Description = @"if it is an IP mute (true/false)"
                 };
 
                 [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]

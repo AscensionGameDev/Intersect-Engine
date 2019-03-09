@@ -458,6 +458,8 @@
     <Compile Include="Classes\Networking\Helpers\UPnP.cs" />
     <Compile Include="Classes\Networking\Websockets\WebSocketConnection.cs" />
     <Compile Include="Classes\Networking\Websockets\WebSocketNetwork.cs" />
+    <Compile Include="Classes\Notifications\Notification.cs" />
+    <Compile Include="Classes\Notifications\ResetPassword.cs" />
     <Compile Include="Classes\Spells\SpellInstance.cs" />
     <Compile Include="Classes\Networking\Lidgren\ServerNetwork.cs" />
     <Compile Include="Classes\Networking\Lidgren\ThreadYieldNet40.cs" />
@@ -511,17 +513,13 @@
     <Compile Include="Migrations\20180927161502_InitialPlayerDb.designer.cs">
       <DependentUpon>20180927161502_InitialPlayerDb.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\20190303005156_RefreshTokens.cs" />
-    <Compile Include="Migrations\20190303005156_RefreshTokens.designer.cs">
-      <DependentUpon>20190303005156_RefreshTokens.cs</DependentUpon>
+    <Compile Include="Migrations\Game\20190303234637_SpellUpgrades_OnHit_Shields.cs" />
+    <Compile Include="Migrations\Game\20190303234637_SpellUpgrades_OnHit_Shields.Designer.cs">
+      <DependentUpon>20190303234637_SpellUpgrades_OnHit_Shields.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\20190303044742_RefreshTokensAddClientId.cs" />
-    <Compile Include="Migrations\20190303044742_RefreshTokensAddClientId.designer.cs">
-      <DependentUpon>20190303044742_RefreshTokensAddClientId.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\20190306223934_RefreshTokensAddTicketId.cs" />
-    <Compile Include="Migrations\20190306223934_RefreshTokensAddTicketId.designer.cs">
-      <DependentUpon>20190306223934_RefreshTokensAddTicketId.cs</DependentUpon>
+    <Compile Include="Migrations\Game\20190306224847_BoundSpells.cs" />
+    <Compile Include="Migrations\Game\20190306224847_BoundSpells.Designer.cs">
+      <DependentUpon>20190306224847_BoundSpells.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />
     <Compile Include="Web\RestApi\Attributes\ConfigurableAuthorizeAttribute.cs" />

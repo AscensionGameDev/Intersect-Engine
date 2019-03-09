@@ -67,6 +67,7 @@ namespace Intersect.Server.Networking
             this.mConnection = connection;
             mConnectTime = Globals.Timing.TimeMs;
             mConnectionTimeout = Globals.Timing.TimeMs + mTimeout;
+            PacketSender.SendServerConfig(this);
         }
 
         public void SetUser(User user)
