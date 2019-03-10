@@ -518,6 +518,10 @@
     <Compile Include="Migrations\20190310001204_AddRefreshTokens.designer.cs">
       <DependentUpon>20190310001204_AddRefreshTokens.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\20190310013418_StandardizeVocabulary1.cs" />
+    <Compile Include="Migrations\20190310013418_StandardizeVocabulary1.designer.cs">
+      <DependentUpon>20190310013418_StandardizeVocabulary1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Game\20190303234637_SpellUpgrades_OnHit_Shields.cs" />
     <Compile Include="Migrations\Game\20190303234637_SpellUpgrades_OnHit_Shields.Designer.cs">
       <DependentUpon>20190303234637_SpellUpgrades_OnHit_Shields.cs</DependentUpon>
