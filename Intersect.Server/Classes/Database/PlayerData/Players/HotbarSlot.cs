@@ -8,16 +8,15 @@ using Newtonsoft.Json;
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
-namespace Intersect.Server.Database.PlayerData.Characters
+namespace Intersect.Server.Database.PlayerData.Players
 {
-    // TODO: Implement ISlot
-    public class HotbarSlot
+    public class HotbarSlot : ISlot, IPlayerOwned
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; private set; }
-        public Guid CharacterId { get; private set; }
-        [JsonIgnore] public virtual Player Character { get; private set; }
-        public int Index { get; private set; }
+        public Guid PlayerId { get; private set; }
+        [JsonIgnore] public virtual Player Player { get; private set; }
+        public int Slot { get; private set; }
         public Guid ItemOrSpellId { get; set; } = Guid.Empty;
         public Guid BagId { get; set; } = Guid.Empty;
         
@@ -35,9 +34,9 @@ namespace Intersect.Server.Database.PlayerData.Characters
             
         }
 
-        public HotbarSlot(int index)
+        public HotbarSlot(int slot)
         {
-            Index = index;
+            Slot = slot;
         }
     }
 }

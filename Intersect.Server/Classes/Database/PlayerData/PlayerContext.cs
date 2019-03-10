@@ -3,7 +3,7 @@ using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 using Intersect.Server.Classes.Database.PlayerData.Api;
-using Intersect.Server.Database.PlayerData.Characters;
+using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Entities;
 using Intersect.Utilities;
 using JetBrains.Annotations;
@@ -17,23 +17,23 @@ namespace Intersect.Server.Database.PlayerData
 
         [NotNull] public DbSet<User> Users { get; set; }
 
-        [NotNull] public DbSet<Player> Characters { get; set; }
-        [NotNull] public DbSet<BankSlot> Character_Bank { get; set; }
-        [NotNull] public DbSet<Friend> Character_Friends { get; set; }
-        [NotNull] public DbSet<HotbarSlot> Character_Hotbar { get; set; }
-        [NotNull] public DbSet<InventorySlot> Character_Items { get; set; }
-        [NotNull] public DbSet<Quest> Character_Quests { get; set; }
-        [NotNull] public DbSet<SpellSlot> Character_Spells { get; set; }
-        [NotNull] public DbSet<Switch> Character_Switches { get; set; }
-        [NotNull] public DbSet<Variable> Character_Variables { get; set; }
-
-        [NotNull] public DbSet<Bag> Bags { get; set; }
-        [NotNull] public DbSet<BagSlot> Bag_Items { get; set; }
-
         [NotNull] public DbSet<Mute> Mutes { get; set; }
         [NotNull] public DbSet<Ban> Bans { get; set; }
 
         [NotNull] public DbSet<RefreshToken> RefreshTokens { get; set; }
+
+        [NotNull] public DbSet<Player> Players { get; set; }
+        [NotNull] public DbSet<BankSlot> Player_Bank { get; set; }
+        [NotNull] public DbSet<Friend> Player_Friends { get; set; }
+        [NotNull] public DbSet<HotbarSlot> Player_Hotbar { get; set; }
+        [NotNull] public DbSet<InventorySlot> Player_Items { get; set; }
+        [NotNull] public DbSet<Quest> Player_Quests { get; set; }
+        [NotNull] public DbSet<SpellSlot> Player_Spells { get; set; }
+        [NotNull] public DbSet<Switch> Player_Switches { get; set; }
+        [NotNull] public DbSet<Variable> Player_Variables { get; set; }
+
+        [NotNull] public DbSet<Bag> Bags { get; set; }
+        [NotNull] public DbSet<BagSlot> Bag_Items { get; set; }
 
         private DatabaseUtils.DbProvider mConnection = DatabaseUtils.DbProvider.Sqlite;
         private string mConnectionString = @"Data Source=resources/playerdata.db";
@@ -81,37 +81,37 @@ namespace Intersect.Server.Database.PlayerData
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>().HasMany(b => b.Players).WithOne(p => p.Account);
+            modelBuilder.Entity<RefreshToken>().HasOne(token => token.User);
 
-            modelBuilder.Entity<User>().HasMany(user => user.RefreshTokens).WithOne(token => token.User);
+            modelBuilder.Entity<Ban>().HasOne(b => b.User);
+            modelBuilder.Entity<Mute>().HasOne(b => b.User);
+
+            modelBuilder.Entity<User>().HasMany(b => b.Players).WithOne(p => p.User);
 
             modelBuilder.Entity<Player>().HasMany(b => b.Friends).WithOne(p => p.Owner);
 
-            modelBuilder.Entity<Player>().HasMany(b => b.Spells).WithOne(p => p.Character);
+            modelBuilder.Entity<Player>().HasMany(b => b.Spells).WithOne(p => p.Player);
 
-            modelBuilder.Entity<Player>().HasMany(b => b.Items).WithOne(p => p.Character);
+            modelBuilder.Entity<Player>().HasMany(b => b.Items).WithOne(p => p.Player);
 
-            modelBuilder.Entity<Player>().HasMany(b => b.Switches).WithOne(p => p.Character);
-            modelBuilder.Entity<Switch>().HasIndex(p => new { p.SwitchId, p.CharacterId }).IsUnique();
+            modelBuilder.Entity<Player>().HasMany(b => b.Switches).WithOne(p => p.Player);
+            modelBuilder.Entity<Switch>().HasIndex(p => new { p.SwitchId, CharacterId = p.PlayerId }).IsUnique();
 
-            modelBuilder.Entity<Player>().HasMany(b => b.Variables).WithOne(p => p.Character);
-            modelBuilder.Entity<Variable>().HasIndex(p => new { p.VariableId, p.CharacterId }).IsUnique();
+            modelBuilder.Entity<Player>().HasMany(b => b.Variables).WithOne(p => p.Player);
+            modelBuilder.Entity<Variable>().HasIndex(p => new { p.VariableId, CharacterId = p.PlayerId }).IsUnique();
 
-            modelBuilder.Entity<Player>().HasMany(b => b.Hotbar).WithOne(p => p.Character);
+            modelBuilder.Entity<Player>().HasMany(b => b.Hotbar).WithOne(p => p.Player);
 
-            modelBuilder.Entity<Player>().HasMany(b => b.Quests).WithOne(p => p.Character);
-            modelBuilder.Entity<Quest>().HasIndex(p => new { p.QuestId, p.CharacterId }).IsUnique();
+            modelBuilder.Entity<Player>().HasMany(b => b.Quests).WithOne(p => p.Player);
+            modelBuilder.Entity<Quest>().HasIndex(p => new { p.QuestId, CharacterId = p.PlayerId }).IsUnique();
 
-            modelBuilder.Entity<Player>().HasMany(b => b.Bank).WithOne(p => p.Character);
+            modelBuilder.Entity<Player>().HasMany(b => b.Bank).WithOne(p => p.Player);
 
             modelBuilder.Entity<Bag>().HasMany(b => b.Slots).WithOne(p => p.ParentBag).HasForeignKey(p => p.ParentBagId);
 
             modelBuilder.Entity<InventorySlot>().HasOne(b => b.Bag);
             modelBuilder.Entity<BagSlot>().HasOne(b => b.Bag);
             modelBuilder.Entity<BankSlot>().HasOne(b => b.Bag);
-
-            modelBuilder.Entity<Ban>().HasOne(b => b.User);
-            modelBuilder.Entity<Mute>().HasOne(b => b.User);
 
         }
 

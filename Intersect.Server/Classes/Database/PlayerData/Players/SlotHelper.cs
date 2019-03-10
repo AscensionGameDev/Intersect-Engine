@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Intersect.Server.Database.PlayerData.Characters
+namespace Intersect.Server.Database.PlayerData.Players
 {
 
     public static class SlotHelper

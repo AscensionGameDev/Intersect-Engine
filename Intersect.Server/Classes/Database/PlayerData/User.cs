@@ -46,7 +46,6 @@ namespace Intersect.Server.Database.PlayerData
 
         public virtual List<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 
-        [Column("Characters")]
         public virtual List<Player> Players { get; set; } = new List<Player>();
 
         [NotNull]

@@ -11,7 +11,7 @@ using Intersect.Logging;
 using Intersect.Models;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
-using Intersect.Server.Database.PlayerData.Characters;
+using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities;
 using Intersect.Server.General;

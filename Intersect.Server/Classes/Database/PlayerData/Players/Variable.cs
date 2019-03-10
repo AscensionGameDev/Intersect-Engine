@@ -6,14 +6,14 @@ using Newtonsoft.Json;
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
-namespace Intersect.Server.Database.PlayerData.Characters
+namespace Intersect.Server.Database.PlayerData.Players
 {
-    public class Variable
+    public class Variable : IPlayerOwned
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; private set; }
-        public Guid CharacterId { get; private set; }
-        [JsonIgnore] public virtual Player Character { get; private set; }
+        public Guid PlayerId { get; private set; }
+        [JsonIgnore] public virtual Player Player { get; private set; }
         public Guid VariableId { get; private set; }
         public long Value { get; set; }
 

@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
-namespace Intersect.Server.Database.PlayerData.Characters
+namespace Intersect.Server.Database.PlayerData.Players
 {
     public class BagSlot : Item, ISlot
     {

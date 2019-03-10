@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
-namespace Intersect.Server.Database.PlayerData.Characters
+namespace Intersect.Server.Database.PlayerData.Players
 {
     public class Bag
     {

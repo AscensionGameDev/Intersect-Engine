@@ -1,6 +1,6 @@
 ﻿using System;
 using Intersect.Server.Database;
-using Intersect.Server.Database.PlayerData.Characters;
+using Intersect.Server.Database.PlayerData.Players;
 
 namespace Intersect.Server.Maps
 {

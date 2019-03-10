@@ -6,25 +6,24 @@ using Newtonsoft.Json;
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
-namespace Intersect.Server.Database.PlayerData.Characters
+namespace Intersect.Server.Database.PlayerData.Players
 {
-    public class Switch
+    public class SpellSlot : Spell, ISlot, IPlayerOwned
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; private set; }
-        public Guid CharacterId { get; private set; }
-        [JsonIgnore] public virtual Player Character { get; private set; }
-        public Guid SwitchId { get; private set; }
-        public bool Value { get; set; }
+        public Guid PlayerId { get; private set; }
+        [JsonIgnore] public virtual Player Player { get; private set; }
+        public int Slot { get; private set; }
 
-        public Switch()
+        public SpellSlot()
         {
-            
+
         }
 
-        public Switch(Guid id)
+        public SpellSlot(int slot)
         {
-            SwitchId = id;
+            Slot = slot;
         }
     }
 }

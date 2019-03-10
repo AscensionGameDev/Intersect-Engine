@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Enums;
 using Intersect.GameObjects;
-using Intersect.Server.Database.PlayerData.Characters;
+using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.General;
 using Intersect.Utilities;
 

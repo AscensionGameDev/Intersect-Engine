@@ -11,7 +11,7 @@ using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
 using Intersect.GameObjects.Maps;
 using Intersect.Server.Database;
-using Intersect.Server.Database.PlayerData.Characters;
+using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.EventProcessing;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
@@ -20,7 +20,7 @@ using Intersect.Server.Networking;
 using Intersect.Utilities;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
-using Switch = Intersect.Server.Database.PlayerData.Characters.Switch;
+using Switch = Intersect.Server.Database.PlayerData.Players.Switch;
 
 namespace Intersect.Server.Entities
 {
@@ -88,7 +88,7 @@ namespace Intersect.Server.Entities
 
             if (Hotbar.Count < Options.MaxHotbar)
             {
-                Hotbar.Sort((a, b) => a?.Index - b?.Index ?? 0);
+                Hotbar.Sort((a, b) => a?.Slot - b?.Slot ?? 0);
                 for (var i = Hotbar.Count; i < Options.MaxHotbar; i++)
                 {
                     Hotbar.Add(new HotbarSlot(i));

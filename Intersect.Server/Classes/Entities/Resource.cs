@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Server.Database;
-using Intersect.Server.Database.PlayerData.Characters;
+using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.General;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;

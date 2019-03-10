@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 
-namespace Intersect.Server.Database.PlayerData.Characters
+namespace Intersect.Server.Database.PlayerData.Players
 {
     public class Friend
     {

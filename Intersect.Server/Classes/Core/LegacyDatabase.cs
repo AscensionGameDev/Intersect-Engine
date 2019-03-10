@@ -20,7 +20,7 @@ using Intersect.Server.Core;
 using Intersect.Server.Database;
 using Intersect.Server.Database.GameData;
 using Intersect.Server.Database.PlayerData;
-using Intersect.Server.Database.PlayerData.Characters;
+using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities;
 using Intersect.Server.General;
@@ -177,12 +177,12 @@ namespace Intersect.Server
 
         public static bool CharacterNameInUse([NotNull]string name)
         {
-            return PlayerContext.Characters.Any(p => string.Equals(p.Name.Trim(), name.Trim(), StringComparison.CurrentCultureIgnoreCase));
+            return PlayerContext.Players.Any(p => string.Equals(p.Name.Trim(), name.Trim(), StringComparison.CurrentCultureIgnoreCase));
         }
 
         public static Guid? GetCharacterId([NotNull]string name)
         {
-            return PlayerContext.Characters.Where(p => string.Equals(p.Name.Trim(), name.Trim(), StringComparison.CurrentCultureIgnoreCase))?.First()?.Id;
+            return PlayerContext.Players.Where(p => string.Equals(p.Name.Trim(), name.Trim(), StringComparison.CurrentCultureIgnoreCase))?.First()?.Id;
         }
 
         public static Player GetPlayer(Guid playerId)
@@ -284,7 +284,7 @@ namespace Intersect.Server
         
         public static void DeleteCharacter(Player chr)
         {
-            PlayerContext.Characters.Remove(chr);
+            PlayerContext.Players.Remove(chr);
         }
 
         //Bags
@@ -1165,16 +1165,16 @@ namespace Intersect.Server
                     else if (!gameDb && newPlayerContext != null)
                     {
                         MigrateDbSet(PlayerContext.Users, newPlayerContext.Users);
-                        MigrateDbSet(PlayerContext.Characters, newPlayerContext.Characters);
-                        MigrateDbSet(PlayerContext.Character_Friends, newPlayerContext.Character_Friends);
-                        MigrateDbSet(PlayerContext.Character_Spells, newPlayerContext.Character_Spells);
-                        MigrateDbSet(PlayerContext.Character_Switches, newPlayerContext.Character_Switches);
-                        MigrateDbSet(PlayerContext.Character_Variables, newPlayerContext.Character_Variables);
-                        MigrateDbSet(PlayerContext.Character_Hotbar, newPlayerContext.Character_Hotbar);
-                        MigrateDbSet(PlayerContext.Character_Quests, newPlayerContext.Character_Quests);
+                        MigrateDbSet(PlayerContext.Players, newPlayerContext.Players);
+                        MigrateDbSet(PlayerContext.Player_Friends, newPlayerContext.Player_Friends);
+                        MigrateDbSet(PlayerContext.Player_Spells, newPlayerContext.Player_Spells);
+                        MigrateDbSet(PlayerContext.Player_Switches, newPlayerContext.Player_Switches);
+                        MigrateDbSet(PlayerContext.Player_Variables, newPlayerContext.Player_Variables);
+                        MigrateDbSet(PlayerContext.Player_Hotbar, newPlayerContext.Player_Hotbar);
+                        MigrateDbSet(PlayerContext.Player_Quests, newPlayerContext.Player_Quests);
                         MigrateDbSet(PlayerContext.Bags, newPlayerContext.Bags);
-                        MigrateDbSet(PlayerContext.Character_Items, newPlayerContext.Character_Items);
-                        MigrateDbSet(PlayerContext.Character_Bank, newPlayerContext.Character_Bank);
+                        MigrateDbSet(PlayerContext.Player_Items, newPlayerContext.Player_Items);
+                        MigrateDbSet(PlayerContext.Player_Bank, newPlayerContext.Player_Bank);
                         MigrateDbSet(PlayerContext.Bag_Items, newPlayerContext.Bag_Items);
                         MigrateDbSet(PlayerContext.Mutes, newPlayerContext.Mutes);
                         MigrateDbSet(PlayerContext.Bans, newPlayerContext.Bans);

@@ -14,19 +14,16 @@ using Newtonsoft.Json;
 
 namespace Intersect.Server.Entities
 {
-    [Table("Characters")]
     public partial class Player
     {
 
         #region Account
 
-        [ForeignKey(nameof(User))] // SOURCE TODO: Migrate column
-        [NotMapped] public Guid UserId { get; private set; }
+        [ForeignKey(nameof(User))]
+        public Guid UserId { get; private set; }
 
-        [JsonIgnore] // SOURCE TODO: Migrate column
-        [NotMapped] public virtual User User { get; private set; }
-
-        public virtual User Account { get; private set; }
+        [JsonIgnore]
+        public virtual User User { get; private set; }
 
         #endregion
 
@@ -91,7 +88,7 @@ namespace Intersect.Server.Entities
             {
                 player.Bank = player.Bank.OrderBy(bankSlot => bankSlot?.Slot).ToList();
                 player.Items = player.Items.OrderBy(inventorySlot => inventorySlot?.Slot).ToList();
-                player.Hotbar = player.Hotbar.OrderBy(hotbarSlot => hotbarSlot?.Index).ToList();
+                player.Hotbar = player.Hotbar.OrderBy(hotbarSlot => hotbarSlot?.Slot).ToList();
                 player.Spells = player.Spells.OrderBy(spellSlot => spellSlot?.Slot).ToList();
             }
 
@@ -104,7 +101,7 @@ namespace Intersect.Server.Entities
 
         [NotNull] private static readonly Func<PlayerContext, Guid, Player> QueryPlayerById =
             EF.CompileQuery((PlayerContext context, Guid id) =>
-                context.Characters
+                context.Players
                     .Include(p => p.Bank)
                     .Include(p => p.Friends)
                     .ThenInclude(p => p.Target)
@@ -119,7 +116,7 @@ namespace Intersect.Server.Entities
 
         [NotNull] private static readonly Func<PlayerContext, string, Player> QueryPlayerByName =
             EF.CompileQuery((PlayerContext context, string name) =>
-                context.Characters
+                context.Players
                     .Include(p => p.Bank)
                     .Include(p => p.Friends)
                     .ThenInclude(p => p.Target)
