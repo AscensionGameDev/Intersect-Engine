@@ -7,6 +7,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+
+using Intersect.Server.Classes.Database.PlayerData.Api;
+
 using JetBrains.Annotations;
 using Intersect.Server.Database.PlayerData.Security;
 
@@ -41,6 +44,7 @@ namespace Intersect.Server.Database.PlayerData
         private bool mMuted { get; set; }
         private string mMuteStatus { get; set; }
 
+        public virtual List<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 
         [Column("Characters")]
         public virtual List<Player> Players { get; set; } = new List<Player>();

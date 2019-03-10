@@ -513,6 +513,10 @@
     <Compile Include="Migrations\20180927161502_InitialPlayerDb.designer.cs">
       <DependentUpon>20180927161502_InitialPlayerDb.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\20190310001204_AddRefreshTokens.cs" />
+    <Compile Include="Migrations\20190310001204_AddRefreshTokens.designer.cs">
+      <DependentUpon>20190310001204_AddRefreshTokens.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Game\20190303234637_SpellUpgrades_OnHit_Shields.cs" />
     <Compile Include="Migrations\Game\20190303234637_SpellUpgrades_OnHit_Shields.Designer.cs">
       <DependentUpon>20190303234637_SpellUpgrades_OnHit_Shields.cs</DependentUpon>

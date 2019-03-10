@@ -20,8 +20,10 @@ namespace Intersect.Server.Classes.Database.PlayerData.Api
         [Key]
         public Guid Id { get; set; }
 
-        [Required]
+        [Required, ForeignKey(nameof(User))]
         public Guid UserId { get; set; }
+
+        public User User { get; set; }
 
         public Guid ClientId { get; set; }
 

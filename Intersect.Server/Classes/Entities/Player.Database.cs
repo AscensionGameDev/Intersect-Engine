@@ -14,16 +14,19 @@ using Newtonsoft.Json;
 
 namespace Intersect.Server.Entities
 {
+    [Table("Characters")]
     public partial class Player
     {
 
         #region Account
 
-        [ForeignKey("Account"), Column("AccountId")] // SOURCE TODO: Migrate column
-        public Guid UserId { get; private set; }
+        [ForeignKey(nameof(User))] // SOURCE TODO: Migrate column
+        [NotMapped] public Guid UserId { get; private set; }
 
-        [JsonIgnore, Column("Account")] // SOURCE TODO: Migrate column
-        public virtual User User { get; private set; }
+        [JsonIgnore] // SOURCE TODO: Migrate column
+        [NotMapped] public virtual User User { get; private set; }
+
+        public virtual User Account { get; private set; }
 
         #endregion
 

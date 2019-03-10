@@ -11,7 +11,6 @@ using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
 using Intersect.GameObjects.Maps;
 using Intersect.Server.Database;
-using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Database.PlayerData.Characters;
 using Intersect.Server.EventProcessing;
 using Intersect.Server.General;
@@ -27,7 +26,6 @@ namespace Intersect.Server.Entities
 {
     using LegacyDatabase = LegacyDatabase;
 
-    [Table("Characters")]
     public partial class Player : EntityInstance
     {
         //Online Players List
