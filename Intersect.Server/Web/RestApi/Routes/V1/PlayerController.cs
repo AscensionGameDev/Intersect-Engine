@@ -81,7 +81,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid player name '{playerName}'.");
             }
 
-            var player = Player.Fetch(playerName);
+            var (client, player) = Player.Fetch(playerName);
             if (player != null)
             {
                 return player;
@@ -228,7 +228,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid player id '{playerId}'.");
             }
 
-            var player = Player.Fetch(playerId);
+            var (client, player) = Player.Fetch(playerId);
             if (player != null)
             {
                 return player;
