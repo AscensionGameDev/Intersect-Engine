@@ -4,7 +4,7 @@ using System.Text;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Database.PlayerData.Security;
 using JetBrains.Annotations;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore;
 
 namespace Intersect.Server.Classes.Database.PlayerData.SeedData
 {
@@ -24,15 +24,27 @@ namespace Intersect.Server.Classes.Database.PlayerData.SeedData
                 var hash = algorithm.ComputeHash(Encoding.UTF8.GetBytes(password));
                 var salted = $@"{BitConverter.ToString(hash).Replace("-", "")}{salt}";
                 var saltedHash = algorithm.ComputeHash(Encoding.UTF8.GetBytes(salted));
-                return BitConverter.ToString(hash).Replace("-", "");
+                return BitConverter.ToString(saltedHash).Replace("-", "");
             }
         }
 
-        public override void Seed([NotNull] EntityTypeBuilder<User> entityTypeBuilder)
+        private User CreateUser([NotNull] string name, [NotNull] string email, [NotNull] string salt, [NotNull] string password, [NotNull] UserRights power)
+        {
+            return new User
+            {
+                Name = name,
+                Email = email,
+                Salt = salt,
+                Password = password,
+                Power = power
+            };
+        }
+
+        public override void Seed([NotNull] DbSet<User> dbSet)
         {
             using (var rng = new RNGCryptoServiceProvider())
             {
-                for (var n = 1; n <= 30; ++n)
+                for (var n = 0; n <= 30; ++n)
                 {
                     var salt = GenerateSalt(rng);
 
@@ -45,11 +57,11 @@ namespace Intersect.Server.Classes.Database.PlayerData.SeedData
                         userRights = UserRights.Moderation;
                     }
 
-                    entityTypeBuilder.HasData(new User
+                    dbSet.Add(new User
                     {
+                        Name = n == 0 ? "test" : $@"test{n:D3}",
+                        Email = $@"test{n:D3}@test.test",
                         Salt = salt,
-                        Name = $@"test{n}",
-                        Email = $@"test{n}@test.test",
                         Password = HashPassword(salt, "test"),
                         Power = userRights
                     });

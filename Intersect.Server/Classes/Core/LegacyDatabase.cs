@@ -79,6 +79,7 @@ namespace Intersect.Server
                 PlayerContext = new PlayerContext(DatabaseUtils.DbProvider.MySql, $"server={Options.PlayerDb.Server};port={Options.PlayerDb.Port};database={Options.PlayerDb.Database};user={Options.PlayerDb.Username};password={Options.PlayerDb.Password}");   
             }
             PlayerContext.Database.Migrate();
+            PlayerContext.Seed();
 
             if (Options.GameDb.Type == DatabaseOptions.DatabaseType.sqlite)
             {

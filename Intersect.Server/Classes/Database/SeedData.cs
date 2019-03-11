@@ -1,25 +1,24 @@
 ﻿using System.Linq;
 using JetBrains.Annotations;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore;
 
 namespace Intersect.Server.Classes.Database
 {
     public abstract class SeedData<TType>
         where TType : class
     {
-        public void SeedIfEmpty(
-            [NotNull] ISeedableContext context,
-            [NotNull] EntityTypeBuilder<TType> entityTypeBuilder
-        )
+        public void SeedIfEmpty([NotNull] ISeedableContext context)
         {
-            if (context.GetDbSet<TType>()?.FirstOrDefault() != null)
+            var dbSet = context.GetDbSet<TType>();
+
+            if (dbSet?.FirstOrDefault() != null)
             {
                 return;
             }
 
-            Seed(entityTypeBuilder);
+            Seed(dbSet);
         }
 
-        public abstract void Seed([NotNull] EntityTypeBuilder<TType> entityTypeBuilder);
+        public abstract void Seed([NotNull] DbSet<TType> dbSet);
     }
 }

@@ -116,11 +116,6 @@ namespace Intersect.Server.Database.PlayerData
             modelBuilder.Entity<InventorySlot>().HasOne(b => b.Bag);
             modelBuilder.Entity<BagSlot>().HasOne(b => b.Bag);
             modelBuilder.Entity<BankSlot>().HasOne(b => b.Bag);
-
-#if DEBUG
-            //new SeedUsers().SeedIfEmpty(this, modelBuilder.Entity<User>());
-#endif
-
         }
 
         public bool IsEmpty()
@@ -153,6 +148,14 @@ namespace Intersect.Server.Database.PlayerData
                 .GetProperties()
                 .FirstOrDefault(propertyInfo => searchType == propertyInfo?.PropertyType);
             return property?.GetValue(this) as DbSet<TType>;
+        }
+
+        public void Seed()
+        {
+#if DEBUG
+            new SeedUsers().SeedIfEmpty(this);
+            SaveChanges();
+#endif
         }
     }
 }
