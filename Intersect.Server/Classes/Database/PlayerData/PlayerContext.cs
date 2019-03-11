@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Data;
+using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Intersect.Server.Classes.Database;
 using Intersect.Server.Classes.Database.PlayerData.Api;
+using Intersect.Server.Classes.Database.PlayerData.SeedData;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Entities;
 using Intersect.Utilities;
@@ -11,7 +15,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Intersect.Server.Database.PlayerData
 {
-    public class PlayerContext : DbContext
+    public class PlayerContext : DbContext, ISeedableContext
     {
         public static PlayerContext Current { get; private set; }
 
@@ -113,6 +117,10 @@ namespace Intersect.Server.Database.PlayerData
             modelBuilder.Entity<BagSlot>().HasOne(b => b.Bag);
             modelBuilder.Entity<BankSlot>().HasOne(b => b.Bag);
 
+#if DEBUG
+            //new SeedUsers().SeedIfEmpty(this, modelBuilder.Entity<User>());
+#endif
+
         }
 
         public bool IsEmpty()
@@ -138,5 +146,13 @@ namespace Intersect.Server.Database.PlayerData
             }
         }
 
+        public DbSet<TType> GetDbSet<TType>() where TType : class
+        {
+            var searchType = typeof(DbSet<TType>);
+            var property = GetType()
+                .GetProperties()
+                .FirstOrDefault(propertyInfo => searchType == propertyInfo?.PropertyType);
+            return property?.GetValue(this) as DbSet<TType>;
+        }
     }
 }

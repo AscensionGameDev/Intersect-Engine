@@ -576,6 +576,9 @@
     <Compile Include="Web\RestApi\Routes\V1\UserController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\PlayerController.cs" />
     <Compile Include="Classes\Database\PlayerData\Security\UserRights.cs" />
+    <Compile Include="Classes\Database\PlayerData\SeedData\SeedUsers.cs" />
+    <Compile Include="Classes\Database\SeedData.cs" />
+    <Compile Include="Classes\Database\ISeedableContext.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="private-intersect.bek" />
@@ -624,6 +627,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Extensions\" />
+    <Folder Include="Classes\Database\PlayerData\SeedData\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
