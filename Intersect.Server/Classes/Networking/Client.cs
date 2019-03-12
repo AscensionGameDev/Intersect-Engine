@@ -79,6 +79,13 @@ namespace Intersect.Server.Networking
         {
             //Entity = new Player(Id, this, character);
             Entity = character;
+
+            if (Entity == null)
+            {
+                return;
+            }
+
+            Entity.LastOnline = DateTime.Now;
             Entity.MyClient = this;
         }
 
@@ -224,7 +231,12 @@ namespace Intersect.Server.Networking
 
         public void Logout()
         {
-            if (Entity == null) return;
+            if (Entity == null)
+            {
+                return;
+            }
+
+            Entity.LastOnline = DateTime.Now;
 
             LegacyDatabase.SavePlayerDatabaseAsync();
            
