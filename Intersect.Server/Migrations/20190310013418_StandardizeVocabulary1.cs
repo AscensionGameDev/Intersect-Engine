@@ -351,7 +351,7 @@ namespace Intersect.Server.Migrations
 
             migrationBuilder.Sql(
                 "INSERT INTO Player_Hotbar (Id, PlayerId, Slot, ItemOrSpellId, BagId, PreferredStatBuffs) " +
-                "SELECT Id, CharacterId, 'Index', ItemOrSpellId, BagId, PreferredStatBuffs " +
+                "SELECT Id, CharacterId, `Index`, ItemOrSpellId, BagId, PreferredStatBuffs " +
                 "FROM Character_Hotbar;"
             );
 
@@ -728,7 +728,7 @@ namespace Intersect.Server.Migrations
             );
 
             migrationBuilder.Sql(
-                "INSERT INTO Character_Hotbar (Id, CharacterId, 'Index', ItemOrSpellId, BagId, PreferredStatBuffs) " +
+                "INSERT INTO Character_Hotbar (Id, CharacterId, `Index`, ItemOrSpellId, BagId, PreferredStatBuffs) " +
                 "SELECT Id, PlayerId, Slot, ItemOrSpellId, BagId, PreferredStatBuffs " +
                 "FROM Player_Hotbar;"
             );
