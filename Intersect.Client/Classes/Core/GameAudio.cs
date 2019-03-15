@@ -221,6 +221,16 @@ namespace Intersect.Client
         private int mY;
         public bool Loaded;
 
+        public bool Loop
+        {
+            get => mLoop;
+            set
+            {
+                mLoop = value;
+                mSound?.SetLoop(mLoop);
+            }
+        }
+
         public MapSound(string filename, int x, int y, Guid mapId, bool loop, int distance)
         {
             if (filename == null) return;
