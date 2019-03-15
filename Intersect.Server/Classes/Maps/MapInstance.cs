@@ -12,6 +12,9 @@ using Intersect.Server.Database;
 using Intersect.Server.Entities;
 using Intersect.Server.General;
 using Intersect.Server.Networking;
+
+using JetBrains.Annotations;
+
 using Newtonsoft.Json;
 using EventInstance = Intersect.Server.Entities.EventInstance;
 
@@ -104,6 +107,7 @@ namespace Intersect.Server.Maps
             Layers = null;
         }
 
+        [NotNull]
         public new static MapInstances Lookup => (sLookup = (sLookup ?? new MapInstances(MapBase.Lookup)));
 
         //GameObject Functions
