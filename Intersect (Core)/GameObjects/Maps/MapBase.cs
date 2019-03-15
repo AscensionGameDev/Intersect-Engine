@@ -81,7 +81,8 @@ namespace Intersect.GameObjects.Maps
         }
         [NotMapped]
         [NotNull]
-        public readonly List<LightBase> Lights = new List<LightBase>();
+        [JsonProperty]
+        public List<LightBase> Lights { get; private set; } = new List<LightBase>();
 
         [Column("Events")]
         [JsonIgnore]
@@ -122,7 +123,8 @@ namespace Intersect.GameObjects.Maps
         }
         [NotMapped]
         [NotNull]
-        public readonly List<NpcSpawn> Spawns  = new List<NpcSpawn>();
+        [JsonProperty]
+        public List<NpcSpawn> Spawns { get; private set; } = new List<NpcSpawn>();
 
         //Properties
         public string Music { get; set; } = null;
