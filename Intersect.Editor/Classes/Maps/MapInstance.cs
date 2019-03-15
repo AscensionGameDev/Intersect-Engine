@@ -7,6 +7,9 @@ using Intersect.Editor.General;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
+
+using Newtonsoft.Json;
+
 using MapAttribute = Intersect.GameObjects.Maps.MapAttribute;
 
 namespace Intersect.Editor.Maps
@@ -20,7 +23,7 @@ namespace Intersect.Editor.Maps
 
         private byte[] mLoadedData;
 
-        public MapInstance(Guid id) : base(id, false)
+        public MapInstance(Guid id) : base(id)
         {
             lock (MapLock)
             {
@@ -193,6 +196,11 @@ namespace Intersect.Editor.Maps
             {
                 mAttributeAnimInstances[attribute] = animationInstance;
             }
+        }
+        
+        public override byte[] GetAttributeData()
+        {
+            return Compression.CompressPacket(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(Attributes, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace })));
         }
 
         public void Update()

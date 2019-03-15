@@ -87,14 +87,14 @@ namespace Intersect.Server.Maps
         public long UpdateDelay = 100;
 
         //Init
-        public MapInstance() : base(Guid.NewGuid(), false)
+        public MapInstance() : base(Guid.NewGuid())
         {
             Name = "New Map";
             Layers = null;
         }
 
         [JsonConstructor]
-        public MapInstance(Guid id) : base(id, false)
+        public MapInstance(Guid id) : base(id)
         {
             if (id == Guid.Empty)
             {

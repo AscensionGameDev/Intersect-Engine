@@ -23,11 +23,6 @@ namespace Intersect.GameObjects.Maps
         [NotMapped]
         public MapAutotiles Autotiles;
 
-        //Temporary Values
-        [JsonIgnore]
-        [NotMapped]
-        public bool IsClient;
-
         //Core Data
         [JsonIgnore]
         [NotMapped]
@@ -50,7 +45,7 @@ namespace Intersect.GameObjects.Maps
         [JsonIgnore]
         public byte[] AttributeData
         {
-            get => mCachedAttributeData;
+            get => GetAttributeData();
             set => Attributes = JsonConvert.DeserializeObject<MapAttribute[,]>(System.Text.Encoding.UTF8.GetString(Compression.DecompressPacket(value)), new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
         }
 
@@ -179,7 +174,7 @@ namespace Intersect.GameObjects.Maps
         public object MapLock => mMapLock;
         
         [JsonConstructor]
-        public MapBase(Guid id, bool isClient) : base(id)
+        public MapBase(Guid id) : base(id)
         {
             Name = "New Map";
 
@@ -189,16 +184,12 @@ namespace Intersect.GameObjects.Maps
              * So the blob size is going to be LayerCount * MapWidth * MapHeight * (16 + 4 + 4 + 1)*/
             TileData = Compression.CompressPacket(new byte[Options.LayerCount * Options.MapWidth * Options.MapHeight * 25]);
             mCachedAttributeData = Compression.CompressPacket(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(Attributes, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace })));
-
-
-            IsClient = isClient;
         }
 
         //EF Constructor
         public MapBase()
         {
             Name = "New Map";
-            IsClient = false;
         }
 
         public MapBase(MapBase mapBase)
@@ -278,6 +269,11 @@ namespace Intersect.GameObjects.Maps
                     EventIds?.AddRange(mapBase.EventIds?.ToArray() ?? new Guid[] {});
                 }
             }
+        }
+
+        public virtual byte[] GetAttributeData()
+        {
+            return mCachedAttributeData;
         }
 
         public class MapInstances : DatabaseObjectLookup

@@ -99,7 +99,7 @@ namespace Intersect.Client.Maps
 
 
         //Initialization
-        public MapInstance(Guid id) : base(id, true)
+        public MapInstance(Guid id) : base(id)
         {
             mTileBuffers = new GameTileBuffer[Options.LayerCount][][];
             for (int i = 0; i < Options.LayerCount; i++)
