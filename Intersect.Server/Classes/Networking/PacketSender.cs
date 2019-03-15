@@ -11,7 +11,8 @@ using Intersect.Logging;
 using Intersect.Models;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
-using Intersect.Server.Database.PlayerData.Characters;
+using Intersect.Server.Database.PlayerData.Players;
+using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
@@ -144,7 +145,7 @@ namespace Intersect.Server.Networking
                 {
                     if (client.SentMaps.ContainsKey(mapId))
                     {
-                        if (client.SentMaps[mapId].Item1 > Globals.System.GetTimeMs() &&
+                        if (client.SentMaps[mapId].Item1 > Globals.Timing.TimeMs &&
                             client.SentMaps[mapId].Item2 == map.Revision) return;
                         client.SentMaps.Remove(mapId);
                     }
@@ -152,7 +153,7 @@ namespace Intersect.Server.Networking
                     try
                     {
                         client.SentMaps.Add(mapId,
-                            new Tuple<long, int>(Globals.System.GetTimeMs() + 5000, map.Revision));
+                            new Tuple<long, int>(Globals.Timing.TimeMs + 5000, map.Revision));
                     }
                     catch (Exception exception)
                     {
@@ -712,7 +713,7 @@ namespace Intersect.Server.Networking
                 bf.WriteGuid(status.Spell.Id);
                 bf.WriteInteger((int)status.Type);
                 bf.WriteString(status.Data);
-                bf.WriteInteger((int)(status.Duration - Globals.System.GetTimeMs()));
+                bf.WriteInteger((int)(status.Duration - Globals.Timing.TimeMs));
                 bf.WriteInteger((int)(status.Duration - status.StartTime));
 
                 if (status.Type == StatusTypes.Shield)
@@ -770,7 +771,7 @@ namespace Intersect.Server.Networking
                 bf.WriteGuid(status.Spell.Id);
                 bf.WriteInteger((int)status.Type);
                 bf.WriteString(status.Data);
-                bf.WriteInteger((int)(status.Duration - Globals.System.GetTimeMs()));
+                bf.WriteInteger((int)(status.Duration - Globals.Timing.TimeMs));
                 bf.WriteInteger((int)(status.Duration - status.StartTime));
             }
             SendDataTo(client, bf.ToArray());

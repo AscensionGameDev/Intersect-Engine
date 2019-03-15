@@ -1,14 +1,14 @@
-﻿using System;
-using System.Diagnostics;
-using System.Reflection;
-using System.Windows.Forms;
-using Intersect.Config;
+﻿using Intersect.Config;
 using Intersect.Editor.General;
 using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Crypto;
 using Intersect.Network.Crypto.Formats;
 using Intersect.Network.Packets.Reflectable;
+using System;
+using System.Diagnostics;
+using System.Reflection;
+using System.Windows.Forms;
 
 namespace Intersect.Editor.Networking
 {
@@ -23,7 +23,6 @@ namespace Intersect.Editor.Networking
         {
             if (EditorLidgrenNetwork == null)
             {
-                Log.Global.AddOutput(new ConsoleOutput());
                 var config = new NetworkConfiguration(ClientOptions.ServerHost, ClientOptions.ServerPort);
                 var assembly = Assembly.GetExecutingAssembly();
                 using (var stream = assembly.GetManifestResourceStream("Intersect.Editor.public-intersect.bek"))

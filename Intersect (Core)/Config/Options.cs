@@ -43,10 +43,13 @@ namespace Intersect
         public static int MapHeight => _options.MapOpts.Height;
         public static int TileWidth => _options.MapOpts.TileWidth;
         public static int TileHeight => _options.MapOpts.TileHeight;
+
         public static bool UPnP => _options._upnp;
+
+        public static bool NoPunchthrough { get; set; }
+        public static bool NoNetworkCheck { get; set; }
+
         public static bool OpenPortChecker => _options._portChecker;
-        public static bool ApiEnabled => _options._api;
-        public static ushort ApiPort => _options._apiPort;
         public static SmtpSettings Smtp => _options.SmtpSettings;
         public static int PasswordResetExpirationMinutes => _options._passResetExpirationMin;
         public static bool SmtpValid => _options._smtpValid;
@@ -95,12 +98,6 @@ namespace Intersect
 
         [JsonProperty("AdminOnly")]
         protected bool _adminOnly = false;
-
-        [JsonProperty("UseApi")]
-        protected bool _api;
-
-        [JsonProperty("ApiPort")]
-        protected ushort _apiPort = 5400; //This makes sense because the server uses udp and the api can use tcp
 
         [JsonProperty("UPnP")]
         protected bool _upnp = true;

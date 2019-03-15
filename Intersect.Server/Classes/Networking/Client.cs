@@ -1,18 +1,18 @@
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
 using Intersect.Enums;
 using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Packets.Reflectable;
 using Intersect.Server.Database.PlayerData;
+using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
-using Intersect.Server.Maps;
 using Lidgren.Network;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text;
 
 namespace Intersect.Server.Networking
 {
@@ -21,6 +21,7 @@ namespace Intersect.Server.Networking
     public class Client
     {
         //Game Incorperation Variables
+
         public string Name => User?.Name;
         public string Email => User?.Email;
         public Guid Id => User?.Id ?? Guid.Empty;
@@ -39,7 +40,7 @@ namespace Intersect.Server.Networking
 
         public User User { get; private set; }
 
-        public List<Player> Characters => User?.Characters;
+        public List<Player> Characters => User?.Players;
 
         private long mConnectionTimeout;
 
@@ -64,8 +65,8 @@ namespace Intersect.Server.Networking
         public Client(IConnection connection = null)
         {
             this.mConnection = connection;
-            mConnectTime = Globals.System.GetTimeMs();
-            mConnectionTimeout = Globals.System.GetTimeMs() + mTimeout;
+            mConnectTime = Globals.Timing.TimeMs;
+            mConnectionTimeout = Globals.Timing.TimeMs + mTimeout;
             PacketSender.SendServerConfig(this);
         }
 
@@ -78,6 +79,13 @@ namespace Intersect.Server.Networking
         {
             //Entity = new Player(Id, this, character);
             Entity = character;
+
+            if (Entity == null)
+            {
+                return;
+            }
+
+            Entity.LastOnline = DateTime.Now;
             Entity.MyClient = this;
         }
 
@@ -177,7 +185,7 @@ namespace Intersect.Server.Networking
         {
             if (mConnection != null)
             {
-                mConnectionTimeout = Globals.System.GetTimeMs() + mTimeout;
+                mConnectionTimeout = Globals.Timing.TimeMs + mTimeout;
             }
         }
 
@@ -223,7 +231,12 @@ namespace Intersect.Server.Networking
 
         public void Logout()
         {
-            if (Entity == null) return;
+            if (Entity == null)
+            {
+                return;
+            }
+
+            Entity.LastOnline = DateTime.Now;
 
             LegacyDatabase.SavePlayerDatabaseAsync();
            

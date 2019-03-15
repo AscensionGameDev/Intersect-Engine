@@ -9,6 +9,8 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Intersect.Logging;
+using Intersect.Server.Core;
 using Intersect.Server.Localization;
 using Lidgren.Network;
 using Newtonsoft.Json;
@@ -74,8 +76,11 @@ namespace Intersect.Server.Networking.Helpers
             result.Wait();
             if (result.Result.IsSuccess)
             {
-                Clipboard.SetText(result.Result.FullUrl);
-                Console.WriteLine(Strings.NetDebug.hastebin.ToString(result.Result.FullUrl));
+                Bootstrapper.MainThread.NextAction = () =>
+                {
+                    Clipboard.SetText(result.Result.FullUrl);
+                    Console.WriteLine(Strings.NetDebug.hastebin.ToString(result.Result.FullUrl));
+                };
             }
             else
             {
@@ -157,9 +162,9 @@ namespace Intersect.Server.Networking.Helpers
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-
+                Log.Warn(exception);
             }
             finally
             {

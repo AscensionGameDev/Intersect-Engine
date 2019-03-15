@@ -7,19 +7,23 @@ using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.Server.Database.PlayerData;
-using Intersect.Server.Database.PlayerData.Characters;
+using Intersect.Server.Database.PlayerData.Players;
+using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
+
+using JetBrains.Annotations;
+
 using Newtonsoft.Json;
 
 namespace Intersect.Server.Entities
 {
     using LegacyDatabase = LegacyDatabase;
 
-    public class EntityInstance : IDisposable
+    public partial class EntityInstance : IDisposable
     {
         [Column(Order = 1)]
         public string Name { get; set; }
@@ -37,40 +41,43 @@ namespace Intersect.Server.Entities
         public string Face { get; set; }
         public int Level { get; set; }
 
-        [Column("Vitals")]
+        [JsonIgnore, Column("Vitals")]
         public string VitalsJson
         {
             get => DatabaseUtils.SaveIntArray(_vital, (int)Enums.Vitals.VitalCount);
             set => _vital = DatabaseUtils.LoadIntArray(value, (int)Enums.Vitals.VitalCount);
         }
-        [NotMapped]
+        [JsonProperty("Vitals"), NotMapped]
         public int[] _vital { get; set; } = new int[(int)Enums.Vitals.VitalCount];
-        [NotMapped]
+        [JsonProperty("MaxVitals"), NotMapped]
         private int[] _maxVital = new int[(int)Vitals.VitalCount];
 
         //Stats based on npc settings, class settings, etc for quick calculations
-        [Column("BaseStats")]
+        [JsonIgnore, Column("BaseStats")]
         public string StatsJson
         {
             get => DatabaseUtils.SaveIntArray(BaseStats, (int)Enums.Stats.StatCount);
             set => BaseStats = DatabaseUtils.LoadIntArray(value, (int)Enums.Stats.StatCount);
         }
         [NotMapped]
-        public int[] BaseStats { get; set; } = new int[(int)Enums.Stats.StatCount];
+        public int[] BaseStats { get; set; } = new int[(int)Enums.Stats.StatCount]; // TODO: Why can this be BaseStats while Vitals is _vital and MaxVitals is _maxVital?
 
-        [Column("StatPointAllocations")]
+        [JsonIgnore, Column("StatPointAllocations")]
         public string StatPointsJson
         {
             get => DatabaseUtils.SaveIntArray(StatPointAllocations, (int)Enums.Stats.StatCount);
             set => StatPointAllocations = DatabaseUtils.LoadIntArray(value, (int)Enums.Stats.StatCount);
         }
+
         [NotMapped]
         public int[] StatPointAllocations { get; set; } = new int[(int)Enums.Stats.StatCount];
 
         //Inventory
+        [NotNull]
         public virtual List<InventorySlot> Items { get; set; } = new List<InventorySlot>();
 
         //Spells
+        [NotNull]
         public virtual List<SpellSlot> Spells { get; set; } = new List<SpellSlot>();
 
         [NotMapped]
@@ -103,7 +110,7 @@ namespace Intersect.Server.Entities
         [NotMapped] public EventPageInstance MoveRouteSetter { get; set; } = null;
         [NotMapped] public long MoveTimer { get; set; }
         [NotMapped] public bool Passable { get; set; } = false;
-        [NotMapped] public long RegenTimer { get; set; } = Globals.System.GetTimeMs();
+        [NotMapped] public long RegenTimer { get; set; } = Globals.Timing.TimeMs;
         [NotMapped] public int SpellCastSlot { get; set; } = 0;
 
         //Status effects
@@ -163,10 +170,10 @@ namespace Intersect.Server.Entities
                 }
             }
             //Regen Timers
-            if (Globals.System.GetTimeMs() > CombatTimer && Globals.System.GetTimeMs() > RegenTimer)
+            if (Globals.Timing.TimeMs > CombatTimer && Globals.Timing.TimeMs > RegenTimer)
             {
                 ProcessRegen();
-                RegenTimer = Globals.System.GetTimeMs() + Options.RegenTime;
+                RegenTimer = Globals.Timing.TimeMs + Options.RegenTime;
             }
             //Status timers
             var statusArray = Statuses.ToArray();
@@ -481,15 +488,15 @@ namespace Intersect.Server.Entities
                         moved = true;
                         break;
                     case MoveRouteEnum.Wait100:
-                        MoveTimer = Globals.System.GetTimeMs() + 100;
+                        MoveTimer = Globals.Timing.TimeMs + 100;
                         moved = true;
                         break;
                     case MoveRouteEnum.Wait500:
-                        MoveTimer = Globals.System.GetTimeMs() + 500;
+                        MoveTimer = Globals.Timing.TimeMs + 500;
                         moved = true;
                         break;
                     case MoveRouteEnum.Wait1000:
-                        MoveTimer = Globals.System.GetTimeMs() + 1000;
+                        MoveTimer = Globals.Timing.TimeMs + 1000;
                         moved = true;
                         break;
                     default:
@@ -505,9 +512,9 @@ namespace Intersect.Server.Entities
                         MoveRoute.Complete = true;
                     }
                 }
-                if (moved && MoveTimer < Globals.System.GetTimeMs())
+                if (moved && MoveTimer < Globals.Timing.TimeMs)
                 {
-                    MoveTimer = Globals.System.GetTimeMs() + (long)GetMovementTime();
+                    MoveTimer = Globals.Timing.TimeMs + (long)GetMovementTime();
                 }
             }
             return true;
@@ -539,7 +546,7 @@ namespace Intersect.Server.Entities
             var xOffset = 0;
             var yOffset = 0;
             Dir = moveDir;
-            if (MoveTimer < Globals.System.GetTimeMs() && CastTime <= 0)
+            if (MoveTimer < Globals.Timing.TimeMs && CastTime <= 0)
             {
                 var tile = new TileHelper(MapId, X, Y);
                 switch (moveDir)
@@ -631,7 +638,7 @@ namespace Intersect.Server.Entities
                                 }
                             }
                         }
-                        MoveTimer = Globals.System.GetTimeMs() + (long)GetMovementTime();
+                        MoveTimer = Globals.Timing.TimeMs + (long)GetMovementTime();
                     }
                     if (TryToChangeDimension() && dontUpdate == true)
                     {
@@ -755,9 +762,9 @@ namespace Intersect.Server.Entities
         }
         public void TryBlock(int blocking)
         {
-            if (AttackTimer < Globals.System.GetTimeMs())
+            if (AttackTimer < Globals.Timing.TimeMs)
             {
-                if (blocking == 1 && !Blocking && AttackTimer < Globals.System.GetTimeMs())
+                if (blocking == 1 && !Blocking && AttackTimer < Globals.Timing.TimeMs)
                 {
                     Blocking = true;
                     PacketSender.SendEntityAttack(this, (int)EntityTypes.GlobalEntity, MapId, -1);
@@ -765,7 +772,7 @@ namespace Intersect.Server.Entities
                 else if (blocking == 0 && Blocking)
                 {
                     Blocking = false;
-                    AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
+                    AttackTimer = Globals.Timing.TimeMs + CalculateAttackTime();
                     PacketSender.SendEntityAttack(this, (int)EntityTypes.GlobalEntity, MapId, 0);
                 }
             }
@@ -1085,7 +1092,7 @@ namespace Intersect.Server.Entities
         //Attack using a weapon or unarmed
         public virtual void TryAttack(EntityInstance enemy, int baseDamage, DamageType damageType, Stats scalingStat, int scaling, int critChance, double critMultiplier, List<KeyValuePair<Guid, int>> deadAnimations = null, List<KeyValuePair<Guid, int>> aliveAnimations = null, ItemBase weapon = null)
         {
-            if ((AttackTimer > Globals.System.GetTimeMs() || Blocking)) return;
+            if ((AttackTimer > Globals.Timing.TimeMs || Blocking)) return;
 
             //Check for parties and safe zones, friendly fire off (unless its healing)
             if (enemy.GetType() == typeof(Player) && GetType() == typeof(Player))
@@ -1106,7 +1113,7 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
+            AttackTimer = Globals.Timing.TimeMs + CalculateAttackTime();
             //Check if the attacker is blinded.
             if (IsOneBlockAway(enemy))
             {
@@ -1127,7 +1134,7 @@ namespace Intersect.Server.Entities
                 aliveAnimations, true);
 
             //If we took damage lets reset our combat timer
-            enemy.CombatTimer = Globals.System.GetTimeMs() + 5000;
+            enemy.CombatTimer = Globals.Timing.TimeMs + 5000;
         }
 
         public void Attack(EntityInstance enemy, int baseDamage, int secondaryDamage, DamageType damageType, Stats scalingStat,
@@ -1157,7 +1164,7 @@ namespace Intersect.Server.Entities
 					// Add a timer before able to make the next move.
 					if (GetType() == typeof(Npc))
 					{
-						((Npc)this).MoveTimer = Globals.System.GetTimeMs() + (long)GetMovementTime();
+						((Npc)this).MoveTimer = Globals.Timing.TimeMs + (long)GetMovementTime();
 					}
 
 					return;
@@ -1199,7 +1206,7 @@ namespace Intersect.Server.Entities
                                 CustomColors.TrueDamage);
                             break;
                     }
-                    enemy.CombatTimer = Globals.System.GetTimeMs() + 5000;
+                    enemy.CombatTimer = Globals.Timing.TimeMs + 5000;
 
                     //No Matter what, if we attack the entitiy, make them chase us
                     if (enemy.GetType() == typeof(Npc))
@@ -1250,7 +1257,7 @@ namespace Intersect.Server.Entities
                 {
                     //If we took damage lets reset our combat timer
                     enemy.SubVital(Vitals.Mana, (int)secondaryDamage);
-                    enemy.CombatTimer = Globals.System.GetTimeMs() + 5000;
+                    enemy.CombatTimer = Globals.Timing.TimeMs + 5000;
                     PacketSender.SendActionMsg(enemy, Strings.Combat.removesymbol + (int)secondaryDamage,
                         CustomColors.RemoveMana);
                 }
@@ -1314,7 +1321,7 @@ namespace Intersect.Server.Entities
             // Add a timer before able to make the next move.
             if (GetType() == typeof(Npc))
             {
-                ((Npc)this).MoveTimer = Globals.System.GetTimeMs() + (long)GetMovementTime();
+                ((Npc)this).MoveTimer = Globals.Timing.TimeMs + (long)GetMovementTime();
             }
         }
 
@@ -1430,7 +1437,7 @@ namespace Intersect.Server.Entities
                         cooldownReduction = (1 - ((decimal)((Player)this).GetCooldownReduction() / 100));
                     }
 
-                    Spells[spellSlot].SpellCd = Globals.System.RealTimeMs() + (int)(spellBase.CooldownDuration * cooldownReduction);
+                    Spells[spellSlot].SpellCd = Globals.Timing.RealTimeMs + (int)(spellBase.CooldownDuration * cooldownReduction);
                     if (GetType() == typeof(Player))
                     {
                         PacketSender.SendSpellCooldown(((Player)this).MyClient, spellSlot);
@@ -1757,7 +1764,7 @@ namespace Intersect.Server.Entities
                 bf.WriteGuid(status.Value.Spell.Id);
                 bf.WriteInteger((int)status.Value.Type);
                 bf.WriteString(status.Value.Data);
-                bf.WriteInteger((int)(status.Value.Duration - Globals.System.GetTimeMs()));
+                bf.WriteInteger((int)(status.Value.Duration - Globals.Timing.TimeMs));
                 bf.WriteInteger((int)(status.Value.Duration - status.Value.StartTime));
             }
             for (var i = 0; i < (int)Stats.StatCount; i++)
@@ -1844,7 +1851,7 @@ namespace Intersect.Server.Entities
             var buffs = mBuff.ToArray();
             foreach (var buff in buffs)
             {
-                if (buff.Value.Duration <= Globals.System.GetTimeMs())
+                if (buff.Value.Duration <= Globals.Timing.TimeMs)
                 {
                     mBuff.Remove(buff.Key);
                     changed = true;
@@ -1886,7 +1893,7 @@ namespace Intersect.Server.Entities
         {
             Spell = spell;
             Buff = buff;
-            Duration = Globals.System.GetTimeMs() + duration;
+            Duration = Globals.Timing.TimeMs + duration;
         }
     }
 
@@ -1912,7 +1919,7 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            mInterval = Globals.System.GetTimeMs() + SpellBase.Combat.HotDotInterval;
+            mInterval = Globals.Timing.TimeMs + SpellBase.Combat.HotDotInterval;
             Count = SpellBase.Combat.Duration / SpellBase.Combat.HotDotInterval - 1;
             target.DoT.Add(this);
             //Subtract 1 since the first tick always occurs when the spell is cast.
@@ -1929,7 +1936,7 @@ namespace Intersect.Server.Entities
         {
             if (CheckExpired()) return;
 
-            if (mInterval > Globals.System.GetTimeMs()) return;
+            if (mInterval > Globals.Timing.TimeMs) return;
             var deadAnimations = new List<KeyValuePair<Guid, int>>();
             var aliveAnimations = new List<KeyValuePair<Guid, int>>();
             if (SpellBase.HitAnimationId != Guid.Empty)
@@ -1941,7 +1948,7 @@ namespace Intersect.Server.Entities
             Attacker?.Attack(Target, SpellBase.Combat.VitalDiff[0], SpellBase.Combat.VitalDiff[1],
                 (DamageType)SpellBase.Combat.DamageType, (Stats)SpellBase.Combat.ScalingStat, SpellBase.Combat.Scaling,
                 SpellBase.Combat.CritChance, SpellBase.Combat.CritMultiplier, deadAnimations, aliveAnimations);
-            mInterval = Globals.System.GetTimeMs() + SpellBase.Combat.HotDotInterval;
+            mInterval = Globals.Timing.TimeMs + SpellBase.Combat.HotDotInterval;
             Count--;
         }
     }
@@ -1961,8 +1968,8 @@ namespace Intersect.Server.Entities
             mEntity = en;
             Spell = spell;
             Type = type;
-            Duration = Globals.System.GetTimeMs() + duration;
-            StartTime = Globals.System.GetTimeMs();
+            Duration = Globals.Timing.TimeMs + duration;
+            StartTime = Globals.Timing.TimeMs;
             Data = data;
 
             if (type == StatusTypes.Shield)
@@ -2008,7 +2015,7 @@ namespace Intersect.Server.Entities
 
         public void TryRemoveStatus()
         {
-            if (Duration <= Globals.System.GetTimeMs()) //Check the timer
+            if (Duration <= Globals.Timing.TimeMs) //Check the timer
             {
                 RemoveStatus();
             }
@@ -2070,10 +2077,10 @@ namespace Intersect.Server.Entities
             {
                 return;
             } //Remove dash instance if no where to dash
-            TransmittionTimer = Globals.System.GetTimeMs() + (long)((float)Options.MaxDashSpeed / (float)Range);
+            TransmittionTimer = Globals.Timing.TimeMs + (long)((float)Options.MaxDashSpeed / (float)Range);
             PacketSender.SendEntityDash(en, en.MapId, en.X, en.Y,
                 (int)(Options.MaxDashSpeed * (Range / 10f)), Direction == Facing ? Direction : -Facing);
-            en.MoveTimer = Globals.System.GetTimeMs() + Options.MaxDashSpeed;
+            en.MoveTimer = Globals.Timing.TimeMs + Options.MaxDashSpeed;
         }
 
         public void CalculateRange(EntityInstance en, int range, bool blockPass = false, bool activeResourcePass = false, bool deadResourcePass = false, bool zdimensionPass = false)

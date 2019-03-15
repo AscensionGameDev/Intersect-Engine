@@ -1,187 +1,207 @@
 ﻿using System;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
+using Intersect.Logging.Output;
 using JetBrains.Annotations;
 
 namespace Intersect.Logging
 {
+
     public static class Log
     {
+
+        [NotNull]
         private static string ExecutableName =>
             Path.GetFileNameWithoutExtension(Process.GetCurrentProcess().MainModule.FileName);
 
-        public static string SuggestFilename(DateTime? time = null)
-            => $"{ExecutableName}-{time ?? DateTime.Now:yyyy_MM_dd-HH_mm_ss_fff}.log";
+        [NotNull]
+        public static string SuggestFilename(DateTime? time = null, [CanBeNull] string prefix = null, [CanBeNull] string extensionPrefix = null) =>
+            $"{prefix?.Trim() ?? ""}{ExecutableName}-{time ?? DateTime.Now:yyyy_MM_dd-HH_mm_ss_fff}{(string.IsNullOrWhiteSpace(extensionPrefix) ? "" : "." + extensionPrefix)}.log";
 
         #region Global
 
-        private static Logger sGlobal;
+        static Log()
+        {
+            var outputs = ImmutableList.Create<ILogOutput>(
+                new FileOutput(),
+                new FileOutput($"errors-{ExecutableName}.log", LogLevel.Error),
+                new ConciseConsoleOutput()
+            ) ?? throw new InvalidOperationException();
+
+            Pretty = new Logger(new LogConfiguration
+            {
+                Pretty = true,
+                LogLevel = LogConfiguration.Default.LogLevel,
+                Outputs = outputs
+            });
+
+            Default = new Logger(new LogConfiguration
+            {
+                Pretty = false,
+                LogLevel = LogConfiguration.Default.LogLevel,
+                Outputs = outputs
+            });
+        }
 
         [NotNull]
-        public static Logger Global
-        {
-            get
-            {
-                if (sGlobal != null) return sGlobal;
-                sGlobal = new Logger();
-                sGlobal.AddOutput(new FileOutput());
-                sGlobal.AddOutput(new FileOutput($"errors-{ExecutableName}.log", LogLevel.Error));
-                // TODO: Add console output
+        public static Logger Pretty { get; }
 
-                return sGlobal;
-            }
-        }
+        [NotNull]
+        public static Logger Default { get; }
 
         public static void Write(LogLevel logLevel, string message)
         {
-            Global.Write(logLevel, message);
+            Default.Write(logLevel, message);
         }
 
         public static void Write(LogLevel logLevel, string format, params object[] args)
         {
-            Global.Write(logLevel, format, args);
+            Default.Write(logLevel, format, args);
         }
 
         public static void Write(LogLevel logLevel, Exception exception, string message = null)
         {
-            Global.Write(logLevel, exception);
+            Default.Write(logLevel, exception);
         }
 
         public static void Write(string message)
         {
-            Global.Write(message);
+            Default.Write(message);
         }
 
         public static void Write(string format, params object[] args)
         {
-            Global.Write(format, args);
+            Default.Write(format, args);
         }
 
         public static void Write(Exception exception, string message = null)
         {
-            Global.Write(exception, message);
+            Default.Write(exception, message);
         }
 
         public static void All(string message)
         {
-            Global.All(message);
+            Default.All(message);
         }
 
         public static void All(string format, params object[] args)
         {
-            Global.All(format, args);
+            Default.All(format, args);
         }
 
         public static void All(Exception exception, string message = null)
         {
-            Global.All(exception, message);
+            Default.All(exception, message);
         }
 
         public static void Error(string message)
         {
-            Global.Error(message);
+            Default.Error(message);
         }
 
         public static void Error(string format, params object[] args)
         {
-            Global.Error(format, args);
+            Default.Error(format, args);
         }
 
         public static void Error(Exception exception, string message = null)
         {
-            Global.Error(exception, message);
+            Default.Error(exception, message);
         }
 
         public static void Warn(string message)
         {
-            Global.Warn(message);
+            Default.Warn(message);
         }
 
         public static void Warn(string format, params object[] args)
         {
-            Global.Warn(format, args);
+            Default.Warn(format, args);
         }
 
         public static void Warn(Exception exception, string message = null)
         {
-            Global.Warn(exception, message);
+            Default.Warn(exception, message);
         }
 
         public static void Info(string message)
         {
-            Global.Info(message);
+            Default.Info(message);
         }
 
         public static void Info(string format, params object[] args)
         {
-            Global.Info(format, args);
+            Default.Info(format, args);
         }
 
         public static void Info(Exception exception, string message = null)
         {
-            Global.Info(exception, message);
+            Default.Info(exception, message);
         }
 
         public static void Trace(string message)
         {
-            Global.Trace(message);
+            Default.Trace(message);
         }
 
         public static void Trace(string format, params object[] args)
         {
-            Global.Trace(format, args);
+            Default.Trace(format, args);
         }
 
         public static void Trace(Exception exception, string message = null)
         {
-            Global.Trace(exception, message);
+            Default.Trace(exception, message);
         }
 
         public static void Debug(string message)
         {
-            Global.Debug(message);
+            Default.Debug(message);
         }
 
         public static void Debug(string format, params object[] args)
         {
-            Global.Debug(format, args);
+            Default.Debug(format, args);
         }
 
         public static void Debug(Exception exception, string message = null)
         {
-            Global.Debug(exception, message);
+            Default.Debug(exception, message);
         }
 
         public static void Diagnostic(string message)
         {
-            Global.Diagnostic(message);
+            Default.Diagnostic(message);
         }
 
         public static void Diagnostic(string format, params object[] args)
         {
-            Global.Diagnostic(format, args);
+            Default.Diagnostic(format, args);
         }
 
         public static void Diagnostic(Exception exception, string message = null)
         {
-            Global.Diagnostic(exception, message);
+            Default.Diagnostic(exception, message);
         }
 
         public static void Verbose(string message)
         {
-            Global.Verbose(message);
+            Default.Verbose(message);
         }
 
         public static void Verbose(string format, params object[] args)
         {
-            Global.Verbose(format, args);
+            Default.Verbose(format, args);
         }
 
         public static void Verbose(Exception exception, string message = null)
         {
-            Global.Verbose(exception, message);
+            Default.Verbose(exception, message);
         }
 
         #endregion
+
     }
+
 }

@@ -11,8 +11,7 @@ using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
 using Intersect.GameObjects.Maps;
 using Intersect.Server.Database;
-using Intersect.Server.Database.PlayerData;
-using Intersect.Server.Database.PlayerData.Characters;
+using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.EventProcessing;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
@@ -20,23 +19,20 @@ using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
 using JetBrains.Annotations;
-using Switch = Intersect.Server.Database.PlayerData.Characters.Switch;
+using Newtonsoft.Json;
+using Switch = Intersect.Server.Database.PlayerData.Players.Switch;
 
 namespace Intersect.Server.Entities
 {
     using LegacyDatabase = LegacyDatabase;
 
-    [Table("Characters")]
-    public class Player : EntityInstance
+    public partial class Player : EntityInstance
     {
         //Online Players List
         [NotNull] private static readonly Dictionary<Guid, Player> OnlinePlayers = new Dictionary<Guid, Player>();
-        public static Player Find(Guid id) => OnlinePlayers.ContainsKey(id) ? OnlinePlayers[id] : null;
-        public static Player Find(string charName) => OnlinePlayers.Values.FirstOrDefault(s => s.Name.ToLower().Trim() == charName.ToLower().Trim());
+        public static Player FindOnline(Guid id) => OnlinePlayers.ContainsKey(id) ? OnlinePlayers[id] : null;
+        public static Player FindOnline(string charName) => OnlinePlayers.Values.FirstOrDefault(s => s.Name.ToLower().Trim() == charName.ToLower().Trim());
         public static int OnlineCount => OnlinePlayers.Count;
-
-        //Account
-        public virtual User Account { get; private set; }
 
         //Name, X, Y, Dir, Etc all in the base Entity Class
         public Guid ClassId { get; set; }
@@ -51,6 +47,7 @@ namespace Intersect.Server.Entities
             get => DatabaseUtils.SaveIntArray(Equipment, Options.EquipmentSlots.Count);
             set => Equipment = DatabaseUtils.LoadIntArray(value, Options.EquipmentSlots.Count);
         }
+
         [NotMapped]
         public int[] Equipment { get; set; } = new int[Options.EquipmentSlots.Count];
 
@@ -58,110 +55,145 @@ namespace Intersect.Server.Entities
         public DateTime? LastOnline { get; set; }
 
         //Bank
+        [NotNull]
         public virtual List<BankSlot> Bank { get; set; } = new List<BankSlot>();
 
         //Friends
+        [NotNull]
         public virtual List<Friend> Friends { get; set; } = new List<Friend>();
 
         //HotBar
+        [NotNull]
         public virtual List<HotbarSlot> Hotbar { get; set; } = new List<HotbarSlot>();
 
         //Quests
+        [NotNull]
         public virtual List<Quest> Quests { get; set; } = new List<Quest>();
 
         //Switches
+        [NotNull]
         public virtual List<Switch> Switches { get; set; } = new List<Switch>();
 
         //Variables
+        [NotNull]
         public virtual List<Variable> Variables { get; set; } = new List<Variable>();
 
-        public void FixLists()
+        public bool ValidateLists()
         {
-            if (Spells.Count < Options.MaxPlayerSkills)
-            {
-                for (int i = Spells.Count; i < Options.MaxPlayerSkills; i++)
-                {
-                    Spells.Add(new SpellSlot(i));
-                }
-            }
-            if (Items.Count < Options.MaxInvItems)
-            {
-                for (int i = Items.Count; i < Options.MaxInvItems; i++)
-                {
-                    Items.Add(new InventorySlot(i));
-                }
-            }
-            if (Bank.Count < Options.MaxBankSlots)
-            {
-                for (int i = Bank.Count; i < Options.MaxBankSlots; i++)
-                {
-                    Bank.Add(new BankSlot(i));
-                }
-            }
+            var changes = false;
+
+            changes |= SlotHelper.ValidateSlots(Spells, Options.MaxPlayerSkills);
+            changes |= SlotHelper.ValidateSlots(Items, Options.MaxInvItems);
+            changes |= SlotHelper.ValidateSlots(Bank, Options.MaxBankSlots);
+
             if (Hotbar.Count < Options.MaxHotbar)
             {
+                Hotbar.Sort((a, b) => a?.Slot - b?.Slot ?? 0);
                 for (var i = Hotbar.Count; i < Options.MaxHotbar; i++)
                 {
                     Hotbar.Add(new HotbarSlot(i));
                 }
+                changes = true;
             }
+
+
+            return changes;
         }
 
 
         //5 minute timeout before someone can send a trade/party request after it has been declined
         [NotMapped] public const long REQUEST_DECLINE_TIMEOUT = 300000;  //TODO: Server option this bitch. JC is a lazy fuck
 
-
         //TODO: Clean all of this stuff up
-        //Temporary Values
-        [NotMapped] public Client MyClient;
+        #region Temporary Values
+
         [NotMapped] public bool InGame;
-        [NotMapped] private bool mSentMap;
-        [NotMapped] private int mCommonEventLaunches = 0;
-        [NotMapped] private object mEventLock = new object();
         [NotMapped] public Guid LastMapEntered = Guid.Empty;
-        [NotMapped] public ConcurrentDictionary<Guid, EventInstance> EventLookup = new ConcurrentDictionary<Guid, EventInstance>();
-        //Event Spawned Npcs
-        [NotMapped] public List<Npc> SpawnedNpcs = new List<Npc>();
-        //Chat
-        [NotMapped] public Player ChatTarget = null;
-        //Trading
-        [NotMapped] public Trading Trading;
-        //Quests
+
+        [JsonIgnore, NotMapped] public Client MyClient;
+
+        [JsonIgnore, NotMapped] private bool mSentMap;
+        [JsonIgnore, NotMapped] private int mCommonEventLaunches = 0;
+        [JsonIgnore, NotMapped] private object mEventLock = new object();
+        [JsonIgnore, NotMapped] public ConcurrentDictionary<Guid, EventInstance> EventLookup = new ConcurrentDictionary<Guid, EventInstance>();
+
+        #endregion
+
+        #region Event Spawned Npcs
+
+        [JsonIgnore] [NotMapped] public List<Npc> SpawnedNpcs = new List<Npc>();
+
+        #endregion
+
+        #region Chat
+
+        [JsonIgnore] [NotMapped] public Player ChatTarget = null;
+
+        #endregion
+
+        #region Trading
+
+        [JsonProperty(nameof(Trading))] private Guid JsonTradingId => Trading.Counterparty?.Id ?? Guid.Empty;
+
+        [JsonIgnore, NotMapped] public Trading Trading;
+
+        #endregion
+
+        #region Quests
+
         [NotMapped] public List<Guid> QuestOffers = new List<Guid>();
-        //Crafting
+
+        #endregion
+
+        #region Crafting
+
         [NotMapped] public Guid CraftingTableId = Guid.Empty;
         [NotMapped] public Guid CraftId = Guid.Empty;
         [NotMapped] public long CraftTimer = 0;
-        //Parties
-        [NotMapped] public List<Player> Party = new List<Player>();
-        [NotMapped] public Player PartyRequester;
-        [NotMapped] public Dictionary<Player, long> PartyRequests = new Dictionary<Player, long>();
-        //Friends
-        [NotMapped] public Player FriendRequester;
-        [NotMapped] public Dictionary<Player, long> FriendRequests = new Dictionary<Player, long>();
-        //Bag/Shops/etc
-        [NotMapped] public Bag InBag;
+
+        #endregion
+
+        #region Parties
+
+        [JsonProperty(nameof(Party))] private List<Guid> JsonPartyIds => Party.Select(partyMember => partyMember?.Id ?? Guid.Empty).ToList();
+        [JsonProperty(nameof(PartyRequester))] private Guid JsonPartyRequesterId => PartyRequester?.Id ?? Guid.Empty;
+        [JsonProperty(nameof(PartyRequests))] private Dictionary<Guid, long> JsonPartyRequests => PartyRequests.ToDictionary(pair => pair.Key?.Id ?? Guid.Empty, pair => pair.Value);
+
+        [JsonIgnore, NotMapped] public List<Player> Party = new List<Player>();
+        [JsonIgnore, NotMapped] public Player PartyRequester;
+        [JsonIgnore, NotMapped] public Dictionary<Player, long> PartyRequests = new Dictionary<Player, long>();
+
+        #endregion
+
+        #region Friends
+
+        [JsonProperty(nameof(FriendRequester))] private Guid JsonFriendRequesterId => FriendRequester?.Id ?? Guid.Empty;
+        [JsonProperty(nameof(FriendRequests))] private Dictionary<Guid, long> JsonFriendRequests => FriendRequests.ToDictionary(pair => pair.Key?.Id ?? Guid.Empty, pair => pair.Value);
+
+        [JsonIgnore, NotMapped] public Player FriendRequester;
+        [JsonIgnore, NotMapped] public Dictionary<Player, long> FriendRequests = new Dictionary<Player, long>();
+
+        #endregion
+
+        #region Bag/Shops/etc
+
+        [JsonProperty(nameof(InBag))] private bool JsonInBag => InBag != null;
+        [JsonProperty(nameof(InShop))] private bool JsonInShop => InShop != null;
+
+        [JsonIgnore, NotMapped] public Bag InBag;
+        [JsonIgnore, NotMapped] public ShopBase InShop;
+
         [NotMapped] public bool InBank;
-        [NotMapped] public ShopBase InShop;
-        //Item Cooldowns
+
+        #endregion
+
+        #region Item Cooldowns
+
         [NotMapped] public Dictionary<Guid, long> ItemCooldowns = new Dictionary<Guid, long>();
 
+        #endregion
 
-
-		[NotMapped]
-        public bool IsValidPlayer
-        {
-            get
-            {
-                if (IsDisposed)
-                {
-                    return false;
-                }
-
-                return (MyClient != null && MyClient.Entity == this);
-            }
-        }
+        [JsonIgnore, ] public bool IsValidPlayer => !IsDisposed && MyClient?.Entity == this;
 
         [NotMapped]
         public long ExperienceToNextLevel => GetExperienceToNextLevel(Level);
@@ -173,10 +205,7 @@ namespace Intersect.Server.Entities
             return classBase?.ExperienceToNextLevel(level) ?? ClassBase.DEFAULT_BASE_EXPERIENCE;
         }
 
-        public Player()
-        {
-            
-        }
+        public Player() { }
 
         public void SetOnline()
         {
@@ -779,7 +808,7 @@ namespace Intersect.Server.Entities
 
         public override void TryAttack(EntityInstance enemy)
         {
-            if (CastTime >= Globals.System.GetTimeMs())
+            if (CastTime >= Globals.Timing.TimeMs)
             {
                 PacketSender.SendPlayerMsg(MyClient, Strings.Combat.channelingnoattack);
                 return;
@@ -1273,7 +1302,7 @@ namespace Intersect.Server.Entities
                     return;
                 }
 
-                if (ItemCooldowns.ContainsKey(itemBase.Id) && ItemCooldowns[itemBase.Id] > Globals.System.GetTimeMs())
+                if (ItemCooldowns.ContainsKey(itemBase.Id) && ItemCooldowns[itemBase.Id] > Globals.Timing.TimeMs)
                 {
                     //Cooldown warning!
                     PacketSender.SendPlayerMsg(MyClient, Strings.Items.cooldown);
@@ -1407,11 +1436,11 @@ namespace Intersect.Server.Entities
                     decimal cooldownReduction = (1 - ((decimal)((Player)this).GetCooldownReduction() / 100));
                     if (ItemCooldowns.ContainsKey(itemBase.Id))
                     {
-                        ItemCooldowns[itemBase.Id] = Globals.System.GetTimeMs() + (long)(itemBase.Cooldown * cooldownReduction);
+                        ItemCooldowns[itemBase.Id] = Globals.Timing.TimeMs + (long)(itemBase.Cooldown * cooldownReduction);
                     }
                     else
                     {
-                        ItemCooldowns.Add(itemBase.Id, Globals.System.GetTimeMs() + (long)(itemBase.Cooldown * cooldownReduction));
+                        ItemCooldowns.Add(itemBase.Id, Globals.Timing.TimeMs + (long)(itemBase.Cooldown * cooldownReduction));
                     }
                     PacketSender.SendItemCooldown(MyClient, itemBase.Id);
                 }
@@ -2439,7 +2468,7 @@ namespace Intersect.Server.Entities
             {
                 fromPlayer.FriendRequests.Remove(this);
             }
-            if (!FriendRequests.ContainsKey(fromPlayer) || !(FriendRequests[fromPlayer] > Globals.System.GetTimeMs()))
+            if (!FriendRequests.ContainsKey(fromPlayer) || !(FriendRequests[fromPlayer] > Globals.Timing.TimeMs))
             {
                 if (Trading.Requester == null && PartyRequester == null && FriendRequester == null)
                 {
@@ -2487,7 +2516,7 @@ namespace Intersect.Server.Entities
             {
                 fromPlayer.Trading.Requests.Remove(this);
             }
-            if (Trading.Requests.ContainsKey(fromPlayer) && Trading.Requests[fromPlayer] > Globals.System.GetTimeMs())
+            if (Trading.Requests.ContainsKey(fromPlayer) && Trading.Requests[fromPlayer] > Globals.Timing.TimeMs)
             {
                 PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Trading.alreadydenied,
                     CustomColors.Error);
@@ -2729,7 +2758,7 @@ namespace Intersect.Server.Entities
             {
                 fromPlayer.PartyRequests.Remove(this);
             }
-            if (PartyRequests.ContainsKey(fromPlayer) && PartyRequests[fromPlayer] > Globals.System.GetTimeMs())
+            if (PartyRequests.ContainsKey(fromPlayer) && PartyRequests[fromPlayer] > Globals.Timing.TimeMs)
             {
                 PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Parties.alreadydenied,
                     CustomColors.Error);
@@ -3056,11 +3085,11 @@ namespace Intersect.Server.Entities
                 {
                     if (spell.VitalCost[(int)Vitals.Health] <= GetVital(Vitals.Health))
                     {
-                        if (Spells[spellSlot].SpellCd < Globals.System.RealTimeMs())
+                        if (Spells[spellSlot].SpellCd < Globals.Timing.RealTimeMs)
                         {
-                            if (CastTime < Globals.System.GetTimeMs())
+                            if (CastTime < Globals.Timing.TimeMs)
                             {
-                                CastTime = Globals.System.GetTimeMs() + spell.CastDuration;
+                                CastTime = Globals.Timing.TimeMs + spell.CastDuration;
                                 SubVital(Vitals.Mana, spell.VitalCost[(int)Vitals.Mana]);
                                 SubVital(Vitals.Health, spell.VitalCost[(int)Vitals.Health]);
                                 SpellCastSlot = spellSlot;
@@ -3084,7 +3113,7 @@ namespace Intersect.Server.Entities
                                 PacketSender.SendEntityVitals(this);
 
                                 //Check if cast should be instance
-                                if (Globals.System.GetTimeMs() >= CastTime)
+                                if (Globals.Timing.TimeMs >= CastTime)
                                 {
                                     //Cast now!
                                     CastTime = 0;

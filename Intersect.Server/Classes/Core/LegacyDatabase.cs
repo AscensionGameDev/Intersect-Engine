@@ -16,10 +16,12 @@ using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Logging;
 using Intersect.Models;
+using Intersect.Server.Core;
 using Intersect.Server.Database;
 using Intersect.Server.Database.GameData;
 using Intersect.Server.Database.PlayerData;
-using Intersect.Server.Database.PlayerData.Characters;
+using Intersect.Server.Database.PlayerData.Players;
+using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
@@ -36,8 +38,8 @@ namespace Intersect.Server
         private const string GameDbFilename = "resources/gamedata.db";
         private const string PlayersDbFilename = "resources/playerdata.db";
 
-        private static PlayerContext sPlayerDb;
-        private static GameContext sGameDb;
+        internal static PlayerContext PlayerContext { get; set; }
+        private static GameContext sGameDb { get; set; }
 
         private static Task sSaveGameDbTask;
         private static Task sSavePlayerDbTask;
@@ -70,13 +72,14 @@ namespace Intersect.Server
             //Connect to new player database
             if (Options.PlayerDb.Type == DatabaseOptions.DatabaseType.sqlite)
             {
-                sPlayerDb = new PlayerContext(DatabaseUtils.DbProvider.Sqlite, $"Data Source={PlayersDbFilename}");
+                PlayerContext = new PlayerContext(DatabaseUtils.DbProvider.Sqlite, $"Data Source={PlayersDbFilename}");
             }
             else
             {
-                sPlayerDb = new PlayerContext(DatabaseUtils.DbProvider.MySql, $"server={Options.PlayerDb.Server};port={Options.PlayerDb.Port};database={Options.PlayerDb.Database};user={Options.PlayerDb.Username};password={Options.PlayerDb.Password}");   
+                PlayerContext = new PlayerContext(DatabaseUtils.DbProvider.MySql, $"server={Options.PlayerDb.Server};port={Options.PlayerDb.Port};database={Options.PlayerDb.Database};user={Options.PlayerDb.Username};password={Options.PlayerDb.Password}");   
             }
-            sPlayerDb.Database.Migrate();
+            PlayerContext.Database.Migrate();
+            PlayerContext.Seed();
 
             if (Options.GameDb.Type == DatabaseOptions.DatabaseType.sqlite)
             {
@@ -128,25 +131,40 @@ namespace Intersect.Server
             }
         }
 
+        public static bool SetPlayerPower([CanBeNull] User user, UserRights power)
+        {
+            if (user != null)
+            {
+                user.Power = power;
+                SavePlayerDatabaseAsync();
+                return true;
+            }
+            else
+            {
+                Console.WriteLine(Strings.Account.doesnotexist);
+                return false;
+            }
+        }
+
         //User Info
         public static bool AccountExists([NotNull] string accountname)
         {
-            return sPlayerDb.Users.Any(p => string.Equals(p.Name.Trim(), accountname.Trim(), StringComparison.CurrentCultureIgnoreCase));
+            return PlayerContext.Users.Any(p => string.Equals(p.Name.Trim(), accountname.Trim(), StringComparison.CurrentCultureIgnoreCase));
         }
 
         public static string UsernameFromEmail([NotNull] string email)
         {
-            return sPlayerDb.Users.FirstOrDefault(p => string.Equals(p.Email.Trim(), email.Trim(), StringComparison.CurrentCultureIgnoreCase))?.Name;
+            return PlayerContext.Users.FirstOrDefault(p => string.Equals(p.Email.Trim(), email.Trim(), StringComparison.CurrentCultureIgnoreCase))?.Name;
         }
 
         public static User GetUser([NotNull] string username)
         {
-            return User.GetUser(sPlayerDb, username);
+            return User.GetUser(PlayerContext, username);
         }
 
         public static Player GetUserCharacter(User user, Guid characterId)
         {
-            foreach (var character in user.Characters)
+            foreach (var character in user.Players)
             {
                 if (character.Id == characterId) return character;
             }
@@ -155,30 +173,30 @@ namespace Intersect.Server
 
         public static bool EmailInUse([NotNull]string email)
         {
-            return sPlayerDb.Users.Any(p => string.Equals(p.Email.Trim(), email.Trim(), StringComparison.CurrentCultureIgnoreCase));
+            return PlayerContext.Users.Any(p => string.Equals(p.Email.Trim(), email.Trim(), StringComparison.CurrentCultureIgnoreCase));
         }
 
         public static bool CharacterNameInUse([NotNull]string name)
         {
-            return sPlayerDb.Characters.Any(p => string.Equals(p.Name.Trim(), name.Trim(), StringComparison.CurrentCultureIgnoreCase));
+            return PlayerContext.Players.Any(p => string.Equals(p.Name.Trim(), name.Trim(), StringComparison.CurrentCultureIgnoreCase));
         }
 
         public static Guid? GetCharacterId([NotNull]string name)
         {
-            return sPlayerDb.Characters.Where(p => string.Equals(p.Name.Trim(), name.Trim(), StringComparison.CurrentCultureIgnoreCase))?.First()?.Id;
+            return PlayerContext.Players.Where(p => string.Equals(p.Name.Trim(), name.Trim(), StringComparison.CurrentCultureIgnoreCase))?.First()?.Id;
         }
 
-        public static Player GetCharacter(Guid id)
+        public static Player GetPlayer(Guid playerId)
         {
-            return User.GetCharacter(sPlayerDb, id);
+            return Player.Load(playerId, PlayerContext);
         }
 
-        public static Player GetCharacter(string name)
+        public static Player GetPlayer([NotNull] string playerName)
         {
-            return User.GetCharacter(sPlayerDb, name);
+            return Player.Load(playerName, PlayerContext);
         }
 
-        public static long RegisteredPlayers => sPlayerDb.Users.Count();
+        public static long RegisteredPlayers => PlayerContext.Users.Count();
 
         public static void CreateAccount([NotNull] Client client, [NotNull] string username, [NotNull] string password, [NotNull] string email)
         {
@@ -207,7 +225,7 @@ namespace Intersect.Server
                 Password = pass,
                 Power = rights,
             };
-            sPlayerDb.Users.Add(user);
+            PlayerContext.Users.Add(user);
             client.SetUser(user);
             SavePlayerDatabaseAsync();
         }
@@ -232,7 +250,7 @@ namespace Intersect.Server
 
         public static bool CheckPassword([NotNull] string username, [NotNull] string password)
         {
-            var user = sPlayerDb.Users.Where(p => p.Name.ToLower() == username.ToLower()).Select(p => new { p.Password, p.Salt }).FirstOrDefault();
+            var user = PlayerContext.Users.Where(p => p.Name.ToLower() == username.ToLower()).Select(p => new { p.Password, p.Salt }).FirstOrDefault();
             if (user != null)
             {
                 var sha = new SHA256Managed();
@@ -249,7 +267,7 @@ namespace Intersect.Server
 
         public static UserRights CheckAccess([NotNull] string username)
         {
-            var user = sPlayerDb.Users.Where(p => string.Equals(p.Name.Trim(), username.Trim(), StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
+            var user = PlayerContext.Users.Where(p => string.Equals(p.Name.Trim(), username.Trim(), StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
             if (user != null) return user.Power;
             return UserRights.None;
         }
@@ -267,14 +285,14 @@ namespace Intersect.Server
         
         public static void DeleteCharacter(Player chr)
         {
-            sPlayerDb.Characters.Remove(chr);
+            PlayerContext.Players.Remove(chr);
         }
 
         //Bags
         public static Bag GetBag(Item item)
         {
             if (item.BagId == null) return null;
-            return Bag.GetBag(sPlayerDb,(Guid)item.BagId);
+            return Bag.GetBag(PlayerContext,(Guid)item.BagId);
         }
 
         public static bool BagEmpty([NotNull] Bag bag)
@@ -539,7 +557,12 @@ namespace Intersect.Server
 
         public static IDatabaseObject AddGameObject(GameObjectType gameObjectType, [NotNull] IDatabaseObject dbObj)
         {
-            lock (mSavingGameLock)
+            if (sGameDb == null)
+            {
+                throw new ArgumentNullException(nameof(sGameDb));
+            }
+
+            lock (mSavingGameLock ?? throw new ArgumentNullException(nameof(mSavingGameLock)))
             {
                 switch (gameObjectType)
                 {
@@ -641,7 +664,7 @@ namespace Intersect.Server
                 }
             }
 
-            if (Globals.ServerStarted)
+            if (ServerContext.Instance.IsStarted)
             {
                 SaveGameDatabaseAsync();
             }
@@ -964,12 +987,12 @@ namespace Intersect.Server
 
         private static void SavePlayerDb()
         {
-            if (sPlayerDb == null) return;
+            if (PlayerContext == null) return;
             var sw = new Stopwatch();
             lock (mSavingPlayerLock)
             {
                 sw.Start();
-                sPlayerDb.SaveChanges();
+                PlayerContext.SaveChanges();
                 sw.Stop();
                 Log.Info("Player DB Save - Took " + sw.ElapsedMilliseconds + "ms to complete.");
             }
@@ -1102,9 +1125,9 @@ namespace Intersect.Server
             Console.WriteLine(Strings.Migration.stoppingserver);
 
             //This variable will end the server loop and save any pending changes
-            Globals.ServerStarted = false;
+            ServerContext.Instance.RequestShutdown();
 
-            while (!Globals.ServerStopped)
+            while (ServerContext.Instance.IsRunning)
             {
                 System.Threading.Thread.Sleep(100);
             }
@@ -1142,20 +1165,20 @@ namespace Intersect.Server
                     }
                     else if (!gameDb && newPlayerContext != null)
                     {
-                        MigrateDbSet(sPlayerDb.Users, newPlayerContext.Users);
-                        MigrateDbSet(sPlayerDb.Characters, newPlayerContext.Characters);
-                        MigrateDbSet(sPlayerDb.Character_Friends, newPlayerContext.Character_Friends);
-                        MigrateDbSet(sPlayerDb.Character_Spells, newPlayerContext.Character_Spells);
-                        MigrateDbSet(sPlayerDb.Character_Switches, newPlayerContext.Character_Switches);
-                        MigrateDbSet(sPlayerDb.Character_Variables, newPlayerContext.Character_Variables);
-                        MigrateDbSet(sPlayerDb.Character_Hotbar, newPlayerContext.Character_Hotbar);
-                        MigrateDbSet(sPlayerDb.Character_Quests, newPlayerContext.Character_Quests);
-                        MigrateDbSet(sPlayerDb.Bags, newPlayerContext.Bags);
-                        MigrateDbSet(sPlayerDb.Character_Items, newPlayerContext.Character_Items);
-                        MigrateDbSet(sPlayerDb.Character_Bank, newPlayerContext.Character_Bank);
-                        MigrateDbSet(sPlayerDb.Bag_Items, newPlayerContext.Bag_Items);
-                        MigrateDbSet(sPlayerDb.Mutes, newPlayerContext.Mutes);
-                        MigrateDbSet(sPlayerDb.Bans, newPlayerContext.Bans);
+                        MigrateDbSet(PlayerContext.Users, newPlayerContext.Users);
+                        MigrateDbSet(PlayerContext.Players, newPlayerContext.Players);
+                        MigrateDbSet(PlayerContext.Player_Friends, newPlayerContext.Player_Friends);
+                        MigrateDbSet(PlayerContext.Player_Spells, newPlayerContext.Player_Spells);
+                        MigrateDbSet(PlayerContext.Player_Switches, newPlayerContext.Player_Switches);
+                        MigrateDbSet(PlayerContext.Player_Variables, newPlayerContext.Player_Variables);
+                        MigrateDbSet(PlayerContext.Player_Hotbar, newPlayerContext.Player_Hotbar);
+                        MigrateDbSet(PlayerContext.Player_Quests, newPlayerContext.Player_Quests);
+                        MigrateDbSet(PlayerContext.Bags, newPlayerContext.Bags);
+                        MigrateDbSet(PlayerContext.Player_Items, newPlayerContext.Player_Items);
+                        MigrateDbSet(PlayerContext.Player_Bank, newPlayerContext.Player_Bank);
+                        MigrateDbSet(PlayerContext.Bag_Items, newPlayerContext.Bag_Items);
+                        MigrateDbSet(PlayerContext.Mutes, newPlayerContext.Mutes);
+                        MigrateDbSet(PlayerContext.Bans, newPlayerContext.Bans);
                         newPlayerContext.SaveChanges();
                         Options.PlayerDb = newOpts;
                         Options.SaveToDisk();

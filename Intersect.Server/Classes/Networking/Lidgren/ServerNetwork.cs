@@ -22,15 +22,12 @@ namespace Intersect.Server.Networking.Lidgren
             lidgrenInterface.OnConnectionApproved += HandleInterfaceOnConnectonApproved;
             lidgrenInterface.OnDisconnected += HandleInterfaceOnDisconnected;
             lidgrenInterface.OnUnconnectedMessage += HandleOnUnconnectedMessage;
-            //lidgrenInterface.OnUnconnectedMessage += HandleUnconnectedMessageReceived;
             AddNetworkLayerInterface(lidgrenInterface);
         }
 
         public HandleConnectionEvent OnConnected { get; set; }
         public HandleConnectionEvent OnConnectionApproved { get; set; }
         public HandleConnectionEvent OnDisconnected { get; set; }
-
-        public override Guid Guid { get; }
 
         public bool Listen()
         {

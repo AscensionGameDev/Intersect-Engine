@@ -13,6 +13,7 @@ using Intersect.Network;
 using Intersect.Network.Packets.Reflectable;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
+using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
@@ -361,7 +362,7 @@ namespace Intersect.Server.Networking
                 }
 
                 //Check Mute Status and Load into user property
-                Mute.CheckMute(client.User, client.GetIp());
+                Mute.FindMuteReason(client.User, client.GetIp());
 
                 PacketSender.SendServerConfig(client);
                 //Character selection if more than one.
@@ -443,10 +444,10 @@ namespace Intersect.Server.Networking
             if ((canMove == -1 || canMove == -4) && client.Entity.MoveRoute == null)
             {
                 player.Move(dir, client, false);
-                if (player.MoveTimer > Globals.System.GetTimeMs())
+                if (player.MoveTimer > Globals.Timing.TimeMs)
                 {
                     //TODO: Make this based moreso on the players current ping instead of a flat value that can be abused
-                    player.MoveTimer = Globals.System.GetTimeMs() +  (long)(player.GetMovementTime() * .75f);
+                    player.MoveTimer = Globals.Timing.TimeMs +  (long)(player.GetMovementTime() * .75f);
                 }
             }
             else
@@ -929,7 +930,7 @@ namespace Intersect.Server.Networking
                 buffer.WriteBytes(packet);
                 var target = buffer.ReadGuid();
 
-                if (client.Entity.CastTime >= Globals.System.GetTimeMs())
+                if (client.Entity.CastTime >= Globals.Timing.TimeMs)
                 {
                     PacketSender.SendPlayerMsg(client, Strings.Combat.channelingnoattack);
                     return;
@@ -1235,7 +1236,7 @@ namespace Intersect.Server.Networking
                 var player = new Player();
                 player.Id = Guid.NewGuid();
                 client.Characters.Add(player);
-                player.FixLists();
+                player.ValidateLists();
                 for (var i = 0; i < Options.EquipmentSlots.Count; i++)
                 {
                     player.Equipment[i] = -1;
@@ -1718,7 +1719,7 @@ namespace Intersect.Server.Networking
                     var unmutedUser = LegacyDatabase.GetUser(val1);
                     if (unmutedUser != null)
                     {
-                        Mute.DeleteMute(unmutedUser);
+                        Mute.Remove(unmutedUser);
                         PacketSender.SendPlayerMsg(client, Strings.Account.unmuted.ToString(val1));
                     }
                     else
@@ -1730,7 +1731,7 @@ namespace Intersect.Server.Networking
                     var unbannedUser = LegacyDatabase.GetUser(val1);
                     if (unbannedUser != null)
                     {
-                        Ban.DeleteBan(unbannedUser);
+                        Ban.Remove(unbannedUser);
                         PacketSender.SendPlayerMsg(client, Strings.Account.unbanned.ToString(val1));
                     }
                     else
@@ -1747,12 +1748,12 @@ namespace Intersect.Server.Networking
                             {
                                 if (Convert.ToBoolean(val4) == true)
                                 {
-                                    Mute.AddMute(Globals.Clients[i], Convert.ToInt32(val2), val3,
+                                    Mute.Add(Globals.Clients[i], Convert.ToInt32(val2), val3,
                                         client.Entity.Name, Globals.Clients[i].GetIp());
                                 }
                                 else
                                 {
-                                    Mute.AddMute(Globals.Clients[i], Convert.ToInt32(val2), val3,
+                                    Mute.Add(Globals.Clients[i], Convert.ToInt32(val2), val3,
                                         client.Entity.Name, "");
                                 }
                                 PacketSender.SendGlobalMsg(Strings.Account.muted.ToString(
@@ -1772,12 +1773,12 @@ namespace Intersect.Server.Networking
                             {
                                 if (Convert.ToBoolean(val4) == true)
                                 {
-                                    Ban.AddBan(Globals.Clients[i], Convert.ToInt32(val2), val3,
+                                    Ban.Add(Globals.Clients[i], Convert.ToInt32(val2), val3,
                                         client.Entity.Name, Globals.Clients[i].GetIp());
                                 }
                                 else
                                 {
-                                    Ban.AddBan(Globals.Clients[i], Convert.ToInt32(val2), val3,
+                                    Ban.Add(Globals.Clients[i], Convert.ToInt32(val2), val3,
                                         client.Entity.Name, "");
                                 }
 
@@ -2056,7 +2057,7 @@ namespace Intersect.Server.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             client.Entity.CraftId = bf.ReadGuid();
-            client.Entity.CraftTimer = Globals.System.GetTimeMs();
+            client.Entity.CraftTimer = Globals.Timing.TimeMs;
             bf.Dispose();
         }
 
@@ -2343,7 +2344,7 @@ namespace Intersect.Server.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var target = Player.Find(bf.ReadGuid());
+            var target = Player.FindOnline(bf.ReadGuid());
             if (target == null) return;
             if (target.Id != client.Entity.Id)
             {
@@ -2387,13 +2388,13 @@ namespace Intersect.Server.Networking
 
                     if (client.Entity.PartyRequests.ContainsKey(client.Entity.PartyRequester))
                     {
-                        client.Entity.PartyRequests[client.Entity.PartyRequester] = Globals.System.GetTimeMs() +
+                        client.Entity.PartyRequests[client.Entity.PartyRequester] = Globals.Timing.TimeMs +
                                                                                     Player.REQUEST_DECLINE_TIMEOUT;
                     }
                     else
                     {
                         client.Entity.PartyRequests.Add(client.Entity.PartyRequester,
-                            Globals.System.GetTimeMs() + Player.REQUEST_DECLINE_TIMEOUT);
+                            Globals.Timing.TimeMs + Player.REQUEST_DECLINE_TIMEOUT);
                     }
                 }
                 client.Entity.PartyRequester = null;
@@ -2445,7 +2446,7 @@ namespace Intersect.Server.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var target = Player.Find(bf.ReadGuid());
+            var target = Player.FindOnline(bf.ReadGuid());
             if (target == null) return;
             if (target.Id != client.Entity.Id)
             {
@@ -2492,13 +2493,13 @@ namespace Intersect.Server.Networking
                         Strings.Trading.declined.ToString(client.Entity.Name), CustomColors.Declined);
                     if (client.Entity.Trading.Requests.ContainsKey(client.Entity.Trading.Requester))
                     {
-                        client.Entity.Trading.Requests[client.Entity.Trading.Requester] = Globals.System.GetTimeMs() +
+                        client.Entity.Trading.Requests[client.Entity.Trading.Requester] = Globals.Timing.TimeMs +
                                                                                     Player.REQUEST_DECLINE_TIMEOUT;
                     }
                     else
                     {
                         client.Entity.Trading.Requests.Add(client.Entity.Trading.Requester,
-                            Globals.System.GetTimeMs() + Player.REQUEST_DECLINE_TIMEOUT);
+                            Globals.Timing.TimeMs + Player.REQUEST_DECLINE_TIMEOUT);
                     }
                 }
                 client.Entity.Trading.Requester = null;
@@ -2638,7 +2639,7 @@ namespace Intersect.Server.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var target = Player.Find(bf.ReadGuid());
+            var target = Player.FindOnline(bf.ReadGuid());
             if (target == null) return;
             if (target.Id != client.Entity.Id)
             {
@@ -2665,7 +2666,7 @@ namespace Intersect.Server.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var target = Player.Find(bf.ReadGuid());
+            var target = Player.FindOnline(bf.ReadGuid());
             if (client.Entity.FriendRequester == target)
             {
                 if (client.Entity.FriendRequester.IsValidPlayer)
@@ -2673,12 +2674,12 @@ namespace Intersect.Server.Networking
                     if (client.Entity.FriendRequests.ContainsKey(client.Entity.FriendRequester))
                     {
                         client.Entity.FriendRequests[client.Entity.FriendRequester] =
-                            Globals.System.GetTimeMs() + Player.REQUEST_DECLINE_TIMEOUT;
+                            Globals.Timing.TimeMs + Player.REQUEST_DECLINE_TIMEOUT;
                     }
                     else
                     {
                         client.Entity.FriendRequests.Add(client.Entity.FriendRequester,
-                            Globals.System.GetTimeMs() + Player.REQUEST_DECLINE_TIMEOUT);
+                            Globals.Timing.TimeMs + Player.REQUEST_DECLINE_TIMEOUT);
                     }
                 }
                 client.Entity.FriendRequester = null;
@@ -2697,7 +2698,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            var character = LegacyDatabase.GetCharacter(name);
+            var character = LegacyDatabase.GetPlayer(name);
             if (character != null)
             {
                 if (!client.Entity.HasFriend(character))
@@ -2733,7 +2734,7 @@ namespace Intersect.Server.Networking
 
             if (charId != null)
             {
-                var character = LegacyDatabase.GetCharacter((Guid)charId);
+                var character = LegacyDatabase.GetPlayer((Guid)charId);
                 if (character != null && client.Entity.HasFriend(character))
                 {
                     client.Entity.RemoveFriend(character);

@@ -83,13 +83,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>..\build\debug\server\</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
+    <DefineConstants>DEBUG;WEBSOCKETS</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
     <Optimize>false</Optimize>
+    <DocumentationFile>..\build\debug\server\Intersect Server.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'NoFody|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -177,11 +178,14 @@
     <OutputPath>..\build\debug\server\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CommandLine, Version=2.4.3.0, Culture=neutral, PublicKeyToken=de6f01bd326f8c32, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommandLineParser.2.4.3\lib\netstandard2.0\CommandLine.dll</HintPath>
+    </Reference>
     <Reference Include="Costura, Version=3.1.2.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
       <HintPath>..\packages\Costura.Fody.3.1.2\lib\net46\Costura.dll</HintPath>
     </Reference>
-    <Reference Include="JetBrains.Annotations, Version=2018.2.1.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
-      <HintPath>..\packages\JetBrains.Annotations.2018.2.1\lib\net20\JetBrains.Annotations.dll</HintPath>
+    <Reference Include="JetBrains.Annotations, Version=2018.3.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\packages\JetBrains.Annotations.2018.3.0\lib\net20\JetBrains.Annotations.dll</HintPath>
     </Reference>
     <Reference Include="jose-jwt, Version=2.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\jose-jwt.2.4.0\lib\net40\jose-jwt.dll</HintPath>
@@ -199,6 +203,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Data.Sqlite, Version=2.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Data.Sqlite.Core.2.1.0\lib\netstandard2.0\Microsoft.Data.Sqlite.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Diagnostics.Runtime, Version=1.0.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Diagnostics.Runtime.1.0.3\lib\net45\Microsoft.Diagnostics.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.EntityFrameworkCore, Version=2.1.3.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.EntityFrameworkCore.2.1.3\lib\netstandard2.0\Microsoft.EntityFrameworkCore.dll</HintPath>
@@ -257,33 +264,39 @@
     <Reference Include="Microsoft.Extensions.Primitives, Version=2.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Extensions.Primitives.2.1.1\lib\netstandard2.0\Microsoft.Extensions.Primitives.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Owin, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.4.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.HttpListener, Version=2.0.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Host.HttpListener.2.0.2\lib\net45\Microsoft.Owin.Host.HttpListener.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Hosting, Version=2.0.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Hosting.2.0.2\lib\net45\Microsoft.Owin.Hosting.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.4.0.1\lib\net45\Microsoft.Owin.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.OAuth, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.OAuth.4.0.1\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
+    </Reference>
     <Reference Include="Mono.Data.Sqlite, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <HintPath>..\packages\Mono.Data.Sqlite.Portable.1.0.3.5\lib\net4\Mono.Data.Sqlite.dll</HintPath>
     </Reference>
     <Reference Include="MySqlConnector, Version=0.45.1.0, Culture=neutral, PublicKeyToken=d33d3e53aa5f8c92, processorArchitecture=MSIL">
       <HintPath>..\packages\MySqlConnector.0.45.1\lib\net461\MySqlConnector.dll</HintPath>
     </Reference>
-    <Reference Include="Nancy, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nancy.2.0.0-pre1904\lib\net452\Nancy.dll</HintPath>
-    </Reference>
-    <Reference Include="Nancy.Authentication.Stateless, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nancy.Authentication.Stateless.2.0.0-pre1904\lib\net452\Nancy.Authentication.Stateless.dll</HintPath>
-    </Reference>
-    <Reference Include="Nancy.Hosting.Self, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nancy.Hosting.Self.2.0.0-pre1904\lib\net452\Nancy.Hosting.Self.dll</HintPath>
-    </Reference>
-    <Reference Include="Nancy.ViewEngines.Markdown, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nancy.ViewEngines.Markdown.2.0.0-pre1904\lib\net452\Nancy.ViewEngines.Markdown.dll</HintPath>
-    </Reference>
     <Reference Include="NCalc, Version=1.3.8.0, Culture=neutral, PublicKeyToken=973cde3f1cafed03, processorArchitecture=MSIL">
       <HintPath>..\packages\ncalc.1.3.8\lib\NCalc.dll</HintPath>
     </Reference>
     <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Open.Nat, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f22a6a4582336c76, processorArchitecture=MSIL">
-      <HintPath>..\packages\Open.NAT.2.1.0.0\lib\net45\Open.Nat.dll</HintPath>
+    <Reference Include="Open.Nat">
+      <HintPath>..\lib\Open.Nat.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
     <Reference Include="Pomelo.EntityFrameworkCore.MySql, Version=2.1.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Pomelo.EntityFrameworkCore.MySql.2.1.2\lib\netstandard2.0\Pomelo.EntityFrameworkCore.MySql.dll</HintPath>
@@ -333,8 +346,8 @@
       <HintPath>..\packages\System.Memory.4.5.1\lib\netstandard2.0\System.Memory.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.Net.Http.Formatting, Version=5.2.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.6\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.7\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
     <Reference Include="System.Numerics" />
     <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -356,29 +369,57 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Http, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.7\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.Owin, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Owin.5.2.7\lib\net45\System.Web.Http.Owin.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.XML" />
     <Reference Include="websocket-sharp, Version=1.0.2.59611, Culture=neutral, PublicKeyToken=5660b08a1845a91e, processorArchitecture=MSIL">
       <HintPath>..\packages\WebSocketSharp.1.0.3-rc11\lib\websocket-sharp.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.IdentityModel.Logging">
+      <HintPath>..\packages\Microsoft.IdentityModel.Logging.5.4.0\lib\net461\Microsoft.IdentityModel.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Tokens">
+      <HintPath>..\packages\Microsoft.IdentityModel.Tokens.5.4.0\lib\net461\Microsoft.IdentityModel.Tokens.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.JsonWebTokens">
+      <HintPath>..\packages\Microsoft.IdentityModel.JsonWebTokens.5.4.0\lib\net461\Microsoft.IdentityModel.JsonWebTokens.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IdentityModel.Tokens.Jwt">
+      <HintPath>..\packages\System.IdentityModel.Tokens.Jwt.5.4.0\lib\net461\System.IdentityModel.Tokens.Jwt.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Jwt">
+      <HintPath>..\packages\Microsoft.Owin.Security.Jwt.4.0.1\lib\net45\Microsoft.Owin.Security.Jwt.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin.Security.AesDataProtectorProvider">
+      <HintPath>..\packages\Owin.Security.AesDataProtectorProvider.1.1.2\lib\net45\Owin.Security.AesDataProtectorProvider.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\Core\ServerStart.cs" />
-    <Compile Include="Classes\Core\ServerSystem.cs" />
+    <Compile Include="Classes\Core\ServerTiming.cs" />
     <Compile Include="Classes\Database\GameData\GameContext.cs" />
+    <Compile Include="Classes\Database\PlayerData\Api\RefreshToken.cs" />
     <Compile Include="Classes\Database\PlayerData\Ban.cs" />
-    <Compile Include="Classes\Database\PlayerData\Characters\Bag.cs" />
-    <Compile Include="Classes\Database\PlayerData\Characters\BagSlot.cs" />
-    <Compile Include="Classes\Database\PlayerData\Characters\BankSlot.cs" />
-    <Compile Include="Classes\Database\PlayerData\Characters\Friend.cs" />
-    <Compile Include="Classes\Database\PlayerData\Characters\HotbarSlot.cs" />
-    <Compile Include="Classes\Database\PlayerData\Characters\InventorySlot.cs" />
+    <Compile Include="Classes\Database\PlayerData\Players\Bag.cs" />
+    <Compile Include="Classes\Database\PlayerData\Players\BagSlot.cs" />
+    <Compile Include="Classes\Database\PlayerData\Players\BankSlot.cs" />
+    <Compile Include="Classes\Database\PlayerData\Players\Friend.cs" />
+    <Compile Include="Classes\Database\PlayerData\Players\HotbarSlot.cs" />
+    <Compile Include="Classes\Database\PlayerData\Players\InventorySlot.cs" />
     <Compile Include="Classes\Database\Item.cs" />
-    <Compile Include="Classes\Database\PlayerData\Characters\Quest.cs" />
-    <Compile Include="Classes\Database\PlayerData\Characters\SpellSlot.cs" />
+    <Compile Include="Classes\Database\PlayerData\Players\IPlayerOwned.cs" />
+    <Compile Include="Classes\Database\PlayerData\Players\ISlot.cs" />
+    <Compile Include="Classes\Database\PlayerData\Players\Quest.cs" />
+    <Compile Include="Classes\Database\PlayerData\Players\SlotHelper.cs" />
+    <Compile Include="Classes\Database\PlayerData\Players\SpellSlot.cs" />
+    <Compile Include="Classes\Entities\Player.Database.cs" />
     <Compile Include="Classes\Database\Spell.cs" />
-    <Compile Include="Classes\Database\PlayerData\Characters\Switch.cs" />
-    <Compile Include="Classes\Database\PlayerData\Characters\Variable.cs" />
+    <Compile Include="Classes\Database\PlayerData\Players\Switch.cs" />
+    <Compile Include="Classes\Database\PlayerData\Players\Variable.cs" />
     <Compile Include="Classes\Database\PlayerData\Mute.cs" />
     <Compile Include="Classes\Database\PlayerData\User.cs" />
     <Compile Include="Classes\Database\PlayerData\PlayerContext.cs" />
@@ -391,6 +432,7 @@
     <Compile Include="Classes\EventProcessing\Conditions.cs" />
     <Compile Include="Classes\General\Formulas.cs" />
     <Compile Include="Classes\General\ServerTime.cs" />
+    <Compile Include="Classes\Localization\CommandsNamespace.cs" />
     <Compile Include="Classes\Localization\Strings.cs" />
     <Compile Include="Classes\Maps\MapInstance.cs" />
     <Compile Include="Classes\Maps\MapItemInstance.cs" />
@@ -422,9 +464,63 @@
     <Compile Include="Classes\Spells\SpellInstance.cs" />
     <Compile Include="Classes\Networking\Lidgren\ServerNetwork.cs" />
     <Compile Include="Classes\Networking\Lidgren\ThreadYieldNet40.cs" />
+    <Compile Include="Core\CommandParsing\Arguments\EnumArgument.cs" />
+    <Compile Include="Core\CommandParsing\Arguments\VariableArgument.cs" />
+    <Compile Include="Core\CommandParsing\CommandParserErrorsNamespace.cs" />
+    <Compile Include="Core\CommandParsing\CommandParserFormattingNamespace.cs" />
+    <Compile Include="Core\CommandParsing\CommandParsingNamespace.cs" />
+    <Compile Include="Core\CommandParsing\Commands\HelpableCommand.cs" />
+    <Compile Include="Core\CommandParsing\Arguments\PositionalArgument.cs" />
+    <Compile Include="Core\CommandParsing\Arguments\ArgumentValues.cs" />
+    <Compile Include="Core\CommandParsing\Arguments\ArgumentValuesMap.cs" />
+    <Compile Include="Core\Bootstrapper.cs" />
+    <Compile Include="Core\CommandLineOptions.cs" />
+    <Compile Include="Core\CommandParsing\Commands\Command.cs" />
+    <Compile Include="Core\CommandParsing\CommandParser.cs" />
+    <Compile Include="Core\CommandParsing\Errors\MissingArgumentError.cs" />
+    <Compile Include="Core\CommandParsing\ParserResultExtensions.cs" />
+    <Compile Include="Core\CommandParsing\ParserSettings.cs" />
+    <Compile Include="Core\Commands\AnnouncementCommand.cs" />
+    <Compile Include="Core\Commands\ApiCommand.cs" />
+    <Compile Include="Core\Commands\CpsCommand.cs" />
+    <Compile Include="Core\Commands\PowerAccountCommand.cs" />
+    <Compile Include="Core\Commands\PowerCommand.cs" />
+    <Compile Include="Core\Commands\ModeratorActionCommand.cs" />
+    <Compile Include="Core\Commands\MuteCommand.cs" />
+    <Compile Include="Core\Commands\ExitCommand.cs" />
+    <Compile Include="Core\CommandParsing\Errors\MissingCommandError.cs" />
+    <Compile Include="Core\CommandParsing\Errors\UnhandledArgumentError.cs" />
+    <Compile Include="Core\CommandParsing\ParserContext.cs" />
+    <Compile Include="Core\Commands\HelpCommand.cs" />
+    <Compile Include="Core\Commands\KickCommand.cs" />
+    <Compile Include="Core\Commands\BanCommand.cs" />
+    <Compile Include="Core\Commands\UnmuteCommand.cs" />
+    <Compile Include="Core\Commands\UnbanCommand.cs" />
+    <Compile Include="Core\Commands\MigrateCommand.cs" />
+    <Compile Include="Core\Commands\MakePublicCommand.cs" />
+    <Compile Include="Core\Commands\MakePrivateCommand.cs" />
+    <Compile Include="Core\Commands\TargetUserCommand.cs" />
+    <Compile Include="Core\Commands\TargettedCommand.cs" />
+    <Compile Include="Core\Commands\TargetClientCommand.cs" />
+    <Compile Include="Core\Commands\KillCommand.cs" />
+    <Compile Include="Core\Commands\NetDebugCommand.cs" />
+    <Compile Include="Core\Commands\OnlineListCommand.cs" />
+    <Compile Include="Core\ServerConsole.cs" />
+    <Compile Include="Core\ServerContext.cs" />
+    <Compile Include="Core\ServerLogic.cs" />
+    <Compile Include="Core\CommandParsing\Tokenization\Tokenizer.cs" />
+    <Compile Include="Core\CommandParsing\Tokenization\TokenizerSettings.cs" />
     <Compile Include="Migrations\20180927161502_InitialPlayerDb.cs" />
     <Compile Include="Migrations\20180927161502_InitialPlayerDb.designer.cs">
       <DependentUpon>20180927161502_InitialPlayerDb.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\20190310001204_AddRefreshTokens.cs" />
+    <Compile Include="Migrations\20190310001204_AddRefreshTokens.designer.cs">
+      <DependentUpon>20190310001204_AddRefreshTokens.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\20190310013418_StandardizeVocabulary1.cs" />
+    <Compile Include="Migrations\20190310013418_StandardizeVocabulary1.designer.cs">
+      <DependentUpon>20190310013418_StandardizeVocabulary1.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\20190303234637_SpellUpgrades_OnHit_Shields.cs" />
     <Compile Include="Migrations\Game\20190303234637_SpellUpgrades_OnHit_Shields.Designer.cs">
@@ -435,13 +531,25 @@
       <DependentUpon>20190306224847_BoundSpells.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />
-    <Compile Include="WebApi\Authentication\AuthorizationProvider.cs" />
+    <Compile Include="Web\RestApi\Attributes\ConfigurableAuthorizeAttribute.cs" />
+    <Compile Include="Web\RestApi\Authentication\AuthenticationProvider.cs" />
+    <Compile Include="Web\RestApi\Authentication\OAuth\OAuthProvider.cs" />
+    <Compile Include="Web\RestApi\Authentication\OAuth\Providers\BearerAuthenticationProvider.cs" />
+    <Compile Include="Web\RestApi\Authentication\OAuth\Providers\GrantProvider.cs" />
+    <Compile Include="Web\RestApi\Authentication\OAuth\Providers\RefreshTokenProvider.cs" />
+    <Compile Include="Web\RestApi\Configuration\ApiConfiguration.cs" />
+    <Compile Include="Web\RestApi\Constraints\AdminActionsConstraint.cs" />
+    <Compile Include="Web\RestApi\Extensions\HttpRequestMessageExtensions.cs" />
+    <Compile Include="Web\RestApi\IAppConfigurationProvider.cs" />
+    <Compile Include="Web\RestApi\Logging\IntersectLogger.cs" />
+    <Compile Include="Web\RestApi\Logging\IntersectLoggerFactory.cs" />
+    <Compile Include="Web\RestApi\MediaTypeFormatterExtensions.cs" />
+    <Compile Include="Web\RestApi\RestApi.cs" />
     <Compile Include="Migrations\Game\20180905042857_Initial.cs" />
     <Compile Include="Migrations\Game\20180905042857_Initial.Designer.cs">
       <DependentUpon>20180905042857_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\GameContextModelSnapshot.cs" />
-    <Compile Include="Classes\Database\PlayerData\UserRights.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -449,21 +557,33 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Utilities\SortHelper.cs" />
-    <Compile Include="WebApi\Authentication\IAuthorizationProvider.cs" />
-    <Compile Include="WebApi\Authentication\JwtToken.cs" />
-    <Compile Include="WebApi\Authentication\UserIdentity.cs" />
-    <Compile Include="WebApi\Bootstrapper.cs" />
-    <Compile Include="WebApi\Modules\AuthModule.cs" />
-    <Compile Include="WebApi\Modules\GameObjectModule.cs" />
-    <Compile Include="WebApi\Modules\PlayerModule.cs" />
-    <Compile Include="WebApi\Modules\RootModule.cs" />
-    <Compile Include="WebApi\Modules\InfoModule.cs" />
-    <Compile Include="WebApi\ServerApi.cs" />
-    <Compile Include="WebApi\ServerModule.cs" />
+    <Compile Include="Core\CommandParsing\Arguments\HelpArgument.cs" />
+    <Compile Include="Core\CommandParsing\Errors\ParserError.cs" />
+    <Compile Include="Core\CommandParsing\Commands\ICommand.cs" />
+    <Compile Include="Core\CommandParsing\Arguments\ICommandArgument.cs" />
+    <Compile Include="Core\CommandParsing\ParserResult.cs" />
+    <Compile Include="Core\Commands\ServerCommand.cs" />
+    <Compile Include="Core\CommandParsing\Arguments\CommandArgument.cs" />
+    <Compile Include="Web\RestApi\RouteProviders\VersionedRouteProvider.cs" />
+    <Compile Include="Web\RestApi\Routes\OAuthController.cs" />
+    <Compile Include="Web\RestApi\Routes\RootInfoController.cs" />
+    <Compile Include="Web\RestApi\Routes\V1\DemoController.cs" />
+    <Compile Include="Web\RestApi\Routes\V1\DocController.cs" />
+    <Compile Include="Web\RestApi\Routes\V1\InfoController.cs" />
+    <Compile Include="Web\RestApi\Services\AuthorizedRoutesService.cs" />
+    <Compile Include="Web\RestApi\Services\IAuthorizedRoutesService.cs" />
+    <Compile Include="Web\RestApi\Services\IntersectServiceDependencyResolver.cs" />
+    <Compile Include="Web\RestApi\Routes\V1\UserController.cs" />
+    <Compile Include="Web\RestApi\Routes\V1\PlayerController.cs" />
+    <Compile Include="Classes\Database\PlayerData\Security\UserRights.cs" />
+    <Compile Include="Classes\Database\PlayerData\SeedData\SeedUsers.cs" />
+    <Compile Include="Classes\Database\SeedData.cs" />
+    <Compile Include="Classes\Database\ISeedableContext.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="private-intersect.bek" />
     <None Include="app.config" />
+    <Compile Include="Classes\Entities\Entity.Comparison.cs" />
     <None Include="packages.config" />
     <EmbeddedResource Include="Resources\libe_sqlite3_x64.so" />
     <EmbeddedResource Include="Resources\libe_sqlite3.dylib" />
@@ -505,7 +625,10 @@
       <Name>Intersect.Network</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+    <Folder Include="Classes\Database\PlayerData\SeedData\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

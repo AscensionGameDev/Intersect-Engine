@@ -107,7 +107,7 @@ namespace Intersect.Server.Entities
                                 {
                                     if (MyPlayer.MoveRoute == null ||
                                         (MyPlayer.MoveRoute.Complete &&
-                                         MyPlayer.MoveTimer < Globals.System.GetTimeMs()))
+                                         MyPlayer.MoveTimer < Globals.Timing.TimeMs))
                                     {
                                         curStack.WaitingForRoute = Guid.Empty;
                                         curStack.WaitingForRouteMap = Guid.Empty;
@@ -138,7 +138,7 @@ namespace Intersect.Server.Entities
                                 }
                                 else
                                 {
-                                    if (WaitTimer < Globals.System.GetTimeMs())
+                                    if (WaitTimer < Globals.Timing.TimeMs)
                                     {
                                         CommandProcessing.ProcessCommand(curStack.Command,MyPlayer,this);
                                     }

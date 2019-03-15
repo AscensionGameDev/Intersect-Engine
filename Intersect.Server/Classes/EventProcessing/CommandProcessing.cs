@@ -9,6 +9,7 @@ using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
+using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
@@ -700,7 +701,7 @@ namespace Intersect.Server.EventProcessing
         //Wait Command
         private static void ProcessCommand(WaitCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            instance.WaitTimer = Globals.System.GetTimeMs() + command.Time;
+            instance.WaitTimer = Globals.Timing.TimeMs + command.Time;
         }
 
         //Open Bank Command
