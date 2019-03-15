@@ -116,6 +116,7 @@ namespace Intersect.Client.UI
             sMenuCanvas?.Dispose();
             sGameCanvas?.Dispose();
             sGwenSkin?.Dispose();
+            GameUi?.Dispose();
             GwenInitialized = false;
         }
 
