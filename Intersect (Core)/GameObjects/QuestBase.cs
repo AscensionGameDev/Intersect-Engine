@@ -91,6 +91,11 @@ namespace Intersect.GameObjects
         [NotMapped]
         public List<Guid> RemoveEvents = new List<Guid>(); //Events that need to be removed for the quest
 
+        //Editor Only
+        [NotMapped]
+        [JsonIgnore]
+        public Dictionary<Guid,Guid> OriginalTaskEventIds { get; set; } = new Dictionary<Guid,Guid>();
+
         [JsonConstructor]
         public QuestBase(Guid Id) : base(Id)
         {
@@ -123,7 +128,7 @@ namespace Intersect.GameObjects
 
         public class QuestTask
         {
-            public Guid Id { get; protected set; }
+            public Guid Id { get; set; }
 
             public Guid CompletionEventId { get; set; }
             [JsonIgnore]
@@ -134,7 +139,7 @@ namespace Intersect.GameObjects
             }
             [NotMapped]
             [JsonIgnore]
-            public EventBase EdittingEvent;
+            public EventBase EditingEvent;
             
             //# of npcs to kill, # of X item to collect, or for event driven this value should be 1
             public QuestObjective Objective { get; set; } = QuestObjective.EventDriven;

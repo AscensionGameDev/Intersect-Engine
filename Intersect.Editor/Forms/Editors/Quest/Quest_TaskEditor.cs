@@ -34,12 +34,12 @@ namespace Intersect.Editor.Forms.Editors.Quest
             mMyTask = refTask;
             mMyQuest = refQuest;
 
-            if (mMyTask?.EdittingEvent == null)
+            if (mMyTask?.EditingEvent == null)
             {
-                Log.Warn($@"{nameof(mMyTask.EdittingEvent)} is null.");
+                Log.Warn($@"{nameof(mMyTask.EditingEvent)} is null.");
             }
 
-            mEventBackup = mMyTask?.EdittingEvent?.JsonData;
+            mEventBackup = mMyTask?.EditingEvent?.JsonData;
             InitLocalization();
             cmbTaskType.SelectedIndex = mMyTask == null ? -1 : (int)mMyTask.Objective;
             txtStartDesc.Text = mMyTask?.Description;
@@ -137,7 +137,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
         private void btnCancel_Click(object sender, EventArgs e)
         {
             Cancelled = true;
-            mMyTask.EdittingEvent.Load(mEventBackup);
+            mMyTask.EditingEvent.Load(mEventBackup);
             ParentForm.Close();
         }
 
@@ -148,10 +148,10 @@ namespace Intersect.Editor.Forms.Editors.Quest
 
         private void btnEditTaskEvent_Click(object sender, EventArgs e)
         {
-            mMyTask.EdittingEvent.Name = Strings.TaskEditor.completionevent.ToString(mMyQuest.Name);
+            mMyTask.EditingEvent.Name = Strings.TaskEditor.completionevent.ToString(mMyQuest.Name);
             FrmEvent editor = new FrmEvent(null)
             {
-                MyEvent = mMyTask.EdittingEvent
+                MyEvent = mMyTask.EditingEvent
             };
             editor.InitEditor(true,true);
             editor.ShowDialog();

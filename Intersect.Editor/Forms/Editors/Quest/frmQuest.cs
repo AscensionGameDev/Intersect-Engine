@@ -92,14 +92,6 @@ namespace Intersect.Editor.Forms.Editors.Quest
                 item.StartEvent.DeleteBackup();
                 item.EndEvent.RestoreBackup();
                 item.EndEvent.DeleteBackup();
-                foreach (var tsk in item.Tasks)
-                {
-                    if (tsk.CompletionEvent.Id != Guid.Empty)
-                    {
-                        tsk.CompletionEvent.RestoreBackup();
-                    }
-                    tsk.CompletionEvent.DeleteBackup();
-                }
                 item.RestoreBackup();
                 item.DeleteBackup();
             }
@@ -120,22 +112,39 @@ namespace Intersect.Editor.Forms.Editors.Quest
                     return;
                 }
 
+                foreach (var id in item.OriginalTaskEventIds.Keys)
+                {
+                    var found = false;
+                    for (int i = 0; i < item.Tasks.Count; i++)
+                    {
+                        if (item.Tasks[i].Id == id)
+                        {
+                            found = true;
+                        }
+                    }
+
+                    if (!found)
+                    {
+                        item.RemoveEvents.Add(item.OriginalTaskEventIds[id]);
+                    }
+                }
+
                 PacketSender.SendSaveObject(item);
                 PacketSender.SendSaveObject(item.StartEvent);
                 PacketSender.SendSaveObject(item.EndEvent);
                 item.Tasks?.ForEach(tsk =>
                 {
-                    if (tsk?.EdittingEvent == null)
+                    if (tsk?.EditingEvent == null)
                     {
                         return;
                     }
 
-                    if (tsk.EdittingEvent.Id != Guid.Empty)
+                    if (tsk.EditingEvent.Id != Guid.Empty)
                     {
-                        PacketSender.SendSaveObject(tsk.EdittingEvent);
+                        PacketSender.SendSaveObject(tsk.EditingEvent);
                     }
 
-                    tsk.EdittingEvent.DeleteBackup();
+                    tsk.EditingEvent.DeleteBackup();
                 });
 
                 item.StartEvent?.DeleteBackup();
@@ -193,7 +202,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
                     foreach (var tsk in mEditorItem.Tasks)
                     {
                         tsk.CompletionEvent.MakeBackup();
-                        tsk.EdittingEvent = tsk.CompletionEvent;
+                        tsk.EditingEvent = tsk.CompletionEvent;
                     }
                     mEditorItem.MakeBackup();
                 }
@@ -273,9 +282,9 @@ namespace Intersect.Editor.Forms.Editors.Quest
         private void btnAddTask_Click(object sender, EventArgs e)
         {
             var questTask = new QuestBase.QuestTask(Guid.NewGuid());
-            questTask.EdittingEvent = new EventBase(Guid.Empty, Guid.Empty,0, 0, false);
-            questTask.EdittingEvent.Name = Strings.TaskEditor.completionevent.ToString(mEditorItem.Name);
-            mEditorItem.AddEvents.Add(questTask.Id, questTask.EdittingEvent);
+            questTask.EditingEvent = new EventBase(Guid.Empty, Guid.Empty,0, 0, false);
+            questTask.EditingEvent.Name = Strings.TaskEditor.completionevent.ToString(mEditorItem.Name);
+            mEditorItem.AddEvents.Add(questTask.Id, questTask.EditingEvent);
             if (OpenTaskEditor(questTask))
             {
                 mEditorItem.Tasks.Add(questTask);
@@ -319,7 +328,6 @@ namespace Intersect.Editor.Forms.Editors.Quest
         {
             if (lstTasks.SelectedIndex > -1)
             {
-                mEditorItem.RemoveEvents.Add(mEditorItem.Tasks[lstTasks.SelectedIndex].CompletionEvent.Id);
                 if (mEditorItem.AddEvents.ContainsKey(mEditorItem.Tasks[lstTasks.SelectedIndex].Id))
                 {
                     mEditorItem.AddEvents.Remove(mEditorItem.Tasks[lstTasks.SelectedIndex].Id);
@@ -423,7 +431,38 @@ namespace Intersect.Editor.Forms.Editors.Quest
         {
             if (mEditorItem != null && mCopiedItem != null && lstQuests.Focused)
             {
+                var startEventId = mEditorItem.StartEventId;
+                var endEventId = mEditorItem.EndEventId;
                 mEditorItem.Load(mCopiedItem, true);
+
+                EventBase.Get(startEventId).Load(mEditorItem.StartEvent.JsonData);
+                EventBase.Get(endEventId).Load(mEditorItem.EndEvent.JsonData);
+
+                mEditorItem.StartEventId = startEventId;
+                mEditorItem.EndEventId = endEventId;
+
+                //Fix tasks
+                foreach (var tsk in mEditorItem.Tasks)
+                {
+                    var oldId = tsk.Id;
+                    tsk.Id = Guid.NewGuid();
+
+                    if (mEditorItem.AddEvents.ContainsKey(oldId))
+                    {
+                        mEditorItem.AddEvents.Add(tsk.Id,mEditorItem.AddEvents[oldId]);
+                        tsk.EditingEvent = mEditorItem.AddEvents[tsk.Id];
+                        mEditorItem.AddEvents.Remove(oldId);
+                    }
+                    else
+                    {
+                        var tskEventData = EventBase.Get(tsk.CompletionEventId).JsonData;
+                        tsk.CompletionEventId = Guid.Empty;
+                        tsk.EditingEvent = new EventBase(Guid.Empty, Guid.Empty, 0, 0, false);
+                        tsk.EditingEvent.Name = Strings.TaskEditor.completionevent.ToString(mEditorItem.Name);
+                        tsk.EditingEvent.Load(tskEventData);
+                        mEditorItem.AddEvents.Add(tsk.Id, tsk.EditingEvent);
+                    }
+                }
                 UpdateEditor();
             }
         }

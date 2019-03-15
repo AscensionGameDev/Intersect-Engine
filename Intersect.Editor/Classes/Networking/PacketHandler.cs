@@ -539,6 +539,8 @@ namespace Intersect.Editor.Networking
                     {
                         var qst = new QuestBase(id);
                         qst.Load(json);
+                        foreach (var tsk in qst.Tasks)
+                            qst.OriginalTaskEventIds.Add(tsk.Id,tsk.CompletionEventId);
                         QuestBase.Lookup.Set(id, qst);
                     }
                     break;
