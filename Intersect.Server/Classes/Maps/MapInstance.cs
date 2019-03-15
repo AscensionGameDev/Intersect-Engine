@@ -884,7 +884,7 @@ namespace Intersect.Server.Maps
             if (side == -1 || side == (int)Directions.Down) Down = Guid.Empty;
             if (side == -1 || side == (int)Directions.Left) Left = Guid.Empty;
             if (side == -1 || side == (int)Directions.Right) Right = Guid.Empty;
-            LegacyDatabase.SaveGameDatabaseAsync();
+            LegacyDatabase.SaveGameDatabase();
         }
 
         public bool TileBlocked(int x, int y)

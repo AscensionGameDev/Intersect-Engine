@@ -85,7 +85,7 @@ namespace Intersect.Server.EventProcessing
                 if (serverSwitch != null)
                 {
                     serverSwitch.Value = command.Value;
-                    LegacyDatabase.SaveGameDatabaseAsync();
+                    LegacyDatabase.SaveGameDatabase();
                 }
             }
         }
@@ -200,7 +200,7 @@ namespace Intersect.Server.EventProcessing
                             break;
                     }
                 }
-                LegacyDatabase.SaveGameDatabaseAsync();
+                LegacyDatabase.SaveGameDatabase();
             }
         }
 

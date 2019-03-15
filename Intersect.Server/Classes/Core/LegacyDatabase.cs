@@ -40,8 +40,6 @@ namespace Intersect.Server
 
         internal static PlayerContext PlayerContext { get; set; }
         private static GameContext sGameDb { get; set; }
-
-        private static Task sSaveGameDbTask;
         private static Task sSavePlayerDbTask;
 
         public static object MapGridLock = new object();
@@ -96,7 +94,7 @@ namespace Intersect.Server
             LoadTime();
             OnClassesLoaded();
             OnMapsLoaded();
-            SaveGameDatabaseAsync();
+            SaveGameDatabase();
             return true;
         }
 
@@ -666,7 +664,7 @@ namespace Intersect.Server
 
             if (ServerContext.Instance.IsStarted)
             {
-                SaveGameDatabaseAsync();
+                SaveGameDatabase();
             }
 
             return dbObj;
@@ -840,7 +838,7 @@ namespace Intersect.Server
             }
             if (updated)
             {
-                SaveGameDatabaseAsync();
+                SaveGameDatabase();
                 PacketSender.SendMapToEditors(map.Id);
             }
         }
@@ -934,21 +932,6 @@ namespace Intersect.Server
                 TimeBase.SetStaticTime(time);
             }
             ServerTime.Init();
-        }
-
-        public static void SaveGameDatabaseAsync()
-        {
-            if ((sSaveGameDbTask == null) || !(sSaveGameDbTask.IsCompleted == false ||
-                                              sSaveGameDbTask.Status == TaskStatus.Running ||
-                                              sSaveGameDbTask.Status == TaskStatus.WaitingToRun ||
-                                              sSaveGameDbTask.Status == TaskStatus.WaitingForActivation))
-            {
-                sSaveGameDbTask = Task.Factory.StartNew(SaveGameDb);
-            }
-            else
-            {
-                Log.Debug("DB Save Ignored - Save Task Already Processing");
-            }
         }
 
         public static void SavePlayerDatabaseAsync()
