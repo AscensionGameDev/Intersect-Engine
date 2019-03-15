@@ -10,7 +10,8 @@ namespace Intersect.Models
 {
     public static class LookupUtils
     {
-        private static readonly object sLock = new object();
+        [NotNull]
+        private static readonly object Lock = new object();
 
         private static Dictionary<Type, DatabaseObjectLookup> sLookupMap;
         private static Dictionary<Type, GameObjectType> sEnumMap;
@@ -23,22 +24,33 @@ namespace Intersect.Models
 
         [NotNull] public static DatabaseObjectLookup GetLookup(Type type)
         {
-            if (type == null) throw new ArgumentNullException(nameof(type));
-            if (LookupMap == null) throw new ArgumentNullException(nameof(LookupMap));
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
 
-            lock (sLock)
+            if (LookupMap == null)
+            {
+                throw new ArgumentNullException(nameof(LookupMap));
+            }
+
+            lock (Lock)
             {
                 try
                 {
                     if (!LookupMap.ContainsKey(type))
                     {
-                        LookupMap[type] = new DatabaseObjectLookup();
+                        LookupMap[type] = new DatabaseObjectLookup(type);
                     }
                 }
                 catch (Exception exception)
                 {
                     Log.Error($"Impossible NPE... [LookupMap={LookupMap}, type={type}]");
-                    if (exception.InnerException != null) Log.Error(exception.InnerException);
+                    if (exception.InnerException != null)
+                    {
+                        Log.Error(exception.InnerException);
+                    }
+
                     Log.Error(exception);
                     Log.Error($"{nameof(LookupMap)}={LookupMap},{nameof(type)}={type}");
                     throw;
