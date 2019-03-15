@@ -226,7 +226,7 @@ namespace Intersect.Client.Maps
         {
             //See if this new map is on the same grid as us
             List<GameTileBuffer> updatedBuffers = new List<GameTileBuffer>();
-            if (map != this && Globals.GridMaps.Contains(map.Id) && Globals.GridMaps.Contains(Id))
+            if (map != this && Globals.GridMaps.Contains(map.Id) && Globals.GridMaps.Contains(Id) && MapLoaded)
             {
                 var surroundingMaps = GenerateAutotileGrid();
                 if (map.MapGridX == MapGridX - 1)
