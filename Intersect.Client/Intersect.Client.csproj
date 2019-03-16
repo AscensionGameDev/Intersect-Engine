@@ -211,39 +211,39 @@
     <EmbeddedResource Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\MonoGame.Framework.dll">
+    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.7.1.189\lib\net45\MonoGame.Framework.dll">
       <Link>Resources\MonoGame.Framework.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\x86\SDL2.dll">
+    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.7.1.189\build\native\x86\SDL2.dll">
       <Link>Resources\x86\SDL2.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\x64\SDL2.dll">
+    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.7.1.189\build\native\x64\SDL2.dll">
       <Link>Resources\x64\SDL2.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\x86\soft_oal.dll">
+    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.7.1.189\build\native\x86\soft_oal.dll">
       <Link>Resources\x86\soft_oal.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\x64\soft_oal.dll">
+    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.7.1.189\build\native\x64\soft_oal.dll">
       <Link>Resources\x64\soft_oal.dll</Link>
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="packages.config" />
-    <Resource Include="$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\x86\libSDL2-2.0.so.0">
+    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.7.1.189\build\native\x86\libSDL2-2.0.so.0">
       <Link>Resources\x86\libSDL2</Link>
-    </Resource>
-    <Resource Include="$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\x64\libSDL2-2.0.so.0">
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.7.1.189\build\native\x64\libSDL2-2.0.so.0">
       <Link>Resources\x64\libSDL2</Link>
-    </Resource>
-    <Resource Include="$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\x86\libopenal.so.1">
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.7.1.189\build\native\x86\libopenal.so.1">
       <Link>Resources\x86\libopenal</Link>
-    </Resource>
-    <Resource Include="$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\x64\libopenal.so.1">
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.7.1.189\build\native\x64\libopenal.so.1">
       <Link>Resources\x64\libopenal</Link>
-    </Resource>
-    <EmbeddedResource Include="$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\libSDL2-2.0.0.dylib">
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.7.1.189\build\native\libSDL2-2.0.0.dylib">
       <Link>Resources\libSDL2-2.0.0.dylib</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\libopenal.1.dylib">
+    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.7.1.189\build\native\libopenal.1.dylib">
       <Link>Resources\libopenal.1.dylib</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
