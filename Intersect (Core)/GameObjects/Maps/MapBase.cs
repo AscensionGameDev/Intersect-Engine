@@ -282,7 +282,8 @@ namespace Intersect.GameObjects.Maps
         {
             private readonly DatabaseObjectLookup mBaseLookup;
 
-            public MapInstances(DatabaseObjectLookup baseLookup)
+            public MapInstances([NotNull] DatabaseObjectLookup baseLookup)
+                : base(baseLookup.StoredType)
             {
                 if (baseLookup == null) throw new ArgumentNullException();
                 mBaseLookup = baseLookup;

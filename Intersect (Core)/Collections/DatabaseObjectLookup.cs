@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using Intersect.Logging;
+
 namespace Intersect.Collections
 {
     public class DatabaseObjectLookup : IGameObjectLookup<IDatabaseObject>
@@ -14,12 +16,16 @@ namespace Intersect.Collections
         [NotNull] private readonly SortedDictionary<Guid, IDatabaseObject> mIdMap;
         [NotNull] private readonly object mLock;
 
-        public DatabaseObjectLookup()
+        public DatabaseObjectLookup([NotNull] Type storedType)
         {
             mLock = new object();
-
             mIdMap = new SortedDictionary<Guid, IDatabaseObject>();
+
+            StoredType = storedType;
         }
+
+        [NotNull]
+        public Type StoredType { get; }
 
         public virtual IDatabaseObject this[Guid id]
         {
@@ -46,7 +52,15 @@ namespace Intersect.Collections
             {
                 lock (mLock)
                 {
-                    return mIdMap.Values.OrderBy(databaseObject => databaseObject?.TimeCreated).ToList();
+                    try
+                    {
+                        return mIdMap.Values.OrderBy(databaseObject => databaseObject?.TimeCreated).ToList();
+                    }
+                    catch (Exception exception)
+                    {
+                        Log.Warn(exception, $@"{StoredType.Name}[Count={mIdMap.Count},NullCount={mIdMap.Count(pair => pair.Value == null)}]");
+                        throw;
+                    }
                 }
             }
         }

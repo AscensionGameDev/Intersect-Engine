@@ -262,21 +262,18 @@ namespace Intersect.Client.UI.Game
 
         public void Draw()
         {
-            if (Globals.Me != null && PlayerBox.MyEntity != Globals.Me)
+            if (Globals.Me != null && PlayerBox?.MyEntity != Globals.Me)
             {
-                PlayerBox.SetEntity(Globals.Me);
+                PlayerBox?.SetEntity(Globals.Me);
             }
-            mEventWindow.Update();
-            mChatBox.Update();
-            GameMenu.Update(mShouldUpdateQuestLog);
+            mEventWindow?.Update();
+            mChatBox?.Update();
+            GameMenu?.Update(mShouldUpdateQuestLog);
             mShouldUpdateQuestLog = false;
-            Hotbar.Update();
-            mDebugMenu.Update();
+            Hotbar?.Update();
+            mDebugMenu?.Update();
             EscapeMenu.Update();
-            if (PlayerBox != null)
-            {
-                PlayerBox.Update();
-            }
+            PlayerBox?.Update();
 
             if (Globals.QuestOffers.Count > 0)
             {
@@ -295,26 +292,30 @@ namespace Intersect.Client.UI.Game
             }
 
             //Shop Update
-            if (mShouldOpenShop) OpenShop();
+            if (mShouldOpenShop)
+            {
+                OpenShop();
+            }
+
             if (mShopWindow != null && (!mShopWindow.IsVisible() || mShouldCloseShop))
             {
                 PacketSender.SendCloseShop();
-                Globals.GameShop = null;
-                mShopWindow.Close();
-                mShopWindow = null;
+                CloseShop();
             }
             mShouldCloseShop = false;
 
             //Bank Update
-            if (mShouldOpenBank) OpenBank();
+            if (mShouldOpenBank)
+            {
+                OpenBank();
+            }
+
             if (mBankWindow != null)
             {
                 if (!mBankWindow.IsVisible() || mShouldCloseBank)
                 {
                     PacketSender.SendCloseBank();
-                    mBankWindow.Close();
-                    mBankWindow = null;
-                    Globals.InBank = false;
+                    CloseBank();
                 }
                 else
                 {
@@ -325,15 +326,17 @@ namespace Intersect.Client.UI.Game
             mShouldCloseBank = false;
 
             //Bag Update
-            if (mShouldOpenBag) OpenBag();
+            if (mShouldOpenBag)
+            {
+                OpenBag();
+            }
+
             if (mBagWindow != null)
             {
                 if (!mBagWindow.IsVisible() || mShouldCloseBag)
                 {
                     PacketSender.SendCloseBag();
-                    mBagWindow.Close();
-                    mBagWindow = null;
-                    Globals.InBag = false;
+                    CloseBagWindow();
                 }
                 else
                 {
@@ -343,15 +346,17 @@ namespace Intersect.Client.UI.Game
             mShouldCloseBag = false;
 
             //Crafting station update
-            if (mShouldOpenCraftingTable) OpenCraftingTable();
+            if (mShouldOpenCraftingTable)
+            {
+                OpenCraftingTable();
+            }
+
             if (mCraftingWindow != null)
             {
                 if (!mCraftingWindow.IsVisible() || mShouldCloseCraftingTable)
                 {
                     PacketSender.SendCloseCraftingTable();
-                    mCraftingWindow.Close();
-                    mCraftingWindow = null;
-                    Globals.InCraft = false;
+                    CloseCraftingTable();
                 }
                 else
                 {
@@ -361,14 +366,16 @@ namespace Intersect.Client.UI.Game
             mShouldCloseCraftingTable = false;
 
             //Trading update
-            if (mShouldOpenTrading) OpenTrading();
+            if (mShouldOpenTrading)
+            {
+                OpenTrading();
+            }
+
             if (mTradingWindow != null)
             {
                 if (mShouldCloseTrading)
                 {
-                    mTradingWindow.Close();
-                    mTradingWindow = null;
-                    Globals.InTrade = false;
+                    CloseTrading();
                     mShouldCloseTrading = false;
                 }
                 else
@@ -376,9 +383,7 @@ namespace Intersect.Client.UI.Game
                     if (!mTradingWindow.IsVisible())
                     {
                         PacketSender.SendDeclineTrade();
-                        mTradingWindow.Close();
-                        mTradingWindow = null;
-                        Globals.InTrade = false;
+                        CloseTrading();
                     }
                     else
                     {
@@ -396,10 +401,50 @@ namespace Intersect.Client.UI.Game
             GameCanvas.RenderCanvas();
         }
 
+        private void CloseShop()
+        {
+            Globals.GameShop = null;
+            mShopWindow?.Close();
+            mShopWindow = null;
+        }
+
+        private void CloseBank()
+        {
+            mBankWindow?.Close();
+            mBankWindow = null;
+            Globals.InBank = false;
+        }
+
+        private void CloseBagWindow()
+        {
+            mBagWindow?.Close();
+            mBagWindow = null;
+            Globals.InBag = false;
+        }
+
+        private void CloseCraftingTable()
+        {
+            mCraftingWindow?.Close();
+            mCraftingWindow = null;
+            Globals.InCraft = false;
+        }
+
+        private void CloseTrading()
+        {
+            mTradingWindow?.Close();
+            mTradingWindow = null;
+            Globals.InTrade = false;
+        }
+
         //Dispose
         public void Dispose()
         {
-            if (GameCanvas != null) GameCanvas.Dispose();
+            CloseBagWindow();
+            CloseBank();
+            CloseCraftingTable();
+            CloseShop();
+            CloseTrading();
+            GameCanvas.Dispose();
         }
     }
 }
