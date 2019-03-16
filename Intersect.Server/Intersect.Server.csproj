@@ -463,7 +463,6 @@
     <Compile Include="Classes\Notifications\ResetPassword.cs" />
     <Compile Include="Classes\Spells\SpellInstance.cs" />
     <Compile Include="Classes\Networking\Lidgren\ServerNetwork.cs" />
-    <Compile Include="Classes\Networking\Lidgren\ThreadYieldNet40.cs" />
     <Compile Include="Core\CommandParsing\Arguments\EnumArgument.cs" />
     <Compile Include="Core\CommandParsing\Arguments\VariableArgument.cs" />
     <Compile Include="Core\CommandParsing\CommandParserErrorsNamespace.cs" />
@@ -627,7 +626,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Extensions\" />
-    <Folder Include="Classes\Database\PlayerData\SeedData\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

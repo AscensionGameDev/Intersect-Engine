@@ -2,19 +2,16 @@
 using System.Diagnostics;
 using System.Threading;
 using Intersect.Logging;
-using Intersect.Threading;
 
 namespace Intersect.Network
 {
     public sealed class NetworkThread
     {
         private readonly PacketDispatcher mDispatcher;
-        private readonly IThreadYield mThreadYield;
         private bool mStarted;
 
-        public NetworkThread(PacketDispatcher dispatcher, IThreadYield yield, string name = null)
+        public NetworkThread(PacketDispatcher dispatcher, string name = null)
         {
-            mThreadYield = yield ?? new ThreadYieldNet35();
             Name = name ?? "Network Worker Thread";
             CurrentThread = new Thread(Loop);
             Queue = new PacketQueue();
@@ -80,7 +77,7 @@ namespace Intersect.Network
 
                 packet.Dispose();
 
-                mThreadYield?.Yield();
+                Thread.Yield();
             }
             sw.Stop();
 
