@@ -199,8 +199,8 @@ namespace Intersect.Client.Entities
                 if (mSound != null)
                 {
                     // TODO: I'm not sure that we should really do this so I only commented out Stop()
-                    mSound.Loop = false;
-                    //mSound.Stop();
+                    //mSound.Loop = false;
+                    mSound.Stop();
                     mSound = null;
                 }
                 GameGraphics.LiveAnimations.Remove(this);
