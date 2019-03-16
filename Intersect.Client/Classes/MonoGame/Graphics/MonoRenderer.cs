@@ -398,13 +398,15 @@ namespace Intersect.Client.MonoGame.Graphics
         {
             return new MonoTileBuffer(mGraphicsDevice);
         }
-
+        
         public override void DrawTexture(GameTexture tex, float sx, float sy, float sw, float sh, float tx, float ty, float tw, float th,
             Framework.GenericClasses.Color renderColor, GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.None,
             GameShader shader = null, float rotationDegrees = 0, bool isUi = false, bool drawImmediate = false)
         {
             var texture = tex?.GetTexture();
             if (texture == null) return;
+
+            var packRotated = false;
 
             var pack = tex.GetTexturePackFrame();
             if (pack != null)
@@ -423,6 +425,7 @@ namespace Intersect.Client.MonoGame.Graphics
                     z = sw;
                     sw = sh;
                     sh = z;
+                    packRotated = true;
                 }
                 else
                 {
@@ -436,9 +439,31 @@ namespace Intersect.Client.MonoGame.Graphics
             if (Math.Abs(rotationDegrees) > 0.01)
             {
                 rotationDegrees = (float) ((Math.PI / 180) * rotationDegrees);
-                origin = new Vector2(sx + sw / 2f, sy + sh / 2f);
-                tx += origin.Y;
-                ty -= origin.X - tw;
+                origin = new Vector2(sw / 2f,sh/2f);
+
+
+                //TODO: Optimize in terms of memory AND performance.
+                var pnt = new Pointf(0, 0);
+                var pnt1 = new Pointf((int)tw, 0);
+                var pnt2 = new Pointf(0, (int)th);
+                var cntr = new Pointf((int) tw / 2, (int) th / 2);
+
+                var pntMod = Rotate(pnt, cntr, rotationDegrees);
+                var pntMod2 = Rotate(pnt1, cntr, rotationDegrees);
+                var pntMod3 = Rotate(pnt2, cntr, rotationDegrees);
+
+                var width = (int)GetDistance(pntMod.X, pntMod.Y, pntMod2.X, pntMod2.Y);
+                var height = (int)GetDistance(pntMod.X, pntMod.Y, pntMod3.X, pntMod3.Y);
+
+                if (packRotated)
+                {
+                    var z = width;
+                    width = height;
+                    height = z;
+                }
+
+                tx += width/2f;
+                ty += height/2f;
             }
             if (renderTarget == null)
             {
@@ -461,6 +486,16 @@ namespace Intersect.Client.MonoGame.Graphics
                     new XNARectangle((int)sx, (int)sy, (int)sw, (int)sh), ConvertColor(renderColor),
                     rotationDegrees, origin, new Vector2(tw / sw, th / sh), SpriteEffects.None, 0);
             }
+        }
+
+        private static double GetDistance(double x1, double y1, double x2, double y2)
+        {
+            return Math.Sqrt(Math.Pow((x2 - x1), 2) + Math.Pow((y2 - y1), 2));
+        }
+
+        private Pointf Rotate(Pointf pnt, Pointf ctr, float angle)
+        {
+            return new Pointf((int)(pnt.X + (ctr.X * Math.Cos(angle)) - (ctr.Y * Math.Sin(angle))),(int)(pnt.Y + (ctr.X * Math.Sin(angle)) + (ctr.Y * Math.Cos(angle))));
         }
 
         public override void End()
