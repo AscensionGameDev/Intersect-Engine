@@ -280,7 +280,6 @@
     <EmbeddedResource Include="Resources\MonoGame.Framework.dll.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" /> -->
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
