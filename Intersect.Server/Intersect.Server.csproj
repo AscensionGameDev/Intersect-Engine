@@ -510,15 +510,15 @@
     <Compile Include="Core\CommandParsing\Tokenization\Tokenizer.cs" />
     <Compile Include="Core\CommandParsing\Tokenization\TokenizerSettings.cs" />
     <Compile Include="Migrations\20180927161502_InitialPlayerDb.cs" />
-    <Compile Include="Migrations\20180927161502_InitialPlayerDb.designer.cs">
+    <Compile Include="Migrations\20180927161502_InitialPlayerDb.Designer.cs">
       <DependentUpon>20180927161502_InitialPlayerDb.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\20190310001204_AddRefreshTokens.cs" />
-    <Compile Include="Migrations\20190310001204_AddRefreshTokens.designer.cs">
+    <Compile Include="Migrations\20190310001204_AddRefreshTokens.Designer.cs">
       <DependentUpon>20190310001204_AddRefreshTokens.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\20190310013418_StandardizeVocabulary1.cs" />
-    <Compile Include="Migrations\20190310013418_StandardizeVocabulary1.designer.cs">
+    <Compile Include="Migrations\20190310013418_StandardizeVocabulary1.Designer.cs">
       <DependentUpon>20190310013418_StandardizeVocabulary1.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Game\20190303234637_SpellUpgrades_OnHit_Shields.cs" />
