@@ -22,14 +22,14 @@ namespace Intersect.Extensions
 
             switch (kind)
             {
-                case DateTimeKind.Utc:
-                    return dateTime.ToUniversalTime();
-
                 case DateTimeKind.Local:
                     return dateTime.ToLocalTime();
 
                 case DateTimeKind.Unspecified:
                     return new DateTime(dateTime.Ticks, DateTimeKind.Unspecified);
+
+                case DateTimeKind.Utc:
+                    return dateTime.ToUniversalTime();
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(kind), kind, @"Unknown DateTimeKind value.");
