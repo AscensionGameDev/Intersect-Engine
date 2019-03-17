@@ -36,8 +36,10 @@ namespace Intersect.Tests.Server
             var expected = (long) DateTime.UtcNow.AsUnixTimeSpan().TotalMilliseconds;
             var actual = timing.RealTimeMs;
             stopwatch.Stop();
-            
-            Assert.IsTrue(Math.Abs(expected - actual) <= stopwatch.ElapsedMilliseconds);
+
+            var errorDelta = (long) Math.Ceiling(stopwatch.Elapsed.TotalMilliseconds);
+
+            Assert.IsTrue(Math.Abs(expected - actual) <= errorDelta, $"Expected difference to be less than {errorDelta}ms but was {Math.Abs(expected - actual)}ms.");
         }
     }
 }
