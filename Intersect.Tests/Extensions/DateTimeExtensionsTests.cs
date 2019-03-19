@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
+
+using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 namespace Intersect.Extensions
 {
-    [TestClass]
+    [TestFixture]
     public class DateTimeExtensionsTests
     {
-        [TestMethod]
+        [Test]
         public void TestUnixEpoch()
         {
             var unixEpoch = DateTimeExtensions.UnixEpoch;
@@ -21,28 +23,30 @@ namespace Intersect.Extensions
             Assert.AreEqual(0, unixEpoch.Millisecond);
         }
 
-        private static IEnumerable<object[]> GetData()
+        private static IEnumerable<object[]> Data
         {
-            yield return new object[] { new DateTime(0, DateTimeKind.Unspecified) };
-            yield return new object[] { new DateTime(0, DateTimeKind.Local) };
-            yield return new object[] { new DateTime(0, DateTimeKind.Utc) };
+            get
+            {
+                yield return new object[] { new DateTime(0, DateTimeKind.Unspecified) };
+                yield return new object[] { new DateTime(0, DateTimeKind.Local) };
+                yield return new object[] { new DateTime(0, DateTimeKind.Utc) };
 
-            yield return new object[] { new DateTime(DateTime.MinValue.Ticks, DateTimeKind.Unspecified) };
-            yield return new object[] { new DateTime(DateTime.MinValue.Ticks, DateTimeKind.Local) };
-            yield return new object[] { new DateTime(DateTime.MinValue.Ticks, DateTimeKind.Utc) };
+                yield return new object[] { new DateTime(DateTime.MinValue.Ticks, DateTimeKind.Unspecified) };
+                yield return new object[] { new DateTime(DateTime.MinValue.Ticks, DateTimeKind.Local) };
+                yield return new object[] { new DateTime(DateTime.MinValue.Ticks, DateTimeKind.Utc) };
 
-            yield return new object[] { new DateTime(DateTime.MaxValue.Ticks, DateTimeKind.Unspecified) };
-            yield return new object[] { new DateTime(DateTime.MaxValue.Ticks, DateTimeKind.Local) };
-            yield return new object[] { new DateTime(DateTime.MaxValue.Ticks, DateTimeKind.Utc) };
+                yield return new object[] { new DateTime(DateTime.MaxValue.Ticks, DateTimeKind.Unspecified) };
+                yield return new object[] { new DateTime(DateTime.MaxValue.Ticks, DateTimeKind.Local) };
+                yield return new object[] { new DateTime(DateTime.MaxValue.Ticks, DateTimeKind.Utc) };
 
-            var random = new Random();
-            yield return new object[] { new DateTime(random.NextLong(DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks), DateTimeKind.Unspecified) };
-            yield return new object[] { new DateTime(random.NextLong(DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks), DateTimeKind.Local) };
-            yield return new object[] { new DateTime(random.NextLong(DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks), DateTimeKind.Utc) };
+                var random = new Random();
+                yield return new object[] { new DateTime(random.NextLong(DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks), DateTimeKind.Unspecified) };
+                yield return new object[] { new DateTime(random.NextLong(DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks), DateTimeKind.Local) };
+                yield return new object[] { new DateTime(random.NextLong(DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks), DateTimeKind.Utc) };
+            }
         }
 
-        [DataTestMethod]
-        [DynamicData(nameof(GetData), DynamicDataSourceType.Method)]
+        [TestCaseSource(nameof(Data))]
         public void TestClone(DateTime dateTime)
         {
             var clone = dateTime.Clone();
@@ -50,9 +54,8 @@ namespace Intersect.Extensions
             Assert.AreEqual(dateTime.Kind, clone.Kind);
         }
 
-        [Ignore] // TODO: This entire test is a pain to implement
-        [DataTestMethod]
-        [DynamicData(nameof(GetData), DynamicDataSourceType.Method)]
+        [Ignore(@"No working test implementation due to environment")] // TODO: This entire test is a pain to implement
+        [TestCaseSource(nameof(Data))]
         public void TestConvertKind(DateTime dateTime)
         {
             var convertedLocal = dateTime.ConvertKind(DateTimeKind.Local);

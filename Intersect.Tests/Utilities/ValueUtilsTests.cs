@@ -1,11 +1,15 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+using NUnit.Framework;
+
+using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
+
 namespace Intersect.Utilities
 {
-    [TestClass]
+    [TestFixture]
     public class ValueUtilsTests
     {
-        [TestMethod]
+        [Test]
         public void SwapTest()
         {
             string a = "Test", b = "Unit";

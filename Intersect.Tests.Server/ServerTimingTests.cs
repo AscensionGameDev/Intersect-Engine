@@ -6,19 +6,23 @@ using Intersect.Server;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+using NUnit.Framework;
+
+using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
+
 namespace Intersect.Tests.Server
 {
-    [TestClass]
+    [TestFixture]
     public class ServerTimingTests
     {
-        [TestMethod]
+        [Test]
         public void TestStopwatchNotNull()
         {
             var timing = new ServerTiming();
             Assert.IsNotNull(timing.Stopwatch);
         }
 
-        [TestMethod]
+        [Test]
         public void TestTimeMs()
         {
             var timing = new ServerTiming();
@@ -26,7 +30,7 @@ namespace Intersect.Tests.Server
             Assert.AreEqual(timing.Stopwatch.ElapsedMilliseconds, timing.TimeMs);
         }
 
-        [TestMethod]
+        [Test]
         public void TestRealTimeMs()
         {
             var timing = new ServerTiming();

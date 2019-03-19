@@ -4,14 +4,18 @@ using MathNet.Numerics.Random;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+using NUnit.Framework;
+
+using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
+
 namespace Intersect.Extensions
 {
 
-    [TestClass]
+    [TestFixture]
     public class RandomExtensionsTests
     {
 
-        [TestMethod]
+        [Test]
         public void NextLongTest()
         {
             var byteGenerator = new Random();
@@ -25,7 +29,7 @@ namespace Intersect.Extensions
             }
         }
 
-        [TestMethod]
+        [Test]
         public void NextLongMaximumTest()
         {
             var random = new MockRandom();
@@ -49,14 +53,14 @@ namespace Intersect.Extensions
             }
         }
 
-        [TestMethod]
+        [Test]
         public void NextLongMinimumMaximumTest()
         {
             var random = new MockRandom();
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => random.NextLong(1, 0));
         }
 
-        [TestMethod]
+        [Test]
         public void NextULongTest()
         {
             var byteGenerator = new Random();
@@ -70,7 +74,7 @@ namespace Intersect.Extensions
             }
         }
 
-        [TestMethod]
+        [Test]
         public void NextULongMaximumTest()
         {
             var random = new MockRandom();
@@ -92,28 +96,28 @@ namespace Intersect.Extensions
             }
         }
 
-        [TestMethod]
+        [Test]
         public void NextULongMinimumMaximumTest()
         {
             var random = new MockRandom();
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => random.NextULong(1, 0));
         }
 
-        [TestMethod]
+        [Test]
         public void NextDecimalMaximumTest()
         {
             var random = new MockRandom();
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => random.NextDecimal(-1));
         }
 
-        [TestMethod]
+        [Test]
         public void NextDecimalMinimumMaximumTest()
         {
             var random = new MockRandom();
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => random.NextDecimal(1, 0));
         }
 
-        [TestMethod]
+        [Test]
         public void NextDoubleTest()
         {
             var random = new MockRandom
@@ -125,21 +129,21 @@ namespace Intersect.Extensions
             Assert.IsTrue(double.IsNegativeInfinity(nextDouble), $@"Expected negative infinity, got {nextDouble}.");
         }
 
-        [TestMethod]
+        [Test]
         public void NextDoubleMaximumTest()
         {
             var random = new MockRandom();
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => random.NextDouble(-1));
         }
 
-        [TestMethod]
+        [Test]
         public void NextDoubleMinimumMaximumTest()
         {
             var random = new MockRandom();
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => random.NextDouble(1, 0));
         }
 
-        [TestMethod]
+        [Test]
         public void NextFloatTest()
         {
             var random = new MockRandom
@@ -151,14 +155,14 @@ namespace Intersect.Extensions
             Assert.IsTrue(float.IsNegativeInfinity(nextFloat), $@"Expected negative infinity, got {nextFloat}.");
         }
 
-        [TestMethod]
+        [Test]
         public void NextFloatMaximumTest()
         {
             var random = new MockRandom();
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => random.NextFloat(-1));
         }
 
-        [TestMethod]
+        [Test]
         public void NextFloatMinimumMaximumTest()
         {
             var random = new MockRandom();
