@@ -95,11 +95,6 @@ namespace Intersect.Server.Networking
             SendEntityDataTo(client, client.Entity);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
-
-            if (!client.IsEditor)
-            {
-                SendGlobalMsg(Strings.Player.joined.ToString( client.Entity.Name, Options.GameName));
-            }
         }
 
         public static void SendMap(Client client, Guid mapId, bool allEditors = false)
