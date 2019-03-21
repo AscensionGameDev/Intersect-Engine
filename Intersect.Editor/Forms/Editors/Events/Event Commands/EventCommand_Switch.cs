@@ -40,6 +40,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             cmbSetSwitchVal.Items.Add(Strings.EventSetSwitch.True);
             btnSave.Text = Strings.EventSetSwitch.okay;
             btnCancel.Text = Strings.EventSetSwitch.cancel;
+            chkSyncParty.Text = Strings.EventSetSwitch.syncparty;
         }
 
         private void InitEditor()
@@ -57,6 +58,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 cmbSetSwitch.SelectedIndex =ServerSwitchBase.ListIndex(mMyCommand.SwitchId);
             }
             cmbSetSwitchVal.SelectedIndex = Convert.ToInt32(mMyCommand.Value);
+            chkSyncParty.Checked = mMyCommand.SyncParty;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -72,6 +74,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 mMyCommand.SwitchId = ServerSwitchBase.IdFromList(cmbSetSwitch.SelectedIndex);
             }
             mMyCommand.Value = Convert.ToBoolean(cmbSetSwitchVal.SelectedIndex);
+            mMyCommand.SyncParty = chkSyncParty.Checked;
             mEventEditor.FinishCommandEdit();
         }
 

@@ -37,6 +37,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
             this.grpVariableSelection = new DarkUI.Controls.DarkGroupBox();
+            this.chkSyncParty = new DarkUI.Controls.DarkCheckBox();
             this.optSystemTime = new DarkUI.Controls.DarkRadioButton();
             this.cmbVariable = new DarkUI.Controls.DarkComboBox();
             this.lblVariable = new System.Windows.Forms.Label();
@@ -45,12 +46,12 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.optRandom = new DarkUI.Controls.DarkRadioButton();
             this.optSubtract = new DarkUI.Controls.DarkRadioButton();
             this.grpRegularValues = new DarkUI.Controls.DarkGroupBox();
-            this.optGlobalVar = new DarkUI.Controls.DarkRadioButton();
-            this.optPlayerVar = new DarkUI.Controls.DarkRadioButton();
+            this.nudValue = new DarkUI.Controls.DarkNumericUpDown();
+            this.optStaticVal = new DarkUI.Controls.DarkRadioButton();
             this.cmbSetGlobalVar = new DarkUI.Controls.DarkComboBox();
             this.cmbSetPlayerVar = new DarkUI.Controls.DarkComboBox();
-            this.optStaticVal = new DarkUI.Controls.DarkRadioButton();
-            this.nudValue = new DarkUI.Controls.DarkNumericUpDown();
+            this.optGlobalVar = new DarkUI.Controls.DarkRadioButton();
+            this.optPlayerVar = new DarkUI.Controls.DarkRadioButton();
             this.grpRandom = new DarkUI.Controls.DarkGroupBox();
             this.nudHigh = new DarkUI.Controls.DarkNumericUpDown();
             this.nudLow = new DarkUI.Controls.DarkNumericUpDown();
@@ -130,6 +131,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             this.grpVariableSelection.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpVariableSelection.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpVariableSelection.Controls.Add(this.chkSyncParty);
             this.grpVariableSelection.Controls.Add(this.optSystemTime);
             this.grpVariableSelection.Controls.Add(this.cmbVariable);
             this.grpVariableSelection.Controls.Add(this.lblVariable);
@@ -144,6 +146,16 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpVariableSelection.TabIndex = 36;
             this.grpVariableSelection.TabStop = false;
             this.grpVariableSelection.Text = "Variable:";
+            // 
+            // chkSyncParty
+            // 
+            this.chkSyncParty.AutoSize = true;
+            this.chkSyncParty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.chkSyncParty.Location = new System.Drawing.Point(119, 45);
+            this.chkSyncParty.Name = "chkSyncParty";
+            this.chkSyncParty.Size = new System.Drawing.Size(129, 17);
+            this.chkSyncParty.TabIndex = 40;
+            this.chkSyncParty.Text = "Sync Party Variables?";
             // 
             // optSystemTime
             // 
@@ -241,23 +253,40 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpRegularValues.TabIndex = 37;
             this.grpRegularValues.TabStop = false;
             // 
-            // optGlobalVar
+            // nudValue
             // 
-            this.optGlobalVar.AutoSize = true;
-            this.optGlobalVar.Location = new System.Drawing.Point(6, 70);
-            this.optGlobalVar.Name = "optGlobalVar";
-            this.optGlobalVar.Size = new System.Drawing.Size(129, 17);
-            this.optGlobalVar.TabIndex = 43;
-            this.optGlobalVar.Text = "Global Variable Value:";
+            this.nudValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudValue.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudValue.Location = new System.Drawing.Point(143, 9);
+            this.nudValue.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+            this.nudValue.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+            this.nudValue.Name = "nudValue";
+            this.nudValue.Size = new System.Drawing.Size(105, 20);
+            this.nudValue.TabIndex = 47;
+            this.nudValue.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
-            // optPlayerVar
+            // optStaticVal
             // 
-            this.optPlayerVar.AutoSize = true;
-            this.optPlayerVar.Location = new System.Drawing.Point(6, 38);
-            this.optPlayerVar.Name = "optPlayerVar";
-            this.optPlayerVar.Size = new System.Drawing.Size(128, 17);
-            this.optPlayerVar.TabIndex = 42;
-            this.optPlayerVar.Text = "Player Variable Value:";
+            this.optStaticVal.AutoSize = true;
+            this.optStaticVal.Checked = true;
+            this.optStaticVal.Location = new System.Drawing.Point(6, 9);
+            this.optStaticVal.Name = "optStaticVal";
+            this.optStaticVal.Size = new System.Drawing.Size(128, 17);
+            this.optStaticVal.TabIndex = 46;
+            this.optStaticVal.TabStop = true;
+            this.optStaticVal.Text = "Player Variable Value:";
             // 
             // cmbSetGlobalVar
             // 
@@ -301,40 +330,23 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.cmbSetPlayerVar.Text = null;
             this.cmbSetPlayerVar.TextPadding = new System.Windows.Forms.Padding(2);
             // 
-            // optStaticVal
+            // optGlobalVar
             // 
-            this.optStaticVal.AutoSize = true;
-            this.optStaticVal.Checked = true;
-            this.optStaticVal.Location = new System.Drawing.Point(6, 9);
-            this.optStaticVal.Name = "optStaticVal";
-            this.optStaticVal.Size = new System.Drawing.Size(128, 17);
-            this.optStaticVal.TabIndex = 46;
-            this.optStaticVal.TabStop = true;
-            this.optStaticVal.Text = "Player Variable Value:";
+            this.optGlobalVar.AutoSize = true;
+            this.optGlobalVar.Location = new System.Drawing.Point(6, 70);
+            this.optGlobalVar.Name = "optGlobalVar";
+            this.optGlobalVar.Size = new System.Drawing.Size(129, 17);
+            this.optGlobalVar.TabIndex = 43;
+            this.optGlobalVar.Text = "Global Variable Value:";
             // 
-            // nudValue
+            // optPlayerVar
             // 
-            this.nudValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudValue.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudValue.Location = new System.Drawing.Point(143, 9);
-            this.nudValue.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-            this.nudValue.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            -2147483648});
-            this.nudValue.Name = "nudValue";
-            this.nudValue.Size = new System.Drawing.Size(105, 20);
-            this.nudValue.TabIndex = 47;
-            this.nudValue.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
+            this.optPlayerVar.AutoSize = true;
+            this.optPlayerVar.Location = new System.Drawing.Point(6, 38);
+            this.optPlayerVar.Name = "optPlayerVar";
+            this.optPlayerVar.Size = new System.Drawing.Size(128, 17);
+            this.optPlayerVar.TabIndex = 42;
+            this.optPlayerVar.Text = "Player Variable Value:";
             // 
             // grpRandom
             // 
@@ -469,5 +481,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private DarkNumericUpDown nudLow;
         internal System.Windows.Forms.Label lblRandomHigh;
         internal System.Windows.Forms.Label lblRandomLow;
+        private DarkCheckBox chkSyncParty;
     }
 }

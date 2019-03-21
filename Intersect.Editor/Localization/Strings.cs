@@ -1082,6 +1082,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString title = @"Set Switch";
             public static LocalizedString to = @"to";
             public static LocalizedString True = @"True";
+            public static LocalizedString syncparty = @"Sync Party Variables?";
         }
 
         public struct EventSetVariable
@@ -1102,6 +1103,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString subtract = @"Subtract";
             public static LocalizedString systemtime = @"System Time (ms)";
             public static LocalizedString title = @"Set Variable";
+            public static LocalizedString syncparty = @"Sync Party Variables?";
         }
 
         public struct EventShowOptions
@@ -1249,6 +1251,15 @@ Tick timer saved in server config.json.";
             public static LocalizedString paste = @"Paste Item";
             public static LocalizedString picture = @"Pic:";
             public static LocalizedString price = @"Price:";
+            public static Dictionary<int, LocalizedString> rarity = new Dictionary<int, LocalizedString>
+            {
+                {0, @"None"},
+                {1, @"Common"},
+                {2, @"Uncommon"},
+                {3, @"Rare"},
+                {4, @"Epic"},
+                {5, @"Legendary"},
+            };
             public static LocalizedString projectile = @"Projectile:";
             public static LocalizedString requirements = @"Edit Usage Requirements";
             public static LocalizedString save = @"Save";
@@ -1258,6 +1269,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString speedbonus = @"Speed:";
             public static LocalizedString spell = @"Spell:";
             public static LocalizedString spellpanel = @"Spell";
+            public static LocalizedString quickcast = @"Quick Cast Spell?";
+            public static LocalizedString destroyspell = @"Destroy On Use?";
             public static LocalizedString stackable = @"Stackable?";
             public static LocalizedString title = @"Item Editor";
             public static LocalizedString tooltype = @"Tool Type:";

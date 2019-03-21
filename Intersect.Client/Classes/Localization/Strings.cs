@@ -383,6 +383,16 @@ namespace Intersect.Client.Localization
                 {4, @"Speed: {00}"}
             };
             public static LocalizedString twohand = @"2H";
+
+            public static Dictionary<int, LocalizedString> rarity = new Dictionary<int, LocalizedString>
+            {
+                {0, @"None"},
+                {1, @"Common"},
+                {2, @"Uncommon"},
+                {3, @"Rare"},
+                {4, @"Epic"},
+                {5, @"Legendary"},
+            };
         }
 
         public struct Keys

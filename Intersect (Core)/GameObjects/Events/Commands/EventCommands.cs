@@ -54,7 +54,8 @@ namespace Intersect.GameObjects.Events.Commands
         public override EventCommandType Type {get;} = EventCommandType.SetSwitch;
         public SwitchTypes SwitchType { get; set; } = SwitchTypes.PlayerSwitch;
         public Guid SwitchId { get; set; }
-        public bool Value { get; set; } 
+        public bool Value { get; set; }
+        public bool SyncParty { get; set; }
     }
 
     public class SetVariableCommand : EventCommand
@@ -66,6 +67,7 @@ namespace Intersect.GameObjects.Events.Commands
         public int Value { get; set; }
         public int HighValue { get; set; }
         public Guid DupVariableId { get; set; }
+        public bool SyncParty { get; set; }
     }
 
     public class SetSelfSwitchCommand : EventCommand

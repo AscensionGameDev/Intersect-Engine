@@ -159,6 +159,12 @@ namespace Intersect.Editor.Forms.Editors
             chkStackable.Text = Strings.ItemEditor.stackable;
             btnEditRequirements.Text = Strings.ItemEditor.requirements;
 
+            cmbRarity.Items.Clear();
+            for (int i = 0; i < Strings.ItemEditor.rarity.Count; i++)
+            {
+                cmbRarity.Items.Add(Strings.ItemEditor.rarity[i]);
+            }
+
             grpEquipment.Text = Strings.ItemEditor.equipment;
             lblEquipmentSlot.Text = Strings.ItemEditor.slot;
             grpStatBonuses.Text = Strings.ItemEditor.bonuses;
@@ -217,6 +223,8 @@ namespace Intersect.Editor.Forms.Editors
 
             grpSpell.Text = Strings.ItemEditor.spellpanel;
             lblSpell.Text = Strings.ItemEditor.spell;
+            chkQuickCast.Text = Strings.ItemEditor.quickcast;
+            chkDestroy.Text = Strings.ItemEditor.destroyspell;
 
             grpEvent.Text = Strings.ItemEditor.eventpanel;
             lblEvent.Text = Strings.ItemEditor.Event;
@@ -266,6 +274,7 @@ namespace Intersect.Editor.Forms.Editors
                 cmbPic.SelectedIndex = cmbPic.FindString(TextUtils.NullToNone(mEditorItem.Icon));
                 cmbEquipmentAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.EquipmentAnimationId) + 1;
                 nudPrice.Value = mEditorItem.Price;
+                cmbRarity.SelectedIndex = mEditorItem.Rarity;
                 nudStr.Value = mEditorItem.StatsGiven[0];
                 nudMag.Value = mEditorItem.StatsGiven[1];
                 nudDef.Value = mEditorItem.StatsGiven[2];
@@ -383,6 +392,8 @@ namespace Intersect.Editor.Forms.Editors
             else if (cmbType.SelectedIndex == (int) ItemTypes.Spell)
             {
                 cmbTeachSpell.SelectedIndex = SpellBase.ListIndex(mEditorItem.SpellId) + 1;
+                chkQuickCast.Checked = mEditorItem.QuickCast;
+                chkDestroy.Checked = mEditorItem.DestroySpell;
                 grpSpell.Visible = true;
             }
             else if (cmbType.SelectedIndex == (int) ItemTypes.Event)
@@ -763,6 +774,21 @@ namespace Intersect.Editor.Forms.Editors
         private void nudAttackSpeedValue_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.AttackSpeedValue = (int)nudAttackSpeedValue.Value;
+        }
+
+        private void chkQuickCast_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.QuickCast = chkQuickCast.Checked;
+        }
+
+        private void chkDestroy_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.DestroySpell = chkDestroy.Checked;
+        }
+
+        private void cmbRarity_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Rarity = cmbRarity.SelectedIndex;
         }
     }
 }

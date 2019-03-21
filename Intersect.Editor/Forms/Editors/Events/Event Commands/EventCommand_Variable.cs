@@ -55,6 +55,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             lblRandomHigh.Text = Strings.EventSetVariable.randomhigh;
             btnSave.Text = Strings.EventSetVariable.okay;
             btnCancel.Text = Strings.EventSetVariable.cancel;
+            chkSyncParty.Text = Strings.EventSetVariable.syncparty;
         }
 
         private void InitEditor()
@@ -127,6 +128,9 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     cmbSetGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(mMyCommand.DupVariableId);
                     break;
             }
+
+            chkSyncParty.Checked = mMyCommand.SyncParty;
+
             UpdateFormElements();
         }
 
@@ -212,7 +216,9 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 }
                 mMyCommand.DupVariableId = ServerVariableBase.IdFromList(cmbSetGlobalVar.SelectedIndex);
             }
-            
+
+            mMyCommand.SyncParty = chkSyncParty.Checked;
+
             mEventEditor.FinishCommandEdit();
         }
 

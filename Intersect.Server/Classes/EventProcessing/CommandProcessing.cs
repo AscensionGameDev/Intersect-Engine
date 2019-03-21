@@ -78,6 +78,18 @@ namespace Intersect.Server.EventProcessing
             if (command.SwitchType == SwitchTypes.PlayerSwitch)
             {
                 player.SetSwitchValue(command.SwitchId, command.Value);
+
+                // Set the party member switches too if Sync Party enabled!
+                if (command.SyncParty)
+                {
+                    foreach (Player partyMember in player.Party)
+                    {
+                        if (partyMember != player)
+                        {
+                            partyMember.SetSwitchValue(command.SwitchId, command.Value);
+                        }
+                    }
+                }
             }
             else if (command.SwitchType == SwitchTypes.ServerSwitch)
             {
@@ -95,54 +107,69 @@ namespace Intersect.Server.EventProcessing
         {
             if (command.VariableType == VariableTypes.PlayerVariable)
             {
+                long value = 0;
+
                 switch (command.ModType)
                 {
                     case VariableMods.Set:
-                        player.SetVariableValue(command.VariableId, command.Value);
+                        value = command.Value;
                         break;
                     case VariableMods.Add:
-                        player.SetVariableValue(command.VariableId, player.GetVariableValue(command.VariableId) + command.Value);
+                        value = player.GetVariableValue(command.VariableId) + command.Value;
                         break;
                     case VariableMods.Subtract:
-                        player.SetVariableValue(command.VariableId, player.GetVariableValue(command.VariableId) - command.Value);
+                        value = player.GetVariableValue(command.VariableId) - command.Value;
                         break;
                     case VariableMods.Random:
-                        player.SetVariableValue(command.VariableId, Globals.Rand.Next(command.Value, command.HighValue + 1));
+                        value = Globals.Rand.Next(command.Value, command.HighValue + 1);
                         break;
                     case VariableMods.SystemTime:
-                        long ms = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
-                        player.SetVariableValue(command.VariableId, ms);
+                        value = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
                         break;
                     case VariableMods.DupPlayerVar:
-                        player.SetVariableValue(command.VariableId, player.GetVariableValue(command.DupVariableId));
+                        value = player.GetVariableValue(command.DupVariableId);
                         break;
                     case VariableMods.DupGlobalVar:
                         var serverVariable = ServerVariableBase.Get(command.DupVariableId);
                         if (serverVariable != null)
                         {
-                            player.SetVariableValue(command.VariableId, serverVariable.Value);
+                            value = serverVariable.Value;
                         }
                         break;
                     case VariableMods.AddPlayerVar:
-                        player.SetVariableValue(command.VariableId, player.GetVariableValue(command.VariableId) + player.GetVariableValue(command.DupVariableId));
+                        value = player.GetVariableValue(command.VariableId) + player.GetVariableValue(command.DupVariableId);
                         break;
                     case VariableMods.AddGlobalVar:
                         var asv = ServerVariableBase.Get(command.DupVariableId);
                         if (asv != null)
                         {
-                            player.SetVariableValue(command.VariableId, player.GetVariableValue(command.VariableId) + asv.Value);
+                            value = player.GetVariableValue(command.VariableId) + asv.Value;
                         }
                         break;
                     case VariableMods.SubtractPlayerVar:
-                        player.SetVariableValue(command.VariableId, player.GetVariableValue(command.VariableId) - player.GetVariableValue(command.DupVariableId));
+                        value = player.GetVariableValue(command.VariableId) - player.GetVariableValue(command.DupVariableId);
                         break;
                     case VariableMods.SubtractGlobalVar:
                         var ssv = ServerVariableBase.Get(command.DupVariableId);
                         if (ssv != null)
                         {
-                            player.SetVariableValue(command.VariableId, player.GetVariableValue(command.VariableId) - ssv.Value);
+                            value = player.GetVariableValue(command.VariableId) - ssv.Value;
                         }
                         break;
+                }
+
+                player.SetVariableValue(command.VariableId, value);
+
+                // Set the party member switches too if Sync Party enabled!
+                if (command.SyncParty)
+                {
+                    foreach (Player partyMember in player.Party)
+                    {
+                        if (partyMember != player)
+                        {
+                            partyMember.SetVariableValue(command.VariableId, value);
+                        }
+                    }
                 }
             }
             else if (command.VariableType == VariableTypes.ServerVariable)

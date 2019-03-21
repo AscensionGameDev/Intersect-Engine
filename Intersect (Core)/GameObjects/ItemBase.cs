@@ -71,6 +71,8 @@ namespace Intersect.GameObjects
             get => SpellBase.Get(SpellId);
             set => SpellId = value?.Id ?? Guid.Empty;
         }
+        public bool QuickCast { get; set; }
+        public bool DestroySpell { get; set; } = true;
 
         [Column("Event")]
         [JsonProperty]
@@ -89,6 +91,7 @@ namespace Intersect.GameObjects
         public string MalePaperdoll { get; set; } = "";
         public string Icon { get; set; } = "";
         public int Price { get; set; }
+        public int Rarity { get; set; }
 
         [Column("Projectile")]
         [JsonProperty]

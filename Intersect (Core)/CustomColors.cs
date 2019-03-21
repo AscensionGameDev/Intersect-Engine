@@ -98,6 +98,13 @@ namespace Intersect
         public static Color RequestSent = Color.Yellow;
         public static Color ChatBubbleTextColor = Color.Black;
 
+        public static Color RarityNone = Color.White;
+        public static Color RarityCommon = Color.Gray;
+        public static Color RarityUncommon = Color.Red;
+        public static Color RarityRare = Color.Blue;
+        public static Color RarityEpic = Color.Green;
+        public static Color RarityLedgendary = Color.Yellow;
+
         public static void Load()
         {
             if (File.Exists(Path.Combine("resources", "colors.json")))

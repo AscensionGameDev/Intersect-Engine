@@ -30,6 +30,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EventCommandSwitch));
             this.grpSetSwitch = new DarkUI.Controls.DarkGroupBox();
             this.rdoGlobalSwitch = new DarkUI.Controls.DarkRadioButton();
             this.rdoPlayerSwitch = new DarkUI.Controls.DarkRadioButton();
@@ -39,6 +40,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.lblSwitch = new System.Windows.Forms.Label();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
+            this.chkSyncParty = new DarkUI.Controls.DarkCheckBox();
             this.grpSetSwitch.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -46,6 +48,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             this.grpSetSwitch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpSetSwitch.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpSetSwitch.Controls.Add(this.chkSyncParty);
             this.grpSetSwitch.Controls.Add(this.rdoGlobalSwitch);
             this.grpSetSwitch.Controls.Add(this.rdoPlayerSwitch);
             this.grpSetSwitch.Controls.Add(this.cmbSetSwitchVal);
@@ -57,7 +60,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpSetSwitch.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpSetSwitch.Location = new System.Drawing.Point(3, 3);
             this.grpSetSwitch.Name = "grpSetSwitch";
-            this.grpSetSwitch.Size = new System.Drawing.Size(292, 121);
+            this.grpSetSwitch.Size = new System.Drawing.Size(292, 137);
             this.grpSetSwitch.TabIndex = 17;
             this.grpSetSwitch.TabStop = false;
             this.grpSetSwitch.Text = "Set Switch";
@@ -90,9 +93,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.cmbSetSwitchVal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbSetSwitchVal.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbSetSwitchVal.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbSetSwitchVal.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbSetSwitchVal.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbSetSwitchVal.ButtonIcon")));
+            this.cmbSetSwitchVal.DrawDropdownHoverOutline = false;
+            this.cmbSetSwitchVal.DrawFocusRectangle = false;
             this.cmbSetSwitchVal.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbSetSwitchVal.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbSetSwitchVal.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbSetSwitchVal.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbSetSwitchVal.FormattingEnabled = true;
             this.cmbSetSwitchVal.Items.AddRange(new object[] {
             "False",
@@ -101,6 +109,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.cmbSetSwitchVal.Name = "cmbSetSwitchVal";
             this.cmbSetSwitchVal.Size = new System.Drawing.Size(71, 21);
             this.cmbSetSwitchVal.TabIndex = 24;
+            this.cmbSetSwitchVal.Text = "False";
+            this.cmbSetSwitchVal.TextPadding = new System.Windows.Forms.Padding(2);
             // 
             // lblTo
             // 
@@ -116,14 +126,21 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.cmbSetSwitch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbSetSwitch.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbSetSwitch.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbSetSwitch.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbSetSwitch.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbSetSwitch.ButtonIcon")));
+            this.cmbSetSwitch.DrawDropdownHoverOutline = false;
+            this.cmbSetSwitch.DrawFocusRectangle = false;
             this.cmbSetSwitch.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbSetSwitch.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbSetSwitch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbSetSwitch.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbSetSwitch.FormattingEnabled = true;
             this.cmbSetSwitch.Location = new System.Drawing.Point(64, 49);
             this.cmbSetSwitch.Name = "cmbSetSwitch";
             this.cmbSetSwitch.Size = new System.Drawing.Size(115, 21);
             this.cmbSetSwitch.TabIndex = 22;
+            this.cmbSetSwitch.Text = null;
+            this.cmbSetSwitch.TextPadding = new System.Windows.Forms.Padding(2);
             // 
             // lblSwitch
             // 
@@ -136,7 +153,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(89, 92);
+            this.btnCancel.Location = new System.Drawing.Point(89, 108);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
@@ -146,7 +163,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(8, 92);
+            this.btnSave.Location = new System.Drawing.Point(8, 108);
             this.btnSave.Name = "btnSave";
             this.btnSave.Padding = new System.Windows.Forms.Padding(5);
             this.btnSave.Size = new System.Drawing.Size(75, 23);
@@ -154,7 +171,17 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.btnSave.Text = "Ok";
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
-            // EventCommand_Switch
+            // chkSyncParty
+            // 
+            this.chkSyncParty.AutoSize = true;
+            this.chkSyncParty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.chkSyncParty.Location = new System.Drawing.Point(8, 76);
+            this.chkSyncParty.Name = "chkSyncParty";
+            this.chkSyncParty.Size = new System.Drawing.Size(118, 17);
+            this.chkSyncParty.TabIndex = 41;
+            this.chkSyncParty.Text = "Sync Party Switch?";
+            // 
+            // EventCommandSwitch
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -162,7 +189,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpSetSwitch);
             this.Name = "EventCommandSwitch";
-            this.Size = new System.Drawing.Size(298, 130);
+            this.Size = new System.Drawing.Size(298, 146);
             this.grpSetSwitch.ResumeLayout(false);
             this.grpSetSwitch.PerformLayout();
             this.ResumeLayout(false);
@@ -180,5 +207,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private System.Windows.Forms.Label lblSwitch;
         private DarkRadioButton rdoGlobalSwitch;
         private DarkRadioButton rdoPlayerSwitch;
+        private DarkCheckBox chkSyncParty;
     }
 }

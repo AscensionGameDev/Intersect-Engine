@@ -37,8 +37,39 @@ namespace Intersect.Client.UI.Game
 
                 Label itemType = new Label(mDescWindow, "ItemTypeLabel");
                 Label itemValue = new Label(mDescWindow, "ItemValueLabel");
+
                 itemType.Text = Strings.ItemDesc.itemtypes[(int)item.ItemType];
                 itemValue.SetText(valueLabel);
+
+                if (item.Rarity > 0)
+                {
+                    itemType.Text += " - " + Strings.ItemDesc.rarity[item.Rarity];
+                    Color rarity = CustomColors.RarityNone;
+
+                    switch (item.Rarity)
+                    {
+                        case 1:
+                            rarity = CustomColors.RarityCommon;
+                            break;
+                        case 2:
+                            rarity = CustomColors.RarityUncommon;
+                            break;
+                        case 3:
+                            rarity = CustomColors.RarityRare;
+                            break;
+                        case 4:
+                            rarity = CustomColors.RarityEpic;
+                            break;
+                        case 5:
+                            rarity = CustomColors.RarityLedgendary;
+                            break;
+                    }
+
+                    itemType.TextColorOverride.R = rarity.R;
+                    itemType.TextColorOverride.G = rarity.G;
+                    itemType.TextColorOverride.B = rarity.B;
+                    itemType.TextColorOverride.A = rarity.A;
+                }
 
                 if (item.ItemType == ItemTypes.Equipment && item.EquipmentSlot > 0 && item.EquipmentSlot < Options.EquipmentSlots.Count)
                 {

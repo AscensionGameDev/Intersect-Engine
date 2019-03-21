@@ -1411,8 +1411,20 @@ namespace Intersect.Server.Entities
                         break;
                     case ItemTypes.Spell:
                         if (itemBase.SpellId == Guid.Empty) return;
-                        if (!TryTeachSpell(new Spell(itemBase.SpellId))) return;
-                        TakeItemsBySlot(slot, 1);
+
+                        if (itemBase.QuickCast)
+                        {
+                            CastSpell(itemBase.SpellId);
+                        }
+                        else
+                        {
+                            if (!TryTeachSpell(new Spell(itemBase.SpellId))) return;
+                        }
+
+                        if (itemBase.DestroySpell)
+                        {
+                            TakeItemsBySlot(slot, 1);
+                        }
                         break;
                     case ItemTypes.Event:
                         var evt = EventBase.Get(itemBase.EventId);
