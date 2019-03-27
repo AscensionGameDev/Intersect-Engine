@@ -32,6 +32,8 @@ namespace Intersect.Server.Database.PlayerData.Security
 
         public bool Api { get; set; }
 
+        public bool PersonalInformation { get; set; }
+
         [JsonIgnore]
         public bool IsModerator => Ban || Mute || Kick;
 
@@ -55,7 +57,7 @@ namespace Intersect.Server.Database.PlayerData.Security
             Mute = true
         };
 
-        [NotNull]
+        [JsonIgnore, NotNull]
         public ImmutableList<string> Roles => EnumeratePermissions();
 
         public static bool operator ==(UserRights b1, UserRights b2)
@@ -80,8 +82,15 @@ namespace Intersect.Server.Database.PlayerData.Security
 
         protected bool Equals([NotNull] UserRights other)
         {
-            return Editor == other.Editor && Ban == other.Ban && Kick == other.Kick && Mute == other.Mute &&
-                   Api == other.Api;
+            var permissions = EnumeratePermissions();
+            var otherPermissions = other.EnumeratePermissions();
+
+            if (permissions.Count != otherPermissions.Count)
+            {
+                return false;
+            }
+
+            return permissions.IsEmpty || otherPermissions.All(permission => permissions.Contains(permission));
         }
 
         public override int GetHashCode()

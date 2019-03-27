@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 using Intersect.Server.Database.PlayerData;
+using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities;
 using Intersect.Server.Web.RestApi.Attributes;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
     [RoutePrefix("users")]
-    [Authorize]
+    [ConfigurableAuthorize(Roles = nameof(UserRights.PersonalInformation))]
     public sealed class UserController : ApiController
     {
         [Route]

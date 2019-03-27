@@ -9,6 +9,8 @@ using Intersect.Server.Database.PlayerData;
 
 using JetBrains.Annotations;
 
+using Newtonsoft.Json;
+
 namespace Intersect.Server.Classes.Database.PlayerData.Api
 {
 
@@ -23,6 +25,7 @@ namespace Intersect.Server.Classes.Database.PlayerData.Api
         [Required, ForeignKey(nameof(User))]
         public Guid UserId { get; set; }
 
+        [JsonIgnore]
         public User User { get; set; }
 
         public Guid ClientId { get; set; }
