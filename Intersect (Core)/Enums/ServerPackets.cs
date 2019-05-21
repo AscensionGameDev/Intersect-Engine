@@ -81,5 +81,6 @@ namespace Intersect.Enums
         PlayerCharacters,
         Shit,
         PasswordResetResult,
+        PlayerTarget,
     }
 }

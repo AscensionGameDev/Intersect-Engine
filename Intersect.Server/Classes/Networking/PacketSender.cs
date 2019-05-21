@@ -457,7 +457,7 @@ namespace Intersect.Server.Networking
             bf.WriteGuid(npc.Id);
 
             //Declare Aggression state
-            if (npc.MyTarget != null)
+            if (npc.Target != null)
             {
                 bf.WriteInteger(-1);
             }
@@ -2079,6 +2079,15 @@ namespace Intersect.Server.Networking
             var bf = new ByteBuffer();
             bf.WriteLong((long)ServerPackets.PasswordResetResult);
             bf.WriteBoolean(result);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SetPlayerTarget(Client client, Guid target)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((long)ServerPackets.PlayerTarget);
+            bf.WriteGuid(target);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }

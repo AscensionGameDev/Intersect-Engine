@@ -298,6 +298,9 @@ namespace Intersect.Client.Networking
                     case ServerPackets.PasswordResetResult:
                         HandlePasswordResetResult(bf.ReadBytes(bf.Length()));
                         break;
+                    case ServerPackets.PlayerTarget:
+                        HandlePlayerTarget(bf.ReadBytes(bf.Length()));
+                        break;
                     default:
                         Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                         break;
@@ -1933,6 +1936,18 @@ namespace Intersect.Client.Networking
             }
             bf.Dispose();
             Globals.WaitingOnServer = false;
+        }
+
+        private static void HandlePlayerTarget(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            Guid target = bf.ReadGuid();
+            if (Globals.Entities.ContainsKey(target))
+            {
+                Globals.Me.TargetIndex = target;
+            }
+            bf.Dispose();
         }
     }
 }

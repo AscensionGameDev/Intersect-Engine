@@ -331,7 +331,11 @@ namespace Intersect.Server.Localization
                     {5, @"STEALTH!"},
                     {6, @"TRANSFORMED!"},
                     {7, @"CLEANSED!"},
-                    {8, @"INVULNERABLE!"}
+                    {8, @"INVULNERABLE!"},
+                    {9, @"SHIELD!"},
+                    {10, @"SLEEP!"},
+                    {11, @"ON HIT!"},
+                    {12, @"TAUNT!"},
                 }
             );
 

@@ -921,7 +921,7 @@ namespace Intersect.Server.Entities
                 if (en.GetType() == typeof(Npc))
                 {
                     var npc = (Npc)en;
-                    if (npc.MyTarget == null && npc.IsFriend(this))
+                    if (npc.Target == null && npc.IsFriend(this))
                     {
                         if (InRangeOf(npc, npc.Base.SightRange))
                         {

@@ -638,7 +638,7 @@ namespace Intersect.Server.Maps
             {
                 foreach (var entity in mEntities)
                 {
-                    if (entity.GetType() == typeof(Npc) && ((Npc)entity).MyTarget == en)
+                    if (entity.GetType() == typeof(Npc) && ((Npc)entity).Target == en)
                     {
                         ((Npc)entity).RemoveTarget();
                     }

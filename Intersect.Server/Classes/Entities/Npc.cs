@@ -26,9 +26,6 @@ namespace Intersect.Server.Entities
 
         public NpcBase Base;
 
-        //Targetting
-        public EntityInstance MyTarget;
-
         //Pathfinding
         private Pathfinder mPathFinder;
 
@@ -101,9 +98,16 @@ namespace Intersect.Server.Entities
         //Targeting
         public void AssignTarget(EntityInstance en)
         {
+            //Can't assign a new target if taunted
+            var statuses = Statuses.Values.ToArray();
+            foreach (var status in statuses)
+            {
+                if (status.Type == StatusTypes.Taunt) return;
+            }
+
             if (en.GetType() == typeof(Projectile))
             {
-                if (((Projectile) en).Owner != this) MyTarget = ((Projectile) en).Owner;
+                if (((Projectile) en).Owner != this) Target = ((Projectile) en).Owner;
             }
             else
             {
@@ -117,11 +121,11 @@ namespace Intersect.Server.Entities
                 if (en.GetType() == typeof(Player))
                 {
                     //TODO Make sure that the npc can target the player
-                    if (this != en) MyTarget = en;
+                    if (this != en) Target = en;
                 }
                 else
                 {
-                    if (this != en) MyTarget = en;
+                    if (this != en) Target = en;
                 }
             }
             PacketSender.SendNpcAggressionToProximity(this);
@@ -129,12 +133,12 @@ namespace Intersect.Server.Entities
 
         public void RemoveTarget()
         {
-            if (MyTarget != null)
+            if (Target != null)
             {
-                if (DamageMap.ContainsKey(MyTarget))
-                    DamageMap.Remove(MyTarget);
+                if (DamageMap.ContainsKey(Target))
+                    DamageMap.Remove(Target);
             }
-            MyTarget = null;
+            Target = null;
             PacketSender.SendNpcAggressionToProximity(this);
         }
 
@@ -276,13 +280,13 @@ namespace Intersect.Server.Entities
                         if (spell != null)
                         {
                             var projectileBase = spell.Combat.Projectile;
-                            if (spell.SpellType == SpellTypes.CombatSpell && spell.Combat.TargetType == SpellTargetTypes.Projectile && projectileBase != null && InRangeOf(MyTarget, projectileBase.Range))
+                            if (spell.SpellType == SpellTypes.CombatSpell && spell.Combat.TargetType == SpellTargetTypes.Projectile && projectileBase != null && InRangeOf(Target, projectileBase.Range))
                             {
                                 range = projectileBase.Range;
-                                if (DirToEnemy(MyTarget) != Dir)
+                                if (DirToEnemy(Target) != Dir)
                                 {
                                     if (LastRandomMove >= Globals.Timing.TimeMs) return;
-                                    var dirToEnemy = DirToEnemy(MyTarget);
+                                    var dirToEnemy = DirToEnemy(Target);
                                     if (dirToEnemy != -1)
                                     {
                                         //Face the target -- next frame fire -- then go on with life
@@ -299,7 +303,7 @@ namespace Intersect.Server.Entities
                                 {
                                     if (Spells[s].SpellCd < Globals.Timing.RealTimeMs)
                                     {
-                                        if (spell.Combat.TargetType == SpellTargetTypes.Self || spell.Combat.TargetType == SpellTargetTypes.AoE || InRangeOf(MyTarget, range))
+                                        if (spell.Combat.TargetType == SpellTargetTypes.Self || spell.Combat.TargetType == SpellTargetTypes.AoE || InRangeOf(Target, range))
                                         {
                                             CastTime = Globals.Timing.TimeMs + spell.CastDuration;
                                             SubVital(Vitals.Mana, spell.VitalCost[(int) Vitals.Mana]);
@@ -310,7 +314,7 @@ namespace Intersect.Server.Entities
                                             }
                                             else
                                             {
-                                                CastTarget = MyTarget;
+                                                CastTarget = Target;
                                             }
 
                                             switch (Base.SpellFrequency)
@@ -390,14 +394,14 @@ namespace Intersect.Server.Entities
                 var targetX = 0;
                 var targetY = 0;
                 //Check if there is a target, if so, run their ass down.
-                if (MyTarget != null)
+                if (Target != null)
                 {
-                    if (!MyTarget.IsDead() && CanAttack(MyTarget,null))
+                    if (!Target.IsDead() && CanAttack(Target,null))
                     {
-                        targetMap = MyTarget.MapId;
-                        targetX = MyTarget.X;
-                        targetY = MyTarget.Y;
-                        var targetStatuses = MyTarget.Statuses.Values.ToArray();
+                        targetMap = Target.MapId;
+                        targetX = Target.X;
+                        targetY = Target.Y;
+                        var targetStatuses = Target.Statuses.Values.ToArray();
                         foreach (var targetStatus in targetStatuses)
                         {
                             if (targetStatus.Type == StatusTypes.Stealth)
@@ -537,7 +541,7 @@ namespace Intersect.Server.Entities
                                     targetMap = Guid.Empty;
                                     break;
                                 case PathfinderResult.NoPathToTarget:
-                                    TryFindNewTarget((MyTarget != null ? MyTarget.Id : Guid.Empty));
+                                    TryFindNewTarget((Target != null ? Target.Id : Guid.Empty));
                                     targetMap = Guid.Empty;
                                     break;
                                 case PathfinderResult.Failure:
@@ -556,7 +560,7 @@ namespace Intersect.Server.Entities
                             var fleed = false;
                             if (fleeing)
                             {
-                                var dir = DirToEnemy(MyTarget);
+                                var dir = DirToEnemy(Target);
                                 switch (dir)
                                 {
                                     case 0:
@@ -589,19 +593,19 @@ namespace Intersect.Server.Entities
                             }
                             if (!fleed)
                             {
-                                if (Dir != DirToEnemy(MyTarget) && DirToEnemy(MyTarget) != -1)
+                                if (Dir != DirToEnemy(Target) && DirToEnemy(Target) != -1)
                                 {
-                                    ChangeDir(DirToEnemy(MyTarget));
+                                    ChangeDir(DirToEnemy(Target));
                                 }
                                 else
                                 {
-                                    if (MyTarget.IsDisposed)
+                                    if (Target.IsDisposed)
                                     {
-                                        MyTarget = null;
+                                        Target = null;
                                     }
                                     else
                                     {
-                                        if (CanAttack(MyTarget, null)) TryAttack(MyTarget);
+                                        if (CanAttack(Target, null)) TryAttack(Target);
                                     }
                                 }
                             }
@@ -667,7 +671,7 @@ namespace Intersect.Server.Entities
                 if (en.GetType() == typeof(Npc))
                 {
                     var npc = (Npc)en;
-                    if (npc.MyTarget == null & npc.Base.Swarm && npc.Base == Base)
+                    if (npc.Target == null & npc.Base.Swarm && npc.Base == Base)
                     {
                         if (npc.InRangeOf(attacker, npc.Base.SightRange))
                         {

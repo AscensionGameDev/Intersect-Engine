@@ -736,6 +736,15 @@ namespace Intersect.Client.Entities
         {
             Entity closestEntity = null;
 
+            //Check for taunt status if so don't allow to change target
+            for (var i = 0; i < Status.Count; i++)
+            {
+                if (Status[i].Type == (int)StatusTypes.Taunt)
+                {
+                    return;
+                }
+            }
+
             foreach (var en in Globals.Entities)
             {
                 if (en.Value == null) continue;
@@ -923,6 +932,15 @@ namespace Intersect.Client.Entities
 
         public bool TryTarget()
         {
+            //Check for taunt status if so don't allow to change target
+            for (var i = 0; i < Status.Count; i++)
+            {
+                if (Status[i].Type == (int)StatusTypes.Taunt)
+                {
+                    return false;
+                }
+            }
+
             var x = (int) Math.Floor(Globals.InputManager.GetMousePosition().X + GameGraphics.CurrentView.Left);
             var y = (int) Math.Floor(Globals.InputManager.GetMousePosition().Y + GameGraphics.CurrentView.Top);
 

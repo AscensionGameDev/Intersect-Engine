@@ -14,5 +14,6 @@ namespace Intersect.Enums
         Shield = 9,
         Sleep = 10,
         OnHit = 11,
+        Taunt = 12,
     }
 }

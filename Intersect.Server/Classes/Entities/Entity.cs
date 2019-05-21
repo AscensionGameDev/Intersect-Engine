@@ -884,6 +884,20 @@ namespace Intersect.Server.Entities
         {
             if (enemy.GetType() == typeof(Resource) && parentSpell != null) return;
 
+            //Check for taunt status and trying to attack a target that has not taunted you.
+            var statuses = Statuses.Values.ToArray();
+            foreach (var status in statuses)
+            {
+                if (status.Type == StatusTypes.Taunt)
+                {
+                    if (Target != enemy)
+                    {
+                        PacketSender.SendActionMsg(this, Strings.Combat.miss, CustomColors.Missed);
+                        return;
+                    }
+                }
+            }
+
             //Check if the target is blocking facing in the direction against you
             if (enemy.Blocking)
             {
@@ -973,6 +987,20 @@ namespace Intersect.Server.Entities
             if (enemy?.GetType() == typeof(Resource)) return;
             if (spellBase == null) return;
 
+            //Check for taunt status and trying to attack a target that has not taunted you.
+            var statuses = Statuses.Values.ToArray();
+            foreach (var status in statuses)
+            {
+                if (status.Type == StatusTypes.Taunt)
+                {
+                    if (Target != enemy)
+                    {
+                        PacketSender.SendActionMsg(this, Strings.Combat.miss, CustomColors.Missed);
+                        return;
+                    }
+                }
+            }
+
             var deadAnimations = new List<KeyValuePair<Guid, int>>();
             var aliveAnimations = new List<KeyValuePair<Guid, int>>();
 
@@ -1048,6 +1076,16 @@ namespace Intersect.Server.Entities
                     new StatusInstance(enemy, spellBase, spellBase.Combat.Effect, spellBase.Combat.Duration, spellBase.Combat.TransformSprite);
                     PacketSender.SendActionMsg(enemy, Strings.Combat.status[(int)spellBase.Combat.Effect], CustomColors.Status);
 
+                    //Set the enemies target if a taunt spell
+                    if (spellBase.Combat.Effect == StatusTypes.Taunt)
+                    {
+                        enemy.Target = this;
+                        if (enemy.GetType() == typeof(Player))
+                        {
+                            PacketSender.SetPlayerTarget(((Player)enemy).MyClient, Id);
+                        }
+                    }
+
                     //If an onhit or shield status bail out as we don't want to do any damage.
                     if (spellBase.Combat.Effect == StatusTypes.OnHit || spellBase.Combat.Effect == StatusTypes.Shield) return;
                 }
@@ -1110,6 +1148,20 @@ namespace Intersect.Server.Entities
                 if (MapInstance.Get(enemy.MapId).ZoneType == MapZones.Safe)
                 {
                     return;
+                }
+            }
+
+            //Check for taunt status and trying to attack a target that has not taunted you.
+            var statusList = Statuses.Values.ToArray();
+            foreach (var status in statusList)
+            {
+                if (status.Type == StatusTypes.Taunt)
+                {
+                    if (Target != enemy)
+                    {
+                        PacketSender.SendActionMsg(this, Strings.Combat.miss, CustomColors.Missed);
+                        return;
+                    }
                 }
             }
 
@@ -1788,7 +1840,7 @@ namespace Intersect.Server.Entities
             }
             else if (GetType() == typeof(Npc)) //Helps the client identify NPC Behavior
             {
-                if (((Npc)this).MyTarget != null)
+                if (((Npc)this).Target != null)
                 {
                     bf.WriteInteger(-1); //Used for coloring the npc's name red when aggression is shown.
                 }
