@@ -35,6 +35,8 @@ namespace Intersect.Client.UI.Game.Inventory
         public ImagePanel Container;
         private Draggable mDragIcon;
         public ImagePanel EquipPanel;
+        public Label EquipLabel;
+        private Label mCooldownLabel;
         public bool IsDragging;
         private bool mIconCd;
 
@@ -61,6 +63,13 @@ namespace Intersect.Client.UI.Game.Inventory
             Pnl.Clicked += pnl_Clicked;
             EquipPanel = new ImagePanel(Pnl, "InventoryItemEquippedIcon");
             EquipPanel.Texture = GameGraphics.Renderer.GetWhiteTexture();
+            EquipLabel = new Label(Pnl, "InventoryItemEquippedLabel");
+            EquipLabel.IsHidden = true;
+            EquipLabel.Text = Strings.Inventory.equippedicon;
+            EquipLabel.TextColor = new Framework.GenericClasses.Color(0,255,255,255);
+            mCooldownLabel = new Label(Pnl, "InventoryItemCooldownLabel");
+            mCooldownLabel.IsHidden = true;
+            mCooldownLabel.TextColor = new Framework.GenericClasses.Color(0, 255, 255, 255);
         }
 
         void pnl_Clicked(Base sender, ClickedEventArgs arguments)
@@ -120,9 +129,7 @@ namespace Intersect.Client.UI.Game.Inventory
             }
             if (Globals.GameShop == null)
             {
-                mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].Item,
-                    Globals.Me.Inventory[mMySlot].Quantity, mInventoryWindow.X - 255, mInventoryWindow.Y,
-                    Globals.Me.Inventory[mMySlot].StatBoost);
+                mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].Item, Globals.Me.Inventory[mMySlot].Quantity, mInventoryWindow.X, mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBoost);
             }
             else
             {
@@ -144,10 +151,7 @@ namespace Intersect.Client.UI.Game.Inventory
                     var hoveredItem = ItemBase.Get(shopItem.CostItemId);
                     if (hoveredItem != null)
                     {
-                        mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].Item,
-                            Globals.Me.Inventory[mMySlot].Quantity, mInventoryWindow.X - 220, mInventoryWindow.Y,
-                            Globals.Me.Inventory[mMySlot].StatBoost, "",
-                            Strings.Shop.sellsfor.ToString( shopItem.CostItemQuantity, hoveredItem.Name));
+                        mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].Item, Globals.Me.Inventory[mMySlot].Quantity, mInventoryWindow.X, mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBoost, "", Strings.Shop.sellsfor.ToString( shopItem.CostItemQuantity, hoveredItem.Name));
                     }
                 }
                 else if (shopItem == null)
@@ -156,16 +160,12 @@ namespace Intersect.Client.UI.Game.Inventory
                     var costItem = Globals.GameShop.DefaultCurrency;
                     if (hoveredItem != null && costItem != null)
                     {
-                        mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].Item,
-                            Globals.Me.Inventory[mMySlot].Quantity, mInventoryWindow.X - 220, mInventoryWindow.Y,
-                            Globals.Me.Inventory[mMySlot].StatBoost, "",
-                            Strings.Shop.sellsfor.ToString( hoveredItem.Price, costItem.Name));
+                        mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].Item, Globals.Me.Inventory[mMySlot].Quantity, mInventoryWindow.X, mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBoost, "", Strings.Shop.sellsfor.ToString( hoveredItem.Price, costItem.Name));
                     }
                 }
                 else
                 {
-                    mDescWindow = new ItemDescWindow(invItem.Item, invItem.Quantity, mInventoryWindow.X - 255,
-                        mInventoryWindow.Y, invItem.StatBoost, "", Strings.Shop.wontbuy);
+                    mDescWindow = new ItemDescWindow(invItem.Item, invItem.Quantity, mInventoryWindow.X, mInventoryWindow.Y, invItem.StatBoost, "", Strings.Shop.wontbuy);
                 }
             }
         }
@@ -195,12 +195,14 @@ namespace Intersect.Client.UI.Game.Inventory
             }
             var item = ItemBase.Get(Globals.Me.Inventory[mMySlot].ItemId);
             if (Globals.Me.Inventory[mMySlot].ItemId != mCurrentItemId || Globals.Me.Inventory[mMySlot].Quantity != mCurrentAmt || equipped != mIsEquipped ||
-                (item == null && mTexLoaded != "") || (item != null && mTexLoaded != item.Icon) || mIconCd != Globals.Me.ItemOnCd(mMySlot))
+                (item == null && mTexLoaded != "") || (item != null && mTexLoaded != item.Icon) || mIconCd != Globals.Me.ItemOnCd(mMySlot) || Globals.Me.ItemOnCd(mMySlot))
             {
                 mCurrentItemId = Globals.Me.Inventory[mMySlot].ItemId;
                 mCurrentAmt = Globals.Me.Inventory[mMySlot].Quantity;
                 mIsEquipped = equipped;
                 EquipPanel.IsHidden = !mIsEquipped;
+                EquipLabel.IsHidden = !mIsEquipped;
+                mCooldownLabel.IsHidden = true;
                 if (item != null)
                 {
                     GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,
@@ -226,6 +228,19 @@ namespace Intersect.Client.UI.Game.Inventory
                     }
                     mTexLoaded = item.Icon;
                     mIconCd = Globals.Me.ItemOnCd(mMySlot);
+                    if (mIconCd)
+                    {
+                        mCooldownLabel.IsHidden = false;
+                        var secondsRemaining = (float)(Globals.Me.ItemCdRemainder(mMySlot)) / 1000f;
+                        if (secondsRemaining > 10f)
+                        {
+                            mCooldownLabel.Text = Strings.Inventory.cooldown.ToString((secondsRemaining).ToString("N0"));
+                        }
+                        else
+                        {
+                            mCooldownLabel.Text = Strings.Inventory.cooldown.ToString((secondsRemaining).ToString("N1").Replace(".", Strings.Numbers.dec));
+                        }
+                    }
                 }
                 else
                 {

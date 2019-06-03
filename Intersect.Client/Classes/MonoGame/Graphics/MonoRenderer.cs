@@ -243,7 +243,7 @@ namespace Intersect.Client.MonoGame.Graphics
                     shader.ResetChanged();
                 }
                 mSpriteBatch.Begin(drawImmediate ? SpriteSortMode.Immediate : SpriteSortMode.Deferred, blend,
-                    SamplerState.PointWrap, null, rs, useEffect,
+                    SamplerState.PointClamp, null, rs, useEffect,
                     Matrix.CreateRotationZ(0f) * Matrix.CreateScale(new Vector3(1, 1, 1)) *
                     Matrix.CreateTranslation(-view.X, -view.Y, 0));
                 mCurrentSpriteView = view;
@@ -465,6 +465,7 @@ namespace Intersect.Client.MonoGame.Graphics
                 tx += width/2f;
                 ty += height/2f;
             }
+            
             if (renderTarget == null)
             {
                 if (isUi)

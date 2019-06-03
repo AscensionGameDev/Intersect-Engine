@@ -256,6 +256,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString cancel = @"Cancel";
             public static LocalizedString copy = @"Copy Craft";
             public static LocalizedString crafts = @"Crafts";
+            public static LocalizedString craftquantity = @"Quantity:";
             public static LocalizedString delete = @"Delete Craft";
             public static LocalizedString deletecraft = @"Delete";
             public static LocalizedString deleteingredient = @"Delete";

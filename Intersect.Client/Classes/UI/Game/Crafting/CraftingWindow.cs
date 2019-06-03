@@ -21,6 +21,7 @@ namespace Intersect.Client.UI.Game.Crafting
         private ImagePanel mBarContainer;
 
         private RecipeItem mCombinedItem;
+        private Label mCombinedValue;
         private Button mCraft;
         private ImagePanel mCraftedItemTemplate;
 
@@ -117,9 +118,15 @@ namespace Intersect.Client.UI.Game.Crafting
                 Container = new ImagePanel(mCraftWindow, "CraftedItem")
             };
             mCombinedItem.Setup("CraftedItemIcon");
+            mCombinedValue = new Label(mCombinedItem.Container,"CraftedItemQuantity");
 
             mCombinedItem.Container.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
             mCombinedItem.LoadItem();
+            mCombinedValue.Show();
+            var quantity = Math.Max(craft.Quantity, 1);
+            var itm = ItemBase.Get(craft.ItemId);
+            if (itm == null || !itm.IsStackable()) quantity = 1;
+            mCombinedValue.Text = quantity.ToString();
 
             for (int i = 0; i < mItems.Count; i++)
             {
@@ -169,8 +176,8 @@ namespace Intersect.Client.UI.Game.Crafting
                 mItems[i].Container.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
                 mItems[i].LoadItem();
 
-                var xPadding = mItems[i].Container.Padding.Left + mItems[i].Container.Padding.Right;
-                var yPadding = mItems[i].Container.Padding.Top + mItems[i].Container.Padding.Bottom;
+                var xPadding = mItems[i].Container.Margin.Left + mItems[i].Container.Margin.Right;
+                var yPadding = mItems[i].Container.Margin.Top + mItems[i].Container.Margin.Bottom;
                 mItems[i].Container.SetPosition(
                     (i % ((mItemContainer.Width - mItemContainer.GetVerticalScrollBar().Width) /
                           (mItems[i].Container.Width + xPadding))) * (mItems[i].Container.Width + xPadding) + xPadding,
@@ -325,6 +332,7 @@ namespace Intersect.Client.UI.Game.Crafting
                     tmpRow.DoubleClicked += tmpNode_DoubleClicked;
                     tmpRow.Clicked += tmpNode_DoubleClicked;
                     tmpRow.SetTextColor(Framework.GenericClasses.Color.White);
+                    tmpRow.RenderColor = new Framework.GenericClasses.Color(50, 255, 255, 255);
                 }
 
                 //Load the craft data
@@ -337,6 +345,7 @@ namespace Intersect.Client.UI.Game.Crafting
 
             if (!Crafting)
             {
+                mBar.Width = 0;
                 return;
             }
 
@@ -356,6 +365,7 @@ namespace Intersect.Client.UI.Game.Crafting
                     mCraftWindow.IsClosable = true;
                 }
                 LoadCraftItems(mCraftId);
+                mBar.Width = 0;
             }
 
             var ratio = craft.Time == 0 ? 0 : Convert.ToDecimal(delta) / Convert.ToDecimal(craft.Time);

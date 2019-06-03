@@ -51,6 +51,7 @@ namespace Intersect.Client.UI.Game
             mQuestDescLabel = new RichLabel(mQuestDescArea);
 
             mBackButton = new Button(mQuestsWindow, "BackButton");
+            mBackButton.Text = Strings.QuestLog.back;
             mBackButton.Clicked += _backButton_Clicked;
 
             mQuitButton = new Button(mQuestsWindow, "AbandonQuestButton");
@@ -184,6 +185,7 @@ namespace Intersect.Client.UI.Game
             item.Clicked += QuestListItem_Clicked;
             item.Selected += Item_Selected;
             item.SetTextColor(clr);
+            item.RenderColor = new Framework.GenericClasses.Color(50, 255, 255, 255);
         }
 
         private void Item_Selected(Base sender, ItemSelectedEventArgs arguments)
@@ -217,6 +219,7 @@ namespace Intersect.Client.UI.Game
             else
             {
                 mQuestDescLabel.ClearText();
+                mQuitButton.IsDisabled = true;
                 ListBoxRow rw;
                 string[] myText = null;
                 List<string> taskString = new List<string>();
@@ -266,10 +269,8 @@ namespace Intersect.Client.UI.Game
                                 }
                             }
                         }
-                        if (mSelectedQuest.Quitable)
-                        {
-                            mQuitButton.Show();
-                        }
+
+                        mQuitButton.IsDisabled = !mSelectedQuest.Quitable;
                     }
                     else
                     {
@@ -317,6 +318,7 @@ namespace Intersect.Client.UI.Game
                 mQuestDescLabel.SizeToChildren(false, true);
                 mQuestStatus.Show();
                 mBackButton.Show();
+                mQuitButton.Show();
             }
         }
 

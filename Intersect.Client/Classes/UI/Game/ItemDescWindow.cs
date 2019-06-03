@@ -12,14 +12,17 @@ namespace Intersect.Client.UI.Game
     {
         ImagePanel mDescWindow;
 
-        public ItemDescWindow(ItemBase item, int amount, int x, int y, int[] statBuffs, string titleOverride = "",
-            string valueLabel = "")
+        public ItemDescWindow(ItemBase item, int amount, int x, int y, int[] statBuffs, string titleOverride = "", string valueLabel = "", bool centerHorizontally = false)
         {
             var title = titleOverride;
             if (string.IsNullOrWhiteSpace(title))
                 title = item.Name;
 
             mDescWindow = new ImagePanel(Gui.GameUi.GameCanvas, "ItemDescWindow");
+            if (item != null && item.ItemType == ItemTypes.Equipment)
+            {
+                mDescWindow.Name = "ItemDescWindowExpanded";
+            }
             
             if (item != null)
             {
@@ -28,9 +31,11 @@ namespace Intersect.Client.UI.Game
                 Label itemName = new Label(mDescWindow, "ItemNameLabel");
                 itemName.Text = title;
 
+                Label itemQuantity = new Label(mDescWindow, "ItemQuantityLabel");
+                
                 if (amount > 1)
                 {
-                    itemName.Text += " " + Strings.ItemDesc.quantity.ToString( amount);
+                    itemQuantity.Text += amount.ToString("N0").Replace(",", Strings.Numbers.comma);
                 }
 
                 itemName.AddAlignment(Alignments.CenterH);
@@ -80,11 +85,18 @@ namespace Intersect.Client.UI.Game
                     }
                 }
                 RichLabel itemDesc = new RichLabel(mDescWindow, "ItemDescription");
+                var itemDescText = new Label(mDescWindow, "ItemDescText");
+                itemDescText.Font = itemDescText.Parent.Skin.DefaultFont;
+                var itemStatsText = new Label(mDescWindow, item.ItemType == ItemTypes.Equipment ? "ItemStatsText" : "");
+                itemStatsText.Font = itemStatsText.Parent.Skin.DefaultFont;
+                RichLabel itemStats = new RichLabel(mDescWindow, item.ItemType == ItemTypes.Equipment ? "ItemStats" : "");
+                itemDescText.IsHidden = true;
+                itemStatsText.IsHidden = true;
                 //Load this up now so we know what color to make the text when filling out the desc
                 mDescWindow.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
                 if (item.Description.Length > 0)
                 {
-                    itemDesc.AddText(Strings.ItemDesc.desc.ToString( item.Description), itemDesc.RenderColor);
+                    itemDesc.AddText(Strings.ItemDesc.desc.ToString( item.Description), itemDesc.RenderColor,itemDescText.CurAlignments.Count > 0 ? itemDescText.CurAlignments[0] : Alignments.Left,itemDescText.Font);
                     itemDesc.AddLineBreak();
                     itemDesc.AddLineBreak();
                 }
@@ -93,30 +105,28 @@ namespace Intersect.Client.UI.Game
                 if (item.ItemType == ItemTypes.Equipment)
                 {
                     stats = Strings.ItemDesc.bonuses;
-                    itemDesc.AddText(stats, itemDesc.RenderColor);
-                    itemDesc.AddLineBreak();
+                    itemStats.AddText(stats, itemStats.RenderColor, itemStatsText.CurAlignments.Count > 0 ? itemStatsText.CurAlignments[0] : Alignments.Left, itemDescText.Font);
+                    itemStats.AddLineBreak();
                     if (item.ItemType == ItemTypes.Equipment && item.EquipmentSlot == Options.WeaponIndex)
                     {
                         stats = Strings.ItemDesc.damage.ToString( item.Damage);
-                        itemDesc.AddText(stats, itemDesc.RenderColor);
-                        itemDesc.AddLineBreak();
+                        itemStats.AddText(stats, itemStats.RenderColor, itemStatsText.CurAlignments.Count > 0 ? itemStatsText.CurAlignments[0] : Alignments.Left, itemDescText.Font);
+                        itemStats.AddLineBreak();
                     }
                     if (statBuffs != null)
                     {
                         for (int i = 0; i < Options.MaxStats; i++)
                         {
                             stats = Strings.ItemDesc.stats[i].ToString((item.StatsGiven[i] + statBuffs[i]));
-                            itemDesc.AddText(stats, itemDesc.RenderColor);
-                            itemDesc.AddLineBreak();
+                            itemStats.AddText(stats, itemStats.RenderColor, itemStatsText.CurAlignments.Count > 0 ? itemStatsText.CurAlignments[0] : Alignments.Left, itemDescText.Font);
+                            itemStats.AddLineBreak();
                         }
                     }
                 }
 
                 if (item.ItemType == ItemTypes.Equipment && item.Effect.Type != EffectType.None && item.Effect.Percentage > 0)
                 {
-                    itemDesc.AddText(
-                        Strings.ItemDesc.effect.ToString( item.Effect.Percentage,
-                            Strings.ItemDesc.effects[(int)item.Effect.Type - 1]), itemDesc.RenderColor);
+                    itemStats.AddText(Strings.ItemDesc.effect.ToString( item.Effect.Percentage,  Strings.ItemDesc.effects[(int)item.Effect.Type - 1]), itemStats.RenderColor, itemStatsText.CurAlignments.Count > 0 ? itemStatsText.CurAlignments[0] : Alignments.Left, itemDescText.Font);
                 }
 
                 //Load Again for positioning purposes.
@@ -127,7 +137,17 @@ namespace Intersect.Client.UI.Game
                     icon.Texture = itemTex;
                 }
                 itemDesc.SizeToChildren(false, true);
-                mDescWindow.SetPosition(x, y);
+                itemStats.SizeToChildren(false, true);
+                itemDescText.IsHidden = true;
+                itemStatsText.IsHidden = true;
+                if (centerHorizontally)
+                {
+                    mDescWindow.MoveTo(x - mDescWindow.Width / 2, y + mDescWindow.Padding.Top);
+                }
+                else
+                {
+                    mDescWindow.MoveTo(x - mDescWindow.Width - mDescWindow.Padding.Right, y + mDescWindow.Padding.Top);
+                }
             }
         }
 
