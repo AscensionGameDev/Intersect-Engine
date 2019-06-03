@@ -643,12 +643,6 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["AddTextSound"] != null) mAddTextSound = (string)obj["AddTextSound"];
             if (obj["RemoveTextSound"] != null) mRemoveTextSound = (string)obj["RemoveTextSound"];
             if (obj["SubmitSound"] != null) mSubmitSound = (string)obj["SubmitSound"];
-
-            //Automated Audio Setup
-            mAddTextSound = "octave-tap-resonant.wav";
-            mRemoveTextSound = "octave-tap-professional.wav";
-            mSubmitSound = "octave-tap-warm.wav";
-            //End Automated Audio Setup
         }
     }
 }

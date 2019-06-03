@@ -147,13 +147,6 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
             if (obj["HoverSound"] != null) mHoverSound = (string)obj["HoverSound"];
             if (obj["MouseUpSound"] != null) mMouseUpSound = (string)obj["MouseUpSound"];
             if (obj["MouseDownSound"] != null) mMouseDownSound = (string)obj["MouseDownSound"];
-
-            //Automated Audio Setup
-            mHoverSound = "octave-tap-resonant.wav";
-            mMouseUpSound = "octave-tap-warm.wav";
-            mMouseDownSound = "octave-tap-professional.wav";
-            mMouseUpSound = mMouseDownSound;
-            //End Automated Audio Setup
         }
 
         public string GetMouseUpSound()

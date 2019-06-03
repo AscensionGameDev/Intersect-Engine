@@ -87,11 +87,6 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["CheckedDisabledImage"] != null) SetImage(GameContentManager.Current.GetTexture(GameContentManager.TextureType.Gui, (string)obj["CheckedDisabledImage"]), (string)obj["CheckedDisabledImage"], ControlState.CheckedDisabled);
             if (obj["CheckedSound"] != null) mCheckSound = (string)obj["CheckedSound"];
             if (obj["UncheckedSound"] != null) mUncheckedSound = (string)obj["UncheckedSound"];
-
-            //Automated Audio Setup
-            mCheckSound = "octave-tap-warm.wav";
-            mUncheckedSound = "octave-tap-resonant.wav";
-            //End Automated Audio Setup
         }
 
         /// <summary>

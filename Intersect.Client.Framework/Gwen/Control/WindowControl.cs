@@ -158,9 +158,6 @@ namespace Intersect.Client.Framework.Gwen.Control
                 mCloseButton.LoadJson(obj["CloseButton"]);
             }
             if (obj["InnerPanel"] != null) mInnerPanel.LoadJson(obj["InnerPanel"]);
-            //Automated Audio Setup
-            mTitleBar.ClearSounds();
-            //End Automated Audio Setup
         }
 
         public override void ProcessAlignments()
