@@ -31,6 +31,10 @@ namespace Intersect.Client.Framework.Gwen.Control
         private GameTexture mNormalImage;
         private string mNormalImageFilename;
 
+        //Sound Effects
+        private string mCheckSound;
+        private string mUncheckedSound;
+
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="CheckBox" /> class.
@@ -69,6 +73,8 @@ namespace Intersect.Client.Framework.Gwen.Control
             obj.Add("CheckedImage", GetImageFilename(ControlState.CheckedNormal));
             obj.Add("DisabledImage", GetImageFilename(ControlState.Disabled));
             obj.Add("CheckedDisabledImage", GetImageFilename(ControlState.CheckedDisabled));
+            obj.Add("CheckedSound", mCheckSound);
+            obj.Add("UncheckedSound", mUncheckedSound);
             return base.FixJson(obj);
         }
 
@@ -79,6 +85,13 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["CheckedImage"] != null) SetImage(GameContentManager.Current.GetTexture(GameContentManager.TextureType.Gui, (string)obj["CheckedImage"]), (string)obj["CheckedImage"], ControlState.CheckedNormal);
             if (obj["DisabledImage"] != null) SetImage(GameContentManager.Current.GetTexture(GameContentManager.TextureType.Gui, (string)obj["DisabledImage"]), (string)obj["DisabledImage"], ControlState.Disabled);
             if (obj["CheckedDisabledImage"] != null) SetImage(GameContentManager.Current.GetTexture(GameContentManager.TextureType.Gui, (string)obj["CheckedDisabledImage"]), (string)obj["CheckedDisabledImage"], ControlState.CheckedDisabled);
+            if (obj["CheckedSound"] != null) mCheckSound = (string)obj["CheckedSound"];
+            if (obj["UncheckedSound"] != null) mUncheckedSound = (string)obj["UncheckedSound"];
+
+            //Automated Audio Setup
+            mCheckSound = "octave-tap-warm.wav";
+            mUncheckedSound = "octave-tap-resonant.wav";
+            //End Automated Audio Setup
         }
 
         /// <summary>
@@ -88,6 +101,14 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             base.Toggle();
             IsChecked = !IsChecked;
+            if (IsChecked)
+            {
+                base.PlaySound(mCheckSound);
+            }
+            else
+            {
+                base.PlaySound(mUncheckedSound);
+            }
         }
 
         /// <summary>

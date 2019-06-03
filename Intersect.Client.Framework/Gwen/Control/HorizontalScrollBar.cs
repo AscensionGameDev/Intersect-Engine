@@ -98,13 +98,19 @@ namespace Intersect.Client.Framework.Gwen.Control
         public void NudgeLeft(Base control, EventArgs args)
         {
             if (!IsDisabled)
+            {
                 SetScrollAmount(ScrollAmount - NudgeAmount, true);
+                base.PlaySound(mBar.GetMouseUpSound());
+            }
         }
 
         public void NudgeRight(Base control, EventArgs args)
         {
             if (!IsDisabled)
+            {
                 SetScrollAmount(ScrollAmount + NudgeAmount, true);
+                base.PlaySound(mBar.GetMouseUpSound());
+            }
         }
 
         public override void ScrollToLeft()
@@ -123,7 +129,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
         /// <param name="down">If set to <c>true</c> mouse button is down.</param>
-        protected override void OnMouseClickedLeft(int x, int y, bool down)
+        protected override void OnMouseClickedLeft(int x, int y, bool down, bool automated = false)
         {
             base.OnMouseClickedLeft(x, y, down);
             if (down)

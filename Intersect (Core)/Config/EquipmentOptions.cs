@@ -15,6 +15,7 @@ namespace Intersect.Config
             "Armor",
             "Weapon",
             "Shield",
+            "Boots",
         };
 
         public PaperdollOptions Paperdoll = new PaperdollOptions();

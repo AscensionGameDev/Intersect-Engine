@@ -98,8 +98,7 @@ namespace Intersect.Client.UI.Game.Bank
             }
             if (Globals.Bank[mMySlot] != null)
             {
-                mDescWindow = new ItemDescWindow(Globals.Bank[mMySlot].Item, Globals.Bank[mMySlot].Quantity,
-                    mBankWindow.X - 255, mBankWindow.Y, Globals.Bank[mMySlot].StatBoost);
+                mDescWindow = new ItemDescWindow(Globals.Bank[mMySlot].Item, Globals.Bank[mMySlot].Quantity, mBankWindow.X, mBankWindow.Y, Globals.Bank[mMySlot].StatBoost);
             }
         }
 

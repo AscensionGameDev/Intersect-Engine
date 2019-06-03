@@ -1936,7 +1936,10 @@ namespace Intersect.Server.Entities
                 }
 
                 //Give them the craft
-                if (TryGiveItem(new Item(CraftBase.Get(id).ItemId, 1)))
+                var quantity = Math.Max(CraftBase.Get(id).Quantity, 1);
+                var itm = ItemBase.Get(CraftBase.Get(id).ItemId);
+                if (itm == null || !itm.IsStackable()) quantity = 1;
+                if (TryGiveItem(new Item(CraftBase.Get(id).ItemId, quantity)))
                 {
                     PacketSender.SendPlayerMsg(MyClient,
                         Strings.Crafting.crafted.ToString(
@@ -2949,6 +2952,7 @@ namespace Intersect.Server.Entities
             {
                 bf.WriteInteger(GetMaxVital(i));
             }
+            bf.WriteInteger(Level);
             return bf.ToArray();
         }
 

@@ -7,6 +7,7 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
+using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.GameObjects;
 
@@ -22,6 +23,7 @@ namespace Intersect.Client.UI.Game.Spells
         private bool mCanDrag;
         private long mClickTime;
         public ImagePanel Container;
+        private Label mCooldownLabel;
         private Guid mCurrentSpellId;
         private Draggable mDragIcon;
         private bool mIconCd;
@@ -49,6 +51,9 @@ namespace Intersect.Client.UI.Game.Spells
             Pnl.HoverLeave += pnl_HoverLeave;
             Pnl.RightClicked += pnl_RightClicked;
             Pnl.Clicked += pnl_Clicked;
+            mCooldownLabel = new Label(Pnl, "SpellCooldownLabel");
+            mCooldownLabel.IsHidden = true;
+            mCooldownLabel.TextColor = new Framework.GenericClasses.Color(0, 255, 255, 255);
         }
 
         void pnl_Clicked(Base sender, ClickedEventArgs arguments)
@@ -87,7 +92,7 @@ namespace Intersect.Client.UI.Game.Spells
                 mDescWindow.Dispose();
                 mDescWindow = null;
             }
-            mDescWindow = new SpellDescWindow(Globals.Me.Spells[mYindex].SpellId, mSpellWindow.X - 255,
+            mDescWindow = new SpellDescWindow(Globals.Me.Spells[mYindex].SpellId, mSpellWindow.X,
                 mSpellWindow.Y);
         }
 
@@ -109,8 +114,9 @@ namespace Intersect.Client.UI.Game.Spells
             if (!IsDragging &&
                 ((mTexLoaded != "" && spell == null) || (spell != null && mTexLoaded != spell.Icon) ||
                  mCurrentSpellId != Globals.Me.Spells[mYindex].SpellId ||
-                 mIconCd != (Globals.Me.Spells[mYindex].SpellCd > Globals.System.GetTimeMs())))
+                 mIconCd != (Globals.Me.Spells[mYindex].SpellCd > Globals.System.GetTimeMs()) || Globals.Me.Spells[mYindex].SpellCd > Globals.System.GetTimeMs()))
             {
+                mCooldownLabel.IsHidden = true;
                 if (spell != null)
                 {
                     GameTexture spellTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell,
@@ -137,6 +143,19 @@ namespace Intersect.Client.UI.Game.Spells
                     mTexLoaded = spell.Icon;
                     mCurrentSpellId = Globals.Me.Spells[mYindex].SpellId;
                     mIconCd = (Globals.Me.Spells[mYindex].SpellCd > Globals.System.GetTimeMs());
+                    if (mIconCd)
+                    {
+                        mCooldownLabel.IsHidden = false;
+                        var secondsRemaining = (float)(Globals.Me.Spells[mYindex].SpellCd - Globals.System.GetTimeMs()) / 1000f;
+                        if (secondsRemaining > 10f)
+                        {
+                            mCooldownLabel.Text = Strings.Spells.cooldown.ToString((secondsRemaining).ToString("N0"));
+                        }
+                        else
+                        {
+                            mCooldownLabel.Text = Strings.Spells.cooldown.ToString((secondsRemaining).ToString("N1").Replace(".", Strings.Numbers.dec));
+                        }
+                    }
                 }
                 else
                 {

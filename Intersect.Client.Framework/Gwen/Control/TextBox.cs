@@ -2,6 +2,8 @@
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Input;
 
+using Newtonsoft.Json.Linq;
+
 namespace Intersect.Client.Framework.Gwen.Control
 {
     /// <summary>
@@ -18,6 +20,11 @@ namespace Intersect.Client.Framework.Gwen.Control
         private bool mSelectAll;
 
         protected Rectangle mSelectionBounds;
+
+        //Sound Effects
+        private string mAddTextSound;
+        private string mRemoveTextSound;
+        private string mSubmitSound;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="TextBox" /> class.
@@ -168,7 +175,7 @@ namespace Intersect.Client.Framework.Gwen.Control
 
             if (HasSelection)
             {
-                EraseSelection();
+                EraseSelection(false);
             }
 
             if (mCursorPos > TextLength)
@@ -185,6 +192,8 @@ namespace Intersect.Client.Framework.Gwen.Control
             mCursorEnd = mCursorPos;
 
             RefreshCursorBounds();
+
+            base.PlaySound(mAddTextSound);
         }
 
         /// <summary>
@@ -484,7 +493,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         /// <param name="startPos">Starting cursor position.</param>
         /// <param name="length">Length in characters.</param>
-        public virtual void DeleteText(int startPos, int length)
+        public virtual void DeleteText(int startPos, int length, bool playSound = true)
         {
             string str = Text;
             str = str.Remove(startPos, length);
@@ -496,17 +505,19 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
 
             CursorEnd = mCursorPos;
+
+            if (length > 0 && playSound) base.PlaySound(mRemoveTextSound);
         }
 
         /// <summary>
         ///     Deletes selected text.
         /// </summary>
-        public virtual void EraseSelection()
+        public virtual void EraseSelection(bool playSound = true)
         {
             int start = Math.Min(mCursorPos, mCursorEnd);
             int end = Math.Max(mCursorPos, mCursorEnd);
 
-            DeleteText(start, end - start);
+            DeleteText(start, end - start, playSound);
 
             // Move the cursor to the start of the selection, 
             // since the end is probably outside of the string now.
@@ -520,7 +531,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
         /// <param name="down">If set to <c>true</c> mouse button is down.</param>
-        protected override void OnMouseClickedLeft(int x, int y, bool down)
+        protected override void OnMouseClickedLeft(int x, int y, bool down, bool automated = false)
         {
             base.OnMouseClickedLeft(x, y, down);
             if (mSelectAll)
@@ -610,7 +621,34 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected virtual void OnReturn()
         {
             if (SubmitPressed != null)
+            {
                 SubmitPressed.Invoke(this, EventArgs.Empty);
+                base.PlaySound(mSubmitSound);
+            }
+        }
+
+
+        public override JObject GetJson()
+        {
+            var obj = base.GetJson();
+            obj.Add("AddTextSound", mAddTextSound);
+            obj.Add("RemoveTextSound", mRemoveTextSound);
+            obj.Add("SubmitSound",mSubmitSound);
+            return base.FixJson(obj);
+        }
+
+        public override void LoadJson(JToken obj)
+        {
+            base.LoadJson(obj);
+            if (obj["AddTextSound"] != null) mAddTextSound = (string)obj["AddTextSound"];
+            if (obj["RemoveTextSound"] != null) mRemoveTextSound = (string)obj["RemoveTextSound"];
+            if (obj["SubmitSound"] != null) mSubmitSound = (string)obj["SubmitSound"];
+
+            //Automated Audio Setup
+            mAddTextSound = "octave-tap-resonant.wav";
+            mRemoveTextSound = "octave-tap-professional.wav";
+            mSubmitSound = "octave-tap-warm.wav";
+            //End Automated Audio Setup
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
@@ -242,6 +243,7 @@ namespace Intersect.Client.Entities
                 Status.Add(new StatusInstance(bf.ReadGuid(), bf.ReadInteger(), bf.ReadString(), bf.ReadInteger(),
                     bf.ReadInteger()));
             }
+            SortStatuses();
             for (var i = 0; i < (int) Stats.StatCount; i++)
             {
                 Stat[i] = bf.ReadInteger();
@@ -1089,6 +1091,27 @@ namespace Intersect.Client.Entities
             mChatBubbles.Add(new ChatBubble(this, text));
         }
 
+        //Statuses
+        public bool StatusActive(Guid guid)
+        {
+            foreach (var status in Status)
+                if (status.SpellId == guid && status.IsActive())
+                    return true;
+            return false;
+        }
+        public StatusInstance GetStatus(Guid guid)
+        {
+            foreach (var status in Status)
+                if (status.SpellId == guid && status.IsActive())
+                    return status;
+            return null;
+        }
+        public void SortStatuses()
+        {
+            //Sort Status effects by remaining time
+            Status = Status.OrderByDescending(x => x.RemainingMs()).ToList();
+        }
+
         ~Entity()
         {
             Dispose();
@@ -1113,6 +1136,17 @@ namespace Intersect.Client.Entities
             TimeRemaining = timeRemaining;
             TotalDuration = totalDuration;
             TimeRecevied = Globals.System.GetTimeMs();
+        }
+
+        public bool IsActive()
+        {
+            return RemainingMs() > 0;
+        }
+
+        public long RemainingMs()
+        {
+            var timeDiff = Globals.System.GetTimeMs() - TimeRecevied;
+            return TimeRemaining - timeDiff; 
         }
     }
 

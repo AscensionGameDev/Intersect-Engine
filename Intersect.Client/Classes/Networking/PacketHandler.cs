@@ -849,6 +849,7 @@ namespace Intersect.Client.Networking
                     }
                 }
             }
+            en.SortStatuses();
 
             if (Gui.GameUi != null)
             {

@@ -9,6 +9,7 @@ namespace Intersect.Client.Entities
         public string Name;
         public int[] Vital = new int[(int)Vitals.VitalCount];
         public int[] MaxVital = new int[(int)Vitals.VitalCount];
+        public int Level;
 
         public PartyMember(ByteBuffer bf)
         {
@@ -22,6 +23,7 @@ namespace Intersect.Client.Entities
             {
                 MaxVital[i] = bf.ReadInteger();
             }
+            Level = bf.ReadInteger();
         }
     }
 }

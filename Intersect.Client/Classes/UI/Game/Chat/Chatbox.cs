@@ -17,6 +17,10 @@ namespace Intersect.Client.UI.Game.Chat
         private ListBox mChatboxMessages;
         private ScrollBar mChatboxScrollBar;
         private Label mChatboxText;
+        private ImagePanel mChatbar;
+
+        private Label mChatboxTitle;
+        private Label mChannelLabel;
 
         private Button mChatboxSendButton;
 
@@ -38,12 +42,23 @@ namespace Intersect.Client.UI.Game.Chat
             mChatboxMessages.EnableScroll(false, true);
             mChatboxWindow.ShouldCacheToTexture = true;
 
+            mChatboxTitle = new Label(mChatboxWindow,"ChatboxTitle");
+            mChatboxTitle.Text = Strings.Chatbox.title;
+            mChatboxTitle.IsHidden = true;
+
+            mChatbar = new ImagePanel(mChatboxWindow,"Chatbar");
+            mChatbar.IsHidden = true;
+
             mChatboxInput = new TextBox(mChatboxWindow, "ChatboxInputField");
             mChatboxInput.SubmitPressed += ChatBoxInput_SubmitPressed;
             mChatboxInput.Text = GetDefaultInputText();
             mChatboxInput.Clicked += ChatBoxInput_Clicked;
             mChatboxInput.IsTabable = false;
             Gui.FocusElements.Add(mChatboxInput);
+
+            mChannelLabel = new Label(mChatboxWindow, "ChannelLabel");
+            mChannelLabel.Text = Strings.Chatbox.channel;
+            mChannelLabel.IsHidden = true;
 
             mChannelCombobox = new ComboBox(mChatboxWindow, "ChatChannelCombobox");
             for (int i = 0; i < 3; i++)

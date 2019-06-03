@@ -82,7 +82,7 @@ namespace Intersect.Client
             }
         }
 
-        private void ResetDefaults()
+        public void ResetDefaults()
         {
             CreateControlMap(Controls.MoveUp, Keys.Up, Keys.W);
             CreateControlMap(Controls.MoveDown, Keys.Down, Keys.S);

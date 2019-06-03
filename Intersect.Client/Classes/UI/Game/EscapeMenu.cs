@@ -1,4 +1,6 @@
-﻿using Intersect.Client.Framework.File_Management;
+﻿using System;
+
+using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;

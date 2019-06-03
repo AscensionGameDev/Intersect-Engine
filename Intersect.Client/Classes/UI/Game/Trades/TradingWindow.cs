@@ -136,11 +136,6 @@ namespace Intersect.Client.UI.Game.Trades
                     }
                 }
                 TradeSegment[n].GoldValue.Text = Strings.Trading.value.ToString(g);
-                TradeSegment[n].GoldValue.SetPosition(
-                    4 +
-                    (((2 * n) + 1) * (mTradeWindow.Width - mTradeWindow.Padding.Left -
-                                      mTradeWindow.Padding.Right) / 4) -
-                    (TradeSegment[n].GoldValue.Width / 2), 294);
                 g = 0;
             }
         }

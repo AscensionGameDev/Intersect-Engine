@@ -35,6 +35,7 @@ namespace Intersect.Client.UI.Game.Character
             Pnl.RightClicked += pnl_RightClicked;
 
             ContentPanel = new ImagePanel(Pnl, "EquipmentIcon");
+            ContentPanel.MouseInputEnabled = false;
             Pnl.SetToolTipText(Options.EquipmentSlots[mYindex]);
         }
 
@@ -66,7 +67,7 @@ namespace Intersect.Client.UI.Game.Character
 
             var item = ItemBase.Get(mCurrentItemId);
             if (item == null) return;
-            mDescWindow = new ItemDescWindow(item, 1, mCharacterWindow.X - 255, mCharacterWindow.Y, mStatBoost, item.Name);
+            mDescWindow = new ItemDescWindow(item, 1, mCharacterWindow.X, mCharacterWindow.Y, mStatBoost, item.Name);
         }
 
         public FloatRect RenderBounds()
