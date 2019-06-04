@@ -21,6 +21,11 @@ namespace Intersect.Client.Framework.Gwen.Control
         private Pos mOldDock; // used while autosizing
         private bool mSizeToContents;
 
+        //Sound Effects
+        protected string mItemHoverSound;
+        protected string mItemClickSound;
+        protected string mItemRightClickSound;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="ListBox" /> class.
         /// </summary>
@@ -166,6 +171,9 @@ namespace Intersect.Client.Framework.Gwen.Control
             obj.Add("SizeToContents", mSizeToContents);
             obj.Add("MultiSelect", AllowMultiSelect);
             obj.Add("IsToggle", IsToggle);
+            obj.Add("ItemHoverSound", mItemHoverSound);
+            obj.Add("ItemClickSound", mItemClickSound);
+            obj.Add("ItemRightClickSound", mItemRightClickSound);
             return base.FixJson(obj);
         }
 
@@ -175,6 +183,17 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["SizeToContents"] != null) mSizeToContents = (bool)obj["SizeToContents"];
             if (obj["MultiSelect"] != null) AllowMultiSelect = (bool)obj["MultiSelect"];
             if (obj["IsToggle"] != null) IsToggle = (bool)obj["IsToggle"];
+            if (obj["ItemHoverSound"] != null) mItemHoverSound = (string)obj["ItemHoverSound"];
+            if (obj["ItemClickSound"] != null) mItemClickSound = (string)obj["ItemClickSound"];
+            if (obj["ItemRightClickSound"] != null) mItemRightClickSound = (string)obj["ItemRightClickSound"];
+
+            foreach (var itm in mTable.Children)
+            {
+                var row = (ListBoxRow) itm;
+                row.HoverSound = mItemHoverSound;
+                row.ClickSound = mItemClickSound;
+                row.RightClickSound = mItemRightClickSound;
+            }
         }
 
         /// <summary>
@@ -297,6 +316,10 @@ namespace Intersect.Client.Framework.Gwen.Control
             row.UserData = userData;
 
             row.Selected += OnRowSelected;
+
+            row.HoverSound = mItemHoverSound;
+            row.ClickSound = mItemClickSound;
+            row.RightClickSound = mItemRightClickSound;
 
             mTable.SizeToContents(Width);
 

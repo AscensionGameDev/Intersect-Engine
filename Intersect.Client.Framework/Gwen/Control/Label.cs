@@ -31,6 +31,11 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected Color mNormalTextColor;
         private Padding mTextPadding;
 
+        private GameTexture mBackgroundTemplateTex;
+        private string mBackgroundTemplateFilename;
+
+        public GameTexture ToolTipBackground { get; set; }
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="Label" /> class.
         /// </summary>
@@ -185,6 +190,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         public override JObject GetJson()
         {
             var obj = base.GetJson();
+            if (this.GetType() == typeof(Label)) obj.Add("BackgroundTemplate", mBackgroundTemplateFilename);
             obj.Add("TextColor", Color.ToString(TextColor));
             obj.Add("HoveredTextColor", Color.ToString(mHoverTextColor));
             obj.Add("ClickedTextColor", Color.ToString(mClickedTextColor));
@@ -200,6 +206,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         public override void LoadJson(JToken obj)
         {
             base.LoadJson(obj);
+            if (this.GetType() == typeof(Label) && obj["BackgroundTemplate"] != null) SetBackgroundTemplate(GameContentManager.Current.GetTexture(GameContentManager.TextureType.Gui, (string)obj["BackgroundTemplate"]), (string)obj["BackgroundTemplate"]);
             if (obj["TextColor"] != null) TextColor = Color.FromString((string)obj["TextColor"]);
             mNormalTextColor = TextColor;
             if (obj["HoveredTextColor"] != null) mHoverTextColor = Color.FromString((string)obj["HoveredTextColor"]);
@@ -215,6 +222,23 @@ namespace Intersect.Client.Framework.Gwen.Control
                 Font = GameContentManager.Current.GetFont(fontArr[0], int.Parse(fontArr[1]));
             }
             if (obj["TextScale"] != null) mText.SetScale((float) obj["TextScale"]);
+        }
+
+
+        public GameTexture GetTemplate()
+        {
+            return mBackgroundTemplateTex;
+        }
+
+        public void SetBackgroundTemplate(GameTexture texture, string fileName)
+        {
+            if (texture == null && !string.IsNullOrWhiteSpace(fileName))
+            {
+                texture = GameContentManager.Current?.GetTexture(GameContentManager.TextureType.Gui, fileName);
+            }
+
+            mBackgroundTemplateFilename = fileName;
+            mBackgroundTemplateTex = texture;
         }
 
         public virtual void MakeColorNormal()
@@ -389,6 +413,8 @@ namespace Intersect.Client.Framework.Gwen.Control
 
             SetSize(mText.Width + Padding.Left + Padding.Right + mTextPadding.Left + mTextPadding.Right,
                 mText.Height + Padding.Top + Padding.Bottom + mTextPadding.Top + mTextPadding.Bottom);
+
+            ProcessAlignments();
             InvalidateParent();
         }
 
@@ -409,6 +435,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="skin">Skin to use.</param>
         protected override void Render(Skin.Base skin)
         {
+            skin.DrawLabel(this);
         }
 
         /// <summary>

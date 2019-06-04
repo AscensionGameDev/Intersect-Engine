@@ -236,7 +236,11 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 mAccelerator.SizeToContents();
                 Width = Width + mAccelerator.Width;
+                mAccelerator.Alignment = Pos.Left;
             }
+
+            if (Width < Parent.Width) Width = Parent.Width;
+            
         }
 
         public MenuItem SetAction(GwenEventHandler<EventArgs> handler,

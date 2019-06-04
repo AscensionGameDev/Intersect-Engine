@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+
 using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Framework.File_Management;
@@ -70,15 +72,15 @@ namespace Intersect.Client.UI.Game.EntityPanel
         public ImagePanel[] PaperdollPanels;
         public string[] PaperdollTextures;
 
-        //Spell List
-        public List<SpellStatus> Items = new List<SpellStatus>();
-
         private long mLastUpdateTime;
         public Button PartyLabel;
         public bool PlayerBox;
         public Button TradeLabel;
+        public Button FriendLabel;
 
         public bool UpdateStatuses;
+
+        private Dictionary<Guid,SpellStatus> mActiveStatuses = new Dictionary<Guid, SpellStatus>();
 
         //Init
         public EntityBox(Canvas gameCanvas, EntityTypes entityType, Entity myEntity, bool playerBox = false)
@@ -148,6 +150,12 @@ namespace Intersect.Client.UI.Game.EntityPanel
             PartyLabel.SetToolTipText(Strings.EntityBox.partytip.ToString(MyEntity.Name));
             PartyLabel.Clicked += invite_Clicked;
 
+            FriendLabel = new Button(EntityInfoPanel, "FriendButton");
+            FriendLabel.SetText(Strings.EntityBox.friend);
+            FriendLabel.SetToolTipText(Strings.EntityBox.friendtip.ToString(MyEntity.Name));
+            FriendLabel.Clicked += friendRequest_Clicked;
+            FriendLabel.IsHidden = true;
+
             EntityStatusPanel = new ImagePanel(EntityWindow, "StatusArea");
 
             UpdateSpellStatus();
@@ -179,6 +187,7 @@ namespace Intersect.Client.UI.Game.EntityPanel
                     {
                         TradeLabel.Hide();
                         PartyLabel.Hide();
+                        FriendLabel.Hide();
                     }
                     else
                     {
@@ -198,6 +207,7 @@ namespace Intersect.Client.UI.Game.EntityPanel
                     ExpTitle.Hide();
                     TradeLabel.Hide();
                     PartyLabel.Hide();
+                    FriendLabel.Hide();
                     EntityMap.Hide();
                     break;
                 case EntityTypes.Event:
@@ -215,6 +225,7 @@ namespace Intersect.Client.UI.Game.EntityPanel
                     HpTitle.Hide();
                     TradeLabel.Hide();
                     PartyLabel.Hide();
+                    FriendLabel.Hide();
                     EntityMap.Hide();
                     break;
             }
@@ -256,6 +267,10 @@ namespace Intersect.Client.UI.Game.EntityPanel
                 UpdateHpBar(elapsedTime);
                 UpdateMpBar(elapsedTime);
             }
+            else
+            {
+                if (!EntityNameAndLevel.IsHidden) EntityNameAndLevel.Text = MyEntity.Name;
+            }
 
             //If player draw exp bar
             if (MyEntity == Globals.Me)
@@ -269,50 +284,78 @@ namespace Intersect.Client.UI.Game.EntityPanel
                 UpdateStatuses = false;
             }
 
-            //Update each status item
-            for (int i = 0; i < Items.Count; i++)
-            {
-                Items[i].Update();
-            }
+            foreach (var itm in mActiveStatuses)
+                itm.Value.Update();
 
             mLastUpdateTime = Globals.System.GetTimeMs();
         }
 
         public void UpdateSpellStatus()
         {
-            foreach (SpellStatus s in Items)
+            //This is shit code that should be removed asap
+            //foreach (SpellStatus s in Items)
+            //{
+            //    s.Pnl.Texture = null;
+            //    s.Container.Hide();
+            //    s.Container.Texture = null;
+            //    EntityStatusPanel.RemoveChild(s.Container, true);
+            //    s.pnl_HoverLeave(null, null);
+            //}
+            //Items.Clear();
+
+            //Remove 'Dead' Statuses
+            var statuses = mActiveStatuses.Keys.ToArray();
+            foreach (var status in statuses)
             {
-                s.Pnl.Texture = null;
-                s.Container.Texture = null;
-                EntityStatusPanel.RemoveChild(s.Container, true);
-                s.pnl_HoverLeave(null, null);
+                if (!MyEntity.StatusActive(status))
+                {
+                    var s = mActiveStatuses[status];
+                    s.Pnl.Texture = null;
+                    s.Container.Hide();
+                    s.Container.Texture = null;
+                    EntityStatusPanel.RemoveChild(s.Container, true);
+                    s.pnl_HoverLeave(null, null);
+                    mActiveStatuses.Remove(status);
+                }
+                else
+                {
+                    mActiveStatuses[status].UpdateStatus(MyEntity.GetStatus(status));
+                }
             }
-            Items.Clear();
+
 
             //Add all of the spell status effects
             for (int i = 0; i < MyEntity.Status.Count; i++)
             {
-                Items.Add(new SpellStatus(this, i));
-                if (PlayerBox)
+                var id = MyEntity.Status[i].SpellId;
+                SpellStatus itm = null;
+                if (!mActiveStatuses.ContainsKey(id))
                 {
-                    Items[i].Container = new ImagePanel(EntityStatusPanel, "PlayerStatusIcon");
+                    itm = new SpellStatus(this, MyEntity.Status[i]);
+                    if (PlayerBox)
+                    {
+                        itm.Container = new ImagePanel(EntityStatusPanel, "PlayerStatusIcon");
+                    }
+                    else
+                    {
+                        itm.Container = new ImagePanel(EntityStatusPanel, "TargetStatusIcon");
+                    }
+
+                    itm.Setup();
+
+                    itm.Container.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
+                    itm.Container.Name = "";
+                    mActiveStatuses.Add(id,itm);
                 }
                 else
                 {
-                    Items[i].Container = new ImagePanel(EntityStatusPanel, "TargetStatusIcon");
+                    itm = mActiveStatuses[id];
                 }
-                Items[i].Setup();
-                
-                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
-                Items[i].Container.Name = "";
+                var xPadding = itm.Container.Margin.Left + itm.Container.Margin.Right;
+                var yPadding = itm.Container.Margin.Top + itm.Container.Margin.Bottom;
 
-                var xPadding = Items[i].Container.Padding.Left + Items[i].Container.Padding.Right;
-                var yPadding = Items[i].Container.Padding.Top + Items[i].Container.Padding.Bottom;
-                Items[i].Container.SetPosition(
-                    (i % (EntityStatusPanel.Width / (float)(Items[i].Container.Width + xPadding))) *
-                    (Items[i].Container.Width + xPadding) + xPadding,
-                    (i / (EntityStatusPanel.Width / (float)(Items[i].Container.Width + xPadding))) *
-                    (Items[i].Container.Height + yPadding) + yPadding);
+                itm.Container.SetPosition((i % (EntityStatusPanel.Width / (itm.Container.Width + xPadding))) * (itm.Container.Width + xPadding) + xPadding, (i / (EntityStatusPanel.Width / (itm.Container.Width + xPadding))) * (itm.Container.Height + yPadding) + yPadding);
+
             }
         }
 
@@ -628,6 +671,15 @@ namespace Intersect.Client.UI.Game.EntityPanel
             if (Globals.Me.TargetIndex != Guid.Empty && Globals.Me.TargetIndex != Globals.Me.Id)
             {
                 PacketSender.SendTradeRequest(Globals.Me.TargetIndex);
+            }
+        }
+
+        //Input Handlers
+        void friendRequest_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            if (Globals.Me.TargetIndex != Guid.Empty && Globals.Me.TargetIndex != Globals.Me.Id)
+            {
+                PacketSender.AddFriend(MyEntity.Name);
             }
         }
     }

@@ -70,6 +70,8 @@ namespace Intersect.Editor.Forms.Editors
                 nudSpeed.Value = mEditorItem.Time;
                 cmbResult.SelectedIndex = ItemBase.ListIndex(mEditorItem.ItemId) + 1;
 
+                nudCraftQuantity.Value = mEditorItem.Quantity;
+
                 lstIngredients.Items.Clear();
                 cmbIngredient.Hide();
                 nudQuantity.Hide();
@@ -324,6 +326,17 @@ namespace Intersect.Editor.Forms.Editors
         private void cmbResult_SelectedIndexChanged(object sender, EventArgs e)
         {
             mEditorItem.ItemId = ItemBase.IdFromList(cmbResult.SelectedIndex - 1);
+            var itm = ItemBase.Get(mEditorItem.ItemId);
+            if (itm == null || !itm.IsStackable())
+            {
+                nudCraftQuantity.Value = 1;
+                mEditorItem.Quantity = 1;
+                nudCraftQuantity.Enabled = false;
+            }
+            else
+            {
+                nudCraftQuantity.Enabled = true;
+            }
         }
 
         private void cmbIngredient_SelectedIndexChanged(object sender, EventArgs e)
@@ -364,6 +377,7 @@ namespace Intersect.Editor.Forms.Editors
             grpGeneral.Text = Strings.CraftsEditor.general;
             lblName.Text = Strings.CraftsEditor.name;
             lblItem.Text = Strings.CraftsEditor.item;
+            lblCraftQuantity.Text = Strings.CraftsEditor.craftquantity;
             lblSpeed.Text = Strings.CraftsEditor.time;
 
             grpIngredients.Text = Strings.CraftsEditor.ingredients;
@@ -375,6 +389,11 @@ namespace Intersect.Editor.Forms.Editors
 
             btnSave.Text = Strings.CraftsEditor.save;
             btnCancel.Text = Strings.CraftsEditor.cancel;
+        }
+
+        private void nudCraftQuantity_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Quantity = (int)nudCraftQuantity.Value;
         }
     }
 }

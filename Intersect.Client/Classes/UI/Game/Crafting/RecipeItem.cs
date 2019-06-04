@@ -105,8 +105,7 @@ namespace Intersect.Client.UI.Game.Crafting
             }
             if (mIngredient != null)
             {
-                DescWindow = new ItemDescWindow(ItemBase.Get(mIngredient.ItemId), mIngredient.Quantity, mCraftingWindow.X - 255,
-                    mCraftingWindow.Y, new int[(int)Stats.StatCount]);
+                DescWindow = new ItemDescWindow(ItemBase.Get(mIngredient.ItemId), mIngredient.Quantity, mCraftingWindow.X, mCraftingWindow.Y, new int[(int)Stats.StatCount]);
             }
         }
     }

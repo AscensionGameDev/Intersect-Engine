@@ -17,6 +17,13 @@ namespace Intersect.Client.Framework.Gwen.Control
         private bool mMenuAbove;
         private MenuItem mSelectedItem;
 
+        //Sound Effects
+        private string mOpenMenuSound;
+        private string mCloseMenuSound;
+        private string mHoverMenuSound;
+        private string mHoverItemSound;
+        private string mSelectItemSound;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="ComboBox" /> class.
         /// </summary>
@@ -57,7 +64,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 if (value == null || value.Parent != mMenu) return;
                 mSelectedItem = value;
-                OnItemSelected(mSelectedItem, new ItemSelectedEventArgs(value));
+                OnItemSelected(mSelectedItem, new ItemSelectedEventArgs(value,true));
             }
         }
 
@@ -86,6 +93,11 @@ namespace Intersect.Client.Framework.Gwen.Control
             obj.Add("MenuAbove", mMenuAbove);
             obj.Add("Menu", mMenu.GetJson());
             obj.Add("DropDownButton", mButton.GetJson());
+            obj.Add("OpenMenuSound", mOpenMenuSound);
+            obj.Add("CloseMenuSound", mCloseMenuSound);
+            obj.Add("HoverMenuSound", mHoverMenuSound);
+            obj.Add("ItemHoverSound", mHoverItemSound);
+            obj.Add("SelectItemSound", mSelectItemSound);
             return base.FixJson(obj);
         }
 
@@ -95,6 +107,31 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["MenuAbove"] != null) mMenuAbove = (bool) obj["MenuAbove"];
             if (obj["Menu"] != null) mMenu.LoadJson(obj["Menu"]);
             if (obj["DropDownButton"] != null) mButton.LoadJson(obj["DropDownButton"]);
+            if (obj["OpenMenuSound"] != null) mOpenMenuSound = (string)obj["OpenMenuSound"];
+            if (obj["CloseMenuSound"] != null) mCloseMenuSound = (string)obj["CloseMenuSound"];
+            if (obj["HoverMenuSound"] != null) mHoverMenuSound = (string)obj["HoverMenuSound"];
+            if (obj["ItemHoverSound"] != null) mHoverItemSound = (string)obj["ItemHoverSound"];
+            if (obj["SelectItemSound"] != null) mSelectItemSound = (string)obj["SelectItemSound"];
+
+            mOpenMenuSound = "octave-tap-warm.wav";
+            mCloseMenuSound = "octave-beep-tapped.wav";
+            mHoverMenuSound = "octave-tap-resonant.wav";
+            mHoverItemSound = "octave-tap-resonant.wav";
+            mSelectItemSound = "octave-tap-warm.wav";
+
+            foreach (var mnu in Children)
+            {
+                if (mnu.GetType() == typeof(Menu))
+                {
+                    foreach (var itm in mnu.Children)
+                    {
+                        if (itm.GetType() == typeof(MenuItem))
+                        {
+                            ((MenuItem)itm).SetHoverSound(mHoverItemSound);
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -113,9 +150,10 @@ namespace Intersect.Client.Framework.Gwen.Control
             item.SetTextColor(GetTextColor(Label.ControlState.Hovered), Label.ControlState.Hovered);
             item.SetTextColor(GetTextColor(Label.ControlState.Clicked), Label.ControlState.Clicked);
             item.SetTextColor(GetTextColor(Label.ControlState.Disabled), Label.ControlState.Disabled);
+            item.SetHoverSound(mHoverItemSound);
 
             if (mSelectedItem == null)
-                OnItemSelected(item, new ItemSelectedEventArgs(null));
+                OnItemSelected(item, new ItemSelectedEventArgs(null,true));
 
             return item;
         }
@@ -185,6 +223,8 @@ namespace Intersect.Client.Framework.Gwen.Control
 
                 if (ItemSelected != null)
                     ItemSelected.Invoke(this, args);
+                
+                if (!args.Automated) base.PlaySound(mSelectItemSound);
 
                 Focus();
                 Invalidate();
@@ -253,6 +293,8 @@ namespace Intersect.Client.Framework.Gwen.Control
                 {
                     mMenu.SetBounds(new Rectangle(p.X, p.Y + Height, Width, mMenu.Height));
                 }
+
+                base.PlaySound(mOpenMenuSound);
             }
         }
 
@@ -265,6 +307,8 @@ namespace Intersect.Client.Framework.Gwen.Control
                 return;
 
             mMenu.Hide();
+
+            base.PlaySound(mCloseMenuSound);
         }
 
         /// <summary>
@@ -395,6 +439,13 @@ namespace Intersect.Client.Framework.Gwen.Control
         public void SetMenu(Menu menu)
         {
             mMenu = menu;
+        }
+
+        protected override void OnMouseEntered()
+        {
+            base.OnMouseEntered();
+            //Play Mouse Entered Sound
+            if (!IsOpen && ShouldDrawHover) base.PlaySound(mHoverMenuSound);
         }
     }
 }

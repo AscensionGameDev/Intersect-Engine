@@ -60,7 +60,7 @@ namespace Intersect.Client.UI.Game.Shop
                 if (item.IsStackable())
                 {
                     InputBox iBox = new InputBox(Strings.Shop.buyitem,
-                        Strings.Shop.buyitemprompt.ToString(item.Name), true, InputBox.InputType.TextInput,
+                        Strings.Shop.buyitemprompt.ToString(item.Name), true, InputBox.InputType.NumericInput,
                         BuyItemInputBoxOkay, null, mMySlot);
                 }
                 else
@@ -117,9 +117,7 @@ namespace Intersect.Client.UI.Game.Shop
             }
             var item = ItemBase.Get(Globals.GameShop.SellingItems[mMySlot].CostItemId);
             if (item != null)
-                mDescWindow = new ItemDescWindow(Globals.GameShop.SellingItems[mMySlot].Item, 1, mShopWindow.X - 255,
-                    mShopWindow.Y, item.StatsGiven, "",
-                    Strings.Shop.costs.ToString(Globals.GameShop.SellingItems[mMySlot].CostItemQuantity, item.Name));
+                mDescWindow = new ItemDescWindow(Globals.GameShop.SellingItems[mMySlot].Item, 1, mShopWindow.X, mShopWindow.Y, item.StatsGiven, "", Strings.Shop.costs.ToString(Globals.GameShop.SellingItems[mMySlot].CostItemQuantity, item.Name));
         }
 
         public FloatRect RenderBounds()

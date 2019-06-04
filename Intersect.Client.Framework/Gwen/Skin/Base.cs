@@ -1,6 +1,7 @@
 ﻿using System;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Framework.Gwen.Control;
 
 namespace Intersect.Client.Framework.Gwen.Skin
 {
@@ -350,6 +351,11 @@ namespace Intersect.Client.Framework.Gwen.Skin
             mRenderer.DrawFilledRect(Util.FloatRect(rect.X + x * 2.0f, rect.Y + y * 3.0f, x * 2, y * 2));
             mRenderer.DrawFilledRect(Util.FloatRect(rect.X + x * 3.0f, rect.Y + y * 1.0f, x * 2, y * 2));
             mRenderer.DrawFilledRect(Util.FloatRect(rect.X + x * 4.0f, rect.Y + y * 0.0f, x * 2, y * 2));
+        }
+
+        public virtual void DrawLabel(Control.Base control)
+        {
+
         }
 
         #endregion

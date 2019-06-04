@@ -46,6 +46,8 @@ namespace Intersect.Client.UI.Game.Hotbar
 
         private Draggable mDragIcon;
         public ImagePanel EquipPanel;
+        public Label EquipLabel;
+        private Label mCooldownLabel;
         private Keys mHotKey;
         public bool IsDragging;
         public Label KeyLabel;
@@ -67,16 +69,23 @@ namespace Intersect.Client.UI.Game.Hotbar
 
         public void Setup()
         {
-            Pnl.HoverEnter += pnl_HoverEnter;
-            Pnl.HoverLeave += pnl_HoverLeave;
-            Pnl.RightClicked += pnl_RightClicked;
-            Pnl.Clicked += pnl_Clicked;
-
             //Content Panel is layered on top of the container.
             //Shows the Item or Spell Icon
             mContentPanel = new ImagePanel(Pnl, "HotbarIcon" + mYindex);
+            mContentPanel.HoverEnter += pnl_HoverEnter;
+            mContentPanel.HoverLeave += pnl_HoverLeave;
+            mContentPanel.RightClicked += pnl_RightClicked;
+            mContentPanel.Clicked += pnl_Clicked;
+
             EquipPanel = new ImagePanel(mContentPanel, "HotbarEquipedIcon" + mYindex);
             EquipPanel.Texture = GameGraphics.Renderer.GetWhiteTexture();
+            EquipLabel = new Label(Pnl, "HotbarEquippedLabel" + mYindex);
+            EquipLabel.IsHidden = true;
+            EquipLabel.Text = Strings.Inventory.equippedicon;
+            EquipLabel.TextColor = new Framework.GenericClasses.Color(0, 255, 255, 255);
+            mCooldownLabel = new Label(Pnl, "HotbarCooldownLabel" + mYindex);
+            mCooldownLabel.IsHidden = true;
+            mCooldownLabel.TextColor = new Framework.GenericClasses.Color(0, 255, 255, 255);
         }
 
         public void Activate()
@@ -140,7 +149,7 @@ namespace Intersect.Client.UI.Game.Hotbar
                     mItemDescWindow.Dispose();
                     mItemDescWindow = null;
                 }
-                mItemDescWindow = new ItemDescWindow(mCurrentItem, 1, mHotbarWindow.X + Pnl.X + 16 - 255 / 2, mHotbarWindow.Y + mHotbarWindow.Height + 2, mInventoryItem?.StatBoost, mCurrentItem.Name);
+                mItemDescWindow = new ItemDescWindow(mCurrentItem, 1, mHotbarWindow.X + Pnl.X + 16, mHotbarWindow.Y + mHotbarWindow.Height + 2, mInventoryItem?.StatBoost, mCurrentItem.Name,"",true);
             }
             else if (mCurrentSpell != null)
             {
@@ -149,7 +158,7 @@ namespace Intersect.Client.UI.Game.Hotbar
                     mSpellDescWindow.Dispose();
                     mSpellDescWindow = null;
                 }
-                mSpellDescWindow = new SpellDescWindow(mCurrentSpell.Id, mHotbarWindow.X + Pnl.X + 16 - 255 / 2, mHotbarWindow.Y + mHotbarWindow.Height + 2);
+                mSpellDescWindow = new SpellDescWindow(mCurrentSpell.Id, mHotbarWindow.X + Pnl.X + 16, mHotbarWindow.Y + mHotbarWindow.Height + 2, true);
             }
         }
 
@@ -225,6 +234,10 @@ namespace Intersect.Client.UI.Game.Hotbar
                 if (mInventoryItem != null && Globals.Me.IsEquipped(mInventoryItemIndex) != mIsEquipped)
                     updateDisplay = true;
 
+                //We have it, and it's on cd
+                if (mInventoryItem != null && Globals.Me.ItemOnCd(mInventoryItemIndex))
+                    updateDisplay = true;
+
                 //We have it, and it's on cd, and the fade is incorrect
                 if (mInventoryItem != null && Globals.Me.ItemOnCd(mInventoryItemIndex) != mIsFaded)
                     updateDisplay = true;
@@ -233,6 +246,10 @@ namespace Intersect.Client.UI.Game.Hotbar
             {
                 //We don't know it, and the icon isn't faded!
                 if (mSpellBookItem == null && !mIsFaded)
+                    updateDisplay = true;
+
+                //Spell on cd
+                if (mSpellBookItem != null && mSpellBookItem.SpellCd > Globals.System.GetTimeMs())
                     updateDisplay = true;
 
                 //Spell on cd and the fade is incorrect
@@ -245,17 +262,33 @@ namespace Intersect.Client.UI.Game.Hotbar
             {
                 if (mCurrentItem != null)
                 {
+                    mCooldownLabel.IsHidden = true;
                     mContentPanel.Show();
                     mContentPanel.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, mCurrentItem.Icon);
                     if (mInventoryItemIndex > -1)
                     {
                         EquipPanel.IsHidden = !Globals.Me.IsEquipped(mInventoryItemIndex);
+                        EquipLabel.IsHidden = !Globals.Me.IsEquipped(mInventoryItemIndex);
                         mIsFaded = Globals.Me.ItemOnCd(mInventoryItemIndex);
+                        if (mIsFaded)
+                        {
+                            mCooldownLabel.IsHidden = false;
+                            var secondsRemaining = (float)(Globals.Me.ItemCdRemainder(mInventoryItemIndex)) / 1000f;
+                            if (secondsRemaining > 10f)
+                            {
+                                mCooldownLabel.Text = Strings.Inventory.cooldown.ToString((secondsRemaining).ToString("N0"));
+                            }
+                            else
+                            {
+                                mCooldownLabel.Text = Strings.Inventory.cooldown.ToString((secondsRemaining).ToString("N1").Replace(".", Strings.Numbers.dec));
+                            }
+                        }
                         mIsEquipped = Globals.Me.IsEquipped(mInventoryItemIndex);
                     }
                     else
                     {
                         EquipPanel.IsHidden = true;
+                        EquipLabel.IsHidden = true;
                         mIsEquipped = false;
                         mIsFaded = true;
                     }
@@ -266,9 +299,24 @@ namespace Intersect.Client.UI.Game.Hotbar
                     mContentPanel.Show();
                     mContentPanel.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell, mCurrentSpell.Icon);
                     EquipPanel.IsHidden = true;
+                    EquipLabel.IsHidden = true;
+                    mCooldownLabel.IsHidden = true;
                     if (mSpellBookItem != null)
                     {
                         mIsFaded = mSpellBookItem.SpellCd > Globals.System.GetTimeMs();
+                        if (mIsFaded)
+                        {
+                            mCooldownLabel.IsHidden = false;
+                            var secondsRemaining = (float)(mSpellBookItem.SpellCd - Globals.System.GetTimeMs()) / 1000f;
+                            if (secondsRemaining > 10f)
+                            {
+                                mCooldownLabel.Text = Strings.Spells.cooldown.ToString((secondsRemaining).ToString("N0"));
+                            }
+                            else
+                            {
+                                mCooldownLabel.Text = Strings.Spells.cooldown.ToString((secondsRemaining).ToString("N1").Replace(".", Strings.Numbers.dec));
+                            }
+                        }
                     }
                     else
                     {
@@ -282,6 +330,9 @@ namespace Intersect.Client.UI.Game.Hotbar
                     mContentPanel.Hide();
                     mTexLoaded = true;
                     mIsEquipped = false;
+                    EquipPanel.IsHidden = true;
+                    EquipLabel.IsHidden = true;
+                    mCooldownLabel.IsHidden = true;
                 }
                 if (mIsFaded)
                 {
