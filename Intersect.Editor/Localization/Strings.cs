@@ -378,6 +378,14 @@ Tick timer saved in server config.json.";
             public static LocalizedString title = @"Change Player Items";
         }
 
+        public struct EventEquipItems
+        {
+            public static LocalizedString cancel = @"Cancel";
+            public static LocalizedString item = @"Item:";
+            public static LocalizedString okay = @"Ok";
+            public static LocalizedString title = @"Equip Player Items";
+        }
+
         public struct EventChangeLevel
         {
             public static LocalizedString cancel = @"Cancel";
@@ -436,6 +444,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString animationrelativerotate = @"Spawn And Rotate Relative To Direction";
             public static LocalizedString animationrotatedir = @"Rotate Relative To Direction";
             public static LocalizedString changeitems = @"Change Player Items [{00}]";
+            public static LocalizedString equipitem = @"Equip Player Item [{00}]";
             public static LocalizedString changespells = @"Change Player Spells [{00}]";
             public static LocalizedString chatboxtext = @"Show Chatbox Text [Channel: {00}, Color: {01}] - {02}";
             public static LocalizedString chatglobal = @"Global";
@@ -604,6 +613,7 @@ Tick timer saved in server config.json.";
                 {"warpplayer", @"Warp Player"},
                 {"hideplayer", @"Hide Player"},
                 {"showplayer", @"Show Player"},
+                {"equipitem", @"Equip Item"},
             };
         }
 

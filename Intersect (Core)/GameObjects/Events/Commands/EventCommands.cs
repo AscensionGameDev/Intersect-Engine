@@ -196,6 +196,12 @@ namespace Intersect.GameObjects.Events.Commands
         }
     }
 
+    public class EquipItemCommand : EventCommand
+    {
+        public override EventCommandType Type { get; } = EventCommandType.EquipItem;
+        public Guid ItemId { get; set; }
+    }
+
     public class ChangeSpriteCommand : EventCommand
     {
         public override EventCommandType Type {get;} = EventCommandType.ChangeSprite;

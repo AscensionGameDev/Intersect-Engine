@@ -121,5 +121,8 @@
         //Hide/show player
         HidePlayer,
         ShowPlayer,
+
+        //Equip Items
+        EquipItem,
     }
 }

@@ -431,6 +431,9 @@ namespace Intersect.Editor.Forms.Editors.Events
                 case EventCommandType.ChangeItems:
                     tmpCommand = new ChangeItemsCommand(CurrentPage.CommandLists);
                     break;
+                case EventCommandType.EquipItem:
+                    tmpCommand = new EquipItemCommand();
+                    break;
                 case EventCommandType.ChangeSprite:
                     tmpCommand = new ChangeSpriteCommand();
                     break;
@@ -895,6 +898,9 @@ namespace Intersect.Editor.Forms.Editors.Events
                     break;
                 case EventCommandType.ChangeItems:
                     cmdWindow = new EventCommandChangeItems((ChangeItemsCommand)command, CurrentPage, this);
+                    break;
+                case EventCommandType.EquipItem:
+                    cmdWindow = new EventCommandEquipItems((EquipItemCommand)command, this);
                     break;
                 case EventCommandType.ChangeSprite:
                     cmdWindow = new EventCommandChangeSprite((ChangeSpriteCommand)command, this);

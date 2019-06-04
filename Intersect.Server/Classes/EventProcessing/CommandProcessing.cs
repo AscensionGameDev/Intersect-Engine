@@ -401,6 +401,12 @@ namespace Intersect.Server.EventProcessing
             callStack.Push(tmpStack);
         }
 
+        //Equip Items Command
+        private static void ProcessCommand(EquipItemCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
+        {
+            player.EquipItem(ItemBase.Get(command.ItemId));
+        }
+
         //Change Sprite Command
         private static void ProcessCommand(ChangeSpriteCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {

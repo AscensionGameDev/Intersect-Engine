@@ -539,6 +539,11 @@ namespace Intersect.Editor.Forms.Editors.Events
                 Strings.EventCommandList.take.ToString(ItemBase.GetName(command.ItemId)));
         }
 
+        private static string GetCommandText(EquipItemCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.equipitem.ToString(ItemBase.GetName(command.ItemId));
+        }
+
         private static string GetCommandText(ChangeSpriteCommand command, MapInstance map)
         {
             return Strings.EventCommandList.setsprite.ToString(command.Sprite);
