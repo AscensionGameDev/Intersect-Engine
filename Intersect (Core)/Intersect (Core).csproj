@@ -54,6 +54,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ceras, Version=4.0.40.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ceras.4.0.40\lib\net45\Ceras.dll</HintPath>
+    </Reference>
     <Reference Include="JetBrains.Annotations, Version=2018.3.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\packages\JetBrains.Annotations.2018.3.0\lib\net20\JetBrains.Annotations.dll</HintPath>
     </Reference>
@@ -135,12 +138,15 @@
     <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
     </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.1\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.2\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Threading, Version=1.0.2856.102, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\TaskParallelLibrary.1.0.2856.0\lib\Net35\System.Threading.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -148,6 +154,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Admin\Actions\AdminAction.cs" />
+    <Compile Include="Admin\Actions\BanAction.cs" />
+    <Compile Include="Admin\Actions\KickAction.cs" />
+    <Compile Include="Admin\Actions\KillAction.cs" />
+    <Compile Include="Admin\Actions\MuteAction.cs" />
+    <Compile Include="Admin\Actions\SetAccessAction.cs" />
+    <Compile Include="Admin\Actions\SetFaceAction.cs" />
+    <Compile Include="Admin\Actions\SetSpriteAction.cs" />
+    <Compile Include="Admin\Actions\UnbanAction.cs" />
+    <Compile Include="Admin\Actions\UnmuteAction.cs" />
+    <Compile Include="Admin\Actions\WarpMeToAction.cs" />
+    <Compile Include="Admin\Actions\WarpToLocationAction.cs" />
+    <Compile Include="Admin\Actions\WarpToMapAction.cs" />
+    <Compile Include="Admin\Actions\WarpToMeAction.cs" />
     <Compile Include="AlphanumComparatorFast.cs" />
     <Compile Include="Core\ApplicationContext.cs" />
     <Compile Include="Core\IApplicationContext.cs" />
@@ -227,6 +247,71 @@
     <Compile Include="GameObjects\Events\Condition.cs" />
     <Compile Include="GameObjects\Events\EventMovement.cs" />
     <Compile Include="Localization\LocalizedString.cs" />
+    <Compile Include="Network\Ceras.cs" />
+    <Compile Include="Network\ConnectionPacket.cs" />
+    <Compile Include="Network\PacketDispatcher.cs" />
+    <Compile Include="Network\Packets\Client\AbandonQuestPacket.cs" />
+    <Compile Include="Network\Packets\Client\ActivateEventPacket.cs" />
+    <Compile Include="Network\Packets\Client\AdminActionPacket.cs" />
+    <Compile Include="Network\Packets\Client\AttackPacket.cs" />
+    <Compile Include="Network\Packets\Client\BlockPacket.cs" />
+    <Compile Include="Network\Packets\Client\BuyItemPacket.cs" />
+    <Compile Include="Network\Packets\Client\ChatMsgPacket.cs" />
+    <Compile Include="Network\Packets\Client\CloseBagPacket.cs" />
+    <Compile Include="Network\Packets\Client\CloseBankPacket.cs" />
+    <Compile Include="Network\Packets\Client\CloseCraftingPacket.cs" />
+    <Compile Include="Network\Packets\Client\CloseShopPacket.cs" />
+    <Compile Include="Network\Packets\Client\CraftItemPacket.cs" />
+    <Compile Include="Network\Packets\Client\CreateAccountPacket.cs" />
+    <Compile Include="Network\Packets\Client\CreateCharacterPacket.cs" />
+    <Compile Include="Network\Packets\Client\DeclineTradePacket.cs" />
+    <Compile Include="Network\Packets\Client\DeleteCharacterPacket.cs" />
+    <Compile Include="Network\Packets\Client\DepositItemPacket.cs" />
+    <Compile Include="Network\Packets\Client\DirectionPacket.cs" />
+    <Compile Include="Network\Packets\Client\DropItemPacket.cs" />
+    <Compile Include="Network\Packets\Client\EnterGamePacket.cs" />
+    <Compile Include="Network\Packets\Client\EventResponsePacket.cs" />
+    <Compile Include="Network\Packets\Client\ForgetSpellPacket.cs" />
+    <Compile Include="Network\Packets\Client\FriendRequestResponsePacket.cs" />
+    <Compile Include="Network\Packets\Client\HotbarSwapPacket.cs" />
+    <Compile Include="Network\Packets\Client\HotbarUpdatePacket.cs" />
+    <Compile Include="Network\Packets\Client\LoginPacket.cs" />
+    <Compile Include="Network\Packets\Client\LogoutPacket.cs" />
+    <Compile Include="Network\Packets\Client\SwapBankItemsPacket.cs" />
+    <Compile Include="Network\Packets\Client\MovePacket.cs" />
+    <Compile Include="Network\Packets\Client\NeedMapPacket.cs" />
+    <Compile Include="Network\Packets\Client\NewCharacterPacket.cs" />
+    <Compile Include="Network\Packets\Client\OfferTradeItemPacket.cs" />
+    <Compile Include="Network\Packets\Client\OpenAdminWindowPacket.cs" />
+    <Compile Include="Network\Packets\Client\PartyInviteResponsePacket.cs" />
+    <Compile Include="Network\Packets\Client\PartyInvitePacket.cs" />
+    <Compile Include="Network\Packets\Client\PartyKickPacket.cs" />
+    <Compile Include="Network\Packets\Client\PartyLeavePacket.cs" />
+    <Compile Include="Network\Packets\Client\PickupItemPacket.cs" />
+    <Compile Include="Network\Packets\Client\PingPacket.cs" />
+    <Compile Include="Network\CerasPacket.cs" />
+    <Compile Include="Network\Packets\Client\QuestResponsePacket.cs" />
+    <Compile Include="Network\Packets\Client\RequestFriendsPacket.cs" />
+    <Compile Include="Network\Packets\Client\RequestPasswordResetPacket.cs" />
+    <Compile Include="Network\Packets\Client\ResetPasswordPacket.cs" />
+    <Compile Include="Network\Packets\Client\RetrieveBagItemPacket.cs" />
+    <Compile Include="Network\Packets\Client\RevokeTradeItemPacket.cs" />
+    <Compile Include="Network\Packets\Client\SelectCharacterPacket.cs" />
+    <Compile Include="Network\Packets\Client\SellItemPacket.cs" />
+    <Compile Include="Network\Packets\Client\StoreBagItemPacket.cs" />
+    <Compile Include="Network\Packets\Client\SwapBagItemsPacket.cs" />
+    <Compile Include="Network\Packets\Client\SwapInvItemsPacket.cs" />
+    <Compile Include="Network\Packets\Client\SwapSpellsPacket.cs" />
+    <Compile Include="Network\Packets\Client\AcceptTradePacket.cs" />
+    <Compile Include="Network\Packets\Client\TradeRequestPacket.cs" />
+    <Compile Include="Network\Packets\Client\TradeRequestResponsePacket.cs" />
+    <Compile Include="Network\Packets\Client\UnequipItemPacket.cs" />
+    <Compile Include="Network\Packets\Client\UpdateFriendsPacket.cs" />
+    <Compile Include="Network\Packets\Client\UpgradeStatPacket.cs" />
+    <Compile Include="Network\Packets\Client\UseItemPacket.cs" />
+    <Compile Include="Network\Packets\Client\UseSpellPacket.cs" />
+    <Compile Include="Network\Packets\Client\WithdrawItemPacket.cs" />
+    <Compile Include="Network\Packets\Reflectable\BinaryPacket.cs" />
     <Compile Include="Security\Claims\IntersectClaimTypes.cs" />
     <Compile Include="Threading\ConcurrentInstance.cs" />
     <Compile Include="Threading\LockingActionQueue.cs" />
@@ -287,9 +372,6 @@
     <Compile Include="Models\IGameObject.cs" />
     <Compile Include="Network\AbstractConnection.cs" />
     <Compile Include="Network\AbstractNetwork.cs" />
-    <Compile Include="Network\AbstractPacket.cs" />
-    <Compile Include="Network\AbstractPacketFactory.cs" />
-    <Compile Include="Network\ConnectionPacket.cs" />
     <Compile Include="Network\DnsUtils.cs" />
     <Compile Include="Network\HandlePacket.cs" />
     <Compile Include="Network\IClient.cs" />
@@ -297,18 +379,11 @@
     <Compile Include="Network\INetwork.cs" />
     <Compile Include="Network\INetworkLayerInterface.cs" />
     <Compile Include="Network\IPacket.cs" />
-    <Compile Include="Network\IPacketFactory.cs" />
     <Compile Include="Network\NetworkConfiguration.cs" />
     <Compile Include="Network\NetworkThread.cs" />
-    <Compile Include="Network\PacketDispatcher.cs" />
-    <Compile Include="Network\PacketCode.cs" />
     <Compile Include="Network\PacketQueue.cs" />
-    <Compile Include="Network\PacketRegistry.cs" />
     <Compile Include="Network\Packets\ApprovalPacket.cs" />
     <Compile Include="Network\Packets\HailPacket.cs" />
-    <Compile Include="Network\Packets\Reflectable\BinaryPacket.cs" />
-    <Compile Include="Network\PacketType.cs" />
-    <Compile Include="Network\ReflectablePacketFactory.cs" />
     <Compile Include="Network\TransmissionMode.cs" />
     <Compile Include="Config\Options.cs" />
     <Compile Include="Point.cs" />
@@ -347,6 +422,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Factories\" />
+    <Folder Include="Network\Packets\Editor\" />
+    <Folder Include="Network\Packets\Server\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

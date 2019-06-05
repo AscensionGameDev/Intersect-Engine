@@ -41,7 +41,7 @@ namespace Intersect.Client.Entities
             if (mLoaded) return;
             base.Load(bf);
             ProjectileId = bf.ReadGuid();
-            Dir = bf.ReadInteger();
+            Dir = (byte)bf.ReadInteger();
             Target = bf.ReadInteger();
             mOwner = bf.ReadGuid();
             mMyBase = ProjectileBase.Get(ProjectileId);
@@ -117,8 +117,8 @@ namespace Intersect.Client.Entities
                         if (mMyBase.SpawnLocations[x, y].Directions[d] == true)
                         {
                             ProjectileSpawns s = new ProjectileSpawns(FindProjectileRotationDir(Dir, d),
-                                CurrentX + FindProjectileRotationX(Dir, x - 2, y - 2),
-                                CurrentY + FindProjectileRotationY(Dir, x - 2, y - 2), CurrentZ, CurrentMap, animBase,
+                                X + FindProjectileRotationX(Dir, x - 2, y - 2),
+                                Y + FindProjectileRotationY(Dir, x - 2, y - 2), Z, CurrentMap, animBase,
                                 mMyBase.Animations[spawn].AutoRotate, mMyBase,this);
                             Spawns[mSpawnedAmount] = s;
                             if (Collided(mSpawnedAmount))
@@ -306,7 +306,7 @@ namespace Intersect.Client.Entities
 
             var tmpI = -1;
             var map = CurrentMap;
-            var y = CurrentY;
+            var y = Y;
 
             if (mQuantity < mMyBase.Quantity && mSpawnTime < Globals.System.GetTimeMs())
             {
@@ -329,7 +329,7 @@ namespace Intersect.Client.Entities
                             MapInstance.Get(Spawns[s].SpawnMapId).GetY() +
                             Spawns[s].SpawnY * Options.TileHeight +
                             Spawns[s].OffsetY +
-                            Options.TileHeight / 2, CurrentX, CurrentY, CurrentMap,
+                            Options.TileHeight / 2, X, Y, CurrentMap,
                             Spawns[s].AutoRotate ? Spawns[s].Dir : 0, Spawns[s].Z);
                         Spawns[s].Anim.Update();
                     }
@@ -461,7 +461,7 @@ namespace Intersect.Client.Entities
             var killSpawn = false;
             var blockedBy = Guid.Empty;
             int tileBlocked =
-                Globals.Me.IsTileBlocked(Spawns[i].X, Spawns[i].Y, CurrentZ, Spawns[i].MapId, ref blockedBy, Spawns[i].ProjectileBase.IgnoreActiveResources, Spawns[i].ProjectileBase.IgnoreExhaustedResources);
+                Globals.Me.IsTileBlocked(Spawns[i].X, Spawns[i].Y, Z, Spawns[i].MapId, ref blockedBy, Spawns[i].ProjectileBase.IgnoreActiveResources, Spawns[i].ProjectileBase.IgnoreExhaustedResources);
 
             if (tileBlocked != -1)
             {

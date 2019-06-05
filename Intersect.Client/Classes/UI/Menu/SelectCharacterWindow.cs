@@ -275,7 +275,7 @@ namespace Intersect.Client.UI.Menu
         private void _playButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
             ChatboxMsg.ClearMessages();
-            PacketSender.PlayGame(Characters[mSelectedChar].Id);
+            PacketSender.SendSelectCharacter(Characters[mSelectedChar].Id);
         }
 
         private void _deleteButton_Clicked(Base sender, ClickedEventArgs arguments)
@@ -289,14 +289,14 @@ namespace Intersect.Client.UI.Menu
 
         private void DeleteCharacter(Object sender, EventArgs e)
         {
-            PacketSender.DeleteChar((Guid)(((InputBox) sender).UserData));
+            PacketSender.SendDeleteCharacter((Guid)(((InputBox) sender).UserData));
             mSelectedChar = 0;
             UpdateDisplay();
         }
 
         private void _newButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            PacketSender.CreateNewCharacter();
+            PacketSender.SendNewCharacter();
         }
     }
 

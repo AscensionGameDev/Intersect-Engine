@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using Intersect.Client.Framework.Network;
@@ -10,6 +11,7 @@ using Intersect.Logging.Output;
 using Intersect.Network;
 using Intersect.Network.Crypto;
 using Intersect.Network.Crypto.Formats;
+using Intersect.Network.Packets;
 using Intersect.Network.Packets.Reflectable;
 
 namespace Intersect.Client.MonoGame.Network
@@ -17,7 +19,7 @@ namespace Intersect.Client.MonoGame.Network
     public class IntersectNetworkSocket : GameSocket
     {
         public static ClientNetwork ClientLidgrenNetwork;
-        public static ConcurrentQueue<IPacket> PacketQueue = new ConcurrentQueue<IPacket>();
+        public static ConcurrentQueue<KeyValuePair<IConnection,IPacket>> PacketQueue = new ConcurrentQueue<KeyValuePair<IConnection,IPacket>>();
 
         public IntersectNetworkSocket()
         {
@@ -41,7 +43,7 @@ namespace Intersect.Client.MonoGame.Network
             }
 
             if (ClientLidgrenNetwork == null) return;
-            ClientLidgrenNetwork.Handlers[PacketCode.BinaryPacket] = AddPacketToQueue;
+            ClientLidgrenNetwork.Handler = AddPacketToQueue;
             ClientLidgrenNetwork.OnConnected += delegate { OnConnected(); };
             ClientLidgrenNetwork.OnDisconnected += delegate { OnDisconnected(); };
             ClientLidgrenNetwork.OnConnectionDenied += delegate { OnConnectionFailed(true); };
@@ -58,16 +60,24 @@ namespace Intersect.Client.MonoGame.Network
             {
                 var buffer = new ByteBuffer();
                 buffer.WriteBytes(data);
-                if (!ClientLidgrenNetwork.Send(new BinaryPacket(null) {Buffer = buffer}))
+                if (!ClientLidgrenNetwork.Send(new BinaryPacket(null,buffer)))
                 {
                     throw new Exception("Beta 4 network send failed.");
                 }
             }
         }
 
-        public static bool AddPacketToQueue(IPacket packet)
+        public override void SendPacket(object packet)
         {
-            PacketQueue.Enqueue(packet);
+            if (packet is CerasPacket)
+            {
+                ClientLidgrenNetwork.Send((CerasPacket) packet);
+            }
+        }
+
+        public static bool AddPacketToQueue(IConnection connection, IPacket packet)
+        {
+            PacketQueue.Enqueue(new KeyValuePair<IConnection, IPacket>(connection,packet));
             return true;
         }
 
@@ -76,10 +86,10 @@ namespace Intersect.Client.MonoGame.Network
             var packetCount = PacketQueue.Count;
             for (int i = 0; i < packetCount; i++)
             {
-                IPacket dequeued;
+                KeyValuePair<IConnection,IPacket> dequeued;
                 if (PacketQueue.TryDequeue(out dequeued))
                 {
-                    PacketHandler.HandlePacket(dequeued);
+                    PacketHandler.HandlePacket(dequeued.Key,dequeued.Value);
                 }
             }
         }

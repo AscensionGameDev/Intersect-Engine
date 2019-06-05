@@ -91,7 +91,7 @@ namespace Intersect.Server.Core
             #region Configure Packet Handlers
 
             var packetHandler = new PacketHandler();
-            network.Handlers[PacketCode.BinaryPacket] = packetHandler.HandlePacket;
+            network.Handler = packetHandler.HandlePacket;
 
             #endregion
 

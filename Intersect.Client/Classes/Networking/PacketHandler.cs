@@ -38,11 +38,11 @@ namespace Intersect.Client.Networking
 
         private static TextWriter sWriter;
 
-        public static bool HandlePacket(IPacket packet)
+        public static bool HandlePacket(IConnection connection, IPacket packet)
         {
             var binaryPacket = packet as BinaryPacket;
 
-            var bf = binaryPacket?.Buffer;
+            var bf = binaryPacket?.GetBuffer();
             if (packet == null || bf == null) return false;
             //Compressed?
             if (bf.ReadByte() == 1)
@@ -631,9 +631,9 @@ namespace Intersect.Client.Networking
             {
                 en.CurrentMap = mapId;
             }
-            en.CurrentX = bf.ReadInteger();
-            en.CurrentY = bf.ReadInteger();
-            en.Dir = bf.ReadInteger();
+            en.X = (byte)bf.ReadInteger();
+            en.Y = (byte)bf.ReadInteger();
+            en.Dir = (byte)bf.ReadInteger();
             en.Passable = bf.ReadBoolean();
             en.HideName = bf.ReadBoolean();
         }
@@ -755,16 +755,16 @@ namespace Intersect.Client.Networking
             }
             if (en.Dashing != null || en.DashQueue.Count > 0) return;
             var map = mapId;
-            var x = bf.ReadInteger();
-            var y = bf.ReadInteger();
-            var dir = bf.ReadInteger();
+            var x = (byte)bf.ReadInteger();
+            var y = (byte)bf.ReadInteger();
+            var dir = (byte)bf.ReadInteger();
             var correction = bf.ReadInteger();
-            if ((en.CurrentMap != map || en.CurrentX != x || en.CurrentY != y) &&
+            if ((en.CurrentMap != map || en.X != x || en.Y != y) &&
                 (en != Globals.Me || (en == Globals.Me && correction == 1)) && en.Dashing == null)
             {
                 en.CurrentMap = map;
-                en.CurrentX = x;
-                en.CurrentY = y;
+                en.X = x;
+                en.Y = y;
                 en.Dir = dir;
                 en.IsMoving = true;
 
@@ -790,11 +790,11 @@ namespace Intersect.Client.Networking
             }
 
             // Set the Z-Dimension if the player has moved up or down a dimension.
-            if (entityMap.Attributes[en.CurrentX, en.CurrentY] != null && entityMap.Attributes[en.CurrentX, en.CurrentY].Type == MapAttributes.ZDimension)
+            if (entityMap.Attributes[en.X, en.Y] != null && entityMap.Attributes[en.X, en.Y].Type == MapAttributes.ZDimension)
             {
-                if (((MapZDimensionAttribute)entityMap.Attributes[en.CurrentX, en.CurrentY]).GatewayTo > 0)
+                if (((MapZDimensionAttribute)entityMap.Attributes[en.X, en.Y]).GatewayTo > 0)
                 {
-                    en.CurrentZ = ((MapZDimensionAttribute)entityMap.Attributes[en.CurrentX, en.CurrentY]).GatewayTo - 1;
+                    en.Z = (byte)(((MapZDimensionAttribute)entityMap.Attributes[en.X, en.Y]).GatewayTo - 1);
                 }
             }
         }
@@ -934,7 +934,7 @@ namespace Intersect.Client.Networking
             {
                 return;
             }
-            en.Dir = bf.ReadInteger();
+            en.Dir = (byte)bf.ReadInteger();
         }
 
         private static void HandleEntityAttack(byte[] packet)
@@ -1501,8 +1501,8 @@ namespace Intersect.Client.Networking
             bf.WriteBytes(packet);
             var id = bf.ReadGuid();
             var endMapId = bf.ReadGuid();
-            var endX = bf.ReadInteger();
-            var endY = bf.ReadInteger();
+            var endX = (byte)bf.ReadInteger();
+            var endY = (byte)bf.ReadInteger();
             var dashTime = bf.ReadInteger();
             var direction = bf.ReadInteger();
             if (Globals.Entities.ContainsKey(id))
@@ -1789,7 +1789,7 @@ namespace Intersect.Client.Networking
             var id = bf.ReadGuid();
             if (Globals.Entities.ContainsKey(id))
             {
-                Globals.Entities[id].CurrentZ = bf.ReadInteger();
+                Globals.Entities[id].Z = (byte)bf.ReadInteger();
             }
             bf.Dispose();
         }

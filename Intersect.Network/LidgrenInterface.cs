@@ -42,6 +42,8 @@ namespace Intersect.Network
 
         [NotNull] private readonly RSACryptoServiceProvider mRsa;
 
+        [NotNull] private readonly Ceras mCeras = new Ceras();
+
         public LidgrenInterface(INetwork network, Type peerType, RSAParameters rsaParameters)
         {
             if (peerType == null)
@@ -183,10 +185,9 @@ namespace Intersect.Network
                 mRsa, handshakeSecret, SharedConstants.VersionData, connectionRsa.ExportParameters(false)
             );
 
-            var hailMessage = mPeer.CreateMessage(hail.EstimatedSize);
-
-            IBuffer buffer = new LidgrenBuffer(hailMessage);
-            hail.Write(ref buffer);
+            var hailMessage = mPeer.CreateMessage();
+            hailMessage.Data = hail.Data();
+            hailMessage.LengthBytes = hailMessage.Data.Length;
 
             if (mPeer.Status == NetPeerStatus.NotRunning)
             {
@@ -290,24 +291,14 @@ namespace Intersect.Network
                 return false;
             }
 
-            var sequence = 0;
-            if (deliveryMethod == NetDeliveryMethod.ReliableSequenced)
-            {
-                sequence = (byte) packet.Code % 32;
-            }
-
-            var message = mPeer.CreateMessage(packet.EstimatedSize);
+            var message = mPeer.CreateMessage();
             if (message == null)
             {
                 throw new ArgumentNullException(nameof(message));
             }
 
-            IBuffer buffer = new LidgrenBuffer(message);
-            if (!packet.Write(ref buffer))
-            {
-                Log.Debug($"Error writing packet to outgoing message buffer ({packet.Code}).");
-                return false;
-            }
+            message.Data = packet.Data();
+            message.LengthBytes = message.Data.Length;
 
             SendMessage(message, lidgrenConnection, deliveryMethod);
             return true;
@@ -331,24 +322,14 @@ namespace Intersect.Network
                 return false;
             }
 
-            var sequence = 0;
-            if (deliveryMethod == NetDeliveryMethod.ReliableSequenced)
-            {
-                sequence = (byte) packet.Code % 32;
-            }
-
-            var message = mPeer.CreateMessage(packet.EstimatedSize);
+            var message = mPeer.CreateMessage();
             if (message == null)
             {
                 throw new ArgumentNullException(nameof(message));
             }
-
-            IBuffer buffer = new LidgrenBuffer(message);
-            if (!packet.Write(ref buffer))
-            {
-                Log.Debug($"Error writing packet to outgoing message buffer ({packet.Code}).");
-                return false;
-            }
+            
+            message.Data = packet.Data();
+            message.LengthBytes = message.Data.Length;
 
             if (connections == null || connections.Count(connection => connection != null) < 1)
             {
@@ -378,15 +359,15 @@ namespace Intersect.Network
                             throw new ArgumentNullException(nameof(message.Data));
                         }
 
-                        var messageClone = mPeer.CreateMessage(message.Data.Length);
-                        if (messageClone == null)
-                        {
-                            throw new ArgumentNullException(nameof(messageClone));
-                        }
+                        //var messageClone = mPeer.CreateMessage(message.Data.Length);
+                        //if (messageClone == null)
+                        //{
+                        //    throw new ArgumentNullException(nameof(messageClone));
+                        //}
 
-                        Buffer.BlockCopy(message.Data, 0, messageClone.Data, 0, message.Data.Length);
-                        messageClone.LengthBytes = message.LengthBytes;
-                        SendMessage(messageClone, lidgrenConnection, deliveryMethod);
+                        //Buffer.BlockCopy(message.Data, 0, messageClone.Data, 0, message.Data.Length);
+                        //messageClone.LengthBytes = message.LengthBytes;
+                        SendMessage(message, lidgrenConnection, deliveryMethod);
                     }
                 );
 
@@ -476,16 +457,7 @@ namespace Intersect.Network
                                 );
 
                                 Debug.Assert(connection != null, "connection != null");
-                                IBuffer buffer = new LidgrenBuffer(connection.RemoteHailMessage);
-                                var approval = new ApprovalPacket(intersectConnection.Rsa);
-
-                                if (!approval.Read(ref buffer))
-                                {
-                                    Log.Error("Unable to read approval message, disconnecting.");
-                                    mNetwork?.Disconnect("client_error");
-                                    connection.Disconnect("client_error");
-                                    break;
-                                }
+                                var approval = (ApprovalPacket)mCeras.Deserialize(connection.RemoteHailMessage.Data);
 
                                 if (!intersectConnection.HandleApproval(approval))
                                 {
@@ -585,15 +557,7 @@ namespace Intersect.Network
 
                 case NetIncomingMessageType.ConnectionApproval:
                 {
-                    IBuffer buffer = new LidgrenBuffer(message);
-                    var hail = new HailPacket(mRsa);
-
-                    if (!hail.Read(ref buffer))
-                    {
-                        Log.Warn($"Failed to read hail, denying connection [{lidgrenIdHex}].");
-                        connection?.Deny(RejectBadHail);
-                        break;
-                    }
+                    var hail = (HailPacket)mCeras.Deserialize(message.Data);
 
                     Debug.Assert(SharedConstants.VersionData != null, "SharedConstants.VERSION_DATA != null");
                     Debug.Assert(hail.VersionData != null, "hail.VersionData != null");
@@ -630,9 +594,9 @@ namespace Intersect.Network
 
                     Debug.Assert(mPeer != null, "mPeer != null");
                     var approval = new ApprovalPacket(client.Rsa, hail.HandshakeSecret, aesKey, client.Guid);
-                    var approvalMessage = mPeer.CreateMessage(approval.EstimatedSize);
-                    IBuffer approvalBuffer = new LidgrenBuffer(approvalMessage);
-                    approval.Write(ref approvalBuffer);
+                    var approvalMessage = mPeer.CreateMessage();
+                    approvalMessage.Data = approval.Data();
+                    approvalMessage.LengthBytes = approvalMessage.Data.Length;
                     connection.Approve(approvalMessage);
                     OnConnectionApproved(this, client);
 

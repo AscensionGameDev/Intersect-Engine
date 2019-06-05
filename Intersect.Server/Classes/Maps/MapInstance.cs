@@ -858,8 +858,8 @@ namespace Intersect.Server.Maps
                 Active = true;
                 //Send Entity Info to Everyone and Everyone to the Entity
                 SendMapEntitiesTo(player);
-                player.MyClient.SentMaps.Clear();
-                PacketSender.SendMapItems(player.MyClient, Id);
+                player.Client.SentMaps.Clear();
+                PacketSender.SendMapItems(player.Client, Id);
                 AddEntity(player);
                 player.LastMapEntered = Id;
                 if (SurroundingMaps.Count <= 0) return;
@@ -867,9 +867,9 @@ namespace Intersect.Server.Maps
                 {
                     Lookup.Get<MapInstance>(t).Active = true;
                     Lookup.Get<MapInstance>(t).SendMapEntitiesTo(player);
-                    PacketSender.SendMapItems(player.MyClient, t);
+                    PacketSender.SendMapItems(player.Client, t);
                 }
-                PacketSender.SendEntityDataToProximity(player, player.MyClient);
+                PacketSender.SendEntityDataToProximity(player, player.Client);
             }
         }
 
@@ -877,7 +877,7 @@ namespace Intersect.Server.Maps
         {
             if (player != null)
             {
-                PacketSender.SendMapEntitiesTo(player.MyClient, mEntities);
+                PacketSender.SendMapEntitiesTo(player.Client, mEntities);
                 if (player.MapId == Id) player.SendEvents();
             }
         }

@@ -48,7 +48,7 @@ namespace Intersect.Network
         {
             if (packet == null) throw new ArgumentNullException();
             return GetHandlers(packet.GetType())?.Any(handler
-                       => handler != null && handler(packet)) ?? false;
+                       => handler != null && handler(null, packet)) ?? false;
         }
     }
 }

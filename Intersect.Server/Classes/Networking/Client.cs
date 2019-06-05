@@ -86,7 +86,7 @@ namespace Intersect.Server.Networking
             }
 
             Entity.LastOnline = DateTime.Now;
-            Entity.MyClient = this;
+            Entity.Client = this;
         }
 
         private int mPacketCount = 0;
@@ -117,7 +117,7 @@ namespace Intersect.Server.Networking
 
             if (mConnection != null)
             {
-                mConnection.Send(new BinaryPacket(null) {Buffer = buff});
+                mConnection.Send(new BinaryPacket(null, buff));
             }
             else
             {

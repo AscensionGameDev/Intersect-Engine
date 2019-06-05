@@ -226,7 +226,7 @@ namespace Intersect.Client.UI.Game
         {
             if (ToggleFriendsWindow())
             {
-                PacketSender.RequestFriends();
+                PacketSender.SendRequestFriends();
             }
         }
 

@@ -760,16 +760,16 @@ namespace Intersect.Server.Entities
                  ((Options.MinAttackRate - Options.MaxAttackRate) *
                   (((float)Options.MaxStatValue - Stat[(int)Stats.Speed].Value()) / (float)Options.MaxStatValue)));
         }
-        public void TryBlock(int blocking)
+        public void TryBlock(bool blocking)
         {
             if (AttackTimer < Globals.Timing.TimeMs)
             {
-                if (blocking == 1 && !Blocking && AttackTimer < Globals.Timing.TimeMs)
+                if (blocking && !Blocking && AttackTimer < Globals.Timing.TimeMs)
                 {
                     Blocking = true;
                     PacketSender.SendEntityAttack(this, (int)EntityTypes.GlobalEntity, MapId, -1);
                 }
-                else if (blocking == 0 && Blocking)
+                else if (!blocking && Blocking)
                 {
                     Blocking = false;
                     AttackTimer = Globals.Timing.TimeMs + CalculateAttackTime();
@@ -1082,7 +1082,7 @@ namespace Intersect.Server.Entities
                         enemy.Target = this;
                         if (enemy.GetType() == typeof(Player))
                         {
-                            PacketSender.SetPlayerTarget(((Player)enemy).MyClient, Id);
+                            PacketSender.SetPlayerTarget(((Player)enemy).Client, Id);
                         }
                     }
 
@@ -1492,7 +1492,7 @@ namespace Intersect.Server.Entities
                     Spells[spellSlot].SpellCd = Globals.Timing.RealTimeMs + (int)(spellBase.CooldownDuration * cooldownReduction);
                     if (GetType() == typeof(Player))
                     {
-                        PacketSender.SendSpellCooldown(((Player)this).MyClient, spellSlot);
+                        PacketSender.SendSpellCooldown(((Player)this).Client, spellSlot);
                     }
                 }
             }
@@ -1825,11 +1825,11 @@ namespace Intersect.Server.Entities
             }
             if (GetType() == typeof(Player)) //helps the client identify admins if entity is a player.
             {
-                if (((Player) this).MyClient.Power == UserRights.Admin)
+                if (((Player) this).Client.Power == UserRights.Admin)
                 {
                     bf.WriteInteger((int)Access.Admin);
                 }
-                else if (((Player) this).MyClient.Power.Ban || ((Player) this).MyClient.Power.Kick || ((Player) this).MyClient.Power.Mute)
+                else if (((Player) this).Client.Power.Ban || ((Player) this).Client.Power.Kick || ((Player) this).Client.Power.Mute)
                 {
                     bf.WriteInteger((int)Access.Moderator);
                 }

@@ -2,48 +2,38 @@
 
 namespace Intersect.Network.Packets.Reflectable
 {
-    public class BinaryPacket : AbstractPacket
+    public class BinaryPacket : CerasPacket
     {
-        public ByteBuffer Buffer;
+        private ByteBuffer mBuffer;
 
-        public BinaryPacket(IConnection connection)
-            : base(connection, PacketCode.BinaryPacket)
+        public byte[] Data
         {
-        }
-
-        public override int EstimatedSize => Buffer?.Length() + sizeof(int) ?? sizeof(int);
-
-        public override bool Read(ref IBuffer buffer)
-        {
-            if (!base.Read(ref buffer)) return false;
-
-            if (!buffer.Read(out byte[] bytes)) return false;
-
-            Buffer = new ByteBuffer();
-            Buffer.WriteBytes(bytes);
-
-            return true;
-        }
-
-        public override bool Write(ref IBuffer buffer)
-        {
-            if (!base.Write(ref buffer)) return false;
-
-            if (Buffer == null)
+            get
             {
-                buffer.Write(0);
+                if (mBuffer != null) return mBuffer.ToArray();
+                return new byte[0];
             }
-            else
+            set
             {
-                buffer.Write(Buffer.ToArray());
+                mBuffer = new ByteBuffer();
+                mBuffer.WriteBytes(value);
             }
-
-            return true;
         }
 
-        public override void Dispose()
+        public BinaryPacket()
         {
-            Buffer?.Dispose();
+
         }
+
+        public BinaryPacket(IConnection connection, ByteBuffer buffer)
+        {
+            mBuffer = buffer;
+        }
+
+        public ByteBuffer GetBuffer()
+        {
+            return mBuffer;
+        }
+
     }
 }

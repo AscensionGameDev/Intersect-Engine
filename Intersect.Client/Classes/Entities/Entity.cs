@@ -23,7 +23,7 @@ namespace Intersect.Client.Entities
         //Chat
         private List<ChatBubble> mChatBubbles = new List<ChatBubble>();
 
-        private int mDir;
+        private byte mDir;
 
         protected bool mDisposed;
 
@@ -51,10 +51,9 @@ namespace Intersect.Client.Entities
         public long CastTime = 0;
 
         //Location Info
-        public int CurrentX;
-
-        public int CurrentY;
-        public int CurrentZ;
+        public byte X;
+        public byte Y;
+        public byte Z;
 
         //Dashing instance
         public DashInstance Dashing;
@@ -142,10 +141,10 @@ namespace Intersect.Client.Entities
             Load(bf);
         }
 
-        public int Dir
+        public byte Dir
         {
             get { return mDir; }
-            set { mDir = (value + 4) % 4; }
+            set { mDir = (byte)((value + 4) % 4); }
         }
 
         public virtual string TransformedSprite
@@ -192,10 +191,10 @@ namespace Intersect.Client.Entities
             MySprite = bf.ReadString();
             Face = bf.ReadString();
             Level = bf.ReadInteger();
-            CurrentX = bf.ReadInteger();
-            CurrentY = bf.ReadInteger();
-            CurrentZ = bf.ReadInteger();
-            Dir = bf.ReadInteger();
+            X = (byte)bf.ReadInteger();
+            Y = (byte)bf.ReadInteger();
+            Z = (byte)bf.ReadInteger();
+            Dir = (byte)bf.ReadInteger();
             Passable = bf.ReadBoolean();
             HideName = bf.ReadBoolean();
             HideEntity = bf.ReadBoolean();
@@ -503,13 +502,13 @@ namespace Intersect.Client.Entities
                 }
                 if (animInstance.AutoRotate)
                 {
-                    animInstance.SetPosition((int) GetCenterPos().X, (int) GetCenterPos().Y, CurrentX, CurrentY,
-                        CurrentMap, Dir, CurrentZ);
+                    animInstance.SetPosition((int) GetCenterPos().X, (int) GetCenterPos().Y, X, Y,
+                        CurrentMap, Dir, Z);
                 }
                 else
                 {
-                    animInstance.SetPosition((int) GetCenterPos().X, (int) GetCenterPos().Y, CurrentX, CurrentY,
-                        CurrentMap, -1, CurrentZ);
+                    animInstance.SetPosition((int) GetCenterPos().X, (int) GetCenterPos().Y, X, Y,
+                        CurrentMap, -1, Z);
                 }
             }
             var chatbubbles = mChatBubbles.ToArray();
@@ -579,26 +578,26 @@ namespace Intersect.Client.Entities
                         if (Globals.MapGrid[x, y] == CurrentMap)
                         {
                             var priority = mRenderPriority;
-                            if (CurrentZ != 0)
+                            if (Z != 0)
                             {
                                 priority += 3;
                             }
                             if (y == gridY - 1)
                             {
-                                GameGraphics.RenderingEntities[priority, Options.MapHeight + CurrentY].Add(this);
-                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight + CurrentY];
+                                GameGraphics.RenderingEntities[priority, Options.MapHeight + Y].Add(this);
+                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight + Y];
                                 return renderList;
                             }
                             else if (y == gridY)
                             {
-                                GameGraphics.RenderingEntities[priority, Options.MapHeight * 2 + CurrentY].Add(this);
-                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight * 2 + CurrentY];
+                                GameGraphics.RenderingEntities[priority, Options.MapHeight * 2 + Y].Add(this);
+                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight * 2 + Y];
                                 return renderList;
                             }
                             else
                             {
-                                GameGraphics.RenderingEntities[priority, Options.MapHeight * 3 + CurrentY].Add(this);
-                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight * 3 + CurrentY];
+                                GameGraphics.RenderingEntities[priority, Options.MapHeight * 3 + Y].Add(this);
+                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight * 3 + Y];
                                 return renderList;
                             }
                         }
@@ -655,14 +654,14 @@ namespace Intersect.Client.Entities
             {
                 if (Texture.GetHeight() / 4 > Options.TileHeight)
                 {
-                    destRectangle.X = (map.GetX() + CurrentX * Options.TileWidth + OffsetX + Options.TileWidth / 2);
-                    destRectangle.Y = map.GetY() + CurrentY * Options.TileHeight + OffsetY -
+                    destRectangle.X = (map.GetX() + X * Options.TileWidth + OffsetX + Options.TileWidth / 2);
+                    destRectangle.Y = map.GetY() + Y * Options.TileHeight + OffsetY -
                                       ((Texture.GetHeight() / 4) - Options.TileHeight);
                 }
                 else
                 {
-                    destRectangle.X = map.GetX() + CurrentX * Options.TileWidth + OffsetX + Options.TileWidth / 2;
-                    destRectangle.Y = map.GetY() + CurrentY * Options.TileHeight + OffsetY;
+                    destRectangle.X = map.GetX() + X * Options.TileWidth + OffsetX + Options.TileWidth / 2;
+                    destRectangle.Y = map.GetY() + Y * Options.TileHeight + OffsetY;
                 }
                 destRectangle.X -= ((Texture.GetWidth() / 8));
                 switch (Dir)
@@ -785,15 +784,15 @@ namespace Intersect.Client.Entities
             {
                 if (paperdollTex.GetHeight() / 4 > Options.TileHeight)
                 {
-                    destRectangle.X = (map.GetX() + CurrentX * Options.TileWidth + OffsetX);
-                    destRectangle.Y = map.GetY() + CurrentY * Options.TileHeight + OffsetY -
+                    destRectangle.X = (map.GetX() + X * Options.TileWidth + OffsetX);
+                    destRectangle.Y = map.GetY() + Y * Options.TileHeight + OffsetY -
                                       ((paperdollTex.GetHeight() / 4) - Options.TileHeight);
                     destRectangle.Y = GetCenterPos().Y - paperdollTex.GetHeight() / 8;
                 }
                 else
                 {
-                    destRectangle.X = map.GetX() + CurrentX * Options.TileWidth + OffsetX;
-                    destRectangle.Y = map.GetY() + CurrentY * Options.TileHeight + OffsetY;
+                    destRectangle.X = map.GetX() + X * Options.TileWidth + OffsetX;
+                    destRectangle.Y = map.GetY() + Y * Options.TileHeight + OffsetY;
                 }
                 if (paperdollTex.GetWidth() / 4 > Options.TileWidth)
                 {
@@ -836,8 +835,8 @@ namespace Intersect.Client.Entities
 
         protected virtual void CalculateCenterPos()
         {
-            Pointf pos = new Pointf(LatestMap.GetX() + CurrentX * Options.TileWidth + OffsetX + Options.TileWidth / 2,
-                LatestMap.GetY() + CurrentY * Options.TileHeight + OffsetY + Options.TileHeight / 2);
+            Pointf pos = new Pointf(LatestMap.GetX() + X * Options.TileWidth + OffsetX + Options.TileWidth / 2,
+                LatestMap.GetY() + Y * Options.TileHeight + OffsetY + Options.TileHeight / 2);
             if (Texture != null)
             {
                 pos.Y += Options.TileHeight / 2;
@@ -1155,15 +1154,15 @@ namespace Intersect.Client.Entities
         private int mChangeDirection = -1;
         private int mDashTime;
         private Guid mEndMapId;
-        private int mEndX;
+        private byte mEndX;
         private float mEndXCoord;
-        private int mEndY;
+        private byte mEndY;
         private float mEndYCoord;
         private long mStartTime;
         private float mStartXCoord;
         private float mStartYCoord;
 
-        public DashInstance(Entity en, Guid endMapId, int endX, int endY, int dashTime, int changeDirection = -1)
+        public DashInstance(Entity en, Guid endMapId, byte endX, byte endY, int dashTime, int changeDirection = -1)
         {
             mChangeDirection = changeDirection;
             mEndMapId = endMapId;
@@ -1176,7 +1175,7 @@ namespace Intersect.Client.Entities
         {
             if (MapInstance.Get(en.CurrentMap) == null ||
                 MapInstance.Get(mEndMapId) == null ||
-                (mEndMapId == en.CurrentMap) && (mEndX == en.CurrentX) && (mEndY == en.CurrentY))
+                (mEndMapId == en.CurrentMap) && (mEndX == en.X) && (mEndY == en.Y))
             {
                 en.Dashing = null;
             }
@@ -1188,10 +1187,10 @@ namespace Intersect.Client.Entities
                 mStartXCoord = en.OffsetX;
                 mStartYCoord = en.OffsetY;
                 mEndXCoord = (endMap.GetX() + mEndX * Options.TileWidth) -
-                             (startMap.GetX() + en.CurrentX * Options.TileWidth);
+                             (startMap.GetX() + en.X * Options.TileWidth);
                 mEndYCoord = (endMap.GetY() + mEndY * Options.TileHeight) -
-                             (startMap.GetY() + en.CurrentY * Options.TileHeight);
-                if (mChangeDirection > -1) en.Dir = mChangeDirection;
+                             (startMap.GetY() + en.Y * Options.TileHeight);
+                if (mChangeDirection > -1) en.Dir = (byte)mChangeDirection;
             }
         }
 
@@ -1227,8 +1226,8 @@ namespace Intersect.Client.Entities
                 en.OffsetX = 0;
                 en.OffsetY = 0;
                 en.CurrentMap = mEndMapId;
-                en.CurrentX = mEndX;
-                en.CurrentY = mEndY;
+                en.X = mEndX;
+                en.Y = mEndY;
             }
             return en.Dashing != null;
         }

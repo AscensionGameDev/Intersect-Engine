@@ -345,7 +345,7 @@ namespace Intersect.Client.UI.Game.Inventory
                             if (mMySlot != bestIntersectIndex)
                             {
                                 //Try to swap....
-                                PacketSender.SendSwapItems(bestIntersectIndex, mMySlot);
+                                PacketSender.SendSwapInvItems(bestIntersectIndex, mMySlot);
                                 Globals.Me.SwapItems(bestIntersectIndex, mMySlot);
                             }
                         }
@@ -369,7 +369,7 @@ namespace Intersect.Client.UI.Game.Inventory
                         }
                         if (bestIntersectIndex > -1)
                         {
-                            Globals.Me.AddToHotbar(bestIntersectIndex, 0, mMySlot);
+                            Globals.Me.AddToHotbar((byte)bestIntersectIndex, 0, mMySlot);
                         }
                     }
 

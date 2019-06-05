@@ -279,7 +279,7 @@ namespace Intersect.Client.UI.Game.Spells
                         }
                         if (bestIntersectIndex > -1)
                         {
-                            Globals.Me.AddToHotbar(bestIntersectIndex, 1, mYindex);
+                            Globals.Me.AddToHotbar((byte)bestIntersectIndex, 1, mYindex);
                         }
                     }
                     mDragIcon.Dispose();

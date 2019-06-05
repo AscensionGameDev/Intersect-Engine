@@ -83,8 +83,8 @@ namespace Intersect.Server.Networking.Websockets
                         var data = mBuffer.ReadBytes(packetLen);
                         var bf = new ByteBuffer();
                         bf.WriteBytes(data);
-                        var packet = new BinaryPacket(this) {Buffer = bf};
-                        mPacketHandler.HandlePacket(packet);
+                        var packet = new BinaryPacket(this, bf);
+                        mPacketHandler.HandlePacket(this, packet);
                     }
                     else
                     {
@@ -106,8 +106,8 @@ namespace Intersect.Server.Networking.Websockets
                 {
                     BinaryPacket bpacket = (BinaryPacket) packet;
                     var bf = new ByteBuffer();
-                    bf.WriteInteger(bpacket.Buffer.ToArray().Length);
-                    bf.WriteBytes(bpacket.Buffer.ToArray());
+                    bf.WriteInteger(bpacket.GetBuffer().ToArray().Length);
+                    bf.WriteBytes(bpacket.GetBuffer().ToArray());
                     mContext.WebSocket.SendAsync(bf.ToArray(), null);
                     return true;
                 }

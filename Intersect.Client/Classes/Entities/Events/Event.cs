@@ -159,15 +159,15 @@ namespace Intersect.Client.Entities.Events
             }
             if (srcTexture != null)
             {
-                destRectangle.X = map.GetX() + CurrentX * Options.TileWidth + OffsetX;
+                destRectangle.X = map.GetX() + X * Options.TileWidth + OffsetX;
                 if (height > Options.TileHeight)
                 {
-                    destRectangle.Y = map.GetY() + CurrentY * Options.TileHeight + OffsetY -
+                    destRectangle.Y = map.GetY() + Y * Options.TileHeight + OffsetY -
                                       ((height) - Options.TileHeight);
                 }
                 else
                 {
-                    destRectangle.Y = map.GetY() + CurrentY * Options.TileHeight + OffsetY;
+                    destRectangle.Y = map.GetY() + Y * Options.TileHeight + OffsetY;
                 }
                 if (width > Options.TileWidth)
                 {
@@ -204,38 +204,38 @@ namespace Intersect.Client.Entities.Events
                             if (RenderLevel == 0) y--;
                             if (RenderLevel == 2) y++;
                             var priority = mRenderPriority;
-                            if (CurrentZ != 0)
+                            if (Z != 0)
                             {
                                 priority += 3;
                             }
                             if (y == gridY - 2)
                             {
-                                GameGraphics.RenderingEntities[priority, CurrentY].Add(this);
-                                renderList = GameGraphics.RenderingEntities[priority, CurrentY];
+                                GameGraphics.RenderingEntities[priority, Y].Add(this);
+                                renderList = GameGraphics.RenderingEntities[priority, Y];
                                 return renderList;
                             }
                             else if (y == gridY - 1)
                             {
-                                GameGraphics.RenderingEntities[priority, Options.MapHeight + CurrentY].Add(this);
-                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight + CurrentY];
+                                GameGraphics.RenderingEntities[priority, Options.MapHeight + Y].Add(this);
+                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight + Y];
                                 return renderList;
                             }
                             else if (y == gridY)
                             {
-                                GameGraphics.RenderingEntities[priority, Options.MapHeight * 2 + CurrentY].Add(this);
-                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight * 2 + CurrentY];
+                                GameGraphics.RenderingEntities[priority, Options.MapHeight * 2 + Y].Add(this);
+                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight * 2 + Y];
                                 return renderList;
                             }
                             else if (y == gridY + 1)
                             {
-                                GameGraphics.RenderingEntities[priority, Options.MapHeight * 3 + CurrentY].Add(this);
-                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight * 3 + CurrentY];
+                                GameGraphics.RenderingEntities[priority, Options.MapHeight * 3 + Y].Add(this);
+                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight * 3 + Y];
                                 return renderList;
                             }
                             else if (y == gridY + 2)
                             {
-                                GameGraphics.RenderingEntities[priority, Options.MapHeight * 4 + CurrentY].Add(this);
-                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight * 4 + CurrentY];
+                                GameGraphics.RenderingEntities[priority, Options.MapHeight * 4 + Y].Add(this);
+                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight * 4 + Y];
                                 return renderList;
                             }
                         }
@@ -313,8 +313,8 @@ namespace Intersect.Client.Entities.Events
                 mCenterPos = Pointf.Empty;
                 return;
             }
-            Pointf pos = new Pointf(map.GetX() + CurrentX * Options.TileWidth + OffsetX + Options.TileWidth / 2,
-                map.GetY() + CurrentY * Options.TileHeight + OffsetY + Options.TileHeight / 2);
+            Pointf pos = new Pointf(map.GetX() + X * Options.TileWidth + OffsetX + Options.TileWidth / 2,
+                map.GetY() + Y * Options.TileHeight + OffsetY + Options.TileHeight / 2);
             switch (GraphicType)
             {
                 case 1: //Sprite

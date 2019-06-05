@@ -37,11 +37,11 @@ namespace Intersect.Editor.Networking
 
         private static TextWriter sWriter;
 
-        public static bool HandlePacket(IPacket packet)
+        public static bool HandlePacket(IConnection connection, IPacket packet)
         {
             var binaryPacket = packet as BinaryPacket;
 
-            var bf = binaryPacket?.Buffer;
+            var bf = binaryPacket?.GetBuffer();
 
             if (packet == null || bf == null) return false;
 

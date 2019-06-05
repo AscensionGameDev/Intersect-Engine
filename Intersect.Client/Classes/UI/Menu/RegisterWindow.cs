@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Text;
+
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -151,8 +154,11 @@ namespace Intersect.Client.UI.Menu
                             {
                                 GameFade.FadeOut();
                                 Hide();
-                                PacketSender.SendCreateAccount(mUsernameTextbox.Text, mPasswordTextbox.Text,
-                                    mEmailTextbox.Text);
+                                //Hash Password
+                                var bf = new ByteBuffer();
+                                var sha = new SHA256Managed();
+                                var hashedPass = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(mPasswordTextbox.Text.Trim()))).Replace("-", "");
+                                PacketSender.SendCreateAccount(mUsernameTextbox.Text, hashedPass, mEmailTextbox.Text);
                                 Globals.WaitingOnServer = true;
                                 ChatboxMsg.ClearMessages();
                             }

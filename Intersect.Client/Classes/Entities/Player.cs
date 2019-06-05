@@ -482,17 +482,17 @@ namespace Intersect.Client.Entities
                 }
                 else
                 {
-                    PacketSender.SendRetreiveBagItem(index, 1);
+                    PacketSender.SendRetrieveBagItem(index, 1);
                 }
             }
         }
-
+        
         private void RetreiveBagItemInputBoxOkay(object sender, EventArgs e)
         {
             int value = (int) ((InputBox) sender).Value;
             if (value > 0)
             {
-                PacketSender.SendRetreiveBagItem((int)((InputBox) sender).UserData, value);
+                PacketSender.SendRetrieveBagItem((int)((InputBox) sender).UserData, value);
             }
         }
 
@@ -511,7 +511,7 @@ namespace Intersect.Client.Entities
                 }
                 else
                 {
-                    PacketSender.SendOfferItem(index, 1);
+                    PacketSender.SendOfferTradeItem(index, 1);
                 }
             }
         }
@@ -521,7 +521,7 @@ namespace Intersect.Client.Entities
             int value = (int) ((InputBox) sender).Value;
             if (value > 0)
             {
-                PacketSender.SendOfferItem((int)((InputBox) sender).UserData, value);
+                PacketSender.SendOfferTradeItem((int)((InputBox) sender).UserData, value);
             }
         }
 
@@ -540,7 +540,7 @@ namespace Intersect.Client.Entities
                 }
                 else
                 {
-                    PacketSender.SendRevokeItem(index, 1);
+                    PacketSender.SendRevokeTradeItem(index, 1);
                 }
             }
         }
@@ -550,7 +550,7 @@ namespace Intersect.Client.Entities
             int value = (int) ((InputBox) sender).Value;
             if (value > 0)
             {
-                PacketSender.SendRevokeItem((int)((InputBox) sender).UserData, value);
+                PacketSender.SendRevokeTradeItem((int)((InputBox) sender).UserData, value);
             }
         }
 
@@ -615,7 +615,7 @@ namespace Intersect.Client.Entities
         }
 
         //Hotbar Processing
-        public void AddToHotbar(int hotbarSlot, int itemType, int itemSlot)
+        public void AddToHotbar(byte hotbarSlot, sbyte itemType, int itemSlot)
         {
             Hotbar[hotbarSlot].ItemOrSpellId = Guid.Empty;
             Hotbar[hotbarSlot].PreferredStats = new int[(int) Stats.StatCount];
@@ -636,10 +636,10 @@ namespace Intersect.Client.Entities
                     Hotbar[hotbarSlot].ItemOrSpellId = spell.SpellId;
                 }
             }
-            PacketSender.SendHotbarChange(hotbarSlot, itemType, itemSlot);
+            PacketSender.SendHotbarUpdate(hotbarSlot, itemType, itemSlot);
         }
 
-        public void HotbarSwap(int index, int swapIndex)
+        public void HotbarSwap(byte index, byte swapIndex)
         {
             var itemId = Hotbar[index].ItemOrSpellId;
             var bagId = Hotbar[index].BagId;
@@ -659,18 +659,18 @@ namespace Intersect.Client.Entities
         // Change the dimension if the player is on a gateway
         private void TryToChangeDimension()
         {
-            if (CurrentX < Options.MapWidth && CurrentX >= 0)
+            if (X < Options.MapWidth && X >= 0)
             {
-                if (CurrentY < Options.MapHeight && CurrentY >= 0)
+                if (Y < Options.MapHeight && Y >= 0)
                 {
                     if (MapInstance.Get(CurrentMap) != null &&
-                        MapInstance.Get(CurrentMap).Attributes[CurrentX, CurrentY] != null)
+                        MapInstance.Get(CurrentMap).Attributes[X, Y] != null)
                     {
-                        if (MapInstance.Get(CurrentMap).Attributes[CurrentX, CurrentY].Type ==  MapAttributes.ZDimension)
+                        if (MapInstance.Get(CurrentMap).Attributes[X, Y].Type ==  MapAttributes.ZDimension)
                         {
-                            if (((MapZDimensionAttribute)MapInstance.Get(CurrentMap).Attributes[CurrentX, CurrentY]).GatewayTo > 0)
+                            if (((MapZDimensionAttribute)MapInstance.Get(CurrentMap).Attributes[X, Y]).GatewayTo > 0)
                             {
-                                CurrentZ = ((MapZDimensionAttribute)MapInstance.Get(CurrentMap).Attributes[CurrentX, CurrentY]).GatewayTo - 1;
+                                Z = (byte)(((MapZDimensionAttribute)MapInstance.Get(CurrentMap).Attributes[X, Y]).GatewayTo - 1);
                             }
                         }
                     }
@@ -734,11 +734,11 @@ namespace Intersect.Client.Entities
                 if (myMap != null && targetMap != null)
                 {
                     //Calculate World Tile of Me
-                    var x1 = CurrentX + (myMap.MapGridX * Options.MapWidth);
-                    var y1 = CurrentY + (myMap.MapGridY * Options.MapHeight);
+                    var x1 = X + (myMap.MapGridX * Options.MapWidth);
+                    var y1 = Y + (myMap.MapGridY * Options.MapHeight);
                     //Calculate world tile of target
-                    var x2 = target.CurrentX + (targetMap.MapGridX * Options.MapWidth);
-                    var y2 = target.CurrentY + (targetMap.MapGridY * Options.MapHeight);
+                    var x2 = target.X + (targetMap.MapGridX * Options.MapWidth);
+                    var y2 = target.Y + (targetMap.MapGridY * Options.MapHeight);
                     return (int)Math.Sqrt(Math.Pow(x1 - x2, 2) + (Math.Pow(y1 - y2, 2)));
                 }
             }
@@ -814,7 +814,7 @@ namespace Intersect.Client.Entities
                     .ItemId);
                 if (item != null)
                 {
-                    PacketSender.SendBlock(1);
+                    PacketSender.SendBlock(true);
                     Blocking = true;
                     return true;
                 }
@@ -828,7 +828,7 @@ namespace Intersect.Client.Entities
             if (Blocking)
             {
                 Blocking = false;
-                PacketSender.SendBlock(0);
+                PacketSender.SendBlock(false);
                 AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
             }
         }
@@ -840,8 +840,8 @@ namespace Intersect.Client.Entities
                 return false;
             }
 
-            var x = Globals.Me.CurrentX;
-            var y = Globals.Me.CurrentY;
+            int x = Globals.Me.X;
+            int y = Globals.Me.Y;
             var map = Globals.Me.CurrentMap;
             switch (Globals.Me.Dir)
             {
@@ -865,7 +865,7 @@ namespace Intersect.Client.Entities
                     if (en.Value == null) continue;
                     if (en.Value != Globals.Me)
                     {
-                        if (en.Value.CurrentMap == map && en.Value.CurrentX == x && en.Value.CurrentY == y)
+                        if (en.Value.CurrentMap == map && en.Value.X == x && en.Value.Y == y)
                         {
                             //ATTACKKKKK!!!
                             PacketSender.SendAttack(en.Key);
@@ -880,12 +880,12 @@ namespace Intersect.Client.Entities
                 foreach (var en in eventMap.LocalEntities)
                 {
                     if (en.Value == null) continue;
-                    if (en.Value.CurrentMap == map && en.Value.CurrentX == x && en.Value.CurrentY == y)
+                    if (en.Value.CurrentMap == map && en.Value.X == x && en.Value.Y == y)
                     {
                         if (en.Value.GetType() == typeof(Event))
                         {
                             //Talk to Event
-                            PacketSender.SendActivateEvent(en.Key, map);
+                            PacketSender.SendActivateEvent(en.Key);
                             AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
                             return true;
                         }
@@ -901,8 +901,8 @@ namespace Intersect.Client.Entities
 
         public bool GetRealLocation(ref int x, ref int y, ref Guid mapId)
         {
-            var tmpX = x;
-            var tmpY = y;
+            int tmpX = x;
+            int tmpY = y;
             var tmpI = -1;
             if (MapInstance.Get(mapId) != null)
             {
@@ -934,8 +934,8 @@ namespace Intersect.Client.Entities
                 {
                     if (MapInstance.Get(Globals.MapGrid[gridX, gridY]) != null)
                     {
-                        x = tmpX;
-                        y = tmpY;
+                        x = (byte)tmpX;
+                        y = (byte)tmpY;
                         mapId = Globals.MapGrid[gridX, gridY];
                         return true;
                     }
@@ -955,8 +955,8 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            var x = (int) Math.Floor(Globals.InputManager.GetMousePosition().X + GameGraphics.CurrentView.Left);
-            var y = (int) Math.Floor(Globals.InputManager.GetMousePosition().Y + GameGraphics.CurrentView.Top);
+            var x = (int)Math.Floor(Globals.InputManager.GetMousePosition().X + GameGraphics.CurrentView.Left);
+            var y = (int)Math.Floor(Globals.InputManager.GetMousePosition().Y + GameGraphics.CurrentView.Top);
 
             foreach (MapInstance map in MapInstance.Lookup.Values)
             {
@@ -965,8 +965,8 @@ namespace Intersect.Client.Entities
                     if (y >= map.GetY() && y <= map.GetY() + (Options.MapHeight * Options.TileHeight))
                     {
                         //Remove the offsets to just be dealing with pixels within the map selected
-                        x -= (int) map.GetX();
-                        y -= (int) map.GetY();
+                        x -= (int)map.GetX();
+                        y -= (int)map.GetY();
 
                         //transform pixel format to tile format
                         x /= Options.TileWidth;
@@ -978,7 +978,7 @@ namespace Intersect.Client.Entities
                             foreach (var en in Globals.Entities)
                             {
                                 if (en.Value == null) continue;
-                                if (en.Value.CurrentMap == mapId && en.Value.CurrentX == x && en.Value.CurrentY == y &&
+                                if (en.Value.CurrentMap == mapId && en.Value.X == x && en.Value.Y == y &&
                                     (!en.Value.IsStealthed() || Globals.Me.IsInMyParty(en.Value)))
                                 {
                                     if (en.Value.GetType() != typeof(Projectile) &&
@@ -1027,8 +1027,8 @@ namespace Intersect.Client.Entities
                                 foreach (var en in eventMap.LocalEntities)
                                 {
                                     if (en.Value == null) continue;
-                                    if (en.Value.CurrentMap == mapId && en.Value.CurrentX == x &&
-                                        en.Value.CurrentY == y && !((Event) en.Value).DisablePreview &&
+                                    if (en.Value.CurrentMap == mapId && en.Value.X == x &&
+                                        en.Value.Y == y && !((Event) en.Value).DisablePreview &&
                                         (!en.Value.IsStealthed() || Globals.Me.IsInMyParty(en.Value)))
                                     {
                                         if (TargetBox != null)
@@ -1081,7 +1081,7 @@ namespace Intersect.Client.Entities
             }
             foreach (var item in map.MapItems)
             {
-                if (item.Value.X == CurrentX && item.Value.Y == CurrentY)
+                if (item.Value.X == X && item.Value.Y == Y)
                 {
                     PacketSender.SendPickupItem(item.Key);
                     return true;
@@ -1167,9 +1167,9 @@ namespace Intersect.Client.Entities
                     switch (MoveDir)
                     {
                         case 0:
-                            if (IsTileBlocked(CurrentX, CurrentY - 1, CurrentZ, CurrentMap,ref blockedBy) == -1)
+                            if (IsTileBlocked(X, Y - 1, Z, CurrentMap,ref blockedBy) == -1)
                             {
-                                CurrentY--;
+                                Y--;
                                 Dir = 0;
                                 IsMoving = true;
                                 OffsetY = Options.TileHeight;
@@ -1178,9 +1178,9 @@ namespace Intersect.Client.Entities
                             }
                             break;
                         case 1:
-                            if (IsTileBlocked(CurrentX, CurrentY + 1, CurrentZ, CurrentMap, ref blockedBy) == -1)
+                            if (IsTileBlocked(X, Y + 1, Z, CurrentMap, ref blockedBy) == -1)
                             {
-                                CurrentY++;
+                                Y++;
                                 Dir = 1;
                                 IsMoving = true;
                                 OffsetY = -Options.TileHeight;
@@ -1189,9 +1189,9 @@ namespace Intersect.Client.Entities
                             }
                             break;
                         case 2:
-                            if (IsTileBlocked(CurrentX - 1, CurrentY, CurrentZ, CurrentMap, ref blockedBy) == -1)
+                            if (IsTileBlocked(X - 1, Y, Z, CurrentMap, ref blockedBy) == -1)
                             {
-                                CurrentX--;
+                                X--;
                                 Dir = 2;
                                 IsMoving = true;
                                 OffsetY = 0;
@@ -1200,9 +1200,9 @@ namespace Intersect.Client.Entities
                             }
                             break;
                         case 3:
-                            if (IsTileBlocked(CurrentX + 1, CurrentY, CurrentZ, CurrentMap, ref blockedBy) == -1)
+                            if (IsTileBlocked(X + 1, Y, Z, CurrentMap, ref blockedBy) == -1)
                             {
-                                CurrentX++;
+                                X++;
                                 Dir = 3;
                                 IsMoving = true;
                                 OffsetY = 0;
@@ -1216,29 +1216,29 @@ namespace Intersect.Client.Entities
                     {
                         MoveTimer = Globals.System.GetTimeMs() + GetMovementTime();
                         didMove = true;
-                        if (CurrentX < 0 || CurrentY < 0 || CurrentX > (Options.MapWidth - 1) ||
-                            CurrentY > (Options.MapHeight - 1))
+                        if (X < 0 || Y < 0 || X > (Options.MapWidth - 1) ||
+                            Y > (Options.MapHeight - 1))
                         {
                             var gridX = MapInstance.Get(Globals.Me.CurrentMap).MapGridX;
                             var gridY = MapInstance.Get(Globals.Me.CurrentMap).MapGridY;
-                            if (CurrentX < 0)
+                            if (X < 0)
                             {
                                 gridX--;
-                                CurrentX = (Options.MapWidth - 1);
+                                X = (byte)(Options.MapWidth - 1);
                             }
-                            if (CurrentY < 0)
+                            if (Y < 0)
                             {
                                 gridY--;
-                                CurrentY = (Options.MapHeight - 1);
+                                Y = (byte)(Options.MapHeight - 1);
                             }
-                            if (CurrentX >= Options.MapWidth)
+                            if (X >= Options.MapWidth)
                             {
-                                CurrentX = 0;
+                                X = 0;
                                 gridX++;
                             }
-                            if (CurrentY >= Options.MapHeight)
+                            if (Y >= Options.MapHeight)
                             {
-                                CurrentY = 0;
+                                Y = 0;
                                 gridY++;
                             }
                             if (CurrentMap != Globals.MapGrid[gridX, gridY])
@@ -1252,14 +1252,14 @@ namespace Intersect.Client.Entities
                     {
                         if (MoveDir != Dir)
                         {
-                            Dir = MoveDir;
-                            PacketSender.SendDir(Dir);
+                            Dir = (byte)MoveDir;
+                            PacketSender.SendDirection(Dir);
                         }
                     }
                 }
             }
-            Globals.MyX = CurrentX;
-            Globals.MyY = CurrentY;
+            Globals.MyX = X;
+            Globals.MyY = Y;
             if (didMove)
             {
                 PacketSender.SendMove();
@@ -1368,8 +1368,8 @@ namespace Intersect.Client.Entities
                     }
                     else
                     {
-                        if (en.Value.CurrentMap == tmpMapId && en.Value.CurrentX == tmpX && en.Value.CurrentY == tmpY &&
-                            en.Value.CurrentZ == CurrentZ)
+                        if (en.Value.CurrentMap == tmpMapId && en.Value.X == tmpX && en.Value.Y == tmpY &&
+                            en.Value.Z == Z)
                         {
                             if (en.Value.GetType() != typeof(Projectile))
                             {
@@ -1412,8 +1412,8 @@ namespace Intersect.Client.Entities
                     foreach (var en in MapInstance.Get(tmpMapId).LocalEntities)
                     {
                         if (en.Value == null) continue;
-                        if (en.Value.CurrentMap == tmpMapId && en.Value.CurrentX == tmpX && en.Value.CurrentY == tmpY &&
-                            en.Value.CurrentZ == CurrentZ && !en.Value.Passable)
+                        if (en.Value.CurrentMap == tmpMapId && en.Value.X == tmpX && en.Value.Y == tmpY &&
+                            en.Value.Z == Z && !en.Value.Passable)
                         {
                             return -4;
                         }

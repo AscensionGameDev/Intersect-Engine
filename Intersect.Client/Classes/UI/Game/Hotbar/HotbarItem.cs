@@ -58,10 +58,10 @@ namespace Intersect.Client.UI.Game.Hotbar
         private int mMouseX = -1;
         private int mMouseY = -1;
 
-        private int mYindex;
+        private byte mYindex;
         public ImagePanel Pnl;
 
-        public HotbarItem(int index, Base hotbarWindow)
+        public HotbarItem(byte index, Base hotbarWindow)
         {
             mYindex = index;
             mHotbarWindow = hotbarWindow;
@@ -426,7 +426,7 @@ namespace Intersect.Client.UI.Game.Hotbar
                             }
                             if (bestIntersectIndex > -1 && bestIntersectIndex != mYindex)
                             {
-                                Globals.Me.HotbarSwap(mYindex, bestIntersectIndex);
+                                Globals.Me.HotbarSwap(mYindex, (byte)bestIntersectIndex);
                             }
                         }
 

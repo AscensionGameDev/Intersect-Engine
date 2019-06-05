@@ -679,7 +679,7 @@ namespace Intersect.Client.UI.Game.EntityPanel
         {
             if (Globals.Me.TargetIndex != Guid.Empty && Globals.Me.TargetIndex != Globals.Me.Id)
             {
-                PacketSender.AddFriend(MyEntity.Name);
+                PacketSender.SendAddFriend(MyEntity.Name);
             }
         }
     }

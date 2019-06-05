@@ -74,7 +74,7 @@ namespace Intersect.Client.UI.Game
 
         void AbandonQuest(object sender, EventArgs e)
         {
-            PacketSender.SendCancelQuest((Guid)((InputBox) sender).UserData);
+            PacketSender.SendAbandonQuest((Guid)((InputBox) sender).UserData);
         }
 
         private void _backButton_Clicked(Base sender, ClickedEventArgs arguments)

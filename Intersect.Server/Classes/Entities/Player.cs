@@ -110,7 +110,7 @@ namespace Intersect.Server.Entities
         [NotMapped] public bool InGame;
         [NotMapped] public Guid LastMapEntered = Guid.Empty;
 
-        [JsonIgnore, NotMapped] public Client MyClient;
+        [JsonIgnore, NotMapped] public Client Client;
 
         [JsonIgnore, NotMapped] private bool mSentMap;
         [JsonIgnore, NotMapped] private int mCommonEventLaunches = 0;
@@ -193,7 +193,7 @@ namespace Intersect.Server.Entities
 
         #endregion
 
-        [JsonIgnore, ] public bool IsValidPlayer => !IsDisposed && MyClient?.Entity == this;
+        [JsonIgnore, ] public bool IsValidPlayer => !IsDisposed && Client?.Entity == this;
 
         [NotMapped]
         public long ExperienceToNextLevel => GetExperienceToNextLevel(Level);
@@ -344,7 +344,7 @@ namespace Intersect.Server.Entities
                         foundEvent = true;
                         if (MoveRoute.ActionIndex < MoveRoute.Actions.Count)
                         {
-                            ProcessMoveRoute(MyClient, timeMs);
+                            ProcessMoveRoute(Client, timeMs);
                         }
                         else
                         {
@@ -352,7 +352,7 @@ namespace Intersect.Server.Entities
                             {
                                 MoveRoute = null;
                                 MoveRouteSetter = null;
-                                PacketSender.SendMoveRouteToggle(MyClient, false);
+                                PacketSender.SendMoveRouteToggle(Client, false);
                             }
                         }
                         break;
@@ -362,7 +362,7 @@ namespace Intersect.Server.Entities
                 {
                     MoveRoute = null;
                     MoveRouteSetter = null;
-                    PacketSender.SendMoveRouteToggle(MyClient, false);
+                    PacketSender.SendMoveRouteToggle(Client, false);
                 }
             }
 
@@ -415,7 +415,7 @@ namespace Intersect.Server.Entities
                                     var foundEvent = EventExists(map.Id, mapEvent.SpawnX, mapEvent.SpawnY);
                                     if (foundEvent == null)
                                     {
-                                        var tmpEvent = new EventInstance(Guid.NewGuid(), map.Id, MyClient, mapEvent)
+                                        var tmpEvent = new EventInstance(Guid.NewGuid(), map.Id, Client, mapEvent)
                                         {
                                             Global = mapEvent.Global,
                                             MapId = map.Id,
@@ -464,7 +464,7 @@ namespace Intersect.Server.Entities
                         eventFound = true;
                     }
                     if (eventFound) continue;
-                    PacketSender.SendEntityLeaveTo(MyClient, evt.BaseEvent.Id, (int)EntityTypes.Event, evt.MapId);
+                    PacketSender.SendEntityLeaveTo(Client, evt.BaseEvent.Id, (int)EntityTypes.Event, evt.MapId);
                     EventLookup.TryRemove(evt.Id, out EventInstance z);
                 }
             }
@@ -474,7 +474,7 @@ namespace Intersect.Server.Entities
         {
             EventInstance outInstance;
             EventLookup.TryRemove(id, out outInstance);
-            PacketSender.SendEntityLeaveTo(MyClient,id, (int)EntityTypes.Event, Id);
+            PacketSender.SendEntityLeaveTo(Client,id, (int)EntityTypes.Event, Id);
         }
 
         //Sending Data
@@ -532,7 +532,7 @@ namespace Intersect.Server.Entities
             base.Die(dropitems, killer);
             Reset();
             Respawn();
-            PacketSender.SendInventory(MyClient);
+            PacketSender.SendInventory(Client);
         }
 
         public override void ProcessRegen()
@@ -619,7 +619,7 @@ namespace Intersect.Server.Entities
             if (resetExperience) Exp = 0;
             RecalculateStatsAndPoints();
             PacketSender.SendEntityDataToProximity(this);
-            PacketSender.SendExperience(MyClient);
+            PacketSender.SendExperience(Client);
         }
 
         public void LevelUp(bool resetExperience = true, int levels = 1)
@@ -649,20 +649,20 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            PacketSender.SendPlayerMsg(MyClient, Strings.Player.levelup.ToString(Level), CustomColors.LevelUp, Name);
+            PacketSender.SendPlayerMsg(Client, Strings.Player.levelup.ToString(Level), CustomColors.LevelUp, Name);
             PacketSender.SendActionMsg(this, Strings.Combat.levelup, CustomColors.LevelUp);
             foreach (var msg in spellMsgs)
             {
-                PacketSender.SendPlayerMsg(MyClient, msg, CustomColors.Info, Name);
+                PacketSender.SendPlayerMsg(Client, msg, CustomColors.Info, Name);
             }
             if (StatPoints > 0)
             {
-                PacketSender.SendPlayerMsg(MyClient, Strings.Player.statpoints.ToString(StatPoints),
+                PacketSender.SendPlayerMsg(Client, Strings.Player.statpoints.ToString(StatPoints),
                     CustomColors.StatPoints, Name);
             }
             RecalculateStatsAndPoints();
-            PacketSender.SendExperience(MyClient);
-            PacketSender.SendPointsTo(MyClient);
+            PacketSender.SendExperience(Client);
+            PacketSender.SendPointsTo(Client);
             PacketSender.SendEntityDataToProximity(this);
 
             //Search for level up activated events and run them
@@ -681,7 +681,7 @@ namespace Intersect.Server.Entities
             if (Exp < 0) Exp = 0;
             if (!CheckLevelUp())
             {
-                PacketSender.SendExperience(MyClient);
+                PacketSender.SendExperience(Client);
             }
         }
 
@@ -767,7 +767,7 @@ namespace Intersect.Server.Entities
                                 else
                                 {
                                     PacketSender.SendQuestProgress(this, quest.Id);
-                                    PacketSender.SendPlayerMsg(MyClient,
+                                    PacketSender.SendPlayerMsg(Client,
                                         Strings.Quests.npctask.ToString(quest.Name, questProgress.TaskProgress,
                                             questTask.Quantity, NpcBase.GetName(questTask.TargetId)));
                                 }
@@ -791,14 +791,14 @@ namespace Intersect.Server.Entities
                 //Check Dynamic Requirements
                 if (!Conditions.MeetsConditionLists(resource.HarvestingRequirements, this, null))
                 {
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Combat.resourcereqs);
+                    PacketSender.SendPlayerMsg(Client, Strings.Combat.resourcereqs);
                     return;
                 }
                 if (resource.Tool > -1 && resource.Tool < Options.ToolTypes.Count)
                 {
                     if (parentItem == null || resource.Tool != parentItem.Tool)
                     {
-                        PacketSender.SendPlayerMsg(MyClient, Strings.Combat.toolrequired.ToString(Options.ToolTypes[resource.Tool]));
+                        PacketSender.SendPlayerMsg(Client, Strings.Combat.toolrequired.ToString(Options.ToolTypes[resource.Tool]));
                         return;
                     }
                 }
@@ -810,7 +810,7 @@ namespace Intersect.Server.Entities
         {
             if (CastTime >= Globals.Timing.TimeMs)
             {
-                PacketSender.SendPlayerMsg(MyClient, Strings.Combat.channelingnoattack);
+                PacketSender.SendPlayerMsg(Client, Strings.Combat.channelingnoattack);
                 return;
             }
 
@@ -834,14 +834,14 @@ namespace Intersect.Server.Entities
                 //Check Dynamic Requirements
                 if (!Conditions.MeetsConditionLists(resource.HarvestingRequirements, this, null))
                 {
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Combat.resourcereqs);
+                    PacketSender.SendPlayerMsg(Client, Strings.Combat.resourcereqs);
                     return;
                 }
                 if (resource.Tool > -1 && resource.Tool < Options.ToolTypes.Count)
                 {
                     if (weapon == null || resource.Tool != weapon.Tool)
                     {
-                        PacketSender.SendPlayerMsg(MyClient,
+                        PacketSender.SendPlayerMsg(Client,
                             Strings.Combat.toolrequired.ToString(Options.ToolTypes[resource.Tool]));
                         return;
                     }
@@ -1072,13 +1072,13 @@ namespace Intersect.Server.Entities
                 //If map grid changed then send the new map grid
                 if (!adminWarp && (oldMap == null || !oldMap.SurroundingMaps.Contains(newMapId)))
                 {
-                    PacketSender.SendMapGrid(MyClient, map.MapGrid, true);
+                    PacketSender.SendMapGrid(Client, map.MapGrid, true);
                 }
 
                 var surroundingMaps = map.GetSurroundingMaps(true);
                 foreach (var surrMap in surroundingMaps)
                 {
-                    PacketSender.SendMap(MyClient, surrMap.Id);
+                    PacketSender.SendMap(Client, surrMap.Id);
                 }
                 mSentMap = true;
             }
@@ -1159,7 +1159,7 @@ namespace Intersect.Server.Entities
                             Items[i].Quantity += item.Quantity;
                             if (sendUpdate)
                             {
-                                PacketSender.SendInventoryItemUpdate(MyClient, i);
+                                PacketSender.SendInventoryItemUpdate(Client, i);
                             }
                             UpdateGatherItemQuests(item.ItemId);
                             return true;
@@ -1175,7 +1175,7 @@ namespace Intersect.Server.Entities
                         Items[i].Set(item);
                         if (sendUpdate)
                         {
-                            PacketSender.SendInventoryItemUpdate(MyClient, i);
+                            PacketSender.SendInventoryItemUpdate(Client, i);
                         }
                         UpdateGatherItemQuests(item.ItemId);
                         return true;
@@ -1190,8 +1190,8 @@ namespace Intersect.Server.Entities
             var tmpInstance = Items[item2].Clone();
             Items[item2].Set(Items[item1]);
             Items[item1].Set(tmpInstance);
-            PacketSender.SendInventoryItemUpdate(MyClient, item1);
-            PacketSender.SendInventoryItemUpdate(MyClient, item2);
+            PacketSender.SendInventoryItemUpdate(Client, item1);
+            PacketSender.SendInventoryItemUpdate(Client, item2);
             EquipmentProcessItemSwap(item1, item2);
         }
 
@@ -1202,7 +1202,7 @@ namespace Intersect.Server.Entities
             {
                 if (itemBase.Bound)
                 {
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Items.bound, CustomColors.ItemBound);
+                    PacketSender.SendPlayerMsg(Client, Strings.Items.bound, CustomColors.ItemBound);
                     return;
                 }
 
@@ -1211,7 +1211,7 @@ namespace Intersect.Server.Entities
                     var bag = LegacyDatabase.GetBag(Items[slot]);
                     if (bag != null && !LegacyDatabase.BagEmpty(bag))
                     {
-                        PacketSender.SendPlayerMsg(MyClient, Strings.Bags.dropnotempty, CustomColors.Error);
+                        PacketSender.SendPlayerMsg(Client, Strings.Bags.dropnotempty, CustomColors.Error);
                         return;
                     }
                 }
@@ -1220,7 +1220,7 @@ namespace Intersect.Server.Entities
                 {
                     if (Equipment[i] == slot)
                     {
-                        PacketSender.SendPlayerMsg(MyClient, Strings.Items.equipped, CustomColors.ItemBound);
+                        PacketSender.SendPlayerMsg(Client, Strings.Items.equipped, CustomColors.ItemBound);
                         return;
                     }
                 }
@@ -1252,7 +1252,7 @@ namespace Intersect.Server.Entities
                     Items[slot].Quantity -= amount;
                 }
                 UpdateGatherItemQuests(itemBase.Id);
-                PacketSender.SendInventoryItemUpdate(MyClient, slot);
+                PacketSender.SendInventoryItemUpdate(Client, slot);
             }
         }
 
@@ -1269,12 +1269,12 @@ namespace Intersect.Server.Entities
                 {
                     if (status.Type == StatusTypes.Stun)
                     {
-                        PacketSender.SendPlayerMsg(MyClient, Strings.Items.stunned);
+                        PacketSender.SendPlayerMsg(Client, Strings.Items.stunned);
                         return;
                     }
                     if (status.Type == StatusTypes.Sleep)
                     {
-                        PacketSender.SendPlayerMsg(MyClient, Strings.Items.sleep);
+                        PacketSender.SendPlayerMsg(Client, Strings.Items.sleep);
                         return;
                     }
                 }
@@ -1298,14 +1298,14 @@ namespace Intersect.Server.Entities
 
                 if (!Conditions.MeetsConditionLists(itemBase.UsageRequirements, this, null))
                 {
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Items.dynamicreq);
+                    PacketSender.SendPlayerMsg(Client, Strings.Items.dynamicreq);
                     return;
                 }
 
                 if (ItemCooldowns.ContainsKey(itemBase.Id) && ItemCooldowns[itemBase.Id] > Globals.Timing.TimeMs)
                 {
                     //Cooldown warning!
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Items.cooldown);
+                    PacketSender.SendPlayerMsg(Client, Strings.Items.cooldown);
                     return;
                 }
 
@@ -1313,7 +1313,7 @@ namespace Intersect.Server.Entities
                 {
                     case ItemTypes.None:
                     case ItemTypes.Currency:
-                        PacketSender.SendPlayerMsg(MyClient, Strings.Items.cannotuse);
+                        PacketSender.SendPlayerMsg(Client, Strings.Items.cannotuse);
                         return;
                     case ItemTypes.Consumable:
                         var negative = itemBase.Consumable.Value < 0;
@@ -1436,7 +1436,7 @@ namespace Intersect.Server.Entities
                         OpenBag(Item, itemBase);
                         break;
                     default:
-                        PacketSender.SendPlayerMsg(MyClient, Strings.Items.notimplemented);
+                        PacketSender.SendPlayerMsg(Client, Strings.Items.notimplemented);
                         return;
                 }
                 if (itemBase.Animation != null)
@@ -1454,7 +1454,7 @@ namespace Intersect.Server.Entities
                     {
                         ItemCooldowns.Add(itemBase.Id, Globals.Timing.TimeMs + (long)(itemBase.Cooldown * cooldownReduction));
                     }
-                    PacketSender.SendItemCooldown(MyClient, itemBase.Id);
+                    PacketSender.SendItemCooldown(Client, itemBase.Id);
                 }
             }
         }
@@ -1496,7 +1496,7 @@ namespace Intersect.Server.Entities
                     EquipmentProcessItemLoss(slot);
                     returnVal = true;
                 }
-                PacketSender.SendInventoryItemUpdate(MyClient, slot);
+                PacketSender.SendInventoryItemUpdate(Client, slot);
             }
             if (returnVal)
             {
@@ -1536,7 +1536,7 @@ namespace Intersect.Server.Entities
                 {
                     amount -= 1;
                     Items[i].Set(Item.None);
-                    PacketSender.SendInventoryItemUpdate(MyClient, i);
+                    PacketSender.SendInventoryItemUpdate(Client, i);
                     if (amount == 0)
                         return true;
                 }
@@ -1546,14 +1546,14 @@ namespace Intersect.Server.Entities
                     {
                         amount -= item.Quantity;
                         Items[i].Set(Item.None);
-                        PacketSender.SendInventoryItemUpdate(MyClient, i);
+                        PacketSender.SendInventoryItemUpdate(Client, i);
                         if (amount == 0)
                             return true;
                     }
                     else
                     {
                         item.Quantity -= amount;
-                        PacketSender.SendInventoryItemUpdate(MyClient, i);
+                        PacketSender.SendInventoryItemUpdate(Client, i);
                         return true;
                     }
                 }
@@ -1563,7 +1563,7 @@ namespace Intersect.Server.Entities
             {
                 Items[i].Set(invbackup[i]);
             }
-            PacketSender.SendInventory(MyClient);
+            PacketSender.SendInventory(Client);
             return false;
         }
 
@@ -1676,7 +1676,7 @@ namespace Intersect.Server.Entities
         {
             if (IsBusy()) return false;
             InShop = shop;
-            PacketSender.SendOpenShop(MyClient, shop);
+            PacketSender.SendOpenShop(Client, shop);
             return true;
         }
 
@@ -1685,7 +1685,7 @@ namespace Intersect.Server.Entities
             if (InShop != null)
             {
                 InShop = null;
-                PacketSender.SendCloseShop(MyClient);
+                PacketSender.SendCloseShop(Client);
             }
         }
 
@@ -1703,7 +1703,7 @@ namespace Intersect.Server.Entities
                 {
                     if (itemBase.Bound)
                     {
-                        PacketSender.SendPlayerMsg(MyClient, Strings.Shops.bound, CustomColors.ItemBound);
+                        PacketSender.SendPlayerMsg(Client, Strings.Shops.bound, CustomColors.ItemBound);
                         return;
                     }
 
@@ -1715,7 +1715,7 @@ namespace Intersect.Server.Entities
                         {
                             if (!LegacyDatabase.BagEmpty(Items[slot].Bag))
                             {
-                                PacketSender.SendPlayerMsg(MyClient, Strings.Bags.onlysellempty,
+                                PacketSender.SendPlayerMsg(Client, Strings.Bags.onlysellempty,
                                     CustomColors.Error);
                                 return;
                             }
@@ -1728,7 +1728,7 @@ namespace Intersect.Server.Entities
                         {
                             if (!shop.BuyingWhitelist)
                             {
-                                PacketSender.SendPlayerMsg(MyClient, Strings.Shops.doesnotaccept,
+                                PacketSender.SendPlayerMsg(Client, Strings.Shops.doesnotaccept,
                                     CustomColors.Error);
                                 return;
                             }
@@ -1744,7 +1744,7 @@ namespace Intersect.Server.Entities
                     {
                         if (shop.BuyingWhitelist)
                         {
-                            PacketSender.SendPlayerMsg(MyClient, Strings.Shops.doesnotaccept,
+                            PacketSender.SendPlayerMsg(Client, Strings.Shops.doesnotaccept,
                                 CustomColors.Error);
                             return;
                         }
@@ -1781,7 +1781,7 @@ namespace Intersect.Server.Entities
                     {
                         TryGiveItem(new Item(rewardItemId, rewardItemVal * amount), true);
                     }
-                    PacketSender.SendInventoryItemUpdate(MyClient, slot);
+                    PacketSender.SendInventoryItemUpdate(Client, slot);
                 }
             }
         }
@@ -1834,14 +1834,14 @@ namespace Intersect.Server.Entities
                                 }
                                 else
                                 {
-                                    PacketSender.SendPlayerMsg(MyClient, Strings.Shops.inventoryfull,
+                                    PacketSender.SendPlayerMsg(Client, Strings.Shops.inventoryfull,
                                         CustomColors.Error, Name);
                                 }
                             }
                         }
                         else
                         {
-                            PacketSender.SendPlayerMsg(MyClient, Strings.Shops.cantafford,
+                            PacketSender.SendPlayerMsg(Client, Strings.Shops.cantafford,
                                 CustomColors.Error, Name);
                         }
                     }
@@ -1856,7 +1856,7 @@ namespace Intersect.Server.Entities
             if (table != null)
             {
                 CraftingTableId = table.Id;
-                PacketSender.SendOpenCraftingTable(MyClient, table);
+                PacketSender.SendOpenCraftingTable(Client, table);
             }
             return true;
         }
@@ -1866,7 +1866,7 @@ namespace Intersect.Server.Entities
             if (CraftingTableId != Guid.Empty && CraftId == Guid.Empty)
             {
                 CraftingTableId = Guid.Empty;
-                PacketSender.SendCloseCraftingTable(MyClient);
+                PacketSender.SendCloseCraftingTable(Client);
             }
         }
 
@@ -1929,7 +1929,7 @@ namespace Intersect.Server.Entities
                         {
                             Items[i].Set(invbackup[i]);
                         }
-                        PacketSender.SendInventory(MyClient);
+                        PacketSender.SendInventory(Client);
                         CraftId = Guid.Empty;
                         return;
                     }
@@ -1941,7 +1941,7 @@ namespace Intersect.Server.Entities
                 if (itm == null || !itm.IsStackable()) quantity = 1;
                 if (TryGiveItem(new Item(CraftBase.Get(id).ItemId, quantity)))
                 {
-                    PacketSender.SendPlayerMsg(MyClient,
+                    PacketSender.SendPlayerMsg(Client,
                         Strings.Crafting.crafted.ToString(
                             ItemBase.GetName(CraftBase.Get(id).ItemId)),
                         CustomColors.Crafted);
@@ -1952,8 +1952,8 @@ namespace Intersect.Server.Entities
                     {
                         Items[i].Set(invbackup[i]);
                     }
-                    PacketSender.SendInventory(MyClient);
-                    PacketSender.SendPlayerMsg(MyClient,
+                    PacketSender.SendInventory(Client);
+                    PacketSender.SendPlayerMsg(Client,
                         Strings.Crafting.nospace.ToString(
                             ItemBase.GetName(CraftBase.Get(id).ItemId)),
                         CustomColors.Error);
@@ -2015,7 +2015,7 @@ namespace Intersect.Server.Entities
         {
             if (IsBusy()) return false;
             InBank = true;
-            PacketSender.SendOpenBank(MyClient);
+            PacketSender.SendOpenBank(Client);
             return true;
         }
 
@@ -2024,7 +2024,7 @@ namespace Intersect.Server.Entities
             if (InBank)
             {
                 InBank = false;
-                PacketSender.SendCloseBank(MyClient);
+                PacketSender.SendCloseBank(Client);
             }
         }
 
@@ -2066,8 +2066,8 @@ namespace Intersect.Server.Entities
                                 {
                                     Items[slot].Quantity -= amount;
                                 }
-                                PacketSender.SendInventoryItemUpdate(MyClient, slot);
-                                PacketSender.SendBankUpdate(MyClient, i);
+                                PacketSender.SendInventoryItemUpdate(Client, slot);
+                                PacketSender.SendBankUpdate(Client, i);
                                 return;
                             }
                         }
@@ -2090,16 +2090,16 @@ namespace Intersect.Server.Entities
                             {
                                 Items[slot].Quantity -= amount;
                             }
-                            PacketSender.SendInventoryItemUpdate(MyClient, slot);
-                            PacketSender.SendBankUpdate(MyClient, i);
+                            PacketSender.SendInventoryItemUpdate(Client, slot);
+                            PacketSender.SendBankUpdate(Client, i);
                             return;
                         }
                     }
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Banks.banknospace, CustomColors.Error);
+                    PacketSender.SendPlayerMsg(Client, Strings.Banks.banknospace, CustomColors.Error);
                 }
                 else
                 {
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Banks.depositinvalid, CustomColors.Error);
+                    PacketSender.SendPlayerMsg(Client, Strings.Banks.depositinvalid, CustomColors.Error);
                 }
             }
         }
@@ -2160,7 +2160,7 @@ namespace Intersect.Server.Entities
                 /* If we don't have a slot send an error. */
                 if (inventorySlot < 0)
                 {
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Banks.inventorynospace,
+                    PacketSender.SendPlayerMsg(Client, Strings.Banks.inventorynospace,
                         CustomColors.Error);
                     return; //Panda forgot this :P
                 }
@@ -2186,12 +2186,12 @@ namespace Intersect.Server.Entities
                     bankSlotItem.Quantity -= amount;
                 }
 
-                PacketSender.SendInventoryItemUpdate(MyClient, inventorySlot);
-                PacketSender.SendBankUpdate(MyClient, slot);
+                PacketSender.SendInventoryItemUpdate(Client, inventorySlot);
+                PacketSender.SendBankUpdate(Client, slot);
             }
             else
             {
-                PacketSender.SendPlayerMsg(MyClient, Strings.Banks.withdrawinvalid, CustomColors.Error);
+                PacketSender.SendPlayerMsg(Client, Strings.Banks.withdrawinvalid, CustomColors.Error);
             }
         }
 
@@ -2215,8 +2215,8 @@ namespace Intersect.Server.Entities
             {
                 Bank[item1].Set(Item.None);
             }
-            PacketSender.SendBankUpdate(MyClient, item1);
-            PacketSender.SendBankUpdate(MyClient, item2);
+            PacketSender.SendBankUpdate(Client, item1);
+            PacketSender.SendBankUpdate(Client, item2);
         }
 
         //Bag
@@ -2238,7 +2238,7 @@ namespace Intersect.Server.Entities
             }
             //Send the bag to the player (this will make it appear on screen)
             InBag = bagItem.Bag;
-            PacketSender.SendOpenBag(MyClient, bagItem.Bag.SlotCount, bagItem.Bag);
+            PacketSender.SendOpenBag(Client, bagItem.Bag.SlotCount, bagItem.Bag);
             return true;
         }
 
@@ -2265,7 +2265,7 @@ namespace Intersect.Server.Entities
             if (InBag != null)
             {
                 InBag = null;
-                PacketSender.SendCloseBag(MyClient);
+                PacketSender.SendCloseBag(Client);
             }
         }
 
@@ -2293,13 +2293,13 @@ namespace Intersect.Server.Entities
                     //Make Sure we are not Storing a Bag inside of itself
                     if (Items[slot].Bag == InBag)
                     {
-                        PacketSender.SendPlayerMsg(MyClient, Strings.Bags.baginself, CustomColors.Error);
+                        PacketSender.SendPlayerMsg(Client, Strings.Bags.baginself, CustomColors.Error);
                         return;
                     }
 
                     if (itemBase.ItemType == ItemTypes.Bag)
                     {
-                        PacketSender.SendPlayerMsg(MyClient,Strings.Bags.baginbag, CustomColors.Error);
+                        PacketSender.SendPlayerMsg(Client,Strings.Bags.baginbag, CustomColors.Error);
                         return;
                     }
 
@@ -2323,8 +2323,8 @@ namespace Intersect.Server.Entities
                                     Items[slot].Quantity -= amount;
                                 }
                                 //LegacyDatabase.SaveBagItem(InBag, i, bag.Items[i]);
-                                PacketSender.SendInventoryItemUpdate(MyClient, slot);
-                                PacketSender.SendBagUpdate(MyClient, i, bag.Slots[i]);
+                                PacketSender.SendInventoryItemUpdate(Client, slot);
+                                PacketSender.SendBagUpdate(Client, i, bag.Slots[i]);
                                 return;
                             }
                         }
@@ -2348,21 +2348,21 @@ namespace Intersect.Server.Entities
                                 Items[slot].Quantity -= amount;
                             }
                             //LegacyDatabase.SaveBagItem(InBag, i, bag.Items[i]);
-                            PacketSender.SendInventoryItemUpdate(MyClient, slot);
-                            PacketSender.SendBagUpdate(MyClient, i, bag.Slots[i]);
+                            PacketSender.SendInventoryItemUpdate(Client, slot);
+                            PacketSender.SendBagUpdate(Client, i, bag.Slots[i]);
                             return;
                         }
                     }
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Bags.bagnospace, CustomColors.Error);
+                    PacketSender.SendPlayerMsg(Client, Strings.Bags.bagnospace, CustomColors.Error);
                 }
                 else
                 {
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Bags.depositinvalid, CustomColors.Error);
+                    PacketSender.SendPlayerMsg(Client, Strings.Bags.depositinvalid, CustomColors.Error);
                 }
             }
         }
 
-        public void RetreiveBagItem(int slot, int amount)
+        public void RetrieveBagItem(int slot, int amount)
         {
             if (InBag == null || !HasBag(InBag)) return;
             var bag = GetBag();
@@ -2414,7 +2414,7 @@ namespace Intersect.Server.Entities
                     /* If we don't have a slot send an error. */
                     if (inventorySlot < 0)
                     {
-                        PacketSender.SendPlayerMsg(MyClient, Strings.Bags.inventorynospace,
+                        PacketSender.SendPlayerMsg(Client, Strings.Bags.inventorynospace,
                             CustomColors.Error);
                         return; //Panda forgot this :P
                     }
@@ -2440,12 +2440,12 @@ namespace Intersect.Server.Entities
                     }
                     //LegacyDatabase.SaveBagItem(InBag, slot, bag.Items[slot]);
 
-                    PacketSender.SendInventoryItemUpdate(MyClient, inventorySlot);
-                    PacketSender.SendBagUpdate(MyClient, slot, bag.Slots[slot]);
+                    PacketSender.SendInventoryItemUpdate(Client, inventorySlot);
+                    PacketSender.SendBagUpdate(Client, slot, bag.Slots[slot]);
                 }
                 else
                 {
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Bags.withdrawinvalid, CustomColors.Error);
+                    PacketSender.SendPlayerMsg(Client, Strings.Bags.withdrawinvalid, CustomColors.Error);
                 }
             }
         }
@@ -2472,8 +2472,8 @@ namespace Intersect.Server.Entities
             {
                 bag.Slots[item1].Set(Item.None);
             }
-            PacketSender.SendBagUpdate(MyClient, item1, bag.Slots[item1]);
-            PacketSender.SendBagUpdate(MyClient, item2, bag.Slots[item2]);
+            PacketSender.SendBagUpdate(Client, item1, bag.Slots[item1]);
+            PacketSender.SendBagUpdate(Client, item2, bag.Slots[item2]);
         }
 
         //Friends
@@ -2488,13 +2488,13 @@ namespace Intersect.Server.Entities
                 if (Trading.Requester == null && PartyRequester == null && FriendRequester == null)
                 {
                     FriendRequester = fromPlayer;
-                    PacketSender.SendFriendRequest(MyClient, fromPlayer);
-                    PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Friends.sent,
+                    PacketSender.SendFriendRequest(Client, fromPlayer);
+                    PacketSender.SendPlayerMsg(fromPlayer.Client, Strings.Friends.sent,
                         CustomColors.RequestSent);
                 }
                 else
                 {
-                    PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Friends.busy.ToString(Name),
+                    PacketSender.SendPlayerMsg(fromPlayer.Client, Strings.Friends.busy.ToString(Name),
                         CustomColors.Error);
                 }
             }
@@ -2533,7 +2533,7 @@ namespace Intersect.Server.Entities
             }
             if (Trading.Requests.ContainsKey(fromPlayer) && Trading.Requests[fromPlayer] > Globals.Timing.TimeMs)
             {
-                PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Trading.alreadydenied,
+                PacketSender.SendPlayerMsg(fromPlayer.Client, Strings.Trading.alreadydenied,
                     CustomColors.Error);
             }
             else
@@ -2541,11 +2541,11 @@ namespace Intersect.Server.Entities
                 if (Trading.Requester == null && PartyRequester == null && FriendRequester == null)
                 {
                     Trading.Requester = fromPlayer;
-                    PacketSender.SendTradeRequest(MyClient, fromPlayer);
+                    PacketSender.SendTradeRequest(Client, fromPlayer);
                 }
                 else
                 {
-                    PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Trading.busy.ToString(Name),
+                    PacketSender.SendPlayerMsg(fromPlayer.Client, Strings.Trading.busy.ToString(Name),
                         CustomColors.Error);
                 }
             }
@@ -2579,7 +2579,7 @@ namespace Intersect.Server.Entities
                         {
                             if (!LegacyDatabase.BagEmpty(Items[slot].Bag))
                             {
-                                PacketSender.SendPlayerMsg(MyClient, Strings.Bags.onlytradeempty,
+                                PacketSender.SendPlayerMsg(Client, Strings.Bags.onlytradeempty,
                                     CustomColors.Error);
                                 return;
                             }
@@ -2605,9 +2605,9 @@ namespace Intersect.Server.Entities
                                 {
                                     Items[slot].Quantity -= amount;
                                 }
-                                PacketSender.SendInventoryItemUpdate(MyClient, slot);
-                                PacketSender.SendTradeUpdate(MyClient, this, i);
-                                PacketSender.SendTradeUpdate(Trading.Counterparty?.MyClient, this, i);
+                                PacketSender.SendInventoryItemUpdate(Client, slot);
+                                PacketSender.SendTradeUpdate(Client, this, i);
+                                PacketSender.SendTradeUpdate(Trading.Counterparty?.Client, this, i);
                                 return;
                             }
                         }
@@ -2630,17 +2630,17 @@ namespace Intersect.Server.Entities
                             {
                                 Items[slot].Quantity -= amount;
                             }
-                            PacketSender.SendInventoryItemUpdate(MyClient, slot);
-                            PacketSender.SendTradeUpdate(MyClient, this, i);
-                            PacketSender.SendTradeUpdate(Trading.Counterparty?.MyClient, this, i);
+                            PacketSender.SendInventoryItemUpdate(Client, slot);
+                            PacketSender.SendTradeUpdate(Client, this, i);
+                            PacketSender.SendTradeUpdate(Trading.Counterparty?.Client, this, i);
                             return;
                         }
                     }
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Trading.tradenospace, CustomColors.Error);
+                    PacketSender.SendPlayerMsg(Client, Strings.Trading.tradenospace, CustomColors.Error);
                 }
                 else
                 {
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Trading.offerinvalid, CustomColors.Error);
+                    PacketSender.SendPlayerMsg(Client, Strings.Trading.offerinvalid, CustomColors.Error);
                 }
             }
         }
@@ -2657,7 +2657,7 @@ namespace Intersect.Server.Entities
 
             if (Trading.Offer[slot] == null || Trading.Offer[slot].ItemId == Guid.Empty)
             {
-                PacketSender.SendPlayerMsg(MyClient, Strings.Trading.revokeinvalid, CustomColors.Error);
+                PacketSender.SendPlayerMsg(Client, Strings.Trading.revokeinvalid, CustomColors.Error);
                 return;
             }
 
@@ -2692,7 +2692,7 @@ namespace Intersect.Server.Entities
             /* If we don't have a slot send an error. */
             if (inventorySlot < 0)
             {
-                PacketSender.SendPlayerMsg(MyClient, Strings.Trading.inventorynospace, CustomColors.Error);
+                PacketSender.SendPlayerMsg(Client, Strings.Trading.inventorynospace, CustomColors.Error);
             }
 
             if (amount > Trading.Offer[slot].Quantity)
@@ -2720,9 +2720,9 @@ namespace Intersect.Server.Entities
                 Trading.Offer[slot].Quantity -= amount;
             }
 
-            PacketSender.SendInventoryItemUpdate(MyClient, inventorySlot);
-            PacketSender.SendTradeUpdate(MyClient, this, slot);
-            PacketSender.SendTradeUpdate(Trading.Counterparty?.MyClient, this, slot);
+            PacketSender.SendInventoryItemUpdate(Client, inventorySlot);
+            PacketSender.SendTradeUpdate(Client, this, slot);
+            PacketSender.SendTradeUpdate(Trading.Counterparty?.Client, this, slot);
         }
 
         public void ReturnTradeItems()
@@ -2742,27 +2742,27 @@ namespace Intersect.Server.Entities
                 if (!TryGiveItem(new Item(offer)))
                 {
                     MapInstance.Get(MapId)?.SpawnItem(X, Y, offer, offer.Quantity);
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Trading.itemsdropped, CustomColors.Error);
+                    PacketSender.SendPlayerMsg(Client, Strings.Trading.itemsdropped, CustomColors.Error);
                 }
 
                 offer.ItemId = Guid.Empty;
                 offer.Quantity = 0;
             }
 
-            PacketSender.SendInventory(MyClient);
+            PacketSender.SendInventory(Client);
         }
 
         public void CancelTrade()
         {
             if (Trading.Counterparty == null) return;
             Trading.Counterparty.ReturnTradeItems();
-            PacketSender.SendPlayerMsg(Trading.Counterparty.MyClient, Strings.Trading.declined, CustomColors.Error);
-            PacketSender.SendTradeClose(Trading.Counterparty.MyClient);
+            PacketSender.SendPlayerMsg(Trading.Counterparty.Client, Strings.Trading.declined, CustomColors.Error);
+            PacketSender.SendTradeClose(Trading.Counterparty.Client);
             Trading.Counterparty.Trading.Counterparty = null;
 
             ReturnTradeItems();
-            PacketSender.SendPlayerMsg(MyClient, Strings.Trading.declined, CustomColors.Error);
-            PacketSender.SendTradeClose(MyClient);
+            PacketSender.SendPlayerMsg(Client, Strings.Trading.declined, CustomColors.Error);
+            PacketSender.SendTradeClose(Client);
             Trading.Counterparty = null;
         }
 
@@ -2775,7 +2775,7 @@ namespace Intersect.Server.Entities
             }
             if (PartyRequests.ContainsKey(fromPlayer) && PartyRequests[fromPlayer] > Globals.Timing.TimeMs)
             {
-                PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Parties.alreadydenied,
+                PacketSender.SendPlayerMsg(fromPlayer.Client, Strings.Parties.alreadydenied,
                     CustomColors.Error);
             }
             else
@@ -2783,11 +2783,11 @@ namespace Intersect.Server.Entities
                 if (Trading.Requester == null && PartyRequester == null && FriendRequester == null)
                 {
                     PartyRequester = fromPlayer;
-                    PacketSender.SendPartyInvite(MyClient, fromPlayer);
+                    PacketSender.SendPartyInvite(Client, fromPlayer);
                 }
                 else
                 {
-                    PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Parties.busy.ToString(Name),
+                    PacketSender.SendPlayerMsg(fromPlayer.Client, Strings.Parties.busy.ToString(Name),
                         CustomColors.Error);
                 }
             }
@@ -2804,7 +2804,7 @@ namespace Intersect.Server.Entities
             {
                 if (Party[0] != this)
                 {
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Parties.leaderinvonly, CustomColors.Error);
+                    PacketSender.SendPlayerMsg(Client, Strings.Parties.leaderinvonly, CustomColors.Error);
                     return;
                 }
 
@@ -2826,14 +2826,14 @@ namespace Intersect.Server.Entities
                 for (var i = 0; i < Party.Count; i++)
                 {
                     Party[i].Party = Party;
-                    PacketSender.SendParty(Party[i].MyClient);
-                    PacketSender.SendPlayerMsg(Party[i].MyClient, Strings.Parties.joined.ToString(target.Name),
+                    PacketSender.SendParty(Party[i].Client);
+                    PacketSender.SendPlayerMsg(Party[i].Client, Strings.Parties.joined.ToString(target.Name),
                         CustomColors.Accepted);
                 }
             }
             else
             {
-                PacketSender.SendPlayerMsg(MyClient, Strings.Parties.limitreached, CustomColors.Error);
+                PacketSender.SendPlayerMsg(Client, Strings.Parties.limitreached, CustomColors.Error);
             }
         }
 
@@ -2847,8 +2847,8 @@ namespace Intersect.Server.Entities
                     if (oldMember != null)
                     {
                         oldMember.Party = new List<Player>();
-                        PacketSender.SendParty(oldMember.MyClient);
-                        PacketSender.SendPlayerMsg(oldMember.MyClient, Strings.Parties.kicked, CustomColors.Error);
+                        PacketSender.SendParty(oldMember.Client);
+                        PacketSender.SendPlayerMsg(oldMember.Client, Strings.Parties.kicked, CustomColors.Error);
                         Party.Remove(oldMember);
 
                         if (Party.Count > 1) //Need atleast 2 party members to function
@@ -2857,16 +2857,16 @@ namespace Intersect.Server.Entities
                             for (var i = 0; i < Party.Count; i++)
                             {
                                 Party[i].Party = Party;
-                                PacketSender.SendParty(Party[i].MyClient);
-                                PacketSender.SendPlayerMsg(Party[i].MyClient, Strings.Parties.memberkicked.ToString(oldMember.Name), CustomColors.Error);
+                                PacketSender.SendParty(Party[i].Client);
+                                PacketSender.SendPlayerMsg(Party[i].Client, Strings.Parties.memberkicked.ToString(oldMember.Name), CustomColors.Error);
                             }
                         }
                         else if (Party.Count > 0) //Check if anyone is left on their own
                         {
                             var remainder = Party[0];
                             remainder.Party.Clear();
-                            PacketSender.SendParty(remainder.MyClient);
-                            PacketSender.SendPlayerMsg(remainder.MyClient, Strings.Parties.disbanded, CustomColors.Error);
+                            PacketSender.SendParty(remainder.Client);
+                            PacketSender.SendPlayerMsg(remainder.Client, Strings.Parties.disbanded, CustomColors.Error);
                         }
                     }
                 }
@@ -2886,8 +2886,8 @@ namespace Intersect.Server.Entities
                     for (var i = 0; i < Party.Count; i++)
                     {
                         Party[i].Party = Party;
-                        PacketSender.SendParty(Party[i].MyClient);
-                        PacketSender.SendPlayerMsg(Party[i].MyClient,
+                        PacketSender.SendParty(Party[i].Client);
+                        PacketSender.SendPlayerMsg(Party[i].Client,
                             Strings.Parties.memberleft.ToString(oldMember.Name), CustomColors.Error);
                     }
                 }
@@ -2895,14 +2895,14 @@ namespace Intersect.Server.Entities
                 {
                     var remainder = Party[0];
                     remainder.Party.Clear();
-                    PacketSender.SendParty(remainder.MyClient);
-                    PacketSender.SendPlayerMsg(remainder.MyClient, Strings.Parties.disbanded,
+                    PacketSender.SendParty(remainder.Client);
+                    PacketSender.SendPlayerMsg(remainder.Client, Strings.Parties.disbanded,
                         CustomColors.Error);
                 }
-                PacketSender.SendPlayerMsg(MyClient, Strings.Parties.left, CustomColors.Error);
+                PacketSender.SendPlayerMsg(Client, Strings.Parties.left, CustomColors.Error);
             }
             Party.Clear();
-            PacketSender.SendParty(MyClient);
+            PacketSender.SendParty(Client);
         }
 
         public bool InParty(Player member)
@@ -2935,8 +2935,8 @@ namespace Intersect.Server.Entities
             }
 
             //Send the trade confirmation to both players
-            PacketSender.StartTrade(target.MyClient, this);
-            PacketSender.StartTrade(MyClient, target);
+            PacketSender.StartTrade(target.Client, this);
+            PacketSender.StartTrade(Client, target);
         }
 
         public byte[] PartyData()
@@ -2971,7 +2971,7 @@ namespace Intersect.Server.Entities
                     Spells[i].Set(spell);
                     if (sendUpdate)
                     {
-                        PacketSender.SendPlayerSpellUpdate(MyClient, i);
+                        PacketSender.SendPlayerSpellUpdate(Client, i);
                     }
                     return true;
                 }
@@ -3008,8 +3008,8 @@ namespace Intersect.Server.Entities
             var tmpInstance = Spells[spell2].Clone();
             Spells[spell2].Set(Spells[spell1]);
             Spells[spell1].Set(tmpInstance);
-            PacketSender.SendPlayerSpellUpdate(MyClient, spell1);
-            PacketSender.SendPlayerSpellUpdate(MyClient, spell2);
+            PacketSender.SendPlayerSpellUpdate(Client, spell1);
+            PacketSender.SendPlayerSpellUpdate(Client, spell2);
         }
 
         public void ForgetSpell(int spellSlot)
@@ -3017,11 +3017,11 @@ namespace Intersect.Server.Entities
             if (!SpellBase.Get(Spells[spellSlot].SpellId).Bound)
             {
                 Spells[spellSlot].Set(Spell.None);
-                PacketSender.SendPlayerSpellUpdate(MyClient, spellSlot);
+                PacketSender.SendPlayerSpellUpdate(Client, spellSlot);
             }
             else
             {
-                PacketSender.SendPlayerMsg(MyClient, Strings.Combat.tryforgetboundspell);
+                PacketSender.SendPlayerMsg(Client, Strings.Combat.tryforgetboundspell);
             }
         }
 
@@ -3035,7 +3035,7 @@ namespace Intersect.Server.Entities
 
                 if (!Conditions.MeetsConditionLists(spell.CastingRequirements, this, null))
                 {
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Combat.dynamicreq);
+                    PacketSender.SendPlayerMsg(Client, Strings.Combat.dynamicreq);
                     return;
                 }
 
@@ -3047,17 +3047,17 @@ namespace Intersect.Server.Entities
 					{
 						if (status.Type == StatusTypes.Silence)
 						{
-							PacketSender.SendPlayerMsg(MyClient, Strings.Combat.silenced);
+							PacketSender.SendPlayerMsg(Client, Strings.Combat.silenced);
 							return;
 						}
 						if (status.Type == StatusTypes.Stun)
 						{
-							PacketSender.SendPlayerMsg(MyClient, Strings.Combat.stunned);
+							PacketSender.SendPlayerMsg(Client, Strings.Combat.stunned);
 							return;
 						}
                         if (status.Type == StatusTypes.Sleep)
                         {
-                            PacketSender.SendPlayerMsg(MyClient, Strings.Combat.sleep);
+                            PacketSender.SendPlayerMsg(Client, Strings.Combat.sleep);
                             return;
                         }
 					}
@@ -3072,7 +3072,7 @@ namespace Intersect.Server.Entities
                     {
                         if (FindItem(projectileBase.AmmoItemId, projectileBase.AmmoRequired) == -1)
                         {
-                            PacketSender.SendPlayerMsg(MyClient,
+                            PacketSender.SendPlayerMsg(Client,
                                 Strings.Items.notenough.ToString(ItemBase.GetName(projectileBase.AmmoItemId)),
                                 CustomColors.Error);
                             return;
@@ -3144,22 +3144,22 @@ namespace Intersect.Server.Entities
                             }
                             else
                             {
-                                PacketSender.SendPlayerMsg(MyClient, Strings.Combat.channeling);
+                                PacketSender.SendPlayerMsg(Client, Strings.Combat.channeling);
                             }
                         }
                         else
                         {
-                            PacketSender.SendPlayerMsg(MyClient, Strings.Combat.cooldown);
+                            PacketSender.SendPlayerMsg(Client, Strings.Combat.cooldown);
                         }
                     }
                     else
                     {
-                        PacketSender.SendPlayerMsg(MyClient, Strings.Combat.lowhealth);
+                        PacketSender.SendPlayerMsg(Client, Strings.Combat.lowhealth);
                     }
                 }
                 else
                 {
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Combat.lowmana);
+                    PacketSender.SendPlayerMsg(Client, Strings.Combat.lowmana);
                 }
             }
         }
@@ -3228,7 +3228,7 @@ namespace Intersect.Server.Entities
                 StatPointAllocations[statIndex]++;
                 StatPoints--;
                 PacketSender.SendEntityStats(this);
-                PacketSender.SendPointsTo(MyClient);
+                PacketSender.SendPointsTo(Client);
             }
         }
 
@@ -3389,7 +3389,7 @@ namespace Intersect.Server.Entities
                     UpdateGatherItemQuests(quest.Tasks[0].TargetId);
                 }
                 StartCommonEvent(EventBase.Get(quest.StartEventId));
-                PacketSender.SendPlayerMsg(MyClient, Strings.Quests.started.ToString(quest.Name),
+                PacketSender.SendPlayerMsg(Client, Strings.Quests.started.ToString(quest.Name),
                     CustomColors.QuestStarted);
                 PacketSender.SendQuestProgress(this, quest.Id);
             }
@@ -3430,7 +3430,7 @@ namespace Intersect.Server.Entities
                 lock (mEventLock)
                 {
                     QuestOffers.Remove(questId);
-                    PacketSender.SendPlayerMsg(MyClient, Strings.Quests.declined.ToString(QuestBase.GetName(questId)),
+                    PacketSender.SendPlayerMsg(Client, Strings.Quests.declined.ToString(QuestBase.GetName(questId)),
                         CustomColors.QuestDeclined);
                     foreach (var evt in EventLookup.Values)
                     {
@@ -3462,7 +3462,7 @@ namespace Intersect.Server.Entities
                         var questProgress = FindQuest(quest.Id);
                         questProgress.TaskId = Guid.Empty;
                         questProgress.TaskProgress = -1;
-                        PacketSender.SendPlayerMsg(MyClient,
+                        PacketSender.SendPlayerMsg(Client,
                             Strings.Quests.abandoned.ToString(QuestBase.GetName(questId)), Color.Red);
                         PacketSender.SendQuestProgress(this, questId);
                     }
@@ -3485,7 +3485,7 @@ namespace Intersect.Server.Entities
                         {
                             if (quest.Tasks[i].Id == taskId)
                             {
-                                PacketSender.SendPlayerMsg(MyClient, Strings.Quests.taskcompleted);
+                                PacketSender.SendPlayerMsg(Client, Strings.Quests.taskcompleted);
                                 if (i == quest.Tasks.Count - 1)
                                 {
                                     //Complete Quest
@@ -3497,7 +3497,7 @@ namespace Intersect.Server.Entities
                                         StartCommonEvent(quest.Tasks[i].CompletionEvent);
                                     }
                                     StartCommonEvent(EventBase.Get(quest.EndEventId));
-                                    PacketSender.SendPlayerMsg(MyClient, Strings.Quests.completed.ToString(quest.Name),
+                                    PacketSender.SendPlayerMsg(Client, Strings.Quests.completed.ToString(quest.Name),
                                         Color.Green);
                                 }
                                 else
@@ -3513,7 +3513,7 @@ namespace Intersect.Server.Entities
                                     {
                                         UpdateGatherItemQuests(quest.Tasks[i + 1].TargetId);
                                     }
-                                    PacketSender.SendPlayerMsg(MyClient, Strings.Quests.updated.ToString(quest.Name),
+                                    PacketSender.SendPlayerMsg(Client, Strings.Quests.updated.ToString(quest.Name),
                                         CustomColors.TaskUpdated);
                                 }
                             }
@@ -3539,7 +3539,7 @@ namespace Intersect.Server.Entities
                     if (!skipCompletionEvent)
                     {
                         StartCommonEvent(EventBase.Get(quest.EndEventId));
-                        PacketSender.SendPlayerMsg(MyClient, Strings.Quests.completed.ToString(quest.Name), Color.Green);
+                        PacketSender.SendPlayerMsg(Client, Strings.Quests.completed.ToString(quest.Name), Color.Green);
                     }
                 }
             }
@@ -3573,7 +3573,7 @@ namespace Intersect.Server.Entities
                                     else
                                     {
                                         PacketSender.SendQuestProgress(this, quest.Id);
-                                        PacketSender.SendPlayerMsg(MyClient, Strings.Quests.itemtask.ToString(quest.Name, questProgress.TaskProgress, questTask.Quantity, ItemBase.GetName(questTask.TargetId)));
+                                        PacketSender.SendPlayerMsg(Client, Strings.Quests.itemtask.ToString(quest.Name, questProgress.TaskProgress, questTask.Quantity, ItemBase.GetName(questTask.TargetId)));
                                     }
                                 }
                             }
@@ -3787,7 +3787,7 @@ namespace Intersect.Server.Entities
                 //Use Fake Ids for Common Events Since they are not tied to maps and such
                 var evtId = Guid.NewGuid();
                 var mapId = Guid.Empty;
-                var tmpEvent = new EventInstance(evtId, Guid.Empty, MyClient, baseEvent)
+                var tmpEvent = new EventInstance(evtId, Guid.Empty, Client, baseEvent)
                 {
                     MapId = mapId,
                     SpawnX = -1,
@@ -3799,7 +3799,7 @@ namespace Intersect.Server.Entities
                 {
                     if ((trigger == CommonEventTrigger.None || baseEvent.Pages[i].CommonTrigger == trigger) && Conditions.CanSpawnPage(baseEvent.Pages[i], this, null))
                     {
-                        tmpEvent.PageInstance = new EventPageInstance(baseEvent, baseEvent.Pages[i], mapId, tmpEvent, MyClient);
+                        tmpEvent.PageInstance = new EventPageInstance(baseEvent, baseEvent.Pages[i], mapId, tmpEvent, Client);
                         tmpEvent.PageIndex = i;
                         //Check for /command trigger
                         if (trigger == CommonEventTrigger.SlashCommand)
@@ -3864,7 +3864,7 @@ namespace Intersect.Server.Entities
         public override void Move(int moveDir, Client client, bool dontUpdate = false, bool correction = false)
         {
             var oldMap = MapId;
-            client = MyClient;
+            client = Client;
             base.Move(moveDir, client, dontUpdate, correction);
             // Check for a warp, if so warp the player.
             var attribute = MapInstance.Get(MapId).Attributes[X, Y];

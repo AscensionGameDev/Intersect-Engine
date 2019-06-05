@@ -33,9 +33,9 @@ namespace Intersect.Server.Networking
             var players = MapInstance.Get(mapId).GetPlayersOnMap();
             foreach (var player in players)
             {
-                if (player != null && player.MyClient != except)
+                if (player != null && player.Client != except)
                 {
-                    player.MyClient.SendPacket(data);
+                    player.Client.SendPacket(data);
                 }
             }
         }
@@ -476,7 +476,7 @@ namespace Intersect.Server.Networking
                 bf.WriteInteger(aggression);
             }
 
-            SendDataTo(en.MyClient, bf.ToArray());
+            SendDataTo(en.Client, bf.ToArray());
             bf.Dispose();
         }
 
@@ -759,7 +759,7 @@ namespace Intersect.Server.Networking
             {
                 for (var i = 0; i < ((Player)en).Party.Count; i++)
                 {
-                    SendPartyUpdateTo(((Player)en).Party[i].MyClient, (Player)en);
+                    SendPartyUpdateTo(((Player)en).Party[i].Client, (Player)en);
                 }
             }
             SendDataToProximity(en.MapId, bf.ToArray());
@@ -871,7 +871,7 @@ namespace Intersect.Server.Networking
             bf.WriteString(face);
             bf.WriteInteger(0);
             bf.WriteGuid(eventId);
-            player.MyClient.SendPacket(bf.ToArray());
+            player.Client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
 
@@ -888,7 +888,7 @@ namespace Intersect.Server.Networking
             bf.WriteString(opt3);
             bf.WriteString(opt4);;
             bf.WriteGuid(eventId);
-            player.MyClient.SendPacket(bf.ToArray());
+            player.Client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
 
@@ -1068,8 +1068,8 @@ namespace Intersect.Server.Networking
                     bf.WriteGuid(en.Items[en.Equipment[i]].ItemId);
                 }
             }
-            SendDataToProximity(en.MapId, bf.ToArray(), en.MyClient);
-            SendPlayerEquipmentTo(en.MyClient, en);
+            SendDataToProximity(en.MapId, bf.ToArray(), en.Client);
+            SendPlayerEquipmentTo(en.Client, en);
             bf.Dispose();
         }
 
@@ -1857,7 +1857,7 @@ namespace Intersect.Server.Networking
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.QuestOffer);
             bf.WriteGuid(questId);
-            SendDataTo(player.MyClient, bf.ToArray());
+            SendDataTo(player.Client, bf.ToArray());
             bf.Dispose();
         }
 
@@ -1896,7 +1896,7 @@ namespace Intersect.Server.Networking
             {
                 bf.WriteByte(0);
             }
-            SendDataTo(player.MyClient, bf.ToArray());
+            SendDataTo(player.Client, bf.ToArray());
             bf.Dispose();
         }
 

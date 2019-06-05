@@ -17,6 +17,11 @@ namespace Intersect.Network.Packets
 
         private byte[] mVersionData;
 
+        public HailPacket()
+        {
+
+        }
+
         public HailPacket(RSACryptoServiceProvider rsa)
             : base(rsa, null)
         {
@@ -64,53 +69,6 @@ namespace Intersect.Network.Packets
         {
             get => mRsaParameters;
             set => mRsaParameters = value;
-        }
-
-        public override int EstimatedSize => mEncryptedHail?.Length + sizeof(int) ?? -1;
-
-        public override bool Read(ref IBuffer buffer)
-        {
-            try
-            {
-                if (!base.Read(ref buffer)) return false;
-                if (!buffer.Read(out mEncryptedHail)) return false;
-
-                if (mRsa == null) throw new ArgumentNullException(nameof(mRsa));
-                var decryptedHail = mRsa.Decrypt(mEncryptedHail, true);
-                using (var hailBuffer = new MemoryBuffer(decryptedHail))
-                {
-                    if (!hailBuffer.Read(out mVersionData)) return false;
-                    if (!hailBuffer.Read(out mHandshakeSecret, SIZE_HANDSHAKE_SECRET)) return false;
-
-#if INTERSECT_DIAGNOSTIC
-                Log.Debug($"VersionData: {BitConverter.ToString(VersionData)}");
-                Log.Debug($"Handshake secret: {BitConverter.ToString(HandshakeSecret)}.");
-#endif
-
-                    if (!hailBuffer.Read(out ushort bits)) return false;
-                    RsaParameters = new RSAParameters();
-                    if (!hailBuffer.Read(out mRsaParameters.Exponent, 3)) return false;
-                    if (!hailBuffer.Read(out mRsaParameters.Modulus, bits >> 3)) return false;
-
-#if INTERSECT_DIAGNOSTIC
-                DumpKey(RsaParameters, true);
-#endif
-
-                    return true;
-                }
-            }
-            catch (Exception exception)
-            {
-                Log.Warn(exception);
-                return false;
-            }
-        }
-
-        public override bool Write(ref IBuffer buffer)
-        {
-            buffer.Write(mEncryptedHail);
-
-            return true;
         }
     }
 }

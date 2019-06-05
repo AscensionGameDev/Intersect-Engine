@@ -4,6 +4,7 @@ using Intersect.Client.General;
 using Intersect.Client.UI.Menu;
 using Intersect.Config;
 using Intersect.Logging;
+using Intersect.Network.Packets;
 
 namespace Intersect.Client.Networking
 {
@@ -138,6 +139,11 @@ namespace Intersect.Client.Networking
             {
                 Log.Trace(exception);
             }
+        }
+
+        public static void SendPacket(CerasPacket packet)
+        {
+            MySocket?.SendPacket(packet);
         }
 
         public static void Update()

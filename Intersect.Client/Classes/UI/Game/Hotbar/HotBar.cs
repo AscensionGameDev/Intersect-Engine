@@ -36,7 +36,7 @@ namespace Intersect.Client.UI.Game.Hotbar
             int x = 12;
             for (int i = 0; i < Options.MaxHotbar; i++)
             {
-                Items.Add(new HotbarItem(i, HotbarWindow));
+                Items.Add(new HotbarItem((byte)i, HotbarWindow));
                 Items[i].Pnl = new ImagePanel(HotbarWindow, "HotbarContainer" + i);
                 Items[i].Setup();
                 Items[i].KeyLabel = new Label(Items[i].Pnl, "HotbarLabel" + i);

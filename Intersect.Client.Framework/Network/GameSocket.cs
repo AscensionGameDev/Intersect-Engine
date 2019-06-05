@@ -4,6 +4,7 @@
     {
         public abstract void Connect(string host, int port);
         public abstract void SendData(byte[] data);
+        public abstract void SendPacket(object packet);
         public abstract void Update();
         public abstract void Disconnect(string reason);
         public abstract void Dispose();

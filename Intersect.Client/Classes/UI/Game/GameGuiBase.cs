@@ -355,7 +355,7 @@ namespace Intersect.Client.UI.Game
             {
                 if (!mCraftingWindow.IsVisible() || mShouldCloseCraftingTable)
                 {
-                    PacketSender.SendCloseCraftingTable();
+                    PacketSender.SendCloseCrafting();
                     CloseCraftingTable();
                 }
                 else

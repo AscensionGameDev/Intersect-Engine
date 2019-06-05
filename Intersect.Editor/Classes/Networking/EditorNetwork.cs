@@ -32,7 +32,7 @@ namespace Intersect.Editor.Networking
                     EditorLidgrenNetwork = new ClientNetwork(config, rsaKey.Parameters);
                 }
 
-                EditorLidgrenNetwork.Handlers[PacketCode.BinaryPacket] = PacketHandler.HandlePacket;
+                EditorLidgrenNetwork.Handler = PacketHandler.HandlePacket;
                 EditorLidgrenNetwork.OnDisconnected += HandleDc;
                 EditorLidgrenNetwork.OnConnectionDenied += delegate
                 {
@@ -114,7 +114,7 @@ namespace Intersect.Editor.Networking
 
                 if (EditorLidgrenNetwork != null)
                 {
-                    if (!EditorLidgrenNetwork.Send(new BinaryPacket(null) {Buffer = buff}))
+                    if (!EditorLidgrenNetwork.Send(new BinaryPacket(null, buff)))
                     {
                         throw new Exception("Beta 4 network send failed.");
                     }

@@ -1,4 +1,6 @@
 ﻿using System;
+
+using Intersect.Admin.Actions;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
@@ -246,20 +248,16 @@ namespace Intersect.Client
             }
             if (btn != GameInput.MouseButtons.Right) return;
             if (Globals.InputManager.KeyDown(Keys.Shift) != true) return;
-            var x =
-                (int)
-                Math.Floor(Globals.InputManager.GetMousePosition().X + GameGraphics.CurrentView.Left);
-            var y =
-                (int)
-                Math.Floor(Globals.InputManager.GetMousePosition().Y + GameGraphics.CurrentView.Top);
+            var x = (int)Math.Floor(Globals.InputManager.GetMousePosition().X + GameGraphics.CurrentView.Left);
+            var y = (int)Math.Floor(Globals.InputManager.GetMousePosition().Y + GameGraphics.CurrentView.Top);
 
             foreach (MapInstance map in MapInstance.Lookup.Values)
             {
                 if (!(x >= map.GetX()) || !(x <= map.GetX() + (Options.MapWidth * Options.TileWidth))) continue;
                 if (!(y >= map.GetY()) || !(y <= map.GetY() + (Options.MapHeight * Options.TileHeight))) continue;
                 //Remove the offsets to just be dealing with pixels within the map selected
-                x -= (int) map.GetX();
-                y -= (int) map.GetY();
+                x -= (int)map.GetX();
+                y -= (int)map.GetY();
 
                 //transform pixel format to tile format
                 x /= Options.TileWidth;
@@ -268,7 +266,7 @@ namespace Intersect.Client
 
                 if (Globals.Me.GetRealLocation(ref x, ref y, ref mapNum))
                 {
-                    PacketSender.SendAdminAction((int) AdminActions.WarpToLoc, "", Convert.ToString(x), Convert.ToString(y),"",map.Id);
+                    PacketSender.SendAdminAction(new WarpToLocationAction(map.Id,(byte)x,(byte)y));
                 }
                 return;
             }
