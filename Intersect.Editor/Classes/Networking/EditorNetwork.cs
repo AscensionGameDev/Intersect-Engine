@@ -10,6 +10,8 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Forms;
 
+using Intersect.Network.Packets;
+
 namespace Intersect.Editor.Networking
 {
     public static class EditorNetwork
@@ -123,6 +125,17 @@ namespace Intersect.Editor.Networking
             catch (Exception)
             {
                 HandleDc(null,null);
+            }
+        }
+
+        public static void SendPacket(CerasPacket packet)
+        {
+            if (EditorLidgrenNetwork != null)
+            {
+                if (!EditorLidgrenNetwork.Send(packet))
+                {
+                    throw new Exception("Beta 4 network send failed.");
+                }
             }
         }
     }

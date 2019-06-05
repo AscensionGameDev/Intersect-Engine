@@ -311,6 +311,23 @@
     <Compile Include="Network\Packets\Client\UseItemPacket.cs" />
     <Compile Include="Network\Packets\Client\UseSpellPacket.cs" />
     <Compile Include="Network\Packets\Client\WithdrawItemPacket.cs" />
+    <Compile Include="Network\Packets\EditorPacket.cs" />
+    <Compile Include="Network\Packets\Editor\AddTilesetsPacket.cs" />
+    <Compile Include="Network\Packets\Editor\CreateGameObjectPacket.cs" />
+    <Compile Include="Network\Packets\Editor\CreateMapPacket.cs" />
+    <Compile Include="Network\Packets\Editor\DeleteGameObjectPacket.cs" />
+    <Compile Include="Network\Packets\Editor\EnterMapPacket.cs" />
+    <Compile Include="Network\Packets\Editor\LinkMapPacket.cs" />
+    <Compile Include="Network\Packets\Editor\LoginPacket.cs" />
+    <Compile Include="Network\Packets\Editor\MapListUpdatePacket.cs" />
+    <Compile Include="Network\Packets\Editor\MapUpdatePacket.cs" />
+    <Compile Include="Network\Packets\Editor\NeedMapPacket.cs" />
+    <Compile Include="Network\Packets\Editor\PingPacket.cs" />
+    <Compile Include="Network\Packets\Editor\RequestGridPacket.cs" />
+    <Compile Include="Network\Packets\Editor\RequestOpenEditorPacket.cs" />
+    <Compile Include="Network\Packets\Editor\SaveGameObjectPacket.cs" />
+    <Compile Include="Network\Packets\Editor\SaveTimeDataPacket.cs" />
+    <Compile Include="Network\Packets\Editor\UnlinkMapPacket.cs" />
     <Compile Include="Network\Packets\Reflectable\BinaryPacket.cs" />
     <Compile Include="Security\Claims\IntersectClaimTypes.cs" />
     <Compile Include="Threading\ConcurrentInstance.cs" />
@@ -422,7 +439,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Factories\" />
-    <Folder Include="Network\Packets\Editor\" />
     <Folder Include="Network\Packets\Server\" />
   </ItemGroup>
   <ItemGroup>
