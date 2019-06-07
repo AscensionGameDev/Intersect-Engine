@@ -156,7 +156,7 @@ namespace Intersect.Client
 
             GameAudio.PlayMusic(MapInstance.Get(Globals.Me.CurrentMap).Music, 3, 3, true);
             Globals.GameState = GameStates.InGame;
-            GameFade.FadeIn();
+            //GameFade.FadeIn();
         }
 
         private static void ProcessGame()
