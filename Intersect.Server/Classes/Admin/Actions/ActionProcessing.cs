@@ -33,7 +33,7 @@ namespace Intersect.Server.Classes.Admin.Actions
             }
             else
             {
-                PacketSender.SendPlayerMsg(client, Strings.Player.offline);
+                PacketSender.SendChatMsg(client, Strings.Player.offline);
             }
         }
 
@@ -48,7 +48,7 @@ namespace Intersect.Server.Classes.Admin.Actions
             }
             else
             {
-                PacketSender.SendPlayerMsg(client, Strings.Player.offline);
+                PacketSender.SendChatMsg(client, Strings.Player.offline);
             }
         }
 
@@ -63,7 +63,7 @@ namespace Intersect.Server.Classes.Admin.Actions
             }
             else
             {
-                PacketSender.SendPlayerMsg(client, Strings.Player.offline);
+                PacketSender.SendChatMsg(client, Strings.Player.offline);
             }
         }
 
@@ -84,7 +84,7 @@ namespace Intersect.Server.Classes.Admin.Actions
             }
             else
             {
-                PacketSender.SendPlayerMsg(client, Strings.Player.offline);
+                PacketSender.SendChatMsg(client, Strings.Player.offline);
             }
         }
 
@@ -126,17 +126,17 @@ namespace Intersect.Server.Classes.Admin.Actions
                     }
                     else
                     {
-                        PacketSender.SendPlayerMsg(client, Strings.Player.adminsetpower);
+                        PacketSender.SendChatMsg(client, Strings.Player.adminsetpower);
                     }
                 }
                 else
                 {
-                    PacketSender.SendPlayerMsg(client, Strings.Player.changeownpower);
+                    PacketSender.SendChatMsg(client, Strings.Player.changeownpower);
                 }
             }
             else
             {
-                PacketSender.SendPlayerMsg(client, Strings.Player.offline);
+                PacketSender.SendChatMsg(client, Strings.Player.offline);
             }
         }
 
@@ -151,7 +151,7 @@ namespace Intersect.Server.Classes.Admin.Actions
             }
             else
             {
-                PacketSender.SendPlayerMsg(client, Strings.Player.offline);
+                PacketSender.SendChatMsg(client, Strings.Player.offline);
             }
         }
 
@@ -166,7 +166,7 @@ namespace Intersect.Server.Classes.Admin.Actions
             }
             else
             {
-                PacketSender.SendPlayerMsg(client, Strings.Player.offline);
+                PacketSender.SendChatMsg(client, Strings.Player.offline);
             }
         }
 
@@ -177,11 +177,11 @@ namespace Intersect.Server.Classes.Admin.Actions
             if (unbannedUser != null)
             {
                 Ban.Remove(unbannedUser);
-                PacketSender.SendPlayerMsg(client, Strings.Account.unbanned.ToString(unbannedUser.Name));
+                PacketSender.SendChatMsg(client, Strings.Account.unbanned.ToString(unbannedUser.Name));
             }
             else
             {
-                PacketSender.SendPlayerMsg(client, Strings.Account.notfound.ToString(unbannedUser.Name));
+                PacketSender.SendChatMsg(client, Strings.Account.notfound.ToString(unbannedUser.Name));
             }
         }
 
@@ -192,11 +192,11 @@ namespace Intersect.Server.Classes.Admin.Actions
             if (unmutedUser != null)
             {
                 Mute.Remove(unmutedUser);
-                PacketSender.SendPlayerMsg(client, Strings.Account.unmuted.ToString(unmutedUser.Name));
+                PacketSender.SendChatMsg(client, Strings.Account.unmuted.ToString(unmutedUser.Name));
             }
             else
             {
-                PacketSender.SendPlayerMsg(client, Strings.Account.notfound.ToString(unmutedUser.Name));
+                PacketSender.SendChatMsg(client, Strings.Account.notfound.ToString(unmutedUser.Name));
             }
         }
 
@@ -207,12 +207,12 @@ namespace Intersect.Server.Classes.Admin.Actions
             if (target != null)
             {
                 player.Warp(target.MapId, target.X, target.Y);
-                PacketSender.SendPlayerMsg(client, Strings.Player.warpedto.ToString(target.Name));
-                PacketSender.SendPlayerMsg(target.Client, Strings.Player.warpedtoyou.ToString(player.Name));
+                PacketSender.SendChatMsg(client, Strings.Player.warpedto.ToString(target.Name));
+                PacketSender.SendChatMsg(target.Client, Strings.Player.warpedtoyou.ToString(player.Name));
             }
             else
             {
-                PacketSender.SendPlayerMsg(client, Strings.Player.offline);
+                PacketSender.SendChatMsg(client, Strings.Player.offline);
             }
         }
 
@@ -235,12 +235,12 @@ namespace Intersect.Server.Classes.Admin.Actions
             if (target != null)
             {
                 target.Warp(player.MapId, player.X, player.Y);
-                PacketSender.SendPlayerMsg(client, Strings.Player.haswarpedto.ToString(target.Name), player.Name);
-                PacketSender.SendPlayerMsg(target.Client, Strings.Player.beenwarpedto.ToString(player.Name), player.Name);
+                PacketSender.SendChatMsg(client, Strings.Player.haswarpedto.ToString(target.Name), player.Name);
+                PacketSender.SendChatMsg(target.Client, Strings.Player.beenwarpedto.ToString(player.Name), player.Name);
             }
             else
             {
-                PacketSender.SendPlayerMsg(client, Strings.Player.offline);
+                PacketSender.SendChatMsg(client, Strings.Player.offline);
             }
         }
     }

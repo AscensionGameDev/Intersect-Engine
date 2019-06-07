@@ -35,7 +35,7 @@ namespace Intersect.Server.Entities
         public void Destroy(int dropitems = 0, EntityInstance killer = null)
         {
             Die(dropitems, killer);
-            PacketSender.SendEntityLeave(Id, (int) EntityTypes.Resource, MapId);
+            PacketSender.SendEntityLeave(this);
         }
 
         public override void Die(int dropitems = 100, EntityInstance killer = null)

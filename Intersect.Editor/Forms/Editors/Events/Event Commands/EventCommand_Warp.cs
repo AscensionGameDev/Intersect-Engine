@@ -61,8 +61,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void btnSave_Click(object sender, EventArgs e)
         {
             mMyCommand.MapId = MapList.OrderedMaps[cmbMap.SelectedIndex].MapId;
-            mMyCommand.X = scrlX.Value;
-            mMyCommand.Y = scrlY.Value;
+            mMyCommand.X = (byte)scrlX.Value;
+            mMyCommand.Y = (byte)scrlY.Value;
             mMyCommand.Direction = (WarpDirection)cmbDirection.SelectedIndex;
             mEventEditor.FinishCommandEdit();
         }
@@ -74,12 +74,12 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void scrlX_Scroll(object sender, ScrollValueEventArgs e)
         {
-            lblX.Text = Strings.Warping.x.ToString( scrlX.Value);
+            lblX.Text = Strings.Warping.x.ToString(scrlX.Value);
         }
 
         private void scrlY_Scroll(object sender, ScrollValueEventArgs e)
         {
-            lblY.Text = Strings.Warping.y.ToString( scrlY.Value);
+            lblY.Text = Strings.Warping.y.ToString(scrlY.Value);
         }
 
         private void btnVisual_Click(object sender, EventArgs e)

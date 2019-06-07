@@ -11,10 +11,10 @@ namespace Intersect.Admin.Actions
     {
         public override AdminActions Action { get; } = AdminActions.WarpTo;
         public Guid MapId { get; set; }
-        public int X { get; set; }
-        public int Y { get; set; }
+        public byte X { get; set; }
+        public byte Y { get; set; }
 
-        public WarpToLocationAction(Guid mapId, int x, int y)
+        public WarpToLocationAction(Guid mapId, byte x, byte y)
         {
             MapId = mapId;
             X = x;

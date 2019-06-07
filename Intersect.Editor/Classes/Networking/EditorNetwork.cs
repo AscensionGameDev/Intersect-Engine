@@ -4,7 +4,6 @@ using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Crypto;
 using Intersect.Network.Crypto.Formats;
-using Intersect.Network.Packets.Reflectable;
 using System;
 using System.Diagnostics;
 using System.Reflection;
@@ -94,37 +93,6 @@ namespace Intersect.Editor.Networking
             {
                 MessageBox.Show(@"Disconnected!");
                 Application.Exit();
-            }
-        }
-
-        public static void SendPacket(byte[] packet)
-        {
-            try
-            {
-                var buff = new ByteBuffer();
-                if (packet.Length > 800)
-                {
-                    packet = Compression.CompressPacket(packet);
-                    buff.WriteByte(1); //Compressed
-                    buff.WriteBytes(packet);
-                }
-                else
-                {
-                    buff.WriteByte(0); //Not Compressed
-                    buff.WriteBytes(packet);
-                }
-
-                if (EditorLidgrenNetwork != null)
-                {
-                    if (!EditorLidgrenNetwork.Send(new BinaryPacket(null, buff)))
-                    {
-                        throw new Exception("Beta 4 network send failed.");
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                HandleDc(null,null);
             }
         }
 

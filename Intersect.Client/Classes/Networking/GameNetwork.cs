@@ -73,7 +73,7 @@ namespace Intersect.Client.Networking
                 Log.Error(exception);
                 return;
             }
-            PacketHandler.HandlePacket(bf);
+            //PacketHandler.HandlePacket(bf);
         }
 
         private static void MySocket_OnDisconnected()
@@ -109,31 +109,6 @@ namespace Intersect.Client.Networking
                 MySocket?.Disconnect(reason);
                 MySocket?.Dispose();
                 MySocket = null;
-            }
-            catch (Exception exception)
-            {
-                Log.Trace(exception);
-            }
-        }
-
-        public static void SendPacket(byte[] packet)
-        {
-            try
-            {
-                var buff = new ByteBuffer();
-                if (packet.Length > 800)
-                {
-                    packet = Compression.CompressPacket(packet);
-                    buff.WriteByte(1); //Compressed
-                    buff.WriteBytes(packet);
-                }
-                else
-                {
-                    buff.WriteByte(0); //Not Compressed
-                    buff.WriteBytes(packet);
-                }
-
-                MySocket?.SendData(buff.ToArray());
             }
             catch (Exception exception)
             {

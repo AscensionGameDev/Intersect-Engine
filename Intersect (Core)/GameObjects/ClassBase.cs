@@ -91,9 +91,9 @@ namespace Intersect.GameObjects
             set => SpawnMapId = value?.Id ?? Guid.Empty;
         }
 
-        public int SpawnX { get; set; }
-        public int SpawnY { get; set; }
-        public int SpawnDir { get; set; }
+        public byte SpawnX { get; set; }
+        public byte SpawnY { get; set; }
+        public byte SpawnDir { get; set; }
 
         //Base Stats
         [Column("BaseStats")]

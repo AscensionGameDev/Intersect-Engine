@@ -9,7 +9,6 @@ using Ceras;
 
 using Intersect.Network.Packets;
 using Intersect.Network.Packets.Client;
-using Intersect.Network.Packets.Reflectable;
 
 namespace Intersect.Network
 {
@@ -32,7 +31,6 @@ namespace Intersect.Network
             AddKnownTypes(mSerializerConfig, "Intersect.Network.Packets.Client");
             AddKnownTypes(mSerializerConfig, "Intersect.Network.Packets.Editor");
             AddKnownTypes(mSerializerConfig, "Intersect.Network.Packets.Server");
-            AddKnownTypes(mSerializerConfig, "Intersect.Network.Packets.Reflectable");
             AddKnownTypes(mSerializerConfig, "Intersect.Admin.Actions");
 
             mSerializer = new CerasSerializer(mSerializerConfig);

@@ -1,7 +1,6 @@
 using Intersect.Enums;
 using Intersect.Logging;
 using Intersect.Network;
-using Intersect.Network.Packets.Reflectable;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities;
@@ -13,6 +12,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+
+using Intersect.Network.Packets;
 
 namespace Intersect.Server.Networking
 {
@@ -91,94 +92,13 @@ namespace Intersect.Server.Networking
 
         private int mPacketCount = 0;
         private bool mDebugPackets = false;
-        public void SendPacket(byte[] packetData)
-        {
-            var buff = new ByteBuffer();
-            Debug.Assert(packetData != null, "packetData != null");
-            mPacketCount++;
-            if (mDebugPackets)
-            {
-                var bf = new ByteBuffer();
-                bf.WriteBytes(packetData);
-                var header = (ServerPackets) bf.ReadLong();
-                Console.WriteLine("Sent " + header + " - " + mPacketCount);
-            }
-            if (packetData.Length > 800)
-            {
-                packetData = Compression.CompressPacket(packetData);
-                buff.WriteByte(1); //Compressed
-                buff.WriteBytes(packetData);
-            }
-            else
-            {
-                buff.WriteByte(0); //Not Compressed
-                buff.WriteBytes(packetData);
-            }
 
+        public void SendPacket(CerasPacket packet)
+        {
             if (mConnection != null)
             {
-                mConnection.Send(new BinaryPacket(null, buff));
+                mConnection.Send(packet);
             }
-            else
-            {
-                mSendQueue?.Enqueue(buff.ToArray());
-            }
-        }
-
-        public void SendShit()
-        {
-            //var timer = new System.Timers.Timer(5000);
-            //timer.Elapsed += (source, args) =>
-            //{
-            var random = new CryptoRandom();
-            var b = 0;
-            for (var a = 0; a < b; a++)
-            {
-                Log.Diagnostic($"Sending shit... {a}/{b}");
-                for (var c = 10; c < 50; c++)
-                {
-                    var cap = 10 + (c + random.NextDouble() * 25) % 40;
-                    SendPacket(CreateShitPacket(true, -1, false, false, null, 0));
-                    for (var i = 0; i < cap; i++)
-                    {
-                        var shit = CreateShit();
-                        var shitSize = Encoding.Unicode.GetByteCount(shit);
-                        SendPacket(CreateShitPacket(true, i, false, true, null, 0));
-                        SendPacket(CreateShitPacket(true, i, true, false, shit, shitSize));
-                        SendPacket(CreateShitPacket(true, i, false, false, null, 0));
-                    }
-                    SendPacket(CreateShitPacket(false, -1, false, false, null, 0));
-                }
-                SendPacket(CreateShitPacket(false, -2, false, false, null, 0));
-            }
-            //};
-            //timer.Start();
-        }
-
-        private byte[] CreateShitPacket(bool shitting, int num, bool data, bool start, string shit, int shitSize)
-        {
-            using (var bf = new ByteBuffer())
-            {
-                bf.WriteLong((int) ServerPackets.Shit);
-                bf.WriteBoolean(shitting);
-                bf.WriteInteger(num);
-                if (num == -1) return bf.ToArray();
-                bf.WriteBoolean(data);
-                if (data)
-                {
-                    bf.WriteString(shit);
-                    bf.WriteInteger(shitSize);
-                }
-                else bf.WriteBoolean(start);
-                return bf.ToArray();
-            }
-        }
-
-        private string CreateShit()
-        {
-            var shit = new byte[512];
-            new Random().NextBytes(shit);
-            return BitConverter.ToString(shit);
         }
 
         public void Pinged()
@@ -214,19 +134,12 @@ namespace Intersect.Server.Networking
         public static Client CreateBeta4Client(IConnection connection)
         {
             var client = new Client(connection);
-            try
+            lock (Globals.ClientLock)
             {
-                lock (Globals.ClientLock)
-                {
-                    Globals.Clients.Add(client);
-                    Globals.ClientLookup.Add(connection.Guid, client);
-                }
-                return client;
+                Globals.Clients.Add(client);
+                Globals.ClientLookup.Add(connection.Guid, client);
             }
-            finally
-            {
-                client.SendShit();
-            }
+            return client;
         }
 
         public void Logout()

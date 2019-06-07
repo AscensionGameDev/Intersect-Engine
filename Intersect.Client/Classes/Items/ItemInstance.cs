@@ -2,14 +2,16 @@
 using Intersect.Enums;
 using Intersect.GameObjects;
 
+using Newtonsoft.Json;
+
 namespace Intersect.Client.Items
 {
     public class ItemInstance
     {
         public Guid ItemId;
         public int Quantity;
-        public int[] StatBoost = new int[(int) Stats.StatCount];
-        public Guid BagId;
+        public int[] StatBuffs = new int[(int) Stats.StatCount];
+        public Guid? BagId;
         
         public ItemBase Item => ItemBase.Get(ItemId);
 
@@ -17,15 +19,9 @@ namespace Intersect.Client.Items
         {
         }
 
-        public void Load(ByteBuffer bf)
+        public void Load(string data)
         {
-            ItemId = bf.ReadGuid();
-            Quantity = bf.ReadInteger();
-            for (int i = 0; i < (int) Stats.StatCount; i++)
-            {
-                StatBoost[i] = bf.ReadInteger();
-            }
-            BagId = bf.ReadGuid();
+            JsonConvert.PopulateObject(data, this);
         }
 
         public ItemInstance Clone()
@@ -38,7 +34,7 @@ namespace Intersect.Client.Items
             };
             for (int i = 0; i < (int) Stats.StatCount; i++)
             {
-                newItem.StatBoost[i] = StatBoost[i];
+                newItem.StatBuffs[i] = StatBuffs[i];
             }
             return newItem;
         }
@@ -53,11 +49,9 @@ namespace Intersect.Client.Items
         {
         }
 
-        public void Load(ByteBuffer bf)
+        public MapItemInstance(string data) : base()
         {
-            X = bf.ReadInteger();
-            Y = bf.ReadInteger();
-            base.Load(bf);
+            JsonConvert.PopulateObject(data, this);
         }
     }
 }

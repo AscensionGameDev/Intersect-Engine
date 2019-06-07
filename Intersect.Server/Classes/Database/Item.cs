@@ -6,16 +6,20 @@ using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.General;
 using Intersect.Utilities;
 
+using Newtonsoft.Json;
+
 namespace Intersect.Server.Database
 {
     public class Item
     {
         public Guid? BagId { get; set; }
+        [JsonIgnore]
         public virtual Bag Bag { get; set; }
         public Guid ItemId { get; set; } = Guid.Empty;
         public int Quantity { get; set; }
 
         [Column("StatBuffs")]
+        [JsonIgnore]
         public string StatBuffsJson
         {
             get => DatabaseUtils.SaveIntArray(StatBuffs, (int)Enums.Stats.StatCount);
@@ -77,17 +81,9 @@ namespace Intersect.Server.Database
             }
         }
 
-        public byte[] Data()
+        public string Data()
         {
-            var bf = new ByteBuffer();
-            bf.WriteGuid(ItemId);
-            bf.WriteInteger(Quantity);
-            for (int i = 0; i < (int)Stats.StatCount; i++)
-            {
-                bf.WriteInteger(StatBuffs[i]);
-            }
-            bf.WriteGuid(BagId ?? Guid.Empty);
-            return bf.ToArray();
+            return JsonConvert.SerializeObject(this);
         }
 
         public Item Clone()

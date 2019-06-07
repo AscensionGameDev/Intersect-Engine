@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using Newtonsoft.Json.Linq;
+
 namespace Intersect.Server.Maps
 {
     using LegacyDatabase = LegacyDatabase;
@@ -20,6 +22,9 @@ namespace Intersect.Server.Maps
         public long XMin;
         public long YMax;
         public long YMin;
+
+        private string[,] mEditorData;
+        private Guid[,] mClientData;
 
         public MapGrid(Guid startMapId, int myGridIndex)
         {
@@ -126,6 +131,32 @@ namespace Intersect.Server.Maps
             if (MyMaps.Contains(mapId)) return true;
             if (!parent) return false;
             return LegacyDatabase.MapGrids.Any(t => t.HasMap(mapId));
+        }
+
+        public string[,] GetEditorData()
+        {
+            var data = new string[Width, Height];
+            for (var x = XMin; x < XMax; x++)
+            {
+                for (var y = YMin; y < YMax; y++)
+                {
+                    var map = MapInstance.Get(MyGrid[x, y]);
+                    if (map != null)
+                    {
+                        var obj = new JObject();
+                        obj.Add("Guid",map.Id);
+                        obj.Add("Name",map.Name);
+                        obj.Add("Revision",map.Revision);
+                        data[x, y] = obj.ToString();
+                    }
+                }
+            }
+            return data;
+        }
+
+        public Guid[,] GetClientData()
+        {
+            return MyGrid;
         }
     }
 }

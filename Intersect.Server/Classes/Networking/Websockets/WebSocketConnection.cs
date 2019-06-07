@@ -1,6 +1,7 @@
 ﻿using System;
 using Intersect.Network;
-using Intersect.Network.Packets.Reflectable;
+using Intersect.Network.Packets;
+
 using WebSocketSharp.Net.WebSockets;
 using WebSocketSharp.Server;
 
@@ -59,41 +60,7 @@ namespace Intersect.Server.Networking.Websockets
                 lock (mBufferLock)
                 {
                     mBuffer.WriteBytes(e.RawData);
-                    ParseData();
-                }
-            }
-        }
-
-        private void ParseData()
-        {
-            int packetLen;
-            if (mClientRemoved) return;
-            lock (mBufferLock)
-            {
-                while (mBuffer.Length() >= 4)
-                {
-                    packetLen = mBuffer.ReadInteger(false);
-                    if (packetLen == 0)
-                    {
-                        break;
-                    }
-                    if (mBuffer.Length() >= packetLen + 4)
-                    {
-                        mBuffer.ReadInteger();
-                        var data = mBuffer.ReadBytes(packetLen);
-                        var bf = new ByteBuffer();
-                        bf.WriteBytes(data);
-                        var packet = new BinaryPacket(this, bf);
-                        mPacketHandler.HandlePacket(this, packet);
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-                if (mBuffer.Length() == 0)
-                {
-                    mBuffer.Clear();
+                    //ParseData();
                 }
             }
         }
@@ -102,13 +69,9 @@ namespace Intersect.Server.Networking.Websockets
         {
             try
             {
-                if (packet.GetType() == typeof(BinaryPacket))
+                if (packet.GetType() == typeof(CerasPacket))
                 {
-                    BinaryPacket bpacket = (BinaryPacket) packet;
-                    var bf = new ByteBuffer();
-                    bf.WriteInteger(bpacket.GetBuffer().ToArray().Length);
-                    bf.WriteBytes(bpacket.GetBuffer().ToArray());
-                    mContext.WebSocket.SendAsync(bf.ToArray(), null);
+                    mContext.WebSocket.SendAsync(((CerasPacket)packet).Data(), null);
                     return true;
                 }
                 else

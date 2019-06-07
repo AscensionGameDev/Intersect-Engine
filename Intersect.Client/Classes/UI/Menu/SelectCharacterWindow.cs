@@ -316,13 +316,9 @@ namespace Intersect.Client.UI.Menu
             Id = id;
         }
 
-        public Character(Guid id, string name, string sprite, string face, int level, string charClass)
+        public Character(Guid id, string name, string sprite, string face, int level, string charClass, string[] equipment)
         {
-            for (int i = 0; i < Options.EquipmentSlots.Count + 1; i++)
-            {
-                Equipment[i] = "";
-            }
-            Equipment[0] = "Player";
+            Equipment = equipment;
             Id = id;
             Name = name;
             Sprite = sprite;

@@ -239,8 +239,7 @@ namespace Intersect.Client.Entities
             Status.Clear();
             for (int i = 0; i < count; i++)
             {
-                Status.Add(new StatusInstance(bf.ReadGuid(), bf.ReadInteger(), bf.ReadString(), bf.ReadInteger(),
-                    bf.ReadInteger()));
+                Status.Add(new StatusInstance(bf.ReadGuid(), (StatusTypes)bf.ReadInteger(), bf.ReadString(), bf.ReadInteger(), bf.ReadInteger()));
             }
             SortStatuses();
             for (var i = 0; i < (int) Stats.StatCount; i++)
@@ -547,7 +546,7 @@ namespace Intersect.Client.Entities
             if (this == Globals.Me) return false;
             for (var n = 0; n < Status.Count; n++)
             {
-                if (Status[n].Type == (int) StatusTypes.Stealth)
+                if (Status[n].Type == StatusTypes.Stealth)
                 {
                     return true;
                 }
@@ -624,13 +623,13 @@ namespace Intersect.Client.Entities
             //If the entity has transformed, apply that sprite instead.
             for (var n = 0; n < Status.Count; n++)
             {
-                if (Status[n].Type == (int) StatusTypes.Transform)
+                if (Status[n].Type == StatusTypes.Transform)
                 {
                     sprite = Status[n].Data;
 					TransformedSprite = sprite;
 				}
                 //If unit is stealthed, don't render unless the entity is the player.
-                if (Status[n].Type == (int) StatusTypes.Stealth)
+                if (Status[n].Type == StatusTypes.Stealth)
                 {
                     if (this != Globals.Me && !Globals.Me.IsInMyParty(this))
                     {
@@ -931,7 +930,7 @@ namespace Intersect.Client.Entities
             for (var n = 0; n < Status.Count; n++)
             {
                 //If unit is stealthed, don't render unless the entity is the player.
-                if (Status[n].Type == (int) StatusTypes.Stealth)
+                if (Status[n].Type == StatusTypes.Stealth)
                 {
                     if (this != Globals.Me && !Globals.Me.IsInMyParty(this))
                     {
@@ -969,7 +968,7 @@ namespace Intersect.Client.Entities
             //Check for shields
             foreach (var status in Status)
             {
-                if (status.Type == (int)StatusTypes.Shield)
+                if (status.Type == StatusTypes.Shield)
                 {
                     shieldSize += status.Shield[(int)Vitals.Health];
                     maxVital += status.Shield[(int)Vitals.Health];
@@ -982,7 +981,7 @@ namespace Intersect.Client.Entities
             for (var n = 0; n < Status.Count; n++)
             {
                 //If unit is stealthed, don't render unless the entity is the player.
-                if (Status[n].Type == (int) StatusTypes.Stealth)
+                if (Status[n].Type == StatusTypes.Stealth)
                 {
                     if (this != Globals.Me && !Globals.Me.IsInMyParty(this))
                     {
@@ -1122,12 +1121,12 @@ namespace Intersect.Client.Entities
         public string Data = "";
         public Guid SpellId;
         public long TimeRecevied = 0;
-        public int TimeRemaining = 0;
-        public int TotalDuration = 1;
-        public int Type = -1;
+        public long TimeRemaining = 0;
+        public long TotalDuration = 1;
+        public StatusTypes Type;
         public int[] Shield = new int[(int)Vitals.VitalCount];
 
-        public StatusInstance(Guid spellId, int type, string data, int timeRemaining, int totalDuration)
+        public StatusInstance(Guid spellId, StatusTypes type, string data, long timeRemaining, long totalDuration)
         {
             SpellId = spellId;
             Type = type;

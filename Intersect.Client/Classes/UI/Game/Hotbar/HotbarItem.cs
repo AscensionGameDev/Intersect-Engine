@@ -149,7 +149,7 @@ namespace Intersect.Client.UI.Game.Hotbar
                     mItemDescWindow.Dispose();
                     mItemDescWindow = null;
                 }
-                mItemDescWindow = new ItemDescWindow(mCurrentItem, 1, mHotbarWindow.X + Pnl.X + 16, mHotbarWindow.Y + mHotbarWindow.Height + 2, mInventoryItem?.StatBoost, mCurrentItem.Name,"",true);
+                mItemDescWindow = new ItemDescWindow(mCurrentItem, 1, mHotbarWindow.X + Pnl.X + 16, mHotbarWindow.Y + mHotbarWindow.Height + 2, mInventoryItem?.StatBuffs, mCurrentItem.Name,"",true);
             }
             else if (mCurrentSpell != null)
             {

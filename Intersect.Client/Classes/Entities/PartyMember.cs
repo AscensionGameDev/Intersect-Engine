@@ -11,19 +11,13 @@ namespace Intersect.Client.Entities
         public int[] MaxVital = new int[(int)Vitals.VitalCount];
         public int Level;
 
-        public PartyMember(ByteBuffer bf)
+        public PartyMember(Guid id, string name, int[] vital, int[] maxVital, int level)
         {
-            Id = bf.ReadGuid();
-            Name = bf.ReadString();
-            for (int i = 0; i < (int) Vitals.VitalCount; i++)
-            {
-                Vital[i] = bf.ReadInteger();
-            }
-            for (int i = 0; i < (int)Vitals.VitalCount; i++)
-            {
-                MaxVital[i] = bf.ReadInteger();
-            }
-            Level = bf.ReadInteger();
+            Id = id;
+            Name = name;
+            Vital = vital;
+            MaxVital = maxVital;
+            Level = level;
         }
     }
 }

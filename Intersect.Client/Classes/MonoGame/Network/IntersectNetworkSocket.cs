@@ -12,7 +12,6 @@ using Intersect.Network;
 using Intersect.Network.Crypto;
 using Intersect.Network.Crypto.Formats;
 using Intersect.Network.Packets;
-using Intersect.Network.Packets.Reflectable;
 
 namespace Intersect.Client.MonoGame.Network
 {
@@ -51,19 +50,6 @@ namespace Intersect.Client.MonoGame.Network
             if (!ClientLidgrenNetwork.Connect())
             {
                 Log.Error("An error occurred while attempting to connect.");
-            }
-        }
-
-        public override void SendData(byte[] data)
-        {
-            if (ClientLidgrenNetwork != null && ClientLidgrenNetwork.IsConnected)
-            {
-                var buffer = new ByteBuffer();
-                buffer.WriteBytes(data);
-                if (!ClientLidgrenNetwork.Send(new BinaryPacket(null,buffer)))
-                {
-                    throw new Exception("Beta 4 network send failed.");
-                }
             }
         }
 

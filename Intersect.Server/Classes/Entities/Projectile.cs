@@ -28,7 +28,7 @@ namespace Intersect.Server.Entities
         public SpellBase Spell;
         public EntityInstance Target;
 
-        public Projectile(EntityInstance owner, SpellBase parentSpell, ItemBase parentItem, ProjectileBase projectile, Guid mapId, int X, int Y, int z, int direction, EntityInstance target) : base()
+        public Projectile(EntityInstance owner, SpellBase parentSpell, ItemBase parentItem, ProjectileBase projectile, Guid mapId, byte X, byte Y, byte z, byte direction, EntityInstance target) : base()
         {
             Base = projectile;
             Name = Base.Name;
@@ -65,18 +65,15 @@ namespace Intersect.Server.Entities
 
         private void AddProjectileSpawns()
         {
-            for (int x = 0; x < ProjectileBase.SPAWN_LOCATIONS_WIDTH; x++)
+            for (byte x = 0; x < ProjectileBase.SPAWN_LOCATIONS_WIDTH; x++)
             {
-                for (int y = 0; y < ProjectileBase.SPAWN_LOCATIONS_HEIGHT; y++)
+                for (byte y = 0; y < ProjectileBase.SPAWN_LOCATIONS_HEIGHT; y++)
                 {
-                    for (int d = 0; d < ProjectileBase.MAX_PROJECTILE_DIRECTIONS; d++)
+                    for (byte d = 0; d < ProjectileBase.MAX_PROJECTILE_DIRECTIONS; d++)
                     {
                         if (Base.SpawnLocations[x, y].Directions[d] == true && mSpawnedAmount < Spawns.Length)
                         {
-                            ProjectileSpawns s = new ProjectileSpawns(FindProjectileRotationDir(Dir, d),
-                                X + FindProjectileRotationX(Dir, x - 2, y - 2),
-                                Y + FindProjectileRotationY(Dir, x - 2, y - 2), Z, MapId, Base,
-                                this);
+                            ProjectileSpawns s = new ProjectileSpawns(FindProjectileRotationDir(Dir, d), (byte)(X + FindProjectileRotationX(Dir, x - 2, y - 2)), (byte)(Y + FindProjectileRotationY(Dir, x - 2, y - 2)), Z, MapId, Base, this);
                             Spawns[mSpawnedAmount] = s;
                             mSpawnedAmount++;
                             mSpawnCount++;
@@ -123,7 +120,7 @@ namespace Intersect.Server.Entities
             }
         }
 
-        private int FindProjectileRotationDir(int entityDir, int projectionDir)
+        private byte FindProjectileRotationDir(int entityDir, byte projectionDir)
         {
             switch (entityDir)
             {
@@ -305,7 +302,7 @@ namespace Intersect.Server.Entities
                     {
                         if (((MapZDimensionAttribute)attribute).GatewayTo > 0)
                         {
-                            spawn.Z = ((MapZDimensionAttribute)attribute).GatewayTo - 1;
+                            spawn.Z = (byte)(((MapZDimensionAttribute)attribute).GatewayTo - 1);
                         }
                     }
                 }
@@ -416,8 +413,8 @@ namespace Intersect.Server.Entities
                     killSpawn = true;
                 }
             }
-            spawn.X = newx;
-            spawn.Y = newy;
+            spawn.X = (byte)newx;
+            spawn.Y = (byte)newy;
             spawn.MapId = newMapId;
             return killSpawn;
         }
@@ -433,7 +430,7 @@ namespace Intersect.Server.Entities
                 }
             }
             MapInstance.Get(MapId).RemoveProjectile(this);
-            PacketSender.SendEntityLeave(Id, (int) EntityTypes.Projectile, MapId);
+            PacketSender.SendEntityLeave(this);
         }
 
         public override byte[] Data()
@@ -462,17 +459,17 @@ namespace Intersect.Server.Entities
 
     public class ProjectileSpawns
     {
-        public int Dir;
+        public byte Dir;
         public int Distance;
         public Guid MapId;
         public Projectile Parent;
         public ProjectileBase ProjectileBase;
         public long TransmittionTimer = Globals.Timing.TimeMs;
-        public int X;
-        public int Y;
-        public int Z;
+        public byte X;
+        public byte Y;
+        public byte Z;
 
-        public ProjectileSpawns(int dir, int x, int y, int z, Guid mapId, ProjectileBase projectileBase, Projectile parent)
+        public ProjectileSpawns(byte dir, byte x, byte y, byte z, Guid mapId, ProjectileBase projectileBase, Projectile parent)
         {
             MapId = mapId;
             X = x;

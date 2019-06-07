@@ -9,6 +9,7 @@ using Intersect.Client.General;
 using Intersect.Client.Maps;
 using Intersect.Client.UI;
 using Intersect.Config;
+using Intersect.Enums;
 using Intersect.GameObjects;
 
 namespace Intersect.Client
@@ -635,19 +636,19 @@ namespace Intersect.Client
                 float y = map.GetY() - Options.MapHeight * Options.TileHeight;
                 float x1 = map.GetX() + (Options.MapWidth * Options.TileWidth) * 2;
                 float y1 = map.GetY() + (Options.MapHeight * Options.TileHeight) * 2;
-                if (map.HoldUp == 1)
+                if (map.CameraHolds[(int)Directions.Up])
                 {
                     y += Options.MapHeight * Options.TileHeight;
                 }
-                if (map.HoldLeft == 1)
+                if (map.CameraHolds[(int)Directions.Left])
                 {
                     x += Options.MapWidth * Options.TileWidth;
                 }
-                if (map.HoldRight == 1)
+                if (map.CameraHolds[(int)Directions.Right])
                 {
                     x1 -= Options.MapWidth * Options.TileWidth;
                 }
-                if (map.HoldDown == 1)
+                if (map.CameraHolds[(int)Directions.Down])
                 {
                     y1 -= Options.MapHeight * Options.TileHeight;
                 }

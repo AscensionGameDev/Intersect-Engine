@@ -163,16 +163,14 @@ namespace Intersect
             optionsCompressed = JsonConvert.SerializeObject(_options);
         }
 
-        public static byte[] GetOptionsData()
+        public static string GetOptionsData()
         {
-            var bf = new ByteBuffer();
-            bf.WriteString(optionsCompressed);
-            return bf.ToArray();
+            return optionsCompressed;
         }
 
-        public static void LoadFromServer(ByteBuffer bf)
+        public static void LoadFromServer(string data)
         {
-            _options = JsonConvert.DeserializeObject<Options>(bf.ReadString());
+            _options = JsonConvert.DeserializeObject<Options>(data);
         }
 
         public bool ShouldSerializePlayerDatabase()

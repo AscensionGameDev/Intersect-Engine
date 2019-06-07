@@ -557,12 +557,8 @@ namespace Intersect.Editor.Forms.DockingElements
                             if (Globals.MapLayersWindow.rbDeclared.Checked == true &&
                                 Globals.MapLayersWindow.lstMapNpcs.Items.Count > 0)
                             {
-                                Globals.CurrentMap.Spawns[
-                                    Globals.MapLayersWindow.lstMapNpcs.SelectedIndex
-                                ].X = Globals.CurTileX;
-                                Globals.CurrentMap.Spawns[
-                                    Globals.MapLayersWindow.lstMapNpcs.SelectedIndex
-                                ].Y = Globals.CurTileY;
+                                Globals.CurrentMap.Spawns[Globals.MapLayersWindow.lstMapNpcs.SelectedIndex].X = Globals.CurTileX;
+                                Globals.CurrentMap.Spawns[Globals.MapLayersWindow.lstMapNpcs.SelectedIndex].Y = Globals.CurTileY;
                             }
                         }
                         else
@@ -1013,10 +1009,8 @@ namespace Intersect.Editor.Forms.DockingElements
                 if (Globals.MapLayersWindow.lstMapNpcs.SelectedIndex > -1 &&
                     Globals.MapLayersWindow.rbDeclared.Checked == true)
                 {
-                    Globals.CurrentMap.Spawns[
-                        Globals.MapLayersWindow.lstMapNpcs.SelectedIndex].X = Globals.CurTileX;
-                    Globals.CurrentMap.Spawns[
-                        Globals.MapLayersWindow.lstMapNpcs.SelectedIndex].Y = Globals.CurTileY;
+                    Globals.CurrentMap.Spawns[Globals.MapLayersWindow.lstMapNpcs.SelectedIndex].X = Globals.CurTileX;
+                    Globals.CurrentMap.Spawns[Globals.MapLayersWindow.lstMapNpcs.SelectedIndex].Y = Globals.CurTileY;
                     mMapChanged = true;
                 }
             }

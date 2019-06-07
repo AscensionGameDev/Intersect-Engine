@@ -61,7 +61,7 @@ namespace Intersect.Server.EventProcessing
             switch (command.Channel)
             {
                 case ChatboxChannel.Player:
-                    PacketSender.SendPlayerMsg(player.Client, txt, color);
+                    PacketSender.SendChatMsg(player.Client, txt, color);
                     break;
                 case ChatboxChannel.Local:
                     PacketSender.SendProximityMsg(txt, player.MapId, color);
@@ -438,13 +438,13 @@ namespace Intersect.Server.EventProcessing
                     break;
             }
             PacketSender.SendEntityDataToProximity(player);
-            PacketSender.SendPlayerMsg(player.Client, Strings.Player.powerchanged, Color.Red);
+            PacketSender.SendChatMsg(player.Client, Strings.Player.powerchanged, Color.Red);
         }
 
         //Warp Player Command
         private static void ProcessCommand(WarpCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            player.Warp(command.MapId,command.X,command.Y,command.Direction == WarpDirection.Retain ? player.Dir : (int)command.Direction - 1);
+            player.Warp(command.MapId,command.X,command.Y,command.Direction == WarpDirection.Retain ? (byte)player.Dir : (byte)(command.Direction - 1));
         }
 
         //Set Move Route Command
@@ -502,9 +502,9 @@ namespace Intersect.Server.EventProcessing
         {
             var npcId = command.NpcId;
             var mapId = command.MapId;
-            var tileX = 0;
-            var tileY = 0;
-            var direction = (int)Directions.Up;
+            var tileX = (byte)0;
+            var tileY = (byte)0;
+            var direction = (byte)Directions.Up;
             var targetEntity = (EntityInstance) player;
             if (mapId != Guid.Empty)
             {
@@ -553,8 +553,8 @@ namespace Intersect.Server.EventProcessing
                         direction = targetEntity.Dir;
                     }
                     mapId = targetEntity.MapId;
-                    tileX = targetEntity.X + xDiff;
-                    tileY = targetEntity.Y + yDiff;
+                    tileX = (byte)(targetEntity.X + xDiff);
+                    tileY = (byte)(targetEntity.Y + yDiff);
                 }
                 else
                 {
@@ -595,7 +595,7 @@ namespace Intersect.Server.EventProcessing
             var mapId = command.MapId;
             var tileX = 0;
             var tileY = 0;
-            var direction = (int)Directions.Up;
+            var direction = (byte)Directions.Up;
             var targetEntity = (EntityInstance)player;
             if (mapId != Guid.Empty)
             {
@@ -655,7 +655,7 @@ namespace Intersect.Server.EventProcessing
             var tile = new TileHelper(mapId, tileX, tileY);
             if (tile.TryFix())
             {
-                PacketSender.SendAnimationToProximity(animId, -1, Guid.Empty, tile.GetMapId(), tile.GetX(), tile.GetY(), direction);
+                PacketSender.SendAnimationToProximity(animId, -1, Guid.Empty, tile.GetMapId(), tile.GetX(), tile.GetY(), (sbyte)direction);
             }
         }
 

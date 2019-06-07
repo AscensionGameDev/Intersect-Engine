@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 
 using Ceras;
 
-using Intersect.Network.Packets.Reflectable;
-
 namespace Intersect.Network.Packets
 {
     public class CerasPacket : IPacket

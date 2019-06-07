@@ -81,10 +81,7 @@ namespace Intersect.Client.Maps
         public bool MapLoaded { get; private set; }
 
         //Camera Locking Variables
-        public int HoldUp { get; set; }
-        public int HoldDown { get; set; }
-        public int HoldLeft { get; set; }
-        public int HoldRight { get; set; }
+        public bool[] CameraHolds { get; set; } = new bool[4];
 
         //World Position
         public int MapGridX { get; set; }

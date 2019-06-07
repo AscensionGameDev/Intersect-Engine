@@ -159,8 +159,10 @@ namespace Intersect
             return bf.ToArray();
         }
 
-        public static void Load(ByteBuffer bf)
+        public static void Load(byte[] data)
         {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(data);
             Type type = typeof(CustomColors);
             foreach (var p in type.GetFields(System.Reflection.BindingFlags.Static |
                                              System.Reflection.BindingFlags.Public))

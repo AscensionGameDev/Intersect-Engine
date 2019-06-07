@@ -134,14 +134,14 @@ namespace Intersect.Server.Maps
             return MapInstance.Get(mMapId);
         }
 
-        public int GetX()
+        public byte GetX()
         {
-            return mTileX;
+            return (byte)mTileX;
         }
 
-        public int GetY()
+        public byte GetY()
         {
-            return mTileY;
+            return (byte)mTileY;
         }
 
         public static bool IsTileValid(Guid mapId, int tileX, int tileY)

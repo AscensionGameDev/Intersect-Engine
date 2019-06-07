@@ -14,6 +14,8 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 
+using Newtonsoft.Json;
+
 namespace Intersect.Client.Entities
 {
     public class Player : Entity
@@ -35,7 +37,7 @@ namespace Intersect.Client.Entities
 
         private List<PartyMember> mParty;
 
-        public Dictionary<Guid, QuestProgressStruct> QuestProgress = new Dictionary<Guid, QuestProgressStruct>();
+        public Dictionary<Guid, QuestProgress> QuestProgress = new Dictionary<Guid, QuestProgress>();
         public int StatPoints = 0;
 
         public Player(Guid id, ByteBuffer bf) : base(id, bf)
@@ -242,12 +244,12 @@ namespace Intersect.Client.Entities
                             }
                             else if (itemBase.ItemType == ItemTypes.Equipment)
                             {
-                                if (hotbarInstance.PreferredStats != null)
+                                if (hotbarInstance.PreferredStatBuffs != null)
                                 {
                                     var statMatch = true;
-                                    for (int s = 0; s < hotbarInstance.PreferredStats.Length; s++)
+                                    for (int s = 0; s < hotbarInstance.PreferredStatBuffs.Length; s++)
                                     {
-                                        if (itm.StatBoost[s] != hotbarInstance.PreferredStats[s])
+                                        if (itm.StatBuffs[s] != hotbarInstance.PreferredStatBuffs[s])
                                             statMatch = false;
                                     }
 
@@ -618,14 +620,14 @@ namespace Intersect.Client.Entities
         public void AddToHotbar(byte hotbarSlot, sbyte itemType, int itemSlot)
         {
             Hotbar[hotbarSlot].ItemOrSpellId = Guid.Empty;
-            Hotbar[hotbarSlot].PreferredStats = new int[(int) Stats.StatCount];
+            Hotbar[hotbarSlot].PreferredStatBuffs = new int[(int) Stats.StatCount];
             if (itemType == 0)
             {
                 var item = Inventory[itemSlot];
                 if (item != null)
                 {
                     Hotbar[hotbarSlot].ItemOrSpellId = item.ItemId;
-                    Hotbar[hotbarSlot].PreferredStats = item.StatBoost;
+                    Hotbar[hotbarSlot].PreferredStatBuffs = item.StatBuffs;
                 }
             }
             else if (itemType == 1)
@@ -643,15 +645,15 @@ namespace Intersect.Client.Entities
         {
             var itemId = Hotbar[index].ItemOrSpellId;
             var bagId = Hotbar[index].BagId;
-            var stats = Hotbar[index].PreferredStats;
+            var stats = Hotbar[index].PreferredStatBuffs;
 
             Hotbar[index].ItemOrSpellId = Hotbar[swapIndex].ItemOrSpellId;
             Hotbar[index].BagId = Hotbar[swapIndex].BagId;
-            Hotbar[index].PreferredStats = Hotbar[swapIndex].PreferredStats;
+            Hotbar[index].PreferredStatBuffs = Hotbar[swapIndex].PreferredStatBuffs;
 
             Hotbar[swapIndex].ItemOrSpellId = itemId;
             Hotbar[swapIndex].BagId = bagId;
-            Hotbar[swapIndex].PreferredStats = stats;
+            Hotbar[swapIndex].PreferredStatBuffs = stats;
 
             PacketSender.SendHotbarSwap(index, swapIndex);
         }
@@ -753,7 +755,7 @@ namespace Intersect.Client.Entities
             //Check for taunt status if so don't allow to change target
             for (var i = 0; i < Status.Count; i++)
             {
-                if (Status[i].Type == (int)StatusTypes.Taunt)
+                if (Status[i].Type == StatusTypes.Taunt)
                 {
                     return;
                 }
@@ -949,7 +951,7 @@ namespace Intersect.Client.Entities
             //Check for taunt status if so don't allow to change target
             for (var i = 0; i < Status.Count; i++)
             {
-                if (Status[i].Type == (int)StatusTypes.Taunt)
+                if (Status[i].Type == StatusTypes.Taunt)
                 {
                     return false;
                 }
@@ -1145,8 +1147,7 @@ namespace Intersect.Client.Entities
             //check if player is stunned or snared, if so don't let them move.
             for (var n = 0; n < Status.Count; n++)
             {
-                if (Status[n].Type == (int) StatusTypes.Stun || Status[n].Type == (int) StatusTypes.Snare ||
-                    Status[n].Type == (int)StatusTypes.Sleep)
+                if (Status[n].Type == StatusTypes.Stun || Status[n].Type == StatusTypes.Snare ||Status[n].Type == StatusTypes.Sleep)
                 {
                     return;
                 }
@@ -1432,7 +1433,7 @@ namespace Intersect.Client.Entities
             //check if player is stunned or snared, if so don't let them move.
             for (var n = 0; n < Status.Count; n++)
             {
-                if (Status[n].Type == (int) StatusTypes.Transform)
+                if (Status[n].Type == StatusTypes.Transform)
                 {
                     return;
                 }
@@ -1561,6 +1562,11 @@ namespace Intersect.Client.Entities
     {
         public Guid ItemOrSpellId = Guid.Empty;
         public Guid BagId = Guid.Empty;
-        public int[] PreferredStats = new int[(int)Stats.StatCount];
+        public int[] PreferredStatBuffs = new int[(int)Stats.StatCount];
+
+        public void Load(string data)
+        {
+            JsonConvert.PopulateObject(data, this);
+        }
     }
 }

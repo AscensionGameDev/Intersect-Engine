@@ -63,8 +63,8 @@ namespace Intersect.Server.Entities
             Id = BaseEvent.Id;
             MyPage = myPage;
             MapId = mapId;
-            X = eventIndex.CurrentX;
-            Y = eventIndex.CurrentY;
+            X = (byte)eventIndex.X;
+            Y = (byte)eventIndex.Y;
             Name = myEvent.Name;
             MovementType = MyPage.Movement.Type;
             MovementFreq = MyPage.Movement.Frequency;
@@ -265,7 +265,7 @@ namespace Intersect.Server.Entities
                 if (MovementType == EventMovementType.Random) //Random
                 {
                     if (Globals.Rand.Next(0, 2) != 0) return;
-                    var dir = Globals.Rand.Next(0, 4);
+                    var dir = (byte)Globals.Rand.Next(0, 4);
                     if (CanMove(dir) == -1)
                     {
                         Move(dir, Client);
@@ -281,7 +281,8 @@ namespace Intersect.Server.Entities
             {
                 var moved = false;
                 var shouldSendUpdate = false;
-                int lookDir = 0, moveDir = 0;
+                sbyte lookDir = 0;
+                byte moveDir = 0;
                 if (MoveRoute.ActionIndex < MoveRoute.Actions.Count)
                 {
                     switch (MoveRoute.Actions[MoveRoute.ActionIndex].Type)
@@ -306,7 +307,7 @@ namespace Intersect.Server.Entities
                                     {
                                         if (CanMove(pathDir) == -1)
                                         {
-                                            Move(pathDir, client);
+                                            Move((byte)pathDir, client);
                                             moved = true;
                                         }
                                         else
@@ -321,7 +322,7 @@ namespace Intersect.Server.Entities
                             //This won't be anything special.
                             if (client != null && GlobalClone == null) //Local Event
                             {
-                                moveDir = GetDirectionTo(client.Entity);
+                                moveDir = (byte)GetDirectionTo(client.Entity);
                                 if (moveDir > -1)
                                 {
                                     switch (moveDir)
@@ -347,7 +348,7 @@ namespace Intersect.Server.Entities
                                     else
                                     {
                                         //Move Randomly
-                                        moveDir = Globals.Rand.Next(0, 4);
+                                        moveDir = (byte)Globals.Rand.Next(0, 4);
                                         if (CanMove(moveDir) == -1)
                                         {
                                             Move(moveDir, client);
@@ -358,7 +359,7 @@ namespace Intersect.Server.Entities
                                 else
                                 {
                                     //Move Randomly
-                                    moveDir = Globals.Rand.Next(0, 4);
+                                    moveDir = (byte)Globals.Rand.Next(0, 4);
                                     if (CanMove(moveDir) == -1)
                                     {
                                         Move(moveDir, client);
@@ -373,7 +374,7 @@ namespace Intersect.Server.Entities
                                 lookDir = GetDirectionTo(client.Entity);
                                 if (lookDir > -1)
                                 {
-                                    ChangeDir(lookDir);
+                                    ChangeDir((byte)lookDir);
                                     moved = true;
                                 }
                             }
@@ -399,7 +400,7 @@ namespace Intersect.Server.Entities
                                             lookDir = (int) Directions.Left;
                                             break;
                                     }
-                                    ChangeDir(lookDir);
+                                    ChangeDir((byte)lookDir);
                                     moved = true;
                                 }
                             }
@@ -609,13 +610,13 @@ namespace Intersect.Server.Entities
 
         public void TurnTowardsPlayer()
         {
-            int lookDir = -1;
+            sbyte lookDir = -1;
             if (Client != null && GlobalClone == null) //Local Event
             {
                 lookDir = GetDirectionTo(Client.Entity);
                 if (lookDir > -1)
                 {
-                    ChangeDir(lookDir);
+                    ChangeDir((byte)lookDir);
                 }
             }
         }

@@ -736,7 +736,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void SaveFormValues(QuestInProgressCondition condition)
         {
             condition.QuestId = QuestBase.IdFromList(cmbQuestInProgress.SelectedIndex);
-            condition.Progress = (QuestProgress)cmbTaskModifier.SelectedIndex;
+            condition.Progress = (QuestProgressState)cmbTaskModifier.SelectedIndex;
             condition.TaskId = Guid.Empty;
             if (cmbTaskModifier.SelectedIndex != 0)
             {

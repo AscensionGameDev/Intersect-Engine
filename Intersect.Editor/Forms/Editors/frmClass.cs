@@ -550,8 +550,8 @@ namespace Intersect.Editor.Forms.Editors
                 nudX.Value = frmWarpSelection.GetX();
                 nudY.Value = frmWarpSelection.GetY();
                 mEditorItem.SpawnMapId = MapList.OrderedMaps[cmbWarpMap.SelectedIndex].MapId;
-                mEditorItem.SpawnX = (int) nudX.Value;
-                mEditorItem.SpawnY = (int) nudY.Value;
+                mEditorItem.SpawnX = (byte) nudX.Value;
+                mEditorItem.SpawnY = (byte) nudY.Value;
             }
         }
 
@@ -564,7 +564,7 @@ namespace Intersect.Editor.Forms.Editors
         private void cmbDirection_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (mEditorItem == null) return;
-            mEditorItem.SpawnDir = cmbDirection.SelectedIndex;
+            mEditorItem.SpawnDir = (byte)cmbDirection.SelectedIndex;
         }
 
         private void cmbFace_SelectedIndexChanged(object sender, EventArgs e)
@@ -788,12 +788,12 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudX_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.SpawnX = (int) nudX.Value;
+            mEditorItem.SpawnX = (byte) nudX.Value;
         }
 
         private void nudY_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.SpawnY = (int) nudY.Value;
+            mEditorItem.SpawnY = (byte) nudY.Value;
         }
 
         private void nudStr_ValueChanged(object sender, EventArgs e)

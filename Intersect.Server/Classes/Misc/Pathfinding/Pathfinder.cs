@@ -165,9 +165,9 @@ namespace Intersect.Server.Misc.Pathfinding
                                                     {
                                                         mapGrid[
                                                                     ((x + 1) - gridX) * Options.MapWidth +
-                                                                    en.Value.CurrentX,
+                                                                    en.Value.X,
                                                                     ((y + 1) - gridY) * Options.MapHeight +
-                                                                    en.Value.CurrentY]
+                                                                    en.Value.Y]
                                                                 .IsWall =
                                                             true;
                                                     }
@@ -199,10 +199,10 @@ namespace Intersect.Server.Misc.Pathfinding
                                                                                 mapGrid[
                                                                                     ((x + 1) - gridX) * Options
                                                                                         .MapWidth +
-                                                                                    evt.CurrentX,
+                                                                                    evt.X,
                                                                                     ((y + 1) - gridY) * Options
                                                                                         .MapHeight +
-                                                                                    evt.CurrentY].IsWall = true;
+                                                                                    evt.Y].IsWall = true;
                                                                             }
                                                                         }
                                                                     }
@@ -347,7 +347,7 @@ namespace Intersect.Server.Misc.Pathfinding
             mWaitTime = timeMs + 1000;
         }
 
-        public int GetMove()
+        public sbyte GetMove()
         {
             if (mPath == null) return -1;
             var enm = mPath.GetEnumerator();

@@ -7,6 +7,7 @@ using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.Framework.Sys;
 using Intersect.Client.Items;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using JetBrains.Annotations;
 
@@ -103,11 +104,11 @@ namespace Intersect.Client.General
         public static List<Guid> QuestOffers = new List<Guid>();
         public static bool MoveRouteActive = false;
 
-        public static Entity GetEntity(Guid id, int type)
+        public static Entity GetEntity(Guid id, EntityTypes type)
         {
             if (Entities.ContainsKey(id))
             {
-                if ((int) Entities[id].GetEntityType() == type)
+                if (Entities[id].GetEntityType() == type)
                 {
                     EntitiesToDispose.Remove(Entities[id].Id);
                     return Entities[id];
