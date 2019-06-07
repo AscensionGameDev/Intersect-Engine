@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Intersect.Collections;
 using Intersect.Enums;
@@ -19,6 +20,8 @@ using Intersect.Server.Entities;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;
+
+using EventInstance = Intersect.Server.Entities.EventInstance;
 
 namespace Intersect.Server.Networking
 {
@@ -46,6 +49,35 @@ namespace Intersect.Server.Networking
         {
             SendEntityDataTo(client, client.Entity);
             client.SendPacket(new JoinGamePacket());
+
+            var player = client.Entity;
+            player.RecalculateStatsAndPoints();
+            ((Player)client.Entity).InGame = true;
+            PacketSender.SendTimeTo(client);
+            PacketSender.SendGameData(client);
+            if (client.Power.Editor)
+            {
+                PacketSender.SendChatMsg(client, Strings.Player.adminjoined, CustomColors.AdminJoined);
+            }
+            else if (client.Power.IsModerator)
+            {
+                PacketSender.SendChatMsg(client, Strings.Player.modjoined, CustomColors.ModJoined);
+            }
+
+            if (player.MapId == Guid.Empty)
+                player.WarpToSpawn();
+            else
+                player.Warp(player.MapId, player.X, player.Y, player.Dir, false, player.Z);
+            PacketSender.SendEntityDataTo(client, player);
+
+            //Search for login activated events and run them
+            foreach (EventBase evt in EventBase.Lookup.Values)
+            {
+                if (evt != null)
+                {
+                    player.StartCommonEvent(evt, CommonEventTrigger.Login);
+                }
+            }
         }
 
         //MapPacket
@@ -368,6 +400,8 @@ namespace Intersect.Server.Networking
         //GameDataPacket
         public static void SendGameData(Client client)
         {
+            var sw = new Stopwatch();
+            sw.Start();
             //Send massive amounts of game data
             foreach (var val in Enum.GetValues(typeof(GameObjectType)))
             {
@@ -396,6 +430,7 @@ namespace Intersect.Server.Networking
 
             //Let the client/editor know they have everything now
             client.SendPacket(new GameDataPacket(CustomColors.GetData()));
+            Console.WriteLine("Took " + sw.ElapsedMilliseconds + "ms to send game data to client!");
         }
 
         //ChatMsgPacket

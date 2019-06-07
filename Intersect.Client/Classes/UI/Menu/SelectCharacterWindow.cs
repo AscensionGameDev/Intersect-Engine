@@ -275,6 +275,7 @@ namespace Intersect.Client.UI.Menu
         private void _playButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
             ChatboxMsg.ClearMessages();
+            Globals.PlayPressed();
             PacketSender.SendSelectCharacter(Characters[mSelectedChar].Id);
         }
 

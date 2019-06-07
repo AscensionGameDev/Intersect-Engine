@@ -119,6 +119,8 @@ namespace Intersect.Client
             {
                 return;
             }
+
+            Globals.InGame();
             if (GridSwitched)
             {
                 //Brightness

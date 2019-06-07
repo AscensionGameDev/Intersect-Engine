@@ -119,7 +119,7 @@ namespace Intersect.Client
                         GameMain.Update();
                     }
 
-                    mLastUpdateTime = gameTime.TotalGameTime.TotalMilliseconds + (1000/60f);
+                    ///mLastUpdateTime = gameTime.TotalGameTime.TotalMilliseconds + (1000/60f);
                 }
             }
             base.Update(gameTime);

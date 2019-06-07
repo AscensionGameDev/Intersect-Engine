@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -532,33 +533,7 @@ namespace Intersect.Server.Networking
         //EnterGamePacket
         public void HandlePacket(Client client, Player player, EnterGamePacket packet)
         {
-            player.RecalculateStatsAndPoints();
-            ((Player)client.Entity).InGame = true;
-            PacketSender.SendTimeTo(client);
-            PacketSender.SendGameData(client);
-            if (client.Power.Editor)
-            {
-                PacketSender.SendChatMsg(client, Strings.Player.adminjoined, CustomColors.AdminJoined);
-            }
-            else if (client.Power.IsModerator)
-            {
-                PacketSender.SendChatMsg(client, Strings.Player.modjoined, CustomColors.ModJoined);
-            }
-
-            if (player.MapId == Guid.Empty)
-                player.WarpToSpawn();
-            else
-                player.Warp(player.MapId, player.X, player.Y, player.Dir, false, player.Z);
-            PacketSender.SendEntityDataTo(client, player);
-
-            //Search for login activated events and run them
-            foreach (EventBase evt in EventBase.Lookup.Values)
-            {
-                if (evt != null)
-                {
-                    player.StartCommonEvent(evt, CommonEventTrigger.Login);
-                }
-            }
+            
         }
 
         //ActivateEventPacket
@@ -1160,10 +1135,14 @@ namespace Intersect.Server.Networking
         //SelectCharacterPacket
         public void HandlePacket(Client client, Player player, SelectCharacterPacket packet)
         {
+            var sw = new Stopwatch();
+            sw.Start();
             var character = LegacyDatabase.GetUserCharacter(client.User, packet.CharacterId);
             if (character != null)
             {
                 client.LoadCharacter(character);
+                sw.Stop();
+                Console.WriteLine("Took " + sw.ElapsedMilliseconds + "ms to load character from db!");
                 try
                 {
                     client.Entity?.SetOnline();
@@ -1280,7 +1259,11 @@ namespace Intersect.Server.Networking
             }
 
             client.IsEditor = true;
+            var sw = new Stopwatch();
+            sw.Start();
             LegacyDatabase.LoadUser(client, packet.Username);
+            sw.Stop();
+            Console.WriteLine("Took " + sw.ElapsedMilliseconds + "ms to load player from db!");
             lock (Globals.ClientLock)
             {
                 var clients = Globals.Clients.ToArray();
