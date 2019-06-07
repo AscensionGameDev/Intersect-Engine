@@ -10,19 +10,24 @@ namespace Intersect.Network.Packets.Server
 {
     public class EntityPacket : CerasPacket
     {
-        public Guid Id { get; set; }
+        public Guid EntityId { get; set; }
         public Guid MapId { get; set; }
-        public EntityTypes Type { get; set; }
-        public byte[] Data { get; set; }
-        public bool IsPlayer { get; set; }
-
-        public EntityPacket(Guid id, Guid mapId, EntityTypes type, byte[] data, bool isPlayer = false)
-        {
-            Id = id;
-            MapId = mapId;
-            Type = type;
-            Data = data;
-            IsPlayer = isPlayer;
-        }
+        public string Name { get; set; }
+        public string Sprite { get; set; }
+        public string Face { get; set; }
+        public int Level { get; set; }
+        public byte X { get; set; }
+        public byte Y { get; set; }
+        public byte Z { get; set; }
+        public byte Dir { get; set; }
+        public bool Passable { get; set; }
+        public bool HideName { get; set; }
+        public bool HideEntity { get; set; }
+        public Guid[] Animations { get; set; }
+        public int[] Vital { get; set; }
+        public int[] MaxVital { get; set; }
+        public int[] Stats { get; set; }
+        public StatusPacket[] StatusEffects { get; set; }
+        public bool IsSelf { get; set; }
     }
 }

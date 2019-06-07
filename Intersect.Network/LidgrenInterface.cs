@@ -300,7 +300,7 @@ namespace Intersect.Network
             message.Data = packet.Data();
             message.LengthBytes = message.Data.Length;
 
-            SendMessage(message, lidgrenConnection, deliveryMethod);
+            SendMessage(message, lidgrenConnection,  NetDeliveryMethod.ReliableOrdered);
             return true;
         }
 

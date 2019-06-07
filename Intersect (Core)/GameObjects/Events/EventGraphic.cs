@@ -22,26 +22,6 @@ namespace Intersect.GameObjects.Events
             Height = -1;
         }
 
-        public void Load(ByteBuffer curBuffer)
-        {
-            Type = (EventGraphicType)curBuffer.ReadInteger();
-            Filename = curBuffer.ReadString();
-            X = curBuffer.ReadInteger();
-            Y = curBuffer.ReadInteger();
-            Width = curBuffer.ReadInteger();
-            Height = curBuffer.ReadInteger();
-        }
-
-        public void Save(ByteBuffer curBuffer)
-        {
-            curBuffer.WriteInteger((int)Type);
-            curBuffer.WriteString(TextUtils.SanitizeNone(Filename));
-            curBuffer.WriteInteger(X);
-            curBuffer.WriteInteger(Y);
-            curBuffer.WriteInteger(Width);
-            curBuffer.WriteInteger(Height);
-        }
-
         public void CopyFrom(EventGraphic toCopy)
         {
             Type = toCopy.Type;

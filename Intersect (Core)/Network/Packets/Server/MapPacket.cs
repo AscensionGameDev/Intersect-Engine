@@ -17,6 +17,8 @@ namespace Intersect.Network.Packets.Server
         public int GridX { get; set; }
         public int GridY { get; set; }
         public bool[] CameraHolds { get; set; }
+        public MapEntitiesPacket MapEntities { get; set; }
+        public MapItemsPacket MapItems { get; set; }
         
         public MapPacket(Guid mapId, bool deleted, string data = null, byte[] tileData = null, byte[] attributeData = null, int revision = -1, int gridX = -1, int gridY = -1, bool[] borders = null)
         {

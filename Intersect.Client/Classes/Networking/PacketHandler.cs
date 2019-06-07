@@ -35,15 +35,16 @@ namespace Intersect.Client.Networking
             Globals.packetSw.Start();
             if (packet is CerasPacket)
             {
-                Globals.HandlePacket((CerasPacket)packet);
-                HandlePacket((dynamic) packet);
+                var time = Globals.sw.ElapsedMilliseconds;
+                HandlePacket((dynamic)packet);
+                Globals.HandlePacket((CerasPacket)packet, time);
             }
 
             Globals.packetSw.Stop();
             Globals.packetCount++;
             return true;
         }
-        
+
         //PingPacket
         private static void HandlePacket(PingPacket packet)
         {
@@ -54,7 +55,7 @@ namespace Intersect.Client.Networking
             }
             else
             {
-                GameNetwork.Ping = (int) (Globals.System.GetTimeMs() - PingTime) / 2;
+                GameNetwork.Ping = (int)(Globals.System.GetTimeMs() - PingTime) / 2;
             }
         }
 
@@ -73,8 +74,17 @@ namespace Intersect.Client.Networking
             Globals.JoiningGame = true;
         }
 
+        //MapAreaPacket
+        private static void HandlePacket(MapAreaPacket packet)
+        {
+            foreach (var map in packet.Maps)
+            {
+                HandleMap(map);
+            }
+        }
+
         //MapPacket
-        private static void HandlePacket(MapPacket packet)
+        private static void HandleMap(MapPacket packet)
         {
             var mapId = packet.MapId;
             var map = MapInstance.Get(mapId);
@@ -107,6 +117,17 @@ namespace Intersect.Client.Networking
                 map.CameraHolds = packet.CameraHolds;
                 map.Autotiles.InitAutotiles(map.GenerateAutotileGrid());
 
+                //Process Entities and Items if provided in this packet
+                if (packet.MapEntities != null)
+                {
+                    HandlePacket((dynamic)packet.MapEntities);
+                }
+
+                if (packet.MapItems != null)
+                {
+                    HandlePacket((dynamic)packet.MapItems);
+                }
+
                 if (Globals.PendingEvents.ContainsKey(mapId))
                 {
                     foreach (var evt in Globals.PendingEvents[mapId])
@@ -118,70 +139,94 @@ namespace Intersect.Client.Networking
                 }
             }
             if (MapInstance.OnMapLoaded != null) MapInstance.OnMapLoaded(map);
+        }
+
+        //MapPacket
+        private static void HandlePacket(MapPacket packet)
+        {
+            HandleMap(packet);
             Globals.Me.FetchNewMaps();
         }
 
-        //EntityPacket
-        //TODO: Remove Bytebuffer usage from here!
-        private static void HandlePacket(EntityPacket packet)
+        //PlayerEntityPacket
+        private static void HandlePacket(PlayerEntityPacket packet)
         {
-            var id = packet.Id;
-            var entityType = packet.Type;
-            var mapId = packet.MapId;
-
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet.Data);
-            if (packet.IsPlayer)
+            var en = Globals.GetEntity(packet.EntityId, EntityTypes.Player);
+            if (en != null)
             {
-                bf.WriteInteger(1);
-            }
-
-            if (entityType != EntityTypes.Event)
-            {
-                var en = Globals.GetEntity(id, entityType);
-                if (en != null)
-                {
-                    en.Load(bf);
-                }
-                else
-                {
-                    switch (entityType)
-                    {
-                        case EntityTypes.Player:
-                            Globals.Entities.Add(id, new Player(id, bf));
-                            break;
-                        case EntityTypes.GlobalEntity:
-                            Globals.Entities.Add(id, new Entity(id, bf));
-                            break;
-                        case EntityTypes.Resource:
-                            Globals.Entities.Add(id, new Resource(id, bf));
-                            break;
-                        case EntityTypes.Projectile:
-                            Globals.Entities.Add(id, new Projectile(id, bf));
-                            break;
-                    }
-                }
+                en.Load(packet);
+                if (packet.IsSelf) Globals.Me = (Player)Globals.Entities[packet.EntityId];
             }
             else
             {
-                var map = MapInstance.Get(mapId);
-                if (map != null)
+                Globals.Entities.Add(packet.EntityId, new Player(packet.EntityId, packet));
+                if (packet.IsSelf) Globals.Me = (Player)Globals.Entities[packet.EntityId];
+            }
+        }
+
+        //NpcEntityPacket
+        private static void HandlePacket(NpcEntityPacket packet)
+        {
+            var en = Globals.GetEntity(packet.EntityId, EntityTypes.GlobalEntity);
+            if (en != null)
+            {
+                en.Load(packet);
+            }
+            else
+            {
+                Globals.Entities.Add(packet.EntityId, new Entity(packet.EntityId, packet));
+                Globals.Entities[packet.EntityId].Type = packet.Aggression;
+            }
+        }
+
+        //ResourceEntityPacket
+        private static void HandlePacket(ResourceEntityPacket packet)
+        {
+            var en = Globals.GetEntity(packet.EntityId, EntityTypes.Resource);
+            if (en != null)
+            {
+                en.Load(packet);
+            }
+            else
+            {
+                Globals.Entities.Add(packet.EntityId, new Resource(packet.EntityId, packet));
+            }
+        }
+
+        //ProjectileEntityPacket
+        private static void HandlePacket(ProjectileEntityPacket packet)
+        {
+            var en = Globals.GetEntity(packet.EntityId, EntityTypes.Projectile);
+            if (en != null)
+            {
+                en.Load(packet);
+            }
+            else
+            {
+                Globals.Entities.Add(packet.EntityId, new Projectile(packet.EntityId, packet));
+            }
+        }
+
+        //EventEntityPacket
+        private static void HandlePacket(EventEntityPacket packet)
+        {
+            var map = MapInstance.Get(packet.MapId);
+            if (map != null)
+            {
+                map?.AddEvent(packet.EntityId, packet);
+            }
+            else
+            {
+                var dict = Globals.PendingEvents.ContainsKey(packet.MapId) ? Globals.PendingEvents[packet.MapId] : new Dictionary<Guid, EventEntityPacket>();
+                if (dict.ContainsKey(packet.EntityId))
                 {
-                    map?.AddEvent(id, bf);
+                    dict[packet.EntityId] = packet;
                 }
                 else
                 {
-                    var dict = Globals.PendingEvents.ContainsKey(mapId) ? Globals.PendingEvents[mapId] : new Dictionary<Guid, ByteBuffer>();
-                    if (dict.ContainsKey(id))
-                    {
-                        dict[id] = bf;
-                    }
-                    else
-                    {
-                        dict.Add(id,bf);
-                    }
-                    if (!Globals.PendingEvents.ContainsKey(mapId)) Globals.PendingEvents.Add(mapId,dict);
+                    dict.Add(packet.EntityId, packet);
                 }
+                if (!Globals.PendingEvents.ContainsKey(packet.MapId)) Globals.PendingEvents.Add(packet.MapId, dict);
             }
         }
 
@@ -267,7 +312,7 @@ namespace Intersect.Client.Networking
         //ChatMsgPacket
         private static void HandlePacket(ChatMsgPacket packet)
         {
-            ChatboxMsg.AddMessage(new ChatboxMsg(packet.Message, new Color(packet.Color.A,packet.Color.R,packet.Color.G,packet.Color.B),packet.Target));
+            ChatboxMsg.AddMessage(new ChatboxMsg(packet.Message, new Color(packet.Color.A, packet.Color.R, packet.Color.G, packet.Color.B), packet.Target));
         }
 
         //ActionMsgPacket
@@ -276,18 +321,23 @@ namespace Intersect.Client.Networking
             var map = MapInstance.Get(packet.MapId);
             if (map != null)
             {
-                map.ActionMsgs.Add(new ActionMsgInstance(map, packet.X,packet.Y, packet.Message, new Color(packet.Color.A, packet.Color.R,packet.Color.G,packet.Color.B)));
+                map.ActionMsgs.Add(new ActionMsgInstance(map, packet.X, packet.Y, packet.Message, new Color(packet.Color.A, packet.Color.R, packet.Color.G, packet.Color.B)));
             }
         }
 
         //GameDataPacket
         private static void HandlePacket(GameDataPacket packet)
         {
-            CustomColors.Load(packet.Colors);
+            foreach (var pkt in packet.GameObjects)
+            {
+                HandlePacket((dynamic)pkt);
+            }
+
+            CustomColors.Load(packet.ColorsJson);
             Globals.HasGameData = true;
             Globals.GotGameData();
         }
-        
+
         //MapListPacket
         private static void HandlePacket(MapListPacket packet)
         {
@@ -562,7 +612,7 @@ namespace Intersect.Client.Networking
         {
             GameFade.FadeIn();
             Globals.WaitingOnServer = false;
-            Gui.MsgboxErrors.Add(new KeyValuePair<string, string>(packet.Header,packet.Error));
+            Gui.MsgboxErrors.Add(new KeyValuePair<string, string>(packet.Header, packet.Error));
             Gui.MenuUi.Reset();
         }
 
@@ -575,7 +625,7 @@ namespace Intersect.Client.Networking
             for (int i = 0; i < packet.Items.Length; i++)
             {
                 if (packet.Items[i] != null)
-                    map.MapItems.Add(i,new MapItemInstance(packet.Items[i]));
+                    map.MapItems.Add(i, new MapItemInstance(packet.Items[i]));
             }
         }
 
@@ -603,16 +653,34 @@ namespace Intersect.Client.Networking
             }
         }
 
+        //InventoryPacket
+        private static void HandlePacket(InventoryPacket packet)
+        {
+            foreach (var inv in packet.Slots)
+            {
+                HandlePacket((dynamic)inv);
+            }
+        }
+
         //InventoryUpdatePacket
         private static void HandlePacket(InventoryUpdatePacket packet)
         {
             if (Globals.Me != null)
             {
-                Globals.Me.Inventory[packet.Slot].Load(packet.ItemData);
+                Globals.Me.Inventory[packet.Slot].Load(packet.ItemId, packet.Quantity, packet.BagId, packet.StatBuffs);
                 if (Globals.Me.InventoryUpdatedDelegate != null)
                 {
                     Globals.Me.InventoryUpdatedDelegate();
                 }
+            }
+        }
+
+        //SpellsPacket
+        private static void HandlePacket(SpellsPacket packet)
+        {
+            foreach (var spl in packet.Slots)
+            {
+                HandlePacket((dynamic)spl);
             }
         }
 
@@ -634,11 +702,11 @@ namespace Intersect.Client.Networking
                 var entity = Globals.Entities[entityId];
                 if (entity != null)
                 {
-                    if (entity == Globals.Me)
+                    if (entity == Globals.Me && packet.InventorySlots != null)
                     {
                         entity.MyEquipment = packet.InventorySlots;
                     }
-                    else
+                    else if (packet.ItemIds != null)
                     {
                         entity.Equipment = packet.ItemIds;
                     }
@@ -708,10 +776,10 @@ namespace Intersect.Client.Networking
         private static void HandlePacket(SpellCooldownPacket packet)
         {
             int spellSlot = packet.Slot;
-			decimal cooldownReduction = (1 - (decimal)(Globals.Me.GetCooldownReduction() / 100));
-			if (SpellBase.Get(Globals.Me.Spells[spellSlot].SpellId) != null)
+            decimal cooldownReduction = (1 - (decimal)(Globals.Me.GetCooldownReduction() / 100));
+            if (SpellBase.Get(Globals.Me.Spells[spellSlot].SpellId) != null)
             {
-                Globals.Me.Spells[spellSlot].SpellCd = Globals.System.GetTimeMs() +(int)(SpellBase.Lookup.Get<SpellBase>(Globals.Me.Spells[spellSlot].SpellId).CooldownDuration * cooldownReduction);
+                Globals.Me.Spells[spellSlot].SpellCd = Globals.System.GetTimeMs() + (int)(SpellBase.Lookup.Get<SpellBase>(Globals.Me.Spells[spellSlot].SpellId).CooldownDuration * cooldownReduction);
             }
         }
 
@@ -749,7 +817,7 @@ namespace Intersect.Client.Networking
             var entityId = packet.ProjectileId;
             if (Globals.Entities.ContainsKey(entityId) && Globals.Entities[entityId].GetType() == typeof(Projectile))
             {
-                ((Projectile) Globals.Entities[entityId]).SpawnDead(packet.SpawnId);
+                ((Projectile)Globals.Entities[entityId]).SpawnDead(packet.SpawnId);
             }
         }
 
@@ -765,7 +833,7 @@ namespace Intersect.Client.Networking
                 var map = MapInstance.Get(mapId);
                 if (map != null)
                 {
-                    map.AddTileAnimation(animId, packet.X,packet.Y,packet.Direction);
+                    map.AddTileAnimation(animId, packet.X, packet.Y, packet.Direction);
                 }
             }
             else if (targetType == 1)
@@ -777,7 +845,7 @@ namespace Intersect.Client.Networking
                         var animBase = AnimationBase.Get(animId);
                         if (animBase != null)
                         {
-                            AnimationInstance animInstance = new AnimationInstance(animBase, false, packet.Direction == -1 ? false : true,-1,Globals.Entities[entityId]);
+                            AnimationInstance animInstance = new AnimationInstance(animBase, false, packet.Direction == -1 ? false : true, -1, Globals.Entities[entityId]);
                             if (packet.Direction > -1) animInstance.SetDir(packet.Direction);
                             Globals.Entities[entityId].Animations.Add(animInstance);
                         }
@@ -796,7 +864,7 @@ namespace Intersect.Client.Networking
                             var animBase = AnimationBase.Get(animId);
                             if (animBase != null)
                             {
-                                AnimationInstance animInstance = new AnimationInstance(animBase, false, packet.Direction == -1 ? true : false,-1,map.LocalEntities[entityId]);
+                                AnimationInstance animInstance = new AnimationInstance(animBase, false, packet.Direction == -1 ? true : false, -1, map.LocalEntities[entityId]);
                                 if (packet.Direction > -1) animInstance.SetDir(packet.Direction);
                                 map.LocalEntities[entityId].Animations.Add(animInstance);
                             }
@@ -805,7 +873,7 @@ namespace Intersect.Client.Networking
                 }
             }
         }
-        
+
         //HoldPlayerPacket
         private static void HandlePacket(HoldPlayerPacket packet)
         {
@@ -822,7 +890,7 @@ namespace Intersect.Client.Networking
                     Globals.EventHolds.Remove(eventId);
                 }
             }
-            
+
         }
 
         //PlayMusicPacket
@@ -909,10 +977,10 @@ namespace Intersect.Client.Networking
         private static void HandlePacket(BankUpdatePacket packet)
         {
             int slot = packet.Slot;
-            if (packet.ItemData != null)
+            if (packet.ItemId != Guid.Empty)
             {
                 Globals.Bank[slot] = new ItemInstance();
-                Globals.Bank[slot].Load(packet.ItemData);
+                Globals.Bank[slot].Load(packet.ItemId, packet.Quantity, packet.BagId, packet.StatBuffs);
             }
             else
             {
@@ -966,7 +1034,7 @@ namespace Intersect.Client.Networking
         private static void HandlePacket(EntityDashPacket packet)
         {
             if (Globals.Entities.ContainsKey(packet.EntityId))
-                Globals.Entities[packet.EntityId].DashQueue.Enqueue(new DashInstance(Globals.Entities[packet.EntityId], packet.EndMapId,packet.EndX,packet.EndY,packet.DashTime,packet.Direction));
+                Globals.Entities[packet.EntityId].DashQueue.Enqueue(new DashInstance(Globals.Entities[packet.EntityId], packet.EndMapId, packet.EndX, packet.EndY, packet.DashTime, packet.Direction));
         }
 
         //MapGridPacket
@@ -980,7 +1048,7 @@ namespace Intersect.Client.Networking
             {
                 foreach (var map in MapInstance.Lookup.Values.ToArray())
                 {
-                    ((MapInstance) map).Dispose();
+                    ((MapInstance)map).Dispose();
                 }
             }
             Globals.NeedsMaps = true;
@@ -1023,7 +1091,7 @@ namespace Intersect.Client.Networking
             for (int i = 0; i < packet.MemberData.Length; i++)
             {
                 var mem = packet.MemberData[i];
-                Globals.Me.Party.Add(new PartyMember(mem.Id,mem.Name,mem.Vital,mem.MaxVital,mem.Level));
+                Globals.Me.Party.Add(new PartyMember(mem.Id, mem.Name, mem.Vital, mem.MaxVital, mem.Level));
             }
         }
 
@@ -1153,14 +1221,14 @@ namespace Intersect.Client.Networking
             }
 
             int slot = packet.Slot;
-            if (packet.ItemData == null)
+            if (packet.ItemId == Guid.Empty)
             {
                 Globals.Trade[side, slot] = null;
             }
             else
             {
                 Globals.Trade[side, slot] = new ItemInstance();
-                Globals.Trade[side, slot].Load(packet.ItemData);
+                Globals.Trade[side, slot].Load(packet.ItemId, packet.Quantity, packet.BagId, packet.StatBuffs);
             }
         }
 
@@ -1217,14 +1285,14 @@ namespace Intersect.Client.Networking
         //BagUpdatePacket
         private static void HandlePacket(BagUpdatePacket packet)
         {
-            if (packet.ItemData == null)
+            if (packet.ItemId == Guid.Empty)
             {
                 Globals.Bag[packet.Slot] = null;
             }
             else
             {
                 Globals.Bag[packet.Slot] = new ItemInstance();
-                Globals.Bag[packet.Slot].Load(packet.ItemData);
+                Globals.Bag[packet.Slot].Load(packet.ItemId, packet.Quantity, packet.BagId, packet.StatBuffs);
             }
         }
 
@@ -1259,7 +1327,7 @@ namespace Intersect.Client.Networking
                 };
                 Globals.Me.Friends.Add(f);
             }
-            
+
             Gui.GameUi.UpdateFriendsList();
         }
 
@@ -1276,7 +1344,7 @@ namespace Intersect.Client.Networking
 
             foreach (var chr in packet.Characters)
             {
-                characters.Add(new Character(chr.Id,chr.Name,chr.Sprite,chr.Face,chr.Level,chr.ClassName,chr.Equipment));
+                characters.Add(new Character(chr.Id, chr.Name, chr.Sprite, chr.Face, chr.Level, chr.ClassName, chr.Equipment));
             }
 
             if (packet.FreeSlot) characters.Add(null);

@@ -1732,6 +1732,7 @@ namespace Intersect.Server.Networking
                 ((EventBase)obj).CommonEvent = true;
                 LegacyDatabase.SaveGameDatabase();
             }
+            PacketSender.CacheGameDataPacket();
             PacketSender.SendGameObjectToAll(obj);
         }
 
@@ -1831,6 +1832,7 @@ namespace Intersect.Server.Networking
                 }
                 LegacyDatabase.DeleteGameObject(obj);
                 LegacyDatabase.SaveGameDatabase();
+                PacketSender.CacheGameDataPacket();
                 PacketSender.SendGameObjectToAll(obj, true);
             }
         }
@@ -1939,7 +1941,7 @@ namespace Intersect.Server.Networking
                     qst.AddEvents.Clear();
                     qst.RemoveEvents.Clear();
                 }
-
+                PacketSender.CacheGameDataPacket();
                 PacketSender.SendGameObjectToAll(obj, false);
                 LegacyDatabase.SaveGameDatabase();
             }
@@ -1966,7 +1968,7 @@ namespace Intersect.Server.Networking
                 var obj = LegacyDatabase.AddGameObject(GameObjectType.Tileset);
                 ((TilesetBase)obj).Name = value;
                 LegacyDatabase.SaveGameDatabase();
-
+                PacketSender.CacheGameDataPacket();
                 PacketSender.SendGameObjectToAll(obj);
             }
         }

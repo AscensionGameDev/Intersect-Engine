@@ -13,6 +13,7 @@ using Intersect.Client.UI.Game.EntityPanel;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
+using Intersect.Network.Packets.Server;
 
 using Newtonsoft.Json;
 
@@ -40,7 +41,7 @@ namespace Intersect.Client.Entities
         public Dictionary<Guid, QuestProgress> QuestProgress = new Dictionary<Guid, QuestProgress>();
         public int StatPoints = 0;
 
-        public Player(Guid id, ByteBuffer bf) : base(id, bf)
+        public Player(Guid id, PlayerEntityPacket packet) : base(id, packet)
         {
             for (int i = 0; i < Options.MaxHotbar; i++)
             {
@@ -140,21 +141,13 @@ namespace Intersect.Client.Entities
         }
 
         //Loading
-        public override void Load(ByteBuffer bf)
+        public override void Load(EntityPacket packet)
         {
-            base.Load(bf);
-            Gender = bf.ReadInteger();
-            Class = bf.ReadGuid();
-
-            //The server send entitiy to packet might tack on an extra 1 if the entity being sent is our player
-            if (bf.Length() >= 4)
-            {
-                var isMe = Convert.ToBoolean(bf.ReadInteger());
-                if (isMe)
-                {
-                    Globals.Me = this;
-                }
-            }
+            base.Load(packet);
+            var pkt = (PlayerEntityPacket) packet;
+            Gender = pkt.Gender;
+            Class = pkt.ClassId;
+            Type = pkt.AccessLevel;
         }
 
         public override EntityTypes GetEntityType()
@@ -1159,6 +1152,9 @@ namespace Intersect.Client.Entities
                 return;
             }
 
+            var tmpX = (sbyte) X;
+            var tmpY = (sbyte) Y;
+
             if (MoveDir > -1 && Globals.EventDialogs.Count == 0)
             {
                 var blockedBy = Guid.Empty;
@@ -1170,45 +1166,41 @@ namespace Intersect.Client.Entities
                         case 0:
                             if (IsTileBlocked(X, Y - 1, Z, CurrentMap,ref blockedBy) == -1)
                             {
-                                Y--;
+                                tmpY--;
                                 Dir = 0;
                                 IsMoving = true;
                                 OffsetY = Options.TileHeight;
                                 OffsetX = 0;
-                                TryToChangeDimension();
                             }
                             break;
                         case 1:
                             if (IsTileBlocked(X, Y + 1, Z, CurrentMap, ref blockedBy) == -1)
                             {
-                                Y++;
+                                tmpY++;
                                 Dir = 1;
                                 IsMoving = true;
                                 OffsetY = -Options.TileHeight;
                                 OffsetX = 0;
-                                TryToChangeDimension();
                             }
                             break;
                         case 2:
                             if (IsTileBlocked(X - 1, Y, Z, CurrentMap, ref blockedBy) == -1)
                             {
-                                X--;
+                                tmpX--;
                                 Dir = 2;
                                 IsMoving = true;
                                 OffsetY = 0;
                                 OffsetX = Options.TileWidth;
-                                TryToChangeDimension();
                             }
                             break;
                         case 3:
                             if (IsTileBlocked(X + 1, Y, Z, CurrentMap, ref blockedBy) == -1)
                             {
-                                X++;
+                                tmpX++;
                                 Dir = 3;
                                 IsMoving = true;
                                 OffsetY = 0;
                                 OffsetX = -Options.TileWidth;
-                                TryToChangeDimension();
                             }
                             break;
                     }
@@ -1217,30 +1209,37 @@ namespace Intersect.Client.Entities
                     {
                         MoveTimer = Globals.System.GetTimeMs() + GetMovementTime();
                         didMove = true;
-                        if (X < 0 || Y < 0 || X > (Options.MapWidth - 1) ||
-                            Y > (Options.MapHeight - 1))
+                        if (tmpX < 0 || tmpY < 0 || tmpX > (Options.MapWidth - 1) || tmpY > (Options.MapHeight - 1))
                         {
                             var gridX = MapInstance.Get(Globals.Me.CurrentMap).MapGridX;
                             var gridY = MapInstance.Get(Globals.Me.CurrentMap).MapGridY;
-                            if (X < 0)
+                            if (tmpX < 0)
                             {
                                 gridX--;
                                 X = (byte)(Options.MapWidth - 1);
-                            }
-                            if (Y < 0)
-                            {
-                                gridY--;
-                                Y = (byte)(Options.MapHeight - 1);
-                            }
-                            if (X >= Options.MapWidth)
+                            } 
+                            else if (tmpX >= Options.MapWidth)
                             {
                                 X = 0;
                                 gridX++;
                             }
-                            if (Y >= Options.MapHeight)
+                            else
+                            {
+                                X = (byte)tmpX;
+                            }
+                            if (tmpY < 0)
+                            {
+                                gridY--;
+                                Y = (byte)(Options.MapHeight - 1);
+                            }
+                            else if (tmpY >= Options.MapHeight)
                             {
                                 Y = 0;
                                 gridY++;
+                            }
+                            else
+                            {
+                                Y = (byte) tmpY;
                             }
                             if (CurrentMap != Globals.MapGrid[gridX, gridY])
                             {
@@ -1248,6 +1247,12 @@ namespace Intersect.Client.Entities
                                 FetchNewMaps();
                             }
                         }
+                        else
+                        {
+                            X = (byte)tmpX;
+                            Y = (byte)tmpY;
+                        }
+                        TryToChangeDimension();
                     }
                     else
                     {

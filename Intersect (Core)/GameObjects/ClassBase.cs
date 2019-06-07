@@ -190,6 +190,7 @@ namespace Intersect.GameObjects
             Name = "New Class";
 
             ExperienceCurve = new ExperienceCurve();
+            ExperienceCurve.Calculate(1);
             BaseExp = DEFAULT_BASE_EXPERIENCE;
             ExpIncrease = DEFAULT_EXPERIENCE_INCREASE;
         }
@@ -200,6 +201,7 @@ namespace Intersect.GameObjects
             Name = "New Class";
 
             ExperienceCurve = new ExperienceCurve();
+            ExperienceCurve.Calculate(1);
             BaseExp = DEFAULT_BASE_EXPERIENCE;
             ExpIncrease = DEFAULT_EXPERIENCE_INCREASE;
         }

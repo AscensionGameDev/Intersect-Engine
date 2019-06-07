@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.EventProcessing;
@@ -817,5 +818,16 @@ namespace Intersect.Server.Entities
                 PacketSender.SendEntityStats(this);
             }
         }
+
+        public override EntityPacket EntityPacket(EntityPacket packet = null)
+        {
+            if (packet == null) packet = new NpcEntityPacket();
+            packet = base.EntityPacket(packet);
+
+            var pkt = (NpcEntityPacket)packet;
+            pkt.Aggression = this.Target != null ? -1 : 0; //TODO FIX THIS WITH NEW NPC AGGRESSIONS
+            return pkt;
+        }
+
     }
 }

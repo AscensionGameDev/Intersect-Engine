@@ -198,8 +198,10 @@ namespace Intersect.Network
             //Incorperate Ceras
             var data = buffer.ToBytes();
             //Get Packet From Data using Ceras
-            
+            var sw = new Stopwatch();
+            sw.Start();
             var packet = (IPacket)connection.Ceras.Deserialize(data);
+            if (sw.ElapsedMilliseconds > 10) Debug.WriteLine("Took " + sw.ElapsedMilliseconds + "ms to deserialize packet: " + packet.GetType().Name);
             
             //Handle any packet identification errors
 

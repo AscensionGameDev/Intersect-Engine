@@ -12,6 +12,7 @@ using Intersect.Client.Spells;
 using Intersect.Client.UI;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.Network.Packets.Server;
 
 namespace Intersect.Client.Entities
 {
@@ -68,7 +69,7 @@ namespace Intersect.Client.Entities
         //Extras
         public string Face = "";
 
-        public int Gender = 0;
+        public Gender Gender = Gender.Male;
         public bool HideName;
         public bool HideEntity = false;
 
@@ -115,7 +116,7 @@ namespace Intersect.Client.Entities
 
         protected Pointf mCenterPos = Pointf.Empty;
 
-        public Entity(Guid id, ByteBuffer bf, bool isEvent = false)
+        public Entity(Guid id, EntityPacket packet, bool isEvent = false)
         {
             Id = id;
             CurrentMap = Guid.Empty;
@@ -138,7 +139,7 @@ namespace Intersect.Client.Entities
             AnimationTimer = Globals.System.GetTimeMs() + Globals.Random.Next(0, 500);
             //TODO Remove because fixed orrrrr change the exception text
             if (Options.EquipmentSlots.Count == 0) throw new Exception("What the fuck is going on!?!?!?!?!?!");
-            Load(bf);
+            Load(packet);
         }
 
         public byte Dir
@@ -184,26 +185,26 @@ namespace Intersect.Client.Entities
         }
 
         //Deserializing
-        public virtual void Load(ByteBuffer bf)
+        public virtual void Load(EntityPacket packet)
         {
-            CurrentMap = bf.ReadGuid();
-            Name = bf.ReadString();
-            MySprite = bf.ReadString();
-            Face = bf.ReadString();
-            Level = bf.ReadInteger();
-            X = (byte)bf.ReadInteger();
-            Y = (byte)bf.ReadInteger();
-            Z = (byte)bf.ReadInteger();
-            Dir = (byte)bf.ReadInteger();
-            Passable = bf.ReadBoolean();
-            HideName = bf.ReadBoolean();
-            HideEntity = bf.ReadBoolean();
+            CurrentMap = packet.MapId;
+            Name = packet.Name;
+            MySprite = packet.Sprite;
+            Face = packet.Face;
+            Level = packet.Level;
+            X = packet.X;
+            Y = packet.Y;
+            Z = packet.Z;
+            Dir = packet.Dir;
+            Passable = packet.Passable;
+            HideName = packet.HideName;
+            HideEntity = packet.HideEntity;
+            
             var animsToClear = new List<AnimationInstance>();
             var animsToAdd = new List<AnimationBase>();
-            int animCount = bf.ReadInteger();
-            for (int i = 0; i < animCount; i++)
+            for (int i = 0; i < packet.Animations.Length; i++)
             {
-                var anim = AnimationBase.Get(bf.ReadGuid());
+                var anim = AnimationBase.Get(packet.Animations[i]);
                 if (anim != null)
                     animsToAdd.Add(anim);
             }
@@ -229,24 +230,23 @@ namespace Intersect.Client.Entities
             }
             ClearAnimations(animsToClear);
             AddAnimations(animsToAdd);
-            for (var i = 0; i < (int) Vitals.VitalCount; i++)
-            {
-                MaxVital[i] = bf.ReadInteger();
-                Vital[i] = bf.ReadInteger();
-            }
+
+            Vital = packet.Vital;
+            MaxVital = packet.Vital;
+
             //Update status effects
-            var count = bf.ReadInteger();
-            Status.Clear();
-            for (int i = 0; i < count; i++)
+            foreach (var status in packet.StatusEffects)
             {
-                Status.Add(new StatusInstance(bf.ReadGuid(), (StatusTypes)bf.ReadInteger(), bf.ReadString(), bf.ReadInteger(), bf.ReadInteger()));
+                var instance = new StatusInstance(status.SpellId, status.Type, status.TransformSprite, status.TimeRemaining, status.TotalDuration);
+                Status.Add(instance);
+
+                if (instance.Type == StatusTypes.Shield)
+                {
+                    instance.Shield = status.VitalShields;
+                }
             }
             SortStatuses();
-            for (var i = 0; i < (int) Stats.StatCount; i++)
-            {
-                Stat[i] = bf.ReadInteger();
-            }
-            Type = bf.ReadInteger();
+            Stat = packet.Stats;
 
             mDisposed = false;
 

@@ -8,11 +8,13 @@ namespace Intersect.Network.Packets.Server
 {
     public class GameDataPacket : CerasPacket
     {
-        public byte[] Colors { get; set; }
+        public GameObjectPacket[] GameObjects { get; set; }
+        public string ColorsJson { get; set; }
 
-        public GameDataPacket(byte[] colors)
+        public GameDataPacket(GameObjectPacket[] gameObjects, string colorsJson)
         {
-            Colors = colors;
+            GameObjects = gameObjects;
+            ColorsJson = colorsJson;
         }
     }
 }

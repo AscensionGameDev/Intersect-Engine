@@ -6,10 +6,13 @@ using System.Threading.Tasks;
 
 namespace Intersect.Network.Packets.Server
 {
-    public class BagUpdatePacket : InventoryUpdatePacket
+    public class SpellsPacket : CerasPacket
     {
-        public BagUpdatePacket(int slot, Guid id, int quantity, Guid? bagId, int[] statBuffs) : base(slot, id, quantity, bagId, statBuffs)
+        public SpellUpdatePacket[] Slots { get; set; }
+
+        public SpellsPacket(SpellUpdatePacket[] slots)
         {
+            Slots = slots;
         }
     }
 }

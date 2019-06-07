@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using Intersect.Threading;
 using Intersect.Logging.Output;
+using Intersect.Server.Networking;
 
 namespace Intersect.Server.Core
 {
@@ -156,6 +157,8 @@ namespace Intersect.Server.Core
             Console.WriteLine(Strings.Commandoutput.gametime.ToString(ServerTime.GetTime().ToString("F")));
 
             ServerTime.Update();
+
+            PacketSender.CacheGameDataPacket();
 
             return true;
         }

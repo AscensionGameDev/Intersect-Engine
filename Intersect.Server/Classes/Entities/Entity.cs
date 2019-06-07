@@ -6,6 +6,7 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
+using Intersect.Network.Packets.Server;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Database.PlayerData.Security;
@@ -886,6 +887,14 @@ namespace Intersect.Server.Entities
         public virtual int GetStatBuffs(Stats statType)
         {
             return 0;
+        }
+
+        public virtual int[] GetStatValues()
+        {
+            var stats = new int[(int) Stats.StatCount];
+            for (int i = 0; i < (int) Stats.StatCount; i++)
+                stats[i] = Stat[i].Value();
+            return stats;
         }
 
         //Attacking with projectile
@@ -1782,79 +1791,53 @@ namespace Intersect.Server.Entities
         {
         }
 
-        //Serializing Data
-        public virtual byte[] Data()
+        public virtual EntityPacket EntityPacket(EntityPacket packet = null)
         {
-            var bf = new ByteBuffer();
-            bf.WriteGuid(MapId);
-            bf.WriteString(Name);
-            bf.WriteString(Sprite);
-            bf.WriteString(Face);
-            bf.WriteInteger(Level);
-            bf.WriteInteger(X);
-            bf.WriteInteger(Y);
-            bf.WriteInteger(Z);
-            bf.WriteInteger(Dir);
-            bf.WriteBoolean(Passable);
-            bf.WriteBoolean(HideName);
-            bf.WriteBoolean(HideEntity);
-            bf.WriteInteger(Animations.Count);
-            for (var i = 0; i < Animations.Count; i++)
+            if (packet == null) packet = new EntityPacket();
+
+            packet.EntityId = Id;
+            packet.MapId = MapId;
+            packet.Name = Name;
+            packet.Sprite = Sprite;
+            packet.Face = Face;
+            packet.Level = Level;
+            packet.X = X;
+            packet.Y = Y;
+            packet.Z = Z;
+            packet.Dir = Dir;
+            packet.Passable = Passable;
+            packet.HideName = HideName;
+            packet.HideEntity = HideEntity;
+            packet.Animations = Animations.ToArray();
+            packet.Vital = GetVitals();
+            packet.MaxVital = GetMaxVitals();
+            packet.Stats = GetStatValues();
+            packet.StatusEffects = StatusPackets();
+
+            return packet;
+        }
+
+        public StatusPacket[] StatusPackets()
+        {
+            var statuses = Statuses.Values.ToArray();
+            var statusPackets = new StatusPacket[statuses.Length];
+            for (int i = 0; i < statuses.Length; i++)
             {
-                bf.WriteGuid(Animations[i]);
-            }
-            for (var i = 0; i < (int)Vitals.VitalCount; i++)
-            {
-                bf.WriteInteger(GetMaxVital(i));
-                bf.WriteInteger(GetVital(i));
-            }
-            var statuses = Statuses.ToArray();
-            bf.WriteInteger(statuses.Count());
-            foreach (var status in statuses)
-            {
-                bf.WriteGuid(status.Value.Spell.Id);
-                bf.WriteInteger((int)status.Value.Type);
-                bf.WriteString(status.Value.Data);
-                bf.WriteInteger((int)(status.Value.Duration - Globals.Timing.TimeMs));
-                bf.WriteInteger((int)(status.Value.Duration - status.Value.StartTime));
-            }
-            for (var i = 0; i < (int)Stats.StatCount; i++)
-            {
-                bf.WriteInteger(Stat[i].Value());
-            }
-            if (GetType() == typeof(Player)) //helps the client identify admins if entity is a player.
-            {
-                if (((Player) this).Client.Power == UserRights.Admin)
+                var status = statuses[i];
+                int[] vitalShields = null;
+                if (status.Type == StatusTypes.Shield)
                 {
-                    bf.WriteInteger((int)Access.Admin);
+                    vitalShields = new int[(int)Vitals.VitalCount];
+                    for (var x = 0; x < (int)Vitals.VitalCount; x++)
+                    {
+                        vitalShields[x] = status.shield[i];
+                    }
                 }
-                else if (((Player) this).Client.Power.Ban || ((Player) this).Client.Power.Kick || ((Player) this).Client.Power.Mute)
-                {
-                    bf.WriteInteger((int)Access.Moderator);
-                }
-                else
-                {
-                    bf.WriteInteger(0);
-                }
+
+                statusPackets[i] = new StatusPacket(status.Spell.Id, status.Type, status.Data, (int)(status.Duration - Globals.Timing.TimeMs), (int)(status.Duration - status.StartTime), vitalShields);
             }
-            else if (GetType() == typeof(Npc)) //Helps the client identify NPC Behavior
-            {
-                if (((Npc)this).Target != null)
-                {
-                    bf.WriteInteger(-1); //Used for coloring the npc's name red when aggression is shown.
-                }
-                else
-                {
-                    //0 Atttack when attacked, 1 attack on sight, 2 friendly, 3 guard
-                    //TODO fix this with new npc behaviors
-                    bf.WriteInteger(0);
-                }
-            }
-            else
-            {
-                bf.WriteInteger(0);
-            }
-            return bf.ToArray();
+
+            return statusPackets;
         }
     }
 

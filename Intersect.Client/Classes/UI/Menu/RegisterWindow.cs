@@ -155,7 +155,6 @@ namespace Intersect.Client.UI.Menu
                                 //GameFade.FadeOut();
                                 Hide();
                                 //Hash Password
-                                var bf = new ByteBuffer();
                                 var sha = new SHA256Managed();
                                 var hashedPass = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(mPasswordTextbox.Text.Trim()))).Replace("-", "");
                                 PacketSender.SendCreateAccount(mUsernameTextbox.Text, hashedPass, mEmailTextbox.Text);

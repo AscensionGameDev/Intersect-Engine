@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+
 using Intersect.Enums;
 using Intersect.GameObjects;
 
@@ -19,9 +21,12 @@ namespace Intersect.Client.Items
         {
         }
 
-        public void Load(string data)
+        public void Load(Guid id, int quantity, Guid? bagId, int[] statBuffs)
         {
-            JsonConvert.PopulateObject(data, this);
+            ItemId = id;
+            Quantity = quantity;
+            BagId = bagId;
+            StatBuffs = statBuffs;
         }
 
         public ItemInstance Clone()

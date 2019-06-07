@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.General;
@@ -170,13 +171,15 @@ namespace Intersect.Server.Entities
             return (IsDead & Base.WalkableAfter) || (!IsDead && Base.WalkableBefore);
         }
 
-        public override byte[] Data()
+        public override EntityPacket EntityPacket(EntityPacket packet = null)
         {
-            ByteBuffer myBuffer = new ByteBuffer();
-            myBuffer.WriteBytes(base.Data());
-            myBuffer.WriteInteger(Convert.ToInt32(IsDead));
-            myBuffer.WriteGuid(Base.Id);
-            return myBuffer.ToArray();
+            if (packet == null) packet = new ResourceEntityPacket();
+            packet = base.EntityPacket(packet);
+
+            var pkt = (ResourceEntityPacket)packet;
+            pkt.ResourceId = Base.Id;
+            pkt.IsDead = IsDead;
+            return pkt;
         }
 
         public override EntityTypes GetEntityType()

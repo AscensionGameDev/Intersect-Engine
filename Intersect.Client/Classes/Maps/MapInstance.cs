@@ -14,6 +14,7 @@ using Intersect.Config;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
+using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
@@ -931,17 +932,17 @@ namespace Intersect.Client.Maps
         }
 
         //Events
-        public void AddEvent(Guid evtId, ByteBuffer bf)
+        public void AddEvent(Guid evtId, EventEntityPacket packet)
         {
             if (MapLoaded)
             {
                 if (LocalEntities.ContainsKey(evtId))
                 {
-                    LocalEntities[evtId].Load(bf);
+                    LocalEntities[evtId].Load(packet);
                 }
                 else
                 {
-                    var evt = new Event(evtId, bf);
+                    var evt = new Event(evtId, packet);
                     LocalEntities.Add(evtId, evt);
                     mEvents.Add(evt);
                 }

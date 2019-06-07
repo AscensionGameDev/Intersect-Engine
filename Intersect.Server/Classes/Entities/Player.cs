@@ -10,8 +10,10 @@ using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
 using Intersect.GameObjects.Maps;
+using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData.Players;
+using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.EventProcessing;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
@@ -478,13 +480,29 @@ namespace Intersect.Server.Entities
         }
 
         //Sending Data
-        public override byte[] Data()
+        public override EntityPacket EntityPacket(EntityPacket packet = null)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(base.Data());
-            bf.WriteInteger((int)Gender);
-            bf.WriteGuid(ClassId);
-            return bf.ToArray();
+            if (packet == null) packet = new PlayerEntityPacket();
+            packet = base.EntityPacket(packet);
+
+            var pkt = (PlayerEntityPacket) packet;
+            pkt.Gender = Gender;
+            pkt.ClassId = ClassId;
+
+            if (Client.Power == UserRights.Admin)
+            {
+                pkt.AccessLevel = (int) Access.Admin;
+            }
+            else if (Client.Power.Ban || Client.Power.Kick || Client.Power.Mute)
+            {
+                pkt.AccessLevel = (int)Access.Moderator;
+            }
+            else
+            {
+                pkt.AccessLevel = 0;
+            }
+
+            return pkt;
         }
 
         public override EntityTypes GetEntityType()
@@ -1073,12 +1091,6 @@ namespace Intersect.Server.Entities
                 if (!adminWarp && (oldMap == null || !oldMap.SurroundingMaps.Contains(newMapId)))
                 {
                     PacketSender.SendMapGrid(Client, map.MapGrid, true);
-                }
-
-                var surroundingMaps = map.GetSurroundingMaps(true);
-                foreach (var surrMap in surroundingMaps)
-                {
-                    PacketSender.SendMap(Client, surrMap.Id);
                 }
                 mSentMap = true;
             }
@@ -2937,23 +2949,6 @@ namespace Intersect.Server.Entities
             //Send the trade confirmation to both players
             PacketSender.StartTrade(target.Client, this);
             PacketSender.StartTrade(Client, target);
-        }
-
-        public byte[] PartyData()
-        {
-            var bf = new ByteBuffer();
-            bf.WriteGuid(base.Id);
-            bf.WriteString(Name);
-            for (int i = 0; i < (int)Vitals.VitalCount; i++)
-            {
-                bf.WriteInteger(GetVital(i));
-            }
-            for (int i = 0; i < (int)Vitals.VitalCount; i++)
-            {
-                bf.WriteInteger(GetMaxVital(i));
-            }
-            bf.WriteInteger(Level);
-            return bf.ToArray();
         }
 
         //Spells

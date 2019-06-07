@@ -4,6 +4,7 @@ using Intersect.Client.Maps;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
+using Intersect.Network.Packets.Server;
 
 namespace Intersect.Client.Entities
 {
@@ -22,12 +23,12 @@ namespace Intersect.Client.Entities
         public ProjectileSpawns[] Spawns;
 
         private long mSpawnTime;
-        public int Target;
+        public Guid TargetId;
 
         /// <summary>
         ///     The constructor for the inherated projectile class
         /// </summary>
-        public Projectile(Guid id, ByteBuffer bf) : base(id, bf)
+        public Projectile(Guid id, ProjectileEntityPacket packet) : base(id, packet)
         {
             Vital[(int) Vitals.Health] = 1;
             MaxVital[(int) Vitals.Health] = 1;
@@ -36,14 +37,15 @@ namespace Intersect.Client.Entities
             IsMoving = true;
         }
 
-        public override void Load(ByteBuffer bf)
+        public override void Load(EntityPacket packet)
         {
             if (mLoaded) return;
-            base.Load(bf);
-            ProjectileId = bf.ReadGuid();
-            Dir = (byte)bf.ReadInteger();
-            Target = bf.ReadInteger();
-            mOwner = bf.ReadGuid();
+            base.Load(packet);
+            var pkt = (ProjectileEntityPacket)packet;
+            ProjectileId = pkt.ProjectileId;
+            Dir = pkt.ProjectileDirection;
+            TargetId = pkt.TargetId;
+            mOwner = pkt.OwnerId;
             mMyBase = ProjectileBase.Get(ProjectileId);
             if (mMyBase != null)
             {

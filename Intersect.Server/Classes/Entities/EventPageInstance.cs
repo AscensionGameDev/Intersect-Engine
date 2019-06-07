@@ -2,6 +2,8 @@
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
+using Intersect.Network.Packets.Server;
+using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.EventProcessing;
 using Intersect.Server.General;
 using Intersect.Server.Maps;
@@ -192,10 +194,10 @@ namespace Intersect.Server.Entities
             return EntityTypes.Event;
         }
 
-        public override byte[] Data()
+        public override EntityPacket EntityPacket(EntityPacket packet = null)
         {
-            var bf = new ByteBuffer();
-
+            if (packet == null) packet = new EventEntityPacket();
+            
             if (GlobalClone != null)
             {
                 Sprite = GlobalClone.Sprite;
@@ -209,20 +211,17 @@ namespace Intersect.Server.Entities
                 HideName = GlobalClone.HideName;
             }
 
-            bf.WriteBytes(base.Data());
-            bf.WriteBoolean(HideName);
-            bf.WriteBoolean(mDirectionFix);
-            bf.WriteBoolean(mWalkingAnim);
-            bf.WriteBoolean(DisablePreview);
-            bf.WriteString(MyPage.Description);
-            bf.WriteInteger((int)MyGraphic.Type);
-            bf.WriteString(MyGraphic.Filename);
-            bf.WriteInteger(MyGraphic.X);
-            bf.WriteInteger(MyGraphic.Y);
-            bf.WriteInteger(MyGraphic.Width);
-            bf.WriteInteger(MyGraphic.Height);
-            bf.WriteInteger((int)mRenderLayer);
-            return bf.ToArray();
+            packet = base.EntityPacket(packet);
+
+            var pkt = (EventEntityPacket)packet;
+            pkt.HideName = HideName;
+            pkt.DirectionFix = mDirectionFix;
+            pkt.WalkingAnim = mWalkingAnim;
+            pkt.DisablePreview = DisablePreview;
+            pkt.Description = MyPage.Description;
+            pkt.Graphic = MyGraphic;
+            pkt.RenderLayer = (byte) mRenderLayer;
+            return pkt;
         }
 
         //Stats

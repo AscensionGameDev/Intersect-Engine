@@ -9,6 +9,7 @@ using Intersect.Client.Maps;
 using Intersect.Client.Networking;
 using Intersect.Client.UI;
 using Intersect.Config;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 
@@ -34,6 +35,20 @@ namespace Intersect.Client
             //Init Network
             GameNetwork.InitNetwork();
             GameFade.FadeIn();
+
+            //Make Json.Net Familiar with Our Object Types
+            var id = Guid.NewGuid();
+            foreach (var val in Enum.GetValues(typeof(GameObjectType)))
+            {
+                var type = ((GameObjectType)val);
+                if (type != GameObjectType.Event && type != GameObjectType.Time)
+                {
+                    var lookup = type.GetLookup();
+                    var item = lookup.AddNew(type.GetObjectType(), id);
+                    item.Load(item.JsonData);
+                    lookup.Delete(item);
+                }
+            }
 
             Globals.IsRunning = true;
         }
@@ -205,6 +220,8 @@ namespace Intersect.Client
                 {
                     canShowWorld = false;
                 }
+
+                canShowWorld = true;
                 if (canShowWorld) Globals.NeedsMaps = false;
             }
             else

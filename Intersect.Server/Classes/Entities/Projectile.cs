@@ -3,6 +3,7 @@ using System.Linq;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
+using Intersect.Network.Packets.Server;
 using Intersect.Server.General;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
@@ -433,22 +434,17 @@ namespace Intersect.Server.Entities
             PacketSender.SendEntityLeave(this);
         }
 
-        public override byte[] Data()
+        public override EntityPacket EntityPacket(EntityPacket packet = null)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(base.Data());
-            bf.WriteGuid(Base.Id);
-            bf.WriteInteger(Dir);
-            if (Target == null)
-            {
-                bf.WriteGuid(Guid.Empty);
-            }
-            else
-            {
-                bf.WriteGuid(Target.Id);
-            }
-            bf.WriteGuid(Owner != null ? Owner.Id : Guid.Empty);
-            return bf.ToArray();
+            if (packet == null) packet = new ProjectileEntityPacket();
+            packet = base.EntityPacket(packet);
+
+            var pkt = (ProjectileEntityPacket)packet;
+            pkt.ProjectileId = Base.Id;
+            pkt.ProjectileDirection = Dir;
+            pkt.TargetId = Target?.Id ?? Guid.Empty;
+            pkt.OwnerId = Owner?.Id ?? Guid.Empty;
+            return pkt;
         }
 
         public override EntityTypes GetEntityType()

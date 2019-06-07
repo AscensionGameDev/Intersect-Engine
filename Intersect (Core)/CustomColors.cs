@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 using Formatting = Newtonsoft.Json.Formatting;
 
 namespace Intersect
@@ -147,27 +149,25 @@ namespace Intersect
             File.WriteAllText(Path.Combine("resources", "colors.json"), JsonConvert.SerializeObject(colors,Formatting.Indented));
         }
 
-        public static byte[] GetData()
+        public static string Json()
         {
-            var bf = new ByteBuffer();
             Type type = typeof(CustomColors);
-            foreach (var p in type.GetFields(System.Reflection.BindingFlags.Static |
-                                             System.Reflection.BindingFlags.Public))
+            var array = new JArray();
+            foreach (var p in type.GetFields(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public))
             {
-                bf.WriteInteger(((Color)p.GetValue(null)).ToArgb());
+                array.Add(((Color)p.GetValue(null)).ToArgb());
             }
-            return bf.ToArray();
+            return array.ToString();
         }
 
-        public static void Load(byte[] data)
+        public static void Load(string json)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(data);
+            var array = JArray.Parse(json);
+            var arrayIndex = 0;
             Type type = typeof(CustomColors);
-            foreach (var p in type.GetFields(System.Reflection.BindingFlags.Static |
-                                             System.Reflection.BindingFlags.Public))
+            foreach (var p in type.GetFields(System.Reflection.BindingFlags.Static |  System.Reflection.BindingFlags.Public))
             {
-                p.SetValue(p, Color.FromArgb(bf.ReadInteger()));
+                p.SetValue(p, Color.FromArgb(int.Parse(array[arrayIndex++].ToString())));
             }
         }
     }

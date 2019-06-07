@@ -6,6 +6,7 @@ using Intersect.Client.General;
 using Intersect.Client.Maps;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.Network.Packets.Server;
 
 namespace Intersect.Client.Entities
 {
@@ -18,7 +19,7 @@ namespace Intersect.Client.Entities
         FloatRect mSrcRectangle = FloatRect.Empty;
         private bool _waitingForTilesets;
 
-        public Resource(Guid id, ByteBuffer bf) : base(id, bf)
+        public Resource(Guid id, ResourceEntityPacket packet) : base(id, packet)
         {
             mRenderPriority = 0;
         }
@@ -53,11 +54,12 @@ namespace Intersect.Client.Entities
             return BaseResource;
         }
 
-        public override void Load(ByteBuffer bf)
+        public override void Load(EntityPacket packet)
         {
-            base.Load(bf);
-            IsDead = Convert.ToBoolean(bf.ReadInteger());
-            var baseId = bf.ReadGuid();
+            base.Load(packet);
+            var pkt = (ResourceEntityPacket)packet;
+            IsDead = pkt.IsDead;
+            var baseId = pkt.ResourceId;
             BaseResource = ResourceBase.Get(baseId);
             HideName = true;
             if (IsDead)

@@ -12,6 +12,7 @@ using Intersect.Client.Items;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Network.Packets;
+using Intersect.Network.Packets.Server;
 
 using JetBrains.Annotations;
 
@@ -103,7 +104,7 @@ namespace Intersect.Client.General
         public static List<EventDialog> EventDialogs = new List<EventDialog>();
 
         //Event Guid and the Map its associated with
-        public static Dictionary<Guid,Dictionary<Guid,ByteBuffer>> PendingEvents = new Dictionary<Guid, Dictionary<Guid, ByteBuffer>>();
+        public static Dictionary<Guid,Dictionary<Guid,EventEntityPacket>> PendingEvents = new Dictionary<Guid, Dictionary<Guid, EventEntityPacket>>();
         public static Dictionary<Guid,Guid> EventHolds = new Dictionary<Guid,Guid>();
         public static List<Guid> QuestOffers = new List<Guid>();
         public static bool MoveRouteActive = false;
@@ -152,11 +153,11 @@ namespace Intersect.Client.General
             }
         }
 
-        internal static void HandlePacket(CerasPacket packet)
+        internal static void HandlePacket(CerasPacket packet, long time)
         {
             if (sw.IsRunning)
             {
-                Debug.WriteLine(sw.ElapsedMilliseconds + "  : " + packet.GetType().Name);
+                Debug.WriteLine(time + "  : " + packet.GetType().Name + " [" + (sw.ElapsedMilliseconds - time) + "ms]");
             }
         }
 
