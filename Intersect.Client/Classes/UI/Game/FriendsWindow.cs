@@ -91,13 +91,13 @@ namespace Intersect.Client.UI.Game
                 //Row Render color (red = offline, green = online)
                 if (f.Online == true)
                 {
-                    row.SetTextColor(Framework.GenericClasses.Color.Green);
+                    row.SetTextColor(Color.Green);
                 }
                 else
                 {
-                    row.SetTextColor(Framework.GenericClasses.Color.Red);
+                    row.SetTextColor(Color.Red);
                 }
-                row.RenderColor = new Framework.GenericClasses.Color(50, 255, 255, 255);
+                row.RenderColor = new Color(50, 255, 255, 255);
             }
         }
 

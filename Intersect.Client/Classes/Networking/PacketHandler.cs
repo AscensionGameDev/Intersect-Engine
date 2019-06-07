@@ -30,7 +30,7 @@ namespace Intersect.Client.Networking
         public static long Ping = 0;
         public static long PingTime;
 
-        public static bool HandlePacket(IConnection connection, IPacket packet)
+        public static bool HandlePacket(IPacket packet)
         {
             if (packet is CerasPacket)
                 HandlePacket((dynamic)packet);
@@ -260,7 +260,7 @@ namespace Intersect.Client.Networking
         //ChatMsgPacket
         private static void HandlePacket(ChatMsgPacket packet)
         {
-            ChatboxMsg.AddMessage(new ChatboxMsg(packet.Message, new Framework.GenericClasses.Color(packet.Color.A,packet.Color.R,packet.Color.G,packet.Color.B),packet.Target));
+            ChatboxMsg.AddMessage(new ChatboxMsg(packet.Message, new Color(packet.Color.A,packet.Color.R,packet.Color.G,packet.Color.B),packet.Target));
         }
 
         //ActionMsgPacket
@@ -269,7 +269,7 @@ namespace Intersect.Client.Networking
             var map = MapInstance.Get(packet.MapId);
             if (map != null)
             {
-                map.ActionMsgs.Add(new ActionMsgInstance(map, packet.X,packet.Y, packet.Message, new Framework.GenericClasses.Color(packet.Color.A, packet.Color.R,packet.Color.G,packet.Color.B)));
+                map.ActionMsgs.Add(new ActionMsgInstance(map, packet.X,packet.Y, packet.Message, new Color(packet.Color.A, packet.Color.R,packet.Color.G,packet.Color.B)));
             }
         }
 
@@ -999,7 +999,7 @@ namespace Intersect.Client.Networking
         //TimePacket
         private static void HandlePacket(TimePacket packet)
         {
-            ClientTime.LoadTime(packet.Time, Framework.GenericClasses.Color.FromArgb(packet.Color.A, packet.Color.R, packet.Color.G, packet.Color.B), packet.Rate);
+            ClientTime.LoadTime(packet.Time, Color.FromArgb(packet.Color.A, packet.Color.R, packet.Color.G, packet.Color.B), packet.Rate);
         }
 
         //PartyPacket

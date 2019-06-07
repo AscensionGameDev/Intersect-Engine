@@ -169,6 +169,7 @@
     <Compile Include="Admin\Actions\WarpToMapAction.cs" />
     <Compile Include="Admin\Actions\WarpToMeAction.cs" />
     <Compile Include="AlphanumComparatorFast.cs" />
+    <Compile Include="ColorF.cs" />
     <Compile Include="Core\ApplicationContext.cs" />
     <Compile Include="Core\IApplicationContext.cs" />
     <Compile Include="BytePoint.cs" />

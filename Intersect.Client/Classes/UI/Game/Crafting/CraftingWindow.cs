@@ -217,7 +217,7 @@ namespace Intersect.Client.UI.Game.Crafting
                     mCraftWindow.IsClosable = true;
                     mBar.Width = 0;
                     ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Crafting.incorrectresources,
-                        Framework.GenericClasses.Color.Red));
+                        Color.Red));
                     return;
                 }
             }
@@ -299,7 +299,7 @@ namespace Intersect.Client.UI.Game.Crafting
             if (!cancraft)
             {
                 ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Crafting.incorrectresources,
-                    Framework.GenericClasses.Color.Red));
+                    Color.Red));
                 return;
             }
 
@@ -331,8 +331,8 @@ namespace Intersect.Client.UI.Game.Crafting
                     tmpRow.UserData = Globals.ActiveCraftingTable.Crafts[i];
                     tmpRow.DoubleClicked += tmpNode_DoubleClicked;
                     tmpRow.Clicked += tmpNode_DoubleClicked;
-                    tmpRow.SetTextColor(Framework.GenericClasses.Color.White);
-                    tmpRow.RenderColor = new Framework.GenericClasses.Color(50, 255, 255, 255);
+                    tmpRow.SetTextColor(Color.White);
+                    tmpRow.RenderColor = new Color(50, 255, 255, 255);
                 }
 
                 //Load the craft data

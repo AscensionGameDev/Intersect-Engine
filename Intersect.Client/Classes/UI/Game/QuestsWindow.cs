@@ -146,7 +146,7 @@ namespace Intersect.Client.UI.Game
                         {
                             if (Globals.Me.QuestProgress[quest.Id].TaskId != Guid.Empty)
                             {
-                                AddQuestToList(quest.Name, Framework.GenericClasses.Color.Yellow, quest.Id);
+                                AddQuestToList(quest.Name, Color.Yellow, quest.Id);
                             }
                             else
                             {
@@ -154,14 +154,14 @@ namespace Intersect.Client.UI.Game
                                 {
                                     if (quest.LogAfterComplete)
                                     {
-                                        AddQuestToList(quest.Name, Framework.GenericClasses.Color.Green, quest.Id);
+                                        AddQuestToList(quest.Name, Color.Green, quest.Id);
                                     }
                                 }
                                 else
                                 {
                                     if (quest.LogBeforeOffer)
                                     {
-                                        AddQuestToList(quest.Name, Framework.GenericClasses.Color.Red, quest.Id);
+                                        AddQuestToList(quest.Name, Color.Red, quest.Id);
                                     }
                                 }
                             }
@@ -170,7 +170,7 @@ namespace Intersect.Client.UI.Game
                         {
                             if (quest.LogBeforeOffer)
                             {
-                                AddQuestToList(quest.Name, Framework.GenericClasses.Color.Red, quest.Id);
+                                AddQuestToList(quest.Name, Color.Red, quest.Id);
                             }
                         }
                     }
@@ -178,14 +178,14 @@ namespace Intersect.Client.UI.Game
             }
         }
 
-        private void AddQuestToList(string name, Framework.GenericClasses.Color clr, Guid questId)
+        private void AddQuestToList(string name, Color clr, Guid questId)
         {
             var item = mQuestList.AddRow(name);
             item.UserData = questId;
             item.Clicked += QuestListItem_Clicked;
             item.Selected += Item_Selected;
             item.SetTextColor(clr);
-            item.RenderColor = new Framework.GenericClasses.Color(50, 255, 255, 255);
+            item.RenderColor = new Color(50, 255, 255, 255);
         }
 
         private void Item_Selected(Base sender, ItemSelectedEventArgs arguments)
@@ -229,15 +229,15 @@ namespace Intersect.Client.UI.Game
                     {
                         //In Progress
                         mQuestStatus.SetText(Strings.QuestLog.inprogress);
-                        mQuestStatus.SetTextColor(Framework.GenericClasses.Color.Yellow, Label.ControlState.Normal);
+                        mQuestStatus.SetTextColor(Color.Yellow, Label.ControlState.Normal);
                         if (mSelectedQuest.InProgressDescription.Length > 0)
                         {
-                            mQuestDescLabel.AddText(mSelectedQuest.InProgressDescription, Framework.GenericClasses.Color.White, Alignments.Left,
+                            mQuestDescLabel.AddText(mSelectedQuest.InProgressDescription, Color.White, Alignments.Left,
                                 mQuestDescTemplateLabel.Font);
                             mQuestDescLabel.AddLineBreak();
                             mQuestDescLabel.AddLineBreak();
                         }
-                        mQuestDescLabel.AddText(Strings.QuestLog.currenttask, Framework.GenericClasses.Color.White, Alignments.Left,
+                        mQuestDescLabel.AddText(Strings.QuestLog.currenttask, Color.White, Alignments.Left,
                             mQuestDescTemplateLabel.Font);
                         mQuestDescLabel.AddLineBreak();
                         for (int i = 0; i < mSelectedQuest.Tasks.Count; i++)
@@ -246,7 +246,7 @@ namespace Intersect.Client.UI.Game
                             {
                                 if (mSelectedQuest.Tasks[i].Description.Length > 0)
                                 {
-                                    mQuestDescLabel.AddText(mSelectedQuest.Tasks[i].Description, Framework.GenericClasses.Color.White, Alignments.Left,
+                                    mQuestDescLabel.AddText(mSelectedQuest.Tasks[i].Description, Color.White, Alignments.Left,
                                         mQuestDescTemplateLabel.Font);
                                     mQuestDescLabel.AddLineBreak();
                                     mQuestDescLabel.AddLineBreak();
@@ -257,7 +257,7 @@ namespace Intersect.Client.UI.Game
                                             Globals.Me.QuestProgress[mSelectedQuest.Id].TaskProgress,
                                             mSelectedQuest.Tasks[i].Quantity,
                                             ItemBase.GetName(mSelectedQuest.Tasks[i].TargetId)),
-                                        Framework.GenericClasses.Color.White, Alignments.Left, mQuestDescTemplateLabel.Font);
+                                        Color.White, Alignments.Left, mQuestDescTemplateLabel.Font);
                                 }
                                 else if (mSelectedQuest.Tasks[i].Objective == QuestObjective.KillNpcs) //Kill Npcs
                                 {
@@ -265,7 +265,7 @@ namespace Intersect.Client.UI.Game
                                             Globals.Me.QuestProgress[mSelectedQuest.Id].TaskProgress,
                                             mSelectedQuest.Tasks[i].Quantity,
                                             NpcBase.GetName(mSelectedQuest.Tasks[i].TargetId)),
-                                        Framework.GenericClasses.Color.White, Alignments.Left, mQuestDescTemplateLabel.Font);
+                                        Color.White, Alignments.Left, mQuestDescTemplateLabel.Font);
                                 }
                             }
                         }
@@ -280,8 +280,8 @@ namespace Intersect.Client.UI.Game
                             if (mSelectedQuest.LogAfterComplete)
                             {
                                 mQuestStatus.SetText(Strings.QuestLog.completed);
-                                mQuestStatus.SetTextColor(Framework.GenericClasses.Color.Green, Label.ControlState.Normal);
-                                mQuestDescLabel.AddText(mSelectedQuest.EndDescription, Framework.GenericClasses.Color.White, Alignments.Left,
+                                mQuestStatus.SetTextColor(Color.Green, Label.ControlState.Normal);
+                                mQuestDescLabel.AddText(mSelectedQuest.EndDescription, Color.White, Alignments.Left,
                                     mQuestDescTemplateLabel.Font);
                             }
                         }
@@ -291,8 +291,8 @@ namespace Intersect.Client.UI.Game
                             if (mSelectedQuest.LogBeforeOffer)
                             {
                                 mQuestStatus.SetText(Strings.QuestLog.notstarted);
-                                mQuestStatus.SetTextColor(Framework.GenericClasses.Color.Red, Label.ControlState.Normal);
-                                mQuestDescLabel.AddText(mSelectedQuest.BeforeDescription, Framework.GenericClasses.Color.White, Alignments.Left,
+                                mQuestStatus.SetTextColor(Color.Red, Label.ControlState.Normal);
+                                mQuestDescLabel.AddText(mSelectedQuest.BeforeDescription, Color.White, Alignments.Left,
                                     mQuestDescTemplateLabel.Font);
                                 mQuitButton?.Hide();
                             }
@@ -305,8 +305,8 @@ namespace Intersect.Client.UI.Game
                     if (mSelectedQuest.LogBeforeOffer)
                     {
                         mQuestStatus.SetText(Strings.QuestLog.notstarted);
-                        mQuestStatus.SetTextColor(Framework.GenericClasses.Color.Red, Label.ControlState.Normal);
-                        mQuestDescLabel.AddText(mSelectedQuest.BeforeDescription, Framework.GenericClasses.Color.White, Alignments.Left,
+                        mQuestStatus.SetTextColor(Color.Red, Label.ControlState.Normal);
+                        mQuestDescLabel.AddText(mSelectedQuest.BeforeDescription, Color.White, Alignments.Left,
                             mQuestDescTemplateLabel.Font);
                     }
                 }

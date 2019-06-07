@@ -60,8 +60,8 @@ namespace Intersect.Client.UI.Game.Hotbar
         {
             FloatRect rect = new FloatRect()
             {
-                X = HotbarWindow.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).X,
-                Y = HotbarWindow.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).Y,
+                X = HotbarWindow.LocalPosToCanvas(new Point(0, 0)).X,
+                Y = HotbarWindow.LocalPosToCanvas(new Point(0, 0)).Y,
                 Width = HotbarWindow.Width,
                 Height = HotbarWindow.Height
             };

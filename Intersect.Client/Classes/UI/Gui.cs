@@ -70,7 +70,7 @@ namespace Intersect.Client.UI
             sMenuCanvas.SetSize((int) (GameGraphics.Renderer.GetScreenWidth() / sMenuCanvas.Scale),
                 (int) (GameGraphics.Renderer.GetScreenHeight() / sMenuCanvas.Scale));
             sMenuCanvas.ShouldDrawBackground = false;
-            sMenuCanvas.BackgroundColor = Framework.GenericClasses.Color.FromArgb(255, 150, 170, 170);
+            sMenuCanvas.BackgroundColor = Color.FromArgb(255, 150, 170, 170);
             sMenuCanvas.KeyboardInputEnabled = true;
 
             // Create the game Canvas (it's root, on which all other GWEN controls are created)
@@ -79,7 +79,7 @@ namespace Intersect.Client.UI
             sGameCanvas.SetSize((int) (GameGraphics.Renderer.GetScreenWidth() / sGameCanvas.Scale),
                 (int) (GameGraphics.Renderer.GetScreenHeight() / sGameCanvas.Scale));
             sGameCanvas.ShouldDrawBackground = false;
-            sGameCanvas.BackgroundColor = Framework.GenericClasses.Color.FromArgb(255, 150, 170, 170);
+            sGameCanvas.BackgroundColor = Color.FromArgb(255, 150, 170, 170);
             sGameCanvas.KeyboardInputEnabled = true;
 
             // Create GWEN input processor
@@ -172,8 +172,8 @@ namespace Intersect.Client.UI
             }
             else
             {
-                FloatRect rect = new FloatRect(obj.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).X,
-                    obj.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).Y, obj.Width, obj.Height);
+                FloatRect rect = new FloatRect(obj.LocalPosToCanvas(new Point(0, 0)).X,
+                    obj.LocalPosToCanvas(new Point(0, 0)).Y, obj.Width, obj.Height);
                 if (rect.Contains(InputHandler.MousePosition.X, InputHandler.MousePosition.Y))
                 {
                     return true;

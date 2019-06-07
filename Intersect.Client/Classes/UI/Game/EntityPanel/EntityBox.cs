@@ -248,7 +248,7 @@ namespace Intersect.Client.UI.Game.EntityPanel
                 UpdateSpellStatus();
                 if (EntityType == EntityTypes.Event)
                 {
-                    EventDesc.AddText(((Event) MyEntity).Desc, Framework.GenericClasses.Color.White);
+                    EventDesc.AddText(((Event) MyEntity).Desc, Color.White);
                     EventDesc.SizeToChildren(false, true);
                 }
                 mInitialized = true;

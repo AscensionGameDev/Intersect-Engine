@@ -64,7 +64,7 @@ namespace Intersect.Client.UI.Menu
                 ShouldDrawBackground = true,
                 Text = Strings.Server.StatusLabel.ToString(ActiveNetworkStatus.ToLocalizedString()),
             };
-            mServerStatusLabel.SetTextColor(Framework.GenericClasses.Color.White, Label.ControlState.Normal);
+            mServerStatusLabel.SetTextColor(Color.White, Label.ControlState.Normal);
             mServerStatusLabel.AddAlignment(Alignments.Bottom);
             mServerStatusLabel.AddAlignment(Alignments.Left);
             mServerStatusLabel.ProcessAlignments();

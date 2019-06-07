@@ -158,7 +158,7 @@ namespace Intersect.Client.MonoGame.Graphics
         {
             mWhiteTexture = CreateRenderTexture(1, 1);
             mWhiteTexture.Begin();
-            mWhiteTexture.Clear(Framework.GenericClasses.Color.White);
+            mWhiteTexture.Clear(Color.White);
             mWhiteTexture.End();
         }
 
@@ -271,12 +271,12 @@ namespace Intersect.Client.MonoGame.Graphics
             mSpriteBatchBegan = false;
         }
 
-        public static Microsoft.Xna.Framework.Color ConvertColor(Framework.GenericClasses.Color clr)
+        public static Microsoft.Xna.Framework.Color ConvertColor(Color clr)
         {
             return new Microsoft.Xna.Framework.Color(clr.R, clr.G, clr.B, clr.A);
         }
 
-        public override void Clear(Framework.GenericClasses.Color color)
+        public override void Clear(Color color)
         {
             mGraphicsDevice.Clear(ConvertColor(color));
         }
@@ -313,7 +313,7 @@ namespace Intersect.Client.MonoGame.Graphics
         }
 
         public override void DrawString(string text, GameFont gameFont, float x, float y, float fontScale,
-            Framework.GenericClasses.Color fontColor, bool worldPos = true, GameRenderTexture renderTexture = null, Framework.GenericClasses.Color borderColor = null)
+            Color fontColor, bool worldPos = true, GameRenderTexture renderTexture = null, Color borderColor = null)
         {
             if (gameFont == null) return;
             var font = (SpriteFont) gameFont.GetFont();
@@ -326,7 +326,7 @@ namespace Intersect.Client.MonoGame.Graphics
                     text = text.Replace(chr, ' ');
                 }
             }
-            if (borderColor != null && borderColor != Framework.GenericClasses.Color.Transparent)
+            if (borderColor != null && borderColor != Color.Transparent)
             {
                 mSpriteBatch.DrawString(font, text, new Vector2(x, y - 1), ConvertColor(borderColor), 0f,
                     Vector2.Zero,
@@ -345,8 +345,8 @@ namespace Intersect.Client.MonoGame.Graphics
         }
 
         public override void DrawString(string text, GameFont gameFont, float x, float y, float fontScale,
-            Framework.GenericClasses.Color fontColor, bool worldPos, GameRenderTexture renderTexture, FloatRect clipRect,
-            Framework.GenericClasses.Color borderColor = null)
+            Color fontColor, bool worldPos, GameRenderTexture renderTexture, FloatRect clipRect,
+            Color borderColor = null)
         {
             if (gameFont == null) return;
             x += mCurrentView.X;
@@ -371,7 +371,7 @@ namespace Intersect.Client.MonoGame.Graphics
                     text = text.Replace(chr, ' ');
                 }
             }
-            if (borderColor != null && borderColor != Framework.GenericClasses.Color.Transparent)
+            if (borderColor != null && borderColor != Color.Transparent)
             {
                 mSpriteBatch.DrawString(font, text, new Vector2(x, y - 1), ConvertColor(borderColor), 0f,
                     Vector2.Zero,
@@ -400,7 +400,7 @@ namespace Intersect.Client.MonoGame.Graphics
         }
         
         public override void DrawTexture(GameTexture tex, float sx, float sy, float sw, float sh, float tx, float ty, float tw, float th,
-            Framework.GenericClasses.Color renderColor, GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.None,
+            Color renderColor, GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.None,
             GameShader shader = null, float rotationDegrees = 0, bool isUi = false, bool drawImmediate = false)
         {
             var texture = tex?.GetTexture();

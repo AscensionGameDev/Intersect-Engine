@@ -923,7 +923,7 @@ namespace Intersect.Client.Maps
                 var x = (int)Math.Ceiling(GetX() + ActionMsgs[n].X * Options.TileWidth + ActionMsgs[n].XOffset);
                 float textWidth = GameGraphics.Renderer.MeasureText(ActionMsgs[n].Msg, GameGraphics.GameFont, 1).X;
                 GameGraphics.Renderer.DrawString(ActionMsgs[n].Msg, GameGraphics.GameFont, (int)(x) - textWidth / 2f,
-                    (int)(y), 1, ActionMsgs[n].Clr, true, null, new Framework.GenericClasses.Color(40, 40, 40));
+                    (int)(y), 1, ActionMsgs[n].Clr, true, null, new Color(40, 40, 40));
 
                 //Try to remove
                 ActionMsgs[n].TryRemove();
@@ -993,7 +993,7 @@ namespace Intersect.Client.Maps
 
     public class ActionMsgInstance
     {
-        public Framework.GenericClasses.Color Clr = new Framework.GenericClasses.Color();
+        public Color Clr = new Color();
         public MapInstance Map;
         public string Msg = "";
         public long TransmittionTimer;
@@ -1001,7 +1001,7 @@ namespace Intersect.Client.Maps
         public long XOffset;
         public int Y;
 
-        public ActionMsgInstance(MapInstance map, int x, int y, string message, Framework.GenericClasses.Color color)
+        public ActionMsgInstance(MapInstance map, int x, int y, string message, Color color)
         {
             Random rnd = new Random();
 

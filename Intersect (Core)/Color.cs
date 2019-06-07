@@ -189,5 +189,27 @@ namespace Intersect
         {
             return FromArgb((rgba >> 0) & 0x0FF, (rgba >> 24) & 0x0FF, (rgba >> 16) & 0x0FF, (rgba >> 8) & 0x0FF);
         }
+
+        public static string ToString(Color clr)
+        {
+            if (clr == null)
+            {
+                return "";
+            }
+            else
+            {
+                return clr.A + "," + clr.R + "," + clr.G + "," + clr.B;
+            }
+        }
+
+        public static Color FromString(string val, Color defaultColor = null)
+        {
+            if (string.IsNullOrEmpty(val)) return defaultColor;
+            string[] strs = val.Split(",".ToCharArray());
+            int[] parts = new int[strs.Length];
+            for (int i = 0; i < strs.Length; i++)
+                parts[i] = int.Parse(strs[i]);
+            return new Color(parts[0], parts[1], parts[2], parts[3]);
+        }
     }
 }

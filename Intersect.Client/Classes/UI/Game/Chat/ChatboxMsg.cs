@@ -6,10 +6,10 @@ namespace Intersect.Client.UI.Game.Chat
     {
         private static List<ChatboxMsg> sGameMessages = new List<ChatboxMsg>();
         private string mMsg = "";
-        private Framework.GenericClasses.Color mMsgColor;
+        private Color mMsgColor;
         private string mTarget = "";
 
-        public ChatboxMsg(string msg, Framework.GenericClasses.Color clr, string target = "")
+        public ChatboxMsg(string msg, Color clr, string target = "")
         {
             mMsg = msg;
             mMsgColor = clr;
@@ -21,7 +21,7 @@ namespace Intersect.Client.UI.Game.Chat
             return mMsg;
         }
 
-        public Framework.GenericClasses.Color GetColor()
+        public Color GetColor()
         {
             return mMsgColor;
         }

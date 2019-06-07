@@ -75,7 +75,7 @@ namespace Intersect.Client.MonoGame.Network
                 KeyValuePair<IConnection,IPacket> dequeued;
                 if (PacketQueue.TryDequeue(out dequeued))
                 {
-                    PacketHandler.HandlePacket(dequeued.Key,dequeued.Value);
+                    OnDataReceived(dequeued.Value);
                 }
             }
         }

@@ -62,7 +62,7 @@ namespace Intersect.Client.UI.Game.Character
             mCharacterWindow.DisableResizing();
 
             mCharacterName = new Label(mCharacterWindow, "CharacterNameLabel");
-            mCharacterName.SetTextColor(Framework.GenericClasses.Color.White, Label.ControlState.Normal);
+            mCharacterName.SetTextColor(Color.White, Label.ControlState.Normal);
 
             mCharacterLevelAndClass = new Label(mCharacterWindow, "ChatacterInfoLabel");
             mCharacterLevelAndClass.SetText("");

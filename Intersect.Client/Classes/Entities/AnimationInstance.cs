@@ -114,7 +114,7 @@ namespace Intersect.Client.Entities
                 }
                 int offsetX = MyBase.Lower.Lights[mLowerFrame].OffsetX;
                 int offsetY = MyBase.Lower.Lights[mLowerFrame].OffsetY;
-                var offset = RotatePoint(new Framework.GenericClasses.Point((int) offsetX, (int) offsetY), new Framework.GenericClasses.Point(0, 0),
+                var offset = RotatePoint(new Point((int) offsetX, (int) offsetY), new Point(0, 0),
                     rotationDegrees + 180);
                 GameGraphics.AddLight((int) mRenderX - offset.X,
                     (int) mRenderY - offset.Y, MyBase.Lower.Lights[mLowerFrame].Size,
@@ -146,7 +146,7 @@ namespace Intersect.Client.Entities
                 }
                 int offsetX = MyBase.Upper.Lights[mUpperFrame].OffsetX;
                 int offsetY = MyBase.Upper.Lights[mUpperFrame].OffsetY;
-                var offset = RotatePoint(new Framework.GenericClasses.Point((int) offsetX, (int) offsetY), new Framework.GenericClasses.Point(0, 0),
+                var offset = RotatePoint(new Point((int) offsetX, (int) offsetY), new Point(0, 0),
                     rotationDegrees + 180);
                 GameGraphics.AddLight((int) mRenderX - offset.X,
                     (int) mRenderY - offset.Y, MyBase.Upper.Lights[mUpperFrame].Size,
@@ -155,12 +155,12 @@ namespace Intersect.Client.Entities
             }
         }
 
-        static Framework.GenericClasses.Point RotatePoint(Framework.GenericClasses.Point pointToRotate, Framework.GenericClasses.Point centerPoint, double angleInDegrees)
+        static Point RotatePoint(Point pointToRotate, Point centerPoint, double angleInDegrees)
         {
             double angleInRadians = angleInDegrees * (Math.PI / 180);
             double cosTheta = Math.Cos(angleInRadians);
             double sinTheta = Math.Sin(angleInRadians);
-            return new Framework.GenericClasses.Point
+            return new Point
             {
                 X =
                     (int)
@@ -276,9 +276,9 @@ namespace Intersect.Client.Entities
             }
         }
 
-        public Framework.GenericClasses.Point AnimationSize()
+        public Point AnimationSize()
         {
-            var size = new Framework.GenericClasses.Point(0, 0);
+            var size = new Point(0, 0);
 
             GameTexture tex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Animation,
                 MyBase.Lower.Sprite);

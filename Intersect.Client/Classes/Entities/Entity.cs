@@ -953,8 +953,8 @@ namespace Intersect.Client.Entities
                     new FloatRect((x - textSize.X / 2f) - 4, y, textSize.X + 8, textSize.Y), backgroundColor);
             GameGraphics.Renderer.DrawString(Name, GameGraphics.GameFont,
                 (int) (x - (int) Math.Ceiling(textSize.X / 2f)), (int) (y), 1,
-                Framework.GenericClasses.Color.FromArgb(textColor.ToArgb()), true, null,
-                Framework.GenericClasses.Color.FromArgb(borderColor.ToArgb()));
+                Color.FromArgb(textColor.ToArgb()), true, null,
+                Color.FromArgb(borderColor.ToArgb()));
         }
 
         public void DrawHpBar()

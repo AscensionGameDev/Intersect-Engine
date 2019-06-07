@@ -65,7 +65,7 @@ namespace Intersect.Client.MonoGame.Graphics
                 {
                     //Failed to load texture.. lets log like we do with audio
                     Log.Error($"Error loading '{mName}'.", ex);
-                    ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sprite) + " [" + mName + "]", new Framework.GenericClasses.Color(0xBF, 0x0, 0x0)));
+                    ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sprite) + " [" + mName + "]", new Color(0xBF, 0x0, 0x0)));
                 }
             }
         }
@@ -111,7 +111,7 @@ namespace Intersect.Client.MonoGame.Graphics
             return mTexture;
         }
 
-        public override Framework.GenericClasses.Color GetPixel(int x1, int y1)
+        public override Color GetPixel(int x1, int y1)
         {
             if (mTexture == null)
             {
@@ -120,7 +120,7 @@ namespace Intersect.Client.MonoGame.Graphics
 
             if (mLoadError)
             {
-                return Framework.GenericClasses.Color.White;
+                return Color.White;
             }
 
             var tex = mTexture;
@@ -144,7 +144,7 @@ namespace Intersect.Client.MonoGame.Graphics
 
             var pixel = new Microsoft.Xna.Framework.Color[1];
             tex?.GetData(0, new Rectangle(x1, y1, 1, 1), pixel, 0, 1);
-            return new Framework.GenericClasses.Color(pixel[0].A, pixel[0].R, pixel[0].G, pixel[0].B);
+            return new Color(pixel[0].A, pixel[0].R, pixel[0].G, pixel[0].B);
         }
 
         public override GameTexturePackFrame GetTexturePackFrame()

@@ -184,7 +184,7 @@ namespace Intersect.Client.UI
                     Font = defaultFont
                 };
                 label.SetBounds(8, 8 + offset, 0, 24);
-                label.SetTextColor(new Framework.GenericClasses.Color(255, 255, 255, 255), Label.ControlState.Normal);
+                label.SetTextColor(new Color(255, 255, 255, 255), Label.ControlState.Normal);
 
                 var key1 = new Button(mControlsContainer, $"Control{Enum.GetName(typeof(Controls), control)}Button1")
                 {

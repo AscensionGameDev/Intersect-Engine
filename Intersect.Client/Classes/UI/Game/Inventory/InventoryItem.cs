@@ -66,10 +66,10 @@ namespace Intersect.Client.UI.Game.Inventory
             EquipLabel = new Label(Pnl, "InventoryItemEquippedLabel");
             EquipLabel.IsHidden = true;
             EquipLabel.Text = Strings.Inventory.equippedicon;
-            EquipLabel.TextColor = new Framework.GenericClasses.Color(0,255,255,255);
+            EquipLabel.TextColor = new Color(0,255,255,255);
             mCooldownLabel = new Label(Pnl, "InventoryItemCooldownLabel");
             mCooldownLabel.IsHidden = true;
-            mCooldownLabel.TextColor = new Framework.GenericClasses.Color(0, 255, 255, 255);
+            mCooldownLabel.TextColor = new Color(0, 255, 255, 255);
         }
 
         void pnl_Clicked(Base sender, ClickedEventArgs arguments)
@@ -174,8 +174,8 @@ namespace Intersect.Client.UI.Game.Inventory
         {
             FloatRect rect = new FloatRect()
             {
-                X = Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).X,
-                Y = Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).Y,
+                X = Pnl.LocalPosToCanvas(new Point(0, 0)).X,
+                Y = Pnl.LocalPosToCanvas(new Point(0, 0)).Y,
                 Width = Pnl.Width,
                 Height = Pnl.Height
             };
@@ -212,11 +212,11 @@ namespace Intersect.Client.UI.Game.Inventory
                         Pnl.Texture = itemTex;
                         if (Globals.Me.ItemOnCd(mMySlot))
                         {
-                            Pnl.RenderColor = new Framework.GenericClasses.Color(100, 255, 255, 255);
+                            Pnl.RenderColor = new Color(100, 255, 255, 255);
                         }
                         else
                         {
-                            Pnl.RenderColor = new Framework.GenericClasses.Color(255, 255, 255, 255);
+                            Pnl.RenderColor = new Color(255, 255, 255, 255);
                         }
                     }
                     else
@@ -279,27 +279,27 @@ namespace Intersect.Client.UI.Game.Inventory
                             if (mMouseX == -1 || mMouseY == -1)
                             {
                                 mMouseX = InputHandler.MousePosition.X -
-                                         Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).X;
+                                         Pnl.LocalPosToCanvas(new Point(0, 0)).X;
                                 mMouseY = InputHandler.MousePosition.Y -
-                                         Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).Y;
+                                         Pnl.LocalPosToCanvas(new Point(0, 0)).Y;
                             }
                             else
                             {
                                 int xdiff = mMouseX -
                                             (InputHandler.MousePosition.X -
-                                             Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0))
+                                             Pnl.LocalPosToCanvas(new Point(0, 0))
                                                  .X);
                                 int ydiff = mMouseY -
                                             (InputHandler.MousePosition.Y -
-                                             Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0))
+                                             Pnl.LocalPosToCanvas(new Point(0, 0))
                                                  .Y);
                                 if (Math.Sqrt(Math.Pow(xdiff, 2) + Math.Pow(ydiff, 2)) > 5)
                                 {
                                     IsDragging = true;
                                     mDragIcon = new Draggable(
-                                        Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).X +
+                                        Pnl.LocalPosToCanvas(new Point(0, 0)).X +
                                         mMouseX,
-                                        Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).X +
+                                        Pnl.LocalPosToCanvas(new Point(0, 0)).X +
                                         mMouseY, Pnl.Texture);
                                 }
                             }

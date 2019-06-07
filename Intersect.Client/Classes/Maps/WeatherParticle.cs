@@ -19,7 +19,7 @@ namespace Intersect.Client.Maps
         private float cameraSpawnY;
         private int xVelocity;
         private int yVelocity;
-        private Framework.GenericClasses.Point partSize;
+        private Point partSize;
         private Rectangle bounds;
         private AnimationInstance animInstance;
 

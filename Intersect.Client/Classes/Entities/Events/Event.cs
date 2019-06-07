@@ -301,8 +301,8 @@ namespace Intersect.Client.Entities.Events
                     CustomColors.EventNameBackground);
             GameGraphics.Renderer.DrawString(Name, GameGraphics.GameFont,
                 (int) (x - (int) Math.Ceiling(textSize.X / 2f)), (int) (y), 1,
-                Framework.GenericClasses.Color.FromArgb(CustomColors.EventName.ToArgb()), true, null,
-                Framework.GenericClasses.Color.FromArgb(CustomColors.EventNameBorder.ToArgb()));
+                Color.FromArgb(CustomColors.EventName.ToArgb()), true, null,
+                Color.FromArgb(CustomColors.EventNameBorder.ToArgb()));
         }
 
         protected override void CalculateCenterPos()

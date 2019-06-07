@@ -266,7 +266,7 @@ namespace Intersect.Client.UI.Game
             mMapList.SetPosition(4f, 316);
             mMapList.Height = 188;
             mMapList.Width = mAdminWindow.Width - 8;
-            mMapList.MaximumSize = new Framework.GenericClasses.Point(4096, 999999);
+            mMapList.MaximumSize = new Point(4096, 999999);
         }
 
         public void UpdateMapList()
