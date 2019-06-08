@@ -50,38 +50,44 @@ namespace Intersect.Server.Networking
         //JoinGamePacket
         public static void SendJoinGame(Client client)
         {
-            SendEntityDataTo(client, client.Entity);
+            if (!client.IsEditor) SendEntityDataTo(client, client.Entity);
+
             client.SendPacket(new JoinGamePacket());
-
-            var player = client.Entity;
-            var sw = new Stopwatch();
-            sw.Start();
-            player.RecalculateStatsAndPoints();
-            System.Console.WriteLine("Took " + sw.ElapsedMilliseconds + "ms to recalculate player stats!");
-            ((Player)client.Entity).InGame = true;
-            PacketSender.SendTimeTo(client);
             PacketSender.SendGameData(client);
-            if (client.Power.Editor)
-            {
-                PacketSender.SendChatMsg(client, Strings.Player.adminjoined, CustomColors.AdminJoined);
-            }
-            else if (client.Power.IsModerator)
-            {
-                PacketSender.SendChatMsg(client, Strings.Player.modjoined, CustomColors.ModJoined);
-            }
 
-            if (player.MapId == Guid.Empty)
-                player.WarpToSpawn();
-            else
-                player.Warp(player.MapId, player.X, player.Y, player.Dir, false, player.Z);
-            PacketSender.SendEntityDataTo(client, player);
-
-            //Search for login activated events and run them
-            foreach (EventBase evt in EventBase.Lookup.Values)
+            if (!client.IsEditor)
             {
-                if (evt != null)
+                var player = client.Entity;
+                var sw = new Stopwatch();
+                sw.Start();
+                player.RecalculateStatsAndPoints();
+                System.Console.WriteLine("Took " + sw.ElapsedMilliseconds + "ms to recalculate player stats!");
+                ((Player) client.Entity).InGame = true;
+                PacketSender.SendTimeTo(client);
+                
+                if (client.Power.Editor)
                 {
-                    player.StartCommonEvent(evt, CommonEventTrigger.Login);
+                    PacketSender.SendChatMsg(client, Strings.Player.adminjoined, CustomColors.AdminJoined);
+                }
+                else if (client.Power.IsModerator)
+                {
+                    PacketSender.SendChatMsg(client, Strings.Player.modjoined, CustomColors.ModJoined);
+                }
+
+                if (player.MapId == Guid.Empty)
+                    player.WarpToSpawn();
+                else
+                    player.Warp(player.MapId, player.X, player.Y, player.Dir, false, player.Z);
+
+                PacketSender.SendEntityDataTo(client, player);
+
+                //Search for login activated events and run them
+                foreach (EventBase evt in EventBase.Lookup.Values)
+                {
+                    if (evt != null)
+                    {
+                        player.StartCommonEvent(evt, CommonEventTrigger.Login);
+                    }
                 }
             }
         }
@@ -506,11 +512,6 @@ namespace Intersect.Server.Networking
 
             }
 
-            if (!client.IsEditor)
-            {
-                SendGameObject(client, ClassBase.Get(client.Entity.ClassId), false,false,gameObjects);
-            }
-
             //Let the client/editor know they have everything now
             client.SendPacket(new GameDataPacket(gameObjects.ToArray(), CustomColors.Json()));
         }
@@ -554,7 +555,7 @@ namespace Intersect.Server.Networking
         //ChatMsgPacket
         public static void SendGlobalMsg(string message, Color clr, string target = "")
         {
-            SendDataToAll(new ChatMsgPacket(message,clr,target));
+            SendDataToAllPlayers(new ChatMsgPacket(message,clr,target));
         }
 
         //ChatMsgPacket

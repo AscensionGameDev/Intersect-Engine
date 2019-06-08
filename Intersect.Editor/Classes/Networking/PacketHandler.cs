@@ -171,6 +171,10 @@ namespace Intersect.Editor.Networking
         //GameDataPacket
         private static void HandlePacket(GameDataPacket packet)
         {
+            foreach (var obj in packet.GameObjects)
+            {
+                HandlePacket((dynamic) obj);
+            }
             Globals.HasGameData = true;
             if (!Globals.InEditor && Globals.HasGameData && Globals.CurrentMap != null)
             {

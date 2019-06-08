@@ -1278,7 +1278,6 @@ namespace Intersect.Server.Networking
             PacketSender.SendServerConfig(client);
             PacketSender.SendJoinGame(client);
             PacketSender.SendTimeBaseTo(client);
-            PacketSender.SendGameData(client);
             PacketSender.SendMapList(client);
         }
 
