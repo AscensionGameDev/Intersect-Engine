@@ -34,6 +34,7 @@ namespace Intersect.Server.Web.RestApi.Routes
         {
             return new
             {
+                debug = true,
                 versions = Versions()
             };
         }
