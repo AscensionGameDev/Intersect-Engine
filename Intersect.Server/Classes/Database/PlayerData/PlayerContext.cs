@@ -19,7 +19,7 @@ namespace Intersect.Server.Database.PlayerData
     {
         public static PlayerContext Current { get; private set; }
 
-        public static PlayerContext Temporary => Current?.CreateTemporaryClone();
+        public static PlayerContext Temporary => new PlayerContext(Current?.mConnection ?? default(DatabaseUtils.DbProvider), Current?.mConnectionString, true);
 
         [NotNull] public DbSet<User> Users { get; set; }
 
@@ -63,11 +63,6 @@ namespace Intersect.Server.Database.PlayerData
             {
                 Current = this;
             }
-        }
-
-        public PlayerContext CreateTemporaryClone()
-        {
-            return new PlayerContext(mConnection, mConnectionString, true);
         }
 
         internal async ValueTask Commit(bool commit = false, CancellationToken cancellationToken = default(CancellationToken))
