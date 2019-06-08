@@ -8,6 +8,8 @@ using Intersect.Server.Web.RestApi.Attributes;
 
 namespace Intersect.Server.Web.RestApi.Routes
 {
+    [RoutePrefix("info")]
+    [DebugAuthorize]
     public class RootInfoController : ApiController
     {
         [NotNull]
