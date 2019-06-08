@@ -19,6 +19,8 @@ namespace Intersect.Server.Database.PlayerData
     {
         public static PlayerContext Current { get; private set; }
 
+        public static PlayerContext Temporary => Current?.CreateTemporaryClone();
+
         [NotNull] public DbSet<User> Users { get; set; }
 
         [NotNull] public DbSet<Mute> Mutes { get; set; }
@@ -47,11 +49,25 @@ namespace Intersect.Server.Database.PlayerData
             Current = this;
         }
 
-        public PlayerContext(DatabaseUtils.DbProvider connection,string connectionString)
+        public PlayerContext(DatabaseUtils.DbProvider connection, string connectionString)
+            : this(connection, connectionString, false)
+        {
+        }
+
+        private PlayerContext(DatabaseUtils.DbProvider connection, string connectionString, bool isTemporary)
         {
             mConnection = connection;
             mConnectionString = connectionString;
-            Current = this;
+
+            if (!isTemporary)
+            {
+                Current = this;
+            }
+        }
+
+        public PlayerContext CreateTemporaryClone()
+        {
+            return new PlayerContext(mConnection, mConnectionString, true);
         }
 
         internal async ValueTask Commit(bool commit = false, CancellationToken cancellationToken = default(CancellationToken))

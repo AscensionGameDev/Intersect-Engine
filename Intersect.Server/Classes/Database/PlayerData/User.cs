@@ -133,44 +133,14 @@ namespace Intersect.Server.Database.PlayerData
             }
         }
 
-        public static User FindByName(string username)
+        public static User FindByName(string username, [CanBeNull] PlayerContext playerContext = null)
         {
-            return FindByName(PlayerContext.Current, username);
+            return string.IsNullOrWhiteSpace(username) ? null : QueryUserByName(playerContext ?? PlayerContext.Current, username);
         }
 
-        public static User FindByName(PlayerContext playerContext, string username)
+        public static User FindById(Guid userId, [CanBeNull] PlayerContext playerContext = null)
         {
-            if (playerContext == null)
-            {
-                return null;
-            }
-
-            if (string.IsNullOrWhiteSpace(username))
-            {
-                return null;
-            }
-
-            return QueryUserByName(playerContext, username);
-        }
-
-        public static User FindById(Guid userId)
-        {
-            return FindById(PlayerContext.Current, userId);
-        }
-
-        public static User FindById(PlayerContext playerContext, Guid userId)
-        {
-            if (playerContext == null)
-            {
-                return null;
-            }
-
-            if (userId == Guid.Empty)
-            {
-                return null;
-            }
-
-            return QueryUserById(playerContext, userId);
+            return userId == Guid.Empty ? null : QueryUserById(playerContext ?? PlayerContext.Current, userId);
         }
     }
 }

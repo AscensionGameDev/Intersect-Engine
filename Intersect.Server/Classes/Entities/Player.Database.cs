@@ -41,20 +41,20 @@ namespace Intersect.Server.Entities
             return QueryPlayerByName(playerContext ?? PlayerContext.Current, playerName);
         }
 
-        public static Tuple<Client, Player> Fetch([NotNull] string playerName)
+        public static Tuple<Client, Player> Fetch([NotNull] string playerName, [CanBeNull] PlayerContext playerContext = null)
         {
             var client = Globals.Clients.Find(
                 queryClient => EntityInstance.CompareName(playerName, queryClient?.Entity?.Name)
             );
 
-            return new Tuple<Client, Player>(client, client?.Entity ?? Player.Find(playerName));
+            return new Tuple<Client, Player>(client, client?.Entity ?? Player.Find(playerName, playerContext));
         }
 
-        public static Tuple<Client, Player> Fetch(Guid playerId)
+        public static Tuple<Client, Player> Fetch(Guid playerId, [CanBeNull] PlayerContext playerContext = null)
         {
             var client = Globals.Clients.Find(queryClient => playerId == queryClient?.Entity?.Id);
 
-            return new Tuple<Client, Player>(client, client?.Entity ?? Player.Find(playerId));
+            return new Tuple<Client, Player>(client, client?.Entity ?? Player.Find(playerId, playerContext));
         }
 
         #endregion
