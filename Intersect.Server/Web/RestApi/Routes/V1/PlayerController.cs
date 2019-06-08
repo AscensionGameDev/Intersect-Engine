@@ -81,10 +81,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid player name '{playerName}'.");
             }
 
-            var (client, player) = Player.Fetch(playerName, PlayerContext.Temporary);
-            if (player != null)
+            using (var context = PlayerContext.Temporary)
             {
-                return player;
+                var (client, player) = Player.Fetch(playerName, context);
+                if (player != null)
+                {
+                    return player;
+                }
             }
 
             return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No player with name '{playerName}'.");
@@ -103,117 +106,121 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid player name '{playerName}'.");
             }
 
-            var (client, player) = Player.Fetch(playerName, PlayerContext.Temporary);
-
-            if (player == null)
+            using (var context = PlayerContext.Temporary)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No player with name '{playerName}'.");
-            }
 
-            var user = client?.User;
-            var userId = user?.Id ?? player.UserId;
-            var targetIp = client?.GetIp() ?? "";
+                var (client, player) = Player.Fetch(playerName, context);
 
-            switch (adminAction)
-            {
-                case AdminActions.Ban:
-                    Ban.Add(
-                        userId,
-                        actionParameters.Duration,
-                        actionParameters.Reason ?? "",
-                        actionParameters.Moderator ?? @"api",
-                        actionParameters.Ip ? targetIp : ""
-                    );
-                    client?.Disconnect();
-                    PacketSender.SendGlobalMsg(Strings.Account.banned.ToString(player.Name));
-                    return Request.CreateMessageResponse(HttpStatusCode.OK, Strings.Account.banned.ToString(player.Name));
+                if (player == null)
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No player with name '{playerName}'.");
+                }
 
-                case AdminActions.UnBan:
-                    Ban.Remove(userId);
-                    PacketSender.SendGlobalMsg(Strings.Account.unbanned.ToString(player.Name));
-                    return Request.CreateMessageResponse(HttpStatusCode.OK, Strings.Account.unbanned.ToString(player.Name));
+                var user = client?.User;
+                var userId = user?.Id ?? player.UserId;
+                var targetIp = client?.GetIp() ?? "";
 
-                case AdminActions.Mute:
-                    if (user == null)
-                    {
-                        Mute.Add(
+                switch (adminAction)
+                {
+                    case AdminActions.Ban:
+                        Ban.Add(
                             userId,
                             actionParameters.Duration,
                             actionParameters.Reason ?? "",
                             actionParameters.Moderator ?? @"api",
                             actionParameters.Ip ? targetIp : ""
                         );
-                    }
-                    else
-                    {
-                        Mute.Add(
-                            user,
-                            actionParameters.Duration,
-                            actionParameters.Reason ?? "",
-                            actionParameters.Moderator ?? @"api",
-                            actionParameters.Ip ? targetIp : ""
-                        );
-                    }
-                    PacketSender.SendGlobalMsg(Strings.Account.muted.ToString(player.Name));
-                    return Request.CreateMessageResponse(HttpStatusCode.OK, Strings.Account.muted.ToString(player.Name));
+                        client?.Disconnect();
+                        PacketSender.SendGlobalMsg(Strings.Account.banned.ToString(player.Name));
+                        return Request.CreateMessageResponse(HttpStatusCode.OK, Strings.Account.banned.ToString(player.Name));
 
-                case AdminActions.UnMute:
-                    if (user == null)
-                    {
-                        Mute.Remove(userId);
-                    }
-                    else
-                    {
-                        Mute.Remove(user);
-                    }
-                    PacketSender.SendGlobalMsg(Strings.Account.unmuted.ToString(player.Name));
-                    return Request.CreateMessageResponse(HttpStatusCode.OK, Strings.Account.unmuted.ToString(player.Name));
+                    case AdminActions.UnBan:
+                        Ban.Remove(userId);
+                        PacketSender.SendGlobalMsg(Strings.Account.unbanned.ToString(player.Name));
+                        return Request.CreateMessageResponse(HttpStatusCode.OK, Strings.Account.unbanned.ToString(player.Name));
 
-                case AdminActions.WarpTo:
-                    if (client?.Entity != null)
-                    {
-                        var mapId = actionParameters.MapId == Guid.Empty ? client.Entity.MapId : actionParameters.MapId;
-                        client.Entity.Warp(mapId, client.Entity.X, client.Entity.Y);
-                        return Request.CreateMessageResponse(HttpStatusCode.OK, $@"Warped '{player.Name}' to {mapId} ({client.Entity.X}, {client.Entity.Y}).");
-                    }
-                    break;
+                    case AdminActions.Mute:
+                        if (user == null)
+                        {
+                            Mute.Add(
+                                userId,
+                                actionParameters.Duration,
+                                actionParameters.Reason ?? "",
+                                actionParameters.Moderator ?? @"api",
+                                actionParameters.Ip ? targetIp : ""
+                            );
+                        }
+                        else
+                        {
+                            Mute.Add(
+                                user,
+                                actionParameters.Duration,
+                                actionParameters.Reason ?? "",
+                                actionParameters.Moderator ?? @"api",
+                                actionParameters.Ip ? targetIp : ""
+                            );
+                        }
+                        PacketSender.SendGlobalMsg(Strings.Account.muted.ToString(player.Name));
+                        return Request.CreateMessageResponse(HttpStatusCode.OK, Strings.Account.muted.ToString(player.Name));
 
-                case AdminActions.WarpToLoc:
-                    if (client?.Entity != null)
-                    {
-                        var mapId = actionParameters.MapId == Guid.Empty ? client.Entity.MapId : actionParameters.MapId;
-                        client.Entity.Warp(mapId, actionParameters.X, actionParameters.Y, true);
-                        return Request.CreateMessageResponse(HttpStatusCode.OK, $@"Warped '{player.Name}' to {mapId} ({actionParameters.X}, {actionParameters.Y}).");
-                    }
-                    break;
+                    case AdminActions.UnMute:
+                        if (user == null)
+                        {
+                            Mute.Remove(userId);
+                        }
+                        else
+                        {
+                            Mute.Remove(user);
+                        }
+                        PacketSender.SendGlobalMsg(Strings.Account.unmuted.ToString(player.Name));
+                        return Request.CreateMessageResponse(HttpStatusCode.OK, Strings.Account.unmuted.ToString(player.Name));
 
-                case AdminActions.Kick:
-                    if (client != null)
-                    {
-                        client.Disconnect(actionParameters.Reason);
-                        PacketSender.SendGlobalMsg(Strings.Player.serverkicked.ToString(player.Name));
-                        return Request.CreateMessageResponse(HttpStatusCode.OK, Strings.Player.serverkicked.ToString(player.Name));
-                    }
-                    break;
+                    case AdminActions.WarpTo:
+                        if (client?.Entity != null)
+                        {
+                            var mapId = actionParameters.MapId == Guid.Empty ? client.Entity.MapId : actionParameters.MapId;
+                            client.Entity.Warp(mapId, client.Entity.X, client.Entity.Y);
+                            return Request.CreateMessageResponse(HttpStatusCode.OK, $@"Warped '{player.Name}' to {mapId} ({client.Entity.X}, {client.Entity.Y}).");
+                        }
+                        break;
 
-                case AdminActions.Kill:
-                    if (client != null)
-                    {
-                        client.Disconnect(actionParameters.Reason);
-                        PacketSender.SendGlobalMsg(Strings.Player.serverkilled.ToString(player.Name));
-                        return Request.CreateMessageResponse(HttpStatusCode.OK, Strings.Commandoutput.killsuccess.ToString(player.Name));
-                    }
-                    break;
+                    case AdminActions.WarpToLoc:
+                        if (client?.Entity != null)
+                        {
+                            var mapId = actionParameters.MapId == Guid.Empty ? client.Entity.MapId : actionParameters.MapId;
+                            client.Entity.Warp(mapId, actionParameters.X, actionParameters.Y, true);
+                            return Request.CreateMessageResponse(HttpStatusCode.OK, $@"Warped '{player.Name}' to {mapId} ({actionParameters.X}, {actionParameters.Y}).");
+                        }
+                        break;
 
-                case AdminActions.WarpMeTo:
-                case AdminActions.WarpToMe:
-                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"'{adminAction.ToString()}' not supported by the API.");
+                    case AdminActions.Kick:
+                        if (client != null)
+                        {
+                            client.Disconnect(actionParameters.Reason);
+                            PacketSender.SendGlobalMsg(Strings.Player.serverkicked.ToString(player.Name));
+                            return Request.CreateMessageResponse(HttpStatusCode.OK, Strings.Player.serverkicked.ToString(player.Name));
+                        }
+                        break;
 
-                case AdminActions.SetSprite:
-                case AdminActions.SetFace:
-                case AdminActions.SetAccess:
-                default:
-                    return Request.CreateErrorResponse(HttpStatusCode.NotImplemented, adminAction.ToString());
+                    case AdminActions.Kill:
+                        if (client != null)
+                        {
+                            client.Disconnect(actionParameters.Reason);
+                            PacketSender.SendGlobalMsg(Strings.Player.serverkilled.ToString(player.Name));
+                            return Request.CreateMessageResponse(HttpStatusCode.OK, Strings.Commandoutput.killsuccess.ToString(player.Name));
+                        }
+                        break;
+
+                    case AdminActions.WarpMeTo:
+                    case AdminActions.WarpToMe:
+                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"'{adminAction.ToString()}' not supported by the API.");
+
+                    case AdminActions.SetSprite:
+                    case AdminActions.SetFace:
+                    case AdminActions.SetAccess:
+                    default:
+                        return Request.CreateErrorResponse(HttpStatusCode.NotImplemented, adminAction.ToString());
+                }
             }
 
             return Request.CreateErrorResponse(HttpStatusCode.NotFound, Strings.Player.offline);
@@ -228,10 +235,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid player id '{playerId}'.");
             }
 
-            var (client, player) = Player.Fetch(playerId, PlayerContext.Temporary);
-            if (player != null)
+            using (var context = PlayerContext.Temporary)
             {
-                return player;
+                var (client, player) = Player.Fetch(playerId, context);
+                if (player != null)
+                {
+                    return player;
+                }
             }
 
             return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No player with id '{playerId}'.");

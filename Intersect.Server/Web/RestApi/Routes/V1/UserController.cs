@@ -27,7 +27,10 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [HttpGet]
         public User UserByName(string userName)
         {
-            return Database.PlayerData.User.FindByName(userName, PlayerContext.Temporary);
+            using (var context = PlayerContext.Temporary)
+            {
+                return Database.PlayerData.User.FindByName(userName, context);
+            }
         }
 
         [Route("{userId:guid}")]
@@ -39,7 +42,10 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return null;
             }
 
-            return Database.PlayerData.User.FindById(userId, PlayerContext.Temporary);
+            using (var context = PlayerContext.Temporary)
+            {
+                return Database.PlayerData.User.FindById(userId, context);
+            }
         }
 
         [Route("{userName}/players")]
@@ -52,9 +58,12 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return null;
             }
 
-            return Database.PlayerData.User
-                .FindByName(userName, PlayerContext.Temporary)?
-                .Players;
+            using (var context = PlayerContext.Temporary)
+            {
+                return Database.PlayerData.User
+                    .FindByName(userName, context)?
+                    .Players;
+            }
         }
 
         [Route("{userId:guid}/players")]
@@ -67,9 +76,12 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return null;
             }
 
-            return Database.PlayerData.User
-                .FindById(userId, PlayerContext.Temporary)?
-                .Players;
+            using (var context = PlayerContext.Temporary)
+            {
+                return Database.PlayerData.User
+                    .FindById(userId, context)?
+                    .Players;
+            }
         }
 
         [Route("{userName}/players/{playerName}")]
@@ -82,10 +94,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return null;
             }
 
-            return Database.PlayerData.User
-                .FindByName(userName, PlayerContext.Temporary)?
-                .Players?
-                .FirstOrDefault(player => string.Equals(player?.Name, playerName, StringComparison.Ordinal));
+            using (var context = PlayerContext.Temporary)
+            {
+                return Database.PlayerData.User
+                    .FindByName(userName, context)?
+                    .Players?
+                    .FirstOrDefault(player => string.Equals(player?.Name, playerName, StringComparison.Ordinal));
+            }
         }
 
         [Route("{userId:guid}/players/{playerId:guid}")]
@@ -98,10 +113,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return null;
             }
 
-            return Database.PlayerData.User
-                .FindById(userId, PlayerContext.Temporary)?
-                .Players?
-                .FirstOrDefault(player => player?.Id == playerId);
+            using (var context = PlayerContext.Temporary)
+            {
+                return Database.PlayerData.User
+                    .FindById(userId, context)?
+                    .Players?
+                    .FirstOrDefault(player => player?.Id == playerId);
+            }
         }
     }
 }
