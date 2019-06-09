@@ -1,8 +1,12 @@
 ﻿using System.Linq;
+
+using Intersect.Server.Classes.Database;
+
 using JetBrains.Annotations;
+
 using Microsoft.EntityFrameworkCore;
 
-namespace Intersect.Server.Classes.Database
+namespace Intersect.Server.Database
 {
     public abstract class SeedData<TType>
         where TType : class
@@ -11,7 +15,12 @@ namespace Intersect.Server.Classes.Database
         {
             var dbSet = context.GetDbSet<TType>();
 
-            if (dbSet?.FirstOrDefault() != null)
+            if (dbSet == null)
+            {
+                return;
+            }
+
+            if (dbSet.FirstOrDefault() != null)
             {
                 return;
             }

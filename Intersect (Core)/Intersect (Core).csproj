@@ -414,6 +414,7 @@
     <Compile Include="Network\Packets\Server\TradeRequestPacket.cs" />
     <Compile Include="Network\Packets\Server\TradeUpdatePacket.cs" />
     <Compile Include="Security\Claims\IntersectClaimTypes.cs" />
+    <Compile Include="Serialization\Json\SingleOrArrayConverter.cs" />
     <Compile Include="Threading\ConcurrentInstance.cs" />
     <Compile Include="Threading\LockingActionQueue.cs" />
     <Compile Include="Threading\Threaded.cs" />

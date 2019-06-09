@@ -6,8 +6,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Intersect.Server.Classes.Database;
 using Intersect.Server.Classes.Database.PlayerData.Api;
-using Intersect.Server.Classes.Database.PlayerData.SeedData;
 using Intersect.Server.Database.PlayerData.Players;
+using Intersect.Server.Database.PlayerData.SeedData;
 using Intersect.Server.Entities;
 using Intersect.Utilities;
 using JetBrains.Annotations;
@@ -165,6 +165,7 @@ namespace Intersect.Server.Database.PlayerData
         {
 #if DEBUG
             new SeedUsers().SeedIfEmpty(this);
+            //new SeedPlayers().SeedIfEmpty(this);
             SaveChanges();
 #endif
         }

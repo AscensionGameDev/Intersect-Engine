@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -47,12 +48,22 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
         [Route]
         [HttpGet]
-        public object List()
+        public object List(int page = 0, int count = 10)
         {
-            // TODO: Implement player listing with pagination
-            return new
+            page = Math.Max(page, 0);
+            count = Math.Max(Math.Min(count, 100), 5);
+
+            using (var context = PlayerContext.Temporary)
             {
-            };
+                var entries = Player.List(page, count, context).ToList();
+                return new
+                {
+                    total = context?.Players.Count() ?? 0,
+                    page,
+                    count = entries.Count,
+                    entries
+                };
+            }
         }
 
         [Route("online")]
