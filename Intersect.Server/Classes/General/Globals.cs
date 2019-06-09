@@ -24,9 +24,9 @@ namespace Intersect.Server.General
         //Game helping stuff
         public static Random Rand = new Random();
 
-        public static List<EntityInstance> OnlineList => Clients?
+        public static List<Player> OnlineList => Clients
             .FindAll(client => client?.Entity != null)
-            .Select<Client, EntityInstance>(client => client.Entity)
+            .Select(client => client.Entity)
             .ToList();
 
         public static void KillResourcesOf(ResourceBase resource)
