@@ -742,7 +742,7 @@ namespace Intersect.Client.Networking
         private static void HandlePacket(CharacterCreationPacket packet)
         {
             Globals.WaitingOnServer = false;
-            //GameFade.FadeIn();
+            GameFade.FadeIn();
             Gui.MenuUi.MainMenu.NotifyOpenCharacterCreation();
         }
 
@@ -1338,7 +1338,7 @@ namespace Intersect.Client.Networking
 
             if (packet.FreeSlot) characters.Add(null);
             Globals.WaitingOnServer = false;
-            //GameFade.FadeIn();
+            GameFade.FadeIn();
             Gui.MenuUi.MainMenu.NotifyOpenCharacterSelection(characters);
         }
 

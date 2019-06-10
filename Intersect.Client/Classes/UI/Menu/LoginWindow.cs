@@ -206,7 +206,7 @@ namespace Intersect.Client.UI.Menu
                 }
             }
 
-            //GameFade.FadeOut();
+            GameFade.FadeOut();
             PacketSender.SendLogin(mUsernameTextbox?.Text, password);
             SaveCredentials();
             Globals.WaitingOnServer = true;
