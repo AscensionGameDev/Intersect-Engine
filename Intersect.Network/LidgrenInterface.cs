@@ -304,17 +304,12 @@ namespace Intersect.Network
             return true;
         }
 
-        public int totalBytesSent = 0;
-        public Stopwatch sw = new Stopwatch();
-        public long lastUpdate = 0;
-
         public bool SendPacket(
             IPacket packet,
             ICollection<IConnection> connections,
             TransmissionMode transmissionMode = TransmissionMode.All
         )
         {
-            if (!sw.IsRunning) sw.Start();
             var deliveryMethod = TranslateTransmissionMode(transmissionMode);
             if (mPeer == null)
             {
@@ -335,12 +330,6 @@ namespace Intersect.Network
             
             message.Data = packet.Data();
             message.LengthBytes = message.Data.Length;
-            totalBytesSent += message.LengthBytes;
-            if (sw.ElapsedMilliseconds > lastUpdate + 1000)
-            {
-                Console.WriteLine("Data sent to client thus far: " + totalBytesSent);
-                lastUpdate = sw.ElapsedMilliseconds;
-            }
 
             if (connections == null || connections.Count(connection => connection != null) < 1)
             {
