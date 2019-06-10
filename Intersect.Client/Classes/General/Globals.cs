@@ -121,52 +121,6 @@ namespace Intersect.Client.General
             }
             return null;
         }
-
-        public static Stopwatch sw = new Stopwatch();
-        public static Stopwatch packetSw = new Stopwatch();
-        public static Stopwatch tSetSw = new Stopwatch();
-
-        public static bool gotFirstAnim = false;
-        public static int packetCount = 0;
-        internal static void PlayPressed()
-        {
-            sw.Reset();
-            sw.Start();
-            packetSw.Reset();
-            packetSw.Start();
-        }
-
-        internal static void GotFirstAnimation()
-        {
-            if (gotFirstAnim) return;
-            gotFirstAnim = true;
-            Debug.WriteLine("Got first animation at " +sw.ElapsedMilliseconds + " ms");
-        }
-
-        internal static void GotGameData()
-        {
-            if (sw.IsRunning)
-            {
-                Debug.WriteLine("Took " + sw.ElapsedMilliseconds + "ms to get game data! (" + packetSw.ElapsedMilliseconds + "ms spent processing " + packetCount + " packets.)");
-            }
-        }
-
-        internal static void HandlePacket(CerasPacket packet, long time)
-        {
-            if (sw.IsRunning)
-            {
-                Debug.WriteLine(time + "  : " + packet.GetType().Name + " [" + (sw.ElapsedMilliseconds - time) + "ms]");
-            }
-        }
-
-        internal static void InGame()
-        {
-            if (sw.IsRunning)
-            {
-                sw.Stop();
-                Debug.WriteLine("Took " + sw.ElapsedMilliseconds + "ms to get in-game! (" + packetSw.ElapsedMilliseconds + "ms spent processing " + packetCount + " packets., " + tSetSw.ElapsedMilliseconds + "ms spent loading tilesets)");
-            }
-        }
     }
 
 

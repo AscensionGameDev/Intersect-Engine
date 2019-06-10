@@ -32,16 +32,10 @@ namespace Intersect.Client.Networking
 
         public static bool HandlePacket(IPacket packet)
         {
-            Globals.packetSw.Start();
             if (packet is CerasPacket)
             {
-                var time = Globals.sw.ElapsedMilliseconds;
                 HandlePacket((dynamic)packet);
-                Globals.HandlePacket((CerasPacket)packet, time);
             }
-
-            Globals.packetSw.Stop();
-            Globals.packetCount++;
             return true;
         }
 
@@ -335,7 +329,6 @@ namespace Intersect.Client.Networking
 
             CustomColors.Load(packet.ColorsJson);
             Globals.HasGameData = true;
-            Globals.GotGameData();
         }
 
         //MapListPacket
@@ -1015,10 +1008,6 @@ namespace Intersect.Client.Networking
                     break;
                 default:
                     var lookup = type.GetLookup();
-                    if (type == GameObjectType.Animation)
-                    {
-                        Globals.GotFirstAnimation();
-                    }
                     if (deleted) lookup.Get(id).Delete();
                     else
                     {

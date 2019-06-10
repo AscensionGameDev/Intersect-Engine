@@ -164,10 +164,7 @@ namespace Intersect.Client
             if (Globals.Me == null || Globals.Me.MapInstance == null) return;
             if (!_loadedTilesets && Globals.HasGameData)
             {
-                Globals.tSetSw.Reset();
-                Globals.tSetSw.Start();
                 Globals.ContentManager.LoadTilesets(TilesetBase.GetNameList());
-                Globals.tSetSw.Stop();
                 _loadedTilesets = true;
             }
 
