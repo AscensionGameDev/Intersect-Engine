@@ -250,7 +250,13 @@ namespace Intersect
                 mReadBytes = mBuff.ToArray();
                 mWasUpdated = false;
             }
-            return new Guid(ReadBytes(16,peek));
+            var id = new Guid(new byte[16] { mReadBytes[Readpos++], mReadBytes[Readpos++], mReadBytes[Readpos++], mReadBytes[Readpos++], mReadBytes[Readpos++], mReadBytes[Readpos++], mReadBytes[Readpos++], mReadBytes[Readpos++], mReadBytes[Readpos++], mReadBytes[Readpos++], mReadBytes[Readpos++], mReadBytes[Readpos++], mReadBytes[Readpos++], mReadBytes[Readpos++], mReadBytes[Readpos++], mReadBytes[Readpos++] });
+            Readpos -= 16;
+            if (peek & mBuff.Count > Readpos)
+            {
+                Readpos += 16;
+            }
+            return id;
         }
 
         // IDisposable

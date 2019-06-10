@@ -58,10 +58,7 @@ namespace Intersect.Server.Networking
             if (!client.IsEditor)
             {
                 var player = client.Entity;
-                var sw = new Stopwatch();
-                sw.Start();
                 player.RecalculateStatsAndPoints();
-                System.Console.WriteLine("Took " + sw.ElapsedMilliseconds + "ms to recalculate player stats!");
                 ((Player) client.Entity).InGame = true;
                 PacketSender.SendTimeTo(client);
                 

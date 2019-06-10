@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-
 using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Framework.Database;
@@ -13,7 +12,6 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Network.Packets;
 using Intersect.Network.Packets.Server;
-
 using JetBrains.Annotations;
 
 namespace Intersect.Client.General

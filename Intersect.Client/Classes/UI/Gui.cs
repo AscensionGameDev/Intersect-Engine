@@ -23,7 +23,6 @@ namespace Intersect.Client.UI
         public static Base GwenRenderer;
         private static Canvas sGameCanvas;
         private static Canvas sMenuCanvas;
-        private static TexturedBase sGwenSkin;
 
         [NotNull]
         public static readonly List<KeyValuePair<string, string>> MsgboxErrors = new List<KeyValuePair<string, string>>();
@@ -32,6 +31,8 @@ namespace Intersect.Client.UI
 
         public static GameGuiBase GameUi;
         public static MenuGuiBase MenuUi;
+
+        public static TexturedBase Skin;
 
         public static ErrorMessageHandler ErrorMsgHandler;
         public static string ActiveFont = "arial";
@@ -48,22 +49,18 @@ namespace Intersect.Client.UI
         public static void InitGwen()
         {
             //TODO: Make it easier to modify skin.
-            sGwenSkin = new TexturedBase(GwenRenderer,
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "defaultskin.png"))
-            {
-                DefaultFont = Globals.ContentManager.GetFont(ActiveFont, 10)
-            };
-            var gameSkin = new TexturedBase(GwenRenderer,
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "defaultskin.png"))
-            {
-                DefaultFont = Globals.ContentManager.GetFont(ActiveFont, 10)
-            };
+            if (Skin == null) {
+                Skin = new TexturedBase(GwenRenderer, Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "defaultskin.png"))
+                {
+                    DefaultFont = Globals.ContentManager.GetFont(ActiveFont, 10)
+                };
+            }
 
             if (MenuUi != null) MenuUi.Dispose();
             if (GameUi != null) GameUi.Dispose();
 
             // Create a Canvas (it's root, on which all other GWEN controls are created)
-            sMenuCanvas = new Canvas(sGwenSkin, "MainMenu")
+            sMenuCanvas = new Canvas(Skin, "MainMenu")
             {
                 Scale = 1f //(GameGraphics.Renderer.GetScreenWidth()/1920f);
             };
@@ -74,7 +71,7 @@ namespace Intersect.Client.UI
             sMenuCanvas.KeyboardInputEnabled = true;
 
             // Create the game Canvas (it's root, on which all other GWEN controls are created)
-            sGameCanvas = new Canvas(gameSkin, "InGame");
+            sGameCanvas = new Canvas(Skin, "InGame");
             //_gameCanvas.Scale = (GameGraphics.Renderer.GetScreenWidth() / 1920f);
             sGameCanvas.SetSize((int) (GameGraphics.Renderer.GetScreenWidth() / sGameCanvas.Scale),
                 (int) (GameGraphics.Renderer.GetScreenHeight() / sGameCanvas.Scale));
@@ -115,7 +112,6 @@ namespace Intersect.Client.UI
             //The canvases dispose of all of their children.
             sMenuCanvas?.Dispose();
             sGameCanvas?.Dispose();
-            sGwenSkin?.Dispose();
             GameUi?.Dispose();
             GwenInitialized = false;
         }

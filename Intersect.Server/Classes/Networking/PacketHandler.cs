@@ -54,7 +54,6 @@ namespace Intersect.Server.Networking
         //LoginPacket
         public void HandlePacket(Client client, Player player, LoginPacket packet)
         {
-
             if (!LegacyDatabase.CheckPassword(packet.Username, packet.Password))
             {
                 PacketSender.SendError(client, Strings.Account.badlogin);
