@@ -6,6 +6,7 @@ using Intersect.Client.General;
 using Intersect.Client.Maps;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.Network.Packets.Server;
 
 namespace Intersect.Client.Entities
 {
@@ -18,7 +19,7 @@ namespace Intersect.Client.Entities
         FloatRect mSrcRectangle = FloatRect.Empty;
         private bool _waitingForTilesets;
 
-        public Resource(Guid id, ByteBuffer bf) : base(id, bf)
+        public Resource(Guid id, ResourceEntityPacket packet) : base(id, packet)
         {
             mRenderPriority = 0;
         }
@@ -53,11 +54,12 @@ namespace Intersect.Client.Entities
             return BaseResource;
         }
 
-        public override void Load(ByteBuffer bf)
+        public override void Load(EntityPacket packet)
         {
-            base.Load(bf);
-            IsDead = Convert.ToBoolean(bf.ReadInteger());
-            var baseId = bf.ReadGuid();
+            base.Load(packet);
+            var pkt = (ResourceEntityPacket)packet;
+            IsDead = pkt.IsDead;
+            var baseId = pkt.ResourceId;
             BaseResource = ResourceBase.Get(baseId);
             HideName = true;
             if (IsDead)
@@ -144,26 +146,26 @@ namespace Intersect.Client.Entities
                         if (Globals.MapGrid[x, y] == CurrentMap)
                         {
                             var priority = mRenderPriority;
-                            if (CurrentZ != 0)
+                            if (Z != 0)
                             {
                                 priority += 3;
                             }
                             if (y == gridY - 1)
                             {
-                                GameGraphics.RenderingEntities[priority, CurrentY].Add(this);
-                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight + CurrentY];
+                                GameGraphics.RenderingEntities[priority, Y].Add(this);
+                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight + Y];
                                 return renderList;
                             }
                             else if (y == gridY)
                             {
-                                GameGraphics.RenderingEntities[priority, Options.MapHeight + CurrentY].Add(this);
-                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight + CurrentY];
+                                GameGraphics.RenderingEntities[priority, Options.MapHeight + Y].Add(this);
+                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight + Y];
                                 return renderList;
                             }
                             else
                             {
-                                GameGraphics.RenderingEntities[priority, Options.MapHeight * 2 + CurrentY].Add(this);
-                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight * 2 + CurrentY];
+                                GameGraphics.RenderingEntities[priority, Options.MapHeight * 2 + Y].Add(this);
+                                renderList = GameGraphics.RenderingEntities[priority, Options.MapHeight * 2 + Y];
                                 return renderList;
                             }
                         }
@@ -211,8 +213,8 @@ namespace Intersect.Client.Entities
                 }
                 mDestRectangle.Width = mSrcRectangle.Width;
                 mDestRectangle.Height = mSrcRectangle.Height;
-                mDestRectangle.Y = (int)(map.GetY() + CurrentY * Options.TileHeight + OffsetY);
-                mDestRectangle.X = (int)(map.GetX() + CurrentX * Options.TileWidth + OffsetX);
+                mDestRectangle.Y = (int)(map.GetY() + Y * Options.TileHeight + OffsetY);
+                mDestRectangle.X = (int)(map.GetX() + X * Options.TileWidth + OffsetX);
                 if (mSrcRectangle.Height > Options.TileHeight)
                 {
                     mDestRectangle.Y -= mSrcRectangle.Height - Options.TileHeight;

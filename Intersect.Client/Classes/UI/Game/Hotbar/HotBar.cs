@@ -36,7 +36,7 @@ namespace Intersect.Client.UI.Game.Hotbar
             int x = 12;
             for (int i = 0; i < Options.MaxHotbar; i++)
             {
-                Items.Add(new HotbarItem(i, HotbarWindow));
+                Items.Add(new HotbarItem((byte)i, HotbarWindow));
                 Items[i].Pnl = new ImagePanel(HotbarWindow, "HotbarContainer" + i);
                 Items[i].Setup();
                 Items[i].KeyLabel = new Label(Items[i].Pnl, "HotbarLabel" + i);
@@ -60,8 +60,8 @@ namespace Intersect.Client.UI.Game.Hotbar
         {
             FloatRect rect = new FloatRect()
             {
-                X = HotbarWindow.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).X,
-                Y = HotbarWindow.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).Y,
+                X = HotbarWindow.LocalPosToCanvas(new Point(0, 0)).X,
+                Y = HotbarWindow.LocalPosToCanvas(new Point(0, 0)).Y,
                 Width = HotbarWindow.Width,
                 Height = HotbarWindow.Height
             };

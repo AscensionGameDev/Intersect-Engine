@@ -96,7 +96,7 @@ namespace Intersect.Client.UI.Menu
                 }
                 else
                 {
-                    mRichLabel.AddText(line.Text, new Framework.GenericClasses.Color(line.Clr.A, line.Clr.R, line.Clr.G, line.Clr.B),
+                    mRichLabel.AddText(line.Text, new Color(line.Clr.A, line.Clr.R, line.Clr.G, line.Clr.B),
                         line.GetAlignment(), GameContentManager.Current.GetFont(line.Font, line.Size));
                     mRichLabel.AddLineBreak();
                 }

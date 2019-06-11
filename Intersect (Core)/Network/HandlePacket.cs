@@ -1,4 +1,4 @@
 ﻿namespace Intersect.Network
 {
-    public delegate bool HandlePacket(IPacket packet);
+    public delegate bool HandlePacket(IConnection connection, IPacket packet);
 }

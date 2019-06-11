@@ -158,7 +158,7 @@ namespace Intersect.Client.MonoGame.Graphics
         {
             mWhiteTexture = CreateRenderTexture(1, 1);
             mWhiteTexture.Begin();
-            mWhiteTexture.Clear(Framework.GenericClasses.Color.White);
+            mWhiteTexture.Clear(Color.White);
             mWhiteTexture.End();
         }
 
@@ -271,12 +271,12 @@ namespace Intersect.Client.MonoGame.Graphics
             mSpriteBatchBegan = false;
         }
 
-        public static Microsoft.Xna.Framework.Color ConvertColor(Framework.GenericClasses.Color clr)
+        public static Microsoft.Xna.Framework.Color ConvertColor(Color clr)
         {
             return new Microsoft.Xna.Framework.Color(clr.R, clr.G, clr.B, clr.A);
         }
 
-        public override void Clear(Framework.GenericClasses.Color color)
+        public override void Clear(Color color)
         {
             mGraphicsDevice.Clear(ConvertColor(color));
         }
@@ -313,7 +313,7 @@ namespace Intersect.Client.MonoGame.Graphics
         }
 
         public override void DrawString(string text, GameFont gameFont, float x, float y, float fontScale,
-            Framework.GenericClasses.Color fontColor, bool worldPos = true, GameRenderTexture renderTexture = null, Framework.GenericClasses.Color borderColor = null)
+            Color fontColor, bool worldPos = true, GameRenderTexture renderTexture = null, Color borderColor = null)
         {
             if (gameFont == null) return;
             var font = (SpriteFont) gameFont.GetFont();
@@ -326,7 +326,7 @@ namespace Intersect.Client.MonoGame.Graphics
                     text = text.Replace(chr, ' ');
                 }
             }
-            if (borderColor != null && borderColor != Framework.GenericClasses.Color.Transparent)
+            if (borderColor != null && borderColor != Color.Transparent)
             {
                 mSpriteBatch.DrawString(font, text, new Vector2(x, y - 1), ConvertColor(borderColor), 0f,
                     Vector2.Zero,
@@ -345,8 +345,8 @@ namespace Intersect.Client.MonoGame.Graphics
         }
 
         public override void DrawString(string text, GameFont gameFont, float x, float y, float fontScale,
-            Framework.GenericClasses.Color fontColor, bool worldPos, GameRenderTexture renderTexture, FloatRect clipRect,
-            Framework.GenericClasses.Color borderColor = null)
+            Color fontColor, bool worldPos, GameRenderTexture renderTexture, FloatRect clipRect,
+            Color borderColor = null)
         {
             if (gameFont == null) return;
             x += mCurrentView.X;
@@ -371,7 +371,7 @@ namespace Intersect.Client.MonoGame.Graphics
                     text = text.Replace(chr, ' ');
                 }
             }
-            if (borderColor != null && borderColor != Framework.GenericClasses.Color.Transparent)
+            if (borderColor != null && borderColor != Color.Transparent)
             {
                 mSpriteBatch.DrawString(font, text, new Vector2(x, y - 1), ConvertColor(borderColor), 0f,
                     Vector2.Zero,
@@ -400,7 +400,7 @@ namespace Intersect.Client.MonoGame.Graphics
         }
         
         public override void DrawTexture(GameTexture tex, float sx, float sy, float sw, float sh, float tx, float ty, float tw, float th,
-            Framework.GenericClasses.Color renderColor, GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.None,
+            Color renderColor, GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.None,
             GameShader shader = null, float rotationDegrees = 0, bool isUi = false, bool drawImmediate = false)
         {
             var texture = tex?.GetTexture();
@@ -441,19 +441,18 @@ namespace Intersect.Client.MonoGame.Graphics
                 rotationDegrees = (float) ((Math.PI / 180) * rotationDegrees);
                 origin = new Vector2(sw / 2f,sh/2f);
 
-
                 //TODO: Optimize in terms of memory AND performance.
                 var pnt = new Pointf(0, 0);
-                var pnt1 = new Pointf((int)tw, 0);
-                var pnt2 = new Pointf(0, (int)th);
-                var cntr = new Pointf((int) tw / 2, (int) th / 2);
+                var pnt1 = new Pointf((float)tw, 0);
+                var pnt2 = new Pointf(0, (float)th);
+                var cntr = new Pointf((float) tw / 2, (float) th / 2);
 
                 var pntMod = Rotate(pnt, cntr, rotationDegrees);
                 var pntMod2 = Rotate(pnt1, cntr, rotationDegrees);
                 var pntMod3 = Rotate(pnt2, cntr, rotationDegrees);
 
-                var width = (int)GetDistance(pntMod.X, pntMod.Y, pntMod2.X, pntMod2.Y);
-                var height = (int)GetDistance(pntMod.X, pntMod.Y, pntMod3.X, pntMod3.Y);
+                var width = (int)Math.Round(GetDistance(pntMod.X, pntMod.Y, pntMod2.X, pntMod2.Y));
+                var height = (int)Math.Round(GetDistance(pntMod.X, pntMod.Y, pntMod3.X, pntMod3.Y));
 
                 if (packRotated)
                 {
@@ -491,12 +490,15 @@ namespace Intersect.Client.MonoGame.Graphics
 
         private static double GetDistance(double x1, double y1, double x2, double y2)
         {
-            return Math.Sqrt(Math.Pow((x2 - x1), 2) + Math.Pow((y2 - y1), 2));
+            var a2 = Math.Pow((x2 - x1), 2);
+            var b2 = Math.Pow((y2 - y1), 2);
+            var root = Math.Sqrt(a2 + b2);
+            return root;
         }
 
         private Pointf Rotate(Pointf pnt, Pointf ctr, float angle)
         {
-            return new Pointf((int)(pnt.X + (ctr.X * Math.Cos(angle)) - (ctr.Y * Math.Sin(angle))),(int)(pnt.Y + (ctr.X * Math.Sin(angle)) + (ctr.Y * Math.Cos(angle))));
+            return new Pointf((float)(pnt.X + (ctr.X * Math.Cos(angle)) - (ctr.Y * Math.Sin(angle))),(float)(pnt.Y + (ctr.X * Math.Sin(angle)) + (ctr.Y * Math.Cos(angle))));
         }
 
         public override void End()

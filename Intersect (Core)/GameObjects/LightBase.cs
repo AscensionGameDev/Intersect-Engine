@@ -40,20 +40,7 @@
             Color = Color.FromArgb(copy.Color.R, copy.Color.G, copy.Color.B);
         }
 
-        public LightBase(ByteBuffer myBuffer)
-        {
-            OffsetX = myBuffer.ReadInteger();
-            OffsetY = myBuffer.ReadInteger();
-            TileX = myBuffer.ReadInteger();
-            TileY = myBuffer.ReadInteger();
-            Intensity = myBuffer.ReadByte();
-            Size = myBuffer.ReadInteger();
-            Expand = (float) myBuffer.ReadDouble();
-            Color = Color.FromArgb(myBuffer.ReadByte(), myBuffer.ReadByte(), myBuffer.ReadByte());
-        }
-
-        public LightBase(int tileX, int tileY, int offsetX, int offsetY, byte intensity, int size, float expand,
-            Color color)
+        public LightBase(int tileX, int tileY, int offsetX, int offsetY, byte intensity, int size, float expand, Color color)
         {
             TileX = tileX;
             TileY = tileY;
@@ -63,22 +50,6 @@
             Size = size;
             Expand = expand;
             Color = color;
-        }
-
-        public byte[] LightData()
-        {
-            var myBuffer = new ByteBuffer();
-            myBuffer.WriteInteger(OffsetX);
-            myBuffer.WriteInteger(OffsetY);
-            myBuffer.WriteInteger(TileX);
-            myBuffer.WriteInteger(TileY);
-            myBuffer.WriteByte(Intensity);
-            myBuffer.WriteInteger(Size);
-            myBuffer.WriteDouble(Expand);
-            myBuffer.WriteByte(Color.R);
-            myBuffer.WriteByte(Color.G);
-            myBuffer.WriteByte(Color.B);
-            return myBuffer.ToArray();
         }
     }
 }

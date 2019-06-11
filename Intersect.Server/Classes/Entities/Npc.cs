@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.EventProcessing;
@@ -92,7 +93,7 @@ namespace Intersect.Server.Entities
         {
             base.Die(dropitems, killer);
             MapInstance.Get(MapId).RemoveEntity(this);
-            PacketSender.SendEntityLeave(Id, (int) EntityTypes.GlobalEntity, MapId);
+            PacketSender.SendEntityLeave(this);
         }
 
         //Targeting
@@ -181,23 +182,21 @@ namespace Intersect.Server.Entities
             if (!IsOneBlockAway(enemy)) return;
             if (!IsFacingTarget(enemy)) return;
 
-            var deadAnimations = new List<KeyValuePair<Guid, int>>();
-            var aliveAnimations = new List<KeyValuePair<Guid, int>>();
+            var deadAnimations = new List<KeyValuePair<Guid, sbyte>>();
+            var aliveAnimations = new List<KeyValuePair<Guid, sbyte>>();
 
             if (Base.AttackAnimation != null)
             {
-                deadAnimations.Add(new KeyValuePair<Guid, int>(Base.AttackAnimationId, Dir));
-                aliveAnimations.Add(new KeyValuePair<Guid, int>(Base.AttackAnimationId, Dir));
+                deadAnimations.Add(new KeyValuePair<Guid, sbyte>(Base.AttackAnimationId, (sbyte)Dir));
+                aliveAnimations.Add(new KeyValuePair<Guid, sbyte>(Base.AttackAnimationId, (sbyte)Dir));
             }
 
             //We were forcing at LEAST 1hp base damage.. but then you can't have guards that won't hurt the player.
             //https://www.ascensiongamedev.com/community/bug_tracker/intersect/npc-set-at-0-attack-damage-still-damages-player-by-1-initially-r915/
             if (AttackTimer < Globals.Timing.TimeMs)
             {
-                base.TryAttack(enemy, Base.Damage, (DamageType) Base.DamageType,
-                    (Stats) Base.ScalingStat,
-                    Base.Scaling, Base.CritChance, Base.CritMultiplier, deadAnimations, aliveAnimations);
-                PacketSender.SendEntityAttack(this, (int) EntityTypes.GlobalEntity, MapId, CalculateAttackTime());
+                base.TryAttack(enemy, Base.Damage, (DamageType) Base.DamageType, (Stats) Base.ScalingStat, Base.Scaling, Base.CritChance, Base.CritMultiplier, deadAnimations, aliveAnimations);
+                PacketSender.SendEntityAttack(this, CalculateAttackTime());
             }
         }
 
@@ -340,8 +339,7 @@ namespace Intersect.Server.Entities
 
                                             if (spell.CastAnimationId != Guid.Empty)
                                             {
-                                                PacketSender.SendAnimationToProximity(spell.CastAnimationId, 1,
-                                                    Id, MapId, 0, 0, Dir);
+                                                PacketSender.SendAnimationToProximity(spell.CastAnimationId, 1, Id, MapId, 0, 0, (sbyte)Dir);
                                                 //Target Type 1 will be global entity
                                             }
 
@@ -528,7 +526,7 @@ namespace Intersect.Server.Entities
                                                     return;
                                                 }
                                             }
-                                            Move(dir, null);
+                                            Move((byte)dir, null);
                                         }
                                         else
                                         {
@@ -623,7 +621,7 @@ namespace Intersect.Server.Entities
                 }
                 else if (Base.Movement == (int)NpcMovement.TurnRandomly)
                 {
-                    ChangeDir(Globals.Rand.Next(0, 4));
+                    ChangeDir((byte)Globals.Rand.Next(0, 4));
                     LastRandomMove = Globals.Timing.TimeMs + Globals.Rand.Next(1000, 3000);
                     return;
                 }
@@ -642,7 +640,7 @@ namespace Intersect.Server.Entities
                                 return;
                             }
                         }
-                        Move(i, null);
+                        Move((byte)i, null);
                     }
                 }
                 LastRandomMove = Globals.Timing.TimeMs + Globals.Rand.Next(1000, 3000);
@@ -790,7 +788,7 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public override void Warp(Guid newMapId, int newX, int newY, int newDir, bool adminWarp = false, int zOverride = 0, bool mapSave = false)
+        public override void Warp(Guid newMapId, byte newX, byte newY, byte newDir, bool adminWarp = false, byte zOverride = 0, bool mapSave = false)
         {
             var map = MapInstance.Get(newMapId);
             if (map == null)
@@ -808,7 +806,7 @@ namespace Intersect.Server.Entities
                 {
                     oldMap.RemoveEntity(this);
                 }
-                PacketSender.SendEntityLeave(Id, (int)EntityTypes.GlobalEntity, MapId);
+                PacketSender.SendEntityLeave(this);
                 MapId = newMapId;
                 PacketSender.SendEntityDataToProximity(this);
                 PacketSender.SendEntityPositionToAll(this);
@@ -820,5 +818,16 @@ namespace Intersect.Server.Entities
                 PacketSender.SendEntityStats(this);
             }
         }
+
+        public override EntityPacket EntityPacket(EntityPacket packet = null)
+        {
+            if (packet == null) packet = new NpcEntityPacket();
+            packet = base.EntityPacket(packet);
+
+            var pkt = (NpcEntityPacket)packet;
+            pkt.Aggression = this.Target != null ? -1 : 0; //TODO FIX THIS WITH NEW NPC AGGRESSIONS
+            return pkt;
+        }
+
     }
 }

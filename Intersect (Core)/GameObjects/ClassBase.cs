@@ -91,9 +91,9 @@ namespace Intersect.GameObjects
             set => SpawnMapId = value?.Id ?? Guid.Empty;
         }
 
-        public int SpawnX { get; set; }
-        public int SpawnY { get; set; }
-        public int SpawnDir { get; set; }
+        public byte SpawnX { get; set; }
+        public byte SpawnY { get; set; }
+        public byte SpawnDir { get; set; }
 
         //Base Stats
         [Column("BaseStats")]
@@ -190,6 +190,7 @@ namespace Intersect.GameObjects
             Name = "New Class";
 
             ExperienceCurve = new ExperienceCurve();
+            ExperienceCurve.Calculate(1);
             BaseExp = DEFAULT_BASE_EXPERIENCE;
             ExpIncrease = DEFAULT_EXPERIENCE_INCREASE;
         }
@@ -200,6 +201,7 @@ namespace Intersect.GameObjects
             Name = "New Class";
 
             ExperienceCurve = new ExperienceCurve();
+            ExperienceCurve.Calculate(1);
             BaseExp = DEFAULT_BASE_EXPERIENCE;
             ExpIncrease = DEFAULT_EXPERIENCE_INCREASE;
         }

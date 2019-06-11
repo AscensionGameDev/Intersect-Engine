@@ -142,7 +142,7 @@ namespace Intersect.Client.UI.Menu
             }
 
             Gui.MenuUi.MainMenu.OpenResetPassword(mInputTextbox?.Text);
-            PacketSender.RequestPasswordReset(mInputTextbox?.Text);
+            PacketSender.SendRequestPasswordReset(mInputTextbox?.Text);
         }
     }
 }

@@ -127,7 +127,7 @@ namespace Intersect.GameObjects.Events
     {
         public override ConditionTypes Type { get; } = ConditionTypes.QuestInProgress;
         public Guid QuestId { get; set; }
-        public QuestProgress Progress { get; set; } = QuestProgress.OnAnyTask;
+        public QuestProgressState Progress { get; set; } = QuestProgressState.OnAnyTask;
         public Guid TaskId { get; set; }
     }
 

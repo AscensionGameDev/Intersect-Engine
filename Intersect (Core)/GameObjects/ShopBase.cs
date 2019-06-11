@@ -64,28 +64,12 @@ namespace Intersect.GameObjects
         [NotMapped]
         public ItemBase Item => ItemBase.Get(ItemId);
 
-        public ShopItem(ByteBuffer myBuffer)
-        {
-            ItemId = myBuffer.ReadGuid();
-            CostItemId = myBuffer.ReadGuid();
-            CostItemQuantity = myBuffer.ReadInteger();
-        }
-
         [JsonConstructor]
         public ShopItem(Guid itemId, Guid costItemId, int costVal)
         {
             ItemId = itemId;
             CostItemId = costItemId;
             CostItemQuantity = costVal;
-        }
-
-        public byte[] Data()
-        {
-            ByteBuffer myBuffer = new ByteBuffer();
-            myBuffer.WriteGuid(ItemId);
-            myBuffer.WriteGuid(CostItemId);
-            myBuffer.WriteInteger(CostItemQuantity);
-            return myBuffer.ToArray();
         }
     }
 }

@@ -39,8 +39,8 @@ namespace Intersect
         public static int ItemRepawnTime => _options.MapOpts.ItemSpawnTime;
         public static int ItemDespawnTime => _options.MapOpts.ItemDespawnTime;
         public static bool ZDimensionVisible => _options.MapOpts.ZDimensionVisible;
-        public static int MapWidth => _options.MapOpts.Width;
-        public static int MapHeight => _options.MapOpts.Height;
+        public static int MapWidth => _options != null ?_options.MapOpts.Width : 32;
+        public static int MapHeight => _options != null ? _options.MapOpts.Height : 26;
         public static int TileWidth => _options.MapOpts.TileWidth;
         public static int TileHeight => _options.MapOpts.TileHeight;
 
@@ -163,16 +163,14 @@ namespace Intersect
             optionsCompressed = JsonConvert.SerializeObject(_options);
         }
 
-        public static byte[] GetOptionsData()
+        public static string GetOptionsData()
         {
-            var bf = new ByteBuffer();
-            bf.WriteString(optionsCompressed);
-            return bf.ToArray();
+            return optionsCompressed;
         }
 
-        public static void LoadFromServer(ByteBuffer bf)
+        public static void LoadFromServer(string data)
         {
-            _options = JsonConvert.DeserializeObject<Options>(bf.ReadString());
+            _options = JsonConvert.DeserializeObject<Options>(data);
         }
 
         public bool ShouldSerializePlayerDatabase()

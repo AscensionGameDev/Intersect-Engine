@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Intersect.Client.Framework</RootNamespace>
     <AssemblyName>Intersect Client Framework</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -51,7 +51,6 @@
     <Compile Include="Audio\GameAudioSource.cs" />
     <Compile Include="Database\GameDatabase.cs" />
     <Compile Include="File Management\GameContentManager.cs" />
-    <Compile Include="GenericClasses\ColorF.cs" />
     <Compile Include="Graphics\GameBlendModes.cs" />
     <Compile Include="Graphics\GameFont.cs" />
     <Compile Include="Graphics\GameRenderer.cs" />
@@ -64,12 +63,10 @@
     <Compile Include="Network\GameSocket.cs" />
     <Compile Include="Sys\GameSystem.cs" />
     <Compile Include="GenericClasses\Clipboard.cs" />
-    <Compile Include="GenericClasses\Color.cs" />
     <Compile Include="GenericClasses\Cursor.cs" />
     <Compile Include="GenericClasses\FloatRect.cs" />
     <Compile Include="GenericClasses\Keys.cs" />
     <Compile Include="GenericClasses\OpenFileDialog.cs" />
-    <Compile Include="GenericClasses\Point.cs" />
     <Compile Include="GenericClasses\Pointf.cs" />
     <Compile Include="GenericClasses\Rectangle.cs" />
     <Compile Include="GenericClasses\SaveFileDialog.cs" />
@@ -196,6 +193,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Intersect %28Core%29\Intersect %28Core%29.csproj">
+      <Project>{bc304b43-1f2c-4454-9edc-48f47357ca94}</Project>
+      <Name>Intersect %28Core%29</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

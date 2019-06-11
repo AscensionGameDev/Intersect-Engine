@@ -2326,11 +2326,11 @@ Negative values for time to flow backwards.";
                 var taskName = task != null ? task.GetTaskString(Strings.TaskEditor.descriptions) : Strings.EventConditionDesc.tasknotfound.ToString();
                 switch (condition.Progress)
                 {
-                    case QuestProgress.BeforeTask:
+                    case QuestProgressState.BeforeTask:
                         return Strings.EventConditionDesc.questinprogress.ToString(QuestBase.GetName(condition.QuestId),  Strings.EventConditionDesc.beforetask.ToString(taskName));
-                    case QuestProgress.AfterTask:
+                    case QuestProgressState.AfterTask:
                         return Strings.EventConditionDesc.questinprogress.ToString(QuestBase.GetName(condition.QuestId), Strings.EventConditionDesc.aftertask.ToString(taskName));
-                    case QuestProgress.OnTask:
+                    case QuestProgressState.OnTask:
                         return Strings.EventConditionDesc.questinprogress.ToString(QuestBase.GetName(condition.QuestId),  Strings.EventConditionDesc.ontask.ToString(taskName));
                     default: //On Any task
                         return Strings.EventConditionDesc.questinprogress.ToString(QuestBase.GetName(condition.QuestId), Strings.EventConditionDesc.onanytask);

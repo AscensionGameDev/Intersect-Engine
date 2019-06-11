@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-    public enum QuestProgress
+    public enum QuestProgressState
     {
         OnAnyTask = 0,
         BeforeTask = 1,
@@ -18,11 +18,16 @@ namespace Intersect.GameObjects
         OnTask = 3,
     }
 
-    public struct QuestProgressStruct
+    public class QuestProgress
     {
         public Guid TaskId;
         public bool Completed;
         public int TaskProgress;
+
+        public QuestProgress(string data)
+        {
+            JsonConvert.PopulateObject(data, this);
+        }
     }
 
     public class QuestBase : DatabaseObject<QuestBase>

@@ -2,12 +2,17 @@
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData.Players;
 
+using Newtonsoft.Json;
+
 namespace Intersect.Server.Maps
 {
     public class MapItem : Item
     {
+        [JsonIgnore]
         public int AttributeSpawnX = -1;
+        [JsonIgnore]
         public int AttributeSpawnY = -1;
+        [JsonIgnore]
         public long DespawnTime;
         public int X = 0;
         public int Y = 0;
@@ -20,13 +25,9 @@ namespace Intersect.Server.Maps
         {
         }
 
-        public byte[] Data()
+        public string Data()
         {
-            var bf = new ByteBuffer();
-            bf.WriteInteger(X);
-            bf.WriteInteger(Y);
-            bf.WriteBytes(base.Data());
-            return bf.ToArray();
+            return JsonConvert.SerializeObject(this);
         }
     }
 }

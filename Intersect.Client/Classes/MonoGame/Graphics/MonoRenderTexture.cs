@@ -47,11 +47,11 @@ namespace Intersect.Client.MonoGame.Graphics
             return mRenderTexture;
         }
 
-        public override Framework.GenericClasses.Color GetPixel(int x1, int y1)
+        public override Color GetPixel(int x1, int y1)
         {
             Microsoft.Xna.Framework.Color[] pixel = new Microsoft.Xna.Framework.Color[1];
             mRenderTexture.GetData(0, new Rectangle(x1, y1, 1, 1), pixel, 0, 1);
-            return new Framework.GenericClasses.Color(pixel[0].A, pixel[0].R, pixel[0].G, pixel[0].B);
+            return new Color(pixel[0].A, pixel[0].R, pixel[0].G, pixel[0].B);
         }
 
         public override GameTexturePackFrame GetTexturePackFrame()
@@ -69,7 +69,7 @@ namespace Intersect.Client.MonoGame.Graphics
             ((MonoRenderer) GameGraphics.Renderer).EndSpriteBatch();
         }
 
-        public override void Clear(Framework.GenericClasses.Color color)
+        public override void Clear(Color color)
         {
             ((MonoRenderer)GameGraphics.Renderer).EndSpriteBatch();
             mGraphicsDevice.SetRenderTarget(mRenderTexture);

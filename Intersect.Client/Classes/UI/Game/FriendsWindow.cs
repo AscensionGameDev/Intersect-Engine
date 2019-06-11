@@ -91,13 +91,13 @@ namespace Intersect.Client.UI.Game
                 //Row Render color (red = offline, green = online)
                 if (f.Online == true)
                 {
-                    row.SetTextColor(Framework.GenericClasses.Color.Green);
+                    row.SetTextColor(Color.Green);
                 }
                 else
                 {
-                    row.SetTextColor(Framework.GenericClasses.Color.Red);
+                    row.SetTextColor(Color.Red);
                 }
-                row.RenderColor = new Framework.GenericClasses.Color(50, 255, 255, 255);
+                row.RenderColor = new Color(50, 255, 255, 255);
             }
         }
 
@@ -105,7 +105,7 @@ namespace Intersect.Client.UI.Game
         {
             if (mSearchTextbox.Text.Trim().Length >= 3) //Don't bother sending a packet less than the char limit
             {
-                PacketSender.AddFriend(mSearchTextbox.Text);
+                PacketSender.SendAddFriend(mSearchTextbox.Text);
             }
         }
 
@@ -145,7 +145,7 @@ namespace Intersect.Client.UI.Game
 
         private void RemoveFriend(Object sender, EventArgs e)
         {
-            PacketSender.RemoveFriend(mTempName);
+            PacketSender.SendRemoveFriend(mTempName);
         }
 
         private void AddFriend(Object sender, EventArgs e)
@@ -153,7 +153,7 @@ namespace Intersect.Client.UI.Game
             var ibox = (InputBox) sender;
             if (ibox.TextValue.Trim().Length >= 3) //Don't bother sending a packet less than the char limit
             {
-                PacketSender.AddFriend(ibox.TextValue);
+                PacketSender.SendAddFriend(ibox.TextValue);
             }
         }
     }

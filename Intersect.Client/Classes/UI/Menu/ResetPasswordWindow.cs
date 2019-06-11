@@ -190,7 +190,7 @@ namespace Intersect.Client.UI.Menu
                 return;
             }
             var sha = new SHA256Managed();
-            PacketSender.ResetPassword(Target,mCodeInputTextbox?.Text, BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(mPasswordTextbox.Text.Trim()))).Replace("-", ""));
+            PacketSender.SendResetPassword(Target,mCodeInputTextbox?.Text, BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(mPasswordTextbox.Text.Trim()))).Replace("-", ""));
             Globals.WaitingOnServer = true;
             ChatboxMsg.ClearMessages();
         }

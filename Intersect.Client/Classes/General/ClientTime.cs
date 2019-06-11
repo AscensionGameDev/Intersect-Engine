@@ -10,9 +10,9 @@ namespace Intersect.Client.General
         private static long sUpdateTime;
         private static float sRate = 1f;
         private static long sColorUpdate;
-        private static Framework.GenericClasses.Color sTargetColor = Framework.GenericClasses.Color.Transparent;
+        private static Color sTargetColor = Color.Transparent;
 
-        public static void LoadTime(DateTime timeUpdate, Framework.GenericClasses.Color clr, float rate)
+        public static void LoadTime(DateTime timeUpdate, Color clr, float rate)
         {
             sServerTime = timeUpdate;
             sTargetColor = clr;

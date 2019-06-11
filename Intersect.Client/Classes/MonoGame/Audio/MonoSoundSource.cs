@@ -58,7 +58,7 @@ namespace Intersect.Client.MonoGame.Audio
                 catch (Exception exception)
                 {
                     Log.Error($"Error loading '{mFilename}'.",exception);
-                    ChatboxMsg.AddMessage(new ChatboxMsg($"{Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound)} [{mFilename}]", new Framework.GenericClasses.Color(0xBF, 0x0, 0x0)));
+                    ChatboxMsg.AddMessage(new ChatboxMsg($"{Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound)} [{mFilename}]", new Color(0xBF, 0x0, 0x0)));
                 }
             }
         }

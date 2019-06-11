@@ -178,7 +178,7 @@ namespace Intersect.Client.UI.Game.Chat
                 return;
             }
 
-            PacketSender.SendChatMsg(mChatboxInput.Text.Trim(), (int) mChannelCombobox.SelectedItem.UserData);
+            PacketSender.SendChatMsg(mChatboxInput.Text.Trim(), byte.Parse(mChannelCombobox.SelectedItem.UserData.ToString()));
             mChatboxInput.Text = GetDefaultInputText();
         }
 

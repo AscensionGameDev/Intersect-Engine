@@ -230,8 +230,8 @@ namespace Intersect.GameObjects.Events.Commands
     {
         public override EventCommandType Type {get;} = EventCommandType.WarpPlayer;
         public Guid MapId { get; set; }
-        public int X { get; set; }
-        public int Y { get; set; }
+        public byte X { get; set; }
+        public byte Y { get; set; }
         public WarpDirection Direction { get; set; } = WarpDirection.Retain;
     }
 
@@ -260,8 +260,8 @@ namespace Intersect.GameObjects.Events.Commands
         public Guid EntityId { get; set; }
 
         //Map Coords or Coords Centered around player to spawn at
-        public int X { get; set; }
-        public int Y { get; set; }
+        public byte X { get; set; }
+        public byte Y { get; set; }
     }
 
     public class DespawnNpcCommand : EventCommand

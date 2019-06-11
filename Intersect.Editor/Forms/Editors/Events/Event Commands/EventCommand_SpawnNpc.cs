@@ -162,8 +162,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 case 0: //Tile Spawn
                     mMyCommand.EntityId = Guid.Empty;
                     mMyCommand.MapId = MapList.OrderedMaps[cmbMap.SelectedIndex].MapId;
-                    mMyCommand.X = (int) nudWarpX.Value;
-                    mMyCommand.Y = (int) nudWarpY.Value;
+                    mMyCommand.X = (byte) nudWarpX.Value;
+                    mMyCommand.Y = (byte) nudWarpY.Value;
                     mMyCommand.Dir = (byte)cmbDirection.SelectedIndex;
                     break;
                 case 1: //On/Around Entity Spawn
@@ -176,8 +176,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     {
                         mMyCommand.EntityId = mCurrentMap.LocalEvents.Keys.ToList()[cmbEntities.SelectedIndex - 1];
                     }
-                    mMyCommand.X = mSpawnX;
-                    mMyCommand.Y = mSpawnY;
+                    mMyCommand.X = (byte)mSpawnX;
+                    mMyCommand.Y = (byte)mSpawnY;
                     mMyCommand.Dir = (byte)Convert.ToInt32(chkDirRelative.Checked);
                     break;
             }

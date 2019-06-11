@@ -178,9 +178,9 @@ namespace Intersect.Server.Maps
         private void SpawnAttributeItems()
         {
             ResourceSpawns.Clear();
-            for (int x = 0; x < Options.MapWidth; x++)
+            for (byte x = 0; x < Options.MapWidth; x++)
             {
-                for (int y = 0; y < Options.MapHeight; y++)
+                for (byte y = 0; y < Options.MapHeight; y++)
                 {
                     if (Attributes[x, y] != null)
                     {
@@ -335,7 +335,7 @@ namespace Intersect.Server.Maps
         }
 
         // Resources
-        private void SpawnAttributeResource(int x, int y)
+        private void SpawnAttributeResource(byte x, byte y)
         {
             var tempResource = new ResourceSpawn()
             {
@@ -423,9 +423,9 @@ namespace Intersect.Server.Maps
 
         private void SpawnMapNpc(int i)
         {
-            int x = 0;
-            int y = 0;
-            int dir = 0;
+            byte x = 0;
+            byte y = 0;
+            byte dir = 0;
             var npcBase = NpcBase.Get(Spawns[i].NpcId);
             if (npcBase != null)
             {
@@ -441,22 +441,22 @@ namespace Intersect.Server.Maps
                 }
                 if (Spawns[i].Direction != NpcSpawnDirection.Random)
                 {
-                    dir = (int)Spawns[i].Direction - 1;
+                    dir = (byte)(Spawns[i].Direction - 1);
                 }
                 else
                 {
-                    dir = Globals.Rand.Next(0, 4);
+                    dir = (byte)Globals.Rand.Next(0, 4);
                 }
                 if (Spawns[i].X >= 0 && Spawns[i].Y >= 0)
                 {
-                    npcSpawnInstance.Entity = SpawnNpc(Spawns[i].X, Spawns[i].Y, dir, Spawns[i].NpcId);
+                    npcSpawnInstance.Entity = SpawnNpc((byte)Spawns[i].X, (byte)Spawns[i].Y, dir, Spawns[i].NpcId);
                 }
                 else
                 {
                     for (int n = 0; n < 100; n++)
                     {
-                        x = Globals.Rand.Next(0, Options.MapWidth);
-                        y = Globals.Rand.Next(0, Options.MapHeight);
+                        x = (byte)Globals.Rand.Next(0, Options.MapWidth);
+                        y = (byte)Globals.Rand.Next(0, Options.MapHeight);
                         if (Attributes[x, y] == null || Attributes[x, y].Type == (int)MapAttributes.Walkable)
                         {
                             break;
@@ -488,7 +488,7 @@ namespace Intersect.Server.Maps
             }
         }
 
-        public EntityInstance SpawnNpc(int tileX, int tileY, int dir, Guid npcId, bool despawnable = false)
+        public EntityInstance SpawnNpc(byte tileX, byte tileY, byte dir, Guid npcId, bool despawnable = false)
         {
             var npcBase = NpcBase.Get(npcId);
             if (npcBase != null)
@@ -566,7 +566,7 @@ namespace Intersect.Server.Maps
 
         //Spawn a projectile
         public void SpawnMapProjectile(EntityInstance owner, ProjectileBase projectile, SpellBase parentSpell,
-            ItemBase parentItem, Guid mapId, int x, int y, int z, int direction, EntityInstance target)
+            ItemBase parentItem, Guid mapId, byte x, byte y, byte z, byte direction, EntityInstance target)
         {
             lock (GetMapLock())
             {
@@ -858,8 +858,8 @@ namespace Intersect.Server.Maps
                 Active = true;
                 //Send Entity Info to Everyone and Everyone to the Entity
                 SendMapEntitiesTo(player);
-                player.MyClient.SentMaps.Clear();
-                PacketSender.SendMapItems(player.MyClient, Id);
+                player.Client.SentMaps.Clear();
+                PacketSender.SendMapItems(player.Client, Id);
                 AddEntity(player);
                 player.LastMapEntered = Id;
                 if (SurroundingMaps.Count <= 0) return;
@@ -867,9 +867,9 @@ namespace Intersect.Server.Maps
                 {
                     Lookup.Get<MapInstance>(t).Active = true;
                     Lookup.Get<MapInstance>(t).SendMapEntitiesTo(player);
-                    PacketSender.SendMapItems(player.MyClient, t);
+                    PacketSender.SendMapItems(player.Client, t);
                 }
-                PacketSender.SendEntityDataToProximity(player, player.MyClient);
+                PacketSender.SendEntityDataToProximity(player, player.Client);
             }
         }
 
@@ -877,7 +877,7 @@ namespace Intersect.Server.Maps
         {
             if (player != null)
             {
-                PacketSender.SendMapEntitiesTo(player.MyClient, mEntities);
+                PacketSender.SendMapEntitiesTo(player.Client, mEntities);
                 if (player.MapId == Id) player.SendEvents();
             }
         }

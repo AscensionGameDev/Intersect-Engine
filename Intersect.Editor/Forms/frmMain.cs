@@ -851,15 +851,16 @@ namespace Intersect.Editor.Forms
                 Filter = "Intersect Map|*.imap",
                 Title = Strings.MainForm.exportmap
             };
-            fileDialog.ShowDialog();
-            var buff = new ByteBuffer();
-            buff.WriteString(Application.ProductVersion);
-            buff.WriteBytes(Globals.CurrentMap.SaveInternal());
-            if (fileDialog.FileName != "")
-            {
-                File.WriteAllBytes(fileDialog.FileName, buff.ToArray());
-            }
-            buff.Dispose();
+            //TODO Reimplement
+            //fileDialog.ShowDialog();
+            //var buff = new ByteBuffer();
+            //buff.WriteString(Application.ProductVersion);
+            //buff.WriteBytes(Globals.CurrentMap.SaveInternal());
+            //if (fileDialog.FileName != "")
+            //{
+            //    File.WriteAllBytes(fileDialog.FileName, buff.ToArray());
+            //}
+            //buff.Dispose();
         }
 
         private void importMapToolStripMenuItem_Click(object sender, EventArgs e)
@@ -869,25 +870,26 @@ namespace Intersect.Editor.Forms
                 Filter = "Intersect Map|*.imap",
                 Title = Strings.MainForm.importmap
             };
-            fileDialog.ShowDialog();
+            //TODO Reimplement
+            //fileDialog.ShowDialog();
 
-            if (fileDialog.FileName != "")
-            {
-                var data = File.ReadAllBytes(fileDialog.FileName);
-                var buff = new ByteBuffer();
-                buff.WriteBytes(data);
-                if (buff.ReadString() == Application.ProductVersion)
-                {
-                    Globals.MapEditorWindow.PrepUndoState();
-                    Globals.CurrentMap.LoadInternal(buff.ReadBytes(buff.Length(), true));
-                    Globals.MapEditorWindow.AddUndoState();
-                }
-                else
-                {
-                    DarkMessageBox.ShowError(Strings.Errors.importfailed,
-                        Strings.Errors.importfailedcaption, DarkDialogButton.Ok, Properties.Resources.Icon);
-                }
-            }
+            //if (fileDialog.FileName != "")
+            //{
+            //    var data = File.ReadAllBytes(fileDialog.FileName);
+            //    var buff = new ByteBuffer();
+            //    buff.WriteBytes(data);
+            //    if (buff.ReadString() == Application.ProductVersion)
+            //    {
+            //        Globals.MapEditorWindow.PrepUndoState();
+            //        Globals.CurrentMap.LoadInternal(buff.ReadBytes(buff.Length(), true));
+            //        Globals.MapEditorWindow.AddUndoState();
+            //    }
+            //    else
+            //    {
+            //        DarkMessageBox.ShowError(Strings.Errors.importfailed,
+            //            Strings.Errors.importfailedcaption, DarkDialogButton.Ok, Properties.Resources.Icon);
+            //    }
+            //}
         }
 
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)

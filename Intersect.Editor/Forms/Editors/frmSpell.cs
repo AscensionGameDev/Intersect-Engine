@@ -711,12 +711,12 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudWarpX_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Warp.X = (int) nudWarpX.Value;
+            mEditorItem.Warp.X = (byte) nudWarpX.Value;
         }
 
         private void nudWarpY_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Warp.Y = (int) nudWarpY.Value;
+            mEditorItem.Warp.Y = (byte) nudWarpY.Value;
         }
 
         private void cmbDirection_SelectedIndexChanged(object sender, EventArgs e)

@@ -19,9 +19,9 @@ namespace Intersect.Network.Packets
 
         private Guid mGuid;
 
-        public ApprovalPacket(RSACryptoServiceProvider rsa)
-            : base(rsa, null)
+        public ApprovalPacket()
         {
+
         }
 
         public ApprovalPacket(RSACryptoServiceProvider rsa, byte[] handshakeSecret, byte[] aesKey, Guid guid)
@@ -56,39 +56,6 @@ namespace Intersect.Network.Packets
         {
             get => mAesKey;
             set => mAesKey = value;
-        }
-
-        public override int EstimatedSize => mEncryptedApproval?.Length + sizeof(int) ?? -1;
-
-        public override bool Read(ref IBuffer buffer)
-        {
-            if (!base.Read(ref buffer)) return false;
-            if (!buffer.Read(out mEncryptedApproval)) return false;
-
-            if (mRsa == null) throw new ArgumentNullException(nameof(mRsa));
-            var decryptedApproval = mRsa.Decrypt(mEncryptedApproval, true);
-            using (var approvalBuffer = new MemoryBuffer(decryptedApproval))
-            {
-                if (!approvalBuffer.Read(out mHandshakeSecret, SIZE_HANDSHAKE_SECRET)) return false;
-                if (!approvalBuffer.Read(out mAesKey, SIZE_AES_KEY)) return false;
-                if (!approvalBuffer.Read(out byte[] guidData, SIZE_GUID)) return false;
-                Guid = new Guid(guidData);
-
-#if INTERSECT_DIAGNOSTIC
-                Log.Debug($"Handshake secret: {BitConverter.ToString(HandshakeSecret)}.");
-                Log.Debug($"Assigned AES Key: {BitConverter.ToString(AesKey)}");
-                Log.Debug($"Assigned UUID: {Guid}).");
-#endif
-
-                return true;
-            }
-        }
-
-        public override bool Write(ref IBuffer buffer)
-        {
-            buffer.Write(mEncryptedApproval);
-
-            return true;
         }
     }
 }

@@ -58,10 +58,10 @@ namespace Intersect.Client.UI.Game.Hotbar
         private int mMouseX = -1;
         private int mMouseY = -1;
 
-        private int mYindex;
+        private byte mYindex;
         public ImagePanel Pnl;
 
-        public HotbarItem(int index, Base hotbarWindow)
+        public HotbarItem(byte index, Base hotbarWindow)
         {
             mYindex = index;
             mHotbarWindow = hotbarWindow;
@@ -82,10 +82,10 @@ namespace Intersect.Client.UI.Game.Hotbar
             EquipLabel = new Label(Pnl, "HotbarEquippedLabel" + mYindex);
             EquipLabel.IsHidden = true;
             EquipLabel.Text = Strings.Inventory.equippedicon;
-            EquipLabel.TextColor = new Framework.GenericClasses.Color(0, 255, 255, 255);
+            EquipLabel.TextColor = new Color(0, 255, 255, 255);
             mCooldownLabel = new Label(Pnl, "HotbarCooldownLabel" + mYindex);
             mCooldownLabel.IsHidden = true;
-            mCooldownLabel.TextColor = new Framework.GenericClasses.Color(0, 255, 255, 255);
+            mCooldownLabel.TextColor = new Color(0, 255, 255, 255);
         }
 
         public void Activate()
@@ -149,7 +149,7 @@ namespace Intersect.Client.UI.Game.Hotbar
                     mItemDescWindow.Dispose();
                     mItemDescWindow = null;
                 }
-                mItemDescWindow = new ItemDescWindow(mCurrentItem, 1, mHotbarWindow.X + Pnl.X + 16, mHotbarWindow.Y + mHotbarWindow.Height + 2, mInventoryItem?.StatBoost, mCurrentItem.Name,"",true);
+                mItemDescWindow = new ItemDescWindow(mCurrentItem, 1, mHotbarWindow.X + Pnl.X + 16, mHotbarWindow.Y + mHotbarWindow.Height + 2, mInventoryItem?.StatBuffs, mCurrentItem.Name,"",true);
             }
             else if (mCurrentSpell != null)
             {
@@ -166,8 +166,8 @@ namespace Intersect.Client.UI.Game.Hotbar
         {
             FloatRect rect = new FloatRect()
             {
-                X = Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).X,
-                Y = Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).Y,
+                X = Pnl.LocalPosToCanvas(new Point(0, 0)).X,
+                Y = Pnl.LocalPosToCanvas(new Point(0, 0)).Y,
                 Width = Pnl.Width,
                 Height = Pnl.Height
             };
@@ -336,11 +336,11 @@ namespace Intersect.Client.UI.Game.Hotbar
                 }
                 if (mIsFaded)
                 {
-                    mContentPanel.RenderColor = new Framework.GenericClasses.Color(100, 255, 255, 255);
+                    mContentPanel.RenderColor = new Color(100, 255, 255, 255);
                 }
                 else
                 {
-                    mContentPanel.RenderColor = Framework.GenericClasses.Color.White;
+                    mContentPanel.RenderColor = Color.White;
                 }
             }
             if (mCurrentItem != null || mCurrentSpell != null)
@@ -367,10 +367,10 @@ namespace Intersect.Client.UI.Game.Hotbar
                                 if (mMouseX == -1 || mMouseY == -1)
                                 {
                                     mMouseX = InputHandler.MousePosition.X -
-                                             Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0))
+                                             Pnl.LocalPosToCanvas(new Point(0, 0))
                                                  .X;
                                     mMouseY = InputHandler.MousePosition.Y -
-                                             Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0))
+                                             Pnl.LocalPosToCanvas(new Point(0, 0))
                                                  .Y;
                                 }
                                 else
@@ -378,18 +378,18 @@ namespace Intersect.Client.UI.Game.Hotbar
                                     int xdiff = mMouseX -
                                                 (InputHandler.MousePosition.X -
                                                  Pnl.LocalPosToCanvas(
-                                                     new Framework.GenericClasses.Point(0, 0)).X);
+                                                     new Point(0, 0)).X);
                                     int ydiff = mMouseY -
                                                 (InputHandler.MousePosition.Y -
                                                  Pnl.LocalPosToCanvas(
-                                                     new Framework.GenericClasses.Point(0, 0)).Y);
+                                                     new Point(0, 0)).Y);
                                     if (Math.Sqrt(Math.Pow(xdiff, 2) + Math.Pow(ydiff, 2)) > 5)
                                     {
                                         IsDragging = true;
                                         mDragIcon = new Draggable(
-                                            Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0))
+                                            Pnl.LocalPosToCanvas(new Point(0, 0))
                                                 .X + mMouseX,
-                                            Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0))
+                                            Pnl.LocalPosToCanvas(new Point(0, 0))
                                                 .X + mMouseY, mContentPanel.Texture);
                                         //SOMETHING SHOULD BE RENDERED HERE, RIGHT?
                                     }
@@ -426,7 +426,7 @@ namespace Intersect.Client.UI.Game.Hotbar
                             }
                             if (bestIntersectIndex > -1 && bestIntersectIndex != mYindex)
                             {
-                                Globals.Me.HotbarSwap(mYindex, bestIntersectIndex);
+                                Globals.Me.HotbarSwap(mYindex, (byte)bestIntersectIndex);
                             }
                         }
 

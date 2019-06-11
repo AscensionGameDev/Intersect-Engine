@@ -20,7 +20,8 @@ using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Logging;
 using Intersect.Network;
-using Intersect.Network.Packets.Reflectable;
+using Intersect.Network.Packets;
+using Intersect.Network.Packets.Server;
 
 namespace Intersect.Client.Networking
 {
@@ -29,431 +30,61 @@ namespace Intersect.Client.Networking
         public static long Ping = 0;
         public static long PingTime;
 
-        private static List<ShitMeasurement> sMeasurements = new List<ShitMeasurement>();
-
-        private static int sHitstaken;
-        private static long sTimespentshitting;
-        private static long sTotalshitsize;
-        private static Stopwatch sShitTimer = new Stopwatch();
-
-        private static TextWriter sWriter;
-
         public static bool HandlePacket(IPacket packet)
         {
-            var binaryPacket = packet as BinaryPacket;
-
-            var bf = binaryPacket?.Buffer;
-            if (packet == null || bf == null) return false;
-            //Compressed?
-            if (bf.ReadByte() == 1)
+            if (packet is CerasPacket)
             {
-                var data = Compression.DecompressPacket(bf.ReadBytes(bf.Length()));
-                bf = new ByteBuffer();
-                bf.WriteBytes(data);
+                HandlePacket((dynamic)packet);
             }
-
-            HandlePacket(bf);
             return true;
         }
 
-        private static int sPacketCount = 0;
-        private static bool sDebugPackets = false;
-        public static void HandlePacket(ByteBuffer bf)
+        //PingPacket
+        private static void HandlePacket(PingPacket packet)
         {
-            var packetHeader = (ServerPackets) bf.ReadLong();
-            sPacketCount++;
-            if (sDebugPackets)
-            {
-                Debug.WriteLine("Handled " + packetHeader + " - " + sPacketCount);
-            }
-            lock (Globals.GameLock)
-            {
-                switch (packetHeader)
-                {
-                    case ServerPackets.Ping:
-                        HandlePing(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.ServerConfig:
-                        HandleServerConfig(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.JoinGame:
-                        HandleJoinGame(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.MapData:
-                        HandleMapData(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.EntityData:
-                        HandleEntityData(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.EntityPosition:
-                        HandlePositionInfo(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.EntityLeave:
-                        HandleLeave(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.ChatMessage:
-                        HandleMsg(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.GameData:
-                        HandleGameData(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.EnterMap:
-                        HandleEnterMap(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.MapList:
-                        HandleMapList(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.EntityMove:
-                        HandleEntityMove(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.EntityVitals:
-                        HandleVitals(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.EntityStats:
-                        HandleStats(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.EntityDir:
-                        HandleEntityDir(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.EventDialog:
-                        HandleEventDialog(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.LoginError:
-                        HandleLoginError(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.MapItems:
-                        HandleMapItems(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.MapItemUpdate:
-                        HandleMapItemUpdate(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.InventoryUpdate:
-                        HandleInventoryUpdate(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.SpellUpdate:
-                        HandleSpellUpdate(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.PlayerEquipment:
-                        HandlePlayerEquipment(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.StatPoints:
-                        HandleStatPoints(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.HotbarSlots:
-                        HandleHotbarSlots(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.CreateCharacter:
-                        HandleCreateCharacter();
-                        break;
-                    case ServerPackets.OpenAdminWindow:
-                        HandleOpenAdminWindow();
-                        break;
-                    case ServerPackets.CastTime:
-                        HandleCastTime(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.SpellCooldown:
-                        HandleSpellCooldown(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.ItemCooldown:
-                        HandleItemCooldown(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.Experience:
-                        HandleExperience(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.ProjectileSpawnDead:
-                        HandleProjectileSpawnDead(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.SendPlayAnimation:
-                        HandlePlayAnimation(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.HoldPlayer:
-                        HandleHoldPlayer(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.ReleasePlayer:
-                        HandleReleasePlayer(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.PlayMusic:
-                        HandlePlayMusic(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.FadeMusic:
-                        HandleFadeMusic(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.PlaySound:
-                        HandlePlaySound(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.StopSounds:
-                        HandleStopSounds(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.ShowPicture:
-                        HandleShowPicture(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.HidePicture:
-                        HandleHidePicture(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.OpenShop:
-                        HandleOpenShop(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.CloseShop:
-                        HandleCloseShop(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.OpenBank:
-                        HandleOpenBank(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.CloseBank:
-                        HandleCloseBank(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.BankUpdate:
-                        HandleBankUpdate(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.OpenCraftingTable:
-                        HandleOpenCraftingTable(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.CloseCraftingTable:
-                        HandleCloseCraftingTable(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.GameObject:
-                        HandleGameObject(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.EntityDash:
-                        HandleEntityDash(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.EntityAttack:
-                        HandleEntityAttack(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.ActionMsg:
-                        HandleActionMsg(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.MapGrid:
-                        HandleMapGrid(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.Time:
-                        HandleTime(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.PartyData:
-                        HandleParty(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.PartyUpdate:
-                        HandlePartyUpdate(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.PartyInvite:
-                        HandlePartyInvite(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.ChatBubble:
-                        HandleChatBubble(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.MapEntities:
-                        HandleMapEntities(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.QuestOffer:
-                        HandleQuestOffer(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.QuestProgress:
-                        HandleQuestProgress(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.TradeStart:
-                        HandleTradeStart(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.TradeUpdate:
-                        HandleTradeUpdate(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.TradeClose:
-                        HandleTradeClose(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.TradeRequest:
-                        HandleTradeRequest(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.NpcAggression:
-                        HandleNpcAggression(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.PlayerDeath:
-                        HandlePlayerDash(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.EntityZDimension:
-                        HandleEntityZDimension(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.OpenBag:
-                        HandleOpenBag(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.CloseBag:
-                        HandleCloseBag(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.BagUpdate:
-                        HandleBagUpdate(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.MoveRouteToggle:
-                        HandleMoveRouteToggle(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.SendFriends:
-                        HandleFriends(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.FriendRequest:
-                        HandleFriendRequest(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.PlayerCharacters:
-                        HandlePlayerCharacters(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.Shit:
-                        HandleShit(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.PasswordResetResult:
-                        HandlePasswordResetResult(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.PlayerTarget:
-                        HandlePlayerTarget(bf.ReadBytes(bf.Length()));
-                        break;
-                    default:
-                        Console.WriteLine(@"Non implemented packet received: " + packetHeader);
-                        break;
-                }
-            }
-        }
-
-        private static void HandleShit(byte[] packet)
-        {
-            if (sWriter == null)
-            {
-                sWriter = new StreamWriter(
-                    new FileStream($"shits{DateTime.Now:yyyy-MM-dd_HH-mm-ss-fff}.csv", FileMode.Create,
-                        FileAccess.Write), Encoding.UTF8);
-            }
-
-            using (var bf = new ByteBuffer())
-            {
-                bf.WriteBytes(packet);
-                var shitting = bf.ReadBoolean();
-                var packetNum = bf.ReadInteger();
-                if (packetNum > -1)
-                {
-                    var isData = bf.ReadBoolean();
-                    if (isData)
-                    {
-                        //Console.WriteLine($"START PACKET #{packetNum}");
-                        //Console.WriteLine($"SHIT LENGTH: {bf.ReadString().Length}");
-                        var shitSize = bf.ReadInteger();
-                        //Console.WriteLine($"SHIT SIZE: {shitSize} bytes.");
-                        //Console.WriteLine($"END PACKET #{packetNum}");
-                        sTotalshitsize += shitSize;
-                    }
-                    else
-                    {
-                        var isStarting = bf.ReadBoolean();
-                        if (isStarting)
-                        {
-                            //Console.WriteLine($"Starting timer...");
-                            sShitTimer.Restart();
-                        }
-                        else
-                        {
-                            sShitTimer.Stop();
-                            //Console.WriteLine($"Timer done. {ShitTimer.ElapsedMilliseconds}ms elapsed.");
-                            sTimespentshitting += sShitTimer.ElapsedTicks;
-                            sHitstaken++;
-                            sMeasurements.Add(new ShitMeasurement
-                            {
-                                Elapsed = sShitTimer.ElapsedTicks,
-                                Taken = 1,
-                                Totalsize = 0
-                            });
-                        }
-                    }
-                }
-                else
-                {
-                    switch (packetNum)
-                    {
-                        case -2:
-                            foreach (var m in sMeasurements)
-                            {
-                                if (m.Taken < 2) continue;
-                                Console.WriteLine(
-                                    $"Shits: {m.Taken}, Shitrate: {m.ShitRate}s/s, Datarate: {m.DataRate / 1048576}MiB/s");
-                            }
-                            break;
-                        case -3:
-                            sWriter.Close();
-                            sWriter.Dispose();
-                            sWriter = null;
-                            break;
-                        default:
-                            if (shitting)
-                            {
-                                sHitstaken = 0;
-                                sTimespentshitting = 0;
-                                sTotalshitsize = 0;
-                                //Console.WriteLine("Starting to shit...");
-                            }
-                            else
-                            {
-                                var diff = 1000.0 * TimeSpan.TicksPerMillisecond;
-                                //Console.WriteLine("Just flushed the toilet.");
-                                //Console.WriteLine($"I took {shitstaken} shit(s).");
-                                //Console.WriteLine($"It took me a total of {timespentshitting / diff}s to shit.");
-                                //Console.WriteLine($"Each shit took {timespentshitting / (diff * shitstaken)}s per shit.");
-                                //Console.WriteLine($"I shit at approximately {(totalshitsize / (timespentshitting / diff)) / 1024}KiB/s.");
-                                sMeasurements.Add(new ShitMeasurement
-                                {
-                                    Elapsed = sTimespentshitting,
-                                    Taken = sHitstaken,
-                                    Totalsize = sTotalshitsize
-                                });
-                                if (sHitstaken > 0)
-                                {
-                                    sWriter.WriteLine($"{sTimespentshitting},{sHitstaken},{sTotalshitsize}");
-                                    sWriter.Flush();
-                                }
-                            }
-                            break;
-                    }
-                }
-            }
-        }
-
-        private static void HandlePing(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            if (Convert.ToBoolean(bf.ReadInteger()) == true) //request
+            if (packet.RequestingReply)
             {
                 PacketSender.SendPing();
                 PingTime = Globals.System.GetTimeMs();
             }
             else
             {
-                GameNetwork.Ping = (int) (Globals.System.GetTimeMs() - PingTime) / 2;
+                GameNetwork.Ping = (int)(Globals.System.GetTimeMs() - PingTime) / 2;
             }
         }
 
-        private static void HandleServerConfig(byte[] packet)
+        //ConfigPacket
+        private static void HandlePacket(ConfigPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            Options.LoadFromServer(bf);
+            Options.LoadFromServer(packet.Config);
             Globals.Bank = new ItemInstance[Options.MaxBankSlots];
             GameGraphics.InitInGame();
         }
 
-        private static void HandleJoinGame(byte[] packet)
+        //JoinGamePacket
+        private static void HandlePacket(JoinGamePacket packet)
         {
             GameMain.JoinGame();
             Globals.JoiningGame = true;
         }
 
-        private static void HandleMapData(byte[] packet)
+        //MapAreaPacket
+        private static void HandlePacket(MapAreaPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var mapId = bf.ReadGuid();
-            bf.ReadInteger();
-            var mapJson = bf.ReadString();
-            var tileLength = bf.ReadInteger();
-            var tileData = bf.ReadBytes(tileLength);
-            var attributeLength = bf.ReadInteger();
-            var attributeData = bf.ReadBytes(attributeLength);
-            var revision = bf.ReadInteger();
+            foreach (var map in packet.Maps)
+            {
+                HandleMap(map);
+            }
+        }
+
+        //MapPacket
+        private static void HandleMap(MapPacket packet)
+        {
+            var mapId = packet.MapId;
             var map = MapInstance.Get(mapId);
             if (map != null)
             {
-                if (revision == map.Revision)
+                if (packet.Revision == map.Revision)
                 {
                     return;
                 }
@@ -466,21 +97,30 @@ namespace Intersect.Client.Networking
             MapInstance.Lookup.Set(mapId, map);
             lock (map.MapLock)
             {
-                map.Load(mapJson);
-                map.LoadTileData(tileData);
-                map.AttributeData = attributeData;
+                map.Load(packet.Data);
+                map.LoadTileData(packet.TileData);
+                map.AttributeData = packet.AttributeData;
                 map.CreateMapSounds();
                 if ((mapId) == Globals.Me.CurrentMap)
                 {
                     GameAudio.PlayMusic(map.Music, 3, 3, true);
                 }
-                map.MapGridX = bf.ReadInteger();
-                map.MapGridY = bf.ReadInteger();
-                map.HoldLeft = bf.ReadInteger();
-                map.HoldRight = bf.ReadInteger();
-                map.HoldUp = bf.ReadInteger();
-                map.HoldDown = bf.ReadInteger();
+
+                map.MapGridX = packet.GridX;
+                map.MapGridY = packet.GridY;
+                map.CameraHolds = packet.CameraHolds;
                 map.Autotiles.InitAutotiles(map.GenerateAutotileGrid());
+
+                //Process Entities and Items if provided in this packet
+                if (packet.MapEntities != null)
+                {
+                    HandlePacket((dynamic)packet.MapEntities);
+                }
+
+                if (packet.MapItems != null)
+                {
+                    HandlePacket((dynamic)packet.MapItems);
+                }
 
                 if (Globals.PendingEvents.ContainsKey(mapId))
                 {
@@ -493,116 +133,112 @@ namespace Intersect.Client.Networking
                 }
             }
             if (MapInstance.OnMapLoaded != null) MapInstance.OnMapLoaded(map);
+        }
+
+        //MapPacket
+        private static void HandlePacket(MapPacket packet)
+        {
+            HandleMap(packet);
             Globals.Me.FetchNewMaps();
         }
 
-        private static void HandleEntityData(byte[] packet)
+        //PlayerEntityPacket
+        private static void HandlePacket(PlayerEntityPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var id = bf.ReadGuid();
-            var entityType = bf.ReadInteger();
-            var mapId = bf.ReadGuid(false);
-            if (entityType != (int) EntityTypes.Event)
+            var en = Globals.GetEntity(packet.EntityId, EntityTypes.Player);
+            if (en != null)
             {
-                var en = Globals.GetEntity(id, entityType);
-                if (en != null)
-                {
-                    en.Load(bf);
-                }
-                else
-                {
-                    switch (entityType)
-                    {
-                        case (int) EntityTypes.Player:
-                            Globals.Entities.Add(id, new Player(id, bf));
-                            break;
-                        case (int) EntityTypes.GlobalEntity:
-                            Globals.Entities.Add(id, new Entity(id, bf));
-                            break;
-                        case (int) EntityTypes.Resource:
-                            Globals.Entities.Add(id, new Resource(id, bf));
-                            break;
-                        case (int) EntityTypes.Projectile:
-                            Globals.Entities.Add(id, new Projectile(id, bf));
-                            break;
-                    }
-                }
+                en.Load(packet);
+                if (packet.IsSelf) Globals.Me = (Player)Globals.Entities[packet.EntityId];
             }
             else
             {
-                var map = MapInstance.Get(mapId);
-                if (map != null)
-                {
-                    map?.AddEvent(id, bf);
-                }
-                else
-                {
-                    var dict = Globals.PendingEvents.ContainsKey(mapId) ? Globals.PendingEvents[mapId] : new Dictionary<Guid, ByteBuffer>();
-                    if (dict.ContainsKey(id))
-                    {
-                        dict[id] = bf;
-                    }
-                    else
-                    {
-                        dict.Add(id,bf);
-                    }
-                    if (!Globals.PendingEvents.ContainsKey(mapId)) Globals.PendingEvents.Add(mapId,dict);
-                }
+                Globals.Entities.Add(packet.EntityId, new Player(packet.EntityId, packet));
+                if (packet.IsSelf) Globals.Me = (Player)Globals.Entities[packet.EntityId];
             }
         }
 
-        private static void HandleMapEntities(byte[] packet)
+        //NpcEntityPacket
+        private static void HandlePacket(NpcEntityPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var entityCount = bf.ReadInteger();
-            for (int z = 0; z < entityCount; z++)
+            var en = Globals.GetEntity(packet.EntityId, EntityTypes.GlobalEntity);
+            if (en != null)
             {
-                var id = bf.ReadGuid();
-                var entityType = bf.ReadInteger();
-                if (entityType != (int) EntityTypes.Event)
-                {
-                    var en = Globals.GetEntity(id, entityType);
-                    if (en != null)
-                    {
-                        en.Load(bf);
-                    }
-                    else
-                    {
-                        switch (entityType)
-                        {
-                            case (int) EntityTypes.Player:
-                                Globals.Entities.Add(id, new Player(id, bf));
-                                break;
-                            case (int) EntityTypes.GlobalEntity:
-                                Globals.Entities.Add(id, new Entity(id, bf));
-                                break;
-                            case (int) EntityTypes.Resource:
-                                Globals.Entities.Add(id, new Resource(id, bf));
-                                break;
-                            case (int) EntityTypes.Projectile:
-                                Globals.Entities.Add(id, new Projectile(id, bf));
-                                break;
-                        }
-                    }
-                }
-                else
-                {
-                    new Event(id, bf);
-                }
+                en.Load(packet);
+            }
+            else
+            {
+                Globals.Entities.Add(packet.EntityId, new Entity(packet.EntityId, packet));
+                Globals.Entities[packet.EntityId].Type = packet.Aggression;
             }
         }
 
-        private static void HandlePositionInfo(byte[] packet)
+        //ResourceEntityPacket
+        private static void HandlePacket(ResourceEntityPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var id = bf.ReadGuid();
-            var type = bf.ReadInteger();
-            var mapId = bf.ReadGuid();
+            var en = Globals.GetEntity(packet.EntityId, EntityTypes.Resource);
+            if (en != null)
+            {
+                en.Load(packet);
+            }
+            else
+            {
+                Globals.Entities.Add(packet.EntityId, new Resource(packet.EntityId, packet));
+            }
+        }
+
+        //ProjectileEntityPacket
+        private static void HandlePacket(ProjectileEntityPacket packet)
+        {
+            var en = Globals.GetEntity(packet.EntityId, EntityTypes.Projectile);
+            if (en != null)
+            {
+                en.Load(packet);
+            }
+            else
+            {
+                Globals.Entities.Add(packet.EntityId, new Projectile(packet.EntityId, packet));
+            }
+        }
+
+        //EventEntityPacket
+        private static void HandlePacket(EventEntityPacket packet)
+        {
+            var map = MapInstance.Get(packet.MapId);
+            if (map != null)
+            {
+                map?.AddEvent(packet.EntityId, packet);
+            }
+            else
+            {
+                var dict = Globals.PendingEvents.ContainsKey(packet.MapId) ? Globals.PendingEvents[packet.MapId] : new Dictionary<Guid, EventEntityPacket>();
+                if (dict.ContainsKey(packet.EntityId))
+                {
+                    dict[packet.EntityId] = packet;
+                }
+                else
+                {
+                    dict.Add(packet.EntityId, packet);
+                }
+                if (!Globals.PendingEvents.ContainsKey(packet.MapId)) Globals.PendingEvents.Add(packet.MapId, dict);
+            }
+        }
+
+        //MapEntitiesPacket
+        private static void HandlePacket(MapEntitiesPacket packet)
+        {
+            foreach (var pkt in packet.MapEntities)
+                HandlePacket((dynamic)pkt);
+        }
+
+        //EntityPositionPacket
+        private static void HandlePacket(EntityPositionPacket packet)
+        {
+            var id = packet.Id;
+            var type = packet.Type;
+            var mapId = packet.MapId;
             Entity en;
-            if (type != (int) EntityTypes.Event)
+            if (type != EntityTypes.Event)
             {
                 if (!Globals.Entities.ContainsKey(id))
                 {
@@ -619,8 +255,7 @@ namespace Intersect.Client.Networking
                 }
                 en = MapInstance.Get(mapId).LocalEntities[id];
             }
-            if (en == Globals.Me &&
-                (Globals.Me.DashQueue.Count > 0 || Globals.Me.DashTimer > Globals.System.GetTimeMs())) return;
+            if (en == Globals.Me && (Globals.Me.DashQueue.Count > 0 || Globals.Me.DashTimer > Globals.System.GetTimeMs())) return;
             if (en == Globals.Me && Globals.Me.CurrentMap != mapId)
             {
                 Globals.Me.CurrentMap = mapId;
@@ -631,25 +266,24 @@ namespace Intersect.Client.Networking
             {
                 en.CurrentMap = mapId;
             }
-            en.CurrentX = bf.ReadInteger();
-            en.CurrentY = bf.ReadInteger();
-            en.Dir = bf.ReadInteger();
-            en.Passable = bf.ReadBoolean();
-            en.HideName = bf.ReadBoolean();
+            en.X = packet.X;
+            en.Y = packet.Y;
+            en.Dir = packet.Direction;
+            en.Passable = packet.Passable;
+            en.HideName = packet.HideName;
         }
 
-        private static void HandleLeave(byte[] packet)
+        //EntityLeftPacket
+        private static void HandlePacket(EntityLeftPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var id = bf.ReadGuid();
-            var type = bf.ReadInteger();
-            var mapId = bf.ReadGuid();
-            if (id == Globals.Me?.Id && type < (int) EntityTypes.Event)
+            var id = packet.Id;
+            var type = packet.Type;
+            var mapId = packet.MapId;
+            if (id == Globals.Me?.Id && type < EntityTypes.Event)
             {
                 return;
             }
-            if (type != (int) EntityTypes.Event)
+            if (type != EntityTypes.Event)
             {
                 if (Globals.Entities?.ContainsKey(id) ?? false)
                 {
@@ -669,64 +303,50 @@ namespace Intersect.Client.Networking
             }
         }
 
-        private static void HandleMsg(byte[] packet)
+        //ChatMsgPacket
+        private static void HandlePacket(ChatMsgPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            ChatboxMsg.AddMessage(new ChatboxMsg(bf.ReadString(),
-                new Framework.GenericClasses.Color((int) bf.ReadByte(), (int) bf.ReadByte(), (int) bf.ReadByte(), (int) bf.ReadByte()),
-                bf.ReadString()));
+            ChatboxMsg.AddMessage(new ChatboxMsg(packet.Message, new Color(packet.Color.A, packet.Color.R, packet.Color.G, packet.Color.B), packet.Target));
         }
 
-        private static void HandleActionMsg(byte[] packet)
+        //ActionMsgPacket
+        private static void HandlePacket(ActionMsgPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var map = MapInstance.Get(bf.ReadGuid());
+            var map = MapInstance.Get(packet.MapId);
             if (map != null)
             {
-                map.ActionMsgs.Add(new ActionMsgInstance(map, bf.ReadInteger(), bf.ReadInteger(),
-                    bf.ReadString(),
-                    new Framework.GenericClasses.Color((int) bf.ReadByte(), (int) bf.ReadByte(), (int) bf.ReadByte(), (int) bf.ReadByte())));
+                map.ActionMsgs.Add(new ActionMsgInstance(map, packet.X, packet.Y, packet.Message, new Color(packet.Color.A, packet.Color.R, packet.Color.G, packet.Color.B)));
             }
-            bf.Dispose();
         }
 
-        private static void HandleGameData(byte[] packet)
+        //GameDataPacket
+        private static void HandlePacket(GameDataPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            CustomColors.Load(bf);
+            foreach (var pkt in packet.GameObjects)
+            {
+                HandlePacket((dynamic)pkt);
+            }
+
+            CustomColors.Load(packet.ColorsJson);
             Globals.HasGameData = true;
         }
 
-        private static void HandleEnterMap(byte[] packet)
+        //MapListPacket
+        private static void HandlePacket(MapListPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var mapId = bf.ReadGuid();
-            if (Globals.Me != null && Globals.Me.CurrentMap != mapId && Globals.Me.CurrentMap != Guid.Empty) return; //TODO WTF -- why does this do nothing?
-        }
-
-        private static void HandleMapList(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            MapList.List.JsonData = bf.ReadString();
+            MapList.List.JsonData = packet.MapListData;
             MapList.List.PostLoad(MapBase.Lookup, false, true);
-            //If admin window is open update it
-            bf.Dispose();
+            //TODO ? If admin window is open update it
         }
 
-        private static void HandleEntityMove(byte[] packet)
+        //EntityMovePacket
+        private static void HandlePacket(EntityMovePacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var id = bf.ReadGuid();
-            var type = bf.ReadInteger();
-            var mapId = bf.ReadGuid();
+            var id = packet.Id;
+            var type = packet.Type;
+            var mapId = packet.MapId;
             Entity en;
-            if (type < (int) EntityTypes.Event)
+            if (type < EntityTypes.Event)
             {
                 if (!Globals.Entities.ContainsKey(id))
                 {
@@ -755,16 +375,16 @@ namespace Intersect.Client.Networking
             }
             if (en.Dashing != null || en.DashQueue.Count > 0) return;
             var map = mapId;
-            var x = bf.ReadInteger();
-            var y = bf.ReadInteger();
-            var dir = bf.ReadInteger();
-            var correction = bf.ReadInteger();
-            if ((en.CurrentMap != map || en.CurrentX != x || en.CurrentY != y) &&
-                (en != Globals.Me || (en == Globals.Me && correction == 1)) && en.Dashing == null)
+            var x = packet.X;
+            var y = packet.Y;
+            var dir = packet.Direction;
+            var correction = packet.Correction;
+            if ((en.CurrentMap != map || en.X != x || en.Y != y) &&
+                (en != Globals.Me || (en == Globals.Me && correction)) && en.Dashing == null)
             {
                 en.CurrentMap = map;
-                en.CurrentX = x;
-                en.CurrentY = y;
+                en.X = x;
+                en.Y = y;
                 en.Dir = dir;
                 en.IsMoving = true;
 
@@ -790,24 +410,23 @@ namespace Intersect.Client.Networking
             }
 
             // Set the Z-Dimension if the player has moved up or down a dimension.
-            if (entityMap.Attributes[en.CurrentX, en.CurrentY] != null && entityMap.Attributes[en.CurrentX, en.CurrentY].Type == MapAttributes.ZDimension)
+            if (entityMap.Attributes[en.X, en.Y] != null && entityMap.Attributes[en.X, en.Y].Type == MapAttributes.ZDimension)
             {
-                if (((MapZDimensionAttribute)entityMap.Attributes[en.CurrentX, en.CurrentY]).GatewayTo > 0)
+                if (((MapZDimensionAttribute)entityMap.Attributes[en.X, en.Y]).GatewayTo > 0)
                 {
-                    en.CurrentZ = ((MapZDimensionAttribute)entityMap.Attributes[en.CurrentX, en.CurrentY]).GatewayTo - 1;
+                    en.Z = (byte)(((MapZDimensionAttribute)entityMap.Attributes[en.X, en.Y]).GatewayTo - 1);
                 }
             }
         }
 
-        private static void HandleVitals(byte[] packet)
+        //EntityVitalsPacket
+        private static void HandlePacket(EntityVitalsPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var id = bf.ReadGuid();
-            var type = bf.ReadInteger();
-            var mapId = bf.ReadGuid();
+            var id = packet.Id;
+            var type = packet.Type;
+            var mapId = packet.MapId;
             Entity en = null;
-            if (type < (int) EntityTypes.Event)
+            if (type < EntityTypes.Event)
             {
                 if (!Globals.Entities.ContainsKey(id))
                 {
@@ -829,27 +448,20 @@ namespace Intersect.Client.Networking
             {
                 return;
             }
-            for (var i = 0; i < (int) Vitals.VitalCount; i++)
-            {
-                en.MaxVital[i] = bf.ReadInteger();
-                en.Vital[i] = bf.ReadInteger();
-            }
+
+            en.Vital = packet.Vitals;
+            en.MaxVital = packet.MaxVitals;
 
             //Update status effects
-            var count = bf.ReadInteger();
             en.Status.Clear();
-            for (int i = 0; i < count; i++)
+            foreach (var status in packet.StatusEffects)
             {
-                en.Status.Add(new StatusInstance(bf.ReadGuid(), bf.ReadInteger(), bf.ReadString(), bf.ReadInteger(),
-                    bf.ReadInteger()));
+                var instance = new StatusInstance(status.SpellId, status.Type, status.TransformSprite, status.TimeRemaining, status.TotalDuration);
+                en.Status.Add(instance);
 
-                //Check for a shield
-                if (en.Status[i].Type == (int)StatusTypes.Shield)
+                if (instance.Type == StatusTypes.Shield)
                 {
-                    for (var s = 0; s < (int)Vitals.VitalCount; s++)
-                    {
-                        en.Status[i].Shield[s] = bf.ReadInteger();
-                    }
+                    instance.Shield = status.VitalShields;
                 }
             }
             en.SortStatuses();
@@ -868,15 +480,14 @@ namespace Intersect.Client.Networking
             }
         }
 
-        private static void HandleStats(byte[] packet)
+        //EntityStatsPacket
+        private static void HandlePacket(EntityStatsPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var id = bf.ReadGuid();
-            var type = bf.ReadInteger();
-            var mapId = bf.ReadGuid();
+            var id = packet.Id;
+            var type = packet.Type;
+            var mapId = packet.MapId;
             Entity en = null;
-            if (type < (int) EntityTypes.Event)
+            if (type < EntityTypes.Event)
             {
                 if (!Globals.Entities.ContainsKey(id))
                 {
@@ -898,21 +509,18 @@ namespace Intersect.Client.Networking
             {
                 return;
             }
-            for (var i = 0; i < (int) Stats.StatCount; i++)
-            {
-                en.Stat[i] = bf.ReadInteger();
-            }
+
+            en.Stat = packet.Stats;
         }
 
-        private static void HandleEntityDir(byte[] packet)
+        //EntityDirectionPacket
+        private static void HandlePacket(EntityDirectionPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var id = bf.ReadGuid();
-            var type = bf.ReadInteger();
-            var mapId = bf.ReadGuid();
+            var id = packet.Id;
+            var type = packet.Type;
+            var mapId = packet.MapId;
             Entity en = null;
-            if (type < (int) EntityTypes.Event)
+            if (type < EntityTypes.Event)
             {
                 if (!Globals.Entities.ContainsKey(id))
                 {
@@ -934,20 +542,19 @@ namespace Intersect.Client.Networking
             {
                 return;
             }
-            en.Dir = bf.ReadInteger();
+            en.Dir = packet.Direction;
         }
 
-        private static void HandleEntityAttack(byte[] packet)
+        //EntityAttackPacket
+        private static void HandlePacket(EntityAttackPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var id = bf.ReadGuid();
-            var type = bf.ReadInteger();
-            var mapId = bf.ReadGuid();
-            var attackTimer = bf.ReadInteger();
+            var id = packet.Id;
+            var type = packet.Type;
+            var mapId = packet.MapId;
+            var attackTimer = packet.AttackTimer;
 
             Entity en = null;
-            if (type < (int) EntityTypes.Event)
+            if (type < EntityTypes.Event)
             {
                 if (!Globals.Entities.ContainsKey(id))
                 {
@@ -976,174 +583,142 @@ namespace Intersect.Client.Networking
             }
         }
 
-        private static void HandleEventDialog(byte[] packet)
+        //EventDialogPacket
+        private static void HandlePacket(EventDialogPacket packet)
         {
-            var bf = new ByteBuffer();
             var ed = new EventDialog();
-            bf.WriteBytes(packet);
-            ed.Prompt = bf.ReadString();
-            ed.Face = bf.ReadString();
-            ed.Type = bf.ReadInteger();
-            if (ed.Type == 0)
+            ed.Prompt = packet.Prompt;
+            ed.Face = packet.Face;
+            if (packet.Type != 0)
             {
+                ed.Opt1 = packet.Responses[0];
+                ed.Opt2 = packet.Responses[1];
+                ed.Opt3 = packet.Responses[2];
+                ed.Opt4 = packet.Responses[3];
             }
-            else
-            {
-                ed.Opt1 = bf.ReadString();
-                ed.Opt2 = bf.ReadString();
-                ed.Opt3 = bf.ReadString();
-                ed.Opt4 = bf.ReadString();
-            }
-            ed.EventId = bf.ReadGuid();
+            ed.EventId = packet.EventId;
             Globals.EventDialogs.Add(ed);
         }
 
-        private static void HandleLoginError(byte[] packet)
+        //ErrorMessagePacket
+        private static void HandlePacket(ErrorMessagePacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var error = bf.ReadString();
-            var header = bf.ReadString();
             GameFade.FadeIn();
             Globals.WaitingOnServer = false;
-            Gui.MsgboxErrors.Add(new KeyValuePair<string, string>(header, error));
+            Gui.MsgboxErrors.Add(new KeyValuePair<string, string>(packet.Header, packet.Error));
             Gui.MenuUi.Reset();
         }
 
-        private static void HandleMapItems(byte[] packet)
+        //MapItemsPacket
+        private static void HandlePacket(MapItemsPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var mapId = bf.ReadGuid();
-            var map = MapInstance.Get(mapId);
+            var map = MapInstance.Get(packet.MapId);
             if (map == null) return;
             map.MapItems.Clear();
-            int itemCount = bf.ReadInteger();
-            for (int i = 0; i < itemCount; i++)
+            for (int i = 0; i < packet.Items.Length; i++)
             {
-                var index = bf.ReadInteger();
-                if (index != -1)
-                {
-                    var item = new MapItemInstance();
-                    item.Load(bf);
-                    map.MapItems.Add(index, item);
-                }
+                if (packet.Items[i] != null)
+                    map.MapItems.Add(i, new MapItemInstance(packet.Items[i]));
             }
-            bf.Dispose();
         }
 
-        private static void HandleMapItemUpdate(byte[] packet)
+        //MapItemUpdatePacket
+        private static void HandlePacket(MapItemUpdatePacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var mapId = bf.ReadGuid();
-            int index = bf.ReadInteger();
-            var map = MapInstance.Get(mapId);
+            var map = MapInstance.Get(packet.MapId);
             if (map != null)
             {
-                if (bf.ReadInteger() == -1)
+                if (packet.ItemData == null)
                 {
-                    map.MapItems.Remove(index);
+                    map.MapItems.Remove(packet.ItemIndex);
                 }
                 else
                 {
-                    if (!map.MapItems.ContainsKey(index))
+                    if (!map.MapItems.ContainsKey(packet.ItemIndex))
                     {
-                        map.MapItems.Add(index, new MapItemInstance());
-                        map.MapItems[index].Load(bf);
+                        map.MapItems.Add(packet.ItemIndex, new MapItemInstance(packet.ItemData));
                     }
                     else
                     {
-                        map.MapItems[index] = new MapItemInstance();
-                        map.MapItems[index].Load(bf);
+                        map.MapItems[packet.ItemIndex] = new MapItemInstance(packet.ItemData);
                     }
                 }
             }
-            bf.Dispose();
         }
 
-        private static void HandleInventoryUpdate(byte[] packet)
+        //InventoryPacket
+        private static void HandlePacket(InventoryPacket packet)
+        {
+            foreach (var inv in packet.Slots)
+            {
+                HandlePacket((dynamic)inv);
+            }
+        }
+
+        //InventoryUpdatePacket
+        private static void HandlePacket(InventoryUpdatePacket packet)
         {
             if (Globals.Me != null)
             {
-                var bf = new ByteBuffer();
-                bf.WriteBytes(packet);
-                int slot = bf.ReadInteger();
-                Globals.Me.Inventory[slot].Load(bf);
+                Globals.Me.Inventory[packet.Slot].Load(packet.ItemId, packet.Quantity, packet.BagId, packet.StatBuffs);
                 if (Globals.Me.InventoryUpdatedDelegate != null)
                 {
                     Globals.Me.InventoryUpdatedDelegate();
                 }
-                bf.Dispose();
             }
         }
 
-        private static void HandleSpellUpdate(byte[] packet)
+        //SpellsPacket
+        private static void HandlePacket(SpellsPacket packet)
+        {
+            foreach (var spl in packet.Slots)
+            {
+                HandlePacket((dynamic)spl);
+            }
+        }
+
+        //SpellUpdatePacket
+        private static void HandlePacket(SpellUpdatePacket packet)
         {
             if (Globals.Me != null)
             {
-                var bf = new ByteBuffer();
-                bf.WriteBytes(packet);
-                int slot = bf.ReadInteger();
-                Globals.Me.Spells[slot].Load(bf);
-                bf.Dispose();
+                Globals.Me.Spells[packet.Slot].Load(packet.SpellId);
             }
         }
 
-        private static void HandlePlayerEquipment(byte[] packet)
+        //EquipmentPacket
+        private static void HandlePacket(EquipmentPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var entityId = bf.ReadGuid();
+            var entityId = packet.EntityId;
             if (Globals.Entities.ContainsKey(entityId))
             {
                 var entity = Globals.Entities[entityId];
                 if (entity != null)
                 {
-                    if (entity == Globals.Me)
+                    if (entity == Globals.Me && packet.InventorySlots != null)
                     {
-                        for (int i = 0; i < Options.EquipmentSlots.Count; i++)
-                        {
-                            if (entity.Equipment.Length <= i)
-                            {
-                                Log.Debug($"Bad equipment index, aborting ({i}/{entity.Equipment.Length}).");
-                                break;
-                            }
-                            entity.MyEquipment[i] = bf.ReadInteger();
-                        }
+                        entity.MyEquipment = packet.InventorySlots;
                     }
-                    else
+                    else if (packet.ItemIds != null)
                     {
-                        for (int i = 0; i < Options.EquipmentSlots.Count; i++)
-                        {
-                            if (entity.Equipment.Length <= i)
-                            {
-                                Log.Debug($"Bad equipment index, aborting ({i}/{entity.Equipment.Length}).");
-                                break;
-                            }
-                            entity.Equipment[i] = bf.ReadGuid();
-                        }
+                        entity.Equipment = packet.ItemIds;
                     }
                 }
             }
-            bf.Dispose();
         }
 
-        private static void HandleStatPoints(byte[] packet)
+        //StatPointsPacket
+        private static void HandlePacket(StatPointsPacket packet)
         {
             if (Globals.Me != null)
             {
-                var bf = new ByteBuffer();
-                bf.WriteBytes(packet);
-                Globals.Me.StatPoints = bf.ReadInteger();
-                bf.Dispose();
+                Globals.Me.StatPoints = packet.Points;
             }
         }
 
-        private static void HandleHotbarSlots(byte[] packet)
+        //HotbarPacket
+        private static void HandlePacket(HotbarPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
             for (int i = 0; i < Options.MaxHotbar; i++)
             {
                 if (Globals.Me == null)
@@ -1159,135 +734,103 @@ namespace Intersect.Client.Networking
                 }
 
                 var hotbarEntry = Globals.Me.Hotbar[i];
-                if (hotbarEntry == null)
-                {
-                    Log.Error(BitConverter.ToString(packet));
-                }
-                hotbarEntry.ItemOrSpellId = bf.ReadGuid();
-                hotbarEntry.BagId = bf.ReadGuid();
-                var hasStats = bf.ReadBoolean();
-                hotbarEntry.PreferredStats = new int[(int)Stats.StatCount];
-                if (hasStats)
-                {
-                    for (int s = 0; s < (int)Stats.StatCount; s++)
-                        hotbarEntry.PreferredStats[s] = bf.ReadInteger();
-                }
+                hotbarEntry.Load(packet.SlotData[i]);
             }
-            bf.Dispose();
         }
 
-        private static void HandleCreateCharacter()
+        //CharacterCreationPacket
+        private static void HandlePacket(CharacterCreationPacket packet)
         {
             Globals.WaitingOnServer = false;
             GameFade.FadeIn();
             Gui.MenuUi.MainMenu.NotifyOpenCharacterCreation();
         }
 
-        private static void HandleOpenAdminWindow()
+        //AdminPanelPacket
+        private static void HandlePacket(AdminPanelPacket packet)
         {
             Gui.GameUi.NotifyOpenAdminWindow();
         }
 
-        private static void HandleCastTime(byte[] packet)
+        //SpellCastPacket
+        private static void HandlePacket(SpellCastPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var entityId = bf.ReadGuid();
-            var spellId = bf.ReadGuid();
+            var entityId = packet.EntityId;
+            var spellId = packet.SpellId;
             if (SpellBase.Get(spellId) != null && Globals.Entities.ContainsKey(entityId))
             {
                 Globals.Entities[entityId].CastTime = Globals.System.GetTimeMs() +
                                                        SpellBase.Get(spellId).CastDuration;
                 Globals.Entities[entityId].SpellCast = spellId;
             }
-            bf.Dispose();
         }
 
-        private static void HandleSpellCooldown(byte[] packet)
+        //SpellCooldownPacket
+        private static void HandlePacket(SpellCooldownPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            int spellSlot = bf.ReadInteger();
-			decimal cooldownReduction = (1 - (decimal)(Globals.Me.GetCooldownReduction() / 100));
-			if (SpellBase.Get(Globals.Me.Spells[spellSlot].SpellId) != null)
+            int spellSlot = packet.Slot;
+            decimal cooldownReduction = (1 - (decimal)(Globals.Me.GetCooldownReduction() / 100));
+            if (SpellBase.Get(Globals.Me.Spells[spellSlot].SpellId) != null)
             {
-                Globals.Me.Spells[spellSlot].SpellCd = Globals.System.GetTimeMs() +
-                                                       (int)(SpellBase.Lookup
-                                                            .Get<SpellBase>(Globals.Me.Spells[spellSlot].SpellId)
-                                                            .CooldownDuration * cooldownReduction);
+                Globals.Me.Spells[spellSlot].SpellCd = Globals.System.GetTimeMs() + (int)(SpellBase.Lookup.Get<SpellBase>(Globals.Me.Spells[spellSlot].SpellId).CooldownDuration * cooldownReduction);
             }
-            bf.Dispose();
         }
 
-        private static void HandleItemCooldown(byte[] packet)
+        //ItemCooldownPacket
+        private static void HandlePacket(ItemCooldownPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            Guid itemId = bf.ReadGuid();
-            var item = ItemBase.Get(itemId);
+            var item = ItemBase.Get(packet.ItemId);
             if (item != null)
             {
                 decimal cooldownReduction = (1 - (decimal)(Globals.Me.GetCooldownReduction() / 100));
-                if (Globals.Me.ItemCooldowns.ContainsKey(itemId))
+                if (Globals.Me.ItemCooldowns.ContainsKey(item.Id))
                 {
-                    Globals.Me.ItemCooldowns[itemId] = Globals.System.GetTimeMs() + (long)(item.Cooldown * cooldownReduction);
+                    Globals.Me.ItemCooldowns[item.Id] = Globals.System.GetTimeMs() + (long)(item.Cooldown * cooldownReduction);
                 }
                 else
                 {
-                    Globals.Me.ItemCooldowns.Add(itemId, Globals.System.GetTimeMs() + (long)(item.Cooldown * cooldownReduction));
+                    Globals.Me.ItemCooldowns.Add(item.Id, Globals.System.GetTimeMs() + (long)(item.Cooldown * cooldownReduction));
                 }
             }
-            bf.Dispose();
         }
 
-        private static void HandleExperience(byte[] packet)
+        //ExperiencePacket
+        private static void HandlePacket(ExperiencePacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
             if (Globals.Me != null)
             {
-                Globals.Me.Experience = bf.ReadLong();
-                Globals.Me.ExperienceToNextLevel = bf.ReadLong();
+                Globals.Me.Experience = packet.Experience;
+                Globals.Me.ExperienceToNextLevel = packet.ExperienceToNextLevel;
             }
-            bf.Dispose();
         }
 
-        private static void HandleProjectileSpawnDead(byte[] packet)
+        //ProjectileDeadPacket
+        private static void HandlePacket(ProjectileDeadPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var entityId = bf.ReadGuid();
-            if (Globals.Entities.ContainsKey(entityId) &&
-                Globals.Entities[entityId].GetType() == typeof(Projectile))
+            var entityId = packet.ProjectileId;
+            if (Globals.Entities.ContainsKey(entityId) && Globals.Entities[entityId].GetType() == typeof(Projectile))
             {
-                ((Projectile) Globals.Entities[entityId]).SpawnDead((int) bf.ReadLong());
+                ((Projectile)Globals.Entities[entityId]).SpawnDead(packet.SpawnId);
             }
-            bf.Dispose();
         }
 
-        private static void HandlePlayAnimation(byte[] packet)
+        //PlayAnimationPacket
+        private static void HandlePacket(PlayAnimationPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var mapId = Guid.Empty;
-            var animId = bf.ReadGuid();
-            int targetType = bf.ReadInteger();
-            var entityId = bf.ReadGuid();
+            var mapId = packet.MapId;
+            var animId = packet.AnimationId;
+            int targetType = packet.TargetType;
+            var entityId = packet.EntityId;
             if (targetType == -1)
             {
-                mapId = bf.ReadGuid();
                 var map = MapInstance.Get(mapId);
                 if (map != null)
                 {
-                    map.AddTileAnimation(animId, bf.ReadInteger(), bf.ReadInteger(), bf.ReadInteger());
+                    map.AddTileAnimation(animId, packet.X, packet.Y, packet.Direction);
                 }
             }
             else if (targetType == 1)
             {
-                bf.ReadInteger();
-                bf.ReadInteger();
-                bf.ReadInteger();
-                int dir = bf.ReadInteger();
                 if (Globals.Entities.ContainsKey(entityId))
                 {
                     if (Globals.Entities[entityId] != null && !Globals.EntitiesToDispose.Contains(entityId))
@@ -1295,9 +838,8 @@ namespace Intersect.Client.Networking
                         var animBase = AnimationBase.Get(animId);
                         if (animBase != null)
                         {
-                            AnimationInstance animInstance = new AnimationInstance(animBase, false,
-                                dir == -1 ? false : true,-1,Globals.Entities[entityId]);
-                            if (dir > -1) animInstance.SetDir(dir);
+                            AnimationInstance animInstance = new AnimationInstance(animBase, false, packet.Direction == -1 ? false : true, -1, Globals.Entities[entityId]);
+                            if (packet.Direction > -1) animInstance.SetDir(packet.Direction);
                             Globals.Entities[entityId].Animations.Add(animInstance);
                         }
                     }
@@ -1305,10 +847,6 @@ namespace Intersect.Client.Networking
             }
             else if (targetType == 2)
             {
-                mapId = bf.ReadGuid();
-                bf.ReadInteger();
-                bf.ReadInteger();
-                int dir = bf.ReadInteger();
                 var map = MapInstance.Get(mapId);
                 if (map != null)
                 {
@@ -1319,211 +857,187 @@ namespace Intersect.Client.Networking
                             var animBase = AnimationBase.Get(animId);
                             if (animBase != null)
                             {
-                                AnimationInstance animInstance = new AnimationInstance(animBase, false,
-                                    dir == -1 ? true : false,-1,map.LocalEntities[entityId]);
-                                if (dir > -1) animInstance.SetDir(dir);
+                                AnimationInstance animInstance = new AnimationInstance(animBase, false, packet.Direction == -1 ? true : false, -1, map.LocalEntities[entityId]);
+                                if (packet.Direction > -1) animInstance.SetDir(packet.Direction);
                                 map.LocalEntities[entityId].Animations.Add(animInstance);
                             }
                         }
                     }
                 }
             }
-            bf.Dispose();
         }
 
-        private static void HandleHoldPlayer(byte[] packet)
+        //HoldPlayerPacket
+        private static void HandlePacket(HoldPlayerPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var eventId = bf.ReadGuid();
-            var mapId = bf.ReadGuid();
-            if (!Globals.EventHolds.ContainsKey(eventId)) Globals.EventHolds.Add(eventId, mapId);
-            bf.Dispose();
-        }
-
-        private static void HandleReleasePlayer(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            Guid eventId = bf.ReadGuid();
-            if (Globals.EventHolds.ContainsKey(eventId))
+            var eventId = packet.EventId;
+            var mapId = packet.MapId;
+            if (!packet.Releasing)
             {
-                Globals.EventHolds.Remove(eventId);
+                if (!Globals.EventHolds.ContainsKey(eventId)) Globals.EventHolds.Add(eventId, mapId);
             }
-            bf.Dispose();
+            else
+            {
+                if (Globals.EventHolds.ContainsKey(eventId))
+                {
+                    Globals.EventHolds.Remove(eventId);
+                }
+            }
+
         }
 
-        private static void HandlePlayMusic(byte[] packet)
+        //PlayMusicPacket
+        private static void HandlePacket(PlayMusicPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            string bgm = bf.ReadString();
-            GameAudio.PlayMusic(bgm, 1f, 1f, true);
-            bf.Dispose();
+            GameAudio.PlayMusic(packet.BGM, 1f, 1f, true);
         }
 
-        private static void HandleFadeMusic(byte[] packet)
+        //StopMusicPacket
+        private static void HandlePacket(StopMusicPacket packet)
         {
             GameAudio.StopMusic(3f);
         }
 
-        private static void HandlePlaySound(byte[] packet)
+        //PlaySoundPacket
+        private static void HandlePacket(PlaySoundPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            string sound = bf.ReadString();
-            GameAudio.AddMapSound(sound, -1, -1, Globals.Me.CurrentMap, false, 5);
-            bf.Dispose();
+            GameAudio.AddMapSound(packet.Sound, -1, -1, Globals.Me.CurrentMap, false, 5);
         }
 
-        private static void HandleStopSounds(byte[] packet)
+        //StopSoundsPacket
+        private static void HandlePacket(StopSoundsPacket packet)
         {
             GameAudio.StopAllSounds();
         }
 
-        private static void HandleShowPicture(byte[] packet)
+        //ShowPicturePacket
+        private static void HandlePacket(ShowPicturePacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            string picture = bf.ReadString();
-            int size = bf.ReadInteger();
-            bool clickable = bf.ReadBoolean();
-            Gui.GameUi.ShowPicture(picture, size, clickable);
-            bf.Dispose();
+            Gui.GameUi.ShowPicture(packet.Picture, packet.Size, packet.Clickable);
         }
 
-        private static void HandleHidePicture(byte[] packet)
+        //HidePicturePacket
+        private static void HandlePacket(HidePicturePacket packet)
         {
             Gui.GameUi.HidePicture();
         }
 
-        private static void HandleOpenShop(byte[] packet)
+        //ShopPacket
+        private static void HandlePacket(ShopPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            Globals.GameShop = new ShopBase();
-            Globals.GameShop.Load(bf.ReadString());
-            Gui.GameUi.NotifyOpenShop();
-        }
-
-        private static void HandleCloseShop(byte[] packet)
-        {
-            Globals.GameShop = null;
-            Gui.GameUi.NotifyCloseShop();
-        }
-
-        private static void HandleOpenCraftingTable(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            Globals.ActiveCraftingTable = new CraftingTableBase();
-            Globals.ActiveCraftingTable.Load(bf.ReadString());
-            Gui.GameUi.NotifyOpenCraftingTable();
-        }
-
-        private static void HandleCloseCraftingTable(byte[] packet)
-        {
-            Gui.GameUi.NotifyCloseCraftingTable();
-        }
-
-        private static void HandleOpenBank(byte[] packet)
-        {
-            Gui.GameUi.NotifyOpenBank();
-        }
-
-        private static void HandleCloseBank(byte[] packet)
-        {
-            Gui.GameUi.NotifyCloseBank();
-        }
-
-        private static void HandleBankUpdate(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            int slot = bf.ReadInteger();
-            int active = bf.ReadInteger();
-            if (active == 0)
+            if (packet.ShopData != null)
             {
-                Globals.Bank[slot] = null;
+                Globals.GameShop = new ShopBase();
+                Globals.GameShop.Load(packet.ShopData);
+                Gui.GameUi.NotifyOpenShop();
             }
             else
             {
-                Globals.Bank[slot] = new ItemInstance();
-                Globals.Bank[slot].Load(bf);
+                Globals.GameShop = null;
+                Gui.GameUi.NotifyCloseShop();
             }
-            bf.Dispose();
         }
 
-        private static void HandleGameObject(byte[] packet)
+        //CraftingTablePacket
+        private static void HandlePacket(CraftingTablePacket packet)
         {
-            using (var bf = new ByteBuffer())
+            if (!packet.Close)
             {
-                bf.WriteBytes(packet);
-                var type = (GameObjectType) bf.ReadInteger();
-                var id = bf.ReadGuid();
-                var another = Convert.ToBoolean(bf.ReadInteger());
-                var deleted = Convert.ToBoolean(bf.ReadInteger());
-                var json = "";
-                if (!deleted) json = bf.ReadString();
-
-                switch (type)
-                {
-                    case GameObjectType.Map:
-                        //Handled in a different packet
-                        break;
-                    case GameObjectType.Tileset:
-                        var obj = new TilesetBase(id);
-                        obj.Load(json);
-                        TilesetBase.Lookup.Set(id, obj);
-                        if (Globals.HasGameData && !another)
-                            Globals.ContentManager.LoadTilesets(TilesetBase.GetNameList());
-                        break;
-                    case GameObjectType.Event:
-                        //Clients don't store event data, im an idiot.
-                        break;
-                    default:
-                        var lookup = type.GetLookup();
-                        if (deleted) lookup.Get(id).Delete();
-                        else
-                        {
-                            lookup.DeleteAt(id);
-                            var item = lookup.AddNew(type.GetObjectType(), id);
-                            item.Load(json);
-                        }
-                        break;
-                }
+                Globals.ActiveCraftingTable = new CraftingTableBase();
+                Globals.ActiveCraftingTable.Load(packet.TableData);
+                Gui.GameUi.NotifyOpenCraftingTable();
+            }
+            else
+            {
+                Gui.GameUi.NotifyCloseCraftingTable();
             }
         }
 
-        private static void HandleEntityDash(byte[] packet)
+        //BankPacket
+        private static void HandlePacket(BankPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var id = bf.ReadGuid();
-            var endMapId = bf.ReadGuid();
-            var endX = bf.ReadInteger();
-            var endY = bf.ReadInteger();
-            var dashTime = bf.ReadInteger();
-            var direction = bf.ReadInteger();
-            if (Globals.Entities.ContainsKey(id))
-                Globals.Entities[id].DashQueue.Enqueue(new DashInstance(Globals.Entities[id], endMapId, endX, endY,
-                    dashTime, direction));
-            bf.Dispose();
+            if (!packet.Close)
+            {
+                Gui.GameUi.NotifyOpenBank();
+            }
+            else
+            {
+                Gui.GameUi.NotifyCloseBank();
+            }
         }
 
-        private static void HandleMapGrid(byte[] packet)
+        //BankUpdatePacket
+        private static void HandlePacket(BankUpdatePacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            Globals.MapGridWidth = bf.ReadLong();
-            Globals.MapGridHeight = bf.ReadLong();
-            var clearKnownMaps = bf.ReadBoolean();
+            int slot = packet.Slot;
+            if (packet.ItemId != Guid.Empty)
+            {
+                Globals.Bank[slot] = new ItemInstance();
+                Globals.Bank[slot].Load(packet.ItemId, packet.Quantity, packet.BagId, packet.StatBuffs);
+            }
+            else
+            {
+                Globals.Bank[slot] = null;
+            }
+        }
+
+        //GameObjectPacket
+        private static void HandlePacket(GameObjectPacket packet)
+        {
+            var type = packet.Type;
+            var id = packet.Id;
+            var another = packet.AnotherFollowing;
+            var deleted = packet.Deleted;
+            var json = "";
+            if (!deleted) json = packet.Data;
+
+            switch (type)
+            {
+                case GameObjectType.Map:
+                    //Handled in a different packet
+                    break;
+                case GameObjectType.Tileset:
+                    var obj = new TilesetBase(id);
+                    obj.Load(json);
+                    TilesetBase.Lookup.Set(id, obj);
+                    if (Globals.HasGameData && !another)
+                        Globals.ContentManager.LoadTilesets(TilesetBase.GetNameList());
+                    break;
+                case GameObjectType.Event:
+                    //Clients don't store event data, im an idiot.
+                    break;
+                default:
+                    var lookup = type.GetLookup();
+                    if (deleted) lookup.Get(id).Delete();
+                    else
+                    {
+                        lookup.DeleteAt(id);
+                        var item = lookup.AddNew(type.GetObjectType(), id);
+                        item.Load(json);
+                    }
+                    break;
+            }
+        }
+
+        //EntityDashPacket
+        private static void HandlePacket(EntityDashPacket packet)
+        {
+            if (Globals.Entities.ContainsKey(packet.EntityId))
+                Globals.Entities[packet.EntityId].DashQueue.Enqueue(new DashInstance(Globals.Entities[packet.EntityId], packet.EndMapId, packet.EndX, packet.EndY, packet.DashTime, packet.Direction));
+        }
+
+        //MapGridPacket
+        private static void HandlePacket(MapGridPacket packet)
+        {
+            Globals.MapGridWidth = packet.Grid.GetLength(0);
+            Globals.MapGridHeight = packet.Grid.GetLength(1);
+            var clearKnownMaps = packet.ClearKnownMaps;
             Globals.MapGrid = new Guid[Globals.MapGridWidth, Globals.MapGridHeight];
             if (clearKnownMaps)
             {
                 foreach (var map in MapInstance.Lookup.Values.ToArray())
                 {
-                    ((MapInstance) map).Dispose();
+                    ((MapInstance)map).Dispose();
                 }
             }
             Globals.NeedsMaps = true;
@@ -1532,7 +1046,7 @@ namespace Intersect.Client.Networking
             {
                 for (int y = 0; y < Globals.MapGridHeight; y++)
                 {
-                    Globals.MapGrid[x, y] = bf.ReadGuid();
+                    Globals.MapGrid[x, y] = packet.Grid[x, y];
                     if (Globals.MapGrid[x, y] != Guid.Empty)
                     {
                         Globals.GridMaps.Add(Globals.MapGrid[x, y]);
@@ -1549,69 +1063,52 @@ namespace Intersect.Client.Networking
             }
             if (Globals.Me != null) Globals.Me.FetchNewMaps();
             GameGraphics.GridSwitched = true;
-            bf.Dispose();
         }
 
-        private static void HandleTime(byte[] packet)
+        //TimePacket
+        private static void HandlePacket(TimePacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            DateTime time = DateTime.FromBinary(bf.ReadLong());
-            float rate = (float) bf.ReadDouble();
-            Framework.GenericClasses.Color clr = Framework.GenericClasses.Color.FromArgb(bf.ReadByte(), bf.ReadByte(), bf.ReadByte(), bf.ReadByte());
-            ClientTime.LoadTime(time, clr, rate);
+            ClientTime.LoadTime(packet.Time, Color.FromArgb(packet.Color.A, packet.Color.R, packet.Color.G, packet.Color.B), packet.Rate);
         }
 
-        private static void HandleParty(byte[] packet)
+        //PartyPacket
+        private static void HandlePacket(PartyPacket packet)
         {
             if (Globals.Me == null || Globals.Me.Party == null) return;
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            int count = bf.ReadInteger();
 
             Globals.Me.Party.Clear();
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < packet.MemberData.Length; i++)
             {
-                Globals.Me.Party.Add(new PartyMember(bf));
+                var mem = packet.MemberData[i];
+                Globals.Me.Party.Add(new PartyMember(mem.Id, mem.Name, mem.Vital, mem.MaxVital, mem.Level));
             }
-
-            bf.Dispose();
         }
 
-        private static void HandlePartyUpdate(byte[] packet)
+        //PartyUpdatePacket
+        private static void HandlePacket(PartyUpdatePacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            int index = bf.ReadInteger();
+            int index = packet.MemberIndex;
             if (index < Globals.Me.Party.Count)
             {
-                Globals.Me.Party[index] = new PartyMember(bf);
+                var mem = packet.MemberData;
+                Globals.Me.Party[index] = new PartyMember(mem.Id, mem.Name, mem.Vital, mem.MaxVital, mem.Level);
             }
-            bf.Dispose();
         }
 
-        private static void HandlePartyInvite(byte[] packet)
+        //PartyInvitePacket
+        private static void HandlePacket(PartyInvitePacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            string leader = bf.ReadString();
-            Guid leaderId = bf.ReadGuid();
-            InputBox iBox = new InputBox(Strings.Parties.partyinvite,
-                Strings.Parties.inviteprompt.ToString( leader), true, InputBox.InputType.YesNo,
-                PacketSender.SendPartyAccept,
-                PacketSender.SendPartyDecline, leaderId);
-            bf.Dispose();
+            InputBox iBox = new InputBox(Strings.Parties.partyinvite, Strings.Parties.inviteprompt.ToString(packet.LeaderName), true, InputBox.InputType.YesNo, PacketSender.SendPartyAccept, PacketSender.SendPartyDecline, packet.LeaderId);
         }
 
-        private static void HandleChatBubble(byte[] packet)
+        //ChatBubblePacket
+        private static void HandlePacket(ChatBubblePacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var id = bf.ReadGuid();
-            var type = bf.ReadInteger();
-            var mapId = bf.ReadGuid();
+            var id = packet.EntityId;
+            var type = packet.Type;
+            var mapId = packet.MapId;
             Entity en = null;
-            if (type < (int) EntityTypes.Event)
+            if (type < EntityTypes.Event)
             {
                 if (!Globals.Entities.ContainsKey(id))
                 {
@@ -1633,54 +1130,41 @@ namespace Intersect.Client.Networking
             {
                 return;
             }
-            en.AddChatBubble(bf.ReadString());
-            bf.Dispose();
+            en.AddChatBubble(packet.Text);
         }
 
-        private static void HandleQuestOffer(byte[] packet)
+        //QuestOfferPacket
+        private static void HandlePacket(QuestOfferPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var questId = bf.ReadGuid();
-            if (!Globals.QuestOffers.Contains(questId))
+            if (!Globals.QuestOffers.Contains(packet.QuestId))
             {
-                Globals.QuestOffers.Add(questId);
+                Globals.QuestOffers.Add(packet.QuestId);
             }
-            bf.Dispose();
         }
 
-        private static void HandleQuestProgress(byte[] packet)
+        //QuestProgressPacket
+        private static void HandlePacket(QuestProgressPacket packet)
         {
             if (Globals.Me != null)
             {
-                var bf = new ByteBuffer();
-                bf.WriteBytes(packet);
-                var count = bf.ReadInteger();
-                for (int i = 0; i < count; i++)
+                foreach (var quest in packet.Quests)
                 {
-                    var id = bf.ReadGuid();
-                    if (bf.ReadByte() == 0)
+                    if (quest.Value == null)
                     {
-                        if (Globals.Me.QuestProgress.ContainsKey(id))
+                        if (Globals.Me.QuestProgress.ContainsKey(quest.Key))
                         {
-                            Globals.Me.QuestProgress.Remove(id);
+                            Globals.Me.QuestProgress.Remove(quest.Key);
                         }
                     }
                     else
                     {
-                        QuestProgressStruct questProgress = new QuestProgressStruct()
+                        if (Globals.Me.QuestProgress.ContainsKey(quest.Key))
                         {
-                            Completed = bf.ReadBoolean(),
-                            TaskId = bf.ReadGuid(),
-                            TaskProgress = bf.ReadInteger()
-                        };
-                        if (Globals.Me.QuestProgress.ContainsKey(id))
-                        {
-                            Globals.Me.QuestProgress[id] = questProgress;
+                            Globals.Me.QuestProgress[quest.Key] = new QuestProgress(quest.Value);
                         }
                         else
                         {
-                            Globals.Me.QuestProgress.Add(id, questProgress);
+                            Globals.Me.QuestProgress.Add(quest.Key, new QuestProgress(quest.Value));
                         }
                     }
                 }
@@ -1688,243 +1172,180 @@ namespace Intersect.Client.Networking
                 {
                     Gui.GameUi.NotifyQuestsUpdated();
                 }
-                bf.Dispose();
             }
         }
 
-        private static void HandleTradeStart(byte[] packet)
+        //TradePacket
+        private static void HandlePacket(TradePacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var traderId = bf.ReadGuid();
-
-            Globals.Trade = new ItemInstance[2, Options.MaxInvItems];
-            //Gotta initialize the trade values
-            for (int x = 0; x < 2; x++)
+            if (packet.TradePartner != Guid.Empty)
             {
-                for (int y = 0; y < Options.MaxInvItems; y++)
+                Globals.Trade = new ItemInstance[2, Options.MaxInvItems];
+
+                //Gotta initialize the trade values
+                for (int x = 0; x < 2; x++)
                 {
-                    Globals.Trade[x, y] = new ItemInstance();
+                    for (int y = 0; y < Options.MaxInvItems; y++)
+                    {
+                        Globals.Trade[x, y] = new ItemInstance();
+                    }
                 }
-            }
-            Gui.GameUi.NotifyOpenTrading(traderId);
-            bf.Dispose();
-        }
 
-        private static void HandleTradeUpdate(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var id = bf.ReadGuid();
-            int i = 0;
-
-            if (id != Globals.Me.Id)
-            {
-                i = 1;
-            }
-
-            int slot = bf.ReadInteger();
-            int active = bf.ReadInteger();
-            if (active == 0)
-            {
-                Globals.Trade[i, slot] = null;
+                Gui.GameUi.NotifyOpenTrading(packet.TradePartner);
             }
             else
             {
-                Globals.Trade[i, slot] = new ItemInstance();
-                Globals.Trade[i, slot].Load(bf);
+                Gui.GameUi.NotifyCloseTrading();
             }
-            bf.Dispose();
         }
 
-        private static void HandleTradeClose(byte[] packet)
+        //TradeUpdatePacket
+        private static void HandlePacket(TradeUpdatePacket packet)
         {
-            Gui.GameUi.NotifyCloseTrading();
-        }
+            int side = 0;
 
-        private static void HandleTradeRequest(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            string partner = bf.ReadString();
-            Guid partnerId = bf.ReadGuid();
-            InputBox iBox = new InputBox(Strings.Trading.traderequest,
-                Strings.Trading.requestprompt.ToString( partner), true, InputBox.InputType.YesNo,
-                PacketSender.SendTradeRequestAccept,
-                PacketSender.SendTradeRequestDecline, partnerId);
-            bf.Dispose();
-        }
-
-        private static void HandleNpcAggression(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var id = bf.ReadGuid();
-            if (Globals.Entities.ContainsKey(id))
+            if (packet.TraderId != Globals.Me.Id)
             {
-                Globals.Entities[id].Type = bf.ReadInteger();
+                side = 1;
             }
-            bf.Dispose();
+
+            int slot = packet.Slot;
+            if (packet.ItemId == Guid.Empty)
+            {
+                Globals.Trade[side, slot] = null;
+            }
+            else
+            {
+                Globals.Trade[side, slot] = new ItemInstance();
+                Globals.Trade[side, slot].Load(packet.ItemId, packet.Quantity, packet.BagId, packet.StatBuffs);
+            }
         }
 
-        private static void HandlePlayerDash(byte[] packet)
+        //TradeRequestPacket
+        private static void HandlePacket(TradeRequestPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var id = bf.ReadGuid();
-            if (Globals.Entities.ContainsKey(id))
+            InputBox iBox = new InputBox(Strings.Trading.traderequest, Strings.Trading.requestprompt.ToString(packet.PartnerName), true, InputBox.InputType.YesNo, PacketSender.SendTradeRequestAccept, PacketSender.SendTradeRequestDecline, packet.PartnerId);
+        }
+
+        //NpcAggressionPacket
+        private static void HandlePacket(NpcAggressionPacket packet)
+        {
+            if (Globals.Entities.ContainsKey(packet.EntityId))
+            {
+                Globals.Entities[packet.EntityId].Type = packet.Aggression;
+            }
+        }
+
+        //PlayerDeathPacket
+        private static void HandlePacket(PlayerDeathPacket packet)
+        {
+            if (Globals.Entities.ContainsKey(packet.PlayerId))
             {
                 //Clear all dashes.
-                Globals.Entities[id].DashQueue.Clear();
-                Globals.Entities[id].Dashing = null;
-                Globals.Entities[id].DashTimer = 0;
+                Globals.Entities[packet.PlayerId].DashQueue.Clear();
+                Globals.Entities[packet.PlayerId].Dashing = null;
+                Globals.Entities[packet.PlayerId].DashTimer = 0;
             }
-            bf.Dispose();
         }
 
-        private static void HandleEntityZDimension(byte[] packet)
+        //EntityZDimensionPacket
+        private static void HandlePacket(EntityZDimensionPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var id = bf.ReadGuid();
-            if (Globals.Entities.ContainsKey(id))
+            if (Globals.Entities.ContainsKey(packet.EntityId))
             {
-                Globals.Entities[id].CurrentZ = bf.ReadInteger();
+                Globals.Entities[packet.EntityId].Z = packet.Level;
             }
-            bf.Dispose();
         }
 
-        private static void HandleOpenBag(byte[] packet)
+        //BagPacket
+        private static void HandlePacket(BagPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var slots = bf.ReadInteger();
-            Globals.Bag = new ItemInstance[slots];
-            Gui.GameUi.NotifyOpenBag();
-            bf.Dispose();
-        }
-
-        private static void HandleCloseBag(byte[] packet)
-        {
-            Gui.GameUi.NotifyCloseBag();
-        }
-
-        private static void HandleBagUpdate(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            int slot = bf.ReadInteger();
-            int active = bf.ReadInteger();
-            if (active == 0)
+            if (!packet.Close)
             {
-                Globals.Bag[slot] = null;
+                Globals.Bag = new ItemInstance[packet.Slots];
+                Gui.GameUi.NotifyOpenBag();
             }
             else
             {
-                Globals.Bag[slot] = new ItemInstance();
-                Globals.Bag[slot].Load(bf);
+                Gui.GameUi.NotifyCloseBag();
             }
-            bf.Dispose();
         }
 
-        private static void HandleMoveRouteToggle(byte[] packet)
+        //BagUpdatePacket
+        private static void HandlePacket(BagUpdatePacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            Globals.MoveRouteActive = bf.ReadBoolean();
-            bf.Dispose();
+            if (packet.ItemId == Guid.Empty)
+            {
+                Globals.Bag[packet.Slot] = null;
+            }
+            else
+            {
+                Globals.Bag[packet.Slot] = new ItemInstance();
+                Globals.Bag[packet.Slot].Load(packet.ItemId, packet.Quantity, packet.BagId, packet.StatBuffs);
+            }
         }
 
-        private static void HandleFriends(byte[] packet)
+        //MoveRoutePacket
+        private static void HandlePacket(MoveRoutePacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
+            Globals.MoveRouteActive = packet.Active;
+        }
+
+        //FriendsPacket
+        private static void HandlePacket(FriendsPacket packet)
+        {
             Globals.Me.Friends.Clear();
 
-            //Online friends
-            int count = bf.ReadInteger();
-            for (int i = 0; i < count; i++)
+            foreach (var friend in packet.OnlineFriends)
             {
-                FriendInstance f = new FriendInstance();
-                f.Name = bf.ReadString();
-                f.Map = bf.ReadString();
-                f.Online = true;
+                FriendInstance f = new FriendInstance()
+                {
+                    Name = friend.Key,
+                    Map = friend.Value,
+                    Online = true
+                };
                 Globals.Me.Friends.Add(f);
             }
 
-            //Offline friends
-            count = bf.ReadInteger();
-            for (int i = 0; i < count; i++)
+            foreach (var friend in packet.OfflineFriends)
             {
-                FriendInstance f = new FriendInstance();
-                f.Name = bf.ReadString();
-                f.Map = "Offline";
-                f.Online = false;
+                FriendInstance f = new FriendInstance()
+                {
+                    Name = friend,
+                    Online = false
+                };
                 Globals.Me.Friends.Add(f);
             }
 
             Gui.GameUi.UpdateFriendsList();
-
-            bf.Dispose();
         }
 
-        private static void HandleFriendRequest(byte[] packet)
+        //FriendRequestPacket
+        private static void HandlePacket(FriendRequestPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            string partner = bf.ReadString();
-            Guid partnerId = bf.ReadGuid();
-            InputBox iBox = new InputBox(Strings.Friends.request,
-                Strings.Friends.requestprompt.ToString( partner), true, InputBox.InputType.YesNo,
-                PacketSender.SendFriendRequestAccept,
-                PacketSender.SendFriendRequestDecline, partnerId);
-            bf.Dispose();
+            InputBox iBox = new InputBox(Strings.Friends.request, Strings.Friends.requestprompt.ToString(packet.FriendName), true, InputBox.InputType.YesNo, PacketSender.SendFriendRequestAccept, PacketSender.SendFriendRequestDecline, packet.FriendId);
         }
 
-        private static void HandlePlayerCharacters(byte[] packet)
+        //CharactersPacket
+        private static void HandlePacket(CharactersPacket packet)
         {
             List<Character> characters = new List<Character>();
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
 
-            int charCount = bf.ReadInteger();
-            bool freeSlot = bf.ReadBoolean();
-
-            for (int i = 0; i < charCount; i++)
+            foreach (var chr in packet.Characters)
             {
-                var id = bf.ReadGuid();
-                characters.Add(new Character(id, bf.ReadString(), bf.ReadString(), bf.ReadString(), bf.ReadInteger(), bf.ReadString()));
-                for (int x = 0; x < Options.EquipmentSlots.Count + 1; x++)
-                {
-                    characters[characters.Count - 1].Equipment[x] = bf.ReadString();
-                }
+                characters.Add(new Character(chr.Id, chr.Name, chr.Sprite, chr.Face, chr.Level, chr.ClassName, chr.Equipment));
             }
 
-            if (freeSlot) characters.Add(null);
-
-            bf.Dispose();
+            if (packet.FreeSlot) characters.Add(null);
             Globals.WaitingOnServer = false;
             GameFade.FadeIn();
             Gui.MenuUi.MainMenu.NotifyOpenCharacterSelection(characters);
         }
 
-        private struct ShitMeasurement
+        //PasswordResetResultPacket
+        private static void HandlePacket(PasswordResetResultPacket packet)
         {
-            public int Taken;
-            public long Totalsize;
-            public long Elapsed;
-
-            public double ShitRate => Taken / (Elapsed / (double) TimeSpan.TicksPerSecond);
-            public double DataRate => Totalsize / (Elapsed / (double) TimeSpan.TicksPerSecond);
-        }
-
-        private static void HandlePasswordResetResult(byte[] packet)
-        {
-            List<Character> characters = new List<Character>();
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var result = bf.ReadBoolean();
-            if (result)
+            if (packet.Succeeded)
             {
                 //Show Success Message and Open Login Screen
                 Gui.MsgboxErrors.Add(new KeyValuePair<string, string>(Strings.ResetPass.success, Strings.ResetPass.successmsg));
@@ -1935,20 +1356,16 @@ namespace Intersect.Client.Networking
                 //Show Error Message
                 Gui.MsgboxErrors.Add(new KeyValuePair<string, string>(Strings.ResetPass.fail, Strings.ResetPass.failmsg));
             }
-            bf.Dispose();
             Globals.WaitingOnServer = false;
         }
 
-        private static void HandlePlayerTarget(byte[] packet)
+        //TargetOverridePacket
+        private static void HandlePacket(TargetOverridePacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            Guid target = bf.ReadGuid();
-            if (Globals.Entities.ContainsKey(target))
+            if (Globals.Entities.ContainsKey(packet.TargetId))
             {
-                Globals.Me.TargetIndex = target;
+                Globals.Me.TargetIndex = packet.TargetId;
             }
-            bf.Dispose();
         }
     }
 }

@@ -43,7 +43,7 @@ namespace Intersect.Client.UI.Game
             mLeader.Hide();
 
             mLeaderText = new Label(mPartyWindow,"LeaderText");
-            mLeaderText.SetTextColor(new Framework.GenericClasses.Color(0, 0, 0, 0), Label.ControlState.Normal);
+            mLeaderText.SetTextColor(new Color(0, 0, 0, 0), Label.ControlState.Normal);
             mLeaderText.Text = Strings.Parties.leader;
             mLeaderText.Hide();
             
@@ -76,11 +76,11 @@ namespace Intersect.Client.UI.Game
                 mHpBarContainer[i].Hide();
                 mHpLabel.Add(new Label(mPartyWindow, "HealthLabel" + i));
                 mHpLabel[i].Hide();
-                mHpLabel[i].SetTextColor(new Framework.GenericClasses.Color(0, 0, 0, 0), Label.ControlState.Normal);
+                mHpLabel[i].SetTextColor(new Color(0, 0, 0, 0), Label.ControlState.Normal);
                 mHpLabel[i].Text = Strings.Parties.vital0;
                 mHpValue.Add(new Label(mPartyWindow, "HealthValue" + i));
                 mHpValue[i].Hide();
-                mHpValue[i].SetTextColor(new Framework.GenericClasses.Color(0, 0, 0, 0), Label.ControlState.Normal);
+                mHpValue[i].SetTextColor(new Color(0, 0, 0, 0), Label.ControlState.Normal);
                 if (i < Globals.Me.Party.Count)
                 {
                     mHpBarContainer[i].Show();
@@ -90,16 +90,16 @@ namespace Intersect.Client.UI.Game
                 //Mana bars
                 mMpBarContainer.Add(new ImagePanel(mPartyWindow, "ManaBarContainer" + i));
                 mMpBarContainer[i].Hide();
-                mMpBarContainer[i].RenderColor = new Framework.GenericClasses.Color(0,0,0,0);
+                mMpBarContainer[i].RenderColor = new Color(0,0,0,0);
                 mMpLabel.Add(new Label(mPartyWindow, "ManaLabel" + i));
                 mMpLabel[i].Hide();
-                mMpLabel[i].SetTextColor(new Framework.GenericClasses.Color(0, 0, 0, 0), Label.ControlState.Normal);
+                mMpLabel[i].SetTextColor(new Color(0, 0, 0, 0), Label.ControlState.Normal);
                 mMpLabel[i].Text = Strings.Parties.vital1;
                 mMpValue.Add(new Label(mPartyWindow, "ManaValue" + i));
                 mMpValue[i].Hide();
-                mMpValue[i].SetTextColor(new Framework.GenericClasses.Color(0, 0, 0, 0), Label.ControlState.Normal);
+                mMpValue[i].SetTextColor(new Color(0, 0, 0, 0), Label.ControlState.Normal);
                 mMpBar.Add(new ImagePanel(mMpBarContainer[i], "ManaBar" + i));
-                mMpBar[i].RenderColor = new Framework.GenericClasses.Color(0,0,0,0);
+                mMpBar[i].RenderColor = new Color(0,0,0,0);
 
                 if (i == 0)
                 {

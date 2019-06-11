@@ -34,17 +34,5 @@ namespace Intersect.Server.Database
             SpellId = spell.SpellId;
             SpellCd = spell.SpellCd;
         }
-
-        public void Load(ByteBuffer bf)
-        {
-            SpellId = bf.ReadGuid();
-        }
-
-        public byte[] Data()
-        {
-            var bf = new ByteBuffer();
-            bf.WriteGuid(SpellId);
-            return bf.ToArray();
-        }
     }
 }

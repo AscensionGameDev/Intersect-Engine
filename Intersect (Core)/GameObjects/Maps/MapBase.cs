@@ -206,7 +206,6 @@ namespace Intersect.GameObjects.Maps
             {
                 lock (mapBase.MapLock ?? throw new ArgumentNullException(nameof(mapBase.MapLock), nameof(mapBase)))
                 {
-                    var bf = new ByteBuffer();
                     Name = mapBase.Name;
                     Brightness = mapBase.Brightness;
                     IsIndoors = mapBase.IsIndoors;

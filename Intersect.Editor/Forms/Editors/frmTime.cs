@@ -48,7 +48,7 @@ namespace Intersect.Editor.Forms.Editors
             //Create a backup in case we want to revert
             mYTime = time;
             mBackupTime = new TimeBase();
-            mBackupTime.LoadTimeBase(time.SaveTimeBase());
+            mBackupTime.LoadFromJson(time.GetInstanceJson());
 
             mTileBackbuffer = new Bitmap(pnlColor.Width, pnlColor.Height);
             UpdateList(TimeBase.GetTimeInterval(cmbIntervals.SelectedIndex));
@@ -154,7 +154,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            PacketSender.SendSaveTime(mYTime.SaveTimeBase());
+            PacketSender.SendSaveTime(mYTime.GetInstanceJson());
             Hide();
             Globals.CurrentEditor = -1;
             Dispose();
@@ -162,7 +162,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            mYTime.LoadTimeBase(mBackupTime.SaveTimeBase());
+            mYTime.LoadFromJson(mBackupTime.GetInstanceJson());
             Hide();
             Globals.CurrentEditor = -1;
             Dispose();

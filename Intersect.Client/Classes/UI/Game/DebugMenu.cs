@@ -86,9 +86,9 @@ namespace Intersect.Client.UI.Game
             {
                 mMapLabel.Text = Strings.Debug.map.ToString(
                     MapInstance.Get(Globals.Me.CurrentMap).Name);
-                mXLabel.Text = Strings.Debug.x.ToString( Globals.Me.CurrentX);
-                mYLabel.Text = Strings.Debug.y.ToString( Globals.Me.CurrentY);
-                mZLabel.Text = Strings.Debug.z.ToString( Globals.Me.CurrentZ);
+                mXLabel.Text = Strings.Debug.x.ToString( Globals.Me.X);
+                mYLabel.Text = Strings.Debug.y.ToString( Globals.Me.Y);
+                mZLabel.Text = Strings.Debug.z.ToString( Globals.Me.Z);
             }
             int entityCount = Globals.Entities.Count;
             foreach (MapInstance map in MapInstance.Lookup.Values)

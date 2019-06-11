@@ -5,6 +5,8 @@ using System.Diagnostics;
 using System.Linq;
 using Intersect.Logging;
 using Intersect.Memory;
+using Intersect.Network.Packets;
+
 using JetBrains.Annotations;
 
 namespace Intersect.Network
@@ -23,9 +25,6 @@ namespace Intersect.Network
             ConnectionLookup = new ConcurrentDictionary<Guid, IConnection>();
 
             Configuration = configuration;
-
-            Handlers = new SortedDictionary<PacketCode, HandlePacket>();
-            PacketFactories = new HashSet<IPacketFactory> {ReflectablePacketFactory.Instance};
         }
 
         [NotNull]
@@ -35,9 +34,7 @@ namespace Intersect.Network
         public IDictionary<Guid, IConnection> ConnectionLookup { get; }
 
         [NotNull]
-        public IDictionary<PacketCode, HandlePacket> Handlers { get; }
-
-        protected ICollection<IPacketFactory> PacketFactories { get; }
+        public HandlePacket Handler { get; set; }
 
         public int ConnectionCount => Connections.Count;
 
@@ -179,20 +176,6 @@ namespace Intersect.Network
             sender.ReleaseInboundBuffer(buffer);
         }
 
-        protected void AddPacketHandler(PacketCode packetCode, HandlePacket handler)
-        {
-            Debug.Assert(Handlers != null, "Handlers != null");
-            Handlers[packetCode] += handler;
-        }
-
-        protected void RemovePacketHandler(PacketCode packetCode, HandlePacket handler)
-        {
-            Debug.Assert(Handlers != null, "Handlers != null");
-            if (!Handlers.ContainsKey(packetCode)) return;
-            // ReSharper disable once DelegateSubtraction
-            Handlers[packetCode] -= handler;
-        }
-
         protected virtual void HandleConnectionApproved(IConnection connection)
         {
         }
@@ -209,52 +192,22 @@ namespace Intersect.Network
 
         private void HandleInboundData(IBuffer buffer, IConnection connection)
         {
-            Debug.Assert(PacketFactories != null, "PacketFactories != null");
-
             if (buffer == default(IBuffer)) return;
             if (buffer.Length < 1) return;
 
-            //if (!buffer.Read(out byte[] guidData, 16)) return;
-            //var guid = new Guid(guidData);
-            var packetCode = (PacketCode) buffer.ReadByte();
+            //Incorperate Ceras
+            var data = buffer.ToBytes();
+            //Get Packet From Data using Ceras
+            var sw = new Stopwatch();
+            sw.Start();
+            var packet = (IPacket)connection.Ceras.Deserialize(data);
+            if (sw.ElapsedMilliseconds > 10) Debug.WriteLine("Took " + sw.ElapsedMilliseconds + "ms to deserialize packet: " + packet.GetType().Name);
+            
+            //Handle any packet identification errors
 
-            IPacket packet = null;
-            foreach (var packetFactory in PacketFactories)
-            {
-                if (!packetFactory.CanCreatePacketType(packetCode)) continue;
-                packet = packetFactory.Create(packetCode, connection);
-            }
 
-            if (packet == null)
-            {
-                Log.Debug($"Could not find a factory for packet of type {packetCode}.");
-                return;
-            }
-
-            if (!packet.Read(ref buffer))
-            {
-                Log.Debug($"Error reading packet of type {packetCode} from the buffer.");
-                return;
-            }
-
-            Debug.Assert(Handlers != null, "Handlers != null");
-            if (!Handlers.ContainsKey(packetCode))
-            {
-                Log.Debug($"No handlers registered for packet type {packetCode}.");
-                return;
-            }
-
-            var handler = Handlers[packetCode];
-            if (!(handler?.Invoke(packet) ?? false))
-            {
-                Log.Debug($"Error invoking handler for packet type {packetCode} (handler={handler}).");
-            }
-#if DIAGNOSTIC_EXTREME
-            else
-            {
-                Log.Diagnostic($"Handled inbound {packet.Code} successfully.");
-            }
-#endif
+            //Pass packet to handler.
+            Handler.Invoke(connection, packet);
         }
 
         protected abstract IDictionary<TKey, TValue> CreateDictionaryLegacy<TKey, TValue>();

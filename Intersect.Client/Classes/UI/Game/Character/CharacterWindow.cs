@@ -62,7 +62,7 @@ namespace Intersect.Client.UI.Game.Character
             mCharacterWindow.DisableResizing();
 
             mCharacterName = new Label(mCharacterWindow, "CharacterNameLabel");
-            mCharacterName.SetTextColor(Framework.GenericClasses.Color.White, Label.ControlState.Normal);
+            mCharacterName.SetTextColor(Color.White, Label.ControlState.Normal);
 
             mCharacterLevelAndClass = new Label(mCharacterWindow, "ChatacterInfoLabel");
             mCharacterLevelAndClass.SetText("");
@@ -268,7 +268,7 @@ namespace Intersect.Client.UI.Game.Character
                     if (Globals.Me.Inventory[Globals.Me.MyEquipment[i]].ItemId != Guid.Empty)
                     {
                         Items[i].Update(Globals.Me.Inventory[Globals.Me.MyEquipment[i]].ItemId,
-                            Globals.Me.Inventory[Globals.Me.MyEquipment[i]].StatBoost);
+                            Globals.Me.Inventory[Globals.Me.MyEquipment[i]].StatBuffs);
                     }
                     else
                     {

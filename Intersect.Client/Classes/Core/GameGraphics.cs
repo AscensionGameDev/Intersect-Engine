@@ -9,6 +9,7 @@ using Intersect.Client.General;
 using Intersect.Client.Maps;
 using Intersect.Client.UI;
 using Intersect.Config;
+using Intersect.Enums;
 using Intersect.GameObjects;
 
 namespace Intersect.Client
@@ -118,6 +119,7 @@ namespace Intersect.Client
             {
                 return;
             }
+            
             if (GridSwitched)
             {
                 //Brightness
@@ -348,7 +350,7 @@ namespace Intersect.Client
                 sOldWidth = Renderer.GetScreenWidth();
                 sOldHeight = Renderer.GetScreenHeight();
             }
-            Renderer.Clear(Framework.GenericClasses.Color.Black);
+            Renderer.Clear(Color.Black);
             DrawCalls = 0;
             MapsDrawn = 0;
             EntitiesDrawn = 0;
@@ -635,19 +637,19 @@ namespace Intersect.Client
                 float y = map.GetY() - Options.MapHeight * Options.TileHeight;
                 float x1 = map.GetX() + (Options.MapWidth * Options.TileWidth) * 2;
                 float y1 = map.GetY() + (Options.MapHeight * Options.TileHeight) * 2;
-                if (map.HoldUp == 1)
+                if (map.CameraHolds[(int)Directions.Up])
                 {
                     y += Options.MapHeight * Options.TileHeight;
                 }
-                if (map.HoldLeft == 1)
+                if (map.CameraHolds[(int)Directions.Left])
                 {
                     x += Options.MapWidth * Options.TileWidth;
                 }
-                if (map.HoldRight == 1)
+                if (map.CameraHolds[(int)Directions.Right])
                 {
                     x1 -= Options.MapWidth * Options.TileWidth;
                 }
-                if (map.HoldDown == 1)
+                if (map.CameraHolds[(int)Directions.Down])
                 {
                     y1 -= Options.MapHeight * Options.TileHeight;
                 }
@@ -696,7 +698,7 @@ namespace Intersect.Client
             {
                 sDarknessTexture = Renderer.CreateRenderTexture(Renderer.GetScreenWidth(), Renderer.GetScreenHeight());
             }
-            sDarknessTexture.Clear(Framework.GenericClasses.Color.Black);
+            sDarknessTexture.Clear(Color.Black);
         }
 
         private static void GenerateLightMap()
@@ -759,7 +761,7 @@ namespace Intersect.Client
                     int x = l.OffsetX - ((int)CurrentView.Left + l.Size);
                     int y = l.OffsetY - ((int)CurrentView.Top + l.Size);
 
-                    radialShader.SetColor("LightColor", new Framework.GenericClasses.Color(l.Intensity, l.Color.R, l.Color.G, l.Color.B));
+                    radialShader.SetColor("LightColor", new Color(l.Intensity, l.Color.R, l.Color.G, l.Color.B));
                     radialShader.SetFloat("Expand", l.Expand / 100f);
 
                     DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
@@ -1018,10 +1020,7 @@ namespace Intersect.Client
             GameShader shader = null, float rotationDegrees = 0.0f, bool drawImmediate = false)
         {
             if (tex == null) return;
-            Renderer.DrawTexture(tex, sx,sy,w,h,dx,dy,w,h,
-                Framework.GenericClasses.Color.White, renderTarget, blendMode,
-                shader,
-                rotationDegrees, false, drawImmediate);
+            Renderer.DrawTexture(tex, sx,sy,w,h,dx,dy,w,h,Color.White, renderTarget, blendMode,shader,rotationDegrees, false, drawImmediate);
         }
 
         public static void DrawGameTexture(GameTexture tex, FloatRect srcRectangle, FloatRect targetRect,
@@ -1030,10 +1029,7 @@ namespace Intersect.Client
             GameShader shader = null, float rotationDegrees = 0.0f, bool drawImmediate = false)
         {
             if (tex == null) return;
-            Renderer.DrawTexture(tex,srcRectangle.X,srcRectangle.Y,srcRectangle.Width,srcRectangle.Height,targetRect.X,targetRect.Y,targetRect.Width,targetRect.Height,
-                Framework.GenericClasses.Color.FromArgb(renderColor.A, renderColor.R, renderColor.G, renderColor.B), renderTarget, blendMode,
-                shader,
-                rotationDegrees,false,drawImmediate);
+            Renderer.DrawTexture(tex,srcRectangle.X,srcRectangle.Y,srcRectangle.Width,srcRectangle.Height,targetRect.X,targetRect.Y,targetRect.Width,targetRect.Height,Color.FromArgb(renderColor.A, renderColor.R, renderColor.G, renderColor.B), renderTarget, blendMode,shader,rotationDegrees,false,drawImmediate);
         }
     }
 }

@@ -4,11 +4,12 @@ using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Crypto;
 using Intersect.Network.Crypto.Formats;
-using Intersect.Network.Packets.Reflectable;
 using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Forms;
+
+using Intersect.Network.Packets;
 
 namespace Intersect.Editor.Networking
 {
@@ -32,7 +33,7 @@ namespace Intersect.Editor.Networking
                     EditorLidgrenNetwork = new ClientNetwork(config, rsaKey.Parameters);
                 }
 
-                EditorLidgrenNetwork.Handlers[PacketCode.BinaryPacket] = PacketHandler.HandlePacket;
+                EditorLidgrenNetwork.Handler = PacketHandler.HandlePacket;
                 EditorLidgrenNetwork.OnDisconnected += HandleDc;
                 EditorLidgrenNetwork.OnConnectionDenied += delegate
                 {
@@ -95,34 +96,14 @@ namespace Intersect.Editor.Networking
             }
         }
 
-        public static void SendPacket(byte[] packet)
+        public static void SendPacket(CerasPacket packet)
         {
-            try
+            if (EditorLidgrenNetwork != null)
             {
-                var buff = new ByteBuffer();
-                if (packet.Length > 800)
+                if (!EditorLidgrenNetwork.Send(packet))
                 {
-                    packet = Compression.CompressPacket(packet);
-                    buff.WriteByte(1); //Compressed
-                    buff.WriteBytes(packet);
+                    throw new Exception("Beta 4 network send failed.");
                 }
-                else
-                {
-                    buff.WriteByte(0); //Not Compressed
-                    buff.WriteBytes(packet);
-                }
-
-                if (EditorLidgrenNetwork != null)
-                {
-                    if (!EditorLidgrenNetwork.Send(new BinaryPacket(null) {Buffer = buff}))
-                    {
-                        throw new Exception("Beta 4 network send failed.");
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                HandleDc(null,null);
             }
         }
     }

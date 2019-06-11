@@ -275,7 +275,7 @@ namespace Intersect.Client.UI.Menu
         private void _playButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
             ChatboxMsg.ClearMessages();
-            PacketSender.PlayGame(Characters[mSelectedChar].Id);
+            PacketSender.SendSelectCharacter(Characters[mSelectedChar].Id);
         }
 
         private void _deleteButton_Clicked(Base sender, ClickedEventArgs arguments)
@@ -289,14 +289,14 @@ namespace Intersect.Client.UI.Menu
 
         private void DeleteCharacter(Object sender, EventArgs e)
         {
-            PacketSender.DeleteChar((Guid)(((InputBox) sender).UserData));
+            PacketSender.SendDeleteCharacter((Guid)(((InputBox) sender).UserData));
             mSelectedChar = 0;
             UpdateDisplay();
         }
 
         private void _newButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            PacketSender.CreateNewCharacter();
+            PacketSender.SendNewCharacter();
         }
     }
 
@@ -316,13 +316,9 @@ namespace Intersect.Client.UI.Menu
             Id = id;
         }
 
-        public Character(Guid id, string name, string sprite, string face, int level, string charClass)
+        public Character(Guid id, string name, string sprite, string face, int level, string charClass, string[] equipment)
         {
-            for (int i = 0; i < Options.EquipmentSlots.Count + 1; i++)
-            {
-                Equipment[i] = "";
-            }
-            Equipment[0] = "Player";
+            Equipment = equipment;
             Id = id;
             Name = name;
             Sprite = sprite;

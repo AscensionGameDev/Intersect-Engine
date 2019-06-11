@@ -248,7 +248,7 @@ namespace Intersect.Client.UI.Game.EntityPanel
                 UpdateSpellStatus();
                 if (EntityType == EntityTypes.Event)
                 {
-                    EventDesc.AddText(((Event) MyEntity).Desc, Framework.GenericClasses.Color.White);
+                    EventDesc.AddText(((Event) MyEntity).Desc, Color.White);
                     EventDesc.SizeToChildren(false, true);
                 }
                 mInitialized = true;
@@ -679,7 +679,7 @@ namespace Intersect.Client.UI.Game.EntityPanel
         {
             if (Globals.Me.TargetIndex != Guid.Empty && Globals.Me.TargetIndex != Globals.Me.Id)
             {
-                PacketSender.AddFriend(MyEntity.Name);
+                PacketSender.SendAddFriend(MyEntity.Name);
             }
         }
     }

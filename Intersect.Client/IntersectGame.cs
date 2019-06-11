@@ -94,10 +94,10 @@ namespace Intersect.Client
             (GameGraphics.Renderer as MonoRenderer)?.Init(GraphicsDevice);
 
             // TODO: Remove old netcode
-            GameNetwork.MySocket = new IntersectNetworkSocket();
-            GameNetwork.MySocket.Connected += MainMenu.OnNetworkConnected;
-            GameNetwork.MySocket.ConnectionFailed += MainMenu.OnNetworkFailed;
-            GameNetwork.MySocket.Disconnected += MainMenu.OnNetworkDisconnected;
+            GameNetwork.Socket = new IntersectNetworkSocket();
+            GameNetwork.Socket.Connected += MainMenu.OnNetworkConnected;
+            GameNetwork.Socket.ConnectionFailed += MainMenu.OnNetworkFailed;
+            GameNetwork.Socket.Disconnected += MainMenu.OnNetworkDisconnected;
 
             GameMain.Start();
             base.Initialize();
@@ -119,7 +119,7 @@ namespace Intersect.Client
                         GameMain.Update();
                     }
 
-                    mLastUpdateTime = gameTime.TotalGameTime.TotalMilliseconds + (1000/60f);
+                    ///mLastUpdateTime = gameTime.TotalGameTime.TotalMilliseconds + (1000/60f);
                 }
             }
             base.Update(gameTime);

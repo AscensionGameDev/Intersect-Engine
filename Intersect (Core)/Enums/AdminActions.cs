@@ -2,7 +2,8 @@ namespace Intersect.Enums
 {
     public enum AdminActions
     {
-        WarpTo = 0,
+        None = 0,
+        WarpTo,
         WarpMeTo,
         WarpToMe,
         WarpToLoc,

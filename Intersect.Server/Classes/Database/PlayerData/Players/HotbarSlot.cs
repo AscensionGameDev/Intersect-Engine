@@ -13,14 +13,15 @@ namespace Intersect.Server.Database.PlayerData.Players
     public class HotbarSlot : ISlot, IPlayerOwned
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; private set; }
-        public Guid PlayerId { get; private set; }
+        [JsonIgnore] public Guid Id { get; private set; }
+        [JsonIgnore] public Guid PlayerId { get; private set; }
         [JsonIgnore] public virtual Player Player { get; private set; }
-        public int Slot { get; private set; }
+        [JsonIgnore] public int Slot { get; private set; }
         public Guid ItemOrSpellId { get; set; } = Guid.Empty;
         public Guid BagId { get; set; } = Guid.Empty;
         
         [Column("PreferredStatBuffs")]
+        [JsonIgnore]
         public string StatBuffsJson
         {
             get => DatabaseUtils.SaveIntArray(PreferredStatBuffs, (int)Enums.Stats.StatCount);
@@ -37,6 +38,11 @@ namespace Intersect.Server.Database.PlayerData.Players
         public HotbarSlot(int slot)
         {
             Slot = slot;
+        }
+
+        public string Data()
+        {
+            return JsonConvert.SerializeObject(this);
         }
     }
 }

@@ -344,7 +344,7 @@ namespace Intersect.Client
             {
                 if (mX == -1 || mY == -1 || mDistance == -1)
                 {
-                    Framework.GenericClasses.Point player = new Framework.GenericClasses.Point()
+                    Point player = new Point()
                     {
                         X = (int) playerx,
                         Y = (int) playery
@@ -365,7 +365,7 @@ namespace Intersect.Client
 
         //Code Courtesy of  Philip Peterson. -- Released under MIT license.
         //Obtained, 06/27/2015 from http://wiki.unity3d.com/index.php/Distance_from_a_point_to_a_rectangle
-        public static float DistancePointToRectangle(Framework.GenericClasses.Point point, Rectangle rect)
+        public static float DistancePointToRectangle(Point point, Rectangle rect)
         {
             //  Calculate a distance between a point and a rectangle.
             //  The area around/in the rectangle is defined in terms of

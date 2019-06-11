@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -10,7 +11,7 @@ using Intersect.GameObjects.Maps.MapList;
 using Intersect.Logging;
 using Intersect.Models;
 using Intersect.Network;
-using Intersect.Network.Packets.Reflectable;
+using Intersect.Network.Packets.Client;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Database.PlayerData.Security;
@@ -24,430 +25,150 @@ using Intersect.Utilities;
 namespace Intersect.Server.Networking
 {
     using LegacyDatabase = LegacyDatabase;
+    using Packets = Intersect.Network.Packets;
 
     public class PacketHandler
     {
-        public bool HandlePacket(IPacket packet)
+        public bool HandlePacket(IConnection connection, IPacket packet)
         {
-            var binaryPacket = packet as BinaryPacket;
-
-            var bf = binaryPacket?.Buffer;
-
-            if (packet == null || bf == null) return false;
-
-            //Compressed?
-            if (bf.ReadByte() == 1)
-            {
-                var data = Compression.DecompressPacket(bf.ReadBytes(bf.Length()));
-                bf = new ByteBuffer();
-                bf.WriteBytes(data);
-            }
-
-            HandlePacket(Client.FindBeta4Client(packet.Connection), bf);
-            return true;
-        }
-
-        public void HandlePacket(Client client, ByteBuffer bf)
-        {
-            //The raw packet is here, no more processing (decompression, length calculations, etc should have to happen)
+            var client = Client.FindBeta4Client(connection);
             if (client == null)
             {
-                Log.Debug("Client missing... >.>");
-                return;
+                throw new Exception("Client is null!");
             }
 
-            if (bf == null || bf.Length() == 0) return;
-            var packetHeader = (ClientPackets)bf.ReadLong();
-            var packet = bf.ReadBytes(bf.Length());
-            bf.Dispose();
-            switch (packetHeader)
-            {
-                case ClientPackets.Ping:
-                    HandlePing(client);
-                    break;
-                case ClientPackets.Login:
-                    HandleLogin(client, packet);
-                    break;
-                case ClientPackets.Logout:
-                    HandleLogout(client, packet);
-                    break;
-                case ClientPackets.NeedMap:
-                    HandleNeedMap(client, packet);
-                    break;
-                case ClientPackets.SendMove:
-                    HandlePlayerMove(client, packet);
-                    break;
-                case ClientPackets.LocalMessage:
-                    HandleLocalMsg(client, packet);
-                    break;
-                case ClientPackets.EditorLogin:
-                    HandleEditorLogin(client, packet);
-                    break;
-                case ClientPackets.SaveMap:
-                    HandleMap(client, packet);
-                    break;
-                case ClientPackets.CreateMap:
-                    HandleCreateMap(client, packet);
-                    break;
-                case ClientPackets.TryAttack:
-                    HandleTryAttack(client, packet);
-                    break;
-                case ClientPackets.TryBlock:
-                    HandleTryBlock(client, packet);
-                    break;
-                case ClientPackets.SendDir:
-                    HandleDir(client, packet);
-                    break;
-                case ClientPackets.EnterGame:
-                    HandleEnterGame(client, packet);
-                    break;
-                case ClientPackets.ActivateEvent:
-                    HandleActivateEvent(client, packet);
-                    break;
-                case ClientPackets.EventResponse:
-                    HandleEventResponse(client, packet);
-                    break;
-                case ClientPackets.CreateAccount:
-                    HandleCreateAccount(client, packet);
-                    break;
-                case ClientPackets.PickupItem:
-                    HandlePickupItem(client, packet);
-                    break;
-                case ClientPackets.SwapItems:
-                    HandleSwapItems(client, packet);
-                    break;
-                case ClientPackets.DropItems:
-                    HandleDropItems(client, packet);
-                    break;
-                case ClientPackets.UseItem:
-                    HandleUseItem(client, packet);
-                    break;
-                case ClientPackets.SwapSpells:
-                    HandleSwapSpells(client, packet);
-                    break;
-                case ClientPackets.ForgetSpell:
-                    HandleForgetSpell(client, packet);
-                    break;
-                case ClientPackets.UseSpell:
-                    HandleUseSpell(client, packet);
-                    break;
-                case ClientPackets.UnequipItem:
-                    HandleUnequipItem(client, packet);
-                    break;
-                case ClientPackets.UpgradeStat:
-                    HandleUpgradeStat(client, packet);
-                    break;
-                case ClientPackets.HotbarChange:
-                    HandleHotbarChange(client, packet);
-                    break;
-                case ClientPackets.HotbarSwap:
-                    HandleHotbarSwap(client, packet);
-                    break;
-                case ClientPackets.MapListUpdate:
-                    HandleMapListUpdate(client, packet);
-                    break;
-                case ClientPackets.CreateCharacter:
-                    HandleCreateCharacter(client, packet);
-                    break;
-                case ClientPackets.OpenAdminWindow:
-                    HandleOpenAdminWindow(client);
-                    break;
-                case ClientPackets.AdminAction:
-                    HandleAdminAction(client, packet);
-                    break;
-                case ClientPackets.NeedGrid:
-                    HandleNeedGrid(client, packet);
-                    break;
-                case ClientPackets.UnlinkMap:
-                    HandleUnlinkMap(client, packet);
-                    break;
-                case ClientPackets.LinkMap:
-                    HandleLinkMap(client, packet);
-                    break;
-                case ClientPackets.BuyItem:
-                    HandleBuyItem(client, packet);
-                    break;
-                case ClientPackets.SellItem:
-                    HandleSellItem(client, packet);
-                    break;
-                case ClientPackets.CloseShop:
-                    HandleCloseShop(client, packet);
-                    break;
-                case ClientPackets.CloseCraftingTable:
-                    HandleCloseCrafting(client, packet);
-                    break;
-                case ClientPackets.CraftItem:
-                    HandleCraftItem(client, packet);
-                    break;
-                case ClientPackets.CloseBank:
-                    HandleCloseBank(client, packet);
-                    break;
-                case ClientPackets.DepositItem:
-                    HandleDepositItem(client, packet);
-                    break;
-                case ClientPackets.WithdrawItem:
-                    HandleWithdrawItem(client, packet);
-                    break;
-                case ClientPackets.MoveBankItem:
-                    HandleMoveBankItem(client, packet);
-                    break;
-                case ClientPackets.NewGameObject:
-                    HandleCreateGameObject(client, packet);
-                    break;
-                case ClientPackets.OpenObjectEditor:
-                    HandleRequestOpenEditor(client, packet);
-                    break;
-                case ClientPackets.DeleteGameObject:
-                    HandleDeleteGameObject(client, packet);
-                    break;
-                case ClientPackets.SaveGameObject:
-                    HandleSaveGameObject(client, packet);
-                    break;
-                case ClientPackets.SaveTime:
-                    HandleSaveTime(client, packet);
-                    break;
-                case ClientPackets.PartyInvite:
-                    HandlePartyInvite(client, packet);
-                    break;
-                case ClientPackets.PartyAcceptInvite:
-                    HandleAcceptPartyInvite(client, packet);
-                    break;
-                case ClientPackets.PartyDeclineInvite:
-                    HandleDeclinePartyInvite(client, packet);
-                    break;
-                case ClientPackets.PartyKick:
-                    HandlePartyKick(client, packet);
-                    break;
-                case ClientPackets.PartyLeave:
-                    HandlePartyLeave(client, packet);
-                    break;
-                case ClientPackets.AcceptQuest:
-                    HandleAcceptQuest(client, packet);
-                    break;
-                case ClientPackets.DeclineQuest:
-                    HandleDeclineQuest(client, packet);
-                    break;
-                case ClientPackets.CancelQuest:
-                    HandleCancelQuest(client, packet);
-                    break;
-                case ClientPackets.TradeRequest:
-                    HandleTradeRequest(client, packet);
-                    break;
-                case ClientPackets.TradeAccept:
-                    HandleTradeAccept(client, packet);
-                    break;
-                case ClientPackets.TradeDecline:
-                    HandleTradeDecline(client, packet);
-                    break;
-                case ClientPackets.TradeOffer:
-                    HandleTradeOffer(client, packet);
-                    break;
-                case ClientPackets.TradeRevoke:
-                    HandleTradeRevoke(client, packet);
-                    break;
-                case ClientPackets.TradeRequestAccept:
-                    HandleTradeRequestAccept(client, packet);
-                    break;
-                case ClientPackets.TradeRequestDecline:
-                    HandleTradeRequestDecline(client, packet);
-                    break;
-                case ClientPackets.AddTilesets:
-                    HandleAddTilesets(client, packet);
-                    break;
-                case ClientPackets.EnterMap:
-                    HandleEnterMap(client, packet);
-                    break;
-                case ClientPackets.CloseBag:
-                    HandleCloseBag(client, packet);
-                    break;
-                case ClientPackets.StoreBagItem:
-                    HandleStoreBagItem(client, packet);
-                    break;
-                case ClientPackets.RetreiveBagItem:
-                    HandleRetreiveBagItem(client, packet);
-                    break;
-                case ClientPackets.MoveBagItem:
-                    HandleMoveBagItem(client, packet);
-                    break;
-                case ClientPackets.RequestFriends:
-                    HandleRequestFriends(client, packet);
-                    break;
-                case ClientPackets.AddFriend:
-                    HandleAddFriend(client, packet);
-                    break;
-                case ClientPackets.RemoveFriend:
-                    HandleRemoveFriend(client, packet);
-                    break;
-                case ClientPackets.FriendRequestAccept:
-                    HandleFriendRequest(client, packet);
-                    break;
-                case ClientPackets.FriendRequestDecline:
-                    HandleFriendRequestDecline(client, packet);
-                    break;
-                case ClientPackets.PlayGame:
-                    HandlePlayGame(client, packet);
-                    break;
-                case ClientPackets.DeleteChar:
-                    HandleDeleteChar(client, packet);
-                    break;
-                case ClientPackets.CreateNewChar:
-                    HandleCreateNewChar(client, packet);
-                    break;
-                case ClientPackets.RequestPassReset:
-                    HandleRequestPassReset(client, packet);
-                    break;
-                case ClientPackets.ResetPass:
-                    HandleResetPass(client, packet);
-                    break;
-                default:
-                    break;
-            }
+            if (packet is Packets.EditorPacket && !client.IsEditor) return false;
+
+            HandlePacket(client, client.Entity, (dynamic)packet);
+            return true;
         }
-
-        private static void HandlePing(Client client)
+        
+        #region "Client Packets"
+        //PingPacket
+        public void HandlePacket(Client client, Player player, PingPacket packet)
         {
             client.Pinged();
             PacketSender.SendPing(client, false);
         }
 
-        private static void HandleLogin(Client client, byte[] packet)
+        //LoginPacket
+        public void HandlePacket(Client client, Player player, LoginPacket packet)
         {
-            using (var bf = new ByteBuffer())
+            if (!LegacyDatabase.CheckPassword(packet.Username, packet.Password))
             {
-                bf.WriteBytes(packet);
-                var index = client.Id;
-                var username = bf.ReadString();
-                var password = bf.ReadString();
+                PacketSender.SendError(client, Strings.Account.badlogin);
+                return;
+            }
 
-                if (!LegacyDatabase.CheckPassword(username, password))
+            lock (Globals.ClientLock)
+            {
+                Globals.Clients.ForEach(user =>
                 {
-                    PacketSender.SendLoginError(client, Strings.Account.badlogin);
+                    if (user == client) return;
+                    if (user?.IsEditor ?? false) return;
+
+                    if (!string.Equals(user?.Name, packet.Username, StringComparison.InvariantCultureIgnoreCase)) return;
+                    user?.Disconnect();
+                });
+            }
+
+            if (!LegacyDatabase.LoadUser(client, packet.Username))
+            {
+                PacketSender.SendError(client, Strings.Account.loadfail);
+                return;
+            }
+
+            //Check for ban
+            var isBanned = Ban.CheckBan(client.User, client.GetIp());
+            if (isBanned != null)
+            {
+                PacketSender.SendError(client, isBanned);
+                return;
+            }
+
+            //Check that server is in admin only mode
+            if (Options.AdminOnly)
+            {
+                if (client.Power == UserRights.None)
+                {
+                    PacketSender.SendError(client, Strings.Account.adminonly);
                     return;
                 }
+            }
 
-                lock (Globals.ClientLock)
-                {
-                    Globals.Clients.ForEach(user =>
-                    {
-                        if (user == client) return;
-                        if (user?.IsEditor ?? false) return;
+            //Check Mute Status and Load into user property
+            Mute.FindMuteReason(client.User, client.GetIp());
 
-                        if (!string.Equals(user?.Name, username, StringComparison.InvariantCultureIgnoreCase)) return;
-                        user?.Disconnect();
-                    });
-                }
-
-                if (!LegacyDatabase.LoadUser(client, username))
-                {
-                    PacketSender.SendLoginError(client, Strings.Account.loadfail);
-                    return;
-                }
-
-                //Check for ban
-                var isBanned = Ban.CheckBan(client.User, client.GetIp());
-                if (isBanned != null)
-                {
-                    PacketSender.SendLoginError(client, isBanned);
-                    return;
-                }
-
-                //Check that server is in admin only mode
-                if (Options.AdminOnly)
-                {
-                    if (client.Power == UserRights.None)
-                    {
-                        PacketSender.SendLoginError(client, Strings.Account.adminonly);
-                        return;
-                    }
-                }
-
-                //Check Mute Status and Load into user property
-                Mute.FindMuteReason(client.User, client.GetIp());
-
-                PacketSender.SendServerConfig(client);
-                //Character selection if more than one.
-                if (Options.MaxCharacters > 1)
-                {
-                    PacketSender.SendPlayerCharacters(client);
-                }
-                else if (client.Characters?.Count > 0)
-                {
-                    client.LoadCharacter(client.Characters.First());
-                    client.Entity.SetOnline();
-                    PacketSender.SendJoinGame(client);
-                }
-                else
-                {
-                    PacketSender.SendGameObjects(client, GameObjectType.Class);
-                    PacketSender.SendCreateCharacter(client);
-                }
+            PacketSender.SendServerConfig(client);
+            //Character selection if more than one.
+            if (Options.MaxCharacters > 1)
+            {
+                PacketSender.SendPlayerCharacters(client);
+            }
+            else if (client.Characters?.Count > 0)
+            {
+                client.LoadCharacter(client.Characters.First());
+                client.Entity.SetOnline();
+                PacketSender.SendJoinGame(client);
+            }
+            else
+            {
+                PacketSender.SendGameObjects(client, GameObjectType.Class);
+                PacketSender.SendCreateCharacter(client);
             }
         }
 
-        private static void HandleLogout(Client client, byte[] packet)
+        //LogoutPacket
+        public void HandlePacket(Client client, Player player, LogoutPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var charSelect = bf.ReadBoolean();
             client?.Logout();
-            if (Options.MaxCharacters > 1 && charSelect)
+            if (Options.MaxCharacters > 1 && packet.ReturningToCharSelect)
             {
                 PacketSender.SendPlayerCharacters(client);
             }
         }
 
-        private static void HandleNeedMap(Client client, byte[] packet)
+        //NeedMapPacket
+        public void HandlePacket(Client client, Player player, NeedMapPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var mapId = bf.ReadGuid();
-            var map = MapInstance.Get(mapId);
+            var map = MapInstance.Get(packet.MapId);
             if (map != null)
             {
-                PacketSender.SendMap(client, mapId);
-                if (!client.IsEditor && client.Entity != null && mapId == client.Entity.MapId)
+                PacketSender.SendMap(client, packet.MapId);
+                if (player != null && packet.MapId == player.MapId)
                 {
-                    PacketSender.SendMapGrid(client, MapInstance.Get(mapId).MapGrid);
+                    PacketSender.SendMapGrid(client, map.MapGrid);
                 }
             }
         }
 
-        private static void HandlePlayerMove(Client client, byte[] packet)
+        //MovePacket
+        public void HandlePacket(Client client, Player player, MovePacket packet)
         {
-            var player = client.Entity;
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var mapId = bf.ReadGuid();
-            var x = bf.ReadInteger();
-            var y = bf.ReadInteger();
-            var dir = bf.ReadInteger();
-
             //check if player is stunned or snared, if so don't let them move.
             var statuses = client.Entity.Statuses.Values.ToArray();
             foreach (var status in statuses)
             {
                 if (status.Type == StatusTypes.Stun || status.Type == StatusTypes.Snare || status.Type == StatusTypes.Sleep)
                 {
-                    bf.Dispose();
                     return;
                 }
             }
 
-            if (!TileHelper.IsTileValid(mapId, x, y))
+            if (!TileHelper.IsTileValid(packet.MapId, packet.X, packet.Y))
             {
                 //POSSIBLE HACKING ATTEMPT!
                 PacketSender.SendEntityPositionTo(client, client.Entity);
                 return;
             }
-            bf.Dispose();
-            var canMove = player.CanMove(dir);
+            var canMove = player.CanMove(packet.Dir);
             if ((canMove == -1 || canMove == -4) && client.Entity.MoveRoute == null)
             {
-                player.Move(dir, client, false);
+                player.Move(packet.Dir, client, false);
                 if (player.MoveTimer > Globals.Timing.TimeMs)
                 {
                     //TODO: Make this based moreso on the players current ping instead of a flat value that can be abused
-                    player.MoveTimer = Globals.Timing.TimeMs +  (long)(player.GetMovementTime() * .75f);
+                    player.MoveTimer = Globals.Timing.TimeMs + (long)(player.GetMovementTime() * .75f);
                 }
             }
             else
@@ -455,22 +176,20 @@ namespace Intersect.Server.Networking
                 PacketSender.SendEntityPositionTo(client, client.Entity);
                 return;
             }
-            if (mapId != client.Entity.MapId || x != client.Entity.X || y != client.Entity.Y)
+            if (packet.MapId != client.Entity.MapId || packet.X != client.Entity.X || packet.Y != client.Entity.Y)
             {
                 PacketSender.SendEntityPositionTo(client, client.Entity);
             }
         }
 
-        private static void HandleLocalMsg(Client client, byte[] packet)
+        //ChatMsgPacket
+        public void HandlePacket(Client client, Player player, ChatMsgPacket packet)
         {
-            var player = client.Entity;
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var msg = bf.ReadString();
-            string channel = bf.ReadInteger().ToString();
+            var msg = packet.Message;
+            var channel = packet.Channel;
             if (client.User.IsMuted()) //Don't let the toungless toxic kids speak.
             {
-                PacketSender.SendPlayerMsg(client, client.User.GetMuteReason());
+                PacketSender.SendChatMsg(client, client.User.GetMuteReason());
                 return;
             }
 
@@ -531,7 +250,7 @@ namespace Intersect.Server.Networking
                     }
                     else
                     {
-                        PacketSender.SendPlayerMsg(client, Strings.Parties.notinparty, CustomColors.Error);
+                        PacketSender.SendChatMsg(client, Strings.Parties.notinparty, CustomColors.Error);
                     }
                 }
                 else if (cmd == Strings.Chat.admincmd || cmd == "/3")
@@ -555,7 +274,7 @@ namespace Intersect.Server.Networking
                     if (splitString.Length < 3)
                     {
                         return;
-                    } 
+                    }
                     msg = msg.Remove(0, splitString[1].Length + 1); //Chop off the player name parameter
                     if (msg.Trim().Length == 0) return;
 
@@ -565,10 +284,10 @@ namespace Intersect.Server.Networking
                         {
                             if (splitString[1].ToLower() == Globals.Clients[i].Entity.Name.ToLower())
                             {
-                                PacketSender.SendPlayerMsg(client,
+                                PacketSender.SendChatMsg(client,
                                     Strings.Chat.Private.ToString(client.Entity.Name, msg), CustomColors.PrivateChat,
                                     client.Entity.Name);
-                                PacketSender.SendPlayerMsg(Globals.Clients[i],
+                                PacketSender.SendChatMsg(Globals.Clients[i],
                                     Strings.Chat.Private.ToString(client.Entity.Name, msg), CustomColors.PrivateChat,
                                     client.Entity.Name);
                                 Globals.Clients[i].Entity.ChatTarget = client.Entity;
@@ -577,23 +296,23 @@ namespace Intersect.Server.Networking
                             }
                         }
                     }
-                    PacketSender.SendPlayerMsg(client, Strings.Player.offline, CustomColors.Error);
+                    PacketSender.SendChatMsg(client, Strings.Player.offline, CustomColors.Error);
                 }
                 else if (cmd == Strings.Chat.replycmd || cmd == Strings.Chat.rcmd)
                 {
                     if (msg.Trim().Length == 0) return;
                     if (client.Entity.ChatTarget != null)
                     {
-                        PacketSender.SendPlayerMsg(client, Strings.Chat.Private.ToString(client.Entity.Name, msg),
+                        PacketSender.SendChatMsg(client, Strings.Chat.Private.ToString(client.Entity.Name, msg),
                             CustomColors.PrivateChat, client.Entity.Name);
-                        PacketSender.SendPlayerMsg(client.Entity.ChatTarget.MyClient,
+                        PacketSender.SendChatMsg(client.Entity.ChatTarget.Client,
                             Strings.Chat.Private.ToString(client.Entity.Name, msg), CustomColors.PrivateChat,
                             client.Entity.Name);
                         client.Entity.ChatTarget.ChatTarget = client.Entity;
                     }
                     else
                     {
-                        PacketSender.SendPlayerMsg(client, Strings.Player.offline, CustomColors.Error);
+                        PacketSender.SendChatMsg(client, Strings.Player.offline, CustomColors.Error);
                     }
                 }
                 else
@@ -612,45 +331,944 @@ namespace Intersect.Server.Networking
                     }
 
                     //No common event /command, invalid command.
-                    PacketSender.SendPlayerMsg(client, Strings.Commands.invalid, CustomColors.Error);
+                    PacketSender.SendChatMsg(client, Strings.Commands.invalid, CustomColors.Error);
+                }
+            }
+        }
+
+        //BlockPacket
+        public void HandlePacket(Client client, Player player, BlockPacket packet)
+        {
+            //check if player is blinded or stunned
+            var statuses = client.Entity.Statuses.Values.ToArray();
+            foreach (var status in statuses)
+            {
+                if (status.Type == StatusTypes.Stun)
+                {
+                    PacketSender.SendChatMsg(client, Strings.Combat.stunblocking);
+                    return;
+                }
+                if (status.Type == StatusTypes.Sleep)
+                {
+                    PacketSender.SendChatMsg(client, Strings.Combat.sleepblocking);
+                    return;
                 }
             }
 
-            bf.Dispose();
+            client.Entity.TryBlock(packet.Blocking);
         }
 
-        private static void HandleEditorLogin(Client client, byte[] packet)
+        //AttackPacket
+        public void HandlePacket(Client client, Player player, AttackPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var usr = bf.ReadString();
-            var pass = bf.ReadString();
-            if (!LegacyDatabase.AccountExists(usr))
+            bool unequippedAttack = false;
+            var target = packet.Target;
+
+            if (client.Entity.CastTime >= Globals.Timing.TimeMs)
             {
-                PacketSender.SendLoginError(client, Strings.Account.badlogin);
+                PacketSender.SendChatMsg(client, Strings.Combat.channelingnoattack);
                 return;
             }
 
-            if (!LegacyDatabase.CheckPassword(usr, pass))
+            //check if player is blinded or stunned
+            var statuses = client.Entity.Statuses.Values.ToArray();
+            foreach (var status in statuses)
             {
-                PacketSender.SendLoginError(client, Strings.Account.badlogin);
+                if (status.Type == StatusTypes.Stun)
+                {
+                    PacketSender.SendChatMsg(client, Strings.Combat.stunattacking);
+                    return;
+                }
+                if (status.Type == StatusTypes.Sleep)
+                {
+                    PacketSender.SendChatMsg(client, Strings.Combat.sleepattacking);
+                    return;
+                }
+                if (status.Type == StatusTypes.Blind)
+                {
+                    PacketSender.SendActionMsg(client.Entity, Strings.Combat.miss,
+                        CustomColors.Missed);
+                    return;
+                }
+            }
+
+            var attackingTile = new TileHelper(client.Entity.MapId, client.Entity.X, client.Entity.Y);
+            switch (client.Entity.Dir)
+            {
+                case 0:
+                    attackingTile.Translate(0, -1);
+                    break;
+                case 1:
+                    attackingTile.Translate(0, 1);
+                    break;
+                case 2:
+                    attackingTile.Translate(-1, 0);
+                    break;
+                case 3:
+                    attackingTile.Translate(1, 0);
+                    break;
+            }
+
+            //Fire projectile instead if weapon has it
+            if (Options.WeaponIndex > -1)
+            {
+                if (client.Entity.Equipment[Options.WeaponIndex] >= 0 && ItemBase.Get(client.Entity.Items[client.Entity.Equipment[Options.WeaponIndex]].ItemId) != null)
+                {
+                    ItemBase weaponItem = ItemBase.Get(client.Entity.Items[client.Entity.Equipment[Options.WeaponIndex]].ItemId);
+
+                    //Check for animation
+                    var attackAnim = ItemBase.Get(client.Entity.Items[client.Entity.Equipment[Options.WeaponIndex]].ItemId).AttackAnimation;
+                    if (attackAnim != null && attackingTile.TryFix())
+                    {
+                        PacketSender.SendAnimationToProximity(attackAnim.Id, -1, Guid.Empty, attackingTile.GetMapId(), attackingTile.GetX(), attackingTile.GetY(), (sbyte)client.Entity.Dir);
+                    }
+
+                    var weaponInvSlot = client.Entity.Equipment[Options.WeaponIndex];
+                    var invItem = client.Entity.Items[weaponInvSlot];
+                    var weapon = ItemBase.Get(invItem?.ItemId ?? Guid.Empty);
+                    var projectileBase = ProjectileBase.Get(weapon?.ProjectileId ?? Guid.Empty);
+
+                    if (projectileBase != null)
+                    {
+                        if (projectileBase.AmmoItemId != Guid.Empty)
+                        {
+                            var itemSlot = client.Entity.FindItem(projectileBase.AmmoItemId, projectileBase.AmmoRequired);
+                            if (itemSlot == -1)
+                            {
+                                PacketSender.SendChatMsg(client,
+                                    Strings.Items.notenough.ToString(ItemBase.GetName(projectileBase.AmmoItemId)),
+                                    CustomColors.NoAmmo);
+                                return;
+                            }
+#if INTERSECT_DIAGNOSTIC
+                                PacketSender.SendPlayerMsg(client,
+                                    Strings.Get("items", "notenough", $"REGISTERED_AMMO ({projectileBase.Ammo}:'{ItemBase.GetName(projectileBase.Ammo)}':{projectileBase.AmmoRequired})"),
+                                    CustomColors.NoAmmo);
+#endif
+                            if (!client.Entity.TakeItemsById(projectileBase.AmmoItemId, projectileBase.AmmoRequired))
+                            {
+#if INTERSECT_DIAGNOSTIC
+                                    PacketSender.SendPlayerMsg(client,
+                                        Strings.Get("items", "notenough", "FAILED_TO_DEDUCT_AMMO"),
+                                        CustomColors.NoAmmo);
+                                    PacketSender.SendPlayerMsg(client,
+                                        Strings.Get("items", "notenough", $"FAILED_TO_DEDUCT_AMMO {client.Entity.CountItems(projectileBase.Ammo)}"),
+                                        CustomColors.NoAmmo);
+#endif
+                            }
+                        }
+#if INTERSECT_DIAGNOSTIC
+                            else
+                            {
+                                PacketSender.SendPlayerMsg(client,
+                                    Strings.Get("items", "notenough", "NO_REGISTERED_AMMO"),
+                                    CustomColors.NoAmmo);
+                            }
+#endif
+                        MapInstance.Get(client.Entity.MapId)
+                            .SpawnMapProjectile(client.Entity, projectileBase, null, weaponItem,
+                                client.Entity.MapId,
+                                client.Entity.X, client.Entity.Y, client.Entity.Z,
+                                client.Entity.Dir, null);
+                        return;
+                    }
+#if INTERSECT_DIAGNOSTIC
+                        else
+                        {
+                            PacketSender.SendPlayerMsg(client,
+                                Strings.Get("items", "notenough", "NONPROJECTILE"),
+                                CustomColors.NoAmmo);
+                            return;
+                        }
+#endif
+                }
+                else
+                {
+                    unequippedAttack = true;
+#if INTERSECT_DIAGNOSTIC
+                        PacketSender.SendPlayerMsg(client,
+                            Strings.Get("items", "notenough", "NO_WEAPON"),
+                            CustomColors.NoAmmo);
+#endif
+                }
+            }
+            else
+            {
+                unequippedAttack = true;
+            }
+
+            if (unequippedAttack)
+            {
+                var classBase = ClassBase.Get(client.Entity.ClassId);
+                if (classBase != null)
+                {
+                    //Check for animation
+                    if (classBase.AttackAnimation != null)
+                    {
+                        PacketSender.SendAnimationToProximity(classBase.AttackAnimationId, -1, Guid.Empty, attackingTile.GetMapId(), attackingTile.GetX(), attackingTile.GetY(), (sbyte)client.Entity.Dir);
+                    }
+                }
+            }
+
+            foreach (var map in client.Entity.Map.GetSurroundingMaps(true))
+            {
+                foreach (var entity in map.GetEntities())
+                {
+                    if (entity.Id == target)
+                    {
+                        client.Entity.TryAttack(entity);
+                        break;
+                    }
+                }
+            }
+        }
+
+        //DirectionPacket
+        public void HandlePacket(Client client, Player player, DirectionPacket packet)
+        {
+            client.Entity.ChangeDir(packet.Direction);
+        }
+
+        //EnterGamePacket
+        public void HandlePacket(Client client, Player player, EnterGamePacket packet)
+        {
+            
+        }
+
+        //ActivateEventPacket
+        public void HandlePacket(Client client, Player player, ActivateEventPacket packet)
+        {
+            ((Player)(client.Entity)).TryActivateEvent(packet.EventId);
+        }
+
+        //EventResponsePacket
+        public void HandlePacket(Client client, Player player, EventResponsePacket packet)
+        {
+            ((Player)(client.Entity)).RespondToEvent(packet.EventId, packet.Response);
+        }
+
+        //CreateAccountPacket
+        public void HandlePacket(Client client, Player player, CreateAccountPacket packet)
+        {
+            if (!FieldChecking.IsValidUsername(packet.Username, Strings.Regex.username))
+            {
+                PacketSender.SendError(client, Strings.Account.invalidname);
+                return;
+            }
+            if (!FieldChecking.IsWellformedEmailAddress(packet.Email, Strings.Regex.email))
+            {
+                PacketSender.SendError(client, Strings.Account.invalidemail);
+                return;
+            }
+            if (LegacyDatabase.AccountExists(packet.Username))
+            {
+                PacketSender.SendError(client, Strings.Account.exists);
+            }
+            else
+            {
+                if (LegacyDatabase.EmailInUse(packet.Email))
+                {
+                    PacketSender.SendError(client, Strings.Account.emailexists);
+                }
+                else
+                {
+                    LegacyDatabase.CreateAccount(client, packet.Username, packet.Password, packet.Email);
+                    PacketSender.SendServerConfig(client);
+
+                    //Check that server is in admin only mode
+                    if (Options.AdminOnly)
+                    {
+                        if (client.Power == UserRights.None)
+                        {
+                            PacketSender.SendError(client, Strings.Account.adminonly);
+                            return;
+                        }
+                    }
+
+                    //Character selection if more than one.
+                    if (Options.MaxCharacters > 1)
+                    {
+                        PacketSender.SendPlayerCharacters(client);
+                    }
+                    else
+                    {
+                        PacketSender.SendGameObjects(client, GameObjectType.Class);
+                        PacketSender.SendCreateCharacter(client);
+                    }
+                }
+            }
+        }
+
+        //CreateCharacterPacket
+        public void HandlePacket(Client client, Player player, CreateCharacterPacket packet)
+        {
+            if (!FieldChecking.IsValidUsername(packet.Name, Strings.Regex.username))
+            {
+                PacketSender.SendError(client, Strings.Account.invalidname);
+                return;
+            }
+            var index = client.Id;
+            var classBase = ClassBase.Get(packet.ClassId);
+            if (classBase == null || classBase.Locked)
+            {
+                PacketSender.SendError(client, Strings.Account.invalidclass);
+                return;
+            }
+            if (LegacyDatabase.CharacterNameInUse(packet.Name))
+            {
+                PacketSender.SendError(client, Strings.Account.characterexists);
+            }
+            else
+            {
+                var newChar = new Player();
+                newChar.Id = Guid.NewGuid();
+                client.Characters.Add(newChar);
+                newChar.ValidateLists();
+                for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+                {
+                    newChar.Equipment[i] = -1;
+                }
+
+                newChar.Name = packet.Name;
+                newChar.ClassId = packet.ClassId;
+                newChar.Level = 1;
+
+                if (classBase.Sprites.Count > 0)
+                {
+                    newChar.Sprite = classBase.Sprites[packet.Sprite].Sprite;
+                    newChar.Face = classBase.Sprites[packet.Sprite].Face;
+                    newChar.Gender = classBase.Sprites[packet.Sprite].Gender;
+                }
+
+                client.LoadCharacter(newChar);
+
+                newChar.SetVital(Vitals.Health, classBase.BaseVital[(int)Vitals.Health]);
+                newChar.SetVital(Vitals.Mana, classBase.BaseVital[(int)Vitals.Mana]);
+
+                for (int i = 0; i < (int)Stats.StatCount; i++)
+                {
+                    newChar.Stat[i].Stat = 0;
+                }
+                newChar.StatPoints = classBase.BasePoints;
+
+                PacketSender.SendJoinGame(client);
+                newChar.SetOnline();
+
+                for (int i = 0; i < classBase.Spells.Count; i++)
+                {
+                    if (classBase.Spells[i].Level <= 1)
+                    {
+                        Spell tempSpell = new Spell(classBase.Spells[i].Id);
+                        newChar.TryTeachSpell(tempSpell, false);
+                    }
+                }
+
+                foreach (var item in classBase.Items)
+                {
+                    if (ItemBase.Get(item.Id) != null)
+                    {
+                        var tempItem = new Item(item.Id, item.Quantity);
+                        newChar.TryGiveItem(tempItem, false);
+                    }
+                }
+
+                LegacyDatabase.SavePlayerDatabaseAsync();
+            }
+        }
+
+        //PickupItemPacket
+        public void HandlePacket(Client client, Player player, PickupItemPacket packet)
+        {
+            if (packet.MapItemIndex < MapInstance.Get(client.Entity.MapId).MapItems.Count && MapInstance.Get(client.Entity.MapId).MapItems[packet.MapItemIndex] != null)
+            {
+                if (MapInstance.Get(client.Entity.MapId).MapItems[packet.MapItemIndex].X == client.Entity.X && MapInstance.Get(client.Entity.MapId).MapItems[packet.MapItemIndex].Y == client.Entity.Y)
+                {
+                    if (client.Entity.TryGiveItem(MapInstance.Get(client.Entity.MapId).MapItems[packet.MapItemIndex]))
+                    {
+                        //Remove Item From Map
+                        MapInstance.Get(client.Entity.MapId).RemoveItem(packet.MapItemIndex);
+                    }
+                }
+            }
+        }
+
+        //SwapInvItemsPacket
+        public void HandlePacket(Client client, Player player, SwapInvItemsPacket packet)
+        {
+            player.SwapItems(packet.Slot1, packet.Slot2);
+        }
+
+        //DropItemPacket
+        public void HandlePacket(Client client, Player player, DropItemPacket packet)
+        {
+            player.DropItems(packet.Slot, packet.Quantity);
+        }
+
+        //UseItemPacket
+        public void HandlePacket(Client client, Player player, UseItemPacket packet)
+        {
+            player.UseItem(packet.Slot);
+        }
+
+        //SwapSpellsPacket
+        public void HandlePacket(Client client, Player player, SwapSpellsPacket packet)
+        {
+            player.SwapSpells(packet.Slot1, packet.Slot2);
+        }
+
+        //ForgetSpellPacket
+        public void HandlePacket(Client client, Player player, ForgetSpellPacket packet)
+        {
+            player.ForgetSpell(packet.Slot);
+        }
+
+        //UseSpellPacket
+        public void HandlePacket(Client client, Player player, UseSpellPacket packet)
+        {
+            var casted = false;
+
+            if (packet.TargetId != Guid.Empty)
+            {
+                foreach (var map in player.Map.GetSurroundingMaps(true))
+                {
+                    foreach (var en in map.GetEntities())
+                    {
+                        if (en.Id == packet.TargetId)
+                        {
+                            player.UseSpell(packet.Slot, en);
+                            casted = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (!casted) player.UseSpell(packet.Slot, null);
+        }
+
+        //UnequipItemPacket
+        public void HandlePacket(Client client, Player player, UnequipItemPacket packet)
+        {
+            player.UnequipItem(packet.Slot);
+        }
+
+        //UpgradeStatPacket
+        public void HandlePacket(Client client, Player player, UpgradeStatPacket packet)
+        {
+            player.UpgradeStat(packet.Stat);
+        }
+
+        //HotbarUpdatePacket
+        public void HandlePacket(Client client, Player player, HotbarUpdatePacket packet)
+        {
+            player.HotbarChange(packet.HotbarSlot, packet.Type, packet.Index);
+        }
+
+        //HotbarSwapPacket
+        public void HandlePacket(Client client, Player player, HotbarSwapPacket packet)
+        {
+            player.HotbarSwap(packet.Slot1, packet.Slot2);
+        }
+
+        //OpenAdminWindowPacket
+        public void HandlePacket(Client client, Player player, OpenAdminWindowPacket packet)
+        {
+            if (client.Power.IsModerator)
+            {
+                PacketSender.SendMapList(client);
+                PacketSender.SendOpenAdminWindow(client);
+            }
+        }
+
+        //AdminActionPacket
+        public void HandlePacket(Client client, Player player, AdminActionPacket packet)
+        {
+            if (!client.Power.Editor && !client.Power.IsModerator)
+            {
+                return;
+            }
+            Classes.Admin.Actions.ActionProcessing.ProcessAction(client, player, (dynamic) packet.Action);
+        }
+
+        //BuyItemPacket
+        public void HandlePacket(Client client, Player player, BuyItemPacket packet)
+        {
+            player.BuyItem(packet.Slot, packet.Quantity);
+        }
+
+        //SellItemPacket
+        public void HandlePacket(Client client, Player player, SellItemPacket packet)
+        {
+            player.SellItem(packet.Slot, packet.Quanity);
+        }
+
+        //CloseShopPacket
+        public void HandlePacket(Client client, Player player, CloseShopPacket packet)
+        {
+            player.CloseShop();
+        }
+
+        //CloseCraftingPacket
+        public void HandlePacket(Client client, Player player, CloseCraftingPacket packet)
+        {
+            player.CloseCraftingTable();
+        }
+
+        //CraftItemPacket
+        public void HandlePacket(Client client, Player player, CraftItemPacket packet)
+        {
+            player.CraftId = packet.CraftId;
+            player.CraftTimer = Globals.Timing.TimeMs;
+        }
+
+        //CloseBankPacket
+        public void HandlePacket(Client client, Player player, CloseBankPacket packet)
+        {
+            player.CloseBank();
+        }
+
+        //DepositItemPacket
+        public void HandlePacket(Client client, Player player, DepositItemPacket packet)
+        {
+            player.DepositItem(packet.Slot, packet.Quantity);
+        }
+
+        //WithdrawItemPacket
+        public void HandlePacket(Client client, Player player, WithdrawItemPacket packet)
+        {
+            player.WithdrawItem(packet.Slot, packet.Quantity);
+        }
+
+        //MoveBankItemPacket
+        public void HandlePacket(Client client, Player player, SwapBankItemsPacket packet)
+        {
+            player.SwapBankItems(packet.Slot1, packet.Slot2);
+        }
+
+        //PartyInvitePacket
+        public void HandlePacket(Client client, Player player, PartyInvitePacket packet)
+        {
+            var target = Player.FindOnline(packet.TargetId);
+            if (target == null) return;
+            if (target.Id != player.Id)
+            {
+                target.InviteToParty(player);
+            }
+            else
+            {
+                PacketSender.SendChatMsg(client, Strings.Player.notarget, CustomColors.NoTarget);
+            }
+        }
+
+        //PartyInviteResponsePacket
+        public void HandlePacket(Client client, Player player, PartyInviteResponsePacket packet)
+        {
+            var leader = packet.PartyId;
+            if (player.PartyRequester != null && player.PartyRequester.Id == leader)
+            {
+                if (packet.AcceptingInvite)
+                {
+                    if (player.PartyRequester.IsValidPlayer)
+                    {
+                        player.PartyRequester.AddParty(player);
+                    }
+                }
+                else
+                {
+                    PacketSender.SendChatMsg(client.Entity.PartyRequester.Client, Strings.Parties.declined.ToString(client.Entity.Name), CustomColors.Declined);
+                    if (player.PartyRequests.ContainsKey(player.PartyRequester))
+                    {
+                        player.PartyRequests[player.PartyRequester] = Globals.Timing.TimeMs + Player.REQUEST_DECLINE_TIMEOUT;
+                    }
+                    else
+                    {
+                        player.PartyRequests.Add(player.PartyRequester, Globals.Timing.TimeMs + Player.REQUEST_DECLINE_TIMEOUT);
+                    }
+                }
+                player.PartyRequester = null;
+            }
+        }
+
+        //PartyKickPacket
+        public void HandlePacket(Client client, Player player, PartyKickPacket packet)
+        {
+            player.KickParty(packet.TargetId);
+        }
+
+        //PartyLeavePacket
+        public void HandlePacket(Client client, Player player, PartyLeavePacket packet)
+        {
+            player.LeaveParty();
+        }
+
+        //QuestResponsePacket
+        public void HandlePacket(Client client, Player player, QuestResponsePacket packet)
+        {
+            if (packet.AcceptingQuest)
+            {
+                player.AcceptQuest(packet.QuestId);
+            }
+            else
+            {
+                player.DeclineQuest(packet.QuestId);
+            }
+        }
+
+        //AbandonQuestPacket
+        public void HandlePacket(Client client, Player player, AbandonQuestPacket packet)
+        {
+            player.CancelQuest(packet.QuestId);
+        }
+
+        //TradeRequestPacket
+        public void HandlePacket(Client client, Player player, TradeRequestPacket packet)
+        {
+            var target = Player.FindOnline(packet.TargetId);
+            if (target == null) return;
+            if (target.Id != player.Id)
+            {
+                target.InviteToTrade(player);
+            }
+        }
+
+        //TradeRequestResponsePacket
+        public void HandlePacket(Client client, Player player, TradeRequestResponsePacket packet)
+        {
+            var target = packet.TradeId;
+            if (player.Trading.Requester != null && player.Trading.Requester.Id == target)
+            {
+                if (player.Trading.Requester.IsValidPlayer)
+                {
+                    if (packet.AcceptingInvite)
+                    {
+                        if (player.Trading.Requester.Trading.Counterparty == null) //They could have accepted another trade since.
+                        {
+                            player.Trading.Requester.StartTrade(player);
+                        }
+                        else
+                        {
+                            PacketSender.SendChatMsg(client, Strings.Trading.busy.ToString(player.Trading.Requester.Name), Color.Red);
+                        }
+                    }
+                    else
+                    {
+                        PacketSender.SendChatMsg(player.Trading.Requester.Client, Strings.Trading.declined.ToString(player.Name), CustomColors.Declined);
+                        if (player.Trading.Requests.ContainsKey(player.Trading.Requester))
+                        {
+                            player.Trading.Requests[player.Trading.Requester] = Globals.Timing.TimeMs +  Player.REQUEST_DECLINE_TIMEOUT;
+                        }
+                        else
+                        {
+                            player.Trading.Requests.Add(player.Trading.Requester, Globals.Timing.TimeMs + Player.REQUEST_DECLINE_TIMEOUT);
+                        }
+                    }
+                }
+            }
+            player.Trading.Requester = null;
+        }
+
+        //OfferTradeItemPacket
+        public void HandlePacket(Client client, Player player, OfferTradeItemPacket packet)
+        {
+            player.OfferItem(packet.Slot, packet.Quanity);
+        }
+
+        //RevokeTradeItemPacket
+        public void HandlePacket(Client client, Player player, RevokeTradeItemPacket packet)
+        {
+            player.RevokeItem(packet.Slot, packet.Quanity);
+        }
+
+        //AcceptTradePacket
+        public void HandlePacket(Client client, Player player, AcceptTradePacket packet)
+        {
+            player.Trading.Accepted = true;
+            if (player.Trading.Counterparty.Trading.Accepted)
+            {
+                Item[] t = new Item[Options.MaxInvItems];
+
+                //Swap the trade boxes over, then return the trade boxes to their new owners!
+                t = player.Trading.Offer;
+                player.Trading.Offer = player.Trading.Counterparty.Trading.Offer;
+                player.Trading.Counterparty.Trading.Offer = t;
+                player.Trading.Counterparty.ReturnTradeItems();
+                player.ReturnTradeItems();
+
+                PacketSender.SendChatMsg(client, Strings.Trading.accepted, CustomColors.Accepted);
+                PacketSender.SendChatMsg(player.Trading.Counterparty.Client, Strings.Trading.accepted, CustomColors.Accepted);
+                PacketSender.SendTradeClose(player.Trading.Counterparty.Client);
+                PacketSender.SendTradeClose(client);
+                player.Trading.Counterparty.Trading.Counterparty = null;
+                player.Trading.Counterparty = null;
+            }
+        }
+
+        //DeclineTradePacket
+        public void HandlePacket(Client client, Player player, DeclineTradePacket packet)
+        {
+            player.CancelTrade();
+        }
+
+        //CloseBagPacket
+        public void HandlePacket(Client client, Player player,  CloseBagPacket packet)
+        {
+            player.CloseBag();
+        }
+
+        //StoreBagItemPacket
+        public void HandlePacket(Client client, Player player, StoreBagItemPacket packet)
+        {
+            player.StoreBagItem(packet.Slot, packet.Quanity);
+        }
+
+        //RetrieveBagItemPacket
+        public void HandlePacket(Client client, Player player, RetrieveBagItemPacket packet)
+        {
+            player.RetrieveBagItem(packet.Slot, packet.Quanity);
+        }
+
+        //SwapBagItemPacket
+        public void HandlePacket(Client client, Player player, SwapBagItemsPacket packet)
+        {
+            player.SwapBagItems(packet.Slot1,packet.Slot2);
+        }
+
+        //RequestFriendsPacket
+        public void HandlePacket(Client client, Player player, RequestFriendsPacket packet)
+        {
+            PacketSender.SendFriends(client);
+        }
+
+        //UpdateFriendsPacket
+        public void HandlePacket(Client client, Player player, UpdateFriendsPacket packet)
+        {
+            if (packet.Adding)
+            {
+                //Don't add yourself!
+                if (packet.Name.ToLower() == client.Entity.Name.ToLower())
+                {
+                    return;
+                }
+
+                var character = LegacyDatabase.GetPlayer(packet.Name);
+                if (character != null)
+                {
+                    if (!client.Entity.HasFriend(character))
+                    {
+                        var target = Player.FindOnline(packet.Name);
+                        if (target != null)
+                        {
+                            target.FriendRequest(client.Entity);
+                        }
+                        else
+                        {
+                            PacketSender.SendChatMsg(client, Strings.Player.offline, CustomColors.Error);
+                        }
+                    }
+                    else
+                    {
+                        PacketSender.SendChatMsg(client, Strings.Friends.alreadyfriends.ToString(packet.Name), CustomColors.Info);
+                    }
+                }
+            }
+            else
+            {
+                var charId = LegacyDatabase.GetCharacterId(packet.Name);
+
+                if (charId != null)
+                {
+                    var character = LegacyDatabase.GetPlayer((Guid)charId);
+                    if (character != null && client.Entity.HasFriend(character))
+                    {
+                        player.RemoveFriend(character);
+                        character.RemoveFriend(player);
+                        PacketSender.SendChatMsg(client, Strings.Friends.remove, CustomColors.Declined);
+                        PacketSender.SendFriends(client);
+                        if (character.Client != null) PacketSender.SendFriends(character.Client);
+                    }
+                }
+            }
+        }
+
+        //FriendRequestResponsePacket
+        public void HandlePacket(Client client, Player player, FriendRequestResponsePacket packet)
+        {
+            var target = Player.FindOnline(packet.FriendId);
+            if (target == null || target.Id == player.Id) return;
+            if (packet.AcceptingRequest)
+            {
+                if (!player.HasFriend(target)) // Incase one user deleted friend then re-requested
+                {
+                    player.AddFriend(target);
+                    PacketSender.SendChatMsg(client, Strings.Friends.notification.ToString(target.Name), CustomColors.Accepted);
+                    PacketSender.SendFriends(client);
+                }
+
+                if (!target.HasFriend(player)) // Incase one user deleted friend then re-requested
+                {
+                    target.AddFriend(player);
+                    PacketSender.SendChatMsg(target.Client, Strings.Friends.accept.ToString(player.Name), CustomColors.Accepted);
+                    PacketSender.SendFriends(target.Client);
+                }
+            }
+            else
+            {
+                if (player.FriendRequester == target)
+                {
+                    if (player.FriendRequester.IsValidPlayer)
+                    {
+                        if (player.FriendRequests.ContainsKey(player.FriendRequester))
+                        {
+                            player.FriendRequests[player.FriendRequester] = Globals.Timing.TimeMs + Player.REQUEST_DECLINE_TIMEOUT;
+                        }
+                        else
+                        {
+                            player.FriendRequests.Add(client.Entity.FriendRequester, Globals.Timing.TimeMs + Player.REQUEST_DECLINE_TIMEOUT);
+                        }
+                    }
+                    player.FriendRequester = null;
+                }
+            }
+        }
+
+        //SelectCharacterPacket
+        public void HandlePacket(Client client, Player player, SelectCharacterPacket packet)
+        {
+            var sw = new Stopwatch();
+            sw.Start();
+            var character = LegacyDatabase.GetUserCharacter(client.User, packet.CharacterId);
+            if (character != null)
+            {
+                client.LoadCharacter(character);
+                sw.Stop();
+                Console.WriteLine("Took " + sw.ElapsedMilliseconds + "ms to load character from db!");
+                try
+                {
+                    client.Entity?.SetOnline();
+                    PacketSender.SendJoinGame(client);
+                }
+                catch (Exception exception)
+                {
+                    Log.Warn(exception);
+                    PacketSender.SendError(client, Strings.Account.loadfail);
+                    client.Logout();
+                }
+            }
+        }
+
+        //DeleteCharacterPacket
+        public void HandlePacket(Client client, Player player, DeleteCharacterPacket packet)
+        {
+            var character = LegacyDatabase.GetUserCharacter(client.User, packet.CharacterId);
+            if (character != null)
+            {
+                foreach (var chr in client.Characters.ToArray())
+                {
+                    if (chr.Id == packet.CharacterId)
+                    {
+                        client.Characters.Remove(chr);
+                        LegacyDatabase.DeleteCharacter(chr);
+                    }
+                }
+            }
+            PacketSender.SendError(client, Strings.Account.deletechar, Strings.Account.deleted);
+            PacketSender.SendPlayerCharacters(client);
+        }
+
+        //NewCharacterPacket
+        public void HandlePacket(Client client, Player player, NewCharacterPacket packet)
+        {
+            if (client?.Characters?.Count < Options.MaxCharacters)
+            {
+                PacketSender.SendGameObjects(client, GameObjectType.Class);
+                PacketSender.SendCreateCharacter(client);
+            }
+            else
+            {
+                PacketSender.SendError(client, Strings.Account.maxchars);
+            }
+        }
+
+        //RequestPasswordResetPacket
+        public void HandlePacket(Client client, Player player, RequestPasswordResetPacket packet)
+        {
+            //Find account with that name or email
+            var userName = LegacyDatabase.UsernameFromEmail(packet.NameOrEmail);
+            if (string.IsNullOrEmpty(userName)) userName = packet.NameOrEmail;
+            if (LegacyDatabase.AccountExists(userName))
+            {
+                //Send reset email
+                var user = LegacyDatabase.GetUser(userName);
+                var email = new PasswordResetEmail(user);
+                email.Send();
+            }
+        }
+
+        //ResetPasswordPacket
+        public void HandlePacket(Client client, Player player, ResetPasswordPacket packet)
+        {
+            //Find account with that name or email
+            var success = false;
+            var userName = LegacyDatabase.UsernameFromEmail(packet.NameOrEmail);
+            if (string.IsNullOrEmpty(userName)) userName = packet.NameOrEmail;
+            if (LegacyDatabase.AccountExists(userName))
+            {
+                //Reset Password
+                var user = LegacyDatabase.GetUser(userName);
+                if (user.PasswordResetCode.ToLower().Trim() == packet.ResetCode.ToLower().Trim() && user.PasswordResetTime > DateTime.UtcNow)
+                {
+                    user.PasswordResetCode = "";
+                    user.PasswordResetTime = DateTime.MinValue;
+                    LegacyDatabase.ResetPass(user, packet.NewPassword);
+                    success = true;
+                }
+            }
+
+            PacketSender.SendPasswordResetResult(client, success);
+        }
+        #endregion
+
+        #region "Editor Packets"
+
+        //PingPacket
+        public void HandlePacket(Client client, Player player, Packets.Editor.PingPacket packet)
+        {
+
+        }
+
+        //LoginPacket
+        public void HandlePacket(Client client, Player player, Packets.Editor.LoginPacket packet)
+        {
+            if (!LegacyDatabase.AccountExists(packet.Username))
+            {
+                PacketSender.SendError(client, Strings.Account.badlogin);
                 return;
             }
 
-            if (!LegacyDatabase.CheckAccess(usr).Editor)
+            if (!LegacyDatabase.CheckPassword(packet.Username, packet.Password))
             {
-                PacketSender.SendLoginError(client, Strings.Account.badaccess);
+                PacketSender.SendError(client, Strings.Account.badlogin);
+                return;
+            }
+
+            if (!LegacyDatabase.CheckAccess(packet.Username).Editor)
+            {
+                PacketSender.SendError(client, Strings.Account.badaccess);
                 return;
             }
 
             client.IsEditor = true;
-            LegacyDatabase.LoadUser(client, usr);
+            var sw = new Stopwatch();
+            sw.Start();
+            LegacyDatabase.LoadUser(client, packet.Username);
+            sw.Stop();
+            Console.WriteLine("Took " + sw.ElapsedMilliseconds + "ms to load player from db!");
             lock (Globals.ClientLock)
             {
                 var clients = Globals.Clients.ToArray();
                 foreach (var user in clients)
                 {
-                    if (user.Name != null && user.Name.ToLower() == usr.ToLower() && user != client && user.IsEditor)
+                    if (user.Name != null && user.Name.ToLower() == packet.Username.ToLower() && user != client && user.IsEditor)
                     {
                         user.Disconnect();
                     }
@@ -659,18 +1277,15 @@ namespace Intersect.Server.Networking
             PacketSender.SendServerConfig(client);
             PacketSender.SendJoinGame(client);
             PacketSender.SendTimeBaseTo(client);
-            PacketSender.SendGameData(client);
             PacketSender.SendMapList(client);
         }
 
-        private static void HandleMap(Client client, byte[] packet)
+        //MapPacket
+        public void HandlePacket(Client client, Player player, Packets.Editor.MapUpdatePacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var mapId = bf.ReadGuid();
-            var map = MapInstance.Get(mapId);
+            var map = MapInstance.Get(packet.MapId);
             if (map == null) return;
-            map.Load(bf.ReadString(), MapInstance.Get(mapId).Revision + 1);
+            map.Load(packet.JsonData, MapInstance.Get(packet.MapId).Revision + 1);
 
             //Event Fixing
             var removedEvents = new List<Guid>();
@@ -696,12 +1311,10 @@ namespace Intersect.Server.Networking
                 if (!map.EventIds.Contains(evt.Key)) map.EventIds.Add(evt.Key);
             }
             map.LocalEvents.Clear();
+            
+            if (packet.TileData != null && map.TileData != null) map.TileData = packet.TileData;
+            map.AttributeData = packet.AttributeData;
 
-            var tileDataLength = bf.ReadInteger();
-            var tileData = bf.ReadBytes(tileDataLength);
-            if (map.TileData != null) map.TileData = tileData;
-            var attributeLength = bf.ReadInteger();
-            map.AttributeData = bf.ReadBytes(attributeLength);
             LegacyDatabase.SaveGameDatabase();
             map.Initialize();
             var players = new List<Player>();
@@ -709,26 +1322,23 @@ namespace Intersect.Server.Networking
             {
                 players.AddRange(surrMap.GetPlayersOnMap().ToArray());
             }
-            foreach (var player in players)
+            foreach (var plyr in players)
             {
-                player.Warp(player.MapId, player.X, player.Y, player.Dir, false, player.Z, true);
-                PacketSender.SendMap(player.MyClient, mapId);
+                plyr.Warp(plyr.MapId, plyr.X, plyr.Y, plyr.Dir, false, plyr.Z, true);
+                PacketSender.SendMap(player.Client, packet.MapId);
             }
-            PacketSender.SendMap(client, mapId, true); //Sends map to everyone/everything in proximity
+            PacketSender.SendMap(client, packet.MapId, true); //Sends map to everyone/everything in proximity
             PacketSender.SendMapListToAll();
-            bf.Dispose();
         }
 
-        private static void HandleCreateMap(Client client, byte[] packet)
+        //CreateMapPacket
+        public void HandlePacket(Client client, Player player, Packets.Editor.CreateMapPacket packet)
         {
-            var bf = new ByteBuffer();
             var newMap = Guid.Empty;
             var tmpMap = new MapInstance();
-            bf.WriteBytes(packet);
-            var location = (int)bf.ReadInteger();
-            if (location == -1)
+            if (!packet.AttachedToMap)
             {
-                var destType = bf.ReadInteger();
+                var destType = (int)packet.MapListParentType;
                 newMap = LegacyDatabase.AddGameObject(GameObjectType.Map).Id;
                 tmpMap = MapInstance.Get(newMap);
                 LegacyDatabase.GenerateMapGrids();
@@ -770,12 +1380,11 @@ namespace Intersect.Server.Networking
             }
             else
             {
-                var relativeMap = bf.ReadGuid();
-                switch (location)
+                var relativeMap = packet.MapId;
+                switch (packet.AttachDir)
                 {
                     case 0:
-                        if (MapInstance.Get(MapInstance.Get(relativeMap).Up) ==
-                            null)
+                        if (MapInstance.Get(MapInstance.Get(relativeMap).Up) == null)
                         {
                             newMap = LegacyDatabase.AddGameObject(GameObjectType.Map).Id;
                             tmpMap = MapInstance.Get(newMap);
@@ -787,8 +1396,7 @@ namespace Intersect.Server.Networking
                         break;
 
                     case 1:
-                        if (MapInstance.Get(MapInstance.Get(relativeMap)
-                                .Down) == null)
+                        if (MapInstance.Get(MapInstance.Get(relativeMap).Down) == null)
                         {
                             newMap = LegacyDatabase.AddGameObject(GameObjectType.Map).Id;
                             tmpMap = MapInstance.Get(newMap);
@@ -800,8 +1408,7 @@ namespace Intersect.Server.Networking
                         break;
 
                     case 2:
-                        if (MapInstance.Get(MapInstance.Get(relativeMap)
-                                .Left) == null)
+                        if (MapInstance.Get(MapInstance.Get(relativeMap).Left) == null)
                         {
                             newMap = LegacyDatabase.AddGameObject(GameObjectType.Map).Id;
                             tmpMap = MapInstance.Get(newMap);
@@ -813,8 +1420,7 @@ namespace Intersect.Server.Networking
                         break;
 
                     case 3:
-                        if (MapInstance.Get(MapInstance.Get(relativeMap)
-                                .Right) == null)
+                        if (MapInstance.Get(MapInstance.Get(relativeMap).Right) == null)
                         {
                             newMap = LegacyDatabase.AddGameObject(GameObjectType.Map).Id;
                             tmpMap = MapInstance.Get(newMap);
@@ -832,8 +1438,7 @@ namespace Intersect.Server.Networking
                     {
                         if (tmpMap.MapGridY + 1 < LegacyDatabase.MapGrids[tmpMap.MapGrid].Height)
                         {
-                            tmpMap.Down = LegacyDatabase.MapGrids[tmpMap.MapGrid]
-                                .MyGrid[tmpMap.MapGridX, tmpMap.MapGridY + 1];
+                            tmpMap.Down = LegacyDatabase.MapGrids[tmpMap.MapGrid].MyGrid[tmpMap.MapGridX, tmpMap.MapGridY + 1];
                             if (tmpMap.Down != Guid.Empty)
                             {
                                 MapInstance.Get(tmpMap.Down).Up = newMap;
@@ -853,8 +1458,7 @@ namespace Intersect.Server.Networking
                     {
                         if (tmpMap.MapGridX - 1 >= 0)
                         {
-                            tmpMap.Left = LegacyDatabase.MapGrids[tmpMap.MapGrid]
-                                .MyGrid[tmpMap.MapGridX - 1, tmpMap.MapGridY];
+                            tmpMap.Left = LegacyDatabase.MapGrids[tmpMap.MapGrid].MyGrid[tmpMap.MapGridX - 1, tmpMap.MapGridY];
                             if (tmpMap.Left != Guid.Empty)
                             {
                                 MapInstance.Get(tmpMap.Left).Right = newMap;
@@ -863,8 +1467,7 @@ namespace Intersect.Server.Networking
 
                         if (tmpMap.MapGridX + 1 < LegacyDatabase.MapGrids[tmpMap.MapGrid].Width)
                         {
-                            tmpMap.Right =
-                                LegacyDatabase.MapGrids[tmpMap.MapGrid].MyGrid[tmpMap.MapGridX + 1, tmpMap.MapGridY];
+                            tmpMap.Right = LegacyDatabase.MapGrids[tmpMap.MapGrid].MyGrid[tmpMap.MapGridX + 1, tmpMap.MapGridY];
                             if (tmpMap.Right != Guid.Empty)
                             {
                                 MapInstance.Get(tmpMap.Right).Left = newMap;
@@ -890,568 +1493,26 @@ namespace Intersect.Server.Networking
                     PacketSender.SendMapListToAll();
                 }
             }
-            bf.Dispose();
         }
 
-        private static void HandleTryBlock(Client client, byte[] packet)
+        //MapListUpdatePacket
+        public void HandlePacket(Client client, Player player, Packets.Editor.MapListUpdatePacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-
-            //check if player is blinded or stunned
-            var statuses = client.Entity.Statuses.Values.ToArray();
-            foreach (var status in statuses)
-            {
-                if (status.Type == StatusTypes.Stun)
-                {
-                    PacketSender.SendPlayerMsg(client, Strings.Combat.stunblocking);
-                    bf.Dispose();
-                    return;
-                }
-                if (status.Type == StatusTypes.Sleep)
-                {
-                    PacketSender.SendPlayerMsg(client, Strings.Combat.sleepblocking);
-                    bf.Dispose();
-                    return;
-                }
-            }
-
-            client.Entity.TryBlock(bf.ReadInteger());
-
-            bf.Dispose();
-        }
-
-        private static void HandleTryAttack(Client client, byte[] packet)
-        {
-            bool unequippedAttack = false;
-
-            using (var buffer = new ByteBuffer())
-            {
-                buffer.WriteBytes(packet);
-                var target = buffer.ReadGuid();
-
-                if (client.Entity.CastTime >= Globals.Timing.TimeMs)
-                {
-                    PacketSender.SendPlayerMsg(client, Strings.Combat.channelingnoattack);
-                    return;
-                }
-
-                //check if player is blinded or stunned
-                var statuses = client.Entity.Statuses.Values.ToArray();
-                foreach (var status in statuses)
-                {
-                    if (status.Type == StatusTypes.Stun)
-                    {
-                        PacketSender.SendPlayerMsg(client, Strings.Combat.stunattacking);
-                        return;
-                    }
-                    if (status.Type == StatusTypes.Sleep)
-                    {
-                        PacketSender.SendPlayerMsg(client, Strings.Combat.sleepattacking);
-                        return;
-                    }
-                    if (status.Type == StatusTypes.Blind)
-                    {
-                        PacketSender.SendActionMsg(client.Entity, Strings.Combat.miss,
-                            CustomColors.Missed);
-                        return;
-                    }
-                }
-
-                var attackingTile = new TileHelper(client.Entity.MapId, client.Entity.X, client.Entity.Y);
-                switch (client.Entity.Dir)
-                {
-                    case 0:
-                        attackingTile.Translate(0, -1);
-                        break;
-                    case 1:
-                        attackingTile.Translate(0, 1);
-                        break;
-                    case 2:
-                        attackingTile.Translate(-1, 0);
-                        break;
-                    case 3:
-                        attackingTile.Translate(1, 0);
-                        break;
-                }
-
-                //Fire projectile instead if weapon has it
-                if (Options.WeaponIndex > -1)
-                {
-                    if (client.Entity.Equipment[Options.WeaponIndex] >= 0 &&
-                        ItemBase.Get(client.Entity
-                            .Items[client.Entity.Equipment[Options.WeaponIndex]].ItemId) !=
-                        null)
-                    {
-                        ItemBase weaponItem = ItemBase.Get(client.Entity
-                            .Items[client.Entity.Equipment[Options.WeaponIndex]].ItemId);
-
-                        //Check for animation
-                        var attackAnim = ItemBase.Get(client.Entity.Items[client.Entity.Equipment[Options.WeaponIndex]].ItemId).AttackAnimation;
-                        if (attackAnim != null && attackingTile.TryFix())
-                        {
-                            PacketSender.SendAnimationToProximity(attackAnim.Id, -1, Guid.Empty, attackingTile.GetMapId(), attackingTile.GetX(), attackingTile.GetY(), client.Entity.Dir);
-                        }
-
-                        var weaponInvSlot = client.Entity.Equipment[Options.WeaponIndex];
-                        var invItem = client.Entity.Items[weaponInvSlot];
-                        var weapon = ItemBase.Get(invItem?.ItemId ?? Guid.Empty);
-                        var projectileBase = ProjectileBase.Get(weapon?.ProjectileId ?? Guid.Empty);
-
-                        if (projectileBase != null)
-                        {
-                            if (projectileBase.AmmoItemId != Guid.Empty)
-                            {
-                                var itemSlot = client.Entity.FindItem(projectileBase.AmmoItemId, projectileBase.AmmoRequired);
-                                if (itemSlot == -1)
-                                {
-                                    PacketSender.SendPlayerMsg(client,
-                                        Strings.Items.notenough.ToString(ItemBase.GetName(projectileBase.AmmoItemId)),
-                                        CustomColors.NoAmmo);
-                                    return;
-                                }
-#if INTERSECT_DIAGNOSTIC
-                                PacketSender.SendPlayerMsg(client,
-                                    Strings.Get("items", "notenough", $"REGISTERED_AMMO ({projectileBase.Ammo}:'{ItemBase.GetName(projectileBase.Ammo)}':{projectileBase.AmmoRequired})"),
-                                    CustomColors.NoAmmo);
-#endif
-                                if (!client.Entity.TakeItemsById(projectileBase.AmmoItemId, projectileBase.AmmoRequired))
-                                {
-#if INTERSECT_DIAGNOSTIC
-                                    PacketSender.SendPlayerMsg(client,
-                                        Strings.Get("items", "notenough", "FAILED_TO_DEDUCT_AMMO"),
-                                        CustomColors.NoAmmo);
-                                    PacketSender.SendPlayerMsg(client,
-                                        Strings.Get("items", "notenough", $"FAILED_TO_DEDUCT_AMMO {client.Entity.CountItems(projectileBase.Ammo)}"),
-                                        CustomColors.NoAmmo);
-#endif
-                                }
-                            }
-#if INTERSECT_DIAGNOSTIC
-                            else
-                            {
-                                PacketSender.SendPlayerMsg(client,
-                                    Strings.Get("items", "notenough", "NO_REGISTERED_AMMO"),
-                                    CustomColors.NoAmmo);
-                            }
-#endif
-                            MapInstance.Get(client.Entity.MapId)
-                                .SpawnMapProjectile(client.Entity, projectileBase, null, weaponItem,
-                                    client.Entity.MapId,
-                                    client.Entity.X, client.Entity.Y, client.Entity.Z,
-                                    client.Entity.Dir, null);
-                            return;
-                        }
-#if INTERSECT_DIAGNOSTIC
-                        else
-                        {
-                            PacketSender.SendPlayerMsg(client,
-                                Strings.Get("items", "notenough", "NONPROJECTILE"),
-                                CustomColors.NoAmmo);
-                            return;
-                        }
-#endif
-                    }
-                    else
-                    {
-                        unequippedAttack = true;
-#if INTERSECT_DIAGNOSTIC
-                        PacketSender.SendPlayerMsg(client,
-                            Strings.Get("items", "notenough", "NO_WEAPON"),
-                            CustomColors.NoAmmo);
-#endif
-                    }
-                }
-                else
-                {
-                    unequippedAttack = true;
-                }
-
-                if (unequippedAttack)
-                {
-                    var classBase = ClassBase.Get(client.Entity.ClassId);
-                    if (classBase != null)
-                    {
-                        //Check for animation
-                        if (classBase.AttackAnimation != null)
-                        {
-                            PacketSender.SendAnimationToProximity(classBase.AttackAnimationId, -1, Guid.Empty, attackingTile.GetMapId(), attackingTile.GetX(), attackingTile.GetY(), client.Entity.Dir);
-                        }
-                    }
-                }
-
-                foreach (var map in client.Entity.Map.GetSurroundingMaps(true))
-                {
-                    foreach (var entity in map.GetEntities())
-                    {
-                        if (entity.Id == target)
-                        {
-                            client.Entity.TryAttack(entity);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        private static void HandleDir(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            client.Entity.ChangeDir((int)bf.ReadLong());
-            bf.Dispose();
-        }
-
-        private static void HandleEnterGame(Client client, byte[] packet)
-        {
-            var player = client.Entity;
-            player.RecalculateStatsAndPoints();
-            ((Player)client.Entity).InGame = true;
-            PacketSender.SendTimeTo(client);
-            PacketSender.SendGameData(client);
-            if (client.Power.Editor)
-            {
-                PacketSender.SendPlayerMsg(client, Strings.Player.adminjoined, CustomColors.AdminJoined);
-            }
-            else if (client.Power.IsModerator)
-            {
-                PacketSender.SendPlayerMsg(client, Strings.Player.modjoined, CustomColors.ModJoined);
-            }
-
-            if (player.MapId == Guid.Empty)
-                player.WarpToSpawn();
-            else
-                player.Warp(player.MapId, player.X,player.Y, player.Dir, false, player.Z);
-            PacketSender.SendEntityDataTo(client, player);
-
-            //Search for login activated events and run them
-            foreach (EventBase evt in EventBase.Lookup.Values)
-            {
-                if (evt != null)
-                {
-                    player.StartCommonEvent(evt, CommonEventTrigger.Login);
-                }
-            }
-        }
-
-        private static void HandleActivateEvent(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            ((Player)(client.Entity)).TryActivateEvent(bf.ReadGuid());
-            bf.Dispose();
-        }
-
-        private static void HandleEventResponse(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            ((Player)(client.Entity)).RespondToEvent(bf.ReadGuid(), bf.ReadInteger());
-            bf.Dispose();
-        }
-
-        private static void HandleCreateAccount(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var username = bf.ReadString();
-            var password = bf.ReadString();
-            var email = bf.ReadString();
-            if (!FieldChecking.IsValidUsername(username, Strings.Regex.username))
-            {
-                PacketSender.SendLoginError(client, Strings.Account.invalidname);
-                return;
-            }
-            if (!FieldChecking.IsWellformedEmailAddress(email, Strings.Regex.email))
-            {
-                PacketSender.SendLoginError(client, Strings.Account.invalidemail);
-                return;
-            }
-            if (LegacyDatabase.AccountExists(username))
-            {
-                PacketSender.SendLoginError(client, Strings.Account.exists);
-            }
-            else
-            {
-                if (LegacyDatabase.EmailInUse(email))
-                {
-                    PacketSender.SendLoginError(client, Strings.Account.emailexists);
-                }
-                else
-                {
-                    LegacyDatabase.CreateAccount(client, username, password, email);
-                    PacketSender.SendServerConfig(client);
-
-                    //Check that server is in admin only mode
-                    if (Options.AdminOnly)
-                    {
-                        if (client.Power == UserRights.None)
-                        {
-                            PacketSender.SendLoginError(client, Strings.Account.adminonly);
-                            return;
-                        }
-                    }
-
-                    //Character selection if more than one.
-                    if (Options.MaxCharacters > 1)
-                    {
-                        PacketSender.SendPlayerCharacters(client);
-                    }
-                    else
-                    {
-                        PacketSender.SendGameObjects(client, GameObjectType.Class);
-                        PacketSender.SendCreateCharacter(client);
-                    }
-                }
-            }
-            bf.Dispose();
-        }
-
-        private static void HandleCreateCharacter(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var name = bf.ReadString();
-            if (!FieldChecking.IsValidUsername(name, Strings.Regex.username))
-            {
-                PacketSender.SendLoginError(client, Strings.Account.invalidname);
-                return;
-            }
-
-            var classId = bf.ReadGuid();
-            var sprite = bf.ReadInteger();
-            var index = client.Id;
-            var classBase = ClassBase.Get(classId);
-            if (classBase == null || classBase.Locked)
-            {
-                PacketSender.SendLoginError(client, Strings.Account.invalidclass);
-                return;
-            }
-            if (LegacyDatabase.CharacterNameInUse(name))
-            {
-                PacketSender.SendLoginError(client, Strings.Account.characterexists);
-            }
-            else
-            {
-                var player = new Player();
-                player.Id = Guid.NewGuid();
-                client.Characters.Add(player);
-                player.ValidateLists();
-                for (var i = 0; i < Options.EquipmentSlots.Count; i++)
-                {
-                    player.Equipment[i] = -1;
-                }
-                
-                player.Name = name;
-                player.ClassId = classId;
-				player.Level = 1;
-
-				if (classBase.Sprites.Count > 0)
-                {
-                    player.Sprite = classBase.Sprites[sprite].Sprite;
-                    player.Face = classBase.Sprites[sprite].Face;
-                    player.Gender = classBase.Sprites[sprite].Gender;
-                }
-
-                client.LoadCharacter(player);
-
-                player.SetVital(Vitals.Health, classBase.BaseVital[(int)Vitals.Health]);
-                player.SetVital(Vitals.Mana, classBase.BaseVital[(int)Vitals.Mana]);
-
-                for (int i = 0; i < (int)Stats.StatCount; i++)
-                {
-					player.Stat[i].Stat = 0;
-                }
-                player.StatPoints = classBase.BasePoints;
-
-                PacketSender.SendJoinGame(client);
-                player.SetOnline();
-
-                for (int i = 0; i < classBase.Spells.Count; i++)
-                {
-                    if (classBase.Spells[i].Level <= 1)
-                    {
-                        Spell tempSpell = new Spell(classBase.Spells[i].Id);
-                        player.TryTeachSpell(tempSpell, false);
-                    }
-                }
-
-                foreach (var item in classBase.Items)
-                {
-                    if (ItemBase.Get(item.Id) != null)
-                    {
-                        var tempItem = new Item(item.Id, item.Quantity);
-                        player.TryGiveItem(tempItem, false);
-                    }
-                }
-
-                LegacyDatabase.SavePlayerDatabaseAsync();
-            }
-            bf.Dispose();
-        }
-
-        private static void HandlePickupItem(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var index = bf.ReadInteger();
-            if (index < MapInstance.Get(client.Entity.MapId).MapItems.Count &&
-                MapInstance.Get(client.Entity.MapId).MapItems[index] != null)
-            {
-                if (MapInstance.Get(client.Entity.MapId).MapItems[index].X ==
-                    client.Entity.X &&
-                    MapInstance.Get(client.Entity.MapId).MapItems[index].Y ==
-                    client.Entity.Y)
-                {
-                    if (
-                        client.Entity.TryGiveItem(MapInstance.Get(client.Entity.MapId) .MapItems[index]))
-                    {
-                        //Remove Item From Map
-                        MapInstance.Get(client.Entity.MapId).RemoveItem(index);
-                    }
-                }
-            }
-            bf.Dispose();
-        }
-
-        private static void HandleSwapItems(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var item1 = bf.ReadInteger();
-            var item2 = bf.ReadInteger();
-            client.Entity.SwapItems(item1, item2);
-            bf.Dispose();
-        }
-
-        private static void HandleDropItems(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var slot = bf.ReadInteger();
-            var amount = bf.ReadInteger();
-            client.Entity.DropItems(slot, amount);
-            bf.Dispose();
-        }
-
-        private static void HandleUseItem(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var slot = bf.ReadInteger();
-            client.Entity.UseItem(slot);
-            bf.Dispose();
-        }
-
-        private static void HandleSwapSpells(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var spell1 = bf.ReadInteger();
-            var spell2 = bf.ReadInteger();
-            client.Entity.SwapSpells(spell1, spell2);
-            bf.Dispose();
-        }
-
-        private static void HandleForgetSpell(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var slot = bf.ReadInteger();
-            client.Entity.ForgetSpell(slot);
-            bf.Dispose();
-        }
-
-        private static void HandleUseSpell(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var slot = bf.ReadInteger();
-            var target = bf.ReadGuid();
-            var casted = false;
-
-            if (target != Guid.Empty)
-            {
-                foreach (var map in client.Entity.Map.GetSurroundingMaps(true))
-                {
-                    foreach (var en in map.GetEntities())
-                    {
-                        if (en.Id == target)
-                        {
-                            client.Entity.UseSpell(slot, en);
-                            casted = true;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            if (!casted) client.Entity.UseSpell(slot, null);
-            bf.Dispose();
-        }
-
-        private static void HandleUnequipItem(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var slot = bf.ReadInteger();
-            client.Entity.UnequipItem(slot);
-            bf.Dispose();
-        }
-
-        private static void HandleUpgradeStat(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var stat = bf.ReadInteger();
-            client.Entity.UpgradeStat(stat);
-            bf.Dispose();
-        }
-
-        private static void HandleHotbarChange(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var index = bf.ReadInteger();
-            var type = bf.ReadInteger();
-            var slot = bf.ReadInteger();
-            client.Entity.HotbarChange(index, type, slot);
-            bf.Dispose();
-        }
-
-        private static void HandleHotbarSwap(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var index = bf.ReadInteger();
-            var swapIndex = bf.ReadInteger();
-            client.Entity.HotbarSwap(index, swapIndex);
-            bf.Dispose();
-        }
-
-        private static void HandleMapListUpdate(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            int destType = -1;
             MapListFolder parent = null;
             var mapId = Guid.Empty;
-            bf.WriteBytes(packet);
-            var type = bf.ReadInteger();
-            switch (type)
+            switch (packet.UpdateType)
             {
-                case (int)MapListUpdates.MoveItem:
-                    MapList.List.HandleMove(bf.ReadInteger(), bf.ReadGuid(), bf.ReadInteger(), bf.ReadGuid());
+                case MapListUpdates.MoveItem:
+                    MapList.List.HandleMove(packet.TargetType,packet.TargetId,packet.ParentType,packet.ParentId);
                     break;
-                case (int)MapListUpdates.AddFolder:
-                    destType = bf.ReadInteger();
-                    parent = null;
-                    if (destType == -1)
+                case MapListUpdates.AddFolder:
+                    if (packet.ParentId == Guid.Empty)
                     {
                         MapList.List.AddFolder(Strings.Mapping.newfolder);
                     }
-                    else if (destType == 0)
+                    else if (packet.ParentType == 0)
                     {
-                        parent = MapList.List.FindDir(bf.ReadGuid());
+                        parent = MapList.List.FindDir(packet.ParentId);
                         if (parent == null)
                         {
                             MapList.List.AddFolder(Strings.Mapping.newfolder);
@@ -1461,9 +1522,9 @@ namespace Intersect.Server.Networking
                             parent.Children.AddFolder(Strings.Mapping.newfolder);
                         }
                     }
-                    else if (destType == 1)
+                    else if (packet.ParentType == 1)
                     {
-                        mapId = bf.ReadGuid();
+                        mapId = packet.ParentId;
                         parent = MapList.List.FindMapParent(mapId, null);
                         if (parent == null)
                         {
@@ -1475,49 +1536,43 @@ namespace Intersect.Server.Networking
                         }
                     }
                     break;
-                case (int)MapListUpdates.Rename:
-                    destType = bf.ReadInteger();
-                    parent = null;
-                    if (destType == 0)
+                case MapListUpdates.Rename:
+                    if (packet.TargetType == 0)
                     {
-                        parent = MapList.List.FindDir(bf.ReadGuid());
-                        parent.Name = bf.ReadString();
+                        parent = MapList.List.FindDir(packet.ParentId);
+                        parent.Name = packet.Name;
                         PacketSender.SendMapListToAll();
                     }
-                    else if (destType == 1)
+                    else if (packet.TargetType == 1)
                     {
-                        mapId = bf.ReadGuid();
-                        MapInstance.Get(mapId).Name = bf.ReadString();
+                        MapInstance.Get(packet.TargetId).Name = packet.Name;
                         LegacyDatabase.SaveGameDatabase();
                         PacketSender.SendMapListToAll();
                     }
                     break;
-                case (int)MapListUpdates.Delete:
-                    destType = bf.ReadInteger();
-                    parent = null;
-                    if (destType == 0)
+                case MapListUpdates.Delete:
+                    if (packet.TargetType == 0)
                     {
-                        MapList.List.DeleteFolder(bf.ReadGuid());
+                        MapList.List.DeleteFolder(packet.TargetId);
                         PacketSender.SendMapListToAll();
                     }
-                    else if (destType == 1)
+                    else if (packet.TargetType == 1)
                     {
                         if (MapInstance.Lookup.Count == 1)
                         {
-                            PacketSender.SendAlert(client, Strings.Mapping.lastmap,
-                                Strings.Mapping.lastmaperror);
+                            PacketSender.SendError(client, Strings.Mapping.lastmaperror, Strings.Mapping.lastmap);
                             return;
                         }
-                        mapId = bf.ReadGuid();
+                        mapId = packet.TargetId;
                         var players = MapInstance.Get(mapId).GetPlayersOnMap();
                         MapList.List.DeleteMap(mapId);
                         LegacyDatabase.DeleteGameObject(MapInstance.Get(mapId));
                         LegacyDatabase.SaveGameDatabase();
                         LegacyDatabase.GenerateMapGrids();
                         PacketSender.SendMapListToAll();
-                        foreach (var player in players)
+                        foreach (var plyr in players)
                         {
-                            player.WarpToSpawn();
+                            plyr.WarpToSpawn();
                         }
                         PacketSender.SendMapToEditors(mapId);
                     }
@@ -1525,295 +1580,13 @@ namespace Intersect.Server.Networking
             }
             PacketSender.SendMapListToAll();
             LegacyDatabase.SaveGameDatabase();
-            bf.Dispose();
         }
 
-        private static void HandleOpenAdminWindow(Client client)
+        //UnlinkMapPacket
+        public void HandlePacket(Client client, Player player, Packets.Editor.UnlinkMapPacket packet)
         {
-            if (client.Power.IsModerator)
-            {
-                PacketSender.SendMapList(client);
-                PacketSender.SendOpenAdminWindow(client);
-            }
-        }
-
-        private static void HandleAdminAction(Client client, byte[] packet)
-        {
-            if (!client.Power.Editor && !client.Power.IsModerator)
-            {
-                return;
-            }
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var type = bf.ReadInteger();
-            string val1 = bf.ReadString();
-            string val2 = bf.ReadString();
-            string val3 = bf.ReadString();
-            string val4 = bf.ReadString();
-            Guid val5 = bf.ReadGuid();
-
-            switch (type)
-            {
-                case (int)AdminActions.WarpTo:
-                    client.Entity.Warp(val5, client.Entity.X, client.Entity.Y);
-                    break;
-                case (int)AdminActions.WarpMeTo:
-                    for (int i = 0; i < Globals.Clients.Count; i++)
-                    {
-                        if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
-                        {
-                            if (val1.ToLower() == Globals.Clients[i].Entity.Name.ToLower())
-                            {
-                                client.Entity.Warp(Globals.Clients[i].Entity.MapId,
-                                    Globals.Clients[i].Entity.X, Globals.Clients[i].Entity.Y);
-                                PacketSender.SendPlayerMsg(client, Strings.Player.warpedto.ToString(val1));
-                                PacketSender.SendPlayerMsg(Globals.Clients[i],
-                                    Strings.Player.warpedtoyou.ToString(client.Entity.Name));
-                                return;
-                            }
-                        }
-                    }
-                    PacketSender.SendPlayerMsg(client, Strings.Player.offline);
-                    break;
-                case (int)AdminActions.WarpToMe:
-                    for (int i = 0; i < Globals.Clients.Count; i++)
-                    {
-                        if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
-                        {
-                            if (val1.ToLower() == Globals.Clients[i].Entity.Name.ToLower())
-                            {
-                                Globals.Clients[i].Entity.Warp(client.Entity.MapId, client.Entity.X,
-                                    client.Entity.Y);
-                                PacketSender.SendPlayerMsg(client, Strings.Player.haswarpedto.ToString(val1),
-                                    client.Entity.Name);
-                                PacketSender.SendPlayerMsg(Globals.Clients[i],
-                                    Strings.Player.beenwarpedto.ToString(client.Entity.Name), client.Entity.Name);
-                                return;
-                            }
-                        }
-                    }
-                    PacketSender.SendPlayerMsg(client, Strings.Player.offline);
-                    break;
-                case (int)AdminActions.WarpToLoc:
-                    if (client.Power.IsModerator)
-                    {
-                        client.Entity.Warp(val5, Convert.ToInt32(val2), Convert.ToInt32(val3), 0, true);
-                    }
-                    break;
-                case (int)AdminActions.Kick:
-                    for (int i = 0; i < Globals.Clients.Count; i++)
-                    {
-                        if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
-                        {
-                            if (val1.ToLower() == Globals.Clients[i].Entity.Name.ToLower())
-                            {
-                                PacketSender.SendGlobalMsg(Strings.Player.kicked.ToString(
-                                    Globals.Clients[i].Entity.Name, client.Entity.Name));
-                                Globals.Clients[i].Disconnect(); //Kick em'
-                                return;
-                            }
-                        }
-                    }
-                    PacketSender.SendPlayerMsg(client, Strings.Player.offline);
-                    break;
-                case (int)AdminActions.Kill:
-                    for (int i = 0; i < Globals.Clients.Count; i++)
-                    {
-                        if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
-                        {
-                            if (val1.ToLower() == Globals.Clients[i].Entity.Name.ToLower())
-                            {
-                                Globals.Clients[i].Entity.Die(); //Kill em'
-                                PacketSender.SendGlobalMsg(Strings.Player.killed.ToString(
-                                    Globals.Clients[i].Entity.Name, client.Entity.Name));
-                                return;
-                            }
-                        }
-                    }
-                    PacketSender.SendPlayerMsg(client, Strings.Player.offline);
-                    break;
-                case (int)AdminActions.SetSprite:
-                    for (int i = 0; i < Globals.Clients.Count; i++)
-                    {
-                        if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
-                        {
-                            if (val1.ToLower() == Globals.Clients[i].Entity.Name.ToLower())
-                            {
-                                Globals.Clients[i].Entity.Sprite = val2;
-                                PacketSender.SendEntityDataToProximity(Globals.Clients[i].Entity);
-                                return;
-                            }
-                        }
-                    }
-                    PacketSender.SendPlayerMsg(client, Strings.Player.offline);
-                    break;
-                case (int)AdminActions.SetFace:
-                    for (int i = 0; i < Globals.Clients.Count; i++)
-                    {
-                        if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
-                        {
-                            if (val1.ToLower() == Globals.Clients[i].Entity.Name.ToLower())
-                            {
-                                Globals.Clients[i].Entity.Face = val2;
-                                PacketSender.SendEntityDataToProximity(Globals.Clients[i].Entity);
-                                return;
-                            }
-                        }
-                    }
-                    PacketSender.SendPlayerMsg(client, Strings.Player.offline);
-                    break;
-                case (int)AdminActions.SetAccess:
-                    var power = UserRights.None;
-                    for (int i = 0; i < Globals.Clients.Count; i++)
-                    {
-                        if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
-                        {
-                            if (val1.ToLower() == Globals.Clients[i].Entity.Name.ToLower())
-                            {
-                                if (val1.ToLower() != client.Entity.Name.ToLower()) //Can't increase your own power!
-                                {
-                                    if (client.Power == UserRights.Admin)
-                                    {
-                                        if (val2 == "Admin")
-                                        {
-                                            power = UserRights.Admin;
-                                        }
-                                        else if (val2 == "Moderator")
-                                        {
-                                            power = UserRights.Moderation;
-                                        }
-
-                                        var targetClient = Globals.Clients[i];
-                                        targetClient.Power = power;
-                                        if (targetClient.Power == UserRights.Admin)
-                                        {
-                                            PacketSender.SendGlobalMsg(Strings.Player.admin.ToString(val1));
-                                        }
-                                        else if (targetClient.Power == UserRights.Moderation)
-                                        {
-                                            PacketSender.SendGlobalMsg(Strings.Player.mod.ToString(val1));
-                                        }
-                                        else
-                                        {
-                                            PacketSender.SendGlobalMsg(Strings.Player.deadmin.ToString(val1));
-                                        }
-                                        return;
-                                    }
-                                    else
-                                    {
-                                        PacketSender.SendPlayerMsg(client, Strings.Player.adminsetpower);
-                                        return;
-                                    }
-                                }
-                                else
-                                {
-                                    PacketSender.SendPlayerMsg(client, Strings.Player.changeownpower);
-                                    return;
-                                }
-                            }
-                        }
-                    }
-                    PacketSender.SendPlayerMsg(client, Strings.Player.offline);
-                    break;
-                case (int)AdminActions.UnMute:
-                    var unmutedUser = LegacyDatabase.GetUser(val1);
-                    if (unmutedUser != null)
-                    {
-                        Mute.Remove(unmutedUser);
-                        PacketSender.SendPlayerMsg(client, Strings.Account.unmuted.ToString(val1));
-                    }
-                    else
-                    {
-                        PacketSender.SendPlayerMsg(client, Strings.Account.notfound.ToString(val1));
-                    }
-                    break;
-                case (int)AdminActions.UnBan:
-                    var unbannedUser = LegacyDatabase.GetUser(val1);
-                    if (unbannedUser != null)
-                    {
-                        Ban.Remove(unbannedUser);
-                        PacketSender.SendPlayerMsg(client, Strings.Account.unbanned.ToString(val1));
-                    }
-                    else
-                    {
-                        PacketSender.SendPlayerMsg(client, Strings.Account.notfound.ToString(val1));
-                    }
-                    break;
-                case (int)AdminActions.Mute:
-                    for (int i = 0; i < Globals.Clients.Count; i++)
-                    {
-                        if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
-                        {
-                            if (val1.ToLower() == Globals.Clients[i].Entity.Name.ToLower())
-                            {
-                                if (Convert.ToBoolean(val4) == true)
-                                {
-                                    Mute.Add(Globals.Clients[i], Convert.ToInt32(val2), val3,
-                                        client.Entity.Name, Globals.Clients[i].GetIp());
-                                }
-                                else
-                                {
-                                    Mute.Add(Globals.Clients[i], Convert.ToInt32(val2), val3,
-                                        client.Entity.Name, "");
-                                }
-                                PacketSender.SendGlobalMsg(Strings.Account.muted.ToString(
-                                    Globals.Clients[i].Entity.Name));
-                                return;
-                            }
-                        }
-                    }
-                    PacketSender.SendPlayerMsg(client, Strings.Player.offline);
-                    break;
-                case (int)AdminActions.Ban:
-                    for (int i = 0; i < Globals.Clients.Count; i++)
-                    {
-                        if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
-                        {
-                            if (val1.ToLower() == Globals.Clients[i].Entity.Name.ToLower())
-                            {
-                                if (Convert.ToBoolean(val4) == true)
-                                {
-                                    Ban.Add(Globals.Clients[i], Convert.ToInt32(val2), val3,
-                                        client.Entity.Name, Globals.Clients[i].GetIp());
-                                }
-                                else
-                                {
-                                    Ban.Add(Globals.Clients[i], Convert.ToInt32(val2), val3,
-                                        client.Entity.Name, "");
-                                }
-
-                                PacketSender.SendGlobalMsg(Strings.Account.banned.ToString(
-                                    Globals.Clients[i].Entity.Name));
-                                Globals.Clients[i].Disconnect(); //Kick em'
-                                return;
-                            }
-                        }
-                    }
-                    PacketSender.SendPlayerMsg(client, Strings.Player.offline);
-                    break;
-            }
-        }
-
-        private static void HandleNeedGrid(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var mapId = bf.ReadGuid();
-            if (MapInstance.Lookup.Keys.Contains(mapId))
-            {
-                if (client.IsEditor)
-                {
-                    PacketSender.SendMapGrid(client, MapInstance.Get(mapId).MapGrid);
-                }
-            }
-        }
-
-        private static void HandleUnlinkMap(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var mapId = bf.ReadGuid();
-            var curMapId = bf.ReadGuid();
+            var mapId = packet.MapId;
+            var curMapId = packet.CurrentMapId;
             int mapGrid = 0;
             if (MapInstance.Lookup.Keys.Contains(mapId))
             {
@@ -1827,67 +1600,31 @@ namespace Intersect.Server.Networking
                         int gridY = MapInstance.Get(mapId).MapGridY;
 
                         //Up
-                        if (gridY - 1 >= 0 &&
-                            LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid]
-                                .MyGrid[gridX, gridY - 1] != Guid.Empty)
+                        if (gridY - 1 >= 0 && LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid].MyGrid[gridX, gridY - 1] != Guid.Empty)
                         {
-                            if (
-                                MapInstance.Get(
-                                    LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid]
-                                        .MyGrid[gridX, gridY - 1]) !=
-                                null)
-                                MapInstance.Get(
-                                        LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid]
-                                            .MyGrid[gridX, gridY - 1])
-                                    .ClearConnections((int)Directions.Down);
+                            if (MapInstance.Get(LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid].MyGrid[gridX, gridY - 1]) != null)
+                                MapInstance.Get(LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid].MyGrid[gridX, gridY - 1]).ClearConnections((int)Directions.Down);
                         }
 
                         //Down
-                        if (gridY + 1 < LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid].Height &&
-                            LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid]
-                                .MyGrid[gridX, gridY + 1] != Guid.Empty)
+                        if (gridY + 1 < LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid].Height && LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid].MyGrid[gridX, gridY + 1] != Guid.Empty)
                         {
-                            if (
-                                MapInstance.Get(
-                                    LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid]
-                                        .MyGrid[gridX, gridY + 1]) !=
-                                null)
-                                MapInstance.Get(
-                                        LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid]
-                                            .MyGrid[gridX, gridY + 1])
-                                    .ClearConnections((int)Directions.Up);
+                            if (MapInstance.Get(LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid].MyGrid[gridX, gridY + 1]) != null)
+                                MapInstance.Get(LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid].MyGrid[gridX, gridY + 1]).ClearConnections((int)Directions.Up);
                         }
 
                         //Left
-                        if (gridX - 1 >= 0 &&
-                            LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid]
-                                .MyGrid[gridX - 1, gridY] != Guid.Empty)
+                        if (gridX - 1 >= 0 && LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid].MyGrid[gridX - 1, gridY] != Guid.Empty)
                         {
-                            if (
-                                MapInstance.Get(
-                                    LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid]
-                                        .MyGrid[gridX - 1, gridY]) !=
-                                null)
-                                MapInstance.Get(
-                                        LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid]
-                                            .MyGrid[gridX - 1, gridY])
-                                    .ClearConnections((int)Directions.Right);
+                            if (MapInstance.Get(LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid].MyGrid[gridX - 1, gridY]) != null)
+                                MapInstance.Get(LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid].MyGrid[gridX - 1, gridY]).ClearConnections((int)Directions.Right);
                         }
 
                         //Right
-                        if (gridX + 1 < LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid].Width &&
-                            LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid]
-                                .MyGrid[gridX + 1, gridY] != Guid.Empty)
+                        if (gridX + 1 < LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid].Width && LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid].MyGrid[gridX + 1, gridY] != Guid.Empty)
                         {
-                            if (
-                                MapInstance.Get(
-                                    LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid]
-                                        .MyGrid[gridX + 1, gridY]) !=
-                                null)
-                                MapInstance.Get(
-                                        LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid]
-                                            .MyGrid[gridX + 1, gridY])
-                                    .ClearConnections((int)Directions.Left);
+                            if (MapInstance.Get(LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid].MyGrid[gridX + 1, gridY]) != null)
+                                MapInstance.Get(LegacyDatabase.MapGrids[MapInstance.Get(mapId).MapGrid].MyGrid[gridX + 1, gridY]).ClearConnections((int)Directions.Left);
                         }
 
                         LegacyDatabase.GenerateMapGrids();
@@ -1901,17 +1638,15 @@ namespace Intersect.Server.Networking
             }
         }
 
-        private static void HandleLinkMap(Client client, byte[] packet)
+        //LinkMapPacket
+        public void HandlePacket(Client client, Player player, Packets.Editor.LinkMapPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var adjacentMap = bf.ReadGuid();
-            var linkMap = bf.ReadGuid();
-            long gridX = bf.ReadLong();
-            long gridY = bf.ReadLong();
+            var adjacentMap = packet.AdjacentMapId;
+            var linkMap = packet.LinkMapId;
+            long gridX = packet.GridX;
+            long gridY = packet.GridY;
             bool canLink = true;
-            if (MapInstance.Lookup.Keys.Contains(linkMap) &&
-                MapInstance.Lookup.Keys.Contains(adjacentMap))
+            if (MapInstance.Lookup.Keys.Contains(linkMap) && MapInstance.Lookup.Keys.Contains(adjacentMap))
             {
                 //Clear to test if we can link.
                 int linkGrid = MapInstance.Get(linkMap).MapGrid;
@@ -1924,20 +1659,12 @@ namespace Intersect.Server.Networking
                     {
                         for (int y = 0; y < LegacyDatabase.MapGrids[adjacentGrid].Height; y++)
                         {
-                            if (x + xOffset >= 0 && x + xOffset < LegacyDatabase.MapGrids[linkGrid].Width &&
-                                y + yOffset >= 0 &&
-                                y + yOffset < LegacyDatabase.MapGrids[linkGrid].Height)
+                            if (x + xOffset >= 0 && x + xOffset < LegacyDatabase.MapGrids[linkGrid].Width && y + yOffset >= 0 && y + yOffset < LegacyDatabase.MapGrids[linkGrid].Height)
                             {
-                                if (LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x, y] != Guid.Empty &&
-                                    LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset] != Guid.Empty)
+                                if (LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x, y] != Guid.Empty && LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset] != Guid.Empty)
                                 {
                                     //Incompatible Link!
-                                    PacketSender.SendAlert(client, Strings.Mapping.linkfail,
-                                        Strings.Mapping.linkfailerror.ToString(MapBase.GetName(linkMap),
-                                            MapBase.GetName(adjacentMap),
-                                            MapBase.GetName(LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x, y]),
-                                            MapBase.GetName(
-                                                LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset])));
+                                    PacketSender.SendError(client, Strings.Mapping.linkfailerror.ToString(MapBase.GetName(linkMap), MapBase.GetName(adjacentMap), MapBase.GetName(LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x, y]), MapBase.GetName(LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset])), Strings.Mapping.linkfail);
                                     return;
                                 }
                             }
@@ -1949,66 +1676,37 @@ namespace Intersect.Server.Networking
                         {
                             for (int y = -1; y < LegacyDatabase.MapGrids[adjacentGrid].Height + 1; y++)
                             {
-                                if (x + xOffset >= 0 && x + xOffset < LegacyDatabase.MapGrids[linkGrid].Width &&
-                                    y + yOffset >= 0 && y + yOffset < LegacyDatabase.MapGrids[linkGrid].Height)
+                                if (x + xOffset >= 0 && x + xOffset < LegacyDatabase.MapGrids[linkGrid].Width && y + yOffset >= 0 && y + yOffset < LegacyDatabase.MapGrids[linkGrid].Height)
                                 {
                                     if (LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset] != Guid.Empty)
                                     {
-                                        bool inXBounds = x > -1 &&
-                                                         x < LegacyDatabase.MapGrids[adjacentGrid].Width;
-                                        bool inYBounds = y > -1 &&
-                                                         y < LegacyDatabase.MapGrids[adjacentGrid].Height;
+                                        bool inXBounds = x > -1 && x < LegacyDatabase.MapGrids[adjacentGrid].Width;
+                                        bool inYBounds = y > -1 && y < LegacyDatabase.MapGrids[adjacentGrid].Height;
                                         if (inXBounds && inYBounds)
-                                            LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x, y] =
-                                                LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
+                                            LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x, y] = LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
 
-                                        if (inXBounds && y - 1 >= 0 &&
-                                            LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x, y - 1] != Guid.Empty)
+                                        if (inXBounds && y - 1 >= 0 && LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x, y - 1] != Guid.Empty)
                                         {
-                                            MapInstance.Get(
-                                                    LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]).Up =
-                                                LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x, y - 1];
-                                            MapInstance.Lookup
-                                                    .Get<MapInstance>(LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x, y - 1])
-                                                    .Down =
-                                                LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
+                                            MapInstance.Get(LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]).Up = LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x, y - 1];
+                                            MapInstance.Lookup.Get<MapInstance>(LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x, y - 1]).Down = LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
                                         }
 
-                                        if (inXBounds && y + 1 < LegacyDatabase.MapGrids[adjacentGrid].Height &&
-                                            LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x, y + 1] != Guid.Empty)
+                                        if (inXBounds && y + 1 < LegacyDatabase.MapGrids[adjacentGrid].Height && LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x, y + 1] != Guid.Empty)
                                         {
-                                            MapInstance.Get(
-                                                    LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]).Down =
-                                                LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x, y + 1];
-                                            MapInstance.Lookup
-                                                    .Get<MapInstance>(LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x, y + 1])
-                                                    .Up =
-                                                LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
+                                            MapInstance.Get(LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]).Down = LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x, y + 1];
+                                            MapInstance.Lookup.Get<MapInstance>(LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x, y + 1]).Up = LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
                                         }
 
-                                        if (inYBounds && x - 1 >= 0 &&
-                                            LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x - 1, y] != Guid.Empty)
+                                        if (inYBounds && x - 1 >= 0 && LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x - 1, y] != Guid.Empty)
                                         {
-                                            MapInstance.Get(
-                                                    LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]).Left =
-                                                LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x - 1, y];
-                                            MapInstance.Lookup
-                                                    .Get<MapInstance>(LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x - 1, y])
-                                                    .Right =
-                                                LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
+                                            MapInstance.Get(LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]).Left = LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x - 1, y];
+                                            MapInstance.Lookup.Get<MapInstance>(LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x - 1, y]).Right = LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
                                         }
 
-                                        if (inYBounds && x + 1 < LegacyDatabase.MapGrids[adjacentGrid].Width &&
-                                            LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x + 1, y] != Guid.Empty)
+                                        if (inYBounds && x + 1 < LegacyDatabase.MapGrids[adjacentGrid].Width &&LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x + 1, y] != Guid.Empty)
                                         {
-                                            MapInstance.Get(
-                                                    LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]).Right
-                                                =
-                                                LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x + 1, y];
-                                            MapInstance.Lookup
-                                                    .Get<MapInstance>(LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x + 1, y])
-                                                    .Left =
-                                                LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
+                                            MapInstance.Get(LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]).Right = LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x + 1, y];
+                                            MapInstance.Lookup.Get<MapInstance>(LegacyDatabase.MapGrids[adjacentGrid].MyGrid[x + 1, y]).Left = LegacyDatabase.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
                                         }
                                     }
                                 }
@@ -2022,111 +1720,33 @@ namespace Intersect.Server.Networking
             }
         }
 
-        private static void HandleBuyItem(Client client, byte[] packet)
+        //CreateGameObjectPacket
+        public void HandlePacket(Client client, Player player, Packets.Editor.CreateGameObjectPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var slot = bf.ReadInteger();
-            var amount = bf.ReadInteger();
-            client.Entity.BuyItem(slot, amount);
-            bf.Dispose();
-        }
-
-        private static void HandleSellItem(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var slot = bf.ReadInteger();
-            var amount = bf.ReadInteger();
-            client.Entity.SellItem(slot, amount);
-            bf.Dispose();
-        }
-
-        private static void HandleCloseShop(Client client, byte[] packet)
-        {
-            client.Entity.CloseShop();
-        }
-
-        private static void HandleCloseCrafting(Client client, byte[] packet)
-        {
-            client.Entity.CloseCraftingTable();
-        }
-
-        private static void HandleCraftItem(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            client.Entity.CraftId = bf.ReadGuid();
-            client.Entity.CraftTimer = Globals.Timing.TimeMs;
-            bf.Dispose();
-        }
-
-        private static void HandleCloseBank(Client client, byte[] packet)
-        {
-            client.Entity.CloseBank();
-        }
-
-        private static void HandleDepositItem(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var slot = bf.ReadInteger();
-            var amount = bf.ReadInteger();
-            client.Entity.DepositItem(slot, amount);
-            bf.Dispose();
-        }
-
-        private static void HandleWithdrawItem(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var slot = bf.ReadInteger();
-            var amount = bf.ReadInteger();
-            client.Entity.WithdrawItem(slot, amount);
-            bf.Dispose();
-        }
-
-        private static void HandleMoveBankItem(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var item1 = bf.ReadInteger();
-            var item2 = bf.ReadInteger();
-            client.Entity.SwapBankItems(item1, item2);
-            bf.Dispose();
-        }
-
-        private static void HandleCreateGameObject(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var type = (GameObjectType)bf.ReadInteger();
+            var type = packet.Type;
             var obj = LegacyDatabase.AddGameObject(type);
             if (type == GameObjectType.Event)
             {
                 ((EventBase)obj).CommonEvent = true;
                 LegacyDatabase.SaveGameDatabase();
             }
+            PacketSender.CacheGameDataPacket();
             PacketSender.SendGameObjectToAll(obj);
-            bf.Dispose();
         }
 
-        private static void HandleRequestOpenEditor(Client client, byte[] packet)
+        //RequestOpenEditorPacket
+        public void HandlePacket(Client client, Player player, Packets.Editor.RequestOpenEditorPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var type = (GameObjectType)bf.ReadInteger();
+            var type = packet.Type;
             PacketSender.SendGameObjects(client, type);
             PacketSender.SendOpenEditor(client, type);
-            bf.Dispose();
         }
 
-        private void HandleDeleteGameObject(Client client, byte[] packet)
+        //DeleteGameObjectPacket
+        public void HandlePacket(Client client, Player player, Packets.Editor.DeleteGameObjectPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var type = (GameObjectType)bf.ReadInteger();
-            var id = bf.ReadGuid();
+            var type = packet.Type;
+            var id = packet.Id;
             // TODO: YO COME DO THIS
             IDatabaseObject obj = null;
             switch (type)
@@ -2137,8 +1757,7 @@ namespace Intersect.Server.Networking
                 case GameObjectType.Class:
                     if (ClassBase.Lookup.Count == 1)
                     {
-                        PacketSender.SendAlert(client, Strings.Classes.lastclass,
-                            Strings.Classes.lastclasserror);
+                        PacketSender.SendError(client, Strings.Classes.lastclasserror, Strings.Classes.lastclass);
                         return;
                     }
                     obj = DatabaseObject<ClassBase>.Lookup.Get(id);
@@ -2211,17 +1830,16 @@ namespace Intersect.Server.Networking
                 }
                 LegacyDatabase.DeleteGameObject(obj);
                 LegacyDatabase.SaveGameDatabase();
+                PacketSender.CacheGameDataPacket();
                 PacketSender.SendGameObjectToAll(obj, true);
             }
-            bf.Dispose();
         }
 
-        private void HandleSaveGameObject(Client client, byte[] packet)
+        //SaveGameObjectPacket
+        public void HandlePacket(Client client, Player player, Packets.Editor.SaveGameObjectPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var type = (GameObjectType)bf.ReadInteger();
-            var id = bf.ReadGuid();
+            var type = packet.Type;
+            var id = packet.Id;
             IDatabaseObject obj = null;
             switch (type)
             {
@@ -2297,13 +1915,12 @@ namespace Intersect.Server.Networking
                 {
                     Globals.KillProjectilesOf((ProjectileBase)obj);
                 }
-
-                var json = bf.ReadString();
-                obj.Load(json);
                 
+                obj.Load(packet.Data);
+
                 if (type == GameObjectType.Quest)
                 {
-                    var qst = (QuestBase) obj;
+                    var qst = (QuestBase)obj;
                     foreach (var evt in qst.RemoveEvents)
                     {
                         var evtb = EventBase.Get(evt);
@@ -2311,7 +1928,7 @@ namespace Intersect.Server.Networking
                     }
                     foreach (var evt in qst.AddEvents)
                     {
-                        var evtb = (EventBase)LegacyDatabase.AddGameObject(GameObjectType.Event,evt.Key);
+                        var evtb = (EventBase)LegacyDatabase.AddGameObject(GameObjectType.Event, evt.Key);
                         evtb.CommonEvent = false;
                         foreach (var tsk in qst.Tasks)
                         {
@@ -2322,540 +1939,66 @@ namespace Intersect.Server.Networking
                     qst.AddEvents.Clear();
                     qst.RemoveEvents.Clear();
                 }
-
+                PacketSender.CacheGameDataPacket();
                 PacketSender.SendGameObjectToAll(obj, false);
                 LegacyDatabase.SaveGameDatabase();
             }
-            bf.Dispose();
         }
 
-        private void HandleSaveTime(Client client, byte[] packet)
+        //SaveTimeDataPacket
+        public void HandlePacket(Client client, Player player, Packets.Editor.SaveTimeDataPacket packet)
         {
-            if (client.IsEditor)
+            TimeBase.GetTimeBase().LoadFromJson(packet.TimeJson);
+            LegacyDatabase.SaveGameDatabase();
+            ServerTime.Init();
+            PacketSender.SendTimeBaseToAllEditors();
+        }
+
+        //AddTilesetsPacket
+        public void HandlePacket(Client client, Player player, Packets.Editor.AddTilesetsPacket packet)
+        {
+            foreach (var tileset in packet.Tilesets)
             {
-                TimeBase.GetTimeBase().LoadTimeBase(packet);
+                var value = tileset.Trim().ToLower();
+                foreach (var tset in TilesetBase.Lookup)
+                    if (tset.Value.Name.Trim().ToLower() == value) continue;
+
+                var obj = LegacyDatabase.AddGameObject(GameObjectType.Tileset);
+                ((TilesetBase)obj).Name = value;
                 LegacyDatabase.SaveGameDatabase();
-                ServerTime.Init();
-                PacketSender.SendTimeBaseToAllEditors();
+                PacketSender.CacheGameDataPacket();
+                PacketSender.SendGameObjectToAll(obj);
             }
         }
 
-        private static void HandlePartyInvite(Client client, byte[] packet)
+        //RequestGridPacket
+        public void HandlePacket(Client client, Player player, Packets.Editor.RequestGridPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var target = Player.FindOnline(bf.ReadGuid());
-            if (target == null) return;
-            if (target.Id != client.Entity.Id)
+            if (MapInstance.Lookup.Keys.Contains(packet.MapId))
             {
-                target.InviteToParty(client.Entity);
-            }
-            else
-            {
-                PacketSender.SendPlayerMsg(client, Strings.Player.notarget, CustomColors.NoTarget);
-            }
-            bf.Dispose();
-        }
-
-        private static void HandleAcceptPartyInvite(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var leader = bf.ReadGuid();
-            if (client.Entity.PartyRequester != null && client.Entity.PartyRequester.Id == leader)
-            {
-                if (client.Entity.PartyRequester.IsValidPlayer)
+                if (client.IsEditor)
                 {
-                    client.Entity.PartyRequester.AddParty(client.Entity);
-                }
-
-                client.Entity.PartyRequester = null;
-            }
-            bf.Dispose();
-        }
-
-        private static void HandleDeclinePartyInvite(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var leader = bf.ReadGuid();
-            if (client.Entity.PartyRequester != null && client.Entity.PartyRequester.Id == leader)
-            {
-                if (client.Entity.PartyRequester.IsValidPlayer)
-                {
-                    PacketSender.SendPlayerMsg(client.Entity.PartyRequester.MyClient,
-                        Strings.Parties.declined.ToString(client.Entity.Name), CustomColors.Declined);
-
-                    if (client.Entity.PartyRequests.ContainsKey(client.Entity.PartyRequester))
-                    {
-                        client.Entity.PartyRequests[client.Entity.PartyRequester] = Globals.Timing.TimeMs +
-                                                                                    Player.REQUEST_DECLINE_TIMEOUT;
-                    }
-                    else
-                    {
-                        client.Entity.PartyRequests.Add(client.Entity.PartyRequester,
-                            Globals.Timing.TimeMs + Player.REQUEST_DECLINE_TIMEOUT);
-                    }
-                }
-                client.Entity.PartyRequester = null;
-            }
-        }
-
-        private static void HandlePartyKick(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            Guid target = bf.ReadGuid();
-            client.Entity.KickParty(target);
-            bf.Dispose();
-        }
-
-        private static void HandlePartyLeave(Client client, byte[] packet)
-        {
-            client.Entity.LeaveParty();
-        }
-
-        private static void HandleAcceptQuest(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var questId = bf.ReadGuid();
-            client.Entity.AcceptQuest(questId);
-            bf.Dispose();
-        }
-
-        private static void HandleDeclineQuest(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var questId = bf.ReadGuid();
-            client.Entity.DeclineQuest(questId);
-            bf.Dispose();
-        }
-
-        private static void HandleCancelQuest(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var questId = bf.ReadGuid();
-            client.Entity.CancelQuest(questId);
-            bf.Dispose();
-        }
-
-        private static void HandleTradeRequest(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var target = Player.FindOnline(bf.ReadGuid());
-            if (target == null) return;
-            if (target.Id != client.Entity.Id)
-            {
-                target.InviteToTrade(client.Entity);
-            }
-            bf.Dispose();
-        }
-
-        private static void HandleTradeRequestAccept(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var target = bf.ReadGuid();
-            if (client.Entity.Trading.Requester != null && client.Entity.Trading.Requester.Id == target)
-            {
-                if (client.Entity.Trading.Requester.IsValidPlayer)
-                {
-                    if (client.Entity.Trading.Requester.Trading.Counterparty == null) //They could have accepted another trade since.
-                    {
-                        client.Entity.Trading.Requester.StartTrade(client.Entity);
-                    }
-                    else
-                    {
-                        PacketSender.SendPlayerMsg(client, Strings.Trading.busy.ToString(
-                            client.Entity.Trading.Requester.Name), Color.Red);
-                    }
-                }
-
-                client.Entity.Trading.Requester = null;
-            }
-            bf.Dispose();
-        }
-
-        private static void HandleTradeRequestDecline(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var target = bf.ReadGuid();
-            if (client.Entity.Trading.Requester != null && client.Entity.Trading.Requester.Id == target)
-            {
-                if (client.Entity.Trading.Requester.IsValidPlayer)
-                {
-                    PacketSender.SendPlayerMsg(client.Entity.Trading.Requester.MyClient,
-                        Strings.Trading.declined.ToString(client.Entity.Name), CustomColors.Declined);
-                    if (client.Entity.Trading.Requests.ContainsKey(client.Entity.Trading.Requester))
-                    {
-                        client.Entity.Trading.Requests[client.Entity.Trading.Requester] = Globals.Timing.TimeMs +
-                                                                                    Player.REQUEST_DECLINE_TIMEOUT;
-                    }
-                    else
-                    {
-                        client.Entity.Trading.Requests.Add(client.Entity.Trading.Requester,
-                            Globals.Timing.TimeMs + Player.REQUEST_DECLINE_TIMEOUT);
-                    }
-                }
-                client.Entity.Trading.Requester = null;
-            }
-        }
-
-        private static void HandleTradeOffer(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var slot = bf.ReadInteger();
-            var amount = bf.ReadInteger();
-            client.Entity.OfferItem(slot, amount);
-            bf.Dispose();
-        }
-
-        private static void HandleTradeRevoke(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var slot = bf.ReadInteger();
-            var amount = bf.ReadInteger();
-            client.Entity.RevokeItem(slot, amount);
-            bf.Dispose();
-        }
-
-        private static void HandleTradeAccept(Client client, byte[] packet)
-        {
-            client.Entity.Trading.Accepted = true;
-            if (client.Entity.Trading.Counterparty.Trading.Accepted)
-            {
-                Item[] t = new Item[Options.MaxInvItems];
-
-                //Swap the trade boxes over, then return the trade boxes to their new owners!
-                t = client.Entity.Trading.Offer;
-                client.Entity.Trading.Offer = client.Entity.Trading.Counterparty.Trading.Offer;
-                client.Entity.Trading.Counterparty.Trading.Offer = t;
-                client.Entity.Trading.Counterparty.ReturnTradeItems();
-                client.Entity.ReturnTradeItems();
-
-                PacketSender.SendPlayerMsg(client, Strings.Trading.accepted, CustomColors.Accepted);
-                PacketSender.SendPlayerMsg(client.Entity.Trading.Counterparty.MyClient, Strings.Trading.accepted, CustomColors.Accepted);
-                PacketSender.SendTradeClose(client.Entity.Trading.Counterparty.MyClient);
-                PacketSender.SendTradeClose(client);
-                client.Entity.Trading.Counterparty.Trading.Counterparty = null;
-                client.Entity.Trading.Counterparty = null;
-            }
-        }
-
-        private static void HandleTradeDecline(Client client, byte[] packet)
-        {
-            client.Entity.CancelTrade();
-        }
-
-        private static void HandleAddTilesets(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            var type = GameObjectType.Tileset;
-            if (client.IsEditor)
-            {
-                bf.WriteBytes(packet);
-                var count = bf.ReadInteger();
-                for (int i = 0; i < count; i++)
-                {
-                    var value = bf.ReadString().Trim().ToLower();
-                    if (type == GameObjectType.Tileset)
-                    {
-                        foreach (var tileset in TilesetBase.Lookup)
-                            if (tileset.Value.Name.Trim().ToLower() == value) return;
-                    }
-                    var obj = LegacyDatabase.AddGameObject(type);
-                    if (type == GameObjectType.Tileset)
-                    {
-                        ((TilesetBase)obj).Name = value;
-                        LegacyDatabase.SaveGameDatabase();
-                    }
-                    PacketSender.SendGameObjectToAll(obj, false, i != count - 1);
-                }
-                bf.Dispose();
-            }
-        }
-
-        private static void HandleEnterMap(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            if (client.IsEditor)
-            {
-                var mapId = bf.ReadGuid();
-                client.EditorMap = mapId;
-            }
-
-            bf.Dispose();
-        }
-
-        private static void HandleCloseBag(Client client, byte[] packet)
-        {
-            client.Entity.CloseBag();
-        }
-
-        private static void HandleStoreBagItem(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var slot = bf.ReadInteger();
-            var amount = bf.ReadInteger();
-            client.Entity.StoreBagItem(slot, amount);
-            bf.Dispose();
-        }
-
-        private static void HandleRetreiveBagItem(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var slot = bf.ReadInteger();
-            var amount = bf.ReadInteger();
-            client.Entity.RetreiveBagItem(slot, amount);
-            bf.Dispose();
-        }
-
-        private static void HandleMoveBagItem(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var item1 = bf.ReadInteger();
-            var item2 = bf.ReadInteger();
-            client.Entity.SwapBagItems(item1, item2);
-            bf.Dispose();
-        }
-
-        private static void HandleRequestFriends(Client client, byte[] packet)
-        {
-            PacketSender.SendFriends(client);
-        }
-
-        private static void HandleFriendRequest(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var target = Player.FindOnline(bf.ReadGuid());
-            if (target == null) return;
-            if (target.Id != client.Entity.Id)
-            {
-                if (!client.Entity.HasFriend(target)) // Incase one user deleted friend then re-requested
-                {
-                    client.Entity.AddFriend(target);
-                    PacketSender.SendPlayerMsg(client, Strings.Friends.notification.ToString(target.Name), CustomColors.Accepted);
-                    PacketSender.SendFriends(client);
-                }
-
-                if (!target.HasFriend(client.Entity)) // Incase one user deleted friend then re-requested
-                {
-                    target.AddFriend(client.Entity);
-                    PacketSender.SendPlayerMsg(target.MyClient, Strings.Friends.accept.ToString(client.Entity.Name), CustomColors.Accepted);
-                    PacketSender.SendFriends(target.MyClient);
-                }
-
-                return;
-            }
-            bf.Dispose();
-        }
-
-        private static void HandleFriendRequestDecline(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var target = Player.FindOnline(bf.ReadGuid());
-            if (client.Entity.FriendRequester == target)
-            {
-                if (client.Entity.FriendRequester.IsValidPlayer)
-                {
-                    if (client.Entity.FriendRequests.ContainsKey(client.Entity.FriendRequester))
-                    {
-                        client.Entity.FriendRequests[client.Entity.FriendRequester] =
-                            Globals.Timing.TimeMs + Player.REQUEST_DECLINE_TIMEOUT;
-                    }
-                    else
-                    {
-                        client.Entity.FriendRequests.Add(client.Entity.FriendRequester,
-                            Globals.Timing.TimeMs + Player.REQUEST_DECLINE_TIMEOUT);
-                    }
-                }
-                client.Entity.FriendRequester = null;
-            }
-        }
-
-        private static void HandleAddFriend(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            string name = bf.ReadString();
-
-            //Don't add yourself!
-            if (name.ToLower() == client.Entity.Name.ToLower())
-            {
-                return;
-            }
-
-            var character = LegacyDatabase.GetPlayer(name);
-            if (character != null)
-            {
-                if (!client.Entity.HasFriend(character))
-                {
-                    //Add the friend
-                    foreach (var c in Globals.Clients) //Check the player is online
-                    {
-                        if (c != null && c.Entity != null)
-                        {
-                            if (name.ToLower() == c.Entity.Name.ToLower())
-                            {
-                                c.Entity.FriendRequest(client.Entity);
-                                return;
-                            }
-                        }
-                    }
-                    PacketSender.SendPlayerMsg(client, Strings.Player.offline, CustomColors.Error);
-                }
-                else
-                {
-                    PacketSender.SendPlayerMsg(client, Strings.Friends.alreadyfriends.ToString(name), CustomColors.Info);
+                    PacketSender.SendMapGrid(client, MapInstance.Get(packet.MapId).MapGrid);
                 }
             }
-            bf.Dispose();
         }
 
-        private static void HandleRemoveFriend(Client client, byte[] packet)
+        //OpenMapPacket
+        public void HandlePacket(Client client, Player player, Packets.Editor.EnterMapPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            string name = bf.ReadString();
-            var charId = LegacyDatabase.GetCharacterId(name);
-
-            if (charId != null)
-            {
-                var character = LegacyDatabase.GetPlayer((Guid)charId);
-                if (character != null && client.Entity.HasFriend(character))
-                {
-                    client.Entity.RemoveFriend(character);
-                    character.RemoveFriend(client.Entity);
-                    PacketSender.SendPlayerMsg(client, Strings.Friends.remove, CustomColors.Declined);
-                    PacketSender.SendFriends(client);
-                    if (character.MyClient != null) PacketSender.SendFriends(character.MyClient);
-                }
-            }
-            bf.Dispose();
+            client.EditorMap = packet.MapId;
         }
 
-        private static void HandlePlayGame(Client client, byte[] packet)
+        //NeedMapPacket
+        public void HandlePacket(Client client, Player player, Packets.Editor.NeedMapPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var charId = bf.ReadGuid();
-            var character = LegacyDatabase.GetUserCharacter(client.User, charId);
-            if (character != null)
+            var map = MapInstance.Get(packet.MapId);
+            if (map != null)
             {
-
-                client.LoadCharacter(character);
-                try
-                {
-                    client.Entity?.SetOnline();
-                    PacketSender.SendJoinGame(client);
-                }
-                catch (Exception exception)
-                {
-                    Log.Warn(exception);
-                    PacketSender.SendLoginError(client, Strings.Account.loadfail);
-                    client.Logout();
-                }
-            }
-            bf.Dispose();
-        }
-
-        private static void HandleDeleteChar(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var charId = bf.ReadGuid();
-            var character = LegacyDatabase.GetUserCharacter(client.User, charId);
-            if (character != null)
-            {
-                foreach (var chr in client.Characters.ToArray())
-                {
-                    if (chr.Id == charId)
-                    {
-                        client.Characters.Remove(chr);
-                        LegacyDatabase.DeleteCharacter(chr);
-                    }
-                }
-            }
-            PacketSender.SendLoginError(client, Strings.Account.deletechar, Strings.Account.deleted);
-            PacketSender.SendPlayerCharacters(client);
-            bf.Dispose();
-        }
-
-        private static void HandleCreateNewChar(Client client, byte[] packet)
-        {
-            if (client?.Characters?.Count < Options.MaxCharacters)
-            {
-                PacketSender.SendGameObjects(client, GameObjectType.Class);
-                PacketSender.SendCreateCharacter(client);
-            }
-            else
-            {
-                PacketSender.SendLoginError(client, Strings.Account.maxchars);
+                PacketSender.SendMap(client, packet.MapId);
             }
         }
 
-        private static void HandleRequestPassReset(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var nameEmail = bf.ReadString();
-            
-            //Find account with that name or email
-            var userName = LegacyDatabase.UsernameFromEmail(nameEmail);
-            if (string.IsNullOrEmpty(userName)) userName = nameEmail;
-            if (LegacyDatabase.AccountExists(userName))
-            {
-                //Send reset email
-                var user = LegacyDatabase.GetUser(userName);
-                var email = new PasswordResetEmail(user);
-                email.Send();
-            }
-
-            bf.Dispose();
-        }
-
-        private static void HandleResetPass(Client client, byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var nameEmail = bf.ReadString();
-            var code = bf.ReadString();
-            var hashedPass = bf.ReadString();
-
-            //Find account with that name or email
-            var success = false;
-            var userName = LegacyDatabase.UsernameFromEmail(nameEmail);
-            if (string.IsNullOrEmpty(userName)) userName = nameEmail;
-            if (LegacyDatabase.AccountExists(userName))
-            {
-                //Reset Password
-                var user = LegacyDatabase.GetUser(userName);
-                if (user.PasswordResetCode.ToLower().Trim() == code.ToLower().Trim() && user.PasswordResetTime > DateTime.UtcNow)
-                {
-                    user.PasswordResetCode = "";
-                    user.PasswordResetTime = DateTime.MinValue;
-                    LegacyDatabase.ResetPass(user, hashedPass);
-                    success = true;
-                }
-            }
-
-            PacketSender.SendPasswordResetResult(client, success);
-
-            bf.Dispose();
-        }
-
+        #endregion
     }
 }

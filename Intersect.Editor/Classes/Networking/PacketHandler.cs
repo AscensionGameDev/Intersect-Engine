@@ -15,280 +15,84 @@ using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Logging;
 using Intersect.Network;
-using Intersect.Network.Packets.Reflectable;
+using Intersect.Network.Packets;
+using Intersect.Network.Packets.Server;
 
 namespace Intersect.Editor.Networking
 {
     public static class PacketHandler
     {
         public delegate void GameObjectUpdated(GameObjectType type);
-
         public delegate void MapUpdated();
-
         public static GameObjectUpdated GameObjectUpdatedDelegate;
         public static MapUpdated MapUpdatedDelegate;
 
-        private static List<ShitMeasurement> sMeasurements = new List<ShitMeasurement>();
-
-        private static int sHitstaken;
-        private static long sTimespentshitting;
-        private static long sTotalshitsize;
-        private static Stopwatch sShitTimer = new Stopwatch();
-
-        private static TextWriter sWriter;
-
-        public static bool HandlePacket(IPacket packet)
+        public static bool HandlePacket(IConnection connection, IPacket packet)
         {
-            var binaryPacket = packet as BinaryPacket;
-
-            var bf = binaryPacket?.Buffer;
-
-            if (packet == null || bf == null) return false;
-
-            //Compressed?
-            if (bf.ReadByte() == 1)
-            {
-                var data = Compression.DecompressPacket(bf.ReadBytes(bf.Length()));
-                bf = new ByteBuffer();
-                bf.WriteBytes(data);
-            }
-
-            HandlePacket(bf);
+            if (packet is CerasPacket)
+                HandlePacket((dynamic)packet);
             return true;
         }
 
-        private static int sPacketCount = 0;
-        private static bool sDebugPackets = false;
-        public static void HandlePacket(ByteBuffer bf)
+        //PingPacket
+        private static void HandlePacket(PingPacket packet)
         {
-            if (bf == null || bf.Length() == 0) return;
-
-            var packetHeader = (ServerPackets) bf.ReadLong();
-            sPacketCount++;
-            if (sDebugPackets)
-            {
-                Console.WriteLine("Handled packet " + packetHeader + " - " + sPacketCount);
-            }
-            switch (packetHeader)
-            {
-                case ServerPackets.Ping:
-                    HandlePing(bf.ReadBytes(bf.Length()));
-                    break;
-                case ServerPackets.ServerConfig:
-                    HandleServerConfig(bf.ReadBytes(bf.Length()));
-                    break;
-                case ServerPackets.JoinGame:
-                    HandleJoinGame(bf.ReadBytes(bf.Length()));
-                    break;
-                case ServerPackets.MapData:
-                    HandleMapData(bf.ReadBytes(bf.Length()));
-                    break;
-                case ServerPackets.GameData:
-                    HandleGameData(bf.ReadBytes(bf.Length()));
-                    break;
-                case ServerPackets.EnterMap:
-                    HandleEnterMap(bf.ReadBytes(bf.Length()));
-                    break;
-                case ServerPackets.MapList:
-                    HandleMapList(bf.ReadBytes(bf.Length()));
-                    break;
-                case ServerPackets.LoginError:
-                    HandleLoginError(bf.ReadBytes(bf.Length()));
-                    break;
-                case ServerPackets.MapGrid:
-                    HandleMapGrid(bf.ReadBytes(bf.Length()));
-                    break;
-                case ServerPackets.SendAlert:
-                    HandleAlert(bf.ReadBytes(bf.Length()));
-                    break;
-                case ServerPackets.GameObject:
-                    HandleGameObject(bf.ReadBytes(bf.Length()));
-                    break;
-                case ServerPackets.GameObjectEditor:
-                    HandleOpenEditor(bf.ReadBytes(bf.Length()));
-                    break;
-                case ServerPackets.TimeBase:
-                    HandleTimeBase(bf.ReadBytes(bf.Length()));
-                    break;
-                case ServerPackets.Shit:
-                    HandleShit(bf.ReadBytes(bf.Length()));
-                    break;
-                default:
-                    Console.WriteLine(@"Non implemented packet received: " + packetHeader);
-                    break;
-            }
-        }
-
-        private static void HandleShit(byte[] packet)
-        {
-            if (sWriter == null)
-            {
-                sWriter = new StreamWriter(
-                    new FileStream($"shits{DateTime.Now:yyyy-MM-dd_HH-mm-ss-fff}.csv", FileMode.Create,
-                        FileAccess.Write), Encoding.UTF8);
-            }
-
-            using (var bf = new ByteBuffer())
-            {
-                bf.WriteBytes(packet);
-                var shitting = bf.ReadBoolean();
-                var packetNum = bf.ReadInteger();
-                if (packetNum > -1)
-                {
-                    var isData = bf.ReadBoolean();
-                    if (isData)
-                    {
-                        //Console.WriteLine($"START PACKET #{packetNum}");
-                        //Console.WriteLine($"SHIT LENGTH: {bf.ReadString().Length}");
-                        var shitSize = bf.ReadInteger();
-                        //Console.WriteLine($"SHIT SIZE: {shitSize} bytes.");
-                        //Console.WriteLine($"END PACKET #{packetNum}");
-                        sTotalshitsize += shitSize;
-                    }
-                    else
-                    {
-                        var isStarting = bf.ReadBoolean();
-                        if (isStarting)
-                        {
-                            //Console.WriteLine($"Starting timer...");
-                            sShitTimer.Restart();
-                        }
-                        else
-                        {
-                            sShitTimer.Stop();
-                            //Console.WriteLine($"Timer done. {ShitTimer.ElapsedMilliseconds}ms elapsed.");
-                            sTimespentshitting += sShitTimer.ElapsedTicks;
-                            sHitstaken++;
-                            sMeasurements.Add(new ShitMeasurement
-                            {
-                                Elapsed = sShitTimer.ElapsedTicks,
-                                Taken = 1,
-                                Totalsize = 0
-                            });
-                        }
-                    }
-                }
-                else
-                {
-                    switch (packetNum)
-                    {
-                        case -2:
-                            foreach (var m in sMeasurements)
-                            {
-                                if (m.Taken < 2) continue;
-                                Console.WriteLine(
-                                    $"Shits: {m.Taken}, Shitrate: {m.ShitRate}s/s, Datarate: {m.DataRate / 1048576}MiB/s");
-                            }
-                            break;
-                        case -3:
-                            sWriter.Close();
-                            sWriter.Dispose();
-                            sWriter = null;
-                            break;
-                        default:
-                            if (shitting)
-                            {
-                                sHitstaken = 0;
-                                sTimespentshitting = 0;
-                                sTotalshitsize = 0;
-                                //Console.WriteLine("Starting to shit...");
-                            }
-                            else
-                            {
-                                var diff = 1000.0 * TimeSpan.TicksPerMillisecond;
-                                //Console.WriteLine("Just flushed the toilet.");
-                                //Console.WriteLine($"I took {shitstaken} shit(s).");
-                                //Console.WriteLine($"It took me a total of {timespentshitting / diff}s to shit.");
-                                //Console.WriteLine($"Each shit took {timespentshitting / (diff * shitstaken)}s per shit.");
-                                //Console.WriteLine($"I shit at approximately {(totalshitsize / (timespentshitting / diff)) / 1024}KiB/s.");
-                                sMeasurements.Add(new ShitMeasurement
-                                {
-                                    Elapsed = sTimespentshitting,
-                                    Taken = sHitstaken,
-                                    Totalsize = sTotalshitsize
-                                });
-                                if (sHitstaken > 0)
-                                {
-                                    sWriter.WriteLine($"{sTimespentshitting},{sHitstaken},{sTotalshitsize}");
-                                    sWriter.Flush();
-                                }
-                            }
-                            break;
-                    }
-                }
-            }
-        }
-
-        private static void HandlePing(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            if (Convert.ToBoolean(bf.ReadInteger()) == true) //request
+            if (packet.RequestingReply)
             {
                 PacketSender.SendPing();
             }
         }
 
-        private static void HandleServerConfig(byte[] packet)
+        //ConfigPacket
+        private static void HandlePacket(ConfigPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            Options.LoadFromServer(bf);
+            Options.LoadFromServer(packet.Config);
         }
 
-        private static void HandleJoinGame(byte[] packet)
+        //JoinGamePacket
+        private static void HandlePacket(JoinGamePacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
             Globals.LoginForm.TryRemembering();
             Globals.LoginForm.HideSafe();
         }
 
-        private static void HandleMapData(byte[] packet)
+        //MapPacket
+        private static void HandlePacket(MapPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            Guid mapId = bf.ReadGuid();
-            int deleted = bf.ReadInteger();
-            if (deleted == 1)
+            if (packet.Deleted)
             {
-                if (MapInstance.Get(mapId) != null)
+                if (MapInstance.Get(packet.MapId) != null)
                 {
-                    if (Globals.CurrentMap == MapInstance.Get(mapId))
+                    if (Globals.CurrentMap == MapInstance.Get(packet.MapId))
                     {
                         Globals.MainForm.EnterMap(MapList.List.FindFirstMap());
                     }
-                    MapInstance.Get(mapId).Delete();
+                    MapInstance.Get(packet.MapId).Delete();
                 }
             }
             else
             {
-                var mapJson = bf.ReadString();
-                var tileLength = bf.ReadInteger();
-                var tileData = bf.ReadBytes(tileLength);
-                var attributeLength = bf.ReadInteger();
-                var attributeData = bf.ReadBytes(attributeLength);
-                var map = new MapInstance(mapId);
-                map.Load(mapJson);
-                map.LoadTileData(tileData);
-                map.AttributeData = attributeData;
-                map.MapGridX = bf.ReadInteger();
-                map.MapGridY = bf.ReadInteger();
+                var map = new MapInstance(packet.MapId);
+                map.Load(packet.Data);
+                map.LoadTileData(packet.TileData);
+                map.AttributeData = packet.AttributeData;
+                map.MapGridX = packet.GridX;
+                map.MapGridY = packet.GridY;
                 map.SaveStateAsUnchanged();
                 map.InitAutotiles();
                 map.UpdateAdjacentAutotiles();
-                if (MapInstance.Get(mapId) != null)
+                if (MapInstance.Get(packet.MapId) != null)
                 {
-                    lock (MapInstance.Get(mapId).MapLock)
+                    lock (MapInstance.Get(packet.MapId).MapLock)
                     {
-                        if (Globals.CurrentMap == MapInstance.Get(mapId))
+                        if (Globals.CurrentMap == MapInstance.Get(packet.MapId))
                         {
                             Globals.CurrentMap = map;
                         }
-                        MapInstance.Get(mapId).Delete();
+                        MapInstance.Get(packet.MapId).Delete();
                     }
                 }
-                MapInstance.Lookup.Set(mapId, map);
+                MapInstance.Lookup.Set(packet.MapId, map);
                 if (!Globals.InEditor && Globals.HasGameData)
                 {
                     Globals.CurrentMap = map;
@@ -299,14 +103,14 @@ namespace Intersect.Editor.Networking
                     if (Globals.FetchingMapPreviews || Globals.CurrentMap == map)
                     {
                         Guid currentMapId = Globals.CurrentMap.Id;
-                        var img = Database.LoadMapCacheLegacy(mapId, map.Revision);
-                        if (img == null &&  !Globals.MapsToScreenshot.Contains(mapId)) Globals.MapsToScreenshot.Add(mapId);
+                        var img = Database.LoadMapCacheLegacy(packet.MapId, map.Revision);
+                        if (img == null &&  !Globals.MapsToScreenshot.Contains(packet.MapId)) Globals.MapsToScreenshot.Add(packet.MapId);
                         img?.Dispose();
                         if (Globals.FetchingMapPreviews)
                         {
-                            if (Globals.MapsToFetch.Contains(mapId))
+                            if (Globals.MapsToFetch.Contains(packet.MapId))
                             {
-                                Globals.MapsToFetch.Remove(mapId);
+                                Globals.MapsToFetch.Remove(packet.MapId);
                                 if (Globals.MapsToFetch.Count == 0)
                                 {
                                     Globals.FetchingMapPreviews = false;
@@ -326,7 +130,7 @@ namespace Intersect.Editor.Networking
                         }
                         Globals.CurrentMap = MapInstance.Get(currentMapId);
                     }
-                    if (mapId != Globals.LoadingMap) return;
+                    if (packet.MapId != Globals.LoadingMap) return;
                     Globals.CurrentMap = MapInstance.Get(Globals.LoadingMap);
                     MapUpdatedDelegate();
                     if (map.Up != Guid.Empty)
@@ -346,7 +150,7 @@ namespace Intersect.Editor.Networking
                         PacketSender.SendNeedMap(map.Right);
                     }
                 }
-                if (Globals.CurrentMap.Id == mapId && Globals.MapGrid != null && Globals.MapGrid.Loaded)
+                if (Globals.CurrentMap.Id == packet.MapId && Globals.MapGrid != null && Globals.MapGrid.Loaded)
                 {
                     for (int y = Globals.CurrentMap.MapGridY + 1; y >= Globals.CurrentMap.MapGridY - 1; y--)
                     {
@@ -364,8 +168,13 @@ namespace Intersect.Editor.Networking
             }
         }
 
-        private static void HandleGameData(byte[] packet)
+        //GameDataPacket
+        private static void HandlePacket(GameDataPacket packet)
         {
+            foreach (var obj in packet.GameObjects)
+            {
+                HandlePacket((dynamic) obj);
+            }
             Globals.HasGameData = true;
             if (!Globals.InEditor && Globals.HasGameData && Globals.CurrentMap != null)
             {
@@ -374,43 +183,36 @@ namespace Intersect.Editor.Networking
             GameContentManager.LoadTilesets();
         }
 
-        private static void HandleEnterMap(byte[] packet)
+        //EnterMapPacket
+        private static void HandlePacket(EnterMapPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            Globals.MainForm.BeginInvoke((Action) (() => Globals.MainForm.EnterMap(bf.ReadGuid())));
+            Globals.MainForm.BeginInvoke((Action) (() => Globals.MainForm.EnterMap(packet.MapId)));
         }
 
-        private static void HandleMapList(byte[] packet)
+        //MapListPacket
+        private static void HandlePacket(MapListPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            MapList.List.JsonData = bf.ReadString();
+            MapList.List.JsonData = packet.MapListData;
             MapList.List.PostLoad(MapBase.Lookup, false, true);
             if (Globals.CurrentMap == null)
             {
                 Globals.MainForm.EnterMap(MapList.List.FindFirstMap());
             }
             Globals.MapListWindow.BeginInvoke(Globals.MapListWindow.mapTreeList.MapListDelegate, Guid.Empty, null);
-            bf.Dispose();
         }
 
-        private static void HandleLoginError(byte[] packet)
+        //ErrorMessagePacket
+        private static void HandlePacket(ErrorMessagePacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            string error = bf.ReadString();
-            MessageBox.Show(error, "Login Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            bf.Dispose();
+            MessageBox.Show(packet.Error,packet.Header, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        private static void HandleMapGrid(byte[] packet)
+        //MapGridPacket
+        private static void HandlePacket(MapGridPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
             if (Globals.MapGrid != null)
             {
-                Globals.MapGrid.Load(bf);
+                Globals.MapGrid.Load(packet.EditorGrid);
                 if (Globals.CurrentMap != null && Globals.MapGrid != null && Globals.MapGrid.Loaded)
                 {
                     for (int y = Globals.CurrentMap.MapGridY + 1; y >= Globals.CurrentMap.MapGridY - 1; y--)
@@ -427,31 +229,17 @@ namespace Intersect.Editor.Networking
                     }
                 }
             }
-            bf.Dispose();
         }
-
-        private static void HandleAlert(byte[] packet)
+        
+        //GameObjectPacket
+        private static void HandlePacket(GameObjectPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var title = bf.ReadString();
-            var text = bf.ReadString();
-            MessageBox.Show(text, title);
-            bf.Dispose();
-        }
-
-        private static void HandleGameObject(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var type = (GameObjectType) bf.ReadInteger();
-            var id = bf.ReadGuid();
-            var another = Convert.ToBoolean(bf.ReadInteger());
-            var deleted = Convert.ToBoolean(bf.ReadInteger());
+            var id = packet.Id;
+            var deleted = packet.Deleted;
             var json = "";
-            if (!deleted)
-                json = bf.ReadString();
-            switch (type)
+            if (!packet.Deleted)
+                json = packet.Data;
+            switch (packet.Type)
             {
                 case GameObjectType.Animation:
                     if (deleted)
@@ -681,41 +469,24 @@ namespace Intersect.Editor.Networking
                     var obj = new TilesetBase(id);
                     obj.Load(json);
                     TilesetBase.Lookup.Set(id, obj);
-                    if (Globals.HasGameData && !another) GameContentManager.LoadTilesets();
+                    if (Globals.HasGameData && !packet.AnotherFollowing) GameContentManager.LoadTilesets();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            GameObjectUpdatedDelegate?.Invoke(type);
-            bf.Dispose();
+            GameObjectUpdatedDelegate?.Invoke(packet.Type);
         }
 
-        private static void HandleOpenEditor(byte[] packet)
+        //OpenEditorPacket
+        private static void HandlePacket(OpenEditorPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var type = (GameObjectType) bf.ReadInteger();
-            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, type);
-            bf.Dispose();
+            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, packet.Type);
         }
 
-        private static void HandleTimeBase(byte[] packet)
+        //TimeDataPacket
+        private static void HandlePacket(TimeDataPacket packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            TimeBase.GetTimeBase().LoadTimeBase(packet);
-            Globals.MainForm.BeginInvoke(Globals.MainForm.TimeDelegate);
-            bf.Dispose();
-        }
-
-        private struct ShitMeasurement
-        {
-            public int Taken;
-            public long Totalsize;
-            public long Elapsed;
-
-            public double ShitRate => Taken / (Elapsed / (double) TimeSpan.TicksPerSecond);
-            public double DataRate => Totalsize / (Elapsed / (double) TimeSpan.TicksPerSecond);
+            TimeBase.GetTimeBase().LoadFromJson(packet.TimeJson);
         }
     }
 }

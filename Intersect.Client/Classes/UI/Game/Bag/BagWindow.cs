@@ -132,8 +132,8 @@ namespace Intersect.Client.UI.Game.Bag
         {
             FloatRect rect = new FloatRect()
             {
-                X = mBagWindow.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).X - sItemXPadding / 2,
-                Y = mBagWindow.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).Y - sItemYPadding / 2,
+                X = mBagWindow.LocalPosToCanvas(new Point(0, 0)).X - sItemXPadding / 2,
+                Y = mBagWindow.LocalPosToCanvas(new Point(0, 0)).Y - sItemYPadding / 2,
                 Width = mBagWindow.Width + sItemXPadding,
                 Height = mBagWindow.Height + sItemYPadding
             };

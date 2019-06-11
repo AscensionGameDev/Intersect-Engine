@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
+
+using Intersect.Editor.Classes.Maps;
 using Intersect.Editor.Entities;
 using Intersect.Editor.General;
 using Intersect.GameObjects;
@@ -21,7 +23,7 @@ namespace Intersect.Editor.Maps
         //Map Attributes
         private Dictionary<MapAttribute, AnimationInstance> mAttributeAnimInstances = new Dictionary<MapAttribute, AnimationInstance>();
 
-        private byte[] mLoadedData;
+        private MapSaveState mLoadedState;
 
         public MapInstance(Guid id) : base(id)
         {
@@ -108,35 +110,19 @@ namespace Intersect.Editor.Maps
 
         public void SaveStateAsUnchanged()
         {
-            mLoadedData = SaveInternal();
+            mLoadedState = SaveInternal();
         }
 
-        public void LoadInternal(byte[] myArr, bool import = false)
+        public void LoadInternal(MapSaveState state, bool import = false)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(myArr);
-            var mapJson = bf.ReadString();
-            var tileDataLength = bf.ReadInteger();
-            var tileData = bf.ReadBytes(tileDataLength);
-            var attributeDataLength = bf.ReadInteger();
-            var attributeData = bf.ReadBytes(attributeDataLength);
-            Load(mapJson, import);
-            LoadTileData(tileData);
-            AttributeData = attributeData;
-            bf.Dispose();
+            Load(state.Metadata, import);
+            LoadTileData(state.Tiles);
+            AttributeData = state.Attributes;
         }
 
-        public byte[] SaveInternal()
+        public MapSaveState SaveInternal()
         {
-            var bf = new ByteBuffer();
-            bf.WriteString(JsonData);
-            var tileData = GenerateTileData();
-            bf.WriteInteger(tileData.Length);
-            bf.WriteBytes(tileData);
-            var attributeData = AttributeData;
-            bf.WriteInteger(attributeData.Length);
-            bf.WriteBytes(attributeData);
-            return bf.ToArray();
+            return new MapSaveState(JsonData, GenerateTileData(), AttributeData);
         }
 
         public byte[] GenerateTileData()
@@ -160,20 +146,10 @@ namespace Intersect.Editor.Maps
 
         public bool Changed()
         {
-            if (mLoadedData != null)
+            if (mLoadedState != null)
             {
                 var newData = SaveInternal();
-                if (newData.Length == mLoadedData.Length)
-                {
-                    for (int i = 0; i < newData.Length; i++)
-                    {
-                        if (newData[i] != mLoadedData[i])
-                        {
-                            return true;
-                        }
-                    }
-                    return false;
-                }
+                return newData.Matches(mLoadedState);
             }
             return true;
         }

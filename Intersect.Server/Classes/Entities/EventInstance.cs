@@ -18,8 +18,8 @@ namespace Intersect.Server.Entities
         public EventBase BaseEvent;
 
         public Stack<CommandInstance> CallStack = new Stack<CommandInstance>();
-        public int CurrentX;
-        public int CurrentY;
+        public int X;
+        public int Y;
         public EventPageInstance[] GlobalPageInstance;
         public bool HoldingPlayer;
         public bool Global;
@@ -47,8 +47,8 @@ namespace Intersect.Server.Entities
             SelfSwitch = new bool[4];
             BaseEvent = baseEvent;
             MapId = map;
-            CurrentX = baseEvent.SpawnX;
-            CurrentY = baseEvent.SpawnY;
+            X = baseEvent.SpawnX;
+            Y = baseEvent.SpawnY;
         }
 
         public EventInstance(Guid instanceId, EventBase baseEvent,Guid map) //Global constructor
@@ -59,8 +59,8 @@ namespace Intersect.Server.Entities
             BaseEvent = baseEvent;
             SelfSwitch = new bool[4];
             GlobalPageInstance = new EventPageInstance[BaseEvent.Pages.Count];
-            CurrentX = baseEvent.SpawnX;
-            CurrentY = baseEvent.SpawnY;
+            X = (byte)baseEvent.SpawnX;
+            Y = baseEvent.SpawnY;
             for (int i = 0; i < BaseEvent.Pages.Count; i++)
             {
                 GlobalPageInstance[i] = new EventPageInstance(BaseEvent, BaseEvent.Pages[i], MapId, this, null);
@@ -75,8 +75,8 @@ namespace Intersect.Server.Entities
                 //Check for despawn
                 if (PageInstance.ShouldDespawn())
                 {
-                    CurrentX = PageInstance.X;
-                    CurrentY = PageInstance.Y;
+                    X = PageInstance.X;
+                    Y = PageInstance.Y;
                     PageInstance = null;
                     PlayerHasDied = false;
                     if (HoldingPlayer)
@@ -196,7 +196,7 @@ namespace Intersect.Server.Entities
 
                 if (sendLeave)
                 {
-                    PacketSender.SendEntityLeaveTo(MyClient, BaseEvent.Id, (int)EntityTypes.Event, MapId);
+                    PacketSender.SendEntityLeaveTo(MyClient, PageInstance);
                 }
             }
         }
