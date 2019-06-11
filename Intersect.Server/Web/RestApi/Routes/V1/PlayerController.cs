@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -47,21 +48,38 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
         [Route]
         [HttpGet]
-        public object List()
+        public object List(int page = 0, int count = 10)
         {
-            // TODO: Implement player listing with pagination
-            return new
+            page = Math.Max(page, 0);
+            count = Math.Max(Math.Min(count, 100), 5);
+
+            using (var context = PlayerContext.Temporary)
             {
-            };
+                var entries = Player.List(page, count, context).ToList();
+                return new
+                {
+                    total = context?.Players.Count() ?? 0,
+                    page,
+                    count = entries.Count,
+                    entries
+                };
+            }
         }
 
         [Route("online")]
         [HttpGet]
-        public object Online()
+        public object Online(int page = 0, int count = 10)
         {
-            // TODO: Implement user listing with pagination
+            page = Math.Max(page, 0);
+            count = Math.Max(Math.Min(count, 100), 5);
+
+            var entries = Globals.OnlineList?.Skip(page * count).Take(count).ToList();
             return new
             {
+                total = Globals.OnlineList?.Count ?? 0,
+                page,
+                count = entries?.Count ?? 0,
+                entries
             };
         }
 
@@ -81,10 +99,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid player name '{playerName}'.");
             }
 
-            var (client, player) = Player.Fetch(playerName);
-            if (player != null)
+            using (var context = PlayerContext.Temporary)
             {
-                return player;
+                var (client, player) = Player.Fetch(playerName, context);
+                if (player != null)
+                {
+                    return player;
+                }
             }
 
             return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No player with name '{playerName}'.");
@@ -103,11 +124,78 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid player name '{playerName}'.");
             }
 
-            var (client, player) = Player.Fetch(playerName);
+            Tuple<Client, Player> fetchResult;
+            using (var context = PlayerContext.Temporary)
+            {
+                fetchResult = Player.Fetch(playerName, context);
+            }
+
+            return DoAdminActionOnPlayer(
+                () => fetchResult,
+                () => Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No player with name '{playerName}'."),
+                adminAction, actionParameters
+            );
+        }
+
+        [Route("{playerId:guid}")]
+        [HttpGet]
+        public object PlayerById(Guid playerId)
+        {
+            if (Guid.Empty == playerId)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid player id '{playerId}'.");
+            }
+
+            using (var context = PlayerContext.Temporary)
+            {
+                var (client, player) = Player.Fetch(playerId, context);
+                if (player != null)
+                {
+                    return player;
+                }
+            }
+
+            return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No player with id '{playerId}'.");
+        }
+
+        [Route("playerId:guid/AdminActions/{adminAction:AdminActions}")]
+        [HttpPost]
+        public object DoAdminActionOnPlayerById(
+            Guid playerId,
+            AdminActions adminAction,
+            [FromBody] AdminActionParameters actionParameters
+        )
+        {
+            if (Guid.Empty == playerId)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid player id '{playerId}'.");
+            }
+
+            Tuple<Client, Player> fetchResult;
+            using (var context = PlayerContext.Temporary)
+            {
+                fetchResult = Player.Fetch(playerId, context);
+            }
+
+            return DoAdminActionOnPlayer(
+                () => fetchResult,
+                () => Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No player with id '{playerId}'."),
+                adminAction, actionParameters
+            );
+        }
+
+        private object DoAdminActionOnPlayer(
+            [NotNull] Func<Tuple<Client, Player>> fetch,
+            [NotNull] Func<HttpResponseMessage> onError,
+            AdminActions adminAction,
+            AdminActionParameters actionParameters
+        )
+        {
+            var (client, player) = fetch();
 
             if (player == null)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No player with name '{playerName}'.");
+                return onError();
             }
 
             var user = client?.User;
@@ -217,24 +305,6 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
 
             return Request.CreateErrorResponse(HttpStatusCode.NotFound, Strings.Player.offline);
-        }
-
-        [Route("{playerId:guid}")]
-        [HttpGet]
-        public object PlayerById(Guid playerId)
-        {
-            if (Guid.Empty == playerId)
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid player id '{playerId}'.");
-            }
-
-            var (client, player) = Player.Fetch(playerId);
-            if (player != null)
-            {
-                return player;
-            }
-
-            return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No player with id '{playerId}'.");
         }
 
     }

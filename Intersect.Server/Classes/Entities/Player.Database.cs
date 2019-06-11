@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
@@ -41,20 +42,20 @@ namespace Intersect.Server.Entities
             return QueryPlayerByName(playerContext ?? PlayerContext.Current, playerName);
         }
 
-        public static Tuple<Client, Player> Fetch([NotNull] string playerName)
+        public static Tuple<Client, Player> Fetch([NotNull] string playerName, [CanBeNull] PlayerContext playerContext = null)
         {
             var client = Globals.Clients.Find(
                 queryClient => EntityInstance.CompareName(playerName, queryClient?.Entity?.Name)
             );
 
-            return new Tuple<Client, Player>(client, client?.Entity ?? Player.Find(playerName));
+            return new Tuple<Client, Player>(client, client?.Entity ?? Player.Find(playerName, playerContext));
         }
 
-        public static Tuple<Client, Player> Fetch(Guid playerId)
+        public static Tuple<Client, Player> Fetch(Guid playerId, [CanBeNull] PlayerContext playerContext = null)
         {
             var client = Globals.Clients.Find(queryClient => playerId == queryClient?.Entity?.Id);
 
-            return new Tuple<Client, Player>(client, client?.Entity ?? Player.Find(playerId));
+            return new Tuple<Client, Player>(client, client?.Entity ?? Player.Find(playerId, playerContext));
         }
 
         #endregion
@@ -97,7 +98,27 @@ namespace Intersect.Server.Entities
 
         #endregion
 
+        #region Listing
+
+        [NotNull]
+        public static IEnumerable<Player> List(int page, int count, [CanBeNull] PlayerContext playerContext = null)
+        {
+            return QueryPlayers(playerContext ?? PlayerContext.Current, page, count) ?? throw new InvalidOperationException();
+        }
+
+        #endregion
+
         #region Compiled Queries
+
+        [NotNull] private static readonly Func<PlayerContext, int, int, IEnumerable<Player>> QueryPlayers =
+            EF.CompileQuery(
+                (PlayerContext context, int page, int count) =>
+                    context.Players
+                        .OrderBy(player => player.Id.ToString())
+                        .Skip(page * count)
+                        .Take(count)
+            ) ??
+            throw new InvalidOperationException();
 
         [NotNull] private static readonly Func<PlayerContext, Guid, Player> QueryPlayerById =
             EF.CompileQuery((PlayerContext context, Guid id) =>

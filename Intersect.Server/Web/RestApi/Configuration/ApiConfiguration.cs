@@ -40,6 +40,15 @@ namespace Intersect.Server.Web.RestApi.Configuration
             set => Hosts = ImmutableArray.Create(value.Select(port => $@"http://localhost:{port}")?.ToArray());
         }
 
+        [JsonIgnore] private ImmutableArray<CorsConfiguration> mCorsConfigurations;
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public ImmutableArray<CorsConfiguration> Cors
+        {
+            get => mCorsConfigurations;
+            set => mCorsConfigurations = value.IsDefaultOrEmpty ? ImmutableArray.Create<CorsConfiguration>() : value;
+        }
+
         [JsonProperty(nameof(RouteAuthorization), NullValueHandling = NullValueHandling.Ignore)]
         private Dictionary<string, object> mRouteAuthorization;
 

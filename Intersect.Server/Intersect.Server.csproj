@@ -267,6 +267,9 @@
     <Reference Include="Microsoft.Owin, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Owin.4.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Owin.Cors, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Cors.4.0.1\lib\net45\Microsoft.Owin.Cors.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Owin.Host.HttpListener, Version=2.0.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Owin.Host.HttpListener.2.0.2\lib\net45\Microsoft.Owin.Host.HttpListener.dll</HintPath>
     </Reference>
@@ -368,6 +371,9 @@
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Web.Cors, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Cors.5.2.7\lib\net45\System.Web.Cors.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Http, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.7\lib\net45\System.Web.Http.dll</HintPath>
@@ -417,6 +423,7 @@
     <Compile Include="Classes\Database\PlayerData\Players\Quest.cs" />
     <Compile Include="Classes\Database\PlayerData\Players\SlotHelper.cs" />
     <Compile Include="Classes\Database\PlayerData\Players\SpellSlot.cs" />
+    <Compile Include="Classes\Database\PlayerData\SeedData\SeedPlayers.cs" />
     <Compile Include="Classes\Entities\Player.Database.cs" />
     <Compile Include="Classes\Database\Spell.cs" />
     <Compile Include="Classes\Database\PlayerData\Players\Switch.cs" />
@@ -539,6 +546,7 @@
       <DependentUpon>20190530000628_AddingCraftingQuantities.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />
+    <Compile Include="Web\RestApi\Attributes\DebugAuthorizeAttribute.cs" />
     <Compile Include="Web\RestApi\Attributes\ConfigurableAuthorizeAttribute.cs" />
     <Compile Include="Web\RestApi\Authentication\AuthenticationProvider.cs" />
     <Compile Include="Web\RestApi\Authentication\OAuth\OAuthProvider.cs" />
@@ -546,6 +554,7 @@
     <Compile Include="Web\RestApi\Authentication\OAuth\Providers\GrantProvider.cs" />
     <Compile Include="Web\RestApi\Authentication\OAuth\Providers\RefreshTokenProvider.cs" />
     <Compile Include="Web\RestApi\Configuration\ApiConfiguration.cs" />
+    <Compile Include="Web\RestApi\Configuration\CorsConfiguration.cs" />
     <Compile Include="Web\RestApi\Constraints\AdminActionsConstraint.cs" />
     <Compile Include="Web\RestApi\Extensions\HttpRequestMessageExtensions.cs" />
     <Compile Include="Web\RestApi\IAppConfigurationProvider.cs" />

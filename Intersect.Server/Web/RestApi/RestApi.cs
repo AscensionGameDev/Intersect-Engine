@@ -81,6 +81,11 @@ namespace Intersect.Server.Web.RestApi
                 throw new InvalidOperationException();
             }
 
+            Configuration.Cors
+                .Select(configuration => configuration.AsCorsOptions())?
+                .ToList()
+                .ForEach(corsOptions => appBuilder.UseCors(corsOptions));
+
             AuthenticationProvider.Configure(appBuilder);
 
             var constraintResolver = new DefaultInlineConstraintResolver();

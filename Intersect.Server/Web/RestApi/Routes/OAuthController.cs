@@ -18,7 +18,6 @@ namespace Intersect.Server.Web.RestApi.Routes
             [FromBody] string grant_type,
             [FromBody] string username,
             [FromBody] string password
-
 #if DEBUG
             ,
             [FromBody] string prehash

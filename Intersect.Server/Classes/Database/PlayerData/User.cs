@@ -12,6 +12,8 @@ using Intersect.Server.Classes.Database.PlayerData.Api;
 
 using JetBrains.Annotations;
 using Intersect.Server.Database.PlayerData.Security;
+using Intersect.Server.General;
+using Intersect.Server.Networking;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 
@@ -48,6 +50,43 @@ namespace Intersect.Server.Database.PlayerData
 
         public virtual List<Player> Players { get; set; } = new List<Player>();
 
+        public User Load()
+        {
+            // ReSharper disable once InvertIf
+            if (Players != null)
+            {
+                foreach (var player in Players)
+                {
+                    Player.Load(player);
+                }
+            }
+
+            return this;
+        }
+
+        #region Listing
+
+        [NotNull]
+        public static IEnumerable<User> List(int page, int count, [CanBeNull] PlayerContext playerContext = null)
+        {
+            return QueryUsers(playerContext ?? PlayerContext.Current, page, count) ?? throw new InvalidOperationException();
+        }
+
+        #endregion
+
+        #region Compiled Queries
+
+        [NotNull]
+        private static readonly Func<PlayerContext, int, int, IEnumerable<User>> QueryUsers =
+            EF.CompileQuery(
+                (PlayerContext context, int page, int count) =>
+                    context.Users
+                        .OrderBy(user => user.Id.ToString())
+                        .Skip(page * count)
+                        .Take(count)
+            ) ??
+            throw new InvalidOperationException();
+
         [NotNull]
         private static readonly Func<PlayerContext, string, User> QueryUserByName =
             EF.CompileQuery((PlayerContext context, string username) =>
@@ -80,27 +119,7 @@ namespace Intersect.Server.Database.PlayerData
                     .FirstOrDefault(user => user.Id == id))
             ?? throw new InvalidOperationException();
 
-        public static User GetUser(PlayerContext context, string username)
-        {
-            var user = QueryUserByName(context, username);
-
-            if (user == null)
-            {
-                return null;
-            }
-
-            if (user.Players == null)
-            {
-                return user;
-            }
-
-            foreach (var player in user.Players)
-            {
-                Player.Load(player);
-            }
-
-            return user;
-        }
+        #endregion
 
         public void SetMuted(bool muted, string reason)
         {
@@ -133,44 +152,32 @@ namespace Intersect.Server.Database.PlayerData
             }
         }
 
-        public static User FindByName(string username)
+        public static User Find(Guid userId, [CanBeNull] PlayerContext playerContext = null)
         {
-            return FindByName(PlayerContext.Current, username);
+            return userId == Guid.Empty ? null : QueryUserById(playerContext ?? PlayerContext.Current, userId);
         }
 
-        public static User FindByName(PlayerContext playerContext, string username)
+        public static Tuple<Client, User> Fetch(Guid userId, [CanBeNull] PlayerContext playerContext = null)
         {
-            if (playerContext == null)
-            {
-                return null;
-            }
+            var client = Globals.Clients.Find(
+                queryClient => userId == queryClient?.User?.Id
+            );
 
-            if (string.IsNullOrWhiteSpace(username))
-            {
-                return null;
-            }
-
-            return QueryUserByName(playerContext, username);
+            return new Tuple<Client, User>(client, client?.User ?? Find(userId, playerContext));
         }
 
-        public static User FindById(Guid userId)
+        public static User Find(string username, [CanBeNull] PlayerContext playerContext = null)
         {
-            return FindById(PlayerContext.Current, userId);
+            return string.IsNullOrWhiteSpace(username) ? null : QueryUserByName(playerContext ?? PlayerContext.Current, username);
         }
 
-        public static User FindById(PlayerContext playerContext, Guid userId)
+        public static Tuple<Client, User> Fetch([NotNull] string userName, [CanBeNull] PlayerContext playerContext = null)
         {
-            if (playerContext == null)
-            {
-                return null;
-            }
+            var client = Globals.Clients.Find(
+                queryClient => EntityInstance.CompareName(userName, queryClient?.User?.Name)
+            );
 
-            if (userId == Guid.Empty)
-            {
-                return null;
-            }
-
-            return QueryUserById(playerContext, userId);
+            return new Tuple<Client, User>(client, client?.User ?? Find(userName, playerContext));
         }
     }
 }
