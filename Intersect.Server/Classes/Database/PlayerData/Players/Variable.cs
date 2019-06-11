@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using Intersect.Enums;
+using Intersect.GameObjects.Switches_and_Variables;
 using Intersect.Server.Entities;
 using Newtonsoft.Json;
 
@@ -15,7 +17,17 @@ namespace Intersect.Server.Database.PlayerData.Players
         public Guid PlayerId { get; private set; }
         [JsonIgnore] public virtual Player Player { get; private set; }
         public Guid VariableId { get; private set; }
-        public long Value { get; set; }
+
+        [NotMapped]
+        public VariableValue Value { get; set; } = new VariableValue();
+
+        [Column("Value")]
+        [JsonIgnore]
+        public string DBValue
+        {
+            get => Value.JsonValue;
+            private set => Value.JsonValue = value;
+        }
 
         public Variable()
         {
