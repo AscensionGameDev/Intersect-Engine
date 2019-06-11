@@ -187,9 +187,9 @@ namespace Intersect.Server.Networking
         {
             var msg = packet.Message;
             var channel = packet.Channel;
-            if (client.User.IsMuted()) //Don't let the toungless toxic kids speak.
+            if (client.User.IsMuted) //Don't let the toungless toxic kids speak.
             {
-                PacketSender.SendChatMsg(client, client.User.GetMuteReason());
+                PacketSender.SendChatMsg(client, client.User.MuteReason);
                 return;
             }
 

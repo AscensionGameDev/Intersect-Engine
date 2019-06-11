@@ -165,7 +165,7 @@ namespace Intersect.Server.Database.PlayerData
         {
 #if DEBUG
             new SeedUsers().SeedIfEmpty(this);
-            //new SeedPlayers().SeedIfEmpty(this);
+
             SaveChanges();
 #endif
         }

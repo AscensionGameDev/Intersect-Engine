@@ -103,7 +103,7 @@ namespace Intersect.Server.Database.PlayerData
         )
         {
             var mute = new Mute(user, ip, reason, duration, muter);
-            user.SetMuted(
+            user.Mute(
                 true, Strings.Account.mutestatus.ToString(mute.StartTime, mute.Muter, mute.EndTime, mute.Reason)
             );
 
@@ -149,7 +149,7 @@ namespace Intersect.Server.Database.PlayerData
                 return false;
             }
 
-            user.SetMuted(false, "");
+            user.Mute(false, "");
 
             return true;
         }
@@ -194,9 +194,9 @@ namespace Intersect.Server.Database.PlayerData
                 return null;
             }
 
-            user.SetMuted(true, muteReason);
+            user.Mute(true, muteReason);
 
-            return user.GetMuteReason();
+            return user.MuteReason;
         }
 
     }

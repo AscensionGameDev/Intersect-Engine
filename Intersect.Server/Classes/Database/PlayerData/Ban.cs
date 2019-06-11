@@ -132,7 +132,7 @@ namespace Intersect.Server.Database.PlayerData
                 return false;
             }
 
-            user.SetMuted(false, "");
+            user.Mute(false, "");
 
             return true;
         }

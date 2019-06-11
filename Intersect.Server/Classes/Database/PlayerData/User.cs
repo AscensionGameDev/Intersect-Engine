@@ -27,28 +27,41 @@ namespace Intersect.Server.Database.PlayerData
 
         [Column(Order = 1)]
         public string Name { get; set; }
+
         [JsonIgnore] public string Salt { get; set; }
+
         [JsonIgnore] public string Password { get; set; }
+
         [Column(Order = 2)]
         public string Email { get; set; }
+
         [Column("Power")]
         public string PowerJson
         {
             get => JsonConvert.SerializeObject(Power);
             set => Power = JsonConvert.DeserializeObject<UserRights>(value);
         }
+
         [NotMapped]
         public UserRights Power { get; set; }
-        public string PasswordResetCode { get; set; }
-        public DateTime? PasswordResetTime { get; set; }
 
-        //Instance Variables
-        private bool mMuted { get; set; }
-        private string mMuteStatus { get; set; }
+        public virtual List<Player> Players { get; set; } = new List<Player>();
 
         public virtual List<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 
-        public virtual List<Player> Players { get; set; } = new List<Player>();
+        public string PasswordResetCode { get; set; }
+
+        public DateTime? PasswordResetTime { get; set; }
+
+        #region Instance Variables
+
+        [NotMapped]
+        public bool IsMuted { get; private set; }
+
+        [NotMapped]
+        public string MuteReason { get; private set; }
+
+        #endregion
 
         public User Load()
         {
@@ -121,20 +134,10 @@ namespace Intersect.Server.Database.PlayerData
 
         #endregion
 
-        public void SetMuted(bool muted, string reason)
+        public void Mute(bool muted, string reason)
         {
-            mMuted = muted;
-            mMuteStatus = reason;
-        }
-
-        public bool IsMuted()
-        {
-            return mMuted;
-        }
-
-        public string GetMuteReason()
-        {
-            return mMuteStatus;
+            IsMuted = muted;
+            MuteReason = reason;
         }
 
         public bool IsPasswordValid([NotNull] string password)
@@ -152,11 +155,6 @@ namespace Intersect.Server.Database.PlayerData
             }
         }
 
-        public static User Find(Guid userId, [CanBeNull] PlayerContext playerContext = null)
-        {
-            return userId == Guid.Empty ? null : QueryUserById(playerContext ?? PlayerContext.Current, userId);
-        }
-
         public static Tuple<Client, User> Fetch(Guid userId, [CanBeNull] PlayerContext playerContext = null)
         {
             var client = Globals.Clients.Find(
@@ -166,11 +164,6 @@ namespace Intersect.Server.Database.PlayerData
             return new Tuple<Client, User>(client, client?.User ?? Find(userId, playerContext));
         }
 
-        public static User Find(string username, [CanBeNull] PlayerContext playerContext = null)
-        {
-            return string.IsNullOrWhiteSpace(username) ? null : QueryUserByName(playerContext ?? PlayerContext.Current, username);
-        }
-
         public static Tuple<Client, User> Fetch([NotNull] string userName, [CanBeNull] PlayerContext playerContext = null)
         {
             var client = Globals.Clients.Find(
@@ -178,6 +171,16 @@ namespace Intersect.Server.Database.PlayerData
             );
 
             return new Tuple<Client, User>(client, client?.User ?? Find(userName, playerContext));
+        }
+
+        public static User Find(Guid userId, [CanBeNull] PlayerContext playerContext = null)
+        {
+            return userId == Guid.Empty ? null : QueryUserById(playerContext ?? PlayerContext.Current, userId);
+        }
+
+        public static User Find(string username, [CanBeNull] PlayerContext playerContext = null)
+        {
+            return string.IsNullOrWhiteSpace(username) ? null : QueryUserByName(playerContext ?? PlayerContext.Current, username);
         }
     }
 }
