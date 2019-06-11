@@ -50,6 +50,20 @@ namespace Intersect.Server.Database.PlayerData
 
         public virtual List<Player> Players { get; set; } = new List<Player>();
 
+        public User Load()
+        {
+            // ReSharper disable once InvertIf
+            if (Players != null)
+            {
+                foreach (var player in Players)
+                {
+                    Player.Load(player);
+                }
+            }
+
+            return this;
+        }
+
         #region Listing
 
         [NotNull]

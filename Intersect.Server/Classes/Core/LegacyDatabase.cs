@@ -157,7 +157,7 @@ namespace Intersect.Server
 
         public static User GetUser([NotNull] string username)
         {
-            return User.GetUser(PlayerContext, username.Trim());
+            return User.Find(username.Trim(), PlayerContext)?.Load();
         }
 
         public static Player GetUserCharacter(User user, Guid characterId)
