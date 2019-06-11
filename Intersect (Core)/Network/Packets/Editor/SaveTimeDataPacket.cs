@@ -8,11 +8,11 @@ namespace Intersect.Network.Packets.Editor
 {
     public class SaveTimeDataPacket : EditorPacket
     {
-        public byte[] Data { get; set; }
+        public string TimeJson { get; set; }
 
-        public SaveTimeDataPacket(byte[] data)
+        public SaveTimeDataPacket(string timeJson)
         {
-            Data = data;
+            TimeJson = timeJson;
         }
     }
 }

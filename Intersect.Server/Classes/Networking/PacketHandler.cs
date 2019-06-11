@@ -1948,7 +1948,7 @@ namespace Intersect.Server.Networking
         //SaveTimeDataPacket
         public void HandlePacket(Client client, Player player, Packets.Editor.SaveTimeDataPacket packet)
         {
-            TimeBase.GetTimeBase().LoadTimeBase(packet.Data);
+            TimeBase.GetTimeBase().LoadFromJson(packet.TimeJson);
             LegacyDatabase.SaveGameDatabase();
             ServerTime.Init();
             PacketSender.SendTimeBaseToAllEditors();

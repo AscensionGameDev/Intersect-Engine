@@ -1328,13 +1328,13 @@ namespace Intersect.Server.Networking
         //TimeDataPacket
         public static void SendTimeBaseTo(Client client)
         {
-            client.SendPacket(new TimeDataPacket(TimeBase.GetTimeBase().SaveTimeBase()));
+            client.SendPacket(new TimeDataPacket(TimeBase.GetTimeBase().GetInstanceJson()));
         }
 
         //TimeDataPacket
         public static void SendTimeBaseToAllEditors()
         {
-            SendDataToEditors(new TimeDataPacket(TimeBase.GetTimeBase().SaveTimeBase()));
+            SendDataToEditors(new TimeDataPacket(TimeBase.GetTimeBase().GetInstanceJson()));
         }
 
         //TimePacket

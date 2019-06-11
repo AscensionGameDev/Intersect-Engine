@@ -17,21 +17,23 @@ namespace Intersect.Network
         private SerializerConfig mSerializerConfig;
         private CerasSerializer mSerializer;
 
-        public Ceras()
+        public Ceras(bool forNetworking = true)
         {
             mSerializerConfig = new SerializerConfig();
             mSerializerConfig.PreserveReferences = false;
-            mSerializerConfig.VersionTolerance.Mode = VersionToleranceMode.Disabled;
-            mSerializerConfig.Advanced.SealTypesWhenUsingKnownTypes = true;
 
-            mSerializerConfig.ConfigType<LoginPacket>().ConstructByUninitialized();
+            if (forNetworking)
+            {
+                mSerializerConfig.VersionTolerance.Mode = VersionToleranceMode.Disabled;
+                mSerializerConfig.Advanced.SealTypesWhenUsingKnownTypes = forNetworking;
 
-            //TODO: Cleanup?
-            AddKnownTypes(mSerializerConfig, "Intersect.Network.Packets");
-            AddKnownTypes(mSerializerConfig, "Intersect.Network.Packets.Client");
-            AddKnownTypes(mSerializerConfig, "Intersect.Network.Packets.Editor");
-            AddKnownTypes(mSerializerConfig, "Intersect.Network.Packets.Server");
-            AddKnownTypes(mSerializerConfig, "Intersect.Admin.Actions");
+                //TODO: Cleanup?
+                AddKnownTypes(mSerializerConfig, "Intersect.Network.Packets");
+                AddKnownTypes(mSerializerConfig, "Intersect.Network.Packets.Client");
+                AddKnownTypes(mSerializerConfig, "Intersect.Network.Packets.Editor");
+                AddKnownTypes(mSerializerConfig, "Intersect.Network.Packets.Server");
+                AddKnownTypes(mSerializerConfig, "Intersect.Admin.Actions");
+            }
 
             mSerializer = new CerasSerializer(mSerializerConfig);
         }

@@ -124,17 +124,7 @@ namespace Intersect.Client.Entities.Events
                     if (mCachedTilesetName != Graphic.Filename)
                     {
                         mCachedTilesetName = Graphic.Filename;
-                        mCachedTileset = null;
-                        foreach (var tilesetName in TilesetBase.GetNameList())
-                        {
-                            if (tilesetName.ToLower() == Graphic.Filename.ToLower())
-                            {
-                                mCachedTileset =
-                                    Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tileset,
-                                        Graphic.Filename);
-                                break;
-                            }
-                        }
+                        mCachedTileset = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tileset,  Graphic.Filename);
                     }
                     GameTexture tileset = mCachedTileset;
                     if (tileset != null)
@@ -261,17 +251,7 @@ namespace Intersect.Client.Entities.Events
                     if (mCachedTilesetName != Graphic.Filename)
                     {
                         mCachedTilesetName = Graphic.Filename;
-                        mCachedTileset = null;
-                        foreach (var tileset in TilesetBase.GetNameList())
-                        {
-                            if (tileset == Graphic.Filename)
-                            {
-                                mCachedTileset =
-                                    Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tileset,
-                                        Graphic.Filename);
-                                break;
-                            }
-                        }
+                        mCachedTileset = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tileset, Graphic.Filename);
                     }
                     if (mCachedTileset != null)
                     {
@@ -320,17 +300,7 @@ namespace Intersect.Client.Entities.Events
                     if (mCachedTilesetName != Graphic.Filename)
                     {
                         mCachedTilesetName = Graphic.Filename;
-                        mCachedTileset = null;
-                        foreach (var tileset in TilesetBase.GetNameList())
-                        {
-                            if (tileset == Graphic.Filename)
-                            {
-                                mCachedTileset =
-                                    Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tileset,
-                                        Graphic.Filename);
-                                break;
-                            }
-                        }
+                        mCachedTileset = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tileset, Graphic.Filename);
                     }
                     if (mCachedTileset != null)
                     {

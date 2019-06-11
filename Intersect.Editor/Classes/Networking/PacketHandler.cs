@@ -486,7 +486,7 @@ namespace Intersect.Editor.Networking
         //TimeDataPacket
         private static void HandlePacket(TimeDataPacket packet)
         {
-            TimeBase.GetTimeBase().LoadTimeBase(packet.TimeData);
+            TimeBase.GetTimeBase().LoadFromJson(packet.TimeJson);
         }
     }
 }

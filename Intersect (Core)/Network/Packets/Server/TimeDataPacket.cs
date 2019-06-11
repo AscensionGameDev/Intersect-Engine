@@ -8,11 +8,11 @@ namespace Intersect.Network.Packets.Server
 {
     public class TimeDataPacket : CerasPacket
     {
-        public byte[] TimeData { get; set; }
+        public string TimeJson { get; set; }
 
-        public TimeDataPacket(byte[] timeData)
+        public TimeDataPacket(string timeJson)
         {
-            TimeData = timeData;
+            TimeJson = timeJson;
         }
     }
 }

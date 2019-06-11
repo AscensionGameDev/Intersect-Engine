@@ -11,7 +11,7 @@ namespace Intersect.Server.Networking.Websockets
     {
         private readonly WebSocketBehavior mBehavior;
         private readonly WebSocketContext mContext;
-        private ByteBuffer mBuffer = new ByteBuffer();
+        //private ByteBuffer mBuffer = new ByteBuffer();
         private object mBufferLock = new Object();
         private bool mClientRemoved;
         private PacketHandler mPacketHandler = new PacketHandler();
@@ -59,7 +59,7 @@ namespace Intersect.Server.Networking.Websockets
             {
                 lock (mBufferLock)
                 {
-                    mBuffer.WriteBytes(e.RawData);
+                    //mBuffer.WriteBytes(e.RawData);
                     //ParseData();
                 }
             }

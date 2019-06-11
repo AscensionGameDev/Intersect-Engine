@@ -141,9 +141,9 @@ namespace Intersect.Editor.Networking
             EditorNetwork.SendPacket(new SaveGameObjectPacket(obj.Type,obj.Id,obj.JsonData));
         }
 
-        public static void SendSaveTime(byte[] data)
+        public static void SendSaveTime(string timeJson)
         {
-            EditorNetwork.SendPacket(new SaveTimeDataPacket(data));
+            EditorNetwork.SendPacket(new SaveTimeDataPacket(timeJson));
         }
 
         public static void SendNewTilesets(string[] tilesets)
