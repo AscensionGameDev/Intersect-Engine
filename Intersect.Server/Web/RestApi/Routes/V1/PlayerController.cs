@@ -160,7 +160,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
         [Route("playerId:guid/AdminActions/{adminAction:AdminActions}")]
         [HttpPost]
-        public object DoAdminActionOnPlayerByName(
+        public object DoAdminActionOnPlayerById(
             Guid playerId,
             AdminActions adminAction,
             [FromBody] AdminActionParameters actionParameters
