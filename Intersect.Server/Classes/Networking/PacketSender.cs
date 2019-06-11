@@ -44,7 +44,7 @@ namespace Intersect.Server.Networking
         //ConfigPacket
         public static void SendServerConfig(Client client)
         {
-            client.SendPacket(new ConfigPacket(Options.GetOptionsData()));
+            client.SendPacket(new ConfigPacket(Options.OptionsData));
         }
 
         //JoinGamePacket

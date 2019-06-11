@@ -14,8 +14,8 @@ namespace Intersect.Client.MonoGame.Database
 
             regkey?.CreateSubKey("IntersectClient");
             regkey = regkey?.OpenSubKey("IntersectClient", true);
-            regkey?.CreateSubKey(ClientOptions.ServerHost + ":" + ClientOptions.ServerPort);
-            regkey = regkey?.OpenSubKey(ClientOptions.ServerHost + ":" + ClientOptions.ServerPort, true);
+            regkey?.CreateSubKey(ClientOptions.Instance.Host + ":" + ClientOptions.Instance.Port);
+            regkey = regkey?.OpenSubKey(ClientOptions.Instance.Host + ":" + ClientOptions.Instance.Port, true);
             regkey?.SetValue(key, Convert.ToString(value));
         }
 
@@ -23,7 +23,7 @@ namespace Intersect.Client.MonoGame.Database
         {
             var regkey = Registry.CurrentUser?.OpenSubKey("Software", false);
             regkey = regkey?.OpenSubKey("IntersectClient", false);
-            regkey = regkey?.OpenSubKey(ClientOptions.ServerHost + ":" + ClientOptions.ServerPort);
+            regkey = regkey?.OpenSubKey(ClientOptions.Instance.Host + ":" + ClientOptions.Instance.Port);
             return regkey?.GetValue(key) as string ?? "";
         }
 

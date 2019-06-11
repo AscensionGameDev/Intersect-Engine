@@ -30,7 +30,7 @@ namespace Intersect.Client
 
             //Load Sounds
             GameAudio.Init();
-            GameAudio.PlayMusic(ClientOptions.MenuMusic, 3, 3, true);
+            GameAudio.PlayMusic(ClientOptions.Instance.MenuMusic, 3, 3, true);
 
             //Init Network
             GameNetwork.InitNetwork();
@@ -103,9 +103,9 @@ namespace Intersect.Client
 
         private static void ProcessIntro()
         {
-            if (ClientOptions.IntroImages.Count > 0)
+            if (ClientOptions.Instance.IntroImages.Count > 0)
             {
-                GameTexture imageTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Image, ClientOptions.IntroImages[Globals.IntroIndex]);
+                GameTexture imageTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Image, ClientOptions.Instance.IntroImages[Globals.IntroIndex]);
                 if (imageTex != null)
                 {
                     if (Globals.IntroStartTime == -1)
@@ -139,7 +139,7 @@ namespace Intersect.Client
                 {
                     Globals.IntroIndex++;
                 }
-                if (Globals.IntroIndex >= ClientOptions.IntroImages.Count)
+                if (Globals.IntroIndex >= ClientOptions.Instance.IntroImages.Count)
                 {
                     Globals.GameState = GameStates.Menu;
                 }

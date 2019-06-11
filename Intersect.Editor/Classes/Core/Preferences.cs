@@ -7,24 +7,24 @@ namespace Intersect.Editor
     {
         public static void SavePreference(string key, string value)
         {
-            RegistryKey regkey = Registry.CurrentUser.OpenSubKey("Software", true);
+            var regkey = Registry.CurrentUser.OpenSubKey("Software", true);
 
             regkey.CreateSubKey("IntersectEditor");
             regkey = regkey.OpenSubKey("IntersectEditor", true);
-            regkey.CreateSubKey(ClientOptions.ServerHost + ":" + ClientOptions.ServerPort);
-            regkey = regkey.OpenSubKey(ClientOptions.ServerHost + ":" + ClientOptions.ServerPort, true);
+            regkey.CreateSubKey(ClientOptions.Instance.Host + ":" + ClientOptions.Instance.Port);
+            regkey = regkey.OpenSubKey(ClientOptions.Instance.Host + ":" + ClientOptions.Instance.Port, true);
             regkey.SetValue(key, value);
         }
 
         public static string LoadPreference(string key)
         {
-            RegistryKey regkey = Registry.CurrentUser.OpenSubKey("Software", false);
+            var regkey = Registry.CurrentUser.OpenSubKey("Software", false);
             regkey = regkey.OpenSubKey("IntersectEditor", false);
             if (regkey == null)
             {
                 return "";
             }
-            regkey = regkey.OpenSubKey(ClientOptions.ServerHost + ":" + ClientOptions.ServerPort);
+            regkey = regkey.OpenSubKey(ClientOptions.Instance.Host + ":" + ClientOptions.Instance.Port);
             if (regkey == null)
             {
                 return "";

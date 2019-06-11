@@ -57,14 +57,14 @@ namespace Intersect
 
         public static DatabaseOptions PlayerDb
         {
-            get { return _options.PlayerDatabase; }
-            set { _options.PlayerDatabase = value; }
+            get => _options.PlayerDatabase;
+            set => _options.PlayerDatabase = value;
         }
 
         public static DatabaseOptions GameDb
         {
-            get { return _options.GameDatabase; }
-            set { _options.GameDatabase = value; }
+            get => _options.GameDatabase;
+            set => _options.GameDatabase = value;
         }
 
 
@@ -163,34 +163,19 @@ namespace Intersect
             optionsCompressed = JsonConvert.SerializeObject(_options);
         }
 
-        public static string GetOptionsData()
-        {
-            return optionsCompressed;
-        }
+        public static string OptionsData => optionsCompressed;
 
         public static void LoadFromServer(string data)
         {
             _options = JsonConvert.DeserializeObject<Options>(data);
         }
 
-        public bool ShouldSerializePlayerDatabase()
-        {
-            return !SendingToClient;
-        }
+        public bool ShouldSerializePlayerDatabase => !SendingToClient;
 
-        public bool ShouldSerializeGameDatabase()
-        {
-            return !SendingToClient;
-        }
+        public bool ShouldSerializeGameDatabase => !SendingToClient;
 
-        public bool ShouldSerializeSmtpSettings()
-        {
-            return !SendingToClient;
-        }
+        public bool ShouldSerializeSmtpSettings => !SendingToClient;
 
-        public bool ShouldSerializeSmtpValid()
-        {
-            return SendingToClient;
-        }
+        public bool ShouldSerializeSmtpValid => SendingToClient;
     }
 }
