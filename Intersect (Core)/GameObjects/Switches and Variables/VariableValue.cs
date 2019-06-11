@@ -22,11 +22,19 @@ namespace Intersect.GameObjects.Switches_and_Variables
                 switch (Type)
                 {
                     case VariableDataTypes.Integer:
-                        obj.Add("Value", mIntVal);
+                        obj.Add("Value", Integer);
                         break;
 
                     case VariableDataTypes.Boolean:
-                        obj.Add("Value", mBoolVal);
+                        obj.Add("Value", Boolean);
+                        break;
+
+                    case VariableDataTypes.Number:
+                        obj.Add("Value", Number);
+                        break;
+
+                    case VariableDataTypes.String:
+                        obj.Add("Value", String);
                         break;
 
                     default:
@@ -43,11 +51,19 @@ namespace Intersect.GameObjects.Switches_and_Variables
                 switch (Type)
                 {
                     case VariableDataTypes.Integer:
-                        mIntVal = int.Parse(obj["Value"].ToString());
+                        Integer = int.Parse(obj["Value"].ToString());
                         break;
 
                     case VariableDataTypes.Boolean:
-                        mBoolVal = bool.Parse(obj["Value"].ToString());
+                        Boolean = bool.Parse(obj["Value"].ToString());
+                        break;
+
+                    case VariableDataTypes.Number:
+                        Number = float.Parse(obj["Value"].ToString());
+                        break;
+
+                    case VariableDataTypes.String:
+                        String = obj["Value"].ToString();
                         break;
 
                     default:
@@ -57,30 +73,48 @@ namespace Intersect.GameObjects.Switches_and_Variables
             }
         }
 
-        //Values
-        private int mIntVal = 0;
-        private bool mBoolVal = false;
-
-        public void Set(int value)
+        private int mInteger;
+        public int Integer
         {
-            mIntVal = value;
-            Type = VariableDataTypes.Integer;
+            get => mInteger;
+            set
+            {
+                Type = VariableDataTypes.Integer;
+                mInteger = value;
+            }
         }
 
-        public void Set(bool value)
+        private bool mBoolean;
+        public bool Boolean
         {
-            mBoolVal = value;
-            Type = VariableDataTypes.Boolean;
+            get => mBoolean;
+            set
+            {
+                Type = VariableDataTypes.Boolean;
+                mBoolean = value;
+            }
         }
 
-        public int GetIntValue()
+        private float mNumber;
+        public float Number
         {
-            return mIntVal;
+            get => mNumber;
+            set
+            {
+                Type = VariableDataTypes.Number;
+                mNumber = value;
+            }
         }
 
-        public bool GetBooleanValue()
+        private string mString;
+        public string String
         {
-            return mBoolVal;
+            get => mString ?? "";
+            set
+            {
+                Type = VariableDataTypes.String;
+                mString = value ?? "";
+            }
         }
     }
 }

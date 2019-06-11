@@ -17,8 +17,10 @@ namespace Intersect.Enums
 
     public enum VariableDataTypes : byte
     {
-        Integer = 0,
-        Boolean
+        Boolean = 1,
+        Integer,
+        Number,
+        String
     }
 
     public enum VariableTypes
