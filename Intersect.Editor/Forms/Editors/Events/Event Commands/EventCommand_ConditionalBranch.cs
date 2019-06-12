@@ -281,7 +281,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     grpSwitch.Text = Strings.EventConditional.playerswitch;
                     grpSwitch.Show();
                     cmbSwitch.Items.Clear();
-                    cmbSwitch.Items.AddRange(PlayerSwitchBase.Names);
+                    cmbSwitch.Items.AddRange(PlayerVariableBase.Names);
                     break;
                 case ConditionTypes.PlayerVariable:
                     grpPlayerVariable.Text = Strings.EventConditional.playervariable;
@@ -297,7 +297,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     grpSwitch.Text = Strings.EventConditional.globalswitch;
                     grpSwitch.Show();
                     cmbSwitch.Items.Clear();
-                    cmbSwitch.Items.AddRange(ServerSwitchBase.Names);
+                    cmbSwitch.Items.AddRange(ServerVariableBase.Names);
                     break;
                 case ConditionTypes.ServerVariable:
                     grpPlayerVariable.Text = Strings.EventConditional.globalvariable;
@@ -481,7 +481,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         #region "SetupFormValues"
         private void SetupFormValues(PlayerSwitchCondition condition)
         {
-            cmbSwitch.SelectedIndex = PlayerSwitchBase.ListIndex(condition.SwitchId);
+            cmbSwitch.SelectedIndex = PlayerVariableBase.ListIndex(condition.SwitchId);
             cmbSwitchVal.SelectedIndex = Convert.ToInt32(condition.Value);
         }
 
@@ -510,7 +510,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void SetupFormValues(ServerSwitchCondition condition)
         {
-            cmbSwitch.SelectedIndex = ServerSwitchBase.ListIndex(condition.SwitchId);
+            cmbSwitch.SelectedIndex = ServerVariableBase.ListIndex(condition.SwitchId);
             cmbSwitchVal.SelectedIndex = Convert.ToInt32(condition.Value);
         }
 
@@ -631,7 +631,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         #region "SaveFormValues"
         private void SaveFormValues(PlayerSwitchCondition condition)
         {
-            condition.SwitchId = PlayerSwitchBase.IdFromList(cmbSwitch.SelectedIndex);
+            condition.SwitchId = PlayerVariableBase.IdFromList(cmbSwitch.SelectedIndex);
             condition.Value = Convert.ToBoolean(cmbSwitchVal.SelectedIndex);
         }
 
@@ -658,7 +658,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void SaveFormValues(ServerSwitchCondition condition)
         {
-            condition.SwitchId = ServerSwitchBase.IdFromList(cmbSwitch.SelectedIndex);
+            condition.SwitchId = ServerVariableBase.IdFromList(cmbSwitch.SelectedIndex);
             condition.Value = Convert.ToBoolean(cmbSwitchVal.SelectedIndex);
         }
 

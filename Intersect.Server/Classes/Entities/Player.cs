@@ -73,10 +73,6 @@ namespace Intersect.Server.Entities
         [NotNull]
         public virtual List<Quest> Quests { get; set; } = new List<Quest>();
 
-        //Switches
-        [NotNull]
-        public virtual List<Switch> Switches { get; set; } = new List<Switch>();
-
         //Variables
         [NotNull]
         public virtual List<Variable> Variables { get; set; } = new List<Variable>();
@@ -3611,11 +3607,11 @@ namespace Intersect.Server.Entities
         }
 
         //Switches and Variables
-        private Switch GetSwitch(Guid id)
+        private Variable GetSwitch(Guid id)
         {
-            foreach (var s in Switches)
+            foreach (var s in Variables)
             {
-                if (s.SwitchId == id) return s;
+                if (s.VariableId == id) return s;
             }
             return null;
         }
@@ -3623,22 +3619,20 @@ namespace Intersect.Server.Entities
         {
             var s = GetSwitch(id);
             if (s == null) return false;
-            return s.Value;
+            return s.Value.Boolean;
         }
         public void SetSwitchValue(Guid id, bool value)
         {
             var s = GetSwitch(id);
             if (s != null)
             {
-                s.Value = value;
+                s.Value.Boolean = value;
             }
             else
             {
-                s = new Switch(id)
-                {
-                    Value = value
-                };
-                Switches.Add(s);
+                s = new Variable(id);
+                s.Value.Boolean = value;
+                Variables.Add(s);
             }
         }
         private Variable GetVariable(Guid id)

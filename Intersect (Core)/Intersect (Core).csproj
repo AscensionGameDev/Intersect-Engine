@@ -450,12 +450,10 @@
     <Compile Include="GameObjects\Maps\MapTile.cs" />
     <Compile Include="GameObjects\Maps\MapTileArray.cs" />
     <Compile Include="GameObjects\NpcBase.cs" />
-    <Compile Include="GameObjects\Switches and Variables\PlayerSwitchBase.cs" />
     <Compile Include="GameObjects\Switches and Variables\PlayerVariableBase.cs" />
     <Compile Include="GameObjects\ProjectileBase.cs" />
     <Compile Include="GameObjects\QuestBase.cs" />
     <Compile Include="GameObjects\ResourceBase.cs" />
-    <Compile Include="GameObjects\Switches and Variables\ServerSwitchBase.cs" />
     <Compile Include="GameObjects\Switches and Variables\ServerVariableBase.cs" />
     <Compile Include="GameObjects\ShopBase.cs" />
     <Compile Include="GameObjects\SpellBase.cs" />
