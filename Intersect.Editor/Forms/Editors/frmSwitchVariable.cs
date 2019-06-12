@@ -173,7 +173,7 @@ namespace Intersect.Editor.Forms.Editors
                 for (int i = 0; i < ServerVariableBase.Lookup.Count; i++)
                 {
                     var var = ServerVariableBase.Get(ServerVariableBase.IdFromList(i));
-                    lstObjects.Items.Add(var.Name + "  =  " + var.Value);
+                    lstObjects.Items.Add(var.Name + "  =  " + var.Value.Integer);
                     lblId.Text = Strings.SwitchVariableEditor.textidgv;
                 }
             }
