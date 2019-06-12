@@ -14,6 +14,7 @@ using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
+using Intersect.GameObjects.Switches_and_Variables;
 using Intersect.Logging;
 using Intersect.Models;
 using Intersect.Server.Core;
@@ -67,6 +68,17 @@ namespace Intersect.Server
         //Database setup, version checking
         public static bool InitDatabase()
         {
+            if (Options.GameDb.Type == DatabaseOptions.DatabaseType.sqlite)
+            {
+                sGameDb = new GameContext(DatabaseUtils.DbProvider.Sqlite, $"Data Source={GameDbFilename}");
+            }
+            else
+            {
+                sGameDb = new GameContext(DatabaseUtils.DbProvider.MySql, $"server={Options.GameDb.Server};port={Options.GameDb.Port};database={Options.GameDb.Database};user={Options.GameDb.Username};password={Options.GameDb.Password}");
+            }
+
+            sGameDb.Database.Migrate();
+
             //Connect to new player database
             if (Options.PlayerDb.Type == DatabaseOptions.DatabaseType.sqlite)
             {
@@ -79,16 +91,6 @@ namespace Intersect.Server
             PlayerContext.Database.Migrate();
             PlayerContext.Seed();
 
-            if (Options.GameDb.Type == DatabaseOptions.DatabaseType.sqlite)
-            {
-                sGameDb = new GameContext(DatabaseUtils.DbProvider.Sqlite, $"Data Source={GameDbFilename}");
-            }
-            else
-            {
-                sGameDb = new GameContext(DatabaseUtils.DbProvider.MySql, $"server={Options.GameDb.Server};port={Options.GameDb.Port};database={Options.GameDb.Database};user={Options.GameDb.Username};password={Options.GameDb.Password}");
-            }
-
-            sGameDb.Database.Migrate();
 
             LoadAllGameObjects();
             LoadTime();
@@ -472,10 +474,10 @@ namespace Intersect.Server
                     }
                     break;
                 case GameObjectType.PlayerSwitch:
-                    foreach (var psw in sGameDb.PlayerSwitches)
-                    {
-                        PlayerSwitchBase.Lookup.Set(psw.Id, psw);
-                    }
+                    //foreach (var psw in sGameDb.PlayerSwitches)
+                    //{
+                    //    PlayerSwitchBase.Lookup.Set(psw.Id, psw);
+                    //}
                     break;
                 case GameObjectType.PlayerVariable:
                     foreach (var psw in sGameDb.PlayerVariables)
@@ -484,10 +486,10 @@ namespace Intersect.Server
                     }
                     break;
                 case GameObjectType.ServerSwitch:
-                    foreach (var psw in sGameDb.ServerSwitches)
-                    {
-                        ServerSwitchBase.Lookup.Set(psw.Id, psw);
-                    }
+                    //foreach (var psw in sGameDb.ServerSwitches)
+                    //{
+                    //    ServerSwitchBase.Lookup.Set(psw.Id, psw);
+                    //}
                     break;
                 case GameObjectType.ServerVariable:
                     foreach (var psw in sGameDb.ServerVariables)
@@ -630,7 +632,7 @@ namespace Intersect.Server
                         break;
 
                     case GameObjectType.PlayerSwitch:
-                        sGameDb.PlayerSwitches.Add((PlayerSwitchBase) dbObj);
+                        //sGameDb.PlayerSwitches.Add((PlayerSwitchBase) dbObj);
                         PlayerSwitchBase.Lookup.Set(dbObj.Id, dbObj);
                         break;
 
@@ -640,7 +642,7 @@ namespace Intersect.Server
                         break;
 
                     case GameObjectType.ServerSwitch:
-                        sGameDb.ServerSwitches.Add((ServerSwitchBase) dbObj);
+                        //sGameDb.ServerSwitches.Add((ServerSwitchBase) dbObj);
                         ServerSwitchBase.Lookup.Set(dbObj.Id, dbObj);
                         break;
 
@@ -727,13 +729,13 @@ namespace Intersect.Server
                         sGameDb.Events.Remove((EventBase) gameObject);
                         break;
                     case GameObjectType.PlayerSwitch:
-                        sGameDb.PlayerSwitches.Remove((PlayerSwitchBase) gameObject);
+                        //sGameDb.PlayerSwitches.Remove((PlayerSwitchBase) gameObject);
                         break;
                     case GameObjectType.PlayerVariable:
                         sGameDb.PlayerVariables.Remove((PlayerVariableBase) gameObject);
                         break;
                     case GameObjectType.ServerSwitch:
-                        sGameDb.ServerSwitches.Remove((ServerSwitchBase) gameObject);
+                        //sGameDb.ServerSwitches.Remove((ServerSwitchBase) gameObject);
                         break;
                     case GameObjectType.ServerVariable:
                         sGameDb.ServerVariables.Remove((ServerVariableBase) gameObject);
@@ -1137,8 +1139,6 @@ namespace Intersect.Server
                         MigrateDbSet(sGameDb.Shops, newGameContext.Shops);
                         MigrateDbSet(sGameDb.Spells, newGameContext.Spells);
                         MigrateDbSet(sGameDb.ServerVariables, newGameContext.ServerVariables);
-                        MigrateDbSet(sGameDb.ServerSwitches, newGameContext.ServerSwitches);
-                        MigrateDbSet(sGameDb.PlayerSwitches, newGameContext.PlayerSwitches);
                         MigrateDbSet(sGameDb.PlayerVariables, newGameContext.PlayerVariables);
                         MigrateDbSet(sGameDb.Tilesets, newGameContext.Tilesets);
                         MigrateDbSet(sGameDb.Time, newGameContext.Time);
@@ -1152,7 +1152,6 @@ namespace Intersect.Server
                         MigrateDbSet(PlayerContext.Players, newPlayerContext.Players);
                         MigrateDbSet(PlayerContext.Player_Friends, newPlayerContext.Player_Friends);
                         MigrateDbSet(PlayerContext.Player_Spells, newPlayerContext.Player_Spells);
-                        MigrateDbSet(PlayerContext.Player_Switches, newPlayerContext.Player_Switches);
                         MigrateDbSet(PlayerContext.Player_Variables, newPlayerContext.Player_Variables);
                         MigrateDbSet(PlayerContext.Player_Hotbar, newPlayerContext.Player_Hotbar);
                         MigrateDbSet(PlayerContext.Player_Quests, newPlayerContext.Player_Quests);
