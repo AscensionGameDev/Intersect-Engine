@@ -52,10 +52,8 @@ namespace Intersect.Server.Database.GameData
         //Spells
         public DbSet<SpellBase> Spells { get; set; }
 
-        //Switches & Variables
-        public DbSet<PlayerSwitchBase> PlayerSwitches { get; set; }
+        //Variables
         public DbSet<PlayerVariableBase> PlayerVariables { get; set; }
-        public DbSet<ServerSwitchBase> ServerSwitches { get; set; }
         public DbSet<ServerVariableBase> ServerVariables { get; set; }
 
         //Tilesets

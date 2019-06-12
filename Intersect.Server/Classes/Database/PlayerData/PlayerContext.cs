@@ -35,7 +35,6 @@ namespace Intersect.Server.Database.PlayerData
         [NotNull] public DbSet<InventorySlot> Player_Items { get; set; }
         [NotNull] public DbSet<Quest> Player_Quests { get; set; }
         [NotNull] public DbSet<SpellSlot> Player_Spells { get; set; }
-        [NotNull] public DbSet<Switch> Player_Switches { get; set; }
         [NotNull] public DbSet<Variable> Player_Variables { get; set; }
 
         [NotNull] public DbSet<Bag> Bags { get; set; }
@@ -108,9 +107,6 @@ namespace Intersect.Server.Database.PlayerData
             modelBuilder.Entity<Player>().HasMany(b => b.Spells).WithOne(p => p.Player);
 
             modelBuilder.Entity<Player>().HasMany(b => b.Items).WithOne(p => p.Player);
-
-            modelBuilder.Entity<Player>().HasMany(b => b.Switches).WithOne(p => p.Player);
-            modelBuilder.Entity<Switch>().HasIndex(p => new { p.SwitchId, CharacterId = p.PlayerId }).IsUnique();
 
             modelBuilder.Entity<Player>().HasMany(b => b.Variables).WithOne(p => p.Player);
             modelBuilder.Entity<Variable>().HasIndex(p => new { p.VariableId, CharacterId = p.PlayerId }).IsUnique();

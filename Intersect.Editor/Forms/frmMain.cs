@@ -1055,7 +1055,7 @@ namespace Intersect.Editor.Forms
 
         private void switchVariableEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PacketSender.SendOpenEditor(GameObjectType.PlayerSwitch);
+            PacketSender.SendOpenEditor(GameObjectType.PlayerVariable);
         }
 
         private void shopEditorToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1406,7 +1406,7 @@ namespace Intersect.Editor.Forms
                             mCommonEventEditor.Show();
                         }
                         break;
-                    case GameObjectType.PlayerSwitch:
+                    case GameObjectType.PlayerVariable:
                         if (mSwitchVariableEditor == null || mSwitchVariableEditor.Visible == false)
                         {
                             mSwitchVariableEditor = new FrmSwitchVariable();

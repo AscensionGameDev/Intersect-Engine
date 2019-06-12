@@ -15,6 +15,14 @@ namespace Intersect.Enums
         ServerSwitch
     }
 
+    public enum VariableDataTypes : byte
+    {
+        Boolean = 1,
+        Integer,
+        Number,
+        String
+    }
+
     public enum VariableTypes
     {
         PlayerVariable = 0,

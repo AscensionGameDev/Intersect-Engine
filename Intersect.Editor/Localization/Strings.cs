@@ -2104,7 +2104,7 @@ Negative values for time to flow backwards.";
         {
             var pValue = Strings.EventConditionDesc.False;
             if (condition.Value) pValue = Strings.EventConditionDesc.True;
-            return Strings.EventConditionDesc.playerswitch.ToString(PlayerSwitchBase.GetName(condition.SwitchId), pValue);
+            return Strings.EventConditionDesc.playerswitch.ToString(PlayerVariableBase.GetName(condition.SwitchId), pValue);
         }
 
         public static string GetEventConditionalDesc(PlayerVariableCondition condition)
@@ -2153,7 +2153,7 @@ Negative values for time to flow backwards.";
         {
             var pValue = Strings.EventConditionDesc.False;
             if (condition.Value) pValue = Strings.EventConditionDesc.True;
-            return Strings.EventConditionDesc.globalswitch.ToString(ServerSwitchBase.GetName(condition.SwitchId), pValue);
+            return Strings.EventConditionDesc.globalswitch.ToString(ServerVariableBase.GetName(condition.SwitchId), pValue);
         }
 
         public static string GetEventConditionalDesc(ServerVariableCondition condition)

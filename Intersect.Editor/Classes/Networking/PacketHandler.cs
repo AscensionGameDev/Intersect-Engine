@@ -413,19 +413,6 @@ namespace Intersect.Editor.Networking
                         EventBase.Lookup.Set(id, evt);
                     }
                     break;
-                case GameObjectType.PlayerSwitch:
-                    if (deleted)
-                    {
-                        var pswtch = PlayerSwitchBase.Get(id);
-                        pswtch.Delete();
-                    }
-                    else
-                    {
-                        var pswtch = new PlayerSwitchBase(id);
-                        pswtch.Load(json);
-                        PlayerSwitchBase.Lookup.Set(id, pswtch);
-                    }
-                    break;
                 case GameObjectType.PlayerVariable:
                     if (deleted)
                     {
@@ -437,19 +424,6 @@ namespace Intersect.Editor.Networking
                         var pvar = new PlayerVariableBase(id);
                         pvar.Load(json);
                         PlayerVariableBase.Lookup.Set(id, pvar);
-                    }
-                    break;
-                case GameObjectType.ServerSwitch:
-                    if (deleted)
-                    {
-                        var sswtch = ServerSwitchBase.Get(id);
-                        sswtch.Delete();
-                    }
-                    else
-                    {
-                        var sswtch = new ServerSwitchBase(id);
-                        sswtch.Load(json);
-                        ServerSwitchBase.Lookup.Set(id, sswtch);
                     }
                     break;
                 case GameObjectType.ServerVariable:

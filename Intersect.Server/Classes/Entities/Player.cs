@@ -10,6 +10,7 @@ using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
 using Intersect.GameObjects.Maps;
+using Intersect.GameObjects.Switches_and_Variables;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData.Players;
@@ -71,10 +72,6 @@ namespace Intersect.Server.Entities
         //Quests
         [NotNull]
         public virtual List<Quest> Quests { get; set; } = new List<Quest>();
-
-        //Switches
-        [NotNull]
-        public virtual List<Switch> Switches { get; set; } = new List<Switch>();
 
         //Variables
         [NotNull]
@@ -3610,11 +3607,11 @@ namespace Intersect.Server.Entities
         }
 
         //Switches and Variables
-        private Switch GetSwitch(Guid id)
+        private Variable GetSwitch(Guid id)
         {
-            foreach (var s in Switches)
+            foreach (var s in Variables)
             {
-                if (s.SwitchId == id) return s;
+                if (s.VariableId == id) return s;
             }
             return null;
         }
@@ -3622,22 +3619,20 @@ namespace Intersect.Server.Entities
         {
             var s = GetSwitch(id);
             if (s == null) return false;
-            return s.Value;
+            return s.Value.Boolean;
         }
         public void SetSwitchValue(Guid id, bool value)
         {
             var s = GetSwitch(id);
             if (s != null)
             {
-                s.Value = value;
+                s.Value.Boolean = value;
             }
             else
             {
-                s = new Switch(id)
-                {
-                    Value = value
-                };
-                Switches.Add(s);
+                s = new Variable(id);
+                s.Value.Boolean = value;
+                Variables.Add(s);
             }
         }
         private Variable GetVariable(Guid id)
@@ -3648,10 +3643,10 @@ namespace Intersect.Server.Entities
             }
             return null;
         }
-        public long GetVariableValue(Guid id)
+        public VariableValue GetVariableValue(Guid id)
         {
             var v = GetVariable(id);
-            if (v == null) return 0;
+            if (v == null) return new VariableValue();
             return v.Value;
         }
         public void SetVariableValue(Guid id, long value)
@@ -3659,14 +3654,12 @@ namespace Intersect.Server.Entities
             var v = GetVariable(id);
             if (v != null)
             {
-                v.Value = value;
+                v.Value.Integer = value;
             }
             else
             {
-                v = new Variable(id)
-                {
-                    Value = value
-                };
+                v = new Variable(id);
+                v.Value.Integer = value;
                 Variables.Add(v);
             }
         }

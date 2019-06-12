@@ -63,7 +63,7 @@ namespace Intersect.Server.EventProcessing
 
         public static bool MeetsCondition(PlayerVariableCondition condition, Player player, EventInstance eventInstance, QuestBase questBase)
         {
-            var varVal = player.GetVariableValue(condition.VariableId);
+            var varVal = player.GetVariableValue(condition.VariableId).Integer;
             long compareAgainst = 0;
 
             switch (condition.CompareType)
@@ -74,12 +74,12 @@ namespace Intersect.Server.EventProcessing
                 case VariableCompareTypes.PlayerVariable:
                     var pvar = PlayerVariableBase.Get(condition.CompareVariableId);
                     if (pvar == null) return false;
-                    compareAgainst = player.GetVariableValue(condition.CompareVariableId);
+                    compareAgainst = player.GetVariableValue(condition.CompareVariableId).Integer;
                     break;
                 case VariableCompareTypes.GlobalVariable:
                     var gvar = ServerVariableBase.Get(condition.CompareVariableId);
                     if (gvar == null) return false;
-                    compareAgainst = gvar.Value;
+                    compareAgainst = gvar.Value.Integer;
                     break;
             }
 
@@ -110,14 +110,14 @@ namespace Intersect.Server.EventProcessing
         public static bool MeetsCondition(ServerSwitchCondition condition, Player player, EventInstance eventInstance, QuestBase questBase)
         {
             var servSwitch = false;
-            if (ServerSwitchBase.Get(condition.SwitchId) != null) servSwitch = ServerSwitchBase.Get(condition.SwitchId).Value;
+            if (ServerVariableBase.Get(condition.SwitchId) != null) servSwitch = ServerVariableBase.Get(condition.SwitchId).Value.Boolean;
             return servSwitch == condition.Value;
         }
 
         public static bool MeetsCondition(ServerVariableCondition condition, Player player, EventInstance eventInstance, QuestBase questBase)
         {
             long varVal = 0;
-            if (ServerVariableBase.Get(condition.VariableId) != null) varVal = ServerVariableBase.Get(condition.VariableId).Value;
+            if (ServerVariableBase.Get(condition.VariableId) != null) varVal = ServerVariableBase.Get(condition.VariableId).Value.Integer;
             long compareAgainst = 0;
 
             switch (condition.CompareType)
@@ -128,12 +128,12 @@ namespace Intersect.Server.EventProcessing
                 case VariableCompareTypes.PlayerVariable:
                     var pvar = PlayerVariableBase.Get(condition.CompareVariableId);
                     if (pvar == null) return false;
-                    compareAgainst = player.GetVariableValue(condition.CompareVariableId);
+                    compareAgainst = player.GetVariableValue(condition.CompareVariableId).Integer;
                     break;
                 case VariableCompareTypes.GlobalVariable:
                     var gvar = ServerVariableBase.Get(condition.CompareVariableId);
                     if (gvar == null) return false;
-                    compareAgainst = gvar.Value;
+                    compareAgainst = gvar.Value.Integer;
                     break;
             }
             
