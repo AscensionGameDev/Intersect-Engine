@@ -289,7 +289,7 @@ namespace Intersect.Editor.Forms.Editors
                     txtObjectName.Text = ((ServerVariableBase)mEditorItem).Name;
                     txtId.Text = ((ServerVariableBase)mEditorItem).TextId;
                     nudVariableValue.Show();
-                    nudVariableValue.Value = ((ServerVariableBase) mEditorItem).Value;
+                    nudVariableValue.Value = ((ServerVariableBase) mEditorItem).Value.Integer;
                     lblValue.Show();
                 }
             }
@@ -410,7 +410,7 @@ namespace Intersect.Editor.Forms.Editors
                     var obj = ServerVariableBase.Get(ServerVariableBase.IdFromList(lstObjects.SelectedIndex));
                     if (obj != null)
                     {
-                        obj.Value = (long) nudVariableValue.Value;
+                        obj.Value.Integer = (long) nudVariableValue.Value;
                         UpdateSelection();
                     }
                 }

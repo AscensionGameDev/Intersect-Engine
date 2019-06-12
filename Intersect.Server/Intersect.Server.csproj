@@ -529,6 +529,10 @@
     <Compile Include="Migrations\20190310013418_StandardizeVocabulary1.Designer.cs">
       <DependentUpon>20190310013418_StandardizeVocabulary1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\20190611170927_CombiningSwitchesVariables.cs" />
+    <Compile Include="Migrations\20190611170927_CombiningSwitchesVariables.designer.cs">
+      <DependentUpon>20190611170927_CombiningSwitchesVariables.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Game\20190303234637_SpellUpgrades_OnHit_Shields.cs" />
     <Compile Include="Migrations\Game\20190303234637_SpellUpgrades_OnHit_Shields.Designer.cs">
       <DependentUpon>20190303234637_SpellUpgrades_OnHit_Shields.cs</DependentUpon>
@@ -544,6 +548,10 @@
     <Compile Include="Migrations\Game\20190530000628_AddingCraftingQuantities.cs" />
     <Compile Include="Migrations\Game\20190530000628_AddingCraftingQuantities.designer.cs">
       <DependentUpon>20190530000628_AddingCraftingQuantities.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Game\20190611170819_CombiningSwitchesVariables.cs" />
+    <Compile Include="Migrations\Game\20190611170819_CombiningSwitchesVariables.designer.cs">
+      <DependentUpon>20190611170819_CombiningSwitchesVariables.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />
     <Compile Include="Web\RestApi\Attributes\DebugAuthorizeAttribute.cs" />

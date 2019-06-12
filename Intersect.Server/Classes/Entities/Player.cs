@@ -10,6 +10,7 @@ using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
 using Intersect.GameObjects.Maps;
+using Intersect.GameObjects.Switches_and_Variables;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData.Players;
@@ -3648,10 +3649,10 @@ namespace Intersect.Server.Entities
             }
             return null;
         }
-        public long GetVariableValue(Guid id)
+        public VariableValue GetVariableValue(Guid id)
         {
             var v = GetVariable(id);
-            if (v == null) return 0;
+            if (v == null) return new VariableValue();
             return v.Value;
         }
         public void SetVariableValue(Guid id, long value)
@@ -3659,14 +3660,12 @@ namespace Intersect.Server.Entities
             var v = GetVariable(id);
             if (v != null)
             {
-                v.Value = value;
+                v.Value.Integer = value;
             }
             else
             {
-                v = new Variable(id)
-                {
-                    Value = value
-                };
+                v = new Variable(id);
+                v.Value.Integer = value;
                 Variables.Add(v);
             }
         }

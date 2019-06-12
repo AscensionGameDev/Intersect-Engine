@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using Intersect.Enums;
 
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.GameObjects.Switches_and_Variables
@@ -42,7 +43,7 @@ namespace Intersect.GameObjects.Switches_and_Variables
                         break;
                 }
 
-                return obj.ToString();
+                return obj.ToString(Formatting.None);
             }
             set
             {
@@ -51,7 +52,7 @@ namespace Intersect.GameObjects.Switches_and_Variables
                 switch (Type)
                 {
                     case VariableDataTypes.Integer:
-                        Integer = int.Parse(obj["Value"].ToString());
+                        Integer = long.Parse(obj["Value"].ToString());
                         break;
 
                     case VariableDataTypes.Boolean:
@@ -59,7 +60,7 @@ namespace Intersect.GameObjects.Switches_and_Variables
                         break;
 
                     case VariableDataTypes.Number:
-                        Number = float.Parse(obj["Value"].ToString());
+                        Number = double.Parse(obj["Value"].ToString());
                         break;
 
                     case VariableDataTypes.String:
@@ -73,8 +74,8 @@ namespace Intersect.GameObjects.Switches_and_Variables
             }
         }
 
-        private int mInteger;
-        public int Integer
+        private long mInteger;
+        public long Integer
         {
             get => mInteger;
             set
@@ -95,8 +96,8 @@ namespace Intersect.GameObjects.Switches_and_Variables
             }
         }
 
-        private float mNumber;
-        public float Number
+        private double mNumber;
+        public double Number
         {
             get => mNumber;
             set
