@@ -7,7 +7,7 @@ namespace Intersect.Network
     {
         private bool mDisposed;
 
-        public Ceras Ceras { get; } = new Ceras();
+        public Ceras Ceras { get; } = new Ceras(true);
 
         protected AbstractConnection(Guid? guid = null)
         {

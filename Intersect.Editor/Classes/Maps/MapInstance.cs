@@ -84,27 +84,10 @@ namespace Intersect.Editor.Maps
 
         public void LoadTileData(byte[] packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(Compression.DecompressPacket(packet));
             lock (MapLock)
             {
-                Layers = new TileArray[Options.LayerCount];
-                for (var i = 0; i < Options.LayerCount; i++)
-                {
-                    Layers[i].Tiles = new Tile[Options.MapWidth, Options.MapHeight];
-                    for (var x = 0; x < Options.MapWidth; x++)
-                    {
-                        for (var y = 0; y < Options.MapHeight; y++)
-                        {
-                            Layers[i].Tiles[x, y].TilesetId = bf.ReadGuid();
-                            Layers[i].Tiles[x, y].X = bf.ReadInteger();
-                            Layers[i].Tiles[x, y].Y = bf.ReadInteger();
-                            Layers[i].Tiles[x, y].Autotile = bf.ReadByte();
-                        }
-                    }
-                }
+                Layers = mCeras.Decompress<TileArray[]>(packet);
             }
-            bf.Dispose();
 			InitAutotiles();
 		}
 
@@ -127,21 +110,7 @@ namespace Intersect.Editor.Maps
 
         public byte[] GenerateTileData()
         {
-            var bf = new ByteBuffer();
-            for (var i = 0; i < Options.LayerCount; i++)
-            {
-                for (var x = 0; x < Options.MapWidth; x++)
-                {
-                    for (var y = 0; y < Options.MapHeight; y++)
-                    {
-                        bf.WriteGuid(Layers[i].Tiles[x, y].TilesetId);
-                        bf.WriteInteger(Layers[i].Tiles[x, y].X);
-                        bf.WriteInteger(Layers[i].Tiles[x, y].Y);
-                        bf.WriteByte(Layers[i].Tiles[x, y].Autotile);
-                    }
-                }
-            }
-            return Compression.CompressPacket(bf.ToArray());
+            return mCeras.Compress(Layers);
         }
 
         public bool Changed()
@@ -176,7 +145,7 @@ namespace Intersect.Editor.Maps
         
         public override byte[] GetAttributeData()
         {
-            return Compression.CompressPacket(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(Attributes, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace })));
+            return mCeras.Compress(Attributes);
         }
 
         public void Update()

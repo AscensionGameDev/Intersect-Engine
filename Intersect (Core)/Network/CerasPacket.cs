@@ -10,7 +10,7 @@ namespace Intersect.Network.Packets
 {
     public class CerasPacket : IPacket
     {
-        private static Ceras sCerasInstance = new Ceras();
+        private static Ceras sCerasInstance = new Ceras(true);
 
         public CerasPacket()
         {

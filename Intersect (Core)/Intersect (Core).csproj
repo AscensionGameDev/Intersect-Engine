@@ -60,6 +60,9 @@
     <Reference Include="JetBrains.Annotations, Version=2018.3.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\packages\JetBrains.Annotations.2018.3.0\lib\net20\JetBrains.Annotations.dll</HintPath>
     </Reference>
+    <Reference Include="K4os.Compression.LZ4, Version=1.1.10.0, Culture=neutral, PublicKeyToken=2186fa9121ef231d, processorArchitecture=MSIL">
+      <HintPath>..\packages\K4os.Compression.LZ4.1.1.10\lib\net46\K4os.Compression.LZ4.dll</HintPath>
+    </Reference>
     <Reference Include="MathNet.Numerics, Version=4.5.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MathNet.Numerics.4.5.1\lib\net461\MathNet.Numerics.dll</HintPath>
     </Reference>
@@ -177,7 +180,6 @@
     <Compile Include="Collections\IGameObjectLookup.cs" />
     <Compile Include="Collections\ILookup.cs" />
     <Compile Include="Collections\ReadOnlyDictionary.cs" />
-    <Compile Include="Compression.cs" />
     <Compile Include="Config\ClientOptions.cs" />
     <Compile Include="Config\CombatOptions.cs" />
     <Compile Include="Config\DatabaseOptions.cs" />
@@ -457,7 +459,6 @@
     <Compile Include="GameObjects\Switches and Variables\ServerVariableBase.cs" />
     <Compile Include="GameObjects\ShopBase.cs" />
     <Compile Include="GameObjects\SpellBase.cs" />
-    <Compile Include="ByteBuffer.cs" />
     <Compile Include="Color.cs" />
     <Compile Include="GameObjects\TilesetBase.cs" />
     <Compile Include="GameObjects\TimeBase.cs" />

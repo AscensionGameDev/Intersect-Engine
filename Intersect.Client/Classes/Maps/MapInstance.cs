@@ -120,24 +120,7 @@ namespace Intersect.Client.Maps
 
         public void LoadTileData(byte[] packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(Compression.DecompressPacket(packet));
-            Layers = new TileArray[Options.LayerCount];
-            for (var i = 0; i < Options.LayerCount; i++)
-            {
-                Layers[i].Tiles = new Tile[Options.MapWidth, Options.MapHeight];
-                for (var x = 0; x < Options.MapWidth; x++)
-                {
-                    for (var y = 0; y < Options.MapHeight; y++)
-                    {
-                        Layers[i].Tiles[x, y].TilesetId = bf.ReadGuid();
-                        Layers[i].Tiles[x, y].X = bf.ReadInteger();
-                        Layers[i].Tiles[x, y].Y = bf.ReadInteger();
-                        Layers[i].Tiles[x, y].Autotile = bf.ReadByte();
-                    }
-                }
-            }
-            bf.Dispose();
+            Layers = mCeras.Decompress<TileArray[]>(packet);
         }
 
         private void CacheTextures()

@@ -165,5 +165,10 @@ namespace Intersect.Server.Database.PlayerData
             SaveChanges();
 #endif
         }
+
+        public void MigrationsProcessed(string[] migrations)
+        {
+
+        }
     }
 }
