@@ -106,13 +106,19 @@ namespace Intersect.Server.Migrations.Game
             if (migrationBuilder.ActiveProvider.Contains("Sqlite"))
             {
                 migrationBuilder.Sql(
-                    "UPDATE ServerVariables Set Value=('{\"Type\":1,\"Value\":' || Value || '}') WHERE Type = 1;"
+                    "UPDATE ServerVariables Set Value=('{\"Type\":1,\"Value\": true}') WHERE Type = 1 AND Value = 1;"
+                );
+                migrationBuilder.Sql(
+                    "UPDATE ServerVariables Set Value=('{\"Type\":1,\"Value\": false}') WHERE Type = 1 AND Value = 0;"
                 );
             }
             else
             {
                 migrationBuilder.Sql(
-                    "UPDATE ServerVariables Set Value=CONCAT('{\"Type\":1,\"Value\":', Value, '}') WHERE Type = 1;"
+                    "UPDATE ServerVariables Set Value=CONCAT('{\"Type\":1,\"Value\": true}') WHERE Type = 1 AND Value = 1;"
+                );
+                migrationBuilder.Sql(
+                    "UPDATE ServerVariables Set Value=CONCAT('{\"Type\":1,\"Value\": false}') WHERE Type = 1 AND Value = 0;"
                 );
             }
         }
