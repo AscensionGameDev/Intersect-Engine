@@ -24,7 +24,7 @@ namespace Intersect.Editor.Networking
         {
             if (EditorLidgrenNetwork == null)
             {
-                var config = new NetworkConfiguration(ClientOptions.ServerHost, ClientOptions.ServerPort);
+                var config = new NetworkConfiguration(ClientOptions.Instance.Host, ClientOptions.Instance.Port);
                 var assembly = Assembly.GetExecutingAssembly();
                 using (var stream = assembly.GetManifestResourceStream("Intersect.Editor.public-intersect.bek"))
                 {

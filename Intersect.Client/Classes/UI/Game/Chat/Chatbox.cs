@@ -112,7 +112,7 @@ namespace Intersect.Client.UI.Game.Chat
                     rw.Clicked += ChatboxRow_Clicked;
                     mReceivedMessage = true;
 
-                    while (mChatboxMessages.RowCount > ClientOptions.ChatLines)
+                    while (mChatboxMessages.RowCount > ClientOptions.Instance.ChatLines)
                     {
                         mChatboxMessages.RemoveRow(0);
                     }

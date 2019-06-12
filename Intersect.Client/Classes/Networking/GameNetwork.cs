@@ -39,7 +39,7 @@ namespace Intersect.Client.Networking
         {
             sConnected = false;
             MainMenu.OnNetworkConnecting();
-            Socket?.Connect(ClientOptions.ServerHost, ClientOptions.ServerPort);
+            Socket?.Connect(ClientOptions.Instance.Host, ClientOptions.Instance.Port);
         }
 
         private static void MySocket_OnConnectionFailed(bool denied)

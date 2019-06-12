@@ -423,7 +423,6 @@
     <Compile Include="Classes\Database\PlayerData\Players\Quest.cs" />
     <Compile Include="Classes\Database\PlayerData\Players\SlotHelper.cs" />
     <Compile Include="Classes\Database\PlayerData\Players\SpellSlot.cs" />
-    <Compile Include="Classes\Database\PlayerData\SeedData\SeedPlayers.cs" />
     <Compile Include="Classes\Entities\Player.Database.cs" />
     <Compile Include="Classes\Database\Spell.cs" />
     <Compile Include="Classes\Database\PlayerData\Players\Switch.cs" />

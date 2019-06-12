@@ -95,7 +95,7 @@ namespace Intersect.Client
 
         public static void DrawIntro()
         {
-            GameTexture imageTex = sContentManager.GetTexture(GameContentManager.TextureType.Image, ClientOptions.IntroImages[Globals.IntroIndex]);
+            GameTexture imageTex = sContentManager.GetTexture(GameContentManager.TextureType.Image, ClientOptions.Instance.IntroImages[Globals.IntroIndex]);
             if (imageTex != null)
             {
                 DrawFullScreenTextureFitMinimum(imageTex);
@@ -104,7 +104,7 @@ namespace Intersect.Client
 
         public static void DrawMenu()
         {
-            GameTexture imageTex = sContentManager.GetTexture(GameContentManager.TextureType.Gui, ClientOptions.MenuBackground);
+            GameTexture imageTex = sContentManager.GetTexture(GameContentManager.TextureType.Gui, ClientOptions.Instance.MenuBackground);
             if (imageTex != null)
             {
                 DrawFullScreenTexture(imageTex);
