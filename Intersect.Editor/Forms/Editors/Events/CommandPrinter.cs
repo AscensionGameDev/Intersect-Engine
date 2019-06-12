@@ -373,12 +373,12 @@ namespace Intersect.Editor.Forms.Editors.Events
 
             if (command.SwitchType == SwitchTypes.PlayerSwitch)
             {
-                return Strings.EventCommandList.playerswitch.ToString(PlayerSwitchBase.GetName(command.SwitchId),
+                return Strings.EventCommandList.playerswitch.ToString(ServerVariableBase.GetName(command.SwitchId),
                     value);
             }
             else if (command.SwitchType == SwitchTypes.ServerSwitch)
             {
-                return Strings.EventCommandList.globalswitch.ToString(ServerSwitchBase.GetName(command.SwitchId),
+                return Strings.EventCommandList.globalswitch.ToString(ServerVariableBase.GetName(command.SwitchId),
                     value);
             }
             else

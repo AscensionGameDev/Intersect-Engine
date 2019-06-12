@@ -367,14 +367,8 @@ namespace Intersect.Server
                 case GameObjectType.Event:
                     EventBase.Lookup.Clear();
                     break;
-                case GameObjectType.PlayerSwitch:
-                    PlayerSwitchBase.Lookup.Clear();
-                    break;
                 case GameObjectType.PlayerVariable:
                     PlayerVariableBase.Lookup.Clear();
-                    break;
-                case GameObjectType.ServerSwitch:
-                    ServerSwitchBase.Lookup.Clear();
                     break;
                 case GameObjectType.ServerVariable:
                     ServerVariableBase.Lookup.Clear();
@@ -473,23 +467,11 @@ namespace Intersect.Server
                         EventBase.Lookup.Set(evt.Id, evt);
                     }
                     break;
-                case GameObjectType.PlayerSwitch:
-                    //foreach (var psw in sGameDb.PlayerSwitches)
-                    //{
-                    //    PlayerSwitchBase.Lookup.Set(psw.Id, psw);
-                    //}
-                    break;
                 case GameObjectType.PlayerVariable:
                     foreach (var psw in sGameDb.PlayerVariables)
                     {
                         PlayerVariableBase.Lookup.Set(psw.Id, psw);
                     }
-                    break;
-                case GameObjectType.ServerSwitch:
-                    //foreach (var psw in sGameDb.ServerSwitches)
-                    //{
-                    //    ServerSwitchBase.Lookup.Set(psw.Id, psw);
-                    //}
                     break;
                 case GameObjectType.ServerVariable:
                     foreach (var psw in sGameDb.ServerVariables)
@@ -533,9 +515,7 @@ namespace Intersect.Server
                 case GameObjectType.Crafts: dbObj = new CraftBase(predefinedid); break;
                 case GameObjectType.Map: dbObj = new MapInstance(predefinedid); break;
                 case GameObjectType.Event: dbObj = new EventBase(predefinedid); break;
-                case GameObjectType.PlayerSwitch: dbObj = new PlayerSwitchBase(predefinedid); break;
                 case GameObjectType.PlayerVariable: dbObj = new PlayerVariableBase(predefinedid); break;
-                case GameObjectType.ServerSwitch: dbObj = new ServerSwitchBase(predefinedid); break;
                 case GameObjectType.ServerVariable: dbObj = new ServerVariableBase(predefinedid); break;
                 case GameObjectType.Tileset: dbObj = new TilesetBase(predefinedid); break;
                 case GameObjectType.Time: break;
@@ -631,19 +611,9 @@ namespace Intersect.Server
                         EventBase.Lookup.Set(dbObj.Id, dbObj);
                         break;
 
-                    case GameObjectType.PlayerSwitch:
-                        //sGameDb.PlayerSwitches.Add((PlayerSwitchBase) dbObj);
-                        PlayerSwitchBase.Lookup.Set(dbObj.Id, dbObj);
-                        break;
-
                     case GameObjectType.PlayerVariable:
                         sGameDb.PlayerVariables.Add((PlayerVariableBase) dbObj);
                         PlayerVariableBase.Lookup.Set(dbObj.Id, dbObj);
-                        break;
-
-                    case GameObjectType.ServerSwitch:
-                        //sGameDb.ServerSwitches.Add((ServerSwitchBase) dbObj);
-                        ServerSwitchBase.Lookup.Set(dbObj.Id, dbObj);
                         break;
 
                     case GameObjectType.ServerVariable:
@@ -728,14 +698,8 @@ namespace Intersect.Server
                     case GameObjectType.Event:
                         sGameDb.Events.Remove((EventBase) gameObject);
                         break;
-                    case GameObjectType.PlayerSwitch:
-                        //sGameDb.PlayerSwitches.Remove((PlayerSwitchBase) gameObject);
-                        break;
                     case GameObjectType.PlayerVariable:
                         sGameDb.PlayerVariables.Remove((PlayerVariableBase) gameObject);
-                        break;
-                    case GameObjectType.ServerSwitch:
-                        //sGameDb.ServerSwitches.Remove((ServerSwitchBase) gameObject);
                         break;
                     case GameObjectType.ServerVariable:
                         sGameDb.ServerVariables.Remove((ServerVariableBase) gameObject);

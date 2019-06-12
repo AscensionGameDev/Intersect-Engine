@@ -110,7 +110,7 @@ namespace Intersect.Server.EventProcessing
         public static bool MeetsCondition(ServerSwitchCondition condition, Player player, EventInstance eventInstance, QuestBase questBase)
         {
             var servSwitch = false;
-            if (ServerSwitchBase.Get(condition.SwitchId) != null) servSwitch = ServerSwitchBase.Get(condition.SwitchId).Value;
+            if (ServerVariableBase.Get(condition.SwitchId) != null) servSwitch = ServerVariableBase.Get(condition.SwitchId).Value.Boolean;
             return servSwitch == condition.Value;
         }
 

@@ -68,7 +68,7 @@ namespace Intersect.GameObjects.Switches_and_Variables
                         break;
 
                     default:
-                        throw new ArgumentOutOfRangeException();
+                        break;
                 }
 
             }
@@ -117,5 +117,12 @@ namespace Intersect.GameObjects.Switches_and_Variables
                 mString = value ?? "";
             }
         }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }

@@ -16,6 +16,8 @@ using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 
+using WebSocketSharp;
+
 namespace Intersect.Server.EventProcessing
 {
     public static class CommandProcessing
@@ -93,10 +95,10 @@ namespace Intersect.Server.EventProcessing
             }
             else if (command.SwitchType == SwitchTypes.ServerSwitch)
             {
-                var serverSwitch = ServerSwitchBase.Get(command.SwitchId);
+                var serverSwitch = ServerVariableBase.Get(command.SwitchId);
                 if (serverSwitch != null)
                 {
-                    serverSwitch.Value = command.Value;
+                    serverSwitch.Value.Boolean = command.Value;
                     LegacyDatabase.SaveGameDatabase();
                 }
             }
@@ -939,11 +941,11 @@ namespace Intersect.Server.EventProcessing
                     if (m.Success)
                     {
                         var id = m.Groups[1].Value;
-                        foreach (var var in PlayerSwitchBase.Lookup.Values)
+                        foreach (var var in PlayerVariableBase.Lookup.Values)
                         {
-                            if (id == ((PlayerSwitchBase)var).TextId)
+                            if (id == ((PlayerVariableBase)var).TextId)
                             {
-                                input = input.Replace(Strings.Events.playerswitch + "{" + m.Groups[1].Value + "}", player.GetSwitchValue(var.Id).ToString());
+                                input = input.Replace(Strings.Events.playerswitch + "{" + m.Groups[1].Value + "}", player.GetVariableValue(var.Id).ToString());
                             }
                         }
                     }
@@ -969,11 +971,11 @@ namespace Intersect.Server.EventProcessing
                     if (m.Success)
                     {
                         var id = m.Groups[1].Value;
-                        foreach (var var in ServerSwitchBase.Lookup.Values)
+                        foreach (var var in ServerVariableBase.Lookup.Values)
                         {
-                            if (id == ((ServerSwitchBase)var).TextId)
+                            if (id == ((ServerVariableBase)var).TextId)
                             {
-                                input = input.Replace(Strings.Events.globalswitch + "{" + m.Groups[1].Value + "}", ((ServerSwitchBase)var).Value.ToString());
+                                input = input.Replace(Strings.Events.globalswitch + "{" + m.Groups[1].Value + "}", ((ServerVariableBase)var).Value.ToString());
                             }
                         }
                     }

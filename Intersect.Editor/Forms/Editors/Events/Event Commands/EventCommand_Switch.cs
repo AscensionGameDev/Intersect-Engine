@@ -49,13 +49,13 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             int switchCount = 0;
             if (rdoPlayerSwitch.Checked)
             {
-                cmbSetSwitch.Items.AddRange(PlayerSwitchBase.Names);
-                cmbSetSwitch.SelectedIndex = PlayerSwitchBase.ListIndex(mMyCommand.SwitchId);
+                cmbSetSwitch.Items.AddRange(PlayerVariableBase.Names);
+                cmbSetSwitch.SelectedIndex = PlayerVariableBase.ListIndex(mMyCommand.SwitchId);
             }
             else
             {
-                cmbSetSwitch.Items.AddRange(ServerSwitchBase.Names);
-                cmbSetSwitch.SelectedIndex =ServerSwitchBase.ListIndex(mMyCommand.SwitchId);
+                cmbSetSwitch.Items.AddRange(ServerVariableBase.Names);
+                cmbSetSwitch.SelectedIndex =ServerVariableBase.ListIndex(mMyCommand.SwitchId);
             }
             cmbSetSwitchVal.SelectedIndex = Convert.ToInt32(mMyCommand.Value);
             chkSyncParty.Checked = mMyCommand.SyncParty;
@@ -66,12 +66,12 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             if (rdoPlayerSwitch.Checked)
             {
                 mMyCommand.SwitchType = SwitchTypes.PlayerSwitch;
-                mMyCommand.SwitchId = PlayerSwitchBase.IdFromList(cmbSetSwitch.SelectedIndex);
+                mMyCommand.SwitchId = PlayerVariableBase.IdFromList(cmbSetSwitch.SelectedIndex);
             }
             if (rdoGlobalSwitch.Checked)
             {
                 mMyCommand.SwitchType = SwitchTypes.ServerSwitch;
-                mMyCommand.SwitchId = ServerSwitchBase.IdFromList(cmbSetSwitch.SelectedIndex);
+                mMyCommand.SwitchId = ServerVariableBase.IdFromList(cmbSetSwitch.SelectedIndex);
             }
             mMyCommand.Value = Convert.ToBoolean(cmbSetSwitchVal.SelectedIndex);
             mMyCommand.SyncParty = chkSyncParty.Checked;

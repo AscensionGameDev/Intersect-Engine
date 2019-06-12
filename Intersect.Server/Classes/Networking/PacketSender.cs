@@ -497,9 +497,7 @@ namespace Intersect.Server.Networking
 
                 if (((GameObjectType)val == GameObjectType.Shop ||
                      (GameObjectType)val == GameObjectType.Event ||
-                     (GameObjectType)val == GameObjectType.PlayerSwitch ||
                      (GameObjectType)val == GameObjectType.PlayerVariable ||
-                     (GameObjectType)val == GameObjectType.ServerSwitch ||
                      (GameObjectType)val == GameObjectType.ServerVariable) && !client.IsEditor)
                 {
                     continue;
@@ -528,9 +526,7 @@ namespace Intersect.Server.Networking
 
                 if (((GameObjectType)val == GameObjectType.Shop ||
                      (GameObjectType)val == GameObjectType.Event ||
-                     (GameObjectType)val == GameObjectType.PlayerSwitch ||
                      (GameObjectType)val == GameObjectType.PlayerVariable ||
-                     (GameObjectType)val == GameObjectType.ServerSwitch ||
                      (GameObjectType)val == GameObjectType.ServerVariable))
                 {
                     continue;
@@ -1207,22 +1203,8 @@ namespace Intersect.Server.Networking
                     }
 
                     break;
-                case GameObjectType.PlayerSwitch:
-                    foreach (var obj in PlayerSwitchBase.Lookup)
-                    {
-                        SendGameObject(client, obj.Value, false, false, packetList);
-                    }
-
-                    break;
                 case GameObjectType.PlayerVariable:
                     foreach (var obj in PlayerVariableBase.Lookup)
-                    {
-                        SendGameObject(client, obj.Value, false, false, packetList);
-                    }
-
-                    break;
-                case GameObjectType.ServerSwitch:
-                    foreach (var obj in ServerSwitchBase.Lookup)
                     {
                         SendGameObject(client, obj.Value, false, false, packetList);
                     }

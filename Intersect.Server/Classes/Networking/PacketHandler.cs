@@ -1794,14 +1794,8 @@ namespace Intersect.Server.Networking
                 case GameObjectType.Event:
                     obj = EventBase.Get(id);
                     break;
-                case GameObjectType.PlayerSwitch:
-                    obj = PlayerSwitchBase.Get(id);
-                    break;
                 case GameObjectType.PlayerVariable:
                     obj = PlayerVariableBase.Get(id);
-                    break;
-                case GameObjectType.ServerSwitch:
-                    obj = ServerSwitchBase.Get(id);
                     break;
                 case GameObjectType.ServerVariable:
                     obj = ServerVariableBase.Get(id);
@@ -1881,14 +1875,8 @@ namespace Intersect.Server.Networking
                 case GameObjectType.Event:
                     obj = EventBase.Get(id);
                     break;
-                case GameObjectType.PlayerSwitch:
-                    obj = PlayerSwitchBase.Get(id);
-                    break;
                 case GameObjectType.PlayerVariable:
                     obj = PlayerVariableBase.Get(id);
-                    break;
-                case GameObjectType.ServerSwitch:
-                    obj = ServerSwitchBase.Get(id);
                     break;
                 case GameObjectType.ServerVariable:
                     obj = ServerVariableBase.Get(id);
