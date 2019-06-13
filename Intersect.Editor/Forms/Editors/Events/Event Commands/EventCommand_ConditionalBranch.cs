@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Forms;
 using Intersect.Editor.Localization;
 using Intersect.Enums;
@@ -39,9 +40,9 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             lblType.Text = Strings.EventConditional.type;
 
             cmbConditionType.Items.Clear();
-            for (int i = 0; i < Strings.EventConditional.conditions.Count; i++)
+            foreach (var itm in Strings.EventConditional.conditions)
             {
-                cmbConditionType.Items.Add(Strings.EventConditional.conditions[i]);
+                cmbConditionType.Items.Add(itm.Value);
             }
 
             chkNegated.Text = Strings.EventConditional.negated;
@@ -376,8 +377,9 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void cmbConditionType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            UpdateFormElements((ConditionTypes)cmbConditionType.SelectedIndex);
-            if (((ConditionTypes)cmbConditionType.SelectedIndex) != Condition.Type) ConditionTypeChanged((ConditionTypes)cmbConditionType.SelectedIndex);
+            var type = Strings.EventConditional.conditions.FirstOrDefault(x => x.Value == cmbConditionType.Text).Key;
+            UpdateFormElements((ConditionTypes)type);
+            if (((ConditionTypes)type) != Condition.Type) ConditionTypeChanged((ConditionTypes)type);
         }
 
         private void cmbTaskModifier_SelectedIndexChanged(object sender, EventArgs e)

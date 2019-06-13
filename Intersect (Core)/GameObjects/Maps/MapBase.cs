@@ -186,7 +186,7 @@ namespace Intersect.GameObjects.Maps
             Name = "New Map";
 
             //Create empty tile array and then compress it down
-            if (Layers == null)
+            if (Layers == null || Layers[0].Tiles == null)
             {
                 Layers = new TileArray[Options.LayerCount];
                 for (var i = 0; i < Options.LayerCount; i++)

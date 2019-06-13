@@ -215,6 +215,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         #region "Boolean Variable"
         private void TryLoadBooleanMod(VariableMod varMod)
         {
+            if (varMod == null) varMod = new BooleanVariableMod();
             if (varMod.GetType() == typeof(BooleanVariableMod))
             {
                 var mod = (BooleanVariableMod)varMod;
@@ -264,6 +265,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void TryLoadNumericMod(VariableMod varMod)
         {
+            if (varMod == null) varMod = new IntegerVariableMod();
             if (varMod.GetType() == typeof(IntegerVariableMod))
             {
                 var mod = (IntegerVariableMod) varMod;
@@ -460,5 +462,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         }
 
         #endregion
+
+        private void cmbVariable_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateFormElements();
+        }
     }
 }

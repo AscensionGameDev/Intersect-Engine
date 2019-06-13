@@ -502,7 +502,6 @@ Tick timer saved in server config.json.";
             public static LocalizedString openshop = @"Open Shop [{00}]";
             public static LocalizedString playanimation = @"Play Animation {00} {01}";
             public static LocalizedString playbgm = @"Play BGM [File: {00}]";
-            public static LocalizedString playerswitch = @"Set Player Switch {00} to {01}";
             public static LocalizedString playervariable = @"Set Player Variable {00} ({01})";
             public static LocalizedString playsound = @"Play Sound [File: {00}]";
             public static LocalizedString questnotstarted = @"Quest Declined or Failed to Start (Reqs not met, already started, etc)";
@@ -651,10 +650,7 @@ Tick timer saved in server config.json.";
 
             public static Dictionary<int, LocalizedString> conditions = new Dictionary<int, LocalizedString>
             {
-                {0, @"Player Switch is..."},
-                {1, @"Player Variable is..."},
-                {2, @"Global Switch is..."},
-                {3, @"Global Variable is..."},
+                {0, @"Variable Is..."},
                 {4, @"Has item..."},
                 {5, @"Class is..."},
                 {6, @"Knows spell..."},
@@ -1090,7 +1086,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString okay = @"Ok";
             public static LocalizedString player = @"Player Variable";
             public static LocalizedString title = @"Set Variable";
-            public static LocalizedString syncparty = @"Sync Party Variables?";
+            public static LocalizedString syncparty = @"Party Sync?";
             public static LocalizedString label = "@Select Variable:";
 
             public static LocalizedString booleanlabel = @"Boolean Variable:";
