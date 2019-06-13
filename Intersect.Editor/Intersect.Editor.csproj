@@ -309,12 +309,6 @@
     <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_StartQuest.Designer.cs">
       <DependentUpon>EventCommand_StartQuest.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Switch.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Switch.Designer.cs">
-      <DependentUpon>EventCommand_Switch.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Text.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -700,9 +694,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_StartQuest.resx">
       <DependentUpon>EventCommand_StartQuest.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_Switch.resx">
-      <DependentUpon>EventCommand_Switch.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_Text.resx">
       <DependentUpon>EventCommand_Text.cs</DependentUpon>

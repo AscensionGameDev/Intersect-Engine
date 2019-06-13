@@ -1082,39 +1082,33 @@ Tick timer saved in server config.json.";
             public static LocalizedString title = @"Set Class";
         }
 
-        public struct EventSetSwitch
-        {
-            public static LocalizedString cancel = @"Cancel";
-            public static LocalizedString False = @"False";
-            public static LocalizedString global = @"Global Switch";
-            public static LocalizedString label = @"Set Switch:";
-            public static LocalizedString okay = @"Ok";
-            public static LocalizedString player = @"Player Switch";
-            public static LocalizedString title = @"Set Switch";
-            public static LocalizedString to = @"to";
-            public static LocalizedString True = @"True";
-            public static LocalizedString syncparty = @"Sync Party Variables?";
-        }
-
         public struct EventSetVariable
         {
-            public static LocalizedString add = @"Add";
             public static LocalizedString cancel = @"Cancel";
             public static LocalizedString global = @"Global Variable";
-            public static LocalizedString globalvariablevalue = @"Global Variable Value: ";
-            public static LocalizedString label = @"Variable:";
             public static LocalizedString okay = @"Ok";
             public static LocalizedString player = @"Player Variable";
-            public static LocalizedString playervariablevalue = @"Player Variable Value: ";
-            public static LocalizedString random = @"Random";
-            public static LocalizedString randomhigh = @"High:";
-            public static LocalizedString randomlow = @"Low:";
-            public static LocalizedString randomdesc = @"Random Number:";
-            public static LocalizedString set = @"Set";
-            public static LocalizedString subtract = @"Subtract";
-            public static LocalizedString systemtime = @"System Time (ms)";
             public static LocalizedString title = @"Set Variable";
             public static LocalizedString syncparty = @"Sync Party Variables?";
+            public static LocalizedString label = "@Select Variable:";
+
+            public static LocalizedString booleanlabel = @"Boolean Variable:";
+            public static LocalizedString booleantrue = @"True";
+            public static LocalizedString booleanfalse = @"False";
+            public static LocalizedString booleanccloneglobalvariablevalue = @"Global Variable Value: ";
+            public static LocalizedString booleancloneplayervariablevalue = @"Player Variable Value: ";
+
+            public static LocalizedString numericlabel = @"Integer Variable:";
+            public static LocalizedString numericadd = @"Add";
+            public static LocalizedString numericcloneglobalvariablevalue = @"Global Variable Value: ";
+            public static LocalizedString numericcloneplayervariablevalue = @"Player Variable Value: ";
+            public static LocalizedString numericrandom = @"Random";
+            public static LocalizedString numericrandomhigh = @"High:";
+            public static LocalizedString numericrandomlow = @"Low:";
+            public static LocalizedString numericrandomdesc = @"Random Number:";
+            public static LocalizedString numericset = @"Set";
+            public static LocalizedString numericsubtract = @"Subtract";
+            public static LocalizedString numericsystemtime = @"System Time (ms)";
         }
 
         public struct EventShowOptions

@@ -386,9 +386,6 @@ namespace Intersect.Editor.Forms.Editors.Events
                 case EventCommandType.AddChatboxText:
                     tmpCommand = new AddChatboxTextCommand();
                     break;
-                case EventCommandType.SetSwitch:
-                    tmpCommand = new SetSwitchCommand() {Value = true};
-                    break;
                 case EventCommandType.SetVariable:
                     tmpCommand = new SetVariableCommand();
                     break;
@@ -853,9 +850,6 @@ namespace Intersect.Editor.Forms.Editors.Events
                     break;
                 case EventCommandType.AddChatboxText:
                     cmdWindow = new EventCommandChatboxText((AddChatboxTextCommand)command, this);
-                    break;
-                case EventCommandType.SetSwitch:
-                    cmdWindow = new EventCommandSwitch((SetSwitchCommand)command, this);
                     break;
                 case EventCommandType.SetVariable:
                     cmdWindow = new EventCommandVariable((SetVariableCommand)command, this);

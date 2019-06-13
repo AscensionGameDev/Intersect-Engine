@@ -60,8 +60,7 @@
         AddChatboxText,
 
         //Logic Flow
-        SetSwitch,
-        SetVariable,
+        SetVariable = 5,
         SetSelfSwitch,
         ConditionalBranch,
         ExitEventProcess,
