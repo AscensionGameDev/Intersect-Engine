@@ -160,7 +160,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void btnAddCondition_Click(object sender, EventArgs e)
         {
-            var condition = OpenConditionEditor(new PlayerSwitchCondition());
+            var condition = OpenConditionEditor(new VariableIsCondition());
             if (condition != null)
             {
                 mEdittingList.Conditions.Add(condition);
