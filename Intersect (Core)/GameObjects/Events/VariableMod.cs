@@ -16,8 +16,8 @@ namespace Intersect.GameObjects.Events
     public class IntegerVariableMod : VariableMod
     {
         public VariableMods ModType { get; set; } = VariableMods.Set;
-        public int Value { get; set; }
-        public int HighValue { get; set; }
+        public long Value { get; set; }
+        public long HighValue { get; set; }
         public Guid DupVariableId { get; set; }
     }
 

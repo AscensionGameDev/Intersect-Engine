@@ -913,7 +913,8 @@ namespace Intersect.Server.EventProcessing
                     value.Integer -= mod.Value;
                     break;
                 case Enums.VariableMods.Random:
-                    value.Integer = Globals.Rand.Next(mod.Value, mod.HighValue + 1);
+                    //TODO: Fix - Random doesnt work with longs lolz
+                    value.Integer = Globals.Rand.Next((int)mod.Value, (int)mod.HighValue + 1);
                     break;
                 case Enums.VariableMods.SystemTime:
                     long ms = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
