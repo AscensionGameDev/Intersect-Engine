@@ -16,10 +16,12 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private EventPage mCurrentPage;
         public Condition Condition;
         public bool Cancelled;
+        private bool mLoading = false;
 
         public EventCommandConditionalBranch(Condition refCommand, EventPage refPage, FrmEvent editor, ConditionalBranchCommand command)
         {
             InitializeComponent();
+            mLoading = true;
             if (refCommand == null) refCommand = new VariableIsCondition();
             Condition = refCommand;
             mEventEditor = editor;
@@ -32,6 +34,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             nudVariableValue.Maximum = long.MaxValue;
             chkNegated.Checked = refCommand.Negated;
             SetupFormValues((dynamic)refCommand);
+            mLoading = false;
         }
 
         private void InitLocalization()
@@ -534,6 +537,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
                 cmbNumericComparitor.SelectedIndex = (int)com.Comparator;
 
+                if (cmbNumericComparitor.SelectedIndex < 0) cmbNumericComparitor.SelectedIndex = 0;
+
                 
 
                 if (com.CompareVariableId != Guid.Empty)
@@ -561,6 +566,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void InitVariableElements(Guid variableId)
         {
+            mLoading = true;
             cmbVariable.Items.Clear();
             if (rdoPlayerVariable.Checked)
             {
@@ -572,6 +578,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 cmbVariable.Items.AddRange(ServerVariableBase.Names);
                 cmbVariable.SelectedIndex = ServerVariableBase.ListIndex(variableId);
             }
+            mLoading = false;
         }
 
         private BooleanVariableComparison GetBooleanVariableComparison()
@@ -600,6 +607,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
             var comp = new IntegerVariableComparison();
 
+            if (cmbNumericComparitor.SelectedIndex < 0) cmbNumericComparitor.SelectedIndex = 0;
+
             comp.Comparator = (VariableComparators) cmbNumericComparitor.SelectedIndex;
 
             comp.CompareVariableId = Guid.Empty;
@@ -625,11 +634,28 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void rdoPlayerVariable_CheckedChanged(object sender, EventArgs e)
         {
             InitVariableElements(Guid.Empty);
+            if (!mLoading && cmbVariable.Items.Count > 0) cmbVariable.SelectedIndex = 0;
         }
 
         private void rdoGlobalVariable_CheckedChanged(object sender, EventArgs e)
         {
             InitVariableElements(Guid.Empty);
+            if (!mLoading && cmbVariable.Items.Count > 0) cmbVariable.SelectedIndex = 0;
+        }
+
+        private void cmbVariable_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (mLoading) return;
+            if (rdoPlayerVariable.Checked)
+            {
+                InitVariableElements(PlayerVariableBase.IdFromList(cmbVariable.SelectedIndex));
+            }
+            else if (rdoGlobalVariable.Checked)
+            {
+                InitVariableElements(ServerVariableBase.IdFromList(cmbVariable.SelectedIndex));
+            }
+
+            UpdateVariableElements();
         }
 
 
@@ -865,8 +891,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             condition.ItemId = ItemBase.IdFromList(cmbEquippedItem.SelectedIndex);
         }
 
+
         #endregion
-
-
     }
 }

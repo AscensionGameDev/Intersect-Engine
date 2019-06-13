@@ -206,16 +206,18 @@ namespace Intersect.Editor.Forms.Editors
                     lblObject.Text = Strings.VariableEditor.playervariable;
                     txtObjectName.Text = ((PlayerVariableBase)mEditorItem).Name;
                     txtId.Text = ((PlayerVariableBase)mEditorItem).TextId;
+                    cmbVariableType.SelectedIndex = (int) (((PlayerVariableBase) mEditorItem).Type - 1);
                 }
                 else if (rdoGlobalVariables.Checked)
                 {
                     lblObject.Text = Strings.VariableEditor.globalvariable;
                     txtObjectName.Text = ((ServerVariableBase)mEditorItem).Name;
                     txtId.Text = ((ServerVariableBase)mEditorItem).TextId;
-                    nudVariableValue.Show();
-                    nudVariableValue.Value = ((ServerVariableBase) mEditorItem).Value.Integer;
+                    cmbVariableType.SelectedIndex = (int)(((ServerVariableBase)mEditorItem).Type - 1);
                     grpValue.Show();
                 }
+
+                InitValueGroup();
             }
             else
             {

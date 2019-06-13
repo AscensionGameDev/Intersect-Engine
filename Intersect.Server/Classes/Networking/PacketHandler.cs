@@ -1325,7 +1325,7 @@ namespace Intersect.Server.Networking
             foreach (var plyr in players)
             {
                 plyr.Warp(plyr.MapId, plyr.X, plyr.Y, plyr.Dir, false, plyr.Z, true);
-                PacketSender.SendMap(player.Client, packet.MapId);
+                PacketSender.SendMap(plyr.Client, packet.MapId);
             }
             PacketSender.SendMap(client, packet.MapId, true); //Sends map to everyone/everything in proximity
             PacketSender.SendMapListToAll();
