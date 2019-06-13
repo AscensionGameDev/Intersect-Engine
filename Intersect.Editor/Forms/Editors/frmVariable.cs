@@ -27,24 +27,27 @@ namespace Intersect.Editor.Forms.Editors
 
         private void InitLocalization()
         {
-            Text = Strings.SwitchVariableEditor.title;
-            grpTypes.Text = Strings.SwitchVariableEditor.type;
-            grpList.Text = Strings.SwitchVariableEditor.list;
-            rdoPlayerSwitch.Text = Strings.SwitchVariableEditor.playerswitches;
-            rdoPlayerVariables.Text = Strings.SwitchVariableEditor.playervariables;
-            rdoGlobalSwitches.Text = Strings.SwitchVariableEditor.globalswitches;
-            rdoGlobalVariables.Text = Strings.SwitchVariableEditor.globalvariables;
-            grpEditor.Text = Strings.SwitchVariableEditor.editor;
-            lblName.Text = Strings.SwitchVariableEditor.name;
-            lblValue.Text = Strings.SwitchVariableEditor.value;
-            cmbSwitchValue.Items.Clear();
-            cmbSwitchValue.Items.Add(Strings.SwitchVariableEditor.False);
-            cmbSwitchValue.Items.Add(Strings.SwitchVariableEditor.True);
-            btnNew.Text = Strings.SwitchVariableEditor.New;
-            btnDelete.Text = Strings.SwitchVariableEditor.delete;
-            btnUndo.Text = Strings.SwitchVariableEditor.undo;
-            btnSave.Text = Strings.SwitchVariableEditor.save;
-            btnCancel.Text = Strings.SwitchVariableEditor.cancel;
+            Text = Strings.VariableEditor.title;
+            grpTypes.Text = Strings.VariableEditor.type;
+            grpList.Text = Strings.VariableEditor.list;
+            rdoPlayerVariables.Text = Strings.VariableEditor.playervariables;
+            rdoGlobalVariables.Text = Strings.VariableEditor.globalvariables;
+            grpEditor.Text = Strings.VariableEditor.editor;
+            lblName.Text = Strings.VariableEditor.name;
+            grpValue.Text = Strings.VariableEditor.value;
+            cmbBooleanValue.Items.Clear();
+            cmbBooleanValue.Items.Add(Strings.VariableEditor.False);
+            cmbBooleanValue.Items.Add(Strings.VariableEditor.True);
+            cmbVariableType.Items.Clear();
+            foreach (var itm in Strings.VariableEditor.types)
+            {
+                cmbVariableType.Items.Add(itm.Value);
+            }
+            btnNew.Text = Strings.VariableEditor.New;
+            btnDelete.Text = Strings.VariableEditor.delete;
+            btnUndo.Text = Strings.VariableEditor.undo;
+            btnSave.Text = Strings.VariableEditor.save;
+            btnCancel.Text = Strings.VariableEditor.cancel;
         }
 
         protected override void GameObjectUpdatedDelegate(GameObjectType type)
@@ -95,8 +98,8 @@ namespace Intersect.Editor.Forms.Editors
             if (mEditorItem != null)
             {
                 if (
-                    DarkMessageBox.ShowWarning(Strings.SwitchVariableEditor.deleteprompt,
-                        Strings.SwitchVariableEditor.deletecaption, DarkDialogButton.YesNo,
+                    DarkMessageBox.ShowWarning(Strings.VariableEditor.deleteprompt,
+                        Strings.VariableEditor.deletecaption, DarkDialogButton.YesNo,
                         Properties.Resources.Icon) == DialogResult.Yes)
                 {
                     PacketSender.SendDeleteObject(mEditorItem);
@@ -161,42 +164,26 @@ namespace Intersect.Editor.Forms.Editors
         {
             lstObjects.Items.Clear();
             grpEditor.Hide();
-            cmbSwitchValue.Hide();
+            cmbBooleanValue.Hide();
             nudVariableValue.Hide();
             if (rdoPlayerVariables.Checked)
             {
                 lstObjects.Items.AddRange(PlayerVariableBase.Names);
-                lblId.Text = Strings.SwitchVariableEditor.textidpv;
+                lblId.Text = Strings.VariableEditor.textidpv;
             }
             else if (rdoGlobalVariables.Checked)
             {
                 for (int i = 0; i < ServerVariableBase.Lookup.Count; i++)
                 {
                     var var = ServerVariableBase.Get(ServerVariableBase.IdFromList(i));
-                    lstObjects.Items.Add(var.Name + "  =  " + var.Value.Integer);
-                    lblId.Text = Strings.SwitchVariableEditor.textidgv;
+                    lstObjects.Items.Add(var.Name + "  =  " + var.Value.StringRepresentation(var.Type));
                 }
+                lblId.Text = Strings.VariableEditor.textidgv;
             }
             UpdateEditor();
         }
 
-        private void frmSwitchVariable_FormClosing(object sender, FormClosingEventArgs e)
-        {
-        }
-
-        private void rdoPlayerSwitch_CheckedChanged(object sender, EventArgs e)
-        {
-            mEditorItem = null;
-            InitEditor();
-        }
-
         private void rdoPlayerVariables_CheckedChanged(object sender, EventArgs e)
-        {
-            mEditorItem = null;
-            InitEditor();
-        }
-
-        private void rdoGlobalSwitches_CheckedChanged(object sender, EventArgs e)
         {
             mEditorItem = null;
             InitEditor();
@@ -213,21 +200,21 @@ namespace Intersect.Editor.Forms.Editors
             if (mEditorItem != null)
             {
                 grpEditor.Show();
-                lblValue.Hide();
+                grpValue.Hide();
                 if (rdoPlayerVariables.Checked)
                 {
-                    lblObject.Text = Strings.SwitchVariableEditor.playervariable;
+                    lblObject.Text = Strings.VariableEditor.playervariable;
                     txtObjectName.Text = ((PlayerVariableBase)mEditorItem).Name;
                     txtId.Text = ((PlayerVariableBase)mEditorItem).TextId;
                 }
                 else if (rdoGlobalVariables.Checked)
                 {
-                    lblObject.Text = Strings.SwitchVariableEditor.globalvariable;
+                    lblObject.Text = Strings.VariableEditor.globalvariable;
                     txtObjectName.Text = ((ServerVariableBase)mEditorItem).Name;
                     txtId.Text = ((ServerVariableBase)mEditorItem).TextId;
                     nudVariableValue.Show();
                     nudVariableValue.Value = ((ServerVariableBase) mEditorItem).Value.Integer;
-                    lblValue.Show();
+                    grpValue.Show();
                 }
             }
             else
@@ -236,25 +223,12 @@ namespace Intersect.Editor.Forms.Editors
             }
         }
 
-        private void cmbSwitchValue_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (lstObjects.SelectedIndex > -1)
-            {
-                if (rdoGlobalSwitches.Checked)
-                {
-                    var obj = ServerVariableBase.Get(ServerVariableBase.IdFromList(lstObjects.SelectedIndex));
-                    obj.Value.Boolean = Convert.ToBoolean(cmbSwitchValue.SelectedIndex);
-                    UpdateSelection();
-                }
-            }
-        }
-
         private void UpdateSelection()
         {
             if (lstObjects.SelectedIndex > -1)
             {
                 grpEditor.Show();
-                lblValue.Hide();
+                grpValue.Hide();
                 if (rdoPlayerVariables.Checked)
                 {
                     var obj = PlayerVariableBase.Get(PlayerVariableBase.IdFromList(lstObjects.SelectedIndex));
@@ -263,7 +237,7 @@ namespace Intersect.Editor.Forms.Editors
                 else if (rdoGlobalVariables.Checked)
                 {
                     var obj = ServerVariableBase.Get(ServerVariableBase.IdFromList(lstObjects.SelectedIndex));
-                    lstObjects.Items[lstObjects.SelectedIndex] = obj.Name + "  =  " + obj.Value;
+                    lstObjects.Items[lstObjects.SelectedIndex] = obj.Name + "  =  " + obj.Value.StringRepresentation(obj.Type);
                 }
             }
         }
@@ -318,6 +292,79 @@ namespace Intersect.Editor.Forms.Editors
                     if (obj != null)
                     {
                         obj.Value.Integer = (long) nudVariableValue.Value;
+                        UpdateSelection();
+                    }
+                }
+            }
+        }
+
+        private void cmbVariableType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lstObjects.SelectedIndex > -1)
+            {
+                if (rdoPlayerVariables.Checked)
+                {
+                    var obj = PlayerVariableBase.Get(PlayerVariableBase.IdFromList(lstObjects.SelectedIndex));
+                    obj.Type = (VariableDataTypes) (cmbVariableType.SelectedIndex + 1);
+                }
+                else if (rdoGlobalVariables.Checked)
+                {
+                    var obj = ServerVariableBase.Get(ServerVariableBase.IdFromList(lstObjects.SelectedIndex));
+                    obj.Type = (VariableDataTypes)(cmbVariableType.SelectedIndex + 1);
+                }
+                InitValueGroup();
+                UpdateSelection();
+            }
+        }
+
+        private void InitValueGroup()
+        {
+            if (rdoPlayerVariables.Checked)
+            {
+                grpValue.Hide();
+            }
+            else
+            {
+                if (lstObjects.SelectedIndex > -1)
+                {
+                    var obj = ServerVariableBase.Get(ServerVariableBase.IdFromList(lstObjects.SelectedIndex));
+                    cmbBooleanValue.Hide();
+                    nudVariableValue.Hide();
+                    switch (obj.Type)
+                    {
+                        case VariableDataTypes.Boolean:
+                            cmbBooleanValue.Show();
+                            cmbBooleanValue.SelectedIndex = Convert.ToInt32(obj.Value.Boolean);
+                            break;
+
+                        case VariableDataTypes.Integer:
+                            nudVariableValue.Show();
+                            nudVariableValue.Value = obj.Value.Integer;
+                            break;
+
+                        case VariableDataTypes.Number:
+                            break;
+
+                        case VariableDataTypes.String:
+                            break;
+
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }
+            }
+        }
+
+        private void cmbBooleanValue_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lstObjects.SelectedIndex > -1)
+            {
+                if (rdoGlobalVariables.Checked)
+                {
+                    var obj = ServerVariableBase.Get(ServerVariableBase.IdFromList(lstObjects.SelectedIndex));
+                    if (obj != null)
+                    {
+                        obj.Value.Boolean = Convert.ToBoolean(cmbBooleanValue.SelectedIndex);
                         UpdateSelection();
                     }
                 }

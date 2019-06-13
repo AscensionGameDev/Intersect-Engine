@@ -441,11 +441,11 @@
     <Compile Include="Forms\Editors\frmSpell.Designer.cs">
       <DependentUpon>frmSpell.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\frmSwitchVariable.cs">
+    <Compile Include="Forms\Editors\frmVariable.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\frmSwitchVariable.Designer.cs">
-      <DependentUpon>frmSwitchVariable.cs</DependentUpon>
+    <Compile Include="Forms\Editors\frmVariable.Designer.cs">
+      <DependentUpon>frmVariable.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Editors\frmTime.cs">
       <SubType>Form</SubType>
@@ -767,8 +767,8 @@
     <EmbeddedResource Include="Forms\Editors\frmSpell.resx">
       <DependentUpon>frmSpell.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\frmSwitchVariable.resx">
-      <DependentUpon>frmSwitchVariable.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\Editors\frmVariable.resx">
+      <DependentUpon>frmVariable.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\frmTime.resx">
       <DependentUpon>frmTime.cs</DependentUpon>

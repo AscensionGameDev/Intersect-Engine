@@ -1394,7 +1394,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString selectlayers = @"Select...";
             public static LocalizedString shopeditor = @"Shop Editor";
             public static LocalizedString spelleditor = @"Spell Editor";
-            public static LocalizedString switchvariableeditor = @"Switch and Variable Editor";
+            public static LocalizedString variableeditor = @"Variable Editor";
             public static LocalizedString tilepreview = @"Tile Preview";
             public static LocalizedString timeeditor = @"Time Editor";
             public static LocalizedString title = @"Intersect Editor - {00}";
@@ -1949,33 +1949,32 @@ Tick timer saved in server config.json.";
             public static LocalizedString warptomap = @"Warp Caster:";
         }
 
-        public struct SwitchVariableEditor
+        public struct VariableEditor
         {
             public static LocalizedString cancel = @"Cancel";
             public static LocalizedString delete = @"Delete";
             public static LocalizedString deletecaption = @"Delete?";
-            public static LocalizedString deleteprompt = @"Are you sure you want to delete this switch/variable? This action cannot be reverted!";
-            public static LocalizedString editor = @"Switch and Variable Editor";
+            public static LocalizedString deleteprompt = @"Are you sure you want to delete this variable? This action cannot be reverted!";
+            public static LocalizedString editor = @"Variable Editor";
             public static LocalizedString False = @"False";
-            public static LocalizedString globalswitch = @"Server Switch";
-            public static LocalizedString globalswitches = @"Global Switches";
             public static LocalizedString globalvariable = @"Server Variable";
             public static LocalizedString globalvariables = @"Global Variables";
-            public static LocalizedString list = @"Switch/Variable List";
+            public static LocalizedString list = @"Variable List";
             public static LocalizedString name = @"Name:";
             public static LocalizedString New = @"New";
-            public static LocalizedString playerswitch = @"Player Switch";
-            public static LocalizedString playerswitches = @"Player Switches";
             public static LocalizedString playervariable = @"Player Variable";
             public static LocalizedString playervariables = @"Player Variables";
             public static LocalizedString save = @"Save";
-            public static LocalizedString textidgs = @"Text Id: \gs ";
             public static LocalizedString textidgv = @"Text Id: \gv ";
-            public static LocalizedString textidps = @"Text Id: \ps ";
             public static LocalizedString textidpv = @"Text Id: \pv ";
-            public static LocalizedString title = @"Switch and Variable Editor";
+            public static LocalizedString title = @"Variable Editor";
             public static LocalizedString True = @"True";
-            public static LocalizedString type = @"Switch or Variable Type";
+            public static LocalizedString type = @"Variable Type";
+            public static Dictionary<int, LocalizedString> types = new Dictionary<int, LocalizedString>
+            {
+                {1, @"Boolean"},
+                {2, @"Integer"},
+            };
             public static LocalizedString undo = @"Undo Changes";
             public static LocalizedString value = @"Value:";
         }

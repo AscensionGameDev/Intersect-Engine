@@ -75,6 +75,7 @@ namespace Intersect.GameObjects.Switches_and_Variables
         }
 
         private long mInteger;
+        [JsonIgnore]
         public long Integer
         {
             get => mInteger;
@@ -86,6 +87,7 @@ namespace Intersect.GameObjects.Switches_and_Variables
         }
 
         private bool mBoolean;
+        [JsonIgnore]
         public bool Boolean
         {
             get => mBoolean;
@@ -97,6 +99,7 @@ namespace Intersect.GameObjects.Switches_and_Variables
         }
 
         private double mNumber;
+        [JsonIgnore]
         public double Number
         {
             get => mNumber;
@@ -108,6 +111,7 @@ namespace Intersect.GameObjects.Switches_and_Variables
         }
 
         private string mString;
+        [JsonIgnore]
         public string String
         {
             get => mString ?? "";
@@ -118,10 +122,24 @@ namespace Intersect.GameObjects.Switches_and_Variables
             }
         }
 
-        /// <inheritdoc />
-        public override string ToString()
+        public string StringRepresentation(VariableDataTypes ofType)
         {
-            throw new NotImplementedException();
+            switch (ofType)
+            {
+                case VariableDataTypes.Boolean:
+                    return Boolean.ToString();
+
+                case VariableDataTypes.Integer:
+                    return Integer.ToString();
+
+                case VariableDataTypes.Number:
+                    break;
+
+                case VariableDataTypes.String:
+                    break;
+            }
+
+            return "No Representation";
         }
 
     }

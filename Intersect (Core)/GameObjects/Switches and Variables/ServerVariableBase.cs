@@ -13,7 +13,7 @@ namespace Intersect.GameObjects
         //Identifier used for event chat variables to display the value of this variable/switch.
         //See https://www.ascensiongamedev.com/topic/749-event-text-variables/ for usage info.
         public string TextId { get; set; }
-        public VariableDataTypes Type { get; set; }
+        public VariableDataTypes Type { get; set; } = VariableDataTypes.Boolean;
 
         [NotMapped]
         public VariableValue Value { get; set; } = new VariableValue();
