@@ -249,8 +249,8 @@ namespace Intersect.GameObjects.Events.Commands
         public Guid EntityId { get; set; }
 
         //Map Coords or Coords Centered around player to spawn at
-        public byte X { get; set; }
-        public byte Y { get; set; }
+        public sbyte X { get; set; }
+        public sbyte Y { get; set; }
     }
 
     public class DespawnNpcCommand : EventCommand
@@ -272,8 +272,8 @@ namespace Intersect.GameObjects.Events.Commands
         public Guid EntityId { get; set; }
 
         //Map Coords or Coords Centered around player to spawn at
-        public int X { get; set; }
-        public int Y { get; set; }
+        public sbyte X { get; set; }
+        public sbyte Y { get; set; }
     }
 
     public class HoldPlayerCommand : EventCommand

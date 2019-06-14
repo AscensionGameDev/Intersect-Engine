@@ -1335,7 +1335,7 @@ namespace Intersect.Server.Networking
         public void HandlePacket(Client client, Player player, Packets.Editor.CreateMapPacket packet)
         {
             var newMap = Guid.Empty;
-            var tmpMap = new MapInstance();
+            var tmpMap = new MapInstance(true);
             if (!packet.AttachedToMap)
             {
                 var destType = (int)packet.MapListParentType;

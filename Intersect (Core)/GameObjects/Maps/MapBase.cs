@@ -44,14 +44,18 @@ namespace Intersect.GameObjects.Maps
         //Cached Att Data
         private byte[] mCachedAttributeData = null;
 
-        protected Network.Ceras mCeras = new Network.Ceras(false);
+        protected static Network.Ceras mCeras = new Network.Ceras(false);
 
         [Column("Attributes")]
         [JsonIgnore]
         public byte[] AttributeData
         {
             get => GetAttributeData();
-            set => Attributes = mCeras.Decompress<MapAttribute[,]>(value);
+            set
+            {
+                mAttributes = mCeras.Decompress<MapAttribute[,]>(value);
+                mCachedAttributeData = value;
+            }
         }
 
         //Map Attributes

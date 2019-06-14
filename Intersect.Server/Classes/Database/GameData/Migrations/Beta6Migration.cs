@@ -134,7 +134,7 @@ namespace Intersect.Server.Classes.Database.GameData.Migrations
                                     childObj.Add(node.Key, node.Value);
                                 }
                                 break;
-                            case "Intersect.GameObjects.Events.GlobalVariableCondition, Intersect Core":
+                            case "Intersect.GameObjects.Events.ServerVariableCondition, Intersect Core":
                                 var newNode4 = ConvertGlobalVariableCondition(childObj);
                                 childObj.RemoveAll();
                                 foreach (var node in newNode4)
@@ -142,7 +142,7 @@ namespace Intersect.Server.Classes.Database.GameData.Migrations
                                     childObj.Add(node.Key, node.Value);
                                 }
                                 break;
-                            case "Intersect.GameObjects.Events.GlobalSwitchCondition, Intersect Core":
+                            case "Intersect.GameObjects.Events.ServerSwitchCondition, Intersect Core":
                                 var newNode5 = ConvertGlobalSwitchCondition(childObj);
                                 childObj.RemoveAll();
                                 foreach (var node in newNode5)

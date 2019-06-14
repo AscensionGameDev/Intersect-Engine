@@ -70,6 +70,7 @@ namespace Intersect.Server.Entities
         public void Update(long timeMs)
         {
             var sendLeave = false;
+            var originalPageInstance = PageInstance;
             if (PageInstance != null)
             {
                 //Check for despawn
@@ -194,9 +195,9 @@ namespace Intersect.Server.Entities
                     }
                 }
 
-                if (sendLeave)
+                if (sendLeave && originalPageInstance != null)
                 {
-                    PacketSender.SendEntityLeaveTo(MyClient, PageInstance);
+                    PacketSender.SendEntityLeaveTo(MyClient, originalPageInstance);
                 }
             }
         }
