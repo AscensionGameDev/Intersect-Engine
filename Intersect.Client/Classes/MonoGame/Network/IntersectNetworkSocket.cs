@@ -6,6 +6,7 @@ using System.Reflection;
 using Intersect.Client.Framework.Network;
 using Intersect.Client.Networking;
 using Intersect.Config;
+using Intersect.Configuration;
 using Intersect.Logging;
 using Intersect.Logging.Output;
 using Intersect.Network;
@@ -32,7 +33,7 @@ namespace Intersect.Client.MonoGame.Network
                 ClientLidgrenNetwork = null;
             }
 
-            var config = new NetworkConfiguration(ClientOptions.Instance.Host, ClientOptions.Instance.Port);
+            var config = new NetworkConfiguration(ClientConfiguration.Instance.Host, ClientConfiguration.Instance.Port);
             var assembly = Assembly.GetExecutingAssembly();
             using (var stream = assembly.GetManifestResourceStream("Intersect.Client.public-intersect.bek"))
             {

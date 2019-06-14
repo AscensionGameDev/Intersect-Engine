@@ -157,7 +157,7 @@ namespace Intersect.Server.Networking
 
             if (!IsEditor)
             {
-                PacketSender.SendGlobalMsg(Strings.Player.left.ToString(Entity.Name, Options.GameName));
+                PacketSender.SendGlobalMsg(Strings.Player.left.ToString(Entity.Name, Options.Instance.GameName));
             }
             Entity.Dispose();
             Entity = null;

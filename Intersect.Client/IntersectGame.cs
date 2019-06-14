@@ -14,6 +14,7 @@ using Intersect.Client.MonoGame.System;
 using Intersect.Client.Networking;
 using Intersect.Client.UI;
 using Intersect.Config;
+using Intersect.Configuration;
 using Intersect.Logging;
 using Intersect.Utilities;
 using Microsoft.Xna.Framework;
@@ -45,21 +46,13 @@ namespace Intersect.Client
             IsMouseVisible = true;
             Globals.ContentManager = new MonoContentManager();
             Globals.Database = new MonoDatabase();
-            
-            //Load ClientOptions
-            if (File.Exists("resources/config.json"))
-            {
-                ClientOptions.LoadFrom(File.ReadAllText("resources/config.json"));
-            }
-            else
-            {
-                ClientOptions.LoadFrom(null);
-            }
-            File.WriteAllText("resources/config.json", ClientOptions.ToJson());
+
+            /* Load configuration */
+            ClientConfiguration.LoadAndSave();
 
             Globals.Database.LoadPreferences();
             
-            Gui.ActiveFont = TextUtils.StripToLower(ClientOptions.Instance.Font);
+            Gui.ActiveFont = TextUtils.StripToLower(ClientConfiguration.Instance.Font);
             Globals.InputManager = new MonoInput(this);
 
             var renderer = new MonoRenderer(graphics, Content, this);
@@ -154,3 +147,4 @@ namespace Intersect.Client
         }
     }
 }
+ 

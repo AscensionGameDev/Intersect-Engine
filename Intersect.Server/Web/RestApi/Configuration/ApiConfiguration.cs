@@ -1,27 +1,36 @@
-﻿using System;
+﻿using Intersect.Configuration;
+using JetBrains.Annotations;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
-using System.Text;
-using Intersect.IO.FileSystem;
-using Intersect.Logging;
-using JetBrains.Annotations;
-using Newtonsoft.Json;
+using System.Security.Cryptography;
 
 namespace Intersect.Server.Web.RestApi.Configuration
 {
-
-    public sealed class ApiConfiguration
+    /// <inheritdoc />
+    /// <summary>
+    /// Configuration options for <see cref="T:Intersect.Server.Web.RestApi.RestApi" />.
+    /// </summary>
+    public sealed class ApiConfiguration : IConfiguration<ApiConfiguration>
     {
+
+        #region Constants
+
+        public const string DefaultPath = @"resources/config/api.config.json";
 
 #if DEBUG
         public const uint DefaultRefreshTokenLifetime = 15;
 #else
         public const uint DefaultRefreshTokenLifetime = 10080;
 #endif
+
+        #endregion
+
+        #region Configuration fields
 
         [JsonIgnore] private ImmutableArray<string> mHosts;
 
@@ -70,12 +79,15 @@ namespace Intersect.Server.Web.RestApi.Configuration
         [DefaultValue(DefaultRefreshTokenLifetime)]
         public uint RefreshTokenLifetime { get; private set; }
 
+        #endregion
 
-        private ApiConfiguration()
+        #region Initialization
+
+        public ApiConfiguration()
         {
             mRouteAuthorization = new Dictionary<string, object>();
 
-            using (var csp = new System.Security.Cryptography.AesCryptoServiceProvider())
+            using (var csp = new AesCryptoServiceProvider())
             {
                 csp.KeySize = 256;
                 csp.GenerateKey();
@@ -85,63 +97,33 @@ namespace Intersect.Server.Web.RestApi.Configuration
             Enabled = false;
             DebugMode = false;
             Hosts = ImmutableArray.Create(new[] { "http://localhost:5401" });
+            Cors = ImmutableArray.Create<CorsConfiguration>();
             RefreshTokenLifetime = DefaultRefreshTokenLifetime;
         }
 
-#region Static
+        #endregion
 
-        public const string DefaultPath = @"resources/config/api.config.json";
+        #region I/O
 
-        public static ApiConfiguration Load([NotNull] string filePath = DefaultPath)
+        /// <inheritdoc />
+        public ApiConfiguration Load(string filePath = DefaultPath, bool failQuietly = false) =>
+            ConfigurationHelper.Load(this, filePath, failQuietly);
+
+        /// <inheritdoc />
+        public ApiConfiguration Save(string filePath = DefaultPath, bool failQuietly = false) =>
+            ConfigurationHelper.Save(this, filePath, failQuietly);
+
+        #endregion
+
+        [NotNull]
+        public static ApiConfiguration Create([CanBeNull] string filePath = DefaultPath)
         {
-            if (!File.Exists(filePath))
-            {
-                return new ApiConfiguration();
-            }
+            var configuration = new ApiConfiguration();
 
-            try
-            {
-                var json = File.ReadAllText(filePath, Encoding.UTF8);
+            ConfigurationHelper.LoadSafely(configuration, filePath);
 
-                return JsonConvert.DeserializeObject<ApiConfiguration>(json);
-            }
-            catch (Exception exception)
-            {
-                Log.Error(exception);
-            }
-
-            return null;
+            return configuration;
         }
-
-        public static bool Save([NotNull] ApiConfiguration apiConfiguration, [NotNull] string filePath = DefaultPath)
-        {
-            var directoryPath = Path.GetDirectoryName(filePath);
-            if (directoryPath == null)
-            {
-                return false;
-            }
-
-            if (!FileSystemHelper.EnsureDirectoryExists(directoryPath))
-            {
-                return false;
-            }
-
-            try
-            {
-                var json = JsonConvert.SerializeObject(apiConfiguration, Formatting.Indented);
-                File.WriteAllText(filePath, json, Encoding.UTF8);
-
-                return true;
-            }
-            catch (Exception exception)
-            {
-                Log.Error(exception);
-
-                return false;
-            }
-        }
-
-#endregion
 
     }
 

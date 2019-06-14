@@ -1,4 +1,6 @@
 ﻿using Intersect.Config;
+using Intersect.Configuration;
+
 using Microsoft.Win32;
 
 namespace Intersect.Editor
@@ -11,8 +13,8 @@ namespace Intersect.Editor
 
             regkey.CreateSubKey("IntersectEditor");
             regkey = regkey.OpenSubKey("IntersectEditor", true);
-            regkey.CreateSubKey(ClientOptions.Instance.Host + ":" + ClientOptions.Instance.Port);
-            regkey = regkey.OpenSubKey(ClientOptions.Instance.Host + ":" + ClientOptions.Instance.Port, true);
+            regkey.CreateSubKey(ClientConfiguration.Instance.Host + ":" + ClientConfiguration.Instance.Port);
+            regkey = regkey.OpenSubKey(ClientConfiguration.Instance.Host + ":" + ClientConfiguration.Instance.Port, true);
             regkey.SetValue(key, value);
         }
 
@@ -24,7 +26,7 @@ namespace Intersect.Editor
             {
                 return "";
             }
-            regkey = regkey.OpenSubKey(ClientOptions.Instance.Host + ":" + ClientOptions.Instance.Port);
+            regkey = regkey.OpenSubKey(ClientConfiguration.Instance.Host + ":" + ClientConfiguration.Instance.Port);
             if (regkey == null)
             {
                 return "";

@@ -3,6 +3,7 @@ using Intersect.Client.Framework.Network;
 using Intersect.Client.General;
 using Intersect.Client.UI.Menu;
 using Intersect.Config;
+using Intersect.Configuration;
 using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Packets;
@@ -39,7 +40,7 @@ namespace Intersect.Client.Networking
         {
             sConnected = false;
             MainMenu.OnNetworkConnecting();
-            Socket?.Connect(ClientOptions.Instance.Host, ClientOptions.Instance.Port);
+            Socket?.Connect(ClientConfiguration.Instance.Host, ClientConfiguration.Instance.Port);
         }
 
         private static void MySocket_OnConnectionFailed(bool denied)

@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Forms;
 
+using Intersect.Configuration;
 using Intersect.Network.Packets;
 
 namespace Intersect.Editor.Networking
@@ -24,7 +25,7 @@ namespace Intersect.Editor.Networking
         {
             if (EditorLidgrenNetwork == null)
             {
-                var config = new NetworkConfiguration(ClientOptions.Instance.Host, ClientOptions.Instance.Port);
+                var config = new NetworkConfiguration(ClientConfiguration.Instance.Host, ClientConfiguration.Instance.Port);
                 var assembly = Assembly.GetExecutingAssembly();
                 using (var stream = assembly.GetManifestResourceStream("Intersect.Editor.public-intersect.bek"))
                 {

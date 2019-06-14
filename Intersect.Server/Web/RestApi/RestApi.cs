@@ -15,6 +15,8 @@ using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Routing;
 
+using Intersect.Config;
+using Intersect.Configuration;
 using Intersect.Logging;
 using Intersect.Server.Localization;
 using Intersect.Server.Web.RestApi.Constraints;
@@ -25,7 +27,7 @@ using Microsoft.Owin.Logging;
 namespace Intersect.Server.Web.RestApi
 {
 
-    internal sealed class RestApi : IDisposable, IAppConfigurationProvider
+    internal sealed class RestApi : IAppConfigurationProvider, IConfigurable<ApiConfiguration>, IDisposable
     {
 
         [NotNull]
@@ -49,12 +51,9 @@ namespace Intersect.Server.Web.RestApi
         {
             StartOptions = new StartOptions();
 
-            Configuration = ApiConfiguration.Load() ?? throw new InvalidOperationException();
+            Configuration = ApiConfiguration.Create();
+
             Configuration.Hosts.ToList().ForEach(host => StartOptions.Urls?.Add(host));
-            if (!ApiConfiguration.Save(Configuration))
-            {
-                Log.Warn("Failed to save API configuration to disk.");
-            }
 
             AuthenticationProvider = new OAuthProvider(Configuration);
         }

@@ -139,7 +139,7 @@ namespace Intersect.Client.UI.Menu
         public void Show()
         {
             mLoginWindow.IsHidden = false;
-            if (!mForgotPassswordButton.IsHidden) mForgotPassswordButton.IsHidden = !Options.SmtpValid;
+            if (!mForgotPassswordButton.IsHidden) mForgotPassswordButton.IsHidden = !Options.Instance.SmtpValid;
         }
 
         //Input Handlers

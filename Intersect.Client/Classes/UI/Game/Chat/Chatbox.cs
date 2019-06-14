@@ -7,6 +7,7 @@ using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Config;
+using Intersect.Configuration;
 
 namespace Intersect.Client.UI.Game.Chat
 {
@@ -112,7 +113,7 @@ namespace Intersect.Client.UI.Game.Chat
                     rw.Clicked += ChatboxRow_Clicked;
                     mReceivedMessage = true;
 
-                    while (mChatboxMessages.RowCount > ClientOptions.Instance.ChatLines)
+                    while (mChatboxMessages.RowCount > ClientConfiguration.Instance.ChatLines)
                     {
                         mChatboxMessages.RemoveRow(0);
                     }

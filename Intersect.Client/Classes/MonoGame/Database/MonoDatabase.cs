@@ -2,6 +2,8 @@
 using System.IO;
 using Intersect.Client.Framework.Database;
 using Intersect.Config;
+using Intersect.Configuration;
+
 using Microsoft.Win32;
 
 namespace Intersect.Client.MonoGame.Database
@@ -14,8 +16,8 @@ namespace Intersect.Client.MonoGame.Database
 
             regkey?.CreateSubKey("IntersectClient");
             regkey = regkey?.OpenSubKey("IntersectClient", true);
-            regkey?.CreateSubKey(ClientOptions.Instance.Host + ":" + ClientOptions.Instance.Port);
-            regkey = regkey?.OpenSubKey(ClientOptions.Instance.Host + ":" + ClientOptions.Instance.Port, true);
+            regkey?.CreateSubKey(ClientConfiguration.Instance.Host + ":" + ClientConfiguration.Instance.Port);
+            regkey = regkey?.OpenSubKey(ClientConfiguration.Instance.Host + ":" + ClientConfiguration.Instance.Port, true);
             regkey?.SetValue(key, Convert.ToString(value));
         }
 
@@ -23,21 +25,14 @@ namespace Intersect.Client.MonoGame.Database
         {
             var regkey = Registry.CurrentUser?.OpenSubKey("Software", false);
             regkey = regkey?.OpenSubKey("IntersectClient", false);
-            regkey = regkey?.OpenSubKey(ClientOptions.Instance.Host + ":" + ClientOptions.Instance.Port);
+            regkey = regkey?.OpenSubKey(ClientConfiguration.Instance.Host + ":" + ClientConfiguration.Instance.Port);
             return regkey?.GetValue(key) as string ?? "";
         }
 
         public override bool LoadConfig()
         {
-            if (!File.Exists(Path.Combine("resources", "config.json")))
-            {
-                ClientOptions.LoadFrom(null);
-                File.WriteAllText(Path.Combine("resources", "config.json"), ClientOptions.ToJson());
-                return true;
-            }
+            ClientConfiguration.LoadAndSave();
 
-            var jsonData = File.ReadAllText(Path.Combine("resources", "config.json"));
-            ClientOptions.LoadFrom(jsonData);
             return true;
         }
     }

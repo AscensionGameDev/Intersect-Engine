@@ -9,6 +9,7 @@ using Intersect.Client.General;
 using Intersect.Client.Maps;
 using Intersect.Client.UI;
 using Intersect.Config;
+using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.GameObjects;
 
@@ -95,7 +96,7 @@ namespace Intersect.Client
 
         public static void DrawIntro()
         {
-            GameTexture imageTex = sContentManager.GetTexture(GameContentManager.TextureType.Image, ClientOptions.Instance.IntroImages[Globals.IntroIndex]);
+            GameTexture imageTex = sContentManager.GetTexture(GameContentManager.TextureType.Image, ClientConfiguration.Instance.IntroImages[Globals.IntroIndex]);
             if (imageTex != null)
             {
                 DrawFullScreenTextureFitMinimum(imageTex);
@@ -104,7 +105,7 @@ namespace Intersect.Client
 
         public static void DrawMenu()
         {
-            GameTexture imageTex = sContentManager.GetTexture(GameContentManager.TextureType.Gui, ClientOptions.Instance.MenuBackground);
+            GameTexture imageTex = sContentManager.GetTexture(GameContentManager.TextureType.Gui, ClientConfiguration.Instance.MenuBackground);
             if (imageTex != null)
             {
                 DrawFullScreenTexture(imageTex);

@@ -2,16 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+
 using JetBrains.Annotations;
+
 using Newtonsoft.Json;
 
-namespace Intersect.Config
+namespace Intersect.Configuration
 {
+    /// <inheritdoc />
     /// <summary>
     /// Client configuration options
     /// </summary>
-    public class ClientOptions
+    public sealed class ClientConfiguration : IConfiguration<ClientConfiguration>
     {
+
+        public const string DefaultPath = @"resources/config.json";
 
         #region Constants
 
@@ -29,17 +34,7 @@ namespace Intersect.Config
 
         #region Static Properties and Methods
 
-        [NotNull] public static ClientOptions Instance { get; private set; } = new ClientOptions();
-
-        public static void LoadFrom(string json)
-        {
-            Instance = (string.IsNullOrWhiteSpace(json) ? null : JsonConvert.DeserializeObject<ClientOptions>(json)) ?? Instance;
-        }
-
-        public static string ToJson()
-        {
-            return JsonConvert.SerializeObject(Instance, Formatting.Indented);
-        }
+        [NotNull] public static ClientConfiguration Instance { get; } = new ClientConfiguration();
 
         public void Validate()
         {
@@ -104,6 +99,18 @@ namespace Intersect.Config
         }
 
         #endregion
+
+        /// <inheritdoc />
+        public ClientConfiguration Load(string filePath = DefaultPath, bool failQuietly = false) =>
+            ConfigurationHelper.Load(this, filePath, failQuietly);
+
+        /// <inheritdoc />
+        public ClientConfiguration Save(string filePath = DefaultPath, bool failQuietly = false) =>
+            ConfigurationHelper.Save(this, filePath, failQuietly);
+
+        [NotNull]
+        public static ClientConfiguration LoadAndSave([CanBeNull] string filePath = null) =>
+            ConfigurationHelper.LoadSafely(Instance, filePath);
 
     }
 }

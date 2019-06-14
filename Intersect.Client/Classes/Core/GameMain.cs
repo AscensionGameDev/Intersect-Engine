@@ -9,6 +9,7 @@ using Intersect.Client.Maps;
 using Intersect.Client.Networking;
 using Intersect.Client.UI;
 using Intersect.Config;
+using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
@@ -30,7 +31,7 @@ namespace Intersect.Client
 
             //Load Sounds
             GameAudio.Init();
-            GameAudio.PlayMusic(ClientOptions.Instance.MenuMusic, 3, 3, true);
+            GameAudio.PlayMusic(ClientConfiguration.Instance.MenuMusic, 3, 3, true);
 
             //Init Network
             GameNetwork.InitNetwork();
@@ -103,9 +104,9 @@ namespace Intersect.Client
 
         private static void ProcessIntro()
         {
-            if (ClientOptions.Instance.IntroImages.Count > 0)
+            if (ClientConfiguration.Instance.IntroImages.Count > 0)
             {
-                GameTexture imageTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Image, ClientOptions.Instance.IntroImages[Globals.IntroIndex]);
+                GameTexture imageTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Image, ClientConfiguration.Instance.IntroImages[Globals.IntroIndex]);
                 if (imageTex != null)
                 {
                     if (Globals.IntroStartTime == -1)
@@ -139,7 +140,7 @@ namespace Intersect.Client
                 {
                     Globals.IntroIndex++;
                 }
-                if (Globals.IntroIndex >= ClientOptions.Instance.IntroImages.Count)
+                if (Globals.IntroIndex >= ClientConfiguration.Instance.IntroImages.Count)
                 {
                     Globals.GameState = GameStates.Menu;
                 }

@@ -289,7 +289,10 @@ namespace Intersect.Server.Entities
                             if (this.GetType() == typeof(Player))
                             {
                                 //Check if this target player is passable....
-                                if (!Options.PlayerPassable[(int)targetMap.ZoneType]) return (int)EntityTypes.Player;
+                                if (!Options.Instance.Passability.Passable[(int)targetMap.ZoneType])
+                                {
+                                    return (int)EntityTypes.Player;
+                                }
                             }
                             else
                             {
