@@ -10,6 +10,8 @@ using Ceras;
 using Intersect.Network.Packets;
 using Intersect.Network.Packets.Client;
 
+using K4os.Compression.LZ4;
+
 namespace Intersect.Network
 {
     public class Ceras
@@ -56,6 +58,26 @@ namespace Intersect.Network
         public object Deserialize(byte[] data)
         {
             return mSerializer.Deserialize<object>(data);
+        }
+
+        public T Deserialize<T>(byte[] data)
+        {
+            return mSerializer.Deserialize<T>(data);
+        }
+
+        public byte[] Compress(object obj)
+        {
+            return LZ4Pickler.Pickle(Serialize(obj), LZ4Level.L12_MAX);
+        }
+
+        public object Decompress(byte[] data)
+        {
+            return Deserialize(LZ4Pickler.Unpickle(data));
+        }
+
+        public T Decompress<T>(byte[] data)
+        {
+            return Deserialize<T>(LZ4Pickler.Unpickle(data));
         }
     }
 }

@@ -157,7 +157,7 @@ namespace Intersect.Editor.Forms
             resourceEditorToolStripMenuItem.Text = Strings.MainForm.resourceeditor;
             shopEditorToolStripMenuItem.Text = Strings.MainForm.shopeditor;
             spellEditorToolStripMenuItem.Text = Strings.MainForm.spelleditor;
-            switchVariableEditorToolStripMenuItem.Text = Strings.MainForm.switchvariableeditor;
+            variableEditorToolStripMenuItem.Text = Strings.MainForm.variableeditor;
             timeEditorToolStripMenuItem.Text = Strings.MainForm.timeeditor;
 
             toolsToolStripMenuItem.Text = Strings.MainForm.tools;
@@ -1053,7 +1053,7 @@ namespace Intersect.Editor.Forms
             PacketSender.SendOpenEditor(GameObjectType.Event);
         }
 
-        private void switchVariableEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        private void variableEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             PacketSender.SendOpenEditor(GameObjectType.PlayerVariable);
         }

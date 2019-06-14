@@ -33,28 +33,29 @@ namespace Intersect.Editor.Forms.Editors
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmSwitchVariable));
             this.grpTypes = new DarkUI.Controls.DarkGroupBox();
             this.rdoGlobalVariables = new DarkUI.Controls.DarkRadioButton();
-            this.rdoGlobalSwitches = new DarkUI.Controls.DarkRadioButton();
             this.rdoPlayerVariables = new DarkUI.Controls.DarkRadioButton();
-            this.rdoPlayerSwitch = new DarkUI.Controls.DarkRadioButton();
             this.grpList = new DarkUI.Controls.DarkGroupBox();
             this.btnUndo = new DarkUI.Controls.DarkButton();
             this.lstObjects = new System.Windows.Forms.ListBox();
             this.btnNew = new DarkUI.Controls.DarkButton();
             this.btnDelete = new DarkUI.Controls.DarkButton();
             this.grpEditor = new DarkUI.Controls.DarkGroupBox();
+            this.grpValue = new DarkUI.Controls.DarkGroupBox();
+            this.cmbBooleanValue = new DarkUI.Controls.DarkComboBox();
             this.nudVariableValue = new DarkUI.Controls.DarkNumericUpDown();
-            this.txtId = new DarkUI.Controls.DarkTextBox();
-            this.lblId = new System.Windows.Forms.Label();
-            this.lblValue = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.cmbVariableType = new DarkUI.Controls.DarkComboBox();
             this.txtObjectName = new DarkUI.Controls.DarkTextBox();
             this.lblName = new System.Windows.Forms.Label();
             this.lblObject = new System.Windows.Forms.Label();
-            this.cmbSwitchValue = new DarkUI.Controls.DarkComboBox();
+            this.txtId = new DarkUI.Controls.DarkTextBox();
+            this.lblId = new System.Windows.Forms.Label();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
             this.grpTypes.SuspendLayout();
             this.grpList.SuspendLayout();
             this.grpEditor.SuspendLayout();
+            this.grpValue.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudVariableValue)).BeginInit();
             this.SuspendLayout();
             // 
@@ -63,58 +64,36 @@ namespace Intersect.Editor.Forms.Editors
             this.grpTypes.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpTypes.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpTypes.Controls.Add(this.rdoGlobalVariables);
-            this.grpTypes.Controls.Add(this.rdoGlobalSwitches);
             this.grpTypes.Controls.Add(this.rdoPlayerVariables);
-            this.grpTypes.Controls.Add(this.rdoPlayerSwitch);
             this.grpTypes.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpTypes.Location = new System.Drawing.Point(13, 13);
             this.grpTypes.Name = "grpTypes";
             this.grpTypes.Size = new System.Drawing.Size(490, 53);
             this.grpTypes.TabIndex = 0;
             this.grpTypes.TabStop = false;
-            this.grpTypes.Text = "Switch or Variable Type";
+            this.grpTypes.Text = "Variable Type";
             // 
             // rdoGlobalVariables
             // 
             this.rdoGlobalVariables.AutoSize = true;
-            this.rdoGlobalVariables.Location = new System.Drawing.Point(326, 20);
+            this.rdoGlobalVariables.Location = new System.Drawing.Point(124, 20);
             this.rdoGlobalVariables.Name = "rdoGlobalVariables";
             this.rdoGlobalVariables.Size = new System.Drawing.Size(101, 17);
             this.rdoGlobalVariables.TabIndex = 3;
             this.rdoGlobalVariables.Text = "Global Variables";
             this.rdoGlobalVariables.CheckedChanged += new System.EventHandler(this.rdoGlobalVariables_CheckedChanged);
             // 
-            // rdoGlobalSwitches
-            // 
-            this.rdoGlobalSwitches.AutoSize = true;
-            this.rdoGlobalSwitches.Location = new System.Drawing.Point(219, 20);
-            this.rdoGlobalSwitches.Name = "rdoGlobalSwitches";
-            this.rdoGlobalSwitches.Size = new System.Drawing.Size(101, 17);
-            this.rdoGlobalSwitches.TabIndex = 2;
-            this.rdoGlobalSwitches.Text = "Global Switches";
-            this.rdoGlobalSwitches.CheckedChanged += new System.EventHandler(this.rdoGlobalSwitches_CheckedChanged);
-            // 
             // rdoPlayerVariables
             // 
             this.rdoPlayerVariables.AutoSize = true;
-            this.rdoPlayerVariables.Location = new System.Drawing.Point(113, 20);
+            this.rdoPlayerVariables.Checked = true;
+            this.rdoPlayerVariables.Location = new System.Drawing.Point(7, 20);
             this.rdoPlayerVariables.Name = "rdoPlayerVariables";
             this.rdoPlayerVariables.Size = new System.Drawing.Size(100, 17);
             this.rdoPlayerVariables.TabIndex = 1;
+            this.rdoPlayerVariables.TabStop = true;
             this.rdoPlayerVariables.Text = "Player Variables";
             this.rdoPlayerVariables.CheckedChanged += new System.EventHandler(this.rdoPlayerVariables_CheckedChanged);
-            // 
-            // rdoPlayerSwitch
-            // 
-            this.rdoPlayerSwitch.AutoSize = true;
-            this.rdoPlayerSwitch.Checked = true;
-            this.rdoPlayerSwitch.Location = new System.Drawing.Point(7, 20);
-            this.rdoPlayerSwitch.Name = "rdoPlayerSwitch";
-            this.rdoPlayerSwitch.Size = new System.Drawing.Size(100, 17);
-            this.rdoPlayerSwitch.TabIndex = 0;
-            this.rdoPlayerSwitch.TabStop = true;
-            this.rdoPlayerSwitch.Text = "Player Switches";
-            this.rdoPlayerSwitch.CheckedChanged += new System.EventHandler(this.rdoPlayerSwitch_CheckedChanged);
             // 
             // grpList
             // 
@@ -130,7 +109,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpList.Size = new System.Drawing.Size(200, 469);
             this.grpList.TabIndex = 1;
             this.grpList.TabStop = false;
-            this.grpList.Text = "Switch/Variable List";
+            this.grpList.Text = "Variable List";
             // 
             // btnUndo
             // 
@@ -181,35 +160,74 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpEditor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpEditor.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpEditor.Controls.Add(this.txtId);
-            this.grpEditor.Controls.Add(this.lblId);
-            this.grpEditor.Controls.Add(this.lblValue);
+            this.grpEditor.Controls.Add(this.grpValue);
+            this.grpEditor.Controls.Add(this.label1);
+            this.grpEditor.Controls.Add(this.cmbVariableType);
             this.grpEditor.Controls.Add(this.txtObjectName);
             this.grpEditor.Controls.Add(this.lblName);
             this.grpEditor.Controls.Add(this.lblObject);
-            this.grpEditor.Controls.Add(this.cmbSwitchValue);
-            this.grpEditor.Controls.Add(this.nudVariableValue);
+            this.grpEditor.Controls.Add(this.txtId);
+            this.grpEditor.Controls.Add(this.lblId);
             this.grpEditor.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpEditor.Location = new System.Drawing.Point(219, 73);
             this.grpEditor.Name = "grpEditor";
-            this.grpEditor.Size = new System.Drawing.Size(284, 127);
+            this.grpEditor.Size = new System.Drawing.Size(284, 436);
             this.grpEditor.TabIndex = 2;
             this.grpEditor.TabStop = false;
-            this.grpEditor.Text = "Switch/Variable Editor";
+            this.grpEditor.Text = "Variable Editor";
             this.grpEditor.Visible = false;
+            // 
+            // grpValue
+            // 
+            this.grpValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpValue.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpValue.Controls.Add(this.cmbBooleanValue);
+            this.grpValue.Controls.Add(this.nudVariableValue);
+            this.grpValue.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpValue.Location = new System.Drawing.Point(13, 119);
+            this.grpValue.Name = "grpValue";
+            this.grpValue.Size = new System.Drawing.Size(265, 200);
+            this.grpValue.TabIndex = 63;
+            this.grpValue.TabStop = false;
+            this.grpValue.Text = "Value";
+            // 
+            // cmbBooleanValue
+            // 
+            this.cmbBooleanValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbBooleanValue.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbBooleanValue.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbBooleanValue.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbBooleanValue.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbBooleanValue.ButtonIcon")));
+            this.cmbBooleanValue.DrawDropdownHoverOutline = false;
+            this.cmbBooleanValue.DrawFocusRectangle = false;
+            this.cmbBooleanValue.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbBooleanValue.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbBooleanValue.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbBooleanValue.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbBooleanValue.FormattingEnabled = true;
+            this.cmbBooleanValue.Items.AddRange(new object[] {
+            "False",
+            "True"});
+            this.cmbBooleanValue.Location = new System.Drawing.Point(6, 19);
+            this.cmbBooleanValue.Name = "cmbBooleanValue";
+            this.cmbBooleanValue.Size = new System.Drawing.Size(252, 21);
+            this.cmbBooleanValue.TabIndex = 5;
+            this.cmbBooleanValue.Text = "False";
+            this.cmbBooleanValue.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbBooleanValue.SelectedIndexChanged += new System.EventHandler(this.cmbBooleanValue_SelectedIndexChanged);
             // 
             // nudVariableValue
             // 
             this.nudVariableValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudVariableValue.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudVariableValue.Location = new System.Drawing.Point(85, 97);
+            this.nudVariableValue.Location = new System.Drawing.Point(6, 20);
             this.nudVariableValue.Maximum = new decimal(new int[] {
             10000,
             0,
             0,
             0});
             this.nudVariableValue.Name = "nudVariableValue";
-            this.nudVariableValue.Size = new System.Drawing.Size(193, 20);
+            this.nudVariableValue.Size = new System.Drawing.Size(252, 20);
             this.nudVariableValue.TabIndex = 60;
             this.nudVariableValue.Value = new decimal(new int[] {
             0,
@@ -218,35 +236,38 @@ namespace Intersect.Editor.Forms.Editors
             0});
             this.nudVariableValue.ValueChanged += new System.EventHandler(this.nudVariableValue_ValueChanged);
             // 
-            // txtId
+            // label1
             // 
-            this.txtId.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.txtId.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtId.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.txtId.Location = new System.Drawing.Point(85, 68);
-            this.txtId.Name = "txtId";
-            this.txtId.Size = new System.Drawing.Size(193, 20);
-            this.txtId.TabIndex = 8;
-            this.txtId.TextChanged += new System.EventHandler(this.txtId_TextChanged);
-            this.txtId.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtId_KeyPress);
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(10, 69);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(34, 13);
+            this.label1.TabIndex = 61;
+            this.label1.Text = "Type:";
             // 
-            // lblId
+            // cmbVariableType
             // 
-            this.lblId.AutoSize = true;
-            this.lblId.Location = new System.Drawing.Point(10, 69);
-            this.lblId.Name = "lblId";
-            this.lblId.Size = new System.Drawing.Size(69, 13);
-            this.lblId.TabIndex = 7;
-            this.lblId.Text = "Text Id:  \\pv ";
-            // 
-            // lblValue
-            // 
-            this.lblValue.AutoSize = true;
-            this.lblValue.Location = new System.Drawing.Point(10, 99);
-            this.lblValue.Name = "lblValue";
-            this.lblValue.Size = new System.Drawing.Size(37, 13);
-            this.lblValue.TabIndex = 3;
-            this.lblValue.Text = "Value:";
+            this.cmbVariableType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbVariableType.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbVariableType.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbVariableType.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbVariableType.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbVariableType.ButtonIcon")));
+            this.cmbVariableType.DrawDropdownHoverOutline = false;
+            this.cmbVariableType.DrawFocusRectangle = false;
+            this.cmbVariableType.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbVariableType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbVariableType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbVariableType.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbVariableType.FormattingEnabled = true;
+            this.cmbVariableType.Items.AddRange(new object[] {
+            "Integer"});
+            this.cmbVariableType.Location = new System.Drawing.Point(85, 66);
+            this.cmbVariableType.Name = "cmbVariableType";
+            this.cmbVariableType.Size = new System.Drawing.Size(193, 21);
+            this.cmbVariableType.TabIndex = 62;
+            this.cmbVariableType.Text = "Integer";
+            this.cmbVariableType.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbVariableType.SelectedIndexChanged += new System.EventHandler(this.cmbVariableType_SelectedIndexChanged);
             // 
             // txtObjectName
             // 
@@ -273,34 +294,30 @@ namespace Intersect.Editor.Forms.Editors
             this.lblObject.AutoSize = true;
             this.lblObject.Location = new System.Drawing.Point(10, 20);
             this.lblObject.Name = "lblObject";
-            this.lblObject.Size = new System.Drawing.Size(87, 13);
+            this.lblObject.Size = new System.Drawing.Size(93, 13);
             this.lblObject.TabIndex = 0;
-            this.lblObject.Text = "Player Switch #1";
+            this.lblObject.Text = "Player Variable #1";
             // 
-            // cmbSwitchValue
+            // txtId
             // 
-            this.cmbSwitchValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbSwitchValue.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbSwitchValue.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbSwitchValue.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbSwitchValue.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbSwitchValue.ButtonIcon")));
-            this.cmbSwitchValue.DrawDropdownHoverOutline = false;
-            this.cmbSwitchValue.DrawFocusRectangle = false;
-            this.cmbSwitchValue.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbSwitchValue.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbSwitchValue.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbSwitchValue.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbSwitchValue.FormattingEnabled = true;
-            this.cmbSwitchValue.Items.AddRange(new object[] {
-            "False",
-            "True"});
-            this.cmbSwitchValue.Location = new System.Drawing.Point(85, 96);
-            this.cmbSwitchValue.Name = "cmbSwitchValue";
-            this.cmbSwitchValue.Size = new System.Drawing.Size(193, 21);
-            this.cmbSwitchValue.TabIndex = 5;
-            this.cmbSwitchValue.Text = "False";
-            this.cmbSwitchValue.TextPadding = new System.Windows.Forms.Padding(2);
-            this.cmbSwitchValue.SelectedIndexChanged += new System.EventHandler(this.cmbSwitchValue_SelectedIndexChanged);
+            this.txtId.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtId.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtId.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.txtId.Location = new System.Drawing.Point(85, 93);
+            this.txtId.Name = "txtId";
+            this.txtId.Size = new System.Drawing.Size(193, 20);
+            this.txtId.TabIndex = 8;
+            this.txtId.TextChanged += new System.EventHandler(this.txtId_TextChanged);
+            this.txtId.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtId_KeyPress);
+            // 
+            // lblId
+            // 
+            this.lblId.AutoSize = true;
+            this.lblId.Location = new System.Drawing.Point(10, 94);
+            this.lblId.Name = "lblId";
+            this.lblId.Size = new System.Drawing.Size(69, 13);
+            this.lblId.TabIndex = 7;
+            this.lblId.Text = "Text Id:  \\pv ";
             // 
             // btnCancel
             // 
@@ -341,13 +358,13 @@ namespace Intersect.Editor.Forms.Editors
             this.MaximizeBox = false;
             this.Name = "FrmSwitchVariable";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Switch and Variable Editor";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmSwitchVariable_FormClosing);
+            this.Text = "Variable Editor";
             this.grpTypes.ResumeLayout(false);
             this.grpTypes.PerformLayout();
             this.grpList.ResumeLayout(false);
             this.grpEditor.ResumeLayout(false);
             this.grpEditor.PerformLayout();
+            this.grpValue.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.nudVariableValue)).EndInit();
             this.ResumeLayout(false);
 
@@ -357,14 +374,11 @@ namespace Intersect.Editor.Forms.Editors
 
         private DarkGroupBox grpTypes;
         private DarkRadioButton rdoGlobalVariables;
-        private DarkRadioButton rdoGlobalSwitches;
         private DarkRadioButton rdoPlayerVariables;
-        private DarkRadioButton rdoPlayerSwitch;
         private DarkGroupBox grpList;
         private System.Windows.Forms.ListBox lstObjects;
         private DarkGroupBox grpEditor;
-        private DarkComboBox cmbSwitchValue;
-        private System.Windows.Forms.Label lblValue;
+        private DarkComboBox cmbBooleanValue;
         private DarkTextBox txtObjectName;
         private System.Windows.Forms.Label lblName;
         private System.Windows.Forms.Label lblObject;
@@ -376,5 +390,8 @@ namespace Intersect.Editor.Forms.Editors
         private DarkTextBox txtId;
         private System.Windows.Forms.Label lblId;
         private DarkNumericUpDown nudVariableValue;
+        private System.Windows.Forms.Label label1;
+        private DarkComboBox cmbVariableType;
+        private DarkGroupBox grpValue;
     }
 }

@@ -1,8 +1,10 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Conditions;
 using Intersect.GameObjects.Events;
+using Intersect.GameObjects.Switches_and_Variables;
 using Intersect.Server.Entities;
 using Intersect.Server.General;
 using Intersect.Server.Maps;
@@ -55,110 +57,21 @@ namespace Intersect.Server.EventProcessing
             return true;
         }
 
-        public static bool MeetsCondition(PlayerSwitchCondition condition, Player player, EventInstance eventInstance, QuestBase questBase)
+        public static bool MeetsCondition(VariableIsCondition condition, Player player, EventInstance eventInstance, QuestBase questBase)
         {
-            var switchVal = player.GetSwitchValue(condition.SwitchId);
-            return switchVal == condition.Value;
-        }
-
-        public static bool MeetsCondition(PlayerVariableCondition condition, Player player, EventInstance eventInstance, QuestBase questBase)
-        {
-            var varVal = player.GetVariableValue(condition.VariableId).Integer;
-            long compareAgainst = 0;
-
-            switch (condition.CompareType)
+            VariableValue value = null;
+            if (condition.VariableType == VariableTypes.PlayerVariable)
             {
-                case VariableCompareTypes.StaticValue:
-                    compareAgainst = condition.Value;
-                    break;
-                case VariableCompareTypes.PlayerVariable:
-                    var pvar = PlayerVariableBase.Get(condition.CompareVariableId);
-                    if (pvar == null) return false;
-                    compareAgainst = player.GetVariableValue(condition.CompareVariableId).Integer;
-                    break;
-                case VariableCompareTypes.GlobalVariable:
-                    var gvar = ServerVariableBase.Get(condition.CompareVariableId);
-                    if (gvar == null) return false;
-                    compareAgainst = gvar.Value.Integer;
-                    break;
+                value = player.GetVariableValue(condition.VariableId);
+            }
+            else if (condition.VariableType == VariableTypes.ServerVariable)
+            {
+                value = ServerVariableBase.Get(condition.VariableId)?.Value;
             }
 
-            switch (condition.Comparator) //Comparator
-            {
-                case VariableComparators.Equal:
-                    if (varVal == compareAgainst) return true;
-                    break;
-                case VariableComparators.GreaterOrEqual:
-                    if (varVal >= compareAgainst) return true;
-                    break;
-                case VariableComparators.LesserOrEqual:
-                    if (varVal <= compareAgainst) return true;
-                    break;
-                case VariableComparators.Greater:
-                    if (varVal > compareAgainst) return true;
-                    break;
-                case VariableComparators.Less:
-                    if (varVal < compareAgainst) return true;
-                    break;
-                case VariableComparators.NotEqual:
-                    if (varVal != compareAgainst) return true;
-                    break;
-            }
-            return false;
-        }
+            if (value == null) value = new VariableValue();
 
-        public static bool MeetsCondition(ServerSwitchCondition condition, Player player, EventInstance eventInstance, QuestBase questBase)
-        {
-            var servSwitch = false;
-            if (ServerVariableBase.Get(condition.SwitchId) != null) servSwitch = ServerVariableBase.Get(condition.SwitchId).Value.Boolean;
-            return servSwitch == condition.Value;
-        }
-
-        public static bool MeetsCondition(ServerVariableCondition condition, Player player, EventInstance eventInstance, QuestBase questBase)
-        {
-            long varVal = 0;
-            if (ServerVariableBase.Get(condition.VariableId) != null) varVal = ServerVariableBase.Get(condition.VariableId).Value.Integer;
-            long compareAgainst = 0;
-
-            switch (condition.CompareType)
-            {
-                case VariableCompareTypes.StaticValue:
-                    compareAgainst = condition.Value;
-                    break;
-                case VariableCompareTypes.PlayerVariable:
-                    var pvar = PlayerVariableBase.Get(condition.CompareVariableId);
-                    if (pvar == null) return false;
-                    compareAgainst = player.GetVariableValue(condition.CompareVariableId).Integer;
-                    break;
-                case VariableCompareTypes.GlobalVariable:
-                    var gvar = ServerVariableBase.Get(condition.CompareVariableId);
-                    if (gvar == null) return false;
-                    compareAgainst = gvar.Value.Integer;
-                    break;
-            }
-            
-            switch (condition.Comparator) //Comparator
-            {
-                case VariableComparators.Equal:
-                    if (varVal == compareAgainst) return true;
-                    break;
-                case VariableComparators.GreaterOrEqual:
-                    if (varVal >= compareAgainst) return true;
-                    break;
-                case VariableComparators.LesserOrEqual:
-                    if (varVal <= compareAgainst) return true;
-                    break;
-                case VariableComparators.Greater:
-                    if (varVal > compareAgainst) return true;
-                    break;
-                case VariableComparators.Less:
-                    if (varVal < compareAgainst) return true;
-                    break;
-                case VariableComparators.NotEqual:
-                    if (varVal != compareAgainst) return true;
-                    break;
-            }
-            return false;
+            return CheckVariableComparison(value, (dynamic)condition.Comparison, player);
         }
 
         public static bool MeetsCondition(HasItemCondition condition, Player player, EventInstance eventInstance, QuestBase questBase)
@@ -348,6 +261,97 @@ namespace Intersect.Server.EventProcessing
                     }
                 }
             }
+            return false;
+        }
+
+
+        //Variable Comparison Processing
+        public static bool CheckVariableComparison(VariableValue currentValue, VariableCompaison comparison, Player player)
+        {
+            return false;
+        }
+
+        public static bool CheckVariableComparison(VariableValue currentValue, BooleanVariableComparison comparison, Player player)
+        {
+            VariableValue compValue = null;
+            if (comparison.CompareVariableId != Guid.Empty)
+            {
+                if (comparison.CompareVariableType == VariableTypes.PlayerVariable)
+                {
+                    compValue = player.GetVariableValue(comparison.CompareVariableId);
+                }
+                else if (comparison.CompareVariableType == VariableTypes.ServerVariable)
+                {
+                    compValue = ServerVariableBase.Get(comparison.CompareVariableId)?.Value;
+                }
+            }
+            else
+            {
+                compValue = new VariableValue();
+                compValue.Boolean = comparison.Value;
+            }
+
+            if (compValue == null) compValue = new VariableValue();
+
+            if (comparison.ComparingEqual)
+            {
+                return currentValue.Boolean == compValue.Boolean;
+            }
+            else
+            {
+                return currentValue.Boolean != compValue.Boolean;
+            }
+        }
+
+        public static bool CheckVariableComparison(VariableValue currentValue, IntegerVariableComparison comparison, Player player)
+        {
+            long compareAgainst = 0;
+
+            VariableValue compValue = null;
+            if (comparison.CompareVariableId != Guid.Empty)
+            {
+                if (comparison.CompareVariableType == VariableTypes.PlayerVariable)
+                {
+                    compValue = player.GetVariableValue(comparison.CompareVariableId);
+                }
+                else if (comparison.CompareVariableType == VariableTypes.ServerVariable)
+                {
+                    compValue = ServerVariableBase.Get(comparison.CompareVariableId)?.Value;
+                }
+            }
+            else
+            {
+                compValue = new VariableValue();
+                compValue.Integer = comparison.Value;
+            }
+
+            if (compValue == null) compValue = new VariableValue();
+
+            var varVal = currentValue.Integer;
+            compareAgainst = compValue.Integer;
+
+            switch (comparison.Comparator) //Comparator
+            {
+                case VariableComparators.Equal:
+                    if (varVal == compareAgainst) return true;
+                    break;
+                case VariableComparators.GreaterOrEqual:
+                    if (varVal >= compareAgainst) return true;
+                    break;
+                case VariableComparators.LesserOrEqual:
+                    if (varVal <= compareAgainst) return true;
+                    break;
+                case VariableComparators.Greater:
+                    if (varVal > compareAgainst) return true;
+                    break;
+                case VariableComparators.Less:
+                    if (varVal < compareAgainst) return true;
+                    break;
+                case VariableComparators.NotEqual:
+                    if (varVal != compareAgainst) return true;
+                    break;
+            }
+
             return false;
         }
     }

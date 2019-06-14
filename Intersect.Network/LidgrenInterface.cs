@@ -42,7 +42,7 @@ namespace Intersect.Network
 
         [NotNull] private readonly RSACryptoServiceProvider mRsa;
 
-        [NotNull] private readonly Ceras mCeras = new Ceras();
+        [NotNull] private readonly Ceras mCeras = new Ceras(true);
 
         public LidgrenInterface(INetwork network, Type peerType, RSAParameters rsaParameters)
         {

@@ -1325,7 +1325,7 @@ namespace Intersect.Server.Networking
             foreach (var plyr in players)
             {
                 plyr.Warp(plyr.MapId, plyr.X, plyr.Y, plyr.Dir, false, plyr.Z, true);
-                PacketSender.SendMap(player.Client, packet.MapId);
+                PacketSender.SendMap(plyr.Client, packet.MapId);
             }
             PacketSender.SendMap(client, packet.MapId, true); //Sends map to everyone/everything in proximity
             PacketSender.SendMapListToAll();
@@ -1335,7 +1335,7 @@ namespace Intersect.Server.Networking
         public void HandlePacket(Client client, Player player, Packets.Editor.CreateMapPacket packet)
         {
             var newMap = Guid.Empty;
-            var tmpMap = new MapInstance();
+            var tmpMap = new MapInstance(true);
             if (!packet.AttachedToMap)
             {
                 var destType = (int)packet.MapListParentType;

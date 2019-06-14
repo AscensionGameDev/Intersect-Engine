@@ -502,7 +502,6 @@ Tick timer saved in server config.json.";
             public static LocalizedString openshop = @"Open Shop [{00}]";
             public static LocalizedString playanimation = @"Play Animation {00} {01}";
             public static LocalizedString playbgm = @"Play BGM [File: {00}]";
-            public static LocalizedString playerswitch = @"Set Player Switch {00} to {01}";
             public static LocalizedString playervariable = @"Set Player Variable {00} ({01})";
             public static LocalizedString playsound = @"Play Sound [File: {00}]";
             public static LocalizedString questnotstarted = @"Quest Declined or Failed to Start (Reqs not met, already started, etc)";
@@ -630,6 +629,9 @@ Tick timer saved in server config.json.";
         public struct EventConditional
         {
             public static LocalizedString and = @"And";
+            public static LocalizedString booleanvariable = @"Boolean Variable:";
+            public static LocalizedString booleanequal = @"Equal To";
+            public static LocalizedString booleannotequal = @"Not Equal To";
             public static LocalizedString cancel = @"Cancel";
             public static LocalizedString canstartquest = @"Can Start Quest";
             public static LocalizedString Class = @"Class:";
@@ -648,10 +650,7 @@ Tick timer saved in server config.json.";
 
             public static Dictionary<int, LocalizedString> conditions = new Dictionary<int, LocalizedString>
             {
-                {0, @"Player Switch is..."},
-                {1, @"Player Variable is..."},
-                {2, @"Global Switch is..."},
-                {3, @"Global Variable is..."},
+                {0, @"Variable Is..."},
                 {4, @"Has item..."},
                 {5, @"Class is..."},
                 {6, @"Knows spell..."},
@@ -688,8 +687,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString male = @"Male";
             public static LocalizedString mapis = @"Map Is...";
             public static LocalizedString negated = @"Negated";
+            public static LocalizedString numericvariable = @"Numeric Variable:";
             public static LocalizedString okay = @"Ok";
-            public static LocalizedString playerswitch = @"Player Switch";
             public static LocalizedString playervariable = @"Player Variable";
             public static LocalizedString playervariablevalue = @"Player Variable Value: ";
             public static LocalizedString power = @"Power:";
@@ -709,6 +708,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString questis = @"Is:";
             public static LocalizedString questprogress = @"Quest:";
             public static LocalizedString selectmap = @"Select Map";
+            public static LocalizedString selectvariable = @"Select Variable:";
             public static LocalizedString selfswitch = @"Self Switch:";
             public static Dictionary<int, LocalizedString> selfswitches = new Dictionary<int, LocalizedString>
             {
@@ -721,7 +721,6 @@ Tick timer saved in server config.json.";
             public static LocalizedString spell = @"Spell:";
             public static LocalizedString startquest = @"Quest:";
             public static LocalizedString startrange = @"Start Range:";
-            public static LocalizedString Switch = @"Switch:";
             public static LocalizedString switchis = @"Is";
             public static LocalizedString task = @"Task:";
             public static LocalizedString time = @"Time is between:";
@@ -730,7 +729,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString True = @"True";
             public static LocalizedString type = @"Condition Type:";
             public static LocalizedString value = @"Static Value:";
-            public static LocalizedString variable = @"Variable:";
+            public static LocalizedString variable = @"Variable Is...";
         }
 
         public struct EventConditionDesc
@@ -743,7 +742,6 @@ Tick timer saved in server config.json.";
             public static LocalizedString False = @"False";
             public static LocalizedString female = @"Female";
             public static LocalizedString gender = @"Player's Gender is {00}";
-            public static LocalizedString globalswitch = @"Global Switch {00} is {01}";
             public static LocalizedString globalvariable = @"Global Variable: {00} {01}";
             public static LocalizedString globalvariablevalue = @"Global Variable: {00}'s Value";
             public static LocalizedString greater = @"is greater than {00}";
@@ -765,7 +763,6 @@ Tick timer saved in server config.json.";
             public static LocalizedString onanytask = @", On Any Task";
             public static LocalizedString ontask = @", On Task: {00}";
             public static LocalizedString playerdeath = @"Player Death";
-            public static LocalizedString playerswitch = @"Player Switch {00} is {01}";
             public static LocalizedString playervariable = @"Player Variable: {00} {01}";
             public static LocalizedString playervariablevalue = @"Player Variable: {00}'s Value";
             public static LocalizedString power = @"Player's Power is {00}";
@@ -1082,39 +1079,33 @@ Tick timer saved in server config.json.";
             public static LocalizedString title = @"Set Class";
         }
 
-        public struct EventSetSwitch
-        {
-            public static LocalizedString cancel = @"Cancel";
-            public static LocalizedString False = @"False";
-            public static LocalizedString global = @"Global Switch";
-            public static LocalizedString label = @"Set Switch:";
-            public static LocalizedString okay = @"Ok";
-            public static LocalizedString player = @"Player Switch";
-            public static LocalizedString title = @"Set Switch";
-            public static LocalizedString to = @"to";
-            public static LocalizedString True = @"True";
-            public static LocalizedString syncparty = @"Sync Party Variables?";
-        }
-
         public struct EventSetVariable
         {
-            public static LocalizedString add = @"Add";
             public static LocalizedString cancel = @"Cancel";
             public static LocalizedString global = @"Global Variable";
-            public static LocalizedString globalvariablevalue = @"Global Variable Value: ";
-            public static LocalizedString label = @"Variable:";
             public static LocalizedString okay = @"Ok";
             public static LocalizedString player = @"Player Variable";
-            public static LocalizedString playervariablevalue = @"Player Variable Value: ";
-            public static LocalizedString random = @"Random";
-            public static LocalizedString randomhigh = @"High:";
-            public static LocalizedString randomlow = @"Low:";
-            public static LocalizedString randomdesc = @"Random Number:";
-            public static LocalizedString set = @"Set";
-            public static LocalizedString subtract = @"Subtract";
-            public static LocalizedString systemtime = @"System Time (ms)";
             public static LocalizedString title = @"Set Variable";
-            public static LocalizedString syncparty = @"Sync Party Variables?";
+            public static LocalizedString syncparty = @"Party Sync?";
+            public static LocalizedString label = "@Select Variable:";
+
+            public static LocalizedString booleanlabel = @"Boolean Variable:";
+            public static LocalizedString booleantrue = @"True";
+            public static LocalizedString booleanfalse = @"False";
+            public static LocalizedString booleanccloneglobalvariablevalue = @"Global Variable Value: ";
+            public static LocalizedString booleancloneplayervariablevalue = @"Player Variable Value: ";
+
+            public static LocalizedString numericlabel = @"Integer Variable:";
+            public static LocalizedString numericadd = @"Add";
+            public static LocalizedString numericcloneglobalvariablevalue = @"Global Variable Value: ";
+            public static LocalizedString numericcloneplayervariablevalue = @"Player Variable Value: ";
+            public static LocalizedString numericrandom = @"Random";
+            public static LocalizedString numericrandomhigh = @"High:";
+            public static LocalizedString numericrandomlow = @"Low:";
+            public static LocalizedString numericrandomdesc = @"Random Number:";
+            public static LocalizedString numericset = @"Set";
+            public static LocalizedString numericsubtract = @"Subtract";
+            public static LocalizedString numericsystemtime = @"System Time (ms)";
         }
 
         public struct EventShowOptions
@@ -1394,7 +1385,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString selectlayers = @"Select...";
             public static LocalizedString shopeditor = @"Shop Editor";
             public static LocalizedString spelleditor = @"Spell Editor";
-            public static LocalizedString switchvariableeditor = @"Switch and Variable Editor";
+            public static LocalizedString variableeditor = @"Variable Editor";
             public static LocalizedString tilepreview = @"Tile Preview";
             public static LocalizedString timeeditor = @"Time Editor";
             public static LocalizedString title = @"Intersect Editor - {00}";
@@ -1949,33 +1940,32 @@ Tick timer saved in server config.json.";
             public static LocalizedString warptomap = @"Warp Caster:";
         }
 
-        public struct SwitchVariableEditor
+        public struct VariableEditor
         {
             public static LocalizedString cancel = @"Cancel";
             public static LocalizedString delete = @"Delete";
             public static LocalizedString deletecaption = @"Delete?";
-            public static LocalizedString deleteprompt = @"Are you sure you want to delete this switch/variable? This action cannot be reverted!";
-            public static LocalizedString editor = @"Switch and Variable Editor";
+            public static LocalizedString deleteprompt = @"Are you sure you want to delete this variable? This action cannot be reverted!";
+            public static LocalizedString editor = @"Variable Editor";
             public static LocalizedString False = @"False";
-            public static LocalizedString globalswitch = @"Server Switch";
-            public static LocalizedString globalswitches = @"Global Switches";
             public static LocalizedString globalvariable = @"Server Variable";
             public static LocalizedString globalvariables = @"Global Variables";
-            public static LocalizedString list = @"Switch/Variable List";
+            public static LocalizedString list = @"Variable List";
             public static LocalizedString name = @"Name:";
             public static LocalizedString New = @"New";
-            public static LocalizedString playerswitch = @"Player Switch";
-            public static LocalizedString playerswitches = @"Player Switches";
             public static LocalizedString playervariable = @"Player Variable";
             public static LocalizedString playervariables = @"Player Variables";
             public static LocalizedString save = @"Save";
-            public static LocalizedString textidgs = @"Text Id: \gs ";
             public static LocalizedString textidgv = @"Text Id: \gv ";
-            public static LocalizedString textidps = @"Text Id: \ps ";
             public static LocalizedString textidpv = @"Text Id: \pv ";
-            public static LocalizedString title = @"Switch and Variable Editor";
+            public static LocalizedString title = @"Variable Editor";
             public static LocalizedString True = @"True";
-            public static LocalizedString type = @"Switch or Variable Type";
+            public static LocalizedString type = @"Variable Type";
+            public static Dictionary<int, LocalizedString> types = new Dictionary<int, LocalizedString>
+            {
+                {1, @"Boolean"},
+                {2, @"Integer"},
+            };
             public static LocalizedString undo = @"Undo Changes";
             public static LocalizedString value = @"Value:";
         }
@@ -2100,102 +2090,20 @@ Negative values for time to flow backwards.";
             public static LocalizedString title = @"Warp Tile Selection";
         }
 
-        public static string GetEventConditionalDesc(PlayerSwitchCondition condition)
+        public static string GetEventConditionalDesc(VariableIsCondition condition)
         {
-            var pValue = Strings.EventConditionDesc.False;
-            if (condition.Value) pValue = Strings.EventConditionDesc.True;
-            return Strings.EventConditionDesc.playerswitch.ToString(PlayerVariableBase.GetName(condition.SwitchId), pValue);
-        }
+            var pVar = GetVariableComparisonString((dynamic)condition.Comparison);
 
-        public static string GetEventConditionalDesc(PlayerVariableCondition condition)
-        {
-            var pVar = "";
-            var value = "";
-
-            switch (condition.CompareType)
+            if (condition.VariableType == VariableTypes.PlayerVariable)
             {
-                case VariableCompareTypes.StaticValue:
-                    value = condition.Value.ToString();
-                    break;
-                case VariableCompareTypes.PlayerVariable:
-                    value = Strings.EventConditionDesc.playervariablevalue.ToString(PlayerVariableBase.GetName(condition.CompareVariableId));
-                    break;
-                case VariableCompareTypes.GlobalVariable:
-                    value = Strings.EventConditionDesc.globalvariablevalue.ToString(ServerVariableBase.GetName(condition.CompareVariableId));
-                    break;
+                return Strings.EventConditionDesc.playervariable.ToString(PlayerVariableBase.GetName(condition.VariableId), pVar);
+            }
+            else if (condition.VariableType == VariableTypes.ServerVariable)
+            {
+                return Strings.EventConditionDesc.globalvariable.ToString(ServerVariableBase.GetName(condition.VariableId), pVar);
             }
 
-            switch (condition.Comparator)
-            {
-                case VariableComparators.Equal:
-                    pVar = Strings.EventConditionDesc.equal.ToString(value);
-                    break;
-                case VariableComparators.GreaterOrEqual:
-                    pVar = Strings.EventConditionDesc.greaterequal.ToString(value);
-                    break;
-                case VariableComparators.LesserOrEqual:
-                    pVar = Strings.EventConditionDesc.lessthanequal.ToString(value);
-                    break;
-                case VariableComparators.Greater:
-                    pVar = Strings.EventConditionDesc.greater.ToString(value);
-                    break;
-                case VariableComparators.Less:
-                    pVar = Strings.EventConditionDesc.lessthan.ToString(value);
-                    break;
-                case VariableComparators.NotEqual:
-                    pVar = Strings.EventConditionDesc.notequal.ToString(value);
-                    break;
-            }
-            return Strings.EventConditionDesc.playervariable.ToString(PlayerVariableBase.GetName(condition.VariableId), pVar);
-        }
-
-        public static string GetEventConditionalDesc(ServerSwitchCondition condition)
-        {
-            var pValue = Strings.EventConditionDesc.False;
-            if (condition.Value) pValue = Strings.EventConditionDesc.True;
-            return Strings.EventConditionDesc.globalswitch.ToString(ServerVariableBase.GetName(condition.SwitchId), pValue);
-        }
-
-        public static string GetEventConditionalDesc(ServerVariableCondition condition)
-        {
-            var pVar = "";
-            var value = "";
-
-            switch (condition.CompareType)
-            {
-                case VariableCompareTypes.StaticValue:
-                    value = condition.Value.ToString();
-                    break;
-                case VariableCompareTypes.PlayerVariable:
-                    value = Strings.EventConditionDesc.playervariablevalue.ToString(PlayerVariableBase.GetName(condition.CompareVariableId));
-                    break;
-                case VariableCompareTypes.GlobalVariable:
-                    value = Strings.EventConditionDesc.globalvariablevalue.ToString(ServerVariableBase.GetName(condition.CompareVariableId));
-                    break;
-            }
-
-            switch (condition.Comparator)
-            {
-                case VariableComparators.Equal:
-                    pVar = Strings.EventConditionDesc.equal.ToString(value);
-                    break;
-                case VariableComparators.GreaterOrEqual:
-                    pVar = Strings.EventConditionDesc.greaterequal.ToString(value);
-                    break;
-                case VariableComparators.LesserOrEqual:
-                    pVar = Strings.EventConditionDesc.lessthanequal.ToString(value);
-                    break;
-                case VariableComparators.Greater:
-                    pVar = Strings.EventConditionDesc.greater.ToString(value);
-                    break;
-                case VariableComparators.Less:
-                    pVar = Strings.EventConditionDesc.lessthan.ToString(value);
-                    break;
-                case VariableComparators.NotEqual:
-                    pVar = Strings.EventConditionDesc.notequal.ToString(value);
-                    break;
-            }
-            return Strings.EventConditionDesc.globalvariable.ToString(ServerVariableBase.GetName(condition.VariableId), pVar);
+            return "";
         }
 
         public static string GetEventConditionalDesc(HasItemCondition condition)
@@ -2359,6 +2267,90 @@ Negative values for time to flow backwards.";
             var map = Intersect.GameObjects.Maps.MapList.MapList.List.FindMap(condition.MapId);
             if (map != null)  return Strings.EventConditionDesc.map.ToString(map.Name);
             return Strings.EventConditionDesc.map.ToString(EventConditionDesc.mapnotfound);
+        }
+
+        public static string GetVariableComparisonString(VariableCompaison comparison)
+        {
+            return "";
+        }
+
+        public static string GetVariableComparisonString(BooleanVariableComparison comparison)
+        {
+            var value = "";
+            var pVar = "";
+
+            if (comparison.CompareVariableId == Guid.Empty)
+            {
+                value = comparison.Value.ToString();
+            }
+            else
+            {
+                if (comparison.CompareVariableType == VariableTypes.PlayerVariable)
+                {
+                    value = Strings.EventConditionDesc.playervariablevalue.ToString(PlayerVariableBase.GetName(comparison.CompareVariableId));
+                }
+                else if (comparison.CompareVariableType == VariableTypes.ServerVariable)
+                {
+                    value = Strings.EventConditionDesc.globalvariablevalue.ToString(ServerVariableBase.GetName(comparison.CompareVariableId));
+                }
+            }
+
+            if (comparison.ComparingEqual)
+            {
+                pVar = Strings.EventConditionDesc.equal.ToString(value);
+            }
+            else
+            {
+                pVar = Strings.EventConditionDesc.notequal.ToString(value);
+            }
+
+            return pVar;
+        }
+
+        public static string GetVariableComparisonString(IntegerVariableComparison comparison)
+        {
+            var value = "";
+            var pVar = "";
+
+            if (comparison.CompareVariableId == Guid.Empty)
+            {
+                value = comparison.Value.ToString();
+            }
+            else
+            {
+                if (comparison.CompareVariableType == VariableTypes.PlayerVariable)
+                {
+                    value = Strings.EventConditionDesc.playervariablevalue.ToString(PlayerVariableBase.GetName(comparison.CompareVariableId));
+                }
+                else if (comparison.CompareVariableType == VariableTypes.ServerVariable)
+                {
+                    value = Strings.EventConditionDesc.globalvariablevalue.ToString(ServerVariableBase.GetName(comparison.CompareVariableId));
+                }
+            }
+
+            switch (comparison.Comparator)
+            {
+                case VariableComparators.Equal:
+                    pVar = Strings.EventConditionDesc.equal.ToString(value);
+                    break;
+                case VariableComparators.GreaterOrEqual:
+                    pVar = Strings.EventConditionDesc.greaterequal.ToString(value);
+                    break;
+                case VariableComparators.LesserOrEqual:
+                    pVar = Strings.EventConditionDesc.lessthanequal.ToString(value);
+                    break;
+                case VariableComparators.Greater:
+                    pVar = Strings.EventConditionDesc.greater.ToString(value);
+                    break;
+                case VariableComparators.Less:
+                    pVar = Strings.EventConditionDesc.lessthan.ToString(value);
+                    break;
+                case VariableComparators.NotEqual:
+                    pVar = Strings.EventConditionDesc.notequal.ToString(value);
+                    break;
+            }
+
+            return pVar;
         }
 
 

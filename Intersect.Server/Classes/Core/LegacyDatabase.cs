@@ -77,7 +77,12 @@ namespace Intersect.Server
                 sGameDb = new GameContext(DatabaseUtils.DbProvider.MySql, $"server={Options.GameDb.Server};port={Options.GameDb.Port};database={Options.GameDb.Database};user={Options.GameDb.Username};password={Options.GameDb.Password}");
             }
 
+            var gameMigrations = sGameDb.Database.GetPendingMigrations();
             sGameDb.Database.Migrate();
+            var remainingGameMigrations = sGameDb.Database.GetPendingMigrations();
+            var processedGameMigrations = new List<string>(gameMigrations);
+            foreach (var itm in remainingGameMigrations) processedGameMigrations.Remove(itm);
+            sGameDb.MigrationsProcessed(processedGameMigrations.ToArray());
 
             //Connect to new player database
             if (Options.PlayerDb.Type == DatabaseOptions.DatabaseType.sqlite)
@@ -88,7 +93,12 @@ namespace Intersect.Server
             {
                 PlayerContext = new PlayerContext(DatabaseUtils.DbProvider.MySql, $"server={Options.PlayerDb.Server};port={Options.PlayerDb.Port};database={Options.PlayerDb.Database};user={Options.PlayerDb.Username};password={Options.PlayerDb.Password}");   
             }
+            var playerMigrations = sGameDb.Database.GetPendingMigrations();
             PlayerContext.Database.Migrate();
+            var remainingPlayerMigrations = sGameDb.Database.GetPendingMigrations();
+            var processedPlayerMigrations = new List<string>(playerMigrations);
+            foreach (var itm in remainingPlayerMigrations) processedPlayerMigrations.Remove(itm);
+            PlayerContext.MigrationsProcessed(processedPlayerMigrations.ToArray());
             PlayerContext.Seed();
 
 

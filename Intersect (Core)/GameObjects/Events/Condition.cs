@@ -9,11 +9,8 @@ namespace Intersect.GameObjects.Events
 {
     public enum ConditionTypes
     {
-        PlayerSwitch = 0,
-        PlayerVariable,
-        ServerSwitch,
-        ServerVariable,
-        HasItem,
+        VariableIs = 0,
+        HasItem = 4,
         ClassIs,
         KnowsSpell,
         LevelOrStat,
@@ -35,38 +32,12 @@ namespace Intersect.GameObjects.Events
         public bool Negated { get; set; }
     }
 
-    public class PlayerSwitchCondition : Condition
+    public class VariableIsCondition : Condition
     {
-        public override ConditionTypes Type { get; } = ConditionTypes.PlayerSwitch;
-        public Guid SwitchId { get; set; }
-        public bool Value { get; set; }
-    }
-
-    public class PlayerVariableCondition : Condition
-    {
-        public override ConditionTypes Type { get; } = ConditionTypes.PlayerVariable;
+        public override ConditionTypes Type { get; } = ConditionTypes.VariableIs;
+        public VariableTypes VariableType { get; set; } = VariableTypes.PlayerVariable;
         public Guid VariableId { get; set; }
-        public VariableComparators Comparator { get; set; } = VariableComparators.Equal;
-        public VariableCompareTypes CompareType { get; set; } = VariableCompareTypes.StaticValue;
-        public long Value { get; set; }
-        public Guid CompareVariableId { get; set; }
-    }
-
-    public class ServerSwitchCondition : Condition
-    {
-        public override ConditionTypes Type { get; } = ConditionTypes.ServerSwitch;
-        public Guid SwitchId { get; set; }
-        public bool Value { get; set; }
-    }
-
-    public class ServerVariableCondition : Condition
-    {
-        public override ConditionTypes Type { get; } = ConditionTypes.ServerVariable;
-        public Guid VariableId { get; set; }
-        public VariableComparators Comparator { get; set; } = VariableComparators.Equal;
-        public VariableCompareTypes CompareType { get; set; } = VariableCompareTypes.StaticValue;
-        public long Value { get; set; }
-        public Guid CompareVariableId { get; set; }
+        public VariableCompaison Comparison { get; set; } = new VariableCompaison();
     }
 
     public class HasItemCondition : Condition
@@ -158,5 +129,27 @@ namespace Intersect.GameObjects.Events
     {
         public override ConditionTypes Type { get; } = ConditionTypes.IsItemEquipped;
         public Guid ItemId { get; set; }
+    }
+
+
+    public class VariableCompaison
+    {
+    }
+
+    public class BooleanVariableComparison : VariableCompaison
+    {
+        public VariableTypes CompareVariableType { get; set; } = VariableTypes.PlayerVariable;
+        public Guid CompareVariableId { get; set; }
+        public bool ComparingEqual { get; set; }
+        public bool Value { get; set; }
+
+    }
+
+    public class IntegerVariableComparison : VariableCompaison
+    {
+        public VariableComparators Comparator { get; set; } = VariableComparators.Equal;
+        public VariableTypes CompareVariableType { get; set; } = VariableTypes.PlayerVariable;
+        public Guid CompareVariableId { get; set; }
+        public long Value { get; set; }
     }
 }

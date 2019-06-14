@@ -7,6 +7,9 @@ using Intersect.GameObjects.Events;
 using Intersect.Models;
 using Intersect.Utilities;
 using JetBrains.Annotations;
+
+using K4os.Compression.LZ4;
+
 using Newtonsoft.Json;
 
 namespace Intersect.GameObjects.Maps
@@ -41,12 +44,18 @@ namespace Intersect.GameObjects.Maps
         //Cached Att Data
         private byte[] mCachedAttributeData = null;
 
+        protected static Network.Ceras mCeras = new Network.Ceras(false);
+
         [Column("Attributes")]
         [JsonIgnore]
         public byte[] AttributeData
         {
             get => GetAttributeData();
-            set => Attributes = JsonConvert.DeserializeObject<MapAttribute[,]>(System.Text.Encoding.UTF8.GetString(Compression.DecompressPacket(value)), new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
+            set
+            {
+                mAttributes = mCeras.Decompress<MapAttribute[,]>(value);
+                mCachedAttributeData = value;
+            }
         }
 
         //Map Attributes
@@ -60,7 +69,7 @@ namespace Intersect.GameObjects.Maps
             set
             {
                 mAttributes = value;
-                mCachedAttributeData = Compression.CompressPacket(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(Attributes, new JsonSerializerSettings() {TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace})));
+                mCachedAttributeData = mCeras.Compress(mAttributes);
             }
         }
 
@@ -174,18 +183,37 @@ namespace Intersect.GameObjects.Maps
         [NotMapped]
         [JsonIgnore]
         public object MapLock => mMapLock;
-        
+
         [JsonConstructor]
         public MapBase(Guid id) : base(id)
         {
             Name = "New Map";
 
-            //Fill Tile Data with Nulled/Empty Data
-            /* Each tile has a Guid for tileset, x and y integer for source tile in the set, and a byte for the tile type.
-             * A Guid is 16 bytes, and the integers are both 4 bytes each, and the final byte is just 1 byte.
-             * So the blob size is going to be LayerCount * MapWidth * MapHeight * (16 + 4 + 4 + 1)*/
-            TileData = Compression.CompressPacket(new byte[Options.LayerCount * Options.MapWidth * Options.MapHeight * 25]);
-            mCachedAttributeData = Compression.CompressPacket(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(Attributes, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace })));
+            //Create empty tile array and then compress it down
+            if (Layers == null || Layers[0].Tiles == null)
+            {
+                Layers = new TileArray[Options.LayerCount];
+                for (var i = 0; i < Options.LayerCount; i++)
+                {
+                    Layers[i].Tiles = new Tile[Options.MapWidth, Options.MapHeight];
+                    for (var x = 0; x < Options.MapWidth; x++)
+                    {
+                        for (var y = 0; y < Options.MapHeight; y++)
+                        {
+                            Layers[i].Tiles[x, y] = new Tile();
+                        }
+                    }
+                }
+
+                TileData = mCeras.Compress(Layers);
+                Layers = null;
+            }
+            else
+            {
+                TileData = mCeras.Compress(Layers);
+            }
+
+            mCachedAttributeData = mCeras.Compress(Attributes);
         }
 
         //EF Constructor

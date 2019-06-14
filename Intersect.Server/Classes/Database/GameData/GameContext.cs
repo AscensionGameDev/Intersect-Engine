@@ -4,9 +4,11 @@ using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps.MapList;
+using Intersect.Server.Classes.Database.GameData.Migrations;
 using Intersect.Server.Maps;
 using Intersect.Utilities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Intersect.Server.Database.GameData
 {
@@ -118,6 +120,11 @@ namespace Intersect.Server.Database.GameData
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+        }
+
+        public void MigrationsProcessed(string[] migrations)
+        {
+            if (migrations.IndexOf("20190611170819_CombiningSwitchesVariables") > -1) Beta6Migration.Run(this);
         }
     }
 }

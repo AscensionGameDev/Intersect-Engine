@@ -89,8 +89,15 @@ namespace Intersect.Server.Maps
         [NotMapped]
         public long UpdateDelay = 100;
 
-        //Init
-        public MapInstance() : base(Guid.NewGuid())
+        //EF
+        public MapInstance() : base()
+        {
+            Name = "New Map";
+            Layers = null;
+        }
+
+        //For New Maps!
+        public MapInstance(bool newMap = false) : base(Guid.NewGuid())
         {
             Name = "New Map";
             Layers = null;
