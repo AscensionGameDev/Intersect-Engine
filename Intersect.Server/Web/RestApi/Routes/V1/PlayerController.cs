@@ -1,12 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Web.Http;
-using System.Web.Http.Results;
-
-using Intersect.Enums;
+﻿using Intersect.Enums;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Entities;
 using Intersect.Server.General;
@@ -14,10 +6,15 @@ using Intersect.Server.Localization;
 using Intersect.Server.Networking;
 using Intersect.Server.Web.RestApi.Attributes;
 using Intersect.Server.Web.RestApi.Extensions;
-
 using JetBrains.Annotations;
+using System;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
 
-using Newtonsoft.Json;
+using Intersect.GameObjects.Switches_and_Variables;
+using Intersect.Server.Web.RestApi.Types;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
@@ -90,96 +87,121 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             return Globals.OnlineList?.Count ?? 0;
         }
 
-        [Route("{playerName}")]
+        [Route("{lookupKey:LookupKey}")]
         [HttpGet]
-        public object PlayerByName(string playerName)
+        public object LookupPlayer(LookupKey lookupKey)
         {
-            if (string.IsNullOrWhiteSpace(playerName))
+            if (lookupKey.IsInvalid)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid player name '{playerName}'.");
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
             using (var context = PlayerContext.Temporary)
             {
-                var (client, player) = Player.Fetch(playerName, context);
+                var (client, player) = Player.Fetch(lookupKey, context);
                 if (player != null)
                 {
                     return player;
                 }
             }
 
-            return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No player with name '{playerName}'.");
+            return Request.CreateErrorResponse(HttpStatusCode.NotFound, lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'.");
         }
 
-        [Route("{playerName}/AdminActions/{adminAction:AdminActions}")]
+        [Route("{lookupKey:LookupKey}/variable/{index:int}")]
+        [HttpGet]
+        public object PlayerVariableGet(LookupKey lookupKey, int index)
+        {
+            if (lookupKey.IsInvalid)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
+            }
+
+            if (index < 0)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid variable index ${index}.");
+            }
+
+            using (var context = PlayerContext.Temporary)
+            {
+                var (client, player) = Player.Fetch(lookupKey, context);
+                if (player == null)
+                {
+                    return Request.CreateErrorResponse(
+                        HttpStatusCode.NotFound,
+                        lookupKey.HasId
+                            ? $@"No player with id '{lookupKey.Id}'."
+                            : $@"No player with name '{lookupKey.Name}'."
+                    );
+                }
+
+                if (index >= player.Variables.Count)
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Variable index ${index} out of bounds (${player.Variables.Count} variables).");
+                }
+
+                return player.Variables[index];
+            }
+        }
+
+        [Route("{lookupKey:LookupKey}/variable/{index:int}")]
+        [HttpPost]
+        public object PlayerVariableSet(LookupKey lookupKey, int index, [FromBody] VariableValue variableValue)
+        {
+            if (lookupKey.IsInvalid)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
+            }
+
+            if (index < 0)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid variable index ${index}.");
+            }
+
+            using (var context = PlayerContext.Temporary)
+            {
+                var (client, player) = Player.Fetch(lookupKey, context);
+                if (player == null)
+                {
+                    return Request.CreateErrorResponse(
+                        HttpStatusCode.NotFound,
+                        lookupKey.HasId
+                            ? $@"No player with id '{lookupKey.Id}'."
+                            : $@"No player with name '{lookupKey.Name}'."
+                    );
+                }
+
+                if (index >= player.Variables.Count)
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Variable index ${index} out of bounds (${player.Variables.Count} variables).");
+                }
+
+                return player.Variables[index];
+            }
+        }
+
+        [Route("{lookupKey:LookupKey}/AdminActions/{adminAction:AdminActions}")]
         [HttpPost]
         public object DoAdminActionOnPlayerByName(
-            string playerName,
+            LookupKey lookupKey,
             AdminActions adminAction,
             [FromBody] AdminActionParameters actionParameters
         )
         {
-            if (string.IsNullOrWhiteSpace(playerName))
+            if (lookupKey.IsInvalid)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid player name '{playerName}'.");
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
             Tuple<Client, Player> fetchResult;
             using (var context = PlayerContext.Temporary)
             {
-                fetchResult = Player.Fetch(playerName, context);
+                fetchResult = Player.Fetch(lookupKey, context);
             }
 
             return DoAdminActionOnPlayer(
                 () => fetchResult,
-                () => Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No player with name '{playerName}'."),
-                adminAction, actionParameters
-            );
-        }
-
-        [Route("{playerId:guid}")]
-        [HttpGet]
-        public object PlayerById(Guid playerId)
-        {
-            if (Guid.Empty == playerId)
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid player id '{playerId}'.");
-            }
-
-            using (var context = PlayerContext.Temporary)
-            {
-                var (client, player) = Player.Fetch(playerId, context);
-                if (player != null)
-                {
-                    return player;
-                }
-            }
-
-            return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No player with id '{playerId}'.");
-        }
-
-        [Route("playerId:guid/AdminActions/{adminAction:AdminActions}")]
-        [HttpPost]
-        public object DoAdminActionOnPlayerById(
-            Guid playerId,
-            AdminActions adminAction,
-            [FromBody] AdminActionParameters actionParameters
-        )
-        {
-            if (Guid.Empty == playerId)
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid player id '{playerId}'.");
-            }
-
-            Tuple<Client, Player> fetchResult;
-            using (var context = PlayerContext.Temporary)
-            {
-                fetchResult = Player.Fetch(playerId, context);
-            }
-
-            return DoAdminActionOnPlayer(
-                () => fetchResult,
-                () => Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No player with id '{playerId}'."),
+                () => Request.CreateErrorResponse(HttpStatusCode.NotFound, lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'."),
                 adminAction, actionParameters
             );
         }

@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 using Intersect.Enums;
 
+using JetBrains.Annotations;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -122,6 +124,7 @@ namespace Intersect.GameObjects.Switches_and_Variables
             }
         }
 
+        [NotNull]
         public string StringRepresentation(VariableDataTypes ofType)
         {
             switch (ofType)
@@ -141,6 +144,8 @@ namespace Intersect.GameObjects.Switches_and_Variables
 
             return "No Representation";
         }
+
+        public override string ToString() => StringRepresentation(Type);
 
     }
 }
