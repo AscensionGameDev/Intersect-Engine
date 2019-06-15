@@ -1,10 +1,4 @@
-﻿using System;
-using System.Data;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
-using Intersect.Server.Classes.Database;
+﻿using Intersect.Server.Classes.Database;
 using Intersect.Server.Classes.Database.PlayerData.Api;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Database.PlayerData.SeedData;
@@ -12,6 +6,11 @@ using Intersect.Server.Entities;
 using Intersect.Utilities;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Data;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Intersect.Server.Database.PlayerData
 {
@@ -19,6 +18,7 @@ namespace Intersect.Server.Database.PlayerData
     {
         public static PlayerContext Current { get; private set; }
 
+        [NotNull]
         public static PlayerContext Temporary => new PlayerContext(Current?.mConnection ?? default(DatabaseUtils.DbProvider), Current?.mConnectionString, true);
 
         [NotNull] public DbSet<User> Users { get; set; }

@@ -1,20 +1,26 @@
-﻿using System;
-using System.Data;
-using Intersect.GameObjects;
+﻿using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Server.Classes.Database.GameData.Migrations;
 using Intersect.Server.Maps;
 using Intersect.Utilities;
+using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 
 namespace Intersect.Server.Database.GameData
 {
     public class GameContext : DbContext
     {
         public static GameContext Current { get; private set; }
+
+        [NotNull]
+        public static GameContext Temporary => new GameContext(Current?.mConnection ?? default(DatabaseUtils.DbProvider), Current?.mConnectionString, true);
 
         //Animations
         public DbSet<AnimationBase> Animations { get; set; }
@@ -73,10 +79,19 @@ namespace Intersect.Server.Database.GameData
         }
 
         public GameContext(DatabaseUtils.DbProvider connection, string connectionString)
+            : this(connection, connectionString, false)
+        {
+        }
+
+        private GameContext(DatabaseUtils.DbProvider connection, string connectionString, bool isTemporary)
         {
             mConnection = connection;
             mConnectionString = connectionString;
-            Current = this;
+
+            if (!isTemporary)
+            {
+                Current = this;
+            }
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -124,7 +139,33 @@ namespace Intersect.Server.Database.GameData
 
         public void MigrationsProcessed(string[] migrations)
         {
-            if (migrations.IndexOf("20190611170819_CombiningSwitchesVariables") > -1) Beta6Migration.Run(this);
+            if (migrations.IndexOf("20190611170819_CombiningSwitchesVariables") > -1)
+            {
+                Beta6Migration.Run(this);
+            }
+        }
+
+        internal static class Queries
+        {
+
+            [NotNull]
+            internal static readonly Func<GameContext, int, int, IEnumerable<ServerVariableBase>> ServerVariables =
+                EF.CompileQuery(
+                    (GameContext context, int page, int count) =>
+                        context.ServerVariables
+                            .OrderBy(variable => variable.Id.ToString())
+                            .Skip(page * count)
+                            .Take(count)
+                ) ??
+                throw new InvalidOperationException();
+
+            [NotNull]
+            internal static readonly Func<GameContext, Guid, ServerVariableBase> ServerVariableById =
+                EF.CompileQuery((GameContext context, Guid id) =>
+                    context.ServerVariables
+                        .FirstOrDefault(variable => variable.Id == id))
+                ?? throw new InvalidOperationException();
+
         }
     }
 }

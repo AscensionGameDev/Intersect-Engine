@@ -6,15 +6,13 @@ using Intersect.Server.Localization;
 using Intersect.Server.Networking;
 using Intersect.Server.Web.RestApi.Attributes;
 using Intersect.Server.Web.RestApi.Extensions;
+using Intersect.Server.Web.RestApi.Types;
 using JetBrains.Annotations;
 using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-
-using Intersect.GameObjects.Switches_and_Variables;
-using Intersect.Server.Web.RestApi.Types;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
@@ -202,7 +200,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Variable index {index} out of bounds ({player.Variables.Count} variables).");
                 }
 
-                return player.Variables[index]?.Value?.Value;
+                return player.Variables[index]?.Value.Value;
             }
         }
 
