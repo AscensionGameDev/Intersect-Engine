@@ -2,37 +2,46 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Enums;
 using Intersect.GameObjects.Switches_and_Variables;
+using Intersect.Logging;
 using Intersect.Server.Entities;
-using Newtonsoft.Json;
 
-// ReSharper disable UnusedAutoPropertyAccessor.Local
-// ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
+using JetBrains.Annotations;
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Intersect.Server.Database.PlayerData.Players
 {
     public class Variable : IPlayerOwned
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; private set; }
-        public Guid PlayerId { get; private set; }
-        [JsonIgnore] public virtual Player Player { get; private set; }
-        public Guid VariableId { get; private set; }
+        public Guid Id { get; protected set; }
+
+        public Guid PlayerId { get; protected set; }
+
+        [JsonIgnore] public virtual Player Player { get; protected set; }
+
+        public Guid VariableId { get; protected set; }
 
         [NotMapped]
+        [NotNull]
         public VariableValue Value { get; set; } = new VariableValue();
 
-        [Column("Value")]
+        [Column(nameof(Value))]
         [JsonIgnore]
-        public string DBValue
+        public string Json
         {
-            get => Value.JsonValue;
-            private set => Value.JsonValue = value;
+            get => Value.Json.ToString(Formatting.None);
+            private set
+            {
+                if (VariableValue.TryParse(value, out var json))
+                {
+                    Value.Json = json;
+                }
+            }
         }
 
-        public Variable()
-        {
-            
-        }
+        public Variable() : this(Guid.Empty) { }
 
         public Variable(Guid id)
         {

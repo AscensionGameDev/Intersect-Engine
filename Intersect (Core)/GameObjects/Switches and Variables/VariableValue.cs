@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Intersect.Enums;
-
+﻿using Intersect.Enums;
+using Intersect.Logging;
 using JetBrains.Annotations;
-
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Intersect.GameObjects.Switches_and_Variables
 {
@@ -18,187 +12,180 @@ namespace Intersect.GameObjects.Switches_and_Variables
     {
         public VariableDataTypes Type { get; set; }
 
-        [JsonIgnore]
-        public string JsonValue
-        {
-            get
-            {
-                var obj = new JObject {{"Type", (byte) Type}};
-                switch (Type)
-                {
-                    case VariableDataTypes.Integer:
-                        obj.Add("Value", Integer);
-                        break;
+        [NotMapped]
+        public dynamic Value { get; set; }
 
-                    case VariableDataTypes.Boolean:
-                        obj.Add("Value", Boolean);
-                        break;
+        #region Typed Properties
 
-                    case VariableDataTypes.Number:
-                        obj.Add("Value", Number);
-                        break;
-
-                    case VariableDataTypes.String:
-                        obj.Add("Value", String);
-                        break;
-
-                    default:
-                        obj.Add("Value", "");
-                        break;
-                }
-
-                return obj.ToString(Formatting.None);
-            }
-            set
-            {
-                var obj = JObject.Parse(value);
-                Type = (VariableDataTypes) (byte.Parse(obj["Type"].ToString()));
-                switch (Type)
-                {
-                    case VariableDataTypes.Integer:
-                        Integer = long.Parse(obj["Value"].ToString());
-                        break;
-
-                    case VariableDataTypes.Boolean:
-                        Boolean = bool.Parse(obj["Value"].ToString());
-                        break;
-
-                    case VariableDataTypes.Number:
-                        Number = double.Parse(obj["Value"].ToString());
-                        break;
-
-                    case VariableDataTypes.String:
-                        String = obj["Value"].ToString();
-                        break;
-
-                    default:
-                        break;
-                }
-
-            }
-        }
-
-        private long mInteger;
-        [JsonIgnore]
-        public long Integer
-        {
-            get => mInteger;
-            set
-            {
-                Type = VariableDataTypes.Integer;
-                mInteger = value;
-            }
-        }
-
-        private bool mBoolean;
         [JsonIgnore]
         public bool Boolean
         {
-            get => mBoolean;
+            get => Value;
             set
             {
                 Type = VariableDataTypes.Boolean;
-                mBoolean = value;
+                Value = value;
             }
         }
 
-        private double mNumber;
+        [JsonIgnore]
+        public long Integer
+        {
+            get => Value;
+            set
+            {
+                Type = VariableDataTypes.Integer;
+                Value = value;
+            }
+        }
+
         [JsonIgnore]
         public double Number
         {
-            get => mNumber;
+            get => Value;
             set
             {
                 Type = VariableDataTypes.Number;
-                mNumber = value;
+                Value = value;
             }
         }
 
-        private string mString;
         [JsonIgnore]
         public string String
         {
-            get => mString ?? "";
+            get => Value ?? "";
             set
             {
                 Type = VariableDataTypes.String;
-                mString = value ?? "";
+                Value = value ?? "";
             }
         }
 
+        #endregion
+
+        public override string ToString() => Value?.ToString() ?? "No representation";
+
+        [JsonIgnore]
         [NotNull]
-        public string StringRepresentation(VariableDataTypes ofType)
+        public JObject Json
         {
-            switch (ofType)
+            get => new JObject
             {
-                case VariableDataTypes.Boolean:
-                    return Boolean.ToString();
-
-                case VariableDataTypes.Integer:
-                    return Integer.ToString();
-
-                case VariableDataTypes.Number:
-                    break;
-
-                case VariableDataTypes.String:
-                    break;
-            }
-
-            return "No Representation";
-        }
-
-        [NotMapped]
-        [JsonProperty("Value")]
-        public dynamic Dynamic
-        {
-            get
-            {
-                switch (Type)
-                {
-                    case VariableDataTypes.Boolean:
-                        return Boolean;
-
-                    case VariableDataTypes.Integer:
-                        return Integer;
-
-                    case VariableDataTypes.Number:
-                        return Number;
-
-                    case VariableDataTypes.String:
-                        return String;
-
-                    default:
-                        return null;
-                }
-            }
+                {nameof(Type), (byte) Type},
+                {nameof(Value), Value}
+            };
 
             set
             {
-                switch (Type)
+                if (!value.TryGetValue(nameof(Type), out var typeToken))
                 {
-                    case VariableDataTypes.Boolean:
-                        Boolean = value;
-                        break;
-
-                    case VariableDataTypes.Integer:
-                        Integer = value;
-                        break;
-
-                    case VariableDataTypes.Number:
-                        Number = value;
-                        break;
-
-                    case VariableDataTypes.String:
-                        String = value;
-                        break;
-
-                    default:
-                        break;
+                    return;
                 }
+
+                if (typeToken.Type != JTokenType.Integer)
+                {
+                    throw new InvalidCastException($@"Expected 'Integer' for 'Type', received '{typeToken.Type.ToString()}'.");
+                }
+
+                if (!value.TryGetValue(nameof(Value), out var valueToken))
+                {
+                    return;
+                }
+
+                Type = (VariableDataTypes)typeToken.Value<byte>();
+                Value = valueToken.Value<dynamic>();
             }
         }
 
-        public override string ToString() => StringRepresentation(Type);
+        #region Operators
 
+        public static implicit operator VariableValue(bool value)
+        {
+            return new VariableValue
+            {
+                Type = VariableDataTypes.Boolean,
+                Boolean = value
+            };
+        }
+
+        public static implicit operator bool([NotNull] VariableValue variableValue)
+        {
+            return variableValue.Boolean;
+        }
+
+        public static implicit operator VariableValue(long value)
+        {
+            return new VariableValue
+            {
+                Type = VariableDataTypes.String,
+                Integer = value
+            };
+        }
+
+        public static implicit operator long([NotNull] VariableValue variableValue)
+        {
+            return variableValue.Integer;
+        }
+
+        public static implicit operator VariableValue(double value)
+        {
+            return new VariableValue
+            {
+                Type = VariableDataTypes.Number,
+                Number = value
+            };
+        }
+
+        public static implicit operator double([NotNull] VariableValue variableValue)
+        {
+            return variableValue.Number;
+        }
+
+        public static implicit operator VariableValue([CanBeNull] string value)
+        {
+            return new VariableValue
+            {
+                Type = VariableDataTypes.String,
+                String = value
+            };
+        }
+
+        public static implicit operator string([NotNull] VariableValue variableValue)
+        {
+            return variableValue.String;
+        }
+
+        #endregion
+
+        public static bool TryParse(string value, out JObject jObject)
+        {
+            try
+            {
+                jObject = JObject.Parse(value);
+
+                if (jObject != null)
+                {
+                    return true;
+                }
+
+                Log.Warn(
+                    new ArgumentNullException(
+                        nameof(jObject),
+                        @"Invalid variable value stored in the database."
+                    )
+                );
+            }
+            catch (Exception exception)
+            {
+                jObject = null;
+#if DEBUG
+                /* Only log in DEBUG in case the variable contains
+                 * sensitive information. */
+                Log.Warn(exception);
+#endif
+            }
+
+            return false;
+        }
     }
 }

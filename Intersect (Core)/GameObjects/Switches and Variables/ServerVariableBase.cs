@@ -4,6 +4,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Enums;
 using Intersect.GameObjects.Switches_and_Variables;
 using Intersect.Models;
+
+using JetBrains.Annotations;
+
 using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
@@ -16,14 +19,21 @@ namespace Intersect.GameObjects
         public VariableDataTypes Type { get; set; } = VariableDataTypes.Boolean;
 
         [NotMapped]
+        [NotNull]
         public VariableValue Value { get; set; } = new VariableValue();
 
-        [Column("Value")]
+        [Column(nameof(Value))]
         [JsonIgnore]
-        public string DBValue
+        public string Json
         {
-            get => Value.JsonValue;
-            private set => Value.JsonValue = value;
+            get => Value.Json.ToString(Formatting.None);
+            private set
+            {
+                if (VariableValue.TryParse(value, out var json))
+                {
+                    Value.Json = json;
+                }
+            }
         }
 
         [JsonConstructor]

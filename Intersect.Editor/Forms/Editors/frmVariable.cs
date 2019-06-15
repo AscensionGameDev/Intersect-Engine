@@ -173,10 +173,10 @@ namespace Intersect.Editor.Forms.Editors
             }
             else if (rdoGlobalVariables.Checked)
             {
-                for (int i = 0; i < ServerVariableBase.Lookup.Count; i++)
+                for (var i = 0; i < ServerVariableBase.Lookup.Count; i++)
                 {
-                    var var = ServerVariableBase.Get(ServerVariableBase.IdFromList(i));
-                    lstObjects.Items.Add(var.Name + "  =  " + var.Value.StringRepresentation(var.Type));
+                    var serverVariable = ServerVariableBase.Get(ServerVariableBase.IdFromList(i));
+                    lstObjects.Items.Add(serverVariable == null ? "null" : $"{serverVariable.Name}  =  {serverVariable.Value}");
                 }
                 lblId.Text = Strings.VariableEditor.textidgv;
             }
@@ -233,13 +233,13 @@ namespace Intersect.Editor.Forms.Editors
                 grpValue.Hide();
                 if (rdoPlayerVariables.Checked)
                 {
-                    var obj = PlayerVariableBase.Get(PlayerVariableBase.IdFromList(lstObjects.SelectedIndex));
-                    lstObjects.Items[lstObjects.SelectedIndex] = obj.Name;
+                    var playerVariable = PlayerVariableBase.Get(PlayerVariableBase.IdFromList(lstObjects.SelectedIndex));
+                    lstObjects.Items[lstObjects.SelectedIndex] = playerVariable?.Name;
                 }
                 else if (rdoGlobalVariables.Checked)
                 {
-                    var obj = ServerVariableBase.Get(ServerVariableBase.IdFromList(lstObjects.SelectedIndex));
-                    lstObjects.Items[lstObjects.SelectedIndex] = obj.Name + "  =  " + obj.Value.StringRepresentation(obj.Type);
+                    var serverVariable = ServerVariableBase.Get(ServerVariableBase.IdFromList(lstObjects.SelectedIndex));
+                    lstObjects.Items[lstObjects.SelectedIndex] = serverVariable == null ? "null" : $"{serverVariable.Name}  =  {serverVariable.Value}";
                 }
             }
         }

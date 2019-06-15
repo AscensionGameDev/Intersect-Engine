@@ -202,7 +202,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Variable index {index} out of bounds ({player.Variables.Count} variables).");
                 }
 
-                return player.Variables[index]?.Value?.Dynamic;
+                return player.Variables[index]?.Value?.Value;
             }
         }
 
@@ -242,7 +242,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
                 if (variable?.Value != null)
                 {
-                    variable.Value.Dynamic = value;
+                    variable.Value.Value = value;
                 }
 
                 return player.Variables[index];
