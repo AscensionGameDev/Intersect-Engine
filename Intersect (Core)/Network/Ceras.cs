@@ -52,17 +52,26 @@ namespace Intersect.Network
 
         public byte[] Serialize(object obj)
         {
-            return mSerializer.Serialize<object>(obj);
+            lock (mSerializer)
+            {
+                return mSerializer.Serialize<object>(obj);
+            }
         }
 
         public object Deserialize(byte[] data)
         {
-            return mSerializer.Deserialize<object>(data);
+            lock (mSerializer)
+            {
+                return mSerializer.Deserialize<object>(data);
+            }
         }
 
         public T Deserialize<T>(byte[] data)
         {
-            return mSerializer.Deserialize<T>(data);
+            lock (mSerializer)
+            {
+                return mSerializer.Deserialize<T>(data);
+            }
         }
 
         public byte[] Compress(object obj)

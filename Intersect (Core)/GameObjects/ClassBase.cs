@@ -184,6 +184,19 @@ namespace Intersect.GameObjects
         [NotMapped]
         public int[] VitalRegen = new int[(int) Vitals.VitalCount];
 
+        [JsonIgnore]
+        [Column("ExperienceOverrides")]
+        public string ExpOverridesJson
+        {
+            get => JsonConvert.SerializeObject(ExperienceOverrides);
+            set
+            {
+                ExperienceOverrides = JsonConvert.DeserializeObject<Dictionary<int, long>>(value ?? "");
+                if (ExperienceOverrides == null) ExperienceOverrides = new Dictionary<int, long>();
+            }
+        }
+        [NotMapped] public Dictionary<int, long> ExperienceOverrides = new Dictionary<int, long>();
+
         [JsonConstructor]
         public ClassBase(Guid id) : base(id)
         {
@@ -208,7 +221,11 @@ namespace Intersect.GameObjects
 
         [Pure]
         public long ExperienceToNextLevel(int level)
-            => ExperienceCurve.Calculate(level);
+        {
+            if (ExperienceOverrides.ContainsKey(level))
+                return ExperienceOverrides[level];
+            return ExperienceCurve.Calculate(level);
+        }
     }
 
     public class ClassItem

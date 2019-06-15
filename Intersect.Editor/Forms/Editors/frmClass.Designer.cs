@@ -30,7 +30,11 @@ namespace Intersect.Editor.Forms.Editors
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmClass));
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.grpClasses = new DarkUI.Controls.DarkGroupBox();
             this.lstClasses = new System.Windows.Forms.ListBox();
             this.grpBaseStats = new DarkUI.Controls.DarkGroupBox();
@@ -110,7 +114,14 @@ namespace Intersect.Editor.Forms.Editors
             this.lblHpRegen = new System.Windows.Forms.Label();
             this.lblManaRegen = new System.Windows.Forms.Label();
             this.lblRegenHint = new System.Windows.Forms.Label();
+            this.grpSprite = new DarkUI.Controls.DarkGroupBox();
+            this.lblFace = new System.Windows.Forms.Label();
+            this.picFace = new System.Windows.Forms.PictureBox();
+            this.lblSpriteOptions = new System.Windows.Forms.Label();
+            this.cmbFace = new DarkUI.Controls.DarkComboBox();
+            this.grpGender = new DarkUI.Controls.DarkGroupBox();
             this.grpLeveling = new DarkUI.Controls.DarkGroupBox();
+            this.btnExpGrid = new DarkUI.Controls.DarkButton();
             this.nudBaseExp = new DarkUI.Controls.DarkNumericUpDown();
             this.nudExpIncrease = new DarkUI.Controls.DarkNumericUpDown();
             this.lblExpIncrease = new System.Windows.Forms.Label();
@@ -134,12 +145,10 @@ namespace Intersect.Editor.Forms.Editors
             this.lblMagicResistIncrease = new System.Windows.Forms.Label();
             this.lblArmorIncrease = new System.Windows.Forms.Label();
             this.lblMagicIncrease = new System.Windows.Forms.Label();
-            this.grpSprite = new DarkUI.Controls.DarkGroupBox();
-            this.lblFace = new System.Windows.Forms.Label();
-            this.picFace = new System.Windows.Forms.PictureBox();
-            this.lblSpriteOptions = new System.Windows.Forms.Label();
-            this.cmbFace = new DarkUI.Controls.DarkComboBox();
-            this.grpGender = new DarkUI.Controls.DarkGroupBox();
+            this.grpExpGrid = new DarkUI.Controls.DarkGroupBox();
+            this.btnResetExpGrid = new DarkUI.Controls.DarkButton();
+            this.btnCloseExpGrid = new DarkUI.Controls.DarkButton();
+            this.expGrid = new System.Windows.Forms.DataGridView();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
             this.toolStrip = new DarkUI.Controls.DarkToolStrip();
@@ -151,6 +160,8 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
+            this.mnuExpGrid = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.btnExpPaste = new System.Windows.Forms.ToolStripMenuItem();
             this.grpClasses.SuspendLayout();
             this.grpBaseStats.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudBaseMana)).BeginInit();
@@ -179,6 +190,9 @@ namespace Intersect.Editor.Forms.Editors
             this.grpRegen.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudMpRegen)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudHPRegen)).BeginInit();
+            this.grpSprite.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picFace)).BeginInit();
+            this.grpGender.SuspendLayout();
             this.grpLeveling.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudBaseExp)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudExpIncrease)).BeginInit();
@@ -191,10 +205,10 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudMagicIncrease)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudArmorIncrease)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudStrengthIncrease)).BeginInit();
-            this.grpSprite.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picFace)).BeginInit();
-            this.grpGender.SuspendLayout();
+            this.grpExpGrid.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.expGrid)).BeginInit();
             this.toolStrip.SuspendLayout();
+            this.mnuExpGrid.SuspendLayout();
             this.SuspendLayout();
             // 
             // grpClasses
@@ -928,12 +942,13 @@ namespace Intersect.Editor.Forms.Editors
             this.pnlContainer.Controls.Add(this.grpSpawnItems);
             this.pnlContainer.Controls.Add(this.grpCombat);
             this.pnlContainer.Controls.Add(this.grpRegen);
-            this.pnlContainer.Controls.Add(this.grpLeveling);
             this.pnlContainer.Controls.Add(this.grpSprite);
             this.pnlContainer.Controls.Add(this.grpSpawnPoint);
             this.pnlContainer.Controls.Add(this.grpGeneral);
             this.pnlContainer.Controls.Add(this.grpSpells);
             this.pnlContainer.Controls.Add(this.grpBaseStats);
+            this.pnlContainer.Controls.Add(this.grpExpGrid);
+            this.pnlContainer.Controls.Add(this.grpLeveling);
             this.pnlContainer.Location = new System.Drawing.Point(147, 36);
             this.pnlContainer.Margin = new System.Windows.Forms.Padding(2);
             this.pnlContainer.Name = "pnlContainer";
@@ -1363,10 +1378,102 @@ namespace Intersect.Editor.Forms.Editors
             this.lblRegenHint.TabIndex = 0;
             this.lblRegenHint.Text = "% of HP/Mana to restore per tick.\r\n\r\nTick timer saved in server config.json.";
             // 
+            // grpSprite
+            // 
+            this.grpSprite.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpSprite.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpSprite.Controls.Add(this.lblFace);
+            this.grpSprite.Controls.Add(this.btnRemove);
+            this.grpSprite.Controls.Add(this.picFace);
+            this.grpSprite.Controls.Add(this.lblSpriteOptions);
+            this.grpSprite.Controls.Add(this.cmbFace);
+            this.grpSprite.Controls.Add(this.btnAdd);
+            this.grpSprite.Controls.Add(this.grpGender);
+            this.grpSprite.Controls.Add(this.lstSprites);
+            this.grpSprite.Controls.Add(this.lblSprite);
+            this.grpSprite.Controls.Add(this.picSprite);
+            this.grpSprite.Controls.Add(this.cmbSprite);
+            this.grpSprite.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpSprite.Location = new System.Drawing.Point(256, 0);
+            this.grpSprite.Name = "grpSprite";
+            this.grpSprite.Size = new System.Drawing.Size(504, 163);
+            this.grpSprite.TabIndex = 28;
+            this.grpSprite.TabStop = false;
+            this.grpSprite.Text = "Sprite and Face";
+            // 
+            // lblFace
+            // 
+            this.lblFace.AutoSize = true;
+            this.lblFace.Location = new System.Drawing.Point(263, 75);
+            this.lblFace.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblFace.Name = "lblFace";
+            this.lblFace.Size = new System.Drawing.Size(34, 13);
+            this.lblFace.TabIndex = 22;
+            this.lblFace.Text = "Face:";
+            // 
+            // picFace
+            // 
+            this.picFace.BackColor = System.Drawing.Color.Black;
+            this.picFace.Location = new System.Drawing.Point(266, 88);
+            this.picFace.Margin = new System.Windows.Forms.Padding(2);
+            this.picFace.Name = "picFace";
+            this.picFace.Size = new System.Drawing.Size(64, 64);
+            this.picFace.TabIndex = 21;
+            this.picFace.TabStop = false;
+            // 
+            // lblSpriteOptions
+            // 
+            this.lblSpriteOptions.AutoSize = true;
+            this.lblSpriteOptions.Location = new System.Drawing.Point(6, 17);
+            this.lblSpriteOptions.Name = "lblSpriteOptions";
+            this.lblSpriteOptions.Size = new System.Drawing.Size(46, 13);
+            this.lblSpriteOptions.TabIndex = 18;
+            this.lblSpriteOptions.Text = "Options:";
+            // 
+            // cmbFace
+            // 
+            this.cmbFace.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbFace.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbFace.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbFace.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbFace.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbFace.ButtonIcon")));
+            this.cmbFace.DrawDropdownHoverOutline = false;
+            this.cmbFace.DrawFocusRectangle = false;
+            this.cmbFace.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbFace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbFace.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbFace.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbFace.FormattingEnabled = true;
+            this.cmbFace.Items.AddRange(new object[] {
+            "None"});
+            this.cmbFace.Location = new System.Drawing.Point(334, 88);
+            this.cmbFace.Margin = new System.Windows.Forms.Padding(2);
+            this.cmbFace.Name = "cmbFace";
+            this.cmbFace.Size = new System.Drawing.Size(83, 21);
+            this.cmbFace.TabIndex = 23;
+            this.cmbFace.Text = "None";
+            this.cmbFace.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbFace.SelectedIndexChanged += new System.EventHandler(this.cmbFace_SelectedIndexChanged);
+            // 
+            // grpGender
+            // 
+            this.grpGender.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpGender.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpGender.Controls.Add(this.rbMale);
+            this.grpGender.Controls.Add(this.rbFemale);
+            this.grpGender.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpGender.Location = new System.Drawing.Point(164, 14);
+            this.grpGender.Name = "grpGender";
+            this.grpGender.Size = new System.Drawing.Size(76, 75);
+            this.grpGender.TabIndex = 20;
+            this.grpGender.TabStop = false;
+            this.grpGender.Text = "Gender";
+            // 
             // grpLeveling
             // 
             this.grpLeveling.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpLeveling.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpLeveling.Controls.Add(this.btnExpGrid);
             this.grpLeveling.Controls.Add(this.nudBaseExp);
             this.grpLeveling.Controls.Add(this.nudExpIncrease);
             this.grpLeveling.Controls.Add(this.lblExpIncrease);
@@ -1381,6 +1488,17 @@ namespace Intersect.Editor.Forms.Editors
             this.grpLeveling.TabIndex = 29;
             this.grpLeveling.TabStop = false;
             this.grpLeveling.Text = "Leveling Up";
+            // 
+            // btnExpGrid
+            // 
+            this.btnExpGrid.Location = new System.Drawing.Point(263, 30);
+            this.btnExpGrid.Margin = new System.Windows.Forms.Padding(2);
+            this.btnExpGrid.Name = "btnExpGrid";
+            this.btnExpGrid.Padding = new System.Windows.Forms.Padding(5);
+            this.btnExpGrid.Size = new System.Drawing.Size(111, 21);
+            this.btnExpGrid.TabIndex = 37;
+            this.btnExpGrid.Text = "Experience Grid";
+            this.btnExpGrid.Click += new System.EventHandler(this.btnExpGrid_Click);
             // 
             // nudBaseExp
             // 
@@ -1732,96 +1850,82 @@ namespace Intersect.Editor.Forms.Editors
             this.lblMagicIncrease.TabIndex = 6;
             this.lblMagicIncrease.Text = "Magic:";
             // 
-            // grpSprite
+            // grpExpGrid
             // 
-            this.grpSprite.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpSprite.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpSprite.Controls.Add(this.lblFace);
-            this.grpSprite.Controls.Add(this.btnRemove);
-            this.grpSprite.Controls.Add(this.picFace);
-            this.grpSprite.Controls.Add(this.lblSpriteOptions);
-            this.grpSprite.Controls.Add(this.cmbFace);
-            this.grpSprite.Controls.Add(this.btnAdd);
-            this.grpSprite.Controls.Add(this.grpGender);
-            this.grpSprite.Controls.Add(this.lstSprites);
-            this.grpSprite.Controls.Add(this.lblSprite);
-            this.grpSprite.Controls.Add(this.picSprite);
-            this.grpSprite.Controls.Add(this.cmbSprite);
-            this.grpSprite.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpSprite.Location = new System.Drawing.Point(256, 0);
-            this.grpSprite.Name = "grpSprite";
-            this.grpSprite.Size = new System.Drawing.Size(504, 163);
-            this.grpSprite.TabIndex = 28;
-            this.grpSprite.TabStop = false;
-            this.grpSprite.Text = "Sprite and Face";
+            this.grpExpGrid.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpExpGrid.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpExpGrid.Controls.Add(this.btnResetExpGrid);
+            this.grpExpGrid.Controls.Add(this.btnCloseExpGrid);
+            this.grpExpGrid.Controls.Add(this.expGrid);
+            this.grpExpGrid.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpExpGrid.Location = new System.Drawing.Point(2, 348);
+            this.grpExpGrid.Margin = new System.Windows.Forms.Padding(2);
+            this.grpExpGrid.Name = "grpExpGrid";
+            this.grpExpGrid.Padding = new System.Windows.Forms.Padding(2);
+            this.grpExpGrid.Size = new System.Drawing.Size(530, 175);
+            this.grpExpGrid.TabIndex = 37;
+            this.grpExpGrid.TabStop = false;
+            this.grpExpGrid.Text = "Experience Overrides";
             // 
-            // lblFace
+            // btnResetExpGrid
             // 
-            this.lblFace.AutoSize = true;
-            this.lblFace.Location = new System.Drawing.Point(263, 75);
-            this.lblFace.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.lblFace.Name = "lblFace";
-            this.lblFace.Size = new System.Drawing.Size(34, 13);
-            this.lblFace.TabIndex = 22;
-            this.lblFace.Text = "Face:";
+            this.btnResetExpGrid.Location = new System.Drawing.Point(7, 148);
+            this.btnResetExpGrid.Margin = new System.Windows.Forms.Padding(2);
+            this.btnResetExpGrid.Name = "btnResetExpGrid";
+            this.btnResetExpGrid.Padding = new System.Windows.Forms.Padding(5);
+            this.btnResetExpGrid.Size = new System.Drawing.Size(83, 21);
+            this.btnResetExpGrid.TabIndex = 39;
+            this.btnResetExpGrid.Text = "Reset Grid";
+            this.btnResetExpGrid.Click += new System.EventHandler(this.btnResetExpGrid_Click);
             // 
-            // picFace
+            // btnCloseExpGrid
             // 
-            this.picFace.BackColor = System.Drawing.Color.Black;
-            this.picFace.Location = new System.Drawing.Point(266, 88);
-            this.picFace.Margin = new System.Windows.Forms.Padding(2);
-            this.picFace.Name = "picFace";
-            this.picFace.Size = new System.Drawing.Size(64, 64);
-            this.picFace.TabIndex = 21;
-            this.picFace.TabStop = false;
+            this.btnCloseExpGrid.Location = new System.Drawing.Point(411, 148);
+            this.btnCloseExpGrid.Margin = new System.Windows.Forms.Padding(2);
+            this.btnCloseExpGrid.Name = "btnCloseExpGrid";
+            this.btnCloseExpGrid.Padding = new System.Windows.Forms.Padding(5);
+            this.btnCloseExpGrid.Size = new System.Drawing.Size(111, 21);
+            this.btnCloseExpGrid.TabIndex = 38;
+            this.btnCloseExpGrid.Text = "Close";
+            this.btnCloseExpGrid.Click += new System.EventHandler(this.btnCloseExpGrid_Click);
             // 
-            // lblSpriteOptions
+            // expGrid
             // 
-            this.lblSpriteOptions.AutoSize = true;
-            this.lblSpriteOptions.Location = new System.Drawing.Point(6, 17);
-            this.lblSpriteOptions.Name = "lblSpriteOptions";
-            this.lblSpriteOptions.Size = new System.Drawing.Size(46, 13);
-            this.lblSpriteOptions.TabIndex = 18;
-            this.lblSpriteOptions.Text = "Options:";
-            // 
-            // cmbFace
-            // 
-            this.cmbFace.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbFace.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbFace.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbFace.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbFace.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbFace.ButtonIcon")));
-            this.cmbFace.DrawDropdownHoverOutline = false;
-            this.cmbFace.DrawFocusRectangle = false;
-            this.cmbFace.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbFace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbFace.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbFace.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbFace.FormattingEnabled = true;
-            this.cmbFace.Items.AddRange(new object[] {
-            "None"});
-            this.cmbFace.Location = new System.Drawing.Point(334, 88);
-            this.cmbFace.Margin = new System.Windows.Forms.Padding(2);
-            this.cmbFace.Name = "cmbFace";
-            this.cmbFace.Size = new System.Drawing.Size(83, 21);
-            this.cmbFace.TabIndex = 23;
-            this.cmbFace.Text = "None";
-            this.cmbFace.TextPadding = new System.Windows.Forms.Padding(2);
-            this.cmbFace.SelectedIndexChanged += new System.EventHandler(this.cmbFace_SelectedIndexChanged);
-            // 
-            // grpGender
-            // 
-            this.grpGender.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpGender.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpGender.Controls.Add(this.rbMale);
-            this.grpGender.Controls.Add(this.rbFemale);
-            this.grpGender.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpGender.Location = new System.Drawing.Point(164, 14);
-            this.grpGender.Name = "grpGender";
-            this.grpGender.Size = new System.Drawing.Size(76, 75);
-            this.grpGender.TabIndex = 20;
-            this.grpGender.TabStop = false;
-            this.grpGender.Text = "Gender";
+            this.expGrid.AllowUserToAddRows = false;
+            this.expGrid.AllowUserToDeleteRows = false;
+            this.expGrid.AllowUserToResizeColumns = false;
+            this.expGrid.AllowUserToResizeRows = false;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(53)))), ((int)(((byte)(55)))));
+            this.expGrid.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            this.expGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.expGrid.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.expGrid.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
+            this.expGrid.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.expGrid.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.Gainsboro;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.expGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            this.expGrid.ColumnHeadersHeight = 24;
+            this.expGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            this.expGrid.EnableHeadersVisualStyles = false;
+            this.expGrid.Location = new System.Drawing.Point(7, 18);
+            this.expGrid.MultiSelect = false;
+            this.expGrid.Name = "expGrid";
+            this.expGrid.RowHeadersVisible = false;
+            dataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.expGrid.RowsDefaultCellStyle = dataGridViewCellStyle3;
+            this.expGrid.Size = new System.Drawing.Size(515, 125);
+            this.expGrid.TabIndex = 0;
+            this.expGrid.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.expGrid_CellEndEdit);
+            this.expGrid.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.expGrid_CellMouseDown);
+            this.expGrid.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.expGrid_EditingControlShowing);
+            this.expGrid.SelectionChanged += new System.EventHandler(this.expGrid_SelectionChanged);
+            this.expGrid.KeyDown += new System.Windows.Forms.KeyEventHandler(this.expGrid_KeyDown);
             // 
             // btnCancel
             // 
@@ -1948,6 +2052,24 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
+            // mnuExpGrid
+            // 
+            this.mnuExpGrid.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.mnuExpGrid.ImageScalingSize = new System.Drawing.Size(24, 24);
+            this.mnuExpGrid.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnExpPaste});
+            this.mnuExpGrid.Name = "commandMenu";
+            this.mnuExpGrid.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.mnuExpGrid.Size = new System.Drawing.Size(103, 26);
+            // 
+            // btnExpPaste
+            // 
+            this.btnExpPaste.ForeColor = System.Drawing.Color.Gainsboro;
+            this.btnExpPaste.Name = "btnExpPaste";
+            this.btnExpPaste.Size = new System.Drawing.Size(102, 22);
+            this.btnExpPaste.Text = "Paste";
+            this.btnExpPaste.Click += new System.EventHandler(this.btnPaste_Click);
+            // 
             // FrmClass
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2006,6 +2128,11 @@ namespace Intersect.Editor.Forms.Editors
             this.grpRegen.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudMpRegen)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudHPRegen)).EndInit();
+            this.grpSprite.ResumeLayout(false);
+            this.grpSprite.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picFace)).EndInit();
+            this.grpGender.ResumeLayout(false);
+            this.grpGender.PerformLayout();
             this.grpLeveling.ResumeLayout(false);
             this.grpLeveling.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudBaseExp)).EndInit();
@@ -2020,13 +2147,11 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudMagicIncrease)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudArmorIncrease)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudStrengthIncrease)).EndInit();
-            this.grpSprite.ResumeLayout(false);
-            this.grpSprite.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picFace)).EndInit();
-            this.grpGender.ResumeLayout(false);
-            this.grpGender.PerformLayout();
+            this.grpExpGrid.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.expGrid)).EndInit();
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
+            this.mnuExpGrid.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -2153,5 +2278,12 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.Label lblSpawnItem;
         private DarkNumericUpDown nudCritMultiplier;
         private System.Windows.Forms.Label lblCritMultiplier;
+        private DarkButton btnExpGrid;
+        private DarkGroupBox grpExpGrid;
+        private DarkButton btnResetExpGrid;
+        private DarkButton btnCloseExpGrid;
+        private System.Windows.Forms.DataGridView expGrid;
+        private System.Windows.Forms.ContextMenuStrip mnuExpGrid;
+        private System.Windows.Forms.ToolStripMenuItem btnExpPaste;
     }
 }

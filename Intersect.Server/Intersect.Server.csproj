@@ -553,6 +553,10 @@
     <Compile Include="Migrations\Game\20190611170819_CombiningSwitchesVariables.designer.cs">
       <DependentUpon>20190611170819_CombiningSwitchesVariables.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\Game\20190615010038_AddingExpOveridesToClasses.cs" />
+    <Compile Include="Migrations\Game\20190615010038_AddingExpOveridesToClasses.designer.cs">
+      <DependentUpon>20190615010038_AddingExpOveridesToClasses.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />
     <Compile Include="Web\RestApi\Attributes\DebugAuthorizeAttribute.cs" />
     <Compile Include="Web\RestApi\Attributes\ConfigurableAuthorizeAttribute.cs" />
