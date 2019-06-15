@@ -6,6 +6,7 @@ using System.Linq;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.General;
 using Intersect.Server.Networking;
+using Intersect.Server.Web.RestApi.Types;
 
 using JetBrains.Annotations;
 
@@ -32,14 +33,16 @@ namespace Intersect.Server.Entities
 
         #region Lookup
 
-        public static Player Find(Guid playerId, [CanBeNull] PlayerContext playerContext = null)
+        public static Tuple<Client, Player> Fetch(LookupKey lookupKey, [CanBeNull] PlayerContext playerContext = null)
         {
-            return QueryPlayerById(playerContext ?? PlayerContext.Current, playerId);
-        }
+            if (!lookupKey.HasName && !lookupKey.HasId)
+            {
+                return new Tuple<Client, Player>(null, null);
+            }
 
-        public static Player Find([NotNull] string playerName, [CanBeNull] PlayerContext playerContext = null)
-        {
-            return QueryPlayerByName(playerContext ?? PlayerContext.Current, playerName);
+            // HasName checks if null or empty
+            // ReSharper disable once AssignNullToNotNullAttribute
+            return lookupKey.HasId ? Fetch(lookupKey.Id, playerContext) : Fetch(lookupKey.Name, playerContext);
         }
 
         public static Tuple<Client, Player> Fetch([NotNull] string playerName, [CanBeNull] PlayerContext playerContext = null)
@@ -56,6 +59,16 @@ namespace Intersect.Server.Entities
             var client = Globals.Clients.Find(queryClient => playerId == queryClient?.Entity?.Id);
 
             return new Tuple<Client, Player>(client, client?.Entity ?? Player.Find(playerId, playerContext));
+        }
+
+        public static Player Find(Guid playerId, [CanBeNull] PlayerContext playerContext = null)
+        {
+            return QueryPlayerById(playerContext ?? PlayerContext.Current, playerId);
+        }
+
+        public static Player Find([NotNull] string playerName, [CanBeNull] PlayerContext playerContext = null)
+        {
+            return QueryPlayerByName(playerContext ?? PlayerContext.Current, playerName);
         }
 
         #endregion

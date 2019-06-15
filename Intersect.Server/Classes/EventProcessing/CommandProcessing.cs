@@ -849,7 +849,10 @@ namespace Intersect.Server.EventProcessing
                 value = ServerVariableBase.Get(command.VariableId)?.Value;
             }
 
-            if (value == null) value = new VariableValue();
+            if (value == null)
+            {
+                value = new VariableValue();
+            }
 
             if (mod.DupVariableId != Guid.Empty)
             {

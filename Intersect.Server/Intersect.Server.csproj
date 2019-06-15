@@ -608,6 +608,7 @@
     <Compile Include="Classes\Database\PlayerData\SeedData\SeedUsers.cs" />
     <Compile Include="Classes\Database\SeedData.cs" />
     <Compile Include="Classes\Database\ISeedableContext.cs" />
+    <Compile Include="Web\RestApi\Types\LookupKey.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="private-intersect.bek" />

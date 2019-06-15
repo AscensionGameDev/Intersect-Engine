@@ -3643,10 +3643,21 @@ namespace Intersect.Server.Entities
             }
             return null;
         }
+
+        private Variable CreateVariable(Guid id)
+        {
+            var variable = new Variable(id);
+            Variables.Add(variable);
+            return variable;
+        }
+
         public VariableValue GetVariableValue(Guid id)
         {
             var v = GetVariable(id);
-            if (v == null) return new VariableValue();
+            if (v == null)
+            {
+                v = CreateVariable(id);
+            }
             return v.Value;
         }
         public void SetVariableValue(Guid id, long value)

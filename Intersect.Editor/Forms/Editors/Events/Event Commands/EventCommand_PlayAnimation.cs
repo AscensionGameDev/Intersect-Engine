@@ -190,8 +190,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     {
                         mMyCommand.EntityId = mCurrentMap.LocalEvents.Keys.ToList()[cmbEntities.SelectedIndex - 1];
                     }
-                    mMyCommand.X = (sbyte)mSpawnX;
-                    mMyCommand.Y = (sbyte)mSpawnY;
+                    mMyCommand.X = (sbyte) mSpawnX;
+                    mMyCommand.Y = (sbyte) mSpawnY;
                     if (chkRelativeLocation.Checked && chkRotateDirection.Checked)
                     {
                         mMyCommand.Dir = 3;

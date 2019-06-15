@@ -17,10 +17,13 @@ using System.Web.Http.Routing;
 
 using Intersect.Config;
 using Intersect.Configuration;
+using Intersect.Enums;
 using Intersect.Logging;
 using Intersect.Server.Localization;
 using Intersect.Server.Web.RestApi.Constraints;
 using Intersect.Server.Web.RestApi.Logging;
+using Intersect.Server.Web.RestApi.Routes.V1;
+using Intersect.Server.Web.RestApi.Types;
 
 using Microsoft.Owin.Logging;
 
@@ -88,7 +91,8 @@ namespace Intersect.Server.Web.RestApi
             AuthenticationProvider.Configure(appBuilder);
 
             var constraintResolver = new DefaultInlineConstraintResolver();
-            constraintResolver.ConstraintMap?.Add("AdminActions", typeof(AdminActionsConstraint));
+            constraintResolver.ConstraintMap?.Add(nameof(AdminActions), typeof(AdminActionsConstraint));
+            constraintResolver.ConstraintMap?.Add(nameof(LookupKey), typeof(LookupKey.Constraint));
 
             // Map routes
             config.MapHttpAttributeRoutes(constraintResolver, new VersionedRouteProvider());
