@@ -19,8 +19,13 @@ namespace Intersect.GameObjects
         public VariableDataTypes Type { get; set; } = VariableDataTypes.Boolean;
 
         [NotMapped]
+        [JsonIgnore]
         [NotNull]
         public VariableValue Value { get; set; } = new VariableValue();
+
+        [NotMapped]
+        [JsonProperty("Value")]
+        public dynamic ValueData => Value.Value;
 
         [Column(nameof(Value))]
         [JsonIgnore]
