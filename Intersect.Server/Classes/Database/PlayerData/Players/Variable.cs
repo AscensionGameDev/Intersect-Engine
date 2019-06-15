@@ -24,8 +24,13 @@ namespace Intersect.Server.Database.PlayerData.Players
         public Guid VariableId { get; protected set; }
 
         [NotMapped]
+        [JsonIgnore]
         [NotNull]
         public VariableValue Value { get; set; } = new VariableValue();
+
+        [NotMapped]
+        [JsonProperty("Value")]
+        public dynamic ValueData => Value.Value;
 
         [Column(nameof(Value))]
         [JsonIgnore]
