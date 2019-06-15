@@ -108,7 +108,33 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             return Request.CreateErrorResponse(HttpStatusCode.NotFound, lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'.");
         }
 
-        [Route("{lookupKey:LookupKey}/variable/{index:int}")]
+        [Route("{lookupKey:LookupKey}/variables")]
+        [HttpGet]
+        public object PlayerVariableGet(LookupKey lookupKey)
+        {
+            if (lookupKey.IsInvalid)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
+            }
+
+            using (var context = PlayerContext.Temporary)
+            {
+                var (client, player) = Player.Fetch(lookupKey, context);
+                if (player == null)
+                {
+                    return Request.CreateErrorResponse(
+                        HttpStatusCode.NotFound,
+                        lookupKey.HasId
+                            ? $@"No player with id '{lookupKey.Id}'."
+                            : $@"No player with name '{lookupKey.Name}'."
+                    );
+                }
+
+                return player.Variables;
+            }
+        }
+
+        [Route("{lookupKey:LookupKey}/variables/{index:int}")]
         [HttpGet]
         public object PlayerVariableGet(LookupKey lookupKey, int index)
         {
@@ -137,16 +163,52 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
                 if (index >= player.Variables.Count)
                 {
-                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Variable index ${index} out of bounds (${player.Variables.Count} variables).");
+                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Variable index {index} out of bounds ({player.Variables.Count} variables).");
                 }
 
                 return player.Variables[index];
             }
         }
 
+        [Route("{lookupKey:LookupKey}/variables/{index:int}/value")]
+        [HttpGet]
+        public object PlayerVariableGetValue(LookupKey lookupKey, int index)
+        {
+            if (lookupKey.IsInvalid)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
+            }
+
+            if (index < 0)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid variable index ${index}.");
+            }
+
+            using (var context = PlayerContext.Temporary)
+            {
+                var (client, player) = Player.Fetch(lookupKey, context);
+                if (player == null)
+                {
+                    return Request.CreateErrorResponse(
+                        HttpStatusCode.NotFound,
+                        lookupKey.HasId
+                            ? $@"No player with id '{lookupKey.Id}'."
+                            : $@"No player with name '{lookupKey.Name}'."
+                    );
+                }
+
+                if (index >= player.Variables.Count)
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Variable index {index} out of bounds ({player.Variables.Count} variables).");
+                }
+
+                return player.Variables[index]?.Value?.Dynamic;
+            }
+        }
+
         [Route("{lookupKey:LookupKey}/variable/{index:int}")]
         [HttpPost]
-        public object PlayerVariableSet(LookupKey lookupKey, int index, [FromBody] VariableValue variableValue)
+        public object PlayerVariableSet(LookupKey lookupKey, int index, [FromBody] dynamic value)
         {
             if (lookupKey.IsInvalid)
             {
@@ -174,6 +236,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 if (index >= player.Variables.Count)
                 {
                     return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Variable index ${index} out of bounds (${player.Variables.Count} variables).");
+                }
+
+                var variable = player.Variables[index];
+
+                if (variable?.Value != null)
+                {
+                    variable.Value.Dynamic = value;
                 }
 
                 return player.Variables[index];

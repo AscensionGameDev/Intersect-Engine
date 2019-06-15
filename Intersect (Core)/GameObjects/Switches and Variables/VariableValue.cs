@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,12 +17,13 @@ namespace Intersect.GameObjects.Switches_and_Variables
     public class VariableValue
     {
         public VariableDataTypes Type { get; set; }
+
+        [JsonIgnore]
         public string JsonValue
         {
             get
             {
-                var obj = new JObject();
-                obj.Add("Type", (byte)Type);
+                var obj = new JObject {{"Type", (byte) Type}};
                 switch (Type)
                 {
                     case VariableDataTypes.Integer:
@@ -143,6 +145,57 @@ namespace Intersect.GameObjects.Switches_and_Variables
             }
 
             return "No Representation";
+        }
+
+        [NotMapped]
+        [JsonProperty("Value")]
+        public dynamic Dynamic
+        {
+            get
+            {
+                switch (Type)
+                {
+                    case VariableDataTypes.Boolean:
+                        return Boolean;
+
+                    case VariableDataTypes.Integer:
+                        return Integer;
+
+                    case VariableDataTypes.Number:
+                        return Number;
+
+                    case VariableDataTypes.String:
+                        return String;
+
+                    default:
+                        return null;
+                }
+            }
+
+            set
+            {
+                switch (Type)
+                {
+                    case VariableDataTypes.Boolean:
+                        Boolean = value;
+                        break;
+
+                    case VariableDataTypes.Integer:
+                        Integer = value;
+                        break;
+
+                    case VariableDataTypes.Number:
+                        Number = value;
+                        break;
+
+                    case VariableDataTypes.String:
+                        String = value;
+                        break;
+
+                    default:
+                        break;
+                }
+            }
         }
 
         public override string ToString() => StringRepresentation(Type);
