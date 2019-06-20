@@ -350,7 +350,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     if (client?.Entity != null)
                     {
                         var mapId = actionParameters.MapId == Guid.Empty ? client.Entity.MapId : actionParameters.MapId;
-                        client.Entity.Warp(mapId, client.Entity.X, client.Entity.Y);
+                        client.Entity.Warp(mapId, (byte)client.Entity.X, (byte)client.Entity.Y);
                         return Request.CreateMessageResponse(HttpStatusCode.OK, $@"Warped '{player.Name}' to {mapId} ({client.Entity.X}, {client.Entity.Y}).");
                     }
                     break;

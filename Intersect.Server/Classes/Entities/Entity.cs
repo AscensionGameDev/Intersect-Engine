@@ -34,10 +34,10 @@ namespace Intersect.Server.Entities
         [NotMapped]
         public MapInstance Map => MapInstance.Get(MapId);
 
-        public byte X { get; set; }
-        public byte Y { get; set; }
-        public byte Z { get; set; }
-        public byte Dir { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
+        public int Z { get; set; }
+        public int Dir { get; set; }
         public string Sprite { get; set; }
         public string Face { get; set; }
         public int Level { get; set; }
@@ -388,7 +388,7 @@ namespace Intersect.Server.Entities
                     case MoveRouteEnum.StepForward:
                         if (CanMove(Dir) > -1)
                         {
-                            Move(Dir, client);
+                            Move((byte)Dir, client);
                             moved = true;
                         }
                         break;
@@ -646,7 +646,7 @@ namespace Intersect.Server.Entities
                     }
                     if (TryToChangeDimension() && dontUpdate == true)
                     {
-                        PacketSender.UpdateEntityZDimension(this, Z);
+                        PacketSender.UpdateEntityZDimension(this, (byte)Z);
                     }
                     var attribute = MapInstance.Get(MapId).Attributes[X, Y];
                     if (this.GetType() != typeof(EventPageInstance))
@@ -658,7 +658,7 @@ namespace Intersect.Server.Entities
                             {
                                 Dir = (byte)(((MapSlideAttribute)attribute).Direction - 1);
                             } //If sets direction, set it.
-                            var dash = new DashInstance(this, 1, Dir);
+                            var dash = new DashInstance(this, 1, (byte)Dir);
                         }
                     }
                 }
@@ -1366,7 +1366,7 @@ namespace Intersect.Server.Entities
                 {
                     foreach (var anim in deadAnimations)
                     {
-                        PacketSender.SendAnimationToProximity(anim.Key, -1, Guid.Empty, enemy.MapId, enemy.X, enemy.Y, anim.Value);
+                        PacketSender.SendAnimationToProximity(anim.Key, -1, Guid.Empty, enemy.MapId, (byte)enemy.X, (byte)enemy.Y, anim.Value);
                     }
                 }
             }
@@ -1459,7 +1459,7 @@ namespace Intersect.Server.Entities
                                 var projectileBase = spellBase.Combat.Projectile;
                                 if (projectileBase != null)
                                 {
-                                    MapInstance.Get(MapId).SpawnMapProjectile(this, projectileBase, spellBase, null, MapId, X, Y, Z, Dir, CastTarget);
+                                    MapInstance.Get(MapId).SpawnMapProjectile(this, projectileBase, spellBase, null, MapId, (byte)X, (byte)Y, (byte)Z, (byte)Dir, CastTarget);
                                 }
                                 break;
                             case SpellTargetTypes.OnHit:
@@ -1477,7 +1477,7 @@ namespace Intersect.Server.Entities
                     case SpellTypes.Warp:
                         if (GetType() == typeof(Player))
                         {
-                            Warp(spellBase.Warp.MapId, spellBase.Warp.X, spellBase.Warp.Y, spellBase.Warp.Dir);
+                            Warp(spellBase.Warp.MapId, (byte)spellBase.Warp.X, (byte)spellBase.Warp.Y, (byte)spellBase.Warp.Dir);
                         }
                         break;
                     case SpellTypes.WarpTo:
@@ -1485,7 +1485,7 @@ namespace Intersect.Server.Entities
                         break;
                     case SpellTypes.Dash:
                         PacketSender.SendActionMsg(this, Strings.Combat.dash, CustomColors.Dash);
-                        var dash = new DashInstance(this, spellBase.Combat.CastRange, Dir, Convert.ToBoolean(spellBase.Dash.IgnoreMapBlocks),
+                        var dash = new DashInstance(this, spellBase.Combat.CastRange, (byte)Dir, Convert.ToBoolean(spellBase.Dash.IgnoreMapBlocks),
                             Convert.ToBoolean(spellBase.Dash.IgnoreActiveResources), Convert.ToBoolean(spellBase.Dash.IgnoreInactiveResources), Convert.ToBoolean(spellBase.Dash.IgnoreZDimensionAttributes));
                         break;
                     default:
@@ -1563,8 +1563,7 @@ namespace Intersect.Server.Entities
                                         {
                                             if (spellTarget != null)
                                             {
-                                                Warp(spellTarget.MapId, spellTarget.X, spellTarget.Y,
-                                                    Dir); //Spelltarget used to be Target. I don't know if this is correct or not.
+                                                Warp(spellTarget.MapId, (byte)spellTarget.X, (byte)spellTarget.Y, (byte)Dir); //Spelltarget used to be Target. I don't know if this is correct or not.
                                             }
                                         }
 
@@ -1787,7 +1786,7 @@ namespace Intersect.Server.Entities
         //Empty virtual functions for players
         public virtual void Warp(Guid newMapId, byte newX, byte newY, bool adminWarp = false)
         {
-            Warp(newMapId, newX, newY, Dir, adminWarp);
+            Warp(newMapId, newX, newY, (byte)Dir, adminWarp);
         }
 
         public virtual void Warp(Guid newMapId, byte newX, byte newY, byte newDir, bool adminWarp = false, byte zOverride = 0, bool mapSave = false)
@@ -1804,10 +1803,10 @@ namespace Intersect.Server.Entities
             packet.Sprite = Sprite;
             packet.Face = Face;
             packet.Level = Level;
-            packet.X = X;
-            packet.Y = Y;
-            packet.Z = Z;
-            packet.Dir = Dir;
+            packet.X = (byte)X;
+            packet.Y = (byte)Y;
+            packet.Z = (byte)Z;
+            packet.Dir = (byte)Dir;
             packet.Passable = Passable;
             packet.HideName = HideName;
             packet.HideEntity = HideEntity;
@@ -1833,7 +1832,7 @@ namespace Intersect.Server.Entities
                     vitalShields = new int[(int)Vitals.VitalCount];
                     for (var x = 0; x < (int)Vitals.VitalCount; x++)
                     {
-                        vitalShields[x] = status.shield[i];
+                        vitalShields[x] = status.shield[x];
                     }
                 }
 
@@ -2105,7 +2104,7 @@ namespace Intersect.Server.Entities
         {
             DistanceTraveled = 0;
             Direction = direction;
-            Facing = en.Dir;
+            Facing = (byte)en.Dir;
 
             CalculateRange(en, range, blockPass, activeResourcePass, deadResourcePass, zdimensionPass);
             if (Range <= 0)
@@ -2113,7 +2112,7 @@ namespace Intersect.Server.Entities
                 return;
             } //Remove dash instance if no where to dash
             TransmittionTimer = Globals.Timing.TimeMs + (long)((float)Options.MaxDashSpeed / (float)Range);
-            PacketSender.SendEntityDash(en, en.MapId, en.X, en.Y, (int)(Options.MaxDashSpeed * (Range / 10f)), Direction == Facing ? (sbyte)Direction : (sbyte)-1);
+            PacketSender.SendEntityDash(en, en.MapId, (byte)en.X, (byte)en.Y, (int)(Options.MaxDashSpeed * (Range / 10f)), Direction == Facing ? (sbyte)Direction : (sbyte)-1);
             en.MoveTimer = Globals.Timing.TimeMs + Options.MaxDashSpeed;
         }
 

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Intersect.GameObjects
 {
-    public class ItemBase : DatabaseObject<ItemBase>
+    public class ItemBase : DatabaseObject<ItemBase>, IFolderable
     {
         [Column("Animation")]
         public Guid AnimationId { get; set; }
@@ -141,6 +141,9 @@ namespace Intersect.GameObjects
         }
         [NotMapped]
         public ConditionLists UsageRequirements = new ConditionLists();
+
+        /// <inheritdoc />
+        public string Folder { get; set; } = "";
 
         public ItemBase() => Initialize();
 

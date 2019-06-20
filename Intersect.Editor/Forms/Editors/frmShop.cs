@@ -17,6 +17,9 @@ namespace Intersect.Editor.Forms.Editors
         private string mCopiedItem;
         private ShopBase mEditorItem;
 
+        private List<string> mKnownFolders = new List<string>();
+        private List<string> mExpandedFolders = new List<string>();
+
         public FrmShop()
         {
             ApplyHooks();
@@ -63,21 +66,6 @@ namespace Intersect.Editor.Forms.Editors
             Hide();
             Globals.CurrentEditor = -1;
             Dispose();
-        }
-
-        private void lstShops_Click(object sender, EventArgs e)
-        {
-            if (mChangingName) return;
-            mEditorItem =
-                ShopBase.Get(
-                    ShopBase.IdFromList(lstShops.SelectedIndex));
-            UpdateEditor();
-        }
-
-        public void InitEditor()
-        {
-            lstShops.Items.Clear();
-            lstShops.Items.AddRange(ShopBase.Names);
         }
 
         private void frmShop_Load(object sender, EventArgs e)
@@ -129,6 +117,11 @@ namespace Intersect.Editor.Forms.Editors
             btnAddBoughtItem.Text = Strings.ShopEditor.addboughtitem;
             btnDelBoughtItem.Text = Strings.ShopEditor.removeboughtitem;
 
+            //Searching/Sorting
+            btnChronological.ToolTipText = Strings.ShopEditor.sortchronologically;
+            txtSearch.Text = Strings.ShopEditor.searchplaceholder;
+            lblFolder.Text = Strings.ShopEditor.folderlabel;
+
             btnSave.Text = Strings.ShopEditor.save;
             btnCancel.Text = Strings.ShopEditor.cancel;
         }
@@ -140,6 +133,7 @@ namespace Intersect.Editor.Forms.Editors
                 pnlContainer.Show();
 
                 txtName.Text = mEditorItem.Name;
+                cmbFolder.Text = mEditorItem.Folder;
                 cmbDefaultCurrency.SelectedIndex = ItemBase.ListIndex(mEditorItem.DefaultCurrencyId);
                 if (mEditorItem.BuyingWhitelist)
                 {
@@ -198,7 +192,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             mChangingName = true;
             mEditorItem.Name = txtName.Text;
-            lstShops.Items[ShopBase.ListIndex(mEditorItem.Id)] = txtName.Text;
+            if (lstShops.SelectedNode != null && lstShops.SelectedNode.Tag != null) lstShops.SelectedNode.Text = txtName.Text;
             mChangingName = false;
         }
 
@@ -384,5 +378,197 @@ namespace Intersect.Editor.Forms.Editors
                 }
             }
         }
+
+        #region "Item List - Folders, Searching, Sorting, Etc"
+        public void InitEditor()
+        {
+            var selectedId = Guid.Empty;
+            var folderNodes = new Dictionary<string, TreeNode>();
+            if (lstShops.SelectedNode != null && lstShops.SelectedNode.Tag != null)
+            {
+                selectedId = (Guid)lstShops.SelectedNode.Tag;
+            }
+            lstShops.Nodes.Clear();
+
+            //Collect folders
+            var mFolders = new List<string>();
+            foreach (var itm in ShopBase.Lookup)
+            {
+                if (!string.IsNullOrEmpty(((ShopBase)itm.Value).Folder) && !mFolders.Contains(((ShopBase)itm.Value).Folder))
+                {
+                    mFolders.Add(((ShopBase)itm.Value).Folder);
+                    if (!mKnownFolders.Contains(((ShopBase)itm.Value).Folder))
+                        mKnownFolders.Add(((ShopBase)itm.Value).Folder);
+                }
+            }
+
+            mFolders.Sort();
+            mKnownFolders.Sort();
+            cmbFolder.Items.Clear();
+            cmbFolder.Items.Add("");
+            cmbFolder.Items.AddRange(mKnownFolders.ToArray());
+
+            lstShops.Sorted = !btnChronological.Checked;
+
+            if (!btnChronological.Checked && !CustomSearch())
+            {
+                foreach (var folder in mFolders)
+                {
+                    var node = lstShops.Nodes.Add(folder);
+                    node.ImageIndex = 0;
+                    node.SelectedImageIndex = 0;
+                    folderNodes.Add(folder, node);
+                }
+            }
+
+            foreach (var itm in ShopBase.ItemPairs)
+            {
+                var node = new TreeNode(itm.Value);
+                node.Tag = itm.Key;
+                node.ImageIndex = 1;
+                node.SelectedImageIndex = 1;
+
+                var folder = ShopBase.Get(itm.Key).Folder;
+                if (!string.IsNullOrEmpty(folder) && !btnChronological.Checked && !CustomSearch())
+                {
+                    var folderNode = folderNodes[folder];
+                    folderNode.Nodes.Add(node);
+                    if (itm.Key == selectedId)
+                        folderNode.Expand();
+                }
+                else
+                {
+                    lstShops.Nodes.Add(node);
+                }
+
+                if (CustomSearch())
+                {
+                    if (!node.Text.ToLower().Contains(txtSearch.Text.ToLower()))
+                    {
+                        node.Remove();
+                    }
+                }
+
+                if (itm.Key == selectedId)
+                    lstShops.SelectedNode = node;
+            }
+
+            var selectedNode = lstShops.SelectedNode;
+
+            if (!btnChronological.Checked) lstShops.Sort();
+
+            lstShops.SelectedNode = selectedNode;
+            foreach (var node in mExpandedFolders)
+            {
+                if (folderNodes.ContainsKey(node))
+                    folderNodes[node].Expand();
+            }
+
+        }
+
+        private void btnAddFolder_Click(object sender, EventArgs e)
+        {
+            var folderName = "";
+            var result = DarkInputBox.ShowInformation(Strings.ShopEditor.folderprompt, Strings.ShopEditor.foldertitle, ref folderName, DarkDialogButton.OkCancel);
+            if (result == DialogResult.OK && !string.IsNullOrEmpty(folderName))
+            {
+                if (!cmbFolder.Items.Contains(folderName))
+                {
+                    mEditorItem.Folder = folderName;
+                    mExpandedFolders.Add(folderName);
+                    InitEditor();
+                    cmbFolder.Text = folderName;
+                }
+            }
+        }
+
+        private void lstShops_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            var node = e.Node;
+            if (node != null)
+            {
+                var hitTest = lstShops.HitTest(e.Location);
+                if (hitTest.Location != TreeViewHitTestLocations.PlusMinus)
+                {
+                    if (node.Nodes.Count > 0)
+                    {
+                        if (node.IsExpanded)
+                        {
+                            node.Collapse();
+                        }
+                        else
+                        {
+                            node.Expand();
+                        }
+                    }
+                }
+
+                if (node.IsExpanded)
+                {
+                    if (!mExpandedFolders.Contains(node.Text)) mExpandedFolders.Add(node.Text);
+                }
+                else
+                {
+                    if (mExpandedFolders.Contains(node.Text)) mExpandedFolders.Remove(node.Text);
+                }
+            }
+        }
+
+        private void lstShops_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            if (mChangingName) return;
+            if (lstShops.SelectedNode == null || lstShops.SelectedNode.Tag == null) return;
+            mEditorItem = ShopBase.Get((Guid)lstShops.SelectedNode.Tag);
+            UpdateEditor();
+        }
+
+        private void cmbFolder_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Folder = cmbFolder.Text;
+            InitEditor();
+        }
+
+        private void btnChronological_Click(object sender, EventArgs e)
+        {
+            btnChronological.Checked = !btnChronological.Checked;
+            InitEditor();
+        }
+
+        private void txtSearch_TextChanged(object sender, EventArgs e)
+        {
+            InitEditor();
+        }
+
+        private void txtSearch_Leave(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtSearch.Text))
+            {
+                txtSearch.Text = Strings.ShopEditor.searchplaceholder;
+            }
+        }
+
+        private void txtSearch_Enter(object sender, EventArgs e)
+        {
+            txtSearch.SelectAll();
+            txtSearch.Focus();
+        }
+
+        private void btnClearSearch_Click(object sender, EventArgs e)
+        {
+            txtSearch.Text = Strings.ShopEditor.searchplaceholder;
+        }
+
+        private bool CustomSearch()
+        {
+            return !string.IsNullOrWhiteSpace(txtSearch.Text) && txtSearch.Text != Strings.ShopEditor.searchplaceholder;
+        }
+
+        private void txtSearch_Click(object sender, EventArgs e)
+        {
+            if (txtSearch.Text == Strings.ShopEditor.searchplaceholder)
+                txtSearch.SelectAll();
+        }
+
+        #endregion
     }
 }

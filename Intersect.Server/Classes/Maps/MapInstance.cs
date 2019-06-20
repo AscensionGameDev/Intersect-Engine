@@ -663,6 +663,11 @@ namespace Intersect.Server.Maps
                 {
                     //TileData = null;
                 }
+                //Process all of the projectiles
+                for (int i = 0; i < MapProjectiles.Count; i++)
+                {
+                    MapProjectiles[i].Update();
+                }
                 if (!Active || CheckActive() == false || LastUpdateTime + UpdateDelay > timeMs)
                 {
                     return;
@@ -746,11 +751,6 @@ namespace Intersect.Server.Maps
                                 }
                             }
                         }
-                    }
-                    //Process all of the projectiles
-                    for (int i = 0; i < MapProjectiles.Count; i++)
-                    {
-                        MapProjectiles[i].Update();
                     }
                     //Process all global events
                     var evts = GlobalEventInstances.Values.ToList();

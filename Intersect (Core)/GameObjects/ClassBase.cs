@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-    public class ClassBase : DatabaseObject<ClassBase>
+    public class ClassBase : DatabaseObject<ClassBase>, IFolderable
     {
         public const long DEFAULT_BASE_EXPERIENCE = 100;
         public const long DEFAULT_EXPERIENCE_INCREASE = 50;
@@ -91,9 +91,9 @@ namespace Intersect.GameObjects
             set => SpawnMapId = value?.Id ?? Guid.Empty;
         }
 
-        public byte SpawnX { get; set; }
-        public byte SpawnY { get; set; }
-        public byte SpawnDir { get; set; }
+        public int SpawnX { get; set; }
+        public int SpawnY { get; set; }
+        public int SpawnDir { get; set; }
 
         //Base Stats
         [Column("BaseStats")]
@@ -196,6 +196,9 @@ namespace Intersect.GameObjects
             }
         }
         [NotMapped] public Dictionary<int, long> ExperienceOverrides = new Dictionary<int, long>();
+
+        /// <inheritdoc />
+        public string Folder { get; set; } = "";
 
         [JsonConstructor]
         public ClassBase(Guid id) : base(id)

@@ -47,13 +47,16 @@ namespace Intersect.GameObjects
         public LightBase[] Lights { get; set; }
     }
 
-    public class AnimationBase : DatabaseObject<AnimationBase>
+    public class AnimationBase : DatabaseObject<AnimationBase>, IFolderable
     {
         public AnimationLayer Lower { get; set; }
         public AnimationLayer Upper { get; set; }
 
         //Misc
         public string Sound { get; set; }
+
+        /// <inheritdoc />
+        public string Folder { get; set; } = "";
 
         [JsonConstructor]
         public AnimationBase(Guid id) : base(id)

@@ -256,6 +256,7 @@
     <Compile Include="GameObjects\Events\Condition.cs" />
     <Compile Include="GameObjects\Events\EventMovement.cs" />
     <Compile Include="Localization\LocalizedString.cs" />
+    <Compile Include="Models\IFolderable.cs" />
     <Compile Include="Network\Ceras.cs" />
     <Compile Include="Network\ConnectionPacket.cs" />
     <Compile Include="Network\PacketDispatcher.cs" />
@@ -347,6 +348,7 @@
     <Compile Include="Network\Packets\Server\CharactersPacket.cs" />
     <Compile Include="Network\Packets\Server\ChatBubblePacket.cs" />
     <Compile Include="Network\Packets\Server\CraftingTablePacket.cs" />
+    <Compile Include="Network\Packets\Server\EnteringGamePacket.cs" />
     <Compile Include="Network\Packets\Server\EnterMapPacket.cs" />
     <Compile Include="Network\Packets\Server\EntityZDimensionPacket.cs" />
     <Compile Include="Network\Packets\Server\EventEntityPacket.cs" />

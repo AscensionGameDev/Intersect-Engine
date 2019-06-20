@@ -468,8 +468,8 @@ namespace Intersect.Server.Networking
                         MapInstance.Get(client.Entity.MapId)
                             .SpawnMapProjectile(client.Entity, projectileBase, null, weaponItem,
                                 client.Entity.MapId,
-                                client.Entity.X, client.Entity.Y, client.Entity.Z,
-                                client.Entity.Dir, null);
+                                (byte)client.Entity.X, (byte)client.Entity.Y, (byte)client.Entity.Z,
+                                (byte)client.Entity.Dir, null);
                         return;
                     }
 #if INTERSECT_DIAGNOSTIC
@@ -1141,7 +1141,7 @@ namespace Intersect.Server.Networking
             {
                 client.LoadCharacter(character);
                 sw.Stop();
-                Console.WriteLine("Took " + sw.ElapsedMilliseconds + "ms to load character from db!");
+                Log.Debug("Took " + sw.ElapsedMilliseconds + "ms to load character from db!");
                 try
                 {
                     client.Entity?.SetOnline();
@@ -1262,7 +1262,7 @@ namespace Intersect.Server.Networking
             sw.Start();
             LegacyDatabase.LoadUser(client, packet.Username);
             sw.Stop();
-            Console.WriteLine("Took " + sw.ElapsedMilliseconds + "ms to load player from db!");
+            Log.Debug("Took " + sw.ElapsedMilliseconds + "ms to load player from db!");
             lock (Globals.ClientLock)
             {
                 var clients = Globals.Clients.ToArray();
@@ -1324,7 +1324,7 @@ namespace Intersect.Server.Networking
             }
             foreach (var plyr in players)
             {
-                plyr.Warp(plyr.MapId, plyr.X, plyr.Y, plyr.Dir, false, plyr.Z, true);
+                plyr.Warp(plyr.MapId, (byte)plyr.X, (byte)plyr.Y, (byte)plyr.Dir, false, (byte)plyr.Z, true);
                 PacketSender.SendMap(plyr.Client, packet.MapId);
             }
             PacketSender.SendMap(client, packet.MapId, true); //Sends map to everyone/everything in proximity

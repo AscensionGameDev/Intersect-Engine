@@ -27,6 +27,7 @@ namespace Intersect.Client.UI.Game.EntityPanel
         public float CurExpWidth;
 
         public float CurHpWidth;
+        public float CurShieldWidth;
         public float CurMpWidth;
         private string mCurrentSprite = "";
         public ImagePanel EntityFace;
@@ -60,6 +61,7 @@ namespace Intersect.Client.UI.Game.EntityPanel
         public Label ExpTitle;
         public ImagePanel HpBackground;
         public ImagePanel HpBar;
+        public ImagePanel ShieldBar;
         public Label HpLbl;
         public Label HpTitle;
         private bool mInitialized;
@@ -124,6 +126,7 @@ namespace Intersect.Client.UI.Game.EntityPanel
 
             HpBackground = new ImagePanel(EntityInfoPanel, "HPBarBackground");
             HpBar = new ImagePanel(EntityInfoPanel, "HPBar");
+            ShieldBar = new ImagePanel(EntityInfoPanel, "ShieldBar");
             HpTitle = new Label(EntityInfoPanel, "HPTitle");
             HpTitle.SetText(Strings.EntityBox.vital0);
             HpLbl = new Label(EntityInfoPanel, "HPLabel");
@@ -230,6 +233,7 @@ namespace Intersect.Client.UI.Game.EntityPanel
                     break;
             }
             EntityName.SetText(MyEntity.Name);
+            ShieldBar.Hide();
         }
 
         //Update
@@ -380,17 +384,39 @@ namespace Intersect.Client.UI.Game.EntityPanel
 
         private void UpdateHpBar(float elapsedTime)
         {
+
+
             float targetHpWidth = 0f;
+            float targetShieldWidth = 0f;
             if (MyEntity.MaxVital[(int) Vitals.Health] > 0)
             {
-                targetHpWidth = (MyEntity.Vital[(int) Vitals.Health] /
-                                 (float) MyEntity.MaxVital[(int) Vitals.Health]);
-                targetHpWidth = Math.Min(1, Math.Max(0, targetHpWidth));
+                var maxVital = MyEntity.MaxVital[(int)Vitals.Health];
+                int shieldSize = 0;
+
+                //Check for shields
+                foreach (var status in MyEntity.Status)
+                {
+                    if (status.Type == StatusTypes.Shield)
+                    {
+                        shieldSize += status.Shield[(int)Vitals.Health];
+                    }
+                }
+
+                if (shieldSize + MyEntity.Vital[(int)Vitals.Health] > maxVital)
+                    maxVital = shieldSize + MyEntity.Vital[(int)Vitals.Health];
+
+                var width = HpBackground.Width;
+
+                var hpfillRatio = ((float)MyEntity.Vital[(int)Vitals.Health] / maxVital);
+                hpfillRatio = Math.Min(1, Math.Max(0, hpfillRatio));
+                targetHpWidth = (float)Math.Ceiling(hpfillRatio * width);
+
+                var shieldfillRatio = ((float)shieldSize / maxVital);
+                shieldfillRatio = Math.Min(1, Math.Max(0, shieldfillRatio));
+                targetShieldWidth = (float)Math.Floor(shieldfillRatio * width);
+
                 //Fix the Labels
-                HpLbl.Text = Strings.EntityBox.vital0val.ToString(MyEntity.Vital[(int) Vitals.Health],
-                    MyEntity.MaxVital[(int) Vitals.Health]);
-                //Multiply by the width of the bars.
-                targetHpWidth *= HpBackground.Width;
+                HpLbl.Text = Strings.EntityBox.vital0val.ToString(MyEntity.Vital[(int) Vitals.Health], MyEntity.MaxVital[(int) Vitals.Health]);
             }
             else
             {
@@ -425,6 +451,42 @@ namespace Intersect.Client.UI.Game.EntityPanel
                     HpBar.SetTextureRect(0, 0, (int) CurHpWidth, HpBar.Height);
                     HpBar.IsHidden = false;
                 }
+            }
+
+
+            if ((int)targetShieldWidth != CurShieldWidth)
+            {
+                if ((int)targetShieldWidth > CurShieldWidth)
+                {
+                    CurShieldWidth += (100f * elapsedTime);
+                    if (CurShieldWidth > (int)targetShieldWidth)
+                    {
+                        CurShieldWidth = targetShieldWidth;
+                    }
+                }
+                else
+                {
+                    CurShieldWidth -= (100f * elapsedTime);
+                    if (CurShieldWidth < targetShieldWidth)
+                    {
+                        CurShieldWidth = targetShieldWidth;
+                    }
+                }
+                if (CurShieldWidth == 0)
+                {
+                    ShieldBar.IsHidden = true;
+                }
+                else
+                {
+                    ShieldBar.Width = (int)CurShieldWidth;
+                    ShieldBar.SetBounds(CurHpWidth + HpBar.X, HpBar.Y, CurShieldWidth, ShieldBar.Height);
+                    ShieldBar.SetTextureRect((int)(HpBackground.Width - CurShieldWidth), 0, (int)CurShieldWidth, ShieldBar.Height);
+                    ShieldBar.IsHidden = false;
+                }
+            }
+            else
+            {
+                ShieldBar.SetPosition(HpBar.X + CurHpWidth, HpBar.Y);
             }
         }
 

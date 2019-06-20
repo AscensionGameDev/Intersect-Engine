@@ -2,11 +2,24 @@
 using System.Collections.Generic;
 using Intersect.Enums;
 
+using Newtonsoft.Json;
+
 namespace Intersect.GameObjects.Events.Commands
 {
     public abstract class EventCommand
     {
         public abstract EventCommandType Type { get; }
+        
+
+        public virtual string GetCopyData(Dictionary<Guid, List<EventCommand>> commandLists, Dictionary<Guid, List<EventCommand>> copyLists)
+        {
+            return JsonConvert.SerializeObject(this, typeof(EventCommand), new JsonSerializerSettings() { Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
+        }
+
+        public virtual void FixBranchIds(Dictionary<Guid, Guid> idDict)
+        {
+
+        }
     }
 
     public class ShowTextCommand : EventCommand
@@ -39,6 +52,28 @@ namespace Intersect.GameObjects.Events.Commands
                 commandLists.Add(BranchIds[i], new List<EventCommand>());
             }
         }
+
+        public override string GetCopyData(Dictionary<Guid, List<EventCommand>> commandLists, Dictionary<Guid, List<EventCommand>> copyLists)
+        {
+            foreach (var branch in BranchIds)
+            {
+                if (branch != Guid.Empty && commandLists.ContainsKey(branch))
+                    copyLists.Add(branch,commandLists[branch]);
+            }
+            return base.GetCopyData(commandLists, copyLists);
+        }
+
+        public override void FixBranchIds(Dictionary<Guid, Guid> idDict)
+        {
+            for (int i = 0; i < BranchIds.Length; i++)
+            {
+                if (idDict.ContainsKey(BranchIds[i]))
+                {
+                    BranchIds[i] = idDict[BranchIds[i]];
+                }
+            }
+        }
+
     }
 
     public class AddChatboxTextCommand : EventCommand
@@ -84,6 +119,27 @@ namespace Intersect.GameObjects.Events.Commands
             {
                 BranchIds[i] = Guid.NewGuid();
                 commandLists.Add(BranchIds[i], new List<EventCommand>());
+            }
+        }
+
+        public override string GetCopyData(Dictionary<Guid, List<EventCommand>> commandLists, Dictionary<Guid, List<EventCommand>> copyLists)
+        {
+            foreach (var branch in BranchIds)
+            {
+                if (branch != Guid.Empty && commandLists.ContainsKey(branch))
+                    copyLists.Add(branch, commandLists[branch]);
+            }
+            return base.GetCopyData(commandLists, copyLists);
+        }
+
+        public override void FixBranchIds(Dictionary<Guid, Guid> idDict)
+        {
+            for (int i = 0; i < BranchIds.Length; i++)
+            {
+                if (idDict.ContainsKey(BranchIds[i]))
+                {
+                    BranchIds[i] = idDict[idDict[BranchIds[i]]];
+                }
             }
         }
     }
@@ -159,6 +215,27 @@ namespace Intersect.GameObjects.Events.Commands
                 commandLists.Add(BranchIds[i], new List<EventCommand>());
             }
         }
+
+        public override string GetCopyData(Dictionary<Guid, List<EventCommand>> commandLists, Dictionary<Guid, List<EventCommand>> copyLists)
+        {
+            foreach (var branch in BranchIds)
+            {
+                if (branch != Guid.Empty && commandLists.ContainsKey(branch))
+                    copyLists.Add(branch, commandLists[branch]);
+            }
+            return base.GetCopyData(commandLists, copyLists);
+        }
+
+        public override void FixBranchIds(Dictionary<Guid, Guid> idDict)
+        {
+            for (int i = 0; i < BranchIds.Length; i++)
+            {
+                if (idDict.ContainsKey(BranchIds[i]))
+                {
+                    BranchIds[i] = idDict[idDict[BranchIds[i]]];
+                }
+            }
+        }
     }
 
     public class ChangeItemsCommand : EventCommand
@@ -181,6 +258,27 @@ namespace Intersect.GameObjects.Events.Commands
             {
                 BranchIds[i] = Guid.NewGuid();
                 commandLists.Add(BranchIds[i], new List<EventCommand>());
+            }
+        }
+
+        public override string GetCopyData(Dictionary<Guid, List<EventCommand>> commandLists, Dictionary<Guid, List<EventCommand>> copyLists)
+        {
+            foreach (var branch in BranchIds)
+            {
+                if (branch != Guid.Empty && commandLists.ContainsKey(branch))
+                    copyLists.Add(branch, commandLists[branch]);
+            }
+            return base.GetCopyData(commandLists, copyLists);
+        }
+
+        public override void FixBranchIds(Dictionary<Guid, Guid> idDict)
+        {
+            for (int i = 0; i < BranchIds.Length; i++)
+            {
+                if (idDict.ContainsKey(BranchIds[i]))
+                {
+                    BranchIds[i] = idDict[idDict[BranchIds[i]]];
+                }
             }
         }
     }
@@ -379,6 +477,27 @@ namespace Intersect.GameObjects.Events.Commands
             {
                 BranchIds[i] = Guid.NewGuid();
                 commandLists.Add(BranchIds[i], new List<EventCommand>());
+            }
+        }
+
+        public override string GetCopyData(Dictionary<Guid, List<EventCommand>> commandLists, Dictionary<Guid, List<EventCommand>> copyLists)
+        {
+            foreach (var branch in BranchIds)
+            {
+                if (branch != Guid.Empty && commandLists.ContainsKey(branch))
+                    copyLists.Add(branch, commandLists[branch]);
+            }
+            return base.GetCopyData(commandLists, copyLists);
+        }
+
+        public override void FixBranchIds(Dictionary<Guid, Guid> idDict)
+        {
+            for (int i = 0; i < BranchIds.Length; i++)
+            {
+                if (idDict.ContainsKey(BranchIds[i]))
+                {
+                    BranchIds[i] = idDict[idDict[BranchIds[i]]];
+                }
             }
         }
     }

@@ -24,11 +24,15 @@ namespace Intersect.Configuration
 
         public const int DEFAULT_PORT = 5400;
 
-        public const string DEFAULT_FONT = "arial";
+        public const string DEFAULT_FONT = "sourcesansproblack";
+
+        public const string DEFAULT_UI_FONT = "sourcesanspro";
 
         public const int DEFAULT_CHAT_LINES = 100;
 
         public const string DEFAULT_MENU_BACKGROUND = "background.png";
+
+        public const string DEFAULT_MENU_MUSIC = "RPG-Theme_v001_Looping.ogg";
 
         #endregion
 
@@ -40,7 +44,8 @@ namespace Intersect.Configuration
         {
             Host = string.IsNullOrWhiteSpace(Host) ? DEFAULT_HOST : Host.Trim();
             Port = Math.Min(Math.Max(Port, (ushort) 1), ushort.MaxValue);
-            Font = string.IsNullOrWhiteSpace(Font) ? DEFAULT_FONT : Font.Trim();
+            GameFont = string.IsNullOrWhiteSpace(GameFont) ? DEFAULT_FONT : GameFont.Trim();
+            UIFont = string.IsNullOrWhiteSpace(UIFont) ? DEFAULT_UI_FONT : UIFont.Trim();
             ChatLines = Math.Min(Math.Max(ChatLines, 10), 500);
             IntroImages = new List<string>(IntroImages?.Distinct() ?? new List<string>());
         }
@@ -60,9 +65,14 @@ namespace Intersect.Configuration
         public ushort Port { get; protected set; } = DEFAULT_PORT;
 
         /// <summary>
-        /// The font family to use on the client
+        /// The font family to use on the client rendering names, damage counters, etc
         /// </summary>
-        public string Font { get; protected set; } = DEFAULT_FONT;
+        public string GameFont { get; protected set; } = DEFAULT_FONT;
+
+        /// <summary>
+        /// The font family to use on unstyled windows such as the debug menu/admin window
+        /// </summary>
+        public string UIFont { get; protected set; } = DEFAULT_UI_FONT;
 
         /// <summary>
         /// Number of lines to save for chat scrollback
@@ -72,7 +82,7 @@ namespace Intersect.Configuration
         /// <summary>
         /// Menu music file name
         /// </summary>
-        public string MenuMusic { get; protected set; } = "";
+        public string MenuMusic { get; protected set; } = DEFAULT_MENU_MUSIC;
 
         /// <summary>
         /// Menu background art

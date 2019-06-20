@@ -82,14 +82,20 @@ namespace Intersect.Client.Framework.Gwen.Control
             get => mText?.Font;
             set
             {
-                if (mText != null)
+                if (value != null)
                 {
-                    mText.Font = value;
-                    fontInfo = $"{value?.GetName()},{value?.GetSize()}";
-                }
+                    if (mText != null)
+                    {
+                        mText.Font = value;
+                        fontInfo = $"{value?.GetName()},{value?.GetSize()}";
+                    }
 
-                if (mAutoSizeToContents) SizeToContents();
-                Invalidate();
+                    if (mAutoSizeToContents)
+                    {
+                        SizeToContents();
+                    }
+                    Invalidate();
+                }
             }
         }
 

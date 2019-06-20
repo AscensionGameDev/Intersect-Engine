@@ -4,10 +4,15 @@ using System.Linq;
 using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
+using Intersect.Logging;
 using Intersect.Server.EventProcessing;
 using Intersect.Server.General;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
+
+using Pomelo.EntityFrameworkCore.MySql;
+
+using Strings = Intersect.Server.Localization.Strings;
 
 namespace Intersect.Server.Entities
 {
@@ -100,7 +105,8 @@ namespace Intersect.Server.Entities
                         if (curStack.WaitingForResponse == CommandInstance.EventResponse.Crafting && MyPlayer.CraftingTableId == Guid.Empty) curStack.WaitingForResponse = CommandInstance.EventResponse.None;
                         if (curStack.WaitingForResponse == CommandInstance.EventResponse.Bank && MyPlayer.InBank == false) curStack.WaitingForResponse = CommandInstance.EventResponse.None;
                         if (curStack.WaitingForResponse == CommandInstance.EventResponse.Quest && !MyPlayer.QuestOffers.Contains(((StartQuestCommand)curStack.WaitingOnCommand).QuestId)) curStack.WaitingForResponse = CommandInstance.EventResponse.None;
-                        while (curStack.WaitingForResponse == CommandInstance.EventResponse.None && !PageInstance.ShouldDespawn())
+                        var commandsExecuted = 0;
+                        while (curStack.WaitingForResponse == CommandInstance.EventResponse.None && !PageInstance.ShouldDespawn() && commandsExecuted < Options.EventWatchdogKillThreshhold)
                         {
                             if (curStack.WaitingForRoute != Guid.Empty)
                             {
@@ -142,6 +148,7 @@ namespace Intersect.Server.Entities
                                     if (WaitTimer < Globals.Timing.TimeMs)
                                     {
                                         CommandProcessing.ProcessCommand(curStack.Command,MyPlayer,this);
+                                        commandsExecuted++;
                                     }
                                     else
                                     {
@@ -156,6 +163,28 @@ namespace Intersect.Server.Entities
                                 }
                             }
                             curStack = CallStack.Peek();
+                        }
+
+                        if (commandsExecuted >= Options.EventWatchdogKillThreshhold)
+                        {
+                            CallStack.Clear(); //Killing this event, we're over it.
+                            if (this.BaseEvent.MapId == Guid.Empty)
+                            {
+                                Log.Error(Strings.Events.watchdogkillcommon.ToString(BaseEvent.Name));
+                                if (MyPlayer.Client.Power.IsModerator)
+                                {
+                                    PacketSender.SendChatMsg(MyPlayer.Client, Strings.Events.watchdogkillcommon.ToString(BaseEvent.Name), Color.Red);
+                                }
+                            }
+                            else
+                            {
+                                var map = MapInstance.Get(this.BaseEvent.MapId);
+                                Log.Error(Strings.Events.watchdogkill.ToString(map.Name, BaseEvent.Name));
+                                if (MyPlayer.Client.Power.IsModerator)
+                                {
+                                    PacketSender.SendChatMsg(MyPlayer.Client, Strings.Events.watchdogkill.ToString(map.Name, BaseEvent.Name), Color.Red);
+                                }
+                            }
                         }
                     }
                     else

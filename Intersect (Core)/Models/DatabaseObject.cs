@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using Intersect.Collections;
@@ -15,6 +16,8 @@ namespace Intersect.Models
 
         public long TimeCreated { get; set; }
 
+        public const string Deleted = "ERR_DELETED";
+
         private string mBackup;
 
         protected DatabaseObject()
@@ -29,9 +32,14 @@ namespace Intersect.Models
             TimeCreated = DateTime.Now.ToBinary();
         }
 
+        public static KeyValuePair<Guid,string>[] ItemPairs => Lookup
+            .OrderBy(p => p.Value?.TimeCreated)
+            .Select(pair => new KeyValuePair<Guid,string>(pair.Key, pair.Value?.Name ?? Deleted))
+            .ToArray();
+
         public static string[] Names => Lookup
             .OrderBy(p => p.Value?.TimeCreated)
-            .Select(pair => pair.Value?.Name ?? "ERR_DELETED")
+            .Select(pair => pair.Value?.Name ?? Deleted)
             .ToArray();
 
         public static Guid IdFromList(int listIndex)
@@ -122,12 +130,12 @@ namespace Intersect.Models
 
         public static string GetName(Guid id)
         {
-            return Lookup.Get(id)?.Name ?? "ERR_DELETED";
+            return Lookup.Get(id)?.Name ?? Deleted;
         }
 
         public static string[] GetNameList()
         {
-            return Lookup.Select(pair => pair.Value?.Name ?? "ERR_DELETED").ToArray();
+            return Lookup.Select(pair => pair.Value?.Name ?? Deleted).ToArray();
         }
     }
 }

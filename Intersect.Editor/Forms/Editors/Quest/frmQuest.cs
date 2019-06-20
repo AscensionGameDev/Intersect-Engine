@@ -19,6 +19,9 @@ namespace Intersect.Editor.Forms.Editors.Quest
         private string mCopiedItem;
         private QuestBase mEditorItem;
 
+        private List<string> mKnownFolders = new List<string>();
+        private List<string> mExpandedFolders = new List<string>();
+
         public FrmQuest()
         {
             ApplyHooks();
@@ -66,6 +69,11 @@ namespace Intersect.Editor.Forms.Editors.Quest
             btnEditStartEvent.Text = Strings.QuestEditor.editstartevent;
             lblOnEnd.Text = Strings.QuestEditor.onend;
             btnEditCompletionEvent.Text = Strings.QuestEditor.editendevent;
+
+            //Searching/Sorting
+            btnChronological.ToolTipText = Strings.QuestEditor.sortchronologically;
+            txtSearch.Text = Strings.QuestEditor.searchplaceholder;
+            lblFolder.Text = Strings.QuestEditor.folderlabel;
 
             btnSave.Text = Strings.QuestEditor.save;
             btnCancel.Text = Strings.QuestEditor.cancel;
@@ -158,23 +166,6 @@ namespace Intersect.Editor.Forms.Editors.Quest
             Dispose();
         }
 
-        private void lstQuests_Click(object sender, EventArgs e)
-        {
-            if (mChangingName) return;
-            mEditorItem =
-                QuestBase.Get(
-                    QuestBase.IdFromList(lstQuests.SelectedIndex));
-            UpdateEditor();
-        }
-
-        public void InitEditor()
-        {
-            lstQuests.Items.Clear();
-            lstQuests.Items.AddRange(QuestBase.Names);
-
-            UpdateEditor();
-        }
-
         private void UpdateEditor()
         {
             if (mEditorItem != null)
@@ -182,6 +173,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
                 pnlContainer.Show();
 
                 txtName.Text = mEditorItem.Name;
+                cmbFolder.Text = mEditorItem.Folder;
                 txtBeforeDesc.Text = mEditorItem.BeforeDescription;
                 txtStartDesc.Text = mEditorItem.StartDescription;
                 txtInProgressDesc.Text = mEditorItem.InProgressDescription;
@@ -242,7 +234,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
 
                 if (lstQuests != null)
                 {
-                    lstQuests.Items[QuestBase.ListIndex(mEditorItem.Id)] = txtName?.Text ?? "";
+                    if (lstQuests.SelectedNode != null && lstQuests.SelectedNode.Tag != null) lstQuests.SelectedNode.Text = txtName?.Text ?? "";
                 }
             }
             mChangingName = false;
@@ -536,5 +528,197 @@ namespace Intersect.Editor.Forms.Editors.Quest
             var frm = new FrmDynamicRequirements(mEditorItem.Requirements, RequirementType.Quest);
             frm.ShowDialog();
         }
+
+        #region "Item List - Folders, Searching, Sorting, Etc"
+        public void InitEditor()
+        {
+            var selectedId = Guid.Empty;
+            var folderNodes = new Dictionary<string, TreeNode>();
+            if (lstQuests.SelectedNode != null && lstQuests.SelectedNode.Tag != null)
+            {
+                selectedId = (Guid)lstQuests.SelectedNode.Tag;
+            }
+            lstQuests.Nodes.Clear();
+
+            //Collect folders
+            var mFolders = new List<string>();
+            foreach (var itm in QuestBase.Lookup)
+            {
+                if (!string.IsNullOrEmpty(((QuestBase)itm.Value).Folder) && !mFolders.Contains(((QuestBase)itm.Value).Folder))
+                {
+                    mFolders.Add(((QuestBase)itm.Value).Folder);
+                    if (!mKnownFolders.Contains(((QuestBase)itm.Value).Folder))
+                        mKnownFolders.Add(((QuestBase)itm.Value).Folder);
+                }
+            }
+
+            mFolders.Sort();
+            mKnownFolders.Sort();
+            cmbFolder.Items.Clear();
+            cmbFolder.Items.Add("");
+            cmbFolder.Items.AddRange(mKnownFolders.ToArray());
+
+            lstQuests.Sorted = !btnChronological.Checked;
+
+            if (!btnChronological.Checked && !CustomSearch())
+            {
+                foreach (var folder in mFolders)
+                {
+                    var node = lstQuests.Nodes.Add(folder);
+                    node.ImageIndex = 0;
+                    node.SelectedImageIndex = 0;
+                    folderNodes.Add(folder, node);
+                }
+            }
+
+            foreach (var itm in QuestBase.ItemPairs)
+            {
+                var node = new TreeNode(itm.Value);
+                node.Tag = itm.Key;
+                node.ImageIndex = 1;
+                node.SelectedImageIndex = 1;
+
+                var folder = QuestBase.Get(itm.Key).Folder;
+                if (!string.IsNullOrEmpty(folder) && !btnChronological.Checked && !CustomSearch())
+                {
+                    var folderNode = folderNodes[folder];
+                    folderNode.Nodes.Add(node);
+                    if (itm.Key == selectedId)
+                        folderNode.Expand();
+                }
+                else
+                {
+                    lstQuests.Nodes.Add(node);
+                }
+
+                if (CustomSearch())
+                {
+                    if (!node.Text.ToLower().Contains(txtSearch.Text.ToLower()))
+                    {
+                        node.Remove();
+                    }
+                }
+
+                if (itm.Key == selectedId)
+                    lstQuests.SelectedNode = node;
+            }
+
+            var selectedNode = lstQuests.SelectedNode;
+
+            if (!btnChronological.Checked) lstQuests.Sort();
+
+            lstQuests.SelectedNode = selectedNode;
+            foreach (var node in mExpandedFolders)
+            {
+                if (folderNodes.ContainsKey(node))
+                    folderNodes[node].Expand();
+            }
+
+        }
+
+        private void btnAddFolder_Click(object sender, EventArgs e)
+        {
+            var folderName = "";
+            var result = DarkInputBox.ShowInformation(Strings.QuestEditor.folderprompt, Strings.QuestEditor.foldertitle, ref folderName, DarkDialogButton.OkCancel);
+            if (result == DialogResult.OK && !string.IsNullOrEmpty(folderName))
+            {
+                if (!cmbFolder.Items.Contains(folderName))
+                {
+                    mEditorItem.Folder = folderName;
+                    mExpandedFolders.Add(folderName);
+                    InitEditor();
+                    cmbFolder.Text = folderName;
+                }
+            }
+        }
+
+        private void lstQuests_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            var node = e.Node;
+            if (node != null)
+            {
+                var hitTest = lstQuests.HitTest(e.Location);
+                if (hitTest.Location != TreeViewHitTestLocations.PlusMinus)
+                {
+                    if (node.Nodes.Count > 0)
+                    {
+                        if (node.IsExpanded)
+                        {
+                            node.Collapse();
+                        }
+                        else
+                        {
+                            node.Expand();
+                        }
+                    }
+                }
+
+                if (node.IsExpanded)
+                {
+                    if (!mExpandedFolders.Contains(node.Text)) mExpandedFolders.Add(node.Text);
+                }
+                else
+                {
+                    if (mExpandedFolders.Contains(node.Text)) mExpandedFolders.Remove(node.Text);
+                }
+            }
+        }
+
+        private void lstQuests_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            if (mChangingName) return;
+            if (lstQuests.SelectedNode == null || lstQuests.SelectedNode.Tag == null) return;
+            mEditorItem = QuestBase.Get((Guid)lstQuests.SelectedNode.Tag);
+            UpdateEditor();
+        }
+
+        private void cmbFolder_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Folder = cmbFolder.Text;
+            InitEditor();
+        }
+
+        private void btnChronological_Click(object sender, EventArgs e)
+        {
+            btnChronological.Checked = !btnChronological.Checked;
+            InitEditor();
+        }
+
+        private void txtSearch_TextChanged(object sender, EventArgs e)
+        {
+            InitEditor();
+        }
+
+        private void txtSearch_Leave(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtSearch.Text))
+            {
+                txtSearch.Text = Strings.QuestEditor.searchplaceholder;
+            }
+        }
+
+        private void txtSearch_Enter(object sender, EventArgs e)
+        {
+            txtSearch.SelectAll();
+            txtSearch.Focus();
+        }
+
+        private void btnClearSearch_Click(object sender, EventArgs e)
+        {
+            txtSearch.Text = Strings.QuestEditor.searchplaceholder;
+        }
+
+        private bool CustomSearch()
+        {
+            return !string.IsNullOrWhiteSpace(txtSearch.Text) && txtSearch.Text != Strings.QuestEditor.searchplaceholder;
+        }
+
+        private void txtSearch_Click(object sender, EventArgs e)
+        {
+            if (txtSearch.Text == Strings.QuestEditor.searchplaceholder)
+                txtSearch.SelectAll();
+        }
+
+        #endregion
     }
 }

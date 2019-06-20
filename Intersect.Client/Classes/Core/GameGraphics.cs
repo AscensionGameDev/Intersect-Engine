@@ -79,7 +79,7 @@ namespace Intersect.Client
             Renderer.Init();
             sContentManager = Globals.ContentManager;
             sContentManager.LoadAll();
-            GameFont = sContentManager.GetFont(Gui.ActiveFont, 8);
+            GameFont = sContentManager.GetFont(ClientConfiguration.Instance.GameFont, 8);
         }
 
         public static void InitInGame()

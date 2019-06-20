@@ -34,6 +34,9 @@ namespace Intersect.Editor.Forms.Editors
         private RenderTarget2D mUpperDarkness;
         private SwapChainRenderTarget mUpperWindow;
 
+        private List<string> mKnownFolders = new List<string>();
+        private List<string> mExpandedFolders = new List<string>();
+
         public FrmAnimation()
         {
             ApplyHooks();
@@ -76,15 +79,6 @@ namespace Intersect.Editor.Forms.Editors
             Hide();
             Globals.CurrentEditor = -1;
             Dispose();
-        }
-
-        private void lstAnimations_Click(object sender, EventArgs e)
-        {
-            if (mChangingName) return;
-            mEditorItem =
-                AnimationBase.Get(
-                    AnimationBase.IdFromList(lstAnimations.SelectedIndex));
-            UpdateEditor();
         }
 
         private void frmAnimation_Load(object sender, EventArgs e)
@@ -164,14 +158,13 @@ namespace Intersect.Editor.Forms.Editors
             chkDisableUpperRotations.Text = Strings.AnimationEditor.disableupperrotations;
             chkRenderBelowFringe.Text = Strings.AnimationEditor.renderbelowfringe;
 
+            //Searching/Sorting
+            btnChronological.ToolTipText = Strings.AnimationEditor.sortchronologically;
+            txtSearch.Text = Strings.AnimationEditor.searchplaceholder;
+            lblFolder.Text = Strings.AnimationEditor.folderlabel;
+
             btnSave.Text = Strings.AnimationEditor.save;
             btnCancel.Text = Strings.AnimationEditor.cancel;
-        }
-
-        public void InitEditor()
-        {
-            lstAnimations.Items.Clear();
-            lstAnimations.Items.AddRange(AnimationBase.Names);
         }
 
         private void UpdateEditor()
@@ -179,6 +172,8 @@ namespace Intersect.Editor.Forms.Editors
             if (mEditorItem != null)
             {
                 pnlContainer.Show();
+
+                cmbFolder.Text = mEditorItem.Folder;
 
                 txtName.Text = mEditorItem.Name;
                 cmbSound.SelectedIndex = cmbSound.FindString(TextUtils.NullToNone(mEditorItem.Sound));
@@ -235,7 +230,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             mChangingName = true;
             mEditorItem.Name = txtName.Text;
-            lstAnimations.Items[AnimationBase.ListIndex(mEditorItem.Id)] = txtName.Text;
+            if (lstAnimations.SelectedNode != null && lstAnimations.SelectedNode.Tag != null) lstAnimations.SelectedNode.Text = txtName.Text;
             mChangingName = false;
         }
 
@@ -714,5 +709,196 @@ namespace Intersect.Editor.Forms.Editors
         {
             mEditorItem.Upper.AlternateRenderLayer = chkRenderBelowFringe.Checked;
         }
+
+        #region "Item List - Folders, Searching, Sorting, Etc"
+        public void InitEditor()
+        {
+            var selectedId = Guid.Empty;
+            var folderNodes = new Dictionary<string, TreeNode>();
+            if (lstAnimations.SelectedNode != null && lstAnimations.SelectedNode.Tag != null)
+            {
+                selectedId = (Guid)lstAnimations.SelectedNode.Tag;
+            }
+            lstAnimations.Nodes.Clear();
+
+            //Collect folders
+            var mFolders = new List<string>();
+            foreach (var anim in AnimationBase.Lookup)
+            {
+                if (!string.IsNullOrEmpty(((AnimationBase)anim.Value).Folder) && !mFolders.Contains(((AnimationBase)anim.Value).Folder))
+                {
+                    mFolders.Add(((AnimationBase)anim.Value).Folder);
+                    if (!mKnownFolders.Contains(((AnimationBase)anim.Value).Folder))
+                        mKnownFolders.Add(((AnimationBase)anim.Value).Folder);
+                }
+            }
+
+            mFolders.Sort();
+            mKnownFolders.Sort();
+            cmbFolder.Items.Clear();
+            cmbFolder.Items.Add("");
+            cmbFolder.Items.AddRange(mKnownFolders.ToArray());
+
+            lstAnimations.Sorted = !btnChronological.Checked;
+
+            if (!btnChronological.Checked && !CustomSearch())
+            {
+                foreach (var folder in mFolders)
+                {
+                    var node = lstAnimations.Nodes.Add(folder);
+                    node.ImageIndex = 0;
+                    node.SelectedImageIndex = 0;
+                    folderNodes.Add(folder, node);
+                }
+            }
+
+            foreach (var itm in AnimationBase.ItemPairs)
+            {
+                var node = new TreeNode(itm.Value);
+                node.Tag = itm.Key;
+                node.ImageIndex = 1;
+                node.SelectedImageIndex = 1;
+
+                var folder = AnimationBase.Get(itm.Key).Folder;
+                if (!string.IsNullOrEmpty(folder) && !btnChronological.Checked && !CustomSearch())
+                {
+                    var folderNode = folderNodes[folder];
+                    folderNode.Nodes.Add(node);
+                    if (itm.Key == selectedId)
+                        folderNode.Expand();
+                }
+                else
+                {
+                    lstAnimations.Nodes.Add(node);
+                }
+
+                if (CustomSearch())
+                {
+                    if (!node.Text.ToLower().Contains(txtSearch.Text.ToLower()))
+                    {
+                        node.Remove();
+                    }
+                }
+
+                if (itm.Key == selectedId)
+                    lstAnimations.SelectedNode = node;
+            }
+
+            var selectedNode = lstAnimations.SelectedNode;
+
+            if (!btnChronological.Checked) lstAnimations.Sort();
+
+            lstAnimations.SelectedNode = selectedNode;
+            foreach (var node in mExpandedFolders)
+            {
+                if (folderNodes.ContainsKey(node))
+                    folderNodes[node].Expand();
+            }
+        }
+
+        private void btnAddFolder_Click(object sender, EventArgs e)
+        {
+            var folderName = "";
+            var result = DarkInputBox.ShowInformation(Strings.AnimationEditor.folderprompt, Strings.AnimationEditor.foldertitle, ref folderName, DarkDialogButton.OkCancel);
+            if (result == DialogResult.OK && !string.IsNullOrEmpty(folderName))
+            {
+                if (!cmbFolder.Items.Contains(folderName))
+                {
+                    mEditorItem.Folder = folderName;
+                    mExpandedFolders.Add(folderName);
+                    InitEditor();
+                    cmbFolder.Text = folderName;
+                }
+            }
+        }
+
+        private void lstAnimations_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            var node = e.Node;
+            if (node != null)
+            {
+                var hitTest = lstAnimations.HitTest(e.Location);
+                if (hitTest.Location != TreeViewHitTestLocations.PlusMinus)
+                {
+                    if (node.Nodes.Count > 0)
+                    {
+                        if (node.IsExpanded)
+                        {
+                            node.Collapse();
+                        }
+                        else
+                        {
+                            node.Expand();
+                        }
+                    }
+                }
+
+                if (node.IsExpanded)
+                {
+                    if (!mExpandedFolders.Contains(node.Text)) mExpandedFolders.Add(node.Text);
+                }
+                else
+                {
+                    if (mExpandedFolders.Contains(node.Text)) mExpandedFolders.Remove(node.Text);
+                }
+            }
+        }
+
+        private void lstAnimations_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            if (mChangingName) return;
+            if (lstAnimations.SelectedNode == null || lstAnimations.SelectedNode.Tag == null) return;
+            mEditorItem = AnimationBase.Get((Guid)lstAnimations.SelectedNode.Tag);
+            UpdateEditor();
+        }
+
+        private void cmbFolder_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Folder = cmbFolder.Text;
+            InitEditor();
+        }
+
+        private void btnChronological_Click(object sender, EventArgs e)
+        {
+            btnChronological.Checked = !btnChronological.Checked;
+            InitEditor();
+        }
+
+        private void txtSearch_TextChanged(object sender, EventArgs e)
+        {
+            InitEditor();
+        }
+
+        private void txtSearch_Leave(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtSearch.Text))
+            {
+                txtSearch.Text = Strings.AnimationEditor.searchplaceholder;
+            }
+        }
+
+        private void txtSearch_Enter(object sender, EventArgs e)
+        {
+            txtSearch.SelectAll();
+            txtSearch.Focus();
+        }
+
+        private void btnClearSearch_Click(object sender, EventArgs e)
+        {
+            txtSearch.Text = Strings.AnimationEditor.searchplaceholder;
+        }
+
+        private bool CustomSearch()
+        {
+            return !string.IsNullOrWhiteSpace(txtSearch.Text) && txtSearch.Text != Strings.AnimationEditor.searchplaceholder;
+        }
+
+        private void txtSearch_Click(object sender, EventArgs e)
+        {
+            if (txtSearch.Text == Strings.AnimationEditor.searchplaceholder)
+                txtSearch.SelectAll();
+        }
+
+        #endregion
     }
 }

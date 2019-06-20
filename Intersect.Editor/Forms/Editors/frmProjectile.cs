@@ -20,6 +20,9 @@ namespace Intersect.Editor.Forms.Editors
         private Bitmap mDirectionGrid;
         private ProjectileBase mEditorItem;
 
+        private List<string> mKnownFolders = new List<string>();
+        private List<string> mExpandedFolders = new List<string>();
+
         public FrmProjectile()
         {
             ApplyHooks();
@@ -66,13 +69,6 @@ namespace Intersect.Editor.Forms.Editors
             Hide();
             Globals.CurrentEditor = -1;
             Dispose();
-        }
-
-        private void lstProjectiles_Click(object sender, EventArgs e)
-        {
-            if (mChangingName) return;
-            mEditorItem = ProjectileBase.Get(ProjectileBase.IdFromList(lstProjectiles.SelectedIndex));
-            UpdateEditor();
         }
 
         private void frmProjectile_Load(object sender, EventArgs e)
@@ -133,14 +129,13 @@ namespace Intersect.Editor.Forms.Editors
             lblAmmoItem.Text = Strings.ProjectileEditor.ammoitem;
             lblAmmoAmount.Text = Strings.ProjectileEditor.ammoamount;
 
+            //Searching/Sorting
+            btnChronological.ToolTipText = Strings.ProjectileEditor.sortchronologically;
+            txtSearch.Text = Strings.ProjectileEditor.searchplaceholder;
+            lblFolder.Text = Strings.ProjectileEditor.folderlabel;
+
             btnSave.Text = Strings.ProjectileEditor.save;
             btnCancel.Text = Strings.ProjectileEditor.cancel;
-        }
-
-        public void InitEditor()
-        {
-            lstProjectiles.Items.Clear();
-            lstProjectiles.Items.AddRange(ProjectileBase.Names);
         }
 
         private void UpdateEditor()
@@ -150,6 +145,7 @@ namespace Intersect.Editor.Forms.Editors
                 pnlContainer.Show();
 
                 txtName.Text = mEditorItem.Name;
+                cmbFolder.Text = mEditorItem.Folder;
                 nudSpeed.Value = mEditorItem.Speed;
                 nudSpawn.Value = mEditorItem.Delay;
                 nudAmount.Value = mEditorItem.Quantity;
@@ -393,8 +389,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             mChangingName = true;
             mEditorItem.Name = txtName.Text;
-            lstProjectiles.Items[ProjectileBase.ListIndex(mEditorItem.Id)] =
-                txtName.Text;
+            if (lstProjectiles.SelectedNode != null && lstProjectiles.SelectedNode.Tag != null) lstProjectiles.SelectedNode.Text = txtName.Text;
             mChangingName = false;
         }
 
@@ -638,5 +633,197 @@ namespace Intersect.Editor.Forms.Editors
                 mEditorItem.Spell = null;
             }
         }
+
+        #region "Item List - Folders, Searching, Sorting, Etc"
+        public void InitEditor()
+        {
+            var selectedId = Guid.Empty;
+            var folderNodes = new Dictionary<string, TreeNode>();
+            if (lstProjectiles.SelectedNode != null && lstProjectiles.SelectedNode.Tag != null)
+            {
+                selectedId = (Guid)lstProjectiles.SelectedNode.Tag;
+            }
+            lstProjectiles.Nodes.Clear();
+
+            //Collect folders
+            var mFolders = new List<string>();
+            foreach (var itm in ProjectileBase.Lookup)
+            {
+                if (!string.IsNullOrEmpty(((ProjectileBase)itm.Value).Folder) && !mFolders.Contains(((ProjectileBase)itm.Value).Folder))
+                {
+                    mFolders.Add(((ProjectileBase)itm.Value).Folder);
+                    if (!mKnownFolders.Contains(((ProjectileBase)itm.Value).Folder))
+                        mKnownFolders.Add(((ProjectileBase)itm.Value).Folder);
+                }
+            }
+
+            mFolders.Sort();
+            mKnownFolders.Sort();
+            cmbFolder.Items.Clear();
+            cmbFolder.Items.Add("");
+            cmbFolder.Items.AddRange(mKnownFolders.ToArray());
+
+            lstProjectiles.Sorted = !btnChronological.Checked;
+
+            if (!btnChronological.Checked && !CustomSearch())
+            {
+                foreach (var folder in mFolders)
+                {
+                    var node = lstProjectiles.Nodes.Add(folder);
+                    node.ImageIndex = 0;
+                    node.SelectedImageIndex = 0;
+                    folderNodes.Add(folder, node);
+                }
+            }
+
+            foreach (var itm in ProjectileBase.ItemPairs)
+            {
+                var node = new TreeNode(itm.Value);
+                node.Tag = itm.Key;
+                node.ImageIndex = 1;
+                node.SelectedImageIndex = 1;
+
+                var folder = ProjectileBase.Get(itm.Key).Folder;
+                if (!string.IsNullOrEmpty(folder) && !btnChronological.Checked && !CustomSearch())
+                {
+                    var folderNode = folderNodes[folder];
+                    folderNode.Nodes.Add(node);
+                    if (itm.Key == selectedId)
+                        folderNode.Expand();
+                }
+                else
+                {
+                    lstProjectiles.Nodes.Add(node);
+                }
+
+                if (CustomSearch())
+                {
+                    if (!node.Text.ToLower().Contains(txtSearch.Text.ToLower()))
+                    {
+                        node.Remove();
+                    }
+                }
+
+                if (itm.Key == selectedId)
+                    lstProjectiles.SelectedNode = node;
+            }
+
+            var selectedNode = lstProjectiles.SelectedNode;
+
+            if (!btnChronological.Checked) lstProjectiles.Sort();
+
+            lstProjectiles.SelectedNode = selectedNode;
+            foreach (var node in mExpandedFolders)
+            {
+                if (folderNodes.ContainsKey(node))
+                    folderNodes[node].Expand();
+            }
+
+        }
+
+        private void btnAddFolder_Click(object sender, EventArgs e)
+        {
+            var folderName = "";
+            var result = DarkInputBox.ShowInformation(Strings.ProjectileEditor.folderprompt, Strings.ProjectileEditor.foldertitle, ref folderName, DarkDialogButton.OkCancel);
+            if (result == DialogResult.OK && !string.IsNullOrEmpty(folderName))
+            {
+                if (!cmbFolder.Items.Contains(folderName))
+                {
+                    mEditorItem.Folder = folderName;
+                    mExpandedFolders.Add(folderName);
+                    InitEditor();
+                    cmbFolder.Text = folderName;
+                }
+            }
+        }
+
+        private void lstProjectiles_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            var node = e.Node;
+            if (node != null)
+            {
+                var hitTest = lstProjectiles.HitTest(e.Location);
+                if (hitTest.Location != TreeViewHitTestLocations.PlusMinus)
+                {
+                    if (node.Nodes.Count > 0)
+                    {
+                        if (node.IsExpanded)
+                        {
+                            node.Collapse();
+                        }
+                        else
+                        {
+                            node.Expand();
+                        }
+                    }
+                }
+
+                if (node.IsExpanded)
+                {
+                    if (!mExpandedFolders.Contains(node.Text)) mExpandedFolders.Add(node.Text);
+                }
+                else
+                {
+                    if (mExpandedFolders.Contains(node.Text)) mExpandedFolders.Remove(node.Text);
+                }
+            }
+        }
+
+        private void lstProjectiles_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            if (mChangingName) return;
+            if (lstProjectiles.SelectedNode == null || lstProjectiles.SelectedNode.Tag == null) return;
+            mEditorItem = ProjectileBase.Get((Guid)lstProjectiles.SelectedNode.Tag);
+            UpdateEditor();
+        }
+
+        private void cmbFolder_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Folder = cmbFolder.Text;
+            InitEditor();
+        }
+
+        private void btnChronological_Click(object sender, EventArgs e)
+        {
+            btnChronological.Checked = !btnChronological.Checked;
+            InitEditor();
+        }
+
+        private void txtSearch_TextChanged(object sender, EventArgs e)
+        {
+            InitEditor();
+        }
+
+        private void txtSearch_Leave(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtSearch.Text))
+            {
+                txtSearch.Text = Strings.ProjectileEditor.searchplaceholder;
+            }
+        }
+
+        private void txtSearch_Enter(object sender, EventArgs e)
+        {
+            txtSearch.SelectAll();
+            txtSearch.Focus();
+        }
+
+        private void btnClearSearch_Click(object sender, EventArgs e)
+        {
+            txtSearch.Text = Strings.ProjectileEditor.searchplaceholder;
+        }
+
+        private bool CustomSearch()
+        {
+            return !string.IsNullOrWhiteSpace(txtSearch.Text) && txtSearch.Text != Strings.ProjectileEditor.searchplaceholder;
+        }
+
+        private void txtSearch_Click(object sender, EventArgs e)
+        {
+            if (txtSearch.Text == Strings.ProjectileEditor.searchplaceholder)
+                txtSearch.SelectAll();
+        }
+
+        #endregion
     }
 }

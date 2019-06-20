@@ -235,10 +235,10 @@ namespace Intersect.Client.Framework.Gwen.Control
                 clr = GetTextColor(ControlState.Inactive);
             }
 
-            if (clr == null && hasFocus)
-            {
-                clr = Skin.Colors.Window.TitleActive;
-            }
+            //if (clr == null && hasFocus)
+            //{
+            //    clr = Skin.Colors.Window.TitleActive;
+            //}
 
             if (clr == null)
             {

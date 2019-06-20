@@ -507,8 +507,7 @@ namespace Intersect.Client.Maps
                             itemBase.Icon);
                         if (itemTex != null)
                         {
-                            GameGraphics.DrawGameTexture(itemTex, GetX() + item.Value.X * Options.TileWidth,
-                                GetY() + item.Value.Y * Options.TileHeight);
+                            GameGraphics.DrawGameTexture(itemTex, new FloatRect(0,0,itemTex.GetWidth(),itemTex.GetHeight()), new FloatRect(GetX() + item.Value.X * Options.TileWidth, GetY() + item.Value.Y * Options.TileHeight,Options.TileWidth,Options.TileHeight), Color.White);
                         }
                     }
                 }

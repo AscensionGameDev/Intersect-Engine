@@ -175,7 +175,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     if (player != null)
                     {
                         var mapId = actionParameters.MapId == Guid.Empty ? player.MapId : actionParameters.MapId;
-                        player.Warp(mapId, player.X, player.Y);
+                        player.Warp(mapId, (byte)player.X, (byte)player.Y);
                         return Request.CreateMessageResponse(HttpStatusCode.OK, $@"Warped '{player.Name}' to {mapId} ({player.X}, {player.Y}).");
                     }
                     break;

@@ -6,7 +6,6 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-using Intersect.Client.Forms;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
@@ -20,115 +19,16 @@ namespace Intersect.Client.MonoGame.File_Management
 {
     public class MonoContentManager : GameContentManager
     {
-        private bool mDownloadCompleted;
-        private string mErrorString = "";
-
-        private FrmLoadingContent mLoadingForm;
-
-        //Initial Resource Downloading
-        private string mResourceRelayer = "http://ascensiongamedev.com/resources/Intersect/findResources.php";
 
         public MonoContentManager()
         {
-            ServicePointManager.Expect100Continue = false;
             Init(this);
             if (!Directory.Exists("resources"))
             {
-                mLoadingForm = new FrmLoadingContent();
-                mLoadingForm.Show();
-                mLoadingForm.BringToFront();
-                using (WebClient client = new WebClient())
-                {
-                    byte[] response =
-                        client.UploadValues(mResourceRelayer, new NameValueCollection()
-                        {
-                            {"version", Assembly.GetExecutingAssembly().GetName().Version.ToString()},
-                        });
-                    string result = Encoding.UTF8.GetString(response);
-                    if (Uri.TryCreate(result, UriKind.Absolute, out Uri urlResult))
-                    {
-                        client.DownloadProgressChanged += Client_DownloadProgressChanged;
-                        client.DownloadFileCompleted += Client_DownloadFileCompleted;
-                        bool retry = true;
-                        while (retry == true)
-                        {
-                            try
-                            {
-                                mDownloadCompleted = false;
-                                mErrorString = "";
-                                client.DownloadFileAsync(urlResult, "resources.zip");
-                                while (!mDownloadCompleted)
-                                {
-                                    Application.DoEvents();
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                mErrorString = ex.Message;
-                            }
-                            if (mErrorString != "")
-                            {
-                                if (
-                                    MessageBox.Show(Strings.Resources.resourceexception.ToString( mErrorString),
-                                        Strings.Resources.failedtoload,
-                                        MessageBoxButtons.YesNo) != DialogResult.Yes)
-                                {
-                                    retry = false;
-                                }
-                            }
-                            else
-                            {
-                                retry = false;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        MessageBox.Show(Strings.Resources.resourcesfatal,
-                            Strings.Resources.failedtoload);
-                    }
-                }
-                mLoadingForm.Close();
-            }
-            if (!Directory.Exists("resources"))
-            {
+                //ERROR MESSAGE
+                MessageBox.Show(Strings.Errors.resourcesnotfound, Strings.Errors.resourcesnotfoundtitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Environment.Exit(1);
             }
-        }
-
-        private void Client_DownloadFileCompleted(object sender,
-            global::System.ComponentModel.AsyncCompletedEventArgs e)
-        {
-            mDownloadCompleted = true;
-            if (!e.Cancelled && e.Error == null)
-            {
-                try
-                {
-                    global::System.IO.Compression.ZipFile.ExtractToDirectory("resources.zip",
-                        Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
-                    File.Delete("resources.zip");
-                }
-                catch (Exception ex)
-                {
-                    mErrorString = ex.Message;
-                }
-            }
-            else
-            {
-                if (e.Cancelled)
-                {
-                    mErrorString = Strings.Resources.cancelled;
-                }
-                else
-                {
-                    mErrorString = e.Error.Message;
-                }
-            }
-        }
-
-        private void Client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
-        {
-            mLoadingForm.SetProgress(e.ProgressPercentage);
         }
 
         //Graphic Loading

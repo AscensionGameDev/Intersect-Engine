@@ -47,10 +47,21 @@ namespace Intersect.Server.Networking
             client.SendPacket(new ConfigPacket(Options.OptionsData));
         }
 
+        //EnteringGamePacket
+        public static void SendEnteringGamePacket(Client client)
+        {
+            client.SendPacket(new EnteringGamePacket());
+        }
+
         //JoinGamePacket
         public static void SendJoinGame(Client client)
         {
-            if (!client.IsEditor) SendEntityDataTo(client, client.Entity);
+
+            if (!client.IsEditor)
+            {
+                SendEnteringGamePacket(client);
+                SendEntityDataTo(client, client.Entity);
+            }
 
             client.SendPacket(new JoinGamePacket());
             PacketSender.SendGameData(client);
@@ -74,7 +85,7 @@ namespace Intersect.Server.Networking
                 if (player.MapId == Guid.Empty)
                     player.WarpToSpawn();
                 else
-                    player.Warp(player.MapId, player.X, player.Y, player.Dir, false, player.Z);
+                    player.Warp(player.MapId, (byte)player.X, (byte)player.Y, (byte)player.Dir, false, (byte)player.Z);
 
                 PacketSender.SendEntityDataTo(client, player);
 
@@ -384,7 +395,7 @@ namespace Intersect.Server.Networking
                 return;
             }
             
-            client.SendPacket(new EntityPositionPacket(en.Id,en.GetEntityType(),en.MapId,en.X,en.Y,en.Dir,en.Passable,en.HideName));
+            client.SendPacket(new EntityPositionPacket(en.Id,en.GetEntityType(),en.MapId, (byte)en.X, (byte)en.Y, (byte)en.Dir,en.Passable,en.HideName));
         }
 
         //EntityPositionPacket
@@ -395,7 +406,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            SendDataToProximity(en.MapId, new EntityPositionPacket(en.Id, en.GetEntityType(), en.MapId, en.X, en.Y, en.Dir, en.Passable, en.HideName));
+            SendDataToProximity(en.MapId, new EntityPositionPacket(en.Id, en.GetEntityType(), en.MapId, (byte)en.X, (byte)en.Y, (byte)en.Dir, en.Passable, en.HideName));
         }
 
         public static void SendNpcAggressionToProximity(Npc en)
@@ -481,7 +492,7 @@ namespace Intersect.Server.Networking
                 sw.Start();
                 client.SendPacket(CachedGameDataPacket);
                 SendGameObject(client, ClassBase.Get(client.Entity.ClassId));
-                Console.WriteLine("Took " + sw.ElapsedMilliseconds + "ms to send game data to client!");
+                Log.Debug("Took " + sw.ElapsedMilliseconds + "ms to send game data to client!");
                 return;
             }
 
@@ -608,13 +619,13 @@ namespace Intersect.Server.Networking
         //EntityMovePacket
         public static void SendEntityMove(EntityInstance en, bool correction = false)
         {
-            SendDataToProximity(en.MapId, new EntityMovePacket(en.Id,en.GetEntityType(),en.MapId,en.X,en.Y,en.Dir,correction));
+            SendDataToProximity(en.MapId, new EntityMovePacket(en.Id,en.GetEntityType(),en.MapId, (byte)en.X, (byte)en.Y, (byte)en.Dir,correction));
         }
 
         //EntityMovePacket
         public static void SendEntityMoveTo(Client client, EntityInstance en, bool correction = false)
         {
-            client.SendPacket(new EntityMovePacket(en.Id, en.GetEntityType(), en.MapId, en.X, en.Y, en.Dir, correction));
+            client.SendPacket(new EntityMovePacket(en.Id, en.GetEntityType(), en.MapId, (byte)en.X, (byte)en.Y, (byte)en.Dir, correction));
         }
 
         //EntityVitalsPacket
@@ -684,7 +695,7 @@ namespace Intersect.Server.Networking
         //EntityDirectionPacket
         public static void SendEntityDir(EntityInstance en)
         {
-            SendDataToProximity(en.MapId, new EntityDirectionPacket(en.Id, en.GetEntityType(), en.MapId, en.Dir));
+            SendDataToProximity(en.MapId, new EntityDirectionPacket(en.Id, en.GetEntityType(), en.MapId, (byte)en.Dir));
         }
 
         //EntityAttackPacket
@@ -696,7 +707,7 @@ namespace Intersect.Server.Networking
         //EntityDirectionPacket
         public static void SendEntityDirTo(Client client, EntityInstance en)
         {
-            client.SendPacket(new EntityDirectionPacket(en.Id,en.GetEntityType(),en.MapId,en.Dir));
+            client.SendPacket(new EntityDirectionPacket(en.Id,en.GetEntityType(),en.MapId, (byte)en.Dir));
         }
 
         //EventDialogPacket

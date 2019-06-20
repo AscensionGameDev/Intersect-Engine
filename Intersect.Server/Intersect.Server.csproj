@@ -557,6 +557,14 @@
     <Compile Include="Migrations\Game\20190615010038_AddingExpOveridesToClasses.designer.cs">
       <DependentUpon>20190615010038_AddingExpOveridesToClasses.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\Game\20190618013705_AddingFoldersToGameObjects.cs" />
+    <Compile Include="Migrations\Game\20190618013705_AddingFoldersToGameObjects.designer.cs">
+      <DependentUpon>20190618013705_AddingFoldersToGameObjects.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Game\20190618014158_AddingFoldersToVaraibles.cs" />
+    <Compile Include="Migrations\Game\20190618014158_AddingFoldersToVaraibles.designer.cs">
+      <DependentUpon>20190618014158_AddingFoldersToVaraibles.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />
     <Compile Include="Web\RestApi\Attributes\DebugAuthorizeAttribute.cs" />
     <Compile Include="Web\RestApi\Attributes\ConfigurableAuthorizeAttribute.cs" />

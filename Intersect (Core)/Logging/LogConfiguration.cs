@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using Intersect.Immutability;
 using Intersect.Logging.Formatting;
@@ -17,11 +18,7 @@ namespace Intersect.Logging
         {
             Formatters = DefaultFormatters,
 
-#if DEBUG
-            LogLevel = LogLevel.All,
-#else
-            LogLevel = LogLevel.Info,
-#endif
+            LogLevel = Debugger.IsAttached ? LogLevel.All : LogLevel.Info,
 
             Pretty = false,
 

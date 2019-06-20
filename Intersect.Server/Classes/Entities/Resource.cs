@@ -49,7 +49,7 @@ namespace Intersect.Server.Entities
             {
                 SpawnResourceItems(killer);
                 if (Base.AnimationId != Guid.Empty)
-                    PacketSender.SendAnimationToProximity(Base.AnimationId, -1, Guid.Empty, MapId, X, Y,
+                    PacketSender.SendAnimationToProximity(Base.AnimationId, -1, Guid.Empty, MapId, (byte)X, (byte)Y,
                         (int) Directions.Up);
             }
             PacketSender.SendEntityDataToProximity(this);

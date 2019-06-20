@@ -206,7 +206,7 @@ namespace Intersect.Server.Classes.Admin.Actions
             var target = Player.FindOnline(action.Name);
             if (target != null)
             {
-                player.Warp(target.MapId, target.X, target.Y);
+                player.Warp(target.MapId, (byte)target.X, (byte)target.Y);
                 PacketSender.SendChatMsg(client, Strings.Player.warpedto.ToString(target.Name));
                 PacketSender.SendChatMsg(target.Client, Strings.Player.warpedtoyou.ToString(player.Name));
             }
@@ -225,7 +225,7 @@ namespace Intersect.Server.Classes.Admin.Actions
         //WarpToMapAction
         public static void ProcessAction(Client client, Player player, WarpToMapAction action)
         {
-            player.Warp(action.MapId, player.X, player.Y);
+            player.Warp(action.MapId, (byte)player.X, (byte)player.Y);
         }
 
         //WarpToMeAction
@@ -234,7 +234,7 @@ namespace Intersect.Server.Classes.Admin.Actions
             var target = Player.FindOnline(action.Name);
             if (target != null)
             {
-                target.Warp(player.MapId, player.X, player.Y);
+                target.Warp(player.MapId, (byte)player.X, (byte)player.Y);
                 PacketSender.SendChatMsg(client, Strings.Player.haswarpedto.ToString(target.Name), player.Name);
                 PacketSender.SendChatMsg(target.Client, Strings.Player.beenwarpedto.ToString(player.Name), player.Name);
             }

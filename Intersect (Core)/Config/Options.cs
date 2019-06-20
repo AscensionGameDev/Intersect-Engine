@@ -55,6 +55,7 @@ namespace Intersect
         public static int MapHeight => Instance?.MapOpts?.Height ?? 26;
         public static int TileWidth => Instance.MapOpts.TileWidth;
         public static int TileHeight => Instance.MapOpts.TileHeight;
+        public static int EventWatchdogKillThreshhold => Instance.EventKillTheshhold;
 
         public static bool UPnP => Instance._upnp;
 
@@ -130,6 +131,9 @@ namespace Intersect
         [JsonProperty("Map")]
         public MapOptions MapOpts = new MapOptions();
 
+        [JsonProperty("EventWatchdogKillThreshold")]
+        public int EventKillTheshhold = 5000;
+
         [JsonProperty("ValidPasswordResetTimeMinutes")]
         protected ushort _passResetExpirationMin = 30;
 
@@ -172,12 +176,28 @@ namespace Intersect
             Instance = JsonConvert.DeserializeObject<Options>(data);
         }
 
-        public bool ShouldSerializePlayerDatabase => !SendingToClient;
+        // ReSharper disable once UnusedMember.Global
+        public bool ShouldSerializePlayerDatabase()
+        {
+            return !SendingToClient;
+        }
 
-        public bool ShouldSerializeGameDatabase => !SendingToClient;
+        // ReSharper disable once UnusedMember.Global
+        public bool ShouldSerializeGameDatabase()
+        {
+            return !SendingToClient;
+        }
 
-        public bool ShouldSerializeSmtpSettings => !SendingToClient;
+        // ReSharper disable once UnusedMember.Global
+        public bool ShouldSerializeSmtpSettings()
+        {
+            return !SendingToClient;
+        }
 
-        public bool ShouldSerializeSmtpValid => SendingToClient;
+        // ReSharper disable once UnusedMember.Global
+        public bool ShouldSerializeSmtpValid()
+        {
+            return SendingToClient;
+        }
     }
 }

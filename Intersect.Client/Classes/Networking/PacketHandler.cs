@@ -742,7 +742,6 @@ namespace Intersect.Client.Networking
         private static void HandlePacket(CharacterCreationPacket packet)
         {
             Globals.WaitingOnServer = false;
-            GameFade.FadeIn();
             Gui.MenuUi.MainMenu.NotifyOpenCharacterCreation();
         }
 
@@ -901,7 +900,7 @@ namespace Intersect.Client.Networking
         //PlaySoundPacket
         private static void HandlePacket(PlaySoundPacket packet)
         {
-            GameAudio.AddMapSound(packet.Sound, -1, -1, Globals.Me.CurrentMap, false, 5);
+            GameAudio.AddGameSound(packet.Sound, false);
         }
 
         //StopSoundsPacket
@@ -1338,7 +1337,6 @@ namespace Intersect.Client.Networking
 
             if (packet.FreeSlot) characters.Add(null);
             Globals.WaitingOnServer = false;
-            GameFade.FadeIn();
             Gui.MenuUi.MainMenu.NotifyOpenCharacterSelection(characters);
         }
 
@@ -1366,6 +1364,13 @@ namespace Intersect.Client.Networking
             {
                 Globals.Me.TargetIndex = packet.TargetId;
             }
+        }
+
+        //EnteringGamePacket
+        private static void HandlePacket(EnteringGamePacket packet)
+        {
+            //Fade out, we're finally loading the game world!
+            GameFade.FadeOut();
         }
     }
 }

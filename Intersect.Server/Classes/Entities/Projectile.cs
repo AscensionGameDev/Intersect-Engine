@@ -74,7 +74,7 @@ namespace Intersect.Server.Entities
                     {
                         if (Base.SpawnLocations[x, y].Directions[d] == true && mSpawnedAmount < Spawns.Length)
                         {
-                            ProjectileSpawns s = new ProjectileSpawns(FindProjectileRotationDir(Dir, d), (byte)(X + FindProjectileRotationX(Dir, x - 2, y - 2)), (byte)(Y + FindProjectileRotationY(Dir, x - 2, y - 2)), Z, MapId, Base, this);
+                            ProjectileSpawns s = new ProjectileSpawns(FindProjectileRotationDir(Dir, d), (byte)(X + FindProjectileRotationX(Dir, x - 2, y - 2)), (byte)(Y + FindProjectileRotationY(Dir, x - 2, y - 2)), (byte)Z, MapId, Base, this);
                             Spawns[mSpawnedAmount] = s;
                             mSpawnedAmount++;
                             mSpawnCount++;
@@ -314,7 +314,7 @@ namespace Intersect.Server.Entities
                     {
                         spawn.Parent.HasGrappled = true;
                         Owner.Dir = spawn.Dir;
-                        new DashInstance(Owner, spawn.Distance, Owner.Dir,Base.IgnoreMapBlocks,Base.IgnoreActiveResources,Base.IgnoreExhaustedResources, Base.IgnoreZDimension);
+                        new DashInstance(Owner, spawn.Distance, (byte)Owner.Dir,Base.IgnoreMapBlocks,Base.IgnoreActiveResources,Base.IgnoreExhaustedResources, Base.IgnoreZDimension);
                         killSpawn = true;
                     }
                 }
@@ -441,7 +441,7 @@ namespace Intersect.Server.Entities
 
             var pkt = (ProjectileEntityPacket)packet;
             pkt.ProjectileId = Base.Id;
-            pkt.ProjectileDirection = Dir;
+            pkt.ProjectileDirection = (byte)Dir;
             pkt.TargetId = Target?.Id ?? Guid.Empty;
             pkt.OwnerId = Owner?.Id ?? Guid.Empty;
             return pkt;
@@ -492,7 +492,7 @@ namespace Intersect.Server.Entities
                         {
                             Parent.HasGrappled = true;
                             Parent.Owner.Dir = Dir;
-                            new DashInstance(Parent.Owner, Distance, Parent.Owner.Dir, Parent.Base.IgnoreMapBlocks, Parent.Base.IgnoreActiveResources, Parent.Base.IgnoreExhaustedResources, Parent.Base.IgnoreZDimension);
+                            new DashInstance(Parent.Owner, Distance, (byte)Parent.Owner.Dir, Parent.Base.IgnoreMapBlocks, Parent.Base.IgnoreActiveResources, Parent.Base.IgnoreExhaustedResources, Parent.Base.IgnoreZDimension);
                         }
                         return true;
                     }
@@ -511,7 +511,7 @@ namespace Intersect.Server.Entities
                             {
                                 Parent.HasGrappled = true;
                                 Parent.Owner.Dir = Dir;
-                                new DashInstance(Parent.Owner, Distance, Parent.Owner.Dir, Parent.Base.IgnoreMapBlocks, Parent.Base.IgnoreActiveResources, Parent.Base.IgnoreExhaustedResources, Parent.Base.IgnoreZDimension);
+                                new DashInstance(Parent.Owner, Distance, (byte)Parent.Owner.Dir, Parent.Base.IgnoreMapBlocks, Parent.Base.IgnoreActiveResources, Parent.Base.IgnoreExhaustedResources, Parent.Base.IgnoreZDimension);
                             }
                         }
                         return true;
@@ -527,7 +527,7 @@ namespace Intersect.Server.Entities
                         {
                             Parent.HasGrappled = true;
                             Parent.Owner.Dir = Dir;
-                            new DashInstance(Parent.Owner, Distance, Parent.Owner.Dir, Parent.Base.IgnoreMapBlocks, Parent.Base.IgnoreActiveResources, Parent.Base.IgnoreExhaustedResources, Parent.Base.IgnoreZDimension);
+                            new DashInstance(Parent.Owner, Distance, (byte)Parent.Owner.Dir, Parent.Base.IgnoreMapBlocks, Parent.Base.IgnoreActiveResources, Parent.Base.IgnoreExhaustedResources, Parent.Base.IgnoreZDimension);
                         }
                         return true;
                     }

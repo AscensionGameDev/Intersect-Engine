@@ -30,7 +30,7 @@ namespace Intersect.GameObjects
         }
     }
 
-    public class QuestBase : DatabaseObject<QuestBase>
+    public class QuestBase : DatabaseObject<QuestBase>, IFolderable
     {
         //Basic Quest Properties
         public string StartDescription { get; set; } = "";
@@ -100,6 +100,9 @@ namespace Intersect.GameObjects
         [NotMapped]
         [JsonIgnore]
         public Dictionary<Guid,Guid> OriginalTaskEventIds { get; set; } = new Dictionary<Guid,Guid>();
+
+        /// <inheritdoc />
+        public string Folder { get; set; } = "";
 
         [JsonConstructor]
         public QuestBase(Guid Id) : base(Id)

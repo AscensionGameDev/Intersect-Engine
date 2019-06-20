@@ -15,6 +15,7 @@ namespace Intersect.Server
             long cpsTimer = Globals.Timing.TimeMs + 1000;
             long cps = 0;
             long minuteTimer = 0;
+            long lastGameSave = Globals.Timing.TimeMs + 60000;
             DateTime lastDbUpdate = DateTime.Now;
             long dbBackupMinutes = 120;
             while (ServerContext.Instance.IsRunning)
@@ -50,6 +51,11 @@ namespace Intersect.Server
                 {
                     int waitTime = (int) ((timeMs + 10) - currentTime);
                     Thread.Sleep(waitTime);
+                }
+                if (timeMs > lastGameSave)
+                {
+                    Task.Run(() => LegacyDatabase.SaveGameDatabase());
+                    lastGameSave = timeMs + 60000;
                 }
             }
 

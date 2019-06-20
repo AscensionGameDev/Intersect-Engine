@@ -38,6 +38,9 @@ namespace Intersect.Editor.Forms.Editors.Events
         public MapInstance MyMap;
         public bool NewEvent;
 
+        private static string mCopyData = null;
+        private static string mCopyLists = null;
+
         private void txtEventname_TextChanged(object sender, EventArgs e)
         {
             MyEvent.Name = txtEventname.Text;
@@ -51,10 +54,26 @@ namespace Intersect.Editor.Forms.Editors.Events
 
         private void lstEventCommands_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode != Keys.Delete) return;
-            if (mCurrentCommand < 0 || mCurrentCommand >= mCommandProperties.Count) return;
-            if (!mCommandProperties[mCurrentCommand].Editable) return;
-            if (mCommandProperties[mCurrentCommand].MyIndex < 0 || mCommandProperties[mCurrentCommand].MyIndex >= mCommandProperties[mCurrentCommand].MyList.Count) return;
+            if (e.KeyCode != Keys.Delete)
+            {
+                return;
+            }
+
+            if (mCurrentCommand < 0 || mCurrentCommand >= mCommandProperties.Count)
+            {
+                return;
+            }
+
+            if (!mCommandProperties[mCurrentCommand].Editable)
+            {
+                return;
+            }
+
+            if (mCommandProperties[mCurrentCommand].MyIndex < 0 || mCommandProperties[mCurrentCommand].MyIndex >= mCommandProperties[mCurrentCommand].MyList.Count)
+            {
+                return;
+            }
+
             HandleRemoveCommand(mCommandProperties[mCurrentCommand].Cmd);
             mCommandProperties[mCurrentCommand].MyList.Remove(mCommandProperties[mCurrentCommand].Cmd);
             mCurrentCommand = -1;
@@ -63,25 +82,53 @@ namespace Intersect.Editor.Forms.Editors.Events
 
         private void lstEventCommands_Click(object sender, MouseEventArgs e)
         {
-            if (e.Button != MouseButtons.Right) return;
+            if (e.Button != MouseButtons.Right)
+            {
+                return;
+            }
+
             var i = lstEventCommands.IndexFromPoint(e.Location);
-            if (i <= -1 || i >= lstEventCommands.Items.Count) return;
-            if (!mCommandProperties[i].Editable) return;
+            if (i <= -1 || i >= lstEventCommands.Items.Count)
+            {
+                return;
+            }
+
+            if (!mCommandProperties[i].Editable)
+            {
+                return;
+            }
+
             lstEventCommands.SelectedIndex = i;
 
-            if (mCurrentCommand < 0 || mCurrentCommand >= mCommandProperties.Count) return;
+            if (mCurrentCommand < 0 || mCurrentCommand >= mCommandProperties.Count)
+            {
+                return;
+            }
 
             commandMenu.Show((ListBox) sender, e.Location);
-            btnEdit.Enabled = true;
-            if (!mCommandProperties[mCurrentCommand].Editable) btnEdit.Enabled = false;
-            if (mCommandProperties[mCurrentCommand].MyIndex < 0 || mCommandProperties[mCurrentCommand].MyIndex >= mCommandProperties[mCurrentCommand].MyList.Count) btnEdit.Enabled = false;
+            btnEdit.Enabled = mCommandProperties[mCurrentCommand].Editable;
+            if (mCommandProperties[mCurrentCommand].MyIndex < 0 || mCommandProperties[mCurrentCommand].MyIndex >= mCommandProperties[mCurrentCommand].MyList.Count)
+            {
+                btnEdit.Enabled = false;
+            }
+
+            btnCopy.Enabled = btnEdit.Enabled;
+            btnCut.Enabled = btnEdit.Enabled;
             btnDelete.Enabled = true;
         }
 
         private void lstEventCommands_DoubleClick(object sender, EventArgs e)
         {
-            if (mCurrentCommand <= -1) return;
-            if (!mCommandProperties[mCurrentCommand].Editable) return;
+            if (mCurrentCommand <= -1)
+            {
+                return;
+            }
+
+            if (!mCommandProperties[mCurrentCommand].Editable)
+            {
+                return;
+            }
+
             if (mCommandProperties[mCurrentCommand].Type == EventCommandType.Null)
             {
                 grpNewCommands.Show();
@@ -269,6 +316,33 @@ namespace Intersect.Editor.Forms.Editors.Events
                     grpNewCommands.Hide();
                     EnableButtons();
                 }
+            }
+            else if (lstEventCommands.Focused && e.KeyData == (Keys.Control | Keys.X))
+            {
+                if (lstEventCommands.SelectedIndex > -1)
+                {
+                    btnCut_Click(null, null);
+                }
+
+                return;
+            }
+            else if (lstEventCommands.Focused && e.KeyData == (Keys.Control | Keys.C))
+            {
+                if (lstEventCommands.SelectedIndex > -1)
+                {
+                    btnCopy_Click(null, null);
+                }
+
+                return;
+            }
+            else if (lstEventCommands.Focused && e.KeyData == (Keys.Control | Keys.V))
+            {
+                if (lstEventCommands.SelectedIndex > -1)
+                {
+                    btnPaste_Click(null, null);
+                }
+
+                return;
             }
         }
 
@@ -563,7 +637,11 @@ namespace Intersect.Editor.Forms.Editors.Events
         /// </summary>
         private void frmEvent_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (e.CloseReason != CloseReason.UserClosing) return;
+            if (e.CloseReason != CloseReason.UserClosing)
+            {
+                return;
+            }
+
             if (btnSave.Enabled == false)
             {
                 e.Cancel = true;
@@ -653,6 +731,9 @@ namespace Intersect.Editor.Forms.Editors.Events
             btnInsert.Text = Strings.EventEditor.insertcommand;
             btnEdit.Text = Strings.EventEditor.editcommand;
             btnDelete.Text = Strings.EventEditor.deletecommand;
+            btnCopy.Text = Strings.EventEditor.copycommand;
+            btnCut.Text = Strings.EventEditor.cutcommand;
+            btnPaste.Text = Strings.EventEditor.pastecommand;
             btnSave.Text = Strings.EventEditor.save;
             btnCancel.Text = Strings.EventEditor.cancel;
 
@@ -679,8 +760,16 @@ namespace Intersect.Editor.Forms.Editors.Events
         {
             mEventBackup = MyEvent.JsonData;
             txtEventname.Text = MyEvent.Name;
-            if (disableNaming) txtEventname.Enabled = false;
-            if (disableTriggers) grpTriggers.Hide();
+            if (disableNaming)
+            {
+                txtEventname.Enabled = false;
+            }
+
+            if (disableTriggers)
+            {
+                grpTriggers.Hide();
+            }
+
             cmbPreviewFace.Items.Clear();
             cmbPreviewFace.Items.Add(Strings.General.none);
             cmbPreviewFace.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Face));
@@ -708,7 +797,11 @@ namespace Intersect.Editor.Forms.Editors.Events
                 cmbTriggerVal.Items.AddRange(ProjectileBase.Names);
             }
             chkIsGlobal.Checked = Convert.ToBoolean(MyEvent.Global);
-            if (MyEvent.CommonEvent) chkIsGlobal.Hide();
+            if (MyEvent.CommonEvent)
+            {
+                chkIsGlobal.Hide();
+            }
+
             UpdateTabControl();
             LoadPage(0);
         }
@@ -721,7 +814,11 @@ namespace Intersect.Editor.Forms.Editors.Events
         {
             Text = Strings.EventEditor.title.ToString(txtEventname.Text);
             CurrentPageIndex = pageNum;
-            if (MyEvent.Pages.Count == 0) MyEvent.Pages.Add(new EventPage());
+            if (MyEvent.Pages.Count == 0)
+            {
+                MyEvent.Pages.Add(new EventPage());
+            }
+
             CurrentPage = MyEvent.Pages[pageNum];
             for (int i = 0; i < mPageTabs.Count; i++)
             {
@@ -913,7 +1010,11 @@ namespace Intersect.Editor.Forms.Editors.Events
                     break;
                 case EventCommandType.SetMoveRoute:
                     var cmd = (SetMoveRouteCommand) command;
-                    if (cmd.Route == null) cmd.Route = new EventMoveRoute();
+                    if (cmd.Route == null)
+                    {
+                        cmd.Route = new EventMoveRoute();
+                    }
+
                     cmdWindow = new EventMoveRouteDesigner(this, mCurrentMap, MyEvent, cmd.Route, cmd);
                     break;
                 case EventCommandType.WaitForRouteCompletion:
@@ -1081,8 +1182,16 @@ namespace Intersect.Editor.Forms.Editors.Events
         /// </summary>
         private void btnInsert_Click(object sender, EventArgs e)
         {
-            if (mCurrentCommand < 0 || mCurrentCommand >= mCommandProperties.Count) return;
-            if (!mCommandProperties[mCurrentCommand].Editable) return;
+            if (mCurrentCommand < 0 || mCurrentCommand >= mCommandProperties.Count)
+            {
+                return;
+            }
+
+            if (!mCommandProperties[mCurrentCommand].Editable)
+            {
+                return;
+            }
+
             if (mCommandProperties[mCurrentCommand].Type == EventCommandType.Null)
             {
                 grpNewCommands.Show();
@@ -1099,22 +1208,141 @@ namespace Intersect.Editor.Forms.Editors.Events
 
         private void btnEdit_Click(object sender, EventArgs e)
         {
-            if (mCurrentCommand < 0 || mCurrentCommand >= mCommandProperties.Count) return;
-            if (!mCommandProperties[mCurrentCommand].Editable) return;
-            if (mCommandProperties[mCurrentCommand].MyIndex < 0 || mCommandProperties[mCurrentCommand].MyIndex >= mCommandProperties[mCurrentCommand].MyList.Count) return;
+            if (mCurrentCommand < 0 || mCurrentCommand >= mCommandProperties.Count)
+            {
+                return;
+            }
+
+            if (!mCommandProperties[mCurrentCommand].Editable)
+            {
+                return;
+            }
+
+            if (mCommandProperties[mCurrentCommand].MyIndex < 0 || mCommandProperties[mCurrentCommand].MyIndex >= mCommandProperties[mCurrentCommand].MyList.Count)
+            {
+                return;
+            }
+
             OpenEditCommand(mCommandProperties[mCurrentCommand].MyList[mCommandProperties[mCurrentCommand].MyIndex]);
             mIsEdit = true;
         }
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            if (mCurrentCommand < 0 || mCurrentCommand >= mCommandProperties.Count) return;
-            if (!mCommandProperties[mCurrentCommand].Editable) return;
-            if (mCommandProperties[mCurrentCommand].MyIndex < 0 || mCommandProperties[mCurrentCommand].MyIndex >= mCommandProperties[mCurrentCommand].MyList.Count) return;
+            if (mCurrentCommand < 0 || mCurrentCommand >= mCommandProperties.Count)
+            {
+                return;
+            }
+
+            if (!mCommandProperties[mCurrentCommand].Editable)
+            {
+                return;
+            }
+
+            if (mCommandProperties[mCurrentCommand].MyIndex < 0 || mCommandProperties[mCurrentCommand].MyIndex >= mCommandProperties[mCurrentCommand].MyList.Count)
+            {
+                return;
+            }
+
             HandleRemoveCommand(mCommandProperties[mCurrentCommand].Cmd);
             mCommandProperties[mCurrentCommand].MyList.Remove(mCommandProperties[mCurrentCommand].Cmd);
             mCurrentCommand = -1;
             ListPageCommands();
+        }
+
+        private void btnCut_Click(object sender, EventArgs e)
+        {
+            if (mCurrentCommand < 0 || mCurrentCommand >= mCommandProperties.Count)
+            {
+                return;
+            }
+
+            if (!mCommandProperties[mCurrentCommand].Editable)
+            {
+                return;
+            }
+
+            if (mCommandProperties[mCurrentCommand].MyIndex < 0 || mCommandProperties[mCurrentCommand].MyIndex >= mCommandProperties[mCurrentCommand].MyList.Count)
+            {
+                return;
+            }
+
+            //Get a json representation of what we're cutting
+            btnCopy_Click(sender,e);
+
+            //Delete the command
+            btnDelete_Click(sender, e);
+        }
+
+        private void btnCopy_Click(object sender, EventArgs e)
+        {
+            if (mCurrentCommand < 0 || mCurrentCommand >= mCommandProperties.Count)
+            {
+                return;
+            }
+
+            if (!mCommandProperties[mCurrentCommand].Editable)
+            {
+                return;
+            }
+
+            if (mCommandProperties[mCurrentCommand].MyIndex < 0 || mCommandProperties[mCurrentCommand].MyIndex >= mCommandProperties[mCurrentCommand].MyList.Count)
+            {
+                return;
+            }
+
+            var copyLists = new Dictionary<Guid, List<EventCommand>>();
+            mCopyData = mCommandProperties[mCurrentCommand].MyList[mCommandProperties[mCurrentCommand].MyIndex].GetCopyData(CurrentPage.CommandLists, copyLists);
+            mCopyLists = JsonConvert.SerializeObject(copyLists, new JsonSerializerSettings() { Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
+        }
+
+        private void btnPaste_Click(object sender, EventArgs e)
+        {
+            if(mCurrentCommand < 0 || mCurrentCommand >= mCommandProperties.Count)
+            {
+                return;
+            }
+
+            if (!mCommandProperties[mCurrentCommand].Editable)
+            {
+                return;
+            }
+
+            if (mCopyData != null)
+            {
+                var newCmd = JsonConvert.DeserializeObject<EventCommand>(mCopyData, new JsonSerializerSettings() { Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
+                var lists = JsonConvert.DeserializeObject<Dictionary<Guid, List<EventCommand>>>(mCopyLists, new JsonSerializerSettings() { Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
+                var newListIds = new Dictionary<Guid, Guid>();
+                foreach (var list in lists)
+                {
+                    newListIds.Add(list.Key,Guid.NewGuid());
+                }
+
+                newCmd.FixBranchIds(newListIds);
+                foreach (var list in lists)
+                {
+                    foreach (var cmd in list.Value)
+                    {
+                        cmd.FixBranchIds(newListIds);
+                    }
+                }
+
+                foreach (var list in lists)
+                {
+                    CurrentPage.CommandLists.Add(newListIds[list.Key],list.Value);
+                }
+
+                if (mCommandProperties[mCurrentCommand].Type == EventCommandType.Null)
+                {
+                    mCommandProperties[mCurrentCommand].MyList.Add(newCmd);
+                }
+                else
+                {
+                    mCommandProperties[mCurrentCommand].MyList.Insert(mCommandProperties[mCurrentCommand].MyList.IndexOf(mCommandProperties[mCurrentCommand].Cmd), newCmd);
+                }
+
+                ListPageCommands();
+            }
         }
 
         #endregion
@@ -1169,9 +1397,14 @@ namespace Intersect.Editor.Forms.Editors.Events
         private void cmbTrigger_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (MyEvent.CommonEvent)
+            {
                 CurrentPage.CommonTrigger = (CommonEventTrigger) cmbTrigger.SelectedIndex;
+            }
             else
+            {
                 CurrentPage.Trigger = (EventTrigger) cmbTrigger.SelectedIndex;
+            }
+
             cmbTriggerVal.Hide();
             lblTriggerVal.Hide();
             txtCommand.Hide();
@@ -1254,6 +1487,7 @@ namespace Intersect.Editor.Forms.Editors.Events
         }
 
         #endregion
+
 
     }
 

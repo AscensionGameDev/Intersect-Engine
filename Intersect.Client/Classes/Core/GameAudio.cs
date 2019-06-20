@@ -25,7 +25,7 @@ namespace Intersect.Client
         private static float sQueuedFade;
 
         //Sounds
-        private static List<MapSound> sGameSounds = new List<MapSound>();
+        private static List<GameSound> sGameSounds = new List<GameSound>();
 
         //Init
         public static void Init()
@@ -192,6 +192,14 @@ namespace Intersect.Client
             return sound;
         }
 
+        public static GameSound AddGameSound(string filename, bool loop)
+        {
+            if (sGameSounds?.Count > 128) return null;
+            var sound = new GameSound(filename, loop);
+            sGameSounds?.Add(sound);
+            return sound;
+        }
+
         public static void StopSound(MapSound sound)
         {
             sound.Stop();
@@ -209,17 +217,54 @@ namespace Intersect.Client
         }
     }
 
-    public class MapSound
+    public class GameSound
     {
-        private int mDistance;
-        private string mFilename;
-        private bool mLoop;
-        private Guid mMapId;
-        private GameAudioInstance mSound;
-        private float mVolume;
-        private int mX;
-        private int mY;
+        protected GameAudioInstance mSound;
+        protected string mFilename;
+        protected bool mLoop;
+        protected float mVolume;
         public bool Loaded;
+
+        public GameSound(string filename, bool loop)
+        {
+            if (String.IsNullOrEmpty(filename)) return;
+            mFilename = GameContentManager.RemoveExtension(filename).ToLower();
+            mLoop = loop;
+            GameAudioSource sound = Globals.ContentManager.GetSound(mFilename);
+            if (sound != null && Globals.Database.SoundVolume > 0)
+            {
+                mSound = sound.CreateInstance();
+                mSound.SetLoop(mLoop);
+                mSound.SetVolume(100);
+                mSound.Play();
+                Loaded = true;
+            }
+        }
+
+        public virtual bool Update()
+        {
+            if (Loaded)
+            {
+                if (!mLoop && mSound.GetState() == GameAudioInstance.AudioInstanceState.Stopped)
+                {
+                    Stop();
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public virtual void Stop()
+        {
+            if (Loaded)
+            {
+                mSound.Dispose();
+                Loaded = false;
+            }
+        }
 
         public bool Loop
         {
@@ -230,25 +275,23 @@ namespace Intersect.Client
                 mSound?.SetLoop(mLoop);
             }
         }
+    }
 
-        public MapSound(string filename, int x, int y, Guid mapId, bool loop, int distance)
+    public class MapSound : GameSound
+    {
+        private int mDistance;
+        private Guid mMapId;
+        private int mX;
+        private int mY;
+
+        public MapSound(string filename, int x, int y, Guid mapId, bool loop, int distance) : base(filename, loop)
         {
-            if (filename == null) return;
-            mFilename = GameContentManager.RemoveExtension(filename).ToLower();
+            if (string.IsNullOrEmpty(filename)) return;
+            mDistance = distance;
             mX = x;
             mY = y;
             mMapId = mapId;
-            mLoop = loop;
-            mDistance = distance;
-            GameAudioSource sound = Globals.ContentManager.GetSound(mFilename);
-            if (sound != null && Globals.Database.SoundVolume > 0)
-            {
-                mSound = sound.CreateInstance();
-                mSound.SetLoop(mLoop);
-                mSound.SetVolume(0);
-                mSound.Play();
-                Loaded = true;
-            }
+            mSound.SetVolume(0);
         }
 
         public void UpdatePosition(int x, int y, Guid mapId)
@@ -258,19 +301,14 @@ namespace Intersect.Client
             mMapId = mapId;
         }
 
-        public void Update()
+        public override bool Update()
         {
-            if (Loaded)
+            if (base.Update())
             {
-                if (!mLoop && mSound.GetState() == GameAudioInstance.AudioInstanceState.Stopped)
-                {
-                    Stop();
-                }
-                else
-                {
-                    UpdateSoundVolume();
-                }
+                UpdateSoundVolume();
+                return true;
             }
+            return false;
         }
 
         private void UpdateSoundVolume()
@@ -449,15 +487,6 @@ namespace Intersect.Client
                     // IX
                     return 0f;
                 }
-            }
-        }
-
-        public void Stop()
-        {
-            if (Loaded)
-            {
-                mSound.Dispose();
-                Loaded = false;
             }
         }
     }

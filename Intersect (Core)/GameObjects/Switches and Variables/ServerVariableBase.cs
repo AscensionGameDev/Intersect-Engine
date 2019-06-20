@@ -11,12 +11,15 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-    public class ServerVariableBase : DatabaseObject<ServerVariableBase>
+    public class ServerVariableBase : DatabaseObject<ServerVariableBase>, IFolderable
     {
         //Identifier used for event chat variables to display the value of this variable/switch.
         //See https://www.ascensiongamedev.com/topic/749-event-text-variables/ for usage info.
         public string TextId { get; set; }
         public VariableDataTypes Type { get; set; } = VariableDataTypes.Boolean;
+
+        /// <inheritdoc />
+        public string Folder { get; set; } = "";
 
         [NotMapped]
         [JsonIgnore]

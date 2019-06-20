@@ -48,11 +48,11 @@ namespace Intersect.Client
             Globals.Database = new MonoDatabase();
 
             /* Load configuration */
-            ClientConfiguration.LoadAndSave();
+            ClientConfiguration.LoadAndSave(ClientConfiguration.DefaultPath);
 
             Globals.Database.LoadPreferences();
             
-            Gui.ActiveFont = TextUtils.StripToLower(ClientConfiguration.Instance.Font);
+            Gui.ActiveFont = TextUtils.StripToLower(ClientConfiguration.Instance.UIFont);
             Globals.InputManager = new MonoInput(this);
 
             var renderer = new MonoRenderer(graphics, Content, this);

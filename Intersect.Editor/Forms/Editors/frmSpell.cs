@@ -23,6 +23,9 @@ namespace Intersect.Editor.Forms.Editors
         private string mCopiedItem;
         private SpellBase mEditorItem;
 
+        private List<string> mKnownFolders = new List<string>();
+        private List<string> mExpandedFolders = new List<string>();
+
         public FrmSpell()
         {
             ApplyHooks();
@@ -69,13 +72,6 @@ namespace Intersect.Editor.Forms.Editors
             Hide();
             Globals.CurrentEditor = -1;
             Dispose();
-        }
-
-        private void lstSpells_Click(object sender, EventArgs e)
-        {
-            if (mChangingName) return;
-            mEditorItem = SpellBase.Get(SpellBase.IdFromList(lstSpells.SelectedIndex));
-            UpdateEditor();
         }
 
         private void frmSpell_Load(object sender, EventArgs e)
@@ -225,19 +221,13 @@ namespace Intersect.Editor.Forms.Editors
 
             grpEvent.Text = Strings.SpellEditor.Event;
 
+            //Searching/Sorting
+            btnChronological.ToolTipText = Strings.SpellEditor.sortchronologically;
+            txtSearch.Text = Strings.SpellEditor.searchplaceholder;
+            lblFolder.Text = Strings.SpellEditor.folderlabel;
+
             btnSave.Text = Strings.SpellEditor.save;
             btnCancel.Text = Strings.SpellEditor.cancel;
-        }
-
-        public void InitEditor()
-        {
-            lstSpells.Items.Clear();
-            lstSpells.Items.AddRange(SpellBase.Names);
-            cmbScalingStat.Items.Clear();
-            for (var i = 0; i < Options.MaxStats; i++)
-            {
-                cmbScalingStat.Items.Add(Globals.GetStatName(i));
-            }
         }
 
         private void UpdateEditor()
@@ -247,6 +237,7 @@ namespace Intersect.Editor.Forms.Editors
                 pnlContainer.Show();
 
                 txtName.Text = mEditorItem.Name;
+                cmbFolder.Text = mEditorItem.Folder;
                 txtDesc.Text = mEditorItem.Description;
                 cmbType.SelectedIndex = (int)mEditorItem.SpellType;
 
@@ -416,7 +407,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             mChangingName = true;
             mEditorItem.Name = txtName.Text;
-            lstSpells.Items[SpellBase.ListIndex(mEditorItem.Id)] = txtName.Text;
+            if (lstSpells.SelectedNode != null && lstSpells.SelectedNode.Tag != null) lstSpells.SelectedNode.Text = txtName.Text;
             mChangingName = false;
         }
 
@@ -823,5 +814,203 @@ namespace Intersect.Editor.Forms.Editors
         {
             mEditorItem.Bound = chkBound.Checked;
         }
+
+        #region "Item List - Folders, Searching, Sorting, Etc"
+        public void InitEditor()
+        {
+            var selectedId = Guid.Empty;
+            var folderNodes = new Dictionary<string, TreeNode>();
+            if (lstSpells.SelectedNode != null && lstSpells.SelectedNode.Tag != null)
+            {
+                selectedId = (Guid)lstSpells.SelectedNode.Tag;
+            }
+            lstSpells.Nodes.Clear();
+
+            cmbScalingStat.Items.Clear();
+            for (var i = 0; i < Options.MaxStats; i++)
+            {
+                cmbScalingStat.Items.Add(Globals.GetStatName(i));
+            }
+
+            //Collect folders
+            var mFolders = new List<string>();
+            foreach (var itm in SpellBase.Lookup)
+            {
+                if (!string.IsNullOrEmpty(((SpellBase)itm.Value).Folder) && !mFolders.Contains(((SpellBase)itm.Value).Folder))
+                {
+                    mFolders.Add(((SpellBase)itm.Value).Folder);
+                    if (!mKnownFolders.Contains(((SpellBase)itm.Value).Folder))
+                        mKnownFolders.Add(((SpellBase)itm.Value).Folder);
+                }
+            }
+
+            mFolders.Sort();
+            mKnownFolders.Sort();
+            cmbFolder.Items.Clear();
+            cmbFolder.Items.Add("");
+            cmbFolder.Items.AddRange(mKnownFolders.ToArray());
+
+            lstSpells.Sorted = !btnChronological.Checked;
+
+            if (!btnChronological.Checked && !CustomSearch())
+            {
+                foreach (var folder in mFolders)
+                {
+                    var node = lstSpells.Nodes.Add(folder);
+                    node.ImageIndex = 0;
+                    node.SelectedImageIndex = 0;
+                    folderNodes.Add(folder, node);
+                }
+            }
+
+            foreach (var itm in SpellBase.ItemPairs)
+            {
+                var node = new TreeNode(itm.Value);
+                node.Tag = itm.Key;
+                node.ImageIndex = 1;
+                node.SelectedImageIndex = 1;
+
+                var folder = SpellBase.Get(itm.Key).Folder;
+                if (!string.IsNullOrEmpty(folder) && !btnChronological.Checked && !CustomSearch())
+                {
+                    var folderNode = folderNodes[folder];
+                    folderNode.Nodes.Add(node);
+                    if (itm.Key == selectedId)
+                        folderNode.Expand();
+                }
+                else
+                {
+                    lstSpells.Nodes.Add(node);
+                }
+
+                if (CustomSearch())
+                {
+                    if (!node.Text.ToLower().Contains(txtSearch.Text.ToLower()))
+                    {
+                        node.Remove();
+                    }
+                }
+
+                if (itm.Key == selectedId)
+                    lstSpells.SelectedNode = node;
+            }
+
+            var selectedNode = lstSpells.SelectedNode;
+
+            if (!btnChronological.Checked) lstSpells.Sort();
+
+            lstSpells.SelectedNode = selectedNode;
+            foreach (var node in mExpandedFolders)
+            {
+                if (folderNodes.ContainsKey(node))
+                    folderNodes[node].Expand();
+            }
+
+        }
+
+        private void btnAddFolder_Click(object sender, EventArgs e)
+        {
+            var folderName = "";
+            var result = DarkInputBox.ShowInformation(Strings.SpellEditor.folderprompt, Strings.SpellEditor.foldertitle, ref folderName, DarkDialogButton.OkCancel);
+            if (result == DialogResult.OK && !string.IsNullOrEmpty(folderName))
+            {
+                if (!cmbFolder.Items.Contains(folderName))
+                {
+                    mEditorItem.Folder = folderName;
+                    mExpandedFolders.Add(folderName);
+                    InitEditor();
+                    cmbFolder.Text = folderName;
+                }
+            }
+        }
+
+        private void lstSpells_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            var node = e.Node;
+            if (node != null)
+            {
+                var hitTest = lstSpells.HitTest(e.Location);
+                if (hitTest.Location != TreeViewHitTestLocations.PlusMinus)
+                {
+                    if (node.Nodes.Count > 0)
+                    {
+                        if (node.IsExpanded)
+                        {
+                            node.Collapse();
+                        }
+                        else
+                        {
+                            node.Expand();
+                        }
+                    }
+                }
+
+                if (node.IsExpanded)
+                {
+                    if (!mExpandedFolders.Contains(node.Text)) mExpandedFolders.Add(node.Text);
+                }
+                else
+                {
+                    if (mExpandedFolders.Contains(node.Text)) mExpandedFolders.Remove(node.Text);
+                }
+            }
+        }
+
+        private void lstSpells_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            if (mChangingName) return;
+            if (lstSpells.SelectedNode == null || lstSpells.SelectedNode.Tag == null) return;
+            mEditorItem = SpellBase.Get((Guid)lstSpells.SelectedNode.Tag);
+            UpdateEditor();
+        }
+
+        private void cmbFolder_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Folder = cmbFolder.Text;
+            InitEditor();
+        }
+
+        private void btnChronological_Click(object sender, EventArgs e)
+        {
+            btnChronological.Checked = !btnChronological.Checked;
+            InitEditor();
+        }
+
+        private void txtSearch_TextChanged(object sender, EventArgs e)
+        {
+            InitEditor();
+        }
+
+        private void txtSearch_Leave(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtSearch.Text))
+            {
+                txtSearch.Text = Strings.SpellEditor.searchplaceholder;
+            }
+        }
+
+        private void txtSearch_Enter(object sender, EventArgs e)
+        {
+            txtSearch.SelectAll();
+            txtSearch.Focus();
+        }
+
+        private void btnClearSearch_Click(object sender, EventArgs e)
+        {
+            txtSearch.Text = Strings.SpellEditor.searchplaceholder;
+        }
+
+        private bool CustomSearch()
+        {
+            return !string.IsNullOrWhiteSpace(txtSearch.Text) && txtSearch.Text != Strings.SpellEditor.searchplaceholder;
+        }
+
+        private void txtSearch_Click(object sender, EventArgs e)
+        {
+            if (txtSearch.Text == Strings.SpellEditor.searchplaceholder)
+                txtSearch.SelectAll();
+        }
+
+        #endregion
     }
 }

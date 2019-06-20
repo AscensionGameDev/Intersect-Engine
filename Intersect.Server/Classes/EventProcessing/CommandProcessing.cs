@@ -406,7 +406,7 @@ namespace Intersect.Server.EventProcessing
                                 xDiff = -tmp;
                                 break;
                         }
-                        direction = targetEntity.Dir;
+                        direction = (byte)targetEntity.Dir;
                     }
                     mapId = targetEntity.MapId;
                     tileX = (byte)(targetEntity.X + xDiff);
@@ -497,7 +497,7 @@ namespace Intersect.Server.EventProcessing
                                 xDiff = -tmp;
                                 break;
                         }
-                        direction = targetEntity.Dir;
+                        direction = (byte)targetEntity.Dir;
                     }
                     mapId = targetEntity.MapId;
                     tileX = targetEntity.X + xDiff;
@@ -884,10 +884,6 @@ namespace Intersect.Server.EventProcessing
                     }
                 }
             }
-            else if (command.VariableType == VariableTypes.ServerVariable)
-            {
-                LegacyDatabase.SaveGameDatabase();
-            }
         }
 
         private static void ProcessVariableModification(SetVariableCommand command, IntegerVariableMod mod, Player player)
@@ -968,10 +964,6 @@ namespace Intersect.Server.EventProcessing
                         }
                     }
                 }
-            }
-            else if (command.VariableType == VariableTypes.ServerVariable)
-            {
-                LegacyDatabase.SaveGameDatabase();
             }
         }
     }

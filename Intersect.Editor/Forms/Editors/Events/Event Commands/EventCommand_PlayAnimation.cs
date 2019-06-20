@@ -93,6 +93,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             {
                 cmbDirection.Items.Add(Strings.Directions.dir[i]);
             }
+            cmbDirection.SelectedIndex = 0;
 
             lblEntity.Text = Strings.EventPlayAnimation.entity;
             lblRelativeLocation.Text = Strings.EventPlayAnimation.relativelocation;

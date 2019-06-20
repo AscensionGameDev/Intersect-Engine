@@ -132,8 +132,6 @@ namespace Intersect.Server.Core
 
             PrintIntroduction();
 
-            Console.WriteLine();
-
             ExportDependencies(args);
 
             Formulas.LoadFormulas();

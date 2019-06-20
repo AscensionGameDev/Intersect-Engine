@@ -26,7 +26,7 @@ namespace Intersect.Logging
             var outputs = ImmutableList.Create<ILogOutput>(
                 new FileOutput(),
                 new FileOutput($"errors-{ExecutableName}.log", LogLevel.Error),
-                new ConciseConsoleOutput()
+                new ConciseConsoleOutput(Debugger.IsAttached ? LogLevel.All : LogLevel.Error)
             ) ?? throw new InvalidOperationException();
 
             Pretty = new Logger(new LogConfiguration

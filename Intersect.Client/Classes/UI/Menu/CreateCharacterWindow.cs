@@ -407,7 +407,6 @@ namespace Intersect.Client.UI.Menu
             }
             if (FieldChecking.IsValidUsername(mCharnameTextbox.Text, Strings.Regex.username))
             {
-                GameFade.FadeOut();
                 if (mMaleChk.IsChecked)
                 {
                     PacketSender.SendCreateCharacter(mCharnameTextbox.Text, GetClass().Id,

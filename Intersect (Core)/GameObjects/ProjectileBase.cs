@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-    public class ProjectileBase : DatabaseObject<ProjectileBase>
+    public class ProjectileBase : DatabaseObject<ProjectileBase>, IFolderable
     {
         public const int SPAWN_LOCATIONS_WIDTH = 5;
         public const int SPAWN_LOCATIONS_HEIGHT = 5;
@@ -64,6 +64,9 @@ namespace Intersect.GameObjects
             get => SpellBase.Get(SpellId);
             set => SpellId = value?.Id ?? Guid.Empty;
         }
+
+        /// <inheritdoc />
+        public string Folder { get; set; } = "";
 
         //Init
         [JsonConstructor]

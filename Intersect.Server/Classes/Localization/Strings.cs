@@ -474,12 +474,19 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString nullfound = @"Tried to load null value for index {00} of {01}";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString playerdboutofdate =
-                @"Player Database is out of date! Version: {00} Expected Version: {01}. Please run the included migration tool!";
+            public readonly LocalizedString upgraderequired = @"Your databases need to be upgraded! This process could corrupt your game data if any errors are encountered.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString gamedboutofdate =
-                @"Game Database is out of date! Version: {00} Expected Version: {01}. Please run the included migration tool!";
+            public readonly LocalizedString upgradebackup = @"Please make a backup of your game and player databases, and then type '{00}' to continue or '{01}' to quit.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString upgradeready = @"READY";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString upgradeexit = @"EXIT";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString upgradepleasewait = @"Please wait! Migrations can take several minutes, and even longer if you are using MySQL databases!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString usingsqlite = @"Using SQLite Database for account and data storage.";
@@ -563,6 +570,12 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString timesecond = @"\second";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString watchdogkill = @"Event killed due to commands processed in a single frame surpassing Event Watchdog Threshhold.  (Map: {00}  Event: {01})";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString watchdogkillcommon = @"Common event killed due to commands processed in a single frame surpassing the Event Watchdog Threshhold.  (Event {00})";
 
         }
 

@@ -77,13 +77,6 @@ namespace Intersect.Server
                 sGameDb = new GameContext(DatabaseUtils.DbProvider.MySql, $"server={Options.GameDb.Server};port={Options.GameDb.Port};database={Options.GameDb.Database};user={Options.GameDb.Username};password={Options.GameDb.Password}");
             }
 
-            var gameMigrations = sGameDb.Database.GetPendingMigrations();
-            sGameDb.Database.Migrate();
-            var remainingGameMigrations = sGameDb.Database.GetPendingMigrations();
-            var processedGameMigrations = new List<string>(gameMigrations);
-            foreach (var itm in remainingGameMigrations) processedGameMigrations.Remove(itm);
-            sGameDb.MigrationsProcessed(processedGameMigrations.ToArray());
-
             //Connect to new player database
             if (Options.PlayerDb.Type == DatabaseOptions.DatabaseType.sqlite)
             {
@@ -91,11 +84,59 @@ namespace Intersect.Server
             }
             else
             {
-                PlayerContext = new PlayerContext(DatabaseUtils.DbProvider.MySql, $"server={Options.PlayerDb.Server};port={Options.PlayerDb.Port};database={Options.PlayerDb.Database};user={Options.PlayerDb.Username};password={Options.PlayerDb.Password}");   
+                PlayerContext = new PlayerContext(DatabaseUtils.DbProvider.MySql, $"server={Options.PlayerDb.Server};port={Options.PlayerDb.Port};database={Options.PlayerDb.Database};user={Options.PlayerDb.Username};password={Options.PlayerDb.Password}");
             }
-            var playerMigrations = sGameDb.Database.GetPendingMigrations();
+
+            //We don't want anyone running the old migration tool accidentally
+            try
+            {
+                if (File.Exists("Intersect Migration Tool.exe")) File.Delete("Intersect Migration Tool.exe");
+                if (File.Exists("Intersect Migration Tool.pdb")) File.Delete("Intersect Migration Tool.pdb");
+                if (File.Exists("Intersect Migration Tool.mdb")) File.Delete("Intersect Migration Tool.mdb");
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            var gameMigrations = sGameDb.Database.GetPendingMigrations();
+            var playerMigrations = PlayerContext.Database.GetPendingMigrations();
+            var showMigrationWarnings = (gameMigrations.Any() && !gameMigrations.Contains("20180905042857_Initial")) || (playerMigrations.Any() && !playerMigrations.Contains("20180927161502_InitialPlayerDb"));
+
+            if (showMigrationWarnings)
+            {
+                Console.WriteLine();
+                Console.WriteLine(Strings.Database.upgraderequired);
+                Console.WriteLine(Strings.Database.upgradebackup.ToString(Strings.Database.upgradeready, Strings.Database.upgradeexit));
+                Console.WriteLine();
+                while (true)
+                {
+                    Console.Write("> ");
+                    var input = Console.ReadLine().Trim();
+                    if (input == Strings.Database.upgradeready.ToString().Trim())
+                    {
+                        break;
+                    }
+                    else if (input.ToLower() == Strings.Database.upgradeexit.ToString().Trim().ToLower())
+                    {
+                        Environment.Exit(1);
+                        return false;
+                    }
+                }
+
+                Console.WriteLine();
+                Console.WriteLine("Please wait! Migrations can take several minutes, and even longer if you are using MySQL databases!");
+            }
+
+            sGameDb.Database.Migrate();
+            var remainingGameMigrations = sGameDb.Database.GetPendingMigrations();
+            var processedGameMigrations = new List<string>(gameMigrations);
+            foreach (var itm in remainingGameMigrations) processedGameMigrations.Remove(itm);
+            sGameDb.MigrationsProcessed(processedGameMigrations.ToArray());
+
+            
             PlayerContext.Database.Migrate();
-            var remainingPlayerMigrations = sGameDb.Database.GetPendingMigrations();
+            var remainingPlayerMigrations = PlayerContext.Database.GetPendingMigrations();
             var processedPlayerMigrations = new List<string>(playerMigrations);
             foreach (var itm in remainingPlayerMigrations) processedPlayerMigrations.Remove(itm);
             PlayerContext.MigrationsProcessed(processedPlayerMigrations.ToArray());
@@ -940,7 +981,7 @@ namespace Intersect.Server
                 sw.Start();
                 sGameDb.SaveChanges();
                 sw.Stop();
-                Log.Info("Game DB Save - Took " + sw.ElapsedMilliseconds + "ms to complete.");
+                //Log.Debug("Game DB Save - Took " + sw.ElapsedMilliseconds + "ms to complete.");
             }
         }
 
@@ -953,7 +994,7 @@ namespace Intersect.Server
                 sw.Start();
                 PlayerContext.SaveChanges();
                 sw.Stop();
-                Log.Info("Player DB Save - Took " + sw.ElapsedMilliseconds + "ms to complete.");
+                //Log.Debug("Player DB Save - Took " + sw.ElapsedMilliseconds + "ms to complete.");
             }
         }
 

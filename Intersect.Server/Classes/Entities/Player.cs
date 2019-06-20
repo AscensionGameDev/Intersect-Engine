@@ -516,7 +516,7 @@ namespace Intersect.Server.Entities
             var cls = ClassBase.Get(ClassId);
             if (cls != null)
             {
-                Warp(cls.SpawnMapId, cls.SpawnX, cls.SpawnY, cls.SpawnDir);
+                Warp(cls.SpawnMapId, (byte)cls.SpawnX, (byte)cls.SpawnY, (byte)cls.SpawnDir);
             }
             else
             {
@@ -1110,9 +1110,9 @@ namespace Intersect.Server.Entities
                 {
                     mapId = cls.SpawnMapId;
                 }
-                x = cls.SpawnX;
-                y = cls.SpawnY;
-                dir = cls.SpawnDir;
+                x = (byte)cls.SpawnX;
+                y = (byte)cls.SpawnY;
+                dir = (byte)cls.SpawnDir;
             }
             if (mapId == Guid.Empty)
             {
@@ -3903,7 +3903,7 @@ namespace Intersect.Server.Entities
                 var warpAtt = (MapWarpAttribute) attribute;
                 if (warpAtt.Direction == WarpDirection.Retain)
                 {
-                    Warp(warpAtt.MapId, warpAtt.X, warpAtt.Y, Dir);
+                    Warp(warpAtt.MapId, warpAtt.X, warpAtt.Y, (byte)Dir);
                 }
                 else
                 {

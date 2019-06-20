@@ -20,6 +20,9 @@ namespace Intersect.Editor.Forms.Editors
         private string mCopiedItem;
         private ItemBase mEditorItem;
 
+        private List<string> mKnownFolders = new List<string>();
+        private List<string> mExpandedFolders = new List<string>();
+
         public FrmItem()
         {
             ApplyHooks();
@@ -72,15 +75,6 @@ namespace Intersect.Editor.Forms.Editors
             Hide();
             Globals.CurrentEditor = -1;
             Dispose();
-        }
-
-        private void lstItems_Click(object sender, EventArgs e)
-        {
-            if (mChangingName) return;
-            mEditorItem =
-                ItemBase.Get(
-                    ItemBase.IdFromList(lstItems.SelectedIndex));
-            UpdateEditor();
         }
 
         private void frmItem_Load(object sender, EventArgs e)
@@ -239,27 +233,13 @@ namespace Intersect.Editor.Forms.Editors
             }
             cmbConsume.Items.Add(Strings.Combat.exp);
 
+            //Searching/Sorting
+            btnChronological.ToolTipText = Strings.ItemEditor.sortchronologically;
+            txtSearch.Text = Strings.ItemEditor.searchplaceholder;
+            lblFolder.Text = Strings.ItemEditor.folderlabel;
+
             btnSave.Text = Strings.ItemEditor.save;
             btnCancel.Text = Strings.ItemEditor.cancel;
-        }
-
-        public void InitEditor()
-        {
-            lstItems.Items.Clear();
-            lstItems.Items.AddRange(ItemBase.Names);
-            cmbEquipmentSlot.Items.Clear();
-            cmbEquipmentSlot.Items.AddRange(Options.EquipmentSlots.ToArray());
-            cmbToolType.Items.Clear();
-            cmbToolType.Items.Add(Strings.General.none);
-            cmbToolType.Items.AddRange(Options.ToolTypes.ToArray());
-            cmbEquipmentBonus.Items.Clear();
-            for (int i = 0; i < Strings.ItemEditor.bonuseffects.Count; i++)
-            {
-                cmbEquipmentBonus.Items.Add(Strings.ItemEditor.bonuseffects[i]);
-            }
-            cmbProjectile.Items.Clear();
-            cmbProjectile.Items.Add(Strings.General.none);
-            cmbProjectile.Items.AddRange(ProjectileBase.Names);
         }
 
         private void UpdateEditor()
@@ -269,6 +249,7 @@ namespace Intersect.Editor.Forms.Editors
                 pnlContainer.Show();
 
                 txtName.Text = mEditorItem.Name;
+                cmbFolder.Text = mEditorItem.Folder;
                 txtDesc.Text = mEditorItem.Description;
                 cmbType.SelectedIndex = (int) mEditorItem.ItemType;
                 cmbPic.SelectedIndex = cmbPic.FindString(TextUtils.NullToNone(mEditorItem.Icon));
@@ -431,7 +412,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             mChangingName = true;
             mEditorItem.Name = txtName.Text;
-            lstItems.Items[ItemBase.ListIndex(mEditorItem.Id)] = txtName.Text;
+            if (lstItems.SelectedNode != null && lstItems.SelectedNode.Tag != null) lstItems.SelectedNode.Text = txtName.Text;
             mChangingName = false;
         }
 
@@ -790,5 +771,211 @@ namespace Intersect.Editor.Forms.Editors
         {
             mEditorItem.Rarity = cmbRarity.SelectedIndex;
         }
+
+        #region "Item List - Folders, Searching, Sorting, Etc"
+        public void InitEditor()
+        { 
+            var selectedId = Guid.Empty;
+            var folderNodes = new Dictionary<string, TreeNode>();
+            if (lstItems.SelectedNode != null && lstItems.SelectedNode.Tag != null)
+            {
+                selectedId = (Guid)lstItems.SelectedNode.Tag;
+            }
+            lstItems.Nodes.Clear();
+
+            cmbEquipmentSlot.Items.Clear();
+            cmbEquipmentSlot.Items.AddRange(Options.EquipmentSlots.ToArray());
+            cmbToolType.Items.Clear();
+            cmbToolType.Items.Add(Strings.General.none);
+            cmbToolType.Items.AddRange(Options.ToolTypes.ToArray());
+            cmbEquipmentBonus.Items.Clear();
+            for (int i = 0; i < Strings.ItemEditor.bonuseffects.Count; i++)
+            {
+                cmbEquipmentBonus.Items.Add(Strings.ItemEditor.bonuseffects[i]);
+            }
+            cmbProjectile.Items.Clear();
+            cmbProjectile.Items.Add(Strings.General.none);
+            cmbProjectile.Items.AddRange(ProjectileBase.Names);
+
+            //Collect folders
+            var mFolders = new List<string>();
+            foreach (var itm in ItemBase.Lookup)
+            {
+                if (!string.IsNullOrEmpty(((ItemBase)itm.Value).Folder) && !mFolders.Contains(((ItemBase)itm.Value).Folder))
+                {
+                    mFolders.Add(((ItemBase)itm.Value).Folder);
+                    if (!mKnownFolders.Contains(((ItemBase)itm.Value).Folder))
+                        mKnownFolders.Add(((ItemBase)itm.Value).Folder);
+                }
+            }
+
+            mFolders.Sort();
+            mKnownFolders.Sort();
+            cmbFolder.Items.Clear();
+            cmbFolder.Items.Add("");
+            cmbFolder.Items.AddRange(mKnownFolders.ToArray());
+
+            lstItems.Sorted = !btnChronological.Checked;
+
+            if (!btnChronological.Checked && !CustomSearch())
+            {
+                foreach (var folder in mFolders)
+                {
+                    var node = lstItems.Nodes.Add(folder);
+                    node.ImageIndex = 0;
+                    node.SelectedImageIndex = 0;
+                    folderNodes.Add(folder, node);
+                }
+            }
+
+            foreach (var itm in ItemBase.ItemPairs)
+            {
+                var node = new TreeNode(itm.Value);
+                node.Tag = itm.Key;
+                node.ImageIndex = 1;
+                node.SelectedImageIndex = 1;
+
+                var folder = ItemBase.Get(itm.Key).Folder;
+                if (!string.IsNullOrEmpty(folder) && !btnChronological.Checked && !CustomSearch())
+                {
+                    var folderNode = folderNodes[folder];
+                    folderNode.Nodes.Add(node);
+                    if (itm.Key == selectedId)
+                        folderNode.Expand();
+                }
+                else
+                {
+                    lstItems.Nodes.Add(node);
+                }
+
+                if (CustomSearch())
+                {
+                    if (!node.Text.ToLower().Contains(txtSearch.Text.ToLower()))
+                    {
+                        node.Remove();
+                    }
+                }
+
+                if (itm.Key == selectedId)
+                    lstItems.SelectedNode = node;
+            }
+
+            var selectedNode = lstItems.SelectedNode;
+
+            if (!btnChronological.Checked) lstItems.Sort();
+
+            lstItems.SelectedNode = selectedNode;
+            foreach (var node in mExpandedFolders)
+            {
+                if (folderNodes.ContainsKey(node))
+                    folderNodes[node].Expand();
+            }
+
+        }
+
+        private void btnAddFolder_Click(object sender, EventArgs e)
+        {
+            var folderName = "";
+            var result = DarkInputBox.ShowInformation(Strings.ItemEditor.folderprompt, Strings.ItemEditor.foldertitle, ref folderName, DarkDialogButton.OkCancel);
+            if (result == DialogResult.OK && !string.IsNullOrEmpty(folderName))
+            {
+                if (!cmbFolder.Items.Contains(folderName))
+                {
+                    mEditorItem.Folder = folderName;
+                    mExpandedFolders.Add(folderName);
+                    InitEditor();
+                    cmbFolder.Text = folderName;
+                }
+            }
+        }
+
+        private void lstItems_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            var node = e.Node;
+            if (node != null)
+            {
+                var hitTest = lstItems.HitTest(e.Location);
+                if (hitTest.Location != TreeViewHitTestLocations.PlusMinus)
+                {
+                    if (node.Nodes.Count > 0)
+                    {
+                        if (node.IsExpanded)
+                        {
+                            node.Collapse();
+                        }
+                        else
+                        {
+                            node.Expand();
+                        }
+                    }
+                }
+
+                if (node.IsExpanded)
+                {
+                    if (!mExpandedFolders.Contains(node.Text)) mExpandedFolders.Add(node.Text);
+                }
+                else
+                {
+                    if (mExpandedFolders.Contains(node.Text)) mExpandedFolders.Remove(node.Text);
+                }
+            }
+        }
+
+        private void lstItems_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            if (mChangingName) return;
+            if (lstItems.SelectedNode == null || lstItems.SelectedNode.Tag == null) return;
+            mEditorItem = ItemBase.Get((Guid)lstItems.SelectedNode.Tag);
+            UpdateEditor();
+        }
+
+        private void cmbFolder_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Folder = cmbFolder.Text;
+            InitEditor();
+        }
+
+        private void btnChronological_Click(object sender, EventArgs e)
+        {
+            btnChronological.Checked = !btnChronological.Checked;
+            InitEditor();
+        }
+
+        private void txtSearch_TextChanged(object sender, EventArgs e)
+        {
+            InitEditor();
+        }
+
+        private void txtSearch_Leave(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtSearch.Text))
+            {
+                txtSearch.Text = Strings.ItemEditor.searchplaceholder;
+            }
+        }
+
+        private void txtSearch_Enter(object sender, EventArgs e)
+        {
+            txtSearch.SelectAll();
+            txtSearch.Focus();
+        }
+
+        private void btnClearSearch_Click(object sender, EventArgs e)
+        {
+            txtSearch.Text = Strings.ItemEditor.searchplaceholder;
+        }
+
+        private bool CustomSearch()
+        {
+            return !string.IsNullOrWhiteSpace(txtSearch.Text) && txtSearch.Text != Strings.ItemEditor.searchplaceholder;
+        }
+
+        private void txtSearch_Click(object sender, EventArgs e)
+        {
+            if (txtSearch.Text == Strings.ItemEditor.searchplaceholder)
+                txtSearch.SelectAll();
+        }
+
+        #endregion
     }
 }

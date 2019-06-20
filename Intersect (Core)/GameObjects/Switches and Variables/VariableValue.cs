@@ -20,7 +20,7 @@ namespace Intersect.GameObjects.Switches_and_Variables
         [JsonIgnore]
         public bool Boolean
         {
-            get => Value;
+            get => Value ?? false;
             set
             {
                 Type = VariableDataTypes.Boolean;
@@ -31,7 +31,7 @@ namespace Intersect.GameObjects.Switches_and_Variables
         [JsonIgnore]
         public long Integer
         {
-            get => Value;
+            get => Value ?? 0;
             set
             {
                 Type = VariableDataTypes.Integer;
@@ -42,7 +42,7 @@ namespace Intersect.GameObjects.Switches_and_Variables
         [JsonIgnore]
         public double Number
         {
-            get => Value;
+            get => Value ?? 0.0;
             set
             {
                 Type = VariableDataTypes.Number;
@@ -93,7 +93,7 @@ namespace Intersect.GameObjects.Switches_and_Variables
                 }
 
                 Type = (VariableDataTypes)typeToken.Value<byte>();
-                Value = valueToken.Value<dynamic>();
+                Value = valueToken.Type == JTokenType.Null ? null : valueToken.Value<dynamic>();
             }
         }
 

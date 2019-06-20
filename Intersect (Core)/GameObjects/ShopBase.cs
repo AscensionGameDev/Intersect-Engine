@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-    public class ShopBase : DatabaseObject<ShopBase>
+    public class ShopBase : DatabaseObject<ShopBase>, IFolderable
     {
         public bool BuyingWhitelist { get; set; } = true;
 
@@ -41,6 +41,9 @@ namespace Intersect.GameObjects
         }
         [NotMapped]
         public List<ShopItem> SellingItems = new List<ShopItem>();
+
+        /// <inheritdoc />
+        public string Folder { get; set; } = "";
 
         [JsonConstructor]
         public ShopBase(Guid id) : base(id)

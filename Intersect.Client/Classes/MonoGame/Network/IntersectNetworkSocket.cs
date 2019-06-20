@@ -56,7 +56,7 @@ namespace Intersect.Client.MonoGame.Network
 
         public override void SendPacket(object packet)
         {
-            if (packet is CerasPacket)
+            if (packet is CerasPacket && ClientLidgrenNetwork != null)
             {
                 ClientLidgrenNetwork.Send((CerasPacket) packet);
             }

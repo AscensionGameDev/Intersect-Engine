@@ -9,7 +9,11 @@ namespace Intersect.Server.Migrations
         private static void RenameOldTables(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.RenameTable("Player_Switches", newName: "Player_Switches_Old");
+            if (!migrationBuilder.ActiveProvider.Contains("Sqlite"))
+                migrationBuilder.DropForeignKey("FK_Player_Switches_Players_PlayerId", "Player_Switches_Old");
             migrationBuilder.RenameTable("Player_Variables", newName: "Player_Variables_Old");
+            if (!migrationBuilder.ActiveProvider.Contains("Sqlite"))
+                migrationBuilder.DropForeignKey("FK_Player_Variables_Players_PlayerId", "Player_Variables_Old");
         }
 
         private static void CreateNewTables(MigrationBuilder migrationBuilder)
@@ -56,18 +60,40 @@ namespace Intersect.Server.Migrations
                 );
             }
 
-            migrationBuilder.Sql(
-                "INSERT INTO Player_Variables (Id, PlayerId, VariableId, Value) " +
-                "SELECT Id, PlayerId, SwitchId, Value " +
-                "FROM Player_Switches_Old;"
-            );
+            if (migrationBuilder.ActiveProvider.Contains("Sqlite"))
+            {
+                migrationBuilder.Sql(
+                    "INSERT INTO Player_Variables (Id, PlayerId, VariableId, Value) " +
+                    "SELECT Id, PlayerId, SwitchId, Value " +
+                    "FROM Player_Switches_Old;"
+                );
 
-            migrationBuilder.Sql(
-                "UPDATE Player_Variables Set Value=('{\"Type\":1,\"Value\": false}') WHERE Value = '0';"
-            );
-            migrationBuilder.Sql(
-                "UPDATE Player_Variables Set Value=('{\"Type\":1,\"Value\": true}') WHERE Value = '1';"
-            );
+                migrationBuilder.Sql(
+                    "UPDATE Player_Variables Set Value=('{\"Type\":1,\"Value\": false}') WHERE Value = '0';"
+                );
+                migrationBuilder.Sql(
+                    "UPDATE Player_Variables Set Value=('{\"Type\":1,\"Value\": true}') WHERE Value = '1';"
+                );
+            }
+            else
+            {
+                migrationBuilder.Sql(
+                    "INSERT INTO Player_Variables (Id, PlayerId, VariableId) " +
+                    "SELECT Id, PlayerId, SwitchId " +
+                    "FROM Player_Switches_Old WHERE Value = 0 OR Value = false;"
+                );
+                migrationBuilder.Sql(
+                    "UPDATE Player_Variables Set Value=('{\"Type\":1,\"Value\": false}') WHERE Value = '' OR Value IS NULL;"
+                );
+                migrationBuilder.Sql(
+                    "INSERT INTO Player_Variables (Id, PlayerId, VariableId) " +
+                    "SELECT Id, PlayerId, SwitchId " +
+                    "FROM Player_Switches_Old WHERE Value = 1 OR Value = true;"
+                );
+                migrationBuilder.Sql(
+                    "UPDATE Player_Variables Set Value=('{\"Type\":1,\"Value\": true}') WHERE Value = '' OR Value IS NULL;"
+                );
+            }
         }
 
         private static void DeleteOldTables(MigrationBuilder migrationBuilder)

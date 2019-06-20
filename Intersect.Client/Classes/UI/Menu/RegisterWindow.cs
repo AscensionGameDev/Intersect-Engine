@@ -152,7 +152,6 @@ namespace Intersect.Client.UI.Menu
                         {
                             if (FieldChecking.IsWellformedEmailAddress(mEmailTextbox.Text, Strings.Regex.email))
                             {
-                                GameFade.FadeOut();
                                 Hide();
                                 //Hash Password
                                 var sha = new SHA256Managed();

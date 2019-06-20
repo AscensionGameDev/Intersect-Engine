@@ -11,12 +11,6 @@ namespace Intersect
 {
     public class CustomColors
     {
-        public static Color HpForeground = Color.Red;
-        public static Color HpBackground = Color.Black;
-        public static Color CastingForeground = Color.Cyan;
-        public static Color CastingBackground = Color.Black;
-        public static Color ShieldForeground = Color.White;
-
         public static Color EventName = Color.White;
         public static Color EventNameBorder = Color.Black;
         public static Color EventNameBackground = new Color(180, 0, 0, 0);

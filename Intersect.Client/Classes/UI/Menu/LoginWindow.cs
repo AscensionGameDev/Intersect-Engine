@@ -205,8 +205,7 @@ namespace Intersect.Client.UI.Menu
                     password = ComputePasswordHash(mPasswordTextbox?.Text?.Trim());
                 }
             }
-
-            GameFade.FadeOut();
+            
             PacketSender.SendLogin(mUsernameTextbox?.Text, password);
             SaveCredentials();
             Globals.WaitingOnServer = true;
