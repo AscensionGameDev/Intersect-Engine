@@ -167,6 +167,23 @@ namespace Intersect.Client.UI.Game.EntityPanel
 
             EntityWindow.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
 
+            i = 0;
+            for (int z = 0; z < Options.PaperdollOrder[1].Count; z++)
+            {
+                if (Options.PaperdollOrder[1][z] == "Player")
+                {
+                    EntityFace.RenderColor = EntityFaceContainer.RenderColor;
+                }
+                else
+                {
+                    PaperdollPanels[i].RenderColor = EntityFaceContainer.RenderColor;
+                    i++;
+                }
+            }
+
+            
+
+
             EntityWindow.Hide();
 
             mLastUpdateTime = Globals.System.GetTimeMs();
@@ -585,10 +602,8 @@ namespace Intersect.Client.UI.Game.EntityPanel
 
         private void UpdateImage()
         {
-            GameTexture faceTex =
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face, MyEntity.Face);
-            GameTexture entityTex =
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, MyEntity.MySprite);
+            GameTexture faceTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face, MyEntity.Face);
+            GameTexture entityTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, MyEntity.MySprite);
             if (faceTex != null && faceTex != EntityFace.Texture)
             {
                 EntityFace.Texture = faceTex;
@@ -597,16 +612,22 @@ namespace Intersect.Client.UI.Game.EntityPanel
                 Align.Center(EntityFace);
                 mCurrentSprite = MyEntity.Face;
                 EntityFace.IsHidden = false;
-                for (var i = 0; i < Options.EquipmentSlots?.Count; i++)
+                var i = 0;
+                for (int z = 0; z < Options.PaperdollOrder[1].Count; z++)
                 {
-                    if (PaperdollPanels == null)
+                    if (Options.PaperdollOrder[1][z] != "Player")
                     {
-                        Log.Warn($@"{nameof(PaperdollPanels)} is null.");
-                    } else if (PaperdollPanels[i] == null)
-                    {
-                        Log.Warn($@"{nameof(PaperdollPanels)}[{i}] is null.");
+                        if (PaperdollPanels == null)
+                        {
+                            Log.Warn($@"{nameof(PaperdollPanels)} is null.");
+                        }
+                        else if (PaperdollPanels[i] == null)
+                        {
+                            Log.Warn($@"{nameof(PaperdollPanels)}[{i}] is null.");
+                        }
+                        PaperdollPanels?[i]?.Hide();
+                        i++;
                     }
-                    PaperdollPanels?[i]?.Hide();
                 }
             }
             else if (entityTex != null && faceTex == null || (faceTex != null && faceTex != EntityFace.Texture))
