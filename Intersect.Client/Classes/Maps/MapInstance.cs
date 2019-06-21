@@ -93,7 +93,7 @@ namespace Intersect.Client.Maps
 
         private bool mTexturesFound = false;
         private GameTileBuffer[][][] mTileBuffers; //Array is layer, autotile frame, buffer index
-        private Dictionary<object,GameTileBuffer[]>[] mTileBufferDict = new Dictionary<object, GameTileBuffer[]>[Options.LayerCount];
+        private Dictionary<object, GameTileBuffer[]>[] mTileBufferDict = new Dictionary<object, GameTileBuffer[]>[Options.LayerCount];
 
 
         //Initialization
@@ -206,7 +206,7 @@ namespace Intersect.Client.Maps
         private void HandleMapLoaded(MapInstance map)
         {
             //See if this new map is on the same grid as us
-            List<GameTileBuffer> updatedBuffers = new List<GameTileBuffer>();
+            HashSet<GameTileBuffer> updatedBuffers = new HashSet<GameTileBuffer>();
             if (map != this && Globals.GridMaps.Contains(map.Id) && Globals.GridMaps.Contains(Id) && MapLoaded)
             {
                 var surroundingMaps = GenerateAutotileGrid();
@@ -215,20 +215,20 @@ namespace Intersect.Client.Maps
                     if (map.MapGridY == MapGridY - 1)
                     {
                         //Check Northwest
-                        updatedBuffers.AddRange(CheckAutotile(0, 0, surroundingMaps));
+                        updatedBuffers.UnionWith(CheckAutotile(0, 0, surroundingMaps));
                     }
                     else if (map.MapGridY == MapGridY)
                     {
                         //Check West
                         for (int y = 0; y < Options.MapHeight; y++)
                         {
-                            updatedBuffers.AddRange(CheckAutotile(0, y, surroundingMaps));
+                            updatedBuffers.UnionWith(CheckAutotile(0, y, surroundingMaps));
                         }
                     }
                     else if (map.MapGridY == MapGridY + 1)
                     {
                         //Check Southwest
-                        updatedBuffers.AddRange(CheckAutotile(0, Options.MapHeight - 1, surroundingMaps));
+                        updatedBuffers.UnionWith(CheckAutotile(0, Options.MapHeight - 1, surroundingMaps));
                     }
                 }
                 else if (map.MapGridX == MapGridX)
@@ -238,7 +238,7 @@ namespace Intersect.Client.Maps
                         //Check North
                         for (int x = 0; x < Options.MapWidth; x++)
                         {
-                            updatedBuffers.AddRange(CheckAutotile(x, 0, surroundingMaps));
+                            updatedBuffers.UnionWith(CheckAutotile(x, 0, surroundingMaps));
                         }
                     }
                     else if (map.MapGridY == MapGridY + 1)
@@ -246,7 +246,7 @@ namespace Intersect.Client.Maps
                         //Check South
                         for (int x = 0; x < Options.MapWidth; x++)
                         {
-                            updatedBuffers.AddRange(CheckAutotile(x, Options.MapHeight - 1, surroundingMaps));
+                            updatedBuffers.UnionWith(CheckAutotile(x, Options.MapHeight - 1, surroundingMaps));
                         }
                     }
                 }
@@ -255,20 +255,35 @@ namespace Intersect.Client.Maps
                     if (map.MapGridY == MapGridY - 1)
                     {
                         //Check Northeast
-                        updatedBuffers.AddRange(CheckAutotile(Options.MapWidth - 1, Options.MapHeight, surroundingMaps));
+                        updatedBuffers.UnionWith(CheckAutotile(Options.MapWidth - 1, Options.MapHeight, surroundingMaps));
                     }
                     else if (map.MapGridY == MapGridY)
                     {
                         //Check East
                         for (int y = 0; y < Options.MapHeight; y++)
                         {
-                            updatedBuffers.AddRange(CheckAutotile(Options.MapWidth - 1, y, surroundingMaps));
+                            updatedBuffers.UnionWith(CheckAutotile(Options.MapWidth - 1, y, surroundingMaps));
                         }
                     }
                     else if (map.MapGridY == MapGridY + 1)
                     {
                         //Check Southeast
-                        updatedBuffers.AddRange(CheckAutotile(Options.MapWidth - 1, Options.MapHeight - 1, surroundingMaps));
+                        updatedBuffers.UnionWith(CheckAutotile(Options.MapWidth - 1, Options.MapHeight - 1, surroundingMaps));
+                    }
+                }
+
+                //Along with edges we need to recalculate ALL cliffs :(
+                for (int x = 0; x < Options.MapWidth; x++)
+                {
+                    for (int y = 0; y < Options.MapHeight; y++)
+                    {
+                        for (int i = 0; i < Options.LayerCount; i++)
+                        {
+                            if (Layers[i].Tiles[x, y].Autotile == MapAutotiles.AUTOTILE_CLIFF)
+                            {
+                                updatedBuffers.UnionWith(CheckAutotile(x, y, surroundingMaps));
+                            }
+                        }
                     }
                 }
             }
@@ -296,10 +311,10 @@ namespace Intersect.Client.Maps
                             var buffer = tileBuffer[platformTex][autotileFrame];
                             var xoffset = GetX();
                             var yoffset = GetY();
-                            DrawAutoTile(layer, x * Options.TileWidth + xoffset, y * Options.TileHeight + yoffset, 1, x, y, autotileFrame, tilesetTex, buffer,true);
-                            DrawAutoTile(layer, x * Options.TileWidth + (Options.TileWidth / 2) + xoffset, y * Options.TileHeight + yoffset, 2, x, y, autotileFrame, tilesetTex, buffer,true);
-                            DrawAutoTile(layer, x * Options.TileWidth + xoffset, y * Options.TileHeight + (Options.TileHeight / 2) + yoffset, 3, x, y, autotileFrame, tilesetTex, buffer,true);
-                            DrawAutoTile(layer, +x * Options.TileWidth + (Options.TileWidth / 2) + xoffset, y * Options.TileHeight + (Options.TileHeight / 2) + yoffset, 4, x, y, autotileFrame, tilesetTex, buffer,true);
+                            DrawAutoTile(layer, x * Options.TileWidth + xoffset, y * Options.TileHeight + yoffset, 1, x, y, autotileFrame, tilesetTex, buffer, true); //Top Left
+                            DrawAutoTile(layer, x * Options.TileWidth + (Options.TileWidth / 2) + xoffset, y * Options.TileHeight + yoffset, 2, x, y, autotileFrame, tilesetTex, buffer, true);
+                            DrawAutoTile(layer, x * Options.TileWidth + xoffset, y * Options.TileHeight + (Options.TileHeight / 2) + yoffset, 3, x, y, autotileFrame, tilesetTex, buffer, true);
+                            DrawAutoTile(layer, +x * Options.TileWidth + (Options.TileWidth / 2) + xoffset, y * Options.TileHeight + (Options.TileHeight / 2) + yoffset, 4, x, y, autotileFrame, tilesetTex, buffer, true);
                             if (!updated.Contains(buffer)) updated.Add(buffer);
                         }
                     }
@@ -430,7 +445,7 @@ namespace Intersect.Client.Maps
             LocalAnimations?.Clear();
             ClearMapAttributes();
         }
-        
+
         public void BuildVBOs()
         {
             for (int i = 0; i < Options.LayerCount; i++)
@@ -507,7 +522,7 @@ namespace Intersect.Client.Maps
                             itemBase.Icon);
                         if (itemTex != null)
                         {
-                            GameGraphics.DrawGameTexture(itemTex, new FloatRect(0,0,itemTex.GetWidth(),itemTex.GetHeight()), new FloatRect(GetX() + item.Value.X * Options.TileWidth, GetY() + item.Value.Y * Options.TileHeight,Options.TileWidth,Options.TileHeight), Color.White);
+                            GameGraphics.DrawGameTexture(itemTex, new FloatRect(0, 0, itemTex.GetWidth(), itemTex.GetHeight()), new FloatRect(GetX() + item.Value.X * Options.TileWidth, GetY() + item.Value.Y * Options.TileHeight, Options.TileWidth, Options.TileHeight), Color.White);
                         }
                     }
                 }
@@ -597,6 +612,10 @@ namespace Intersect.Client.Maps
                     switch (Autotiles.Autotile[x, y].Layer[layer].RenderState)
                     {
                         case MapAutotiles.RENDER_STATE_NORMAL:
+                            if (this.Name == "Graveyard" && x == 19 && y == 24 && layer == 3)
+                            {
+                                var here = true;
+                            }
                             for (int i = 0; i < 3; i++)
                             {
                                 var buffer = buffers[i];
