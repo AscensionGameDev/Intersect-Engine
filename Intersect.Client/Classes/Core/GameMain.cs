@@ -317,7 +317,7 @@ namespace Intersect.Client
 
         public static void Logout(bool characterSelect)
         {
-            GameAudio.StopMusic(3f);
+            GameAudio.PlayMusic(ClientConfiguration.Instance.MenuMusic, 3, 3, true);
             GameFade.FadeOut();
             PacketSender.SendLogout(characterSelect);
             Globals.LoggedIn = false;
