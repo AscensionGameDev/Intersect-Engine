@@ -955,20 +955,22 @@ namespace Intersect.Server.Entities
             {
                 TryAttack(enemy, parentSpell);
             }
-            else
+
+            if (GetType() == typeof(Player) && enemy.GetType() == typeof(Player))
             {
-                if (GetType() == typeof(Player) && enemy.GetType() == typeof(Player))
+                if (MapInstance.Get(MapId).ZoneType == MapZones.Safe)
                 {
-                    if (MapInstance.Get(MapId).ZoneType == MapZones.Safe)
-                    {
-                        return;
-                    }
-                    if (MapInstance.Get(enemy.MapId).ZoneType == MapZones.Safe)
-                    {
-                        return;
-                    }
-                    if (((Player)this).InParty((Player)enemy) == true) return;
+                    return;
                 }
+                if (MapInstance.Get(enemy.MapId).ZoneType == MapZones.Safe)
+                {
+                    return;
+                }
+                if (((Player)this).InParty((Player)enemy) == true) return;
+            }
+
+            if (parentSpell == null)
+            {
                 Attack(enemy, parentItem.Damage, 0, (DamageType)parentItem.DamageType, (Stats)parentItem.ScalingStat,
                     parentItem.Scaling, parentItem.CritChance, parentItem.CritMultiplier, null, null, true);
             }
