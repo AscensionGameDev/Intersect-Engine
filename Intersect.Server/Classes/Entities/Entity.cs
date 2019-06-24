@@ -1057,6 +1057,8 @@ namespace Intersect.Server.Entities
                         return;
                     }
                 }
+
+                if (!CanAttack(enemy, spellBase)) return;
             }
             else
             {
