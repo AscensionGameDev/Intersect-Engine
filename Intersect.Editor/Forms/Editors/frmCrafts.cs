@@ -21,6 +21,8 @@ namespace Intersect.Editor.Forms.Editors
         private List<string> mKnownFolders = new List<string>();
         private List<string> mExpandedFolders = new List<string>();
 
+        private bool updatingIngedients = false;
+
 
         public FrmCrafts()
         {
@@ -118,16 +120,16 @@ namespace Intersect.Editor.Forms.Editors
             if (lstIngredients.SelectedIndex > -1)
             {
                 mEditorItem.Ingredients[lstIngredients.SelectedIndex].Quantity = (int)nudQuantity.Value;
+                updatingIngedients = true;
                 if (cmbIngredient.SelectedIndex > 0)
                 {
-                    lstIngredients.Items[lstIngredients.SelectedIndex] = Strings.CraftsEditor.ingredientlistitem.ToString(
-                        ItemBase.GetName(mEditorItem.Ingredients[lstIngredients.SelectedIndex].ItemId),
-                        nudQuantity.Value);
+                    lstIngredients.Items[lstIngredients.SelectedIndex] = Strings.CraftsEditor.ingredientlistitem.ToString(ItemBase.GetName(mEditorItem.Ingredients[lstIngredients.SelectedIndex].ItemId), nudQuantity.Value);
                 }
                 else
                 {
                     lstIngredients.Items[lstIngredients.SelectedIndex] = Strings.CraftsEditor.ingredientlistitem.ToString(Strings.CraftsEditor.ingredientnone, nudQuantity.Value);
                 }
+                updatingIngedients = false;
             }
         }
 
@@ -284,6 +286,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void lstIngredients_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (updatingIngedients) return;
             if (lstIngredients.SelectedIndex > -1)
             {
                 cmbIngredient.Show();
@@ -333,8 +336,8 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (lstIngredients.SelectedIndex > -1)
             {
-                mEditorItem.Ingredients[lstIngredients.SelectedIndex].ItemId =
-                    ItemBase.IdFromList(cmbIngredient.SelectedIndex - 1);
+                mEditorItem.Ingredients[lstIngredients.SelectedIndex].ItemId = ItemBase.IdFromList(cmbIngredient.SelectedIndex - 1);
+                updatingIngedients = true;
                 if (cmbIngredient.SelectedIndex > 0)
                 {
                     lstIngredients.Items[lstIngredients.SelectedIndex] = Strings.CraftsEditor.ingredientlistitem.ToString(
@@ -345,6 +348,7 @@ namespace Intersect.Editor.Forms.Editors
                 {
                     lstIngredients.Items[lstIngredients.SelectedIndex] = Strings.CraftsEditor.ingredientlistitem.ToString(Strings.CraftsEditor.ingredientnone, nudQuantity.Value);
                 }
+                updatingIngedients = false;
             }
         }
 
