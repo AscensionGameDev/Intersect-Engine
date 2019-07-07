@@ -60,10 +60,9 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.txtLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.txtLabel.Location = new System.Drawing.Point(46, 19);
-            this.txtLabel.Multiline = true;
             this.txtLabel.Name = "txtLabel";
             this.txtLabel.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.txtLabel.Size = new System.Drawing.Size(195, 22);
+            this.txtLabel.Size = new System.Drawing.Size(195, 20);
             this.txtLabel.TabIndex = 22;
             // 
             // lblLabel
@@ -95,7 +94,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.btnSave.Text = "Ok";
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
-            // EventCommand_Label
+            // EventCommandLabel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
