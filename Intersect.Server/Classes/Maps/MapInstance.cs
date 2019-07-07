@@ -36,7 +36,7 @@ namespace Intersect.Server.Maps
 
         [JsonIgnore] [NotMapped] public Dictionary<EventBase, EventInstance> GlobalEventInstances = new Dictionary<EventBase, EventInstance>();
         [JsonIgnore] [NotMapped] public List<MapItemSpawn> ItemRespawns = new List<MapItemSpawn>();
-        [NotMapped] private BytePoint[] mMapBlocks;
+        [NotMapped] private BytePoint[] mMapBlocks = new BytePoint[0];
 
         //Location of Map in the current grid
         [JsonIgnore]
@@ -58,7 +58,7 @@ namespace Intersect.Server.Maps
         [NotMapped]
         public List<Projectile> MapProjectiles = new List<Projectile>();
 
-        private BytePoint[] mNpcMapBlocks;
+        private BytePoint[] mNpcMapBlocks = new BytePoint[0];
         [JsonIgnore]
         [NotMapped]
         public Dictionary<NpcSpawn, MapNpcSpawn> NpcSpawnInstances = new Dictionary<NpcSpawn, MapNpcSpawn>();
