@@ -27,6 +27,7 @@ namespace Intersect.Client.Entities
         private long mUpperTimer;
         private int mZDimension = -1;
         private Entity mParent;
+        private bool disposed = false;
 
         public AnimationInstance(AnimationBase animBase, bool loopForever, bool autoRotate = false, int zDimension = -1, Entity parent = null)
         {
@@ -194,6 +195,7 @@ namespace Intersect.Client.Entities
 
         public void Dispose()
         {
+            if (disposed) return;
             lock (GameGraphics.AnimationLock)
             {
                 if (mSound != null)
@@ -204,7 +206,13 @@ namespace Intersect.Client.Entities
                     mSound = null;
                 }
                 GameGraphics.LiveAnimations.Remove(this);
+                disposed = true;
             }
+        }
+
+        public bool Disposed()
+        {
+            return disposed;
         }
 
         public void SetPosition(float worldX, float worldY, int mapx, int mapy, Guid mapId, int dir, int z = 0)

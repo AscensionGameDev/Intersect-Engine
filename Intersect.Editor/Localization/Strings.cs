@@ -475,7 +475,7 @@ Tick timer saved in server config.json.";
         {
             public static LocalizedString addvariable = @"Add {00}";
             public static LocalizedString admin = @"Owner/Developer";
-            public static LocalizedString animationonevent = @"On Event #{00} {01} [X Offset: {02} Y Offset: {03} {04}]";
+            public static LocalizedString animationonevent = @"On Event {00} [X Offset: {01} Y Offset: {02} {03}]";
             public static LocalizedString animationonmap = @"[On Map {00} X: {01} Y: {02} Dir: {03}]";
             public static LocalizedString animationonplayer = @"On Player [X Offset: {00} Y Offset: {01} {02}]";
             public static LocalizedString animationrelativedir = @"Spawn Relative To Direction";

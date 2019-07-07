@@ -226,6 +226,14 @@ namespace Intersect.Client.Entities
                             break;
                         }
                     }
+
+                    foreach (var equipAnim in EquipmentAnimations)
+                    {
+                        if (equipAnim == anim)
+                        {
+                            animsToClear.Remove(anim);
+                        }
+                    }
                 }
             }
             ClearAnimations(animsToClear);
@@ -463,7 +471,7 @@ namespace Intersect.Client.Entities
                         }
                         if (anim != null)
                         {
-                            if (EquipmentAnimations[z] != null && EquipmentAnimations[z].MyBase != anim)
+                            if (EquipmentAnimations[z] != null && (EquipmentAnimations[z].MyBase != anim || EquipmentAnimations[z].Disposed()))
                             {
                                 EquipmentAnimations[z].Dispose();
                                 Animations.Remove(EquipmentAnimations[z]);
