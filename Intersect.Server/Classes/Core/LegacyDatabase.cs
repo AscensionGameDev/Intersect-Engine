@@ -337,6 +337,7 @@ namespace Intersect.Server
         public static void DeleteCharacter(Player chr)
         {
             PlayerContext.Players.Remove(chr);
+            SavePlayerDatabaseAsync();
         }
 
         //Bags
