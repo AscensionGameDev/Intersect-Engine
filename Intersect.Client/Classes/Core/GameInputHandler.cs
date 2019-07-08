@@ -61,7 +61,8 @@ namespace Intersect.Client
                         break;
 
                     case Controls.ToggleGui:
-                        Gui.HideUi = !Gui.HideUi;
+                        if (Globals.GameState == GameStates.InGame)
+                            Gui.HideUi = !Gui.HideUi;
                         break;
                 }
 
