@@ -80,6 +80,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             {
                 cmbDirection.Items.Add(Strings.Directions.dir[i]);
             }
+            cmbDirection.SelectedIndex = 0;
             btnVisual.Text = Strings.Warping.visual;
 
             lblEntity.Text = Strings.EventSpawnNpc.entity;
