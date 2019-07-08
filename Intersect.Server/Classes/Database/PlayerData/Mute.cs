@@ -171,10 +171,8 @@ namespace Intersect.Server.Database.PlayerData
                 return null;
             }
 
-            var mute = context.Mutes.SingleOrDefault(queryMute => queryMute.UserId == userId) ??
-                       context.Mutes.SingleOrDefault(
-                           queryMute => string.Equals(queryMute.Ip, ip, StringComparison.OrdinalIgnoreCase)
-                       );
+            var mute = context.Mutes.SingleOrDefault(queryMute => queryMute.UserId == userId && queryMute.EndTime > DateTime.UtcNow) ??
+                       context.Mutes.SingleOrDefault(queryMute => string.Equals(queryMute.Ip, ip, StringComparison.OrdinalIgnoreCase) && queryMute.EndTime > DateTime.UtcNow);
 
             return mute == null
                 ? null
@@ -191,6 +189,7 @@ namespace Intersect.Server.Database.PlayerData
 
             if (muteReason == null)
             {
+                user.Mute(false, "");
                 return null;
             }
 

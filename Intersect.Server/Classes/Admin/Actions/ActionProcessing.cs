@@ -30,6 +30,8 @@ namespace Intersect.Server.Classes.Admin.Actions
                 {
                     Ban.Add(target.Client, action.DurationDays, action.Reason, player.Name, "");
                 }
+                target.Client.Disconnect();
+                PacketSender.SendChatMsg(client,Strings.Account.banned.ToString(target.Name),Color.Red);
             }
             else
             {
@@ -81,6 +83,8 @@ namespace Intersect.Server.Classes.Admin.Actions
                 {
                     Mute.Add(target.Client, action.DurationDays, action.Reason, player.Name, "");
                 }
+
+                PacketSender.SendChatMsg(client, Strings.Account.muted.ToString(target.Name), Color.Red);
             }
             else
             {
