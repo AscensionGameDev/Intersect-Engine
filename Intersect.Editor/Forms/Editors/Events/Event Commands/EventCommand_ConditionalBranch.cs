@@ -27,9 +27,18 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             mEventEditor = editor;
             mEventCommand = command;
             mCurrentPage = refPage;
-            cmbConditionType.SelectedIndex = (int)Condition.Type;
             UpdateFormElements(refCommand.Type);
             InitLocalization();
+            var typeIndex = 0;
+            foreach (var itm in Strings.EventConditional.conditions)
+            {
+                if (itm.Key == (int)Condition.Type)
+                {
+                    cmbConditionType.SelectedIndex = typeIndex;
+                    break;
+                }
+                typeIndex++;
+            }
             nudVariableValue.Minimum = long.MinValue;
             nudVariableValue.Maximum = long.MaxValue;
             chkNegated.Checked = refCommand.Negated;
