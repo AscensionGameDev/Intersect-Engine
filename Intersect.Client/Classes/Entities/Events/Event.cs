@@ -137,27 +137,27 @@ namespace Intersect.Client.Entities.Events
                     }
                     break;
             }
+            destRectangle.X = map.GetX() + X * Options.TileWidth + OffsetX;
+            if (height > Options.TileHeight)
+            {
+                destRectangle.Y = map.GetY() + Y * Options.TileHeight + OffsetY -
+                                  ((height) - Options.TileHeight);
+            }
+            else
+            {
+                destRectangle.Y = map.GetY() + Y * Options.TileHeight + OffsetY;
+            }
+            if (width > Options.TileWidth)
+            {
+                destRectangle.X -= ((width) - Options.TileWidth) / 2;
+            }
+            destRectangle.X = (int)Math.Ceiling(destRectangle.X);
+            destRectangle.Y = (int)Math.Ceiling(destRectangle.Y);
+            destRectangle.Width = srcRectangle.Width;
+            destRectangle.Height = srcRectangle.Height;
+            WorldPos = destRectangle;
             if (srcTexture != null)
             {
-                destRectangle.X = map.GetX() + X * Options.TileWidth + OffsetX;
-                if (height > Options.TileHeight)
-                {
-                    destRectangle.Y = map.GetY() + Y * Options.TileHeight + OffsetY -
-                                      ((height) - Options.TileHeight);
-                }
-                else
-                {
-                    destRectangle.Y = map.GetY() + Y * Options.TileHeight + OffsetY;
-                }
-                if (width > Options.TileWidth)
-                {
-                    destRectangle.X -= ((width) - Options.TileWidth) / 2;
-                }
-                destRectangle.X = (int) Math.Ceiling(destRectangle.X);
-                destRectangle.Y = (int) Math.Ceiling(destRectangle.Y);
-                destRectangle.Width = srcRectangle.Width;
-                destRectangle.Height = srcRectangle.Height;
-                WorldPos = destRectangle;
                 GameGraphics.DrawGameTexture(srcTexture, srcRectangle, destRectangle, Intersect.Color.White);
             }
         }

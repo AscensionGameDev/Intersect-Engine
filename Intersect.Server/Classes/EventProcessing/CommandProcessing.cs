@@ -475,6 +475,12 @@ namespace Intersect.Server.EventProcessing
                 }
                 if (targetEntity != null)
                 {
+                    if (command.X == 0 && command.Y == 0 && command.Dir == 0)
+                    {
+                        //Attach to entity instead of playing on tile
+                        PacketSender.SendAnimationToProximity(animId, targetEntity.GetEntityType() == EntityTypes.Event ? 2 : 1, targetEntity.Id, targetEntity.MapId,0,0,0);
+                        return;
+                    }
                     int xDiff = command.X;
                     int yDiff = command.Y;
                     if (command.Dir == 1)
