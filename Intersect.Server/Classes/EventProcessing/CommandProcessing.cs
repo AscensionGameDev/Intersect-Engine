@@ -620,6 +620,7 @@ namespace Intersect.Server.EventProcessing
             if (ClassBase.Get(command.ClassId) != null)
             {
                 player.ClassId = command.ClassId;
+                player.RecalculateStatsAndPoints();
             }
             PacketSender.SendEntityDataToProximity(player);
         }
