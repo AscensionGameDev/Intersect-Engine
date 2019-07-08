@@ -1099,15 +1099,9 @@ namespace Intersect.Editor
                         {
                             float xpos = x * Options.TileWidth + xoffset + Options.TileWidth / 2;
                             float ypos = y * Options.TileHeight + yoffset + Options.TileHeight / 2;
-                            var tmpMapOld = tmpMap;
-                            if (tmpMap == TilePreviewStruct)
-                            {
-                                tmpMap = Globals.CurrentMap;
-                            }
                             if (tmpMap.Attributes[x, y] != null)
                             {
-                                var animInstance = tmpMap.GetAttributeAnimation(tmpMap.Attributes[x, y],
-                                    animation.Id);
+                                var animInstance = tmpMap.GetAttributeAnimation(tmpMap.Attributes[x, y], animation.Id);
                                 //Update if the animation isn't right!
                                 if (animInstance == null || animInstance.MyBase != animation)
                                 {
@@ -1118,7 +1112,6 @@ namespace Intersect.Editor
                                 animInstance.SetPosition((int) xpos, (int) ypos, 0);
                                 animInstance.Draw(renderTarget, upper, alternate);
                             }
-                            tmpMap = tmpMapOld;
                         }
                     }
                 }
