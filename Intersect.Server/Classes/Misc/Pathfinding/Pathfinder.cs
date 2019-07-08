@@ -163,13 +163,11 @@ namespace Intersect.Server.Misc.Pathfinding
                                                 {
                                                     if (en.Value != null)
                                                     {
-                                                        mapGrid[
-                                                                    ((x + 1) - gridX) * Options.MapWidth +
-                                                                    en.Value.X,
-                                                                    ((y + 1) - gridY) * Options.MapHeight +
-                                                                    en.Value.Y]
-                                                                .IsWall =
-                                                            true;
+                                                        foreach (var page in en.Value.GlobalPageInstance)
+                                                        {
+                                                            if (!page.Passable)
+                                                                mapGrid[((x + 1) - gridX) * Options.MapWidth + en.Value.X, ((y + 1) - gridY) * Options.MapHeight + en.Value.Y].IsWall = true;
+                                                        }
                                                     }
                                                 }
 
