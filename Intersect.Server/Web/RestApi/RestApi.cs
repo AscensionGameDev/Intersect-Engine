@@ -1,31 +1,23 @@
-﻿using Intersect.Server.Web.RestApi.Authentication;
+﻿using Intersect.Configuration;
+using Intersect.Enums;
+using Intersect.Logging;
+using Intersect.Server.Localization;
+using Intersect.Server.Web.RestApi.Authentication;
 using Intersect.Server.Web.RestApi.Authentication.OAuth;
 using Intersect.Server.Web.RestApi.Configuration;
+using Intersect.Server.Web.RestApi.Constraints;
+using Intersect.Server.Web.RestApi.Logging;
 using Intersect.Server.Web.RestApi.RouteProviders;
 using Intersect.Server.Web.RestApi.Services;
-
+using Intersect.Server.Web.RestApi.Types;
 using JetBrains.Annotations;
-
 using Microsoft.Owin.Hosting;
-
+using Microsoft.Owin.Logging;
 using Owin;
-
 using System;
 using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Routing;
-
-using Intersect.Config;
-using Intersect.Configuration;
-using Intersect.Enums;
-using Intersect.Logging;
-using Intersect.Server.Localization;
-using Intersect.Server.Web.RestApi.Constraints;
-using Intersect.Server.Web.RestApi.Logging;
-using Intersect.Server.Web.RestApi.Routes.V1;
-using Intersect.Server.Web.RestApi.Types;
-
-using Microsoft.Owin.Logging;
 
 namespace Intersect.Server.Web.RestApi
 {
@@ -93,6 +85,7 @@ namespace Intersect.Server.Web.RestApi
             var constraintResolver = new DefaultInlineConstraintResolver();
             constraintResolver.ConstraintMap?.Add(nameof(AdminActions), typeof(AdminActionsConstraint));
             constraintResolver.ConstraintMap?.Add(nameof(LookupKey), typeof(LookupKey.Constraint));
+            constraintResolver.ConstraintMap?.Add(nameof(ChatMessage), typeof(ChatMessage.Constraint));
 
             // Map routes
             config.MapHttpAttributeRoutes(constraintResolver, new VersionedRouteProvider());

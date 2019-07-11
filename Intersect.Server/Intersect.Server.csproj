@@ -598,6 +598,7 @@
     <Compile Include="Web\RestApi\Routes\RootInfoController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\DemoController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\DocController.cs" />
+    <Compile Include="Web\RestApi\Routes\V1\ChatController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\InfoController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\VariableController.cs" />
     <Compile Include="Web\RestApi\Services\AuthorizedRoutesService.cs" />
@@ -609,6 +610,7 @@
     <Compile Include="Classes\Database\PlayerData\SeedData\SeedUsers.cs" />
     <Compile Include="Classes\Database\SeedData.cs" />
     <Compile Include="Classes\Database\ISeedableContext.cs" />
+    <Compile Include="Web\RestApi\Types\ChatMessage.cs" />
     <Compile Include="Web\RestApi\Types\LookupKey.cs" />
   </ItemGroup>
   <ItemGroup>

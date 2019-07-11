@@ -247,6 +247,10 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
         }
 
+        // TODO: give item ?id&quantity&bank-overflow => { inventory_count, bank_count } // -1 
+
+        // TODO: spells give/take/list
+
         [Route("{lookupKey:LookupKey}/AdminActions/{adminAction:AdminActions}")]
         [HttpPost]
         public object DoAdminActionOnPlayerByName(
