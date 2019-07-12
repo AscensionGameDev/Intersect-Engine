@@ -38,6 +38,7 @@ namespace Intersect.Editor.Forms.Editors
             this.lstAnimations = new System.Windows.Forms.TreeView();
             this.imageList = new System.Windows.Forms.ImageList(this.components);
             this.grpGeneral = new DarkUI.Controls.DarkGroupBox();
+            this.chkCompleteSoundPlayback = new DarkUI.Controls.DarkCheckBox();
             this.btnAddFolder = new DarkUI.Controls.DarkButton();
             this.lblFolder = new System.Windows.Forms.Label();
             this.cmbFolder = new DarkUI.Controls.DarkComboBox();
@@ -205,6 +206,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpGeneral.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpGeneral.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpGeneral.Controls.Add(this.chkCompleteSoundPlayback);
             this.grpGeneral.Controls.Add(this.btnAddFolder);
             this.grpGeneral.Controls.Add(this.lblFolder);
             this.grpGeneral.Controls.Add(this.cmbFolder);
@@ -222,6 +224,15 @@ namespace Intersect.Editor.Forms.Editors
             this.grpGeneral.TabIndex = 18;
             this.grpGeneral.TabStop = false;
             this.grpGeneral.Text = "General";
+            // 
+            // chkCompleteSoundPlayback
+            // 
+            this.chkCompleteSoundPlayback.Location = new System.Drawing.Point(221, 47);
+            this.chkCompleteSoundPlayback.Name = "chkCompleteSoundPlayback";
+            this.chkCompleteSoundPlayback.Size = new System.Drawing.Size(246, 17);
+            this.chkCompleteSoundPlayback.TabIndex = 29;
+            this.chkCompleteSoundPlayback.Text = "Complete Sound Playback After Anim Dies";
+            this.chkCompleteSoundPlayback.CheckedChanged += new System.EventHandler(this.chkCompleteSoundPlayback_CheckedChanged);
             // 
             // btnAddFolder
             // 
@@ -266,7 +277,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             // btnSwap
             // 
-            this.btnSwap.Location = new System.Drawing.Point(265, 44);
+            this.btnSwap.Location = new System.Drawing.Point(473, 43);
             this.btnSwap.Name = "btnSwap";
             this.btnSwap.Padding = new System.Windows.Forms.Padding(5);
             this.btnSwap.Size = new System.Drawing.Size(158, 23);
@@ -276,7 +287,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             // scrlDarkness
             // 
-            this.scrlDarkness.Location = new System.Drawing.Point(551, 19);
+            this.scrlDarkness.Location = new System.Drawing.Point(584, 19);
             this.scrlDarkness.Name = "scrlDarkness";
             this.scrlDarkness.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
             this.scrlDarkness.Size = new System.Drawing.Size(218, 17);
@@ -286,7 +297,7 @@ namespace Intersect.Editor.Forms.Editors
             // labelDarkness
             // 
             this.labelDarkness.AutoSize = true;
-            this.labelDarkness.Location = new System.Drawing.Point(437, 20);
+            this.labelDarkness.Location = new System.Drawing.Point(470, 20);
             this.labelDarkness.Name = "labelDarkness";
             this.labelDarkness.Size = new System.Drawing.Size(107, 13);
             this.labelDarkness.TabIndex = 4;
@@ -319,7 +330,7 @@ namespace Intersect.Editor.Forms.Editors
             "None"});
             this.cmbSound.Location = new System.Drawing.Point(265, 17);
             this.cmbSound.Name = "cmbSound";
-            this.cmbSound.Size = new System.Drawing.Size(158, 21);
+            this.cmbSound.Size = new System.Drawing.Size(187, 21);
             this.cmbSound.TabIndex = 2;
             this.cmbSound.Text = "None";
             this.cmbSound.TextPadding = new System.Windows.Forms.Padding(2);
@@ -1322,5 +1333,6 @@ namespace Intersect.Editor.Forms.Editors
         private Mono.Data.Sqlite.SqliteCommand sqliteCommand1;
         private DarkButton btnClearSearch;
         private DarkTextBox txtSearch;
+        private DarkCheckBox chkCompleteSoundPlayback;
     }
 }

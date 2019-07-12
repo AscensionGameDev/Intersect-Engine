@@ -125,6 +125,7 @@ namespace Intersect.Editor.Forms.Editors
             grpGeneral.Text = Strings.AnimationEditor.general;
             lblName.Text = Strings.AnimationEditor.name;
             lblSound.Text = Strings.AnimationEditor.sound;
+            chkCompleteSoundPlayback.Text = Strings.AnimationEditor.soundcomplete;
             labelDarkness.Text = Strings.AnimationEditor.simulatedarkness.ToString( scrlDarkness.Value);
             btnSwap.Text = Strings.AnimationEditor.swap;
 
@@ -177,9 +178,9 @@ namespace Intersect.Editor.Forms.Editors
 
                 txtName.Text = mEditorItem.Name;
                 cmbSound.SelectedIndex = cmbSound.FindString(TextUtils.NullToNone(mEditorItem.Sound));
+                chkCompleteSoundPlayback.Checked = mEditorItem.CompleteSound;
 
-                cmbLowerGraphic.SelectedIndex =
-                    cmbLowerGraphic.FindString(TextUtils.NullToNone(mEditorItem.Lower.Sprite));
+                cmbLowerGraphic.SelectedIndex = cmbLowerGraphic.FindString(TextUtils.NullToNone(mEditorItem.Lower.Sprite));
 
                 nudLowerHorizontalFrames.Value = mEditorItem.Lower.XFrames;
                 nudLowerVerticalFrames.Value = mEditorItem.Lower.YFrames;
@@ -190,8 +191,7 @@ namespace Intersect.Editor.Forms.Editors
                 tmrLowerAnimation.Interval = (int) nudLowerFrameDuration.Value;
                 nudLowerLoopCount.Value = mEditorItem.Lower.LoopCount;
 
-                cmbUpperGraphic.SelectedIndex =
-                    cmbUpperGraphic.FindString(TextUtils.NullToNone(mEditorItem.Upper.Sprite));
+                cmbUpperGraphic.SelectedIndex = cmbUpperGraphic.FindString(TextUtils.NullToNone(mEditorItem.Upper.Sprite));
 
                 nudUpperHorizontalFrames.Value = mEditorItem.Upper.XFrames;
                 nudUpperVerticalFrames.Value = mEditorItem.Upper.YFrames;
@@ -237,6 +237,11 @@ namespace Intersect.Editor.Forms.Editors
         private void cmbSound_SelectedIndexChanged(object sender, EventArgs e)
         {
             mEditorItem.Sound = TextUtils.SanitizeNone(cmbSound?.Text);
+        }
+
+        private void chkCompleteSoundPlayback_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.CompleteSound = chkCompleteSoundPlayback.Checked;
         }
 
         private void cmbLowerGraphic_SelectedIndexChanged(object sender, EventArgs e)

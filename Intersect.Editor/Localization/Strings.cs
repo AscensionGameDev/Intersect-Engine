@@ -57,6 +57,7 @@ namespace Intersect.Editor.Localization
             public static LocalizedString sortchronologically = @"Order Chronologically";
             public static LocalizedString simulatedarkness = @"Simulate Darkness: {00}";
             public static LocalizedString sound = @"Sound:";
+            public static LocalizedString soundcomplete = @"Complete Sound Playback After Anim Dies";
             public static LocalizedString swap = @"Swap Upper/Lower";
             public static LocalizedString title = @"Animation Editor";
             public static LocalizedString undo = @"Undo Changes";

@@ -54,6 +54,7 @@ namespace Intersect.GameObjects
 
         //Misc
         public string Sound { get; set; }
+        public bool CompleteSound { get; set; }
 
         /// <inheritdoc />
         public string Folder { get; set; } = "";
