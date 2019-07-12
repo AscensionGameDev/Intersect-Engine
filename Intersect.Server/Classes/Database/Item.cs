@@ -37,18 +37,18 @@ namespace Intersect.Server.Database
 
         public static Item None => new Item();
 
-        public Item(Guid itemId, int quantity) : this(itemId, quantity, null,null)
+        public Item(Guid itemId, int quantity, bool incStatBuffs = true) : this(itemId, quantity, null,null, incStatBuffs)
         {
             
         }
 
-        public Item(Guid itemId, int quantity, Guid? bagId, Bag bag)
+        public Item(Guid itemId, int quantity, Guid? bagId, Bag bag, bool incStatBuffs = true)
         {
             ItemId = itemId;
             Quantity = quantity;
             BagId = bagId;
             Bag = bag;
-            if (ItemBase.Get(ItemId) != null)
+            if (ItemBase.Get(ItemId) != null && incStatBuffs)
             {
                 if (ItemBase.Get(ItemId).ItemType == ItemTypes.Equipment)
                 {

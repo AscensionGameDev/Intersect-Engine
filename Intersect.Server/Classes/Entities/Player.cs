@@ -1797,45 +1797,32 @@ namespace Intersect.Server.Entities
                         {
                             buyItemAmt = Math.Max(1, amount);
                         }
-                        if (shop.SellingItems[slot].CostItemQuantity == 0 ||
-                            FindItem(shop.SellingItems[slot].CostItemId,
-                                shop.SellingItems[slot].CostItemQuantity * buyItemAmt) > -1)
+                        if (shop.SellingItems[slot].CostItemQuantity == 0 || FindItem(shop.SellingItems[slot].CostItemId, shop.SellingItems[slot].CostItemQuantity * buyItemAmt) > -1)
                         {
-                            if (CanGiveItem(new Item(buyItemNum, buyItemAmt)))
+                            if (CanGiveItem(new Item(buyItemNum, buyItemAmt, false)))
                             {
                                 if (shop.SellingItems[slot].CostItemQuantity > 0)
                                 {
-                                    TakeItemsBySlot(
-                                        FindItem(shop.SellingItems[slot].CostItemId,
-                                            shop.SellingItems[slot].CostItemQuantity * buyItemAmt),
-                                        shop.SellingItems[slot].CostItemQuantity * buyItemAmt);
+                                    TakeItemsBySlot(FindItem(shop.SellingItems[slot].CostItemId, shop.SellingItems[slot].CostItemQuantity * buyItemAmt), shop.SellingItems[slot].CostItemQuantity * buyItemAmt);
                                 }
-                                TryGiveItem(new Item(buyItemNum, buyItemAmt));
+                                TryGiveItem(new Item(buyItemNum, buyItemAmt, false));
                             }
                             else
                             {
-                                if (shop.SellingItems[slot].CostItemQuantity * buyItemAmt ==
-                                    Items[
-                                        FindItem(shop.SellingItems[slot].CostItemId,
-                                            shop.SellingItems[slot].CostItemQuantity * buyItemAmt)].Quantity)
+                                if (shop.SellingItems[slot].CostItemQuantity * buyItemAmt == Items[ FindItem(shop.SellingItems[slot].CostItemId, shop.SellingItems[slot].CostItemQuantity * buyItemAmt)].Quantity)
                                 {
-                                    TakeItemsBySlot(
-                                        FindItem(shop.SellingItems[slot].CostItemId,
-                                            shop.SellingItems[slot].CostItemQuantity * buyItemAmt),
-                                        shop.SellingItems[slot].CostItemQuantity * buyItemAmt);
+                                    TakeItemsBySlot( FindItem(shop.SellingItems[slot].CostItemId, shop.SellingItems[slot].CostItemQuantity * buyItemAmt), shop.SellingItems[slot].CostItemQuantity * buyItemAmt);
                                     TryGiveItem(new Item(buyItemNum, buyItemAmt));
                                 }
                                 else
                                 {
-                                    PacketSender.SendChatMsg(Client, Strings.Shops.inventoryfull,
-                                        CustomColors.Error, Name);
+                                    PacketSender.SendChatMsg(Client, Strings.Shops.inventoryfull, CustomColors.Error, Name);
                                 }
                             }
                         }
                         else
                         {
-                            PacketSender.SendChatMsg(Client, Strings.Shops.cantafford,
-                                CustomColors.Error, Name);
+                            PacketSender.SendChatMsg(Client, Strings.Shops.cantafford, CustomColors.Error, Name);
                         }
                     }
                 }

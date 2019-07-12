@@ -113,6 +113,14 @@ namespace Intersect.Client.UI.Game
                         itemStats.AddText(stats, itemStats.RenderColor, itemStatsText.CurAlignments.Count > 0 ? itemStatsText.CurAlignments[0] : Alignments.Left, itemDescText.Font);
                         itemStats.AddLineBreak();
                     }
+
+                    for (int i = 0; i < (int)Vitals.VitalCount; i++)
+                    {
+                        var vitals = Strings.ItemDesc.vitals[i].ToString((item.VitalsGiven[i]));
+                        itemStats.AddText(vitals, itemStats.RenderColor, itemStatsText.CurAlignments.Count > 0 ? itemStatsText.CurAlignments[0] : Alignments.Left, itemDescText.Font);
+                        itemStats.AddLineBreak();
+                    }
+
                     if (statBuffs != null)
                     {
                         for (int i = 0; i < Options.MaxStats; i++)
