@@ -830,7 +830,7 @@ namespace Intersect.Server.Networking
         //DepositItemPacket
         public void HandlePacket(Client client, Player player, DepositItemPacket packet)
         {
-            player.DepositItem(packet.Slot, packet.Quantity);
+            player.TryDepositItem(packet.Slot, packet.Quantity);
         }
 
         //WithdrawItemPacket

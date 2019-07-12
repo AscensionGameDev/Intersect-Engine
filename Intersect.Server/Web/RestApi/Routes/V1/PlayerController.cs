@@ -365,30 +365,45 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                         inventory = quantityInventory
                     }
                 };
-
             }
         }
 
-        [Route("{lookupKey:LookupKey}/items/{slotIndex:int}")]
+        [Route("{lookupKey:LookupKey}/items/{itemId:guid}")]
         [HttpDelete]
-        public object ItemsTake(LookupKey lookupKey, int slotIndex, int quantity = -1)
+        public object ItemsTake(LookupKey lookupKey, Guid itemId, int quantity = -1)
         {
-            // TODO(source): Makes sense to do this, but it wasn't requested yet
-            throw new NotImplementedException("TODO(source)");
+            if (lookupKey.IsInvalid)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
+            }
+
+            using (var context = PlayerContext.Temporary)
+            {
+                var (client, player) = Player.Fetch(lookupKey, context);
+                if (player == null)
+                {
+                    return Request.CreateErrorResponse(
+                        HttpStatusCode.NotFound,
+                        lookupKey.HasId
+                            ? $@"No player with id '{lookupKey.Id}'."
+                            : $@"No player with name '{lookupKey.Name}'."
+                    );
+                }
+
+                if (player.TakeItemsById(itemId, quantity))
+                {
+                    return new
+                    {
+                        itemId,
+                        quantity
+                    };
+                }
+
+                return Request.CreateErrorResponse(
+                    HttpStatusCode.InternalServerError, $@"Failed to take {quantity} of '{itemId}' from player."
+                );
+            }
         }
-
-        // I've actually commented out this variation of the ItemsTake endpoint
-        // because it breaks the DELETE /players/<id|name>/items/<slot> format.
-        // This may get scrapped before implementation.
-        //[Route("items/inventory/{slotId:guid}")]
-        //[HttpDelete]
-        //public object ItemsTake(Guid slotId, int quantity = -1)
-        //{
-        //    // TODO(source): Makes sense to do this, but it wasn't requested yet
-        //    throw new NotImplementedException("TODO(source)");
-        //}
-
-        // TODO: spells give/take/list
 
         [Route("{lookupKey:LookupKey}/spells")]
         [HttpGet]
