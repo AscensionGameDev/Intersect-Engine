@@ -1131,7 +1131,7 @@ namespace Intersect.Server.Entities
             var itemBase = ItemBase.Get(item.ItemId);
             if (itemBase != null)
             {
-                if (itemBase.IsStackable())
+                if (itemBase.IsStackable)
                 {
                     for (var i = 0; i < Options.MaxInvItems; i++)
                     {
@@ -1154,34 +1154,28 @@ namespace Intersect.Server.Entities
             return false;
         }
 
-        public bool TryGiveItem(Item item, bool sendUpdate = true)
-        {
-            var itemBase = ItemBase.Get(item.ItemId);
-            if (itemBase != null)
-            {
-                if (itemBase.IsStackable())
-                {
-                    for (var i = 0; i < Options.MaxInvItems; i++)
-                    {
-                        if (Items[i].ItemId == item.ItemId)
-                        {
-                            Items[i].Quantity += item.Quantity;
-                            if (sendUpdate)
-                            {
-                                PacketSender.SendInventoryItemUpdate(Client, i);
-                            }
-                            UpdateGatherItemQuests(item.ItemId);
-                            return true;
-                        }
-                    }
-                }
+        public bool TryGiveItem(Guid itemId, int quantity, bool bankOverflow = false, bool sendUpdate = true) =>
+            TryGiveItem(new Item(itemId, quantity), sendUpdate);
 
-                //Either a non stacking item, or we couldn't find the item already existing in the players inventory
+        public bool TryGiveItem(Item item, bool sendUpdate = true) => TryGiveItem(item, false, sendUpdate);
+
+        public bool TryGiveItem(Item item, bool bankOverflow, bool sendUpdate)
+        {
+            // TODO: Bank overflow
+
+            var itemBase = ItemBase.Get(item.ItemId);
+            if (itemBase == null)
+            {
+                return false;
+            }
+
+            if (itemBase.IsStackable)
+            {
                 for (var i = 0; i < Options.MaxInvItems; i++)
                 {
-                    if (Items[i].ItemId == Guid.Empty)
+                    if (Items[i].ItemId == item.ItemId)
                     {
-                        Items[i].Set(item);
+                        Items[i].Quantity += item.Quantity;
                         if (sendUpdate)
                         {
                             PacketSender.SendInventoryItemUpdate(Client, i);
@@ -1189,6 +1183,21 @@ namespace Intersect.Server.Entities
                         UpdateGatherItemQuests(item.ItemId);
                         return true;
                     }
+                }
+            }
+
+            //Either a non stacking item, or we couldn't find the item already existing in the players inventory
+            for (var i = 0; i < Options.MaxInvItems; i++)
+            {
+                if (Items[i].ItemId == Guid.Empty)
+                {
+                    Items[i].Set(item);
+                    if (sendUpdate)
+                    {
+                        PacketSender.SendInventoryItemUpdate(Client, i);
+                    }
+                    UpdateGatherItemQuests(item.ItemId);
+                    return true;
                 }
             }
             return false;
@@ -1238,7 +1247,7 @@ namespace Intersect.Server.Entities
                 {
                     amount = Items[slot].Quantity;
                 }
-                if (itemBase.IsStackable())
+                if (itemBase.IsStackable)
                 {
                     MapInstance.Get(MapId)
                         .SpawnItem(X, Y, Items[slot], amount);
@@ -1444,7 +1453,7 @@ namespace Intersect.Server.Entities
             var itemBase = ItemBase.Get(Items[slot].ItemId);
             if (itemBase != null)
             {
-                if (itemBase.IsStackable())
+                if (itemBase.IsStackable)
                 {
                     if (amount > Items[slot].Quantity)
                     {
@@ -1542,7 +1551,7 @@ namespace Intersect.Server.Entities
             return false;
         }
 
-        public int FindItem(Guid itemId, int itemVal = 1)
+        public int FindItem(Guid itemId, int quantity = 1)
         {
             if (Items == null)
                 return -1;
@@ -1553,26 +1562,34 @@ namespace Intersect.Server.Entities
                 if (item?.ItemId != itemId)
                     continue;
 
-                if (item.Quantity >= itemVal)
+                if (item.Quantity >= quantity)
                     return i;
             }
 
             return -1;
         }
 
-        public int CountItems(Guid itemId)
+        public int CountItems(Guid itemId, bool inInventory = true, bool inBank = false)
         {
-            if (Items == null)
-                return -1;
+            if (inInventory == false && inBank == false)
+            {
+                throw new ArgumentException(
+                    $@"At least one of either {nameof(inInventory)} or {nameof(inBank)} must be true to count items."
+                );
+            }
 
             var count = 0;
-            for (var i = 0; i < Options.MaxInvItems; i++)
-            {
-                var item = Items[i];
-                if (item?.ItemId != itemId)
-                    continue;
 
-                count += Math.Max(1, item.Quantity);
+            int QuantityFromSlot(Item item) => item?.ItemId == itemId ? Math.Max(1, item.Quantity) : 0;
+
+            if (inInventory)
+            {
+                count += Items.Sum(QuantityFromSlot);
+            }
+
+            if (inBank)
+            {
+                count += Bank.Sum(QuantityFromSlot);
             }
 
             return count;
@@ -1754,7 +1771,7 @@ namespace Intersect.Server.Entities
                     }
                     if (canSellItem)
                     {
-                        TryGiveItem(new Item(rewardItemId, rewardItemVal * amount), true);
+                        TryGiveItem(new Item(rewardItemId, rewardItemVal * amount));
                     }
                     PacketSender.SendInventoryItemUpdate(Client, slot);
                 }
@@ -1775,7 +1792,7 @@ namespace Intersect.Server.Entities
                     if (itemBase != null)
                     {
                         buyItemNum = shop.SellingItems[slot].ItemId;
-                        if (itemBase.IsStackable())
+                        if (itemBase.IsStackable)
                         {
                             buyItemAmt = Math.Max(1, amount);
                         }
@@ -1792,7 +1809,7 @@ namespace Intersect.Server.Entities
                                             shop.SellingItems[slot].CostItemQuantity * buyItemAmt),
                                         shop.SellingItems[slot].CostItemQuantity * buyItemAmt);
                                 }
-                                TryGiveItem(new Item(buyItemNum, buyItemAmt), true);
+                                TryGiveItem(new Item(buyItemNum, buyItemAmt));
                             }
                             else
                             {
@@ -1805,7 +1822,7 @@ namespace Intersect.Server.Entities
                                         FindItem(shop.SellingItems[slot].CostItemId,
                                             shop.SellingItems[slot].CostItemQuantity * buyItemAmt),
                                         shop.SellingItems[slot].CostItemQuantity * buyItemAmt);
-                                    TryGiveItem(new Item(buyItemNum, buyItemAmt), true);
+                                    TryGiveItem(new Item(buyItemNum, buyItemAmt));
                                 }
                                 else
                                 {
@@ -1913,7 +1930,7 @@ namespace Intersect.Server.Entities
                 //Give them the craft
                 var quantity = Math.Max(CraftBase.Get(id).Quantity, 1);
                 var itm = ItemBase.Get(CraftBase.Get(id).ItemId);
-                if (itm == null || !itm.IsStackable()) quantity = 1;
+                if (itm == null || !itm.IsStackable) quantity = 1;
                 if (TryGiveItem(new Item(CraftBase.Get(id).ItemId, quantity)))
                 {
                     PacketSender.SendChatMsg(Client,
@@ -2011,7 +2028,7 @@ namespace Intersect.Server.Entities
             {
                 if (Items[slot].ItemId != Guid.Empty)
                 {
-                    if (itemBase.IsStackable())
+                    if (itemBase.IsStackable)
                     {
                         if (amount >= Items[slot].Quantity)
                         {
@@ -2023,7 +2040,7 @@ namespace Intersect.Server.Entities
                         amount = 1;
                     }
                     //Find a spot in the bank for it!
-                    if (itemBase.IsStackable())
+                    if (itemBase.IsStackable)
                     {
                         for (var i = 0; i < Options.MaxBankSlots; i++)
                         {
@@ -2095,7 +2112,7 @@ namespace Intersect.Server.Entities
             if (itemBase == null) return;
             if (bankSlotItem.ItemId != Guid.Empty)
             {
-                if (itemBase.IsStackable())
+                if (itemBase.IsStackable)
                 {
                     if (amount >= bankSlotItem.Quantity)
                     {
@@ -2108,7 +2125,7 @@ namespace Intersect.Server.Entities
                 }
 
                 //Find a spot in the inventory for it!
-                if (itemBase.IsStackable())
+                if (itemBase.IsStackable)
                 {
                     /* Find an existing stack */
                     for (var i = 0; i < Options.MaxInvItems; i++)
@@ -2253,7 +2270,7 @@ namespace Intersect.Server.Entities
             {
                 if (Items[slot].ItemId != Guid.Empty)
                 {
-                    if (itemBase.IsStackable())
+                    if (itemBase.IsStackable)
                     {
                         if (amount >= Items[slot].Quantity)
                         {
@@ -2279,7 +2296,7 @@ namespace Intersect.Server.Entities
                     }
 
                     //Find a spot in the bag for it!
-                    if (itemBase.IsStackable())
+                    if (itemBase.IsStackable)
                     {
                         for (var i = 0; i < bag.SlotCount; i++)
                         {
@@ -2348,7 +2365,7 @@ namespace Intersect.Server.Entities
             {
                 if (bag.Slots[slot] != null && bag.Slots[slot].ItemId != Guid.Empty)
                 {
-                    if (itemBase.IsStackable())
+                    if (itemBase.IsStackable)
                     {
                         if (amount >= bag.Slots[slot].Quantity)
                         {
@@ -2360,7 +2377,7 @@ namespace Intersect.Server.Entities
                         amount = 1;
                     }
                     //Find a spot in the inventory for it!
-                    if (itemBase.IsStackable())
+                    if (itemBase.IsStackable)
                     {
                         /* Find an existing stack */
                         for (var i = 0; i < Options.MaxInvItems; i++)
@@ -2534,7 +2551,7 @@ namespace Intersect.Server.Entities
             {
                 if (Items[slot].ItemId != Guid.Empty)
                 {
-                    if (itemBase.IsStackable())
+                    if (itemBase.IsStackable)
                     {
                         if (amount >= Items[slot].Quantity)
                         {
@@ -2562,7 +2579,7 @@ namespace Intersect.Server.Entities
                     }
 
                     //Find a spot in the trade for it!
-                    if (itemBase.IsStackable())
+                    if (itemBase.IsStackable)
                     {
                         for (var i = 0; i < Options.MaxInvItems; i++)
                         {
@@ -2637,7 +2654,7 @@ namespace Intersect.Server.Entities
             }
 
             var inventorySlot = -1;
-            var stackable = itemBase.IsStackable();
+            var stackable = itemBase.IsStackable;
             if (stackable)
             {
                 /* Find an existing stack */
@@ -2981,6 +2998,48 @@ namespace Intersect.Server.Entities
             {
                 PacketSender.SendChatMsg(Client, Strings.Combat.tryforgetboundspell);
             }
+        }
+
+        public bool TryForgetSpell([NotNull] Spell spell, bool sendUpdate = true)
+        {
+            Spell slot = null;
+            var slotIndex = -1;
+
+            for (var index = 0; index < Spells.Count; ++index)
+            {
+                var spellSlot = Spells[index];
+
+                // Avoid continue;
+                // ReSharper disable once InvertIf
+                if (spellSlot?.SpellId == spell.SpellId)
+                {
+                    slot = spellSlot;
+                    slotIndex = index;
+                    break;
+                }
+            }
+
+            if (slot == null)
+            {
+                return false;
+            }
+
+            var spellBase = SpellBase.Get(spell.SpellId);
+            if (spellBase == null)
+            {
+                return false;
+            }
+
+            if (spellBase.Bound)
+            {
+                PacketSender.SendChatMsg(Client, Strings.Combat.tryforgetboundspell);
+                return false;
+            }
+
+            slot.Set(Spell.None);
+            PacketSender.SendPlayerSpellUpdate(Client, slotIndex);
+
+            return true;
         }
 
         public void UseSpell(int spellSlot, EntityInstance target)

@@ -327,7 +327,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             mEditorItem.ItemId = ItemBase.IdFromList(cmbResult.SelectedIndex - 1);
             var itm = ItemBase.Get(mEditorItem.ItemId);
-            if (itm == null || !itm.IsStackable())
+            if (itm == null || !itm.IsStackable)
             {
                 nudCraftQuantity.Value = 1;
                 mEditorItem.Quantity = 1;

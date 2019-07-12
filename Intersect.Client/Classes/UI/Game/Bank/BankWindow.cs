@@ -73,7 +73,7 @@ namespace Intersect.Client.UI.Game.Bank
                     if (item != null)
                     {
                         Items[i].Pnl.IsHidden = false;
-                        if (item.IsStackable())
+                        if (item.IsStackable)
                         {
                             mValues[i].IsHidden = false;
                             mValues[i].Text = Globals.Bank[i].Quantity.ToString();

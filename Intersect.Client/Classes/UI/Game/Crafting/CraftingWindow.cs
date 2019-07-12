@@ -125,7 +125,7 @@ namespace Intersect.Client.UI.Game.Crafting
             mCombinedValue.Show();
             var quantity = Math.Max(craft.Quantity, 1);
             var itm = ItemBase.Get(craft.ItemId);
-            if (itm == null || !itm.IsStackable()) quantity = 1;
+            if (itm == null || !itm.IsStackable) quantity = 1;
             mCombinedValue.Text = quantity.ToString();
 
             for (int i = 0; i < mItems.Count; i++)

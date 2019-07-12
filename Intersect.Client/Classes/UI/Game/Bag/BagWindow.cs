@@ -80,7 +80,7 @@ namespace Intersect.Client.UI.Game.Bag
                     {
                         Items[i].Pnl.IsHidden = false;
 
-                        if (item.IsStackable())
+                        if (item.IsStackable)
                         {
                             mValues[i].IsHidden = false;
                             mValues[i].Text = Globals.Bag[i].Quantity.ToString();

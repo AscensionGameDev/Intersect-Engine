@@ -57,7 +57,7 @@ namespace Intersect.Client.UI.Game.Shop
             var item = ItemBase.Get(Globals.GameShop.SellingItems[mMySlot].ItemId);
             if (item != null)
             {
-                if (item.IsStackable())
+                if (item.IsStackable)
                 {
                     InputBox iBox = new InputBox(Strings.Shop.buyitem,
                         Strings.Shop.buyitemprompt.ToString(item.Name), true, InputBox.InputType.NumericInput,
