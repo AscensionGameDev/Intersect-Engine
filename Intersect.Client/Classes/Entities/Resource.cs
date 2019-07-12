@@ -118,6 +118,12 @@ namespace Intersect.Client.Entities
             return result;
         }
 
+        /// <inheritdoc />
+        public override bool CanBeAttacked()
+        {
+            return !IsDead;
+        }
+
         public override HashSet<Entity> DetermineRenderOrder(HashSet<Entity> renderList, MapInstance map)
         {
             if (IsDead && !BaseResource.Exhausted.RenderBelowEntities) return base.DetermineRenderOrder(renderList, map);

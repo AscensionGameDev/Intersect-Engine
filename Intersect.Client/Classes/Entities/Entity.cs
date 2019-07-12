@@ -1102,6 +1102,11 @@ namespace Intersect.Client.Entities
             }
         }
 
+        public virtual bool CanBeAttacked()
+        {
+            return true;
+        }
+
         //Chatting
         public void AddChatBubble(string text)
         {

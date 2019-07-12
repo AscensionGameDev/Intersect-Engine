@@ -87,6 +87,12 @@ namespace Intersect.Client.Entities
             }
         }
 
+        /// <inheritdoc />
+        public override bool CanBeAttacked()
+        {
+            return false;
+        }
+
         //Find out which animation data to load depending on what spawn wave we are on during projection.
         private int FindSpawnAnimationData()
         {

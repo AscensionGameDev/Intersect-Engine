@@ -860,7 +860,7 @@ namespace Intersect.Client.Entities
                     if (en.Value == null) continue;
                     if (en.Value != Globals.Me)
                     {
-                        if (en.Value.CurrentMap == map && en.Value.X == x && en.Value.Y == y)
+                        if (en.Value.CurrentMap == map && en.Value.X == x && en.Value.Y == y && en.Value.CanBeAttacked())
                         {
                             //ATTACKKKKK!!!
                             PacketSender.SendAttack(en.Key);
