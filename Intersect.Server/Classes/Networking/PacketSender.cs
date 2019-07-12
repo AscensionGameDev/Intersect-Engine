@@ -704,6 +704,12 @@ namespace Intersect.Server.Networking
             SendDataToProximity(en.MapId, new EntityAttackPacket(en.Id,en.GetEntityType(),en.MapId,attackTime));
         }
 
+        //EntityDiePacket
+        public static void SendEntityDie(EntityInstance en)
+        {
+            SendDataToProximity(en.MapId, new EntityDiePacket(en.Id, en.GetEntityType(), en.MapId));
+        }
+
         //EntityDirectionPacket
         public static void SendEntityDirTo(Client client, EntityInstance en)
         {

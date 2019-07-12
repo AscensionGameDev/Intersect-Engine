@@ -545,6 +545,7 @@ namespace Intersect.Server.Entities
             }
 
             base.Die(dropitems, killer);
+            PacketSender.SendEntityDie(this);
             Reset();
             Respawn();
             PacketSender.SendInventory(Client);

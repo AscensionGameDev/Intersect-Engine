@@ -431,6 +431,7 @@ namespace Intersect.Server.Entities
                 }
             }
             MapInstance.Get(MapId).RemoveProjectile(this);
+            PacketSender.SendEntityDie(this);
             PacketSender.SendEntityLeave(this);
         }
 

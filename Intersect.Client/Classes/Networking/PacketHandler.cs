@@ -583,6 +583,40 @@ namespace Intersect.Client.Networking
             }
         }
 
+        //EntityDiePacket
+        private static void HandlePacket(EntityDiePacket packet)
+        {
+            var id = packet.Id;
+            var type = packet.Type;
+            var mapId = packet.MapId;
+
+            Entity en = null;
+            if (type < EntityTypes.Event)
+            {
+                if (!Globals.Entities.ContainsKey(id))
+                {
+                    return;
+                }
+                en = Globals.Entities[id];
+            }
+            else
+            {
+                var entityMap = MapInstance.Get(mapId);
+                if (entityMap == null) return;
+                if (!entityMap.LocalEntities.ContainsKey(id))
+                {
+                    return;
+                }
+                en = entityMap.LocalEntities[id];
+            }
+            if (en == null)
+            {
+                return;
+            }
+
+            en.ClearAnimations(null);
+        }
+
         //EventDialogPacket
         private static void HandlePacket(EventDialogPacket packet)
         {

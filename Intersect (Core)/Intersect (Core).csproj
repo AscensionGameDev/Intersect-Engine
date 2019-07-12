@@ -350,6 +350,7 @@
     <Compile Include="Network\Packets\Server\CraftingTablePacket.cs" />
     <Compile Include="Network\Packets\Server\EnteringGamePacket.cs" />
     <Compile Include="Network\Packets\Server\EnterMapPacket.cs" />
+    <Compile Include="Network\Packets\Server\EntityDiePacket.cs" />
     <Compile Include="Network\Packets\Server\EntityZDimensionPacket.cs" />
     <Compile Include="Network\Packets\Server\EventEntityPacket.cs" />
     <Compile Include="Network\Packets\Server\FriendRequestPacket.cs" />

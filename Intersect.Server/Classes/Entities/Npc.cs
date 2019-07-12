@@ -93,6 +93,7 @@ namespace Intersect.Server.Entities
         {
             base.Die(dropitems, killer);
             MapInstance.Get(MapId).RemoveEntity(this);
+            PacketSender.SendEntityDie(this);
             PacketSender.SendEntityLeave(this);
         }
 
