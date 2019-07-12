@@ -2881,7 +2881,8 @@ namespace Intersect.Server.Entities
                 }
                 PacketSender.SendChatMsg(Client, Strings.Parties.left, CustomColors.Error);
             }
-            Party.Clear();
+
+            Party = new List<Player>();
             PacketSender.SendParty(Client);
         }
 
