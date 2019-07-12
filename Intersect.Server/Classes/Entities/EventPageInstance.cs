@@ -296,7 +296,7 @@ namespace Intersect.Server.Entities
                                     mPathFinder.GetTarget().TargetY != client.Entity.Y)
                                 {
                                     mPathFinder.SetTarget(new PathfinderTarget(client.Entity.MapId,
-                                        client.Entity.X, client.Entity.Y));
+                                        client.Entity.X, client.Entity.Y, client.Entity.Z));
                                 }
                                 //Todo check if next to or on top of player.. if so don't run pathfinder.
                                 if (mPathFinder.Update(timeMs) == PathfinderResult.Success)

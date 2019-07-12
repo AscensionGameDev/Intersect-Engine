@@ -392,6 +392,7 @@ namespace Intersect.Server.Entities
                 var targetMap = Guid.Empty;
                 var targetX = 0;
                 var targetY = 0;
+                var targetZ = 0;
                 //Check if there is a target, if so, run their ass down.
                 if (Target != null)
                 {
@@ -400,6 +401,7 @@ namespace Intersect.Server.Entities
                         targetMap = Target.MapId;
                         targetX = Target.X;
                         targetY = Target.Y;
+                        targetZ = Target.Z;
                         var targetStatuses = Target.Statuses.Values.ToArray();
                         foreach (var targetStatus in targetStatuses)
                         {
@@ -408,6 +410,7 @@ namespace Intersect.Server.Entities
                                 targetMap = Guid.Empty;
                                 targetX = 0;
                                 targetY = 0;
+                                targetZ = 0;
                             }
                         }
                     }
@@ -483,14 +486,14 @@ namespace Intersect.Server.Entities
 
                     if (mPathFinder.GetTarget() == null)
                     {
-                        mPathFinder.SetTarget(new PathfinderTarget(targetMap, targetX, targetY));
+                        mPathFinder.SetTarget(new PathfinderTarget(targetMap, targetX, targetY, targetZ));
                     }
 
                     if (mPathFinder.GetTarget() != null)
                     {
                         TryCastSpells();
                         if (!IsOneBlockAway(mPathFinder.GetTarget().TargetMapId, mPathFinder.GetTarget().TargetX,
-                            mPathFinder.GetTarget().TargetY))
+                            mPathFinder.GetTarget().TargetY, mPathFinder.GetTarget().TargetZ))
                         {
                             switch (mPathFinder.Update(timeMs))
                             {
