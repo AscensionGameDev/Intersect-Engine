@@ -123,6 +123,12 @@ namespace Intersect.Editor.Forms.Editors
             nudMR.Maximum = Options.MaxStatValue;
             nudSpd.Maximum = Options.MaxStatValue;
 
+            nudStr.Minimum = -Options.MaxStatValue;
+            nudMag.Minimum = -Options.MaxStatValue;
+            nudDef.Minimum = -Options.MaxStatValue;
+            nudMR.Minimum = -Options.MaxStatValue;
+            nudSpd.Minimum = -Options.MaxStatValue;
+
             InitLocalization();
             UpdateEditor();
         }
