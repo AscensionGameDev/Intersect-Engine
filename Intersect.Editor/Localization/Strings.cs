@@ -594,7 +594,7 @@ Tick timer saved in server config.json.";
 
         public struct EventCommands
         {
-            public static Dictionary<string, string> commands = new Dictionary<string, string>()
+            public static Dictionary<string, LocalizedString> commands = new Dictionary<string, LocalizedString>()
             {
                 {"addchatboxtext", @"Add Chatbox Text"},
                 {"changeclass", @"Change Class"},
