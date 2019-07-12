@@ -63,7 +63,7 @@ namespace Intersect.Client.UI.Game.Inventory
                 if (item != null)
                 {
                     Items[i].Pnl.IsHidden = false;
-                    if (item.IsStackable())
+                    if (item.IsStackable)
                     {
                         mValues[i].IsHidden = false;
                         mValues[i].Text = Strings.FormatQuantityAbbreviated(Globals.Me.Inventory[i].Quantity);

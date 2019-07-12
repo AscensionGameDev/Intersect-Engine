@@ -160,10 +160,11 @@ namespace Intersect.GameObjects
             Effect = new EffectData();
         }
 
-        public bool IsStackable()
-        {
-            return (ItemType == ItemTypes.Currency || Stackable) && ItemType != ItemTypes.Equipment && ItemType != ItemTypes.Bag;
-        }
+        [JsonIgnore, NotMapped]
+        public bool IsStackable => (ItemType == ItemTypes.Currency || Stackable) &&
+                                   ItemType != ItemTypes.Equipment &&
+                                   ItemType != ItemTypes.Bag;
+
     }
     
     [Owned]

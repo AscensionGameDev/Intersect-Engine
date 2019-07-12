@@ -17,11 +17,11 @@ namespace Intersect.Server.Maps
         public int X = 0;
         public int Y = 0;
 
-        public MapItem(Guid itemId, int itemVal) : base(itemId, itemVal,null, null)
+        public MapItem(Guid itemId, int quantity) : base(itemId, quantity,null, null)
         {
         }
 
-        public MapItem(Guid itemId, int itemVal, Guid? bagId, Bag bag) : base(itemId, itemVal,bagId, bag)
+        public MapItem(Guid itemId, int quantity, Guid? bagId, Bag bag) : base(itemId, quantity,bagId, bag)
         {
         }
 

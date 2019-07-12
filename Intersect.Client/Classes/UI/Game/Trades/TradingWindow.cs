@@ -111,7 +111,7 @@ namespace Intersect.Client.UI.Game.Trades
                         {
                             g += (item.Price * Globals.Trade[n, i].Quantity);
                             TradeSegment[n].Items[i].Pnl.IsHidden = false;
-                            if (item.IsStackable())
+                            if (item.IsStackable)
                             {
                                 TradeSegment[n].Values[i].IsHidden = false;
                                 TradeSegment[n].Values[i].Text = Globals.Trade[n, i].Quantity.ToString();

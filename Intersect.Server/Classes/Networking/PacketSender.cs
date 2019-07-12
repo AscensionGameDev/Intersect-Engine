@@ -1593,12 +1593,9 @@ namespace Intersect.Server.Networking
             {
                 foreach (var client in Globals.Clients)
                 {
-                    if (client != null)
+                    if (client?.Entity != null)
                     {
-                        if (client.Entity != null)
-                        {
-                            client.SendPacket(packet);
-                        }
+                        client.SendPacket(packet);
                     }
                 }
             }
@@ -1610,12 +1607,9 @@ namespace Intersect.Server.Networking
             {
                 foreach (var client in Globals.Clients)
                 {
-                    if (client != null)
+                    if ((client?.IsEditor ?? false) || client?.Entity != null)
                     {
-                        if (client.IsEditor || client.Entity != null)
-                        {
-                            client.SendPacket(packet);
-                        }
+                        client.SendPacket(packet);
                     }
                 }
             }

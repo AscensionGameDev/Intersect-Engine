@@ -14,6 +14,10 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 
+using Intersect.GameObjects;
+using Intersect.Server.Database;
+using Intersect.Server.Database.GameData;
+
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
 
@@ -244,6 +248,263 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 }
 
                 return player.Variables[index];
+            }
+        }
+
+        [Route("{lookupKey:LookupKey}/items")]
+        [HttpGet]
+        public object ItemsList(LookupKey lookupKey)
+        {
+            return new
+            {
+                inventory = ItemsListInventory(lookupKey),
+                bank = ItemsListBank(lookupKey)
+            };
+        }
+
+        [Route("{lookupKey:LookupKey}/items/bank")]
+        [HttpGet]
+        public object ItemsListBank(LookupKey lookupKey)
+        {
+            if (lookupKey.IsInvalid)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
+            }
+
+            using (var context = PlayerContext.Temporary)
+            {
+                var (client, player) = Player.Fetch(lookupKey, context);
+                if (player == null)
+                {
+                    return Request.CreateErrorResponse(
+                        HttpStatusCode.NotFound,
+                        lookupKey.HasId
+                            ? $@"No player with id '{lookupKey.Id}'."
+                            : $@"No player with name '{lookupKey.Name}'."
+                    );
+                }
+
+                return player.Bank;
+            }
+        }
+
+        [Route("{lookupKey:LookupKey}/items/inventory")]
+        [HttpGet]
+        public object ItemsListInventory(LookupKey lookupKey)
+        {
+            if (lookupKey.IsInvalid)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
+            }
+
+            using (var context = PlayerContext.Temporary)
+            {
+                var (client, player) = Player.Fetch(lookupKey, context);
+                if (player == null)
+                {
+                    return Request.CreateErrorResponse(
+                        HttpStatusCode.NotFound,
+                        lookupKey.HasId
+                            ? $@"No player with id '{lookupKey.Id}'."
+                            : $@"No player with name '{lookupKey.Name}'."
+                    );
+                }
+
+                return player.Items;
+            }
+        }
+
+        [Route("{lookupKey:LookupKey}/items")]
+        [HttpPost]
+        public object ItemsGive(LookupKey lookupKey, [FromBody] Item item, bool bankOverflow = false)
+        {
+            if (lookupKey.IsInvalid)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
+            }
+
+            if (null == item)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid item payload.");
+            }
+
+            if (Guid.Empty == item.ItemId)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid item id.");
+            }
+
+            using (var context = PlayerContext.Temporary)
+            {
+                var (client, player) = Player.Fetch(lookupKey, context);
+                if (player == null)
+                {
+                    return Request.CreateErrorResponse(
+                        HttpStatusCode.NotFound,
+                        lookupKey.HasId
+                            ? $@"No player with id '{lookupKey.Id}'."
+                            : $@"No player with name '{lookupKey.Name}'."
+                    );
+                }
+
+                if (!player.TryGiveItem(item, bankOverflow, true))
+                {
+                    return Request.CreateErrorResponse(
+                        HttpStatusCode.InternalServerError, $@"Failed to give player {item.Quantity} of '{item.ItemId}'."
+                    );
+                }
+
+                var quantityBank = player.CountItems(item.ItemId, false, true);
+                var quantityInventory = player.CountItems(item.ItemId, true, false);
+                return new
+                {
+                    id = item.ItemId,
+                    quantity = new
+                    {
+                        total = quantityBank + quantityInventory,
+                        bank = quantityBank,
+                        inventory = quantityInventory
+                    }
+                };
+
+            }
+        }
+
+        [Route("{lookupKey:LookupKey}/items/{slotIndex:int}")]
+        [HttpDelete]
+        public object ItemsTake(LookupKey lookupKey, int slotIndex, int quantity = -1)
+        {
+            // TODO(source): Makes sense to do this, but it wasn't requested yet
+            throw new NotImplementedException("TODO(source)");
+        }
+
+        // I've actually commented out this variation of the ItemsTake endpoint
+        // because it breaks the DELETE /players/<id|name>/items/<slot> format.
+        // This may get scrapped before implementation.
+        //[Route("items/inventory/{slotId:guid}")]
+        //[HttpDelete]
+        //public object ItemsTake(Guid slotId, int quantity = -1)
+        //{
+        //    // TODO(source): Makes sense to do this, but it wasn't requested yet
+        //    throw new NotImplementedException("TODO(source)");
+        //}
+
+        // TODO: spells give/take/list
+
+        [Route("{lookupKey:LookupKey}/spells")]
+        [HttpGet]
+        public object SpellsList(LookupKey lookupKey)
+        {
+            if (lookupKey.IsInvalid)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
+            }
+
+            using (var context = PlayerContext.Temporary)
+            {
+                var (client, player) = Player.Fetch(lookupKey, context);
+                if (player == null)
+                {
+                    return Request.CreateErrorResponse(
+                        HttpStatusCode.NotFound,
+                        lookupKey.HasId
+                            ? $@"No player with id '{lookupKey.Id}'."
+                            : $@"No player with name '{lookupKey.Name}'."
+                    );
+                }
+
+                return player.Spells;
+            }
+        }
+
+        [Route("{lookupKey:LookupKey}/spells")]
+        [HttpPost]
+        public object SpellsTeach(LookupKey lookupKey, [FromBody] Spell spell)
+        {
+            if (lookupKey.IsInvalid)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
+            }
+
+            if (null == spell)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid spell payload.");
+            }
+
+            if (Guid.Empty == spell.SpellId)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid spell id.");
+            }
+
+            using (var context = PlayerContext.Temporary)
+            {
+                var (client, player) = Player.Fetch(lookupKey, context);
+                if (player == null)
+                {
+                    return Request.CreateErrorResponse(
+                        HttpStatusCode.NotFound,
+                        lookupKey.HasId
+                            ? $@"No player with id '{lookupKey.Id}'."
+                            : $@"No player with name '{lookupKey.Name}'."
+                    );
+                }
+
+                if (player.TryTeachSpell(spell, true))
+                {
+                    return new
+                    {
+                        spell
+                    };
+                }
+
+                return Request.CreateErrorResponse(
+                    HttpStatusCode.InternalServerError, $@"Failed to teach player spell with id '{spell.SpellId}'."
+                );
+            }
+        }
+
+        [Route("{lookupKey:LookupKey}/spells")]
+        [HttpDelete]
+        public object SpellsTake(LookupKey lookupKey, [FromBody] Spell spell)
+        {
+            if (lookupKey.IsInvalid)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
+            }
+
+            if (null == spell)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid spell payload.");
+            }
+
+            if (Guid.Empty == spell.SpellId)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid spell id.");
+            }
+
+            using (var context = PlayerContext.Temporary)
+            {
+                var (client, player) = Player.Fetch(lookupKey, context);
+                if (player == null)
+                {
+                    return Request.CreateErrorResponse(
+                        HttpStatusCode.NotFound,
+                        lookupKey.HasId
+                            ? $@"No player with id '{lookupKey.Id}'."
+                            : $@"No player with name '{lookupKey.Name}'."
+                    );
+                }
+
+                if (player.TryForgetSpell(spell, true))
+                {
+                    return new
+                    {
+                        spell
+                    };
+                }
+
+                return Request.CreateErrorResponse(
+                    HttpStatusCode.InternalServerError, $@"Failed to teach player spell with id '{spell.SpellId}'."
+                );
             }
         }
 
