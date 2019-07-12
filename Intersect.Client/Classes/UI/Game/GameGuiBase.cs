@@ -193,13 +193,13 @@ namespace Intersect.Client.UI.Game
 
         public void ShowPicture(string picture, int size, bool clickable)
         {
-            if (mPictureWindow != null) mPictureWindow.Close();
+            mPictureWindow?.Close();
             mPictureWindow = new PictureWindow(GameCanvas, picture, size, clickable);
         }
 
         public void HidePicture()
         {
-            mPictureWindow.Close();
+            mPictureWindow?.Close();
         }
 
         //Quest Log
