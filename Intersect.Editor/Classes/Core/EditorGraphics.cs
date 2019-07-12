@@ -538,6 +538,8 @@ namespace Intersect.Editor
                                         tmpMap.Autotiles.UpdateAutoTiles(Globals.CurTileX, Globals.CurTileY,
                                             Globals.CurrentLayer, tmpMap.GenerateAutotileGrid());
                                     }
+
+                                    tmpMap.Autotiles.UpdateCliffAutotiles(tmpMap, Globals.CurrentLayer);
                                 }
                                 else if (Globals.CurrentTool == (int) EditingTool.Rectangle)
                                 {
@@ -606,6 +608,7 @@ namespace Intersect.Editor
                                                 tmpMap.Autotiles.UpdateAutoTiles(x0, y0,
                                                     Globals.CurrentLayer, tmpMap.GenerateAutotileGrid());
                                             }
+                                            tmpMap.Autotiles.UpdateCliffAutotiles(tmpMap, Globals.CurrentLayer);
                                         }
                                     }
                                 }

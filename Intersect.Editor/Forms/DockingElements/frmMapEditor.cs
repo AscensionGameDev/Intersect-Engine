@@ -604,6 +604,7 @@ namespace Intersect.Editor.Forms.DockingElements
                                 tmpMap.Autotiles.UpdateAutoTiles(Globals.CurTileX, Globals.CurTileY,
                                     Globals.CurrentLayer, tmpMap.GenerateAutotileGrid());
                             }
+                            tmpMap.Autotiles.UpdateCliffAutotiles(tmpMap, Globals.CurrentLayer);
                         }
                         if (Globals.CurTileX == 0)
                         {
@@ -796,6 +797,7 @@ namespace Intersect.Editor.Forms.DockingElements
                                 tmpMap.Autotiles.UpdateAutoTiles(x0, y0,
                                     Globals.CurrentLayer, tmpMap.GenerateAutotileGrid());
                             }
+                            tmpMap.Autotiles.UpdateCliffAutotiles(tmpMap, Globals.CurrentLayer);
                         }
                     }
                     mMapChanged = true;
@@ -1474,6 +1476,7 @@ namespace Intersect.Editor.Forms.DockingElements
                     }
                 }
             }
+            tmpMap.Autotiles.UpdateCliffAutotiles(tmpMap, Globals.CurrentLayer);
 
             for (int x0 = selX + dragxoffset; x0 < selX + selW + 1 + dragxoffset; x0++)
             {
@@ -1628,6 +1631,7 @@ namespace Intersect.Editor.Forms.DockingElements
                     }
                 }
             }
+            tmpMap.Autotiles.UpdateCliffAutotiles(tmpMap, Globals.CurrentLayer);
 
             for (int x0 = selX; x0 < selX + selW + 1; x0++)
             {

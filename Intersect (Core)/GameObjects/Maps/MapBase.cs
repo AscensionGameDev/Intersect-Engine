@@ -300,6 +300,11 @@ namespace Intersect.GameObjects.Maps
             }
         }
 
+        public virtual MapBase[,] GenerateAutotileGrid()
+        {
+            return null;
+        }
+
         public virtual byte[] GetAttributeData()
         {
             return mCachedAttributeData;
