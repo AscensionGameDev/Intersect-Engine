@@ -28,6 +28,7 @@ namespace Intersect.Client.Entities
         private int mZDimension = -1;
         private Entity mParent;
         private bool disposed = false;
+        private long mStartTime = Globals.System.GetTimeMs();
 
         public AnimationInstance(AnimationBase animBase, bool loopForever, bool autoRotate = false, int zDimension = -1, Entity parent = null)
         {
@@ -234,48 +235,40 @@ namespace Intersect.Client.Entities
                 {
                     mSound.Update();
                 }
-                if (mLowerTimer < Globals.System.GetTimeMs() && mShowLower)
+
+                //Calculate Frames
+                var elapsedTime = Globals.System.GetTimeMs() - mStartTime;
+
+                //Lower
+                if (MyBase.Lower.FrameCount > 0 && MyBase.Lower.FrameSpeed > 0)
                 {
-                    mLowerFrame++;
-                    if (mLowerFrame >= MyBase.Lower.FrameCount)
+                    var lowerFrame = (int)Math.Floor(elapsedTime / (float)MyBase.Lower.FrameSpeed);
+                    var lowerLoops = (int)Math.Floor(lowerFrame / (float)MyBase.Lower.FrameCount);
+                    if (lowerLoops >= mLowerLoop && !InfiniteLoop)
                     {
-                        mLowerLoop--;
-                        mLowerFrame = 0;
-                        if (mLowerLoop < 0)
-                        {
-                            if (InfiniteLoop)
-                            {
-                                mLowerLoop = MyBase.Lower.LoopCount;
-                            }
-                            else
-                            {
-                                mShowLower = false;
-                            }
-                        }
+                        mShowLower = false;
                     }
-                    mLowerTimer = Globals.System.GetTimeMs() + MyBase.Lower.FrameSpeed;
+                    else
+                    {
+                        mLowerFrame = lowerFrame - (lowerLoops * MyBase.Lower.FrameCount);
+                    }
                 }
-                if (mUpperTimer < Globals.System.GetTimeMs() && mShowUpper)
+
+                //Upper
+                if (MyBase.Upper.FrameCount > 0 && MyBase.Upper.FrameSpeed > 0)
                 {
-                    mUpperFrame++;
-                    if (mUpperFrame >= MyBase.Upper.FrameCount)
+                    var upperFrame = (int)Math.Floor(elapsedTime / (float)MyBase.Upper.FrameSpeed);
+                    var upperLoops = (int)Math.Floor(upperFrame / (float)MyBase.Upper.FrameCount);
+                    if (upperLoops >= mUpperLoop && !InfiniteLoop)
                     {
-                        mUpperLoop--;
-                        mUpperFrame = 0;
-                        if (mUpperLoop < 0)
-                        {
-                            if (InfiniteLoop)
-                            {
-                                mUpperLoop = MyBase.Upper.LoopCount;
-                            }
-                            else
-                            {
-                                mShowUpper = false;
-                            }
-                        }
+                        mShowUpper = false;
                     }
-                    mUpperTimer = Globals.System.GetTimeMs() + MyBase.Upper.FrameSpeed;
+                    else
+                    {
+                        mUpperFrame = upperFrame - (upperLoops * MyBase.Upper.FrameCount);
+                    }
                 }
+
                 if (!mShowLower && !mShowUpper)
                 {
                     Dispose();
