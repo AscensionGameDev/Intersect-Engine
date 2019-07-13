@@ -188,8 +188,7 @@ namespace Intersect.Server.Entities
 
             if (Base.AttackAnimation != null)
             {
-                deadAnimations.Add(new KeyValuePair<Guid, sbyte>(Base.AttackAnimationId, (sbyte)Dir));
-                aliveAnimations.Add(new KeyValuePair<Guid, sbyte>(Base.AttackAnimationId, (sbyte)Dir));
+                PacketSender.SendAnimationToProximity(Base.AttackAnimationId, -1, Guid.Empty, enemy.MapId, (byte)enemy.X, (byte)enemy.Y, (sbyte) Dir);
             }
 
             //We were forcing at LEAST 1hp base damage.. but then you can't have guards that won't hurt the player.
