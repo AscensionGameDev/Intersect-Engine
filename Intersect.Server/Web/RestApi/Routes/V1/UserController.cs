@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Web.Http;
 
 using Intersect.Enums;
@@ -90,6 +91,28 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             using (var context = PlayerContext.Temporary)
             {
                 return Database.PlayerData.User.Find(userName, context);
+            }
+        }
+
+        [Route("{userName}")]
+        [HttpGet]
+        public object UserValidatePassword(string userName, [FromBody] string password)
+        {
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"No password provided.");
+            }
+
+            if (!Regex.IsMatch(password, "^[0-9A-Fa-f]{64}$", RegexOptions.Compiled))
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Did not receive a valid password.");
+            }
+
+            using (var context = PlayerContext.Temporary)
+            {
+                var user = Database.PlayerData.User.Find(userName, context);
+
+                return user?.IsPasswordValid(password) ?? false;
             }
         }
 

@@ -1162,8 +1162,6 @@ namespace Intersect.Server.Entities
 
         public bool TryGiveItem(Item item, bool bankOverflow, bool sendUpdate)
         {
-            // TODO: Bank overflow
-
             var itemBase = ItemBase.Get(item.ItemId);
             if (itemBase == null)
             {
@@ -1174,34 +1172,44 @@ namespace Intersect.Server.Entities
             {
                 for (var i = 0; i < Options.MaxInvItems; i++)
                 {
-                    if (Items[i].ItemId == item.ItemId)
+                    var inventorySlot = Items[i];
+
+                    if (inventorySlot != null && inventorySlot.ItemId == item.ItemId)
                     {
-                        Items[i].Quantity += item.Quantity;
+                        inventorySlot.Quantity += item.Quantity;
+
                         if (sendUpdate)
                         {
                             PacketSender.SendInventoryItemUpdate(Client, i);
                         }
+
                         UpdateGatherItemQuests(item.ItemId);
+
                         return true;
                     }
                 }
             }
 
-            //Either a non stacking item, or we couldn't find the item already existing in the players inventory
+            // Either a non stacking item, or we couldn't find the item already existing in the players inventory
             for (var i = 0; i < Options.MaxInvItems; i++)
             {
-                if (Items[i].ItemId == Guid.Empty)
+                var inventorySlot = Items[i];
+
+                if (inventorySlot != null && inventorySlot.ItemId == Guid.Empty)
                 {
-                    Items[i].Set(item);
+                    inventorySlot.Set(item);
                     if (sendUpdate)
                     {
                         PacketSender.SendInventoryItemUpdate(Client, i);
                     }
+
                     UpdateGatherItemQuests(item.ItemId);
+
                     return true;
                 }
             }
-            return false;
+
+            return bankOverflow && TryDepositItem(item, sendUpdate);
         }
 
         public void SwapItems(int item1, int item2)
@@ -2008,9 +2016,13 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public void DepositItem(int slot, int amount)
+        public bool TryDepositItem(int slot, int amount, bool sendUpdate = true)
         {
-            if (!InBank) return;
+            if (!InBank)
+            {
+                return false;
+            }
+
             var itemBase = ItemBase.Get(Items[slot].ItemId);
             if (itemBase != null)
             {
@@ -2046,9 +2058,15 @@ namespace Intersect.Server.Entities
                                 {
                                     Items[slot].Quantity -= amount;
                                 }
-                                PacketSender.SendInventoryItemUpdate(Client, slot);
-                                PacketSender.SendBankUpdate(Client, i);
-                                return;
+
+
+                                if (sendUpdate)
+                                {
+                                    PacketSender.SendInventoryItemUpdate(Client, slot);
+                                    PacketSender.SendBankUpdate(Client, i);
+                                }
+
+                                return true;
                             }
                         }
                     }
@@ -2070,9 +2088,14 @@ namespace Intersect.Server.Entities
                             {
                                 Items[slot].Quantity -= amount;
                             }
-                            PacketSender.SendInventoryItemUpdate(Client, slot);
-                            PacketSender.SendBankUpdate(Client, i);
-                            return;
+
+                            if (sendUpdate)
+                            {
+                                PacketSender.SendInventoryItemUpdate(Client, slot);
+                                PacketSender.SendBankUpdate(Client, i);
+                            }
+
+                            return true;
                         }
                     }
                     PacketSender.SendChatMsg(Client, Strings.Banks.banknospace, CustomColors.Error);
@@ -2082,6 +2105,70 @@ namespace Intersect.Server.Entities
                     PacketSender.SendChatMsg(Client, Strings.Banks.depositinvalid, CustomColors.Error);
                 }
             }
+
+            return false;
+        }
+
+        public bool TryDepositItem([NotNull] Item item, bool sendUpdate = true)
+        {
+            var itemBase = item.Descriptor;
+
+            if (itemBase == null)
+            {
+                return false;
+            }
+
+            if (item.ItemId != Guid.Empty)
+            {
+                // Find a spot in the bank for it!
+                if (itemBase.IsStackable)
+                {
+                    for (var i = 0; i < Options.MaxBankSlots; i++)
+                    {
+                        var bankSlot = Bank[i];
+                        if (bankSlot != null && bankSlot.ItemId == item.ItemId)
+                        {
+                            if (item.Quantity <= int.MaxValue - bankSlot.Quantity)
+                            {
+                                bankSlot.Quantity += item.Quantity;
+
+                                if (sendUpdate)
+                                {
+                                    PacketSender.SendBankUpdate(Client, i);
+                                }
+
+                                return true;
+                            }
+                        }
+                    }
+                }
+
+                // Either a non stacking item, or we couldn't find the item already existing in the players inventory
+                for (var i = 0; i < Options.MaxBankSlots; i++)
+                {
+                    var bankSlot = Bank[i];
+
+                    if (bankSlot == null || bankSlot.ItemId == Guid.Empty)
+                    {
+                        bankSlot.Set(item);
+
+                        if (sendUpdate)
+                        {
+                            PacketSender.SendBankUpdate(Client, i);
+                        }
+
+                        return true;
+                    }
+                }
+
+                PacketSender.SendChatMsg(Client, Strings.Banks.banknospace, CustomColors.Error);
+            }
+            else
+            {
+                PacketSender.SendChatMsg(Client, Strings.Banks.depositinvalid, CustomColors.Error);
+            }
+
+            return false;
         }
 
         public void WithdrawItem(int slot, int amount)

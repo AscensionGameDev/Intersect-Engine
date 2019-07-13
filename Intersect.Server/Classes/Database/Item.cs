@@ -28,6 +28,9 @@ namespace Intersect.Server.Database
         [NotMapped]
         public int[] StatBuffs { get; set; } = new int[(int)Enums.Stats.StatCount];
 
+        [JsonIgnore, NotMapped]
+        public ItemBase Descriptor => ItemBase.Get(ItemId);
+
 
 
         public Item()
