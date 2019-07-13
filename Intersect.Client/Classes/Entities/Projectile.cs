@@ -75,13 +75,17 @@ namespace Intersect.Client.Entities
 
         public override void Dispose()
         {
+            if (mSpawnedAmount == 0)
+            {
+                Update();
+            }
             if (Spawns != null)
             {
                 foreach (ProjectileSpawns s in Spawns)
                 {
                     if (s != null && s.Anim != null)
                     {
-                        s.Anim.Dispose();
+                        s.Anim.DisposeNextDraw();
                     }
                 }
             }
@@ -566,7 +570,7 @@ namespace Intersect.Client.Entities
 
         public void Dispose()
         {
-            Anim.Dispose();
+            Anim.DisposeNextDraw();
         }
     }
 }

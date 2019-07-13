@@ -158,7 +158,6 @@ namespace Intersect.Client
             }
 
             ClearDarknessTexture();
-            GenerateLightMap();
 
             var gridX = currentMap.MapGridX;
             var gridY = currentMap.MapGridY;
@@ -283,6 +282,7 @@ namespace Intersect.Client
 
             DrawOverlay();
 
+            GenerateLightMap();
             DrawDarkness();
 
             for (int y = 0; y < Options.MapHeight * 5; y++)
@@ -329,6 +329,11 @@ namespace Intersect.Client
                     var map = MapInstance.Get(Globals.MapGrid[x, y]);
                     map?.DrawActionMsgs();
                 }
+            }
+
+            foreach (AnimationInstance animInstance in LiveAnimations.ToArray())
+            {
+                animInstance.EndDraw();
             }
         }
 

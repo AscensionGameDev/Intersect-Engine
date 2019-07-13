@@ -29,6 +29,7 @@ namespace Intersect.Client.Entities
         private Entity mParent;
         private bool disposed = false;
         private long mStartTime = Globals.System.GetTimeMs();
+        private bool mDisposeNextDraw;
 
         public AnimationInstance(AnimationBase animBase, bool loopForever, bool autoRotate = false, int zDimension = -1, Entity parent = null)
         {
@@ -157,6 +158,12 @@ namespace Intersect.Client.Entities
             }
         }
 
+        public void EndDraw()
+        {
+            if (mDisposeNextDraw)
+                Dispose();
+        }
+
         static Point RotatePoint(Point pointToRotate, Point centerPoint, double angleInDegrees)
         {
             double angleInRadians = angleInDegrees * (Math.PI / 180);
@@ -208,6 +215,11 @@ namespace Intersect.Client.Entities
                 GameGraphics.LiveAnimations.Remove(this);
                 disposed = true;
             }
+        }
+
+        public void DisposeNextDraw()
+        {
+            mDisposeNextDraw = true;
         }
 
         public bool Disposed()
