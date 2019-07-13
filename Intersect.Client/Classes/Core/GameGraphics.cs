@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Framework.File_Management;
@@ -193,15 +194,28 @@ namespace Intersect.Client
                     animInstance.Draw(false);
                 }
             }
-            
-            for (int y = 0; y < Options.MapHeight * 5; y++)
+
+            for (int x = 0; x < 3; x++)
             {
-                for (int x = 0; x < 3; x++)
+                for (int y = 0; y < Options.MapHeight * 5; y++)
                 {
                     foreach (var entity in RenderingEntities[x, y])
                     {
                         entity.Draw();
                         EntitiesDrawn++;
+                    }
+
+                    if (x == 0 && y > 0 && y % Options.MapHeight == 0)
+                    {
+                        for (var x1 = gridX - 1; x1 <= gridX + 1; x1++)
+                        {
+                            var y1 = gridY - 2 + (int) Math.Floor(y / (float)Options.MapHeight);
+                            if (x1 >= 0 && x1 < Globals.MapGridWidth && y1 >= 0 && y1 < Globals.MapGridHeight && Globals.MapGrid[x1, y1] != Guid.Empty)
+                            {
+                                var map = MapInstance.Get(Globals.MapGrid[x1, y1]);
+                                map.DrawItemsAndLights();
+                            }
+                        }
                     }
                 }
             }

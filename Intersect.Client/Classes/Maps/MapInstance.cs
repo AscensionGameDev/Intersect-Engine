@@ -509,32 +509,32 @@ namespace Intersect.Client.Maps
                     }
                 }
             }
+        }
 
-            if (layer == 0)
+        public void DrawItemsAndLights()
+        {
+            //Draw Map Items
+            foreach (var item in MapItems)
             {
-                //Draw Map Items
-                foreach (var item in MapItems)
+                var itemBase = ItemBase.Get(item.Value.ItemId);
+                if (itemBase != null)
                 {
-                    var itemBase = ItemBase.Get(item.Value.ItemId);
-                    if (itemBase != null)
+                    GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,
+                        itemBase.Icon);
+                    if (itemTex != null)
                     {
-                        GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,
-                            itemBase.Icon);
-                        if (itemTex != null)
-                        {
-                            GameGraphics.DrawGameTexture(itemTex, new FloatRect(0, 0, itemTex.GetWidth(), itemTex.GetHeight()), new FloatRect(GetX() + item.Value.X * Options.TileWidth, GetY() + item.Value.Y * Options.TileHeight, Options.TileWidth, Options.TileHeight), Color.White);
-                        }
+                        GameGraphics.DrawGameTexture(itemTex, new FloatRect(0, 0, itemTex.GetWidth(), itemTex.GetHeight()), new FloatRect(GetX() + item.Value.X * Options.TileWidth, GetY() + item.Value.Y * Options.TileHeight, Options.TileWidth, Options.TileHeight), Color.White);
                     }
                 }
+            }
 
-                //Add lights to our darkness texture
-                foreach (var light in Lights)
-                {
-                    double w = light.Size;
-                    var x = GetX() + (light.TileX * Options.TileWidth + light.OffsetX) + Options.TileWidth / 2f;
-                    var y = GetY() + (light.TileY * Options.TileHeight + light.OffsetY) + Options.TileHeight / 2f;
-                    GameGraphics.AddLight((int)x, (int)y, (int)w, light.Intensity, light.Expand, light.Color);
-                }
+            //Add lights to our darkness texture
+            foreach (var light in Lights)
+            {
+                double w = light.Size;
+                var x = GetX() + (light.TileX * Options.TileWidth + light.OffsetX) + Options.TileWidth / 2f;
+                var y = GetY() + (light.TileY * Options.TileHeight + light.OffsetY) + Options.TileHeight / 2f;
+                GameGraphics.AddLight((int)x, (int)y, (int)w, light.Intensity, light.Expand, light.Color);
             }
         }
 
