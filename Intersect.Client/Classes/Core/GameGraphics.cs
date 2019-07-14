@@ -213,7 +213,10 @@ namespace Intersect.Client
                             if (x1 >= 0 && x1 < Globals.MapGridWidth && y1 >= 0 && y1 < Globals.MapGridHeight && Globals.MapGrid[x1, y1] != Guid.Empty)
                             {
                                 var map = MapInstance.Get(Globals.MapGrid[x1, y1]);
-                                map.DrawItemsAndLights();
+                                if (map != null)
+                                {
+                                    map.DrawItemsAndLights();
+                                }
                             }
                         }
                     }

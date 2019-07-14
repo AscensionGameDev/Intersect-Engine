@@ -83,7 +83,7 @@ namespace Intersect.Client.UI.Game
 
             foreach (var f in Globals.Me.Friends)
             {
-                var row = mFriends.AddRow(f.Name + " - " + f.Map);
+                var row = f.Online ? mFriends.AddRow(f.Name + " - " + f.Map) : mFriends.AddRow(f.Name);
                 row.UserData = f.Name;
                 row.Clicked += friends_Clicked;
                 row.RightClicked += friends_RightClicked;

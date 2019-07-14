@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+
+using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
+
+using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
@@ -12,6 +16,9 @@ namespace Intersect.Client.Framework.Gwen.Control
     {
         private readonly List<TextBlock> mTextBlocks;
         private readonly string[] mNewline;
+
+        private GameFont mFont;
+        private string mFontInfo;
 
         private bool mNeedsRebuild;
 
@@ -35,6 +42,27 @@ namespace Intersect.Client.Framework.Gwen.Control
             mTextBlocks.Add(block);
         }
 
+        /// <inheritdoc />
+        public override void LoadJson(JToken obj)
+        {
+            base.LoadJson(obj);
+
+            if (obj["Font"] != null && obj["Font"].Type != JTokenType.Null)
+            {
+                var fontArr = ((string)obj["Font"]).Split(',');
+                mFontInfo = (string)obj["Font"];
+                mFont = GameContentManager.Current.GetFont(fontArr[0], int.Parse(fontArr[1]));
+            }
+        }
+
+        /// <inheritdoc />
+        public override JObject GetJson()
+        {
+            var obj = base.GetJson();
+            obj.Add("Font", mFontInfo);
+            return base.FixJson(obj);
+        }
+
         /// <summary>
         ///     Adds text to the control.
         /// </summary>
@@ -45,6 +73,9 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             if (String.IsNullOrEmpty(text))
                 return;
+
+            if (font == null && mFont != null)
+                font = mFont;
 
             var lines = text.Split(mNewline, StringSplitOptions.None);
             for (int i = 0; i < lines.Length; i++)

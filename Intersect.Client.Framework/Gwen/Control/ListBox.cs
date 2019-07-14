@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+
+using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Control.Layout;
 using Newtonsoft.Json.Linq;
@@ -20,6 +23,9 @@ namespace Intersect.Client.Framework.Gwen.Control
         private bool mMultiSelect;
         private Pos mOldDock; // used while autosizing
         private bool mSizeToContents;
+
+        private GameFont mFont;
+        private string mFontInfo;
 
         //Sound Effects
         protected string mItemHoverSound;
@@ -171,6 +177,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             obj.Add("SizeToContents", mSizeToContents);
             obj.Add("MultiSelect", AllowMultiSelect);
             obj.Add("IsToggle", IsToggle);
+            obj.Add("Font", mFontInfo);
             obj.Add("ItemHoverSound", mItemHoverSound);
             obj.Add("ItemClickSound", mItemClickSound);
             obj.Add("ItemRightClickSound", mItemRightClickSound);
@@ -187,12 +194,23 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["ItemClickSound"] != null) mItemClickSound = (string)obj["ItemClickSound"];
             if (obj["ItemRightClickSound"] != null) mItemRightClickSound = (string)obj["ItemRightClickSound"];
 
+            if (obj["Font"] != null && obj["Font"].Type != JTokenType.Null)
+            {
+                var fontArr = ((string)obj["Font"]).Split(',');
+                mFontInfo = (string)obj["Font"];
+                mFont = GameContentManager.Current.GetFont(fontArr[0], int.Parse(fontArr[1]));
+            }
+
             foreach (var itm in mTable.Children)
             {
                 var row = (ListBoxRow) itm;
                 row.HoverSound = mItemHoverSound;
                 row.ClickSound = mItemClickSound;
                 row.RightClickSound = mItemRightClickSound;
+                if (mFont != null)
+                {
+                    row.SetTextFont(mFont);
+                }
             }
         }
 
@@ -320,6 +338,9 @@ namespace Intersect.Client.Framework.Gwen.Control
             row.HoverSound = mItemHoverSound;
             row.ClickSound = mItemClickSound;
             row.RightClickSound = mItemRightClickSound;
+
+            if (mFont != null)
+                row.SetTextFont(mFont);
 
             mTable.SizeToContents(Width);
 
