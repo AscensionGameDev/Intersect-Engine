@@ -274,6 +274,24 @@ namespace Intersect.Server.Entities
             }
         }
 
+        /// <inheritdoc />
+        public override void Move(byte moveDir, Client client, bool dontUpdate = false, bool correction = false)
+        {
+            base.Move(moveDir, client, dontUpdate, correction);
+
+            if (this.Trigger == EventTrigger.PlayerCollide && Passable)
+            {
+                var players = Map.GetPlayersOnMap();
+                foreach (var player in players)
+                {
+                    if (player.X == X && player.Y == Y && player.Z == Z)
+                    {
+                        player.HandleEventCollision(this.MyEventIndex, mPageNum);
+                    }
+                }
+            }
+        }
+
         protected override bool ProcessMoveRoute(Client client, long timeMs)
         {
             if (!base.ProcessMoveRoute(client, timeMs))

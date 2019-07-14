@@ -4057,7 +4057,27 @@ namespace Intersect.Server.Entities
                         var z = evt.PageInstance.GlobalClone?.Z ?? evt.PageInstance.Z;
                         if (x == X && y == Y &&  z == Z)
                         {
-                            if (evt.PageInstance.Trigger != EventTrigger.PlayerTouch) return;
+                            HandleEventCollision(evt,-1);
+                        }
+                    }
+                }
+            }
+        }
+
+        public void TryBumpEvent(Guid mapId, Guid eventId)
+        {
+            foreach (var evt in EventLookup.Values)
+            {
+                if (evt.MapId == MapId)
+                {
+                    if (evt.PageInstance != null && evt.PageInstance.MapId == MapId && evt.BaseEvent.Id == eventId)
+                    {
+                        var x = evt.PageInstance.GlobalClone?.X ?? evt.PageInstance.X;
+                        var y = evt.PageInstance.GlobalClone?.Y ?? evt.PageInstance.Y;
+                        var z = evt.PageInstance.GlobalClone?.Z ?? evt.PageInstance.Z;
+                        if (IsOneBlockAway(mapId,x,y,z))
+                        {
+                            if (evt.PageInstance.Trigger != EventTrigger.PlayerBump) return;
                             if (evt.CallStack.Count != 0) return;
                             var newStack = new CommandInstance(evt.PageInstance.MyPage);
                             evt.CallStack.Push(newStack);
@@ -4066,7 +4086,36 @@ namespace Intersect.Server.Entities
                 }
             }
         }
+
+        public void HandleEventCollision(EventInstance evt, int pageNum)
+        {
+            EventInstance eventInstance = evt;
+            if (evt.MyPlayer == null) //Global
+            {
+                eventInstance = null;
+                foreach (var e in EventLookup.Values)
+                {
+                    if (e.BaseEvent.Id == evt.BaseEvent.Id)
+                    {
+                        if (e.PageInstance.MyPage == e.BaseEvent.Pages[pageNum])
+                        {
+                            eventInstance = e;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (eventInstance != null)
+            {
+                if (eventInstance.PageInstance.Trigger != EventTrigger.PlayerCollide) return;
+                if (eventInstance.CallStack.Count != 0) return;
+                var newStack = new CommandInstance(eventInstance.PageInstance.MyPage);
+                eventInstance.CallStack.Push(newStack);
+            }
+        }
     }
+
 
     public struct Trading : IDisposable
     {

@@ -349,5 +349,10 @@ namespace Intersect.Client.Networking
         {
             GameNetwork.SendPacket(new AdminActionPacket(action));
         }
+
+        public static void SendBumpEvent(Guid mapId, Guid eventId)
+        {
+            GameNetwork.SendPacket(new BumpPacket(mapId, eventId));
+        }
     }
 }

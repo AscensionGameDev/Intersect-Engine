@@ -358,6 +358,12 @@ namespace Intersect.Server.Networking
             client.Entity.TryBlock(packet.Blocking);
         }
 
+        //BumpPacket
+        public void HandlePacket(Client client, Player player, BumpPacket packet)
+        {
+            player.TryBumpEvent(packet.MapId, packet.EventId);
+        }
+
         //AttackPacket
         public void HandlePacket(Client client, Player player, AttackPacket packet)
         {

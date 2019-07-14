@@ -265,6 +265,7 @@
     <Compile Include="Network\Packets\Client\AdminActionPacket.cs" />
     <Compile Include="Network\Packets\Client\AttackPacket.cs" />
     <Compile Include="Network\Packets\Client\BlockPacket.cs" />
+    <Compile Include="Network\Packets\Client\BumpPacket.cs" />
     <Compile Include="Network\Packets\Client\BuyItemPacket.cs" />
     <Compile Include="Network\Packets\Client\ChatMsgPacket.cs" />
     <Compile Include="Network\Packets\Client\CloseBagPacket.cs" />

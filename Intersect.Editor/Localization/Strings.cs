@@ -908,8 +908,9 @@ Tick timer saved in server config.json.";
             public static Dictionary<int, LocalizedString> triggers = new Dictionary<int, LocalizedString>
             {
                 {0, @"Action Button"},
-                {1, @"Player Touch"},
+                {1, @"Player Collide"},
                 {2, @"Autorun"},
+                {3, "Player Bump" },
             };
             public static LocalizedString walkinganim = @"Walking Anim";
         }

@@ -471,15 +471,15 @@ namespace Intersect.Client.Entities
         private bool Collided(int i)
         {
             var killSpawn = false;
-            var blockedBy = Guid.Empty;
+            Entity blockedBy = null;
             int tileBlocked =
                 Globals.Me.IsTileBlocked(Spawns[i].X, Spawns[i].Y, Z, Spawns[i].MapId, ref blockedBy, Spawns[i].ProjectileBase.IgnoreActiveResources, Spawns[i].ProjectileBase.IgnoreExhaustedResources);
 
             if (tileBlocked != -1)
             {
-                if (tileBlocked == -6 && blockedBy != mOwner && Globals.Entities.ContainsKey(blockedBy))
+                if (tileBlocked == -6 && blockedBy != null && blockedBy.Id != mOwner && Globals.Entities.ContainsKey(blockedBy.Id))
                 {
-                    if (Globals.Entities[blockedBy].GetType() == typeof(Resource))
+                    if (blockedBy.GetType() == typeof(Resource))
                     {
                         killSpawn = true;
                     }
