@@ -65,6 +65,7 @@ namespace Intersect.GameObjects
         public Guid ItemId;
 
         [NotMapped]
+        [JsonIgnore]
         public ItemBase Item => ItemBase.Get(ItemId);
 
         [JsonConstructor]

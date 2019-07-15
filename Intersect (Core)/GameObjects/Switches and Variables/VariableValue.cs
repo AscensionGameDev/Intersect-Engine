@@ -63,7 +63,30 @@ namespace Intersect.GameObjects.Switches_and_Variables
 
         #endregion
 
-        public override string ToString() => Value?.ToString() ?? "No representation";
+        public override string ToString() => Value?.ToString() ?? "No Representation";
+
+        public string ToString(VariableDataTypes forceType)
+        {
+            if (Value == null)
+            {
+                switch (forceType)
+                {
+                    case VariableDataTypes.Boolean:
+                        Boolean = false;
+                        break;
+                    case VariableDataTypes.Integer:
+                        Integer = (long) 0;
+                        break;
+                    case VariableDataTypes.Number:
+                        Number = 0.0;
+                        break;
+                    case VariableDataTypes.String:
+                        String = "";
+                        break;
+                }
+            }
+            return Value.ToString();
+        }
 
         [JsonIgnore]
         [NotNull]

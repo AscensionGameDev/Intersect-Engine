@@ -657,9 +657,6 @@ namespace Intersect.Server.Networking
                 }
                 newChar.StatPoints = classBase.BasePoints;
 
-                PacketSender.SendJoinGame(client);
-                newChar.SetOnline();
-
                 for (int i = 0; i < classBase.Spells.Count; i++)
                 {
                     if (classBase.Spells[i].Level <= 1)
@@ -677,6 +674,9 @@ namespace Intersect.Server.Networking
                         newChar.TryGiveItem(tempItem, false);
                     }
                 }
+
+                PacketSender.SendJoinGame(client);
+                newChar.SetOnline();
 
                 LegacyDatabase.SavePlayerDatabaseAsync();
             }

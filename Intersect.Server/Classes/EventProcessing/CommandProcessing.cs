@@ -815,7 +815,7 @@ namespace Intersect.Server.EventProcessing
                         {
                             if (id == ((ServerVariableBase)var).TextId)
                             {
-                                input = input.Replace(Strings.Events.globalvar + "{" + m.Groups[1].Value + "}", ((ServerVariableBase)var).Value.ToString());
+                                input = input.Replace(Strings.Events.globalvar + "{" + m.Groups[1].Value + "}", ((ServerVariableBase)var).Value.ToString(((ServerVariableBase)var).Type));
                             }
                         }
                     }
@@ -830,7 +830,7 @@ namespace Intersect.Server.EventProcessing
                         {
                             if (id == ((ServerVariableBase)var).TextId)
                             {
-                                input = input.Replace(Strings.Events.globalswitch + "{" + m.Groups[1].Value + "}", ((ServerVariableBase)var).Value.ToString());
+                                input = input.Replace(Strings.Events.globalswitch + "{" + m.Groups[1].Value + "}", ((ServerVariableBase)var).Value.ToString(((ServerVariableBase)var).Type));
                             }
                         }
                     }
