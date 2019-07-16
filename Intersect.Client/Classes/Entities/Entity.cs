@@ -240,7 +240,7 @@ namespace Intersect.Client.Entities
             AddAnimations(animsToAdd);
 
             Vital = packet.Vital;
-            MaxVital = packet.Vital;
+            MaxVital = packet.MaxVital;
 
             //Update status effects
             foreach (var status in packet.StatusEffects)
