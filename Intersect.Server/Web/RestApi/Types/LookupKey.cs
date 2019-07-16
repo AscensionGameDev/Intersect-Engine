@@ -26,6 +26,11 @@ namespace Intersect.Server.Web.RestApi.Types
 
         [CanBeNull] public string Name { get; private set; }
 
+        public override string ToString()
+        {
+            return HasId ? Id.ToString() : Name;
+        }
+
         public class Converter : TypeConverter
         {
 
