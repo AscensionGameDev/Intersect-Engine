@@ -16,7 +16,7 @@ namespace Intersect.Server.Web.RestApi.Types
 
         public string Message { get; set; }
 
-        public int Color { get; set; }
+        public Color Color { get; set; }
 
         public string Target { get; set; }
 

@@ -18,9 +18,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [HttpPost]
         public object SendGlobal([FromBody] ChatMessage chatMessage)
         {
+            chatMessage.Color = chatMessage.Color ?? CustomColors.AnnouncementChat;
+
             try
             {
-                PacketSender.SendGlobalMsg(chatMessage.Message, Color.FromArgb(chatMessage.Color), chatMessage.Target);
+                PacketSender.SendGlobalMsg(chatMessage.Message, chatMessage.Color, chatMessage.Target);
 
                 return new
                 {
@@ -43,14 +45,27 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [HttpPost]
         public object SendProximity(Guid mapId, [FromBody] ChatMessage chatMessage)
         {
-            try
-            {
-                PacketSender.SendProximityMsg(chatMessage.Message, mapId, Color.FromArgb(chatMessage.Color), chatMessage.Target);
+            chatMessage.Color = chatMessage.Color ?? CustomColors.ProximityMsg;
 
+            if (Guid.Empty == mapId)
+            {
                 return new
                 {
-                    success = true,
-                    chatMessage
+                    success = false,
+                    mapId,
+                    chatMessage,
+                    exception = new ArgumentException($@"Invalid map id '{mapId}'.", nameof(mapId))
+                };
+            }
+
+            try
+            {
+                return new
+                {
+                    success = PacketSender.SendProximityMsg(chatMessage.Message, mapId, chatMessage.Color, chatMessage.Target),
+                    mapId,
+                    chatMessage,
+                    exception = new ArgumentOutOfRangeException(nameof(mapId), $@"Map with id '{mapId}' not found.")
                 };
             }
             catch (Exception exception)
@@ -121,32 +136,16 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 };
             }
 
-            try
-            {
-                PacketSender.SendGlobalMsg(chatMessage.Message, Color.FromArgb(chatMessage.Color), chatMessage.Target);
-
-                return new
-                {
-                    success = true,
-                    chatMessage
-                };
-            }
-            catch (Exception exception)
-            {
-                return new
-                {
-                    success = false,
-                    chatMessage,
-                    exception
-                };
-            }
+            return SendDirect(client, chatMessage);
         }
 
         private static object SendDirect([NotNull] Client client, ChatMessage chatMessage)
         {
+            chatMessage.Color = chatMessage.Color ?? CustomColors.PlayerMsg;
+
             try
             {
-                PacketSender.SendChatMsg(client, chatMessage.Message, Color.FromArgb(chatMessage.Color), chatMessage.Target);
+                PacketSender.SendChatMsg(client, chatMessage.Message, chatMessage.Color, chatMessage.Target);
 
                 return new
                 {
