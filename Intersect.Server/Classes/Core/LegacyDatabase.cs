@@ -28,6 +28,7 @@ using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
+using Intersect.Server.Web.RestApi;
 using Intersect.Utilities;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
@@ -140,7 +141,10 @@ namespace Intersect.Server
             var processedPlayerMigrations = new List<string>(playerMigrations);
             foreach (var itm in remainingPlayerMigrations) processedPlayerMigrations.Remove(itm);
             PlayerContext.MigrationsProcessed(processedPlayerMigrations.ToArray());
-            PlayerContext.Seed();
+#if DEBUG
+            if (ServerContext.Instance.RestApi.Configuration.SeedMode)
+                PlayerContext.Seed();
+#endif
 
 
             LoadAllGameObjects();

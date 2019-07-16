@@ -75,6 +75,11 @@ namespace Intersect.Server.Web.RestApi.Configuration
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public bool DebugMode { get; private set; }
 
+#if DEBUG
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public bool SeedMode { get; private set; }
+#endif
+
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Include)]
         [DefaultValue(DefaultRefreshTokenLifetime)]
         public uint RefreshTokenLifetime { get; private set; }
