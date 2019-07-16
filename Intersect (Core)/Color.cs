@@ -211,5 +211,10 @@ namespace Intersect
                 parts[i] = int.Parse(strs[i]);
             return new Color(parts[0], parts[1], parts[2], parts[3]);
         }
+
+        public static implicit operator Color(string colorString)
+        {
+            return FromString(colorString);
+        }
     }
 }

@@ -563,15 +563,15 @@ namespace Intersect.Server.Networking
         }
 
         //ChatMsgPacket
-        public static void SendProximityMsg(string message, Guid mapId, string target = "")
+        public static bool SendProximityMsg(string message, Guid mapId, string target = "")
         {
-            SendProximityMsg(message, mapId, CustomColors.ProximityMsg);
+            return SendProximityMsg(message, mapId, CustomColors.ProximityMsg);
         }
 
         //ChatMsgPacket
-        public static void SendProximityMsg(string message, Guid mapId, Color clr, string target = "")
+        public static bool SendProximityMsg(string message, Guid mapId, Color clr, string target = "")
         {
-            SendDataToProximity(mapId, new ChatMsgPacket(message,clr,target));
+            return SendDataToProximity(mapId, new ChatMsgPacket(message,clr,target));
         }
 
         //ChatMsgPacket
@@ -1566,17 +1566,20 @@ namespace Intersect.Server.Networking
             }
         }
 
-        public static void SendDataToProximity(Guid mapId, CerasPacket packet, Client except = null)
+        public static bool SendDataToProximity(Guid mapId, CerasPacket packet, Client except = null)
         {
             if (!MapInstance.Lookup.Keys.Contains(mapId))
             {
-                return;
+                return false;
             }
+
             SendDataToMap(mapId, packet, except);
             for (var i = 0; i < MapInstance.Get(mapId).SurroundingMaps.Count; i++)
             {
                 SendDataToMap(MapInstance.Get(mapId).SurroundingMaps[i], packet, except);
             }
+
+            return true;
         }
 
         public static void SendDataToEditors(CerasPacket packet)
