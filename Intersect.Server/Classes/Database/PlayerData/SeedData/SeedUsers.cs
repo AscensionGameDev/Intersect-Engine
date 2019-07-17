@@ -40,7 +40,31 @@ namespace Intersect.Server.Database.PlayerData.SeedData
                     var salt = GenerateSalt(rng);
 
                     var userRights = UserRights.None;
-                    if (n < 100)
+                    if (n < 10)
+                    {
+                        userRights = new UserRights
+                        {
+                            Editor = true,
+                            Ban = true,
+                            Kick = true,
+                            Mute = true,
+                            Api = true,
+                            PersonalInformation = true
+                        };
+                    }
+                    else if (n < 20)
+                    {
+                        userRights = new UserRights
+                        {
+                            Editor = true,
+                            Ban = true,
+                            Kick = true,
+                            Mute = true,
+                            Api = true,
+                            PersonalInformation = false
+                        };
+                    }
+                    else if (n < 100)
                     {
                         userRights = UserRights.Admin;
                     }

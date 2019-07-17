@@ -612,7 +612,7 @@
     <Compile Include="Web\RestApi\Routes\V1\DocController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\ChatController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\InfoController.cs" />
-    <Compile Include="Web\RestApi\Routes\V1\VariableController.cs" />
+    <Compile Include="Web\RestApi\Routes\V1\VariablesController.cs" />
     <Compile Include="Web\RestApi\Services\AuthorizedRoutesService.cs" />
     <Compile Include="Web\RestApi\Services\IAuthorizedRoutesService.cs" />
     <Compile Include="Web\RestApi\Services\IntersectServiceDependencyResolver.cs" />
