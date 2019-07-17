@@ -375,7 +375,7 @@ namespace Intersect.Client.UI.Game.EntityPanel
                 var xPadding = itm.Container.Margin.Left + itm.Container.Margin.Right;
                 var yPadding = itm.Container.Margin.Top + itm.Container.Margin.Bottom;
 
-                itm.Container.SetPosition((i % (EntityStatusPanel.Width / (itm.Container.Width + xPadding))) * (itm.Container.Width + xPadding) + xPadding, (i / (EntityStatusPanel.Width / (itm.Container.Width + xPadding))) * (itm.Container.Height + yPadding) + yPadding);
+                itm.Container.SetPosition((i % (EntityStatusPanel.Width / Math.Max(1, EntityStatusPanel.Width / (itm.Container.Width + xPadding)))) * (itm.Container.Width + xPadding) + xPadding, (i / Math.Max(1,EntityStatusPanel.Width / (itm.Container.Width + xPadding))) * (itm.Container.Height + yPadding) + yPadding);
 
             }
         }
