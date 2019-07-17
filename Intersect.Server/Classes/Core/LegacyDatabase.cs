@@ -145,8 +145,7 @@ namespace Intersect.Server
             if (ServerContext.Instance.RestApi.Configuration.SeedMode)
                 PlayerContext.Seed();
 #endif
-
-
+            
             LoadAllGameObjects();
             LoadTime();
             OnClassesLoaded();

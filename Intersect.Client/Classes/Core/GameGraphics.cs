@@ -66,7 +66,7 @@ namespace Intersect.Client
 
         //Cache the Y based rendering
         public static HashSet<Entity>[,] RenderingEntities;
-        
+
         public static object GfxLock = new object();
 
         //Animations
@@ -121,11 +121,11 @@ namespace Intersect.Client
             {
                 return;
             }
-            
+
             if (GridSwitched)
             {
                 //Brightness
-                byte brightnessTarget = (byte) ((currentMap.Brightness / 100f) * 255);
+                byte brightnessTarget = (byte)((currentMap.Brightness / 100f) * 255);
                 BrightnessLevel = brightnessTarget;
                 PlayerLightColor.R = currentMap.PlayerLightColor.R;
                 PlayerLightColor.G = currentMap.PlayerLightColor.G;
@@ -135,10 +135,10 @@ namespace Intersect.Client
                 sPlayerLightExpand = currentMap.PlayerLightExpand;
 
                 //Overlay
-                OverlayColor.A = (byte) currentMap.AHue;
-                OverlayColor.R = (byte) currentMap.RHue;
-                OverlayColor.G = (byte) currentMap.GHue;
-                OverlayColor.B = (byte) currentMap.BHue;
+                OverlayColor.A = (byte)currentMap.AHue;
+                OverlayColor.R = (byte)currentMap.RHue;
+                OverlayColor.G = (byte)currentMap.GHue;
+                OverlayColor.B = (byte)currentMap.BHue;
 
                 //Fog && Panorama
                 currentMap.GridSwitched();
@@ -195,9 +195,10 @@ namespace Intersect.Client
                 }
             }
 
-            for (int x = 0; x < 3; x++)
+
+            for (int y = 0; y < Options.MapHeight * 5; y++)
             {
-                for (int y = 0; y < Options.MapHeight * 5; y++)
+                for (int x = 0; x < 3; x++)
                 {
                     foreach (var entity in RenderingEntities[x, y])
                     {
@@ -209,7 +210,7 @@ namespace Intersect.Client
                     {
                         for (var x1 = gridX - 1; x1 <= gridX + 1; x1++)
                         {
-                            var y1 = gridY - 2 + (int) Math.Floor(y / (float)Options.MapHeight);
+                            var y1 = gridY - 2 + (int)Math.Floor(y / (float)Options.MapHeight);
                             if (x1 >= 0 && x1 < Globals.MapGridWidth && y1 >= 0 && y1 < Globals.MapGridHeight && Globals.MapGrid[x1, y1] != Guid.Empty)
                             {
                                 var map = MapInstance.Get(Globals.MapGrid[x1, y1]);
@@ -227,7 +228,7 @@ namespace Intersect.Client
             {
                 foreach (AnimationInstance animInstance in LiveAnimations)
                 {
-                    animInstance.Draw(false,true);
+                    animInstance.Draw(false, true);
                     animInstance.Draw(true, true);
                 }
             }
@@ -243,7 +244,7 @@ namespace Intersect.Client
                     }
                 }
             }
-            
+
             for (int y = 0; y < Options.MapHeight * 5; y++)
             {
                 for (int x = 3; x < 6; x++)
@@ -789,7 +790,7 @@ namespace Intersect.Client
 
                     DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
                         new FloatRect(x, y, l.Size * 2, l.Size * 2), new Color(255, 255, 255, 255),
-                        sDarknessTexture, GameBlendModes.Add, radialShader,0,true);
+                        sDarknessTexture, GameBlendModes.Add, radialShader, 0, true);
                 }
             }
             sLightQueue.Clear();
@@ -1043,7 +1044,7 @@ namespace Intersect.Client
             GameShader shader = null, float rotationDegrees = 0.0f, bool drawImmediate = false)
         {
             if (tex == null) return;
-            Renderer.DrawTexture(tex, sx,sy,w,h,dx,dy,w,h,Color.White, renderTarget, blendMode,shader,rotationDegrees, false, drawImmediate);
+            Renderer.DrawTexture(tex, sx, sy, w, h, dx, dy, w, h, Color.White, renderTarget, blendMode, shader, rotationDegrees, false, drawImmediate);
         }
 
         public static void DrawGameTexture(GameTexture tex, FloatRect srcRectangle, FloatRect targetRect,
@@ -1052,7 +1053,7 @@ namespace Intersect.Client
             GameShader shader = null, float rotationDegrees = 0.0f, bool drawImmediate = false)
         {
             if (tex == null) return;
-            Renderer.DrawTexture(tex,srcRectangle.X,srcRectangle.Y,srcRectangle.Width,srcRectangle.Height,targetRect.X,targetRect.Y,targetRect.Width,targetRect.Height,Color.FromArgb(renderColor.A, renderColor.R, renderColor.G, renderColor.B), renderTarget, blendMode,shader,rotationDegrees,false,drawImmediate);
+            Renderer.DrawTexture(tex, srcRectangle.X, srcRectangle.Y, srcRectangle.Width, srcRectangle.Height, targetRect.X, targetRect.Y, targetRect.Width, targetRect.Height, Color.FromArgb(renderColor.A, renderColor.R, renderColor.G, renderColor.B), renderTarget, blendMode, shader, rotationDegrees, false, drawImmediate);
         }
     }
 }
