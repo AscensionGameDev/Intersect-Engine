@@ -4,12 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 
-using Intersect.Server.Web.RestApi.Attributes;
-
 namespace Intersect.Server.Web.RestApi.Routes
 {
     [RoutePrefix("info")]
-    [DebugAuthorize]
     public class RootInfoController : ApiController
     {
         [NotNull]
@@ -29,19 +26,19 @@ namespace Intersect.Server.Web.RestApi.Routes
 
         [Route]
         [HttpGet]
-        [ConfigurableAuthorize]
         public object Default()
         {
             return new
             {
+#if DEBUG
                 debug = true,
+#endif
                 versions = Versions()
             };
         }
 
         [Route("versions")]
         [HttpGet]
-        [ConfigurableAuthorize]
         public IEnumerable<string> Versions()
         {
             return DiscoveredVersions;
