@@ -1028,7 +1028,7 @@ namespace Intersect.Server.Entities
             var aliveAnimations = new List<KeyValuePair<Guid, sbyte>>();
 
             //Only count safe zones and friendly fire if its a dangerous spell! (If one has been used)
-            if (!spellBase.Combat.Friendly && spellBase.Combat.TargetType != (int)SpellTargetTypes.Self)
+            if (!spellBase.Combat.Friendly && (spellBase.Combat.TargetType != (int)SpellTargetTypes.Self || onHitTrigger))
             {
                 //If about to hit self with an unfriendly spell (maybe aoe?) return
                 if (enemy == this && spellBase.Combat.Effect != StatusTypes.OnHit) return;
@@ -1079,7 +1079,7 @@ namespace Intersect.Server.Entities
                 if (enemy.GetType() != GetType()) return; //Don't let players aoe heal npcs. Don't let npcs aoe heal players.
             }
 
-            if (spellBase.HitAnimationId != Guid.Empty)
+            if (spellBase.HitAnimationId != Guid.Empty && (spellBase.Combat.Effect != StatusTypes.OnHit || onHitTrigger))
             {
                 deadAnimations.Add(new KeyValuePair<Guid, sbyte>(spellBase.HitAnimationId, (sbyte)Directions.Up));
                 aliveAnimations.Add(new KeyValuePair<Guid, sbyte>(spellBase.HitAnimationId, (sbyte)Directions.Up));
@@ -1429,7 +1429,7 @@ namespace Intersect.Server.Entities
                         switch (spellBase.Combat.TargetType)
                         {
                             case SpellTargetTypes.Self:
-                                if (spellBase.HitAnimationId != Guid.Empty)
+                                if (spellBase.HitAnimationId != Guid.Empty && spellBase.Combat.Effect != StatusTypes.OnHit)
                                 {
                                     PacketSender.SendAnimationToProximity(spellBase.HitAnimationId, 1, Id, MapId, 0, 0, (sbyte)Dir); //Target Type 1 will be global entity
                                 }
@@ -1467,12 +1467,12 @@ namespace Intersect.Server.Entities
                                 }
                                 break;
                             case SpellTargetTypes.OnHit:
-                                if (spellBase.HitAnimationId != Guid.Empty)
+                                if (spellBase.Combat.Effect == StatusTypes.OnHit)
                                 {
-                                    PacketSender.SendAnimationToProximity(spellBase.HitAnimationId, 1, Id, MapId, 0, 0, (sbyte)Dir); //Target Type 1 will be global entity
+                                    new StatusInstance(this, spellBase, StatusTypes.OnHit, spellBase.Combat.OnHitDuration, spellBase.Combat.TransformSprite);
+                                    PacketSender.SendActionMsg(this, Strings.Combat.status[(int) spellBase.Combat.Effect], CustomColors.Status);
                                 }
 
-                                new StatusInstance(this, spellBase, StatusTypes.OnHit, spellBase.Combat.OnHitDuration, spellBase.Combat.TransformSprite);
                                 break;
                             default:
                                 break;
