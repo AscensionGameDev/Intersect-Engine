@@ -11,7 +11,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
     [RoutePrefix("variables")]
     [ConfigurableAuthorize]
-    public sealed class VariableController : ApiController
+    public sealed class VariablesController : ApiController
     {
 
         [Route("global")]
