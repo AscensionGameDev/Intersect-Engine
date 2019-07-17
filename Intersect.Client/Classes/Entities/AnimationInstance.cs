@@ -256,7 +256,7 @@ namespace Intersect.Client.Entities
                 {
                     var lowerFrame = (int)Math.Floor(elapsedTime / (float)MyBase.Lower.FrameSpeed);
                     var lowerLoops = (int)Math.Floor(lowerFrame / (float)MyBase.Lower.FrameCount);
-                    if (lowerLoops >= mLowerLoop && !InfiniteLoop)
+                    if (lowerLoops > mLowerLoop && !InfiniteLoop)
                     {
                         mShowLower = false;
                     }
@@ -271,7 +271,7 @@ namespace Intersect.Client.Entities
                 {
                     var upperFrame = (int)Math.Floor(elapsedTime / (float)MyBase.Upper.FrameSpeed);
                     var upperLoops = (int)Math.Floor(upperFrame / (float)MyBase.Upper.FrameCount);
-                    if (upperLoops >= mUpperLoop && !InfiniteLoop)
+                    if (upperLoops > mUpperLoop && !InfiniteLoop)
                     {
                         mShowUpper = false;
                     }
