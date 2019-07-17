@@ -76,12 +76,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             {
                 cmbNumericComparitor.Items.Add(Strings.EventConditional.comparators[i]);
             }
+            cmbNumericComparitor.SelectedIndex = 0;
 
             //Boolean Variable
             grpBooleanVariable.Text = Strings.EventConditional.booleanvariable;
             cmbBooleanComparator.Items.Clear();
             cmbBooleanComparator.Items.Add(Strings.EventConditional.booleanequal);
             cmbBooleanComparator.Items.Add(Strings.EventConditional.booleannotequal);
+            cmbBooleanComparator.SelectedIndex = 0;
             optBooleanTrue.Text = Strings.EventConditional.True;
             optBooleanFalse.Text = Strings.EventConditional.False;
             optBooleanGlobalVariable.Text = Strings.EventConditional.globalvariablevalue;
@@ -519,6 +521,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
                 cmbBooleanComparator.SelectedIndex = Convert.ToInt32(!com.ComparingEqual);
 
+                if (cmbBooleanComparator.SelectedIndex < 0) cmbBooleanComparator.SelectedIndex = 0;
+
                 optBooleanTrue.Checked = com.Value;
                 optBooleanFalse.Checked = !com.Value;
 
@@ -593,6 +597,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private BooleanVariableComparison GetBooleanVariableComparison()
         {
             var comp = new BooleanVariableComparison();
+
+            if (cmbBooleanComparator.SelectedIndex < 0) cmbBooleanComparator.SelectedIndex = 0;
 
             comp.ComparingEqual = !Convert.ToBoolean(cmbBooleanComparator.SelectedIndex);
 

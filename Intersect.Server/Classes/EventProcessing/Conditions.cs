@@ -224,6 +224,7 @@ namespace Intersect.Server.EventProcessing
             {
                 if (eventInstance.NpcDeathTriggerd == true) return false; //Only call it once
                 MapInstance m = MapInstance.Get(eventInstance.MapId);
+                if (m == null) return false;
                 for (int i = 0; i < m.Spawns.Count; i++)
                 {
                     if (m.NpcSpawnInstances.ContainsKey(m.Spawns[i]))
@@ -293,6 +294,8 @@ namespace Intersect.Server.EventProcessing
 
             if (compValue == null) compValue = new VariableValue();
 
+            if (compValue.Type != currentValue.Type) return false;
+
             if (comparison.ComparingEqual)
             {
                 return currentValue.Boolean == compValue.Boolean;
@@ -326,6 +329,8 @@ namespace Intersect.Server.EventProcessing
             }
 
             if (compValue == null) compValue = new VariableValue();
+
+            if (compValue.Type != currentValue.Type) return false;
 
             var varVal = currentValue.Integer;
             compareAgainst = compValue.Integer;
