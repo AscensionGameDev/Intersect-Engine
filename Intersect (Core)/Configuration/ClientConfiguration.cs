@@ -57,40 +57,40 @@ namespace Intersect.Configuration
         /// <summary>
         /// Hostname of the server to connect to
         /// </summary>
-        public string Host { get; protected set; } = DEFAULT_HOST;
+        public string Host { get; set; } = DEFAULT_HOST;
 
         /// <summary>
         /// Port of the server to connect to
         /// </summary>
-        public ushort Port { get; protected set; } = DEFAULT_PORT;
+        public ushort Port { get; set; } = DEFAULT_PORT;
 
         /// <summary>
         /// The font family to use on the client rendering names, damage counters, etc
         /// </summary>
-        public string GameFont { get; protected set; } = DEFAULT_FONT;
+        public string GameFont { get; set; } = DEFAULT_FONT;
 
         /// <summary>
         /// The font family to use on unstyled windows such as the debug menu/admin window
         /// </summary>
-        public string UIFont { get; protected set; } = DEFAULT_UI_FONT;
+        public string UIFont { get; set; } = DEFAULT_UI_FONT;
 
         /// <summary>
         /// Number of lines to save for chat scrollback
         /// </summary>
-        public int ChatLines { get; protected set; } = DEFAULT_CHAT_LINES;
+        public int ChatLines { get; set; } = DEFAULT_CHAT_LINES;
 
         /// <summary>
         /// Menu music file name
         /// </summary>
-        public string MenuMusic { get; protected set; } = DEFAULT_MENU_MUSIC;
+        public string MenuMusic { get; set; } = DEFAULT_MENU_MUSIC;
 
         /// <summary>
         /// Menu background art
         /// </summary>
-        public string MenuBackground { get; protected set; } = DEFAULT_MENU_BACKGROUND;
+        public string MenuBackground { get; set; } = DEFAULT_MENU_BACKGROUND;
 
         // TODO: What is this for?
-        public List<string> IntroImages { get; protected set; } = new List<string>();
+        public List<string> IntroImages { get; set; } = new List<string>();
 
         #endregion
 

@@ -93,20 +93,20 @@ namespace Intersect
         public static MapOptions Map => Instance.MapOpts;
 
         public static bool Loaded => Instance != null;
-        
 
-        public string GameName { get; protected set; } = DEFAULT_GAME_NAME;
+        [JsonProperty("GameName", Order = -5)]
+        public string GameName { get; set; } = DEFAULT_GAME_NAME;
 
-        [JsonProperty("ServerPort")]
-        public ushort _serverPort { get; protected set; } = DEFAULT_SERVER_PORT;
+        [JsonProperty("ServerPort", Order = -4)]
+        public ushort _serverPort { get; set; } = DEFAULT_SERVER_PORT;
 
-        [JsonProperty("AdminOnly")]
+        [JsonProperty("AdminOnly", Order = -3)]
         protected bool _adminOnly = false;
 
-        [JsonProperty("UPnP")]
+        [JsonProperty("UPnP", Order = -2)]
         protected bool _upnp = true;
 
-        [JsonProperty("OpenPortChecker")]
+        [JsonProperty("OpenPortChecker", Order = -1)]
         protected bool _portChecker = true;
 
         [JsonProperty ("Player")]
