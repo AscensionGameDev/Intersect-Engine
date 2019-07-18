@@ -804,12 +804,12 @@ namespace Intersect.Server
                 cls.Name = Strings.Database.Default;
                 var defaultMale = new ClassSprite()
                 {
-                    Sprite = "1.png",
+                    Sprite = "Base_Male.png",
                     Gender = Gender.Male
                 };
                 var defaultFemale = new ClassSprite()
                 {
-                    Sprite = "2.png",
+                    Sprite = "Base_Female.png",
                     Gender = Gender.Female
                 };
                 cls.Sprites.Add(defaultMale);
