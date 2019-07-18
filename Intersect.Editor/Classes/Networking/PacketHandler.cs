@@ -401,17 +401,22 @@ namespace Intersect.Editor.Networking
                     //Handled in a different packet
                     break;
                 case GameObjectType.Event:
+                    var wasCommon = false;
                     if (deleted)
                     {
                         var evt = EventBase.Get(id);
+                        wasCommon = evt.CommonEvent;
                         evt.Delete();
                     }
                     else
                     {
                         var evt = new EventBase(id);
                         evt.Load(json);
+                        wasCommon = evt.CommonEvent;
                         EventBase.Lookup.Set(id, evt);
                     }
+
+                    if (!wasCommon) return;
                     break;
                 case GameObjectType.PlayerVariable:
                     if (deleted)

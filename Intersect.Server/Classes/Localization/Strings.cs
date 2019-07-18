@@ -1051,7 +1051,7 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString screwed =
-                @"   3. If on a college campus, or within a business network you likely do not have permission to open ports or host games in which case you are screwed!";
+                @"   3. If on a college campus, or within a business network you likely do not have permission to open ports or host games in which case you should explore external hosting options!";
 
         }
 

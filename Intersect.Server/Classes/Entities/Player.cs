@@ -3655,8 +3655,7 @@ namespace Intersect.Server.Entities
                                         StartCommonEvent(quest.Tasks[i].CompletionEvent);
                                     }
                                     StartCommonEvent(EventBase.Get(quest.EndEventId));
-                                    PacketSender.SendChatMsg(Client, Strings.Quests.completed.ToString(quest.Name),
-                                        Color.Green);
+                                    PacketSender.SendChatMsg(Client, Strings.Quests.completed.ToString(quest.Name), Color.Green);
                                 }
                                 else
                                 {
@@ -3671,8 +3670,7 @@ namespace Intersect.Server.Entities
                                     {
                                         UpdateGatherItemQuests(quest.Tasks[i + 1].TargetId);
                                     }
-                                    PacketSender.SendChatMsg(Client, Strings.Quests.updated.ToString(quest.Name),
-                                        CustomColors.TaskUpdated);
+                                    PacketSender.SendChatMsg(Client, Strings.Quests.updated.ToString(quest.Name), CustomColors.TaskUpdated);
                                 }
                             }
                         }

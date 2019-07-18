@@ -225,15 +225,10 @@ namespace Intersect.Server.EventProcessing
                 if (eventInstance.NpcDeathTriggerd == true) return false; //Only call it once
                 MapInstance m = MapInstance.Get(eventInstance.MapId);
                 if (m == null) return false;
-                for (int i = 0; i < m.Spawns.Count; i++)
+                var entities = m.GetEntities();
+                foreach (var en in entities)
                 {
-                    if (m.NpcSpawnInstances.ContainsKey(m.Spawns[i]))
-                    {
-                        if (m.NpcSpawnInstances[m.Spawns[i]].Entity.Dead == false)
-                        {
-                            return false;
-                        }
-                    }
+                    if (en.GetType() == typeof(Npc)) return false;
                 }
                 return true;
             }
