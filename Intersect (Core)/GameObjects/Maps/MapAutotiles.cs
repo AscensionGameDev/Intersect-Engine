@@ -442,6 +442,7 @@ namespace Intersect.GameObjects.Maps
 
         public void UpdateCliffAutotiles(MapBase curMap, int layer)
         {
+            if (layer >= Options.LayerCount) return;
             foreach (var map in curMap.GenerateAutotileGrid())
             {
                 if (map != null)

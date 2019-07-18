@@ -60,7 +60,11 @@ namespace Intersect.Client.Framework.Gwen.Control
         public GameTexture Texture
         {
             get => mTexture;
-            set => mTexture = value;
+            set
+            {
+                mTexture = value;
+                this.InvalidateParent();
+            }
         }
 
         public string TextureFilename

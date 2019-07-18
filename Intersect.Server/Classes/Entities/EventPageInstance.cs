@@ -65,8 +65,8 @@ namespace Intersect.Server.Entities
             Id = BaseEvent.Id;
             MyPage = myPage;
             MapId = mapId;
-            X = (byte)eventIndex.X;
-            Y = (byte)eventIndex.Y;
+            X = eventIndex.X;
+            Y = eventIndex.Y;
             Name = myEvent.Name;
             MovementType = MyPage.Movement.Type;
             MovementFreq = MyPage.Movement.Frequency;
