@@ -509,7 +509,7 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString errorservercrash =
-                @"The Intersect server has encountered an error and must close. Error information can be found in resources/logs/errors.log. Press any key to exit.";
+                @"The Intersect server has encountered an error and must close. Error information can be found in resources/logs/errors.log. Press enter to exit.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString errorservercrashnohalt =
@@ -636,7 +636,7 @@ namespace Intersect.Server.Localization
                 @"Type exit to shutdown the server, or help for a list of commands.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString exit = @"Press any key to exit.";
+            public readonly LocalizedString exit = @"Press enter to exit.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString loading = @"Loading, please wait.";
@@ -832,7 +832,7 @@ namespace Intersect.Server.Localization
                 @"Please wait, stopping server, and saving current database...";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
-            public readonly LocalizedString migrationcomplete = @"Migration complete! Press any key to exit.";
+            public readonly LocalizedString migrationcomplete = @"Migration complete! Press enter to exit.";
 
         }
 

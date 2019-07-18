@@ -1187,7 +1187,7 @@ namespace Intersect.Server
                 }
             }
             Console.WriteLine(Strings.Migration.migrationcomplete);
-            Console.ReadKey();
+            Bootstrapper.Context.ServerConsole.Wait();
             Environment.Exit(0);
         }
 

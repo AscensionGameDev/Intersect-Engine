@@ -1,19 +1,18 @@
-﻿using CommandLine;
-using Intersect.Logging;
-using Intersect.Server.General;
-using Intersect.Server.Localization;
-using Intersect.Server.Networking.Helpers;
-using Intersect.Utilities;
-using JetBrains.Annotations;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using Intersect.Threading;
-using Intersect.Logging.Output;
+using CommandLine;
+using Intersect.Logging;
+using Intersect.Server.General;
+using Intersect.Server.Localization;
 using Intersect.Server.Networking;
+using Intersect.Server.Networking.Helpers;
+using Intersect.Threading;
+using Intersect.Utilities;
+using JetBrains.Annotations;
 
 namespace Intersect.Server.Core
 {
@@ -27,7 +26,7 @@ namespace Intersect.Server.Core
             Console.CancelKeyPress += OnConsoleCancelKeyPress;
         }
 
-        private static ServerContext sContext;
+        public static ServerContext Context { get; private set; }
 
         [NotNull]
         public static LockingActionQueue MainThread { get; private set; }
@@ -40,7 +39,7 @@ namespace Intersect.Server.Core
             }
 
             var commandLineOptions = ParseCommandLineArgs(args);
-            sContext = new ServerContext(commandLineOptions);
+            Context = new ServerContext(commandLineOptions);
 
             if (!PostContextSetup())
             {
@@ -425,19 +424,19 @@ namespace Intersect.Server.Core
                 Console.WriteLine(Strings.Errors.errorlogged);
             }
 
-            if (sContext?.StartupOptions.DoNotHaltOnError ?? false)
+            if (Context?.StartupOptions.DoNotHaltOnError ?? false)
             {
                 Console.WriteLine(Strings.Errors.errorservercrashnohalt);
             }
             else
             {
                 Console.WriteLine(Strings.Errors.errorservercrash);
-                Console.ReadKey();
+                Context.ServerConsole.Wait();
             }
 
-            if (!(sContext?.IsDisposed ?? true))
+            if (!(Context?.IsDisposed ?? true))
             {
-                sContext?.Dispose();
+                Context?.Dispose();
             }
         }
 
