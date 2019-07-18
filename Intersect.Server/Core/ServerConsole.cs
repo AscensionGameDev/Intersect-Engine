@@ -51,9 +51,10 @@ namespace Intersect.Server.Core
 
         public void Wait(bool doNotContinue = false)
         {
+            mDoNotContinue = mDoNotContinue || doNotContinue;
+
             lock (mInputLock)
             {
-                mDoNotContinue = mDoNotContinue || doNotContinue;
                 return;
             }
         }
@@ -72,6 +73,11 @@ namespace Intersect.Server.Core
 #endif
 
                     line = Console.ReadLine()?.Trim();
+
+                    if (mDoNotContinue)
+                    {
+                        return;
+                    }
                 }
 
                 if (line == null)
