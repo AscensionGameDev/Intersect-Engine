@@ -431,7 +431,7 @@ namespace Intersect.Server.Core
             else
             {
                 Console.WriteLine(Strings.Errors.errorservercrash);
-                Context.ServerConsole.Wait();
+                Context.ServerConsole.Wait(true);
             }
 
             if (!(Context?.IsDisposed ?? true))

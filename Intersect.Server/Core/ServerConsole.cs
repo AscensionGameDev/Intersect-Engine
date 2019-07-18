@@ -14,6 +14,8 @@ namespace Intersect.Server.Core
     {
         private readonly object mInputLock = new object();
 
+        private bool mDoNotContinue;
+
         [NotNull]
         public CommandParser Parser { get; }
 
@@ -47,10 +49,11 @@ namespace Intersect.Server.Core
             Parser.Register<UnmuteCommand>();
         }
 
-        public void Wait()
+        public void Wait(bool doNotContinue = false)
         {
             lock (mInputLock)
             {
+                mDoNotContinue = mDoNotContinue || doNotContinue;
                 return;
             }
         }
@@ -59,7 +62,7 @@ namespace Intersect.Server.Core
         {
             Console.WriteLine(Strings.Intro.consoleactive);
 
-            while (ServerContext.Instance.IsRunning)
+            while (ServerContext.Instance.IsRunning && !mDoNotContinue)
             {
                 string line;
                 lock (mInputLock)
