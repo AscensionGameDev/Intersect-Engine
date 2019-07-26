@@ -1227,11 +1227,12 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            //Invulnerability
+            //Check for enemy statuses
             var statuses = enemy.Statuses.Values.ToArray();
 			foreach (var status in statuses)
 			{
-				if (status.Type == StatusTypes.Invulnerable)
+                //Invulnerability ignore
+                if (status.Type == StatusTypes.Invulnerable)
 				{
 					PacketSender.SendActionMsg(enemy, Strings.Combat.invulnerable, CustomColors.Invulnerable);
 
@@ -1243,7 +1244,13 @@ namespace Intersect.Server.Entities
 
 					return;
 				}
-			}
+
+                //Wake up any sleeping targets
+                if (status.Type == StatusTypes.Sleep)
+                {
+                    status.RemoveStatus();
+                }
+            }
 
 			//Is this a critical hit?
 			if (Globals.Rand.Next(1, 101) > critChance)
