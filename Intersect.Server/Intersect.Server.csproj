@@ -573,6 +573,10 @@
     <Compile Include="Migrations\Game\20190726203949_SpellUpgrades_Percentage_Buffs.Designer.cs">
       <DependentUpon>20190726203949_SpellUpgrades_Percentage_Buffs.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\Game\20190727120303_ItemUpgrades_Percentage_Based_Stats.cs" />
+    <Compile Include="Migrations\Game\20190727120303_ItemUpgrades_Percentage_Based_Stats.designer.cs">
+      <DependentUpon>20190727120303_ItemUpgrades_Percentage_Based_Stats.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />
     <Compile Include="Web\RestApi\Attributes\DebugAuthorizeAttribute.cs" />
     <Compile Include="Web\RestApi\Attributes\ConfigurableAuthorizeAttribute.cs" />

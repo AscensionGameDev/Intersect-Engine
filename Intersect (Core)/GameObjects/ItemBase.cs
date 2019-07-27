@@ -121,6 +121,16 @@ namespace Intersect.GameObjects
         [NotMapped]
         public int[] VitalsGiven { get; set; }
 
+        [Column("PercentageVitalsGiven")]
+        [JsonIgnore]
+        public string PercentageVitalsJson
+        {
+            get => DatabaseUtils.SaveIntArray(PercentageVitalsGiven, (int)Vitals.VitalCount);
+            set => PercentageVitalsGiven = DatabaseUtils.LoadIntArray(value, (int)Vitals.VitalCount);
+        }
+        [NotMapped]
+        public int[] PercentageVitalsGiven { get; set; }
+
         [Column("StatsGiven")]
         [JsonIgnore]
         public string StatsJson
@@ -130,6 +140,16 @@ namespace Intersect.GameObjects
         }
         [NotMapped]
         public int[] StatsGiven { get; set; }
+
+        [Column("PercentageStatsGiven")]
+        [JsonIgnore]
+        public string PercentageStatsJson
+        {
+            get => DatabaseUtils.SaveIntArray(PercentageStatsGiven, (int)Stats.StatCount);
+            set => PercentageStatsGiven = DatabaseUtils.LoadIntArray(value, (int)Stats.StatCount);
+        }
+        [NotMapped]
+        public int[] PercentageStatsGiven { get; set; }
 
 
         [Column("UsageRequirements")]
@@ -155,7 +175,9 @@ namespace Intersect.GameObjects
             Name = "New Item";
             Speed = 10; // Set to 10 by default.
             StatsGiven = new int[(int)Stats.StatCount];
-	        VitalsGiven = new int[(int)Vitals.VitalCount];
+            PercentageStatsGiven = new int[(int)Stats.StatCount];
+            VitalsGiven = new int[(int)Vitals.VitalCount];
+            PercentageVitalsGiven = new int[(int)Vitals.VitalCount];
 			Consumable = new ConsumableData();
             Effect = new EffectData();
         }
@@ -172,6 +194,7 @@ namespace Intersect.GameObjects
     {
         public ConsumableType Type { get; set; }
         public int Value { get; set; }
+        public int Percentage { get; set; }
     }
 
     [Owned]

@@ -227,7 +227,6 @@ namespace Intersect.Editor.Forms.Editors
             chkDestroy.Text = Strings.ItemEditor.destroyspell;
 
             grpEvent.Text = Strings.ItemEditor.eventpanel;
-            lblEvent.Text = Strings.ItemEditor.Event;
 
             grpConsumable.Text = Strings.ItemEditor.consumeablepanel;
             lblVital.Text = Strings.ItemEditor.vital;
@@ -262,13 +261,24 @@ namespace Intersect.Editor.Forms.Editors
                 cmbEquipmentAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.EquipmentAnimationId) + 1;
                 nudPrice.Value = mEditorItem.Price;
                 cmbRarity.SelectedIndex = mEditorItem.Rarity;
+
                 nudStr.Value = mEditorItem.StatsGiven[0];
                 nudMag.Value = mEditorItem.StatsGiven[1];
                 nudDef.Value = mEditorItem.StatsGiven[2];
                 nudMR.Value = mEditorItem.StatsGiven[3];
                 nudSpd.Value = mEditorItem.StatsGiven[4];
+
+                nudStrPercentage.Value = mEditorItem.PercentageStatsGiven[0];
+                nudMagPercentage.Value = mEditorItem.PercentageStatsGiven[1];
+                nudDefPercentage.Value = mEditorItem.PercentageStatsGiven[2];
+                nudMRPercentage.Value = mEditorItem.PercentageStatsGiven[3];
+                nudSpdPercentage.Value = mEditorItem.PercentageStatsGiven[4];
+
                 nudHealthBonus.Value = mEditorItem.VitalsGiven[0];
                 nudManaBonus.Value = mEditorItem.VitalsGiven[1];
+                nudHPPercentage.Value = mEditorItem.PercentageVitalsGiven[0];
+                nudMPPercentage.Value = mEditorItem.PercentageVitalsGiven[1];
+
                 nudDamage.Value = mEditorItem.Damage;
                 nudCritChance.Value = mEditorItem.CritChance;
                 nudCritMultiplier.Value = (decimal)mEditorItem.CritMultiplier;
@@ -292,6 +302,7 @@ namespace Intersect.Editor.Forms.Editors
                 {
                     cmbConsume.SelectedIndex = (int) mEditorItem.Consumable.Type;
                     nudInterval.Value = mEditorItem.Consumable.Value;
+                    nudIntervalPercentage.Value = mEditorItem.Consumable.Percentage;
                 }
                 if (cmbPic.SelectedIndex > 0)
                 {
@@ -374,6 +385,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 cmbConsume.SelectedIndex = (int) mEditorItem.Consumable.Type;
                 nudInterval.Value = mEditorItem.Consumable.Value;
+                nudIntervalPercentage.Value = mEditorItem.Consumable.Percentage;
                 grpConsumable.Visible = true;
             }
             else if (cmbType.SelectedIndex == (int) ItemTypes.Spell)
@@ -707,6 +719,31 @@ namespace Intersect.Editor.Forms.Editors
             mEditorItem.StatsGiven[4] = (int) nudSpd.Value;
         }
 
+        private void nudStrPercentage_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.PercentageStatsGiven[0] = (int)nudStrPercentage.Value;
+        }
+
+        private void nudMagPercentage_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.PercentageStatsGiven[1] = (int)nudMagPercentage.Value;
+        }
+
+        private void nudDefPercentage_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.PercentageStatsGiven[2] = (int)nudDefPercentage.Value;
+        }
+
+        private void nudMRPercentage_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.PercentageStatsGiven[3] = (int)nudMRPercentage.Value;
+        }
+
+        private void nudSpdPercentage_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.PercentageStatsGiven[4] = (int)nudSpdPercentage.Value;
+        }
+
         private void nudBag_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.SlotCount = (int) nudBag.Value;
@@ -715,6 +752,11 @@ namespace Intersect.Editor.Forms.Editors
         private void nudInterval_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.Consumable.Value = (int) nudInterval.Value;
+        }
+
+        private void nudIntervalPercentage_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Consumable.Percentage = (int)nudIntervalPercentage.Value;
         }
 
         private void chkBound_CheckedChanged(object sender, EventArgs e)
@@ -745,6 +787,16 @@ namespace Intersect.Editor.Forms.Editors
         private void nudManaBonus_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.VitalsGiven[1] = (int)nudManaBonus.Value;
+        }
+
+        private void nudHPPercentage_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.PercentageVitalsGiven[0] = (int)nudHPPercentage.Value;
+        }
+
+        private void nudMPPercentage_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.PercentageVitalsGiven[1] = (int)nudMPPercentage.Value;
         }
 
         private void cmbEquipmentAnimation_SelectedIndexChanged(object sender, EventArgs e)
