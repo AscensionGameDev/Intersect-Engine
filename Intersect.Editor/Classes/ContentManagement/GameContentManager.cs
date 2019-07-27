@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using Intersect.Editor.Forms;
+using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -40,12 +41,6 @@ namespace Intersect.Editor.ContentManagement
 
         //MonoGame Content Manager
         private static ContentManager sContentManger;
-
-        //Initial Resource Downloading
-        private static string sResourceRelayer = "http://ascensiongamedev.com/resources/Intersect/findResources.php";
-
-        private static FrmLoadingContent sLoadingForm;
-        private static bool sDownloadCompleted;
         private static string sErrorString = "";
 
         //Game Content
@@ -72,106 +67,11 @@ namespace Intersect.Editor.ContentManagement
         //Resource Downloader
         public static void CheckForResources()
         {
-            ServicePointManager.Expect100Continue = false;
             if (!Directory.Exists("resources"))
             {
-                sLoadingForm = new FrmLoadingContent();
-                sLoadingForm.Show();
-                sLoadingForm.BringToFront();
-                using (WebClient client = new WebClient())
-                {
-                    byte[] response =
-                        client.UploadValues(sResourceRelayer, new NameValueCollection()
-                        {
-                            {"version", Assembly.GetExecutingAssembly().GetName().Version.ToString()},
-                        });
-                    string result = Encoding.UTF8.GetString(response);
-                    if (Uri.TryCreate(result, UriKind.Absolute, out Uri urlResult))
-                    {
-                        client.DownloadProgressChanged += Client_DownloadProgressChanged;
-                        client.DownloadFileCompleted += Client_DownloadFileCompleted;
-                        bool retry = true;
-                        while (retry == true)
-                        {
-                            try
-                            {
-                                sDownloadCompleted = false;
-                                sErrorString = "";
-                                client.DownloadFileAsync(urlResult, "resources.zip");
-                                while (!sDownloadCompleted)
-                                {
-                                    Application.DoEvents();
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                sErrorString = ex.Message;
-                            }
-                            if (sErrorString != "")
-                            {
-                                if (
-                                    MessageBox.Show(
-                                        "Failed to download client resources.\n\nException Info: " + sErrorString +
-                                        "\n\n" +
-                                        "Would you like to try again?", "Failed to load Resources!",
-                                        MessageBoxButtons.YesNo) != DialogResult.Yes)
-                                {
-                                    retry = false;
-                                }
-                            }
-                            else
-                            {
-                                retry = false;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        MessageBox.Show(
-                            "Failed to load resources from client directory and Ascension Game Dev server. Cannot launch game!",
-                            "Failed to load Resources!");
-                    }
-                }
-                sLoadingForm.Close();
-            }
-            if (!Directory.Exists("resources"))
-            {
+                MessageBox.Show(Strings.Errors.resourcesnotfound, Strings.Errors.resourcesnotfoundtitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Environment.Exit(1);
             }
-        }
-
-        private static void Client_DownloadFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
-        {
-            sDownloadCompleted = true;
-            if (!e.Cancelled && e.Error == null)
-            {
-                try
-                {
-                    System.IO.Compression.ZipFile.ExtractToDirectory("resources.zip",
-                        Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
-                    File.Delete("resources.zip");
-                }
-                catch (Exception ex)
-                {
-                    sErrorString = ex.Message;
-                }
-            }
-            else
-            {
-                if (e.Cancelled)
-                {
-                    sErrorString = "Download was cancelled!";
-                }
-                else
-                {
-                    sErrorString = e.Error.Message;
-                }
-            }
-        }
-
-        private static void Client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
-        {
-            sLoadingForm.SetProgress(e.ProgressPercentage);
         }
 
         public static void LoadEditorContent()

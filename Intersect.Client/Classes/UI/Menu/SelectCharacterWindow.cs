@@ -180,8 +180,8 @@ namespace Intersect.Client.UI.Menu
                     if (isFace)
                     {
                         mCharacterPortrait.SetTextureRect(0, 0, mCharacterPortrait.Texture.GetWidth(), mCharacterPortrait.Texture.GetHeight());
-                        mCharacterPortrait.SetSize(mCharacterContainer.Width - mCharacterContainer.Padding.Left - mCharacterContainer.Padding.Right,mCharacterContainer.Height - mCharacterContainer.Padding.Top - mCharacterContainer.Padding.Bottom);
-                        mCharacterPortrait.SetPosition(mCharacterContainer.Padding.Left,mCharacterContainer.Padding.Top);
+                        mCharacterPortrait.SetSize(mCharacterPortrait.Texture.GetWidth(), mCharacterPortrait.Texture.GetHeight());
+                        mCharacterPortrait.SetPosition(mCharacterContainer.Width / 2 - mCharacterPortrait.Width / 2, mCharacterContainer.Height / 2 - mCharacterPortrait.Height / 2);
                         mCharacterPortrait.Show();
                     }
                     else

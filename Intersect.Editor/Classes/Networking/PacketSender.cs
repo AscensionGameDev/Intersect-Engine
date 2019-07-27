@@ -128,6 +128,7 @@ namespace Intersect.Editor.Networking
 
         public static void SendOpenEditor(GameObjectType type)
         {
+            if (Globals.CurrentEditor != -1) return;
             EditorNetwork.SendPacket(new RequestOpenEditorPacket(type));
         }
 

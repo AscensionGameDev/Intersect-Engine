@@ -3281,6 +3281,7 @@ namespace Intersect.Server.Entities
         //Equipment
         public void EquipItem(ItemBase itemBase, int slot = -1)
         {
+            if (itemBase == null) return;
             if (itemBase.ItemType == ItemTypes.Equipment)
             {
                 if (slot == -1)

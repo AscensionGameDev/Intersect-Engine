@@ -365,6 +365,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString disconnectedsavecaption = @"Disconnected -- Export Map?";
             public static LocalizedString importfailed = @"Cannot import map. Currently selected map is not an Intersect map file or was exported with a different version of the Intersect editor!";
             public static LocalizedString importfailedcaption = @"Failed to import map!";
+            public static LocalizedString resourcesnotfound = @"The resources directory could not be found! Intersect will now close.";
+            public static LocalizedString resourcesnotfoundtitle = @"Resources not found!";
         }
 
         public struct EventChangeFace

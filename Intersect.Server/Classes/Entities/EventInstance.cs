@@ -31,7 +31,6 @@ namespace Intersect.Server.Entities
         public Guid MapId;
         public Client MyClient;
         public Player MyPlayer;
-        public bool NpcDeathTriggerd;
         public int PageIndex;
         public EventPageInstance PageInstance;
 
@@ -158,7 +157,6 @@ namespace Intersect.Server.Entities
                                 if (CallStack.Count == 0)
                                 {
                                     PlayerHasDied = false;
-                                    NpcDeathTriggerd = true;
                                     break;
                                 }
                             }

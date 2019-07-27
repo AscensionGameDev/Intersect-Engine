@@ -220,12 +220,11 @@ namespace Intersect.Server.EventProcessing
 
         public static bool MeetsCondition(NoNpcsOnMapCondition condition, Player player, EventInstance eventInstance, QuestBase questBase)
         {
-            if (eventInstance != null)
+            var map = MapInstance.Get(eventInstance?.MapId ?? Guid.Empty);
+            if (map == null) map = MapInstance.Get(player.MapId);
+            if (map != null)
             {
-                if (eventInstance.NpcDeathTriggerd == true) return false; //Only call it once
-                MapInstance m = MapInstance.Get(eventInstance.MapId);
-                if (m == null) return false;
-                var entities = m.GetEntities();
+                var entities = map.GetEntities();
                 foreach (var en in entities)
                 {
                     if (en.GetType() == typeof(Npc)) return false;

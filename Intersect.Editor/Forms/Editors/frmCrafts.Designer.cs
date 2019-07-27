@@ -214,7 +214,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblFolder
             // 
             this.lblFolder.AutoSize = true;
-            this.lblFolder.Location = new System.Drawing.Point(12, 45);
+            this.lblFolder.Location = new System.Drawing.Point(6, 45);
             this.lblFolder.Name = "lblFolder";
             this.lblFolder.Size = new System.Drawing.Size(39, 13);
             this.lblFolder.TabIndex = 45;
@@ -234,9 +234,9 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbFolder.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbFolder.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbFolder.FormattingEnabled = true;
-            this.cmbFolder.Location = new System.Drawing.Point(57, 41);
+            this.cmbFolder.Location = new System.Drawing.Point(73, 41);
             this.cmbFolder.Name = "cmbFolder";
-            this.cmbFolder.Size = new System.Drawing.Size(182, 21);
+            this.cmbFolder.Size = new System.Drawing.Size(166, 21);
             this.cmbFolder.TabIndex = 44;
             this.cmbFolder.Text = null;
             this.cmbFolder.TextPadding = new System.Windows.Forms.Padding(2);
@@ -246,7 +246,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.nudCraftQuantity.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudCraftQuantity.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudCraftQuantity.Location = new System.Drawing.Point(57, 95);
+            this.nudCraftQuantity.Location = new System.Drawing.Point(73, 95);
             this.nudCraftQuantity.Maximum = new decimal(new int[] {
             2147483647,
             0,
@@ -258,7 +258,7 @@ namespace Intersect.Editor.Forms.Editors
             0,
             0});
             this.nudCraftQuantity.Name = "nudCraftQuantity";
-            this.nudCraftQuantity.Size = new System.Drawing.Size(206, 20);
+            this.nudCraftQuantity.Size = new System.Drawing.Size(190, 20);
             this.nudCraftQuantity.TabIndex = 43;
             this.nudCraftQuantity.Value = new decimal(new int[] {
             1,
@@ -270,7 +270,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblCraftQuantity
             // 
             this.lblCraftQuantity.AutoSize = true;
-            this.lblCraftQuantity.Location = new System.Drawing.Point(2, 97);
+            this.lblCraftQuantity.Location = new System.Drawing.Point(6, 97);
             this.lblCraftQuantity.Name = "lblCraftQuantity";
             this.lblCraftQuantity.Size = new System.Drawing.Size(49, 13);
             this.lblCraftQuantity.TabIndex = 42;
@@ -280,7 +280,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.nudSpeed.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudSpeed.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudSpeed.Location = new System.Drawing.Point(57, 121);
+            this.nudSpeed.Location = new System.Drawing.Point(73, 121);
             this.nudSpeed.Maximum = new decimal(new int[] {
             2147483647,
             0,
@@ -292,7 +292,7 @@ namespace Intersect.Editor.Forms.Editors
             0,
             0});
             this.nudSpeed.Name = "nudSpeed";
-            this.nudSpeed.Size = new System.Drawing.Size(206, 20);
+            this.nudSpeed.Size = new System.Drawing.Size(190, 20);
             this.nudSpeed.TabIndex = 35;
             this.nudSpeed.Value = new decimal(new int[] {
             1,
@@ -315,9 +315,9 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbResult.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbResult.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbResult.FormattingEnabled = true;
-            this.cmbResult.Location = new System.Drawing.Point(57, 68);
+            this.cmbResult.Location = new System.Drawing.Point(73, 68);
             this.cmbResult.Name = "cmbResult";
-            this.cmbResult.Size = new System.Drawing.Size(206, 21);
+            this.cmbResult.Size = new System.Drawing.Size(190, 21);
             this.cmbResult.TabIndex = 34;
             this.cmbResult.Text = null;
             this.cmbResult.TextPadding = new System.Windows.Forms.Padding(2);
@@ -326,7 +326,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblItem
             // 
             this.lblItem.AutoSize = true;
-            this.lblItem.Location = new System.Drawing.Point(19, 71);
+            this.lblItem.Location = new System.Drawing.Point(6, 71);
             this.lblItem.Name = "lblItem";
             this.lblItem.Size = new System.Drawing.Size(30, 13);
             this.lblItem.TabIndex = 33;
@@ -335,7 +335,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblName
             // 
             this.lblName.AutoSize = true;
-            this.lblName.Location = new System.Drawing.Point(11, 17);
+            this.lblName.Location = new System.Drawing.Point(6, 17);
             this.lblName.Name = "lblName";
             this.lblName.Size = new System.Drawing.Size(38, 13);
             this.lblName.TabIndex = 19;
@@ -346,16 +346,16 @@ namespace Intersect.Editor.Forms.Editors
             this.txtName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.txtName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.txtName.Location = new System.Drawing.Point(57, 15);
+            this.txtName.Location = new System.Drawing.Point(73, 15);
             this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(206, 20);
+            this.txtName.Size = new System.Drawing.Size(190, 20);
             this.txtName.TabIndex = 18;
             this.txtName.TextChanged += new System.EventHandler(this.txtName_TextChanged);
             // 
             // lblSpeed
             // 
             this.lblSpeed.AutoSize = true;
-            this.lblSpeed.Location = new System.Drawing.Point(2, 123);
+            this.lblSpeed.Location = new System.Drawing.Point(6, 123);
             this.lblSpeed.Name = "lblSpeed";
             this.lblSpeed.Size = new System.Drawing.Size(55, 13);
             this.lblSpeed.TabIndex = 3;

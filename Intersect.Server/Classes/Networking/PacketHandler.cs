@@ -1954,14 +1954,19 @@ namespace Intersect.Server.Networking
             foreach (var tileset in packet.Tilesets)
             {
                 var value = tileset.Trim().ToLower();
+                var found = false;
                 foreach (var tset in TilesetBase.Lookup)
-                    if (tset.Value.Name.Trim().ToLower() == value) continue;
+                    if (tset.Value.Name.Trim().ToLower() == value)
+                        found = true;
 
-                var obj = LegacyDatabase.AddGameObject(GameObjectType.Tileset);
-                ((TilesetBase)obj).Name = value;
-                LegacyDatabase.SaveGameDatabase();
-                PacketSender.CacheGameDataPacket();
-                PacketSender.SendGameObjectToAll(obj);
+                if (!found)
+                {
+                    var obj = LegacyDatabase.AddGameObject(GameObjectType.Tileset);
+                    ((TilesetBase) obj).Name = value;
+                    LegacyDatabase.SaveGameDatabase();
+                    PacketSender.CacheGameDataPacket();
+                    PacketSender.SendGameObjectToAll(obj);
+                }
             }
         }
 

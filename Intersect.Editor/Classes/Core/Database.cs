@@ -44,7 +44,7 @@ namespace Intersect.Editor
             }
 
             /* Load configuration */
-            ClientConfiguration.LoadAndSave();
+            ClientConfiguration.LoadAndSave(ClientConfiguration.DefaultPath);
         }
 
         //Map Cache DB

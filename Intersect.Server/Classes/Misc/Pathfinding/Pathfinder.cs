@@ -85,7 +85,7 @@ namespace Intersect.Server.Misc.Pathfinding
 
                     if (targetFound)
                     {
-                        if (AlongPath(mPath, targetX, targetY))
+                        if (AlongPath(mPath, targetX, targetY, mEntity.Passable))
                         {
                             path = mPath;
                             returnVal = PathfinderResult.Success;
@@ -305,7 +305,7 @@ namespace Intersect.Server.Misc.Pathfinding
             }
         }
 
-        public bool AlongPath(IEnumerable<PathNode> path, int x, int y)
+        public bool AlongPath(IEnumerable<PathNode> path, int x, int y, bool exact)
         {
             if (path == null) return false;
             var foundUs = false;
@@ -319,7 +319,7 @@ namespace Intersect.Server.Misc.Pathfinding
                 }
                 if (foundUs && enm.Current.X == x)
                 {
-                    if (enm.Current.Y == y || enm.Current.Y - 1 == y || enm.Current.Y + 1 == y)
+                    if (enm.Current.Y == y || ((enm.Current.Y - 1 == y || enm.Current.Y + 1 == y) & !exact))
                     {
                         enm.Dispose();
                         return true;
@@ -327,7 +327,7 @@ namespace Intersect.Server.Misc.Pathfinding
                 }
                 if (foundUs && enm.Current.Y == y)
                 {
-                    if (enm.Current.X == x || enm.Current.X - 1 == x || enm.Current.X + 1 == x)
+                    if (enm.Current.X == x || ((enm.Current.X - 1 == x || enm.Current.X + 1 == x) & !exact))
                     {
                         enm.Dispose();
                         return true;

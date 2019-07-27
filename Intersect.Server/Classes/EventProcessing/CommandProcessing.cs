@@ -254,6 +254,9 @@ namespace Intersect.Server.EventProcessing
         //Equip Items Command
         private static void ProcessCommand(EquipItemCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
+            var itm = ItemBase.Get(command.ItemId);
+
+            if (itm == null) return;
             player.EquipItem(ItemBase.Get(command.ItemId));
         }
 
