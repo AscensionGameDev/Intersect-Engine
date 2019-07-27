@@ -54,7 +54,7 @@ namespace Intersect.Editor.Maps
 
         public int MapGridY { get; set; }
 
-        public void Load(string mapJson, bool import = false)
+        public void Load(string mapJson, bool import = false, bool clearEvents = true)
         {
             lock (MapLock)
             {
@@ -73,11 +73,14 @@ namespace Intersect.Editor.Maps
                 Autotiles = new MapAutotiles(this);
 
                 //Initialize Local Events
-                LocalEvents.Clear();
-                foreach (var id in EventIds)
+                if (clearEvents)
                 {
-                    var evt = EventBase.Get(id);
-                    LocalEvents.Add(id,evt);
+                    LocalEvents.Clear();
+                    foreach (var id in EventIds)
+                    {
+                        var evt = EventBase.Get(id);
+                        LocalEvents.Add(id, evt);
+                    }
                 }
             }
         }
@@ -98,14 +101,16 @@ namespace Intersect.Editor.Maps
 
         public void LoadInternal(MapSaveState state, bool import = false)
         {
-            Load(state.Metadata, import);
+            LocalEvents.Clear();
+            LocalEventsJson = state.EventData;
+            Load(state.Metadata, import, false);
             LoadTileData(state.Tiles);
             AttributeData = state.Attributes;
         }
 
         public MapSaveState SaveInternal()
         {
-            return new MapSaveState(JsonData, GenerateTileData(), AttributeData);
+            return new MapSaveState(JsonData, GenerateTileData(), AttributeData, LocalEventsJson);
         }
 
         public byte[] GenerateTileData()
