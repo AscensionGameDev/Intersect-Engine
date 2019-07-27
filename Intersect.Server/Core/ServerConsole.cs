@@ -12,6 +12,10 @@ namespace Intersect.Server.Core
 {
     internal sealed class ServerConsole : Threaded
     {
+        private readonly object mInputLock = new object();
+
+        private bool mDoNotContinue;
+
         [NotNull]
         public CommandParser Parser { get; }
 
@@ -45,16 +49,36 @@ namespace Intersect.Server.Core
             Parser.Register<UnmuteCommand>();
         }
 
+        public void Wait(bool doNotContinue = false)
+        {
+            mDoNotContinue = mDoNotContinue || doNotContinue;
+
+            lock (mInputLock)
+            {
+                return;
+            }
+        }
+
         protected override void ThreadStart()
         {
             Console.WriteLine(Strings.Intro.consoleactive);
 
-            while (ServerContext.Instance.IsRunning)
+            while (ServerContext.Instance.IsRunning && !mDoNotContinue)
             {
+                string line;
+                lock (mInputLock)
+                {
 #if !CONSOLE_EXTENSIONS
-                Console.Write(Console.WaitPrefix);
+                    Console.Write(Console.WaitPrefix);
 #endif
-                var line = Console.ReadLine()?.Trim();
+
+                    line = Console.ReadLine()?.Trim();
+
+                    if (mDoNotContinue)
+                    {
+                        return;
+                    }
+                }
 
                 if (line == null)
                 {

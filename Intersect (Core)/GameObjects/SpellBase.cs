@@ -142,6 +142,17 @@ namespace Intersect.GameObjects
         [NotMapped]
         public int[] StatDiff { get; set; } = new int[(int)Stats.StatCount];
 
+        //Buff/Debuff Data
+        [Column("PercentageStatDiff")]
+        [JsonIgnore]
+        public string PercentageStatDiffJson
+        {
+            get => DatabaseUtils.SaveIntArray(PercentageStatDiff, (int)Stats.StatCount);
+            set => PercentageStatDiff = DatabaseUtils.LoadIntArray(value, (int)Stats.StatCount);
+        }
+        [NotMapped]
+        public int[] PercentageStatDiff { get; set; } = new int[(int)Stats.StatCount];
+
         public int Scaling { get; set; } = 100;
         public int ScalingStat { get; set; }
         public SpellTargetTypes TargetType { get; set; }

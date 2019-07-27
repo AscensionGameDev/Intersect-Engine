@@ -1088,7 +1088,8 @@ namespace Intersect.Server.Entities
             var statBuffTime = -1;
             for (var i = 0; i < (int)Stats.StatCount; i++)
             {
-                enemy.Stat[i].AddBuff(new EntityBuff(spellBase, spellBase.Combat.StatDiff[i], spellBase.Combat.Duration));
+                enemy.Stat[i].AddBuff(new EntityBuff(spellBase, spellBase.Combat.StatDiff[i] + 
+                    ((enemy.Stat[i].Stat * spellBase.Combat.PercentageStatDiff[i]) / 100), spellBase.Combat.Duration));
                 if (spellBase.Combat.StatDiff[i] != 0)
                     statBuffTime = spellBase.Combat.Duration;
             }
@@ -1227,11 +1228,12 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            //Invulnerability
+            //Check for enemy statuses
             var statuses = enemy.Statuses.Values.ToArray();
 			foreach (var status in statuses)
 			{
-				if (status.Type == StatusTypes.Invulnerable)
+                //Invulnerability ignore
+                if (status.Type == StatusTypes.Invulnerable)
 				{
 					PacketSender.SendActionMsg(enemy, Strings.Combat.invulnerable, CustomColors.Invulnerable);
 
@@ -1243,7 +1245,13 @@ namespace Intersect.Server.Entities
 
 					return;
 				}
-			}
+
+                //Wake up any sleeping targets
+                if (status.Type == StatusTypes.Sleep)
+                {
+                    status.RemoveStatus();
+                }
+            }
 
 			//Is this a critical hit?
 			if (Globals.Rand.Next(1, 101) > critChance)
