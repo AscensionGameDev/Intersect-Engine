@@ -695,7 +695,7 @@ namespace Intersect.Client.MonoGame.Graphics
         public override bool BeginScreenshot()
         {
             if (mGraphicsDevice == null) return false;
-            mScreenshotRenderTarget = new RenderTarget2D(mGraphicsDevice, mScreenWidth, mScreenHeight);
+            mScreenshotRenderTarget = new RenderTarget2D(mGraphicsDevice, mScreenWidth, mScreenHeight, false, mGraphicsDevice.PresentationParameters.BackBufferFormat, mGraphicsDevice.PresentationParameters.DepthStencilFormat, mGraphicsDevice.PresentationParameters.MultiSampleCount, RenderTargetUsage.PreserveContents);
             return true;
         }
 
