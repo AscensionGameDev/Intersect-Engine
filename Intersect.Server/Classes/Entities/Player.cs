@@ -588,6 +588,7 @@ namespace Intersect.Server.Entities
                     classVital = myclass.BaseVital[vital] + (myclass.VitalIncrease[vital] * (Level - 1));
                 }
             }
+            var baseVital = classVital;
 
             //Loop through equipment and see if any items grant vital buffs
             for (var i = 0; i < Options.EquipmentSlots.Count; i++)
@@ -599,7 +600,7 @@ namespace Intersect.Server.Entities
                         var item = ItemBase.Get(Items[Equipment[i]].ItemId);
                         if (item != null)
                         {
-                            classVital += item.VitalsGiven[vital];
+                            classVital += item.VitalsGiven[vital] + ((item.PercentageVitalsGiven[vital] * baseVital) / 100);
                         }
                     }
                 }
@@ -984,7 +985,8 @@ namespace Intersect.Server.Entities
                         var item = ItemBase.Get(Items[Equipment[i]].ItemId);
                         if (item != null)
                         {
-                            s += Items[Equipment[i]].StatBuffs[(int)statType] + item.StatsGiven[(int)statType];
+                            s += Items[Equipment[i]].StatBuffs[(int)statType] + item.StatsGiven[(int)statType] + 
+                                ((BaseStats[(int)statType] * item.PercentageStatsGiven[(int)statType]) / 100);
                         }
                     }
                 }
@@ -1345,14 +1347,15 @@ namespace Intersect.Server.Entities
                     case ItemTypes.Consumable:
                         var negative = itemBase.Consumable.Value < 0;
                         var symbol = negative ? Strings.Combat.removesymbol : Strings.Combat.addsymbol;
-                        var number = $"{symbol}{itemBase.Consumable.Value}";
+                        var value = 0;
                         var color = CustomColors.Heal;
                         var die = false;
 
                         switch (itemBase.Consumable.Type)
                         {
                             case ConsumableType.Health:
-                                AddVital(Vitals.Health, itemBase.Consumable.Value);
+                                value = itemBase.Consumable.Value + ((GetMaxVital((int)itemBase.Consumable.Type) * itemBase.Consumable.Percentage) / 100);
+                                AddVital(Vitals.Health, value);
                                 if (negative)
                                 {
                                     color = CustomColors.PhysicalDamage;
@@ -1362,12 +1365,14 @@ namespace Intersect.Server.Entities
                                 break;
 
                             case ConsumableType.Mana:
-                                AddVital(Vitals.Mana, itemBase.Consumable.Value);
+                                value = itemBase.Consumable.Value + ((GetMaxVital((int)itemBase.Consumable.Type) * itemBase.Consumable.Percentage) / 100);
+                                AddVital(Vitals.Mana, value);
                                 color = CustomColors.AddMana;
                                 break;
 
                             case ConsumableType.Experience:
-                                GiveExperience(itemBase.Consumable.Value);
+                                value = itemBase.Consumable.Value + (int)((GetExperienceToNextLevel(Level) * itemBase.Consumable.Percentage) / 100);
+                                GiveExperience(value);
                                 color = CustomColors.Experience;
                                 break;
 
@@ -1375,6 +1380,7 @@ namespace Intersect.Server.Entities
                                 throw new IndexOutOfRangeException();
                         }
 
+                        var number = $"{symbol}{value}";
                         PacketSender.SendActionMsg(this, number, color);
 
                         if (die)

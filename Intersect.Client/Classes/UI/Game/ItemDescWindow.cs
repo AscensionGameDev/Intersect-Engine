@@ -116,7 +116,22 @@ namespace Intersect.Client.UI.Game
 
                     for (int i = 0; i < (int)Vitals.VitalCount; i++)
                     {
-                        var vitals = Strings.ItemDesc.vitals[i].ToString((item.VitalsGiven[i]));
+                        string bonus = item.VitalsGiven[i].ToString();
+                        if (item.PercentageVitalsGiven[i] > 0)
+                        {
+                            if (item.VitalsGiven[i] > 0)
+                            {
+                                bonus += " + ";
+                            }
+                            else
+                            {
+                                bonus = "";
+                            }
+
+                            bonus += item.PercentageVitalsGiven[i] + "%";
+                        }
+
+                        var vitals = Strings.ItemDesc.vitals[i].ToString(bonus);
                         itemStats.AddText(vitals, itemStats.RenderColor, itemStatsText.CurAlignments.Count > 0 ? itemStatsText.CurAlignments[0] : Alignments.Left, itemDescText.Font);
                         itemStats.AddLineBreak();
                     }
@@ -125,7 +140,24 @@ namespace Intersect.Client.UI.Game
                     {
                         for (int i = 0; i < Options.MaxStats; i++)
                         {
-                            stats = Strings.ItemDesc.stats[i].ToString((item.StatsGiven[i] + statBuffs[i]));
+                            var flatStat = item.StatsGiven[i] + statBuffs[i];
+                            string bonus = flatStat.ToString();
+
+                            if (item.PercentageStatsGiven[i] > 0)
+                            {
+                                if (flatStat > 0)
+                                {
+                                    bonus += " + ";
+                                }
+                                else
+                                {
+                                    bonus = "";
+                                }
+
+                                bonus += item.PercentageStatsGiven[i] + "%";
+                            }
+
+                            stats = Strings.ItemDesc.stats[i].ToString(bonus);
                             itemStats.AddText(stats, itemStats.RenderColor, itemStatsText.CurAlignments.Count > 0 ? itemStatsText.CurAlignments[0] : Alignments.Left, itemDescText.Font);
                             itemStats.AddLineBreak();
                         }
