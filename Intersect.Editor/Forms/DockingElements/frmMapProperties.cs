@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Maps;
 using WeifenLuo.WinFormsUI.Docking;
@@ -7,9 +8,14 @@ namespace Intersect.Editor.Forms.DockingElements
 {
     public partial class FrmMapProperties : DockContent
     {
+        //Cross Thread Delegates
+        public delegate void UpdateProperties();
+        public UpdateProperties UpdatePropertiesDelegate;
+
         public FrmMapProperties()
         {
             InitializeComponent();
+            UpdatePropertiesDelegate = Update;
         }
 
         public void Init(MapInstance map)

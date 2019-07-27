@@ -1545,12 +1545,14 @@ namespace Intersect.Server.Networking
                 case MapListUpdates.Rename:
                     if (packet.TargetType == 0)
                     {
-                        parent = MapList.List.FindDir(packet.ParentId);
+                        parent = MapList.List.FindDir(packet.TargetId);
                         parent.Name = packet.Name;
                         PacketSender.SendMapListToAll();
                     }
                     else if (packet.TargetType == 1)
                     {
+                        var mapListMap = MapList.List.FindMap(packet.TargetId);
+                        mapListMap.Name = packet.Name;
                         MapInstance.Get(packet.TargetId).Name = packet.Name;
                         LegacyDatabase.SaveGameDatabase();
                         PacketSender.SendMapListToAll();

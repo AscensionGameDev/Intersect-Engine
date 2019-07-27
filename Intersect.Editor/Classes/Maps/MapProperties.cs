@@ -50,6 +50,9 @@ namespace Intersect.Editor.Maps
             mMyMap = map;
         }
 
+        [Browsable(false)]
+        public Guid MapId => mMyMap.Id;
+
         [CustomCategory("general"),
          CustomDescription("namedesc"),
          CustomDisplayName("name"),

@@ -199,6 +199,8 @@ namespace Intersect.Editor.Networking
                 Globals.MainForm.EnterMap(MapList.List.FindFirstMap());
             }
             Globals.MapListWindow.BeginInvoke(Globals.MapListWindow.mapTreeList.MapListDelegate, Guid.Empty, null);
+            Globals.MapPropertiesWindow?.BeginInvoke(Globals.MapPropertiesWindow.UpdatePropertiesDelegate);
+
         }
 
         //ErrorMessagePacket

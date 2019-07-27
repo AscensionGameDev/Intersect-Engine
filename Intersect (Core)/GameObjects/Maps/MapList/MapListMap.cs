@@ -18,8 +18,9 @@ namespace Intersect.GameObjects.Maps.MapList
         {
             if (!isServer)
             { 
-                if (gameMaps.Keys.Contains(MapId))
+                if (gameMaps.Keys.Contains(MapId)) { 
                     gameMaps[MapId].Name = Name;
+                    }
             }
             else
             {
