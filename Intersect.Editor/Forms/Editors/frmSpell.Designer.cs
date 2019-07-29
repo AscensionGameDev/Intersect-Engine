@@ -1458,8 +1458,8 @@ namespace Intersect.Editor.Forms.Editors
             this.nudBuffDuration.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudBuffDuration.Location = new System.Drawing.Point(137, 14);
             this.nudBuffDuration.Maximum = new decimal(new int[] {
-            -100,
-            49,
+            999999999,
+            0,
             0,
             0});
             this.nudBuffDuration.Name = "nudBuffDuration";

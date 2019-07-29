@@ -195,16 +195,16 @@ namespace Intersect.Editor.Forms.Editors
             if (lstVariables.SelectedNode != null && lstVariables.SelectedNode.Tag != null)
             {
                 grpEditor.Show();
-                grpValue.Hide();
                 if (rdoPlayerVariables.Checked)
                 {
                     var obj = PlayerVariableBase.Get((Guid)lstVariables.SelectedNode.Tag);
                     lstVariables.SelectedNode.Text = obj.Name;
+                    grpValue.Hide();
                 }
                 else if (rdoGlobalVariables.Checked)
                 {
                     var obj = ServerVariableBase.Get((Guid)lstVariables.SelectedNode.Tag);
-                    lstVariables.SelectedNode.Text = obj.Name + " = " + obj.Value.ToString();
+                    lstVariables.SelectedNode.Text = obj.Name + " = " + obj.Value.ToString(obj.Type);
                 }
             }
         }
@@ -425,7 +425,7 @@ namespace Intersect.Editor.Forms.Editors
                 var node = new TreeNode(itm.Value);
                 if (rdoGlobalVariables.Checked)
                 {
-                    node.Text = node.Text + " = " + ServerVariableBase.Get(itm.Key).Value.ToString();
+                    node.Text = node.Text + " = " + ServerVariableBase.Get(itm.Key).Value.ToString(ServerVariableBase.Get(itm.Key).Type);
                 }
                 node.Tag = itm.Key;
                 node.ImageIndex = 1;

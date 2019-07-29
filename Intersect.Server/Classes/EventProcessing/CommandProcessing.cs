@@ -788,7 +788,7 @@ namespace Intersect.Server.EventProcessing
                         {
                             if (id == ((PlayerVariableBase) var).TextId)
                             {
-                                input = input.Replace(Strings.Events.playervar + "{" + m.Groups[1].Value + "}", player.GetVariableValue(var.Id).ToString());
+                                input = input.Replace(Strings.Events.playervar + "{" + m.Groups[1].Value + "}", player.GetVariableValue(var.Id).ToString(((PlayerVariableBase)var).Type));
                             }
                         }
                     }
@@ -803,7 +803,7 @@ namespace Intersect.Server.EventProcessing
                         {
                             if (id == ((PlayerVariableBase)var).TextId)
                             {
-                                input = input.Replace(Strings.Events.playerswitch + "{" + m.Groups[1].Value + "}", player.GetVariableValue(var.Id).ToString());
+                                input = input.Replace(Strings.Events.playerswitch + "{" + m.Groups[1].Value + "}", player.GetVariableValue(var.Id).ToString(((PlayerVariableBase)var).Type));
                             }
                         }
                     }
@@ -872,7 +872,11 @@ namespace Intersect.Server.EventProcessing
                 }
                 else if (mod.DupVariableType == VariableTypes.ServerVariable)
                 {
-                    value.Boolean = ServerVariableBase.Get(mod.DupVariableId).Value.Boolean;
+                    var variable = ServerVariableBase.Get(mod.DupVariableId);
+                    if (variable != null)
+                    {
+                        value.Boolean = ServerVariableBase.Get(mod.DupVariableId).Value.Boolean;
+                    }
                 }
             }
             else

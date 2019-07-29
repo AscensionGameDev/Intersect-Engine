@@ -644,6 +644,7 @@
     <EmbeddedResource Include="Resources\libe_sqlite3_x86.so" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\notifications\PasswordReset.html" />
     <EmbeddedResource Include="Resources\e_sqlite3x64.dll" />
     <EmbeddedResource Include="Resources\e_sqlite3x86.dll" />
     <None Include="FodyWeavers.xml">

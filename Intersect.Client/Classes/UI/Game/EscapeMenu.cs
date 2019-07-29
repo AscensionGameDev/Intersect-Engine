@@ -107,6 +107,13 @@ namespace Intersect.Client.UI.Game
             Gui.GameUi?.EscapeMenu?.Hide();
         }
 
+        /// <inheritdoc />
+        public override void ToggleHidden()
+        {
+            if (mOptionsWindow.IsVisible()) return;
+            base.ToggleHidden();
+        }
+
         private static void GoToCharacterSelect_Clicked(Base sender, ClickedEventArgs arguments)
         {
             GameMain.Logout(true);

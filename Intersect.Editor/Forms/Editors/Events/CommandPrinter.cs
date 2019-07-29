@@ -826,16 +826,18 @@ namespace Intersect.Editor.Forms.Editors.Events
                         ServerVariableBase.GetName(mod.DupVariableId));
                 }
             }
-
-            if (mod.Value == true)
-            {
-                varvalue = Strings.EventCommandList.setvariable.ToString(Strings.EventCommandList.True);
-            }
             else
             {
-                varvalue = Strings.EventCommandList.setvariable.ToString(Strings.EventCommandList.False);
+                if (mod.Value == true)
+                {
+                    varvalue = Strings.EventCommandList.setvariable.ToString(Strings.EventCommandList.True);
+                }
+                else
+                {
+                    varvalue = Strings.EventCommandList.setvariable.ToString(Strings.EventCommandList.False);
+                }
             }
-
+            
             if (command.VariableType == VariableTypes.PlayerVariable)
             {
                 return Strings.EventCommandList.playervariable.ToString(PlayerVariableBase.GetName(command.VariableId),

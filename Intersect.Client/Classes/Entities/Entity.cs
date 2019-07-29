@@ -243,6 +243,7 @@ namespace Intersect.Client.Entities
             MaxVital = packet.MaxVital;
 
             //Update status effects
+            Status.Clear();
             foreach (var status in packet.StatusEffects)
             {
                 var instance = new StatusInstance(status.SpellId, status.Type, status.TransformSprite, status.TimeRemaining, status.TotalDuration);

@@ -231,11 +231,11 @@ namespace Intersect.Client
             mFilename = GameContentManager.RemoveExtension(filename).ToLower();
             mLoop = loop;
             GameAudioSource sound = Globals.ContentManager.GetSound(mFilename);
-            if (sound != null && Globals.Database.SoundVolume > 0)
+            if (sound != null)
             {
                 mSound = sound.CreateInstance();
                 mSound.SetLoop(mLoop);
-                mSound.SetVolume(100);
+                mSound.SetVolume(Globals.Database.SoundVolume);
                 mSound.Play();
                 Loaded = true;
             }
@@ -286,7 +286,7 @@ namespace Intersect.Client
 
         public MapSound(string filename, int x, int y, Guid mapId, bool loop, int distance) : base(filename, loop)
         {
-            if (string.IsNullOrEmpty(filename)) return;
+            if (string.IsNullOrEmpty(filename) || mSound == null) return;
             mDistance = distance;
             mX = x;
             mY = y;

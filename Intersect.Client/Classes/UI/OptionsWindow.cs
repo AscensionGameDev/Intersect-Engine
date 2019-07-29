@@ -306,7 +306,6 @@ namespace Intersect.Client.UI
         {
             if (mEdittingButton != null)
             {
-                if (key == Keys.Escape) key = Keys.None;
                 mEdittingControls.UpdateControl(mEdittingControl, mEdittingKey, key);
                 if (mEdittingKey == 1)
                 {

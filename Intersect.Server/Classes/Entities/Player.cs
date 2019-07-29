@@ -904,7 +904,7 @@ namespace Intersect.Server.Entities
             }
             if (en.GetType() == typeof(Player))
             {
-                if (spell != null && spell.Combat.Friendly)
+                if (spell != null && (spell.Combat.Friendly != ((Player)en).InParty(this)))
                 {
                     return false;
                 }
@@ -1285,7 +1285,7 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public void UseItem(int slot)
+        public void UseItem(int slot, EntityInstance target = null)
         {
             var equipped = false;
             var Item = Items[slot];
@@ -1413,6 +1413,7 @@ namespace Intersect.Server.Entities
 
                         if (itemBase.QuickCast)
                         {
+                            CastTarget = target;
                             CastSpell(itemBase.SpellId);
                         }
                         else

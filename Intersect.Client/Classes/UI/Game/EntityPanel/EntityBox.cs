@@ -161,11 +161,11 @@ namespace Intersect.Client.UI.Game.EntityPanel
 
             EntityStatusPanel = new ImagePanel(EntityWindow, "StatusArea");
 
-            UpdateSpellStatus();
-
             SetEntity(myEntity);
 
             EntityWindow.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
+
+            UpdateSpellStatus();
 
             i = 0;
             for (int z = 0; z < Options.PaperdollOrder[1].Count; z++)

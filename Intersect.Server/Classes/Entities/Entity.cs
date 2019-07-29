@@ -1493,6 +1493,7 @@ namespace Intersect.Server.Entities
                         }
                         break;
                     case SpellTypes.WarpTo:
+                        if (CastTarget == null) return;
                         HandleAoESpell(spellId, spellBase.Combat.CastRange, MapId, X, Y, CastTarget);
                         break;
                     case SpellTypes.Dash:
@@ -1532,6 +1533,9 @@ namespace Intersect.Server.Entities
                     for (var y = startY - range; y <= startY + range; y++)
                     {
                         var tempMap = MapInstance.Get(startMapId);
+
+                        if (tempMap == null) continue;
+
                         var x2 = x;
                         var y2 = y;
 
@@ -1556,6 +1560,8 @@ namespace Intersect.Server.Entities
                             tempMap = MapInstance.Get(tempMap.Right);
                             x2 = Options.MapWidth - x;
                         }
+
+                        if (tempMap == null) continue;
 
                         var mapEntities = tempMap.GetEntities();
                         for (var i = 0; i < mapEntities.Count; i++)

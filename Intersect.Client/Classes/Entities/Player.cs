@@ -213,7 +213,7 @@ namespace Intersect.Client.Entities
         {
             if (Globals.GameShop == null && Globals.InBank == false && Globals.InTrade == false && !ItemOnCd(index))
             {
-                PacketSender.SendUseItem(index);
+                PacketSender.SendUseItem(index, TargetIndex);
             }
         }
 

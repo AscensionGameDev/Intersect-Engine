@@ -713,7 +713,22 @@ namespace Intersect.Server.Networking
         //UseItemPacket
         public void HandlePacket(Client client, Player player, UseItemPacket packet)
         {
-            player.UseItem(packet.Slot);
+            EntityInstance target = null;
+            if (packet.TargetId != Guid.Empty)
+            {
+                foreach (var map in player.Map.GetSurroundingMaps(true))
+                {
+                    foreach (var en in map.GetEntities())
+                    {
+                        if (en.Id == packet.TargetId)
+                        {
+                            target = en;
+                            break;
+                        }
+                    }
+                }
+            }
+            player.UseItem(packet.Slot, target);
         }
 
         //SwapSpellsPacket

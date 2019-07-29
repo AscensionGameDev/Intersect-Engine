@@ -101,6 +101,9 @@ namespace Intersect.Server.Core
                 return false;
             }
 
+            if (!Directory.Exists(Path.Combine("resources","notifications"))) Directory.CreateDirectory(Path.Combine("resources","notifications"));
+            if (!File.Exists(Path.Combine("resources","notifications", "PasswordReset.html"))) ReflectionUtils.ExtractResource("Intersect.Server.Resources.notifications.PasswordReset.html", Path.Combine("resources","notifications", "PasswordReset.html"));
+
             LegacyDatabase.CheckDirectories();
 
             if (args != null)

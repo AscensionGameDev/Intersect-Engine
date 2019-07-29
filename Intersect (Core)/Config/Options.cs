@@ -142,6 +142,12 @@ namespace Intersect
         public DatabaseOptions PlayerDatabase = new DatabaseOptions();
         public DatabaseOptions GameDatabase = new DatabaseOptions();
 
+        public void FixAnimatedSprites()
+        {
+            for (int i = 0; i < _animatedSprites.Count; i++)
+                _animatedSprites[i] = _animatedSprites[i].ToLower();
+        }
+
 
         //Caching Json
         private static string optionsCompressed = "";
@@ -155,6 +161,7 @@ namespace Intersect
                 Instance = JsonConvert.DeserializeObject<Options>(File.ReadAllText("resources/config.json"));
             }
             Instance.SendingToClient = false;
+            Instance.FixAnimatedSprites();
             File.WriteAllText("resources/config.json", JsonConvert.SerializeObject(Instance,Formatting.Indented));
             Instance.SendingToClient = true;
             optionsCompressed = JsonConvert.SerializeObject(Instance);

@@ -253,7 +253,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             else if (optBooleanCloneGlobalVar.Checked)
             {
                 mod.DupVariableType = VariableTypes.ServerVariable;
-                mod.DupVariableId = PlayerVariableBase.IdFromList(cmbBooleanCloneGlobalVar.SelectedIndex);
+                mod.DupVariableId = ServerVariableBase.IdFromList(cmbBooleanCloneGlobalVar.SelectedIndex);
             }
 
             return mod;

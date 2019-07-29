@@ -108,9 +108,9 @@ namespace Intersect.Client.Networking
             GameNetwork.SendPacket(new DropItemPacket(slot,amount));
         }
 
-        public static void SendUseItem(int slot)
+        public static void SendUseItem(int slot, Guid targetId)
         {
-            GameNetwork.SendPacket(new UseItemPacket(slot));
+            GameNetwork.SendPacket(new UseItemPacket(slot, targetId));
         }
 
         public static void SendSwapSpells(int spell1, int spell2)
