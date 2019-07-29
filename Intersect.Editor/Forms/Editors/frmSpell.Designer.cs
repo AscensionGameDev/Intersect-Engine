@@ -984,6 +984,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudSpdPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudSpdPercentage.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudSpdPercentage.Location = new System.Drawing.Point(165, 132);
+            this.nudSpdPercentage.Minimum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            -2147483648});
             this.nudSpdPercentage.Name = "nudSpdPercentage";
             this.nudSpdPercentage.Size = new System.Drawing.Size(43, 20);
             this.nudSpdPercentage.TabIndex = 62;
@@ -999,6 +1004,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudMRPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudMRPercentage.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudMRPercentage.Location = new System.Drawing.Point(165, 102);
+            this.nudMRPercentage.Minimum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            -2147483648});
             this.nudMRPercentage.Name = "nudMRPercentage";
             this.nudMRPercentage.Size = new System.Drawing.Size(43, 20);
             this.nudMRPercentage.TabIndex = 61;
@@ -1014,6 +1024,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudDefPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudDefPercentage.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudDefPercentage.Location = new System.Drawing.Point(165, 75);
+            this.nudDefPercentage.Minimum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            -2147483648});
             this.nudDefPercentage.Name = "nudDefPercentage";
             this.nudDefPercentage.Size = new System.Drawing.Size(43, 20);
             this.nudDefPercentage.TabIndex = 60;
@@ -1029,6 +1044,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudMagPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudMagPercentage.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudMagPercentage.Location = new System.Drawing.Point(165, 47);
+            this.nudMagPercentage.Minimum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            -2147483648});
             this.nudMagPercentage.Name = "nudMagPercentage";
             this.nudMagPercentage.Size = new System.Drawing.Size(43, 20);
             this.nudMagPercentage.TabIndex = 59;
@@ -1044,6 +1064,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudStrPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudStrPercentage.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudStrPercentage.Location = new System.Drawing.Point(165, 19);
+            this.nudStrPercentage.Minimum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            -2147483648});
             this.nudStrPercentage.Name = "nudStrPercentage";
             this.nudStrPercentage.Size = new System.Drawing.Size(43, 20);
             this.nudStrPercentage.TabIndex = 58;
