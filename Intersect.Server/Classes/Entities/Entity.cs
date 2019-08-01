@@ -1373,6 +1373,22 @@ namespace Intersect.Server.Entities
                 else
                 {
                     enemy.Die(Options.ItemDropChance);
+
+                    //PVP Kill common events
+                    if (this.GetType() == typeof(Player))
+                    {
+                        if (MapInstance.Get(MapId).ZoneType != MapZones.Arena)
+                        {
+                            foreach (EventBase evt in EventBase.Lookup.Values)
+                            {
+                                if (evt != null)
+                                {
+                                    ((Player)this).StartCommonEvent(evt, CommonEventTrigger.PVPKill);
+                                    ((Player)enemy).StartCommonEvent(evt, CommonEventTrigger.PVPDeath);
+                                }
+                            }
+                        }
+                    }
                 }
                 if (deadAnimations != null)
                 {
