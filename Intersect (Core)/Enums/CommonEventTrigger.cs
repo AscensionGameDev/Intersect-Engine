@@ -7,6 +7,8 @@
         LevelUp,
         OnRespawn,
         SlashCommand,
-        Autorun
+        Autorun,
+        PVPKill,
+        PVPDeath
     }
 }
