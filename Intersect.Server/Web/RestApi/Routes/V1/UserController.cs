@@ -94,8 +94,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
         }
 
-        [Route("{userName}")]
-        [HttpGet]
+        [Route("{userName}/ValidatePassword")]
+        [HttpPost]
         public object UserValidatePassword(string userName, [FromBody] string password)
         {
             if (string.IsNullOrWhiteSpace(password))

@@ -26,6 +26,8 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth
         {
             appBuilder.UseAesDataProtectorProvider();
 
+            appBuilder.Use<OAuthJsonMiddleware>();
+
             appBuilder.UseOAuthAuthorizationServer(new OAuthAuthorizationServerOptions
             {
                 TokenEndpointPath = new PathString("/api/oauth/token"),
