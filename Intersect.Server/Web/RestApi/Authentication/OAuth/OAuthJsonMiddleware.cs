@@ -15,7 +15,7 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth
 {
     public sealed class OAuthJsonMiddleware : OwinMiddleware
     {
-        public OAuthJsonMiddleware(OwinMiddleware next)
+        public JsonBodyToUrlEncodedBodyMiddleware(OwinMiddleware next)
             : base(next)
         {
         }
