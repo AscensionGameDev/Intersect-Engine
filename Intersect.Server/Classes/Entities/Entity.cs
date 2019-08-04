@@ -84,6 +84,15 @@ namespace Intersect.Server.Entities
         [NotMapped]
         public EntityStat[] Stat = new EntityStat[(int)Stats.StatCount];
 
+        [JsonIgnore, Column("NameColor")]
+        public string NameColorJson
+        {
+            get => DatabaseUtils.SaveColor(NameColor);
+            set => NameColor = DatabaseUtils.LoadColor(value);
+        }
+
+        [NotMapped]
+        public Color NameColor { get; set; }
 
         //Instance Values
         private Guid _id;
@@ -1849,6 +1858,7 @@ namespace Intersect.Server.Entities
             packet.MaxVital = GetMaxVitals();
             packet.Stats = GetStatValues();
             packet.StatusEffects = StatusPackets();
+            packet.NameColor = NameColor;
 
             return packet;
         }

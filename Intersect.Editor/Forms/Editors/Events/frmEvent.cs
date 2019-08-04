@@ -514,6 +514,9 @@ namespace Intersect.Editor.Forms.Editors.Events
                 case EventCommandType.ChangeGender:
                     tmpCommand = new ChangeGenderCommand();
                     break;
+                case EventCommandType.ChangeNameColor:
+                    tmpCommand = new ChangeNameColorCommand();
+                    break;
                 case EventCommandType.SetAccess:
                     tmpCommand = new SetAccessCommand();
                     break;
@@ -1001,6 +1004,9 @@ namespace Intersect.Editor.Forms.Editors.Events
                     break;
                 case EventCommandType.ChangeGender:
                     cmdWindow = new EventCommandChangeGender((ChangeGenderCommand)command, this);
+                    break;
+                case EventCommandType.ChangeNameColor:
+                    cmdWindow = new EventCommandChangeNameColor((ChangeNameColorCommand)command, this);
                     break;
                 case EventCommandType.SetAccess:
                     cmdWindow = new EventCommandSetAccess((SetAccessCommand)command, this);

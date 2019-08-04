@@ -435,6 +435,16 @@ Tick timer saved in server config.json.";
             public static LocalizedString title = @"Change Level";
         }
 
+        public struct EventChangeNameColor
+        {
+            public static LocalizedString cancel = @"Cancel";
+            public static LocalizedString okay = @"Ok";
+            public static LocalizedString title = @"Change Name Color";
+            public static LocalizedString select = @"Select Color";
+            public static LocalizedString adminoverride = @"Override Admin Name Color?";
+            public static LocalizedString remove = @"Remove Name Color?";
+        }
+
         public struct EventChangeSpells
         {
             public static LocalizedString action = @"Action: ";
@@ -564,6 +574,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString setaccess = @"Set Player Access to {00}";
             public static LocalizedString setclass = @"Set Class [{00}]";
             public static LocalizedString setface = @"Set Player Face to {00}";
+            public static LocalizedString setnamecolor = @"Set Player Name Color";
+            public static LocalizedString removenamecolor = @"Remove Player Name Color";
             public static LocalizedString setgender = @"Set Player Gender to {00}";
             public static LocalizedString setlevel = @"Set Player Level To: {00}";
             public static LocalizedString setsprite = @"Set Player Sprite to {00}";
@@ -654,6 +666,7 @@ Tick timer saved in server config.json.";
                 {"hideplayer", @"Hide Player"},
                 {"showplayer", @"Show Player"},
                 {"equipitem", @"Equip Item"},
+                {"changenamecolor", @"Change Name Color"},
             };
         }
 

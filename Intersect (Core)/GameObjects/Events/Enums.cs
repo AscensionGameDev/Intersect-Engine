@@ -123,5 +123,8 @@
 
         //Equip Items
         EquipItem,
+
+        //Chane Name Color
+        ChangeNameColor,
     }
 }

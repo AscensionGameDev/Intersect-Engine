@@ -29,5 +29,6 @@ namespace Intersect.Network.Packets.Server
         public int[] Stats { get; set; }
         public StatusPacket[] StatusEffects { get; set; }
         public bool IsSelf { get; set; }
+        public Color NameColor { get; set; }
     }
 }

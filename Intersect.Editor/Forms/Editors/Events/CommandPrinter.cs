@@ -473,6 +473,18 @@ namespace Intersect.Editor.Forms.Editors.Events
             return Strings.EventCommandList.setface.ToString(command.Face);
         }
 
+        private static string GetCommandText(ChangeNameColorCommand command, MapInstance map)
+        {
+            if (command.Remove)
+            {
+                return Strings.EventCommandList.removenamecolor.ToString();
+            }
+            else
+            {
+                return Strings.EventCommandList.setnamecolor.ToString();
+            }
+        }
+
         private static string GetCommandText(ChangeGenderCommand command, MapInstance map)
         {
             if (command.Gender == 0)

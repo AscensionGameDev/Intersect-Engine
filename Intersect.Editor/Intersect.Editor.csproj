@@ -89,6 +89,12 @@
     <Compile Include="Forms\Editors\Events\CommandPrinter.cs" />
     <Compile Include="Classes\General\Enums.cs" />
     <Compile Include="Classes\General\Globals.cs" />
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeNameColor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeNameColor.Designer.cs">
+      <DependentUpon>EventCommand_ChangeNameColor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_EquipItem.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -619,6 +625,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeGender.resx">
       <DependentUpon>EventCommand_ChangeGender.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeNameColor.resx">
+      <DependentUpon>EventCommand_ChangeNameColor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_EquipItem.resx">
       <DependentUpon>EventCommand_EquipItem.cs</DependentUpon>

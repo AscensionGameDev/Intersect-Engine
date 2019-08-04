@@ -281,6 +281,24 @@ namespace Intersect.Server.EventProcessing
             PacketSender.SendEntityDataToProximity(player);
         }
 
+        //Change Sprite Command
+        private static void ProcessCommand(ChangeNameColorCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
+        {
+            if (command.Remove)
+            {
+                player.NameColor = null;
+                PacketSender.SendEntityDataToProximity(player);
+                return;
+            }
+
+            //Don't set the name color if it doesn't override admin name colors.
+            if (player.Client.Power != UserRights.None && !command.Override)
+                return;
+
+            player.NameColor = command.Color;
+            PacketSender.SendEntityDataToProximity(player);
+        }
+
         //Set Access Command (wtf why would we even allow this? lol)
         private static void ProcessCommand(SetAccessCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {

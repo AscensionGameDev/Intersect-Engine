@@ -1467,21 +1467,28 @@ namespace Intersect.Client.Entities
         //Override of the original function, used for rendering the color of a player based on rank
         public override void DrawName(Color textColor, Color borderColor, Color backgroundColor)
         {
+            Color customColorOverride = NameColor;
+            if (customColorOverride != null)
+            {
+                //We don't want to override the default colors if the color is transparent!
+                if (customColorOverride.A == 0) customColorOverride = null;
+            }
+
             if (textColor == null)
             {
                 if (Type == 1)
                 {
-                    base.DrawName(CustomColors.PlayerNameMod, CustomColors.PlayerNameModBorder,
+                    base.DrawName((customColorOverride != null) ? customColorOverride : CustomColors.PlayerNameMod, CustomColors.PlayerNameModBorder,
                         CustomColors.PlayerNameModBackground);
                 }
                 else if (Type == 2)
                 {
-                    base.DrawName(CustomColors.PlayerNameAdmin, CustomColors.PlayerNameAdminBorder,
+                    base.DrawName((customColorOverride != null) ? customColorOverride : CustomColors.PlayerNameAdmin, CustomColors.PlayerNameAdminBorder,
                         CustomColors.PlayerNameAdminBackground);
                 }
                 else
                 {
-                    base.DrawName(CustomColors.PlayerNameNormal, CustomColors.PlayerNameNormalBorder,
+                    base.DrawName((customColorOverride != null) ? customColorOverride : CustomColors.PlayerNameNormal, CustomColors.PlayerNameNormalBorder,
                         CustomColors.PlayerNameNormalBackground);
                 }
             }

@@ -56,5 +56,19 @@ namespace Intersect.Utilities
             }
             return JsonConvert.SerializeObject(output);
         }
+
+        public static string SaveColor(Color color)
+        {
+            if (color == null) color = new Color();
+            return JsonConvert.SerializeObject(color);
+        }
+
+        public static Color LoadColor(string json)
+        {
+            var color = new Color();
+            if (json != null) color = JsonConvert.DeserializeObject<Color>(json);
+
+            return color;
+        }
     }
 }

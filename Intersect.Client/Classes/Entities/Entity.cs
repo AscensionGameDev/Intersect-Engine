@@ -68,6 +68,7 @@ namespace Intersect.Client.Entities
 
         //Extras
         public string Face = "";
+        public Color NameColor = null;
 
         public Gender Gender = Gender.Male;
         public bool HideName;
@@ -199,6 +200,7 @@ namespace Intersect.Client.Entities
             Passable = packet.Passable;
             HideName = packet.HideName;
             HideEntity = packet.HideEntity;
+            NameColor = packet.NameColor;
             
             var animsToClear = new List<AnimationInstance>();
             var animsToAdd = new List<AnimationBase>();

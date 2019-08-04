@@ -295,6 +295,14 @@ namespace Intersect.GameObjects.Events.Commands
         public string Sprite { get; set; } = "";
     }
 
+    public class ChangeNameColorCommand : EventCommand
+    {
+        public override EventCommandType Type { get; } = EventCommandType.ChangeNameColor;
+        public Color Color { get; set; }
+        public bool Override { get; set; }
+        public bool Remove { get; set; }
+    }
+
     public class ChangeFaceCommand : EventCommand
     {
         public override EventCommandType Type {get;} = EventCommandType.ChangeFace;
