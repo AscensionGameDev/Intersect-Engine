@@ -43,13 +43,12 @@ namespace Intersect.Server.Web.RestApi.Routes
             return Ok();
         }
 
-        [AllowAnonymous]
+        [Authorize]
         [HttpDelete]
-        [Route("token/{username}/{tokenId:guid}")]
-        public async Task<IHttpActionResult> DeleteToken(string username, Guid tokenId)
+        [Route("token/{username}")]
+        public async Task<IHttpActionResult> DeleteToken(string username)
         {
             User user;
-            RefreshToken refreshToken;
 
             using (var context = PlayerContext.Temporary)
             {
@@ -61,14 +60,49 @@ namespace Intersect.Server.Web.RestApi.Routes
                 }
             }
 
-            refreshToken = (await RefreshToken.FindForUser(user)).FirstOrDefault();
+            var refreshToken = (await RefreshToken.FindForUser(user)).FirstOrDefault();
+
+            if (refreshToken == null)
+            {
+                return StatusCode(HttpStatusCode.Gone);
+            }
+
+            if (await RefreshToken.Remove(refreshToken, true))
+            {
+                return Ok(new
+                {
+                    username
+                });
+            }
+
+            return StatusCode(HttpStatusCode.Gone);
+        }
+
+        [AllowAnonymous]
+        [HttpDelete]
+        [Route("token/{username}/{tokenId:guid}")]
+        public async Task<IHttpActionResult> DeleteToken(string username, Guid tokenId)
+        {
+            User user;
+
+            using (var context = PlayerContext.Temporary)
+            {
+                user = Database.PlayerData.User.Find(username, context);
+
+                if (user == null)
+                {
+                    return Unauthorized();
+                }
+            }
+
+            var refreshToken = (await RefreshToken.FindForUser(user)).FirstOrDefault();
 
             if (refreshToken?.Id != tokenId)
             {
                 return Unauthorized();
             }
 
-            if (await RefreshToken.Remove(tokenId, true))
+            if (await RefreshToken.Remove(refreshToken, true))
             {
                 return Ok(new
                 {
