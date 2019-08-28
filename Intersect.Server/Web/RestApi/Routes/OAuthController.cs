@@ -1,8 +1,13 @@
 ﻿using Intersect.Server.Classes.Database.PlayerData.Api;
 using System;
+using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Web.Http;
 
+using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Web.RestApi.Attributes;
 
 namespace Intersect.Server.Web.RestApi.Routes
@@ -38,21 +43,37 @@ namespace Intersect.Server.Web.RestApi.Routes
             return Ok();
         }
 
-        [Authorize]
+        [AllowAnonymous]
         [HttpDelete]
-        [Route("token/{tokenId:guid}")]
-        public IHttpActionResult DeleteToken(Guid tokenId)
+        [Route("token/{username}/{tokenId:guid}")]
+        public async Task<IHttpActionResult> DeleteToken(string username, Guid tokenId)
         {
-            if (User?.Identity == null)
+            User user;
+            RefreshToken refreshToken;
+
+            using (var context = PlayerContext.Temporary)
+            {
+                user = Database.PlayerData.User.Find(username, context);
+
+                if (user == null)
+                {
+                    return Unauthorized();
+                }
+            }
+
+            refreshToken = (await RefreshToken.FindForUser(user)).FirstOrDefault();
+
+            if (refreshToken?.Id != tokenId)
             {
                 return Unauthorized();
             }
 
-            if (RefreshToken.Remove(tokenId, true).GetAwaiter().GetResult())
+            if (await RefreshToken.Remove(tokenId, true))
             {
                 return Ok(new
                 {
-                    revoked_refresh_token = tokenId
+                    username,
+                    tokenId
                 });
             }
 
