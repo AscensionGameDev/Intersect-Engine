@@ -3017,6 +3017,7 @@ namespace Intersect.Server.Entities
         //Spells
         public bool TryTeachSpell(Spell spell, bool sendUpdate = true)
         {
+            if (spell == null || spell.SpellId == Guid.Empty) return false;
             if (KnowsSpell(spell.SpellId))
             {
                 return false;

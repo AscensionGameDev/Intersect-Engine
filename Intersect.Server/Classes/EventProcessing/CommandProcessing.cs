@@ -209,7 +209,7 @@ namespace Intersect.Server.EventProcessing
             }
             else
             {
-                if (player.FindSpell(command.SpellId) > -1)
+                if (player.FindSpell(command.SpellId) > -1 && command.SpellId != Guid.Empty)
                 {
                     player.ForgetSpell(player.FindSpell(command.SpellId));
                     success = true;

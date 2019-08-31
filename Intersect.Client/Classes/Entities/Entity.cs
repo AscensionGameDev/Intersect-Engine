@@ -496,6 +496,15 @@ namespace Intersect.Client.Entities
                             }
                         }
                     }
+                    else
+                    {
+                        if (EquipmentAnimations[z] != null)
+                        {
+                            EquipmentAnimations[z].Dispose();
+                            Animations.Remove(EquipmentAnimations[z]);
+                            EquipmentAnimations[z] = null;
+                        }
+                    }
                 }
             }
 

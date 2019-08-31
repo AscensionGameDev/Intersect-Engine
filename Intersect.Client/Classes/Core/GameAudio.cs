@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+
+using Intersect.Client.Entities;
 using Intersect.Client.Framework.Audio;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
@@ -184,10 +186,10 @@ namespace Intersect.Client
         }
 
         //Sounds
-        public static MapSound AddMapSound(string filename, int x, int y, Guid mapId, bool loop, int distance)
+        public static MapSound AddMapSound(string filename, int x, int y, Guid mapId, bool loop, int distance, Entity parent = null)
         {
             if (sGameSounds?.Count > 128) return null;
-            var sound = new MapSound(filename, x, y, mapId, loop, distance);
+            var sound = new MapSound(filename, x, y, mapId, loop, distance, parent);
             sGameSounds?.Add(sound);
             return sound;
         }
@@ -283,14 +285,16 @@ namespace Intersect.Client
         private Guid mMapId;
         private int mX;
         private int mY;
+        private Entity mEntity;
 
-        public MapSound(string filename, int x, int y, Guid mapId, bool loop, int distance) : base(filename, loop)
+        public MapSound(string filename, int x, int y, Guid mapId, bool loop, int distance, Entity parent = null) : base(filename, loop)
         {
             if (string.IsNullOrEmpty(filename) || mSound == null) return;
             mDistance = distance;
             mX = x;
             mY = y;
             mMapId = mapId;
+            mEntity = parent;
             mSound.SetVolume(0);
         }
 
@@ -319,7 +323,7 @@ namespace Intersect.Client
                 return;
             }
             var map = MapInstance.Get(mMapId);
-            if (map == null)
+            if (map == null && mEntity != Globals.Me)
             {
                 Stop();
                 return;

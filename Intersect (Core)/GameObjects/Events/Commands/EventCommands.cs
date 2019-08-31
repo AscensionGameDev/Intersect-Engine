@@ -232,7 +232,7 @@ namespace Intersect.GameObjects.Events.Commands
             {
                 if (idDict.ContainsKey(BranchIds[i]))
                 {
-                    BranchIds[i] = idDict[idDict[BranchIds[i]]];
+                    BranchIds[i] = idDict[BranchIds[i]];
                 }
             }
         }
@@ -277,7 +277,7 @@ namespace Intersect.GameObjects.Events.Commands
             {
                 if (idDict.ContainsKey(BranchIds[i]))
                 {
-                    BranchIds[i] = idDict[idDict[BranchIds[i]]];
+                    BranchIds[i] = idDict[BranchIds[i]];
                 }
             }
         }
@@ -504,7 +504,7 @@ namespace Intersect.GameObjects.Events.Commands
             {
                 if (idDict.ContainsKey(BranchIds[i]))
                 {
-                    BranchIds[i] = idDict[idDict[BranchIds[i]]];
+                    BranchIds[i] = idDict[BranchIds[i]];
                 }
             }
         }

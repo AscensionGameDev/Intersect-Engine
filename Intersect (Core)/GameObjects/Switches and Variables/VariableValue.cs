@@ -20,7 +20,7 @@ namespace Intersect.GameObjects.Switches_and_Variables
         [JsonIgnore]
         public bool Boolean
         {
-            get => (Value as bool?) ?? false;
+            get => CanConvertTo<bool>(Value) ? Convert.ToBoolean(Value) : false;
             set
             {
                 Type = VariableDataTypes.Boolean;
@@ -31,7 +31,7 @@ namespace Intersect.GameObjects.Switches_and_Variables
         [JsonIgnore]
         public long Integer
         {
-            get => (Value as int?) ?? 0;
+            get => CanConvertTo<int>(Value) ? Convert.ToInt32(Value) : 0;
             set
             {
                 Type = VariableDataTypes.Integer;
@@ -42,7 +42,7 @@ namespace Intersect.GameObjects.Switches_and_Variables
         [JsonIgnore]
         public double Number
         {
-            get => (Value as double?) ?? 0.0;
+            get => CanConvertTo<double>(Value) ? Convert.ToDouble(Value) : 0.0;
             set
             {
                 Type = VariableDataTypes.Number;
@@ -59,6 +59,21 @@ namespace Intersect.GameObjects.Switches_and_Variables
                 Type = VariableDataTypes.String;
                 Value = value ?? "";
             }
+        }
+
+        public static bool CanConvertTo<T>(object input)
+        {
+            Object result = null;
+            try
+            {
+                result = Convert.ChangeType(input, typeof(T));
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
         }
 
         #endregion

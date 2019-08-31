@@ -44,7 +44,7 @@ namespace Intersect.Client.Entities
                 InfiniteLoop = loopForever;
                 AutoRotate = autoRotate;
                 mZDimension = zDimension;
-                mSound = GameAudio.AddMapSound(MyBase.Sound, 0, 0,Guid.Empty, loopForever, 12);
+                mSound = GameAudio.AddMapSound(MyBase.Sound, 0, 0,Guid.Empty, loopForever, 12, parent);
                 lock (GameGraphics.AnimationLock)
                 {
                     GameGraphics.LiveAnimations.Add(this);

@@ -534,6 +534,10 @@
     <Compile Include="Migrations\20190611170927_CombiningSwitchesVariables.designer.cs">
       <DependentUpon>20190611170927_CombiningSwitchesVariables.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\20190804133420_Custom_Player_Name_Colors.cs" />
+    <Compile Include="Migrations\20190804133420_Custom_Player_Name_Colors.Designer.cs">
+      <DependentUpon>20190804133420_Custom_Player_Name_Colors.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Game\20190303234637_SpellUpgrades_OnHit_Shields.cs" />
     <Compile Include="Migrations\Game\20190303234637_SpellUpgrades_OnHit_Shields.Designer.cs">
       <DependentUpon>20190303234637_SpellUpgrades_OnHit_Shields.cs</DependentUpon>

@@ -288,6 +288,8 @@ namespace Intersect.Server.EventProcessing
 
             if (compValue == null) compValue = new VariableValue();
 
+            if (currentValue.Type == 0) currentValue.Boolean = false;
+
             if (compValue.Type != currentValue.Type) return false;
 
             if (comparison.ComparingEqual)
@@ -323,6 +325,8 @@ namespace Intersect.Server.EventProcessing
             }
 
             if (compValue == null) compValue = new VariableValue();
+
+            if (currentValue.Type == 0) currentValue.Integer = 0;
 
             if (compValue.Type != currentValue.Type) return false;
 
