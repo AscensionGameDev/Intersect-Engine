@@ -9,7 +9,7 @@ using Intersect.Server.Web.RestApi.Constraints;
 using Intersect.Server.Web.RestApi.Logging;
 using Intersect.Server.Web.RestApi.RouteProviders;
 using Intersect.Server.Web.RestApi.Services;
-using Intersect.Server.Web.RestApi.Types;
+using Intersect.Server.Web.RestApi.Payloads;
 using JetBrains.Annotations;
 using Microsoft.Owin.Hosting;
 using Microsoft.Owin.Logging;

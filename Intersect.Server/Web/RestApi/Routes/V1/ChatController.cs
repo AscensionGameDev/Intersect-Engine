@@ -5,7 +5,7 @@ using System.Web.Http;
 using Intersect.Server.General;
 using Intersect.Server.Networking;
 using Intersect.Server.Web.RestApi.Attributes;
-using Intersect.Server.Web.RestApi.Types;
+using Intersect.Server.Web.RestApi.Payloads;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {

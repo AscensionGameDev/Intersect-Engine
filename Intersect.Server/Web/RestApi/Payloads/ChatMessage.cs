@@ -8,7 +8,7 @@ using System.Web.Http.Routing;
 
 using Newtonsoft.Json;
 
-namespace Intersect.Server.Web.RestApi.Types
+namespace Intersect.Server.Web.RestApi.Payloads
 {
     //[TypeConverter(typeof(Converter))]
     public struct ChatMessage

@@ -6,7 +6,7 @@ using System.Linq;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.General;
 using Intersect.Server.Networking;
-using Intersect.Server.Web.RestApi.Types;
+using Intersect.Server.Web.RestApi.Payloads;
 
 using JetBrains.Annotations;
 

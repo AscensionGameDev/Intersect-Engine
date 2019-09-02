@@ -14,7 +14,8 @@ using Intersect.Server.Localization;
 using Intersect.Server.Networking;
 using Intersect.Server.Web.RestApi.Attributes;
 using Intersect.Server.Web.RestApi.Extensions;
-
+using Intersect.Server.Web.RestApi.Payloads;
+using Intersect.Utilities;
 using JetBrains.Annotations;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
@@ -35,7 +36,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 var entries = Database.PlayerData.User.List(page, count, context).ToList();
                 return new
                 {
-                    total = context?.Users.Count() ?? 0,
+                    total = context.Users.Count(),
                     page,
                     count = entries.Count,
                     entries
@@ -86,15 +87,64 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
         [Route("{userName}")]
         [HttpGet]
-        public User UserByName(string userName)
+        public object UserByName(string userName)
         {
             using (var context = PlayerContext.Temporary)
             {
-                return Database.PlayerData.User.Find(userName, context);
+                var user = Database.PlayerData.User.Find(userName, context);
+
+                if (user == null)
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with name '{userName}'.");
+                }
+
+                return user;
             }
         }
 
-        [Route("{userName}/ValidatePassword")]
+        [Route("{userName}/email/change")]
+        [HttpGet]
+        public object UserChangeEmail(string userName, [FromBody] AuthorizedChange authorizedChange)
+        {
+            var email = authorizedChange.New;
+
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Malformed email address '{email}'.");
+            }
+
+            if (!FieldChecking.IsWellformedEmailAddress(email, Strings.Regex.email))
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Malformed email address '{email}'.");
+            }
+
+            using (var context = PlayerContext.Temporary)
+            {
+                var user = Database.PlayerData.User.Find(userName, context);
+
+                if (user == null)
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with name '{userName}'.");
+                }
+
+                if (!user.IsPasswordValid(authorizedChange.Authorization))
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.Forbidden, @"Invalid credentials.");
+                }
+
+                if (LegacyDatabase.EmailInUse(email))
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.Conflict, @"Email address already in use.");
+                }
+
+                user.Email = email;
+
+                LegacyDatabase.SavePlayerDatabaseAsync();
+                return user;
+            }
+        }
+
+        [Route("{userName}/password/validate")]
         [HttpPost]
         public object UserValidatePassword(string userName, [FromBody] string password)
         {
@@ -112,7 +162,46 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 var user = Database.PlayerData.User.Find(userName, context);
 
-                return user?.IsPasswordValid(password) ?? false;
+                if (user == null)
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with name '{userName}'.");
+                }
+
+                if (user.IsPasswordValid(password))
+                {
+                    return true;
+                }
+
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid credentials.");
+            }
+        }
+
+        [Route("{userName}/password/change")]
+        [HttpPost]
+        public object UserChangePassword(string userName, [FromBody] AuthorizedChange authorizedChange)
+        {
+            if (!authorizedChange.IsValid)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid payload");
+            }
+
+            using (var context = PlayerContext.Temporary)
+            {
+                var user = Database.PlayerData.User.Find(userName, context);
+
+                if (user == null)
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with name '{userName}'.");
+                }
+
+                if (!user.TryChangePassword(authorizedChange.Authorization, authorizedChange.New))
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.Forbidden, @"Invalid credentials.");
+                }
+
+                LegacyDatabase.SavePlayerDatabaseAsync();
+                return true;
+
             }
         }
 

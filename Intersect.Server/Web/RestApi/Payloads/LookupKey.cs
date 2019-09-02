@@ -6,7 +6,7 @@ using System.Globalization;
 using System.Net.Http;
 using System.Web.Http.Routing;
 
-namespace Intersect.Server.Web.RestApi.Types
+namespace Intersect.Server.Web.RestApi.Payloads
 {
     [TypeConverter(typeof(Converter))]
     public struct LookupKey

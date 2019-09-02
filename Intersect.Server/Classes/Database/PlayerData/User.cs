@@ -153,6 +153,33 @@ namespace Intersect.Server.Database.PlayerData
             }
         }
 
+        public bool TryChangePassword([NotNull] string oldPassword, [NotNull] string newPassword)
+        {
+            return IsPasswordValid(oldPassword) && TrySetPassword(newPassword);
+        }
+
+        public bool TrySetPassword([NotNull] string password)
+        {
+            using (var sha = new SHA256Managed())
+            {
+                using (var rng = new RNGCryptoServiceProvider())
+                {
+                    /* Generate a Salt */
+                    var saltBuffer = new byte[20];
+                    rng.GetBytes(saltBuffer);
+                    var salt = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(Convert.ToBase64String(saltBuffer)))).Replace("-", "");
+
+                    /* Hash the Password */
+                    var pass = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password + salt))).Replace("-", "");
+
+                    Salt = salt;
+                    Password = pass;
+
+                    return true;
+                }
+            }
+        }
+
         public static Tuple<Client, User> Fetch(Guid userId, [CanBeNull] PlayerContext playerContext = null)
         {
             var client = Globals.Clients.Find(

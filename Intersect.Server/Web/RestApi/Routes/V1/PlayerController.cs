@@ -6,7 +6,7 @@ using Intersect.Server.Localization;
 using Intersect.Server.Networking;
 using Intersect.Server.Web.RestApi.Attributes;
 using Intersect.Server.Web.RestApi.Extensions;
-using Intersect.Server.Web.RestApi.Types;
+using Intersect.Server.Web.RestApi.Payloads;
 using JetBrains.Annotations;
 using System;
 using System.Linq;
@@ -17,6 +17,7 @@ using System.Web.Http;
 using Intersect.GameObjects;
 using Intersect.Server.Database;
 using Intersect.Server.Database.GameData;
+using Intersect.Server.Web.RestApi.Payloads;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
