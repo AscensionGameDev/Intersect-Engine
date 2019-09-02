@@ -99,10 +99,6 @@ namespace Intersect.Server.Entities
             return changes;
         }
 
-
-        //5 minute timeout before someone can send a trade/party request after it has been declined
-        [NotMapped] public const long REQUEST_DECLINE_TIMEOUT = 300000;  //TODO: Server option this bitch. JC is a lazy fuck
-
         //TODO: Clean all of this stuff up
         #region Temporary Values
 
@@ -486,11 +482,11 @@ namespace Intersect.Server.Entities
             pkt.Gender = Gender;
             pkt.ClassId = ClassId;
 
-            if (Client.Power == UserRights.Admin)
+            if (Client.Power.IsAdmin)
             {
                 pkt.AccessLevel = (int) Access.Admin;
             }
-            else if (Client.Power.Ban || Client.Power.Kick || Client.Power.Mute)
+            else if (Client.Power.IsModerator)
             {
                 pkt.AccessLevel = (int)Access.Moderator;
             }
@@ -2843,6 +2839,11 @@ namespace Intersect.Server.Entities
         //Parties
         public void InviteToParty(Player fromPlayer)
         {
+            if (Party.Count != 0)
+            {
+                PacketSender.SendChatMsg(fromPlayer.Client, Strings.Parties.inparty.ToString(Name), CustomColors.Error);
+                return;
+            }
             if (fromPlayer.PartyRequests.ContainsKey(this))
             {
                 fromPlayer.PartyRequests.Remove(this);
@@ -2894,6 +2895,7 @@ namespace Intersect.Server.Entities
 
             if (Party.Count < 4)
             {
+                target.LeaveParty();
                 Party.Add(target);
 
                 //Update all members of the party with the new list

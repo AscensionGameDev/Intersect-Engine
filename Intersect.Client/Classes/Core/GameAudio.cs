@@ -360,7 +360,7 @@ namespace Intersect.Client
             {
                 if (mDistance > 0 && Globals.GridMaps.Contains(mMapId))
                 {
-                    float volume = 100 - ((100 / mDistance) * CalculateSoundDistance());
+                    float volume = 100 - ((100 / (mDistance + 1)) * CalculateSoundDistance());
                     if (volume < 0)
                     {
                         volume = 0f;
@@ -377,13 +377,16 @@ namespace Intersect.Client
         private float CalculateSoundDistance()
         {
             float distance = 0f;
-            float playerx = Globals.Me.GetCenterPos().X;
-            float playery = Globals.Me.GetCenterPos().Y;
+            float playerx = 0f;
+            float playery = 0f;
             float soundx = 0;
             float soundy = 0;
             var map = MapInstance.Get(mMapId);
-            if (map != null)
+            var pMap = MapInstance.Get(Globals.Me.CurrentMap);
+            if (map != null && pMap != null)
             {
+                playerx = pMap.GetX() + Globals.Me.X * Options.TileWidth + 16;
+                playery = pMap.GetY() + Globals.Me.Y * Options.TileHeight + 16;
                 if (mX == -1 || mY == -1 || mDistance == -1)
                 {
                     Point player = new Point()

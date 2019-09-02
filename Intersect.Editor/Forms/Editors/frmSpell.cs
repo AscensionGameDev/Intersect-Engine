@@ -111,6 +111,9 @@ namespace Intersect.Editor.Forms.Editors
             nudMR.Maximum = Options.MaxStatValue;
             nudSpd.Maximum = Options.MaxStatValue;
 
+            nudCastDuration.Maximum = Int32.MaxValue;
+            nudCooldownDuration.Maximum = Int32.MaxValue;
+
             InitLocalization();
             UpdateEditor();
         }
@@ -250,13 +253,11 @@ namespace Intersect.Editor.Forms.Editors
                 chkBound.Checked = mEditorItem.Bound;
 
                 cmbSprite.SelectedIndex = cmbSprite.FindString(TextUtils.NullToNone(mEditorItem.Icon));
+                picSpell.BackgroundImage?.Dispose();
+                picSpell.BackgroundImage = null;
                 if (cmbSprite.SelectedIndex > 0)
                 {
                     picSpell.BackgroundImage = Image.FromFile("resources/spells/" + cmbSprite.Text);
-                }
-                else
-                {
-                    picSpell.BackgroundImage = null;
                 }
                 nudHPCost.Value = mEditorItem.VitalCost[(int) Vitals.Health];
                 nudMpCost.Value = mEditorItem.VitalCost[(int) Vitals.Mana];
@@ -430,6 +431,8 @@ namespace Intersect.Editor.Forms.Editors
         private void cmbSprite_SelectedIndexChanged(object sender, EventArgs e)
         {
             mEditorItem.Icon = cmbSprite.Text;
+            picSpell.BackgroundImage?.Dispose();
+            picSpell.BackgroundImage = null;
             picSpell.BackgroundImage = cmbSprite.SelectedIndex > 0 ? Image.FromFile("resources/spells/" + cmbSprite.Text) : null;
         }
 
@@ -691,11 +694,14 @@ namespace Intersect.Editor.Forms.Editors
                     if (MapList.OrderedMaps[i].MapId == frmWarpSelection.GetMap())
                     {
                         cmbWarpMap.SelectedIndex = i;
+                        mEditorItem.Warp.MapId = MapList.OrderedMaps[i].MapId;
                         break;
                     }
                 }
                 nudWarpX.Value = frmWarpSelection.GetX();
+                mEditorItem.Warp.X = frmWarpSelection.GetX();
                 nudWarpY.Value = frmWarpSelection.GetY();
+                mEditorItem.Warp.Y = frmWarpSelection.GetY();
             }
         }
 

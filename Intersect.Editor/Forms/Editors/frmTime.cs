@@ -128,9 +128,7 @@ namespace Intersect.Editor.Forms.Editors
                 return;
             }
             grpRangeOptions.Show();
-            pnlColor.BackColor = System.Drawing.Color.FromArgb(255, mYTime.DaylightHues[lstTimes.SelectedIndex].R,
-                mYTime.DaylightHues[lstTimes.SelectedIndex].G,
-                mYTime.DaylightHues[lstTimes.SelectedIndex].B);
+            pnlColor.BackColor = System.Drawing.Color.FromArgb(255, mYTime.DaylightHues[lstTimes.SelectedIndex].R, mYTime.DaylightHues[lstTimes.SelectedIndex].G, mYTime.DaylightHues[lstTimes.SelectedIndex].B);
             scrlAlpha.Value = mYTime.DaylightHues[lstTimes.SelectedIndex].A;
             var brightness = (int) ((255 - scrlAlpha.Value) / 255f * 100);
             lblBrightness.Text = Strings.TimeEditor.brightness.ToString( brightness);

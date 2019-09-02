@@ -181,51 +181,56 @@ namespace Intersect.Client.UI
         public static string[] WrapText(string input, int width, GameFont font)
         {
             var myOutput = new List<string>();
-            var lastSpace = 0;
-            var curPos = 0;
-            var curLen = 1;
-            var lastOk = 0;
-            var lastCut = 0;
-            input = input.Replace("\r\n", "\n");
-            float measured;
-            string line;
-            while (curPos + curLen < input.Length)
+            if (input == null)
             {
-                line = input.Substring(curPos, curLen);
-                measured = GameGraphics.Renderer.MeasureText(line, font, 1).X;
-                //Debug.WriteLine($"w:{width},m:{measured},p:{curPos},l:{curLen},s:{lastSpace},t:'{line}'");
-                if (measured < width)
-                {
-                    lastOk = lastSpace;
-                    switch (input[curPos + curLen])
-                    {
-                        case ' ':
-                        case '-':
-                            lastSpace = curLen;
-                            break;
-
-                        case '\n':
-                            myOutput.Add(input.Substring(curPos, curLen).Trim());
-                            lastSpace = 0;
-                            curPos = curPos + curLen + 1;
-                            curLen = 1;
-                            break;
-                    }
-                }
-                else
-                {
-                    if (lastOk == 0) lastOk = curLen - 1;
-                    line = input.Substring(curPos, lastOk).Trim();
-                    //Debug.WriteLine($"line={line}");
-                    myOutput.Add(line);
-                    curPos = curPos + lastOk;
-                    lastOk = 0;
-                    lastSpace = 0;
-                    curLen = 1;
-                }
-                curLen++;
+                myOutput.Add("");
             }
-            myOutput.Add(input.Substring(curPos, input.Length - curPos).Trim());
+            else
+            {
+                var lastSpace = 0;
+                var curPos = 0;
+                var curLen = 1;
+                var lastOk = 0;
+                var lastCut = 0;
+                input = input.Replace("\r\n", "\n");
+                float measured;
+                string line;
+                while (curPos + curLen < input.Length)
+                {
+                    line = input.Substring(curPos, curLen);
+                    measured = GameGraphics.Renderer.MeasureText(line, font, 1).X;
+                    if (measured < width)
+                    {
+                        lastOk = lastSpace;
+                        switch (input[curPos + curLen])
+                        {
+                            case ' ':
+                            case '-':
+                                lastSpace = curLen;
+                                break;
+
+                            case '\n':
+                                myOutput.Add(input.Substring(curPos, curLen).Trim());
+                                lastSpace = 0;
+                                curPos = curPos + curLen + 1;
+                                curLen = 1;
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        if (lastOk == 0) lastOk = curLen - 1;
+                        line = input.Substring(curPos, lastOk).Trim();
+                        myOutput.Add(line);
+                        curPos = curPos + lastOk;
+                        lastOk = 0;
+                        lastSpace = 0;
+                        curLen = 1;
+                    }
+                    curLen++;
+                }
+                myOutput.Add(input.Substring(curPos, input.Length - curPos).Trim());
+            }
             return myOutput.ToArray();
         }
 

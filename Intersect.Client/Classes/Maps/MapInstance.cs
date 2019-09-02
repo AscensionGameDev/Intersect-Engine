@@ -988,6 +988,7 @@ namespace Intersect.Client.Maps
             HideActiveAnimations();
             ClearWeather();
             ClearMapAttributes();
+            ClearAttributeSounds();
             DestroyVBOs();
             Delete();
         }
@@ -1005,14 +1006,12 @@ namespace Intersect.Client.Maps
 
         public ActionMsgInstance(MapInstance map, int x, int y, string message, Color color)
         {
-            Random rnd = new Random();
-
             Map = map;
             X = x;
             Y = y;
             Msg = message;
             Clr = color;
-            XOffset = rnd.Next(-30, 30); //+- 16 pixels so action msg's don't overlap!
+            XOffset = Globals.Random.Next(-30, 30); //+- 16 pixels so action msg's don't overlap!
             TransmittionTimer = Globals.System.GetTimeMs() + 1000;
         }
 

@@ -225,7 +225,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 MyEvent = EventBase.Get((Guid)lstCommonEvents.SelectedNode.Tag)
             };
-            editor.InitEditor(false, false);
+            editor.InitEditor(false, false, false);
             editor.ShowDialog();
             InitEditor();
             Globals.MainForm.BringToFront();

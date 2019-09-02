@@ -186,15 +186,14 @@ namespace Intersect.Server.Entities
             var deadAnimations = new List<KeyValuePair<Guid, sbyte>>();
             var aliveAnimations = new List<KeyValuePair<Guid, sbyte>>();
 
-            if (Base.AttackAnimation != null)
-            {
-                PacketSender.SendAnimationToProximity(Base.AttackAnimationId, -1, Guid.Empty, enemy.MapId, (byte)enemy.X, (byte)enemy.Y, (sbyte) Dir);
-            }
-
             //We were forcing at LEAST 1hp base damage.. but then you can't have guards that won't hurt the player.
             //https://www.ascensiongamedev.com/community/bug_tracker/intersect/npc-set-at-0-attack-damage-still-damages-player-by-1-initially-r915/
             if (AttackTimer < Globals.Timing.TimeMs)
             {
+                if (Base.AttackAnimation != null)
+                {
+                    PacketSender.SendAnimationToProximity(Base.AttackAnimationId, -1, Guid.Empty, enemy.MapId, (byte)enemy.X, (byte)enemy.Y, (sbyte)Dir);
+                }
                 base.TryAttack(enemy, Base.Damage, (DamageType) Base.DamageType, (Stats) Base.ScalingStat, Base.Scaling, Base.CritChance, Base.CritMultiplier, deadAnimations, aliveAnimations);
                 PacketSender.SendEntityAttack(this, CalculateAttackTime());
             }

@@ -996,14 +996,14 @@ namespace Intersect.Editor.Forms.DockingElements
                         MyMap = Globals.CurrentMap,
                         NewEvent = true
                     };
-                    tmpEventEditor.InitEditor(false,false);
+                    tmpEventEditor.InitEditor(false,false, false);
                     tmpEventEditor.ShowDialog();
                     mMapChanged = true;
                 }
                 else
                 {
                     tmpEventEditor = new FrmEvent(Globals.CurrentMap) {MyEvent = tmpEvent, MyMap = Globals.CurrentMap};
-                    tmpEventEditor.InitEditor(false, false);
+                    tmpEventEditor.InitEditor(false, false, false);
                     tmpEventEditor.ShowDialog();
                 }
             }

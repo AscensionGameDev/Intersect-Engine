@@ -692,9 +692,9 @@ namespace Intersect.Editor
                 foreach (var light in tmpMap.Lights)
                 {
                     double w = light.Size;
-                    var x = xoffset + Options.MapWidth * Options.TileWidth +
+                    var x = xoffset + (Options.MapWidth * Options.TileWidth) - CurrentView.Left +
                             (light.TileX * Options.TileWidth + light.OffsetX) + Options.TileWidth / 2;
-                    var y = yoffset + Options.MapHeight * Options.TileHeight +
+                    var y = yoffset + (Options.MapHeight * Options.TileHeight) - CurrentView.Top +
                             (light.TileY * Options.TileHeight + light.OffsetY) + Options.TileHeight / 2;
                     if (!HideDarkness) AddLight(x, y, light, null);
                 }
@@ -1375,6 +1375,22 @@ namespace Intersect.Editor
                         System.Drawing.Color.FromArgb(LightColor.A, LightColor.R, LightColor.G, LightColor.B),
                         DarknessTexture,
                         BlendState.NonPremultiplied);
+
+                    DrawTexture(sWhiteTex, new RectangleF(0, 0, 1, 1),
+                        new RectangleF(0, 0, 32,32),
+                        System.Drawing.Color.FromArgb(255, 255, 0, 0), DarknessTexture, BlendState.NonPremultiplied);
+
+                    DrawTexture(sWhiteTex, new RectangleF(0, 0, 1, 1),
+                        new RectangleF(0, DarknessTexture.Height - 32, 32, 32),
+                        System.Drawing.Color.FromArgb(255, 255, 0, 0), DarknessTexture, BlendState.NonPremultiplied);
+
+                    DrawTexture(sWhiteTex, new RectangleF(0, 0, 1, 1),
+                        new RectangleF(DarknessTexture.Width - 32, 0, 32, 32),
+                        System.Drawing.Color.FromArgb(255, 255, 0, 0), DarknessTexture, BlendState.NonPremultiplied);
+
+                    DrawTexture(sWhiteTex, new RectangleF(0, 0, 1, 1),
+                        new RectangleF(DarknessTexture.Width -32 , DarknessTexture.Height - 32, 32, 32),
+                        System.Drawing.Color.FromArgb(255, 255, 0, 0), DarknessTexture, BlendState.NonPremultiplied);
                 }
                 else if (tmpMap.IsIndoors)
                 {
@@ -1411,7 +1427,7 @@ namespace Intersect.Editor
             }
 
             DrawTexture(DarknessTexture, new RectangleF(0, 0, DarknessTexture.Width, DarknessTexture.Height),
-                new RectangleF(-Options.MapWidth * Options.TileWidth, -Options.MapHeight * Options.TileHeight,
+                new RectangleF(CurrentView.Left - (Options.MapWidth * Options.TileWidth),CurrentView.Top - (Options.MapHeight * Options.TileHeight),
                     DarknessTexture.Width, DarknessTexture.Height), System.Drawing.Color.FromArgb(255, 255, 255, 255),
                 target,
                 MultiplyState);
@@ -1428,10 +1444,7 @@ namespace Intersect.Editor
                         var lightTex = GameContentManager.GetTexture(GameContentManager.TextureType.Misc, "lighticon.png");
                         if (lightTex != null)
                         {
-                            DrawTexture(lightTex, new RectangleF(0, 0, lightTex.Width, lightTex.Height),
-                                new RectangleF(CurrentView.Left + x * Options.TileWidth,
-                                    CurrentView.Top + y * Options.TileHeight, Options.TileWidth, Options.TileHeight),
-                                System.Drawing.Color.White, target);
+                            DrawTexture(lightTex, new RectangleF(0, 0, lightTex.Width, lightTex.Height), new RectangleF(x * Options.TileWidth + (Options.MapWidth * Options.TileWidth * 0) + CurrentView.Left, y * Options.TileHeight + (Options.MapHeight * Options.TileHeight * 0) + CurrentView.Top, Options.TileWidth, Options.TileHeight), System.Drawing.Color.White, target);
                         }
                     }
                 }

@@ -759,7 +759,7 @@ namespace Intersect.Editor.Forms.Editors.Events
         ///     It also populates General lists in our editor (ie. switches/variables) for event spawning conditions.
         ///     If the event is a common event (not a map entity) we hide the entity Options on the form.
         /// </summary>
-        public void InitEditor(bool disableNaming, bool disableTriggers)
+        public void InitEditor(bool disableNaming, bool disableTriggers, bool questEvent)
         {
             mEventBackup = MyEvent.JsonData;
             txtEventname.Text = MyEvent.Name;
@@ -779,7 +779,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             cmbAnimation.Items.Clear();
             cmbAnimation.Items.Add(Strings.General.none);
             cmbAnimation.Items.AddRange(AnimationBase.Names);
-            if (MyEvent.CommonEvent)
+            if (MyEvent.CommonEvent || questEvent)
             {
                 grpEntityOptions.Hide();
                 cmbTrigger.Items.Clear();

@@ -153,7 +153,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
             {
                 MyEvent = mMyTask.EditingEvent
             };
-            editor.InitEditor(true,true);
+            editor.InitEditor(true,true, true);
             editor.ShowDialog();
             Globals.MainForm.BringToFront();
             BringToFront();

@@ -371,7 +371,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            SendDataToProximity(en.MapId, en.EntityPacket());
+            SendDataToProximity(en.MapId, en.EntityPacket(), except);
             SendEntityVitals(en);
             SendEntityStats(en);
 

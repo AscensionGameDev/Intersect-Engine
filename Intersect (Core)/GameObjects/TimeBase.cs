@@ -31,12 +31,12 @@ namespace Intersect.GameObjects
 
         public void LoadFromJson(string json)
         {
-            sTimeBase = JsonConvert.DeserializeObject<TimeBase>(json);
+            JsonConvert.PopulateObject(json, sTimeBase);
         }
 
         public string GetInstanceJson()
         {
-            return JsonConvert.SerializeObject(sTimeBase);
+            return JsonConvert.SerializeObject(this);
         }
 
         public static string GetTimeJson()

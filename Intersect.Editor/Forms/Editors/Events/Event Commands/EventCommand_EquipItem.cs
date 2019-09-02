@@ -25,9 +25,9 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void InitLocalization()
         {
-            grpChangeItems.Text = Strings.EventChangeItems.title;
-            btnSave.Text = Strings.EventChangeItems.okay;
-            btnCancel.Text = Strings.EventChangeItems.cancel;
+            grpEquipItem.Text = Strings.EventEquipItems.title;
+            btnSave.Text = Strings.EventEquipItems.okay;
+            btnCancel.Text = Strings.EventEquipItems.cancel;
         }
 
         private void btnSave_Click(object sender, EventArgs e)

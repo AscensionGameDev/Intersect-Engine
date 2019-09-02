@@ -304,32 +304,25 @@ namespace Intersect.Editor.Forms.Editors
                     nudInterval.Value = mEditorItem.Consumable.Value;
                     nudIntervalPercentage.Value = mEditorItem.Consumable.Percentage;
                 }
+                picItem.BackgroundImage?.Dispose();
+                picItem.BackgroundImage = null;
                 if (cmbPic.SelectedIndex > 0)
                 {
                     picItem.BackgroundImage = System.Drawing.Image.FromFile("resources/items/" + cmbPic.Text);
                 }
-                else
-                {
-                    picItem.BackgroundImage = null;
-                }
+
+                picMalePaperdoll.BackgroundImage?.Dispose();
+                picMalePaperdoll.BackgroundImage = null;
                 if (cmbMalePaperdoll.SelectedIndex > 0)
                 {
-                    picMalePaperdoll.BackgroundImage =
-                        System.Drawing.Image.FromFile("resources/paperdolls/" + cmbMalePaperdoll.Text);
-                }
-                else
-                {
-                    picFemalePaperdoll.BackgroundImage = null;
+                    picMalePaperdoll.BackgroundImage = System.Drawing.Image.FromFile("resources/paperdolls/" + cmbMalePaperdoll.Text);
                 }
 
+                picFemalePaperdoll.BackgroundImage?.Dispose();
+                picFemalePaperdoll.BackgroundImage = null;
                 if (cmbFemalePaperdoll.SelectedIndex > 0)
                 {
-                    picFemalePaperdoll.BackgroundImage =
-                        System.Drawing.Image.FromFile("resources/paperdolls/" + cmbFemalePaperdoll.Text);
-                }
-                else
-                {
-                    picFemalePaperdoll.BackgroundImage = null;
+                    picFemalePaperdoll.BackgroundImage = System.Drawing.Image.FromFile("resources/paperdolls/" + cmbFemalePaperdoll.Text);
                 }
 
                 cmbDamageType.SelectedIndex = mEditorItem.DamageType;
@@ -437,13 +430,11 @@ namespace Intersect.Editor.Forms.Editors
         private void cmbPic_SelectedIndexChanged(object sender, EventArgs e)
         {
             mEditorItem.Icon = cmbPic.SelectedIndex < 1 ? null : cmbPic.Text;
+            picItem.BackgroundImage?.Dispose();
+            picItem.BackgroundImage = null;
             if (cmbPic.SelectedIndex > 0)
             {
                 picItem.BackgroundImage = System.Drawing.Image.FromFile("resources/items/" + cmbPic.Text);
-            }
-            else
-            {
-                picItem.BackgroundImage = null;
             }
         }
 
@@ -455,14 +446,11 @@ namespace Intersect.Editor.Forms.Editors
         private void cmbPaperdoll_SelectedIndexChanged(object sender, EventArgs e)
         {
             mEditorItem.MalePaperdoll = TextUtils.SanitizeNone(cmbMalePaperdoll.Text);
+            picMalePaperdoll.BackgroundImage?.Dispose();
+            picMalePaperdoll.BackgroundImage = null;
             if (cmbMalePaperdoll.SelectedIndex > 0)
             {
-                picMalePaperdoll.BackgroundImage =
-                    System.Drawing.Image.FromFile("resources/paperdolls/" + cmbMalePaperdoll.Text);
-            }
-            else
-            {
-                picMalePaperdoll.BackgroundImage = null;
+                picMalePaperdoll.BackgroundImage = System.Drawing.Image.FromFile("resources/paperdolls/" + cmbMalePaperdoll.Text);
             }
         }
 
@@ -512,14 +500,11 @@ namespace Intersect.Editor.Forms.Editors
         private void cmbFemalePaperdoll_SelectedIndexChanged(object sender, EventArgs e)
         {
             mEditorItem.FemalePaperdoll = TextUtils.SanitizeNone(cmbFemalePaperdoll.Text);
+            picFemalePaperdoll.BackgroundImage?.Dispose();
+            picFemalePaperdoll.BackgroundImage = null;
             if (cmbFemalePaperdoll.SelectedIndex > 0)
             {
-                picFemalePaperdoll.BackgroundImage =
-                    System.Drawing.Image.FromFile("resources/paperdolls/" + cmbFemalePaperdoll.Text);
-            }
-            else
-            {
-                picFemalePaperdoll.BackgroundImage = null;
+                picFemalePaperdoll.BackgroundImage = System.Drawing.Image.FromFile("resources/paperdolls/" + cmbFemalePaperdoll.Text);
             }
         }
 

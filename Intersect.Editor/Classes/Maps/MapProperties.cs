@@ -241,7 +241,7 @@ namespace Intersect.Editor.Maps
          CustomDescription("playerlightintensitydesc"),
          CustomDisplayName("playerlightintensity"),
          DefaultValue(255)]
-        public byte PlayerLightIntensity
+        public float PlayerLightIntensity
         {
             get { return mMyMap.PlayerLightIntensity; }
             set
@@ -249,8 +249,8 @@ namespace Intersect.Editor.Maps
                 if (mMyMap.PlayerLightIntensity != value)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    mMyMap.PlayerLightIntensity = Math.Max(value, (byte)0);
-                    mMyMap.PlayerLightIntensity = Math.Min(mMyMap.PlayerLightIntensity, (byte)255);
+                    var val = Math.Max(value, (byte)0);
+                    mMyMap.PlayerLightIntensity = (byte)Math.Min(val, (byte)255);
                     EditorGraphics.TilePreviewUpdated = true;
                     Globals.MapEditorWindow.AddUndoState();
                 }

@@ -899,11 +899,11 @@ namespace Intersect.Server.Networking
                     PacketSender.SendChatMsg(client.Entity.PartyRequester.Client, Strings.Parties.declined.ToString(client.Entity.Name), CustomColors.Declined);
                     if (player.PartyRequests.ContainsKey(player.PartyRequester))
                     {
-                        player.PartyRequests[player.PartyRequester] = Globals.Timing.TimeMs + Player.REQUEST_DECLINE_TIMEOUT;
+                        player.PartyRequests[player.PartyRequester] = Globals.Timing.TimeMs + Options.RequestTimeout;
                     }
                     else
                     {
-                        player.PartyRequests.Add(player.PartyRequester, Globals.Timing.TimeMs + Player.REQUEST_DECLINE_TIMEOUT);
+                        player.PartyRequests.Add(player.PartyRequester, Globals.Timing.TimeMs + Options.RequestTimeout);
                     }
                 }
                 player.PartyRequester = null;
@@ -976,11 +976,11 @@ namespace Intersect.Server.Networking
                         PacketSender.SendChatMsg(player.Trading.Requester.Client, Strings.Trading.declined.ToString(player.Name), CustomColors.Declined);
                         if (player.Trading.Requests.ContainsKey(player.Trading.Requester))
                         {
-                            player.Trading.Requests[player.Trading.Requester] = Globals.Timing.TimeMs +  Player.REQUEST_DECLINE_TIMEOUT;
+                            player.Trading.Requests[player.Trading.Requester] = Globals.Timing.TimeMs + Options.RequestTimeout;
                         }
                         else
                         {
-                            player.Trading.Requests.Add(player.Trading.Requester, Globals.Timing.TimeMs + Player.REQUEST_DECLINE_TIMEOUT);
+                            player.Trading.Requests.Add(player.Trading.Requester, Globals.Timing.TimeMs + Options.RequestTimeout);
                         }
                     }
                 }
@@ -1140,11 +1140,11 @@ namespace Intersect.Server.Networking
                     {
                         if (player.FriendRequests.ContainsKey(player.FriendRequester))
                         {
-                            player.FriendRequests[player.FriendRequester] = Globals.Timing.TimeMs + Player.REQUEST_DECLINE_TIMEOUT;
+                            player.FriendRequests[player.FriendRequester] = Globals.Timing.TimeMs + Options.RequestTimeout;
                         }
                         else
                         {
-                            player.FriendRequests.Add(client.Entity.FriendRequester, Globals.Timing.TimeMs + Player.REQUEST_DECLINE_TIMEOUT);
+                            player.FriendRequests.Add(client.Entity.FriendRequester, Globals.Timing.TimeMs + Options.RequestTimeout);
                         }
                     }
                     player.FriendRequester = null;

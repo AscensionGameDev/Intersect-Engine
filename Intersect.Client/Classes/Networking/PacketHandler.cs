@@ -306,7 +306,7 @@ namespace Intersect.Client.Networking
         //ChatMsgPacket
         private static void HandlePacket(ChatMsgPacket packet)
         {
-            ChatboxMsg.AddMessage(new ChatboxMsg(packet.Message, new Color(packet.Color.A, packet.Color.R, packet.Color.G, packet.Color.B), packet.Target));
+            ChatboxMsg.AddMessage(new ChatboxMsg(packet.Message ?? "", new Color(packet.Color.A, packet.Color.R, packet.Color.G, packet.Color.B), packet.Target));
         }
 
         //ActionMsgPacket

@@ -282,6 +282,8 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbInitialSprite_SelectedIndexChanged(object sender, EventArgs e)
         {
+            mInitialGraphic?.Dispose();
+            mInitialGraphic = null;
             if (cmbInitialSprite.SelectedIndex > 0)
             {
                 mEditorItem.Initial.Graphic = cmbInitialSprite.Text;
@@ -293,15 +295,10 @@ namespace Intersect.Editor.Forms.Editors
                     picInitialResource.Height = mInitialGraphic.Height;
                     mInitialBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);
                 }
-                else
-                {
-                    mInitialGraphic = null;
-                }
             }
             else
             {
                 mEditorItem.Initial.Graphic = null;
-                mInitialGraphic = null;
             }
             picInitialResource.Visible = mInitialGraphic != null;
             Render();
@@ -309,6 +306,8 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbEndSprite_SelectedIndexChanged(object sender, EventArgs e)
         {
+            mEndGraphic?.Dispose();
+            mEndGraphic = null;
             if (cmbEndSprite.SelectedIndex > 0)
             {
                 mEditorItem.Exhausted.Graphic = cmbEndSprite.Text;
@@ -320,15 +319,10 @@ namespace Intersect.Editor.Forms.Editors
                     picEndResource.Height = mEndGraphic.Height;
                     mEndBitmap = new Bitmap(picEndResource.Width, picEndResource.Height);
                 }
-                else
-                {
-                    mEndGraphic = null;
-                }
             }
             else
             {
                 mEditorItem.Exhausted.Graphic = null;
-                mEndGraphic = null;
             }
             picEndResource.Visible = mEndGraphic != null;
             Render();

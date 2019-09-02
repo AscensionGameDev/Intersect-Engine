@@ -37,6 +37,9 @@ namespace Intersect.Server.Database.PlayerData.Security
         [JsonIgnore]
         public bool IsModerator => Ban || Mute || Kick;
 
+        [JsonIgnore]
+        public bool IsAdmin => Ban && Mute && Kick && Editor;
+
         [NotNull]
         public static UserRights None => new UserRights();
 

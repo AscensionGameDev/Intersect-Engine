@@ -729,8 +729,8 @@ namespace Intersect.Server.Entities
                     if (y == -1 || y >= LegacyDatabase.MapGrids[myGrid].Height) continue;
                     if (LegacyDatabase.MapGrids[myGrid].MyGrid[x, y] != Guid.Empty && LegacyDatabase.MapGrids[myGrid].MyGrid[x, y] == target.MapId)
                     {
-                        xDiff = (MapInstance.Get(MapId).MapGridX - x) * Options.MapWidth + target.X - X;
-                        yDiff = (MapInstance.Get(MapId).MapGridY - y) * Options.MapHeight + target.Y - Y;
+                        xDiff = (x - MapInstance.Get(MapId).MapGridX) * Options.MapWidth + target.X - X;
+                        yDiff = (y - MapInstance.Get(MapId).MapGridY) * Options.MapHeight + target.Y - Y;
                         if (Math.Abs(xDiff) > Math.Abs(yDiff))
                         {
                             if (xDiff < 0) return (int)Directions.Left;
@@ -1099,8 +1099,16 @@ namespace Intersect.Server.Entities
             {
                 enemy.Stat[i].AddBuff(new EntityBuff(spellBase, spellBase.Combat.StatDiff[i] + 
                     ((enemy.Stat[i].Stat * spellBase.Combat.PercentageStatDiff[i]) / 100), spellBase.Combat.Duration));
-                if (spellBase.Combat.StatDiff[i] != 0)
+                if (spellBase.Combat.StatDiff[i] != 0 || spellBase.Combat.PercentageStatDiff[i] != 0)
                     statBuffTime = spellBase.Combat.Duration;
+            }
+
+            if (statBuffTime == -1)
+            {
+                if (spellBase.Combat.HoTDoT && spellBase.Combat.HotDotInterval > 0)
+                {
+                    statBuffTime = spellBase.Combat.Duration;
+                }
             }
 
             if (spellBase.Combat.Effect > 0) //Handle status effects
@@ -1351,6 +1359,33 @@ namespace Intersect.Server.Entities
                     enemy.CombatTimer = Globals.Timing.TimeMs + 5000;
                     PacketSender.SendActionMsg(enemy, Strings.Combat.removesymbol + (int)secondaryDamage,
                         CustomColors.RemoveMana);
+
+                    enemy.CombatTimer = Globals.Timing.TimeMs + 5000;
+
+                    //No Matter what, if we attack the entitiy, make them chase us
+                    if (enemy.GetType() == typeof(Npc))
+                    {
+                        var dmgMap = ((Npc)enemy).DamageMap;
+                        var target = this;
+                        long dmg = 0;
+                        foreach (var pair in dmgMap)
+                        {
+                            if (pair.Value > dmg)
+                            {
+                                target = pair.Key;
+                                dmg = pair.Value;
+                            }
+                        }
+                        if (((Npc)enemy).Base.FocusHighestDamageDealer)
+                        {
+                            ((Npc)enemy).AssignTarget(target);
+                        }
+                        else
+                        {
+                            ((Npc)enemy).AssignTarget(this);
+                        }
+                    }
+                    enemy.NotifySwarm(this);
                 }
                 else if (secondaryDamage < 0 && !enemy.IsFullVital(Vitals.Mana))
                 {
@@ -1505,7 +1540,6 @@ namespace Intersect.Server.Entities
                                     new StatusInstance(this, spellBase, StatusTypes.OnHit, spellBase.Combat.OnHitDuration, spellBase.Combat.TransformSprite);
                                     PacketSender.SendActionMsg(this, Strings.Combat.status[(int) spellBase.Combat.Effect], CustomColors.Status);
                                 }
-
                                 break;
                             default:
                                 break;
@@ -1514,7 +1548,7 @@ namespace Intersect.Server.Entities
                     case SpellTypes.Warp:
                         if (GetType() == typeof(Player))
                         {
-                            Warp(spellBase.Warp.MapId, (byte)spellBase.Warp.X, (byte)spellBase.Warp.Y, (byte)spellBase.Warp.Dir);
+                            Warp(spellBase.Warp.MapId, (byte)spellBase.Warp.X, (byte)spellBase.Warp.Y, (spellBase.Warp.Dir - 1) == -1 ? (byte)this.Dir : (byte)(spellBase.Warp.Dir - 1));
                         }
                         break;
                     case SpellTypes.WarpTo:
@@ -1572,7 +1606,7 @@ namespace Intersect.Server.Entities
                         else if (y > Options.MapHeight - 1 && tempMap.Down != Guid.Empty)
                         {
                             tempMap = MapInstance.Get(tempMap.Down);
-                            y2 = Options.MapHeight - y;
+                            y2 = y - Options.MapHeight;
                         }
 
                         if (x < 0 && tempMap.Left != Guid.Empty)
@@ -1583,7 +1617,7 @@ namespace Intersect.Server.Entities
                         else if (x > Options.MapWidth - 1 && tempMap.Right != Guid.Empty)
                         {
                             tempMap = MapInstance.Get(tempMap.Right);
-                            x2 = Options.MapWidth - x;
+                            x2 = x - Options.MapWidth;
                         }
 
                         if (tempMap == null) continue;
@@ -2007,6 +2041,7 @@ namespace Intersect.Server.Entities
 
         public bool CheckExpired()
         {
+            if (Target != null && !Target.DoT.Contains(this)) return false;
             if (SpellBase == null || Count > 0) return false;
             Target?.DoT?.Remove(this);
             return true;

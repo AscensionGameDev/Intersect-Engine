@@ -36,6 +36,7 @@ namespace Intersect.Server.Core.Commands
 
             var access = result.Find(Access);
             target.Power.Api = access;
+            target.Power.PersonalInformation = access;
             LegacyDatabase.SavePlayerDatabaseAsync();
 
             Console.WriteLine(access

@@ -31,29 +31,29 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EventCommandEquipItems));
-            this.grpChangeItems = new DarkUI.Controls.DarkGroupBox();
+            this.grpEquipItem = new DarkUI.Controls.DarkGroupBox();
             this.cmbItem = new DarkUI.Controls.DarkComboBox();
             this.lblItem = new System.Windows.Forms.Label();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
-            this.grpChangeItems.SuspendLayout();
+            this.grpEquipItem.SuspendLayout();
             this.SuspendLayout();
             // 
-            // grpChangeItems
+            // grpEquipItem
             // 
-            this.grpChangeItems.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.grpChangeItems.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpChangeItems.Controls.Add(this.cmbItem);
-            this.grpChangeItems.Controls.Add(this.lblItem);
-            this.grpChangeItems.Controls.Add(this.btnCancel);
-            this.grpChangeItems.Controls.Add(this.btnSave);
-            this.grpChangeItems.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpChangeItems.Location = new System.Drawing.Point(3, 3);
-            this.grpChangeItems.Name = "grpChangeItems";
-            this.grpChangeItems.Size = new System.Drawing.Size(193, 93);
-            this.grpChangeItems.TabIndex = 17;
-            this.grpChangeItems.TabStop = false;
-            this.grpChangeItems.Text = "Equip Player Items:";
+            this.grpEquipItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpEquipItem.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpEquipItem.Controls.Add(this.cmbItem);
+            this.grpEquipItem.Controls.Add(this.lblItem);
+            this.grpEquipItem.Controls.Add(this.btnCancel);
+            this.grpEquipItem.Controls.Add(this.btnSave);
+            this.grpEquipItem.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpEquipItem.Location = new System.Drawing.Point(3, 3);
+            this.grpEquipItem.Name = "grpEquipItem";
+            this.grpEquipItem.Size = new System.Drawing.Size(193, 93);
+            this.grpEquipItem.TabIndex = 17;
+            this.grpEquipItem.TabStop = false;
+            this.grpEquipItem.Text = "Equip Player Items:";
             // 
             // cmbItem
             // 
@@ -111,18 +111,18 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.Controls.Add(this.grpChangeItems);
+            this.Controls.Add(this.grpEquipItem);
             this.Name = "EventCommandEquipItems";
             this.Size = new System.Drawing.Size(205, 105);
-            this.grpChangeItems.ResumeLayout(false);
-            this.grpChangeItems.PerformLayout();
+            this.grpEquipItem.ResumeLayout(false);
+            this.grpEquipItem.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private DarkGroupBox grpChangeItems;
+        private DarkGroupBox grpEquipItem;
         private DarkButton btnCancel;
         private DarkButton btnSave;
         private DarkComboBox cmbItem;
