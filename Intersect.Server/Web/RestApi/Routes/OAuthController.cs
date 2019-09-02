@@ -1,8 +1,13 @@
 ﻿using Intersect.Server.Classes.Database.PlayerData.Api;
 using System;
+using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Web.Http;
 
+using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Web.RestApi.Attributes;
 
 namespace Intersect.Server.Web.RestApi.Routes
@@ -40,19 +45,69 @@ namespace Intersect.Server.Web.RestApi.Routes
 
         [Authorize]
         [HttpDelete]
-        [Route("token/{tokenId:guid}")]
-        public IHttpActionResult DeleteToken(Guid tokenId)
+        [Route("token/{username}")]
+        public async Task<IHttpActionResult> DeleteToken(string username)
         {
-            if (User?.Identity == null)
+            User user;
+
+            using (var context = PlayerContext.Temporary)
+            {
+                user = Database.PlayerData.User.Find(username, context);
+
+                if (user == null)
+                {
+                    return Unauthorized();
+                }
+            }
+
+            var refreshToken = (await RefreshToken.FindForUser(user)).FirstOrDefault();
+
+            if (refreshToken == null)
+            {
+                return StatusCode(HttpStatusCode.Gone);
+            }
+
+            if (await RefreshToken.Remove(refreshToken, true))
+            {
+                return Ok(new
+                {
+                    username
+                });
+            }
+
+            return StatusCode(HttpStatusCode.Gone);
+        }
+
+        [AllowAnonymous]
+        [HttpDelete]
+        [Route("token/{username}/{tokenId:guid}")]
+        public async Task<IHttpActionResult> DeleteToken(string username, Guid tokenId)
+        {
+            User user;
+
+            using (var context = PlayerContext.Temporary)
+            {
+                user = Database.PlayerData.User.Find(username, context);
+
+                if (user == null)
+                {
+                    return Unauthorized();
+                }
+            }
+
+            var refreshToken = (await RefreshToken.FindForUser(user)).FirstOrDefault();
+
+            if (refreshToken?.Id != tokenId)
             {
                 return Unauthorized();
             }
 
-            if (RefreshToken.Remove(tokenId, true).GetAwaiter().GetResult())
+            if (await RefreshToken.Remove(refreshToken, true))
             {
                 return Ok(new
                 {
-                    revoked_refresh_token = tokenId
+                    username,
+                    tokenId
                 });
             }
 

@@ -116,6 +116,8 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
                 return;
             }
 
+            // TODO: Require username
+
             context?.DeserializeTicket(refreshToken.Ticket);
         }
     }
