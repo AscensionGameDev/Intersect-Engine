@@ -9,6 +9,7 @@
         SlashCommand,
         Autorun,
         PVPKill,
-        PVPDeath
+        PVPDeath,
+        PlayerInteract
     }
 }

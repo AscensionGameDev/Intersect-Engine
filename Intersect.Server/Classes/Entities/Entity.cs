@@ -967,6 +967,15 @@ namespace Intersect.Server.Entities
 
             if (GetType() == typeof(Player) && enemy.GetType() == typeof(Player))
             {
+                //Player interaction common events
+                foreach (EventBase evt in EventBase.Lookup.Values)
+                {
+                    if (evt != null)
+                    {
+                        ((Player)enemy).StartCommonEvent(evt, CommonEventTrigger.PlayerInteract);
+                    }
+                }
+
                 if (MapInstance.Get(MapId).ZoneType == MapZones.Safe)
                 {
                     return;
@@ -1182,6 +1191,15 @@ namespace Intersect.Server.Entities
             //Check if either the attacker or the defender is in a "safe zone" (Only apply if combat is PVP)
             if (enemy.GetType() == typeof(Player) && GetType() == typeof(Player))
             {
+                //Player interaction common events
+                foreach (EventBase evt in EventBase.Lookup.Values)
+                {
+                    if (evt != null)
+                    {
+                        ((Player)enemy).StartCommonEvent(evt, CommonEventTrigger.PlayerInteract);
+                    }
+                }
+
                 if (MapInstance.Get(MapId).ZoneType == MapZones.Safe)
                 {
                     return;
