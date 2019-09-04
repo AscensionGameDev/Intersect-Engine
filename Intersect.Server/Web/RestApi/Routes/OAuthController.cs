@@ -50,14 +50,12 @@ namespace Intersect.Server.Web.RestApi.Routes
         {
             User user;
 
-            using (var context = PlayerContext.Temporary)
-            {
-                user = Database.PlayerData.User.Find(username, context);
+            var context = PlayerContext.Current;
+            user = Database.PlayerData.User.Find(username, context);
 
-                if (user == null)
-                {
-                    return Unauthorized();
-                }
+            if (user == null)
+            {
+                return Unauthorized();
             }
 
             var refreshToken = (await RefreshToken.FindForUser(user)).FirstOrDefault();
@@ -85,14 +83,12 @@ namespace Intersect.Server.Web.RestApi.Routes
         {
             User user;
 
-            using (var context = PlayerContext.Temporary)
-            {
-                user = Database.PlayerData.User.Find(username, context);
+            var context = PlayerContext.Current;
+            user = Database.PlayerData.User.Find(username, context);
 
-                if (user == null)
-                {
-                    return Unauthorized();
-                }
+            if (user == null)
+            {
+                return Unauthorized();
             }
 
             var refreshToken = (await RefreshToken.FindForUser(user)).FirstOrDefault();

@@ -18,8 +18,9 @@ namespace Intersect.Server.Database.PlayerData
     {
         public static PlayerContext Current { get; private set; }
 
-        [NotNull]
-        public static PlayerContext Temporary => new PlayerContext(Current?.mConnection ?? default(DatabaseUtils.DbProvider), Current?.mConnectionString, true);
+        //[NotNull]
+        //This doesnt work for api because the Current context doesnt see changes made to the temp one.
+        //public static PlayerContext Temporary => new PlayerContext(Current?.mConnection ?? default(DatabaseUtils.DbProvider), Current?.mConnectionString, true);
 
         [NotNull] public DbSet<User> Users { get; set; }
 
