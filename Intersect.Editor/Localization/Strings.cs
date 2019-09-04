@@ -854,6 +854,7 @@ Tick timer saved in server config.json.";
                 {5, @"Autorun"},
                 {6, @"PVP Kill"},
                 {7, @"PVP Death"},
+                {8, @"Player Interact"},
             };
             public static LocalizedString conditions = @"Conditions";
             public static LocalizedString copypage = @"Copy Page";

@@ -842,6 +842,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 //Place the change, we done!
                 Globals.MapEditorWindow.ProcessSelectionMovement(Globals.CurrentMap, true);
                 Globals.MapEditorWindow.PlaceSelection();
+                return;
             }
 
             //Check Left Column of Maps
@@ -1722,7 +1723,7 @@ namespace Intersect.Editor.Forms.DockingElements
 			selW = Globals.CurMapSelW,
 			selH = Globals.CurMapSelH;
 
-			MapUndoStates.Add(CurrentMapState);
+            MapUndoStates.Add(CurrentMapState);
 
 			if (Globals.CurrentTool == (int)EditingTool.Rectangle ||
 				Globals.CurrentTool == (int)EditingTool.Selection)
@@ -1794,7 +1795,7 @@ namespace Intersect.Editor.Forms.DockingElements
 			selW = Globals.CurMapSelW,
 			selH = Globals.CurMapSelH;
 
-			MapUndoStates.Add(CurrentMapState);
+            MapUndoStates.Add(CurrentMapState);
 
 			if (Globals.CurrentTool == (int)EditingTool.Rectangle ||
 				Globals.CurrentTool == (int)EditingTool.Selection)
