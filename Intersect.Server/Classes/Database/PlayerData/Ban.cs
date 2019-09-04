@@ -113,7 +113,7 @@ namespace Intersect.Server.Database.PlayerData
                 return false;
             }
 
-            var ban = context.Bans.SingleOrDefault(p => p.UserId == userId);
+            var ban = context.Bans.FirstOrDefault(p => p.UserId == userId);
             if (ban == null)
             {
                 return true;

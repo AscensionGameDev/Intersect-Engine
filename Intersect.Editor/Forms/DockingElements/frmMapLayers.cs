@@ -974,5 +974,13 @@ namespace Intersect.Editor.Forms.DockingElements
             ToolTip tt = new ToolTip();
             tt.SetToolTip((PictureBox) sender, Strings.Tiles.layers[mMapLayers.IndexOf((PictureBox) sender)]);
         }
+
+        private void cmbTilesets_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right && Globals.CurrentTileset != null)
+            {
+                Clipboard.SetText(Globals.CurrentTileset.Id.ToString());
+            }
+        }
     }
 }

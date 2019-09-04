@@ -32,9 +32,7 @@ namespace Intersect.Server.Database.PlayerData.Security
 
         public bool Api { get; set; }
 
-        public bool ApiPersonalInformation { get; set; }
-
-        public bool ApiUserManagement { get; set; }
+        public ApiRoles ApiRoles { get; set; } = new ApiRoles();
 
         [JsonIgnore]
         public bool IsModerator => Ban || Mute || Kick;
@@ -133,5 +131,13 @@ namespace Intersect.Server.Database.PlayerData.Security
                     throw new ArgumentOutOfRangeException(nameof(access), access, null);
             }
         }
+    }
+
+    public class ApiRoles
+    {
+        public bool UserQuery { get; set; }
+
+        public bool UserManage { get; set; }
+
     }
 }

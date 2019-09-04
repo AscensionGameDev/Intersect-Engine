@@ -164,7 +164,16 @@ namespace Intersect.Editor.Forms.DockingElements
 
             if (e.X < EditorGraphics.CurrentView.Left || e.Y < EditorGraphics.CurrentView.Top ||
                 e.X > EditorGraphics.CurrentView.Left + Options.MapWidth * Options.TileWidth ||
-                e.Y > EditorGraphics.CurrentView.Top + Options.MapHeight * Options.TileHeight) return;
+                e.Y > EditorGraphics.CurrentView.Top + Options.MapHeight * Options.TileHeight)
+            {
+                if (Globals.Dragging)
+                {
+                    //Place the change, we done!
+                    Globals.MapEditorWindow.ProcessSelectionMovement(Globals.CurrentMap, true);
+                    Globals.MapEditorWindow.PlaceSelection();
+                }
+                return;
+            }
 
             if (CurrentMapState == null)
             {
@@ -842,7 +851,6 @@ namespace Intersect.Editor.Forms.DockingElements
                 //Place the change, we done!
                 Globals.MapEditorWindow.ProcessSelectionMovement(Globals.CurrentMap, true);
                 Globals.MapEditorWindow.PlaceSelection();
-                return;
             }
 
             //Check Left Column of Maps

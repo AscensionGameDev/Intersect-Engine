@@ -490,6 +490,9 @@
     <Compile Include="Core\CommandParsing\ParserSettings.cs" />
     <Compile Include="Core\Commands\AnnouncementCommand.cs" />
     <Compile Include="Core\Commands\ApiCommand.cs" />
+    <Compile Include="Core\Commands\ApiGrantCommand.cs" />
+    <Compile Include="Core\Commands\ApiRevokeCommand.cs" />
+    <Compile Include="Core\Commands\ApiRolesCommand.cs" />
     <Compile Include="Core\Commands\CpsCommand.cs" />
     <Compile Include="Core\Commands\PowerAccountCommand.cs" />
     <Compile Include="Core\Commands\PowerCommand.cs" />
@@ -636,6 +639,7 @@
     <Compile Include="Web\RestApi\Routes\V1\DemoController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\DocController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\ChatController.cs" />
+    <Compile Include="Web\RestApi\Routes\V1\GameObjectController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\InfoController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\VariablesController.cs" />
     <Compile Include="Web\RestApi\Services\AuthorizedRoutesService.cs" />

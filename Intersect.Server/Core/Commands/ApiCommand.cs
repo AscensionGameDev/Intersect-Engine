@@ -36,7 +36,10 @@ namespace Intersect.Server.Core.Commands
 
             var access = result.Find(Access);
             target.Power.Api = access;
-            target.Power.ApiPersonalInformation = access;
+            if (!access)
+            {
+                target.Power.ApiRoles = new Database.PlayerData.Security.ApiRoles();
+            }
             LegacyDatabase.SavePlayerDatabaseAsync();
 
             Console.WriteLine(access

@@ -882,6 +882,13 @@ namespace Intersect.Editor.Forms.Editors
             var node = e.Node;
             if (node != null)
             {
+                if (e.Button == MouseButtons.Right)
+                {
+                    if (e.Node.Tag != null && e.Node.Tag.GetType() == typeof(Guid))
+                    {
+                        Clipboard.SetText(e.Node.Tag.ToString());
+                    }
+                }
                 var hitTest = lstResources.HitTest(e.Location);
                 if (hitTest.Location != TreeViewHitTestLocations.PlusMinus)
                 {

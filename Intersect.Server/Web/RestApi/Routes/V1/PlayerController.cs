@@ -523,14 +523,22 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
         }
 
-        [Route("{lookupKey:LookupKey}/AdminActions/{adminAction:AdminActions}")]
+        [Route("{lookupKey:LookupKey}/admin/{act}")]
         [HttpPost]
         public object DoAdminActionOnPlayerByName(
             LookupKey lookupKey,
-            AdminActions adminAction,
+            string act,
             [FromBody] AdminActionParameters actionParameters
         )
         {
+
+            AdminActions adminAction;
+            if (!Enum.TryParse<AdminActions>(act, true, out adminAction))
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid action.");
+            }
+
+
             if (lookupKey.IsInvalid)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
@@ -650,9 +658,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     break;
 
                 case AdminActions.Kill:
-                    if (client != null)
+                    if (client != null && client.Entity != null)
                     {
-                        client.Disconnect(actionParameters.Reason);
+                        client.Entity.Die();
                         PacketSender.SendGlobalMsg(Strings.Player.serverkilled.ToString(player.Name));
                         return Request.CreateMessageResponse(HttpStatusCode.OK, Strings.Commandoutput.killsuccess.ToString(player.Name));
                     }

@@ -31,6 +31,9 @@ namespace Intersect.Server.Core
 
             Parser.Register<AnnouncementCommand>();
             Parser.Register<ApiCommand>();
+            Parser.Register<ApiGrantCommand>();
+            Parser.Register<ApiRevokeCommand>();
+            Parser.Register<ApiRolesCommand>();
             Parser.Register<BanCommand>();
             Parser.Register<CpsCommand>();
             Parser.Register<ExitCommand>();

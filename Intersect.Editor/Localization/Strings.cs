@@ -1508,6 +1508,7 @@ Tick timer saved in server config.json.";
         public struct MapList
         {
             public static LocalizedString chronological = @"Order Chronologically";
+            public static LocalizedString copyid = @"Copy Id";
             public static LocalizedString delete = @"Delete";
             public static LocalizedString deleteconfirm = @"Are you sure you want to delete {00}?";
             public static LocalizedString newfolder = @"New Folder";

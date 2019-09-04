@@ -386,6 +386,30 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString apirevoked = @"{00} has had their api access revoked!";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
+            public readonly LocalizedString apirolegranted = @"{00} now has the {01} api role!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
+            public readonly LocalizedString apirolerevoked = @"{00} has had their {01} api role revoked!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
+            public readonly LocalizedString apirolenotgranted = @"Failed to assign api role {00}, api access must be enabled for {01} first!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
+            public readonly LocalizedString apirolenotfound = @"Api role {00} not found!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
+            public readonly LocalizedString apiroleprereq = @"Api role {00} could not be granted! Depends on {01} role.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
+            public readonly LocalizedString apiroles = @"Api roles for {00}:";
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString cps = @"Current CPS: {00}";
 

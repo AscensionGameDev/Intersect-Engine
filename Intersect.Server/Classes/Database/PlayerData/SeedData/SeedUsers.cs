@@ -49,7 +49,11 @@ namespace Intersect.Server.Database.PlayerData.SeedData
                             Kick = true,
                             Mute = true,
                             Api = true,
-                            ApiPersonalInformation = true
+                            ApiRoles = new ApiRoles
+                            {
+                                UserManage = true,
+                                UserQuery = true
+                            }
                         };
                     }
                     else if (n < 20)
@@ -61,7 +65,11 @@ namespace Intersect.Server.Database.PlayerData.SeedData
                             Kick = true,
                             Mute = true,
                             Api = true,
-                            ApiPersonalInformation = false
+                            ApiRoles = new ApiRoles
+                            {
+                                UserManage = true,
+                                UserQuery = true
+                            }
                         };
                     }
                     else if (n < 100)

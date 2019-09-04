@@ -130,7 +130,7 @@ namespace Intersect.Server.Database.PlayerData
                 return false;
             }
 
-            var mute = context.Mutes.SingleOrDefault(p => p.UserId == userId);
+            var mute = context.Mutes.FirstOrDefault(p => p.UserId == userId);
             if (mute == null)
             {
                 return true;

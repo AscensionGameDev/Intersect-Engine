@@ -33,6 +33,14 @@ namespace Intersect.Server.Localization
                     Description = @"the message to send"
                 };
 
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+                [NotNull]
+                public readonly LocaleArgument ApiRole = new LocaleArgument
+                {
+                    Name = @"role",
+                    Description = @"role to grant or revoke (users.query or users.manage)"
+                };
+
                 [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
                 public readonly LocaleArgument CpsOperation = new LocaleArgument
                 {
@@ -210,9 +218,35 @@ namespace Intersect.Server.Localization
             public readonly LocaleCommand Api = new LocaleCommand
             {
                 Name = @"api",
-                Description =
-                    @"Sets the api access (enabled/disabled) of a selected account. true is enabled, false is disabled",
+                Description = @"Sets the api access (enabled/disabled) of a selected account. true is enabled, false is disabled",
                 Help = @"enables or disables api access for an account"
+            };
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
+            public readonly LocaleCommand ApiGrant = new LocaleCommand
+            {
+                Name = @"apigrant",
+                Description = @"Grants extra api access roles for a user. (Options: users.query, users.manage)",
+                Help = @"enables extra api access roles for a account. (Options: users.query, users.manage)"
+            };
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
+            public readonly LocaleCommand ApiRevoke = new LocaleCommand
+            {
+                Name = @"apirevoke",
+                Description = @"Revokes extra api access roles for a account. (Options: users.query, users.manage)",
+                Help = @"revokes extra api access roles for a account. (Options: users.query, users.manage)"
+            };
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
+            public readonly LocaleCommand ApiRoles = new LocaleCommand
+            {
+                Name = @"apiroles",
+                Description = @"Lists extra api access roles assigned to a user.",
+                Help = @"lists extra api access roles for an account (Options: users.query, users.manage)"
             };
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
