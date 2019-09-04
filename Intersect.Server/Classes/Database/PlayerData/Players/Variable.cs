@@ -14,9 +14,10 @@ namespace Intersect.Server.Database.PlayerData.Players
 {
     public class Variable : IPlayerOwned
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity), JsonIgnore]
         public Guid Id { get; protected set; }
 
+        [JsonIgnore]
         public Guid PlayerId { get; protected set; }
 
         [JsonIgnore] public virtual Player Player { get; protected set; }

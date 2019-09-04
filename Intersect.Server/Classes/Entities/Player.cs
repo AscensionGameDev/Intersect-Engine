@@ -37,6 +37,9 @@ namespace Intersect.Server.Entities
         public static Player FindOnline(string charName) => OnlinePlayers.Values.FirstOrDefault(s => s.Name.ToLower().Trim() == charName.ToLower().Trim());
         public static int OnlineCount => OnlinePlayers.Count;
 
+        [JsonProperty("MaxVitals"), NotMapped]
+        public new int[] MaxVitals => GetMaxVitals();
+
         //Name, X, Y, Dir, Etc all in the base Entity Class
         public Guid ClassId { get; set; }
         public Gender Gender { get; set; }
@@ -44,7 +47,7 @@ namespace Intersect.Server.Entities
 
         public int StatPoints { get; set; }
 
-        [Column("Equipment")]
+        [Column("Equipment"), JsonIgnore]
         public string EquipmentJson
         {
             get => DatabaseUtils.SaveIntArray(Equipment, Options.EquipmentSlots.Count);
@@ -58,23 +61,23 @@ namespace Intersect.Server.Entities
         public DateTime? LastOnline { get; set; }
 
         //Bank
-        [NotNull]
+        [NotNull, JsonIgnore]
         public virtual List<BankSlot> Bank { get; set; } = new List<BankSlot>();
 
         //Friends
-        [NotNull]
+        [NotNull, JsonIgnore]
         public virtual List<Friend> Friends { get; set; } = new List<Friend>();
 
         //HotBar
-        [NotNull]
+        [NotNull, JsonIgnore]
         public virtual List<HotbarSlot> Hotbar { get; set; } = new List<HotbarSlot>();
 
         //Quests
-        [NotNull]
+        [NotNull, JsonIgnore]
         public virtual List<Quest> Quests { get; set; } = new List<Quest>();
 
         //Variables
-        [NotNull]
+        [NotNull, JsonIgnore]
         public virtual List<Variable> Variables { get; set; } = new List<Variable>();
 
         public bool ValidateLists()
@@ -102,8 +105,8 @@ namespace Intersect.Server.Entities
         //TODO: Clean all of this stuff up
         #region Temporary Values
 
-        [NotMapped] public bool InGame;
-        [NotMapped] public Guid LastMapEntered = Guid.Empty;
+        [NotMapped, JsonIgnore] public bool InGame;
+        [NotMapped, JsonIgnore] public Guid LastMapEntered = Guid.Empty;
 
         [JsonIgnore, NotMapped] public Client Client;
 
@@ -136,23 +139,23 @@ namespace Intersect.Server.Entities
 
         #region Quests
 
-        [NotMapped] public List<Guid> QuestOffers = new List<Guid>();
+        [NotMapped, JsonIgnore] public List<Guid> QuestOffers = new List<Guid>();
 
         #endregion
 
         #region Crafting
 
-        [NotMapped] public Guid CraftingTableId = Guid.Empty;
-        [NotMapped] public Guid CraftId = Guid.Empty;
-        [NotMapped] public long CraftTimer = 0;
+        [NotMapped, JsonIgnore] public Guid CraftingTableId = Guid.Empty;
+        [NotMapped, JsonIgnore] public Guid CraftId = Guid.Empty;
+        [NotMapped, JsonIgnore] public long CraftTimer = 0;
 
         #endregion
 
         #region Parties
 
-        [JsonProperty(nameof(Party))] private List<Guid> JsonPartyIds => Party.Select(partyMember => partyMember?.Id ?? Guid.Empty).ToList();
-        [JsonProperty(nameof(PartyRequester))] private Guid JsonPartyRequesterId => PartyRequester?.Id ?? Guid.Empty;
-        [JsonProperty(nameof(PartyRequests))] private Dictionary<Guid, long> JsonPartyRequests => PartyRequests.ToDictionary(pair => pair.Key?.Id ?? Guid.Empty, pair => pair.Value);
+        private List<Guid> JsonPartyIds => Party.Select(partyMember => partyMember?.Id ?? Guid.Empty).ToList();
+        private Guid JsonPartyRequesterId => PartyRequester?.Id ?? Guid.Empty;
+        private Dictionary<Guid, long> JsonPartyRequests => PartyRequests.ToDictionary(pair => pair.Key?.Id ?? Guid.Empty, pair => pair.Value);
 
         [JsonIgnore, NotMapped] public List<Player> Party = new List<Player>();
         [JsonIgnore, NotMapped] public Player PartyRequester;
@@ -162,8 +165,8 @@ namespace Intersect.Server.Entities
 
         #region Friends
 
-        [JsonProperty(nameof(FriendRequester))] private Guid JsonFriendRequesterId => FriendRequester?.Id ?? Guid.Empty;
-        [JsonProperty(nameof(FriendRequests))] private Dictionary<Guid, long> JsonFriendRequests => FriendRequests.ToDictionary(pair => pair.Key?.Id ?? Guid.Empty, pair => pair.Value);
+        private Guid JsonFriendRequesterId => FriendRequester?.Id ?? Guid.Empty;
+        private Dictionary<Guid, long> JsonFriendRequests => FriendRequests.ToDictionary(pair => pair.Key?.Id ?? Guid.Empty, pair => pair.Value);
 
         [JsonIgnore, NotMapped] public Player FriendRequester;
         [JsonIgnore, NotMapped] public Dictionary<Player, long> FriendRequests = new Dictionary<Player, long>();
@@ -184,11 +187,11 @@ namespace Intersect.Server.Entities
 
         #region Item Cooldowns
 
-        [NotMapped] public Dictionary<Guid, long> ItemCooldowns = new Dictionary<Guid, long>();
+        [NotMapped, JsonIgnore] public Dictionary<Guid, long> ItemCooldowns = new Dictionary<Guid, long>();
 
         #endregion
 
-        [JsonIgnore, ] public bool IsValidPlayer => !IsDisposed && Client?.Entity == this;
+        [JsonIgnore, NotMapped] public bool IsValidPlayer => !IsDisposed && Client?.Entity == this;
 
         [NotMapped]
         public long ExperienceToNextLevel => GetExperienceToNextLevel(Level);
@@ -3779,17 +3782,22 @@ namespace Intersect.Server.Entities
                 Variables.Add(s);
             }
         }
-        private Variable GetVariable(Guid id)
+        public Variable GetVariable(Guid id, bool createIfNull = false)
         {
             foreach (var v in Variables)
             {
                 if (v.VariableId == id) return v;
+            }
+            if (createIfNull)
+            {
+                return CreateVariable(id);
             }
             return null;
         }
 
         private Variable CreateVariable(Guid id)
         {
+            if (PlayerVariableBase.Get(id) == null) return null;
             var variable = new Variable(id);
             Variables.Add(variable);
             return variable;

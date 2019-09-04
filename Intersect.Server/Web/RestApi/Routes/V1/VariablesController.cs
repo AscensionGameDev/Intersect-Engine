@@ -1,5 +1,6 @@
 ﻿using Intersect.Server.Database.GameData;
 using Intersect.Server.Web.RestApi.Attributes;
+using Intersect.Server.Web.RestApi.Payloads;
 using System;
 using System.Linq;
 using System.Net;
@@ -15,19 +16,19 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
     {
 
         [Route("global")]
-        [HttpGet]
-        public object GlobalVariablesGet(int page = 0, int count = 10)
+        [HttpPost]
+        public object GlobalVariablesGet([FromBody] PagingInfo pageInfo)
         {
-            page = Math.Max(page, 0);
-            count = Math.Max(Math.Min(count, 100), 5);
+            pageInfo.Page = Math.Max(pageInfo.Page, 0);
+            pageInfo.Count = Math.Max(Math.Min(pageInfo.Count, 100), 5);
 
             using (var context = GameContext.Temporary)
             {
-                var entries = GameContext.Queries.ServerVariables(context, page, count)?.ToList();
+                var entries = GameContext.Queries.ServerVariables(context, pageInfo.Page, pageInfo.Count)?.ToList();
                 return new
                 {
                     total = context.ServerVariables?.Count() ?? 0,
-                    page,
+                    pageInfo.Page,
                     count = entries?.Count ?? 0,
                     entries
                 };
@@ -75,7 +76,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
         [Route("global/{guid:guid}")]
         [HttpPost]
-        public object GlobalVariableSet(Guid guid, [FromBody] dynamic value)
+        public object GlobalVariableSet(Guid guid, [FromBody] VariableValue value)
         {
             if (Guid.Empty == guid)
             {
@@ -91,7 +92,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No global variable with id '{guid}'.");
                 }
 
-                variable.Value.Value = value;
+                variable.Value.Value = value.Value;
 
                 return variable;
             }

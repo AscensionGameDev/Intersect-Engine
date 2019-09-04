@@ -49,7 +49,7 @@ namespace Intersect.Server.Database.PlayerData.SeedData
                             Kick = true,
                             Mute = true,
                             Api = true,
-                            PersonalInformation = true
+                            ApiPersonalInformation = true
                         };
                     }
                     else if (n < 20)
@@ -61,7 +61,7 @@ namespace Intersect.Server.Database.PlayerData.SeedData
                             Kick = true,
                             Mute = true,
                             Api = true,
-                            PersonalInformation = false
+                            ApiPersonalInformation = false
                         };
                     }
                     else if (n < 100)

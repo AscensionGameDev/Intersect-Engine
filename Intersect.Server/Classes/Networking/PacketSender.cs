@@ -798,6 +798,7 @@ namespace Intersect.Server.Networking
         //InventoryPacket
         public static void SendInventory(Client client)
         {
+            if (client == null) return;
             var invItems = new InventoryUpdatePacket[Options.MaxInvItems];
             for (var i = 0; i < Options.MaxInvItems; i++)
             {
@@ -809,12 +810,14 @@ namespace Intersect.Server.Networking
         //InventoryUpdatePacket
         public static void SendInventoryItemUpdate(Client client, int slot)
         {
+            if (client == null) return;
             client.SendPacket(new InventoryUpdatePacket(slot, client.Entity.Items[slot].ItemId, client.Entity.Items[slot].Quantity, client.Entity.Items[slot].BagId, client.Entity.Items[slot].StatBuffs));
         }
 
         //SpellsPacket
         public static void SendPlayerSpells(Client client)
         {
+            if (client == null) return;
             var spells = new SpellUpdatePacket[Options.MaxPlayerSkills];
             for (var i = 0; i < Options.MaxPlayerSkills; i++)
             {
@@ -826,6 +829,7 @@ namespace Intersect.Server.Networking
         //SpellUpdatePacket
         public static void SendPlayerSpellUpdate(Client client, int slot)
         {
+            if (client == null) return;
             client.SendPacket(new SpellUpdatePacket(slot, client.Entity.Spells[slot].SpellId));
         }
 

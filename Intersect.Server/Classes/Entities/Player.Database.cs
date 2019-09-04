@@ -130,6 +130,14 @@ namespace Intersect.Server.Entities
                         .OrderBy(player => player.Id.ToString())
                         .Skip(page * count)
                         .Take(count)
+                        .Include(p => p.Bank)
+                        .Include(p => p.Friends)
+                        .ThenInclude(p => p.Target)
+                        .Include(p => p.Hotbar)
+                        .Include(p => p.Quests)
+                        .Include(p => p.Variables)
+                        .Include(p => p.Items)
+                        .Include(p => p.Spells)
             ) ??
             throw new InvalidOperationException();
 

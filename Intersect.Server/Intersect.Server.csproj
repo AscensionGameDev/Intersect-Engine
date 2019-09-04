@@ -602,7 +602,13 @@
     <Compile Include="Web\RestApi\Logging\IntersectLogger.cs" />
     <Compile Include="Web\RestApi\Logging\IntersectLoggerFactory.cs" />
     <Compile Include="Web\RestApi\MediaTypeFormatterExtensions.cs" />
+    <Compile Include="Web\RestApi\Payloads\AdminChange.cs" />
     <Compile Include="Web\RestApi\Payloads\AuthorizedChange.cs" />
+    <Compile Include="Web\RestApi\Payloads\ItemInfo.cs" />
+    <Compile Include="Web\RestApi\Payloads\PagingInfo.cs" />
+    <Compile Include="Web\RestApi\Payloads\PasswordValidation.cs" />
+    <Compile Include="Web\RestApi\Payloads\SpellInfo.cs" />
+    <Compile Include="Web\RestApi\Payloads\VariableValue.cs" />
     <Compile Include="Web\RestApi\RestApi.cs" />
     <Compile Include="Migrations\Game\20180905042857_Initial.cs" />
     <Compile Include="Migrations\Game\20180905042857_Initial.Designer.cs">

@@ -9,9 +9,9 @@ namespace Intersect.Server.Database.PlayerData.Players
 {
     public class BagSlot : Item, ISlot
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity), JsonIgnore]
         public Guid Id { get; private set; }
-        public Guid ParentBagId { get; private set; }
+        [JsonIgnore] public Guid ParentBagId { get; private set; }
         [JsonIgnore] public virtual Bag ParentBag { get; private set; }
         public int Slot { get; private set; }
 

@@ -17,8 +17,6 @@ using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 
-using WebSocketSharp;
-
 namespace Intersect.Server.EventProcessing
 {
     public static class CommandProcessing

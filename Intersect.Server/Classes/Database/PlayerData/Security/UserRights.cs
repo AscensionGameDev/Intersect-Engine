@@ -32,7 +32,9 @@ namespace Intersect.Server.Database.PlayerData.Security
 
         public bool Api { get; set; }
 
-        public bool PersonalInformation { get; set; }
+        public bool ApiPersonalInformation { get; set; }
+
+        public bool ApiUserManagement { get; set; }
 
         [JsonIgnore]
         public bool IsModerator => Ban || Mute || Kick;

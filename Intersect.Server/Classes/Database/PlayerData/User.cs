@@ -36,6 +36,7 @@ namespace Intersect.Server.Database.PlayerData
         public string Email { get; set; }
 
         [Column("Power")]
+        [JsonIgnore]
         public string PowerJson
         {
             get => JsonConvert.SerializeObject(Power);
@@ -45,12 +46,15 @@ namespace Intersect.Server.Database.PlayerData
         [NotMapped]
         public UserRights Power { get; set; }
 
+        [JsonIgnore]
         public virtual List<Player> Players { get; set; } = new List<Player>();
 
+        [JsonIgnore]
         public virtual List<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 
         public string PasswordResetCode { get; set; }
 
+        [JsonIgnore]
         public DateTime? PasswordResetTime { get; set; }
 
         #region Instance Variables

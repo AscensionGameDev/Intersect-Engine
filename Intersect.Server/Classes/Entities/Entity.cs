@@ -26,7 +26,7 @@ namespace Intersect.Server.Entities
 
     public partial class EntityInstance : IDisposable
     {
-        [Column(Order = 1)]
+        [Column(Order = 1), JsonProperty(Order = -2)]
         public string Name { get; set; }
         public Guid MapId { get; set; }
 
@@ -74,14 +74,14 @@ namespace Intersect.Server.Entities
         public int[] StatPointAllocations { get; set; } = new int[(int)Enums.Stats.StatCount];
 
         //Inventory
-        [NotNull]
+        [NotNull, JsonIgnore]
         public virtual List<InventorySlot> Items { get; set; } = new List<InventorySlot>();
 
         //Spells
-        [NotNull]
+        [NotNull, JsonIgnore]
         public virtual List<SpellSlot> Spells { get; set; } = new List<SpellSlot>();
 
-        [NotMapped]
+        [NotMapped, JsonIgnore]
         public EntityStat[] Stat = new EntityStat[(int)Stats.StatCount];
 
         [JsonIgnore, Column("NameColor")]
@@ -102,33 +102,33 @@ namespace Intersect.Server.Entities
         [NotMapped] public bool Dead { get; set; }
 
         //Combat
-        [NotMapped] public long CastTime { get; set; }
-        [NotMapped] public long AttackTimer { get; set; }
-        [NotMapped] public bool Blocking { get; set; }
-        [NotMapped] public EntityInstance CastTarget { get; set; }
-        [NotMapped] public Guid CollisionIndex { get; set; }
-        [NotMapped] public long CombatTimer { get; set; }
+        [NotMapped, JsonIgnore] public long CastTime { get; set; }
+        [NotMapped, JsonIgnore] public long AttackTimer { get; set; }
+        [NotMapped, JsonIgnore] public bool Blocking { get; set; }
+        [NotMapped, JsonIgnore] public EntityInstance CastTarget { get; set; }
+        [NotMapped, JsonIgnore] public Guid CollisionIndex { get; set; }
+        [NotMapped, JsonIgnore] public long CombatTimer { get; set; }
 
         //Visuals
-        [NotMapped] public bool HideName { get; set; }
-        [NotMapped] public bool HideEntity { get; set; } = false;
-        [NotMapped] public List<Guid> Animations { get; set; } = new List<Guid>();
+        [NotMapped, JsonIgnore] public bool HideName { get; set; }
+        [NotMapped, JsonIgnore] public bool HideEntity { get; set; } = false;
+        [NotMapped, JsonIgnore] public List<Guid> Animations { get; set; } = new List<Guid>();
 
         //DoT/HoT Spells
-        [NotMapped] public List<DoTInstance> DoT { get; set; } = new List<DoTInstance>();
-        [NotMapped] public EventMoveRoute MoveRoute { get; set; } = null;
-        [NotMapped] public EventPageInstance MoveRouteSetter { get; set; } = null;
-        [NotMapped] public long MoveTimer { get; set; }
-        [NotMapped] public bool Passable { get; set; } = false;
-        [NotMapped] public long RegenTimer { get; set; } = Globals.Timing.TimeMs;
-        [NotMapped] public int SpellCastSlot { get; set; } = 0;
+        [NotMapped, JsonIgnore] public List<DoTInstance> DoT { get; set; } = new List<DoTInstance>();
+        [NotMapped, JsonIgnore] public EventMoveRoute MoveRoute { get; set; } = null;
+        [NotMapped, JsonIgnore] public EventPageInstance MoveRouteSetter { get; set; } = null;
+        [NotMapped, JsonIgnore] public long MoveTimer { get; set; }
+        [NotMapped, JsonIgnore] public bool Passable { get; set; } = false;
+        [NotMapped, JsonIgnore] public long RegenTimer { get; set; } = Globals.Timing.TimeMs;
+        [NotMapped, JsonIgnore] public int SpellCastSlot { get; set; } = 0;
 
         //Status effects
-        [NotMapped] public Dictionary<SpellBase, StatusInstance> Statuses = new Dictionary<SpellBase, StatusInstance>();
+        [NotMapped, JsonIgnore] public Dictionary<SpellBase, StatusInstance> Statuses = new Dictionary<SpellBase, StatusInstance>();
 
-        [NotMapped] public EntityInstance Target = null;
+        [NotMapped, JsonIgnore] public EntityInstance Target = null;
 
-        [NotMapped] public bool IsDisposed { get; protected set; }
+        [NotMapped, JsonIgnore] public bool IsDisposed { get; protected set; }
 
         public EntityInstance() : this(Guid.NewGuid())
         {

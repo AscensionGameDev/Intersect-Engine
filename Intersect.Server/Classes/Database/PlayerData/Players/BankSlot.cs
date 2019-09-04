@@ -10,9 +10,9 @@ namespace Intersect.Server.Database.PlayerData.Players
 {
     public class BankSlot : Item, ISlot, IPlayerOwned
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity), JsonIgnore]
         public Guid Id { get; private set; }
-        public Guid PlayerId { get; private set; }
+        [JsonIgnore] public Guid PlayerId { get; private set; }
 
         [JsonIgnore]
         public virtual Player Player { get; private set; }

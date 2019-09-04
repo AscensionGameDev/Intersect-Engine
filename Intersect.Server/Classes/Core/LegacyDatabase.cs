@@ -346,8 +346,13 @@ namespace Intersect.Server
         //Bags
         public static Bag GetBag(Item item)
         {
-            if (item.BagId == null) return null;
-            return Bag.GetBag(PlayerContext,(Guid)item.BagId);
+            return GetBag(item.BagId);
+        }
+
+        public static Bag GetBag(Guid? id)
+        {
+            if (id == null) return null;
+            return Bag.GetBag(PlayerContext, (Guid)id);
         }
 
         public static bool BagEmpty([NotNull] Bag bag)
