@@ -252,7 +252,7 @@ namespace Intersect.Server
 
         public static long RegisteredPlayers => PlayerContext.Users.Count();
 
-        public static void CreateAccount([NotNull] Client client, [NotNull] string username, [NotNull] string password, [NotNull] string email)
+        public static void CreateAccount(Client client, [NotNull] string username, [NotNull] string password, [NotNull] string email)
         {
             var sha = new SHA256Managed();
 
@@ -280,7 +280,7 @@ namespace Intersect.Server
                 Power = rights,
             };
             PlayerContext.Users.Add(user);
-            client.SetUser(user);
+            client?.SetUser(user);
             SavePlayerDatabaseAsync();
         }
 

@@ -608,6 +608,7 @@
     <Compile Include="Web\RestApi\Payloads\PagingInfo.cs" />
     <Compile Include="Web\RestApi\Payloads\PasswordValidation.cs" />
     <Compile Include="Web\RestApi\Payloads\SpellInfo.cs" />
+    <Compile Include="Web\RestApi\Payloads\UserInfo.cs" />
     <Compile Include="Web\RestApi\Payloads\VariableValue.cs" />
     <Compile Include="Web\RestApi\RestApi.cs" />
     <Compile Include="Migrations\Game\20180905042857_Initial.cs" />

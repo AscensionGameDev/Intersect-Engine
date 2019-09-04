@@ -77,6 +77,47 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
         }
 
+        [Route("register")]
+        [HttpPost]
+        public object RegisterUser([FromBody] UserInfo user)
+        {
+            if (string.IsNullOrEmpty(user.Username) || string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.Password))
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Username, Email, and Password all must be provided, and not null/empty.");
+            }
+
+            if (!FieldChecking.IsWellformedEmailAddress(user.Email, Strings.Regex.email))
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Malformed email address '{user.Email}'.");
+            }
+
+            if (!FieldChecking.IsValidUsername(user.Username, Strings.Regex.username))
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid username '{user.Username}'.");
+            }
+
+            if (LegacyDatabase.AccountExists(user.Username))
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Account already exists with username '{user.Username}'.");
+            }
+            else
+            {
+                if (LegacyDatabase.EmailInUse(user.Email))
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Account already with email '{user.Email}'.");
+                }
+                else
+                {
+                    LegacyDatabase.CreateAccount(null, user.Username, user.Password, user.Email);
+                    return new
+                    {
+                        Username = user.Username,
+                        Email = user.Email,
+                    };
+                }
+            }
+        }
+
         #region "Change Email"
         [Route("{userName}/manage/email/change")]
         [ConfigurableAuthorize(Roles = nameof(UserRights.ApiUserManagement))]
@@ -326,6 +367,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with name '{userName}'.");
                 }
 
+                if (!user.TrySetPassword(authorizedChange.New))
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.Forbidden, @"Failed to update password.");
+                }
+
                 LegacyDatabase.SavePlayerDatabaseAsync();
                 return "Password updated.";
 
@@ -349,6 +395,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 if (user == null)
                 {
                     return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with name '{userId}'.");
+                }
+
+                if (!user.TrySetPassword(authorizedChange.New))
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.Forbidden, @"Failed to update password.");
                 }
 
                 LegacyDatabase.SavePlayerDatabaseAsync();
