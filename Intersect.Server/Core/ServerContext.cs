@@ -58,7 +58,7 @@ namespace Intersect.Server.Core
 
             ServerConsole = new ServerConsole();
             ServerLogic = new ServerLogic();
-            RestApi = new RestApi();
+            RestApi = new RestApi(startupOptions.ApiPort);
 
             Network = CreateNetwork();
         }
@@ -72,7 +72,7 @@ namespace Intersect.Server.Core
 
             #region Apply CLI Options
 
-            Options.ServerPort = StartupOptions.ValidPort(Options.ServerPort);
+            //Options.ServerPort = StartupOptions.ValidPort(Options.ServerPort);
 
             #endregion
 
@@ -102,9 +102,15 @@ namespace Intersect.Server.Core
 
         private void InternalStartNetworking()
         {
+            Console.WriteLine();
+
             if (!Network.Listen())
             {
                 Log.Error("An error occurred while attempting to connect.");
+            }
+            else
+            {
+                Console.WriteLine(Strings.Intro.started.ToString(Options.ServerPort));
             }
 
 #if WEBSOCKETS
@@ -112,12 +118,15 @@ namespace Intersect.Server.Core
             Log.Pretty.Info(Strings.Intro.websocketstarted.ToString(Options.ServerPort));
             Console.WriteLine();
 #endif
+
             RestApi.Start();
 
             if (!Options.UPnP || Options.NoPunchthrough)
             {
                 return;
             }
+
+            Console.WriteLine();
 
             UpnP.ConnectNatDevice().Wait(5000);
 #if WEBSOCKETS

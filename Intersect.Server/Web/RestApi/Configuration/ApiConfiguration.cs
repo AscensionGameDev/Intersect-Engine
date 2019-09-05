@@ -35,17 +35,17 @@ namespace Intersect.Server.Web.RestApi.Configuration
         [JsonIgnore] private ImmutableArray<string> mHosts;
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        [DefaultValue(new[] {"http://localhost:5401"})]
+        [DefaultValue(new[] {"http://localhost:5400"})]
         public ImmutableArray<string> Hosts
         {
             get => mHosts;
-            set => mHosts = value.IsDefaultOrEmpty ? ImmutableArray.Create(new[] {"http://localhost:5401"}) : value;
+            set => mHosts = value.IsDefaultOrEmpty ? ImmutableArray.Create(new[] {"http://localhost:5400"}) : value;
         }
 
         [JsonIgnore]
         public ImmutableArray<int> Ports
         {
-            get => Hosts.Select(host => new Uri(host ?? "http://localhost:5401").Port).ToImmutableArray();
+            get => Hosts.Select(host => new Uri(host ?? "http://localhost:5400").Port).ToImmutableArray();
             set => Hosts = ImmutableArray.Create(value.Select(port => $@"http://localhost:{port}")?.ToArray());
         }
 
@@ -101,7 +101,7 @@ namespace Intersect.Server.Web.RestApi.Configuration
 
             Enabled = false;
             DebugMode = false;
-            Hosts = ImmutableArray.Create(new[] { "http://localhost:5401" });
+            Hosts = ImmutableArray.Create(new[] { "http://localhost:5400" });
             Cors = ImmutableArray.Create<CorsConfiguration>();
             RefreshTokenLifetime = DefaultRefreshTokenLifetime;
         }

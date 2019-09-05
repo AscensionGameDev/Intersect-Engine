@@ -13,7 +13,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyDescription("2D ORPG Client - Part of the Intersect Game Creation Suite")]
 [assembly: AssemblyCompany("Ascension Game Development")]
-[assembly: AssemblyCopyright("Copyright ©  2018 Ascension Game Dev")]
+[assembly: AssemblyCopyright("Copyright ©  2019 Ascension Game Dev")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

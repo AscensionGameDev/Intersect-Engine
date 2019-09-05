@@ -42,13 +42,19 @@ namespace Intersect.Server.Web.RestApi
         [NotNull]
         private AuthenticationProvider AuthenticationProvider { get; }
 
-        public RestApi()
+        public RestApi(ushort apiPort)
         {
             StartOptions = new StartOptions();
 
             Configuration = ApiConfiguration.Create();
 
             Configuration.Hosts.ToList().ForEach(host => StartOptions.Urls?.Add(host));
+
+            if (apiPort > 0)
+            {
+                StartOptions.Urls.Clear();
+                StartOptions.Urls.Add("http://*:" + apiPort + "/");
+            }
 
             AuthenticationProvider = new OAuthProvider(Configuration);
         }
@@ -60,8 +66,16 @@ namespace Intersect.Server.Web.RestApi
                 return;
             }
 
-            Configuration.Hosts.ToList().ForEach(host => Log.Pretty.Info(Strings.Intro.api.ToString(host)));
-            mWebAppHandle = WebApp.Start(StartOptions, Configure);
+            try
+            {
+                mWebAppHandle = WebApp.Start(StartOptions, Configure);
+                StartOptions.Urls.ToList().ForEach(host => Console.WriteLine(Strings.Intro.api.ToString(host)));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(Strings.Intro.apifailed);
+                Log.Error(Strings.Intro.apifailed + Environment.NewLine + ex.ToString());
+            }
         }
 
         public void Configure(IAppBuilder appBuilder)
