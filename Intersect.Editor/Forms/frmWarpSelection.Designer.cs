@@ -34,16 +34,16 @@ namespace Intersect.Editor.Forms
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmWarpSelection));
             this.grpEverything = new DarkUI.Controls.DarkGroupBox();
+            this.btnRefreshPreview = new System.Windows.Forms.Button();
             this.grpMapPreview = new DarkUI.Controls.DarkGroupBox();
             this.pnlMapContainer = new System.Windows.Forms.Panel();
             this.pnlMap = new System.Windows.Forms.Panel();
             this.grpMapList = new DarkUI.Controls.DarkGroupBox();
             this.chkChronological = new DarkUI.Controls.DarkCheckBox();
-            this.mapTreeList1 = new MapTreeList();
+            this.mapTreeList1 = new Intersect.Editor.Forms.Controls.MapTreeList();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnOk = new DarkUI.Controls.DarkButton();
             this.tmrMapCheck = new System.Windows.Forms.Timer(this.components);
-            this.btnRefreshPreview = new System.Windows.Forms.Button();
             this.grpEverything.SuspendLayout();
             this.grpMapPreview.SuspendLayout();
             this.pnlMapContainer.SuspendLayout();
@@ -68,6 +68,21 @@ namespace Intersect.Editor.Forms
             this.grpEverything.Size = new System.Drawing.Size(783, 604);
             this.grpEverything.TabIndex = 1;
             this.grpEverything.TabStop = false;
+            // 
+            // btnRefreshPreview
+            // 
+            this.btnRefreshPreview.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnRefreshPreview.BackgroundImage")));
+            this.btnRefreshPreview.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.btnRefreshPreview.Enabled = false;
+            this.btnRefreshPreview.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
+            this.btnRefreshPreview.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnRefreshPreview.ForeColor = System.Drawing.Color.Transparent;
+            this.btnRefreshPreview.Location = new System.Drawing.Point(753, 2);
+            this.btnRefreshPreview.Name = "btnRefreshPreview";
+            this.btnRefreshPreview.Size = new System.Drawing.Size(24, 24);
+            this.btnRefreshPreview.TabIndex = 8;
+            this.btnRefreshPreview.UseVisualStyleBackColor = true;
+            this.btnRefreshPreview.Click += new System.EventHandler(this.btnRefreshPreview_Click);
             // 
             // grpMapPreview
             // 
@@ -165,22 +180,7 @@ namespace Intersect.Editor.Forms
             // 
             this.tmrMapCheck.Tick += new System.EventHandler(this.tmrMapCheck_Tick);
             // 
-            // btnRefreshPreview
-            // 
-            this.btnRefreshPreview.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnRefreshPreview.BackgroundImage")));
-            this.btnRefreshPreview.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.btnRefreshPreview.Enabled = false;
-            this.btnRefreshPreview.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
-            this.btnRefreshPreview.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnRefreshPreview.ForeColor = System.Drawing.Color.Transparent;
-            this.btnRefreshPreview.Location = new System.Drawing.Point(753, 2);
-            this.btnRefreshPreview.Name = "btnRefreshPreview";
-            this.btnRefreshPreview.Size = new System.Drawing.Size(24, 24);
-            this.btnRefreshPreview.TabIndex = 8;
-            this.btnRefreshPreview.UseVisualStyleBackColor = true;
-            this.btnRefreshPreview.Click += new System.EventHandler(this.btnRefreshPreview_Click);
-            // 
-            // frmWarpSelection
+            // FrmWarpSelection
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;

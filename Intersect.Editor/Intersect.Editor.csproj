@@ -471,12 +471,6 @@
     <Compile Include="Forms\frmAbout.Designer.cs">
       <DependentUpon>frmAbout.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\frmLoadingContent.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\frmLoadingContent.Designer.cs">
-      <DependentUpon>frmLoadingContent.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\frmLogin.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -781,9 +775,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\frmAbout.resx">
       <DependentUpon>frmAbout.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmLoadingContent.resx">
-      <DependentUpon>frmLoadingContent.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\frmLogin.resx">
       <DependentUpon>frmLogin.cs</DependentUpon>

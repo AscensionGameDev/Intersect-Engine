@@ -1407,7 +1407,6 @@ Tick timer saved in server config.json.";
             public static LocalizedString currentonly = @"Current Layer Only";
             public static LocalizedString cut = @"Cut";
             public static LocalizedString darkness = @"Darkness";
-            public static LocalizedString donate = @"Buy the devs a coffee :)";
             public static LocalizedString droppler = @"Droppler Tool";
             public static LocalizedString edit = @"Edit";
             public static LocalizedString editors = @"Game Editors";

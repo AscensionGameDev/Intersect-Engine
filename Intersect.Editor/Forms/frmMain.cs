@@ -98,8 +98,7 @@ namespace Intersect.Editor.Forms
             Globals.MapLayersWindow.InitMapLayers();
             Globals.MapGridWindowNew.InitGridWindow();
             UpdateTimeSimulationList();
-
-            toolStripButtonDonate.Size = new Size(54, 25);
+            
             WindowState = FormWindowState.Maximized;
         }
 
@@ -169,7 +168,6 @@ namespace Intersect.Editor.Forms
             reportBugToolStripMenuItem.Text = Strings.MainForm.reportbug;
             toolStripButtonBug.Text = Strings.MainForm.reportbug;
             aboutToolStripMenuItem.Text = Strings.MainForm.about;
-            toolStripButtonDonate.Text = Strings.MainForm.donate;
 
             toolStripBtnPen.Text = Strings.MainForm.pen;
             toolStripBtnSelect.Text = Strings.MainForm.selection;
@@ -1219,11 +1217,6 @@ namespace Intersect.Editor.Forms
                 };
                 var process = Process.Start(processStartInfo);
             }
-        }
-
-        private void toolStripButtonDonate_Click(object sender, EventArgs e)
-        {
-            Process.Start("https://www.freemmorpgmaker.com/donate.php");
         }
 
         private void toolStripButtonQuestion_Click(object sender, EventArgs e)

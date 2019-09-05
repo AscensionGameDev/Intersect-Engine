@@ -67,8 +67,6 @@ namespace Intersect.Editor.Forms
             this.toolStripBtnScreenshot = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripBtnRun = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButtonDonate = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonBug = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripBtnFlipVertical = new System.Windows.Forms.ToolStripButton();
@@ -437,33 +435,6 @@ namespace Intersect.Editor.Forms
             this.toolStripBtnRun.Text = "Run Client";
             this.toolStripBtnRun.Click += new System.EventHandler(this.toolStripBtnRun_Click);
             // 
-            // toolStripButtonDonate
-            // 
-            this.toolStripButtonDonate.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripButtonDonate.AutoSize = false;
-            this.toolStripButtonDonate.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("toolStripButtonDonate.BackgroundImage")));
-            this.toolStripButtonDonate.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.toolStripButtonDonate.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButtonDonate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.toolStripButtonDonate.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonDonate.Image")));
-            this.toolStripButtonDonate.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.toolStripButtonDonate.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.toolStripButtonDonate.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButtonDonate.Margin = new System.Windows.Forms.Padding(0);
-            this.toolStripButtonDonate.Name = "toolStripButtonDonate";
-            this.toolStripButtonDonate.Size = new System.Drawing.Size(24, 24);
-            this.toolStripButtonDonate.Text = "Buy the Devs a Coffee :D";
-            this.toolStripButtonDonate.TextImageRelation = System.Windows.Forms.TextImageRelation.Overlay;
-            this.toolStripButtonDonate.Click += new System.EventHandler(this.toolStripButtonDonate_Click);
-            // 
-            // toolStripSeparator12
-            // 
-            this.toolStripSeparator12.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.toolStripSeparator12.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.toolStripSeparator12.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
-            this.toolStripSeparator12.Name = "toolStripSeparator12";
-            this.toolStripSeparator12.Size = new System.Drawing.Size(6, 25);
-            // 
             // toolStripButtonBug
             // 
             this.toolStripButtonBug.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
@@ -560,8 +531,6 @@ namespace Intersect.Editor.Forms
             this.toolStripBtnScreenshot,
             this.toolStripSeparator10,
             this.toolStripBtnRun,
-            this.toolStripButtonDonate,
-            this.toolStripSeparator12,
             this.toolStripButtonBug,
             this.toolStripSeparator11,
             this.toolStripButtonQuestion});
@@ -1080,8 +1049,6 @@ namespace Intersect.Editor.Forms
 		private ToolStripButton toolStripBtnScreenshot;
 		private ToolStripSeparator toolStripSeparator10;
 		private ToolStripButton toolStripBtnRun;
-		private ToolStripButton toolStripButtonDonate;
-		private ToolStripSeparator toolStripSeparator12;
 		private ToolStripButton toolStripButtonBug;
 		private ToolStripSeparator toolStripSeparator11;
 		private ToolStripButton toolStripButtonQuestion;

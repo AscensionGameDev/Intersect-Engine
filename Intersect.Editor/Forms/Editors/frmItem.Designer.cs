@@ -81,6 +81,21 @@ namespace Intersect.Editor.Forms.Editors
             this.lblEquipmentAnimation = new System.Windows.Forms.Label();
             this.nudEffectPercent = new DarkUI.Controls.DarkNumericUpDown();
             this.grpStatBonuses = new DarkUI.Controls.DarkGroupBox();
+            this.lblPercentage5 = new System.Windows.Forms.Label();
+            this.lblPercentage4 = new System.Windows.Forms.Label();
+            this.lblPercentage8 = new System.Windows.Forms.Label();
+            this.lblPercentage7 = new System.Windows.Forms.Label();
+            this.lblPercentage6 = new System.Windows.Forms.Label();
+            this.nudSpdPercentage = new DarkUI.Controls.DarkNumericUpDown();
+            this.nudMRPercentage = new DarkUI.Controls.DarkNumericUpDown();
+            this.nudDefPercentage = new DarkUI.Controls.DarkNumericUpDown();
+            this.nudMagPercentage = new DarkUI.Controls.DarkNumericUpDown();
+            this.nudStrPercentage = new DarkUI.Controls.DarkNumericUpDown();
+            this.lblPlus5 = new System.Windows.Forms.Label();
+            this.lblPlus4 = new System.Windows.Forms.Label();
+            this.lblPlus8 = new System.Windows.Forms.Label();
+            this.lblPlus7 = new System.Windows.Forms.Label();
+            this.lblPlus6 = new System.Windows.Forms.Label();
             this.nudRange = new DarkUI.Controls.DarkNumericUpDown();
             this.nudSpd = new DarkUI.Controls.DarkNumericUpDown();
             this.nudMR = new DarkUI.Controls.DarkNumericUpDown();
@@ -159,21 +174,6 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
-            this.lblPercentage5 = new System.Windows.Forms.Label();
-            this.lblPercentage4 = new System.Windows.Forms.Label();
-            this.lblPercentage8 = new System.Windows.Forms.Label();
-            this.lblPercentage7 = new System.Windows.Forms.Label();
-            this.lblPercentage6 = new System.Windows.Forms.Label();
-            this.nudSpdPercentage = new DarkUI.Controls.DarkNumericUpDown();
-            this.nudMRPercentage = new DarkUI.Controls.DarkNumericUpDown();
-            this.nudDefPercentage = new DarkUI.Controls.DarkNumericUpDown();
-            this.nudMagPercentage = new DarkUI.Controls.DarkNumericUpDown();
-            this.nudStrPercentage = new DarkUI.Controls.DarkNumericUpDown();
-            this.lblPlus5 = new System.Windows.Forms.Label();
-            this.lblPlus4 = new System.Windows.Forms.Label();
-            this.lblPlus8 = new System.Windows.Forms.Label();
-            this.lblPlus7 = new System.Windows.Forms.Label();
-            this.lblPlus6 = new System.Windows.Forms.Label();
             this.grpItems.SuspendLayout();
             this.grpGeneral.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudCooldown)).BeginInit();
@@ -187,6 +187,11 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudHealthBonus)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudEffectPercent)).BeginInit();
             this.grpStatBonuses.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudSpdPercentage)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMRPercentage)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDefPercentage)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMagPercentage)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudStrPercentage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRange)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudSpd)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMR)).BeginInit();
@@ -211,11 +216,6 @@ namespace Intersect.Editor.Forms.Editors
             this.grpBags.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudBag)).BeginInit();
             this.toolStrip.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudSpdPercentage)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudMRPercentage)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudDefPercentage)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudMagPercentage)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudStrPercentage)).BeginInit();
             this.SuspendLayout();
             // 
             // grpItems
@@ -936,6 +936,181 @@ namespace Intersect.Editor.Forms.Editors
             this.grpStatBonuses.TabIndex = 40;
             this.grpStatBonuses.TabStop = false;
             this.grpStatBonuses.Text = "Stat Bonuses";
+            // 
+            // lblPercentage5
+            // 
+            this.lblPercentage5.AutoSize = true;
+            this.lblPercentage5.Location = new System.Drawing.Point(179, 180);
+            this.lblPercentage5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblPercentage5.Name = "lblPercentage5";
+            this.lblPercentage5.Size = new System.Drawing.Size(15, 13);
+            this.lblPercentage5.TabIndex = 82;
+            this.lblPercentage5.Text = "%";
+            // 
+            // lblPercentage4
+            // 
+            this.lblPercentage4.AutoSize = true;
+            this.lblPercentage4.Location = new System.Drawing.Point(179, 142);
+            this.lblPercentage4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblPercentage4.Name = "lblPercentage4";
+            this.lblPercentage4.Size = new System.Drawing.Size(15, 13);
+            this.lblPercentage4.TabIndex = 81;
+            this.lblPercentage4.Text = "%";
+            // 
+            // lblPercentage8
+            // 
+            this.lblPercentage8.AutoSize = true;
+            this.lblPercentage8.Location = new System.Drawing.Point(181, 102);
+            this.lblPercentage8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblPercentage8.Name = "lblPercentage8";
+            this.lblPercentage8.Size = new System.Drawing.Size(15, 13);
+            this.lblPercentage8.TabIndex = 80;
+            this.lblPercentage8.Text = "%";
+            // 
+            // lblPercentage7
+            // 
+            this.lblPercentage7.AutoSize = true;
+            this.lblPercentage7.Location = new System.Drawing.Point(179, 64);
+            this.lblPercentage7.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblPercentage7.Name = "lblPercentage7";
+            this.lblPercentage7.Size = new System.Drawing.Size(15, 13);
+            this.lblPercentage7.TabIndex = 79;
+            this.lblPercentage7.Text = "%";
+            // 
+            // lblPercentage6
+            // 
+            this.lblPercentage6.AutoSize = true;
+            this.lblPercentage6.Location = new System.Drawing.Point(179, 30);
+            this.lblPercentage6.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblPercentage6.Name = "lblPercentage6";
+            this.lblPercentage6.Size = new System.Drawing.Size(15, 13);
+            this.lblPercentage6.TabIndex = 78;
+            this.lblPercentage6.Text = "%";
+            // 
+            // nudSpdPercentage
+            // 
+            this.nudSpdPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudSpdPercentage.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudSpdPercentage.Location = new System.Drawing.Point(132, 178);
+            this.nudSpdPercentage.Name = "nudSpdPercentage";
+            this.nudSpdPercentage.Size = new System.Drawing.Size(43, 20);
+            this.nudSpdPercentage.TabIndex = 77;
+            this.nudSpdPercentage.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudSpdPercentage.ValueChanged += new System.EventHandler(this.nudSpdPercentage_ValueChanged);
+            // 
+            // nudMRPercentage
+            // 
+            this.nudMRPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudMRPercentage.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudMRPercentage.Location = new System.Drawing.Point(132, 140);
+            this.nudMRPercentage.Name = "nudMRPercentage";
+            this.nudMRPercentage.Size = new System.Drawing.Size(43, 20);
+            this.nudMRPercentage.TabIndex = 76;
+            this.nudMRPercentage.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudMRPercentage.ValueChanged += new System.EventHandler(this.nudMRPercentage_ValueChanged);
+            // 
+            // nudDefPercentage
+            // 
+            this.nudDefPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudDefPercentage.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudDefPercentage.Location = new System.Drawing.Point(134, 101);
+            this.nudDefPercentage.Name = "nudDefPercentage";
+            this.nudDefPercentage.Size = new System.Drawing.Size(43, 20);
+            this.nudDefPercentage.TabIndex = 75;
+            this.nudDefPercentage.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudDefPercentage.ValueChanged += new System.EventHandler(this.nudDefPercentage_ValueChanged);
+            // 
+            // nudMagPercentage
+            // 
+            this.nudMagPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudMagPercentage.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudMagPercentage.Location = new System.Drawing.Point(132, 63);
+            this.nudMagPercentage.Name = "nudMagPercentage";
+            this.nudMagPercentage.Size = new System.Drawing.Size(43, 20);
+            this.nudMagPercentage.TabIndex = 74;
+            this.nudMagPercentage.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudMagPercentage.ValueChanged += new System.EventHandler(this.nudMagPercentage_ValueChanged);
+            // 
+            // nudStrPercentage
+            // 
+            this.nudStrPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudStrPercentage.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudStrPercentage.Location = new System.Drawing.Point(132, 28);
+            this.nudStrPercentage.Name = "nudStrPercentage";
+            this.nudStrPercentage.Size = new System.Drawing.Size(43, 20);
+            this.nudStrPercentage.TabIndex = 73;
+            this.nudStrPercentage.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudStrPercentage.ValueChanged += new System.EventHandler(this.nudStrPercentage_ValueChanged);
+            // 
+            // lblPlus5
+            // 
+            this.lblPlus5.AutoSize = true;
+            this.lblPlus5.Location = new System.Drawing.Point(114, 180);
+            this.lblPlus5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblPlus5.Name = "lblPlus5";
+            this.lblPlus5.Size = new System.Drawing.Size(13, 13);
+            this.lblPlus5.TabIndex = 72;
+            this.lblPlus5.Text = "+";
+            // 
+            // lblPlus4
+            // 
+            this.lblPlus4.AutoSize = true;
+            this.lblPlus4.Location = new System.Drawing.Point(114, 142);
+            this.lblPlus4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblPlus4.Name = "lblPlus4";
+            this.lblPlus4.Size = new System.Drawing.Size(13, 13);
+            this.lblPlus4.TabIndex = 71;
+            this.lblPlus4.Text = "+";
+            // 
+            // lblPlus8
+            // 
+            this.lblPlus8.AutoSize = true;
+            this.lblPlus8.Location = new System.Drawing.Point(116, 102);
+            this.lblPlus8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblPlus8.Name = "lblPlus8";
+            this.lblPlus8.Size = new System.Drawing.Size(13, 13);
+            this.lblPlus8.TabIndex = 70;
+            this.lblPlus8.Text = "+";
+            // 
+            // lblPlus7
+            // 
+            this.lblPlus7.AutoSize = true;
+            this.lblPlus7.Location = new System.Drawing.Point(114, 64);
+            this.lblPlus7.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblPlus7.Name = "lblPlus7";
+            this.lblPlus7.Size = new System.Drawing.Size(13, 13);
+            this.lblPlus7.TabIndex = 69;
+            this.lblPlus7.Text = "+";
+            // 
+            // lblPlus6
+            // 
+            this.lblPlus6.AutoSize = true;
+            this.lblPlus6.Location = new System.Drawing.Point(114, 30);
+            this.lblPlus6.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblPlus6.Name = "lblPlus6";
+            this.lblPlus6.Size = new System.Drawing.Size(13, 13);
+            this.lblPlus6.TabIndex = 68;
+            this.lblPlus6.Text = "+";
             // 
             // nudRange
             // 
@@ -2075,181 +2250,6 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
-            // lblPercentage5
-            // 
-            this.lblPercentage5.AutoSize = true;
-            this.lblPercentage5.Location = new System.Drawing.Point(179, 180);
-            this.lblPercentage5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.lblPercentage5.Name = "lblPercentage5";
-            this.lblPercentage5.Size = new System.Drawing.Size(15, 13);
-            this.lblPercentage5.TabIndex = 82;
-            this.lblPercentage5.Text = "%";
-            // 
-            // lblPercentage4
-            // 
-            this.lblPercentage4.AutoSize = true;
-            this.lblPercentage4.Location = new System.Drawing.Point(179, 142);
-            this.lblPercentage4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.lblPercentage4.Name = "lblPercentage4";
-            this.lblPercentage4.Size = new System.Drawing.Size(15, 13);
-            this.lblPercentage4.TabIndex = 81;
-            this.lblPercentage4.Text = "%";
-            // 
-            // lblPercentage8
-            // 
-            this.lblPercentage8.AutoSize = true;
-            this.lblPercentage8.Location = new System.Drawing.Point(181, 102);
-            this.lblPercentage8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.lblPercentage8.Name = "lblPercentage8";
-            this.lblPercentage8.Size = new System.Drawing.Size(15, 13);
-            this.lblPercentage8.TabIndex = 80;
-            this.lblPercentage8.Text = "%";
-            // 
-            // lblPercentage7
-            // 
-            this.lblPercentage7.AutoSize = true;
-            this.lblPercentage7.Location = new System.Drawing.Point(179, 64);
-            this.lblPercentage7.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.lblPercentage7.Name = "lblPercentage7";
-            this.lblPercentage7.Size = new System.Drawing.Size(15, 13);
-            this.lblPercentage7.TabIndex = 79;
-            this.lblPercentage7.Text = "%";
-            // 
-            // lblPercentage6
-            // 
-            this.lblPercentage6.AutoSize = true;
-            this.lblPercentage6.Location = new System.Drawing.Point(179, 30);
-            this.lblPercentage6.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.lblPercentage6.Name = "lblPercentage6";
-            this.lblPercentage6.Size = new System.Drawing.Size(15, 13);
-            this.lblPercentage6.TabIndex = 78;
-            this.lblPercentage6.Text = "%";
-            // 
-            // nudSpdPercentage
-            // 
-            this.nudSpdPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudSpdPercentage.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudSpdPercentage.Location = new System.Drawing.Point(132, 178);
-            this.nudSpdPercentage.Name = "nudSpdPercentage";
-            this.nudSpdPercentage.Size = new System.Drawing.Size(43, 20);
-            this.nudSpdPercentage.TabIndex = 77;
-            this.nudSpdPercentage.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.nudSpdPercentage.ValueChanged += new System.EventHandler(this.nudSpdPercentage_ValueChanged);
-            // 
-            // nudMRPercentage
-            // 
-            this.nudMRPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudMRPercentage.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudMRPercentage.Location = new System.Drawing.Point(132, 140);
-            this.nudMRPercentage.Name = "nudMRPercentage";
-            this.nudMRPercentage.Size = new System.Drawing.Size(43, 20);
-            this.nudMRPercentage.TabIndex = 76;
-            this.nudMRPercentage.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.nudMRPercentage.ValueChanged += new System.EventHandler(this.nudMRPercentage_ValueChanged);
-            // 
-            // nudDefPercentage
-            // 
-            this.nudDefPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudDefPercentage.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudDefPercentage.Location = new System.Drawing.Point(134, 101);
-            this.nudDefPercentage.Name = "nudDefPercentage";
-            this.nudDefPercentage.Size = new System.Drawing.Size(43, 20);
-            this.nudDefPercentage.TabIndex = 75;
-            this.nudDefPercentage.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.nudDefPercentage.ValueChanged += new System.EventHandler(this.nudDefPercentage_ValueChanged);
-            // 
-            // nudMagPercentage
-            // 
-            this.nudMagPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudMagPercentage.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudMagPercentage.Location = new System.Drawing.Point(132, 63);
-            this.nudMagPercentage.Name = "nudMagPercentage";
-            this.nudMagPercentage.Size = new System.Drawing.Size(43, 20);
-            this.nudMagPercentage.TabIndex = 74;
-            this.nudMagPercentage.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.nudMagPercentage.ValueChanged += new System.EventHandler(this.nudMagPercentage_ValueChanged);
-            // 
-            // nudStrPercentage
-            // 
-            this.nudStrPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudStrPercentage.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudStrPercentage.Location = new System.Drawing.Point(132, 28);
-            this.nudStrPercentage.Name = "nudStrPercentage";
-            this.nudStrPercentage.Size = new System.Drawing.Size(43, 20);
-            this.nudStrPercentage.TabIndex = 73;
-            this.nudStrPercentage.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.nudStrPercentage.ValueChanged += new System.EventHandler(this.nudStrPercentage_ValueChanged);
-            // 
-            // lblPlus5
-            // 
-            this.lblPlus5.AutoSize = true;
-            this.lblPlus5.Location = new System.Drawing.Point(114, 180);
-            this.lblPlus5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.lblPlus5.Name = "lblPlus5";
-            this.lblPlus5.Size = new System.Drawing.Size(13, 13);
-            this.lblPlus5.TabIndex = 72;
-            this.lblPlus5.Text = "+";
-            // 
-            // lblPlus4
-            // 
-            this.lblPlus4.AutoSize = true;
-            this.lblPlus4.Location = new System.Drawing.Point(114, 142);
-            this.lblPlus4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.lblPlus4.Name = "lblPlus4";
-            this.lblPlus4.Size = new System.Drawing.Size(13, 13);
-            this.lblPlus4.TabIndex = 71;
-            this.lblPlus4.Text = "+";
-            // 
-            // lblPlus8
-            // 
-            this.lblPlus8.AutoSize = true;
-            this.lblPlus8.Location = new System.Drawing.Point(116, 102);
-            this.lblPlus8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.lblPlus8.Name = "lblPlus8";
-            this.lblPlus8.Size = new System.Drawing.Size(13, 13);
-            this.lblPlus8.TabIndex = 70;
-            this.lblPlus8.Text = "+";
-            // 
-            // lblPlus7
-            // 
-            this.lblPlus7.AutoSize = true;
-            this.lblPlus7.Location = new System.Drawing.Point(114, 64);
-            this.lblPlus7.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.lblPlus7.Name = "lblPlus7";
-            this.lblPlus7.Size = new System.Drawing.Size(13, 13);
-            this.lblPlus7.TabIndex = 69;
-            this.lblPlus7.Text = "+";
-            // 
-            // lblPlus6
-            // 
-            this.lblPlus6.AutoSize = true;
-            this.lblPlus6.Location = new System.Drawing.Point(114, 30);
-            this.lblPlus6.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.lblPlus6.Name = "lblPlus6";
-            this.lblPlus6.Size = new System.Drawing.Size(13, 13);
-            this.lblPlus6.TabIndex = 68;
-            this.lblPlus6.Text = "+";
-            // 
             // FrmItem
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2290,6 +2290,11 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudEffectPercent)).EndInit();
             this.grpStatBonuses.ResumeLayout(false);
             this.grpStatBonuses.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudSpdPercentage)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMRPercentage)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDefPercentage)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudMagPercentage)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudStrPercentage)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudRange)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudSpd)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMR)).EndInit();
@@ -2320,11 +2325,6 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudBag)).EndInit();
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudSpdPercentage)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudMRPercentage)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudDefPercentage)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudMagPercentage)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudStrPercentage)).EndInit();
             this.ResumeLayout(false);
 
         }
