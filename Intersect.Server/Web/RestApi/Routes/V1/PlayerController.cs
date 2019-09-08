@@ -82,9 +82,12 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
         [Route("online/count")]
         [HttpGet]
-        public int OnlineCount()
+        public object OnlineCount()
         {
-            return Globals.OnlineList?.Count ?? 0;
+            return new
+            {
+                onlineCount = Globals.OnlineList?.Count ?? 0,
+            };
         }
 
         [Route("{lookupKey:LookupKey}")]
@@ -181,7 +184,10 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 );
             }
 
-            return player.GetVariable(variableId, true).Value.Value;
+            return new
+            {
+                value = player.GetVariable(variableId, true).Value.Value,
+            };
         }
 
         [Route("{lookupKey:LookupKey}/variables/{variableId:guid}")]

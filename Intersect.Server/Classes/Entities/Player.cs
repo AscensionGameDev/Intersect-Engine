@@ -438,10 +438,6 @@ namespace Intersect.Server.Entities
                             Monitor.Exit(map.GetMapLock());
                         }
                     }
-                    lock (map.GetMapLock())
-                    {
-                        
-                    }
                 }
             }
             //Check to see if we can spawn events, if already spawned.. update them.

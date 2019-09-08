@@ -70,12 +70,10 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No global variable with id '{guid}'.");
             }
 
-            if (variable.Value.Value == null)
+            return new
             {
-                return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"null");
-            }
-
-            return variable?.Value.Value;
+                value = variable?.Value.Value,
+            };
         }
 
         [Route("global/{guid:guid}")]

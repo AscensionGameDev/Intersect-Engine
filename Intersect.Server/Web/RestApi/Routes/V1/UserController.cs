@@ -284,7 +284,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             if (user.IsPasswordValid(data.Password))
             {
-                return "Correct password.";
+                return Request.CreateMessageResponse(HttpStatusCode.OK, "Password Correct");
             }
 
             return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid credentials.");
@@ -313,7 +313,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             if (user.IsPasswordValid(data.Password))
             {
-                return "Correct password.";
+                return Request.CreateMessageResponse(HttpStatusCode.OK, "Password Correct");
             }
 
             return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid credentials.");
@@ -370,7 +370,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
 
             DbInterface.SavePlayerDatabaseAsync();
-            return "Password updated.";
+            return Request.CreateMessageResponse(HttpStatusCode.OK, "Password Updated.");
         }
 
         [Route("{userName}/password/change")]
@@ -395,7 +395,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
 
             DbInterface.SavePlayerDatabaseAsync();
-            return "Password updated.";
+            return Request.CreateMessageResponse(HttpStatusCode.OK, "Password Updated.");
         }
 
         [Route("{userId:guid}/password/change")]
@@ -440,7 +440,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 var email = new PasswordResetEmail(user);
                 email.Send();
-                return "Password reset email sent.";
+                return Request.CreateMessageResponse(HttpStatusCode.OK, "Password reset email sent.");
             }
             else
             {
@@ -463,7 +463,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 var email = new PasswordResetEmail(user);
                 email.Send();
-                return "Password reset email sent.";
+                return Request.CreateMessageResponse(HttpStatusCode.OK, "Password reset email sent.");
             }
             else
             {
