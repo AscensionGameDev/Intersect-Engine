@@ -13,5 +13,6 @@ namespace Intersect.Network.Packets.Server
         public int AccessLevel { get; set; }
         public Gender Gender { get; set; }
         public Guid ClassId { get; set; }
+        public EquipmentPacket Equipment { get; set; }
     }
 }

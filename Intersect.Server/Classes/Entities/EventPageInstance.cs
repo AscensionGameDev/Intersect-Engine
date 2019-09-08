@@ -194,7 +194,7 @@ namespace Intersect.Server.Entities
             return EntityTypes.Event;
         }
 
-        public override EntityPacket EntityPacket(EntityPacket packet = null)
+        public override EntityPacket EntityPacket(EntityPacket packet = null, Client forClient = null)
         {
             if (packet == null) packet = new EventEntityPacket();
             

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
@@ -399,36 +400,47 @@ namespace Intersect.Server.Entities
                         map = MapInstance.Get(currentMap.SurroundingMaps[i]);
                     }
                     if (map == null) continue;
-                    lock (map.GetMapLock())
+                    if (Monitor.TryEnter(map.GetMapLock(), new TimeSpan(0, 0, 0, 0, 1)))
                     {
-                        //Check to see if we can spawn events, if already spawned.. update them.
-                        lock (mEventLock)
+                        try
                         {
-                            foreach (var evtId in map.EventIds.ToArray())
+                            //Check to see if we can spawn events, if already spawned.. update them.
+                            lock (mEventLock)
                             {
-                                var mapEvent = EventBase.Get(evtId);
-                                if (mapEvent != null)
+                                foreach (var evtId in map.EventIds.ToArray())
                                 {
-                                    //Look for event
-                                    var foundEvent = EventExists(map.Id, mapEvent.SpawnX, mapEvent.SpawnY);
-                                    if (foundEvent == null)
+                                    var mapEvent = EventBase.Get(evtId);
+                                    if (mapEvent != null)
                                     {
-                                        var tmpEvent = new EventInstance(Guid.NewGuid(), map.Id, Client, mapEvent)
+                                        //Look for event
+                                        var foundEvent = EventExists(map.Id, mapEvent.SpawnX, mapEvent.SpawnY);
+                                        if (foundEvent == null)
                                         {
-                                            Global = mapEvent.Global,
-                                            MapId = map.Id,
-                                            SpawnX = mapEvent.SpawnX,
-                                            SpawnY = mapEvent.SpawnY
-                                        };
-                                        EventLookup.AddOrUpdate(tmpEvent.Id, tmpEvent, (key, oldValue) => tmpEvent);
-                                    }
-                                    else
-                                    {
-                                        foundEvent.Update(timeMs);
+                                            var tmpEvent = new EventInstance(Guid.NewGuid(), map.Id, Client, mapEvent)
+                                            {
+                                                Global = mapEvent.Global,
+                                                MapId = map.Id,
+                                                SpawnX = mapEvent.SpawnX,
+                                                SpawnY = mapEvent.SpawnY
+                                            };
+                                            EventLookup.AddOrUpdate(tmpEvent.Id, tmpEvent, (key, oldValue) => tmpEvent);
+                                        }
+                                        else
+                                        {
+                                            foundEvent.Update(timeMs);
+                                        }
                                     }
                                 }
                             }
                         }
+                        finally
+                        {
+                            Monitor.Exit(map.GetMapLock());
+                        }
+                    }
+                    lock (map.GetMapLock())
+                    {
+                        
                     }
                 }
             }
@@ -476,7 +488,7 @@ namespace Intersect.Server.Entities
         }
 
         //Sending Data
-        public override EntityPacket EntityPacket(EntityPacket packet = null)
+        public override EntityPacket EntityPacket(EntityPacket packet = null, Client forClient = null)
         {
             if (packet == null) packet = new PlayerEntityPacket();
             packet = base.EntityPacket(packet);
@@ -496,6 +508,13 @@ namespace Intersect.Server.Entities
             else
             {
                 pkt.AccessLevel = 0;
+            }
+
+
+
+            if (forClient != null && GetType() == typeof(Player))
+            {
+                ((PlayerEntityPacket)packet).Equipment = PacketSender.GenerateEquipmentPacket(forClient, (Player)this);
             }
 
             return pkt;

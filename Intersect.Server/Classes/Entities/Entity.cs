@@ -1280,12 +1280,6 @@ namespace Intersect.Server.Entities
 
 					return;
 				}
-
-                //Wake up any sleeping targets
-                if (status.Type == StatusTypes.Sleep)
-                {
-                    status.RemoveStatus();
-                }
             }
 
 			//Is this a critical hit?
@@ -1324,6 +1318,15 @@ namespace Intersect.Server.Entities
                             break;
                     }
                     enemy.CombatTimer = Globals.Timing.TimeMs + 5000;
+
+                    foreach (var status in statuses)
+                    {
+                        //Wake up any sleeping targets
+                        if (status.Type == StatusTypes.Sleep)
+                        {
+                            status.RemoveStatus();
+                        }
+                    }
 
                     //No Matter what, if we attack the entitiy, make them chase us
                     if (enemy.GetType() == typeof(Npc))
@@ -1888,7 +1891,7 @@ namespace Intersect.Server.Entities
         {
         }
 
-        public virtual EntityPacket EntityPacket(EntityPacket packet = null)
+        public virtual EntityPacket EntityPacket(EntityPacket packet = null, Client forClient = null)
         {
             if (packet == null) packet = new EntityPacket();
 

@@ -1,6 +1,7 @@
 ﻿using Intersect.Collections;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.GameObjects.Events;
 using Intersect.Server.Web.RestApi.Attributes;
 using Intersect.Server.Web.RestApi.Payloads;
 using System;
@@ -35,7 +36,15 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             if (lookup != null)
             {
-                return lookup.OrderBy(user => user.Value.TimeCreated).Skip(pageInfo.Page * pageInfo.Count).Take(pageInfo.Count);
+                var entries = gameObjectType == GameObjectType.Event ? lookup.Where(obj => ((EventBase)obj.Value).CommonEvent).OrderBy(obj => obj.Value.TimeCreated).Skip(pageInfo.Page * pageInfo.Count).Take(pageInfo.Count) : lookup.OrderBy(obj => obj.Value.TimeCreated).Skip(pageInfo.Page * pageInfo.Count).Take(pageInfo.Count);
+
+                return new
+                {
+                    total = gameObjectType == GameObjectType.Event ? lookup.Where(obj => ((EventBase)obj.Value).CommonEvent).Count() : lookup.Count(),
+                    pageInfo.Page,
+                    count = entries.Count(),
+                    entries
+                };
             }
 
             return null;
@@ -47,7 +56,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         {
             if (objId == Guid.Empty)
             {
-                return null;
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Object not found!"); return null;
             }
 
             GameObjectType gameObjectType;

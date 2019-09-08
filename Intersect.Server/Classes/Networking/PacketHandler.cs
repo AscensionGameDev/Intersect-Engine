@@ -556,6 +556,11 @@ namespace Intersect.Server.Networking
         //CreateAccountPacket
         public void HandlePacket(Client client, Player player, CreateAccountPacket packet)
         {
+            if (Options.BlockClientRegistrations)
+            {
+                PacketSender.SendError(client, Strings.Account.registrationsblocked);
+                return;
+            }
             if (!FieldChecking.IsValidUsername(packet.Username, Strings.Regex.username))
             {
                 PacketSender.SendError(client, Strings.Account.invalidname);
@@ -991,13 +996,13 @@ namespace Intersect.Server.Networking
         //OfferTradeItemPacket
         public void HandlePacket(Client client, Player player, OfferTradeItemPacket packet)
         {
-            player.OfferItem(packet.Slot, packet.Quanity);
+            player?.OfferItem(packet.Slot, packet.Quanity);
         }
 
         //RevokeTradeItemPacket
         public void HandlePacket(Client client, Player player, RevokeTradeItemPacket packet)
         {
-            player.RevokeItem(packet.Slot, packet.Quanity);
+            player?.RevokeItem(packet.Slot, packet.Quanity);
         }
 
         //AcceptTradePacket
@@ -1027,31 +1032,31 @@ namespace Intersect.Server.Networking
         //DeclineTradePacket
         public void HandlePacket(Client client, Player player, DeclineTradePacket packet)
         {
-            player.CancelTrade();
+            player?.CancelTrade();
         }
 
         //CloseBagPacket
         public void HandlePacket(Client client, Player player,  CloseBagPacket packet)
         {
-            player.CloseBag();
+            player?.CloseBag();
         }
 
         //StoreBagItemPacket
         public void HandlePacket(Client client, Player player, StoreBagItemPacket packet)
         {
-            player.StoreBagItem(packet.Slot, packet.Quanity);
+            player?.StoreBagItem(packet.Slot, packet.Quanity);
         }
 
         //RetrieveBagItemPacket
         public void HandlePacket(Client client, Player player, RetrieveBagItemPacket packet)
         {
-            player.RetrieveBagItem(packet.Slot, packet.Quanity);
+            player?.RetrieveBagItem(packet.Slot, packet.Quanity);
         }
 
         //SwapBagItemPacket
         public void HandlePacket(Client client, Player player, SwapBagItemsPacket packet)
         {
-            player.SwapBagItems(packet.Slot1,packet.Slot2);
+            player?.SwapBagItems(packet.Slot1,packet.Slot2);
         }
 
         //RequestFriendsPacket

@@ -69,6 +69,7 @@ namespace Intersect.Server.Web.RestApi
             try
             {
                 mWebAppHandle = WebApp.Start(StartOptions, Configure);
+                System.Diagnostics.Trace.Listeners.Remove("HostingTraceListener");
                 StartOptions.Urls.ToList().ForEach(host => Console.WriteLine(Strings.Intro.api.ToString(host)));
             }
             catch (Exception ex)

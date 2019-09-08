@@ -656,16 +656,23 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             switch (adminAction)
             {
                 case AdminActions.Ban:
-                    Ban.Add(
+                    if (string.IsNullOrEmpty(Ban.CheckBan(user, "")))
+                    {
+                        Ban.Add(
                         user.Id,
                         actionParameters.Duration,
                         actionParameters.Reason ?? "",
                         actionParameters.Moderator ?? @"api",
                         actionParameters.Ip ? targetIp : ""
                     );
-                    client?.Disconnect();
-                    PacketSender.SendGlobalMsg(Strings.Account.banned.ToString(user.Name));
-                    return Request.CreateMessageResponse(HttpStatusCode.OK, Strings.Account.banned.ToString(user.Name));
+                        client?.Disconnect();
+                        PacketSender.SendGlobalMsg(Strings.Account.banned.ToString(user.Name));
+                        return Request.CreateMessageResponse(HttpStatusCode.OK, Strings.Account.banned.ToString(user.Name));
+                    }
+                    else
+                    {
+                        return Request.CreateMessageResponse(HttpStatusCode.BadRequest, Strings.Account.alreadybanned.ToString(user.Name));
+                    }
 
                 case AdminActions.UnBan:
                     Ban.Remove(user.Id);
@@ -673,15 +680,22 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     return Request.CreateMessageResponse(HttpStatusCode.OK, Strings.Account.unbanned.ToString(user.Name));
 
                 case AdminActions.Mute:
-                    Mute.Add(
+                    if (string.IsNullOrEmpty(Mute.FindMuteReason(user.Id, "")))
+                    {
+                        Mute.Add(
                         user,
                         actionParameters.Duration,
                         actionParameters.Reason ?? "",
                         actionParameters.Moderator ?? @"api",
                         actionParameters.Ip ? targetIp : ""
                     );
-                    PacketSender.SendGlobalMsg(Strings.Account.muted.ToString(user.Name));
-                    return Request.CreateMessageResponse(HttpStatusCode.OK, Strings.Account.muted.ToString(user.Name));
+                        PacketSender.SendGlobalMsg(Strings.Account.muted.ToString(user.Name));
+                        return Request.CreateMessageResponse(HttpStatusCode.OK, Strings.Account.muted.ToString(user.Name));
+                    }
+                    else
+                    {
+                        return Request.CreateMessageResponse(HttpStatusCode.BadRequest, Strings.Account.alreadymuted.ToString(user.Name));
+                    }
 
                 case AdminActions.UnMute:
                     Mute.Remove(user);

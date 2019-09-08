@@ -548,16 +548,23 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             switch (adminAction)
             {
                 case AdminActions.Ban:
-                    Ban.Add(
-                        userId,
-                        actionParameters.Duration,
-                        actionParameters.Reason ?? "",
-                        actionParameters.Moderator ?? @"api",
-                        actionParameters.Ip ? targetIp : ""
-                    );
-                    client?.Disconnect();
-                    PacketSender.SendGlobalMsg(Strings.Account.banned.ToString(player.Name));
-                    return Request.CreateMessageResponse(HttpStatusCode.OK, Strings.Account.banned.ToString(player.Name));
+                    if (string.IsNullOrEmpty(Ban.CheckBan(user, "")))
+                    {
+                        Ban.Add(
+                            userId,
+                            actionParameters.Duration,
+                            actionParameters.Reason ?? "",
+                            actionParameters.Moderator ?? @"api",
+                            actionParameters.Ip ? targetIp : ""
+                        );
+                        client?.Disconnect();
+                        PacketSender.SendGlobalMsg(Strings.Account.banned.ToString(player.Name));
+                        return Request.CreateMessageResponse(HttpStatusCode.OK, Strings.Account.banned.ToString(player.Name));
+                    }
+                    else
+                    {
+                        return Request.CreateMessageResponse(HttpStatusCode.BadRequest, Strings.Account.alreadybanned.ToString(player.Name));
+                    }
 
                 case AdminActions.UnBan:
                     Ban.Remove(userId);
@@ -565,28 +572,34 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     return Request.CreateMessageResponse(HttpStatusCode.OK, Strings.Account.unbanned.ToString(player.Name));
 
                 case AdminActions.Mute:
-                    if (user == null)
-                    {
-                        Mute.Add(
-                            userId,
-                            actionParameters.Duration,
-                            actionParameters.Reason ?? "",
-                            actionParameters.Moderator ?? @"api",
-                            actionParameters.Ip ? targetIp : ""
-                        );
+                    if (string.IsNullOrEmpty(Mute.FindMuteReason(userId, ""))) {
+                        if (user == null)
+                        {
+                            Mute.Add(
+                                userId,
+                                actionParameters.Duration,
+                                actionParameters.Reason ?? "",
+                                actionParameters.Moderator ?? @"api",
+                                actionParameters.Ip ? targetIp : ""
+                            );
+                        }
+                        else
+                        {
+                            Mute.Add(
+                                user,
+                                actionParameters.Duration,
+                                actionParameters.Reason ?? "",
+                                actionParameters.Moderator ?? @"api",
+                                actionParameters.Ip ? targetIp : ""
+                            );
+                        }
+                        PacketSender.SendGlobalMsg(Strings.Account.muted.ToString(player.Name));
+                        return Request.CreateMessageResponse(HttpStatusCode.OK, Strings.Account.muted.ToString(player.Name));
                     }
                     else
                     {
-                        Mute.Add(
-                            user,
-                            actionParameters.Duration,
-                            actionParameters.Reason ?? "",
-                            actionParameters.Moderator ?? @"api",
-                            actionParameters.Ip ? targetIp : ""
-                        );
+                        return Request.CreateMessageResponse(HttpStatusCode.BadRequest, Strings.Account.alreadymuted.ToString(player.Name));
                     }
-                    PacketSender.SendGlobalMsg(Strings.Account.muted.ToString(player.Name));
-                    return Request.CreateMessageResponse(HttpStatusCode.OK, Strings.Account.muted.ToString(player.Name));
 
                 case AdminActions.UnMute:
                     if (user == null)

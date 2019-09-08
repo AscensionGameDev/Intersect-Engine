@@ -67,6 +67,7 @@ namespace Intersect
         public static SmtpSettings Smtp => Instance.SmtpSettings;
         public static int PasswordResetExpirationMinutes => Instance._passResetExpirationMin;
         public static bool AdminOnly { get => Instance._adminOnly; set => Instance._adminOnly = value; }
+        public static bool BlockClientRegistrations { get => Instance._blockClientRegistrations; set => Instance._blockClientRegistrations = value; }
 
         public static DatabaseOptions PlayerDb
         {
@@ -104,10 +105,13 @@ namespace Intersect
         [JsonProperty("AdminOnly", Order = -3)]
         protected bool _adminOnly = false;
 
-        [JsonProperty("UPnP", Order = -2)]
+        [JsonProperty("BlockClientRegistrations", Order = -2)]
+        protected bool _blockClientRegistrations = false;
+
+        [JsonProperty("UPnP", Order = -1)]
         protected bool _upnp = true;
 
-        [JsonProperty("OpenPortChecker", Order = -1)]
+        [JsonProperty("OpenPortChecker", Order = 0)]
         protected bool _portChecker = true;
 
         [JsonProperty ("Player")]

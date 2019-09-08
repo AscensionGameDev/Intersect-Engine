@@ -172,7 +172,7 @@ namespace Intersect.Server.Entities
             return (IsDead & Base.WalkableAfter) || (!IsDead && Base.WalkableBefore);
         }
 
-        public override EntityPacket EntityPacket(EntityPacket packet = null)
+        public override EntityPacket EntityPacket(EntityPacket packet = null, Client forClient = null)
         {
             if (packet == null) packet = new ResourceEntityPacket();
             packet = base.EntityPacket(packet);

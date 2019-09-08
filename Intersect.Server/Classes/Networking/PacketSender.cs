@@ -162,8 +162,7 @@ namespace Intersect.Server.Networking
                 else
                 {
                     mapPacket.MapItems = GenerateMapItemsPacket(mapId);
-                    mapPacket.MapEntities = GenerateMapEntitiesPacket(mapId);
-
+                    mapPacket.MapEntities = GenerateMapEntitiesPacket(mapId, client);
                     return mapPacket;
                 }
             }
@@ -256,7 +255,7 @@ namespace Intersect.Server.Networking
         }
 
         //MapEntitiesPacket
-        public static MapEntitiesPacket GenerateMapEntitiesPacket(Guid mapId)
+        public static MapEntitiesPacket GenerateMapEntitiesPacket(Guid mapId, Client forClient = null)
         {
             var map = MapInstance.Get(mapId);
             if (map != null)
@@ -274,7 +273,7 @@ namespace Intersect.Server.Networking
                 var enPackets = new List<EntityPacket>();
                 for (var i = 0; i < sendEntities.Count; i++)
                 {
-                    enPackets.Add(sendEntities[i].EntityPacket());
+                    enPackets.Add(sendEntities[i].EntityPacket(null, forClient));
                 }
 
                 return new MapEntitiesPacket(enPackets.ToArray());

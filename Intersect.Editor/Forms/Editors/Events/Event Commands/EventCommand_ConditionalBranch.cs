@@ -392,6 +392,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void cmbConditionType_SelectedIndexChanged(object sender, EventArgs e)
         {
             var type = Strings.EventConditional.conditions.FirstOrDefault(x => x.Value == cmbConditionType.Text).Key;
+            if (type < 4) type = 0;
             UpdateFormElements((ConditionTypes)type);
             if (((ConditionTypes)type) != Condition.Type) ConditionTypeChanged((ConditionTypes)type);
         }

@@ -87,7 +87,7 @@ namespace Intersect.Server.Maps
         public long LastUpdateTime = -1;
         [JsonIgnore]
         [NotMapped]
-        public long UpdateDelay = 100;
+        public long UpdateDelay = 75;
 
         //EF
         public MapInstance() : base()

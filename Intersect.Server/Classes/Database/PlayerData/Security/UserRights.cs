@@ -13,8 +13,17 @@ namespace Intersect.Server.Database.PlayerData.Security
     {
         [NotNull] private static readonly Type UserRightsType = typeof(UserRights);
 
+        [NotNull] private static readonly Type ApiRolesType = typeof(ApiRoles);
+
         [NotNull]
         private static readonly List<PropertyInfo> UserRightsPermissions = UserRightsType
+            .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            .Where(propertyInfo => propertyInfo.CanWrite)
+            .Where(propertyInfo => propertyInfo.PropertyType == typeof(bool))
+            .ToList();
+
+        [NotNull]
+        private static readonly List<PropertyInfo> ApiRolesPermissions = ApiRolesType
             .GetProperties(BindingFlags.Public | BindingFlags.Instance)
             .Where(propertyInfo => propertyInfo.CanWrite)
             .Where(propertyInfo => propertyInfo.PropertyType == typeof(bool))
@@ -104,10 +113,16 @@ namespace Intersect.Server.Database.PlayerData.Security
         [NotNull]
         internal ImmutableList<string> EnumeratePermissions(bool permitted = true)
         {
-            return UserRightsPermissions
+            var userRights = UserRightsPermissions
                        .Where(property => permitted == (bool)(property?.GetValue(this, null) ?? false))
                        .Select(property => property?.Name)
-                       .ToImmutableList() ?? throw new InvalidOperationException();
+                       .ToList() ?? throw new InvalidOperationException();
+            var apiRoles = ApiRolesPermissions
+                       .Where(property => permitted == (bool)(property?.GetValue(this.ApiRoles, null) ?? false))
+                       .Select(property => property?.Name)
+                       .ToList() ?? throw new InvalidOperationException();
+            userRights.AddRange(apiRoles);
+            return userRights.ToImmutableList();
         }
     }
 

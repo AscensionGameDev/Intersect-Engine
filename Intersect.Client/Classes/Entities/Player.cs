@@ -150,6 +150,18 @@ namespace Intersect.Client.Entities
             Gender = pkt.Gender;
             Class = pkt.ClassId;
             Type = pkt.AccessLevel;
+
+            if (((PlayerEntityPacket)packet).Equipment != null)
+            {
+                if (this == Globals.Me && ((PlayerEntityPacket)packet).Equipment.InventorySlots != null)
+                {
+                    this.MyEquipment = ((PlayerEntityPacket)packet).Equipment.InventorySlots;
+                }
+                else if (((PlayerEntityPacket)packet).Equipment.ItemIds != null)
+                {
+                    this.Equipment = ((PlayerEntityPacket)packet).Equipment.ItemIds;
+                }
+            }
         }
 
         public override EntityTypes GetEntityType()

@@ -12,8 +12,23 @@ namespace Intersect.GameObjects.Switches_and_Variables
     {
         public VariableDataTypes Type { get; set; }
 
+        private dynamic mValue;
+
         [NotMapped]
-        public dynamic Value { get; set; }
+        public dynamic Value { get => mValue; set => SetValue(value); }
+
+        public void SetValue(object value)
+        {
+            //Doing these also updates the variable data types appropriately.
+            if (value != null)
+            {
+                if (value.GetType() == typeof(bool)) Boolean = (bool)value;
+                if (value.GetType() == typeof(long)) Integer = (long)value;
+                if (value.GetType() == typeof(double)) Number = (double)value;
+                if (value.GetType() == typeof(string)) String = (string)value;
+            }
+            mValue = value;
+        }
 
         #region Typed Properties
 
@@ -24,7 +39,7 @@ namespace Intersect.GameObjects.Switches_and_Variables
             set
             {
                 Type = VariableDataTypes.Boolean;
-                Value = value;
+                mValue = value;
             }
         }
 
@@ -35,7 +50,7 @@ namespace Intersect.GameObjects.Switches_and_Variables
             set
             {
                 Type = VariableDataTypes.Integer;
-                Value = value;
+                mValue = value;
             }
         }
 
@@ -46,7 +61,7 @@ namespace Intersect.GameObjects.Switches_and_Variables
             set
             {
                 Type = VariableDataTypes.Number;
-                Value = value;
+                mValue = value;
             }
         }
 
@@ -57,7 +72,7 @@ namespace Intersect.GameObjects.Switches_and_Variables
             set
             {
                 Type = VariableDataTypes.String;
-                Value = value ?? "";
+                mValue = value ?? "";
             }
         }
 

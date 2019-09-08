@@ -313,8 +313,12 @@ namespace Intersect.Server.Entities
                     if (spawn.Dir <= 3) //Don't handle directional projectile grapplehooks
                     {
                         spawn.Parent.HasGrappled = true;
-                        Owner.Dir = spawn.Dir;
-                        new DashInstance(Owner, spawn.Distance, (byte)Owner.Dir,Base.IgnoreMapBlocks,Base.IgnoreActiveResources,Base.IgnoreExhaustedResources, Base.IgnoreZDimension);
+                        //Only grapple if the player hasnt left the firing position.. if they have then we assume they dont wanna grapple
+                        if (Owner.X == X && Owner.Y == Y && Owner.MapId == MapId)
+                        {
+                            Owner.Dir = spawn.Dir;
+                            new DashInstance(Owner, spawn.Distance, (byte)Owner.Dir, Base.IgnoreMapBlocks, Base.IgnoreActiveResources, Base.IgnoreExhaustedResources, Base.IgnoreZDimension);
+                        }
                         killSpawn = true;
                     }
                 }
@@ -435,7 +439,7 @@ namespace Intersect.Server.Entities
             PacketSender.SendEntityLeave(this);
         }
 
-        public override EntityPacket EntityPacket(EntityPacket packet = null)
+        public override EntityPacket EntityPacket(EntityPacket packet = null, Client forClient = null)
         {
             if (packet == null) packet = new ProjectileEntityPacket();
             packet = base.EntityPacket(packet);

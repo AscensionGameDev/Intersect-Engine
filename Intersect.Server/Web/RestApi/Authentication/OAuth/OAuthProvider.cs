@@ -52,9 +52,9 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth
                     ApplicationCanDisplayErrors = true,
 #if DEBUG
                     AllowInsecureHttp = true,
-                    AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(5),
+                    AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(Configuration.RefreshTokenLifetime),
 #else
-                    AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(60),
+                    AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(Configuration.RefreshTokenLifetime),
 #endif
                     Provider = OAuthAuthorizationServerProvider,
                     RefreshTokenProvider = RefreshTokenProvider

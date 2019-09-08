@@ -821,7 +821,7 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public override EntityPacket EntityPacket(EntityPacket packet = null)
+        public override EntityPacket EntityPacket(EntityPacket packet = null, Client forClient = null)
         {
             if (packet == null) packet = new NpcEntityPacket();
             packet = base.EntityPacket(packet);

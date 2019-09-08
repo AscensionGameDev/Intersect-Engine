@@ -84,6 +84,7 @@ namespace Intersect.Client.UI.Game.Trades
 
         void pnl_HoverEnter(Base sender, EventArgs arguments)
         {
+            if (InputHandler.MouseFocus != null) return;
             mMouseOver = true;
             mCanDrag = true;
             if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
@@ -165,7 +166,7 @@ namespace Intersect.Client.UI.Game.Trades
                     }
                     else
                     {
-                        if (mCanDrag)
+                        if (mCanDrag && Draggable.Active == null)
                         {
                             if (mMouseX == -1 || mMouseY == -1)
                             {

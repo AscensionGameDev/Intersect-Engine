@@ -271,7 +271,7 @@ namespace Intersect.Client.UI.Menu
         private void UpdateDisabled()
         {
             mLoginButton.IsDisabled = ActiveNetworkStatus != NetworkStatus.Online;
-            mRegisterButton.IsDisabled = ActiveNetworkStatus != NetworkStatus.Online;
+            mRegisterButton.IsDisabled = ActiveNetworkStatus != NetworkStatus.Online || (Options.Loaded && Options.BlockClientRegistrations == true);
         }
         
         public static NetworkStatus ActiveNetworkStatus;

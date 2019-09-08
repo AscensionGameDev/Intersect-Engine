@@ -25,6 +25,10 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString badlogin = @"Username or password incorrect.";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
+            public readonly LocalizedString alreadybanned = @"{00} has already been banned!";
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString banned = @"{00} has been banned!";
 
@@ -69,6 +73,10 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString maxchars =
                 @"You have already created the maximum number of characters. Delete one before creating a new one.";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
+            public readonly LocalizedString alreadymuted = @"{00} has already been muted!";
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString muted = @"{00} has been muted!";
 
@@ -78,6 +86,10 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString notfound = @"Error: Account {00} was not found!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
+            public readonly LocalizedString registrationsblocked =  @"Account registrations are currently blocked by the server.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString unbanned = @"Account {00} has been unbanned!";
@@ -1230,6 +1242,10 @@ namespace Intersect.Server.Localization
                 }
                 catch (Exception exception)
                 {
+                    if (exception.Message.Contains("Commands.announcement"))
+                    {
+                        throw new Exception("Server strings invalid! Upgrade steps to B6 were not followed correctly. Server must close!");
+                    }
                     Log.Error(exception);
                     return false;
                 }

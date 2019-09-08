@@ -22,17 +22,15 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             pageInfo.Page = Math.Max(pageInfo.Page, 0);
             pageInfo.Count = Math.Max(Math.Min(pageInfo.Count, 100), 5);
 
-            using (var context = GameContext.Temporary)
+            var context = GameContext.Current;
+            var entries = GameContext.Queries.ServerVariables(context, pageInfo.Page, pageInfo.Count)?.ToList();
+            return new
             {
-                var entries = GameContext.Queries.ServerVariables(context, pageInfo.Page, pageInfo.Count)?.ToList();
-                return new
-                {
-                    total = context.ServerVariables?.Count() ?? 0,
-                    pageInfo.Page,
-                    count = entries?.Count ?? 0,
-                    entries
-                };
-            }
+                total = context.ServerVariables?.Count() ?? 0,
+                pageInfo.Page,
+                count = entries?.Count ?? 0,
+                entries
+            };
         }
 
         [Route("global/{guid:guid}")]
@@ -44,17 +42,15 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid global variable id.");
             }
 
-            using (var context = GameContext.Temporary)
-            {
-                var variable = GameContext.Queries.ServerVariableById(context, guid);
-                
-                if (variable == null)
-                {
-                    return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No global variable with id '{guid}'.");
-                }
+            var context = GameContext.Current;
+            var variable = GameContext.Queries.ServerVariableById(context, guid);
 
-                return variable;
+            if (variable == null)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No global variable with id '{guid}'.");
             }
+
+            return variable;
         }
 
         [Route("global/{guid:guid}/value")]
@@ -66,12 +62,20 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid global variable id.");
             }
 
-            using (var context = GameContext.Temporary)
-            {
-                var variable = GameContext.Queries.ServerVariableById(context, guid);
+            var context = GameContext.Current;
+            var variable = GameContext.Queries.ServerVariableById(context, guid);
 
-                return variable?.Value.Value ?? Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No global variable with id '{guid}'.");
+            if (variable == null)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No global variable with id '{guid}'.");
             }
+
+            if (variable.Value.Value == null)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"null");
+            }
+
+            return variable?.Value.Value;
         }
 
         [Route("global/{guid:guid}")]
@@ -83,19 +87,17 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid global variable id.");
             }
 
-            using (var context = GameContext.Temporary)
+            var context = GameContext.Current;
+            var variable = GameContext.Queries.ServerVariableById(context, guid);
+
+            if (variable == null)
             {
-                var variable = GameContext.Queries.ServerVariableById(context, guid);
-
-                if (variable == null)
-                {
-                    return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No global variable with id '{guid}'.");
-                }
-
-                variable.Value.Value = value.Value;
-
-                return variable;
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No global variable with id '{guid}'.");
             }
+
+            variable.Value.Value = value.Value;
+
+            return variable;
         }
 
     }

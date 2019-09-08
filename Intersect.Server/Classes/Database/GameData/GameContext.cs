@@ -19,8 +19,9 @@ namespace Intersect.Server.Database.GameData
     {
         public static GameContext Current { get; private set; }
 
-        [NotNull]
-        public static GameContext Temporary => new GameContext(Current?.mConnection ?? default(DatabaseUtils.DbProvider), Current?.mConnectionString, true);
+        //[NotNull]
+        //This doesnt work for api because the Current context doesnt see changes made to the temp one.
+        //public static GameContext Temporary => new GameContext(Current?.mConnection ?? default(DatabaseUtils.DbProvider), Current?.mConnectionString, true);
 
         //Animations
         public DbSet<AnimationBase> Animations { get; set; }
