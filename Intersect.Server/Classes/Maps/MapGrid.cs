@@ -6,7 +6,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Intersect.Server.Maps
 {
-    using LegacyDatabase = LegacyDatabase;
+    using DbInterface = DbInterface;
 
     public class MapGrid
     {
@@ -130,7 +130,7 @@ namespace Intersect.Server.Maps
         {
             if (MyMaps.Contains(mapId)) return true;
             if (!parent) return false;
-            return LegacyDatabase.MapGrids.Any(t => t.HasMap(mapId));
+            return DbInterface.MapGrids.Any(t => t.HasMap(mapId));
         }
 
         public string[,] GetEditorData()

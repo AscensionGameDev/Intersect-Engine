@@ -28,7 +28,7 @@ using Switch = Intersect.Server.Database.PlayerData.Players.Switch;
 
 namespace Intersect.Server.Entities
 {
-    using LegacyDatabase = LegacyDatabase;
+    using DbInterface = DbInterface;
 
     public partial class Player : EntityInstance
     {
@@ -1255,8 +1255,8 @@ namespace Intersect.Server.Entities
 
                 if (itemBase.ItemType == ItemTypes.Bag)
                 {
-                    var bag = LegacyDatabase.GetBag(Items[slot]);
-                    if (bag != null && !LegacyDatabase.BagEmpty(bag))
+                    var bag = DbInterface.GetBag(Items[slot]);
+                    if (bag != null && !DbInterface.BagEmpty(bag))
                     {
                         PacketSender.SendChatMsg(Client, Strings.Bags.dropnotempty, CustomColors.Error);
                         return;
@@ -1736,10 +1736,10 @@ namespace Intersect.Server.Entities
                     //Check if this is a bag with items.. if so don't allow sale
                     if (itemBase.ItemType == ItemTypes.Bag)
                     {
-                        if (Items[slot].Bag == null) Items[slot].Bag = LegacyDatabase.GetBag(Items[slot]);
+                        if (Items[slot].Bag == null) Items[slot].Bag = DbInterface.GetBag(Items[slot]);
                         if (Items[slot].Bag != null)
                         {
-                            if (!LegacyDatabase.BagEmpty(Items[slot].Bag))
+                            if (!DbInterface.BagEmpty(Items[slot].Bag))
                             {
                                 PacketSender.SendChatMsg(Client, Strings.Bags.onlysellempty,
                                     CustomColors.Error);
@@ -2318,7 +2318,7 @@ namespace Intersect.Server.Entities
             //Bags will never, ever, be stackable. Going to use the value property for the bag id in the Database.
             if (bagItem.Bag == null)
             {
-                bagItem.Bag = LegacyDatabase.GetBag(bagItem);
+                bagItem.Bag = DbInterface.GetBag(bagItem);
                 if (bagItem.Bag == null) //Bag doesnt exist, create it!
                 {
                     //Create the Bag
@@ -2666,10 +2666,10 @@ namespace Intersect.Server.Entities
                     //Check if this is a bag with items.. if so don't allow sale
                     if (itemBase.ItemType == ItemTypes.Bag)
                     {
-                        if (Items[slot].Bag == null) Items[slot].Bag = LegacyDatabase.GetBag(Items[slot]);
+                        if (Items[slot].Bag == null) Items[slot].Bag = DbInterface.GetBag(Items[slot]);
                         if (Items[slot].Bag != null)
                         {
-                            if (!LegacyDatabase.BagEmpty(Items[slot].Bag))
+                            if (!DbInterface.BagEmpty(Items[slot].Bag))
                             {
                                 PacketSender.SendChatMsg(Client, Strings.Bags.onlytradeempty,
                                     CustomColors.Error);

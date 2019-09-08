@@ -43,7 +43,7 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
                 return;
             }
 
-            var refreshToken = await RefreshToken.FindForTicket(ticketId);
+            var refreshToken = RefreshToken.FindForTicket(ticketId);
             if (refreshToken == null)
             {
                 context.Rejected();
@@ -58,7 +58,7 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
 
             if (refreshToken.ClientId != clientId || refreshToken.UserId != userId)
             {
-                await RefreshToken.Remove(refreshToken.Id, true);
+                RefreshToken.Remove(refreshToken.Id, true);
                 context.Rejected();
                 return;
             }

@@ -84,9 +84,30 @@ namespace Intersect.Server.Database.PlayerData
         #region Listing
 
         [NotNull]
+        public static int Count()
+        {
+            lock (DbInterface.GetPlayerContextLock())
+            {
+                var context = DbInterface.GetPlayerContext();
+                return context.Users.Count();
+            }
+        }
+
+        [NotNull]
         public static IEnumerable<User> List(int page, int count, [CanBeNull] PlayerContext playerContext = null)
         {
-            return QueryUsers(playerContext ?? PlayerContext.Current, page, count) ?? throw new InvalidOperationException();
+            if (playerContext == null)
+            {
+                lock (DbInterface.GetPlayerContextLock())
+                {
+                    var context = DbInterface.GetPlayerContext();
+                    return QueryUsers(context, page, count) ?? throw new InvalidOperationException();
+                }
+            }
+            else
+            {
+                return QueryUsers(playerContext, page, count) ?? throw new InvalidOperationException();
+            }
         }
 
         #endregion
@@ -204,12 +225,34 @@ namespace Intersect.Server.Database.PlayerData
 
         public static User Find(Guid userId, [CanBeNull] PlayerContext playerContext = null)
         {
-            return userId == Guid.Empty ? null : QueryUserById(playerContext ?? PlayerContext.Current, userId);
+            if (playerContext == null)
+            {
+                lock (DbInterface.GetPlayerContextLock())
+                {
+                    var context = DbInterface.GetPlayerContext();
+                    return userId == Guid.Empty ? null : QueryUserById(context, userId);
+                }
+            }
+            else
+            {
+                return userId == Guid.Empty ? null : QueryUserById(playerContext, userId);
+            }
         }
 
         public static User Find(string username, [CanBeNull] PlayerContext playerContext = null)
         {
-            return string.IsNullOrWhiteSpace(username) ? null : QueryUserByName(playerContext ?? PlayerContext.Current, username);
+            if (playerContext == null)
+            {
+                lock (DbInterface.GetPlayerContextLock())
+                {
+                    var context = DbInterface.GetPlayerContext();
+                    return string.IsNullOrWhiteSpace(username) ? null : QueryUserByName(context, username);
+                }
+            }
+            else
+            {
+                return string.IsNullOrWhiteSpace(username) ? null : QueryUserByName(playerContext, username);
+            }
         }
     }
 }

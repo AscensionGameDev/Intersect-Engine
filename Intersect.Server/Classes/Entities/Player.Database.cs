@@ -63,12 +63,34 @@ namespace Intersect.Server.Entities
 
         public static Player Find(Guid playerId, [CanBeNull] PlayerContext playerContext = null)
         {
-            return QueryPlayerById(playerContext ?? PlayerContext.Current, playerId);
+            if (playerContext == null)
+            {
+                lock (DbInterface.GetPlayerContextLock())
+                {
+                    var context = DbInterface.GetPlayerContext();
+                    return QueryPlayerById(context, playerId);
+                }
+            }
+            else
+            {
+                return QueryPlayerById(playerContext, playerId);
+            }
         }
 
         public static Player Find([NotNull] string playerName, [CanBeNull] PlayerContext playerContext = null)
         {
-            return QueryPlayerByName(playerContext ?? PlayerContext.Current, playerName);
+            if (playerContext == null)
+            {
+                lock (DbInterface.GetPlayerContextLock())
+                {
+                    var context = DbInterface.GetPlayerContext();
+                    return QueryPlayerByName(context, playerName);
+                }
+            }
+            else
+            {
+                return QueryPlayerByName(playerContext, playerName);
+            }
         }
 
         #endregion
@@ -114,9 +136,30 @@ namespace Intersect.Server.Entities
         #region Listing
 
         [NotNull]
+        public static int Count()
+        {
+            lock (DbInterface.GetPlayerContextLock())
+            {
+                var context = DbInterface.GetPlayerContext();
+                return context.Players.Count();
+            }
+        }
+
+        [NotNull]
         public static IEnumerable<Player> List(int page, int count, [CanBeNull] PlayerContext playerContext = null)
         {
-            return QueryPlayers(playerContext ?? PlayerContext.Current, page, count) ?? throw new InvalidOperationException();
+            if (playerContext == null)
+            {
+                lock (DbInterface.GetPlayerContextLock())
+                {
+                    var context = DbInterface.GetPlayerContext();
+                    return QueryPlayers(context, page, count) ?? throw new InvalidOperationException();
+                }
+            }
+            else
+            {
+                return QueryPlayers(playerContext, page, count) ?? throw new InvalidOperationException();
+            }
         }
 
         #endregion

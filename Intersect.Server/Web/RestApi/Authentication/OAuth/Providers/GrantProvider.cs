@@ -94,7 +94,7 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
 
             username = username.Trim();
 
-            var user = LegacyDatabase.GetUser(username);
+            var user = DbInterface.GetUser(username);
             if (!user?.IsPasswordValid(password) ?? true)
             {
                 context.SetError("credentials_invalid");

@@ -3,7 +3,7 @@ using Intersect.Enums;
 
 namespace Intersect.Server.Maps
 {
-    using LegacyDatabase = LegacyDatabase;
+    using DbInterface = DbInterface;
 
     public class TileHelper
     {
@@ -63,35 +63,35 @@ namespace Intersect.Server.Maps
             switch (direction)
             {
                 case (int) Directions.Up:
-                    if (gridY > 0 && LegacyDatabase.MapGrids[grid].MyGrid[gridX, gridY - 1] != Guid.Empty)
+                    if (gridY > 0 && DbInterface.MapGrids[grid].MyGrid[gridX, gridY - 1] != Guid.Empty)
                     {
-                        mMapId = LegacyDatabase.MapGrids[grid].MyGrid[gridX, gridY - 1];
+                        mMapId = DbInterface.MapGrids[grid].MyGrid[gridX, gridY - 1];
                         mTileY += Options.MapHeight;
                         return true;
                     }
                     return false;
                 case (int) Directions.Down:
-                    if (gridY + 1 < LegacyDatabase.MapGrids[grid].Height &&
-                        LegacyDatabase.MapGrids[grid].MyGrid[gridX, gridY + 1] != Guid.Empty)
+                    if (gridY + 1 < DbInterface.MapGrids[grid].Height &&
+                        DbInterface.MapGrids[grid].MyGrid[gridX, gridY + 1] != Guid.Empty)
                     {
-                        mMapId = LegacyDatabase.MapGrids[grid].MyGrid[gridX, gridY + 1];
+                        mMapId = DbInterface.MapGrids[grid].MyGrid[gridX, gridY + 1];
                         mTileY -= Options.MapHeight;
                         return true;
                     }
                     return false;
                 case (int) Directions.Left:
-                    if (gridX > 0 && LegacyDatabase.MapGrids[grid].MyGrid[gridX - 1, gridY] != Guid.Empty)
+                    if (gridX > 0 && DbInterface.MapGrids[grid].MyGrid[gridX - 1, gridY] != Guid.Empty)
                     {
-                        mMapId = LegacyDatabase.MapGrids[grid].MyGrid[gridX - 1, gridY];
+                        mMapId = DbInterface.MapGrids[grid].MyGrid[gridX - 1, gridY];
                         mTileX += Options.MapWidth;
                         return true;
                     }
                     return false;
                 case (int) Directions.Right:
-                    if (gridX + 1 < LegacyDatabase.MapGrids[grid].Width &&
-                        LegacyDatabase.MapGrids[grid].MyGrid[gridX + 1, gridY] != Guid.Empty)
+                    if (gridX + 1 < DbInterface.MapGrids[grid].Width &&
+                        DbInterface.MapGrids[grid].MyGrid[gridX + 1, gridY] != Guid.Empty)
                     {
-                        mMapId = LegacyDatabase.MapGrids[grid].MyGrid[gridX + 1, gridY];
+                        mMapId = DbInterface.MapGrids[grid].MyGrid[gridX + 1, gridY];
                         mTileX -= Options.MapWidth;
                         return true;
                     }

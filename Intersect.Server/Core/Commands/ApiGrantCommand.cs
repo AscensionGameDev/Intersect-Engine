@@ -65,7 +65,7 @@ namespace Intersect.Server.Core.Commands
                 return;
             }
 
-            LegacyDatabase.SavePlayerDatabaseAsync();
+            DbInterface.SavePlayerDatabaseAsync();
 
             Console.WriteLine(Strings.Commandoutput.apirolegranted.ToString(target.Name, role));
         }

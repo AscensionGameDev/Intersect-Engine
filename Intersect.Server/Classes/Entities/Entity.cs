@@ -22,7 +22,7 @@ using Newtonsoft.Json;
 
 namespace Intersect.Server.Entities
 {
-    using LegacyDatabase = LegacyDatabase;
+    using DbInterface = DbInterface;
 
     public partial class EntityInstance : IDisposable
     {
@@ -723,11 +723,11 @@ namespace Intersect.Server.Entities
             //Loop through surrouding maps to generate a array of open and blocked points.
             for (var x = MapInstance.Get(MapId).MapGridX - 1; x <= MapInstance.Get(MapId).MapGridX + 1; x++)
             {
-                if (x == -1 || x >= LegacyDatabase.MapGrids[myGrid].Width) continue;
+                if (x == -1 || x >= DbInterface.MapGrids[myGrid].Width) continue;
                 for (var y = MapInstance.Get(MapId).MapGridY - 1; y <= MapInstance.Get(MapId).MapGridY + 1; y++)
                 {
-                    if (y == -1 || y >= LegacyDatabase.MapGrids[myGrid].Height) continue;
-                    if (LegacyDatabase.MapGrids[myGrid].MyGrid[x, y] != Guid.Empty && LegacyDatabase.MapGrids[myGrid].MyGrid[x, y] == target.MapId)
+                    if (y == -1 || y >= DbInterface.MapGrids[myGrid].Height) continue;
+                    if (DbInterface.MapGrids[myGrid].MyGrid[x, y] != Guid.Empty && DbInterface.MapGrids[myGrid].MyGrid[x, y] == target.MapId)
                     {
                         xDiff = (x - MapInstance.Get(MapId).MapGridX) * Options.MapWidth + target.X - X;
                         yDiff = (y - MapInstance.Get(MapId).MapGridY) * Options.MapHeight + target.Y - Y;

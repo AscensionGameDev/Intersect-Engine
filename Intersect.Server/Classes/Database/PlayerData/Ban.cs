@@ -54,19 +54,23 @@ namespace Intersect.Server.Database.PlayerData
 
         public static bool Add([NotNull] Ban ban, [CanBeNull] PlayerContext playerContext = null)
         {
-            var context = playerContext ?? PlayerContext.Current;
-            if (context == null)
+            lock (DbInterface.GetPlayerContextLock())
             {
-                return false;
-            }
+                var context = DbInterface.GetPlayerContext();
+                if (context == null)
+                {
+                    return false;
+                }
 
-            if (ban.User == null && ban.UserId == Guid.Empty)
-            {
-                return false;
-            }
+                if (ban.User == null && ban.UserId == Guid.Empty)
+                {
+                    return false;
+                }
 
-            context.Bans.Add(ban);
-            return 0 < context.SaveChanges();
+                context.Bans.Add(ban);
+                DbInterface.SavePlayerDatabaseAsync();
+                return true;
+            }
         }
 
         public static bool Add(
@@ -107,22 +111,24 @@ namespace Intersect.Server.Database.PlayerData
 
         public static bool Remove(Guid userId, [CanBeNull] PlayerContext playerContext = null)
         {
-            var context = playerContext ?? PlayerContext.Current;
-            if (context == null)
+            lock (DbInterface.GetPlayerContextLock())
             {
-                return false;
-            }
+                var context = DbInterface.GetPlayerContext();
+                if (context == null)
+                {
+                    return false;
+                }
 
-            var ban = context.Bans.FirstOrDefault(p => p.UserId == userId);
-            if (ban == null)
-            {
+                var ban = context.Bans.FirstOrDefault(p => p.UserId == userId);
+                if (ban == null)
+                {
+                    return true;
+                }
+
+                context.Bans.Remove(ban);
+                DbInterface.SavePlayerDatabaseAsync();
                 return true;
             }
-
-            context.Bans.Remove(ban);
-            context.SaveChanges();
-
-            return true;
         }
 
         public static bool Remove([NotNull] User user, [CanBeNull] PlayerContext playerContext = null)
@@ -145,9 +151,13 @@ namespace Intersect.Server.Database.PlayerData
         public static string CheckBan([NotNull] User user, string ip)
         {
             // TODO: Move this off of the server so that ban dates can be formatted in local time.
-            var ban = PlayerContext.Current?.Bans.SingleOrDefault(p => p.User == user && p.EndTime > DateTime.UtcNow) ??
-                      PlayerContext.Current?.Bans.SingleOrDefault(p => p.Ip == ip && p.EndTime > DateTime.UtcNow);
-            return ban != null ? Strings.Account.banstatus.ToString(ban.StartTime, ban.Banner, ban.EndTime, ban.Reason) : null;
+            lock (DbInterface.GetPlayerContextLock())
+            {
+                var context = DbInterface.GetPlayerContext();
+                var ban = context?.Bans.SingleOrDefault(p => p.User == user && p.EndTime > DateTime.UtcNow) ??
+                      context?.Bans.SingleOrDefault(p => p.Ip == ip && p.EndTime > DateTime.UtcNow);
+                return ban != null ? Strings.Account.banstatus.ToString(ban.StartTime, ban.Banner, ban.EndTime, ban.Reason) : null;
+            }
         }
     }
 }

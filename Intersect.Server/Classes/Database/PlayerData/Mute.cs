@@ -66,19 +66,23 @@ namespace Intersect.Server.Database.PlayerData
 
         public static bool Add([NotNull] Mute mute, [CanBeNull] PlayerContext playerContext = null)
         {
-            var context = playerContext ?? PlayerContext.Current;
-            if (context == null)
+            lock (DbInterface.GetPlayerContextLock())
             {
-                return false;
-            }
+                var context = DbInterface.GetPlayerContext();
+                if (context == null)
+                {
+                    return false;
+                }
 
-            if (mute.User == null && mute.UserId == Guid.Empty)
-            {
-                return false;
-            }
+                if (mute.User == null && mute.UserId == Guid.Empty)
+                {
+                    return false;
+                }
 
-            context.Mutes.Add(mute);
-            return 0 < context.SaveChanges();
+                context.Mutes.Add(mute);
+                DbInterface.SavePlayerDatabaseAsync();
+                return true;
+            }
         }
 
         public static bool Add(
@@ -124,22 +128,24 @@ namespace Intersect.Server.Database.PlayerData
 
         public static bool Remove(Guid userId, [CanBeNull] PlayerContext playerContext = null)
         {
-            var context = playerContext ?? PlayerContext.Current;
-            if (context == null)
+            lock (DbInterface.GetPlayerContextLock())
             {
-                return false;
-            }
+                var context = DbInterface.GetPlayerContext();
+                if (context == null)
+                {
+                    return false;
+                }
 
-            var mute = context.Mutes.FirstOrDefault(p => p.UserId == userId);
-            if (mute == null)
-            {
+                var mute = context.Mutes.FirstOrDefault(p => p.UserId == userId);
+                if (mute == null)
+                {
+                    return true;
+                }
+
+                context.Mutes.Remove(mute);
+                DbInterface.SavePlayerDatabaseAsync();
                 return true;
             }
-
-            context.Mutes.Remove(mute);
-            context.SaveChanges();
-
-            return true;
         }
 
         public static bool Remove([NotNull] User user, [CanBeNull] PlayerContext playerContext = null)
@@ -165,18 +171,21 @@ namespace Intersect.Server.Database.PlayerData
             [CanBeNull] PlayerContext playerContext = null
         )
         {
-            var context = playerContext ?? PlayerContext.Current;
-            if (context == null)
+            lock (DbInterface.GetPlayerContextLock())
             {
-                return null;
+                var context = DbInterface.GetPlayerContext();
+                if (context == null)
+                {
+                    return null;
+                }
+
+                var mute = context.Mutes.SingleOrDefault(queryMute => queryMute.UserId == userId && queryMute.EndTime > DateTime.UtcNow) ??
+                           context.Mutes.SingleOrDefault(queryMute => string.Equals(queryMute.Ip, ip, StringComparison.OrdinalIgnoreCase) && queryMute.EndTime > DateTime.UtcNow);
+
+                return mute == null
+                    ? null
+                    : Strings.Account.mutestatus.ToString(mute.StartTime, mute.Muter, mute.EndTime, mute.Reason);
             }
-
-            var mute = context.Mutes.SingleOrDefault(queryMute => queryMute.UserId == userId && queryMute.EndTime > DateTime.UtcNow) ??
-                       context.Mutes.SingleOrDefault(queryMute => string.Equals(queryMute.Ip, ip, StringComparison.OrdinalIgnoreCase) && queryMute.EndTime > DateTime.UtcNow);
-
-            return mute == null
-                ? null
-                : Strings.Account.mutestatus.ToString(mute.StartTime, mute.Muter, mute.EndTime, mute.Reason);
         }
 
         public static string FindMuteReason(

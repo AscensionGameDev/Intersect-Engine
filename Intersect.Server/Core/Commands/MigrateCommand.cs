@@ -83,7 +83,7 @@ namespace Intersect.Server.Core.Commands
             {
                 try
                 {
-                    LegacyDatabase.Migrate(db, dbengine);
+                    DbInterface.Migrate(db, dbengine);
                 }
                 catch (Exception exception)
                 {

@@ -104,7 +104,7 @@ namespace Intersect.Server.Core
             if (!Directory.Exists(Path.Combine("resources","notifications"))) Directory.CreateDirectory(Path.Combine("resources","notifications"));
             if (!File.Exists(Path.Combine("resources","notifications", "PasswordReset.html"))) ReflectionUtils.ExtractResource("Intersect.Server.Resources.notifications.PasswordReset.html", Path.Combine("resources","notifications", "PasswordReset.html"));
 
-            LegacyDatabase.CheckDirectories();
+            DbInterface.CheckDirectories();
 
             if (args != null)
             {
@@ -145,7 +145,7 @@ namespace Intersect.Server.Core
 
         private static bool PostContextSetup()
         {
-            if (!LegacyDatabase.InitDatabase())
+            if (!DbInterface.InitDatabase())
             {
                 Console.ReadKey();
                 return false;
@@ -153,7 +153,7 @@ namespace Intersect.Server.Core
 
             Console.WriteLine();
 
-            Console.WriteLine(Strings.Commandoutput.playercount.ToString(LegacyDatabase.RegisteredPlayers));
+            Console.WriteLine(Strings.Commandoutput.playercount.ToString(DbInterface.RegisteredPlayers));
             Console.WriteLine(Strings.Commandoutput.gametime.ToString(ServerTime.GetTime().ToString("F")));
 
             ServerTime.Update();

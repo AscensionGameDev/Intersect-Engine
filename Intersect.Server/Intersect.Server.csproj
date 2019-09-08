@@ -461,7 +461,7 @@
     <Compile Include="Classes\Networking\PacketSender.cs" />
     <Compile Include="Classes\Entities\Player.cs" />
     <Compile Include="Classes\Entities\Entity.cs" />
-    <Compile Include="Classes\Core\LegacyDatabase.cs" />
+    <Compile Include="Classes\Database\DbInterface.cs" />
     <Compile Include="Classes\Maps\MapGrid.cs" />
     <Compile Include="Classes\Core\ServerLoop.cs" />
     <Compile Include="Classes\Networking\Helpers\PortChecker.cs" />

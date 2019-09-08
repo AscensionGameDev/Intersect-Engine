@@ -49,160 +49,181 @@ namespace Intersect.Server.Classes.Database.PlayerData.Api
             bool checkForDuplicates = true
         )
         {
-            if (PlayerContext.Current?.RefreshTokens == null)
+            lock (DbInterface.GetPlayerContextLock())
             {
-                return false;
+                if (DbInterface.GetPlayerContext()?.RefreshTokens == null)
+                {
+                    return false;
+                }
             }
 
             if (checkForDuplicates)
             {
-                var duplicate = await Find(token.Id);
-                if (duplicate != null && !await Remove(token.Id, commit))
+                var duplicate = Find(token.Id);
+                if (duplicate != null && !Remove(token.Id, commit))
                 {
                     return false;
                 }
 
-                var forClient = await FindForClient(token.ClientId);
-                if (forClient != null && !await RemoveAll(forClient, commit))
+                var forClient = FindForClient(token.ClientId);
+                if (forClient != null && !RemoveAll(forClient, commit))
                 {
                     return false;
                 }
 
-                var forUser = await FindForUser(token.UserId);
-                if (forUser != null && !await RemoveAll(forUser, commit))
+                var forUser = FindForUser(token.UserId);
+                if (forUser != null && !RemoveAll(forUser, commit))
                 {
                     return false;
                 }
             }
 
-            PlayerContext.Current.RefreshTokens.Add(token);
-            await PlayerContext.Current.Commit(commit);
+            lock (DbInterface.GetPlayerContextLock())
+            {
+                var context = DbInterface.GetPlayerContext();
+                context.RefreshTokens.Add(token);
+            }
 
             return true;
         }
 
-        public static async ValueTask<RefreshToken> Find(Guid id)
+        public static RefreshToken Find(Guid id)
         {
-            if (PlayerContext.Current?.RefreshTokens == null)
+            lock (DbInterface.GetPlayerContextLock())
             {
-                return null;
+                if (DbInterface.GetPlayerContext()?.RefreshTokens == null)
+                {
+                    return null;
+                }
+                return DbInterface.GetPlayerContext()?.RefreshTokens.Find(id);
             }
-
-            var task = PlayerContext.Current.RefreshTokens.FindAsync(id);
-
-            return task == null ? null : await task;
         }
 
-        public static async ValueTask<RefreshToken> FindForTicket([CanBeNull] Guid ticketId)
+        public static RefreshToken FindForTicket([CanBeNull] Guid ticketId)
         {
             if (ticketId == Guid.Empty)
             {
                 return null;
             }
 
-            var task = PlayerContext.Current?
-                    .RefreshTokens?
-                    .ToAsyncEnumerable()
-                    .Where(queryToken => queryToken?.TicketId == ticketId)
+            lock (DbInterface.GetPlayerContextLock())
+            {
+                if (DbInterface.GetPlayerContext()?.RefreshTokens == null)
+                {
+                    return null;
+                }
+
+                var refreshToken = DbInterface.GetPlayerContext()?.RefreshTokens?
+                    .Where(queryToken => queryToken.TicketId == ticketId)
                     .FirstOrDefault();
 
-            if (task == null)
-            {
-                return null;
+                if (refreshToken == null || DateTime.UtcNow < refreshToken.Expires)
+                {
+                    return refreshToken;
+                }
+                else
+                {
+                    Remove(refreshToken, true);
+                }
             }
-
-            var refreshToken = await task;
-            if (refreshToken == null || DateTime.UtcNow < refreshToken.Expires)
-            {
-                return refreshToken;
-            }
-
-            await Remove(refreshToken, true);
             return null;
         }
 
-        public static ValueTask<IQueryable<RefreshToken>> FindForClient(Guid clientId)
+        public static IQueryable<RefreshToken> FindForClient(Guid clientId)
         {
-            var tokenQuery = PlayerContext.Current?.RefreshTokens?.Where(queryToken => queryToken.ClientId == clientId);
-
-            return new ValueTask<IQueryable<RefreshToken>>(tokenQuery);
-        }
-
-        public static ValueTask<IQueryable<RefreshToken>> FindForUser(Guid userId)
-        {
-            var tokenQuery = PlayerContext.Current?.RefreshTokens?.Where(queryToken => queryToken.UserId == userId);
-
-            return new ValueTask<IQueryable<RefreshToken>>(tokenQuery);
-        }
-
-        public static async ValueTask<IQueryable<RefreshToken>> FindForUser([NotNull] User user)
-        {
-            if (PlayerContext.Current?.RefreshTokens == null)
+            lock (DbInterface.GetPlayerContextLock())
             {
-                return null;
+                if (DbInterface.GetPlayerContext()?.RefreshTokens == null)
+                {
+                    return null;
+                }
+
+                var tokenQuery = DbInterface.GetPlayerContext()?.RefreshTokens?.Where(queryToken => queryToken.ClientId == clientId);
+
+                return tokenQuery;
             }
-
-            return await FindForUser(user.Id);
         }
 
-        public static ValueTask<RefreshToken> FindOneForUser(Guid userId)
+        public static IQueryable<RefreshToken> FindForUser(Guid userId)
         {
-            var token = PlayerContext.Current?.RefreshTokens?.First(queryToken => queryToken.UserId == userId);
-
-            return new ValueTask<RefreshToken>(token);
-        }
-
-        public static async ValueTask<RefreshToken> FindOneForUser([NotNull] User user)
-        {
-            if (PlayerContext.Current?.RefreshTokens == null)
+            lock (DbInterface.GetPlayerContextLock())
             {
-                return null;
-            }
+                if (DbInterface.GetPlayerContext()?.RefreshTokens == null)
+                {
+                    return null;
+                }
 
-            return await FindOneForUser(user.Id);
+                var tokenQuery = DbInterface.GetPlayerContext()?.RefreshTokens?.Where(queryToken => queryToken.UserId == userId);
+
+                return tokenQuery;
+            }
         }
 
-        public static async ValueTask<bool> Remove(Guid id, bool commit = false)
+        public static IQueryable<RefreshToken> FindForUser([NotNull] User user)
         {
-            if (PlayerContext.Current?.RefreshTokens == null)
-            {
-                return false;
-            }
+            return FindForUser(user.Id);
+        }
 
-            var token = await Find(id);
+        public static RefreshToken FindOneForUser(Guid userId)
+        {
+            lock (DbInterface.GetPlayerContextLock())
+            {
+                if (DbInterface.GetPlayerContext()?.RefreshTokens == null)
+                {
+                    return null;
+                }
+
+                var token = DbInterface.GetPlayerContext()?.RefreshTokens?.First(queryToken => queryToken.UserId == userId);
+
+                return token;
+            }
+        }
+
+        public static RefreshToken FindOneForUser([NotNull] User user)
+        {
+            return FindOneForUser(user.Id);
+        }
+
+        public static bool Remove(Guid id, bool commit = false)
+        {
+            var token = Find(id);
 
             if (token == null)
             {
                 return false;
             }
 
-            return await Remove(token, commit);
+            return Remove(token, commit);
         }
 
-        public static async ValueTask<bool> Remove([NotNull] RefreshToken token, bool commit = false)
+        public static bool Remove([NotNull] RefreshToken token, bool commit = false)
         {
-            if (PlayerContext.Current?.RefreshTokens == null)
+            lock (DbInterface.GetPlayerContextLock())
             {
-                return false;
+                if (DbInterface.GetPlayerContext()?.RefreshTokens == null)
+                {
+                    return false;
+                }
+
+                DbInterface.GetPlayerContext()?.RefreshTokens.Remove(token);
+
+                return true;
             }
-
-            PlayerContext.Current.RefreshTokens.Remove(token);
-            await PlayerContext.Current.Commit(commit);
-
-            return true;
         }
 
-        public static async ValueTask<bool> RemoveAll([NotNull] IEnumerable<RefreshToken> tokens, bool commit = false)
+        public static bool RemoveAll([NotNull] IEnumerable<RefreshToken> tokens, bool commit = false)
         {
-            if (PlayerContext.Current?.RefreshTokens == null)
+            lock (DbInterface.GetPlayerContextLock())
             {
-                return false;
+                if (DbInterface.GetPlayerContext()?.RefreshTokens == null)
+                {
+                    return false;
+                }
+
+                DbInterface.GetPlayerContext()?.RefreshTokens.RemoveRange(tokens);
+
+                return true;
             }
-
-            PlayerContext.Current.RefreshTokens.RemoveRange(tokens);
-            await PlayerContext.Current.Commit(commit);
-
-            return true;
         }
 
     }

@@ -191,7 +191,7 @@ namespace Intersect.Server.Classes.Admin.Actions
         //UnbanAction
         public static void ProcessAction(Client client, Player player, UnbanAction action)
         {
-            var unbannedUser = LegacyDatabase.GetUser(action.Name);
+            var unbannedUser = DbInterface.GetUser(action.Name);
             if (unbannedUser != null)
             {
                 Ban.Remove(unbannedUser);
@@ -206,7 +206,7 @@ namespace Intersect.Server.Classes.Admin.Actions
         //UnmuteAction
         public static void ProcessAction(Client client, Player player, UnmuteAction action)
         {
-            var unmutedUser = LegacyDatabase.GetUser(action.Name);
+            var unmutedUser = DbInterface.GetUser(action.Name);
             if (unmutedUser != null)
             {
                 Mute.Remove(unmutedUser);

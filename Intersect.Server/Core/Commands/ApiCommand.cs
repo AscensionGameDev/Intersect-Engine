@@ -40,7 +40,7 @@ namespace Intersect.Server.Core.Commands
             {
                 target.Power.ApiRoles = new Database.PlayerData.Security.ApiRoles();
             }
-            LegacyDatabase.SavePlayerDatabaseAsync();
+            DbInterface.SavePlayerDatabaseAsync();
 
             Console.WriteLine(access
                 ? $@"    {Strings.Commandoutput.apigranted.ToString(target.Name)}"

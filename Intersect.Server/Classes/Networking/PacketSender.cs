@@ -25,7 +25,7 @@ using EventInstance = Intersect.Server.Entities.EventInstance;
 
 namespace Intersect.Server.Networking
 {
-    using LegacyDatabase = LegacyDatabase;
+    using DbInterface = DbInterface;
 
     public static class PacketSender
     {
@@ -150,7 +150,7 @@ namespace Intersect.Server.Networking
                             break;
 
                         case 0:
-                            mapPacket.CameraHolds = new bool[4] { 0 == map.MapGridY, LegacyDatabase.MapGrids[map.MapGrid].YMax - 1 == map.MapGridY, 0 == map.MapGridX, LegacyDatabase.MapGrids[map.MapGrid].XMax - 1 == map.MapGridX };
+                            mapPacket.CameraHolds = new bool[4] { 0 == map.MapGridY, DbInterface.MapGrids[map.MapGrid].YMax - 1 == map.MapGridY, 0 == map.MapGridX, DbInterface.MapGrids[map.MapGrid].XMax - 1 == map.MapGridX };
                             break;
                     }
                 }
@@ -953,7 +953,7 @@ namespace Intersect.Server.Networking
                 {
                     if (Globals.Clients[i].IsEditor)
                     {
-                        if (LegacyDatabase.MapGrids[gridIndex].HasMap(Globals.Clients[i].EditorMap))
+                        if (DbInterface.MapGrids[gridIndex].HasMap(Globals.Clients[i].EditorMap))
                         {
                             SendMapGrid(Globals.Clients[i], gridIndex);
                         }
@@ -962,7 +962,7 @@ namespace Intersect.Server.Networking
                     {
                         if (Globals.Clients[i].Entity != null)
                         {
-                            if (LegacyDatabase.MapGrids[gridIndex].HasMap(Globals.Clients[i].Entity.MapId))
+                            if (DbInterface.MapGrids[gridIndex].HasMap(Globals.Clients[i].Entity.MapId))
                             {
                                 SendMapGrid(Globals.Clients[i], gridIndex, true);
                             }
@@ -975,7 +975,7 @@ namespace Intersect.Server.Networking
         //MapGridPacket
         public static void SendMapGrid(Client client, int gridIndex, bool clearKnownMaps = false)
         {
-            var grid = LegacyDatabase.MapGrids[gridIndex];
+            var grid = DbInterface.MapGrids[gridIndex];
             if (clearKnownMaps)
             {
                 client.SentMaps.Clear();

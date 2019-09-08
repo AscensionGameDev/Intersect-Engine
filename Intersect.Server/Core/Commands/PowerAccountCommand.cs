@@ -24,7 +24,7 @@ namespace Intersect.Server.Core.Commands
         protected override void HandleTarget(ServerContext context, ParserResult result, User target)
         {
             var power = result.Find(Power);
-            if (LegacyDatabase.SetPlayerPower(target, power.AsUserRights()))
+            if (DbInterface.SetPlayerPower(target, power.AsUserRights()))
             {
                 Console.WriteLine($@"    {Strings.Commandoutput.powerchanged.ToString(target?.Name)}");
             }

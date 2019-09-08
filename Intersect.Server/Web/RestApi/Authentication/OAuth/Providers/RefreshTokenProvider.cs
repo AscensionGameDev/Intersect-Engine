@@ -109,7 +109,7 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
                 return;
             }
 
-            var refreshToken = await RefreshToken.Find(refreshTokenId);
+            var refreshToken = RefreshToken.Find(refreshTokenId);
 
             if (refreshToken == null)
             {

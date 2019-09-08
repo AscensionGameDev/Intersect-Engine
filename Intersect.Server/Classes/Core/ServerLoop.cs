@@ -32,10 +32,10 @@ namespace Intersect.Server
                 {
                     if (lastDbUpdate.AddMinutes(dbBackupMinutes) < DateTime.Now)
                     {
-                        Task.Run(() => LegacyDatabase.BackupDatabase());
+                        Task.Run(() => DbInterface.BackupDatabase());
                         lastDbUpdate = DateTime.Now;
                     }
-                    LegacyDatabase.SavePlayerDatabaseAsync();
+                    DbInterface.SavePlayerDatabaseAsync();
                     minuteTimer = timeMs + 60000;
                 }
                 cps++;
@@ -54,7 +54,7 @@ namespace Intersect.Server
                 }
                 if (timeMs > lastGameSave)
                 {
-                    Task.Run(() => LegacyDatabase.SaveGameDatabase());
+                    Task.Run(() => DbInterface.SaveGameDatabase());
                     lastGameSave = timeMs + 60000;
                 }
             }

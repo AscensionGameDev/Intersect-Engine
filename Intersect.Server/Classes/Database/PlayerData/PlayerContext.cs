@@ -16,12 +16,6 @@ namespace Intersect.Server.Database.PlayerData
 {
     public class PlayerContext : DbContext, ISeedableContext
     {
-        public static PlayerContext Current { get; private set; }
-
-        //[NotNull]
-        //This doesnt work for api because the Current context doesnt see changes made to the temp one.
-        //public static PlayerContext Temporary => new PlayerContext(Current?.mConnection ?? default(DatabaseUtils.DbProvider), Current?.mConnectionString, true);
-
         [NotNull] public DbSet<User> Users { get; set; }
 
         [NotNull] public DbSet<Mute> Mutes { get; set; }
@@ -46,23 +40,12 @@ namespace Intersect.Server.Database.PlayerData
 
         public PlayerContext()
         {
-            Current = this;
         }
 
-        public PlayerContext(DatabaseUtils.DbProvider connection, string connectionString)
-            : this(connection, connectionString, false)
-        {
-        }
-
-        private PlayerContext(DatabaseUtils.DbProvider connection, string connectionString, bool isTemporary)
+        public  PlayerContext(DatabaseUtils.DbProvider connection, string connectionString)
         {
             mConnection = connection;
             mConnectionString = connectionString;
-
-            if (!isTemporary)
-            {
-                Current = this;
-            }
         }
 
         internal async ValueTask Commit(bool commit = false, CancellationToken cancellationToken = default(CancellationToken))

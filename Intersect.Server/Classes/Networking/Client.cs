@@ -17,7 +17,7 @@ using Intersect.Network.Packets;
 
 namespace Intersect.Server.Networking
 {
-    using LegacyDatabase = LegacyDatabase;
+    using DbInterface = DbInterface;
 
     public class Client
     {
@@ -151,7 +151,7 @@ namespace Intersect.Server.Networking
 
             Entity.LastOnline = DateTime.Now;
 
-            LegacyDatabase.SavePlayerDatabaseAsync();
+            DbInterface.SavePlayerDatabaseAsync();
            
             Entity.Logout();
 

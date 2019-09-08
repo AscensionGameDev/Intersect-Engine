@@ -6,7 +6,7 @@ using Intersect.Server.Maps;
 
 namespace Intersect.Server.Misc.Pathfinding
 {
-    using LegacyDatabase = LegacyDatabase;
+    using DbInterface = DbInterface;
 
     public enum PathfinderResult
     {
@@ -67,13 +67,13 @@ namespace Intersect.Server.Misc.Pathfinding
                     //Loop through surrouding maps to see if our target is even around.
                     for (var x = gridX - 1; x <= gridX + 1; x++)
                     {
-                        if (x == -1 || x >= LegacyDatabase.MapGrids[myGrid].Width) continue;
+                        if (x == -1 || x >= DbInterface.MapGrids[myGrid].Width) continue;
                         for (var y = gridY - 1; y <= gridY + 1; y++)
                         {
-                            if (y == -1 || y >= LegacyDatabase.MapGrids[myGrid].Height) continue;
-                            if (LegacyDatabase.MapGrids[myGrid].MyGrid[x, y] != Guid.Empty)
+                            if (y == -1 || y >= DbInterface.MapGrids[myGrid].Height) continue;
+                            if (DbInterface.MapGrids[myGrid].MyGrid[x, y] != Guid.Empty)
                             {
-                                if (LegacyDatabase.MapGrids[myGrid].MyGrid[x, y] == mTarget.TargetMapId)
+                                if (DbInterface.MapGrids[myGrid].MyGrid[x, y] == mTarget.TargetMapId)
                                 {
                                     targetX = (x - gridX + 1) * Options.MapWidth + mTarget.TargetX;
                                     targetY = (y - gridY + 1) * Options.MapHeight + mTarget.TargetY;
@@ -114,7 +114,7 @@ namespace Intersect.Server.Misc.Pathfinding
                                 //loop through all surrounding maps.. gather blocking elements, resources, players, npcs, global events, and local events (if this is a local event)
                                 for (var x = gridX - 1; x <= gridX + 1; x++)
                                 {
-                                    if (x == -1 || x >= LegacyDatabase.MapGrids[myGrid].Width)
+                                    if (x == -1 || x >= DbInterface.MapGrids[myGrid].Width)
                                     {
                                         for (int y = 0; y < 3; y++)
                                         {
@@ -126,7 +126,7 @@ namespace Intersect.Server.Misc.Pathfinding
                                     }
                                     for (var y = gridY - 1; y <= gridY + 1; y++)
                                     {
-                                        if (y == -1 || y >= LegacyDatabase.MapGrids[myGrid].Height)
+                                        if (y == -1 || y >= DbInterface.MapGrids[myGrid].Height)
                                         {
                                             FillArea(mapGrid, ((x + 1) - gridX) * Options.MapWidth,
                                                 ((y + 1) - gridY) * Options.MapHeight, Options.MapWidth,
@@ -134,10 +134,10 @@ namespace Intersect.Server.Misc.Pathfinding
                                             continue;
                                         }
 
-                                        if (LegacyDatabase.MapGrids[myGrid].MyGrid[x, y] != Guid.Empty)
+                                        if (DbInterface.MapGrids[myGrid].MyGrid[x, y] != Guid.Empty)
                                         {
                                             var tmpMap =
-                                                MapInstance.Get(LegacyDatabase.MapGrids[myGrid]
+                                                MapInstance.Get(DbInterface.MapGrids[myGrid]
                                                     .MyGrid[x, y]);
                                             if (tmpMap != null)
                                             {

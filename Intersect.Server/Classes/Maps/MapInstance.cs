@@ -20,7 +20,7 @@ using EventInstance = Intersect.Server.Entities.EventInstance;
 
 namespace Intersect.Server.Maps
 {
-    using LegacyDatabase = LegacyDatabase;
+    using DbInterface = DbInterface;
 
     public class MapInstance : MapBase
     {
@@ -895,7 +895,7 @@ namespace Intersect.Server.Maps
             if (side == -1 || side == (int)Directions.Down) Down = Guid.Empty;
             if (side == -1 || side == (int)Directions.Left) Left = Guid.Empty;
             if (side == -1 || side == (int)Directions.Right) Right = Guid.Empty;
-            LegacyDatabase.SaveGameDatabase();
+            DbInterface.SaveGameDatabase();
         }
 
         public bool TileBlocked(int x, int y)

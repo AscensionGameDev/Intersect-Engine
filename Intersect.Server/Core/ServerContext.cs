@@ -201,9 +201,9 @@ namespace Intersect.Server.Core
 
                 // TODO: This probably also needs to not be a global, but will require more work to clean up.
                 Log.Info("Saving player database..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
-                LegacyDatabase.SavePlayerDatabase();
+                DbInterface.SavePlayerDatabase();
                 Log.Info("Saving game database..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
-                LegacyDatabase.SaveGameDatabase();
+                DbInterface.SaveGameDatabase();
 
                 // TODO: This needs to not be a global. I'm also in the middle of rewriting the API anyway.
                 Log.Info("Shutting down the API..." + $" ({stopwatch.ElapsedMilliseconds}ms)");

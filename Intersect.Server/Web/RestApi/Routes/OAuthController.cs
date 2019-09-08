@@ -49,23 +49,22 @@ namespace Intersect.Server.Web.RestApi.Routes
         public async Task<IHttpActionResult> DeleteToken(string username)
         {
             User user;
-
-            var context = PlayerContext.Current;
-            user = Database.PlayerData.User.Find(username, context);
+            
+            user = Database.PlayerData.User.Find(username);
 
             if (user == null)
             {
                 return Unauthorized();
             }
 
-            var refreshToken = (await RefreshToken.FindForUser(user)).FirstOrDefault();
+            var refreshToken = (RefreshToken.FindForUser(user)).FirstOrDefault();
 
             if (refreshToken == null)
             {
                 return StatusCode(HttpStatusCode.Gone);
             }
 
-            if (await RefreshToken.Remove(refreshToken, true))
+            if (RefreshToken.Remove(refreshToken, true))
             {
                 return Ok(new
                 {
@@ -82,23 +81,22 @@ namespace Intersect.Server.Web.RestApi.Routes
         public async Task<IHttpActionResult> DeleteToken(string username, Guid tokenId)
         {
             User user;
-
-            var context = PlayerContext.Current;
-            user = Database.PlayerData.User.Find(username, context);
+            
+            user = Database.PlayerData.User.Find(username);
 
             if (user == null)
             {
                 return Unauthorized();
             }
 
-            var refreshToken = (await RefreshToken.FindForUser(user)).FirstOrDefault();
+            var refreshToken = (RefreshToken.FindForUser(user)).FirstOrDefault();
 
             if (refreshToken?.Id != tokenId)
             {
                 return Unauthorized();
             }
 
-            if (await RefreshToken.Remove(refreshToken, true))
+            if (RefreshToken.Remove(refreshToken, true))
             {
                 return Ok(new
                 {

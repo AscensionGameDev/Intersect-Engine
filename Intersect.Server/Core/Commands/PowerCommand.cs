@@ -37,7 +37,7 @@ namespace Intersect.Server.Core.Commands
             }
 
             var power = result.Find(Power);
-            LegacyDatabase.SetPlayerPower(target.Name, power.AsUserRights());
+            DbInterface.SetPlayerPower(target.Name, power.AsUserRights());
             PacketSender.SendEntityDataToProximity(target.Entity);
             PacketSender.SendGlobalMsg(power != Access.None
                 ? Strings.Player.admin.ToString(target.Entity.Name)

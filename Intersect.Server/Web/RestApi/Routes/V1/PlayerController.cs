@@ -52,12 +52,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         {
             pageInfo.Page = Math.Max(pageInfo.Page, 0);
             pageInfo.Count = Math.Max(Math.Min(pageInfo.Count, 100), 5);
-
-            var context = PlayerContext.Current;
-            var entries = Player.List(pageInfo.Page, pageInfo.Count, context).ToList();
+            
+            var entries = Player.List(pageInfo.Page, pageInfo.Count).ToList();
             return new
             {
-                total = context?.Players.Count() ?? 0,
+                total = Player.Count(),
                 pageInfo.Page,
                 count = entries.Count,
                 entries
@@ -96,9 +95,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
-
-            var context = PlayerContext.Current;
-            var (client, player) = Player.Fetch(lookupKey, context);
+            
+            var (client, player) = Player.Fetch(lookupKey);
             if (player != null)
             {
                 return player;
@@ -115,9 +113,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
-
-            var context = PlayerContext.Current;
-            var (client, player) = Player.Fetch(lookupKey, context);
+            
+            var (client, player) = Player.Fetch(lookupKey);
             if (player == null)
             {
                 return Request.CreateErrorResponse(
@@ -144,9 +141,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid variable id ${variableId}.");
             }
-
-            var context = PlayerContext.Current;
-            var (client, player) = Player.Fetch(lookupKey, context);
+            
+            var (client, player) = Player.Fetch(lookupKey);
             if (player == null)
             {
                 return Request.CreateErrorResponse(
@@ -173,9 +169,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid variable id ${variableId}.");
             }
-
-            var context = PlayerContext.Current;
-            var (client, player) = Player.Fetch(lookupKey, context);
+            
+            var (client, player) = Player.Fetch(lookupKey);
             if (player == null)
             {
                 return Request.CreateErrorResponse(
@@ -202,9 +197,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid variable id ${variableId}.");
             }
-
-            var context = PlayerContext.Current;
-            var (client, player) = Player.Fetch(lookupKey, context);
+            
+            var (client, player) = Player.Fetch(lookupKey);
             if (player == null)
             {
                 return Request.CreateErrorResponse(
@@ -244,9 +238,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
-
-            var context = PlayerContext.Current;
-            var (client, player) = Player.Fetch(lookupKey, context);
+            
+            var (client, player) = Player.Fetch(lookupKey);
             if (player == null)
             {
                 return Request.CreateErrorResponse(
@@ -268,9 +261,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid bag id.");
             }
-
-            var context = PlayerContext.Current;
-            var bag = LegacyDatabase.GetBag(bagId);
+            
+            var bag = DbInterface.GetBag(bagId);
 
             if (bag == null)
             {
@@ -290,9 +282,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
-
-            var context = PlayerContext.Current;
-            var (client, player) = Player.Fetch(lookupKey, context);
+            
+            var (client, player) = Player.Fetch(lookupKey);
             if (player == null)
             {
                 return Request.CreateErrorResponse(
@@ -325,9 +316,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Cannot give 0, or a negative amount of an item.");
             }
 
-
-            var context = PlayerContext.Current;
-            var (client, player) = Player.Fetch(lookupKey, context);
+            
+            var (client, player) = Player.Fetch(lookupKey);
             if (player == null)
             {
                 return Request.CreateErrorResponse(
@@ -372,9 +362,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Cannot take 0, or a negative amount of an item.");
             }
-
-            var context = PlayerContext.Current;
-            var (client, player) = Player.Fetch(lookupKey, context);
+            
+            var (client, player) = Player.Fetch(lookupKey);
             if (player == null)
             {
                 return Request.CreateErrorResponse(
@@ -407,9 +396,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
-
-            var context = PlayerContext.Current;
-            var (client, player) = Player.Fetch(lookupKey, context);
+            
+            var (client, player) = Player.Fetch(lookupKey);
             if (player == null)
             {
                 return Request.CreateErrorResponse(
@@ -436,9 +424,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid spell id.");
             }
-
-            var context = PlayerContext.Current;
-            var (client, player) = Player.Fetch(lookupKey, context);
+            
+            var (client, player) = Player.Fetch(lookupKey);
             if (player == null)
             {
                 return Request.CreateErrorResponse(
@@ -472,9 +459,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid spell id.");
             }
-
-            var context = PlayerContext.Current;
-            var (client, player) = Player.Fetch(lookupKey, context);
+            
+            var (client, player) = Player.Fetch(lookupKey);
             if (player == null)
             {
                 return Request.CreateErrorResponse(
@@ -517,8 +503,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
 
             Tuple<Client, Player> fetchResult;
-            var context = PlayerContext.Current;
-            fetchResult = Player.Fetch(lookupKey, context);
+            fetchResult = Player.Fetch(lookupKey);
 
             return DoAdminActionOnPlayer(
                 () => fetchResult,

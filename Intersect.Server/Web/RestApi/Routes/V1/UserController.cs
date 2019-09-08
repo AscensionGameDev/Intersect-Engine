@@ -31,12 +31,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         {
             pageInfo.Page = Math.Max(pageInfo.Page, 0);
             pageInfo.Count = Math.Max(Math.Min(pageInfo.Count, 100), 5);
-
-            var context = PlayerContext.Current;
-            var entries = Database.PlayerData.User.List(pageInfo.Page, pageInfo.Count, context).ToList();
+            
+            var entries = Database.PlayerData.User.List(pageInfo.Page, pageInfo.Count).ToList();
             return new
             {
-                total = context.Users.Count(),
+                total = Database.PlayerData.User.Count(),
                 pageInfo.Page,
                 count = entries.Count,
                 entries
@@ -51,17 +50,15 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 return null;
             }
-
-            var context = PlayerContext.Current;
-            return Database.PlayerData.User.Find(userId, context);
+            
+            return Database.PlayerData.User.Find(userId);
         }
 
         [Route("{userName}")]
         [HttpGet]
         public object UserByName(string userName)
         {
-            var context = PlayerContext.Current;
-            var user = Database.PlayerData.User.Find(userName, context);
+            var user = Database.PlayerData.User.Find(userName);
 
             if (user == null)
             {
@@ -90,19 +87,19 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid username '{user.Username}'.");
             }
 
-            if (LegacyDatabase.AccountExists(user.Username))
+            if (DbInterface.AccountExists(user.Username))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Account already exists with username '{user.Username}'.");
             }
             else
             {
-                if (LegacyDatabase.EmailInUse(user.Email))
+                if (DbInterface.EmailInUse(user.Email))
                 {
                     return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Account already with email '{user.Email}'.");
                 }
                 else
                 {
-                    LegacyDatabase.CreateAccount(null, user.Username, user.Password, user.Email);
+                    DbInterface.CreateAccount(null, user.Username, user.Password, user.Email);
                     return new
                     {
                         Username = user.Username,
@@ -129,23 +126,22 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Malformed email address '{email}'.");
             }
-
-            var context = PlayerContext.Current;
-            var user = Database.PlayerData.User.Find(userName, context);
+            
+            var user = Database.PlayerData.User.Find(userName);
 
             if (user == null)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with name '{userName}'.");
             }
 
-            if (LegacyDatabase.EmailInUse(email))
+            if (DbInterface.EmailInUse(email))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.Conflict, @"Email address already in use.");
             }
 
             user.Email = email;
 
-            LegacyDatabase.SavePlayerDatabaseAsync();
+            DbInterface.SavePlayerDatabaseAsync();
             return user;
         }
 
@@ -165,23 +161,22 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Malformed email address '{email}'.");
             }
-
-            var context = PlayerContext.Current;
-            var user = Database.PlayerData.User.Find(userId, context);
+            
+            var user = Database.PlayerData.User.Find(userId);
 
             if (user == null)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with id '{userId}'.");
             }
 
-            if (LegacyDatabase.EmailInUse(email))
+            if (DbInterface.EmailInUse(email))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.Conflict, @"Email address already in use.");
             }
 
             user.Email = email;
 
-            LegacyDatabase.SavePlayerDatabaseAsync();
+            DbInterface.SavePlayerDatabaseAsync();
             return user;
         }
 
@@ -200,9 +195,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Malformed email address '{email}'.");
             }
-
-            var context = PlayerContext.Current;
-            var user = Database.PlayerData.User.Find(userName, context);
+            
+            var user = Database.PlayerData.User.Find(userName);
 
             if (user == null)
             {
@@ -214,14 +208,14 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.Forbidden, @"Invalid credentials.");
             }
 
-            if (LegacyDatabase.EmailInUse(email))
+            if (DbInterface.EmailInUse(email))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.Conflict, @"Email address already in use.");
             }
 
             user.Email = email;
 
-            LegacyDatabase.SavePlayerDatabaseAsync();
+            DbInterface.SavePlayerDatabaseAsync();
             return user;
         }
 
@@ -240,9 +234,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Malformed email address '{email}'.");
             }
-
-            var context = PlayerContext.Current;
-            var user = Database.PlayerData.User.Find(userId, context);
+            
+            var user = Database.PlayerData.User.Find(userId);
 
             if (user == null)
             {
@@ -254,14 +247,14 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.Forbidden, @"Invalid credentials.");
             }
 
-            if (LegacyDatabase.EmailInUse(email))
+            if (DbInterface.EmailInUse(email))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.Conflict, @"Email address already in use.");
             }
 
             user.Email = email;
 
-            LegacyDatabase.SavePlayerDatabaseAsync();
+            DbInterface.SavePlayerDatabaseAsync();
             return user;
         }
 
@@ -281,9 +274,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Did not receive a valid password.");
             }
-
-            var context = PlayerContext.Current;
-            var user = Database.PlayerData.User.Find(userName, context);
+            
+            var user = Database.PlayerData.User.Find(userName);
 
             if (user == null)
             {
@@ -312,8 +304,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Did not receive a valid password.");
             }
 
-            var context = PlayerContext.Current;
-            var user = Database.PlayerData.User.Find(userId, context);
+            var user = Database.PlayerData.User.Find(userId);
 
             if (user == null)
             {
@@ -339,9 +330,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid payload");
             }
-
-            var context = PlayerContext.Current;
-            var user = Database.PlayerData.User.Find(userName, context);
+            
+            var user = Database.PlayerData.User.Find(userName);
 
             if (user == null)
             {
@@ -353,7 +343,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.Forbidden, @"Failed to update password.");
             }
 
-            LegacyDatabase.SavePlayerDatabaseAsync();
+            DbInterface.SavePlayerDatabaseAsync();
             return "Password updated.";
         }
 
@@ -366,9 +356,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid payload");
             }
-
-            var context = PlayerContext.Current;
-            var user = Database.PlayerData.User.Find(userId, context);
+            
+            var user = Database.PlayerData.User.Find(userId);
 
             if (user == null)
             {
@@ -380,7 +369,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.Forbidden, @"Failed to update password.");
             }
 
-            LegacyDatabase.SavePlayerDatabaseAsync();
+            DbInterface.SavePlayerDatabaseAsync();
             return "Password updated.";
         }
 
@@ -392,9 +381,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid payload");
             }
-
-            var context = PlayerContext.Current;
-            var user = Database.PlayerData.User.Find(userName, context);
+            
+            var user = Database.PlayerData.User.Find(userName);
 
             if (user == null)
             {
@@ -406,7 +394,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.Forbidden, @"Invalid credentials.");
             }
 
-            LegacyDatabase.SavePlayerDatabaseAsync();
+            DbInterface.SavePlayerDatabaseAsync();
             return "Password updated.";
         }
 
@@ -418,9 +406,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid payload");
             }
-
-            var context = PlayerContext.Current;
-            var user = Database.PlayerData.User.Find(userId, context);
+            
+            var user = Database.PlayerData.User.Find(userId);
 
             if (user == null)
             {
@@ -432,7 +419,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.Forbidden, @"Invalid credentials.");
             }
 
-            LegacyDatabase.SavePlayerDatabaseAsync();
+            DbInterface.SavePlayerDatabaseAsync();
             return "Password updated.";
         }
         #endregion
@@ -442,8 +429,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [HttpGet]
         public object UserSendPasswordResetEmailByName(string userName)
         {
-            var context = PlayerContext.Current;
-            var user = Database.PlayerData.User.Find(userName, context);
+            var user = Database.PlayerData.User.Find(userName);
 
             if (user == null)
             {
@@ -466,8 +452,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [HttpGet]
         public object UserSendPasswordResetEmailById(Guid userId)
         {
-            var context = PlayerContext.Current;
-            var user = Database.PlayerData.User.Find(userId, context);
+            var user = Database.PlayerData.User.Find(userId);
 
             if (user == null)
             {
@@ -498,11 +483,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 return null;
             }
-
-            var context = PlayerContext.Current;
+            
             return Database.PlayerData.User
-                .Find(userName, context)?
-                .Players;
+                .Find(userName)?.Players;
         }
 
         [Route("{userId:guid}/players")]
@@ -514,10 +497,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 return null;
             }
-
-            var context = PlayerContext.Current;
+            
             return Database.PlayerData.User
-                .Find(userId, context)?
+                .Find(userId)?
                 .Players;
         }
 
@@ -530,10 +512,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 return null;
             }
-
-            var context = PlayerContext.Current;
+            
             return Database.PlayerData.User
-                .Find(userName, context)?
+                .Find(userName)?
                 .Players?
                 .FirstOrDefault(player => string.Equals(player?.Name, playerName, StringComparison.Ordinal));
         }
@@ -547,10 +528,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 return null;
             }
-
-            var context = PlayerContext.Current;
+            
             return Database.PlayerData.User
-                .Find(userId, context)?
+                .Find(userId)?
                 .Players?
                 .FirstOrDefault(player => player?.Id == playerId);
         }
@@ -564,10 +544,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 return null;
             }
-
-            var context = PlayerContext.Current;
+            
             return Database.PlayerData.User
-                .Find(userId, context)?
+                .Find(userId)?
                 .Players?
                 .Skip(index)
                 .FirstOrDefault();
@@ -595,8 +574,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
 
             Tuple<Client, User> fetchResult;
-            var context = PlayerContext.Current;
-            fetchResult = Database.PlayerData.User.Fetch(userId, context);
+            fetchResult = Database.PlayerData.User.Fetch(userId);
 
             return DoAdminActionOnUser(
                 () => fetchResult,
@@ -626,8 +604,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
 
             Tuple<Client, User> fetchResult;
-            var context = PlayerContext.Current;
-            fetchResult = Database.PlayerData.User.Fetch(userName, context);
+            fetchResult = Database.PlayerData.User.Fetch(userName);
 
             return DoAdminActionOnUser(
                 () => fetchResult,
