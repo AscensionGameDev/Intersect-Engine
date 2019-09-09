@@ -158,6 +158,12 @@ namespace Intersect.Editor.Forms.Editors
             InitEditor();
         }
 
+        private void UpdateToolStripItems()
+        {
+            toolStripItemDelete.Enabled = mEditorItem != null && lstVariables.Focused;
+            toolStripItemUndo.Enabled = mEditorItem != null && lstVariables.Focused;
+        }
+
         private void UpdateEditor()
         {
             if (mEditorItem != null)
@@ -188,6 +194,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 grpEditor.Hide();
             }
+            UpdateToolStripItems();
         }
 
         private void UpdateSelection()

@@ -1312,6 +1312,7 @@ namespace Intersect.Server.Networking
             var map = MapInstance.Get(packet.MapId);
             if (map == null) return;
             map.Load(packet.JsonData, MapInstance.Get(packet.MapId).Revision + 1);
+            MapList.List.UpdateMap(packet.MapId);
 
             //Event Fixing
             var removedEvents = new List<Guid>();

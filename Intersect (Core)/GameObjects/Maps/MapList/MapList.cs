@@ -286,6 +286,17 @@ namespace Intersect.GameObjects.Maps.MapList
             }
         }
 
+        public void UpdateMap(Guid mapId)
+        {
+            var map = FindMap(mapId);
+            var mapInstance = MapBase.Get(mapId);
+            if (map != null && mapInstance != null)
+            {
+                map.Name = mapInstance.Name;
+                map.TimeCreated = mapInstance.TimeCreated;
+            }
+        }
+
         public Guid FindFirstMap()
         {
             Guid lowestMap = Guid.Empty;

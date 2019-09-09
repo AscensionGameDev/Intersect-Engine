@@ -51,13 +51,21 @@ namespace Intersect.Client.UI.Game
             {
                 spellType.Text = Strings.SpellDesc.targettypes[(int)spell.Combat.TargetType].ToString(spell.Combat.CastRange, spell.Combat.HitRadius);
             }
+
+            if (spell.SpellType == (int)SpellTypes.CombatSpell && (spell.Combat.TargetType == SpellTargetTypes.AoE || spell.Combat.TargetType == SpellTargetTypes.Single) && spell.Combat.HitRadius > 0)
+            {
+                spellStats.AddText(Strings.SpellDesc.radius.ToString(spell.Combat.HitRadius), spellStats.RenderColor, spellStatsText.CurAlignments.Count > 0 ? spellStatsText.CurAlignments[0] : Alignments.Left, spellStatsText.Font);
+                spellStats.AddLineBreak();
+                spellStats.AddLineBreak();
+            }
+
             if (spell.CastDuration > 0)
             {
 				float castDuration = (float)spell.CastDuration / 1000f;
 				spellStats.AddText(Strings.SpellDesc.casttime.ToString(castDuration),
                     spellStats.RenderColor, spellStatsText.CurAlignments.Count > 0 ? spellStatsText.CurAlignments[0] : Alignments.Left, spellStatsText.Font);
                 spellStats.AddLineBreak();
-                spellStats.AddLineBreak();
+                if (spell.CooldownDuration <= 0) spellStats.AddLineBreak();
             }
             if (spell.CooldownDuration > 0)
             {
