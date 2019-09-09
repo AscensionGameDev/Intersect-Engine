@@ -130,6 +130,7 @@ namespace Intersect.Editor.Forms.Editors
             this.btnAddFolder.Size = new System.Drawing.Size(18, 21);
             this.btnAddFolder.TabIndex = 25;
             this.btnAddFolder.Text = "+";
+            this.btnAddFolder.Visible = false;
             this.btnAddFolder.Click += new System.EventHandler(this.btnAddFolder_Click);
             // 
             // lblFolder
@@ -140,6 +141,7 @@ namespace Intersect.Editor.Forms.Editors
             this.lblFolder.Size = new System.Drawing.Size(39, 13);
             this.lblFolder.TabIndex = 24;
             this.lblFolder.Text = "Folder:";
+            this.lblFolder.Visible = false;
             // 
             // cmbFolder
             // 
@@ -161,6 +163,7 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbFolder.TabIndex = 23;
             this.cmbFolder.Text = null;
             this.cmbFolder.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbFolder.Visible = false;
             this.cmbFolder.SelectedIndexChanged += new System.EventHandler(this.cmbFolder_SelectedIndexChanged);
             // 
             // toolStrip
