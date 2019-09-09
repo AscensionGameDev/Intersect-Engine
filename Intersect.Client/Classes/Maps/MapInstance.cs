@@ -594,6 +594,10 @@ namespace Intersect.Client.Maps
                     var tile = Layers[layer].Tiles[x, y];
                     if (tile.TilesetTex == null) continue;
                     GameTexture tilesetTex = (GameTexture)tile.TilesetTex;
+
+                    if (tile.X < 0 || tile.Y < 0) continue;
+                    if (tile.X * Options.TileWidth >= tilesetTex.GetWidth() || tile.Y * Options.TileHeight >= tilesetTex.GetHeight()) continue;
+
                     var platformTex = tilesetTex.GetTexture();
 
                     GameTileBuffer[] buffers = null;
@@ -612,10 +616,6 @@ namespace Intersect.Client.Maps
                     switch (Autotiles.Autotile[x, y].Layer[layer].RenderState)
                     {
                         case MapAutotiles.RENDER_STATE_NORMAL:
-                            if (this.Name == "Graveyard" && x == 19 && y == 24 && layer == 3)
-                            {
-                                var here = true;
-                            }
                             for (int i = 0; i < 3; i++)
                             {
                                 var buffer = buffers[i];

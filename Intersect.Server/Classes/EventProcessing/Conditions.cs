@@ -111,7 +111,7 @@ namespace Intersect.Server.EventProcessing
             else
             {
                 lvlStat = player.Stat[(int)condition.Stat].Value();
-                if (condition.IgnoreBuffs) lvlStat = player.Stat[(int)condition.Stat].Stat;
+                if (condition.IgnoreBuffs) lvlStat = player.Stat[(int)condition.Stat].Stat + player.StatPointAllocations[(int)condition.Stat];
             }
             switch (condition.Comparator) //Comparator
             {

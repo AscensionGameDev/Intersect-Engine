@@ -177,8 +177,11 @@ namespace Intersect.Editor.Forms.Editors
                 if (!cmbFolder.Items.Contains(folderName))
                 {
                     var evt = GetSelectedEvent();
-                    evt.Folder = folderName;
-                    PacketSender.SendSaveObject(evt);
+                    if (evt != null)
+                    {
+                        evt.Folder = folderName;
+                        PacketSender.SendSaveObject(evt);
+                    }
                     mExpandedFolders.Add(folderName);
                     InitEditor();
                     cmbFolder.Text = folderName;
@@ -298,12 +301,18 @@ namespace Intersect.Editor.Forms.Editors
             toolStripItemDelete.Enabled = false;
             toolStripItemCopy.Enabled = false;
             toolStripItemPaste.Enabled = false;
+            cmbFolder.Hide();
+            btnAddFolder.Hide();
+            lblFolder.Hide();
             if (evt != null)
             {
                 cmbFolder.Text = evt.Folder;
                 toolStripItemDelete.Enabled = true;
                 toolStripItemCopy.Enabled = true;
                 toolStripItemPaste.Enabled = mCopiedItem != null;
+                cmbFolder.Show();
+                btnAddFolder.Show();
+                lblFolder.Show();
             }
         }
 

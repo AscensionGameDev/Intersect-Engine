@@ -793,6 +793,7 @@ namespace Intersect.Client.Localization
             };
             public static LocalizedString effects = @"Effects:";
             public static LocalizedString prereqs = @"Prerequisites:";
+            public static LocalizedString radius = @"Hit Radius: {00}";
             public static LocalizedString removesymbol = @"-";
             public static Dictionary<int, LocalizedString> spelltypes = new Dictionary<int, LocalizedString>
             {
@@ -804,7 +805,7 @@ namespace Intersect.Client.Localization
             };
             public static Dictionary<int, LocalizedString> stats = new Dictionary<int, LocalizedString>
             {
-                {0,@"Attack: {00}"},
+                {0, @"Attack: {00}"},
                 {1, @"Ability Power: {00}"},
                 {2, @"Defense: {00}"},
                 {3, @"Magic Resist: {00}"},
@@ -814,7 +815,7 @@ namespace Intersect.Client.Localization
             {
                 {0, @"Self Cast"},
                 {1, @"Targetted - Range: {00} Tiles"},
-                {2, @"AOE - Range: {00} Tiles - Radius: {01} Tiles"},
+                {2, @"AOE"},
                 {3, @"Projectile - Range: {00} Tiles"},
                 {4, @"On Hit"},
             };

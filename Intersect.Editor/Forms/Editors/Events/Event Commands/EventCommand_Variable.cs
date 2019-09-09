@@ -181,7 +181,21 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             }
             else
             {
-                mMyCommand.Modification = new VariableMod();
+                if (mMyCommand.Modification == null)
+                {
+                    mMyCommand.Modification = new BooleanVariableMod();
+                }
+                else
+                {
+                    if (mMyCommand.Modification.GetType() == typeof(BooleanVariableMod))
+                    {
+                        mMyCommand.Modification = GetBooleanVariableMod();
+                    }
+                    else if (mMyCommand.Modification.GetType() == typeof(IntegerVariableMod))
+                    {
+                        mMyCommand.Modification = GetNumericVariableMod();
+                    }
+                }
             }
 
             mMyCommand.SyncParty = chkSyncParty.Checked;
