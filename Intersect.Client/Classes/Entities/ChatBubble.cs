@@ -14,7 +14,7 @@ namespace Intersect.Client.Entities
         private Color mRenderColor;
         private long mRenderTimer;
         private string mSourceText;
-        private Framework.GenericClasses.Point[,] mTexSections;
+        private Point[,] mTexSections;
         private string[] mText;
         private Rectangle mTextBounds;
         private Rectangle mTextureBounds;
@@ -47,7 +47,7 @@ namespace Intersect.Client.Entities
             if (mTextureBounds.Width == 0)
             {
                 //Gotta Calculate Bounds
-                for (int i = mText.Length - 1; i > -1; i--)
+                for (var i = (mText?.Length ?? 0) - 1; i > -1; i--)
                 {
                     var textSize = GameGraphics.Renderer.MeasureText(mText[i], GameGraphics.GameFont, 1);
                     if (textSize.X > mTextureBounds.Width) mTextureBounds.Width = (int) textSize.X + 16;
@@ -61,7 +61,7 @@ namespace Intersect.Client.Entities
                 mTextureBounds.Width = (int) (Math.Round(mTextureBounds.Width / 8.0) * 8.0);
                 mTextureBounds.Height = (int) (Math.Round(mTextureBounds.Height / 8.0) * 8.0);
                 if ((mTextureBounds.Width / 8) % 2 != 0) mTextureBounds.Width += 8;
-                mTexSections = new Framework.GenericClasses.Point[mTextureBounds.Width / 8, mTextureBounds.Height / 8];
+                mTexSections = new Point[mTextureBounds.Width / 8, mTextureBounds.Height / 8];
                 for (int x1 = 0; x1 < mTextureBounds.Width / 8; x1++)
                 {
                     for (int y1 = 0; y1 < mTextureBounds.Height / 8; y1++)
@@ -92,10 +92,10 @@ namespace Intersect.Client.Entities
                     for (int y1 = 0; y1 < mTextureBounds.Height / 8; y1++)
                     {
                         GameGraphics.Renderer.DrawTexture(mBubbleTex,
-                            new FloatRect(mTexSections[x1, y1].X * 8, mTexSections[x1, y1].Y * 8, 8, 8),
-                            new FloatRect(x - mTextureBounds.Width / 2 + (x1 * 8),
-                                y - mTextureBounds.Height - yoffset + (y1 * 8), 8, 8),
-                            Framework.GenericClasses.Color.White);
+                           mTexSections[x1, y1].X * 8, mTexSections[x1, y1].Y * 8, 8, 8,
+                            x - mTextureBounds.Width / 2 + (x1 * 8),
+                                y - mTextureBounds.Height - yoffset + (y1 * 8), 8, 8,
+                            Color.White);
                     }
                 }
                 for (int i = mText.Length - 1; i > -1; i--)
@@ -104,7 +104,7 @@ namespace Intersect.Client.Entities
                     GameGraphics.Renderer.DrawString(mText[i], GameGraphics.GameFont,
                         (int) (x - mTextureBounds.Width / 2 + (mTextureBounds.Width - textSize.X) / 2f),
                         (int) ((y) - mTextureBounds.Height - yoffset + 8 + (i * 16)), 1,
-                        Framework.GenericClasses.Color.FromArgb(CustomColors.ChatBubbleTextColor.ToArgb()), true, null);
+                        Color.FromArgb(CustomColors.ChatBubbleTextColor.ToArgb()), true, null);
                 }
             }
             yoffset += mTextureBounds.Height;

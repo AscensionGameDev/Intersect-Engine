@@ -30,10 +30,17 @@ namespace Intersect.Editor.Forms.Editors
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmShop));
             this.grpShops = new DarkUI.Controls.DarkGroupBox();
-            this.lstShops = new System.Windows.Forms.ListBox();
+            this.btnClearSearch = new DarkUI.Controls.DarkButton();
+            this.txtSearch = new DarkUI.Controls.DarkTextBox();
+            this.lstShops = new System.Windows.Forms.TreeView();
+            this.imageList = new System.Windows.Forms.ImageList(this.components);
             this.grpGeneral = new DarkUI.Controls.DarkGroupBox();
+            this.btnAddFolder = new DarkUI.Controls.DarkButton();
+            this.lblFolder = new System.Windows.Forms.Label();
+            this.cmbFolder = new DarkUI.Controls.DarkComboBox();
             this.cmbDefaultCurrency = new DarkUI.Controls.DarkComboBox();
             this.lblDefaultCurrency = new System.Windows.Forms.Label();
             this.lblName = new System.Windows.Forms.Label();
@@ -68,6 +75,8 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemDelete = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnChronological = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemCopy = new System.Windows.Forms.ToolStripButton();
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
@@ -86,6 +95,8 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpShops.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpShops.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpShops.Controls.Add(this.btnClearSearch);
+            this.grpShops.Controls.Add(this.txtSearch);
             this.grpShops.Controls.Add(this.lstShops);
             this.grpShops.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpShops.Location = new System.Drawing.Point(12, 34);
@@ -95,23 +106,63 @@ namespace Intersect.Editor.Forms.Editors
             this.grpShops.TabStop = false;
             this.grpShops.Text = "Shops";
             // 
+            // btnClearSearch
+            // 
+            this.btnClearSearch.Location = new System.Drawing.Point(179, 20);
+            this.btnClearSearch.Name = "btnClearSearch";
+            this.btnClearSearch.Padding = new System.Windows.Forms.Padding(5);
+            this.btnClearSearch.Size = new System.Drawing.Size(18, 20);
+            this.btnClearSearch.TabIndex = 37;
+            this.btnClearSearch.Text = "X";
+            this.btnClearSearch.Click += new System.EventHandler(this.btnClearSearch_Click);
+            // 
+            // txtSearch
+            // 
+            this.txtSearch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtSearch.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtSearch.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.txtSearch.Location = new System.Drawing.Point(6, 20);
+            this.txtSearch.Name = "txtSearch";
+            this.txtSearch.Size = new System.Drawing.Size(167, 20);
+            this.txtSearch.TabIndex = 36;
+            this.txtSearch.Text = "Search...";
+            this.txtSearch.Click += new System.EventHandler(this.txtSearch_Click);
+            this.txtSearch.TextChanged += new System.EventHandler(this.txtSearch_TextChanged);
+            this.txtSearch.Enter += new System.EventHandler(this.txtSearch_Enter);
+            this.txtSearch.Leave += new System.EventHandler(this.txtSearch_Leave);
+            // 
             // lstShops
             // 
+            this.lstShops.AllowDrop = true;
             this.lstShops.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.lstShops.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lstShops.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.lstShops.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lstShops.FormattingEnabled = true;
-            this.lstShops.Location = new System.Drawing.Point(6, 19);
+            this.lstShops.HideSelection = false;
+            this.lstShops.ImageIndex = 0;
+            this.lstShops.ImageList = this.imageList;
+            this.lstShops.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
+            this.lstShops.Location = new System.Drawing.Point(6, 46);
             this.lstShops.Name = "lstShops";
-            this.lstShops.Size = new System.Drawing.Size(191, 431);
-            this.lstShops.TabIndex = 1;
-            this.lstShops.SelectedIndexChanged += new System.EventHandler(this.lstShops_Click);
-            this.lstShops.KeyDown += new System.Windows.Forms.KeyEventHandler(this.itemList_KeyDown);
+            this.lstShops.SelectedImageIndex = 0;
+            this.lstShops.Size = new System.Drawing.Size(191, 415);
+            this.lstShops.TabIndex = 35;
+            this.lstShops.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.lstShops_AfterSelect);
+            this.lstShops.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.lstShops_NodeMouseClick);
+            // 
+            // imageList
+            // 
+            this.imageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList.ImageStream")));
+            this.imageList.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList.Images.SetKeyName(0, "folder_Open_16xLG.png");
+            this.imageList.Images.SetKeyName(1, "LegacyPackage_16x.png");
             // 
             // grpGeneral
             // 
             this.grpGeneral.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpGeneral.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpGeneral.Controls.Add(this.btnAddFolder);
+            this.grpGeneral.Controls.Add(this.lblFolder);
+            this.grpGeneral.Controls.Add(this.cmbFolder);
             this.grpGeneral.Controls.Add(this.cmbDefaultCurrency);
             this.grpGeneral.Controls.Add(this.lblDefaultCurrency);
             this.grpGeneral.Controls.Add(this.lblName);
@@ -119,10 +170,51 @@ namespace Intersect.Editor.Forms.Editors
             this.grpGeneral.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpGeneral.Location = new System.Drawing.Point(-1, 2);
             this.grpGeneral.Name = "grpGeneral";
-            this.grpGeneral.Size = new System.Drawing.Size(523, 47);
+            this.grpGeneral.Size = new System.Drawing.Size(523, 67);
             this.grpGeneral.TabIndex = 16;
             this.grpGeneral.TabStop = false;
             this.grpGeneral.Text = "General";
+            // 
+            // btnAddFolder
+            // 
+            this.btnAddFolder.Location = new System.Drawing.Point(197, 41);
+            this.btnAddFolder.Name = "btnAddFolder";
+            this.btnAddFolder.Padding = new System.Windows.Forms.Padding(5);
+            this.btnAddFolder.Size = new System.Drawing.Size(18, 21);
+            this.btnAddFolder.TabIndex = 55;
+            this.btnAddFolder.Text = "+";
+            this.btnAddFolder.Click += new System.EventHandler(this.btnAddFolder_Click);
+            // 
+            // lblFolder
+            // 
+            this.lblFolder.AutoSize = true;
+            this.lblFolder.Location = new System.Drawing.Point(6, 44);
+            this.lblFolder.Name = "lblFolder";
+            this.lblFolder.Size = new System.Drawing.Size(39, 13);
+            this.lblFolder.TabIndex = 54;
+            this.lblFolder.Text = "Folder:";
+            // 
+            // cmbFolder
+            // 
+            this.cmbFolder.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbFolder.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbFolder.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbFolder.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbFolder.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbFolder.ButtonIcon")));
+            this.cmbFolder.DrawDropdownHoverOutline = false;
+            this.cmbFolder.DrawFocusRectangle = false;
+            this.cmbFolder.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbFolder.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbFolder.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbFolder.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbFolder.FormattingEnabled = true;
+            this.cmbFolder.Location = new System.Drawing.Point(60, 41);
+            this.cmbFolder.Name = "cmbFolder";
+            this.cmbFolder.Size = new System.Drawing.Size(131, 21);
+            this.cmbFolder.TabIndex = 53;
+            this.cmbFolder.Text = null;
+            this.cmbFolder.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbFolder.SelectedIndexChanged += new System.EventHandler(this.cmbFolder_SelectedIndexChanged);
             // 
             // cmbDefaultCurrency
             // 
@@ -158,7 +250,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblName
             // 
             this.lblName.AutoSize = true;
-            this.lblName.Location = new System.Drawing.Point(6, 20);
+            this.lblName.Location = new System.Drawing.Point(6, 17);
             this.lblName.Name = "lblName";
             this.lblName.Size = new System.Drawing.Size(38, 13);
             this.lblName.TabIndex = 1;
@@ -169,9 +261,9 @@ namespace Intersect.Editor.Forms.Editors
             this.txtName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.txtName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.txtName.Location = new System.Drawing.Point(60, 19);
+            this.txtName.Location = new System.Drawing.Point(60, 16);
             this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(135, 20);
+            this.txtName.Size = new System.Drawing.Size(155, 20);
             this.txtName.TabIndex = 0;
             this.txtName.TextChanged += new System.EventHandler(this.txtName_TextChanged);
             // 
@@ -189,9 +281,9 @@ namespace Intersect.Editor.Forms.Editors
             this.grpItemsSold.Controls.Add(this.lblAddSoldItem);
             this.grpItemsSold.Controls.Add(this.lstSoldItems);
             this.grpItemsSold.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpItemsSold.Location = new System.Drawing.Point(0, 55);
+            this.grpItemsSold.Location = new System.Drawing.Point(0, 75);
             this.grpItemsSold.Name = "grpItemsSold";
-            this.grpItemsSold.Size = new System.Drawing.Size(258, 414);
+            this.grpItemsSold.Size = new System.Drawing.Size(258, 390);
             this.grpItemsSold.TabIndex = 17;
             this.grpItemsSold.TabStop = false;
             this.grpItemsSold.Text = "Items Sold";
@@ -200,7 +292,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.nudSellCost.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudSellCost.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudSellCost.Location = new System.Drawing.Point(81, 351);
+            this.nudSellCost.Location = new System.Drawing.Point(81, 325);
             this.nudSellCost.Maximum = new decimal(new int[] {
             1000000,
             0,
@@ -229,7 +321,7 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbSellFor.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbSellFor.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbSellFor.FormattingEnabled = true;
-            this.cmbSellFor.Location = new System.Drawing.Point(6, 322);
+            this.cmbSellFor.Location = new System.Drawing.Point(6, 296);
             this.cmbSellFor.Name = "cmbSellFor";
             this.cmbSellFor.Size = new System.Drawing.Size(246, 21);
             this.cmbSellFor.TabIndex = 11;
@@ -239,7 +331,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblSellFor
             // 
             this.lblSellFor.AutoSize = true;
-            this.lblSellFor.Location = new System.Drawing.Point(7, 306);
+            this.lblSellFor.Location = new System.Drawing.Point(7, 280);
             this.lblSellFor.Name = "lblSellFor";
             this.lblSellFor.Size = new System.Drawing.Size(45, 13);
             this.lblSellFor.TabIndex = 10;
@@ -248,7 +340,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblSellCost
             // 
             this.lblSellCost.AutoSize = true;
-            this.lblSellCost.Location = new System.Drawing.Point(7, 353);
+            this.lblSellCost.Location = new System.Drawing.Point(7, 327);
             this.lblSellCost.Name = "lblSellCost";
             this.lblSellCost.Size = new System.Drawing.Size(51, 13);
             this.lblSellCost.TabIndex = 5;
@@ -256,7 +348,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             // btnDelSoldItem
             // 
-            this.btnDelSoldItem.Location = new System.Drawing.Point(135, 383);
+            this.btnDelSoldItem.Location = new System.Drawing.Point(135, 357);
             this.btnDelSoldItem.Name = "btnDelSoldItem";
             this.btnDelSoldItem.Padding = new System.Windows.Forms.Padding(5);
             this.btnDelSoldItem.Size = new System.Drawing.Size(117, 23);
@@ -266,7 +358,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             // btnAddSoldItem
             // 
-            this.btnAddSoldItem.Location = new System.Drawing.Point(6, 383);
+            this.btnAddSoldItem.Location = new System.Drawing.Point(6, 357);
             this.btnAddSoldItem.Name = "btnAddSoldItem";
             this.btnAddSoldItem.Padding = new System.Windows.Forms.Padding(5);
             this.btnAddSoldItem.Size = new System.Drawing.Size(117, 23);
@@ -288,7 +380,7 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbAddSoldItem.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbAddSoldItem.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbAddSoldItem.FormattingEnabled = true;
-            this.cmbAddSoldItem.Location = new System.Drawing.Point(6, 280);
+            this.cmbAddSoldItem.Location = new System.Drawing.Point(6, 254);
             this.cmbAddSoldItem.Name = "cmbAddSoldItem";
             this.cmbAddSoldItem.Size = new System.Drawing.Size(246, 21);
             this.cmbAddSoldItem.TabIndex = 2;
@@ -298,7 +390,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblAddSoldItem
             // 
             this.lblAddSoldItem.AutoSize = true;
-            this.lblAddSoldItem.Location = new System.Drawing.Point(7, 264);
+            this.lblAddSoldItem.Location = new System.Drawing.Point(7, 238);
             this.lblAddSoldItem.Name = "lblAddSoldItem";
             this.lblAddSoldItem.Size = new System.Drawing.Size(108, 13);
             this.lblAddSoldItem.TabIndex = 1;
@@ -312,7 +404,7 @@ namespace Intersect.Editor.Forms.Editors
             this.lstSoldItems.FormattingEnabled = true;
             this.lstSoldItems.Location = new System.Drawing.Point(7, 20);
             this.lstSoldItems.Name = "lstSoldItems";
-            this.lstSoldItems.Size = new System.Drawing.Size(245, 236);
+            this.lstSoldItems.Size = new System.Drawing.Size(245, 210);
             this.lstSoldItems.TabIndex = 0;
             // 
             // grpItemsBought
@@ -331,9 +423,9 @@ namespace Intersect.Editor.Forms.Editors
             this.grpItemsBought.Controls.Add(this.rdoBuyBlacklist);
             this.grpItemsBought.Controls.Add(this.rdoBuyWhitelist);
             this.grpItemsBought.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpItemsBought.Location = new System.Drawing.Point(264, 55);
+            this.grpItemsBought.Location = new System.Drawing.Point(264, 75);
             this.grpItemsBought.Name = "grpItemsBought";
-            this.grpItemsBought.Size = new System.Drawing.Size(258, 414);
+            this.grpItemsBought.Size = new System.Drawing.Size(258, 390);
             this.grpItemsBought.TabIndex = 18;
             this.grpItemsBought.TabStop = false;
             this.grpItemsBought.Text = "Items Bought (Whitelist - Buy Listed Items)";
@@ -342,7 +434,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.nudBuyAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudBuyAmount.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudBuyAmount.Location = new System.Drawing.Point(82, 351);
+            this.nudBuyAmount.Location = new System.Drawing.Point(82, 325);
             this.nudBuyAmount.Maximum = new decimal(new int[] {
             1000000,
             0,
@@ -371,7 +463,7 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbBuyFor.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbBuyFor.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbBuyFor.FormattingEnabled = true;
-            this.cmbBuyFor.Location = new System.Drawing.Point(8, 322);
+            this.cmbBuyFor.Location = new System.Drawing.Point(8, 296);
             this.cmbBuyFor.Name = "cmbBuyFor";
             this.cmbBuyFor.Size = new System.Drawing.Size(246, 21);
             this.cmbBuyFor.TabIndex = 12;
@@ -381,7 +473,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblBuyFor
             // 
             this.lblBuyFor.AutoSize = true;
-            this.lblBuyFor.Location = new System.Drawing.Point(6, 306);
+            this.lblBuyFor.Location = new System.Drawing.Point(6, 280);
             this.lblBuyFor.Name = "lblBuyFor";
             this.lblBuyFor.Size = new System.Drawing.Size(46, 13);
             this.lblBuyFor.TabIndex = 11;
@@ -390,7 +482,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblBuyAmount
             // 
             this.lblBuyAmount.AutoSize = true;
-            this.lblBuyAmount.Location = new System.Drawing.Point(6, 353);
+            this.lblBuyAmount.Location = new System.Drawing.Point(6, 327);
             this.lblBuyAmount.Name = "lblBuyAmount";
             this.lblBuyAmount.Size = new System.Drawing.Size(66, 13);
             this.lblBuyAmount.TabIndex = 6;
@@ -398,7 +490,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             // btnDelBoughtItem
             // 
-            this.btnDelBoughtItem.Location = new System.Drawing.Point(138, 383);
+            this.btnDelBoughtItem.Location = new System.Drawing.Point(138, 357);
             this.btnDelBoughtItem.Name = "btnDelBoughtItem";
             this.btnDelBoughtItem.Padding = new System.Windows.Forms.Padding(5);
             this.btnDelBoughtItem.Size = new System.Drawing.Size(117, 23);
@@ -408,7 +500,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             // btnAddBoughtItem
             // 
-            this.btnAddBoughtItem.Location = new System.Drawing.Point(9, 383);
+            this.btnAddBoughtItem.Location = new System.Drawing.Point(9, 357);
             this.btnAddBoughtItem.Name = "btnAddBoughtItem";
             this.btnAddBoughtItem.Padding = new System.Windows.Forms.Padding(5);
             this.btnAddBoughtItem.Size = new System.Drawing.Size(117, 23);
@@ -430,7 +522,7 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbAddBoughtItem.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbAddBoughtItem.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbAddBoughtItem.FormattingEnabled = true;
-            this.cmbAddBoughtItem.Location = new System.Drawing.Point(8, 280);
+            this.cmbAddBoughtItem.Location = new System.Drawing.Point(8, 254);
             this.cmbAddBoughtItem.Name = "cmbAddBoughtItem";
             this.cmbAddBoughtItem.Size = new System.Drawing.Size(246, 21);
             this.cmbAddBoughtItem.TabIndex = 3;
@@ -440,7 +532,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblItemBought
             // 
             this.lblItemBought.AutoSize = true;
-            this.lblItemBought.Location = new System.Drawing.Point(6, 266);
+            this.lblItemBought.Location = new System.Drawing.Point(6, 240);
             this.lblItemBought.Name = "lblItemBought";
             this.lblItemBought.Size = new System.Drawing.Size(52, 13);
             this.lblItemBought.TabIndex = 2;
@@ -454,13 +546,13 @@ namespace Intersect.Editor.Forms.Editors
             this.lstBoughtItems.FormattingEnabled = true;
             this.lstBoughtItems.Location = new System.Drawing.Point(8, 20);
             this.lstBoughtItems.Name = "lstBoughtItems";
-            this.lstBoughtItems.Size = new System.Drawing.Size(245, 236);
+            this.lstBoughtItems.Size = new System.Drawing.Size(245, 210);
             this.lstBoughtItems.TabIndex = 2;
             // 
             // rdoBuyBlacklist
             // 
             this.rdoBuyBlacklist.AutoSize = true;
-            this.rdoBuyBlacklist.Location = new System.Drawing.Point(189, 262);
+            this.rdoBuyBlacklist.Location = new System.Drawing.Point(189, 236);
             this.rdoBuyBlacklist.Name = "rdoBuyBlacklist";
             this.rdoBuyBlacklist.Size = new System.Drawing.Size(64, 17);
             this.rdoBuyBlacklist.TabIndex = 1;
@@ -471,7 +563,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.rdoBuyWhitelist.AutoSize = true;
             this.rdoBuyWhitelist.Checked = true;
-            this.rdoBuyWhitelist.Location = new System.Drawing.Point(118, 262);
+            this.rdoBuyWhitelist.Location = new System.Drawing.Point(118, 236);
             this.rdoBuyWhitelist.Name = "rdoBuyWhitelist";
             this.rdoBuyWhitelist.Size = new System.Drawing.Size(65, 17);
             this.rdoBuyWhitelist.TabIndex = 0;
@@ -521,6 +613,8 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripSeparator1,
             this.toolStripItemDelete,
             this.toolStripSeparator2,
+            this.btnChronological,
+            this.toolStripSeparator4,
             this.toolStripItemCopy,
             this.toolStripItemPaste,
             this.toolStripSeparator3,
@@ -568,6 +662,24 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripSeparator2.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            // 
+            // btnChronological
+            // 
+            this.btnChronological.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnChronological.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.btnChronological.Image = ((System.Drawing.Image)(resources.GetObject("btnChronological.Image")));
+            this.btnChronological.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnChronological.Name = "btnChronological";
+            this.btnChronological.Size = new System.Drawing.Size(23, 22);
+            this.btnChronological.Text = "Order Chronologically";
+            this.btnChronological.Click += new System.EventHandler(this.btnChronological_Click);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.toolStripSeparator4.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
             // 
             // toolStripItemCopy
             // 
@@ -634,6 +746,7 @@ namespace Intersect.Editor.Forms.Editors
             this.Load += new System.EventHandler(this.frmShop_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.form_KeyDown);
             this.grpShops.ResumeLayout(false);
+            this.grpShops.PerformLayout();
             this.grpGeneral.ResumeLayout(false);
             this.grpGeneral.PerformLayout();
             this.grpItemsSold.ResumeLayout(false);
@@ -652,7 +765,6 @@ namespace Intersect.Editor.Forms.Editors
         #endregion
 
         private DarkGroupBox grpShops;
-        private System.Windows.Forms.ListBox lstShops;
         private DarkGroupBox grpGeneral;
         private System.Windows.Forms.Label lblName;
         private DarkTextBox txtName;
@@ -692,5 +804,14 @@ namespace Intersect.Editor.Forms.Editors
         public System.Windows.Forms.ToolStripButton toolStripItemUndo;
         private DarkNumericUpDown nudSellCost;
         private DarkNumericUpDown nudBuyAmount;
+        private DarkButton btnClearSearch;
+        private DarkTextBox txtSearch;
+        public System.Windows.Forms.TreeView lstShops;
+        private System.Windows.Forms.ImageList imageList;
+        private DarkButton btnAddFolder;
+        private System.Windows.Forms.Label lblFolder;
+        private DarkComboBox cmbFolder;
+        private System.Windows.Forms.ToolStripButton btnChronological;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
     }
 }

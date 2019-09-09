@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Forms;
 using Intersect.Editor.Localization;
 using Intersect.Enums;
@@ -15,22 +16,34 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private EventPage mCurrentPage;
         public Condition Condition;
         public bool Cancelled;
+        private bool mLoading = false;
 
         public EventCommandConditionalBranch(Condition refCommand, EventPage refPage, FrmEvent editor, ConditionalBranchCommand command)
         {
             InitializeComponent();
-            if (refCommand == null) refCommand = new PlayerSwitchCondition();
+            mLoading = true;
+            if (refCommand == null) refCommand = new VariableIsCondition();
             Condition = refCommand;
             mEventEditor = editor;
             mEventCommand = command;
             mCurrentPage = refPage;
-            cmbConditionType.SelectedIndex = (int)Condition.Type;
             UpdateFormElements(refCommand.Type);
             InitLocalization();
+            var typeIndex = 0;
+            foreach (var itm in Strings.EventConditional.conditions)
+            {
+                if (itm.Key == (int)Condition.Type)
+                {
+                    cmbConditionType.SelectedIndex = typeIndex;
+                    break;
+                }
+                typeIndex++;
+            }
             nudVariableValue.Minimum = long.MinValue;
             nudVariableValue.Maximum = long.MaxValue;
             chkNegated.Checked = refCommand.Negated;
             SetupFormValues((dynamic)refCommand);
+            mLoading = false;
         }
 
         private void InitLocalization()
@@ -39,38 +52,51 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             lblType.Text = Strings.EventConditional.type;
 
             cmbConditionType.Items.Clear();
-            for (int i = 0; i < Strings.EventConditional.conditions.Count; i++)
+            foreach (var itm in Strings.EventConditional.conditions)
             {
-                cmbConditionType.Items.Add(Strings.EventConditional.conditions[i]);
+                cmbConditionType.Items.Add(itm.Value);
             }
 
             chkNegated.Text = Strings.EventConditional.negated;
 
-            //Player Switch
-            grpSwitch.Text = Strings.EventConditional.playerswitch;
-            lblSwitch.Text = Strings.EventConditional.Switch;
-            lblSwitchIs.Text = Strings.EventConditional.switchis;
-            cmbSwitchVal.Items.Clear();
-            cmbSwitchVal.Items.Add(Strings.EventConditional.False);
-            cmbSwitchVal.Items.Add(Strings.EventConditional.True);
+            //Variable Is
+            grpVariable.Text = Strings.EventConditional.variable;
+            grpSelectVariable.Text = Strings.EventConditional.selectvariable;
+            rdoPlayerVariable.Text = Strings.EventConditional.playervariable;
+            rdoGlobalVariable.Text = Strings.EventConditional.globalvariable;
 
-            //Player Variable
-            grpPlayerVariable.Text = Strings.EventConditional.playervariable;
-            lblVariable.Text = Strings.EventConditional.variable;
-            lblComparator.Text = Strings.EventConditional.comparator;
+            //Numeric Variable
+            grpNumericVariable.Text = Strings.EventConditional.numericvariable;
+            lblNumericComparator.Text = Strings.EventConditional.comparator;
             rdoVarCompareStaticValue.Text = Strings.EventConditional.value;
             rdoVarComparePlayerVar.Text = Strings.EventConditional.playervariablevalue;
             rdoVarCompareGlobalVar.Text = Strings.EventConditional.globalvariablevalue;
-            cmbVariableMod.Items.Clear();
+            cmbNumericComparitor.Items.Clear();
             for (int i = 0; i < Strings.EventConditional.comparators.Count; i++)
             {
-                cmbVariableMod.Items.Add(Strings.EventConditional.comparators[i]);
+                cmbNumericComparitor.Items.Add(Strings.EventConditional.comparators[i]);
             }
+            cmbNumericComparitor.SelectedIndex = 0;
+
+            //Boolean Variable
+            grpBooleanVariable.Text = Strings.EventConditional.booleanvariable;
+            cmbBooleanComparator.Items.Clear();
+            cmbBooleanComparator.Items.Add(Strings.EventConditional.booleanequal);
+            cmbBooleanComparator.Items.Add(Strings.EventConditional.booleannotequal);
+            cmbBooleanComparator.SelectedIndex = 0;
+            optBooleanTrue.Text = Strings.EventConditional.True;
+            optBooleanFalse.Text = Strings.EventConditional.False;
+            optBooleanGlobalVariable.Text = Strings.EventConditional.globalvariablevalue;
+            optBooleanPlayerVariable.Text = Strings.EventConditional.playervariablevalue;
 
             //Has Item
             grpHasItem.Text = Strings.EventConditional.hasitem;
             lblItemQuantity.Text = Strings.EventConditional.hasatleast;
             lblItem.Text = Strings.EventConditional.item;
+
+            //Has Item Equipped
+            grpEquippedItem.Text = Strings.EventConditional.hasitemequipped;
+            lblEquippedItem.Text = Strings.EventConditional.item;
 
             //Class is
             grpClass.Text = Strings.EventConditional.classis;
@@ -162,29 +188,9 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
             switch (type)
             {
-                case ConditionTypes.PlayerSwitch:
-                    Condition = new PlayerSwitchCondition();
-                    if (cmbSwitch.Items.Count > 0) cmbSwitch.SelectedIndex = 0;
-                    cmbSwitchVal.SelectedIndex = 0;
-                    break;
-                case ConditionTypes.PlayerVariable:
-                    Condition = new PlayerVariableCondition();
-                    if (cmbVariable.Items.Count > 0) cmbVariable.SelectedIndex = 0;
-                    cmbVariableMod.SelectedIndex = 0;
-                    rdoVarCompareStaticValue.Checked = true;
-                    nudVariableValue.Value = 0;
-                    break;
-                case ConditionTypes.ServerSwitch:
-                    Condition = new ServerSwitchCondition();
-                    if (cmbSwitch.Items.Count > 0) cmbSwitch.SelectedIndex = 0;
-                    cmbSwitchVal.SelectedIndex = 0;
-                    break;
-                case ConditionTypes.ServerVariable:
-                    Condition = new ServerVariableCondition();
-                    if (cmbVariable.Items.Count > 0) cmbVariable.SelectedIndex = 0;
-                    cmbVariableMod.SelectedIndex = 0;
-                    rdoVarCompareStaticValue.Checked = true;
-                    nudVariableValue.Value = 0;
+                case ConditionTypes.VariableIs:
+                    Condition = new VariableIsCondition();
+                    SetupFormValues((dynamic) Condition);
                     break;
                 case ConditionTypes.HasItem:
                     Condition = new HasItemCondition();
@@ -244,6 +250,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     Condition = new MapIsCondition();
                     btnSelectMap.Tag = Guid.Empty;
                     break;
+                case ConditionTypes.IsItemEquipped:
+                    Condition = new IsItemEquippedCondition();
+                    if (cmbEquippedItem.Items.Count > 0) cmbEquippedItem.SelectedIndex = 0;
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -252,8 +262,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void UpdateFormElements(ConditionTypes type)
         {
-            grpSwitch.Hide();
-            grpPlayerVariable.Hide();
+            grpVariable.Hide();
             grpHasItem.Hide();
             grpSpell.Hide();
             grpClass.Hide();
@@ -266,39 +275,21 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             grpQuestCompleted.Hide();
             grpGender.Hide();
             grpMapIs.Hide();
+            grpEquippedItem.Hide();
             switch (type)
             {
-                case ConditionTypes.PlayerSwitch:
-                    grpSwitch.Text = Strings.EventConditional.playerswitch;
-                    grpSwitch.Show();
-                    cmbSwitch.Items.Clear();
-                    cmbSwitch.Items.AddRange(PlayerSwitchBase.Names);
-                    break;
-                case ConditionTypes.PlayerVariable:
-                    grpPlayerVariable.Text = Strings.EventConditional.playervariable;
-                    grpPlayerVariable.Show();
-                    cmbVariable.Items.Clear();
-                    cmbVariable.Items.AddRange(PlayerVariableBase.Names);
+                case ConditionTypes.VariableIs:
+                    grpVariable.Show();
+
                     cmbCompareGlobalVar.Items.Clear();
                     cmbCompareGlobalVar.Items.AddRange(ServerVariableBase.Names);
                     cmbComparePlayerVar.Items.Clear();
                     cmbComparePlayerVar.Items.AddRange(PlayerVariableBase.Names);
-                    break;
-                case ConditionTypes.ServerSwitch:
-                    grpSwitch.Text = Strings.EventConditional.globalswitch;
-                    grpSwitch.Show();
-                    cmbSwitch.Items.Clear();
-                    cmbSwitch.Items.AddRange(ServerSwitchBase.Names);
-                    break;
-                case ConditionTypes.ServerVariable:
-                    grpPlayerVariable.Text = Strings.EventConditional.globalvariable;
-                    grpPlayerVariable.Show();
-                    cmbVariable.Items.Clear();
-                    cmbVariable.Items.AddRange(ServerVariableBase.Names);
-                    cmbCompareGlobalVar.Items.Clear();
-                    cmbCompareGlobalVar.Items.AddRange(ServerVariableBase.Names);
-                    cmbComparePlayerVar.Items.Clear();
-                    cmbComparePlayerVar.Items.AddRange(PlayerVariableBase.Names);
+
+                    cmbBooleanGlobalVariable.Items.Clear();
+                    cmbBooleanGlobalVariable.Items.AddRange(ServerVariableBase.Names);
+                    cmbBooleanPlayerVariable.Items.Clear();
+                    cmbBooleanPlayerVariable.Items.AddRange(PlayerVariableBase.Names);
                     break;
                 case ConditionTypes.HasItem:
                     grpHasItem.Show();
@@ -361,6 +352,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 case ConditionTypes.MapIs:
                     grpMapIs.Show();
                     break;
+                case ConditionTypes.IsItemEquipped:
+                    grpEquippedItem.Show();
+                    cmbEquippedItem.Items.Clear();
+                    cmbEquippedItem.Items.AddRange(ItemBase.Names);
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -395,8 +391,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void cmbConditionType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            UpdateFormElements((ConditionTypes)cmbConditionType.SelectedIndex);
-            if (((ConditionTypes)cmbConditionType.SelectedIndex) != Condition.Type) ConditionTypeChanged((ConditionTypes)cmbConditionType.SelectedIndex);
+            var type = Strings.EventConditional.conditions.FirstOrDefault(x => x.Value == cmbConditionType.Text).Key;
+            if (type < 4) type = 0;
+            UpdateFormElements((ConditionTypes)type);
+            if (((ConditionTypes)type) != Condition.Type) ConditionTypeChanged((ConditionTypes)type);
         }
 
         private void cmbTaskModifier_SelectedIndexChanged(object sender, EventArgs e)
@@ -443,82 +441,254 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void rdoVarCompareStaticValue_CheckedChanged(object sender, EventArgs e)
         {
-            UpdateVariableElements();
+            UpdateNumericVariableElements();
         }
 
         private void rdoVarComparePlayerVar_CheckedChanged(object sender, EventArgs e)
         {
-            UpdateVariableElements();
+            UpdateNumericVariableElements();
         }
 
         private void rdoVarCompareGlobalVar_CheckedChanged(object sender, EventArgs e)
         {
-            UpdateVariableElements();
+            UpdateNumericVariableElements();
         }
 
-        private void UpdateVariableElements()
+        private void UpdateNumericVariableElements()
         {
             nudVariableValue.Enabled = rdoVarCompareStaticValue.Checked;
             cmbComparePlayerVar.Enabled = rdoVarComparePlayerVar.Checked;
             cmbCompareGlobalVar.Enabled = rdoVarCompareGlobalVar.Checked;
         }
 
-
-        #region "SetupFormValues"
-        private void SetupFormValues(PlayerSwitchCondition condition)
+        private void UpdateVariableElements()
         {
-            cmbSwitch.SelectedIndex = PlayerSwitchBase.ListIndex(condition.SwitchId);
-            cmbSwitchVal.SelectedIndex = Convert.ToInt32(condition.Value);
+            //Hide editor windows until we have a variable selected to work with
+            grpNumericVariable.Hide();
+            grpBooleanVariable.Hide();
+
+            var varType = 0;
+            if (cmbVariable.SelectedIndex > -1)
+            {
+                //Determine Variable Type
+                if (rdoPlayerVariable.Checked)
+                {
+                    var playerVar = PlayerVariableBase.FromList(cmbVariable.SelectedIndex);
+                    if (playerVar != null) varType = (byte)playerVar.Type;
+
+                }
+                else if (rdoGlobalVariable.Checked)
+                {
+                    var serverVar = ServerVariableBase.FromList(cmbVariable.SelectedIndex);
+                    if (serverVar != null) varType = (byte)serverVar.Type;
+                }
+            }
+
+            //Load the correct editor
+            if (varType > 0)
+            {
+                switch ((VariableDataTypes)varType)
+                {
+                    case VariableDataTypes.Boolean:
+                        grpBooleanVariable.Show();
+                        TryLoadVariableBooleanComparison(((VariableIsCondition)Condition).Comparison);
+                        break;
+
+                    case VariableDataTypes.Integer:
+                        grpNumericVariable.Show();
+                        TryLoadVariableIntegerComparison(((VariableIsCondition)Condition).Comparison);
+                        UpdateNumericVariableElements();
+                        break;
+
+                    case VariableDataTypes.Number:
+                        break;
+
+                    case VariableDataTypes.String:
+                        break;
+
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
+
         }
 
-        private void SetupFormValues(PlayerVariableCondition condition)
+        private void TryLoadVariableBooleanComparison(VariableCompaison comp)
         {
-            cmbVariable.SelectedIndex = PlayerVariableBase.ListIndex(condition.VariableId);
-            cmbVariableMod.SelectedIndex = (int)condition.Comparator;
-            switch (condition.CompareType)
+            if (comp.GetType() == typeof(BooleanVariableComparison))
             {
-                case VariableCompareTypes.StaticValue:
+                var com = (BooleanVariableComparison)comp;
+
+                cmbBooleanComparator.SelectedIndex = Convert.ToInt32(!com.ComparingEqual);
+
+                if (cmbBooleanComparator.SelectedIndex < 0) cmbBooleanComparator.SelectedIndex = 0;
+
+                optBooleanTrue.Checked = com.Value;
+                optBooleanFalse.Checked = !com.Value;
+
+                if (com.CompareVariableId != Guid.Empty)
+                {
+                    if (com.CompareVariableType == VariableTypes.PlayerVariable)
+                    {
+                        optBooleanPlayerVariable.Checked = true;
+                        cmbBooleanPlayerVariable.SelectedIndex = PlayerVariableBase.ListIndex(com.CompareVariableId);
+                    }
+                    else
+                    {
+                        optBooleanGlobalVariable.Checked = true;
+                        cmbBooleanGlobalVariable.SelectedIndex = ServerVariableBase.ListIndex(com.CompareVariableId);
+                    }
+                }
+            }
+        }
+
+        private void TryLoadVariableIntegerComparison(VariableCompaison comp)
+        {
+            if (comp.GetType() == typeof(IntegerVariableComparison))
+            {
+                var com = (IntegerVariableComparison)comp;
+
+                cmbNumericComparitor.SelectedIndex = (int)com.Comparator;
+
+                if (cmbNumericComparitor.SelectedIndex < 0) cmbNumericComparitor.SelectedIndex = 0;
+
+                
+
+                if (com.CompareVariableId != Guid.Empty)
+                {
+                    if (com.CompareVariableType == VariableTypes.PlayerVariable)
+                    {
+                        rdoVarComparePlayerVar.Checked = true;
+                        cmbComparePlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(com.CompareVariableId);
+                    }
+                    else
+                    {
+                        rdoVarCompareGlobalVar.Checked = true;
+                        cmbCompareGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(com.CompareVariableId);
+                    }
+                }
+                else
+                {
                     rdoVarCompareStaticValue.Checked = true;
-                    nudVariableValue.Value = condition.Value;
-                    break;
-                case VariableCompareTypes.PlayerVariable:
-                    rdoVarComparePlayerVar.Checked = true;
-                    cmbComparePlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(condition.CompareVariableId);
-                    break;
-                case VariableCompareTypes.GlobalVariable:
-                    rdoVarCompareGlobalVar.Checked = true;
-                    cmbCompareGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(condition.CompareVariableId);
-                    break;
+                    nudVariableValue.Value = com.Value;
+                }
+
+                UpdateNumericVariableElements();
+            }
+        }
+
+        private void InitVariableElements(Guid variableId)
+        {
+            mLoading = true;
+            cmbVariable.Items.Clear();
+            if (rdoPlayerVariable.Checked)
+            {
+                cmbVariable.Items.AddRange(PlayerVariableBase.Names);
+                cmbVariable.SelectedIndex = PlayerVariableBase.ListIndex(variableId);
+            }
+            else
+            {
+                cmbVariable.Items.AddRange(ServerVariableBase.Names);
+                cmbVariable.SelectedIndex = ServerVariableBase.ListIndex(variableId);
+            }
+            mLoading = false;
+        }
+
+        private BooleanVariableComparison GetBooleanVariableComparison()
+        {
+            var comp = new BooleanVariableComparison();
+
+            if (cmbBooleanComparator.SelectedIndex < 0) cmbBooleanComparator.SelectedIndex = 0;
+
+            comp.ComparingEqual = !Convert.ToBoolean(cmbBooleanComparator.SelectedIndex);
+
+            comp.Value = optBooleanTrue.Checked;
+
+            if (optBooleanGlobalVariable.Checked)
+            {
+                comp.CompareVariableType = VariableTypes.ServerVariable;
+                comp.CompareVariableId = ServerVariableBase.IdFromList(cmbBooleanGlobalVariable.SelectedIndex);
+            }
+            else if (optBooleanPlayerVariable.Checked)
+            {
+                comp.CompareVariableType = VariableTypes.PlayerVariable;
+                comp.CompareVariableId = PlayerVariableBase.IdFromList(cmbBooleanPlayerVariable.SelectedIndex);
+            }
+
+            return comp;
+        }
+
+        private IntegerVariableComparison GetNumericVariableComparison()
+        {
+            var comp = new IntegerVariableComparison();
+
+            if (cmbNumericComparitor.SelectedIndex < 0) cmbNumericComparitor.SelectedIndex = 0;
+
+            comp.Comparator = (VariableComparators) cmbNumericComparitor.SelectedIndex;
+
+            comp.CompareVariableId = Guid.Empty;
+
+            if (rdoVarCompareStaticValue.Checked)
+            {
+                comp.Value = (long)nudVariableValue.Value;
+            }
+            else if (rdoVarCompareGlobalVar.Checked)
+            {
+                comp.CompareVariableType = VariableTypes.ServerVariable;
+                comp.CompareVariableId = ServerVariableBase.IdFromList(cmbCompareGlobalVar.SelectedIndex);
+            }
+            else if (rdoVarComparePlayerVar.Checked)
+            {
+                comp.CompareVariableType = VariableTypes.PlayerVariable;
+                comp.CompareVariableId = PlayerVariableBase.IdFromList(cmbComparePlayerVar.SelectedIndex);
+            }
+
+            return comp;
+        }
+
+        private void rdoPlayerVariable_CheckedChanged(object sender, EventArgs e)
+        {
+            InitVariableElements(Guid.Empty);
+            if (!mLoading && cmbVariable.Items.Count > 0) cmbVariable.SelectedIndex = 0;
+        }
+
+        private void rdoGlobalVariable_CheckedChanged(object sender, EventArgs e)
+        {
+            InitVariableElements(Guid.Empty);
+            if (!mLoading && cmbVariable.Items.Count > 0) cmbVariable.SelectedIndex = 0;
+        }
+
+        private void cmbVariable_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (mLoading) return;
+            if (rdoPlayerVariable.Checked)
+            {
+                InitVariableElements(PlayerVariableBase.IdFromList(cmbVariable.SelectedIndex));
+            }
+            else if (rdoGlobalVariable.Checked)
+            {
+                InitVariableElements(ServerVariableBase.IdFromList(cmbVariable.SelectedIndex));
             }
 
             UpdateVariableElements();
         }
 
-        private void SetupFormValues(ServerSwitchCondition condition)
-        {
-            cmbSwitch.SelectedIndex = ServerSwitchBase.ListIndex(condition.SwitchId);
-            cmbSwitchVal.SelectedIndex = Convert.ToInt32(condition.Value);
-        }
 
-        private void SetupFormValues(ServerVariableCondition condition)
+        #region "SetupFormValues"
+        private void SetupFormValues(VariableIsCondition condition)
         {
-            cmbVariable.SelectedIndex = ServerVariableBase.ListIndex(condition.VariableId);
-            cmbVariableMod.SelectedIndex = (int)condition.Comparator;
-            switch (condition.CompareType)
+            if (condition.VariableType == VariableTypes.PlayerVariable)
             {
-                case VariableCompareTypes.StaticValue:
-                    rdoVarCompareStaticValue.Checked = true;
-                    nudVariableValue.Value = condition.Value;
-                    break;
-                case VariableCompareTypes.PlayerVariable:
-                    rdoVarComparePlayerVar.Checked = true;
-                    cmbComparePlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(condition.CompareVariableId);
-                    break;
-                case VariableCompareTypes.GlobalVariable:
-                    rdoVarCompareGlobalVar.Checked = true;
-                    cmbCompareGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(condition.CompareVariableId);
-                    break;
+                rdoPlayerVariable.Checked = true;
             }
+            else
+            {
+                rdoGlobalVariable.Checked = true;
+            }
+
+            InitVariableElements(condition.VariableId);
+
             UpdateVariableElements();
         }
 
@@ -607,60 +777,39 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
             btnSelectMap.Tag = condition.MapId;
         }
+
+        private void SetupFormValues(IsItemEquippedCondition condition)
+        {
+            cmbEquippedItem.SelectedIndex = ItemBase.ListIndex(condition.ItemId);
+        }
         #endregion
 
         #region "SaveFormValues"
-        private void SaveFormValues(PlayerSwitchCondition condition)
-        {
-            condition.SwitchId = PlayerSwitchBase.IdFromList(cmbSwitch.SelectedIndex);
-            condition.Value = Convert.ToBoolean(cmbSwitchVal.SelectedIndex);
-        }
 
-        private void SaveFormValues(PlayerVariableCondition condition)
+        private void SaveFormValues(VariableIsCondition condition)
         {
-            condition.VariableId = PlayerVariableBase.IdFromList(cmbVariable.SelectedIndex);
-            condition.Comparator = (VariableComparators)cmbVariableMod.SelectedIndex;
-            if (rdoVarCompareStaticValue.Checked)
+            if (rdoGlobalVariable.Checked)
             {
-                condition.CompareType = VariableCompareTypes.StaticValue;
-                condition.Value = (long) nudVariableValue.Value;
-            }
-            else if (rdoVarComparePlayerVar.Checked)
-            {
-                condition.CompareType = VariableCompareTypes.PlayerVariable;
-                condition.CompareVariableId = PlayerVariableBase.IdFromList(cmbComparePlayerVar.SelectedIndex);
+                condition.VariableType = VariableTypes.ServerVariable;
+                condition.VariableId = ServerVariableBase.IdFromList(cmbVariable.SelectedIndex);
             }
             else
             {
-                condition.CompareType = VariableCompareTypes.GlobalVariable;
-                condition.CompareVariableId = ServerVariableBase.IdFromList(cmbCompareGlobalVar.SelectedIndex);
+                condition.VariableType = VariableTypes.PlayerVariable;
+                condition.VariableId = PlayerVariableBase.IdFromList(cmbVariable.SelectedIndex);
             }
-        }
 
-        private void SaveFormValues(ServerSwitchCondition condition)
-        {
-            condition.SwitchId = ServerSwitchBase.IdFromList(cmbSwitch.SelectedIndex);
-            condition.Value = Convert.ToBoolean(cmbSwitchVal.SelectedIndex);
-        }
-
-        private void SaveFormValues(ServerVariableCondition condition)
-        {
-            condition.VariableId = ServerVariableBase.IdFromList(cmbVariable.SelectedIndex);
-            condition.Comparator = (VariableComparators)cmbVariableMod.SelectedIndex;
-            if (rdoVarCompareStaticValue.Checked)
+            if (grpBooleanVariable.Visible)
             {
-                condition.CompareType = VariableCompareTypes.StaticValue;
-                condition.Value = (long)nudVariableValue.Value;
+                condition.Comparison = GetBooleanVariableComparison();
             }
-            else if (rdoVarComparePlayerVar.Checked)
+            else if (grpNumericVariable.Visible)
             {
-                condition.CompareType = VariableCompareTypes.PlayerVariable;
-                condition.CompareVariableId = PlayerVariableBase.IdFromList(cmbComparePlayerVar.SelectedIndex);
+                condition.Comparison = GetNumericVariableComparison();
             }
             else
             {
-                condition.CompareType = VariableCompareTypes.GlobalVariable;
-                condition.CompareVariableId = ServerVariableBase.IdFromList(cmbCompareGlobalVar.SelectedIndex);
+                condition.Comparison = new VariableCompaison();
             }
         }
 
@@ -717,7 +866,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void SaveFormValues(QuestInProgressCondition condition)
         {
             condition.QuestId = QuestBase.IdFromList(cmbQuestInProgress.SelectedIndex);
-            condition.Progress = (QuestProgress)cmbTaskModifier.SelectedIndex;
+            condition.Progress = (QuestProgressState)cmbTaskModifier.SelectedIndex;
             condition.TaskId = Guid.Empty;
             if (cmbTaskModifier.SelectedIndex != 0)
             {
@@ -753,9 +902,12 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             condition.MapId = (Guid)btnSelectMap.Tag;
         }
 
+        private void SaveFormValues(IsItemEquippedCondition condition)
+        {
+            condition.ItemId = ItemBase.IdFromList(cmbEquippedItem.SelectedIndex);
+        }
+
 
         #endregion
-
-
     }
 }

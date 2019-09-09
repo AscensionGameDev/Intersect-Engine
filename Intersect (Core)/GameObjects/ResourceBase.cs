@@ -24,7 +24,7 @@ namespace Intersect.GameObjects
     }
 
 
-    public class ResourceBase : DatabaseObject<ResourceBase>
+    public class ResourceBase : DatabaseObject<ResourceBase>, IFolderable
     {
         // Graphics
         public ResourceState Initial { get; set; }
@@ -83,6 +83,9 @@ namespace Intersect.GameObjects
         public int Tool { get; set; } = -1;
         public bool WalkableAfter { get; set; }
         public bool WalkableBefore { get; set; }
+
+        /// <inheritdoc />
+        public string Folder { get; set; } = "";
 
         [JsonConstructor]
         public ResourceBase(Guid id) : base(id)

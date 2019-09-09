@@ -2,11 +2,16 @@
 using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
+
+using Intersect.Editor.Classes.Maps;
 using Intersect.Editor.Entities;
 using Intersect.Editor.General;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
+
+using Newtonsoft.Json;
+
 using MapAttribute = Intersect.GameObjects.Maps.MapAttribute;
 
 namespace Intersect.Editor.Maps
@@ -18,9 +23,9 @@ namespace Intersect.Editor.Maps
         //Map Attributes
         private Dictionary<MapAttribute, AnimationInstance> mAttributeAnimInstances = new Dictionary<MapAttribute, AnimationInstance>();
 
-        private byte[] mLoadedData;
+        private MapSaveState mLoadedState;
 
-        public MapInstance(Guid id) : base(id, false)
+        public MapInstance(Guid id) : base(id)
         {
             lock (MapLock)
             {
@@ -49,7 +54,7 @@ namespace Intersect.Editor.Maps
 
         public int MapGridY { get; set; }
 
-        public void Load(string mapJson, bool import = false)
+        public void Load(string mapJson, bool import = false, bool clearEvents = true)
         {
             lock (MapLock)
             {
@@ -68,109 +73,57 @@ namespace Intersect.Editor.Maps
                 Autotiles = new MapAutotiles(this);
 
                 //Initialize Local Events
-                LocalEvents.Clear();
-                foreach (var id in EventIds)
+                if (clearEvents)
                 {
-                    var evt = EventBase.Get(id);
-                    LocalEvents.Add(id,evt);
+                    LocalEvents.Clear();
+                    foreach (var id in EventIds)
+                    {
+                        var evt = EventBase.Get(id);
+                        LocalEvents.Add(id, evt);
+                    }
                 }
             }
         }
 
         public void LoadTileData(byte[] packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(Compression.DecompressPacket(packet));
             lock (MapLock)
             {
-                Layers = new TileArray[Options.LayerCount];
-                for (var i = 0; i < Options.LayerCount; i++)
-                {
-                    Layers[i].Tiles = new Tile[Options.MapWidth, Options.MapHeight];
-                    for (var x = 0; x < Options.MapWidth; x++)
-                    {
-                        for (var y = 0; y < Options.MapHeight; y++)
-                        {
-                            Layers[i].Tiles[x, y].TilesetId = bf.ReadGuid();
-                            Layers[i].Tiles[x, y].X = bf.ReadInteger();
-                            Layers[i].Tiles[x, y].Y = bf.ReadInteger();
-                            Layers[i].Tiles[x, y].Autotile = bf.ReadByte();
-                        }
-                    }
-                }
+                Layers = mCeras.Decompress<TileArray[]>(packet);
             }
-            bf.Dispose();
 			InitAutotiles();
 		}
 
         public void SaveStateAsUnchanged()
         {
-            mLoadedData = SaveInternal();
+            mLoadedState = SaveInternal();
         }
 
-        public void LoadInternal(byte[] myArr, bool import = false)
+        public void LoadInternal(MapSaveState state, bool import = false)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(myArr);
-            var mapJson = bf.ReadString();
-            var tileDataLength = bf.ReadInteger();
-            var tileData = bf.ReadBytes(tileDataLength);
-            var attributeDataLength = bf.ReadInteger();
-            var attributeData = bf.ReadBytes(attributeDataLength);
-            Load(mapJson, import);
-            LoadTileData(tileData);
-            AttributeData = attributeData;
-            bf.Dispose();
+            LocalEvents.Clear();
+            LocalEventsJson = state.EventData;
+            Load(state.Metadata, import, false);
+            LoadTileData(state.Tiles);
+            AttributeData = state.Attributes;
         }
 
-        public byte[] SaveInternal()
+        public MapSaveState SaveInternal()
         {
-            var bf = new ByteBuffer();
-            bf.WriteString(JsonData);
-            var tileData = GenerateTileData();
-            bf.WriteInteger(tileData.Length);
-            bf.WriteBytes(tileData);
-            var attributeData = AttributeData;
-            bf.WriteInteger(attributeData.Length);
-            bf.WriteBytes(attributeData);
-            return bf.ToArray();
+            return new MapSaveState(JsonData, GenerateTileData(), AttributeData, LocalEventsJson);
         }
 
         public byte[] GenerateTileData()
         {
-            var bf = new ByteBuffer();
-            for (var i = 0; i < Options.LayerCount; i++)
-            {
-                for (var x = 0; x < Options.MapWidth; x++)
-                {
-                    for (var y = 0; y < Options.MapHeight; y++)
-                    {
-                        bf.WriteGuid(Layers[i].Tiles[x, y].TilesetId);
-                        bf.WriteInteger(Layers[i].Tiles[x, y].X);
-                        bf.WriteInteger(Layers[i].Tiles[x, y].Y);
-                        bf.WriteByte(Layers[i].Tiles[x, y].Autotile);
-                    }
-                }
-            }
-            return Compression.CompressPacket(bf.ToArray());
+            return mCeras.Compress(Layers);
         }
 
         public bool Changed()
         {
-            if (mLoadedData != null)
+            if (mLoadedState != null)
             {
                 var newData = SaveInternal();
-                if (newData.Length == mLoadedData.Length)
-                {
-                    for (int i = 0; i < newData.Length; i++)
-                    {
-                        if (newData[i] != mLoadedData[i])
-                        {
-                            return true;
-                        }
-                    }
-                    return false;
-                }
+                return newData.Matches(mLoadedState);
             }
             return true;
         }
@@ -193,6 +146,11 @@ namespace Intersect.Editor.Maps
             {
                 mAttributeAnimInstances[attribute] = animationInstance;
             }
+        }
+        
+        public override byte[] GetAttributeData()
+        {
+            return mCeras.Compress(Attributes);
         }
 
         public void Update()
@@ -252,7 +210,7 @@ namespace Intersect.Editor.Maps
         }
 
         //Helper Functions
-        public MapBase[,] GenerateAutotileGrid()
+        public override MapBase[,] GenerateAutotileGrid()
         {
             MapBase[,] mapBase = new MapBase[3, 3];
             if (Globals.MapGrid != null && Globals.MapGrid.Contains(Id))

@@ -7,8 +7,10 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
+using Intersect.GameObjects.Switches_and_Variables;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
+using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
@@ -60,7 +62,7 @@ namespace Intersect.Server.EventProcessing
             switch (command.Channel)
             {
                 case ChatboxChannel.Player:
-                    PacketSender.SendPlayerMsg(player.MyClient, txt, color);
+                    PacketSender.SendChatMsg(player.Client, txt, color);
                     break;
                 case ChatboxChannel.Local:
                     PacketSender.SendProximityMsg(txt, player.MapId, color);
@@ -71,96 +73,10 @@ namespace Intersect.Server.EventProcessing
             }
         }
 
-        //Set Switch Command
-        private static void ProcessCommand(SetSwitchCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
-        {
-            if (command.SwitchType == SwitchTypes.PlayerSwitch)
-            {
-                player.SetSwitchValue(command.SwitchId, command.Value);
-            }
-            else if (command.SwitchType == SwitchTypes.ServerSwitch)
-            {
-                var serverSwitch = ServerSwitchBase.Get(command.SwitchId);
-                if (serverSwitch != null)
-                {
-                    serverSwitch.Value = command.Value;
-                    LegacyDatabase.SaveGameDatabaseAsync();
-                }
-            }
-        }
-
         //Set Variable Commands
         private static void ProcessCommand(SetVariableCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            if (command.VariableType == VariableTypes.PlayerVariable)
-            {
-                switch (command.ModType)
-                {
-                    case VariableMods.Set:
-                        player.SetVariableValue(command.VariableId, command.Value);
-                        break;
-                    case VariableMods.Add:
-                        player.SetVariableValue(command.VariableId, player.GetVariableValue(command.VariableId) + command.Value);
-                        break;
-                    case VariableMods.Subtract:
-                        player.SetVariableValue(command.VariableId, player.GetVariableValue(command.VariableId) - command.Value);
-                        break;
-                    case VariableMods.Random:
-                        player.SetVariableValue(command.VariableId, Globals.Rand.Next(command.Value, command.HighValue + 1));
-                        break;
-                    case VariableMods.SystemTime:
-                        long ms = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
-                        player.SetVariableValue(command.VariableId, ms);
-                        break;
-                    case VariableMods.DupPlayerVar:
-                        player.SetVariableValue(command.VariableId, player.GetVariableValue(command.DupVariableId));
-                        break;
-                    case VariableMods.DupGlobalVar:
-                        var serverVariable = ServerVariableBase.Get(command.DupVariableId);
-                        if (serverVariable != null)
-                        {
-                            player.SetVariableValue(command.VariableId, serverVariable.Value);
-                        }
-                        break;
-                }
-            }
-            else if (command.VariableType == VariableTypes.ServerVariable)
-            {
-                var serverVariable = ServerVariableBase.Get(command.VariableId);
-                if (serverVariable != null)
-                {
-                    switch (command.ModType)
-                    {
-                        case VariableMods.Set:
-                            serverVariable.Value = command.Value;
-                            break;
-                        case VariableMods.Add:
-                            serverVariable.Value += command.Value;
-                            break;
-                        case VariableMods.Subtract:
-                            serverVariable.Value -= command.Value;
-                            break;
-                        case VariableMods.Random:
-                            serverVariable.Value = Globals.Rand.Next(command.Value, command.HighValue + 1);
-                            break;
-                        case VariableMods.SystemTime:
-                            long ms = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
-                            serverVariable.Value = ms;
-                            break;
-                        case VariableMods.DupPlayerVar:
-                            serverVariable.Value = player.GetVariableValue(command.DupVariableId);
-                            break;
-                        case VariableMods.DupGlobalVar:
-                            var dupServerVariable = ServerVariableBase.Get(command.DupVariableId);
-                            if (dupServerVariable != null)
-                            {
-                                serverVariable.Value = dupServerVariable.Value;
-                            }
-                            break;
-                    }
-                }
-                LegacyDatabase.SaveGameDatabaseAsync();
-            }
+            ProcessVariableModification(command, (dynamic)command.Modification, player);
         }
 
         //Set Self Switch Command
@@ -291,7 +207,7 @@ namespace Intersect.Server.EventProcessing
             }
             else
             {
-                if (player.FindSpell(command.SpellId) > -1)
+                if (player.FindSpell(command.SpellId) > -1 && command.SpellId != Guid.Empty)
                 {
                     player.ForgetSpell(player.FindSpell(command.SpellId));
                     success = true;
@@ -333,6 +249,15 @@ namespace Intersect.Server.EventProcessing
             callStack.Push(tmpStack);
         }
 
+        //Equip Items Command
+        private static void ProcessCommand(EquipItemCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
+        {
+            var itm = ItemBase.Get(command.ItemId);
+
+            if (itm == null) return;
+            player.EquipItem(ItemBase.Get(command.ItemId));
+        }
+
         //Change Sprite Command
         private static void ProcessCommand(ChangeSpriteCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
@@ -354,29 +279,47 @@ namespace Intersect.Server.EventProcessing
             PacketSender.SendEntityDataToProximity(player);
         }
 
+        //Change Sprite Command
+        private static void ProcessCommand(ChangeNameColorCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
+        {
+            if (command.Remove)
+            {
+                player.NameColor = null;
+                PacketSender.SendEntityDataToProximity(player);
+                return;
+            }
+
+            //Don't set the name color if it doesn't override admin name colors.
+            if (player.Client.Power != UserRights.None && !command.Override)
+                return;
+
+            player.NameColor = command.Color;
+            PacketSender.SendEntityDataToProximity(player);
+        }
+
         //Set Access Command (wtf why would we even allow this? lol)
         private static void ProcessCommand(SetAccessCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             switch (command.Access)
             {
                 case Access.Moderator:
-                    player.MyClient.Power = UserRights.Moderation;
+                    player.Client.Power = UserRights.Moderation;
                     break;
                 case Access.Admin:
-                    player.MyClient.Power = UserRights.Admin;
+                    player.Client.Power = UserRights.Admin;
                     break;
                 default:
-                    player.MyClient.Power = UserRights.None;
+                    player.Client.Power = UserRights.None;
                     break;
             }
             PacketSender.SendEntityDataToProximity(player);
-            PacketSender.SendPlayerMsg(player.MyClient, Strings.Player.powerchanged, Color.Red);
+            PacketSender.SendChatMsg(player.Client, Strings.Player.powerchanged, Color.Red);
         }
 
         //Warp Player Command
         private static void ProcessCommand(WarpCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            player.Warp(command.MapId,command.X,command.Y,command.Direction == WarpDirection.Retain ? player.Dir : (int)command.Direction - 1);
+            player.Warp(command.MapId,command.X,command.Y,command.Direction == WarpDirection.Retain ? (byte)player.Dir : (byte)(command.Direction - 1));
         }
 
         //Set Move Route Command
@@ -387,7 +330,7 @@ namespace Intersect.Server.EventProcessing
                 player.MoveRoute = new EventMoveRoute();
                 player.MoveRouteSetter = instance.PageInstance;
                 player.MoveRoute.CopyFrom(command.Route);
-                PacketSender.SendMoveRouteToggle(player.MyClient, true);
+                PacketSender.SendMoveRouteToggle(player.Client, true);
             }
             else
             {
@@ -436,7 +379,7 @@ namespace Intersect.Server.EventProcessing
             var mapId = command.MapId;
             var tileX = 0;
             var tileY = 0;
-            var direction = (int)Directions.Up;
+            var direction = (byte)Directions.Up;
             var targetEntity = (EntityInstance) player;
             if (mapId != Guid.Empty)
             {
@@ -482,11 +425,11 @@ namespace Intersect.Server.EventProcessing
                                 xDiff = -tmp;
                                 break;
                         }
-                        direction = targetEntity.Dir;
+                        direction = (byte)targetEntity.Dir;
                     }
                     mapId = targetEntity.MapId;
-                    tileX = targetEntity.X + xDiff;
-                    tileY = targetEntity.Y + yDiff;
+                    tileX = (byte)(targetEntity.X + xDiff);
+                    tileY = (byte)(targetEntity.Y + yDiff);
                 }
                 else
                 {
@@ -496,7 +439,7 @@ namespace Intersect.Server.EventProcessing
             var tile = new TileHelper(mapId, tileX, tileY);
             if (tile.TryFix())
             {
-                var npc = MapInstance.Get(mapId).SpawnNpc(tileX, tileY, direction, npcId, true);
+                var npc = MapInstance.Get(mapId).SpawnNpc((byte)tileX, (byte)tileY, direction, npcId, true);
                 player.SpawnedNpcs.Add((Npc)npc);
             }
         }
@@ -527,7 +470,7 @@ namespace Intersect.Server.EventProcessing
             var mapId = command.MapId;
             var tileX = 0;
             var tileY = 0;
-            var direction = (int)Directions.Up;
+            var direction = (byte)Directions.Up;
             var targetEntity = (EntityInstance)player;
             if (mapId != Guid.Empty)
             {
@@ -551,6 +494,12 @@ namespace Intersect.Server.EventProcessing
                 }
                 if (targetEntity != null)
                 {
+                    if (command.X == 0 && command.Y == 0 && command.Dir == 0)
+                    {
+                        //Attach to entity instead of playing on tile
+                        PacketSender.SendAnimationToProximity(animId, targetEntity.GetEntityType() == EntityTypes.Event ? 2 : 1, targetEntity.Id, targetEntity.MapId,0,0,0);
+                        return;
+                    }
                     int xDiff = command.X;
                     int yDiff = command.Y;
                     if (command.Dir == 1)
@@ -573,7 +522,7 @@ namespace Intersect.Server.EventProcessing
                                 xDiff = -tmp;
                                 break;
                         }
-                        direction = targetEntity.Dir;
+                        direction = (byte)targetEntity.Dir;
                     }
                     mapId = targetEntity.MapId;
                     tileX = targetEntity.X + xDiff;
@@ -587,7 +536,7 @@ namespace Intersect.Server.EventProcessing
             var tile = new TileHelper(mapId, tileX, tileY);
             if (tile.TryFix())
             {
-                PacketSender.SendAnimationToProximity(animId, -1, Guid.Empty, tile.GetMapId(), tile.GetX(), tile.GetY(), direction);
+                PacketSender.SendAnimationToProximity(animId, -1, Guid.Empty, tile.GetMapId(), tile.GetX(), tile.GetY(), (sbyte)direction);
             }
         }
 
@@ -595,56 +544,72 @@ namespace Intersect.Server.EventProcessing
         private static void ProcessCommand(HoldPlayerCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             instance.HoldingPlayer = true;
-            PacketSender.SendHoldPlayer(player.MyClient, instance.BaseEvent.Id, instance.BaseEvent.MapId);
+            PacketSender.SendHoldPlayer(player.Client, instance.BaseEvent.Id, instance.BaseEvent.MapId);
         }
 
         //Release Player Command
         private static void ProcessCommand(ReleasePlayerCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             instance.HoldingPlayer = false;
-            PacketSender.SendReleasePlayer(player.MyClient, instance.BaseEvent.Id);
+            PacketSender.SendReleasePlayer(player.Client, instance.BaseEvent.Id);
+        }
+
+        //Hide Player Command
+        private static void ProcessCommand(HidePlayerCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
+        {
+            player.HideEntity = true;
+            player.HideName = true;
+            PacketSender.SendEntityDataToProximity(player);
+        }
+
+        //Show Player Command
+        private static void ProcessCommand(ShowPlayerCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
+        {
+            player.HideEntity = false;
+            player.HideName = false;
+            PacketSender.SendEntityDataToProximity(player);
         }
 
         //Play Bgm Command
         private static void ProcessCommand(PlayBgmCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            PacketSender.SendPlayMusic(player.MyClient, command.File);
+            PacketSender.SendPlayMusic(player.Client, command.File);
         }
 
         //Fadeout Bgm Command
         private static void ProcessCommand(FadeoutBgmCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            PacketSender.SendFadeMusic(player.MyClient);
+            PacketSender.SendFadeMusic(player.Client);
         }
 
         //Play Sound Command
         private static void ProcessCommand(PlaySoundCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            PacketSender.SendPlaySound(player.MyClient, command.File);
+            PacketSender.SendPlaySound(player.Client, command.File);
         }
 
         //Stop Sounds Command
         private static void ProcessCommand(StopSoundsCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            PacketSender.SendStopSounds(player.MyClient);
+            PacketSender.SendStopSounds(player.Client);
         }
 
         //Show Picture Command
         private static void ProcessCommand(ShowPictureCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            PacketSender.SendShowPicture(player.MyClient, command.File, command.Size, command.Clickable);
+            PacketSender.SendShowPicture(player.Client, command.File, command.Size, command.Clickable);
         }
 
         //Hide Picture Command
         private static void ProcessCommand(HidePictureCommmand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            PacketSender.SendHidePicture(player.MyClient);
+            PacketSender.SendHidePicture(player.Client);
         }
 
         //Wait Command
         private static void ProcessCommand(WaitCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            instance.WaitTimer = Globals.System.GetTimeMs() + command.Time;
+            instance.WaitTimer = Globals.Timing.TimeMs + command.Time;
         }
 
         //Open Bank Command
@@ -674,6 +639,7 @@ namespace Intersect.Server.EventProcessing
             if (ClassBase.Get(command.ClassId) != null)
             {
                 player.ClassId = command.ClassId;
+                player.RecalculateStatsAndPoints();
             }
             PacketSender.SendEntityDataToProximity(player);
         }
@@ -838,7 +804,7 @@ namespace Intersect.Server.EventProcessing
                         {
                             if (id == ((PlayerVariableBase) var).TextId)
                             {
-                                input = input.Replace(Strings.Events.playervar + "{" + m.Groups[1].Value + "}", player.GetVariableValue(var.Id).ToString());
+                                input = input.Replace(Strings.Events.playervar + "{" + m.Groups[1].Value + "}", player.GetVariableValue(var.Id).ToString(((PlayerVariableBase)var).Type));
                             }
                         }
                     }
@@ -849,11 +815,11 @@ namespace Intersect.Server.EventProcessing
                     if (m.Success)
                     {
                         var id = m.Groups[1].Value;
-                        foreach (var var in PlayerSwitchBase.Lookup.Values)
+                        foreach (var var in PlayerVariableBase.Lookup.Values)
                         {
-                            if (id == ((PlayerSwitchBase)var).TextId)
+                            if (id == ((PlayerVariableBase)var).TextId)
                             {
-                                input = input.Replace(Strings.Events.playerswitch + "{" + m.Groups[1].Value + "}", player.GetSwitchValue(var.Id).ToString());
+                                input = input.Replace(Strings.Events.playerswitch + "{" + m.Groups[1].Value + "}", player.GetVariableValue(var.Id).ToString(((PlayerVariableBase)var).Type));
                             }
                         }
                     }
@@ -868,7 +834,7 @@ namespace Intersect.Server.EventProcessing
                         {
                             if (id == ((ServerVariableBase)var).TextId)
                             {
-                                input = input.Replace(Strings.Events.globalvar + "{" + m.Groups[1].Value + "}", ((ServerVariableBase)var).Value.ToString());
+                                input = input.Replace(Strings.Events.globalvar + "{" + m.Groups[1].Value + "}", ((ServerVariableBase)var).Value.ToString(((ServerVariableBase)var).Type));
                             }
                         }
                     }
@@ -879,17 +845,156 @@ namespace Intersect.Server.EventProcessing
                     if (m.Success)
                     {
                         var id = m.Groups[1].Value;
-                        foreach (var var in ServerSwitchBase.Lookup.Values)
+                        foreach (var var in ServerVariableBase.Lookup.Values)
                         {
-                            if (id == ((ServerSwitchBase)var).TextId)
+                            if (id == ((ServerVariableBase)var).TextId)
                             {
-                                input = input.Replace(Strings.Events.globalswitch + "{" + m.Groups[1].Value + "}", ((ServerSwitchBase)var).Value.ToString());
+                                input = input.Replace(Strings.Events.globalswitch + "{" + m.Groups[1].Value + "}", ((ServerVariableBase)var).Value.ToString(((ServerVariableBase)var).Type));
                             }
                         }
                     }
                 }
             }
             return input;
+        }
+
+        private static void ProcessVariableModification(SetVariableCommand command, VariableMod mod, Player player)
+        {
+
+        }
+
+        private static void ProcessVariableModification(SetVariableCommand command, BooleanVariableMod mod, Player player)
+        {
+            VariableValue value = null;
+            if (command.VariableType == VariableTypes.PlayerVariable)
+            {
+                value = player.GetVariableValue(command.VariableId);
+            }
+            else if (command.VariableType == VariableTypes.ServerVariable)
+            {
+                value = ServerVariableBase.Get(command.VariableId)?.Value;
+            }
+
+            if (value == null)
+            {
+                value = new VariableValue();
+            }
+
+            if (mod.DupVariableId != Guid.Empty)
+            {
+                if (mod.DupVariableType == VariableTypes.PlayerVariable)
+                {
+                    value.Boolean = player.GetVariableValue(mod.DupVariableId).Boolean;
+                }
+                else if (mod.DupVariableType == VariableTypes.ServerVariable)
+                {
+                    var variable = ServerVariableBase.Get(mod.DupVariableId);
+                    if (variable != null)
+                    {
+                        value.Boolean = ServerVariableBase.Get(mod.DupVariableId).Value.Boolean;
+                    }
+                }
+            }
+            else
+            {
+                value.Boolean = mod.Value;
+            }
+
+            if (command.VariableType == VariableTypes.PlayerVariable)
+            {
+                // Set the party member switches too if Sync Party enabled!
+                if (command.SyncParty)
+                {
+                    foreach (Player partyMember in player.Party)
+                    {
+                        if (partyMember != player)
+                        {
+                            partyMember.SetVariableValue(command.VariableId, value.Integer);
+                        }
+                    }
+                }
+            }
+        }
+
+        private static void ProcessVariableModification(SetVariableCommand command, IntegerVariableMod mod, Player player)
+        {
+            VariableValue value = null;
+            if (command.VariableType == VariableTypes.PlayerVariable)
+            {
+                value = player.GetVariableValue(command.VariableId);
+            }
+            else if (command.VariableType == VariableTypes.ServerVariable)
+            {
+                value = ServerVariableBase.Get(command.VariableId)?.Value;
+            }
+
+            if (value == null) value = new VariableValue();
+
+            switch (mod.ModType)
+            {
+                case Enums.VariableMods.Set:
+                    value.Integer = mod.Value;
+                    break;
+                case Enums.VariableMods.Add:
+                    value.Integer += mod.Value;
+                    break;
+                case Enums.VariableMods.Subtract:
+                    value.Integer -= mod.Value;
+                    break;
+                case Enums.VariableMods.Random:
+                    //TODO: Fix - Random doesnt work with longs lolz
+                    value.Integer = Globals.Rand.Next((int)mod.Value, (int)mod.HighValue + 1);
+                    break;
+                case Enums.VariableMods.SystemTime:
+                    long ms = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
+                    value.Integer = ms;
+                    break;
+                case Enums.VariableMods.DupPlayerVar:
+                    value.Integer = player.GetVariableValue(mod.DupVariableId).Integer;
+                    break;
+                case Enums.VariableMods.DupGlobalVar:
+                    var dupServerVariable = ServerVariableBase.Get(mod.DupVariableId);
+                    if (dupServerVariable != null)
+                    {
+                        value.Integer = dupServerVariable.Value.Integer;
+                    }
+                    break;
+                case Enums.VariableMods.AddPlayerVar:
+                    value.Integer += player.GetVariableValue(mod.DupVariableId).Integer;
+                    break;
+                case Enums.VariableMods.AddGlobalVar:
+                    var asv = ServerVariableBase.Get(mod.DupVariableId);
+                    if (asv != null)
+                    {
+                        value.Integer += asv.Value.Integer;
+                    }
+                    break;
+                case Enums.VariableMods.SubtractPlayerVar:
+                    value.Integer -= player.GetVariableValue(mod.DupVariableId).Integer;
+                    break;
+                case Enums.VariableMods.SubtractGlobalVar:
+                    var ssv = ServerVariableBase.Get(mod.DupVariableId);
+                    if (ssv != null)
+                    {
+                        value.Integer -= ssv.Value.Integer;
+                    }
+                    break;
+            }
+
+            if (command.VariableType == VariableTypes.PlayerVariable)
+            {
+                // Set the party member switches too if Sync Party enabled!
+                if (command.SyncParty)
+                {
+                    foreach (Player partyMember in player.Party)
+                    {
+                        if (partyMember != player)
+                        {
+                            partyMember.SetVariableValue(command.VariableId, value.Integer);
+                        }
+                    }
+                }
+            }
         }
     }
 }

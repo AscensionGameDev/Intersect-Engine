@@ -31,6 +31,9 @@ namespace Intersect.Client.UI.Menu
         private readonly Button mRegisterButton;
         private readonly RegisterWindow mRegisterWindow;
 
+        private readonly ForgotPasswordWindow mForgotPasswordWindow;
+        private readonly ResetPasswordWindow mResetPasswordWindow;
+
         private readonly SelectCharacterWindow mSelectCharacterWindow;
         private bool mShouldOpenCharacterCreation;
         private bool mShouldOpenCharacterSelection;
@@ -59,14 +62,14 @@ namespace Intersect.Client.UI.Menu
             {
                 AutoSizeToContents = true,
                 ShouldDrawBackground = true,
-                Text = Strings.Server.StatusLabel.ToString(sNetworkStatus.ToLocalizedString()),
+                Text = Strings.Server.StatusLabel.ToString(ActiveNetworkStatus.ToLocalizedString()),
             };
-            mServerStatusLabel.SetTextColor(Framework.GenericClasses.Color.White, Label.ControlState.Normal);
+            mServerStatusLabel.SetTextColor(Color.White, Label.ControlState.Normal);
             mServerStatusLabel.AddAlignment(Alignments.Bottom);
             mServerStatusLabel.AddAlignment(Alignments.Left);
             mServerStatusLabel.ProcessAlignments();
 
-            sNetworkStatusChanged += HandleNetworkStatusChanged;
+            NetworkStatusChanged += HandleNetworkStatusChanged;
 
             //Menu Header
             mMenuHeader = new Label(mMenuWindow, "Title");
@@ -107,10 +110,14 @@ namespace Intersect.Client.UI.Menu
             mLoginWindow = new LoginWindow(menuCanvas, this, mMenuWindow);
             //Register Controls
             mRegisterWindow = new RegisterWindow(menuCanvas, this, mMenuWindow);
-            //Character Creation Controls
-            mCreateCharacterWindow = new CreateCharacterWindow(mMenuCanvas, this, mMenuWindow);
+            //Forgot Password Controls
+            mForgotPasswordWindow = new ForgotPasswordWindow(menuCanvas, this, mMenuWindow);
+            //Reset Password Controls
+            mResetPasswordWindow = new ResetPasswordWindow(menuCanvas, this, mMenuWindow);
             //Character Selection Controls
             mSelectCharacterWindow = new SelectCharacterWindow(mMenuCanvas, this, mMenuWindow);
+            //Character Creation Controls
+            mCreateCharacterWindow = new CreateCharacterWindow(mMenuCanvas, this, mMenuWindow,mSelectCharacterWindow);
             //Credits Controls
             mCreditsWindow = new CreditsWindow(mMenuCanvas, this);
 
@@ -120,7 +127,7 @@ namespace Intersect.Client.UI.Menu
         ~MainMenu()
         {
             // ReSharper disable once DelegateSubtraction
-            sNetworkStatusChanged -= HandleNetworkStatusChanged;
+            NetworkStatusChanged -= HandleNetworkStatusChanged;
         }
 
         //Methods
@@ -148,6 +155,8 @@ namespace Intersect.Client.UI.Menu
             mRegisterWindow.Hide();
             mOptionsWindow.Hide();
             mCreditsWindow.Hide();
+            mForgotPasswordWindow.Hide();
+            mResetPasswordWindow.Hide();
             if (mCreateCharacterWindow != null) mCreateCharacterWindow.Hide();
             if (mSelectCharacterWindow != null) mSelectCharacterWindow.Hide();
             mMenuWindow.Show();
@@ -170,6 +179,28 @@ namespace Intersect.Client.UI.Menu
         {
             mShouldOpenCharacterSelection = true;
             mSelectCharacterWindow.Characters = characters;
+        }
+
+        public void NotifyOpenForgotPassword()
+        {
+            Reset();
+            Hide();
+            mForgotPasswordWindow.Show();
+        }
+
+        public void NotifyOpenLogin()
+        {
+            Reset();
+            Hide();
+            mLoginWindow.Show();
+        }
+
+        public void OpenResetPassword(string nameEmail)
+        {
+            Reset();
+            Hide();
+            mResetPasswordWindow.Target = nameEmail;
+            mResetPasswordWindow.Show();
         }
 
         public void CreateCharacterSelection()
@@ -233,42 +264,42 @@ namespace Intersect.Client.UI.Menu
 
         private void HandleNetworkStatusChanged()
         {
-            mServerStatusLabel.Text = Strings.Server.StatusLabel.ToString(sNetworkStatus.ToLocalizedString());
+            mServerStatusLabel.Text = Strings.Server.StatusLabel.ToString(ActiveNetworkStatus.ToLocalizedString());
             UpdateDisabled();
         }
 
         private void UpdateDisabled()
         {
-            mLoginButton.IsDisabled = sNetworkStatus != NetworkStatus.Online;
-            mRegisterButton.IsDisabled = sNetworkStatus != NetworkStatus.Online;
+            mLoginButton.IsDisabled = ActiveNetworkStatus != NetworkStatus.Online;
+            mRegisterButton.IsDisabled = ActiveNetworkStatus != NetworkStatus.Online || (Options.Loaded && Options.BlockClientRegistrations == true);
         }
         
-        private static NetworkStatus sNetworkStatus;
-        private static NetworkStatusHandler sNetworkStatusChanged;
+        public static NetworkStatus ActiveNetworkStatus;
+        public static NetworkStatusHandler NetworkStatusChanged;
 
         public static void OnNetworkConnecting()
         {
-            sNetworkStatus = NetworkStatus.Connecting;
+            ActiveNetworkStatus = NetworkStatus.Connecting;
         }
 
         public static void OnNetworkConnected()
         {
-            sNetworkStatus = NetworkStatus.Online;
-            sNetworkStatusChanged?.Invoke();
+            ActiveNetworkStatus = NetworkStatus.Online;
+            NetworkStatusChanged?.Invoke();
         }
 
         public static void OnNetworkDisconnected()
         {
-            sNetworkStatus = NetworkStatus.Offline;
-            sNetworkStatusChanged?.Invoke();
+            ActiveNetworkStatus = NetworkStatus.Offline;
+            NetworkStatusChanged?.Invoke();
         }
 
         public static void OnNetworkFailed(bool denied)
         {
-            sNetworkStatus = denied ? NetworkStatus.Failed : NetworkStatus.Connecting;
-            sNetworkStatusChanged?.Invoke();
+            ActiveNetworkStatus = denied ? NetworkStatus.Failed : NetworkStatus.Connecting;
+            NetworkStatusChanged?.Invoke();
         }
 
-        private delegate void NetworkStatusHandler();
+        public delegate void NetworkStatusHandler();
     }
 }

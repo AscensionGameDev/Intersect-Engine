@@ -35,6 +35,8 @@ namespace Intersect.Client.UI.Game.Inventory
         public ImagePanel Container;
         private Draggable mDragIcon;
         public ImagePanel EquipPanel;
+        public Label EquipLabel;
+        private Label mCooldownLabel;
         public bool IsDragging;
         private bool mIconCd;
 
@@ -61,6 +63,13 @@ namespace Intersect.Client.UI.Game.Inventory
             Pnl.Clicked += pnl_Clicked;
             EquipPanel = new ImagePanel(Pnl, "InventoryItemEquippedIcon");
             EquipPanel.Texture = GameGraphics.Renderer.GetWhiteTexture();
+            EquipLabel = new Label(Pnl, "InventoryItemEquippedLabel");
+            EquipLabel.IsHidden = true;
+            EquipLabel.Text = Strings.Inventory.equippedicon;
+            EquipLabel.TextColor = new Color(0,255,255,255);
+            mCooldownLabel = new Label(Pnl, "InventoryItemCooldownLabel");
+            mCooldownLabel.IsHidden = true;
+            mCooldownLabel.TextColor = new Color(0, 255, 255, 255);
         }
 
         void pnl_Clicked(Base sender, ClickedEventArgs arguments)
@@ -106,6 +115,7 @@ namespace Intersect.Client.UI.Game.Inventory
 
         void pnl_HoverEnter(Base sender, EventArgs arguments)
         {
+            if (InputHandler.MouseFocus != null) return;
             mMouseOver = true;
             mCanDrag = true;
             if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
@@ -120,9 +130,7 @@ namespace Intersect.Client.UI.Game.Inventory
             }
             if (Globals.GameShop == null)
             {
-                mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].Item,
-                    Globals.Me.Inventory[mMySlot].Quantity, mInventoryWindow.X - 255, mInventoryWindow.Y,
-                    Globals.Me.Inventory[mMySlot].StatBoost);
+                mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].Item, Globals.Me.Inventory[mMySlot].Quantity, mInventoryWindow.X, mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBuffs);
             }
             else
             {
@@ -144,10 +152,7 @@ namespace Intersect.Client.UI.Game.Inventory
                     var hoveredItem = ItemBase.Get(shopItem.CostItemId);
                     if (hoveredItem != null)
                     {
-                        mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].Item,
-                            Globals.Me.Inventory[mMySlot].Quantity, mInventoryWindow.X - 220, mInventoryWindow.Y,
-                            Globals.Me.Inventory[mMySlot].StatBoost, "",
-                            Strings.Shop.sellsfor.ToString( shopItem.CostItemQuantity, hoveredItem.Name));
+                        mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].Item, Globals.Me.Inventory[mMySlot].Quantity, mInventoryWindow.X, mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBuffs, "", Strings.Shop.sellsfor.ToString( shopItem.CostItemQuantity, hoveredItem.Name));
                     }
                 }
                 else if (shopItem == null)
@@ -156,16 +161,12 @@ namespace Intersect.Client.UI.Game.Inventory
                     var costItem = Globals.GameShop.DefaultCurrency;
                     if (hoveredItem != null && costItem != null)
                     {
-                        mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].Item,
-                            Globals.Me.Inventory[mMySlot].Quantity, mInventoryWindow.X - 220, mInventoryWindow.Y,
-                            Globals.Me.Inventory[mMySlot].StatBoost, "",
-                            Strings.Shop.sellsfor.ToString( hoveredItem.Price, costItem.Name));
+                        mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].Item, Globals.Me.Inventory[mMySlot].Quantity, mInventoryWindow.X, mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBuffs, "", Strings.Shop.sellsfor.ToString( hoveredItem.Price, costItem.Name));
                     }
                 }
                 else
                 {
-                    mDescWindow = new ItemDescWindow(invItem.Item, invItem.Quantity, mInventoryWindow.X - 255,
-                        mInventoryWindow.Y, invItem.StatBoost, "", Strings.Shop.wontbuy);
+                    mDescWindow = new ItemDescWindow(invItem.Item, invItem.Quantity, mInventoryWindow.X, mInventoryWindow.Y, invItem.StatBuffs, "", Strings.Shop.wontbuy);
                 }
             }
         }
@@ -174,8 +175,8 @@ namespace Intersect.Client.UI.Game.Inventory
         {
             FloatRect rect = new FloatRect()
             {
-                X = Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).X,
-                Y = Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).Y,
+                X = Pnl.LocalPosToCanvas(new Point(0, 0)).X,
+                Y = Pnl.LocalPosToCanvas(new Point(0, 0)).Y,
                 Width = Pnl.Width,
                 Height = Pnl.Height
             };
@@ -195,12 +196,14 @@ namespace Intersect.Client.UI.Game.Inventory
             }
             var item = ItemBase.Get(Globals.Me.Inventory[mMySlot].ItemId);
             if (Globals.Me.Inventory[mMySlot].ItemId != mCurrentItemId || Globals.Me.Inventory[mMySlot].Quantity != mCurrentAmt || equipped != mIsEquipped ||
-                (item == null && mTexLoaded != "") || (item != null && mTexLoaded != item.Icon) || mIconCd != Globals.Me.ItemOnCd(mMySlot))
+                (item == null && mTexLoaded != "") || (item != null && mTexLoaded != item.Icon) || mIconCd != Globals.Me.ItemOnCd(mMySlot) || Globals.Me.ItemOnCd(mMySlot))
             {
                 mCurrentItemId = Globals.Me.Inventory[mMySlot].ItemId;
                 mCurrentAmt = Globals.Me.Inventory[mMySlot].Quantity;
                 mIsEquipped = equipped;
                 EquipPanel.IsHidden = !mIsEquipped;
+                EquipLabel.IsHidden = !mIsEquipped;
+                mCooldownLabel.IsHidden = true;
                 if (item != null)
                 {
                     GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,
@@ -210,11 +213,11 @@ namespace Intersect.Client.UI.Game.Inventory
                         Pnl.Texture = itemTex;
                         if (Globals.Me.ItemOnCd(mMySlot))
                         {
-                            Pnl.RenderColor = new Framework.GenericClasses.Color(100, 255, 255, 255);
+                            Pnl.RenderColor = new Color(100, 255, 255, 255);
                         }
                         else
                         {
-                            Pnl.RenderColor = new Framework.GenericClasses.Color(255, 255, 255, 255);
+                            Pnl.RenderColor = new Color(255, 255, 255, 255);
                         }
                     }
                     else
@@ -226,6 +229,19 @@ namespace Intersect.Client.UI.Game.Inventory
                     }
                     mTexLoaded = item.Icon;
                     mIconCd = Globals.Me.ItemOnCd(mMySlot);
+                    if (mIconCd)
+                    {
+                        mCooldownLabel.IsHidden = false;
+                        var secondsRemaining = (float)(Globals.Me.ItemCdRemainder(mMySlot)) / 1000f;
+                        if (secondsRemaining > 10f)
+                        {
+                            mCooldownLabel.Text = Strings.Inventory.cooldown.ToString((secondsRemaining).ToString("N0"));
+                        }
+                        else
+                        {
+                            mCooldownLabel.Text = Strings.Inventory.cooldown.ToString((secondsRemaining).ToString("N1").Replace(".", Strings.Numbers.dec));
+                        }
+                    }
                 }
                 else
                 {
@@ -259,32 +275,32 @@ namespace Intersect.Client.UI.Game.Inventory
                     }
                     else
                     {
-                        if (mCanDrag)
+                        if (mCanDrag && Draggable.Active == null)
                         {
                             if (mMouseX == -1 || mMouseY == -1)
                             {
                                 mMouseX = InputHandler.MousePosition.X -
-                                         Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).X;
+                                         Pnl.LocalPosToCanvas(new Point(0, 0)).X;
                                 mMouseY = InputHandler.MousePosition.Y -
-                                         Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).Y;
+                                         Pnl.LocalPosToCanvas(new Point(0, 0)).Y;
                             }
                             else
                             {
                                 int xdiff = mMouseX -
                                             (InputHandler.MousePosition.X -
-                                             Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0))
+                                             Pnl.LocalPosToCanvas(new Point(0, 0))
                                                  .X);
                                 int ydiff = mMouseY -
                                             (InputHandler.MousePosition.Y -
-                                             Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0))
+                                             Pnl.LocalPosToCanvas(new Point(0, 0))
                                                  .Y);
                                 if (Math.Sqrt(Math.Pow(xdiff, 2) + Math.Pow(ydiff, 2)) > 5)
                                 {
                                     IsDragging = true;
                                     mDragIcon = new Draggable(
-                                        Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).X +
+                                        Pnl.LocalPosToCanvas(new Point(0, 0)).X +
                                         mMouseX,
-                                        Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).X +
+                                        Pnl.LocalPosToCanvas(new Point(0, 0)).X +
                                         mMouseY, Pnl.Texture);
                                 }
                             }
@@ -330,7 +346,7 @@ namespace Intersect.Client.UI.Game.Inventory
                             if (mMySlot != bestIntersectIndex)
                             {
                                 //Try to swap....
-                                PacketSender.SendSwapItems(bestIntersectIndex, mMySlot);
+                                PacketSender.SendSwapInvItems(bestIntersectIndex, mMySlot);
                                 Globals.Me.SwapItems(bestIntersectIndex, mMySlot);
                             }
                         }
@@ -354,7 +370,7 @@ namespace Intersect.Client.UI.Game.Inventory
                         }
                         if (bestIntersectIndex > -1)
                         {
-                            Globals.Me.AddToHotbar(bestIntersectIndex, 0, mMySlot);
+                            Globals.Me.AddToHotbar((byte)bestIntersectIndex, 0, mMySlot);
                         }
                     }
 

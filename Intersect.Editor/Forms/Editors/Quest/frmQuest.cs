@@ -19,6 +19,9 @@ namespace Intersect.Editor.Forms.Editors.Quest
         private string mCopiedItem;
         private QuestBase mEditorItem;
 
+        private List<string> mKnownFolders = new List<string>();
+        private List<string> mExpandedFolders = new List<string>();
+
         public FrmQuest()
         {
             ApplyHooks();
@@ -67,6 +70,11 @@ namespace Intersect.Editor.Forms.Editors.Quest
             lblOnEnd.Text = Strings.QuestEditor.onend;
             btnEditCompletionEvent.Text = Strings.QuestEditor.editendevent;
 
+            //Searching/Sorting
+            btnChronological.ToolTipText = Strings.QuestEditor.sortchronologically;
+            txtSearch.Text = Strings.QuestEditor.searchplaceholder;
+            lblFolder.Text = Strings.QuestEditor.folderlabel;
+
             btnSave.Text = Strings.QuestEditor.save;
             btnCancel.Text = Strings.QuestEditor.cancel;
         }
@@ -92,14 +100,6 @@ namespace Intersect.Editor.Forms.Editors.Quest
                 item.StartEvent.DeleteBackup();
                 item.EndEvent.RestoreBackup();
                 item.EndEvent.DeleteBackup();
-                foreach (var tsk in item.Tasks)
-                {
-                    if (tsk.CompletionEvent.Id != Guid.Empty)
-                    {
-                        tsk.CompletionEvent.RestoreBackup();
-                    }
-                    tsk.CompletionEvent.DeleteBackup();
-                }
                 item.RestoreBackup();
                 item.DeleteBackup();
             }
@@ -113,45 +113,57 @@ namespace Intersect.Editor.Forms.Editors.Quest
         private void btnSave_Click(object sender, EventArgs e)
         {
             //Send Changed items
-            foreach (var item in mChanged)
+            mChanged?.ForEach(item =>
             {
+                if (item == null)
+                {
+                    return;
+                }
+
+                foreach (var id in item.OriginalTaskEventIds.Keys)
+                {
+                    var found = false;
+                    for (int i = 0; i < item.Tasks.Count; i++)
+                    {
+                        if (item.Tasks[i].Id == id)
+                        {
+                            found = true;
+                        }
+                    }
+
+                    if (!found)
+                    {
+                        item.RemoveEvents.Add(item.OriginalTaskEventIds[id]);
+                    }
+                }
+
                 PacketSender.SendSaveObject(item);
                 PacketSender.SendSaveObject(item.StartEvent);
                 PacketSender.SendSaveObject(item.EndEvent);
-                foreach (var tsk in item.Tasks)
+                item.Tasks?.ForEach(tsk =>
                 {
-                    if (tsk.EdittingEvent.Id != Guid.Empty)
+                    if (tsk?.EditingEvent == null)
                     {
-                        PacketSender.SendSaveObject(tsk.EdittingEvent);
+                        return;
                     }
-                    tsk.EdittingEvent.DeleteBackup();
-                }
-                item.StartEvent.DeleteBackup();
-                item.EndEvent.DeleteBackup();
+
+                    if (tsk.EditingEvent.Id != Guid.Empty)
+                    {
+                        PacketSender.SendSaveObject(tsk.EditingEvent);
+                    }
+
+                    tsk.EditingEvent.DeleteBackup();
+                });
+
+                item.StartEvent?.DeleteBackup();
+                item.EndEvent?.DeleteBackup();
                 item.DeleteBackup();
-            }
+            });
 
             mEditorItem = null;
             Hide();
             Globals.CurrentEditor = -1;
             Dispose();
-        }
-
-        private void lstQuests_Click(object sender, EventArgs e)
-        {
-            if (mChangingName) return;
-            mEditorItem =
-                QuestBase.Get(
-                    QuestBase.IdFromList(lstQuests.SelectedIndex));
-            UpdateEditor();
-        }
-
-        public void InitEditor()
-        {
-            lstQuests.Items.Clear();
-            lstQuests.Items.AddRange(QuestBase.Names);
-
-            UpdateEditor();
         }
 
         private void UpdateEditor()
@@ -161,6 +173,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
                 pnlContainer.Show();
 
                 txtName.Text = mEditorItem.Name;
+                cmbFolder.Text = mEditorItem.Folder;
                 txtBeforeDesc.Text = mEditorItem.BeforeDescription;
                 txtStartDesc.Text = mEditorItem.StartDescription;
                 txtInProgressDesc.Text = mEditorItem.InProgressDescription;
@@ -181,7 +194,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
                     foreach (var tsk in mEditorItem.Tasks)
                     {
                         tsk.CompletionEvent.MakeBackup();
-                        tsk.EdittingEvent = tsk.CompletionEvent;
+                        tsk.EditingEvent = tsk.CompletionEvent;
                     }
                     mEditorItem.MakeBackup();
                 }
@@ -196,16 +209,34 @@ namespace Intersect.Editor.Forms.Editors.Quest
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             mChangingName = true;
-            mEditorItem.Name = txtName.Text;
-            //Rename all events
-            mEditorItem.StartEvent.Name = Strings.QuestEditor.startevent.ToString(mEditorItem.Name);
-            mEditorItem.EndEvent.Name = Strings.QuestEditor.endevent.ToString(mEditorItem.Name);
-            foreach (var tsk in mEditorItem.Tasks)
+            if (mEditorItem != null)
             {
-                if (tsk.CompletionEvent != null)
-                    tsk.CompletionEvent.Name = Strings.TaskEditor.completionevent.ToString(mEditorItem.Name);
+                mEditorItem.Name = txtName?.Text ?? "";
+                //Rename all events
+                if (mEditorItem.StartEvent != null)
+                {
+                    mEditorItem.StartEvent.Name = Strings.QuestEditor.startevent.ToString(mEditorItem.Name);
+                }
+
+                if (mEditorItem.EndEvent != null)
+                {
+                    mEditorItem.EndEvent.Name = Strings.QuestEditor.endevent.ToString(mEditorItem.Name);
+                }
+
+                if (mEditorItem.Tasks != null)
+                {
+                    foreach (var tsk in mEditorItem.Tasks)
+                    {
+                        if (tsk.CompletionEvent != null)
+                            tsk.CompletionEvent.Name = Strings.TaskEditor.completionevent.ToString(mEditorItem.Name);
+                    }
+                }
+
+                if (lstQuests != null)
+                {
+                    if (lstQuests.SelectedNode != null && lstQuests.SelectedNode.Tag != null) lstQuests.SelectedNode.Text = txtName?.Text ?? "";
+                }
             }
-            lstQuests.Items[QuestBase.ListIndex(mEditorItem.Id)] = txtName.Text;
             mChangingName = false;
         }
 
@@ -234,7 +265,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
         private void OpenQuestEvent(EventBase evt)
         {
             FrmEvent editor = new FrmEvent(null) {MyEvent = evt};
-            editor.InitEditor(true,true);
+            editor.InitEditor(true,true, true);
             editor.ShowDialog();
             Globals.MainForm.BringToFront();
             BringToFront();
@@ -243,9 +274,9 @@ namespace Intersect.Editor.Forms.Editors.Quest
         private void btnAddTask_Click(object sender, EventArgs e)
         {
             var questTask = new QuestBase.QuestTask(Guid.NewGuid());
-            questTask.EdittingEvent = new EventBase(Guid.Empty, Guid.Empty,0, 0, false);
-            questTask.EdittingEvent.Name = Strings.TaskEditor.completionevent.ToString(mEditorItem.Name);
-            mEditorItem.AddEvents.Add(questTask.Id, questTask.EdittingEvent);
+            questTask.EditingEvent = new EventBase(Guid.Empty, Guid.Empty,0, 0, false);
+            questTask.EditingEvent.Name = Strings.TaskEditor.completionevent.ToString(mEditorItem.Name);
+            mEditorItem.AddEvents.Add(questTask.Id, questTask.EditingEvent);
             if (OpenTaskEditor(questTask))
             {
                 mEditorItem.Tasks.Add(questTask);
@@ -289,7 +320,6 @@ namespace Intersect.Editor.Forms.Editors.Quest
         {
             if (lstTasks.SelectedIndex > -1)
             {
-                mEditorItem.RemoveEvents.Add(mEditorItem.Tasks[lstTasks.SelectedIndex].CompletionEvent.Id);
                 if (mEditorItem.AddEvents.ContainsKey(mEditorItem.Tasks[lstTasks.SelectedIndex].Id))
                 {
                     mEditorItem.AddEvents.Remove(mEditorItem.Tasks[lstTasks.SelectedIndex].Id);
@@ -393,7 +423,38 @@ namespace Intersect.Editor.Forms.Editors.Quest
         {
             if (mEditorItem != null && mCopiedItem != null && lstQuests.Focused)
             {
+                var startEventId = mEditorItem.StartEventId;
+                var endEventId = mEditorItem.EndEventId;
                 mEditorItem.Load(mCopiedItem, true);
+
+                EventBase.Get(startEventId).Load(mEditorItem.StartEvent.JsonData);
+                EventBase.Get(endEventId).Load(mEditorItem.EndEvent.JsonData);
+
+                mEditorItem.StartEventId = startEventId;
+                mEditorItem.EndEventId = endEventId;
+
+                //Fix tasks
+                foreach (var tsk in mEditorItem.Tasks)
+                {
+                    var oldId = tsk.Id;
+                    tsk.Id = Guid.NewGuid();
+
+                    if (mEditorItem.AddEvents.ContainsKey(oldId))
+                    {
+                        mEditorItem.AddEvents.Add(tsk.Id,mEditorItem.AddEvents[oldId]);
+                        tsk.EditingEvent = mEditorItem.AddEvents[tsk.Id];
+                        mEditorItem.AddEvents.Remove(oldId);
+                    }
+                    else
+                    {
+                        var tskEventData = EventBase.Get(tsk.CompletionEventId).JsonData;
+                        tsk.CompletionEventId = Guid.Empty;
+                        tsk.EditingEvent = new EventBase(Guid.Empty, Guid.Empty, 0, 0, false);
+                        tsk.EditingEvent.Name = Strings.TaskEditor.completionevent.ToString(mEditorItem.Name);
+                        tsk.EditingEvent.Load(tskEventData);
+                        mEditorItem.AddEvents.Add(tsk.Id, tsk.EditingEvent);
+                    }
+                }
                 UpdateEditor();
             }
         }
@@ -467,5 +528,204 @@ namespace Intersect.Editor.Forms.Editors.Quest
             var frm = new FrmDynamicRequirements(mEditorItem.Requirements, RequirementType.Quest);
             frm.ShowDialog();
         }
+
+        #region "Item List - Folders, Searching, Sorting, Etc"
+        public void InitEditor()
+        {
+            var selectedId = Guid.Empty;
+            var folderNodes = new Dictionary<string, TreeNode>();
+            if (lstQuests.SelectedNode != null && lstQuests.SelectedNode.Tag != null)
+            {
+                selectedId = (Guid)lstQuests.SelectedNode.Tag;
+            }
+            lstQuests.Nodes.Clear();
+
+            //Collect folders
+            var mFolders = new List<string>();
+            foreach (var itm in QuestBase.Lookup)
+            {
+                if (!string.IsNullOrEmpty(((QuestBase)itm.Value).Folder) && !mFolders.Contains(((QuestBase)itm.Value).Folder))
+                {
+                    mFolders.Add(((QuestBase)itm.Value).Folder);
+                    if (!mKnownFolders.Contains(((QuestBase)itm.Value).Folder))
+                        mKnownFolders.Add(((QuestBase)itm.Value).Folder);
+                }
+            }
+
+            mFolders.Sort();
+            mKnownFolders.Sort();
+            cmbFolder.Items.Clear();
+            cmbFolder.Items.Add("");
+            cmbFolder.Items.AddRange(mKnownFolders.ToArray());
+
+            lstQuests.Sorted = !btnChronological.Checked;
+
+            if (!btnChronological.Checked && !CustomSearch())
+            {
+                foreach (var folder in mFolders)
+                {
+                    var node = lstQuests.Nodes.Add(folder);
+                    node.ImageIndex = 0;
+                    node.SelectedImageIndex = 0;
+                    folderNodes.Add(folder, node);
+                }
+            }
+
+            foreach (var itm in QuestBase.ItemPairs)
+            {
+                var node = new TreeNode(itm.Value);
+                node.Tag = itm.Key;
+                node.ImageIndex = 1;
+                node.SelectedImageIndex = 1;
+
+                var folder = QuestBase.Get(itm.Key).Folder;
+                if (!string.IsNullOrEmpty(folder) && !btnChronological.Checked && !CustomSearch())
+                {
+                    var folderNode = folderNodes[folder];
+                    folderNode.Nodes.Add(node);
+                    if (itm.Key == selectedId)
+                        folderNode.Expand();
+                }
+                else
+                {
+                    lstQuests.Nodes.Add(node);
+                }
+
+                if (CustomSearch())
+                {
+                    if (!node.Text.ToLower().Contains(txtSearch.Text.ToLower()))
+                    {
+                        node.Remove();
+                    }
+                }
+
+                if (itm.Key == selectedId)
+                    lstQuests.SelectedNode = node;
+            }
+
+            var selectedNode = lstQuests.SelectedNode;
+
+            if (!btnChronological.Checked) lstQuests.Sort();
+
+            lstQuests.SelectedNode = selectedNode;
+            foreach (var node in mExpandedFolders)
+            {
+                if (folderNodes.ContainsKey(node))
+                    folderNodes[node].Expand();
+            }
+
+        }
+
+        private void btnAddFolder_Click(object sender, EventArgs e)
+        {
+            var folderName = "";
+            var result = DarkInputBox.ShowInformation(Strings.QuestEditor.folderprompt, Strings.QuestEditor.foldertitle, ref folderName, DarkDialogButton.OkCancel);
+            if (result == DialogResult.OK && !string.IsNullOrEmpty(folderName))
+            {
+                if (!cmbFolder.Items.Contains(folderName))
+                {
+                    mEditorItem.Folder = folderName;
+                    mExpandedFolders.Add(folderName);
+                    InitEditor();
+                    cmbFolder.Text = folderName;
+                }
+            }
+        }
+
+        private void lstQuests_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            var node = e.Node;
+            if (node != null)
+            {
+                if (e.Button == MouseButtons.Right)
+                {
+                    if (e.Node.Tag != null && e.Node.Tag.GetType() == typeof(Guid))
+                    {
+                        Clipboard.SetText(e.Node.Tag.ToString());
+                    }
+                }
+                var hitTest = lstQuests.HitTest(e.Location);
+                if (hitTest.Location != TreeViewHitTestLocations.PlusMinus)
+                {
+                    if (node.Nodes.Count > 0)
+                    {
+                        if (node.IsExpanded)
+                        {
+                            node.Collapse();
+                        }
+                        else
+                        {
+                            node.Expand();
+                        }
+                    }
+                }
+
+                if (node.IsExpanded)
+                {
+                    if (!mExpandedFolders.Contains(node.Text)) mExpandedFolders.Add(node.Text);
+                }
+                else
+                {
+                    if (mExpandedFolders.Contains(node.Text)) mExpandedFolders.Remove(node.Text);
+                }
+            }
+        }
+
+        private void lstQuests_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            if (mChangingName) return;
+            if (lstQuests.SelectedNode == null || lstQuests.SelectedNode.Tag == null) return;
+            mEditorItem = QuestBase.Get((Guid)lstQuests.SelectedNode.Tag);
+            UpdateEditor();
+        }
+
+        private void cmbFolder_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Folder = cmbFolder.Text;
+            InitEditor();
+        }
+
+        private void btnChronological_Click(object sender, EventArgs e)
+        {
+            btnChronological.Checked = !btnChronological.Checked;
+            InitEditor();
+        }
+
+        private void txtSearch_TextChanged(object sender, EventArgs e)
+        {
+            InitEditor();
+        }
+
+        private void txtSearch_Leave(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtSearch.Text))
+            {
+                txtSearch.Text = Strings.QuestEditor.searchplaceholder;
+            }
+        }
+
+        private void txtSearch_Enter(object sender, EventArgs e)
+        {
+            txtSearch.SelectAll();
+            txtSearch.Focus();
+        }
+
+        private void btnClearSearch_Click(object sender, EventArgs e)
+        {
+            txtSearch.Text = Strings.QuestEditor.searchplaceholder;
+        }
+
+        private bool CustomSearch()
+        {
+            return !string.IsNullOrWhiteSpace(txtSearch.Text) && txtSearch.Text != Strings.QuestEditor.searchplaceholder;
+        }
+
+        private void txtSearch_Click(object sender, EventArgs e)
+        {
+            if (txtSearch.Text == Strings.QuestEditor.searchplaceholder)
+                txtSearch.SelectAll();
+        }
+
+        #endregion
     }
 }

@@ -84,6 +84,7 @@ namespace Intersect.Client.UI.Game.Trades
 
         void pnl_HoverEnter(Base sender, EventArgs arguments)
         {
+            if (InputHandler.MouseFocus != null) return;
             mMouseOver = true;
             mCanDrag = true;
             if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
@@ -98,9 +99,7 @@ namespace Intersect.Client.UI.Game.Trades
             }
             if (ItemBase.Get(Globals.Trade[mMySide, mMySlot].ItemId) != null)
             {
-                mDescWindow = new ItemDescWindow(Globals.Trade[mMySide, mMySlot].Item,
-                    Globals.Trade[mMySide, mMySlot].Quantity, mTradeWindow.X - 255, mTradeWindow.Y,
-                    Globals.Trade[mMySide, mMySlot].StatBoost);
+                mDescWindow = new ItemDescWindow(Globals.Trade[mMySide, mMySlot].Item, Globals.Trade[mMySide, mMySlot].Quantity, mTradeWindow.X, mTradeWindow.Y, Globals.Trade[mMySide, mMySlot].StatBuffs);
             }
         }
 
@@ -108,8 +107,8 @@ namespace Intersect.Client.UI.Game.Trades
         {
             FloatRect rect = new FloatRect()
             {
-                X = Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).X,
-                Y = Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).Y,
+                X = Pnl.LocalPosToCanvas(new Point(0, 0)).X,
+                Y = Pnl.LocalPosToCanvas(new Point(0, 0)).Y,
                 Width = Pnl.Width,
                 Height = Pnl.Height
             };
@@ -167,32 +166,32 @@ namespace Intersect.Client.UI.Game.Trades
                     }
                     else
                     {
-                        if (mCanDrag)
+                        if (mCanDrag && Draggable.Active == null)
                         {
                             if (mMouseX == -1 || mMouseY == -1)
                             {
                                 mMouseX = InputHandler.MousePosition.X -
-                                         Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).X;
+                                         Pnl.LocalPosToCanvas(new Point(0, 0)).X;
                                 mMouseY = InputHandler.MousePosition.Y -
-                                         Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).Y;
+                                         Pnl.LocalPosToCanvas(new Point(0, 0)).Y;
                             }
                             else
                             {
                                 int xdiff = mMouseX -
                                             (InputHandler.MousePosition.X -
-                                             Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0))
+                                             Pnl.LocalPosToCanvas(new Point(0, 0))
                                                  .X);
                                 int ydiff = mMouseY -
                                             (InputHandler.MousePosition.Y -
-                                             Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0))
+                                             Pnl.LocalPosToCanvas(new Point(0, 0))
                                                  .Y);
                                 if (Math.Sqrt(Math.Pow(xdiff, 2) + Math.Pow(ydiff, 2)) > 5)
                                 {
                                     IsDragging = true;
                                     mDragIcon = new Draggable(
-                                        Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).X +
+                                        Pnl.LocalPosToCanvas(new Point(0, 0)).X +
                                         mMouseX,
-                                        Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).X +
+                                        Pnl.LocalPosToCanvas(new Point(0, 0)).X +
                                         mMouseY, Pnl.Texture);
                                 }
                             }

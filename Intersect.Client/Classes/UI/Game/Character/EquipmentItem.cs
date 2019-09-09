@@ -4,6 +4,7 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
+using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Networking;
@@ -35,6 +36,7 @@ namespace Intersect.Client.UI.Game.Character
             Pnl.RightClicked += pnl_RightClicked;
 
             ContentPanel = new ImagePanel(Pnl, "EquipmentIcon");
+            ContentPanel.MouseInputEnabled = false;
             Pnl.SetToolTipText(Options.EquipmentSlots[mYindex]);
         }
 
@@ -54,6 +56,7 @@ namespace Intersect.Client.UI.Game.Character
 
         void pnl_HoverEnter(Base sender, EventArgs arguments)
         {
+            if (InputHandler.MouseFocus != null) return;
             if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
             {
                 return;
@@ -66,15 +69,15 @@ namespace Intersect.Client.UI.Game.Character
 
             var item = ItemBase.Get(mCurrentItemId);
             if (item == null) return;
-            mDescWindow = new ItemDescWindow(item, 1, mCharacterWindow.X - 255, mCharacterWindow.Y, mStatBoost, item.Name);
+            mDescWindow = new ItemDescWindow(item, 1, mCharacterWindow.X, mCharacterWindow.Y, mStatBoost, item.Name);
         }
 
         public FloatRect RenderBounds()
         {
             FloatRect rect = new FloatRect()
             {
-                X = Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).X,
-                Y = Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).Y,
+                X = Pnl.LocalPosToCanvas(new Point(0, 0)).X,
+                Y = Pnl.LocalPosToCanvas(new Point(0, 0)).Y,
                 Width = Pnl.Width,
                 Height = Pnl.Height
             };

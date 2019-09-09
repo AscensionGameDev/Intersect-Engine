@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen;
@@ -24,7 +25,9 @@ namespace Intersect.Client.UI
         private Controls mEdittingControl;
         private GameControls mEdittingControls;
         private int mEdittingKey = -1;
-        private Button mExitKeybindingsButton;
+        private Button mApplyKeybindingsButton;
+        private Button mCancelKeybindingsButton;
+        private Button mRestoreKeybindingsButton;
 
         private ImagePanel mFpsBackground;
         private Label mFpsLabel;
@@ -92,7 +95,7 @@ namespace Intersect.Client.UI
             myModes?.ForEach(t =>
             {
                 var item = mResolutionList.AddItem(t);
-                item.Alignment = Pos.Center;
+                item.Alignment = Pos.Left;
             });
 
             //FPS Background
@@ -125,7 +128,7 @@ namespace Intersect.Client.UI
 
             mEditKeybindingsBtn =
                 new Button(mOptionsContainer, "KeybindingsButton") { Text = Strings.Controls.edit };
-            mEditKeybindingsBtn.Clicked += _editKeybindingsBtn_Clicked;
+            mEditKeybindingsBtn.Clicked += EditKeybindingsButton_Clicked;
 
             //Options - Sound Label
             mSoundLabel = new Label(mOptionsContainer, "SoundLabel");
@@ -152,12 +155,23 @@ namespace Intersect.Client.UI
             mControlsContainer.EnableScroll(false, true);
             mControlsContainer.Hide();
 
-            mExitKeybindingsButton = new Button(mOptionsPanel, "ExitControlsButton");
-            mExitKeybindingsButton.Hide();
-            mExitKeybindingsButton.Clicked += _editKeybindingsBtn_Clicked;
+            mApplyKeybindingsButton = new Button(mOptionsPanel, "ExitControlsButton");
+            mApplyKeybindingsButton.Text = Strings.Options.apply;
+            mApplyKeybindingsButton.Hide();
+            mApplyKeybindingsButton.Clicked += ApplyKeybindingsButton_Clicked;
+
+            mCancelKeybindingsButton = new Button(mOptionsPanel, "CancelControlsButton");
+            mCancelKeybindingsButton.Text = Strings.Options.back;
+            mCancelKeybindingsButton.Hide();
+            mCancelKeybindingsButton.Clicked += CancelKeybindingsButton_Clicked;
+
+            mRestoreKeybindingsButton = new Button(mOptionsPanel, "RestoreControlsButton");
+            mRestoreKeybindingsButton.Text = Strings.Options.restore;
+            mRestoreKeybindingsButton.Hide();
+            mRestoreKeybindingsButton.Clicked += RestoreKeybindingsButton_Clicked;
 
             var row = 0;
-            var defaultFont = GameContentManager.Current?.GetFont("arial", 16);
+            var defaultFont = GameContentManager.Current?.GetFont("sourcesansproblack", 16);
             foreach (Controls control in Enum.GetValues(typeof(Controls)))
             {
                 var offset = row * 32;
@@ -170,7 +184,7 @@ namespace Intersect.Client.UI
                     Font = defaultFont
                 };
                 label.SetBounds(8, 8 + offset, 0, 24);
-                label.SetTextColor(new Framework.GenericClasses.Color(255, 255, 255, 255), Label.ControlState.Normal);
+                label.SetTextColor(new Color(255, 255, 255, 255), Label.ControlState.Normal);
 
                 var key1 = new Button(mControlsContainer, $"Control{Enum.GetName(typeof(Controls), control)}Button1")
                 {
@@ -180,12 +194,6 @@ namespace Intersect.Client.UI
                     Font = defaultFont
                 };
                 key1.Clicked += Key1_Clicked;
-                key1.SetBounds(200, 6 + offset, 120, 28);
-                key1.SetTextColor(new Framework.GenericClasses.Color(255, 30, 30, 30), Label.ControlState.Normal);
-                key1.SetImage(null, "controlnormal.png", Button.ControlState.Normal);
-                key1.SetImage(null, "controlhover.png", Button.ControlState.Hovered);
-                key1.SetImage(null, "", Button.ControlState.Disabled);
-                key1.SetImage(null, "", Button.ControlState.Clicked);
 
                 var key2 = new Button(mControlsContainer, $"Control{Enum.GetName(typeof(Controls), control)}Button2")
                 {
@@ -195,12 +203,6 @@ namespace Intersect.Client.UI
                     Font = defaultFont
                 };
                 key2.Clicked += Key2_Clicked;
-                key2.SetBounds(350, 6 + offset, 120, 28);
-                key2.SetTextColor(new Framework.GenericClasses.Color(255, 30, 30, 30), Label.ControlState.Normal);
-                key2.SetImage(null, "controlnormal.png", Button.ControlState.Normal);
-                key2.SetImage(null, "controlhover.png", Button.ControlState.Hovered);
-                key2.SetImage(null, "", Button.ControlState.Disabled);
-                key2.SetImage(null, "", Button.ControlState.Clicked);
 
                 mKeyButtons.Add(control, new[] {key1, key2});
 
@@ -221,6 +223,8 @@ namespace Intersect.Client.UI
             GameInputHandler.MouseDown += OnKeyDown;
 
             mOptionsPanel.LoadJsonUi(mainMenu == null ? GameContentManager.UI.InGame : GameContentManager.UI.Menu, GameGraphics.Renderer.GetResolutionString());
+
+            CloseKeybindings();
         }
 
         private void Key2_Clicked(Base sender, ClickedEventArgs arguments)
@@ -246,22 +250,17 @@ namespace Intersect.Client.UI
             }
         }
 
-        private void _editKeybindingsBtn_Clicked(Base sender, ClickedEventArgs arguments)
+        private void EditKeybindingsButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
             //Determine if controls are currently being shown or not
-            if (mControlsContainer.IsVisible)
-            {
-                mControlsContainer.Hide();
-                mOptionsContainer.Show();
-                mOptionsHeader.SetText(Strings.Options.title);
-                mExitKeybindingsButton.Hide();
-            }
-            else
+            if (!mControlsContainer.IsVisible)
             {
                 mControlsContainer.Show();
                 mOptionsContainer.Hide();
                 mOptionsHeader.SetText(Strings.Controls.title);
-                mExitKeybindingsButton.Show();
+                mApplyKeybindingsButton.Show();
+                mCancelKeybindingsButton.Show();
+                mRestoreKeybindingsButton.Show();
                 foreach (Controls control in Enum.GetValues(typeof(Controls)))
                 {
                     mKeyButtons[control][0].Text = Strings.Keys.keydict[Enum.GetName(typeof(Keys), mEdittingControls.ControlMapping[control].Key1).ToLower()];
@@ -270,11 +269,43 @@ namespace Intersect.Client.UI
             }
         }
 
+        private void ApplyKeybindingsButton_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            GameControls.ActiveControls = mEdittingControls;
+            GameControls.ActiveControls.Save();
+            CloseKeybindings();
+        }
+
+        private void CancelKeybindingsButton_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            mEdittingControls = new GameControls(GameControls.ActiveControls);
+            CloseKeybindings();
+        }
+
+        private void RestoreKeybindingsButton_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            mEdittingControls.ResetDefaults();
+            foreach (Controls control in Enum.GetValues(typeof(Controls)))
+            {
+                mKeyButtons[control][0].Text = Strings.Keys.keydict[Enum.GetName(typeof(Keys), mEdittingControls.ControlMapping[control].Key1).ToLower()];
+                mKeyButtons[control][1].Text = Strings.Keys.keydict[Enum.GetName(typeof(Keys), mEdittingControls.ControlMapping[control].Key2).ToLower()];
+            }
+        }
+
+        private void CloseKeybindings()
+        {
+            mControlsContainer.Hide();
+            mOptionsContainer.Show();
+            mOptionsHeader.SetText(Strings.Options.title);
+            mApplyKeybindingsButton.Hide();
+            mCancelKeybindingsButton.Hide();
+            mRestoreKeybindingsButton.Hide();
+        }
+
         private void OnKeyDown(Keys key)
         {
             if (mEdittingButton != null)
             {
-                if (key == Keys.Escape) key = Keys.None;
                 mEdittingControls.UpdateControl(mEdittingControl, mEdittingKey, key);
                 if (mEdittingKey == 1)
                 {
@@ -284,6 +315,7 @@ namespace Intersect.Client.UI
                 {
                     mEdittingButton.Text = Strings.Keys.keydict[Enum.GetName(typeof(Keys), mEdittingControls.ControlMapping[mEdittingControl].Key2).ToLower()];
                 }
+                mEdittingButton.PlayHoverSound();
                 mEdittingButton = null;
                 Gui.GwenInput.HandleInput = true;
             }
@@ -438,8 +470,6 @@ namespace Intersect.Client.UI
             }
             Globals.Database.MusicVolume = (int) mMusicSlider.Value;
             Globals.Database.SoundVolume = (int) mSoundSlider.Value;
-            GameControls.ActiveControls = mEdittingControls;
-            GameControls.ActiveControls.Save();
             GameAudio.UpdateGlobalVolume();
             Globals.Database.SavePreferences();
             if (shouldReset) GameGraphics.Renderer.Init();

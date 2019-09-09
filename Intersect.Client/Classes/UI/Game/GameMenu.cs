@@ -56,6 +56,7 @@ namespace Intersect.Client.UI.Game
             mGameCanvas = gameCanvas;
 
             mMenuContainer = new ImagePanel(gameCanvas, "MenuContainer");
+            mMenuContainer.ShouldCacheToTexture = true;
 
             mInventoryBackground = new ImagePanel(mMenuContainer, "InventoryContainer");
             mInventoryButton = new Button(mInventoryBackground, "InventoryButton");
@@ -225,7 +226,7 @@ namespace Intersect.Client.UI.Game
         {
             if (ToggleFriendsWindow())
             {
-                PacketSender.RequestFriends();
+                PacketSender.SendRequestFriends();
             }
         }
 

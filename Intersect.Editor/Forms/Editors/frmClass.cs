@@ -21,6 +21,9 @@ namespace Intersect.Editor.Forms.Editors
         private string mCopiedItem;
         private ClassBase mEditorItem;
 
+        private List<string> mKnownFolders = new List<string>();
+        private List<string> mExpandedFolders = new List<string>();
+
 
         public FrmClass()
         {
@@ -70,20 +73,11 @@ namespace Intersect.Editor.Forms.Editors
             Dispose();
         }
 
-        private void lstClasses_Click(object sender, EventArgs e)
-        {
-            if (mChangingName) return;
-            mEditorItem =
-                ClassBase.Get(
-                    ClassBase.IdFromList(lstClasses.SelectedIndex));
-            UpdateEditor();
-        }
-
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             mChangingName = true;
             mEditorItem.Name = txtName.Text;
-            lstClasses.Items[ClassBase.ListIndex(mEditorItem.Id)] = txtName.Text;
+            if (lstClasses.SelectedNode != null && lstClasses.SelectedNode.Tag != null) lstClasses.SelectedNode.Text = txtName.Text;
             mChangingName = false;
         }
 
@@ -142,6 +136,8 @@ namespace Intersect.Editor.Forms.Editors
                 nudBaseMana.Value = mEditorItem.BaseVital[(int) Vitals.Mana];
                 nudPoints.Value = mEditorItem.BasePoints;
                 chkLocked.Checked = Convert.ToBoolean(mEditorItem.Locked);
+
+                cmbFolder.Text = mEditorItem.Folder;
 
                 //Combat
                 nudDamage.Value = mEditorItem.Damage;
@@ -208,9 +204,9 @@ namespace Intersect.Editor.Forms.Editors
                     }
                 }
 
-                for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
+                for (int i = 0; i < MapList.OrderedMaps.Count; i++)
                 {
-                    if (MapList.GetOrderedMaps()[i].MapId == mEditorItem.SpawnMapId)
+                    if (MapList.OrderedMaps[i].MapId == mEditorItem.SpawnMapId)
                     {
                         cmbWarpMap.SelectedIndex = i;
                         break;
@@ -219,7 +215,7 @@ namespace Intersect.Editor.Forms.Editors
                 if (cmbWarpMap.SelectedIndex == -1)
                 {
                     cmbWarpMap.SelectedIndex = 0;
-                    mEditorItem.SpawnMapId = MapList.GetOrderedMaps()[0].MapId;
+                    mEditorItem.SpawnMapId = MapList.OrderedMaps[0].MapId;
                 }
                 nudX.Value = mEditorItem.SpawnX;
                 nudY.Value = mEditorItem.SpawnY;
@@ -232,6 +228,8 @@ namespace Intersect.Editor.Forms.Editors
                     mChanged.Add(mEditorItem);
                     mEditorItem.MakeBackup();
                 }
+
+                grpExpGrid.Hide();
             }
             else
             {
@@ -267,6 +265,7 @@ namespace Intersect.Editor.Forms.Editors
             nudDef.Maximum = Options.MaxStatValue;
             nudMR.Maximum = Options.MaxStatValue;
             nudSpd.Maximum = Options.MaxStatValue;
+
             InitLocalization();
             UpdateEditor();
         }
@@ -371,21 +370,136 @@ namespace Intersect.Editor.Forms.Editors
                 rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString());
             lblPointsIncrease.Text = Strings.ClassEditor.pointsboost;
 
+
+            //Exp Grid
+            btnExpGrid.Text = Strings.ClassEditor.expgrid;
+            grpExpGrid.Text = Strings.ClassEditor.experiencegrid;
+            btnResetExpGrid.Text = Strings.ClassEditor.gridreset;
+            btnCloseExpGrid.Text = Strings.ClassEditor.gridclose;
+            btnExpPaste.Text = Strings.ClassEditor.gridpaste;
+
+            //Create EXP Grid...
+            var levelCol = new DataGridViewTextBoxColumn();
+            levelCol.HeaderText = Strings.ClassEditor.gridlevel;
+            levelCol.ReadOnly = true;
+            levelCol.SortMode = DataGridViewColumnSortMode.NotSortable;
+
+
+            var tnlCol = new DataGridViewTextBoxColumn();
+            tnlCol.HeaderText = Strings.ClassEditor.gridtnl;
+            tnlCol.SortMode = DataGridViewColumnSortMode.NotSortable;
+
+            var totalCol = new DataGridViewTextBoxColumn();
+            totalCol.HeaderText = Strings.ClassEditor.gridtotalexp;
+            totalCol.ReadOnly = true;
+            totalCol.SortMode = DataGridViewColumnSortMode.NotSortable;
+
+            expGrid.Columns.Clear();
+            expGrid.Columns.Add(levelCol);
+            expGrid.Columns.Add(tnlCol);
+            expGrid.Columns.Add(totalCol);
+
+            //Searching/Sorting
+            btnChronological.ToolTipText = Strings.ClassEditor.sortchronologically;
+            txtSearch.Text = Strings.ClassEditor.searchplaceholder;
+            lblFolder.Text = Strings.ClassEditor.folderlabel;
+
             btnSave.Text = Strings.ClassEditor.save;
             btnCancel.Text = Strings.ClassEditor.cancel;
         }
 
         public void InitEditor()
         {
-            lstClasses.Items.Clear();
-            lstClasses.Items.AddRange(ClassBase.Names);
-            cmbWarpMap.Items.Clear();
-            for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
+            var selectedId = Guid.Empty;
+            var folderNodes = new Dictionary<string, TreeNode>();
+            if (lstClasses.SelectedNode != null && lstClasses.SelectedNode.Tag != null)
             {
-                cmbWarpMap.Items.Add(MapList.GetOrderedMaps()[i].Name);
+                selectedId = (Guid)lstClasses.SelectedNode.Tag;
+            }
+            lstClasses.Nodes.Clear();
+            
+            cmbWarpMap.Items.Clear();
+            for (int i = 0; i < MapList.OrderedMaps.Count; i++)
+            {
+                cmbWarpMap.Items.Add(MapList.OrderedMaps[i].Name);
             }
             cmbWarpMap.SelectedIndex = 0;
             cmbDirection.SelectedIndex = 0;
+
+            //Collect folders
+            var mFolders = new List<string>();
+            foreach (var itm in ClassBase.Lookup)
+            {
+                if (!string.IsNullOrEmpty(((ClassBase)itm.Value).Folder) && !mFolders.Contains(((ClassBase)itm.Value).Folder))
+                {
+                    mFolders.Add(((ClassBase)itm.Value).Folder);
+                    if (!mKnownFolders.Contains(((ClassBase)itm.Value).Folder))
+                        mKnownFolders.Add(((ClassBase)itm.Value).Folder);
+                }
+            }
+
+            mFolders.Sort();
+            mKnownFolders.Sort();
+            cmbFolder.Items.Clear();
+            cmbFolder.Items.Add("");
+            cmbFolder.Items.AddRange(mKnownFolders.ToArray());
+
+            lstClasses.Sorted = !btnChronological.Checked;
+
+            if (!btnChronological.Checked && !CustomSearch())
+            {
+                foreach (var folder in mFolders)
+                {
+                    var node = lstClasses.Nodes.Add(folder);
+                    node.ImageIndex = 0;
+                    node.SelectedImageIndex = 0;
+                    folderNodes.Add(folder, node);
+                }
+            }
+
+            foreach (var itm in ClassBase.ItemPairs)
+            {
+                var node = new TreeNode(itm.Value);
+                node.Tag = itm.Key;
+                node.ImageIndex = 1;
+                node.SelectedImageIndex = 1;
+
+                var folder = ClassBase.Get(itm.Key).Folder;
+                if (!string.IsNullOrEmpty(folder) && !btnChronological.Checked && !CustomSearch())
+                {
+                    var folderNode = folderNodes[folder];
+                    folderNode.Nodes.Add(node);
+                    if (itm.Key == selectedId)
+                        folderNode.Expand();
+                }
+                else
+                {
+                    lstClasses.Nodes.Add(node);
+                }
+
+                if (CustomSearch())
+                {
+                    if (!node.Text.ToLower().Contains(txtSearch.Text.ToLower()))
+                    {
+                        node.Remove();
+                    }
+                }
+
+                if (itm.Key == selectedId)
+                    lstClasses.SelectedNode = node;
+            }
+
+            var selectedNode = lstClasses.SelectedNode;
+
+            if (!btnChronological.Checked) lstClasses.Sort();
+
+            lstClasses.SelectedNode = selectedNode;
+            foreach (var node in mExpandedFolders)
+            {
+                if (folderNodes.ContainsKey(node))
+                    folderNodes[node].Expand();
+            }
+
         }
 
         private void lstSprites_Click(object sender, EventArgs e)
@@ -534,14 +648,14 @@ namespace Intersect.Editor.Forms.Editors
         private void btnVisualMapSelector_Click(object sender, EventArgs e)
         {
             FrmWarpSelection frmWarpSelection = new FrmWarpSelection();
-            frmWarpSelection.SelectTile(MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapId, (int) nudX.Value,
+            frmWarpSelection.SelectTile(MapList.OrderedMaps[cmbWarpMap.SelectedIndex].MapId, (int) nudX.Value,
                 (int) nudY.Value);
             frmWarpSelection.ShowDialog();
             if (frmWarpSelection.GetResult())
             {
-                for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
+                for (int i = 0; i < MapList.OrderedMaps.Count; i++)
                 {
-                    if (MapList.GetOrderedMaps()[i].MapId == frmWarpSelection.GetMap())
+                    if (MapList.OrderedMaps[i].MapId == frmWarpSelection.GetMap())
                     {
                         cmbWarpMap.SelectedIndex = i;
                         break;
@@ -549,22 +663,22 @@ namespace Intersect.Editor.Forms.Editors
                 }
                 nudX.Value = frmWarpSelection.GetX();
                 nudY.Value = frmWarpSelection.GetY();
-                mEditorItem.SpawnMapId = MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapId;
-                mEditorItem.SpawnX = (int) nudX.Value;
-                mEditorItem.SpawnY = (int) nudY.Value;
+                mEditorItem.SpawnMapId = MapList.OrderedMaps[cmbWarpMap.SelectedIndex].MapId;
+                mEditorItem.SpawnX = (byte) nudX.Value;
+                mEditorItem.SpawnY = (byte) nudY.Value;
             }
         }
 
         private void cmbWarpMap_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (mEditorItem == null) return;
-            mEditorItem.SpawnMapId = MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapId;
+            mEditorItem.SpawnMapId = MapList.OrderedMaps[cmbWarpMap.SelectedIndex].MapId;
         }
 
         private void cmbDirection_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (mEditorItem == null) return;
-            mEditorItem.SpawnDir = cmbDirection.SelectedIndex;
+            mEditorItem.SpawnDir = (byte)cmbDirection.SelectedIndex;
         }
 
         private void cmbFace_SelectedIndexChanged(object sender, EventArgs e)
@@ -788,12 +902,12 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudX_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.SpawnX = (int) nudX.Value;
+            mEditorItem.SpawnX = (byte) nudX.Value;
         }
 
         private void nudY_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.SpawnY = (int) nudY.Value;
+            mEditorItem.SpawnY = (byte) nudY.Value;
         }
 
         private void nudStr_ValueChanged(object sender, EventArgs e)
@@ -997,5 +1111,346 @@ namespace Intersect.Editor.Forms.Editors
         {
             mEditorItem.CritMultiplier = (double)nudCritMultiplier.Value;
         }
+
+        #region "Exp Grid"
+
+        private void btnExpGrid_Click(object sender, EventArgs e)
+        {
+            grpExpGrid.Show();
+            grpExpGrid.BringToFront();
+
+            expGrid.Rows.Clear();
+
+            for (int i = 1; i <= Options.MaxLevel; i++)
+            {
+                var index = expGrid.Rows.Add(i.ToString(), "", "");
+                var row = expGrid.Rows[index];
+                row.Cells[0].Style.SelectionBackColor = row.Cells[0].Style.BackColor;
+                row.Cells[2].Style.SelectionBackColor = row.Cells[2].Style.BackColor;
+            }
+
+            UpdateExpGridValues(1);
+        }
+
+        private void UpdateExpGridValues(int start, int end = -1)
+        {
+            if (end == -1) end = Options.MaxLevel;
+            if (start > end) return;
+            if (start < 1) start = 1;
+            for (int i = start; i <= end; i++)
+            {
+                if (i < Options.MaxLevel)
+                {
+                    if (mEditorItem.ExperienceOverrides.ContainsKey(i))
+                    {
+                        expGrid.Rows[i-1].Cells[1].Value = Convert.ChangeType(mEditorItem.ExperienceOverrides[i], expGrid.Rows[i-1].Cells[1].ValueType);
+                        var style = expGrid.Rows[i - 1].Cells[1].InheritedStyle;
+                        style.Font = new Font(style.Font, FontStyle.Bold);
+                        expGrid.Rows[i - 1].Cells[1].Style.ApplyStyle(style);
+                    }
+                    else
+                    {
+                        expGrid.Rows[i-1].Cells[1].Value = Convert.ChangeType(mEditorItem.ExperienceCurve.Calculate(i), expGrid.Rows[i-1].Cells[1].ValueType);
+                        expGrid.Rows[i - 1].Cells[1].Style.ApplyStyle(expGrid.Rows[i-1].Cells[0].InheritedStyle);
+                    }
+                }
+                else
+                {
+                    expGrid.Rows[i-1].Cells[1].Value = Convert.ChangeType(0, expGrid.Rows[i-1].Cells[1].ValueType);
+                    expGrid.Rows[i-1].Cells[1].ReadOnly = true;
+                }
+
+                if (i == 1)
+                {
+                    expGrid.Rows[i - 1].Cells[2].Value = Convert.ChangeType(0, expGrid.Rows[i - 1].Cells[1].ValueType);
+                }
+                else
+                {
+                    expGrid.Rows[i - 1].Cells[2].Value = Convert.ChangeType(long.Parse(expGrid.Rows[i - 2].Cells[2].Value.ToString()) + long.Parse(expGrid.Rows[i - 2].Cells[1].Value.ToString()), expGrid.Rows[i - 1].Cells[2].ValueType);
+                }
+            }
+        }
+
+        private void btnCloseExpGrid_Click(object sender, EventArgs e)
+        {
+            grpExpGrid.Hide();
+        }
+
+        private void expGrid_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right && expGrid.CurrentCell != null && expGrid.CurrentCell.IsInEditMode == false)
+            {
+                var cell = expGrid.CurrentCell;
+                if (cell != null)
+                {
+                    Rectangle r = cell.DataGridView.GetCellDisplayRectangle(cell.ColumnIndex, cell.RowIndex, false);
+                    System.Drawing.Point p = new System.Drawing.Point(r.X + r.Width, r.Y + r.Height);
+                    mnuExpGrid.Show((DataGridView) sender, p);
+                }
+            }
+        }
+
+        private void expGrid_SelectionChanged(object sender, EventArgs e)
+        {
+            if (expGrid.Rows.Count <= 0) return;
+            var sel = expGrid.SelectedCells;
+            if (sel.Count == 0)
+                expGrid.Rows[0].Cells[1].Selected = true;
+            else
+            {
+                var selection = sel[0];
+                if (selection.ColumnIndex != 1)
+                {
+                    expGrid.Rows[selection.RowIndex].Cells[1].Selected = true;
+                }
+            }
+        }
+
+        private void btnPaste_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string s = Clipboard.GetText();
+                string[] lines = s.Split('\n');
+                int iFail = 0, iRow = expGrid.CurrentCell.RowIndex;
+                int iCol = expGrid.CurrentCell.ColumnIndex;
+                DataGridViewCell oCell;
+                foreach (string line in lines)
+                {
+                    if (iRow < expGrid.RowCount && line.Length > 0)
+                    {
+                        string[] sCells = line.Split('\t');
+                        for (int i = 0; i < 1; ++i)
+                        {
+                            if (iCol + i < this.expGrid.ColumnCount)
+                            {
+                                oCell = expGrid[iCol + i, iRow];
+                                if (!oCell.ReadOnly)
+                                {
+                                    if (oCell.Value.ToString() != sCells[i])
+                                    {
+                                        int val = 0;
+                                        if (int.TryParse(sCells[i], out val))
+                                        {
+                                            if (val > 0)
+                                            {
+                                                oCell.Value = Convert.ChangeType(val.ToString(), oCell.ValueType);
+                                            }
+                                        }
+                                    }
+                                    else
+                                        iFail++;
+                                    //only traps a fail if the data has changed 
+                                    //and you are pasting into a read only cell
+                                }
+                            }
+                            else
+                            { break; }
+                        }
+                        iRow++;
+                    }
+                    else
+                    { break; }
+                }
+            }
+            catch (Exception)
+            {
+
+                return;
+            }
+        }
+
+        private void expGrid_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        {
+            e.Control.KeyPress -= new KeyPressEventHandler(expGrid_KeyPress);
+            TextBox tb = e.Control as TextBox;
+            if (tb != null)
+            {
+                tb.KeyPress += new KeyPressEventHandler(expGrid_KeyPress);
+            }
+        }
+
+        private void expGrid_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void expGrid_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            var cell = expGrid.Rows[e.RowIndex].Cells[e.ColumnIndex];
+            long val = 0;
+            if (long.TryParse(cell.Value.ToString(), out val))
+            {
+                if (val == 0 || val == mEditorItem.ExperienceCurve.Calculate(e.RowIndex + 1))
+                {
+                    if (mEditorItem.ExperienceOverrides.ContainsKey(e.RowIndex + 1))
+                    {
+                        mEditorItem.ExperienceOverrides.Remove(e.RowIndex + 1);
+                    }
+                }
+                else
+                {
+                    if (!mEditorItem.ExperienceOverrides.ContainsKey(e.RowIndex + 1))
+                    {
+                        mEditorItem.ExperienceOverrides.Add(e.RowIndex + 1, val);
+                    }
+                    else
+                    {
+                        mEditorItem.ExperienceOverrides[e.RowIndex + 1] = val;
+                    }
+                }
+
+                UpdateExpGridValues(e.RowIndex + 1);
+            }
+            else
+            {
+                UpdateExpGridValues(e.RowIndex + 1, e.RowIndex + 2);
+            }
+        }
+
+        private void btnResetExpGrid_Click(object sender, EventArgs e)
+        {
+            mEditorItem.ExperienceOverrides.Clear();
+            UpdateExpGridValues(1);
+        }
+
+        private void expGrid_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+            {
+                if (expGrid.CurrentCell != null)
+                {
+                    if (!expGrid.CurrentCell.IsInEditMode && expGrid.CurrentCell.ReadOnly == false)
+                    {
+                        var level = expGrid.CurrentCell.RowIndex + 1;
+                        if (mEditorItem.ExperienceOverrides.ContainsKey(level))
+                        {
+                            mEditorItem.ExperienceOverrides.Remove(level);
+                        }
+                        UpdateExpGridValues(level);
+                    }
+                }
+            }
+        }
+
+        #endregion
+
+        #region "Item List - Folders, Searching, Sorting, Etc"
+        private void btnAddFolder_Click(object sender, EventArgs e)
+        {
+            var folderName = "";
+            var result = DarkInputBox.ShowInformation(Strings.ClassEditor.folderprompt, Strings.ClassEditor.foldertitle, ref folderName, DarkDialogButton.OkCancel);
+            if (result == DialogResult.OK && !string.IsNullOrEmpty(folderName))
+            {
+                if (!cmbFolder.Items.Contains(folderName))
+                {
+                    mEditorItem.Folder = folderName;
+                    mExpandedFolders.Add(folderName);
+                    InitEditor();
+                    cmbFolder.Text = folderName;
+                }
+            }
+        }
+
+        private void lstClasses_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            var node = e.Node;
+            if (node != null)
+            {
+                if (e.Button == MouseButtons.Right)
+                {
+                    if (e.Node.Tag != null && e.Node.Tag.GetType() == typeof(Guid))
+                    {
+                        Clipboard.SetText(e.Node.Tag.ToString());
+                    }
+                }
+                var hitTest = lstClasses.HitTest(e.Location);
+                if (hitTest.Location != TreeViewHitTestLocations.PlusMinus)
+                {
+                    if (node.Nodes.Count > 0)
+                    {
+                        if (node.IsExpanded)
+                        {
+                            node.Collapse();
+                        }
+                        else
+                        {
+                            node.Expand();
+                        }
+                    }
+                }
+
+                if (node.IsExpanded)
+                {
+                    if (!mExpandedFolders.Contains(node.Text)) mExpandedFolders.Add(node.Text);
+                }
+                else
+                {
+                    if (mExpandedFolders.Contains(node.Text)) mExpandedFolders.Remove(node.Text);
+                }
+            }
+        }
+
+        private void lstClasses_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            if (mChangingName) return;
+            if (lstClasses.SelectedNode == null || lstClasses.SelectedNode.Tag == null) return;
+            mEditorItem = ClassBase.Get((Guid)lstClasses.SelectedNode.Tag);
+            UpdateEditor();
+        }
+
+        private void cmbFolder_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Folder = cmbFolder.Text;
+            InitEditor();
+        }
+
+        private void btnChronological_Click(object sender, EventArgs e)
+        {
+            btnChronological.Checked = !btnChronological.Checked;
+            InitEditor();
+        }
+
+        private void txtSearch_TextChanged(object sender, EventArgs e)
+        {
+            InitEditor();
+        }
+
+        private void txtSearch_Leave(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtSearch.Text))
+            {
+                txtSearch.Text = Strings.ClassEditor.searchplaceholder;
+            }
+        }
+
+        private void txtSearch_Enter(object sender, EventArgs e)
+        {
+            txtSearch.SelectAll();
+            txtSearch.Focus();
+        }
+
+        private void btnClearSearch_Click(object sender, EventArgs e)
+        {
+            txtSearch.Text = Strings.ClassEditor.searchplaceholder;
+        }
+
+        private bool CustomSearch()
+        {
+            return !string.IsNullOrWhiteSpace(txtSearch.Text) && txtSearch.Text != Strings.ClassEditor.searchplaceholder;
+        }
+
+        private void txtSearch_Click(object sender, EventArgs e)
+        {
+            if (txtSearch.Text == Strings.ClassEditor.searchplaceholder)
+                txtSearch.SelectAll();
+        }
+
+        #endregion
+
+
     }
 }

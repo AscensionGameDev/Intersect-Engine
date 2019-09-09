@@ -1,12 +1,16 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+using NUnit.Framework;
+
+using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
+
 namespace Intersect.Extensions
 {
-    [TestClass]
+    [TestFixture]
     public class GameObjectInfoAttributeTests
     {
-        [TestMethod]
+        [Test]
         public void GameObjectInfoAttributeTest()
         {
             const string table = "FakeTable";

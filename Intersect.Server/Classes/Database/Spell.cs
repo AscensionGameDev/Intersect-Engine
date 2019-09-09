@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace Intersect.Server.Database
 {
     public class Spell
     {
         public Guid SpellId { get; set; }
-        public long SpellCd { get; set; }
+        [JsonIgnore] public long SpellCd { get; set; }
         
 
         public static Spell None => new Spell(Guid.Empty);
@@ -33,18 +34,6 @@ namespace Intersect.Server.Database
         {
             SpellId = spell.SpellId;
             SpellCd = spell.SpellCd;
-        }
-
-        public void Load(ByteBuffer bf)
-        {
-            SpellId = bf.ReadGuid();
-        }
-
-        public byte[] Data()
-        {
-            var bf = new ByteBuffer();
-            bf.WriteGuid(SpellId);
-            return bf.ToArray();
         }
     }
 }

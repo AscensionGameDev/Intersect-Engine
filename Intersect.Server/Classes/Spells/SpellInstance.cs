@@ -23,17 +23,5 @@
             };
             return newSpell;
         }
-
-        public void Load(ByteBuffer bf)
-        {
-            SpellNum = bf.ReadInteger();
-        }
-
-        public byte[] Data()
-        {
-            var bf = new ByteBuffer();
-            bf.WriteInteger(SpellNum);
-            return bf.ToArray();
-        }
     }
 }

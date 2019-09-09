@@ -28,7 +28,7 @@ namespace Intersect.Client.MonoGame.Graphics
             //throw new NotImplementedException();
         }
 
-        public override void SetColor(string key, Framework.GenericClasses.Color val)
+        public override void SetColor(string key, Color val)
         {
             var vec = new Vector4(val.R / 255f, val.G / 255f, val.B / 255f, val.A / 255f);
             mShader.Parameters[key].SetValue(vec);

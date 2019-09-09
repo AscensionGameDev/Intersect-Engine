@@ -4,6 +4,7 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
+using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
@@ -57,10 +58,10 @@ namespace Intersect.Client.UI.Game.Shop
             var item = ItemBase.Get(Globals.GameShop.SellingItems[mMySlot].ItemId);
             if (item != null)
             {
-                if (item.IsStackable())
+                if (item.IsStackable)
                 {
                     InputBox iBox = new InputBox(Strings.Shop.buyitem,
-                        Strings.Shop.buyitemprompt.ToString(item.Name), true, InputBox.InputType.TextInput,
+                        Strings.Shop.buyitemprompt.ToString(item.Name), true, InputBox.InputType.NumericInput,
                         BuyItemInputBoxOkay, null, mMySlot);
                 }
                 else
@@ -106,6 +107,7 @@ namespace Intersect.Client.UI.Game.Shop
 
         void pnl_HoverEnter(Base sender, EventArgs arguments)
         {
+            if (InputHandler.MouseFocus != null) return;
             if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
             {
                 return;
@@ -117,17 +119,15 @@ namespace Intersect.Client.UI.Game.Shop
             }
             var item = ItemBase.Get(Globals.GameShop.SellingItems[mMySlot].CostItemId);
             if (item != null)
-                mDescWindow = new ItemDescWindow(Globals.GameShop.SellingItems[mMySlot].Item, 1, mShopWindow.X - 255,
-                    mShopWindow.Y, item.StatsGiven, "",
-                    Strings.Shop.costs.ToString(Globals.GameShop.SellingItems[mMySlot].CostItemQuantity, item.Name));
+                mDescWindow = new ItemDescWindow(Globals.GameShop.SellingItems[mMySlot].Item, 1, mShopWindow.X, mShopWindow.Y, item.StatsGiven, "", Strings.Shop.costs.ToString(Globals.GameShop.SellingItems[mMySlot].CostItemQuantity, item.Name));
         }
 
         public FloatRect RenderBounds()
         {
             FloatRect rect = new FloatRect()
             {
-                X = Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).X,
-                Y = Pnl.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).Y,
+                X = Pnl.LocalPosToCanvas(new Point(0, 0)).X,
+                Y = Pnl.LocalPosToCanvas(new Point(0, 0)).Y,
                 Width = Pnl.Width,
                 Height = Pnl.Height
             };

@@ -82,12 +82,12 @@ namespace Intersect.Client.Framework.Gwen.Control.Property
             mTextBox.SetText(value, fireEvents);
         }
 
-        private void SetTextFromColor(GenericClasses.Color color)
+        private void SetTextFromColor(Intersect.Color color)
         {
             mTextBox.Text = String.Format("{0} {1} {2}", color.R, color.G, color.B);
         }
 
-        private GenericClasses.Color GetColorFromText()
+        private Intersect.Color GetColorFromText()
         {
             string[] split = mTextBox.Text.Split(' ');
 
@@ -111,7 +111,7 @@ namespace Intersect.Client.Framework.Gwen.Control.Property
                 Byte.TryParse(split[2], out blue);
             }
 
-            return GenericClasses.Color.FromArgb(alpha, red, green, blue);
+            return Intersect.Color.FromArgb(alpha, red, green, blue);
         }
 
         protected override void DoChanged()

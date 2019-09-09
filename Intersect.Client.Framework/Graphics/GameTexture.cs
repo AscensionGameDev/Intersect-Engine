@@ -9,6 +9,7 @@ namespace Intersect.Client.Framework.Graphics
         public abstract int GetHeight();
         public abstract object GetTexture();
         public abstract Color GetPixel(int x1, int y1);
+        public abstract GameTexturePackFrame GetTexturePackFrame();
 
         public static string ToString(GameTexture tex)
         {

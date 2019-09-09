@@ -73,7 +73,7 @@ namespace Intersect.Client.UI.Game.Bank
                     if (item != null)
                     {
                         Items[i].Pnl.IsHidden = false;
-                        if (item.IsStackable())
+                        if (item.IsStackable)
                         {
                             mValues[i].IsHidden = false;
                             mValues[i].Text = Globals.Bank[i].Quantity.ToString();
@@ -107,13 +107,13 @@ namespace Intersect.Client.UI.Game.Bank
                 Items[i].Container = new ImagePanel(mItemContainer, "BankItem");
                 Items[i].Setup();
 
-                mValues.Add(new Label(mItemContainer));
+                mValues.Add(new Label(Items[i].Container, "BankItemValue"));
                 mValues[i].Text = "";
 
                 Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
 
-                var xPadding = Items[i].Container.Padding.Left + Items[i].Container.Padding.Right;
-                var yPadding = Items[i].Container.Padding.Top + Items[i].Container.Padding.Bottom;
+                var xPadding = Items[i].Container.Margin.Left + Items[i].Container.Margin.Right;
+                var yPadding = Items[i].Container.Margin.Top + Items[i].Container.Margin.Bottom;
                 Items[i].Container.SetPosition(
                     (i % (mItemContainer.Width / (Items[i].Container.Width + xPadding))) *
                     (Items[i].Container.Width + xPadding) + xPadding,
@@ -126,8 +126,8 @@ namespace Intersect.Client.UI.Game.Bank
         {
             FloatRect rect = new FloatRect()
             {
-                X = mBankWindow.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).X - sItemXPadding / 2,
-                Y = mBankWindow.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).Y - sItemYPadding / 2,
+                X = mBankWindow.LocalPosToCanvas(new Point(0, 0)).X - sItemXPadding / 2,
+                Y = mBankWindow.LocalPosToCanvas(new Point(0, 0)).Y - sItemYPadding / 2,
                 Width = mBankWindow.Width + sItemXPadding,
                 Height = mBankWindow.Height + sItemYPadding
             };

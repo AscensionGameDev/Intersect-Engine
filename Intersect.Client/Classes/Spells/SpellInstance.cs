@@ -17,16 +17,10 @@ namespace Intersect.Client.Spells
             return newSpell;
         }
 
-        public void Load(ByteBuffer bf)
+        public void Load(Guid spellId)
         {
-            SpellId = bf.ReadGuid();
-        }
-
-        public byte[] Data()
-        {
-            var bf = new ByteBuffer();
-            bf.WriteGuid(SpellId);
-            return bf.ToArray();
+            SpellId = spellId;
+            SpellCd = 0;
         }
     }
 }

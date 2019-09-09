@@ -1,31 +1,35 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+using NUnit.Framework;
+
+using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
+
 namespace Intersect.Utilities
 {
-    [TestClass]
+    [TestFixture]
     public class TextUtilsTests
     {
         private string mNone;
 
-        [TestInitialize]
+        [SetUp]
         public void SaveState()
         {
             mNone = TextUtils.None;
         }
 
-        [TestCleanup]
+        [TearDown]
         public void ResetState()
         {
             TextUtils.None = mNone;
         }
 
-        [TestMethod]
+        [Test]
         public void StaticConstructor()
         {
             Assert.AreEqual("None", TextUtils.None);
         }
 
-        [TestMethod]
+        [Test]
         public void StripToLowerTest()
         {
             Assert.AreEqual("test", TextUtils.StripToLower("test"));
@@ -35,7 +39,7 @@ namespace Intersect.Utilities
             Assert.AreEqual("test", TextUtils.StripToLower(" T e S t "));
         }
 
-        [TestMethod]
+        [Test]
         public void IsNoneTest()
         {
             Assert.IsTrue(TextUtils.IsNone(null));
@@ -60,7 +64,7 @@ namespace Intersect.Utilities
             Assert.IsFalse(TextUtils.IsNone("NotNone"));
         }
 
-        [TestMethod]
+        [Test]
         public void NullToNoneTest()
         {
             Assert.AreEqual("None", TextUtils.NullToNone(null));
@@ -80,7 +84,7 @@ namespace Intersect.Utilities
             Assert.AreEqual("Intersect", TextUtils.NullToNone("Intersect"));
         }
 
-        [TestMethod]
+        [Test]
         public void SanitizeNoneTest()
         {
             Assert.IsNull(TextUtils.SanitizeNone(null));

@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Intersect.Client.Framework</RootNamespace>
     <AssemblyName>Intersect Client Framework</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -33,11 +33,11 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="JetBrains.Annotations, Version=2018.2.1.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
-      <HintPath>..\..\Intersect-Engine\packages\JetBrains.Annotations.2018.2.1\lib\net20\JetBrains.Annotations.dll</HintPath>
+    <Reference Include="JetBrains.Annotations, Version=2018.3.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\packages\JetBrains.Annotations.2018.3.0\lib\net20\JetBrains.Annotations.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -51,23 +51,22 @@
     <Compile Include="Audio\GameAudioSource.cs" />
     <Compile Include="Database\GameDatabase.cs" />
     <Compile Include="File Management\GameContentManager.cs" />
-    <Compile Include="GenericClasses\ColorF.cs" />
     <Compile Include="Graphics\GameBlendModes.cs" />
     <Compile Include="Graphics\GameFont.cs" />
     <Compile Include="Graphics\GameRenderer.cs" />
     <Compile Include="Graphics\GameRenderTexture.cs" />
     <Compile Include="Graphics\GameShader.cs" />
     <Compile Include="Graphics\GameTexture.cs" />
+    <Compile Include="Graphics\GameTexturePack.cs" />
+    <Compile Include="Graphics\GameTileBuffer.cs" />
     <Compile Include="Input\GameInput.cs" />
     <Compile Include="Network\GameSocket.cs" />
     <Compile Include="Sys\GameSystem.cs" />
     <Compile Include="GenericClasses\Clipboard.cs" />
-    <Compile Include="GenericClasses\Color.cs" />
     <Compile Include="GenericClasses\Cursor.cs" />
     <Compile Include="GenericClasses\FloatRect.cs" />
     <Compile Include="GenericClasses\Keys.cs" />
     <Compile Include="GenericClasses\OpenFileDialog.cs" />
-    <Compile Include="GenericClasses\Point.cs" />
     <Compile Include="GenericClasses\Pointf.cs" />
     <Compile Include="GenericClasses\Rectangle.cs" />
     <Compile Include="GenericClasses\SaveFileDialog.cs" />
@@ -193,14 +192,21 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Intersect %28Core%29\Intersect %28Core%29.csproj">
+      <Project>{bc304b43-1f2c-4454-9edc-48f47357ca94}</Project>
+      <Name>Intersect %28Core%29</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>
   </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild"></Target><Target Name="AfterBuild"></Target>
   -->

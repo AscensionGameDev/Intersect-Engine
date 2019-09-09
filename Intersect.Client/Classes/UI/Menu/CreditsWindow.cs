@@ -69,7 +69,6 @@ namespace Intersect.Client.UI.Menu
         {
             mCreditsWindow.IsHidden = false;
             mRichLabel.ClearText();
-            mRichLabel.Width = mCreditsContent.Width;
             Credits credits = new Credits();
             var creditsFile = Path.Combine("resources", "credits.json");
             if (File.Exists(creditsFile))
@@ -83,7 +82,7 @@ namespace Intersect.Client.UI.Menu
                 line.Alignment = "center";
                 line.Size = 12;
                 line.Clr = Intersect.Color.White;
-                line.Font = "arial";
+                line.Font = "sourcesansproblack";
                 credits.Lines.Add(line);
             }
             File.WriteAllText(creditsFile, JsonConvert.SerializeObject(credits, Formatting.Indented));
@@ -96,7 +95,7 @@ namespace Intersect.Client.UI.Menu
                 }
                 else
                 {
-                    mRichLabel.AddText(line.Text, new Framework.GenericClasses.Color(line.Clr.A, line.Clr.R, line.Clr.G, line.Clr.B),
+                    mRichLabel.AddText(line.Text, new Color(line.Clr.A, line.Clr.R, line.Clr.G, line.Clr.B),
                         line.GetAlignment(), GameContentManager.Current.GetFont(line.Font, line.Size));
                     mRichLabel.AddLineBreak();
                 }

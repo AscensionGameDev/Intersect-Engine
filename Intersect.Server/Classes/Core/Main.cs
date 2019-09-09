@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
-using System.Reflection;
 
 namespace Intersect.Server
 {
@@ -17,15 +16,24 @@ namespace Intersect.Server
             CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
             try
             {
-                Type.GetType("Intersect.Server.ServerStart")?.GetMethod("Start")
-                    ?.Invoke(null, new object[] {args});
+                Type
+                    .GetType("Intersect.Server.Core.Bootstrapper")?
+                    .GetMethod("Start")?
+                    .Invoke(null, new object[] {args});
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                var type = Type.GetType("Intersect.Server.ServerStart", true);
+                var type = Type.GetType("Intersect.Server.Core.Bootstrapper", true);
                 Debug.Assert(type != null, "type != null");
-                MethodInfo staticMethodInfo = type.GetMethod("CurrentDomain_UnhandledException");
-                staticMethodInfo.Invoke(null, new object[] { null, new UnhandledExceptionEventArgs(ex.InnerException != null ? ex.InnerException : ex, true) });
+
+                var staticMethodInfo = type.GetMethod("OnUnhandledException");
+                Debug.Assert(staticMethodInfo != null, nameof(staticMethodInfo) + " != null");
+
+                staticMethodInfo.Invoke(null, new object[]
+                {
+                    null,
+                    new UnhandledExceptionEventArgs(exception.InnerException ?? exception, true)
+                });
             }
         }
     }

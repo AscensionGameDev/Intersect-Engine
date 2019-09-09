@@ -17,6 +17,11 @@ namespace Intersect.Client.Framework.Gwen.Control
         private GameTexture mTexture;
         private string mTextureFilename;
 
+        //Sound Effects
+        protected string mHoverSound;
+        protected string mLeftMouseClickSound;
+        protected string mRightMouseClickSound;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="ImagePanel" /> class.
         /// </summary>
@@ -29,6 +34,24 @@ namespace Intersect.Client.Framework.Gwen.Control
             SetUv(0, 0, 1, 1);
             MouseInputEnabled = true;
             Name = name;
+            this.Clicked += ImagePanel_Clicked;
+            this.RightClicked += ImagePanel_RightClicked;
+            this.HoverEnter += ImagePanel_HoverEnter;
+        }
+
+        private void ImagePanel_HoverEnter(Base sender, System.EventArgs arguments)
+        {
+            PlaySound(mHoverSound);
+        }
+
+        private void ImagePanel_RightClicked(Base sender, EventArguments.ClickedEventArgs arguments)
+        {
+            PlaySound(mRightMouseClickSound);
+        }
+
+        private void ImagePanel_Clicked(Base sender, EventArguments.ClickedEventArgs arguments)
+        {
+            PlaySound(mLeftMouseClickSound);
         }
 
         /// <summary>
@@ -37,7 +60,11 @@ namespace Intersect.Client.Framework.Gwen.Control
         public GameTexture Texture
         {
             get => mTexture;
-            set => mTexture = value;
+            set
+            {
+                mTexture = value;
+                this.InvalidateParent();
+            }
         }
 
         public string TextureFilename
@@ -58,6 +85,9 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             var obj = base.GetJson();
             obj.Add("Texture", TextureFilename);
+            obj.Add("HoverSound", mHoverSound);
+            obj.Add("LeftMouseClickSound", mLeftMouseClickSound);
+            obj.Add("RightMouseClickSound", mRightMouseClickSound);
             return base.FixJson(obj);
         }
 
@@ -69,6 +99,10 @@ namespace Intersect.Client.Framework.Gwen.Control
                 Texture = GameContentManager.Current.GetTexture(GameContentManager.TextureType.Gui, (string)obj["Texture"]);
                 TextureFilename = (string) obj["Texture"];
             }
+
+            if (obj["HoverSound"] != null) mHoverSound = (string)obj["HoverSound"];
+            if (obj["LeftMouseClickSound"] != null) mLeftMouseClickSound = (string)obj["LeftMouseClickSound"];
+            if (obj["RightMouseClickSound"] != null) mRightMouseClickSound = (string)obj["RightMouseClickSound"];
         }
 
         /// <summary>

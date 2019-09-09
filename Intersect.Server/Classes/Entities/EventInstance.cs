@@ -4,10 +4,15 @@ using System.Linq;
 using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
+using Intersect.Logging;
 using Intersect.Server.EventProcessing;
 using Intersect.Server.General;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
+
+using Pomelo.EntityFrameworkCore.MySql;
+
+using Strings = Intersect.Server.Localization.Strings;
 
 namespace Intersect.Server.Entities
 {
@@ -18,15 +23,14 @@ namespace Intersect.Server.Entities
         public EventBase BaseEvent;
 
         public Stack<CommandInstance> CallStack = new Stack<CommandInstance>();
-        public int CurrentX;
-        public int CurrentY;
+        public int X;
+        public int Y;
         public EventPageInstance[] GlobalPageInstance;
         public bool HoldingPlayer;
         public bool Global;
         public Guid MapId;
         public Client MyClient;
         public Player MyPlayer;
-        public bool NpcDeathTriggerd;
         public int PageIndex;
         public EventPageInstance PageInstance;
 
@@ -47,8 +51,8 @@ namespace Intersect.Server.Entities
             SelfSwitch = new bool[4];
             BaseEvent = baseEvent;
             MapId = map;
-            CurrentX = baseEvent.SpawnX;
-            CurrentY = baseEvent.SpawnY;
+            X = baseEvent.SpawnX;
+            Y = baseEvent.SpawnY;
         }
 
         public EventInstance(Guid instanceId, EventBase baseEvent,Guid map) //Global constructor
@@ -59,8 +63,8 @@ namespace Intersect.Server.Entities
             BaseEvent = baseEvent;
             SelfSwitch = new bool[4];
             GlobalPageInstance = new EventPageInstance[BaseEvent.Pages.Count];
-            CurrentX = baseEvent.SpawnX;
-            CurrentY = baseEvent.SpawnY;
+            X = (byte)baseEvent.SpawnX;
+            Y = baseEvent.SpawnY;
             for (int i = 0; i < BaseEvent.Pages.Count; i++)
             {
                 GlobalPageInstance[i] = new EventPageInstance(BaseEvent, BaseEvent.Pages[i], MapId, this, null);
@@ -70,13 +74,14 @@ namespace Intersect.Server.Entities
         public void Update(long timeMs)
         {
             var sendLeave = false;
+            var originalPageInstance = PageInstance;
             if (PageInstance != null)
             {
                 //Check for despawn
                 if (PageInstance.ShouldDespawn())
                 {
-                    CurrentX = PageInstance.X;
-                    CurrentY = PageInstance.Y;
+                    X = PageInstance.X;
+                    Y = PageInstance.Y;
                     PageInstance = null;
                     PlayerHasDied = false;
                     if (HoldingPlayer)
@@ -99,7 +104,8 @@ namespace Intersect.Server.Entities
                         if (curStack.WaitingForResponse == CommandInstance.EventResponse.Crafting && MyPlayer.CraftingTableId == Guid.Empty) curStack.WaitingForResponse = CommandInstance.EventResponse.None;
                         if (curStack.WaitingForResponse == CommandInstance.EventResponse.Bank && MyPlayer.InBank == false) curStack.WaitingForResponse = CommandInstance.EventResponse.None;
                         if (curStack.WaitingForResponse == CommandInstance.EventResponse.Quest && !MyPlayer.QuestOffers.Contains(((StartQuestCommand)curStack.WaitingOnCommand).QuestId)) curStack.WaitingForResponse = CommandInstance.EventResponse.None;
-                        while (curStack.WaitingForResponse == CommandInstance.EventResponse.None && !PageInstance.ShouldDespawn())
+                        var commandsExecuted = 0;
+                        while (curStack.WaitingForResponse == CommandInstance.EventResponse.None && !PageInstance.ShouldDespawn() && commandsExecuted < Options.EventWatchdogKillThreshhold)
                         {
                             if (curStack.WaitingForRoute != Guid.Empty)
                             {
@@ -107,7 +113,7 @@ namespace Intersect.Server.Entities
                                 {
                                     if (MyPlayer.MoveRoute == null ||
                                         (MyPlayer.MoveRoute.Complete &&
-                                         MyPlayer.MoveTimer < Globals.System.GetTimeMs()))
+                                         MyPlayer.MoveTimer < Globals.Timing.TimeMs))
                                     {
                                         curStack.WaitingForRoute = Guid.Empty;
                                         curStack.WaitingForRouteMap = Guid.Empty;
@@ -138,9 +144,10 @@ namespace Intersect.Server.Entities
                                 }
                                 else
                                 {
-                                    if (WaitTimer < Globals.System.GetTimeMs())
+                                    if (WaitTimer < Globals.Timing.TimeMs)
                                     {
                                         CommandProcessing.ProcessCommand(curStack.Command,MyPlayer,this);
+                                        commandsExecuted++;
                                     }
                                     else
                                     {
@@ -150,11 +157,32 @@ namespace Intersect.Server.Entities
                                 if (CallStack.Count == 0)
                                 {
                                     PlayerHasDied = false;
-                                    NpcDeathTriggerd = true;
                                     break;
                                 }
                             }
                             curStack = CallStack.Peek();
+                        }
+
+                        if (commandsExecuted >= Options.EventWatchdogKillThreshhold)
+                        {
+                            CallStack.Clear(); //Killing this event, we're over it.
+                            if (this.BaseEvent.MapId == Guid.Empty)
+                            {
+                                Log.Error(Strings.Events.watchdogkillcommon.ToString(BaseEvent.Name));
+                                if (MyPlayer.Client.Power.IsModerator)
+                                {
+                                    PacketSender.SendChatMsg(MyPlayer.Client, Strings.Events.watchdogkillcommon.ToString(BaseEvent.Name), Color.Red);
+                                }
+                            }
+                            else
+                            {
+                                var map = MapInstance.Get(this.BaseEvent.MapId);
+                                Log.Error(Strings.Events.watchdogkill.ToString(map.Name, BaseEvent.Name));
+                                if (MyPlayer.Client.Power.IsModerator)
+                                {
+                                    PacketSender.SendChatMsg(MyPlayer.Client, Strings.Events.watchdogkill.ToString(map.Name, BaseEvent.Name), Color.Red);
+                                }
+                            }
                         }
                     }
                     else
@@ -194,9 +222,9 @@ namespace Intersect.Server.Entities
                     }
                 }
 
-                if (sendLeave)
+                if (sendLeave && originalPageInstance != null)
                 {
-                    PacketSender.SendEntityLeaveTo(MyClient, BaseEvent.Id, (int)EntityTypes.Event, MapId);
+                    PacketSender.SendEntityLeaveTo(MyClient, originalPageInstance);
                 }
             }
         }

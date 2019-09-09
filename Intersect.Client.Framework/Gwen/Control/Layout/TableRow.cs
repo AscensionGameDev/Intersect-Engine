@@ -18,6 +18,29 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
         private int mColumnCount;
         private bool mEvenRow;
 
+        //Sound Effects
+        protected string mHoverSound;
+        protected string mClickSound;
+        protected string mRightClickSound;
+
+        public string HoverSound
+        {
+            get => mHoverSound;
+            set => mHoverSound = value;
+        }
+
+        public string ClickSound
+        {
+            get => mClickSound;
+            set => mClickSound = value;
+        }
+
+        public string RightClickSound
+        {
+            get => mRightClickSound;
+            set => mRightClickSound = value;
+        }
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="TableRow" /> class.
         /// </summary>
@@ -28,6 +51,24 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
             mColumns = new Label[MAX_COLUMNS];
             mColumnCount = 0;
             KeyboardInputEnabled = true;
+            this.Clicked += TableRow_Clicked;
+            this.RightClicked += TableRow_RightClicked;
+            this.HoverEnter += TableRow_HoverEnter;
+        }
+
+        private void TableRow_HoverEnter(Base sender, EventArgs arguments)
+        {
+            PlaySound(mHoverSound);
+        }
+
+        private void TableRow_RightClicked(Base sender, ClickedEventArgs arguments)
+        {
+            PlaySound(mRightClickSound);
+        }
+
+        private void TableRow_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            PlaySound(mClickSound);
         }
 
         /// <summary>
@@ -91,6 +132,7 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
                         {
                             // last column fills remaining space
                             mColumns[i].Dock = Pos.Fill;
+                            mColumns[i].AutoSizeToContents = false;
                         }
                         else
                         {

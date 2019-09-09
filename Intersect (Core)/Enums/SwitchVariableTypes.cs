@@ -1,18 +1,11 @@
 namespace Intersect.Enums
 {
-    public enum SwitchVariableTypes
+    public enum VariableDataTypes : byte
     {
-        PlayerSwitch = 0,
-        PlayerVariable,
-        ServerSwitch,
-        ServerVariable,
-    }
-
-
-    public enum SwitchTypes
-    {
-        PlayerSwitch = 0,
-        ServerSwitch
+        Boolean = 1,
+        Integer,
+        Number,
+        String
     }
 
     public enum VariableTypes
@@ -30,6 +23,10 @@ namespace Intersect.Enums
         SystemTime,
         DupPlayerVar,
         DupGlobalVar,
+        AddPlayerVar,
+        AddGlobalVar,
+        SubtractPlayerVar,
+        SubtractGlobalVar,
     }
 
     public enum VariableComparators
@@ -40,12 +37,5 @@ namespace Intersect.Enums
         Greater,
         Less,
         NotEqual
-    }
-
-    public enum VariableCompareTypes
-    {
-        StaticValue = 0,
-        PlayerVariable,
-        GlobalVariable
     }
 }

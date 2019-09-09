@@ -2,20 +2,24 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Enums;
 using Intersect.GameObjects;
-using Intersect.Server.Database.PlayerData.Characters;
+using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.General;
 using Intersect.Utilities;
+
+using Newtonsoft.Json;
 
 namespace Intersect.Server.Database
 {
     public class Item
     {
         public Guid? BagId { get; set; }
+        [JsonIgnore]
         public virtual Bag Bag { get; set; }
         public Guid ItemId { get; set; } = Guid.Empty;
         public int Quantity { get; set; }
 
         [Column("StatBuffs")]
+        [JsonIgnore]
         public string StatBuffsJson
         {
             get => DatabaseUtils.SaveIntArray(StatBuffs, (int)Enums.Stats.StatCount);
@@ -23,6 +27,9 @@ namespace Intersect.Server.Database
         }
         [NotMapped]
         public int[] StatBuffs { get; set; } = new int[(int)Enums.Stats.StatCount];
+
+        [JsonIgnore, NotMapped]
+        public ItemBase Descriptor => ItemBase.Get(ItemId);
 
 
 
@@ -33,18 +40,18 @@ namespace Intersect.Server.Database
 
         public static Item None => new Item();
 
-        public Item(Guid itemId, int itemVal) : this(itemId, itemVal, null,null)
+        public Item(Guid itemId, int quantity, bool incStatBuffs = true) : this(itemId, quantity, null,null, incStatBuffs)
         {
             
         }
 
-        public Item(Guid itemId, int itemVal, Guid? bagId,Bag bag)
+        public Item(Guid itemId, int quantity, Guid? bagId, Bag bag, bool incStatBuffs = true)
         {
             ItemId = itemId;
-            Quantity = itemVal;
+            Quantity = quantity;
             BagId = bagId;
             Bag = bag;
-            if (ItemBase.Get(ItemId) != null)
+            if (ItemBase.Get(ItemId) != null && incStatBuffs)
             {
                 if (ItemBase.Get(ItemId).ItemType == ItemTypes.Equipment)
                 {
@@ -57,7 +64,7 @@ namespace Intersect.Server.Database
             }
         }
 
-        public Item(Item item) : this(item.ItemId, item.Quantity, item.BagId,item.Bag)
+        public Item(Item item) : this(item.ItemId, item.Quantity, item.BagId, item.Bag)
         {
             for (int i = 0; i < (int)Stats.StatCount; i++)
             {
@@ -77,17 +84,9 @@ namespace Intersect.Server.Database
             }
         }
 
-        public byte[] Data()
+        public string Data()
         {
-            var bf = new ByteBuffer();
-            bf.WriteGuid(ItemId);
-            bf.WriteInteger(Quantity);
-            for (int i = 0; i < (int)Stats.StatCount; i++)
-            {
-                bf.WriteInteger(StatBuffs[i]);
-            }
-            bf.WriteGuid(BagId ?? Guid.Empty);
-            return bf.ToArray();
+            return JsonConvert.SerializeObject(this);
         }
 
         public Item Clone()

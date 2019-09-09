@@ -1,243 +1,209 @@
 ﻿using System;
-using System.Collections.Generic;
+
 using JetBrains.Annotations;
 
 namespace Intersect.Logging
 {
-    public class Logger
+
+    public class Logger : ILogger
     {
-        private List<ILogOutput> mOutputs;
 
-        public Logger(string tag = null)
+        public Logger() : this(LogConfiguration.Default) { }
+
+        public Logger(string tag = null) : this(
+            new LogConfiguration {Tag = string.IsNullOrEmpty(tag?.Trim()) ? null : tag}
+        )
         {
-            mOutputs = new List<ILogOutput>();
+        }
 
-#if DEBUG
-            LogLevel = LogLevel.All;
-#else
-            LogLevel = LogLevel.Info;
-#endif
-
-            Tag = (string.IsNullOrEmpty(tag) ? null : tag);
+        public Logger([NotNull] LogConfiguration configuration)
+        {
+            Configuration = configuration;
         }
 
         [NotNull]
-        public List<ILogOutput> Outputs
+        public LogConfiguration Configuration { get; set; }
+
+        public virtual void Write(LogLevel logLevel, string message)
         {
-            get
-            {
-                if (mOutputs == null)
-                {
-                    mOutputs = new List<ILogOutput>();
-                }
-
-                return new List<ILogOutput>(mOutputs);
-            }
-        }
-
-        public LogLevel LogLevel { get; set; }
-
-        public string Tag { get; set; }
-
-        public bool AddOutput(ILogOutput output)
-        {
-            if (output != null && !mOutputs.Contains(output))
-            {
-                mOutputs.Add(output);
-                return true;
-            }
-
-            return false;
-        }
-
-        public bool RemoveOutput(ILogOutput output)
-        {
-            if (output != null && mOutputs.Contains(output))
-            {
-                return mOutputs.Remove(output);
-            }
-
-            return false;
-        }
-
-        public void Write(LogLevel logLevel, string message)
-        {
-            if (LogLevel < logLevel)
+            if (Configuration.LogLevel < logLevel)
             {
                 return;
             }
 
-            foreach (var output in Outputs)
+            foreach (var output in Configuration.Outputs)
             {
-                output.Write(Tag, logLevel, message);
+                output.Write(Configuration, logLevel, message);
             }
         }
 
-        public void Write(LogLevel logLevel, string format, params object[] args)
+        public virtual void Write(LogLevel logLevel, string format, params object[] args)
         {
-            if (LogLevel < logLevel)
-            {
-                return;
-            }
-
-            foreach (var output in Outputs)
-            {
-                output.Write(Tag, logLevel, format, args);
-            }
-        }
-
-        public void Write(LogLevel logLevel, Exception exception, string message = null)
-        {
-            if (LogLevel < logLevel)
+            if (Configuration.LogLevel < logLevel)
             {
                 return;
             }
 
-            foreach (var output in Outputs)
+            foreach (var output in Configuration.Outputs)
             {
-                output.Write(Tag, logLevel, exception, message);
+                output.Write(Configuration, logLevel, format, args);
             }
         }
 
-        public void Write(string message)
+        public virtual void Write(LogLevel logLevel, Exception exception, string message = null)
         {
-            Write(LogLevel, message);
+            if (Configuration.LogLevel < logLevel)
+            {
+                return;
+            }
+
+            foreach (var output in Configuration.Outputs)
+            {
+                output.Write(Configuration, logLevel, exception, message);
+            }
         }
 
-        public void Write(string format, params object[] args)
+        public virtual void Write(string message)
         {
-            Write(LogLevel, format, args);
+            Write(Configuration.LogLevel, message);
         }
 
-        public void Write(Exception exception, string message = null)
+        public virtual void Write(string format, params object[] args)
         {
-            Write(LogLevel, exception, message);
+            Write(Configuration.LogLevel, format, args);
         }
 
-        public void All(string message)
+        public virtual void Write(Exception exception, string message = null)
+        {
+            Write(Configuration.LogLevel, exception, message);
+        }
+
+        public virtual void All(string message)
         {
             Write(LogLevel.All, message);
         }
 
-        public void All(string format, params object[] args)
+        public virtual void All(string format, params object[] args)
         {
             Write(LogLevel.All, format, args);
         }
 
-        public void All(Exception exception, string message = null)
+        public virtual void All(Exception exception, string message = null)
         {
             Write(LogLevel.All, exception, message);
         }
 
-        public void Error(string message)
+        public virtual void Error(string message)
         {
             Write(LogLevel.Error, message);
         }
 
-        public void Error(string format, params object[] args)
+        public virtual void Error(string format, params object[] args)
         {
             Write(LogLevel.Error, format, args);
         }
 
-        public void Error(Exception exception, string message = null)
+        public virtual void Error(Exception exception, string message = null)
         {
             Write(LogLevel.Error, exception, message);
         }
 
-        public void Warn(string message)
+        public virtual void Warn(string message)
         {
             Write(LogLevel.Warn, message);
         }
 
-        public void Warn(string format, params object[] args)
+        public virtual void Warn(string format, params object[] args)
         {
             Write(LogLevel.Warn, format, args);
         }
 
-        public void Warn(Exception exception, string message = null)
+        public virtual void Warn(Exception exception, string message = null)
         {
             Write(LogLevel.Warn, exception, message);
         }
 
-        public void Info(string message)
+        public virtual void Info(string message)
         {
             Write(LogLevel.Info, message);
         }
 
-        public void Info(string format, params object[] args)
+        public virtual void Info(string format, params object[] args)
         {
             Write(LogLevel.Info, format, args);
         }
 
-        public void Info(Exception exception, string message = null)
+        public virtual void Info(Exception exception, string message = null)
         {
             Write(LogLevel.Info, exception, message);
         }
 
-        public void Trace(string message)
+        public virtual void Trace(string message)
         {
             Write(LogLevel.Trace, message);
         }
 
-        public void Trace(string format, params object[] args)
+        public virtual void Trace(string format, params object[] args)
         {
             Write(LogLevel.Trace, format, args);
         }
 
-        public void Trace(Exception exception, string message = null)
+        public virtual void Trace(Exception exception, string message = null)
         {
             Write(LogLevel.Trace, exception, message);
         }
 
-        public void Debug(string message)
+        public virtual void Debug(string message)
         {
             Write(LogLevel.Debug, message);
         }
 
-        public void Debug(string format, params object[] args)
+        public virtual void Debug(string format, params object[] args)
         {
             Write(LogLevel.Debug, format, args);
         }
 
-        public void Debug(Exception exception, string message = null)
+        public virtual void Debug(Exception exception, string message = null)
         {
             Write(LogLevel.Debug, exception, message);
         }
 
-        public void Diagnostic(string message)
+        public virtual void Diagnostic(string message)
         {
 #if INTERSECT_DIAGNOSTIC
             Write(LogLevel.Diagnostic, message);
 #endif
         }
 
-        public void Diagnostic(string format, params object[] args)
+        public virtual void Diagnostic(string format, params object[] args)
         {
 #if INTERSECT_DIAGNOSTIC
             Write(LogLevel.Diagnostic, format, args);
 #endif
         }
 
-        public void Diagnostic(Exception exception, string message = null)
+        public virtual void Diagnostic(Exception exception, string message = null)
         {
 #if INTERSECT_DIAGNOSTIC
             Write(LogLevel.Diagnostic, exception, message);
 #endif
         }
 
-        public void Verbose(string message)
+        public virtual void Verbose(string message)
         {
             Write(LogLevel.Verbose, message);
         }
 
-        public void Verbose(string format, params object[] args)
+        public virtual void Verbose(string format, params object[] args)
         {
             Write(LogLevel.Verbose, format, args);
         }
 
-        public void Verbose(Exception exception, string message = null)
+        public virtual void Verbose(Exception exception, string message = null)
         {
             Write(LogLevel.Verbose, exception, message);
         }
+
     }
+
 }

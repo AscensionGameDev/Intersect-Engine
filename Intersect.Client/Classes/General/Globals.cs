@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Framework.Database;
@@ -7,7 +8,10 @@ using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.Framework.Sys;
 using Intersect.Client.Items;
+using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.Network.Packets;
+using Intersect.Network.Packets.Server;
 using JetBrains.Annotations;
 
 namespace Intersect.Client.General
@@ -76,6 +80,9 @@ namespace Intersect.Client.General
         //Crafting station
         public static bool InCraft = false;
 
+        //Only need 1 table, and that is the one we see at a given moment in time.
+        public static CraftingTableBase ActiveCraftingTable;
+
         //Trading (Only 2 people can trade at once)
         public static ItemInstance[,] Trade;
 
@@ -84,9 +91,6 @@ namespace Intersect.Client.General
         //Game Shop
         //Only need 1 shop, and that is the one we see at a given moment in time.
         public static ShopBase GameShop;
-
-        //Only need 1 table, and that is the one we see at a given moment in time.
-        public static CraftingTableBase ActiveCraftingTable;
 
         public static int AnimFrame = 0;
 
@@ -98,16 +102,16 @@ namespace Intersect.Client.General
         public static List<EventDialog> EventDialogs = new List<EventDialog>();
 
         //Event Guid and the Map its associated with
-        public static Dictionary<Guid,Dictionary<Guid,ByteBuffer>> PendingEvents = new Dictionary<Guid, Dictionary<Guid, ByteBuffer>>();
+        public static Dictionary<Guid,Dictionary<Guid,EventEntityPacket>> PendingEvents = new Dictionary<Guid, Dictionary<Guid, EventEntityPacket>>();
         public static Dictionary<Guid,Guid> EventHolds = new Dictionary<Guid,Guid>();
         public static List<Guid> QuestOffers = new List<Guid>();
         public static bool MoveRouteActive = false;
 
-        public static Entity GetEntity(Guid id, int type)
+        public static Entity GetEntity(Guid id, EntityTypes type)
         {
             if (Entities.ContainsKey(id))
             {
-                if ((int) Entities[id].GetEntityType() == type)
+                if (Entities[id].GetEntityType() == type)
                 {
                     EntitiesToDispose.Remove(Entities[id].Id);
                     return Entities[id];
@@ -118,4 +122,6 @@ namespace Intersect.Client.General
             return null;
         }
     }
+
+
 }

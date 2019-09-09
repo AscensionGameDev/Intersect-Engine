@@ -5,6 +5,7 @@ namespace Intersect.Network
     public interface IConnection : IDisposable
     {
         Guid Guid { get; }
+        Ceras Ceras { get; }
 
         bool IsConnected { get; }
 

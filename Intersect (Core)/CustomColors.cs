@@ -3,17 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 using Formatting = Newtonsoft.Json.Formatting;
 
 namespace Intersect
 {
     public class CustomColors
     {
-        public static Color HpForeground = Color.Red;
-        public static Color HpBackground = Color.Black;
-        public static Color CastingForeground = Color.Cyan;
-        public static Color CastingBackground = Color.Black;
-
         public static Color EventName = Color.White;
         public static Color EventNameBorder = Color.Black;
         public static Color EventNameBackground = new Color(180, 0, 0, 0);
@@ -97,6 +94,13 @@ namespace Intersect
         public static Color RequestSent = Color.Yellow;
         public static Color ChatBubbleTextColor = Color.Black;
 
+        public static Color RarityNone = Color.White;
+        public static Color RarityCommon = Color.Gray;
+        public static Color RarityUncommon = Color.Red;
+        public static Color RarityRare = Color.Blue;
+        public static Color RarityEpic = Color.Green;
+        public static Color RarityLedgendary = Color.Yellow;
+
         public static void Load()
         {
             if (File.Exists(Path.Combine("resources", "colors.json")))
@@ -139,25 +143,25 @@ namespace Intersect
             File.WriteAllText(Path.Combine("resources", "colors.json"), JsonConvert.SerializeObject(colors,Formatting.Indented));
         }
 
-        public static byte[] GetData()
+        public static string Json()
         {
-            var bf = new ByteBuffer();
             Type type = typeof(CustomColors);
-            foreach (var p in type.GetFields(System.Reflection.BindingFlags.Static |
-                                             System.Reflection.BindingFlags.Public))
+            var array = new JArray();
+            foreach (var p in type.GetFields(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public))
             {
-                bf.WriteInteger(((Color)p.GetValue(null)).ToArgb());
+                array.Add(((Color)p.GetValue(null)).ToArgb());
             }
-            return bf.ToArray();
+            return array.ToString();
         }
 
-        public static void Load(ByteBuffer bf)
+        public static void Load(string json)
         {
+            var array = JArray.Parse(json);
+            var arrayIndex = 0;
             Type type = typeof(CustomColors);
-            foreach (var p in type.GetFields(System.Reflection.BindingFlags.Static |
-                                             System.Reflection.BindingFlags.Public))
+            foreach (var p in type.GetFields(System.Reflection.BindingFlags.Static |  System.Reflection.BindingFlags.Public))
             {
-                p.SetValue(p, Color.FromArgb(bf.ReadInteger()));
+                p.SetValue(p, Color.FromArgb(int.Parse(array[arrayIndex++].ToString())));
             }
         }
     }

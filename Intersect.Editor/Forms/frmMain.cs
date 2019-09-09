@@ -1,10 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using DarkUI.Controls;
 using DarkUI.Forms;
+using Intersect.Editor.Classes.ContentManagement;
+using Intersect.Editor.ContentManagement;
 using Intersect.Editor.Forms.DockingElements;
 using Intersect.Editor.Forms.Editors;
 using Intersect.Editor.Forms.Editors.Quest;
@@ -92,8 +98,7 @@ namespace Intersect.Editor.Forms
             Globals.MapLayersWindow.InitMapLayers();
             Globals.MapGridWindowNew.InitGridWindow();
             UpdateTimeSimulationList();
-
-            toolStripButtonDonate.Size = new Size(54, 25);
+            
             WindowState = FormWindowState.Maximized;
         }
 
@@ -151,10 +156,11 @@ namespace Intersect.Editor.Forms
             resourceEditorToolStripMenuItem.Text = Strings.MainForm.resourceeditor;
             shopEditorToolStripMenuItem.Text = Strings.MainForm.shopeditor;
             spellEditorToolStripMenuItem.Text = Strings.MainForm.spelleditor;
-            switchVariableEditorToolStripMenuItem.Text = Strings.MainForm.switchvariableeditor;
+            variableEditorToolStripMenuItem.Text = Strings.MainForm.variableeditor;
             timeEditorToolStripMenuItem.Text = Strings.MainForm.timeeditor;
 
-            externalToolsToolStripMenuItem.Text = Strings.MainForm.externaltools;
+            toolsToolStripMenuItem.Text = Strings.MainForm.tools;
+            packClientTexturesToolStripMenuItem.Text = Strings.MainForm.packtextures;
 
             helpToolStripMenuItem.Text = Strings.MainForm.help;
             postQuestionToolStripMenuItem.Text = Strings.MainForm.postquestion;
@@ -162,7 +168,6 @@ namespace Intersect.Editor.Forms
             reportBugToolStripMenuItem.Text = Strings.MainForm.reportbug;
             toolStripButtonBug.Text = Strings.MainForm.reportbug;
             aboutToolStripMenuItem.Text = Strings.MainForm.about;
-            toolStripButtonDonate.Text = Strings.MainForm.donate;
 
             toolStripBtnPen.Text = Strings.MainForm.pen;
             toolStripBtnSelect.Text = Strings.MainForm.selection;
@@ -187,17 +192,15 @@ namespace Intersect.Editor.Forms
                     for (int x = 0; x < executables.Length; x++)
                     {
                         var item =
-                            externalToolsToolStripMenuItem.DropDownItems.Add(
+                            toolsToolStripMenuItem.DropDownItems.Add(
                                 executables[x].Replace(childDirs[i], "")
                                     .Replace(".exe", "")
                                     .Replace(Path.DirectorySeparatorChar.ToString(), ""));
                         item.Tag = executables[x];
                         item.Click += externalToolItem_Click;
-                        foundTools = true;
                     }
                 }
             }
-            externalToolsToolStripMenuItem.Visible = foundTools;
         }
 
         private void externalToolItem_Click(object sender, EventArgs e)
@@ -846,15 +849,16 @@ namespace Intersect.Editor.Forms
                 Filter = "Intersect Map|*.imap",
                 Title = Strings.MainForm.exportmap
             };
-            fileDialog.ShowDialog();
-            var buff = new ByteBuffer();
-            buff.WriteString(Application.ProductVersion);
-            buff.WriteBytes(Globals.CurrentMap.SaveInternal());
-            if (fileDialog.FileName != "")
-            {
-                File.WriteAllBytes(fileDialog.FileName, buff.ToArray());
-            }
-            buff.Dispose();
+            //TODO Reimplement
+            //fileDialog.ShowDialog();
+            //var buff = new ByteBuffer();
+            //buff.WriteString(Application.ProductVersion);
+            //buff.WriteBytes(Globals.CurrentMap.SaveInternal());
+            //if (fileDialog.FileName != "")
+            //{
+            //    File.WriteAllBytes(fileDialog.FileName, buff.ToArray());
+            //}
+            //buff.Dispose();
         }
 
         private void importMapToolStripMenuItem_Click(object sender, EventArgs e)
@@ -864,25 +868,26 @@ namespace Intersect.Editor.Forms
                 Filter = "Intersect Map|*.imap",
                 Title = Strings.MainForm.importmap
             };
-            fileDialog.ShowDialog();
+            //TODO Reimplement
+            //fileDialog.ShowDialog();
 
-            if (fileDialog.FileName != "")
-            {
-                var data = File.ReadAllBytes(fileDialog.FileName);
-                var buff = new ByteBuffer();
-                buff.WriteBytes(data);
-                if (buff.ReadString() == Application.ProductVersion)
-                {
-                    Globals.MapEditorWindow.PrepUndoState();
-                    Globals.CurrentMap.LoadInternal(buff.ReadBytes(buff.Length(), true));
-                    Globals.MapEditorWindow.AddUndoState();
-                }
-                else
-                {
-                    DarkMessageBox.ShowError(Strings.Errors.importfailed,
-                        Strings.Errors.importfailedcaption, DarkDialogButton.Ok, Properties.Resources.Icon);
-                }
-            }
+            //if (fileDialog.FileName != "")
+            //{
+            //    var data = File.ReadAllBytes(fileDialog.FileName);
+            //    var buff = new ByteBuffer();
+            //    buff.WriteBytes(data);
+            //    if (buff.ReadString() == Application.ProductVersion)
+            //    {
+            //        Globals.MapEditorWindow.PrepUndoState();
+            //        Globals.CurrentMap.LoadInternal(buff.ReadBytes(buff.Length(), true));
+            //        Globals.MapEditorWindow.AddUndoState();
+            //    }
+            //    else
+            //    {
+            //        DarkMessageBox.ShowError(Strings.Errors.importfailed,
+            //            Strings.Errors.importfailedcaption, DarkDialogButton.Ok, Properties.Resources.Icon);
+            //    }
+            //}
         }
 
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1046,9 +1051,9 @@ namespace Intersect.Editor.Forms
             PacketSender.SendOpenEditor(GameObjectType.Event);
         }
 
-        private void switchVariableEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        private void variableEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PacketSender.SendOpenEditor(GameObjectType.PlayerSwitch);
+            PacketSender.SendOpenEditor(GameObjectType.PlayerVariable);
         }
 
         private void shopEditorToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1094,11 +1099,9 @@ namespace Intersect.Editor.Forms
             var tmpMap = Globals.CurrentMap;
             if (Globals.MapEditorWindow.MapUndoStates.Count > 0)
             {
-                tmpMap.LoadInternal(
-                    Globals.MapEditorWindow.MapUndoStates[Globals.MapEditorWindow.MapUndoStates.Count - 1]);
+                tmpMap.LoadInternal(Globals.MapEditorWindow.MapUndoStates[Globals.MapEditorWindow.MapUndoStates.Count - 1]);
                 Globals.MapEditorWindow.MapRedoStates.Add(Globals.MapEditorWindow.CurrentMapState);
-                Globals.MapEditorWindow.CurrentMapState =
-                    Globals.MapEditorWindow.MapUndoStates[Globals.MapEditorWindow.MapUndoStates.Count - 1];
+                Globals.MapEditorWindow.CurrentMapState = Globals.MapEditorWindow.MapUndoStates[Globals.MapEditorWindow.MapUndoStates.Count - 1];
                 Globals.MapEditorWindow.MapUndoStates.RemoveAt(Globals.MapEditorWindow.MapUndoStates.Count - 1);
                 Globals.MapPropertiesWindow.Update();
                 EditorGraphics.TilePreviewUpdated = true;
@@ -1110,11 +1113,9 @@ namespace Intersect.Editor.Forms
             var tmpMap = Globals.CurrentMap;
             if (Globals.MapEditorWindow.MapRedoStates.Count > 0)
             {
-                tmpMap.LoadInternal(
-                    Globals.MapEditorWindow.MapRedoStates[Globals.MapEditorWindow.MapRedoStates.Count - 1]);
+                tmpMap.LoadInternal(Globals.MapEditorWindow.MapRedoStates[Globals.MapEditorWindow.MapRedoStates.Count - 1]);
                 Globals.MapEditorWindow.MapUndoStates.Add(Globals.MapEditorWindow.CurrentMapState);
-                Globals.MapEditorWindow.CurrentMapState =
-                    Globals.MapEditorWindow.MapRedoStates[Globals.MapEditorWindow.MapRedoStates.Count - 1];
+                Globals.MapEditorWindow.CurrentMapState = Globals.MapEditorWindow.MapRedoStates[Globals.MapEditorWindow.MapRedoStates.Count - 1];
                 Globals.MapEditorWindow.MapRedoStates.RemoveAt(Globals.MapEditorWindow.MapRedoStates.Count - 1);
                 Globals.MapPropertiesWindow.Update();
                 EditorGraphics.TilePreviewUpdated = true;
@@ -1218,11 +1219,6 @@ namespace Intersect.Editor.Forms
             }
         }
 
-        private void toolStripButtonDonate_Click(object sender, EventArgs e)
-        {
-            Process.Start("https://www.freemmorpgmaker.com/donate.php");
-        }
-
         private void toolStripButtonQuestion_Click(object sender, EventArgs e)
         {
             Process.Start("https://www.ascensiongamedev.com/community/forum/53-questions-and-answers/");
@@ -1267,7 +1263,7 @@ namespace Intersect.Editor.Forms
                 var clr = TimeBase.GetTimeBase().DaylightHues[x];
                 Brush brush =
                     new SolidBrush(System.Drawing.Color.FromArgb(clr.A, clr.R, clr.G, clr.B));
-                g.FillRectangle(brush, new Rectangle(0, 0, 32, 32));
+                g.FillRectangle(brush, new System.Drawing.Rectangle(0, 0, 32, 32));
 
                 //Draw the overlay color
                 g.Dispose();
@@ -1399,7 +1395,7 @@ namespace Intersect.Editor.Forms
                             mCommonEventEditor.Show();
                         }
                         break;
-                    case GameObjectType.PlayerSwitch:
+                    case GameObjectType.PlayerVariable:
                         if (mSwitchVariableEditor == null || mSwitchVariableEditor.Visible == false)
                         {
                             mSwitchVariableEditor = new FrmSwitchVariable();
@@ -1451,5 +1447,109 @@ namespace Intersect.Editor.Forms
 		{
 			Globals.MapEditorWindow.FlipHorizontal();
 		}
-	}
+
+        private void packClientTexturesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Globals.PackingProgressForm = new FrmProgress();
+            Globals.PackingProgressForm.SetTitle(Strings.TexturePacking.title);
+            Thread packingthread = new Thread(() => packTextures());
+            packingthread.Start();
+            Globals.PackingProgressForm.ShowDialog();
+        }
+
+        private void packTextures()
+        {
+            //TODO: Make the max pack size a configurable option, along with the packing heuristic that the texture packer class should use.
+            var maxPackSize = 2048;
+            var packsPath = Path.Combine("resources", "packs");
+            //Delete Old Packs
+            Globals.PackingProgressForm.SetProgress(Strings.TexturePacking.deleting, 10, false);
+            Application.DoEvents();
+            if (Directory.Exists(packsPath))
+            {
+                System.IO.DirectoryInfo di = new DirectoryInfo(packsPath);
+
+                foreach (FileInfo file in di.GetFiles())
+                {
+                    file.Delete();
+                }
+                foreach (DirectoryInfo dir in di.GetDirectories())
+                {
+                    dir.Delete(true);
+                }
+            }
+            else
+            {
+                Directory.CreateDirectory(packsPath);
+            }
+
+            //Create two 'sets' of graphics we want to pack. Tilesets + Fogs in one set, everything else in the other.
+            Globals.PackingProgressForm.SetProgress(Strings.TexturePacking.collecting, 20, false);
+            Application.DoEvents();
+            var toPack = new HashSet<GameTexture>();
+            foreach (var tex in GameContentManager.TilesetTextures)
+                toPack.Add(tex);
+            foreach (var tex in GameContentManager.FogTextures)
+                toPack.Add(tex);
+            foreach (var tex in GameContentManager.AllTextures)
+                if (!toPack.Contains(tex))
+                    toPack.Add(tex);
+            
+
+            Globals.PackingProgressForm.SetProgress(Strings.TexturePacking.calculating, 30, false);
+            Application.DoEvents();
+            var packs = new List<TexturePacker>();
+            while (toPack.Count > 0)
+            {
+                var tex = toPack.First();
+                var inserted = false;
+                toPack.Remove(tex);
+
+                foreach (var pack in packs)
+                {
+                    if (pack.InsertTex(tex))
+                    {
+                        inserted = true;
+                        break;
+                    }
+                }
+
+                if (!inserted)
+                {
+                    if (tex.GetWidth() > maxPackSize || tex.GetHeight() > maxPackSize)
+                    {
+                        //Own texture
+                        var pack = new TexturePacker(tex.GetWidth(), tex.GetHeight(), false);
+                        packs.Add(pack);
+                        pack.InsertTex(tex);
+                    }
+                    else
+                    {
+                        var pack = new TexturePacker(maxPackSize, maxPackSize, true);
+                        packs.Add(pack);
+                        if (!pack.InsertTex(tex))
+                        {
+                            throw new Exception("This shouldn't happen!");
+                        }
+                    }
+                }
+            }
+
+            Globals.PackingProgressForm.SetProgress(Strings.TexturePacking.exporting, 40, false);
+            Application.DoEvents();
+            var packIndex = 0;
+            foreach (var pack in packs)
+            {
+                pack.Export(packIndex);
+                packIndex++;
+            }
+
+            Globals.PackingProgressForm.SetProgress(Strings.TexturePacking.done, 100, false);
+            Application.DoEvents();
+            System.Threading.Thread.Sleep(1000);
+
+            Globals.PackingProgressForm.NotifyClose();
+
+        }
+    }
 }

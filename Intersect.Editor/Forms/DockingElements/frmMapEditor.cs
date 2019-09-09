@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using DarkUI.Forms;
+using Intersect.Editor.Classes.Maps;
 using Intersect.Editor.Forms.Editors;
 using Intersect.Editor.Forms.Editors.Events;
 using Intersect.Editor.General;
@@ -24,12 +25,12 @@ namespace Intersect.Editor.Forms.DockingElements
         //MonoGame Swap Chain
         private SwapChainRenderTarget mChain;
 
-        public byte[] CurrentMapState;
+        public MapSaveState CurrentMapState;
         private bool mMapChanged;
-        public List<byte[]> MapRedoStates = new List<byte[]>();
+        public List<MapSaveState> MapRedoStates = new List<MapSaveState>();
 
         //Map States
-        public List<byte[]> MapUndoStates = new List<byte[]>();
+        public List<MapSaveState> MapUndoStates = new List<MapSaveState>();
 
         //Init/Form Functions
         public FrmMapEditor()
@@ -163,7 +164,16 @@ namespace Intersect.Editor.Forms.DockingElements
 
             if (e.X < EditorGraphics.CurrentView.Left || e.Y < EditorGraphics.CurrentView.Top ||
                 e.X > EditorGraphics.CurrentView.Left + Options.MapWidth * Options.TileWidth ||
-                e.Y > EditorGraphics.CurrentView.Top + Options.MapHeight * Options.TileHeight) return;
+                e.Y > EditorGraphics.CurrentView.Top + Options.MapHeight * Options.TileHeight)
+            {
+                if (Globals.Dragging)
+                {
+                    //Place the change, we done!
+                    Globals.MapEditorWindow.ProcessSelectionMovement(Globals.CurrentMap, true);
+                    Globals.MapEditorWindow.PlaceSelection();
+                }
+                return;
+            }
 
             if (CurrentMapState == null)
             {
@@ -557,12 +567,8 @@ namespace Intersect.Editor.Forms.DockingElements
                             if (Globals.MapLayersWindow.rbDeclared.Checked == true &&
                                 Globals.MapLayersWindow.lstMapNpcs.Items.Count > 0)
                             {
-                                Globals.CurrentMap.Spawns[
-                                    Globals.MapLayersWindow.lstMapNpcs.SelectedIndex
-                                ].X = Globals.CurTileX;
-                                Globals.CurrentMap.Spawns[
-                                    Globals.MapLayersWindow.lstMapNpcs.SelectedIndex
-                                ].Y = Globals.CurTileY;
+                                Globals.CurrentMap.Spawns[Globals.MapLayersWindow.lstMapNpcs.SelectedIndex].X = Globals.CurTileX;
+                                Globals.CurrentMap.Spawns[Globals.MapLayersWindow.lstMapNpcs.SelectedIndex].Y = Globals.CurTileY;
                             }
                         }
                         else
@@ -607,6 +613,7 @@ namespace Intersect.Editor.Forms.DockingElements
                                 tmpMap.Autotiles.UpdateAutoTiles(Globals.CurTileX, Globals.CurTileY,
                                     Globals.CurrentLayer, tmpMap.GenerateAutotileGrid());
                             }
+                            tmpMap.Autotiles.UpdateCliffAutotiles(tmpMap, Globals.CurrentLayer);
                         }
                         if (Globals.CurTileX == 0)
                         {
@@ -799,6 +806,7 @@ namespace Intersect.Editor.Forms.DockingElements
                                 tmpMap.Autotiles.UpdateAutoTiles(x0, y0,
                                     Globals.CurrentLayer, tmpMap.GenerateAutotileGrid());
                             }
+                            tmpMap.Autotiles.UpdateCliffAutotiles(tmpMap, Globals.CurrentLayer);
                         }
                     }
                     mMapChanged = true;
@@ -997,14 +1005,14 @@ namespace Intersect.Editor.Forms.DockingElements
                         MyMap = Globals.CurrentMap,
                         NewEvent = true
                     };
-                    tmpEventEditor.InitEditor(false,false);
+                    tmpEventEditor.InitEditor(false,false, false);
                     tmpEventEditor.ShowDialog();
                     mMapChanged = true;
                 }
                 else
                 {
                     tmpEventEditor = new FrmEvent(Globals.CurrentMap) {MyEvent = tmpEvent, MyMap = Globals.CurrentMap};
-                    tmpEventEditor.InitEditor(false, false);
+                    tmpEventEditor.InitEditor(false, false, false);
                     tmpEventEditor.ShowDialog();
                 }
             }
@@ -1013,10 +1021,8 @@ namespace Intersect.Editor.Forms.DockingElements
                 if (Globals.MapLayersWindow.lstMapNpcs.SelectedIndex > -1 &&
                     Globals.MapLayersWindow.rbDeclared.Checked == true)
                 {
-                    Globals.CurrentMap.Spawns[
-                        Globals.MapLayersWindow.lstMapNpcs.SelectedIndex].X = Globals.CurTileX;
-                    Globals.CurrentMap.Spawns[
-                        Globals.MapLayersWindow.lstMapNpcs.SelectedIndex].Y = Globals.CurTileY;
+                    Globals.CurrentMap.Spawns[Globals.MapLayersWindow.lstMapNpcs.SelectedIndex].X = Globals.CurTileX;
+                    Globals.CurrentMap.Spawns[Globals.MapLayersWindow.lstMapNpcs.SelectedIndex].Y = Globals.CurTileY;
                     mMapChanged = true;
                 }
             }
@@ -1123,7 +1129,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 if (MapInstance.Get(tmpMap.Down) != null)
                     MapInstance.Get(tmpMap.Down).InitAutotiles();
 
-                if (!CurrentMapState.SequenceEqual(tmpMap.SaveInternal()))
+                if (!CurrentMapState.Matches(tmpMap.SaveInternal()))
                 {
                     if (CurrentMapState != null) MapUndoStates.Add(CurrentMapState);
                     MapRedoStates.Clear();
@@ -1179,7 +1185,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 if (MapInstance.Get(tmpMap.Down) != null)
                     MapInstance.Get(tmpMap.Down).InitAutotiles();
 
-                if (!CurrentMapState.SequenceEqual(tmpMap.SaveInternal()))
+                if (!CurrentMapState.Matches(tmpMap.SaveInternal()))
                 {
                     if (CurrentMapState != null) MapUndoStates.Add(CurrentMapState);
                     MapRedoStates.Clear();
@@ -1248,7 +1254,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 if (MapInstance.Get(Globals.CurrentMap.Down) != null)
                     MapInstance.Get(Globals.CurrentMap.Down).InitAutotiles();
 
-                if (!CurrentMapState.SequenceEqual(Globals.CurrentMap.SaveInternal()))
+                if (!CurrentMapState.Matches(Globals.CurrentMap.SaveInternal()))
                 {
                     if (CurrentMapState != null) MapUndoStates.Add(CurrentMapState);
                     MapRedoStates.Clear();
@@ -1284,7 +1290,7 @@ namespace Intersect.Editor.Forms.DockingElements
             var data = attribute?.Data();
             SmartFillAttribute(x, y, data);
 
-            if (!CurrentMapState.SequenceEqual(Globals.CurrentMap.SaveInternal()))
+            if (!CurrentMapState.Matches(Globals.CurrentMap.SaveInternal()))
             {
                 if (CurrentMapState != null) MapUndoStates.Add(CurrentMapState);
                 MapRedoStates.Clear();
@@ -1334,7 +1340,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 if (MapInstance.Get(Globals.CurrentMap.Down) != null)
                     MapInstance.Get(Globals.CurrentMap.Down).InitAutotiles();
 
-                if (!CurrentMapState.SequenceEqual(Globals.CurrentMap.SaveInternal()))
+                if (!CurrentMapState.Matches(Globals.CurrentMap.SaveInternal()))
                 {
                     if (CurrentMapState != null) MapUndoStates.Add(CurrentMapState);
                     MapRedoStates.Clear();
@@ -1380,7 +1386,7 @@ namespace Intersect.Editor.Forms.DockingElements
             {
                 SmartEraseAttribute(x, y, attribute);
 
-                if (!CurrentMapState.SequenceEqual(Globals.CurrentMap.SaveInternal()))
+                if (!CurrentMapState.Matches(Globals.CurrentMap.SaveInternal()))
                 {
                     if (CurrentMapState != null) MapUndoStates.Add(CurrentMapState);
                     MapRedoStates.Clear();
@@ -1479,6 +1485,7 @@ namespace Intersect.Editor.Forms.DockingElements
                     }
                 }
             }
+            tmpMap.Autotiles.UpdateCliffAutotiles(tmpMap, Globals.CurrentLayer);
 
             for (int x0 = selX + dragxoffset; x0 < selX + selW + 1 + dragxoffset; x0++)
             {
@@ -1633,6 +1640,7 @@ namespace Intersect.Editor.Forms.DockingElements
                     }
                 }
             }
+            tmpMap.Autotiles.UpdateCliffAutotiles(tmpMap, Globals.CurrentLayer);
 
             for (int x0 = selX; x0 < selX + selW + 1; x0++)
             {
@@ -1723,7 +1731,7 @@ namespace Intersect.Editor.Forms.DockingElements
 			selW = Globals.CurMapSelW,
 			selH = Globals.CurMapSelH;
 
-			MapUndoStates.Add(CurrentMapState);
+            MapUndoStates.Add(CurrentMapState);
 
 			if (Globals.CurrentTool == (int)EditingTool.Rectangle ||
 				Globals.CurrentTool == (int)EditingTool.Selection)
@@ -1795,7 +1803,7 @@ namespace Intersect.Editor.Forms.DockingElements
 			selW = Globals.CurMapSelW,
 			selH = Globals.CurMapSelH;
 
-			MapUndoStates.Add(CurrentMapState);
+            MapUndoStates.Add(CurrentMapState);
 
 			if (Globals.CurrentTool == (int)EditingTool.Rectangle ||
 				Globals.CurrentTool == (int)EditingTool.Selection)

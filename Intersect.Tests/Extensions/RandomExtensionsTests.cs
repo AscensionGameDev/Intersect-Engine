@@ -1,13 +1,21 @@
 ﻿using System;
+
 using MathNet.Numerics.Random;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using NUnit.Framework;
+
+using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 namespace Intersect.Extensions
 {
-    [TestClass]
+
+    [TestFixture]
     public class RandomExtensionsTests
     {
-        [TestMethod]
+
+        [Test]
         public void NextLongTest()
         {
             var byteGenerator = new Random();
@@ -21,14 +29,14 @@ namespace Intersect.Extensions
             }
         }
 
-        [TestMethod]
+        [Test]
         public void NextLongMaximumTest()
         {
             var random = new MockRandom();
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => random.NextLong(-1));
 
             var byteGenerator = new Random();
-            
+
             var buffer = new byte[8];
             for (var i = 0; i < 100; i++)
             {
@@ -38,17 +46,21 @@ namespace Intersect.Extensions
                 var value = BitConverter.ToInt64(buffer, 0);
                 var maximum = byteGenerator.NextInt64();
 
-                Assert.AreEqual(value % maximum, random.NextLong(maximum), $"value={value}, maximum={maximum}, %={value % maximum}, {random.NextLong(maximum)}");
+                Assert.AreEqual(
+                    value % maximum, random.NextLong(maximum),
+                    $"value={value}, maximum={maximum}, %={value % maximum}, {random.NextLong(maximum)}"
+                );
             }
         }
 
-        [TestMethod]
+        [Test]
         public void NextLongMinimumMaximumTest()
         {
             var random = new MockRandom();
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => random.NextLong(1, 0));
         }
-        [TestMethod]
+
+        [Test]
         public void NextULongTest()
         {
             var byteGenerator = new Random();
@@ -62,7 +74,7 @@ namespace Intersect.Extensions
             }
         }
 
-        [TestMethod]
+        [Test]
         public void NextULongMaximumTest()
         {
             var random = new MockRandom();
@@ -75,70 +87,93 @@ namespace Intersect.Extensions
                 random.MockNextBytes = buffer;
 
                 var value = BitConverter.ToUInt64(buffer, 0);
-                var maximum = unchecked((ulong)byteGenerator.NextInt64());
+                var maximum = unchecked((ulong) byteGenerator.NextInt64());
 
-                Assert.AreEqual(value % maximum, random.NextULong(maximum), $"value={value}, maximum={maximum}, %={value % maximum}, {random.NextULong(maximum)}");
+                Assert.AreEqual(
+                    value % maximum, random.NextULong(maximum),
+                    $"value={value}, maximum={maximum}, %={value % maximum}, {random.NextULong(maximum)}"
+                );
             }
         }
 
-        [TestMethod]
+        [Test]
         public void NextULongMinimumMaximumTest()
         {
             var random = new MockRandom();
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => random.NextULong(1, 0));
         }
 
-        [TestMethod]
+        [Test]
         public void NextDecimalMaximumTest()
         {
             var random = new MockRandom();
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => random.NextDecimal(-1));
         }
 
-        [TestMethod]
+        [Test]
         public void NextDecimalMinimumMaximumTest()
         {
             var random = new MockRandom();
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => random.NextDecimal(1, 0));
         }
 
-        [TestMethod]
+        [Test]
+        public void NextDoubleTest()
+        {
+            var random = new MockRandom
+            {
+                MockNextDouble = double.NegativeInfinity
+            };
+
+            var nextDouble = random.NextDouble();
+            Assert.IsTrue(double.IsNegativeInfinity(nextDouble), $@"Expected negative infinity, got {nextDouble}.");
+        }
+
+        [Test]
         public void NextDoubleMaximumTest()
         {
             var random = new MockRandom();
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => random.NextDouble(-1));
         }
 
-        [TestMethod]
+        [Test]
         public void NextDoubleMinimumMaximumTest()
         {
             var random = new MockRandom();
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => random.NextDouble(1, 0));
         }
 
-        [TestMethod]
+        [Test]
         public void NextFloatTest()
         {
-            Assert.Fail();
+            var random = new MockRandom
+            {
+                MockNextDouble = float.NegativeInfinity
+            };
+
+            var nextFloat = random.NextFloat();
+            Assert.IsTrue(float.IsNegativeInfinity(nextFloat), $@"Expected negative infinity, got {nextFloat}.");
         }
 
-        [TestMethod]
+        [Test]
         public void NextFloatMaximumTest()
         {
             var random = new MockRandom();
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => random.NextFloat(-1));
         }
 
-        [TestMethod]
+        [Test]
         public void NextFloatMinimumMaximumTest()
         {
             var random = new MockRandom();
             Assert.ThrowsException<ArgumentOutOfRangeException>(() => random.NextFloat(1, 0));
         }
+
     }
 
     internal class MockRandom : Random
     {
+
         internal byte[] MockNextBytes { private get; set; }
 
         internal int MockNext { get; set; }
@@ -150,7 +185,7 @@ namespace Intersect.Extensions
             return MockNext;
         }
 
-        public override double NextDouble()
+        protected override double Sample()
         {
             return MockNextDouble;
         }
@@ -168,5 +203,7 @@ namespace Intersect.Extensions
                 buffer[i] = MockNextBytes[i];
             }
         }
+
     }
+
 }

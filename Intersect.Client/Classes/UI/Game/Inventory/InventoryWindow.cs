@@ -25,8 +25,7 @@ namespace Intersect.Client.UI.Game.Inventory
         //Init
         public InventoryWindow(Canvas gameCanvas)
         {
-            mInventoryWindow = new WindowControl(gameCanvas, Strings.Inventory.title, false,
-                "InventoryWindow");
+            mInventoryWindow = new WindowControl(gameCanvas, Strings.Inventory.title, false, "InventoryWindow");
             mInventoryWindow.DisableResizing();
 
             mItemContainer = new ScrollControl(mInventoryWindow, "ItemsContainer");
@@ -64,10 +63,10 @@ namespace Intersect.Client.UI.Game.Inventory
                 if (item != null)
                 {
                     Items[i].Pnl.IsHidden = false;
-                    if (item.IsStackable())
+                    if (item.IsStackable)
                     {
                         mValues[i].IsHidden = false;
-                        mValues[i].Text = Globals.Me.Inventory[i].Quantity.ToString();
+                        mValues[i].Text = Strings.FormatQuantityAbbreviated(Globals.Me.Inventory[i].Quantity);
                     }
                     else
                     {
@@ -105,8 +104,8 @@ namespace Intersect.Client.UI.Game.Inventory
                 if (Items[i].EquipPanel.Texture == null)
                     Items[i].EquipPanel.Texture = GameGraphics.Renderer.GetWhiteTexture();
 
-                var xPadding = Items[i].Container.Padding.Left + Items[i].Container.Padding.Right;
-                var yPadding = Items[i].Container.Padding.Top + Items[i].Container.Padding.Bottom;
+                var xPadding = Items[i].Container.Margin.Left + Items[i].Container.Margin.Right;
+                var yPadding = Items[i].Container.Margin.Top + Items[i].Container.Margin.Bottom;
                 Items[i].Container.SetPosition( (i % (mItemContainer.Width / (Items[i].Container.Width + xPadding))) * (Items[i].Container.Width + xPadding) + xPadding,
                     (i / (mItemContainer.Width / (Items[i].Container.Width + xPadding))) * (Items[i].Container.Height + yPadding) + yPadding);
             }
@@ -131,9 +130,9 @@ namespace Intersect.Client.UI.Game.Inventory
         {
             FloatRect rect = new FloatRect()
             {
-                X = mInventoryWindow.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).X -
+                X = mInventoryWindow.LocalPosToCanvas(new Point(0, 0)).X -
                     (Items[0].Container.Padding.Left + Items[0].Container.Padding.Right) / 2,
-                Y = mInventoryWindow.LocalPosToCanvas(new Framework.GenericClasses.Point(0, 0)).Y -
+                Y = mInventoryWindow.LocalPosToCanvas(new Point(0, 0)).Y -
                     (Items[0].Container.Padding.Top + Items[0].Container.Padding.Bottom) / 2,
                 Width = mInventoryWindow.Width + (Items[0].Container.Padding.Left + Items[0].Container.Padding.Right),
                 Height = mInventoryWindow.Height + (Items[0].Container.Padding.Top + Items[0].Container.Padding.Bottom)

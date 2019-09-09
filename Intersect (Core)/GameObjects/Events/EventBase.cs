@@ -9,13 +9,16 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects.Events
 {
-    public class EventBase : DatabaseObject<EventBase>
+    public class EventBase : DatabaseObject<EventBase>, IFolderable
     {
         public Guid MapId { get; set; }
         public int SpawnX { get; set; } = -1;
         public int SpawnY { get; set; } = -1;
         public bool CommonEvent { get; set; }
         public bool Global { get; set; }
+
+        /// <inheritdoc />
+        public string Folder { get; set; } = "";
 
         //Cached Pages Data
         private string mCachedPagesData = null;
@@ -84,7 +87,13 @@ namespace Intersect.GameObjects.Events
             Load(json);
         }
 
-        public new static string[] Names => Lookup.Where(pair => ((EventBase)pair.Value)?.CommonEvent ?? false).OrderBy(p => p.Value?.TimeCreated).Select(pair => pair.Value?.Name ?? "ERR_DELETED").ToArray();
+        public new static string[] Names => Lookup.Where(pair => ((EventBase)pair.Value)?.CommonEvent ?? false).OrderBy(p => p.Value?.TimeCreated).Select(pair => pair.Value?.Name ?? Deleted).ToArray();
+
+        public new static KeyValuePair<Guid, string>[] ItemPairs => Lookup
+            .Where(pair => ((EventBase)pair.Value)?.CommonEvent ?? false)
+            .OrderBy(p => p.Value?.TimeCreated)
+            .Select(pair => new KeyValuePair<Guid, string>(pair.Key, pair.Value?.Name ?? Deleted))
+            .ToArray();
 
         public new static Guid IdFromList(int listIndex)
         {

@@ -12,12 +12,19 @@ namespace Intersect.Client.UI.Game
 {
     public class PartyWindow
     {
-        private List<ImagePanel> mBar = new List<ImagePanel>();
-        private List<ImagePanel> mBarContainer = new List<ImagePanel>();
+        private List<ImagePanel> mHpBar = new List<ImagePanel>();
+        private List<ImagePanel> mHpBarContainer = new List<ImagePanel>();
+        private List<Label> mHpLabel = new List<Label>();
+        private List<Label> mHpValue = new List<Label>();
+        private List<ImagePanel> mMpBar = new List<ImagePanel>();
+        private List<ImagePanel> mMpBarContainer = new List<ImagePanel>();
+        private List<Label> mMpLabel = new List<Label>();
+        private List<Label> mMpValue = new List<Label>();
         private List<Button> mKickButtons = new List<Button>();
 
         private List<Label> mLblnames = new List<Label>();
         private ImagePanel mLeader;
+        private Label mLeaderText;
 
         private Button mLeaveButton;
 
@@ -32,17 +39,24 @@ namespace Intersect.Client.UI.Game
 
             //Add the icon representing party leader (ALWAYS member 1 in the party list)
             mLeader = new ImagePanel(mPartyWindow, "LeaderIcon");
-            mLeader.SetToolTipText(Strings.Parties.leader);
+            mLeader.SetToolTipText(Strings.Parties.leadertip);
             mLeader.Hide();
+
+            mLeaderText = new Label(mPartyWindow,"LeaderText");
+            mLeaderText.SetTextColor(new Color(0, 0, 0, 0), Label.ControlState.Normal);
+            mLeaderText.Text = Strings.Parties.leader;
+            mLeaderText.Hide();
+            
             if (Globals.Me.Party.Count > 0)
             {
                 mLeader.Show();
+                mLeaderText.Show();
             }
 
             mLblnames.Clear();
             mKickButtons.Clear();
-            mBarContainer.Clear();
-            mBar.Clear();
+            mHpBarContainer.Clear();
+            mHpBar.Clear();
 
             for (int i = 0; i < 4; i++)
             {
@@ -50,7 +64,7 @@ namespace Intersect.Client.UI.Game
                 mLblnames.Add(new Label(mPartyWindow, "MemberName" + i));
                 if (i < Globals.Me.Party.Count)
                 {
-                    mLblnames[i].Text = Globals.Me.Party[i].Name;
+                    mLblnames[i].Text = Strings.Parties.name.ToString(Globals.Me.Party[i].Name, Globals.Me.Party[i].Level);
                 }
                 else
                 {
@@ -58,13 +72,34 @@ namespace Intersect.Client.UI.Game
                 }
 
                 //Health bars
-                mBarContainer.Add(new ImagePanel(mPartyWindow, "HealthBarContainer" + i));
-                mBarContainer[i].Hide();
+                mHpBarContainer.Add(new ImagePanel(mPartyWindow, "HealthBarContainer" + i));
+                mHpBarContainer[i].Hide();
+                mHpLabel.Add(new Label(mPartyWindow, "HealthLabel" + i));
+                mHpLabel[i].Hide();
+                mHpLabel[i].SetTextColor(new Color(0, 0, 0, 0), Label.ControlState.Normal);
+                mHpLabel[i].Text = Strings.Parties.vital0;
+                mHpValue.Add(new Label(mPartyWindow, "HealthValue" + i));
+                mHpValue[i].Hide();
+                mHpValue[i].SetTextColor(new Color(0, 0, 0, 0), Label.ControlState.Normal);
                 if (i < Globals.Me.Party.Count)
                 {
-                    mBarContainer[i].Show();
+                    mHpBarContainer[i].Show();
                 }
-                mBar.Add(new ImagePanel(mBarContainer[i], "HealthBar" + i));
+                mHpBar.Add(new ImagePanel(mHpBarContainer[i], "HealthBar" + i));
+
+                //Mana bars
+                mMpBarContainer.Add(new ImagePanel(mPartyWindow, "ManaBarContainer" + i));
+                mMpBarContainer[i].Hide();
+                mMpBarContainer[i].RenderColor = new Color(0,0,0,0);
+                mMpLabel.Add(new Label(mPartyWindow, "ManaLabel" + i));
+                mMpLabel[i].Hide();
+                mMpLabel[i].SetTextColor(new Color(0, 0, 0, 0), Label.ControlState.Normal);
+                mMpLabel[i].Text = Strings.Parties.vital1;
+                mMpValue.Add(new Label(mPartyWindow, "ManaValue" + i));
+                mMpValue[i].Hide();
+                mMpValue[i].SetTextColor(new Color(0, 0, 0, 0), Label.ControlState.Normal);
+                mMpBar.Add(new ImagePanel(mMpBarContainer[i], "ManaBar" + i));
+                mMpBar[i].RenderColor = new Color(0,0,0,0);
 
                 if (i == 0)
                 {
@@ -74,6 +109,7 @@ namespace Intersect.Client.UI.Game
                 {
                     mKickButtons.Add(new Button(mPartyWindow, "KickButton" + i));
                     mKickButtons[i].Clicked += kick_Clicked;
+                    mKickButtons[i].Text = Strings.Parties.kicklbl;
                     if (i < Globals.Me.Party.Count)
                     {
                         mKickButtons[i].SetToolTipText(Strings.Parties.kick.ToString(
@@ -97,7 +133,8 @@ namespace Intersect.Client.UI.Game
             }
 
             mLeaveButton = new Button(mPartyWindow, "LeavePartyButton");
-            mLeaveButton.SetToolTipText(Strings.Parties.leave);
+            mLeaveButton.Text = Strings.Parties.leave;
+            mLeaveButton.SetToolTipText(Strings.Parties.leavetip);
             mLeaveButton.Clicked += leave_Clicked;
 
             mPartyWindow.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
@@ -112,33 +149,62 @@ namespace Intersect.Client.UI.Game
             }
 
             mLeader.Hide();
+            mLeaderText.Hide();
             mLeaveButton.Hide();
             for (int i = 0; i < 4; i++)
             {
-                mBarContainer[i].Hide();
+                mHpBarContainer[i].Hide();
+                mHpLabel[i].Hide();
+                mHpValue[i].Hide();
                 mLblnames[i].Text = "";
+                mMpBarContainer[i].Hide();
+                mMpLabel[i].Hide();
+                mMpValue[i].Hide();
                 if (i > 0) mKickButtons[i].Hide();
             }
             if (Globals.Me.IsInParty())
             {
                 mLeader.Show();
+                mLeaderText.Show();
                 mLeaveButton.Show();
 
                 for (int i = 0; i < 4; i++)
                 {
                     if (i < Globals.Me.Party.Count)
                     {
-                        mBarContainer[i].Show();
-                        mLblnames[i].Text = Globals.Me.Party[i].Name;
+                        mHpLabel[i].Show();
+                        mHpValue[i].Show();
+                        mHpBarContainer[i].Show();
 
-                        var vitalHp = Globals.Me.Party[i].Vital[(int)Vitals.Health];
-                        var vitalMaxHp = Globals.Me.Party[i].MaxVital[(int)Vitals.Health];
-                        var ratioHp = ((float)vitalHp) / ((float)vitalMaxHp);
-                        ratioHp = Math.Min(1, Math.Max(0, ratioHp));
-                        mBar[i].SetTextureRect(0, 0, Convert.ToInt32(mBar[i].Texture.GetWidth() * ratioHp), mBar[i].Texture.GetHeight());
-                        mBar[i].SetSize(Convert.ToInt32(ratioHp * mBarContainer[i].Width), mBarContainer[i].Height);
+                        mMpLabel[i].Show();
+                        mMpValue[i].Show();
+                        mMpBarContainer[i].Show();
+
+                        mLblnames[i].Text = Strings.Parties.name.ToString(Globals.Me.Party[i].Name, Globals.Me.Party[i].Level);
+
+                        if (mHpBar[i].Texture != null)
+                        {
+                            var vitalHp = Globals.Me.Party[i].Vital[(int) Vitals.Health];
+                            var vitalMaxHp = Globals.Me.Party[i].MaxVital[(int) Vitals.Health];
+                            var ratioHp = ((float) vitalHp) / ((float) vitalMaxHp);
+                            ratioHp = Math.Min(1, Math.Max(0, ratioHp));
+                            mHpBar[i].SetTextureRect(0, 0, Convert.ToInt32(mHpBar[i].Texture.GetWidth() * ratioHp), mHpBar[i].Texture.GetHeight());
+                            mHpBar[i].SetSize(Convert.ToInt32(ratioHp * mHpBarContainer[i].Width), mHpBarContainer[i].Height);
+                        }
+                        mHpValue[i].Text = Strings.Parties.vital0val.ToString(Globals.Me.Party[i].Vital[(int)Vitals.Health], Globals.Me.Party[i].MaxVital[(int)Vitals.Health]);
+
+                        if (mMpBar[i].Texture != null)
+                        {
+                            var vitalMp = Globals.Me.Party[i].Vital[(int) Vitals.Mana];
+                            var vitalMaxMp = Globals.Me.Party[i].MaxVital[(int) Vitals.Mana];
+                            var ratioMp = ((float) vitalMp) / ((float) vitalMaxMp);
+                            ratioMp = Math.Min(1, Math.Max(0, ratioMp));
+                            mMpBar[i].SetTextureRect(0, 0, Convert.ToInt32(mMpBar[i].Texture.GetWidth() * ratioMp), mMpBar[i].Texture.GetHeight());
+                            mMpBar[i].SetSize(Convert.ToInt32(ratioMp * mMpBarContainer[i].Width), mMpBarContainer[i].Height);
+                        }
+                        mMpValue[i].Text = Strings.Parties.vital1val.ToString(Globals.Me.Party[i].Vital[(int)Vitals.Mana], Globals.Me.Party[i].MaxVital[(int)Vitals.Mana]);
+
                         if (i > 0) mKickButtons[i].Hide();
-
                         //Only show the kick buttons if its you or you are the party leader
                         if (Globals.Me.Party[0].Id == Globals.Me.Id && i > 0)
                         {
@@ -150,8 +216,8 @@ namespace Intersect.Client.UI.Game
                     {
                         if (i > 0) mKickButtons[i].SetToolTipText("");
                         mLblnames[i].Text = "";
-                        mBar[i].SetSize(0, mBarContainer[i].Height);
-                        mBarContainer[i].Hide();
+                        mHpBar[i].SetSize(0, mHpBarContainer[i].Height);
+                        mHpBarContainer[i].Hide();
                     }
                 }
             }

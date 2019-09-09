@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-    public class SpellBase : DatabaseObject<SpellBase>
+    public class SpellBase : DatabaseObject<SpellBase>, IFolderable
     {
         public SpellTypes SpellType { get; set; }
         public string Description { get; set; } = "";
@@ -40,6 +40,9 @@ namespace Intersect.GameObjects
         //Spell Times
         public int CastDuration { get; set; }
         public int CooldownDuration { get; set; }
+
+        //Spell Bound
+        public bool Bound { get; set; }
 
         //Requirements
         [Column("CastRequirements")]
@@ -82,7 +85,10 @@ namespace Intersect.GameObjects
         }
         [NotMapped]
         public int[] VitalCost = new int[(int) Vitals.VitalCount];
-        
+
+        /// <inheritdoc />
+        public string Folder { get; set; } = "";
+
         [JsonConstructor]
         public SpellBase(Guid id) : base(id)
         {
@@ -136,6 +142,17 @@ namespace Intersect.GameObjects
         [NotMapped]
         public int[] StatDiff { get; set; } = new int[(int)Stats.StatCount];
 
+        //Buff/Debuff Data
+        [Column("PercentageStatDiff")]
+        [JsonIgnore]
+        public string PercentageStatDiffJson
+        {
+            get => DatabaseUtils.SaveIntArray(PercentageStatDiff, (int)Stats.StatCount);
+            set => PercentageStatDiff = DatabaseUtils.LoadIntArray(value, (int)Stats.StatCount);
+        }
+        [NotMapped]
+        public int[] PercentageStatDiff { get; set; } = new int[(int)Stats.StatCount];
+
         public int Scaling { get; set; } = 100;
         public int ScalingStat { get; set; }
         public SpellTargetTypes TargetType { get; set; }
@@ -144,6 +161,9 @@ namespace Intersect.GameObjects
         public int Duration { get; set; }
         public StatusTypes Effect { get; set; }
         public string TransformSprite { get; set; }
+
+        [Column("OnHit")]
+        public int OnHitDuration { get; set; }
     }
 
     [Owned]
@@ -152,7 +172,7 @@ namespace Intersect.GameObjects
         public Guid MapId { get; set; }
         public int X { get; set; }
         public int Y { get; set; }
-        public byte Dir { get; set; }
+        public int Dir { get; set; }
     }
 
     [Owned]

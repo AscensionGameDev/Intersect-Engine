@@ -29,7 +29,7 @@ namespace Intersect.Server.General
         public static void Update()
         {
             var timeBase = TimeBase.GetTimeBase();
-            if (Globals.System.GetTimeMs() > sUpdateTime)
+            if (Globals.Timing.TimeMs > sUpdateTime)
             {
                 if (!timeBase.SyncTime)
                 {
@@ -53,7 +53,7 @@ namespace Intersect.Server.General
                     PacketSender.SendTimeToAll();
                 }
 
-                sUpdateTime = Globals.System.GetTimeMs() + 1000;
+                sUpdateTime = Globals.Timing.TimeMs + 1000;
             }
         }
 

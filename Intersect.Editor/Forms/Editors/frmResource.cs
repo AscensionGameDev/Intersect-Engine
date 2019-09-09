@@ -26,6 +26,9 @@ namespace Intersect.Editor.Forms.Editors
         private Bitmap mInitialGraphic;
         private bool mMouseDown;
 
+        private List<string> mKnownFolders = new List<string>();
+        private List<string> mExpandedFolders = new List<string>();
+
         //General Editting Variables
         bool mTMouseDown;
 
@@ -75,15 +78,6 @@ namespace Intersect.Editor.Forms.Editors
             Hide();
             Globals.CurrentEditor = -1;
             Dispose();
-        }
-
-        private void lstResources_Click(object sender, EventArgs e)
-        {
-            if (mChangingName) return;
-            mEditorItem =
-                ResourceBase.Get(
-                    ResourceBase.IdFromList(lstResources.SelectedIndex));
-            UpdateEditor();
         }
 
         private void frmResource_Load(object sender, EventArgs e)
@@ -194,20 +188,13 @@ namespace Intersect.Editor.Forms.Editors
             grpCommonEvent.Text = Strings.ResourceEditor.commonevent;
             lblEvent.Text = Strings.ResourceEditor.harvestevent;
 
+            //Searching/Sorting
+            btnChronological.ToolTipText = Strings.ResourceEditor.sortchronologically;
+            txtSearch.Text = Strings.ResourceEditor.searchplaceholder;
+            lblFolder.Text = Strings.ResourceEditor.folderlabel;
+
             btnSave.Text = Strings.ResourceEditor.save;
             btnCancel.Text = Strings.ResourceEditor.cancel;
-        }
-
-        public void InitEditor()
-        {
-            lstResources.Items.Clear();
-            lstResources.Items.AddRange(ResourceBase.Names);
-            cmbToolType.Items.Clear();
-            cmbToolType.Items.Add(Strings.General.none);
-            cmbToolType.Items.AddRange(Options.ToolTypes.ToArray());
-            cmbEvent.Items.Clear();
-            cmbEvent.Items.Add(Strings.General.none);
-            cmbEvent.Items.AddRange(EventBase.Names);
         }
 
         private void UpdateEditor()
@@ -217,6 +204,7 @@ namespace Intersect.Editor.Forms.Editors
                 pnlContainer.Show();
 
                 txtName.Text = mEditorItem.Name;
+                cmbFolder.Text = mEditorItem.Folder;
                 cmbToolType.SelectedIndex = mEditorItem.Tool + 1;
                 nudSpawnDuration.Value = mEditorItem.SpawnDuration;
                 cmbAnimation.SelectedIndex =  AnimationBase.ListIndex(mEditorItem.AnimationId) + 1;
@@ -294,6 +282,8 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbInitialSprite_SelectedIndexChanged(object sender, EventArgs e)
         {
+            mInitialGraphic?.Dispose();
+            mInitialGraphic = null;
             if (cmbInitialSprite.SelectedIndex > 0)
             {
                 mEditorItem.Initial.Graphic = cmbInitialSprite.Text;
@@ -305,15 +295,10 @@ namespace Intersect.Editor.Forms.Editors
                     picInitialResource.Height = mInitialGraphic.Height;
                     mInitialBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);
                 }
-                else
-                {
-                    mInitialGraphic = null;
-                }
             }
             else
             {
                 mEditorItem.Initial.Graphic = null;
-                mInitialGraphic = null;
             }
             picInitialResource.Visible = mInitialGraphic != null;
             Render();
@@ -321,6 +306,8 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbEndSprite_SelectedIndexChanged(object sender, EventArgs e)
         {
+            mEndGraphic?.Dispose();
+            mEndGraphic = null;
             if (cmbEndSprite.SelectedIndex > 0)
             {
                 mEditorItem.Exhausted.Graphic = cmbEndSprite.Text;
@@ -332,15 +319,10 @@ namespace Intersect.Editor.Forms.Editors
                     picEndResource.Height = mEndGraphic.Height;
                     mEndBitmap = new Bitmap(picEndResource.Width, picEndResource.Height);
                 }
-                else
-                {
-                    mEndGraphic = null;
-                }
             }
             else
             {
                 mEditorItem.Exhausted.Graphic = null;
-                mEndGraphic = null;
             }
             picEndResource.Visible = mEndGraphic != null;
             Render();
@@ -423,7 +405,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             mChangingName = true;
             mEditorItem.Name = txtName.Text;
-            lstResources.Items[lstResources.SelectedIndex] = txtName.Text;
+            if (lstResources.SelectedNode != null && lstResources.SelectedNode.Tag != null) lstResources.SelectedNode.Text = txtName.Text;
             mChangingName = false;
         }
 
@@ -784,5 +766,211 @@ namespace Intersect.Editor.Forms.Editors
         {
             mEditorItem.Exhausted.RenderBelowEntities = chkExhaustedBelowEntities.Checked;
         }
+
+        #region "Item List - Folders, Searching, Sorting, Etc"
+        public void InitEditor()
+        {
+            var selectedId = Guid.Empty;
+            var folderNodes = new Dictionary<string, TreeNode>();
+            if (lstResources.SelectedNode != null && lstResources.SelectedNode.Tag != null)
+            {
+                selectedId = (Guid)lstResources.SelectedNode.Tag;
+            }
+            lstResources.Nodes.Clear();
+
+            cmbToolType.Items.Clear();
+            cmbToolType.Items.Add(Strings.General.none);
+            cmbToolType.Items.AddRange(Options.ToolTypes.ToArray());
+            cmbEvent.Items.Clear();
+            cmbEvent.Items.Add(Strings.General.none);
+            cmbEvent.Items.AddRange(EventBase.Names);
+
+            //Collect folders
+            var mFolders = new List<string>();
+            foreach (var itm in ResourceBase.Lookup)
+            {
+                if (!string.IsNullOrEmpty(((ResourceBase)itm.Value).Folder) && !mFolders.Contains(((ResourceBase)itm.Value).Folder))
+                {
+                    mFolders.Add(((ResourceBase)itm.Value).Folder);
+                    if (!mKnownFolders.Contains(((ResourceBase)itm.Value).Folder))
+                        mKnownFolders.Add(((ResourceBase)itm.Value).Folder);
+                }
+            }
+
+            mFolders.Sort();
+            mKnownFolders.Sort();
+            cmbFolder.Items.Clear();
+            cmbFolder.Items.Add("");
+            cmbFolder.Items.AddRange(mKnownFolders.ToArray());
+
+            lstResources.Sorted = !btnChronological.Checked;
+
+            if (!btnChronological.Checked && !CustomSearch())
+            {
+                foreach (var folder in mFolders)
+                {
+                    var node = lstResources.Nodes.Add(folder);
+                    node.ImageIndex = 0;
+                    node.SelectedImageIndex = 0;
+                    folderNodes.Add(folder, node);
+                }
+            }
+
+            foreach (var itm in ResourceBase.ItemPairs)
+            {
+                var node = new TreeNode(itm.Value);
+                node.Tag = itm.Key;
+                node.ImageIndex = 1;
+                node.SelectedImageIndex = 1;
+
+                var folder = ResourceBase.Get(itm.Key).Folder;
+                if (!string.IsNullOrEmpty(folder) && !btnChronological.Checked && !CustomSearch())
+                {
+                    var folderNode = folderNodes[folder];
+                    folderNode.Nodes.Add(node);
+                    if (itm.Key == selectedId)
+                        folderNode.Expand();
+                }
+                else
+                {
+                    lstResources.Nodes.Add(node);
+                }
+
+                if (CustomSearch())
+                {
+                    if (!node.Text.ToLower().Contains(txtSearch.Text.ToLower()))
+                    {
+                        node.Remove();
+                    }
+                }
+
+                if (itm.Key == selectedId)
+                    lstResources.SelectedNode = node;
+            }
+
+            var selectedNode = lstResources.SelectedNode;
+
+            if (!btnChronological.Checked) lstResources.Sort();
+
+            lstResources.SelectedNode = selectedNode;
+            foreach (var node in mExpandedFolders)
+            {
+                if (folderNodes.ContainsKey(node))
+                    folderNodes[node].Expand();
+            }
+
+        }
+
+        private void btnAddFolder_Click(object sender, EventArgs e)
+        {
+            var folderName = "";
+            var result = DarkInputBox.ShowInformation(Strings.ResourceEditor.folderprompt, Strings.ResourceEditor.foldertitle, ref folderName, DarkDialogButton.OkCancel);
+            if (result == DialogResult.OK && !string.IsNullOrEmpty(folderName))
+            {
+                if (!cmbFolder.Items.Contains(folderName))
+                {
+                    mEditorItem.Folder = folderName;
+                    mExpandedFolders.Add(folderName);
+                    InitEditor();
+                    cmbFolder.Text = folderName;
+                }
+            }
+        }
+
+        private void lstResources_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            var node = e.Node;
+            if (node != null)
+            {
+                if (e.Button == MouseButtons.Right)
+                {
+                    if (e.Node.Tag != null && e.Node.Tag.GetType() == typeof(Guid))
+                    {
+                        Clipboard.SetText(e.Node.Tag.ToString());
+                    }
+                }
+                var hitTest = lstResources.HitTest(e.Location);
+                if (hitTest.Location != TreeViewHitTestLocations.PlusMinus)
+                {
+                    if (node.Nodes.Count > 0)
+                    {
+                        if (node.IsExpanded)
+                        {
+                            node.Collapse();
+                        }
+                        else
+                        {
+                            node.Expand();
+                        }
+                    }
+                }
+
+                if (node.IsExpanded)
+                {
+                    if (!mExpandedFolders.Contains(node.Text)) mExpandedFolders.Add(node.Text);
+                }
+                else
+                {
+                    if (mExpandedFolders.Contains(node.Text)) mExpandedFolders.Remove(node.Text);
+                }
+            }
+        }
+
+        private void lstResources_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            if (mChangingName) return;
+            if (lstResources.SelectedNode == null || lstResources.SelectedNode.Tag == null) return;
+            mEditorItem = ResourceBase.Get((Guid)lstResources.SelectedNode.Tag);
+            UpdateEditor();
+        }
+
+        private void cmbFolder_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Folder = cmbFolder.Text;
+            InitEditor();
+        }
+
+        private void btnChronological_Click(object sender, EventArgs e)
+        {
+            btnChronological.Checked = !btnChronological.Checked;
+            InitEditor();
+        }
+
+        private void txtSearch_TextChanged(object sender, EventArgs e)
+        {
+            InitEditor();
+        }
+
+        private void txtSearch_Leave(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtSearch.Text))
+            {
+                txtSearch.Text = Strings.ResourceEditor.searchplaceholder;
+            }
+        }
+
+        private void txtSearch_Enter(object sender, EventArgs e)
+        {
+            txtSearch.SelectAll();
+            txtSearch.Focus();
+        }
+
+        private void btnClearSearch_Click(object sender, EventArgs e)
+        {
+            txtSearch.Text = Strings.ResourceEditor.searchplaceholder;
+        }
+
+        private bool CustomSearch()
+        {
+            return !string.IsNullOrWhiteSpace(txtSearch.Text) && txtSearch.Text != Strings.ResourceEditor.searchplaceholder;
+        }
+
+        private void txtSearch_Click(object sender, EventArgs e)
+        {
+            if (txtSearch.Text == Strings.ResourceEditor.searchplaceholder)
+                txtSearch.SelectAll();
+        }
+
+        #endregion
     }
 }

@@ -5,6 +5,8 @@ using Intersect.Server.Localization;
 using Intersect.Server.Networking;
 using JetBrains.Annotations;
 
+using Newtonsoft.Json;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
@@ -14,8 +16,13 @@ namespace Intersect.Server.Database.PlayerData
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; private set; }
-        public Guid PlayerId { get; private set; }
-        public virtual User Player { get; private set; }
+
+        [ForeignKey("Player"), Column("PlayerId")] // SOURCE TODO: Migrate column
+        public Guid UserId { get; private set; }
+
+        [JsonIgnore, Column("Player")] // SOURCE TODO: Migrate column
+        public virtual User User { get; private set; }
+
         public string Ip { get; private set; }
         public DateTime StartTime { get; private set; }
         public DateTime EndTime { get; set; }
@@ -24,9 +31,8 @@ namespace Intersect.Server.Database.PlayerData
 
         public Ban() { }
 
-        public Ban(User player, string ip, string reason, int durationDays, string banner)
+        private Ban(string ip, string reason, int durationDays, string banner)
         {
-            Player = player;
             Ip = ip;
             StartTime = DateTime.UtcNow;
             Reason = reason;
@@ -34,26 +40,124 @@ namespace Intersect.Server.Database.PlayerData
             Banner = banner;
         }
 
-        public static void AddBan(Client player, int duration, string reason, string banner, string ip)
+        public Ban(Guid userId, string ip, string reason, int durationDays, string banner)
+            : this(ip, reason, durationDays, banner)
         {
-            var ban = new Ban(player.User, ip, reason, duration, banner);
-            PlayerContext.Current.Bans.Add(ban);
+            UserId = userId;
         }
 
-        public static void DeleteBan([NotNull] User user)
+        public Ban(User user, string ip, string reason, int durationDays, string banner)
+            : this(ip, reason, durationDays, banner)
         {
-            PlayerContext.Current.Mutes.Remove(PlayerContext.Current.Mutes.SingleOrDefault(p => p.Player == user));
+            User = user;
+        }
+
+        public static bool Add([NotNull] Ban ban, [CanBeNull] PlayerContext playerContext = null)
+        {
+            lock (DbInterface.GetPlayerContextLock())
+            {
+                var context = DbInterface.GetPlayerContext();
+                if (context == null)
+                {
+                    return false;
+                }
+
+                if (ban.User == null && ban.UserId == Guid.Empty)
+                {
+                    return false;
+                }
+
+                context.Bans.Add(ban);
+                DbInterface.SavePlayerDatabaseAsync();
+                return true;
+            }
+        }
+
+        public static bool Add(
+            Guid userId,
+            int duration,
+            [NotNull] string reason,
+            [NotNull] string banner,
+            string ip,
+            [CanBeNull] PlayerContext playerContext = null
+        )
+        {
+            return Add(new Ban(userId, ip, reason, duration, banner), playerContext);
+        }
+
+        public static bool Add(
+            [NotNull] User user,
+            int duration,
+            [NotNull] string reason,
+            [NotNull] string banner,
+            string ip,
+            [CanBeNull] PlayerContext playerContext = null
+        )
+        {
+            return Add(new Ban(user, ip, reason, duration, banner), playerContext);
+        }
+
+        public static bool Add(
+            [NotNull] Client client,
+            int duration,
+            [NotNull] string reason,
+            [NotNull] string banner,
+            string ip,
+            [CanBeNull] PlayerContext playerContext = null
+        )
+        {
+            return client.User != null && Add(client.User, duration, reason, banner, ip, playerContext);
+        }
+
+        public static bool Remove(Guid userId, [CanBeNull] PlayerContext playerContext = null)
+        {
+            lock (DbInterface.GetPlayerContextLock())
+            {
+                var context = DbInterface.GetPlayerContext();
+                if (context == null)
+                {
+                    return false;
+                }
+
+                var ban = context.Bans.FirstOrDefault(p => p.UserId == userId);
+                if (ban == null)
+                {
+                    return true;
+                }
+
+                context.Bans.Remove(ban);
+                DbInterface.SavePlayerDatabaseAsync();
+                return true;
+            }
+        }
+
+        public static bool Remove([NotNull] User user, [CanBeNull] PlayerContext playerContext = null)
+        {
+            if (!Remove(user.Id, playerContext))
+            {
+                return false;
+            }
+
+            user.Mute(false, "");
+
+            return true;
+        }
+
+        public static bool Remove([NotNull] Client client, [CanBeNull] PlayerContext playerContext = null)
+        {
+            return client.User != null && Remove(client.User, playerContext);
         }
 
         public static string CheckBan([NotNull] User user, string ip)
         {
-            Ban ban = PlayerContext.Current.Bans.SingleOrDefault(p => p.Player == user);
-            if (ban == null) ban = PlayerContext.Current.Bans.SingleOrDefault(p => p.Ip == ip);
-            if (ban != null)
+            // TODO: Move this off of the server so that ban dates can be formatted in local time.
+            lock (DbInterface.GetPlayerContextLock())
             {
-                return Strings.Account.banstatus.ToString(ban.StartTime, ban.Banner, ban.EndTime, ban.Reason);
+                var context = DbInterface.GetPlayerContext();
+                var ban = context?.Bans.SingleOrDefault(p => p.User == user && p.EndTime > DateTime.UtcNow) ??
+                      context?.Bans.SingleOrDefault(p => p.Ip == ip && p.EndTime > DateTime.UtcNow);
+                return ban != null ? Strings.Account.banstatus.ToString(ban.StartTime, ban.Banner, ban.EndTime, ban.Reason) : null;
             }
-            return null;
         }
     }
 }

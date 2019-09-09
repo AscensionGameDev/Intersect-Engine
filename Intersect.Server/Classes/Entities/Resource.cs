@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
-using Intersect.Server.Database.PlayerData.Characters;
+using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.General;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
@@ -35,7 +36,8 @@ namespace Intersect.Server.Entities
         public void Destroy(int dropitems = 0, EntityInstance killer = null)
         {
             Die(dropitems, killer);
-            PacketSender.SendEntityLeave(Id, (int) EntityTypes.Resource, MapId);
+            PacketSender.SendEntityDie(this);
+            PacketSender.SendEntityLeave(this);
         }
 
         public override void Die(int dropitems = 100, EntityInstance killer = null)
@@ -48,7 +50,7 @@ namespace Intersect.Server.Entities
             {
                 SpawnResourceItems(killer);
                 if (Base.AnimationId != Guid.Empty)
-                    PacketSender.SendAnimationToProximity(Base.AnimationId, -1, Guid.Empty, MapId, X, Y,
+                    PacketSender.SendAnimationToProximity(Base.AnimationId, -1, Guid.Empty, MapId, (byte)X, (byte)Y,
                         (int) Directions.Up);
             }
             PacketSender.SendEntityDataToProximity(this);
@@ -170,13 +172,15 @@ namespace Intersect.Server.Entities
             return (IsDead & Base.WalkableAfter) || (!IsDead && Base.WalkableBefore);
         }
 
-        public override byte[] Data()
+        public override EntityPacket EntityPacket(EntityPacket packet = null, Client forClient = null)
         {
-            ByteBuffer myBuffer = new ByteBuffer();
-            myBuffer.WriteBytes(base.Data());
-            myBuffer.WriteInteger(Convert.ToInt32(IsDead));
-            myBuffer.WriteGuid(Base.Id);
-            return myBuffer.ToArray();
+            if (packet == null) packet = new ResourceEntityPacket();
+            packet = base.EntityPacket(packet);
+
+            var pkt = (ResourceEntityPacket)packet;
+            pkt.ResourceId = Base.Id;
+            pkt.IsDead = IsDead;
+            return pkt;
         }
 
         public override EntityTypes GetEntityType()

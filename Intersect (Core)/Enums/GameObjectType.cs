@@ -34,11 +34,7 @@ namespace Intersect.Enums
 
         [GameObjectInfo(typeof(EventBase), "events")] Event,
 
-        [GameObjectInfo(typeof(PlayerSwitchBase), "player_switches")] PlayerSwitch,
-
         [GameObjectInfo(typeof(PlayerVariableBase), "player_variables")] PlayerVariable,
-
-        [GameObjectInfo(typeof(ServerSwitchBase), "server_switches")] ServerSwitch,
 
         [GameObjectInfo(typeof(ServerVariableBase), "server_variables")] ServerVariable,
 

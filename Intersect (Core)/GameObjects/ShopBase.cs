@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-    public class ShopBase : DatabaseObject<ShopBase>
+    public class ShopBase : DatabaseObject<ShopBase>, IFolderable
     {
         public bool BuyingWhitelist { get; set; } = true;
 
@@ -42,6 +42,9 @@ namespace Intersect.GameObjects
         [NotMapped]
         public List<ShopItem> SellingItems = new List<ShopItem>();
 
+        /// <inheritdoc />
+        public string Folder { get; set; } = "";
+
         [JsonConstructor]
         public ShopBase(Guid id) : base(id)
         {
@@ -62,14 +65,8 @@ namespace Intersect.GameObjects
         public Guid ItemId;
 
         [NotMapped]
+        [JsonIgnore]
         public ItemBase Item => ItemBase.Get(ItemId);
-
-        public ShopItem(ByteBuffer myBuffer)
-        {
-            ItemId = myBuffer.ReadGuid();
-            CostItemId = myBuffer.ReadGuid();
-            CostItemQuantity = myBuffer.ReadInteger();
-        }
 
         [JsonConstructor]
         public ShopItem(Guid itemId, Guid costItemId, int costVal)
@@ -77,15 +74,6 @@ namespace Intersect.GameObjects
             ItemId = itemId;
             CostItemId = costItemId;
             CostItemQuantity = costVal;
-        }
-
-        public byte[] Data()
-        {
-            ByteBuffer myBuffer = new ByteBuffer();
-            myBuffer.WriteGuid(ItemId);
-            myBuffer.WriteGuid(CostItemId);
-            myBuffer.WriteInteger(CostItemQuantity);
-            return myBuffer.ToArray();
         }
     }
 }

@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Security.Cryptography;
+
+using Intersect.Network.Packets;
+
 #if INTERSECT_DIAGNOSTIC
 using Intersect.Logging;
 #endif
 
 namespace Intersect.Network
 {
-    public abstract class ConnectionPacket : AbstractPacket
+    public abstract class ConnectionPacket : CerasPacket
     {
         protected const int SIZE_HANDSHAKE_SECRET = 32;
 
@@ -14,8 +17,12 @@ namespace Intersect.Network
 
         protected byte[] mHandshakeSecret;
 
+        protected ConnectionPacket()
+        {
+
+        }
+
         protected ConnectionPacket(RSACryptoServiceProvider rsa, byte[] handshakeSecret)
-            : base(null, PacketCode.Unknown)
         {
             mRsa = rsa ?? throw new ArgumentNullException();
 

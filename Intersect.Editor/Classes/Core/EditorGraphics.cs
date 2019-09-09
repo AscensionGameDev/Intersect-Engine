@@ -538,6 +538,8 @@ namespace Intersect.Editor
                                         tmpMap.Autotiles.UpdateAutoTiles(Globals.CurTileX, Globals.CurTileY,
                                             Globals.CurrentLayer, tmpMap.GenerateAutotileGrid());
                                     }
+
+                                    tmpMap.Autotiles.UpdateCliffAutotiles(tmpMap, Globals.CurrentLayer);
                                 }
                                 else if (Globals.CurrentTool == (int) EditingTool.Rectangle)
                                 {
@@ -606,6 +608,7 @@ namespace Intersect.Editor
                                                 tmpMap.Autotiles.UpdateAutoTiles(x0, y0,
                                                     Globals.CurrentLayer, tmpMap.GenerateAutotileGrid());
                                             }
+                                            tmpMap.Autotiles.UpdateCliffAutotiles(tmpMap, Globals.CurrentLayer);
                                         }
                                     }
                                 }
@@ -689,9 +692,9 @@ namespace Intersect.Editor
                 foreach (var light in tmpMap.Lights)
                 {
                     double w = light.Size;
-                    var x = xoffset + Options.MapWidth * Options.TileWidth +
+                    var x = xoffset + (Options.MapWidth * Options.TileWidth) - CurrentView.Left +
                             (light.TileX * Options.TileWidth + light.OffsetX) + Options.TileWidth / 2;
-                    var y = yoffset + Options.MapHeight * Options.TileHeight +
+                    var y = yoffset + (Options.MapHeight * Options.TileHeight) - CurrentView.Top +
                             (light.TileY * Options.TileHeight + light.OffsetY) + Options.TileHeight / 2;
                     if (!HideDarkness) AddLight(x, y, light, null);
                 }
@@ -1099,15 +1102,9 @@ namespace Intersect.Editor
                         {
                             float xpos = x * Options.TileWidth + xoffset + Options.TileWidth / 2;
                             float ypos = y * Options.TileHeight + yoffset + Options.TileHeight / 2;
-                            var tmpMapOld = tmpMap;
-                            if (tmpMap == TilePreviewStruct)
-                            {
-                                tmpMap = Globals.CurrentMap;
-                            }
                             if (tmpMap.Attributes[x, y] != null)
                             {
-                                var animInstance = tmpMap.GetAttributeAnimation(tmpMap.Attributes[x, y],
-                                    animation.Id);
+                                var animInstance = tmpMap.GetAttributeAnimation(tmpMap.Attributes[x, y], animation.Id);
                                 //Update if the animation isn't right!
                                 if (animInstance == null || animInstance.MyBase != animation)
                                 {
@@ -1118,7 +1115,6 @@ namespace Intersect.Editor
                                 animInstance.SetPosition((int) xpos, (int) ypos, 0);
                                 animInstance.Draw(renderTarget, upper, alternate);
                             }
-                            tmpMap = tmpMapOld;
                         }
                     }
                 }
@@ -1203,13 +1199,13 @@ namespace Intersect.Editor
                 }
 
                 //Draw the upper resources/animations
-                for (int y = Globals.CurrentMap.MapGridY - 1; y <= Globals.CurrentMap.MapGridY + 1; y++)
+                for (var y = Globals.CurrentMap.MapGridY - 1; y <= Globals.CurrentMap.MapGridY + 1; y++)
                 {
-                    for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
+                    for (var x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
                     {
                         if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                         {
-                            var map = MapInstance.Get(Globals.MapGrid.Grid[x, y].MapId);
+                            var map = MapInstance.Get(Globals.MapGrid.Grid?[x, y]?.MapId ?? Guid.Empty);
                             if (map != null)
                             {
                                 lock (map.MapLock)
@@ -1379,6 +1375,22 @@ namespace Intersect.Editor
                         System.Drawing.Color.FromArgb(LightColor.A, LightColor.R, LightColor.G, LightColor.B),
                         DarknessTexture,
                         BlendState.NonPremultiplied);
+
+                    DrawTexture(sWhiteTex, new RectangleF(0, 0, 1, 1),
+                        new RectangleF(0, 0, 32,32),
+                        System.Drawing.Color.FromArgb(255, 255, 0, 0), DarknessTexture, BlendState.NonPremultiplied);
+
+                    DrawTexture(sWhiteTex, new RectangleF(0, 0, 1, 1),
+                        new RectangleF(0, DarknessTexture.Height - 32, 32, 32),
+                        System.Drawing.Color.FromArgb(255, 255, 0, 0), DarknessTexture, BlendState.NonPremultiplied);
+
+                    DrawTexture(sWhiteTex, new RectangleF(0, 0, 1, 1),
+                        new RectangleF(DarknessTexture.Width - 32, 0, 32, 32),
+                        System.Drawing.Color.FromArgb(255, 255, 0, 0), DarknessTexture, BlendState.NonPremultiplied);
+
+                    DrawTexture(sWhiteTex, new RectangleF(0, 0, 1, 1),
+                        new RectangleF(DarknessTexture.Width -32 , DarknessTexture.Height - 32, 32, 32),
+                        System.Drawing.Color.FromArgb(255, 255, 0, 0), DarknessTexture, BlendState.NonPremultiplied);
                 }
                 else if (tmpMap.IsIndoors)
                 {
@@ -1415,7 +1427,7 @@ namespace Intersect.Editor
             }
 
             DrawTexture(DarknessTexture, new RectangleF(0, 0, DarknessTexture.Width, DarknessTexture.Height),
-                new RectangleF(-Options.MapWidth * Options.TileWidth, -Options.MapHeight * Options.TileHeight,
+                new RectangleF(CurrentView.Left - (Options.MapWidth * Options.TileWidth),CurrentView.Top - (Options.MapHeight * Options.TileHeight),
                     DarknessTexture.Width, DarknessTexture.Height), System.Drawing.Color.FromArgb(255, 255, 255, 255),
                 target,
                 MultiplyState);
@@ -1432,10 +1444,7 @@ namespace Intersect.Editor
                         var lightTex = GameContentManager.GetTexture(GameContentManager.TextureType.Misc, "lighticon.png");
                         if (lightTex != null)
                         {
-                            DrawTexture(lightTex, new RectangleF(0, 0, lightTex.Width, lightTex.Height),
-                                new RectangleF(CurrentView.Left + x * Options.TileWidth,
-                                    CurrentView.Top + y * Options.TileHeight, Options.TileWidth, Options.TileHeight),
-                                System.Drawing.Color.White, target);
+                            DrawTexture(lightTex, new RectangleF(0, 0, lightTex.Width, lightTex.Height), new RectangleF(x * Options.TileWidth + (Options.MapWidth * Options.TileWidth * 0) + CurrentView.Left, y * Options.TileHeight + (Options.MapHeight * Options.TileHeight * 0) + CurrentView.Top, Options.TileWidth, Options.TileHeight), System.Drawing.Color.White, target);
                         }
                     }
                 }

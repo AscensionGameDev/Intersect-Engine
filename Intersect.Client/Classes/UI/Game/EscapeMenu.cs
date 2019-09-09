@@ -1,4 +1,6 @@
-﻿using Intersect.Client.Framework.File_Management;
+﻿using System;
+
+using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
@@ -103,6 +105,13 @@ namespace Intersect.Client.UI.Game
         {
             mOptionsWindow.Show();
             Gui.GameUi?.EscapeMenu?.Hide();
+        }
+
+        /// <inheritdoc />
+        public override void ToggleHidden()
+        {
+            if (mOptionsWindow.IsVisible()) return;
+            base.ToggleHidden();
         }
 
         private static void GoToCharacterSelect_Clicked(Base sender, ClickedEventArgs arguments)

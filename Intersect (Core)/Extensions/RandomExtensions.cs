@@ -16,7 +16,9 @@ namespace Intersect.Extensions
         public static long NextLong([NotNull] this Random random, long maximum)
         {
             if (maximum <= 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(maximum), @"'maximum' must be greater than 0.");
+            }
 
             return NextLong(random) % maximum;
         }
@@ -24,10 +26,16 @@ namespace Intersect.Extensions
         public static long NextLong([NotNull] this Random random, long minimum, long maximum)
         {
             if (minimum >= maximum)
+            {
                 throw new ArgumentOutOfRangeException(nameof(maximum), @"'maximum' must be greater than 'minimum'.");
+            }
 
             var value = NextULong(random, (ulong)(maximum - minimum));
-            if (value < long.MaxValue) return minimum + (long)value;
+            if (value < long.MaxValue)
+            {
+                return minimum + (long)value;
+            }
+
             return maximum - (long)(ulong.MaxValue - value);
         }
 
@@ -46,7 +54,9 @@ namespace Intersect.Extensions
         public static ulong NextULong([NotNull] this Random random, ulong minimum, ulong maximum)
         {
             if (minimum >= maximum)
+            {
                 throw new ArgumentOutOfRangeException(nameof(maximum), @"'maximum' must be greater than 'minimum'.");
+            }
 
             return NextULong(random, maximum - minimum) + minimum;
         }
@@ -54,7 +64,9 @@ namespace Intersect.Extensions
         public static decimal NextDecimal([NotNull] this Random random, decimal maximum)
         {
             if (maximum <= 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(maximum), @"'maximum' must be greater than 0.");
+            }
 
             return random.NextDecimal() * maximum;
         }
@@ -62,7 +74,9 @@ namespace Intersect.Extensions
         public static decimal NextDecimal([NotNull] this Random random, decimal minimum, decimal maximum)
         {
             if (minimum >= maximum)
+            {
                 throw new ArgumentOutOfRangeException(nameof(maximum), @"'maximum' must be greater than 'minimum'.");
+            }
 
             var midpoint = minimum / 2M + maximum / 2M;
             var halfRange = Math.Abs(maximum - midpoint);
@@ -72,7 +86,9 @@ namespace Intersect.Extensions
         public static double NextDouble([NotNull] this Random random, double maximum)
         {
             if (maximum <= 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(maximum), @"'maximum' must be greater than 0.");
+            }
 
             return random.NextDouble() * maximum;
         }
@@ -80,7 +96,9 @@ namespace Intersect.Extensions
         public static double NextDouble([NotNull] this Random random, double minimum, double maximum)
         {
             if (minimum >= maximum)
+            {
                 throw new ArgumentOutOfRangeException(nameof(maximum), @"'maximum' must be greater than 'minimum'.");
+            }
 
             var midpoint = minimum / 2D + maximum / 2D;
             var halfRange = Math.Abs(maximum - midpoint);
@@ -95,7 +113,9 @@ namespace Intersect.Extensions
         public static float NextFloat([NotNull] this Random random, float maximum)
         {
             if (maximum <= 0)
+            {
                 throw new ArgumentOutOfRangeException(nameof(maximum), @"'maximum' must be greater than 0.");
+            }
 
             return (float)NextDouble(random, maximum);
         }
@@ -103,7 +123,9 @@ namespace Intersect.Extensions
         public static float NextFloat([NotNull] this Random random, float minimum, float maximum)
         {
             if (minimum >= maximum)
+            {
                 throw new ArgumentOutOfRangeException(nameof(maximum), @"'maximum' must be greater than 'minimum'.");
+            }
 
             return (float)NextDouble(random, minimum, maximum);
         }

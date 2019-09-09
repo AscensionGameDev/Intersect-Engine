@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+
+using Intersect.Client.Entities;
 using Intersect.Client.Framework.Audio;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
@@ -25,7 +27,7 @@ namespace Intersect.Client
         private static float sQueuedFade;
 
         //Sounds
-        private static List<MapSound> sGameSounds = new List<MapSound>();
+        private static List<GameSound> sGameSounds = new List<GameSound>();
 
         //Init
         public static void Init()
@@ -184,10 +186,18 @@ namespace Intersect.Client
         }
 
         //Sounds
-        public static MapSound AddMapSound(string filename, int x, int y, Guid mapId, bool loop, int distance)
+        public static MapSound AddMapSound(string filename, int x, int y, Guid mapId, bool loop, int distance, Entity parent = null)
         {
             if (sGameSounds?.Count > 128) return null;
-            var sound = new MapSound(filename, x, y, mapId, loop, distance);
+            var sound = new MapSound(filename, x, y, mapId, loop, distance, parent);
+            sGameSounds?.Add(sound);
+            return sound;
+        }
+
+        public static GameSound AddGameSound(string filename, bool loop)
+        {
+            if (sGameSounds?.Count > 128) return null;
+            var sound = new GameSound(filename, loop);
             sGameSounds?.Add(sound);
             return sound;
         }
@@ -209,46 +219,31 @@ namespace Intersect.Client
         }
     }
 
-    public class MapSound
+    public class GameSound
     {
-        private int mDistance;
-        private string mFilename;
-        private bool mLoop;
-        private Guid mMapId;
-        private GameAudioInstance mSound;
-        private float mVolume;
-        private int mX;
-        private int mY;
+        protected GameAudioInstance mSound;
+        protected string mFilename;
+        protected bool mLoop;
+        protected float mVolume;
         public bool Loaded;
 
-        public MapSound(string filename, int x, int y, Guid mapId, bool loop, int distance)
+        public GameSound(string filename, bool loop)
         {
-            if (filename == null) return;
+            if (String.IsNullOrEmpty(filename)) return;
             mFilename = GameContentManager.RemoveExtension(filename).ToLower();
-            mX = x;
-            mY = y;
-            mMapId = mapId;
             mLoop = loop;
-            mDistance = distance;
             GameAudioSource sound = Globals.ContentManager.GetSound(mFilename);
-            if (sound != null && Globals.Database.SoundVolume > 0)
+            if (sound != null)
             {
                 mSound = sound.CreateInstance();
                 mSound.SetLoop(mLoop);
-                mSound.SetVolume(0);
+                mSound.SetVolume(Globals.Database.SoundVolume);
                 mSound.Play();
                 Loaded = true;
             }
         }
 
-        public void UpdatePosition(int x, int y, Guid mapId)
-        {
-            mX = x;
-            mY = y;
-            mMapId = mapId;
-        }
-
-        public void Update()
+        public virtual bool Update()
         {
             if (Loaded)
             {
@@ -258,9 +253,66 @@ namespace Intersect.Client
                 }
                 else
                 {
-                    UpdateSoundVolume();
+                    return true;
                 }
             }
+            return false;
+        }
+
+        public virtual void Stop()
+        {
+            if (Loaded)
+            {
+                mSound.Dispose();
+                Loaded = false;
+            }
+        }
+
+        public bool Loop
+        {
+            get => mLoop;
+            set
+            {
+                mLoop = value;
+                mSound?.SetLoop(mLoop);
+            }
+        }
+    }
+
+    public class MapSound : GameSound
+    {
+        private int mDistance;
+        private Guid mMapId;
+        private int mX;
+        private int mY;
+        private Entity mEntity;
+
+        public MapSound(string filename, int x, int y, Guid mapId, bool loop, int distance, Entity parent = null) : base(filename, loop)
+        {
+            if (string.IsNullOrEmpty(filename) || mSound == null) return;
+            mDistance = distance;
+            mX = x;
+            mY = y;
+            mMapId = mapId;
+            mEntity = parent;
+            mSound.SetVolume(0);
+        }
+
+        public void UpdatePosition(int x, int y, Guid mapId)
+        {
+            mX = x;
+            mY = y;
+            mMapId = mapId;
+        }
+
+        public override bool Update()
+        {
+            if (base.Update())
+            {
+                UpdateSoundVolume();
+                return true;
+            }
+            return false;
         }
 
         private void UpdateSoundVolume()
@@ -271,7 +323,7 @@ namespace Intersect.Client
                 return;
             }
             var map = MapInstance.Get(mMapId);
-            if (map == null)
+            if (map == null && mEntity != Globals.Me)
             {
                 Stop();
                 return;
@@ -308,7 +360,7 @@ namespace Intersect.Client
             {
                 if (mDistance > 0 && Globals.GridMaps.Contains(mMapId))
                 {
-                    float volume = 100 - ((100 / mDistance) * CalculateSoundDistance());
+                    float volume = 100 - ((100 / (mDistance + 1)) * CalculateSoundDistance());
                     if (volume < 0)
                     {
                         volume = 0f;
@@ -325,16 +377,19 @@ namespace Intersect.Client
         private float CalculateSoundDistance()
         {
             float distance = 0f;
-            float playerx = Globals.Me.GetCenterPos().X;
-            float playery = Globals.Me.GetCenterPos().Y;
+            float playerx = 0f;
+            float playery = 0f;
             float soundx = 0;
             float soundy = 0;
             var map = MapInstance.Get(mMapId);
-            if (map != null)
+            var pMap = MapInstance.Get(Globals.Me.CurrentMap);
+            if (map != null && pMap != null)
             {
+                playerx = pMap.GetX() + Globals.Me.X * Options.TileWidth + 16;
+                playery = pMap.GetY() + Globals.Me.Y * Options.TileHeight + 16;
                 if (mX == -1 || mY == -1 || mDistance == -1)
                 {
-                    Framework.GenericClasses.Point player = new Framework.GenericClasses.Point()
+                    Point player = new Point()
                     {
                         X = (int) playerx,
                         Y = (int) playery
@@ -355,7 +410,7 @@ namespace Intersect.Client
 
         //Code Courtesy of  Philip Peterson. -- Released under MIT license.
         //Obtained, 06/27/2015 from http://wiki.unity3d.com/index.php/Distance_from_a_point_to_a_rectangle
-        public static float DistancePointToRectangle(Framework.GenericClasses.Point point, Rectangle rect)
+        public static float DistancePointToRectangle(Point point, Rectangle rect)
         {
             //  Calculate a distance between a point and a rectangle.
             //  The area around/in the rectangle is defined in terms of
@@ -439,15 +494,6 @@ namespace Intersect.Client
                     // IX
                     return 0f;
                 }
-            }
-        }
-
-        public void Stop()
-        {
-            if (Loaded)
-            {
-                mSound.Dispose();
-                Loaded = false;
             }
         }
     }

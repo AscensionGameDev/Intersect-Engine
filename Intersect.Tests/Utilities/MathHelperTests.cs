@@ -2,12 +2,16 @@
 using Intersect.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+using NUnit.Framework;
+
+using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
+
 namespace Intersect.Utilities
 {
-    [TestClass]
+    [TestFixture]
     public class MathHelperTests
     {
-        [TestMethod]
+        [Test]
         public void ClampDecimal()
         {
             var random = new Random();
@@ -28,7 +32,7 @@ namespace Intersect.Utilities
             Assert.IsTrue(i > 100);
         }
 
-        [TestMethod]
+        [Test]
         public void ClampDouble()
         {
             var random = new Random();
@@ -49,7 +53,7 @@ namespace Intersect.Utilities
             Assert.IsTrue(i > 100);
         }
 
-        [TestMethod]
+        [Test]
         public void ClampLong()
         {
             var random = new Random();
@@ -70,7 +74,7 @@ namespace Intersect.Utilities
             Assert.IsTrue(i > 100);
         }
 
-        [TestMethod]
+        [Test]
         public void ClampULong()
         {
             var random = new Random();

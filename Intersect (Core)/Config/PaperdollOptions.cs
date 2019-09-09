@@ -15,7 +15,8 @@ namespace Intersect.Config
             "Armor",
 			"Helmet",
 			"Weapon",
-            "Shield"
+            "Shield",
+            "Boots"
         };
         public List<string> Down = new List<string>()
         {
@@ -23,24 +24,27 @@ namespace Intersect.Config
 			"Armor",
 			"Helmet",
 			"Weapon",
-			"Shield"
-		};
+			"Shield",
+            "Boots"
+        };
         public List<string> Left = new List<string>()
         {
 			"Player",
 			"Armor",
 			"Helmet",
 			"Weapon",
-			"Shield"
-		};
+			"Shield",
+            "Boots"
+        };
         public List<string> Right = new List<string>()
         {
 			"Player",
 			"Armor",
 			"Helmet",
 			"Weapon",
-			"Shield"
-		};
+			"Shield",
+            "Boots"
+        };
 
         [JsonIgnore] public List<string>[] Directions;
 

@@ -9,6 +9,8 @@ using Intersect.Client.Maps;
 using Intersect.Client.Networking;
 using Intersect.Client.UI;
 using Intersect.Config;
+using Intersect.Configuration;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 
@@ -29,11 +31,25 @@ namespace Intersect.Client
 
             //Load Sounds
             GameAudio.Init();
-            GameAudio.PlayMusic(ClientOptions.MenuMusic, 3, 3, true);
+            GameAudio.PlayMusic(ClientConfiguration.Instance.MenuMusic, 3, 3, true);
 
             //Init Network
             GameNetwork.InitNetwork();
             GameFade.FadeIn();
+
+            //Make Json.Net Familiar with Our Object Types
+            var id = Guid.NewGuid();
+            foreach (var val in Enum.GetValues(typeof(GameObjectType)))
+            {
+                var type = ((GameObjectType)val);
+                if (type != GameObjectType.Event && type != GameObjectType.Time)
+                {
+                    var lookup = type.GetLookup();
+                    var item = lookup.AddNew(type.GetObjectType(), id);
+                    item.Load(item.JsonData);
+                    lookup.Delete(item);
+                }
+            }
 
             Globals.IsRunning = true;
         }
@@ -52,6 +68,7 @@ namespace Intersect.Client
             lock (Globals.GameLock)
             {
                 GameNetwork.Update();
+                Globals.System.Update();
                 GameFade.Update();
                 Gui.ToggleInput(Globals.GameState != GameStates.Intro);
 
@@ -87,9 +104,9 @@ namespace Intersect.Client
 
         private static void ProcessIntro()
         {
-            if (ClientOptions.IntroImages.Count > 0)
+            if (ClientConfiguration.Instance.IntroImages.Count > 0)
             {
-                GameTexture imageTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Image, ClientOptions.IntroImages[Globals.IntroIndex]);
+                GameTexture imageTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Image, ClientConfiguration.Instance.IntroImages[Globals.IntroIndex]);
                 if (imageTex != null)
                 {
                     if (Globals.IntroStartTime == -1)
@@ -123,7 +140,7 @@ namespace Intersect.Client
                 {
                     Globals.IntroIndex++;
                 }
-                if (Globals.IntroIndex >= ClientOptions.IntroImages.Count)
+                if (Globals.IntroIndex >= ClientConfiguration.Instance.IntroImages.Count)
                 {
                     Globals.GameState = GameStates.Menu;
                 }
@@ -141,58 +158,15 @@ namespace Intersect.Client
             //Check if maps are loaded and ready
             Globals.GameState = GameStates.Loading;
             Gui.DestroyGwen();
-            PacketSender.SendEnterGame();
         }
 
         private static void ProcessLoading()
         {
             if (Globals.Me == null || Globals.Me.MapInstance == null) return;
-            if (!_createdMapTextures)
-            {
-                if (ClientOptions.RenderCache) GameGraphics.CreateMapTextures(9 * 18);
-                _createdMapTextures = true;
-            }
             if (!_loadedTilesets && Globals.HasGameData)
             {
                 Globals.ContentManager.LoadTilesets(TilesetBase.GetNameList());
                 _loadedTilesets = true;
-            }
-            if (ClientOptions.RenderCache && Globals.Me != null && Globals.Me.MapInstance != null)
-            {
-                var gridX = Globals.Me.MapInstance.MapGridX;
-                var gridY = Globals.Me.MapInstance.MapGridY;
-                for (int x = gridX - 1; x <= gridX + 1; x++)
-                {
-                    for (int y = gridY - 1; y <= gridY + 1; y++)
-                    {
-                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
-                            Globals.MapGrid[x, y] != Guid.Empty)
-                        {
-                            var map = MapInstance.Get(Globals.MapGrid[x, y]);
-                            if (map != null)
-                            {
-                                if (map.MapLoaded == false)
-                                {
-                                    return;
-                                }
-                                else if (map.MapRendered == false && ClientOptions.RenderCache == true)
-                                {
-                                    lock (map.MapLock)
-                                    {
-                                        while (!map.MapRendered)
-                                            if (!map.PreRenderMap())
-                                                break;
-                                    }
-                                    return;
-                                }
-                            }
-                            else
-                            {
-                                return;
-                            }
-                        }
-                    }
-                }
             }
 
             GameAudio.PlayMusic(MapInstance.Get(Globals.Me.CurrentMap).Music, 3, 3, true);
@@ -227,7 +201,7 @@ namespace Intersect.Client
                                 var map = MapInstance.Get(Globals.MapGrid[x, y]);
                                 if (map != null)
                                 {
-                                    if (map.MapLoaded == false || (ClientOptions.RenderCache && map.MapRendered == false))
+                                    if (map.MapLoaded == false)
                                     {
                                         canShowWorld = false;
                                     }
@@ -244,6 +218,8 @@ namespace Intersect.Client
                 {
                     canShowWorld = false;
                 }
+
+                canShowWorld = true;
                 if (canShowWorld) Globals.NeedsMaps = false;
             }
             else
@@ -341,7 +317,7 @@ namespace Intersect.Client
 
         public static void Logout(bool characterSelect)
         {
-            GameAudio.StopMusic(3f);
+            GameAudio.PlayMusic(ClientConfiguration.Instance.MenuMusic, 3, 3, true);
             GameFade.FadeOut();
             PacketSender.SendLogout(characterSelect);
             Globals.LoggedIn = false;
@@ -349,6 +325,7 @@ namespace Intersect.Client
             Globals.GameState = GameStates.Menu;
             Globals.JoiningGame = false;
             Globals.NeedsMaps = true;
+            Gui.HideUi = false;
 
             //Dump Game Objects
             Globals.Me = null;

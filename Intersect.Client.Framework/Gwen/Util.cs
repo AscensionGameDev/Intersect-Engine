@@ -81,7 +81,7 @@ namespace Intersect.Client.Framework.Gwen
             int max = Math.Max(color.R, Math.Max(color.G, color.B));
             int min = Math.Min(color.R, Math.Min(color.G, color.B));
 
-            hsv.H = color.GetHue();
+            hsv.H = 0;
             hsv.s = (max == 0) ? 0 : 1f - (1f * min / max);
             hsv.V = max / 255f;
 

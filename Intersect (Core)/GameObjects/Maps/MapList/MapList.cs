@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using Intersect.Collections;
 using Intersect.GameObjects.Crafting;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace Intersect.GameObjects.Maps.MapList
@@ -13,11 +14,14 @@ namespace Intersect.GameObjects.Maps.MapList
         //So EF will save this :P
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; protected set; }
-        private static MapList sMapList = new MapList();
-        private static List<MapListMap> sOrderedMaps = new List<MapListMap>();
 
         [NotMapped]
         public List<MapListItem> Items { get; set; } = new List<MapListItem>();
+
+        public static MapList List { get; set; } = new MapList();
+
+        [NotNull]
+        public static List<MapListMap> OrderedMaps { get; } = new List<MapListMap>();
 
         [JsonIgnore]
         [Column("JsonData")]
@@ -29,7 +33,7 @@ namespace Intersect.GameObjects.Maps.MapList
 
         public void PostLoad(DatabaseObjectLookup gameMaps, bool isServer = true, bool isTopLevel = false)
         {
-            if (isTopLevel) sOrderedMaps.Clear();
+            if (isTopLevel) OrderedMaps.Clear();
             foreach (var itm in Items.ToArray())
             {
                 if (itm.Type == 0)
@@ -53,26 +57,12 @@ namespace Intersect.GameObjects.Maps.MapList
                     if (!removed)
                     {
                         mapItm.PostLoad(gameMaps, isServer);
-                        sOrderedMaps.Add(mapItm);
+                        OrderedMaps.Add(mapItm);
                     }
                 }
             }
             if (isTopLevel)
-                sOrderedMaps.Sort();
-        }
-
-        public static void SetList(MapList list)
-        {
-            sMapList = list;
-        }
-        public static MapList GetList()
-        {
-            return sMapList;
-        }
-
-        public static List<MapListMap> GetOrderedMaps()
-        {
-            return sOrderedMaps;
+                OrderedMaps.Sort();
         }
 
         public void AddMap(Guid mapId, long timeCreated, DatabaseObjectLookup gameMaps)
@@ -193,7 +183,7 @@ namespace Intersect.GameObjects.Maps.MapList
                 destParent = FindFolderParent(destId, null);
                 if (destParent == null)
                 {
-                    targetList = sMapList;
+                    targetList = List;
                 }
                 else
                 {
@@ -206,7 +196,7 @@ namespace Intersect.GameObjects.Maps.MapList
                 destParent = FindMapParent(destId, null);
                 if (destParent == null)
                 {
-                    targetList = sMapList;
+                    targetList = List;
                 }
                 else
                 {
@@ -219,7 +209,7 @@ namespace Intersect.GameObjects.Maps.MapList
                 sourceParent = FindFolderParent(srcId, null);
                 if (sourceParent == null)
                 {
-                    sourceList = sMapList;
+                    sourceList = List;
                 }
                 else
                 {
@@ -232,7 +222,7 @@ namespace Intersect.GameObjects.Maps.MapList
                 sourceParent = FindMapParent(srcId, null);
                 if (sourceParent == null)
                 {
-                    sourceList = sMapList;
+                    sourceList = List;
                 }
                 else
                 {
@@ -272,8 +262,8 @@ namespace Intersect.GameObjects.Maps.MapList
             MapListFolder self = FindDir(folderId);
             if (parent == null)
             {
-                sMapList.Items.AddRange(self.Children.Items);
-                sMapList.Items.Remove(self);
+                List.Items.AddRange(self.Children.Items);
+                List.Items.Remove(self);
             }
             else
             {
@@ -288,7 +278,7 @@ namespace Intersect.GameObjects.Maps.MapList
             MapListMap self = FindMap(mapid);
             if (parent == null)
             {
-                sMapList.Items.Remove(self);
+                List.Items.Remove(self);
             }
             else
             {
@@ -299,9 +289,9 @@ namespace Intersect.GameObjects.Maps.MapList
         public Guid FindFirstMap()
         {
             Guid lowestMap = Guid.Empty;
-            if (sOrderedMaps.Count > 0)
+            if (OrderedMaps.Count > 0)
             {
-                lowestMap = sOrderedMaps[0].MapId;
+                lowestMap = OrderedMaps[0].MapId;
             }
             return lowestMap;
         }

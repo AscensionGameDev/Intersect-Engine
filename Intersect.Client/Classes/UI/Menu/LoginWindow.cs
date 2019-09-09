@@ -32,6 +32,7 @@ namespace Intersect.Client.UI.Menu
         private TextBoxPassword mPasswordTextbox;
         private string mSavedPass = "";
         private LabeledCheckBox mSavePassChk;
+        private Button mForgotPassswordButton;
 
         //Controls
         private ImagePanel mUsernameBackground;
@@ -82,6 +83,12 @@ namespace Intersect.Client.UI.Menu
             mSavePassChk =
                 new LabeledCheckBox(mLoginWindow, "SavePassCheckbox") {Text = Strings.Login.savepass};
 
+            //Forgot Password Button
+            mForgotPassswordButton = new Button(mLoginWindow,"ForgotPasswordButton");
+            mForgotPassswordButton.IsHidden = true;
+            mForgotPassswordButton.SetText(Strings.Login.forgot);
+            mForgotPassswordButton.Clicked += mForgotPassswordButton_Clicked;
+
             //Login - Send Login Button
             mLoginBtn = new Button(mLoginWindow, "LoginButton");
             mLoginBtn.SetText(Strings.Login.login);
@@ -95,6 +102,14 @@ namespace Intersect.Client.UI.Menu
             LoadCredentials();
 
             mLoginWindow.LoadJsonUi(GameContentManager.UI.Menu, GameGraphics.Renderer.GetResolutionString());
+
+            //Hide Forgot Password Button if not supported by server
+
+        }
+
+        private void mForgotPassswordButton_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            Gui.MenuUi.MainMenu.NotifyOpenForgotPassword();
         }
 
         private void _usernameTextbox_Clicked(Base sender, ClickedEventArgs arguments)
@@ -106,12 +121,14 @@ namespace Intersect.Client.UI.Menu
         //Methods
         public void Update()
         {
-            if (!GameNetwork.Connected)
+            if (GameNetwork.Connected)
             {
-                Hide();
-                mMainMenu.Show();
-                Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.lostconnection));
+                return;
             }
+
+            Hide();
+            mMainMenu.Show();
+            Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.lostconnection));
         }
 
         public void Hide()
@@ -122,6 +139,7 @@ namespace Intersect.Client.UI.Menu
         public void Show()
         {
             mLoginWindow.IsHidden = false;
+            if (!mForgotPassswordButton.IsHidden) mForgotPassswordButton.IsHidden = !Options.Instance.SmtpValid;
         }
 
         //Input Handlers
@@ -187,8 +205,7 @@ namespace Intersect.Client.UI.Menu
                     password = ComputePasswordHash(mPasswordTextbox?.Text?.Trim());
                 }
             }
-
-            GameFade.FadeOut();
+            
             PacketSender.SendLogin(mUsernameTextbox?.Text, password);
             SaveCredentials();
             Globals.WaitingOnServer = true;

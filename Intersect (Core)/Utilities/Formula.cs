@@ -13,19 +13,50 @@ namespace Intersect.Utilities
 
     public class Formula
     {
-        [NotNull]
-        public static readonly List<string> SYSTEM_MATH_FUNCTIONS = new List<string> {
-            "Abs", "Acos", "Asin", "Atan", "BigMul", "Ceiling", "Cos", "Cosh", "DivRem", "Exp", "Floor", "IEEERemainder", "Log", "Max", "Min", "Pow", "Round", "Sign", "Sin", "Sinh", "Sqrt", "Tan", "Tanh", "Truncate"
+        [NotNull] public static readonly List<string> SYSTEM_MATH_FUNCTIONS = new List<string>
+        {
+            "Abs",
+            "Acos",
+            "Asin",
+            "Atan",
+            "BigMul",
+            "Ceiling",
+            "Cos",
+            "Cosh",
+            "DivRem",
+            "Exp",
+            "Floor",
+            "IEEERemainder",
+            "Log",
+            "Max",
+            "Min",
+            "Pow",
+            "Round",
+            "Sign",
+            "Sin",
+            "Sinh",
+            "Sqrt",
+            "Tan",
+            "Tanh",
+            "Truncate"
         };
 
         [CanBeNull] private string mLastSource;
 
         [NotNull] private string mSource;
-        [NotNull] public string Source
+
+        [NotNull]
+        public string Source
         {
             get => mSource;
             set
             {
+                if (string.Equals(mSource, value, StringComparison.Ordinal))
+                {
+                    return;
+                }
+
+                mLastSource = mSource;
                 mSource = value;
 
                 if (!Load())
@@ -54,6 +85,7 @@ namespace Intersect.Utilities
 
             Source = source;
             Functions = new Dictionary<string, FormulaFunction>();
+            Parameters = new Dictionary<string, FormulaParameter>();
 
             if (Expression == null)
             {
@@ -70,11 +102,11 @@ namespace Intersect.Utilities
 
             Expression = new Expression(Source);
 
-            Expression.EvaluateParameter += delegate (string name, ParameterArgs args)
+            Expression.EvaluateParameter += delegate(string name, ParameterArgs args)
             {
                 if (string.IsNullOrEmpty(name)) return;
 
-                if (!Parameters.TryGetValue(name, out FormulaParameter formulaParameter))
+                if (!Parameters.TryGetValue(name, out var formulaParameter))
                 {
                     Log.Error($"Tried to access non-existent parameter '{name}' in a formula.");
                     return;
@@ -88,18 +120,20 @@ namespace Intersect.Utilities
 
                 formulaParameter(args);
             };
+
             RegisterParameters();
 
             Expression.EvaluateFunction += delegate(string name, FunctionArgs args)
             {
                 if (string.IsNullOrEmpty(name)) return;
 
-                if (!Functions.TryGetValue(name, out FormulaFunction formulaFunction))
+                if (!Functions.TryGetValue(name, out var formulaFunction))
                 {
                     if (!SYSTEM_MATH_FUNCTIONS.Contains(name))
                     {
                         Log.Error($"Tried to access non-existent function '{name}' in a formula.");
                     }
+
                     return;
                 }
 
@@ -111,6 +145,7 @@ namespace Intersect.Utilities
 
                 formulaFunction(args);
             };
+
             RegisterFunctions();
 
             return true;
@@ -118,7 +153,6 @@ namespace Intersect.Utilities
 
         public virtual void RegisterFunctions()
         {
-            
         }
 
         public bool RegisterFunction([NotNull] string name, FormulaFunction function, bool shouldOverride = false)
@@ -177,7 +211,7 @@ namespace Intersect.Utilities
                 }
             }
 
-            Parameters.Add(name, delegate (ParameterArgs args)
+            Parameters.Add(name, delegate(ParameterArgs args)
             {
                 if (args == null)
                 {
@@ -192,6 +226,6 @@ namespace Intersect.Utilities
         }
 
         public T Evaluate<T>() where T : struct, IComparable, IFormattable, IConvertible, IComparable<T>, IEquatable<T>
-            => (T)(Convert.ChangeType(Expression.Evaluate(), typeof(T)) ?? default(T));
+            => (T) (Convert.ChangeType(Expression.Evaluate(), typeof(T)) ?? default(T));
     }
 }

@@ -60,10 +60,9 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.txtGotoLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtGotoLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.txtGotoLabel.Location = new System.Drawing.Point(72, 19);
-            this.txtGotoLabel.Multiline = true;
             this.txtGotoLabel.Name = "txtGotoLabel";
             this.txtGotoLabel.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.txtGotoLabel.Size = new System.Drawing.Size(175, 22);
+            this.txtGotoLabel.Size = new System.Drawing.Size(175, 20);
             this.txtGotoLabel.TabIndex = 22;
             // 
             // lblGotoLabel
@@ -95,7 +94,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.btnSave.Text = "Ok";
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
-            // EventCommand_GotoLabel
+            // EventCommandGotoLabel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;

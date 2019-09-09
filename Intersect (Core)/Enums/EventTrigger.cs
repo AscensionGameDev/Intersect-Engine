@@ -3,7 +3,8 @@
     public enum EventTrigger
     {
         ActionButton = 0,
-        PlayerTouch,
+        PlayerCollide,
         Autorun,
+        PlayerBump,
     }
 }

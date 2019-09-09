@@ -16,7 +16,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         ///     Initializes a new instance of the <see cref="TextBoxNumeric" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public TextBoxNumeric(Base parent) : base(parent)
+        public TextBoxNumeric(Base parent, string name = "") : base(parent,name)
         {
             AutoSizeToContents = false;
             SetText("0", false);

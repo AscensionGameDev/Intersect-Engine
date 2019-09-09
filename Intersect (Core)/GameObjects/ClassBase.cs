@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-    public class ClassBase : DatabaseObject<ClassBase>
+    public class ClassBase : DatabaseObject<ClassBase>, IFolderable
     {
         public const long DEFAULT_BASE_EXPERIENCE = 100;
         public const long DEFAULT_EXPERIENCE_INCREASE = 50;
@@ -184,12 +184,29 @@ namespace Intersect.GameObjects
         [NotMapped]
         public int[] VitalRegen = new int[(int) Vitals.VitalCount];
 
+        [JsonIgnore]
+        [Column("ExperienceOverrides")]
+        public string ExpOverridesJson
+        {
+            get => JsonConvert.SerializeObject(ExperienceOverrides);
+            set
+            {
+                ExperienceOverrides = JsonConvert.DeserializeObject<Dictionary<int, long>>(value ?? "");
+                if (ExperienceOverrides == null) ExperienceOverrides = new Dictionary<int, long>();
+            }
+        }
+        [NotMapped] public Dictionary<int, long> ExperienceOverrides = new Dictionary<int, long>();
+
+        /// <inheritdoc />
+        public string Folder { get; set; } = "";
+
         [JsonConstructor]
         public ClassBase(Guid id) : base(id)
         {
             Name = "New Class";
 
             ExperienceCurve = new ExperienceCurve();
+            ExperienceCurve.Calculate(1);
             BaseExp = DEFAULT_BASE_EXPERIENCE;
             ExpIncrease = DEFAULT_EXPERIENCE_INCREASE;
         }
@@ -200,13 +217,18 @@ namespace Intersect.GameObjects
             Name = "New Class";
 
             ExperienceCurve = new ExperienceCurve();
+            ExperienceCurve.Calculate(1);
             BaseExp = DEFAULT_BASE_EXPERIENCE;
             ExpIncrease = DEFAULT_EXPERIENCE_INCREASE;
         }
 
         [Pure]
         public long ExperienceToNextLevel(int level)
-            => ExperienceCurve.Calculate(level);
+        {
+            if (ExperienceOverrides.ContainsKey(level))
+                return ExperienceOverrides[level];
+            return ExperienceCurve.Calculate(level);
+        }
     }
 
     public class ClassItem

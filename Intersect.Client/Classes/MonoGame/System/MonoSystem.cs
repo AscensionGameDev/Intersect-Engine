@@ -7,6 +7,7 @@ namespace Intersect.Client.MonoGame.System
     public class MonoSystem : GameSystem
     {
         public Stopwatch StopWatch = new Stopwatch();
+        public long TotalMilliseconds;
 
         public MonoSystem()
         {
@@ -15,7 +16,17 @@ namespace Intersect.Client.MonoGame.System
 
         public override long GetTimeMs()
         {
+            return TotalMilliseconds;
+        }
+
+        public override long GetTimeMsExact()
+        {
             return StopWatch.ElapsedMilliseconds;
+        }
+
+        public override void Update()
+        {
+            TotalMilliseconds = StopWatch.ElapsedMilliseconds;
         }
 
         public override void Log(string msg)

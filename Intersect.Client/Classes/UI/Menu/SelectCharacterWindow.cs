@@ -37,6 +37,7 @@ namespace Intersect.Client.UI.Menu
         private Button mPlayButton;
         private Button mPrevCharButton;
         public List<Character> Characters = new List<Character>();
+        private Button mLogoutButton;
 
         //Selected Char
         private int mSelectedChar = 0;
@@ -91,6 +92,12 @@ namespace Intersect.Client.UI.Menu
             mNewButton = new Button(mCharacterSelectionPanel, "NewButton");
             mNewButton.SetText(Strings.CharacterSelection.New);
             mNewButton.Clicked += _newButton_Clicked;
+
+            //Logout Button
+            mLogoutButton = new Button(mCharacterSelectionPanel,"LogoutButton");
+            mLogoutButton.SetText(Strings.CharacterSelection.logout);
+            mLogoutButton.IsHidden = true;
+            mLogoutButton.Clicked += mLogoutButton_Clicked;
 
             mCharacterSelectionPanel.LoadJsonUi(GameContentManager.UI.Menu, GameGraphics.Renderer.GetResolutionString());
         }
@@ -173,8 +180,8 @@ namespace Intersect.Client.UI.Menu
                     if (isFace)
                     {
                         mCharacterPortrait.SetTextureRect(0, 0, mCharacterPortrait.Texture.GetWidth(), mCharacterPortrait.Texture.GetHeight());
-                        mCharacterPortrait.SetSize(mCharacterContainer.Width - mCharacterContainer.Padding.Left - mCharacterContainer.Padding.Right,mCharacterContainer.Height - mCharacterContainer.Padding.Top - mCharacterContainer.Padding.Bottom);
-                        mCharacterPortrait.SetPosition(mCharacterContainer.Padding.Left,mCharacterContainer.Padding.Top);
+                        mCharacterPortrait.SetSize(mCharacterPortrait.Texture.GetWidth(), mCharacterPortrait.Texture.GetHeight());
+                        mCharacterPortrait.SetPosition(mCharacterContainer.Width / 2 - mCharacterPortrait.Width / 2, mCharacterContainer.Height / 2 - mCharacterPortrait.Height / 2);
                         mCharacterPortrait.Show();
                     }
                     else
@@ -240,6 +247,11 @@ namespace Intersect.Client.UI.Menu
             mCharacterSelectionPanel.Hide();
         }
 
+        private void mLogoutButton_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            mMainMenu.Reset();
+        }
+
         private void _prevCharButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
             mSelectedChar--;
@@ -263,7 +275,7 @@ namespace Intersect.Client.UI.Menu
         private void _playButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
             ChatboxMsg.ClearMessages();
-            PacketSender.PlayGame(Characters[mSelectedChar].Id);
+            PacketSender.SendSelectCharacter(Characters[mSelectedChar].Id);
         }
 
         private void _deleteButton_Clicked(Base sender, ClickedEventArgs arguments)
@@ -277,14 +289,14 @@ namespace Intersect.Client.UI.Menu
 
         private void DeleteCharacter(Object sender, EventArgs e)
         {
-            PacketSender.DeleteChar((Guid)(((InputBox) sender).UserData));
+            PacketSender.SendDeleteCharacter((Guid)(((InputBox) sender).UserData));
             mSelectedChar = 0;
             UpdateDisplay();
         }
 
         private void _newButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            PacketSender.CreateNewCharacter();
+            PacketSender.SendNewCharacter();
         }
     }
 
@@ -304,13 +316,9 @@ namespace Intersect.Client.UI.Menu
             Id = id;
         }
 
-        public Character(Guid id, string name, string sprite, string face, int level, string charClass)
+        public Character(Guid id, string name, string sprite, string face, int level, string charClass, string[] equipment)
         {
-            for (int i = 0; i < Options.EquipmentSlots.Count + 1; i++)
-            {
-                Equipment[i] = "";
-            }
-            Equipment[0] = "Player";
+            Equipment = equipment;
             Id = id;
             Name = name;
             Sprite = sprite;

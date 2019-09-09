@@ -39,10 +39,6 @@ namespace Intersect.Client.UI.Game.Character
         private string mCurrentSprite = "";
         Label mDefenseLabel;
         private int[] mEmptyStatBoost = new int[Options.MaxStats];
-        private ScrollControl mEquipmentContainer;
-
-        //Initialization
-        private bool mInitialized = false;
         
         Label mMagicRstLabel;
         public ImagePanel[] PaperdollPanels;
@@ -66,7 +62,7 @@ namespace Intersect.Client.UI.Game.Character
             mCharacterWindow.DisableResizing();
 
             mCharacterName = new Label(mCharacterWindow, "CharacterNameLabel");
-            mCharacterName.SetTextColor(Framework.GenericClasses.Color.White, Label.ControlState.Normal);
+            mCharacterName.SetTextColor(Color.White, Label.ControlState.Normal);
 
             mCharacterLevelAndClass = new Label(mCharacterWindow, "ChatacterInfoLabel");
             mCharacterLevelAndClass.SetText("");
@@ -86,9 +82,6 @@ namespace Intersect.Client.UI.Game.Character
 
             Label equipmentLabel = new Label(mCharacterWindow, "EquipmentLabel");
             equipmentLabel.SetText(Strings.Character.equipment);
-
-            mEquipmentContainer = new ScrollControl(mCharacterWindow, "EquipmentContainer");
-            mEquipmentContainer.EnableScroll(true, false);
 
             Label statsLabel = new Label(mCharacterWindow, "StatsLabel");
             statsLabel.SetText(Strings.Character.stats);
@@ -115,6 +108,13 @@ namespace Intersect.Client.UI.Game.Character
             mAddMagicResistBtn.Clicked += _addMagicResistBtn_Clicked;
 
             mPointsLabel = new Label(mCharacterWindow, "PointsLabel");
+
+            for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+            {
+                Items.Add(new EquipmentItem(i, mCharacterWindow));
+                Items[i].Pnl = new ImagePanel(mCharacterWindow, "EquipmentItem" + i);
+                Items[i].Setup();
+            }
 
             mCharacterWindow.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
         }
@@ -145,31 +145,9 @@ namespace Intersect.Client.UI.Game.Character
             PacketSender.SendUpgradeStat((int) Stats.Attack);
         }
 
-        private void InitEquipmentContainer()
-        {
-            for (int i = 0; i < Options.EquipmentSlots.Count; i++)
-            {
-                Items.Add(new EquipmentItem(i, mCharacterWindow));
-                Items[i].Pnl = new ImagePanel(mEquipmentContainer, "EquipmentItem");
-                Items[i].Setup();
-
-                Items[i].Pnl.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
-
-                Items[i].Pnl
-                    .SetPosition(
-                        Items[i].Pnl.Padding.Left + (i * (Items[i].Pnl.Padding.Left + Items[i].Pnl.Padding.Right +
-                                                          Items[i].Pnl.Width)), Items[i].Pnl.Padding.Top);
-            }
-        }
-
         //Methods
         public void Update()
         {
-            if (!mInitialized)
-            {
-                InitEquipmentContainer();
-                mInitialized = true;
-            }
             if (mCharacterWindow.IsHidden)
             {
                 return;
@@ -290,7 +268,7 @@ namespace Intersect.Client.UI.Game.Character
                     if (Globals.Me.Inventory[Globals.Me.MyEquipment[i]].ItemId != Guid.Empty)
                     {
                         Items[i].Update(Globals.Me.Inventory[Globals.Me.MyEquipment[i]].ItemId,
-                            Globals.Me.Inventory[Globals.Me.MyEquipment[i]].StatBoost);
+                            Globals.Me.Inventory[Globals.Me.MyEquipment[i]].StatBuffs);
                     }
                     else
                     {

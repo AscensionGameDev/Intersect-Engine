@@ -222,7 +222,7 @@ namespace Intersect.Editor.Forms.Controls
         {
             list.Nodes.Clear();
             mRestrictMapIds = restrictMaps;
-            AddMapListToTree(MapList.GetList(), null, selectMapId, mRestrictMapIds);
+            AddMapListToTree(MapList.List, null, selectMapId, mRestrictMapIds);
         }
 
         private void AddMapListToTree(MapList mapList, TreeNode parent, Guid selectMapId = new Guid(), List<Guid> restrictMaps = null)
@@ -230,17 +230,17 @@ namespace Intersect.Editor.Forms.Controls
             TreeNode tmpNode;
             if (Chronological)
             {
-                for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
+                for (int i = 0; i < MapList.OrderedMaps.Count; i++)
                 {
-                    if (restrictMaps == null || restrictMaps.Contains(MapList.GetOrderedMaps()[i].MapId))
+                    if (restrictMaps == null || restrictMaps.Contains(MapList.OrderedMaps[i].MapId))
                     {
-                        tmpNode = list.Nodes.Add(MapList.GetOrderedMaps()[i].Name);
-                        tmpNode.Tag = (MapList.GetOrderedMaps()[i]);
+                        tmpNode = list.Nodes.Add(MapList.OrderedMaps[i].Name);
+                        tmpNode.Tag = (MapList.OrderedMaps[i]);
                         tmpNode.ImageIndex = 1;
                         tmpNode.SelectedImageIndex = 1;
                         if (selectMapId != Guid.Empty)
                         {
-                            if (MapList.GetOrderedMaps()[i].MapId == selectMapId)
+                            if (MapList.OrderedMaps[i].MapId == selectMapId)
                             {
                                 list.SelectedNode = tmpNode;
                                 list.Focus();
@@ -248,7 +248,7 @@ namespace Intersect.Editor.Forms.Controls
                         }
                         else
                         {
-                            if (mSelectionType == 0 && mSelectedMap == MapList.GetOrderedMaps()[i].MapId)
+                            if (mSelectionType == 0 && mSelectedMap == MapList.OrderedMaps[i].MapId)
                             {
                                 list.SelectedNode = tmpNode;
                                 list.Focus();

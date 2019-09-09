@@ -60,8 +60,7 @@
         AddChatboxText,
 
         //Logic Flow
-        SetSwitch,
-        SetVariable,
+        SetVariable = 5,
         SetSelfSwitch,
         ConditionalBranch,
         ExitEventProcess,
@@ -117,5 +116,15 @@
         //Pictures
         ShowPicture,
         HidePicture,
+
+        //Hide/show player
+        HidePlayer,
+        ShowPlayer,
+
+        //Equip Items
+        EquipItem,
+
+        //Chane Name Color
+        ChangeNameColor,
     }
 }

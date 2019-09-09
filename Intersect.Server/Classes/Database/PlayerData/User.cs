@@ -1,10 +1,19 @@
-﻿using System;
+﻿using Intersect.Server.Entities;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using Intersect.Server.Entities;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
+using System.Security.Cryptography;
+using System.Text;
+
+using Intersect.Server.Classes.Database.PlayerData.Api;
+
+using JetBrains.Annotations;
+using Intersect.Server.Database.PlayerData.Security;
+using Intersect.Server.General;
+using Intersect.Server.Networking;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 
@@ -18,118 +27,232 @@ namespace Intersect.Server.Database.PlayerData
 
         [Column(Order = 1)]
         public string Name { get; set; }
-        public string Salt { get; set; }
-        public string Password { get; set; }
+
+        [JsonIgnore] public string Salt { get; set; }
+
+        [JsonIgnore] public string Password { get; set; }
+
         [Column(Order = 2)]
         public string Email { get; set; }
+
         [Column("Power")]
+        [JsonIgnore]
         public string PowerJson
         {
             get => JsonConvert.SerializeObject(Power);
             set => Power = JsonConvert.DeserializeObject<UserRights>(value);
         }
+
         [NotMapped]
         public UserRights Power { get; set; }
+
+        [JsonIgnore]
+        public virtual List<Player> Players { get; set; } = new List<Player>();
+
+        [JsonIgnore]
+        public virtual List<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
+
         public string PasswordResetCode { get; set; }
+
+        [JsonIgnore]
         public DateTime? PasswordResetTime { get; set; }
 
-        //Instance Variables
-        private bool mMuted { get; set; }
-        private string mMuteStatus { get; set; }
+        #region Instance Variables
 
+        [NotMapped]
+        public bool IsMuted { get; private set; }
 
-        public virtual List<Player> Characters { get; set; } = new List<Player>();
+        [NotMapped]
+        public string MuteReason { get; private set; }
 
-        private static Func<PlayerContext, string, User> _getUser =
+        #endregion
+
+        public User Load()
+        {
+            // ReSharper disable once InvertIf
+            if (Players != null)
+            {
+                foreach (var player in Players)
+                {
+                    Player.Load(player);
+                }
+            }
+
+            return this;
+        }
+
+        #region Listing
+
+        [NotNull]
+        public static int Count()
+        {
+            lock (DbInterface.GetPlayerContextLock())
+            {
+                var context = DbInterface.GetPlayerContext();
+                return context.Users.Count();
+            }
+        }
+
+        [NotNull]
+        public static IEnumerable<User> List(int page, int count, [CanBeNull] PlayerContext playerContext = null)
+        {
+            if (playerContext == null)
+            {
+                lock (DbInterface.GetPlayerContextLock())
+                {
+                    var context = DbInterface.GetPlayerContext();
+                    return QueryUsers(context, page, count) ?? throw new InvalidOperationException();
+                }
+            }
+            else
+            {
+                return QueryUsers(playerContext, page, count) ?? throw new InvalidOperationException();
+            }
+        }
+
+        #endregion
+
+        #region Compiled Queries
+
+        [NotNull]
+        private static readonly Func<PlayerContext, int, int, IEnumerable<User>> QueryUsers =
+            EF.CompileQuery(
+                (PlayerContext context, int page, int count) =>
+                    context.Users
+                        .OrderBy(user => user.Id.ToString())
+                        .Skip(page * count)
+                        .Take(count)
+            ) ??
+            throw new InvalidOperationException();
+
+        [NotNull]
+        private static readonly Func<PlayerContext, string, User> QueryUserByName =
             EF.CompileQuery((PlayerContext context, string username) =>
                 context.Users
-                    .Include(p => p.Characters).ThenInclude(c => c.Bank)
-                    .Include(p => p.Characters).ThenInclude(c => c.Friends).ThenInclude(c => c.Target)
-                    .Include(p => p.Characters).ThenInclude(c => c.Hotbar)
-                    .Include(p => p.Characters).ThenInclude(c => c.Quests)
-                    .Include(p => p.Characters).ThenInclude(c => c.Switches)
-                    .Include(p => p.Characters).ThenInclude(c => c.Variables)
-                    .Include(p => p.Characters).ThenInclude(c => c.Items)
-                    .Include(p => p.Characters).ThenInclude(c => c.Spells)
-                    .Include(p => p.Characters).ThenInclude(c => c.Bank)
-                    .FirstOrDefault(c => c.Name.ToLower() == username.ToLower()));
+                    .Include(p => p.Players).ThenInclude(c => c.Bank)
+                    .Include(p => p.Players).ThenInclude(c => c.Friends).ThenInclude(c => c.Target)
+                    .Include(p => p.Players).ThenInclude(c => c.Hotbar)
+                    .Include(p => p.Players).ThenInclude(c => c.Quests)
+                    .Include(p => p.Players).ThenInclude(c => c.Variables)
+                    .Include(p => p.Players).ThenInclude(c => c.Items)
+                    .Include(p => p.Players).ThenInclude(c => c.Spells)
+                    .Include(p => p.Players).ThenInclude(c => c.Bank)
+                    .FirstOrDefault(user => user.Name.ToLower() == username.ToLower()))
+            ?? throw new InvalidOperationException();
 
-        private static Func<PlayerContext, Guid, Player> _getPlayerById =
+        [NotNull]
+        private static readonly Func<PlayerContext, Guid, User> QueryUserById =
             EF.CompileQuery((PlayerContext context, Guid id) =>
-                context.Characters
-                    .Include(p => p.Bank)
-                    .Include(p => p.Friends)
-                    .ThenInclude(p => p.Target)
-                    .Include(p => p.Hotbar)
-                    .Include(p => p.Quests)
-                    .Include(p => p.Switches)
-                    .Include(p => p.Variables)
-                    .Include(p => p.Items)
-                    .Include(p => p.Spells)
-                    .FirstOrDefault(c => c.Id == id));
+                context.Users
+                    .Include(p => p.Players).ThenInclude(c => c.Bank)
+                    .Include(p => p.Players).ThenInclude(c => c.Friends).ThenInclude(c => c.Target)
+                    .Include(p => p.Players).ThenInclude(c => c.Hotbar)
+                    .Include(p => p.Players).ThenInclude(c => c.Quests)
+                    .Include(p => p.Players).ThenInclude(c => c.Variables)
+                    .Include(p => p.Players).ThenInclude(c => c.Items)
+                    .Include(p => p.Players).ThenInclude(c => c.Spells)
+                    .Include(p => p.Players).ThenInclude(c => c.Bank)
+                    .FirstOrDefault(user => user.Id == id))
+            ?? throw new InvalidOperationException();
 
-        private static Func<PlayerContext, string, Player> _getPlayerByName =
-            EF.CompileQuery((PlayerContext context, string name) =>
-                context.Characters
-                    .Include(p => p.Bank)
-                    .Include(p => p.Friends)
-                    .ThenInclude(p => p.Target)
-                    .Include(p => p.Hotbar)
-                    .Include(p => p.Quests)
-                    .Include(p => p.Switches)
-                    .Include(p => p.Variables)
-                    .Include(p => p.Items)
-                    .Include(p => p.Spells)
-                    .FirstOrDefault(c => c.Name.ToLower() == name.ToLower()));
+        #endregion
 
-        public static User GetUser(PlayerContext context, string username)
+        public void Mute(bool muted, string reason)
         {
-            var user = _getUser(context, username);
-            foreach (var chr in user.Characters)
+            IsMuted = muted;
+            MuteReason = reason;
+        }
+
+        public bool IsPasswordValid([NotNull] string password)
+        {
+            if (string.IsNullOrEmpty(password))
             {
-                LoadCharacter(chr);
-            } return user;
-        }
-
-        public void SetMuted(bool muted, string reason)
-        {
-            mMuted = muted;
-            mMuteStatus = reason;
-        }
-
-        public bool IsMuted()
-        {
-            return mMuted;
-        }
-
-        public string GetMuteReason()
-        {
-            return mMuteStatus;
-        }
-
-        public static Player GetCharacter(PlayerContext context, Guid id)
-        {
-            var chr = LoadCharacter(_getPlayerById(context, id));
-            return chr;
-        }
-
-        public static Player GetCharacter(PlayerContext context, string name)
-        {
-            var chr = LoadCharacter(_getPlayerByName(context, name));
-            return chr;
-        }
-
-        public static Player LoadCharacter(Player character)
-        {
-            if (character != null)
-            {
-                character.FixLists();
-                character.Items = character.Items.OrderBy(p => p.Slot).ToList();
-                character.Bank = character.Bank.OrderBy(p => p.Slot).ToList();
-                character.Spells = character.Spells.OrderBy(p => p.Slot).ToList();
-                character.Hotbar = character.Hotbar.OrderBy(p => p.Index).ToList();
+                return false;
             }
-            return character;
+
+            using (var sha = new SHA256Managed())
+            {
+                var digest = sha.ComputeHash(Encoding.UTF8.GetBytes(password + Salt));
+                var hashword = BitConverter.ToString(digest).Replace("-", "");
+                return string.Equals(Password, hashword, StringComparison.Ordinal);
+            }
+        }
+
+        public bool TryChangePassword([NotNull] string oldPassword, [NotNull] string newPassword)
+        {
+            return IsPasswordValid(oldPassword) && TrySetPassword(newPassword);
+        }
+
+        public bool TrySetPassword([NotNull] string password)
+        {
+            using (var sha = new SHA256Managed())
+            {
+                using (var rng = new RNGCryptoServiceProvider())
+                {
+                    /* Generate a Salt */
+                    var saltBuffer = new byte[20];
+                    rng.GetBytes(saltBuffer);
+                    var salt = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(Convert.ToBase64String(saltBuffer)))).Replace("-", "");
+
+                    /* Hash the Password */
+                    var pass = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password + salt))).Replace("-", "");
+
+                    Salt = salt;
+                    Password = pass;
+
+                    return true;
+                }
+            }
+        }
+
+        public static Tuple<Client, User> Fetch(Guid userId, [CanBeNull] PlayerContext playerContext = null)
+        {
+            var client = Globals.Clients.Find(
+                queryClient => userId == queryClient?.User?.Id
+            );
+
+            return new Tuple<Client, User>(client, client?.User ?? Find(userId, playerContext));
+        }
+
+        public static Tuple<Client, User> Fetch([NotNull] string userName, [CanBeNull] PlayerContext playerContext = null)
+        {
+            var client = Globals.Clients.Find(
+                queryClient => EntityInstance.CompareName(userName, queryClient?.User?.Name)
+            );
+
+            return new Tuple<Client, User>(client, client?.User ?? Find(userName, playerContext));
+        }
+
+        public static User Find(Guid userId, [CanBeNull] PlayerContext playerContext = null)
+        {
+            if (playerContext == null)
+            {
+                lock (DbInterface.GetPlayerContextLock())
+                {
+                    var context = DbInterface.GetPlayerContext();
+                    return userId == Guid.Empty ? null : QueryUserById(context, userId);
+                }
+            }
+            else
+            {
+                return userId == Guid.Empty ? null : QueryUserById(playerContext, userId);
+            }
+        }
+
+        public static User Find(string username, [CanBeNull] PlayerContext playerContext = null)
+        {
+            if (playerContext == null)
+            {
+                lock (DbInterface.GetPlayerContextLock())
+                {
+                    var context = DbInterface.GetPlayerContext();
+                    return string.IsNullOrWhiteSpace(username) ? null : QueryUserByName(context, username);
+                }
+            }
+            else
+            {
+                return string.IsNullOrWhiteSpace(username) ? null : QueryUserByName(playerContext, username);
+            }
         }
     }
 }

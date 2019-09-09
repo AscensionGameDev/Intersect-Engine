@@ -19,6 +19,9 @@ namespace Intersect.Editor.Forms.Editors
         private CraftBase mCurrentCraft;
         private CraftingTableBase mEditorItem;
 
+        private List<string> mKnownFolders = new List<string>();
+        private List<string> mExpandedFolders = new List<string>();
+
         public FrmCraftingTables()
         {
             ApplyHooks();
@@ -40,21 +43,6 @@ namespace Intersect.Editor.Forms.Editors
             }
         }
 
-        public void InitEditor()
-        {
-            lstTables.Items.Clear();
-            lstTables.Items.AddRange(CraftingTableBase.Names);
-        }
-
-        private void lstCrafts_Click(object sender, EventArgs e)
-        {
-            if (mChangingName) return;
-            mEditorItem =
-                CraftingTableBase.Get(
-                    CraftingTableBase.IdFromList(lstTables.SelectedIndex));
-            UpdateEditor();
-        }
-
         private void UpdateEditor()
         {
             if (mEditorItem != null)
@@ -62,6 +50,8 @@ namespace Intersect.Editor.Forms.Editors
                 pnlContainer.Show();
 
                 txtName.Text = mEditorItem.Name;
+
+                cmbFolder.Text = mEditorItem.Folder;
 
                 //Populate the checked list box
                 lstAvailableCrafts.Items.Clear();
@@ -97,10 +87,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             mChangingName = true;
             mEditorItem.Name = txtName.Text;
-            if (lstTables.SelectedIndex > -1)
-            {
-                lstTables.Items[lstTables.SelectedIndex] = txtName.Text;
-            }
+            if (lstTables.SelectedNode != null && lstTables.SelectedNode.Tag != null) lstTables.SelectedNode.Text = txtName.Text;
             mChangingName = false;
         }
 
@@ -253,6 +240,11 @@ namespace Intersect.Editor.Forms.Editors
             grpGeneral.Text = Strings.CraftingTableEditor.general;
             lblName.Text = Strings.CraftingTableEditor.name;
 
+            //Searching/Sorting
+            btnChronological.ToolTipText = Strings.CraftingTableEditor.sortchronologically;
+            txtSearch.Text = Strings.CraftingTableEditor.searchplaceholder;
+            lblFolder.Text = Strings.CraftingTableEditor.folderlabel;
+
             btnSave.Text = Strings.CraftingTableEditor.save;
             btnCancel.Text = Strings.CraftingTableEditor.cancel;
         }
@@ -268,5 +260,204 @@ namespace Intersect.Editor.Forms.Editors
                 }
             }
         }
+
+        #region "Item List - Folders, Searching, Sorting, Etc"
+        public void InitEditor()
+        {
+            var selectedId = Guid.Empty;
+            var folderNodes = new Dictionary<string, TreeNode>();
+            if (lstTables.SelectedNode != null && lstTables.SelectedNode.Tag != null)
+            {
+                selectedId = (Guid)lstTables.SelectedNode.Tag;
+            }
+            lstTables.Nodes.Clear();
+
+            //Collect folders
+            var mFolders = new List<string>();
+            foreach (var itm in CraftingTableBase.Lookup)
+            {
+                if (!string.IsNullOrEmpty(((CraftingTableBase)itm.Value).Folder) && !mFolders.Contains(((CraftingTableBase)itm.Value).Folder))
+                {
+                    mFolders.Add(((CraftingTableBase)itm.Value).Folder);
+                    if (!mKnownFolders.Contains(((CraftingTableBase)itm.Value).Folder))
+                        mKnownFolders.Add(((CraftingTableBase)itm.Value).Folder);
+                }
+            }
+
+            mFolders.Sort();
+            mKnownFolders.Sort();
+            cmbFolder.Items.Clear();
+            cmbFolder.Items.Add("");
+            cmbFolder.Items.AddRange(mKnownFolders.ToArray());
+
+            lstTables.Sorted = !btnChronological.Checked;
+
+            if (!btnChronological.Checked && !CustomSearch())
+            {
+                foreach (var folder in mFolders)
+                {
+                    var node = lstTables.Nodes.Add(folder);
+                    node.ImageIndex = 0;
+                    node.SelectedImageIndex = 0;
+                    folderNodes.Add(folder, node);
+                }
+            }
+
+            foreach (var itm in CraftingTableBase.ItemPairs)
+            {
+                var node = new TreeNode(itm.Value);
+                node.Tag = itm.Key;
+                node.ImageIndex = 1;
+                node.SelectedImageIndex = 1;
+
+                var folder = CraftingTableBase.Get(itm.Key).Folder;
+                if (!string.IsNullOrEmpty(folder) && !btnChronological.Checked && !CustomSearch())
+                {
+                    var folderNode = folderNodes[folder];
+                    folderNode.Nodes.Add(node);
+                    if (itm.Key == selectedId)
+                        folderNode.Expand();
+                }
+                else
+                {
+                    lstTables.Nodes.Add(node);
+                }
+
+                if (CustomSearch())
+                {
+                    if (!node.Text.ToLower().Contains(txtSearch.Text.ToLower()))
+                    {
+                        node.Remove();
+                    }
+                }
+
+                if (itm.Key == selectedId)
+                    lstTables.SelectedNode = node;
+            }
+
+            var selectedNode = lstTables.SelectedNode;
+
+            if (!btnChronological.Checked) lstTables.Sort();
+
+            lstTables.SelectedNode = selectedNode;
+            foreach (var node in mExpandedFolders)
+            {
+                if (folderNodes.ContainsKey(node))
+                    folderNodes[node].Expand();
+            }
+
+        }
+
+        private void btnAddFolder_Click(object sender, EventArgs e)
+        {
+            var folderName = "";
+            var result = DarkInputBox.ShowInformation(Strings.CraftingTableEditor.folderprompt, Strings.CraftingTableEditor.foldertitle, ref folderName, DarkDialogButton.OkCancel);
+            if (result == DialogResult.OK && !string.IsNullOrEmpty(folderName))
+            {
+                if (!cmbFolder.Items.Contains(folderName))
+                {
+                    mEditorItem.Folder = folderName;
+                    mExpandedFolders.Add(folderName);
+                    InitEditor();
+                    cmbFolder.Text = folderName;
+                }
+            }
+        }
+
+        private void lstTables_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            var node = e.Node;
+            if (node != null)
+            {
+                if (e.Button == MouseButtons.Right)
+                {
+                    if (e.Node.Tag != null && e.Node.Tag.GetType() == typeof(Guid))
+                    {
+                        Clipboard.SetText(e.Node.Tag.ToString());
+                    }
+                }
+                var hitTest = lstTables.HitTest(e.Location);
+                if (hitTest.Location != TreeViewHitTestLocations.PlusMinus)
+                {
+                    if (node.Nodes.Count > 0)
+                    {
+                        if (node.IsExpanded)
+                        {
+                            node.Collapse();
+                        }
+                        else
+                        {
+                            node.Expand();
+                        }
+                    }
+                }
+
+                if (node.IsExpanded)
+                {
+                    if (!mExpandedFolders.Contains(node.Text)) mExpandedFolders.Add(node.Text);
+                }
+                else
+                {
+                    if (mExpandedFolders.Contains(node.Text)) mExpandedFolders.Remove(node.Text);
+                }
+            }
+        }
+
+        private void lstTables_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            if (mChangingName) return;
+            if (lstTables.SelectedNode == null || lstTables.SelectedNode.Tag == null) return;
+            mEditorItem = CraftingTableBase.Get((Guid)lstTables.SelectedNode.Tag);
+            UpdateEditor();
+        }
+
+        private void cmbFolder_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Folder = cmbFolder.Text;
+            InitEditor();
+        }
+
+        private void btnChronological_Click(object sender, EventArgs e)
+        {
+            btnChronological.Checked = !btnChronological.Checked;
+            InitEditor();
+        }
+
+        private void txtSearch_TextChanged(object sender, EventArgs e)
+        {
+            InitEditor();
+        }
+
+        private void txtSearch_Leave(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtSearch.Text))
+            {
+                txtSearch.Text = Strings.CraftingTableEditor.searchplaceholder;
+            }
+        }
+
+        private void txtSearch_Enter(object sender, EventArgs e)
+        {
+            txtSearch.SelectAll();
+            txtSearch.Focus();
+        }
+
+        private void btnClearSearch_Click(object sender, EventArgs e)
+        {
+            txtSearch.Text = Strings.CraftingTableEditor.searchplaceholder;
+        }
+
+        private bool CustomSearch()
+        {
+            return !string.IsNullOrWhiteSpace(txtSearch.Text) && txtSearch.Text != Strings.CraftingTableEditor.searchplaceholder;
+        }
+
+        private void txtSearch_Click(object sender, EventArgs e)
+        {
+            if (txtSearch.Text == Strings.CraftingTableEditor.searchplaceholder)
+                txtSearch.SelectAll();
+        }
+
+        #endregion
     }
 }

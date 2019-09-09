@@ -29,41 +29,14 @@ namespace Intersect.GameObjects
             ResetColors();
         }
 
-        public void LoadTimeBase(byte[] data)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(data);
-            SyncTime = Convert.ToBoolean(bf.ReadInteger());
-            RangeInterval = bf.ReadInteger();
-            Rate = (float) bf.ReadDouble();
-            DaylightHues = new Color[1440 / RangeInterval];
-            for (int i = 0; i < 1440 / RangeInterval; i++)
-            {
-                DaylightHues[i] = new Color((int) bf.ReadByte(), (int) bf.ReadByte(), (int) bf.ReadByte(),
-                    (int) bf.ReadByte());
-            }
-            bf.Dispose();
-        }
-
-        public byte[] SaveTimeBase()
-        {
-            var bf = new ByteBuffer();
-            bf.WriteInteger(Convert.ToInt32(SyncTime));
-            bf.WriteInteger(RangeInterval);
-            bf.WriteDouble((double) Rate);
-            for (int i = 0; i < 1440 / RangeInterval; i++)
-            {
-                bf.WriteByte(DaylightHues[i].A);
-                bf.WriteByte(DaylightHues[i].R);
-                bf.WriteByte(DaylightHues[i].G);
-                bf.WriteByte(DaylightHues[i].B);
-            }
-            return bf.ToArray();
-        }
-
         public void LoadFromJson(string json)
         {
-            sTimeBase = JsonConvert.DeserializeObject<TimeBase>(json);
+            JsonConvert.PopulateObject(json, sTimeBase);
+        }
+
+        public string GetInstanceJson()
+        {
+            return JsonConvert.SerializeObject(this);
         }
 
         public static string GetTimeJson()

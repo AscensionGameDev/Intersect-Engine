@@ -1,4 +1,6 @@
 ﻿using System;
+
+using Intersect.Admin.Actions;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
@@ -264,14 +266,14 @@ namespace Intersect.Client.UI.Game
             mMapList.SetPosition(4f, 316);
             mMapList.Height = 188;
             mMapList.Width = mAdminWindow.Width - 8;
-            mMapList.MaximumSize = new Framework.GenericClasses.Point(4096, 999999);
+            mMapList.MaximumSize = new Point(4096, 999999);
         }
 
         public void UpdateMapList()
         {
             mMapList.Dispose();
             CreateMapList();
-            AddMapListToTree(MapList.GetList(), null);
+            AddMapListToTree(MapList.List, null);
         }
 
         private void AddMapListToTree(MapList mapList, TreeNode parent)
@@ -279,10 +281,10 @@ namespace Intersect.Client.UI.Game
             TreeNode tmpNode;
             if (mChkChronological.IsChecked)
             {
-                for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
+                for (int i = 0; i < MapList.OrderedMaps.Count; i++)
                 {
-                    tmpNode = mMapList.AddNode(MapList.GetOrderedMaps()[i].Name);
-                    tmpNode.UserData = (MapList.GetOrderedMaps()[i]).MapId;
+                    tmpNode = mMapList.AddNode(MapList.OrderedMaps[i].Name);
+                    tmpNode.UserData = (MapList.OrderedMaps[i]).MapId;
                     tmpNode.DoubleClicked += tmpNode_DoubleClicked;
                     tmpNode.Clicked += tmpNode_DoubleClicked;
                 }
@@ -331,7 +333,7 @@ namespace Intersect.Client.UI.Game
         {
             if (mNameTextbox.Text.Trim().Length > 0)
             {
-                PacketSender.SendAdminAction((int) AdminActions.Kick, mNameTextbox.Text);
+                PacketSender.SendAdminAction(new KickAction(mNameTextbox.Text));
             }
         }
 
@@ -339,7 +341,7 @@ namespace Intersect.Client.UI.Game
         {
             if (mNameTextbox.Text.Trim().Length > 0)
             {
-                PacketSender.SendAdminAction((int) AdminActions.Kill, mNameTextbox.Text);
+                PacketSender.SendAdminAction(new KillAction(mNameTextbox.Text));
             }
         }
 
@@ -347,7 +349,7 @@ namespace Intersect.Client.UI.Game
         {
             if (mNameTextbox.Text.Trim().Length > 0)
             {
-                PacketSender.SendAdminAction((int) AdminActions.WarpToMe, mNameTextbox.Text);
+                PacketSender.SendAdminAction(new WarpToMeAction(mNameTextbox.Text));
             }
         }
 
@@ -355,7 +357,7 @@ namespace Intersect.Client.UI.Game
         {
             if (mNameTextbox.Text.Trim().Length > 0)
             {
-                PacketSender.SendAdminAction((int) AdminActions.WarpMeTo, mNameTextbox.Text);
+                PacketSender.SendAdminAction(new WarpMeToAction(mNameTextbox.Text));
             }
         }
 
@@ -370,17 +372,13 @@ namespace Intersect.Client.UI.Game
 
         void MuteUser(object sender, EventArgs e)
         {
-            PacketSender.SendAdminAction((int) AdminActions.Mute, mNameTextbox.Text,
-                mBanMuteWindow.GetDuration().ToString(), mBanMuteWindow.GetReason(),
-                Convert.ToString(mBanMuteWindow.BanIp()));
+            PacketSender.SendAdminAction(new MuteAction(mNameTextbox.Text,mBanMuteWindow.GetDuration(), mBanMuteWindow.GetReason(), mBanMuteWindow.BanIp()));
             mBanMuteWindow.Dispose();
         }
 
         void BanUser(object sender, EventArgs e)
         {
-            PacketSender.SendAdminAction((int) AdminActions.Ban, mNameTextbox.Text,
-                mBanMuteWindow.GetDuration().ToString(), mBanMuteWindow.GetReason(),
-                Convert.ToString(mBanMuteWindow.BanIp()));
+            PacketSender.SendAdminAction(new BanAction(mNameTextbox.Text, mBanMuteWindow.GetDuration(), mBanMuteWindow.GetReason(), mBanMuteWindow.BanIp()));
             mBanMuteWindow.Dispose();
         }
 
@@ -398,7 +396,7 @@ namespace Intersect.Client.UI.Game
         {
             if (mNameTextbox.Text.Trim().Length > 0)
             {
-                PacketSender.SendAdminAction((int) AdminActions.SetFace, mNameTextbox.Text, mFaceDropdown.Text);
+                PacketSender.SendAdminAction(new SetFaceAction(mNameTextbox.Text, mFaceDropdown.Text));
             }
         }
 
@@ -424,19 +422,19 @@ namespace Intersect.Client.UI.Game
 
         void UnmuteUser(object sender, EventArgs e)
         {
-            PacketSender.SendAdminAction((int) AdminActions.UnMute, mNameTextbox.Text);
+            PacketSender.SendAdminAction(new UnmuteAction(mNameTextbox.Text));
         }
 
         void UnbanUser(object sender, EventArgs e)
         {
-            PacketSender.SendAdminAction((int) AdminActions.UnBan, mNameTextbox.Text);
+            PacketSender.SendAdminAction(new UnbanAction(mNameTextbox.Text));
         }
 
         void _setSpriteButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
             if (mNameTextbox.Text.Trim().Length > 0)
             {
-                PacketSender.SendAdminAction((int) AdminActions.SetSprite, mNameTextbox.Text, mSpriteDropdown.Text);
+                PacketSender.SendAdminAction(new SetSpriteAction(mNameTextbox.Text, mSpriteDropdown.Text));
             }
         }
 
@@ -444,8 +442,7 @@ namespace Intersect.Client.UI.Game
         {
             if (mNameTextbox.Text.Trim().Length > 0)
             {
-                PacketSender.SendAdminAction((int) AdminActions.SetAccess, mNameTextbox.Text,
-                    mAccessDropdown.SelectedItem.UserData.ToString());
+                PacketSender.SendAdminAction(new SetAccessAction(mNameTextbox.Text, mAccessDropdown.SelectedItem.UserData.ToString()));
             }
         }
 
@@ -456,7 +453,7 @@ namespace Intersect.Client.UI.Game
 
         void tmpNode_DoubleClicked(Base sender, ClickedEventArgs arguments)
         {
-            PacketSender.SendAdminAction((int) AdminActions.WarpTo,"","","","",(Guid)((TreeNode) sender).UserData);
+            PacketSender.SendAdminAction(new WarpToMapAction((Guid)((TreeNode) sender).UserData));
         }
 
         public void Update()

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+
 using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Framework.File_Management;
@@ -12,6 +14,7 @@ using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.Logging;
 using JetBrains.Annotations;
 
 namespace Intersect.Client.UI.Game.EntityPanel
@@ -24,6 +27,7 @@ namespace Intersect.Client.UI.Game.EntityPanel
         public float CurExpWidth;
 
         public float CurHpWidth;
+        public float CurShieldWidth;
         public float CurMpWidth;
         private string mCurrentSprite = "";
         public ImagePanel EntityFace;
@@ -57,6 +61,7 @@ namespace Intersect.Client.UI.Game.EntityPanel
         public Label ExpTitle;
         public ImagePanel HpBackground;
         public ImagePanel HpBar;
+        public ImagePanel ShieldBar;
         public Label HpLbl;
         public Label HpTitle;
         private bool mInitialized;
@@ -69,15 +74,15 @@ namespace Intersect.Client.UI.Game.EntityPanel
         public ImagePanel[] PaperdollPanels;
         public string[] PaperdollTextures;
 
-        //Spell List
-        public List<SpellStatus> Items = new List<SpellStatus>();
-
         private long mLastUpdateTime;
         public Button PartyLabel;
         public bool PlayerBox;
         public Button TradeLabel;
+        public Button FriendLabel;
 
         public bool UpdateStatuses;
+
+        private Dictionary<Guid,SpellStatus> mActiveStatuses = new Dictionary<Guid, SpellStatus>();
 
         //Init
         public EntityBox(Canvas gameCanvas, EntityTypes entityType, Entity myEntity, bool playerBox = false)
@@ -86,6 +91,7 @@ namespace Intersect.Client.UI.Game.EntityPanel
             EntityType = entityType;
             PlayerBox = playerBox;
             EntityWindow = playerBox ? new ImagePanel(gameCanvas, "PlayerBox") : new ImagePanel(gameCanvas, "TargetBox");
+            EntityWindow.ShouldCacheToTexture = true;
 
             EntityInfoPanel = new ImagePanel(EntityWindow, "EntityInfoPanel");
 
@@ -120,6 +126,7 @@ namespace Intersect.Client.UI.Game.EntityPanel
 
             HpBackground = new ImagePanel(EntityInfoPanel, "HPBarBackground");
             HpBar = new ImagePanel(EntityInfoPanel, "HPBar");
+            ShieldBar = new ImagePanel(EntityInfoPanel, "ShieldBar");
             HpTitle = new Label(EntityInfoPanel, "HPTitle");
             HpTitle.SetText(Strings.EntityBox.vital0);
             HpLbl = new Label(EntityInfoPanel, "HPLabel");
@@ -146,13 +153,36 @@ namespace Intersect.Client.UI.Game.EntityPanel
             PartyLabel.SetToolTipText(Strings.EntityBox.partytip.ToString(MyEntity.Name));
             PartyLabel.Clicked += invite_Clicked;
 
-            EntityStatusPanel = new ImagePanel(EntityWindow, "StatusArea");
+            FriendLabel = new Button(EntityInfoPanel, "FriendButton");
+            FriendLabel.SetText(Strings.EntityBox.friend);
+            FriendLabel.SetToolTipText(Strings.EntityBox.friendtip.ToString(MyEntity.Name));
+            FriendLabel.Clicked += friendRequest_Clicked;
+            FriendLabel.IsHidden = true;
 
-            UpdateSpellStatus();
+            EntityStatusPanel = new ImagePanel(EntityWindow, "StatusArea");
 
             SetEntity(myEntity);
 
             EntityWindow.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
+
+            UpdateSpellStatus();
+
+            i = 0;
+            for (int z = 0; z < Options.PaperdollOrder[1].Count; z++)
+            {
+                if (Options.PaperdollOrder[1][z] == "Player")
+                {
+                    EntityFace.RenderColor = EntityFaceContainer.RenderColor;
+                }
+                else
+                {
+                    PaperdollPanels[i].RenderColor = EntityFaceContainer.RenderColor;
+                    i++;
+                }
+            }
+
+            
+
 
             EntityWindow.Hide();
 
@@ -177,6 +207,7 @@ namespace Intersect.Client.UI.Game.EntityPanel
                     {
                         TradeLabel.Hide();
                         PartyLabel.Hide();
+                        FriendLabel.Hide();
                     }
                     else
                     {
@@ -196,6 +227,7 @@ namespace Intersect.Client.UI.Game.EntityPanel
                     ExpTitle.Hide();
                     TradeLabel.Hide();
                     PartyLabel.Hide();
+                    FriendLabel.Hide();
                     EntityMap.Hide();
                     break;
                 case EntityTypes.Event:
@@ -213,10 +245,12 @@ namespace Intersect.Client.UI.Game.EntityPanel
                     HpTitle.Hide();
                     TradeLabel.Hide();
                     PartyLabel.Hide();
+                    FriendLabel.Hide();
                     EntityMap.Hide();
                     break;
             }
             EntityName.SetText(MyEntity.Name);
+            ShieldBar.Hide();
         }
 
         //Update
@@ -235,7 +269,7 @@ namespace Intersect.Client.UI.Game.EntityPanel
                 UpdateSpellStatus();
                 if (EntityType == EntityTypes.Event)
                 {
-                    EventDesc.AddText(((Event) MyEntity).Desc, Framework.GenericClasses.Color.White);
+                    EventDesc.AddText(((Event) MyEntity).Desc, Color.White);
                     EventDesc.SizeToChildren(false, true);
                 }
                 mInitialized = true;
@@ -254,6 +288,10 @@ namespace Intersect.Client.UI.Game.EntityPanel
                 UpdateHpBar(elapsedTime);
                 UpdateMpBar(elapsedTime);
             }
+            else
+            {
+                if (!EntityNameAndLevel.IsHidden) EntityNameAndLevel.Text = MyEntity.Name;
+            }
 
             //If player draw exp bar
             if (MyEntity == Globals.Me)
@@ -267,50 +305,78 @@ namespace Intersect.Client.UI.Game.EntityPanel
                 UpdateStatuses = false;
             }
 
-            //Update each status item
-            for (int i = 0; i < Items.Count; i++)
-            {
-                Items[i].Update();
-            }
+            foreach (var itm in mActiveStatuses)
+                itm.Value.Update();
 
             mLastUpdateTime = Globals.System.GetTimeMs();
         }
 
         public void UpdateSpellStatus()
         {
-            foreach (SpellStatus s in Items)
+            //This is shit code that should be removed asap
+            //foreach (SpellStatus s in Items)
+            //{
+            //    s.Pnl.Texture = null;
+            //    s.Container.Hide();
+            //    s.Container.Texture = null;
+            //    EntityStatusPanel.RemoveChild(s.Container, true);
+            //    s.pnl_HoverLeave(null, null);
+            //}
+            //Items.Clear();
+
+            //Remove 'Dead' Statuses
+            var statuses = mActiveStatuses.Keys.ToArray();
+            foreach (var status in statuses)
             {
-                s.Pnl.Texture = null;
-                s.Container.Texture = null;
-                EntityStatusPanel.RemoveChild(s.Container, true);
-                s.pnl_HoverLeave(null, null);
+                if (!MyEntity.StatusActive(status))
+                {
+                    var s = mActiveStatuses[status];
+                    s.Pnl.Texture = null;
+                    s.Container.Hide();
+                    s.Container.Texture = null;
+                    EntityStatusPanel.RemoveChild(s.Container, true);
+                    s.pnl_HoverLeave(null, null);
+                    mActiveStatuses.Remove(status);
+                }
+                else
+                {
+                    mActiveStatuses[status].UpdateStatus(MyEntity.GetStatus(status));
+                }
             }
-            Items.Clear();
+
 
             //Add all of the spell status effects
             for (int i = 0; i < MyEntity.Status.Count; i++)
             {
-                Items.Add(new SpellStatus(this, i));
-                if (PlayerBox)
+                var id = MyEntity.Status[i].SpellId;
+                SpellStatus itm = null;
+                if (!mActiveStatuses.ContainsKey(id))
                 {
-                    Items[i].Container = new ImagePanel(EntityStatusPanel, "PlayerStatusIcon");
+                    itm = new SpellStatus(this, MyEntity.Status[i]);
+                    if (PlayerBox)
+                    {
+                        itm.Container = new ImagePanel(EntityStatusPanel, "PlayerStatusIcon");
+                    }
+                    else
+                    {
+                        itm.Container = new ImagePanel(EntityStatusPanel, "TargetStatusIcon");
+                    }
+
+                    itm.Setup();
+
+                    itm.Container.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
+                    itm.Container.Name = "";
+                    mActiveStatuses.Add(id,itm);
                 }
                 else
                 {
-                    Items[i].Container = new ImagePanel(EntityStatusPanel, "TargetStatusIcon");
+                    itm = mActiveStatuses[id];
                 }
-                Items[i].Setup();
-                
-                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
-                Items[i].Container.Name = "";
+                var xPadding = itm.Container.Margin.Left + itm.Container.Margin.Right;
+                var yPadding = itm.Container.Margin.Top + itm.Container.Margin.Bottom;
 
-                var xPadding = Items[i].Container.Padding.Left + Items[i].Container.Padding.Right;
-                var yPadding = Items[i].Container.Padding.Top + Items[i].Container.Padding.Bottom;
-                Items[i].Container.SetPosition(
-                    (i % (EntityStatusPanel.Width / (float)(Items[i].Container.Width + xPadding))) *
-                    (Items[i].Container.Width + xPadding) + xPadding,
-                    (i / (EntityStatusPanel.Width / (float)(Items[i].Container.Width + xPadding))) *
-                    (Items[i].Container.Height + yPadding) + yPadding);
+                itm.Container.SetPosition((i % (EntityStatusPanel.Width / Math.Max(1, EntityStatusPanel.Width / (itm.Container.Width + xPadding)))) * (itm.Container.Width + xPadding) + xPadding, (i / Math.Max(1,EntityStatusPanel.Width / (itm.Container.Width + xPadding))) * (itm.Container.Height + yPadding) + yPadding);
+
             }
         }
 
@@ -335,17 +401,39 @@ namespace Intersect.Client.UI.Game.EntityPanel
 
         private void UpdateHpBar(float elapsedTime)
         {
+
+
             float targetHpWidth = 0f;
+            float targetShieldWidth = 0f;
             if (MyEntity.MaxVital[(int) Vitals.Health] > 0)
             {
-                targetHpWidth = (MyEntity.Vital[(int) Vitals.Health] /
-                                 (float) MyEntity.MaxVital[(int) Vitals.Health]);
-                targetHpWidth = Math.Min(1, Math.Max(0, targetHpWidth));
+                var maxVital = MyEntity.MaxVital[(int)Vitals.Health];
+                int shieldSize = 0;
+
+                //Check for shields
+                foreach (var status in MyEntity.Status)
+                {
+                    if (status.Type == StatusTypes.Shield)
+                    {
+                        shieldSize += status.Shield[(int)Vitals.Health];
+                    }
+                }
+
+                if (shieldSize + MyEntity.Vital[(int)Vitals.Health] > maxVital)
+                    maxVital = shieldSize + MyEntity.Vital[(int)Vitals.Health];
+
+                var width = HpBackground.Width;
+
+                var hpfillRatio = ((float)MyEntity.Vital[(int)Vitals.Health] / maxVital);
+                hpfillRatio = Math.Min(1, Math.Max(0, hpfillRatio));
+                targetHpWidth = (float)Math.Ceiling(hpfillRatio * width);
+
+                var shieldfillRatio = ((float)shieldSize / maxVital);
+                shieldfillRatio = Math.Min(1, Math.Max(0, shieldfillRatio));
+                targetShieldWidth = (float)Math.Floor(shieldfillRatio * width);
+
                 //Fix the Labels
-                HpLbl.Text = Strings.EntityBox.vital0val.ToString(MyEntity.Vital[(int) Vitals.Health],
-                    MyEntity.MaxVital[(int) Vitals.Health]);
-                //Multiply by the width of the bars.
-                targetHpWidth *= HpBackground.Width;
+                HpLbl.Text = Strings.EntityBox.vital0val.ToString(MyEntity.Vital[(int) Vitals.Health], MyEntity.MaxVital[(int) Vitals.Health]);
             }
             else
             {
@@ -380,6 +468,42 @@ namespace Intersect.Client.UI.Game.EntityPanel
                     HpBar.SetTextureRect(0, 0, (int) CurHpWidth, HpBar.Height);
                     HpBar.IsHidden = false;
                 }
+            }
+
+
+            if ((int)targetShieldWidth != CurShieldWidth)
+            {
+                if ((int)targetShieldWidth > CurShieldWidth)
+                {
+                    CurShieldWidth += (100f * elapsedTime);
+                    if (CurShieldWidth > (int)targetShieldWidth)
+                    {
+                        CurShieldWidth = targetShieldWidth;
+                    }
+                }
+                else
+                {
+                    CurShieldWidth -= (100f * elapsedTime);
+                    if (CurShieldWidth < targetShieldWidth)
+                    {
+                        CurShieldWidth = targetShieldWidth;
+                    }
+                }
+                if (CurShieldWidth == 0)
+                {
+                    ShieldBar.IsHidden = true;
+                }
+                else
+                {
+                    ShieldBar.Width = (int)CurShieldWidth;
+                    ShieldBar.SetBounds(CurHpWidth + HpBar.X, HpBar.Y, CurShieldWidth, ShieldBar.Height);
+                    ShieldBar.SetTextureRect((int)(HpBackground.Width - CurShieldWidth), 0, (int)CurShieldWidth, ShieldBar.Height);
+                    ShieldBar.IsHidden = false;
+                }
+            }
+            else
+            {
+                ShieldBar.SetPosition(HpBar.X + CurHpWidth, HpBar.Y);
             }
         }
 
@@ -478,10 +602,8 @@ namespace Intersect.Client.UI.Game.EntityPanel
 
         private void UpdateImage()
         {
-            GameTexture faceTex =
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face, MyEntity.Face);
-            GameTexture entityTex =
-                Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, MyEntity.MySprite);
+            GameTexture faceTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face, MyEntity.Face);
+            GameTexture entityTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, MyEntity.MySprite);
             if (faceTex != null && faceTex != EntityFace.Texture)
             {
                 EntityFace.Texture = faceTex;
@@ -490,9 +612,22 @@ namespace Intersect.Client.UI.Game.EntityPanel
                 Align.Center(EntityFace);
                 mCurrentSprite = MyEntity.Face;
                 EntityFace.IsHidden = false;
-                for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+                var i = 0;
+                for (int z = 0; z < Options.PaperdollOrder[1].Count; z++)
                 {
-                    PaperdollPanels[i].Hide();
+                    if (Options.PaperdollOrder[1][z] != "Player")
+                    {
+                        if (PaperdollPanels == null)
+                        {
+                            Log.Warn($@"{nameof(PaperdollPanels)} is null.");
+                        }
+                        else if (PaperdollPanels[i] == null)
+                        {
+                            Log.Warn($@"{nameof(PaperdollPanels)}[{i}] is null.");
+                        }
+                        PaperdollPanels?[i]?.Hide();
+                        i++;
+                    }
                 }
             }
             else if (entityTex != null && faceTex == null || (faceTex != null && faceTex != EntityFace.Texture))
@@ -619,6 +754,15 @@ namespace Intersect.Client.UI.Game.EntityPanel
             if (Globals.Me.TargetIndex != Guid.Empty && Globals.Me.TargetIndex != Globals.Me.Id)
             {
                 PacketSender.SendTradeRequest(Globals.Me.TargetIndex);
+            }
+        }
+
+        //Input Handlers
+        void friendRequest_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            if (Globals.Me.TargetIndex != Guid.Empty && Globals.Me.TargetIndex != Globals.Me.Id)
+            {
+                PacketSender.SendAddFriend(MyEntity.Name);
             }
         }
     }

@@ -11,6 +11,8 @@ namespace Intersect.Client.UI.Game
     {
         ImagePanel mPnl;
 
+        public static Draggable Active = null;
+
         public Draggable(int x, int y, GameTexture tex)
         {
             mPnl = new ImagePanel(Gui.GameUi.GameCanvas, "Draggable");
@@ -18,6 +20,7 @@ namespace Intersect.Client.UI.Game
             mPnl.SetPosition(InputHandler.MousePosition.X - mPnl.Width / 2,
                 InputHandler.MousePosition.Y - mPnl.Height / 2);
             mPnl.Texture = tex;
+            Active = this;
         }
 
         public int X
@@ -45,6 +48,7 @@ namespace Intersect.Client.UI.Game
 
         public void Dispose()
         {
+            if (Active == this) Active = null; ;
             Gui.GameUi.GameCanvas.RemoveChild(mPnl, false);
         }
     }

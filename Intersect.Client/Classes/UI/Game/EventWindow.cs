@@ -197,6 +197,7 @@ namespace Intersect.Client.UI.Game
                                 ? mEventDialogLabelTemplate.CurAlignments[0]
                                 : Alignments.Left, mEventDialogLabelTemplate.Font);
                         mEventDialogLabel.SizeToChildren(false, true);
+                        mEventDialogArea.ScrollToTop();
                     }
                     else
                     {
@@ -209,6 +210,7 @@ namespace Intersect.Client.UI.Game
                                 ? mEventDialogLabelNoFaceTemplate.CurAlignments[0]
                                 : Alignments.Left, mEventDialogLabelNoFaceTemplate.Font);
                         mEventDialogLabelNoFace.SizeToChildren(false, true);
+                        mEventDialogAreaNoFace.ScrollToTop();
                     }
                 }
             }

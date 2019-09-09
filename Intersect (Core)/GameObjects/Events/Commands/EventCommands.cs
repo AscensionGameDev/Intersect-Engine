@@ -2,11 +2,24 @@
 using System.Collections.Generic;
 using Intersect.Enums;
 
+using Newtonsoft.Json;
+
 namespace Intersect.GameObjects.Events.Commands
 {
     public abstract class EventCommand
     {
         public abstract EventCommandType Type { get; }
+        
+
+        public virtual string GetCopyData(Dictionary<Guid, List<EventCommand>> commandLists, Dictionary<Guid, List<EventCommand>> copyLists)
+        {
+            return JsonConvert.SerializeObject(this, typeof(EventCommand), new JsonSerializerSettings() { Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
+        }
+
+        public virtual void FixBranchIds(Dictionary<Guid, Guid> idDict)
+        {
+
+        }
     }
 
     public class ShowTextCommand : EventCommand
@@ -39,6 +52,28 @@ namespace Intersect.GameObjects.Events.Commands
                 commandLists.Add(BranchIds[i], new List<EventCommand>());
             }
         }
+
+        public override string GetCopyData(Dictionary<Guid, List<EventCommand>> commandLists, Dictionary<Guid, List<EventCommand>> copyLists)
+        {
+            foreach (var branch in BranchIds)
+            {
+                if (branch != Guid.Empty && commandLists.ContainsKey(branch))
+                    copyLists.Add(branch,commandLists[branch]);
+            }
+            return base.GetCopyData(commandLists, copyLists);
+        }
+
+        public override void FixBranchIds(Dictionary<Guid, Guid> idDict)
+        {
+            for (int i = 0; i < BranchIds.Length; i++)
+            {
+                if (idDict.ContainsKey(BranchIds[i]))
+                {
+                    BranchIds[i] = idDict[BranchIds[i]];
+                }
+            }
+        }
+
     }
 
     public class AddChatboxTextCommand : EventCommand
@@ -49,23 +84,14 @@ namespace Intersect.GameObjects.Events.Commands
         public ChatboxChannel Channel { get; set; } = ChatboxChannel.Player;
     }
 
-    public class SetSwitchCommand : EventCommand
-    {
-        public override EventCommandType Type {get;} = EventCommandType.SetSwitch;
-        public SwitchTypes SwitchType { get; set; } = SwitchTypes.PlayerSwitch;
-        public Guid SwitchId { get; set; }
-        public bool Value { get; set; } 
-    }
-
     public class SetVariableCommand : EventCommand
     {
         public override EventCommandType Type {get;} = EventCommandType.SetVariable;
         public VariableTypes VariableType { get; set; } = VariableTypes.PlayerVariable;
         public Guid VariableId { get; set; }
-        public VariableMods ModType { get; set; } = VariableMods.Set;
-        public int Value { get; set; }
-        public int HighValue { get; set; }
-        public Guid DupVariableId { get; set; }
+        public bool SyncParty { get; set; }
+
+        public VariableMod Modification { get; set; }
     }
 
     public class SetSelfSwitchCommand : EventCommand
@@ -93,6 +119,27 @@ namespace Intersect.GameObjects.Events.Commands
             {
                 BranchIds[i] = Guid.NewGuid();
                 commandLists.Add(BranchIds[i], new List<EventCommand>());
+            }
+        }
+
+        public override string GetCopyData(Dictionary<Guid, List<EventCommand>> commandLists, Dictionary<Guid, List<EventCommand>> copyLists)
+        {
+            foreach (var branch in BranchIds)
+            {
+                if (branch != Guid.Empty && commandLists.ContainsKey(branch))
+                    copyLists.Add(branch, commandLists[branch]);
+            }
+            return base.GetCopyData(commandLists, copyLists);
+        }
+
+        public override void FixBranchIds(Dictionary<Guid, Guid> idDict)
+        {
+            for (int i = 0; i < BranchIds.Length; i++)
+            {
+                if (idDict.ContainsKey(BranchIds[i]))
+                {
+                    BranchIds[i] = idDict[BranchIds[i]];
+                }
             }
         }
     }
@@ -168,6 +215,27 @@ namespace Intersect.GameObjects.Events.Commands
                 commandLists.Add(BranchIds[i], new List<EventCommand>());
             }
         }
+
+        public override string GetCopyData(Dictionary<Guid, List<EventCommand>> commandLists, Dictionary<Guid, List<EventCommand>> copyLists)
+        {
+            foreach (var branch in BranchIds)
+            {
+                if (branch != Guid.Empty && commandLists.ContainsKey(branch))
+                    copyLists.Add(branch, commandLists[branch]);
+            }
+            return base.GetCopyData(commandLists, copyLists);
+        }
+
+        public override void FixBranchIds(Dictionary<Guid, Guid> idDict)
+        {
+            for (int i = 0; i < BranchIds.Length; i++)
+            {
+                if (idDict.ContainsKey(BranchIds[i]))
+                {
+                    BranchIds[i] = idDict[BranchIds[i]];
+                }
+            }
+        }
     }
 
     public class ChangeItemsCommand : EventCommand
@@ -192,12 +260,47 @@ namespace Intersect.GameObjects.Events.Commands
                 commandLists.Add(BranchIds[i], new List<EventCommand>());
             }
         }
+
+        public override string GetCopyData(Dictionary<Guid, List<EventCommand>> commandLists, Dictionary<Guid, List<EventCommand>> copyLists)
+        {
+            foreach (var branch in BranchIds)
+            {
+                if (branch != Guid.Empty && commandLists.ContainsKey(branch))
+                    copyLists.Add(branch, commandLists[branch]);
+            }
+            return base.GetCopyData(commandLists, copyLists);
+        }
+
+        public override void FixBranchIds(Dictionary<Guid, Guid> idDict)
+        {
+            for (int i = 0; i < BranchIds.Length; i++)
+            {
+                if (idDict.ContainsKey(BranchIds[i]))
+                {
+                    BranchIds[i] = idDict[BranchIds[i]];
+                }
+            }
+        }
+    }
+
+    public class EquipItemCommand : EventCommand
+    {
+        public override EventCommandType Type { get; } = EventCommandType.EquipItem;
+        public Guid ItemId { get; set; }
     }
 
     public class ChangeSpriteCommand : EventCommand
     {
         public override EventCommandType Type {get;} = EventCommandType.ChangeSprite;
         public string Sprite { get; set; } = "";
+    }
+
+    public class ChangeNameColorCommand : EventCommand
+    {
+        public override EventCommandType Type { get; } = EventCommandType.ChangeNameColor;
+        public Color Color { get; set; }
+        public bool Override { get; set; }
+        public bool Remove { get; set; }
     }
 
     public class ChangeFaceCommand : EventCommand
@@ -222,8 +325,8 @@ namespace Intersect.GameObjects.Events.Commands
     {
         public override EventCommandType Type {get;} = EventCommandType.WarpPlayer;
         public Guid MapId { get; set; }
-        public int X { get; set; }
-        public int Y { get; set; }
+        public byte X { get; set; }
+        public byte Y { get; set; }
         public WarpDirection Direction { get; set; } = WarpDirection.Retain;
     }
 
@@ -252,8 +355,8 @@ namespace Intersect.GameObjects.Events.Commands
         public Guid EntityId { get; set; }
 
         //Map Coords or Coords Centered around player to spawn at
-        public int X { get; set; }
-        public int Y { get; set; }
+        public sbyte X { get; set; }
+        public sbyte Y { get; set; }
     }
 
     public class DespawnNpcCommand : EventCommand
@@ -275,8 +378,8 @@ namespace Intersect.GameObjects.Events.Commands
         public Guid EntityId { get; set; }
 
         //Map Coords or Coords Centered around player to spawn at
-        public int X { get; set; }
-        public int Y { get; set; }
+        public sbyte X { get; set; }
+        public sbyte Y { get; set; }
     }
 
     public class HoldPlayerCommand : EventCommand
@@ -287,6 +390,16 @@ namespace Intersect.GameObjects.Events.Commands
     public class ReleasePlayerCommand : EventCommand
     {
         public override EventCommandType Type {get;} = EventCommandType.ReleasePlayer;
+    }
+
+    public class HidePlayerCommand : EventCommand
+    {
+        public override EventCommandType Type { get; } = EventCommandType.HidePlayer;
+    }
+
+    public class ShowPlayerCommand : EventCommand
+    {
+        public override EventCommandType Type { get; } = EventCommandType.ShowPlayer;
     }
 
     public class PlayBgmCommand : EventCommand
@@ -372,6 +485,27 @@ namespace Intersect.GameObjects.Events.Commands
             {
                 BranchIds[i] = Guid.NewGuid();
                 commandLists.Add(BranchIds[i], new List<EventCommand>());
+            }
+        }
+
+        public override string GetCopyData(Dictionary<Guid, List<EventCommand>> commandLists, Dictionary<Guid, List<EventCommand>> copyLists)
+        {
+            foreach (var branch in BranchIds)
+            {
+                if (branch != Guid.Empty && commandLists.ContainsKey(branch))
+                    copyLists.Add(branch, commandLists[branch]);
+            }
+            return base.GetCopyData(commandLists, copyLists);
+        }
+
+        public override void FixBranchIds(Dictionary<Guid, Guid> idDict)
+        {
+            for (int i = 0; i < BranchIds.Length; i++)
+            {
+                if (idDict.ContainsKey(BranchIds[i]))
+                {
+                    BranchIds[i] = idDict[BranchIds[i]];
+                }
             }
         }
     }

@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Security.Cryptography;
 using System.Text;
+
+using Intersect.Admin.Actions;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.General;
 using Intersect.Client.Maps;
 using Intersect.Client.UI.Game;
 using Intersect.Enums;
+using Intersect.Network.Packets.Client;
 
 namespace Intersect.Client.Networking
 {
@@ -13,34 +16,22 @@ namespace Intersect.Client.Networking
     {
         public static void SendPing()
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.Ping);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new PingPacket());
         }
 
         public static void SendLogin(string username, string password)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.Login);
-            bf.WriteString(username.ToLower().Trim());
-            bf.WriteString(password.Trim());
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new LoginPacket(username, password));
         }
 
         public static void SendLogout(bool characterSelect = false)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.Logout);
-            bf.WriteBoolean(characterSelect);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new LogoutPacket(characterSelect));
         }
 
         public static void SendNeedMap(Guid mapId)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.NeedMap);
-            bf.WriteGuid(mapId);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new NeedMapPacket(mapId));
             if (MapInstance.MapRequests.ContainsKey(mapId))
             {
                 MapInstance.MapRequests[mapId] = Globals.System.GetTimeMs() + 3000;
@@ -53,498 +44,315 @@ namespace Intersect.Client.Networking
 
         public static void SendMove()
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.SendMove);
-            bf.WriteGuid(Globals.Me.CurrentMap);
-            bf.WriteInteger(Globals.Me.CurrentX);
-            bf.WriteInteger(Globals.Me.CurrentY);
-            bf.WriteInteger(Globals.Me.Dir);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new MovePacket(Globals.Me.CurrentMap,Globals.Me.X, Globals.Me.Y, Globals.Me.Dir));
         }
 
-        public static void SendChatMsg(string msg, int channel)
+        public static void SendChatMsg(string msg, byte channel)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.LocalMessage);
-            bf.WriteString(msg);
-            bf.WriteInteger(channel);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new ChatMsgPacket(msg,channel));
         }
 
         public static void SendAttack(Guid targetId)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.TryAttack);
-            bf.WriteGuid(targetId);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new AttackPacket(targetId));
         }
 
-        public static void SendBlock(int blocking)
+        public static void SendBlock(bool blocking)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.TryBlock);
-            bf.WriteInteger(blocking);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new BlockPacket(blocking));
         }
 
-        public static void SendDir(int dir)
+        public static void SendDirection(byte dir)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.SendDir);
-            bf.WriteLong(dir);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new DirectionPacket(dir));
         }
 
         public static void SendEnterGame()
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.EnterGame);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new EnterGamePacket());
         }
 
-        public static void SendActivateEvent(Guid eventId, Guid mapId)
+        public static void SendActivateEvent(Guid eventId)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.ActivateEvent);
-            bf.WriteGuid(eventId);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new ActivateEventPacket(eventId));
         }
 
-        public static void SendEventResponse(int response, EventDialog ed)
+        public static void SendEventResponse(byte response, EventDialog ed)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.EventResponse);
-            bf.WriteGuid(ed.EventId);
-            bf.WriteInteger(response);
             Globals.EventDialogs.Remove(ed);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new EventResponsePacket(ed.EventId,response));
         }
 
         public static void SendCreateAccount(string username, string password, string email)
         {
-            var bf = new ByteBuffer();
-            var sha = new SHA256Managed();
-            bf.WriteLong((int) ClientPackets.CreateAccount);
-            bf.WriteString(username.Trim());
-            bf.WriteString(BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password.Trim())))
-                .Replace("-", ""));
-            bf.WriteString(email.Trim());
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new CreateAccountPacket(username.Trim(),password.Trim(),email.Trim()));
         }
 
         public static void SendCreateCharacter(string name, Guid classId, int sprite)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.CreateCharacter);
-            bf.WriteString(name.Trim());
-            bf.WriteGuid(classId);
-            bf.WriteInteger(sprite);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new CreateCharacterPacket(name,classId,sprite));
         }
 
         public static void SendPickupItem(int index)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.PickupItem);
-            bf.WriteInteger(index);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new PickupItemPacket(index));
         }
 
-        public static void SendSwapItems(int item1, int item2)
+        public static void SendSwapInvItems(int item1, int item2)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.SwapItems);
-            bf.WriteInteger(item1);
-            bf.WriteInteger(item2);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new SwapInvItemsPacket(item1,item2));
         }
 
         public static void SendDropItem(int slot, int amount)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.DropItems);
-            bf.WriteInteger(slot);
-            bf.WriteInteger(amount);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new DropItemPacket(slot,amount));
         }
 
-        public static void SendUseItem(int slot)
+        public static void SendUseItem(int slot, Guid targetId)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.UseItem);
-            bf.WriteInteger(slot);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new UseItemPacket(slot, targetId));
         }
 
         public static void SendSwapSpells(int spell1, int spell2)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.SwapSpells);
-            bf.WriteInteger(spell1);
-            bf.WriteInteger(spell2);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new SwapSpellsPacket(spell1,spell2));
         }
 
         public static void SendForgetSpell(int slot)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.ForgetSpell);
-            bf.WriteInteger(slot);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new ForgetSpellPacket(slot));
         }
 
         public static void SendUseSpell(int slot, Guid targetId)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.UseSpell);
-            bf.WriteInteger(slot);
-            bf.WriteGuid(targetId);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new UseSpellPacket(slot,targetId));
         }
 
         public static void SendUnequipItem(int slot)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.UnequipItem);
-            bf.WriteInteger(slot);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new UnequipItemPacket(slot));
         }
 
-        public static void SendUpgradeStat(int stat)
+        public static void SendUpgradeStat(byte stat)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.UpgradeStat);
-            bf.WriteInteger(stat);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new UpgradeStatPacket(stat));
         }
 
-        public static void SendHotbarChange(int index, int type, int slot)
+        public static void SendHotbarUpdate(byte hotbarSlot, sbyte type, int itemIndex)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.HotbarChange);
-            bf.WriteInteger(index);
-            bf.WriteInteger(type);
-            bf.WriteInteger(slot);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new HotbarUpdatePacket(hotbarSlot,type,itemIndex));
         }
 
-        public static void SendHotbarSwap(int index, int swapIndex)
+        public static void SendHotbarSwap(byte index, byte swapIndex)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.HotbarSwap);
-            bf.WriteInteger(index);
-            bf.WriteInteger(swapIndex);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new HotbarSwapPacket(index,swapIndex));
         }
 
         public static void SendOpenAdminWindow()
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.OpenAdminWindow);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new OpenAdminWindowPacket());
         }
 
-        public static void SendAdminAction(int action, string val1 = "", string val2 = "", string val3 = "",
-            string val4 = "", Guid val5 = new Guid())
-        {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.AdminAction);
-            bf.WriteInteger(action);
-            bf.WriteString(val1);
-            bf.WriteString(val2);
-            bf.WriteString(val3);
-            bf.WriteString(val4);
-            bf.WriteGuid(val5);
-            GameNetwork.SendPacket(bf.ToArray());
-        }
+        //Admin Action Packet Should be Here
 
         public static void SendSellItem(int slot, int amount)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.SellItem);
-            bf.WriteInteger(slot);
-            bf.WriteInteger(amount);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new SellItemPacket(slot,amount));
         }
 
         public static void SendBuyItem(int slot, int amount)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.BuyItem);
-            bf.WriteInteger(slot);
-            bf.WriteInteger(amount);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new BuyItemPacket(slot,amount));
         }
 
         public static void SendCloseShop()
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.CloseShop);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new CloseShopPacket());
         }
 
         public static void SendDepositItem(int slot, int amount)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.DepositItem);
-            bf.WriteInteger(slot);
-            bf.WriteInteger(amount);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new DepositItemPacket(slot,amount));
         }
 
         public static void SendWithdrawItem(int slot, int amount)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.WithdrawItem);
-            bf.WriteInteger(slot);
-            bf.WriteInteger(amount);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new WithdrawItemPacket(slot,amount));
         }
 
         public static void SendCloseBank()
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.CloseBank);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new CloseBankPacket());
         }
 
-        public static void SendCloseCraftingTable()
+        public static void SendCloseCrafting()
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.CloseCraftingTable);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new CloseCraftingPacket());
         }
 
         public static void SendMoveBankItems(int slot1, int slot2)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.MoveBankItem);
-            bf.WriteInteger(slot1);
-            bf.WriteInteger(slot2);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new SwapBankItemsPacket(slot1,slot2));
         }
 
         public static void SendCraftItem(Guid id)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.CraftItem);
-            bf.WriteGuid(id);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new CraftItemPacket(id));
         }
 
         public static void SendPartyInvite(Guid targetId)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.PartyInvite);
-            bf.WriteGuid(targetId);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new PartyInvitePacket(targetId));
         }
 
         public static void SendPartyKick(Guid targetId)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.PartyKick);
-            bf.WriteGuid(targetId);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new PartyKickPacket(targetId));
         }
 
         public static void SendPartyLeave()
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.PartyLeave);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new PartyLeavePacket());
         }
 
         public static void SendPartyAccept(object sender, EventArgs e)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.PartyAcceptInvite);
-            bf.WriteGuid((Guid) ((InputBox) sender).UserData);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new PartyInviteResponsePacket((Guid)((InputBox)sender).UserData,true));
         }
 
         public static void SendPartyDecline(object sender, EventArgs e)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.PartyDeclineInvite);
-            bf.WriteGuid((Guid) ((InputBox) sender).UserData);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new PartyInviteResponsePacket((Guid)((InputBox)sender).UserData, false));
         }
 
         public static void SendAcceptQuest(Guid questId)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.AcceptQuest);
-            bf.WriteGuid(questId);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new QuestResponsePacket(questId,true));
         }
 
         public static void SendDeclineQuest(Guid questId)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.DeclineQuest);
-            bf.WriteGuid(questId);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new QuestResponsePacket(questId,false));
         }
 
-        public static void SendCancelQuest(Guid questId)
+        public static void SendAbandonQuest(Guid questId)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.CancelQuest);
-            bf.WriteGuid(questId);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new AbandonQuestPacket(questId));
         }
 
         public static void SendTradeRequest(Guid targetId)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.TradeRequest);
-            bf.WriteGuid(targetId);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new TradeRequestPacket(targetId));
         }
 
-        public static void SendOfferItem(int slot, int amount)
+        public static void SendOfferTradeItem(int slot, int amount)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.TradeOffer);
-            bf.WriteInteger(slot);
-            bf.WriteInteger(amount);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new OfferTradeItemPacket(slot,amount));
         }
 
-        public static void SendRevokeItem(int slot, int amount)
+        public static void SendRevokeTradeItem(int slot, int amount)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.TradeRevoke);
-            bf.WriteInteger(slot);
-            bf.WriteInteger(amount);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new RevokeTradeItemPacket(slot,amount));
         }
 
         public static void SendAcceptTrade()
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.TradeAccept);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new AcceptTradePacket());
         }
 
         public static void SendDeclineTrade()
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.TradeDecline);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new DeclineTradePacket());
         }
 
         public static void SendTradeRequestAccept(object sender, EventArgs e)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.TradeRequestAccept);
-            bf.WriteGuid((Guid) ((InputBox) sender).UserData);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new TradeRequestResponsePacket((Guid)((InputBox)sender).UserData,true));
         }
 
         public static void SendTradeRequestDecline(object sender, EventArgs e)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.TradeRequestDecline);
-            bf.WriteGuid((Guid) ((InputBox) sender).UserData);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new TradeRequestResponsePacket((Guid)((InputBox)sender).UserData, false));
         }
 
         public static void SendStoreBagItem(int slot, int amount)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.StoreBagItem);
-            bf.WriteInteger(slot);
-            bf.WriteInteger(amount);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new StoreBagItemPacket(slot,amount));
         }
 
-        public static void SendRetreiveBagItem(int slot, int amount)
+        public static void SendRetrieveBagItem(int slot, int amount)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.RetreiveBagItem);
-            bf.WriteInteger(slot);
-            bf.WriteInteger(amount);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new RetrieveBagItemPacket(slot,amount));
         }
 
         public static void SendCloseBag()
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.CloseBag);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new CloseBagPacket());
         }
 
         public static void SendMoveBagItems(int slot1, int slot2)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.MoveBagItem);
-            bf.WriteInteger(slot1);
-            bf.WriteInteger(slot2);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new SwapBagItemsPacket(slot1,slot2));
         }
 
-        public static void RequestFriends()
+        public static void SendRequestFriends()
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.RequestFriends);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new RequestFriendsPacket());
         }
 
-        public static void AddFriend(string name)
+        public static void SendAddFriend(string name)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.AddFriend);
-            bf.WriteString(name);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new UpdateFriendsPacket(name,true));
         }
 
-        public static void RemoveFriend(string name)
+        public static void SendRemoveFriend(string name)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.RemoveFriend);
-            bf.WriteString(name);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new UpdateFriendsPacket(name,false));
         }
 
         public static void SendFriendRequestAccept(Object sender, EventArgs e)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.FriendRequestAccept);
-            bf.WriteGuid((Guid) ((InputBox) sender).UserData);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new FriendRequestResponsePacket((Guid)((InputBox)sender).UserData,true));
         }
 
         public static void SendFriendRequestDecline(Object sender, EventArgs e)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.FriendRequestDecline);
-            bf.WriteGuid((Guid) ((InputBox) sender).UserData);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new FriendRequestResponsePacket((Guid)((InputBox)sender).UserData,false));
         }
 
-        public static void PlayGame(Guid charId)
+        public static void SendSelectCharacter(Guid charId)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.PlayGame);
-            bf.WriteGuid(charId);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new SelectCharacterPacket(charId));
         }
 
-        public static void DeleteChar(Guid charId)
+        public static void SendDeleteCharacter(Guid charId)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.DeleteChar);
-            bf.WriteGuid(charId);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new DeleteCharacterPacket(charId));
         }
 
-        public static void CreateNewCharacter()
+        public static void SendNewCharacter()
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int) ClientPackets.CreateNewChar);
-            GameNetwork.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(new NewCharacterPacket());
+        }
+
+        public static void SendRequestPasswordReset(string nameEmail)
+        {
+            GameNetwork.SendPacket(new RequestPasswordResetPacket(nameEmail));
+        }
+
+        public static void SendResetPassword(string nameEmail, string code, string hashedPass)
+        {
+            GameNetwork.SendPacket(new ResetPasswordPacket(nameEmail,code,hashedPass));
+        }
+
+        public static void SendAdminAction(AdminAction action)
+        {
+            GameNetwork.SendPacket(new AdminActionPacket(action));
+        }
+
+        public static void SendBumpEvent(Guid mapId, Guid eventId)
+        {
+            GameNetwork.SendPacket(new BumpPacket(mapId, eventId));
         }
     }
 }

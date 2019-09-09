@@ -6,6 +6,10 @@ using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.Models;
 using Intersect.Utilities;
+using JetBrains.Annotations;
+
+using K4os.Compression.LZ4;
+
 using Newtonsoft.Json;
 
 namespace Intersect.GameObjects.Maps
@@ -21,11 +25,6 @@ namespace Intersect.GameObjects.Maps
         [JsonIgnore]
         [NotMapped]
         public MapAutotiles Autotiles;
-
-        //Temporary Values
-        [JsonIgnore]
-        [NotMapped]
-        public bool IsClient;
 
         //Core Data
         [JsonIgnore]
@@ -45,12 +44,18 @@ namespace Intersect.GameObjects.Maps
         //Cached Att Data
         private byte[] mCachedAttributeData = null;
 
+        protected static Network.Ceras mCeras = new Network.Ceras(false);
+
         [Column("Attributes")]
         [JsonIgnore]
         public byte[] AttributeData
         {
-            get => mCachedAttributeData;
-            set => Attributes = JsonConvert.DeserializeObject<MapAttribute[,]>(System.Text.Encoding.UTF8.GetString(Compression.DecompressPacket(value)), new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
+            get => GetAttributeData();
+            set
+            {
+                mAttributes = mCeras.Decompress<MapAttribute[,]>(value);
+                mCachedAttributeData = value;
+            }
         }
 
         //Map Attributes
@@ -64,7 +69,7 @@ namespace Intersect.GameObjects.Maps
             set
             {
                 mAttributes = value;
-                mCachedAttributeData = Compression.CompressPacket(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(Attributes, new JsonSerializerSettings() {TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace})));
+                mCachedAttributeData = mCeras.Compress(mAttributes);
             }
         }
 
@@ -73,10 +78,20 @@ namespace Intersect.GameObjects.Maps
         public string LightsJson
         {
             get => JsonConvert.SerializeObject(Lights);
-            set => Lights = JsonConvert.DeserializeObject<List<LightBase>>(value);
+            set
+            {
+                Lights.Clear();
+                var lights = JsonConvert.DeserializeObject<List<LightBase>>(value);
+                if (lights != null)
+                {
+                    Lights.AddRange(lights);
+                }
+            }
         }
         [NotMapped]
-        public List<LightBase> Lights { get; set; } = new List<LightBase>();
+        [NotNull]
+        [JsonProperty]
+        public List<LightBase> Lights { get; private set; } = new List<LightBase>();
 
         [Column("Events")]
         [JsonIgnore]
@@ -92,21 +107,33 @@ namespace Intersect.GameObjects.Maps
         public string LocalEventsJson
         {
             get => JsonConvert.SerializeObject(LocalEvents, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
-            set => JsonConvert.PopulateObject(value, LocalEvents, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
+            set => JsonConvert.PopulateObject(value, LocalEvents, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace });
         }
         [NotMapped]
         [JsonIgnore]
-        public Dictionary<Guid, EventBase> LocalEvents = new Dictionary<Guid, EventBase>();
+        [NotNull]
+        public readonly Dictionary<Guid, EventBase> LocalEvents = new Dictionary<Guid, EventBase>();
 
         [Column("NpcSpawns")]
         [JsonIgnore]
         public string NpcSpawnsJson
         {
             get => JsonConvert.SerializeObject(Spawns);
-            set => Spawns = JsonConvert.DeserializeObject<List<NpcSpawn>>(value);
+            set
+            {
+                Spawns.Clear();
+
+                var spawns = JsonConvert.DeserializeObject<List<NpcSpawn>>(value);
+                if (spawns != null)
+                {
+                    Spawns.AddRange(spawns);
+                }
+            }
         }
         [NotMapped]
-        public List<NpcSpawn> Spawns { get; set; } = new List<NpcSpawn>();
+        [NotNull]
+        [JsonProperty]
+        public List<NpcSpawn> Spawns { get; private set; } = new List<NpcSpawn>();
 
         //Properties
         public string Music { get; set; } = null;
@@ -156,41 +183,61 @@ namespace Intersect.GameObjects.Maps
         [NotMapped]
         [JsonIgnore]
         public object MapLock => mMapLock;
-        
+
         [JsonConstructor]
-        public MapBase(Guid id, bool isClient) : base(id)
+        public MapBase(Guid id) : base(id)
         {
             Name = "New Map";
 
-            //Fill Tile Data with Nulled/Empty Data
-            /* Each tile has a Guid for tileset, x and y integer for source tile in the set, and a byte for the tile type.
-             * A Guid is 16 bytes, and the integers are both 4 bytes each, and the final byte is just 1 byte.
-             * So the blob size is going to be LayerCount * MapWidth * MapHeight * (16 + 4 + 4 + 1)*/
-            TileData = Compression.CompressPacket(new byte[Options.LayerCount * Options.MapWidth * Options.MapHeight * 25]);
-            mCachedAttributeData = Compression.CompressPacket(System.Text.Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(Attributes, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, ObjectCreationHandling = ObjectCreationHandling.Replace })));
+            //Create empty tile array and then compress it down
+            if (Layers == null || Layers[0].Tiles == null)
+            {
+                Layers = new TileArray[Options.LayerCount];
+                for (var i = 0; i < Options.LayerCount; i++)
+                {
+                    Layers[i].Tiles = new Tile[Options.MapWidth, Options.MapHeight];
+                    for (var x = 0; x < Options.MapWidth; x++)
+                    {
+                        for (var y = 0; y < Options.MapHeight; y++)
+                        {
+                            Layers[i].Tiles[x, y] = new Tile();
+                        }
+                    }
+                }
 
+                TileData = mCeras.Compress(Layers);
+                Layers = null;
+            }
+            else
+            {
+                TileData = mCeras.Compress(Layers);
+            }
 
-            IsClient = isClient;
+            mCachedAttributeData = mCeras.Compress(Attributes);
         }
 
         //EF Constructor
         public MapBase()
         {
             Name = "New Map";
-            IsClient = false;
         }
 
-        public MapBase(MapBase mapcopy) : base(mapcopy.Id)
+        public MapBase(MapBase mapBase)
+            : base(mapBase?.Id ?? Guid.Empty)
         {
-            lock (MapLock)
+            if (mapBase == null)
             {
-                lock (mapcopy.MapLock)
+                return;
+            }
+
+            lock (MapLock ?? throw new ArgumentNullException(nameof(MapLock), @"this"))
+            {
+                lock (mapBase.MapLock ?? throw new ArgumentNullException(nameof(mapBase.MapLock), nameof(mapBase)))
                 {
-                    ByteBuffer bf = new ByteBuffer();
-                    Name = mapcopy.Name;
-                    Brightness = mapcopy.Brightness;
-                    IsIndoors = mapcopy.IsIndoors;
-                    if (Layers != null && mapcopy.Layers != null)
+                    Name = mapBase.Name;
+                    Brightness = mapBase.Brightness;
+                    IsIndoors = mapBase.IsIndoors;
+                    if (Layers != null && mapBase.Layers != null)
                     {
                         if (Layers.Length < Options.LayerCount) Layers = new TileArray[Options.LayerCount];
                         for (var i = 0; i < Options.LayerCount; i++)
@@ -202,10 +249,10 @@ namespace Intersect.GameObjects.Maps
                                 {
                                     Layers[i].Tiles[x, y] = new Tile
                                     {
-                                        TilesetId = mapcopy.Layers[i].Tiles[x, y].TilesetId,
-                                        X = mapcopy.Layers[i].Tiles[x, y].X,
-                                        Y = mapcopy.Layers[i].Tiles[x, y].Y,
-                                        Autotile = mapcopy.Layers[i].Tiles[x, y].Autotile
+                                        TilesetId = mapBase.Layers[i].Tiles[x, y].TilesetId,
+                                        X = mapBase.Layers[i].Tiles[x, y].X,
+                                        Y = mapBase.Layers[i].Tiles[x, y].Y,
+                                        Autotile = mapBase.Layers[i].Tiles[x, y].Autotile
                                     };
                                 }
                             }
@@ -215,40 +262,60 @@ namespace Intersect.GameObjects.Maps
                     {
                         for (var y = 0; y < Options.MapHeight; y++)
                         {
-                            if (mapcopy.Attributes[x, y] == null)
+                            if (Attributes == null)
+                            {
+                                continue;
+                            }
+
+                            if (mapBase.Attributes?[x, y] == null)
                             {
                                 Attributes[x, y] = null;
                             }
                             else
                             {
-                                Attributes[x, y] = mapcopy.Attributes[x, y].Clone();
+                                Attributes[x, y] = mapBase.Attributes[x, y].Clone();
                             }
                         }
                     }
-                    for (var i = 0; i < mapcopy.Spawns.Count; i++)
+                    for (var i = 0; i < mapBase.Spawns?.Count; i++)
                     {
-                        Spawns.Add(new NpcSpawn(mapcopy.Spawns[i]));
+                        Spawns.Add(new NpcSpawn(mapBase.Spawns[i]));
                     }
-                    for (var i = 0; i < mapcopy.Lights.Count; i++)
+                    for (var i = 0; i < mapBase.Lights?.Count; i++)
                     {
-                        Lights.Add(new LightBase(mapcopy.Lights[i]));
+                        Lights.Add(new LightBase(mapBase.Lights[i]));
                     }
-                    foreach (var record in mapcopy.LocalEvents)
+
+
+
+                    foreach (var record in mapBase.LocalEvents)
                     {
-                        var evt = new EventBase(record.Key, record.Value.JsonData);
-                        LocalEvents.Add(record.Key,evt);
+                        var evt = new EventBase(record.Key, record.Value?.JsonData);
+                        LocalEvents?.Add(record.Key, evt);
                     }
-                    EventIds.Clear();
-                    EventIds.AddRange(mapcopy.EventIds.ToArray());
+
+                    EventIds?.Clear();
+                    EventIds?.AddRange(mapBase.EventIds?.ToArray() ?? new Guid[] {});
                 }
             }
+        }
+
+        public virtual MapBase[,] GenerateAutotileGrid()
+        {
+            return null;
+        }
+
+        public virtual byte[] GetAttributeData()
+        {
+            return mCachedAttributeData;
         }
 
         public class MapInstances : DatabaseObjectLookup
         {
             private readonly DatabaseObjectLookup mBaseLookup;
 
-            public MapInstances(DatabaseObjectLookup baseLookup)
+            public MapInstances([NotNull] DatabaseObjectLookup baseLookup)
+                : base(baseLookup.StoredType)
             {
                 if (baseLookup == null) throw new ArgumentNullException();
                 mBaseLookup = baseLookup;

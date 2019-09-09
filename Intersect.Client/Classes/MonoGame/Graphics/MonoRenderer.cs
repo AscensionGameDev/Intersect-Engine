@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using Intersect.Client.Classes.MonoGame.Graphics;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
@@ -52,6 +53,8 @@ namespace Intersect.Client.MonoGame.Graphics
         private SpriteBatch mSpriteBatch;
         private List<string> mValidVideoModes;
         private GameRenderTexture mWhiteTexture;
+
+        private BasicEffect mBasicEffect;
 
         public MonoRenderer(GraphicsDeviceManager graphics, ContentManager contentManager, [NotNull] Game monoGame)
         {
@@ -155,7 +158,7 @@ namespace Intersect.Client.MonoGame.Graphics
         {
             mWhiteTexture = CreateRenderTexture(1, 1);
             mWhiteTexture.Begin();
-            mWhiteTexture.Clear(Framework.GenericClasses.Color.White);
+            mWhiteTexture.Clear(Color.White);
             mWhiteTexture.End();
         }
 
@@ -268,15 +271,26 @@ namespace Intersect.Client.MonoGame.Graphics
             mSpriteBatchBegan = false;
         }
 
-        public static Microsoft.Xna.Framework.Color ConvertColor(Framework.GenericClasses.Color clr)
+        public static Microsoft.Xna.Framework.Color ConvertColor(Color clr)
         {
-            return new Microsoft.Xna.Framework.Color(
-                new Vector4(clr.R / 255f, clr.G / 255f, clr.B / 255f, clr.A / 255f));
+            return new Microsoft.Xna.Framework.Color(clr.R, clr.G, clr.B, clr.A);
         }
 
-        public override void Clear(Framework.GenericClasses.Color color)
+        public override void Clear(Color color)
         {
             mGraphicsDevice.Clear(ConvertColor(color));
+        }
+
+        public override void DrawTileBuffer(GameTileBuffer buffer)
+        {
+            EndSpriteBatch();
+            mGraphicsDevice?.SetRenderTarget(mScreenshotRenderTarget);
+            mGraphicsDevice.BlendState = mNormalState;
+            mGraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+            mGraphicsDevice.SamplerStates[0] = SamplerState.LinearClamp;
+            mGraphicsDevice.DepthStencilState = DepthStencilState.None;
+
+            ((MonoTileBuffer) buffer).Draw(mBasicEffect, mCurrentView);
         }
 
         public override void Close()
@@ -299,7 +313,7 @@ namespace Intersect.Client.MonoGame.Graphics
         }
 
         public override void DrawString(string text, GameFont gameFont, float x, float y, float fontScale,
-            Framework.GenericClasses.Color fontColor, bool worldPos = true, GameRenderTexture renderTexture = null, Framework.GenericClasses.Color borderColor = null)
+            Color fontColor, bool worldPos = true, GameRenderTexture renderTexture = null, Color borderColor = null)
         {
             if (gameFont == null) return;
             var font = (SpriteFont) gameFont.GetFont();
@@ -312,7 +326,7 @@ namespace Intersect.Client.MonoGame.Graphics
                     text = text.Replace(chr, ' ');
                 }
             }
-            if (borderColor != null && borderColor != Framework.GenericClasses.Color.Transparent)
+            if (borderColor != null && borderColor != Color.Transparent)
             {
                 mSpriteBatch.DrawString(font, text, new Vector2(x, y - 1), ConvertColor(borderColor), 0f,
                     Vector2.Zero,
@@ -331,8 +345,8 @@ namespace Intersect.Client.MonoGame.Graphics
         }
 
         public override void DrawString(string text, GameFont gameFont, float x, float y, float fontScale,
-            Framework.GenericClasses.Color fontColor, bool worldPos, GameRenderTexture renderTexture, FloatRect clipRect,
-            Framework.GenericClasses.Color borderColor = null)
+            Color fontColor, bool worldPos, GameRenderTexture renderTexture, FloatRect clipRect,
+            Color borderColor = null)
         {
             if (gameFont == null) return;
             x += mCurrentView.X;
@@ -345,11 +359,11 @@ namespace Intersect.Client.MonoGame.Graphics
 
             //Copy the current scissor rect so we can restore it after
             var currentRect = mSpriteBatch.GraphicsDevice.ScissorRectangle;
-            EndSpriteBatch();
+            StartSpritebatch(mCurrentView, GameBlendModes.None, null, renderTexture, false, mRasterizerState,true);
             //Set the current scissor rectangle
             mSpriteBatch.GraphicsDevice.ScissorRectangle = new Microsoft.Xna.Framework.Rectangle((int) clipRect.X,
                 (int) clipRect.Y, (int) clipRect.Width, (int) clipRect.Height);
-            StartSpritebatch(mCurrentView, GameBlendModes.None, null, renderTexture, false, mRasterizerState);
+
             foreach (var chr in text)
             {
                 if (!font.Characters.Contains(chr))
@@ -357,7 +371,7 @@ namespace Intersect.Client.MonoGame.Graphics
                     text = text.Replace(chr, ' ');
                 }
             }
-            if (borderColor != null && borderColor != Framework.GenericClasses.Color.Transparent)
+            if (borderColor != null && borderColor != Color.Transparent)
             {
                 mSpriteBatch.DrawString(font, text, new Vector2(x, y - 1), ConvertColor(borderColor), 0f,
                     Vector2.Zero,
@@ -380,47 +394,111 @@ namespace Intersect.Client.MonoGame.Graphics
             mSpriteBatch.GraphicsDevice.ScissorRectangle = currentRect;
         }
 
-        public override void DrawTexture(GameTexture tex, FloatRect srcRectangle, FloatRect targetRect,
-            Framework.GenericClasses.Color renderColor, GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.None,
+        public override GameTileBuffer CreateTileBuffer()
+        {
+            return new MonoTileBuffer(mGraphicsDevice);
+        }
+        
+        public override void DrawTexture(GameTexture tex, float sx, float sy, float sw, float sh, float tx, float ty, float tw, float th,
+            Color renderColor, GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.None,
             GameShader shader = null, float rotationDegrees = 0, bool isUi = false, bool drawImmediate = false)
         {
-            if (tex?.GetTexture() == null) return;
+            var texture = tex?.GetTexture();
+            if (texture == null) return;
+
+            var packRotated = false;
+
+            var pack = tex.GetTexturePackFrame();
+            if (pack != null)
+            {
+                if (pack.Rotated)
+                {
+                    rotationDegrees -= 90;
+                    var z = tw;
+                    tw = th;
+                    th = z;
+
+                    z = sx;
+                    sx = pack.Rect.Right - sy - sh;
+                    sy = pack.Rect.Top + z;
+
+                    z = sw;
+                    sw = sh;
+                    sh = z;
+                    packRotated = true;
+                }
+                else
+                {
+                    sx += pack.Rect.X;
+                    sy += pack.Rect.Y;
+                }
+            }
+
+
             var origin = Vector2.Zero;
             if (Math.Abs(rotationDegrees) > 0.01)
             {
                 rotationDegrees = (float) ((Math.PI / 180) * rotationDegrees);
-                origin = new Vector2(srcRectangle.Width / 2, srcRectangle.Height / 2);
-                targetRect.X += srcRectangle.Width / 2;
-                targetRect.Y += srcRectangle.Height / 2;
+                origin = new Vector2(sw / 2f,sh/2f);
+
+                //TODO: Optimize in terms of memory AND performance.
+                var pnt = new Pointf(0, 0);
+                var pnt1 = new Pointf((float)tw, 0);
+                var pnt2 = new Pointf(0, (float)th);
+                var cntr = new Pointf((float) tw / 2, (float) th / 2);
+
+                var pntMod = Rotate(pnt, cntr, rotationDegrees);
+                var pntMod2 = Rotate(pnt1, cntr, rotationDegrees);
+                var pntMod3 = Rotate(pnt2, cntr, rotationDegrees);
+
+                var width = (int)Math.Round(GetDistance(pntMod.X, pntMod.Y, pntMod2.X, pntMod2.Y));
+                var height = (int)Math.Round(GetDistance(pntMod.X, pntMod.Y, pntMod3.X, pntMod3.Y));
+
+                if (packRotated)
+                {
+                    var z = width;
+                    width = height;
+                    height = z;
+                }
+
+                tx += width/2f;
+                ty += height/2f;
             }
+            
             if (renderTarget == null)
             {
                 if (isUi)
                 {
-                    targetRect.X += mCurrentView.X;
-                    targetRect.Y += mCurrentView.Y;
+                    tx += mCurrentView.X;
+                    ty += mCurrentView.Y;
                 }
                 StartSpritebatch(mCurrentView, blendMode, shader, null, false, null, drawImmediate);
-                mSpriteBatch.Draw((Texture2D) tex.GetTexture(), null,
-                    new XNARectangle((int) targetRect.X, (int) targetRect.Y,
-                        (int) targetRect.Width,
-                        (int) targetRect.Height),
-                    new XNARectangle((int) srcRectangle.X, (int) srcRectangle.Y,
-                        (int) srcRectangle.Width, (int) srcRectangle.Height),
-                    origin, rotationDegrees, null, ConvertColor(renderColor), SpriteEffects.None, 0);
+
+                mSpriteBatch.Draw((Texture2D)texture, new Vector2(tx, ty),
+                    new XNARectangle((int)sx, (int)sy, (int)sw, (int)sh), ConvertColor(renderColor),
+                    rotationDegrees, origin, new Vector2(tw/sw, th/sh), SpriteEffects.None, 0);
             }
             else
             {
                 StartSpritebatch(new FloatRect(0, 0, renderTarget.GetWidth(), renderTarget.GetHeight()), blendMode,
                     shader, renderTarget, false, null, drawImmediate);
-                mSpriteBatch.Draw((Texture2D) tex.GetTexture(), null,
-                    new Microsoft.Xna.Framework.Rectangle((int) targetRect.X, (int) targetRect.Y,
-                        (int) targetRect.Width,
-                        (int) targetRect.Height),
-                    new Microsoft.Xna.Framework.Rectangle((int) srcRectangle.X, (int) srcRectangle.Y,
-                        (int) srcRectangle.Width, (int) srcRectangle.Height),
-                    origin, rotationDegrees, null, ConvertColor(renderColor), SpriteEffects.None, 0);
+                mSpriteBatch.Draw((Texture2D)texture, new Vector2(tx, ty),
+                    new XNARectangle((int)sx, (int)sy, (int)sw, (int)sh), ConvertColor(renderColor),
+                    rotationDegrees, origin, new Vector2(tw / sw, th / sh), SpriteEffects.None, 0);
             }
+        }
+
+        private static double GetDistance(double x1, double y1, double x2, double y2)
+        {
+            var a2 = Math.Pow((x2 - x1), 2);
+            var b2 = Math.Pow((y2 - y1), 2);
+            var root = Math.Sqrt(a2 + b2);
+            return root;
+        }
+
+        private Pointf Rotate(Pointf pnt, Pointf ctr, float angle)
+        {
+            return new Pointf((float)(pnt.X + (ctr.X * Math.Cos(angle)) - (ctr.Y * Math.Sin(angle))),(float)(pnt.Y + (ctr.X * Math.Sin(angle)) + (ctr.Y * Math.Cos(angle))));
         }
 
         public override void End()
@@ -533,6 +611,9 @@ namespace Intersect.Client.MonoGame.Graphics
         public void Init(GraphicsDevice graphicsDevice)
         {
             mGraphicsDevice = graphicsDevice;
+            mBasicEffect = new BasicEffect(mGraphicsDevice);
+            mBasicEffect.LightingEnabled = false;
+            mBasicEffect.TextureEnabled = true;
             mSpriteBatch = new SpriteBatch(mGraphicsDevice);
         }
 
@@ -567,6 +648,13 @@ namespace Intersect.Client.MonoGame.Graphics
 
         public override GameTexture LoadTexture(string filename)
         {
+            var packFrame = GameTexturePacks.GetFrame(filename);
+            if (packFrame != null)
+            {
+                var tx = new MonoTexture(mGraphicsDevice, filename, packFrame);
+                mAllTextures.Add(tx);
+                return tx;
+            }
             var tex = new MonoTexture(mGraphicsDevice, filename);
             mAllTextures.Add(tex);
             return tex;
@@ -591,6 +679,14 @@ namespace Intersect.Client.MonoGame.Graphics
         public override void SetView(FloatRect view)
         {
             mCurrentView = view;
+
+            Matrix projection;
+            Matrix.CreateOrthographicOffCenter(0, view.Width, view.Height, 0, 0f, -1, out projection);
+            projection.M41 += -0.5f * projection.M11;
+            projection.M42 += -0.5f * projection.M22;
+            mBasicEffect.Projection = projection;
+            mBasicEffect.View = Matrix.CreateRotationZ(0f) * Matrix.CreateScale(new Vector3(1, 1, 1)) * Matrix.CreateTranslation(-view.X, -view.Y, 0);
+
             return;
         }
 
@@ -599,7 +695,7 @@ namespace Intersect.Client.MonoGame.Graphics
         public override bool BeginScreenshot()
         {
             if (mGraphicsDevice == null) return false;
-            mScreenshotRenderTarget = new RenderTarget2D(mGraphicsDevice, mScreenWidth, mScreenHeight);
+            mScreenshotRenderTarget = new RenderTarget2D(mGraphicsDevice, mScreenWidth, mScreenHeight, false, mGraphicsDevice.PresentationParameters.BackBufferFormat, mGraphicsDevice.PresentationParameters.DepthStencilFormat, mGraphicsDevice.PresentationParameters.MultiSampleCount, RenderTargetUsage.PreserveContents);
             return true;
         }
 

@@ -77,6 +77,7 @@
   <ItemGroup>
     <Compile Include="Classes\ContentManagement\GameContentManager.cs" />
     <Compile Include="Classes\ContentManagement\GameTexture.cs" />
+    <Compile Include="Classes\ContentManagement\TexturePacker.cs" />
     <Compile Include="Classes\Core\Database.cs" />
     <Compile Include="Classes\Core\EditorGraphics.cs" />
     <Compile Include="Classes\Core\EditorLoop.cs" />
@@ -84,9 +85,22 @@
     <Compile Include="Classes\Core\Preferences.cs" />
     <Compile Include="Classes\Core\Program.cs" />
     <Compile Include="Classes\Entities\AnimationInstance.cs" />
+    <Compile Include="Classes\Maps\MapSaveState.cs" />
     <Compile Include="Forms\Editors\Events\CommandPrinter.cs" />
     <Compile Include="Classes\General\Enums.cs" />
     <Compile Include="Classes\General\Globals.cs" />
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeNameColor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeNameColor.Designer.cs">
+      <DependentUpon>EventCommand_ChangeNameColor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_EquipItem.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_EquipItem.Designer.cs">
+      <DependentUpon>EventCommand_EquipItem.cs</DependentUpon>
+    </Compile>
     <Compile Include="Localization\Strings.cs" />
     <Compile Include="Classes\Maps\MapGrid.cs" />
     <Compile Include="Classes\Maps\MapInstance.cs" />
@@ -301,12 +315,6 @@
     <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_StartQuest.Designer.cs">
       <DependentUpon>EventCommand_StartQuest.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Switch.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Switch.Designer.cs">
-      <DependentUpon>EventCommand_Switch.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Text.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -433,11 +441,11 @@
     <Compile Include="Forms\Editors\frmSpell.Designer.cs">
       <DependentUpon>frmSpell.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\frmSwitchVariable.cs">
+    <Compile Include="Forms\Editors\frmVariable.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\frmSwitchVariable.Designer.cs">
-      <DependentUpon>frmSwitchVariable.cs</DependentUpon>
+    <Compile Include="Forms\Editors\frmVariable.Designer.cs">
+      <DependentUpon>frmVariable.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Editors\frmTime.cs">
       <SubType>Form</SubType>
@@ -462,12 +470,6 @@
     </Compile>
     <Compile Include="Forms\frmAbout.Designer.cs">
       <DependentUpon>frmAbout.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\frmLoadingContent.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\frmLoadingContent.Designer.cs">
-      <DependentUpon>frmLoadingContent.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\frmLogin.cs">
       <SubType>Form</SubType>
@@ -514,8 +516,8 @@
     <Reference Include="DarkUI">
       <HintPath>.\DarkUI.dll</HintPath>
     </Reference>
-    <Reference Include="JetBrains.Annotations, Version=2018.2.1.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
-      <HintPath>..\packages\JetBrains.Annotations.2018.2.1\lib\net20\JetBrains.Annotations.dll</HintPath>
+    <Reference Include="JetBrains.Annotations, Version=2018.3.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\packages\JetBrains.Annotations.2018.3.0\lib\net20\JetBrains.Annotations.dll</HintPath>
     </Reference>
     <Reference Include="Lidgren.Network, Version=3.6.0.1271, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -525,14 +527,41 @@
     <Reference Include="Mono.Data.Sqlite, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <HintPath>..\packages\Mono.Data.Sqlite.Portable.1.0.3.5\lib\net4\Mono.Data.Sqlite.dll</HintPath>
     </Reference>
-    <Reference Include="MonoGame.Framework">
-      <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\Windows\MonoGame.Framework.dll</HintPath>
+    <Reference Include="MonoGame.Framework, Version=3.7.1.189, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.7.1.189\lib\net45\MonoGame.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Pngcs">
       <HintPath>.\Pngcs.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.4.0.1\lib\net45\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct2D1, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.Direct2D1.4.0.1\lib\net45\SharpDX.Direct2D1.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D11, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.Direct3D11.4.0.1\lib\net45\SharpDX.Direct3D11.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D9, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.Direct3D9.4.0.1\lib\net45\SharpDX.Direct3D9.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.DXGI, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.DXGI.4.0.1\lib\net45\SharpDX.DXGI.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Mathematics, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.Mathematics.4.0.1\lib\net45\SharpDX.Mathematics.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.MediaFoundation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.MediaFoundation.4.0.1\lib\net45\SharpDX.MediaFoundation.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.XAudio2, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.XAudio2.4.0.1\lib\net45\SharpDX.XAudio2.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.XInput, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpDX.XInput.4.0.1\lib\net45\SharpDX.XInput.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -590,6 +619,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeGender.resx">
       <DependentUpon>EventCommand_ChangeGender.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeNameColor.resx">
+      <DependentUpon>EventCommand_ChangeNameColor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_EquipItem.resx">
+      <DependentUpon>EventCommand_EquipItem.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeItems.resx">
       <DependentUpon>EventCommand_ChangeItems.cs</DependentUpon>
@@ -663,9 +698,6 @@
     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_StartQuest.resx">
       <DependentUpon>EventCommand_StartQuest.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_Switch.resx">
-      <DependentUpon>EventCommand_Switch.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_Text.resx">
       <DependentUpon>EventCommand_Text.cs</DependentUpon>
     </EmbeddedResource>
@@ -729,8 +761,8 @@
     <EmbeddedResource Include="Forms\Editors\frmSpell.resx">
       <DependentUpon>frmSpell.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\frmSwitchVariable.resx">
-      <DependentUpon>frmSwitchVariable.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\Editors\frmVariable.resx">
+      <DependentUpon>frmVariable.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\frmTime.resx">
       <DependentUpon>frmTime.cs</DependentUpon>
@@ -743,9 +775,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\frmAbout.resx">
       <DependentUpon>frmAbout.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmLoadingContent.resx">
-      <DependentUpon>frmLoadingContent.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\frmLogin.resx">
       <DependentUpon>frmLogin.cs</DependentUpon>
@@ -808,7 +837,6 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
@@ -825,9 +853,13 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Fody.3.2.4\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.3.2.4\build\Fody.targets'))" />
     <Error Condition="!Exists('..\packages\Costura.Fody.3.1.2\build\Costura.Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Costura.Fody.3.1.2\build\Costura.Fody.targets'))" />
+    <Error Condition="!Exists('..\packages\MonoGame.Framework.WindowsDX.3.7.1.189\build\MonoGame.Framework.WindowsDX.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MonoGame.Framework.WindowsDX.3.7.1.189\build\MonoGame.Framework.WindowsDX.targets'))" />
+    <Error Condition="!Exists('..\packages\MonoGame.Content.Builder.3.7.0.9\build\MonoGame.Content.Builder.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MonoGame.Content.Builder.3.7.0.9\build\MonoGame.Content.Builder.targets'))" />
   </Target>
   <Import Project="..\packages\Costura.Fody.3.1.2\build\Costura.Fody.targets" Condition="Exists('..\packages\Costura.Fody.3.1.2\build\Costura.Fody.targets')" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <Import Project="..\packages\MonoGame.Framework.WindowsDX.3.7.1.189\build\MonoGame.Framework.WindowsDX.targets" Condition="Exists('..\packages\MonoGame.Framework.WindowsDX.3.7.1.189\build\MonoGame.Framework.WindowsDX.targets')" />
+  <Import Project="..\packages\MonoGame.Content.Builder.3.7.0.9\build\MonoGame.Content.Builder.targets" Condition="Exists('..\packages\MonoGame.Content.Builder.3.7.0.9\build\MonoGame.Content.Builder.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

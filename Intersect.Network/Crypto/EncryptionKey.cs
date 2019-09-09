@@ -3,6 +3,7 @@ using System.IO;
 using System.IO.Compression;
 using Intersect.Memory;
 using Intersect.Network.Crypto.Formats;
+using JetBrains.Annotations;
 
 namespace Intersect.Network.Crypto
 {
@@ -14,27 +15,31 @@ namespace Intersect.Network.Crypto
         }
 
         public KeyFormat Format { get; }
+
         public bool Compressed { get; set; }
 
         protected abstract bool InternalRead(IBuffer buffer);
 
         protected abstract bool InternalWrite(IBuffer buffer);
 
-        public bool Read(Stream stream)
+        public bool Read([NotNull] Stream stream)
         {
+            var readStream = stream;
             if (Compressed)
-                stream = new GZipStream(stream, CompressionMode.Decompress);
-
-            using (stream)
             {
-                using (var wrapper = new StreamWrapper(stream))
+                readStream = new GZipStream(stream, CompressionMode.Decompress);
+            }
+
+            using (readStream)
+            {
+                using (var wrapper = new StreamWrapper(readStream))
                 {
                     return InternalRead(wrapper);
                 }
             }
         }
 
-        public bool Write(Stream stream)
+        public bool Write([NotNull] Stream stream)
         {
             var buffer = new StreamWrapper(stream);
 
@@ -42,26 +47,34 @@ namespace Intersect.Network.Crypto
             buffer.Write(Compressed);
 
             if (Compressed)
+            {
                 buffer = new StreamWrapper(new GZipStream(stream, CompressionLevel.Optimal));
+            }
 
             return InternalWrite(buffer);
         }
 
-        public static bool ToStream(EncryptionKey encryptionKey, Stream stream)
+        public static bool ToStream([NotNull] EncryptionKey encryptionKey, [NotNull] Stream stream)
         {
-            if (encryptionKey == null) throw new ArgumentNullException();
-
             return encryptionKey.Write(stream);
         }
 
-        public static EncryptionKey FromStream(Stream stream)
+        [NotNull]
+        public static EncryptionKey FromStream([NotNull] Stream stream)
         {
-            EncryptionKey encryptionKey;
-
             using (var wrapper = new StreamWrapper(stream))
             {
-                if (!wrapper.Read(out byte format)) throw new EndOfStreamException();
-                if (!wrapper.Read(out bool compressed)) throw new EndOfStreamException();
+                if (!wrapper.Read(out byte format))
+                {
+                    throw new EndOfStreamException();
+                }
+
+                if (!wrapper.Read(out bool compressed))
+                {
+                    throw new EndOfStreamException();
+                }
+
+                EncryptionKey encryptionKey;
 
                 switch ((KeyFormat) format)
                 {
@@ -80,15 +93,27 @@ namespace Intersect.Network.Crypto
                 encryptionKey.Compressed = compressed;
 
                 if (!encryptionKey.Read(stream))
+                {
                     throw new Exception();
-            }
+                }
 
-            return encryptionKey;
+                return encryptionKey;
+            }
         }
 
-        public static TKey FromStream<TKey>(Stream stream) where TKey : EncryptionKey
+        [NotNull]
+        public static TKey FromStream<TKey>([NotNull] Stream stream) where TKey : EncryptionKey
         {
-            return FromStream(stream) as TKey;
+            var key = FromStream(stream);
+
+            if (!(key is TKey castedKey))
+            {
+                throw new InvalidOperationException(
+                    $@"Cannot convert from {key.GetType().Name} to {typeof(TKey).Name}."
+                );
+            }
+
+            return castedKey;
         }
     }
 }

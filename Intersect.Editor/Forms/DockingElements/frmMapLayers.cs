@@ -348,9 +348,9 @@ namespace Intersect.Editor.Forms.DockingElements
             nudWarpX.Maximum = Options.MapWidth;
             nudWarpY.Maximum = Options.MapHeight;
             cmbWarpMap.Items.Clear();
-            for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
+            for (int i = 0; i < MapList.OrderedMaps.Count; i++)
             {
-                cmbWarpMap.Items.Add(MapList.GetOrderedMaps()[i].Name);
+                cmbWarpMap.Items.Add(MapList.OrderedMaps[i].Name);
             }
             cmbWarpMap.SelectedIndex = 0;
             cmbDirection.SelectedIndex = 0;
@@ -476,7 +476,7 @@ namespace Intersect.Editor.Forms.DockingElements
             else if (rbWarp.Checked)
             {
                 tmpMap.Attributes[x, y] = MapAttribute.CreateAttribute(MapAttributes.Warp);
-                ((MapWarpAttribute)tmpMap.Attributes[x, y]).MapId = MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapId;
+                ((MapWarpAttribute)tmpMap.Attributes[x, y]).MapId = MapList.OrderedMaps[cmbWarpMap.SelectedIndex].MapId;
                 ((MapWarpAttribute)tmpMap.Attributes[x, y]).X = (byte) nudWarpX.Value;
                 ((MapWarpAttribute)tmpMap.Attributes[x, y]).Y = (byte) nudWarpY.Value;
                 ((MapWarpAttribute)tmpMap.Attributes[x, y]).Direction = (WarpDirection)(cmbDirection.SelectedIndex);
@@ -665,19 +665,19 @@ namespace Intersect.Editor.Forms.DockingElements
         private void btnVisualMapSelector_Click(object sender, EventArgs e)
         {
             FrmWarpSelection frmWarpSelection = new FrmWarpSelection();
-            frmWarpSelection.SelectTile(MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapId, (int) nudWarpX.Value,
+            frmWarpSelection.SelectTile(MapList.OrderedMaps[cmbWarpMap.SelectedIndex].MapId, (int) nudWarpX.Value,
                 (int) nudWarpY.Value);
             frmWarpSelection.ShowDialog();
             if (frmWarpSelection.GetResult())
             {
                 cmbWarpMap.Items.Clear();
-                for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
+                for (int i = 0; i < MapList.OrderedMaps.Count; i++)
                 {
-                    cmbWarpMap.Items.Add(MapList.GetOrderedMaps()[i].Name);
+                    cmbWarpMap.Items.Add(MapList.OrderedMaps[i].Name);
                 }
-                for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
+                for (int i = 0; i < MapList.OrderedMaps.Count; i++)
                 {
-                    if (MapList.GetOrderedMaps()[i].MapId == frmWarpSelection.GetMap())
+                    if (MapList.OrderedMaps[i].MapId == frmWarpSelection.GetMap())
                     {
                         cmbWarpMap.SelectedIndex = i;
                         break;
@@ -973,6 +973,14 @@ namespace Intersect.Editor.Forms.DockingElements
         {
             ToolTip tt = new ToolTip();
             tt.SetToolTip((PictureBox) sender, Strings.Tiles.layers[mMapLayers.IndexOf((PictureBox) sender)]);
+        }
+
+        private void cmbTilesets_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right && Globals.CurrentTileset != null)
+            {
+                Clipboard.SetText(Globals.CurrentTileset.Id.ToString());
+            }
         }
     }
 }

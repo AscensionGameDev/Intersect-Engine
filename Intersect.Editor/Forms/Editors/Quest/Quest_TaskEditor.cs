@@ -6,6 +6,7 @@ using Intersect.Editor.Localization;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
+using Intersect.Logging;
 using Newtonsoft.Json;
 
 namespace Intersect.Editor.Forms.Editors.Quest
@@ -19,25 +20,41 @@ namespace Intersect.Editor.Forms.Editors.Quest
 
         public QuestTaskEditor(QuestBase refQuest, QuestBase.QuestTask refTask)
         {
+            if (refQuest == null)
+            {
+                Log.Warn($@"{nameof(refQuest)} is null.");
+            }
+
+            if (refTask == null)
+            {
+                Log.Warn($@"{nameof(refTask)} is null.");
+            }
+
             InitializeComponent();
             mMyTask = refTask;
             mMyQuest = refQuest;
-            mEventBackup = mMyTask.EdittingEvent.JsonData;
+
+            if (mMyTask?.EditingEvent == null)
+            {
+                Log.Warn($@"{nameof(mMyTask.EditingEvent)} is null.");
+            }
+
+            mEventBackup = mMyTask?.EditingEvent?.JsonData;
             InitLocalization();
-            cmbTaskType.SelectedIndex = (int)mMyTask.Objective;
-            txtStartDesc.Text = mMyTask.Description;
+            cmbTaskType.SelectedIndex = mMyTask == null ? -1 : (int)mMyTask.Objective;
+            txtStartDesc.Text = mMyTask?.Description;
             UpdateFormElements();
             switch (cmbTaskType.SelectedIndex)
             {
                 case 0: //Event Driven
                     break;
                 case 1: //Gather Items
-                    cmbItem.SelectedIndex = ItemBase.ListIndex(mMyTask.TargetId);
-                    nudItemAmount.Value = mMyTask.Quantity;
+                    cmbItem.SelectedIndex = ItemBase.ListIndex(mMyTask?.TargetId ?? Guid.Empty);
+                    nudItemAmount.Value = mMyTask?.Quantity ?? 0;
                     break;
                 case 2: //Kill NPCS
-                    cmbNpc.SelectedIndex = NpcBase.ListIndex(mMyTask.TargetId);
-                    nudNpcQuantity.Value = mMyTask.Quantity;
+                    cmbNpc.SelectedIndex = NpcBase.ListIndex(mMyTask?.TargetId ?? Guid.Empty);
+                    nudNpcQuantity.Value = mMyTask?.Quantity ?? 0;
                     break;
             }
         }
@@ -120,7 +137,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
         private void btnCancel_Click(object sender, EventArgs e)
         {
             Cancelled = true;
-            mMyTask.EdittingEvent.Load(mEventBackup);
+            mMyTask.EditingEvent.Load(mEventBackup);
             ParentForm.Close();
         }
 
@@ -131,12 +148,12 @@ namespace Intersect.Editor.Forms.Editors.Quest
 
         private void btnEditTaskEvent_Click(object sender, EventArgs e)
         {
-            mMyTask.EdittingEvent.Name = Strings.TaskEditor.completionevent.ToString(mMyQuest.Name);
+            mMyTask.EditingEvent.Name = Strings.TaskEditor.completionevent.ToString(mMyQuest.Name);
             FrmEvent editor = new FrmEvent(null)
             {
-                MyEvent = mMyTask.EdittingEvent
+                MyEvent = mMyTask.EditingEvent
             };
-            editor.InitEditor(true,true);
+            editor.InitEditor(true,true, true);
             editor.ShowDialog();
             Globals.MainForm.BringToFront();
             BringToFront();

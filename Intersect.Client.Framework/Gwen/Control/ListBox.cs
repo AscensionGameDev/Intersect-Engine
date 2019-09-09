@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+
+using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Control.Layout;
 using Newtonsoft.Json.Linq;
@@ -20,6 +23,14 @@ namespace Intersect.Client.Framework.Gwen.Control
         private bool mMultiSelect;
         private Pos mOldDock; // used while autosizing
         private bool mSizeToContents;
+
+        private GameFont mFont;
+        private string mFontInfo;
+
+        //Sound Effects
+        protected string mItemHoverSound;
+        protected string mItemClickSound;
+        protected string mItemRightClickSound;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ListBox" /> class.
@@ -166,6 +177,10 @@ namespace Intersect.Client.Framework.Gwen.Control
             obj.Add("SizeToContents", mSizeToContents);
             obj.Add("MultiSelect", AllowMultiSelect);
             obj.Add("IsToggle", IsToggle);
+            obj.Add("Font", mFontInfo);
+            obj.Add("ItemHoverSound", mItemHoverSound);
+            obj.Add("ItemClickSound", mItemClickSound);
+            obj.Add("ItemRightClickSound", mItemRightClickSound);
             return base.FixJson(obj);
         }
 
@@ -175,6 +190,28 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["SizeToContents"] != null) mSizeToContents = (bool)obj["SizeToContents"];
             if (obj["MultiSelect"] != null) AllowMultiSelect = (bool)obj["MultiSelect"];
             if (obj["IsToggle"] != null) IsToggle = (bool)obj["IsToggle"];
+            if (obj["ItemHoverSound"] != null) mItemHoverSound = (string)obj["ItemHoverSound"];
+            if (obj["ItemClickSound"] != null) mItemClickSound = (string)obj["ItemClickSound"];
+            if (obj["ItemRightClickSound"] != null) mItemRightClickSound = (string)obj["ItemRightClickSound"];
+
+            if (obj["Font"] != null && obj["Font"].Type != JTokenType.Null)
+            {
+                var fontArr = ((string)obj["Font"]).Split(',');
+                mFontInfo = (string)obj["Font"];
+                mFont = GameContentManager.Current.GetFont(fontArr[0], int.Parse(fontArr[1]));
+            }
+
+            foreach (var itm in mTable.Children)
+            {
+                var row = (ListBoxRow) itm;
+                row.HoverSound = mItemHoverSound;
+                row.ClickSound = mItemClickSound;
+                row.RightClickSound = mItemRightClickSound;
+                if (mFont != null)
+                {
+                    row.SetTextFont(mFont);
+                }
+            }
         }
 
         /// <summary>
@@ -297,6 +334,13 @@ namespace Intersect.Client.Framework.Gwen.Control
             row.UserData = userData;
 
             row.Selected += OnRowSelected;
+
+            row.HoverSound = mItemHoverSound;
+            row.ClickSound = mItemClickSound;
+            row.RightClickSound = mItemRightClickSound;
+
+            if (mFont != null)
+                row.SetTextFont(mFont);
 
             mTable.SizeToContents(Width);
 

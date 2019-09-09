@@ -33,8 +33,14 @@ namespace Intersect.Editor.Forms.Editors
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmResource));
             this.grpResources = new DarkUI.Controls.DarkGroupBox();
-            this.lstResources = new System.Windows.Forms.ListBox();
+            this.btnClearSearch = new DarkUI.Controls.DarkButton();
+            this.txtSearch = new DarkUI.Controls.DarkTextBox();
+            this.lstResources = new System.Windows.Forms.TreeView();
+            this.imageList = new System.Windows.Forms.ImageList(this.components);
             this.grpGeneral = new DarkUI.Controls.DarkGroupBox();
+            this.btnAddFolder = new DarkUI.Controls.DarkButton();
+            this.lblFolder = new System.Windows.Forms.Label();
+            this.cmbFolder = new DarkUI.Controls.DarkComboBox();
             this.nudMaxHp = new DarkUI.Controls.DarkNumericUpDown();
             this.nudMinHp = new DarkUI.Controls.DarkNumericUpDown();
             this.nudSpawnDuration = new DarkUI.Controls.DarkNumericUpDown();
@@ -89,6 +95,8 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemDelete = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnChronological = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemCopy = new System.Windows.Forms.ToolStripButton();
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
@@ -117,6 +125,8 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpResources.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpResources.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpResources.Controls.Add(this.btnClearSearch);
+            this.grpResources.Controls.Add(this.txtSearch);
             this.grpResources.Controls.Add(this.lstResources);
             this.grpResources.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpResources.Location = new System.Drawing.Point(12, 39);
@@ -126,23 +136,63 @@ namespace Intersect.Editor.Forms.Editors
             this.grpResources.TabStop = false;
             this.grpResources.Text = "Resources";
             // 
+            // btnClearSearch
+            // 
+            this.btnClearSearch.Location = new System.Drawing.Point(179, 19);
+            this.btnClearSearch.Name = "btnClearSearch";
+            this.btnClearSearch.Padding = new System.Windows.Forms.Padding(5);
+            this.btnClearSearch.Size = new System.Drawing.Size(18, 20);
+            this.btnClearSearch.TabIndex = 34;
+            this.btnClearSearch.Text = "X";
+            this.btnClearSearch.Click += new System.EventHandler(this.btnClearSearch_Click);
+            // 
+            // txtSearch
+            // 
+            this.txtSearch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtSearch.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtSearch.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.txtSearch.Location = new System.Drawing.Point(6, 19);
+            this.txtSearch.Name = "txtSearch";
+            this.txtSearch.Size = new System.Drawing.Size(167, 20);
+            this.txtSearch.TabIndex = 33;
+            this.txtSearch.Text = "Search...";
+            this.txtSearch.Click += new System.EventHandler(this.txtSearch_Click);
+            this.txtSearch.TextChanged += new System.EventHandler(this.txtSearch_TextChanged);
+            this.txtSearch.Enter += new System.EventHandler(this.txtSearch_Enter);
+            this.txtSearch.Leave += new System.EventHandler(this.txtSearch_Leave);
+            // 
             // lstResources
             // 
+            this.lstResources.AllowDrop = true;
             this.lstResources.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.lstResources.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lstResources.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.lstResources.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lstResources.FormattingEnabled = true;
-            this.lstResources.Location = new System.Drawing.Point(6, 19);
+            this.lstResources.HideSelection = false;
+            this.lstResources.ImageIndex = 0;
+            this.lstResources.ImageList = this.imageList;
+            this.lstResources.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
+            this.lstResources.Location = new System.Drawing.Point(6, 45);
             this.lstResources.Name = "lstResources";
-            this.lstResources.Size = new System.Drawing.Size(191, 405);
-            this.lstResources.TabIndex = 1;
-            this.lstResources.SelectedIndexChanged += new System.EventHandler(this.lstResources_Click);
-            this.lstResources.KeyDown += new System.Windows.Forms.KeyEventHandler(this.itemList_KeyDown);
+            this.lstResources.SelectedImageIndex = 0;
+            this.lstResources.Size = new System.Drawing.Size(191, 386);
+            this.lstResources.TabIndex = 32;
+            this.lstResources.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.lstResources_AfterSelect);
+            this.lstResources.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.lstResources_NodeMouseClick);
+            // 
+            // imageList
+            // 
+            this.imageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList.ImageStream")));
+            this.imageList.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList.Images.SetKeyName(0, "folder_Open_16xLG.png");
+            this.imageList.Images.SetKeyName(1, "LegacyPackage_16x.png");
             // 
             // grpGeneral
             // 
             this.grpGeneral.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpGeneral.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpGeneral.Controls.Add(this.btnAddFolder);
+            this.grpGeneral.Controls.Add(this.lblFolder);
+            this.grpGeneral.Controls.Add(this.cmbFolder);
             this.grpGeneral.Controls.Add(this.nudMaxHp);
             this.grpGeneral.Controls.Add(this.nudMinHp);
             this.grpGeneral.Controls.Add(this.nudSpawnDuration);
@@ -166,11 +216,52 @@ namespace Intersect.Editor.Forms.Editors
             this.grpGeneral.TabStop = false;
             this.grpGeneral.Text = "General";
             // 
+            // btnAddFolder
+            // 
+            this.btnAddFolder.Location = new System.Drawing.Point(192, 45);
+            this.btnAddFolder.Name = "btnAddFolder";
+            this.btnAddFolder.Padding = new System.Windows.Forms.Padding(5);
+            this.btnAddFolder.Size = new System.Drawing.Size(18, 21);
+            this.btnAddFolder.TabIndex = 52;
+            this.btnAddFolder.Text = "+";
+            this.btnAddFolder.Click += new System.EventHandler(this.btnAddFolder_Click);
+            // 
+            // lblFolder
+            // 
+            this.lblFolder.AutoSize = true;
+            this.lblFolder.Location = new System.Drawing.Point(6, 48);
+            this.lblFolder.Name = "lblFolder";
+            this.lblFolder.Size = new System.Drawing.Size(39, 13);
+            this.lblFolder.TabIndex = 51;
+            this.lblFolder.Text = "Folder:";
+            // 
+            // cmbFolder
+            // 
+            this.cmbFolder.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbFolder.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbFolder.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbFolder.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbFolder.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbFolder.ButtonIcon")));
+            this.cmbFolder.DrawDropdownHoverOutline = false;
+            this.cmbFolder.DrawFocusRectangle = false;
+            this.cmbFolder.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbFolder.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbFolder.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbFolder.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbFolder.FormattingEnabled = true;
+            this.cmbFolder.Location = new System.Drawing.Point(75, 45);
+            this.cmbFolder.Name = "cmbFolder";
+            this.cmbFolder.Size = new System.Drawing.Size(113, 21);
+            this.cmbFolder.TabIndex = 50;
+            this.cmbFolder.Text = null;
+            this.cmbFolder.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbFolder.SelectedIndexChanged += new System.EventHandler(this.cmbFolder_SelectedIndexChanged);
+            // 
             // nudMaxHp
             // 
             this.nudMaxHp.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudMaxHp.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudMaxHp.Location = new System.Drawing.Point(75, 104);
+            this.nudMaxHp.Location = new System.Drawing.Point(75, 125);
             this.nudMaxHp.Maximum = new decimal(new int[] {
             1000000,
             0,
@@ -190,7 +281,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.nudMinHp.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudMinHp.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudMinHp.Location = new System.Drawing.Point(75, 78);
+            this.nudMinHp.Location = new System.Drawing.Point(75, 99);
             this.nudMinHp.Maximum = new decimal(new int[] {
             1000000,
             0,
@@ -210,14 +301,14 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.nudSpawnDuration.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudSpawnDuration.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudSpawnDuration.Location = new System.Drawing.Point(9, 140);
+            this.nudSpawnDuration.Location = new System.Drawing.Point(123, 151);
             this.nudSpawnDuration.Maximum = new decimal(new int[] {
             2147483647,
             0,
             0,
             0});
             this.nudSpawnDuration.Name = "nudSpawnDuration";
-            this.nudSpawnDuration.Size = new System.Drawing.Size(201, 20);
+            this.nudSpawnDuration.Size = new System.Drawing.Size(87, 20);
             this.nudSpawnDuration.TabIndex = 40;
             this.nudSpawnDuration.Value = new decimal(new int[] {
             0,
@@ -240,9 +331,9 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbAnimation.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbAnimation.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbAnimation.FormattingEnabled = true;
-            this.cmbAnimation.Location = new System.Drawing.Point(9, 179);
+            this.cmbAnimation.Location = new System.Drawing.Point(75, 179);
             this.cmbAnimation.Name = "cmbAnimation";
-            this.cmbAnimation.Size = new System.Drawing.Size(201, 21);
+            this.cmbAnimation.Size = new System.Drawing.Size(135, 21);
             this.cmbAnimation.TabIndex = 39;
             this.cmbAnimation.Text = null;
             this.cmbAnimation.TextPadding = new System.Windows.Forms.Padding(2);
@@ -261,7 +352,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblAnimation
             // 
             this.lblAnimation.AutoSize = true;
-            this.lblAnimation.Location = new System.Drawing.Point(6, 162);
+            this.lblAnimation.Location = new System.Drawing.Point(6, 182);
             this.lblAnimation.Name = "lblAnimation";
             this.lblAnimation.Size = new System.Drawing.Size(56, 13);
             this.lblAnimation.TabIndex = 36;
@@ -270,7 +361,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblMaxHp
             // 
             this.lblMaxHp.AutoSize = true;
-            this.lblMaxHp.Location = new System.Drawing.Point(6, 106);
+            this.lblMaxHp.Location = new System.Drawing.Point(6, 127);
             this.lblMaxHp.Name = "lblMaxHp";
             this.lblMaxHp.Size = new System.Drawing.Size(48, 13);
             this.lblMaxHp.TabIndex = 35;
@@ -279,7 +370,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblSpawnDuration
             // 
             this.lblSpawnDuration.AutoSize = true;
-            this.lblSpawnDuration.Location = new System.Drawing.Point(6, 127);
+            this.lblSpawnDuration.Location = new System.Drawing.Point(6, 155);
             this.lblSpawnDuration.Name = "lblSpawnDuration";
             this.lblSpawnDuration.Size = new System.Drawing.Size(86, 13);
             this.lblSpawnDuration.TabIndex = 32;
@@ -317,7 +408,7 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbToolType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbToolType.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbToolType.FormattingEnabled = true;
-            this.cmbToolType.Location = new System.Drawing.Point(75, 46);
+            this.cmbToolType.Location = new System.Drawing.Point(75, 72);
             this.cmbToolType.Name = "cmbToolType";
             this.cmbToolType.Size = new System.Drawing.Size(135, 21);
             this.cmbToolType.TabIndex = 29;
@@ -328,7 +419,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblToolType
             // 
             this.lblToolType.AutoSize = true;
-            this.lblToolType.Location = new System.Drawing.Point(6, 49);
+            this.lblToolType.Location = new System.Drawing.Point(6, 75);
             this.lblToolType.Name = "lblToolType";
             this.lblToolType.Size = new System.Drawing.Size(58, 13);
             this.lblToolType.TabIndex = 28;
@@ -337,7 +428,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblHP
             // 
             this.lblHP.AutoSize = true;
-            this.lblHP.Location = new System.Drawing.Point(6, 80);
+            this.lblHP.Location = new System.Drawing.Point(6, 101);
             this.lblHP.Name = "lblHP";
             this.lblHP.Size = new System.Drawing.Size(45, 13);
             this.lblHP.TabIndex = 16;
@@ -818,6 +909,8 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripSeparator1,
             this.toolStripItemDelete,
             this.toolStripSeparator2,
+            this.btnChronological,
+            this.toolStripSeparator4,
             this.toolStripItemCopy,
             this.toolStripItemPaste,
             this.toolStripSeparator3,
@@ -865,6 +958,24 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripSeparator2.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            // 
+            // btnChronological
+            // 
+            this.btnChronological.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnChronological.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.btnChronological.Image = ((System.Drawing.Image)(resources.GetObject("btnChronological.Image")));
+            this.btnChronological.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnChronological.Name = "btnChronological";
+            this.btnChronological.Size = new System.Drawing.Size(23, 22);
+            this.btnChronological.Text = "Order Chronologically";
+            this.btnChronological.Click += new System.EventHandler(this.btnChronological_Click);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.toolStripSeparator4.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
             // 
             // toolStripItemCopy
             // 
@@ -932,6 +1043,7 @@ namespace Intersect.Editor.Forms.Editors
             this.Load += new System.EventHandler(this.frmResource_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.form_KeyDown);
             this.grpResources.ResumeLayout(false);
+            this.grpResources.PerformLayout();
             this.grpGeneral.ResumeLayout(false);
             this.grpGeneral.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudMaxHp)).EndInit();
@@ -962,7 +1074,6 @@ namespace Intersect.Editor.Forms.Editors
         #endregion
 
         private DarkGroupBox grpResources;
-        private System.Windows.Forms.ListBox lstResources;
         private DarkGroupBox grpGeneral;
         private DarkGroupBox grpGraphics;
         private System.Windows.Forms.Label lblName;
@@ -1022,5 +1133,14 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.Label lblEvent;
         private DarkCheckBox chkExhaustedBelowEntities;
         private DarkCheckBox chkInitialBelowEntities;
+        private DarkButton btnClearSearch;
+        private DarkTextBox txtSearch;
+        public System.Windows.Forms.TreeView lstResources;
+        private System.Windows.Forms.ImageList imageList;
+        private DarkButton btnAddFolder;
+        private System.Windows.Forms.Label lblFolder;
+        private DarkComboBox cmbFolder;
+        private System.Windows.Forms.ToolStripButton btnChronological;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
     }
 }

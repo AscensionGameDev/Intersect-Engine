@@ -111,7 +111,7 @@ namespace Intersect
         public static Color Cyan => new Color(0, 255, 255);
         public static Color Pink => new Color(255, 192, 203);
 
-        public static Color FromName(string name, Dictionary<int,LocalizedString> colors)
+        public static Color FromName(string name, IDictionary<int,LocalizedString> colors)
         {
             if (name == "Black" || name == colors[0])
             {
@@ -188,6 +188,33 @@ namespace Intersect
         public static Color FromRgba(int rgba)
         {
             return FromArgb((rgba >> 0) & 0x0FF, (rgba >> 24) & 0x0FF, (rgba >> 16) & 0x0FF, (rgba >> 8) & 0x0FF);
+        }
+
+        public static string ToString(Color clr)
+        {
+            if (clr == null)
+            {
+                return "";
+            }
+            else
+            {
+                return clr.A + "," + clr.R + "," + clr.G + "," + clr.B;
+            }
+        }
+
+        public static Color FromString(string val, Color defaultColor = null)
+        {
+            if (string.IsNullOrEmpty(val)) return defaultColor;
+            string[] strs = val.Split(",".ToCharArray());
+            int[] parts = new int[strs.Length];
+            for (int i = 0; i < strs.Length; i++)
+                parts[i] = int.Parse(strs[i]);
+            return new Color(parts[0], parts[1], parts[2], parts[3]);
+        }
+
+        public static implicit operator Color(string colorString)
+        {
+            return FromString(colorString);
         }
     }
 }

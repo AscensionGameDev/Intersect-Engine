@@ -23,6 +23,8 @@ namespace Intersect.Client.UI.Menu
         private string mCharacterPortraitImg = "";
 
         private Label mCharCreationHeader;
+        private Label mHintLabel;
+        private Label mHint2Label;
 
         //Controls
         private ImagePanel mCharCreationPanel;
@@ -34,6 +36,7 @@ namespace Intersect.Client.UI.Menu
         private ComboBox mClassCombobox;
         private Label mClassLabel;
         private Button mCreateButton;
+        private Button mBackButton;
         private int mDisplaySpriteIndex = -1;
         private LabeledCheckBox mFemaleChk;
         private List<KeyValuePair<int, ClassSprite>> mFemaleSprites = new List<KeyValuePair<int, ClassSprite>>();
@@ -43,6 +46,7 @@ namespace Intersect.Client.UI.Menu
 
         //Parent
         private MainMenu mMainMenu;
+        private SelectCharacterWindow mSelectCharacterWindow;
 
         private LabeledCheckBox mMaleChk;
 
@@ -55,10 +59,11 @@ namespace Intersect.Client.UI.Menu
         public bool IsHidden => mCharCreationPanel.IsHidden;
 
         //Init
-        public CreateCharacterWindow(Canvas parent, MainMenu mainMenu, ImagePanel parentPanel)
+        public CreateCharacterWindow(Canvas parent, MainMenu mainMenu, ImagePanel parentPanel, SelectCharacterWindow selectCharacterWindow)
         {
             //Assign References
             mMainMenu = mainMenu;
+            mSelectCharacterWindow = selectCharacterWindow;
 
             //Main Menu Window
             mCharCreationPanel = new ImagePanel(parent, "CharacterCreationWindow");
@@ -89,6 +94,16 @@ namespace Intersect.Client.UI.Menu
             //Class Combobox
             mClassCombobox = new ComboBox(mClassBackground, "ClassCombobox");
             mClassCombobox.ItemSelected += classCombobox_ItemSelected;
+
+            //Hint Label
+            mHintLabel = new Label(mCharCreationPanel, "HintLabel");
+            mHintLabel.SetText(Strings.CharacterCreation.hint);
+            mHintLabel.IsHidden = true;
+
+            //Hint2 Label
+            mHint2Label = new Label(mCharCreationPanel, "Hint2Label");
+            mHint2Label.SetText(Strings.CharacterCreation.hint2);
+            mHint2Label.IsHidden = true;
 
             //Character Container
             mCharacterContainer = new ImagePanel(mCharCreationPanel, "CharacterContainer");
@@ -134,6 +149,11 @@ namespace Intersect.Client.UI.Menu
             mCreateButton = new Button(mCharCreationPanel, "CreateButton");
             mCreateButton.SetText(Strings.CharacterCreation.create);
             mCreateButton.Clicked += CreateButton_Clicked;
+
+            mBackButton = new Button(mCharCreationPanel, "BackButton");
+            mBackButton.IsHidden = true;
+            mBackButton.SetText(Strings.CharacterCreation.back);
+            mBackButton.Clicked += BackButton_Clicked;
 
             mCharCreationPanel.LoadJsonUi(GameContentManager.UI.Menu, GameGraphics.Renderer.GetResolutionString());
         }
@@ -204,10 +224,9 @@ namespace Intersect.Client.UI.Menu
                     {
                         if (isFace)
                         {
-                            mCharacterPortrait.SetTextureRect(0, 0, mCharacterPortrait.Texture.GetWidth(),
-                                mCharacterPortrait.Texture.GetHeight());
-                            mCharacterPortrait.SetSize(64, 64);
-                            mCharacterPortrait.SetPosition(5, 5);
+                            mCharacterPortrait.SetTextureRect(0, 0, mCharacterPortrait.Texture.GetWidth(), mCharacterPortrait.Texture.GetHeight());
+                            mCharacterPortrait.SetSize(mCharacterPortrait.Texture.GetWidth(), mCharacterPortrait.Texture.GetHeight());
+                            mCharacterPortrait.SetPosition(mCharacterContainer.Width / 2 - mCharacterPortrait.Width / 2, mCharacterContainer.Height / 2 - mCharacterPortrait.Height / 2);
                         }
                         else
                         {
@@ -387,7 +406,6 @@ namespace Intersect.Client.UI.Menu
             }
             if (FieldChecking.IsValidUsername(mCharnameTextbox.Text, Strings.Regex.username))
             {
-                GameFade.FadeOut();
                 if (mMaleChk.IsChecked)
                 {
                     PacketSender.SendCreateCharacter(mCharnameTextbox.Text, GetClass().Id,
@@ -452,6 +470,21 @@ namespace Intersect.Client.UI.Menu
             else
             {
                 TryCreateCharacter(1);
+            }
+        }
+
+        private void BackButton_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            Hide();
+            if (Options.Player.MaxCharacters <= 1)
+            {
+                //Logout
+                mMainMenu.Show();
+            }
+            else
+            {
+                //Character Selection Screen
+                mSelectCharacterWindow.Show();
             }
         }
     }

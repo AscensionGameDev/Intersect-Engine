@@ -233,6 +233,7 @@ namespace Intersect.Editor.Forms.DockingElements
             this.cmbTilesets.Text = null;
             this.cmbTilesets.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbTilesets.SelectedIndexChanged += new System.EventHandler(this.cmbTilesets_SelectedIndexChanged);
+            this.cmbTilesets.MouseDown += new System.Windows.Forms.MouseEventHandler(this.cmbTilesets_MouseDown);
             // 
             // rbSlide
             // 
@@ -458,6 +459,11 @@ namespace Intersect.Editor.Forms.DockingElements
             this.nudItemQuantity.Name = "nudItemQuantity";
             this.nudItemQuantity.Size = new System.Drawing.Size(219, 20);
             this.nudItemQuantity.TabIndex = 10;
+            this.nudItemQuantity.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // cmbItemAttribute
             // 
@@ -528,6 +534,11 @@ namespace Intersect.Editor.Forms.DockingElements
             this.nudWarpY.Name = "nudWarpY";
             this.nudWarpY.Size = new System.Drawing.Size(190, 20);
             this.nudWarpY.TabIndex = 26;
+            this.nudWarpY.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // nudWarpX
             // 
@@ -537,6 +548,11 @@ namespace Intersect.Editor.Forms.DockingElements
             this.nudWarpX.Name = "nudWarpX";
             this.nudWarpX.Size = new System.Drawing.Size(190, 20);
             this.nudWarpX.TabIndex = 25;
+            this.nudWarpX.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // btnVisualMapSelector
             // 
@@ -760,6 +776,11 @@ namespace Intersect.Editor.Forms.DockingElements
             this.nudSoundDistance.Name = "nudSoundDistance";
             this.nudSoundDistance.Size = new System.Drawing.Size(219, 20);
             this.nudSoundDistance.TabIndex = 10;
+            this.nudSoundDistance.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // cmbMapAttributeSound
             // 
@@ -1285,7 +1306,7 @@ namespace Intersect.Editor.Forms.DockingElements
             this.pnlNpcs.Size = new System.Drawing.Size(276, 422);
             this.pnlNpcs.TabIndex = 1;
             // 
-            // frmMapLayers
+            // FrmMapLayers
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;

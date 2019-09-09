@@ -2,6 +2,7 @@
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
+using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Enums;
@@ -91,6 +92,7 @@ namespace Intersect.Client.UI.Game.Crafting
 
         void pnl_HoverEnter(Base sender, EventArgs arguments)
         {
+            if (InputHandler.MouseFocus != null) return;
             mMouseOver = true;
             mCanDrag = true;
             if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
@@ -105,8 +107,7 @@ namespace Intersect.Client.UI.Game.Crafting
             }
             if (mIngredient != null)
             {
-                DescWindow = new ItemDescWindow(ItemBase.Get(mIngredient.ItemId), mIngredient.Quantity, mCraftingWindow.X - 255,
-                    mCraftingWindow.Y, new int[(int)Stats.StatCount]);
+                DescWindow = new ItemDescWindow(ItemBase.Get(mIngredient.ItemId), mIngredient.Quantity, mCraftingWindow.X, mCraftingWindow.Y, new int[(int)Stats.StatCount]);
             }
         }
     }

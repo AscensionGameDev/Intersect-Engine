@@ -67,6 +67,7 @@ namespace Intersect.Editor.Forms.DockingElements
             renameToolStripMenuItem.Text = Strings.MapList.rename;
             newFolderToolStripMenuItem.Text = Strings.MapList.newfolder;
             deleteToolStripMenuItem.Text = Strings.MapList.delete;
+            copyIdToolStripMenuItem.Text = Strings.MapList.copyid;
         }
 
         private void btnRefreshList_Click(object sender, EventArgs e)
@@ -152,6 +153,22 @@ namespace Intersect.Editor.Forms.DockingElements
         private void toolSelectMap_Click(object sender, EventArgs e)
         {
             mapTreeList.UpdateMapList(Globals.CurrentMap.Id);
+        }
+
+        private void contextMenuStrip1_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            var node = mapTreeList.list.SelectedNode;
+            copyIdToolStripMenuItem.Visible = node != null && node.Tag.GetType() == typeof(MapListMap);
+        }
+
+        private void copyIdToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var node = mapTreeList.list.SelectedNode;
+            if (node != null && node.Tag.GetType() == typeof(MapListMap))
+            {
+                var id = ((MapListMap)node.Tag).MapId;
+                Clipboard.SetText(id.ToString());
+            }
         }
     }
 }

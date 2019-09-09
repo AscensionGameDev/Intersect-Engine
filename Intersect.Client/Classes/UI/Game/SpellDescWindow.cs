@@ -1,5 +1,6 @@
 ﻿using System;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
@@ -12,14 +13,14 @@ namespace Intersect.Client.UI.Game
     {
         ImagePanel mDescWindow;
 
-        public SpellDescWindow(Guid spellId, int x, int y)
+        public SpellDescWindow(Guid spellId, int x, int y, bool centerHorizontally = false)
         {
             var spell = SpellBase.Get(spellId);
             if (spell == null)
             {
                 return;
             }
-            mDescWindow = new ImagePanel(Gui.GameUi.GameCanvas, "SpellDescWindow");
+            mDescWindow = new ImagePanel(Gui.GameUi.GameCanvas, "SpellDescWindowExpanded");
 
             ImagePanel icon = new ImagePanel(mDescWindow, "SpellIcon");
 
@@ -30,11 +31,18 @@ namespace Intersect.Client.UI.Game
             spellType.Text = Strings.SpellDesc.spelltypes[(int)spell.SpellType];
 
             RichLabel spellDesc = new RichLabel(mDescWindow, "SpellDesc");
+            RichLabel spellStats = new RichLabel(mDescWindow,"SpellStats");
+            var spellDescText = new Label(mDescWindow, "SpellDescText");
+            spellDescText.Font = spellDescText.Parent.Skin.DefaultFont;
+            var spellStatsText = new Label(mDescWindow, "SpellStatsText");
+            spellStatsText.Font = spellStatsText.Parent.Skin.DefaultFont;
+            spellDescText.IsHidden = true;
+            spellStatsText.IsHidden = true;
             //Load this up now so we know what color to make the text when filling out the desc
             mDescWindow.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
             if (spell.Description.Length > 0)
             {
-                spellDesc.AddText(Strings.SpellDesc.desc.ToString( spell.Description), spellDesc.RenderColor);
+                spellDesc.AddText(Strings.SpellDesc.desc.ToString(spell.Description), spellDesc.RenderColor, spellDescText.CurAlignments.Count > 0 ? spellDescText.CurAlignments[0] : Alignments.Left, spellDescText.Font);
                 spellDesc.AddLineBreak();
                 spellDesc.AddLineBreak();
             }
@@ -46,53 +54,53 @@ namespace Intersect.Client.UI.Game
             if (spell.CastDuration > 0)
             {
 				float castDuration = (float)spell.CastDuration / 1000f;
-				spellDesc.AddText(Strings.SpellDesc.casttime.ToString(castDuration),
-                    spellDesc.RenderColor);
-                spellDesc.AddLineBreak();
-                spellDesc.AddLineBreak();
+				spellStats.AddText(Strings.SpellDesc.casttime.ToString(castDuration),
+                    spellStats.RenderColor, spellStatsText.CurAlignments.Count > 0 ? spellStatsText.CurAlignments[0] : Alignments.Left, spellStatsText.Font);
+                spellStats.AddLineBreak();
+                spellStats.AddLineBreak();
             }
             if (spell.CooldownDuration > 0)
             {
 				decimal cdr = 1 - (Globals.Me.GetCooldownReduction() / 100);
 				float cd = ((float)(spell.CooldownDuration * cdr) / 1000f);
-				spellDesc.AddText(Strings.SpellDesc.cooldowntime.ToString(cd),
-                    spellDesc.RenderColor);
-                spellDesc.AddLineBreak();
-                spellDesc.AddLineBreak();
+				spellStats.AddText(Strings.SpellDesc.cooldowntime.ToString(cd),
+                    spellStats.RenderColor, spellStatsText.CurAlignments.Count > 0 ? spellStatsText.CurAlignments[0] : Alignments.Left, spellStatsText.Font);
+                spellStats.AddLineBreak();
+                spellStats.AddLineBreak();
             }
 
             bool requirements = (spell.VitalCost[(int) Vitals.Health] > 0 || spell.VitalCost[(int) Vitals.Mana] > 0);
 
             if (requirements == true)
             {
-                spellDesc.AddText(Strings.SpellDesc.prereqs, spellDesc.RenderColor);
-                spellDesc.AddLineBreak();
+                spellStats.AddText(Strings.SpellDesc.prereqs, spellStats.RenderColor, spellStatsText.CurAlignments.Count > 0 ? spellStatsText.CurAlignments[0] : Alignments.Left, spellStatsText.Font);
+                spellStats.AddLineBreak();
                 if (spell.VitalCost[(int) Vitals.Health] > 0)
                 {
-                    spellDesc.AddText(Strings.SpellDesc.vitalcosts[(int)Vitals.Health].ToString( spell.VitalCost[(int) Vitals.Health]),
-                        spellDesc.RenderColor);
-                    spellDesc.AddLineBreak();
+                    spellStats.AddText(Strings.SpellDesc.vitalcosts[(int)Vitals.Health].ToString( spell.VitalCost[(int) Vitals.Health]),
+                        spellStats.RenderColor, spellStatsText.CurAlignments.Count > 0 ? spellStatsText.CurAlignments[0] : Alignments.Left, spellStatsText.Font);
+                    spellStats.AddLineBreak();
                 }
                 if (spell.VitalCost[(int) Vitals.Mana] > 0)
                 {
-                    spellDesc.AddText(Strings.SpellDesc.vitalcosts[(int)Vitals.Mana].ToString( spell.VitalCost[(int) Vitals.Mana]),
-                        spellDesc.RenderColor);
-                    spellDesc.AddLineBreak();
+                    spellStats.AddText(Strings.SpellDesc.vitalcosts[(int)Vitals.Mana].ToString( spell.VitalCost[(int) Vitals.Mana]),
+                        spellStats.RenderColor, spellStatsText.CurAlignments.Count > 0 ? spellStatsText.CurAlignments[0] : Alignments.Left, spellStatsText.Font);
+                    spellStats.AddLineBreak();
                 }
-                spellDesc.AddLineBreak();
+                spellStats.AddLineBreak();
             }
 
             string stats = "";
             if (spell.SpellType == (int) SpellTypes.CombatSpell)
             {
                 stats = Strings.SpellDesc.effects;
-                spellDesc.AddText(stats, spellDesc.RenderColor);
-                spellDesc.AddLineBreak();
+                spellStats.AddText(stats, spellStats.RenderColor, spellStatsText.CurAlignments.Count > 0 ? spellStatsText.CurAlignments[0] : Alignments.Left, spellStatsText.Font);
+                spellStats.AddLineBreak();
 
                 if (spell.Combat.Effect > 0)
                 {
-                    spellDesc.AddText(Strings.SpellDesc.effectlist[(int)spell.Combat.Effect], spellDesc.RenderColor);
-                    spellDesc.AddLineBreak();
+                    spellStats.AddText(Strings.SpellDesc.effectlist[(int)spell.Combat.Effect], spellStats.RenderColor, spellStatsText.CurAlignments.Count > 0 ? spellStatsText.CurAlignments[0] : Alignments.Left, spellStatsText.Font);
+                    spellStats.AddLineBreak();
                 }
 
                 for (var i = 0; i < (int) Vitals.VitalCount; i++)
@@ -101,8 +109,8 @@ namespace Intersect.Client.UI.Game
                     if (vitalDiff == 0) continue;
                     var vitalSymbol = vitalDiff < 0 ? Strings.SpellDesc.addsymbol : Strings.SpellDesc.removesymbol;
                     stats = Strings.SpellDesc.vitals[i].ToString(vitalSymbol, Math.Abs(vitalDiff));
-                    spellDesc.AddText(stats, spellDesc.RenderColor);
-                    spellDesc.AddLineBreak();
+                    spellStats.AddText(stats, spellStats.RenderColor, spellStatsText.CurAlignments.Count > 0 ? spellStatsText.CurAlignments[0] : Alignments.Left, spellStatsText.Font);
+                    spellStats.AddLineBreak();
                 }
 
                 if (spell.Combat.Duration > 0)
@@ -111,20 +119,37 @@ namespace Intersect.Client.UI.Game
                     {
                         if (spell.Combat.StatDiff[i] != 0)
                         {
-                            spellDesc.AddText(Strings.SpellDesc.stats[i].ToString((spell.Combat.StatDiff[i] > 0 ? Strings.SpellDesc.addsymbol.ToString() : Strings.SpellDesc.removesymbol.ToString()) + spell.Combat.StatDiff[i]), spellDesc.RenderColor);
-                            spellDesc.AddLineBreak();
+                            spellStats.AddText(Strings.SpellDesc.stats[i].ToString((spell.Combat.StatDiff[i] > 0 ? Strings.SpellDesc.addsymbol.ToString() : Strings.SpellDesc.removesymbol.ToString()) + Math.Abs(spell.Combat.StatDiff[i])), spellStats.RenderColor, spellStatsText.CurAlignments.Count > 0 ? spellStatsText.CurAlignments[0] : Alignments.Left, spellStatsText.Font);
+                            spellStats.AddLineBreak();
                         }
                     }
 					float duration = (float)spell.Combat.Duration / 1000f;
-					spellDesc.AddText(Strings.SpellDesc.duration.ToString(duration), spellDesc.RenderColor);
-                    spellDesc.AddLineBreak();
+					spellStats.AddText(Strings.SpellDesc.duration.ToString(duration), spellStats.RenderColor, spellStatsText.CurAlignments.Count > 0 ? spellStatsText.CurAlignments[0] : Alignments.Left, spellStatsText.Font);
+                    spellStats.AddLineBreak();
                 }
+            }
+
+            spellStats.SizeToChildren(false, true);
+            if (spellStats.Children.Count == 0)
+            {
+                mDescWindow.Name = "SpellDescWindow";
+                spellStats.Name = "";
+                spellStatsText.Name = "";
             }
             //Load Again for positioning purposes.
             mDescWindow.LoadJsonUi(GameContentManager.UI.InGame, GameGraphics.Renderer.GetResolutionString());
+            spellDescText.IsHidden = true;
+            spellStatsText.IsHidden = true;
             icon.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell, spell.Icon);
-            spellDesc.SizeToChildren(false, true);
-            mDescWindow.SetPosition(x, y);
+            spellStats.SizeToChildren(false, true);
+            if (centerHorizontally)
+            {
+                mDescWindow.MoveTo(x - mDescWindow.Width / 2, y + mDescWindow.Padding.Top);
+            }
+            else
+            {
+                mDescWindow.MoveTo(x - mDescWindow.Width - mDescWindow.Padding.Right, y + mDescWindow.Padding.Top);
+            }
         }
 
         public void Dispose()

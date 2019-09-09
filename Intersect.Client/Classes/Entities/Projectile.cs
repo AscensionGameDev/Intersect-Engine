@@ -4,6 +4,7 @@ using Intersect.Client.Maps;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
+using Intersect.Network.Packets.Server;
 
 namespace Intersect.Client.Entities
 {
@@ -22,12 +23,12 @@ namespace Intersect.Client.Entities
         public ProjectileSpawns[] Spawns;
 
         private long mSpawnTime;
-        public int Target;
+        public Guid TargetId;
 
         /// <summary>
         ///     The constructor for the inherated projectile class
         /// </summary>
-        public Projectile(Guid id, ByteBuffer bf) : base(id, bf)
+        public Projectile(Guid id, ProjectileEntityPacket packet) : base(id, packet)
         {
             Vital[(int) Vitals.Health] = 1;
             MaxVital[(int) Vitals.Health] = 1;
@@ -36,14 +37,15 @@ namespace Intersect.Client.Entities
             IsMoving = true;
         }
 
-        public override void Load(ByteBuffer bf)
+        public override void Load(EntityPacket packet)
         {
             if (mLoaded) return;
-            base.Load(bf);
-            ProjectileId = bf.ReadGuid();
-            Dir = bf.ReadInteger();
-            Target = bf.ReadInteger();
-            mOwner = bf.ReadGuid();
+            base.Load(packet);
+            var pkt = (ProjectileEntityPacket)packet;
+            ProjectileId = pkt.ProjectileId;
+            Dir = pkt.ProjectileDirection;
+            TargetId = pkt.TargetId;
+            mOwner = pkt.OwnerId;
             mMyBase = ProjectileBase.Get(ProjectileId);
             if (mMyBase != null)
             {
@@ -73,16 +75,26 @@ namespace Intersect.Client.Entities
 
         public override void Dispose()
         {
+            if (mSpawnedAmount == 0)
+            {
+                Update();
+            }
             if (Spawns != null)
             {
                 foreach (ProjectileSpawns s in Spawns)
                 {
                     if (s != null && s.Anim != null)
                     {
-                        s.Anim.Dispose();
+                        s.Anim.DisposeNextDraw();
                     }
                 }
             }
+        }
+
+        /// <inheritdoc />
+        public override bool CanBeAttacked()
+        {
+            return false;
         }
 
         //Find out which animation data to load depending on what spawn wave we are on during projection.
@@ -117,8 +129,8 @@ namespace Intersect.Client.Entities
                         if (mMyBase.SpawnLocations[x, y].Directions[d] == true)
                         {
                             ProjectileSpawns s = new ProjectileSpawns(FindProjectileRotationDir(Dir, d),
-                                CurrentX + FindProjectileRotationX(Dir, x - 2, y - 2),
-                                CurrentY + FindProjectileRotationY(Dir, x - 2, y - 2), CurrentZ, CurrentMap, animBase,
+                                X + FindProjectileRotationX(Dir, x - 2, y - 2),
+                                Y + FindProjectileRotationY(Dir, x - 2, y - 2), Z, CurrentMap, animBase,
                                 mMyBase.Animations[spawn].AutoRotate, mMyBase,this);
                             Spawns[mSpawnedAmount] = s;
                             if (Collided(mSpawnedAmount))
@@ -306,7 +318,7 @@ namespace Intersect.Client.Entities
 
             var tmpI = -1;
             var map = CurrentMap;
-            var y = CurrentY;
+            var y = Y;
 
             if (mQuantity < mMyBase.Quantity && mSpawnTime < Globals.System.GetTimeMs())
             {
@@ -329,7 +341,7 @@ namespace Intersect.Client.Entities
                             MapInstance.Get(Spawns[s].SpawnMapId).GetY() +
                             Spawns[s].SpawnY * Options.TileHeight +
                             Spawns[s].OffsetY +
-                            Options.TileHeight / 2, CurrentX, CurrentY, CurrentMap,
+                            Options.TileHeight / 2, X, Y, CurrentMap,
                             Spawns[s].AutoRotate ? Spawns[s].Dir : 0, Spawns[s].Z);
                         Spawns[s].Anim.Update();
                     }
@@ -459,15 +471,15 @@ namespace Intersect.Client.Entities
         private bool Collided(int i)
         {
             var killSpawn = false;
-            var blockedBy = Guid.Empty;
+            Entity blockedBy = null;
             int tileBlocked =
-                Globals.Me.IsTileBlocked(Spawns[i].X, Spawns[i].Y, CurrentZ, Spawns[i].MapId, ref blockedBy, Spawns[i].ProjectileBase.IgnoreActiveResources, Spawns[i].ProjectileBase.IgnoreExhaustedResources);
+                Globals.Me.IsTileBlocked(Spawns[i].X, Spawns[i].Y, Z, Spawns[i].MapId, ref blockedBy, Spawns[i].ProjectileBase.IgnoreActiveResources, Spawns[i].ProjectileBase.IgnoreExhaustedResources);
 
             if (tileBlocked != -1)
             {
-                if (tileBlocked == -6 && blockedBy != mOwner && Globals.Entities.ContainsKey(blockedBy))
+                if (tileBlocked == -6 && blockedBy != null && blockedBy.Id != mOwner && Globals.Entities.ContainsKey(blockedBy.Id))
                 {
-                    if (Globals.Entities[blockedBy].GetType() == typeof(Resource))
+                    if (blockedBy.GetType() == typeof(Resource))
                     {
                         killSpawn = true;
                     }
@@ -558,7 +570,7 @@ namespace Intersect.Client.Entities
 
         public void Dispose()
         {
-            Anim.Dispose();
+            Anim.DisposeNextDraw();
         }
     }
 }

@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-    public enum QuestProgress
+    public enum QuestProgressState
     {
         OnAnyTask = 0,
         BeforeTask = 1,
@@ -18,14 +18,19 @@ namespace Intersect.GameObjects
         OnTask = 3,
     }
 
-    public struct QuestProgressStruct
+    public class QuestProgress
     {
         public Guid TaskId;
         public bool Completed;
         public int TaskProgress;
+
+        public QuestProgress(string data)
+        {
+            JsonConvert.PopulateObject(data, this);
+        }
     }
 
-    public class QuestBase : DatabaseObject<QuestBase>
+    public class QuestBase : DatabaseObject<QuestBase>, IFolderable
     {
         //Basic Quest Properties
         public string StartDescription { get; set; } = "";
@@ -91,6 +96,14 @@ namespace Intersect.GameObjects
         [NotMapped]
         public List<Guid> RemoveEvents = new List<Guid>(); //Events that need to be removed for the quest
 
+        //Editor Only
+        [NotMapped]
+        [JsonIgnore]
+        public Dictionary<Guid,Guid> OriginalTaskEventIds { get; set; } = new Dictionary<Guid,Guid>();
+
+        /// <inheritdoc />
+        public string Folder { get; set; } = "";
+
         [JsonConstructor]
         public QuestBase(Guid Id) : base(Id)
         {
@@ -123,7 +136,7 @@ namespace Intersect.GameObjects
 
         public class QuestTask
         {
-            public Guid Id { get; protected set; }
+            public Guid Id { get; set; }
 
             public Guid CompletionEventId { get; set; }
             [JsonIgnore]
@@ -134,7 +147,7 @@ namespace Intersect.GameObjects
             }
             [NotMapped]
             [JsonIgnore]
-            public EventBase EdittingEvent;
+            public EventBase EditingEvent;
             
             //# of npcs to kill, # of X item to collect, or for event driven this value should be 1
             public QuestObjective Objective { get; set; } = QuestObjective.EventDriven;

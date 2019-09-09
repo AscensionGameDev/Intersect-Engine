@@ -440,6 +440,28 @@ namespace Intersect.GameObjects.Maps
             }
         }
 
+        public void UpdateCliffAutotiles(MapBase curMap, int layer)
+        {
+            if (layer >= Options.LayerCount) return;
+            foreach (var map in curMap.GenerateAutotileGrid())
+            {
+                if (map != null)
+                {
+                    for (var x1 = 0; x1 < Options.MapWidth; x1++)
+                    {
+                        for (var y1 = 0; y1 < Options.MapHeight; y1++)
+                        {
+                            if (map.Layers[layer].Tiles[x1, y1].Autotile == AUTOTILE_CLIFF)
+                            {
+                                map.Autotiles.CalculateAutotile(x1, y1, layer, map.GenerateAutotileGrid());
+                                map.Autotiles.CacheRenderState(x1, y1, layer);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         public bool UpdateAutoTile(int x, int y, int layer, MapBase[,] surroundingMaps)
         {
             if (x < 0 || x >= Options.MapWidth || y < 0 || y >= Options.MapHeight)
@@ -568,17 +590,110 @@ namespace Intersect.GameObjects.Maps
 
                 // Cliff
                 case AUTOTILE_CLIFF:
+
+                    var cliffStart = 0;
+                    var cliffHeight = CalculateCliffHeight(layerNum, x, y, surroundingMaps, out cliffStart);
+
+                    //Calculate cliffStart and cliffHeight of immediately adjacent cliffs
+                    var leftCliffStart = 0;
+                    var leftCliffHeight = 0;
+                    if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps))
+                    {
+                        leftCliffHeight = CalculateCliffHeight(layerNum, x - 1, y, surroundingMaps, out leftCliffStart);
+                    }
+
+                    var rightCliffStart = 0;
+                    var rightCliffHeight = 0;
+                    if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps))
+                    {
+                        rightCliffHeight = CalculateCliffHeight(layerNum, x + 1, y, surroundingMaps, out rightCliffStart);
+                    }
+
+                    var assumeInteriorEast = CheckTileMatch(layerNum, x, y, x + 1, cliffStart, surroundingMaps) && !CheckTileMatch(layerNum, x, y, x + 1, cliffStart-1, surroundingMaps);
+                    var assumeInteriorWest = CheckTileMatch(layerNum, x, y, x - 1, cliffStart, surroundingMaps) && !CheckTileMatch(layerNum, x, y, x - 1, cliffStart-1, surroundingMaps);
+
+                    var rangeHeight = cliffHeight;
+
+                    var x1 = x - 1;
+                    while (x1 > -Options.MapWidth && CheckTileMatch(layerNum, x, y, x1, cliffStart, surroundingMaps))
+                    {
+                        var adjStart = 0;
+                        var height = CalculateCliffHeight(layerNum, x1, cliffStart, surroundingMaps, out adjStart);
+                        if (adjStart == cliffStart)
+                        {
+                            if (height > rangeHeight) rangeHeight = height;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                        x1--;
+                    }
+                    x1 = x + 1;
+                    while (x1 < Options.MapWidth * 2 && CheckTileMatch(layerNum, x, y, x1, cliffStart, surroundingMaps))
+                    {
+                        var adjStart = 0;
+                        var height = CalculateCliffHeight(layerNum, x1, cliffStart, surroundingMaps, out adjStart);
+                        if (adjStart == cliffStart)
+                        {
+                            if (height > rangeHeight) rangeHeight = height;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                        x1++;
+                    }
+
+
+                    //var drawBottom = true;
+
+                    //var lowestCliffBottom = cliffStart + cliffHeight;
+                    //if (assumeInteriorEast || assumeInteriorWest)
+                    //{
+                    //    var x1 = x - 1;
+                    //    while (x1 > -Options.MapWidth && CheckTileMatch(layerNum, x, y, x1, cliffStart, surroundingMaps))
+                    //    {
+                    //        var adjStart = 0;
+                    //        var height = CalculateCliffHeight(layerNum, x1, cliffStart, surroundingMaps, out adjStart);
+                    //        if (adjStart + height > lowestCliffBottom && adjStart == cliffStart) lowestCliffBottom = adjStart + height;
+                    //        if (adjStart + height > cliffStart + cliffHeight) break;
+                    //        x1--;
+                    //    }
+
+                    //    if (lowestCliffBottom <= cliffStart + cliffHeight)
+                    //    {
+                    //        x1 = x + 1;
+                    //        while (x1 < Options.MapWidth * 2 && CheckTileMatch(layerNum, x, y, x1, cliffStart, surroundingMaps))
+                    //        {
+                    //            var adjStart = 0;
+                    //            var height = CalculateCliffHeight(layerNum, x1, cliffStart, surroundingMaps, out adjStart);
+                    //            if (adjStart + height > lowestCliffBottom && adjStart == cliffStart) lowestCliffBottom = adjStart + height;
+                    //            if (adjStart + height > cliffStart + cliffHeight) break;
+                    //            x1++;
+                    //        }
+                    //    }
+
+                    //    if (lowestCliffBottom > cliffStart + cliffHeight)
+                    //    {
+                    //        drawBottom = false;
+                    //    }
+                    //}
+
+                    var drawBottom = !((assumeInteriorEast && rangeHeight > cliffHeight) || (assumeInteriorWest && rangeHeight > cliffHeight));
+                    if ((assumeInteriorEast || assumeInteriorWest) && cliffHeight == 1 && cliffStart != y) drawBottom = true;
+
                     // North West Quarter
-                    CalculateNW_Cliff(layerNum, x, y, surroundingMaps);
+                    CalculateNW_Cliff(layerNum, x, y, surroundingMaps, cliffStart,cliffHeight, leftCliffStart,leftCliffHeight, assumeInteriorWest);
 
                     // North East Quarter
-                    CalculateNE_Cliff(layerNum, x, y, surroundingMaps);
+                    CalculateNE_Cliff(layerNum, x, y, surroundingMaps, cliffStart, cliffHeight, rightCliffStart, rightCliffHeight, assumeInteriorEast);
 
                     // South West Quarter
-                    CalculateSW_Cliff(layerNum, x, y, surroundingMaps);
+                    CalculateSW_Cliff(layerNum, x, y, surroundingMaps, cliffStart, cliffHeight, leftCliffStart, leftCliffHeight, assumeInteriorWest, drawBottom);
 
                     // South East Quarter
-                    CalculateSE_Cliff(layerNum, x, y, surroundingMaps);
+                    CalculateSE_Cliff(layerNum, x, y, surroundingMaps, cliffStart, cliffHeight, rightCliffStart,rightCliffHeight, assumeInteriorEast, drawBottom);
                     break;
 
                 // Waterfalls
@@ -964,53 +1079,11 @@ namespace Intersect.GameObjects.Maps
             }
         }
 
-        // Clif (f autotiling
-        public void CalculateNW_Cliff(int layerNum, int x, int y, MapBase[,] surroundingMaps)
+        // Cliff autotiling
+        public void CalculateNW_Cliff(int layerNum, int x, int y, MapBase[,] surroundingMaps, int cliffStart, int cliffHeight, int adjacentStart, int adjacentHeight, bool assumeInterior)
         {
             var tmpTile = new bool[5];
             byte situation = 1;
-            int tileLayer = 0;
-
-            //Check side tile.
-            if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps))
-            {
-                int i = y - 1;
-
-                while (tileLayer == 0 && i > -Options.MapHeight)
-                {
-                    if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
-                    {
-                        tileLayer = 1;
-                    }
-
-                    if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps) &&
-                        CheckTileMatch(layerNum, x, y, x - 1, i, surroundingMaps))
-                    {
-                        tileLayer = 2;
-                    }
-
-                    i--;
-                }
-            }
-            else
-            {
-                int i = y + 1;
-
-                while (tileLayer == 0 && i < Options.MapHeight * 2)
-                {
-                    if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
-                    {
-                        tileLayer = 2;
-                    }
-
-                    if (CheckTileMatch(layerNum, x, y, x - 1, i, surroundingMaps))
-                    {
-                        tileLayer = 1;
-                    }
-
-                    i++;
-                }
-            }
 
             // North West
             if (CheckTileMatch(layerNum, x, y, x - 1, y - 1, surroundingMaps))
@@ -1023,19 +1096,27 @@ namespace Intersect.GameObjects.Maps
             {
                 tmpTile[2] = true;
             }
-
-            // West
-            if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps))
+            
+            //West
+            //Check side tile.
+            if (adjacentHeight > 0)
             {
-                tmpTile[3] = true;
+                if (cliffStart == adjacentStart)
+                {
+                    tmpTile[3] = true;
+                }
+                else if (cliffStart > adjacentStart && (cliffStart + cliffHeight) <= (adjacentStart + adjacentHeight))
+                {
+                    tmpTile[3] = true;
+                }
             }
 
             //Center
-            if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps) &&
-                !CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps))
-            {
-                tmpTile[4] = true;
-            }
+            //if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps) &&
+            //    !CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps))
+            //{
+            //    //tmpTile[4] = true;
+            //}
 
             // Calculate Situation - Horizontal
             if (!tmpTile[2] && tmpTile[3])
@@ -1048,7 +1129,7 @@ namespace Intersect.GameObjects.Maps
                 situation = AUTO_TILE_VERTICAL;
             }
             // Fill
-            if ((tmpTile[2] && tmpTile[3]) || (tileLayer == 1))
+            if ((tmpTile[2] && tmpTile[3]))
             {
                 situation = AUTO_TILE_FILL;
             }
@@ -1059,16 +1140,7 @@ namespace Intersect.GameObjects.Maps
                 situation = AUTO_TILE_HORIZONTAL;
             }
 
-            //check for edge of cliff for cliff layering.
-            if (tileLayer == 2)
-            {
-                situation = AUTO_TILE_VERTICAL;
-            }
-
-            if (!tmpTile[2] && tileLayer != 1)
-            {
-                situation = AUTO_TILE_INNER;
-            }
+            if (situation == AUTO_TILE_VERTICAL && assumeInterior) situation = AUTO_TILE_FILL;
 
             // Actually place the subtile
             switch (situation)
@@ -1088,51 +1160,10 @@ namespace Intersect.GameObjects.Maps
             }
         }
 
-        public void CalculateNE_Cliff(int layerNum, int x, int y, MapBase[,] surroundingMaps)
+        public void CalculateNE_Cliff(int layerNum, int x, int y, MapBase[,] surroundingMaps, int cliffStart, int cliffHeight, int adjacentStart, int adjacentHeight, bool assumeInterior)
         {
             var tmpTile = new bool[5];
             byte situation = 1;
-            int tileLayer = 0;
-
-            //Check side tile.
-            if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps))
-            {
-                int i = y - 1;
-                while (tileLayer == 0 && i > -Options.MapHeight)
-                {
-                    if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
-                    {
-                        tileLayer = 1;
-                    }
-
-                    if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps) &&
-                        CheckTileMatch(layerNum, x, y, x + 1, i, surroundingMaps))
-                    {
-                        tileLayer = 2;
-                    }
-
-                    i--;
-                }
-            }
-            else
-            {
-                int i = y + 1;
-
-                while (tileLayer == 0 && i < Options.MapHeight * 2)
-                {
-                    if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
-                    {
-                        tileLayer = 2;
-                    }
-
-                    if (CheckTileMatch(layerNum, x, y, x + 1, i, surroundingMaps))
-                    {
-                        tileLayer = 1;
-                    }
-
-                    i++;
-                }
-            }
 
             // North
             if (CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps))
@@ -1146,18 +1177,26 @@ namespace Intersect.GameObjects.Maps
                 tmpTile[2] = true;
             }
 
-            // East
-            if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps))
+            //East
+            //Check side tile.
+            if (adjacentHeight > 0)
             {
-                tmpTile[3] = true;
+                if (cliffStart == adjacentStart)
+                {
+                    tmpTile[3] = true;
+                }
+                else if (cliffStart > adjacentStart && (cliffStart + cliffHeight) <= (adjacentStart + adjacentHeight))
+                {
+                    tmpTile[3] = true;
+                }
             }
 
+
             //Center
-            if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps) &&
-                !CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps))
-            {
-                tmpTile[4] = true;
-            }
+            //if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps) && !CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps))
+            //{
+            //    //tmpTile[4] = true;
+            //}
 
             // Calculate Situation - Horizontal
             if (!tmpTile[1] && tmpTile[3])
@@ -1170,7 +1209,7 @@ namespace Intersect.GameObjects.Maps
                 situation = AUTO_TILE_VERTICAL;
             }
             // Fill
-            if ((tmpTile[1] && tmpTile[3]) || (tileLayer == 1))
+            if ((tmpTile[1] && tmpTile[3]))
             {
                 situation = AUTO_TILE_FILL;
             }
@@ -1181,16 +1220,7 @@ namespace Intersect.GameObjects.Maps
                 situation = AUTO_TILE_HORIZONTAL;
             }
 
-            //check for edge of cliff for cliff layering.
-            if (tileLayer == 2)
-            {
-                situation = AUTO_TILE_VERTICAL;
-            }
-
-            if (!tmpTile[1] && tileLayer != 1)
-            {
-                situation = AUTO_TILE_INNER;
-            }
+            if (situation == AUTO_TILE_VERTICAL && assumeInterior) situation = AUTO_TILE_FILL;
 
             // Actually place the subtile
             switch (situation)
@@ -1210,57 +1240,23 @@ namespace Intersect.GameObjects.Maps
             }
         }
 
-        public void CalculateSW_Cliff(int layerNum, int x, int y, MapBase[,] surroundingMaps)
+        public void CalculateSW_Cliff(int layerNum, int x, int y, MapBase[,] surroundingMaps, int cliffStart, int cliffHeight, int adjacentStart, int adjacentHeight, bool assumeInterior, bool drawBottom)
         {
             var tmpTile = new bool[5];
             byte situation = 1;
-            int tileLayer = 0;
 
+            //West
             //Check side tile.
-            if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps))
+            if (adjacentHeight > 0)
             {
-                int i = y - 1;
-
-                while (tileLayer == 0 && i > -Options.MapHeight)
+                if (cliffStart == adjacentStart)
                 {
-                    if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
-                    {
-                        tileLayer = 1;
-                    }
-
-                    if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps) &&
-                        CheckTileMatch(layerNum, x, y, x - 1, i, surroundingMaps))
-                    {
-                        tileLayer = 2;
-                    }
-
-                    i--;
+                    tmpTile[1] = true;
                 }
-            }
-            else
-            {
-                int i = y + 1;
-
-                while (tileLayer == 0 && i < Options.MapHeight * 2)
+                else if (cliffStart > adjacentStart && (cliffStart + cliffHeight) <= (adjacentStart + adjacentHeight))
                 {
-                    if (CheckTileMatch(layerNum, x, y, x - 1, i, surroundingMaps))
-                    {
-                        tileLayer = 1;
-                    }
-
-                    if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
-                    {
-                        tileLayer = 2;
-                    }
-
-                    i++;
+                    tmpTile[1] = true;
                 }
-            }
-
-            // West
-            if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps))
-            {
-                tmpTile[1] = true;
             }
 
             // South West
@@ -1270,14 +1266,13 @@ namespace Intersect.GameObjects.Maps
             }
 
             // South
-            if (CheckTileMatch(layerNum, x, y, x, y + 1, surroundingMaps))
+            if (CheckTileMatch(layerNum, x, y, x, y + 1, surroundingMaps) || !drawBottom)
             {
                 tmpTile[3] = true;
             }
 
             //Center
-            if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps) &&
-                !CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps))
+            if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps) && !CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps))
             {
                 tmpTile[4] = true;
             }
@@ -1289,13 +1284,10 @@ namespace Intersect.GameObjects.Maps
             }
 
             // Fill
-            if ((tmpTile[1] && tmpTile[3]) || (tileLayer == 1))
+            if ((tmpTile[1] && tmpTile[3]))
             {
                 situation = AUTO_TILE_FILL;
             }
-
-            // Vertical
-            if (tileLayer == 2) situation = AUTO_TILE_VERTICAL;
 
             // Calculate Situation - Horizontal
             if (tmpTile[1] && !tmpTile[3])
@@ -1308,6 +1300,9 @@ namespace Intersect.GameObjects.Maps
             {
                 situation = AUTO_TILE_INNER;
             }
+
+            if (situation == AUTO_TILE_VERTICAL && assumeInterior) situation = AUTO_TILE_FILL;
+            if (situation == AUTO_TILE_INNER && assumeInterior) situation = AUTO_TILE_HORIZONTAL;
 
             // Actually place the subtile
             switch (situation)
@@ -1327,55 +1322,13 @@ namespace Intersect.GameObjects.Maps
             }
         }
 
-        public void CalculateSE_Cliff(int layerNum, int x, int y, MapBase[,] surroundingMaps)
+        public void CalculateSE_Cliff(int layerNum, int x, int y, MapBase[,] surroundingMaps, int cliffStart, int cliffHeight, int adjacentStart, int adjacentHeight, bool assumeInterior, bool drawBottom)
         {
             var tmpTile = new bool[5];
             byte situation = 1;
-            int tileLayer = 0;
-
-            //Check side tile.
-            if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps))
-            {
-                int i = y - 1;
-
-                while (tileLayer == 0 && i > -Options.MapHeight)
-                {
-                    if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
-                    {
-                        tileLayer = 1;
-                    }
-
-                    if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps) &&
-                        CheckTileMatch(layerNum, x, y, x + 1, i, surroundingMaps))
-                    {
-                        tileLayer = 2;
-                    }
-
-                    i--;
-                }
-            }
-            else
-            {
-                int i = y + 1;
-
-                while (tileLayer == 0 && i < Options.MapHeight * 2)
-                {
-                    if (CheckTileMatch(layerNum, x, y, x + 1, i, surroundingMaps))
-                    {
-                        tileLayer = 1;
-                    }
-
-                    if (!CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
-                    {
-                        tileLayer = 2;
-                    }
-
-                    i++;
-                }
-            }
 
             // South
-            if (CheckTileMatch(layerNum, x, y, x, y + 1, surroundingMaps))
+            if (CheckTileMatch(layerNum, x, y, x, y + 1, surroundingMaps) || !drawBottom)
             {
                 tmpTile[1] = true;
             }
@@ -1386,10 +1339,18 @@ namespace Intersect.GameObjects.Maps
                 tmpTile[2] = true;
             }
 
-            // East
-            if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps))
+            //East
+            //Check side tile.
+            if (adjacentHeight > 0)
             {
-                tmpTile[3] = true;
+                if (cliffStart == adjacentStart)
+                {
+                    tmpTile[3] = true;
+                }
+                else if (cliffStart > adjacentStart && (cliffStart + cliffHeight) <= (adjacentStart + adjacentHeight))
+                {
+                    tmpTile[3] = true;
+                }
             }
 
             //Center
@@ -1406,13 +1367,10 @@ namespace Intersect.GameObjects.Maps
             }
 
             // Fill
-            if ((tmpTile[1] && tmpTile[3]) || (tileLayer == 1))
+            if ((tmpTile[1] && tmpTile[3]))
             {
                 situation = AUTO_TILE_FILL;
             }
-
-            // Vertical
-            if (tileLayer == 2) situation = AUTO_TILE_VERTICAL;
 
             // Calculate Situation -  Horizontal
             if (!tmpTile[1] && tmpTile[3])
@@ -1425,6 +1383,9 @@ namespace Intersect.GameObjects.Maps
             {
                 situation = AUTO_TILE_INNER;
             }
+
+            if (situation == AUTO_TILE_VERTICAL && assumeInterior) situation = AUTO_TILE_FILL;
+            if (situation == AUTO_TILE_INNER && assumeInterior) situation = AUTO_TILE_HORIZONTAL;
 
             // Actually place the subtile
             switch (situation)
@@ -1963,6 +1924,82 @@ namespace Intersect.GameObjects.Maps
             }
 
             return true;
+        }
+
+        private int CalculateCliffHeight(int layerNum, int x, int y, MapBase[,] surroundingMaps, out int cliffStart)
+        {
+            Tile sourceTile;
+            sourceTile.TilesetId = Guid.Empty;
+            sourceTile.X = -1;
+            sourceTile.Y = -1;
+            sourceTile.Autotile = 0;
+
+            cliffStart = y;
+
+            int gridX = 0;
+            int gridY = 0;
+            if (x < 0)
+            {
+                gridX = -1;
+                x += Options.MapWidth;
+            }
+            if (y < 0)
+            {
+                gridY = -1;
+                y += Options.MapHeight;
+            }
+            if (x >= Options.MapWidth)
+            {
+                gridX = 1;
+                x -= Options.MapWidth;
+            }
+            if (y >= Options.MapHeight)
+            {
+                gridY = 1;
+                y -= Options.MapHeight;
+            }
+
+            if (surroundingMaps[gridX + 1, gridY + 1] != null)
+            {
+                var layers = surroundingMaps[gridX + 1, gridY + 1].Layers;
+                var tiles = layers[layerNum].Tiles;
+                sourceTile = tiles[x, y];
+            }
+
+            if (sourceTile.Autotile == (int) AUTOTILE_CLIFF)
+            {
+                var height = 1;
+                int i = y - 1;
+                while (i > -Options.MapHeight)
+                {
+                    if (CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
+                    {
+                        height++;
+                        cliffStart--;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                    i--;
+                }
+
+                i = y + 1;
+                while (i < Options.MapHeight * 2)
+                {
+                    if (CheckTileMatch(layerNum, x, y, x, i, surroundingMaps))
+                    {
+                        height++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                    i++;
+                }
+                return height;
+            }
+            return 0;
         }
 
         public void PlaceAutotile(int layerNum, int x, int y, byte tileQuarter, string autoTileLetter)

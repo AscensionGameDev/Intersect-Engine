@@ -13,6 +13,8 @@ using Intersect.Editor.Networking;
 using Intersect.GameObjects.Maps.MapList;
 using Microsoft.Xna.Framework.Graphics;
 
+using Newtonsoft.Json.Linq;
+
 namespace Intersect.Editor.Maps
 {
     public class MapGrid
@@ -108,15 +110,14 @@ namespace Intersect.Editor.Maps
             return mTexLock;
         }
 
-        public void Load(ByteBuffer bf)
+        public void Load(string[,] mapGrid)
         {
             lock (GetMapGridLock())
             {
                 Loaded = false;
                 List<Guid> gridMaps = new List<Guid>();
-                GridWidth = (int)bf.ReadLong();
-                GridHeight = (int)bf.ReadLong();
-                bf.ReadBoolean();
+                GridWidth = mapGrid.GetLength(0);
+                GridHeight = mapGrid.GetLength(1);
                 UnloadTextures();
                 Grid = new MapGridItem[GridWidth, GridHeight];
                 for (int x = -1; x <= GridWidth; x++)
@@ -128,14 +129,14 @@ namespace Intersect.Editor.Maps
                         }
                         else
                         {
-                            var id = bf.ReadGuid();
-                            if (id == Guid.Empty)
+                            if (mapGrid[x,y] == null)
                             {
-                                Grid[x, y] = new MapGridItem(id);
+                                Grid[x, y] = new MapGridItem(Guid.Empty);
                             }
                             else
                             {
-                                Grid[x, y] = new MapGridItem(id, bf.ReadString(), bf.ReadInteger());
+                                var obj = JObject.Parse(mapGrid[x, y]);
+                                Grid[x, y] = new MapGridItem(Guid.Parse(obj["Guid"].ToString()), obj["Name"].ToString(), int.Parse(obj["Revision"].ToString()));
                                 gridMaps.Add(Grid[x, y].MapId);
                             }
                         }
@@ -143,11 +144,11 @@ namespace Intersect.Editor.Maps
                 }
                 //Get a list of maps -- if they are not in this grid.
                 mLinkMaps.Clear();
-                for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
+                for (int i = 0; i < MapList.OrderedMaps.Count; i++)
                 {
-                    if (!gridMaps.Contains(MapList.GetOrderedMaps()[i].MapId))
+                    if (!gridMaps.Contains(MapList.OrderedMaps[i].MapId))
                     {
-                        mLinkMaps.Add(MapList.GetOrderedMaps()[i].MapId);
+                        mLinkMaps.Add(MapList.OrderedMaps[i].MapId);
                     }
                 }
                 mMaxZoom = 1f; //Real Size

@@ -14,6 +14,7 @@ using Intersect.Client.MonoGame.System;
 using Intersect.Client.Networking;
 using Intersect.Client.UI;
 using Intersect.Config;
+using Intersect.Configuration;
 using Intersect.Logging;
 using Intersect.Utilities;
 using Microsoft.Xna.Framework;
@@ -27,6 +28,7 @@ namespace Intersect.Client
     /// </summary>
     public class IntersectGame : Game
     {
+        private double mLastUpdateTime = 0;
         public IntersectGame()
         {
             //Setup an error handler
@@ -35,26 +37,22 @@ namespace Intersect.Client
             Strings.Load();
 
             var graphics = new GraphicsDeviceManager(this);
+            graphics.PreparingDeviceSettings += (object s, PreparingDeviceSettingsEventArgs args) =>
+            {
+                args.GraphicsDeviceInformation.PresentationParameters.RenderTargetUsage = RenderTargetUsage.PreserveContents;
+            };
 
             Content.RootDirectory = "";
             IsMouseVisible = true;
             Globals.ContentManager = new MonoContentManager();
             Globals.Database = new MonoDatabase();
-            
-            //Load ClientOptions
-            if (File.Exists("resources/config.json"))
-            {
-                ClientOptions.LoadFrom(File.ReadAllText("resources/config.json"));
-            }
-            else
-            {
-                ClientOptions.LoadFrom(null);
-            }
-            File.WriteAllText("resources/config.json", ClientOptions.ToJson());
+
+            /* Load configuration */
+            ClientConfiguration.LoadAndSave(ClientConfiguration.DefaultPath);
 
             Globals.Database.LoadPreferences();
             
-            Gui.ActiveFont = TextUtils.StripToLower(ClientOptions.Font);
+            Gui.ActiveFont = TextUtils.StripToLower(ClientConfiguration.Instance.UIFont);
             Globals.InputManager = new MonoInput(this);
 
             var renderer = new MonoRenderer(graphics, Content, this);
@@ -89,10 +87,10 @@ namespace Intersect.Client
             (GameGraphics.Renderer as MonoRenderer)?.Init(GraphicsDevice);
 
             // TODO: Remove old netcode
-            GameNetwork.MySocket = new IntersectNetworkSocket();
-            GameNetwork.MySocket.Connected += MainMenu.OnNetworkConnected;
-            GameNetwork.MySocket.ConnectionFailed += MainMenu.OnNetworkFailed;
-            GameNetwork.MySocket.Disconnected += MainMenu.OnNetworkDisconnected;
+            GameNetwork.Socket = new IntersectNetworkSocket();
+            GameNetwork.Socket.Connected += MainMenu.OnNetworkConnected;
+            GameNetwork.Socket.ConnectionFailed += MainMenu.OnNetworkFailed;
+            GameNetwork.Socket.Disconnected += MainMenu.OnNetworkDisconnected;
 
             GameMain.Start();
             base.Initialize();
@@ -107,9 +105,14 @@ namespace Intersect.Client
         {
             if (Globals.IsRunning)
             {
-                lock (Globals.GameLock)
+                if (mLastUpdateTime < gameTime.TotalGameTime.TotalMilliseconds)
                 {
-                    GameMain.Update();
+                    lock (Globals.GameLock)
+                    {
+                        GameMain.Update();
+                    }
+
+                    ///mLastUpdateTime = gameTime.TotalGameTime.TotalMilliseconds + (1000/60f);
                 }
             }
             base.Update(gameTime);
@@ -144,3 +147,4 @@ namespace Intersect.Client
         }
     }
 }
+ 

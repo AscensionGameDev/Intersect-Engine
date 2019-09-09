@@ -11,6 +11,7 @@ namespace Intersect.Client.UI.Game
     class FriendsWindow
     {
         private Button mAddButton;
+        private Button mAddPopupButton;
         private ListBox mFriends;
 
         //Controls
@@ -37,6 +38,11 @@ namespace Intersect.Client.UI.Game
             mAddButton = new Button(mFriendsWindow, "AddFriendButton");
             mAddButton.SetText("+");
             mAddButton.Clicked += addButton_Clicked;
+
+            mAddPopupButton = new Button(mFriendsWindow, "AddFriendPopupButton");
+            mAddPopupButton.IsHidden = true;
+            mAddPopupButton.SetText(Strings.Friends.addfriend);
+            mAddPopupButton.Clicked += addPopupButton_Clicked;
 
             UpdateList();
 
@@ -77,7 +83,7 @@ namespace Intersect.Client.UI.Game
 
             foreach (var f in Globals.Me.Friends)
             {
-                var row = mFriends.AddRow(f.Name + " - " + f.Map);
+                var row = f.Online ? mFriends.AddRow(f.Name + " - " + f.Map) : mFriends.AddRow(f.Name);
                 row.UserData = f.Name;
                 row.Clicked += friends_Clicked;
                 row.RightClicked += friends_RightClicked;
@@ -85,22 +91,29 @@ namespace Intersect.Client.UI.Game
                 //Row Render color (red = offline, green = online)
                 if (f.Online == true)
                 {
-                    row.SetTextColor(Framework.GenericClasses.Color.Green);
+                    row.SetTextColor(Color.Green);
                 }
                 else
                 {
-                    row.SetTextColor(Framework.GenericClasses.Color.Red);
+                    row.SetTextColor(Color.Red);
                 }
-                row.RenderColor = new Framework.GenericClasses.Color(50, 255, 255, 255);
+                row.RenderColor = new Color(50, 255, 255, 255);
             }
         }
 
         void addButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (mSearchTextbox.Text.Length >= 3) //Don't bother sending a packet less than the char limit
+            if (mSearchTextbox.Text.Trim().Length >= 3) //Don't bother sending a packet less than the char limit
             {
-                PacketSender.AddFriend(mSearchTextbox.Text);
+                PacketSender.SendAddFriend(mSearchTextbox.Text);
             }
+        }
+
+        void addPopupButton_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            InputBox iBox = new InputBox(Strings.Friends.addfriend,
+                Strings.Friends.addfriendprompt,
+                true, InputBox.InputType.TextInput, AddFriend, null, 0);
         }
 
         void friends_Clicked(Base sender, ClickedEventArgs arguments)
@@ -132,7 +145,16 @@ namespace Intersect.Client.UI.Game
 
         private void RemoveFriend(Object sender, EventArgs e)
         {
-            PacketSender.RemoveFriend(mTempName);
+            PacketSender.SendRemoveFriend(mTempName);
+        }
+
+        private void AddFriend(Object sender, EventArgs e)
+        {
+            var ibox = (InputBox) sender;
+            if (ibox.TextValue.Trim().Length >= 3) //Don't bother sending a packet less than the char limit
+            {
+                PacketSender.SendAddFriend(ibox.TextValue);
+            }
         }
     }
 }

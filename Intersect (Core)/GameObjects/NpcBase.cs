@@ -10,7 +10,7 @@ using Intersect.GameObjects.Conditions;
 
 namespace Intersect.GameObjects
 {
-    public class NpcBase : DatabaseObject<NpcBase>
+    public class NpcBase : DatabaseObject<NpcBase>, IFolderable
     {
         [Column("AggroList")]
         [JsonIgnore]
@@ -171,6 +171,9 @@ namespace Intersect.GameObjects
         }
         [NotMapped]
         public int[] VitalRegen = new int[(int)Vitals.VitalCount];
+
+        /// <inheritdoc />
+        public string Folder { get; set; } = "";
 
         [JsonConstructor]
         public NpcBase(Guid id) : base(id)

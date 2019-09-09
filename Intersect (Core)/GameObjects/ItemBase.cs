@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Intersect.GameObjects
 {
-    public class ItemBase : DatabaseObject<ItemBase>
+    public class ItemBase : DatabaseObject<ItemBase>, IFolderable
     {
         [Column("Animation")]
         public Guid AnimationId { get; set; }
@@ -71,6 +71,8 @@ namespace Intersect.GameObjects
             get => SpellBase.Get(SpellId);
             set => SpellId = value?.Id ?? Guid.Empty;
         }
+        public bool QuickCast { get; set; }
+        public bool DestroySpell { get; set; } = true;
 
         [Column("Event")]
         [JsonProperty]
@@ -89,6 +91,7 @@ namespace Intersect.GameObjects
         public string MalePaperdoll { get; set; } = "";
         public string Icon { get; set; } = "";
         public int Price { get; set; }
+        public int Rarity { get; set; }
 
         [Column("Projectile")]
         [JsonProperty]
@@ -118,6 +121,16 @@ namespace Intersect.GameObjects
         [NotMapped]
         public int[] VitalsGiven { get; set; }
 
+        [Column("PercentageVitalsGiven")]
+        [JsonIgnore]
+        public string PercentageVitalsJson
+        {
+            get => DatabaseUtils.SaveIntArray(PercentageVitalsGiven, (int)Vitals.VitalCount);
+            set => PercentageVitalsGiven = DatabaseUtils.LoadIntArray(value, (int)Vitals.VitalCount);
+        }
+        [NotMapped]
+        public int[] PercentageVitalsGiven { get; set; }
+
         [Column("StatsGiven")]
         [JsonIgnore]
         public string StatsJson
@@ -127,6 +140,16 @@ namespace Intersect.GameObjects
         }
         [NotMapped]
         public int[] StatsGiven { get; set; }
+
+        [Column("PercentageStatsGiven")]
+        [JsonIgnore]
+        public string PercentageStatsJson
+        {
+            get => DatabaseUtils.SaveIntArray(PercentageStatsGiven, (int)Stats.StatCount);
+            set => PercentageStatsGiven = DatabaseUtils.LoadIntArray(value, (int)Stats.StatCount);
+        }
+        [NotMapped]
+        public int[] PercentageStatsGiven { get; set; }
 
 
         [Column("UsageRequirements")]
@@ -139,6 +162,9 @@ namespace Intersect.GameObjects
         [NotMapped]
         public ConditionLists UsageRequirements = new ConditionLists();
 
+        /// <inheritdoc />
+        public string Folder { get; set; } = "";
+
         public ItemBase() => Initialize();
 
         [JsonConstructor]
@@ -149,15 +175,18 @@ namespace Intersect.GameObjects
             Name = "New Item";
             Speed = 10; // Set to 10 by default.
             StatsGiven = new int[(int)Stats.StatCount];
-	        VitalsGiven = new int[(int)Vitals.VitalCount];
+            PercentageStatsGiven = new int[(int)Stats.StatCount];
+            VitalsGiven = new int[(int)Vitals.VitalCount];
+            PercentageVitalsGiven = new int[(int)Vitals.VitalCount];
 			Consumable = new ConsumableData();
             Effect = new EffectData();
         }
 
-        public bool IsStackable()
-        {
-            return (ItemType == ItemTypes.Currency || Stackable) && ItemType != ItemTypes.Equipment && ItemType != ItemTypes.Bag;
-        }
+        [JsonIgnore, NotMapped]
+        public bool IsStackable => (ItemType == ItemTypes.Currency || Stackable) &&
+                                   ItemType != ItemTypes.Equipment &&
+                                   ItemType != ItemTypes.Bag;
+
     }
     
     [Owned]
@@ -165,6 +194,7 @@ namespace Intersect.GameObjects
     {
         public ConsumableType Type { get; set; }
         public int Value { get; set; }
+        public int Percentage { get; set; }
     }
 
     [Owned]

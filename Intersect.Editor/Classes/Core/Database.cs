@@ -2,6 +2,8 @@ using System;
 using System.Drawing;
 using System.IO;
 using Intersect.Config;
+using Intersect.Configuration;
+
 using Mono.Data.Sqlite;
 
 namespace Intersect.Editor
@@ -36,17 +38,13 @@ namespace Intersect.Editor
         //Options File
         public static void LoadOptions()
         {
-            if (!Directory.Exists("resources")) Directory.CreateDirectory("resources");
+            if (!Directory.Exists("resources"))
+            {
+                Directory.CreateDirectory("resources");
+            }
 
-            if (File.Exists("resources/config.json"))
-            {
-                ClientOptions.LoadFrom(File.ReadAllText("resources/config.json"));
-            }
-            else
-            {
-                ClientOptions.LoadFrom(null);
-            }
-            File.WriteAllText("resources/config.json", ClientOptions.ToJson());
+            /* Load configuration */
+            ClientConfiguration.LoadAndSave(ClientConfiguration.DefaultPath);
         }
 
         //Map Cache DB

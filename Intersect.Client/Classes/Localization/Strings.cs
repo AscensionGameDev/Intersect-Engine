@@ -103,10 +103,13 @@ namespace Intersect.Client.Localization
 
         public struct CharacterCreation
         {
+            public static LocalizedString back = @"Back";
             public static LocalizedString Class = @"Class:";
             public static LocalizedString create = @"Create";
             public static LocalizedString female = @"Female";
             public static LocalizedString gender = @"Gender:";
+            public static LocalizedString hint = @"Customize";
+            public static LocalizedString hint2 = @"Your Character";
             public static LocalizedString invalidname = @"Character name is invalid. Please use alphanumeric characters with a length between 2 and 20.";
             public static LocalizedString male = @"Male";
             public static LocalizedString name = @"Char Name:";
@@ -120,14 +123,16 @@ namespace Intersect.Client.Localization
             public static LocalizedString deletetitle = @"Delete {00}";
             public static LocalizedString empty = @"Empty Character Slot";
             public static LocalizedString info = @"Level {00} {01}";
+            public static LocalizedString logout = @"Logout";
             public static LocalizedString name = @"{00}";
-            public static LocalizedString New = @"New Character";
+            public static LocalizedString New = @"New";
             public static LocalizedString play = @"Use";
             public static LocalizedString title = @"Select a Character";
         }
 
         public struct Chatbox
         {
+            public static LocalizedString channel = @"Channel:";
             public static Dictionary<int, LocalizedString> channels = new Dictionary<int, LocalizedString>
             {
                 {0, @"local"},
@@ -139,6 +144,7 @@ namespace Intersect.Client.Localization
             public static LocalizedString enterchat1 = @"Press {00} to chat.";
             public static LocalizedString enterchat2 = @"Press {00} or {01} to chat.";
             public static LocalizedString send = @"Send";
+            public static LocalizedString title = @"Chat";
         }
 
         public struct Colors
@@ -218,15 +224,15 @@ namespace Intersect.Client.Localization
         {
             public static LocalizedString craft = @"Craft";
             public static LocalizedString incorrectresources = @"You do not have the correct resources to craft this item.";
-            public static LocalizedString ingredients = @"Ingredients:";
-            public static LocalizedString product = @"Product:";
+            public static LocalizedString ingredients = @"Requires:";
+            public static LocalizedString product = @"Crafting:";
             public static LocalizedString recipes = @"Recipes:";
             public static LocalizedString title = @"Crafting Table";
         }
 
         public struct Credits
         {
-            public static LocalizedString back = @"";
+            public static LocalizedString back = @"Main Menu";
             public static LocalizedString title = @"Credits";
         }
 
@@ -251,8 +257,11 @@ namespace Intersect.Client.Localization
         public struct EntityBox
         {
             public static LocalizedString NameAndLevel = @"{00}    {01}";
+            public static LocalizedString cooldown = "{00}s";
             public static LocalizedString exp = @"EXP:";
             public static LocalizedString expval = @"{00} / {01}";
+            public static LocalizedString friend = "Befriend";
+            public static LocalizedString friendtip = "Send {00} a friend request.";
             public static LocalizedString level = @"Lv. {00}";
             public static LocalizedString map = @"{00}";
             public static LocalizedString maxlevel = @"Max Level";
@@ -278,6 +287,8 @@ namespace Intersect.Client.Localization
             public static LocalizedString openglerror = @"OpenGL Initialization Error! Try updating your graphics drivers! Make sure you're not using remote desktop software. Visit {00} (may open automatically) for more information.";
             public static LocalizedString opengllink = @"https://goo.gl/RSP3ts";
             public static LocalizedString passwordinvalid = @"Password is invalid. Please use alphanumeric characters with a length between 4 and 20.";
+            public static LocalizedString resourcesnotfound = @"The resources directory could not be found! Intersect will now close.";
+            public static LocalizedString resourcesnotfoundtitle = @"Resources not found!";
             public static LocalizedString title = @"Error!";
             public static LocalizedString usernameinvalid = @"Username is invalid. Please use alphanumeric characters with a length between 2 and 20.";
             public static LocalizedString LoadFile = @"Failed to load a {00}. Please send the game administrator a copy of your errors log file in the logs directory.";
@@ -297,8 +308,20 @@ namespace Intersect.Client.Localization
             public static LocalizedString Continue = @"Continue";
         }
 
+        public struct ForgotPass
+        {
+            public static LocalizedString back = @"Back";
+            public static LocalizedString hint = @"If your account exists we will send you a temporary password reset code.";
+            public static LocalizedString label = @"Enter your username or email below:";
+            public static LocalizedString submit = @"Submit";
+            public static LocalizedString title = @"Password Reset";
+        }
+
         public struct Friends
         {
+            public static LocalizedString addfriend = @"Add Friend";
+            public static LocalizedString addfriendtitle = @"Add Friend";
+            public static LocalizedString addfriendprompt = @"Who would you like to add as a friend?";
             public static LocalizedString removefriend = @"Remove Friend";
             public static LocalizedString removefriendprompt = @"Do you wish to remove {00} from your friends list?";
             public static LocalizedString request = @"Friend Request";
@@ -332,9 +355,11 @@ namespace Intersect.Client.Localization
 
         public struct Inventory
         {
+            public static LocalizedString cooldown = "{00}s";
             public static LocalizedString dropitem = @"Drop Item";
             public static LocalizedString dropitemprompt = @"How many/much {00} do you want to drop?";
             public static LocalizedString dropprompt = @"Do you wish to drop the item: {00}?";
+            public static LocalizedString equippedicon = "E";
             public static LocalizedString title = @"Inventory";
         }
 
@@ -342,7 +367,7 @@ namespace Intersect.Client.Localization
         {
             public static LocalizedString bonuses = @"Stat Bonuses:";
             public static LocalizedString damage = @"Base Damage: {00}";
-            public static LocalizedString desc = @"Desc: {00}";
+            public static LocalizedString desc = @"{00}";
             public static LocalizedString effect = @"Bonus Effect: {00}% {01}";
             public static Dictionary<int, LocalizedString> effects = new Dictionary<int, LocalizedString>
             {
@@ -360,7 +385,6 @@ namespace Intersect.Client.Localization
                 {6,@"Bag"},
             };
             public static LocalizedString prereq = @"Prerequisites:";
-            public static LocalizedString quantity = @"x{00}";
             public static Dictionary<int, LocalizedString> stats = new Dictionary<int, LocalizedString>
             {
                 {0,@"Attack: {00}"},
@@ -370,6 +394,22 @@ namespace Intersect.Client.Localization
                 {4, @"Speed: {00}"}
             };
             public static LocalizedString twohand = @"2H";
+
+            public static Dictionary<int, LocalizedString> rarity = new Dictionary<int, LocalizedString>
+            {
+                {0, @"None"},
+                {1, @"Common"},
+                {2, @"Uncommon"},
+                {3, @"Rare"},
+                {4, @"Epic"},
+                {5, @"Legendary"},
+            };
+
+            public static Dictionary<int, LocalizedString> vitals = new Dictionary<int, LocalizedString>
+            {
+                {0,@"HP: {00}"},
+                {1,@"MP: {00}"}
+            };
         }
 
         public struct Keys
@@ -576,6 +616,7 @@ namespace Intersect.Client.Localization
         public struct Login
         {
             public static LocalizedString back = @"Back";
+            public static LocalizedString forgot = @"Forgot Password?";
             public static LocalizedString login = @"Login";
             public static LocalizedString password = @"Password:";
             public static LocalizedString savepass = @"Save Password";
@@ -593,7 +634,7 @@ namespace Intersect.Client.Localization
             public static LocalizedString credits = @"Credits";
             public static LocalizedString exit = @"Exit";
             public static LocalizedString login = @"Login";
-            public static LocalizedString options = @"";
+            public static LocalizedString options = @"Settings";
             public static LocalizedString optionstooltip = @"";
             public static LocalizedString register = @"Register";
             public static LocalizedString title = @"Main Menu";
@@ -606,11 +647,13 @@ namespace Intersect.Client.Localization
             public static LocalizedString fps90 = @"90";
             public static LocalizedString fps120 = @"120";
             public static LocalizedString apply = @"Apply";
+            public static LocalizedString back = @"Back";
             public static LocalizedString cancel = @"Cancel";
             public static LocalizedString fullscreen = @"Fullscreen";
             public static LocalizedString AutocloseWindows = @"Auto-close Windows";
             public static LocalizedString musicvolume = @"Music Volume: {00}%";
             public static LocalizedString resolution = @"Resolution:";
+            public static LocalizedString restore = @"Restore Defaults";
             public static LocalizedString soundvolume = @"Sound Volume: {00}%";
             public static LocalizedString targetfps = @"Target FPS:";
             public static LocalizedString title = @"Options";
@@ -622,10 +665,18 @@ namespace Intersect.Client.Localization
         {
             public static LocalizedString inviteprompt = @"{00} has invited you to their party. Do you accept?";
             public static LocalizedString kick = @"Kick {00}";
-            public static LocalizedString leader = @"Party Leader";
+            public static LocalizedString kicklbl = @"Kick";
+            public static LocalizedString leader = @"Leader";
+            public static LocalizedString leadertip = @"Party Leader";
             public static LocalizedString leave = @"Leave Party";
+            public static LocalizedString leavetip = @"Leave Tip";
+            public static LocalizedString name = @"{00} - Lv. {01}";
             public static LocalizedString partyinvite = @"Party Invite";
             public static LocalizedString title = @"Party";
+            public static LocalizedString vital0 = @"HP:";
+            public static LocalizedString vital0val = @"{00} / {01}";
+            public static LocalizedString vital1 = @"MP:";
+            public static LocalizedString vital1val = @"{00} / {01}";
         }
 
         public struct QuestLog
@@ -633,6 +684,7 @@ namespace Intersect.Client.Localization
             public static LocalizedString abandon = @"Abandon";
             public static LocalizedString abandonprompt = @"Are you sure that you want to quit the quest ""{00}""?";
             public static LocalizedString abandontitle = @"Abandon Quest: {00}";
+            public static LocalizedString back = @"Back";
             public static LocalizedString completed = @"Quest Completed";
             public static LocalizedString currenttask = @"Current Task:";
             public static LocalizedString inprogress = @"Quest In Progress";
@@ -667,6 +719,21 @@ namespace Intersect.Client.Localization
             public static LocalizedString register = @"Register";
             public static LocalizedString title = @"Register";
             public static LocalizedString username = @"Username:";
+        }
+
+        public struct ResetPass
+        {
+            public static LocalizedString back = @"Cancel";
+            public static LocalizedString code = @"Enter the reset code that was sent to you:";
+            public static LocalizedString fail = @"Error!";
+            public static LocalizedString failmsg = @"The reset code was not valid, has expired, or the account does not exist!";
+            public static LocalizedString inputcode = @"Please enter your password reset code.";
+            public static LocalizedString password = @"New Password:";
+            public static LocalizedString password2 = @"Confirm Password:";
+            public static LocalizedString submit = @"Submit";
+            public static LocalizedString success = @"Success!";
+            public static LocalizedString successmsg = @"Your password has been reset!";
+            public static LocalizedString title = @"Password Reset";
         }
 
         public struct Resources
@@ -705,19 +772,24 @@ namespace Intersect.Client.Localization
             public static LocalizedString addsymbol = @"+";
             public static LocalizedString casttime = @"Cast Time: {00} Seconds";
             public static LocalizedString cooldowntime = @"Cooldown: {00} Seconds";
-            public static LocalizedString desc = @"Desc: {00}";
+            public static LocalizedString desc = @"{00}";
             public static LocalizedString duration = @"Duration: {00}s";
             public static Dictionary<int, LocalizedString> effectlist = new Dictionary<int, LocalizedString>
             {
                 {0, @""},
                 {1,@"Silences Target"},
-                {2, @"Stuns Target"},
+                {2,@"Stuns Target" },
                 {3,@"Snares Target"},
                 {4,@"Blinds Target"},
                 {5,@"Stealths Target"},
                 {6,@"Transforms Target"},
                 {7,@"Cleanses Target"},
                 {8,@"Target becomes Invulnerable"},
+                {9,@"Shields Target"},
+                {10,@"Makes the target fall asleep"},
+                {11,@"Applies an On Hit effect to the target"},
+                {12,@"Taunts Target"},
+
             };
             public static LocalizedString effects = @"Effects:";
             public static LocalizedString prereqs = @"Prerequisites:";
@@ -725,8 +797,8 @@ namespace Intersect.Client.Localization
             public static Dictionary<int, LocalizedString> spelltypes = new Dictionary<int, LocalizedString>
             {
                 {0, @"Combat Spell"},
-                {1, @"Warp - Self Cast"},
-                {2, @"Warp - Self Cast"},
+                {1, @"Warp to Map"},
+                {2, @"Warp to Target"},
                 {3, @"Dash"},
                 {4, @"Special"},
             };
@@ -744,6 +816,7 @@ namespace Intersect.Client.Localization
                 {1, @"Targetted - Range: {00} Tiles"},
                 {2, @"AOE - Range: {00} Tiles - Radius: {01} Tiles"},
                 {3, @"Projectile - Range: {00} Tiles"},
+                {4, @"On Hit"},
             };
             public static Dictionary<int, LocalizedString> vitals = new Dictionary<int, LocalizedString>
             {
@@ -759,6 +832,7 @@ namespace Intersect.Client.Localization
 
         public struct Spells
         {
+            public static LocalizedString cooldown = "{00}s";
             public static LocalizedString forgetspell = @"Forget Spell";
             public static LocalizedString forgetspellprompt = @"Are you sure you want to forget {00}?";
             public static LocalizedString title = @"Spells";
@@ -773,21 +847,80 @@ namespace Intersect.Client.Localization
             public static LocalizedString requestprompt = @"{00} has invited you to trade items with them. Do you accept?";
             public static LocalizedString revokeitem = @"Revoke Item";
             public static LocalizedString revokeitemprompt = @"How many/much {00} would you like to revoke?";
-            public static LocalizedString theiroffer = @"Their offer:";
+            public static LocalizedString theiroffer = @"Their Offer:";
             public static LocalizedString title = @"Trading with {00}";
             public static LocalizedString traderequest = @"Trading Invite";
             public static LocalizedString value = @"Value: {00}";
-            public static LocalizedString youroffer = @"Your offer:";
+            public static LocalizedString youroffer = @"Your Offer:";
         }
 
         public struct EscapeMenu
         {
             public static LocalizedString Title = @"Menu";
             public static LocalizedString Options = @"Options";
-            public static LocalizedString CharacterSelect = @"Character Select";
+            public static LocalizedString CharacterSelect = @"Characters";
             public static LocalizedString Logout = @"Logout";
-            public static LocalizedString ExitToDesktop = @"Exit to Desktop";
+            public static LocalizedString ExitToDesktop = @"Desktop";
             public static LocalizedString Close = @"Close";
+        }
+
+        public struct Numbers
+        {
+            public static LocalizedString thousands = "k";
+            public static LocalizedString millions = "m";
+            public static LocalizedString billions = "b";
+            public static LocalizedString dec = ".";
+            public static LocalizedString comma = ",";
+        }
+
+        private static char[] mQuantityTrimChars = new char[] {'.','0'};
+        public static string FormatQuantityAbbreviated(long value)
+        {
+            if (value == 0)
+            {
+                return "";
+            }
+            else
+            {
+                double returnVal = 0;
+                string postfix = "";
+                // hundreds
+                if (value <= 999)
+                {
+                    returnVal = value;
+                }
+                // thousands
+                else if (value >= 1000 && value <= 999999)
+                {
+                    returnVal = (value / 1000.0);
+                    postfix = Strings.Numbers.thousands;
+                }
+                // millions
+                else if (value >= 1000000 && value <= 999999999)
+                {
+                    returnVal = value / 1000000.0;
+                    postfix = Strings.Numbers.millions;
+                }
+                // billions
+                else if (value >= 1000000000 && value <= 999999999999)
+                {
+                    returnVal = value / 1000000000.0;
+                    postfix = Strings.Numbers.billions;
+                }
+                else
+                    return "OOB";
+
+                if (returnVal >= 10)
+                {
+                    returnVal = Math.Floor(returnVal);
+                    return returnVal.ToString() + postfix;
+                }
+                else
+                {
+                    returnVal = Math.Floor(returnVal * 10) / 10.0;
+                    return returnVal.ToString("F1").TrimEnd(mQuantityTrimChars).ToString().Replace(".",Strings.Numbers.dec) + postfix;
+                }
+            }
         }
 
         public static void Load()

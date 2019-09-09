@@ -7,6 +7,7 @@ using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Config;
+using Intersect.Configuration;
 
 namespace Intersect.Client.UI.Game.Chat
 {
@@ -17,6 +18,10 @@ namespace Intersect.Client.UI.Game.Chat
         private ListBox mChatboxMessages;
         private ScrollBar mChatboxScrollBar;
         private Label mChatboxText;
+        private ImagePanel mChatbar;
+
+        private Label mChatboxTitle;
+        private Label mChannelLabel;
 
         private Button mChatboxSendButton;
 
@@ -36,6 +41,14 @@ namespace Intersect.Client.UI.Game.Chat
             mChatboxWindow = new ImagePanel(gameCanvas, "ChatboxWindow");
             mChatboxMessages = new ListBox(mChatboxWindow, "MessageList");
             mChatboxMessages.EnableScroll(false, true);
+            mChatboxWindow.ShouldCacheToTexture = true;
+
+            mChatboxTitle = new Label(mChatboxWindow,"ChatboxTitle");
+            mChatboxTitle.Text = Strings.Chatbox.title;
+            mChatboxTitle.IsHidden = true;
+
+            mChatbar = new ImagePanel(mChatboxWindow,"Chatbar");
+            mChatbar.IsHidden = true;
 
             mChatboxInput = new TextBox(mChatboxWindow, "ChatboxInputField");
             mChatboxInput.SubmitPressed += ChatBoxInput_SubmitPressed;
@@ -43,6 +56,10 @@ namespace Intersect.Client.UI.Game.Chat
             mChatboxInput.Clicked += ChatBoxInput_Clicked;
             mChatboxInput.IsTabable = false;
             Gui.FocusElements.Add(mChatboxInput);
+
+            mChannelLabel = new Label(mChatboxWindow, "ChannelLabel");
+            mChannelLabel.Text = Strings.Chatbox.channel;
+            mChannelLabel.IsHidden = true;
 
             mChannelCombobox = new ComboBox(mChatboxWindow, "ChatChannelCombobox");
             for (int i = 0; i < 3; i++)
@@ -96,7 +113,7 @@ namespace Intersect.Client.UI.Game.Chat
                     rw.Clicked += ChatboxRow_Clicked;
                     mReceivedMessage = true;
 
-                    while (mChatboxMessages.RowCount > ClientOptions.ChatLines)
+                    while (mChatboxMessages.RowCount > ClientConfiguration.Instance.ChatLines)
                     {
                         mChatboxMessages.RemoveRow(0);
                     }
@@ -162,7 +179,7 @@ namespace Intersect.Client.UI.Game.Chat
                 return;
             }
 
-            PacketSender.SendChatMsg(mChatboxInput.Text.Trim(), (int) mChannelCombobox.SelectedItem.UserData);
+            PacketSender.SendChatMsg(mChatboxInput.Text.Trim(), byte.Parse(mChannelCombobox.SelectedItem.UserData.ToString()));
             mChatboxInput.Text = GetDefaultInputText();
         }
 

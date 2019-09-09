@@ -22,8 +22,6 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// </summary>
     public class Base : IDisposable
     {
-        private GameTexture mDisabledCheckedImage;
-        private GameTexture mCheckedImage;
         private List<Alignments> mAlignments = new List<Alignments>();
 
         /// <summary>
@@ -47,6 +45,8 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         private Base mParent;
 
+        private bool mHideToolTip;
+
         /// <summary>
         ///     This is the panel's actual parent - most likely the logical
         ///     parent's InnerPanel (if it has one). You should rarely need this.
@@ -60,6 +60,24 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected Base mInnerPanel;
 
         private Base mToolTip;
+        private string mToolTipBackgroundFilename;
+        private GameTexture mToolTipBackgroundImage;
+        private Color mToolTipFontColor;
+        private string mToolTipFontInfo;
+        private GameFont mToolTipFont;
+
+        /// <summary>
+        ///     Font.
+        /// </summary>
+        public GameFont ToolTipFont
+        {
+            get => mToolTipFont;
+            set
+            {
+                mToolTipFont = value;
+                mToolTipFontInfo = $"{value?.GetName()},{value?.GetSize()}";
+            }
+        }
 
         public List<Alignments> CurAlignments => mAlignments;
 
@@ -112,6 +130,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                 new JProperty("Bounds", Rectangle.ToString(mBounds)),
                 new JProperty("Padding", Padding.ToString(mPadding)),
                 new JProperty("AlignmentEdgeDistances", Padding.ToString(mAlignmentDistance)),
+                new JProperty("AlignmentTransform",Point.ToString(mAlignmentTransform)),
                 new JProperty("Margin", Margin.ToString(mMargin)),
                 new JProperty("RenderColor", Color.ToString(mColor)),
                 new JProperty("Alignments", string.Join(",", alignments.ToArray())),
@@ -122,7 +141,10 @@ namespace Intersect.Client.Framework.Gwen.Control
                 new JProperty("Hidden", mHidden),
                 new JProperty("RestrictToParent", mRestrictToParent),
                 new JProperty("MouseInputEnabled", mMouseInputEnabled),
-                new JProperty("HideToolTip", false)
+                new JProperty("HideToolTip", mHideToolTip),
+                new JProperty("ToolTipBackground", mToolTipBackgroundFilename),
+                new JProperty("ToolTipFont",mToolTipFontInfo),
+                new JProperty("ToolTipTextColor",Color.ToString(mToolTipFontColor))
             );
             if (HasNamedChildren())
             {
@@ -154,19 +176,19 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             try
             {
-                JObject obj = JsonConvert.DeserializeObject<JObject>(GameContentManager.Current.GetUIJson(stage, Name, resolution));
+                var obj = JsonConvert.DeserializeObject<JObject>(GameContentManager.Current?.GetUIJson(stage, Name, resolution));
                 if (obj != null)
                 {
                     LoadJson(obj);
                     ProcessAlignments();
                 }
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
                 //Log JSON UI Loading Error
-                throw new Exception("Error loading json ui for " + Name,ex);
+                throw new Exception("Error loading json ui for " + CanonicalName, exception);
             }
-            GameContentManager.Current.SaveUIJson(stage, Name, GetJsonUI(),resolution);
+            GameContentManager.Current?.SaveUIJson(stage, Name, GetJsonUI(), resolution);
         }
 
         public virtual void LoadJson(JToken obj)
@@ -206,6 +228,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["Bounds"] != null) SetBounds(Rectangle.FromString((string)obj["Bounds"]));
             if (obj["Padding"] != null) Padding = Padding.FromString((string)obj["Padding"]);
             if (obj["AlignmentEdgeDistances"] != null) mAlignmentDistance = Padding.FromString((string)obj["AlignmentEdgeDistances"]);
+            if (obj["AlignmentTransform"] != null) mAlignmentTransform = Point.FromString((string)obj["AlignmentTransform"]);
             if (obj["Margin"] != null) Margin = Margin.FromString((string)obj["Margin"]);
             if (obj["RenderColor"] != null) RenderColor = Color.FromString((string)obj["RenderColor"]);
             if (obj["DrawBackground"] != null) ShouldDrawBackground = (bool)obj["DrawBackground"];
@@ -215,7 +238,31 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["Hidden"] != null) IsHidden = (bool)obj["Hidden"];
             if (obj["RestrictToParent"] != null) RestrictToParent = (bool)obj["RestrictToParent"];
             if (obj["MouseInputEnabled"] != null) MouseInputEnabled = (bool)obj["MouseInputEnabled"];
-            if (obj["HideToolTip"] != null && (bool)obj["HideToolTip"]) SetToolTipText(null);
+            if (obj["HideToolTip"] != null && (bool) obj["HideToolTip"])
+            {
+                mHideToolTip = true;
+                SetToolTipText(null);
+            }
+            if (obj["ToolTipBackground"] != null)
+            {
+                var fileName = (string)obj["ToolTipBackground"];
+                GameTexture texture = null;
+                if (!string.IsNullOrWhiteSpace(fileName))
+                {
+                    texture = GameContentManager.Current?.GetTexture(GameContentManager.TextureType.Gui, fileName);
+                }
+
+                mToolTipBackgroundFilename = fileName;
+                mToolTipBackgroundImage = texture;
+            }
+            if (obj["ToolTipFont"] != null && obj["ToolTipFont"].Type != JTokenType.Null)
+            {
+                var fontArr = ((string)obj["ToolTipFont"]).Split(',');
+                mToolTipFontInfo = (string)obj["ToolTipFont"];
+                mToolTipFont = GameContentManager.Current.GetFont(fontArr[0], int.Parse(fontArr[1]));
+            }
+            if (obj["ToolTipTextColor"] != null) mToolTipFontColor = Color.FromString((string)obj["ToolTipTextColor"]);
+            UpdateToolTipProperties();
             if (HasNamedChildren())
             {
                 if (obj["Children"] != null)
@@ -275,7 +322,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                 }
             });
 
-            MoveTo(X, Y, true);
+            MoveTo(X + mAlignmentTransform.X, Y + mAlignmentTransform.Y, true);
             Children?.ForEach(child => child?.ProcessAlignments());
         }
 
@@ -291,6 +338,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         private Rectangle mInnerBounds;
         private Padding mPadding;
         private Padding mAlignmentDistance;
+        private Point mAlignmentTransform;
         private Margin mMargin;
         private Color mColor;
 
@@ -600,6 +648,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                 if (value == mHidden) return;
                 mHidden = value;
                 Invalidate();
+                InvalidateParent();
             }
         }
 
@@ -665,6 +714,11 @@ namespace Intersect.Client.Framework.Gwen.Control
             get => mCacheToTexture;
             set => mCacheToTexture = value;
         }
+
+        /// <summary>
+        ///     Gets the control's internal canonical name.
+        /// </summary>
+        public string CanonicalName => mParent == null ? Name : mParent.Name + "." + Name;
 
         /// <summary>
         ///     Gets or sets the control's internal name.
@@ -841,6 +895,11 @@ namespace Intersect.Client.Framework.Gwen.Control
             ////debug.print("Control.Base: Disposing {0} {1:X}", this, GetHashCode());
             if (mDisposed) return;
 
+            Renderer.ICacheToTexture cache = Skin.Renderer.Ctt;
+
+            if (ShouldCacheToTexture && cache != null)
+                cache.DisposeCachedTexture(this);
+
             if (InputHandler.HoveredControl == this)
                 InputHandler.HoveredControl = null;
 
@@ -966,13 +1025,30 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="text">Tooltip text.</param>
         public virtual void SetToolTipText(string text)
         {
+            if (mHideToolTip || text == null)
+            {
+                this.ToolTip = null;
+                return;
+            }
             Label tooltip = new Label(this);
             tooltip.Text = text;
-            tooltip.TextColorOverride = Skin.Colors.TooltipText;
+            tooltip.TextColorOverride = mToolTipFontColor ?? Skin.Colors.TooltipText;
+            if (mToolTipFont != null) tooltip.Font = mToolTipFont;
+            tooltip.ToolTipBackground = mToolTipBackgroundImage;
             tooltip.Padding = new Padding(5, 3, 5, 3);
             tooltip.SizeToContents();
-
             ToolTip = tooltip;
+        }
+
+        protected virtual void UpdateToolTipProperties()
+        {
+            if (ToolTip != null && ToolTip.GetType() == typeof(Label))
+            {
+                Label tooltip = (Label) ToolTip;
+                tooltip.TextColorOverride = mToolTipFontColor ?? Skin.Colors.TooltipText;
+                if (mToolTipFont != null) tooltip.Font = mToolTipFont;
+                tooltip.ToolTipBackground = mToolTipBackgroundImage;
+            }
         }
 
         /// <summary>
@@ -1623,7 +1699,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="x">X coordinate.</param>
         /// <param name="y">Y coordinate.</param>
         /// <param name="down">If set to <c>true</c> mouse button is down.</param>
-        protected virtual void OnMouseClickedLeft(int x, int y, bool down)
+        protected virtual void OnMouseClickedLeft(int x, int y, bool down, bool automated = false)
         {
             if (down && Clicked != null)
                 Clicked(this, new ClickedEventArgs(x, y, down));
@@ -1632,9 +1708,9 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <summary>
         ///     Invokes left mouse click event (used by input system).
         /// </summary>
-        internal void InputMouseClickedLeft(int x, int y, bool down)
+        internal void InputMouseClickedLeft(int x, int y, bool down, bool automated = false)
         {
-            OnMouseClickedLeft(x, y, down);
+            OnMouseClickedLeft(x, y, down, automated);
         }
 
         /// <summary>
@@ -1721,7 +1797,7 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         protected void PlaySound(string filename)
         {
-            if (filename == null) return;
+            if (filename == null || this.IsDisabled) return;
             filename = GameContentManager.RemoveExtension(filename).ToLower();
             GameAudioSource sound = GameContentManager.Current.GetSound(filename);
             if (sound != null)
@@ -1731,6 +1807,8 @@ namespace Intersect.Client.Framework.Gwen.Control
                 {
                     soundInstance.SetVolume(100, false);
                     soundInstance.Play();
+                    Console.WriteLine("--- Playing Sound: " + filename + " ---");
+                    Console.WriteLine(new System.Diagnostics.StackTrace().ToString());
                 }
             }
         }
@@ -1942,7 +2020,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 Pos dock = child.Dock;
 
-                if (!(0 != (dock & Pos.Fill)))
+                if (0 == (dock & Pos.Fill))
                     continue;
 
                 Margin margin = child.Margin;
@@ -2251,6 +2329,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         public void InvalidateParent()
         {
             mParent?.Invalidate();
+            mParent?.InvalidateParent();
         }
 
         /// <summary>

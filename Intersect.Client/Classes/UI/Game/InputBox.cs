@@ -13,6 +13,7 @@ namespace Intersect.Client.UI.Game
         {
             OkayOnly,
             YesNo,
+            NumericInput,
             TextInput,
         }
 
@@ -24,12 +25,15 @@ namespace Intersect.Client.UI.Game
         private Button mOkayButton;
         private string mPrompt = "";
         private Label mPromptLabel;
-        private TextBoxNumeric mTextbox;
+        private TextBoxNumeric mNumericTextbox;
+        private ImagePanel mNumericTextboxBg;
+        private TextBox mTextbox;
         private ImagePanel mTextboxBg;
         private GameContentManager.UI _uiStage;
         private Button mYesButton;
         public object UserData;
         public float Value;
+        public string TextValue;
 
         public InputBox(string title, string prompt, bool modal, InputType inputtype, EventHandler okayYesSubmitClicked,
             EventHandler cancelClicked, object userData, Base parent = null, GameContentManager.UI stage = GameContentManager.UI.InGame)
@@ -47,13 +51,22 @@ namespace Intersect.Client.UI.Game
             mMyWindow.DisableResizing();
             Gui.InputBlockingElements.Add(mMyWindow);
 
+            mNumericTextboxBg = new ImagePanel(mMyWindow, "Textbox");
+            mNumericTextbox = new TextBoxNumeric(mNumericTextboxBg, "TextboxText");
+            if (inputtype == InputType.NumericInput) mNumericTextbox.Focus();
+
             mTextboxBg = new ImagePanel(mMyWindow, "Textbox");
-            mTextbox = new TextBoxNumeric(mTextboxBg);
-            mTextbox.Focus();
+            mTextbox = new TextBox(mTextboxBg, "TextboxText");
+            if (inputtype == InputType.TextInput) mTextbox.Focus();
+
+            if (inputtype != InputType.NumericInput)
+            {
+                mNumericTextboxBg.IsHidden = true;
+            }
 
             if (inputtype != InputType.TextInput)
             {
-                mTextbox.IsHidden = true;
+                mTextboxBg.IsHidden = true;
             }
 
             mYesButton = new Button(mMyWindow, "YesButton");
@@ -99,18 +112,28 @@ namespace Intersect.Client.UI.Game
                         mOkayButton.Hide();
                         mYesButton.Show();
                         mNoButton.Show();
+                        mNumericTextboxBg.Hide();
                         mTextboxBg.Hide();
                         break;
                     case InputType.OkayOnly:
                         mOkayButton.Show();
                         mYesButton.Hide();
                         mNoButton.Hide();
+                        mNumericTextboxBg.Hide();
+                        mTextboxBg.Hide();
+                        break;
+                    case InputType.NumericInput:
+                        mOkayButton.Hide();
+                        mYesButton.Show();
+                        mNoButton.Show();
+                        mNumericTextboxBg.Show();
                         mTextboxBg.Hide();
                         break;
                     case InputType.TextInput:
                         mOkayButton.Hide();
                         mYesButton.Show();
                         mNoButton.Show();
+                        mNumericTextboxBg.Hide();
                         mTextboxBg.Show();
                         break;
                 }
@@ -125,9 +148,13 @@ namespace Intersect.Client.UI.Game
 
         void cancelBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
+            if (mNumericTextbox != null)
+            {
+                Value = mNumericTextbox.Value;
+            }
             if (mTextbox != null)
             {
-                Value = mTextbox.Value;
+                TextValue = mTextbox.Text;
             }
             if (CancelEventHandler != null)
             {
@@ -138,9 +165,13 @@ namespace Intersect.Client.UI.Game
 
         void okayBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
+            if (mNumericTextbox != null)
+            {
+                Value = mNumericTextbox.Value;
+            }
             if (mTextbox != null)
             {
-                Value = mTextbox.Value;
+                TextValue = mTextbox.Text;
             }
             if (OkayEventHandler != null)
             {
