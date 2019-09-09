@@ -142,7 +142,7 @@ namespace Intersect
         [JsonProperty("ValidPasswordResetTimeMinutes")]
         protected ushort _passResetExpirationMin = 30;
 
-        public bool SmtpValid => Smtp.IsValid();
+        public bool SmtpValid { get; set; }
         public SmtpSettings SmtpSettings = new SmtpSettings();
         public DatabaseOptions PlayerDatabase = new DatabaseOptions();
         public DatabaseOptions GameDatabase = new DatabaseOptions();
@@ -165,6 +165,7 @@ namespace Intersect
             {
                 Instance = JsonConvert.DeserializeObject<Options>(File.ReadAllText("resources/config.json"));
             }
+            Instance.SmtpValid = Instance.SmtpSettings.IsValid();
             Instance.SendingToClient = false;
             Instance.FixAnimatedSprites();
             File.WriteAllText("resources/config.json", JsonConvert.SerializeObject(Instance,Formatting.Indented));
