@@ -1807,8 +1807,6 @@ namespace Intersect.Client.Framework.Gwen.Control
                 {
                     soundInstance.SetVolume(100, false);
                     soundInstance.Play();
-                    Console.WriteLine("--- Playing Sound: " + filename + " ---");
-                    Console.WriteLine(new System.Diagnostics.StackTrace().ToString());
                 }
             }
         }
