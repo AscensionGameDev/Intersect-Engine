@@ -300,6 +300,7 @@ namespace Intersect.Editor.Forms.Editors
                     var obj = ServerVariableBase.Get((Guid)lstVariables.SelectedNode.Tag);
                     cmbBooleanValue.Hide();
                     nudVariableValue.Hide();
+                    txtStringValue.Hide();
                     switch (obj.Type)
                     {
                         case VariableDataTypes.Boolean:
@@ -316,6 +317,8 @@ namespace Intersect.Editor.Forms.Editors
                             break;
 
                         case VariableDataTypes.String:
+                            txtStringValue.Show();
+                            txtStringValue.Text = obj.Value.String;
                             break;
 
                         default:
@@ -339,6 +342,22 @@ namespace Intersect.Editor.Forms.Editors
                     }
                }
                UpdateSelection();
+            }
+        }
+
+        private void txtStringValue_TextChanged(object sender, EventArgs e)
+        {
+            if (lstVariables.SelectedNode != null && lstVariables.SelectedNode.Tag != null)
+            {
+                if (rdoGlobalVariables.Checked)
+                {
+                    var obj = ServerVariableBase.Get((Guid)lstVariables.SelectedNode.Tag);
+                    if (obj != null)
+                    {
+                        obj.Value.String = txtStringValue.Text;
+                        UpdateSelection();
+                    }
+                }
             }
         }
 
@@ -366,6 +385,7 @@ namespace Intersect.Editor.Forms.Editors
             grpEditor.Hide();
             cmbBooleanValue.Hide();
             nudVariableValue.Hide();
+            txtStringValue.Hide();
 
             //Collect folders
             var mFolders = new List<string>();

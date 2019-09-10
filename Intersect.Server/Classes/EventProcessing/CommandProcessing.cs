@@ -996,5 +996,55 @@ namespace Intersect.Server.EventProcessing
                 }
             }
         }
+
+        private static void ProcessVariableModification(SetVariableCommand command, StringVariableMod mod, Player player)
+        {
+            VariableValue value = null;
+            if (command.VariableType == VariableTypes.PlayerVariable)
+            {
+                value = player.GetVariableValue(command.VariableId);
+            }
+            else if (command.VariableType == VariableTypes.ServerVariable)
+            {
+                value = ServerVariableBase.Get(command.VariableId)?.Value;
+            }
+
+            if (value == null) value = new VariableValue();
+
+            switch (mod.ModType)
+            {
+                case Enums.VariableMods.Set:
+                    value.String = mod.Value;
+                    break;
+                case Enums.VariableMods.DupPlayerVar:
+                    value.String = player.GetVariableValue(mod.DupVariableId).String;
+                    break;
+                case Enums.VariableMods.DupGlobalVar:
+                    var dupServerVariable = ServerVariableBase.Get(mod.DupVariableId);
+                    if (dupServerVariable != null)
+                    {
+                        value.String = dupServerVariable.Value.String;
+                    }
+                    break;
+                case Enums.VariableMods.PlayerName:
+                    value.String = player.Name;
+                    break;
+            }
+
+            if (command.VariableType == VariableTypes.PlayerVariable)
+            {
+                // Set the party member switches too if Sync Party enabled!
+                if (command.SyncParty)
+                {
+                    foreach (Player partyMember in player.Party)
+                    {
+                        if (partyMember != player)
+                        {
+                            partyMember.SetVariableValue(command.VariableId, value.Integer);
+                        }
+                    }
+                }
+            }
+        }
     }
 }

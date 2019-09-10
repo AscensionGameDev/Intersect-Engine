@@ -114,6 +114,15 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.cmbItem = new DarkUI.Controls.DarkComboBox();
             this.lblItem = new System.Windows.Forms.Label();
             this.lblItemQuantity = new System.Windows.Forms.Label();
+            this.grpStringVariable = new DarkUI.Controls.DarkGroupBox();
+            this.cmbStringComparitor = new DarkUI.Controls.DarkComboBox();
+            this.lblStringComparator = new System.Windows.Forms.Label();
+            this.cmbStringGlobalVariable = new DarkUI.Controls.DarkComboBox();
+            this.cmbStringPlayerVariable = new DarkUI.Controls.DarkComboBox();
+            this.optStringPlayerVariable = new DarkUI.Controls.DarkRadioButton();
+            this.optStringGlobalVariable = new DarkUI.Controls.DarkRadioButton();
+            this.txtStringValue = new DarkUI.Controls.DarkTextBox();
+            this.optStringStaticValue = new DarkUI.Controls.DarkRadioButton();
             this.grpConditional.SuspendLayout();
             this.grpVariable.SuspendLayout();
             this.grpNumericVariable.SuspendLayout();
@@ -135,6 +144,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpEquippedItem.SuspendLayout();
             this.grpHasItem.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudItemAmount)).BeginInit();
+            this.grpStringVariable.SuspendLayout();
             this.SuspendLayout();
             // 
             // grpConditional
@@ -247,9 +257,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             this.grpVariable.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpVariable.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpVariable.Controls.Add(this.grpNumericVariable);
             this.grpVariable.Controls.Add(this.grpSelectVariable);
+            this.grpVariable.Controls.Add(this.grpStringVariable);
             this.grpVariable.Controls.Add(this.grpBooleanVariable);
+            this.grpVariable.Controls.Add(this.grpNumericVariable);
             this.grpVariable.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpVariable.Location = new System.Drawing.Point(9, 40);
             this.grpVariable.Name = "grpVariable";
@@ -1404,6 +1415,138 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.lblItemQuantity.TabIndex = 0;
             this.lblItemQuantity.Text = "Has at least:";
             // 
+            // grpStringVariable
+            // 
+            this.grpStringVariable.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpStringVariable.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpStringVariable.Controls.Add(this.optStringStaticValue);
+            this.grpStringVariable.Controls.Add(this.txtStringValue);
+            this.grpStringVariable.Controls.Add(this.cmbStringComparitor);
+            this.grpStringVariable.Controls.Add(this.lblStringComparator);
+            this.grpStringVariable.Controls.Add(this.cmbStringGlobalVariable);
+            this.grpStringVariable.Controls.Add(this.cmbStringPlayerVariable);
+            this.grpStringVariable.Controls.Add(this.optStringPlayerVariable);
+            this.grpStringVariable.Controls.Add(this.optStringGlobalVariable);
+            this.grpStringVariable.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpStringVariable.Location = new System.Drawing.Point(6, 96);
+            this.grpStringVariable.Name = "grpStringVariable";
+            this.grpStringVariable.Size = new System.Drawing.Size(247, 134);
+            this.grpStringVariable.TabIndex = 53;
+            this.grpStringVariable.TabStop = false;
+            this.grpStringVariable.Text = "String Variable:";
+            // 
+            // cmbStringComparitor
+            // 
+            this.cmbStringComparitor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbStringComparitor.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbStringComparitor.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbStringComparitor.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbStringComparitor.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbStringComparitor.ButtonIcon")));
+            this.cmbStringComparitor.DrawDropdownHoverOutline = false;
+            this.cmbStringComparitor.DrawFocusRectangle = false;
+            this.cmbStringComparitor.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbStringComparitor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbStringComparitor.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbStringComparitor.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbStringComparitor.FormattingEnabled = true;
+            this.cmbStringComparitor.Items.AddRange(new object[] {
+            "Equal To",
+            "Not Equal To"});
+            this.cmbStringComparitor.Location = new System.Drawing.Point(115, 20);
+            this.cmbStringComparitor.Name = "cmbStringComparitor";
+            this.cmbStringComparitor.Size = new System.Drawing.Size(125, 21);
+            this.cmbStringComparitor.TabIndex = 3;
+            this.cmbStringComparitor.Text = "Equal To";
+            this.cmbStringComparitor.TextPadding = new System.Windows.Forms.Padding(2);
+            // 
+            // lblStringComparator
+            // 
+            this.lblStringComparator.AutoSize = true;
+            this.lblStringComparator.Location = new System.Drawing.Point(9, 23);
+            this.lblStringComparator.Name = "lblStringComparator";
+            this.lblStringComparator.Size = new System.Drawing.Size(61, 13);
+            this.lblStringComparator.TabIndex = 2;
+            this.lblStringComparator.Text = "Comparator";
+            // 
+            // cmbStringGlobalVariable
+            // 
+            this.cmbStringGlobalVariable.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbStringGlobalVariable.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbStringGlobalVariable.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbStringGlobalVariable.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbStringGlobalVariable.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbStringGlobalVariable.ButtonIcon")));
+            this.cmbStringGlobalVariable.DrawDropdownHoverOutline = false;
+            this.cmbStringGlobalVariable.DrawFocusRectangle = false;
+            this.cmbStringGlobalVariable.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbStringGlobalVariable.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbStringGlobalVariable.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbStringGlobalVariable.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbStringGlobalVariable.FormattingEnabled = true;
+            this.cmbStringGlobalVariable.Location = new System.Drawing.Point(146, 102);
+            this.cmbStringGlobalVariable.Name = "cmbStringGlobalVariable";
+            this.cmbStringGlobalVariable.Size = new System.Drawing.Size(94, 21);
+            this.cmbStringGlobalVariable.TabIndex = 48;
+            this.cmbStringGlobalVariable.Text = null;
+            this.cmbStringGlobalVariable.TextPadding = new System.Windows.Forms.Padding(2);
+            // 
+            // cmbStringPlayerVariable
+            // 
+            this.cmbStringPlayerVariable.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbStringPlayerVariable.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbStringPlayerVariable.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbStringPlayerVariable.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbStringPlayerVariable.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbStringPlayerVariable.ButtonIcon")));
+            this.cmbStringPlayerVariable.DrawDropdownHoverOutline = false;
+            this.cmbStringPlayerVariable.DrawFocusRectangle = false;
+            this.cmbStringPlayerVariable.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbStringPlayerVariable.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbStringPlayerVariable.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbStringPlayerVariable.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbStringPlayerVariable.FormattingEnabled = true;
+            this.cmbStringPlayerVariable.Location = new System.Drawing.Point(146, 75);
+            this.cmbStringPlayerVariable.Name = "cmbStringPlayerVariable";
+            this.cmbStringPlayerVariable.Size = new System.Drawing.Size(94, 21);
+            this.cmbStringPlayerVariable.TabIndex = 47;
+            this.cmbStringPlayerVariable.Text = null;
+            this.cmbStringPlayerVariable.TextPadding = new System.Windows.Forms.Padding(2);
+            // 
+            // optStringPlayerVariable
+            // 
+            this.optStringPlayerVariable.AutoSize = true;
+            this.optStringPlayerVariable.Location = new System.Drawing.Point(10, 76);
+            this.optStringPlayerVariable.Name = "optStringPlayerVariable";
+            this.optStringPlayerVariable.Size = new System.Drawing.Size(128, 17);
+            this.optStringPlayerVariable.TabIndex = 45;
+            this.optStringPlayerVariable.Text = "Player Variable Value:";
+            // 
+            // optStringGlobalVariable
+            // 
+            this.optStringGlobalVariable.AutoSize = true;
+            this.optStringGlobalVariable.Location = new System.Drawing.Point(10, 103);
+            this.optStringGlobalVariable.Name = "optStringGlobalVariable";
+            this.optStringGlobalVariable.Size = new System.Drawing.Size(129, 17);
+            this.optStringGlobalVariable.TabIndex = 46;
+            this.optStringGlobalVariable.Text = "Global Variable Value:";
+            // 
+            // txtStringValue
+            // 
+            this.txtStringValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtStringValue.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtStringValue.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.txtStringValue.Location = new System.Drawing.Point(115, 46);
+            this.txtStringValue.Name = "txtStringValue";
+            this.txtStringValue.Size = new System.Drawing.Size(125, 20);
+            this.txtStringValue.TabIndex = 62;
+            this.txtStringValue.Visible = false;
+            // 
+            // optStringStaticValue
+            // 
+            this.optStringStaticValue.Location = new System.Drawing.Point(10, 46);
+            this.optStringStaticValue.Name = "optStringStaticValue";
+            this.optStringStaticValue.Size = new System.Drawing.Size(96, 17);
+            this.optStringStaticValue.TabIndex = 63;
+            this.optStringStaticValue.Text = "Static Value:";
+            // 
             // EventCommandConditionalBranch
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1450,6 +1593,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpHasItem.ResumeLayout(false);
             this.grpHasItem.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudItemAmount)).EndInit();
+            this.grpStringVariable.ResumeLayout(false);
+            this.grpStringVariable.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1539,5 +1684,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private DarkRadioButton rdoGlobalVariable;
         internal DarkRadioButton optBooleanTrue;
         internal DarkRadioButton optBooleanFalse;
+        private DarkGroupBox grpStringVariable;
+        private DarkComboBox cmbStringComparitor;
+        private System.Windows.Forms.Label lblStringComparator;
+        internal DarkComboBox cmbStringGlobalVariable;
+        internal DarkComboBox cmbStringPlayerVariable;
+        internal DarkRadioButton optStringPlayerVariable;
+        internal DarkRadioButton optStringGlobalVariable;
+        private DarkTextBox txtStringValue;
+        internal DarkRadioButton optStringStaticValue;
     }
 }

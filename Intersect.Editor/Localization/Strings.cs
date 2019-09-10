@@ -685,6 +685,9 @@ Tick timer saved in server config.json.";
             public static LocalizedString booleanvariable = @"Boolean Variable:";
             public static LocalizedString booleanequal = @"Equal To";
             public static LocalizedString booleannotequal = @"Not Equal To";
+            public static LocalizedString stringvariable = @"String Variable:";
+            public static LocalizedString stringequal = @"Equal To";
+            public static LocalizedString stringnotequal = @"Not Equal To";
             public static LocalizedString cancel = @"Cancel";
             public static LocalizedString canstartquest = @"Can Start Quest";
             public static LocalizedString Class = @"Class:";
@@ -1166,6 +1169,12 @@ Tick timer saved in server config.json.";
             public static LocalizedString numericset = @"Set";
             public static LocalizedString numericsubtract = @"Subtract";
             public static LocalizedString numericsystemtime = @"System Time (ms)";
+
+            public static LocalizedString stringlabel = @"Boolean Variable:";
+            public static LocalizedString stringvalue = @"Text:";
+            public static LocalizedString stringcloneplayerstringvalue = @"Player Variable Value: ";
+            public static LocalizedString stringcloneglobalstringvalue = @"Global Variable Value: ";
+            public static LocalizedString stringplayername = @"Player Name";
         }
 
         public struct EventShowOptions
@@ -2065,6 +2074,7 @@ Tick timer saved in server config.json.";
             {
                 {1, @"Boolean"},
                 {2, @"Integer"},
+                {3, @"String"},
             };
             public static LocalizedString undo = @"Undo Changes";
             public static LocalizedString value = @"Value:";

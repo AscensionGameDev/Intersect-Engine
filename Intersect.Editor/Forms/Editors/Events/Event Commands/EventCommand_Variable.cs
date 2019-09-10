@@ -77,6 +77,12 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             optBooleanCloneGlobalVar.Text = Strings.EventSetVariable.booleanccloneglobalvariablevalue;
             optBooleanClonePlayerVar.Text = Strings.EventSetVariable.booleancloneplayervariablevalue;
 
+            //String
+            grpStringVariable.Text = Strings.EventSetVariable.stringlabel;
+            optStaticString.Text = Strings.EventSetVariable.stringvalue;
+            optClonePlayerString.Text = Strings.EventSetVariable.stringcloneplayerstringvalue;
+            optCloneGlobalString.Text = Strings.EventSetVariable.stringcloneglobalstringvalue;
+            optPlayerName.Text = Strings.EventSetVariable.stringplayername;
         }
 
         private void InitEditor()
@@ -108,6 +114,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             //Hide editor windows until we have a variable selected to work with
             grpNumericVariable.Hide();
             grpBooleanVariable.Hide();
+            grpStringVariable.Hide();
 
             var varType = 0;
             if (cmbVariable.SelectedIndex > -1)
@@ -146,6 +153,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                         break;
 
                     case VariableDataTypes.String:
+                        grpStringVariable.Show();
+                        TryLoadStringMod(mMyCommand.Modification);
                         break;
 
                     default:
@@ -178,6 +187,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             else if (grpBooleanVariable.Visible)
             {
                 mMyCommand.Modification = GetBooleanVariableMod();
+            }
+            else if (grpStringVariable.Visible)
+            {
+                mMyCommand.Modification = GetStringVariableMod();
             }
             else
             {
@@ -456,6 +469,64 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     mod.ModType = VariableMods.SubtractGlobalVar;
                 }
                 mod.DupVariableId = ServerVariableBase.IdFromList(cmbNumericCloneGlobalVar.SelectedIndex);
+            }
+
+            return mod;
+        }
+
+        #endregion
+
+        #region "String Variable"
+
+        private void TryLoadStringMod(VariableMod varMod)
+        {
+            if (varMod == null) varMod = new StringVariableMod();
+            if (varMod.GetType() == typeof(StringVariableMod))
+            {
+                var mod = (StringVariableMod)varMod;
+
+                switch (mod.ModType)
+                {
+                    case VariableMods.Set:
+                        optStaticString.Checked = true;
+                        txtStringValue.Text = mod.Value;
+                        break;
+                    case VariableMods.DupPlayerVar:
+                        optClonePlayerString.Checked = true;
+                        cmbDupPlayerString.SelectedIndex = PlayerVariableBase.ListIndex(mod.DupVariableId);
+                        break;
+                    case VariableMods.DupGlobalVar:
+                        optCloneGlobalString.Checked = true;
+                        cmbDupGlobalString.SelectedIndex = ServerVariableBase.ListIndex(mod.DupVariableId);
+                        break;
+                    case VariableMods.PlayerName:
+                        optPlayerName.Checked = true;
+                        break;
+                }
+            }
+        }
+
+        private StringVariableMod GetStringVariableMod()
+        {
+            var mod = new StringVariableMod();
+            if (optStaticString.Checked)
+            {
+                mod.ModType = VariableMods.Set;
+                mod.Value = txtStringValue.Text;
+            }
+            else if (optClonePlayerString.Checked)
+            {
+                mod.ModType = VariableMods.DupPlayerVar;
+                mod.DupVariableId = PlayerVariableBase.IdFromList(cmbDupPlayerString.SelectedIndex);
+            }
+            else if (optCloneGlobalString.Checked)
+            {
+                mod.ModType = VariableMods.DupGlobalVar;
+                mod.DupVariableId = ServerVariableBase.IdFromList(cmbDupGlobalString.SelectedIndex);
+            }
+            else if (optPlayerName.Checked)
+            {
+                mod.ModType = VariableMods.PlayerName;
             }
 
             return mod;
