@@ -114,7 +114,7 @@ namespace Intersect.Server.Classes.Admin.Actions
             {
                 if (action.Name.Trim().ToLower() != player.Name.Trim().ToLower())
                 {
-                    if (client.Power == UserRights.Admin)
+                    if (client.Power.IsAdmin)
                     {
                         var power = UserRights.None;
                         if (action.Power == "Admin")
@@ -128,11 +128,11 @@ namespace Intersect.Server.Classes.Admin.Actions
 
                         var targetClient = target.Client;
                         targetClient.Power = power;
-                        if (targetClient.Power == UserRights.Admin)
+                        if (targetClient.Power.IsAdmin)
                         {
                             PacketSender.SendGlobalMsg(Strings.Player.admin.ToString(target.Name));
                         }
-                        else if (targetClient.Power == UserRights.Moderation)
+                        else if (targetClient.Power.IsModerator)
                         {
                             PacketSender.SendGlobalMsg(Strings.Player.mod.ToString(target.Name));
                         }

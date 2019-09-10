@@ -208,11 +208,11 @@ namespace Intersect.Server.Networking
 
                 if (cmd == Strings.Chat.localcmd || cmd == "/0")
                 {
-                    if (client.Power == UserRights.Admin)
+                    if (client.Power.IsAdmin)
                     {
                         PacketSender.SendProximityMsg(Strings.Chat.local.ToString(client.Entity.Name, msg), player.MapId, CustomColors.AdminLocalChat, client.Entity.Name);
                     }
-                    else if (client.Power.Ban || client.Power.Mute || client.Power.Kick)
+                    else if (client.Power.IsModerator)
                     {
                         PacketSender.SendProximityMsg(Strings.Chat.local.ToString(client.Entity.Name, msg), player.MapId, CustomColors.ModLocalChat, client.Entity.Name);
                     }
@@ -224,12 +224,12 @@ namespace Intersect.Server.Networking
                 }
                 else if (cmd == Strings.Chat.allcmd || cmd == "/1" || cmd == Strings.Chat.globalcmd)
                 {
-                    if (client.Power == UserRights.Admin)
+                    if (client.Power.IsAdmin)
                     {
                         PacketSender.SendGlobalMsg(Strings.Chat.Global.ToString(client.Entity.Name, msg),
                             CustomColors.AdminGlobalChat, client.Entity.Name);
                     }
-                    else if (client.Power.Ban || client.Power.Mute || client.Power.Kick)
+                    else if (client.Power.IsModerator)
                     {
                         PacketSender.SendGlobalMsg(Strings.Chat.Global.ToString(client.Entity.Name, msg),
                             CustomColors.ModGlobalChat, client.Entity.Name);
