@@ -3825,6 +3825,7 @@ namespace Intersect.Server.Entities
             {
                 v = CreateVariable(id);
             }
+            if (v == null) return new VariableValue();
             return v.Value;
         }
         public void SetVariableValue(Guid id, long value)
