@@ -34,6 +34,12 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             cmbBooleanClonePlayerVar.Items.Clear();
             cmbBooleanClonePlayerVar.Items.AddRange(PlayerVariableBase.Names);
 
+            //Strings
+            cmbDupGlobalString.Items.Clear();
+            cmbDupGlobalString.Items.AddRange(ServerVariableBase.Names);
+            cmbDupPlayerString.Items.Clear();
+            cmbDupPlayerString.Items.AddRange(PlayerVariableBase.Names);
+
             if (mMyCommand.VariableType == VariableTypes.ServerVariable)
             {
                 rdoGlobalVariable.Checked = true;

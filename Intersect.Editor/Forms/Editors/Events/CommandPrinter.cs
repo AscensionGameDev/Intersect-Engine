@@ -925,5 +925,41 @@ namespace Intersect.Editor.Forms.Editors.Events
 
             return Strings.EventCommandList.invalid;
         }
+
+        private static string GetVariableModText(SetVariableCommand command, StringVariableMod mod)
+        {
+            var varvalue = "";
+            switch (mod.ModType)
+            {
+                case Enums.VariableMods.Set:
+                    varvalue = Strings.EventCommandList.setvariable.ToString(mod.Value);
+                    break;
+                case Enums.VariableMods.DupPlayerVar:
+                    varvalue = Strings.EventCommandList.dupplayervariable.ToString(
+                        PlayerVariableBase.GetName(mod.DupVariableId));
+                    break;
+                case Enums.VariableMods.DupGlobalVar:
+                    varvalue = Strings.EventCommandList.dupglobalvariable.ToString(
+                        ServerVariableBase.GetName(mod.DupVariableId));
+                    break;
+                case Enums.VariableMods.PlayerName:
+                    varvalue = Strings.EventCommandList.playername.ToString();
+                    break;
+            }
+
+            if (command.VariableType == VariableTypes.PlayerVariable)
+            {
+                return Strings.EventCommandList.playervariable.ToString(PlayerVariableBase.GetName(command.VariableId),
+                    varvalue);
+            }
+
+            if (command.VariableType == VariableTypes.ServerVariable)
+            {
+                return Strings.EventCommandList.globalvariable.ToString(ServerVariableBase.GetName(command.VariableId),
+                    varvalue);
+            }
+
+            return Strings.EventCommandList.invalid;
+        }
     }
 }

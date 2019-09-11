@@ -221,7 +221,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.txtStringValue.Name = "txtStringValue";
             this.txtStringValue.Size = new System.Drawing.Size(138, 20);
             this.txtStringValue.TabIndex = 62;
-            this.txtStringValue.Visible = false;
             // 
             // optStaticString
             // 

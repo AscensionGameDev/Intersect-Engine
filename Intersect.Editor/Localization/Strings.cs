@@ -580,6 +580,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString setlevel = @"Set Player Level To: {00}";
             public static LocalizedString setsprite = @"Set Player Sprite to {00}";
             public static LocalizedString setvariable = @"Set to {00}";
+            public static LocalizedString playername = @"Set to player name";
             public static LocalizedString showoffer = @"Show Offer Window";
             public static LocalizedString showoptions = @"Show Options: {00}";
             public static LocalizedString showpicture = @"Show Picture";
@@ -2463,6 +2464,38 @@ Negative values for time to flow backwards.";
             return pVar;
         }
 
+        public static string GetVariableComparisonString(StringVariableComparison comparison)
+        {
+            var value = "";
+            var pVar = "";
+
+            if (comparison.CompareVariableId == Guid.Empty)
+            {
+                value = comparison.Value.ToString();
+            }
+            else
+            {
+                if (comparison.CompareVariableType == VariableTypes.PlayerVariable)
+                {
+                    value = Strings.EventConditionDesc.playervariablevalue.ToString(PlayerVariableBase.GetName(comparison.CompareVariableId));
+                }
+                else if (comparison.CompareVariableType == VariableTypes.ServerVariable)
+                {
+                    value = Strings.EventConditionDesc.globalvariablevalue.ToString(ServerVariableBase.GetName(comparison.CompareVariableId));
+                }
+            }
+
+            if (comparison.ComparingEqual)
+            {
+                pVar = Strings.EventConditionDesc.equal.ToString(value);
+            }
+            else
+            {
+                pVar = Strings.EventConditionDesc.notequal.ToString(value);
+            }
+
+            return pVar;
+        }
 
         public static void Load()
         {

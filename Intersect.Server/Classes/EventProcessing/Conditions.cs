@@ -386,7 +386,7 @@ namespace Intersect.Server.EventProcessing
 
             if (compValue.Type != currentValue.Type) return false;
 
-            var varVal = currentValue.Integer;
+            var varVal = currentValue.String;
             compareAgainst = compValue.String;
 
             if (comparison.ComparingEqual)
