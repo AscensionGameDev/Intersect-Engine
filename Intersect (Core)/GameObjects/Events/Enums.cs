@@ -124,7 +124,10 @@
         //Equip Items
         EquipItem,
 
-        //Chane Name Color
+        //Change Name Color
         ChangeNameColor,
+
+        //Player Input variable.
+        InputVariable,
     }
 }

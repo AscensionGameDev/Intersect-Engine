@@ -583,6 +583,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString playername = @"Set to player name";
             public static LocalizedString showoffer = @"Show Offer Window";
             public static LocalizedString showoptions = @"Show Options: {00}";
+            public static LocalizedString variableinput = @"Input Variable: {00}";
             public static LocalizedString showpicture = @"Show Picture";
             public static LocalizedString showtext = @"Show Text: {00}";
             public static LocalizedString skipcompletionevent = @"Without Running Completion Event";
@@ -668,6 +669,7 @@ Tick timer saved in server config.json.";
                 {"showplayer", @"Show Player"},
                 {"equipitem", @"Equip Item"},
                 {"changenamecolor", @"Change Name Color"},
+                {"inputvariable", @"Input Variable"},
             };
         }
 
@@ -1200,6 +1202,22 @@ Tick timer saved in server config.json.";
             public static LocalizedString okay = @"Ok";
             public static LocalizedString text = @"Text:";
             public static LocalizedString title = @"Show Text";
+        }
+
+        public struct EventInput
+        {
+            public static LocalizedString cancel = @"Cancel";
+            public static LocalizedString commands = @"Chat Commands";
+            public static LocalizedString okay = @"Ok";
+            public static LocalizedString text = @"Text:";
+            public static LocalizedString titlestr = @"Title:";
+            public static LocalizedString title = @"Input Variable";
+            public static LocalizedString playervariable = @"Player Variable";
+            public static LocalizedString globalvariable = @"Global Variable";
+            public static LocalizedString minval = @"Minimum Value";
+            public static LocalizedString maxval = @"Maximum Value";
+            public static LocalizedString minlength = @"Minimum Length";
+            public static LocalizedString maxlength = @"Maximum Length";
         }
 
         public struct EventSpawnNpc

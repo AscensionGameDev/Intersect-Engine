@@ -3932,6 +3932,77 @@ namespace Intersect.Server.Entities
             }
         }
 
+        public void RespondToEventInput(Guid eventId, int newValue, string newValueString, bool canceled = false)
+        {
+            lock (mEventLock)
+            {
+                foreach (var evt in EventLookup.Values)
+                {
+                    if (evt.PageInstance != null && evt.PageInstance.Id == eventId)
+                    {
+                        if (evt.CallStack.Count <= 0) return;
+                        var stackInfo = evt.CallStack.Peek();
+                        if (stackInfo.WaitingForResponse != CommandInstance.EventResponse.Dialogue) return;
+                        stackInfo.WaitingForResponse = CommandInstance.EventResponse.None;
+                        if (stackInfo.WaitingOnCommand != null && stackInfo.WaitingOnCommand.Type == EventCommandType.InputVariable)
+                        {
+                            var cmd = ((InputVariableCommand)stackInfo.Command);
+                            VariableValue value = null;
+                            if (cmd.VariableType == VariableTypes.PlayerVariable)
+                            {
+                                value = GetVariableValue(cmd.VariableId);
+                            }
+                            else if (cmd.VariableType == VariableTypes.ServerVariable)
+                            {
+                                value = ServerVariableBase.Get(cmd.VariableId)?.Value;
+                            }
+                            if (value == null) value = new VariableValue();
+
+                            bool success = false;
+
+                            if (!canceled)
+                            {
+                                switch (value.Type)
+                                {
+                                    case VariableDataTypes.Integer:
+                                        if (newValue >= cmd.Minimum && newValue <= cmd.Maximum)
+                                        {
+                                            value.Integer = newValue;
+                                            success = true;
+                                        }
+                                        break;
+                                    case VariableDataTypes.Number:
+                                        if (newValue >= cmd.Minimum && newValue <= cmd.Maximum)
+                                        {
+                                            value.Number = newValue;
+                                            success = true;
+                                        }
+                                        break;
+                                    case VariableDataTypes.String:
+                                        if (newValueString.Length >= cmd.Minimum && newValueString.Length <= cmd.Maximum)
+                                        {
+                                            value.String = newValueString;
+                                            success = true;
+                                        }
+                                        break;
+                                    case VariableDataTypes.Boolean:
+                                        value.Boolean = newValue > 0;
+                                        success = true;
+                                        break;
+                                }
+                            }
+
+                            var tmpStack = success ? new CommandInstance(stackInfo.Page, stackInfo.BranchIds[0])
+                                                   : new CommandInstance(stackInfo.Page, stackInfo.BranchIds[1]);
+
+                            evt.CallStack.Push(tmpStack);
+                        }
+                        return;
+                    }
+                }
+            }
+        }
+
         static bool IsEventOneBlockAway(EventInstance evt)
         {
             //todo this

@@ -178,7 +178,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             if (rdoPlayerVariable.Checked)
             {
                 mMyCommand.VariableType = VariableTypes.PlayerVariable;
-                mMyCommand.VariableId =PlayerVariableBase.IdFromList(cmbVariable.SelectedIndex);
+                mMyCommand.VariableId = PlayerVariableBase.IdFromList(cmbVariable.SelectedIndex);
             }
             if (rdoGlobalVariable.Checked)
             {

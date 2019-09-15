@@ -76,6 +76,54 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
+    public class InputVariableCommand : EventCommand
+    {
+        public override EventCommandType Type { get; } = EventCommandType.InputVariable;
+        public string Title { get; set; }
+        public string Text { get; set; } = "";
+        public VariableTypes VariableType { get; set; } = VariableTypes.PlayerVariable;
+        public Guid VariableId { get; set; } = new Guid();
+        public long Minimum { get; set; } = 0;
+        public long Maximum { get; set; } = 0;
+        public Guid[] BranchIds { get; set; } = new Guid[2]; //Branch[0] is the event commands to execute when the condition is met, Branch[1] is for when it's not.
+
+        //For Json Deserialization
+        public InputVariableCommand()
+        {
+
+        }
+
+        public InputVariableCommand(Dictionary<Guid, List<EventCommand>> commandLists)
+        {
+            for (int i = 0; i < BranchIds.Length; i++)
+            {
+                BranchIds[i] = Guid.NewGuid();
+                commandLists.Add(BranchIds[i], new List<EventCommand>());
+            }
+        }
+
+        public override string GetCopyData(Dictionary<Guid, List<EventCommand>> commandLists, Dictionary<Guid, List<EventCommand>> copyLists)
+        {
+            foreach (var branch in BranchIds)
+            {
+                if (branch != Guid.Empty && commandLists.ContainsKey(branch))
+                    copyLists.Add(branch, commandLists[branch]);
+            }
+            return base.GetCopyData(commandLists, copyLists);
+        }
+
+        public override void FixBranchIds(Dictionary<Guid, Guid> idDict)
+        {
+            for (int i = 0; i < BranchIds.Length; i++)
+            {
+                if (idDict.ContainsKey(BranchIds[i]))
+                {
+                    BranchIds[i] = idDict[BranchIds[i]];
+                }
+            }
+        }
+    }
+
     public class AddChatboxTextCommand : EventCommand
     {
         public override EventCommandType Type {get;} = EventCommandType.AddChatboxText;

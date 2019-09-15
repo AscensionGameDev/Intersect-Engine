@@ -457,6 +457,9 @@ namespace Intersect.Editor.Forms.Editors.Events
                 case EventCommandType.ShowOptions:
                     tmpCommand = new ShowOptionsCommand(CurrentPage.CommandLists);
                     break;
+                case EventCommandType.InputVariable:
+                    tmpCommand = new InputVariableCommand(CurrentPage.CommandLists);
+                    break;
                 case EventCommandType.AddChatboxText:
                     tmpCommand = new AddChatboxTextCommand();
                     break;
@@ -948,6 +951,9 @@ namespace Intersect.Editor.Forms.Editors.Events
                 case EventCommandType.ShowOptions:
                     cmdWindow = new EventCommandOptions((ShowOptionsCommand)command, CurrentPage, this);
                     break;
+                case EventCommandType.InputVariable:
+                    cmdWindow = new EventCommandInput((InputVariableCommand)command, this);
+                    break;
                 case EventCommandType.AddChatboxText:
                     cmdWindow = new EventCommandChatboxText((AddChatboxTextCommand)command, this);
                     break;
@@ -1163,6 +1169,9 @@ namespace Intersect.Editor.Forms.Editors.Events
             {
                 case EventCommandType.ShowOptions:
                     branchesToRemove.AddRange(((ShowOptionsCommand)cmd).BranchIds);
+                    break;
+                case EventCommandType.InputVariable:
+                    branchesToRemove.AddRange(((InputVariableCommand)cmd).BranchIds);
                     break;
                 case EventCommandType.ConditionalBranch:
                     branchesToRemove.AddRange(((ConditionalBranchCommand)cmd).BranchIds);

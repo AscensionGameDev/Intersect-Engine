@@ -54,6 +54,31 @@ namespace Intersect.Server.EventProcessing
             stackInfo.BranchIds = command.BranchIds;
         }
 
+        //Input Variable Command
+        private static void ProcessCommand(InputVariableCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
+        {
+            var title = ParseEventText(command.Title, player, instance);
+            var txt = ParseEventText(command.Text, player, instance);
+            VariableDataTypes type = VariableDataTypes.Integer;
+
+
+            if (command.VariableType == VariableTypes.PlayerVariable)
+            {
+                var variable = PlayerVariableBase.Get(command.VariableId);
+                type = variable.Type;
+            }
+            else
+            {
+                var variable = ServerVariableBase.Get(command.VariableId);
+                type = variable.Type;
+            }
+
+            PacketSender.SendInputVariableDialog(player, title, txt, type, instance.PageInstance.Id);
+            stackInfo.WaitingForResponse = CommandInstance.EventResponse.Dialogue;
+            stackInfo.WaitingOnCommand = command;
+            stackInfo.BranchIds = command.BranchIds;
+        }
+
         //Show Add Chatbox Text Command
         private static void ProcessCommand(AddChatboxTextCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
@@ -715,6 +740,9 @@ namespace Intersect.Server.EventProcessing
                     {
                         case EventCommandType.ShowOptions:
                             branchIds.AddRange(((ShowOptionsCommand)command).BranchIds);
+                            break;
+                        case EventCommandType.InputVariable:
+                            branchIds.AddRange(((InputVariableCommand)command).BranchIds);
                             break;
                         case EventCommandType.ConditionalBranch:
                             branchIds.AddRange(((ConditionalBranchCommand)command).BranchIds);

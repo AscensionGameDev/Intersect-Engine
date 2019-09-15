@@ -101,6 +101,12 @@
     <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_EquipItem.Designer.cs">
       <DependentUpon>EventCommand_EquipItem.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Input.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Input.Designer.cs">
+      <DependentUpon>EventCommand_Input.cs</DependentUpon>
+    </Compile>
     <Compile Include="Localization\Strings.cs" />
     <Compile Include="Classes\Maps\MapGrid.cs" />
     <Compile Include="Classes\Maps\MapInstance.cs" />
@@ -697,6 +703,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_StartQuest.resx">
       <DependentUpon>EventCommand_StartQuest.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_Input.resx">
+      <DependentUpon>EventCommand_Input.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_Text.resx">
       <DependentUpon>EventCommand_Text.cs</DependentUpon>
