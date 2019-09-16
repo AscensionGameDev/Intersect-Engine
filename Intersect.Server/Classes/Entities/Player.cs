@@ -3946,14 +3946,19 @@ namespace Intersect.Server.Entities
                         stackInfo.WaitingForResponse = CommandInstance.EventResponse.None;
                         if (stackInfo.WaitingOnCommand != null && stackInfo.WaitingOnCommand.Type == EventCommandType.InputVariable)
                         {
-                            var cmd = ((InputVariableCommand)stackInfo.Command);
+                            var cmd = ((InputVariableCommand)stackInfo.WaitingOnCommand);
                             VariableValue value = null;
+                            VariableDataTypes type = VariableDataTypes.Boolean;
                             if (cmd.VariableType == VariableTypes.PlayerVariable)
                             {
+                                var variable = PlayerVariableBase.Get(cmd.VariableId);
+                                if (variable != null) type = variable.Type;
                                 value = GetVariableValue(cmd.VariableId);
                             }
                             else if (cmd.VariableType == VariableTypes.ServerVariable)
                             {
+                                var variable = ServerVariableBase.Get(cmd.VariableId);
+                                if (variable != null) type = variable.Type;
                                 value = ServerVariableBase.Get(cmd.VariableId)?.Value;
                             }
                             if (value == null) value = new VariableValue();
@@ -3962,7 +3967,7 @@ namespace Intersect.Server.Entities
 
                             if (!canceled)
                             {
-                                switch (value.Type)
+                                switch (type)
                                 {
                                     case VariableDataTypes.Integer:
                                         if (newValue >= cmd.Minimum && newValue <= cmd.Maximum)
@@ -3990,6 +3995,18 @@ namespace Intersect.Server.Entities
                                         success = true;
                                         break;
                                 }
+                            }
+
+                            //Reassign variable values in case they didnt already exist and we made them from scratch at the null check above
+                            if (cmd.VariableType == VariableTypes.PlayerVariable)
+                            {
+                                var variable = GetVariable(cmd.VariableId);
+                                variable.Value = value;
+                            }
+                            else if (cmd.VariableType == VariableTypes.ServerVariable)
+                            {
+                                var variable = ServerVariableBase.Get(cmd.VariableId);
+                                if (variable != null) variable.Value = value;
                             }
 
                             var tmpStack = success ? new CommandInstance(stackInfo.Page, stackInfo.BranchIds[0])
