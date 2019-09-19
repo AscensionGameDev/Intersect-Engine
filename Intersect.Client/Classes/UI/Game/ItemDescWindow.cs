@@ -46,6 +46,15 @@ namespace Intersect.Client.UI.Game
                 itemType.Text = Strings.ItemDesc.itemtypes[(int)item.ItemType];
                 itemValue.SetText(valueLabel);
 
+                if (item.ItemType == ItemTypes.Equipment && item.EquipmentSlot > 0 && item.EquipmentSlot < Options.EquipmentSlots.Count)
+                {
+                    itemType.Text = Options.EquipmentSlots[item.EquipmentSlot];
+                    if (item.EquipmentSlot == Options.WeaponIndex && item.TwoHanded)
+                    {
+                        itemType.Text += " - " + Strings.ItemDesc.twohand;
+                    }
+                }
+
                 if (item.Rarity > 0)
                 {
                     itemType.Text += " - " + Strings.ItemDesc.rarity[item.Rarity];
@@ -76,14 +85,6 @@ namespace Intersect.Client.UI.Game
                     itemType.TextColorOverride.A = rarity.A;
                 }
 
-                if (item.ItemType == ItemTypes.Equipment && item.EquipmentSlot > 0 && item.EquipmentSlot < Options.EquipmentSlots.Count)
-                {
-                    itemType.Text = Options.EquipmentSlots[item.EquipmentSlot];
-                    if (item.EquipmentSlot == Options.WeaponIndex && item.TwoHanded)
-                    {
-                        itemType.Text += " - " + Strings.ItemDesc.twohand;
-                    }
-                }
                 RichLabel itemDesc = new RichLabel(mDescWindow, "ItemDescription");
                 var itemDescText = new Label(mDescWindow, "ItemDescText");
                 itemDescText.Font = itemDescText.Parent.Skin.DefaultFont;
