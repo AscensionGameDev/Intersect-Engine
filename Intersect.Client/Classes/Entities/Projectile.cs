@@ -18,6 +18,7 @@ namespace Intersect.Client.Entities
         private Guid mOwner;
         public Guid ProjectileId;
         private int mQuantity;
+        private bool mDisposing;
 
         // Individual Spawns
         public ProjectileSpawns[] Spawns;
@@ -75,17 +76,21 @@ namespace Intersect.Client.Entities
 
         public override void Dispose()
         {
-            if (mSpawnedAmount == 0)
+            if (!mDisposing)
             {
-                Update();
-            }
-            if (Spawns != null)
-            {
-                foreach (ProjectileSpawns s in Spawns)
+                mDisposing = true;
+                if (mSpawnedAmount == 0)
                 {
-                    if (s != null && s.Anim != null)
+                    Update();
+                }
+                if (Spawns != null)
+                {
+                    foreach (ProjectileSpawns s in Spawns)
                     {
-                        s.Anim.DisposeNextDraw();
+                        if (s != null && s.Anim != null)
+                        {
+                            s.Anim.DisposeNextDraw();
+                        }
                     }
                 }
             }
