@@ -199,7 +199,7 @@ namespace Intersect.Server.Classes.Admin.Actions
             }
             else
             {
-                PacketSender.SendChatMsg(client, Strings.Account.notfound.ToString(unbannedUser.Name));
+                PacketSender.SendChatMsg(client, Strings.Account.notfound.ToString(action.Name));
             }
         }
 
@@ -214,7 +214,16 @@ namespace Intersect.Server.Classes.Admin.Actions
             }
             else
             {
-                PacketSender.SendChatMsg(client, Strings.Account.notfound.ToString(unmutedUser.Name));
+                var target = Player.FindOnline(action.Name);
+                if (target != null)
+                {
+                    Mute.Remove(target.User);
+                    PacketSender.SendChatMsg(client, Strings.Account.unmuted.ToString(target.Name));
+                }
+                else
+                {
+                    PacketSender.SendChatMsg(client, Strings.Account.notfound.ToString(action.Name));
+                } 
             }
         }
 
