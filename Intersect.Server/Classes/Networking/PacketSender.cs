@@ -1506,6 +1506,7 @@ namespace Intersect.Server.Networking
         //FriendsPacket
         public static void SendFriends(Client client)
         {
+            if (client.Entity == null) return;
             var online = new Dictionary<string,string>();
             var offline = new List<string>();
             var found = false;
