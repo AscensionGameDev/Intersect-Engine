@@ -1254,15 +1254,6 @@ namespace Intersect.Server.Entities
 	        bool damagingAttack = (baseDamage > 0);
             if (enemy == null) return;
 
-            //Remove stealth
-            foreach (var status in this.Statuses.Values.ToArray())
-            {
-                if (status.Type == StatusTypes.Stealth)
-                {
-                    status.RemoveStatus();
-                }
-            }
-
             //Check for enemy statuses
             var statuses = enemy.Statuses.Values.ToArray();
 			foreach (var status in statuses)
@@ -1323,6 +1314,12 @@ namespace Intersect.Server.Entities
                     {
                         //Wake up any sleeping targets
                         if (status.Type == StatusTypes.Sleep)
+                        {
+                            status.RemoveStatus();
+                        }
+
+                        //Remove stealth from any stealthy targets
+                        if (status.Type == StatusTypes.Stealth)
                         {
                             status.RemoveStatus();
                         }
