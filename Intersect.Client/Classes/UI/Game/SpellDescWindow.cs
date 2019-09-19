@@ -49,7 +49,15 @@ namespace Intersect.Client.UI.Game
 
             if (spell.SpellType == (int) SpellTypes.CombatSpell)
             {
-                spellType.Text = Strings.SpellDesc.targettypes[(int)spell.Combat.TargetType].ToString(spell.Combat.CastRange, spell.Combat.HitRadius);
+                if (spell.Combat.TargetType == SpellTargetTypes.Projectile)
+                {
+                    var proj = ProjectileBase.Get(spell.Combat.ProjectileId);
+                    spellType.Text = Strings.SpellDesc.targettypes[(int)spell.Combat.TargetType].ToString(proj?.Range ?? 0, spell.Combat.HitRadius);
+                }
+                else
+                {
+                    spellType.Text = Strings.SpellDesc.targettypes[(int)spell.Combat.TargetType].ToString(spell.Combat.CastRange, spell.Combat.HitRadius);
+                }
             }
 
             if (spell.SpellType == (int)SpellTypes.CombatSpell && (spell.Combat.TargetType == SpellTargetTypes.AoE || spell.Combat.TargetType == SpellTargetTypes.Single) && spell.Combat.HitRadius > 0)
