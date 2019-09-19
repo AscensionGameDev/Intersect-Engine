@@ -39,7 +39,15 @@ namespace Intersect.Server.Networking
 
             if (packet is Packets.EditorPacket && !client.IsEditor) return false;
 
-            HandlePacket(client, client.Entity, (dynamic)packet);
+            try
+            {
+                HandlePacket(client, client.Entity, (dynamic)packet);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, string.Format("Client Packet Error! [Packet: {00} | User: {01} | Player: {02} | IP {03}]", packet.GetType().Name, client?.User?.Name ?? "", client?.Entity?.Name ?? "", client.GetIp()));
+                client.Disconnect("Error processing packet " + packet.GetType().Name);
+            }
             return true;
         }
         
