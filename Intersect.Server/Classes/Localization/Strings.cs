@@ -557,6 +557,10 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString warpfail = @"Failed to warp player to new map -- warping to spawn.";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
+            public readonly LocalizedString errortimeout = @"Flooding prevented: Too many failed requests. Please wait and try again!";
+
         }
 
         public sealed class EventsNamespace : LocaleNamespace

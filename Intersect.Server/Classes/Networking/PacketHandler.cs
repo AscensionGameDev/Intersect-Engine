@@ -64,8 +64,18 @@ namespace Intersect.Server.Networking
         //LoginPacket
         public void HandlePacket(Client client, Player player, LoginPacket packet)
         {
+            if (client.AccountAttempts > 3 && client.TimeoutMs > Globals.Timing.TimeMs)
+            {
+                PacketSender.SendError(client, Strings.Errors.errortimeout);
+                client.ResetTimeout();
+                return;
+            }
+
+            client.ResetTimeout();
+
             if (!DbInterface.CheckPassword(packet.Username, packet.Password))
             {
+                client.FailedAttempt();
                 PacketSender.SendError(client, Strings.Account.badlogin);
                 return;
             }
@@ -208,10 +218,10 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            if (client.LastChatTime > Globals.Timing.RealTimeMs)
+            if (player.LastChatTime > Globals.Timing.RealTimeMs)
             {
                 PacketSender.SendChatMsg(client, Strings.Chat.toofast);
-                client.LastChatTime = Globals.Timing.RealTimeMs + Options.MinChatInterval;
+                player.LastChatTime = Globals.Timing.RealTimeMs + Options.MinChatInterval;
                 return;
             }
 
@@ -224,7 +234,7 @@ namespace Intersect.Server.Networking
                 msg = "/" + channel + " " + msg;
             }
 
-            client.LastChatTime = Globals.Timing.RealTimeMs + Options.MinChatInterval;
+            player.LastChatTime = Globals.Timing.RealTimeMs + Options.MinChatInterval;
 
             //Check for /commands
             if (msg[0] == '/')
@@ -589,6 +599,15 @@ namespace Intersect.Server.Networking
         //CreateAccountPacket
         public void HandlePacket(Client client, Player player, CreateAccountPacket packet)
         {
+            if (client.TimeoutMs > Globals.Timing.TimeMs)
+            {
+                PacketSender.SendError(client, Strings.Errors.errortimeout);
+                client.ResetTimeout();
+                return;
+            }
+
+            client.ResetTimeout();
+
             if (Options.BlockClientRegistrations)
             {
                 PacketSender.SendError(client, Strings.Account.registrationsblocked);
@@ -1298,15 +1317,33 @@ namespace Intersect.Server.Networking
         //RequestPasswordResetPacket
         public void HandlePacket(Client client, Player player, RequestPasswordResetPacket packet)
         {
-            //Find account with that name or email
-            var userName = DbInterface.UsernameFromEmail(packet.NameOrEmail);
-            if (string.IsNullOrEmpty(userName)) userName = packet.NameOrEmail;
-            if (DbInterface.AccountExists(userName))
+            if (client.TimeoutMs > Globals.Timing.TimeMs)
             {
-                //Send reset email
-                var user = DbInterface.GetUser(userName);
-                var email = new PasswordResetEmail(user);
-                email.Send();
+                PacketSender.SendError(client, Strings.Errors.errortimeout);
+                client.ResetTimeout();
+                return;
+            }
+
+            if (Options.Instance.SmtpValid)
+            {
+                //Find account with that name or email
+                var userName = DbInterface.UsernameFromEmail(packet.NameOrEmail);
+                if (string.IsNullOrEmpty(userName)) userName = packet.NameOrEmail;
+                if (DbInterface.AccountExists(userName))
+                {
+                    //Send reset email
+                    var user = DbInterface.GetUser(userName);
+                    var email = new PasswordResetEmail(user);
+                    email.Send();
+                }
+                else
+                {
+                    client.FailedAttempt();
+                }
+            }
+            else
+            {
+                client.FailedAttempt();
             }
         }
 
@@ -1345,20 +1382,32 @@ namespace Intersect.Server.Networking
         //LoginPacket
         public void HandlePacket(Client client, Player player, Packets.Editor.LoginPacket packet)
         {
+            if (client.AccountAttempts > 3 && client.TimeoutMs > Globals.Timing.TimeMs)
+            {
+                PacketSender.SendError(client, Strings.Errors.errortimeout);
+                client.ResetTimeout();
+                return;
+            }
+
+            client.ResetTimeout();
+
             if (!DbInterface.AccountExists(packet.Username))
             {
+                client.FailedAttempt();
                 PacketSender.SendError(client, Strings.Account.badlogin);
                 return;
             }
 
             if (!DbInterface.CheckPassword(packet.Username, packet.Password))
             {
+                client.FailedAttempt();
                 PacketSender.SendError(client, Strings.Account.badlogin);
                 return;
             }
 
             if (!DbInterface.CheckAccess(packet.Username).Editor)
             {
+                client.FailedAttempt();
                 PacketSender.SendError(client, Strings.Account.badaccess);
                 return;
             }

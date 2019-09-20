@@ -81,6 +81,9 @@ namespace Intersect.Server.Entities
         [NotNull, JsonIgnore]
         public virtual List<Variable> Variables { get; set; } = new List<Variable>();
 
+        [NotMapped, JsonIgnore]
+        public long LastChatTime = -1;
+
         public bool ValidateLists()
         {
             var changes = false;

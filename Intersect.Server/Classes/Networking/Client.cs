@@ -22,14 +22,17 @@ namespace Intersect.Server.Networking
     public class Client
     {
         //Game Incorperation Variables
-
         public string Name => User?.Name;
         public string Email => User?.Email;
         public Guid Id => User?.Id ?? Guid.Empty;
         public string Password => User?.Password;
         public string Salt => User?.Salt;
         public bool Banned { get; set; }
-        public long LastChatTime = -1;
+
+        //Security/Flooding Variables
+        public long AccountAttempts { get; set; }
+        public long TimeoutMs { get; set; }
+        
 
         public UserRights Power
         {
@@ -192,6 +195,21 @@ namespace Intersect.Server.Networking
             lock (Globals.ClientLock)
             {
                 return Globals.Clients.Find(client => client?.mConnection == connection);
+            }
+        }
+
+        public void FailedAttempt()
+        {
+            AccountAttempts++;
+            ResetTimeout();
+        }
+
+        public void ResetTimeout()
+        {
+            TimeoutMs = Globals.Timing.TimeMs + 5000;
+            if (AccountAttempts > 3)
+            {
+                TimeoutMs += 1000 * AccountAttempts;
             }
         }
     }
