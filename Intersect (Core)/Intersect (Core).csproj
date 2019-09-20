@@ -177,6 +177,7 @@
     <Compile Include="Configuration\IConfigurable.cs" />
     <Compile Include="Configuration\IConfiguration.cs" />
     <Compile Include="Configuration\ConfigurationHelper.cs" />
+    <Compile Include="Config\ChatOptions.cs" />
     <Compile Include="Core\ApplicationContext.cs" />
     <Compile Include="Core\IApplicationContext.cs" />
     <Compile Include="BytePoint.cs" />

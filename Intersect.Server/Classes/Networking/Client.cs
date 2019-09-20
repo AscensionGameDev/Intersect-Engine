@@ -28,6 +28,8 @@ namespace Intersect.Server.Networking
         public Guid Id => User?.Id ?? Guid.Empty;
         public string Password => User?.Password;
         public string Salt => User?.Salt;
+        public bool Banned { get; set; }
+        public long LastChatTime = -1;
 
         public UserRights Power
         {

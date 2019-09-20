@@ -21,6 +21,8 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         protected Rectangle mSelectionBounds;
 
+        private int mMaxTextLength = -1;
+
         //Sound Effects
         private string mAddTextSound;
         private string mRemoveTextSound;
@@ -122,6 +124,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <returns>True if allowed.</returns>
         protected virtual bool IsTextAllowed(string text, int position)
         {
+            if (mMaxTextLength >= 0 && this.Text.Length + text.Length > mMaxTextLength) return false;
             return true;
         }
 
@@ -625,6 +628,11 @@ namespace Intersect.Client.Framework.Gwen.Control
                 SubmitPressed.Invoke(this, EventArgs.Empty);
                 base.PlaySound(mSubmitSound);
             }
+        }
+
+        public void SetMaxLength(int val)
+        {
+            mMaxTextLength = val;
         }
 
 

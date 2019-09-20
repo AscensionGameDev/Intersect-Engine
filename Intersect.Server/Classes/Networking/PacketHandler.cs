@@ -37,7 +37,7 @@ namespace Intersect.Server.Networking
                 throw new Exception("Client is null!");
             }
 
-            if (client.Banned) return;
+            if (client.Banned) return false;
 
             if (packet is Packets.EditorPacket && !client.IsEditor) return false;
 
@@ -199,6 +199,7 @@ namespace Intersect.Server.Networking
         public void HandlePacket(Client client, Player player, ChatMsgPacket packet)
         {
             if (player == null) return;
+
             var msg = packet.Message;
             var channel = packet.Channel;
             if (client.User.IsMuted) //Don't let the toungless toxic kids speak.
@@ -207,11 +208,23 @@ namespace Intersect.Server.Networking
                 return;
             }
 
+            if (client.LastChatTime > Globals.Timing.RealTimeMs)
+            {
+                PacketSender.SendChatMsg(client, Strings.Chat.toofast);
+                client.LastChatTime = Globals.Timing.RealTimeMs + Options.MinChatInterval;
+                return;
+            }
+
+            if (packet.Message.Length > Options.MaxChatLength)
+                return;
+            
             //If no /command, then use the designated channel.
             if (msg[0] != '/')
             {
                 msg = "/" + channel + " " + msg;
             }
+
+            client.LastChatTime = Globals.Timing.RealTimeMs + Options.MinChatInterval;
 
             //Check for /commands
             if (msg[0] == '/')

@@ -57,6 +57,8 @@ namespace Intersect
         public static int TileWidth => Instance.MapOpts.TileWidth;
         public static int TileHeight => Instance.MapOpts.TileHeight;
         public static int EventWatchdogKillThreshhold => Instance.EventKillTheshhold;
+        public static int MaxChatLength => Instance.ChatOpts.MaxChatLength;
+        public static int MinChatInterval => Instance.ChatOpts.MinIntervalBetweenChats;
 
         public static bool UPnP => Instance._upnp;
 
@@ -124,6 +126,9 @@ namespace Intersect
 
         [JsonProperty("Equipment")]
         public EquipmentOptions EquipmentOpts = new EquipmentOptions();
+
+        [JsonProperty("Chat")]
+        public ChatOptions ChatOpts = new ChatOptions();
 
 
         //Constantly Animated Sprites
