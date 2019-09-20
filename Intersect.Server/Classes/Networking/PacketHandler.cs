@@ -37,6 +37,8 @@ namespace Intersect.Server.Networking
                 throw new Exception("Client is null!");
             }
 
+            if (client.Banned) return;
+
             if (packet is Packets.EditorPacket && !client.IsEditor) return false;
 
             try
@@ -90,6 +92,8 @@ namespace Intersect.Server.Networking
             var isBanned = Ban.CheckBan(client.User, client.GetIp());
             if (isBanned != null)
             {
+                client.SetUser(null);
+                client.Banned = true;
                 PacketSender.SendError(client, isBanned);
                 return;
             }
