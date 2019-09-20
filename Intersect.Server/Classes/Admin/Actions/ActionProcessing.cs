@@ -19,20 +19,20 @@ namespace Intersect.Server.Classes.Admin.Actions
         //BanAction
         public static void ProcessAction(Client client, Player player, BanAction action) 
         {
-            var target = Player.FindOnline(action.Name);
+            var target = DbInterface.GetPlayer(action.Name);
             if (target != null)
             {
                 if (string.IsNullOrEmpty(Ban.CheckBan(target.User, "")))
                 {
                     if (action.BanIp == true)
                     {
-                        Ban.Add(target.Client, action.DurationDays, action.Reason, player.Name, target.Client.GetIp());
+                        Ban.Add(target.User, action.DurationDays, action.Reason, player.Name, target.Client?.GetIp() ?? "");
                     }
                     else
                     {
-                        Ban.Add(target.Client, action.DurationDays, action.Reason, player.Name, "");
+                        Ban.Add(target.User, action.DurationDays, action.Reason, player.Name, "");
                     }
-                    target.Client.Disconnect();
+                    target.Client?.Disconnect();
                     PacketSender.SendChatMsg(client, Strings.Account.banned.ToString(target.Name), Color.Red);
                 }
                 else
@@ -79,18 +79,18 @@ namespace Intersect.Server.Classes.Admin.Actions
         //MuteAction
         public static void ProcessAction(Client client, Player player, MuteAction action)
         {
-            var target = Player.FindOnline(action.Name);
+            var target = DbInterface.GetPlayer(action.Name);
             if (target != null)
             {
                 if (string.IsNullOrEmpty(Mute.FindMuteReason(target.UserId, "")))
                 {
                     if (action.BanIp == true)
                     {
-                        Mute.Add(target.Client, action.DurationDays, action.Reason, player.Name, target.Client.GetIp());
+                        Mute.Add(target.User, action.DurationDays, action.Reason, player.Name, target.Client?.GetIp() ?? "");
                     }
                     else
                     {
-                        Mute.Add(target.Client, action.DurationDays, action.Reason, player.Name, "");
+                        Mute.Add(target.User, action.DurationDays, action.Reason, player.Name, "");
                     }
 
                     PacketSender.SendChatMsg(client, Strings.Account.muted.ToString(target.Name), Color.Red);

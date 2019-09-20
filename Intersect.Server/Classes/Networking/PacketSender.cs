@@ -1518,9 +1518,9 @@ namespace Intersect.Server.Networking
                 {
                     if (c != null && c.Entity != null)
                     {
-                        if (friend.Target.Name.ToLower() == c.Entity.Name.ToLower())
+                        if (friend.Target?.Name.ToLower() == c.Entity?.Name.ToLower())
                         {
-                            online.Add(friend.Target.Name, MapList.List.FindMap(friend.Target.MapId).Name);
+                            online.Add(friend.Target?.Name, MapList.List.FindMap(friend.Target.MapId)?.Name ?? "");
                             found = true;
                             break;
                         }
