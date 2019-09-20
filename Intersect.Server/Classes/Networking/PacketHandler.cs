@@ -594,6 +594,13 @@ namespace Intersect.Server.Networking
                 PacketSender.SendError(client, Strings.Account.registrationsblocked);
                 return;
             }
+            //Check for ban
+            var isBanned = Ban.CheckBan(client.GetIp());
+            if (isBanned != null)
+            {
+                PacketSender.SendError(client, isBanned);
+                return;
+            }
             if (!FieldChecking.IsValidUsername(packet.Username, Strings.Regex.username))
             {
                 PacketSender.SendError(client, Strings.Account.invalidname);
