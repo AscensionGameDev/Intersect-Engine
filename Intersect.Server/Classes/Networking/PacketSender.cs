@@ -1513,6 +1513,7 @@ namespace Intersect.Server.Networking
 
             foreach (var friend in client.Entity.Friends)
             {
+                if (friend.Target == null) continue;
                 found = false;
                 foreach (var c in Globals.Clients)
                 {
