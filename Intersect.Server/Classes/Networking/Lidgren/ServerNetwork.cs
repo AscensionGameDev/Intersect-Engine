@@ -76,7 +76,7 @@ namespace Intersect.Server.Networking.Lidgren
             {
                 if (!string.IsNullOrEmpty(connection.Ip))
                 {
-                    return string.IsNullOrEmpty(Database.PlayerData.Ban.CheckBan(connection.Ip.Trim()));
+                    return string.IsNullOrEmpty(Database.PlayerData.Ban.CheckBan(connection.Ip.Trim())) && Options.Instance.SecurityOpts.CheckIp(connection.Ip.Trim());
                 }
                 else
                 {
