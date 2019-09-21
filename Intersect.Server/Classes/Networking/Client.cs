@@ -32,6 +32,14 @@ namespace Intersect.Server.Networking
         //Security/Flooding Variables
         public long AccountAttempts { get; set; }
         public long TimeoutMs { get; set; }
+
+        public long PacketTimer { get; set; }
+        public bool PacketFloodDetect { get; set; }
+        public long PacketCount { get; set; }
+        public long FloodDetects { get; set; }
+        public bool FloodKicked { get; set; }
+
+        public long TotalFloodDetects { get; set; }
         
 
         public UserRights Power

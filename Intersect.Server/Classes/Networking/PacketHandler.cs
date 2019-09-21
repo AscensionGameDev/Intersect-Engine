@@ -29,6 +29,91 @@ namespace Intersect.Server.Networking
 
     public class PacketHandler
     {
+        public bool PreProcessPacket(IConnection connection, long pSize)
+        {
+            var client = Client.FindBeta4Client(connection);
+            if (client == null)
+            {
+                throw new Exception("Client is null!");
+            }
+
+            if (client.Banned || client.FloodKicked) return false;
+
+            var threshholds = Options.Instance.SecurityOpts.PacketOpts.Threshholds;
+            if (client.IsEditor != null)
+            {
+                //Is Editor
+                threshholds = Options.Instance.SecurityOpts.PacketOpts.EditorThreshholds;
+            }
+            else if (client.User != null)
+            {
+                //Logged In
+                threshholds = Options.Instance.SecurityOpts.PacketOpts.PlayerThreshholds;
+            }
+
+            if (pSize > threshholds.MaxPacketSize)
+            {
+                Log.Error(Strings.Errors.floodsize.ToString(pSize, client?.User?.Name ?? "", client?.Entity?.Name ?? "", client.GetIp()));
+                client.FloodKicked = true;
+                client.Disconnect("Flooding detected.");
+                return false;
+            }
+
+            if (client.PacketTimer > Globals.Timing.TimeMs)
+            {
+                client.PacketCount++;
+                if (client.PacketCount > threshholds.MaxPacketPerSec)
+                {
+                    Log.Error(Strings.Errors.floodburst.ToString(client.PacketCount, client?.User?.Name ?? "", client?.Entity?.Name ?? "", client.GetIp()));
+                    client.FloodKicked = true;
+                    client.Disconnect("Flooding detected.");
+                    return false;
+                }
+                else if (client.PacketCount > threshholds.KickAvgPacketPerSec && !client.PacketFloodDetect)
+                {
+                    client.FloodDetects++;
+                    client.TotalFloodDetects++;
+                    client.PacketFloodDetect = true;
+
+                    if (client.FloodDetects > 3)
+                    {
+                        Log.Error(Strings.Errors.floodaverage.ToString(client.TotalFloodDetects, client?.User?.Name ?? "", client?.Entity?.Name ?? "", client.GetIp()));
+                        client.FloodKicked = true;
+                        client.Disconnect("Flooding detected.");
+                        return false;
+                    }
+
+                    //TODO: Make this check a rolling average somehow to prevent constant flooding right below the threshholds.
+                    if (client.TotalFloodDetects > 10)
+                    {
+                        //Log.Error(string.Format("[Flood]: Total Detections: {00} [User: {01} | Player: {02} | IP {03}]", client.TotalFloodDetects, client?.User?.Name ?? "", client?.Entity?.Name ?? "", client.GetIp()));
+                        //client.Disconnect("Flooding detected.");
+                        //return false;
+                    }
+
+                }
+                else if (client.PacketCount < threshholds.KickAvgPacketPerSec / 2)
+                {
+                    if (client.FloodDetects > 1)
+                    {
+                        client.FloodDetects--;
+                    }
+                }
+            }
+            else
+            {
+                if (client.PacketFloodDetect)
+                {
+                    //Log.Error(string.Format("Possible Flood Detected: Packets in last second {00} [User: {01} | Player: {02} | IP {03}]", client.PacketCount, client?.User?.Name ?? "", client?.Entity?.Name ?? "", client.GetIp()));
+                }
+                client.PacketCount = 0;
+                client.PacketTimer = Globals.Timing.TimeMs + 1000;
+                client.PacketFloodDetect = false;
+            }
+
+            return true;
+        }
+
         public bool HandlePacket(IConnection connection, IPacket packet)
         {
             var client = Client.FindBeta4Client(connection);

@@ -559,7 +559,19 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             [NotNull]
-            public readonly LocalizedString errortimeout = @"Flooding prevented: Too many failed requests. Please wait and try again!";
+            public readonly LocalizedString errortimeout = @"Too many failed requests. Please wait and try again!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
+            public readonly LocalizedString floodsize = @"[Flood]: Packet Size: {00} [User: {01} | Player: {02} | IP {03}]";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
+            public readonly LocalizedString floodburst = @"[Flood]: {00} Burst Packets [User: {01} | Player: {02} | IP {03}]";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            [NotNull]
+            public readonly LocalizedString floodaverage = @"[Flood]: 3+ Rapid Detections. Total Detections: {00} [User: {01} | Player: {02} | IP {03}]";
 
         }
 

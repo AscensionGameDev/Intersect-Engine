@@ -35,6 +35,8 @@ namespace Intersect.Network
 
         [NotNull]
         public HandlePacket Handler { get; set; }
+        
+        public ShouldProcessPacket PreProcessHandler { get; set; }
 
         public int ConnectionCount => Connections.Count;
 
@@ -194,6 +196,11 @@ namespace Intersect.Network
         {
             if (buffer == default(IBuffer)) return;
             if (buffer.Length < 1) return;
+
+            if (PreProcessHandler != null)
+            {
+                if (!PreProcessHandler.Invoke(connection, buffer.Length)) return;
+            }
 
             //Incorperate Ceras
             var data = buffer.ToBytes();

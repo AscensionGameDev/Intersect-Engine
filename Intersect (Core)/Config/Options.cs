@@ -124,12 +124,11 @@ namespace Intersect
         /// </summary>
         [NotNull] public Passability Passability { get; } = new Passability();
 
-        [JsonProperty("Equipment")]
-        public EquipmentOptions EquipmentOpts = new EquipmentOptions();
-
         [JsonProperty("Chat")]
         public ChatOptions ChatOpts = new ChatOptions();
 
+        [JsonProperty("Equipment")]
+        public EquipmentOptions EquipmentOpts = new EquipmentOptions();
 
         //Constantly Animated Sprites
         [JsonProperty("AnimatedSprites")]
@@ -146,6 +145,9 @@ namespace Intersect
 
         [JsonProperty("ValidPasswordResetTimeMinutes")]
         protected ushort _passResetExpirationMin = 30;
+
+        [JsonProperty("Security")]
+        public SecurityOptions SecurityOpts = new SecurityOptions();
 
         public bool SmtpValid { get; set; }
         public SmtpSettings SmtpSettings = new SmtpSettings();
@@ -216,6 +218,12 @@ namespace Intersect
         public bool ShouldSerializeSmtpValid()
         {
             return SendingToClient;
+        }
+
+        // ReSharper disable once UnusedMember.Global
+        public bool ShouldSerializeSecurityOpts()
+        {
+            return !SendingToClient;
         }
     }
 }
