@@ -330,6 +330,7 @@ namespace Intersect.Server.Networking
 
                 if (cmd == Strings.Chat.localcmd || cmd == "/0")
                 {
+                    if (msg.Trim().Length == 0) return;
                     if (client.Power.IsAdmin)
                     {
                         PacketSender.SendProximityMsg(Strings.Chat.local.ToString(client.Entity.Name, msg), player.MapId, CustomColors.AdminLocalChat, client.Entity.Name);
@@ -346,6 +347,7 @@ namespace Intersect.Server.Networking
                 }
                 else if (cmd == Strings.Chat.allcmd || cmd == "/1" || cmd == Strings.Chat.globalcmd)
                 {
+                    if (msg.Trim().Length == 0) return;
                     if (client.Power.IsAdmin)
                     {
                         PacketSender.SendGlobalMsg(Strings.Chat.Global.ToString(client.Entity.Name, msg),
@@ -364,6 +366,7 @@ namespace Intersect.Server.Networking
                 }
                 else if (cmd == Strings.Chat.partycmd || cmd == "/2")
                 {
+                    if (msg.Trim().Length == 0) return;
                     if (client.Entity.InParty(client.Entity))
                     {
                         PacketSender.SendPartyMsg(client,
@@ -377,6 +380,7 @@ namespace Intersect.Server.Networking
                 }
                 else if (cmd == Strings.Chat.admincmd || cmd == "/3")
                 {
+                    if (msg.Trim().Length == 0) return;
                     if (client.Power.IsModerator)
                     {
                         PacketSender.SendAdminMsg(Strings.Chat.admin.ToString(client.Entity.Name, msg),
@@ -385,6 +389,7 @@ namespace Intersect.Server.Networking
                 }
                 else if (cmd == Strings.Chat.announcementcmd)
                 {
+                    if (msg.Trim().Length == 0) return;
                     if (client.Power.IsModerator)
                     {
                         PacketSender.SendGlobalMsg(Strings.Chat.announcement.ToString(client.Entity.Name, msg),
