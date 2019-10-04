@@ -22,7 +22,7 @@ using JetBrains.Annotations;
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
     [RoutePrefix("users")]
-    [ConfigurableAuthorize(Roles = nameof(UserRights.ApiRoles.UserQuery))]
+    [ConfigurableAuthorize(Roles = nameof(ApiRoles.UserQuery))]
     public sealed class UserController : ApiController
     {
         [Route]
