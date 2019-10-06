@@ -45,7 +45,7 @@ namespace Intersect.Server.Web.RestApi.Configuration
         [JsonIgnore]
         public ImmutableArray<int> Ports
         {
-            get => Hosts.Select(host => new Uri(host ?? "http://localhost:5400").Port).ToImmutableArray();
+            get => Hosts.Select(host => new Uri(host?.Replace("*", "localhost") ?? "http://localhost:5400").Port).ToImmutableArray();
             set => Hosts = ImmutableArray.Create(value.Select(port => $@"http://localhost:{port}")?.ToArray());
         }
 
