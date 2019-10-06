@@ -159,5 +159,16 @@ namespace Intersect.Server.Database.PlayerData
                 return ban != null ? Strings.Account.banstatus.ToString(ban.StartTime, ban.Banner, ban.EndTime, ban.Reason) : null;
             }
         }
+
+        public static string CheckBan(string ip)
+        {
+            // TODO: Move this off of the server so that ban dates can be formatted in local time.
+            lock (DbInterface.GetPlayerContextLock())
+            {
+                var context = DbInterface.GetPlayerContext();
+                var ban = context?.Bans.SingleOrDefault(p => p.Ip == ip && p.EndTime > DateTime.UtcNow);
+                return ban != null ? Strings.Account.banstatus.ToString(ban.StartTime, ban.Banner, ban.EndTime, ban.Reason) : null;
+            }
+        }
     }
 }

@@ -57,6 +57,8 @@ namespace Intersect
         public static int TileWidth => Instance.MapOpts.TileWidth;
         public static int TileHeight => Instance.MapOpts.TileHeight;
         public static int EventWatchdogKillThreshhold => Instance.EventKillTheshhold;
+        public static int MaxChatLength => Instance.ChatOpts.MaxChatLength;
+        public static int MinChatInterval => Instance.ChatOpts.MinIntervalBetweenChats;
 
         public static bool UPnP => Instance._upnp;
 
@@ -122,9 +124,11 @@ namespace Intersect
         /// </summary>
         [NotNull] public Passability Passability { get; } = new Passability();
 
+        [JsonProperty("Chat")]
+        public ChatOptions ChatOpts = new ChatOptions();
+
         [JsonProperty("Equipment")]
         public EquipmentOptions EquipmentOpts = new EquipmentOptions();
-
 
         //Constantly Animated Sprites
         [JsonProperty("AnimatedSprites")]
@@ -141,6 +145,9 @@ namespace Intersect
 
         [JsonProperty("ValidPasswordResetTimeMinutes")]
         protected ushort _passResetExpirationMin = 30;
+
+        [JsonProperty("Security")]
+        public SecurityOptions SecurityOpts = new SecurityOptions();
 
         public bool SmtpValid { get; set; }
         public SmtpSettings SmtpSettings = new SmtpSettings();
@@ -211,6 +218,12 @@ namespace Intersect
         public bool ShouldSerializeSmtpValid()
         {
             return SendingToClient;
+        }
+
+        // ReSharper disable once UnusedMember.Global
+        public bool ShouldSerializeSecurityOpts()
+        {
+            return !SendingToClient;
         }
     }
 }

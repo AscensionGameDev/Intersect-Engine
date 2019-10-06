@@ -145,6 +145,7 @@ namespace Intersect.Client.Localization
             public static LocalizedString enterchat2 = @"Press {00} or {01} to chat.";
             public static LocalizedString send = @"Send";
             public static LocalizedString title = @"Chat";
+            public static LocalizedString toofast = @"You are chatting too fast!";
         }
 
         public struct Colors

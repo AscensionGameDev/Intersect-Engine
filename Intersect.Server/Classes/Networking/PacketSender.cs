@@ -1506,20 +1506,22 @@ namespace Intersect.Server.Networking
         //FriendsPacket
         public static void SendFriends(Client client)
         {
+            if (client.Entity == null) return;
             var online = new Dictionary<string,string>();
             var offline = new List<string>();
             var found = false;
 
             foreach (var friend in client.Entity.Friends)
             {
+                if (friend.Target == null) continue;
                 found = false;
                 foreach (var c in Globals.Clients)
                 {
                     if (c != null && c.Entity != null)
                     {
-                        if (friend.Target.Name.ToLower() == c.Entity.Name.ToLower())
+                        if (friend.Target?.Name.ToLower() == c.Entity?.Name.ToLower())
                         {
-                            online.Add(friend.Target.Name, MapList.List.FindMap(friend.Target.MapId).Name);
+                            online.Add(friend.Target?.Name, MapList.List.FindMap(friend.Target.MapId)?.Name ?? "");
                             found = true;
                             break;
                         }

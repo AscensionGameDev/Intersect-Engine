@@ -19,20 +19,20 @@ namespace Intersect.Server.Classes.Admin.Actions
         //BanAction
         public static void ProcessAction(Client client, Player player, BanAction action) 
         {
-            var target = Player.FindOnline(action.Name);
+            var target = DbInterface.GetPlayer(action.Name);
             if (target != null)
             {
                 if (string.IsNullOrEmpty(Ban.CheckBan(target.User, "")))
                 {
                     if (action.BanIp == true)
                     {
-                        Ban.Add(target.Client, action.DurationDays, action.Reason, player.Name, target.Client.GetIp());
+                        Ban.Add(target.User, action.DurationDays, action.Reason, player.Name, target.Client?.GetIp() ?? "");
                     }
                     else
                     {
-                        Ban.Add(target.Client, action.DurationDays, action.Reason, player.Name, "");
+                        Ban.Add(target.User, action.DurationDays, action.Reason, player.Name, "");
                     }
-                    target.Client.Disconnect();
+                    target.Client?.Disconnect();
                     PacketSender.SendChatMsg(client, Strings.Account.banned.ToString(target.Name), Color.Red);
                 }
                 else
@@ -79,18 +79,18 @@ namespace Intersect.Server.Classes.Admin.Actions
         //MuteAction
         public static void ProcessAction(Client client, Player player, MuteAction action)
         {
-            var target = Player.FindOnline(action.Name);
+            var target = DbInterface.GetPlayer(action.Name);
             if (target != null)
             {
                 if (string.IsNullOrEmpty(Mute.FindMuteReason(target.UserId, "")))
                 {
                     if (action.BanIp == true)
                     {
-                        Mute.Add(target.Client, action.DurationDays, action.Reason, player.Name, target.Client.GetIp());
+                        Mute.Add(target.User, action.DurationDays, action.Reason, player.Name, target.Client?.GetIp() ?? "");
                     }
                     else
                     {
-                        Mute.Add(target.Client, action.DurationDays, action.Reason, player.Name, "");
+                        Mute.Add(target.User, action.DurationDays, action.Reason, player.Name, "");
                     }
 
                     PacketSender.SendChatMsg(client, Strings.Account.muted.ToString(target.Name), Color.Red);
@@ -114,7 +114,7 @@ namespace Intersect.Server.Classes.Admin.Actions
             {
                 if (action.Name.Trim().ToLower() != player.Name.Trim().ToLower())
                 {
-                    if (client.Power == UserRights.Admin)
+                    if (client.Power.IsAdmin)
                     {
                         var power = UserRights.None;
                         if (action.Power == "Admin")
@@ -128,11 +128,11 @@ namespace Intersect.Server.Classes.Admin.Actions
 
                         var targetClient = target.Client;
                         targetClient.Power = power;
-                        if (targetClient.Power == UserRights.Admin)
+                        if (targetClient.Power.IsAdmin)
                         {
                             PacketSender.SendGlobalMsg(Strings.Player.admin.ToString(target.Name));
                         }
-                        else if (targetClient.Power == UserRights.Moderation)
+                        else if (targetClient.Power.IsModerator)
                         {
                             PacketSender.SendGlobalMsg(Strings.Player.mod.ToString(target.Name));
                         }
@@ -199,7 +199,7 @@ namespace Intersect.Server.Classes.Admin.Actions
             }
             else
             {
-                PacketSender.SendChatMsg(client, Strings.Account.notfound.ToString(unbannedUser.Name));
+                PacketSender.SendChatMsg(client, Strings.Account.notfound.ToString(action.Name));
             }
         }
 
@@ -214,7 +214,16 @@ namespace Intersect.Server.Classes.Admin.Actions
             }
             else
             {
-                PacketSender.SendChatMsg(client, Strings.Account.notfound.ToString(unmutedUser.Name));
+                var target = Player.FindOnline(action.Name);
+                if (target != null)
+                {
+                    Mute.Remove(target.User);
+                    PacketSender.SendChatMsg(client, Strings.Account.unmuted.ToString(target.Name));
+                }
+                else
+                {
+                    PacketSender.SendChatMsg(client, Strings.Account.notfound.ToString(action.Name));
+                } 
             }
         }
 

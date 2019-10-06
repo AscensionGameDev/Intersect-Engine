@@ -8,6 +8,8 @@ namespace Intersect.Network
 
     public delegate void HandleConnectionEvent(INetworkLayerInterface sender, IConnection connection);
 
+    public delegate bool HandleConnectionRequest(INetworkLayerInterface sender, IConnection connection);
+
     public interface INetworkLayerInterface : IDisposable
     {
         HandlePacketAvailable OnPacketAvailable { get; set; }

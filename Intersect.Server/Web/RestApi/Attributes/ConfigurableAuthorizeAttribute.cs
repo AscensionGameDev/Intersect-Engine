@@ -27,7 +27,7 @@ namespace Intersect.Server.Web.RestApi.Attributes
         protected override bool IsAuthorized(HttpActionContext actionContext)
         {
             var authorized = base.IsAuthorized(actionContext);
-            var whitelistedRoles = Roles?.ToList();
+            var whitelistedRoles = InternalRoles?.ToList();
 
             if (whitelistedRoles?.Count > 0)
             {

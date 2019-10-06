@@ -65,13 +65,13 @@ namespace Intersect.Server.Classes.Database.PlayerData.Api
                     return false;
                 }
 
-                var forClient = FindForClient(token.ClientId);
+                var forClient = FindForClient(token.ClientId)?.ToList();
                 if (forClient != null && !RemoveAll(forClient, commit))
                 {
                     return false;
                 }
 
-                var forUser = FindForUser(token.UserId);
+                var forUser = FindForUser(token.UserId)?.ToList();
                 if (forUser != null && !RemoveAll(forUser, commit))
                 {
                     return false;
@@ -82,6 +82,7 @@ namespace Intersect.Server.Classes.Database.PlayerData.Api
             {
                 var context = DbInterface.GetPlayerContext();
                 context.RefreshTokens.Add(token);
+                context.SaveChanges();
             }
 
             return true;
@@ -113,7 +114,8 @@ namespace Intersect.Server.Classes.Database.PlayerData.Api
                     return null;
                 }
 
-                var refreshToken = DbInterface.GetPlayerContext()?.RefreshTokens?
+                var playerContext = DbInterface.GetPlayerContext();
+                var refreshToken = playerContext?.RefreshTokens?
                     .Where(queryToken => queryToken.TicketId == ticketId)
                     .FirstOrDefault();
 
@@ -131,6 +133,11 @@ namespace Intersect.Server.Classes.Database.PlayerData.Api
 
         public static IQueryable<RefreshToken> FindForClient(Guid clientId)
         {
+            if (clientId == Guid.Empty)
+            {
+                return null;
+            }
+
             lock (DbInterface.GetPlayerContextLock())
             {
                 if (DbInterface.GetPlayerContext()?.RefreshTokens == null)
@@ -146,6 +153,11 @@ namespace Intersect.Server.Classes.Database.PlayerData.Api
 
         public static IQueryable<RefreshToken> FindForUser(Guid userId)
         {
+            if (userId == Guid.Empty)
+            {
+                return null;
+            }
+
             lock (DbInterface.GetPlayerContextLock())
             {
                 if (DbInterface.GetPlayerContext()?.RefreshTokens == null)

@@ -1122,6 +1122,7 @@ namespace Intersect.Client.Entities
         //Chatting
         public void AddChatBubble(string text)
         {
+            if (string.IsNullOrEmpty(text)) return;
             mChatBubbles.Add(new ChatBubble(this, text));
         }
 

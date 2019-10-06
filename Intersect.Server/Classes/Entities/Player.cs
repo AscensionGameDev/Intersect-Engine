@@ -81,6 +81,9 @@ namespace Intersect.Server.Entities
         [NotNull, JsonIgnore]
         public virtual List<Variable> Variables { get; set; } = new List<Variable>();
 
+        [NotMapped, JsonIgnore]
+        public long LastChatTime = -1;
+
         public bool ValidateLists()
         {
             var changes = false;
@@ -3825,6 +3828,7 @@ namespace Intersect.Server.Entities
             {
                 v = CreateVariable(id);
             }
+            if (v == null) return new VariableValue();
             return v.Value;
         }
         public void SetVariableValue(Guid id, long value)

@@ -152,6 +152,8 @@ namespace Intersect.Network
 
         public HandleConnectionEvent OnDisconnected { get; set; }
 
+        public HandleConnectionRequest OnConnectionRequested { get;set; }
+
         public void Start()
         {
             if (mNetwork.Configuration.IsServer)
@@ -579,6 +581,13 @@ namespace Intersect.Network
                     var aesKey = new byte[32];
                     mRng?.GetNonZeroBytes(aesKey);
                     var client = new LidgrenConnection(mNetwork, connection, aesKey, hail.RsaParameters);
+
+                    if (!OnConnectionRequested(this, client))
+                    {
+                        Log.Warn($"Connection blocked due to ban or ip filter!");
+                        connection?.Deny(RejectServerError);
+                        break;
+                    }
 
                     Debug.Assert(mNetwork != null, "mNetwork != null");
                     if (!mNetwork.AddConnection(client))

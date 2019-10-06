@@ -22,6 +22,7 @@ namespace Intersect.Server.Networking.Lidgren
             lidgrenInterface.OnConnectionApproved += HandleInterfaceOnConnectonApproved;
             lidgrenInterface.OnDisconnected += HandleInterfaceOnDisconnected;
             lidgrenInterface.OnUnconnectedMessage += HandleOnUnconnectedMessage;
+            lidgrenInterface.OnConnectionRequested += HandleConnectionRequested;
             AddNetworkLayerInterface(lidgrenInterface);
         }
 
@@ -66,6 +67,23 @@ namespace Intersect.Server.Networking.Lidgren
                     peer.SendUnconnectedMessage(response, message.SenderEndPoint);
                     break;
             }
+        }
+
+
+        protected virtual bool HandleConnectionRequested(INetworkLayerInterface sender, IConnection connection)
+        {
+            if (connection != null)
+            {
+                if (!string.IsNullOrEmpty(connection.Ip))
+                {
+                    return string.IsNullOrEmpty(Database.PlayerData.Ban.CheckBan(connection.Ip.Trim())) && Options.Instance.SecurityOpts.CheckIp(connection.Ip.Trim());
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         public override bool Send(IPacket packet)

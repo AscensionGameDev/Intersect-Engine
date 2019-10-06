@@ -21,6 +21,7 @@ namespace Intersect.Client.Entities
 
         public ChatBubble(Entity owner, string text)
         {
+            if (string.IsNullOrEmpty(text)) return;
             mOwner = owner;
             mSourceText = text;
             mRenderTimer = Globals.System.GetTimeMs() + 5000;
@@ -42,6 +43,7 @@ namespace Intersect.Client.Entities
             {
                 mText = Gui.WrapText(mSourceText, 200, GameGraphics.GameFont);
             }
+            if (mText == null) return 0f;
             var y = (int) Math.Ceiling(mOwner.GetTopPos());
             var x = (int) Math.Ceiling(mOwner.GetCenterPos().X);
             if (mTextureBounds.Width == 0)

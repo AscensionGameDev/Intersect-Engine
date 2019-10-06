@@ -92,6 +92,7 @@ namespace Intersect.Server.Core
 
             var packetHandler = new PacketHandler();
             network.Handler = packetHandler.HandlePacket;
+            network.PreProcessHandler = packetHandler.PreProcessPacket;
 
             #endregion
 

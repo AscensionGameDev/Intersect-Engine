@@ -323,7 +323,7 @@ namespace Intersect.Client
                 return;
             }
             var map = MapInstance.Get(mMapId);
-            if (map == null && mEntity != Globals.Me)
+            if ((map == null && mEntity != Globals.Me) || Globals.Me == null)
             {
                 Stop();
                 return;

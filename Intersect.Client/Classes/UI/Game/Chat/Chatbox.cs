@@ -31,6 +31,7 @@ namespace Intersect.Client.UI.Game.Chat
         private GameGuiBase mGameUi;
         private int mMessageIndex;
         private bool mReceivedMessage;
+        private long mLastChatTime = -1;
 
         //Init
         public Chatbox(Canvas gameCanvas, GameGuiBase gameUi)
@@ -55,6 +56,7 @@ namespace Intersect.Client.UI.Game.Chat
             mChatboxInput.Text = GetDefaultInputText();
             mChatboxInput.Clicked += ChatBoxInput_Clicked;
             mChatboxInput.IsTabable = false;
+            mChatboxInput.SetMaxLength(Options.MaxChatLength);
             Gui.FocusElements.Add(mChatboxInput);
 
             mChannelLabel = new Label(mChatboxWindow, "ChannelLabel");
@@ -173,6 +175,15 @@ namespace Intersect.Client.UI.Game.Chat
 
         void TrySendMessage()
         {
+            if (mLastChatTime > Globals.System.GetTimeMs())
+            {
+                ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Chatbox.toofast, Color.Red));
+                mLastChatTime = Globals.System.GetTimeMs() + Options.MinChatInterval;
+                return;
+            }
+
+            mLastChatTime = Globals.System.GetTimeMs() + Options.MinChatInterval;
+
             if (mChatboxInput.Text.Trim().Length <= 0 || mChatboxInput.Text == GetDefaultInputText())
             {
                 mChatboxInput.Text = GetDefaultInputText();
