@@ -111,7 +111,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
         #region "Change Email"
         [Route("{userName}/manage/email/change")]
-        [ConfigurableAuthorize(Roles = nameof(UserRights.ApiRoles.UserManage))]
+        [ConfigurableAuthorize(Roles = nameof(ApiRoles.UserManage))]
         [HttpPost]
         public object UserChangeEmailByName(string userName, [FromBody] AdminChange authorizedChange)
         {
@@ -146,7 +146,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [Route("{userId:guid}/manage/email/change")]
-        [ConfigurableAuthorize(Roles = nameof(UserRights.ApiRoles.UserManage))]
+        [ConfigurableAuthorize(Roles = nameof(ApiRoles.UserManage))]
         [HttpPost]
         public object UserChangeEmailById(Guid userId, [FromBody] AdminChange authorizedChange)
         {
@@ -322,7 +322,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
         #region "Change Password"
         [Route("{userName}/manage/password/change")]
-        [ConfigurableAuthorize(Roles = nameof(UserRights.ApiRoles.UserManage))]
+        [ConfigurableAuthorize(Roles = nameof(ApiRoles.UserManage))]
         [HttpPost]
         public object UserChangePassword(string userName, [FromBody] AdminChange authorizedChange)
         {
@@ -348,7 +348,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [Route("{userId:guid}/manage/password/change")]
-        [ConfigurableAuthorize(Roles = nameof(UserRights.ApiRoles.UserManage))]
+        [ConfigurableAuthorize(Roles = nameof(ApiRoles.UserManage))]
         [HttpPost]
         public object UserChangePassword(Guid userId, [FromBody] AdminChange authorizedChange)
         {
