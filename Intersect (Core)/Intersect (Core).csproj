@@ -181,6 +181,12 @@
     <Compile Include="Config\PacketOptions.cs" />
     <Compile Include="Config\SecurityOptions.cs" />
     <Compile Include="Core\ApplicationContext.cs" />
+    <Compile Include="Core\ExperimentalFeatures\CommonExperiments.Core.cs" />
+    <Compile Include="Core\ExperimentalFeatures\CommonExperiments.Static.cs" />
+    <Compile Include="Core\ExperimentalFeatures\ExperimentalFlag.cs" />
+    <Compile Include="Core\ExperimentalFeatures\CommonExperiments.Flags.cs" />
+    <Compile Include="Core\ExperimentalFeatures\ExperimentalFlagConverter.cs" />
+    <Compile Include="Core\ExperimentalFeatures\ExperimentNamespace.cs" />
     <Compile Include="Core\IApplicationContext.cs" />
     <Compile Include="BytePoint.cs" />
     <Compile Include="Collections\DatabaseObjectLookup.cs" />
@@ -201,11 +207,16 @@
     <Compile Include="Extensions\ArrayExtensions.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <Compile Include="Extensions\PropertyInfoExtensions.cs" />
     <Compile Include="GameObjects\Events\VariableMod.cs" />
     <Compile Include="GameObjects\Switches and Variables\VariableValue.cs" />
     <Compile Include="IO\ConsoleContext.cs" />
     <Compile Include="IO\ConsoleWriter.cs" />
     <Compile Include="IO\FileSystem\FileSystemHelper.cs" />
+    <Compile Include="IO\ILoadable.cs" />
+    <Compile Include="IO\ISaveable.cs" />
+    <Compile Include="IO\ISaveableProvider.cs" />
+    <Compile Include="IO\ISaveable.Generic.cs" />
     <Compile Include="Localization\LocaleDescribableToken.cs" />
     <Compile Include="Localization\LocaleToken.cs" />
     <Compile Include="Localization\LocaleCommand.cs" />
@@ -510,6 +521,7 @@
     <Compile Include="SharedConstants.cs" />
     <Compile Include="Utilities\Formula.cs" />
     <Compile Include="Utilities\GameObjectTypeUtils.cs" />
+    <Compile Include="Utilities\GuidUtils.cs" />
     <Compile Include="Utilities\MathHelper.cs" />
     <Compile Include="Extensions\RandomExtensions.cs" />
     <Compile Include="Network\NetworkHelper.cs" />

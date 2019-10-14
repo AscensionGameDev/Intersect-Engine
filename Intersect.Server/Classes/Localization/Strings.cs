@@ -435,6 +435,9 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString cpsunlocked = @"CPS Unlocked";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString ExperimentalFeatureEnablement = @"{00} is {01}.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString gametime = @"Game time is now: {00}";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
@@ -677,6 +680,18 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString none = @"None";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString Enabled = @"Enabled";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString EnabledLowerCase = @"enabled";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString Disabled = @"Disabled";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString DisabledLowerCase = @"disabled";
 
         }
 

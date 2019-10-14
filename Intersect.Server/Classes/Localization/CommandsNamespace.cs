@@ -72,6 +72,13 @@ namespace Intersect.Server.Localization
                 };
 
                 [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+                public readonly LocaleArgument EnablementBoolean = new LocaleArgument
+                {
+                    Name = @"enablement",
+                    Description = @"whether or not this is enabled"
+                };
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
                 public readonly LocaleArgument IpBan = new LocaleArgument
                 {
                     Name = @"ip-ban",
@@ -111,6 +118,13 @@ namespace Intersect.Server.Localization
                 {
                     Name = @"account-name",
                     Description = @"the name of the acount to change the API access of"
+                };
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+                public readonly LocaleArgument TargetExperimentalFeature = new LocaleArgument
+                {
+                    Name = @"experimental-feature-name-or-id",
+                    Description = @"the Guid or name of the experimental feature to configure"
                 };
 
                 [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
@@ -273,6 +287,17 @@ namespace Intersect.Server.Localization
                 Description = @"Closes down the server.",
                 Help = @"closes the server"
             };
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocaleCommand Experiments = new LocaleCommand
+            {
+                Name = @"experiments",
+                Description = @"Sets the enablement of an experimental feature. true is enabled, false is disabled",
+                Help = @"enables or disables an experimental feature"
+            };
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString ExperimentalFlagNotFound = @"Experimental flag '{00}' was not found!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocaleCommand Help = new LocaleCommand

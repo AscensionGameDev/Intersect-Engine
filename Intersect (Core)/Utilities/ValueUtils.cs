@@ -8,5 +8,11 @@
             a = b;
             b = temp;
         }
+
+        public static bool SetDefault<T>(bool condition, out T value)
+        {
+            value = default(T);
+            return condition;
+        }
     }
 }

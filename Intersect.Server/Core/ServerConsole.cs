@@ -37,6 +37,7 @@ namespace Intersect.Server.Core
             Parser.Register<BanCommand>();
             Parser.Register<CpsCommand>();
             Parser.Register<ExitCommand>();
+            Parser.Register<ExperimentsCommand>();
             Parser.Register<HelpCommand>(Parser.Settings);
             Parser.Register<KickCommand>();
             Parser.Register<KillCommand>();
