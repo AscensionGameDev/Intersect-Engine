@@ -465,13 +465,13 @@ namespace Intersect.Editor.Forms.Editors.Events
 
         private static string GetCommandText(RestoreHpCommand command, MapInstance map)
         {
-            return Strings.EventCommandList.restorehp;
+            return Strings.EventCommandList.restorehp.ToString(command.amount);
         }
 
         private static string GetCommandText(RestoreMpCommand command, MapInstance map)
         {
-            return Strings.EventCommandList.restoremp;
-        }
+            return Strings.EventCommandList.restoremp.ToString(command.amount);
+    }
 
         private static string GetCommandText(LevelUpCommand command, MapInstance map)
         {
@@ -531,6 +531,18 @@ namespace Intersect.Editor.Forms.Editors.Events
             {
                 return Strings.EventCommandList.setnamecolor.ToString();
             }
+        }
+
+        private static string GetCommandText(ChangePlayerLabelCommand command, MapInstance map)
+        {
+          if (command.VariableType == VariableTypes.PlayerVariable)
+          {
+            return Strings.EventCommandList.changeplayerlabel.ToString(PlayerVariableBase.GetName(command.VariableId));
+          }
+          else
+          {
+            return Strings.EventCommandList.changeplayerlabel.ToString(ServerVariableBase.GetName(command.VariableId));
+          }
         }
 
         private static string GetCommandText(ChangeGenderCommand command, MapInstance map)

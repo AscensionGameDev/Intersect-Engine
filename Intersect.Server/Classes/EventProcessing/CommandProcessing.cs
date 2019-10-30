@@ -194,13 +194,27 @@ namespace Intersect.Server.EventProcessing
         //Restore Hp Command
         private static void ProcessCommand(RestoreHpCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            player.RestoreVital(Vitals.Health);
+            if (command.amount > 0)
+            {
+                player.AddVital(Vitals.Health, command.amount);
+            }
+            else if (command.amount < 0)
+            {
+                player.SubVital(Vitals.Health, command.amount);
+            }
         }
 
         //Restore Mp Command
         private static void ProcessCommand(RestoreMpCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            player.RestoreVital(Vitals.Mana);
+            if (command.amount > 0)
+            {
+                player.AddVital(Vitals.Mana, command.amount);
+            }
+            else if (command.amount < 0)
+            {
+                player.SubVital(Vitals.Mana, command.amount);
+            }
         }
 
         //Level Up Command
@@ -304,7 +318,7 @@ namespace Intersect.Server.EventProcessing
             PacketSender.SendEntityDataToProximity(player);
         }
 
-        //Change Sprite Command
+        //Change Name Color Command
         private static void ProcessCommand(ChangeNameColorCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             if (command.Remove)
@@ -320,6 +334,31 @@ namespace Intersect.Server.EventProcessing
 
             player.NameColor = command.Color;
             PacketSender.SendEntityDataToProximity(player);
+        }
+
+        //Change Player Label Command
+        private static void ProcessCommand(ChangePlayerLabelCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
+        {
+          string label = "";
+          if (command.VariableType == VariableTypes.PlayerVariable)
+            label = player.GetVariableValue(command.VariableId).ToString();
+          else if (command.VariableType == VariableTypes.ServerVariable)
+            label = ServerVariableBase.Get(command.VariableId).Value.ToString();
+
+          Color color = command.Color;
+          if (command.MatchNameColor)
+            color = player.NameColor;
+
+          if (command.Position == 0) // Header
+          {
+            player.HeaderLabel = new Tuple<string, Color>(label, color);
+          }
+          else if (command.Position == 1) // Footer
+          {
+            player.FooterLabel = new Tuple<string, Color>(label, color);
+          }
+
+          PacketSender.SendEntityDataToProximity(player);
         }
 
         //Set Access Command (wtf why would we even allow this? lol)

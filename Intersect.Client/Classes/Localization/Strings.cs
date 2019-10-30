@@ -372,7 +372,10 @@ namespace Intersect.Client.Localization
             public static Dictionary<int, LocalizedString> effects = new Dictionary<int, LocalizedString>
             {
                 {0, @"Cooldown Reduction"},
-                {1, @"Lifesteal"}
+                {1, @"Lifesteal"},
+                {2, @"Tenacity"},
+                {3, @"Luck"},
+                {4, @"Exp Increase"},
             };
             public static Dictionary<int, LocalizedString> itemtypes = new Dictionary<int, LocalizedString>
             {

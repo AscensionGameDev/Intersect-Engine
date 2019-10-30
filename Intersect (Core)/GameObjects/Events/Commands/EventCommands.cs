@@ -218,12 +218,14 @@ namespace Intersect.GameObjects.Events.Commands
     public class RestoreHpCommand : EventCommand
     {
         public override EventCommandType Type {get;} = EventCommandType.RestoreHp;
+        public int amount { get; set; }
     }
 
     public class RestoreMpCommand : EventCommand
     {
         public override EventCommandType Type {get;} = EventCommandType.RestoreMp;
-    }
+        public int amount { get; set; }
+  }
 
     public class LevelUpCommand : EventCommand
     {
@@ -349,6 +351,16 @@ namespace Intersect.GameObjects.Events.Commands
         public Color Color { get; set; }
         public bool Override { get; set; }
         public bool Remove { get; set; }
+    }
+
+    public class ChangePlayerLabelCommand : EventCommand
+    {
+      public override EventCommandType Type { get; } = EventCommandType.PlayerLabel;
+      public VariableTypes VariableType { get; set; } = VariableTypes.PlayerVariable;
+      public Guid VariableId { get; set; } = new Guid();
+      public int Position { get; set; } //0 = Above Player Name, 1 = Below Player Name
+      public Color Color { get; set; }
+      public bool MatchNameColor { get; set; }
     }
 
     public class ChangeFaceCommand : EventCommand

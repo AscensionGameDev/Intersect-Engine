@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web.Http.Dispatcher;
+
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
@@ -66,13 +68,13 @@ namespace Intersect.Server.Entities
             var itemSlot = 0;
             foreach (var drop in myBase.Drops)
             {
-                if (Globals.Rand.Next(1, 10001) <= drop.Chance * 100 && ItemBase.Get(drop.ItemId) != null)
-                {
+                //if (Globals.Rand.Next(1, 10001) <= drop.Chance * 100 && ItemBase.Get(drop.ItemId) != null)
+                //{
                     var slot = new InventorySlot(itemSlot);
                     Items.Add(slot);
-                    slot.Set(new Item(drop.ItemId, drop.Quantity));
+                    slot.Set(new Item(drop.ItemId, drop.Quantity, true, drop.Chance));
                     itemSlot++;
-                }
+                //}
             }
 
             for (int i = 0; i < (int) Vitals.VitalCount; i++)

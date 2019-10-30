@@ -581,7 +581,7 @@ namespace Intersect.Server.Entities
                 var maxVitalValue = GetMaxVital(vital);
                 if (vitalValue >= maxVitalValue) continue;
 
-                var vitalRegenRate = playerClass.VitalRegen[vitalId] / 100f;
+                var vitalRegenRate = playerClass.VitalRegen[vitalId] + GetEquipmentVitalRegen(vital) / 100f;
                 var regenValue = (int)Math.Max(1, maxVitalValue * vitalRegenRate) * Math.Abs(Math.Sign(vitalRegenRate));
                 AddVital(vital, regenValue);
             }
@@ -708,7 +708,7 @@ namespace Intersect.Server.Entities
 
         public void GiveExperience(long amount)
         {
-            Exp += amount;
+            Exp += (int)((amount * GetExpMultiplier()) / 100);
             if (Exp < 0) Exp = 0;
             if (!CheckLevelUp())
             {
@@ -1654,11 +1654,10 @@ namespace Intersect.Server.Entities
                         var item = ItemBase.Get(Items[Equipment[i]].ItemId);
                         if (item != null)
                         {
-                            //Check for cooldown reduction
-                            if (item.Effect.Type == EffectType.CooldownReduction)
-                            {
-                                cooldown += item.Effect.Percentage;
-                            }
+                          if (item.Effect.Type == EffectType.CooldownReduction)
+                          {
+                              cooldown += item.Effect.Percentage;
+                          }
                         }
                     }
                 }
@@ -1680,17 +1679,113 @@ namespace Intersect.Server.Entities
                         var item = ItemBase.Get(Items[Equipment[i]].ItemId);
                         if (item != null)
                         {
-                            //Check for cooldown reduction
-                            if (item.Effect.Type == EffectType.Lifesteal)
-                            {
-                                lifesteal += item.Effect.Percentage;
-                            }
+                          if (item.Effect.Type == EffectType.Lifesteal)
+                          {
+                              lifesteal += item.Effect.Percentage;
+                          }
                         }
                     }
                 }
             }
 
             return lifesteal;
+        }
+
+        public int GetTenacity()
+        {
+          int tenacity = 0;
+
+          for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+          {
+            if (Equipment[i] > -1)
+            {
+              if (Items[Equipment[i]].ItemId != Guid.Empty)
+              {
+                var item = ItemBase.Get(Items[Equipment[i]].ItemId);
+                if (item != null)
+                {
+                  if (item.Effect.Type == EffectType.Tenacity)
+                  {
+                    tenacity += item.Effect.Percentage;
+                  }
+                }
+              }
+            }
+          }
+
+          return tenacity;
+        }
+
+        public int GetLuck()
+        {
+          int luck = 0;
+
+          for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+          {
+            if (Equipment[i] > -1)
+            {
+              if (Items[Equipment[i]].ItemId != Guid.Empty)
+              {
+                var item = ItemBase.Get(Items[Equipment[i]].ItemId);
+                if (item != null)
+                {
+                  if (item.Effect.Type == EffectType.Luck)
+                  {
+                    luck += item.Effect.Percentage;
+                  }
+                }
+              }
+            }
+          }
+
+          return luck;
+        }
+
+        public int GetExpMultiplier()
+        {
+          int exp = 100;
+
+          for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+          {
+            if (Equipment[i] > -1)
+            {
+              if (Items[Equipment[i]].ItemId != Guid.Empty)
+              {
+                var item = ItemBase.Get(Items[Equipment[i]].ItemId);
+                if (item != null)
+                {
+                  if (item.Effect.Type == EffectType.EXP)
+                  {
+                    exp += item.Effect.Percentage;
+                  }
+                }
+              }
+            }
+          }
+
+          return exp;
+        }
+
+        public int GetEquipmentVitalRegen(Vitals vital)
+        {
+          int regen = 0;
+
+          for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+          {
+            if (Equipment[i] > -1)
+            {
+              if (Items[Equipment[i]].ItemId != Guid.Empty)
+              {
+                var item = ItemBase.Get(Items[Equipment[i]].ItemId);
+                if (item != null)
+                {
+                  regen += item.VitalsRegen[(int)vital];
+                }
+              }
+            }
+          }
+
+          return regen;
         }
 
         //Shop

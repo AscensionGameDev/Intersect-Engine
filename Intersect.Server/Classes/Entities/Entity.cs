@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Web.UI;
+
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
@@ -94,8 +96,11 @@ namespace Intersect.Server.Entities
         [NotMapped]
         public Color NameColor { get; set; }
 
-        //Instance Values
-        private Guid _id;
+        [NotMapped] public Tuple<string, Color> HeaderLabel { get; set; }
+        [NotMapped] public Tuple<string, Color> FooterLabel { get; set; }
+
+    //Instance Values
+    private Guid _id;
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column(Order = 0)]
         public Guid Id { get => GetId(); set => _id = value; }
@@ -669,6 +674,11 @@ namespace Intersect.Server.Entities
                             } //If sets direction, set it.
                             var dash = new DashInstance(this, 1, (byte)Dir);
                         }
+                        //Check for traps
+                        foreach (var trap in MapInstance.Get(MapId).MapTraps)
+                        {
+                            trap.CheckEntityHasDetonatedTrap(this);
+                        }
                     }
                 }
             }
@@ -1023,23 +1033,27 @@ namespace Intersect.Server.Entities
         }
 
         //Attacking with spell
-        public virtual void TryAttack(EntityInstance enemy, SpellBase spellBase, bool onHitTrigger = false)
+        public virtual void TryAttack(EntityInstance enemy, SpellBase spellBase, bool onHitTrigger = false, bool trapTrigger = false)
         {
             if (enemy?.GetType() == typeof(Resource)) return;
             if (spellBase == null) return;
 
             //Check for taunt status and trying to attack a target that has not taunted you.
-            var statuses = Statuses.Values.ToArray();
-            foreach (var status in statuses)
+            if (!trapTrigger) //Traps ignore taunts.
             {
+              var statuses = Statuses.Values.ToArray();
+              foreach (var status in statuses)
+              {
                 if (status.Type == StatusTypes.Taunt)
                 {
-                    if (Target != enemy)
-                    {
-                        PacketSender.SendActionMsg(this, Strings.Combat.miss, CustomColors.Missed);
-                        return;
-                    }
+                  if (Target != enemy)
+                  {
+                    PacketSender.SendActionMsg(this, Strings.Combat.miss, CustomColors.Missed);
+
+                    return;
+                  }
                 }
+              }
             }
 
             var deadAnimations = new List<KeyValuePair<Guid, sbyte>>();
@@ -1562,6 +1576,10 @@ namespace Intersect.Server.Entities
                                     PacketSender.SendActionMsg(this, Strings.Combat.status[(int) spellBase.Combat.Effect], CustomColors.Status);
                                 }
                                 break;
+                            case SpellTargetTypes.Trap:
+                                MapInstance.Get(MapId).SpawnTrap(this, spellBase, (byte)X, (byte)Y, (byte)Z);
+                                PacketSender.SendAnimationToProximity(spellBase.HitAnimationId, -1, Guid.Empty, MapId, (byte)X, (byte)Y, 0);
+                                break;
                             default:
                                 break;
                         }
@@ -1842,7 +1860,15 @@ namespace Intersect.Server.Entities
                         }
                     }
 
-                    if (Globals.Rand.Next(1, 101) >= dropitems) continue;
+                    //Calculate the killers luck (If they are a player)
+                    var playerKiller = killer as Player;
+                    int luck = (playerKiller != null) ? playerKiller.GetLuck() : 0;
+
+                    //Player drop rates
+                    if (Globals.Rand.Next(1, 101 - luck) >= dropitems) continue;
+
+                    //Npc drop rates
+                    if (Globals.Rand.Next(1, 101 - luck) >= item.DropChance) continue;
 
                     var map = MapInstance.Get(MapId);
                     map?.SpawnItem(X, Y, item, item.Quantity);
@@ -1914,6 +1940,8 @@ namespace Intersect.Server.Entities
             packet.Stats = GetStatValues();
             packet.StatusEffects = StatusPackets();
             packet.NameColor = NameColor;
+            packet.HeaderLabel = HeaderLabel;
+            packet.FooterLabel = FooterLabel;
 
             return packet;
         }
@@ -2104,9 +2132,22 @@ namespace Intersect.Server.Entities
             mEntity = en;
             Spell = spell;
             Type = type;
-            Duration = Globals.Timing.TimeMs + duration;
             StartTime = Globals.Timing.TimeMs;
+            Duration = Globals.Timing.TimeMs + duration;
             Data = data;
+
+            if (en.GetType() == typeof(Player))
+            {
+              if (type == StatusTypes.Blind ||
+                  type == StatusTypes.Silence ||
+                  type == StatusTypes.Sleep ||
+                  type == StatusTypes.Snare ||
+                  type == StatusTypes.Stun ||
+                  type == StatusTypes.Taunt)
+              {
+                Duration = Globals.Timing.TimeMs +  ((100 - ((Player)en).GetTenacity()) * duration);
+              }
+            }
 
             if (type == StatusTypes.Shield)
             {

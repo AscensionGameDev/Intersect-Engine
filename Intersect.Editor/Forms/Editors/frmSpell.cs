@@ -162,7 +162,7 @@ namespace Intersect.Editor.Forms.Editors
             lblCastRange.Text = Strings.SpellEditor.castrange;
             lblProjectile.Text = Strings.SpellEditor.projectile;
             lblHitRadius.Text = Strings.SpellEditor.hitradius;
-            lblOnHitDuration.Text = Strings.SpellEditor.onhitduration;
+            lblDuration.Text = Strings.SpellEditor.duration;
 
             grpCombat.Text = Strings.SpellEditor.combatspell;
             grpDamage.Text = Strings.SpellEditor.damagegroup;
@@ -369,8 +369,8 @@ namespace Intersect.Editor.Forms.Editors
             nudCastRange.Hide();
             lblProjectile.Hide();
             cmbProjectile.Hide();
-            lblOnHitDuration.Hide();
-            nudOnHitDuration.Hide();
+            lblDuration.Hide();
+            nudDuration.Hide();
 
             if (cmbTargetType.SelectedIndex == (int) SpellTargetTypes.Single)
             {
@@ -405,9 +405,15 @@ namespace Intersect.Editor.Forms.Editors
             }
             if (cmbTargetType.SelectedIndex == (int)SpellTargetTypes.OnHit)
             {
-                lblOnHitDuration.Show();
-                nudOnHitDuration.Show();
-                nudOnHitDuration.Value = mEditorItem.Combat.OnHitDuration;
+                lblDuration.Show();
+                nudDuration.Show();
+                nudDuration.Value = mEditorItem.Combat.OnHitDuration;
+            }
+            if (cmbTargetType.SelectedIndex == (int)SpellTargetTypes.Trap)
+            {
+              lblDuration.Show();
+              nudDuration.Show();
+              nudDuration.Value = mEditorItem.Combat.TrapDuration;
             }
         }
 
@@ -845,7 +851,14 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudOnHitDuration_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Combat.OnHitDuration = (int)nudOnHitDuration.Value;
+            if (cmbTargetType.SelectedIndex == (int)SpellTargetTypes.OnHit)
+            {
+                mEditorItem.Combat.OnHitDuration = (int)nudDuration.Value;
+            }
+            if (cmbTargetType.SelectedIndex == (int)SpellTargetTypes.Trap)
+            {
+                mEditorItem.Combat.TrapDuration = (int)nudDuration.Value;
+            }
         }
 
         private void chkBound_CheckedChanged(object sender, EventArgs e)

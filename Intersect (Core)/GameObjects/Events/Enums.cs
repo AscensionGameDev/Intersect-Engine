@@ -129,5 +129,8 @@
 
         //Player Input variable.
         InputVariable,
+
+        //Player Label
+        PlayerLabel,
     }
 }

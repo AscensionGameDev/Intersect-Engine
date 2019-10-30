@@ -1490,23 +1490,28 @@ namespace Intersect.Client.Entities
             {
                 if (Type == 1)
                 {
-                    base.DrawName((customColorOverride != null) ? customColorOverride : CustomColors.PlayerNameMod, CustomColors.PlayerNameModBorder,
-                        CustomColors.PlayerNameModBackground);
+                    base.DrawName((customColorOverride != null) ? customColorOverride : CustomColors.PlayerNameMod, CustomColors.PlayerNameModBorder, CustomColors.PlayerNameModBackground);
+                    DrawLabels(HeaderLabel.Item1, 0, (HeaderLabel.Item2 != null) ? HeaderLabel.Item2 : CustomColors.PlayerNameMod, CustomColors.PlayerNameModBorder, CustomColors.PlayerNameModBackground);
+                    DrawLabels(FooterLabel.Item1, 1, (FooterLabel.Item2 != null) ? FooterLabel.Item2 : CustomColors.PlayerNameMod, CustomColors.PlayerNameModBorder, CustomColors.PlayerNameModBackground);
                 }
                 else if (Type == 2)
                 {
-                    base.DrawName((customColorOverride != null) ? customColorOverride : CustomColors.PlayerNameAdmin, CustomColors.PlayerNameAdminBorder,
-                        CustomColors.PlayerNameAdminBackground);
+                    base.DrawName((customColorOverride != null) ? customColorOverride : CustomColors.PlayerNameAdmin, CustomColors.PlayerNameAdminBorder, CustomColors.PlayerNameAdminBackground);
+                    DrawLabels(HeaderLabel.Item1, 0, (HeaderLabel.Item2 != null) ? HeaderLabel.Item2 : CustomColors.PlayerNameAdmin, CustomColors.PlayerNameAdminBorder, CustomColors.PlayerNameAdminBackground);
+                    DrawLabels(FooterLabel.Item1, 1, (FooterLabel.Item2 != null) ? FooterLabel.Item2 : CustomColors.PlayerNameAdmin, CustomColors.PlayerNameAdminBorder, CustomColors.PlayerNameAdminBackground);
                 }
                 else
                 {
-                    base.DrawName((customColorOverride != null) ? customColorOverride : CustomColors.PlayerNameNormal, CustomColors.PlayerNameNormalBorder,
-                        CustomColors.PlayerNameNormalBackground);
+                    base.DrawName((customColorOverride != null) ? customColorOverride : CustomColors.PlayerNameNormal, CustomColors.PlayerNameNormalBorder, CustomColors.PlayerNameNormalBackground);
+                    DrawLabels(HeaderLabel.Item1, 0, (HeaderLabel.Item2 != null) ? HeaderLabel.Item2 : CustomColors.PlayerNameNormal, CustomColors.PlayerNameNormalBorder, CustomColors.PlayerNameNormalBackground);
+                    DrawLabels(FooterLabel.Item1, 1, (FooterLabel.Item2 != null) ? FooterLabel.Item2 : CustomColors.PlayerNameNormal, CustomColors.PlayerNameNormalBorder, CustomColors.PlayerNameNormalBackground);
                 }
             }
             else
             {
                 base.DrawName(textColor, borderColor, backgroundColor);
+                DrawLabels(HeaderLabel.Item1, 0, textColor, borderColor, backgroundColor);
+                DrawLabels(FooterLabel.Item1, 1, textColor, borderColor, backgroundColor);
             }
         }
 

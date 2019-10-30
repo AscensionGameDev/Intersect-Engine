@@ -30,5 +30,7 @@ namespace Intersect.Network.Packets.Server
         public StatusPacket[] StatusEffects { get; set; }
         public bool IsSelf { get; set; }
         public Color NameColor { get; set; }
-    }
+        public Tuple<string, Color> HeaderLabel { get; set; }
+        public Tuple<string, Color> FooterLabel { get; set; }
+  }
 }
