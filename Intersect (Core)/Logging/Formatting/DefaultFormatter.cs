@@ -67,7 +67,7 @@ namespace Intersect.Logging.Formatting
             }
 
             builder.AppendLine($@"  Message: {exception.Message}");
-            builder.AppendLine($@"    Stack: {exception.StackTrace}");
+//             builder.AppendLine($@"    Stack: {exception.StackTrace}");
             builder.AppendLine();
 
             if (!recurse)
