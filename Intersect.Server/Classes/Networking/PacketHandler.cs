@@ -130,10 +130,13 @@ namespace Intersect.Server.Networking
             {
                 HandlePacket(client, client.Entity, (dynamic)packet);
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                Log.Error(ex, string.Format("Client Packet Error! [Packet: {00} | User: {01} | Player: {02} | IP {03}]", packet.GetType().Name, client?.User?.Name ?? "", client?.Entity?.Name ?? "", client.GetIp()));
-                client.Disconnect("Error processing packet " + packet.GetType().Name);
+                var packetType = packet?.GetType().Name ?? "NULL_PACKET";
+                Log.Error(exception,
+                    $"Client Packet Error! [Packet: {packetType} | User: {client.User?.Name ?? ""} | Player: {client.Entity?.Name ?? ""} | IP {client.GetIp()}]"
+                );
+                client.Disconnect($"Error processing packet type '{packetType}'.");
             }
             return true;
         }
