@@ -290,21 +290,18 @@ namespace Intersect.Server
             rng.GetBytes(buff);
             var salt = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(Convert.ToBase64String(buff)))).Replace("-", "");
 
-            //Hash the Password
-            var pass = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password + salt))).Replace("-", "");
-
             var rights = UserRights.None;
             if (RegisteredPlayers== 0)
             {
                 rights = UserRights.Admin;
             }
 
-            var user = new User()
+            var user = new User
             {
                 Name = username,
                 Email = email,
                 Salt = salt,
-                Password = pass,
+                Password = User.SaltPasswordHash(password, salt),
                 Power = rights,
             };
             lock (mPlayerDbLock)
@@ -315,7 +312,7 @@ namespace Intersect.Server
             SavePlayerDatabaseAsync();
         }
 
-        public static void ResetPass(User user, string hashedPass)
+        public static void ResetPass(User user, string password)
         {
             var sha = new SHA256Managed();
 
@@ -325,11 +322,8 @@ namespace Intersect.Server
             rng.GetBytes(buff);
             var salt = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(Convert.ToBase64String(buff)))).Replace("-", "");
 
-            //Hash the Password
-            var pass = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(hashedPass + salt))).Replace("-", "");
-
             user.Salt = salt;
-            user.Password = pass;
+            user.Password = User.SaltPasswordHash(password, salt);
             SavePlayerDatabaseAsync();
         }
 
@@ -338,19 +332,8 @@ namespace Intersect.Server
             lock (mPlayerDbLock)
             {
                 var user = sPlayerDb.Users.Where(p => p.Name.ToLower() == username.ToLower()).Select(p => new { p.Password, p.Salt }).FirstOrDefault();
-                if (user != null)
-                {
-                    var sha = new SHA256Managed();
-                    var pass = user.Password;
-                    var salt = user.Salt;
-                    var temppass = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password + salt))).Replace("-", "");
-                    if (temppass == pass)
-                    {
-                        return true;
-                    }
-                }
+                return user != null && User.SaltPasswordHash(password, user.Salt) == user.Password;
             }
-            return false;
         }
 
         public static UserRights CheckAccess([NotNull] string username)

@@ -136,6 +136,14 @@ namespace Intersect.Client.UI.Menu
             mRegistrationPanel.Hide();
         }
 
+        private static string ComputePasswordHash(string password)
+        {
+            using (var sha = new SHA256Managed())
+            {
+                return BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password ?? ""))).Replace("-", "");
+            }
+        }
+
         void TryRegister()
         {
             if (Globals.WaitingOnServer)
@@ -154,9 +162,11 @@ namespace Intersect.Client.UI.Menu
                             {
                                 Hide();
                                 //Hash Password
-                                var sha = new SHA256Managed();
-                                var hashedPass = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(mPasswordTextbox.Text.Trim()))).Replace("-", "");
-                                PacketSender.SendCreateAccount(mUsernameTextbox.Text, hashedPass, mEmailTextbox.Text);
+                                using (var sha = new SHA256Managed())
+                                {
+                                    var hashedPass = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(mPasswordTextbox.Text.Trim()))).Replace("-", "");
+                                    PacketSender.SendCreateAccount(mUsernameTextbox.Text, hashedPass, mEmailTextbox.Text);
+                                }
                                 Globals.WaitingOnServer = true;
                                 ChatboxMsg.ClearMessages();
                             }

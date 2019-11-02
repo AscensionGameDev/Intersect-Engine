@@ -17,33 +17,6 @@ namespace Intersect.Server.Web.RestApi.Routes
     public sealed class OAuthController : ApiController
     {
         [Authorize]
-        [HttpPost]
-        [Route("token")]
-        public IHttpActionResult Token(
-            [FromBody] string grant_type,
-            [FromBody] string username,
-            [FromBody] string password
-#if DEBUG
-            ,
-            [FromBody] string prehash
-#endif
-        )
-        {
-            return Ok();
-        }
-
-        [Authorize]
-        [HttpPost]
-        [Route("token")]
-        public IHttpActionResult Token(
-            [FromBody] string grant_type,
-            [FromBody] string refresh_token
-        )
-        {
-            return Ok();
-        }
-
-        [Authorize]
         [HttpDelete]
         [Route("token/{username}")]
         public async Task<IHttpActionResult> DeleteToken(string username)

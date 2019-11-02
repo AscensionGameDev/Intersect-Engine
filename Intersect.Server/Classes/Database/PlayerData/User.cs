@@ -163,19 +163,23 @@ namespace Intersect.Server.Database.PlayerData
             MuteReason = reason;
         }
 
-        public bool IsPasswordValid([NotNull] string password)
+        public static string SaltPasswordHash([NotNull] string passwordHash, [NotNull] string salt)
         {
-            if (string.IsNullOrEmpty(password))
+            using (var sha = new SHA256Managed())
+            {
+                return BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(passwordHash.ToUpperInvariant() + salt))).Replace("-", "");
+            }
+        }
+
+        public bool IsPasswordValid([NotNull] string passwordHash)
+        {
+            if (string.IsNullOrWhiteSpace(passwordHash) || string.IsNullOrWhiteSpace(Salt))
             {
                 return false;
             }
 
-            using (var sha = new SHA256Managed())
-            {
-                var digest = sha.ComputeHash(Encoding.UTF8.GetBytes(password + Salt));
-                var hashword = BitConverter.ToString(digest).Replace("-", "");
-                return string.Equals(Password, hashword, StringComparison.Ordinal);
-            }
+            var saltedPasswordHash = SaltPasswordHash(passwordHash, Salt);
+            return string.Equals(Password, saltedPasswordHash, StringComparison.Ordinal);
         }
 
         public bool TryChangePassword([NotNull] string oldPassword, [NotNull] string newPassword)
@@ -183,7 +187,7 @@ namespace Intersect.Server.Database.PlayerData
             return IsPasswordValid(oldPassword) && TrySetPassword(newPassword);
         }
 
-        public bool TrySetPassword([NotNull] string password)
+        public bool TrySetPassword([NotNull] string passwordHash)
         {
             using (var sha = new SHA256Managed())
             {
@@ -194,11 +198,8 @@ namespace Intersect.Server.Database.PlayerData
                     rng.GetBytes(saltBuffer);
                     var salt = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(Convert.ToBase64String(saltBuffer)))).Replace("-", "");
 
-                    /* Hash the Password */
-                    var pass = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password + salt))).Replace("-", "");
-
                     Salt = salt;
-                    Password = pass;
+                    Password = SaltPasswordHash(passwordHash, salt);
 
                     return true;
                 }

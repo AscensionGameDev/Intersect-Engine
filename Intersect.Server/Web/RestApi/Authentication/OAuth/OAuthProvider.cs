@@ -50,8 +50,8 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth
                 {
                     TokenEndpointPath = new PathString("/api/oauth/token"),
                     ApplicationCanDisplayErrors = true,
-#if DEBUG
                     AllowInsecureHttp = true,
+#if DEBUG
                     AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(Configuration.RefreshTokenLifetime),
 #else
                     AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(Configuration.RefreshTokenLifetime),

@@ -95,16 +95,18 @@ namespace Intersect.Editor.Forms
             if (!EditorNetwork.Connected || !btnLogin.Enabled) return;
             if (txtUsername.Text.Trim().Length > 0 && txtPassword.Text.Trim().Length > 0)
             {
-                var sha = new SHA256Managed();
-                if (mSavedPassword != "")
+                using (var sha = new SHA256Managed())
                 {
-                    PacketSender.SendLogin(txtUsername.Text.Trim(), mSavedPassword);
-                }
-                else
-                {
-                    PacketSender.SendLogin(txtUsername.Text.Trim(),
-                        BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(txtPassword.Text.Trim())))
-                            .Replace("-", ""));
+                    if (mSavedPassword != "")
+                    {
+                        PacketSender.SendLogin(txtUsername.Text.Trim(), mSavedPassword);
+                    }
+                    else
+                    {
+                        PacketSender.SendLogin(txtUsername.Text.Trim(),
+                            BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(txtPassword.Text.Trim())))
+                                .Replace("-", ""));
+                    }
                 }
             }
         }
@@ -126,25 +128,27 @@ namespace Intersect.Editor.Forms
 
         public void TryRemembering()
         {
-            var sha = new SHA256Managed();
-            if (chkRemember.Checked)
+            using (var sha = new SHA256Managed())
             {
-                Preferences.SavePreference("Username", txtUsername.Text);
-                if (mSavedPassword != "")
+                if (chkRemember.Checked)
                 {
-                    Preferences.SavePreference("Password", mSavedPassword);
+                    Preferences.SavePreference("Username", txtUsername.Text);
+                    if (mSavedPassword != "")
+                    {
+                        Preferences.SavePreference("Password", mSavedPassword);
+                    }
+                    else
+                    {
+                        Preferences.SavePreference("Password",
+                            BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(txtPassword.Text.Trim())))
+                                .Replace("-", ""));
+                    }
                 }
                 else
                 {
-                    Preferences.SavePreference("Password",
-                        BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(txtPassword.Text.Trim())))
-                            .Replace("-", ""));
+                    Preferences.SavePreference("Username", "");
+                    Preferences.SavePreference("Password", "");
                 }
-            }
-            else
-            {
-                Preferences.SavePreference("Username", "");
-                Preferences.SavePreference("Password", "");
             }
         }
 
