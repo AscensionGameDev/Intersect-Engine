@@ -122,9 +122,15 @@ namespace Intersect.Server.Networking
                 throw new Exception("Client is null!");
             }
 
-            if (client.Banned) return false;
+            if (client.Banned)
+            {
+                return false;
+            }
 
-            if (packet is Packets.EditorPacket && !client.IsEditor) return false;
+            if (packet is Packets.EditorPacket && !client.IsEditor)
+            {
+                return false;
+            }
 
             try
             {
@@ -133,9 +139,13 @@ namespace Intersect.Server.Networking
             catch (Exception exception)
             {
                 var packetType = packet?.GetType().Name ?? "NULL_PACKET";
-                Log.Error(exception,
-                    $"Client Packet Error! [Packet: {packetType} | User: {client.User?.Name ?? ""} | Player: {client.Entity?.Name ?? ""} | IP {client.GetIp()}]"
-                );
+                var packetMessage =
+                    $"Client Packet Error! [Packet: {packetType} | User: {client.User?.Name ?? ""} | Player: {client.Entity?.Name ?? ""} | IP {client.GetIp()}]";
+
+                // TODO: Re-combine these once we figure out how to prevent the OutOfMemoryException that happens occasionally
+                Log.Error(packetMessage);
+                Log.Error(exception);
+
                 client.Disconnect($"Error processing packet type '{packetType}'.");
             }
             return true;
