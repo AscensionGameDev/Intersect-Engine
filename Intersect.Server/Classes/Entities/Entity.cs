@@ -904,6 +904,11 @@ namespace Intersect.Server.Entities
             var maxVitalValue = GetMaxVital(vitalId);
             var safeAmount = Math.Min(amount, GetVital(vital));
             SetVital(vital, GetVital(vital) - safeAmount);
+
+            if (GetVital(Vitals.Health) <= 0)
+            {
+                Die();
+            }
         }
         //Stats
         public virtual int GetStatBuffs(Stats statType)
@@ -1862,13 +1867,13 @@ namespace Intersect.Server.Entities
 
                     //Calculate the killers luck (If they are a player)
                     var playerKiller = killer as Player;
-                    int luck = (playerKiller != null) ? playerKiller.GetLuck() : 0;
+                    double luck = 1.0 + (((playerKiller != null) ? playerKiller.GetLuck() : 0) / 100);
 
                     //Player drop rates
-                    if (Globals.Rand.Next(1, 101 - luck) >= dropitems) continue;
+                    if (Globals.Rand.Next(1, 101) >= dropitems * luck) continue;
 
                     //Npc drop rates
-                    if (Globals.Rand.Next(1, 101 - luck) >= item.DropChance) continue;
+                    if (Globals.Rand.Next(1, 101) >= item.DropChance * luck) continue;
 
                     var map = MapInstance.Get(MapId);
                     map?.SpawnItem(X, Y, item, item.Quantity);
@@ -2145,7 +2150,7 @@ namespace Intersect.Server.Entities
                   type == StatusTypes.Stun ||
                   type == StatusTypes.Taunt)
               {
-                Duration = Globals.Timing.TimeMs +  ((100 - ((Player)en).GetTenacity()) * duration);
+                Duration = Globals.Timing.TimeMs + duration - (long)((((Player)en).GetTenacity() / 100) * duration);
               }
             }
 

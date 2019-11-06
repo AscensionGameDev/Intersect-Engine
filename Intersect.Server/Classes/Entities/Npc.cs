@@ -71,8 +71,9 @@ namespace Intersect.Server.Entities
                 //if (Globals.Rand.Next(1, 10001) <= drop.Chance * 100 && ItemBase.Get(drop.ItemId) != null)
                 //{
                     var slot = new InventorySlot(itemSlot);
+                    slot.Set(new Item(drop.ItemId, drop.Quantity, true));
+                    slot.DropChance = drop.Chance;
                     Items.Add(slot);
-                    slot.Set(new Item(drop.ItemId, drop.Quantity, true, drop.Chance));
                     itemSlot++;
                 //}
             }

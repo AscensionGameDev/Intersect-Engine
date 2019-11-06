@@ -931,7 +931,7 @@ namespace Intersect.Client.Entities
           float offset = textSize.Y;
           if (position == 0) offset = -offset;
 
-          var y = GetTopPos() + offset - 4;
+          var y = GetTopPos() + offset - 16;
           var x = (int)Math.Ceiling(GetCenterPos().X);
 
           if (backgroundColor != Color.Transparent)
@@ -1002,7 +1002,7 @@ namespace Intersect.Client.Entities
             {
                 return;
             }
-            var y = GetTopPos() - 4;
+            var y = GetTopPos() - 16;
             var x = (int) Math.Ceiling(GetCenterPos().X);
 
             Pointf textSize = GameGraphics.Renderer.MeasureText(Name, GameGraphics.GameFont, 1);

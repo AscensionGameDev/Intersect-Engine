@@ -820,6 +820,7 @@ namespace Intersect.Client.Localization
                 {2, @"AOE - Range: {00} Tiles - Radius: {01} Tiles"},
                 {3, @"Projectile - Range: {00} Tiles"},
                 {4, @"On Hit"},
+                {5, @"Trap"},
             };
             public static Dictionary<int, LocalizedString> vitals = new Dictionary<int, LocalizedString>
             {

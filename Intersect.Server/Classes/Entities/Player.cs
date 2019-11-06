@@ -1691,9 +1691,9 @@ namespace Intersect.Server.Entities
             return lifesteal;
         }
 
-        public int GetTenacity()
+        public double GetTenacity()
         {
-          int tenacity = 0;
+          double tenacity = 0;
 
           for (var i = 0; i < Options.EquipmentSlots.Count; i++)
           {
@@ -1716,9 +1716,9 @@ namespace Intersect.Server.Entities
           return tenacity;
         }
 
-        public int GetLuck()
+        public double GetLuck()
         {
-          int luck = 0;
+          double luck = 0;
 
           for (var i = 0; i < Options.EquipmentSlots.Count; i++)
           {

@@ -200,7 +200,7 @@ namespace Intersect.Server.EventProcessing
             }
             else if (command.amount < 0)
             {
-                player.SubVital(Vitals.Health, command.amount);
+                player.SubVital(Vitals.Health, -command.amount);
             }
         }
 
@@ -213,7 +213,7 @@ namespace Intersect.Server.EventProcessing
             }
             else if (command.amount < 0)
             {
-                player.SubVital(Vitals.Mana, command.amount);
+                player.SubVital(Vitals.Mana, -command.amount);
             }
         }
 
