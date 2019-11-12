@@ -146,7 +146,7 @@ namespace Intersect.Client.Entities
         public override void Load(EntityPacket packet)
         {
             base.Load(packet);
-            var pkt = (PlayerEntityPacket) packet;
+            var pkt = (PlayerEntityPacket)packet;
             Gender = pkt.Gender;
             Class = pkt.ClassId;
             Type = pkt.AccessLevel;
@@ -170,11 +170,11 @@ namespace Intersect.Client.Entities
         }
 
         //Item Processing
-        public void SwapItems(int item1, int item2)
+        public void SwapItems(int Label, int Color)
         {
-            ItemInstance tmpInstance = Inventory[item2].Clone();
-            Inventory[item2] = Inventory[item1].Clone();
-            Inventory[item1] = tmpInstance.Clone();
+            ItemInstance tmpInstance = Inventory[Color].Clone();
+            Inventory[Color] = Inventory[Label].Clone();
+            Inventory[Label] = tmpInstance.Clone();
         }
 
         public void TryDropItem(int index)
@@ -197,10 +197,10 @@ namespace Intersect.Client.Entities
 
         private void DropItemInputBoxOkay(object sender, EventArgs e)
         {
-            int value = (int) ((InputBox) sender).Value;
+            int value = (int)((InputBox)sender).Value;
             if (value > 0)
             {
-                PacketSender.SendDropItem((int)((InputBox) sender).UserData, value);
+                PacketSender.SendDropItem((int)((InputBox)sender).UserData, value);
             }
         }
 
@@ -316,33 +316,33 @@ namespace Intersect.Client.Entities
             return 0;
         }
 
-		public decimal GetCooldownReduction()
-		{
-			int cooldown = 0;
+        public decimal GetCooldownReduction()
+        {
+            int cooldown = 0;
 
-			for (var i = 0; i < Options.EquipmentSlots.Count; i++)
-			{
-				if (MyEquipment[i] > -1)
-				{
-					if (Inventory[MyEquipment[i]].ItemId != Guid.Empty)
-					{
-						var item = ItemBase.Get(Inventory[MyEquipment[i]].ItemId);
-						if (item != null)
-						{
-							//Check for cooldown reduction
-							if (item.Effect.Type == EffectType.CooldownReduction)
-							{
-								cooldown += item.Effect.Percentage;
-							}
-						}
-					}
-				}
-			}
+            for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+            {
+                if (MyEquipment[i] > -1)
+                {
+                    if (Inventory[MyEquipment[i]].ItemId != Guid.Empty)
+                    {
+                        var item = ItemBase.Get(Inventory[MyEquipment[i]].ItemId);
+                        if (item != null)
+                        {
+                            //Check for cooldown reduction
+                            if (item.Effect.Type == EffectType.CooldownReduction)
+                            {
+                                cooldown += item.Effect.Percentage;
+                            }
+                        }
+                    }
+                }
+            }
 
-			return cooldown;
-		}
+            return cooldown;
+        }
 
-		public void TrySellItem(int index)
+        public void TrySellItem(int index)
         {
             if (ItemBase.Get(Inventory[index].ItemId) != null)
             {
@@ -381,10 +381,10 @@ namespace Intersect.Client.Entities
 
         private void SellItemInputBoxOkay(object sender, EventArgs e)
         {
-            int value = (int) ((InputBox) sender).Value;
+            int value = (int)((InputBox)sender).Value;
             if (value > 0)
             {
-                PacketSender.SendSellItem((int)((InputBox) sender).UserData, value);
+                PacketSender.SendSellItem((int)((InputBox)sender).UserData, value);
             }
         }
 
@@ -415,10 +415,10 @@ namespace Intersect.Client.Entities
 
         private void DepositItemInputBoxOkay(object sender, EventArgs e)
         {
-            int value = (int) ((InputBox) sender).Value;
+            int value = (int)((InputBox)sender).Value;
             if (value > 0)
             {
-                PacketSender.SendDepositItem((int)((InputBox) sender).UserData, value);
+                PacketSender.SendDepositItem((int)((InputBox)sender).UserData, value);
             }
         }
 
@@ -442,10 +442,10 @@ namespace Intersect.Client.Entities
 
         private void WithdrawItemInputBoxOkay(object sender, EventArgs e)
         {
-            int value = (int) ((InputBox) sender).Value;
+            int value = (int)((InputBox)sender).Value;
             if (value > 0)
             {
-                PacketSender.SendWithdrawItem((int)((InputBox) sender).UserData, value);
+                PacketSender.SendWithdrawItem((int)((InputBox)sender).UserData, value);
             }
         }
 
@@ -471,10 +471,10 @@ namespace Intersect.Client.Entities
 
         private void StoreBagItemInputBoxOkay(object sender, EventArgs e)
         {
-            int value = (int) ((InputBox) sender).Value;
+            int value = (int)((InputBox)sender).Value;
             if (value > 0)
             {
-                PacketSender.SendStoreBagItem((int)((InputBox) sender).UserData, value);
+                PacketSender.SendStoreBagItem((int)((InputBox)sender).UserData, value);
             }
         }
 
@@ -495,13 +495,13 @@ namespace Intersect.Client.Entities
                 }
             }
         }
-        
+
         private void RetreiveBagItemInputBoxOkay(object sender, EventArgs e)
         {
-            int value = (int) ((InputBox) sender).Value;
+            int value = (int)((InputBox)sender).Value;
             if (value > 0)
             {
-                PacketSender.SendRetrieveBagItem((int)((InputBox) sender).UserData, value);
+                PacketSender.SendRetrieveBagItem((int)((InputBox)sender).UserData, value);
             }
         }
 
@@ -527,10 +527,10 @@ namespace Intersect.Client.Entities
 
         private void TradeItemInputBoxOkay(object sender, EventArgs e)
         {
-            int value = (int) ((InputBox) sender).Value;
+            int value = (int)((InputBox)sender).Value;
             if (value > 0)
             {
-                PacketSender.SendOfferTradeItem((int)((InputBox) sender).UserData, value);
+                PacketSender.SendOfferTradeItem((int)((InputBox)sender).UserData, value);
             }
         }
 
@@ -556,10 +556,10 @@ namespace Intersect.Client.Entities
 
         private void RevokeItemInputBoxOkay(object sender, EventArgs e)
         {
-            int value = (int) ((InputBox) sender).Value;
+            int value = (int)((InputBox)sender).Value;
             if (value > 0)
             {
-                PacketSender.SendRevokeTradeItem((int)((InputBox) sender).UserData, value);
+                PacketSender.SendRevokeTradeItem((int)((InputBox)sender).UserData, value);
             }
         }
 
@@ -584,7 +584,7 @@ namespace Intersect.Client.Entities
 
         private void ForgetSpellInputBoxOkay(object sender, EventArgs e)
         {
-            PacketSender.SendForgetSpell((int)((InputBox) sender).UserData);
+            PacketSender.SendForgetSpell((int)((InputBox)sender).UserData);
         }
 
         public void TryUseSpell(int index)
@@ -627,7 +627,7 @@ namespace Intersect.Client.Entities
         public void AddToHotbar(byte hotbarSlot, sbyte itemType, int itemSlot)
         {
             Hotbar[hotbarSlot].ItemOrSpellId = Guid.Empty;
-            Hotbar[hotbarSlot].PreferredStatBuffs = new int[(int) Stats.StatCount];
+            Hotbar[hotbarSlot].PreferredStatBuffs = new int[(int)Stats.StatCount];
             if (itemType == 0)
             {
                 var item = Inventory[itemSlot];
@@ -675,7 +675,7 @@ namespace Intersect.Client.Entities
                     if (MapInstance.Get(CurrentMap) != null &&
                         MapInstance.Get(CurrentMap).Attributes[X, Y] != null)
                     {
-                        if (MapInstance.Get(CurrentMap).Attributes[X, Y].Type ==  MapAttributes.ZDimension)
+                        if (MapInstance.Get(CurrentMap).Attributes[X, Y].Type == MapAttributes.ZDimension)
                         {
                             if (((MapZDimensionAttribute)MapInstance.Get(CurrentMap).Attributes[X, Y]).GatewayTo > 0)
                             {
@@ -1037,7 +1037,7 @@ namespace Intersect.Client.Entities
                                 {
                                     if (en.Value == null) continue;
                                     if (en.Value.CurrentMap == mapId && en.Value.X == x &&
-                                        en.Value.Y == y && !((Event) en.Value).DisablePreview &&
+                                        en.Value.Y == y && !((Event)en.Value).DisablePreview &&
                                         (!en.Value.IsStealthed() || Globals.Me.IsInMyParty(en.Value)))
                                     {
                                         if (TargetBox != null)
@@ -1154,7 +1154,7 @@ namespace Intersect.Client.Entities
             //check if player is stunned or snared, if so don't let them move.
             for (var n = 0; n < Status.Count; n++)
             {
-                if (Status[n].Type == StatusTypes.Stun || Status[n].Type == StatusTypes.Snare ||Status[n].Type == StatusTypes.Sleep)
+                if (Status[n].Type == StatusTypes.Stun || Status[n].Type == StatusTypes.Snare || Status[n].Type == StatusTypes.Sleep)
                 {
                     return;
                 }
@@ -1166,8 +1166,8 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            var tmpX = (sbyte) X;
-            var tmpY = (sbyte) Y;
+            var tmpX = (sbyte)X;
+            var tmpY = (sbyte)Y;
             Entity blockedBy = null;
 
             if (MoveDir > -1 && Globals.EventDialogs.Count == 0)
@@ -1178,7 +1178,7 @@ namespace Intersect.Client.Entities
                     switch (MoveDir)
                     {
                         case 0:
-                            if (IsTileBlocked(X, Y - 1, Z, CurrentMap,ref blockedBy) == -1)
+                            if (IsTileBlocked(X, Y - 1, Z, CurrentMap, ref blockedBy) == -1)
                             {
                                 tmpY--;
                                 Dir = 0;
@@ -1236,7 +1236,7 @@ namespace Intersect.Client.Entities
                             {
                                 gridX--;
                                 X = (byte)(Options.MapWidth - 1);
-                            } 
+                            }
                             else if (tmpX >= Options.MapWidth)
                             {
                                 X = 0;
@@ -1258,7 +1258,7 @@ namespace Intersect.Client.Entities
                             }
                             else
                             {
-                                Y = (byte) tmpY;
+                                Y = (byte)tmpY;
                             }
                             if (CurrentMap != Globals.MapGrid[gridX, gridY])
                             {
@@ -1440,7 +1440,7 @@ namespace Intersect.Client.Entities
                         {
                             return -2;
                         }
-                        else if (gameMap.Attributes[tmpX, tmpY].Type ==MapAttributes.ZDimension)
+                        else if (gameMap.Attributes[tmpX, tmpY].Type == MapAttributes.ZDimension)
                         {
                             if (((MapZDimensionAttribute)gameMap.Attributes[tmpX, tmpY]).BlockedLevel - 1 == z)
                             {
@@ -1453,7 +1453,7 @@ namespace Intersect.Client.Entities
                 {
                     return -5;
                 }
-                
+
                 return -1;
             }
             catch
@@ -1492,42 +1492,30 @@ namespace Intersect.Client.Entities
                 {
                     base.DrawName((customColorOverride != null) ? customColorOverride : CustomColors.PlayerNameMod, CustomColors.PlayerNameModBorder, CustomColors.PlayerNameModBackground);
 
-                    if (HeaderLabel != null)
-                        DrawLabels(HeaderLabel.Item1, 0, (HeaderLabel.Item2.A != 0) ? HeaderLabel.Item2 : CustomColors.PlayerNameMod, CustomColors.PlayerNameModBorder, CustomColors.PlayerNameModBackground);
-
-                    if (FooterLabel != null)
-                        DrawLabels(FooterLabel.Item1, 1, (FooterLabel.Item2.A != 0) ? FooterLabel.Item2 : CustomColors.PlayerNameMod, CustomColors.PlayerNameModBorder, CustomColors.PlayerNameModBackground);
+                    DrawLabels(HeaderLabel.Label, 0, (HeaderLabel.Color.A != 0) ? HeaderLabel.Color : CustomColors.PlayerNameMod, CustomColors.PlayerNameModBorder, CustomColors.PlayerNameModBackground);
+                    DrawLabels(FooterLabel.Label, 1, (FooterLabel.Color.A != 0) ? FooterLabel.Color : CustomColors.PlayerNameMod, CustomColors.PlayerNameModBorder, CustomColors.PlayerNameModBackground);
                 }
                 else if (Type == 2)
                 {
                     base.DrawName((customColorOverride != null) ? customColorOverride : CustomColors.PlayerNameAdmin, CustomColors.PlayerNameAdminBorder, CustomColors.PlayerNameAdminBackground);
 
-                    if (HeaderLabel != null)
-                        DrawLabels(HeaderLabel.Item1, 0, (HeaderLabel.Item2.A != 0) ? HeaderLabel.Item2 : CustomColors.PlayerNameAdmin, CustomColors.PlayerNameAdminBorder, CustomColors.PlayerNameAdminBackground);
-
-                    if (FooterLabel != null)
-                        DrawLabels(FooterLabel.Item1, 1, (FooterLabel.Item2.A != 0) ? FooterLabel.Item2 : CustomColors.PlayerNameAdmin, CustomColors.PlayerNameAdminBorder, CustomColors.PlayerNameAdminBackground);
+                    DrawLabels(HeaderLabel.Label, 0, (HeaderLabel.Color.A != 0) ? HeaderLabel.Color : CustomColors.PlayerNameAdmin, CustomColors.PlayerNameAdminBorder, CustomColors.PlayerNameAdminBackground);
+                    DrawLabels(FooterLabel.Label, 1, (FooterLabel.Color.A != 0) ? FooterLabel.Color : CustomColors.PlayerNameAdmin, CustomColors.PlayerNameAdminBorder, CustomColors.PlayerNameAdminBackground);
                 }
                 else
                 {
                     base.DrawName((customColorOverride != null) ? customColorOverride : CustomColors.PlayerNameNormal, CustomColors.PlayerNameNormalBorder, CustomColors.PlayerNameNormalBackground);
 
-                    if (HeaderLabel != null)
-                        DrawLabels(HeaderLabel.Item1, 0, (HeaderLabel.Item2.A != 0) ? HeaderLabel.Item2 : CustomColors.PlayerNameNormal, CustomColors.PlayerNameNormalBorder, CustomColors.PlayerNameNormalBackground);
-
-                    if (FooterLabel != null)
-                        DrawLabels(FooterLabel.Item1, 1, (FooterLabel.Item2.A != 0) ? FooterLabel.Item2 : CustomColors.PlayerNameNormal, CustomColors.PlayerNameNormalBorder, CustomColors.PlayerNameNormalBackground);
+                    DrawLabels(HeaderLabel.Label, 0, (HeaderLabel.Color.A != 0) ? HeaderLabel.Color : CustomColors.PlayerNameNormal, CustomColors.PlayerNameNormalBorder, CustomColors.PlayerNameNormalBackground);
+                    DrawLabels(FooterLabel.Label, 1, (FooterLabel.Color.A != 0) ? FooterLabel.Color : CustomColors.PlayerNameNormal, CustomColors.PlayerNameNormalBorder, CustomColors.PlayerNameNormalBackground);
                 }
             }
             else
             {
                 base.DrawName(textColor, borderColor, backgroundColor);
 
-                if (HeaderLabel != null)
-                    DrawLabels(HeaderLabel.Item1, 0, textColor, borderColor, backgroundColor);
-
-                if (FooterLabel != null)
-                    DrawLabels(FooterLabel.Item1, 1, textColor, borderColor, backgroundColor);
+                DrawLabels(HeaderLabel.Label, 0, textColor, borderColor, backgroundColor);
+                DrawLabels(FooterLabel.Label, 1, textColor, borderColor, backgroundColor);
             }
         }
 
@@ -1536,13 +1524,13 @@ namespace Intersect.Client.Entities
             foreach (var en in Globals.Entities)
             {
                 if (en.Value == null) continue;
-                if (!en.Value.IsStealthed() ||  Globals.Me.IsInMyParty(en.Value))
+                if (!en.Value.IsStealthed() || Globals.Me.IsInMyParty(en.Value))
                 {
                     if (en.Value.GetType() != typeof(Projectile) && en.Value.GetType() != typeof(Resource))
                     {
                         if (TargetType == 0 && TargetIndex == en.Value.Id)
                         {
-                            en.Value.DrawTarget((int) TargetTypes.Selected);
+                            en.Value.DrawTarget((int)TargetTypes.Selected);
                         }
                     }
                 }
@@ -1557,18 +1545,18 @@ namespace Intersect.Client.Entities
                 foreach (var en in eventMap.LocalEntities)
                 {
                     if (en.Value == null) continue;
-                    if (en.Value.CurrentMap == eventMap.Id && !((Event) en.Value).DisablePreview && (!en.Value.IsStealthed() || Globals.Me.IsInMyParty(en.Value)))
+                    if (en.Value.CurrentMap == eventMap.Id && !((Event)en.Value).DisablePreview && (!en.Value.IsStealthed() || Globals.Me.IsInMyParty(en.Value)))
                     {
                         if (TargetType == 1 && TargetIndex == en.Value.Id)
                         {
-                            en.Value.DrawTarget((int) TargetTypes.Selected);
+                            en.Value.DrawTarget((int)TargetTypes.Selected);
                         }
                     }
                 }
             }
 
-            var x = (int) Math.Floor(Globals.InputManager.GetMousePosition().X + GameGraphics.CurrentView.Left);
-            var y = (int) Math.Floor(Globals.InputManager.GetMousePosition().Y + GameGraphics.CurrentView.Top);
+            var x = (int)Math.Floor(Globals.InputManager.GetMousePosition().X + GameGraphics.CurrentView.Left);
+            var y = (int)Math.Floor(Globals.InputManager.GetMousePosition().Y + GameGraphics.CurrentView.Top);
 
             foreach (MapInstance map in MapInstance.Lookup.Values)
             {
@@ -1581,7 +1569,7 @@ namespace Intersect.Client.Entities
                         foreach (var en in Globals.Entities)
                         {
                             if (en.Value == null) continue;
-                            if (en.Value.CurrentMap == mapId && !en.Value.IsStealthed() && en.Value.WorldPos.Contains(x,y))
+                            if (en.Value.CurrentMap == mapId && !en.Value.IsStealthed() && en.Value.WorldPos.Contains(x, y))
                             {
                                 if (en.Value.GetType() != typeof(Projectile) && en.Value.GetType() != typeof(Resource))
                                 {

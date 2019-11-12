@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Web.UI;
 
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -96,8 +95,8 @@ namespace Intersect.Server.Entities
         [NotMapped]
         public Color NameColor { get; set; }
 
-        [NotMapped] public Tuple<string, Color> HeaderLabel { get; set; }
-        [NotMapped] public Tuple<string, Color> FooterLabel { get; set; }
+        [NotMapped] public LabelInstance HeaderLabel { get; set; }
+        [NotMapped] public LabelInstance FooterLabel { get; set; }
 
     //Instance Values
     private Guid _id;
@@ -1945,8 +1944,8 @@ namespace Intersect.Server.Entities
             packet.Stats = GetStatValues();
             packet.StatusEffects = StatusPackets();
             packet.NameColor = NameColor;
-            packet.HeaderLabel = HeaderLabel;
-            packet.FooterLabel = FooterLabel;
+            packet.HeaderLabel = new LabelPacket(HeaderLabel.Label, HeaderLabel.Color);
+            packet.FooterLabel = new LabelPacket(FooterLabel.Label, FooterLabel.Color);
 
             return packet;
         }
@@ -2297,6 +2296,18 @@ namespace Intersect.Server.Entities
 
                 Range = i;
             }
+        }
+    }
+
+    public struct LabelInstance
+    {
+        public string Label;
+        public Color Color;
+
+        public LabelInstance(string label, Color color)
+        {
+            Label = label;
+            Color = color;
         }
     }
 }

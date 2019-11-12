@@ -15,7 +15,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             InitializeComponent();
             mMyCommand = refCommand;
             mEventEditor = editor;
-            nudVital.Value = refCommand.amount;
+            nudVital.Value = refCommand.Amount;
             InitLocalization();
         }
 
@@ -24,7 +24,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
           InitializeComponent();
           mMyCommand = refCommand;
           mEventEditor = editor;
-          nudVital.Value = refCommand.amount;
+          nudVital.Value = refCommand.Amount;
           InitLocalization();
         }
 
@@ -48,11 +48,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
             if (mMyCommand is RestoreHpCommand)
             {
-                ((RestoreHpCommand)mMyCommand).amount = (int)nudVital.Value;
+                ((RestoreHpCommand)mMyCommand).Amount = (int)nudVital.Value;
             }
             if (mMyCommand is RestoreMpCommand)
             {
-                ((RestoreMpCommand)mMyCommand).amount = (int)nudVital.Value;
+                ((RestoreMpCommand)mMyCommand).Amount = (int)nudVital.Value;
             }
             mEventEditor.FinishCommandEdit();
         }

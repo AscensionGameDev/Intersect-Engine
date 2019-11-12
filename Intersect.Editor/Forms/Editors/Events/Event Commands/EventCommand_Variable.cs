@@ -242,17 +242,17 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 optBooleanTrue.Checked = mod.Value;
                 optBooleanFalse.Checked = !mod.Value;
 
-                if (mod.DupVariableId != Guid.Empty)
+                if (mod.DuplicateVariableId != Guid.Empty)
                 {
                     if (mod.DupVariableType == VariableTypes.PlayerVariable)
                     {
                         optBooleanClonePlayerVar.Checked = true;
-                        cmbBooleanClonePlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(mod.DupVariableId);
+                        cmbBooleanClonePlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(mod.DuplicateVariableId);
                     }
                     else
                     {
                         optBooleanCloneGlobalVar.Checked = true;
-                        cmbBooleanCloneGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(mod.DupVariableId);
+                        cmbBooleanCloneGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(mod.DuplicateVariableId);
                     }
                 }
             }
@@ -267,12 +267,12 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             if (optBooleanClonePlayerVar.Checked)
             {
                 mod.DupVariableType = VariableTypes.PlayerVariable;
-                mod.DupVariableId = PlayerVariableBase.IdFromList(cmbBooleanClonePlayerVar.SelectedIndex);
+                mod.DuplicateVariableId = PlayerVariableBase.IdFromList(cmbBooleanClonePlayerVar.SelectedIndex);
             }
             else if (optBooleanCloneGlobalVar.Checked)
             {
                 mod.DupVariableType = VariableTypes.ServerVariable;
-                mod.DupVariableId = ServerVariableBase.IdFromList(cmbBooleanCloneGlobalVar.SelectedIndex);
+                mod.DuplicateVariableId = ServerVariableBase.IdFromList(cmbBooleanCloneGlobalVar.SelectedIndex);
             }
 
             return mod;
@@ -327,42 +327,42 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     case VariableMods.DupPlayerVar:
                         optNumericSet.Checked = true;
                         optNumericClonePlayerVar.Checked = true;
-                        cmbNumericClonePlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(mod.DupVariableId);
+                        cmbNumericClonePlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(mod.DuplicateVariableId);
 
                         break;
 
                     case VariableMods.DupGlobalVar:
                         optNumericSet.Checked = true;
                         optNumericCloneGlobalVar.Checked = true;
-                        cmbNumericCloneGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(mod.DupVariableId);
+                        cmbNumericCloneGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(mod.DuplicateVariableId);
 
                         break;
 
                     case VariableMods.AddPlayerVar:
                         optNumericAdd.Checked = true;
                         optNumericClonePlayerVar.Checked = true;
-                        cmbNumericClonePlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(mod.DupVariableId);
+                        cmbNumericClonePlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(mod.DuplicateVariableId);
 
                         break;
 
                     case VariableMods.AddGlobalVar:
                         optNumericAdd.Checked = true;
                         optNumericCloneGlobalVar.Checked = true;
-                        cmbNumericCloneGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(mod.DupVariableId);
+                        cmbNumericCloneGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(mod.DuplicateVariableId);
 
                         break;
 
                     case VariableMods.SubtractPlayerVar:
                         optNumericSubtract.Checked = true;
                         optNumericClonePlayerVar.Checked = true;
-                        cmbNumericClonePlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(mod.DupVariableId);
+                        cmbNumericClonePlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(mod.DuplicateVariableId);
 
                         break;
 
                     case VariableMods.SubtractGlobalVar:
                         optNumericSubtract.Checked = true;
                         optNumericCloneGlobalVar.Checked = true;
-                        cmbNumericCloneGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(mod.DupVariableId);
+                        cmbNumericCloneGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(mod.DuplicateVariableId);
 
                         break;
                 }
@@ -458,7 +458,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 {
                     mod.ModType = VariableMods.SubtractPlayerVar;
                 }
-                mod.DupVariableId = PlayerVariableBase.IdFromList(cmbNumericClonePlayerVar.SelectedIndex);
+                mod.DuplicateVariableId = PlayerVariableBase.IdFromList(cmbNumericClonePlayerVar.SelectedIndex);
             }
             else if (optNumericCloneGlobalVar.Checked)
             {
@@ -474,7 +474,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 {
                     mod.ModType = VariableMods.SubtractGlobalVar;
                 }
-                mod.DupVariableId = ServerVariableBase.IdFromList(cmbNumericCloneGlobalVar.SelectedIndex);
+                mod.DuplicateVariableId = ServerVariableBase.IdFromList(cmbNumericCloneGlobalVar.SelectedIndex);
             }
 
             return mod;
@@ -499,11 +499,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                         break;
                     case VariableMods.DupPlayerVar:
                         optClonePlayerString.Checked = true;
-                        cmbDupPlayerString.SelectedIndex = PlayerVariableBase.ListIndex(mod.DupVariableId);
+                        cmbDupPlayerString.SelectedIndex = PlayerVariableBase.ListIndex(mod.DuplicateVariableId);
                         break;
                     case VariableMods.DupGlobalVar:
                         optCloneGlobalString.Checked = true;
-                        cmbDupGlobalString.SelectedIndex = ServerVariableBase.ListIndex(mod.DupVariableId);
+                        cmbDupGlobalString.SelectedIndex = ServerVariableBase.ListIndex(mod.DuplicateVariableId);
                         break;
                     case VariableMods.PlayerName:
                         optPlayerName.Checked = true;
@@ -523,12 +523,12 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             else if (optClonePlayerString.Checked)
             {
                 mod.ModType = VariableMods.DupPlayerVar;
-                mod.DupVariableId = PlayerVariableBase.IdFromList(cmbDupPlayerString.SelectedIndex);
+                mod.DuplicateVariableId = PlayerVariableBase.IdFromList(cmbDupPlayerString.SelectedIndex);
             }
             else if (optCloneGlobalString.Checked)
             {
                 mod.ModType = VariableMods.DupGlobalVar;
-                mod.DupVariableId = ServerVariableBase.IdFromList(cmbDupGlobalString.SelectedIndex);
+                mod.DuplicateVariableId = ServerVariableBase.IdFromList(cmbDupGlobalString.SelectedIndex);
             }
             else if (optPlayerName.Checked)
             {

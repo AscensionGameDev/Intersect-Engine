@@ -359,6 +359,7 @@
     <Compile Include="Network\Packets\Server\FriendsPacket.cs" />
     <Compile Include="Network\Packets\Server\InputVariablePacket.cs" />
     <Compile Include="Network\Packets\Server\InventoryPacket.cs" />
+    <Compile Include="Network\Packets\Server\LabelPacket.cs" />
     <Compile Include="Network\Packets\Server\MapAreaPacket.cs" />
     <Compile Include="Network\Packets\Server\MoveRoutePacket.cs" />
     <Compile Include="Network\Packets\Server\NpcEntityPacket.cs" />

@@ -27,7 +27,7 @@ namespace Intersect.Server.EventProcessing
             stackInfo.WaitingForResponse = CommandInstance.EventResponse.None;
             stackInfo.WaitingOnCommand = null;
             stackInfo.BranchIds = null;
-            
+
             ProcessCommand((dynamic)command, player, instance, instance.CallStack.Peek(), instance.CallStack);
 
             stackInfo.CommandIndex++;
@@ -182,7 +182,7 @@ namespace Intersect.Server.EventProcessing
             {
                 for (int i = 0; i < commonEvent.Pages.Count; i++)
                 {
-                    if (Conditions.CanSpawnPage(commonEvent.Pages[i],player,instance))
+                    if (Conditions.CanSpawnPage(commonEvent.Pages[i], player, instance))
                     {
                         var commonEventStack = new CommandInstance(commonEvent.Pages[i]);
                         callStack.Push(commonEventStack);
@@ -194,26 +194,26 @@ namespace Intersect.Server.EventProcessing
         //Restore Hp Command
         private static void ProcessCommand(RestoreHpCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            if (command.amount > 0)
+            if (command.Amount > 0)
             {
-                player.AddVital(Vitals.Health, command.amount);
+                player.AddVital(Vitals.Health, command.Amount);
             }
-            else if (command.amount < 0)
+            else if (command.Amount < 0)
             {
-                player.SubVital(Vitals.Health, -command.amount);
+                player.SubVital(Vitals.Health, -command.Amount);
             }
         }
 
         //Restore Mp Command
         private static void ProcessCommand(RestoreMpCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            if (command.amount > 0)
+            if (command.Amount > 0)
             {
-                player.AddVital(Vitals.Mana, command.amount);
+                player.AddVital(Vitals.Mana, command.Amount);
             }
-            else if (command.amount < 0)
+            else if (command.Amount < 0)
             {
-                player.SubVital(Vitals.Mana, -command.amount);
+                player.SubVital(Vitals.Mana, -command.Amount);
             }
         }
 
@@ -339,26 +339,26 @@ namespace Intersect.Server.EventProcessing
         //Change Player Label Command
         private static void ProcessCommand(ChangePlayerLabelCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-          string label = "";
-          if (command.VariableType == VariableTypes.PlayerVariable)
-            label = player.GetVariableValue(command.VariableId).ToString();
-          else if (command.VariableType == VariableTypes.ServerVariable)
-            label = ServerVariableBase.Get(command.VariableId).Value.ToString();
+            string label = "";
+            if (command.VariableType == VariableTypes.PlayerVariable)
+                label = player.GetVariableValue(command.VariableId).ToString();
+            else if (command.VariableType == VariableTypes.ServerVariable)
+                label = ServerVariableBase.Get(command.VariableId).Value.ToString();
 
-          Color color = command.Color;
-          if (command.MatchNameColor)
-            color = player.NameColor;
+            Color color = command.Color;
+            if (command.MatchNameColor)
+                color = player.NameColor;
 
-          if (command.Position == 0) // Header
-          {
-            player.HeaderLabel = new Tuple<string, Color>(label, color);
-          }
-          else if (command.Position == 1) // Footer
-          {
-            player.FooterLabel = new Tuple<string, Color>(label, color);
-          }
+            if (command.Position == 0) // Header
+            {
+                player.HeaderLabel = new LabelInstance(label, color);
+            }
+            else if (command.Position == 1) // Footer
+            {
+                player.FooterLabel = new LabelInstance(label, color);
+            }
 
-          PacketSender.SendEntityDataToProximity(player);
+            PacketSender.SendEntityDataToProximity(player);
         }
 
         //Set Access Command (wtf why would we even allow this? lol)
@@ -383,7 +383,7 @@ namespace Intersect.Server.EventProcessing
         //Warp Player Command
         private static void ProcessCommand(WarpCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            player.Warp(command.MapId,command.X,command.Y,command.Direction == WarpDirection.Retain ? (byte)player.Dir : (byte)(command.Direction - 1));
+            player.Warp(command.MapId, command.X, command.Y, command.Direction == WarpDirection.Retain ? (byte)player.Dir : (byte)(command.Direction - 1));
         }
 
         //Set Move Route Command
@@ -444,7 +444,7 @@ namespace Intersect.Server.EventProcessing
             var tileX = 0;
             var tileY = 0;
             var direction = (byte)Directions.Up;
-            var targetEntity = (EntityInstance) player;
+            var targetEntity = (EntityInstance)player;
             if (mapId != Guid.Empty)
             {
                 tileX = command.X;
@@ -474,16 +474,16 @@ namespace Intersect.Server.EventProcessing
                         int tmp = 0;
                         switch (targetEntity.Dir)
                         {
-                            case (int) Directions.Down:
+                            case (int)Directions.Down:
                                 yDiff *= -1;
                                 xDiff *= -1;
                                 break;
-                            case (int) Directions.Left:
+                            case (int)Directions.Left:
                                 tmp = yDiff;
                                 yDiff = xDiff;
                                 xDiff = tmp;
                                 break;
-                            case (int) Directions.Right:
+                            case (int)Directions.Right:
                                 tmp = yDiff;
                                 yDiff = xDiff;
                                 xDiff = -tmp;
@@ -561,7 +561,7 @@ namespace Intersect.Server.EventProcessing
                     if (command.X == 0 && command.Y == 0 && command.Dir == 0)
                     {
                         //Attach to entity instead of playing on tile
-                        PacketSender.SendAnimationToProximity(animId, targetEntity.GetEntityType() == EntityTypes.Event ? 2 : 1, targetEntity.Id, targetEntity.MapId,0,0,0);
+                        PacketSender.SendAnimationToProximity(animId, targetEntity.GetEntityType() == EntityTypes.Event ? 2 : 1, targetEntity.Id, targetEntity.MapId, 0, 0, 0);
                         return;
                     }
                     int xDiff = command.X;
@@ -815,7 +815,7 @@ namespace Intersect.Server.EventProcessing
                             };
                             stack.Peek().CommandIndex++;
                             stack.Push(tmpStack);
-                            if (FindLabelResursive(stack,page,tmpStack.CommandList, label)) return true;
+                            if (FindLabelResursive(stack, page, tmpStack.CommandList, label)) return true;
                             stack.Peek().CommandIndex--;
                         }
                     }
@@ -869,7 +869,7 @@ namespace Intersect.Server.EventProcessing
                         var id = m.Groups[1].Value;
                         foreach (var var in PlayerVariableBase.Lookup.Values)
                         {
-                            if (id == ((PlayerVariableBase) var).TextId)
+                            if (id == ((PlayerVariableBase)var).TextId)
                             {
                                 input = input.Replace(Strings.Events.playervar + "{" + m.Groups[1].Value + "}", player.GetVariableValue(var.Id).ToString(((PlayerVariableBase)var).Type));
                             }
@@ -947,18 +947,18 @@ namespace Intersect.Server.EventProcessing
                 value = new VariableValue();
             }
 
-            if (mod.DupVariableId != Guid.Empty)
+            if (mod.DuplicateVariableId != Guid.Empty)
             {
                 if (mod.DupVariableType == VariableTypes.PlayerVariable)
                 {
-                    value.Boolean = player.GetVariableValue(mod.DupVariableId).Boolean;
+                    value.Boolean = player.GetVariableValue(mod.DuplicateVariableId).Boolean;
                 }
                 else if (mod.DupVariableType == VariableTypes.ServerVariable)
                 {
-                    var variable = ServerVariableBase.Get(mod.DupVariableId);
+                    var variable = ServerVariableBase.Get(mod.DuplicateVariableId);
                     if (variable != null)
                     {
-                        value.Boolean = ServerVariableBase.Get(mod.DupVariableId).Value.Boolean;
+                        value.Boolean = ServerVariableBase.Get(mod.DuplicateVariableId).Value.Boolean;
                     }
                 }
             }
@@ -1017,30 +1017,30 @@ namespace Intersect.Server.EventProcessing
                     value.Integer = ms;
                     break;
                 case Enums.VariableMods.DupPlayerVar:
-                    value.Integer = player.GetVariableValue(mod.DupVariableId).Integer;
+                    value.Integer = player.GetVariableValue(mod.DuplicateVariableId).Integer;
                     break;
                 case Enums.VariableMods.DupGlobalVar:
-                    var dupServerVariable = ServerVariableBase.Get(mod.DupVariableId);
+                    var dupServerVariable = ServerVariableBase.Get(mod.DuplicateVariableId);
                     if (dupServerVariable != null)
                     {
                         value.Integer = dupServerVariable.Value.Integer;
                     }
                     break;
                 case Enums.VariableMods.AddPlayerVar:
-                    value.Integer += player.GetVariableValue(mod.DupVariableId).Integer;
+                    value.Integer += player.GetVariableValue(mod.DuplicateVariableId).Integer;
                     break;
                 case Enums.VariableMods.AddGlobalVar:
-                    var asv = ServerVariableBase.Get(mod.DupVariableId);
+                    var asv = ServerVariableBase.Get(mod.DuplicateVariableId);
                     if (asv != null)
                     {
                         value.Integer += asv.Value.Integer;
                     }
                     break;
                 case Enums.VariableMods.SubtractPlayerVar:
-                    value.Integer -= player.GetVariableValue(mod.DupVariableId).Integer;
+                    value.Integer -= player.GetVariableValue(mod.DuplicateVariableId).Integer;
                     break;
                 case Enums.VariableMods.SubtractGlobalVar:
-                    var ssv = ServerVariableBase.Get(mod.DupVariableId);
+                    var ssv = ServerVariableBase.Get(mod.DuplicateVariableId);
                     if (ssv != null)
                     {
                         value.Integer -= ssv.Value.Integer;
@@ -1084,10 +1084,10 @@ namespace Intersect.Server.EventProcessing
                     value.String = mod.Value;
                     break;
                 case Enums.VariableMods.DupPlayerVar:
-                    value.String = player.GetVariableValue(mod.DupVariableId).String;
+                    value.String = player.GetVariableValue(mod.DuplicateVariableId).String;
                     break;
                 case Enums.VariableMods.DupGlobalVar:
-                    var dupServerVariable = ServerVariableBase.Get(mod.DupVariableId);
+                    var dupServerVariable = ServerVariableBase.Get(mod.DuplicateVariableId);
                     if (dupServerVariable != null)
                     {
                         value.String = dupServerVariable.Value.String;

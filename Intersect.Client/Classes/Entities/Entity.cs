@@ -69,8 +69,8 @@ namespace Intersect.Client.Entities
         //Extras
         public string Face = "";
         public Color NameColor = null;
-        public Tuple<string, Color> HeaderLabel;
-        public Tuple<string, Color> FooterLabel;
+        public LabelInstance HeaderLabel;
+        public LabelInstance FooterLabel;
 
         public Gender Gender = Gender.Male;
         public bool HideName;
@@ -203,9 +203,9 @@ namespace Intersect.Client.Entities
             HideName = packet.HideName;
             HideEntity = packet.HideEntity;
             NameColor = packet.NameColor;
-            HeaderLabel = packet.HeaderLabel;
-            FooterLabel = packet.FooterLabel;
-            
+            HeaderLabel = new LabelInstance(packet.HeaderLabel.Label, packet.HeaderLabel.Color);
+            FooterLabel = new LabelInstance(packet.FooterLabel.Label, packet.FooterLabel.Color);
+
             var animsToClear = new List<AnimationInstance>();
             var animsToAdd = new List<AnimationBase>();
             for (int i = 0; i < packet.Animations.Length; i++)
@@ -1308,6 +1308,18 @@ namespace Intersect.Client.Entities
                 en.Y = mEndY;
             }
             return en.Dashing != null;
+        }
+    }
+
+    public struct LabelInstance
+    {
+        public string Label;
+        public Color Color;
+
+        public LabelInstance(string label, Color color)
+        {
+            Label = label;
+            Color = color;
         }
     }
 }
