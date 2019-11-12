@@ -8,6 +8,7 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
+using Intersect.Server.Classes.Maps;
 using Intersect.Server.Database;
 using Intersect.Server.Entities;
 using Intersect.Server.General;
@@ -58,7 +59,12 @@ namespace Intersect.Server.Maps
         [NotMapped]
         public List<Projectile> MapProjectiles = new List<Projectile>();
 
-        private BytePoint[] mNpcMapBlocks = new BytePoint[0];
+        //Traps
+        [JsonIgnore]
+        [NotMapped]
+        public List<MapTrapInstance> MapTraps = new List<MapTrapInstance>();
+
+    private BytePoint[] mNpcMapBlocks = new BytePoint[0];
         [JsonIgnore]
         [NotMapped]
         public Dictionary<NpcSpawn, MapNpcSpawn> NpcSpawnInstances = new Dictionary<NpcSpawn, MapNpcSpawn>();
@@ -600,6 +606,23 @@ namespace Intersect.Server.Maps
             }
         }
 
+        public void SpawnTrap(EntityInstance owner, SpellBase parentSpell, byte x, byte y, byte z)
+        {
+            lock (GetMapLock())
+            {
+                var trap = new MapTrapInstance(owner, parentSpell, Id, x, y, z);
+                MapTraps.Add(trap);
+            }
+        }
+
+        public void DespawnTraps()
+        {
+          lock (GetMapLock())
+          {
+            MapTraps.Clear();
+          }
+        }
+
         //Entity Processing
         public void AddEntity(EntityInstance en)
         {
@@ -639,6 +662,14 @@ namespace Intersect.Server.Maps
             }
         }
 
+        public void RemoveTrap(MapTrapInstance trap)
+        {
+            lock (GetMapLock())
+            {
+                MapTraps.Remove(trap);
+            }
+        }
+
         public void ClearEntityTargetsOf(EntityInstance en)
         {
             lock (GetMapLock())
@@ -667,6 +698,11 @@ namespace Intersect.Server.Maps
                 for (int i = 0; i < MapProjectiles.Count; i++)
                 {
                     MapProjectiles[i].Update();
+                }
+                //Process all of the traps
+                for (int i = 0; i < MapTraps.Count; i++)
+                {
+                  MapTraps[i].Update();
                 }
                 if (!Active || CheckActive() == false || LastUpdateTime + UpdateDelay > timeMs)
                 {
@@ -940,6 +976,7 @@ namespace Intersect.Server.Maps
             DespawnItems();
             DespawnResources();
             DespawnProjectiles();
+            DespawnTraps();
             DespawnGlobalEvents();
         }
 

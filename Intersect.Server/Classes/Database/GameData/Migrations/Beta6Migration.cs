@@ -268,7 +268,7 @@ namespace Intersect.Server.Classes.Database.GameData.Migrations
         //    public VariableMods ModType { get; set; } = VariableMods.Set;
         //    public int Value { get; set; }
         //    public int HighValue { get; set; }
-        //    public Guid DupVariableId { get; set; }
+        //    public Guid DuplicateVariableId { get; set; }
         //}
 
         private static JObject ConvertSetVariableCommand(JObject obj)
@@ -300,7 +300,7 @@ namespace Intersect.Server.Classes.Database.GameData.Migrations
             cmd.Modification = mod;
 
             if (obj.ContainsKey("Value")) mod.Value = long.Parse(obj["Value"].ToString());
-            if (obj.ContainsKey("DupVariableId")) mod.DupVariableId = Guid.Parse(obj["DupVariableId"].ToString());
+            if (obj.ContainsKey("DuplicateVariableId")) mod.DuplicateVariableId = Guid.Parse(obj["DuplicateVariableId"].ToString());
             if (obj.ContainsKey("HighValue")) mod.HighValue = long.Parse(obj["HighValue"].ToString());
             if (obj.ContainsKey("ModType")) mod.ModType = (VariableMods)int.Parse(obj["ModType"].ToString());
 

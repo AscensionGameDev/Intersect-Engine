@@ -124,6 +124,7 @@ namespace Intersect.Editor.Forms.Editors
             chkIgnoreActiveResources.Text = Strings.ProjectileEditor.ignoreactiveresources;
             chkIgnoreInactiveResources.Text = Strings.ProjectileEditor.ignoreinactiveresources;
             chkIgnoreZDimensionBlocks.Text = Strings.ProjectileEditor.ignorezdimension;
+            chkPierce.Text = Strings.ProjectileEditor.piercetarget;
 
             grpAmmo.Text = Strings.ProjectileEditor.ammo;
             lblAmmoItem.Text = Strings.ProjectileEditor.ammoitem;
@@ -157,6 +158,7 @@ namespace Intersect.Editor.Forms.Editors
                 chkIgnoreInactiveResources.Checked = mEditorItem.IgnoreExhaustedResources;
                 chkIgnoreZDimensionBlocks.Checked = mEditorItem.IgnoreZDimension;
                 chkGrapple.Checked = mEditorItem.GrappleHook;
+                chkPierce.Checked = mEditorItem.PierceTarget;
                 cmbItem.SelectedIndex = ItemBase.ListIndex(mEditorItem.AmmoItemId) + 1;
                 nudConsume.Value = mEditorItem.AmmoRequired;
 
@@ -437,6 +439,11 @@ namespace Intersect.Editor.Forms.Editors
         private void chkIgnoreZDimensionBlocks_CheckedChanged(object sender, EventArgs e)
         {
             mEditorItem.IgnoreZDimension = chkIgnoreZDimensionBlocks.Checked;
+        }
+
+        private void chkPierce_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.PierceTarget = chkPierce.Checked;
         }
 
         private void chkGrapple_CheckedChanged(object sender, EventArgs e)
@@ -831,6 +838,7 @@ namespace Intersect.Editor.Forms.Editors
                 txtSearch.SelectAll();
         }
 
-        #endregion
-    }
+    #endregion
+
+  }
 }

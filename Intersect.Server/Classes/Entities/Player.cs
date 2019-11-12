@@ -584,7 +584,7 @@ namespace Intersect.Server.Entities
                 var maxVitalValue = GetMaxVital(vital);
                 if (vitalValue >= maxVitalValue) continue;
 
-                var vitalRegenRate = playerClass.VitalRegen[vitalId] / 100f;
+                var vitalRegenRate = playerClass.VitalRegen[vitalId] + GetEquipmentVitalRegen(vital) / 100f;
                 var regenValue = (int)Math.Max(1, maxVitalValue * vitalRegenRate) * Math.Abs(Math.Sign(vitalRegenRate));
                 AddVital(vital, regenValue);
             }
@@ -711,7 +711,7 @@ namespace Intersect.Server.Entities
 
         public void GiveExperience(long amount)
         {
-            Exp += amount;
+            Exp += (int)((amount * GetExpMultiplier()) / 100);
             if (Exp < 0) Exp = 0;
             if (!CheckLevelUp())
             {
@@ -1657,11 +1657,10 @@ namespace Intersect.Server.Entities
                         var item = ItemBase.Get(Items[Equipment[i]].ItemId);
                         if (item != null)
                         {
-                            //Check for cooldown reduction
-                            if (item.Effect.Type == EffectType.CooldownReduction)
-                            {
-                                cooldown += item.Effect.Percentage;
-                            }
+                          if (item.Effect.Type == EffectType.CooldownReduction)
+                          {
+                              cooldown += item.Effect.Percentage;
+                          }
                         }
                     }
                 }
@@ -1683,17 +1682,113 @@ namespace Intersect.Server.Entities
                         var item = ItemBase.Get(Items[Equipment[i]].ItemId);
                         if (item != null)
                         {
-                            //Check for cooldown reduction
-                            if (item.Effect.Type == EffectType.Lifesteal)
-                            {
-                                lifesteal += item.Effect.Percentage;
-                            }
+                          if (item.Effect.Type == EffectType.Lifesteal)
+                          {
+                              lifesteal += item.Effect.Percentage;
+                          }
                         }
                     }
                 }
             }
 
             return lifesteal;
+        }
+
+        public double GetTenacity()
+        {
+          double tenacity = 0;
+
+          for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+          {
+            if (Equipment[i] > -1)
+            {
+              if (Items[Equipment[i]].ItemId != Guid.Empty)
+              {
+                var item = ItemBase.Get(Items[Equipment[i]].ItemId);
+                if (item != null)
+                {
+                  if (item.Effect.Type == EffectType.Tenacity)
+                  {
+                    tenacity += item.Effect.Percentage;
+                  }
+                }
+              }
+            }
+          }
+
+          return tenacity;
+        }
+
+        public double GetLuck()
+        {
+          double luck = 0;
+
+          for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+          {
+            if (Equipment[i] > -1)
+            {
+              if (Items[Equipment[i]].ItemId != Guid.Empty)
+              {
+                var item = ItemBase.Get(Items[Equipment[i]].ItemId);
+                if (item != null)
+                {
+                  if (item.Effect.Type == EffectType.Luck)
+                  {
+                    luck += item.Effect.Percentage;
+                  }
+                }
+              }
+            }
+          }
+
+          return luck;
+        }
+
+        public int GetExpMultiplier()
+        {
+          int exp = 100;
+
+          for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+          {
+            if (Equipment[i] > -1)
+            {
+              if (Items[Equipment[i]].ItemId != Guid.Empty)
+              {
+                var item = ItemBase.Get(Items[Equipment[i]].ItemId);
+                if (item != null)
+                {
+                  if (item.Effect.Type == EffectType.EXP)
+                  {
+                    exp += item.Effect.Percentage;
+                  }
+                }
+              }
+            }
+          }
+
+          return exp;
+        }
+
+        public int GetEquipmentVitalRegen(Vitals vital)
+        {
+          int regen = 0;
+
+          for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+          {
+            if (Equipment[i] > -1)
+            {
+              if (Items[Equipment[i]].ItemId != Guid.Empty)
+              {
+                var item = ItemBase.Get(Items[Equipment[i]].ItemId);
+                if (item != null)
+                {
+                  regen += item.VitalsRegen[(int)vital];
+                }
+              }
+            }
+          }
+
+          return regen;
         }
 
         //Shop
@@ -3928,6 +4023,94 @@ namespace Intersect.Server.Entities
                         if (stackInfo.WaitingOnCommand != null && stackInfo.WaitingOnCommand.Type == EventCommandType.ShowOptions)
                         {
                             var tmpStack = new CommandInstance(stackInfo.Page, stackInfo.BranchIds[responseId - 1]);
+                            evt.CallStack.Push(tmpStack);
+                        }
+                        return;
+                    }
+                }
+            }
+        }
+
+        public void RespondToEventInput(Guid eventId, int newValue, string newValueString, bool canceled = false)
+        {
+            lock (mEventLock)
+            {
+                foreach (var evt in EventLookup.Values)
+                {
+                    if (evt.PageInstance != null && evt.PageInstance.Id == eventId)
+                    {
+                        if (evt.CallStack.Count <= 0) return;
+                        var stackInfo = evt.CallStack.Peek();
+                        if (stackInfo.WaitingForResponse != CommandInstance.EventResponse.Dialogue) return;
+                        stackInfo.WaitingForResponse = CommandInstance.EventResponse.None;
+                        if (stackInfo.WaitingOnCommand != null && stackInfo.WaitingOnCommand.Type == EventCommandType.InputVariable)
+                        {
+                            var cmd = ((InputVariableCommand)stackInfo.WaitingOnCommand);
+                            VariableValue value = null;
+                            VariableDataTypes type = VariableDataTypes.Boolean;
+                            if (cmd.VariableType == VariableTypes.PlayerVariable)
+                            {
+                                var variable = PlayerVariableBase.Get(cmd.VariableId);
+                                if (variable != null) type = variable.Type;
+                                value = GetVariableValue(cmd.VariableId);
+                            }
+                            else if (cmd.VariableType == VariableTypes.ServerVariable)
+                            {
+                                var variable = ServerVariableBase.Get(cmd.VariableId);
+                                if (variable != null) type = variable.Type;
+                                value = ServerVariableBase.Get(cmd.VariableId)?.Value;
+                            }
+                            if (value == null) value = new VariableValue();
+
+                            bool success = false;
+
+                            if (!canceled)
+                            {
+                                switch (type)
+                                {
+                                    case VariableDataTypes.Integer:
+                                        if (newValue >= cmd.Minimum && newValue <= cmd.Maximum)
+                                        {
+                                            value.Integer = newValue;
+                                            success = true;
+                                        }
+                                        break;
+                                    case VariableDataTypes.Number:
+                                        if (newValue >= cmd.Minimum && newValue <= cmd.Maximum)
+                                        {
+                                            value.Number = newValue;
+                                            success = true;
+                                        }
+                                        break;
+                                    case VariableDataTypes.String:
+                                        if (newValueString.Length >= cmd.Minimum && newValueString.Length <= cmd.Maximum)
+                                        {
+                                            value.String = newValueString;
+                                            success = true;
+                                        }
+                                        break;
+                                    case VariableDataTypes.Boolean:
+                                        value.Boolean = newValue > 0;
+                                        success = true;
+                                        break;
+                                }
+                            }
+
+                            //Reassign variable values in case they didnt already exist and we made them from scratch at the null check above
+                            if (cmd.VariableType == VariableTypes.PlayerVariable)
+                            {
+                                var variable = GetVariable(cmd.VariableId);
+                                variable.Value = value;
+                            }
+                            else if (cmd.VariableType == VariableTypes.ServerVariable)
+                            {
+                                var variable = ServerVariableBase.Get(cmd.VariableId);
+                                if (variable != null) variable.Value = value;
+                            }
+
+                            var tmpStack = success ? new CommandInstance(stackInfo.Page, stackInfo.BranchIds[0])
+                                                   : new CommandInstance(stackInfo.Page, stackInfo.BranchIds[1]);
+
                             evt.CallStack.Push(tmpStack);
                         }
                         return;

@@ -686,6 +686,12 @@ namespace Intersect.Server.Networking
             player.RespondToEvent(packet.EventId, packet.Response);
         }
 
+        //EventInputVariablePacket
+        public void HandlePacket(Client client, Player player, EventInputVariablePacket packet)
+        {
+            ((Player)(client.Entity)).RespondToEventInput(packet.EventId, packet.Value, packet.StringValue, packet.Canceled);
+        }
+
         //CreateAccountPacket
         public void HandlePacket(Client client, Player player, CreateAccountPacket packet)
         {
