@@ -123,7 +123,7 @@ namespace Intersect.Editor.Maps
             if (mLoadedState != null)
             {
                 var newData = SaveInternal();
-                return newData.Matches(mLoadedState);
+                return !newData.Matches(mLoadedState);
             }
             return true;
         }
