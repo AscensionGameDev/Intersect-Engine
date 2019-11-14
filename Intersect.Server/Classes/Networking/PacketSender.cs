@@ -580,7 +580,7 @@ namespace Intersect.Server.Networking
             {
                 if (client != null)
                 {
-                    if (client.IsEditor || client.Entity != null)
+                    if (!client.IsEditor && client.Entity != null)
                     {
                         if (client.Power != UserRights.None)
                         {
