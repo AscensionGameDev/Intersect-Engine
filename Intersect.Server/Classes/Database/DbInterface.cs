@@ -753,14 +753,24 @@ namespace Intersect.Server
                         sGameDb.Projectiles.Remove((ProjectileBase) gameObject);
                         break;
                     case GameObjectType.Quest:
-                        sGameDb.Events.Remove(((QuestBase) gameObject).StartEvent);
-                        EventBase.Lookup.Delete(((QuestBase) gameObject).StartEvent);
-                        sGameDb.Events.Remove(((QuestBase) gameObject).EndEvent);
-                        EventBase.Lookup.Delete(((QuestBase) gameObject).EndEvent);
+
+                        if (((QuestBase)gameObject).StartEvent != null)
+                        {
+                            sGameDb.Events.Remove(((QuestBase)gameObject).StartEvent);
+                            EventBase.Lookup.Delete(((QuestBase)gameObject).StartEvent);
+                        }
+                        if (((QuestBase)gameObject).EndEvent != null)
+                        {
+                            sGameDb.Events.Remove(((QuestBase)gameObject).EndEvent);
+                            EventBase.Lookup.Delete(((QuestBase)gameObject).EndEvent);
+                        }
                         foreach (var tsk in ((QuestBase) gameObject).Tasks)
                         {
-                            sGameDb.Events.Remove(tsk.CompletionEvent);
-                            EventBase.Lookup.Delete(tsk.CompletionEvent);
+                            if (tsk.CompletionEvent != null)
+                            {
+                                sGameDb.Events.Remove(tsk.CompletionEvent);
+                                EventBase.Lookup.Delete(tsk.CompletionEvent);
+                            }
                         }
 
                         sGameDb.Quests.Remove((QuestBase) gameObject);
