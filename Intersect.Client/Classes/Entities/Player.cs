@@ -775,7 +775,7 @@ namespace Intersect.Client.Entities
                 {
                     if (en.Value.GetEntityType() == EntityTypes.GlobalEntity || en.Value.GetEntityType() == EntityTypes.Player)
                     {
-                        if (en.Value != Globals.Me)
+                        if (en.Value != Globals.Me && !Globals.Me.IsInMyParty(en.Value))
                         {
                             if (GetDistanceTo(en.Value) < GetDistanceTo(closestEntity))
                             {
