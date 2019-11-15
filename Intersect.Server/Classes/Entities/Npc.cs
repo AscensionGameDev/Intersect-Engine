@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -37,7 +38,7 @@ namespace Intersect.Server.Entities
         public long RespawnTime;
 
         //Damage Map - Keep track of who is doing the most damage to this npc and focus accordingly
-        public Dictionary<EntityInstance, long> DamageMap = new Dictionary<EntityInstance, long>();
+        public ConcurrentDictionary<EntityInstance, long> DamageMap = new ConcurrentDictionary<EntityInstance, long>();
 
         public Npc(NpcBase myBase, bool despawnable = false) : base()
         {
@@ -138,7 +139,7 @@ namespace Intersect.Server.Entities
             if (Target != null)
             {
                 if (DamageMap.ContainsKey(Target))
-                    DamageMap.Remove(Target);
+                    DamageMap.TryRemove(Target, out long val);
             }
             Target = null;
             PacketSender.SendNpcAggressionToProximity(this);

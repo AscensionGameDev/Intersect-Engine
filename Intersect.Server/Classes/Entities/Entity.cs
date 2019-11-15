@@ -637,14 +637,15 @@ namespace Intersect.Server.Entities
                                     {
                                         var proj = projectile;
                                         if (proj.Spawns != null) {
-                                            foreach (var spawn in proj.Spawns)
+                                            var spawns = proj.Spawns.ToArray();
+                                            foreach (var spawn in spawns)
                                             {
                                                 if (spawn != null && spawn.MapId == MapId && spawn.X == X &&
                                                     spawn.Y == Y && spawn.Z == Z)
                                                 {
                                                     if (spawn.HitEntity(this))
                                                     {
-                                                        spawn.Parent?.KillSpawn(spawn);
+                                                        proj.KillSpawn(spawn);
                                                     }
                                                 }
                                             }
