@@ -636,14 +636,16 @@ namespace Intersect.Server.Entities
                                     if (projectile.GetType() == typeof(Projectile))
                                     {
                                         var proj = projectile;
-                                        foreach (var spawn in proj.Spawns)
-                                        {
-                                            if (spawn != null && spawn.MapId == MapId && spawn.X == X &&
-                                                spawn.Y == Y && spawn.Z == Z)
+                                        if (proj.Spawns != null) {
+                                            foreach (var spawn in proj.Spawns)
                                             {
-                                                if (spawn.HitEntity(this))
+                                                if (spawn != null && spawn.MapId == MapId && spawn.X == X &&
+                                                    spawn.Y == Y && spawn.Z == Z)
                                                 {
-                                                    spawn.Parent.KillSpawn(spawn);
+                                                    if (spawn.HitEntity(this))
+                                                    {
+                                                        spawn.Parent?.KillSpawn(spawn);
+                                                    }
                                                 }
                                             }
                                         }

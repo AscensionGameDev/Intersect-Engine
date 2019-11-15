@@ -430,11 +430,8 @@ namespace Intersect.Server.Entities
         {
             for (int i = 0; i < Spawns.Length; i++)
             {
-                if (Spawns[i] != null)
-                {
-                    Spawns[i].Dispose(i);
-                    Spawns[i] = null;
-                }
+                Spawns[i]?.Dispose(i);
+                Spawns[i] = null;
             }
             MapInstance.Get(MapId).RemoveProjectile(this);
             PacketSender.SendEntityDie(this);
