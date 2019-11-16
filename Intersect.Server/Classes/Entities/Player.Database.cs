@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
 using Intersect.Server.Database.PlayerData;
+using Intersect.Server.Extensions;
 using Intersect.Server.General;
 using Intersect.Server.Networking;
 using Intersect.Server.Web.RestApi.Payloads;
@@ -162,6 +163,23 @@ namespace Intersect.Server.Entities
             }
         }
 
+        [NotNull]
+        public static IEnumerable<Player> Rank(int page, int count, SortDirection sortDirection, [CanBeNull] PlayerContext playerContext = null)
+        {
+            var context = playerContext;
+            if (context != null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            lock (DbInterface.GetPlayerContextLock())
+            {
+                context = DbInterface.GetPlayerContext();
+                var results = sortDirection == SortDirection.Ascending ? QueryPlayersWithRankAscending(context, page, count) : QueryPlayersWithRank(context, page, count);
+                return results ?? throw new InvalidOperationException();
+            }
+        }
+
         #endregion
 
         #region Compiled Queries
@@ -171,6 +189,44 @@ namespace Intersect.Server.Entities
                 (PlayerContext context, int page, int count) =>
                     context.Players
                         .OrderBy(player => player.Id.ToString())
+                        .Skip(page * count)
+                        .Take(count)
+                        .Include(p => p.Bank)
+                        .Include(p => p.Friends)
+                        .ThenInclude(p => p.Target)
+                        .Include(p => p.Hotbar)
+                        .Include(p => p.Quests)
+                        .Include(p => p.Variables)
+                        .Include(p => p.Items)
+                        .Include(p => p.Spells)
+            ) ??
+            throw new InvalidOperationException();
+
+        [NotNull] private static readonly Func<PlayerContext, int, int, IEnumerable<Player>> QueryPlayersWithRank =
+            EF.CompileQuery(
+                (PlayerContext context, int page, int count) =>
+                    context.Players
+                        .OrderByDescending(entity => EF.Property<dynamic>(entity, "Level"))
+                        .ThenByDescending(entity => EF.Property<dynamic>(entity, "Exp"))
+                        .Skip(page * count)
+                        .Take(count)
+                        .Include(p => p.Bank)
+                        .Include(p => p.Friends)
+                        .ThenInclude(p => p.Target)
+                        .Include(p => p.Hotbar)
+                        .Include(p => p.Quests)
+                        .Include(p => p.Variables)
+                        .Include(p => p.Items)
+                        .Include(p => p.Spells)
+            ) ??
+            throw new InvalidOperationException();
+
+        [NotNull] private static readonly Func<PlayerContext, int, int, IEnumerable<Player>> QueryPlayersWithRankAscending =
+            EF.CompileQuery(
+                (PlayerContext context, int page, int count) =>
+                    context.Players
+                        .OrderBy(entity => EF.Property<dynamic>(entity, "Level"))
+                        .ThenBy(entity => EF.Property<dynamic>(entity, "Exp"))
                         .Skip(page * count)
                         .Take(count)
                         .Include(p => p.Bank)
