@@ -655,6 +655,7 @@
     <Compile Include="Classes\Database\ISeedableContext.cs" />
     <Compile Include="Web\RestApi\Payloads\ChatMessage.cs" />
     <Compile Include="Web\RestApi\Payloads\LookupKey.cs" />
+    <Compile Include="Web\RestApi\Types\DataPage.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="private-intersect.bek" />
