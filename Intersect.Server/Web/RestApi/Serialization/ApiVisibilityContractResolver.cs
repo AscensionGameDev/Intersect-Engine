@@ -33,12 +33,28 @@ namespace Intersect.Server.Web.RestApi.Serialization
         /// <inheritdoc />
         protected override List<MemberInfo> GetSerializableMembers(Type objectType)
         {
-            var serializableMembers = base.GetSerializableMembers(objectType);
             var typeApiVisibility = objectType?.GetCustomAttribute<ApiVisibilityAttribute>();
+            var claimsPrincipal = RequestContext.Principal as ClaimsPrincipal;
+            var readClaims = claimsPrincipal?.FindAll(IntersectClaimTypes.AccessRead)?.ToList() ?? new List<Claim>();
+
+            var hasAccessToType = typeApiVisibility?.Visibility != ApiVisibility.Hidden;
+            if (hasAccessToType && (typeApiVisibility?.Visibility.HasFlag(ApiVisibility.Restricted) ?? false))
+            {
+                hasAccessToType = readClaims.Any(
+                    claim => string.Equals(objectType.FullName, claim?.Value, StringComparison.Ordinal)
+                );
+            }
+
+            if (!hasAccessToType)
+            {
+                return new List<MemberInfo>();
+            }
+
+            var serializableMembers = base.GetSerializableMembers(objectType);
             return serializableMembers?.Where(
                 memberInfo =>
                 {
-                    var apiVisibility = memberInfo?.GetCustomAttribute<ApiVisibilityAttribute>() ?? typeApiVisibility;
+                    var apiVisibility = memberInfo?.GetCustomAttribute<ApiVisibilityAttribute>();
                     if (apiVisibility == null || apiVisibility.Visibility == ApiVisibility.Public)
                     {
                         return true;
@@ -52,9 +68,6 @@ namespace Intersect.Server.Web.RestApi.Serialization
                     // ReSharper disable once InvertIf
                     if (apiVisibility.Visibility.HasFlag(ApiVisibility.Restricted))
                     {
-                        var claimsPrincipal = RequestContext.Principal as ClaimsPrincipal;
-                        var readClaims = claimsPrincipal?.FindAll(IntersectClaimTypes.AccessRead) ?? new Claim[0];
-
                         return readClaims.Any(
                             claim => string.Equals(memberInfo?.GetFullName(), claim?.Value, StringComparison.Ordinal)
                         );

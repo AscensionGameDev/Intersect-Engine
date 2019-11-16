@@ -20,6 +20,7 @@ using Intersect.Server.Networking;
 
 namespace Intersect.Server.Database.PlayerData
 {
+    [ApiVisibility(ApiVisibility.Restricted | ApiVisibility.Private)]
     public class User
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

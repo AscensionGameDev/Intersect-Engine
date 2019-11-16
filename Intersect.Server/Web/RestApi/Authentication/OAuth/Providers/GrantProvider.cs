@@ -118,6 +118,7 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
                 identity.AddClaims(user.Power.Roles.Select(role => new Claim(IntersectClaimTypes.Role, role)));
                 if (user.Power.ApiRoles?.UserQuery ?? false)
                 {
+                    identity.AddClaim(new Claim(IntersectClaimTypes.AccessRead, typeof(User).FullName));
                     identity.AddClaim(new Claim(IntersectClaimTypes.AccessRead, typeof(User).GetProperty(nameof(User.Ban))?.GetFullName()));
                     identity.AddClaim(new Claim(IntersectClaimTypes.AccessRead, typeof(User).GetProperty(nameof(User.Mute))?.GetFullName()));
                     identity.AddClaim(new Claim(IntersectClaimTypes.AccessRead, typeof(User).GetProperty(nameof(User.IsBanned))?.GetFullName()));
