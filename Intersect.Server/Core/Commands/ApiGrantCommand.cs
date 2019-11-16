@@ -43,11 +43,11 @@ namespace Intersect.Server.Core.Commands
                 return;
             }
             
-            if (role == "users.query")
+            if (string.Equals("users.query", role, StringComparison.OrdinalIgnoreCase))
             {
                 target.Power.ApiRoles.UserQuery = true;
             }
-            else if (role == "users.manage")
+            else if (string.Equals("users.manage", role, StringComparison.OrdinalIgnoreCase))
             {
                 if (target.Power.ApiRoles.UserQuery)
                 {
