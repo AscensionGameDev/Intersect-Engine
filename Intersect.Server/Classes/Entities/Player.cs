@@ -1430,8 +1430,15 @@ namespace Intersect.Server.Entities
 
                         if (itemBase.QuickCast)
                         {
-                            CastTarget = target;
-                            CastSpell(itemBase.SpellId);
+                            if (CanSpellCast(itemBase.Spell,target, false))
+                            {
+                                CastTarget = target;
+                                CastSpell(itemBase.SpellId);
+                            }
+                            else
+                            {
+                                return;
+                            }
                         }
                         else
                         {
@@ -3149,141 +3156,150 @@ namespace Intersect.Server.Entities
             return true;
         }
 
+        public bool CanSpellCast(SpellBase spell, EntityInstance target, bool checkVitalReqs)
+        {
+            if (!Conditions.MeetsConditionLists(spell.CastingRequirements, this, null))
+            {
+                PacketSender.SendChatMsg(Client, Strings.Combat.dynamicreq);
+                return false;
+            }
+
+            //Check if the caster is silenced or stunned. Clense casts break the rule.
+            if (spell.Combat.Effect != StatusTypes.Cleanse)
+            {
+                var statuses = Statuses.Values.ToArray();
+                foreach (var status in statuses)
+                {
+                    if (status.Type == StatusTypes.Silence)
+                    {
+                        PacketSender.SendChatMsg(Client, Strings.Combat.silenced);
+                        return false;
+                    }
+                    if (status.Type == StatusTypes.Stun)
+                    {
+                        PacketSender.SendChatMsg(Client, Strings.Combat.stunned);
+                        return false;
+                    }
+                    if (status.Type == StatusTypes.Sleep)
+                    {
+                        PacketSender.SendChatMsg(Client, Strings.Combat.sleep);
+                        return false;
+                    }
+                }
+            }
+
+            //Check if the caster has the right ammunition if a projectile
+            if (spell.SpellType == SpellTypes.CombatSpell && spell.Combat.TargetType == SpellTargetTypes.Projectile && spell.Combat.ProjectileId != Guid.Empty)
+            {
+                var projectileBase = spell.Combat.Projectile;
+                if (projectileBase == null) return false;
+                if (projectileBase.AmmoItemId != Guid.Empty)
+                {
+                    if (FindItem(projectileBase.AmmoItemId, projectileBase.AmmoRequired) == -1)
+                    {
+                        PacketSender.SendChatMsg(Client,
+                            Strings.Items.notenough.ToString(ItemBase.GetName(projectileBase.AmmoItemId)),
+                            CustomColors.Error);
+                        return false;
+                    }
+                }
+            }
+
+            if (target == null && ((spell.SpellType == SpellTypes.CombatSpell && spell.Combat.TargetType == SpellTargetTypes.Single) || spell.SpellType == SpellTypes.WarpTo))
+            {
+                PacketSender.SendActionMsg(this, Strings.Combat.notarget, CustomColors.NoTarget);
+                return false;
+            }
+
+            //Check for range of a single target spell
+            if (spell.SpellType == (int)SpellTypes.CombatSpell && spell.Combat.TargetType == SpellTargetTypes.Single && Target != this)
+            {
+                if (!InRangeOf(Target, spell.Combat.CastRange))
+                {
+                    PacketSender.SendActionMsg(this, Strings.Combat.targetoutsiderange,
+                        CustomColors.NoTarget);
+                    return false;
+                }
+            }
+
+            if (checkVitalReqs)
+            {
+                if (spell.VitalCost[(int)Vitals.Mana] > GetVital(Vitals.Mana))
+                {
+                    PacketSender.SendChatMsg(Client, Strings.Combat.lowmana);
+                    return false;
+                }
+
+                if (spell.VitalCost[(int)Vitals.Health] > GetVital(Vitals.Health))
+                {
+                    PacketSender.SendChatMsg(Client, Strings.Combat.lowhealth);
+                    return false;
+                }
+            }
+
+
+            return true;
+        }
+
         public void UseSpell(int spellSlot, EntityInstance target)
         {
             var spellNum = Spells[spellSlot].SpellId;
             Target = target;
-            if (SpellBase.Get(spellNum) != null)
+            var spell = SpellBase.Get(spellNum);
+            if (spell != null)
             {
-                var spell = SpellBase.Get(spellNum);
-
-                if (!Conditions.MeetsConditionLists(spell.CastingRequirements, this, null))
+                if (CanSpellCast(spell, target, true))
                 {
-                    PacketSender.SendChatMsg(Client, Strings.Combat.dynamicreq);
-                    return;
-                }
-
-				//Check if the caster is silenced or stunned. Clense casts break the rule.
-				if (spell.Combat.Effect != StatusTypes.Cleanse)
-				{
-					var statuses = Statuses.Values.ToArray();
-					foreach (var status in statuses)
-					{
-						if (status.Type == StatusTypes.Silence)
-						{
-							PacketSender.SendChatMsg(Client, Strings.Combat.silenced);
-							return;
-						}
-						if (status.Type == StatusTypes.Stun)
-						{
-							PacketSender.SendChatMsg(Client, Strings.Combat.stunned);
-							return;
-						}
-                        if (status.Type == StatusTypes.Sleep)
-                        {
-                            PacketSender.SendChatMsg(Client, Strings.Combat.sleep);
-                            return;
-                        }
-					}
-				}
-
-                //Check if the caster has the right ammunition if a projectile
-                if (spell.SpellType == SpellTypes.CombatSpell && spell.Combat.TargetType == SpellTargetTypes.Projectile && spell.Combat.ProjectileId != Guid.Empty)
-                {
-                    var projectileBase = spell.Combat.Projectile;
-                    if (projectileBase == null) return;
-                    if (projectileBase.AmmoItemId != Guid.Empty)
+                    if (Spells[spellSlot].SpellCd < Globals.Timing.RealTimeMs)
                     {
-                        if (FindItem(projectileBase.AmmoItemId, projectileBase.AmmoRequired) == -1)
+                        if (CastTime < Globals.Timing.TimeMs)
                         {
-                            PacketSender.SendChatMsg(Client,
-                                Strings.Items.notenough.ToString(ItemBase.GetName(projectileBase.AmmoItemId)),
-                                CustomColors.Error);
-                            return;
-                        }
-                    }
-                }
+                            CastTime = Globals.Timing.TimeMs + spell.CastDuration;
+                            SubVital(Vitals.Mana, spell.VitalCost[(int)Vitals.Mana]);
+                            SubVital(Vitals.Health, spell.VitalCost[(int)Vitals.Health]);
+                            SpellCastSlot = spellSlot;
+                            CastTarget = Target;
 
-                if (target == null && ((spell.SpellType == SpellTypes.CombatSpell && spell.Combat.TargetType == SpellTargetTypes.Single) || spell.SpellType == SpellTypes.WarpTo))
-                {
-                    PacketSender.SendActionMsg(this, Strings.Combat.notarget, CustomColors.NoTarget);
-                    return;
-                }
-
-                //Check for range of a single target spell
-                if (spell.SpellType == (int)SpellTypes.CombatSpell && spell.Combat.TargetType == SpellTargetTypes.Single && Target != this)
-                {
-                    if (!InRangeOf(Target, spell.Combat.CastRange))
-                    {
-                        PacketSender.SendActionMsg(this, Strings.Combat.targetoutsiderange,
-                            CustomColors.NoTarget);
-                        return;
-                    }
-                }
-
-                if (spell.VitalCost[(int)Vitals.Mana] <= GetVital(Vitals.Mana))
-                {
-                    if (spell.VitalCost[(int)Vitals.Health] <= GetVital(Vitals.Health))
-                    {
-                        if (Spells[spellSlot].SpellCd < Globals.Timing.RealTimeMs)
-                        {
-                            if (CastTime < Globals.Timing.TimeMs)
+                            //Check if the caster has the right ammunition if a projectile
+                            if (spell.SpellType == SpellTypes.CombatSpell && spell.Combat.TargetType == SpellTargetTypes.Projectile && spell.Combat.ProjectileId != Guid.Empty)
                             {
-                                CastTime = Globals.Timing.TimeMs + spell.CastDuration;
-                                SubVital(Vitals.Mana, spell.VitalCost[(int)Vitals.Mana]);
-                                SubVital(Vitals.Health, spell.VitalCost[(int)Vitals.Health]);
-                                SpellCastSlot = spellSlot;
-                                CastTarget = Target;
-
-                                //Check if the caster has the right ammunition if a projectile
-                                if (spell.SpellType == SpellTypes.CombatSpell && spell.Combat.TargetType == SpellTargetTypes.Projectile && spell.Combat.ProjectileId != Guid.Empty)
+                                var projectileBase = spell.Combat.Projectile;
+                                if (projectileBase != null && projectileBase.AmmoItemId != Guid.Empty)
                                 {
-                                    var projectileBase = spell.Combat.Projectile;
-                                    if (projectileBase != null && projectileBase.AmmoItemId != Guid.Empty)
-                                    {
-                                        TakeItemsById(projectileBase.AmmoItemId, projectileBase.AmmoRequired);
-                                    }
+                                    TakeItemsById(projectileBase.AmmoItemId, projectileBase.AmmoRequired);
                                 }
+                            }
 
-                                if (spell.CastAnimationId != Guid.Empty)
-                                {
-                                    PacketSender.SendAnimationToProximity(spell.CastAnimationId, 1, base.Id, MapId, 0, 0, (sbyte)Dir); //Target Type 1 will be global entity
-                                }
+                            if (spell.CastAnimationId != Guid.Empty)
+                            {
+                                PacketSender.SendAnimationToProximity(spell.CastAnimationId, 1, base.Id, MapId, 0, 0, (sbyte)Dir); //Target Type 1 will be global entity
+                            }
 
-                                PacketSender.SendEntityVitals(this);
+                            PacketSender.SendEntityVitals(this);
 
-                                //Check if cast should be instance
-                                if (Globals.Timing.TimeMs >= CastTime)
-                                {
-                                    //Cast now!
-                                    CastTime = 0;
-                                    CastSpell(Spells[SpellCastSlot].SpellId, SpellCastSlot);
-                                    CastTarget = null;
-                                }
-                                else
-                                {
-                                    //Tell the client we are channeling the spell
-                                    PacketSender.SendEntityCastTime(this, spellNum);
-                                }
+                            //Check if cast should be instance
+                            if (Globals.Timing.TimeMs >= CastTime)
+                            {
+                                //Cast now!
+                                CastTime = 0;
+                                CastSpell(Spells[SpellCastSlot].SpellId, SpellCastSlot);
+                                CastTarget = null;
                             }
                             else
                             {
-                                PacketSender.SendChatMsg(Client, Strings.Combat.channeling);
+                                //Tell the client we are channeling the spell
+                                PacketSender.SendEntityCastTime(this, spellNum);
                             }
                         }
                         else
                         {
-                            PacketSender.SendChatMsg(Client, Strings.Combat.cooldown);
+                            PacketSender.SendChatMsg(Client, Strings.Combat.channeling);
                         }
                     }
                     else
                     {
-                        PacketSender.SendChatMsg(Client, Strings.Combat.lowhealth);
+                        PacketSender.SendChatMsg(Client, Strings.Combat.cooldown);
                     }
-                }
-                else
-                {
-                    PacketSender.SendChatMsg(Client, Strings.Combat.lowmana);
                 }
             }
         }
