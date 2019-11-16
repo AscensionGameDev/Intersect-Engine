@@ -1,4 +1,13 @@
-﻿using Intersect.Enums;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+
+using Intersect.Enums;
+using Intersect.GameObjects;
+using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Entities;
 using Intersect.Server.General;
@@ -7,17 +16,9 @@ using Intersect.Server.Networking;
 using Intersect.Server.Web.RestApi.Attributes;
 using Intersect.Server.Web.RestApi.Extensions;
 using Intersect.Server.Web.RestApi.Payloads;
-using JetBrains.Annotations;
-using System;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
+using Intersect.Server.Web.RestApi.Types;
 
-using Intersect.GameObjects;
-using Intersect.Server.Database;
-using Intersect.Server.Database.GameData;
-using Intersect.Server.Web.RestApi.Payloads;
+using JetBrains.Annotations;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
@@ -43,12 +44,12 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
     [RoutePrefix("players")]
     [ConfigurableAuthorize]
-    public sealed class PlayerController : ApiController
+    public sealed class PlayerController : IntersectApiController
     {
 
         [Route]
         [HttpPost]
-        public object List([FromBody] PagingInfo pageInfo)
+        public object ListPost([FromBody] PagingInfo pageInfo)
         {
             pageInfo.Page = Math.Max(pageInfo.Page, 0);
             pageInfo.Count = Math.Max(Math.Min(pageInfo.Count, 100), 5);
@@ -63,9 +64,33 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             };
         }
 
+        [Route]
+        [HttpGet]
+        public DataPage<Player> List([FromUri] int page = 0, [FromUri] int pageSize = 0, [FromUri] int limit = 0)
+        {
+            page = Math.Max(page, 0);
+            pageSize = Math.Max(Math.Min(pageSize, 100), 5);
+            limit = Math.Max(Math.Min(limit, pageSize), 1);
+            
+            var values = Player.List(page, pageSize).ToList();
+            if (limit != pageSize)
+            {
+                values = values.Take(limit).ToList();
+            }
+
+            return new DataPage<Player>
+            {
+                Total = Player.Count(),
+                Page = page,
+                PageSize = pageSize,
+                Count = values.Count,
+                Values = values
+            };
+        }
+
         [Route("online")]
         [HttpPost]
-        public object Online([FromBody] PagingInfo pageInfo)
+        public object OnlinePost([FromBody] PagingInfo pageInfo)
         {
             pageInfo.Page = Math.Max(pageInfo.Page, 0);
             pageInfo.Count = Math.Max(Math.Min(pageInfo.Count, 100), 5);
@@ -77,6 +102,30 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 pageInfo.Page,
                 count = entries?.Count ?? 0,
                 entries
+            };
+        }
+
+        [Route("online")]
+        [HttpGet]
+        public DataPage<Player> Online([FromUri] int page = 0, [FromUri] int pageSize = 0, [FromUri] int limit = 0)
+        {
+            page = Math.Max(page, 0);
+            pageSize = Math.Max(Math.Min(pageSize, 100), 5);
+            limit = Math.Max(Math.Min(limit, pageSize), 1);
+            
+            var values = Globals.OnlineList?.Skip(page * pageSize).ToList() ?? new List<Player>();
+            if (limit != pageSize)
+            {
+                values = values.Take(limit).ToList();
+            }
+
+            return new DataPage<Player>
+            {
+                Total = Player.Count(),
+                Page = page,
+                PageSize = pageSize,
+                Count = values.Count,
+                Values = values
             };
         }
 

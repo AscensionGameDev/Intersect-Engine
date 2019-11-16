@@ -602,6 +602,7 @@
     <Compile Include="Web\RestApi\Constraints\AdminActionsConstraint.cs" />
     <Compile Include="Web\RestApi\Extensions\HttpRequestMessageExtensions.cs" />
     <Compile Include="Web\RestApi\IAppConfigurationProvider.cs" />
+    <Compile Include="Web\RestApi\IntersectApiController.cs" />
     <Compile Include="Web\RestApi\Logging\IntersectLogger.cs" />
     <Compile Include="Web\RestApi\Logging\IntersectLoggerFactory.cs" />
     <Compile Include="Web\RestApi\MediaTypeFormatterExtensions.cs" />
@@ -642,6 +643,7 @@
     <Compile Include="Web\RestApi\Routes\V1\GameObjectController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\InfoController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\VariablesController.cs" />
+    <Compile Include="Web\RestApi\Serialization\ApiVisibilityContractResolver.cs" />
     <Compile Include="Web\RestApi\Services\AuthorizedRoutesService.cs" />
     <Compile Include="Web\RestApi\Services\IAuthorizedRoutesService.cs" />
     <Compile Include="Web\RestApi\Services\IntersectServiceDependencyResolver.cs" />
@@ -653,6 +655,7 @@
     <Compile Include="Classes\Database\ISeedableContext.cs" />
     <Compile Include="Web\RestApi\Payloads\ChatMessage.cs" />
     <Compile Include="Web\RestApi\Payloads\LookupKey.cs" />
+    <Compile Include="Web\RestApi\Types\DataPage.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="private-intersect.bek" />

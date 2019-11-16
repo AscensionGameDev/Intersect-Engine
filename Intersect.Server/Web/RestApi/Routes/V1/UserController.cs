@@ -16,21 +16,23 @@ using Intersect.Server.Notifications;
 using Intersect.Server.Web.RestApi.Attributes;
 using Intersect.Server.Web.RestApi.Extensions;
 using Intersect.Server.Web.RestApi.Payloads;
+using Intersect.Server.Web.RestApi.Types;
 using Intersect.Utilities;
+
 using JetBrains.Annotations;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
     [RoutePrefix("users")]
     [ConfigurableAuthorize(Roles = nameof(ApiRoles.UserQuery))]
-    public sealed class UserController : ApiController
+    public sealed class UserController : IntersectApiController
     {
         [Route]
         [HttpPost]
-        public object List([FromBody] PagingInfo pageInfo)
+        public object ListPost([FromBody] PagingInfo pageInfo)
         {
             pageInfo.Page = Math.Max(pageInfo.Page, 0);
-            pageInfo.Count = Math.Max(Math.Min(pageInfo.Count, 100), 5);
+            pageInfo.Count = Math.Max(Math.Min(pageInfo.Count, PAGE_SIZE_MAX), 5);
             
             var entries = Database.PlayerData.User.List(pageInfo.Page, pageInfo.Count).ToList();
             return new
@@ -39,6 +41,30 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 pageInfo.Page,
                 count = entries.Count,
                 entries
+            };
+        }
+
+        [Route]
+        [HttpGet]
+        public DataPage<User> List([FromUri] int page = 0, [FromUri] int pageSize = 0, [FromUri] int limit = PAGE_SIZE_MAX)
+        {
+            page = Math.Max(page, 0);
+            pageSize = Math.Max(Math.Min(pageSize, PAGE_SIZE_MAX), PAGE_SIZE_MIN);
+            limit = Math.Max(Math.Min(limit, pageSize), 1);
+            
+            var values = Database.PlayerData.User.List(page, pageSize).ToList();
+            if (limit != pageSize)
+            {
+                values = values.Take(limit).ToList();
+            }
+
+            return new DataPage<User>
+            {
+                Total = Database.PlayerData.User.Count(),
+                Page = page,
+                PageSize = pageSize,
+                Count = values.Count,
+                Values = values
             };
         }
 

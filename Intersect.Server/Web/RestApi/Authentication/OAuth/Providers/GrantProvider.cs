@@ -4,7 +4,9 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 
 using Intersect.Logging;
+using Intersect.Reflection;
 using Intersect.Security.Claims;
+using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Web.RestApi.Configuration;
 
 using JetBrains.Annotations;
@@ -114,6 +116,14 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
             if (user.Power != null)
             {
                 identity.AddClaims(user.Power.Roles.Select(role => new Claim(IntersectClaimTypes.Role, role)));
+                if (user.Power.ApiRoles?.UserQuery ?? false)
+                {
+                    identity.AddClaim(new Claim(IntersectClaimTypes.AccessRead, typeof(User).FullName));
+                    identity.AddClaim(new Claim(IntersectClaimTypes.AccessRead, typeof(User).GetProperty(nameof(User.Ban))?.GetFullName()));
+                    identity.AddClaim(new Claim(IntersectClaimTypes.AccessRead, typeof(User).GetProperty(nameof(User.Mute))?.GetFullName()));
+                    identity.AddClaim(new Claim(IntersectClaimTypes.AccessRead, typeof(User).GetProperty(nameof(User.IsBanned))?.GetFullName()));
+                    identity.AddClaim(new Claim(IntersectClaimTypes.AccessRead, typeof(User).GetProperty(nameof(User.IsMuted))?.GetFullName()));
+                }
             }
 
             var ticketProperties = new AuthenticationProperties();
