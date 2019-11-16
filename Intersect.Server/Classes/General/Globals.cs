@@ -22,7 +22,7 @@ namespace Intersect.Server.General
         [NotNull] public static readonly IDictionary<Guid, Client> ClientLookup = new Dictionary<Guid, Client>();
 
         //Game helping stuff
-        public static Random Rand = new Random();
+        [NotNull] public static Random Rand { get; } = new Random();
 
         public static List<Player> OnlineList => Clients
             .FindAll(client => client?.Entity != null)

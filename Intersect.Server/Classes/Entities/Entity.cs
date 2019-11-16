@@ -124,7 +124,7 @@ namespace Intersect.Server.Entities
         [NotMapped, JsonIgnore] public int SpellCastSlot { get; set; } = 0;
 
         //Status effects
-        [NotMapped, JsonIgnore] public Dictionary<SpellBase, StatusInstance> Statuses = new Dictionary<SpellBase, StatusInstance>();
+        [NotMapped, JsonIgnore, NotNull] public Dictionary<SpellBase, StatusInstance> Statuses { get; } = new Dictionary<SpellBase, StatusInstance>();
 
         [NotMapped, JsonIgnore] public EntityInstance Target = null;
 
@@ -1749,6 +1749,7 @@ namespace Intersect.Server.Entities
             //Calculate world tile of target
             var x2 = target.X + (MapInstance.Get(target.MapId).MapGridX * Options.MapWidth);
             var y2 = target.Y + (MapInstance.Get(target.MapId).MapGridY * Options.MapHeight);
+            
             if (Math.Abs(x1 - x2) > Math.Abs(y1 - y2))
             {
                 //Left or Right
@@ -1756,23 +1757,17 @@ namespace Intersect.Server.Entities
                 {
                     return (byte)Directions.Right;
                 }
-                else
-                {
-                    return (byte)Directions.Left;
-                }
+
+                return (byte)Directions.Left;
             }
-            else
+
+            //Left or Right
+            if (y1 - y2 < 0)
             {
-                //Left or Right
-                if (y1 - y2 < 0)
-                {
-                    return (byte)Directions.Down;
-                }
-                else
-                {
-                    return (byte)Directions.Up;
-                }
+                return (byte)Directions.Down;
             }
+
+            return (byte)Directions.Up;
         }
 
         //Check if the target is either up, down, left or right of the target on the correct Z dimension.
