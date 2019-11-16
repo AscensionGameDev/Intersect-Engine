@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Intersect.Enums;
+using Intersect.ErrorHandling;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
@@ -144,7 +145,14 @@ namespace Intersect.Server.Networking
 
                 // TODO: Re-combine these once we figure out how to prevent the OutOfMemoryException that happens occasionally
                 Log.Error(packetMessage);
-                Log.Error(exception);
+                Log.Error(new ExceptionInfo(exception));
+                if (exception.InnerException != null)
+                {
+                    Log.Error(new ExceptionInfo(exception.InnerException));
+                }
+
+                // Make the call that triggered the OOME in the first place so that we know when it stops happening
+                Log.Error(exception, packetMessage);
 
                 client.Disconnect($"Error processing packet type '{packetType}'.");
             }
