@@ -113,12 +113,8 @@ namespace Intersect.Server.Database.PlayerData
             [CanBeNull] PlayerContext playerContext = null
         )
         {
-            var mute = new Mute(user, ip, reason, duration, muter);
-            user.SetMute(
-                true, Strings.Account.mutestatus.ToString(mute.StartTime, mute.Muter, mute.EndTime, mute.Reason)
-            );
-
-            return Add(mute, playerContext);
+            user.UserMute = new Mute(user, ip, reason, duration, muter);
+            return Add(user.UserMute, playerContext);
         }
 
         public static bool Add(
@@ -162,7 +158,7 @@ namespace Intersect.Server.Database.PlayerData
                 return false;
             }
 
-            user.SetMute(false, "");
+            user.UserMute = null;
 
             return true;
         }
@@ -186,8 +182,7 @@ namespace Intersect.Server.Database.PlayerData
                     return null;
                 }
 
-                var mute = context.Mutes.SingleOrDefault(queryMute => queryMute.UserId == userId && queryMute.EndTime > DateTime.UtcNow) ??
-                           context.Mutes.SingleOrDefault(queryMute => string.Equals(queryMute.Ip, ip, StringComparison.OrdinalIgnoreCase) && queryMute.EndTime > DateTime.UtcNow);
+                var mute = Find(userId) ?? Find(ip);
 
                 return mute == null
                     ? null
@@ -201,24 +196,37 @@ namespace Intersect.Server.Database.PlayerData
             [CanBeNull] PlayerContext playerContext = null
         )
         {
-            var muteReason = FindMuteReason(user.Id, ip, playerContext);
-
-            if (muteReason == null)
+            if (user.Mute == null)
             {
-                user.SetMute(false, "");
+                user.IpMute = Find(ip);
+            }
+
+            var mute = user.Mute;
+            return mute == null ? null : Strings.Account.mutestatus.ToString(mute.StartTime, mute.Muter, mute.EndTime, mute.Reason);
+        }
+
+        public static Mute Find([NotNull] User user) => Find(user.Id);
+
+        public static Mute Find(Guid userId)
+        {
+            lock (DbInterface.GetPlayerContextLock())
+            {
+                return ByUser(DbInterface.GetPlayerContext(), userId)?.FirstOrDefault();
+            }
+        }
+
+        public static Mute Find(string ip)
+        {
+            if (string.IsNullOrWhiteSpace(ip))
+            {
                 return null;
             }
 
-            user.SetMute(true, muteReason);
-
-            return user.MuteReason;
+            lock (DbInterface.GetPlayerContextLock())
+            {
+                return ByIp(DbInterface.GetPlayerContext(), ip)?.FirstOrDefault();
+            }
         }
-
-        public static Mute Find([NotNull] User user) => ByUser(DbInterface.GetPlayerContext(), user.Id)?.FirstOrDefault();
-
-        public static Mute Find(Guid userId) => ByUser(DbInterface.GetPlayerContext(), userId)?.FirstOrDefault();
-
-        public static Mute Find(string ip) => ByIp(DbInterface.GetPlayerContext(), ip)?.FirstOrDefault();
 
         public static IEnumerable<Mute> FindAll([NotNull] User user) => ByUser(DbInterface.GetPlayerContext(), user.Id);
 
@@ -230,13 +238,13 @@ namespace Intersect.Server.Database.PlayerData
 
         [NotNull] private static readonly Func<PlayerContext, Guid, IEnumerable<Mute>> ByUser =
             EF.CompileQuery<PlayerContext, Guid, Mute>(
-                (context, userId) => context.Mutes.Where(mute => mute.UserId == userId)
+                (context, userId) => context.Mutes.Where(mute => mute.UserId == userId && mute.EndTime > DateTime.UtcNow)
             ) ??
             throw new InvalidOperationException();
 
         [NotNull] private static readonly Func<PlayerContext, string, IEnumerable<Mute>> ByIp =
             EF.CompileQuery<PlayerContext, string, Mute>(
-                (context, ip) => context.Mutes.Where(mute => string.Equals(mute.Ip, ip, StringComparison.OrdinalIgnoreCase))
+                (context, ip) => context.Mutes.Where(mute => string.Equals(mute.Ip, ip, StringComparison.OrdinalIgnoreCase) && mute.EndTime > DateTime.UtcNow)
             ) ??
             throw new InvalidOperationException();
 

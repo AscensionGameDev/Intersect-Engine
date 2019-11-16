@@ -9,6 +9,7 @@ using System.Linq.Expressions;
 using System.Security.Cryptography;
 using System.Text;
 
+using Intersect.Logging;
 using Intersect.Security;
 using Intersect.Server.Classes.Database.PlayerData.Api;
 
@@ -68,16 +69,33 @@ namespace Intersect.Server.Database.PlayerData
         public bool IsBanned => Ban != null;
 
         [NotMapped, ApiVisibility(ApiVisibility.Restricted | ApiVisibility.Private)]
-        public bool IsMuted { get; private set; }
+        public bool IsMuted => Mute != null;
 
-        [NotMapped, JsonIgnore]
-        public string MuteReason { get; private set; }
+        [ApiVisibility(ApiVisibility.Restricted)]
+        public Ban Ban
+        {
+            get => UserBan ?? IpBan;
+            set => UserBan = value;
+        }
 
-        [ApiVisibility(ApiVisibility.Restricted), JsonProperty(nameof(Ban))]
-        public Ban Ban => Ban.Find(this);
+        [ApiVisibility(ApiVisibility.Restricted)]
+        public Mute Mute
+        {
+            get => UserMute ?? IpMute;
+            set => UserMute = value;
+        }
 
-        [ApiVisibility(ApiVisibility.Restricted), JsonProperty(nameof(Mute))]
-        public Mute Mute => Mute.Find(this);
+        [NotMapped]
+        public Ban IpBan { get; set; }
+
+        [NotMapped]
+        public Mute IpMute { get; set; }
+
+        [ApiVisibility(ApiVisibility.Restricted), NotMapped]
+        public Ban UserBan { get; set; }
+
+        [ApiVisibility(ApiVisibility.Restricted), NotMapped]
+        public Mute UserMute { get; set; }
 
         #endregion
 
@@ -136,6 +154,8 @@ namespace Intersect.Server.Database.PlayerData
                         .OrderBy(user => user.Id.ToString())
                         .Skip(page * count)
                         .Take(count)
+                        .Include(p => p.Ban)
+                        .Include(p => p.Mute)
             ) ??
             throw new InvalidOperationException();
 
@@ -143,6 +163,9 @@ namespace Intersect.Server.Database.PlayerData
         private static readonly Func<PlayerContext, string, User> QueryUserByName =
             EF.CompileQuery((PlayerContext context, string username) =>
                 context.Users
+                    .Where(u => string.Equals(u.Name, username, StringComparison.OrdinalIgnoreCase))
+                    .Include(p => p.Ban)
+                    .Include(p => p.Mute)
                     .Include(p => p.Players).ThenInclude(c => c.Bank)
                     .Include(p => p.Players).ThenInclude(c => c.Friends).ThenInclude(c => c.Target)
                     .Include(p => p.Players).ThenInclude(c => c.Hotbar)
@@ -151,13 +174,16 @@ namespace Intersect.Server.Database.PlayerData
                     .Include(p => p.Players).ThenInclude(c => c.Items)
                     .Include(p => p.Players).ThenInclude(c => c.Spells)
                     .Include(p => p.Players).ThenInclude(c => c.Bank)
-                    .FirstOrDefault(user => user.Name.ToLower() == username.ToLower()))
+                    .FirstOrDefault())
             ?? throw new InvalidOperationException();
 
         [NotNull]
         private static readonly Func<PlayerContext, Guid, User> QueryUserById =
             EF.CompileQuery((PlayerContext context, Guid id) =>
                 context.Users
+                    .Where(u => u.Id == id)
+                    .Include(p => p.Ban)
+                    .Include(p => p.Mute)
                     .Include(p => p.Players).ThenInclude(c => c.Bank)
                     .Include(p => p.Players).ThenInclude(c => c.Friends).ThenInclude(c => c.Target)
                     .Include(p => p.Players).ThenInclude(c => c.Hotbar)
@@ -166,16 +192,10 @@ namespace Intersect.Server.Database.PlayerData
                     .Include(p => p.Players).ThenInclude(c => c.Items)
                     .Include(p => p.Players).ThenInclude(c => c.Spells)
                     .Include(p => p.Players).ThenInclude(c => c.Bank)
-                    .FirstOrDefault(user => user.Id == id))
+                    .FirstOrDefault())
             ?? throw new InvalidOperationException();
 
         #endregion
-
-        public void SetMute(bool muted, string reason)
-        {
-            IsMuted = muted;
-            MuteReason = reason;
-        }
 
         public static string SaltPasswordHash([NotNull] string passwordHash, [NotNull] string salt)
         {
@@ -256,17 +276,27 @@ namespace Intersect.Server.Database.PlayerData
 
         public static User Find(string username, [CanBeNull] PlayerContext playerContext = null)
         {
-            if (playerContext == null)
+            try
             {
-                lock (DbInterface.GetPlayerContextLock())
+                if (playerContext == null)
                 {
-                    var context = DbInterface.GetPlayerContext();
-                    return string.IsNullOrWhiteSpace(username) ? null : QueryUserByName(context, username);
+                    lock (DbInterface.GetPlayerContextLock())
+                    {
+                        var context = DbInterface.GetPlayerContext();
+
+                        return string.IsNullOrWhiteSpace(username) ? null : QueryUserByName(context, username);
+                    }
+                }
+                else
+                {
+                    return string.IsNullOrWhiteSpace(username) ? null : QueryUserByName(playerContext, username);
                 }
             }
-            else
+            catch (Exception exception)
             {
-                return string.IsNullOrWhiteSpace(username) ? null : QueryUserByName(playerContext, username);
+                Log.Error(exception);
+
+                throw;
             }
         }
     }
