@@ -17,13 +17,14 @@ using Intersect.Server.Web.RestApi.Attributes;
 using Intersect.Server.Web.RestApi.Extensions;
 using Intersect.Server.Web.RestApi.Payloads;
 using Intersect.Utilities;
+
 using JetBrains.Annotations;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
     [RoutePrefix("users")]
     [ConfigurableAuthorize(Roles = nameof(ApiRoles.UserQuery))]
-    public sealed class UserController : ApiController
+    public sealed class UserController : IntersectApiController
     {
         [Route]
         [HttpPost]

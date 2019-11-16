@@ -173,6 +173,7 @@
     <Compile Include="Admin\Actions\WarpToMapAction.cs" />
     <Compile Include="Admin\Actions\WarpToMeAction.cs" />
     <Compile Include="AlphanumComparatorFast.cs" />
+    <Compile Include="Collections\SingleOrList.cs" />
     <Compile Include="ColorF.cs" />
     <Compile Include="Configuration\IConfigurable.cs" />
     <Compile Include="Configuration\IConfiguration.cs" />
@@ -428,6 +429,9 @@
     <Compile Include="Network\Packets\Server\TradePacket.cs" />
     <Compile Include="Network\Packets\Server\TradeRequestPacket.cs" />
     <Compile Include="Network\Packets\Server\TradeUpdatePacket.cs" />
+    <Compile Include="Reflection\MemberInfoExtensions.cs" />
+    <Compile Include="Security\ApiVisibility.cs" />
+    <Compile Include="Security\ApiVisibilityAttribute.cs" />
     <Compile Include="Security\Claims\IntersectClaimTypes.cs" />
     <Compile Include="Serialization\Json\SingleOrArrayConverter.cs" />
     <Compile Include="Threading\ConcurrentInstance.cs" />

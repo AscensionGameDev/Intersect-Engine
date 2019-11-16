@@ -8,6 +8,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
+using Intersect.Security;
 using Intersect.Server.Classes.Database.PlayerData.Api;
 
 using JetBrains.Annotations;
@@ -59,11 +60,20 @@ namespace Intersect.Server.Database.PlayerData
 
         #region Instance Variables
 
-        [NotMapped]
+        [NotMapped, ApiVisibility(ApiVisibility.Restricted | ApiVisibility.Private)]
+        public bool IsBanned => Ban != null;
+
+        [NotMapped, ApiVisibility(ApiVisibility.Restricted | ApiVisibility.Private)]
         public bool IsMuted { get; private set; }
 
-        [NotMapped]
+        [NotMapped, JsonIgnore]
         public string MuteReason { get; private set; }
+
+        [ApiVisibility(ApiVisibility.Restricted), JsonProperty(nameof(Ban))]
+        public Ban Ban => Ban.Find(this);
+
+        [ApiVisibility(ApiVisibility.Restricted), JsonProperty(nameof(Mute))]
+        public Mute Mute => Mute.Find(this);
 
         #endregion
 
@@ -157,7 +167,7 @@ namespace Intersect.Server.Database.PlayerData
 
         #endregion
 
-        public void Mute(bool muted, string reason)
+        public void SetMute(bool muted, string reason)
         {
             IsMuted = muted;
             MuteReason = reason;

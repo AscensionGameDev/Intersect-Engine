@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Dynamic;
 using System.Linq;
 
 using Intersect.Server.Localization;
 using Intersect.Server.Networking;
 
 using JetBrains.Annotations;
+
+using Microsoft.EntityFrameworkCore;
 
 using Newtonsoft.Json;
 
@@ -26,6 +30,9 @@ namespace Intersect.Server.Database.PlayerData
 
         [JsonIgnore, Column("Player")] // SOURCE TODO: Migrate column
         public virtual User User { get; private set; }
+
+        [JsonIgnore, NotMapped]
+        public bool IsIp => Guid.Empty == UserId;
 
         public string Ip { get; private set; }
 
@@ -107,7 +114,7 @@ namespace Intersect.Server.Database.PlayerData
         )
         {
             var mute = new Mute(user, ip, reason, duration, muter);
-            user.Mute(
+            user.SetMute(
                 true, Strings.Account.mutestatus.ToString(mute.StartTime, mute.Muter, mute.EndTime, mute.Reason)
             );
 
@@ -155,7 +162,7 @@ namespace Intersect.Server.Database.PlayerData
                 return false;
             }
 
-            user.Mute(false, "");
+            user.SetMute(false, "");
 
             return true;
         }
@@ -198,14 +205,42 @@ namespace Intersect.Server.Database.PlayerData
 
             if (muteReason == null)
             {
-                user.Mute(false, "");
+                user.SetMute(false, "");
                 return null;
             }
 
-            user.Mute(true, muteReason);
+            user.SetMute(true, muteReason);
 
             return user.MuteReason;
         }
+
+        public static Mute Find([NotNull] User user) => ByUser(DbInterface.GetPlayerContext(), user.Id)?.FirstOrDefault();
+
+        public static Mute Find(Guid userId) => ByUser(DbInterface.GetPlayerContext(), userId)?.FirstOrDefault();
+
+        public static Mute Find(string ip) => ByIp(DbInterface.GetPlayerContext(), ip)?.FirstOrDefault();
+
+        public static IEnumerable<Mute> FindAll([NotNull] User user) => ByUser(DbInterface.GetPlayerContext(), user.Id);
+
+        public static IEnumerable<Mute> FindAll(Guid userId) => ByUser(DbInterface.GetPlayerContext(), userId);
+
+        public static IEnumerable<Mute> FindAll(string ip) => ByIp(DbInterface.GetPlayerContext(), ip);
+
+        #region Compiled Queries
+
+        [NotNull] private static readonly Func<PlayerContext, Guid, IEnumerable<Mute>> ByUser =
+            EF.CompileQuery<PlayerContext, Guid, Mute>(
+                (context, userId) => context.Mutes.Where(mute => mute.UserId == userId)
+            ) ??
+            throw new InvalidOperationException();
+
+        [NotNull] private static readonly Func<PlayerContext, string, IEnumerable<Mute>> ByIp =
+            EF.CompileQuery<PlayerContext, string, Mute>(
+                (context, ip) => context.Mutes.Where(mute => string.Equals(mute.Ip, ip, StringComparison.OrdinalIgnoreCase))
+            ) ??
+            throw new InvalidOperationException();
+
+        #endregion Compiled Queries
 
     }
 
