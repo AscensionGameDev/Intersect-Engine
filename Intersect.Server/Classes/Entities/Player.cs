@@ -3212,7 +3212,7 @@ namespace Intersect.Server.Entities
             }
 
             //Check for range of a single target spell
-            if (spell.SpellType == (int)SpellTypes.CombatSpell && spell.Combat.TargetType == SpellTargetTypes.Single && Target != this)
+            if (spell.SpellType == (int)SpellTypes.CombatSpell && spell.Combat.TargetType == SpellTargetTypes.Single && target != this)
             {
                 if (!InRangeOf(Target, spell.Combat.CastRange))
                 {
