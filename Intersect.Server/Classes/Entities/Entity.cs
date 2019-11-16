@@ -98,7 +98,7 @@ namespace Intersect.Server.Entities
         private Guid _id;
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column(Order = 0)]
-        public Guid Id { get => GetId(); set => _id = value; }
+        public Guid Id { get => _id; set => _id = value; }
         [NotMapped] public bool Dead { get; set; }
 
         //Combat
@@ -133,11 +133,6 @@ namespace Intersect.Server.Entities
         public EntityInstance() : this(Guid.NewGuid())
         {
 
-        }
-
-        public virtual Guid GetId()
-        {
-            return _id;
         }
 
         //Initialization

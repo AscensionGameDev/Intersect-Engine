@@ -521,6 +521,8 @@
     <Compile Include="Core\ServerLogic.cs" />
     <Compile Include="Core\CommandParsing\Tokenization\Tokenizer.cs" />
     <Compile Include="Core\CommandParsing\Tokenization\TokenizerSettings.cs" />
+    <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <Compile Include="Extensions\QueryableExtensions.cs" />
     <Compile Include="Migrations\20180927161502_InitialPlayerDb.cs" />
     <Compile Include="Migrations\20180927161502_InitialPlayerDb.Designer.cs">
       <DependentUpon>20180927161502_InitialPlayerDb.cs</DependentUpon>
@@ -611,6 +613,8 @@
     <Compile Include="Web\RestApi\Payloads\ItemInfo.cs" />
     <Compile Include="Web\RestApi\Payloads\PagingInfo.cs" />
     <Compile Include="Web\RestApi\Payloads\PasswordValidation.cs" />
+    <Compile Include="Web\RestApi\Payloads\Sort.cs" />
+    <Compile Include="Web\RestApi\Payloads\SortDirection.cs" />
     <Compile Include="Web\RestApi\Payloads\SpellInfo.cs" />
     <Compile Include="Web\RestApi\Payloads\UserInfo.cs" />
     <Compile Include="Web\RestApi\Payloads\VariableValue.cs" />
@@ -705,7 +709,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Classes\Database\PlayerData\Migrations\" />
-    <Folder Include="Extensions\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

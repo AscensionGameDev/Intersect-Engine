@@ -10,6 +10,7 @@ using Intersect.GameObjects;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Entities;
+using Intersect.Server.Extensions;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking;
@@ -66,12 +67,17 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
         [Route]
         [HttpGet]
-        public DataPage<Player> List([FromUri] int page = 0, [FromUri] int pageSize = 0, [FromUri] int limit = 0)
+        public DataPage<Player> List(
+            [FromUri] int page = 0, [FromUri] int pageSize = 0, [FromUri] int limit = PAGE_SIZE_MAX//,
+            //[FromUri] string[] sortBy = null, [FromUri] SortDirection[] sortDirection = null
+        )
         {
             page = Math.Max(page, 0);
             pageSize = Math.Max(Math.Min(pageSize, 100), 5);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
-            
+
+            //var sort = Sort.From(sortBy, sortDirection);
+            //var values = Player.List(page, pageSize, sort).ToList();
             var values = Player.List(page, pageSize).ToList();
             if (limit != pageSize)
             {
@@ -85,6 +91,37 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 PageSize = pageSize,
                 Count = values.Count,
                 Values = values
+            };
+        }
+
+        [Route("rank")]
+        [HttpGet]
+        public DataPage<Player> Rank(
+            [FromUri] int page = 0, [FromUri] int pageSize = 0, [FromUri] int limit = PAGE_SIZE_MAX,
+            [FromUri] SortDirection sortDirection = SortDirection.Descending
+        )
+        {
+            page = Math.Max(page, 0);
+            pageSize = Math.Max(Math.Min(pageSize, 100), 5);
+            limit = Math.Max(Math.Min(limit, pageSize), 1);
+
+            var values = Player.Rank(page, pageSize, sortDirection).ToList();
+            if (limit != pageSize)
+            {
+                values = values.Take(limit).ToList();
+            }
+
+            return new DataPage<Player>
+            {
+                Total = Player.Count(),
+                Page = page,
+                PageSize = pageSize,
+                Count = values.Count,
+                Values = values,
+                Extra = new
+                {
+                    sortDirection
+                }
             };
         }
 
@@ -107,13 +144,17 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
         [Route("online")]
         [HttpGet]
-        public DataPage<Player> Online([FromUri] int page = 0, [FromUri] int pageSize = 0, [FromUri] int limit = 0)
+        public DataPage<Player> Online(
+            [FromUri] int page = 0, [FromUri] int pageSize = 0, [FromUri] int limit = PAGE_SIZE_MAX,
+            [FromUri] string[] sortBy = null, [FromUri] SortDirection[] sortDirection = null
+        )
         {
             page = Math.Max(page, 0);
             pageSize = Math.Max(Math.Min(pageSize, 100), 5);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
             
-            var values = Globals.OnlineList?.Skip(page * pageSize).ToList() ?? new List<Player>();
+            var sort = Sort.From(sortBy, sortDirection);
+            var values = Globals.OnlineList?.Sort(sort)?.Skip(page * pageSize).ToList() ?? new List<Player>();
             if (limit != pageSize)
             {
                 values = values.Take(limit).ToList();
@@ -121,11 +162,12 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             return new DataPage<Player>
             {
-                Total = Player.Count(),
+                Total = Globals.OnlineList?.Count ?? 0,
                 Page = page,
                 PageSize = pageSize,
                 Count = values.Count,
-                Values = values
+                Values = values,
+                Sort = sort
             };
         }
 

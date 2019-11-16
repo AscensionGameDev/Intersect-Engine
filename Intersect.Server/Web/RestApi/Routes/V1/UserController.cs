@@ -46,12 +46,17 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
         [Route]
         [HttpGet]
-        public DataPage<User> List([FromUri] int page = 0, [FromUri] int pageSize = 0, [FromUri] int limit = PAGE_SIZE_MAX)
+        public DataPage<User> List(
+            [FromUri] int page = 0, [FromUri] int pageSize = 0, [FromUri] int limit = PAGE_SIZE_MAX//,
+            //[FromUri] string[] sortBy = null, [FromUri] SortDirection[] sortDirection = null
+        )
         {
             page = Math.Max(page, 0);
             pageSize = Math.Max(Math.Min(pageSize, PAGE_SIZE_MAX), PAGE_SIZE_MIN);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
             
+            //var sort = Sort.From(sortBy, sortDirection);
+            //var values = Database.PlayerData.User.List(page, pageSize, sort).ToList();
             var values = Database.PlayerData.User.List(page, pageSize).ToList();
             if (limit != pageSize)
             {
