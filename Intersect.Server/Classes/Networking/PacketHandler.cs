@@ -320,7 +320,7 @@ namespace Intersect.Server.Networking
             var channel = packet.Channel;
             if (client.User.IsMuted) //Don't let the toungless toxic kids speak.
             {
-                PacketSender.SendChatMsg(client, client.User.MuteReason);
+                PacketSender.SendChatMsg(client, client.User.Mute?.Reason);
                 return;
             }
 
