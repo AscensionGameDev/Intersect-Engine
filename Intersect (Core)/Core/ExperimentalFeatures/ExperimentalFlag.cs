@@ -8,13 +8,9 @@ using Newtonsoft.Json;
 
 namespace Intersect.Core.ExperimentalFeatures
 {
-    public interface IFlag {
-        bool Enabled { get; }
-    }
-
-    public struct ExperimentalFlag : IEquatable<ExperimentalFlag>, IFlag
+    public struct ExperimentalFlag : IExperimentalFlag
     {
-        private readonly IFlag mParentFlag;
+        private readonly IExperimentalFlag mParentFlag;
         
         [JsonProperty(nameof(Guid))] private Guid mGuid;
         [JsonIgnore] public Guid Guid => mGuid;
@@ -33,7 +29,7 @@ namespace Intersect.Core.ExperimentalFeatures
             mEnabled = enabled;
         }
 
-        public ExperimentalFlag([NotNull] string name, Guid namespaceId, bool enabled = false, IFlag parentFlag = null)
+        public ExperimentalFlag([NotNull] string name, Guid namespaceId, bool enabled = false, IExperimentalFlag parentFlag = null)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -46,15 +42,10 @@ namespace Intersect.Core.ExperimentalFeatures
             mEnabled = enabled;
         }
 
-        /// <summary>
-        /// Creates a clone of this <see cref="ExperimentalFlag"/> with the given enablement.
-        /// </summary>
-        /// <param name="enabled">the new enablement state</param>
-        /// <returns>a clone of this flag with the new enablement state</returns>
-        public ExperimentalFlag With(bool enabled) => new ExperimentalFlag(this, enabled);
+        public IExperimentalFlag With(bool enabled) => new ExperimentalFlag(this, enabled);
 
-        /// <inheritdoc />
-        public bool Equals(ExperimentalFlag other) => this == other;
+        /// <inheritdoc cref="IEquatable{T}" />
+        public bool Equals(IExperimentalFlag other) => this == other;
 
         /// <summary>
         /// 
@@ -62,12 +53,12 @@ namespace Intersect.Core.ExperimentalFeatures
         /// <param name="flag"></param>
         public static implicit operator bool(ExperimentalFlag flag) => flag.Enabled;
 
-        public static bool operator ==(ExperimentalFlag a, ExperimentalFlag b)
+        public static bool operator ==(ExperimentalFlag a, [NotNull] IExperimentalFlag b)
         {
             return a.Guid == b.Guid && a.Enabled == b.Enabled;
         }
 
-        public static bool operator !=(ExperimentalFlag a, ExperimentalFlag b)
+        public static bool operator !=(ExperimentalFlag a, [NotNull] IExperimentalFlag b)
         {
             return a.Guid != b.Guid || a.Enabled != b.Enabled;
         }

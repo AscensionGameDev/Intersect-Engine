@@ -185,8 +185,12 @@
     <Compile Include="Core\ExperimentalFeatures\CommonExperiments.Static.cs" />
     <Compile Include="Core\ExperimentalFeatures\ExperimentalFlag.cs" />
     <Compile Include="Core\ExperimentalFeatures\CommonExperiments.Flags.cs" />
+    <Compile Include="Core\ExperimentalFeatures\ExperimentalFlagAlias.cs" />
+    <Compile Include="Core\ExperimentalFeatures\ExperimentalFlagAliasAttribute.cs" />
     <Compile Include="Core\ExperimentalFeatures\ExperimentalFlagConverter.cs" />
     <Compile Include="Core\ExperimentalFeatures\ExperimentNamespace.cs" />
+    <Compile Include="Core\ExperimentalFeatures\IExperimentalFlag.cs" />
+    <Compile Include="Core\ExperimentalFeatures\IFlagProvider.cs" />
     <Compile Include="Core\IApplicationContext.cs" />
     <Compile Include="BytePoint.cs" />
     <Compile Include="Collections\DatabaseObjectLookup.cs" />

@@ -15,7 +15,8 @@ using Newtonsoft.Json;
 
 namespace Intersect.Core.ExperimentalFeatures
 {
-    public abstract partial class CommonExperiments<TExperiments> where TExperiments : CommonExperiments<TExperiments>
+    public abstract partial class CommonExperiments<TExperiments> : IFlagProvider
+        where TExperiments : CommonExperiments<TExperiments>
     {
         private static readonly Guid NamespaceId = Guid.Parse("c68012b3-d666-4204-84eb-4976f2b570ab");
 
@@ -28,38 +29,80 @@ namespace Intersect.Core.ExperimentalFeatures
             mFlagsById = new Dictionary<Guid, PropertyInfo>();
             mFlagsByName = new Dictionary<string, PropertyInfo>();
 
-            RegisterProperties();
+            RegisterPropertiesAndAliases();
         }
 
-        private void RegisterProperties()
+        private void RegisterPropertiesAndAliases()
         {
+            PropertyInfo existingFlag;
             var experimentsType = typeof(TExperiments);
-            var properties = experimentsType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-            var flagProperties = properties.Where(property => property.PropertyType == typeof(ExperimentalFlag));
-            flagProperties.ToList()
-                .ForEach(
-                    property =>
-                    {
-                        if (property?.DeclaringType == null)
-                        {
-                            throw new InvalidOperationException();
-                        }
+            var aliasProperties = new List<(PropertyInfo property, ExperimentalFlagAliasAttribute aliasAttribute)>();
+            var properties =
+                experimentsType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
-                        var namespaceId = GetNamespaceIdFor(property.DeclaringType);
-                        var flagId = GuidUtils.CreateNamed(namespaceId, property.Name);
-                        mFlagsById.Add(flagId, property);
-                        mFlagsByName.Add(property.Name.ToLowerInvariant(), property);
+            var flagProperties = properties
+                .Where(property => typeof(IExperimentalFlag).IsAssignableFrom(property.PropertyType))
+                .ToList();
+
+            flagProperties.ForEach(
+                property =>
+                {
+                    var aliasAttribute = property?.GetCustomAttribute<ExperimentalFlagAliasAttribute>(true);
+                    if (aliasAttribute != null)
+                    {
+                        aliasProperties.Add((property, aliasAttribute));
+                        return;
                     }
-                );
+
+                    if (property?.DeclaringType == null)
+                    {
+                        throw new InvalidOperationException();
+                    }
+
+                    var flagName = property.Name.ToLowerInvariant();
+                    var namespaceId = GetNamespaceIdFor(property.DeclaringType);
+                    var flagId = GuidUtils.CreateNamed(namespaceId, property.Name);
+
+                    if (TryGetProperty(flagName, out existingFlag))
+                    {
+                        throw new InvalidOperationException(
+                            $@"Tried to add a flag with name '{flagName}' in '{property.DeclaringType?.FullName}' but there is already a flag with that name defined in '{existingFlag.DeclaringType?.FullName}'."
+                        );
+                    }
+
+                    mFlagsById.Add(flagId, property);
+                    mFlagsByName.Add(flagName, property);
+                }
+            );
+
+            aliasProperties.ForEach(
+                pair =>
+                {
+                    var (property, aliasAttribute) = pair;
+                    var aliasName = property.Name.ToLowerInvariant();
+                    var targetName = aliasAttribute.Of;
+                    var alias = new ExperimentalFlagAlias(this, targetName, aliasName);
+                    property.SetValue(this, alias);
+
+                    if (TryGetProperty(aliasName, out existingFlag))
+                    {
+                        throw new InvalidOperationException(
+                            $@"Tried to add an alias with name '{aliasName}' in '{property.DeclaringType?.FullName}' but there is already a flag with that name defined in '{existingFlag.DeclaringType?.FullName}'."
+                        );
+                    }
+
+                    mFlagsByName.Add(aliasName, property);
+                }
+            );
         }
 
-        public bool Disable(ExperimentalFlag flag) => TrySet(flag, false);
+        public bool Disable(IExperimentalFlag flag) => TrySet(flag, false);
 
         public bool Disable(Guid flagId) => TrySet(flagId, false);
 
         public bool Disable([NotNull] string flagName) => TrySet(flagName, false);
 
-        public bool Enable(ExperimentalFlag flag) => TrySet(flag, true);
+        public bool Enable([NotNull] IExperimentalFlag flag) => TrySet(flag, true);
 
         public bool Enable(Guid flagId) => TrySet(flagId, true);
 
@@ -67,23 +110,23 @@ namespace Intersect.Core.ExperimentalFeatures
 
         public bool IsEnabled(Guid flagId) =>
             mFlagsById.TryGetValue(flagId, out var property) &&
-            property.GetValue(this) is ExperimentalFlag flag &&
+            property.GetValue(this) is IExperimentalFlag flag &&
             flag.Enabled;
 
-        public bool IsEnabled([NotNull] string flagName) =>
+        public bool IsEnabled(string flagName) =>
             mFlagsByName.TryGetValue(flagName, out var property) &&
-            property.GetValue(this) is ExperimentalFlag flag &&
+            property.GetValue(this) is IExperimentalFlag flag &&
             flag.Enabled;
 
-        public bool TryGet(Guid flagId, out ExperimentalFlag flag) =>
+        public bool TryGet(Guid flagId, out IExperimentalFlag flag) =>
             ValueUtils.SetDefault(TryGetProperty(flagId, out var property), out flag) &&
             property.TryGetValue(this, out flag);
 
-        public bool TryGet([NotNull] string flagName, out ExperimentalFlag flag) =>
+        public bool TryGet(string flagName, out IExperimentalFlag flag) =>
             ValueUtils.SetDefault(TryGetProperty(flagName, out var property), out flag) &&
             property.TryGetValue(this, out flag);
 
-        protected bool TryGetProperty(ExperimentalFlag flag, out PropertyInfo flagPropertyInfo) =>
+        protected bool TryGetProperty(IExperimentalFlag flag, out PropertyInfo flagPropertyInfo) =>
             mFlagsById.TryGetValue(flag.Guid, out flagPropertyInfo);
 
         protected bool TryGetProperty(Guid flagId, out PropertyInfo flagPropertyInfo) =>
@@ -93,44 +136,35 @@ namespace Intersect.Core.ExperimentalFeatures
             ValueUtils.SetDefault(!string.IsNullOrWhiteSpace(flagName), out flagPropertyInfo) &&
             mFlagsByName.TryGetValue(flagName.ToLowerInvariant(), out flagPropertyInfo);
 
-        public bool TrySet(ExperimentalFlag flag, bool enabled)
+        private bool InternalTrySet(PropertyInfo property, [NotNull] IExperimentalFlag flag, bool enabled)
         {
-            // ReSharper disable once InvertIf
-            if (TryGetProperty(flag, out var property))
+            /* Unwraps the flag */
+            if (flag is ExperimentalFlagAlias && !TryGet(flag.Guid, out flag))
             {
-                property.SetValue(this, flag.With(enabled));
-                Save();
-                return true;
+                return false;
             }
 
-            return false;
-        }
-
-        public bool TrySet(Guid flagId, bool enabled)
-        {
-            // ReSharper disable once InvertIf
-            if (TryGetProperty(flagId, out var property) && property.GetValue(this) is ExperimentalFlag flag)
+            if (property == null && !TryGetProperty(flag, out property))
             {
-                property.SetValue(this, flag.With(enabled));
-                Save();
-                return true;
+                return false;
             }
 
-            return false;
+            property.SetValue(this, flag.With(enabled));
+            Save();
+            return true;
         }
 
-        public bool TrySet([NotNull] string flagName, bool enabled)
-        {
-            // ReSharper disable once InvertIf
-            if (TryGetProperty(flagName, out var property) && property.GetValue(this) is ExperimentalFlag flag)
-            {
-                property.SetValue(this, flag.With(enabled));
-                Save();
-                return true;
-            }
+        public bool TrySet([NotNull] IExperimentalFlag flag, bool enabled) => InternalTrySet(null, flag, enabled);
 
-            return false;
-        }
+        public bool TrySet(Guid flagId, bool enabled) =>
+            TryGetProperty(flagId, out var property) &&
+            property.GetValue(this) is IExperimentalFlag flag &&
+            InternalTrySet(property, flag, enabled);
+
+        public bool TrySet([NotNull] string flagName, bool enabled) =>
+            TryGetProperty(flagName, out var property) &&
+            property.GetValue(this) is IExperimentalFlag flag &&
+            InternalTrySet(property, flag, enabled);
 
         protected virtual bool Load()
         {
@@ -142,13 +176,16 @@ namespace Intersect.Core.ExperimentalFeatures
             try
             {
                 var json = File.ReadAllText(CONFIG_PATH, Encoding.UTF8);
-                JsonConvert.PopulateObject(json, Instance, new JsonSerializerSettings
-                {
-                    Converters = new List<JsonConverter>
+                JsonConvert.PopulateObject(
+                    json, Instance, new JsonSerializerSettings
                     {
-                        new ExperimentalFlagConverter()
+                        Converters = new List<JsonConverter>
+                        {
+                            new ExperimentalFlagConverter()
+                        }
                     }
-                });
+                );
+
                 return true;
             }
             catch (Exception exception)

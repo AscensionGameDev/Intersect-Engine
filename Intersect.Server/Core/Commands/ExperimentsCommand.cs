@@ -10,19 +10,20 @@ using JetBrains.Annotations;
 
 namespace Intersect.Server.Core.Commands
 {
-    internal class ExperimentsCommand : TargettedCommand<ExperimentalFlag>
+    internal class ExperimentsCommand : TargettedCommand<IExperimentalFlag>
     {
         [NotNull]
         private VariableArgument<bool> Enablement => FindArgumentOrThrow<VariableArgument<bool>>();
 
         public ExperimentsCommand() : base(
-            Strings.Commands.Experiments, Strings.Commands.Arguments.TargetExperimentalFeature,
+            Strings.Commands.Experiments,
+            Strings.Commands.Arguments.TargetExperimentalFeature,
             new VariableArgument<bool>(Strings.Commands.Arguments.EnablementBoolean, positional: true)
         )
         {
         }
 
-        protected override ExperimentalFlag FindTarget(ServerContext context, ParserResult result, string targetName)
+        protected override IExperimentalFlag FindTarget(ServerContext context, ParserResult result, string targetName)
         {
             if (Guid.TryParse(targetName, out var flagId) && Experiments.Instance.TryGet(flagId, out var flag))
             {
@@ -35,12 +36,12 @@ namespace Intersect.Server.Core.Commands
             }
 
             Console.WriteLine($@"    {Strings.Commands.ExperimentalFlagNotFound.ToString(targetName)}");
-            return default(ExperimentalFlag);
+            return default(IExperimentalFlag);
         }
 
-        protected override void HandleTarget(ServerContext context, ParserResult result, ExperimentalFlag target)
+        protected override void HandleTarget(ServerContext context, ParserResult result, IExperimentalFlag target)
         {
-            if (target == default(ExperimentalFlag))
+            if (target == default(IExperimentalFlag))
             {
                 return;
             }
