@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
+﻿using System.Diagnostics.CodeAnalysis;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -13,14 +10,22 @@ namespace Intersect.Config
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public enum DatabaseType
         {
-            sqlite,
-            mysql,
+            SQLite,
+            sqlite = SQLite,
+
+            MySQL,
+            MySql = MySQL,
+            Mysql = MySQL,
+            mysql = MySQL,
+
+            MariaDB = MySQL,
+            mariadb = MariaDB
         }
 
         [JsonConverter(typeof(StringEnumConverter))]
-        public DatabaseType Type { get; set; } = DatabaseType.sqlite;
+        public DatabaseType Type { get; set; } = DatabaseType.SQLite;
         public string Server { get; set; } = "localhost";
-        public int Port { get; set; } = 3306;
+        public ushort Port { get; set; } = 3306;
         public string Database { get; set; } = "";
         public string Username { get; set; } = "";
         public string Password { get; set; } = "";

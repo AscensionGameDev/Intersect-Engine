@@ -12,6 +12,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Intersect.Config;
+
 namespace Intersect.Server.Database.PlayerData
 {
     public class PlayerContext : DbContext, ISeedableContext
@@ -35,14 +37,14 @@ namespace Intersect.Server.Database.PlayerData
         [NotNull] public DbSet<Bag> Bags { get; set; }
         [NotNull] public DbSet<BagSlot> Bag_Items { get; set; }
 
-        private DatabaseUtils.DbProvider mConnection = DatabaseUtils.DbProvider.Sqlite;
+        private DatabaseOptions.DatabaseType mConnection = DatabaseOptions.DatabaseType.SQLite;
         private string mConnectionString = @"Data Source=resources/playerdata.db";
 
         public PlayerContext()
         {
         }
 
-        public  PlayerContext(DatabaseUtils.DbProvider connection, string connectionString)
+        public  PlayerContext(DatabaseOptions.DatabaseType connection, string connectionString)
         {
             mConnection = connection;
             mConnectionString = connectionString;
@@ -66,10 +68,10 @@ namespace Intersect.Server.Database.PlayerData
         {
             switch (mConnection)
             {
-                case DatabaseUtils.DbProvider.Sqlite:
+                case DatabaseOptions.DatabaseType.SQLite:
                     optionsBuilder.UseSqlite(mConnectionString);
                     break;
-                case DatabaseUtils.DbProvider.MySql:
+                case DatabaseOptions.DatabaseType.MySQL:
                     optionsBuilder.UseMySql(mConnectionString);
                     break;
                 default:
@@ -113,11 +115,11 @@ namespace Intersect.Server.Database.PlayerData
         {
             using (var command = Database.GetDbConnection().CreateCommand())
             {
-                if (mConnection == DatabaseUtils.DbProvider.MySql)
+                if (mConnection == DatabaseOptions.DatabaseType.MySQL)
                 {
                     command.CommandText = "show tables;";
                 }
-                else if (mConnection == DatabaseUtils.DbProvider.Sqlite)
+                else if (mConnection == DatabaseOptions.DatabaseType.SQLite)
                 {
                     command.CommandText = "SELECT name FROM sqlite_master WHERE type='table';";
                 }

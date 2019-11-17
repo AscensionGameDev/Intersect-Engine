@@ -75,21 +75,21 @@ namespace Intersect.Server
         {
             if (Options.GameDb.Type == DatabaseOptions.DatabaseType.sqlite)
             {
-                sGameDb = new GameContext(DatabaseUtils.DbProvider.Sqlite, $"Data Source={GameDbFilename}");
+                sGameDb = new GameContext(DatabaseOptions.DatabaseType.SQLite, $"Data Source={GameDbFilename}");
             }
             else
             {
-                sGameDb = new GameContext(DatabaseUtils.DbProvider.MySql, $"server={Options.GameDb.Server};port={Options.GameDb.Port};database={Options.GameDb.Database};user={Options.GameDb.Username};password={Options.GameDb.Password}");
+                sGameDb = new GameContext(DatabaseOptions.DatabaseType.MySQL, $"server={Options.GameDb.Server};port={Options.GameDb.Port};database={Options.GameDb.Database};user={Options.GameDb.Username};password={Options.GameDb.Password}");
             }
 
             //Connect to new player database
             if (Options.PlayerDb.Type == DatabaseOptions.DatabaseType.sqlite)
             {
-                sPlayerDb = new PlayerContext(DatabaseUtils.DbProvider.Sqlite, $"Data Source={PlayersDbFilename}");
+                sPlayerDb = new PlayerContext(DatabaseOptions.DatabaseType.SQLite, $"Data Source={PlayersDbFilename}");
             }
             else
             {
-                sPlayerDb = new PlayerContext(DatabaseUtils.DbProvider.MySql, $"server={Options.PlayerDb.Server};port={Options.PlayerDb.Port};database={Options.PlayerDb.Database};user={Options.PlayerDb.Username};password={Options.PlayerDb.Password}");
+                sPlayerDb = new PlayerContext(DatabaseOptions.DatabaseType.MySQL, $"server={Options.PlayerDb.Server};port={Options.PlayerDb.Port};database={Options.PlayerDb.Database};user={Options.PlayerDb.Username};password={Options.PlayerDb.Password}");
             }
 
             //We don't want anyone running the old migration tool accidentally
@@ -1066,7 +1066,7 @@ namespace Intersect.Server
             var user = "";
             var pass = "";
             var database = "";
-            var port = 3306;
+            ushort port = 3306;
             var dbConnected = false;
             if (convType == DatabaseOptions.DatabaseType.mysql)
             {
@@ -1078,7 +1078,7 @@ namespace Intersect.Server
                     Console.Write(Strings.Migration.mysqlport);
                     var portinput = Console.ReadLine().Trim();
                     if (string.IsNullOrEmpty(portinput)) portinput = "3306";
-                    port = int.Parse(portinput);
+                    port = ushort.Parse(portinput);
                     Console.Write(Strings.Migration.mysqldatabase);
                     database = Console.ReadLine().Trim();
                     Console.Write(Strings.Migration.mysqluser);
@@ -1093,7 +1093,7 @@ namespace Intersect.Server
                     {
                         if (gameDb)
                         {
-                            newGameContext = new GameContext(DatabaseUtils.DbProvider.MySql, connString);
+                            newGameContext = new GameContext(DatabaseOptions.DatabaseType.MySQL, connString);
                             if (newGameContext.IsEmpty())
                             {
                                 newGameContext.Database.EnsureDeleted();
@@ -1107,7 +1107,7 @@ namespace Intersect.Server
                         }
                         else
                         {
-                            newPlayerContext = new PlayerContext(DatabaseUtils.DbProvider.MySql, connString);
+                            newPlayerContext = new PlayerContext(DatabaseOptions.DatabaseType.MySQL, connString);
                             if (newPlayerContext.IsEmpty())
                             {
                                 newPlayerContext.Database.EnsureDeleted();
@@ -1163,13 +1163,13 @@ namespace Intersect.Server
                 }
                 if (gameDb)
                 {
-                    newGameContext = new GameContext(DatabaseUtils.DbProvider.Sqlite, $"Data Source={GameDbFilename}");
+                    newGameContext = new GameContext(DatabaseOptions.DatabaseType.SQLite, $"Data Source={GameDbFilename}");
                     newGameContext.Database.EnsureDeleted();
                     newGameContext.Database.Migrate();
                 }
                 else
                 {
-                    newPlayerContext = new PlayerContext(DatabaseUtils.DbProvider.Sqlite, $"Data Source={PlayersDbFilename}");
+                    newPlayerContext = new PlayerContext(DatabaseOptions.DatabaseType.SQLite, $"Data Source={PlayersDbFilename}");
                     newPlayerContext.Database.EnsureDeleted();
                     newPlayerContext.Database.Migrate();
                 }

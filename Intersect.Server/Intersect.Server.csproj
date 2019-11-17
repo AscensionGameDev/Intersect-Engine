@@ -414,6 +414,8 @@
     <Compile Include="Classes\Core\ServerTiming.cs" />
     <Compile Include="Classes\Database\GameData\GameContext.cs" />
     <Compile Include="Classes\Database\GameData\Migrations\Beta6Migration.cs" />
+    <Compile Include="Classes\Database\IntersectDbContext.cs" />
+    <Compile Include="Classes\Database\MigrationBuilderExtensions.cs" />
     <Compile Include="Classes\Database\PlayerData\Api\RefreshToken.cs" />
     <Compile Include="Classes\Database\PlayerData\Ban.cs" />
     <Compile Include="Classes\Database\PlayerData\Players\Bag.cs" />

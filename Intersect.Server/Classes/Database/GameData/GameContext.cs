@@ -1,17 +1,21 @@
-﻿using Intersect.GameObjects;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+
+using Intersect.Config;
+using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Server.Classes.Database.GameData.Migrations;
 using Intersect.Server.Maps;
 using Intersect.Utilities;
+
 using JetBrains.Annotations;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 
 namespace Intersect.Server.Database.GameData
 {
@@ -71,7 +75,7 @@ namespace Intersect.Server.Database.GameData
         //Time
         public DbSet<TimeBase> Time { get; set; }
 
-        private DatabaseUtils.DbProvider mConnection = DatabaseUtils.DbProvider.Sqlite;
+        private DatabaseOptions.DatabaseType mConnection = DatabaseOptions.DatabaseType.SQLite;
         private string mConnectionString = @"Data Source=resources/gamedata.db";
 
         public GameContext()
@@ -79,12 +83,12 @@ namespace Intersect.Server.Database.GameData
             Current = this;
         }
 
-        public GameContext(DatabaseUtils.DbProvider connection, string connectionString)
+        public GameContext(DatabaseOptions.DatabaseType connection, string connectionString)
             : this(connection, connectionString, false)
         {
         }
 
-        private GameContext(DatabaseUtils.DbProvider connection, string connectionString, bool isTemporary)
+        private GameContext(DatabaseOptions.DatabaseType connection, string connectionString, bool isTemporary)
         {
             mConnection = connection;
             mConnectionString = connectionString;
@@ -100,10 +104,10 @@ namespace Intersect.Server.Database.GameData
             optionsBuilder.EnableSensitiveDataLogging(true);
             switch (mConnection)
             {
-                case DatabaseUtils.DbProvider.Sqlite:
+                case DatabaseOptions.DatabaseType.SQLite:
                     optionsBuilder.UseSqlite(mConnectionString);
                     break;
-                case DatabaseUtils.DbProvider.MySql:
+                case DatabaseOptions.DatabaseType.MySQL:
                     optionsBuilder.UseMySql(mConnectionString);
                     break;
                 default:
@@ -115,11 +119,11 @@ namespace Intersect.Server.Database.GameData
         {
             using (var command = Database.GetDbConnection().CreateCommand())
             {
-                if (mConnection == DatabaseUtils.DbProvider.MySql)
+                if (mConnection == DatabaseOptions.DatabaseType.MySQL)
                 {
                     command.CommandText = "show tables;";
                 }
-                else if (mConnection == DatabaseUtils.DbProvider.Sqlite)
+                else if (mConnection == DatabaseOptions.DatabaseType.SQLite)
                 {
                     command.CommandText = "SELECT name FROM sqlite_master WHERE type='table';";
                 }
