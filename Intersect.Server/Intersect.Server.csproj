@@ -384,6 +384,9 @@
     </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.XML" />
+    <Reference Include="WebApiThrottle, Version=1.5.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebApiThrottle.1.5.4\lib\net45\WebApiThrottle.dll</HintPath>
+    </Reference>
     <Reference Include="websocket-sharp, Version=1.0.2.59611, Culture=neutral, PublicKeyToken=5660b08a1845a91e, processorArchitecture=MSIL">
       <HintPath>..\packages\WebSocketSharp.1.0.3-rc11\lib\websocket-sharp.dll</HintPath>
     </Reference>
@@ -605,6 +608,7 @@
     <Compile Include="Web\RestApi\Extensions\HttpRequestMessageExtensions.cs" />
     <Compile Include="Web\RestApi\IAppConfigurationProvider.cs" />
     <Compile Include="Web\RestApi\IntersectApiController.cs" />
+    <Compile Include="Web\RestApi\IntersectThrottlingHandler.cs" />
     <Compile Include="Web\RestApi\Logging\IntersectLogger.cs" />
     <Compile Include="Web\RestApi\Logging\IntersectLoggerFactory.cs" />
     <Compile Include="Web\RestApi\MediaTypeFormatterExtensions.cs" />

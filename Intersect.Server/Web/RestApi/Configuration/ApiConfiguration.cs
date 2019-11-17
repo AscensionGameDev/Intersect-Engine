@@ -1,6 +1,9 @@
 ﻿using Intersect.Configuration;
+
 using JetBrains.Annotations;
+
 using Newtonsoft.Json;
+
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -9,8 +12,13 @@ using System.ComponentModel;
 using System.Linq;
 using System.Security.Cryptography;
 
+using Intersect.Server.Web.RestApi.Authentication.OAuth;
+
+using WebApiThrottle;
+
 namespace Intersect.Server.Web.RestApi.Configuration
 {
+
     /// <inheritdoc />
     /// <summary>
     /// Configuration options for <see cref="T:Intersect.Server.Web.RestApi.RestApi" />.
@@ -27,6 +35,39 @@ namespace Intersect.Server.Web.RestApi.Configuration
 #else
         public const uint DefaultRefreshTokenLifetime = 10080;
 #endif
+
+        public static readonly ThrottlePolicy DefaultThrottlePolicy = new ThrottlePolicy
+        {
+            ClientRules =
+            {
+                {
+                    IntersectThrottlingHandler.DefaultFallbackClientKey, new RateLimits
+                    {
+                        PerSecond = 1,
+                        PerMinute = 10
+                    }
+                }
+            },
+            ClientThrottling = true,
+            EndpointRules =
+            {
+                {
+                    OAuthProvider.TokenEndpoint, new RateLimits
+                    {
+                        PerSecond = 1,
+                        PerMinute = 5
+                    }
+                }
+            },
+            EndpointThrottling = true,
+            IpThrottling = true,
+            StackBlockedRequests = true,
+            Rates =
+            {
+                {RateLimitPeriod.Second, 1},
+                {RateLimitPeriod.Minute, 60}
+            }
+        };
 
         #endregion
 
@@ -45,7 +86,8 @@ namespace Intersect.Server.Web.RestApi.Configuration
         [JsonIgnore]
         public ImmutableArray<int> Ports
         {
-            get => Hosts.Select(host => new Uri(host?.Replace("*", "localhost") ?? "http://localhost:5400").Port).ToImmutableArray();
+            get => Hosts.Select(host => new Uri(host?.Replace("*", "localhost") ?? "http://localhost:5400").Port)
+                .ToImmutableArray();
             set => Hosts = ImmutableArray.Create(value.Select(port => $@"http://localhost:{port}")?.ToArray());
         }
 
@@ -62,7 +104,8 @@ namespace Intersect.Server.Web.RestApi.Configuration
         private Dictionary<string, object> mRouteAuthorization;
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        [NotNull] public string DataProtectionKey { get; private set; }
+        [NotNull]
+        public string DataProtectionKey { get; private set; }
 
         [JsonIgnore]
         [NotNull]
@@ -70,19 +113,33 @@ namespace Intersect.Server.Web.RestApi.Configuration
             new ReadOnlyDictionary<string, object>(mRouteAuthorization);
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public bool Enabled { get; private set; }
+        public bool Enabled { get; private set; } = false;
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public bool DebugMode { get; private set; }
+        public bool DebugMode { get; private set; } = false;
 
 #if DEBUG
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public bool SeedMode { get; private set; }
 #endif
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Include)]
+        [JsonProperty(
+            NullValueHandling = NullValueHandling.Ignore,
+            DefaultValueHandling = DefaultValueHandling.Include
+        )]
         [DefaultValue(DefaultRefreshTokenLifetime)]
-        public uint RefreshTokenLifetime { get; private set; }
+        public uint RefreshTokenLifetime { get; private set; } = DefaultRefreshTokenLifetime;
+
+        [JsonProperty(
+            NullValueHandling = NullValueHandling.Ignore,
+            DefaultValueHandling = DefaultValueHandling.Include
+        )]
+        public ThrottlePolicy ThrottlePolicy { get; private set; } = DefaultThrottlePolicy;
+
+        [JsonProperty(
+             NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Include
+         ), DefaultValue(IntersectThrottlingHandler.DefaultFallbackClientKey)]
+        public string FallbackClientKey { get; private set; } = IntersectThrottlingHandler.DefaultFallbackClientKey;
 
         #endregion
 
@@ -99,11 +156,8 @@ namespace Intersect.Server.Web.RestApi.Configuration
                 DataProtectionKey = BitConverter.ToString(csp.Key).Replace("-", "");
             }
 
-            Enabled = false;
-            DebugMode = false;
-            Hosts = ImmutableArray.Create(new[] { "http://localhost:5400" });
+            Hosts = ImmutableArray.Create(new[] {"http://localhost:5400"});
             Cors = ImmutableArray.Create<CorsConfiguration>();
-            RefreshTokenLifetime = DefaultRefreshTokenLifetime;
         }
 
         #endregion

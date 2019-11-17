@@ -1,12 +1,10 @@
-﻿using Intersect.Server.Classes.Database.PlayerData.Api;
-using System;
+﻿using System;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Http;
 
+using Intersect.Server.Classes.Database.PlayerData.Api;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Web.RestApi.Attributes;
 
