@@ -2,6 +2,7 @@
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
@@ -118,5 +119,9 @@ namespace Intersect.Server.Database
                 .FirstOrDefault(propertyInfo => searchType == propertyInfo.PropertyType);
             return property?.GetValue(this) as DbSet<TType>;
         }
+
+        [NotNull]
+        public ICollection<string> PendingMigrations => Database?.GetPendingMigrations()?.ToList() ?? new List<string>();
+
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
+using System.Data.Common;
 using System.Linq;
 
 using Intersect.Config;
@@ -10,22 +10,22 @@ using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Server.Classes.Database.GameData.Migrations;
 using Intersect.Server.Maps;
-using Intersect.Utilities;
 
 using JetBrains.Annotations;
 
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Intersect.Server.Database.GameData
 {
-    public class GameContext : DbContext
+    public class GameContext : IntersectDbContext<GameContext>
     {
-        public static GameContext Current { get; private set; }
+        [NotNull]
+        public static DbConnectionStringBuilder DefaultConnectionStringBuilder =>
+            new SqliteConnectionStringBuilder(@"Data Source=resources/gamedata.db");
 
-        //[NotNull]
-        //This doesnt work for api because the Current context doesnt see changes made to the temp one.
-        //public static GameContext Temporary => new GameContext(Current?.mConnection ?? default(DatabaseUtils.DbProvider), Current?.mConnectionString, true);
+        public static GameContext Current { get; private set; }
 
         //Animations
         public DbSet<AnimationBase> Animations { get; set; }
@@ -75,67 +75,17 @@ namespace Intersect.Server.Database.GameData
         //Time
         public DbSet<TimeBase> Time { get; set; }
 
-        private DatabaseOptions.DatabaseType mConnection = DatabaseOptions.DatabaseType.SQLite;
-        private string mConnectionString = @"Data Source=resources/gamedata.db";
-
-        public GameContext()
+        public GameContext() : base(DefaultConnectionStringBuilder)
         {
             Current = this;
         }
 
-        public GameContext(DatabaseOptions.DatabaseType connection, string connectionString)
-            : this(connection, connectionString, false)
+        public GameContext(
+            [NotNull] DbConnectionStringBuilder connectionStringBuilder,
+            DatabaseOptions.DatabaseType databaseType
+        ) : base(connectionStringBuilder, databaseType, false)
         {
-        }
-
-        private GameContext(DatabaseOptions.DatabaseType connection, string connectionString, bool isTemporary)
-        {
-            mConnection = connection;
-            mConnectionString = connectionString;
-
-            if (!isTemporary)
-            {
-                Current = this;
-            }
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.EnableSensitiveDataLogging(true);
-            switch (mConnection)
-            {
-                case DatabaseOptions.DatabaseType.SQLite:
-                    optionsBuilder.UseSqlite(mConnectionString);
-                    break;
-                case DatabaseOptions.DatabaseType.MySQL:
-                    optionsBuilder.UseMySql(mConnectionString);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        public bool IsEmpty()
-        {
-            using (var command = Database.GetDbConnection().CreateCommand())
-            {
-                if (mConnection == DatabaseOptions.DatabaseType.MySQL)
-                {
-                    command.CommandText = "show tables;";
-                }
-                else if (mConnection == DatabaseOptions.DatabaseType.SQLite)
-                {
-                    command.CommandText = "SELECT name FROM sqlite_master WHERE type='table';";
-                }
-                command.CommandType = CommandType.Text;
-
-                Database.OpenConnection();
-
-                using (var result = command.ExecuteReader())
-                {
-                    return !result.HasRows;
-                }
-            }
+            Current = this;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
