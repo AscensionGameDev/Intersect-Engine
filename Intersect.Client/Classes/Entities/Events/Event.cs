@@ -263,6 +263,8 @@ namespace Intersect.Client.Entities.Events
             y = (int) GetTopPos(height) - 12;
             x = (int) Math.Ceiling(GetCenterPos().X);
 
+            if (Graphic.Type == EventGraphicType.Tileset) y -= 12;
+
             Pointf textSize = GameGraphics.Renderer.MeasureText(Name, GameGraphics.GameFont, 1);
 
             if (CustomColors.EventNameBackground != Color.Transparent)
@@ -304,8 +306,8 @@ namespace Intersect.Client.Entities.Events
                     }
                     if (mCachedTileset != null)
                     {
-                        pos.Y -= ((Graphic.Height + 1) * Options.TileHeight) / 2;
-                        pos.Y -= 12;
+                        pos.Y += Options.TileHeight / 2;
+                        pos.Y -= ((Graphic.Height) * Options.TileHeight / 2);
                     }
                     break;
             }
