@@ -666,6 +666,7 @@
     <Compile Include="Web\RestApi\Payloads\ChatMessage.cs" />
     <Compile Include="Web\RestApi\Payloads\LookupKey.cs" />
     <Compile Include="Web\RestApi\Types\DataPage.cs" />
+    <Compile Include="Web\Utilities\HeaderHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="private-intersect.bek" />

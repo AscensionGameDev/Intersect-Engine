@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Net.Http;
 
+using Intersect.Server.Web.Utilities;
+
 using JetBrains.Annotations;
 
 using WebApiThrottle;
@@ -11,8 +13,9 @@ namespace Intersect.Server.Web.RestApi
     public class IntersectThrottlingHandler : ThrottlingHandler
     {
 
-        [NotNull]
-        public const string DefaultFallbackClientKey = "test";
+        [NotNull] public const string DefaultFallbackClientKey = "test";
+
+        [NotNull] public const string DefaultAuthorizedFallbackClientKey = "authorized";
 
         public string Header { get; set; }
 
@@ -29,6 +32,14 @@ namespace Intersect.Server.Web.RestApi
             if (request.Headers.TryGetValues(Header, out var clientKeys))
             {
                 clientKey = clientKeys.FirstOrDefault();
+            }
+
+            if (string.IsNullOrWhiteSpace(clientKey) && request.Headers.TryGetValues("Authorization", out var authorizationHeaders))
+            {
+                if (authorizationHeaders.Any(HeaderHelper.IsValidAuthorizationBearerHeader))
+                {
+                    clientKey = DefaultAuthorizedFallbackClientKey;
+                }
             }
 
             return new RequestIdentity
