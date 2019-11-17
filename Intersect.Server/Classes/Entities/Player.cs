@@ -1003,7 +1003,7 @@ namespace Intersect.Server.Entities
                         if (item != null)
                         {
                             s += Items[Equipment[i]].StatBuffs[(int)statType] + item.StatsGiven[(int)statType] + 
-                                ((BaseStats[(int)statType] * item.PercentageStatsGiven[(int)statType]) / 100);
+                                (int)(((Stat[(int)statType].Stat + StatPointAllocations[(int)statType]) * (item.PercentageStatsGiven[(int)statType]) / 100f));
                         }
                     }
                 }

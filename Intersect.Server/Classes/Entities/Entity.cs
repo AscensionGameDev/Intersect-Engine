@@ -1105,7 +1105,7 @@ namespace Intersect.Server.Entities
             for (var i = 0; i < (int)Stats.StatCount; i++)
             {
                 enemy.Stat[i].AddBuff(new EntityBuff(spellBase, spellBase.Combat.StatDiff[i] + 
-                    ((enemy.Stat[i].Stat * spellBase.Combat.PercentageStatDiff[i]) / 100), spellBase.Combat.Duration));
+                    (int)((enemy.Stat[i].Stat + enemy.StatPointAllocations[i]) * (spellBase.Combat.PercentageStatDiff[i] / 100f)), spellBase.Combat.Duration));
                 if (spellBase.Combat.StatDiff[i] != 0 || spellBase.Combat.PercentageStatDiff[i] != 0)
                     statBuffTime = spellBase.Combat.Duration;
             }
