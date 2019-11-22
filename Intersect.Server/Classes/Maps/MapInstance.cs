@@ -209,22 +209,25 @@ namespace Intersect.Server.Maps
             var itemBase = ItemBase.Get(item.ItemId);
             if (itemBase != null)
             {
-                MapItems.Add(new MapItem(item.ItemId, item.Quantity, item.BagId, item.Bag));
-                MapItems[MapItems.Count - 1].X = x;
-                MapItems[MapItems.Count - 1].Y = y;
-                MapItems[MapItems.Count - 1].DespawnTime = Globals.Timing.TimeMs + Options.ItemDespawnTime;
+                var mapItem = new MapItem(item.ItemId, item.Quantity, item.BagId, item.Bag)
+                {
+                    X = x,
+                    Y = y,
+                    DespawnTime = Globals.Timing.TimeMs + Options.ItemDespawnTime
+                };
                 if (itemBase.ItemType == ItemTypes.Equipment)
                 {
-                    MapItems[MapItems.Count - 1].Quantity = 1;
+                    mapItem.Quantity = 1;
                     for (int i = 0; i < (int)Stats.StatCount; i++)
                     {
-                        MapItems[MapItems.Count - 1].StatBuffs[i] = item.StatBuffs[i];
+                        mapItem.StatBuffs[i] = item.StatBuffs.Length > i ? item.StatBuffs[i] : 0;
                     }
                 }
                 else
                 {
-                    MapItems[MapItems.Count - 1].Quantity = amount;
+                    mapItem.Quantity = amount;
                 }
+                MapItems.Add(mapItem);
                 PacketSender.SendMapItemUpdate(Id, MapItems.Count - 1);
             }
         }
