@@ -58,7 +58,11 @@ namespace Intersect.GameObjects.Events.Commands
             foreach (var branch in BranchIds)
             {
                 if (branch != Guid.Empty && commandLists.ContainsKey(branch))
-                    copyLists.Add(branch,commandLists[branch]);
+                {
+                    copyLists.Add(branch, commandLists[branch]);
+                    foreach (var cmd in commandLists[branch])
+                        cmd.GetCopyData(commandLists, copyLists);
+                }
             }
             return base.GetCopyData(commandLists, copyLists);
         }
@@ -175,7 +179,11 @@ namespace Intersect.GameObjects.Events.Commands
             foreach (var branch in BranchIds)
             {
                 if (branch != Guid.Empty && commandLists.ContainsKey(branch))
+                {
                     copyLists.Add(branch, commandLists[branch]);
+                    foreach (var cmd in commandLists[branch])
+                        cmd.GetCopyData(commandLists, copyLists);
+                }
             }
             return base.GetCopyData(commandLists, copyLists);
         }
@@ -271,7 +279,11 @@ namespace Intersect.GameObjects.Events.Commands
             foreach (var branch in BranchIds)
             {
                 if (branch != Guid.Empty && commandLists.ContainsKey(branch))
+                {
                     copyLists.Add(branch, commandLists[branch]);
+                    foreach (var cmd in commandLists[branch])
+                        cmd.GetCopyData(commandLists, copyLists);
+                }
             }
             return base.GetCopyData(commandLists, copyLists);
         }
@@ -316,7 +328,11 @@ namespace Intersect.GameObjects.Events.Commands
             foreach (var branch in BranchIds)
             {
                 if (branch != Guid.Empty && commandLists.ContainsKey(branch))
+                {
                     copyLists.Add(branch, commandLists[branch]);
+                    foreach (var cmd in commandLists[branch])
+                        cmd.GetCopyData(commandLists, copyLists);
+                }
             }
             return base.GetCopyData(commandLists, copyLists);
         }
@@ -553,7 +569,11 @@ namespace Intersect.GameObjects.Events.Commands
             foreach (var branch in BranchIds)
             {
                 if (branch != Guid.Empty && commandLists.ContainsKey(branch))
+                {
                     copyLists.Add(branch, commandLists[branch]);
+                    foreach (var cmd in commandLists[branch])
+                        cmd.GetCopyData(commandLists, copyLists);
+                }
             }
             return base.GetCopyData(commandLists, copyLists);
         }

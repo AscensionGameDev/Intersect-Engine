@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,6 +7,7 @@ using System.Web.Http.Dispatcher;
 
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.Logging;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData.Players;
@@ -14,6 +16,8 @@ using Intersect.Server.General;
 using Intersect.Server.Maps;
 using Intersect.Server.Misc.Pathfinding;
 using Intersect.Server.Networking;
+
+using JetBrains.Annotations;
 
 namespace Intersect.Server.Entities
 {
@@ -27,7 +31,7 @@ namespace Intersect.Server.Entities
         //Moving
         public long LastRandomMove;
 
-        public NpcBase Base;
+        [NotNull] public NpcBase Base { get; private set; }
 
         //Pathfinding
         private Pathfinder mPathFinder;
@@ -39,9 +43,9 @@ namespace Intersect.Server.Entities
         public long RespawnTime;
 
         //Damage Map - Keep track of who is doing the most damage to this npc and focus accordingly
-        public Dictionary<EntityInstance, long> DamageMap = new Dictionary<EntityInstance, long>();
+        public ConcurrentDictionary<EntityInstance, long> DamageMap = new ConcurrentDictionary<EntityInstance, long>();
 
-        public Npc(NpcBase myBase, bool despawnable = false) : base()
+        public Npc([NotNull] NpcBase myBase, bool despawnable = false) : base()
         {
             Name = myBase.Name;
             Sprite = myBase.Sprite;
@@ -141,7 +145,7 @@ namespace Intersect.Server.Entities
             if (Target != null)
             {
                 if (DamageMap.ContainsKey(Target))
-                    DamageMap.Remove(Target);
+                    DamageMap.TryRemove(Target, out long val);
             }
             Target = null;
             PacketSender.SendNpcAggressionToProximity(this);
@@ -242,119 +246,220 @@ namespace Intersect.Server.Entities
             return false;
         }
 
+        private static bool PredicateStunnedOrSleeping(StatusInstance status)
+        {
+            switch (status?.Type)
+            {
+                case StatusTypes.Sleep:
+                case StatusTypes.Stun:
+                    return true;
+
+                case StatusTypes.Silence:
+                case StatusTypes.None:
+                case StatusTypes.Snare:
+                case StatusTypes.Blind:
+                case StatusTypes.Stealth:
+                case StatusTypes.Transform:
+                case StatusTypes.Cleanse:
+                case StatusTypes.Invulnerable:
+                case StatusTypes.Shield:
+                case StatusTypes.OnHit:
+                case StatusTypes.Taunt:
+                case null:
+                    return false;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private static bool PredicateUnableToCastSpells(StatusInstance status)
+        {
+            switch (status?.Type)
+            {
+                case StatusTypes.Silence:
+                case StatusTypes.Sleep:
+                case StatusTypes.Stun:
+                    return true;
+
+                case StatusTypes.None:
+                case StatusTypes.Snare:
+                case StatusTypes.Blind:
+                case StatusTypes.Stealth:
+                case StatusTypes.Transform:
+                case StatusTypes.Cleanse:
+                case StatusTypes.Invulnerable:
+                case StatusTypes.Shield:
+                case StatusTypes.OnHit:
+                case StatusTypes.Taunt:
+                case null:
+                    return false;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private bool IsStunnedOrSleeping => Statuses.Values.Any(PredicateStunnedOrSleeping);
+
+        private bool IsUnableToCastSpells => Statuses.Values.Any(PredicateUnableToCastSpells);
+
         private void TryCastSpells()
         {
-            //check if NPC is stunned
-            var statuses = Statuses.Values.ToArray();
-            foreach (var status in statuses)
+            // Check if NPC is stunned/sleeping
+            if (IsStunnedOrSleeping)
             {
-                if (status.Type == StatusTypes.Stun || status.Type == StatusTypes.Sleep)
-                {
-                    return;
-                }
+                return;
             }
+
             //Check if NPC is casting a spell
             if (CastTime > Globals.Timing.TimeMs)
             {
                 return; //can't move while casting
             }
-            else if (CastFreq < Globals.Timing.TimeMs) //Try to cast a new spell
+
+            if (CastFreq >= Globals.Timing.TimeMs)
             {
-                var cc = false;
-                //Check if the NPC is silenced or stunned
-                foreach (var status in statuses)
+                return;
+            }
+
+            // Check if the NPC is able to cast spells
+            if (IsUnableToCastSpells)
+            {
+                return;
+            }
+
+            if (Base.Spells == null || Base.Spells.Count <= 0)
+            {
+                return;
+            }
+
+            // Pick a random spell
+            var spellIndex = Globals.Rand.Next(0, Spells.Count);
+            var spellId = Base.Spells[spellIndex];
+            var spellBase = SpellBase.Get(spellId);
+            if (spellBase == null)
+            {
+                return;
+            }
+
+            if (spellBase.Combat == null)
+            {
+                Log.Warn($"Combat data missing for {spellBase.Id}.");
+            }
+
+            var range = spellBase.Combat?.CastRange ?? 0;
+            var targetType = spellBase.Combat?.TargetType ?? SpellTargetTypes.Single;
+            var projectileBase = spellBase.Combat?.Projectile;
+
+            if (spellBase.SpellType == SpellTypes.CombatSpell &&
+                targetType == SpellTargetTypes.Projectile &&
+                projectileBase != null &&
+                InRangeOf(Target, projectileBase.Range))
+            {
+                range = projectileBase.Range;
+                var dirToEnemy = DirToEnemy(Target);
+                if (dirToEnemy != Dir)
                 {
-                    if (status.Type == StatusTypes.Silence || status.Type == StatusTypes.Stun || status.Type == StatusTypes.Sleep)
+                    if (LastRandomMove >= Globals.Timing.TimeMs)
                     {
-                        cc = true;
-                        break;
+                        return;
                     }
-                }
 
-                if (cc == false)
-                {
-                    if (Base.Spells.Count > 0)
-                    {
-                        var s = Globals.Rand.Next(0, Base.Spells.Count); //Pick a random spell
-                        var spell = SpellBase.Get((Base.Spells[s]));
-                        var range = spell.Combat.CastRange;
-                        if (spell != null)
-                        {
-                            var projectileBase = spell.Combat.Projectile;
-                            if (spell.SpellType == SpellTypes.CombatSpell && spell.Combat.TargetType == SpellTargetTypes.Projectile && projectileBase != null && InRangeOf(Target, projectileBase.Range))
-                            {
-                                range = projectileBase.Range;
-                                if (DirToEnemy(Target) != Dir)
-                                {
-                                    if (LastRandomMove >= Globals.Timing.TimeMs) return;
-                                    var dirToEnemy = DirToEnemy(Target);
-                                    if (dirToEnemy != -1)
-                                    {
-                                        //Face the target -- next frame fire -- then go on with life
-                                        ChangeDir(dirToEnemy); // Gotta get dir to enemy
-                                        LastRandomMove = Globals.Timing.TimeMs + Globals.Rand.Next(1000, 3000);
-                                    }
-                                    return;
-                                }
-                            }
+                    //Face the target -- next frame fire -- then go on with life
+                    ChangeDir(dirToEnemy); // Gotta get dir to enemy
+                    LastRandomMove = Globals.Timing.TimeMs + Globals.Rand.Next(1000, 3000);
 
-                            if (spell.VitalCost[(int) Vitals.Mana] <= GetVital(Vitals.Mana))
-                            {
-                                if (spell.VitalCost[(int) Vitals.Health] <= GetVital(Vitals.Health))
-                                {
-                                    if (Spells[s].SpellCd < Globals.Timing.RealTimeMs)
-                                    {
-                                        if (spell.Combat.TargetType == SpellTargetTypes.Self || spell.Combat.TargetType == SpellTargetTypes.AoE || InRangeOf(Target, range))
-                                        {
-                                            CastTime = Globals.Timing.TimeMs + spell.CastDuration;
-                                            SubVital(Vitals.Mana, spell.VitalCost[(int) Vitals.Mana]);
-                                            SubVital(Vitals.Health,spell.VitalCost[(int)Vitals.Health]);
-                                            if (spell.Combat.Friendly && spell.SpellType != SpellTypes.WarpTo)
-                                            {
-                                                CastTarget = this;
-                                            }
-                                            else
-                                            {
-                                                CastTarget = Target;
-                                            }
-
-                                            switch (Base.SpellFrequency)
-                                            {
-                                                case 0:
-                                                    CastFreq = Globals.Timing.TimeMs + 30000;
-                                                    break;
-                                                case 1:
-                                                    CastFreq = Globals.Timing.TimeMs + 15000;
-                                                    break;
-                                                case 2:
-                                                    CastFreq = Globals.Timing.TimeMs + 8000;
-                                                    break;
-                                                case 3:
-                                                    CastFreq = Globals.Timing.TimeMs + 4000;
-                                                    break;
-                                                case 4:
-                                                    CastFreq = Globals.Timing.TimeMs + 2000;
-                                                    break;
-                                            }
-
-                                            SpellCastSlot = s;
-
-                                            if (spell.CastAnimationId != Guid.Empty)
-                                            {
-                                                PacketSender.SendAnimationToProximity(spell.CastAnimationId, 1, Id, MapId, 0, 0, (sbyte)Dir);
-                                                //Target Type 1 will be global entity
-                                            }
-
-                                            PacketSender.SendEntityVitals(this);
-                                            PacketSender.SendEntityCastTime(this, (Base.Spells[s]));
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    return;
                 }
             }
+
+            if (spellBase.VitalCost == null)
+            {
+                return;
+            }
+
+            if (spellBase.VitalCost[(int) Vitals.Mana] > GetVital(Vitals.Mana))
+            {
+                return;
+            }
+
+            if (spellBase.VitalCost[(int) Vitals.Health] > GetVital(Vitals.Health))
+            {
+                return;
+            }
+
+            var spell = Spells[spellIndex];
+            if (spell == null)
+            {
+                return;
+            }
+
+            if (spell.SpellCd >= Globals.Timing.RealTimeMs)
+            {
+                return;
+            }
+
+            if (!InRangeOf(Target, range))
+            {
+                // ReSharper disable once SwitchStatementMissingSomeCases
+                switch (targetType)
+                {
+                    case SpellTargetTypes.Self:
+                    case SpellTargetTypes.AoE:
+                        return;
+                }
+            }
+
+            CastTime = Globals.Timing.TimeMs + spellBase.CastDuration;
+            SubVital(Vitals.Mana, spellBase.VitalCost[(int) Vitals.Mana]);
+            SubVital(Vitals.Health, spellBase.VitalCost[(int) Vitals.Health]);
+                
+            if ((spellBase.Combat?.Friendly ?? false) && spellBase.SpellType != SpellTypes.WarpTo)
+            {
+                CastTarget = this;
+            }
+            else
+            {
+                CastTarget = Target;
+            }
+
+            switch (Base.SpellFrequency)
+            {
+                case 0:
+                    CastFreq = Globals.Timing.TimeMs + 30000;
+                    break;
+
+                case 1:
+                    CastFreq = Globals.Timing.TimeMs + 15000;
+                    break;
+
+                case 2:
+                    CastFreq = Globals.Timing.TimeMs + 8000;
+                    break;
+
+                case 3:
+                    CastFreq = Globals.Timing.TimeMs + 4000;
+                    break;
+
+                case 4:
+                    CastFreq = Globals.Timing.TimeMs + 2000;
+                    break;
+            }
+
+            SpellCastSlot = spellIndex;
+
+            if (spellBase.CastAnimationId != Guid.Empty)
+            {
+                PacketSender.SendAnimationToProximity(
+                    spellBase.CastAnimationId, 1, Id, MapId, 0, 0, (sbyte) Dir
+                );
+
+                //Target Type 1 will be global entity
+            }
+
+            PacketSender.SendEntityVitals(this);
+            PacketSender.SendEntityCastTime(this, spellId);
         }
 
         //General Updating

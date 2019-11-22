@@ -204,7 +204,7 @@ namespace Intersect.Client
 
         public static void StopSound(MapSound sound)
         {
-            sound.Stop();
+            sound?.Stop();
         }
 
         public static void StopAllSounds()

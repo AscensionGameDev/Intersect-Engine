@@ -193,6 +193,8 @@ namespace Intersect.Editor.Forms.DockingElements
                                 Globals.MapLayersWindow.SetTileset(
                                     TilesetBase.GetName(
                                         tmpMap.Layers[i].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetId));
+                                Globals.CurSelW = 0;
+                                Globals.CurSelH = 0;
                                 Globals.MapLayersWindow.SetAutoTile(
                                     tmpMap.Layers[i].Tiles[Globals.CurTileX, Globals.CurTileY].Autotile);
                                 Globals.CurSelX = tmpMap.Layers[i].Tiles[Globals.CurTileX, Globals.CurTileY].X;
@@ -286,6 +288,7 @@ namespace Intersect.Editor.Forms.DockingElements
                         {
                             Globals.MapEditorWindow.SmartFillLayer(Globals.CurTileX, Globals.CurTileY);
                         }
+                        Globals.MouseButton = -1;
                     }
                     else if (Globals.CurrentTool == (int) EditingTool.Erase)
                     {
@@ -300,6 +303,7 @@ namespace Intersect.Editor.Forms.DockingElements
                                 Globals.MapEditorWindow.SmartEraseLayer(Globals.CurTileX, Globals.CurTileY);
                             }
                         }
+                        Globals.MouseButton = -1;
                     }
                     else
                     {
@@ -382,6 +386,7 @@ namespace Intersect.Editor.Forms.DockingElements
                         {
                             Globals.MapEditorWindow.FillLayer();
                         }
+                        Globals.MouseButton = -1;
                     }
                     else if (Globals.CurrentTool == (int) EditingTool.Erase)
                     {
@@ -389,6 +394,7 @@ namespace Intersect.Editor.Forms.DockingElements
                         {
                             Globals.MapEditorWindow.EraseLayer();
                         }
+                        Globals.MouseButton = -1;
                     }
                     else if (Globals.CurrentLayer == Options.LayerCount) //Attributes
                     {

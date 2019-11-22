@@ -104,6 +104,7 @@ namespace Intersect.Server.Entities
                         if (curStack.WaitingForResponse == CommandInstance.EventResponse.Crafting && MyPlayer.CraftingTableId == Guid.Empty) curStack.WaitingForResponse = CommandInstance.EventResponse.None;
                         if (curStack.WaitingForResponse == CommandInstance.EventResponse.Bank && MyPlayer.InBank == false) curStack.WaitingForResponse = CommandInstance.EventResponse.None;
                         if (curStack.WaitingForResponse == CommandInstance.EventResponse.Quest && !MyPlayer.QuestOffers.Contains(((StartQuestCommand)curStack.WaitingOnCommand).QuestId)) curStack.WaitingForResponse = CommandInstance.EventResponse.None;
+                        if (curStack.WaitingForResponse == CommandInstance.EventResponse.Timer && WaitTimer < Globals.Timing.TimeMs) curStack.WaitingForResponse = CommandInstance.EventResponse.None;
                         var commandsExecuted = 0;
                         while (curStack.WaitingForResponse == CommandInstance.EventResponse.None && !PageInstance.ShouldDespawn() && commandsExecuted < Options.EventWatchdogKillThreshhold)
                         {
@@ -187,7 +188,7 @@ namespace Intersect.Server.Entities
                     }
                     else
                     {
-                        if (PageInstance.Trigger == EventTrigger.Autorun)
+                        if (PageInstance.Trigger == EventTrigger.Autorun && WaitTimer < Globals.Timing.TimeMs)
                         {
                             var newStack = new CommandInstance(PageInstance.MyPage);
                             CallStack.Push(newStack);
@@ -240,6 +241,7 @@ namespace Intersect.Server.Entities
             Bank,
             Crafting,
             Quest,
+            Timer
         }
 
         private int commandIndex;

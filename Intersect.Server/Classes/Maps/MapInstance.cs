@@ -32,8 +32,8 @@ namespace Intersect.Server.Maps
         [NotMapped]
         public bool Active;
 
-        [NotMapped]
-        private List<EntityInstance> mEntities = new List<EntityInstance>();
+        [NotNull, NotMapped]
+        private readonly List<EntityInstance> mEntities = new List<EntityInstance>();
 
         [JsonIgnore] [NotMapped] public Dictionary<EventBase, EventInstance> GlobalEventInstances = new Dictionary<EventBase, EventInstance>();
         [JsonIgnore] [NotMapped] public List<MapItemSpawn> ItemRespawns = new List<MapItemSpawn>();
@@ -215,22 +215,25 @@ namespace Intersect.Server.Maps
             var itemBase = ItemBase.Get(item.ItemId);
             if (itemBase != null)
             {
-                MapItems.Add(new MapItem(item.ItemId, item.Quantity, item.BagId, item.Bag));
-                MapItems[MapItems.Count - 1].X = x;
-                MapItems[MapItems.Count - 1].Y = y;
-                MapItems[MapItems.Count - 1].DespawnTime = Globals.Timing.TimeMs + Options.ItemDespawnTime;
+                var mapItem = new MapItem(item.ItemId, item.Quantity, item.BagId, item.Bag)
+                {
+                    X = x,
+                    Y = y,
+                    DespawnTime = Globals.Timing.TimeMs + Options.ItemDespawnTime
+                };
                 if (itemBase.ItemType == ItemTypes.Equipment)
                 {
-                    MapItems[MapItems.Count - 1].Quantity = 1;
+                    mapItem.Quantity = 1;
                     for (int i = 0; i < (int)Stats.StatCount; i++)
                     {
-                        MapItems[MapItems.Count - 1].StatBuffs[i] = item.StatBuffs[i];
+                        mapItem.StatBuffs[i] = item.StatBuffs.Length > i ? item.StatBuffs[i] : 0;
                     }
                 }
                 else
                 {
-                    MapItems[MapItems.Count - 1].Quantity = amount;
+                    mapItem.Quantity = amount;
                 }
+                MapItems.Add(mapItem);
                 PacketSender.SendMapItemUpdate(Id, MapItems.Count - 1);
             }
         }
@@ -817,11 +820,17 @@ namespace Intersect.Server.Maps
             }
         }
 
+        [NotNull]
         public List<MapInstance> GetSurroundingMaps(bool includingSelf = false)
         {
             Debug.Assert(Lookup != null, "Lookup != null");
             var maps = SurroundingMaps?.Select(mapNum => Lookup.Get<MapInstance>(mapNum)).Where(map => map != null).ToList() ?? new List<MapInstance>();
-            if (includingSelf) maps.Add(this);
+            
+            if (includingSelf)
+            {
+                maps.Add(this);
+            }
+
             return maps;
         }
 
@@ -873,10 +882,12 @@ namespace Intersect.Server.Maps
             return false;
         }
 
+        [NotNull]
         public List<EntityInstance> GetEntities(bool includeSurroundingMaps = false)
         {
-            var entities = new List<EntityInstance>();
-            entities.AddRange(mEntities.ToArray());
+            var entities = new List<EntityInstance>(mEntities);
+            
+            // ReSharper disable once InvertIf
             if (includeSurroundingMaps)
             {
                 foreach (var map in GetSurroundingMaps(false))
@@ -884,6 +895,7 @@ namespace Intersect.Server.Maps
                     entities.AddRange(map.GetEntities());
                 }
             }
+
             return entities;
         }
 

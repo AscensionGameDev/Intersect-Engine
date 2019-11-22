@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -31,7 +32,11 @@ using Intersect.Server.Networking;
 using Intersect.Server.Web.RestApi;
 using Intersect.Utilities;
 using JetBrains.Annotations;
+
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+
+using MySql.Data.MySqlClient;
 
 namespace Intersect.Server
 {
@@ -70,45 +75,76 @@ namespace Intersect.Server
             
         }
 
-        //Database setup, version checking
+        [NotNull]
+        public static DbConnectionStringBuilder CreateConnectionStringBuilder(
+            [NotNull] DatabaseOptions databaseOptions,
+            [NotNull] string filename
+        )
+        {
+            switch (databaseOptions.Type)
+            {
+                case DatabaseOptions.DatabaseType.SQLite:
+                    return new SqliteConnectionStringBuilder($"Data Source={filename}");
+
+                case DatabaseOptions.DatabaseType.MySQL:
+                    return new MySqlConnectionStringBuilder
+                    {
+                        Server = databaseOptions.Server,
+                        Port = databaseOptions.Port,
+                        Database = databaseOptions.Database,
+                        UserID = databaseOptions.Username,
+                        Password = databaseOptions.Password
+                    };
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(databaseOptions.Type));
+            }
+        }
+
+        // Database setup, version checking
         public static bool InitDatabase()
         {
-            if (Options.GameDb.Type == DatabaseOptions.DatabaseType.sqlite)
-            {
-                sGameDb = new GameContext(DatabaseUtils.DbProvider.Sqlite, $"Data Source={GameDbFilename}");
-            }
-            else
-            {
-                sGameDb = new GameContext(DatabaseUtils.DbProvider.MySql, $"server={Options.GameDb.Server};port={Options.GameDb.Port};database={Options.GameDb.Database};user={Options.GameDb.Username};password={Options.GameDb.Password}");
-            }
+            sGameDb = new GameContext(
+                CreateConnectionStringBuilder(Options.GameDb ?? throw new InvalidOperationException(), GameDbFilename),
+                Options.GameDb.Type
+            );
 
-            //Connect to new player database
-            if (Options.PlayerDb.Type == DatabaseOptions.DatabaseType.sqlite)
-            {
-                sPlayerDb = new PlayerContext(DatabaseUtils.DbProvider.Sqlite, $"Data Source={PlayersDbFilename}");
-            }
-            else
-            {
-                sPlayerDb = new PlayerContext(DatabaseUtils.DbProvider.MySql, $"server={Options.PlayerDb.Server};port={Options.PlayerDb.Port};database={Options.PlayerDb.Database};user={Options.PlayerDb.Username};password={Options.PlayerDb.Password}");
-            }
+            sPlayerDb = new PlayerContext(
+                CreateConnectionStringBuilder(
+                    Options.PlayerDb ?? throw new InvalidOperationException(), PlayersDbFilename
+                ), Options.PlayerDb.Type
+            );
 
-            //We don't want anyone running the old migration tool accidentally
+            // We don't want anyone running the old migration tool accidentally
             try
             {
-                if (File.Exists("Intersect Migration Tool.exe")) File.Delete("Intersect Migration Tool.exe");
-                if (File.Exists("Intersect Migration Tool.pdb")) File.Delete("Intersect Migration Tool.pdb");
-                if (File.Exists("Intersect Migration Tool.mdb")) File.Delete("Intersect Migration Tool.mdb");
+                if (File.Exists("Intersect Migration Tool.exe"))
+                {
+                    File.Delete("Intersect Migration Tool.exe");
+                }
+
+                if (File.Exists("Intersect Migration Tool.pdb"))
+                {
+                    File.Delete("Intersect Migration Tool.pdb");
+                }
+
+                if (File.Exists("Intersect Migration Tool.mdb"))
+                {
+                    File.Delete("Intersect Migration Tool.mdb");
+                }
             }
-            catch (Exception ex)
+            catch
             {
-
+                // ignored
             }
 
-            var gameMigrations = sGameDb.Database.GetPendingMigrations();
-            var playerMigrations = sPlayerDb.Database.GetPendingMigrations();
-            var showMigrationWarnings = (gameMigrations.Any() && !gameMigrations.Contains("20180905042857_Initial")) || (playerMigrations.Any() && !playerMigrations.Contains("20180927161502_InitialPlayerDb"));
+            var gameMigrations = sGameDb.PendingMigrations;
+            var showGameMigrationWarning = gameMigrations.Any() && !gameMigrations.Contains("20180905042857_Initial");
+            var playerMigrations = sPlayerDb.PendingMigrations;
+            var showPlayerMigrationWarning =
+                playerMigrations.Any() && !playerMigrations.Contains("20180927161502_InitialPlayerDb");
 
-            if (showMigrationWarnings)
+            if (showGameMigrationWarning || showPlayerMigrationWarning)
             {
                 Console.WriteLine();
                 Console.WriteLine(Strings.Database.upgraderequired);
@@ -134,20 +170,29 @@ namespace Intersect.Server
             }
 
             sGameDb.Database.Migrate();
-            var remainingGameMigrations = sGameDb.Database.GetPendingMigrations();
+            var remainingGameMigrations = sGameDb.PendingMigrations;
             var processedGameMigrations = new List<string>(gameMigrations);
-            foreach (var itm in remainingGameMigrations) processedGameMigrations.Remove(itm);
+            foreach (var itm in remainingGameMigrations)
+            {
+                processedGameMigrations.Remove(itm);
+            }
             sGameDb.MigrationsProcessed(processedGameMigrations.ToArray());
 
             
             sPlayerDb.Database.Migrate();
-            var remainingPlayerMigrations = sPlayerDb.Database.GetPendingMigrations();
+            var remainingPlayerMigrations = sPlayerDb.PendingMigrations;
             var processedPlayerMigrations = new List<string>(playerMigrations);
-            foreach (var itm in remainingPlayerMigrations) processedPlayerMigrations.Remove(itm);
+            foreach (var itm in remainingPlayerMigrations)
+            {
+                processedPlayerMigrations.Remove(itm);
+            }
             sPlayerDb.MigrationsProcessed(processedPlayerMigrations.ToArray());
 #if DEBUG
             if (ServerContext.Instance.RestApi.Configuration.SeedMode)
+            {
+                
                 sPlayerDb.Seed();
+            }
 #endif
             
             LoadAllGameObjects();
@@ -290,21 +335,18 @@ namespace Intersect.Server
             rng.GetBytes(buff);
             var salt = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(Convert.ToBase64String(buff)))).Replace("-", "");
 
-            //Hash the Password
-            var pass = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password + salt))).Replace("-", "");
-
             var rights = UserRights.None;
             if (RegisteredPlayers== 0)
             {
                 rights = UserRights.Admin;
             }
 
-            var user = new User()
+            var user = new User
             {
                 Name = username,
                 Email = email,
                 Salt = salt,
-                Password = pass,
+                Password = User.SaltPasswordHash(password, salt),
                 Power = rights,
             };
             lock (mPlayerDbLock)
@@ -315,7 +357,7 @@ namespace Intersect.Server
             SavePlayerDatabaseAsync();
         }
 
-        public static void ResetPass(User user, string hashedPass)
+        public static void ResetPass(User user, string password)
         {
             var sha = new SHA256Managed();
 
@@ -325,11 +367,8 @@ namespace Intersect.Server
             rng.GetBytes(buff);
             var salt = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(Convert.ToBase64String(buff)))).Replace("-", "");
 
-            //Hash the Password
-            var pass = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(hashedPass + salt))).Replace("-", "");
-
             user.Salt = salt;
-            user.Password = pass;
+            user.Password = User.SaltPasswordHash(password, salt);
             SavePlayerDatabaseAsync();
         }
 
@@ -338,19 +377,8 @@ namespace Intersect.Server
             lock (mPlayerDbLock)
             {
                 var user = sPlayerDb.Users.Where(p => p.Name.ToLower() == username.ToLower()).Select(p => new { p.Password, p.Salt }).FirstOrDefault();
-                if (user != null)
-                {
-                    var sha = new SHA256Managed();
-                    var pass = user.Password;
-                    var salt = user.Salt;
-                    var temppass = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password + salt))).Replace("-", "");
-                    if (temppass == pass)
-                    {
-                        return true;
-                    }
-                }
+                return user != null && User.SaltPasswordHash(password, user.Salt) == user.Password;
             }
-            return false;
         }
 
         public static UserRights CheckAccess([NotNull] string username)
@@ -770,14 +798,24 @@ namespace Intersect.Server
                         sGameDb.Projectiles.Remove((ProjectileBase) gameObject);
                         break;
                     case GameObjectType.Quest:
-                        sGameDb.Events.Remove(((QuestBase) gameObject).StartEvent);
-                        EventBase.Lookup.Delete(((QuestBase) gameObject).StartEvent);
-                        sGameDb.Events.Remove(((QuestBase) gameObject).EndEvent);
-                        EventBase.Lookup.Delete(((QuestBase) gameObject).EndEvent);
+
+                        if (((QuestBase)gameObject).StartEvent != null)
+                        {
+                            sGameDb.Events.Remove(((QuestBase)gameObject).StartEvent);
+                            EventBase.Lookup.Delete(((QuestBase)gameObject).StartEvent);
+                        }
+                        if (((QuestBase)gameObject).EndEvent != null)
+                        {
+                            sGameDb.Events.Remove(((QuestBase)gameObject).EndEvent);
+                            EventBase.Lookup.Delete(((QuestBase)gameObject).EndEvent);
+                        }
                         foreach (var tsk in ((QuestBase) gameObject).Tasks)
                         {
-                            sGameDb.Events.Remove(tsk.CompletionEvent);
-                            EventBase.Lookup.Delete(tsk.CompletionEvent);
+                            if (tsk.CompletionEvent != null)
+                            {
+                                sGameDb.Events.Remove(tsk.CompletionEvent);
+                                EventBase.Lookup.Delete(tsk.CompletionEvent);
+                            }
                         }
 
                         sGameDb.Quests.Remove((QuestBase) gameObject);
@@ -1065,121 +1103,158 @@ namespace Intersect.Server
             var gameDb = orig == Options.GameDb;
             PlayerContext newPlayerContext = null;
             GameContext newGameContext = null;
-            var newOpts = new DatabaseOptions();
-            newOpts.Type = DatabaseOptions.DatabaseType.sqlite;
+            var newOpts = new DatabaseOptions
+            {
+                Type = DatabaseOptions.DatabaseType.SQLite
+            };
 
             //MySql Creds
-            var host = "";
-            var user = "";
-            var pass = "";
-            var database = "";
-            var port = 3306;
+            string host, user, pass, database;
+            ushort port;
             var dbConnected = false;
-            if (convType == DatabaseOptions.DatabaseType.mysql)
+
+            switch (convType)
             {
-                while (!dbConnected)
-                {
-                    Console.WriteLine(Strings.Migration.entermysqlinfo);
-                    Console.Write(Strings.Migration.mysqlhost);
-                    host = Console.ReadLine().Trim();
-                    Console.Write(Strings.Migration.mysqlport);
-                    var portinput = Console.ReadLine().Trim();
-                    if (string.IsNullOrEmpty(portinput)) portinput = "3306";
-                    port = int.Parse(portinput);
-                    Console.Write(Strings.Migration.mysqldatabase);
-                    database = Console.ReadLine().Trim();
-                    Console.Write(Strings.Migration.mysqluser);
-                    user = Console.ReadLine().Trim();
-                    Console.Write(Strings.Migration.mysqlpass);
-                    pass = GetPassword();
-
-                    Console.WriteLine();
-                    Console.WriteLine(Strings.Migration.mysqlconnecting);
-                    var connString = $"server={host};port={port};database={database};user={user};password={pass}";
-                    try
+                case DatabaseOptions.DatabaseType.MySQL:
+                    while (!dbConnected)
                     {
-                        if (gameDb)
+                        Console.WriteLine(Strings.Migration.entermysqlinfo);
+                        Console.Write(Strings.Migration.mysqlhost);
+                        host = Console.ReadLine()?.Trim() ?? "localhost";
+                        Console.Write(Strings.Migration.mysqlport);
+                        var portinput = Console.ReadLine()?.Trim();
+                        if (string.IsNullOrWhiteSpace(portinput))
                         {
-                            newGameContext = new GameContext(DatabaseUtils.DbProvider.MySql, connString);
-                            if (newGameContext.IsEmpty())
-                            {
-                                newGameContext.Database.EnsureDeleted();
-                                newGameContext.Database.Migrate();
-                            }
-                            else
-                            {
-                                Console.WriteLine(Strings.Migration.mysqlnotempty);
-                                return;
-                            }
-                        }
-                        else
-                        {
-                            newPlayerContext = new PlayerContext(DatabaseUtils.DbProvider.MySql, connString);
-                            if (newPlayerContext.IsEmpty())
-                            {
-                                newPlayerContext.Database.EnsureDeleted();
-                                newPlayerContext.Database.Migrate();
-                            }
-                            else
-                            {
-                                Console.WriteLine(Strings.Migration.mysqlnotempty);
-                                return;
-                            }
+                            portinput = "3306";
                         }
 
-                        newOpts.Type = DatabaseOptions.DatabaseType.mysql;
-                        newOpts.Server = host;
-                        newOpts.Port = port;
-                        newOpts.Database = database;
-                        newOpts.Username = user;
-                        newOpts.Password = pass;
+                        port = ushort.Parse(portinput);
+                        Console.Write(Strings.Migration.mysqldatabase);
+                        database = Console.ReadLine()?.Trim();
+                        Console.Write(Strings.Migration.mysqluser);
+                        user = Console.ReadLine().Trim();
+                        Console.Write(Strings.Migration.mysqlpass);
+                        pass = GetPassword();
 
-                        dbConnected = true;
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(Strings.Migration.mysqlconnectionerror.ToString(ex));
                         Console.WriteLine();
-                        Console.WriteLine(Strings.Migration.mysqltryagain);
+                        Console.WriteLine(Strings.Migration.mysqlconnecting);
+                        var connectionStringBuilder = CreateConnectionStringBuilder(
+                            new DatabaseOptions
+                            {
+                                Type = DatabaseOptions.DatabaseType.MySQL,
+                                Server = host,
+                                Port = port,
+                                Database = database,
+                                Username = user,
+                                Password = pass
+                            }, null
+                        );
+                        try
+                        {
+                            if (gameDb)
+                            {
+                                newGameContext = new GameContext(connectionStringBuilder, DatabaseOptions.DatabaseType.MySQL);
+                                if (newGameContext.IsEmpty())
+                                {
+                                    newGameContext.Database.EnsureDeleted();
+                                    newGameContext.Database.Migrate();
+                                }
+                                else
+                                {
+                                    Console.WriteLine(Strings.Migration.mysqlnotempty);
+                                    return;
+                                }
+                            }
+                            else
+                            {
+                                newPlayerContext = new PlayerContext(connectionStringBuilder, DatabaseOptions.DatabaseType.MySQL);
+                                if (newPlayerContext.IsEmpty())
+                                {
+                                    newPlayerContext.Database.EnsureDeleted();
+                                    newPlayerContext.Database.Migrate();
+                                }
+                                else
+                                {
+                                    Console.WriteLine(Strings.Migration.mysqlnotempty);
+                                    return;
+                                }
+                            }
+
+                            newOpts.Type = DatabaseOptions.DatabaseType.mysql;
+                            newOpts.Server = host;
+                            newOpts.Port = port;
+                            newOpts.Database = database;
+                            newOpts.Username = user;
+                            newOpts.Password = pass;
+
+                            dbConnected = true;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(Strings.Migration.mysqlconnectionerror.ToString(ex));
+                            Console.WriteLine();
+                            Console.WriteLine(Strings.Migration.mysqltryagain);
+                            var key = Console.ReadKey().KeyChar;
+                            Console.WriteLine();
+                            if (!string.Equals(Strings.Migration.tryagaincharacter, key.ToString(), StringComparison.Ordinal))
+                            {
+                                Console.WriteLine(Strings.Migration.migrationcancelled);
+                                return;
+                            }
+                        }
+                    }
+                    break;
+
+                case DatabaseOptions.DatabaseType.SQLite:
+                    //If the file exists make sure it is safe to delete
+                    var dbExists = ((gameDb && File.Exists(GameDbFilename)) || (!gameDb && File.Exists(PlayersDbFilename)));
+                    if (dbExists)
+                    {
+                        Console.WriteLine();
+                        var filename = gameDb ? GameDbFilename : PlayersDbFilename;
+                        Console.WriteLine(Strings.Migration.sqlitealreadyexists.ToString(filename));
                         var key = Console.ReadKey().KeyChar;
                         Console.WriteLine();
-                        if (key.ToString() != Strings.Migration.tryagaincharacter)
+                        if (key.ToString() != Strings.Migration.overwritecharacter)
                         {
                             Console.WriteLine(Strings.Migration.migrationcancelled);
                             return;
                         }
                     }
-                }
-            }
-            else if (convType == DatabaseOptions.DatabaseType.sqlite)
-            {
-                //If the file exists make sure it is safe to delete
-                var dbExists = ((gameDb && File.Exists(GameDbFilename)) || (!gameDb && File.Exists(PlayersDbFilename)));
-                if (dbExists)
-                {
-                    Console.WriteLine();
-                    var filename = gameDb ? GameDbFilename : PlayersDbFilename;
-                    Console.WriteLine(Strings.Migration.sqlitealreadyexists.ToString(filename));
-                    var key = Console.ReadKey().KeyChar;
-                    Console.WriteLine();
-                    if (key.ToString() != Strings.Migration.overwritecharacter)
+                    if (gameDb)
                     {
-                        Console.WriteLine(Strings.Migration.migrationcancelled);
-                        return;
+                        newGameContext = new GameContext(
+                            CreateConnectionStringBuilder(
+                                new DatabaseOptions
+                                {
+                                    Type = DatabaseOptions.DatabaseType.SQLite
+                                }, GameDbFilename
+                            ),
+                            DatabaseOptions.DatabaseType.SQLite
+                        );
+
+                        newGameContext.Database.EnsureDeleted();
+                        newGameContext.Database.Migrate();
                     }
-                }
-                if (gameDb)
-                {
-                    newGameContext = new GameContext(DatabaseUtils.DbProvider.Sqlite, $"Data Source={GameDbFilename}");
-                    newGameContext.Database.EnsureDeleted();
-                    newGameContext.Database.Migrate();
-                }
-                else
-                {
-                    newPlayerContext = new PlayerContext(DatabaseUtils.DbProvider.Sqlite, $"Data Source={PlayersDbFilename}");
-                    newPlayerContext.Database.EnsureDeleted();
-                    newPlayerContext.Database.Migrate();
-                }
+                    else
+                    {
+                        newPlayerContext = new PlayerContext(
+                            CreateConnectionStringBuilder(
+                                new DatabaseOptions
+                                {
+                                    Type = DatabaseOptions.DatabaseType.SQLite
+                                }, PlayersDbFilename
+                            ),
+                            DatabaseOptions.DatabaseType.SQLite
+                        );
+
+                        newPlayerContext.Database.EnsureDeleted();
+                        newPlayerContext.Database.Migrate();
+                    }
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(convType));
             }
 
             //Shut down server, start migration.

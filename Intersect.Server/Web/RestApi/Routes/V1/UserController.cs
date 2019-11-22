@@ -16,21 +16,23 @@ using Intersect.Server.Notifications;
 using Intersect.Server.Web.RestApi.Attributes;
 using Intersect.Server.Web.RestApi.Extensions;
 using Intersect.Server.Web.RestApi.Payloads;
+using Intersect.Server.Web.RestApi.Types;
 using Intersect.Utilities;
+
 using JetBrains.Annotations;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
     [RoutePrefix("users")]
     [ConfigurableAuthorize(Roles = nameof(ApiRoles.UserQuery))]
-    public sealed class UserController : ApiController
+    public sealed class UserController : IntersectApiController
     {
         [Route]
         [HttpPost]
-        public object List([FromBody] PagingInfo pageInfo)
+        public object ListPost([FromBody] PagingInfo pageInfo)
         {
             pageInfo.Page = Math.Max(pageInfo.Page, 0);
-            pageInfo.Count = Math.Max(Math.Min(pageInfo.Count, 100), 5);
+            pageInfo.Count = Math.Max(Math.Min(pageInfo.Count, PAGE_SIZE_MAX), 5);
             
             var entries = Database.PlayerData.User.List(pageInfo.Page, pageInfo.Count).ToList();
             return new
@@ -39,6 +41,35 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 pageInfo.Page,
                 count = entries.Count,
                 entries
+            };
+        }
+
+        [Route]
+        [HttpGet]
+        public DataPage<User> List(
+            [FromUri] int page = 0, [FromUri] int pageSize = 0, [FromUri] int limit = PAGE_SIZE_MAX//,
+            //[FromUri] string[] sortBy = null, [FromUri] SortDirection[] sortDirection = null
+        )
+        {
+            page = Math.Max(page, 0);
+            pageSize = Math.Max(Math.Min(pageSize, PAGE_SIZE_MAX), PAGE_SIZE_MIN);
+            limit = Math.Max(Math.Min(limit, pageSize), 1);
+            
+            //var sort = Sort.From(sortBy, sortDirection);
+            //var values = Database.PlayerData.User.List(page, pageSize, sort).ToList();
+            var values = Database.PlayerData.User.List(page, pageSize).ToList();
+            if (limit != pageSize)
+            {
+                values = values.Take(limit).ToList();
+            }
+
+            return new DataPage<User>
+            {
+                Total = Database.PlayerData.User.Count(),
+                Page = page,
+                PageSize = pageSize,
+                Count = values.Count,
+                Values = values
             };
         }
 
@@ -99,7 +130,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 }
                 else
                 {
-                    DbInterface.CreateAccount(null, user.Username, user.Password, user.Email);
+                    DbInterface.CreateAccount(null, user.Username, user.Password.ToUpper().Trim(), user.Email);
                     return new
                     {
                         Username = user.Username,
@@ -203,7 +234,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with name '{userName}'.");
             }
 
-            if (!user.IsPasswordValid(authorizedChange.Authorization))
+            if (!user.IsPasswordValid(authorizedChange.Authorization.ToUpper().Trim()))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.Forbidden, @"Invalid credentials.");
             }
@@ -242,7 +273,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with id '{userId}'.");
             }
 
-            if (!user.IsPasswordValid(authorizedChange.Authorization))
+            if (!user.IsPasswordValid(authorizedChange.Authorization.ToUpper().Trim()))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.Forbidden, @"Invalid credentials.");
             }
@@ -270,7 +301,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"No password provided.");
             }
 
-            if (!Regex.IsMatch(data.Password, "^[0-9A-Fa-f]{64}$", RegexOptions.Compiled))
+            if (!Regex.IsMatch(data.Password.ToUpper().Trim(), "^[0-9A-Fa-f]{64}$", RegexOptions.Compiled))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Did not receive a valid password.");
             }
@@ -282,7 +313,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with name '{userName}'.");
             }
 
-            if (user.IsPasswordValid(data.Password))
+            if (user.IsPasswordValid(data.Password.ToUpper().Trim()))
             {
                 return Request.CreateMessageResponse(HttpStatusCode.OK, "Password Correct");
             }
@@ -299,7 +330,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"No password provided.");
             }
 
-            if (!Regex.IsMatch(data.Password, "^[0-9A-Fa-f]{64}$", RegexOptions.Compiled))
+            if (!Regex.IsMatch(data.Password.ToUpper().Trim(), "^[0-9A-Fa-f]{64}$", RegexOptions.Compiled))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Did not receive a valid password.");
             }
@@ -311,7 +342,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with name '{userId}'.");
             }
 
-            if (user.IsPasswordValid(data.Password))
+            if (user.IsPasswordValid(data.Password.ToUpper().Trim()))
             {
                 return Request.CreateMessageResponse(HttpStatusCode.OK, "Password Correct");
             }
@@ -338,7 +369,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with name '{userName}'.");
             }
 
-            if (!user.TrySetPassword(authorizedChange.New))
+            if (!user.TrySetPassword(authorizedChange.New.ToUpper().Trim()))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.Forbidden, @"Failed to update password.");
             }
@@ -364,7 +395,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with name '{userId}'.");
             }
 
-            if (!user.TrySetPassword(authorizedChange.New))
+            if (!user.TrySetPassword(authorizedChange.New.ToUpper().Trim()))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.Forbidden, @"Failed to update password.");
             }
@@ -389,7 +420,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with name '{userName}'.");
             }
 
-            if (!user.TryChangePassword(authorizedChange.Authorization, authorizedChange.New))
+            if (!user.TryChangePassword(authorizedChange.Authorization.ToUpper().Trim(), authorizedChange.New.ToUpper().Trim()))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.Forbidden, @"Invalid credentials.");
             }
@@ -414,7 +445,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with name '{userId}'.");
             }
 
-            if (!user.TryChangePassword(authorizedChange.Authorization, authorizedChange.New))
+            if (!user.TryChangePassword(authorizedChange.Authorization.ToUpper().Trim(), authorizedChange.New.ToUpper().Trim()))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.Forbidden, @"Invalid credentials.");
             }

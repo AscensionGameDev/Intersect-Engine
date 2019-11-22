@@ -12,7 +12,10 @@ using Intersect.Client.Spells;
 using Intersect.Client.UI;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.Logging;
 using Intersect.Network.Packets.Server;
+
+using JetBrains.Annotations;
 
 namespace Intersect.Client.Entities
 {
@@ -109,7 +112,8 @@ namespace Intersect.Client.Entities
         public int[] Stat = new int[(int) Stats.StatCount];
 
         //Status effects
-        public List<StatusInstance> Status = new List<StatusInstance>();
+        [NotNull]
+        public List<StatusInstance> Status { get; private set; } = new List<StatusInstance>();
 
         public int Target = -1;
         public GameTexture Texture;
@@ -250,34 +254,65 @@ namespace Intersect.Client.Entities
 
             //Update status effects
             Status.Clear();
-            foreach (var status in packet.StatusEffects)
-            {
-                var instance = new StatusInstance(status.SpellId, status.Type, status.TransformSprite, status.TimeRemaining, status.TotalDuration);
-                Status.Add(instance);
 
-                if (instance.Type == StatusTypes.Shield)
+            if (packet.StatusEffects == null)
+            {
+                Log.Warn($"'{nameof(packet)}.{nameof(packet.StatusEffects)}' is null.");
+            }
+            else
+            {
+                foreach (var status in packet.StatusEffects)
                 {
-                    instance.Shield = status.VitalShields;
+                    var instance = new StatusInstance(status.SpellId, status.Type, status.TransformSprite, status.TimeRemaining, status.TotalDuration);
+                    Status?.Add(instance);
+
+                    if (instance.Type == StatusTypes.Shield)
+                    {
+                        instance.Shield = status.VitalShields;
+                    }
                 }
             }
+
             SortStatuses();
             Stat = packet.Stats;
 
             mDisposed = false;
 
             //Status effects box update
-            if (Globals.Me != null)
+            if (Globals.Me == null)
+            {
+                Log.Warn($"'{nameof(Globals.Me)}' is null.");
+            }
+            else
             {
                 if (Id == Globals.Me.Id)
                 {
-                    if (Gui.GameUi != null)
+                    if (Gui.GameUi == null)
                     {
-                        Gui.GameUi.PlayerBox.UpdateStatuses = true;
+                        Log.Warn($"'{nameof(Gui.GameUi)}' is null.");
+                    }
+                    else
+                    {
+                        if (Gui.GameUi.PlayerBox == null)
+                        {
+                            Log.Warn($"'{nameof(Gui.GameUi.PlayerBox)}' is null.");
+                        }
+                        else
+                        {
+                            Gui.GameUi.PlayerBox.UpdateStatuses = true;
+                        }
                     }
                 }
                 else if (Id != Guid.Empty && Id == Globals.Me.TargetIndex)
                 {
-                    Globals.Me.TargetBox.UpdateStatuses = true;
+                    if (Globals.Me.TargetBox == null)
+                    {
+                        Log.Warn($"'{nameof(Globals.Me.TargetBox)}' is null.");
+                    }
+                    else
+                    {
+                        Globals.Me.TargetBox.UpdateStatuses = true;
+                    }
                 }
             }
         }

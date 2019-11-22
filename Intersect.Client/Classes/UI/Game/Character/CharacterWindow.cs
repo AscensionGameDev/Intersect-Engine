@@ -239,27 +239,17 @@ namespace Intersect.Client.UI.Game.Character
                 }
             }
 
-            mAttackLabel.SetText(Strings.Character.stat0.ToString( Strings.Combat.stat0,
-                Globals.Me.Stat[(int) Stats.Attack]));
-            mDefenseLabel.SetText(Strings.Character.stat2.ToString( Strings.Combat.stat2,
-                Globals.Me.Stat[(int) Stats.Defense]));
-            mSpeedLabel.SetText(Strings.Character.stat4.ToString( Strings.Combat.stat4,
-                Globals.Me.Stat[(int) Stats.Speed]));
-            mAbilityPwrLabel.SetText(Strings.Character.stat1.ToString( Strings.Combat.stat1,
-                Globals.Me.Stat[(int) Stats.AbilityPower]));
-            mMagicRstLabel.SetText(Strings.Character.stat3.ToString( Strings.Combat.stat3,
-                Globals.Me.Stat[(int) Stats.MagicResist]));
+            mAttackLabel.SetText(Strings.Character.stat0.ToString( Strings.Combat.stat0, Globals.Me.Stat[(int) Stats.Attack]));
+            mDefenseLabel.SetText(Strings.Character.stat2.ToString( Strings.Combat.stat2, Globals.Me.Stat[(int) Stats.Defense]));
+            mSpeedLabel.SetText(Strings.Character.stat4.ToString( Strings.Combat.stat4, Globals.Me.Stat[(int) Stats.Speed]));
+            mAbilityPwrLabel.SetText(Strings.Character.stat1.ToString( Strings.Combat.stat1, Globals.Me.Stat[(int) Stats.AbilityPower]));
+            mMagicRstLabel.SetText(Strings.Character.stat3.ToString( Strings.Combat.stat3, Globals.Me.Stat[(int) Stats.MagicResist]));
             mPointsLabel.SetText(Strings.Character.points.ToString(Globals.Me.StatPoints));
-            mAddAbilityPwrBtn.IsHidden = (Globals.Me.StatPoints == 0 ||
-                                          Globals.Me.Stat[(int) Stats.AbilityPower] == Options.MaxStatValue);
-            mAddAttackBtn.IsHidden = (Globals.Me.StatPoints == 0 ||
-                                      Globals.Me.Stat[(int) Stats.Attack] == Options.MaxStatValue);
-            mAddDefenseBtn.IsHidden = (Globals.Me.StatPoints == 0 ||
-                                       Globals.Me.Stat[(int) Stats.Defense] == Options.MaxStatValue);
-            mAddMagicResistBtn.IsHidden = (Globals.Me.StatPoints == 0 ||
-                                           Globals.Me.Stat[(int) Stats.MagicResist] == Options.MaxStatValue);
-            mAddSpeedBtn.IsHidden = (Globals.Me.StatPoints == 0 ||
-                                     Globals.Me.Stat[(int) Stats.Speed] == Options.MaxStatValue);
+            mAddAbilityPwrBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int) Stats.AbilityPower] == Options.MaxStatValue);
+            mAddAttackBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int) Stats.Attack] == Options.MaxStatValue);
+            mAddDefenseBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int) Stats.Defense] == Options.MaxStatValue);
+            mAddMagicResistBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int) Stats.MagicResist] == Options.MaxStatValue);
+            mAddSpeedBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int) Stats.Speed] == Options.MaxStatValue);
 
             for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {

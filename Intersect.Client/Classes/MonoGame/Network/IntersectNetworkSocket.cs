@@ -93,10 +93,7 @@ namespace Intersect.Client.MonoGame.Network
             ClientLidgrenNetwork = null;
         }
 
-        public override bool IsConnected()
-        {
-            return ClientLidgrenNetwork.IsConnected;
-        }
+        public override bool IsConnected() => ClientLidgrenNetwork?.IsConnected ?? false;
 
         public override int Ping()
         {

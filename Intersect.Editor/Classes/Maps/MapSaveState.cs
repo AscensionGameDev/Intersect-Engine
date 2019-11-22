@@ -23,7 +23,7 @@ namespace Intersect.Editor.Classes.Maps
 
         public bool Matches(MapSaveState otherState)
         {
-            return Metadata != otherState.Metadata || !Tiles.SequenceEqual(otherState.Tiles) || !Attributes.SequenceEqual(otherState.Attributes) || !EventData.SequenceEqual(otherState.EventData);
+            return Metadata == otherState.Metadata && Tiles.SequenceEqual(otherState.Tiles) && Attributes.SequenceEqual(otherState.Attributes) && EventData.SequenceEqual(otherState.EventData);
         }
     }
 }

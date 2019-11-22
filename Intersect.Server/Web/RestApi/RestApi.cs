@@ -19,13 +19,14 @@ using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Routing;
 
+using WebApiThrottle;
+
 namespace Intersect.Server.Web.RestApi
 {
 
     internal sealed class RestApi : IAppConfigurationProvider, IConfigurable<ApiConfiguration>, IDisposable
     {
 
-        [NotNull]
         public ApiConfiguration Configuration { get; }
 
         public bool Disposing { get; private set; }
@@ -52,8 +53,8 @@ namespace Intersect.Server.Web.RestApi
 
             if (apiPort > 0)
             {
-                StartOptions.Urls.Clear();
-                StartOptions.Urls.Add("http://*:" + apiPort + "/");
+                StartOptions.Urls?.Clear();
+                StartOptions.Urls?.Add("http://*:" + apiPort + "/");
             }
 
             AuthenticationProvider = new OAuthProvider(Configuration);
@@ -70,12 +71,12 @@ namespace Intersect.Server.Web.RestApi
             {
                 mWebAppHandle = WebApp.Start(StartOptions, Configure);
                 System.Diagnostics.Trace.Listeners.Remove("HostingTraceListener");
-                StartOptions.Urls.ToList().ForEach(host => Console.WriteLine(Strings.Intro.api.ToString(host)));
+                StartOptions.Urls?.ToList().ForEach(host => Console.WriteLine(Strings.Intro.api.ToString(host)));
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
                 Console.WriteLine(Strings.Intro.apifailed);
-                Log.Error(Strings.Intro.apifailed + Environment.NewLine + ex.ToString());
+                Log.Error(Strings.Intro.apifailed + Environment.NewLine + exception);
             }
         }
 
@@ -108,6 +109,16 @@ namespace Intersect.Server.Web.RestApi
 
             // Make JSON the default response type for browsers
             config.Formatters?.JsonFormatter?.Map("accept", "text/html", "application/json");
+
+            config.MessageHandlers?.Add(
+                new IntersectThrottlingHandler
+                {
+                    FallbackClientKey = Configuration.FallbackClientKey,
+                    Header = "X-Intersect-ApiKey",
+                    Policy = Configuration.ThrottlePolicy,
+                    Repository = new MemoryCacheRepository()
+                }
+            );
 
             if (Configuration.DebugMode)
             {

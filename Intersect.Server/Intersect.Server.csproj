@@ -384,6 +384,9 @@
     </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.XML" />
+    <Reference Include="WebApiThrottle, Version=1.5.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebApiThrottle.1.5.4\lib\net45\WebApiThrottle.dll</HintPath>
+    </Reference>
     <Reference Include="websocket-sharp, Version=1.0.2.59611, Culture=neutral, PublicKeyToken=5660b08a1845a91e, processorArchitecture=MSIL">
       <HintPath>..\packages\WebSocketSharp.1.0.3-rc11\lib\websocket-sharp.dll</HintPath>
     </Reference>
@@ -411,6 +414,8 @@
     <Compile Include="Classes\Core\ServerTiming.cs" />
     <Compile Include="Classes\Database\GameData\GameContext.cs" />
     <Compile Include="Classes\Database\GameData\Migrations\Beta6Migration.cs" />
+    <Compile Include="Classes\Database\IntersectDbContext.cs" />
+    <Compile Include="Classes\Database\MigrationBuilderExtensions.cs" />
     <Compile Include="Classes\Database\PlayerData\Api\RefreshToken.cs" />
     <Compile Include="Classes\Database\PlayerData\Ban.cs" />
     <Compile Include="Classes\Database\PlayerData\Players\Bag.cs" />
@@ -522,6 +527,8 @@
     <Compile Include="Core\ServerLogic.cs" />
     <Compile Include="Core\CommandParsing\Tokenization\Tokenizer.cs" />
     <Compile Include="Core\CommandParsing\Tokenization\TokenizerSettings.cs" />
+    <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <Compile Include="Extensions\QueryableExtensions.cs" />
     <Compile Include="Migrations\20180927161502_InitialPlayerDb.cs" />
     <Compile Include="Migrations\20180927161502_InitialPlayerDb.Designer.cs">
       <DependentUpon>20180927161502_InitialPlayerDb.cs</DependentUpon>
@@ -611,6 +618,8 @@
     <Compile Include="Web\RestApi\Constraints\AdminActionsConstraint.cs" />
     <Compile Include="Web\RestApi\Extensions\HttpRequestMessageExtensions.cs" />
     <Compile Include="Web\RestApi\IAppConfigurationProvider.cs" />
+    <Compile Include="Web\RestApi\IntersectApiController.cs" />
+    <Compile Include="Web\RestApi\IntersectThrottlingHandler.cs" />
     <Compile Include="Web\RestApi\Logging\IntersectLogger.cs" />
     <Compile Include="Web\RestApi\Logging\IntersectLoggerFactory.cs" />
     <Compile Include="Web\RestApi\MediaTypeFormatterExtensions.cs" />
@@ -619,6 +628,8 @@
     <Compile Include="Web\RestApi\Payloads\ItemInfo.cs" />
     <Compile Include="Web\RestApi\Payloads\PagingInfo.cs" />
     <Compile Include="Web\RestApi\Payloads\PasswordValidation.cs" />
+    <Compile Include="Web\RestApi\Payloads\Sort.cs" />
+    <Compile Include="Web\RestApi\Payloads\SortDirection.cs" />
     <Compile Include="Web\RestApi\Payloads\SpellInfo.cs" />
     <Compile Include="Web\RestApi\Payloads\UserInfo.cs" />
     <Compile Include="Web\RestApi\Payloads\VariableValue.cs" />
@@ -651,6 +662,7 @@
     <Compile Include="Web\RestApi\Routes\V1\GameObjectController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\InfoController.cs" />
     <Compile Include="Web\RestApi\Routes\V1\VariablesController.cs" />
+    <Compile Include="Web\RestApi\Serialization\ApiVisibilityContractResolver.cs" />
     <Compile Include="Web\RestApi\Services\AuthorizedRoutesService.cs" />
     <Compile Include="Web\RestApi\Services\IAuthorizedRoutesService.cs" />
     <Compile Include="Web\RestApi\Services\IntersectServiceDependencyResolver.cs" />
@@ -662,6 +674,8 @@
     <Compile Include="Classes\Database\ISeedableContext.cs" />
     <Compile Include="Web\RestApi\Payloads\ChatMessage.cs" />
     <Compile Include="Web\RestApi\Payloads\LookupKey.cs" />
+    <Compile Include="Web\RestApi\Types\DataPage.cs" />
+    <Compile Include="Web\Utilities\HeaderHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="private-intersect.bek" />
@@ -711,7 +725,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Classes\Database\PlayerData\Migrations\" />
-    <Folder Include="Extensions\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

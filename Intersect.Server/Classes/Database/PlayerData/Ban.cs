@@ -1,9 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+
 using Intersect.Server.Localization;
 using Intersect.Server.Networking;
+
 using JetBrains.Annotations;
+
+using Microsoft.EntityFrameworkCore;
 
 using Newtonsoft.Json;
 
@@ -12,8 +17,10 @@ using Newtonsoft.Json;
 
 namespace Intersect.Server.Database.PlayerData
 {
+
     public class Ban
     {
+
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; private set; }
 
@@ -24,9 +31,13 @@ namespace Intersect.Server.Database.PlayerData
         public virtual User User { get; private set; }
 
         public string Ip { get; private set; }
+
         public DateTime StartTime { get; private set; }
+
         public DateTime EndTime { get; set; }
+
         public string Reason { get; private set; }
+
         public string Banner { get; private set; }
 
         public Ban() { }
@@ -40,14 +51,16 @@ namespace Intersect.Server.Database.PlayerData
             Banner = banner;
         }
 
-        public Ban(Guid userId, string ip, string reason, int durationDays, string banner)
-            : this(ip, reason, durationDays, banner)
+        public Ban(Guid userId, string ip, string reason, int durationDays, string banner) : this(
+            ip, reason, durationDays, banner
+        )
         {
             UserId = userId;
         }
 
-        public Ban(User user, string ip, string reason, int durationDays, string banner)
-            : this(ip, reason, durationDays, banner)
+        public Ban(User user, string ip, string reason, int durationDays, string banner) : this(
+            ip, reason, durationDays, banner
+        )
         {
             User = user;
         }
@@ -69,6 +82,7 @@ namespace Intersect.Server.Database.PlayerData
 
                 context.Bans.Add(ban);
                 DbInterface.SavePlayerDatabaseAsync();
+
                 return true;
             }
         }
@@ -127,6 +141,7 @@ namespace Intersect.Server.Database.PlayerData
 
                 context.Bans.Remove(ban);
                 DbInterface.SavePlayerDatabaseAsync();
+
                 return true;
             }
         }
@@ -138,7 +153,7 @@ namespace Intersect.Server.Database.PlayerData
                 return false;
             }
 
-            user.Mute(false, "");
+            user.UserBan = null;
 
             return true;
         }
@@ -148,27 +163,72 @@ namespace Intersect.Server.Database.PlayerData
             return client.User != null && Remove(client.User, playerContext);
         }
 
-        public static string CheckBan([NotNull] User user, string ip)
+        public static string CheckBan(User user, string ip)
         {
-            // TODO: Move this off of the server so that ban dates can be formatted in local time.
+            var ban = user?.Ban;
+
+            // ReSharper disable once InvertIf
+            if (ban == null)
+            {
+                ban = Find(ip);
+                if (user != null)
+                {
+                    user.IpBan = ban;
+                }
+            }
+
+            return ban != null
+                ? Strings.Account.banstatus.ToString(ban.StartTime, ban.Banner, ban.EndTime, ban.Reason)
+                : null;
+        }
+
+        public static string CheckBan(string ip) => CheckBan(null, ip);
+
+        public static Ban Find([NotNull] User user) => Find(user.Id);
+
+        public static Ban Find(Guid userId)
+        {
             lock (DbInterface.GetPlayerContextLock())
             {
-                var context = DbInterface.GetPlayerContext();
-                var ban = context?.Bans.SingleOrDefault(p => p.User == user && p.EndTime > DateTime.UtcNow) ??
-                      context?.Bans.SingleOrDefault(p => p.Ip == ip && p.EndTime > DateTime.UtcNow);
-                return ban != null ? Strings.Account.banstatus.ToString(ban.StartTime, ban.Banner, ban.EndTime, ban.Reason) : null;
+                return ByUser(DbInterface.GetPlayerContext(), userId)?.FirstOrDefault();
             }
         }
 
-        public static string CheckBan(string ip)
+        public static Ban Find(string ip)
         {
-            // TODO: Move this off of the server so that ban dates can be formatted in local time.
+            if (string.IsNullOrWhiteSpace(ip))
+            {
+                return null;
+            }
+
             lock (DbInterface.GetPlayerContextLock())
             {
-                var context = DbInterface.GetPlayerContext();
-                var ban = context?.Bans.SingleOrDefault(p => p.Ip == ip && p.EndTime > DateTime.UtcNow);
-                return ban != null ? Strings.Account.banstatus.ToString(ban.StartTime, ban.Banner, ban.EndTime, ban.Reason) : null;
+                return ByIp(DbInterface.GetPlayerContext(), ip)?.FirstOrDefault();
             }
         }
+
+        public static IEnumerable<Ban> FindAll([NotNull] User user) => ByUser(DbInterface.GetPlayerContext(), user.Id);
+
+        public static IEnumerable<Ban> FindAll(Guid userId) => ByUser(DbInterface.GetPlayerContext(), userId);
+
+        public static IEnumerable<Ban> FindAll(string ip) => ByIp(DbInterface.GetPlayerContext(), ip);
+
+        #region Compiled Queries
+
+        [NotNull] private static readonly Func<PlayerContext, Guid, IEnumerable<Ban>> ByUser =
+            EF.CompileQuery<PlayerContext, Guid, Ban>(
+                (context, userId) => context.Bans.Where(ban => ban.UserId == userId && ban.EndTime > DateTime.UtcNow)
+            ) ??
+            throw new InvalidOperationException();
+
+        [NotNull] private static readonly Func<PlayerContext, string, IEnumerable<Ban>> ByIp =
+            EF.CompileQuery<PlayerContext, string, Ban>(
+                (context, ip) => context.Bans.Where(ban => string.Equals(ban.Ip, ip, StringComparison.OrdinalIgnoreCase) && ban.EndTime > DateTime.UtcNow)
+            ) ??
+            throw new InvalidOperationException();
+
+        #endregion Compiled Queries
+
     }
+
 }

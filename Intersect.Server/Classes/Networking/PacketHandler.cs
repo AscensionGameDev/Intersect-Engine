@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Intersect.Enums;
+using Intersect.ErrorHandling;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
@@ -122,18 +123,38 @@ namespace Intersect.Server.Networking
                 throw new Exception("Client is null!");
             }
 
-            if (client.Banned) return false;
+            if (client.Banned)
+            {
+                return false;
+            }
 
-            if (packet is Packets.EditorPacket && !client.IsEditor) return false;
+            if (packet is Packets.EditorPacket && !client.IsEditor)
+            {
+                return false;
+            }
 
             try
             {
                 HandlePacket(client, client.Entity, (dynamic)packet);
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                Log.Error(ex, string.Format("Client Packet Error! [Packet: {00} | User: {01} | Player: {02} | IP {03}]", packet.GetType().Name, client?.User?.Name ?? "", client?.Entity?.Name ?? "", client.GetIp()));
-                client.Disconnect("Error processing packet " + packet.GetType().Name);
+                var packetType = packet?.GetType().Name ?? "NULL_PACKET";
+                var packetMessage =
+                    $"Client Packet Error! [Packet: {packetType} | User: {client.User?.Name ?? ""} | Player: {client.Entity?.Name ?? ""} | IP {client.GetIp()}]";
+
+                // TODO: Re-combine these once we figure out how to prevent the OutOfMemoryException that happens occasionally
+                Log.Error(packetMessage);
+                Log.Error(new ExceptionInfo(exception));
+                if (exception.InnerException != null)
+                {
+                    Log.Error(new ExceptionInfo(exception.InnerException));
+                }
+
+                // Make the call that triggered the OOME in the first place so that we know when it stops happening
+                Log.Error(exception, packetMessage);
+
+                client.Disconnect($"Error processing packet type '{packetType}'.");
             }
             return true;
         }
@@ -299,7 +320,7 @@ namespace Intersect.Server.Networking
             var channel = packet.Channel;
             if (client.User.IsMuted) //Don't let the toungless toxic kids speak.
             {
-                PacketSender.SendChatMsg(client, client.User.MuteReason);
+                PacketSender.SendChatMsg(client, client.User.Mute?.Reason);
                 return;
             }
 

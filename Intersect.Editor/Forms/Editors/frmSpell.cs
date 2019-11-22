@@ -110,6 +110,11 @@ namespace Intersect.Editor.Forms.Editors
             nudDef.Maximum = Options.MaxStatValue;
             nudMR.Maximum = Options.MaxStatValue;
             nudSpd.Maximum = Options.MaxStatValue;
+            nudStr.Minimum = -Options.MaxStatValue;
+            nudMag.Minimum = -Options.MaxStatValue;
+            nudDef.Minimum = -Options.MaxStatValue;
+            nudMR.Minimum = -Options.MaxStatValue;
+            nudSpd.Minimum = -Options.MaxStatValue;
 
             nudCastDuration.Maximum = Int32.MaxValue;
             nudCooldownDuration.Maximum = Int32.MaxValue;
