@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Intersect.Enums;
+using Newtonsoft.Json;
 
 namespace Intersect.GameObjects.Events
 {
@@ -18,6 +19,7 @@ namespace Intersect.GameObjects.Events
         public VariableMods ModType { get; set; } = VariableMods.Set;
         public long Value { get; set; }
         public long HighValue { get; set; }
+        [JsonProperty("DupVariableId")]
         public Guid DuplicateVariableId { get; set; }
     }
 
@@ -25,6 +27,7 @@ namespace Intersect.GameObjects.Events
     {
         public bool Value { get; set; }
         public VariableTypes DupVariableType { get; set; } = VariableTypes.PlayerVariable;
+        [JsonProperty("DupVariableId")]
         public Guid DuplicateVariableId { get; set; }
     }
 
@@ -32,6 +35,7 @@ namespace Intersect.GameObjects.Events
     {
         public VariableMods ModType { get; set; } = VariableMods.Set;
         public string Value { get; set; }
+        [JsonProperty("DupVariableId")]
         public Guid DuplicateVariableId { get; set; }
     }
 }
