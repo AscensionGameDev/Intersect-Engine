@@ -1478,41 +1478,44 @@ namespace Intersect.Client.Entities
         //Override of the original function, used for rendering the color of a player based on rank
         public override void DrawName(Color textColor, Color borderColor, Color backgroundColor)
         {
-            Color customColorOverride = NameColor;
-            if (customColorOverride != null)
-            {
-                //We don't want to override the default colors if the color is transparent!
-                if (customColorOverride.A == 0) customColorOverride = null;
-            }
-
             if (textColor == null)
             {
                 if (Type == 1)
                 {
-                    base.DrawName((customColorOverride != null) ? customColorOverride : CustomColors.PlayerNameMod, CustomColors.PlayerNameModBorder, CustomColors.PlayerNameModBackground);
-
-                    DrawLabels(HeaderLabel.Label, 0, (HeaderLabel.Color.A != 0) ? HeaderLabel.Color : CustomColors.PlayerNameMod, CustomColors.PlayerNameModBorder, CustomColors.PlayerNameModBackground);
-                    DrawLabels(FooterLabel.Label, 1, (FooterLabel.Color.A != 0) ? FooterLabel.Color : CustomColors.PlayerNameMod, CustomColors.PlayerNameModBorder, CustomColors.PlayerNameModBackground);
+                    textColor = CustomColors.PlayerNameMod;
+                    borderColor = CustomColors.PlayerNameModBorder;
+                    backgroundColor = CustomColors.PlayerNameModBackground;
                 }
                 else if (Type == 2)
                 {
-                    base.DrawName((customColorOverride != null) ? customColorOverride : CustomColors.PlayerNameAdmin, CustomColors.PlayerNameAdminBorder, CustomColors.PlayerNameAdminBackground);
-
-                    DrawLabels(HeaderLabel.Label, 0, (HeaderLabel.Color.A != 0) ? HeaderLabel.Color : CustomColors.PlayerNameAdmin, CustomColors.PlayerNameAdminBorder, CustomColors.PlayerNameAdminBackground);
-                    DrawLabels(FooterLabel.Label, 1, (FooterLabel.Color.A != 0) ? FooterLabel.Color : CustomColors.PlayerNameAdmin, CustomColors.PlayerNameAdminBorder, CustomColors.PlayerNameAdminBackground);
+                    textColor = CustomColors.PlayerNameAdmin;
+                    borderColor = CustomColors.PlayerNameAdminBorder;
+                    backgroundColor = CustomColors.PlayerNameAdminBackground;
                 }
                 else
                 {
-                    base.DrawName((customColorOverride != null) ? customColorOverride : CustomColors.PlayerNameNormal, CustomColors.PlayerNameNormalBorder, CustomColors.PlayerNameNormalBackground);
-
-                    DrawLabels(HeaderLabel.Label, 0, (HeaderLabel.Color.A != 0) ? HeaderLabel.Color : CustomColors.PlayerNameNormal, CustomColors.PlayerNameNormalBorder, CustomColors.PlayerNameNormalBackground);
-                    DrawLabels(FooterLabel.Label, 1, (FooterLabel.Color.A != 0) ? FooterLabel.Color : CustomColors.PlayerNameNormal, CustomColors.PlayerNameNormalBorder, CustomColors.PlayerNameNormalBackground);
+                    textColor = CustomColors.PlayerNameNormal;
+                    borderColor = CustomColors.PlayerNameNormalBorder;
+                    backgroundColor = CustomColors.PlayerNameNormalBackground;
                 }
             }
-            else
-            {
-                base.DrawName(textColor, borderColor, backgroundColor);
 
+            Color customColorOverride = NameColor;
+            if (customColorOverride != null)
+            {
+                //We don't want to override the default colors if the color is transparent!
+                if (customColorOverride.A != 0) textColor = customColorOverride;
+            }
+
+            DrawNameAndLabels(textColor, borderColor, backgroundColor);
+        }
+
+        private void DrawNameAndLabels(Color textColor, Color borderColor, Color backgroundColor)
+        {
+            base.DrawName(textColor, borderColor, backgroundColor);
+
+            if (!string.IsNullOrEmpty(HeaderLabel.Label))
+            {
                 DrawLabels(HeaderLabel.Label, 0, textColor, borderColor, backgroundColor);
                 DrawLabels(FooterLabel.Label, 1, textColor, borderColor, backgroundColor);
             }
