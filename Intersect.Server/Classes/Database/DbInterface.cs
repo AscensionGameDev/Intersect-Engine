@@ -201,10 +201,12 @@ namespace Intersect.Server
             }
 #endif
 
+#if DEBUG
             using (var loggingContext = LoggingContext.Create())
             {
                 loggingContext.Database?.Migrate();
             }
+#endif
 
             LoadAllGameObjects();
             LoadTime();
