@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Security.Cryptography;
 
+using Intersect.Logging;
 using Intersect.Server.Web.RestApi.Authentication.OAuth;
 
 using WebApiThrottle;
@@ -68,6 +69,8 @@ namespace Intersect.Server.Web.RestApi.Configuration
                 {RateLimitPeriod.Minute, 60}
             }
         };
+
+        public const LogLevel DefaultRequestLogLevel = LogLevel.Trace;
 
         #endregion
 
@@ -138,8 +141,13 @@ namespace Intersect.Server.Web.RestApi.Configuration
 
         [JsonProperty(
              NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Include
-         ), DefaultValue(IntersectThrottlingHandler.DefaultFallbackClientKey)]
+        )]
+        [DefaultValue(IntersectThrottlingHandler.DefaultFallbackClientKey)]
         public string FallbackClientKey { get; private set; } = IntersectThrottlingHandler.DefaultFallbackClientKey;
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Include)]
+        [DefaultValue(DefaultRequestLogLevel)]
+        public LogLevel RequestLogLevel { get; set; } = DefaultRequestLogLevel;
 
         #endregion
 

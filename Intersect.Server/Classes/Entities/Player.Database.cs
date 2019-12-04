@@ -154,12 +154,12 @@ namespace Intersect.Server.Entities
                 lock (DbInterface.GetPlayerContextLock())
                 {
                     var context = DbInterface.GetPlayerContext();
-                    return QueryPlayers(context, page, count) ?? throw new InvalidOperationException();
+                    return QueryPlayers(context, page * count, count) ?? throw new InvalidOperationException();
                 }
             }
             else
             {
-                return QueryPlayers(playerContext, page, count) ?? throw new InvalidOperationException();
+                return QueryPlayers(playerContext, page * count, count) ?? throw new InvalidOperationException();
             }
         }
 
@@ -175,7 +175,7 @@ namespace Intersect.Server.Entities
             lock (DbInterface.GetPlayerContextLock())
             {
                 context = DbInterface.GetPlayerContext();
-                var results = sortDirection == SortDirection.Ascending ? QueryPlayersWithRankAscending(context, page, count) : QueryPlayersWithRank(context, page, count);
+                var results = sortDirection == SortDirection.Ascending ? QueryPlayersWithRankAscending(context, page * count, count) : QueryPlayersWithRank(context, page * count, count);
                 return results ?? throw new InvalidOperationException();
             }
         }
@@ -183,13 +183,13 @@ namespace Intersect.Server.Entities
         #endregion
 
         #region Compiled Queries
-
+        
         [NotNull] private static readonly Func<PlayerContext, int, int, IEnumerable<Player>> QueryPlayers =
             EF.CompileQuery(
-                (PlayerContext context, int page, int count) =>
+                (PlayerContext context, int offset, int count) =>
                     context.Players
                         .OrderBy(player => player.Id.ToString())
-                        .Skip(page * count)
+                        .Skip(offset)
                         .Take(count)
                         .Include(p => p.Bank)
                         .Include(p => p.Friends)
@@ -204,11 +204,11 @@ namespace Intersect.Server.Entities
 
         [NotNull] private static readonly Func<PlayerContext, int, int, IEnumerable<Player>> QueryPlayersWithRank =
             EF.CompileQuery(
-                (PlayerContext context, int page, int count) =>
+                (PlayerContext context, int offset, int count) =>
                     context.Players
                         .OrderByDescending(entity => EF.Property<dynamic>(entity, "Level"))
                         .ThenByDescending(entity => EF.Property<dynamic>(entity, "Exp"))
-                        .Skip(page * count)
+                        .Skip(offset)
                         .Take(count)
                         .Include(p => p.Bank)
                         .Include(p => p.Friends)
@@ -223,11 +223,11 @@ namespace Intersect.Server.Entities
 
         [NotNull] private static readonly Func<PlayerContext, int, int, IEnumerable<Player>> QueryPlayersWithRankAscending =
             EF.CompileQuery(
-                (PlayerContext context, int page, int count) =>
+                (PlayerContext context, int offset, int count) =>
                     context.Players
                         .OrderBy(entity => EF.Property<dynamic>(entity, "Level"))
                         .ThenBy(entity => EF.Property<dynamic>(entity, "Exp"))
-                        .Skip(page * count)
+                        .Skip(offset)
                         .Take(count)
                         .Include(p => p.Bank)
                         .Include(p => p.Friends)

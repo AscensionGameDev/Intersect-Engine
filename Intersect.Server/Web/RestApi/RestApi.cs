@@ -19,6 +19,8 @@ using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Routing;
 
+using Intersect.Server.Web.RestApi.Middleware;
+
 using WebApiThrottle;
 
 namespace Intersect.Server.Web.RestApi
@@ -96,8 +98,6 @@ namespace Intersect.Server.Web.RestApi
                 .ToList()
                 .ForEach(corsOptions => appBuilder.UseCors(corsOptions));
 
-            AuthenticationProvider.Configure(appBuilder);
-
             var constraintResolver = new DefaultInlineConstraintResolver();
             constraintResolver.ConstraintMap?.Add(nameof(AdminActions), typeof(AdminActionsConstraint));
             constraintResolver.ConstraintMap?.Add(nameof(LookupKey), typeof(LookupKey.Constraint));
@@ -110,20 +110,16 @@ namespace Intersect.Server.Web.RestApi
             // Make JSON the default response type for browsers
             config.Formatters?.JsonFormatter?.Map("accept", "text/html", "application/json");
 
-            config.MessageHandlers?.Add(
-                new IntersectThrottlingHandler
-                {
-                    FallbackClientKey = Configuration.FallbackClientKey,
-                    Header = "X-Intersect-ApiKey",
-                    Policy = Configuration.ThrottlePolicy,
-                    Repository = new MemoryCacheRepository()
-                }
-            );
-
             if (Configuration.DebugMode)
             {
                 appBuilder.SetLoggerFactory(new IntersectLoggerFactory());
             }
+
+            appBuilder.Use<IntersectRequestLoggingMiddleware>(LogLevel.Debug);
+
+            appBuilder.Use<IntersectThrottlingMiddleware>(Configuration.ThrottlePolicy, null, Configuration.FallbackClientKey, null);
+
+            AuthenticationProvider.Configure(appBuilder);
 
             appBuilder.UseWebApi(config);
         }

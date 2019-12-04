@@ -106,7 +106,7 @@ namespace Intersect.Server.Database.PlayerData
 #endif
         }
 
-        public void MigrationsProcessed(string[] migrations)
+        public override void MigrationsProcessed(string[] migrations)
         {
 
         }

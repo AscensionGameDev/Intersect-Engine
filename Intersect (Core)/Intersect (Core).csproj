@@ -173,6 +173,7 @@
     <Compile Include="Admin\Actions\WarpToMapAction.cs" />
     <Compile Include="Admin\Actions\WarpToMeAction.cs" />
     <Compile Include="AlphanumComparatorFast.cs" />
+    <Compile Include="Collections\NamedInstanceStore.cs" />
     <Compile Include="Collections\SingleOrList.cs" />
     <Compile Include="ColorF.cs" />
     <Compile Include="Configuration\IConfigurable.cs" />
@@ -203,6 +204,7 @@
     <Compile Include="Extensions\ArrayExtensions.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <Compile Include="Extensions\LogLevelExtensions.cs" />
     <Compile Include="GameObjects\Events\VariableMod.cs" />
     <Compile Include="GameObjects\Switches and Variables\VariableValue.cs" />
     <Compile Include="IO\ConsoleContext.cs" />
@@ -217,6 +219,9 @@
     <Compile Include="Localization\LocaleNamespace.cs" />
     <Compile Include="Logging\Formatting\DefaultFormatter.cs" />
     <Compile Include="Logging\Formatting\ILogFormatter.cs" />
+    <Compile Include="Logging\Microsoft\Extensions\Logging\IntersectLogger.cs" />
+    <Compile Include="Logging\Microsoft\Extensions\Logging\IntersectLoggerFactory.cs" />
+    <Compile Include="Logging\Microsoft\Extensions\Logging\IntersectLogScope.cs" />
     <Compile Include="Logging\LogConfiguration.cs" />
     <Compile Include="Models\DatabaseObject.cs" />
     <Compile Include="Enums\Access.cs" />
@@ -518,6 +523,7 @@
     <Compile Include="Utilities\MathHelper.cs" />
     <Compile Include="Extensions\RandomExtensions.cs" />
     <Compile Include="Network\NetworkHelper.cs" />
+    <Compile Include="Utilities\Nullability.cs" />
     <Compile Include="Utilities\Retry.cs" />
     <Compile Include="Utilities\StreamUtils.cs" />
     <Compile Include="Utilities\TextUtils.cs" />

@@ -10,6 +10,7 @@ using WebApiThrottle;
 
 namespace Intersect.Server.Web.RestApi
 {
+    // TODO: Probably a good idea to remove this since it was replaced with middleware
     public class IntersectThrottlingHandler : ThrottlingHandler
     {
 

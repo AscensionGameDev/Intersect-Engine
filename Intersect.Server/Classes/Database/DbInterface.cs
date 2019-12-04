@@ -21,6 +21,7 @@ using Intersect.Models;
 using Intersect.Server.Core;
 using Intersect.Server.Database;
 using Intersect.Server.Database.GameData;
+using Intersect.Server.Database.Logging;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Database.PlayerData.Security;
@@ -115,6 +116,11 @@ namespace Intersect.Server
                 ), Options.PlayerDb.Type
             );
 
+            LoggingContext.Configure(
+                DatabaseOptions.DatabaseType.SQLite,
+                LoggingContext.DefaultConnectionStringBuilder
+            );
+
             // We don't want anyone running the old migration tool accidentally
             try
             {
@@ -194,7 +200,12 @@ namespace Intersect.Server
                 sPlayerDb.Seed();
             }
 #endif
-            
+
+            using (var loggingContext = LoggingContext.Create())
+            {
+                loggingContext.Database?.Migrate();
+            }
+
             LoadAllGameObjects();
             LoadTime();
             OnClassesLoaded();

@@ -92,7 +92,7 @@ namespace Intersect.Server.Database.GameData
         {
         }
 
-        public void MigrationsProcessed(string[] migrations)
+        public override void MigrationsProcessed(string[] migrations)
         {
             if (migrations.IndexOf("20190611170819_CombiningSwitchesVariables") > -1)
             {

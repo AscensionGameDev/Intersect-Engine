@@ -133,7 +133,15 @@ namespace Intersect.Server.Database.PlayerData
                 lock (DbInterface.GetPlayerContextLock())
                 {
                     var context = DbInterface.GetPlayerContext();
-                    return QueryUsers(context, page, count) ?? throw new InvalidOperationException();
+                    try
+                    {
+                        return QueryUsers(context, page * count, count) ?? throw new InvalidOperationException();
+                    }
+                    catch (Exception exception)
+                    {
+                        exception.ToString();
+                        throw;
+                    }
                 }
             }
             else
@@ -149,10 +157,10 @@ namespace Intersect.Server.Database.PlayerData
         [NotNull]
         private static readonly Func<PlayerContext, int, int, IEnumerable<User>> QueryUsers =
             EF.CompileQuery(
-                (PlayerContext context, int page, int count) =>
+                (PlayerContext context, int offset, int count) =>
                     context.Users
                         .OrderBy(user => user.Id.ToString())
-                        .Skip(page * count)
+                        .Skip(offset)
                         .Take(count)
                         .Include(p => p.Ban)
                         .Include(p => p.Mute)

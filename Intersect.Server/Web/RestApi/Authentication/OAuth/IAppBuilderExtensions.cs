@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 
+using Intersect.Server.Web.RestApi.Middleware;
+
 using JetBrains.Annotations;
 
 using Microsoft.Owin;
