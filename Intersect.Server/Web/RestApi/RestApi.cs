@@ -115,9 +115,10 @@ namespace Intersect.Server.Web.RestApi
                 appBuilder.SetLoggerFactory(new IntersectLoggerFactory());
             }
 
-#if DEBUG
-            appBuilder.Use<IntersectRequestLoggingMiddleware>(LogLevel.Debug);
-#endif
+            if (Configuration.RequestLogging)
+            {
+                appBuilder.Use<IntersectRequestLoggingMiddleware>(Configuration.RequestLogLevel);
+            }
 
             appBuilder.Use<IntersectThrottlingMiddleware>(Configuration.ThrottlePolicy, null, Configuration.FallbackClientKey, null);
 

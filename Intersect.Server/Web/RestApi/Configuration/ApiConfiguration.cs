@@ -149,6 +149,13 @@ namespace Intersect.Server.Web.RestApi.Configuration
         [DefaultValue(DefaultRequestLogLevel)]
         public LogLevel RequestLogLevel { get; set; } = DefaultRequestLogLevel;
 
+        [JsonProperty(
+            NullValueHandling = NullValueHandling.Ignore,
+            DefaultValueHandling = DefaultValueHandling.Ignore
+        )]
+        [DefaultValue(false)]
+        public bool RequestLogging { get; set; }
+
         #endregion
 
         #region Initialization

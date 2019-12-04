@@ -103,7 +103,7 @@ namespace Intersect.Server
         }
 
         // Database setup, version checking
-        public static bool InitDatabase()
+        internal static bool InitDatabase([NotNull] ServerContext serverContext)
         {
             sGameDb = new GameContext(
                 CreateConnectionStringBuilder(Options.GameDb ?? throw new InvalidOperationException(), GameDbFilename),
@@ -201,12 +201,13 @@ namespace Intersect.Server
             }
 #endif
 
-#if DEBUG
-            using (var loggingContext = LoggingContext.Create())
+            if (serverContext.RestApi.Configuration.RequestLogging)
             {
-                loggingContext.Database?.Migrate();
+                using (var loggingContext = LoggingContext.Create())
+                {
+                    loggingContext.Database?.Migrate();
+                }
             }
-#endif
 
             LoadAllGameObjects();
             LoadTime();

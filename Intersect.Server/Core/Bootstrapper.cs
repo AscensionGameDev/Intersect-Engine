@@ -152,7 +152,12 @@ namespace Intersect.Server.Core
 
         private static bool PostContextSetup()
         {
-            if (!DbInterface.InitDatabase())
+            if (Context == null)
+            {
+                throw new ArgumentNullException(nameof(Context));
+            }
+
+            if (!DbInterface.InitDatabase(Context))
             {
                 Console.ReadKey();
                 return false;
