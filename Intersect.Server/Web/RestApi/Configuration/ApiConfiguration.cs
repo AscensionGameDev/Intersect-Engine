@@ -15,6 +15,8 @@ using System.Security.Cryptography;
 using Intersect.Logging;
 using Intersect.Server.Web.RestApi.Authentication.OAuth;
 
+using Newtonsoft.Json.Converters;
+
 using WebApiThrottle;
 
 namespace Intersect.Server.Web.RestApi.Configuration
@@ -145,7 +147,11 @@ namespace Intersect.Server.Web.RestApi.Configuration
         [DefaultValue(IntersectThrottlingHandler.DefaultFallbackClientKey)]
         public string FallbackClientKey { get; private set; } = IntersectThrottlingHandler.DefaultFallbackClientKey;
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Include)]
+        [JsonProperty(
+            NullValueHandling = NullValueHandling.Ignore,
+            DefaultValueHandling = DefaultValueHandling.Include,
+            ItemConverterType = typeof(StringEnumConverter)
+        )]
         [DefaultValue(DefaultRequestLogLevel)]
         public LogLevel RequestLogLevel { get; set; } = DefaultRequestLogLevel;
 
