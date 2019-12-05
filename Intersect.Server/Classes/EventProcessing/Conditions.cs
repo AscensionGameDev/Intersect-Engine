@@ -357,5 +357,46 @@ namespace Intersect.Server.EventProcessing
 
             return false;
         }
+
+        public static bool CheckVariableComparison(VariableValue currentValue, StringVariableComparison comparison, Player player)
+        {
+            string compareAgainst = "";
+
+            VariableValue compValue = null;
+            if (comparison.CompareVariableId != Guid.Empty)
+            {
+                if (comparison.CompareVariableType == VariableTypes.PlayerVariable)
+                {
+                    compValue = player.GetVariableValue(comparison.CompareVariableId);
+                }
+                else if (comparison.CompareVariableType == VariableTypes.ServerVariable)
+                {
+                    compValue = ServerVariableBase.Get(comparison.CompareVariableId)?.Value;
+                }
+            }
+            else
+            {
+                compValue = new VariableValue();
+                compValue.String = comparison.Value;
+            }
+
+            if (compValue == null) compValue = new VariableValue();
+
+            if (currentValue.Type != VariableDataTypes.String) currentValue.String = "";
+
+            if (compValue.Type != currentValue.Type) return false;
+
+            var varVal = currentValue.String;
+            compareAgainst = compValue.String;
+
+            if (comparison.ComparingEqual)
+            {
+                return currentValue.String == compValue.String;
+            }
+            else
+            {
+                return currentValue.String != compValue.String;
+            }
+        }
     }
 }

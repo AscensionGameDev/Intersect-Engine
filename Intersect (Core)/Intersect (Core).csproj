@@ -291,6 +291,7 @@
     <Compile Include="Network\Packets\Client\DirectionPacket.cs" />
     <Compile Include="Network\Packets\Client\DropItemPacket.cs" />
     <Compile Include="Network\Packets\Client\EnterGamePacket.cs" />
+    <Compile Include="Network\Packets\Client\EventInputVariablePacket.cs" />
     <Compile Include="Network\Packets\Client\EventResponsePacket.cs" />
     <Compile Include="Network\Packets\Client\ForgetSpellPacket.cs" />
     <Compile Include="Network\Packets\Client\FriendRequestResponsePacket.cs" />
@@ -366,7 +367,9 @@
     <Compile Include="Network\Packets\Server\EventEntityPacket.cs" />
     <Compile Include="Network\Packets\Server\FriendRequestPacket.cs" />
     <Compile Include="Network\Packets\Server\FriendsPacket.cs" />
+    <Compile Include="Network\Packets\Server\InputVariablePacket.cs" />
     <Compile Include="Network\Packets\Server\InventoryPacket.cs" />
+    <Compile Include="Network\Packets\Server\LabelPacket.cs" />
     <Compile Include="Network\Packets\Server\MapAreaPacket.cs" />
     <Compile Include="Network\Packets\Server\MoveRoutePacket.cs" />
     <Compile Include="Network\Packets\Server\NpcEntityPacket.cs" />

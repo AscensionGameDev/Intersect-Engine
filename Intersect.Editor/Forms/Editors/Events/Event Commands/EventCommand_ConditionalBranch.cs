@@ -89,6 +89,16 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             optBooleanGlobalVariable.Text = Strings.EventConditional.globalvariablevalue;
             optBooleanPlayerVariable.Text = Strings.EventConditional.playervariablevalue;
 
+            //String Variable
+            grpStringVariable.Text = Strings.EventConditional.stringvariable;
+            cmbStringComparitor.Items.Clear();
+            cmbStringComparitor.Items.Add(Strings.EventConditional.stringequal);
+            cmbStringComparitor.Items.Add(Strings.EventConditional.stringnotequal);
+            cmbStringComparitor.SelectedIndex = 0;
+            optStringStaticValue.Text = Strings.EventConditional.value;
+            optStringGlobalVariable.Text = Strings.EventConditional.globalvariablevalue;
+            optStringPlayerVariable.Text = Strings.EventConditional.playervariablevalue;
+
             //Has Item
             grpHasItem.Text = Strings.EventConditional.hasitem;
             lblItemQuantity.Text = Strings.EventConditional.hasatleast;
@@ -290,6 +300,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     cmbBooleanGlobalVariable.Items.AddRange(ServerVariableBase.Names);
                     cmbBooleanPlayerVariable.Items.Clear();
                     cmbBooleanPlayerVariable.Items.AddRange(PlayerVariableBase.Names);
+
+                    cmbStringGlobalVariable.Items.Clear();
+                    cmbStringGlobalVariable.Items.AddRange(ServerVariableBase.Names);
+                    cmbStringPlayerVariable.Items.Clear();
+                    cmbStringPlayerVariable.Items.AddRange(PlayerVariableBase.Names);
                     break;
                 case ConditionTypes.HasItem:
                     grpHasItem.Show();
@@ -466,6 +481,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             //Hide editor windows until we have a variable selected to work with
             grpNumericVariable.Hide();
             grpBooleanVariable.Hide();
+            grpStringVariable.Hide();
 
             var varType = 0;
             if (cmbVariable.SelectedIndex > -1)
@@ -504,6 +520,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                         break;
 
                     case VariableDataTypes.String:
+                        grpStringVariable.Show();
+                        TryLoadVariableStringComparison(((VariableIsCondition)Condition).Comparison);
                         break;
 
                     default:
@@ -578,6 +596,37 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             }
         }
 
+        private void TryLoadVariableStringComparison(VariableCompaison comp)
+        {
+            if (comp.GetType() == typeof(StringVariableComparison))
+            {
+                var com = (StringVariableComparison)comp;
+
+                cmbStringComparitor.SelectedIndex = Convert.ToInt32(!com.ComparingEqual);
+
+                if (cmbStringComparitor.SelectedIndex < 0) cmbStringComparitor.SelectedIndex = 0;
+
+                if (com.CompareVariableId != Guid.Empty)
+                {
+                    if (com.CompareVariableType == VariableTypes.PlayerVariable)
+                    {
+                        optStringPlayerVariable.Checked = true;
+                        cmbStringPlayerVariable.SelectedIndex = PlayerVariableBase.ListIndex(com.CompareVariableId);
+                    }
+                    else
+                    {
+                        optStringGlobalVariable.Checked = true;
+                        cmbStringGlobalVariable.SelectedIndex = ServerVariableBase.ListIndex(com.CompareVariableId);
+                    }
+                }
+                else
+                {
+                    optStringStaticValue.Checked = true;
+                    txtStringValue.Text = com.Value;
+                }
+            }
+        }
+
         private void InitVariableElements(Guid variableId)
         {
             mLoading = true;
@@ -642,6 +691,30 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             {
                 comp.CompareVariableType = VariableTypes.PlayerVariable;
                 comp.CompareVariableId = PlayerVariableBase.IdFromList(cmbComparePlayerVar.SelectedIndex);
+            }
+
+            return comp;
+        }
+
+        private StringVariableComparison GetStringVariableComparison()
+        {
+            var comp = new StringVariableComparison();
+
+            if (cmbStringComparitor.SelectedIndex < 0) cmbStringComparitor.SelectedIndex = 0;
+
+            comp.ComparingEqual = !Convert.ToBoolean(cmbStringComparitor.SelectedIndex);
+
+            comp.Value = txtStringValue.Text;
+
+            if (optStringGlobalVariable.Checked)
+            {
+                comp.CompareVariableType = VariableTypes.ServerVariable;
+                comp.CompareVariableId = ServerVariableBase.IdFromList(cmbStringGlobalVariable.SelectedIndex);
+            }
+            else if (optStringPlayerVariable.Checked)
+            {
+                comp.CompareVariableType = VariableTypes.PlayerVariable;
+                comp.CompareVariableId = PlayerVariableBase.IdFromList(cmbStringPlayerVariable.SelectedIndex);
             }
 
             return comp;
@@ -806,6 +879,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             else if (grpNumericVariable.Visible)
             {
                 condition.Comparison = GetNumericVariableComparison();
+            }
+            else if (grpStringVariable.Visible)
+            {
+                condition.Comparison = GetStringVariableComparison();
             }
             else
             {

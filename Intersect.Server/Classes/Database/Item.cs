@@ -31,7 +31,8 @@ namespace Intersect.Server.Database
         [JsonIgnore, NotMapped]
         public ItemBase Descriptor => ItemBase.Get(ItemId);
 
-
+        [JsonIgnore, NotMapped] 
+        public double DropChance = 100;
 
         public Item()
         {
@@ -51,6 +52,7 @@ namespace Intersect.Server.Database
             Quantity = quantity;
             BagId = bagId;
             Bag = bag;
+
             if (ItemBase.Get(ItemId) != null && incStatBuffs)
             {
                 if (ItemBase.Get(ItemId).ItemType == ItemTypes.Equipment)

@@ -427,6 +427,15 @@ Tick timer saved in server config.json.";
             public static LocalizedString title = @"Equip Player Items";
         }
 
+        public struct EventChangeVital
+        {
+          public static LocalizedString cancel = @"Cancel";
+          public static LocalizedString labelhealth = @"Set Health:";
+          public static LocalizedString labelmana = @"Set Mana:";
+          public static LocalizedString okay = @"Ok";
+          public static LocalizedString title = @"Change Vital";
+        }
+
         public struct EventChangeLevel
         {
             public static LocalizedString cancel = @"Cancel";
@@ -467,7 +476,24 @@ Tick timer saved in server config.json.";
             public static LocalizedString title = @"Change Sprite";
         }
 
-        public struct EventChatboxText
+        public struct EventChangePlayerLabel
+        {
+          public static LocalizedString cancel = @"Cancel";
+          public static LocalizedString okay = @"Ok";
+          public static LocalizedString title = @"Change Player Label";
+          public static LocalizedString select = @"Select Color";
+          public static LocalizedString copyplayernamecolor = @"Copy Player Name Color?";
+          public static LocalizedString global = @"Global Variable";
+          public static LocalizedString player = @"Player Variable";
+          public static LocalizedString position = @"Label Position:";
+          public static Dictionary<int, LocalizedString> positions = new Dictionary<int, LocalizedString>
+          {
+            {0, @"Above Character Name"},
+            {1, @"Below Character Name"},
+          };
+        }
+
+    public struct EventChatboxText
         {
             public static LocalizedString cancel = @"Cancel";
             public static LocalizedString channel = @"Channel:";
@@ -559,8 +585,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString randvariable = @"Random Number {00} to {01}";
             public static LocalizedString regularuser = @"Regulator User";
             public static LocalizedString releaseplayer = @"Release Player";
-            public static LocalizedString restorehp = @"Restore Player HP";
-            public static LocalizedString restoremp = @"Restore Player MP";
+            public static LocalizedString restorehp = @"Restore Player HP by {00}";
+            public static LocalizedString restoremp = @"Restore Player MP by {00}";
             public static LocalizedString runcompletionevent = @"Running Completion Event";
             public static LocalizedString selfswitch = @"Set Self Switch {00} to {01}";
             public static LocalizedString showplayer = @"Show Player";
@@ -576,12 +602,15 @@ Tick timer saved in server config.json.";
             public static LocalizedString setface = @"Set Player Face to {00}";
             public static LocalizedString setnamecolor = @"Set Player Name Color";
             public static LocalizedString removenamecolor = @"Remove Player Name Color";
+            public static LocalizedString changeplayerlabel = @"Change Player Label to {00}";
             public static LocalizedString setgender = @"Set Player Gender to {00}";
             public static LocalizedString setlevel = @"Set Player Level To: {00}";
             public static LocalizedString setsprite = @"Set Player Sprite to {00}";
             public static LocalizedString setvariable = @"Set to {00}";
+            public static LocalizedString playername = @"Set to player name";
             public static LocalizedString showoffer = @"Show Offer Window";
             public static LocalizedString showoptions = @"Show Options: {00}";
+            public static LocalizedString variableinput = @"Input Variable: {00}";
             public static LocalizedString showpicture = @"Show Picture";
             public static LocalizedString showtext = @"Show Text: {00}";
             public static LocalizedString skipcompletionevent = @"Without Running Completion Event";
@@ -667,6 +696,8 @@ Tick timer saved in server config.json.";
                 {"showplayer", @"Show Player"},
                 {"equipitem", @"Equip Item"},
                 {"changenamecolor", @"Change Name Color"},
+                {"inputvariable", @"Input Variable"},
+                {"changeplayerlabel", @"Change Player Label"},
             };
         }
 
@@ -685,6 +716,9 @@ Tick timer saved in server config.json.";
             public static LocalizedString booleanvariable = @"Boolean Variable:";
             public static LocalizedString booleanequal = @"Equal To";
             public static LocalizedString booleannotequal = @"Not Equal To";
+            public static LocalizedString stringvariable = @"String Variable:";
+            public static LocalizedString stringequal = @"Equal To";
+            public static LocalizedString stringnotequal = @"Not Equal To";
             public static LocalizedString cancel = @"Cancel";
             public static LocalizedString canstartquest = @"Can Start Quest";
             public static LocalizedString Class = @"Class:";
@@ -1166,6 +1200,12 @@ Tick timer saved in server config.json.";
             public static LocalizedString numericset = @"Set";
             public static LocalizedString numericsubtract = @"Subtract";
             public static LocalizedString numericsystemtime = @"System Time (ms)";
+
+            public static LocalizedString stringlabel = @"Boolean Variable:";
+            public static LocalizedString stringvalue = @"Text:";
+            public static LocalizedString stringcloneplayerstringvalue = @"Player Variable Value: ";
+            public static LocalizedString stringcloneglobalstringvalue = @"Global Variable Value: ";
+            public static LocalizedString stringplayername = @"Player Name";
         }
 
         public struct EventShowOptions
@@ -1190,6 +1230,22 @@ Tick timer saved in server config.json.";
             public static LocalizedString okay = @"Ok";
             public static LocalizedString text = @"Text:";
             public static LocalizedString title = @"Show Text";
+        }
+
+        public struct EventInput
+        {
+            public static LocalizedString cancel = @"Cancel";
+            public static LocalizedString commands = @"Chat Commands";
+            public static LocalizedString okay = @"Ok";
+            public static LocalizedString text = @"Text:";
+            public static LocalizedString titlestr = @"Title:";
+            public static LocalizedString title = @"Input Variable";
+            public static LocalizedString playervariable = @"Player Variable";
+            public static LocalizedString globalvariable = @"Global Variable";
+            public static LocalizedString minval = @"Minimum Value";
+            public static LocalizedString maxval = @"Maximum Value";
+            public static LocalizedString minlength = @"Minimum Length";
+            public static LocalizedString maxlength = @"Maximum Length";
         }
 
         public struct EventSpawnNpc
@@ -1280,6 +1336,9 @@ Tick timer saved in server config.json.";
                 {0, @"None"},
                 {1, @"Cooldown Reduction"},
                 {2, @"Life Steal"},
+                {3, @"Tenacity"},
+                {4, @"Luck"},
+                {5, @"EXP"},
             };
             public static LocalizedString bonuses = @"Stat Bonuses";
             public static LocalizedString bonusrange = @"Stat Bonus Range (+-):";
@@ -1311,6 +1370,11 @@ Tick timer saved in server config.json.";
             public static LocalizedString magicresistbonus = @"Magic Resist:";
             public static LocalizedString malepaperdoll = @"Male Paperdoll:";
             public static LocalizedString mana = @"Mana:";
+            public static LocalizedString regen = @"Regen";
+            public static LocalizedString regenhint = @"% of HP/Mana to restore per tick.
+Tick timer saved in server config.json.";
+            public static LocalizedString hpregen = @"HP (%);";
+            public static LocalizedString mpregen = @"MP (%):";
             public static LocalizedString name = @"Name:";
             public static LocalizedString New = @"New Item";
             public static LocalizedString paste = @"Paste Item";
@@ -1764,6 +1828,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString ignoreblocks = @"Map Blocks";
             public static LocalizedString ignoreinactiveresources = @"Inactive Resources";
             public static LocalizedString ignorezdimension = @"Z-Dimension Blocks";
+            public static LocalizedString piercetarget = @"Pierce Target?";
             public static LocalizedString knockback = @"Knockback:";
             public static LocalizedString name = @"Name:";
             public static LocalizedString New = @"New Projectile";
@@ -1980,7 +2045,6 @@ Tick timer saved in server config.json.";
             public static LocalizedString hitanimation = @"Hit Animation:";
             public static LocalizedString bound = @"Bound?";
             public static LocalizedString hitradius = @"Hit Radius:";
-            public static LocalizedString onhitduration = @"Duration (ms):";
             public static LocalizedString hotdot = @"Heal/Damage Over Time";
             public static LocalizedString hotdottick = @"Tick (ms):";
             public static LocalizedString hpcost = @"HP Cost:";
@@ -2017,6 +2081,7 @@ Tick timer saved in server config.json.";
                 {2, @"AOE"},
                 {3, @"Linear (projectile)"},
                 {4, @"On Hit"},
+                {5, @"Trap" }
             };
             public static LocalizedString title = @"Spell Editor";
             public static LocalizedString transformsprite = @"Sprite:";
@@ -2065,6 +2130,7 @@ Tick timer saved in server config.json.";
             {
                 {1, @"Boolean"},
                 {2, @"Integer"},
+                {3, @"String"},
             };
             public static LocalizedString undo = @"Undo Changes";
             public static LocalizedString value = @"Value:";
@@ -2453,6 +2519,38 @@ Negative values for time to flow backwards.";
             return pVar;
         }
 
+        public static string GetVariableComparisonString(StringVariableComparison comparison)
+        {
+            var value = "";
+            var pVar = "";
+
+            if (comparison.CompareVariableId == Guid.Empty)
+            {
+                value = comparison.Value.ToString();
+            }
+            else
+            {
+                if (comparison.CompareVariableType == VariableTypes.PlayerVariable)
+                {
+                    value = Strings.EventConditionDesc.playervariablevalue.ToString(PlayerVariableBase.GetName(comparison.CompareVariableId));
+                }
+                else if (comparison.CompareVariableType == VariableTypes.ServerVariable)
+                {
+                    value = Strings.EventConditionDesc.globalvariablevalue.ToString(ServerVariableBase.GetName(comparison.CompareVariableId));
+                }
+            }
+
+            if (comparison.ComparingEqual)
+            {
+                pVar = Strings.EventConditionDesc.equal.ToString(value);
+            }
+            else
+            {
+                pVar = Strings.EventConditionDesc.notequal.ToString(value);
+            }
+
+            return pVar;
+        }
 
         public static void Load()
         {

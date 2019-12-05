@@ -498,7 +498,8 @@ namespace Intersect.Server.Entities
                             Parent.Owner.Dir = Dir;
                             new DashInstance(Parent.Owner, Distance, (byte)Parent.Owner.Dir, Parent.Base.IgnoreMapBlocks, Parent.Base.IgnoreActiveResources, Parent.Base.IgnoreExhaustedResources, Parent.Base.IgnoreZDimension);
                         }
-                        return true;
+
+                        if (!Parent.Base.PierceTarget) return true;
                     }
                 }
                 else if (targetEntity.GetType() == typeof(Resource))
@@ -533,7 +534,7 @@ namespace Intersect.Server.Entities
                             Parent.Owner.Dir = Dir;
                             new DashInstance(Parent.Owner, Distance, (byte)Parent.Owner.Dir, Parent.Base.IgnoreMapBlocks, Parent.Base.IgnoreActiveResources, Parent.Base.IgnoreExhaustedResources, Parent.Base.IgnoreZDimension);
                         }
-                        return true;
+                        if (!Parent.Base.PierceTarget) return true;
                     }
                 }
             }
