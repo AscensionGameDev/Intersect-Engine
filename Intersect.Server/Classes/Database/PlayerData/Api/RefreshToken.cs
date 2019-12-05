@@ -131,7 +131,7 @@ namespace Intersect.Server.Classes.Database.PlayerData.Api
             return null;
         }
 
-        public static IQueryable<RefreshToken> FindForClient(Guid clientId)
+        public static IEnumerable<RefreshToken> FindForClient(Guid clientId)
         {
             if (clientId == Guid.Empty)
             {
@@ -147,11 +147,11 @@ namespace Intersect.Server.Classes.Database.PlayerData.Api
 
                 var tokenQuery = DbInterface.GetPlayerContext()?.RefreshTokens?.Where(queryToken => queryToken.ClientId == clientId);
 
-                return tokenQuery;
+                return tokenQuery.AsEnumerable()?.ToList();
             }
         }
 
-        public static IQueryable<RefreshToken> FindForUser(Guid userId)
+        public static IEnumerable<RefreshToken> FindForUser(Guid userId)
         {
             if (userId == Guid.Empty)
             {
@@ -167,11 +167,11 @@ namespace Intersect.Server.Classes.Database.PlayerData.Api
 
                 var tokenQuery = DbInterface.GetPlayerContext()?.RefreshTokens?.Where(queryToken => queryToken.UserId == userId);
 
-                return tokenQuery;
+                return tokenQuery.AsEnumerable()?.ToList();
             }
         }
 
-        public static IQueryable<RefreshToken> FindForUser([NotNull] User user)
+        public static IEnumerable<RefreshToken> FindForUser([NotNull] User user)
         {
             return FindForUser(user.Id);
         }

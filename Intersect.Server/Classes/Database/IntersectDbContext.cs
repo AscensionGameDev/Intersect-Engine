@@ -2,12 +2,17 @@
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
+using System.Reflection;
 
+using Intersect.Logging.Microsoft.Extensions.Logging;
 using Intersect.Server.Classes.Database;
+
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Server.Database
 {
@@ -20,6 +25,58 @@ namespace Intersect.Server.Database
         where T : IntersectDbContext<T>
     {
         public static T Current { get; private set; }
+
+        private static ILoggerFactory MsExtLoggerFactory { get; } =
+            LoggerFactory.Create(builder => builder.AddConsole());
+
+        private static DatabaseOptions.DatabaseType configuredDatabaseType = DatabaseOptions.DatabaseType.SQLite;
+
+        private static DbConnectionStringBuilder configuredConnectionStringBuilder;
+
+        public static void Configure(
+            DatabaseOptions.DatabaseType databaseType = DatabaseOptions.DatabaseType.SQLite,
+            DbConnectionStringBuilder connectionStringBuilder = null
+        )
+        {
+            configuredDatabaseType = databaseType;
+            configuredConnectionStringBuilder = connectionStringBuilder;
+        }
+
+        [NotNull]
+        private static readonly IDictionary<Type, ConstructorInfo> constructorCache =
+            new ConcurrentDictionary<Type, ConstructorInfo>();
+
+        [NotNull]
+        public static T Create(
+            DatabaseOptions.DatabaseType? databaseType = null,
+            DbConnectionStringBuilder connectionStringBuilder = null
+        )
+        {
+            var type = typeof(T);
+            if (!constructorCache.TryGetValue(type, out var constructorInfo))
+            {
+                constructorInfo = type.GetConstructor(new [] { typeof(DbConnectionStringBuilder), typeof(DatabaseOptions.DatabaseType) });
+                constructorCache[type] = constructorInfo;
+            }
+
+            if (constructorInfo == null)
+            {
+                throw new InvalidOperationException(@"Missing IntersectDbContext constructor.");
+            }
+
+            if (!(constructorInfo.Invoke(
+                new object[]
+                {
+                    connectionStringBuilder ?? configuredConnectionStringBuilder,
+                    databaseType ?? configuredDatabaseType
+                }
+            ) is T contextInstance))
+            {
+                throw new InvalidOperationException();
+            }
+
+            return contextInstance;
+        }
 
         /// <summary>
         /// 
@@ -54,7 +111,11 @@ namespace Intersect.Server.Database
 
         protected override void OnConfiguring([NotNull] DbContextOptionsBuilder optionsBuilder)
         {
+            base.OnConfiguring(optionsBuilder);
+
             var connectionString = ConnectionStringBuilder.ToString();
+
+            //optionsBuilder.UseLoggerFactory(MsExtLoggerFactory);
 
             optionsBuilder.EnableSensitiveDataLogging(true);
             switch (DatabaseType)
@@ -122,6 +183,8 @@ namespace Intersect.Server.Database
 
         [NotNull]
         public ICollection<string> PendingMigrations => Database?.GetPendingMigrations()?.ToList() ?? new List<string>();
+
+        public virtual void MigrationsProcessed([NotNull] string[] migrations) { }
 
     }
 }
