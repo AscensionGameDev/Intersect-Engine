@@ -625,7 +625,7 @@ namespace Intersect.Server.Entities
                             var localMaps = myMap.GetSurroundingMaps(true);
                             foreach (var map in localMaps)
                             {
-                                var projectiles = map.MapProjectiles;
+                                var projectiles = map.MapProjectiles.ToArray();
                                 foreach (var projectile in projectiles)
                                 {
                                     if (projectile.GetType() == typeof(Projectile))
