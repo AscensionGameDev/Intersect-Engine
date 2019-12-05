@@ -9,6 +9,8 @@ using Owin.Security.AesDataProtectorProvider;
 using System;
 using System.Collections.Generic;
 
+using Intersect.Server.Web.RestApi.Middleware;
+
 namespace Intersect.Server.Web.RestApi.Authentication.OAuth
 {
 
