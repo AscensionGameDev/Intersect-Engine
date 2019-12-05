@@ -502,6 +502,7 @@
     <Compile Include="Core\Commands\ApiRevokeCommand.cs" />
     <Compile Include="Core\Commands\ApiRolesCommand.cs" />
     <Compile Include="Core\Commands\CpsCommand.cs" />
+    <Compile Include="Core\Commands\ExperimentsCommand.cs" />
     <Compile Include="Core\Commands\PowerAccountCommand.cs" />
     <Compile Include="Core\Commands\PowerCommand.cs" />
     <Compile Include="Core\Commands\ModeratorActionCommand.cs" />
@@ -524,6 +525,7 @@
     <Compile Include="Core\Commands\KillCommand.cs" />
     <Compile Include="Core\Commands\NetDebugCommand.cs" />
     <Compile Include="Core\Commands\OnlineListCommand.cs" />
+    <Compile Include="Core\ExperimentalFeatures\Experiments.cs" />
     <Compile Include="Core\ServerConsole.cs" />
     <Compile Include="Core\ServerContext.cs" />
     <Compile Include="Core\ServerLogic.cs" />
