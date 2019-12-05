@@ -580,7 +580,7 @@ namespace Intersect.Server.Networking
             {
                 if (client != null)
                 {
-                    if (client.IsEditor || client.Entity != null)
+                    if (!client.IsEditor && client.Entity != null)
                     {
                         if (client.Power != UserRights.None)
                         {
@@ -725,6 +725,11 @@ namespace Intersect.Server.Networking
         public static void SendEventDialog(Player player, string prompt, string opt1, string opt2, string opt3,string opt4, string face, Guid eventId)
         {
             player.Client.SendPacket(new EventDialogPacket(eventId,prompt,face,1,new string[4] {opt1,opt2,opt3,opt4}));
+        }
+
+        public static void SendInputVariableDialog(Player player, string title, string prompt, VariableDataTypes type, Guid eventId)
+        {
+            player.Client.SendPacket(new InputVariablePacket(eventId, title, prompt, type));
         }
 
         //MapListPacket

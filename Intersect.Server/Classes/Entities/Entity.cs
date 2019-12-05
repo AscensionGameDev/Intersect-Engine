@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
@@ -94,11 +95,14 @@ namespace Intersect.Server.Entities
         [NotMapped]
         public Color NameColor { get; set; }
 
-        //Instance Values
-        private Guid _id;
+        [NotMapped] public LabelInstance HeaderLabel { get; set; }
+        [NotMapped] public LabelInstance FooterLabel { get; set; }
+
+    //Instance Values
+    private Guid _id;
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column(Order = 0)]
-        public Guid Id { get => GetId(); set => _id = value; }
+        public Guid Id { get => _id; set => _id = value; }
         [NotMapped] public bool Dead { get; set; }
 
         //Combat
@@ -124,7 +128,7 @@ namespace Intersect.Server.Entities
         [NotMapped, JsonIgnore] public int SpellCastSlot { get; set; } = 0;
 
         //Status effects
-        [NotMapped, JsonIgnore] public Dictionary<SpellBase, StatusInstance> Statuses = new Dictionary<SpellBase, StatusInstance>();
+        [NotMapped, JsonIgnore, NotNull] public Dictionary<SpellBase, StatusInstance> Statuses { get; } = new Dictionary<SpellBase, StatusInstance>();
 
         [NotMapped, JsonIgnore] public EntityInstance Target = null;
 
@@ -133,11 +137,6 @@ namespace Intersect.Server.Entities
         public EntityInstance() : this(Guid.NewGuid())
         {
 
-        }
-
-        public virtual Guid GetId()
-        {
-            return _id;
         }
 
         //Initialization
@@ -636,14 +635,17 @@ namespace Intersect.Server.Entities
                                     if (projectile.GetType() == typeof(Projectile))
                                     {
                                         var proj = projectile;
-                                        foreach (var spawn in proj.Spawns)
-                                        {
-                                            if (spawn != null && spawn.MapId == MapId && spawn.X == X &&
-                                                spawn.Y == Y && spawn.Z == Z)
+                                        if (proj.Spawns != null) {
+                                            var spawns = proj.Spawns.ToArray();
+                                            foreach (var spawn in spawns)
                                             {
-                                                if (spawn.HitEntity(this))
+                                                if (spawn != null && spawn.MapId == MapId && spawn.X == X &&
+                                                    spawn.Y == Y && spawn.Z == Z)
                                                 {
-                                                    spawn.Parent.KillSpawn(spawn);
+                                                    if (spawn.HitEntity(this))
+                                                    {
+                                                        proj.KillSpawn(spawn);
+                                                    }
                                                 }
                                             }
                                         }
@@ -668,6 +670,11 @@ namespace Intersect.Server.Entities
                                 Dir = (byte)(((MapSlideAttribute)attribute).Direction - 1);
                             } //If sets direction, set it.
                             var dash = new DashInstance(this, 1, (byte)Dir);
+                        }
+                        //Check for traps
+                        foreach (var trap in MapInstance.Get(MapId).MapTraps)
+                        {
+                            trap.CheckEntityHasDetonatedTrap(this);
                         }
                     }
                 }
@@ -894,6 +901,11 @@ namespace Intersect.Server.Entities
             var maxVitalValue = GetMaxVital(vitalId);
             var safeAmount = Math.Min(amount, GetVital(vital));
             SetVital(vital, GetVital(vital) - safeAmount);
+
+            if (GetVital(Vitals.Health) <= 0)
+            {
+                Die();
+            }
         }
         //Stats
         public virtual int GetStatBuffs(Stats statType)
@@ -1023,23 +1035,27 @@ namespace Intersect.Server.Entities
         }
 
         //Attacking with spell
-        public virtual void TryAttack(EntityInstance enemy, SpellBase spellBase, bool onHitTrigger = false)
+        public virtual void TryAttack(EntityInstance enemy, SpellBase spellBase, bool onHitTrigger = false, bool trapTrigger = false)
         {
             if (enemy?.GetType() == typeof(Resource)) return;
             if (spellBase == null) return;
 
             //Check for taunt status and trying to attack a target that has not taunted you.
-            var statuses = Statuses.Values.ToArray();
-            foreach (var status in statuses)
+            if (!trapTrigger) //Traps ignore taunts.
             {
+              var statuses = Statuses.Values.ToArray();
+              foreach (var status in statuses)
+              {
                 if (status.Type == StatusTypes.Taunt)
                 {
-                    if (Target != enemy)
-                    {
-                        PacketSender.SendActionMsg(this, Strings.Combat.miss, CustomColors.Missed);
-                        return;
-                    }
+                  if (Target != enemy)
+                  {
+                    PacketSender.SendActionMsg(this, Strings.Combat.miss, CustomColors.Missed);
+
+                    return;
+                  }
                 }
+              }
             }
 
             var deadAnimations = new List<KeyValuePair<Guid, sbyte>>();
@@ -1107,7 +1123,7 @@ namespace Intersect.Server.Entities
             for (var i = 0; i < (int)Stats.StatCount; i++)
             {
                 enemy.Stat[i].AddBuff(new EntityBuff(spellBase, spellBase.Combat.StatDiff[i] + 
-                    ((enemy.Stat[i].Stat * spellBase.Combat.PercentageStatDiff[i]) / 100), spellBase.Combat.Duration));
+                    (int)((enemy.Stat[i].Stat + enemy.StatPointAllocations[i]) * (spellBase.Combat.PercentageStatDiff[i] / 100f)), spellBase.Combat.Duration));
                 if (spellBase.Combat.StatDiff[i] != 0 || spellBase.Combat.PercentageStatDiff[i] != 0)
                     statBuffTime = spellBase.Combat.Duration;
             }
@@ -1559,6 +1575,10 @@ namespace Intersect.Server.Entities
                                     PacketSender.SendActionMsg(this, Strings.Combat.status[(int) spellBase.Combat.Effect], CustomColors.Status);
                                 }
                                 break;
+                            case SpellTargetTypes.Trap:
+                                MapInstance.Get(MapId).SpawnTrap(this, spellBase, (byte)X, (byte)Y, (byte)Z);
+                                PacketSender.SendAnimationToProximity(spellBase.HitAnimationId, -1, Guid.Empty, MapId, (byte)X, (byte)Y, 0);
+                                break;
                             default:
                                 break;
                         }
@@ -1751,6 +1771,7 @@ namespace Intersect.Server.Entities
             //Calculate world tile of target
             var x2 = target.X + (MapInstance.Get(target.MapId).MapGridX * Options.MapWidth);
             var y2 = target.Y + (MapInstance.Get(target.MapId).MapGridY * Options.MapHeight);
+            
             if (Math.Abs(x1 - x2) > Math.Abs(y1 - y2))
             {
                 //Left or Right
@@ -1758,23 +1779,17 @@ namespace Intersect.Server.Entities
                 {
                     return (byte)Directions.Right;
                 }
-                else
-                {
-                    return (byte)Directions.Left;
-                }
+
+                return (byte)Directions.Left;
             }
-            else
+
+            //Left or Right
+            if (y1 - y2 < 0)
             {
-                //Left or Right
-                if (y1 - y2 < 0)
-                {
-                    return (byte)Directions.Down;
-                }
-                else
-                {
-                    return (byte)Directions.Up;
-                }
+                return (byte)Directions.Down;
             }
+
+            return (byte)Directions.Up;
         }
 
         //Check if the target is either up, down, left or right of the target on the correct Z dimension.
@@ -1839,7 +1854,15 @@ namespace Intersect.Server.Entities
                         }
                     }
 
-                    if (Globals.Rand.Next(1, 101) >= dropitems) continue;
+                    //Calculate the killers luck (If they are a player)
+                    var playerKiller = killer as Player;
+                    double luck = 1.0 + (((playerKiller != null) ? playerKiller.GetLuck() : 0) / 100);
+
+                    //Player drop rates
+                    if (Globals.Rand.Next(1, 101) >= dropitems * luck) continue;
+
+                    //Npc drop rates
+                    if (Globals.Rand.Next(1, 101) >= item.DropChance * luck) continue;
 
                     var map = MapInstance.Get(MapId);
                     map?.SpawnItem(X, Y, item, item.Quantity);
@@ -1911,6 +1934,8 @@ namespace Intersect.Server.Entities
             packet.Stats = GetStatValues();
             packet.StatusEffects = StatusPackets();
             packet.NameColor = NameColor;
+            packet.HeaderLabel = new LabelPacket(HeaderLabel.Label, HeaderLabel.Color);
+            packet.FooterLabel = new LabelPacket(FooterLabel.Label, FooterLabel.Color);
 
             return packet;
         }
@@ -2101,9 +2126,22 @@ namespace Intersect.Server.Entities
             mEntity = en;
             Spell = spell;
             Type = type;
-            Duration = Globals.Timing.TimeMs + duration;
             StartTime = Globals.Timing.TimeMs;
+            Duration = Globals.Timing.TimeMs + duration;
             Data = data;
+
+            if (en.GetType() == typeof(Player))
+            {
+              if (type == StatusTypes.Blind ||
+                  type == StatusTypes.Silence ||
+                  type == StatusTypes.Sleep ||
+                  type == StatusTypes.Snare ||
+                  type == StatusTypes.Stun ||
+                  type == StatusTypes.Taunt)
+              {
+                Duration = Globals.Timing.TimeMs + duration - (long)((((Player)en).GetTenacity() / 100) * duration);
+              }
+            }
 
             if (type == StatusTypes.Shield)
             {
@@ -2248,6 +2286,18 @@ namespace Intersect.Server.Entities
 
                 Range = i;
             }
+        }
+    }
+
+    public struct LabelInstance
+    {
+        public string Label;
+        public Color Color;
+
+        public LabelInstance(string label, Color color)
+        {
+            Label = label;
+            Color = color;
         }
     }
 }

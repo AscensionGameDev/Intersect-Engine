@@ -153,6 +153,7 @@ namespace Intersect.Client.UI.Game
             else
             {
                 HideWindows();
+                mFriendsWindow.UpdateList();
                 mFriendsWindow.Show();
             }
 

@@ -1,20 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+
 using Newtonsoft.Json;
 
 namespace Intersect.Utilities
 {
     public static class DatabaseUtils
     {
-        public enum DbProvider
-        {
-            Sqlite,
-            MySql,
-        }
-
         public static int[] LoadIntArray(string json, int arrayLen)
         {
             var output = new int[arrayLen];

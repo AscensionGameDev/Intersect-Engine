@@ -189,11 +189,11 @@ namespace Intersect.Editor.Forms.Editors.Quest
                 if (mChanged.IndexOf(mEditorItem) == -1)
                 {
                     mChanged.Add(mEditorItem);
-                    mEditorItem.StartEvent.MakeBackup();
-                    mEditorItem.EndEvent.MakeBackup();
+                    mEditorItem.StartEvent?.MakeBackup();
+                    mEditorItem.EndEvent?.MakeBackup();
                     foreach (var tsk in mEditorItem.Tasks)
                     {
-                        tsk.CompletionEvent.MakeBackup();
+                        tsk.CompletionEvent?.MakeBackup();
                         tsk.EditingEvent = tsk.CompletionEvent;
                     }
                     mEditorItem.MakeBackup();

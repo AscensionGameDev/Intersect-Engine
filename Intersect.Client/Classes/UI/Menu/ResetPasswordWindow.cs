@@ -189,8 +189,10 @@ namespace Intersect.Client.UI.Menu
                 Gui.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.passwordinvalid));
                 return;
             }
-            var sha = new SHA256Managed();
-            PacketSender.SendResetPassword(Target,mCodeInputTextbox?.Text, BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(mPasswordTextbox.Text.Trim()))).Replace("-", ""));
+            using (var sha = new SHA256Managed())
+            {
+                PacketSender.SendResetPassword(Target,mCodeInputTextbox?.Text, BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(mPasswordTextbox.Text.Trim()))).Replace("-", ""));
+            }
             Globals.WaitingOnServer = true;
             ChatboxMsg.ClearMessages();
         }

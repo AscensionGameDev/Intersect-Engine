@@ -173,6 +173,8 @@
     <Compile Include="Admin\Actions\WarpToMapAction.cs" />
     <Compile Include="Admin\Actions\WarpToMeAction.cs" />
     <Compile Include="AlphanumComparatorFast.cs" />
+    <Compile Include="Collections\NamedInstanceStore.cs" />
+    <Compile Include="Collections\SingleOrList.cs" />
     <Compile Include="ColorF.cs" />
     <Compile Include="Configuration\IConfigurable.cs" />
     <Compile Include="Configuration\IConfiguration.cs" />
@@ -208,10 +210,12 @@
     <Compile Include="Config\SmtpSettings.cs" />
     <Compile Include="Crypto\RsaUtils.cs" />
     <Compile Include="CustomColors.cs" />
+    <Compile Include="ErrorHandling\ExceptionInfo.cs" />
     <Compile Include="Extensions\ArrayExtensions.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\PropertyInfoExtensions.cs" />
+    <Compile Include="Extensions\LogLevelExtensions.cs" />
     <Compile Include="GameObjects\Events\VariableMod.cs" />
     <Compile Include="GameObjects\Switches and Variables\VariableValue.cs" />
     <Compile Include="IO\ConsoleContext.cs" />
@@ -230,6 +234,9 @@
     <Compile Include="Localization\LocaleNamespace.cs" />
     <Compile Include="Logging\Formatting\DefaultFormatter.cs" />
     <Compile Include="Logging\Formatting\ILogFormatter.cs" />
+    <Compile Include="Logging\Microsoft\Extensions\Logging\IntersectLogger.cs" />
+    <Compile Include="Logging\Microsoft\Extensions\Logging\IntersectLoggerFactory.cs" />
+    <Compile Include="Logging\Microsoft\Extensions\Logging\IntersectLogScope.cs" />
     <Compile Include="Logging\LogConfiguration.cs" />
     <Compile Include="Models\DatabaseObject.cs" />
     <Compile Include="Enums\Access.cs" />
@@ -299,6 +306,7 @@
     <Compile Include="Network\Packets\Client\DirectionPacket.cs" />
     <Compile Include="Network\Packets\Client\DropItemPacket.cs" />
     <Compile Include="Network\Packets\Client\EnterGamePacket.cs" />
+    <Compile Include="Network\Packets\Client\EventInputVariablePacket.cs" />
     <Compile Include="Network\Packets\Client\EventResponsePacket.cs" />
     <Compile Include="Network\Packets\Client\ForgetSpellPacket.cs" />
     <Compile Include="Network\Packets\Client\FriendRequestResponsePacket.cs" />
@@ -374,7 +382,9 @@
     <Compile Include="Network\Packets\Server\EventEntityPacket.cs" />
     <Compile Include="Network\Packets\Server\FriendRequestPacket.cs" />
     <Compile Include="Network\Packets\Server\FriendsPacket.cs" />
+    <Compile Include="Network\Packets\Server\InputVariablePacket.cs" />
     <Compile Include="Network\Packets\Server\InventoryPacket.cs" />
+    <Compile Include="Network\Packets\Server\LabelPacket.cs" />
     <Compile Include="Network\Packets\Server\MapAreaPacket.cs" />
     <Compile Include="Network\Packets\Server\MoveRoutePacket.cs" />
     <Compile Include="Network\Packets\Server\NpcEntityPacket.cs" />
@@ -443,6 +453,9 @@
     <Compile Include="Network\Packets\Server\TradePacket.cs" />
     <Compile Include="Network\Packets\Server\TradeRequestPacket.cs" />
     <Compile Include="Network\Packets\Server\TradeUpdatePacket.cs" />
+    <Compile Include="Reflection\MemberInfoExtensions.cs" />
+    <Compile Include="Security\ApiVisibility.cs" />
+    <Compile Include="Security\ApiVisibilityAttribute.cs" />
     <Compile Include="Security\Claims\IntersectClaimTypes.cs" />
     <Compile Include="Serialization\Json\SingleOrArrayConverter.cs" />
     <Compile Include="Threading\ConcurrentInstance.cs" />
@@ -529,6 +542,7 @@
     <Compile Include="Utilities\MathHelper.cs" />
     <Compile Include="Extensions\RandomExtensions.cs" />
     <Compile Include="Network\NetworkHelper.cs" />
+    <Compile Include="Utilities\Nullability.cs" />
     <Compile Include="Utilities\Retry.cs" />
     <Compile Include="Utilities\StreamUtils.cs" />
     <Compile Include="Utilities\TextUtils.cs" />

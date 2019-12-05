@@ -20,7 +20,16 @@ namespace Intersect.Client.MonoGame.Audio
 
         public override void Play()
         {
-            mInstance?.Play();
+            //This can fail due to null reference exceptions or sound limits, or any other number of reasons
+            //I'm adding a catch-all so that maybe it stops crashing games :/
+            try
+            {
+                mInstance?.Play();
+            }
+            catch (Exception ex)
+            {
+                Logging.Log.Debug(ex, "Error trying to play sound in MonoSoundInstance.Play()");
+            }
         }
 
         public override void Pause()

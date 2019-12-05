@@ -1,21 +1,26 @@
-﻿using Intersect.Server.Classes.Database;
+﻿using System.Data.Common;
+using System.Threading;
+using System.Threading.Tasks;
+
+using Intersect.Config;
 using Intersect.Server.Classes.Database.PlayerData.Api;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Database.PlayerData.SeedData;
 using Intersect.Server.Entities;
-using Intersect.Utilities;
+
 using JetBrains.Annotations;
+
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Data;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Intersect.Server.Database.PlayerData
 {
-    public class PlayerContext : DbContext, ISeedableContext
+    public class PlayerContext : IntersectDbContext<PlayerContext>
     {
+        [NotNull]
+        public static DbConnectionStringBuilder DefaultConnectionStringBuilder =>
+            new SqliteConnectionStringBuilder(@"Data Source=resources/playerdata.db");
+
         [NotNull] public DbSet<User> Users { get; set; }
 
         [NotNull] public DbSet<Mute> Mutes { get; set; }
@@ -35,17 +40,15 @@ namespace Intersect.Server.Database.PlayerData
         [NotNull] public DbSet<Bag> Bags { get; set; }
         [NotNull] public DbSet<BagSlot> Bag_Items { get; set; }
 
-        private DatabaseUtils.DbProvider mConnection = DatabaseUtils.DbProvider.Sqlite;
-        private string mConnectionString = @"Data Source=resources/playerdata.db";
-
-        public PlayerContext()
+        public PlayerContext() : base(DefaultConnectionStringBuilder)
         {
         }
 
-        public  PlayerContext(DatabaseUtils.DbProvider connection, string connectionString)
+        public PlayerContext(
+            [NotNull] DbConnectionStringBuilder connectionStringBuilder,
+            DatabaseOptions.DatabaseType databaseType
+        ) : base(connectionStringBuilder, databaseType, false)
         {
-            mConnection = connection;
-            mConnectionString = connectionString;
         }
 
         internal async ValueTask Commit(bool commit = false, CancellationToken cancellationToken = default(CancellationToken))
@@ -62,22 +65,7 @@ namespace Intersect.Server.Database.PlayerData
             }
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            switch (mConnection)
-            {
-                case DatabaseUtils.DbProvider.Sqlite:
-                    optionsBuilder.UseSqlite(mConnectionString);
-                    break;
-                case DatabaseUtils.DbProvider.MySql:
-                    optionsBuilder.UseMySql(mConnectionString);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating([NotNull] ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<RefreshToken>().HasOne(token => token.User);
 
@@ -109,38 +97,6 @@ namespace Intersect.Server.Database.PlayerData
             modelBuilder.Entity<BankSlot>().HasOne(b => b.Bag);
         }
 
-        public bool IsEmpty()
-        {
-            using (var command = Database.GetDbConnection().CreateCommand())
-            {
-                if (mConnection == DatabaseUtils.DbProvider.MySql)
-                {
-                    command.CommandText = "show tables;";
-                }
-                else if (mConnection == DatabaseUtils.DbProvider.Sqlite)
-                {
-                    command.CommandText = "SELECT name FROM sqlite_master WHERE type='table';";
-                }
-                command.CommandType = CommandType.Text;
-
-                Database.OpenConnection();
-
-                using (var result = command.ExecuteReader())
-                {
-                    return !result.HasRows;
-                }
-            }
-        }
-
-        public DbSet<TType> GetDbSet<TType>() where TType : class
-        {
-            var searchType = typeof(DbSet<TType>);
-            var property = GetType()
-                .GetProperties()
-                .FirstOrDefault(propertyInfo => searchType == propertyInfo?.PropertyType);
-            return property?.GetValue(this) as DbSet<TType>;
-        }
-
         public void Seed()
         {
 #if DEBUG
@@ -150,7 +106,7 @@ namespace Intersect.Server.Database.PlayerData
 #endif
         }
 
-        public void MigrationsProcessed(string[] migrations)
+        public override void MigrationsProcessed(string[] migrations)
         {
 
         }

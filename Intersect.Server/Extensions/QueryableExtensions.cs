@@ -1,0 +1,93 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+
+using Intersect.Server.Web.RestApi.Payloads;
+
+using JetBrains.Annotations;
+
+using Microsoft.EntityFrameworkCore;
+
+namespace Intersect.Server.Extensions
+{
+
+    public static class QueryableExtensions
+    {
+
+        public static IQueryable<TValue> Sort<TValue>(
+            [NotNull] this IQueryable<TValue> queryable,
+            IReadOnlyCollection<Sort> sort
+        ) => DoSort(queryable, sort);
+
+        public static bool IsOrdered<TValue>([NotNull] this IQueryable<TValue> queryable) =>
+            queryable.Expression.Type == typeof(IOrderedQueryable<TValue>);
+
+        public static IOrderedQueryable<TValue> SmartOrderBy<TValue>([NotNull] this IQueryable<TValue> queryable, Sort sort) =>
+            sort.Direction == SortDirection.Ascending
+                ? queryable.OrderBy(entity => EF.Property<object>(entity, sort.By))
+                : queryable.OrderByDescending(entity => EF.Property<object>(entity, sort.By));
+
+        public static IOrderedQueryable<TValue> SmartThenBy<TValue>([NotNull] this IOrderedQueryable<TValue> queryable, Sort sort) =>
+            sort.Direction == SortDirection.Ascending
+                ? queryable.ThenBy(entity => EF.Property<object>(entity, sort.By))
+                : queryable.ThenByDescending(entity => EF.Property<object>(entity, sort.By));
+
+        public static IQueryable<TValue> SmartSort<TValue>([NotNull] this IQueryable<TValue> queryable, Sort sort) =>
+            sort.Direction == SortDirection.Ascending
+                ? SmartSortAscending(queryable, sort)
+                : SmartSortDescending(queryable, sort);
+
+        public static IQueryable<TValue> SmartSortAscending<TValue>([NotNull] this IQueryable<TValue> queryable, Sort sort) =>
+            queryable.IsOrdered()
+                ? (queryable as IOrderedQueryable<TValue>)?.ThenBy(entity => EF.Property<object>(entity, sort.By))
+                : queryable.OrderBy(entity => EF.Property<object>(entity, sort.By));
+
+        public static IQueryable<TValue> SmartSortDescending<TValue>([NotNull] this IQueryable<TValue> queryable, Sort sort) =>
+            queryable.IsOrdered()
+                ? (queryable as IOrderedQueryable<TValue>)?.ThenByDescending(entity => EF.Property<object>(entity, sort.By))
+                : queryable.OrderByDescending(entity => EF.Property<object>(entity, sort.By));
+
+        public static IQueryable<TValue> DoSort<TValue>(
+            [NotNull] IQueryable<TValue> queryable,
+            IReadOnlyCollection<Sort> sort
+        )
+        {
+            if (sort == null || sort.Count < 1)
+            {
+                return queryable;
+            }
+
+            var sorted = queryable;
+            var orderedOnce = false;
+            foreach (var sortPair in sort)
+            {
+                if (string.IsNullOrWhiteSpace(sortPair.By))
+                {
+                    continue;
+                }
+
+                Expression<Func<TValue, object>> orderLambda = entity => EF.Property<object>(entity, sortPair.By);
+
+                if (sortPair.Direction == SortDirection.Ascending)
+                {
+                    sorted = orderedOnce
+                        ? ((IOrderedQueryable<TValue>) sorted).ThenBy(orderLambda)
+                        : sorted.OrderBy(orderLambda);
+                }
+                else
+                {
+                    sorted = orderedOnce
+                        ? ((IOrderedQueryable<TValue>) sorted).ThenByDescending(orderLambda)
+                        : sorted.OrderByDescending(orderLambda);
+                }
+
+                orderedOnce = true;
+            }
+
+            return sorted;
+        }
+
+    }
+
+}

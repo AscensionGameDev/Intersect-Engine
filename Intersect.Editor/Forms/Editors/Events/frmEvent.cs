@@ -457,6 +457,9 @@ namespace Intersect.Editor.Forms.Editors.Events
                 case EventCommandType.ShowOptions:
                     tmpCommand = new ShowOptionsCommand(CurrentPage.CommandLists);
                     break;
+                case EventCommandType.InputVariable:
+                    tmpCommand = new InputVariableCommand(CurrentPage.CommandLists);
+                    break;
                 case EventCommandType.AddChatboxText:
                     tmpCommand = new AddChatboxTextCommand();
                     break;
@@ -517,6 +520,9 @@ namespace Intersect.Editor.Forms.Editors.Events
                 case EventCommandType.ChangeNameColor:
                     tmpCommand = new ChangeNameColorCommand();
                     break;
+                case EventCommandType.PlayerLabel:
+                  tmpCommand = new ChangePlayerLabelCommand();
+                  break;
                 case EventCommandType.SetAccess:
                     tmpCommand = new SetAccessCommand();
                     break;
@@ -948,6 +954,9 @@ namespace Intersect.Editor.Forms.Editors.Events
                 case EventCommandType.ShowOptions:
                     cmdWindow = new EventCommandOptions((ShowOptionsCommand)command, CurrentPage, this);
                     break;
+                case EventCommandType.InputVariable:
+                    cmdWindow = new EventCommandInput((InputVariableCommand)command, this);
+                    break;
                 case EventCommandType.AddChatboxText:
                     cmdWindow = new EventCommandChatboxText((AddChatboxTextCommand)command, this);
                     break;
@@ -973,10 +982,10 @@ namespace Intersect.Editor.Forms.Editors.Events
                     cmdWindow = new EventCommandStartCommonEvent((StartCommmonEventCommand)command, this);
                     break;
                 case EventCommandType.RestoreHp:
-                    //No editor
+                    cmdWindow = new EventCommandChangeVital((RestoreHpCommand) command, this);
                     break;
                 case EventCommandType.RestoreMp:
-                    //No editor
+                    cmdWindow = new EventCommandChangeVital((RestoreMpCommand)command, this);
                     break;
                 case EventCommandType.LevelUp:
                     //No editor
@@ -1008,6 +1017,9 @@ namespace Intersect.Editor.Forms.Editors.Events
                 case EventCommandType.ChangeNameColor:
                     cmdWindow = new EventCommandChangeNameColor((ChangeNameColorCommand)command, this);
                     break;
+                case EventCommandType.PlayerLabel:
+                  cmdWindow = new EventCommandChangePlayerLabel((ChangePlayerLabelCommand)command, this);
+                  break;
                 case EventCommandType.SetAccess:
                     cmdWindow = new EventCommandSetAccess((SetAccessCommand)command, this);
                     break;
@@ -1163,6 +1175,9 @@ namespace Intersect.Editor.Forms.Editors.Events
             {
                 case EventCommandType.ShowOptions:
                     branchesToRemove.AddRange(((ShowOptionsCommand)cmd).BranchIds);
+                    break;
+                case EventCommandType.InputVariable:
+                    branchesToRemove.AddRange(((InputVariableCommand)cmd).BranchIds);
                     break;
                 case EventCommandType.ConditionalBranch:
                     branchesToRemove.AddRange(((ConditionalBranchCommand)cmd).BranchIds);

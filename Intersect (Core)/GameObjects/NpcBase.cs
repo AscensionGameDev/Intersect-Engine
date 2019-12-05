@@ -8,6 +8,8 @@ using Intersect.Utilities;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Conditions;
 
+using JetBrains.Annotations;
+
 namespace Intersect.GameObjects
 {
     public class NpcBase : DatabaseObject<NpcBase>, IFolderable
@@ -148,6 +150,18 @@ namespace Intersect.GameObjects
         }
         [NotMapped]
         public DbList<SpellBase> Spells { get; set; } = new DbList<SpellBase>();
+
+        public SpellBase GetRandomSpell([NotNull] Random random)
+        {
+            if (Spells == null || Spells.Count == 0)
+            {
+                return null;
+            }
+
+            var spellIndex = random.Next(0, Spells.Count);
+            var spellId = Spells[spellIndex];
+            return SpellBase.Get(spellId);
+        }
 
         public string Sprite { get; set; } = "";
 

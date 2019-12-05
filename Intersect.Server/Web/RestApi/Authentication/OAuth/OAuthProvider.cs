@@ -9,6 +9,8 @@ using Owin.Security.AesDataProtectorProvider;
 using System;
 using System.Collections.Generic;
 
+using Intersect.Server.Web.RestApi.Middleware;
+
 namespace Intersect.Server.Web.RestApi.Authentication.OAuth
 {
 
@@ -16,6 +18,8 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth
 
     internal class OAuthProvider : AuthenticationProvider
     {
+
+        public const string TokenEndpoint = "/api/oauth/token";
 
         [NotNull]
         private OAuthAuthorizationServerProvider OAuthAuthorizationServerProvider { get; }
@@ -37,7 +41,7 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth
                 new RequestMap
                 {
                     {
-                        (new PathString("/api/oauth/token"), "POST", "application/json"),
+                        (new PathString(TokenEndpoint), "POST", "application/json"),
                         async owinContext =>
                             await (owinContext?.ConvertFromJsonToFormBody() ??
                                    throw new InvalidOperationException(@"Task is null"))
@@ -48,14 +52,10 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth
             appBuilder.UseOAuthAuthorizationServer(
                 new OAuthAuthorizationServerOptions
                 {
-                    TokenEndpointPath = new PathString("/api/oauth/token"),
+                    TokenEndpointPath = new PathString(TokenEndpoint),
                     ApplicationCanDisplayErrors = true,
-#if DEBUG
                     AllowInsecureHttp = true,
                     AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(Configuration.RefreshTokenLifetime),
-#else
-                    AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(Configuration.RefreshTokenLifetime),
-#endif
                     Provider = OAuthAuthorizationServerProvider,
                     RefreshTokenProvider = RefreshTokenProvider
                 }

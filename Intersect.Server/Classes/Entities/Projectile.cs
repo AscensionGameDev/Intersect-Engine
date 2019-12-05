@@ -247,18 +247,20 @@ namespace Intersect.Server.Entities
 
         public void ProcessFragments()
         {
+            if (Base == null) return;
             if (mSpawnCount != 0 || mQuantity < Base.Quantity)
             {
                 for (int i = 0; i < mSpawnedAmount; i++)
                 {
-                    if (Spawns[i] != null && Globals.Timing.TimeMs > Spawns[i].TransmittionTimer)
+                    var spawn = Spawns[i];
+                    if (spawn != null && Globals.Timing.TimeMs > spawn.TransmittionTimer)
                     {
-                        var killSpawn = MoveFragment(Spawns[i]);
-                        if (!killSpawn) killSpawn = CheckForCollision(Spawns[i]);
+                        var killSpawn = MoveFragment(spawn);
+                        if (!killSpawn) killSpawn = CheckForCollision(spawn);
 
                         if (killSpawn)
                         {
-                            Spawns[i].Dispose(i);
+                            spawn.Dispose(i);
                             Spawns[i] = null;
                             mSpawnCount--;
                             continue;
@@ -280,7 +282,7 @@ namespace Intersect.Server.Entities
                 {
                     if (spawn == Spawns[i])
                     {
-                        Spawns[i].Dispose(i);
+                        Spawns[i]?.Dispose(i);
                         Spawns[i] = null;
                         mSpawnCount--;
                     }
@@ -428,11 +430,8 @@ namespace Intersect.Server.Entities
         {
             for (int i = 0; i < Spawns.Length; i++)
             {
-                if (Spawns[i] != null)
-                {
-                    Spawns[i].Dispose(i);
-                    Spawns[i] = null;
-                }
+                Spawns[i]?.Dispose(i);
+                Spawns[i] = null;
             }
             MapInstance.Get(MapId).RemoveProjectile(this);
             PacketSender.SendEntityDie(this);
@@ -499,7 +498,8 @@ namespace Intersect.Server.Entities
                             Parent.Owner.Dir = Dir;
                             new DashInstance(Parent.Owner, Distance, (byte)Parent.Owner.Dir, Parent.Base.IgnoreMapBlocks, Parent.Base.IgnoreActiveResources, Parent.Base.IgnoreExhaustedResources, Parent.Base.IgnoreZDimension);
                         }
-                        return true;
+
+                        if (!Parent.Base.PierceTarget) return true;
                     }
                 }
                 else if (targetEntity.GetType() == typeof(Resource))
@@ -534,7 +534,7 @@ namespace Intersect.Server.Entities
                             Parent.Owner.Dir = Dir;
                             new DashInstance(Parent.Owner, Distance, (byte)Parent.Owner.Dir, Parent.Base.IgnoreMapBlocks, Parent.Base.IgnoreActiveResources, Parent.Base.IgnoreExhaustedResources, Parent.Base.IgnoreZDimension);
                         }
-                        return true;
+                        if (!Parent.Base.PierceTarget) return true;
                     }
                 }
             }

@@ -1,23 +1,24 @@
-﻿using Intersect.Logging;
-using Intersect.Security.Claims;
-using Intersect.Server.Web.RestApi.Configuration;
-using JetBrains.Annotations;
-using Microsoft.Owin.Security;
-using Microsoft.Owin.Security.OAuth;
-using System;
+﻿using System;
 using System.Linq;
 using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
+
+using Intersect.Logging;
+using Intersect.Reflection;
+using Intersect.Security.Claims;
+using Intersect.Server.Database.PlayerData;
+using Intersect.Server.Web.RestApi.Configuration;
+
+using JetBrains.Annotations;
+
+using Microsoft.Owin.Security;
+using Microsoft.Owin.Security.OAuth;
 
 namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
 {
 
     internal class GrantProvider : OAuthAuthorizationServerProvider
     {
-        [NotNull] private const string KEY_PREHASH = "intersect:prehash";
-
         [NotNull]
         private ApiConfiguration Configuration { get; }
 
@@ -75,16 +76,6 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
 
             var username = context.UserName;
             var password = context.Password;
-#if DEBUG
-            if (!string.IsNullOrEmpty(password) && owinContext.Get<bool>(KEY_PREHASH))
-            {
-                using (var sha = new SHA256Managed())
-                {
-                    var digest = sha.ComputeHash(Encoding.UTF8.GetBytes(password));
-                    password = BitConverter.ToString(digest).Replace("-", "");
-                }
-            }
-#endif
 
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
@@ -95,7 +86,7 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
             username = username.Trim();
 
             var user = DbInterface.GetUser(username);
-            if (!user?.IsPasswordValid(password) ?? true)
+            if (!user?.IsPasswordValid(password.ToUpper().Trim()) ?? true)
             {
                 context.SetError("credentials_invalid");
                 return;
@@ -125,6 +116,14 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
             if (user.Power != null)
             {
                 identity.AddClaims(user.Power.Roles.Select(role => new Claim(IntersectClaimTypes.Role, role)));
+                if (user.Power.ApiRoles?.UserQuery ?? false)
+                {
+                    identity.AddClaim(new Claim(IntersectClaimTypes.AccessRead, typeof(User).FullName));
+                    identity.AddClaim(new Claim(IntersectClaimTypes.AccessRead, typeof(User).GetProperty(nameof(User.Ban))?.GetFullName()));
+                    identity.AddClaim(new Claim(IntersectClaimTypes.AccessRead, typeof(User).GetProperty(nameof(User.Mute))?.GetFullName()));
+                    identity.AddClaim(new Claim(IntersectClaimTypes.AccessRead, typeof(User).GetProperty(nameof(User.IsBanned))?.GetFullName()));
+                    identity.AddClaim(new Claim(IntersectClaimTypes.AccessRead, typeof(User).GetProperty(nameof(User.IsMuted))?.GetFullName()));
+                }
             }
 
             var ticketProperties = new AuthenticationProperties();
@@ -181,12 +180,6 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
             switch (grantType)
             {
                 case "password":
-#if DEBUG
-                    if (parameters["prehash"] != null)
-                    {
-                        context.OwinContext?.Set(KEY_PREHASH, true);
-                    }
-#endif
                     context.Validated();
                     return;
 

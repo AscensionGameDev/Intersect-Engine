@@ -46,7 +46,7 @@ namespace Intersect.GameObjects.Switches_and_Variables
         [JsonIgnore]
         public long Integer
         {
-            get => CanConvertTo<int>(Value) ? Convert.ToInt32(Value) : 0;
+            get => CanConvertTo<long>(Value) ? Convert.ToInt64(Value) : 0;
             set
             {
                 Type = VariableDataTypes.Integer;

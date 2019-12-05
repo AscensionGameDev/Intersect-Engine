@@ -284,6 +284,9 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<string>("VitalsJson")
                         .HasColumnName("VitalsGiven");
 
+                    b.Property<string>("VitalsRegenJson")
+                        .HasColumnName("VitalsRegen");
+
                     b.HasKey("Id");
 
                     b.ToTable("Items");
@@ -442,6 +445,8 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<int>("Knockback");
 
                     b.Property<string>("Name");
+
+                    b.Property<bool>("PierceTarget");
 
                     b.Property<int>("Quantity");
 
@@ -960,6 +965,9 @@ namespace Intersect.Server.Migrations.Game
                             b1.Property<int>("TargetType");
 
                             b1.Property<string>("TransformSprite");
+
+                            b1.Property<int>("TrapDuration")
+                                .HasColumnName("Trap");
 
                             b1.Property<string>("VitalDiffJson")
                                 .HasColumnName("VitalDiff");

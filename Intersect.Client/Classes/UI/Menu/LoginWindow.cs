@@ -200,10 +200,7 @@ namespace Intersect.Client.UI.Menu
             var password = mSavedPass;
             if (!mUseSavedPass)
             {
-                using (var sha = new SHA256Managed())
-                {
-                    password = ComputePasswordHash(mPasswordTextbox?.Text?.Trim());
-                }
+                password = ComputePasswordHash(mPasswordTextbox?.Text?.Trim());
             }
             
             PacketSender.SendLogin(mUsernameTextbox?.Text, password);

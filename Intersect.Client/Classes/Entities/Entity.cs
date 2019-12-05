@@ -12,7 +12,10 @@ using Intersect.Client.Spells;
 using Intersect.Client.UI;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.Logging;
 using Intersect.Network.Packets.Server;
+
+using JetBrains.Annotations;
 
 namespace Intersect.Client.Entities
 {
@@ -69,6 +72,8 @@ namespace Intersect.Client.Entities
         //Extras
         public string Face = "";
         public Color NameColor = null;
+        public LabelInstance HeaderLabel;
+        public LabelInstance FooterLabel;
 
         public Gender Gender = Gender.Male;
         public bool HideName;
@@ -107,7 +112,8 @@ namespace Intersect.Client.Entities
         public int[] Stat = new int[(int) Stats.StatCount];
 
         //Status effects
-        public List<StatusInstance> Status = new List<StatusInstance>();
+        [NotNull]
+        public List<StatusInstance> Status { get; private set; } = new List<StatusInstance>();
 
         public int Target = -1;
         public GameTexture Texture;
@@ -201,7 +207,9 @@ namespace Intersect.Client.Entities
             HideName = packet.HideName;
             HideEntity = packet.HideEntity;
             NameColor = packet.NameColor;
-            
+            HeaderLabel = new LabelInstance(packet.HeaderLabel.Label, packet.HeaderLabel.Color);
+            FooterLabel = new LabelInstance(packet.FooterLabel.Label, packet.FooterLabel.Color);
+
             var animsToClear = new List<AnimationInstance>();
             var animsToAdd = new List<AnimationBase>();
             for (int i = 0; i < packet.Animations.Length; i++)
@@ -246,34 +254,65 @@ namespace Intersect.Client.Entities
 
             //Update status effects
             Status.Clear();
-            foreach (var status in packet.StatusEffects)
-            {
-                var instance = new StatusInstance(status.SpellId, status.Type, status.TransformSprite, status.TimeRemaining, status.TotalDuration);
-                Status.Add(instance);
 
-                if (instance.Type == StatusTypes.Shield)
+            if (packet.StatusEffects == null)
+            {
+                Log.Warn($"'{nameof(packet)}.{nameof(packet.StatusEffects)}' is null.");
+            }
+            else
+            {
+                foreach (var status in packet.StatusEffects)
                 {
-                    instance.Shield = status.VitalShields;
+                    var instance = new StatusInstance(status.SpellId, status.Type, status.TransformSprite, status.TimeRemaining, status.TotalDuration);
+                    Status?.Add(instance);
+
+                    if (instance.Type == StatusTypes.Shield)
+                    {
+                        instance.Shield = status.VitalShields;
+                    }
                 }
             }
+
             SortStatuses();
             Stat = packet.Stats;
 
             mDisposed = false;
 
             //Status effects box update
-            if (Globals.Me != null)
+            if (Globals.Me == null)
+            {
+                Log.Warn($"'{nameof(Globals.Me)}' is null.");
+            }
+            else
             {
                 if (Id == Globals.Me.Id)
                 {
-                    if (Gui.GameUi != null)
+                    if (Gui.GameUi == null)
                     {
-                        Gui.GameUi.PlayerBox.UpdateStatuses = true;
+                        Log.Warn($"'{nameof(Gui.GameUi)}' is null.");
+                    }
+                    else
+                    {
+                        if (Gui.GameUi.PlayerBox == null)
+                        {
+                            Log.Warn($"'{nameof(Gui.GameUi.PlayerBox)}' is null.");
+                        }
+                        else
+                        {
+                            Gui.GameUi.PlayerBox.UpdateStatuses = true;
+                        }
                     }
                 }
                 else if (Id != Guid.Empty && Id == Globals.Me.TargetIndex)
                 {
-                    Globals.Me.TargetBox.UpdateStatuses = true;
+                    if (Globals.Me.TargetBox == null)
+                    {
+                        Log.Warn($"'{nameof(Globals.Me.TargetBox)}' is null.");
+                    }
+                    else
+                    {
+                        Globals.Me.TargetBox.UpdateStatuses = true;
+                    }
                 }
             }
         }
@@ -900,6 +939,45 @@ namespace Intersect.Client.Entities
             return y;
         }
 
+        public void DrawLabels(string label, int position, Color textColor, Color borderColor = null, Color backgroundColor = null)
+        {
+          if (label.Trim().Length == 0) return;
+          if (HideName) return;
+
+          if (borderColor == null) borderColor = Color.Transparent;
+          if (backgroundColor == null) backgroundColor = Color.Transparent;
+
+          //Check for stealth amoungst status effects.
+          for (var n = 0; n < Status.Count; n++)
+          {
+            //If unit is stealthed, don't render unless the entity is the player.
+            if (Status[n].Type == StatusTypes.Stealth)
+            {
+              if (this != Globals.Me && !Globals.Me.IsInMyParty(this))
+              {
+                return;
+              }
+            }
+          }
+          var map = MapInstance;
+          if (map == null) return;
+          Pointf textSize = GameGraphics.Renderer.MeasureText(label, GameGraphics.GameFont, 1);
+
+          float offset = textSize.Y;
+          if (position == 0) offset = -offset;
+
+          var y = GetTopPos() + offset - 16;
+          var x = (int)Math.Ceiling(GetCenterPos().X);
+
+          if (backgroundColor != Color.Transparent)
+            GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
+              new FloatRect((x - textSize.X / 2f) - 4, y, textSize.X + 8, textSize.Y), backgroundColor);
+          GameGraphics.Renderer.DrawString(label, GameGraphics.GameFont,
+            (int)(x - (int)Math.Ceiling(textSize.X / 2f)), (int)(y), 1,
+            Color.FromArgb(textColor.ToArgb()), true, null,
+            Color.FromArgb(borderColor.ToArgb()));
+        }
+
         public virtual void DrawName(Color textColor, Color borderColor = null, Color backgroundColor = null)
         {
             if (HideName || Name.Trim().Length == 0)
@@ -959,7 +1037,7 @@ namespace Intersect.Client.Entities
             {
                 return;
             }
-            var y = GetTopPos() - 4;
+            var y = GetTopPos() - 16;
             var x = (int) Math.Ceiling(GetCenterPos().X);
 
             Pointf textSize = GameGraphics.Renderer.MeasureText(Name, GameGraphics.GameFont, 1);
@@ -1266,6 +1344,18 @@ namespace Intersect.Client.Entities
                 en.Y = mEndY;
             }
             return en.Dashing != null;
+        }
+    }
+
+    public struct LabelInstance
+    {
+        public string Label;
+        public Color Color;
+
+        public LabelInstance(string label, Color color)
+        {
+            Label = label;
+            Color = color;
         }
     }
 }

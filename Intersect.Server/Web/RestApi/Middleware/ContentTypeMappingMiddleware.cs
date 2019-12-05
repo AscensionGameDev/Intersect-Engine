@@ -1,13 +1,14 @@
-﻿using JetBrains.Annotations;
-using Microsoft.Owin;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace Intersect.Server.Web.RestApi.Authentication.OAuth
-{
+using JetBrains.Annotations;
 
+using Microsoft.Owin;
+
+namespace Intersect.Server.Web.RestApi.Middleware
+{
     using RequestMap = IDictionary<(PathString, string, string), RequestMapFunc>;
 
     /// <summary>
@@ -20,7 +21,6 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth
     /// <inheritdoc />
     public sealed class ContentTypeMappingMiddleware : OwinMiddleware
     {
-
         [NotNull] private readonly RequestMap mRequestMap;
 
         /// <inheritdoc />
@@ -54,8 +54,8 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth
             }
 
             await (Next.Invoke(owinContext) ?? throw new InvalidOperationException(@"Task is null"));
+
+            owinContext.ToString();
         }
-
     }
-
 }

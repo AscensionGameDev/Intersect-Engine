@@ -19,13 +19,16 @@ using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Routing;
 
+using Intersect.Server.Web.RestApi.Middleware;
+
+using WebApiThrottle;
+
 namespace Intersect.Server.Web.RestApi
 {
 
     internal sealed class RestApi : IAppConfigurationProvider, IConfigurable<ApiConfiguration>, IDisposable
     {
 
-        [NotNull]
         public ApiConfiguration Configuration { get; }
 
         public bool Disposing { get; private set; }
@@ -52,8 +55,8 @@ namespace Intersect.Server.Web.RestApi
 
             if (apiPort > 0)
             {
-                StartOptions.Urls.Clear();
-                StartOptions.Urls.Add("http://*:" + apiPort + "/");
+                StartOptions.Urls?.Clear();
+                StartOptions.Urls?.Add("http://*:" + apiPort + "/");
             }
 
             AuthenticationProvider = new OAuthProvider(Configuration);
@@ -70,12 +73,12 @@ namespace Intersect.Server.Web.RestApi
             {
                 mWebAppHandle = WebApp.Start(StartOptions, Configure);
                 System.Diagnostics.Trace.Listeners.Remove("HostingTraceListener");
-                StartOptions.Urls.ToList().ForEach(host => Console.WriteLine(Strings.Intro.api.ToString(host)));
+                StartOptions.Urls?.ToList().ForEach(host => Console.WriteLine(Strings.Intro.api.ToString(host)));
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
                 Console.WriteLine(Strings.Intro.apifailed);
-                Log.Error(Strings.Intro.apifailed + Environment.NewLine + ex.ToString());
+                Log.Error(Strings.Intro.apifailed + Environment.NewLine + exception);
             }
         }
 
@@ -95,8 +98,6 @@ namespace Intersect.Server.Web.RestApi
                 .ToList()
                 .ForEach(corsOptions => appBuilder.UseCors(corsOptions));
 
-            AuthenticationProvider.Configure(appBuilder);
-
             var constraintResolver = new DefaultInlineConstraintResolver();
             constraintResolver.ConstraintMap?.Add(nameof(AdminActions), typeof(AdminActionsConstraint));
             constraintResolver.ConstraintMap?.Add(nameof(LookupKey), typeof(LookupKey.Constraint));
@@ -113,6 +114,15 @@ namespace Intersect.Server.Web.RestApi
             {
                 appBuilder.SetLoggerFactory(new IntersectLoggerFactory());
             }
+
+            if (Configuration.RequestLogging)
+            {
+                appBuilder.Use<IntersectRequestLoggingMiddleware>(Configuration.RequestLogLevel);
+            }
+
+            appBuilder.Use<IntersectThrottlingMiddleware>(Configuration.ThrottlePolicy, null, Configuration.FallbackClientKey, null);
+
+            AuthenticationProvider.Configure(appBuilder);
 
             appBuilder.UseWebApi(config);
         }

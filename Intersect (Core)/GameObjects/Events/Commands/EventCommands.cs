@@ -58,7 +58,11 @@ namespace Intersect.GameObjects.Events.Commands
             foreach (var branch in BranchIds)
             {
                 if (branch != Guid.Empty && commandLists.ContainsKey(branch))
-                    copyLists.Add(branch,commandLists[branch]);
+                {
+                    copyLists.Add(branch, commandLists[branch]);
+                    foreach (var cmd in commandLists[branch])
+                        cmd.GetCopyData(commandLists, copyLists);
+                }
             }
             return base.GetCopyData(commandLists, copyLists);
         }
@@ -74,6 +78,54 @@ namespace Intersect.GameObjects.Events.Commands
             }
         }
 
+    }
+
+    public class InputVariableCommand : EventCommand
+    {
+        public override EventCommandType Type { get; } = EventCommandType.InputVariable;
+        public string Title { get; set; }
+        public string Text { get; set; } = "";
+        public VariableTypes VariableType { get; set; } = VariableTypes.PlayerVariable;
+        public Guid VariableId { get; set; } = new Guid();
+        public long Minimum { get; set; } = 0;
+        public long Maximum { get; set; } = 0;
+        public Guid[] BranchIds { get; set; } = new Guid[2]; //Branch[0] is the event commands to execute when the condition is met, Branch[1] is for when it's not.
+
+        //For Json Deserialization
+        public InputVariableCommand()
+        {
+
+        }
+
+        public InputVariableCommand(Dictionary<Guid, List<EventCommand>> commandLists)
+        {
+            for (int i = 0; i < BranchIds.Length; i++)
+            {
+                BranchIds[i] = Guid.NewGuid();
+                commandLists.Add(BranchIds[i], new List<EventCommand>());
+            }
+        }
+
+        public override string GetCopyData(Dictionary<Guid, List<EventCommand>> commandLists, Dictionary<Guid, List<EventCommand>> copyLists)
+        {
+            foreach (var branch in BranchIds)
+            {
+                if (branch != Guid.Empty && commandLists.ContainsKey(branch))
+                    copyLists.Add(branch, commandLists[branch]);
+            }
+            return base.GetCopyData(commandLists, copyLists);
+        }
+
+        public override void FixBranchIds(Dictionary<Guid, Guid> idDict)
+        {
+            for (int i = 0; i < BranchIds.Length; i++)
+            {
+                if (idDict.ContainsKey(BranchIds[i]))
+                {
+                    BranchIds[i] = idDict[BranchIds[i]];
+                }
+            }
+        }
     }
 
     public class AddChatboxTextCommand : EventCommand
@@ -127,7 +179,11 @@ namespace Intersect.GameObjects.Events.Commands
             foreach (var branch in BranchIds)
             {
                 if (branch != Guid.Empty && commandLists.ContainsKey(branch))
+                {
                     copyLists.Add(branch, commandLists[branch]);
+                    foreach (var cmd in commandLists[branch])
+                        cmd.GetCopyData(commandLists, copyLists);
+                }
             }
             return base.GetCopyData(commandLists, copyLists);
         }
@@ -170,12 +226,14 @@ namespace Intersect.GameObjects.Events.Commands
     public class RestoreHpCommand : EventCommand
     {
         public override EventCommandType Type {get;} = EventCommandType.RestoreHp;
+        public int Amount { get; set; }
     }
 
     public class RestoreMpCommand : EventCommand
     {
         public override EventCommandType Type {get;} = EventCommandType.RestoreMp;
-    }
+        public int Amount { get; set; }
+  }
 
     public class LevelUpCommand : EventCommand
     {
@@ -221,7 +279,11 @@ namespace Intersect.GameObjects.Events.Commands
             foreach (var branch in BranchIds)
             {
                 if (branch != Guid.Empty && commandLists.ContainsKey(branch))
+                {
                     copyLists.Add(branch, commandLists[branch]);
+                    foreach (var cmd in commandLists[branch])
+                        cmd.GetCopyData(commandLists, copyLists);
+                }
             }
             return base.GetCopyData(commandLists, copyLists);
         }
@@ -266,7 +328,11 @@ namespace Intersect.GameObjects.Events.Commands
             foreach (var branch in BranchIds)
             {
                 if (branch != Guid.Empty && commandLists.ContainsKey(branch))
+                {
                     copyLists.Add(branch, commandLists[branch]);
+                    foreach (var cmd in commandLists[branch])
+                        cmd.GetCopyData(commandLists, copyLists);
+                }
             }
             return base.GetCopyData(commandLists, copyLists);
         }
@@ -301,6 +367,16 @@ namespace Intersect.GameObjects.Events.Commands
         public Color Color { get; set; }
         public bool Override { get; set; }
         public bool Remove { get; set; }
+    }
+
+    public class ChangePlayerLabelCommand : EventCommand
+    {
+      public override EventCommandType Type { get; } = EventCommandType.PlayerLabel;
+      public VariableTypes VariableType { get; set; } = VariableTypes.PlayerVariable;
+      public Guid VariableId { get; set; } = new Guid();
+      public int Position { get; set; } //0 = Above Player Name, 1 = Below Player Name
+      public Color Color { get; set; }
+      public bool MatchNameColor { get; set; }
     }
 
     public class ChangeFaceCommand : EventCommand
@@ -493,7 +569,11 @@ namespace Intersect.GameObjects.Events.Commands
             foreach (var branch in BranchIds)
             {
                 if (branch != Guid.Empty && commandLists.ContainsKey(branch))
+                {
                     copyLists.Add(branch, commandLists[branch]);
+                    foreach (var cmd in commandLists[branch])
+                        cmd.GetCopyData(commandLists, copyLists);
+                }
             }
             return base.GetCopyData(commandLists, copyLists);
         }

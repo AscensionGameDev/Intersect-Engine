@@ -634,6 +634,27 @@ namespace Intersect.Client.Networking
             Globals.EventDialogs.Add(ed);
         }
 
+        //InputVariablePacket
+        private static void HandlePacket(InputVariablePacket packet)
+        {
+            var type = InputBox.InputType.NumericInput;
+            switch (packet.Type)
+            {
+                case VariableDataTypes.String:
+                    type = InputBox.InputType.TextInput;
+                    break;
+                case VariableDataTypes.Integer:
+                case VariableDataTypes.Number:
+                    type = InputBox.InputType.NumericInput;
+                    break;
+                case VariableDataTypes.Boolean:
+                    type = InputBox.InputType.YesNo;
+                    break;
+            }         
+
+            InputBox iBox = new InputBox(packet.Title, packet.Prompt, true, type, PacketSender.SendEventInputVariable, PacketSender.SendEventInputVariableCancel, packet.EventId);
+        }
+
         //ErrorMessagePacket
         private static void HandlePacket(ErrorMessagePacket packet)
         {
