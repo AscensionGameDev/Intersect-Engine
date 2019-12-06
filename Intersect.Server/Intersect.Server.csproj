@@ -190,9 +190,8 @@
     <Reference Include="jose-jwt, Version=2.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\jose-jwt.2.4.0\lib\net40\jose-jwt.dll</HintPath>
     </Reference>
-    <Reference Include="Lidgren.Network, Version=3.6.0.1271, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\Lidgren.Network.dll</HintPath>
+    <Reference Include="Lidgren.Network, Version=2012.1.7.0, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\AscensionGameDev.Lidgren.Network.1.1.0\lib\net46\Lidgren.Network.dll</HintPath>
     </Reference>
     <Reference Include="Markdown, Version=2.0.0.0, Culture=neutral, PublicKeyToken=1b320cc08ad5aa89, processorArchitecture=MSIL">
       <HintPath>..\packages\Markdown.2.2.1\lib\net451\Markdown.dll</HintPath>
