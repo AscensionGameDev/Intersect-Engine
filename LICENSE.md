@@ -6,7 +6,7 @@ In short, you are allowed to create games with Intersect and distribute, sell, o
 
 ## Making free and public improvements to the engine?
 
-We ask that if you are making improvements to the engine that you do not intend to charge for, that you take a look at our [guidelines for contributing](/CONTRBUTING.md) to the engine, and if your improvements meet the spirit of the engine please work with us on integrating your changes into the engine itself.
+We ask that if you are making improvements to the engine that you do not intend to charge for, that you take a look at our [guidelines for contributing](/CONTRIBUTING.md) to the engine, and if your improvements meet the spirit of the engine please work with us on integrating your changes into the engine itself.
 
 ## Commercializing improvements to the engine?
 
