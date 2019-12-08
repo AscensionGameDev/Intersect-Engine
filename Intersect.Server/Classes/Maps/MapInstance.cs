@@ -56,7 +56,8 @@ namespace Intersect.Server.Maps
         //Projectiles
         [JsonIgnore]
         [NotMapped]
-        public List<Projectile> MapProjectiles = new List<Projectile>();
+        [NotNull]
+        public List<Projectile> MapProjectiles { get; } = new List<Projectile>();
 
         private BytePoint[] mNpcMapBlocks = new BytePoint[0];
         [JsonIgnore]

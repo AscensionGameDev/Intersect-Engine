@@ -549,124 +549,124 @@ namespace Intersect.Server.Entities
             return EntityTypes.GlobalEntity;
         }
 
-        public virtual void Move(byte moveDir, Client client, bool dontUpdate = false, bool correction = false)
+        public virtual void Move(byte moveDir, Client client, bool doNotUpdate = false, bool correction = false)
         {
             var xOffset = 0;
             var yOffset = 0;
             Dir = moveDir;
-            if (MoveTimer < Globals.Timing.TimeMs && CastTime <= 0)
+            if (Globals.Timing.TimeMs <= MoveTimer || CastTime  > 0)
             {
-                var tile = new TileHelper(MapId, X, Y);
-                switch (moveDir)
+                return;
+            }
+
+            var tile = new TileHelper(MapId, X, Y);
+            switch (moveDir)
+            {
+                case 0: //Up
+                    --yOffset;
+                    break;
+                case 1: //Down
+                    ++yOffset;
+                    break;
+                case 2: //Left
+                    --xOffset;
+                    break;
+                case 3: //Right
+                    ++xOffset;
+                    break;
+                case 4: //NW
+                    --yOffset;
+                    --xOffset;
+                    break;
+                case 5: //NE
+                    --yOffset;
+                    ++xOffset;
+                    break;
+                case 6: //SW
+                    ++yOffset;
+                    --xOffset;
+                    break;
+                case 7: //SE
+                    ++yOffset;
+                    ++xOffset;
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(moveDir));
+            }
+
+            // ReSharper disable once InvertIf
+            if (tile.Translate(xOffset, yOffset))
+            {
+                X = tile.GetX();
+                Y = tile.GetY();
+
+                var currentMap = MapInstance.Get(tile.GetMapId());
+                if (MapId != tile.GetMapId())
                 {
-                    case 0: //Up
-                        yOffset--;
-                        break;
-                    case 1: //Down
-                        yOffset++;
-                        break;
-                    case 2: //Left
-                        xOffset--;
-                        break;
-                    case 3: //Right
-                        xOffset++;
-                        break;
-                    case 4: //NW
-                        yOffset--;
-                        xOffset--;
-                        break;
-                    case 5: //NE
-                        yOffset--;
-                        xOffset++;
-                        break;
-                    case 6: //SW
-                        yOffset++;
-                        xOffset--;
-                        break;
-                    case 7: //SE
-                        yOffset++;
-                        xOffset++;
-                        break;
+                    var oldMap = MapInstance.Get(MapId);
+                    oldMap?.RemoveEntity(this);
+                    currentMap?.AddEntity(this);
                 }
 
-                if (tile.Translate(xOffset, yOffset))
+                MapId = tile.GetMapId();
+
+                if (doNotUpdate == false)
                 {
-                    X = tile.GetX();
-                    Y = tile.GetY();
-                    if (MapId != tile.GetMapId())
+                    if (GetType() == typeof(EventPageInstance))
                     {
-                        var oldMap = MapInstance.Get(MapId);
-                        if (oldMap != null) oldMap.RemoveEntity(this);
-                        var newMap = MapInstance.Get(tile.GetMapId());
-                        if (newMap != null) newMap.AddEntity(this);
-                    }
-                    MapId = tile.GetMapId();
-                    if (dontUpdate == false)
-                    {
-                        if (GetType() == typeof(EventPageInstance))
+                        if (client != null)
                         {
-                            if (client != null)
-                            {
-                                PacketSender.SendEntityMoveTo(client, this, correction);
-                            }
-                            else
-                            {
-                                PacketSender.SendEntityMove(this, correction);
-                            }
+                            PacketSender.SendEntityMoveTo(client, this, correction);
                         }
                         else
                         {
                             PacketSender.SendEntityMove(this, correction);
                         }
-                        //Check if moving into a projectile.. if so this npc needs to be hit
-                        var myMap = MapInstance.Get(MapId);
-                        if (myMap != null)
+                    }
+                    else
+                    {
+                        PacketSender.SendEntityMove(this, correction);
+                    }
+                    //Check if moving into a projectile.. if so this npc needs to be hit
+                    if (currentMap != null)
+                    {
+                        var localMaps = currentMap.GetSurroundingMaps(true);
+                        foreach (var map in localMaps)
                         {
-                            var localMaps = myMap.GetSurroundingMaps(true);
-                            foreach (var map in localMaps)
+                            var projectiles = map.MapProjectiles.ToArray();
+                            foreach (var projectile in projectiles)
                             {
-                                var projectiles = map.MapProjectiles.ToArray();
-                                foreach (var projectile in projectiles)
+                                var spawns = projectile.Spawns?.ToArray() ?? new ProjectileSpawns[0];
+                                foreach (var spawn in spawns)
                                 {
-                                    if (projectile.GetType() == typeof(Projectile))
+                                    if (spawn.IsAtLocation(MapId, X, Y, Z) && spawn.HitEntity(this))
                                     {
-                                        var proj = projectile;
-                                        if (proj.Spawns != null) {
-                                            var spawns = proj.Spawns.ToArray();
-                                            foreach (var spawn in spawns)
-                                            {
-                                                if (spawn != null && spawn.MapId == MapId && spawn.X == X &&
-                                                    spawn.Y == Y && spawn.Z == Z)
-                                                {
-                                                    if (spawn.HitEntity(this))
-                                                    {
-                                                        proj.KillSpawn(spawn);
-                                                    }
-                                                }
-                                            }
-                                        }
+                                        projectile.KillSpawn(spawn);
                                     }
                                 }
                             }
                         }
-                        MoveTimer = Globals.Timing.TimeMs + (long)GetMovementTime();
                     }
-                    if (TryToChangeDimension() && dontUpdate == true)
+                    MoveTimer = Globals.Timing.TimeMs + (long)GetMovementTime();
+                } else if (TryToChangeDimension())
+                {
+                    PacketSender.UpdateEntityZDimension(this, (byte)Z);
+                }
+                    
+                // ReSharper disable once InvertIf
+                if (currentMap != null && this is EventPageInstance)
+                {
+                    var attribute = currentMap.Attributes[X, Y];
+                    //Check for slide tiles
+                    // ReSharper disable once InvertIf
+                    if (attribute != null && attribute.Type == MapAttributes.Slide)
                     {
-                        PacketSender.UpdateEntityZDimension(this, (byte)Z);
-                    }
-                    var attribute = MapInstance.Get(MapId).Attributes[X, Y];
-                    if (this.GetType() != typeof(EventPageInstance))
-                    {
-                        //Check for slide tiles
-                        if (attribute != null && attribute.Type == MapAttributes.Slide)
+                        if (((MapSlideAttribute)attribute).Direction > 0)
                         {
-                            if (((MapSlideAttribute)attribute).Direction > 0)
-                            {
-                                Dir = (byte)(((MapSlideAttribute)attribute).Direction - 1);
-                            } //If sets direction, set it.
-                            var dash = new DashInstance(this, 1, (byte)Dir);
-                        }
+                            Dir = (byte)(((MapSlideAttribute)attribute).Direction - 1);
+                        } //If sets direction, set it.
+                        var dash = new DashInstance(this, 1, (byte)Dir);
                     }
                 }
             }

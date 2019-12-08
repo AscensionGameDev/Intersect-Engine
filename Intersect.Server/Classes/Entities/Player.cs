@@ -4078,11 +4078,11 @@ namespace Intersect.Server.Entities
         }
 
 
-        public override void Move(byte moveDir, Client client, bool dontUpdate = false, bool correction = false)
+        public override void Move(byte moveDir, Client client, bool doNotUpdate = false, bool correction = false)
         {
             var oldMap = MapId;
             client = Client;
-            base.Move(moveDir, client, dontUpdate, correction);
+            base.Move(moveDir, client, doNotUpdate, correction);
             // Check for a warp, if so warp the player.
             var attribute = MapInstance.Get(MapId).Attributes[X, Y];
             if (attribute != null && attribute.Type == MapAttributes.Warp)

@@ -275,9 +275,9 @@ namespace Intersect.Server.Entities
         }
 
         /// <inheritdoc />
-        public override void Move(byte moveDir, Client client, bool dontUpdate = false, bool correction = false)
+        public override void Move(byte moveDir, Client client, bool doNotUpdate = false, bool correction = false)
         {
-            base.Move(moveDir, client, dontUpdate, correction);
+            base.Move(moveDir, client, doNotUpdate, correction);
 
             if (this.Trigger == EventTrigger.PlayerCollide && Passable)
             {
