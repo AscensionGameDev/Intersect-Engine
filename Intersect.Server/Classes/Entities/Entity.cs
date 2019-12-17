@@ -640,6 +640,11 @@ namespace Intersect.Server.Entities
                                 var spawns = projectile.Spawns?.ToArray() ?? new ProjectileSpawns[0];
                                 foreach (var spawn in spawns)
                                 {
+				    // TODO: Filter in Spawns variable, there should be no nulls. See #78 for evidence it is null.
+				    if (spawn == null) {
+				        continue;
+				    }
+
                                     if (spawn.IsAtLocation(MapId, X, Y, Z) && spawn.HitEntity(this))
                                     {
                                         projectile.KillSpawn(spawn);
