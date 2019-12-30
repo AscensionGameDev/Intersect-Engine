@@ -885,8 +885,12 @@ namespace Intersect.Server.Networking
         //DropItemPacket
         public void HandlePacket(Client client, Player player, DropItemPacket packet)
         {
-            if (player == null) return;
-            player.DropItems(packet.Slot, packet.Quantity);
+            if (packet == null)
+            {
+                return;
+            }
+
+            player?.DropItems(packet.Slot, packet.Quantity);
         }
 
         //UseItemPacket

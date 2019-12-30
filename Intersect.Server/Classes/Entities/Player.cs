@@ -12,6 +12,7 @@ using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Switches_and_Variables;
+using Intersect.Logging;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData.Players;
@@ -1241,65 +1242,69 @@ namespace Intersect.Server.Entities
             EquipmentProcessItemSwap(item1, item2);
         }
 
-        public void DropItems(int slot, int amount)
+        public void DropItems(int slotIndex, int amount)
         {
-            var itemBase = ItemBase.Get(Items[slot].ItemId);
-            if (itemBase != null)
+            var slot = Items[slotIndex];
+            if (slot == null)
             {
-                if (itemBase.Bound)
+                return;
+            }
+
+            amount = Math.Min(amount, slot.Quantity);
+
+            if (amount < 1)
+            {
+                // Abort if the amount we are trying to drop is below 1.
+                return;
+            }
+
+            if (Equipment?.Any(equipmentSlotIndex => equipmentSlotIndex == slotIndex) ?? false)
+            {
+                PacketSender.SendChatMsg(Client, Strings.Items.equipped, CustomColors.ItemBound);
+                return;
+            }
+
+            var itemBase = ItemBase.Get(slot.ItemId);
+            if (itemBase == null)
+            {
+                return;
+            }
+
+            if (itemBase.Bound)
+            {
+                PacketSender.SendChatMsg(Client, Strings.Items.bound, CustomColors.ItemBound);
+                return;
+            }
+
+            if (itemBase.ItemType == ItemTypes.Bag)
+            {
+                var bag = DbInterface.GetBag(Items[slotIndex]);
+                if (bag != null && !DbInterface.BagEmpty(bag))
                 {
-                    PacketSender.SendChatMsg(Client, Strings.Items.bound, CustomColors.ItemBound);
+                    PacketSender.SendChatMsg(Client, Strings.Bags.dropnotempty, CustomColors.Error);
                     return;
                 }
-
-                if (itemBase.ItemType == ItemTypes.Bag)
-                {
-                    var bag = DbInterface.GetBag(Items[slot]);
-                    if (bag != null && !DbInterface.BagEmpty(bag))
-                    {
-                        PacketSender.SendChatMsg(Client, Strings.Bags.dropnotempty, CustomColors.Error);
-                        return;
-                    }
-                }
-
-                for (var i = 0; i < Options.EquipmentSlots.Count; i++)
-                {
-                    if (Equipment[i] == slot)
-                    {
-                        PacketSender.SendChatMsg(Client, Strings.Items.equipped, CustomColors.ItemBound);
-                        return;
-                    }
-                }
-
-                if (amount >= Items[slot].Quantity)
-                {
-                    amount = Items[slot].Quantity;
-                }
-                if (itemBase.IsStackable)
-                {
-                    MapInstance.Get(MapId)
-                        .SpawnItem(X, Y, Items[slot], amount);
-                }
-                else
-                {
-                    for (var i = 0; i < amount; i++)
-                    {
-                        MapInstance.Get(MapId)
-                            .SpawnItem(X, Y, Items[slot], 1);
-                    }
-                }
-                if (amount == Items[slot].Quantity)
-                {
-                    Items[slot].Set(Item.None);
-                    EquipmentProcessItemLoss(slot);
-                }
-                else
-                {
-                    Items[slot].Quantity -= amount;
-                }
-                UpdateGatherItemQuests(itemBase.Id);
-                PacketSender.SendInventoryItemUpdate(Client, slot);
             }
+
+            var map = MapInstance.Get(MapId);
+            if (map == null)
+            {
+                Log.Error($"Could not find map {MapId} for player '{Name}'.");
+                return;
+            }
+
+            map.SpawnItem(X, Y, Items[slotIndex], itemBase.IsStackable ? amount : 1);
+
+            slot.Quantity = Math.Max(0, slot.Quantity - amount);
+
+            if (slot.Quantity == 0)
+            {
+                slot.Set(Item.None);
+                EquipmentProcessItemLoss(slotIndex);
+            }
+
+            UpdateGatherItemQuests(itemBase.Id);
+            PacketSender.SendInventoryItemUpdate(Client, slotIndex);
         }
 
         public void UseItem(int slot, EntityInstance target = null)
