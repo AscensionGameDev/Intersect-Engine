@@ -817,9 +817,10 @@ namespace Intersect.Server.Networking
 
                 if (classBase.Sprites.Count > 0)
                 {
-                    newChar.Sprite = classBase.Sprites[packet.Sprite].Sprite;
-                    newChar.Face = classBase.Sprites[packet.Sprite].Face;
-                    newChar.Gender = classBase.Sprites[packet.Sprite].Gender;
+                    var spriteIndex = Math.Max(0, Math.Min(classBase.Sprites.Count, packet.Sprite));
+                    newChar.Sprite = classBase.Sprites[spriteIndex].Sprite;
+                    newChar.Face = classBase.Sprites[spriteIndex].Face;
+                    newChar.Gender = classBase.Sprites[spriteIndex].Gender;
                 }
 
                 client.LoadCharacter(newChar);
