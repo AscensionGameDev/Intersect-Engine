@@ -300,6 +300,7 @@
     <Compile Include="Network\Packets\Client\HotbarUpdatePacket.cs" />
     <Compile Include="Network\Packets\Client\LoginPacket.cs" />
     <Compile Include="Network\Packets\Client\LogoutPacket.cs" />
+    <Compile Include="Network\Packets\SlotQuantityPacket.cs" />
     <Compile Include="Network\Packets\Client\SwapBankItemsPacket.cs" />
     <Compile Include="Network\Packets\Client\MovePacket.cs" />
     <Compile Include="Network\Packets\Client\NeedMapPacket.cs" />
@@ -437,6 +438,7 @@
     <Compile Include="Network\Packets\Server\TradePacket.cs" />
     <Compile Include="Network\Packets\Server\TradeRequestPacket.cs" />
     <Compile Include="Network\Packets\Server\TradeUpdatePacket.cs" />
+    <Compile Include="Network\Packets\SlotSwapPacket.cs" />
     <Compile Include="Reflection\MemberInfoExtensions.cs" />
     <Compile Include="Security\ApiVisibility.cs" />
     <Compile Include="Security\ApiVisibilityAttribute.cs" />

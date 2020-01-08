@@ -25,6 +25,8 @@ using Intersect.Server.Maps;
 using Intersect.Server.Notifications;
 using Intersect.Utilities;
 
+using JetBrains.Annotations;
+
 namespace Intersect.Server.Networking
 {
 
@@ -163,6 +165,7 @@ namespace Intersect.Server.Networking
                 case null:
                     Log.Error($@"Received null packet from {client.Id} ({client.Name}).");
                     client.Disconnect("Error processing packet.");
+
                     return true;
             }
 
@@ -1492,21 +1495,15 @@ namespace Intersect.Server.Networking
         }
 
         //OfferTradeItemPacket
-        public void HandlePacket(Client client, Player player, OfferTradeItemPacket packet)
+        public void HandlePacket(Client client, Player player, [NotNull] OfferTradeItemPacket packet)
         {
-            if (player == null)
-                return;
-
             player?.OfferItem(packet.Slot, packet.Quantity);
         }
 
         //RevokeTradeItemPacket
-        public void HandlePacket(Client client, Player player, RevokeTradeItemPacket packet)
+        public void HandlePacket(Client client, Player player, [NotNull] RevokeTradeItemPacket packet)
         {
-            if (player == null)
-                return;
-
-            player?.RevokeItem(packet.Slot, packet.Quanity);
+            player?.RevokeItem(packet.Slot, packet.Quantity);
         }
 
         //AcceptTradePacket

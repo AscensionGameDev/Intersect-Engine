@@ -9,6 +9,8 @@ namespace Intersect.Network
     {
         byte[] Data { get; }
 
+        bool IsValid { get; }
+
         Dictionary<string, SanitizedValue<object>> Sanitize();
 
     }

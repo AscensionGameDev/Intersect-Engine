@@ -1,20 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Intersect.Network.Packets.Client
+﻿namespace Intersect.Network.Packets.Client
 {
-    public class RevokeTradeItemPacket : CerasPacket
+    public class RevokeTradeItemPacket : SlotQuantityPacket
     {
-        public int Slot { get; set; }
-        public int Quanity { get; set; }
 
-        public RevokeTradeItemPacket(int slot, int quanity)
+        public RevokeTradeItemPacket(int slot, int quantity) : base(slot, quantity)
         {
-            Slot = slot;
-            Quanity = quanity;
         }
+
     }
 }
