@@ -71,7 +71,7 @@ namespace Intersect.Server.Networking.Websockets
             {
                 if (packet.GetType() == typeof(CerasPacket))
                 {
-                    mContext.WebSocket.SendAsync(((CerasPacket)packet).Data(), null);
+                    mContext.WebSocket.SendAsync(((CerasPacket)packet).Data, null);
                     return true;
                 }
                 else

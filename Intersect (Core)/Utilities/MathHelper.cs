@@ -14,7 +14,31 @@ namespace Intersect.Utilities
             => Math.Min(Math.Max(value, minimum), maximum);
 
         [Pure]
+        public static sbyte Clamp(sbyte value, sbyte minimum, sbyte maximum)
+            => Math.Min(Math.Max(value, minimum), maximum);
+
+        [Pure]
+        public static short Clamp(short value, short minimum, short maximum)
+            => Math.Min(Math.Max(value, minimum), maximum);
+
+        [Pure]
+        public static int Clamp(int value, int minimum, int maximum)
+            => Math.Min(Math.Max(value, minimum), maximum);
+
+        [Pure]
         public static long Clamp(long value, long minimum, long maximum)
+            => Math.Min(Math.Max(value, minimum), maximum);
+
+        [Pure]
+        public static byte Clamp(byte value, byte minimum, byte maximum)
+            => Math.Min(Math.Max(value, minimum), maximum);
+
+        [Pure]
+        public static ushort Clamp(ushort value, ushort minimum, ushort maximum)
+            => Math.Min(Math.Max(value, minimum), maximum);
+
+        [Pure]
+        public static uint Clamp(uint value, uint minimum, uint maximum)
             => Math.Min(Math.Max(value, minimum), maximum);
 
         [Pure]

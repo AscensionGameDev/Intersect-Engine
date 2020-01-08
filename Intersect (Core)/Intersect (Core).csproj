@@ -174,6 +174,8 @@
     <Compile Include="Admin\Actions\WarpToMeAction.cs" />
     <Compile Include="AlphanumComparatorFast.cs" />
     <Compile Include="Collections\NamedInstanceStore.cs" />
+    <Compile Include="Collections\SanitizedValue.cs" />
+    <Compile Include="Collections\Sanitizer.cs" />
     <Compile Include="Collections\SingleOrList.cs" />
     <Compile Include="ColorF.cs" />
     <Compile Include="Configuration\IConfigurable.cs" />

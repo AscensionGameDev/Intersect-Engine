@@ -1,33 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-using Ceras;
+using Intersect.Collections;
 
-namespace Intersect.Network.Packets
+using JetBrains.Annotations;
+
+namespace Intersect.Network
 {
-    public class CerasPacket : IPacket
+    public abstract class CerasPacket : IPacket
     {
-        private static Ceras sCerasInstance = new Ceras(true);
+        [NotNull] private static readonly Ceras sCerasInstance = new Ceras(true);
 
-        public CerasPacket()
+        protected CerasPacket()
         {
         }
 
 
         /// <inheritdoc />
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
+        public virtual void Dispose() => throw new NotImplementedException();
 
         /// <inheritdoc />
-        public byte[] Data()
-        {
-            return sCerasInstance.Serialize(this);
-        }
+        public byte[] Data => sCerasInstance.Serialize(this);
+
+        /// <inheritdoc />
+        public virtual Dictionary<string, SanitizedValue<object>> Sanitize() => null;
 
     }
 }

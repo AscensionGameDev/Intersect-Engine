@@ -188,7 +188,7 @@ namespace Intersect.Network
             );
 
             var hailMessage = mPeer.CreateMessage();
-            hailMessage.Data = hail.Data();
+            hailMessage.Data = hail.Data;
             hailMessage.LengthBytes = hailMessage.Data.Length;
 
             if (mPeer.Status == NetPeerStatus.NotRunning)
@@ -299,7 +299,7 @@ namespace Intersect.Network
                 throw new ArgumentNullException(nameof(message));
             }
 
-            message.Data = packet.Data();
+            message.Data = packet.Data;
             message.LengthBytes = message.Data.Length;
 
             SendMessage(message, lidgrenConnection,  NetDeliveryMethod.ReliableOrdered);
@@ -330,7 +330,7 @@ namespace Intersect.Network
                 throw new ArgumentNullException(nameof(message));
             }
             
-            message.Data = packet.Data();
+            message.Data = packet.Data;
             message.LengthBytes = message.Data.Length;
 
             if (connections == null || connections.Count(connection => connection != null) < 1)
@@ -604,7 +604,7 @@ namespace Intersect.Network
                     Debug.Assert(mPeer != null, "mPeer != null");
                     var approval = new ApprovalPacket(client.Rsa, hail.HandshakeSecret, aesKey, client.Guid);
                     var approvalMessage = mPeer.CreateMessage();
-                    approvalMessage.Data = approval.Data();
+                    approvalMessage.Data = approval.Data;
                     approvalMessage.LengthBytes = approvalMessage.Data.Length;
                     connection.Approve(approvalMessage);
                     OnConnectionApproved(this, client);

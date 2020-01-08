@@ -1,10 +1,15 @@
-﻿using System;
-using Intersect.Memory;
+﻿using Intersect.Collections;
+
+using System;
+using System.Collections.Generic;
 
 namespace Intersect.Network
 {
     public interface IPacket : IDisposable
     {
-        byte[] Data();
+        byte[] Data { get; }
+
+        Dictionary<string, SanitizedValue<object>> Sanitize();
+
     }
 }

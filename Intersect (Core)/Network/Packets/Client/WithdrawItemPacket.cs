@@ -1,8 +1,6 @@
-﻿using System;
+﻿using Intersect.Collections;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Intersect.Network.Packets.Client
 {
@@ -15,6 +13,16 @@ namespace Intersect.Network.Packets.Client
         {
             Slot = slot;
             Quantity = amt;
+        }
+
+        public override Dictionary<string, SanitizedValue<object>> Sanitize()
+        {
+            var sanitizer = new Sanitizer();
+
+            Quantity = sanitizer.Maximum(nameof(Quantity), Quantity, 0);
+            Slot = sanitizer.Maximum(nameof(Slot), Slot, 0);
+
+            return sanitizer.Sanitized;
         }
     }
 }

@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Intersect.Collections;
+using Intersect.GameObjects;
+
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Intersect.Network.Packets.Client
 {
@@ -17,6 +17,21 @@ namespace Intersect.Network.Packets.Client
             Name = name;
             ClassId = classId;
             Sprite = sprite;
+        }
+
+        public override Dictionary<string, SanitizedValue<object>> Sanitize()
+        {
+            base.Sanitize();
+
+            var sanitizer = new Sanitizer();
+
+            var classDescriptor = ClassBase.Get(ClassId);
+            if (classDescriptor != null)
+            {
+                Sprite = sanitizer.Clamp(nameof(Sprite), Sprite, 0, classDescriptor.Sprites?.Count ?? 0);
+            }
+
+            return sanitizer.Sanitized;
         }
     }
 }

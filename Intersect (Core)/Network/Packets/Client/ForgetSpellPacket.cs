@@ -1,8 +1,6 @@
-﻿using System;
+﻿using Intersect.Collections;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Intersect.Network.Packets.Client
 {
@@ -13,6 +11,15 @@ namespace Intersect.Network.Packets.Client
         public ForgetSpellPacket(int slot)
         {
             Slot = slot;
+        }
+
+        public override Dictionary<string, SanitizedValue<object>> Sanitize()
+        {
+            var sanitizer = new Sanitizer();
+
+            Slot = sanitizer.Maximum(nameof(Slot), Slot, 0);
+
+            return sanitizer.Sanitized;
         }
     }
 }
