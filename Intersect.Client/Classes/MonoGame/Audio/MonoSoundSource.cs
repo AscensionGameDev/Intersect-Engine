@@ -30,12 +30,13 @@ namespace Intersect.Client.MonoGame.Audio
 
         public void ReleaseEffect()
         {
-            mInstanceCount--;
-            if (mInstanceCount == 0)
+            if (--mInstanceCount > 0)
             {
-                mSound.Dispose();
-                mSound = null;
+                return;
             }
+
+            mSound?.Dispose();
+            mSound = null;
         }
 
         public SoundEffect GetEffect()
