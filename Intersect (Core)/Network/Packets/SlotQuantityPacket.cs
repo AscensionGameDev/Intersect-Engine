@@ -17,7 +17,7 @@ namespace Intersect.Network.Packets
             Quantity = quantity;
         }
 
-        public override bool IsValid => Slot >= 0;
+        public override bool IsValid => Slot >= 0 && Quantity >= 0;
 
         public override Dictionary<string, SanitizedValue<object>> Sanitize()
         {
