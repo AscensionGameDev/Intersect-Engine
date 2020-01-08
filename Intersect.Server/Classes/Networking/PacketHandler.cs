@@ -169,6 +169,11 @@ namespace Intersect.Server.Networking
                     return true;
             }
 
+            if (!packet.IsValid)
+            {
+                return false;
+            }
+
             try
             {
                 var sanitizedFields = packet.Sanitize();
@@ -204,6 +209,7 @@ namespace Intersect.Server.Networking
 
                 Log.Error(exception);
                 client.Disconnect("Error processing packet.");
+                return false;
             }
 
             try
@@ -227,11 +233,12 @@ namespace Intersect.Server.Networking
                 // Make the call that triggered the OOME in the first place so that we know when it stops happening
                 Log.Error(exception, packetMessage);
 
-#if DEBUG
+#if DIAGNOSTIC
                 client.Disconnect($"Error processing packet type '{packetType}'.");
 #else
                 client.Disconnect($"Error processing packet.");
 #endif
+                return false;
             }
 
             return true;
