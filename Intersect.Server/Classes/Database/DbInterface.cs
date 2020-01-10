@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using Intersect.Collections;
+﻿using Intersect.Collections;
 using Intersect.Config;
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -15,8 +6,6 @@ using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
-using Intersect.GameObjects.Switches_and_Variables;
-using Intersect.Logging;
 using Intersect.Models;
 using Intersect.Server.Core;
 using Intersect.Server.Database;
@@ -30,14 +19,23 @@ using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
-using Intersect.Server.Web.RestApi;
-using Intersect.Utilities;
+
 using JetBrains.Annotations;
 
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
 using MySql.Data.MySqlClient;
+
+using System;
+using System.Collections.Generic;
+using System.Data.Common;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Intersect.Server
 {
@@ -1360,7 +1358,7 @@ namespace Intersect.Server
                 {
                     if (pwd.Length > 0)
                     {
-                        pwd.Remove(pwd.Length - 2, 1);
+                        pwd = pwd.Remove(pwd.Length - 2, 1);
                         Console.Write("\b \b");
                     }
                 }
