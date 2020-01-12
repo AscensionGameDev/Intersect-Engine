@@ -1,14 +1,14 @@
-﻿using System;
-using Intersect.Enums;
+﻿using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.Network.Packets.Server;
-using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.EventProcessing;
 using Intersect.Server.General;
 using Intersect.Server.Maps;
 using Intersect.Server.Misc.Pathfinding;
 using Intersect.Server.Networking;
+
+using System;
 
 namespace Intersect.Server.Entities
 {
