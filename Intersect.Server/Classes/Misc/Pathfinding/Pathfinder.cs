@@ -346,10 +346,8 @@ namespace Intersect.Server.Misc.Pathfinding
             {
                 Log.Error(exception);
             }
-            finally
-            {
-                return returnVal;
-            }
+
+            return returnVal;
         }
 
         private void FillArea(PathNode[,] dest, int startX, int startY, int width, int height)
