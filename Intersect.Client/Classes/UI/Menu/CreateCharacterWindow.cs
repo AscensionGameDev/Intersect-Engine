@@ -225,7 +225,11 @@ namespace Intersect.Client.UI.Menu
                         if (isFace)
                         {
                             mCharacterPortrait.SetTextureRect(0, 0, mCharacterPortrait.Texture.GetWidth(), mCharacterPortrait.Texture.GetHeight());
-                            mCharacterPortrait.SetSize(mCharacterPortrait.Texture.GetWidth(), mCharacterPortrait.Texture.GetHeight());
+                            var scale = Math.Min(
+                                mCharacterContainer.InnerWidth / (double)mCharacterPortrait.Texture.GetWidth(),
+                                mCharacterContainer.InnerHeight / (double)mCharacterPortrait.Texture.GetHeight()
+                            );
+                            mCharacterPortrait.SetSize((int)(mCharacterPortrait.Texture.GetWidth() * scale), (int)(mCharacterPortrait.Texture.GetHeight() * scale));
                             mCharacterPortrait.SetPosition(mCharacterContainer.Width / 2 - mCharacterPortrait.Width / 2, mCharacterContainer.Height / 2 - mCharacterPortrait.Height / 2);
                         }
                         else
