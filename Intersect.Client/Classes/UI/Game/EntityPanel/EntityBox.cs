@@ -112,7 +112,7 @@ namespace Intersect.Client.UI.Game.EntityPanel
 					EntityFace = new ImagePanel(EntityFaceContainer);
 					EntityFace.SetSize(64, 64);
 					EntityFace.AddAlignment(Alignments.Center);
-				}
+                }
 				else
 				{
 					PaperdollPanels[i] = new ImagePanel(EntityFaceContainer);
@@ -608,7 +608,6 @@ namespace Intersect.Client.UI.Game.EntityPanel
             {
                 EntityFace.Texture = faceTex;
                 EntityFace.SetTextureRect(0, 0, faceTex.GetWidth(), faceTex.GetHeight());
-                EntityFace.SizeToContents();
                 Align.Center(EntityFace);
                 mCurrentSprite = MyEntity.Face;
                 EntityFace.IsHidden = false;
