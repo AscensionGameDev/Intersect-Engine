@@ -195,9 +195,13 @@ namespace Intersect.Client
 
         public static void OnMouseDown(GameInput.MouseButtons btn)
         {
-            var key = Keys.LButton;
+            var key = Keys.None;
             switch (btn)
             {
+                case GameInput.MouseButtons.Left:
+                    key = Keys.LButton;
+                    break;
+
                 case GameInput.MouseButtons.Right:
                     key = Keys.RButton;
                     break;
@@ -224,6 +228,11 @@ namespace Intersect.Client
 
             if (!GameControls.ControlHasKey(Controls.Block, key)) return;
             if (Globals.Me.TryBlock()) return;
+
+            if (key != Keys.None)
+            {
+                OnKeyPressed(key);
+            }
         }
 
         public static void OnMouseUp(GameInput.MouseButtons btn)
