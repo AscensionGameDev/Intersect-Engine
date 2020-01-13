@@ -303,6 +303,8 @@ namespace Intersect.Client.Maps
                     var tile = Layers[layer].Tiles[x, y];
                     if (tile.TilesetTex == null) continue;
                     GameTexture tilesetTex = (GameTexture)tile.TilesetTex;
+                    if (tile.X < 0 || tile.Y < 0) continue;
+                    if (tile.X * Options.TileWidth >= tilesetTex.GetWidth() || tile.Y * Options.TileHeight >= tilesetTex.GetHeight()) continue;
                     var platformTex = tilesetTex.GetTexture();
                     if (tileBuffer.ContainsKey(platformTex))
                     {
@@ -563,7 +565,7 @@ namespace Intersect.Client.Maps
 
             if (update)
             {
-                if (!buffer.UpdateTile(destX, destY,
+                if (!buffer.UpdateTile(tileset, destX, destY,
                     (int)Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X + xOffset,
                     (int)Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y + yOffset,
                     Options.TileWidth / 2, Options.TileHeight / 2))
