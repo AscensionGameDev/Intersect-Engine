@@ -87,7 +87,7 @@ namespace Intersect.Network
             catch (Exception exception)
             {
                 Log.Error(exception);
-                return default;
+                return default(T);
             }
         }
 
