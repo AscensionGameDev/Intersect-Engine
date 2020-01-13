@@ -104,15 +104,11 @@ namespace Intersect.Editor.Maps
         {
             get
             {
-                List<string> musicList = new List<string>
-                {
-                    Strings.General.none
-                };
+                var musicList = new List<string> { Strings.General.none };
                 musicList.AddRange(GameContentManager.SmartSortedMusicNames);
-                if (musicList.IndexOf(mMyMap.Music) <= -1)
-                {
-                    mMyMap.Music = null;
-                }
+                mMyMap.Music = musicList.Find(
+                    item => string.Equals(item, mMyMap.Music, StringComparison.InvariantCultureIgnoreCase)
+                );
                 return TextUtils.NullToNone(mMyMap.Music);
             }
             set
@@ -136,15 +132,11 @@ namespace Intersect.Editor.Maps
         {
             get
             {
-                List<string> soundList = new List<string>
-                {
-                    Strings.General.none
-                };
+                var soundList = new List<string> { Strings.General.none };
                 soundList.AddRange(GameContentManager.SmartSortedSoundNames);
-                if (soundList.IndexOf(mMyMap.Sound) <= -1)
-                {
-                    mMyMap.Sound = null;
-                }
+                mMyMap.Sound = soundList.Find(
+                    item => string.Equals(item, mMyMap.Music, StringComparison.InvariantCultureIgnoreCase)
+                );
                 return TextUtils.NullToNone(mMyMap.Sound);
             }
             set
