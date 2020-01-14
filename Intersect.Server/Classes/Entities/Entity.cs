@@ -6,6 +6,7 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
+using Intersect.Logging;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Database.PlayerData.Players;
@@ -549,17 +550,15 @@ namespace Intersect.Server.Entities
             return EntityTypes.GlobalEntity;
         }
 
-        public virtual void Move(byte moveDir, Client client, bool doNotUpdate = false, bool correction = false)
+        public virtual void Move(int moveDir, Client client, bool doNotUpdate = false, bool correction = false)
         {
-            var xOffset = 0;
-            var yOffset = 0;
-            Dir = moveDir;
             if (Globals.Timing.TimeMs <= MoveTimer || CastTime  > 0)
             {
                 return;
             }
 
-            var tile = new TileHelper(MapId, X, Y);
+            var xOffset = 0;
+            var yOffset = 0;
             switch (moveDir)
             {
                 case 0: //Up
@@ -592,9 +591,13 @@ namespace Intersect.Server.Entities
                     break;
 
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(moveDir));
+                    Log.Warn(new ArgumentOutOfRangeException(nameof(moveDir), $@"Bogus move attempt in direction {moveDir}."));
+                    return;
             }
 
+            Dir = moveDir;
+
+            var tile = new TileHelper(MapId, X, Y);
             // ReSharper disable once InvertIf
             if (tile.Translate(xOffset, yOffset))
             {
@@ -677,8 +680,13 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public void ChangeDir(byte dir)
+        public void ChangeDir(int dir)
         {
+            if (dir == -1)
+            {
+                return;
+            }
+
             Dir = dir;
             if (GetType() == typeof(EventPageInstance))
             {
@@ -719,7 +727,7 @@ namespace Intersect.Server.Entities
         }
 
         //Misc
-        public sbyte GetDirectionTo(EntityInstance target)
+        public int GetDirectionTo(EntityInstance target)
         {
             int xDiff = 0, yDiff = 0;
             var myGrid = MapInstance.Get(MapId).MapGrid;

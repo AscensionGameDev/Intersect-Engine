@@ -4083,7 +4083,7 @@ namespace Intersect.Server.Entities
         }
 
 
-        public override void Move(byte moveDir, Client client, bool doNotUpdate = false, bool correction = false)
+        public override void Move(int moveDir, Client client, bool doNotUpdate = false, bool correction = false)
         {
             var oldMap = MapId;
             client = Client;

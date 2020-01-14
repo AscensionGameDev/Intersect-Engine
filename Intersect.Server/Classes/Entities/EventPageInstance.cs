@@ -275,7 +275,7 @@ namespace Intersect.Server.Entities
         }
 
         /// <inheritdoc />
-        public override void Move(byte moveDir, Client client, bool doNotUpdate = false, bool correction = false)
+        public override void Move(int moveDir, Client client, bool doNotUpdate = false, bool correction = false)
         {
             base.Move(moveDir, client, doNotUpdate, correction);
 
@@ -298,8 +298,8 @@ namespace Intersect.Server.Entities
             {
                 var moved = false;
                 var shouldSendUpdate = false;
-                sbyte lookDir = 0;
-                byte moveDir = 0;
+                int lookDir;
+                int moveDir;
                 if (MoveRoute.ActionIndex < MoveRoute.Actions.Count)
                 {
                     switch (MoveRoute.Actions[MoveRoute.ActionIndex].Type)
@@ -627,13 +627,13 @@ namespace Intersect.Server.Entities
 
         public void TurnTowardsPlayer()
         {
-            sbyte lookDir = -1;
+            int lookDir;
             if (Client != null && GlobalClone == null) //Local Event
             {
                 lookDir = GetDirectionTo(Client.Entity);
                 if (lookDir > -1)
                 {
-                    ChangeDir((byte)lookDir);
+                    ChangeDir(lookDir);
                 }
             }
         }
