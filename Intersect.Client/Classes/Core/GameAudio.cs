@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 using Intersect.Client.Entities;
 using Intersect.Client.Framework.Audio;
@@ -7,6 +8,7 @@ using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.General;
 using Intersect.Client.Maps;
+using Intersect.Logging;
 
 namespace Intersect.Client
 {
@@ -114,23 +116,50 @@ namespace Intersect.Client
             }
         }
 
+        private static string AudioStateString
+        {
+            get
+            {
+                if (sMyMusic == null)
+                {
+                    return "N/A";
+                }
+
+                var builder = new StringBuilder();
+                builder.AppendLine($"Current: track='{sCurrentSong}' fade={sFadeRate} loop={sMusicLoop}");
+                builder.AppendLine($"Instance: volume={sMyMusic.GetVolume()}, state={Enum.GetName(typeof(GameAudioInstance.AudioInstanceState), sMyMusic.GetState())}");
+                builder.AppendLine($"Fade: timer={sFadeTimer} fading={sFadingOut}");
+                builder.AppendLine($"Queue: track='{sQueuedMusic}' fade={sQueuedFade} loop={sQueuedLoop}");
+                return builder.ToString();
+            }
+        }
+
         //Music
         public static void PlayMusic(string filename, float fadeout = 0f, float fadein = 0f, bool loop = false)
         {
-            if (filename == null) filename = "";
+            Log.Info($"PlayMusic({filename}, {fadeout}, {fadein}, {loop})");
+            Log.Info(AudioStateString);
+
+            if (filename == null)
+            {
+                filename = "";
+            }
+
             filename = GameContentManager.RemoveExtension(filename);
             if (sMyMusic != null)
             {
-                if (fadeout == 0 || sMyMusic.GetState() == GameAudioInstance.AudioInstanceState.Stopped ||
+                if (fadeout < 0.01|| sMyMusic.GetState() == GameAudioInstance.AudioInstanceState.Stopped ||
                     sMyMusic.GetState() == GameAudioInstance.AudioInstanceState.Paused || sMyMusic.GetVolume() == 0)
                 {
+                    Log.Info("Skipping to next song immediately.");
                     StopMusic();
                     StartMusic(filename, fadein);
                 }
                 else
                 {
+                    Log.Info("Queuing next track.");
                     //Start fadeout
-                    if (sCurrentSong.ToLower() != filename.ToLower() || sFadingOut)
+                    if (!string.Equals(sCurrentSong, filename, StringComparison.CurrentCultureIgnoreCase) || sFadingOut)
                     {
                         sFadeRate = (float) sMyMusic.GetVolume() / fadeout;
                         sFadeTimer = Globals.System.GetTimeMs() + (long) (sFadeRate / 1000);
@@ -143,24 +172,30 @@ namespace Intersect.Client
             }
             else
             {
+                Log.Info("No currently playing track, starting.");
                 StartMusic(filename, fadein);
             }
             sMusicLoop = loop;
+
+            Log.Info(AudioStateString);
         }
 
         private static void StartMusic(string filename, float fadein = 0f)
         {
-            GameAudioSource music = Globals.ContentManager.GetMusic(filename);
-            if (music != null)
+            var music = Globals.ContentManager.GetMusic(filename);
+            if (music == null)
             {
-                sMyMusic = music.CreateInstance();
-                sCurrentSong = filename;
-                sMyMusic.Play();
-                sMyMusic.SetVolume(0, true);
-                sFadeRate = (float) 100 / fadein;
-                sFadeTimer = Globals.System.GetTimeMs() + (long) (sFadeRate / 1000) + 1;
-                sFadingOut = false;
+                return;
             }
+
+            sMyMusic = music.CreateInstance();
+            sCurrentSong = filename;
+            sMyMusic.Play();
+            sMyMusic.SetVolume(0, true);
+            sFadeRate = (float) 100 / fadein;
+            sFadeTimer = Globals.System.GetTimeMs() + (long) (sFadeRate / 1000) + 1;
+            sFadingOut = false;
+            Log.Info(AudioStateString);
         }
 
         public static void StopMusic(float fadeout = 0f)
