@@ -182,9 +182,9 @@ namespace Intersect.Server.Networking
 
             if (!client.IsEditor)
             {
-                if (client.SentMaps.ContainsKey(mapId))
+                if (client.SentMaps.TryGetValue(mapId, out var sentMap))
                 {
-                    if (client.SentMaps[mapId].Item1 > Globals.Timing.TimeMs && client.SentMaps[mapId].Item2 == map.Revision)
+                    if (sentMap.Item1 > Globals.Timing.TimeMs && sentMap.Item2 == map.Revision)
                     {
                         return;
                     }
