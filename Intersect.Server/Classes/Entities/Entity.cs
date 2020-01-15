@@ -254,7 +254,7 @@ namespace Intersect.Server.Entities
                     if (tileAttribute.Type == MapAttributes.ZDimension && ((MapZDimensionAttribute)tileAttribute).BlockedLevel > 0 && ((MapZDimensionAttribute)tileAttribute).BlockedLevel - 1 == Z) return -3;
                     if (tileAttribute.Type == MapAttributes.Slide)
                     {
-                        if (this.GetType() == typeof(EventPageInstance)) return -4;
+                        if (this is EventPageInstance) return -4;
                         switch (((MapSlideAttribute)tileAttribute).Direction)
                         {
                             case 1:
@@ -661,21 +661,22 @@ namespace Intersect.Server.Entities
                 {
                     PacketSender.UpdateEntityZDimension(this, (byte)Z);
                 }
-                    
+
+                // TODO: Why was this scoped to only Event entities?
+                //                if (currentMap != null && this is EventPageInstance)
+                var attribute = currentMap?.Attributes[X, Y];
+
                 // ReSharper disable once InvertIf
-                if (currentMap != null && this is EventPageInstance)
+                //Check for slide tiles
+                if (attribute?.Type == MapAttributes.Slide)
                 {
-                    var attribute = currentMap.Attributes[X, Y];
-                    //Check for slide tiles
-                    // ReSharper disable once InvertIf
-                    if (attribute != null && attribute.Type == MapAttributes.Slide)
+                    // If sets direction, set it.
+                    if (((MapSlideAttribute)attribute).Direction > 0)
                     {
-                        if (((MapSlideAttribute)attribute).Direction > 0)
-                        {
-                            Dir = (byte)(((MapSlideAttribute)attribute).Direction - 1);
-                        } //If sets direction, set it.
-                        var dash = new DashInstance(this, 1, (byte)Dir);
+                        Dir = ((MapSlideAttribute)attribute).Direction - 1;
                     }
+
+                    var dash = new DashInstance(this, 1, (byte)Dir);
                 }
             }
         }
