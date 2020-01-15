@@ -1152,12 +1152,19 @@ namespace Intersect.Server.Entities
                     }
 
                     //If an onhit or shield status bail out as we don't want to do any damage.
-                    if (spellBase.Combat.Effect == StatusTypes.OnHit || spellBase.Combat.Effect == StatusTypes.Shield) return;
+                    if (spellBase.Combat.Effect == StatusTypes.OnHit || spellBase.Combat.Effect == StatusTypes.Shield)
+                    {
+                        Animate(target, aliveAnimations);
+                        return;
+                    }
                 }
             }
             else
             {
-                if (statBuffTime > -1) new StatusInstance(target, spellBase, spellBase.Combat.Effect, statBuffTime, "");
+                if (statBuffTime > -1)
+                {
+                    new StatusInstance(target, spellBase, spellBase.Combat.Effect, statBuffTime, "");
+                }
             }
 
             var damageHealth = spellBase.Combat.VitalDiff[0];
@@ -1181,6 +1188,14 @@ namespace Intersect.Server.Entities
                 {
                     new DoTInstance(this, spellBase.Id, target);
                 }
+            }
+        }
+
+        private void Animate([NotNull] EntityInstance target, [NotNull] List<KeyValuePair<Guid, sbyte>> animations)
+        {
+            foreach (var anim in animations)
+            {
+                PacketSender.SendAnimationToProximity(anim.Key, 1, target.Id, target.MapId, 0, 0, anim.Value);
             }
         }
 
@@ -1485,12 +1500,9 @@ namespace Intersect.Server.Entities
                 //Hit him, make him mad and send the vital update.
                 PacketSender.SendEntityVitals(enemy);
                 PacketSender.SendEntityStats(enemy);
-                if (aliveAnimations != null)
+                if (aliveAnimations?.Count > 0)
                 {
-                    foreach (var anim in aliveAnimations)
-                    {
-                        PacketSender.SendAnimationToProximity(anim.Key, 1, enemy.Id, enemy.MapId, 0,0, anim.Value);
-                    }
+                    Animate(enemy, aliveAnimations);
                 }
 
                 //Check for any onhit damage bonus effects!

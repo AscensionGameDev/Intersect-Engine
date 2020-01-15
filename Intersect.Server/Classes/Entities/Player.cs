@@ -3230,7 +3230,7 @@ namespace Intersect.Server.Entities
                     return false;
                 }
 
-                if (!spell.Combat.Friendly)
+                if (!spell.Combat.Friendly && IsAllyOf(target))
                 {
                     return false;
                 }
