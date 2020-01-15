@@ -813,16 +813,16 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public override void TryAttack(EntityInstance enemy, ProjectileBase projectile, SpellBase parentSpell, ItemBase parentItem, byte projectileDir)
+        public override void TryAttack(EntityInstance target, ProjectileBase projectile, SpellBase parentSpell, ItemBase parentItem, byte projectileDir)
         {
-            if (!CanAttack(enemy, parentSpell)) return;
+            if (!CanAttack(target, parentSpell)) return;
 
             //If Entity is resource, check for the correct tool and make sure its not a spell cast.
-            if (enemy.GetType() == typeof(Resource))
+            if (target.GetType() == typeof(Resource))
             {
-                if (((Resource)enemy).IsDead) return;
+                if (((Resource)target).IsDead) return;
                 // Check that a resource is actually required.
-                var resource = ((Resource)enemy).Base;
+                var resource = ((Resource)target).Base;
                 //Check Dynamic Requirements
                 if (!Conditions.MeetsConditionLists(resource.HarvestingRequirements, this, null))
                 {
@@ -838,10 +838,10 @@ namespace Intersect.Server.Entities
                     }
                 }
             }
-            base.TryAttack(enemy, projectile, parentSpell, parentItem, projectileDir);
+            base.TryAttack(target, projectile, parentSpell, parentItem, projectileDir);
         }
 
-        public override void TryAttack(EntityInstance enemy)
+        public override void TryAttack(EntityInstance target)
         {
             if (CastTime >= Globals.Timing.TimeMs)
             {
@@ -849,10 +849,10 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            if (!IsOneBlockAway(enemy)) return;
-            if (!IsFacingTarget(enemy)) return;
-            if (!CanAttack(enemy, null)) return;
-            if (enemy.GetType() == typeof(EventPageInstance)) return;
+            if (!IsOneBlockAway(target)) return;
+            if (!IsFacingTarget(target)) return;
+            if (!CanAttack(target, null)) return;
+            if (target.GetType() == typeof(EventPageInstance)) return;
 
             ItemBase weapon = null;
             if (Options.WeaponIndex > -1 && Options.WeaponIndex < Equipment.Length && Equipment[Options.WeaponIndex] >= 0)
@@ -861,11 +861,11 @@ namespace Intersect.Server.Entities
             }
 
             //If Entity is resource, check for the correct tool and make sure its not a spell cast.
-            if (enemy.GetType() == typeof(Resource))
+            if (target.GetType() == typeof(Resource))
             {
-                if (((Resource)enemy).IsDead) return;
+                if (((Resource)target).IsDead) return;
                 // Check that a resource is actually required.
-                var resource = ((Resource)enemy).Base;
+                var resource = ((Resource)target).Base;
                 //Check Dynamic Requirements
                 if (!Conditions.MeetsConditionLists(resource.HarvestingRequirements, this, null))
                 {
@@ -885,7 +885,7 @@ namespace Intersect.Server.Entities
 
             if (weapon != null)
             {
-                base.TryAttack(enemy, weapon.Damage, (DamageType)weapon.DamageType,
+                base.TryAttack(target, weapon.Damage, (DamageType)weapon.DamageType,
                     (Stats)weapon.ScalingStat,
                     weapon.Scaling, weapon.CritChance, weapon.CritMultiplier, null, null, weapon);
             }
@@ -894,13 +894,13 @@ namespace Intersect.Server.Entities
                 var classBase = ClassBase.Get(ClassId);
                 if (classBase != null)
                 {
-                    base.TryAttack(enemy, classBase.Damage,
+                    base.TryAttack(target, classBase.Damage,
                         (DamageType)classBase.DamageType, (Stats)classBase.ScalingStat,
                         classBase.Scaling, classBase.CritChance, classBase.CritMultiplier);
                 }
                 else
                 {
-                    base.TryAttack(enemy, 1, (DamageType)DamageType.Physical, Stats.Attack,
+                    base.TryAttack(target, 1, (DamageType)DamageType.Physical, Stats.Attack,
                         100, 10, 1.5);
                 }
             }
@@ -3161,6 +3161,10 @@ namespace Intersect.Server.Entities
             return true;
         }
 
+        public override bool IsAllyOf(EntityInstance otherEntity) => otherEntity is Player otherPlayer && IsAllyOf(otherPlayer);
+
+        public virtual bool IsAllyOf([NotNull] Player otherPlayer) => this.InParty(otherPlayer);
+
         public bool CanSpellCast(SpellBase spell, EntityInstance target, bool checkVitalReqs)
         {
             if (!Conditions.MeetsConditionLists(spell.CastingRequirements, this, null))
@@ -3210,10 +3214,26 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            if (target == null && ((spell.SpellType == SpellTypes.CombatSpell && spell.Combat.TargetType == SpellTargetTypes.Single) || spell.SpellType == SpellTypes.WarpTo))
+            var singleTargetCombatSpell = spell.SpellType == SpellTypes.CombatSpell &&
+                                    spell.Combat.TargetType == SpellTargetTypes.Single;
+
+            if (target == null && (spell.SpellType == SpellTypes.WarpTo || singleTargetCombatSpell))
             {
                 PacketSender.SendActionMsg(this, Strings.Combat.notarget, CustomColors.NoTarget);
                 return false;
+            }
+
+            if (target != null && singleTargetCombatSpell)
+            {
+                if (spell.Combat.Friendly && !IsAllyOf(target))
+                {
+                    return false;
+                }
+
+                if (!spell.Combat.Friendly)
+                {
+                    return false;
+                }
             }
 
             //Check for range of a single target spell

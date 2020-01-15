@@ -181,12 +181,12 @@ namespace Intersect.Server.Entities
             return true;
         }
 
-        public override void TryAttack(EntityInstance enemy)
+        public override void TryAttack(EntityInstance target)
         {
-            if (enemy.IsDisposed) return;
-            if (!CanAttack(enemy, null)) return;
-            if (!IsOneBlockAway(enemy)) return;
-            if (!IsFacingTarget(enemy)) return;
+            if (target.IsDisposed) return;
+            if (!CanAttack(target, null)) return;
+            if (!IsOneBlockAway(target)) return;
+            if (!IsFacingTarget(target)) return;
 
             var deadAnimations = new List<KeyValuePair<Guid, sbyte>>();
             var aliveAnimations = new List<KeyValuePair<Guid, sbyte>>();
@@ -197,9 +197,9 @@ namespace Intersect.Server.Entities
             {
                 if (Base.AttackAnimation != null)
                 {
-                    PacketSender.SendAnimationToProximity(Base.AttackAnimationId, -1, Guid.Empty, enemy.MapId, (byte)enemy.X, (byte)enemy.Y, (sbyte)Dir);
+                    PacketSender.SendAnimationToProximity(Base.AttackAnimationId, -1, Guid.Empty, target.MapId, (byte)target.X, (byte)target.Y, (sbyte)Dir);
                 }
-                base.TryAttack(enemy, Base.Damage, (DamageType) Base.DamageType, (Stats) Base.ScalingStat, Base.Scaling, Base.CritChance, Base.CritMultiplier, deadAnimations, aliveAnimations);
+                base.TryAttack(target, Base.Damage, (DamageType) Base.DamageType, (Stats) Base.ScalingStat, Base.Scaling, Base.CritChance, Base.CritMultiplier, deadAnimations, aliveAnimations);
                 PacketSender.SendEntityAttack(this, CalculateAttackTime());
             }
         }
