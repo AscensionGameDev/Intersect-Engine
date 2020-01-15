@@ -622,27 +622,27 @@ namespace Intersect.Editor.Forms.Editors.Events
 
             var retain = Strings.EventCommandList.False;
             //TODO: Possibly bugged -- test this.
-            if (Convert.ToBoolean(command.Dir)) retain = Strings.EventCommandList.True;
+            if (Convert.ToBoolean(command.Dir))
+            {
+                retain = Strings.EventCommandList.True;
+            }
+
             if (command.EntityId == Guid.Empty)
             {
                 return Strings.EventCommandList.spawnnpc.ToString(NpcBase.GetName(command.NpcId),
                     Strings.EventCommandList.spawnonplayer.ToString(command.X, command.Y, retain));
             }
-            else
+
+            if (map.LocalEvents.TryGetValue(command.EntityId, out var localEvent))
             {
-                if (map.LocalEvents.ContainsKey(command.EntityId))
-                {
-                    return Strings.EventCommandList.spawnnpc.ToString(NpcBase.GetName(command.NpcId),
-                        Strings.EventCommandList.spawnonevent.ToString(
-                            map.LocalEvents[command.EntityId].Name, command.X, command.Y, retain));
-                }
-                else
-                {
-                    return Strings.EventCommandList.spawnnpc.ToString(NpcBase.GetName(command.NpcId),
-                        Strings.EventCommandList.spawnonevent.ToString(
-                            Strings.EventCommandList.deletedevent, command.X, command.Y, retain));
-                }
+                return Strings.EventCommandList.spawnnpc.ToString(NpcBase.GetName(command.NpcId),
+                    Strings.EventCommandList.spawnonevent.ToString(
+                        localEvent.Name, command.X, command.Y, retain));
             }
+
+            return Strings.EventCommandList.spawnnpc.ToString(NpcBase.GetName(command.NpcId),
+                Strings.EventCommandList.spawnonevent.ToString(
+                    Strings.EventCommandList.deletedevent, command.X, command.Y, retain));
         }
 
         private static string GetCommandText(DespawnNpcCommand command, MapInstance map)
