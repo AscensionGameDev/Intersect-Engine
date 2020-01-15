@@ -3161,6 +3161,7 @@ namespace Intersect.Server.Entities
             return true;
         }
 
+        // TODO: Take into account NPC friendliness
         public override bool IsAllyOf(EntityInstance otherEntity) => otherEntity is Player otherPlayer && IsAllyOf(otherPlayer);
 
         public virtual bool IsAllyOf([NotNull] Player otherPlayer) => this.InParty(otherPlayer);

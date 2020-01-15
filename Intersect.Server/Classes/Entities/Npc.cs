@@ -460,6 +460,7 @@ namespace Intersect.Server.Entities
             PacketSender.SendEntityCastTime(this, spellId);
         }
 
+        // TODO: Improve NPC movement to be more fluid like a player
         //General Updating
         public override void Update(long timeMs)
         {
@@ -647,7 +648,7 @@ namespace Intersect.Server.Entities
                                     targetMap = Guid.Empty;
                                     break;
                                 case PathfinderResult.NoPathToTarget:
-                                    TryFindNewTarget((Target != null ? Target.Id : Guid.Empty));
+                                    TryFindNewTarget(Target?.Id ?? Guid.Empty);
                                     targetMap = Guid.Empty;
                                     break;
                                 case PathfinderResult.Failure:

@@ -540,7 +540,7 @@ namespace Intersect.Server.Entities
             var time = 1000f / (float)(1 + Math.Log(Stat[(int)Stats.Speed].Value()));
             if (Blocking)
             {
-                time += time * (float)Options.BlockingSlow;
+                time += time * Options.BlockingSlow;
             }
             return Math.Min(1000f, time);
         }
