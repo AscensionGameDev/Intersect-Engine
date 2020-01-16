@@ -939,7 +939,7 @@ namespace Intersect.Server.Entities
                 {
                     return true;
                 }
-                else if (friendly && npc.IsFriend(this))
+                else if (friendly && npc.IsAllyOf(this))
                 {
                     return true;
                 }
@@ -956,7 +956,7 @@ namespace Intersect.Server.Entities
                 if (en.GetType() == typeof(Npc))
                 {
                     var npc = (Npc)en;
-                    if (npc.Target == null && npc.IsFriend(this))
+                    if (npc.Target == null && npc.IsAllyOf(this))
                     {
                         if (InRangeOf(npc, npc.Base.SightRange))
                         {
@@ -3161,8 +3161,18 @@ namespace Intersect.Server.Entities
             return true;
         }
 
-        // TODO: Take into account NPC friendliness
-        public override bool IsAllyOf(EntityInstance otherEntity) => otherEntity is Player otherPlayer && IsAllyOf(otherPlayer);
+        public override bool IsAllyOf(EntityInstance otherEntity)
+        {
+            switch (otherEntity)
+            {
+                case Player otherPlayer:
+                    return IsAllyOf(otherPlayer);
+                case Npc otherNpc:
+                    return otherNpc.IsAllyOf(this);
+                default:
+                    return base.IsAllyOf(otherEntity);
+            }
+        }
 
         public virtual bool IsAllyOf([NotNull] Player otherPlayer) => this.InParty(otherPlayer);
 

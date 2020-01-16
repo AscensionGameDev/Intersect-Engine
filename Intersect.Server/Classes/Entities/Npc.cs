@@ -174,8 +174,8 @@ namespace Intersect.Server.Entities
             {
                 var player = (Player)en;
                 var friendly = spell != null && spell.Combat.Friendly;
-                if (friendly && IsFriend(player)) return true;
-                if (!friendly && !IsFriend(player)) return true;
+                if (friendly && IsAllyOf(player)) return true;
+                if (!friendly && !IsAllyOf(player)) return true;
                 return false;
             }
             return true;
@@ -792,7 +792,7 @@ namespace Intersect.Server.Entities
         public bool CanPlayerAttack(Player en)
         {
             //Check to see if the npc is a friend/protector...
-            if (IsFriend(en)) return false;
+            if (IsAllyOf(en)) return false;
 
             //If not then check and see if player meets the conditions to attack the npc...
             if (Base.PlayerCanAttackConditions.Lists.Count == 0 || Conditions.MeetsConditionLists(Base.PlayerCanAttackConditions, en, null)) return true;
@@ -800,27 +800,28 @@ namespace Intersect.Server.Entities
             return false;
         }
 
-        public bool IsFriend(EntityInstance entity)
+        public override bool IsAllyOf(EntityInstance otherEntity)
         {
-            if (entity.GetType() == typeof(Npc))
+            switch (otherEntity)
             {
-                if (((Npc)entity).Base == Base) return true;
+                case Npc otherNpc:
+                    return Base == otherNpc.Base;
+                case Player otherPlayer:
+                    var conditionLists = Base.PlayerFriendConditions;
+                    if ((conditionLists?.Count ?? 0) == 0)
+                    {
+                        return false;
+                    }
+
+                    return Conditions.MeetsConditionLists(conditionLists, otherPlayer, null);
+                default:
+                    return base.IsAllyOf(otherEntity);
             }
-            else if (entity.GetType() == typeof(Player))
-            {
-                var player = (Player)entity;
-                if (Base.PlayerFriendConditions.Lists.Count == 0) return false;
-                if (Conditions.MeetsConditionLists(Base.PlayerFriendConditions,player,null))
-                {
-                    return true;
-                }
-            }
-            return false;
         }
 
         public bool ShouldAttackPlayerOnSight(Player en)
         {
-            if (IsFriend(en)) return false;
+            if (IsAllyOf(en)) return false;
             if (Base.Aggressive)
             {
                 if (Base.AttackOnSightConditions.Lists.Count > 0 && Conditions.MeetsConditionLists(Base.AttackOnSightConditions, en, null)) return false;

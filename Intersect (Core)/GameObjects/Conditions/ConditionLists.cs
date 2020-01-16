@@ -11,6 +11,8 @@ namespace Intersect.GameObjects.Conditions
     {
         public List<ConditionList> Lists = new List<ConditionList>();
 
+        public int Count => Lists?.Count ?? 0;
+
         public ConditionLists()
         {
         }

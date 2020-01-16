@@ -440,7 +440,7 @@ namespace Intersect.Server.Networking
             if (npc.Target == null)
             {
                 //TODO (0 is attack when attacked, 1 is attack on sight, 2 is friendly, 3 is guard)
-                if (npc.IsFriend(en) || !en.CanAttack(npc, null))
+                if (npc.IsAllyOf(en) || !en.CanAttack(npc, null))
                 {
                     aggression = 2;
                 }
