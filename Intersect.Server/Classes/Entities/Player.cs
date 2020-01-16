@@ -3240,7 +3240,7 @@ namespace Intersect.Server.Entities
             //Check for range of a single target spell
             if (spell.SpellType == (int)SpellTypes.CombatSpell && spell.Combat.TargetType == SpellTargetTypes.Single && target != this)
             {
-                if (!InRangeOf(Target, spell.Combat.CastRange))
+                if (!InRangeOf(target, spell.Combat.CastRange))
                 {
                     PacketSender.SendActionMsg(this, Strings.Combat.targetoutsiderange,
                         CustomColors.NoTarget);
