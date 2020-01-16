@@ -71,11 +71,7 @@ namespace Intersect.Client
                         if (sMyMusic.GetVolume() <= 1)
                         {
                             StopMusic();
-                            if (sQueuedMusic != "")
-                            {
-                                PlayMusic(sQueuedMusic, 0f, sQueuedFade, sQueuedLoop);
-                                sQueuedMusic = "";
-                            }
+                            PlayMusic(sQueuedMusic, 0f, sQueuedFade, sQueuedLoop);
                         }
                         else
                         {
@@ -137,13 +133,14 @@ namespace Intersect.Client
         //Music
         public static void PlayMusic(string filename, float fadeout = 0f, float fadein = 0f, bool loop = false)
         {
-            Log.Info($"PlayMusic({filename}, {fadeout}, {fadein}, {loop})");
-            Log.Info(AudioStateString);
-
-            if (filename == null)
+            if (string.IsNullOrWhiteSpace(filename))
             {
-                filename = "";
+                return;
             }
+
+            Log.Info($"PlayMusic({filename}, {fadeout}, {fadein}, {loop})");
+            ClearQueue();
+            Log.Info(AudioStateString);
 
             filename = GameContentManager.RemoveExtension(filename);
             if (sMyMusic != null)
@@ -178,6 +175,13 @@ namespace Intersect.Client
             sMusicLoop = loop;
 
             Log.Info(AudioStateString);
+        }
+
+        private static void ClearQueue()
+        {
+            sQueuedMusic = null;
+            sQueuedLoop = false;
+            sQueuedFade = -1;
         }
 
         private static void StartMusic(string filename, float fadein = 0f)
