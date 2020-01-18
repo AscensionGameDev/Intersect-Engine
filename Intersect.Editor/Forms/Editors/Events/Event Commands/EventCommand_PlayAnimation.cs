@@ -150,21 +150,32 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void UpdateSpawnPreview()
         {
-            Bitmap destBitmap = new Bitmap(pnlSpawnLoc.Width, pnlSpawnLoc.Height);
-            Font renderFont = new Font(new FontFamily("Arial"), 14);
-            Graphics g = Graphics.FromImage(destBitmap);
+            var destBitmap = new Bitmap(pnlSpawnLoc.Width, pnlSpawnLoc.Height);
+            var renderFont = new Font(new FontFamily("Arial"), 14);
+            var cellWidth = pnlSpawnLoc.Width / 5;
+            var cellHeight = pnlSpawnLoc.Height / 5;
+
+            var g = Graphics.FromImage(destBitmap);
             g.Clear(System.Drawing.Color.White);
-            g.FillRectangle(Brushes.Red, new Rectangle((mSpawnX + 2) * 32, (mSpawnY + 2) * 32, 32, 32));
-            for (int x = 0; x < 5; x++)
+            g.FillRectangle(Brushes.Red, new Rectangle((pnlSpawnLoc.Width - cellWidth) / 2, (pnlSpawnLoc.Height - cellHeight) / 2, cellWidth, cellHeight));
+            for (var i = 1; i < 5; ++i)
             {
-                g.DrawLine(Pens.Black, x * 32, 0, x * 32, 32 * 5);
-                g.DrawLine(Pens.Black, 0, x * 32, 32 * 5, x * 32);
+                g.DrawLine(Pens.Black, 0, cellHeight * i, pnlSpawnLoc.Width, cellHeight * i);
+                g.DrawLine(Pens.Black, cellWidth * i, 0, cellWidth * i, pnlSpawnLoc.Height);
             }
-            g.DrawLine(Pens.Black, 0, 32 * 5 - 1, 32 * 5, 32 * 5 - 1);
-            g.DrawLine(Pens.Black, 32 * 5 - 1, 0, 32 * 5 - 1, 32 * 5 - 1);
+            //            g.FillRectangle(Brushes.Red, new Rectangle((mSpawnX + 2) * 32, (mSpawnY + 2) * 32, 32, 32));
+            //            for (int x = 0; x < 5; x++)
+            //            {
+            //                g.DrawLine(Pens.Black, x * 32, 0, x * 32, 32 * 5);
+            //                g.DrawLine(Pens.Black, 0, x * 32, 32 * 5, x * 32);
+            //            }
+            //            g.DrawLine(Pens.Black, 0, 32 * 5 - 1, 32 * 5, 32 * 5 - 1);
+            //            g.DrawLine(Pens.Black, 32 * 5 - 1, 0, 32 * 5 - 1, 32 * 5 - 1);
+
             g.DrawString("E", renderFont, Brushes.Black,
                 pnlSpawnLoc.Width / 2 - g.MeasureString("E", renderFont).Width / 2,
                 pnlSpawnLoc.Height / 2 - g.MeasureString("S", renderFont).Height / 2);
+            
             g.Dispose();
             pnlSpawnLoc.BackgroundImage = destBitmap;
         }

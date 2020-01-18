@@ -2,7 +2,7 @@
 
 namespace Intersect.Models
 {
-    public interface IGameObject
+    public interface IObject
     {
         Guid Id { get; }
     }

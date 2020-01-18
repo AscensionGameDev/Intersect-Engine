@@ -150,6 +150,7 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
+            this.searchableDarkTreeView1 = new Intersect.Editor.Forms.Controls.SearchableDarkTreeView();
             this.grpNpcs.SuspendLayout();
             this.grpGeneral.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudLevel)).BeginInit();
@@ -1735,7 +1736,7 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Padding = new System.Windows.Forms.Padding(5, 0, 1, 0);
-            this.toolStrip.Size = new System.Drawing.Size(689, 25);
+            this.toolStrip.Size = new System.Drawing.Size(699, 25);
             this.toolStrip.TabIndex = 45;
             this.toolStrip.Text = "toolStrip1";
             // 
@@ -1837,19 +1838,33 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
+            // searchableDarkTreeView1
+            // 
+            this.searchableDarkTreeView1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.searchableDarkTreeView1.ItemProvider = null;
+            this.searchableDarkTreeView1.Location = new System.Drawing.Point(0, 27);
+            this.searchableDarkTreeView1.Margin = new System.Windows.Forms.Padding(2);
+            this.searchableDarkTreeView1.Name = "searchableDarkTreeView1";
+            this.searchableDarkTreeView1.SearchText = "";
+            this.searchableDarkTreeView1.SelectedId = new System.Guid("00000000-0000-0000-0000-000000000000");
+            this.searchableDarkTreeView1.Size = new System.Drawing.Size(240, 480);
+            this.searchableDarkTreeView1.TabIndex = 46;
+            this.searchableDarkTreeView1.Visible = false;
+            // 
             // FrmNpc
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.ClientSize = new System.Drawing.Size(689, 615);
+            this.ClientSize = new System.Drawing.Size(699, 615);
             this.ControlBox = false;
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.grpNpcs);
             this.Controls.Add(this.pnlContainer);
+            this.Controls.Add(this.searchableDarkTreeView1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
@@ -2028,5 +2043,6 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.ImageList imageList;
         private System.Windows.Forms.ToolStripButton btnChronological;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private Controls.SearchableDarkTreeView searchableDarkTreeView1;
     }
 }

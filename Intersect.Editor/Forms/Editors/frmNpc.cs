@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using DarkUI.Forms;
+
+using Intersect.Collections;
 using Intersect.Editor.ContentManagement;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
@@ -11,6 +14,7 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Utilities;
 using Intersect.GameObjects.Events;
+using Intersect.Models;
 
 namespace Intersect.Editor.Forms.Editors
 {
@@ -874,6 +878,8 @@ namespace Intersect.Editor.Forms.Editors
                     folderNodes[node].Expand();
             }
 
+//            searchableDarkTreeView1.ItemProvider = NpcBase.Lookup;
+//            searchableDarkTreeView1?.Refresh();
         }
 
         private void btnAddFolder_Click(object sender, EventArgs e)

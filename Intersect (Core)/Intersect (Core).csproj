@@ -269,6 +269,7 @@
     <Compile Include="GameObjects\Events\EventMovement.cs" />
     <Compile Include="Localization\LocalizedString.cs" />
     <Compile Include="Models\IFolderable.cs" />
+    <Compile Include="Models\INamedObject.cs" />
     <Compile Include="Network\Ceras.cs" />
     <Compile Include="Network\ConnectionPacket.cs" />
     <Compile Include="Network\PacketDispatcher.cs" />
@@ -497,7 +498,7 @@
     <Compile Include="Memory\StreamWrapper.cs" />
     <Compile Include="Models\LookupUtils.cs" />
     <Compile Include="Models\IDatabaseObject.cs" />
-    <Compile Include="Models\IGameObject.cs" />
+    <Compile Include="Models\IObject.cs" />
     <Compile Include="Network\AbstractConnection.cs" />
     <Compile Include="Network\AbstractNetwork.cs" />
     <Compile Include="Network\DnsUtils.cs" />
