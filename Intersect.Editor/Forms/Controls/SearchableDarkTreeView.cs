@@ -115,6 +115,9 @@ namespace Intersect.Editor.Forms.Controls
         {
             treeViewItems?.Nodes?.Clear();
 
+            // TODO: Remove this when we fix DarkUI, which currently does not invalidate (and will show stale values when the list is emptied).
+            treeViewItems?.Invalidate();
+
             if (ItemProvider == null)
             {
                 return;
@@ -129,12 +132,6 @@ namespace Intersect.Editor.Forms.Controls
             var nodes = filtered.Select(PairAsNode).ToList();
 
             treeViewItems?.Nodes?.AddRange(nodes);
-            
-            // TODO: Remove this when we fix DarkUI, which currently does not invalidate (and will show stale values when the list is emptied).
-            if (nodes.Count == 0)
-            {
-                treeViewItems?.Invalidate();
-            }
         }
 
         private void txtSearch_TextChanged(object sender, EventArgs e)
