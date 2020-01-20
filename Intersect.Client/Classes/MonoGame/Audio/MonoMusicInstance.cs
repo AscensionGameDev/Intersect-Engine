@@ -1,19 +1,23 @@
-﻿using System;
-using Intersect.Client.Framework.Audio;
-using Intersect.Client.General;
+﻿using Intersect.Client.General;
+
+using JetBrains.Annotations;
+
 using Microsoft.Xna.Framework.Media;
+
+using System;
 
 namespace Intersect.Client.MonoGame.Audio
 {
-    public class MonoMusicInstance : GameAudioInstance
+    public class MonoMusicInstance : MonoAudioInstance<MonoMusicSource>
     {
         private bool mDisposed;
-        private Song mSong;
+        private readonly Song mSong;
         private int mVolume;
 
-        public MonoMusicInstance(GameAudioSource music) : base(music)
+        // ReSharper disable once SuggestBaseTypeForParameter
+        public MonoMusicInstance([NotNull] MonoMusicSource source) : base(source)
         {
-            mSong = ((MonoMusicSource) music).GetSource();
+            mSong = source.Song;
         }
 
         public override void Play()
@@ -36,7 +40,7 @@ namespace Intersect.Client.MonoGame.Audio
             mVolume = volume;
             try
             {
-                MediaPlayer.Volume = (mVolume * (float) (Globals.Database.MusicVolume / 100f) / 100f);
+                MediaPlayer.Volume = (mVolume * (Globals.Database.MusicVolume / 100f) / 100f);
             }
             catch (NullReferenceException)
             {
@@ -53,24 +57,40 @@ namespace Intersect.Client.MonoGame.Audio
             return mVolume;
         }
 
-        public override void SetLoop(bool val)
-        {
-            MediaPlayer.IsRepeating = val;
-        }
+        protected override void InternalLoopSet() => MediaPlayer.IsRepeating = IsLooping;
 
-        public override AudioInstanceState GetState()
+        public override AudioInstanceState State
         {
-            if (mDisposed) return AudioInstanceState.Disposed;
-            if (MediaPlayer.State == MediaState.Playing) return AudioInstanceState.Playing;
-            if (MediaPlayer.State == MediaState.Stopped) return AudioInstanceState.Stopped;
-            if (MediaPlayer.State == MediaState.Paused) return AudioInstanceState.Paused;
-            return AudioInstanceState.Disposed;
+            get
+            {
+                if (mDisposed)
+                {
+                    return AudioInstanceState.Disposed;
+                }
+
+                switch (MediaPlayer.State)
+                {
+                    case MediaState.Playing:
+                        return AudioInstanceState.Playing;
+                    case MediaState.Stopped:
+                        return AudioInstanceState.Stopped;
+                    case MediaState.Paused:
+                        return AudioInstanceState.Paused;
+                    default:
+                        return AudioInstanceState.Disposed;
+                }
+            }
         }
 
         public override void Dispose()
         {
             mDisposed = true;
             MediaPlayer.Stop();
+        }
+
+        ~MonoMusicInstance()
+        {
+            Dispose();
         }
     }
 }

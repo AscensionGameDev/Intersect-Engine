@@ -11,7 +11,7 @@ namespace Intersect.Client.MonoGame.Audio
 {
     public class MonoSoundSource : GameAudioSource
     {
-        private ContentManager mContentManager;
+
         private readonly string mFilename;
         private int mInstanceCount;
         private SoundEffect mSound;
@@ -19,7 +19,6 @@ namespace Intersect.Client.MonoGame.Audio
         public MonoSoundSource(string filename, ContentManager contentManager)
         {
             mFilename = filename;
-            mContentManager = contentManager;
         }
 
         public override GameAudioInstance CreateInstance()
@@ -39,13 +38,17 @@ namespace Intersect.Client.MonoGame.Audio
             mSound = null;
         }
 
-        public SoundEffect GetEffect()
+        public SoundEffect Effect
         {
-            if (mSound == null)
+            get
             {
-                LoadSound();
+                if (mSound == null)
+                {
+                    LoadSound();
+                }
+
+                return mSound;
             }
-            return mSound;
         }
 
         private void LoadSound()

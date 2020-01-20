@@ -93,7 +93,7 @@ namespace Intersect.Client
                 }
                 else
                 {
-                    if (sMyMusic.GetState() == GameAudioInstance.AudioInstanceState.Stopped)
+                    if (sMyMusic.State == GameAudioInstance.AudioInstanceState.Stopped)
                     {
                         if (sMusicLoop)
                         {
@@ -123,7 +123,7 @@ namespace Intersect.Client
 
                 var builder = new StringBuilder();
                 builder.AppendLine($"Current: track='{sCurrentSong}' fade={sFadeRate} loop={sMusicLoop}");
-                builder.AppendLine($"Instance: volume={sMyMusic.GetVolume()}, state={Enum.GetName(typeof(GameAudioInstance.AudioInstanceState), sMyMusic.GetState())}");
+                builder.AppendLine($"Instance: volume={sMyMusic.GetVolume()}, state={Enum.GetName(typeof(GameAudioInstance.AudioInstanceState), sMyMusic.State)}");
                 builder.AppendLine($"Fade: timer={sFadeTimer} fading={sFadingOut}");
                 builder.AppendLine($"Queue: track='{sQueuedMusic}' fade={sQueuedFade} loop={sQueuedLoop}");
                 return builder.ToString();
@@ -145,8 +145,8 @@ namespace Intersect.Client
             filename = GameContentManager.RemoveExtension(filename);
             if (sMyMusic != null)
             {
-                if (fadeout < 0.01|| sMyMusic.GetState() == GameAudioInstance.AudioInstanceState.Stopped ||
-                    sMyMusic.GetState() == GameAudioInstance.AudioInstanceState.Paused || sMyMusic.GetVolume() == 0)
+                if (fadeout < 0.01|| sMyMusic.State == GameAudioInstance.AudioInstanceState.Stopped ||
+                    sMyMusic.State == GameAudioInstance.AudioInstanceState.Paused || sMyMusic.GetVolume() == 0)
                 {
                     Log.Info("Skipping to next song immediately.");
                     StopMusic();
@@ -206,8 +206,8 @@ namespace Intersect.Client
         {
             if (sMyMusic == null) return;
 
-            if (Math.Abs(fadeout) < 0.01 || sMyMusic.GetState() == GameAudioInstance.AudioInstanceState.Stopped ||
-                sMyMusic.GetState() == GameAudioInstance.AudioInstanceState.Paused || sMyMusic.GetVolume() == 0)
+            if (Math.Abs(fadeout) < 0.01 || sMyMusic.State == GameAudioInstance.AudioInstanceState.Stopped ||
+                sMyMusic.State == GameAudioInstance.AudioInstanceState.Paused || sMyMusic.GetVolume() == 0)
             {
                 sCurrentSong = "";
                 sMyMusic.Stop();
@@ -275,7 +275,7 @@ namespace Intersect.Client
             if (sound != null)
             {
                 mSound = sound.CreateInstance();
-                mSound.SetLoop(mLoop);
+                mSound.IsLooping = mLoop;
                 mSound.SetVolume(Globals.Database.SoundVolume);
                 mSound.Play();
                 Loaded = true;
@@ -286,7 +286,7 @@ namespace Intersect.Client
         {
             if (Loaded)
             {
-                if (!mLoop && mSound.GetState() == GameAudioInstance.AudioInstanceState.Stopped)
+                if (!mLoop && mSound.State == GameAudioInstance.AudioInstanceState.Stopped)
                 {
                     Stop();
                 }
@@ -313,7 +313,7 @@ namespace Intersect.Client
             set
             {
                 mLoop = value;
-                mSound?.SetLoop(mLoop);
+                mSound.IsLooping = mLoop;
             }
         }
     }

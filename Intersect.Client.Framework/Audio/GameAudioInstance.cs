@@ -1,4 +1,6 @@
-﻿namespace Intersect.Client.Framework.Audio
+﻿using JetBrains.Annotations;
+
+namespace Intersect.Client.Framework.Audio
 {
     public abstract class GameAudioInstance
     {
@@ -10,20 +12,34 @@
             Disposed = 3,
         }
 
-        private GameAudioSource mMyMusic;
+        private bool mIsLooping;
 
-        public GameAudioInstance(GameAudioSource music)
+        protected GameAudioInstance([NotNull] GameAudioSource source)
         {
-            mMyMusic = music;
+            Source = source;
         }
+
+        [NotNull] public GameAudioSource Source { get;  }
+
+        public bool IsLooping
+        {
+            get => mIsLooping;
+            set
+            {
+                mIsLooping = value;
+                InternalLoopSet();
+            }
+        }
+
+        protected abstract void InternalLoopSet();
 
         public abstract void Play();
         public abstract void Pause();
         public abstract void Stop();
         public abstract void SetVolume(int volume, bool isMusic = false);
         public abstract int GetVolume();
-        public abstract void SetLoop(bool val);
-        public abstract AudioInstanceState GetState();
+
+        public abstract AudioInstanceState State { get; }
 
         public abstract void Dispose();
     }
