@@ -1,7 +1,11 @@
 ﻿namespace Intersect.Editor.Forms.Controls
 {
+    using JetBrains.Annotations;
+    using System.Windows.Forms;
+
     partial class SearchableDarkTreeView
     {
+
         /// <summary> 
         /// Required designer variable.
         /// </summary>
@@ -31,7 +35,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SearchableDarkTreeView));
             this.txtSearch = new DarkUI.Controls.DarkTextBox();
             this.picClear = new System.Windows.Forms.PictureBox();
-            this.toolStrip1 = new DarkUI.Controls.DarkToolStrip();
+            this.toolStrip = new DarkUI.Controls.DarkToolStrip();
             this.toolStripCreate = new System.Windows.Forms.ToolStripButton();
             this.toolStripDelete = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -44,7 +48,7 @@
             this.toolStripSort = new System.Windows.Forms.ToolStripButton();
             this.treeViewItems = new DarkUI.Controls.DarkTreeView();
             ((System.ComponentModel.ISupportInitialize)(this.picClear)).BeginInit();
-            this.toolStrip1.SuspendLayout();
+            this.toolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // txtSearch
@@ -60,6 +64,7 @@
             // 
             // picClear
             // 
+            this.picClear.Enabled = false;
             this.picClear.Image = ((System.Drawing.Image)(resources.GetObject("picClear.Image")));
             this.picClear.Location = new System.Drawing.Point(217, 27);
             this.picClear.Name = "picClear";
@@ -68,12 +73,12 @@
             this.picClear.TabIndex = 1;
             this.picClear.TabStop = false;
             // 
-            // toolStrip1
+            // toolStrip
             // 
-            this.toolStrip1.AutoSize = false;
-            this.toolStrip1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.toolStrip1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStrip.AutoSize = false;
+            this.toolStrip.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.toolStrip.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripCreate,
             this.toolStripDelete,
             this.toolStripSeparator1,
@@ -84,12 +89,12 @@
             this.toolStripRedo,
             this.toolStripSeparator3,
             this.toolStripSort});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Padding = new System.Windows.Forms.Padding(5, 0, 1, 0);
-            this.toolStrip1.Size = new System.Drawing.Size(240, 24);
-            this.toolStrip1.TabIndex = 8;
-            this.toolStrip1.Text = "toolStrip1";
+            this.toolStrip.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip.Name = "toolStrip";
+            this.toolStrip.Padding = new System.Windows.Forms.Padding(5, 0, 1, 0);
+            this.toolStrip.Size = new System.Drawing.Size(240, 24);
+            this.toolStrip.TabIndex = 8;
+            this.toolStrip.Text = "toolStrip1";
             // 
             // toolStripCreate
             // 
@@ -100,10 +105,12 @@
             this.toolStripCreate.Name = "toolStripCreate";
             this.toolStripCreate.Size = new System.Drawing.Size(23, 21);
             this.toolStripCreate.Text = "toolStripCreate";
+            this.toolStripCreate.Click += new System.EventHandler(this.toolStripCreate_Click);
             // 
             // toolStripDelete
             // 
             this.toolStripDelete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripDelete.Enabled = false;
             this.toolStripDelete.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.toolStripDelete.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDelete.Image")));
             this.toolStripDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -122,6 +129,7 @@
             // toolStripCopy
             // 
             this.toolStripCopy.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripCopy.Enabled = false;
             this.toolStripCopy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.toolStripCopy.Image = ((System.Drawing.Image)(resources.GetObject("toolStripCopy.Image")));
             this.toolStripCopy.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -132,6 +140,7 @@
             // toolStripPaste
             // 
             this.toolStripPaste.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripPaste.Enabled = false;
             this.toolStripPaste.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.toolStripPaste.Image = ((System.Drawing.Image)(resources.GetObject("toolStripPaste.Image")));
             this.toolStripPaste.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -150,6 +159,7 @@
             // toolStripUndo
             // 
             this.toolStripUndo.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripUndo.Enabled = false;
             this.toolStripUndo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.toolStripUndo.Image = ((System.Drawing.Image)(resources.GetObject("toolStripUndo.Image")));
             this.toolStripUndo.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -160,6 +170,7 @@
             // toolStripRedo
             // 
             this.toolStripRedo.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripRedo.Enabled = false;
             this.toolStripRedo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.toolStripRedo.Image = ((System.Drawing.Image)(resources.GetObject("toolStripRedo.Image")));
             this.toolStripRedo.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -199,15 +210,15 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.Controls.Add(this.treeViewItems);
-            this.Controls.Add(this.toolStrip1);
+            this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.picClear);
             this.Controls.Add(this.txtSearch);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "SearchableDarkTreeView";
             this.Size = new System.Drawing.Size(240, 480);
             ((System.ComponentModel.ISupportInitialize)(this.picClear)).EndInit();
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
+            this.toolStrip.ResumeLayout(false);
+            this.toolStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -217,7 +228,7 @@
 
         private DarkUI.Controls.DarkTextBox txtSearch;
         private System.Windows.Forms.PictureBox picClear;
-        private DarkUI.Controls.DarkToolStrip toolStrip1;
+        private DarkUI.Controls.DarkToolStrip toolStrip;
         private System.Windows.Forms.ToolStripButton toolStripCreate;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton toolStripDelete;

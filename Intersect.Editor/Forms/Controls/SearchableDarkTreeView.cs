@@ -146,6 +146,11 @@ namespace Intersect.Editor.Forms.Controls
 
             UpdateNodes();
         }
+
+        private void toolStripCreate_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 
 }

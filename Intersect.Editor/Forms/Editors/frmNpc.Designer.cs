@@ -197,7 +197,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpNpcs.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpNpcs.Location = new System.Drawing.Point(12, 39);
             this.grpNpcs.Name = "grpNpcs";
-            this.grpNpcs.Size = new System.Drawing.Size(203, 529);
+            this.grpNpcs.Size = new System.Drawing.Size(203, 570);
             this.grpNpcs.TabIndex = 13;
             this.grpNpcs.TabStop = false;
             this.grpNpcs.Text = "NPCs";
@@ -240,7 +240,7 @@ namespace Intersect.Editor.Forms.Editors
             this.lstNpcs.Location = new System.Drawing.Point(6, 44);
             this.lstNpcs.Name = "lstNpcs";
             this.lstNpcs.SelectedImageIndex = 0;
-            this.lstNpcs.Size = new System.Drawing.Size(191, 478);
+            this.lstNpcs.Size = new System.Drawing.Size(191, 159);
             this.lstNpcs.TabIndex = 32;
             this.lstNpcs.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.lstNpcs_AfterSelect);
             this.lstNpcs.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.lstNpcs_NodeMouseClick);
@@ -1842,7 +1842,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.searchableDarkTreeView1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.searchableDarkTreeView1.ItemProvider = null;
-            this.searchableDarkTreeView1.Location = new System.Drawing.Point(0, 27);
+            this.searchableDarkTreeView1.Location = new System.Drawing.Point(11, 27);
             this.searchableDarkTreeView1.Margin = new System.Windows.Forms.Padding(2);
             this.searchableDarkTreeView1.Name = "searchableDarkTreeView1";
             this.searchableDarkTreeView1.SearchText = "";
