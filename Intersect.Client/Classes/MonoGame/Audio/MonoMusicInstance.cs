@@ -85,7 +85,14 @@ namespace Intersect.Client.MonoGame.Audio
         public override void Dispose()
         {
             mDisposed = true;
-            MediaPlayer.Stop();
+            try
+            {
+                MediaPlayer.Stop();
+            }
+            catch
+            {
+                /* This is just to catch any B.S. errors that MonoGame shouldn't be throwing to us. */
+            }
         }
 
         ~MonoMusicInstance()
