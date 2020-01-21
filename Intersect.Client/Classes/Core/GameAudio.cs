@@ -284,27 +284,30 @@ namespace Intersect.Client
 
         public virtual bool Update()
         {
-            if (Loaded)
+            if (!Loaded)
             {
-                if (!mLoop && mSound.State == GameAudioInstance.AudioInstanceState.Stopped)
-                {
-                    Stop();
-                }
-                else
-                {
-                    return true;
-                }
+                return false;
             }
+
+            if (mLoop || mSound?.State != GameAudioInstance.AudioInstanceState.Stopped)
+            {
+                return true;
+            }
+
+            Stop();
             return false;
+
         }
 
         public virtual void Stop()
         {
-            if (Loaded)
+            if (!Loaded)
             {
-                mSound.Dispose();
-                Loaded = false;
+                return;
             }
+
+            mSound?.Dispose();
+            Loaded = false;
         }
 
         public bool Loop
@@ -313,7 +316,10 @@ namespace Intersect.Client
             set
             {
                 mLoop = value;
-                mSound.IsLooping = mLoop;
+                if (mSound != null)
+                {
+                    mSound.IsLooping = mLoop;
+                }
             }
         }
     }
