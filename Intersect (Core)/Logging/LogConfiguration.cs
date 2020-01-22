@@ -18,7 +18,11 @@ namespace Intersect.Logging
         {
             Formatters = DefaultFormatters,
 
-            LogLevel = Debugger.IsAttached ? LogLevel.All : LogLevel.Info,
+#if DEBUG
+            LogLevel = Debugger.IsAttached ? LogLevel.All : LogLevel.Debug,
+#else
+            LogLevel = Debugger.IsAttached ? LogLevel.All : LogLevel.Trace,
+#endif
 
             Pretty = false,
 
