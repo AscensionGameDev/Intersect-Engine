@@ -111,6 +111,7 @@ namespace Intersect.Server.Core
                 ReflectionUtils.ExtractResource("Intersect.Server.Resources.notifications.PasswordReset.html", Path.Combine("resources","notifications", "PasswordReset.html"));
             }
 
+            DbInterface.InitializeDbLoggers();
             DbInterface.CheckDirectories();
 
             if (args != null)

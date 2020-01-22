@@ -29,6 +29,7 @@ using MySql.Data.MySqlClient;
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
@@ -36,6 +37,9 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+
+using Intersect.Logging;
+using Intersect.Logging.Output;
 
 namespace Intersect.Server
 {
@@ -50,6 +54,10 @@ namespace Intersect.Server
         private static PlayerContext sPlayerDb { get; set; }
         private static GameContext sGameDb { get; set; }
 
+        private static long playerSavesWaiting = 0;
+
+        private static long gameSavesWaiting = 0;
+
         private static Task sSavePlayerDbTask;
 
         public static object MapGridLock = new object();
@@ -57,6 +65,43 @@ namespace Intersect.Server
 
         private static object mGameDbLock = new object();
         private static object mPlayerDbLock = new object();
+
+        private static Logger gameDbLogger;
+
+        private static Logger playerDbLogger;
+
+        public static void InitializeDbLoggers()
+        {
+            if (Options.GameDb.EnableLogs)
+            {
+                gameDbLogger = new Logger(
+                    new LogConfiguration
+                    {
+                        Tag = "GAMEDB",
+                        Pretty = false,
+                        LogLevel = LogLevel.Debug,
+                        Outputs = ImmutableList.Create<ILogOutput>(
+                            new FileOutput(Log.SuggestFilename(null, "gamedb"), LogLevel.Debug)
+                        )
+                    }
+                );
+            }
+
+            if (Options.PlayerDb.EnableLogs)
+            {
+                playerDbLogger = new Logger(
+                    new LogConfiguration
+                    {
+                        Tag = "PLAYERDB",
+                        Pretty = false,
+                        LogLevel = LogLevel.Debug,
+                        Outputs = ImmutableList.Create<ILogOutput>(
+                            new FileOutput(Log.SuggestFilename(null, "playerdb"), LogLevel.Debug)
+                        )
+                    }
+                );
+            }
+        }
 
         //Check Directories
         public static void CheckDirectories()
@@ -1069,44 +1114,44 @@ namespace Intersect.Server
                                                  sSavePlayerDbTask.Status == TaskStatus.WaitingToRun ||
                                                  sSavePlayerDbTask.Status == TaskStatus.WaitingForActivation))
             {
-                sSavePlayerDbTask = Task.Factory.StartNew(SavePlayerDb);
+                sSavePlayerDbTask = Task.Factory.StartNew(SavePlayerDatabase);
             }
         }
 
         public static void SaveGameDatabase()
         {
-            SaveGameDb();
+            ++gameSavesWaiting;
+            gameDbLogger?.Debug($"{gameSavesWaiting} saves queued.");
+            lock (mGameDbLock)
+            {
+                var elapsedMs = SaveDb(sGameDb);
+                gameDbLogger?.Debug($"Save took {elapsedMs}ms, {--gameSavesWaiting} saves queued.");
+            }
         }
 
         public static void SavePlayerDatabase()
         {
-            SavePlayerDb();
-        }
-
-        private static void SaveGameDb()
-        {
-            if (sGameDb == null) return;
-            var sw = new Stopwatch();
-            lock (mGameDbLock)
-            {
-                sw.Start();
-                sGameDb.SaveChanges();
-                sw.Stop();
-                //Log.Debug("Game DB Save - Took " + sw.ElapsedMilliseconds + "ms to complete.");
-            }
-        }
-
-        private static void SavePlayerDb()
-        {
-            if (sPlayerDb == null) return;
-            var sw = new Stopwatch();
+            ++playerSavesWaiting;
+            playerDbLogger?.Debug($"{playerSavesWaiting} saves queued.");
             lock (mPlayerDbLock)
             {
-                sw.Start();
-                sPlayerDb.SaveChanges();
-                sw.Stop();
-                //Log.Debug("Player DB Save - Took " + sw.ElapsedMilliseconds + "ms to complete.");
+                var elapsedMs = SaveDb(sPlayerDb);
+                playerDbLogger?.Debug($"Save took {elapsedMs}ms, {--playerSavesWaiting} saves queued.");
             }
+        }
+
+        private static long SaveDb(DbContext dbContext)
+        {
+            if (dbContext == null)
+            {
+                return -1;
+            }
+
+            var stopwatch = Stopwatch.StartNew();
+            dbContext.SaveChanges();
+            stopwatch.Stop();
+
+            return stopwatch.ElapsedMilliseconds;
         }
 
         //Migration Code

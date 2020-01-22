@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -29,5 +30,9 @@ namespace Intersect.Config
         public string Database { get; set; } = "";
         public string Username { get; set; } = "";
         public string Password { get; set; } = "";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Populate)]
+        [DefaultValue(true)]
+        public bool EnableLogs { get; set; } = true;
     }
 }
