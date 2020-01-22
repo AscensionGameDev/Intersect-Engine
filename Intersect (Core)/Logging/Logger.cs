@@ -31,9 +31,19 @@ namespace Intersect.Logging
                 return;
             }
 
+            string trace = null;
+            if (logLevel == LogLevel.Trace)
+            {
+                trace = Environment.StackTrace;
+            }
+
             foreach (var output in Configuration.Outputs)
             {
                 output.Write(Configuration, logLevel, message);
+                if (trace != null)
+                {
+                    output.Write(Configuration, logLevel, trace);
+                }
             }
         }
 
@@ -44,9 +54,19 @@ namespace Intersect.Logging
                 return;
             }
 
+            string trace = null;
+            if (logLevel == LogLevel.Trace)
+            {
+                trace = Environment.StackTrace;
+            }
+
             foreach (var output in Configuration.Outputs)
             {
                 output.Write(Configuration, logLevel, format, args);
+                if (trace != null)
+                {
+                    output.Write(Configuration, logLevel, trace);
+                }
             }
         }
 
@@ -57,9 +77,19 @@ namespace Intersect.Logging
                 return;
             }
 
+            string trace = null;
+            if (logLevel == LogLevel.Trace)
+            {
+                trace = Environment.StackTrace;
+            }
+
             foreach (var output in Configuration.Outputs)
             {
                 output.Write(Configuration, logLevel, exception, message);
+                if (trace != null)
+                {
+                    output.Write(Configuration, logLevel, trace);
+                }
             }
         }
 
