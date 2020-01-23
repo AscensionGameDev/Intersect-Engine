@@ -149,10 +149,10 @@ namespace Intersect.Server.Entities
             PacketSender.SendNpcAggressionToProximity(this);
         }
 
-        public override bool CanAttack(EntityInstance en, SpellBase spell)
+        public override bool CanAttack(EntityInstance entity, SpellBase spell)
         {
-            if (!base.CanAttack(en, spell)) return false;
-            if (en.GetType() == typeof(EventPageInstance)) return false;
+            if (!base.CanAttack(entity, spell)) return false;
+            if (entity.GetType() == typeof(EventPageInstance)) return false;
             //Check if the attacker is stunned or blinded.
             var statuses = Statuses.Values.ToArray();
             foreach (var status in statuses)
@@ -162,17 +162,17 @@ namespace Intersect.Server.Entities
                     return false;
                 }
             }
-            if (en.GetType() == typeof(Resource))
+            if (entity.GetType() == typeof(Resource))
             {
-				if (!en.Passable) return false;
+				if (!entity.Passable) return false;
             }
-            else if (en.GetType() == typeof(Npc))
+            else if (entity.GetType() == typeof(Npc))
             {
-                return CanNpcCombat(en, spell != null && spell.Combat.Friendly) || en == this;
+                return CanNpcCombat(entity, spell != null && spell.Combat.Friendly) || entity == this;
             }
-            else if (en.GetType() == typeof(Player))
+            else if (entity.GetType() == typeof(Player))
             {
-                var player = (Player)en;
+                var player = (Player)entity;
                 var friendly = spell != null && spell.Combat.Friendly;
                 if (friendly && IsAllyOf(player)) return true;
                 if (!friendly && !IsAllyOf(player)) return true;
