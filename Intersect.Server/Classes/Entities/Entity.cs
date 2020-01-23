@@ -921,7 +921,7 @@ namespace Intersect.Server.Entities
             return stats;
         }
 
-        public virtual bool IsAllyOf([NotNull] EntityInstance otherEntity) => false;
+        public virtual bool IsAllyOf([NotNull] EntityInstance otherEntity) => this == otherEntity;
 
         //Attacking with projectile
         public virtual void TryAttack(EntityInstance target, ProjectileBase projectile, SpellBase parentSpell, ItemBase parentItem, byte projectileDir)

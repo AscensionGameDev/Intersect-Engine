@@ -3017,6 +3017,11 @@ namespace Intersect.Server.Entities
 
         public bool InParty(Player member)
         {
+            if (this == member)
+            {
+                return true;
+            }
+
             for (var i = 0; i < Party.Count; i++)
             {
                 if (member == Party[i])
