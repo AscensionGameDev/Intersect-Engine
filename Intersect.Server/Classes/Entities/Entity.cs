@@ -312,7 +312,7 @@ namespace Intersect.Server.Entities
                         return -2;
                     }
 
-                    if (tileAttribute.Type == MapAttributes.NpcAvoid && GetType() == typeof(Npc))
+                    if (tileAttribute.Type == MapAttributes.NpcAvoid && this is Npc)
                     {
                         return -2;
                     }
@@ -381,9 +381,9 @@ namespace Intersect.Server.Entities
                     {
                         //Set a target if a projectile
                         CollisionIndex = en.Id;
-                        if (en.GetType() == typeof(Player))
+                        if (en is Player)
                         {
-                            if (this.GetType() == typeof(Player))
+                            if (this is Player)
                             {
                                 //Check if this target player is passable....
                                 if (!Options.Instance.Passability.Passable[(int) targetMap.ZoneType])
@@ -396,16 +396,15 @@ namespace Intersect.Server.Entities
                                 return (int) EntityTypes.Player;
                             }
                         }
-                        else if (en.GetType() == typeof(Npc))
+                        else if (en is Npc)
                         {
                             return (int) EntityTypes.Player;
                         }
-                        else if (en.GetType() == typeof(Resource))
+                        else if (en is Resource resource)
                         {
                             //If determine if we should walk
-                            var res = ((Resource) en);
-                            if ((!res.IsDead() && !res.Base.WalkableBefore) ||
-                                (res.IsDead() && !res.Base.WalkableAfter))
+                            if ((!resource.IsDead() && !resource.Base.WalkableBefore) ||
+                                (resource.IsDead() && !resource.Base.WalkableAfter))
                             {
                                 return (int) EntityTypes.Resource;
                             }
@@ -414,7 +413,7 @@ namespace Intersect.Server.Entities
                 }
 
                 //If this is an npc or other event.. if any global page exists that isn't passable then don't walk here!
-                if (this.GetType() != typeof(Player))
+                if (!(this is Player))
                 {
                     foreach (var evt in MapInstance.Get(tile.GetMapId()).GlobalEventInstances)
                     {
@@ -772,7 +771,7 @@ namespace Intersect.Server.Entities
 
                 if (doNotUpdate == false)
                 {
-                    if (GetType() == typeof(EventPageInstance))
+                    if (this is EventPageInstance)
                     {
                         if (client != null)
                         {
@@ -849,16 +848,9 @@ namespace Intersect.Server.Entities
             }
 
             Dir = dir;
-            if (GetType() == typeof(EventPageInstance))
+            if (this is EventPageInstance eventPageInstance && eventPageInstance.Client != null)
             {
-                if (((EventPageInstance) this).Client != null)
-                {
-                    PacketSender.SendEntityDirTo(((EventPageInstance) this).Client, this);
-                }
-                else
-                {
-                    PacketSender.SendEntityDir(this);
-                }
+                PacketSender.SendEntityDirTo(eventPageInstance.Client, this);
             }
             else
             {
@@ -1143,7 +1135,7 @@ namespace Intersect.Server.Entities
             byte projectileDir
         )
         {
-            if (target.GetType() == typeof(Resource) && parentSpell != null)
+            if (target is Resource && parentSpell != null)
             {
                 return;
             }
@@ -1204,14 +1196,16 @@ namespace Intersect.Server.Entities
                 TryAttack(target, parentSpell);
             }
 
-            if (GetType() == typeof(Player) && target.GetType() == typeof(Player))
+            var targetPlayer = target as Player;
+
+            if (this is Player player && targetPlayer != null)
             {
                 //Player interaction common events
                 foreach (EventBase evt in EventBase.Lookup.Values)
                 {
                     if (evt != null)
                     {
-                        ((Player) target).StartCommonEvent(evt, CommonEventTrigger.PlayerInteract);
+                        targetPlayer.StartCommonEvent(evt, CommonEventTrigger.PlayerInteract);
                     }
                 }
 
@@ -1225,7 +1219,7 @@ namespace Intersect.Server.Entities
                     return;
                 }
 
-                if (((Player) this).InParty((Player) target) == true)
+                if (player.InParty(targetPlayer))
                 {
                     return;
                 }
@@ -1240,42 +1234,45 @@ namespace Intersect.Server.Entities
             }
 
             //If projectile, check if a splash spell is applied
-            if (projectile != null)
+            if (projectile == null)
             {
-                if (projectile.SpellId != Guid.Empty)
-                {
-                    var s = projectile.Spell;
-                    if (s != null)
-                    {
-                        HandleAoESpell(projectile.SpellId, s.Combat.HitRadius, target.MapId, target.X, target.Y, null);
-                    }
+                return;
+            }
 
-                    //Check that the npc has not been destroyed by the splash spell
-                    //TODO: Actually implement this, since null check is wrong.
-                    if (target == null)
-                    {
-                        return;
-                    }
+            if (projectile.SpellId != Guid.Empty)
+            {
+                var s = projectile.Spell;
+                if (s != null)
+                {
+                    HandleAoESpell(projectile.SpellId, s.Combat.HitRadius, target.MapId, target.X, target.Y, null);
                 }
 
-                if (target.GetType() == typeof(Player) || target.GetType() == typeof(Npc))
+                //Check that the npc has not been destroyed by the splash spell
+                //TODO: Actually implement this, since null check is wrong.
+                if (target == null)
                 {
-                    if (projectile.Knockback > 0 && projectileDir < 4)
-
-                        //If there is a knockback, knock them backwards and make sure its linear (diagonal player movement not coded).
-                    {
-                        var dash = new DashInstance(
-                            target, projectile.Knockback, projectileDir, false, false, false, false
-                        );
-                    }
+                    return;
                 }
+            }
+
+            if (targetPlayer == null && !(target is Npc))
+            {
+                return;
+            }
+
+            //If there is a knockback, knock them backwards and make sure its linear (diagonal player movement not coded).
+            if (projectile.Knockback > 0 && projectileDir < 4)
+            {
+                var dash = new DashInstance(
+                    target, projectile.Knockback, projectileDir, false, false, false, false
+                );
             }
         }
 
         //Attacking with spell
         public virtual void TryAttack(EntityInstance target, SpellBase spellBase, bool onHitTrigger = false)
         {
-            if (target?.GetType() == typeof(Resource))
+            if (target is Resource)
             {
                 return;
             }
@@ -1314,25 +1311,22 @@ namespace Intersect.Server.Entities
                 }
 
                 //Check for parties and safe zones, friendly fire off (unless its healing)
-                if (target.GetType() == typeof(Player) && GetType() == typeof(Player))
+                if (target is Npc && this is Npc npc)
                 {
-                    if (((Player) this).InParty((Player) target) == true)
+                    if (!npc.CanNpcCombat(target, spellBase.Combat.Friendly))
                     {
                         return;
                     }
                 }
 
-                if (target.GetType() == typeof(Npc) && GetType() == typeof(Npc))
+                if (target is Player targetPlayer && this is Player player)
                 {
-                    if (!((Npc) this).CanNpcCombat(target, spellBase.Combat.Friendly))
+                    if (player.InParty(targetPlayer))
                     {
                         return;
                     }
-                }
 
-                //Check if either the attacker or the defender is in a "safe zone" (Only apply if combat is PVP)
-                if (target.GetType() == typeof(Player) && GetType() == typeof(Player))
-                {
+                    // Check if either the attacker or the defender is in a "safe zone" (Only apply if combat is PVP)
                     if (MapInstance.Get(MapId).ZoneType == MapZones.Safe)
                     {
                         return;
@@ -1351,26 +1345,17 @@ namespace Intersect.Server.Entities
             }
             else
             {
-                //Friendly Spell! Do not attack other players/npcs around us.
-                if (target.GetType() == typeof(Player) && GetType() == typeof(Player))
+                // Friendly Spell! Do not attack other players/npcs around us.
+                switch (target)
                 {
-                    if (!((Player) this).InParty((Player) target) && this != target)
-                    {
+                    case Player targetPlayer when this is Player player && !player.InParty(targetPlayer) && this != target:
+                    case Npc _ when this is Npc npc && !npc.CanNpcCombat(target, spellBase.Combat.Friendly):
                         return;
-                    }
                 }
 
-                if (target.GetType() == typeof(Npc) && GetType() == typeof(Npc))
+                if (target?.GetType() != GetType())
                 {
-                    if (!((Npc) this).CanNpcCombat(target, spellBase.Combat.Friendly))
-                    {
-                        return;
-                    }
-                }
-
-                if (target.GetType() != GetType())
-                {
-                    return; //Don't let players aoe heal npcs. Don't let npcs aoe heal players.
+                    return; // Don't let players aoe heal npcs. Don't let npcs aoe heal players.
                 }
             }
 
@@ -1426,9 +1411,9 @@ namespace Intersect.Server.Entities
                     if (spellBase.Combat.Effect == StatusTypes.Taunt)
                     {
                         target.Target = this;
-                        if (target.GetType() == typeof(Player))
+                        if (target is Player targetPlayer)
                         {
-                            PacketSender.SetPlayerTarget(((Player) target).Client, Id);
+                            PacketSender.SetPlayerTarget(targetPlayer.Client, Id);
                         }
                     }
 
@@ -1613,9 +1598,9 @@ namespace Intersect.Server.Entities
                     PacketSender.SendActionMsg(enemy, Strings.Combat.invulnerable, CustomColors.Invulnerable);
 
                     // Add a timer before able to make the next move.
-                    if (GetType() == typeof(Npc))
+                    if (this is Npc npc)
                     {
-                        ((Npc) this).MoveTimer = Globals.Timing.TimeMs + (long) GetMovementTime();
+                        npc.MoveTimer = Globals.Timing.TimeMs + (long) GetMovementTime();
                     }
 
                     return;
@@ -1687,37 +1672,27 @@ namespace Intersect.Server.Entities
                     }
 
                     //No Matter what, if we attack the entity, make them chase us
-                    if (enemy.GetType() == typeof(Npc))
+                    if (enemy is Npc enemyNpc)
                     {
-                        var dmgMap = ((Npc) enemy).DamageMap;
-                        if (dmgMap.ContainsKey(this))
-                        {
-                            dmgMap[this] += baseDamage;
-                        }
-                        else
-                        {
-                            dmgMap[this] = baseDamage;
-                        }
+                        var dmgMap = enemyNpc.DamageMap;
+                        dmgMap.TryGetValue(this, out var damage);
+                        dmgMap[this] = damage + baseDamage;
 
                         long dmg = baseDamage;
-                        var target = this;
-                        foreach (var pair in dmgMap)
+                        var newTarget = this;
+                        if (enemyNpc.Base.FocusHighestDamageDealer)
                         {
-                            if (pair.Value > dmg)
+                            foreach (var pair in dmgMap)
                             {
-                                target = pair.Key;
-                                dmg = pair.Value;
+                                if (pair.Value > dmg)
+                                {
+                                    newTarget = pair.Key;
+                                    dmg = pair.Value;
+                                }
                             }
                         }
 
-                        if (((Npc) enemy).Base.FocusHighestDamageDealer)
-                        {
-                            ((Npc) enemy).AssignTarget(target);
-                        }
-                        else
-                        {
-                            ((Npc) enemy).AssignTarget(this);
-                        }
+                        enemyNpc.AssignTarget(newTarget);
                     }
 
                     enemy.NotifySwarm(this);
@@ -1753,10 +1728,10 @@ namespace Intersect.Server.Entities
 
                     enemy.CombatTimer = Globals.Timing.TimeMs + 5000;
 
-                    //No Matter what, if we attack the entitiy, make them chase us
-                    if (enemy.GetType() == typeof(Npc))
+                    //No Matter what, if we attack the entity, make them chase us
+                    if (enemy is Npc enemyNpc)
                     {
-                        var dmgMap = ((Npc) enemy).DamageMap;
+                        var dmgMap = enemyNpc.DamageMap;
                         var target = this;
                         long dmg = 0;
                         foreach (var pair in dmgMap)
@@ -1768,13 +1743,13 @@ namespace Intersect.Server.Entities
                             }
                         }
 
-                        if (((Npc) enemy).Base.FocusHighestDamageDealer)
+                        if (enemyNpc.Base.FocusHighestDamageDealer)
                         {
-                            ((Npc) enemy).AssignTarget(target);
+                            enemyNpc.AssignTarget(target);
                         }
                         else
                         {
-                            ((Npc) enemy).AssignTarget(this);
+                            enemyNpc.AssignTarget(this);
                         }
                     }
 

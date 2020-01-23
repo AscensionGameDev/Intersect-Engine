@@ -225,7 +225,8 @@ namespace Intersect.Server.Entities
                     }
                     return false;
                 }
-                else if (enemy != null && enemy.GetType() == typeof(Player))
+
+                if (enemy != null && enemy.GetType() == typeof(Player))
                 {
                     return true;
                 }
