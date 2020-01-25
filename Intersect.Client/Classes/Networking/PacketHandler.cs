@@ -946,18 +946,51 @@ namespace Intersect.Client.Networking
         //ShowPicturePacket
         private static void HandlePacket(ShowPicturePacket packet)
         {
+            if (Gui.GameUi == null)
+            {
+                throw new ArgumentNullException(nameof(Gui.GameUi));
+            }
+
+            if (packet == null)
+            {
+                Log.Warn(
+                    "Failed to show picture because the packet was null.", new ArgumentNullException(nameof(packet))
+                );
+                return;
+            }
+
             Gui.GameUi.ShowPicture(packet.Picture, packet.Size, packet.Clickable);
         }
 
         //HidePicturePacket
         private static void HandlePacket(HidePicturePacket packet)
         {
+            if (Gui.GameUi == null)
+            {
+                throw new ArgumentNullException(nameof(Gui.GameUi));
+            }
+
+            if (packet == null)
+            {
+                Log.Warn($"{nameof(HidePicturePacket)} packet is null for some reason.");
+            }
+
             Gui.GameUi.HidePicture();
         }
 
         //ShopPacket
         private static void HandlePacket(ShopPacket packet)
         {
+            if (Gui.GameUi == null)
+            {
+                throw new ArgumentNullException(nameof(Gui.GameUi));
+            }
+
+            if (packet == null)
+            {
+                throw new ArgumentNullException(nameof(packet));
+            }
+
             if (packet.ShopData != null)
             {
                 Globals.GameShop = new ShopBase();
