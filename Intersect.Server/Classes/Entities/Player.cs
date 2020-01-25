@@ -584,8 +584,7 @@ namespace Intersect.Server.Entities
 
             if (forClient != null && GetType() == typeof(Player))
             {
-                ((PlayerEntityPacket) packet).Equipment =
-                    PacketSender.GenerateEquipmentPacket(forClient, this);
+                ((PlayerEntityPacket) packet).Equipment = PacketSender.GenerateEquipmentPacket(forClient, this);
             }
 
             return pkt;
@@ -688,7 +687,8 @@ namespace Intersect.Server.Entities
                 }
                 else
                 {
-                    classVital = classDescriptor.BaseVital[vital] + (classDescriptor.VitalIncrease[vital] * (Level - 1));
+                    classVital = classDescriptor.BaseVital[vital] +
+                                 (classDescriptor.VitalIncrease[vital] * (Level - 1));
                 }
             }
 
@@ -785,9 +785,7 @@ namespace Intersect.Server.Entities
                         if (TryTeachSpell(spellInstance, true))
                         {
                             messages.Add(
-                                Strings.Player.spelltaughtlevelup.ToString(
-                                    SpellBase.GetName(spellInstance.SpellId)
-                                )
+                                Strings.Player.spelltaughtlevelup.ToString(SpellBase.GetName(spellInstance.SpellId))
                             );
                         }
                     }
@@ -1673,22 +1671,17 @@ namespace Intersect.Server.Entities
 
                         if (itemBase.QuickCast)
                         {
-                            if (CanSpellCast(itemBase.Spell, target, false))
-                            {
-                                CastTarget = target;
-                                CastSpell(itemBase.SpellId);
-                            }
-                            else
+                            if (!CanSpellCast(itemBase.Spell, target, false))
                             {
                                 return;
                             }
+
+                            CastTarget = target;
+                            CastSpell(itemBase.SpellId);
                         }
-                        else
+                        else if (!TryTeachSpell(new Spell(itemBase.SpellId)))
                         {
-                            if (!TryTeachSpell(new Spell(itemBase.SpellId)))
-                            {
-                                return;
-                            }
+                            return;
                         }
 
                         if (itemBase.DestroySpell)
@@ -1699,12 +1692,7 @@ namespace Intersect.Server.Entities
                         break;
                     case ItemTypes.Event:
                         var evt = EventBase.Get(itemBase.EventId);
-                        if (evt == null)
-                        {
-                            return;
-                        }
-
-                        if (!StartCommonEvent(evt))
+                        if (evt == null || !StartCommonEvent(evt))
                         {
                             return;
                         }
@@ -3814,74 +3802,83 @@ namespace Intersect.Server.Entities
             var spellNum = Spells[spellSlot].SpellId;
             Target = target;
             var spell = SpellBase.Get(spellNum);
-            if (spell != null)
+            if (spell == null)
             {
-                if (CanSpellCast(spell, target, true))
+                return;
+            }
+
+            if (!CanSpellCast(spell, target, true))
+            {
+                return;
+            }
+
+            if (Spells[spellSlot].SpellCd < Globals.Timing.RealTimeMs)
+            {
+                if (CastTime < Globals.Timing.TimeMs)
                 {
-                    if (Spells[spellSlot].SpellCd < Globals.Timing.RealTimeMs)
+                    CastTime = Globals.Timing.TimeMs + spell.CastDuration;
+                    SubVital(Vitals.Mana, spell.VitalCost[(int) Vitals.Mana]);
+                    SubVital(Vitals.Health, spell.VitalCost[(int) Vitals.Health]);
+                    SpellCastSlot = spellSlot;
+                    CastTarget = Target;
+
+                    //Check if the caster has the right ammunition if a projectile
+                    if (spell.SpellType == SpellTypes.CombatSpell &&
+                        spell.Combat.TargetType == SpellTargetTypes.Projectile &&
+                        spell.Combat.ProjectileId != Guid.Empty)
                     {
-                        if (CastTime < Globals.Timing.TimeMs)
+                        var projectileBase = spell.Combat.Projectile;
+                        if (projectileBase != null && projectileBase.AmmoItemId != Guid.Empty)
                         {
-                            CastTime = Globals.Timing.TimeMs + spell.CastDuration;
-                            SubVital(Vitals.Mana, spell.VitalCost[(int) Vitals.Mana]);
-                            SubVital(Vitals.Health, spell.VitalCost[(int) Vitals.Health]);
-                            SpellCastSlot = spellSlot;
-                            CastTarget = Target;
-
-                            //Check if the caster has the right ammunition if a projectile
-                            if (spell.SpellType == SpellTypes.CombatSpell &&
-                                spell.Combat.TargetType == SpellTargetTypes.Projectile &&
-                                spell.Combat.ProjectileId != Guid.Empty)
-                            {
-                                var projectileBase = spell.Combat.Projectile;
-                                if (projectileBase != null && projectileBase.AmmoItemId != Guid.Empty)
-                                {
-                                    TakeItemsById(projectileBase.AmmoItemId, projectileBase.AmmoRequired);
-                                }
-                            }
-
-                            if (spell.CastAnimationId != Guid.Empty)
-                            {
-                                PacketSender.SendAnimationToProximity(
-                                    spell.CastAnimationId, 1, base.Id, MapId, 0, 0, (sbyte) Dir
-                                ); //Target Type 1 will be global entity
-                            }
-
-                            PacketSender.SendEntityVitals(this);
-
-                            //Check if cast should be instance
-                            if (Globals.Timing.TimeMs >= CastTime)
-                            {
-                                //Cast now!
-                                CastTime = 0;
-                                CastSpell(Spells[SpellCastSlot].SpellId, SpellCastSlot);
-                                CastTarget = null;
-                            }
-                            else
-                            {
-                                //Tell the client we are channeling the spell
-                                PacketSender.SendEntityCastTime(this, spellNum);
-                            }
+                            TakeItemsById(projectileBase.AmmoItemId, projectileBase.AmmoRequired);
                         }
-                        else
-                        {
-                            PacketSender.SendChatMsg(Client, Strings.Combat.channeling);
-                        }
+                    }
+
+                    if (spell.CastAnimationId != Guid.Empty)
+                    {
+                        PacketSender.SendAnimationToProximity(
+                            spell.CastAnimationId, 1, base.Id, MapId, 0, 0, (sbyte) Dir
+                        ); //Target Type 1 will be global entity
+                    }
+
+                    PacketSender.SendEntityVitals(this);
+
+                    //Check if cast should be instance
+                    if (Globals.Timing.TimeMs >= CastTime)
+                    {
+                        //Cast now!
+                        CastTime = 0;
+                        CastSpell(Spells[SpellCastSlot].SpellId, SpellCastSlot);
+                        CastTarget = null;
                     }
                     else
                     {
-                        PacketSender.SendChatMsg(Client, Strings.Combat.cooldown);
+                        //Tell the client we are channeling the spell
+                        PacketSender.SendEntityCastTime(this, spellNum);
                     }
                 }
+                else
+                {
+                    PacketSender.SendChatMsg(Client, Strings.Combat.channeling);
+                }
+            }
+            else
+            {
+                PacketSender.SendChatMsg(Client, Strings.Combat.cooldown);
             }
         }
 
         public override void CastSpell(Guid spellId, int spellSlot = -1)
         {
             var spellBase = SpellBase.Get(spellId);
-            if (spellBase != null)
+            if (spellBase == null)
             {
-                if (spellBase.SpellType == SpellTypes.Event)
+                return;
+            }
+
+            switch (spellBase.SpellType)
+            {
+                case SpellTypes.Event:
                 {
                     var evt = spellBase.Event;
                     if (evt != null)
@@ -3890,11 +3887,13 @@ namespace Intersect.Server.Entities
                     }
 
                     base.CastSpell(spellId, spellSlot); //To get cooldown :P
+
+                    break;
                 }
-                else
-                {
+                default:
                     base.CastSpell(spellId, spellSlot);
-                }
+
+                    break;
             }
         }
 

@@ -633,7 +633,7 @@ namespace Intersect.Server.Networking
         {
             var statuses = en.Statuses.Values.ToArray();
 
-            return new EntityVitalsPacket(en.Id, en.GetEntityType(), en.MapId, en.Vitals, en.GetMaxVitals(), en.StatusPackets());
+            return new EntityVitalsPacket(en.Id, en.GetEntityType(), en.MapId, en.GetVitals(), en.GetMaxVitals(), en.StatusPackets());
         }
 
         //EntityVitalsPacket
@@ -1359,7 +1359,7 @@ namespace Intersect.Server.Networking
             for (var i = 0; i < client.Entity.Party.Count; i++)
             {
                 var mem = client.Entity.Party[i];
-                memberPackets[i] = new PartyMemberPacket(mem.Id, mem.Name, mem.Vitals, mem.GetMaxVitals(), mem.Level);
+                memberPackets[i] = new PartyMemberPacket(mem.Id, mem.Name, mem.GetVitals(), mem.GetMaxVitals(), mem.Level);
             }
             client.SendPacket(new PartyPacket(memberPackets));
         }
@@ -1377,7 +1377,7 @@ namespace Intersect.Server.Networking
             }
             if (partyIndex > -1)
             {
-                client.SendPacket(new PartyUpdatePacket(partyIndex,new PartyMemberPacket(entity.Id,entity.Name,entity.Vitals,entity.GetMaxVitals(),entity.Level)));
+                client.SendPacket(new PartyUpdatePacket(partyIndex,new PartyMemberPacket(entity.Id,entity.Name,entity.GetVitals(), entity.GetMaxVitals(),entity.Level)));
             }
         }
         
