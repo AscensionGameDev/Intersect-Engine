@@ -240,7 +240,7 @@ namespace Intersect.Editor.Forms.Editors
             this.lstNpcs.Location = new System.Drawing.Point(6, 44);
             this.lstNpcs.Name = "lstNpcs";
             this.lstNpcs.SelectedImageIndex = 0;
-            this.lstNpcs.Size = new System.Drawing.Size(191, 159);
+            this.lstNpcs.Size = new System.Drawing.Size(191, 520);
             this.lstNpcs.TabIndex = 32;
             this.lstNpcs.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.lstNpcs_AfterSelect);
             this.lstNpcs.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.lstNpcs_NodeMouseClick);
