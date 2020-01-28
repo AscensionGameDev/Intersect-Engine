@@ -15,6 +15,8 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
+using Intersect.Logging;
+
 using Microsoft.Xna.Framework.Graphics;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -846,6 +848,14 @@ namespace Intersect.Editor.Forms.DockingElements
 
         private void picMap_DoubleClick(object sender, EventArgs e)
         {
+            var currentMap = Globals.CurrentMap;
+
+            if (currentMap == null)
+            {
+                Log.Error(new ArgumentNullException(nameof(currentMap)));
+                return;
+            }
+
             var dir = -1;
             var newMapId = Guid.Empty;
 
@@ -969,72 +979,86 @@ namespace Intersect.Editor.Forms.DockingElements
                 return;
             }
 
-            //See if we should edit an event, light, npc, etc
-            if (Globals.CurrentLayer == Options.LayerCount) //Attributes
+            switch (Globals.CurrentLayer)
             {
-            }
-            else if (Globals.CurrentLayer == Options.LayerCount + 1) //Lights
-            {
-                LightBase tmpLight;
-                if (
-                    (tmpLight =
-                        Globals.CurrentMap.FindLightAt(Globals.CurTileX,
-                            Globals.CurTileY)) == null)
+                //See if we should edit an event, light, npc, etc
+                //Attributes
+                case Options.LayerCount:
+                    break;
+
+                //Lights
+                case Options.LayerCount + 1:
                 {
-                    tmpLight = new LightBase(Globals.CurTileX, Globals.CurTileY)
+                    LightBase tmpLight;
+                    if (
+                        (tmpLight =
+                            Globals.CurrentMap.FindLightAt(Globals.CurTileX,
+                                Globals.CurTileY)) == null)
                     {
-                        Size = 50
-                    };
-                    Globals.CurrentMap.Lights.Add(tmpLight);
+                        tmpLight = new LightBase(Globals.CurTileX, Globals.CurTileY)
+                        {
+                            Size = 50
+                        };
+                        Globals.CurrentMap.Lights.Add(tmpLight);
+                    }
+                    Globals.MapLayersWindow.btnLightsHeader_Click(null, null);
+                    Globals.MapLayersWindow.lightEditor.Show();
+                    Globals.BackupLight = new LightBase(tmpLight);
+                    Globals.MapLayersWindow.lightEditor.LoadEditor(tmpLight);
+                    Globals.EditingLight = tmpLight;
+                    mMapChanged = true;
+
+                    break;
                 }
-                Globals.MapLayersWindow.btnLightsHeader_Click(null, null);
-                Globals.MapLayersWindow.lightEditor.Show();
-                Globals.BackupLight = new LightBase(tmpLight);
-                Globals.MapLayersWindow.lightEditor.LoadEditor(tmpLight);
-                Globals.EditingLight = tmpLight;
-                mMapChanged = true;
-            }
-            else if (Globals.CurrentLayer == Options.LayerCount + 2) //Events
-            {
-                EventBase tmpEvent;
-                FrmEvent tmpEventEditor;
-                if (
-                    (tmpEvent =
-                        Globals.CurrentMap.FindEventAt(Globals.CurTileX,
-                            Globals.CurTileY)) == null)
+
+                //Events
+                case Options.LayerCount + 2:
                 {
-                    tmpEvent = new EventBase(Guid.NewGuid(), Globals.CurrentMap.Id,Globals.CurTileX, Globals.CurTileY);
-                    Globals.CurrentMap.LocalEvents.Add(tmpEvent.Id, tmpEvent);
-                    tmpEventEditor = new FrmEvent(Globals.CurrentMap)
+                    var tmpEvent = currentMap.FindEventAt(Globals.CurTileX, Globals.CurTileY);
+                    FrmEvent tmpEventEditor;
+                    if (tmpEvent == null)
                     {
-                        MyEvent = tmpEvent,
-                        MyMap = Globals.CurrentMap,
-                        NewEvent = true
-                    };
-                    tmpEventEditor.InitEditor(false,false, false);
-                    tmpEventEditor.ShowDialog();
-                    mMapChanged = true;
+                        tmpEvent = new EventBase(Guid.NewGuid(), Globals.CurrentMap.Id,Globals.CurTileX, Globals.CurTileY);
+                        Globals.CurrentMap.LocalEvents.Add(tmpEvent.Id, tmpEvent);
+                        tmpEventEditor = new FrmEvent(Globals.CurrentMap)
+                        {
+                            MyEvent = tmpEvent,
+                            MyMap = Globals.CurrentMap,
+                            NewEvent = true
+                        };
+                        tmpEventEditor.InitEditor(false,false, false);
+                        tmpEventEditor.ShowDialog();
+                        mMapChanged = true;
+                    }
+                    else
+                    {
+                        tmpEventEditor = new FrmEvent(Globals.CurrentMap) {MyEvent = tmpEvent, MyMap = Globals.CurrentMap};
+                        tmpEventEditor.InitEditor(false, false, false);
+                        tmpEventEditor.ShowDialog();
+                    }
+
+                    break;
                 }
-                else
+
+                //NPCS
+                case Options.LayerCount + 3:
                 {
-                    tmpEventEditor = new FrmEvent(Globals.CurrentMap) {MyEvent = tmpEvent, MyMap = Globals.CurrentMap};
-                    tmpEventEditor.InitEditor(false, false, false);
-                    tmpEventEditor.ShowDialog();
+                    var spawnIndex = Globals.MapLayersWindow.lstMapNpcs.SelectedIndex;
+                    var spawn = -1 < spawnIndex && spawnIndex < currentMap.Spawns.Count ? currentMap.Spawns[spawnIndex] : null;
+                    if (spawn != null &&  Globals.MapLayersWindow.rbDeclared.Checked)
+                    {
+                        spawn.X = Globals.CurTileX;
+                        spawn.Y = Globals.CurTileY;
+                        mMapChanged = true;
+                    }
+
+                    break;
                 }
+
+                default:
+                    break;
             }
-            else if (Globals.CurrentLayer == Options.LayerCount + 3) //NPCS
-            {
-                if (Globals.MapLayersWindow.lstMapNpcs.SelectedIndex > -1 &&
-                    Globals.MapLayersWindow.rbDeclared.Checked == true)
-                {
-                    Globals.CurrentMap.Spawns[Globals.MapLayersWindow.lstMapNpcs.SelectedIndex].X = Globals.CurTileX;
-                    Globals.CurrentMap.Spawns[Globals.MapLayersWindow.lstMapNpcs.SelectedIndex].Y = Globals.CurTileY;
-                    mMapChanged = true;
-                }
-            }
-            else
-            {
-            }
+
             Globals.Dragging = false;
             Globals.TotalTileDragX = 0;
             Globals.TotalTileDragY = 0;
