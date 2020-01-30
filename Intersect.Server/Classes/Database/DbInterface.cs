@@ -28,6 +28,7 @@ using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Data.Common;
@@ -1114,29 +1115,131 @@ namespace Intersect.Server
                                                  sSavePlayerDbTask.Status == TaskStatus.WaitingToRun ||
                                                  sSavePlayerDbTask.Status == TaskStatus.WaitingForActivation))
             {
-                sSavePlayerDbTask = Task.Factory.StartNew(SavePlayerDatabase);
+                var trace = Environment.StackTrace;
+                sSavePlayerDbTask = Task.Factory.StartNew(() => SavePlayerDatabase(trace));
             }
         }
+
+        private struct IdTrace
+        {
+
+            public long Id;
+
+            public string Trace;
+
+            public override string ToString() => $"{Id:000000}: {Trace}";
+
+        }
+
+        private static long gameDbSaveId = 0;
+        [NotNull] private static readonly ConcurrentQueue<IdTrace> gameDbTraces = new ConcurrentQueue<IdTrace>();
 
         public static void SaveGameDatabase()
         {
             ++gameSavesWaiting;
             gameDbLogger?.Debug($"{gameSavesWaiting} saves queued.");
+
+            if (gameDbTraces.Count > 1)
+            {
+                var builder = new StringBuilder();
+
+                while (!gameDbTraces.IsEmpty)
+                {
+                    builder.AppendLine(
+                        gameDbTraces.TryDequeue(out var dequeueTrace)
+                            ? dequeueTrace.ToString()
+                            : $"Error dequeuing trace ({gameDbTraces.Count} traces)."
+                    );
+
+                    builder.AppendLine();
+                }
+
+                gameDbLogger?.Debug($"{gameSavesWaiting} saves queued, traces:\n{builder}");
+            }
+
+            gameDbTraces.Enqueue(new IdTrace { Id = gameDbSaveId++, Trace = Environment.StackTrace });
+
+            switch (gameSavesWaiting)
+            {
+                case var _ when gameSavesWaiting > 2:
+                    Log.Debug($"Possible Game DB deadlock: {gameSavesWaiting} saves queued!");
+                    break;
+
+                case var _ when gameSavesWaiting > 8:
+                    Log.Warn($"Probable Game DB deadlock: {gameSavesWaiting} saves queued!");
+                    break;
+
+                case var _ when gameSavesWaiting > 16:
+                    Log.Error($"Detected Game DB deadlock: {gameSavesWaiting} saves queued!");
+                    break;
+            }
+
             lock (mGameDbLock)
             {
                 var elapsedMs = SaveDb(sGameDb);
                 gameDbLogger?.Debug($"Save took {elapsedMs}ms, {--gameSavesWaiting} saves queued.");
+                gameDbTraces.TryDequeue(out _);
             }
         }
 
-        public static void SavePlayerDatabase()
+        private static long playerDbSaveId = 0;
+        [NotNull] private static readonly ConcurrentQueue<IdTrace> playerDbTraces = new ConcurrentQueue<IdTrace>();
+
+        public static void SavePlayerDatabase(string trace)
         {
             ++playerSavesWaiting;
-            playerDbLogger?.Debug($"{playerSavesWaiting} saves queued.");
+            var currentTrace = new IdTrace { Id = playerDbSaveId++, Trace = trace };
+            playerDbLogger?.Debug($"{currentTrace.Id:00000}: {playerSavesWaiting} saves queued.");
+
+            if (playerDbTraces.Count > 1)
+            {
+                var builder = new StringBuilder();
+                
+                while (!playerDbTraces.IsEmpty)
+                {
+                    builder.AppendLine(
+                        playerDbTraces.TryDequeue(out var dequeueTrace)
+                            ? dequeueTrace.ToString()
+                            : $"{currentTrace.Id:00000}: Error dequeuing trace ({playerDbTraces.Count} traces)."
+                    );
+
+                    builder.AppendLine();
+                }
+
+                playerDbLogger?.Debug($"{currentTrace.Id:00000}: {playerSavesWaiting} saves queued, traces:\n{builder}");
+            }
+
+            playerDbTraces.Enqueue(currentTrace);
+
+            switch (playerSavesWaiting)
+            {
+                case var _ when playerSavesWaiting > 1:
+                    Log.Debug($"{currentTrace.Id:00000}: Possible Player DB deadlock: {playerSavesWaiting} saves queued!");
+                    break;
+
+                case var _ when playerSavesWaiting > 4:
+                    Log.Warn($"{currentTrace.Id:00000}: Probable Player DB deadlock: {playerSavesWaiting} saves queued!");
+                    break;
+
+                case var _ when playerSavesWaiting > 8:
+                    Log.Error($"{currentTrace.Id:00000}: Detected Player DB deadlock: {playerSavesWaiting} saves queued!");
+                    break;
+            }
+
             lock (mPlayerDbLock)
             {
                 var elapsedMs = SaveDb(sPlayerDb);
-                playerDbLogger?.Debug($"Save took {elapsedMs}ms, {--playerSavesWaiting} saves queued.");
+                playerDbLogger?.Debug($"{currentTrace.Id:00000}: Save took {elapsedMs}ms, {--playerSavesWaiting} saves queued.");
+                if (playerDbTraces.TryPeek(out var peekTrace) && peekTrace.Id != currentTrace.Id)
+                {
+                    playerDbLogger?.Debug($"{currentTrace.Id:00000}: Next save expected to complete was {peekTrace.Id:00000}, which is from a different call.");
+                }
+
+                playerDbLogger?.Debug(
+                    playerDbTraces.TryDequeue(out var dequeueTrace)
+                        ? $"{dequeueTrace.Id:00000} ({currentTrace.Id:00000}): Save completed."
+                        : $"{currentTrace.Id:00000}: Save complete but there are no available traces."
+                );
             }
         }
 

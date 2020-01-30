@@ -202,7 +202,7 @@ namespace Intersect.Server.Core
 
                 // TODO: This probably also needs to not be a global, but will require more work to clean up.
                 Log.Info("Saving player database..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
-                DbInterface.SavePlayerDatabase();
+                DbInterface.SavePlayerDatabase(Environment.StackTrace);
                 Log.Info("Saving game database..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
                 DbInterface.SaveGameDatabase();
 
