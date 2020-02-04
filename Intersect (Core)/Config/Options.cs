@@ -62,9 +62,6 @@ namespace Intersect
 
         public static bool UPnP => Instance._upnp;
 
-        public static bool NoPunchthrough { get; set; }
-        public static bool NoNetworkCheck { get; set; }
-
         public static bool OpenPortChecker => Instance._portChecker;
         public static SmtpSettings Smtp => Instance.SmtpSettings;
         public static int PasswordResetExpirationMinutes => Instance._passResetExpirationMin;

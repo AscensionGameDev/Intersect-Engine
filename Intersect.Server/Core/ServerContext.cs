@@ -122,7 +122,7 @@ namespace Intersect.Server.Core
 
             RestApi.Start();
 
-            if (!Options.UPnP || Options.NoPunchthrough)
+            if (!Options.UPnP || ServerContext.Instance.StartupOptions.NoNatPunchthrough)
             {
                 return;
             }

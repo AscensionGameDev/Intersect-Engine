@@ -134,31 +134,8 @@ namespace Intersect.Server.Core
             DbInterface.InitializeDbLoggers();
             DbInterface.CheckDirectories();
 
-            if (args != null)
-            {
-                foreach (var arg in args)
-                {
-                    if (string.IsNullOrWhiteSpace(arg) || !arg.Contains("port="))
-                    {
-                        continue;
-                    }
-
-                    if (ushort.TryParse(arg.Split("=".ToCharArray())[1], out var port))
-                    {
-                        Options.ServerPort = port;
-                    }
-                }
-
-                if (args.Contains("noupnp"))
-                {
-                    Options.NoPunchthrough = true;
-                }
-
-                if (args.Contains("noportcheck"))
-                {
-                    Options.NoNetworkCheck = true;
-                }
-            }
+            if (Context?.StartupOptions.Port > 0)
+                Options.ServerPort = Context.StartupOptions.Port;
 
             PrintIntroduction();
 
@@ -220,7 +197,7 @@ namespace Intersect.Server.Core
         internal static void CheckNetwork()
         {
             //Check to see if AGD can see this server. If so let the owner know :)
-            if (Options.OpenPortChecker && !Options.NoNetworkCheck)
+            if (Options.OpenPortChecker && !Context.StartupOptions.NoNetworkCheck)
             {
                 var serverAccessible = PortChecker.CanYouSeeMe(Options.ServerPort, out var externalIp);
 
