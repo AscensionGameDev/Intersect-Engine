@@ -324,10 +324,6 @@ namespace Intersect.Server.Core
 
                 case PlatformID.Unix:
                     sqliteResourceName = Environment.Is64BitProcess ? "libe_sqlite3_x64.so" : "libe_sqlite3_x86.so";
-                    if (args?.Contains("alpine") ?? false)
-                    {
-                        sqliteResourceName = "libe_sqlite3_alpine.so";
-                    }
                     sqliteFileName = "libe_sqlite3.so";
                     break;
 
