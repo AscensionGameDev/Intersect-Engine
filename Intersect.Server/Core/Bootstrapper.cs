@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using CommandLine;
 using Intersect.Logging;
 using Intersect.Server.General;
@@ -22,6 +23,7 @@ namespace Intersect.Server.Core
         {
             AppDomain.CurrentDomain.AssemblyResolve += OnAssemblyResolve;
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+            TaskScheduler.UnobservedTaskException += UnobservedTaskException;
 
             Console.CancelKeyPress += OnConsoleCancelKeyPress;
         }
@@ -438,6 +440,13 @@ namespace Intersect.Server.Core
                 Console.WriteLine(Strings.Errors.errorlogged);
             }
 
+            //Dispose Server Context Before Waiting
+            //Under no circumstances do we want the game to continue
+            if (!(Context?.IsDisposed ?? true))
+            {
+                Context?.Dispose();
+            }
+
             if (Context?.StartupOptions.DoNotHaltOnError ?? false)
             {
                 Console.WriteLine(Strings.Errors.errorservercrashnohalt);
@@ -447,10 +456,27 @@ namespace Intersect.Server.Core
                 Console.WriteLine(Strings.Errors.errorservercrash);
                 Context.ServerConsole.Wait(true);
             }
+        }
 
+        private static void UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
+        {
+             ProcessUnhandledException(sender, e.Exception.InnerException as Exception ?? throw new InvalidOperationException());
+
+            //Dispose Server Context Before Waiting
+            //Under no circumstances do we want the game to continue
             if (!(Context?.IsDisposed ?? true))
             {
                 Context?.Dispose();
+            }
+
+            if (Context?.StartupOptions.DoNotHaltOnError ?? false)
+            {
+                Console.WriteLine(Strings.Errors.errorservercrashnohalt);
+            }
+            else
+            {
+                Console.WriteLine(Strings.Errors.errorservercrash);
+                Context.ServerConsole.Wait(true);
             }
         }
 

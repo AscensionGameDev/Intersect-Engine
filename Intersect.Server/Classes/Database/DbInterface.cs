@@ -117,7 +117,7 @@ namespace Intersect.Server
         //TODO: Options for saving frequency and number of backups to keep.
         public static void BackupDatabase()
         {
-            
+
         }
 
         [NotNull]
@@ -228,7 +228,7 @@ namespace Intersect.Server
             }
             sGameDb.MigrationsProcessed(processedGameMigrations.ToArray());
 
-            
+
             sPlayerDb.Database.Migrate();
             var remainingPlayerMigrations = sPlayerDb.PendingMigrations;
             var processedPlayerMigrations = new List<string>(playerMigrations);
@@ -240,7 +240,7 @@ namespace Intersect.Server
 #if DEBUG
             if (ServerContext.Instance.RestApi.Configuration.SeedMode)
             {
-                
+
                 sPlayerDb.Seed();
             }
 #endif
@@ -381,7 +381,13 @@ namespace Intersect.Server
             }
         }
 
-        public static long RegisteredPlayers => sPlayerDb.Users.Count();
+        public static long RegisteredPlayers
+        {
+            get
+            {
+                lock (mPlayerDbLock) { return sPlayerDb.Players.Count(); }
+            }
+        }
 
         public static void CreateAccount(Client client, [NotNull] string username, [NotNull] string password, [NotNull] string email)
         {
