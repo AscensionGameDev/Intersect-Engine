@@ -1360,7 +1360,8 @@ namespace Intersect.Server
                             Console.WriteLine(Strings.Migration.mysqlconnectionerror.ToString(ex));
                             Console.WriteLine();
                             Console.WriteLine(Strings.Migration.mysqltryagain);
-                            var key = Console.ReadKey().KeyChar;
+                            var input = Console.ReadLine();
+                            var key = input.Length > 0 ? input[0] : ' ';
                             Console.WriteLine();
                             if (!string.Equals(Strings.Migration.tryagaincharacter, key.ToString(), StringComparison.Ordinal))
                             {
@@ -1379,7 +1380,8 @@ namespace Intersect.Server
                         Console.WriteLine();
                         var filename = gameDb ? GameDbFilename : PlayersDbFilename;
                         Console.WriteLine(Strings.Migration.sqlitealreadyexists.ToString(filename));
-                        var key = Console.ReadKey().KeyChar;
+                        var input = Console.ReadLine();
+                        var key = input.Length > 0 ? input[0] : ' ';
                         Console.WriteLine();
                         if (key.ToString() != Strings.Migration.overwritecharacter)
                         {

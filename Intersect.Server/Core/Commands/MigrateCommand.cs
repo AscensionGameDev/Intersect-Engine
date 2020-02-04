@@ -16,6 +16,8 @@ namespace Intersect.Server.Core.Commands
 
         protected override void HandleValue(ServerContext context, ParserResult result)
         {
+            string input = "";
+            char selection = ' ';
             Console.WriteLine();
             Console.WriteLine(Strings.Migration.selectdb);
             Console.WriteLine();
@@ -31,7 +33,8 @@ namespace Intersect.Server.Core.Commands
             Console.WriteLine(Strings.Migration.cancel);
             // TODO: Remove > when moving to ReadKeyWait when console magic is ready
             Console.Write("> ");
-            var selection = Console.ReadKey().KeyChar;
+            input = Console.ReadLine();
+            selection = input.Length > 0 ? input[0] : ' ';
             Console.WriteLine();
             DatabaseOptions db;
             if (selection.ToString() == Strings.Migration.selectgamedbkey.ToString())
@@ -55,7 +58,8 @@ namespace Intersect.Server.Core.Commands
             Console.WriteLine(Strings.Migration.cancel);
             // TODO: Remove > when moving to ReadKeyWait when console magic is ready
             Console.Write("> ");
-            selection = Console.ReadKey().KeyChar;
+            input = Console.ReadLine();
+            selection = input.Length > 0 ? input[0] : ' ';
             Console.WriteLine();
             var dbengine = DatabaseOptions.DatabaseType.sqlite;
             if (selection.ToString() != Strings.Migration.selectsqlitekey.ToString() &&
