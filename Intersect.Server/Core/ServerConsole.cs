@@ -7,6 +7,9 @@ using Intersect.Threading;
 using JetBrains.Annotations;
 using System.Linq;
 using Intersect.Server.Core.CommandParsing.Commands;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Intersect.Server.Core
 {
@@ -19,7 +22,7 @@ namespace Intersect.Server.Core
         [NotNull]
         public CommandParser Parser { get; }
 
-        public ServerConsole()
+        public ServerConsole(): base("ServerConsole")
         {
             Console.WaitPrefix = "> ";
 
@@ -65,154 +68,160 @@ namespace Intersect.Server.Core
         protected override void ThreadStart()
         {
             Console.WriteLine(Strings.Intro.consoleactive);
+            try {
 
-            while (ServerContext.Instance.IsRunning && !mDoNotContinue)
-            {
-                string line;
-                lock (mInputLock)
+                while (ServerContext.Instance.IsRunning && !mDoNotContinue)
                 {
+                    string line;
+                    lock (mInputLock)
+                    {
 #if !CONSOLE_EXTENSIONS
-                    Console.Write(Console.WaitPrefix);
+                        Console.Write(Console.WaitPrefix);
 #endif
 
-                    line = Console.ReadLine()?.Trim();
+                        line = Console.ReadLine()?.Trim();
 
-                    if (mDoNotContinue)
-                    {
-                        return;
-                    }
-                }
-
-                if (line == null)
-                {
-                    ServerContext.Instance.RequestShutdown();
-                    break;
-                }
-
-                if (string.IsNullOrEmpty(line))
-                {
-                    continue;
-                }
-
-                var result = Parser.Parse(line);
-                var shouldHelp = result.Command is IHelpableCommand helpable && result.Find(helpable.Help);
-                if (result.Missing.IsEmpty)
-                {
-                    var fatalError = false;
-                    result.Errors.ForEach(error =>
-                    {
-                        if (error == null)
+                        if (mDoNotContinue)
                         {
                             return;
                         }
+                    }
 
-                        fatalError = error.IsFatal;
-                        if (error is MissingArgumentError)
-                        {
-                            return;
-                        }
-
-                        if (error.Exception != null)
-                        {
-                            Log.Warn(error.Exception);
-                        }
-
-                        Console.WriteLine(error.Message);
-                    });
-
-                    if (!fatalError)
+                    if (line == null)
                     {
-                        if (!shouldHelp)
+                        ServerContext.Instance.RequestShutdown();
+                        break;
+                    }
+
+                    if (string.IsNullOrEmpty(line))
+                    {
+                        continue;
+                    }
+
+                    var result = Parser.Parse(line);
+                    var shouldHelp = result.Command is IHelpableCommand helpable && result.Find(helpable.Help);
+                    if (result.Missing.IsEmpty)
+                    {
+                        var fatalError = false;
+                        result.Errors.ForEach(error =>
                         {
-                            result.Command?.Handle(ServerContext.Instance, result);
-                            continue;
+                            if (error == null)
+                            {
+                                return;
+                            }
+
+                            fatalError = error.IsFatal;
+                            if (error is MissingArgumentError)
+                            {
+                                return;
+                            }
+
+                            if (error.Exception != null)
+                            {
+                                Log.Warn(error.Exception);
+                            }
+
+                            Console.WriteLine(error.Message);
+                        });
+
+                        if (!fatalError)
+                        {
+                            if (!shouldHelp)
+                            {
+                                result.Command?.Handle(ServerContext.Instance, result);
+                                continue;
+                            }
                         }
                     }
-                }
-                else
-                {
-                    Console.WriteLine(
-                        Strings.Commands.Parsing.Errors.MissingArguments.ToString(
-                            string.Join(
-                                Strings.Commands.Parsing.Errors.MissingArgumentsDelimeter,
-                                result.Missing.Select(argument =>
-                                    {
-                                        var typeName = argument?.ValueType.Name ?? Strings.Commands.Parsing.TypeUnknown;
-                                        if (Strings.Commands.Parsing.TypeNames.TryGetValue(typeName,
-                                            out var localizedType))
+                    else
+                    {
+                        Console.WriteLine(
+                            Strings.Commands.Parsing.Errors.MissingArguments.ToString(
+                                string.Join(
+                                    Strings.Commands.Parsing.Errors.MissingArgumentsDelimeter,
+                                    result.Missing.Select(argument =>
                                         {
-                                            typeName = localizedType;
-                                        }
+                                            var typeName = argument?.ValueType.Name ?? Strings.Commands.Parsing.TypeUnknown;
+                                            if (Strings.Commands.Parsing.TypeNames.TryGetValue(typeName,
+                                                out var localizedType))
+                                            {
+                                                typeName = localizedType;
+                                            }
 
-                                        return argument?.Name +
-                                               Strings.Commands.Parsing.Formatting.Type.ToString(typeName);
-                                    }
+                                            return argument?.Name +
+                                                   Strings.Commands.Parsing.Formatting.Type.ToString(typeName);
+                                        }
+                                    )
                                 )
                             )
-                        )
-                    );
+                        );
+                    }
+
+                    if (result.Command == null)
+                    {
+                        continue;
+                    }
+
+                    var command = result.Command;
+                    Console.WriteLine(command.FormatUsage(Parser.Settings, result.AsContext(true), true));
+
+                    if (!shouldHelp)
+                    {
+                        continue;
+                    }
+
+                    Console.WriteLine($@"    {command.Description}");
+                    Console.WriteLine();
+
+                    var requiredBuffer = command.Arguments.Count == 1
+                        ? ""
+                        : new string(' ', Strings.Commands.RequiredInfo.ToString().Length);
+                    command.UnsortedArguments.ForEach(argument =>
+                    {
+                        if (argument == null)
+                        {
+                            return;
+                        }
+
+                        var shortName = argument.HasShortName ? argument.ShortName.ToString() : null;
+                        var name = argument.Name;
+
+                        var typeName = argument.ValueType.Name;
+                        if (argument.IsFlag)
+                        {
+                            typeName = Strings.Commands.FlagInfo;
+                        }
+                        else if (Strings.Commands.Parsing.TypeNames.TryGetValue(typeName, out var localizedType))
+                        {
+                            typeName = localizedType;
+                        }
+
+                        if (!argument.IsPositional)
+                        {
+                            shortName = Parser.Settings.PrefixShort + shortName;
+                            name = Parser.Settings.PrefixLong + name;
+                        }
+
+                        var names = string.Join(
+                            ", ", new[] { shortName, name }.Where(nameString => !string.IsNullOrWhiteSpace(nameString))
+                        );
+
+                        var required = argument.IsRequiredByDefault
+                            ? Strings.Commands.RequiredInfo.ToString()
+                            : requiredBuffer;
+
+                        var descriptionSegment =
+                            string.IsNullOrEmpty(argument.Description) ? "" : $@" - {argument.Description}";
+
+                        Console.WriteLine($@"    {names,-16} {typeName,-12} {required}{descriptionSegment}");
+                    });
+
+                    Console.WriteLine();
                 }
-
-                if (result.Command == null)
-                {
-                    continue;
-                }
-
-                var command = result.Command;
-                Console.WriteLine(command.FormatUsage(Parser.Settings, result.AsContext(true), true));
-
-                if (!shouldHelp)
-                {
-                    continue;
-                }
-
-                Console.WriteLine($@"    {command.Description}");
-                Console.WriteLine();
-
-                var requiredBuffer = command.Arguments.Count == 1
-                    ? ""
-                    : new string(' ', Strings.Commands.RequiredInfo.ToString().Length);
-                command.UnsortedArguments.ForEach(argument =>
-                {
-                    if (argument == null)
-                    {
-                        return;
-                    }
-
-                    var shortName = argument.HasShortName ? argument.ShortName.ToString() : null;
-                    var name = argument.Name;
-
-                    var typeName = argument.ValueType.Name;
-                    if (argument.IsFlag)
-                    {
-                        typeName = Strings.Commands.FlagInfo;
-                    }
-                    else if (Strings.Commands.Parsing.TypeNames.TryGetValue(typeName, out var localizedType))
-                    {
-                        typeName = localizedType;
-                    }
-
-                    if (!argument.IsPositional)
-                    {
-                        shortName = Parser.Settings.PrefixShort + shortName;
-                        name = Parser.Settings.PrefixLong + name;
-                    }
-
-                    var names = string.Join(
-                        ", ", new[] {shortName, name}.Where(nameString => !string.IsNullOrWhiteSpace(nameString))
-                    );
-
-                    var required = argument.IsRequiredByDefault
-                        ? Strings.Commands.RequiredInfo.ToString()
-                        : requiredBuffer;
-
-                    var descriptionSegment =
-                        string.IsNullOrEmpty(argument.Description) ? "" : $@" - {argument.Description}";
-
-                    Console.WriteLine($@"    {names,-16} {typeName,-12} {required}{descriptionSegment}");
-                });
-
-                Console.WriteLine();
+            }
+            catch (Exception ex)
+            {
+                Task.Factory.StartNew(() => Bootstrapper.OnUnhandledException(Thread.CurrentThread.Name, new UnhandledExceptionEventArgs(ex, true)));
             }
         }
     }

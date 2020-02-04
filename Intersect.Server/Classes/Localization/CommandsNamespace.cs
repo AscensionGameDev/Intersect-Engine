@@ -187,6 +187,10 @@ namespace Intersect.Server.Localization
                 @"Server is now closing. Please wait while your game and player data is saved!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
+            public readonly LocalizedString exited =
+                @"Main server shutdown completed. If your server is stuck you may safely kill it.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]
             public readonly LocalizedString commandinfo = @"/?";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] [NotNull]

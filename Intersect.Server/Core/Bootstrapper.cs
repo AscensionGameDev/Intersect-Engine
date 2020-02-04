@@ -30,6 +30,8 @@ namespace Intersect.Server.Core
 
         public static ServerContext Context { get; private set; }
 
+        private static bool mErrored { get; set; }
+
         [NotNull]
         public static LockingActionQueue MainThread { get; private set; }
 
@@ -42,6 +44,7 @@ namespace Intersect.Server.Core
 
             var commandLineOptions = ParseCommandLineArgs(args);
             Context = new ServerContext(commandLineOptions);
+            var noHaltOnError = Context?.StartupOptions.DoNotHaltOnError ?? false;
 
             if (!PostContextSetup())
             {
@@ -55,6 +58,21 @@ namespace Intersect.Server.Core
                 action.Invoke();
             }
             Log.Diagnostic("Bootstrapper exited.");
+
+            //At this point dbs should be saved and all threads should be killed. Give a message saying that the server has shutdown and to press any key to exit.
+            //Having the message and the console.readline() allows the server to exit properly if the console has crashed, and it allows us to know that the server context has shutdown.
+            if (mErrored)
+            {
+                if (noHaltOnError)
+                {
+                    Console.WriteLine(Strings.Errors.errorservercrashnohalt);
+                }
+                else
+                {
+                    Console.WriteLine(Strings.Errors.errorservercrash);
+                    Console.ReadLine();
+                }
+            }
         }
 
         [NotNull]
@@ -440,43 +458,27 @@ namespace Intersect.Server.Core
                 Console.WriteLine(Strings.Errors.errorlogged);
             }
 
+            mErrored = true;
+
             //Dispose Server Context Before Waiting
             //Under no circumstances do we want the game to continue
             if (!(Context?.IsDisposed ?? true))
             {
-                Context?.Dispose();
-            }
-
-            if (Context?.StartupOptions.DoNotHaltOnError ?? false)
-            {
-                Console.WriteLine(Strings.Errors.errorservercrashnohalt);
-            }
-            else
-            {
-                Console.WriteLine(Strings.Errors.errorservercrash);
-                Context.ServerConsole.Wait(true);
+                Context?.RequestShutdown(true);
             }
         }
 
         private static void UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
         {
-             ProcessUnhandledException(sender, e.Exception.InnerException as Exception ?? throw new InvalidOperationException());
+            ProcessUnhandledException(sender, e.Exception.InnerException as Exception ?? throw new InvalidOperationException());
+
+            mErrored = true;
 
             //Dispose Server Context Before Waiting
             //Under no circumstances do we want the game to continue
             if (!(Context?.IsDisposed ?? true))
             {
-                Context?.Dispose();
-            }
-
-            if (Context?.StartupOptions.DoNotHaltOnError ?? false)
-            {
-                Console.WriteLine(Strings.Errors.errorservercrashnohalt);
-            }
-            else
-            {
-                Console.WriteLine(Strings.Errors.errorservercrash);
-                Context.ServerConsole.Wait(true);
+                Context?.RequestShutdown(true);
             }
         }
 

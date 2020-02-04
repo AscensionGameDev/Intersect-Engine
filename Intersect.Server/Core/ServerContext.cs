@@ -217,7 +217,14 @@ namespace Intersect.Server.Core
                     Log.Info("Shutting down the console thread..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
                     if (!ThreadConsole.Join(1000))
                     {
-                        ThreadConsole.Abort();
+                        try
+                        {
+                            ThreadConsole.Abort();
+                        }
+                        catch (ThreadAbortException ex)
+                        {
+
+                        }
                     }
                 }
 
@@ -226,7 +233,14 @@ namespace Intersect.Server.Core
                     Log.Info("Shutting down the logic thread..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
                     if (!ThreadLogic.Join(10000))
                     {
-                        ThreadLogic.Abort();
+                        try
+                        {
+                            ThreadLogic.Abort();
+                        }
+                        catch (ThreadAbortException ex)
+                        {
+
+                        }
                     }
                 }
             }
@@ -234,6 +248,7 @@ namespace Intersect.Server.Core
             Log.Info("Base dispose." + $" ({stopwatch.ElapsedMilliseconds}ms)");
             base.Dispose(disposing);
             Log.Info("Finished disposing server context." + $" ({stopwatch.ElapsedMilliseconds}ms)");
+            Console.WriteLine(Strings.Commands.exited);
         }
 
         #endregion

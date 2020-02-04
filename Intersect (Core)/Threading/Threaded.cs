@@ -12,9 +12,10 @@ namespace Intersect.Threading
         [NotNull]
         private readonly Thread mThread;
 
-        protected Threaded()
+        protected Threaded(string name = null)
         {
             mThread = new Thread(ThreadStart);
+            if (!string.IsNullOrEmpty(name)) mThread.Name = name;
         }
 
         public Thread Start()
