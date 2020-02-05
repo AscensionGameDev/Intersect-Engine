@@ -74,7 +74,8 @@ namespace Intersect.Server.Database.PlayerData
 
             modelBuilder.Entity<User>().HasMany(b => b.Players).WithOne(p => p.User);
 
-            modelBuilder.Entity<Player>().HasMany(b => b.Friends).WithOne(p => p.Owner);
+            modelBuilder.Entity<Player>().HasMany(b => b.Friends).WithOne(p => p.Owner).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Friend>().HasOne(b => b.Target).WithMany().OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Player>().HasMany(b => b.Spells).WithOne(p => p.Player);
 

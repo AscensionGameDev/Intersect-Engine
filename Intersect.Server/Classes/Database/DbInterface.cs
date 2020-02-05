@@ -41,6 +41,7 @@ using System.Threading.Tasks;
 
 using Intersect.Logging;
 using Intersect.Logging.Output;
+using System.Threading;
 
 namespace Intersect.Server
 {
@@ -1182,9 +1183,18 @@ namespace Intersect.Server
 
             lock (mGameDbLock)
             {
-                var elapsedMs = SaveDb(sGameDb);
-                gameDbLogger?.Debug($"Save took {elapsedMs}ms, {--gameSavesWaiting} saves queued.");
-                gameDbTraces.TryDequeue(out _);
+                try
+                {
+                    var elapsedMs = SaveDb(sGameDb);
+                    gameDbLogger?.Debug($"Save took {elapsedMs}ms, {--gameSavesWaiting} saves queued.");
+                    gameDbTraces.TryDequeue(out _);
+                }
+                catch (Exception ex)
+                {
+                    Task.Factory.StartNew(() => Bootstrapper.OnUnhandledException(Thread.CurrentThread.Name, new UnhandledExceptionEventArgs(ex, true)));
+                    Log.Error("Error Saving Game Database! Server will shutdown in order to prevent potential rollback scenarios!");
+                    gameDbLogger?.Error(ex, "Error Saving Game Database! Server will shutdown in order to prevent potential rollback scenarios!");
+                }
             }
         }
 
@@ -1234,18 +1244,27 @@ namespace Intersect.Server
 
             lock (mPlayerDbLock)
             {
-                var elapsedMs = SaveDb(sPlayerDb);
-                playerDbLogger?.Debug($"{currentTrace.Id:00000}: Save took {elapsedMs}ms, {--playerSavesWaiting} saves queued.");
-                if (playerDbTraces.TryPeek(out var peekTrace) && peekTrace.Id != currentTrace.Id)
+                try
                 {
-                    playerDbLogger?.Debug($"{currentTrace.Id:00000}: Next save expected to complete was {peekTrace.Id:00000}, which is from a different call.");
-                }
+                    var elapsedMs = SaveDb(sPlayerDb);
+                    playerDbLogger?.Debug($"{currentTrace.Id:00000}: Save took {elapsedMs}ms, {--playerSavesWaiting} saves queued.");
+                    if (playerDbTraces.TryPeek(out var peekTrace) && peekTrace.Id != currentTrace.Id)
+                    {
+                        playerDbLogger?.Debug($"{currentTrace.Id:00000}: Next save expected to complete was {peekTrace.Id:00000}, which is from a different call.");
+                    }
 
-                playerDbLogger?.Debug(
-                    playerDbTraces.TryDequeue(out var dequeueTrace)
-                        ? $"{dequeueTrace.Id:00000} ({currentTrace.Id:00000}): Save completed."
-                        : $"{currentTrace.Id:00000}: Save complete but there are no available traces."
-                );
+                    playerDbLogger?.Debug(
+                        playerDbTraces.TryDequeue(out var dequeueTrace)
+                            ? $"{dequeueTrace.Id:00000} ({currentTrace.Id:00000}): Save completed."
+                            : $"{currentTrace.Id:00000}: Save complete but there are no available traces."
+                    );
+                }
+                catch (Exception ex)
+                {
+                    Task.Factory.StartNew(() => Bootstrapper.OnUnhandledException(Thread.CurrentThread.Name, new UnhandledExceptionEventArgs(ex, true)));
+                    Log.Error("Error Saving Player Database! Server will shutdown in order to prevent potential rollback scenarios!");
+                    playerDbLogger?.Error(ex, "Error Saving Player Database! Server will shutdown in order to prevent potential rollback scenarios!");
+                }
             }
         }
 
