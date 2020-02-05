@@ -56,6 +56,9 @@ namespace Intersect.Server.Core
         {
             StartupOptions = startupOptions;
 
+            if (startupOptions.Port > 0)
+                Options.ServerPort = startupOptions.Port;
+
             ServerConsole = new ServerConsole();
             ServerLogic = new ServerLogic();
             RestApi = new RestApi(startupOptions.ApiPort);

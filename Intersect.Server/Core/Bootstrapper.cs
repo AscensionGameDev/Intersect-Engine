@@ -134,9 +134,6 @@ namespace Intersect.Server.Core
             DbInterface.InitializeDbLoggers();
             DbInterface.CheckDirectories();
 
-            if (Context?.StartupOptions.Port > 0)
-                Options.ServerPort = Context.StartupOptions.Port;
-
             PrintIntroduction();
 
             ExportDependencies(args);
