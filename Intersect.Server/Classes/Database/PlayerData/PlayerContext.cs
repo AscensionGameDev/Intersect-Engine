@@ -46,8 +46,8 @@ namespace Intersect.Server.Database.PlayerData
 
         public PlayerContext(
             [NotNull] DbConnectionStringBuilder connectionStringBuilder,
-            DatabaseOptions.DatabaseType databaseType
-        ) : base(connectionStringBuilder, databaseType, false)
+            DatabaseOptions.DatabaseType databaseType, Intersect.Logging.Logger logger = null, Intersect.Logging.LogLevel logLevel = Intersect.Logging.LogLevel.None
+        ) : base(connectionStringBuilder, databaseType, false, logger, logLevel)
         {
         }
 

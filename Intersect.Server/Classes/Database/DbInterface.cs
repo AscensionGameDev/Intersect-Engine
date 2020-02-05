@@ -73,14 +73,14 @@ namespace Intersect.Server
 
         public static void InitializeDbLoggers()
         {
-            if (Options.GameDb.EnableLogs)
+            if (Options.GameDb.LogLevel > LogLevel.None)
             {
                 gameDbLogger = new Logger(
                     new LogConfiguration
                     {
                         Tag = "GAMEDB",
                         Pretty = false,
-                        LogLevel = LogLevel.Debug,
+                        LogLevel = Options.GameDb.LogLevel,
                         Outputs = ImmutableList.Create<ILogOutput>(
                             new FileOutput(Log.SuggestFilename(null, "gamedb"), LogLevel.Debug)
                         )
@@ -88,14 +88,14 @@ namespace Intersect.Server
                 );
             }
 
-            if (Options.PlayerDb.EnableLogs)
+            if (Options.PlayerDb.LogLevel > LogLevel.None)
             {
                 playerDbLogger = new Logger(
                     new LogConfiguration
                     {
                         Tag = "PLAYERDB",
                         Pretty = false,
-                        LogLevel = LogLevel.Debug,
+                        LogLevel = Options.PlayerDb.LogLevel,
                         Outputs = ImmutableList.Create<ILogOutput>(
                             new FileOutput(Log.SuggestFilename(null, "playerdb"), LogLevel.Debug)
                         )
@@ -151,13 +151,13 @@ namespace Intersect.Server
         {
             sGameDb = new GameContext(
                 CreateConnectionStringBuilder(Options.GameDb ?? throw new InvalidOperationException(), GameDbFilename),
-                Options.GameDb.Type
+                Options.GameDb.Type, gameDbLogger, Options.GameDb.LogLevel
             );
 
             sPlayerDb = new PlayerContext(
                 CreateConnectionStringBuilder(
                     Options.PlayerDb ?? throw new InvalidOperationException(), PlayersDbFilename
-                ), Options.PlayerDb.Type
+                ), Options.PlayerDb.Type, playerDbLogger, Options.PlayerDb.LogLevel
             );
 
             LoggingContext.Configure(
