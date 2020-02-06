@@ -466,12 +466,23 @@ namespace Intersect.Server
             }
             return false;
         }
-        
-        public static void DeleteCharacter(Player chr)
+
+        public static void AddCharacter(User usr, Player chr)
         {
             lock (mPlayerDbLock)
             {
-                sPlayerDb.Players.Remove(chr);
+                usr.Players.Add(chr);
+                sPlayerDb.Add(chr);
+            }
+            SavePlayerDatabaseAsync();
+        }
+
+        public static void DeleteCharacter(User usr, Player chr)
+        {
+            lock (mPlayerDbLock)
+            {
+                usr.Players.Remove(chr);
+                sPlayerDb.Remove<Player>(chr);
             }
             SavePlayerDatabaseAsync();
         }
@@ -1191,8 +1202,8 @@ namespace Intersect.Server
                 }
                 catch (Exception ex)
                 {
+                    Console.WriteLine("Error Saving Game Database! Server will shutdown in order to prevent potential rollback scenarios!");
                     Task.Factory.StartNew(() => Bootstrapper.OnUnhandledException(Thread.CurrentThread.Name, new UnhandledExceptionEventArgs(ex, true)));
-                    Log.Error("Error Saving Game Database! Server will shutdown in order to prevent potential rollback scenarios!");
                     gameDbLogger?.Error(ex, "Error Saving Game Database! Server will shutdown in order to prevent potential rollback scenarios!");
                 }
             }
@@ -1261,8 +1272,8 @@ namespace Intersect.Server
                 }
                 catch (Exception ex)
                 {
+                    Console.WriteLine("Error Saving Player Database! Server will shutdown in order to prevent potential rollback scenarios!");
                     Task.Factory.StartNew(() => Bootstrapper.OnUnhandledException(Thread.CurrentThread.Name, new UnhandledExceptionEventArgs(ex, true)));
-                    Log.Error("Error Saving Player Database! Server will shutdown in order to prevent potential rollback scenarios!");
                     playerDbLogger?.Error(ex, "Error Saving Player Database! Server will shutdown in order to prevent potential rollback scenarios!");
                 }
             }

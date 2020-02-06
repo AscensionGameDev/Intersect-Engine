@@ -1024,7 +1024,7 @@ namespace Intersect.Server.Networking
             {
                 var newChar = new Player();
                 newChar.Id = Guid.NewGuid();
-                client.Characters.Add(newChar);
+                DbInterface.AddCharacter(client.User, newChar);
                 newChar.ValidateLists();
                 for (var i = 0; i < Options.EquipmentSlots.Count; i++)
                 {
@@ -1746,8 +1746,7 @@ namespace Intersect.Server.Networking
                 {
                     if (chr.Id == packet.CharacterId)
                     {
-                        client.Characters.Remove(chr);
-                        DbInterface.DeleteCharacter(chr);
+                        DbInterface.DeleteCharacter(client.User, chr);
                     }
                 }
             }
