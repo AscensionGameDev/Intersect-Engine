@@ -65,6 +65,7 @@ namespace Intersect.Editor.Forms.Editors
             this.btnChronological = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
+            this.txtStringValue = new DarkUI.Controls.DarkTextBox();
             this.grpTypes.SuspendLayout();
             this.grpList.SuspendLayout();
             this.grpEditor.SuspendLayout();
@@ -244,6 +245,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpValue.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpValue.Controls.Add(this.txtStringValue);
             this.grpValue.Controls.Add(this.cmbBooleanValue);
             this.grpValue.Controls.Add(this.nudVariableValue);
             this.grpValue.ForeColor = System.Drawing.Color.Gainsboro;
@@ -505,6 +507,18 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.btnUndo_Click);
             // 
+            // txtStringValue
+            // 
+            this.txtStringValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtStringValue.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtStringValue.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.txtStringValue.Location = new System.Drawing.Point(6, 19);
+            this.txtStringValue.Name = "txtStringValue";
+            this.txtStringValue.Size = new System.Drawing.Size(239, 20);
+            this.txtStringValue.TabIndex = 61;
+            this.txtStringValue.Visible = false;
+            this.txtStringValue.TextChanged += new System.EventHandler(this.txtStringValue_TextChanged);
+            // 
             // FrmSwitchVariable
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -530,6 +544,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpEditor.ResumeLayout(false);
             this.grpEditor.PerformLayout();
             this.grpValue.ResumeLayout(false);
+            this.grpValue.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudVariableValue)).EndInit();
             this.grpVariables.ResumeLayout(false);
             this.toolStrip.ResumeLayout(false);
@@ -573,5 +588,6 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.Label lblFolder;
         private DarkComboBox cmbFolder;
         private System.Windows.Forms.ImageList imageList;
+        private DarkTextBox txtStringValue;
     }
 }

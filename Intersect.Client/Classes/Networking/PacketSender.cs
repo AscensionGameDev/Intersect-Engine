@@ -8,6 +8,7 @@ using Intersect.Client.General;
 using Intersect.Client.Maps;
 using Intersect.Client.UI.Game;
 using Intersect.Enums;
+using Intersect.GameObjects.Switches_and_Variables;
 using Intersect.Network.Packets.Client;
 
 namespace Intersect.Client.Networking
@@ -81,6 +82,16 @@ namespace Intersect.Client.Networking
         {
             Globals.EventDialogs.Remove(ed);
             GameNetwork.SendPacket(new EventResponsePacket(ed.EventId,response));
+        }
+
+        public static void SendEventInputVariable(object sender, EventArgs e)
+        {
+            GameNetwork.SendPacket(new EventInputVariablePacket((Guid)((InputBox)sender).UserData, (int)((InputBox)sender).Value, ((InputBox)sender).TextValue));
+        }
+
+        public static void SendEventInputVariableCancel(object sender, EventArgs e)
+        {
+            GameNetwork.SendPacket(new EventInputVariablePacket((Guid)((InputBox)sender).UserData, (int)((InputBox)sender).Value, ((InputBox)sender).TextValue, true));
         }
 
         public static void SendCreateAccount(string username, string password, string email)

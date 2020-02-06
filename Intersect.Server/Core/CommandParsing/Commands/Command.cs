@@ -74,10 +74,10 @@ namespace Intersect.Server.Core.CommandParsing.Commands
 
                 if (a.IsPositional)
                 {
-                    return b.IsPositional ? 0 : 1;
+                    return b.IsPositional ? 0 : -1;
                 }
 
-                return b.IsPositional ? -1 : 0;
+                return b.IsPositional ? 1 : 0;
             });
 
             Arguments = argumentList.ToImmutableList() ?? throw new InvalidOperationException();

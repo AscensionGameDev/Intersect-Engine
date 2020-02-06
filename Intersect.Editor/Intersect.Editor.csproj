@@ -95,6 +95,18 @@
     <Compile Include="Forms\Editors\Events\CommandPrinter.cs" />
     <Compile Include="Classes\General\Enums.cs" />
     <Compile Include="Classes\General\Globals.cs" />
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeVital.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeVital.Designer.cs">
+      <DependentUpon>EventCommand_ChangeVital.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangePlayerLabel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangePlayerLabel.Designer.cs">
+      <DependentUpon>EventCommand_ChangePlayerLabel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeNameColor.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -106,6 +118,12 @@
     </Compile>
     <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_EquipItem.Designer.cs">
       <DependentUpon>EventCommand_EquipItem.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Input.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Input.Designer.cs">
+      <DependentUpon>EventCommand_Input.cs</DependentUpon>
     </Compile>
     <Compile Include="Localization\Strings.cs" />
     <Compile Include="Classes\Maps\MapGrid.cs" />
@@ -525,9 +543,8 @@
     <Reference Include="JetBrains.Annotations, Version=2018.3.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\packages\JetBrains.Annotations.2018.3.0\lib\net20\JetBrains.Annotations.dll</HintPath>
     </Reference>
-    <Reference Include="Lidgren.Network, Version=3.6.0.1271, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\Lidgren.Network.dll</HintPath>
+    <Reference Include="Lidgren.Network, Version=2012.1.7.0, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\AscensionGameDev.Lidgren.Network.1.1.0\lib\net46\Lidgren.Network.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Mono.Data.Sqlite, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
@@ -537,7 +554,7 @@
       <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.7.1.189\lib\net45\MonoGame.Framework.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Pngcs">
       <HintPath>.\Pngcs.dll</HintPath>
@@ -629,6 +646,12 @@
     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeGender.resx">
       <DependentUpon>EventCommand_ChangeGender.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeVital.resx">
+      <DependentUpon>EventCommand_ChangeVital.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangePlayerLabel.resx">
+      <DependentUpon>EventCommand_ChangePlayerLabel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeNameColor.resx">
       <DependentUpon>EventCommand_ChangeNameColor.cs</DependentUpon>
     </EmbeddedResource>
@@ -706,6 +729,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_StartQuest.resx">
       <DependentUpon>EventCommand_StartQuest.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_Input.resx">
+      <DependentUpon>EventCommand_Input.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_Text.resx">
       <DependentUpon>EventCommand_Text.cs</DependentUpon>

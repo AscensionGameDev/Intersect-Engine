@@ -728,6 +728,11 @@ namespace Intersect.Server.Networking
             player.Client.SendPacket(new EventDialogPacket(eventId,prompt,face,1,new string[4] {opt1,opt2,opt3,opt4}));
         }
 
+        public static void SendInputVariableDialog(Player player, string title, string prompt, VariableDataTypes type, Guid eventId)
+        {
+            player.Client.SendPacket(new InputVariablePacket(eventId, title, prompt, type));
+        }
+
         //MapListPacket
         public static void SendMapList(Client client)
         {
