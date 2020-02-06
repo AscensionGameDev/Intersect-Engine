@@ -1,33 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Ceras;
 
-using Ceras;
-
-using Intersect.Network.Packets;
-using Intersect.Network.Packets.Client;
+using Intersect.Logging;
 
 using K4os.Compression.LZ4;
+
+using System;
+using System.Linq;
+using System.Reflection;
+
+using JetBrains.Annotations;
 
 namespace Intersect.Network
 {
     public class Ceras
     {
-        private SerializerConfig mSerializerConfig;
-        private CerasSerializer mSerializer;
+        [NotNull] private readonly SerializerConfig mSerializerConfig;
+        [NotNull] private readonly CerasSerializer mSerializer;
 
         public Ceras(bool forNetworking = true)
         {
-            mSerializerConfig = new SerializerConfig();
-            mSerializerConfig.PreserveReferences = false;
+            mSerializerConfig = new SerializerConfig
+            {
+                PreserveReferences = false
+            };
+
+            mSerializerConfig.Advanced.SealTypesWhenUsingKnownTypes = forNetworking;
 
             if (forNetworking)
             {
                 mSerializerConfig.VersionTolerance.Mode = VersionToleranceMode.Disabled;
-                mSerializerConfig.Advanced.SealTypesWhenUsingKnownTypes = forNetworking;
 
                 //TODO: Cleanup?
                 AddKnownTypes(mSerializerConfig, "Intersect.Network.Packets");
@@ -60,17 +61,33 @@ namespace Intersect.Network
 
         public object Deserialize(byte[] data)
         {
-            lock (mSerializer)
+            try
             {
-                return mSerializer.Deserialize<object>(data);
+                lock (mSerializer)
+                {
+                    return mSerializer.Deserialize<object>(data);
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.Error(exception);
+                return null;
             }
         }
 
         public T Deserialize<T>(byte[] data)
         {
-            lock (mSerializer)
+            try
             {
-                return mSerializer.Deserialize<T>(data);
+                lock (mSerializer)
+                {
+                    return mSerializer.Deserialize<T>(data);
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.Error(exception);
+                return default(T);
             }
         }
 

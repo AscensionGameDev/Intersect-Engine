@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using Intersect.Collections;
+﻿using Intersect.Collections;
 using Intersect.Config;
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -15,8 +6,6 @@ using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
-using Intersect.GameObjects.Switches_and_Variables;
-using Intersect.Logging;
 using Intersect.Models;
 using Intersect.Server.Core;
 using Intersect.Server.Database;
@@ -30,14 +19,29 @@ using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
-using Intersect.Server.Web.RestApi;
-using Intersect.Utilities;
+
 using JetBrains.Annotations;
 
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
 using MySql.Data.MySqlClient;
+
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Data.Common;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+
+using Intersect.Logging;
+using Intersect.Logging.Output;
+using System.Threading;
 
 namespace Intersect.Server
 {
@@ -52,6 +56,10 @@ namespace Intersect.Server
         private static PlayerContext sPlayerDb { get; set; }
         private static GameContext sGameDb { get; set; }
 
+        private static long playerSavesWaiting = 0;
+
+        private static long gameSavesWaiting = 0;
+
         private static Task sSavePlayerDbTask;
 
         public static object MapGridLock = new object();
@@ -59,6 +67,43 @@ namespace Intersect.Server
 
         private static object mGameDbLock = new object();
         private static object mPlayerDbLock = new object();
+
+        private static Logger gameDbLogger;
+
+        private static Logger playerDbLogger;
+
+        public static void InitializeDbLoggers()
+        {
+            if (Options.GameDb.LogLevel > LogLevel.None)
+            {
+                gameDbLogger = new Logger(
+                    new LogConfiguration
+                    {
+                        Tag = "GAMEDB",
+                        Pretty = false,
+                        LogLevel = Options.GameDb.LogLevel,
+                        Outputs = ImmutableList.Create<ILogOutput>(
+                            new FileOutput(Log.SuggestFilename(null, "gamedb"), LogLevel.Debug)
+                        )
+                    }
+                );
+            }
+
+            if (Options.PlayerDb.LogLevel > LogLevel.None)
+            {
+                playerDbLogger = new Logger(
+                    new LogConfiguration
+                    {
+                        Tag = "PLAYERDB",
+                        Pretty = false,
+                        LogLevel = Options.PlayerDb.LogLevel,
+                        Outputs = ImmutableList.Create<ILogOutput>(
+                            new FileOutput(Log.SuggestFilename(null, "playerdb"), LogLevel.Debug)
+                        )
+                    }
+                );
+            }
+        }
 
         //Check Directories
         public static void CheckDirectories()
@@ -73,7 +118,7 @@ namespace Intersect.Server
         //TODO: Options for saving frequency and number of backups to keep.
         public static void BackupDatabase()
         {
-            
+
         }
 
         [NotNull]
@@ -107,13 +152,13 @@ namespace Intersect.Server
         {
             sGameDb = new GameContext(
                 CreateConnectionStringBuilder(Options.GameDb ?? throw new InvalidOperationException(), GameDbFilename),
-                Options.GameDb.Type
+                Options.GameDb.Type, gameDbLogger, Options.GameDb.LogLevel
             );
 
             sPlayerDb = new PlayerContext(
                 CreateConnectionStringBuilder(
                     Options.PlayerDb ?? throw new InvalidOperationException(), PlayersDbFilename
-                ), Options.PlayerDb.Type
+                ), Options.PlayerDb.Type, playerDbLogger, Options.PlayerDb.LogLevel
             );
 
             LoggingContext.Configure(
@@ -184,7 +229,7 @@ namespace Intersect.Server
             }
             sGameDb.MigrationsProcessed(processedGameMigrations.ToArray());
 
-            
+
             sPlayerDb.Database.Migrate();
             var remainingPlayerMigrations = sPlayerDb.PendingMigrations;
             var processedPlayerMigrations = new List<string>(playerMigrations);
@@ -196,7 +241,7 @@ namespace Intersect.Server
 #if DEBUG
             if (ServerContext.Instance.RestApi.Configuration.SeedMode)
             {
-                
+
                 sPlayerDb.Seed();
             }
 #endif
@@ -337,7 +382,13 @@ namespace Intersect.Server
             }
         }
 
-        public static long RegisteredPlayers => sPlayerDb.Users.Count();
+        public static long RegisteredPlayers
+        {
+            get
+            {
+                lock (mPlayerDbLock) { return sPlayerDb.Players.Count(); }
+            }
+        }
 
         public static void CreateAccount(Client client, [NotNull] string username, [NotNull] string password, [NotNull] string email)
         {
@@ -415,12 +466,23 @@ namespace Intersect.Server
             }
             return false;
         }
-        
-        public static void DeleteCharacter(Player chr)
+
+        public static void AddCharacter(User usr, Player chr)
         {
             lock (mPlayerDbLock)
             {
-                sPlayerDb.Players.Remove(chr);
+                usr.Players.Add(chr);
+                sPlayerDb.Add(chr);
+            }
+            SavePlayerDatabaseAsync();
+        }
+
+        public static void DeleteCharacter(User usr, Player chr)
+        {
+            lock (mPlayerDbLock)
+            {
+                usr.Players.Remove(chr);
+                sPlayerDb.Remove<Player>(chr);
             }
             SavePlayerDatabaseAsync();
         }
@@ -1071,44 +1133,164 @@ namespace Intersect.Server
                                                  sSavePlayerDbTask.Status == TaskStatus.WaitingToRun ||
                                                  sSavePlayerDbTask.Status == TaskStatus.WaitingForActivation))
             {
-                sSavePlayerDbTask = Task.Factory.StartNew(SavePlayerDb);
+                var trace = Environment.StackTrace;
+                sSavePlayerDbTask = Task.Factory.StartNew(() => SavePlayerDatabase(trace));
             }
         }
+
+        private struct IdTrace
+        {
+
+            public long Id;
+
+            public string Trace;
+
+            public override string ToString() => $"{Id:000000}: {Trace}";
+
+        }
+
+        private static long gameDbSaveId = 0;
+        [NotNull] private static readonly ConcurrentQueue<IdTrace> gameDbTraces = new ConcurrentQueue<IdTrace>();
 
         public static void SaveGameDatabase()
         {
-            SaveGameDb();
-        }
+            ++gameSavesWaiting;
+            gameDbLogger?.Debug($"{gameSavesWaiting} saves queued.");
 
-        public static void SavePlayerDatabase()
-        {
-            SavePlayerDb();
-        }
+            if (gameDbTraces.Count > 1)
+            {
+                var builder = new StringBuilder();
 
-        private static void SaveGameDb()
-        {
-            if (sGameDb == null) return;
-            var sw = new Stopwatch();
+                while (!gameDbTraces.IsEmpty)
+                {
+                    builder.AppendLine(
+                        gameDbTraces.TryDequeue(out var dequeueTrace)
+                            ? dequeueTrace.ToString()
+                            : $"Error dequeuing trace ({gameDbTraces.Count} traces)."
+                    );
+
+                    builder.AppendLine();
+                }
+
+                gameDbLogger?.Debug($"{gameSavesWaiting} saves queued, traces:\n{builder}");
+            }
+
+            gameDbTraces.Enqueue(new IdTrace { Id = gameDbSaveId++, Trace = Environment.StackTrace });
+
+            switch (gameSavesWaiting)
+            {
+                case var _ when gameSavesWaiting > 2:
+                    Log.Debug($"Possible Game DB deadlock: {gameSavesWaiting} saves queued!");
+                    break;
+
+                case var _ when gameSavesWaiting > 8:
+                    Log.Warn($"Probable Game DB deadlock: {gameSavesWaiting} saves queued!");
+                    break;
+
+                case var _ when gameSavesWaiting > 16:
+                    Log.Error($"Detected Game DB deadlock: {gameSavesWaiting} saves queued!");
+                    break;
+            }
+
             lock (mGameDbLock)
             {
-                sw.Start();
-                sGameDb.SaveChanges();
-                sw.Stop();
-                //Log.Debug("Game DB Save - Took " + sw.ElapsedMilliseconds + "ms to complete.");
+                try
+                {
+                    var elapsedMs = SaveDb(sGameDb);
+                    gameDbLogger?.Debug($"Save took {elapsedMs}ms, {--gameSavesWaiting} saves queued.");
+                    gameDbTraces.TryDequeue(out _);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error Saving Game Database! Server will shutdown in order to prevent potential rollback scenarios!");
+                    Task.Factory.StartNew(() => Bootstrapper.OnUnhandledException(Thread.CurrentThread.Name, new UnhandledExceptionEventArgs(ex, true)));
+                    gameDbLogger?.Error(ex, "Error Saving Game Database! Server will shutdown in order to prevent potential rollback scenarios!");
+                }
             }
         }
 
-        private static void SavePlayerDb()
+        private static long playerDbSaveId = 0;
+        [NotNull] private static readonly ConcurrentQueue<IdTrace> playerDbTraces = new ConcurrentQueue<IdTrace>();
+
+        public static void SavePlayerDatabase(string trace)
         {
-            if (sPlayerDb == null) return;
-            var sw = new Stopwatch();
+            ++playerSavesWaiting;
+            var currentTrace = new IdTrace { Id = playerDbSaveId++, Trace = trace };
+            playerDbLogger?.Debug($"{currentTrace.Id:00000}: {playerSavesWaiting} saves queued.");
+
+            if (playerDbTraces.Count > 1)
+            {
+                var builder = new StringBuilder();
+                
+                while (!playerDbTraces.IsEmpty)
+                {
+                    builder.AppendLine(
+                        playerDbTraces.TryDequeue(out var dequeueTrace)
+                            ? dequeueTrace.ToString()
+                            : $"{currentTrace.Id:00000}: Error dequeuing trace ({playerDbTraces.Count} traces)."
+                    );
+
+                    builder.AppendLine();
+                }
+
+                playerDbLogger?.Debug($"{currentTrace.Id:00000}: {playerSavesWaiting} saves queued, traces:\n{builder}");
+            }
+
+            playerDbTraces.Enqueue(currentTrace);
+
+            switch (playerSavesWaiting)
+            {
+                case var _ when playerSavesWaiting > 1:
+                    Log.Debug($"{currentTrace.Id:00000}: Possible Player DB deadlock: {playerSavesWaiting} saves queued!");
+                    break;
+
+                case var _ when playerSavesWaiting > 4:
+                    Log.Warn($"{currentTrace.Id:00000}: Probable Player DB deadlock: {playerSavesWaiting} saves queued!");
+                    break;
+
+                case var _ when playerSavesWaiting > 8:
+                    Log.Error($"{currentTrace.Id:00000}: Detected Player DB deadlock: {playerSavesWaiting} saves queued!");
+                    break;
+            }
+
             lock (mPlayerDbLock)
             {
-                sw.Start();
-                sPlayerDb.SaveChanges();
-                sw.Stop();
-                //Log.Debug("Player DB Save - Took " + sw.ElapsedMilliseconds + "ms to complete.");
+                try
+                {
+                    var elapsedMs = SaveDb(sPlayerDb);
+                    playerDbLogger?.Debug($"{currentTrace.Id:00000}: Save took {elapsedMs}ms, {--playerSavesWaiting} saves queued.");
+                    if (playerDbTraces.TryPeek(out var peekTrace) && peekTrace.Id != currentTrace.Id)
+                    {
+                        playerDbLogger?.Debug($"{currentTrace.Id:00000}: Next save expected to complete was {peekTrace.Id:00000}, which is from a different call.");
+                    }
+
+                    playerDbLogger?.Debug(
+                        playerDbTraces.TryDequeue(out var dequeueTrace)
+                            ? $"{dequeueTrace.Id:00000} ({currentTrace.Id:00000}): Save completed."
+                            : $"{currentTrace.Id:00000}: Save complete but there are no available traces."
+                    );
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error Saving Player Database! Server will shutdown in order to prevent potential rollback scenarios!");
+                    Task.Factory.StartNew(() => Bootstrapper.OnUnhandledException(Thread.CurrentThread.Name, new UnhandledExceptionEventArgs(ex, true)));
+                    playerDbLogger?.Error(ex, "Error Saving Player Database! Server will shutdown in order to prevent potential rollback scenarios!");
+                }
             }
+        }
+
+        private static long SaveDb(DbContext dbContext)
+        {
+            if (dbContext == null)
+            {
+                return -1;
+            }
+
+            var stopwatch = Stopwatch.StartNew();
+            dbContext.SaveChanges();
+            stopwatch.Stop();
+
+            return stopwatch.ElapsedMilliseconds;
         }
 
         //Migration Code
@@ -1208,7 +1390,8 @@ namespace Intersect.Server
                             Console.WriteLine(Strings.Migration.mysqlconnectionerror.ToString(ex));
                             Console.WriteLine();
                             Console.WriteLine(Strings.Migration.mysqltryagain);
-                            var key = Console.ReadKey().KeyChar;
+                            var input = Console.ReadLine();
+                            var key = input.Length > 0 ? input[0] : ' ';
                             Console.WriteLine();
                             if (!string.Equals(Strings.Migration.tryagaincharacter, key.ToString(), StringComparison.Ordinal))
                             {
@@ -1227,7 +1410,8 @@ namespace Intersect.Server
                         Console.WriteLine();
                         var filename = gameDb ? GameDbFilename : PlayersDbFilename;
                         Console.WriteLine(Strings.Migration.sqlitealreadyexists.ToString(filename));
-                        var key = Console.ReadKey().KeyChar;
+                        var input = Console.ReadLine();
+                        var key = input.Length > 0 ? input[0] : ' ';
                         Console.WriteLine();
                         if (key.ToString() != Strings.Migration.overwritecharacter)
                         {
@@ -1360,7 +1544,7 @@ namespace Intersect.Server
                 {
                     if (pwd.Length > 0)
                     {
-                        pwd.Remove(pwd.Length - 2, 1);
+                        pwd = pwd.Remove(pwd.Length - 2, 1);
                         Console.Write("\b \b");
                     }
                 }

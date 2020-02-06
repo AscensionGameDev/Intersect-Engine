@@ -9,7 +9,7 @@ namespace Intersect.Client.MonoGame.Audio
 {
     public class MonoMusicSource : GameAudioSource
     {
-        private string mPath;
+        private readonly string mPath;
         private Song mSong;
 
         public MonoMusicSource(string path)
@@ -17,14 +17,14 @@ namespace Intersect.Client.MonoGame.Audio
             mPath = path;
         }
 
-        public override GameAudioInstance CreateInstance()
-        {
-            return new MonoMusicInstance(this);
-        }
+        public override GameAudioInstance CreateInstance() => new MonoMusicInstance(this);
 
         private void Load()
         {
-            if (mPath == null) return;
+            if (string.IsNullOrWhiteSpace(mPath))
+            {
+                return;
+            }
 
             try
             {
@@ -37,10 +37,18 @@ namespace Intersect.Client.MonoGame.Audio
             }
         }
 
-        public Song GetSource()
+        public Song Song
         {
-            if (mSong == null) Load();
-            return mSong;
+            get
+            {
+                if (mSong == null)
+                {
+                    Load();
+                }
+
+                return mSong;
+            }
         }
+
     }
 }

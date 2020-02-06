@@ -1,21 +1,23 @@
-﻿using System;
-using Intersect.Client.Framework.Audio;
-using Intersect.Client.General;
+﻿using Intersect.Client.General;
+
+using JetBrains.Annotations;
+
 using Microsoft.Xna.Framework.Audio;
+
+using System;
 
 namespace Intersect.Client.MonoGame.Audio
 {
-    public class MonoSoundInstance : GameAudioInstance
+    public class MonoSoundInstance : MonoAudioInstance<MonoSoundSource>
     {
         private bool mDisposed;
-        private SoundEffectInstance mInstance;
-        private MonoSoundSource mSource;
+        private readonly SoundEffectInstance mInstance;
         private int mVolume;
 
-        public MonoSoundInstance(GameAudioSource music) : base(music)
+        // ReSharper disable once SuggestBaseTypeForParameter
+        public MonoSoundInstance([NotNull] MonoSoundSource source) : base(source)
         {
-            mSource = ((MonoSoundSource) music);
-            mInstance = mSource.GetEffect()?.CreateInstance();
+            mInstance = Source.Effect?.CreateInstance();
         }
 
         public override void Play()
@@ -67,30 +69,51 @@ namespace Intersect.Client.MonoGame.Audio
             return mVolume;
         }
 
-        public override void SetLoop(bool val)
+        protected override void InternalLoopSet()
         {
             if (mInstance != null)
             {
-                mInstance.IsLooped = val;
+                mInstance.IsLooped = IsLooping;
             }
         }
 
-        public override AudioInstanceState GetState()
+        public override AudioInstanceState State
         {
-            if (mDisposed || mInstance == null) return AudioInstanceState.Disposed;
-            if (mInstance.State == SoundState.Playing) return AudioInstanceState.Playing;
-            if (mInstance.State == SoundState.Stopped) return AudioInstanceState.Stopped;
-            if (mInstance.State == SoundState.Paused) return AudioInstanceState.Paused;
-            return AudioInstanceState.Disposed;
+            get
+            {
+                if (mDisposed || mInstance == null)
+                {
+                    return AudioInstanceState.Disposed;
+                }
+
+                switch (mInstance.State)
+                {
+                    case SoundState.Playing:
+                        return AudioInstanceState.Playing;
+                    case SoundState.Stopped:
+                        return AudioInstanceState.Stopped;
+                    case SoundState.Paused:
+                        return AudioInstanceState.Paused;
+                    default:
+                        return AudioInstanceState.Disposed;
+                }
+            }
         }
 
         public override void Dispose()
         {
-            if (mDisposed || mInstance == null) return;
+            if (mDisposed || mInstance == null)
+            {
+                return;
+            }
+
             mDisposed = true;
-            mInstance.Stop();
+            if (mInstance.State != SoundState.Stopped)
+            {
+                mInstance.Stop();
+            }
             mInstance.Dispose();
-            mSource?.ReleaseEffect();
+            Source.ReleaseEffect();
         }
 
         ~MonoSoundInstance()

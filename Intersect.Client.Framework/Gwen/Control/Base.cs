@@ -822,6 +822,10 @@ namespace Intersect.Client.Framework.Gwen.Control
             set => SetSize(Width, value);
         }
 
+        public int InnerWidth => mBounds.Width - (mPadding.Left + mPadding.Right);
+
+        public int InnerHeight => mBounds.Height - (mPadding.Top + mPadding.Bottom);
+
         public int Bottom => mBounds.Bottom + mMargin.Bottom;
 
         public int Right => mBounds.Right + mMargin.Right;

@@ -15,19 +15,20 @@ namespace Intersect.Server.Core.Commands
 
         protected override void HandleValue(ServerContext context, ParserResult result)
         {
-            var columnScale = Console.BufferWidth / 66.0;
+            var bufferWidth = (Console.BufferWidth == 0 ? 100 : Console.BufferWidth) - 1;
+            var columnScale = bufferWidth / 66.0;
             var columnWidths = new[] {10, 28, 28}.Select(width => (int) (width * columnScale)).ToArray();
-            columnWidths[0] += Console.BufferWidth - columnWidths.Sum();
+            columnWidths[0] += bufferWidth - columnWidths.Sum();
             columnWidths[1] -= 2;
             columnWidths[2] -= 2;
             var formatLine = string.Join("| ", columnWidths.Select((width, column) => $"{{{column},{-width}}}"));
 
-            Console.Write(formatLine,
+            Console.WriteLine(formatLine,
                 Strings.Commandoutput.listid,
                 Strings.Commandoutput.listaccount,
                 Strings.Commandoutput.listcharacter);
 
-            Console.Write(new string('-', Console.BufferWidth));
+            Console.WriteLine(new string('-', bufferWidth));
 
             for (var i = 0; i < Globals.Clients.Count; i++)
             {
@@ -37,7 +38,7 @@ namespace Intersect.Server.Core.Commands
                 }
 
                 var name = Globals.Clients[i].Entity != null ? Globals.Clients[i].Entity.Name : "";
-                Console.Write(formatLine, "#" + i, Globals.Clients[i].Name, name);
+                Console.WriteLine(formatLine, "#" + i, Globals.Clients[i].Name, name);
             }
         }
     }

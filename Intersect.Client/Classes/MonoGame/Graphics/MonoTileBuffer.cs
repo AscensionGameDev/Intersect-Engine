@@ -154,7 +154,7 @@ namespace Intersect.Client.Classes.MonoGame.Graphics
             disposed = true;
         }
 
-        public override bool UpdateTile(float x, float y, int srcX, int srcY, int srcW, int srcH)
+        public override bool UpdateTile(GameTexture tex, float x, float y, int srcX, int srcY, int srcW, int srcH)
         {
             var key = new Tuple<float, float>(x, y);
             var vertexIndex = -1;
@@ -163,13 +163,14 @@ namespace Intersect.Client.Classes.MonoGame.Graphics
                 vertexIndex = verticeDict[key];
             }
             if (vertexIndex == -1) return false;
-            var platformTex = Texture?.GetTexture();
+            var platformTex = tex?.GetTexture();
             if (platformTex == null) return false;
-            if (Texture == null) return false;
-            if (Texture.GetTexture() != platformTex) return false;
+            if (tex == null) return false;
+            if (tex.GetTexture() != platformTex) return false;
             if (vertexBuffer == null) return false;
 
-            var pack = Texture.GetTexturePackFrame();
+            var pack = tex.GetTexturePackFrame();
+
             var rotated = false;
             if (pack != null)
             {
@@ -192,7 +193,7 @@ namespace Intersect.Client.Classes.MonoGame.Graphics
                 }
             }
 
-            var texture = (Texture2D)Texture.GetTexture();
+            var texture = (Texture2D)tex.GetTexture();
 
             float textureSizeX = 1f / texture.Width;
             float textureSizeY = 1f / texture.Height;

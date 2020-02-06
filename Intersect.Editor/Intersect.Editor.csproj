@@ -86,6 +86,12 @@
     <Compile Include="Classes\Core\Program.cs" />
     <Compile Include="Classes\Entities\AnimationInstance.cs" />
     <Compile Include="Classes\Maps\MapSaveState.cs" />
+    <Compile Include="Forms\Controls\SearchableDarkTreeView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Controls\SearchableDarkTreeView.Designer.cs">
+      <DependentUpon>SearchableDarkTreeView.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Editors\Events\CommandPrinter.cs" />
     <Compile Include="Classes\General\Enums.cs" />
     <Compile Include="Classes\General\Globals.cs" />
@@ -612,6 +618,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Controls\MapTreeList.resx">
       <DependentUpon>MapTreeList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Controls\SearchableDarkTreeView.resx">
+      <DependentUpon>SearchableDarkTreeView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\DockingElements\frmMapEditor.resx">
       <DependentUpon>frmMapEditor.cs</DependentUpon>

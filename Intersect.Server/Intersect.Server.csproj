@@ -416,6 +416,8 @@
   <ItemGroup>
     <Compile Include="Classes\Admin\Actions\ActionProcessing.cs" />
     <Compile Include="Classes\Core\ServerTiming.cs" />
+    <Compile Include="Classes\Database\DbLogger.cs" />
+    <Compile Include="Classes\Database\DbLoggerProvider.cs" />
     <Compile Include="Classes\Database\GameData\GameContext.cs" />
     <Compile Include="Classes\Database\GameData\Migrations\Beta6Migration.cs" />
     <Compile Include="Classes\Database\IntersectDbContext.cs" />
@@ -556,6 +558,10 @@
     <Compile Include="Migrations\20190804133420_Custom_Player_Name_Colors.cs" />
     <Compile Include="Migrations\20190804133420_Custom_Player_Name_Colors.Designer.cs">
       <DependentUpon>20190804133420_Custom_Player_Name_Colors.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\20200205112316_FixingPlayerDeleteFriendsForeignKeyContraintFail.cs" />
+    <Compile Include="Migrations\20200205112316_FixingPlayerDeleteFriendsForeignKeyContraintFail.designer.cs">
+      <DependentUpon>20200205112316_FixingPlayerDeleteFriendsForeignKeyContraintFail.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\20191030214333_PlayerUpgrades_Labels.cs" />
     <Compile Include="Migrations\20191030214333_PlayerUpgrades_Labels.designer.cs">
@@ -701,7 +707,6 @@
     <None Include="packages.config" />
     <EmbeddedResource Include="Resources\libe_sqlite3_x64.so" />
     <EmbeddedResource Include="Resources\libe_sqlite3.dylib" />
-    <EmbeddedResource Include="Resources\libe_sqlite3_alpine.so" />
     <EmbeddedResource Include="Resources\libe_sqlite3_x86.so" />
   </ItemGroup>
   <ItemGroup>

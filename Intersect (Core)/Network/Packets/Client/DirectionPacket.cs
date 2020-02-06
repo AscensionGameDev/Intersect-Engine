@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Intersect.Collections;
+using Intersect.Enums;
+
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Intersect.Network.Packets.Client
 {
@@ -13,6 +13,15 @@ namespace Intersect.Network.Packets.Client
         public DirectionPacket(byte dir)
         {
             Direction = dir;
+        }
+
+        public override Dictionary<string, SanitizedValue<object>> Sanitize()
+        {
+            var sanitizer = new Sanitizer();
+
+            Direction = (byte)sanitizer.Clamp(nameof(Direction), Direction, 0, Enum.GetValues(typeof(Directions)).Length);
+
+            return sanitizer.Sanitized;
         }
     }
 }

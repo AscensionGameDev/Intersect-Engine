@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using CommandLine;
 using Intersect.Logging;
 using Intersect.Server.General;
@@ -22,11 +23,14 @@ namespace Intersect.Server.Core
         {
             AppDomain.CurrentDomain.AssemblyResolve += OnAssemblyResolve;
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+            TaskScheduler.UnobservedTaskException += UnobservedTaskException;
 
             Console.CancelKeyPress += OnConsoleCancelKeyPress;
         }
 
         public static ServerContext Context { get; private set; }
+
+        private static bool mErrored { get; set; }
 
         [NotNull]
         public static LockingActionQueue MainThread { get; private set; }
@@ -40,6 +44,7 @@ namespace Intersect.Server.Core
 
             var commandLineOptions = ParseCommandLineArgs(args);
             Context = new ServerContext(commandLineOptions);
+            var noHaltOnError = Context?.StartupOptions.DoNotHaltOnError ?? false;
 
             if (!PostContextSetup())
             {
@@ -53,6 +58,21 @@ namespace Intersect.Server.Core
                 action.Invoke();
             }
             Log.Diagnostic("Bootstrapper exited.");
+
+            //At this point dbs should be saved and all threads should be killed. Give a message saying that the server has shutdown and to press any key to exit.
+            //Having the message and the console.readline() allows the server to exit properly if the console has crashed, and it allows us to know that the server context has shutdown.
+            if (mErrored)
+            {
+                if (noHaltOnError)
+                {
+                    Console.WriteLine(Strings.Errors.errorservercrashnohalt);
+                }
+                else
+                {
+                    Console.WriteLine(Strings.Errors.errorservercrash);
+                    Console.ReadLine();
+                }
+            }
         }
 
         [NotNull]
@@ -111,33 +131,8 @@ namespace Intersect.Server.Core
                 ReflectionUtils.ExtractResource("Intersect.Server.Resources.notifications.PasswordReset.html", Path.Combine("resources","notifications", "PasswordReset.html"));
             }
 
+            DbInterface.InitializeDbLoggers();
             DbInterface.CheckDirectories();
-
-            if (args != null)
-            {
-                foreach (var arg in args)
-                {
-                    if (string.IsNullOrWhiteSpace(arg) || !arg.Contains("port="))
-                    {
-                        continue;
-                    }
-
-                    if (ushort.TryParse(arg.Split("=".ToCharArray())[1], out var port))
-                    {
-                        Options.ServerPort = port;
-                    }
-                }
-
-                if (args.Contains("noupnp"))
-                {
-                    Options.NoPunchthrough = true;
-                }
-
-                if (args.Contains("noportcheck"))
-                {
-                    Options.NoNetworkCheck = true;
-                }
-            }
 
             PrintIntroduction();
 
@@ -199,7 +194,7 @@ namespace Intersect.Server.Core
         internal static void CheckNetwork()
         {
             //Check to see if AGD can see this server. If so let the owner know :)
-            if (Options.OpenPortChecker && !Options.NoNetworkCheck)
+            if (Options.OpenPortChecker && !Context.StartupOptions.NoNetworkCheck)
             {
                 var serverAccessible = PortChecker.CanYouSeeMe(Options.ServerPort, out var externalIp);
 
@@ -326,10 +321,6 @@ namespace Intersect.Server.Core
 
                 case PlatformID.Unix:
                     sqliteResourceName = Environment.Is64BitProcess ? "libe_sqlite3_x64.so" : "libe_sqlite3_x86.so";
-                    if (args?.Contains("alpine") ?? false)
-                    {
-                        sqliteResourceName = "libe_sqlite3_alpine.so";
-                    }
                     sqliteFileName = "libe_sqlite3.so";
                     break;
 
@@ -437,19 +428,27 @@ namespace Intersect.Server.Core
                 Console.WriteLine(Strings.Errors.errorlogged);
             }
 
-            if (Context?.StartupOptions.DoNotHaltOnError ?? false)
-            {
-                Console.WriteLine(Strings.Errors.errorservercrashnohalt);
-            }
-            else
-            {
-                Console.WriteLine(Strings.Errors.errorservercrash);
-                Context.ServerConsole.Wait(true);
-            }
+            mErrored = true;
 
+            //Dispose Server Context Before Waiting
+            //Under no circumstances do we want the game to continue
             if (!(Context?.IsDisposed ?? true))
             {
-                Context?.Dispose();
+                Context?.RequestShutdown(true);
+            }
+        }
+
+        private static void UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
+        {
+            ProcessUnhandledException(sender, e.Exception.InnerException as Exception ?? throw new InvalidOperationException());
+
+            mErrored = true;
+
+            //Dispose Server Context Before Waiting
+            //Under no circumstances do we want the game to continue
+            if (!(Context?.IsDisposed ?? true))
+            {
+                Context?.RequestShutdown(true);
             }
         }
 

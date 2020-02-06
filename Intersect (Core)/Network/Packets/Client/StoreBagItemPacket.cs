@@ -1,20 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Intersect.Network.Packets.Client
+﻿namespace Intersect.Network.Packets.Client
 {
-    public class StoreBagItemPacket : CerasPacket
+    public class StoreBagItemPacket : SlotQuantityPacket
     {
-        public int Slot { get; set; }
-        public int Quanity { get; set; }
-
-        public StoreBagItemPacket(int slot, int qty)
+        public StoreBagItemPacket(int slot, int quantity) : base(slot, quantity)
         {
-            Slot = slot;
-            Quanity = qty;
         }
     }
 }

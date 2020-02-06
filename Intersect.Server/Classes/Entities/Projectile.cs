@@ -482,6 +482,8 @@ namespace Intersect.Server.Entities
                                 (long) ((float) ProjectileBase.Speed / (float) ProjectileBase.Range);
         }
 
+        public bool IsAtLocation(Guid mapId, int x, int y, int z) => MapId == mapId && X == x && Y == y && Z == z;
+
         public bool HitEntity(EntityInstance en)
         {
             var targetEntity = en;

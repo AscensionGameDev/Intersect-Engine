@@ -2,6 +2,8 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
+
 using Intersect.Logging.Output;
 using JetBrains.Annotations;
 
@@ -50,151 +52,181 @@ namespace Intersect.Logging
         [NotNull]
         public static Logger Default { get; }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Write(LogLevel logLevel, string message)
         {
             Default.Write(logLevel, message);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Write(LogLevel logLevel, string format, params object[] args)
         {
             Default.Write(logLevel, format, args);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Write(LogLevel logLevel, Exception exception, string message = null)
         {
             Default.Write(logLevel, exception);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Write(string message)
         {
             Default.Write(message);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Write(string format, params object[] args)
         {
             Default.Write(format, args);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Write(Exception exception, string message = null)
         {
             Default.Write(exception, message);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void All(string message)
         {
             Default.All(message);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void All(string format, params object[] args)
         {
             Default.All(format, args);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void All(Exception exception, string message = null)
         {
             Default.All(exception, message);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Error(string message)
         {
             Default.Error(message);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Error(string format, params object[] args)
         {
             Default.Error(format, args);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Error(Exception exception, string message = null)
         {
             Default.Error(exception, message);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Warn(string message)
         {
             Default.Warn(message);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Warn(string format, params object[] args)
         {
             Default.Warn(format, args);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Warn(Exception exception, string message = null)
         {
             Default.Warn(exception, message);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Info(string message)
         {
             Default.Info(message);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Info(string format, params object[] args)
         {
             Default.Info(format, args);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Info(Exception exception, string message = null)
         {
             Default.Info(exception, message);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Trace(string message)
         {
             Default.Trace(message);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Trace(string format, params object[] args)
         {
             Default.Trace(format, args);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Trace(Exception exception, string message = null)
         {
             Default.Trace(exception, message);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Debug(string message)
         {
             Default.Debug(message);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Debug(string format, params object[] args)
         {
             Default.Debug(format, args);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Debug(Exception exception, string message = null)
         {
             Default.Debug(exception, message);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Diagnostic(string message)
         {
             Default.Diagnostic(message);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Diagnostic(string format, params object[] args)
         {
             Default.Diagnostic(format, args);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Diagnostic(Exception exception, string message = null)
         {
             Default.Diagnostic(exception, message);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Verbose(string message)
         {
             Default.Verbose(message);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Verbose(string format, params object[] args)
         {
             Default.Verbose(format, args);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Verbose(Exception exception, string message = null)
         {
             Default.Verbose(exception, message);

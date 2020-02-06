@@ -56,6 +56,9 @@ namespace Intersect.Server.Core
         {
             StartupOptions = startupOptions;
 
+            if (startupOptions.Port > 0)
+                Options.ServerPort = startupOptions.Port;
+
             ServerConsole = new ServerConsole();
             ServerLogic = new ServerLogic();
             RestApi = new RestApi(startupOptions.ApiPort);
@@ -122,7 +125,7 @@ namespace Intersect.Server.Core
 
             RestApi.Start();
 
-            if (!Options.UPnP || Options.NoPunchthrough)
+            if (!Options.UPnP || ServerContext.Instance.StartupOptions.NoNatPunchthrough)
             {
                 return;
             }
@@ -202,7 +205,7 @@ namespace Intersect.Server.Core
 
                 // TODO: This probably also needs to not be a global, but will require more work to clean up.
                 Log.Info("Saving player database..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
-                DbInterface.SavePlayerDatabase();
+                DbInterface.SavePlayerDatabase(Environment.StackTrace);
                 Log.Info("Saving game database..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
                 DbInterface.SaveGameDatabase();
 
@@ -217,7 +220,14 @@ namespace Intersect.Server.Core
                     Log.Info("Shutting down the console thread..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
                     if (!ThreadConsole.Join(1000))
                     {
-                        ThreadConsole.Abort();
+                        try
+                        {
+                            ThreadConsole.Abort();
+                        }
+                        catch (ThreadAbortException ex)
+                        {
+
+                        }
                     }
                 }
 
@@ -226,7 +236,14 @@ namespace Intersect.Server.Core
                     Log.Info("Shutting down the logic thread..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
                     if (!ThreadLogic.Join(10000))
                     {
-                        ThreadLogic.Abort();
+                        try
+                        {
+                            ThreadLogic.Abort();
+                        }
+                        catch (ThreadAbortException ex)
+                        {
+
+                        }
                     }
                 }
             }
@@ -234,6 +251,7 @@ namespace Intersect.Server.Core
             Log.Info("Base dispose." + $" ({stopwatch.ElapsedMilliseconds}ms)");
             base.Dispose(disposing);
             Log.Info("Finished disposing server context." + $" ({stopwatch.ElapsedMilliseconds}ms)");
+            Console.WriteLine(Strings.Commands.exited);
         }
 
         #endregion

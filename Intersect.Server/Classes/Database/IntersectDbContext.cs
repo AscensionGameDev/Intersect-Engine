@@ -33,6 +33,8 @@ namespace Intersect.Server.Database
 
         private static DbConnectionStringBuilder configuredConnectionStringBuilder;
 
+        private static ILoggerFactory loggerFactory;
+
         public static void Configure(
             DatabaseOptions.DatabaseType databaseType = DatabaseOptions.DatabaseType.SQLite,
             DbConnectionStringBuilder connectionStringBuilder = null
@@ -97,11 +99,47 @@ namespace Intersect.Server.Database
         protected IntersectDbContext(
             [NotNull] DbConnectionStringBuilder connectionStringBuilder,
             DatabaseOptions.DatabaseType databaseType = DatabaseOptions.DatabaseType.SQLite,
-            bool isTemporary = false
+            bool isTemporary = false, Intersect.Logging.Logger dbLogger = null, Intersect.Logging.LogLevel logLevel = Intersect.Logging.LogLevel.None
             )
         {
             ConnectionStringBuilder = connectionStringBuilder;
             DatabaseType = databaseType;
+
+            //Translate Intersect.Logging.LogLevel into LoggerFactory Log Level
+            if (dbLogger != null && logLevel > Intersect.Logging.LogLevel.None)
+            {
+                var efLogLevel = LogLevel.None;
+                switch (logLevel)
+                {
+                    case Intersect.Logging.LogLevel.None:
+                        break;
+                    case Intersect.Logging.LogLevel.Error:
+                        efLogLevel = LogLevel.Error;
+                        break;
+                    case Intersect.Logging.LogLevel.Warn:
+                        efLogLevel = LogLevel.Warning;
+                        break;
+                    case Intersect.Logging.LogLevel.Info:
+                        efLogLevel = LogLevel.Information;
+                        break;
+                    case Intersect.Logging.LogLevel.Trace:
+                        efLogLevel = LogLevel.Trace;
+                        break;
+                    case Intersect.Logging.LogLevel.Verbose:
+                        efLogLevel = LogLevel.Trace;
+                        break;
+                    case Intersect.Logging.LogLevel.Debug:
+                        efLogLevel = LogLevel.Debug;
+                        break;
+                    case Intersect.Logging.LogLevel.Diagnostic:
+                        efLogLevel = LogLevel.Trace;
+                        break;
+                    case Intersect.Logging.LogLevel.All:
+                        efLogLevel = LogLevel.Trace;
+                        break;
+                }
+                loggerFactory = LoggerFactory.Create(builder => { builder.AddFilter((level) => level >= efLogLevel).AddProvider(new DbLoggerProvider(dbLogger)); });
+            }
 
             if (!isTemporary)
             {
@@ -121,11 +159,11 @@ namespace Intersect.Server.Database
             switch (DatabaseType)
             {
                 case DatabaseOptions.DatabaseType.SQLite:
-                    optionsBuilder.UseSqlite(connectionString);
+                    optionsBuilder.UseLoggerFactory(loggerFactory).UseSqlite(connectionString);
                     break;
 
                 case DatabaseOptions.DatabaseType.MySQL:
-                    optionsBuilder.UseMySql(connectionString);
+                    optionsBuilder.UseLoggerFactory(loggerFactory).UseMySql(connectionString);
                     break;
 
                 default:

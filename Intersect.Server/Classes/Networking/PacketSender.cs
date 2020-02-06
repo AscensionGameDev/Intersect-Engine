@@ -10,6 +10,7 @@ using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Logging;
 using Intersect.Models;
+using Intersect.Network;
 using Intersect.Network.Packets;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
@@ -181,9 +182,9 @@ namespace Intersect.Server.Networking
 
             if (!client.IsEditor)
             {
-                if (client.SentMaps.ContainsKey(mapId))
+                if (client.SentMaps.TryGetValue(mapId, out var sentMap))
                 {
-                    if (client.SentMaps[mapId].Item1 > Globals.Timing.TimeMs && client.SentMaps[mapId].Item2 == map.Revision)
+                    if (sentMap.Item1 > Globals.Timing.TimeMs && sentMap.Item2 == map.Revision)
                     {
                         return;
                     }
@@ -439,7 +440,7 @@ namespace Intersect.Server.Networking
             if (npc.Target == null)
             {
                 //TODO (0 is attack when attacked, 1 is attack on sight, 2 is friendly, 3 is guard)
-                if (npc.IsFriend(en) || !en.CanAttack(npc, null))
+                if (npc.IsAllyOf(en) || !en.CanAttack(npc, null))
                 {
                     aggression = 2;
                 }
@@ -1381,7 +1382,7 @@ namespace Intersect.Server.Networking
             }
             if (partyIndex > -1)
             {
-                client.SendPacket(new PartyUpdatePacket(partyIndex,new PartyMemberPacket(entity.Id,entity.Name,entity.GetVitals(),entity.GetMaxVitals(),entity.Level)));
+                client.SendPacket(new PartyUpdatePacket(partyIndex,new PartyMemberPacket(entity.Id,entity.Name,entity.GetVitals(), entity.GetMaxVitals(),entity.Level)));
             }
         }
         

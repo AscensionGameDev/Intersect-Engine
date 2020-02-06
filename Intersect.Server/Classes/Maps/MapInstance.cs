@@ -8,6 +8,7 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
+using Intersect.Logging;
 using Intersect.Server.Classes.Maps;
 using Intersect.Server.Database;
 using Intersect.Server.Entities;
@@ -50,14 +51,17 @@ namespace Intersect.Server.Maps
         [JsonIgnore]
         [NotMapped]
         public int MapGridY = -1;
+        
+        [NotNull]
         [JsonIgnore]
         [NotMapped]
-        public List<MapItem> MapItems = new List<MapItem>();
+        public List<MapItem> MapItems { get; } = new List<MapItem>();
 
         //Projectiles
         [JsonIgnore]
         [NotMapped]
-        public List<Projectile> MapProjectiles = new List<Projectile>();
+        [NotNull]
+        public List<Projectile> MapProjectiles { get; } = new List<Projectile>();
 
         //Traps
         [JsonIgnore]
@@ -212,30 +216,50 @@ namespace Intersect.Server.Maps
 
         public void SpawnItem(int x, int y, Item item, int amount)
         {
-            var itemBase = ItemBase.Get(item.ItemId);
-            if (itemBase != null)
+            if (item == null)
             {
-                var mapItem = new MapItem(item.ItemId, item.Quantity, item.BagId, item.Bag)
+                Log.Warn($"Tried to spawn {amount} of a null item at ({x}, {y}) in map {Id}.");
+                return;
+            }
+
+            var itemBase = ItemBase.Get(item.ItemId);
+            if (itemBase == null)
+            {
+                Log.Warn($"No item found for {item.ItemId}.");
+                return;
+            }
+
+            var mapItem = new MapItem(item.ItemId, item.Quantity, item.BagId, item.Bag)
+            {
+                X = x,
+                Y = y,
+                DespawnTime = Globals.Timing.TimeMs + Options.ItemDespawnTime
+            };
+
+            if (itemBase.ItemType == ItemTypes.Equipment)
+            {
+                mapItem.Quantity = 1;
+                if (mapItem.StatBuffs != null && item.StatBuffs != null)
                 {
-                    X = x,
-                    Y = y,
-                    DespawnTime = Globals.Timing.TimeMs + Options.ItemDespawnTime
-                };
-                if (itemBase.ItemType == ItemTypes.Equipment)
-                {
-                    mapItem.Quantity = 1;
-                    for (int i = 0; i < (int)Stats.StatCount; i++)
+                    for (var i = 0; i < mapItem.StatBuffs.Length; ++i)
                     {
                         mapItem.StatBuffs[i] = item.StatBuffs.Length > i ? item.StatBuffs[i] : 0;
                     }
-                }
-                else
+                } else if (mapItem.StatBuffs == null)
                 {
-                    mapItem.Quantity = amount;
+                    Log.Warn($"Unexpected null: {nameof(mapItem)}.{nameof(mapItem.StatBuffs)}");
+                } else
+                {
+                    Log.Warn($"Unexpected null: {nameof(item)}.{nameof(item.StatBuffs)}");
                 }
-                MapItems.Add(mapItem);
-                PacketSender.SendMapItemUpdate(Id, MapItems.Count - 1);
             }
+            else
+            {
+                mapItem.Quantity = amount;
+            }
+
+            MapItems.Add(mapItem);
+            PacketSender.SendMapItemUpdate(Id, MapItems.Count - 1);
         }
 
         private void SpawnAttributeItem(int x, int y)

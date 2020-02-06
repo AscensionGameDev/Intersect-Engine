@@ -1,14 +1,14 @@
-﻿using System;
-using Intersect.Enums;
+﻿using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.Network.Packets.Server;
-using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.EventProcessing;
 using Intersect.Server.General;
 using Intersect.Server.Maps;
 using Intersect.Server.Misc.Pathfinding;
 using Intersect.Server.Networking;
+
+using System;
 
 namespace Intersect.Server.Entities
 {
@@ -275,9 +275,9 @@ namespace Intersect.Server.Entities
         }
 
         /// <inheritdoc />
-        public override void Move(byte moveDir, Client client, bool dontUpdate = false, bool correction = false)
+        public override void Move(int moveDir, Client client, bool doNotUpdate = false, bool correction = false)
         {
-            base.Move(moveDir, client, dontUpdate, correction);
+            base.Move(moveDir, client, doNotUpdate, correction);
 
             if (this.Trigger == EventTrigger.PlayerCollide && Passable)
             {
@@ -298,8 +298,8 @@ namespace Intersect.Server.Entities
             {
                 var moved = false;
                 var shouldSendUpdate = false;
-                sbyte lookDir = 0;
-                byte moveDir = 0;
+                int lookDir;
+                int moveDir;
                 if (MoveRoute.ActionIndex < MoveRoute.Actions.Count)
                 {
                     switch (MoveRoute.Actions[MoveRoute.ActionIndex].Type)
@@ -627,13 +627,13 @@ namespace Intersect.Server.Entities
 
         public void TurnTowardsPlayer()
         {
-            sbyte lookDir = -1;
+            int lookDir;
             if (Client != null && GlobalClone == null) //Local Event
             {
                 lookDir = GetDirectionTo(Client.Entity);
                 if (lookDir > -1)
                 {
-                    ChangeDir((byte)lookDir);
+                    ChangeDir(lookDir);
                 }
             }
         }

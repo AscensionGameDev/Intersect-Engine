@@ -89,6 +89,8 @@ namespace Intersect.Core
 
         public void RequestShutdown(bool join = false)
         {
+            Task disposeTask = null;
+
             lock (this)
             {
                 if (IsDisposed || IsDisposing || IsShutdownRequested)
@@ -97,7 +99,7 @@ namespace Intersect.Core
                 }
 
                 IsShutdownRequested = true;
-                var disposeTask = new Task(() =>
+                disposeTask = new Task(() =>
                 {
                     Dispose();
 
@@ -108,11 +110,12 @@ namespace Intersect.Core
                 });
 
                 disposeTask.Start();
+            }
 
-                if (join)
-                {
-                    disposeTask.Wait();
-                }
+            
+            if (join)
+            {
+                disposeTask.Wait();
             }
         }
 

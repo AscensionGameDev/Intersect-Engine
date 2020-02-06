@@ -64,7 +64,8 @@ namespace Intersect.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("Bans");
                 });
@@ -89,7 +90,8 @@ namespace Intersect.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("Mutes");
                 });
@@ -388,16 +390,16 @@ namespace Intersect.Server.Migrations
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Ban", b =>
                 {
                     b.HasOne("Intersect.Server.Database.PlayerData.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
+                        .WithOne("Ban")
+                        .HasForeignKey("Intersect.Server.Database.PlayerData.Ban", "UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Mute", b =>
                 {
                     b.HasOne("Intersect.Server.Database.PlayerData.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
+                        .WithOne("Mute")
+                        .HasForeignKey("Intersect.Server.Database.PlayerData.Mute", "UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -429,11 +431,13 @@ namespace Intersect.Server.Migrations
                 {
                     b.HasOne("Intersect.Server.Entities.Player", "Owner")
                         .WithMany("Friends")
-                        .HasForeignKey("OwnerId");
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Intersect.Server.Entities.Player", "Target")
                         .WithMany()
-                        .HasForeignKey("TargetId");
+                        .HasForeignKey("TargetId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Players.HotbarSlot", b =>

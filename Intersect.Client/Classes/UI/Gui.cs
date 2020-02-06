@@ -27,21 +27,21 @@ namespace Intersect.Client.UI
         [NotNull]
         public static readonly List<KeyValuePair<string, string>> MsgboxErrors = new List<KeyValuePair<string, string>>();
 
-        public static bool SetupHandlers;
+        public static bool SetupHandlers { get; set; }
 
-        public static GameGuiBase GameUi;
-        public static MenuGuiBase MenuUi;
+        public static GameGuiBase GameUi { get; set; }
+        public static MenuGuiBase MenuUi { get; set; }
 
-        public static TexturedBase Skin;
+        public static TexturedBase Skin { get; set; }
 
         public static ErrorMessageHandler ErrorMsgHandler;
         public static string ActiveFont = "arial";
         public static bool HideUi;
 
         //Input Handling
-        public static List<Framework.Gwen.Control.Base> FocusElements;
+        public static List<Framework.Gwen.Control.Base> FocusElements { get; set; }
 
-        public static List<Framework.Gwen.Control.Base> InputBlockingElements;
+        public static List<Framework.Gwen.Control.Base> InputBlockingElements { get; set; }
 
         #region "Gwen Setup and Input"
 

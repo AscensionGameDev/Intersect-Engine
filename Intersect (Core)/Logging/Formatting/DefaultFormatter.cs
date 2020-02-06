@@ -80,8 +80,8 @@ namespace Intersect.Logging.Formatting
                 return;
             }
 
-            Exception innerException;
-            while ((innerException = exception.InnerException) != null)
+            Exception innerException = exception; ;
+            while ((innerException = innerException.InnerException) != null)
             {
                 builder.AppendLine(@"Caused By");
                 FormatLine(builder, null, innerException, false);

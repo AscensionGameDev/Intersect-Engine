@@ -19,6 +19,12 @@ using Intersect.Server.Networking;
 
 using JetBrains.Annotations;
 
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
 namespace Intersect.Server.Entities
 {
     public class Npc : EntityInstance
@@ -151,10 +157,10 @@ namespace Intersect.Server.Entities
             PacketSender.SendNpcAggressionToProximity(this);
         }
 
-        public override bool CanAttack(EntityInstance en, SpellBase spell)
+        public override bool CanAttack(EntityInstance entity, SpellBase spell)
         {
-            if (!base.CanAttack(en, spell)) return false;
-            if (en.GetType() == typeof(EventPageInstance)) return false;
+            if (!base.CanAttack(entity, spell)) return false;
+            if (entity.GetType() == typeof(EventPageInstance)) return false;
             //Check if the attacker is stunned or blinded.
             var statuses = Statuses.Values.ToArray();
             foreach (var status in statuses)
@@ -164,31 +170,31 @@ namespace Intersect.Server.Entities
                     return false;
                 }
             }
-            if (en.GetType() == typeof(Resource))
+            if (entity.GetType() == typeof(Resource))
             {
-				if (!en.Passable) return false;
+				if (!entity.Passable) return false;
             }
-            else if (en.GetType() == typeof(Npc))
+            else if (entity.GetType() == typeof(Npc))
             {
-                return CanNpcCombat(en, spell != null && spell.Combat.Friendly) || en == this;
+                return CanNpcCombat(entity, spell != null && spell.Combat.Friendly) || entity == this;
             }
-            else if (en.GetType() == typeof(Player))
+            else if (entity.GetType() == typeof(Player))
             {
-                var player = (Player)en;
+                var player = (Player)entity;
                 var friendly = spell != null && spell.Combat.Friendly;
-                if (friendly && IsFriend(player)) return true;
-                if (!friendly && !IsFriend(player)) return true;
+                if (friendly && IsAllyOf(player)) return true;
+                if (!friendly && !IsAllyOf(player)) return true;
                 return false;
             }
             return true;
         }
 
-        public override void TryAttack(EntityInstance enemy)
+        public override void TryAttack(EntityInstance target)
         {
-            if (enemy.IsDisposed) return;
-            if (!CanAttack(enemy, null)) return;
-            if (!IsOneBlockAway(enemy)) return;
-            if (!IsFacingTarget(enemy)) return;
+            if (target.IsDisposed) return;
+            if (!CanAttack(target, null)) return;
+            if (!IsOneBlockAway(target)) return;
+            if (!IsFacingTarget(target)) return;
 
             var deadAnimations = new List<KeyValuePair<Guid, sbyte>>();
             var aliveAnimations = new List<KeyValuePair<Guid, sbyte>>();
@@ -199,9 +205,9 @@ namespace Intersect.Server.Entities
             {
                 if (Base.AttackAnimation != null)
                 {
-                    PacketSender.SendAnimationToProximity(Base.AttackAnimationId, -1, Guid.Empty, enemy.MapId, (byte)enemy.X, (byte)enemy.Y, (sbyte)Dir);
+                    PacketSender.SendAnimationToProximity(Base.AttackAnimationId, -1, Guid.Empty, target.MapId, (byte)target.X, (byte)target.Y, (sbyte)Dir);
                 }
-                base.TryAttack(enemy, Base.Damage, (DamageType) Base.DamageType, (Stats) Base.ScalingStat, Base.Scaling, Base.CritChance, Base.CritMultiplier, deadAnimations, aliveAnimations);
+                base.TryAttack(target, Base.Damage, (DamageType) Base.DamageType, (Stats) Base.ScalingStat, Base.Scaling, Base.CritChance, Base.CritMultiplier, deadAnimations, aliveAnimations);
                 PacketSender.SendEntityAttack(this, CalculateAttackTime());
             }
         }
@@ -227,7 +233,8 @@ namespace Intersect.Server.Entities
                     }
                     return false;
                 }
-                else if (enemy != null && enemy.GetType() == typeof(Player))
+
+                if (enemy != null && enemy.GetType() == typeof(Player))
                 {
                     return true;
                 }
@@ -462,6 +469,7 @@ namespace Intersect.Server.Entities
             PacketSender.SendEntityCastTime(this, spellId);
         }
 
+        // TODO: Improve NPC movement to be more fluid like a player
         //General Updating
         public override void Update(long timeMs)
         {
@@ -649,7 +657,7 @@ namespace Intersect.Server.Entities
                                     targetMap = Guid.Empty;
                                     break;
                                 case PathfinderResult.NoPathToTarget:
-                                    TryFindNewTarget((Target != null ? Target.Id : Guid.Empty));
+                                    TryFindNewTarget(Target?.Id ?? Guid.Empty);
                                     targetMap = Guid.Empty;
                                     break;
                                 case PathfinderResult.Failure:
@@ -793,7 +801,7 @@ namespace Intersect.Server.Entities
         public bool CanPlayerAttack(Player en)
         {
             //Check to see if the npc is a friend/protector...
-            if (IsFriend(en)) return false;
+            if (IsAllyOf(en)) return false;
 
             //If not then check and see if player meets the conditions to attack the npc...
             if (Base.PlayerCanAttackConditions.Lists.Count == 0 || Conditions.MeetsConditionLists(Base.PlayerCanAttackConditions, en, null)) return true;
@@ -801,27 +809,28 @@ namespace Intersect.Server.Entities
             return false;
         }
 
-        public bool IsFriend(EntityInstance entity)
+        public override bool IsAllyOf(EntityInstance otherEntity)
         {
-            if (entity.GetType() == typeof(Npc))
+            switch (otherEntity)
             {
-                if (((Npc)entity).Base == Base) return true;
+                case Npc otherNpc:
+                    return Base == otherNpc.Base;
+                case Player otherPlayer:
+                    var conditionLists = Base.PlayerFriendConditions;
+                    if ((conditionLists?.Count ?? 0) == 0)
+                    {
+                        return false;
+                    }
+
+                    return Conditions.MeetsConditionLists(conditionLists, otherPlayer, null);
+                default:
+                    return base.IsAllyOf(otherEntity);
             }
-            else if (entity.GetType() == typeof(Player))
-            {
-                var player = (Player)entity;
-                if (Base.PlayerFriendConditions.Lists.Count == 0) return false;
-                if (Conditions.MeetsConditionLists(Base.PlayerFriendConditions,player,null))
-                {
-                    return true;
-                }
-            }
-            return false;
         }
 
         public bool ShouldAttackPlayerOnSight(Player en)
         {
-            if (IsFriend(en)) return false;
+            if (IsAllyOf(en)) return false;
             if (Base.Aggressive)
             {
                 if (Base.AttackOnSightConditions.Lists.Count > 0 && Conditions.MeetsConditionLists(Base.AttackOnSightConditions, en, null)) return false;

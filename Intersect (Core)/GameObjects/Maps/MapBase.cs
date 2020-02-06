@@ -63,9 +63,11 @@ namespace Intersect.GameObjects.Maps
 
         [NotMapped]
         [JsonIgnore]
+        [NotNull]
         public MapAttribute[,] Attributes
         {
-            get => mAttributes;
+            get => mAttributes ?? (mAttributes = new MapAttribute[Options.MapWidth, Options.MapHeight]);
+
             set
             {
                 mAttributes = value;
