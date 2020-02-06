@@ -846,8 +846,7 @@ namespace Intersect.Server.Entities
                             if (((MapSlideAttribute)attribute).Direction > 0)
                             {
                                 Dir = (byte)(((MapSlideAttribute)attribute).Direction - 1);
-                            } //If sets direction, set it.
-                            var dash = new DashInstance(this, 1, (byte)Dir);
+                            }
                         }
                         //Check for traps
                         foreach (var trap in MapInstance.Get(MapId).MapTraps)
@@ -1299,7 +1298,7 @@ namespace Intersect.Server.Entities
         }
 
         //Attacking with spell
-        public virtual void TryAttack(EntityInstance enemy, SpellBase spellBase, bool onHitTrigger = false, bool trapTrigger = false)
+        public virtual void TryAttack(EntityInstance target, SpellBase spellBase, bool onHitTrigger = false, bool trapTrigger = false)
         {
             if (target is Resource)
             {
@@ -1319,10 +1318,9 @@ namespace Intersect.Server.Entities
               {
                 if (status.Type == StatusTypes.Taunt)
                 {
-                  if (Target != enemy)
+                  if (Target != target)
                   {
                     PacketSender.SendActionMsg(this, Strings.Combat.miss, CustomColors.Missed);
-
                     return;
                   }
                 }
