@@ -429,7 +429,6 @@ namespace Intersect.Server.Networking
             if (client.User.IsMuted) //Don't let the toungless toxic kids speak.
             {
                 PacketSender.SendChatMsg(client, client.User.Mute?.Reason);
-
                 return;
             }
 
@@ -437,7 +436,6 @@ namespace Intersect.Server.Networking
             {
                 PacketSender.SendChatMsg(client, Strings.Chat.toofast);
                 player.LastChatTime = Globals.Timing.RealTimeMs + Options.MinChatInterval;
-
                 return;
             }
 
@@ -445,202 +443,214 @@ namespace Intersect.Server.Networking
                 return;
 
             //If no /command, then use the designated channel.
-            if (msg[0] != '/')
+            var cmd = "";
+            if (!msg.StartsWith("/"))
             {
-                msg = "/" + channel + " " + msg;
+                switch (channel)
+                {
+                    case 0: //local
+                        cmd = Strings.Chat.localcmd;
+                        break;
+                    case 1: //global
+                        cmd = Strings.Chat.allcmd;
+                        break;
+                    case 2: //party
+                        cmd = Strings.Chat.partycmd;
+                        break;
+                    case 3: //admin
+                        cmd = Strings.Chat.admincmd;
+                        break;
+                }
+            }
+            else
+            {
+                cmd = msg.Split()[0].ToLower();
+                msg = msg.Remove(0, cmd.Length);
             }
 
-            player.LastChatTime = Globals.Timing.RealTimeMs + Options.MinChatInterval;
+            var msgSplit = msg.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-            //Check for /commands
-            if (msg[0] == '/')
+            if (cmd == Strings.Chat.localcmd)
             {
-                string[] splitString = msg.Split();
-                msg = msg.Remove(0, splitString[0].Length); //Chop off the /command at the start of the sentance
-                var cmd = splitString[0].ToLower();
+                if (msg.Trim().Length == 0)
+                    return;
 
-                if (cmd == Strings.Chat.localcmd || cmd == "/0")
+                if (client.Power.IsAdmin)
                 {
-                    if (msg.Trim().Length == 0)
-                        return;
-
-                    if (client.Power.IsAdmin)
-                    {
-                        PacketSender.SendProximityMsg(
-                            Strings.Chat.local.ToString(client.Entity.Name, msg), player.MapId,
-                            CustomColors.AdminLocalChat, client.Entity.Name
-                        );
-                    }
-                    else if (client.Power.IsModerator)
-                    {
-                        PacketSender.SendProximityMsg(
-                            Strings.Chat.local.ToString(client.Entity.Name, msg), player.MapId,
-                            CustomColors.ModLocalChat, client.Entity.Name
-                        );
-                    }
-                    else
-                    {
-                        PacketSender.SendProximityMsg(
-                            Strings.Chat.local.ToString(client.Entity.Name, msg), player.MapId, CustomColors.LocalChat,
-                            client.Entity.Name
-                        );
-                    }
-
-                    PacketSender.SendChatBubble(player.Id, (int) EntityTypes.GlobalEntity, msg, player.MapId);
+                    PacketSender.SendProximityMsg(
+                        Strings.Chat.local.ToString(client.Entity.Name, msg), player.MapId,
+                        CustomColors.AdminLocalChat, client.Entity.Name
+                    );
                 }
-                else if (cmd == Strings.Chat.allcmd || cmd == "/1" || cmd == Strings.Chat.globalcmd)
+                else if (client.Power.IsModerator)
                 {
-                    if (msg.Trim().Length == 0)
-                        return;
-
-                    if (client.Power.IsAdmin)
-                    {
-                        PacketSender.SendGlobalMsg(
-                            Strings.Chat.Global.ToString(client.Entity.Name, msg), CustomColors.AdminGlobalChat,
-                            client.Entity.Name
-                        );
-                    }
-                    else if (client.Power.IsModerator)
-                    {
-                        PacketSender.SendGlobalMsg(
-                            Strings.Chat.Global.ToString(client.Entity.Name, msg), CustomColors.ModGlobalChat,
-                            client.Entity.Name
-                        );
-                    }
-                    else
-                    {
-                        PacketSender.SendGlobalMsg(
-                            Strings.Chat.Global.ToString(client.Entity.Name, msg), CustomColors.GlobalChat,
-                            client.Entity.Name
-                        );
-                    }
-                }
-                else if (cmd == Strings.Chat.partycmd || cmd == "/2")
-                {
-                    if (msg.Trim().Length == 0)
-                        return;
-
-                    if (client.Entity.InParty(client.Entity))
-                    {
-                        PacketSender.SendPartyMsg(
-                            client, Strings.Chat.party.ToString(client.Entity.Name, msg), CustomColors.PartyChat,
-                            client.Entity.Name
-                        );
-                    }
-                    else
-                    {
-                        PacketSender.SendChatMsg(client, Strings.Parties.notinparty, CustomColors.Error);
-                    }
-                }
-                else if (cmd == Strings.Chat.admincmd || cmd == "/3")
-                {
-                    if (msg.Trim().Length == 0)
-                        return;
-
-                    if (client.Power.IsModerator)
-                    {
-                        PacketSender.SendAdminMsg(
-                            Strings.Chat.admin.ToString(client.Entity.Name, msg), CustomColors.AdminChat,
-                            client.Entity.Name
-                        );
-                    }
-                }
-                else if (cmd == Strings.Chat.announcementcmd)
-                {
-                    if (msg.Trim().Length == 0)
-                        return;
-
-                    if (client.Power.IsModerator)
-                    {
-                        PacketSender.SendGlobalMsg(
-                            Strings.Chat.announcement.ToString(client.Entity.Name, msg), CustomColors.AnnouncementChat,
-                            client.Entity.Name
-                        );
-                    }
-                }
-                else if (cmd == Strings.Chat.pmcmd || cmd == Strings.Chat.messagecmd)
-                {
-                    if (splitString.Length < 3)
-                    {
-                        return;
-                    }
-
-                    msg = msg.Remove(0, splitString[1].Length + 1); //Chop off the player name parameter
-
-                    if (msg.Trim().Length == 0)
-                        return;
-
-                    for (int i = 0; i < Globals.Clients.Count; i++)
-                    {
-                        if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
-                        {
-                            if (splitString[1].ToLower() == Globals.Clients[i].Entity.Name.ToLower())
-                            {
-                                PacketSender.SendChatMsg(
-                                    client, Strings.Chat.Private.ToString(client.Entity.Name, msg),
-                                    CustomColors.PrivateChat, client.Entity.Name
-                                );
-
-                                PacketSender.SendChatMsg(
-                                    Globals.Clients[i], Strings.Chat.Private.ToString(client.Entity.Name, msg),
-                                    CustomColors.PrivateChat, client.Entity.Name
-                                );
-
-                                Globals.Clients[i].Entity.ChatTarget = client.Entity;
-                                client.Entity.ChatTarget = Globals.Clients[i].Entity;
-
-                                return;
-                            }
-                        }
-                    }
-
-                    PacketSender.SendChatMsg(client, Strings.Player.offline, CustomColors.Error);
-                }
-                else if (cmd == Strings.Chat.replycmd || cmd == Strings.Chat.rcmd)
-                {
-                    if (msg.Trim().Length == 0)
-                        return;
-
-                    if (client.Entity.ChatTarget != null)
-                    {
-                        PacketSender.SendChatMsg(
-                            client, Strings.Chat.Private.ToString(client.Entity.Name, msg), CustomColors.PrivateChat,
-                            client.Entity.Name
-                        );
-
-                        PacketSender.SendChatMsg(
-                            client.Entity.ChatTarget.Client, Strings.Chat.Private.ToString(client.Entity.Name, msg),
-                            CustomColors.PrivateChat, client.Entity.Name
-                        );
-
-                        client.Entity.ChatTarget.ChatTarget = client.Entity;
-                    }
-                    else
-                    {
-                        PacketSender.SendChatMsg(client, Strings.Player.offline, CustomColors.Error);
-                    }
+                    PacketSender.SendProximityMsg(
+                        Strings.Chat.local.ToString(client.Entity.Name, msg), player.MapId,
+                        CustomColors.ModLocalChat, client.Entity.Name
+                    );
                 }
                 else
                 {
-                    //Search for command activated events and run them
-                    foreach (var evt in EventBase.Lookup)
+                    PacketSender.SendProximityMsg(
+                        Strings.Chat.local.ToString(client.Entity.Name, msg), player.MapId, CustomColors.LocalChat,
+                        client.Entity.Name
+                    );
+                }
+
+                PacketSender.SendChatBubble(player.Id, (int)EntityTypes.GlobalEntity, msg, player.MapId);
+            }
+            else if (cmd == Strings.Chat.allcmd || cmd == Strings.Chat.globalcmd)
+            {
+                if (msg.Trim().Length == 0)
+                    return;
+
+                if (client.Power.IsAdmin)
+                {
+                    PacketSender.SendGlobalMsg(
+                        Strings.Chat.Global.ToString(client.Entity.Name, msg), CustomColors.AdminGlobalChat,
+                        client.Entity.Name
+                    );
+                }
+                else if (client.Power.IsModerator)
+                {
+                    PacketSender.SendGlobalMsg(
+                        Strings.Chat.Global.ToString(client.Entity.Name, msg), CustomColors.ModGlobalChat,
+                        client.Entity.Name
+                    );
+                }
+                else
+                {
+                    PacketSender.SendGlobalMsg(
+                        Strings.Chat.Global.ToString(client.Entity.Name, msg), CustomColors.GlobalChat,
+                        client.Entity.Name
+                    );
+                }
+            }
+            else if (cmd == Strings.Chat.partycmd)
+            {
+                if (msg.Trim().Length == 0)
+                    return;
+
+                if (client.Entity.InParty(client.Entity))
+                {
+                    PacketSender.SendPartyMsg(
+                        client, Strings.Chat.party.ToString(client.Entity.Name, msg), CustomColors.PartyChat,
+                        client.Entity.Name
+                    );
+                }
+                else
+                {
+                    PacketSender.SendChatMsg(client, Strings.Parties.notinparty, CustomColors.Error);
+                }
+            }
+            else if (cmd == Strings.Chat.admincmd)
+            {
+                if (msg.Trim().Length == 0)
+                    return;
+
+                if (client.Power.IsModerator)
+                {
+                    PacketSender.SendAdminMsg(
+                        Strings.Chat.admin.ToString(client.Entity.Name, msg), CustomColors.AdminChat,
+                        client.Entity.Name
+                    );
+                }
+            }
+            else if (cmd == Strings.Chat.announcementcmd)
+            {
+                if (msg.Trim().Length == 0)
+                    return;
+
+                if (client.Power.IsModerator)
+                {
+                    PacketSender.SendGlobalMsg(
+                        Strings.Chat.announcement.ToString(client.Entity.Name, msg), CustomColors.AnnouncementChat,
+                        client.Entity.Name
+                    );
+                }
+            }
+            else if (cmd == Strings.Chat.pmcmd || cmd == Strings.Chat.messagecmd)
+            {
+                if (msgSplit.Length < 2)
+                {
+                    return;
+                }
+
+                msg = msg.Remove(0, msgSplit[0].Length + 1); //Chop off the player name parameter
+
+                if (msg.Trim().Length == 0)
+                    return;
+
+                for (int i = 0; i < Globals.Clients.Count; i++)
+                {
+                    if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                     {
-                        if ((EventBase) evt.Value != null)
+                        if (msgSplit[0].ToLower() == Globals.Clients[i].Entity.Name.ToLower())
                         {
-                            if (client.Entity.StartCommonEvent(
-                                    (EventBase) evt.Value, CommonEventTrigger.SlashCommand,
-                                    splitString[0].TrimStart('/'), msg
-                                ) ==
-                                true)
-                            {
-                                return; //Found our /command, exit now :)
-                            }
+                            PacketSender.SendChatMsg(
+                                client, Strings.Chat.Private.ToString(client.Entity.Name, msg),
+                                CustomColors.PrivateChat, client.Entity.Name
+                            );
+
+                            PacketSender.SendChatMsg(
+                                Globals.Clients[i], Strings.Chat.Private.ToString(client.Entity.Name, msg),
+                                CustomColors.PrivateChat, client.Entity.Name
+                            );
+
+                            Globals.Clients[i].Entity.ChatTarget = client.Entity;
+                            client.Entity.ChatTarget = Globals.Clients[i].Entity;
+
+                            return;
                         }
                     }
-
-                    //No common event /command, invalid command.
-                    PacketSender.SendChatMsg(client, Strings.Commands.invalid, CustomColors.Error);
                 }
+
+                PacketSender.SendChatMsg(client, Strings.Player.offline, CustomColors.Error);
+            }
+            else if (cmd == Strings.Chat.replycmd || cmd == Strings.Chat.rcmd)
+            {
+                if (msg.Trim().Length == 0)
+                    return;
+
+                if (client.Entity.ChatTarget != null)
+                {
+                    PacketSender.SendChatMsg(
+                        client, Strings.Chat.Private.ToString(client.Entity.Name, msg), CustomColors.PrivateChat,
+                        client.Entity.Name
+                    );
+
+                    PacketSender.SendChatMsg(
+                        client.Entity.ChatTarget.Client, Strings.Chat.Private.ToString(client.Entity.Name, msg),
+                        CustomColors.PrivateChat, client.Entity.Name
+                    );
+
+                    client.Entity.ChatTarget.ChatTarget = client.Entity;
+                }
+                else
+                {
+                    PacketSender.SendChatMsg(client, Strings.Player.offline, CustomColors.Error);
+                }
+            }
+            else
+            {
+                //Search for command activated events and run them
+                foreach (var evt in EventBase.Lookup)
+                {
+                    if ((EventBase)evt.Value != null)
+                    {
+                        if (client.Entity.StartCommonEvent(
+                                (EventBase)evt.Value, CommonEventTrigger.SlashCommand,
+                                cmd.TrimStart('/'), msg
+                            ) ==
+                            true)
+                        {
+                            return; //Found our /command, exit now :)
+                        }
+                    }
+                }
+
+                //No common event /command, invalid command.
+                PacketSender.SendChatMsg(client, Strings.Commands.invalid, CustomColors.Error);
             }
         }
 
