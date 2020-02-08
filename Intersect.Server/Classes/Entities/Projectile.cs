@@ -441,7 +441,7 @@ namespace Intersect.Server.Entities
         public override EntityPacket EntityPacket(EntityPacket packet = null, Client forClient = null)
         {
             if (packet == null) packet = new ProjectileEntityPacket();
-            packet = base.EntityPacket(packet);
+            packet = base.EntityPacket(packet, forClient);
 
             var pkt = (ProjectileEntityPacket)packet;
             pkt.ProjectileId = Base.Id;

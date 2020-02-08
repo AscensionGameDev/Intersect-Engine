@@ -291,7 +291,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            var packet = en.EntityPacket();
+            var packet = en.EntityPacket(null, client);
             packet.IsSelf = en == client.Entity;
             client.SendPacket(packet);
 
@@ -332,7 +332,7 @@ namespace Intersect.Server.Networking
             var enPackets = new List<EntityPacket>();
             for (var i = 0; i < sendEntities.Count; i++)
             {
-                enPackets.Add(sendEntities[i].EntityPacket());
+                enPackets.Add(sendEntities[i].EntityPacket(null, client));
             }
 
             client.SendPacket(new MapEntitiesPacket(enPackets.ToArray()));
@@ -371,7 +371,15 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            SendDataToProximity(en.MapId, en.EntityPacket(), except);
+            foreach (var map in en.Map.GetSurroundingMaps(true))
+            {
+                foreach (var player in map.GetPlayersOnMap())
+                {
+                    if (player.Client != except)
+                        SendEntityDataTo(player.Client, en);
+                }
+            }
+
             SendEntityVitals(en);
             SendEntityStats(en);
 
@@ -434,23 +442,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            var aggression = -1;
-
-            //Declare Aggression state
-            if (npc.Target == null)
-            {
-                //TODO (0 is attack when attacked, 1 is attack on sight, 2 is friendly, 3 is guard)
-                if (npc.IsAllyOf(en) || !en.CanAttack(npc, null))
-                {
-                    aggression = 2;
-                }
-                else if (npc.ShouldAttackPlayerOnSight(en))
-                {
-                    aggression = 1;
-                }
-            }
-
-            en.Client.SendPacket(new NpcAggressionPacket(npc.Id,aggression));
+            en.Client.SendPacket(new NpcAggressionPacket(npc.Id,npc.GetAggression(en)));
         }
 
         //EntityLeftPacket

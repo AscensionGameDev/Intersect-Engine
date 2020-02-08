@@ -175,7 +175,7 @@ namespace Intersect.Server.Entities
         public override EntityPacket EntityPacket(EntityPacket packet = null, Client forClient = null)
         {
             if (packet == null) packet = new ResourceEntityPacket();
-            packet = base.EntityPacket(packet);
+            packet = base.EntityPacket(packet, forClient);
 
             var pkt = (ResourceEntityPacket)packet;
             pkt.ResourceId = Base.Id;

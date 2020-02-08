@@ -563,7 +563,7 @@ namespace Intersect.Server.Entities
                 packet = new PlayerEntityPacket();
             }
 
-            packet = base.EntityPacket(packet);
+            packet = base.EntityPacket(packet, forClient);
 
             var pkt = (PlayerEntityPacket) packet;
             pkt.Gender = Gender;

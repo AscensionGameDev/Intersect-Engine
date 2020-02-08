@@ -211,7 +211,7 @@ namespace Intersect.Server.Entities
                 HideName = GlobalClone.HideName;
             }
 
-            packet = base.EntityPacket(packet);
+            packet = base.EntityPacket(packet, forClient);
 
             var pkt = (EventEntityPacket)packet;
             pkt.HideName = HideName;

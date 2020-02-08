@@ -165,6 +165,7 @@ namespace Intersect.Client.Networking
             if (en != null)
             {
                 en.Load(packet);
+                en.Type = packet.Aggression;
             }
             else
             {

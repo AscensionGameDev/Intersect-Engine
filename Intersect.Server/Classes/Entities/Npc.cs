@@ -930,13 +930,37 @@ namespace Intersect.Server.Entities
             }
         }
 
+        public int GetAggression(Player player)
+        {
+            //Determines the aggression level of this npc to send to the player
+            if (this.Target != null)
+            {
+                return -1;
+            }
+            else
+            {
+                //Guard = 3
+                //Will attack on sight = 1
+                //Will attack if attacked = 0
+                //Can't attack nor can attack = 2
+                var ally = IsAllyOf(player);
+                var attackOnSight = ShouldAttackPlayerOnSight(player);
+                var canPlayerAttack = CanPlayerAttack(player);
+                if (ally && !canPlayerAttack) return 3;
+                if (attackOnSight) return 1;
+                if (!ally && !attackOnSight && canPlayerAttack) return 0;
+                if (!ally && !attackOnSight && !canPlayerAttack) return 2;
+            }
+            return 2;
+        }
+
         public override EntityPacket EntityPacket(EntityPacket packet = null, Client forClient = null)
         {
             if (packet == null) packet = new NpcEntityPacket();
-            packet = base.EntityPacket(packet);
+            packet = base.EntityPacket(packet, forClient);
 
             var pkt = (NpcEntityPacket)packet;
-            pkt.Aggression = this.Target != null ? -1 : 0; //TODO FIX THIS WITH NEW NPC AGGRESSIONS
+            pkt.Aggression = GetAggression(forClient?.Entity);
             return pkt;
         }
 
