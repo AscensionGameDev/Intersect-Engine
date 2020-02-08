@@ -24,7 +24,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             }
             else
             {
-                cmbPicture.SelectedIndex = 0;
+                if (cmbPicture.Items.Count > 0) cmbPicture.SelectedIndex = 0;
             }
 
             cmbSize.Items.Clear();
