@@ -3814,7 +3814,7 @@ namespace Intersect.Server.Entities
 
             if (Spells[spellSlot].SpellCd < Globals.Timing.RealTimeMs)
             {
-                if (CastTime < Globals.Timing.TimeMs)
+                if (CastTime == 0)
                 {
                     CastTime = Globals.Timing.TimeMs + spell.CastDuration;
                     SubVital(Vitals.Mana, spell.VitalCost[(int) Vitals.Mana]);
