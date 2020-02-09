@@ -1875,7 +1875,7 @@ namespace Intersect.Server.Entities
             }
 
             var spellCombat = spellDescriptor.Combat;
-            if (spellDescriptor.SpellType != SpellTypes.CombatSpell || spellCombat == null)
+            if ((spellDescriptor.SpellType != SpellTypes.CombatSpell && spellDescriptor.SpellType != SpellTypes.Event) || spellCombat == null)
             {
                 return true;
             }
