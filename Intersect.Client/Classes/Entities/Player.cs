@@ -78,8 +78,7 @@ namespace Intersect.Client.Entities
                     if (Globals.Me == this)
                     {
                         if (MapInstance.Get(Globals.Me.CurrentMap) != null)
-                            GameAudio.PlayMusic(MapInstance.Get(Globals.Me.CurrentMap).Music, 3, 3,
-                                true);
+                            GameAudio.PlayMusic(MapInstance.Get(Globals.Me.CurrentMap).Music, 3, 3, true);
                         if (newMap != null && oldMap != null)
                         {
                             newMap.CompareEffects(oldMap);

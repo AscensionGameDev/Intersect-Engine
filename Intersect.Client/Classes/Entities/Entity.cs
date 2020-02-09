@@ -547,28 +547,6 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            foreach (AnimationInstance animInstance in Animations)
-            {
-                animInstance.Update();
-                if (IsStealthed())
-                {
-                    animInstance.Hide();
-                }
-                else
-                {
-                    animInstance.Show();
-                }
-                if (animInstance.AutoRotate)
-                {
-                    animInstance.SetPosition((int) GetCenterPos().X, (int) GetCenterPos().Y, X, Y,
-                        CurrentMap, Dir, Z);
-                }
-                else
-                {
-                    animInstance.SetPosition((int) GetCenterPos().X, (int) GetCenterPos().Y, X, Y,
-                        CurrentMap, -1, Z);
-                }
-            }
             var chatbubbles = mChatBubbles.ToArray();
             foreach (var chatbubble in chatbubbles)
             {
@@ -585,6 +563,30 @@ namespace Intersect.Client.Entities
             }
 
             CalculateCenterPos();
+
+            foreach (AnimationInstance animInstance in Animations)
+            {
+                animInstance.Update();
+                if (IsStealthed())
+                {
+                    animInstance.Hide();
+                }
+                else
+                {
+                    animInstance.Show();
+                }
+                if (animInstance.AutoRotate)
+                {
+                    animInstance.SetPosition((int)Math.Ceiling(GetCenterPos().X), (int)Math.Ceiling(GetCenterPos().Y), X, Y,
+                        CurrentMap, Dir, Z);
+                }
+                else
+                {
+                    animInstance.SetPosition((int)Math.Ceiling(GetCenterPos().X), (int)Math.Ceiling(GetCenterPos().Y), X, Y,
+                        CurrentMap, -1, Z);
+                }
+            }
+
             mLastUpdate = Globals.System.GetTimeMs();
             return true;
         }
@@ -997,7 +999,7 @@ namespace Intersect.Client.Entities
                         backgroundColor = CustomColors.AgressiveNpcNameBackground;
                         break;
                     case 0: //Attack when attacked
-                        textColor = Intersect.CustomColors.AttackWhenAttackedName;
+                        textColor = CustomColors.AttackWhenAttackedName;
                         borderColor = CustomColors.AttackWhenAttackedNameBorder;
                         backgroundColor = CustomColors.AttackWhenAttackedNameBackground;
                         break;

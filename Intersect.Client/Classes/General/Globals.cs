@@ -92,6 +92,11 @@ namespace Intersect.Client.General
         //Only need 1 shop, and that is the one we see at a given moment in time.
         public static ShopBase GameShop;
 
+        //Event Show Pictures
+        public static string Picture;
+        public static int PictureSize;
+        public static bool PictureClickable;
+
         public static int AnimFrame = 0;
 
         public static bool LoggedIn = false;

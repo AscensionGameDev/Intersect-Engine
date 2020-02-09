@@ -325,6 +325,7 @@ namespace Intersect.Client
             Globals.GameState = GameStates.Menu;
             Globals.JoiningGame = false;
             Globals.NeedsMaps = true;
+            Globals.Picture = null;
             Gui.HideUi = false;
 
             //Dump Game Objects

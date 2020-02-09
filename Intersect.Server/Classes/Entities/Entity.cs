@@ -824,7 +824,9 @@ namespace Intersect.Server.Entities
 
                     MoveTimer = Globals.Timing.TimeMs + (long) GetMovementTime();
                 }
-                else if (TryToChangeDimension())
+
+                
+                if (TryToChangeDimension() && doNotUpdate == true)
                 {
                     PacketSender.UpdateEntityZDimension(this, (byte) Z);
                 }
@@ -1423,6 +1425,18 @@ namespace Intersect.Server.Entities
                 }
             }
 
+            var damageHealth = spellBase.Combat.VitalDiff[0];
+            var damageMana = spellBase.Combat.VitalDiff[1];
+
+            if (spellBase.Combat.Effect != StatusTypes.OnHit && spellBase.Combat.Effect != StatusTypes.Shield)
+            {
+                Attack(
+                    target, damageHealth, damageMana, (DamageType)spellBase.Combat.DamageType,
+                    (Stats)spellBase.Combat.ScalingStat, spellBase.Combat.Scaling, spellBase.Combat.CritChance,
+                    spellBase.Combat.CritMultiplier, deadAnimations, aliveAnimations
+                );
+            }
+
             if (spellBase.Combat.Effect > 0) //Handle status effects
             {
                 //Check for onhit effect to avoid the onhit effect recycling.
@@ -1434,7 +1448,7 @@ namespace Intersect.Server.Entities
                     );
 
                     PacketSender.SendActionMsg(
-                        target, Strings.Combat.status[(int) spellBase.Combat.Effect], CustomColors.Status
+                        target, Strings.Combat.status[(int)spellBase.Combat.Effect], CustomColors.Status
                     );
 
                     //Set the enemies target if a taunt spell
@@ -1463,15 +1477,6 @@ namespace Intersect.Server.Entities
                     new StatusInstance(target, spellBase, spellBase.Combat.Effect, statBuffTime, "");
                 }
             }
-
-            var damageHealth = spellBase.Combat.VitalDiff[0];
-            var damageMana = spellBase.Combat.VitalDiff[1];
-
-            Attack(
-                target, damageHealth, damageMana, (DamageType) spellBase.Combat.DamageType,
-                (Stats) spellBase.Combat.ScalingStat, spellBase.Combat.Scaling, spellBase.Combat.CritChance,
-                spellBase.Combat.CritMultiplier, deadAnimations, aliveAnimations
-            );
 
             //Handle DoT/HoT spells]
             if (spellBase.Combat.HoTDoT)
@@ -1900,7 +1905,7 @@ namespace Intersect.Server.Entities
             }
 
             var spellCombat = spellDescriptor.Combat;
-            if (spellDescriptor.SpellType != SpellTypes.CombatSpell || spellCombat == null)
+            if ((spellDescriptor.SpellType != SpellTypes.CombatSpell && spellDescriptor.SpellType != SpellTypes.Event) || spellCombat == null)
             {
                 return true;
             }
@@ -2724,11 +2729,7 @@ namespace Intersect.Server.Entities
             {
                 for (var i = (int) Vitals.Health; i < (int) Vitals.VitalCount; i++)
                 {
-                    if (spell.Combat.VitalDiff[i] > 0)
-                    {
-                        shield[i] = spell.Combat.VitalDiff[i] +
-                                    ((spell.Combat.Scaling * en.Stat[spell.Combat.ScalingStat].Stat) / 100);
-                    }
+                    shield[i] = Math.Abs(spell.Combat.VitalDiff[i]) + (int)((spell.Combat.Scaling * en.Stat[spell.Combat.ScalingStat].Stat) / 100f);
                 }
             }
 

@@ -97,7 +97,8 @@ namespace Intersect.Client.MonoGame.Audio
 
         ~MonoMusicInstance()
         {
-            Dispose();
+            mDisposed = true;
+            //We don't want to call MediaPlayer.Stop() here because it's static and another song has likely started playing.
         }
     }
 }

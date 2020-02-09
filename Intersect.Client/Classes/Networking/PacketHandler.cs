@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.General;
@@ -165,6 +166,7 @@ namespace Intersect.Client.Networking
             if (en != null)
             {
                 en.Load(packet);
+                en.Type = packet.Aggression;
             }
             else
             {
@@ -967,36 +969,15 @@ namespace Intersect.Client.Networking
         //ShowPicturePacket
         private static void HandlePacket(ShowPicturePacket packet)
         {
-            if (Gui.GameUi == null)
-            {
-                throw new ArgumentNullException(nameof(Gui.GameUi));
-            }
-
-            if (packet == null)
-            {
-                Log.Warn(
-                    "Failed to show picture because the packet was null.", new ArgumentNullException(nameof(packet))
-                );
-                return;
-            }
-
-            Gui.GameUi.ShowPicture(packet.Picture, packet.Size, packet.Clickable);
+            Globals.Picture = packet.Picture;
+            Globals.PictureSize = packet.Size;
+            Globals.PictureClickable = packet.Clickable;
         }
 
         //HidePicturePacket
         private static void HandlePacket(HidePicturePacket packet)
         {
-            if (Gui.GameUi == null)
-            {
-                throw new ArgumentNullException(nameof(Gui.GameUi));
-            }
-
-            if (packet == null)
-            {
-                Log.Warn($"{nameof(HidePicturePacket)} packet is null for some reason.");
-            }
-
-            Gui.GameUi.HidePicture();
+            Globals.Picture = null;
         }
 
         //ShopPacket

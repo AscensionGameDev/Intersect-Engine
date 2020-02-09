@@ -124,7 +124,16 @@ namespace Intersect.Client.UI.Game
                     var vitalDiff = spell.Combat.VitalDiff?[i] ?? 0;
                     if (vitalDiff == 0) continue;
                     var vitalSymbol = vitalDiff < 0 ? Strings.SpellDesc.addsymbol : Strings.SpellDesc.removesymbol;
-                    stats = Strings.SpellDesc.vitals[i].ToString(vitalSymbol, Math.Abs(vitalDiff));
+                    if (spell.Combat.Effect == StatusTypes.Shield)
+                    {
+                        stats = Strings.SpellDesc.shield.ToString(Math.Abs(vitalDiff));
+                    }
+                    else
+                    {
+                        stats = Strings.SpellDesc.vitals[i].ToString(vitalSymbol, Math.Abs(vitalDiff));
+                    }
+                    
+                    
                     spellStats.AddText(stats, spellStats.RenderColor, spellStatsText.CurAlignments.Count > 0 ? spellStatsText.CurAlignments[0] : Alignments.Left, spellStatsText.Font);
                     spellStats.AddLineBreak();
                 }

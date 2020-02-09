@@ -797,6 +797,7 @@ namespace Intersect.Client.Localization
             };
             public static LocalizedString effects = @"Effects:";
             public static LocalizedString prereqs = @"Prerequisites:";
+            public static LocalizedString shield = @"Shielding: {00}";
             public static LocalizedString radius = @"Hit Radius: {00}";
             public static LocalizedString removesymbol = @"-";
             public static Dictionary<int, LocalizedString> spelltypes = new Dictionary<int, LocalizedString>

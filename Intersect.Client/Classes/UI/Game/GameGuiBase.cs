@@ -189,19 +189,6 @@ namespace Intersect.Client.UI.Game
             Globals.InCraft = true;
         }
 
-        //Picture
-
-        public void ShowPicture(string picture, int size, bool clickable)
-        {
-            mPictureWindow?.Close();
-            mPictureWindow = new PictureWindow(GameCanvas, picture, size, clickable);
-        }
-
-        public void HidePicture()
-        {
-            mPictureWindow?.Close();
-        }
-
         //Quest Log
         public void NotifyQuestsUpdated()
         {
@@ -284,6 +271,35 @@ namespace Intersect.Client.UI.Game
             {
                 mQuestOfferWindow.Hide();
             }
+
+            if (Globals.Picture != null)
+            {
+                var create = true;
+                if (mPictureWindow != null)
+                {
+                    if (mPictureWindow.Picture != Globals.Picture || mPictureWindow.Size != Globals.PictureSize || mPictureWindow.Clickable != Globals.PictureClickable)
+                    {
+                        mPictureWindow.Close();
+                        mPictureWindow = null;
+                    }
+                    else
+                    {
+                        create = false;
+                    }
+                }
+                if (create)
+                    mPictureWindow = new PictureWindow(GameCanvas, Globals.Picture, Globals.PictureSize, Globals.PictureClickable);
+            }
+            else
+            {
+                if (mPictureWindow != null)
+                {
+                    mPictureWindow.Close();
+                    mPictureWindow = null;
+                }
+            }
+
+            
 
             //Admin window update
             if (mShouldOpenAdminWindow)

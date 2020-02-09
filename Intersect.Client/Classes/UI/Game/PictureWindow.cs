@@ -18,9 +18,17 @@ namespace Intersect.Client.UI.Game
 
         //Controls
         private ImagePanel mPicture;
+        public string Picture { get; }
+        public int Size { get; }
+        public bool Clickable { get; }
+
 
         public PictureWindow(Canvas gameCanvas, string picture, int size, bool clickable)
         {
+            Picture = picture;
+            Size = size;
+            Clickable = clickable;
+
             mPicture = new ImagePanel(gameCanvas);
             mPicture.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Image, picture);
             if (mPicture.Texture != null)

@@ -977,7 +977,7 @@ namespace Intersect.Server.EventProcessing
                     {
                         if (partyMember != player)
                         {
-                            partyMember.SetVariableValue(command.VariableId, value.Integer);
+                            partyMember.SetSwitchValue(command.VariableId, mod.Value);
                         }
                     }
                 }
