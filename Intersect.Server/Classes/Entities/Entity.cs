@@ -816,7 +816,9 @@ namespace Intersect.Server.Entities
 
                     MoveTimer = Globals.Timing.TimeMs + (long) GetMovementTime();
                 }
-                else if (TryToChangeDimension())
+
+                
+                if (TryToChangeDimension() && doNotUpdate == true)
                 {
                     PacketSender.UpdateEntityZDimension(this, (byte) Z);
                 }
