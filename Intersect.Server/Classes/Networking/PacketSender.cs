@@ -622,7 +622,7 @@ namespace Intersect.Server.Networking
         {
             var statuses = en.Statuses.Values.ToArray();
 
-            return new EntityVitalsPacket(en.Id, en.GetEntityType(), en.MapId, en.GetVitals(), en.GetMaxVitals(), en.StatusPackets());
+            return new EntityVitalsPacket(en.Id, en.GetEntityType(), en.MapId, en.GetVitals(), en.GetMaxVitals(), en.StatusPackets(), en.CombatTimer - Globals.Timing.TimeMs);
         }
 
         //EntityVitalsPacket

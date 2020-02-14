@@ -36,6 +36,7 @@ namespace Intersect.Client.Entities
         public HotbarInstance[] Hotbar = new HotbarInstance[Options.MaxHotbar];
         public Dictionary<Guid, long> ItemCooldowns = new Dictionary<Guid, long>();
         public Dictionary<Guid, long> SpellCooldowns = new Dictionary<Guid, long>();
+        public long CombatTimer { get; set; } = 0;
 
         private List<PartyMember> mParty;
 
@@ -150,6 +151,7 @@ namespace Intersect.Client.Entities
             Gender = pkt.Gender;
             Class = pkt.ClassId;
             Type = pkt.AccessLevel;
+            CombatTimer = pkt.CombatTimeRemaining + Globals.System.GetTimeMs();
 
             if (((PlayerEntityPacket)packet).Equipment != null)
             {

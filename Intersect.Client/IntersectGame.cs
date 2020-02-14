@@ -144,6 +144,10 @@ namespace Intersect.Client
         {
             base.OnExiting(sender, args);
             GameNetwork.Close("quitting");
+            if (Globals.Me != null && Globals.Me.CombatTimer > Globals.System?.GetTimeMs())
+            {
+                MessageBox.Show(Strings.Combat.warningforceclose, Strings.Combat.warningtitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
             base.Dispose();
         }
     }

@@ -454,6 +454,14 @@ namespace Intersect.Client.Networking
             en.Vital = packet.Vitals;
             en.MaxVital = packet.MaxVitals;
 
+            if (en == Globals.Me)
+            {
+                if (packet.CombatTimeRemaining > 0)
+                {
+                    Globals.Me.CombatTimer = Globals.System.GetTimeMs() + packet.CombatTimeRemaining;
+                }
+            }
+
             //Update status effects
             en.Status.Clear();
             foreach (var status in packet.StatusEffects)

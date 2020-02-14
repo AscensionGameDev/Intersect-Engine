@@ -629,6 +629,11 @@ namespace Intersect.Server.Entities
                 pkt.AccessLevel = 0;
             }
 
+            if (CombatTimer > Globals.Timing.TimeMs)
+            {
+                pkt.CombatTimeRemaining = CombatTimer - Globals.Timing.TimeMs;
+            }
+            
             if (forPlayer != null && GetType() == typeof(Player))
             {
                 ((PlayerEntityPacket)packet).Equipment = PacketSender.GenerateEquipmentPacket(forPlayer, (Player)this);
