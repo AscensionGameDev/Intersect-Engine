@@ -11,8 +11,7 @@ namespace Intersect.Localization
             writer.WriteValue(value?.ToString());
         }
 
-        public override LocalizedString ReadJson([NotNull] JsonReader reader, Type objectType, LocalizedString existingValue, bool hasExistingValue,
-            JsonSerializer serializer)
+        public override LocalizedString ReadJson([NotNull] JsonReader reader, Type objectType, LocalizedString existingValue, bool hasExistingValue, JsonSerializer serializer)
         {
             return reader.Value as string;
         }

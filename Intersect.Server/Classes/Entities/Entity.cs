@@ -1198,8 +1198,7 @@ namespace Intersect.Server.Entities
                 {
                     if (Target != target)
                     {
-                        PacketSender.SendActionMsg(this, Strings.Combat.miss, CustomColors.Missed);
-
+                        PacketSender.SendActionMsg(this, Strings.Combat.miss, CustomColors.Combat.Missed);
                         return;
                     }
                 }
@@ -1217,26 +1216,22 @@ namespace Intersect.Server.Entities
 
                 if (target.Dir == (int) Directions.Left && d == (int) Directions.Right)
                 {
-                    PacketSender.SendActionMsg(target, Strings.Combat.blocked, CustomColors.Blocked);
-
+                    PacketSender.SendActionMsg(target, Strings.Combat.blocked, CustomColors.Combat.Blocked);
                     return;
                 }
                 else if (target.Dir == (int) Directions.Right && d == (int) Directions.Left)
                 {
-                    PacketSender.SendActionMsg(target, Strings.Combat.blocked, CustomColors.Blocked);
-
+                    PacketSender.SendActionMsg(target, Strings.Combat.blocked, CustomColors.Combat.Blocked);
                     return;
                 }
                 else if (target.Dir == (int) Directions.Up && d == (int) Directions.Down)
                 {
-                    PacketSender.SendActionMsg(target, Strings.Combat.blocked, CustomColors.Blocked);
-
+                    PacketSender.SendActionMsg(target, Strings.Combat.blocked, CustomColors.Combat.Blocked);
                     return;
                 }
                 else if (target.Dir == (int) Directions.Down && d == (int) Directions.Up)
                 {
-                    PacketSender.SendActionMsg(target, Strings.Combat.blocked, CustomColors.Blocked);
-
+                    PacketSender.SendActionMsg(target, Strings.Combat.blocked, CustomColors.Combat.Blocked);
                     return;
                 }
             }
@@ -1342,7 +1337,8 @@ namespace Intersect.Server.Entities
                 {
                   if (Target != target)
                   {
-                    PacketSender.SendActionMsg(this, Strings.Combat.miss, CustomColors.Missed);
+                    PacketSender.SendActionMsg(this, Strings.Combat.miss, CustomColors.Combat.Missed);
+
                     return;
                   }
                 }
@@ -1468,7 +1464,7 @@ namespace Intersect.Server.Entities
                     );
 
                     PacketSender.SendActionMsg(
-                        target, Strings.Combat.status[(int)spellBase.Combat.Effect], CustomColors.Status
+                        target, Strings.Combat.status[(int)spellBase.Combat.Effect], CustomColors.Combat.Status
                     );
 
                     //Set the enemies target if a taunt spell
@@ -1587,8 +1583,7 @@ namespace Intersect.Server.Entities
                 {
                     if (Target != target)
                     {
-                        PacketSender.SendActionMsg(this, Strings.Combat.miss, CustomColors.Missed);
-
+                        PacketSender.SendActionMsg(this, Strings.Combat.miss, CustomColors.Combat.Missed);
                         return;
                     }
                 }
@@ -1606,7 +1601,7 @@ namespace Intersect.Server.Entities
                         status.Type == StatusTypes.Blind ||
                         status.Type == StatusTypes.Sleep)
                     {
-                        PacketSender.SendActionMsg(this, Strings.Combat.miss, CustomColors.Missed);
+                        PacketSender.SendActionMsg(this, Strings.Combat.miss, CustomColors.Combat.Missed);
                         PacketSender.SendEntityAttack(this, CalculateAttackTime());
 
                         return;
@@ -1649,8 +1644,8 @@ namespace Intersect.Server.Entities
             {
                 //Invulnerability ignore
                 if (status.Type == StatusTypes.Invulnerable)
-                {
-                    PacketSender.SendActionMsg(enemy, Strings.Combat.invulnerable, CustomColors.Invulnerable);
+				{
+					PacketSender.SendActionMsg(enemy, Strings.Combat.invulnerable, CustomColors.Combat.Invulnerable);
 
                     // Add a timer before able to make the next move.
                     if (this is Npc npc)
@@ -1669,7 +1664,7 @@ namespace Intersect.Server.Entities
             }
             else
             {
-                PacketSender.SendActionMsg(enemy, Strings.Combat.critical, CustomColors.Critical);
+                PacketSender.SendActionMsg(enemy, Strings.Combat.critical, CustomColors.Combat.Critical);
             }
 
             //Calculate Damages
@@ -1691,22 +1686,13 @@ namespace Intersect.Server.Entities
                     switch (damageType)
                     {
                         case DamageType.Physical:
-                            PacketSender.SendActionMsg(
-                                enemy, Strings.Combat.removesymbol + baseDamage, CustomColors.PhysicalDamage
-                            );
-
+                            PacketSender.SendActionMsg(enemy, Strings.Combat.removesymbol + (int)baseDamage, CustomColors.Combat.PhysicalDamage);
                             break;
                         case DamageType.Magic:
-                            PacketSender.SendActionMsg(
-                                enemy, Strings.Combat.removesymbol + baseDamage, CustomColors.MagicDamage
-                            );
-
+                            PacketSender.SendActionMsg(enemy, Strings.Combat.removesymbol + (int)baseDamage, CustomColors.Combat.MagicDamage);
                             break;
                         case DamageType.True:
-                            PacketSender.SendActionMsg(
-                                enemy, Strings.Combat.removesymbol + baseDamage, CustomColors.TrueDamage
-                            );
-
+                            PacketSender.SendActionMsg(enemy, Strings.Combat.removesymbol + (int)baseDamage, CustomColors.Combat.TrueDamage);
                             break;
                     }
 
@@ -1753,10 +1739,8 @@ namespace Intersect.Server.Entities
                 }
                 else if (baseDamage < 0 && !enemy.IsFullVital(Vitals.Health))
                 {
-                    enemy.SubVital(Vitals.Health, (int) baseDamage);
-                    PacketSender.SendActionMsg(
-                        enemy, Strings.Combat.addsymbol + (int) Math.Abs(baseDamage), CustomColors.Heal
-                    );
+                    enemy.SubVital(Vitals.Health, (int)baseDamage);
+                    PacketSender.SendActionMsg(enemy, Strings.Combat.addsymbol + (int)Math.Abs(baseDamage), CustomColors.Combat.Heal);
                 }
             }
 
@@ -1777,7 +1761,7 @@ namespace Intersect.Server.Entities
                     enemy.CombatTimer = Globals.Timing.TimeMs + Options.CombatTime;
                     enemy.SubVital(Vitals.Mana, (int)secondaryDamage);
                     PacketSender.SendActionMsg(enemy, Strings.Combat.removesymbol + (int)secondaryDamage,
-                        CustomColors.RemoveMana);
+                        CustomColors.Combat.RemoveMana);
 
                     //No Matter what, if we attack the entitiy, make them chase us
                     if (enemy is Npc enemyNpc)
@@ -1808,10 +1792,8 @@ namespace Intersect.Server.Entities
                 }
                 else if (secondaryDamage < 0 && !enemy.IsFullVital(Vitals.Mana))
                 {
-                    enemy.SubVital(Vitals.Mana, (int) secondaryDamage);
-                    PacketSender.SendActionMsg(
-                        enemy, Strings.Combat.addsymbol + (int) Math.Abs(secondaryDamage), CustomColors.AddMana
-                    );
+                    enemy.SubVital(Vitals.Mana, (int)secondaryDamage);
+                    PacketSender.SendActionMsg(enemy, Strings.Combat.addsymbol + (int)Math.Abs(secondaryDamage), CustomColors.Combat.AddMana);
                 }
             }
 
@@ -1822,11 +1804,8 @@ namespace Intersect.Server.Entities
                 var healthRecovered = lifesteal * baseDamage;
                 if (healthRecovered > 0) //Don't send any +0 msg's.
                 {
-                    AddVital(Vitals.Health, (int) healthRecovered);
-                    PacketSender.SendActionMsg(
-                        this, Strings.Combat.addsymbol + (int) healthRecovered, CustomColors.Heal
-                    );
-
+                    AddVital(Vitals.Health, (int)healthRecovered);
+                    PacketSender.SendActionMsg(this, Strings.Combat.addsymbol + (int)healthRecovered, CustomColors.Combat.Heal);
                     PacketSender.SendEntityVitals(this);
                 }
             }
@@ -2019,7 +1998,7 @@ namespace Intersect.Server.Entities
                                 );
 
                                 PacketSender.SendActionMsg(
-                                    this, Strings.Combat.status[(int) spellBase.Combat.Effect], CustomColors.Status
+                                    this, Strings.Combat.status[(int) spellBase.Combat.Effect], CustomColors.Combat.Status
                                 );
                             }
                             break;
@@ -2053,7 +2032,7 @@ namespace Intersect.Server.Entities
 
                     break;
                 case SpellTypes.Dash:
-                    PacketSender.SendActionMsg(this, Strings.Combat.dash, CustomColors.Dash);
+                    PacketSender.SendActionMsg(this, Strings.Combat.dash, CustomColors.Combat.Dash);
                     var dash = new DashInstance(
                         this, spellBase.Combat.CastRange, (byte) Dir,
                         Convert.ToBoolean(spellBase.Dash.IgnoreMapBlocks),
@@ -2769,7 +2748,7 @@ namespace Intersect.Server.Entities
                 {
                     if (status.Type == StatusTypes.Cleanse)
                     {
-                        PacketSender.SendActionMsg(en, Strings.Combat.status[(int) Type], CustomColors.Cleanse);
+                        PacketSender.SendActionMsg(en, Strings.Combat.status[(int) Type], CustomColors.Combat.Cleanse);
 
                         return;
                     }

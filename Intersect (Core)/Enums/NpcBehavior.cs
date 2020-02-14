@@ -6,7 +6,6 @@ namespace Intersect.Enums
     {
         AttackWhenAttacked = 0,
         AttackOnSight,
-        Friendly,
         Guard,
     }
 }

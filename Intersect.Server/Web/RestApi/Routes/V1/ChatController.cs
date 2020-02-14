@@ -21,7 +21,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         {
             try
             {
-                PacketSender.SendGlobalMsg(chatMessage.Message, chatMessage.Color ?? CustomColors.AnnouncementChat, chatMessage.Target);
+                PacketSender.SendGlobalMsg(chatMessage.Message, chatMessage.Color ?? CustomColors.Chat.AnnouncementChat, chatMessage.Target);
 
                 return new
                 {
@@ -52,7 +52,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             try
             {
-                PacketSender.SendChatMsg(client.Entity, chatMessage.Message, chatMessage.Color ?? CustomColors.PlayerMsg, chatMessage.Target);
+                PacketSender.SendChatMsg(client.Entity, chatMessage.Message, chatMessage.Color ?? CustomColors.Chat.PlayerMsg, chatMessage.Target);
 
                 return new
                 {
@@ -78,7 +78,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             try
             {
-                if (PacketSender.SendProximityMsg(chatMessage.Message, mapId, chatMessage.Color ?? CustomColors.ProximityMsg, chatMessage.Target))
+                if (PacketSender.SendProximityMsg(chatMessage.Message, mapId, chatMessage.Color ?? CustomColors.Chat.ProximityMsg, chatMessage.Target))
                 {
                     return new
                     {

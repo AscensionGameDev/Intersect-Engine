@@ -995,35 +995,34 @@ namespace Intersect.Client.Entities
             //Check for npc colors
             if (textColor == null)
             {
+                LabelColor? color = null;
                 switch (Type)
                 {
                     case -1: //When entity has a target (showing aggression)
-                        textColor = CustomColors.AgressiveNpcName;
-                        borderColor = CustomColors.AgressiveNpcNameBorder;
-                        backgroundColor = CustomColors.AgressiveNpcNameBackground;
+                        color = CustomColors.Names.Npcs["Aggressive"];
                         break;
                     case 0: //Attack when attacked
-                        textColor = CustomColors.AttackWhenAttackedName;
-                        borderColor = CustomColors.AttackWhenAttackedNameBorder;
-                        backgroundColor = CustomColors.AttackWhenAttackedNameBackground;
+                        color = CustomColors.Names.Npcs["AttackWhenAttacked"];
                         break;
                     case 1: //Attack on sight
-                        textColor = CustomColors.AttackOnSightName;
-                        borderColor = CustomColors.AttackOnSightNameBorder;
-                        backgroundColor = CustomColors.AttackOnSightNameBackground;
+                        color = CustomColors.Names.Npcs["AttackOnSight"];
                         break;
                     case 3: //Guard
-                        textColor = CustomColors.GuardName;
-                        borderColor = CustomColors.GuardNameBorder;
-                        backgroundColor = CustomColors.GuardNameBackground;
+                        color = CustomColors.Names.Npcs["Guard"];
                         break;
                     case 2: //Neutral
                     default:
-                        textColor = CustomColors.NeutralName;
-                        borderColor = CustomColors.NeutralNameBorder;
-                        backgroundColor = CustomColors.NeutralNameBackground;
+                        color = CustomColors.Names.Npcs["Neutral"];
                         break;
                 }
+
+                if (color != null)
+                {
+                    textColor = color?.Name;
+                    backgroundColor = color?.Background;
+                    borderColor = color?.Outline;
+                }
+
             }
 
             //Check for stealth amoungst status effects.

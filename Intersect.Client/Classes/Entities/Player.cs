@@ -1497,21 +1497,21 @@ namespace Intersect.Client.Entities
             {
                 if (Type == 1) //Mod
                 {
-                    textColor = CustomColors.PlayerNameMod;
-                    borderColor = CustomColors.PlayerNameModBorder;
-                    backgroundColor = CustomColors.PlayerNameModBackground;
+                    textColor = CustomColors.Names.Players["Moderator"].Name;
+                    borderColor = CustomColors.Names.Players["Moderator"].Outline;
+                    backgroundColor = CustomColors.Names.Players["Moderator"].Background;
                 }
                 else if (Type == 2) //Admin
                 {
-                    textColor = CustomColors.PlayerNameAdmin;
-                    borderColor = CustomColors.PlayerNameAdminBorder;
-                    backgroundColor = CustomColors.PlayerNameAdminBackground;
+                    textColor = CustomColors.Names.Players["Admin"].Name;
+                    borderColor = CustomColors.Names.Players["Admin"].Outline;
+                    backgroundColor = CustomColors.Names.Players["Admin"].Background;
                 }
                 else //No Power
                 {
-                    textColor = CustomColors.PlayerNameNormal;
-                    borderColor = CustomColors.PlayerNameNormalBorder;
-                    backgroundColor = CustomColors.PlayerNameNormalBackground;
+                    textColor = CustomColors.Names.Players["Normal"].Name;
+                    borderColor = CustomColors.Names.Players["Normal"].Outline;
+                    backgroundColor = CustomColors.Names.Players["Normal"].Background;
                 }
             }
 

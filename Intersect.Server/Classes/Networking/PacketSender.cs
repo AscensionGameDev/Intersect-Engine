@@ -77,11 +77,11 @@ namespace Intersect.Server.Networking
                 
                 if (client.Power.Editor)
                 {
-                    SendChatMsg(player, Strings.Player.adminjoined, CustomColors.AdminJoined);
+                    SendChatMsg(player, Strings.Player.adminjoined, CustomColors.Alerts.AdminJoined);
                 }
                 else if (client.Power.IsModerator)
                 {
-                    SendChatMsg(player, Strings.Player.modjoined, CustomColors.ModJoined);
+                    SendChatMsg(player, Strings.Player.modjoined, CustomColors.Alerts.ModJoined);
                 }
 
                 if (player.MapId == Guid.Empty)
@@ -471,7 +471,7 @@ namespace Intersect.Server.Networking
         //ChatMsgPacket
         public static void SendChatMsg(Player player, string message, string target = "")
         {
-            SendChatMsg(player, message, CustomColors.PlayerMsg, target);
+            SendChatMsg(player, message, CustomColors.Chat.PlayerMsg, target);
         }
 
         //ChatMsgPacket
@@ -551,7 +551,7 @@ namespace Intersect.Server.Networking
         //ChatMsgPacket
         public static void SendGlobalMsg(string message, string target = "")
         {
-            SendGlobalMsg(message, CustomColors.AnnouncementChat, target);
+            SendGlobalMsg(message, CustomColors.Chat.AnnouncementChat, target);
         }
 
         //ChatMsgPacket
@@ -563,7 +563,7 @@ namespace Intersect.Server.Networking
         //ChatMsgPacket
         public static bool SendProximityMsg(string message, Guid mapId, string target = "")
         {
-            return SendProximityMsg(message, mapId, CustomColors.ProximityMsg);
+            return SendProximityMsg(message, mapId, CustomColors.Chat.ProximityMsg);
         }
 
         //ChatMsgPacket
