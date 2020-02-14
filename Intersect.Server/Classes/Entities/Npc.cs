@@ -402,7 +402,7 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            if (spell.SpellCd >= Globals.Timing.RealTimeMs)
+            if (SpellCooldowns.ContainsKey(spell.SpellId) && SpellCooldowns[spell.SpellId] >= Globals.Timing.RealTimeMs)
             {
                 return;
             }

@@ -6,7 +6,6 @@ namespace Intersect.Server.Database
     public class Spell
     {
         public Guid SpellId { get; set; }
-        [JsonIgnore] public long SpellCd { get; set; }
         
 
         public static Spell None => new Spell(Guid.Empty);
@@ -24,8 +23,7 @@ namespace Intersect.Server.Database
         {
             Spell newSpell = new Spell()
             {
-                SpellId = SpellId,
-                SpellCd = SpellCd
+                SpellId = SpellId
             };
             return newSpell;
         }
@@ -33,7 +31,6 @@ namespace Intersect.Server.Database
         public virtual void Set(Spell spell)
         {
             SpellId = spell.SpellId;
-            SpellCd = spell.SpellCd;
         }
     }
 }

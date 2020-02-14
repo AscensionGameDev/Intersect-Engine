@@ -222,12 +222,18 @@ namespace Intersect.Server.Entities
 
         #region Item Cooldowns
 
-        [NotMapped, JsonIgnore] public Dictionary<Guid, long> ItemCooldowns = new Dictionary<Guid, long>();
+        [JsonIgnore, Column("ItemCooldowns")]
+        public string ItemCooldownsJson
+        {
+            get => JsonConvert.SerializeObject(ItemCooldowns);
+            set => ItemCooldowns = JsonConvert.DeserializeObject<Dictionary<Guid, long>>(value ?? "{}");
+        }
+
+        [JsonIgnore] public Dictionary<Guid, long> ItemCooldowns = new Dictionary<Guid, long>();
 
         #endregion
 
-        [JsonIgnore, NotMapped]
-        public bool IsValidPlayer => !IsDisposed && Client?.Entity == this;
+        [JsonIgnore, NotMapped] public bool IsValidPlayer => !IsDisposed && Client?.Entity == this;
 
         [NotMapped]
         public long ExperienceToNextLevel => GetExperienceToNextLevel(Level);
@@ -328,7 +334,21 @@ namespace Intersect.Server.Entities
             InBag = null;
             InBank = false;
             InShop = null;
-            ItemCooldowns.Clear();
+
+            //Clear cooldowns that have expired
+            var keys = SpellCooldowns.Keys.ToArray();
+            foreach (var key in keys)
+            {
+                if (SpellCooldowns[key] < Globals.Timing.RealTimeMs)
+                    SpellCooldowns.Remove(key);
+            }
+
+            keys = ItemCooldowns.Keys.ToArray();
+            foreach (var key in keys)
+            {
+                if (ItemCooldowns[key] < Globals.Timing.RealTimeMs)
+                    ItemCooldowns.Remove(key);
+            }
 
             PacketSender.SendEntityLeave(this);
         }
@@ -1562,7 +1582,7 @@ namespace Intersect.Server.Entities
                     return;
                 }
 
-                if (ItemCooldowns.ContainsKey(itemBase.Id) && ItemCooldowns[itemBase.Id] > Globals.Timing.TimeMs)
+                if (ItemCooldowns.ContainsKey(itemBase.Id) && ItemCooldowns[itemBase.Id] > Globals.Timing.RealTimeMs)
                 {
                     //Cooldown warning!
                     PacketSender.SendChatMsg(Client, Strings.Items.cooldown);
@@ -1720,14 +1740,11 @@ namespace Intersect.Server.Entities
                     decimal cooldownReduction = (1 - (this.GetCooldownReduction() / 100));
                     if (ItemCooldowns.ContainsKey(itemBase.Id))
                     {
-                        ItemCooldowns[itemBase.Id] =
-                            Globals.Timing.TimeMs + (long) (itemBase.Cooldown * cooldownReduction);
+                        ItemCooldowns[itemBase.Id] = Globals.Timing.RealTimeMs + (long)(itemBase.Cooldown * cooldownReduction);
                     }
                     else
                     {
-                        ItemCooldowns.Add(
-                            itemBase.Id, Globals.Timing.TimeMs + (long) (itemBase.Cooldown * cooldownReduction)
-                        );
+                        ItemCooldowns.Add(itemBase.Id, Globals.Timing.RealTimeMs + (long)(itemBase.Cooldown * cooldownReduction));
                     }
 
                     PacketSender.SendItemCooldown(Client, itemBase.Id);
@@ -3905,7 +3922,7 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            if (Spells[spellSlot].SpellCd < Globals.Timing.RealTimeMs)
+            if (!SpellCooldowns.ContainsKey(Spells[spellSlot].SpellId) || SpellCooldowns[Spells[spellSlot].SpellId] < Globals.Timing.RealTimeMs)
             {
                 if (CastTime == 0)
                 {

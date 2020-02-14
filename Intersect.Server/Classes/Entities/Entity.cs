@@ -184,6 +184,19 @@ namespace Intersect.Server.Entities
         [NotMapped, JsonIgnore]
         public bool IsDisposed { get; protected set; }
 
+        #region Spell Cooldowns
+        
+        [JsonIgnore, Column("SpellCooldowns")]
+        public string SpellCooldownsJson
+        {
+            get => JsonConvert.SerializeObject(SpellCooldowns);
+            set => SpellCooldowns = JsonConvert.DeserializeObject<Dictionary<Guid,long>>(value ?? "{}");
+        }
+
+        [NotMapped] public Dictionary<Guid, long> SpellCooldowns = new Dictionary<Guid, long>();
+
+        #endregion
+
         public EntityInstance() : this(Guid.NewGuid())
         {
         }
@@ -2059,12 +2072,18 @@ namespace Intersect.Server.Entities
                     cooldownReduction = (1 - ((decimal) ((Player) this).GetCooldownReduction() / 100));
                 }
 
-                Spells[spellSlot].SpellCd = Globals.Timing.RealTimeMs +
-                                            (int) (spellBase.CooldownDuration * cooldownReduction);
+                if (SpellCooldowns.ContainsKey(Spells[spellSlot].SpellId))
+                {
+                    SpellCooldowns[Spells[spellSlot].SpellId] = Globals.Timing.RealTimeMs + (int)(spellBase.CooldownDuration * cooldownReduction);
+                }
+                else
+                {
+                    SpellCooldowns.Add(Spells[spellSlot].SpellId, Globals.Timing.RealTimeMs + (int)(spellBase.CooldownDuration * cooldownReduction));
+                }
 
                 if (GetType() == typeof(Player))
                 {
-                    PacketSender.SendSpellCooldown(((Player) this).Client, spellSlot);
+                    PacketSender.SendSpellCooldown(((Player)this).Client, Spells[spellSlot].SpellId);
                 }
             }
         }

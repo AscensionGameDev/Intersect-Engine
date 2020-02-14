@@ -303,6 +303,8 @@ namespace Intersect.Server.Networking
                 SendPointsTo(client);
                 SendHotbarSlots(client);
                 SendQuestsProgress(client);
+                SendItemCooldowns(client, (Player)en);
+                SendSpellCooldowns(client, (Player)en);
             }
 
             //If a player, send equipment to all (for paperdolls)
@@ -998,15 +1000,51 @@ namespace Intersect.Server.Networking
         }
 
         //SpellCooldownPacket
-        public static void SendSpellCooldown(Client client, int spellSlot)
+        public static void SendSpellCooldown(Client client, Guid spellId)
         {
-            client.SendPacket(new SpellCooldownPacket(spellSlot));
+            if (client.Entity.SpellCooldowns.ContainsKey(spellId))
+            {
+                var cds = new Dictionary<Guid, long>();
+                cds.Add(spellId, client.Entity.SpellCooldowns[spellId] - Globals.Timing.RealTimeMs);
+                client.SendPacket(new SpellCooldownPacket(cds));
+            }
+        }
+
+        public static void SendSpellCooldowns(Client client, Player en)
+        {
+            if (client.Entity.SpellCooldowns.Count > 0)
+            {
+                var cds = new Dictionary<Guid, long>();
+                foreach (var cd in client.Entity.SpellCooldowns)
+                {
+                    cds.Add(cd.Key, cd.Value - Globals.Timing.RealTimeMs);
+                }
+                client.SendPacket(new SpellCooldownPacket(cds));
+            }
         }
 
         //ItemCooldownPacket
         public static void SendItemCooldown(Client client, Guid itemId)
         {
-            client.SendPacket(new ItemCooldownPacket(itemId));
+            if (client.Entity.ItemCooldowns.ContainsKey(itemId))
+            {
+                var cds = new Dictionary<Guid, long>();
+                cds.Add(itemId, client.Entity.ItemCooldowns[itemId] - Globals.Timing.RealTimeMs);
+                client.SendPacket(new ItemCooldownPacket(cds));
+            }
+        }
+
+        public static void SendItemCooldowns(Client client, Player en)
+        {
+            if (client.Entity.ItemCooldowns.Count > 0)
+            {
+                var cds = new Dictionary<Guid, long>();
+                foreach (var cd in client.Entity.ItemCooldowns)
+                {
+                    cds.Add(cd.Key, cd.Value - Globals.Timing.RealTimeMs);
+                }
+                client.SendPacket(new ItemCooldownPacket(cds));
+            }
         }
 
         //ExperiencePacket

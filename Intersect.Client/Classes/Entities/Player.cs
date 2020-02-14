@@ -35,6 +35,7 @@ namespace Intersect.Client.Entities
         public List<FriendInstance> Friends = new List<FriendInstance>();
         public HotbarInstance[] Hotbar = new HotbarInstance[Options.MaxHotbar];
         public Dictionary<Guid, long> ItemCooldowns = new Dictionary<Guid, long>();
+        public Dictionary<Guid, long> SpellCooldowns = new Dictionary<Guid, long>();
 
         private List<PartyMember> mParty;
 
@@ -226,6 +227,12 @@ namespace Intersect.Client.Entities
             {
                 PacketSender.SendUseItem(index, TargetIndex);
             }
+        }
+
+        public long GetItemCooldown(Guid id)
+        {
+            if (ItemCooldowns.ContainsKey(id)) return ItemCooldowns[id];
+            return 0;
         }
 
         public int FindHotbarItem(HotbarInstance hotbarInstance)
@@ -588,10 +595,16 @@ namespace Intersect.Client.Entities
 
         public void TryUseSpell(int index)
         {
-            if (Spells[index].SpellId != Guid.Empty && Spells[index].SpellCd < Globals.System.GetTimeMs())
+            if (Spells[index].SpellId != Guid.Empty && (!Globals.Me.SpellCooldowns.ContainsKey(Spells[index].SpellId) || Globals.Me.SpellCooldowns[Spells[index].SpellId] < Globals.System.GetTimeMs()))
             {
                 PacketSender.SendUseSpell(index, TargetIndex);
             }
+        }
+
+        public long GetSpellCooldown(Guid id)
+        {
+            if (SpellCooldowns.ContainsKey(id)) return SpellCooldowns[id];
+            return 0;
         }
 
         public void TryUseSpell(Guid spellId)
