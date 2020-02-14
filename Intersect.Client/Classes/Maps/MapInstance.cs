@@ -925,8 +925,8 @@ namespace Intersect.Client.Maps
                                  ((Options.TileHeight * 2) *
                                   (1000 - (ActionMsgs[n].TransmittionTimer - Globals.System.GetTimeMs())) / 1000));
                 var x = (int)Math.Ceiling(GetX() + ActionMsgs[n].X * Options.TileWidth + ActionMsgs[n].XOffset);
-                float textWidth = GameGraphics.Renderer.MeasureText(ActionMsgs[n].Msg, GameGraphics.GameFont, 1).X;
-                GameGraphics.Renderer.DrawString(ActionMsgs[n].Msg, GameGraphics.GameFont, (int)(x) - textWidth / 2f,
+                float textWidth = GameGraphics.Renderer.MeasureText(ActionMsgs[n].Msg, GameGraphics.ActionMsgFont, 1).X;
+                GameGraphics.Renderer.DrawString(ActionMsgs[n].Msg, GameGraphics.ActionMsgFont, (int)(x) - textWidth / 2f,
                     (int)(y), 1, ActionMsgs[n].Clr, true, null, new Color(40, 40, 40));
 
                 //Try to remove

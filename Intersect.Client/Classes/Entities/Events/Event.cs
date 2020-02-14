@@ -265,13 +265,13 @@ namespace Intersect.Client.Entities.Events
 
             if (Graphic.Type == EventGraphicType.Tileset) y -= 12;
 
-            Pointf textSize = GameGraphics.Renderer.MeasureText(Name, GameGraphics.GameFont, 1);
+            Pointf textSize = GameGraphics.Renderer.MeasureText(Name, GameGraphics.EntityNameFont, 1);
 
             if (CustomColors.EventNameBackground != Color.Transparent)
                 GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
                     new FloatRect((x - textSize.X / 2f) - 4, y, textSize.X + 8, textSize.Y),
                     CustomColors.EventNameBackground);
-            GameGraphics.Renderer.DrawString(Name, GameGraphics.GameFont,
+            GameGraphics.Renderer.DrawString(Name, GameGraphics.EntityNameFont,
                 (int) (x - (int) Math.Ceiling(textSize.X / 2f)), (int) (y), 1,
                 Color.FromArgb(CustomColors.EventName.ToArgb()), true, null,
                 Color.FromArgb(CustomColors.EventNameBorder.ToArgb()));

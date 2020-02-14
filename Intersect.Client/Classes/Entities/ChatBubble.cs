@@ -41,17 +41,18 @@ namespace Intersect.Client.Entities
         {
             if (mText == null && mSourceText.Trim().Length > 0)
             {
-                mText = Gui.WrapText(mSourceText, 200, GameGraphics.GameFont);
+                mText = Gui.WrapText(mSourceText, 200, GameGraphics.ChatBubbleFont);
             }
             if (mText == null) return 0f;
-            var y = (int) Math.Ceiling(mOwner.GetTopPos());
+            var y = (int) Math.Ceiling(mOwner.GetLabelLocation(Entity.LabelType.ChatBubble));
+
             var x = (int) Math.Ceiling(mOwner.GetCenterPos().X);
             if (mTextureBounds.Width == 0)
             {
                 //Gotta Calculate Bounds
                 for (var i = (mText?.Length ?? 0) - 1; i > -1; i--)
                 {
-                    var textSize = GameGraphics.Renderer.MeasureText(mText[i], GameGraphics.GameFont, 1);
+                    var textSize = GameGraphics.Renderer.MeasureText(mText[i], GameGraphics.ChatBubbleFont, 1);
                     if (textSize.X > mTextureBounds.Width) mTextureBounds.Width = (int) textSize.X + 16;
                     mTextureBounds.Height += (int) textSize.Y + 2;
                     if (textSize.X > mTextBounds.Width) mTextBounds.Width = (int) textSize.X;
@@ -102,8 +103,8 @@ namespace Intersect.Client.Entities
                 }
                 for (int i = mText.Length - 1; i > -1; i--)
                 {
-                    var textSize = GameGraphics.Renderer.MeasureText(mText[i], GameGraphics.GameFont, 1);
-                    GameGraphics.Renderer.DrawString(mText[i], GameGraphics.GameFont,
+                    var textSize = GameGraphics.Renderer.MeasureText(mText[i], GameGraphics.ChatBubbleFont, 1);
+                    GameGraphics.Renderer.DrawString(mText[i], GameGraphics.ChatBubbleFont,
                         (int) (x - mTextureBounds.Width / 2 + (mTextureBounds.Width - textSize.X) / 2f),
                         (int) ((y) - mTextureBounds.Height - yoffset + 8 + (i * 16)), 1,
                         Color.FromArgb(CustomColors.ChatBubbleTextColor.ToArgb()), true, null);

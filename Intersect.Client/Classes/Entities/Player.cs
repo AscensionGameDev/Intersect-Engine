@@ -1480,19 +1480,19 @@ namespace Intersect.Client.Entities
         {
             if (textColor == null)
             {
-                if (Type == 1)
+                if (Type == 1) //Mod
                 {
                     textColor = CustomColors.PlayerNameMod;
                     borderColor = CustomColors.PlayerNameModBorder;
                     backgroundColor = CustomColors.PlayerNameModBackground;
                 }
-                else if (Type == 2)
+                else if (Type == 2) //Admin
                 {
                     textColor = CustomColors.PlayerNameAdmin;
                     borderColor = CustomColors.PlayerNameAdminBorder;
                     backgroundColor = CustomColors.PlayerNameAdminBackground;
                 }
-                else
+                else //No Power
                 {
                     textColor = CustomColors.PlayerNameNormal;
                     borderColor = CustomColors.PlayerNameNormalBorder;
@@ -1513,12 +1513,8 @@ namespace Intersect.Client.Entities
         private void DrawNameAndLabels(Color textColor, Color borderColor, Color backgroundColor)
         {
             base.DrawName(textColor, borderColor, backgroundColor);
-
-            if (!string.IsNullOrEmpty(HeaderLabel.Label))
-            {
-                DrawLabels(HeaderLabel.Label, 0, textColor, borderColor, backgroundColor);
-                DrawLabels(FooterLabel.Label, 1, textColor, borderColor, backgroundColor);
-            }
+            DrawLabels(HeaderLabel.Label, 0, textColor, borderColor, backgroundColor);
+            DrawLabels(FooterLabel.Label, 1, textColor, borderColor, backgroundColor);
         }
 
         public void DrawTargets()
