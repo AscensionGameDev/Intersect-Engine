@@ -39,6 +39,8 @@ namespace Intersect.Server.Entities
         public int SpawnY;
         public long WaitTimer;
 
+        private Dictionary<string, string> mParams = new Dictionary<string, string>();
+
         public bool[] SelfSwitch { get; set; }
 
         public EventInstance(Guid instanceId, Guid map, Player player, EventBase baseEvent)
@@ -226,6 +228,107 @@ namespace Intersect.Server.Entities
                     PacketSender.SendEntityLeaveTo(Player, originalPageInstance);
                 }
             }
+        }
+
+        public Dictionary<string, string> GetParams(Player player)
+        {
+            var prams = new Dictionary<string, string>();
+
+            foreach (var prm in mParams)
+            {
+                prams.Add(prm.Key, prm.Value);
+            }
+
+            prams.Add("evtName", this.BaseEvent.Name);
+
+            if (MapId != Guid.Empty)
+            {
+                if (this.GlobalPageInstance != null)
+                {
+                    prams.Add("evtMap", this.GlobalPageInstance[PageIndex].Map.Name);
+                    prams.Add("evtX", this.GlobalPageInstance[PageIndex].X.ToString());
+                    prams.Add("evtY", this.GlobalPageInstance[PageIndex].Y.ToString());
+                }
+                else
+                {
+                    prams.Add("evtMap", this.PageInstance.Map.Name);
+                    prams.Add("evtX", this.PageInstance.X.ToString());
+                    prams.Add("evtY", this.PageInstance.Y.ToString());
+                }
+            }
+
+            if (player != null)
+            {
+                //Player Name, Map, X, Y, Z?
+                //Player Vitals, Player Stats, Player Sprite?
+                //More later.. good start now
+                prams.Add("plyrName", player.Name);
+                prams.Add("plyrMap", player.Map.Name);
+                prams.Add("plyrX", player.X.ToString());
+                prams.Add("plyrY", player.Y.ToString());
+                prams.Add("plyrZ", player.Z.ToString());
+                prams.Add("plyrSprite", player.Sprite);
+                prams.Add("plyrFace", player.Face);
+                prams.Add("plyrLvl", player.Level.ToString());
+
+                //Vitals
+                for (int i = 0; i < player.GetVitals().Length; i++)
+                {
+                    prams.Add("plyrVit" + i, player.GetVital(i).ToString());
+                    prams.Add("plyrMaxVit" + i, player.GetMaxVital(i).ToString());
+                }
+
+                //Stats
+                var stats = player.GetStatValues();
+                for (int i = 0; i < stats.Length; i++)
+                {
+                    prams.Add("plyrStat" + i, stats[i].ToString());
+                }
+
+
+
+            }
+
+
+
+            return prams;
+        }
+
+        public void SetParam(string key, string value)
+        {
+            key = key.ToLower();
+            if (mParams.ContainsKey(key))
+            {
+                mParams[key] = value;
+            }
+            else
+            {
+                mParams.Add(key, value);
+            }
+        }
+
+        public string GetParam(Player player, string key)
+        {
+            key = key.ToLower();
+
+            var prams = GetParams(player);
+
+            if (prams.ContainsKey(key))
+                return prams[key];
+
+            return "";
+        }
+
+        public string FormatParameters(Player player)
+        {
+            var prams = GetParams(player);
+            var output = "{" + Environment.NewLine;
+            foreach (var p in prams)
+            {
+                output += "\t\t\t\"" + p.Key + "\":\t\t\"" + p.Value + "\"," + Environment.NewLine;
+            }
+            output += "}";
+            return output;
         }
     }
 

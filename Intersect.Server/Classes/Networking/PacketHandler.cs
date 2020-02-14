@@ -638,11 +638,7 @@ namespace Intersect.Server.Networking
                 {
                     if ((EventBase)evt.Value != null)
                     {
-                        if (player.StartCommonEvent(
-                                (EventBase)evt.Value, CommonEventTrigger.SlashCommand,
-                                cmd.TrimStart('/'), msg
-                            ) ==
-                            true)
+                        if (client.Entity.StartCommonEvent((EventBase)evt.Value, CommonEventTrigger.SlashCommand, cmd.TrimStart('/'), msg) == true)
                         {
                             return; //Found our /command, exit now :)
                         }

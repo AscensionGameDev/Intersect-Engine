@@ -4863,8 +4863,7 @@ namespace Intersect.Server.Entities
                 //Try to Spawn a PageInstance.. if we can
                 for (var i = baseEvent.Pages.Count - 1; i >= 0; i--)
                 {
-                    if ((trigger == CommonEventTrigger.None || baseEvent.Pages[i].CommonTrigger == trigger) &&
-                        Conditions.CanSpawnPage(baseEvent.Pages[i], this, null))
+                    if ((trigger == CommonEventTrigger.None || baseEvent.Pages[i].CommonTrigger == trigger) && Conditions.CanSpawnPage(baseEvent.Pages[i], this, null))
                     {
                         tmpEvent.PageInstance = new EventPageInstance(baseEvent, baseEvent.Pages[i], mapId, tmpEvent, this);
                         tmpEvent.PageIndex = i;
@@ -4874,6 +4873,13 @@ namespace Intersect.Server.Entities
                         {
                             if (command.ToLower() == tmpEvent.PageInstance.MyPage.TriggerCommand.ToLower())
                             {
+                                //Split params up
+                                var prams = param.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                                for (var x = 0; x < prams.Length; x++)
+                                {
+                                    tmpEvent.SetParam("slashParam" + x, prams[x]);
+                                }
+
                                 var newStack = new CommandInstance(tmpEvent.PageInstance.MyPage);
                                 tmpEvent.PageInstance.Param = param;
                                 tmpEvent.CallStack.Push(newStack);
@@ -4883,6 +4889,34 @@ namespace Intersect.Server.Entities
                         }
                         else
                         {
+                            switch (trigger)
+                            {
+                                case CommonEventTrigger.None:
+                                    break;
+                                case CommonEventTrigger.Login:
+                                    break;
+                                case CommonEventTrigger.LevelUp:
+                                    break;
+                                case CommonEventTrigger.OnRespawn:
+                                    break;
+                                case CommonEventTrigger.SlashCommand:
+                                    break;
+                                case CommonEventTrigger.Autorun:
+                                    break;
+                                case CommonEventTrigger.PVPKill:
+                                    //Add victim as a parameter
+                                    tmpEvent.SetParam("victim", param);
+                                    break;
+                                case CommonEventTrigger.PVPDeath:
+                                    //Add killer as a parameter
+                                    tmpEvent.SetParam("killer", param);
+                                    break;
+                                case CommonEventTrigger.PlayerInteract:
+                                    //Interactee as a parameter
+                                    tmpEvent.SetParam("triggered", param);
+                                    break;
+                            }
+
                             var newStack = new CommandInstance(tmpEvent.PageInstance.MyPage);
                             tmpEvent.CallStack.Push(newStack);
 

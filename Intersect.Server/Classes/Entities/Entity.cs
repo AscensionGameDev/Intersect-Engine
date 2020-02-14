@@ -1150,11 +1150,6 @@ namespace Intersect.Server.Entities
             var maxVitalValue = GetMaxVital(vitalId);
             var safeAmount = Math.Min(amount, GetVital(vital));
             SetVital(vital, GetVital(vital) - safeAmount);
-
-            if (GetVital(Vitals.Health) <= 0)
-            {
-                Die();
-            }
         }
 
         //Stats
@@ -1250,7 +1245,7 @@ namespace Intersect.Server.Entities
                 {
                     if (evt != null)
                     {
-                        targetPlayer.StartCommonEvent(evt, CommonEventTrigger.PlayerInteract);
+                        targetPlayer.StartCommonEvent(evt, CommonEventTrigger.PlayerInteract, "", this.Name);
                     }
                 }
 
@@ -1560,7 +1555,7 @@ namespace Intersect.Server.Entities
                 {
                     if (evt != null)
                     {
-                        targetPlayer.StartCommonEvent(evt, CommonEventTrigger.PlayerInteract);
+                        targetPlayer.StartCommonEvent(evt, CommonEventTrigger.PlayerInteract, "", this.Name);
                     }
                 }
 
@@ -1831,8 +1826,8 @@ namespace Intersect.Server.Entities
                             {
                                 if (evt != null)
                                 {
-                                    ((Player) this).StartCommonEvent(evt, CommonEventTrigger.PVPKill);
-                                    ((Player) enemy).StartCommonEvent(evt, CommonEventTrigger.PVPDeath);
+                                    ((Player) this).StartCommonEvent(evt, CommonEventTrigger.PVPKill, "", enemy.Name);
+                                    ((Player) enemy).StartCommonEvent(evt, CommonEventTrigger.PVPDeath, "", this.Name);
                                 }
                             }
                         }

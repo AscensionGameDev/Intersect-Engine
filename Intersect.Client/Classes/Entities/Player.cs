@@ -1528,8 +1528,8 @@ namespace Intersect.Client.Entities
         private void DrawNameAndLabels(Color textColor, Color borderColor, Color backgroundColor)
         {
             base.DrawName(textColor, borderColor, backgroundColor);
-            DrawLabels(HeaderLabel.Label, 0, textColor, borderColor, backgroundColor);
-            DrawLabels(FooterLabel.Label, 1, textColor, borderColor, backgroundColor);
+            DrawLabels(HeaderLabel.Label, 0, HeaderLabel.Color ?? textColor, borderColor, backgroundColor);
+            DrawLabels(FooterLabel.Label, 1, FooterLabel.Color ?? textColor, borderColor, backgroundColor);
         }
 
         public void DrawTargets()

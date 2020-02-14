@@ -201,6 +201,10 @@ namespace Intersect.Server.EventProcessing
             else if (command.Amount < 0)
             {
                 player.SubVital(Vitals.Health, -command.Amount);
+                if (player.GetVital(Vitals.Health) < 0)
+                {
+                    player.Die(Options.ItemDropChance);
+                }
             }
         }
 
@@ -838,6 +842,7 @@ namespace Intersect.Server.EventProcessing
                 {
                     input = input.Replace(Strings.Events.eventnamecommand, instance.PageInstance.Name);
                     input = input.Replace(Strings.Events.commandparameter, instance.PageInstance.Param);
+                    input = input.Replace(Strings.Events.eventparams, instance.FormatParameters(player));
                 }
                 if (input.Contains(Strings.Events.onlinelistcommand) || input.Contains(Strings.Events.onlinecountcommand))
                 {
@@ -923,6 +928,20 @@ namespace Intersect.Server.EventProcessing
                             {
                                 input = input.Replace(Strings.Events.globalswitch + "{" + m.Groups[1].Value + "}", ((ServerVariableBase)var).Value.ToString(((ServerVariableBase)var).Type));
                             }
+                        }
+                    }
+                }
+
+                //Event Params
+                matches = Regex.Matches(input, Regex.Escape(Strings.Events.eventparam) + @"{([^}]*)}");
+                if (instance != null)
+                {
+                    foreach (Match m in matches)
+                    {
+                        if (m.Success)
+                        {
+                            var id = m.Groups[1].Value;
+                            input = input.Replace(Strings.Events.eventparam + "{" + m.Groups[1].Value + "}", instance.GetParam(player, id.ToLower()));
                         }
                     }
                 }
