@@ -162,7 +162,7 @@ namespace Intersect.Server.EventProcessing
 
         public static bool MeetsCondition(AccessIsCondition condition, Player player, EventInstance eventInstance, QuestBase questBase)
         {
-            var power = player.Client.Power;
+            var power = player.Power;
             if (condition.Access == 0)
             {
                 return power.Ban || power.Kick || power.Mute;

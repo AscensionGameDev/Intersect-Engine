@@ -29,8 +29,7 @@ namespace Intersect.Server.Entities
         public bool HoldingPlayer;
         public bool Global;
         public Guid MapId;
-        public Client MyClient;
-        public Player MyPlayer;
+        public Player Player;
         public int PageIndex;
         public EventPageInstance PageInstance;
 
@@ -42,12 +41,11 @@ namespace Intersect.Server.Entities
 
         public bool[] SelfSwitch { get; set; }
 
-        public EventInstance(Guid instanceId, Guid map, Client client, EventBase baseEvent)
+        public EventInstance(Guid instanceId, Guid map, Player player, EventBase baseEvent)
         {
             Id = instanceId;
-            MyClient = client;
             MapId = map;
-            MyPlayer = client.Entity;
+            Player = player;
             SelfSwitch = new bool[4];
             BaseEvent = baseEvent;
             MapId = map;
@@ -86,7 +84,7 @@ namespace Intersect.Server.Entities
                     PlayerHasDied = false;
                     if (HoldingPlayer)
                     {
-                        PacketSender.SendReleasePlayer(MyClient, Id);
+                        PacketSender.SendReleasePlayer(Player, Id);
                         HoldingPlayer = false;
                     }
                     sendLeave = true;
@@ -100,21 +98,21 @@ namespace Intersect.Server.Entities
                     if (CallStack.Count > 0)
                     {
                         var curStack = CallStack.Peek();
-                        if (curStack.WaitingForResponse == CommandInstance.EventResponse.Shop && MyPlayer.InShop == null) curStack.WaitingForResponse = CommandInstance.EventResponse.None;
-                        if (curStack.WaitingForResponse == CommandInstance.EventResponse.Crafting && MyPlayer.CraftingTableId == Guid.Empty) curStack.WaitingForResponse = CommandInstance.EventResponse.None;
-                        if (curStack.WaitingForResponse == CommandInstance.EventResponse.Bank && MyPlayer.InBank == false) curStack.WaitingForResponse = CommandInstance.EventResponse.None;
-                        if (curStack.WaitingForResponse == CommandInstance.EventResponse.Quest && !MyPlayer.QuestOffers.Contains(((StartQuestCommand)curStack.WaitingOnCommand).QuestId)) curStack.WaitingForResponse = CommandInstance.EventResponse.None;
+                        if (curStack.WaitingForResponse == CommandInstance.EventResponse.Shop && Player.InShop == null) curStack.WaitingForResponse = CommandInstance.EventResponse.None;
+                        if (curStack.WaitingForResponse == CommandInstance.EventResponse.Crafting && Player.CraftingTableId == Guid.Empty) curStack.WaitingForResponse = CommandInstance.EventResponse.None;
+                        if (curStack.WaitingForResponse == CommandInstance.EventResponse.Bank && Player.InBank == false) curStack.WaitingForResponse = CommandInstance.EventResponse.None;
+                        if (curStack.WaitingForResponse == CommandInstance.EventResponse.Quest && !Player.QuestOffers.Contains(((StartQuestCommand)curStack.WaitingOnCommand).QuestId)) curStack.WaitingForResponse = CommandInstance.EventResponse.None;
                         if (curStack.WaitingForResponse == CommandInstance.EventResponse.Timer && WaitTimer < Globals.Timing.TimeMs) curStack.WaitingForResponse = CommandInstance.EventResponse.None;
                         var commandsExecuted = 0;
                         while (curStack.WaitingForResponse == CommandInstance.EventResponse.None && !PageInstance.ShouldDespawn() && commandsExecuted < Options.EventWatchdogKillThreshhold)
                         {
                             if (curStack.WaitingForRoute != Guid.Empty)
                             {
-                                if (curStack.WaitingForRoute == MyPlayer.Id)
+                                if (curStack.WaitingForRoute == Player.Id)
                                 {
-                                    if (MyPlayer.MoveRoute == null ||
-                                        (MyPlayer.MoveRoute.Complete &&
-                                         MyPlayer.MoveTimer < Globals.Timing.TimeMs))
+                                    if (Player.MoveRoute == null ||
+                                        (Player.MoveRoute.Complete &&
+                                         Player.MoveTimer < Globals.Timing.TimeMs))
                                     {
                                         curStack.WaitingForRoute = Guid.Empty;
                                         curStack.WaitingForRouteMap = Guid.Empty;
@@ -123,7 +121,7 @@ namespace Intersect.Server.Entities
                                 else
                                 {
                                     //Check if the exist exists && if the move route is completed.
-                                    foreach (var evt in MyPlayer.EventLookup.Values)
+                                    foreach (var evt in Player.EventLookup.Values)
                                     {
                                         if (evt.MapId == curStack.WaitingForRouteMap && evt.BaseEvent.Id == curStack.WaitingForRoute)
                                         {
@@ -147,7 +145,7 @@ namespace Intersect.Server.Entities
                                 {
                                     if (WaitTimer < Globals.Timing.TimeMs)
                                     {
-                                        CommandProcessing.ProcessCommand(curStack.Command,MyPlayer,this);
+                                        CommandProcessing.ProcessCommand(curStack.Command,Player,this);
                                         commandsExecuted++;
                                     }
                                     else
@@ -170,18 +168,18 @@ namespace Intersect.Server.Entities
                             if (this.BaseEvent.MapId == Guid.Empty)
                             {
                                 Log.Error(Strings.Events.watchdogkillcommon.ToString(BaseEvent.Name));
-                                if (MyPlayer.Client.Power.IsModerator)
+                                if (Player.Power.IsModerator)
                                 {
-                                    PacketSender.SendChatMsg(MyPlayer.Client, Strings.Events.watchdogkillcommon.ToString(BaseEvent.Name), Color.Red);
+                                    PacketSender.SendChatMsg(Player, Strings.Events.watchdogkillcommon.ToString(BaseEvent.Name), Color.Red);
                                 }
                             }
                             else
                             {
                                 var map = MapInstance.Get(this.BaseEvent.MapId);
                                 Log.Error(Strings.Events.watchdogkill.ToString(map.Name, BaseEvent.Name));
-                                if (MyPlayer.Client.Power.IsModerator)
+                                if (Player.Power.IsModerator)
                                 {
-                                    PacketSender.SendChatMsg(MyPlayer.Client, Strings.Events.watchdogkill.ToString(map.Name, BaseEvent.Name), Color.Red);
+                                    PacketSender.SendChatMsg(Player, Strings.Events.watchdogkill.ToString(map.Name, BaseEvent.Name), Color.Red);
                                 }
                             }
                         }
@@ -202,20 +200,20 @@ namespace Intersect.Server.Entities
                 //Try to Spawn a PageInstance.. if we can
                 for (int i = BaseEvent.Pages.Count - 1; i >= 0; i--)
                 {
-                    if (Conditions.CanSpawnPage(BaseEvent.Pages[i],MyPlayer,this))
+                    if (Conditions.CanSpawnPage(BaseEvent.Pages[i],Player,this))
                     {
                         if (Global)
                         {
                             if (MapInstance.Get(MapId).GetGlobalEventInstance(BaseEvent) != null)
                             {
-                                PageInstance = new EventPageInstance(BaseEvent, BaseEvent.Pages[i],BaseEvent.Id,MapId, this, MyClient, MapInstance.Get(MapId).GetGlobalEventInstance(BaseEvent).GlobalPageInstance[i]);
+                                PageInstance = new EventPageInstance(BaseEvent, BaseEvent.Pages[i],BaseEvent.Id,MapId, this, Player, MapInstance.Get(MapId).GetGlobalEventInstance(BaseEvent).GlobalPageInstance[i]);
                                 sendLeave = false;
                                 PageIndex = i;
                             }
                         }
                         else
                         {
-                            PageInstance = new EventPageInstance(BaseEvent, BaseEvent.Pages[i], MapId, this, MyClient);
+                            PageInstance = new EventPageInstance(BaseEvent, BaseEvent.Pages[i], MapId, this, Player);
                             sendLeave = false;
                             PageIndex = i;
                         }
@@ -225,7 +223,7 @@ namespace Intersect.Server.Entities
 
                 if (sendLeave && originalPageInstance != null)
                 {
-                    PacketSender.SendEntityLeaveTo(MyClient, originalPageInstance);
+                    PacketSender.SendEntityLeaveTo(Player, originalPageInstance);
                 }
             }
         }

@@ -52,7 +52,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             try
             {
-                PacketSender.SendChatMsg(client, chatMessage.Message, chatMessage.Color ?? CustomColors.PlayerMsg, chatMessage.Target);
+                PacketSender.SendChatMsg(client.Entity, chatMessage.Message, chatMessage.Color ?? CustomColors.PlayerMsg, chatMessage.Target);
 
                 return new
                 {

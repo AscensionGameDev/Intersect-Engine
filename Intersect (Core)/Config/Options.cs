@@ -44,6 +44,7 @@ namespace Intersect
         public static List<string> ToolTypes => Instance.EquipmentOpts.ToolTypes;
         public static List<string> AnimatedSprites => Instance._animatedSprites;
         public static int RegenTime => Instance.CombatOpts.RegenTime;
+        public static int CombatTime => Instance.CombatOpts.CombatTime;
         public static int MinAttackRate => Instance.CombatOpts.MinAttackRate;
         public static int MaxAttackRate => Instance.CombatOpts.MaxAttackRate;
         public static int BlockingSlow => Instance.CombatOpts.BlockingSlow;

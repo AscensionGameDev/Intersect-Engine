@@ -438,10 +438,10 @@ namespace Intersect.Server.Entities
             PacketSender.SendEntityLeave(this);
         }
 
-        public override EntityPacket EntityPacket(EntityPacket packet = null, Client forClient = null)
+        public override EntityPacket EntityPacket(EntityPacket packet = null, Player forPlayer = null)
         {
             if (packet == null) packet = new ProjectileEntityPacket();
-            packet = base.EntityPacket(packet, forClient);
+            packet = base.EntityPacket(packet, forPlayer);
 
             var pkt = (ProjectileEntityPacket)packet;
             pkt.ProjectileId = Base.Id;

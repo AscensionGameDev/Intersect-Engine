@@ -66,6 +66,7 @@ namespace Intersect.Client
 
             Window.Position = new Microsoft.Xna.Framework.Point(-20, -2000);
             Window.IsBorderless = false;
+            Window.AllowAltF4 = false;
         }
 
         //Really basic error handler for debugging purposes

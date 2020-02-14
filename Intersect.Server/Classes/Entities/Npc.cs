@@ -962,13 +962,13 @@ namespace Intersect.Server.Entities
             return 2;
         }
 
-        public override EntityPacket EntityPacket(EntityPacket packet = null, Client forClient = null)
+        public override EntityPacket EntityPacket(EntityPacket packet = null, Player forPlayer = null)
         {
             if (packet == null) packet = new NpcEntityPacket();
-            packet = base.EntityPacket(packet, forClient);
+            packet = base.EntityPacket(packet, forPlayer);
 
             var pkt = (NpcEntityPacket)packet;
-            pkt.Aggression = GetAggression(forClient?.Entity);
+            pkt.Aggression = GetAggression(forPlayer);
             return pkt;
         }
 

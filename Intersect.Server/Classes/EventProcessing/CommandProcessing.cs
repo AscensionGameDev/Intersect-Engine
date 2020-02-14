@@ -87,7 +87,7 @@ namespace Intersect.Server.EventProcessing
             switch (command.Channel)
             {
                 case ChatboxChannel.Player:
-                    PacketSender.SendChatMsg(player.Client, txt, color);
+                    PacketSender.SendChatMsg(player, txt, color);
                     break;
                 case ChatboxChannel.Local:
                     PacketSender.SendProximityMsg(txt, player.MapId, color);
@@ -329,7 +329,7 @@ namespace Intersect.Server.EventProcessing
             }
 
             //Don't set the name color if it doesn't override admin name colors.
-            if (player.Client.Power != UserRights.None && !command.Override)
+            if (player.Power != UserRights.None && !command.Override)
                 return;
 
             player.NameColor = command.Color;
@@ -364,6 +364,7 @@ namespace Intersect.Server.EventProcessing
         //Set Access Command (wtf why would we even allow this? lol)
         private static void ProcessCommand(SetAccessCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
+            if (player.Client == null) return;
             switch (command.Access)
             {
                 case Access.Moderator:
@@ -377,7 +378,7 @@ namespace Intersect.Server.EventProcessing
                     break;
             }
             PacketSender.SendEntityDataToProximity(player);
-            PacketSender.SendChatMsg(player.Client, Strings.Player.powerchanged, Color.Red);
+            PacketSender.SendChatMsg(player, Strings.Player.powerchanged, Color.Red);
         }
 
         //Warp Player Command
@@ -394,7 +395,7 @@ namespace Intersect.Server.EventProcessing
                 player.MoveRoute = new EventMoveRoute();
                 player.MoveRouteSetter = instance.PageInstance;
                 player.MoveRoute.CopyFrom(command.Route);
-                PacketSender.SendMoveRouteToggle(player.Client, true);
+                PacketSender.SendMoveRouteToggle(player, true);
             }
             else
             {
@@ -608,14 +609,14 @@ namespace Intersect.Server.EventProcessing
         private static void ProcessCommand(HoldPlayerCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             instance.HoldingPlayer = true;
-            PacketSender.SendHoldPlayer(player.Client, instance.BaseEvent.Id, instance.BaseEvent.MapId);
+            PacketSender.SendHoldPlayer(player, instance.BaseEvent.Id, instance.BaseEvent.MapId);
         }
 
         //Release Player Command
         private static void ProcessCommand(ReleasePlayerCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             instance.HoldingPlayer = false;
-            PacketSender.SendReleasePlayer(player.Client, instance.BaseEvent.Id);
+            PacketSender.SendReleasePlayer(player, instance.BaseEvent.Id);
         }
 
         //Hide Player Command
@@ -637,37 +638,37 @@ namespace Intersect.Server.EventProcessing
         //Play Bgm Command
         private static void ProcessCommand(PlayBgmCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            PacketSender.SendPlayMusic(player.Client, command.File);
+            PacketSender.SendPlayMusic(player, command.File);
         }
 
         //Fadeout Bgm Command
         private static void ProcessCommand(FadeoutBgmCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            PacketSender.SendFadeMusic(player.Client);
+            PacketSender.SendFadeMusic(player);
         }
 
         //Play Sound Command
         private static void ProcessCommand(PlaySoundCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            PacketSender.SendPlaySound(player.Client, command.File);
+            PacketSender.SendPlaySound(player, command.File);
         }
 
         //Stop Sounds Command
         private static void ProcessCommand(StopSoundsCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            PacketSender.SendStopSounds(player.Client);
+            PacketSender.SendStopSounds(player);
         }
 
         //Show Picture Command
         private static void ProcessCommand(ShowPictureCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            PacketSender.SendShowPicture(player.Client, command.File, command.Size, command.Clickable);
+            PacketSender.SendShowPicture(player, command.File, command.Size, command.Clickable);
         }
 
         //Hide Picture Command
         private static void ProcessCommand(HidePictureCommmand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            PacketSender.SendHidePicture(player.Client);
+            PacketSender.SendHidePicture(player);
         }
 
         //Wait Command
