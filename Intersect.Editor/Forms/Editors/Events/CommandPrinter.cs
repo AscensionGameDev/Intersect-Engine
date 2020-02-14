@@ -994,16 +994,8 @@ namespace Intersect.Editor.Forms.Editors.Events
                 case Enums.VariableMods.Set:
                     varvalue = Strings.EventCommandList.setvariable.ToString(mod.Value);
                     break;
-                case Enums.VariableMods.DupPlayerVar:
-                    varvalue = Strings.EventCommandList.dupplayervariable.ToString(
-                        PlayerVariableBase.GetName(mod.DuplicateVariableId));
-                    break;
-                case Enums.VariableMods.DupGlobalVar:
-                    varvalue = Strings.EventCommandList.dupglobalvariable.ToString(
-                        ServerVariableBase.GetName(mod.DuplicateVariableId));
-                    break;
-                case Enums.VariableMods.PlayerName:
-                    varvalue = Strings.EventCommandList.playername.ToString();
+                case Enums.VariableMods.Replace:
+                    varvalue = Strings.EventCommandList.replace.ToString(mod.Value, mod.Replace);
                     break;
             }
 

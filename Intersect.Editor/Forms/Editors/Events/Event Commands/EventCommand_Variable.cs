@@ -34,12 +34,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             cmbBooleanClonePlayerVar.Items.Clear();
             cmbBooleanClonePlayerVar.Items.AddRange(PlayerVariableBase.Names);
 
-            //Strings
-            cmbDupGlobalString.Items.Clear();
-            cmbDupGlobalString.Items.AddRange(ServerVariableBase.Names);
-            cmbDupPlayerString.Items.Clear();
-            cmbDupPlayerString.Items.AddRange(PlayerVariableBase.Names);
-
             if (mMyCommand.VariableType == VariableTypes.ServerVariable)
             {
                 rdoGlobalVariable.Checked = true;
@@ -85,10 +79,15 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
             //String
             grpStringVariable.Text = Strings.EventSetVariable.stringlabel;
-            optStaticString.Text = Strings.EventSetVariable.stringvalue;
-            optClonePlayerString.Text = Strings.EventSetVariable.stringcloneplayerstringvalue;
-            optCloneGlobalString.Text = Strings.EventSetVariable.stringcloneglobalstringvalue;
-            optPlayerName.Text = Strings.EventSetVariable.stringplayername;
+            optStaticString.Text = Strings.EventSetVariable.stringset;
+            optReplaceString.Text = Strings.EventSetVariable.stringreplace;
+            grpStringSet.Text = Strings.EventSetVariable.stringset;
+            grpStringReplace.Text = Strings.EventSetVariable.stringreplace;
+            lblStringValue.Text = Strings.EventSetVariable.stringsetvalue;
+            lblStringFind.Text = Strings.EventSetVariable.stringreplacefind;
+            lblStringReplace.Text = Strings.EventSetVariable.stringreplacereplace;
+            lblStringTextVariables.Text = Strings.EventSetVariable.stringtip;
+
         }
 
         private void InitEditor()
@@ -105,10 +104,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 cmbVariable.Items.AddRange(ServerVariableBase.Names);
                 cmbVariable.SelectedIndex =  ServerVariableBase.ListIndex(mMyCommand.VariableId);
             }
-
-            
-
-    
 
             chkSyncParty.Checked = mMyCommand.SyncParty;
 
@@ -511,16 +506,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                         optStaticString.Checked = true;
                         txtStringValue.Text = mod.Value;
                         break;
-                    case VariableMods.DupPlayerVar:
-                        optClonePlayerString.Checked = true;
-                        cmbDupPlayerString.SelectedIndex = PlayerVariableBase.ListIndex(mod.DuplicateVariableId);
-                        break;
-                    case VariableMods.DupGlobalVar:
-                        optCloneGlobalString.Checked = true;
-                        cmbDupGlobalString.SelectedIndex = ServerVariableBase.ListIndex(mod.DuplicateVariableId);
-                        break;
-                    case VariableMods.PlayerName:
-                        optPlayerName.Checked = true;
+                    case VariableMods.Replace:
+                        optReplaceString.Checked = true;
+                        txtStringFind.Text = mod.Value;
+                        txtStringReplace.Text = mod.Replace;
                         break;
                 }
             }
@@ -534,22 +523,36 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 mod.ModType = VariableMods.Set;
                 mod.Value = txtStringValue.Text;
             }
-            else if (optClonePlayerString.Checked)
+            else if (optReplaceString.Checked)
             {
-                mod.ModType = VariableMods.DupPlayerVar;
-                mod.DuplicateVariableId = PlayerVariableBase.IdFromList(cmbDupPlayerString.SelectedIndex);
-            }
-            else if (optCloneGlobalString.Checked)
-            {
-                mod.ModType = VariableMods.DupGlobalVar;
-                mod.DuplicateVariableId = ServerVariableBase.IdFromList(cmbDupGlobalString.SelectedIndex);
-            }
-            else if (optPlayerName.Checked)
-            {
-                mod.ModType = VariableMods.PlayerName;
+                mod.ModType = VariableMods.Replace;
+                mod.Value = txtStringFind.Text;
+                mod.Replace = txtStringReplace.Text;
             }
 
             return mod;
+        }
+
+        private void lblStringTextVariables_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start(
+                "http://www.ascensiongamedev.com/community/topic/749-event-text-variables/");
+        }
+
+        private void UpdateStringFormElements()
+        {
+            grpStringSet.Visible = optStaticString.Checked;
+            grpStringReplace.Visible = optReplaceString.Checked;
+        }
+
+        private void optStaticString_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateStringFormElements();
+        }
+
+        private void optReplaceString_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateStringFormElements();
         }
 
         #endregion

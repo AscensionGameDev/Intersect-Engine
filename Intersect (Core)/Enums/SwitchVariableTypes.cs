@@ -27,7 +27,7 @@ namespace Intersect.Enums
         AddGlobalVar,
         SubtractPlayerVar,
         SubtractGlobalVar,
-        PlayerName,
+        Replace,
     }
 
     public enum VariableComparators
@@ -38,5 +38,11 @@ namespace Intersect.Enums
         Greater,
         Less,
         NotEqual
+    }
+
+    public enum StringVariableComparators
+    {
+        Equal = 0,
+        Contains,
     }
 }

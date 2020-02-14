@@ -101,7 +101,7 @@ namespace Intersect.Server.EventProcessing
         //Set Variable Commands
         private static void ProcessCommand(SetVariableCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            ProcessVariableModification(command, (dynamic)command.Modification, player);
+            ProcessVariableModification(command, (dynamic)command.Modification, player, instance);
         }
 
         //Set Self Switch Command
@@ -829,13 +829,16 @@ namespace Intersect.Server.EventProcessing
         }
 
 
-        private static string ParseEventText(string input, Player player, EventInstance instance)
+        public static string ParseEventText(string input, Player player, EventInstance instance)
         {
             if (player != null)
             {
                 input = input.Replace(Strings.Events.playernamecommand, player.Name);
-                input = input.Replace(Strings.Events.eventnamecommand, instance.PageInstance.Name);
-                input = input.Replace(Strings.Events.commandparameter, instance.PageInstance.Param);
+                if (instance != null)
+                {
+                    input = input.Replace(Strings.Events.eventnamecommand, instance.PageInstance.Name);
+                    input = input.Replace(Strings.Events.commandparameter, instance.PageInstance.Param);
+                }
                 if (input.Contains(Strings.Events.onlinelistcommand) || input.Contains(Strings.Events.onlinecountcommand))
                 {
                     var onlineList = Globals.OnlineList;
@@ -927,12 +930,12 @@ namespace Intersect.Server.EventProcessing
             return input;
         }
 
-        private static void ProcessVariableModification(SetVariableCommand command, VariableMod mod, Player player)
+        private static void ProcessVariableModification(SetVariableCommand command, VariableMod mod, Player player, EventInstance instance)
         {
 
         }
 
-        private static void ProcessVariableModification(SetVariableCommand command, BooleanVariableMod mod, Player player)
+        private static void ProcessVariableModification(SetVariableCommand command, BooleanVariableMod mod, Player player, EventInstance instance)
         {
             VariableValue value = null;
             if (command.VariableType == VariableTypes.PlayerVariable)
@@ -985,7 +988,7 @@ namespace Intersect.Server.EventProcessing
             }
         }
 
-        private static void ProcessVariableModification(SetVariableCommand command, IntegerVariableMod mod, Player player)
+        private static void ProcessVariableModification(SetVariableCommand command, IntegerVariableMod mod, Player player, EventInstance instance)
         {
             VariableValue value = null;
             if (command.VariableType == VariableTypes.PlayerVariable)
@@ -1066,7 +1069,7 @@ namespace Intersect.Server.EventProcessing
             }
         }
 
-        private static void ProcessVariableModification(SetVariableCommand command, StringVariableMod mod, Player player)
+        private static void ProcessVariableModification(SetVariableCommand command, StringVariableMod mod, Player player, EventInstance instance)
         {
             VariableValue value = null;
             if (command.VariableType == VariableTypes.PlayerVariable)
@@ -1083,20 +1086,12 @@ namespace Intersect.Server.EventProcessing
             switch (mod.ModType)
             {
                 case Enums.VariableMods.Set:
-                    value.String = mod.Value;
+                    value.String = ParseEventText(mod.Value, player, instance);
                     break;
-                case Enums.VariableMods.DupPlayerVar:
-                    value.String = player.GetVariableValue(mod.DuplicateVariableId).String;
-                    break;
-                case Enums.VariableMods.DupGlobalVar:
-                    var dupServerVariable = ServerVariableBase.Get(mod.DuplicateVariableId);
-                    if (dupServerVariable != null)
-                    {
-                        value.String = dupServerVariable.Value.String;
-                    }
-                    break;
-                case Enums.VariableMods.PlayerName:
-                    value.String = player.Name;
+                case Enums.VariableMods.Replace:
+                    var find = ParseEventText(mod.Value, player, instance);
+                    var replace = ParseEventText(mod.Replace, player, instance);
+                    value.String = value.String.Replace(find, replace);
                     break;
             }
 

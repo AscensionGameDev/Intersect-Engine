@@ -607,7 +607,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString setlevel = @"Set Player Level To: {00}";
             public static LocalizedString setsprite = @"Set Player Sprite to {00}";
             public static LocalizedString setvariable = @"Set to {00}";
-            public static LocalizedString playername = @"Set to player name";
+            public static LocalizedString replace = @"Replace {00} with {01}";
             public static LocalizedString showoffer = @"Show Offer Window";
             public static LocalizedString showoptions = @"Show Options: {00}";
             public static LocalizedString variableinput = @"Input Variable: {00}";
@@ -717,14 +717,18 @@ Tick timer saved in server config.json.";
             public static LocalizedString booleanequal = @"Equal To";
             public static LocalizedString booleannotequal = @"Not Equal To";
             public static LocalizedString stringvariable = @"String Variable:";
-            public static LocalizedString stringequal = @"Equal To";
-            public static LocalizedString stringnotequal = @"Not Equal To";
+            public static LocalizedString stringtip = @"Text variables work here. Click here for a list!";
             public static LocalizedString cancel = @"Cancel";
             public static LocalizedString canstartquest = @"Can Start Quest";
             public static LocalizedString Class = @"Class:";
             public static LocalizedString classis = @"Class Is";
             public static LocalizedString commoneventsonly = @"This condition works for Common Events activation only!";
             public static LocalizedString comparator = @"Comparator:";
+            public static Dictionary<int, LocalizedString> stringcomparators = new Dictionary<int, LocalizedString>
+            {
+                {0, @"Equal To"},
+                {1, @"Contains"}
+            };
             public static Dictionary<int, LocalizedString> comparators = new Dictionary<int, LocalizedString>
             {
                 {0, @"Equal To"},
@@ -825,6 +829,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString aftertask = @", After Task: {00}";
             public static LocalizedString beforetask = @", Before Task: {00}";
             public static LocalizedString Class = @"Player's class is {00}";
+            public static LocalizedString contains = @"contains {00}";
             public static LocalizedString equal = @"is equal to {00}";
             public static LocalizedString False = @"False";
             public static LocalizedString female = @"Female";
@@ -1181,7 +1186,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString player = @"Player Variable";
             public static LocalizedString title = @"Set Variable";
             public static LocalizedString syncparty = @"Party Sync?";
-            public static LocalizedString label = "@Select Variable:";
+            public static LocalizedString label = @"Select Variable:";
 
             public static LocalizedString booleanlabel = @"Boolean Variable:";
             public static LocalizedString booleantrue = @"True";
@@ -1201,11 +1206,13 @@ Tick timer saved in server config.json.";
             public static LocalizedString numericsubtract = @"Subtract";
             public static LocalizedString numericsystemtime = @"System Time (ms)";
 
-            public static LocalizedString stringlabel = @"Boolean Variable:";
-            public static LocalizedString stringvalue = @"Text:";
-            public static LocalizedString stringcloneplayerstringvalue = @"Player Variable Value: ";
-            public static LocalizedString stringcloneglobalstringvalue = @"Global Variable Value: ";
-            public static LocalizedString stringplayername = @"Player Name";
+            public static LocalizedString stringlabel = @"String Variable:";
+            public static LocalizedString stringset = @"Set";
+            public static LocalizedString stringreplace = @"Replace";
+            public static LocalizedString stringsetvalue = @"Value:";
+            public static LocalizedString stringreplacefind = @"Find:";
+            public static LocalizedString stringreplacereplace = @"Replace:";
+            public static LocalizedString stringtip = @"Text variables work with strings. Click here for a list!";
         }
 
         public struct EventShowOptions
@@ -2521,35 +2528,14 @@ Negative values for time to flow backwards.";
 
         public static string GetVariableComparisonString(StringVariableComparison comparison)
         {
-            var value = "";
-            var pVar = "";
-
-            if (comparison.CompareVariableId == Guid.Empty)
+            switch (comparison.Comparator)
             {
-                value = comparison.Value.ToString();
+                case StringVariableComparators.Equal:
+                    return Strings.EventConditionDesc.equal.ToString(comparison.Value);
+                case StringVariableComparators.Contains:
+                    return Strings.EventConditionDesc.contains.ToString(comparison.Value);
             }
-            else
-            {
-                if (comparison.CompareVariableType == VariableTypes.PlayerVariable)
-                {
-                    value = Strings.EventConditionDesc.playervariablevalue.ToString(PlayerVariableBase.GetName(comparison.CompareVariableId));
-                }
-                else if (comparison.CompareVariableType == VariableTypes.ServerVariable)
-                {
-                    value = Strings.EventConditionDesc.globalvariablevalue.ToString(ServerVariableBase.GetName(comparison.CompareVariableId));
-                }
-            }
-
-            if (comparison.ComparingEqual)
-            {
-                pVar = Strings.EventConditionDesc.equal.ToString(value);
-            }
-            else
-            {
-                pVar = Strings.EventConditionDesc.notequal.ToString(value);
-            }
-
-            return pVar;
+            return "";
         }
 
         public static void Load()

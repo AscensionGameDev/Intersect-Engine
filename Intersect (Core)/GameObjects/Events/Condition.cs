@@ -155,9 +155,7 @@ namespace Intersect.GameObjects.Events
 
     public class StringVariableComparison : VariableCompaison
     {
-        public VariableTypes CompareVariableType { get; set; } = VariableTypes.PlayerVariable;
-        public Guid CompareVariableId { get; set; }
-        public bool ComparingEqual { get; set; }
+        public StringVariableComparators Comparator { get; set; } = StringVariableComparators.Equal;
         public string Value { get; set; }
     }
 }
