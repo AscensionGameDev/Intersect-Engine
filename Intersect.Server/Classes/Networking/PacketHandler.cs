@@ -1474,9 +1474,9 @@ namespace Intersect.Server.Networking
                 {
                     if (packet.AcceptingInvite)
                     {
-                        if (player.Trading.Requester.Trading.Counterparty == null
-                        ) //They could have accepted another trade since.
+                        if (player.Trading.Requester.Trading.Counterparty == null) //They could have accepted another trade since.
                         {
+                            //Check if still in range lolz
                             player.Trading.Requester.StartTrade(player);
                         }
                         else
