@@ -258,6 +258,23 @@ namespace Intersect.Server.Entities
                 }
             }
 
+            //Upon Sign In Remove Any Items/Spells that have been deleted
+            foreach (var itm in Items)
+            {
+                if (itm.ItemId != Guid.Empty && ItemBase.Get(itm.ItemId) == null)
+                    itm.Set(new Item());
+            }
+            foreach (var itm in Bank)
+            {
+                if (itm.ItemId != Guid.Empty && ItemBase.Get(itm.ItemId) == null)
+                    itm.Set(new Item());
+            }
+            foreach (var spl in Spells)
+            {
+                if (spl.SpellId != Guid.Empty && SpellBase.Get(spl.SpellId) == null)
+                    spl.Set(new Spell());
+            }
+
             OnlinePlayers.Add(Id, this);
         }
 
@@ -2718,6 +2735,12 @@ namespace Intersect.Server.Entities
                 }
 
                 bagItem.Bag.Slots = bagItem.Bag.Slots.OrderBy(p => p.Slot).ToList();
+
+                foreach (var itm in bagItem.Bag.Slots)
+                {
+                    if (itm.ItemId != Guid.Empty && ItemBase.Get(itm.ItemId) == null)
+                        itm.Set(new Item());
+                }
             }
 
             //Send the bag to the player (this will make it appear on screen)
