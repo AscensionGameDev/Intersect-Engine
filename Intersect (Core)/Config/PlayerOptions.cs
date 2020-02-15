@@ -10,5 +10,7 @@
         public int MaxCharacters = 1;
         public int ItemDropChance = 0;
         public int RequestTimeout = 300000;
+        public int TradeRange = 6;
+        public int PartyRange = 80;
     }
 }
