@@ -984,6 +984,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudSpdPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudSpdPercentage.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudSpdPercentage.Location = new System.Drawing.Point(165, 132);
+            this.nudSpdPercentage.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
             this.nudSpdPercentage.Minimum = new decimal(new int[] {
             100,
             0,
@@ -1004,6 +1009,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudMRPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudMRPercentage.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudMRPercentage.Location = new System.Drawing.Point(165, 102);
+            this.nudMRPercentage.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
             this.nudMRPercentage.Minimum = new decimal(new int[] {
             100,
             0,
@@ -1024,6 +1034,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudDefPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudDefPercentage.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudDefPercentage.Location = new System.Drawing.Point(165, 75);
+            this.nudDefPercentage.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
             this.nudDefPercentage.Minimum = new decimal(new int[] {
             100,
             0,
@@ -1044,6 +1059,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudMagPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudMagPercentage.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudMagPercentage.Location = new System.Drawing.Point(165, 47);
+            this.nudMagPercentage.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
             this.nudMagPercentage.Minimum = new decimal(new int[] {
             100,
             0,
@@ -1064,6 +1084,11 @@ namespace Intersect.Editor.Forms.Editors
             this.nudStrPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudStrPercentage.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudStrPercentage.Location = new System.Drawing.Point(165, 19);
+            this.nudStrPercentage.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
             this.nudStrPercentage.Minimum = new decimal(new int[] {
             100,
             0,
