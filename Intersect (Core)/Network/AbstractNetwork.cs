@@ -24,6 +24,9 @@ namespace Intersect.Network
 
             ConnectionLookup = new ConcurrentDictionary<Guid, IConnection>();
 
+            if (configuration.Host?.ToLower() == "localhost")
+                configuration.Host = "127.0.0.1";
+
             Configuration = configuration;
         }
 
