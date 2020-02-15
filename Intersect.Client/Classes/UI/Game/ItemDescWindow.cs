@@ -5,6 +5,7 @@ using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using JetBrains.Annotations;
 
 namespace Intersect.Client.UI.Game
 {
@@ -12,7 +13,7 @@ namespace Intersect.Client.UI.Game
     {
         ImagePanel mDescWindow;
 
-        public ItemDescWindow(ItemBase item, int amount, int x, int y, int[] statBuffs, string titleOverride = "", string valueLabel = "", bool centerHorizontally = false)
+        public ItemDescWindow([NotNull] ItemBase item, int amount, int x, int y, int[] statBuffs, string titleOverride = "", string valueLabel = "", bool centerHorizontally = false)
         {
             var title = titleOverride;
             if (string.IsNullOrWhiteSpace(title))
