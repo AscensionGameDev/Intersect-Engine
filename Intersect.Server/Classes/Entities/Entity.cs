@@ -1457,7 +1457,7 @@ namespace Intersect.Server.Entities
                 var doTFound = false;
                 for (var i = 0; i < target.DoT.Count; i++)
                 {
-                    if (target.DoT[i].SpellBase.Id == spellBase.Id || target.DoT[i].Target == this)
+                    if (target.DoT[i].SpellBase.Id == spellBase.Id && target.DoT[i].Target == this)
                     {
                         doTFound = true;
                     }
