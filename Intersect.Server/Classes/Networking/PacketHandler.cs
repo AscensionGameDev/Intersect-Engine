@@ -1449,8 +1449,8 @@ namespace Intersect.Server.Networking
 
             //Player Out of Range Or Offline
             PacketSender.SendChatMsg(
-                player.Client, Strings.Trading.outofrange.ToString(),
-                CustomColors.NoTarget
+                player, Strings.Trading.outofrange.ToString(),
+                CustomColors.Combat.NoTarget
             );
         }
 
@@ -1477,8 +1477,8 @@ namespace Intersect.Server.Networking
                             else
                             {
                                 PacketSender.SendChatMsg(
-                                    player.Client, Strings.Trading.outofrange.ToString(),
-                                    CustomColors.NoTarget
+                                    player, Strings.Trading.outofrange.ToString(),
+                                    CustomColors.Combat.NoTarget
                                 );
                             }
                         }
