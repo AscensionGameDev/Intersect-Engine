@@ -1351,17 +1351,13 @@ namespace Intersect.Server.Networking
 
             var target = Player.FindOnline(packet.TargetId);
 
-            if (target == null)
-                return;
-
-            if (target.Id != player.Id)
+            if (target != null && target.Id != player.Id && player.InRangeOf(target, Options.PartyRange))
             {
                 target.InviteToParty(player);
+                return;
             }
-            else
-            {
-                PacketSender.SendChatMsg(client, Strings.Player.notarget, CustomColors.NoTarget);
-            }
+
+            PacketSender.SendChatMsg(client, Strings.Parties.outofrange, CustomColors.NoTarget);
         }
 
         //PartyInviteResponsePacket
@@ -1452,13 +1448,20 @@ namespace Intersect.Server.Networking
 
             var target = Player.FindOnline(packet.TargetId);
 
-            if (target == null)
-                return;
-
-            if (target.Id != player.Id)
+            if (target != null && target.Id != player.Id && player.InRangeOf(target, Options.TradeRange))
             {
-                target.InviteToTrade(player);
+                if (player.InRangeOf(target, Options.TradeRange))
+                {
+                    target.InviteToTrade(player);
+                    return;
+                }
             }
+
+            //Player Out of Range Or Offline
+            PacketSender.SendChatMsg(
+                player.Client, Strings.Trading.outofrange.ToString(),
+                CustomColors.NoTarget
+            );
         }
 
         //TradeRequestResponsePacket
@@ -1474,10 +1477,20 @@ namespace Intersect.Server.Networking
                 {
                     if (packet.AcceptingInvite)
                     {
-                        if (player.Trading.Requester.Trading.Counterparty == null
-                        ) //They could have accepted another trade since.
+                        if (player.Trading.Requester.Trading.Counterparty == null) //They could have accepted another trade since.
                         {
-                            player.Trading.Requester.StartTrade(player);
+                            if (player.InRangeOf(player.Trading.Requester, Options.TradeRange))
+                            {
+                                //Check if still in range lolz
+                                player.Trading.Requester.StartTrade(player);
+                            }
+                            else
+                            {
+                                PacketSender.SendChatMsg(
+                                    player.Client, Strings.Trading.outofrange.ToString(),
+                                    CustomColors.NoTarget
+                                );
+                            }
                         }
                         else
                         {

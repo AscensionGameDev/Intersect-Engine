@@ -1225,7 +1225,7 @@ namespace Intersect.Client.Networking
         //TradePacket
         private static void HandlePacket(TradePacket packet)
         {
-            if (packet.TradePartner != Guid.Empty)
+            if (!string.IsNullOrEmpty(packet.TradePartner))
             {
                 Globals.Trade = new ItemInstance[2, Options.MaxInvItems];
 

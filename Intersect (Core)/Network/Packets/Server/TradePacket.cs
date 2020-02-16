@@ -8,11 +8,11 @@ namespace Intersect.Network.Packets.Server
 {
     public class TradePacket: CerasPacket
     {
-        public Guid TradePartner { get; set; }
+        public string TradePartner { get; set; }
 
-        public TradePacket(Guid partnerId)
+        public TradePacket(string partnerName)
         {
-            TradePartner = partnerId;
+            TradePartner = partnerName;
         }
     }
 }

@@ -19,6 +19,7 @@ namespace Intersect.Client.Entities
         public Guid ProjectileId;
         private int mQuantity;
         private bool mDisposing;
+        private object mLock = new object();
 
         // Individual Spawns
         public ProjectileSpawns[] Spawns;
@@ -78,18 +79,21 @@ namespace Intersect.Client.Entities
         {
             if (!mDisposing)
             {
-                mDisposing = true;
-                if (mSpawnedAmount == 0)
+                lock (mLock)
                 {
-                    Update();
-                }
-                if (Spawns != null)
-                {
-                    foreach (ProjectileSpawns s in Spawns)
+                    mDisposing = true;
+                    if (mSpawnedAmount == 0)
                     {
-                        if (s != null && s.Anim != null)
+                        Update();
+                    }
+                    if (Spawns != null)
+                    {
+                        foreach (ProjectileSpawns s in Spawns)
                         {
-                            s.Anim.DisposeNextDraw();
+                            if (s != null && s.Anim != null)
+                            {
+                                s.Anim.DisposeNextDraw();
+                            }
                         }
                     }
                 }
@@ -321,38 +325,41 @@ namespace Intersect.Client.Entities
         {
             if (mMyBase == null) return false;
 
-            var tmpI = -1;
-            var map = CurrentMap;
-            var y = Y;
-
-            if (mQuantity < mMyBase.Quantity && mSpawnTime < Globals.System.GetTimeMs())
+            lock (mLock)
             {
-                AddProjectileSpawns();
-            }
+                var tmpI = -1;
+                var map = CurrentMap;
+                var y = Y;
 
-            if (IsMoving)
-            {
-                for (int s = 0; s < mSpawnedAmount; s++)
+                if (mQuantity < mMyBase.Quantity && mSpawnTime < Globals.System.GetTimeMs())
                 {
-                    if (Spawns[s] != null && MapInstance.Get(Spawns[s].SpawnMapId) != null)
+                    AddProjectileSpawns();
+                }
+
+                if (IsMoving)
+                {
+                    for (int s = 0; s < mSpawnedAmount; s++)
                     {
-                        Spawns[s].OffsetX = GetRangeX(Spawns[s].Dir, GetDisplacement(Spawns[s].SpawnTime));
-                        Spawns[s].OffsetY = GetRangeY(Spawns[s].Dir, GetDisplacement(Spawns[s].SpawnTime));
-                        Spawns[s].Anim.SetPosition(
-                            MapInstance.Get(Spawns[s].SpawnMapId).GetX() +
-                            Spawns[s].SpawnX * Options.TileWidth +
-                            Spawns[s].OffsetX +
-                            Options.TileWidth / 2,
-                            MapInstance.Get(Spawns[s].SpawnMapId).GetY() +
-                            Spawns[s].SpawnY * Options.TileHeight +
-                            Spawns[s].OffsetY +
-                            Options.TileHeight / 2, X, Y, CurrentMap,
-                            Spawns[s].AutoRotate ? Spawns[s].Dir : 0, Spawns[s].Z);
-                        Spawns[s].Anim.Update();
+                        if (Spawns[s] != null && MapInstance.Get(Spawns[s].SpawnMapId) != null)
+                        {
+                            Spawns[s].OffsetX = GetRangeX(Spawns[s].Dir, GetDisplacement(Spawns[s].SpawnTime));
+                            Spawns[s].OffsetY = GetRangeY(Spawns[s].Dir, GetDisplacement(Spawns[s].SpawnTime));
+                            Spawns[s].Anim.SetPosition(
+                                MapInstance.Get(Spawns[s].SpawnMapId).GetX() +
+                                Spawns[s].SpawnX * Options.TileWidth +
+                                Spawns[s].OffsetX +
+                                Options.TileWidth / 2,
+                                MapInstance.Get(Spawns[s].SpawnMapId).GetY() +
+                                Spawns[s].SpawnY * Options.TileHeight +
+                                Spawns[s].OffsetY +
+                                Options.TileHeight / 2, X, Y, CurrentMap,
+                                Spawns[s].AutoRotate ? Spawns[s].Dir : 0, Spawns[s].Z);
+                            Spawns[s].Anim.Update();
+                        }
                     }
                 }
+                CheckForCollision();
             }
-            CheckForCollision();
 
             return true;
         }

@@ -48,7 +48,7 @@ namespace Intersect.Client.UI.Game
         private bool mShouldOpenShop;
         private bool mShouldOpenTrading;
         private bool mShouldUpdateQuestLog = true;
-        private Guid mTradingTargetId;
+        private string mTradingTarget;
         private TradingWindow mTradingWindow;
         public bool FocusChat;
 
@@ -196,10 +196,10 @@ namespace Intersect.Client.UI.Game
         }
 
         //Trading
-        public void NotifyOpenTrading(Guid traderId)
+        public void NotifyOpenTrading(string traderName)
         {
             mShouldOpenTrading = true;
-            mTradingTargetId = traderId;
+            mTradingTarget = traderName;
         }
 
         public void NotifyCloseTrading()
@@ -210,7 +210,7 @@ namespace Intersect.Client.UI.Game
         public void OpenTrading()
         {
             if (mTradingWindow != null) mTradingWindow.Close();
-            mTradingWindow = new TradingWindow(GameCanvas, mTradingTargetId);
+            mTradingWindow = new TradingWindow(GameCanvas, mTradingTarget);
             mShouldOpenTrading = false;
             Globals.InTrade = true;
         }
