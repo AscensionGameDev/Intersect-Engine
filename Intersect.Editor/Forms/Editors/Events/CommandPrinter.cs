@@ -465,13 +465,27 @@ namespace Intersect.Editor.Forms.Editors.Events
 
         private static string GetCommandText(RestoreHpCommand command, MapInstance map)
         {
-            return Strings.EventCommandList.restorehp.ToString(command.Amount);
+            if (command.Amount == 0)
+            {
+                return Strings.EventCommandList.restorehp.ToString();
+            }
+            else
+            {
+                return Strings.EventCommandList.restorehpby.ToString(command.Amount);
+            }
         }
 
         private static string GetCommandText(RestoreMpCommand command, MapInstance map)
         {
-            return Strings.EventCommandList.restoremp.ToString(command.Amount);
-    }
+            if (command.Amount == 0)
+            {
+                return Strings.EventCommandList.restoremp.ToString();
+            }
+            else
+            {
+                return Strings.EventCommandList.restorempby.ToString(command.Amount);
+            }
+        }
 
         private static string GetCommandText(LevelUpCommand command, MapInstance map)
         {

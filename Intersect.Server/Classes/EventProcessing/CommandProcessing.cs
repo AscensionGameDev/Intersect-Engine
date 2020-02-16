@@ -206,6 +206,10 @@ namespace Intersect.Server.EventProcessing
                     player.Die(Options.ItemDropChance);
                 }
             }
+            else
+            {
+                player.RestoreVital(Vitals.Health);
+            }
         }
 
         //Restore Mp Command
@@ -218,6 +222,10 @@ namespace Intersect.Server.EventProcessing
             else if (command.Amount < 0)
             {
                 player.SubVital(Vitals.Mana, -command.Amount);
+            }
+            else
+            {
+                player.RestoreVital(Vitals.Mana);
             }
         }
 
