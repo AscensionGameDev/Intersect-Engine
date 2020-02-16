@@ -38,6 +38,9 @@ namespace Intersect.GameObjects
 
         public int DamageType { get; set; }
 
+        public int AttackSpeedModifier { get; set; }
+        public int AttackSpeedValue { get; set; }
+
         [JsonIgnore]
         private long mBaseExp;
 

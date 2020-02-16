@@ -1123,6 +1123,13 @@ namespace Intersect.Client.Entities
         {
             ItemBase weapon = null;
             var attackTime = base.CalculateAttackTime();
+
+            var cls = ClassBase.Get(Class);
+            if (cls != null && cls.AttackSpeedModifier == 1) //Static
+            {
+                attackTime = cls.AttackSpeedValue;
+            }
+
             if (this == Globals.Me)
             {
                 if (Options.WeaponIndex > -1 && Options.WeaponIndex < Equipment.Length && MyEquipment[Options.WeaponIndex] >= 0)

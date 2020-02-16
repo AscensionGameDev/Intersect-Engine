@@ -1190,6 +1190,13 @@ namespace Intersect.Server.Entities
         {
             ItemBase weapon = null;
             var attackTime = base.CalculateAttackTime();
+
+            var cls = ClassBase.Get(ClassId);
+            if (cls != null && cls.AttackSpeedModifier == 1) //Static
+            {
+                attackTime = cls.AttackSpeedValue;
+            }
+
             if (Options.WeaponIndex > -1 &&
                 Options.WeaponIndex < Equipment.Length &&
                 Equipment[Options.WeaponIndex] >= 0)

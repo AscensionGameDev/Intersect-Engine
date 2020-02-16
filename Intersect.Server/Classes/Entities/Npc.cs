@@ -157,6 +157,13 @@ namespace Intersect.Server.Entities
             PacketSender.SendNpcAggressionToProximity(this);
         }
 
+        public override int CalculateAttackTime()
+        {
+            if (Base.AttackSpeedModifier == 1) //Static
+                return Base.AttackSpeedValue;
+            return base.CalculateAttackTime();
+        }
+
         public override bool CanAttack(EntityInstance entity, SpellBase spell)
         {
             if (!base.CanAttack(entity, spell)) return false;

@@ -102,7 +102,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
     <Optimize>false</Optimize>
-	<DisableFody>true</DisableFody>
+    <DisableFody>true</DisableFody>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <OutputPath>..\build\release\server\</OutputPath>
@@ -174,11 +174,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'NoFody|x86'">
     <OutputPath>..\build\debug\server\</OutputPath>
-	<DisableFody>true</DisableFody>
+    <DisableFody>true</DisableFody>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'NoFody|x64'">
     <OutputPath>..\build\debug\server\</OutputPath>
-	<DisableFody>true</DisableFody>
+    <DisableFody>true</DisableFody>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CommandLine, Version=2.4.3.0, Culture=neutral, PublicKeyToken=de6f01bd326f8c32, processorArchitecture=MSIL">
@@ -618,6 +618,10 @@
     <Compile Include="Migrations\Game\20190727120303_ItemUpgrades_Percentage_Based_Stats.cs" />
     <Compile Include="Migrations\Game\20190727120303_ItemUpgrades_Percentage_Based_Stats.designer.cs">
       <DependentUpon>20190727120303_ItemUpgrades_Percentage_Based_Stats.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Game\20200216143942_MoreGraularAttackSpeedOptions.cs" />
+    <Compile Include="Migrations\Game\20200216143942_MoreGraularAttackSpeedOptions.designer.cs">
+      <DependentUpon>20200216143942_MoreGraularAttackSpeedOptions.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Logging\20191118024649_RequestLogs.cs" />
     <Compile Include="Migrations\Logging\20191118024649_RequestLogs.designer.cs">

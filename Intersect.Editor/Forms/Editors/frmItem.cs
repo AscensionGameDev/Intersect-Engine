@@ -801,7 +801,7 @@ namespace Intersect.Editor.Forms.Editors
             mEditorItem.VitalsRegen[1] = (int)nudMpRegen.Value;
         }
 
-    private void cmbEquipmentAnimation_SelectedIndexChanged(object sender, EventArgs e)
+        private void cmbEquipmentAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
             mEditorItem.EquipmentAnimation = AnimationBase.Get(AnimationBase.IdFromList(cmbEquipmentAnimation.SelectedIndex - 1));
         }

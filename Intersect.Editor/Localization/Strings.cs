@@ -113,6 +113,14 @@ namespace Intersect.Editor.Localization
             public static LocalizedString armorboost = @"Armor (+{00}):";
             public static LocalizedString attackanimation = @"Attack Animation:";
             public static LocalizedString attackboost = @"Attack (+{00}):";
+            public static LocalizedString attackspeed = @"Attack Speed";
+            public static LocalizedString attackspeedmodifier = @"Modifier:";
+            public static Dictionary<int, LocalizedString> attackspeedmodifiers = new Dictionary<int, LocalizedString>
+            {
+                {0, @"Disabled"},
+                {1, @"Static (ms)"},
+            };
+            public static LocalizedString attackspeedvalue = @"Value:";
             public static LocalizedString baseabilitypower = @"Ability Pwr:";
             public static LocalizedString basearmor = @"Armor:";
             public static LocalizedString baseattack = @"Attack:";
@@ -1696,6 +1704,14 @@ Tick timer saved in server config.json.";
             public static LocalizedString attackallies = @"Attack Allies?";
             public static LocalizedString attackanimation = @"Attack Animation:";
             public static LocalizedString attackonsightconditions = @"Attack Player on Sight";
+            public static LocalizedString attackspeed = @"Attack Speed";
+            public static LocalizedString attackspeedmodifier = @"Modifier:";
+            public static Dictionary<int, LocalizedString> attackspeedmodifiers = new Dictionary<int, LocalizedString>
+            {
+                {0, @"Disabled"},
+                {1, @"Static (ms)"},
+            };
+            public static LocalizedString attackspeedvalue = @"Value:";
             public static LocalizedString basedamage = @"Base Damage:";
             public static LocalizedString behavior = @"Behavior:";
             public static LocalizedString cancel = @"Cancel";
