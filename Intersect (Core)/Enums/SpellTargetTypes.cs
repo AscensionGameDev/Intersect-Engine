@@ -7,5 +7,6 @@ namespace Intersect.Enums
         AoE = 2,
         Projectile = 3,
         OnHit = 4,
+        Trap = 5
     }
 }

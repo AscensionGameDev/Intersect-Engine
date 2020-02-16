@@ -175,6 +175,15 @@ namespace Intersect.Editor.Forms.Editors
                 cmbFreq.Items.Add(Strings.NpcEditor.frequencies[i]);
             }
 
+            grpAttackSpeed.Text = Strings.NpcEditor.attackspeed;
+            lblAttackSpeedModifier.Text = Strings.NpcEditor.attackspeedmodifier;
+            lblAttackSpeedValue.Text = Strings.NpcEditor.attackspeedvalue;
+            cmbAttackSpeedModifier.Items.Clear();
+            foreach (var val in Strings.NpcEditor.attackspeedmodifiers.Values)
+            {
+                cmbAttackSpeedModifier.Items.Add(val.ToString());
+            }
+
             grpNpcVsNpc.Text = Strings.NpcEditor.npcvsnpc;
             chkEnabled.Text = Strings.NpcEditor.enabled;
             chkAttackAllies.Text = Strings.NpcEditor.attackallies;
@@ -264,6 +273,8 @@ namespace Intersect.Editor.Forms.Editors
                 cmbScalingStat.SelectedIndex = mEditorItem.ScalingStat;
                 cmbAttackAnimation.SelectedIndex =
                     AnimationBase.ListIndex(mEditorItem.AttackAnimationId) + 1;
+                cmbAttackSpeedModifier.SelectedIndex = mEditorItem.AttackSpeedModifier;
+                nudAttackSpeedValue.Value = mEditorItem.AttackSpeedValue;
 
                 //Regen
                 nudHpRegen.Value = mEditorItem.VitalRegen[(int)Vitals.Health];
@@ -793,6 +804,17 @@ namespace Intersect.Editor.Forms.Editors
             mEditorItem.CritMultiplier = (double)nudCritMultiplier.Value;
         }
 
+        private void cmbAttackSpeedModifier_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.AttackSpeedModifier = cmbAttackSpeedModifier.SelectedIndex;
+            nudAttackSpeedValue.Enabled = cmbAttackSpeedModifier.SelectedIndex > 0;
+        }
+
+        private void nudAttackSpeedValue_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.AttackSpeedValue = (int)nudAttackSpeedValue.Value;
+        }
+
         #region "Item List - Folders, Searching, Sorting, Etc"
         public void InitEditor()
         {
@@ -993,5 +1015,6 @@ namespace Intersect.Editor.Forms.Editors
         }
 
         #endregion
+
     }
 }

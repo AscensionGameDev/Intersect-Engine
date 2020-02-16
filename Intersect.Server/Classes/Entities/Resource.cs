@@ -172,10 +172,10 @@ namespace Intersect.Server.Entities
             return (IsDead & Base.WalkableAfter) || (!IsDead && Base.WalkableBefore);
         }
 
-        public override EntityPacket EntityPacket(EntityPacket packet = null, Client forClient = null)
+        public override EntityPacket EntityPacket(EntityPacket packet = null, Player forPlayer = null)
         {
             if (packet == null) packet = new ResourceEntityPacket();
-            packet = base.EntityPacket(packet, forClient);
+            packet = base.EntityPacket(packet, forPlayer);
 
             var pkt = (ResourceEntityPacket)packet;
             pkt.ResourceId = Base.Id;

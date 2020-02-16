@@ -71,7 +71,7 @@ namespace Intersect.Server.EventProcessing
 
             if (value == null) value = new VariableValue();
 
-            return CheckVariableComparison(value, (dynamic)condition.Comparison, player);
+            return CheckVariableComparison(value, (dynamic)condition.Comparison, player, eventInstance);
         }
 
         public static bool MeetsCondition(HasItemCondition condition, Player player, EventInstance eventInstance, QuestBase questBase)
@@ -162,7 +162,7 @@ namespace Intersect.Server.EventProcessing
 
         public static bool MeetsCondition(AccessIsCondition condition, Player player, EventInstance eventInstance, QuestBase questBase)
         {
-            var power = player.Client.Power;
+            var power = player.Power;
             if (condition.Access == 0)
             {
                 return power.Ban || power.Kick || power.Mute;
@@ -261,12 +261,12 @@ namespace Intersect.Server.EventProcessing
 
 
         //Variable Comparison Processing
-        public static bool CheckVariableComparison(VariableValue currentValue, VariableCompaison comparison, Player player)
+        public static bool CheckVariableComparison(VariableValue currentValue, VariableCompaison comparison, Player player, EventInstance instance)
         {
             return false;
         }
 
-        public static bool CheckVariableComparison(VariableValue currentValue, BooleanVariableComparison comparison, Player player)
+        public static bool CheckVariableComparison(VariableValue currentValue, BooleanVariableComparison comparison, Player player, EventInstance instance)
         {
             VariableValue compValue = null;
             if (comparison.CompareVariableId != Guid.Empty)
@@ -302,7 +302,7 @@ namespace Intersect.Server.EventProcessing
             }
         }
 
-        public static bool CheckVariableComparison(VariableValue currentValue, IntegerVariableComparison comparison, Player player)
+        public static bool CheckVariableComparison(VariableValue currentValue, IntegerVariableComparison comparison, Player player, EventInstance instance)
         {
             long compareAgainst = 0;
 
@@ -353,6 +353,22 @@ namespace Intersect.Server.EventProcessing
                 case VariableComparators.NotEqual:
                     if (varVal != compareAgainst) return true;
                     break;
+            }
+
+            return false;
+        }
+
+        public static bool CheckVariableComparison(VariableValue currentValue, StringVariableComparison comparison, Player player, EventInstance instance)
+        {
+            var varVal = CommandProcessing.ParseEventText(currentValue.String, player, instance);
+            var compareAgainst = CommandProcessing.ParseEventText(comparison.Value, player, instance);
+
+            switch (comparison.Comparator)
+            {
+                case StringVariableComparators.Equal:
+                    return varVal == compareAgainst;
+                case StringVariableComparators.Contains:
+                    return varVal.Contains(compareAgainst);
             }
 
             return false;
