@@ -200,7 +200,7 @@ namespace Intersect.Server.EventProcessing
             }
             else if (command.Amount < 0)
             {
-                player.SubVital(Vitals.Health, -command.Amount);
+                player.SubVital(Vitals.Health, command.Amount);
                 if (player.GetVital(Vitals.Health) < 0)
                 {
                     player.Die(Options.ItemDropChance);
@@ -221,7 +221,7 @@ namespace Intersect.Server.EventProcessing
             }
             else if (command.Amount < 0)
             {
-                player.SubVital(Vitals.Mana, -command.Amount);
+                player.SubVital(Vitals.Mana, command.Amount);
             }
             else
             {
@@ -839,6 +839,7 @@ namespace Intersect.Server.EventProcessing
 
         public static string ParseEventText(string input, Player player, EventInstance instance)
         {
+            if (input == null) input = "";
             if (player != null)
             {
                 input = input.Replace(Strings.Events.playernamecommand, player.Name);

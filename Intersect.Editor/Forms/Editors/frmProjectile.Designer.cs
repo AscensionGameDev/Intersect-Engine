@@ -191,6 +191,7 @@ namespace Intersect.Editor.Forms.Editors
       // 
       this.picSpawns.Location = new System.Drawing.Point(15, 19);
       this.picSpawns.Name = "picSpawns";
+      this.picSpawns.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
       this.picSpawns.Size = new System.Drawing.Size(160, 160);
       this.picSpawns.TabIndex = 17;
       this.picSpawns.TabStop = false;

@@ -43,6 +43,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.cmbVariable = new DarkUI.Controls.DarkComboBox();
             this.rdoGlobalVariable = new DarkUI.Controls.DarkRadioButton();
             this.grpStringVariable = new DarkUI.Controls.DarkGroupBox();
+            this.lblStringTextVariables = new System.Windows.Forms.Label();
+            this.lblStringComparatorValue = new System.Windows.Forms.Label();
             this.txtStringValue = new DarkUI.Controls.DarkTextBox();
             this.cmbStringComparitor = new DarkUI.Controls.DarkComboBox();
             this.lblStringComparator = new System.Windows.Forms.Label();
@@ -118,8 +120,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.cmbItem = new DarkUI.Controls.DarkComboBox();
             this.lblItem = new System.Windows.Forms.Label();
             this.lblItemQuantity = new System.Windows.Forms.Label();
-            this.lblStringComparatorValue = new System.Windows.Forms.Label();
-            this.lblStringTextVariables = new System.Windows.Forms.Label();
             this.grpConditional.SuspendLayout();
             this.grpVariable.SuspendLayout();
             this.grpSelectVariable.SuspendLayout();
@@ -341,6 +341,28 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpStringVariable.TabIndex = 53;
             this.grpStringVariable.TabStop = false;
             this.grpStringVariable.Text = "String Variable:";
+            // 
+            // lblStringTextVariables
+            // 
+            this.lblStringTextVariables.AutoSize = true;
+            this.lblStringTextVariables.BackColor = System.Drawing.Color.Transparent;
+            this.lblStringTextVariables.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblStringTextVariables.ForeColor = System.Drawing.SystemColors.MenuHighlight;
+            this.lblStringTextVariables.Location = new System.Drawing.Point(8, 109);
+            this.lblStringTextVariables.Name = "lblStringTextVariables";
+            this.lblStringTextVariables.Size = new System.Drawing.Size(218, 13);
+            this.lblStringTextVariables.TabIndex = 69;
+            this.lblStringTextVariables.Text = "Text variables work here. Click here for a list!";
+            this.lblStringTextVariables.Click += new System.EventHandler(this.lblStringTextVariables_Click);
+            // 
+            // lblStringComparatorValue
+            // 
+            this.lblStringComparatorValue.AutoSize = true;
+            this.lblStringComparatorValue.Location = new System.Drawing.Point(9, 52);
+            this.lblStringComparatorValue.Name = "lblStringComparatorValue";
+            this.lblStringComparatorValue.Size = new System.Drawing.Size(37, 13);
+            this.lblStringComparatorValue.TabIndex = 63;
+            this.lblStringComparatorValue.Text = "Value:";
             // 
             // txtStringValue
             // 
@@ -1471,27 +1493,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.lblItemQuantity.Size = new System.Drawing.Size(66, 13);
             this.lblItemQuantity.TabIndex = 0;
             this.lblItemQuantity.Text = "Has at least:";
-            // 
-            // lblStringComparatorValue
-            // 
-            this.lblStringComparatorValue.AutoSize = true;
-            this.lblStringComparatorValue.Location = new System.Drawing.Point(9, 52);
-            this.lblStringComparatorValue.Name = "lblStringComparatorValue";
-            this.lblStringComparatorValue.Size = new System.Drawing.Size(37, 13);
-            this.lblStringComparatorValue.TabIndex = 63;
-            this.lblStringComparatorValue.Text = "Value:";
-            // 
-            // lblStringTextVariables
-            // 
-            this.lblStringTextVariables.AutoSize = true;
-            this.lblStringTextVariables.BackColor = System.Drawing.Color.Transparent;
-            this.lblStringTextVariables.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblStringTextVariables.ForeColor = System.Drawing.SystemColors.MenuHighlight;
-            this.lblStringTextVariables.Location = new System.Drawing.Point(8, 109);
-            this.lblStringTextVariables.Name = "lblStringTextVariables";
-            this.lblStringTextVariables.Size = new System.Drawing.Size(218, 13);
-            this.lblStringTextVariables.TabIndex = 69;
-            this.lblStringTextVariables.Text = "Text variables work here. Click here for a list!";
             // 
             // EventCommandConditionalBranch
             // 
