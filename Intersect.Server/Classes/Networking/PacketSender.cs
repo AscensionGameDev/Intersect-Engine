@@ -440,14 +440,14 @@ namespace Intersect.Server.Networking
         }
 
         //NpcAggressionPacket
-        public static void SendNpcAggressionTo(Player en, Npc npc)
+        public static void SendNpcAggressionTo(Player player, Npc npc)
         {
-            if (en == null || npc == null)
+            if (player == null || npc == null)
             {
                 return;
             }
 
-            en.Client.SendPacket(new NpcAggressionPacket(npc.Id,npc.GetAggression(en)));
+            player.SendPacket(new NpcAggressionPacket(npc.Id,npc.GetAggression(player)));
         }
 
         //EntityLeftPacket
