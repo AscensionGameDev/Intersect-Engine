@@ -2208,7 +2208,7 @@ namespace Intersect.Server.Entities
             {
                 var myMap = MapInstance.Get(MapId);
                 var targetMap = MapInstance.Get(target.MapId);
-                if (myMap != null && targetMap != null & myMap.MapGrid == targetMap.MapGrid) //Make sure both maps exist and that they are in the same dimension
+                if (myMap != null && targetMap != null && myMap.MapGrid == targetMap.MapGrid) //Make sure both maps exist and that they are in the same dimension
                 {
                     //Calculate World Tile of Me
                     var x1 = X + (myMap.MapGridX * Options.MapWidth);
