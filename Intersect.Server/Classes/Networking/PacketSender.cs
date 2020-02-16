@@ -1459,7 +1459,7 @@ namespace Intersect.Server.Networking
         //TradePacket
         public static void StartTrade(Player player, Player target)
         {
-            player.SendPacket(new TradePacket(target.Id));
+            player.SendPacket(new TradePacket(target.Name));
         }
 
         //TradeUpdatePacket
@@ -1478,7 +1478,7 @@ namespace Intersect.Server.Networking
         //TradePacket
         public static void SendTradeClose(Player player)
         {
-            player.SendPacket(new TradePacket(Guid.Empty));
+            player.SendPacket(new TradePacket(null));
         }
 
         //TradeRequestPacket

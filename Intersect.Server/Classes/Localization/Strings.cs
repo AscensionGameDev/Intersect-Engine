@@ -999,6 +999,9 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString notinparty = @"You are not in a party.";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString outofrange = @"Target is out of range or offline.";
+
         }
 
         public sealed class PasswordResetNotificationNamespace : LocaleNamespace
@@ -1234,6 +1237,9 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString tradenospace = @"There is no space left in the trade window for that item!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString outofrange = @"Trade target is out of range or offline.";
 
         }
 

@@ -130,7 +130,8 @@ namespace Intersect.Client.UI.Game.Inventory
             }
             if (Globals.GameShop == null)
             {
-                mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].Item, Globals.Me.Inventory[mMySlot].Quantity, mInventoryWindow.X, mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBuffs);
+                if (Globals.Me.Inventory[mMySlot]?.Item != null)
+                    mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].Item, Globals.Me.Inventory[mMySlot].Quantity, mInventoryWindow.X, mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBuffs);
             }
             else
             {
@@ -150,7 +151,7 @@ namespace Intersect.Client.UI.Game.Inventory
                 if (Globals.GameShop.BuyingWhitelist && shopItem != null)
                 {
                     var hoveredItem = ItemBase.Get(shopItem.CostItemId);
-                    if (hoveredItem != null)
+                    if (hoveredItem != null && Globals.Me.Inventory[mMySlot]?.Item != null)
                     {
                         mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].Item, Globals.Me.Inventory[mMySlot].Quantity, mInventoryWindow.X, mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBuffs, "", Strings.Shop.sellsfor.ToString( shopItem.CostItemQuantity, hoveredItem.Name));
                     }
@@ -159,14 +160,15 @@ namespace Intersect.Client.UI.Game.Inventory
                 {
                     var hoveredItem = ItemBase.Get(invItem.ItemId);
                     var costItem = Globals.GameShop.DefaultCurrency;
-                    if (hoveredItem != null && costItem != null)
+                    if (hoveredItem != null && costItem != null && Globals.Me.Inventory[mMySlot]?.Item != null)
                     {
                         mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].Item, Globals.Me.Inventory[mMySlot].Quantity, mInventoryWindow.X, mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBuffs, "", Strings.Shop.sellsfor.ToString( hoveredItem.Price, costItem.Name));
                     }
                 }
                 else
                 {
-                    mDescWindow = new ItemDescWindow(invItem.Item, invItem.Quantity, mInventoryWindow.X, mInventoryWindow.Y, invItem.StatBuffs, "", Strings.Shop.wontbuy);
+                    if (invItem?.Item != null)
+                        mDescWindow = new ItemDescWindow(invItem.Item, invItem.Quantity, mInventoryWindow.X, mInventoryWindow.Y, invItem.StatBuffs, "", Strings.Shop.wontbuy);
                 }
             }
         }

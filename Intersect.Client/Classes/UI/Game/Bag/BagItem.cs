@@ -97,7 +97,7 @@ namespace Intersect.Client.UI.Game.Bag
                 mDescWindow.Dispose();
                 mDescWindow = null;
             }
-            if (Globals.Bag[mMySlot] != null)
+            if (Globals.Bag[mMySlot]?.Item != null)
             {
                 mDescWindow = new ItemDescWindow(Globals.Bag[mMySlot].Item, Globals.Bag[mMySlot].Quantity, mBagWindow.X, mBagWindow.Y, Globals.Bag[mMySlot].StatBuffs);
             }

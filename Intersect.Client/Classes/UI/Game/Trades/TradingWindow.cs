@@ -27,16 +27,11 @@ namespace Intersect.Client.UI.Game.Trades
         //Name tags
         private Label mYourOffer;
 
-        //Trader
-        public Guid EntityId;
-
         //Init
-        public TradingWindow(Canvas gameCanvas, Guid entityId)
+        public TradingWindow(Canvas gameCanvas, string traderName)
         {
-            EntityId = entityId;
-
             mTradeWindow = new WindowControl(gameCanvas,
-                Strings.Trading.title.ToString(Globals.Entities[EntityId].Name), false, "TradeWindow");
+                Strings.Trading.title.ToString(traderName), false, "TradeWindow");
             mTradeWindow.DisableResizing();
             Gui.InputBlockingElements.Add(mTradeWindow);
 

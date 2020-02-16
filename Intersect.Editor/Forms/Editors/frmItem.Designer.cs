@@ -639,131 +639,140 @@ namespace Intersect.Editor.Forms.Editors
             "Spell",
             "Event",
             "Bag"});
-      this.cmbType.Location = new System.Drawing.Point(53, 93);
-      this.cmbType.Name = "cmbType";
-      this.cmbType.Size = new System.Drawing.Size(149, 21);
-      this.cmbType.TabIndex = 2;
-      this.cmbType.Text = "None";
-      this.cmbType.TextPadding = new System.Windows.Forms.Padding(2);
-      this.cmbType.SelectedIndexChanged += new System.EventHandler(this.cmbType_SelectedIndexChanged);
-      // 
-      // lblName
-      // 
-      this.lblName.AutoSize = true;
-      this.lblName.Location = new System.Drawing.Point(8, 27);
-      this.lblName.Name = "lblName";
-      this.lblName.Size = new System.Drawing.Size(38, 13);
-      this.lblName.TabIndex = 1;
-      this.lblName.Text = "Name:";
-      // 
-      // txtName
-      // 
-      this.txtName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-      this.txtName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-      this.txtName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-      this.txtName.Location = new System.Drawing.Point(53, 25);
-      this.txtName.Name = "txtName";
-      this.txtName.Size = new System.Drawing.Size(145, 20);
-      this.txtName.TabIndex = 0;
-      this.txtName.TextChanged += new System.EventHandler(this.txtName_TextChanged);
-      // 
-      // grpEquipment
-      // 
-      this.grpEquipment.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-      this.grpEquipment.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-      this.grpEquipment.Controls.Add(this.grpRegen);
-      this.grpEquipment.Controls.Add(this.grpVitalBonuses);
-      this.grpEquipment.Controls.Add(this.cmbEquipmentAnimation);
-      this.grpEquipment.Controls.Add(this.lblEquipmentAnimation);
-      this.grpEquipment.Controls.Add(this.nudEffectPercent);
-      this.grpEquipment.Controls.Add(this.grpStatBonuses);
-      this.grpEquipment.Controls.Add(this.cmbFemalePaperdoll);
-      this.grpEquipment.Controls.Add(this.lblFemalePaperdoll);
-      this.grpEquipment.Controls.Add(this.picFemalePaperdoll);
-      this.grpEquipment.Controls.Add(this.lblEffectPercent);
-      this.grpEquipment.Controls.Add(this.cmbEquipmentBonus);
-      this.grpEquipment.Controls.Add(this.lblBonusEffect);
-      this.grpEquipment.Controls.Add(this.cmbEquipmentSlot);
-      this.grpEquipment.Controls.Add(this.lblEquipmentSlot);
-      this.grpEquipment.Controls.Add(this.cmbMalePaperdoll);
-      this.grpEquipment.Controls.Add(this.lblMalePaperdoll);
-      this.grpEquipment.Controls.Add(this.picMalePaperdoll);
-      this.grpEquipment.Controls.Add(this.grpWeaponProperties);
-      this.grpEquipment.ForeColor = System.Drawing.Color.Gainsboro;
-      this.grpEquipment.Location = new System.Drawing.Point(2, 270);
-      this.grpEquipment.Name = "grpEquipment";
-      this.grpEquipment.Size = new System.Drawing.Size(439, 743);
-      this.grpEquipment.TabIndex = 12;
-      this.grpEquipment.TabStop = false;
-      this.grpEquipment.Text = "Equipment";
-      this.grpEquipment.Visible = false;
-      // 
-      // grpVitalBonuses
-      // 
-      this.grpVitalBonuses.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-      this.grpVitalBonuses.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-      this.grpVitalBonuses.Controls.Add(this.lblPercentage2);
-      this.grpVitalBonuses.Controls.Add(this.lblPercentage1);
-      this.grpVitalBonuses.Controls.Add(this.nudMPPercentage);
-      this.grpVitalBonuses.Controls.Add(this.nudHPPercentage);
-      this.grpVitalBonuses.Controls.Add(this.lblPlus2);
-      this.grpVitalBonuses.Controls.Add(this.lblPlus1);
-      this.grpVitalBonuses.Controls.Add(this.nudManaBonus);
-      this.grpVitalBonuses.Controls.Add(this.nudHealthBonus);
-      this.grpVitalBonuses.Controls.Add(this.lblManaBonus);
-      this.grpVitalBonuses.Controls.Add(this.lblHealthBonus);
-      this.grpVitalBonuses.ForeColor = System.Drawing.Color.Gainsboro;
-      this.grpVitalBonuses.Location = new System.Drawing.Point(15, 42);
-      this.grpVitalBonuses.Name = "grpVitalBonuses";
-      this.grpVitalBonuses.Size = new System.Drawing.Size(200, 102);
-      this.grpVitalBonuses.TabIndex = 58;
-      this.grpVitalBonuses.TabStop = false;
-      this.grpVitalBonuses.Text = "Vital Bonuses";
-      // 
-      // lblPercentage2
-      // 
-      this.lblPercentage2.AutoSize = true;
-      this.lblPercentage2.Location = new System.Drawing.Point(179, 75);
-      this.lblPercentage2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      this.lblPercentage2.Name = "lblPercentage2";
-      this.lblPercentage2.Size = new System.Drawing.Size(15, 13);
-      this.lblPercentage2.TabIndex = 70;
-      this.lblPercentage2.Text = "%";
-      // 
-      // lblPercentage1
-      // 
-      this.lblPercentage1.AutoSize = true;
-      this.lblPercentage1.Location = new System.Drawing.Point(179, 39);
-      this.lblPercentage1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      this.lblPercentage1.Name = "lblPercentage1";
-      this.lblPercentage1.Size = new System.Drawing.Size(15, 13);
-      this.lblPercentage1.TabIndex = 69;
-      this.lblPercentage1.Text = "%";
-      // 
-      // nudMPPercentage
-      // 
-      this.nudMPPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-      this.nudMPPercentage.ForeColor = System.Drawing.Color.Gainsboro;
-      this.nudMPPercentage.Location = new System.Drawing.Point(132, 74);
-      this.nudMPPercentage.Name = "nudMPPercentage";
-      this.nudMPPercentage.Size = new System.Drawing.Size(43, 20);
-      this.nudMPPercentage.TabIndex = 68;
-      this.nudMPPercentage.Value = new decimal(new int[] {
+            this.cmbType.Location = new System.Drawing.Point(53, 93);
+            this.cmbType.Name = "cmbType";
+            this.cmbType.Size = new System.Drawing.Size(149, 21);
+            this.cmbType.TabIndex = 2;
+            this.cmbType.Text = "None";
+            this.cmbType.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbType.SelectedIndexChanged += new System.EventHandler(this.cmbType_SelectedIndexChanged);
+            // 
+            // lblName
+            // 
+            this.lblName.AutoSize = true;
+            this.lblName.Location = new System.Drawing.Point(8, 27);
+            this.lblName.Name = "lblName";
+            this.lblName.Size = new System.Drawing.Size(38, 13);
+            this.lblName.TabIndex = 1;
+            this.lblName.Text = "Name:";
+            // 
+            // txtName
+            // 
+            this.txtName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.txtName.Location = new System.Drawing.Point(53, 25);
+            this.txtName.Name = "txtName";
+            this.txtName.Size = new System.Drawing.Size(145, 20);
+            this.txtName.TabIndex = 0;
+            this.txtName.TextChanged += new System.EventHandler(this.txtName_TextChanged);
+            // 
+            // grpEquipment
+            // 
+            this.grpEquipment.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpEquipment.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpEquipment.Controls.Add(this.grpVitalBonuses);
+            this.grpEquipment.Controls.Add(this.cmbEquipmentAnimation);
+            this.grpEquipment.Controls.Add(this.lblEquipmentAnimation);
+            this.grpEquipment.Controls.Add(this.nudEffectPercent);
+            this.grpEquipment.Controls.Add(this.grpStatBonuses);
+            this.grpEquipment.Controls.Add(this.cmbFemalePaperdoll);
+            this.grpEquipment.Controls.Add(this.lblFemalePaperdoll);
+            this.grpEquipment.Controls.Add(this.picFemalePaperdoll);
+            this.grpEquipment.Controls.Add(this.lblEffectPercent);
+            this.grpEquipment.Controls.Add(this.cmbEquipmentBonus);
+            this.grpEquipment.Controls.Add(this.lblBonusEffect);
+            this.grpEquipment.Controls.Add(this.cmbEquipmentSlot);
+            this.grpEquipment.Controls.Add(this.lblEquipmentSlot);
+            this.grpEquipment.Controls.Add(this.cmbMalePaperdoll);
+            this.grpEquipment.Controls.Add(this.lblMalePaperdoll);
+            this.grpEquipment.Controls.Add(this.picMalePaperdoll);
+            this.grpEquipment.Controls.Add(this.grpWeaponProperties);
+            this.grpEquipment.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpEquipment.Location = new System.Drawing.Point(2, 270);
+            this.grpEquipment.Name = "grpEquipment";
+            this.grpEquipment.Size = new System.Drawing.Size(439, 731);
+            this.grpEquipment.TabIndex = 12;
+            this.grpEquipment.TabStop = false;
+            this.grpEquipment.Text = "Equipment";
+            this.grpEquipment.Visible = false;
+            // 
+            // grpVitalBonuses
+            // 
+            this.grpVitalBonuses.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpVitalBonuses.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpVitalBonuses.Controls.Add(this.lblPercentage2);
+            this.grpVitalBonuses.Controls.Add(this.lblPercentage1);
+            this.grpVitalBonuses.Controls.Add(this.nudMPPercentage);
+            this.grpVitalBonuses.Controls.Add(this.nudHPPercentage);
+            this.grpVitalBonuses.Controls.Add(this.lblPlus2);
+            this.grpVitalBonuses.Controls.Add(this.lblPlus1);
+            this.grpVitalBonuses.Controls.Add(this.nudManaBonus);
+            this.grpVitalBonuses.Controls.Add(this.nudHealthBonus);
+            this.grpVitalBonuses.Controls.Add(this.lblManaBonus);
+            this.grpVitalBonuses.Controls.Add(this.lblHealthBonus);
+            this.grpVitalBonuses.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpVitalBonuses.Location = new System.Drawing.Point(15, 42);
+            this.grpVitalBonuses.Name = "grpVitalBonuses";
+            this.grpVitalBonuses.Size = new System.Drawing.Size(200, 102);
+            this.grpVitalBonuses.TabIndex = 58;
+            this.grpVitalBonuses.TabStop = false;
+            this.grpVitalBonuses.Text = "Vital Bonuses";
+            // 
+            // lblPercentage2
+            // 
+            this.lblPercentage2.AutoSize = true;
+            this.lblPercentage2.Location = new System.Drawing.Point(179, 75);
+            this.lblPercentage2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblPercentage2.Name = "lblPercentage2";
+            this.lblPercentage2.Size = new System.Drawing.Size(15, 13);
+            this.lblPercentage2.TabIndex = 70;
+            this.lblPercentage2.Text = "%";
+            // 
+            // lblPercentage1
+            // 
+            this.lblPercentage1.AutoSize = true;
+            this.lblPercentage1.Location = new System.Drawing.Point(179, 39);
+            this.lblPercentage1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblPercentage1.Name = "lblPercentage1";
+            this.lblPercentage1.Size = new System.Drawing.Size(15, 13);
+            this.lblPercentage1.TabIndex = 69;
+            this.lblPercentage1.Text = "%";
+            // 
+            // nudMPPercentage
+            // 
+            this.nudMPPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudMPPercentage.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudMPPercentage.Location = new System.Drawing.Point(132, 74);
+            this.nudMPPercentage.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.nudMPPercentage.Name = "nudMPPercentage";
+            this.nudMPPercentage.Size = new System.Drawing.Size(43, 20);
+            this.nudMPPercentage.TabIndex = 68;
+            this.nudMPPercentage.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
-      this.nudMPPercentage.ValueChanged += new System.EventHandler(this.nudMPPercentage_ValueChanged);
-      // 
-      // nudHPPercentage
-      // 
-      this.nudHPPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-      this.nudHPPercentage.ForeColor = System.Drawing.Color.Gainsboro;
-      this.nudHPPercentage.Location = new System.Drawing.Point(132, 37);
-      this.nudHPPercentage.Name = "nudHPPercentage";
-      this.nudHPPercentage.Size = new System.Drawing.Size(43, 20);
-      this.nudHPPercentage.TabIndex = 67;
-      this.nudHPPercentage.Value = new decimal(new int[] {
+            this.nudMPPercentage.ValueChanged += new System.EventHandler(this.nudMPPercentage_ValueChanged);
+            // 
+            // nudHPPercentage
+            // 
+            this.nudHPPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudHPPercentage.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudHPPercentage.Location = new System.Drawing.Point(132, 37);
+            this.nudHPPercentage.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.nudHPPercentage.Name = "nudHPPercentage";
+            this.nudHPPercentage.Size = new System.Drawing.Size(43, 20);
+            this.nudHPPercentage.TabIndex = 67;
+            this.nudHPPercentage.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -906,166 +915,191 @@ namespace Intersect.Editor.Forms.Editors
             0,
             0,
             0});
-      this.nudEffectPercent.ValueChanged += new System.EventHandler(this.nudEffectPercent_ValueChanged);
-      // 
-      // grpStatBonuses
-      // 
-      this.grpStatBonuses.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-      this.grpStatBonuses.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-      this.grpStatBonuses.Controls.Add(this.lblPercentage5);
-      this.grpStatBonuses.Controls.Add(this.lblPercentage4);
-      this.grpStatBonuses.Controls.Add(this.lblPercentage8);
-      this.grpStatBonuses.Controls.Add(this.lblPercentage7);
-      this.grpStatBonuses.Controls.Add(this.lblPercentage6);
-      this.grpStatBonuses.Controls.Add(this.nudSpdPercentage);
-      this.grpStatBonuses.Controls.Add(this.nudMRPercentage);
-      this.grpStatBonuses.Controls.Add(this.nudDefPercentage);
-      this.grpStatBonuses.Controls.Add(this.nudMagPercentage);
-      this.grpStatBonuses.Controls.Add(this.nudStrPercentage);
-      this.grpStatBonuses.Controls.Add(this.lblPlus5);
-      this.grpStatBonuses.Controls.Add(this.lblPlus4);
-      this.grpStatBonuses.Controls.Add(this.lblPlus8);
-      this.grpStatBonuses.Controls.Add(this.lblPlus7);
-      this.grpStatBonuses.Controls.Add(this.lblPlus6);
-      this.grpStatBonuses.Controls.Add(this.nudRange);
-      this.grpStatBonuses.Controls.Add(this.nudSpd);
-      this.grpStatBonuses.Controls.Add(this.nudMR);
-      this.grpStatBonuses.Controls.Add(this.nudDef);
-      this.grpStatBonuses.Controls.Add(this.nudMag);
-      this.grpStatBonuses.Controls.Add(this.nudStr);
-      this.grpStatBonuses.Controls.Add(this.lblSpd);
-      this.grpStatBonuses.Controls.Add(this.lblMR);
-      this.grpStatBonuses.Controls.Add(this.lblDef);
-      this.grpStatBonuses.Controls.Add(this.lblMag);
-      this.grpStatBonuses.Controls.Add(this.lblStr);
-      this.grpStatBonuses.Controls.Add(this.lblRange);
-      this.grpStatBonuses.ForeColor = System.Drawing.Color.Gainsboro;
-      this.grpStatBonuses.Location = new System.Drawing.Point(15, 243);
-      this.grpStatBonuses.Name = "grpStatBonuses";
-      this.grpStatBonuses.Size = new System.Drawing.Size(202, 234);
-      this.grpStatBonuses.TabIndex = 40;
-      this.grpStatBonuses.TabStop = false;
-      this.grpStatBonuses.Text = "Stat Bonuses";
-      // 
-      // lblPercentage5
-      // 
-      this.lblPercentage5.AutoSize = true;
-      this.lblPercentage5.Location = new System.Drawing.Point(179, 180);
-      this.lblPercentage5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      this.lblPercentage5.Name = "lblPercentage5";
-      this.lblPercentage5.Size = new System.Drawing.Size(15, 13);
-      this.lblPercentage5.TabIndex = 82;
-      this.lblPercentage5.Text = "%";
-      // 
-      // lblPercentage4
-      // 
-      this.lblPercentage4.AutoSize = true;
-      this.lblPercentage4.Location = new System.Drawing.Point(179, 142);
-      this.lblPercentage4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      this.lblPercentage4.Name = "lblPercentage4";
-      this.lblPercentage4.Size = new System.Drawing.Size(15, 13);
-      this.lblPercentage4.TabIndex = 81;
-      this.lblPercentage4.Text = "%";
-      // 
-      // lblPercentage8
-      // 
-      this.lblPercentage8.AutoSize = true;
-      this.lblPercentage8.Location = new System.Drawing.Point(181, 102);
-      this.lblPercentage8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      this.lblPercentage8.Name = "lblPercentage8";
-      this.lblPercentage8.Size = new System.Drawing.Size(15, 13);
-      this.lblPercentage8.TabIndex = 80;
-      this.lblPercentage8.Text = "%";
-      // 
-      // lblPercentage7
-      // 
-      this.lblPercentage7.AutoSize = true;
-      this.lblPercentage7.Location = new System.Drawing.Point(179, 64);
-      this.lblPercentage7.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      this.lblPercentage7.Name = "lblPercentage7";
-      this.lblPercentage7.Size = new System.Drawing.Size(15, 13);
-      this.lblPercentage7.TabIndex = 79;
-      this.lblPercentage7.Text = "%";
-      // 
-      // lblPercentage6
-      // 
-      this.lblPercentage6.AutoSize = true;
-      this.lblPercentage6.Location = new System.Drawing.Point(179, 30);
-      this.lblPercentage6.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      this.lblPercentage6.Name = "lblPercentage6";
-      this.lblPercentage6.Size = new System.Drawing.Size(15, 13);
-      this.lblPercentage6.TabIndex = 78;
-      this.lblPercentage6.Text = "%";
-      // 
-      // nudSpdPercentage
-      // 
-      this.nudSpdPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-      this.nudSpdPercentage.ForeColor = System.Drawing.Color.Gainsboro;
-      this.nudSpdPercentage.Location = new System.Drawing.Point(132, 178);
-      this.nudSpdPercentage.Name = "nudSpdPercentage";
-      this.nudSpdPercentage.Size = new System.Drawing.Size(43, 20);
-      this.nudSpdPercentage.TabIndex = 77;
-      this.nudSpdPercentage.Value = new decimal(new int[] {
+            this.nudEffectPercent.ValueChanged += new System.EventHandler(this.nudEffectPercent_ValueChanged);
+            // 
+            // grpStatBonuses
+            // 
+            this.grpStatBonuses.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpStatBonuses.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpStatBonuses.Controls.Add(this.lblPercentage5);
+            this.grpStatBonuses.Controls.Add(this.lblPercentage4);
+            this.grpStatBonuses.Controls.Add(this.lblPercentage8);
+            this.grpStatBonuses.Controls.Add(this.lblPercentage7);
+            this.grpStatBonuses.Controls.Add(this.lblPercentage6);
+            this.grpStatBonuses.Controls.Add(this.nudSpdPercentage);
+            this.grpStatBonuses.Controls.Add(this.nudMRPercentage);
+            this.grpStatBonuses.Controls.Add(this.nudDefPercentage);
+            this.grpStatBonuses.Controls.Add(this.nudMagPercentage);
+            this.grpStatBonuses.Controls.Add(this.nudStrPercentage);
+            this.grpStatBonuses.Controls.Add(this.lblPlus5);
+            this.grpStatBonuses.Controls.Add(this.lblPlus4);
+            this.grpStatBonuses.Controls.Add(this.lblPlus8);
+            this.grpStatBonuses.Controls.Add(this.lblPlus7);
+            this.grpStatBonuses.Controls.Add(this.lblPlus6);
+            this.grpStatBonuses.Controls.Add(this.nudRange);
+            this.grpStatBonuses.Controls.Add(this.nudSpd);
+            this.grpStatBonuses.Controls.Add(this.nudMR);
+            this.grpStatBonuses.Controls.Add(this.nudDef);
+            this.grpStatBonuses.Controls.Add(this.nudMag);
+            this.grpStatBonuses.Controls.Add(this.nudStr);
+            this.grpStatBonuses.Controls.Add(this.lblSpd);
+            this.grpStatBonuses.Controls.Add(this.lblMR);
+            this.grpStatBonuses.Controls.Add(this.lblDef);
+            this.grpStatBonuses.Controls.Add(this.lblMag);
+            this.grpStatBonuses.Controls.Add(this.lblStr);
+            this.grpStatBonuses.Controls.Add(this.lblRange);
+            this.grpStatBonuses.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpStatBonuses.Location = new System.Drawing.Point(13, 150);
+            this.grpStatBonuses.Name = "grpStatBonuses";
+            this.grpStatBonuses.Size = new System.Drawing.Size(202, 234);
+            this.grpStatBonuses.TabIndex = 40;
+            this.grpStatBonuses.TabStop = false;
+            this.grpStatBonuses.Text = "Stat Bonuses";
+            // 
+            // lblPercentage5
+            // 
+            this.lblPercentage5.AutoSize = true;
+            this.lblPercentage5.Location = new System.Drawing.Point(179, 180);
+            this.lblPercentage5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblPercentage5.Name = "lblPercentage5";
+            this.lblPercentage5.Size = new System.Drawing.Size(15, 13);
+            this.lblPercentage5.TabIndex = 82;
+            this.lblPercentage5.Text = "%";
+            // 
+            // lblPercentage4
+            // 
+            this.lblPercentage4.AutoSize = true;
+            this.lblPercentage4.Location = new System.Drawing.Point(179, 142);
+            this.lblPercentage4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblPercentage4.Name = "lblPercentage4";
+            this.lblPercentage4.Size = new System.Drawing.Size(15, 13);
+            this.lblPercentage4.TabIndex = 81;
+            this.lblPercentage4.Text = "%";
+            // 
+            // lblPercentage8
+            // 
+            this.lblPercentage8.AutoSize = true;
+            this.lblPercentage8.Location = new System.Drawing.Point(181, 102);
+            this.lblPercentage8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblPercentage8.Name = "lblPercentage8";
+            this.lblPercentage8.Size = new System.Drawing.Size(15, 13);
+            this.lblPercentage8.TabIndex = 80;
+            this.lblPercentage8.Text = "%";
+            // 
+            // lblPercentage7
+            // 
+            this.lblPercentage7.AutoSize = true;
+            this.lblPercentage7.Location = new System.Drawing.Point(179, 64);
+            this.lblPercentage7.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblPercentage7.Name = "lblPercentage7";
+            this.lblPercentage7.Size = new System.Drawing.Size(15, 13);
+            this.lblPercentage7.TabIndex = 79;
+            this.lblPercentage7.Text = "%";
+            // 
+            // lblPercentage6
+            // 
+            this.lblPercentage6.AutoSize = true;
+            this.lblPercentage6.Location = new System.Drawing.Point(179, 30);
+            this.lblPercentage6.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblPercentage6.Name = "lblPercentage6";
+            this.lblPercentage6.Size = new System.Drawing.Size(15, 13);
+            this.lblPercentage6.TabIndex = 78;
+            this.lblPercentage6.Text = "%";
+            // 
+            // nudSpdPercentage
+            // 
+            this.nudSpdPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudSpdPercentage.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudSpdPercentage.Location = new System.Drawing.Point(132, 178);
+            this.nudSpdPercentage.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.nudSpdPercentage.Name = "nudSpdPercentage";
+            this.nudSpdPercentage.Size = new System.Drawing.Size(43, 20);
+            this.nudSpdPercentage.TabIndex = 77;
+            this.nudSpdPercentage.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
-      this.nudSpdPercentage.ValueChanged += new System.EventHandler(this.nudSpdPercentage_ValueChanged);
-      // 
-      // nudMRPercentage
-      // 
-      this.nudMRPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-      this.nudMRPercentage.ForeColor = System.Drawing.Color.Gainsboro;
-      this.nudMRPercentage.Location = new System.Drawing.Point(132, 140);
-      this.nudMRPercentage.Name = "nudMRPercentage";
-      this.nudMRPercentage.Size = new System.Drawing.Size(43, 20);
-      this.nudMRPercentage.TabIndex = 76;
-      this.nudMRPercentage.Value = new decimal(new int[] {
+            this.nudSpdPercentage.ValueChanged += new System.EventHandler(this.nudSpdPercentage_ValueChanged);
+            // 
+            // nudMRPercentage
+            // 
+            this.nudMRPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudMRPercentage.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudMRPercentage.Location = new System.Drawing.Point(132, 140);
+            this.nudMRPercentage.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.nudMRPercentage.Name = "nudMRPercentage";
+            this.nudMRPercentage.Size = new System.Drawing.Size(43, 20);
+            this.nudMRPercentage.TabIndex = 76;
+            this.nudMRPercentage.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
-      this.nudMRPercentage.ValueChanged += new System.EventHandler(this.nudMRPercentage_ValueChanged);
-      // 
-      // nudDefPercentage
-      // 
-      this.nudDefPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-      this.nudDefPercentage.ForeColor = System.Drawing.Color.Gainsboro;
-      this.nudDefPercentage.Location = new System.Drawing.Point(134, 101);
-      this.nudDefPercentage.Name = "nudDefPercentage";
-      this.nudDefPercentage.Size = new System.Drawing.Size(43, 20);
-      this.nudDefPercentage.TabIndex = 75;
-      this.nudDefPercentage.Value = new decimal(new int[] {
+            this.nudMRPercentage.ValueChanged += new System.EventHandler(this.nudMRPercentage_ValueChanged);
+            // 
+            // nudDefPercentage
+            // 
+            this.nudDefPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudDefPercentage.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudDefPercentage.Location = new System.Drawing.Point(134, 101);
+            this.nudDefPercentage.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.nudDefPercentage.Name = "nudDefPercentage";
+            this.nudDefPercentage.Size = new System.Drawing.Size(43, 20);
+            this.nudDefPercentage.TabIndex = 75;
+            this.nudDefPercentage.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
-      this.nudDefPercentage.ValueChanged += new System.EventHandler(this.nudDefPercentage_ValueChanged);
-      // 
-      // nudMagPercentage
-      // 
-      this.nudMagPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-      this.nudMagPercentage.ForeColor = System.Drawing.Color.Gainsboro;
-      this.nudMagPercentage.Location = new System.Drawing.Point(132, 63);
-      this.nudMagPercentage.Name = "nudMagPercentage";
-      this.nudMagPercentage.Size = new System.Drawing.Size(43, 20);
-      this.nudMagPercentage.TabIndex = 74;
-      this.nudMagPercentage.Value = new decimal(new int[] {
+            this.nudDefPercentage.ValueChanged += new System.EventHandler(this.nudDefPercentage_ValueChanged);
+            // 
+            // nudMagPercentage
+            // 
+            this.nudMagPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudMagPercentage.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudMagPercentage.Location = new System.Drawing.Point(132, 63);
+            this.nudMagPercentage.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.nudMagPercentage.Name = "nudMagPercentage";
+            this.nudMagPercentage.Size = new System.Drawing.Size(43, 20);
+            this.nudMagPercentage.TabIndex = 74;
+            this.nudMagPercentage.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
-      this.nudMagPercentage.ValueChanged += new System.EventHandler(this.nudMagPercentage_ValueChanged);
-      // 
-      // nudStrPercentage
-      // 
-      this.nudStrPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-      this.nudStrPercentage.ForeColor = System.Drawing.Color.Gainsboro;
-      this.nudStrPercentage.Location = new System.Drawing.Point(132, 28);
-      this.nudStrPercentage.Name = "nudStrPercentage";
-      this.nudStrPercentage.Size = new System.Drawing.Size(43, 20);
-      this.nudStrPercentage.TabIndex = 73;
-      this.nudStrPercentage.Value = new decimal(new int[] {
+            this.nudMagPercentage.ValueChanged += new System.EventHandler(this.nudMagPercentage_ValueChanged);
+            // 
+            // nudStrPercentage
+            // 
+            this.nudStrPercentage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudStrPercentage.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudStrPercentage.Location = new System.Drawing.Point(132, 28);
+            this.nudStrPercentage.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.nudStrPercentage.Name = "nudStrPercentage";
+            this.nudStrPercentage.Size = new System.Drawing.Size(43, 20);
+            this.nudStrPercentage.TabIndex = 73;
+            this.nudStrPercentage.Value = new decimal(new int[] {
             0,
             0,
             0,

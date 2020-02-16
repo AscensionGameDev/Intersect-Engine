@@ -585,7 +585,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
         #region "Admin Action"
 
-        [Route("userId:guid/admin/{act}")]
+        [Route("{userId:guid}/admin/{act}")]
         [HttpPost]
         public object DoAdminActionOnPlayerById(
         Guid userId,

@@ -1439,7 +1439,7 @@ namespace Intersect.Server.Entities
             var damageHealth = spellBase.Combat.VitalDiff[0];
             var damageMana = spellBase.Combat.VitalDiff[1];
 
-            if (spellBase.Combat.Effect != StatusTypes.OnHit && spellBase.Combat.Effect != StatusTypes.Shield)
+            if ((spellBase.Combat.Effect != StatusTypes.OnHit || onHitTrigger) && spellBase.Combat.Effect != StatusTypes.Shield)
             {
                 Attack(
                     target, damageHealth, damageMana, (DamageType)spellBase.Combat.DamageType,
@@ -1495,7 +1495,7 @@ namespace Intersect.Server.Entities
                 var doTFound = false;
                 for (var i = 0; i < target.DoT.Count; i++)
                 {
-                    if (target.DoT[i].SpellBase.Id == spellBase.Id || target.DoT[i].Target == this)
+                    if (target.DoT[i].SpellBase.Id == spellBase.Id && target.DoT[i].Target == this)
                     {
                         doTFound = true;
                     }
@@ -2235,7 +2235,7 @@ namespace Intersect.Server.Entities
             {
                 var myMap = MapInstance.Get(MapId);
                 var targetMap = MapInstance.Get(target.MapId);
-                if (myMap != null && targetMap != null)
+                if (myMap != null && targetMap != null && myMap.MapGrid == targetMap.MapGrid) //Make sure both maps exist and that they are in the same dimension
                 {
                     //Calculate World Tile of Me
                     var x1 = X + (myMap.MapGridX * Options.MapWidth);
@@ -2253,9 +2253,10 @@ namespace Intersect.Server.Entities
             return 9999;
         }
 
-        protected bool InRangeOf(EntityInstance target, int range)
+        public bool InRangeOf(EntityInstance target, int range)
         {
             var dist = GetDistanceTo(target);
+            if (dist == 9999) return false;
             if (dist <= range)
             {
                 return true;
