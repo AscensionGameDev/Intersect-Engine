@@ -6,14 +6,6 @@ namespace Intersect.Server.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropIndex(
-                name: "IX_Mutes_PlayerId",
-                table: "Mutes");
-
-            migrationBuilder.DropIndex(
-                name: "IX_Bans_PlayerId",
-                table: "Bans");
-
             //Sqlite doesn't support drop column...
             //migrationBuilder.DropColumn(
             //    name: "SpellCd",
