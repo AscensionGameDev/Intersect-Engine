@@ -952,7 +952,7 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             [NotNull]
-            public readonly LocalizedString copyright = "Copyright (C) 2019 Ascension Game Dev, All Rights Reserved";
+            public readonly LocalizedString copyright = "Copyright (C) 2020 Ascension Game Dev, All Rights Reserved";
         }
 
         public sealed class PartiesNamespace : LocaleNamespace
