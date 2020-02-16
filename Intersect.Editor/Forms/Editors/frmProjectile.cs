@@ -290,8 +290,8 @@ namespace Intersect.Editor.Forms.Editors
             }
 
             gfx.DrawImage(mDirectionGrid,
-                new Rectangle((160 / 2) - (((32 - 2) / 3) / 2),
-                    (160 / 2) - (((32 - 2) / 3) / 2), (32 - 2) / 3, (32 - 2) / 3),
+                new Rectangle((picSpawns.Width / 2) - (((32 - 2) / 3) / 2),
+                    (picSpawns.Height / 2) - (((32 - 2) / 3) / 2), (32 - 2) / 3, (32 - 2) / 3),
                 new Rectangle(43, 11, (32 - 2) / 3, (32 - 2) / 3), GraphicsUnit.Pixel);
             gfx.Dispose();
             picSpawns.Refresh();
@@ -408,8 +408,6 @@ namespace Intersect.Editor.Forms.Editors
 
             x = Math.Floor(x);
             y = Math.Floor(y);
-
-            if (x > 4 || y > 4) return;
 
             i = (e.X - (x * 32)) / (32 / 3);
             j = (e.Y - (y * 32)) / (32 / 3);
