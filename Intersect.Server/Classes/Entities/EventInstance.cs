@@ -325,7 +325,7 @@ namespace Intersect.Server.Entities
             var output = "{" + Environment.NewLine;
             foreach (var p in prams)
             {
-                output += "\t\t\t\"" + p.Key + "\":\t\t\"" + p.Value + "\"," + Environment.NewLine;
+                output += "\t\t\t\"" + p.Key + "\":\t\t\"" + p.Value + "\",\r\n";
             }
             output += "}";
             return output;
