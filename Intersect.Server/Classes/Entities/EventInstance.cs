@@ -322,7 +322,7 @@ namespace Intersect.Server.Entities
         public string FormatParameters(Player player)
         {
             var prams = GetParams(player);
-            var output = "{" + Environment.NewLine;
+            var output = "{\r\n";
             foreach (var p in prams)
             {
                 output += "\t\t\t\"" + p.Key + "\":\t\t\"" + p.Value + "\",\r\n";
