@@ -1401,7 +1401,7 @@ namespace Intersect.Server.Entities
             var damageHealth = spellBase.Combat.VitalDiff[0];
             var damageMana = spellBase.Combat.VitalDiff[1];
 
-            if (spellBase.Combat.Effect != StatusTypes.OnHit && spellBase.Combat.Effect != StatusTypes.Shield)
+            if ((spellBase.Combat.Effect != StatusTypes.OnHit || onHitTrigger) && spellBase.Combat.Effect != StatusTypes.Shield)
             {
                 Attack(
                     target, damageHealth, damageMana, (DamageType)spellBase.Combat.DamageType,
