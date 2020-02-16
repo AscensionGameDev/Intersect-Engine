@@ -245,7 +245,7 @@ namespace Intersect.Server.Entities
             }
 
             //Regen Timers
-            if (Globals.Timing.TimeMs > RegenTimer)
+            if (Globals.Timing.TimeMs > CombatTimer && Globals.Timing.TimeMs > RegenTimer)
             {
                 ProcessRegen();
                 RegenTimer = Globals.Timing.TimeMs + Options.RegenTime;
@@ -1610,7 +1610,7 @@ namespace Intersect.Server.Entities
             );
 
             //If we took damage lets reset our combat timer
-            target.CombatTimer = Globals.Timing.TimeMs + 5000;
+            target.CombatTimer = Globals.Timing.TimeMs + Options.CombatTime;
         }
 
         public void Attack(
