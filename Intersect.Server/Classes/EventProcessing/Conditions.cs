@@ -360,8 +360,8 @@ namespace Intersect.Server.EventProcessing
 
         public static bool CheckVariableComparison(VariableValue currentValue, StringVariableComparison comparison, Player player, EventInstance instance)
         {
-            var varVal = CommandProcessing.ParseEventText(currentValue.String, player, instance);
-            var compareAgainst = CommandProcessing.ParseEventText(comparison.Value, player, instance);
+            var varVal = CommandProcessing.ParseEventText(currentValue.String ?? "", player, instance);
+            var compareAgainst = CommandProcessing.ParseEventText(comparison.Value ?? "", player, instance);
 
             switch (comparison.Comparator)
             {

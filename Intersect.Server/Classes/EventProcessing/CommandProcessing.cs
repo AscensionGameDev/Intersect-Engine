@@ -839,6 +839,7 @@ namespace Intersect.Server.EventProcessing
 
         public static string ParseEventText(string input, Player player, EventInstance instance)
         {
+            if (input == null) input = "";
             if (player != null)
             {
                 input = input.Replace(Strings.Events.playernamecommand, player.Name);
