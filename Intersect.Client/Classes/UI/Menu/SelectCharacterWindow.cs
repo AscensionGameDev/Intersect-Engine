@@ -133,9 +133,9 @@ namespace Intersect.Client.UI.Menu
 
             if (mPaperdollPortraits == null)
             {
-                mPaperdollPortraits = new ImagePanel[Options.EquipmentSlots.Count];
+                mPaperdollPortraits = new ImagePanel[Options.EquipmentSlots.Count + 1];
                 mCharacterPortrait = new ImagePanel(mCharacterContainer);
-                for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+                for (int i = 0; i <= Options.EquipmentSlots.Count; i++)
                 {
                     mPaperdollPortraits[i] = new ImagePanel(mCharacterContainer);
                 }
@@ -155,7 +155,7 @@ namespace Intersect.Client.UI.Menu
                 mDeleteButton.Show();
                 mNewButton.Hide();
 
-                for (int i = 0; i < Options.EquipmentSlots.Count + 1; i++)
+                for (int i = 0; i <= Options.EquipmentSlots.Count; i++)
                 {
                     if (Characters[mSelectedChar].Equipment[i] == "Player")
                     {
@@ -197,7 +197,7 @@ namespace Intersect.Client.UI.Menu
                         mCharacterPortrait.SetPosition(mCharacterContainer.Width / 2 - mCharacterPortrait.Width / 2,
                             mCharacterContainer.Height / 2 - mCharacterPortrait.Height / 2);
 
-                        for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+                        for (int i = 0; i <= Options.EquipmentSlots.Count; i++)
                         {
                             if (mPaperdollPortraits[i] != mCharacterPortrait)
                             {
