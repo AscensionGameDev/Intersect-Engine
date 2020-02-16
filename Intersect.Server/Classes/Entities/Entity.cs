@@ -844,6 +844,12 @@ namespace Intersect.Server.Entities
                     PacketSender.UpdateEntityZDimension(this, (byte) Z);
                 }
 
+                //Check for traps
+                foreach (var trap in MapInstance.Get(MapId).MapTraps)
+                {
+                    trap.CheckEntityHasDetonatedTrap(this);
+                }
+
                 // TODO: Why was this scoped to only Event entities?
                 //                if (currentMap != null && this is EventPageInstance)
                 var attribute = currentMap?.Attributes[X, Y];
@@ -863,13 +869,7 @@ namespace Intersect.Server.Entities
                                 Dir = (byte)(((MapSlideAttribute)attribute).Direction - 1);
                             }
                         }
-                        //Check for traps
-                        foreach (var trap in MapInstance.Get(MapId).MapTraps)
-                        {
-                            trap.CheckEntityHasDetonatedTrap(this);
-                        }
                     }
-
                     var dash = new DashInstance(this, 1, (byte) Dir);
                 }
             }
