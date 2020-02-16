@@ -953,5 +953,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
 
         #endregion
+
+        private void lblStringTextVariables_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start(
+                "http://www.ascensiongamedev.com/community/topic/749-event-text-variables/");
+        }
     }
 }
