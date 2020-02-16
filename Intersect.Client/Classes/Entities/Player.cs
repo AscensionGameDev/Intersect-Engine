@@ -35,6 +35,8 @@ namespace Intersect.Client.Entities
         public List<FriendInstance> Friends = new List<FriendInstance>();
         public HotbarInstance[] Hotbar = new HotbarInstance[Options.MaxHotbar];
         public Dictionary<Guid, long> ItemCooldowns = new Dictionary<Guid, long>();
+        public Dictionary<Guid, long> SpellCooldowns = new Dictionary<Guid, long>();
+        public long CombatTimer { get; set; } = 0;
 
         private List<PartyMember> mParty;
 
@@ -149,6 +151,7 @@ namespace Intersect.Client.Entities
             Gender = pkt.Gender;
             Class = pkt.ClassId;
             Type = pkt.AccessLevel;
+            CombatTimer = pkt.CombatTimeRemaining + Globals.System.GetTimeMs();
 
             if (((PlayerEntityPacket)packet).Equipment != null)
             {
@@ -226,6 +229,12 @@ namespace Intersect.Client.Entities
             {
                 PacketSender.SendUseItem(index, TargetIndex);
             }
+        }
+
+        public long GetItemCooldown(Guid id)
+        {
+            if (ItemCooldowns.ContainsKey(id)) return ItemCooldowns[id];
+            return 0;
         }
 
         public int FindHotbarItem(HotbarInstance hotbarInstance)
@@ -588,10 +597,16 @@ namespace Intersect.Client.Entities
 
         public void TryUseSpell(int index)
         {
-            if (Spells[index].SpellId != Guid.Empty && Spells[index].SpellCd < Globals.System.GetTimeMs())
+            if (Spells[index].SpellId != Guid.Empty && (!Globals.Me.SpellCooldowns.ContainsKey(Spells[index].SpellId) || Globals.Me.SpellCooldowns[Spells[index].SpellId] < Globals.System.GetTimeMs()))
             {
                 PacketSender.SendUseSpell(index, TargetIndex);
             }
+        }
+
+        public long GetSpellCooldown(Guid id)
+        {
+            if (SpellCooldowns.ContainsKey(id)) return SpellCooldowns[id];
+            return 0;
         }
 
         public void TryUseSpell(Guid spellId)
@@ -1108,6 +1123,13 @@ namespace Intersect.Client.Entities
         {
             ItemBase weapon = null;
             var attackTime = base.CalculateAttackTime();
+
+            var cls = ClassBase.Get(Class);
+            if (cls != null && cls.AttackSpeedModifier == 1) //Static
+            {
+                attackTime = cls.AttackSpeedValue;
+            }
+
             if (this == Globals.Me)
             {
                 if (Options.WeaponIndex > -1 && Options.WeaponIndex < Equipment.Length && MyEquipment[Options.WeaponIndex] >= 0)
@@ -1478,44 +1500,43 @@ namespace Intersect.Client.Entities
         //Override of the original function, used for rendering the color of a player based on rank
         public override void DrawName(Color textColor, Color borderColor, Color backgroundColor)
         {
+            if (textColor == null)
+            {
+                if (Type == 1) //Mod
+                {
+                    textColor = CustomColors.Names.Players["Moderator"].Name;
+                    borderColor = CustomColors.Names.Players["Moderator"].Outline;
+                    backgroundColor = CustomColors.Names.Players["Moderator"].Background;
+                }
+                else if (Type == 2) //Admin
+                {
+                    textColor = CustomColors.Names.Players["Admin"].Name;
+                    borderColor = CustomColors.Names.Players["Admin"].Outline;
+                    backgroundColor = CustomColors.Names.Players["Admin"].Background;
+                }
+                else //No Power
+                {
+                    textColor = CustomColors.Names.Players["Normal"].Name;
+                    borderColor = CustomColors.Names.Players["Normal"].Outline;
+                    backgroundColor = CustomColors.Names.Players["Normal"].Background;
+                }
+            }
+
             Color customColorOverride = NameColor;
             if (customColorOverride != null)
             {
                 //We don't want to override the default colors if the color is transparent!
-                if (customColorOverride.A == 0) customColorOverride = null;
+                if (customColorOverride.A != 0) textColor = customColorOverride;
             }
 
-            if (textColor == null)
-            {
-                if (Type == 1)
-                {
-                    base.DrawName((customColorOverride != null) ? customColorOverride : CustomColors.PlayerNameMod, CustomColors.PlayerNameModBorder, CustomColors.PlayerNameModBackground);
+            DrawNameAndLabels(textColor, borderColor, backgroundColor);
+        }
 
-                    DrawLabels(HeaderLabel.Label, 0, (HeaderLabel.Color.A != 0) ? HeaderLabel.Color : CustomColors.PlayerNameMod, CustomColors.PlayerNameModBorder, CustomColors.PlayerNameModBackground);
-                    DrawLabels(FooterLabel.Label, 1, (FooterLabel.Color.A != 0) ? FooterLabel.Color : CustomColors.PlayerNameMod, CustomColors.PlayerNameModBorder, CustomColors.PlayerNameModBackground);
-                }
-                else if (Type == 2)
-                {
-                    base.DrawName((customColorOverride != null) ? customColorOverride : CustomColors.PlayerNameAdmin, CustomColors.PlayerNameAdminBorder, CustomColors.PlayerNameAdminBackground);
-
-                    DrawLabels(HeaderLabel.Label, 0, (HeaderLabel.Color.A != 0) ? HeaderLabel.Color : CustomColors.PlayerNameAdmin, CustomColors.PlayerNameAdminBorder, CustomColors.PlayerNameAdminBackground);
-                    DrawLabels(FooterLabel.Label, 1, (FooterLabel.Color.A != 0) ? FooterLabel.Color : CustomColors.PlayerNameAdmin, CustomColors.PlayerNameAdminBorder, CustomColors.PlayerNameAdminBackground);
-                }
-                else
-                {
-                    base.DrawName((customColorOverride != null) ? customColorOverride : CustomColors.PlayerNameNormal, CustomColors.PlayerNameNormalBorder, CustomColors.PlayerNameNormalBackground);
-
-                    DrawLabels(HeaderLabel.Label, 0, (HeaderLabel.Color.A != 0) ? HeaderLabel.Color : CustomColors.PlayerNameNormal, CustomColors.PlayerNameNormalBorder, CustomColors.PlayerNameNormalBackground);
-                    DrawLabels(FooterLabel.Label, 1, (FooterLabel.Color.A != 0) ? FooterLabel.Color : CustomColors.PlayerNameNormal, CustomColors.PlayerNameNormalBorder, CustomColors.PlayerNameNormalBackground);
-                }
-            }
-            else
-            {
-                base.DrawName(textColor, borderColor, backgroundColor);
-
-                DrawLabels(HeaderLabel.Label, 0, textColor, borderColor, backgroundColor);
-                DrawLabels(FooterLabel.Label, 1, textColor, borderColor, backgroundColor);
-            }
+        private void DrawNameAndLabels(Color textColor, Color borderColor, Color backgroundColor)
+        {
+            base.DrawName(textColor, borderColor, backgroundColor);
+            DrawLabels(HeaderLabel.Label, 0, HeaderLabel.Color ?? textColor, borderColor, backgroundColor);
+            DrawLabels(FooterLabel.Label, 1, FooterLabel.Color ?? textColor, borderColor, backgroundColor);
         }
 
         public void DrawTargets()

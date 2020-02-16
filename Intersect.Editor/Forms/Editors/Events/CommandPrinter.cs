@@ -465,13 +465,27 @@ namespace Intersect.Editor.Forms.Editors.Events
 
         private static string GetCommandText(RestoreHpCommand command, MapInstance map)
         {
-            return Strings.EventCommandList.restorehp.ToString(command.Amount);
+            if (command.Amount == 0)
+            {
+                return Strings.EventCommandList.restorehp.ToString();
+            }
+            else
+            {
+                return Strings.EventCommandList.restorehpby.ToString(command.Amount);
+            }
         }
 
         private static string GetCommandText(RestoreMpCommand command, MapInstance map)
         {
-            return Strings.EventCommandList.restoremp.ToString(command.Amount);
-    }
+            if (command.Amount == 0)
+            {
+                return Strings.EventCommandList.restoremp.ToString();
+            }
+            else
+            {
+                return Strings.EventCommandList.restorempby.ToString(command.Amount);
+            }
+        }
 
         private static string GetCommandText(LevelUpCommand command, MapInstance map)
         {
@@ -535,14 +549,7 @@ namespace Intersect.Editor.Forms.Editors.Events
 
         private static string GetCommandText(ChangePlayerLabelCommand command, MapInstance map)
         {
-          if (command.VariableType == VariableTypes.PlayerVariable)
-          {
-            return Strings.EventCommandList.changeplayerlabel.ToString(PlayerVariableBase.GetName(command.VariableId));
-          }
-          else
-          {
-            return Strings.EventCommandList.changeplayerlabel.ToString(ServerVariableBase.GetName(command.VariableId));
-          }
+            return Strings.EventCommandList.changeplayerlabel.ToString(command.Value);
         }
 
         private static string GetCommandText(ChangeGenderCommand command, MapInstance map)
@@ -994,16 +1001,8 @@ namespace Intersect.Editor.Forms.Editors.Events
                 case Enums.VariableMods.Set:
                     varvalue = Strings.EventCommandList.setvariable.ToString(mod.Value);
                     break;
-                case Enums.VariableMods.DupPlayerVar:
-                    varvalue = Strings.EventCommandList.dupplayervariable.ToString(
-                        PlayerVariableBase.GetName(mod.DuplicateVariableId));
-                    break;
-                case Enums.VariableMods.DupGlobalVar:
-                    varvalue = Strings.EventCommandList.dupglobalvariable.ToString(
-                        ServerVariableBase.GetName(mod.DuplicateVariableId));
-                    break;
-                case Enums.VariableMods.PlayerName:
-                    varvalue = Strings.EventCommandList.playername.ToString();
+                case Enums.VariableMods.Replace:
+                    varvalue = Strings.EventCommandList.replace.ToString(mod.Value, mod.Replace);
                     break;
             }
 

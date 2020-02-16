@@ -157,6 +157,13 @@ namespace Intersect.Server.Entities
             PacketSender.SendNpcAggressionToProximity(this);
         }
 
+        public override int CalculateAttackTime()
+        {
+            if (Base.AttackSpeedModifier == 1) //Static
+                return Base.AttackSpeedValue;
+            return base.CalculateAttackTime();
+        }
+
         public override bool CanAttack(EntityInstance entity, SpellBase spell)
         {
             if (!base.CanAttack(entity, spell)) return false;
@@ -402,7 +409,7 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            if (spell.SpellCd >= Globals.Timing.RealTimeMs)
+            if (SpellCooldowns.ContainsKey(spell.SpellId) && SpellCooldowns[spell.SpellId] >= Globals.Timing.RealTimeMs)
             {
                 return;
             }
@@ -962,13 +969,13 @@ namespace Intersect.Server.Entities
             return 2;
         }
 
-        public override EntityPacket EntityPacket(EntityPacket packet = null, Client forClient = null)
+        public override EntityPacket EntityPacket(EntityPacket packet = null, Player forPlayer = null)
         {
             if (packet == null) packet = new NpcEntityPacket();
-            packet = base.EntityPacket(packet, forClient);
+            packet = base.EntityPacket(packet, forPlayer);
 
             var pkt = (NpcEntityPacket)packet;
-            pkt.Aggression = GetAggression(forClient?.Entity);
+            pkt.Aggression = GetAggression(forPlayer);
             return pkt;
         }
 

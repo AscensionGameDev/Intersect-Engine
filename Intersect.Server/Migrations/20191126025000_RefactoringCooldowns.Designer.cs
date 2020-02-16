@@ -3,14 +3,16 @@ using System;
 using Intersect.Server.Database.PlayerData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Intersect.Server.Migrations
 {
     [DbContext(typeof(PlayerContext))]
-    partial class PlayerContextModelSnapshot : ModelSnapshot
+    [Migration("20191126025000_RefactoringCooldowns")]
+    partial class RefactoringCooldowns
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -435,13 +437,11 @@ namespace Intersect.Server.Migrations
                 {
                     b.HasOne("Intersect.Server.Entities.Player", "Owner")
                         .WithMany("Friends")
-                        .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("OwnerId");
 
                     b.HasOne("Intersect.Server.Entities.Player", "Target")
                         .WithMany()
-                        .HasForeignKey("TargetId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("TargetId");
                 });
 
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Players.HotbarSlot", b =>

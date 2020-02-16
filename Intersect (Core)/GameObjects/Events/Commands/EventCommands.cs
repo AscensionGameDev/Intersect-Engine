@@ -372,8 +372,7 @@ namespace Intersect.GameObjects.Events.Commands
     public class ChangePlayerLabelCommand : EventCommand
     {
       public override EventCommandType Type { get; } = EventCommandType.PlayerLabel;
-      public VariableTypes VariableType { get; set; } = VariableTypes.PlayerVariable;
-      public Guid VariableId { get; set; } = new Guid();
+      public string Value { get; set; }
       public int Position { get; set; } //0 = Above Player Name, 1 = Below Player Name
       public Color Color { get; set; }
       public bool MatchNameColor { get; set; }

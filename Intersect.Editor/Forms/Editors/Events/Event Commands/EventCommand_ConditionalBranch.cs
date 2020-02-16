@@ -92,12 +92,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             //String Variable
             grpStringVariable.Text = Strings.EventConditional.stringvariable;
             cmbStringComparitor.Items.Clear();
-            cmbStringComparitor.Items.Add(Strings.EventConditional.stringequal);
-            cmbStringComparitor.Items.Add(Strings.EventConditional.stringnotequal);
+            for (int i = 0; i < Strings.EventConditional.stringcomparators.Count; i++)
+            {
+                cmbStringComparitor.Items.Add(Strings.EventConditional.stringcomparators[i]);
+            }
             cmbStringComparitor.SelectedIndex = 0;
-            optStringStaticValue.Text = Strings.EventConditional.value;
-            optStringGlobalVariable.Text = Strings.EventConditional.globalvariablevalue;
-            optStringPlayerVariable.Text = Strings.EventConditional.playervariablevalue;
+            lblStringComparator.Text = Strings.EventConditional.comparator;
+            lblStringComparatorValue.Text = Strings.EventConditional.value;
+            lblStringTextVariables.Text = Strings.EventConditional.stringtip;
 
             //Has Item
             grpHasItem.Text = Strings.EventConditional.hasitem;
@@ -300,11 +302,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     cmbBooleanGlobalVariable.Items.AddRange(ServerVariableBase.Names);
                     cmbBooleanPlayerVariable.Items.Clear();
                     cmbBooleanPlayerVariable.Items.AddRange(PlayerVariableBase.Names);
-
-                    cmbStringGlobalVariable.Items.Clear();
-                    cmbStringGlobalVariable.Items.AddRange(ServerVariableBase.Names);
-                    cmbStringPlayerVariable.Items.Clear();
-                    cmbStringPlayerVariable.Items.AddRange(PlayerVariableBase.Names);
                     break;
                 case ConditionTypes.HasItem:
                     grpHasItem.Show();
@@ -602,28 +599,9 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             {
                 var com = (StringVariableComparison)comp;
 
-                cmbStringComparitor.SelectedIndex = Convert.ToInt32(!com.ComparingEqual);
+                cmbStringComparitor.SelectedIndex = Convert.ToInt32(com.Comparator);
 
                 if (cmbStringComparitor.SelectedIndex < 0) cmbStringComparitor.SelectedIndex = 0;
-
-                if (com.CompareVariableId != Guid.Empty)
-                {
-                    if (com.CompareVariableType == VariableTypes.PlayerVariable)
-                    {
-                        optStringPlayerVariable.Checked = true;
-                        cmbStringPlayerVariable.SelectedIndex = PlayerVariableBase.ListIndex(com.CompareVariableId);
-                    }
-                    else
-                    {
-                        optStringGlobalVariable.Checked = true;
-                        cmbStringGlobalVariable.SelectedIndex = ServerVariableBase.ListIndex(com.CompareVariableId);
-                    }
-                }
-                else
-                {
-                    optStringStaticValue.Checked = true;
-                    txtStringValue.Text = com.Value;
-                }
             }
         }
 
@@ -702,20 +680,9 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
             if (cmbStringComparitor.SelectedIndex < 0) cmbStringComparitor.SelectedIndex = 0;
 
-            comp.ComparingEqual = !Convert.ToBoolean(cmbStringComparitor.SelectedIndex);
+            comp.Comparator = (StringVariableComparators)cmbStringComparitor.SelectedIndex;
 
             comp.Value = txtStringValue.Text;
-
-            if (optStringGlobalVariable.Checked)
-            {
-                comp.CompareVariableType = VariableTypes.ServerVariable;
-                comp.CompareVariableId = ServerVariableBase.IdFromList(cmbStringGlobalVariable.SelectedIndex);
-            }
-            else if (optStringPlayerVariable.Checked)
-            {
-                comp.CompareVariableType = VariableTypes.PlayerVariable;
-                comp.CompareVariableId = PlayerVariableBase.IdFromList(cmbStringPlayerVariable.SelectedIndex);
-            }
 
             return comp;
         }

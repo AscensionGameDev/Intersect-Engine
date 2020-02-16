@@ -588,6 +588,12 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString eventnamecommand = @"\en";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString eventparams = @"\evtparams";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString eventparam = @"\evtparam";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString globalswitch = @"\gs";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

@@ -6,8 +6,11 @@ namespace Intersect.Server.Database
     public class Spell
     {
         public Guid SpellId { get; set; }
+        //SpellCD NO LONGER USED
+        //CAN'T REMOVE VIA EF UNTIL SQLITE ALLOWS ALTER TABLE DROP COLUMN
+        //DON"T REMEMBER THIS VARIABLE ELSE EF WILL FAIL TO SAVE NEW PLAYERS
         [JsonIgnore] public long SpellCd { get; set; }
-        
+
 
         public static Spell None => new Spell(Guid.Empty);
 
@@ -24,8 +27,7 @@ namespace Intersect.Server.Database
         {
             Spell newSpell = new Spell()
             {
-                SpellId = SpellId,
-                SpellCd = SpellCd
+                SpellId = SpellId
             };
             return newSpell;
         }
@@ -33,7 +35,6 @@ namespace Intersect.Server.Database
         public virtual void Set(Spell spell)
         {
             SpellId = spell.SpellId;
-            SpellCd = spell.SpellCd;
         }
     }
 }

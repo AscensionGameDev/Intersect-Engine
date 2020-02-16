@@ -87,7 +87,7 @@ namespace Intersect.Server.EventProcessing
             switch (command.Channel)
             {
                 case ChatboxChannel.Player:
-                    PacketSender.SendChatMsg(player.Client, txt, color);
+                    PacketSender.SendChatMsg(player, txt, color);
                     break;
                 case ChatboxChannel.Local:
                     PacketSender.SendProximityMsg(txt, player.MapId, color);
@@ -101,7 +101,7 @@ namespace Intersect.Server.EventProcessing
         //Set Variable Commands
         private static void ProcessCommand(SetVariableCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            ProcessVariableModification(command, (dynamic)command.Modification, player);
+            ProcessVariableModification(command, (dynamic)command.Modification, player, instance);
         }
 
         //Set Self Switch Command
@@ -201,6 +201,14 @@ namespace Intersect.Server.EventProcessing
             else if (command.Amount < 0)
             {
                 player.SubVital(Vitals.Health, -command.Amount);
+                if (player.GetVital(Vitals.Health) < 0)
+                {
+                    player.Die(Options.ItemDropChance);
+                }
+            }
+            else
+            {
+                player.RestoreVital(Vitals.Health);
             }
         }
 
@@ -214,6 +222,10 @@ namespace Intersect.Server.EventProcessing
             else if (command.Amount < 0)
             {
                 player.SubVital(Vitals.Mana, -command.Amount);
+            }
+            else
+            {
+                player.RestoreVital(Vitals.Mana);
             }
         }
 
@@ -329,7 +341,7 @@ namespace Intersect.Server.EventProcessing
             }
 
             //Don't set the name color if it doesn't override admin name colors.
-            if (player.Client.Power != UserRights.None && !command.Override)
+            if (player.Power != UserRights.None && !command.Override)
                 return;
 
             player.NameColor = command.Color;
@@ -339,11 +351,7 @@ namespace Intersect.Server.EventProcessing
         //Change Player Label Command
         private static void ProcessCommand(ChangePlayerLabelCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            string label = "";
-            if (command.VariableType == VariableTypes.PlayerVariable)
-                label = player.GetVariableValue(command.VariableId).ToString();
-            else if (command.VariableType == VariableTypes.ServerVariable)
-                label = ServerVariableBase.Get(command.VariableId).Value.ToString();
+            string label = ParseEventText(command.Value,player, instance);
 
             Color color = command.Color;
             if (command.MatchNameColor)
@@ -364,6 +372,7 @@ namespace Intersect.Server.EventProcessing
         //Set Access Command (wtf why would we even allow this? lol)
         private static void ProcessCommand(SetAccessCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
+            if (player.Client == null) return;
             switch (command.Access)
             {
                 case Access.Moderator:
@@ -377,7 +386,7 @@ namespace Intersect.Server.EventProcessing
                     break;
             }
             PacketSender.SendEntityDataToProximity(player);
-            PacketSender.SendChatMsg(player.Client, Strings.Player.powerchanged, Color.Red);
+            PacketSender.SendChatMsg(player, Strings.Player.powerchanged, Color.Red);
         }
 
         //Warp Player Command
@@ -394,7 +403,7 @@ namespace Intersect.Server.EventProcessing
                 player.MoveRoute = new EventMoveRoute();
                 player.MoveRouteSetter = instance.PageInstance;
                 player.MoveRoute.CopyFrom(command.Route);
-                PacketSender.SendMoveRouteToggle(player.Client, true);
+                PacketSender.SendMoveRouteToggle(player, true);
             }
             else
             {
@@ -608,14 +617,14 @@ namespace Intersect.Server.EventProcessing
         private static void ProcessCommand(HoldPlayerCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             instance.HoldingPlayer = true;
-            PacketSender.SendHoldPlayer(player.Client, instance.BaseEvent.Id, instance.BaseEvent.MapId);
+            PacketSender.SendHoldPlayer(player, instance.BaseEvent.Id, instance.BaseEvent.MapId);
         }
 
         //Release Player Command
         private static void ProcessCommand(ReleasePlayerCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
             instance.HoldingPlayer = false;
-            PacketSender.SendReleasePlayer(player.Client, instance.BaseEvent.Id);
+            PacketSender.SendReleasePlayer(player, instance.BaseEvent.Id);
         }
 
         //Hide Player Command
@@ -637,37 +646,37 @@ namespace Intersect.Server.EventProcessing
         //Play Bgm Command
         private static void ProcessCommand(PlayBgmCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            PacketSender.SendPlayMusic(player.Client, command.File);
+            PacketSender.SendPlayMusic(player, command.File);
         }
 
         //Fadeout Bgm Command
         private static void ProcessCommand(FadeoutBgmCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            PacketSender.SendFadeMusic(player.Client);
+            PacketSender.SendFadeMusic(player);
         }
 
         //Play Sound Command
         private static void ProcessCommand(PlaySoundCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            PacketSender.SendPlaySound(player.Client, command.File);
+            PacketSender.SendPlaySound(player, command.File);
         }
 
         //Stop Sounds Command
         private static void ProcessCommand(StopSoundsCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            PacketSender.SendStopSounds(player.Client);
+            PacketSender.SendStopSounds(player);
         }
 
         //Show Picture Command
         private static void ProcessCommand(ShowPictureCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            PacketSender.SendShowPicture(player.Client, command.File, command.Size, command.Clickable);
+            PacketSender.SendShowPicture(player, command.File, command.Size, command.Clickable);
         }
 
         //Hide Picture Command
         private static void ProcessCommand(HidePictureCommmand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            PacketSender.SendHidePicture(player.Client);
+            PacketSender.SendHidePicture(player);
         }
 
         //Wait Command
@@ -828,13 +837,17 @@ namespace Intersect.Server.EventProcessing
         }
 
 
-        private static string ParseEventText(string input, Player player, EventInstance instance)
+        public static string ParseEventText(string input, Player player, EventInstance instance)
         {
             if (player != null)
             {
                 input = input.Replace(Strings.Events.playernamecommand, player.Name);
-                input = input.Replace(Strings.Events.eventnamecommand, instance.PageInstance.Name);
-                input = input.Replace(Strings.Events.commandparameter, instance.PageInstance.Param);
+                if (instance != null)
+                {
+                    input = input.Replace(Strings.Events.eventnamecommand, instance.PageInstance.Name);
+                    input = input.Replace(Strings.Events.commandparameter, instance.PageInstance.Param);
+                    input = input.Replace(Strings.Events.eventparams, instance.FormatParameters(player));
+                }
                 if (input.Contains(Strings.Events.onlinelistcommand) || input.Contains(Strings.Events.onlinecountcommand))
                 {
                     var onlineList = Globals.OnlineList;
@@ -922,16 +935,30 @@ namespace Intersect.Server.EventProcessing
                         }
                     }
                 }
+
+                //Event Params
+                matches = Regex.Matches(input, Regex.Escape(Strings.Events.eventparam) + @"{([^}]*)}");
+                if (instance != null)
+                {
+                    foreach (Match m in matches)
+                    {
+                        if (m.Success)
+                        {
+                            var id = m.Groups[1].Value;
+                            input = input.Replace(Strings.Events.eventparam + "{" + m.Groups[1].Value + "}", instance.GetParam(player, id.ToLower()));
+                        }
+                    }
+                }
             }
             return input;
         }
 
-        private static void ProcessVariableModification(SetVariableCommand command, VariableMod mod, Player player)
+        private static void ProcessVariableModification(SetVariableCommand command, VariableMod mod, Player player, EventInstance instance)
         {
 
         }
 
-        private static void ProcessVariableModification(SetVariableCommand command, BooleanVariableMod mod, Player player)
+        private static void ProcessVariableModification(SetVariableCommand command, BooleanVariableMod mod, Player player, EventInstance instance)
         {
             VariableValue value = null;
             if (command.VariableType == VariableTypes.PlayerVariable)
@@ -984,7 +1011,7 @@ namespace Intersect.Server.EventProcessing
             }
         }
 
-        private static void ProcessVariableModification(SetVariableCommand command, IntegerVariableMod mod, Player player)
+        private static void ProcessVariableModification(SetVariableCommand command, IntegerVariableMod mod, Player player, EventInstance instance)
         {
             VariableValue value = null;
             if (command.VariableType == VariableTypes.PlayerVariable)
@@ -1065,7 +1092,7 @@ namespace Intersect.Server.EventProcessing
             }
         }
 
-        private static void ProcessVariableModification(SetVariableCommand command, StringVariableMod mod, Player player)
+        private static void ProcessVariableModification(SetVariableCommand command, StringVariableMod mod, Player player, EventInstance instance)
         {
             VariableValue value = null;
             if (command.VariableType == VariableTypes.PlayerVariable)
@@ -1082,20 +1109,12 @@ namespace Intersect.Server.EventProcessing
             switch (mod.ModType)
             {
                 case Enums.VariableMods.Set:
-                    value.String = mod.Value;
+                    value.String = ParseEventText(mod.Value, player, instance);
                     break;
-                case Enums.VariableMods.DupPlayerVar:
-                    value.String = player.GetVariableValue(mod.DuplicateVariableId).String;
-                    break;
-                case Enums.VariableMods.DupGlobalVar:
-                    var dupServerVariable = ServerVariableBase.Get(mod.DuplicateVariableId);
-                    if (dupServerVariable != null)
-                    {
-                        value.String = dupServerVariable.Value.String;
-                    }
-                    break;
-                case Enums.VariableMods.PlayerName:
-                    value.String = player.Name;
+                case Enums.VariableMods.Replace:
+                    var find = ParseEventText(mod.Value, player, instance);
+                    var replace = ParseEventText(mod.Replace, player, instance);
+                    value.String = value.String.Replace(find, replace);
                     break;
             }
 

@@ -177,6 +177,11 @@ namespace Intersect.Client.Localization
             public static LocalizedString targetoutsiderange = @"Target too far away!";
             public static LocalizedString vital0 = @"Health";
             public static LocalizedString vital1 = @"Mana";
+            public static LocalizedString warningtitle = @"Combat Warning!";
+            public static LocalizedString warningforceclose = @"Game was closed while in combat! Your character will remain logged in until combat has concluded!";
+            public static LocalizedString warninglogout = @"You are about to logout while in combat! Your character will remain in-game until combat has ended! Are you sure you want to logout now?";
+            public static LocalizedString warningcharacterselect = @"You are about to logout while in combat! Your character will remain in-game until combat has ended! Are you sure you want to logout now?";
+            public static LocalizedString warningexitdesktop = @"You are about to exit while in combat! Your character will remain in-game until combat has ended! Are you sure you want to quit now?";
         }
 
         public struct Controls

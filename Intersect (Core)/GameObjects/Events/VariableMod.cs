@@ -35,7 +35,6 @@ namespace Intersect.GameObjects.Events
     {
         public VariableMods ModType { get; set; } = VariableMods.Set;
         public string Value { get; set; }
-        [JsonProperty("DupVariableId")]
-        public Guid DuplicateVariableId { get; set; }
+        public string Replace { get; set; }
     }
 }
