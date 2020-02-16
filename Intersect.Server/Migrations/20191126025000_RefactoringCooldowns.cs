@@ -20,18 +20,6 @@ namespace Intersect.Server.Migrations
                 name: "SpellCooldowns",
                 table: "Players",
                 nullable: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Mutes_PlayerId",
-                table: "Mutes",
-                column: "PlayerId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Bans_PlayerId",
-                table: "Bans",
-                column: "PlayerId",
-                unique: true);
         }
     }
 }
