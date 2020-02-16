@@ -549,14 +549,7 @@ namespace Intersect.Editor.Forms.Editors.Events
 
         private static string GetCommandText(ChangePlayerLabelCommand command, MapInstance map)
         {
-          if (command.VariableType == VariableTypes.PlayerVariable)
-          {
-            return Strings.EventCommandList.changeplayerlabel.ToString(PlayerVariableBase.GetName(command.VariableId));
-          }
-          else
-          {
-            return Strings.EventCommandList.changeplayerlabel.ToString(ServerVariableBase.GetName(command.VariableId));
-          }
+            return Strings.EventCommandList.changeplayerlabel.ToString(command.Value);
         }
 
         private static string GetCommandText(ChangeGenderCommand command, MapInstance map)

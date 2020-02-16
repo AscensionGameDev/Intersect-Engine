@@ -23,17 +23,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             pnlLightColor.BackColor = System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B);
             chkPlayerNameColor.Checked = refCommand.MatchNameColor;
             cmbPosition.SelectedIndex = refCommand.Position;
-
-            if (mMyCommand.VariableType == Enums.VariableTypes.PlayerVariable)
-            {
-              rdoPlayerVariables.Checked = true;
-            }
-            else
-            {
-              rdoGlobalVariables.Checked = true;
-            }
-
-            LoadVariableList();
+            txtLabel.Text = refCommand.Value;
         }
 
         private void InitLocalization()
@@ -44,8 +34,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             btnSelectLightColor.Text = Strings.EventChangePlayerLabel.select;
             chkPlayerNameColor.Text = Strings.EventChangePlayerLabel.copyplayernamecolor;
 
-            rdoPlayerVariables.Text = Strings.EventChangePlayerLabel.player;
-            rdoGlobalVariables.Text = Strings.EventChangePlayerLabel.global;
+            lblValue.Text = Strings.EventChangePlayerLabel.value;
+            lblStringTextVariables.Text = Strings.EventChangePlayerLabel.hint;
 
             lblPosition.Text = Strings.EventChangePlayerLabel.position;
             cmbPosition.Items.Clear();
@@ -55,37 +45,12 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             }
         }
 
-        private void LoadVariableList()
-        {
-          cmbVariable.Items.Clear();
-          if (rdoPlayerVariables.Checked)
-          {
-            cmbVariable.Items.AddRange(PlayerVariableBase.Names);
-            cmbVariable.SelectedIndex = PlayerVariableBase.ListIndex(mMyCommand.VariableId);
-          }
-          else
-          {
-            cmbVariable.Items.AddRange(ServerVariableBase.Names);
-            cmbVariable.SelectedIndex = ServerVariableBase.ListIndex(mMyCommand.VariableId);
-          }
-        }
-
         private void btnSave_Click(object sender, EventArgs e)
         {
             mMyCommand.Color = Color.FromArgb(colorDialog.Color.A, colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B);
             mMyCommand.MatchNameColor = chkPlayerNameColor.Checked;
             mMyCommand.Position = cmbPosition.SelectedIndex;
-
-            if (rdoPlayerVariables.Checked)
-            {
-              mMyCommand.VariableType = Enums.VariableTypes.PlayerVariable;
-              mMyCommand.VariableId = PlayerVariableBase.IdFromList(cmbVariable.SelectedIndex);
-            }
-            else
-            {
-              mMyCommand.VariableType = Enums.VariableTypes.ServerVariable;
-              mMyCommand.VariableId = ServerVariableBase.IdFromList(cmbVariable.SelectedIndex);
-            }
+            mMyCommand.Value = txtLabel.Text;
 
             mEventEditor.FinishCommandEdit();
         }
@@ -101,6 +66,12 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             colorDialog.ShowDialog();
             pnlLightColor.BackColor = colorDialog.Color;
             EditorGraphics.TilePreviewUpdated = true;
+        }
+
+        private void lblStringTextVariables_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start(
+                "http://www.ascensiongamedev.com/community/topic/749-event-text-variables/");
         }
     }
 }

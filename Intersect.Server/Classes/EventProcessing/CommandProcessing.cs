@@ -351,11 +351,7 @@ namespace Intersect.Server.EventProcessing
         //Change Player Label Command
         private static void ProcessCommand(ChangePlayerLabelCommand command, Player player, EventInstance instance, CommandInstance stackInfo, Stack<CommandInstance> callStack)
         {
-            string label = "";
-            if (command.VariableType == VariableTypes.PlayerVariable)
-                label = player.GetVariableValue(command.VariableId).ToString();
-            else if (command.VariableType == VariableTypes.ServerVariable)
-                label = ServerVariableBase.Get(command.VariableId).Value.ToString();
+            string label = ParseEventText(command.Value,player, instance);
 
             Color color = command.Color;
             if (command.MatchNameColor)

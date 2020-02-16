@@ -225,7 +225,7 @@ Tick timer saved in server config.json.";
                 {10, @"Cyan"}
             };
         }
-        
+
         public struct Combat
         {
             public static Dictionary<int, LocalizedString> damagetypes = new Dictionary<int, LocalizedString>
@@ -340,7 +340,7 @@ Tick timer saved in server config.json.";
                 {3, @"Right"}
             };
         }
-        
+
         public struct DynamicRequirements
         {
             public static LocalizedString addcondition = @"Add Condition";
@@ -437,11 +437,11 @@ Tick timer saved in server config.json.";
 
         public struct EventChangeVital
         {
-          public static LocalizedString cancel = @"Cancel";
-          public static LocalizedString labelhealth = @"Set Health:";
-          public static LocalizedString labelmana = @"Set Mana:";
-          public static LocalizedString okay = @"Ok";
-          public static LocalizedString title = @"Change Vital";
+            public static LocalizedString cancel = @"Cancel";
+            public static LocalizedString labelhealth = @"Set Health:";
+            public static LocalizedString labelmana = @"Set Mana:";
+            public static LocalizedString okay = @"Ok";
+            public static LocalizedString title = @"Change Vital";
         }
 
         public struct EventChangeLevel
@@ -486,22 +486,22 @@ Tick timer saved in server config.json.";
 
         public struct EventChangePlayerLabel
         {
-          public static LocalizedString cancel = @"Cancel";
-          public static LocalizedString okay = @"Ok";
-          public static LocalizedString title = @"Change Player Label";
-          public static LocalizedString select = @"Select Color";
-          public static LocalizedString copyplayernamecolor = @"Copy Player Name Color?";
-          public static LocalizedString global = @"Global Variable";
-          public static LocalizedString player = @"Player Variable";
-          public static LocalizedString position = @"Label Position:";
-          public static Dictionary<int, LocalizedString> positions = new Dictionary<int, LocalizedString>
+            public static LocalizedString cancel = @"Cancel";
+            public static LocalizedString okay = @"Ok";
+            public static LocalizedString title = @"Change Player Label";
+            public static LocalizedString select = @"Select Color";
+            public static LocalizedString copyplayernamecolor = @"Copy Player Name Color?";
+            public static LocalizedString value = @"Value:";
+            public static LocalizedString hint = @"Text variables work with strings. Click here for info!";
+            public static LocalizedString position = @"Label Position:";
+            public static Dictionary<int, LocalizedString> positions = new Dictionary<int, LocalizedString>
           {
             {0, @"Above Character Name"},
             {1, @"Below Character Name"},
           };
         }
 
-    public struct EventChatboxText
+        public struct EventChatboxText
         {
             public static LocalizedString cancel = @"Cancel";
             public static LocalizedString channel = @"Channel:";
@@ -1517,9 +1517,9 @@ Tick timer saved in server config.json.";
             public static LocalizedString questeditor = @"Quest Editor";
             public static LocalizedString rectangle = @"Rectangle Tool";
             public static LocalizedString redo = @"Redo";
-			public static LocalizedString fliphorizontal = @"Flip Horizontal";
-			public static LocalizedString flipvertical = @"Flip Vertical";
-			public static LocalizedString reportbug = @"Report Bug";
+            public static LocalizedString fliphorizontal = @"Flip Horizontal";
+            public static LocalizedString flipvertical = @"Flip Vertical";
+            public static LocalizedString reportbug = @"Report Bug";
             public static LocalizedString resourceeditor = @"Resource Editor";
             public static LocalizedString resources = @"Resources";
             public static LocalizedString revision = @"Revision: {00}";
@@ -2051,8 +2051,8 @@ Tick timer saved in server config.json.";
                 {4, @"Blind"},
                 {5, @"Stealth"},
                 {6, @"Transform"},
-				{7, @"Cleanse"},
-				{8, @"Invulnerable"},
+                {7, @"Cleanse"},
+                {8, @"Invulnerable"},
                 {9, @"Shield"},
                 {10, @"Sleep"},
                 {11, @"OnHit"},
@@ -2426,11 +2426,11 @@ Negative values for time to flow backwards.";
                 switch (condition.Progress)
                 {
                     case QuestProgressState.BeforeTask:
-                        return Strings.EventConditionDesc.questinprogress.ToString(QuestBase.GetName(condition.QuestId),  Strings.EventConditionDesc.beforetask.ToString(taskName));
+                        return Strings.EventConditionDesc.questinprogress.ToString(QuestBase.GetName(condition.QuestId), Strings.EventConditionDesc.beforetask.ToString(taskName));
                     case QuestProgressState.AfterTask:
                         return Strings.EventConditionDesc.questinprogress.ToString(QuestBase.GetName(condition.QuestId), Strings.EventConditionDesc.aftertask.ToString(taskName));
                     case QuestProgressState.OnTask:
-                        return Strings.EventConditionDesc.questinprogress.ToString(QuestBase.GetName(condition.QuestId),  Strings.EventConditionDesc.ontask.ToString(taskName));
+                        return Strings.EventConditionDesc.questinprogress.ToString(QuestBase.GetName(condition.QuestId), Strings.EventConditionDesc.ontask.ToString(taskName));
                     default: //On Any task
                         return Strings.EventConditionDesc.questinprogress.ToString(QuestBase.GetName(condition.QuestId), Strings.EventConditionDesc.onanytask);
                 }
@@ -2450,13 +2450,13 @@ Negative values for time to flow backwards.";
 
         public static string GetEventConditionalDesc(GenderIsCondition condition)
         {
-            return Strings.EventConditionDesc.gender.ToString((condition.Gender == 0? Strings.EventConditionDesc.male : Strings.EventConditionDesc.female));
+            return Strings.EventConditionDesc.gender.ToString((condition.Gender == 0 ? Strings.EventConditionDesc.male : Strings.EventConditionDesc.female));
         }
 
         public static string GetEventConditionalDesc(MapIsCondition condition)
         {
             var map = Intersect.GameObjects.Maps.MapList.MapList.List.FindMap(condition.MapId);
-            if (map != null)  return Strings.EventConditionDesc.map.ToString(map.Name);
+            if (map != null) return Strings.EventConditionDesc.map.ToString(map.Name);
             return Strings.EventConditionDesc.map.ToString(EventConditionDesc.mapnotfound);
         }
 
