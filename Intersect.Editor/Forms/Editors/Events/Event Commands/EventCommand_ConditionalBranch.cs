@@ -602,6 +602,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 cmbStringComparitor.SelectedIndex = Convert.ToInt32(com.Comparator);
 
                 if (cmbStringComparitor.SelectedIndex < 0) cmbStringComparitor.SelectedIndex = 0;
+
+                txtStringValue.Text = com.Value;
             }
         }
 
