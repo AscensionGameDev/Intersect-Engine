@@ -1734,7 +1734,7 @@ namespace Intersect.Server.Entities
                 }
                 else if (baseDamage < 0 && !enemy.IsFullVital(Vitals.Health))
                 {
-                    enemy.SubVital(Vitals.Health, (int)baseDamage);
+                    enemy.AddVital(Vitals.Health, (int)-baseDamage);
                     PacketSender.SendActionMsg(enemy, Strings.Combat.addsymbol + (int)Math.Abs(baseDamage), CustomColors.Combat.Heal);
                 }
             }
@@ -1787,7 +1787,7 @@ namespace Intersect.Server.Entities
                 }
                 else if (secondaryDamage < 0 && !enemy.IsFullVital(Vitals.Mana))
                 {
-                    enemy.SubVital(Vitals.Mana, (int)secondaryDamage);
+                    enemy.AddVital(Vitals.Mana, (int)-secondaryDamage);
                     PacketSender.SendActionMsg(enemy, Strings.Combat.addsymbol + (int)Math.Abs(secondaryDamage), CustomColors.Combat.AddMana);
                 }
             }
