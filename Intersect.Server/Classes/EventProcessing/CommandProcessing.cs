@@ -200,8 +200,9 @@ namespace Intersect.Server.EventProcessing
             }
             else if (command.Amount < 0)
             {
-                player.SubVital(Vitals.Health, command.Amount);
-                if (player.GetVital(Vitals.Health) < 0)
+                player.SubVital(Vitals.Health, -command.Amount);
+                player.CombatTimer = Globals.Timing.TimeMs + Options.CombatTime;
+                if (player.GetVital(Vitals.Health) <= 0)
                 {
                     player.Die(Options.ItemDropChance);
                 }
@@ -221,7 +222,8 @@ namespace Intersect.Server.EventProcessing
             }
             else if (command.Amount < 0)
             {
-                player.SubVital(Vitals.Mana, command.Amount);
+                player.SubVital(Vitals.Mana, -command.Amount);
+                player.CombatTimer = Globals.Timing.TimeMs + Options.CombatTime;
             }
             else
             {
