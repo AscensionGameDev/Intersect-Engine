@@ -847,8 +847,11 @@ namespace Intersect.Server.EventProcessing
                 input = input.Replace(Strings.Events.playernamecommand, player.Name);
                 if (instance != null)
                 {
-                    input = input.Replace(Strings.Events.eventnamecommand, instance.PageInstance.Name);
-                    input = input.Replace(Strings.Events.commandparameter, instance.PageInstance.Param);
+                    if (instance.PageInstance != null)
+                    {
+                        input = input.Replace(Strings.Events.eventnamecommand, instance.PageInstance.Name);
+                        input = input.Replace(Strings.Events.commandparameter, instance.PageInstance.Param);
+                    }
                     input = input.Replace(Strings.Events.eventparams, instance.FormatParameters(player));
                 }
                 if (input.Contains(Strings.Events.onlinelistcommand) || input.Contains(Strings.Events.onlinecountcommand))

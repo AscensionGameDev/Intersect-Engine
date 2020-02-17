@@ -239,21 +239,21 @@ namespace Intersect.Server.Entities
                 prams.Add(prm.Key, prm.Value);
             }
 
-            prams.Add("evtName", this.BaseEvent.Name);
+            prams.Add("evtName", BaseEvent.Name);
 
             if (MapId != Guid.Empty)
             {
-                if (this.GlobalPageInstance != null)
+                if (GlobalPageInstance != null)
                 {
-                    prams.Add("evtMap", this.GlobalPageInstance[PageIndex].Map.Name);
-                    prams.Add("evtX", this.GlobalPageInstance[PageIndex].X.ToString());
-                    prams.Add("evtY", this.GlobalPageInstance[PageIndex].Y.ToString());
+                    prams.Add("evtMap", GlobalPageInstance[PageIndex].Map.Name);
+                    prams.Add("evtX", GlobalPageInstance[PageIndex].X.ToString());
+                    prams.Add("evtY", GlobalPageInstance[PageIndex].Y.ToString());
                 }
-                else
+                else if (PageInstance != null)
                 {
-                    prams.Add("evtMap", this.PageInstance.Map.Name);
-                    prams.Add("evtX", this.PageInstance.X.ToString());
-                    prams.Add("evtY", this.PageInstance.Y.ToString());
+                    prams.Add("evtMap", PageInstance.Map.Name);
+                    prams.Add("evtX", PageInstance.X.ToString());
+                    prams.Add("evtY", PageInstance.Y.ToString());
                 }
             }
 
