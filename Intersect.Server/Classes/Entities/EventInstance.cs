@@ -313,8 +313,9 @@ namespace Intersect.Server.Entities
 
             var prams = GetParams(player);
 
-            if (prams.ContainsKey(key))
-                return prams[key];
+            foreach (var pair in prams)
+                if (string.Equals(pair.Key, key,StringComparison.OrdinalIgnoreCase))
+                    return pair.Value;
 
             return "";
         }
