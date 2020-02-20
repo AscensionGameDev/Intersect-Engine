@@ -3887,8 +3887,17 @@ namespace Intersect.Server.Entities
                 if (CastTime == 0)
                 {
                     CastTime = Globals.Timing.TimeMs + spell.CastDuration;
-                    SubVital(Vitals.Mana, spell.VitalCost[(int) Vitals.Mana]);
-                    SubVital(Vitals.Health, spell.VitalCost[(int) Vitals.Health]);
+
+                    if (spell.VitalCost[(int)Vitals.Mana] > 0)
+                        SubVital(Vitals.Mana, spell.VitalCost[(int)Vitals.Mana]);
+                    else
+                        AddVital(Vitals.Mana, -spell.VitalCost[(int)Vitals.Mana]);
+
+                    if (spell.VitalCost[(int)Vitals.Health] > 0)
+                        SubVital(Vitals.Health, spell.VitalCost[(int)Vitals.Health]);
+                    else
+                        AddVital(Vitals.Health, -spell.VitalCost[(int)Vitals.Health]);
+
                     SpellCastSlot = spellSlot;
                     CastTarget = Target;
 
