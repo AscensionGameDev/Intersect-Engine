@@ -1867,23 +1867,12 @@ namespace Intersect.Server.Entities
                     continue;
                 }
 
-                //Remove equipment
-                for (var x = 0; x < Options.EquipmentSlots.Count; x++)
-                {
-                    if (Equipment[x] == item.Slot)
-                    {
-                        Equipment[x] = -1;
-                        PacketSender.SendPlayerEquipmentToProximity(this);
-
-                        break;
-                    }
-                }
-
                 if (item.Quantity <= 1)
                 {
                     amount -= 1;
                     Items[i].Set(Item.None);
                     PacketSender.SendInventoryItemUpdate(this, i);
+                    EquipmentProcessItemLoss(i);
                     if (amount == 0)
                     {
                         return true;
@@ -1896,6 +1885,7 @@ namespace Intersect.Server.Entities
                         amount -= item.Quantity;
                         Items[i].Set(Item.None);
                         PacketSender.SendInventoryItemUpdate(this, i);
+                        EquipmentProcessItemLoss(i);
                         if (amount == 0)
                         {
                             return true;
