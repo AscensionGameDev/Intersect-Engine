@@ -1123,12 +1123,6 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            if (amount < 0)
-            {
-                SubVital(vital, amount);
-                return;
-            }
-
             var vitalId = (int) vital;
             var maxVitalValue = GetMaxVital(vitalId);
             var safeAmount = Math.Min(amount, int.MaxValue - maxVitalValue);
@@ -1139,12 +1133,6 @@ namespace Intersect.Server.Entities
         {
             if (vital >= Vitals.VitalCount)
             {
-                return;
-            }
-
-            if (amount < 0)
-            {
-                AddVital(vital, -amount);
                 return;
             }
 
