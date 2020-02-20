@@ -69,6 +69,7 @@ namespace Intersect.Client.UI.Game
                     mEventDialogWindow.Show();
                     mEventDialogWindow.MakeModal();
                     mEventDialogArea.ScrollToTop();
+                    mEventDialogWindow.BringToFront();
                     GameTexture faceTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face,
                         Globals.EventDialogs[0].Face);
 

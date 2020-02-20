@@ -67,13 +67,15 @@ namespace Intersect.Client.UI.Game
 
         public void InitGameGui()
         {
-            mEventWindow = new EventWindow(GameCanvas);
             mChatBox = new Chatbox(GameCanvas, this);
             GameMenu = new GameMenu(GameCanvas);
             Hotbar = new HotBarWindow(GameCanvas);
-            mDebugMenu = new DebugMenu(GameCanvas);
-            mQuestOfferWindow = new QuestOfferWindow(GameCanvas);
             PlayerBox = new EntityBox(GameCanvas, EntityTypes.Player, Globals.Me, true);
+            if (mPictureWindow == null)
+                mPictureWindow = new PictureWindow(GameCanvas);
+            mEventWindow = new EventWindow(GameCanvas);
+            mQuestOfferWindow = new QuestOfferWindow(GameCanvas);
+            mDebugMenu = new DebugMenu(GameCanvas);
         }
 
         //Chatbox
@@ -253,7 +255,6 @@ namespace Intersect.Client.UI.Game
             {
                 PlayerBox?.SetEntity(Globals.Me);
             }
-            mEventWindow?.Update();
             mChatBox?.Update();
             GameMenu?.Update(mShouldUpdateQuestLog);
             mShouldUpdateQuestLog = false;
@@ -274,32 +275,20 @@ namespace Intersect.Client.UI.Game
 
             if (Globals.Picture != null)
             {
-                var create = true;
-                if (mPictureWindow != null)
+                if (mPictureWindow.Picture != Globals.Picture || mPictureWindow.Size != Globals.PictureSize || mPictureWindow.Clickable != Globals.PictureClickable)
                 {
-                    if (mPictureWindow.Picture != Globals.Picture || mPictureWindow.Size != Globals.PictureSize || mPictureWindow.Clickable != Globals.PictureClickable)
-                    {
-                        mPictureWindow.Close();
-                        mPictureWindow = null;
-                    }
-                    else
-                    {
-                        create = false;
-                    }
+                    mPictureWindow.Setup(Globals.Picture, Globals.PictureSize, Globals.PictureClickable);
                 }
-                if (create)
-                    mPictureWindow = new PictureWindow(GameCanvas, Globals.Picture, Globals.PictureSize, Globals.PictureClickable);
             }
             else
             {
                 if (mPictureWindow != null)
                 {
                     mPictureWindow.Close();
-                    mPictureWindow = null;
                 }
             }
 
-            
+            mEventWindow?.Update();
 
             //Admin window update
             if (mShouldOpenAdminWindow)
