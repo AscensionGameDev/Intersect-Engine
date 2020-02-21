@@ -47,7 +47,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            mMyCommand.Color = Color.FromArgb(colorDialog.Color.A, colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B);
+            mMyCommand.Color = Color.FromArgb(pnlLightColor.BackColor.A, pnlLightColor.BackColor.R, pnlLightColor.BackColor.G, pnlLightColor.BackColor.B);
             mMyCommand.MatchNameColor = chkPlayerNameColor.Checked;
             mMyCommand.Position = cmbPosition.SelectedIndex;
             mMyCommand.Value = txtLabel.Text;

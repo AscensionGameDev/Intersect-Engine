@@ -135,7 +135,7 @@ namespace Intersect.Editor.Maps
                 var soundList = new List<string> { Strings.General.none };
                 soundList.AddRange(GameContentManager.SmartSortedSoundNames);
                 mMyMap.Sound = soundList.Find(
-                    item => string.Equals(item, mMyMap.Music, StringComparison.InvariantCultureIgnoreCase)
+                    item => string.Equals(item, mMyMap.Sound, StringComparison.InvariantCultureIgnoreCase)
                 );
                 return TextUtils.NullToNone(mMyMap.Sound);
             }

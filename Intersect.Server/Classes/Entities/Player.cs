@@ -1867,23 +1867,12 @@ namespace Intersect.Server.Entities
                     continue;
                 }
 
-                //Remove equipment
-                for (var x = 0; x < Options.EquipmentSlots.Count; x++)
-                {
-                    if (Equipment[x] == item.Slot)
-                    {
-                        Equipment[x] = -1;
-                        PacketSender.SendPlayerEquipmentToProximity(this);
-
-                        break;
-                    }
-                }
-
                 if (item.Quantity <= 1)
                 {
                     amount -= 1;
                     Items[i].Set(Item.None);
                     PacketSender.SendInventoryItemUpdate(this, i);
+                    EquipmentProcessItemLoss(i);
                     if (amount == 0)
                     {
                         return true;
@@ -1896,6 +1885,7 @@ namespace Intersect.Server.Entities
                         amount -= item.Quantity;
                         Items[i].Set(Item.None);
                         PacketSender.SendInventoryItemUpdate(this, i);
+                        EquipmentProcessItemLoss(i);
                         if (amount == 0)
                         {
                             return true;
@@ -3897,8 +3887,17 @@ namespace Intersect.Server.Entities
                 if (CastTime == 0)
                 {
                     CastTime = Globals.Timing.TimeMs + spell.CastDuration;
-                    SubVital(Vitals.Mana, spell.VitalCost[(int) Vitals.Mana]);
-                    SubVital(Vitals.Health, spell.VitalCost[(int) Vitals.Health]);
+
+                    if (spell.VitalCost[(int)Vitals.Mana] > 0)
+                        SubVital(Vitals.Mana, spell.VitalCost[(int)Vitals.Mana]);
+                    else
+                        AddVital(Vitals.Mana, -spell.VitalCost[(int)Vitals.Mana]);
+
+                    if (spell.VitalCost[(int)Vitals.Health] > 0)
+                        SubVital(Vitals.Health, spell.VitalCost[(int)Vitals.Health]);
+                    else
+                        AddVital(Vitals.Health, -spell.VitalCost[(int)Vitals.Health]);
+
                     SpellCastSlot = spellSlot;
                     CastTarget = Target;
 

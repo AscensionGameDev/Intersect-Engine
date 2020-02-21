@@ -357,7 +357,7 @@ namespace Intersect.Server.EventProcessing
 
             Color color = command.Color;
             if (command.MatchNameColor)
-                color = player.NameColor;
+                color = Color.Transparent;
 
             if (command.Position == 0) // Header
             {

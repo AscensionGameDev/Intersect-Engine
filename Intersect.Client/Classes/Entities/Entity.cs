@@ -949,7 +949,7 @@ namespace Intersect.Client.Entities
             return y;
         }
 
-        public void DrawLabels(string label, int position, Color textColor, Color borderColor = null, Color backgroundColor = null)
+        public void DrawLabels(string label, int position, Color labelColor, Color textColor, Color borderColor = null, Color backgroundColor = null)
         {
             if (string.IsNullOrEmpty(label)) return;
             if (label.Trim().Length == 0) return;
@@ -957,6 +957,9 @@ namespace Intersect.Client.Entities
 
             if (borderColor == null) borderColor = Color.Transparent;
             if (backgroundColor == null) backgroundColor = Color.Transparent;
+
+            if (labelColor != null && labelColor != Color.Transparent)
+                textColor = labelColor;
 
             //Check for stealth amoungst status effects.
             for (var n = 0; n < Status.Count; n++)
