@@ -958,7 +958,8 @@ namespace Intersect.Client.Entities
             if (borderColor == null) borderColor = Color.Transparent;
             if (backgroundColor == null) backgroundColor = Color.Transparent;
 
-            if (labelColor != null && labelColor != Color.Transparent)
+            //If we have a non-transparent label color then use it, otherwise use the players name color
+            if (labelColor != null && labelColor.A != 0)
                 textColor = labelColor;
 
             //Check for stealth amoungst status effects.
