@@ -285,8 +285,7 @@ namespace Intersect.Client.Entities.Events
                 mCenterPos = Pointf.Empty;
                 return;
             }
-            Pointf pos = new Pointf(map.GetX() + X * Options.TileWidth + OffsetX + Options.TileWidth / 2,
-                map.GetY() + Y * Options.TileHeight + OffsetY + Options.TileHeight / 2);
+            Pointf pos = new Pointf(map.GetX() + X * Options.TileWidth + OffsetX + Options.TileWidth / 2,  map.GetY() + Y * Options.TileHeight + OffsetY + Options.TileHeight / 2);
             switch (Graphic.Type)
             {
                 case EventGraphicType.Sprite: //Sprite
@@ -307,7 +306,7 @@ namespace Intersect.Client.Entities.Events
                     if (mCachedTileset != null)
                     {
                         pos.Y += Options.TileHeight / 2;
-                        pos.Y -= ((Graphic.Height) * Options.TileHeight / 2);
+                        pos.Y -= ((Graphic.Height + 1) * Options.TileHeight / 2);
                     }
                     break;
             }
