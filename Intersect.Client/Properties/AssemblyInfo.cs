@@ -13,7 +13,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyDescription("2D ORPG Client - Part of the Intersect Game Creation Suite")]
 [assembly: AssemblyCompany("Ascension Game Development")]
-[assembly: AssemblyCopyright("Copyright ©  2019 Ascension Game Dev")]
+[assembly: AssemblyCopyright("Copyright ©  2020 Ascension Game Dev")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -38,5 +38,5 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion("0.6.0.0")]
-[assembly: AssemblyFileVersion("0.6.0.0")]
+[assembly: AssemblyVersion("0.6.1.0")]
+[assembly: AssemblyFileVersion("0.6.1.0")]

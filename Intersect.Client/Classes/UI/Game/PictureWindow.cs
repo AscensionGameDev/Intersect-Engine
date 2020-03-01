@@ -17,19 +17,25 @@ namespace Intersect.Client.UI.Game
         }
 
         //Controls
+        private Canvas mGameCanvas;
         private ImagePanel mPicture;
-        public string Picture { get; }
-        public int Size { get; }
-        public bool Clickable { get; }
+        public string Picture { get; private set; }
+        public int Size { get; private set;  }
+        public bool Clickable { get; private set; }
 
 
-        public PictureWindow(Canvas gameCanvas, string picture, int size, bool clickable)
+        public PictureWindow(Canvas gameCanvas)
+        {
+            mGameCanvas = gameCanvas;
+            mPicture = new ImagePanel(gameCanvas);
+        }
+
+        public void Setup(string picture, int size, bool clickable)
         {
             Picture = picture;
             Size = size;
             Clickable = clickable;
 
-            mPicture = new ImagePanel(gameCanvas);
             mPicture.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Image, picture);
             if (mPicture.Texture != null)
             {
@@ -46,7 +52,7 @@ namespace Intersect.Client.UI.Game
                 {
                     if (size == (int)PictureSize.StretchToFit)
                     {
-                        mPicture.SetSize(gameCanvas.Width, gameCanvas.Height);
+                        mPicture.SetSize(mGameCanvas.Width, mGameCanvas.Height);
                         Align.Center(mPicture);
                     }
                     else
@@ -58,25 +64,27 @@ namespace Intersect.Client.UI.Game
 
                         var ar = (float)mPicture.Width / (float)mPicture.Height;
                         var heightLimit = true;
-                        if (gameCanvas.Width < gameCanvas.Height * ar)
+                        if (mGameCanvas.Width < mGameCanvas.Height * ar)
                             heightLimit = false;
 
                         if (heightLimit)
                         {
-                            var height = gameCanvas.Height;
-                            var width = gameCanvas.Height * ar;
+                            var height = mGameCanvas.Height;
+                            var width = mGameCanvas.Height * ar;
                             mPicture.SetSize((int)(width / n), (int)(height / n));
                             Align.Center(mPicture);
                         }
                         else
                         {
-                            var width = gameCanvas.Width;
+                            var width = mGameCanvas.Width;
                             var height = width / ar;
                             mPicture.SetSize((int)(width / n), (int)(height / n));
                             Align.Center(mPicture);
                         }
                     }
                 }
+                mPicture.BringToFront();
+                mPicture.Show();
             }
             else
             {
@@ -91,8 +99,8 @@ namespace Intersect.Client.UI.Game
 
         public void Close()
         {
-            mPicture.Parent.RemoveChild(mPicture, false);
-            mPicture.Dispose();
+            Picture = null;
+            mPicture.Hide();
         }
     }
 }

@@ -124,6 +124,7 @@ namespace Intersect.Editor.Forms.Editors
             chkIgnoreActiveResources.Text = Strings.ProjectileEditor.ignoreactiveresources;
             chkIgnoreInactiveResources.Text = Strings.ProjectileEditor.ignoreinactiveresources;
             chkIgnoreZDimensionBlocks.Text = Strings.ProjectileEditor.ignorezdimension;
+            chkPierce.Text = Strings.ProjectileEditor.piercetarget;
 
             grpAmmo.Text = Strings.ProjectileEditor.ammo;
             lblAmmoItem.Text = Strings.ProjectileEditor.ammoitem;
@@ -157,6 +158,7 @@ namespace Intersect.Editor.Forms.Editors
                 chkIgnoreInactiveResources.Checked = mEditorItem.IgnoreExhaustedResources;
                 chkIgnoreZDimensionBlocks.Checked = mEditorItem.IgnoreZDimension;
                 chkGrapple.Checked = mEditorItem.GrappleHook;
+                chkPierce.Checked = mEditorItem.PierceTarget;
                 cmbItem.SelectedIndex = ItemBase.ListIndex(mEditorItem.AmmoItemId) + 1;
                 nudConsume.Value = mEditorItem.AmmoRequired;
 
@@ -256,7 +258,7 @@ namespace Intersect.Editor.Forms.Editors
             Bitmap img;
             if (picSpawns.BackgroundImage == null)
             {
-                img = new Bitmap(picSpawns.Width, picSpawns.Height);
+                img = new Bitmap(160, 160);
                 picSpawns.BackgroundImage = img;
             }
             else
@@ -288,8 +290,8 @@ namespace Intersect.Editor.Forms.Editors
             }
 
             gfx.DrawImage(mDirectionGrid,
-                new Rectangle((picSpawns.Width / 2) - (((32 - 2) / 3) / 2),
-                    (picSpawns.Height / 2) - (((32 - 2) / 3) / 2), (32 - 2) / 3, (32 - 2) / 3),
+                new Rectangle((160 / 2) - (((32 - 2) / 3) / 2),
+                    (160 / 2) - (((32 - 2) / 3) / 2), (32 - 2) / 3, (32 - 2) / 3),
                 new Rectangle(43, 11, (32 - 2) / 3, (32 - 2) / 3), GraphicsUnit.Pixel);
             gfx.Dispose();
             picSpawns.Refresh();
@@ -400,15 +402,19 @@ namespace Intersect.Editor.Forms.Editors
 
         private void picSpawns_MouseDown(object sender, MouseEventArgs e)
         {
-            double x = e.X / 32;
-            double y = e.Y / 32;
+            double scaledX = e.X * (160f / picSpawns.Width);
+            double scaledY = e.Y * (160f / picSpawns.Height);
+            double x = scaledX / 32;
+            double y = scaledY / 32;
             double i, j;
 
             x = Math.Floor(x);
             y = Math.Floor(y);
 
-            i = (e.X - (x * 32)) / (32 / 3);
-            j = (e.Y - (y * 32)) / (32 / 3);
+            if (x > 4 || y > 4) return;
+
+            i = (scaledX - (x * 32)) / (32 / 3);
+            j = (scaledY - (y * 32)) / (32 / 3);
 
             i = Math.Floor(i);
             j = Math.Floor(j);
@@ -437,6 +443,11 @@ namespace Intersect.Editor.Forms.Editors
         private void chkIgnoreZDimensionBlocks_CheckedChanged(object sender, EventArgs e)
         {
             mEditorItem.IgnoreZDimension = chkIgnoreZDimensionBlocks.Checked;
+        }
+
+        private void chkPierce_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.PierceTarget = chkPierce.Checked;
         }
 
         private void chkGrapple_CheckedChanged(object sender, EventArgs e)
@@ -831,6 +842,7 @@ namespace Intersect.Editor.Forms.Editors
                 txtSearch.SelectAll();
         }
 
-        #endregion
-    }
+    #endregion
+
+  }
 }

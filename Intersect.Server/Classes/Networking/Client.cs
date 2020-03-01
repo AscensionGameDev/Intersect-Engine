@@ -166,13 +166,9 @@ namespace Intersect.Server.Networking
 
             DbInterface.SavePlayerDatabaseAsync();
            
-            Entity.Logout();
+            Entity.TryLogout();
 
-            if (!IsEditor)
-            {
-                PacketSender.SendGlobalMsg(Strings.Player.left.ToString(Entity.Name, Options.Instance.GameName));
-            }
-            Entity.Dispose();
+            Entity.Client = null;
             Entity = null;
         }
 

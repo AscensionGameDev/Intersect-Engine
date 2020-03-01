@@ -264,8 +264,6 @@ namespace Intersect.Server.Migrations
 
                     b.Property<int>("Slot");
 
-                    b.Property<long>("SpellCd");
-
                     b.Property<Guid>("SpellId");
 
                     b.HasKey("Id");
@@ -340,6 +338,9 @@ namespace Intersect.Server.Migrations
 
                     b.Property<int>("Gender");
 
+                    b.Property<string>("ItemCooldownsJson")
+                        .HasColumnName("ItemCooldowns");
+
                     b.Property<DateTime?>("LastOnline");
 
                     b.Property<int>("Level");
@@ -350,6 +351,9 @@ namespace Intersect.Server.Migrations
 
                     b.Property<string>("NameColorJson")
                         .HasColumnName("NameColor");
+
+                    b.Property<string>("SpellCooldownsJson")
+                        .HasColumnName("SpellCooldowns");
 
                     b.Property<string>("Sprite");
 

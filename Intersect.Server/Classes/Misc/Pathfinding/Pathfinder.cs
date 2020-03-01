@@ -197,12 +197,11 @@ namespace Intersect.Server.Misc.Pathfinding
                                                     //If this is a local event then we gotta loop through all other local events for the player
                                                     if (mEntity.GetType() == typeof(EventPageInstance))
                                                     {
-                                                        EventPageInstance ev = (EventPageInstance) mEntity;
-                                                        if (!ev.Passable && ev.Client != null)
-
-                                                            //Make sure this is a local event
+                                                        EventPageInstance ev = (EventPageInstance)mEntity;
+                                                        if (!ev.Passable && ev.Player != null)
+                                                        //Make sure this is a local event
                                                         {
-                                                            Player player = ev.Client.Entity;
+                                                            Player player = ev.Player;
                                                             if (player != null)
                                                             {
                                                                 if (player.EventLookup.Values.Count >
@@ -417,22 +416,22 @@ namespace Intersect.Server.Misc.Pathfinding
                         if (mEntity.X < newX)
                         {
                             enm.Dispose();
-                            return (int) Directions.Right;
+                            return (int)Directions.Right;
                         }
                         else if (mEntity.X > newX)
                         {
                             enm.Dispose();
-                            return (int) Directions.Left;
+                            return (int)Directions.Left;
                         }
                         else if (mEntity.Y < newY)
                         {
                             enm.Dispose();
-                            return (int) Directions.Down;
+                            return (int)Directions.Down;
                         }
                         else if (mEntity.Y > newY)
                         {
                             enm.Dispose();
-                            return (int) Directions.Up;
+                            return (int)Directions.Up;
                         }
                     }
                 }

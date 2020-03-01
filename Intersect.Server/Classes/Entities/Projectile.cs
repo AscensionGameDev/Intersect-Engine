@@ -438,10 +438,10 @@ namespace Intersect.Server.Entities
             PacketSender.SendEntityLeave(this);
         }
 
-        public override EntityPacket EntityPacket(EntityPacket packet = null, Client forClient = null)
+        public override EntityPacket EntityPacket(EntityPacket packet = null, Player forPlayer = null)
         {
             if (packet == null) packet = new ProjectileEntityPacket();
-            packet = base.EntityPacket(packet, forClient);
+            packet = base.EntityPacket(packet, forPlayer);
 
             var pkt = (ProjectileEntityPacket)packet;
             pkt.ProjectileId = Base.Id;
@@ -500,7 +500,8 @@ namespace Intersect.Server.Entities
                             Parent.Owner.Dir = Dir;
                             new DashInstance(Parent.Owner, Distance, (byte)Parent.Owner.Dir, Parent.Base.IgnoreMapBlocks, Parent.Base.IgnoreActiveResources, Parent.Base.IgnoreExhaustedResources, Parent.Base.IgnoreZDimension);
                         }
-                        return true;
+
+                        if (!Parent.Base.PierceTarget) return true;
                     }
                 }
                 else if (targetEntity.GetType() == typeof(Resource))
@@ -535,7 +536,7 @@ namespace Intersect.Server.Entities
                             Parent.Owner.Dir = Dir;
                             new DashInstance(Parent.Owner, Distance, (byte)Parent.Owner.Dir, Parent.Base.IgnoreMapBlocks, Parent.Base.IgnoreActiveResources, Parent.Base.IgnoreExhaustedResources, Parent.Base.IgnoreZDimension);
                         }
-                        return true;
+                        if (!Parent.Base.PierceTarget) return true;
                     }
                 }
             }

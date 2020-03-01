@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+
 using Intersect.Server.Core.CommandParsing.Commands;
+
 using JetBrains.Annotations;
 
 namespace Intersect.Server.Core.CommandParsing.Arguments
@@ -28,49 +30,72 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         [CanBeNull]
-        public ArgumentValues Find([NotNull] ICommandArgument argument)
+        public ArgumentValues Find([NotNull] ICommandArgument argument) =>
+            TryFind(argument, out var values) ? values : null;
+
+        public bool TryFind([NotNull] ICommandArgument argument, out ArgumentValues values) =>
+            mValuesMap.TryGetValue(argument, out values);
+
+        [CanBeNull]
+        public TValue Find<TValue>([NotNull] ICommandArgument argument, int index = 0, bool allowImplicit = true)
         {
-            return mValuesMap.TryGetValue(argument, out var values) ? values : null;
+            TryFind(argument, out TValue value, index, allowImplicit);
+            return value;
+        }
+
+        public bool TryFind<TValue>([NotNull] ICommandArgument argument, out TValue value, int index = 0, bool allowImplicit = true)
+        {
+            if (TryFind(argument, out var argumentValues) && (allowImplicit || !argumentValues.IsImplicit))
+            {
+                value = argumentValues.ToTypedValue<TValue>(index);
+                return true;
+            }
+
+            value = argument.DefaultValueAsType<TValue>();
+            return false;
         }
 
         [CanBeNull]
-        public TValue Find<TValue>([NotNull] ICommandArgument argument, int index = 0)
+        public IEnumerable<TValue> FindAll<TValue>([NotNull] ICommandArgument argument)
         {
-            var argumentValues = Find(argument);
-            return argumentValues == null
-                ? argument.DefaultValueAsType<TValue>()
-                : argumentValues.ToTypedValue<TValue>(index);
+            TryFindAll<TValue>(argument, out var values);
+            return values;
+        }
+
+        public bool TryFindAll<TValue>([NotNull] ICommandArgument argument, out IEnumerable<TValue> values)
+        {
+            if (TryFind(argument, out var argumentValues))
+            {
+                values = argumentValues.ToTypedValues<TValue>();
+                return true;
+            }
+
+            values = argument.DefaultValueAsType<IEnumerable<TValue>>();
+            return false;
         }
 
         [CanBeNull]
-        public IEnumerable<TValues> FindAll<TValues>([NotNull] ICommandArgument argument)
-        {
-            return Find(argument)?.ToTypedValues<TValues>() ?? argument.DefaultValueAsType<IEnumerable<TValues>>();
-        }
+        public TValue Find<TValue>([NotNull] CommandArgument<TValue> argument, int index = 0) =>
+            Find<TValue>(argument as ICommandArgument, index);
+
+        public bool TryFind<TValue>([NotNull] CommandArgument<TValue> argument, out TValue value, int index = 0) =>
+            TryFind(argument as ICommandArgument, out value, index);
 
         [CanBeNull]
-        public TValue Find<TValue>([NotNull] CommandArgument<TValue> argument, int index = 0)
-        {
-            return Find<TValue>(argument as ICommandArgument, index);
-        }
+        public IEnumerable<TValue> FindAll<TValue>([NotNull] ArrayCommandArgument<TValue> argument) =>
+            FindAll<TValue>(argument as ICommandArgument);
 
-        [CanBeNull]
-        public IEnumerable<TValues> FindAll<TValues>([NotNull] ArrayCommandArgument<TValues> argument)
-        {
-            return FindAll<TValues>(argument as ICommandArgument);
-        }
+        public bool TryFindAll<TValue>(
+            [NotNull] ArrayCommandArgument<TValue> argument,
+            out IEnumerable<TValue> value
+        ) =>
+            TryFindAll(argument as ICommandArgument, out value);
 
         [NotNull]
-        public ParserResult AsResult(ICommand command = null)
-        {
-            return new ParserResult(command, this);
-        }
+        public ParserResult AsResult(ICommand command = null) => new ParserResult(command, this);
 
         [NotNull]
-        public ParserResult<TCommand> AsResult<TCommand>(TCommand command)
-            where TCommand : ICommand
-        {
-            return new ParserResult<TCommand>(command, this);
-        }
+        public ParserResult<TCommand> AsResult<TCommand>(TCommand command) where TCommand : ICommand =>
+            new ParserResult<TCommand>(command, this);
     }
 }

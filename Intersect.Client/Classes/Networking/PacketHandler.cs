@@ -454,6 +454,14 @@ namespace Intersect.Client.Networking
             en.Vital = packet.Vitals;
             en.MaxVital = packet.MaxVitals;
 
+            if (en == Globals.Me)
+            {
+                if (packet.CombatTimeRemaining > 0)
+                {
+                    Globals.Me.CombatTimer = Globals.System.GetTimeMs() + packet.CombatTimeRemaining;
+                }
+            }
+
             //Update status effects
             en.Status.Clear();
             foreach (var status in packet.StatusEffects)
@@ -636,6 +644,27 @@ namespace Intersect.Client.Networking
             Globals.EventDialogs.Add(ed);
         }
 
+        //InputVariablePacket
+        private static void HandlePacket(InputVariablePacket packet)
+        {
+            var type = InputBox.InputType.NumericInput;
+            switch (packet.Type)
+            {
+                case VariableDataTypes.String:
+                    type = InputBox.InputType.TextInput;
+                    break;
+                case VariableDataTypes.Integer:
+                case VariableDataTypes.Number:
+                    type = InputBox.InputType.NumericInput;
+                    break;
+                case VariableDataTypes.Boolean:
+                    type = InputBox.InputType.YesNo;
+                    break;
+            }         
+
+            InputBox iBox = new InputBox(packet.Title, packet.Prompt, true, type, PacketSender.SendEventInputVariable, PacketSender.SendEventInputVariableCancel, packet.EventId);
+        }
+
         //ErrorMessagePacket
         private static void HandlePacket(ErrorMessagePacket packet)
         {
@@ -803,28 +832,33 @@ namespace Intersect.Client.Networking
         //SpellCooldownPacket
         private static void HandlePacket(SpellCooldownPacket packet)
         {
-            int spellSlot = packet.Slot;
-            decimal cooldownReduction = (1 - (decimal)(Globals.Me.GetCooldownReduction() / 100));
-            if (SpellBase.Get(Globals.Me.Spells[spellSlot].SpellId) != null)
+            foreach (var cd in packet.SpellCds)
             {
-                Globals.Me.Spells[spellSlot].SpellCd = Globals.System.GetTimeMs() + (int)(SpellBase.Lookup.Get<SpellBase>(Globals.Me.Spells[spellSlot].SpellId).CooldownDuration * cooldownReduction);
+                var time = Globals.System.GetTimeMs() + cd.Value;
+                if (!Globals.Me.SpellCooldowns.ContainsKey(cd.Key))
+                {
+                    Globals.Me.SpellCooldowns.Add(cd.Key, time);
+                }
+                else
+                {
+                    Globals.Me.SpellCooldowns[cd.Key] = time;
+                }
             }
         }
 
         //ItemCooldownPacket
         private static void HandlePacket(ItemCooldownPacket packet)
         {
-            var item = ItemBase.Get(packet.ItemId);
-            if (item != null)
+            foreach (var cd in packet.ItemCds)
             {
-                decimal cooldownReduction = (1 - (decimal)(Globals.Me.GetCooldownReduction() / 100));
-                if (Globals.Me.ItemCooldowns.ContainsKey(item.Id))
+                var time = Globals.System.GetTimeMs() + cd.Value;
+                if (!Globals.Me.ItemCooldowns.ContainsKey(cd.Key))
                 {
-                    Globals.Me.ItemCooldowns[item.Id] = Globals.System.GetTimeMs() + (long)(item.Cooldown * cooldownReduction);
+                    Globals.Me.ItemCooldowns.Add(cd.Key, time);
                 }
                 else
                 {
-                    Globals.Me.ItemCooldowns.Add(item.Id, Globals.System.GetTimeMs() + (long)(item.Cooldown * cooldownReduction));
+                    Globals.Me.ItemCooldowns[cd.Key] = time;
                 }
             }
         }

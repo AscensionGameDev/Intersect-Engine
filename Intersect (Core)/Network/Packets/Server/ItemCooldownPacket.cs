@@ -8,11 +8,12 @@ namespace Intersect.Network.Packets.Server
 {
     public class ItemCooldownPacket : CerasPacket
     {
-        public Guid ItemId { get; set; }
+        //Item Id / Time Remaining (Since we cannot expect all clients to have perfect system times)
+        public Dictionary<Guid, long> ItemCds;
 
-        public ItemCooldownPacket(Guid itemId)
+        public ItemCooldownPacket(Dictionary<Guid, long> itemCds)
         {
-            ItemId = itemId;
+            ItemCds = itemCds;
         }
     }
 }

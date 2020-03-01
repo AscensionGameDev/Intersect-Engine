@@ -66,6 +66,7 @@ namespace Intersect.Client
 
             Window.Position = new Microsoft.Xna.Framework.Point(-20, -2000);
             Window.IsBorderless = false;
+            Window.AllowAltF4 = false;
         }
 
         //Really basic error handler for debugging purposes
@@ -143,6 +144,10 @@ namespace Intersect.Client
         {
             base.OnExiting(sender, args);
             GameNetwork.Close("quitting");
+            if (Globals.Me != null && Globals.Me.CombatTimer > Globals.System?.GetTimeMs())
+            {
+                MessageBox.Show(Strings.Combat.warningforceclose, Strings.Combat.warningtitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
             base.Dispose();
         }
     }

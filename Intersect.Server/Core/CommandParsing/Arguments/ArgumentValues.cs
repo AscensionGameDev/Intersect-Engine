@@ -21,6 +21,8 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
 
         public bool IsEmpty => mValues.Count < 1;
 
+        public bool IsImplicit { get; }
+
         public ArgumentValues(
             [NotNull] string argumentName,
             [CanBeNull] params object[] values
@@ -31,11 +33,22 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
 
         public ArgumentValues(
             [NotNull] string argumentName,
-            [CanBeNull] IEnumerable<object> values = null
+            bool isImplicit,
+            [CanBeNull] params object[] values
+        )
+            : this(argumentName, values.AsEnumerable(), isImplicit)
+        {
+        }
+
+        public ArgumentValues(
+            [NotNull] string argumentName,
+            [CanBeNull] IEnumerable<object> values = null,
+            bool isImplicit = false
         )
         {
             ArgumentName = argumentName;
             mValues = new List<object>(values ?? new object[0]);
+            IsImplicit = isImplicit;
         }
 
         public IEnumerator<object> GetEnumerator() => mValues.GetEnumerator();

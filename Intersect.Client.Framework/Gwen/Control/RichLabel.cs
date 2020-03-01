@@ -29,7 +29,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         public RichLabel(Base parent, string name = "")
             : base(parent, name)
         {
-            mNewline = new string[] {Environment.NewLine};
+            mNewline = new string[] {Environment.NewLine, "\n"};
             mTextBlocks = new List<TextBlock>();
         }
 

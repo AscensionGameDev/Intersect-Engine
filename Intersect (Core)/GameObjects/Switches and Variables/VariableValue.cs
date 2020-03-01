@@ -68,7 +68,7 @@ namespace Intersect.GameObjects.Switches_and_Variables
         [JsonIgnore]
         public string String
         {
-            get => (Value as string) ?? "";
+            get => CanConvertTo<string>(Value) ? Convert.ToString(Value) : "";
             set
             {
                 Type = VariableDataTypes.String;
