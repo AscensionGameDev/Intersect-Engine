@@ -20,7 +20,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
             Color color = refCommand.Color;
             if (color == null) color = Color.White;
-            pnlLightColor.BackColor = System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B);
+            pnlColor.BackColor = System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B);
             chkPlayerNameColor.Checked = refCommand.MatchNameColor;
             cmbPosition.SelectedIndex = refCommand.Position;
             txtLabel.Text = refCommand.Value;
@@ -47,7 +47,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            mMyCommand.Color = Color.FromArgb(pnlLightColor.BackColor.A, pnlLightColor.BackColor.R, pnlLightColor.BackColor.G, pnlLightColor.BackColor.B);
+            mMyCommand.Color = Color.FromArgb(pnlColor.BackColor.A, pnlColor.BackColor.R, pnlColor.BackColor.G, pnlColor.BackColor.B);
             mMyCommand.MatchNameColor = chkPlayerNameColor.Checked;
             mMyCommand.Position = cmbPosition.SelectedIndex;
             mMyCommand.Value = txtLabel.Text;
@@ -62,10 +62,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void btnSelectLightColor_Click(object sender, EventArgs e)
         {
-            colorDialog.Color = System.Drawing.Color.White;
-            colorDialog.ShowDialog();
-            pnlLightColor.BackColor = colorDialog.Color;
-            EditorGraphics.TilePreviewUpdated = true;
+            colorDialog.Color = pnlColor.BackColor;
+            if (colorDialog.ShowDialog() == DialogResult.OK)
+            {
+                pnlColor.BackColor = colorDialog.Color;
+            }
         }
 
         private void lblStringTextVariables_Click(object sender, EventArgs e)

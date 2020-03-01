@@ -32,17 +32,17 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
     {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EventCommandChangePlayerLabel));
             this.grpChangeLabel = new DarkUI.Controls.DarkGroupBox();
+            this.lblStringTextVariables = new System.Windows.Forms.Label();
+            this.txtLabel = new DarkUI.Controls.DarkTextBox();
+            this.lblValue = new System.Windows.Forms.Label();
             this.lblPosition = new System.Windows.Forms.Label();
             this.cmbPosition = new DarkUI.Controls.DarkComboBox();
             this.chkPlayerNameColor = new System.Windows.Forms.CheckBox();
-            this.pnlLightColor = new System.Windows.Forms.Panel();
+            this.pnlColor = new System.Windows.Forms.Panel();
             this.btnSelectLightColor = new DarkUI.Controls.DarkButton();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
             this.colorDialog = new System.Windows.Forms.ColorDialog();
-            this.lblValue = new System.Windows.Forms.Label();
-            this.txtLabel = new DarkUI.Controls.DarkTextBox();
-            this.lblStringTextVariables = new System.Windows.Forms.Label();
             this.grpChangeLabel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -56,7 +56,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpChangeLabel.Controls.Add(this.lblPosition);
             this.grpChangeLabel.Controls.Add(this.cmbPosition);
             this.grpChangeLabel.Controls.Add(this.chkPlayerNameColor);
-            this.grpChangeLabel.Controls.Add(this.pnlLightColor);
+            this.grpChangeLabel.Controls.Add(this.pnlColor);
             this.grpChangeLabel.Controls.Add(this.btnSelectLightColor);
             this.grpChangeLabel.Controls.Add(this.btnCancel);
             this.grpChangeLabel.Controls.Add(this.btnSave);
@@ -67,6 +67,39 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpChangeLabel.TabIndex = 17;
             this.grpChangeLabel.TabStop = false;
             this.grpChangeLabel.Text = "Change Player Label:";
+            // 
+            // lblStringTextVariables
+            // 
+            this.lblStringTextVariables.AutoSize = true;
+            this.lblStringTextVariables.BackColor = System.Drawing.Color.Transparent;
+            this.lblStringTextVariables.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblStringTextVariables.ForeColor = System.Drawing.SystemColors.MenuHighlight;
+            this.lblStringTextVariables.Location = new System.Drawing.Point(2, 185);
+            this.lblStringTextVariables.Name = "lblStringTextVariables";
+            this.lblStringTextVariables.Size = new System.Drawing.Size(245, 13);
+            this.lblStringTextVariables.TabIndex = 69;
+            this.lblStringTextVariables.Text = "Text variables work with strings. Click here for info!";
+            this.lblStringTextVariables.Click += new System.EventHandler(this.lblStringTextVariables_Click);
+            // 
+            // txtLabel
+            // 
+            this.txtLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.txtLabel.Location = new System.Drawing.Point(88, 57);
+            this.txtLabel.Name = "txtLabel";
+            this.txtLabel.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
+            this.txtLabel.Size = new System.Drawing.Size(152, 20);
+            this.txtLabel.TabIndex = 56;
+            // 
+            // lblValue
+            // 
+            this.lblValue.AutoSize = true;
+            this.lblValue.Location = new System.Drawing.Point(6, 59);
+            this.lblValue.Name = "lblValue";
+            this.lblValue.Size = new System.Drawing.Size(34, 13);
+            this.lblValue.TabIndex = 55;
+            this.lblValue.Text = "Value";
             // 
             // lblPosition
             // 
@@ -111,14 +144,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.chkPlayerNameColor.Text = "Copy Player Name Color?";
             this.chkPlayerNameColor.UseVisualStyleBackColor = true;
             // 
-            // pnlLightColor
+            // pnlColor
             // 
-            this.pnlLightColor.BackColor = System.Drawing.Color.White;
-            this.pnlLightColor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pnlLightColor.Location = new System.Drawing.Point(8, 92);
-            this.pnlLightColor.Name = "pnlLightColor";
-            this.pnlLightColor.Size = new System.Drawing.Size(31, 29);
-            this.pnlLightColor.TabIndex = 41;
+            this.pnlColor.BackColor = System.Drawing.Color.White;
+            this.pnlColor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pnlColor.Location = new System.Drawing.Point(8, 92);
+            this.pnlColor.Name = "pnlColor";
+            this.pnlColor.Size = new System.Drawing.Size(31, 29);
+            this.pnlColor.TabIndex = 41;
             // 
             // btnSelectLightColor
             // 
@@ -150,39 +183,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.btnSave.Text = "Ok";
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
-            // lblValue
-            // 
-            this.lblValue.AutoSize = true;
-            this.lblValue.Location = new System.Drawing.Point(6, 59);
-            this.lblValue.Name = "lblValue";
-            this.lblValue.Size = new System.Drawing.Size(34, 13);
-            this.lblValue.TabIndex = 55;
-            this.lblValue.Text = "Value";
-            // 
-            // txtLabel
-            // 
-            this.txtLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.txtLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.txtLabel.Location = new System.Drawing.Point(88, 57);
-            this.txtLabel.Name = "txtLabel";
-            this.txtLabel.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.txtLabel.Size = new System.Drawing.Size(152, 20);
-            this.txtLabel.TabIndex = 56;
-            // 
-            // lblStringTextVariables
-            // 
-            this.lblStringTextVariables.AutoSize = true;
-            this.lblStringTextVariables.BackColor = System.Drawing.Color.Transparent;
-            this.lblStringTextVariables.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblStringTextVariables.ForeColor = System.Drawing.SystemColors.MenuHighlight;
-            this.lblStringTextVariables.Location = new System.Drawing.Point(2, 185);
-            this.lblStringTextVariables.Name = "lblStringTextVariables";
-            this.lblStringTextVariables.Size = new System.Drawing.Size(245, 13);
-            this.lblStringTextVariables.TabIndex = 69;
-            this.lblStringTextVariables.Text = "Text variables work with strings. Click here for info!";
-            this.lblStringTextVariables.Click += new System.EventHandler(this.lblStringTextVariables_Click);
-            // 
             // EventCommandChangePlayerLabel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -204,7 +204,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
     private DarkButton btnCancel;
     private DarkButton btnSave;
     private System.Windows.Forms.CheckBox chkPlayerNameColor;
-    public System.Windows.Forms.Panel pnlLightColor;
+    public System.Windows.Forms.Panel pnlColor;
     private DarkButton btnSelectLightColor;
     private System.Windows.Forms.ColorDialog colorDialog;
     internal DarkComboBox cmbPosition;

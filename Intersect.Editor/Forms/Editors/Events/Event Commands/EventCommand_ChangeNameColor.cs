@@ -18,7 +18,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
             Color color = refCommand.Color;
             if (color == null) color = Color.White;
-            pnlLightColor.BackColor = System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B);
+            pnlColor.BackColor = System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B);
             chkOverride.Checked = refCommand.Override;
             chkRemove.Checked = refCommand.Remove;
             InitLocalization();
@@ -36,7 +36,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            mMyCommand.Color = Color.FromArgb(colorDialog.Color.A, colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B);
+            mMyCommand.Color = Color.FromArgb(pnlColor.BackColor.A, pnlColor.BackColor.R, pnlColor.BackColor.G, pnlColor.BackColor.B);
             mMyCommand.Override = chkOverride.Checked;
             mMyCommand.Remove = chkRemove.Checked;
             mEventEditor.FinishCommandEdit();
@@ -49,10 +49,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void btnSelectLightColor_Click(object sender, EventArgs e)
         {
-            colorDialog.Color = System.Drawing.Color.White;
-            colorDialog.ShowDialog();
-            pnlLightColor.BackColor = colorDialog.Color;
-            EditorGraphics.TilePreviewUpdated = true;
+            colorDialog.Color = pnlColor.BackColor;
+            if (colorDialog.ShowDialog() == DialogResult.OK)
+            {
+                pnlColor.BackColor = colorDialog.Color;
+            }
         }
     }
 }

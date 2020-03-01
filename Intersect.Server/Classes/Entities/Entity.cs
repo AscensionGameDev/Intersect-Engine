@@ -119,7 +119,20 @@ namespace Intersect.Server.Entities
         public Guid Id { get => _id; set => _id = value; }
         
         [NotMapped] public LabelInstance HeaderLabel { get; set; }
+        [JsonIgnore, Column("HeaderLabel")]
+        public string HeaderLabelJson
+        {
+            get => JsonConvert.SerializeObject(HeaderLabel);
+            set => HeaderLabel = value != null ? JsonConvert.DeserializeObject<LabelInstance>(value): new LabelInstance();
+        }
+
         [NotMapped] public LabelInstance FooterLabel { get; set; }
+        [JsonIgnore, Column("FooterLabel")]
+        public string FooterLabelJson
+        {
+            get => JsonConvert.SerializeObject(FooterLabel);
+            set => FooterLabel = value != null ? JsonConvert.DeserializeObject<LabelInstance>(value) : new LabelInstance();
+        }
 
         [NotMapped]
         public bool Dead { get; set; }
