@@ -17,12 +17,13 @@ namespace Intersect.Client.MonoGame.Audio
         // ReSharper disable once SuggestBaseTypeForParameter
         public MonoMusicInstance([NotNull] MonoMusicSource source) : base(source)
         {
-            mSong = source.Song;
+            mSong = source.LoadSong();
         }
 
         public override void Play()
         {
-            MediaPlayer.Play(mSong);
+            if (mSong != null)
+                MediaPlayer.Play(mSong);
         }
 
         public override void Pause()
@@ -88,6 +89,7 @@ namespace Intersect.Client.MonoGame.Audio
             try
             {
                 MediaPlayer.Stop();
+                mSong.Dispose();
             }
             catch
             {

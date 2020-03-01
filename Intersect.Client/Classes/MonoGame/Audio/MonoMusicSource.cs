@@ -10,7 +10,6 @@ namespace Intersect.Client.MonoGame.Audio
     public class MonoMusicSource : GameAudioSource
     {
         private readonly string mPath;
-        private Song mSong;
 
         public MonoMusicSource(string path)
         {
@@ -19,35 +18,21 @@ namespace Intersect.Client.MonoGame.Audio
 
         public override GameAudioInstance CreateInstance() => new MonoMusicInstance(this);
 
-        private void Load()
+        public Song LoadSong()
         {
-            if (string.IsNullOrWhiteSpace(mPath))
+            if (!string.IsNullOrWhiteSpace(mPath))
             {
-                return;
-            }
-
-            try
-            {
-                mSong = Song.FromUri(mPath, new Uri(mPath, UriKind.Relative));
-            }
-            catch (Exception exception)
-            {
-                Log.Error($"Error loading '{mPath}'.", exception);
-                ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound), new Color(0xBF, 0x0, 0x0)));
-            }
-        }
-
-        public Song Song
-        {
-            get
-            {
-                if (mSong == null)
+                try
                 {
-                    Load();
+                    return Song.FromUri(mPath, new Uri(mPath, UriKind.Relative));
                 }
-
-                return mSong;
+                catch (Exception exception)
+                {
+                    Log.Error($"Error loading '{mPath}'.", exception);
+                    ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound), new Color(0xBF, 0x0, 0x0)));
+                }
             }
+            return null;
         }
 
     }
