@@ -83,6 +83,7 @@ namespace Intersect.Server.Entities
                     X = PageInstance.X;
                     Y = PageInstance.Y;
                     PageInstance = null;
+                    CallStack.Clear();
                     PlayerHasDied = false;
                     if (HoldingPlayer)
                     {
