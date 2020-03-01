@@ -28,6 +28,7 @@ namespace Intersect.Client.UI.Game
         {
             mGameCanvas = gameCanvas;
             mPicture = new ImagePanel(gameCanvas);
+            mPicture.Clicked += MPicture_Clicked;
         }
 
         public void Setup(string picture, int size, bool clickable)
@@ -41,12 +42,6 @@ namespace Intersect.Client.UI.Game
             {
                 mPicture.SetSize(mPicture.Texture.GetWidth(), mPicture.Texture.GetHeight());
                 Align.Center(mPicture);
-
-                //Assign it to be clickable if property set
-                if (clickable)
-                {
-                    mPicture.Clicked += MPicture_Clicked;
-                }
 
                 if (size != (int)PictureSize.Original) // Don't scale if you want to keep the original size.
                 {
@@ -94,13 +89,20 @@ namespace Intersect.Client.UI.Game
 
         private void MPicture_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            Close();
+            if (Clickable)
+            {
+                Close();
+            }
         }
 
         public void Close()
         {
-            Picture = null;
-            mPicture.Hide();
+            if (Picture != null)
+            {
+                Globals.Picture = null;
+                Picture = null;
+                mPicture.Hide();
+            }
         }
     }
 }
