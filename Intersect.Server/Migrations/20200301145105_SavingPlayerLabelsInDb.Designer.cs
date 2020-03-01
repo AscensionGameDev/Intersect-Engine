@@ -3,14 +3,16 @@ using System;
 using Intersect.Server.Database.PlayerData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Intersect.Server.Migrations
 {
     [DbContext(typeof(PlayerContext))]
-    partial class PlayerContextModelSnapshot : ModelSnapshot
+    [Migration("20200301145105_SavingPlayerLabelsInDb")]
+    partial class SavingPlayerLabelsInDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -263,6 +265,8 @@ namespace Intersect.Server.Migrations
                     b.Property<Guid>("PlayerId");
 
                     b.Property<int>("Slot");
+
+                    b.Property<long>("SpellCd");
 
                     b.Property<Guid>("SpellId");
 

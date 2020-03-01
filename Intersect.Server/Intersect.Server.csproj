@@ -575,6 +575,10 @@
     <Compile Include="Migrations\20191126025000_RefactoringCooldowns.designer.cs">
       <DependentUpon>20191126025000_RefactoringCooldowns.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\20200301145105_SavingPlayerLabelsInDb.cs" />
+    <Compile Include="Migrations\20200301145105_SavingPlayerLabelsInDb.designer.cs">
+      <DependentUpon>20200301145105_SavingPlayerLabelsInDb.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Game\20190303234637_SpellUpgrades_OnHit_Shields.cs" />
     <Compile Include="Migrations\Game\20190303234637_SpellUpgrades_OnHit_Shields.Designer.cs">
       <DependentUpon>20190303234637_SpellUpgrades_OnHit_Shields.cs</DependentUpon>
