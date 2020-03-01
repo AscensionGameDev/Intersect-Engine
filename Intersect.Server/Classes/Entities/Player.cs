@@ -4601,6 +4601,21 @@ namespace Intersect.Server.Entities
             }
         }
 
+        public void SetVariableValue(Guid id, string value)
+        {
+            var v = GetVariable(id);
+            if (v != null)
+            {
+                v.Value.String = value;
+            }
+            else
+            {
+                v = new Variable(id);
+                v.Value.String = value;
+                Variables.Add(v);
+            }
+        }
+
         //Event Processing Methods
         public EventInstance EventExists(Guid mapId, int x, int y)
         {
