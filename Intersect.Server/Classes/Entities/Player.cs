@@ -3699,7 +3699,7 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public virtual bool IsAllyOf([NotNull] Player otherPlayer) => this.InParty(otherPlayer);
+        public virtual bool IsAllyOf([NotNull] Player otherPlayer) => base.IsAllyOf(otherPlayer) || this.InParty(otherPlayer);
 
         public bool CanSpellCast(SpellBase spell, EntityInstance target, bool checkVitalReqs)
         {
