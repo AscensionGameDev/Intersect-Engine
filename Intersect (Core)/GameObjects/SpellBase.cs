@@ -164,7 +164,10 @@ namespace Intersect.GameObjects
 
         [Column("OnHit")]
         public int OnHitDuration { get; set; }
-    }
+
+        [Column("Trap")]
+        public int TrapDuration { get; set; }
+  }
 
     [Owned]
     public class SpellWarpData

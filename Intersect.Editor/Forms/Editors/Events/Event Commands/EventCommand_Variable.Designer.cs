@@ -39,6 +39,9 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.rdoGlobalVariable = new DarkUI.Controls.DarkRadioButton();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
+            this.grpStringVariable = new DarkUI.Controls.DarkGroupBox();
+            this.txtStringValue = new DarkUI.Controls.DarkTextBox();
+            this.optStaticString = new DarkUI.Controls.DarkRadioButton();
             this.grpBooleanVariable = new DarkUI.Controls.DarkGroupBox();
             this.cmbBooleanCloneGlobalVar = new DarkUI.Controls.DarkComboBox();
             this.cmbBooleanClonePlayerVar = new DarkUI.Controls.DarkComboBox();
@@ -52,11 +55,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.optNumericRandom = new DarkUI.Controls.DarkRadioButton();
             this.optNumericSubtract = new DarkUI.Controls.DarkRadioButton();
             this.optNumericSystemTime = new DarkUI.Controls.DarkRadioButton();
-            this.grpNumericRandom = new DarkUI.Controls.DarkGroupBox();
-            this.nudHigh = new DarkUI.Controls.DarkNumericUpDown();
-            this.nudLow = new DarkUI.Controls.DarkNumericUpDown();
-            this.lblNumericRandomHigh = new System.Windows.Forms.Label();
-            this.lblNumericRandomLow = new System.Windows.Forms.Label();
             this.grpNumericValues = new DarkUI.Controls.DarkGroupBox();
             this.nudNumericValue = new DarkUI.Controls.DarkNumericUpDown();
             this.cmbNumericCloneGlobalVar = new DarkUI.Controls.DarkComboBox();
@@ -64,15 +62,32 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.optNumericCloneGlobalVar = new DarkUI.Controls.DarkRadioButton();
             this.optNumericClonePlayerVar = new DarkUI.Controls.DarkRadioButton();
             this.optNumericStaticVal = new DarkUI.Controls.DarkRadioButton();
+            this.grpNumericRandom = new DarkUI.Controls.DarkGroupBox();
+            this.nudHigh = new DarkUI.Controls.DarkNumericUpDown();
+            this.nudLow = new DarkUI.Controls.DarkNumericUpDown();
+            this.lblNumericRandomHigh = new System.Windows.Forms.Label();
+            this.lblNumericRandomLow = new System.Windows.Forms.Label();
+            this.optReplaceString = new DarkUI.Controls.DarkRadioButton();
+            this.grpStringReplace = new DarkUI.Controls.DarkGroupBox();
+            this.lblStringReplace = new System.Windows.Forms.Label();
+            this.lblStringFind = new System.Windows.Forms.Label();
+            this.lblStringValue = new System.Windows.Forms.Label();
+            this.txtStringFind = new DarkUI.Controls.DarkTextBox();
+            this.txtStringReplace = new DarkUI.Controls.DarkTextBox();
+            this.grpStringSet = new DarkUI.Controls.DarkGroupBox();
+            this.lblStringTextVariables = new System.Windows.Forms.Label();
             this.grpSetVariable.SuspendLayout();
             this.grpSelectVariable.SuspendLayout();
+            this.grpStringVariable.SuspendLayout();
             this.grpBooleanVariable.SuspendLayout();
             this.grpNumericVariable.SuspendLayout();
+            this.grpNumericValues.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudNumericValue)).BeginInit();
             this.grpNumericRandom.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudHigh)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudLow)).BeginInit();
-            this.grpNumericValues.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudNumericValue)).BeginInit();
+            this.grpStringReplace.SuspendLayout();
+            this.grpStringSet.SuspendLayout();
             this.SuspendLayout();
             // 
             // grpSetVariable
@@ -82,6 +97,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpSetVariable.Controls.Add(this.grpSelectVariable);
             this.grpSetVariable.Controls.Add(this.btnCancel);
             this.grpSetVariable.Controls.Add(this.btnSave);
+            this.grpSetVariable.Controls.Add(this.grpStringVariable);
             this.grpSetVariable.Controls.Add(this.grpBooleanVariable);
             this.grpSetVariable.Controls.Add(this.grpNumericVariable);
             this.grpSetVariable.ForeColor = System.Drawing.Color.Gainsboro;
@@ -181,6 +197,44 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.btnSave.TabIndex = 19;
             this.btnSave.Text = "Ok";
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // grpStringVariable
+            // 
+            this.grpStringVariable.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpStringVariable.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpStringVariable.Controls.Add(this.lblStringTextVariables);
+            this.grpStringVariable.Controls.Add(this.grpStringReplace);
+            this.grpStringVariable.Controls.Add(this.optReplaceString);
+            this.grpStringVariable.Controls.Add(this.optStaticString);
+            this.grpStringVariable.Controls.Add(this.grpStringSet);
+            this.grpStringVariable.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpStringVariable.Location = new System.Drawing.Point(6, 100);
+            this.grpStringVariable.Name = "grpStringVariable";
+            this.grpStringVariable.Size = new System.Drawing.Size(296, 183);
+            this.grpStringVariable.TabIndex = 51;
+            this.grpStringVariable.TabStop = false;
+            this.grpStringVariable.Text = "String Variable:";
+            this.grpStringVariable.Visible = false;
+            // 
+            // txtStringValue
+            // 
+            this.txtStringValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtStringValue.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtStringValue.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.txtStringValue.Location = new System.Drawing.Point(71, 25);
+            this.txtStringValue.Name = "txtStringValue";
+            this.txtStringValue.Size = new System.Drawing.Size(207, 20);
+            this.txtStringValue.TabIndex = 62;
+            // 
+            // optStaticString
+            // 
+            this.optStaticString.AutoSize = true;
+            this.optStaticString.Location = new System.Drawing.Point(9, 19);
+            this.optStaticString.Name = "optStaticString";
+            this.optStaticString.Size = new System.Drawing.Size(41, 17);
+            this.optStaticString.TabIndex = 51;
+            this.optStaticString.Text = "Set";
+            this.optStaticString.CheckedChanged += new System.EventHandler(this.optStaticString_CheckedChanged);
             // 
             // grpBooleanVariable
             // 
@@ -287,8 +341,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpNumericVariable.Controls.Add(this.optNumericRandom);
             this.grpNumericVariable.Controls.Add(this.optNumericSubtract);
             this.grpNumericVariable.Controls.Add(this.optNumericSystemTime);
-            this.grpNumericVariable.Controls.Add(this.grpNumericRandom);
             this.grpNumericVariable.Controls.Add(this.grpNumericValues);
+            this.grpNumericVariable.Controls.Add(this.grpNumericRandom);
             this.grpNumericVariable.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpNumericVariable.Location = new System.Drawing.Point(6, 100);
             this.grpNumericVariable.Name = "grpNumericVariable";
@@ -345,88 +399,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.optNumericSystemTime.TabIndex = 39;
             this.optNumericSystemTime.Text = "System Time (Ms)";
             this.optNumericSystemTime.CheckedChanged += new System.EventHandler(this.optNumericSystemTime_CheckedChanged);
-            // 
-            // grpNumericRandom
-            // 
-            this.grpNumericRandom.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.grpNumericRandom.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpNumericRandom.Controls.Add(this.nudHigh);
-            this.grpNumericRandom.Controls.Add(this.nudLow);
-            this.grpNumericRandom.Controls.Add(this.lblNumericRandomHigh);
-            this.grpNumericRandom.Controls.Add(this.lblNumericRandomLow);
-            this.grpNumericRandom.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpNumericRandom.Location = new System.Drawing.Point(6, 74);
-            this.grpNumericRandom.Name = "grpNumericRandom";
-            this.grpNumericRandom.Size = new System.Drawing.Size(284, 97);
-            this.grpNumericRandom.TabIndex = 39;
-            this.grpNumericRandom.TabStop = false;
-            this.grpNumericRandom.Text = "Random Number:";
-            // 
-            // nudHigh
-            // 
-            this.nudHigh.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudHigh.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudHigh.Location = new System.Drawing.Point(44, 51);
-            this.nudHigh.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-            this.nudHigh.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            -2147483648});
-            this.nudHigh.Name = "nudHigh";
-            this.nudHigh.Size = new System.Drawing.Size(224, 20);
-            this.nudHigh.TabIndex = 42;
-            this.nudHigh.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // nudLow
-            // 
-            this.nudLow.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudLow.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudLow.Location = new System.Drawing.Point(44, 25);
-            this.nudLow.Maximum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            0});
-            this.nudLow.Minimum = new decimal(new int[] {
-            1000000000,
-            0,
-            0,
-            -2147483648});
-            this.nudLow.Name = "nudLow";
-            this.nudLow.Size = new System.Drawing.Size(224, 20);
-            this.nudLow.TabIndex = 41;
-            this.nudLow.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
-            // lblNumericRandomHigh
-            // 
-            this.lblNumericRandomHigh.AutoSize = true;
-            this.lblNumericRandomHigh.Location = new System.Drawing.Point(9, 54);
-            this.lblNumericRandomHigh.Name = "lblNumericRandomHigh";
-            this.lblNumericRandomHigh.Size = new System.Drawing.Size(29, 13);
-            this.lblNumericRandomHigh.TabIndex = 39;
-            this.lblNumericRandomHigh.Text = "High";
-            // 
-            // lblNumericRandomLow
-            // 
-            this.lblNumericRandomLow.AutoSize = true;
-            this.lblNumericRandomLow.Location = new System.Drawing.Point(11, 27);
-            this.lblNumericRandomLow.Name = "lblNumericRandomLow";
-            this.lblNumericRandomLow.Size = new System.Drawing.Size(27, 13);
-            this.lblNumericRandomLow.TabIndex = 40;
-            this.lblNumericRandomLow.Text = "Low";
             // 
             // grpNumericValues
             // 
@@ -542,6 +514,188 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.optNumericStaticVal.TabStop = true;
             this.optNumericStaticVal.Text = "Static Value:";
             // 
+            // grpNumericRandom
+            // 
+            this.grpNumericRandom.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpNumericRandom.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpNumericRandom.Controls.Add(this.nudHigh);
+            this.grpNumericRandom.Controls.Add(this.nudLow);
+            this.grpNumericRandom.Controls.Add(this.lblNumericRandomHigh);
+            this.grpNumericRandom.Controls.Add(this.lblNumericRandomLow);
+            this.grpNumericRandom.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpNumericRandom.Location = new System.Drawing.Point(6, 74);
+            this.grpNumericRandom.Name = "grpNumericRandom";
+            this.grpNumericRandom.Size = new System.Drawing.Size(284, 97);
+            this.grpNumericRandom.TabIndex = 39;
+            this.grpNumericRandom.TabStop = false;
+            this.grpNumericRandom.Text = "Random Number:";
+            // 
+            // nudHigh
+            // 
+            this.nudHigh.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudHigh.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudHigh.Location = new System.Drawing.Point(44, 51);
+            this.nudHigh.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+            this.nudHigh.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+            this.nudHigh.Name = "nudHigh";
+            this.nudHigh.Size = new System.Drawing.Size(224, 20);
+            this.nudHigh.TabIndex = 42;
+            this.nudHigh.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // nudLow
+            // 
+            this.nudLow.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudLow.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudLow.Location = new System.Drawing.Point(44, 25);
+            this.nudLow.Maximum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            0});
+            this.nudLow.Minimum = new decimal(new int[] {
+            1000000000,
+            0,
+            0,
+            -2147483648});
+            this.nudLow.Name = "nudLow";
+            this.nudLow.Size = new System.Drawing.Size(224, 20);
+            this.nudLow.TabIndex = 41;
+            this.nudLow.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // lblNumericRandomHigh
+            // 
+            this.lblNumericRandomHigh.AutoSize = true;
+            this.lblNumericRandomHigh.Location = new System.Drawing.Point(9, 54);
+            this.lblNumericRandomHigh.Name = "lblNumericRandomHigh";
+            this.lblNumericRandomHigh.Size = new System.Drawing.Size(29, 13);
+            this.lblNumericRandomHigh.TabIndex = 39;
+            this.lblNumericRandomHigh.Text = "High";
+            // 
+            // lblNumericRandomLow
+            // 
+            this.lblNumericRandomLow.AutoSize = true;
+            this.lblNumericRandomLow.Location = new System.Drawing.Point(11, 27);
+            this.lblNumericRandomLow.Name = "lblNumericRandomLow";
+            this.lblNumericRandomLow.Size = new System.Drawing.Size(27, 13);
+            this.lblNumericRandomLow.TabIndex = 40;
+            this.lblNumericRandomLow.Text = "Low";
+            // 
+            // optReplaceString
+            // 
+            this.optReplaceString.AutoSize = true;
+            this.optReplaceString.Location = new System.Drawing.Point(62, 19);
+            this.optReplaceString.Name = "optReplaceString";
+            this.optReplaceString.Size = new System.Drawing.Size(65, 17);
+            this.optReplaceString.TabIndex = 63;
+            this.optReplaceString.Text = "Replace";
+            this.optReplaceString.CheckedChanged += new System.EventHandler(this.optReplaceString_CheckedChanged);
+            // 
+            // grpStringReplace
+            // 
+            this.grpStringReplace.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpStringReplace.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpStringReplace.Controls.Add(this.txtStringReplace);
+            this.grpStringReplace.Controls.Add(this.txtStringFind);
+            this.grpStringReplace.Controls.Add(this.lblStringReplace);
+            this.grpStringReplace.Controls.Add(this.lblStringFind);
+            this.grpStringReplace.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpStringReplace.Location = new System.Drawing.Point(6, 55);
+            this.grpStringReplace.Name = "grpStringReplace";
+            this.grpStringReplace.Size = new System.Drawing.Size(284, 90);
+            this.grpStringReplace.TabIndex = 65;
+            this.grpStringReplace.TabStop = false;
+            this.grpStringReplace.Text = "Replace";
+            // 
+            // lblStringReplace
+            // 
+            this.lblStringReplace.AutoSize = true;
+            this.lblStringReplace.Location = new System.Drawing.Point(9, 54);
+            this.lblStringReplace.Name = "lblStringReplace";
+            this.lblStringReplace.Size = new System.Drawing.Size(47, 13);
+            this.lblStringReplace.TabIndex = 39;
+            this.lblStringReplace.Text = "Replace";
+            // 
+            // lblStringFind
+            // 
+            this.lblStringFind.AutoSize = true;
+            this.lblStringFind.Location = new System.Drawing.Point(11, 27);
+            this.lblStringFind.Name = "lblStringFind";
+            this.lblStringFind.Size = new System.Drawing.Size(27, 13);
+            this.lblStringFind.TabIndex = 40;
+            this.lblStringFind.Text = "Find";
+            // 
+            // lblStringValue
+            // 
+            this.lblStringValue.AutoSize = true;
+            this.lblStringValue.Location = new System.Drawing.Point(6, 28);
+            this.lblStringValue.Name = "lblStringValue";
+            this.lblStringValue.Size = new System.Drawing.Size(37, 13);
+            this.lblStringValue.TabIndex = 66;
+            this.lblStringValue.Text = "Value:";
+            // 
+            // txtStringFind
+            // 
+            this.txtStringFind.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtStringFind.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtStringFind.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.txtStringFind.Location = new System.Drawing.Point(77, 20);
+            this.txtStringFind.Name = "txtStringFind";
+            this.txtStringFind.Size = new System.Drawing.Size(201, 20);
+            this.txtStringFind.TabIndex = 63;
+            // 
+            // txtStringReplace
+            // 
+            this.txtStringReplace.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtStringReplace.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtStringReplace.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.txtStringReplace.Location = new System.Drawing.Point(77, 52);
+            this.txtStringReplace.Name = "txtStringReplace";
+            this.txtStringReplace.Size = new System.Drawing.Size(201, 20);
+            this.txtStringReplace.TabIndex = 64;
+            // 
+            // grpStringSet
+            // 
+            this.grpStringSet.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpStringSet.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpStringSet.Controls.Add(this.lblStringValue);
+            this.grpStringSet.Controls.Add(this.txtStringValue);
+            this.grpStringSet.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpStringSet.Location = new System.Drawing.Point(6, 55);
+            this.grpStringSet.Name = "grpStringSet";
+            this.grpStringSet.Size = new System.Drawing.Size(284, 90);
+            this.grpStringSet.TabIndex = 67;
+            this.grpStringSet.TabStop = false;
+            this.grpStringSet.Text = "Set";
+            // 
+            // lblStringTextVariables
+            // 
+            this.lblStringTextVariables.AutoSize = true;
+            this.lblStringTextVariables.BackColor = System.Drawing.Color.Transparent;
+            this.lblStringTextVariables.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblStringTextVariables.ForeColor = System.Drawing.SystemColors.MenuHighlight;
+            this.lblStringTextVariables.Location = new System.Drawing.Point(6, 159);
+            this.lblStringTextVariables.Name = "lblStringTextVariables";
+            this.lblStringTextVariables.Size = new System.Drawing.Size(249, 13);
+            this.lblStringTextVariables.TabIndex = 68;
+            this.lblStringTextVariables.Text = "Text variables work with strings. Click here for a list!";
+            this.lblStringTextVariables.Click += new System.EventHandler(this.lblStringTextVariables_Click);
+            // 
             // EventCommandVariable
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -554,17 +708,23 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpSetVariable.ResumeLayout(false);
             this.grpSelectVariable.ResumeLayout(false);
             this.grpSelectVariable.PerformLayout();
+            this.grpStringVariable.ResumeLayout(false);
+            this.grpStringVariable.PerformLayout();
             this.grpBooleanVariable.ResumeLayout(false);
             this.grpBooleanVariable.PerformLayout();
             this.grpNumericVariable.ResumeLayout(false);
             this.grpNumericVariable.PerformLayout();
+            this.grpNumericValues.ResumeLayout(false);
+            this.grpNumericValues.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudNumericValue)).EndInit();
             this.grpNumericRandom.ResumeLayout(false);
             this.grpNumericRandom.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudHigh)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudLow)).EndInit();
-            this.grpNumericValues.ResumeLayout(false);
-            this.grpNumericValues.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudNumericValue)).EndInit();
+            this.grpStringReplace.ResumeLayout(false);
+            this.grpStringReplace.PerformLayout();
+            this.grpStringSet.ResumeLayout(false);
+            this.grpStringSet.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -604,5 +764,17 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         internal DarkRadioButton optBooleanClonePlayerVar;
         internal DarkRadioButton optBooleanTrue;
         internal DarkRadioButton optBooleanFalse;
+        private DarkGroupBox grpStringVariable;
+        private DarkTextBox txtStringValue;
+        internal System.Windows.Forms.Label lblStringValue;
+        private DarkGroupBox grpStringReplace;
+        private DarkTextBox txtStringReplace;
+        private DarkTextBox txtStringFind;
+        internal System.Windows.Forms.Label lblStringReplace;
+        internal System.Windows.Forms.Label lblStringFind;
+        private DarkRadioButton optReplaceString;
+        private DarkRadioButton optStaticString;
+        private DarkGroupBox grpStringSet;
+        private System.Windows.Forms.Label lblStringTextVariables;
     }
 }

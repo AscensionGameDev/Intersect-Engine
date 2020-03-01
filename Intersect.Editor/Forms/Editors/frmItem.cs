@@ -206,6 +206,11 @@ namespace Intersect.Editor.Forms.Editors
             lblHealthBonus.Text = Strings.ItemEditor.health;
             lblManaBonus.Text = Strings.ItemEditor.mana;
 
+            grpRegen.Text = Strings.ItemEditor.regen;
+            lblHpRegen.Text = Strings.ItemEditor.hpregen;
+            lblManaRegen.Text = Strings.ItemEditor.mpregen;
+            lblRegenHint.Text = Strings.ItemEditor.regenhint;
+
             grpAttackSpeed.Text = Strings.ItemEditor.attackspeed;
             lblAttackSpeedModifier.Text = Strings.ItemEditor.attackspeedmodifier;
             lblAttackSpeedValue.Text = Strings.ItemEditor.attackspeedvalue;
@@ -278,6 +283,8 @@ namespace Intersect.Editor.Forms.Editors
                 nudManaBonus.Value = mEditorItem.VitalsGiven[1];
                 nudHPPercentage.Value = mEditorItem.PercentageVitalsGiven[0];
                 nudMPPercentage.Value = mEditorItem.PercentageVitalsGiven[1];
+                nudHPRegen.Value = mEditorItem.VitalsRegen[0];
+                nudMpRegen.Value = mEditorItem.VitalsRegen[1];
 
                 nudDamage.Value = mEditorItem.Damage;
                 nudCritChance.Value = mEditorItem.CritChance;
@@ -784,6 +791,16 @@ namespace Intersect.Editor.Forms.Editors
             mEditorItem.PercentageVitalsGiven[1] = (int)nudMPPercentage.Value;
         }
 
+        private void nudHPRegen_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.VitalsRegen[0] = (int)nudHPRegen.Value;
+    }
+
+        private void nudMpRegen_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.VitalsRegen[1] = (int)nudMpRegen.Value;
+        }
+
         private void cmbEquipmentAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
             mEditorItem.EquipmentAnimation = AnimationBase.Get(AnimationBase.IdFromList(cmbEquipmentAnimation.SelectedIndex - 1));
@@ -1026,6 +1043,7 @@ namespace Intersect.Editor.Forms.Editors
                 txtSearch.SelectAll();
         }
 
-        #endregion
-    }
+    #endregion
+
+  }
 }

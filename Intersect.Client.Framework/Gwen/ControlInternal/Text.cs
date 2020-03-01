@@ -160,13 +160,8 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
         /// </summary>
         public void SizeToContents()
         {
-            if (String == null)
+            if (String == null || Font == null)
                 return;
-
-            if (Font == null)
-            {
-                throw new InvalidOperationException("Text.SizeToContents() - No Font!!\n");
-            }
 
             Point p = new Point(1, 10);
 
