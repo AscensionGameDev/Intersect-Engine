@@ -1133,7 +1133,7 @@ namespace Intersect.Server.EventProcessing
                     {
                         if (partyMember != player)
                         {
-                            partyMember.SetVariableValue(command.VariableId, value.Integer);
+                            partyMember.SetVariableValue(command.VariableId, value.String);
                         }
                     }
                 }
