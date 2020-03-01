@@ -92,7 +92,7 @@ namespace Intersect.Client.MonoGame.Graphics
 
         public IList<string> ValidVideoModes => GetValidVideoModes();
 
-        public void UpdateGraphicsState(int width, int height)
+        public void UpdateGraphicsState(int width, int height, bool initial = false)
         {
             var currentDisplayMode = mGraphics.GraphicsDevice.Adapter.CurrentDisplayMode;
 
@@ -145,10 +145,13 @@ namespace Intersect.Client.MonoGame.Graphics
 
             mGraphics.ApplyChanges();
 
-            mDisplayWidth = currentDisplayMode.Width;
-            mDisplayHeight = currentDisplayMode.Height;
-            mGameWindow.Position = new Microsoft.Xna.Framework.Point((mDisplayWidth - mScreenWidth) / 2,
-                (mDisplayHeight - mScreenHeight) / 2);
+            mDisplayWidth = mGraphics.GraphicsDevice.Adapter.CurrentDisplayMode.Width;
+            mDisplayHeight = mGraphics.GraphicsDevice.Adapter.CurrentDisplayMode.Height;
+            if (fsChanged || initial)
+            {
+                mGameWindow.Position = new Microsoft.Xna.Framework.Point((mDisplayWidth - mScreenWidth) / 2,
+                    (mDisplayHeight - mScreenHeight) / 2);
+            }
             mOldDisplayMode = currentDisplayMode;
             if (fsChanged) mFsChangedTimer = Globals.System.GetTimeMs() + 1000;
             if (fsChanged) mDisplayModeChanged = true;
@@ -173,10 +176,7 @@ namespace Intersect.Client.MonoGame.Graphics
                 mGraphics.ApplyChanges();
                 mFsChangedTimer = -1;
             }
-            if (mGameWindow.ClientBounds.Width != 0 && mGameWindow.ClientBounds.Height != 0 &&
-                (mGameWindow.ClientBounds.Width != mScreenWidth || mGameWindow.ClientBounds.Height != mScreenHeight ||
-                 mGraphics.GraphicsDevice.Adapter.CurrentDisplayMode != mOldDisplayMode) &&
-                !mGraphics.IsFullScreen)
+            if (mGameWindow.ClientBounds.Width != 0 && mGameWindow.ClientBounds.Height != 0 && (mGameWindow.ClientBounds.Width != mScreenWidth || mGameWindow.ClientBounds.Height != mScreenHeight) && !mGraphics.IsFullScreen)
             {
                 if (mOldDisplayMode != mGraphics.GraphicsDevice.DisplayMode) mDisplayModeChanged = true;
                 UpdateGraphicsState(mScreenWidth, mScreenHeight);
@@ -601,7 +601,7 @@ namespace Intersect.Client.MonoGame.Graphics
             mGraphics.PreferredBackBufferHeight = resolution.Y;
 
             UpdateGraphicsState(mGraphics?.PreferredBackBufferWidth ?? 800,
-                mGraphics?.PreferredBackBufferHeight ?? 600);
+                mGraphics?.PreferredBackBufferHeight ?? 600, true);
 
             if (mWhiteTexture == null) CreateWhiteTexture();
 
