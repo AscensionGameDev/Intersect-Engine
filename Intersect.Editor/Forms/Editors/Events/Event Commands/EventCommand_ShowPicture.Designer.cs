@@ -61,12 +61,11 @@
             // 
             // chkClick
             // 
-            this.chkClick.AutoSize = true;
             this.chkClick.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.chkClick.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkClick.Location = new System.Drawing.Point(40, 80);
+            this.chkClick.Location = new System.Drawing.Point(8, 80);
             this.chkClick.Name = "chkClick";
-            this.chkClick.Size = new System.Drawing.Size(132, 17);
+            this.chkClick.Size = new System.Drawing.Size(164, 17);
             this.chkClick.TabIndex = 25;
             this.chkClick.Text = "Click To Close Image?";
             this.chkClick.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
