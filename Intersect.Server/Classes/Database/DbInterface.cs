@@ -1194,17 +1194,43 @@ namespace Intersect.Server
 
             lock (mGameDbLock)
             {
-                try
+                var saved = false;
+                var failures = 0;
+                while (!saved)
                 {
-                    var elapsedMs = SaveDb(sGameDb);
-                    gameDbLogger?.Debug($"Save took {elapsedMs}ms, {--gameSavesWaiting} saves queued.");
-                    gameDbTraces.TryDequeue(out _);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Error Saving Game Database! Server will shutdown in order to prevent potential rollback scenarios!");
-                    Task.Factory.StartNew(() => Bootstrapper.OnUnhandledException(Thread.CurrentThread.Name, new UnhandledExceptionEventArgs(ex, true)));
-                    gameDbLogger?.Error(ex, "Error Saving Game Database! Server will shutdown in order to prevent potential rollback scenarios!");
+                    try
+                    {
+                        var elapsedMs = SaveDb(sGameDb);
+                        saved = true;
+                        gameDbLogger?.Debug($"Save took {elapsedMs}ms, {--gameSavesWaiting} saves queued.");
+                        gameDbTraces.TryDequeue(out _);
+                    }
+                    catch (Exception ex)
+                    {
+                        if (ex is InvalidOperationException)
+                        {
+                            //Collection was modified?
+                            //Loop and try to save again!
+                            failures++;
+                            if (failures > 10)
+                            {
+                                Console.WriteLine("Error Saving Game Database! Server will shutdown in order to prevent potential rollback scenarios!");
+                                Task.Factory.StartNew(() => Bootstrapper.OnUnhandledException(Thread.CurrentThread.Name, new UnhandledExceptionEventArgs(ex, true)));
+                                gameDbLogger?.Error(ex, "Error Saving Game Database! Server will shutdown in order to prevent potential rollback scenarios! [Failures: " + failures + "]");
+                                break;
+                            }
+                            //This should be a warning but I want to actually see it working in a real environment without people needing to change their configs for a few builds
+                            //TODO change to .Warn
+                            gameDbLogger?.Error(ex, "Collection was modified? while trying to save game db, will loop and try to save again! [Failures: " + failures + "]");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Error Saving Game Database! Server will shutdown in order to prevent potential rollback scenarios!");
+                            Task.Factory.StartNew(() => Bootstrapper.OnUnhandledException(Thread.CurrentThread.Name, new UnhandledExceptionEventArgs(ex, true)));
+                            gameDbLogger?.Error(ex, "Error Saving Game Database! Server will shutdown in order to prevent potential rollback scenarios!");
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -1255,26 +1281,52 @@ namespace Intersect.Server
 
             lock (mPlayerDbLock)
             {
-                try
+                var saved = false;
+                var failures = 0;
+                while (!saved)
                 {
-                    var elapsedMs = SaveDb(sPlayerDb);
-                    playerDbLogger?.Debug($"{currentTrace.Id:00000}: Save took {elapsedMs}ms, {--playerSavesWaiting} saves queued.");
-                    if (playerDbTraces.TryPeek(out var peekTrace) && peekTrace.Id != currentTrace.Id)
+                    try
                     {
-                        playerDbLogger?.Debug($"{currentTrace.Id:00000}: Next save expected to complete was {peekTrace.Id:00000}, which is from a different call.");
-                    }
+                        var elapsedMs = SaveDb(sPlayerDb);
+                        saved = true;
+                        playerDbLogger?.Debug($"{currentTrace.Id:00000}: Save took {elapsedMs}ms, {--playerSavesWaiting} saves queued.");
+                        if (playerDbTraces.TryPeek(out var peekTrace) && peekTrace.Id != currentTrace.Id)
+                        {
+                            playerDbLogger?.Debug($"{currentTrace.Id:00000}: Next save expected to complete was {peekTrace.Id:00000}, which is from a different call.");
+                        }
 
-                    playerDbLogger?.Debug(
-                        playerDbTraces.TryDequeue(out var dequeueTrace)
-                            ? $"{dequeueTrace.Id:00000} ({currentTrace.Id:00000}): Save completed."
-                            : $"{currentTrace.Id:00000}: Save complete but there are no available traces."
-                    );
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Error Saving Player Database! Server will shutdown in order to prevent potential rollback scenarios!");
-                    Task.Factory.StartNew(() => Bootstrapper.OnUnhandledException(Thread.CurrentThread.Name, new UnhandledExceptionEventArgs(ex, true)));
-                    playerDbLogger?.Error(ex, "Error Saving Player Database! Server will shutdown in order to prevent potential rollback scenarios!");
+                        playerDbLogger?.Debug(
+                            playerDbTraces.TryDequeue(out var dequeueTrace)
+                                ? $"{dequeueTrace.Id:00000} ({currentTrace.Id:00000}): Save completed."
+                                : $"{currentTrace.Id:00000}: Save complete but there are no available traces."
+                        );
+                    }
+                    catch (Exception ex)
+                    {
+                        if (ex is InvalidOperationException)
+                        {
+                            //Collection was modified?
+                            //Loop and try to save again!
+                            failures++;
+                            if (failures > 10)
+                            {
+                                Console.WriteLine("Error Saving Player Database! Server will shutdown in order to prevent potential rollback scenarios!");
+                                Task.Factory.StartNew(() => Bootstrapper.OnUnhandledException(Thread.CurrentThread.Name, new UnhandledExceptionEventArgs(ex, true)));
+                                playerDbLogger?.Error(ex, "Error Saving Player Database! Server will shutdown in order to prevent potential rollback scenarios! [Failures: " + failures + "]");
+                                break;
+                            }
+                            //This should be a warning but I want to actually see it working in a real environment without people needing to change their configs for a few builds
+                            //TODO change to .Warn
+                            playerDbLogger?.Error(ex, "Collection was modified? while trying to save player db, will loop and try to save again! [Failures: " + failures + "]");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Error Saving Player Database! Server will shutdown in order to prevent potential rollback scenarios!");
+                            Task.Factory.StartNew(() => Bootstrapper.OnUnhandledException(Thread.CurrentThread.Name, new UnhandledExceptionEventArgs(ex, true)));
+                            playerDbLogger?.Error(ex, "Error Saving Player Database! Server will shutdown in order to prevent potential rollback scenarios!");
+                            break;
+                        }
+                    }
                 }
             }
         }
