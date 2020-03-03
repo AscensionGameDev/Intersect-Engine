@@ -52,7 +52,6 @@ namespace Intersect.Client
 
             Globals.Database.LoadPreferences();
             
-            Gui.ActiveFont = TextUtils.StripToLower(ClientConfiguration.Instance.UIFont);
             Globals.InputManager = new MonoInput(this);
 
             var renderer = new MonoRenderer(graphics, Content, this);

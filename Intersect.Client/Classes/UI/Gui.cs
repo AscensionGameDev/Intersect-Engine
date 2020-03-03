@@ -35,7 +35,6 @@ namespace Intersect.Client.UI
         public static TexturedBase Skin { get; set; }
 
         public static ErrorMessageHandler ErrorMsgHandler;
-        public static string ActiveFont = "arial";
         public static bool HideUi;
 
         //Input Handling
@@ -52,7 +51,7 @@ namespace Intersect.Client.UI
             if (Skin == null) {
                 Skin = new TexturedBase(GwenRenderer, Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "defaultskin.png"))
                 {
-                    DefaultFont = Globals.ContentManager.GetFont(ActiveFont, 10)
+                    DefaultFont = GameGraphics.UIFont
                 };
             }
 

@@ -31,6 +31,7 @@ namespace Intersect.Client
 
         //Screen Values
         public static GameFont GameFont;
+        public static GameFont UIFont;
         public static GameFont EntityNameFont;
         public static GameFont ChatBubbleFont;
         public static GameFont ActionMsgFont;
@@ -84,6 +85,7 @@ namespace Intersect.Client
             sContentManager = Globals.ContentManager;
             sContentManager.LoadAll();
             GameFont = FindFont(ClientConfiguration.Instance.GameFont);
+            UIFont = FindFont(ClientConfiguration.Instance.UIFont);
             EntityNameFont = FindFont(ClientConfiguration.Instance.EntityNameFont);
             ChatBubbleFont = FindFont(ClientConfiguration.Instance.ChatBubbleFont);
             ActionMsgFont = FindFont(ClientConfiguration.Instance.ActionMsgFont);
