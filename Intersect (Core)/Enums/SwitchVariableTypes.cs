@@ -4,8 +4,8 @@ namespace Intersect.Enums
     {
         Boolean = 1,
         Integer,
-        Number,
-        String
+        String,
+        Number
     }
 
     public enum VariableTypes
@@ -27,6 +27,7 @@ namespace Intersect.Enums
         AddGlobalVar,
         SubtractPlayerVar,
         SubtractGlobalVar,
+        Replace,
     }
 
     public enum VariableComparators
@@ -37,5 +38,11 @@ namespace Intersect.Enums
         Greater,
         Less,
         NotEqual
+    }
+
+    public enum StringVariableComparators
+    {
+        Equal = 0,
+        Contains,
     }
 }

@@ -148,6 +148,8 @@ namespace Intersect.Editor.Forms.Editors
                 cmbScalingStat.SelectedIndex = mEditorItem.ScalingStat;
                 cmbAttackAnimation.SelectedIndex =
                     AnimationBase.ListIndex(mEditorItem.AttackAnimationId) + 1;
+                cmbAttackSpeedModifier.SelectedIndex = mEditorItem.AttackSpeedModifier;
+                nudAttackSpeedValue.Value = mEditorItem.AttackSpeedValue;
 
                 //Regen
                 nudHPRegen.Value = mEditorItem.VitalRegen[(int) Vitals.Health];
@@ -347,6 +349,15 @@ namespace Intersect.Editor.Forms.Editors
             lblScalingStat.Text = Strings.ClassEditor.scalingstat;
             lblScalingAmount.Text = Strings.ClassEditor.scalingamount;
             lblAttackAnimation.Text = Strings.ClassEditor.attackanimation;
+
+            grpAttackSpeed.Text = Strings.NpcEditor.attackspeed;
+            lblAttackSpeedModifier.Text = Strings.NpcEditor.attackspeedmodifier;
+            lblAttackSpeedValue.Text = Strings.NpcEditor.attackspeedvalue;
+            cmbAttackSpeedModifier.Items.Clear();
+            foreach (var val in Strings.NpcEditor.attackspeedmodifiers.Values)
+            {
+                cmbAttackSpeedModifier.Items.Add(val.ToString());
+            }
 
             grpLeveling.Text = Strings.ClassEditor.leveling;
             lblBaseExp.Text = Strings.ClassEditor.levelexp;
@@ -1112,6 +1123,17 @@ namespace Intersect.Editor.Forms.Editors
             mEditorItem.CritMultiplier = (double)nudCritMultiplier.Value;
         }
 
+        private void cmbAttackSpeedModifier_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.AttackSpeedModifier = cmbAttackSpeedModifier.SelectedIndex;
+            nudAttackSpeedValue.Enabled = cmbAttackSpeedModifier.SelectedIndex > 0;
+        }
+
+        private void nudAttackSpeedValue_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.AttackSpeedValue = (int)nudAttackSpeedValue.Value;
+        }
+
         #region "Exp Grid"
 
         private void btnExpGrid_Click(object sender, EventArgs e)
@@ -1448,6 +1470,7 @@ namespace Intersect.Editor.Forms.Editors
             if (txtSearch.Text == Strings.ClassEditor.searchplaceholder)
                 txtSearch.SelectAll();
         }
+
 
         #endregion
 

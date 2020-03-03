@@ -177,6 +177,11 @@ namespace Intersect.Client.Localization
             public static LocalizedString targetoutsiderange = @"Target too far away!";
             public static LocalizedString vital0 = @"Health";
             public static LocalizedString vital1 = @"Mana";
+            public static LocalizedString warningtitle = @"Combat Warning!";
+            public static LocalizedString warningforceclose = @"Game was closed while in combat! Your character will remain logged in until combat has concluded!";
+            public static LocalizedString warninglogout = @"You are about to logout while in combat! Your character will remain in-game until combat has ended! Are you sure you want to logout now?";
+            public static LocalizedString warningcharacterselect = @"You are about to logout while in combat! Your character will remain in-game until combat has ended! Are you sure you want to logout now?";
+            public static LocalizedString warningexitdesktop = @"You are about to exit while in combat! Your character will remain in-game until combat has ended! Are you sure you want to quit now?";
         }
 
         public struct Controls
@@ -373,7 +378,10 @@ namespace Intersect.Client.Localization
             public static Dictionary<int, LocalizedString> effects = new Dictionary<int, LocalizedString>
             {
                 {0, @"Cooldown Reduction"},
-                {1, @"Lifesteal"}
+                {1, @"Lifesteal"},
+                {2, @"Tenacity"},
+                {3, @"Luck"},
+                {4, @"Exp Increase"},
             };
             public static Dictionary<int, LocalizedString> itemtypes = new Dictionary<int, LocalizedString>
             {
@@ -820,6 +828,7 @@ namespace Intersect.Client.Localization
                 {2, @"AOE"},
                 {3, @"Projectile - Range: {00} Tiles"},
                 {4, @"On Hit"},
+                {5, @"Trap"},
             };
             public static Dictionary<int, LocalizedString> vitals = new Dictionary<int, LocalizedString>
             {

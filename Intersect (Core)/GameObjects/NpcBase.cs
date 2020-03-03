@@ -82,6 +82,8 @@ namespace Intersect.GameObjects
         public int DamageType { get; set; }
         public int CritChance { get; set; }
         public double CritMultiplier { get; set; } = 1.5;
+        public int AttackSpeedModifier { get; set; }
+        public int AttackSpeedValue { get; set; }
 
         //Common Events
         [Column("OnDeathEvent")]

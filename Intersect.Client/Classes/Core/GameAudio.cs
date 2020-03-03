@@ -106,6 +106,8 @@ namespace Intersect.Client
         {
             if (string.IsNullOrWhiteSpace(filename))
             {
+                //Entered a map with no music selected, fade out any music that's already playing.
+                StopMusic(3f);
                 return;
             }
             
