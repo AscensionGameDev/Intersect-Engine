@@ -331,7 +331,7 @@ namespace Intersect.Server.Maps
 
         public void DespawnResourcesOf(ResourceBase resourceBase)
         {
-            var resources = new List<Resource>();.
+            var resources = new List<Resource>();
             lock (GetMapLock())
             {
                 foreach (var entity in mEntities)
