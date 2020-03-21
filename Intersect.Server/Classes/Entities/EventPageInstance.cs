@@ -16,7 +16,7 @@ namespace Intersect.Server.Entities
     {
         private Pathfinder mPathFinder;
         public EventBase BaseEvent;
-        public Client Client;
+        public Player Player;
         private bool mDirectionFix;
         public bool DisablePreview;
         public EventPageInstance GlobalClone;
@@ -59,7 +59,7 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public EventPageInstance(EventBase myEvent, EventPage myPage, Guid mapId, EventInstance eventIndex, Client client) : base(Guid.NewGuid())
+        public EventPageInstance(EventBase myEvent, EventPage myPage, Guid mapId, EventInstance eventIndex, Player player) : base(Guid.NewGuid())
         {
             BaseEvent = myEvent;
             Id = BaseEvent.Id;
@@ -114,11 +114,11 @@ namespace Intersect.Server.Entities
             }
             Face = MyPage.FaceGraphic;
             mPageNum = BaseEvent.Pages.IndexOf(MyPage);
-            Client = client;
-            SendToClient();
+            Player = player;
+            SendToPlayer();
         }
 
-        public EventPageInstance(EventBase myEvent, EventPage myPage, Guid instanceId, Guid mapId, EventInstance eventIndex, Client client, EventPageInstance globalClone) : base(instanceId)
+        public EventPageInstance(EventBase myEvent, EventPage myPage, Guid instanceId, Guid mapId, EventInstance eventIndex, Player player, EventPageInstance globalClone) : base(instanceId)
         {
             BaseEvent = myEvent;
             Id = BaseEvent.Id;
@@ -173,15 +173,15 @@ namespace Intersect.Server.Entities
             }
             Face = MyPage.FaceGraphic;
             mPageNum = BaseEvent.Pages.IndexOf(MyPage);
-            Client = client;
-            SendToClient();
+            Player = player;
+            SendToPlayer();
         }
 
-        public void SendToClient()
+        public void SendToPlayer()
         {
-            if (Client != null)
+            if (Player != null)
             {
-                PacketSender.SendEntityDataTo(Client, this);
+                PacketSender.SendEntityDataTo(Player, this);
             }
             else
             {
@@ -194,7 +194,7 @@ namespace Intersect.Server.Entities
             return EntityTypes.Event;
         }
 
-        public override EntityPacket EntityPacket(EntityPacket packet = null, Client forClient = null)
+        public override EntityPacket EntityPacket(EntityPacket packet = null, Player forPlayer = null)
         {
             if (packet == null) packet = new EventEntityPacket();
             
@@ -211,7 +211,7 @@ namespace Intersect.Server.Entities
                 HideName = GlobalClone.HideName;
             }
 
-            packet = base.EntityPacket(packet, forClient);
+            packet = base.EntityPacket(packet, forPlayer);
 
             var pkt = (EventEntityPacket)packet;
             pkt.HideName = HideName;
@@ -257,7 +257,7 @@ namespace Intersect.Server.Entities
             if (MoveTimer >= Globals.Timing.TimeMs || GlobalClone != null ||  (isActive && MyPage.InteractionFreeze)) return;
             if (MovementType == EventMovementType.MoveRoute && MoveRoute != null)
             {
-                ProcessMoveRoute(Client, timeMs);
+                ProcessMoveRoute(Player, timeMs);
             }
             else
             {
@@ -267,7 +267,7 @@ namespace Intersect.Server.Entities
                     var dir = (byte)Globals.Rand.Next(0, 4);
                     if (CanMove(dir) == -1)
                     {
-                        Move(dir, Client);
+                        Move(dir, Player);
                         MoveTimer = Globals.Timing.TimeMs + (long) GetMovementTime();
                     }
                 }
@@ -275,9 +275,9 @@ namespace Intersect.Server.Entities
         }
 
         /// <inheritdoc />
-        public override void Move(int moveDir, Client client, bool doNotUpdate = false, bool correction = false)
+        public override void Move(int moveDir, Player forPlayer, bool doNotUpdate = false, bool correction = false)
         {
-            base.Move(moveDir, client, doNotUpdate, correction);
+            base.Move(moveDir, forPlayer, doNotUpdate, correction);
 
             if (this.Trigger == EventTrigger.PlayerCollide && Passable)
             {
@@ -292,9 +292,9 @@ namespace Intersect.Server.Entities
             }
         }
 
-        protected override bool ProcessMoveRoute(Client client, long timeMs)
+        protected override bool ProcessMoveRoute(Player forPlayer, long timeMs)
         {
-            if (!base.ProcessMoveRoute(client, timeMs))
+            if (!base.ProcessMoveRoute(forPlayer, timeMs))
             {
                 var moved = false;
                 var shouldSendUpdate = false;
@@ -306,15 +306,14 @@ namespace Intersect.Server.Entities
                     {
                         case MoveRouteEnum.MoveTowardsPlayer:
                             //Pathfinding required.. this will be weird.
-                            if (client != null && GlobalClone == null) //Local Event
+                            if (forPlayer != null && GlobalClone == null) //Local Event
                             {
                                 if (mPathFinder.GetTarget() == null ||
-                                    mPathFinder.GetTarget().TargetMapId != client.Entity.MapId ||
-                                    mPathFinder.GetTarget().TargetX != client.Entity.X ||
-                                    mPathFinder.GetTarget().TargetY != client.Entity.Y)
+                                    mPathFinder.GetTarget().TargetMapId != forPlayer.MapId ||
+                                    mPathFinder.GetTarget().TargetX != forPlayer.X ||
+                                    mPathFinder.GetTarget().TargetY != forPlayer.Y)
                                 {
-                                    mPathFinder.SetTarget(new PathfinderTarget(client.Entity.MapId,
-                                        client.Entity.X, client.Entity.Y, client.Entity.Z));
+                                    mPathFinder.SetTarget(new PathfinderTarget(forPlayer.MapId, forPlayer.X, forPlayer.Y, forPlayer.Z));
                                 }
                                 //Todo check if next to or on top of player.. if so don't run pathfinder.
                                 if (mPathFinder.Update(timeMs) == PathfinderResult.Success)
@@ -324,7 +323,7 @@ namespace Intersect.Server.Entities
                                     {
                                         if (CanMove(pathDir) == -1)
                                         {
-                                            Move((byte)pathDir, client);
+                                            Move((byte)pathDir, forPlayer);
                                             moved = true;
                                         }
                                         else
@@ -337,9 +336,9 @@ namespace Intersect.Server.Entities
                             break;
                         case MoveRouteEnum.MoveAwayFromPlayer:
                             //This won't be anything special.
-                            if (client != null && GlobalClone == null) //Local Event
+                            if (forPlayer != null && GlobalClone == null) //Local Event
                             {
-                                moveDir = (byte)GetDirectionTo(client.Entity);
+                                moveDir = (byte)GetDirectionTo(forPlayer);
                                 if (moveDir > -1)
                                 {
                                     switch (moveDir)
@@ -359,7 +358,7 @@ namespace Intersect.Server.Entities
                                     }
                                     if (CanMove(moveDir) == -1)
                                     {
-                                        Move(moveDir, client);
+                                        Move(moveDir, forPlayer);
                                         moved = true;
                                     }
                                     else
@@ -368,7 +367,7 @@ namespace Intersect.Server.Entities
                                         moveDir = (byte)Globals.Rand.Next(0, 4);
                                         if (CanMove(moveDir) == -1)
                                         {
-                                            Move(moveDir, client);
+                                            Move(moveDir, forPlayer);
                                             moved = true;
                                         }
                                     }
@@ -379,16 +378,16 @@ namespace Intersect.Server.Entities
                                     moveDir = (byte)Globals.Rand.Next(0, 4);
                                     if (CanMove(moveDir) == -1)
                                     {
-                                        Move(moveDir, client);
+                                        Move(moveDir, forPlayer);
                                         moved = true;
                                     }
                                 }
                             }
                             break;
                         case MoveRouteEnum.FacePlayer:
-                            if (client != null && GlobalClone == null) //Local Event
+                            if (forPlayer != null && GlobalClone == null) //Local Event
                             {
-                                lookDir = GetDirectionTo(client.Entity);
+                                lookDir = GetDirectionTo(forPlayer);
                                 if (lookDir > -1)
                                 {
                                     ChangeDir((byte)lookDir);
@@ -397,9 +396,9 @@ namespace Intersect.Server.Entities
                             }
                             break;
                         case MoveRouteEnum.FaceAwayFromPlayer:
-                            if (client != null && GlobalClone == null) //Local Event
+                            if (forPlayer != null && GlobalClone == null) //Local Event
                             {
-                                lookDir = GetDirectionTo(client.Entity);
+                                lookDir = GetDirectionTo(forPlayer);
                                 if (lookDir > -1)
                                 {
                                     switch (lookDir)
@@ -574,7 +573,7 @@ namespace Intersect.Server.Entities
                     if (shouldSendUpdate)
                     {
                         //Send Update
-                        SendToClient();
+                        SendToPlayer();
                     }
                     if (MoveTimer < Globals.Timing.TimeMs)
                     {
@@ -606,7 +605,7 @@ namespace Intersect.Server.Entities
 
         public override int CanMove(int moveDir)
         {
-            if (Client == null && mPageNum != 0) return -5;
+            if (Player == null && mPageNum != 0) return -5;
             switch (moveDir)
             {
                 case (int) Directions.Up:
@@ -628,9 +627,9 @@ namespace Intersect.Server.Entities
         public void TurnTowardsPlayer()
         {
             int lookDir;
-            if (Client != null && GlobalClone == null) //Local Event
+            if (Player != null && GlobalClone == null) //Local Event
             {
-                lookDir = GetDirectionTo(Client.Entity);
+                lookDir = GetDirectionTo(Player);
                 if (lookDir > -1)
                 {
                     ChangeDir(lookDir);
@@ -641,13 +640,13 @@ namespace Intersect.Server.Entities
         public bool ShouldDespawn()
         {
             //Should despawn if conditions are not met OR an earlier page can spawn
-            if (!Conditions.MeetsConditionLists(MyPage.ConditionLists, MyEventIndex.MyPlayer, MyEventIndex))
+            if (!Conditions.MeetsConditionLists(MyPage.ConditionLists, MyEventIndex.Player, MyEventIndex))
                 return true;
-            if (Map != null && !Map.GetSurroundingMaps(true).Contains(MyEventIndex.MyPlayer.Map))
+            if (Map != null && !Map.GetSurroundingMaps(true).Contains(MyEventIndex.Player.Map))
                 return true;
             for (int i = 0; i < BaseEvent.Pages.Count; i++)
             {
-                if (Conditions.CanSpawnPage(BaseEvent.Pages[i],MyEventIndex.MyPlayer,MyEventIndex))
+                if (Conditions.CanSpawnPage(BaseEvent.Pages[i],MyEventIndex.Player,MyEventIndex))
                 {
                     if (i > mPageNum) return true;
                 }

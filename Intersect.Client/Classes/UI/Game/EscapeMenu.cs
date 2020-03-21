@@ -114,17 +114,66 @@ namespace Intersect.Client.UI.Game
             base.ToggleHidden();
         }
 
-        private static void GoToCharacterSelect_Clicked(Base sender, ClickedEventArgs arguments)
+
+        private void LogoutToCharacterSelect(object sender, EventArgs e)
         {
+            if (Globals.Me != null) Globals.Me.CombatTimer = 0;
             GameMain.Logout(true);
         }
 
-        private static void Logout_Clicked(Base sender, ClickedEventArgs arguments)
+        private void LogoutToMainMenu(object sender, EventArgs e)
         {
+            if (Globals.Me != null) Globals.Me.CombatTimer = 0;
             GameMain.Logout(false);
         }
 
-        private static void ExitToDesktop_Clicked(Base sender, ClickedEventArgs arguments) => Globals.IsRunning = false;
+        private void ExitToDesktop(object sender, EventArgs e)
+        {
+            if (Globals.Me != null) Globals.Me.CombatTimer = 0;
+            Globals.IsRunning = false;
+        }
+
+        private void GoToCharacterSelect_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            ToggleHidden();
+            if (Globals.Me.CombatTimer > Globals.System.GetTimeMs())
+            {
+                //Show Logout in Combat Warning
+                var box = new InputBox(Strings.Combat.warningtitle, Strings.Combat.warningcharacterselect, true, InputBox.InputType.YesNo, LogoutToCharacterSelect, null, null);
+            }
+            else
+            {
+                LogoutToCharacterSelect(null, null);
+            }
+        }
+
+        private void Logout_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            ToggleHidden();
+            if (Globals.Me.CombatTimer > Globals.System.GetTimeMs())
+            {
+                //Show Logout in Combat Warning
+                var box = new InputBox(Strings.Combat.warningtitle, Strings.Combat.warninglogout, true, InputBox.InputType.YesNo, LogoutToMainMenu, null, null);
+            }
+            else
+            {
+                LogoutToMainMenu(null, null);
+            }
+        }
+
+        private void ExitToDesktop_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            ToggleHidden();
+            if (Globals.Me.CombatTimer > Globals.System.GetTimeMs())
+            {
+                //Show Logout in Combat Warning
+                var box = new InputBox(Strings.Combat.warningtitle, Strings.Combat.warningexitdesktop, true, InputBox.InputType.YesNo, ExitToDesktop, null, null);
+            }
+            else
+            {
+                ExitToDesktop(null, null);
+            }
+        }
 
         private void Close_Clicked(Base sender, ClickedEventArgs arguments) => Hide();
     }

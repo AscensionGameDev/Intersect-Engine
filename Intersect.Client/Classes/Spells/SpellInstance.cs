@@ -4,15 +4,13 @@ namespace Intersect.Client.Spells
 {
     public class SpellInstance
     {
-        public long SpellCd;
         public Guid SpellId;
 
         public SpellInstance Clone()
         {
             SpellInstance newSpell = new SpellInstance()
             {
-                SpellId = SpellId,
-                SpellCd = SpellCd
+                SpellId = SpellId
             };
             return newSpell;
         }
@@ -20,7 +18,6 @@ namespace Intersect.Client.Spells
         public void Load(Guid spellId)
         {
             SpellId = spellId;
-            SpellCd = 0;
         }
     }
 }

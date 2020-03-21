@@ -1,4 +1,11 @@
-﻿using Intersect.Enums;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Web.Http.Dispatcher;
+
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Logging;
 using Intersect.Network.Packets.Server;
@@ -71,13 +78,14 @@ namespace Intersect.Server.Entities
             var itemSlot = 0;
             foreach (var drop in myBase.Drops)
             {
-                if (Globals.Rand.Next(1, 10001) <= drop.Chance * 100 && ItemBase.Get(drop.ItemId) != null)
-                {
+                //if (Globals.Rand.Next(1, 10001) <= drop.Chance * 100 && ItemBase.Get(drop.ItemId) != null)
+                //{
                     var slot = new InventorySlot(itemSlot);
+                    slot.Set(new Item(drop.ItemId, drop.Quantity, true));
+                    slot.DropChance = drop.Chance;
                     Items.Add(slot);
-                    slot.Set(new Item(drop.ItemId, drop.Quantity));
                     itemSlot++;
-                }
+                //}
             }
 
             for (int i = 0; i < (int) Vitals.VitalCount; i++)
@@ -147,6 +155,13 @@ namespace Intersect.Server.Entities
             }
             Target = null;
             PacketSender.SendNpcAggressionToProximity(this);
+        }
+
+        public override int CalculateAttackTime()
+        {
+            if (Base.AttackSpeedModifier == 1) //Static
+                return Base.AttackSpeedValue;
+            return base.CalculateAttackTime();
         }
 
         public override bool CanAttack(EntityInstance entity, SpellBase spell)
@@ -394,7 +409,7 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            if (spell.SpellCd >= Globals.Timing.RealTimeMs)
+            if (SpellCooldowns.ContainsKey(spell.SpellId) && SpellCooldowns[spell.SpellId] >= Globals.Timing.RealTimeMs)
             {
                 return;
             }
@@ -411,8 +426,16 @@ namespace Intersect.Server.Entities
             }
 
             CastTime = Globals.Timing.TimeMs + spellBase.CastDuration;
-            SubVital(Vitals.Mana, spellBase.VitalCost[(int) Vitals.Mana]);
-            SubVital(Vitals.Health, spellBase.VitalCost[(int) Vitals.Health]);
+
+            if (spellBase.VitalCost[(int)Vitals.Mana] > 0)
+                SubVital(Vitals.Mana, spellBase.VitalCost[(int)Vitals.Mana]);
+            else
+                AddVital(Vitals.Mana, -spellBase.VitalCost[(int)Vitals.Mana]);
+
+            if (spellBase.VitalCost[(int)Vitals.Health] > 0)
+                SubVital(Vitals.Health, spellBase.VitalCost[(int)Vitals.Health]);
+            else
+                AddVital(Vitals.Health, -spellBase.VitalCost[(int)Vitals.Health]);
                 
             if ((spellBase.Combat?.Friendly ?? false) && spellBase.SpellType != SpellTypes.WarpTo)
             {
@@ -954,13 +977,13 @@ namespace Intersect.Server.Entities
             return 2;
         }
 
-        public override EntityPacket EntityPacket(EntityPacket packet = null, Client forClient = null)
+        public override EntityPacket EntityPacket(EntityPacket packet = null, Player forPlayer = null)
         {
             if (packet == null) packet = new NpcEntityPacket();
-            packet = base.EntityPacket(packet, forClient);
+            packet = base.EntityPacket(packet, forPlayer);
 
             var pkt = (NpcEntityPacket)packet;
-            pkt.Aggression = GetAggression(forClient?.Entity);
+            pkt.Aggression = GetAggression(forPlayer);
             return pkt;
         }
 

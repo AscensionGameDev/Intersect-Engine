@@ -26,7 +26,7 @@ namespace Intersect.Configuration
 
         public const string DEFAULT_FONT = "sourcesansproblack";
 
-        public const string DEFAULT_UI_FONT = "sourcesanspro";
+        public const string DEFAULT_UI_FONT = "sourcesanspro,8";
 
         public const int DEFAULT_CHAT_LINES = 100;
 
@@ -65,9 +65,24 @@ namespace Intersect.Configuration
         public ushort Port { get; set; } = DEFAULT_PORT;
 
         /// <summary>
-        /// The font family to use on the client rendering names, damage counters, etc
+        /// The font family to use on misc non-ui rendering
         /// </summary>
         public string GameFont { get; set; } = DEFAULT_FONT;
+
+        /// <summary>
+        /// The font family to use on entity names
+        /// </summary>
+        public string EntityNameFont { get; set; } = DEFAULT_FONT;
+
+        /// <summary>
+        /// The font family to use on chat bubbles
+        /// </summary>
+        public string ChatBubbleFont { get; set; } = DEFAULT_FONT;
+
+        /// <summary>
+        /// The font family to use on action messages
+        /// </summary>
+        public string ActionMsgFont { get; set; } = DEFAULT_FONT;
 
         /// <summary>
         /// The font family to use on unstyled windows such as the debug menu/admin window

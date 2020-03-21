@@ -121,7 +121,17 @@ namespace Intersect.GameObjects
         [NotMapped]
         public int[] VitalsGiven { get; set; }
 
-        [Column("PercentageVitalsGiven")]
+        [Column("VitalsRegen")]
+        [JsonIgnore]
+        public string VitalsRegenJson
+        {
+          get => DatabaseUtils.SaveIntArray(VitalsRegen, (int)Vitals.VitalCount);
+          set => VitalsRegen = DatabaseUtils.LoadIntArray(value, (int)Vitals.VitalCount);
+        }
+        [NotMapped]
+        public int[] VitalsRegen { get; set; }
+
+    [Column("PercentageVitalsGiven")]
         [JsonIgnore]
         public string PercentageVitalsJson
         {
@@ -177,8 +187,9 @@ namespace Intersect.GameObjects
             StatsGiven = new int[(int)Stats.StatCount];
             PercentageStatsGiven = new int[(int)Stats.StatCount];
             VitalsGiven = new int[(int)Vitals.VitalCount];
+            VitalsRegen = new int[(int)Vitals.VitalCount];
             PercentageVitalsGiven = new int[(int)Vitals.VitalCount];
-			Consumable = new ConsumableData();
+            Consumable = new ConsumableData();
             Effect = new EffectData();
         }
 

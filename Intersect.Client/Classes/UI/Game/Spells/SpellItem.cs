@@ -115,7 +115,7 @@ namespace Intersect.Client.UI.Game.Spells
             if (!IsDragging &&
                 ((mTexLoaded != "" && spell == null) || (spell != null && mTexLoaded != spell.Icon) ||
                  mCurrentSpellId != Globals.Me.Spells[mYindex].SpellId ||
-                 mIconCd != (Globals.Me.Spells[mYindex].SpellCd > Globals.System.GetTimeMs()) || Globals.Me.Spells[mYindex].SpellCd > Globals.System.GetTimeMs()))
+                 mIconCd != (Globals.Me.GetSpellCooldown(Globals.Me.Spells[mYindex].SpellId) > Globals.System.GetTimeMs()) || Globals.Me.GetSpellCooldown(Globals.Me.Spells[mYindex].SpellId)  > Globals.System.GetTimeMs()))
             {
                 mCooldownLabel.IsHidden = true;
                 if (spell != null)
@@ -125,7 +125,7 @@ namespace Intersect.Client.UI.Game.Spells
                     if (spellTex != null)
                     {
                         Pnl.Texture = spellTex;
-                        if ((Globals.Me.Spells[mYindex].SpellCd > Globals.System.GetTimeMs()))
+                        if ((Globals.Me.GetSpellCooldown(Globals.Me.Spells[mYindex].SpellId) > Globals.System.GetTimeMs()))
                         {
                             Pnl.RenderColor = new Color(100, 255, 255, 255);
                         }
@@ -143,11 +143,11 @@ namespace Intersect.Client.UI.Game.Spells
                     }
                     mTexLoaded = spell.Icon;
                     mCurrentSpellId = Globals.Me.Spells[mYindex].SpellId;
-                    mIconCd = (Globals.Me.Spells[mYindex].SpellCd > Globals.System.GetTimeMs());
+                    mIconCd = (Globals.Me.GetSpellCooldown(Globals.Me.Spells[mYindex].SpellId) > Globals.System.GetTimeMs());
                     if (mIconCd)
                     {
                         mCooldownLabel.IsHidden = false;
-                        var secondsRemaining = (float)(Globals.Me.Spells[mYindex].SpellCd - Globals.System.GetTimeMs()) / 1000f;
+                        var secondsRemaining = (float)(Globals.Me.GetSpellCooldown(Globals.Me.Spells[mYindex].SpellId) - Globals.System.GetTimeMs()) / 1000f;
                         if (secondsRemaining > 10f)
                         {
                             mCooldownLabel.Text = Strings.Spells.cooldown.ToString((secondsRemaining).ToString("N0"));

@@ -59,26 +59,7 @@ namespace Intersect.Client.UI.Game
                 if (item.Rarity > 0)
                 {
                     itemType.Text += " - " + Strings.ItemDesc.rarity[item.Rarity];
-                    Color rarity = CustomColors.RarityNone;
-
-                    switch (item.Rarity)
-                    {
-                        case 1:
-                            rarity = CustomColors.RarityCommon;
-                            break;
-                        case 2:
-                            rarity = CustomColors.RarityUncommon;
-                            break;
-                        case 3:
-                            rarity = CustomColors.RarityRare;
-                            break;
-                        case 4:
-                            rarity = CustomColors.RarityEpic;
-                            break;
-                        case 5:
-                            rarity = CustomColors.RarityLedgendary;
-                            break;
-                    }
+                    Color rarity = CustomColors.Items.Rarities.ContainsKey(item.Rarity) ? CustomColors.Items.Rarities[item.Rarity] : Color.White;
 
                     itemType.TextColorOverride.R = rarity.R;
                     itemType.TextColorOverride.G = rarity.G;

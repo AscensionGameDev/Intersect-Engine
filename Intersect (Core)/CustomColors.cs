@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
+using Intersect.Logging;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -9,160 +12,242 @@ using Formatting = Newtonsoft.Json.Formatting;
 
 namespace Intersect
 {
-    public class CustomColors
+
+    public class ColorConverter : JsonConverter<Color>
     {
-        public static Color EventName = Color.White;
-        public static Color EventNameBorder = Color.Black;
-        public static Color EventNameBackground = new Color(180, 0, 0, 0);
-
-        public static Color AgressiveNpcName = new Color(255, 255, 40, 0);
-        public static Color AgressiveNpcNameBorder = Color.Black;
-        public static Color AgressiveNpcNameBackground = new Color(180, 0, 0, 0);
-
-        public static Color AttackWhenAttackedName = new Color(255, 255, 255, 255);
-        public static Color AttackWhenAttackedNameBorder = Color.Black;
-        public static Color AttackWhenAttackedNameBackground = new Color(180, 0, 0, 0);
-
-        public static Color AttackOnSightName = new Color(255, 255, 200, 0);
-        public static Color AttackOnSightNameBorder = Color.Black;
-        public static Color AttackOnSightNameBackground = new Color(180, 0, 0, 0);
-
-        public static Color NeutralName = new Color(255, 100, 230, 100);
-        public static Color NeutralNameBorder = Color.Black;
-        public static Color NeutralNameBackground = new Color(180, 0, 0, 0);
-
-        public static Color GuardName = new Color(255, 240, 142, 105);
-        public static Color GuardNameBorder = Color.Black;
-        public static Color GuardNameBackground = new Color(180, 0, 0, 0);
-
-        public static Color PlayerNameNormal = Color.White;
-        public static Color PlayerNameNormalBorder = Color.Black;
-        public static Color PlayerNameNormalBackground = new Color(180, 0, 0, 0);
-
-        public static Color PlayerNameMod = new Color(255, 0, 255, 255);
-        public static Color PlayerNameModBorder = Color.Black;
-        public static Color PlayerNameModBackground = new Color(180, 0, 0, 0);
-
-        public static Color PlayerNameAdmin = new Color(255, 255, 255, 0);
-        public static Color PlayerNameAdminBorder = Color.Black;
-        public static Color PlayerNameAdminBackground = new Color(180, 0, 0, 0);
-
-        public static Color GlobalMsg = new Color(255, 220, 220, 220);
-        public static Color PlayerMsg = new Color(255, 220, 220, 220);
-        public static Color ProximityMsg = new Color(255, 220, 220, 220);
-        public static Color Blocked = new Color(255, 0, 0, 255);
-        public static Color Status = new Color(255, 255, 255, 0);
-        public static Color Missed = new Color(255, 255, 255, 255);
-        public static Color Critical = new Color(255, 255, 255, 0);
-        public static Color PhysicalDamage = new Color(255, 255, 0, 0);
-        public static Color MagicDamage = new Color(255, 255, 0, 255);
-        public static Color TrueDamage = new Color(255, 255, 255, 255);
-        public static Color Heal = new Color(255, 0, 255, 0);
-		public static Color Invulnerable = new Color(255, 255, 0, 0);
-		public static Color Cleanse = new Color(0, 255, 0, 0);
-		public static Color AddMana = new Color(255, 0, 0, 255);
-        public static Color RemoveMana = new Color(255, 255, 127, 80);
-        public static Color Dash = new Color(255, 0, 0, 255);
-        public static Color NoAmmo = Color.Red;
-        public static Color AdminJoined = new Color(255, 255, 255, 0);
-        public static Color ModJoined = new Color(255, 0, 255, 255);
-        public static Color NoTarget = Color.Red;
-        public static Color Declined = Color.Red;
-        public static Color Accepted = Color.Green;
-        public static Color Error = Color.Red;
-        public static Color Info = Color.White;
-        public static Color AdminGlobalChat = new Color(255, 255, 255, 0);
-        public static Color ModGlobalChat = new Color(255, 0, 255, 255);
-        public static Color GlobalChat = new Color(255, 220, 220, 220);
-        public static Color AnnouncementChat = Color.Yellow;
-        public static Color AdminChat = Color.Cyan;
-        public static Color PartyChat = Color.Green;
-        public static Color PrivateChat = Color.Magenta;
-        public static Color AdminLocalChat = new Color(255, 255, 255, 0);
-        public static Color ModLocalChat = new Color(255, 0, 255, 255);
-        public static Color LocalChat = new Color(255, 240, 240, 240);
-        public static Color QuestStarted = Color.Cyan;
-        public static Color QuestDeclined = Color.Red;
-        public static Color QuestAbandoned = Color.Red;
-        public static Color QuestCompleted = Color.Green;
-        public static Color TaskUpdated = Color.Cyan;
-        public static Color LevelUp = Color.Cyan;
-        public static Color StatPoints = Color.Cyan;
-        public static Color ItemBound = Color.Red;
-        public static Color Experience = Color.White;
-        public static Color Crafted = Color.Green;
-        public static Color RequestSent = Color.Yellow;
-        public static Color ChatBubbleTextColor = Color.Black;
-
-        public static Color RarityNone = Color.White;
-        public static Color RarityCommon = Color.Gray;
-        public static Color RarityUncommon = Color.Red;
-        public static Color RarityRare = Color.Blue;
-        public static Color RarityEpic = Color.Green;
-        public static Color RarityLedgendary = Color.Yellow;
-
-        public static void Load()
+        public override void WriteJson([NotNull] JsonWriter writer, Color value, JsonSerializer serializer)
         {
-            if (File.Exists(Path.Combine("resources", "colors.json")))
-            {
-                Dictionary<string, string> colors = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(Path.Combine("resources", "colors.json")));
+            writer.WriteValue($"{value?.A ?? 0},{value?.R ?? 0},{value?.G ?? 0},{ value?.B ?? 0}");
+        }
 
-                Type type = typeof(CustomColors);
-                foreach (var p in type.GetFields(System.Reflection.BindingFlags.Static |
-                                                 System.Reflection.BindingFlags.Public))
+        public override Color ReadJson([NotNull] JsonReader reader, Type objectType, Color existingValue, bool hasExistingValue, JsonSerializer serializer)
+        {
+            return Color.FromString((reader.Value as string), Color.Black);
+        }
+    }
+
+    public struct LabelColor
+    {
+        public Color Name;
+        public Color Outline;
+        public Color Background;
+
+        public LabelColor(Color nameColor, Color outlineColor, Color backgroundColor)
+        {
+            Name = nameColor;
+            Outline = outlineColor;
+            Background = backgroundColor;
+        }
+    }
+
+    public static partial class CustomColors
+    {
+
+        public sealed class NamesNamespace
+        {
+
+            public LabelColor Events = new LabelColor(Color.White, Color.Black, new Color(180, 0, 0, 0));
+            public Dictionary<string, LabelColor> Npcs = new Dictionary<string, LabelColor>()
+            {
+                { "Neutral", new LabelColor(new Color(255, 100, 230, 100), Color.Black, new Color(180, 0, 0, 0)) },
+                { "Guard", new LabelColor(new Color(255, 240, 142, 105), Color.Black, new Color(180, 0, 0, 0)) },
+                { "AttackWhenAttacked", new LabelColor(new Color(255, 255, 255, 255), Color.Black, new Color(180, 0, 0, 0)) },
+                { "AttackOnSight", new LabelColor(new Color(255, 255, 200, 0), Color.Black, new Color(180, 0, 0, 0)) },
+                { "Aggressive", new LabelColor(new Color(255, 255, 40, 0), Color.Black, new Color(180, 0, 0, 0)) }
+            };
+            public Dictionary<string, LabelColor> Players = new Dictionary<string, LabelColor>()
+            {
+                { "Normal", new LabelColor(new Color(255, 255, 255, 255), Color.Black, new Color(180, 0, 0, 0)) },
+                { "Moderator", new LabelColor(new Color(255, 0, 255, 255), Color.Black, new Color(180, 0, 0, 0)) },
+                { "Admin", new LabelColor(new Color(255, 255, 255, 0), Color.Black, new Color(180, 0, 0, 0)) },
+            };
+        }
+
+        public sealed class ChatNamespace
+        {
+            public Color GlobalMsg = new Color(255, 220, 220, 220);
+            public Color PlayerMsg = new Color(255, 220, 220, 220);
+            public Color ProximityMsg = new Color(255, 220, 220, 220);
+            public Color AdminGlobalChat = new Color(255, 255, 255, 0);
+            public Color ModGlobalChat = new Color(255, 0, 255, 255);
+            public Color GlobalChat = new Color(255, 220, 220, 220);
+            public Color AnnouncementChat = Color.Yellow;
+            public Color AdminChat = Color.Cyan;
+            public Color PartyChat = Color.Green;
+            public Color PrivateChat = Color.Magenta;
+            public Color AdminLocalChat = new Color(255, 255, 255, 0);
+            public Color ModLocalChat = new Color(255, 0, 255, 255);
+            public Color LocalChat = new Color(255, 240, 240, 240);
+            public Color ChatBubbleText = Color.Black;
+        }
+
+        public sealed class QuestsNamespace
+        {
+            public Color Started = Color.Cyan;
+            public Color Declined = Color.Red;
+            public Color Abandoned = Color.Red;
+            public Color Completed = Color.Green;
+            public Color TaskUpdated = Color.Cyan;
+        }
+
+        public sealed class AlertsNamespace
+        {
+            public Color Declined = Color.Red;
+            public Color Accepted = Color.Green;
+            public Color Error = Color.Red;
+            public Color Info = Color.White;
+            public Color Success = Color.Green;
+            public Color AdminJoined = new Color(255, 255, 255, 0);
+            public Color ModJoined = new Color(255, 0, 255, 255);
+            public Color RequestSent = Color.Yellow;
+        }
+
+        public sealed class CombatNamespace
+        {
+            public Color Blocked = new Color(255, 0, 0, 255);
+            public Color Status = new Color(255, 255, 255, 0);
+            public Color Missed = new Color(255, 255, 255, 255);
+            public Color Critical = new Color(255, 255, 255, 0);
+            public Color PhysicalDamage = new Color(255, 255, 0, 0);
+            public Color MagicDamage = new Color(255, 255, 0, 255);
+            public Color TrueDamage = new Color(255, 255, 255, 255);
+            public Color Heal = new Color(255, 0, 255, 0);
+            public Color Invulnerable = new Color(255, 255, 0, 0);
+            public Color Cleanse = new Color(0, 255, 0, 0);
+            public Color AddMana = new Color(255, 0, 0, 255);
+            public Color RemoveMana = new Color(255, 255, 127, 80);
+            public Color Dash = new Color(255, 0, 0, 255);
+            public Color NoAmmo = Color.Red;
+            public Color NoTarget = Color.Red;
+            public Color LevelUp = Color.Cyan;
+            public Color StatPoints = Color.Cyan;
+        }
+
+        public sealed class ItemsNamespace
+        {
+            public Dictionary<int, Color> Rarities = new Dictionary<int, Color>()
+            {
+                { 0, Color.White },
+                { 1, Color.Gray },
+                { 2, Color.Red },
+                { 3, Color.Blue },
+                { 4, Color.Green },
+                { 5, Color.Yellow },
+            };
+            public Color ConsumeHp = new Color(255, 0, 255, 0);
+            public Color ConsumePoison = new Color(255, 255, 0, 0);
+            public Color ConsumeMp = new Color(255, 0, 0, 255);
+            public Color ConsumeExp = Color.White;
+            public Color Bound = Color.Red;
+        }
+
+
+        #region Serialization
+
+        public static bool Load()
+        {
+            var filepath = Path.Combine("resources", "colors.json");
+
+            // Really don't want two JsonSave() return points...
+            // ReSharper disable once InvertIf
+            if (File.Exists(filepath))
+            {
+                var json = File.ReadAllText(filepath, Encoding.UTF8);
+                try
                 {
-                    if (colors.ContainsKey(p.Name))
-                    {
-                        var value = colors[p.Name];
-                        Match match = Regex.Match(value,
-                            "argb" + Regex.Escape("(") + "([0-9]*),([0-9]*),([0-9]*),([0-9]*)" + Regex.Escape(")"));
-                        if (match.Success)
-                        {
-                            p.SetValue(p, Color.FromArgb(Convert.ToInt32(match.Groups[1].Value),
-                                Convert.ToInt32(match.Groups[2].Value), Convert.ToInt32(match.Groups[3].Value),
-                                Convert.ToInt32(match.Groups[4].Value)));
-                        }
-                    }
+                    Root = JsonConvert.DeserializeObject<RootNamespace>(json, new ColorConverter()) ?? Root;
+                }
+                catch (Exception exception)
+                {
+                    Log.Error(exception);
+                    return false;
                 }
             }
-            Save();
+
+            return Save();
         }
 
-        private static void Save()
+        public static bool Save()
         {
-            Dictionary<string, string> colors = new Dictionary<string, string>();
-
-            Type type = typeof(CustomColors);
-            foreach (var p in type.GetFields(System.Reflection.BindingFlags.Static |
-                                             System.Reflection.BindingFlags.Public))
+            try
             {
-                Color val = (Color)p.GetValue(null);
-                colors.Add(p.Name, "argb(" + String.Join(",",
-                                       new string[4] { val.A.ToString(), val.R.ToString(), val.G.ToString(), val.B.ToString() }) + ")");
+                var filepath = Path.Combine("resources", "colors.json");
+                Directory.CreateDirectory("resources");
+                var json = JsonConvert.SerializeObject(Root, Formatting.Indented, new ColorConverter());
+                File.WriteAllText(filepath, json, Encoding.UTF8);
+                return true;
             }
-            File.WriteAllText(Path.Combine("resources", "colors.json"), JsonConvert.SerializeObject(colors,Formatting.Indented));
+            catch (Exception exception)
+            {
+                Log.Error(exception);
+                return false;
+            }
         }
+
+        #endregion
 
         public static string Json()
         {
-            Type type = typeof(CustomColors);
-            var array = new JArray();
-            foreach (var p in type.GetFields(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public))
-            {
-                array.Add(((Color)p.GetValue(null)).ToArgb());
-            }
-            return array.ToString();
+            return JsonConvert.SerializeObject(Root, Formatting.None, new ColorConverter());
         }
 
         public static void Load(string json)
         {
-            var array = JArray.Parse(json);
-            var arrayIndex = 0;
-            Type type = typeof(CustomColors);
-            foreach (var p in type.GetFields(System.Reflection.BindingFlags.Static |  System.Reflection.BindingFlags.Public))
-            {
-                p.SetValue(p, Color.FromArgb(int.Parse(array[arrayIndex++].ToString())));
-            }
+            Root = JsonConvert.DeserializeObject<RootNamespace>(json, new ColorConverter()) ?? Root;
         }
+
+        #region Root Namespace
+
+        static CustomColors()
+        {
+            Root = new RootNamespace();
+        }
+
+        [NotNull]
+        private static RootNamespace Root { get; set; }
+
+        // ReSharper disable MemberHidesStaticFromOuterClass
+        private sealed class RootNamespace
+        {
+
+            [NotNull] public readonly NamesNamespace Names = new NamesNamespace();
+
+            [NotNull] public readonly ChatNamespace Chat = new ChatNamespace();
+
+            [NotNull] public readonly QuestsNamespace Quests = new QuestsNamespace();
+
+            [NotNull] public readonly AlertsNamespace Alerts = new AlertsNamespace();
+
+            [NotNull] public readonly CombatNamespace Combat = new CombatNamespace();
+
+            [NotNull] public readonly ItemsNamespace Items = new ItemsNamespace();
+
+        }
+        // ReSharper restore MemberHidesStaticFromOuterClass
+        #endregion
+
+        #region Namespace Exposure
+
+        [NotNull]
+        public static NamesNamespace Names => Root.Names;
+
+        [NotNull]
+        public static ChatNamespace Chat => Root.Chat;
+
+        [NotNull]
+        public static QuestsNamespace Quests => Root.Quests;
+
+        [NotNull]
+        public static AlertsNamespace Alerts => Root.Alerts;
+
+        [NotNull]
+        public static CombatNamespace Combat => Root.Combat;
+
+        [NotNull]
+        public static ItemsNamespace Items => Root.Items;
+
+        #endregion
+
+
     }
 }
