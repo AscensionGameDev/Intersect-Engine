@@ -53,7 +53,7 @@
       <HintPath>..\packages\JetBrains.Annotations.2018.3.0\lib\net20\JetBrains.Annotations.dll</HintPath>
     </Reference>
     <Reference Include="Lidgren.Network, Version=2012.1.7.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\AscensionGameDev.Lidgren.Network.1.7.1\lib\net46\Lidgren.Network.dll</HintPath>
+      <HintPath>..\packages\AscensionGameDev.Lidgren.Network.1.7.2\lib\net46\Lidgren.Network.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

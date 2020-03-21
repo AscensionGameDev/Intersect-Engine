@@ -72,8 +72,6 @@ namespace Intersect.Network
 
             mPeerConfiguration.DisableMessageType(NetIncomingMessageType.Receipt);
             mPeerConfiguration.EnableMessageType(NetIncomingMessageType.UnconnectedData);
-            mPeerConfiguration.EnableMessageType(NetIncomingMessageType.ErrorMessage);
-            mPeerConfiguration.EnableMessageType(NetIncomingMessageType.Error);
 
             if (configuration.IsServer)
             {
@@ -90,10 +88,14 @@ namespace Intersect.Network
             if (Debugger.IsAttached)
             {
                 mPeerConfiguration.EnableMessageType(NetIncomingMessageType.DebugMessage);
+                mPeerConfiguration.EnableMessageType(NetIncomingMessageType.ErrorMessage);
+                mPeerConfiguration.EnableMessageType(NetIncomingMessageType.Error);
             }
             else
             {
                 mPeerConfiguration.DisableMessageType(NetIncomingMessageType.DebugMessage);
+                mPeerConfiguration.DisableMessageType(NetIncomingMessageType.ErrorMessage);
+                mPeerConfiguration.DisableMessageType(NetIncomingMessageType.Error);
             }
 
             if (Debugger.IsAttached)
