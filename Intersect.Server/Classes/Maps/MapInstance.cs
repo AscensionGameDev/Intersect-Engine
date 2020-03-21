@@ -321,42 +321,51 @@ namespace Intersect.Server.Maps
         public void DespawnNpcsOf(NpcBase npcBase)
         {
             var npcs = new List<Npc>();
-            foreach (var entity in mEntities)
+            lock (GetMapLock())
             {
-                if (entity.GetType() == typeof(Npc) && ((Npc)entity).Base == npcBase)
-                    npcs.Add((Npc)entity);
-            }
-            foreach (var en in npcs)
-            {
-                en.Die(0);
+                foreach (var entity in mEntities)
+                {
+                    if (entity.GetType() == typeof(Npc) && ((Npc)entity).Base == npcBase)
+                        npcs.Add((Npc)entity);
+                }
+                foreach (var en in npcs)
+                {
+                    en.Die(0);
+                }
             }
         }
 
         public void DespawnResourcesOf(ResourceBase resourceBase)
         {
             var resources = new List<Resource>();
-            foreach (var entity in mEntities)
+            lock (GetMapLock())
             {
-                if (entity.GetType() == typeof(Resource) && ((Resource)entity).Base == resourceBase)
-                    resources.Add((Resource)entity);
-            }
-            foreach (var en in resources)
-            {
-                en.Die(0);
+                foreach (var entity in mEntities)
+                {
+                    if (entity.GetType() == typeof(Resource) && ((Resource)entity).Base == resourceBase)
+                        resources.Add((Resource)entity);
+                }
+                foreach (var en in resources)
+                {
+                    en.Die(0);
+                }
             }
         }
 
         public void DespawnProjectilesOf(ProjectileBase projectileBase)
         {
             var projectiles = new List<Projectile>();
-            foreach (var entity in mEntities)
+            lock (GetMapLock())
             {
-                if (entity.GetType() == typeof(Projectile) && ((Projectile)entity).Base == projectileBase)
-                    projectiles.Add((Projectile)entity);
-            }
-            foreach (var en in projectiles)
-            {
-                en.Die(0);
+                foreach (var entity in mEntities)
+                {
+                    if (entity.GetType() == typeof(Projectile) && ((Projectile)entity).Base == projectileBase)
+                        projectiles.Add((Projectile)entity);
+                }
+                foreach (var en in projectiles)
+                {
+                    en.Die(0);
+                }
             }
         }
 
@@ -441,15 +450,18 @@ namespace Intersect.Server.Maps
         private void DespawnResources()
         {
             //Kill all resources spawned from this map
-            foreach (var resourceSpawn in ResourceSpawnInstances)
+            lock (GetMapLock())
             {
-                if (resourceSpawn.Value != null && resourceSpawn.Value.Entity != null)
+                foreach (var resourceSpawn in ResourceSpawnInstances)
                 {
-                    resourceSpawn.Value.Entity.Destroy(0);
-                    mEntities.Remove(resourceSpawn.Value.Entity);
+                    if (resourceSpawn.Value != null && resourceSpawn.Value.Entity != null)
+                    {
+                        resourceSpawn.Value.Entity.Destroy(0);
+                        mEntities.Remove(resourceSpawn.Value.Entity);
+                    }
                 }
+                ResourceSpawnInstances.Clear();
             }
-            ResourceSpawnInstances.Clear();
         }
 
         //Npcs
@@ -512,18 +524,21 @@ namespace Intersect.Server.Maps
         private void DespawnNpcs()
         {
             //Kill all npcs spawned from this map
-            foreach (var npcSpawn in NpcSpawnInstances)
+            lock (GetMapLock())
             {
-                npcSpawn.Value.Entity.Die(0);
-            }
-            NpcSpawnInstances.Clear();
-            //Kill any other npcs on this map (only players should remain)
-            var entities = mEntities.ToArray();
-            foreach (var entity in entities)
-            {
-                if (entity.GetType() == typeof(Npc))
+                foreach (var npcSpawn in NpcSpawnInstances)
                 {
-                    entity.Die(0);
+                    npcSpawn.Value.Entity.Die(0);
+                }
+                NpcSpawnInstances.Clear();
+                //Kill any other npcs on this map (only players should remain)
+                var entities = mEntities.ToArray();
+                foreach (var entity in entities)
+                {
+                    if (entity.GetType() == typeof(Npc))
+                    {
+                        entity.Die(0);
+                    }
                 }
             }
         }
@@ -909,7 +924,12 @@ namespace Intersect.Server.Maps
         [NotNull]
         public List<EntityInstance> GetEntities(bool includeSurroundingMaps = false)
         {
-            var entities = new List<EntityInstance>(mEntities);
+            var entities = new List<EntityInstance>();
+
+            lock (GetMapLock())
+            {
+                entities.AddRange(mEntities);
+            }
             
             // ReSharper disable once InvertIf
             if (includeSurroundingMaps)

@@ -285,7 +285,7 @@ namespace Intersect.Server.Entities
                     spl.Set(new Spell());
             }
 
-            OnlinePlayers.Add(Id, this);
+            OnlinePlayers[Id] = this;
         }
 
         public void SendPacket(CerasPacket packet)
