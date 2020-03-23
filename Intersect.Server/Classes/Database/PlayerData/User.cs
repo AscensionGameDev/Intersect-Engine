@@ -171,7 +171,7 @@ namespace Intersect.Server.Database.PlayerData
         private static readonly Func<PlayerContext, string, User> QueryUserByName =
             EF.CompileQuery((PlayerContext context, string username) =>
                 context.Users
-                    .Where(u => string.Equals(u.Name, username, StringComparison.OrdinalIgnoreCase))
+                    .Where(u => u.Name == username)
                     .Include(p => p.Ban)
                     .Include(p => p.Mute)
                     .Include(p => p.Players).ThenInclude(c => c.Bank)
