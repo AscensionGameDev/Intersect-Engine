@@ -8,11 +8,12 @@ namespace Intersect.Network.Packets.Server
 {
     public class SpellCooldownPacket : CerasPacket
     {
-        public int Slot { get; set; }
+        //Spell Id / Time Remaining (Since we cannot expect all clients to have perfect system times)
+        public Dictionary<Guid, long> SpellCds;
 
-        public SpellCooldownPacket(int slot)
+        public SpellCooldownPacket(Dictionary<Guid, long> spellCds)
         {
-            Slot = slot;
+            SpellCds = spellCds;
         }
     }
 }

@@ -365,7 +365,7 @@ namespace Intersect.Server.Core.CommandParsing
                 {
                     if (!parsed.ContainsKey(argument))
                     {
-                        parsed[argument] = ConstructDefaultArgument(argument);
+                        parsed[argument] = ConstructDefaultArgument(argument, true);
                         omitted.Add(argument);
                     }
 
@@ -415,12 +415,12 @@ namespace Intersect.Server.Core.CommandParsing
         }
 
         [NotNull]
-        private ArgumentValues ConstructDefaultArgument([NotNull] ICommandArgument argument)
+        private ArgumentValues ConstructDefaultArgument([NotNull] ICommandArgument argument, bool isImplicit = false)
         {
             var argumentName = argument.ShortName == '\0' ? Settings.PrefixShort + argument.ShortName : Settings.PrefixLong + argument.Name;
             return argument.ValueType.IsArray
-                ? new ArgumentValues(argumentName, (argument.DefaultValue as IEnumerable)?.Cast<object>())
-                : new ArgumentValues(argumentName, argument.DefaultValue);
+                ? new ArgumentValues(argumentName, (argument.DefaultValue as IEnumerable)?.Cast<object>(), isImplicit: isImplicit)
+                : new ArgumentValues(argumentName, isImplicit: isImplicit, values: argument.DefaultValue);
         }
 
         private bool TryParseArgument(

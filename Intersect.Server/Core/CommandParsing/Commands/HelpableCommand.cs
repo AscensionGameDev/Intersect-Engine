@@ -27,14 +27,19 @@ namespace Intersect.Server.Core.CommandParsing.Commands
         {
         }
 
-        protected static bool RequiredIfNotHelp(ParserContext context)
+        public static bool RequiredIfNotHelp(ParserContext context)
         {
-            if (context.Command is HelpableCommand<TContext> command)
+            if (!(context.Command is HelpableCommand<TContext> command))
             {
-                return !context.Parsed?.ContainsKey(command.Help) ?? false;
+                return false;
             }
 
-            return false;
+            if (context.Parsed == null)
+            {
+                return false;
+            }
+
+            return !(context.Parsed.TryGetValue(command.Help, out var value) && (!value?.IsImplicit ?? true));
         }
 
         protected override void Handle(TContext context, ParserResult result)

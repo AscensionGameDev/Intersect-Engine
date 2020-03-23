@@ -39,6 +39,7 @@ namespace Intersect.GameObjects
         public bool IgnoreExhaustedResources { get; set; }
         public bool IgnoreMapBlocks { get; set; }
         public bool IgnoreZDimension { get; set; }
+        public bool PierceTarget { get; set; }
         public int Knockback { get; set; }
         public int Quantity { get; set; } = 1;
         public int Range { get; set; } = 1;

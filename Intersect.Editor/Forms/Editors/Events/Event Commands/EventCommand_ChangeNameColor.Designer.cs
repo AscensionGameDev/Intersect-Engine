@@ -31,13 +31,13 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void InitializeComponent()
         {
             this.grpChangeLevel = new DarkUI.Controls.DarkGroupBox();
+            this.chkRemove = new System.Windows.Forms.CheckBox();
             this.chkOverride = new System.Windows.Forms.CheckBox();
-            this.pnlLightColor = new System.Windows.Forms.Panel();
+            this.pnlColor = new System.Windows.Forms.Panel();
             this.btnSelectLightColor = new DarkUI.Controls.DarkButton();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
             this.colorDialog = new System.Windows.Forms.ColorDialog();
-            this.chkRemove = new System.Windows.Forms.CheckBox();
             this.grpChangeLevel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -47,7 +47,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpChangeLevel.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpChangeLevel.Controls.Add(this.chkRemove);
             this.grpChangeLevel.Controls.Add(this.chkOverride);
-            this.grpChangeLevel.Controls.Add(this.pnlLightColor);
+            this.grpChangeLevel.Controls.Add(this.pnlColor);
             this.grpChangeLevel.Controls.Add(this.btnSelectLightColor);
             this.grpChangeLevel.Controls.Add(this.btnCancel);
             this.grpChangeLevel.Controls.Add(this.btnSave);
@@ -59,6 +59,16 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpChangeLevel.TabStop = false;
             this.grpChangeLevel.Text = "Change Name Color:";
             // 
+            // chkRemove
+            // 
+            this.chkRemove.AutoSize = true;
+            this.chkRemove.Location = new System.Drawing.Point(15, 77);
+            this.chkRemove.Name = "chkRemove";
+            this.chkRemove.Size = new System.Drawing.Size(130, 17);
+            this.chkRemove.TabIndex = 43;
+            this.chkRemove.Text = "Remove Name Color?";
+            this.chkRemove.UseVisualStyleBackColor = true;
+            // 
             // chkOverride
             // 
             this.chkOverride.AutoSize = true;
@@ -69,14 +79,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.chkOverride.Text = "Override Admin Name Color?";
             this.chkOverride.UseVisualStyleBackColor = true;
             // 
-            // pnlLightColor
+            // pnlColor
             // 
-            this.pnlLightColor.BackColor = System.Drawing.Color.White;
-            this.pnlLightColor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pnlLightColor.Location = new System.Drawing.Point(15, 19);
-            this.pnlLightColor.Name = "pnlLightColor";
-            this.pnlLightColor.Size = new System.Drawing.Size(31, 29);
-            this.pnlLightColor.TabIndex = 41;
+            this.pnlColor.BackColor = System.Drawing.Color.White;
+            this.pnlColor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pnlColor.Location = new System.Drawing.Point(15, 19);
+            this.pnlColor.Name = "pnlColor";
+            this.pnlColor.Size = new System.Drawing.Size(31, 29);
+            this.pnlColor.TabIndex = 41;
             // 
             // btnSelectLightColor
             // 
@@ -108,16 +118,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.btnSave.Text = "Ok";
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
-            // chkRemove
-            // 
-            this.chkRemove.AutoSize = true;
-            this.chkRemove.Location = new System.Drawing.Point(15, 77);
-            this.chkRemove.Name = "chkRemove";
-            this.chkRemove.Size = new System.Drawing.Size(130, 17);
-            this.chkRemove.TabIndex = 43;
-            this.chkRemove.Text = "Remove Name Color?";
-            this.chkRemove.UseVisualStyleBackColor = true;
-            // 
             // EventCommandChangeNameColor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -139,7 +139,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private DarkButton btnCancel;
         private DarkButton btnSave;
         private System.Windows.Forms.CheckBox chkOverride;
-        public System.Windows.Forms.Panel pnlLightColor;
+        public System.Windows.Forms.Panel pnlColor;
         private DarkButton btnSelectLightColor;
         private System.Windows.Forms.ColorDialog colorDialog;
         private System.Windows.Forms.CheckBox chkRemove;

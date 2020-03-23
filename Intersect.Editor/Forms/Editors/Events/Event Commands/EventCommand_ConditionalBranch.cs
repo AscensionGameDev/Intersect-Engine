@@ -89,6 +89,18 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             optBooleanGlobalVariable.Text = Strings.EventConditional.globalvariablevalue;
             optBooleanPlayerVariable.Text = Strings.EventConditional.playervariablevalue;
 
+            //String Variable
+            grpStringVariable.Text = Strings.EventConditional.stringvariable;
+            cmbStringComparitor.Items.Clear();
+            for (int i = 0; i < Strings.EventConditional.stringcomparators.Count; i++)
+            {
+                cmbStringComparitor.Items.Add(Strings.EventConditional.stringcomparators[i]);
+            }
+            cmbStringComparitor.SelectedIndex = 0;
+            lblStringComparator.Text = Strings.EventConditional.comparator;
+            lblStringComparatorValue.Text = Strings.EventConditional.value;
+            lblStringTextVariables.Text = Strings.EventConditional.stringtip;
+
             //Has Item
             grpHasItem.Text = Strings.EventConditional.hasitem;
             lblItemQuantity.Text = Strings.EventConditional.hasatleast;
@@ -466,6 +478,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             //Hide editor windows until we have a variable selected to work with
             grpNumericVariable.Hide();
             grpBooleanVariable.Hide();
+            grpStringVariable.Hide();
 
             var varType = 0;
             if (cmbVariable.SelectedIndex > -1)
@@ -504,6 +517,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                         break;
 
                     case VariableDataTypes.String:
+                        grpStringVariable.Show();
+                        TryLoadVariableStringComparison(((VariableIsCondition)Condition).Comparison);
                         break;
 
                     default:
@@ -578,6 +593,20 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             }
         }
 
+        private void TryLoadVariableStringComparison(VariableCompaison comp)
+        {
+            if (comp.GetType() == typeof(StringVariableComparison))
+            {
+                var com = (StringVariableComparison)comp;
+
+                cmbStringComparitor.SelectedIndex = Convert.ToInt32(com.Comparator);
+
+                if (cmbStringComparitor.SelectedIndex < 0) cmbStringComparitor.SelectedIndex = 0;
+
+                txtStringValue.Text = com.Value;
+            }
+        }
+
         private void InitVariableElements(Guid variableId)
         {
             mLoading = true;
@@ -643,6 +672,19 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 comp.CompareVariableType = VariableTypes.PlayerVariable;
                 comp.CompareVariableId = PlayerVariableBase.IdFromList(cmbComparePlayerVar.SelectedIndex);
             }
+
+            return comp;
+        }
+
+        private StringVariableComparison GetStringVariableComparison()
+        {
+            var comp = new StringVariableComparison();
+
+            if (cmbStringComparitor.SelectedIndex < 0) cmbStringComparitor.SelectedIndex = 0;
+
+            comp.Comparator = (StringVariableComparators)cmbStringComparitor.SelectedIndex;
+
+            comp.Value = txtStringValue.Text;
 
             return comp;
         }
@@ -807,6 +849,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             {
                 condition.Comparison = GetNumericVariableComparison();
             }
+            else if (grpStringVariable.Visible)
+            {
+                condition.Comparison = GetStringVariableComparison();
+            }
             else
             {
                 condition.Comparison = new VariableCompaison();
@@ -909,5 +955,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
 
         #endregion
+
+        private void lblStringTextVariables_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start(
+                "http://www.ascensiongamedev.com/community/topic/749-event-text-variables/");
+        }
     }
 }

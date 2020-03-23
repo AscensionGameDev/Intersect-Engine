@@ -14,5 +14,6 @@ namespace Intersect.Network.Packets.Server
         public Gender Gender { get; set; }
         public Guid ClassId { get; set; }
         public EquipmentPacket Equipment { get; set; }
+        public long CombatTimeRemaining { get; set; }
     }
 }

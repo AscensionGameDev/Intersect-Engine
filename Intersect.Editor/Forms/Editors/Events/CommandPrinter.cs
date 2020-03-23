@@ -88,6 +88,49 @@ namespace Intersect.Editor.Forms.Editors.Events
 
                             mCommandProperties.Add(clp);
                             break;
+                        case EventCommandType.InputVariable:
+                            var cid = ((InputVariableCommand)commandList[i]);
+                            lstEventCommands.Items.Add(indent + Strings.EventCommandList.linestart +
+                                                       GetCommandText((dynamic)commandList[i], map));
+                            clp = new CommandListProperties
+                            {
+                                Editable = true,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Cmd = commandList[i],
+                                Type = commandList[i].Type
+                            };
+                            mCommandProperties.Add(clp);
+
+                            PrintCommandList(page, page.CommandLists[cid.BranchIds[0]], indent + "          ",
+                                lstEventCommands, mCommandProperties, map);
+
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.conditionalelse);
+                            clp = new CommandListProperties
+                            {
+                                Editable = false,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Type = commandList[i].Type,
+                                Cmd = commandList[i]
+                            };
+                            mCommandProperties.Add(clp);
+
+                            PrintCommandList(page, page.CommandLists[cid.BranchIds[1]], indent + "          ",
+                                lstEventCommands, mCommandProperties, map);
+
+                            lstEventCommands.Items.Add(indent + "      : " + Strings.EventCommandList.conditionalend);
+                            clp = new CommandListProperties
+                            {
+                                Editable = false,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Type = commandList[i].Type,
+                                Cmd = commandList[i]
+                            };
+
+                            mCommandProperties.Add(clp);
+                            break;
                         case EventCommandType.ConditionalBranch:
                             var cnd = ((ConditionalBranchCommand) commandList[i]);
                             lstEventCommands.Items.Add(indent + Strings.EventCommandList.linestart +
@@ -343,6 +386,11 @@ namespace Intersect.Editor.Forms.Editors.Events
             return Strings.EventCommandList.showoptions.ToString(Truncate(command.Text, 30));
         }
 
+        private static string GetCommandText(InputVariableCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.variableinput.ToString(Truncate(command.Text, 30));
+        }
+
         private static string GetCommandText(AddChatboxTextCommand command, MapInstance map)
         {
             var channel = "";
@@ -417,12 +465,26 @@ namespace Intersect.Editor.Forms.Editors.Events
 
         private static string GetCommandText(RestoreHpCommand command, MapInstance map)
         {
-            return Strings.EventCommandList.restorehp;
+            if (command.Amount == 0)
+            {
+                return Strings.EventCommandList.restorehp.ToString();
+            }
+            else
+            {
+                return Strings.EventCommandList.restorehpby.ToString(command.Amount);
+            }
         }
 
         private static string GetCommandText(RestoreMpCommand command, MapInstance map)
         {
-            return Strings.EventCommandList.restoremp;
+            if (command.Amount == 0)
+            {
+                return Strings.EventCommandList.restoremp.ToString();
+            }
+            else
+            {
+                return Strings.EventCommandList.restorempby.ToString(command.Amount);
+            }
         }
 
         private static string GetCommandText(LevelUpCommand command, MapInstance map)
@@ -483,6 +545,11 @@ namespace Intersect.Editor.Forms.Editors.Events
             {
                 return Strings.EventCommandList.setnamecolor.ToString();
             }
+        }
+
+        private static string GetCommandText(ChangePlayerLabelCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.changeplayerlabel.ToString(command.Value);
         }
 
         private static string GetCommandText(ChangeGenderCommand command, MapInstance map)
@@ -824,18 +891,18 @@ namespace Intersect.Editor.Forms.Editors.Events
         private static string GetVariableModText(SetVariableCommand command, BooleanVariableMod mod)
         {
             var varvalue = "";
-            if (mod.DupVariableId != Guid.Empty)
+            if (mod.DuplicateVariableId != Guid.Empty)
             {
                 if (mod.DupVariableType == VariableTypes.PlayerVariable)
                 {
                     varvalue = Strings.EventCommandList.dupplayervariable.ToString(
-                        PlayerVariableBase.GetName(mod.DupVariableId));
+                        PlayerVariableBase.GetName(mod.DuplicateVariableId));
                 }
 
                 else if (mod.DupVariableType == VariableTypes.ServerVariable)
                 {
                     varvalue = Strings.EventCommandList.dupglobalvariable.ToString(
-                        ServerVariableBase.GetName(mod.DupVariableId));
+                        ServerVariableBase.GetName(mod.DuplicateVariableId));
                 }
             }
             else
@@ -887,27 +954,55 @@ namespace Intersect.Editor.Forms.Editors.Events
                     break;
                 case Enums.VariableMods.DupPlayerVar:
                     varvalue = Strings.EventCommandList.dupplayervariable.ToString(
-                        PlayerVariableBase.GetName(mod.DupVariableId));
+                        PlayerVariableBase.GetName(mod.DuplicateVariableId));
                     break;
                 case Enums.VariableMods.DupGlobalVar:
                     varvalue = Strings.EventCommandList.dupglobalvariable.ToString(
-                        ServerVariableBase.GetName(mod.DupVariableId));
+                        ServerVariableBase.GetName(mod.DuplicateVariableId));
                     break;
                 case Enums.VariableMods.AddPlayerVar:
                     varvalue = Strings.EventCommandList.addplayervariable.ToString(
-                        PlayerVariableBase.GetName(mod.DupVariableId));
+                        PlayerVariableBase.GetName(mod.DuplicateVariableId));
                     break;
                 case Enums.VariableMods.AddGlobalVar:
                     varvalue = Strings.EventCommandList.addglobalvariable.ToString(
-                        ServerVariableBase.GetName(mod.DupVariableId));
+                        ServerVariableBase.GetName(mod.DuplicateVariableId));
                     break;
                 case Enums.VariableMods.SubtractPlayerVar:
                     varvalue = Strings.EventCommandList.subtractplayervariable.ToString(
-                        PlayerVariableBase.GetName(mod.DupVariableId));
+                        PlayerVariableBase.GetName(mod.DuplicateVariableId));
                     break;
                 case Enums.VariableMods.SubtractGlobalVar:
                     varvalue = Strings.EventCommandList.subtractglobalvariable.ToString(
-                        ServerVariableBase.GetName(mod.DupVariableId));
+                        ServerVariableBase.GetName(mod.DuplicateVariableId));
+                    break;
+            }
+
+            if (command.VariableType == VariableTypes.PlayerVariable)
+            {
+                return Strings.EventCommandList.playervariable.ToString(PlayerVariableBase.GetName(command.VariableId),
+                    varvalue);
+            }
+
+            if (command.VariableType == VariableTypes.ServerVariable)
+            {
+                return Strings.EventCommandList.globalvariable.ToString(ServerVariableBase.GetName(command.VariableId),
+                    varvalue);
+            }
+
+            return Strings.EventCommandList.invalid;
+        }
+
+        private static string GetVariableModText(SetVariableCommand command, StringVariableMod mod)
+        {
+            var varvalue = "";
+            switch (mod.ModType)
+            {
+                case Enums.VariableMods.Set:
+                    varvalue = Strings.EventCommandList.setvariable.ToString(mod.Value);
+                    break;
+                case Enums.VariableMods.Replace:
+                    varvalue = Strings.EventCommandList.replace.ToString(mod.Value, mod.Replace);
                     break;
             }
 
