@@ -293,12 +293,16 @@ namespace Intersect.Server.Networking
                 );
             }
 
+            var sw = new Stopwatch();
+            sw.Start();
             if (!DbInterface.LoadUser(client, packet.Username))
             {
                 PacketSender.SendError(client, Strings.Account.loadfail);
 
                 return;
             }
+            sw.Stop();
+            Log.Debug("Took " + sw.ElapsedMilliseconds + "ms to load user and characters from db!");
 
             //Check for ban
             var isBanned = Ban.CheckBan(client.User, client.GetIp());
@@ -1712,14 +1716,10 @@ namespace Intersect.Server.Networking
         //SelectCharacterPacket
         public void HandlePacket(Client client, Player player, SelectCharacterPacket packet)
         {
-            var sw = new Stopwatch();
-            sw.Start();
             var character = DbInterface.GetUserCharacter(client.User, packet.CharacterId);
             if (character != null)
             {
                 client.LoadCharacter(character);
-                sw.Stop();
-                Log.Debug("Took " + sw.ElapsedMilliseconds + "ms to load character from db!");
                 try
                 {
                     client.Entity?.SetOnline();
