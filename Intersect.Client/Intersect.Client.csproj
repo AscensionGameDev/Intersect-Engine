@@ -91,7 +91,7 @@
     <Compile Include="Entities\Projectiles\ProjectileSpawns.cs" />
     <Compile Include="Entities\Resource.cs" />
     <Compile Include="Entities\Status.cs" />
-    <Compile Include="General\ClientTime.cs" />
+    <Compile Include="General\Time.cs" />
     <Compile Include="General\Enums.cs" />
     <Compile Include="General\Globals.cs" />
     <Compile Include="Items\ItemInstance.cs" />

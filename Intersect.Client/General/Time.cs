@@ -3,7 +3,7 @@ using Intersect.Client.Framework.GenericClasses;
 
 namespace Intersect.Client.General
 {
-    public static class ClientTime
+    public static class Time
     {
         private static DateTime sServerTime = DateTime.Now;
         private static ColorF sCurrentColor = ColorF.White;

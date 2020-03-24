@@ -101,7 +101,7 @@ namespace Intersect.Client.Interface.Game
             mMapsDrawnLabel.Text = Strings.Debug.mapsdrawn.ToString( Graphics.MapsDrawn);
             mEntitiesDrawnLabel.Text = Strings.Debug.entitiesdrawn.ToString( +Graphics.EntitiesDrawn);
             mLightsDrawnLabel.Text = Strings.Debug.lightsdrawn.ToString( Graphics.LightsDrawn);
-            mTimeLabel.Text = Strings.Debug.time.ToString( ClientTime.GetTime());
+            mTimeLabel.Text = Strings.Debug.time.ToString( Time.GetTime());
         }
 
         public void Show()

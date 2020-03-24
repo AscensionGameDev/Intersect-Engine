@@ -767,8 +767,8 @@ namespace Intersect.Client.Core
                     new Color(255, 255, 255, 255), sDarknessTexture, GameBlendModes.Add);
                 DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
                     new FloatRect(0, 0, sDarknessTexture.GetWidth(), sDarknessTexture.GetHeight()),
-                    new Color((int)ClientTime.GetTintColor().A, (int)ClientTime.GetTintColor().R,
-                        (int)ClientTime.GetTintColor().G, (int)ClientTime.GetTintColor().B), sDarknessTexture,
+                    new Color((int)Time.GetTintColor().A, (int)Time.GetTintColor().R,
+                        (int)Time.GetTintColor().G, (int)Time.GetTintColor().B), sDarknessTexture,
                     GameBlendModes.None);
             }
             AddLight((int)Math.Ceiling(Globals.Me.GetCenterPos().X), (int)Math.Ceiling(Globals.Me.GetCenterPos().Y),

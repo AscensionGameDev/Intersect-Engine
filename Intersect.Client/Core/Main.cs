@@ -306,7 +306,7 @@ namespace Intersect.Client.Core
             }
 
             Graphics.UpdatePlayerLight();
-            ClientTime.Update();
+            Time.Update();
         }
 
         public static void JoinGame()

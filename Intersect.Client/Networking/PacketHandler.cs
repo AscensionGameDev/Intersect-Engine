@@ -1152,7 +1152,7 @@ namespace Intersect.Client.Networking
         //TimePacket
         private static void HandlePacket(TimePacket packet)
         {
-            ClientTime.LoadTime(packet.Time, Color.FromArgb(packet.Color.A, packet.Color.R, packet.Color.G, packet.Color.B), packet.Rate);
+            Time.LoadTime(packet.Time, Color.FromArgb(packet.Color.A, packet.Color.R, packet.Color.G, packet.Color.B), packet.Rate);
         }
 
         //PartyPacket
