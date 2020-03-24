@@ -68,12 +68,12 @@ namespace Intersect.Client.General
         public static List<Guid> EntitiesToDispose = new List<Guid>();
 
         //Bank
-        public static ItemInstance[] Bank;
+        public static Item[] Bank;
 
         public static bool InBank = false;
 
         //Bag
-        public static ItemInstance[] Bag = null;
+        public static Item[] Bag = null;
 
         public static bool InBag = false;
 
@@ -84,7 +84,7 @@ namespace Intersect.Client.General
         public static CraftingTableBase ActiveCraftingTable;
 
         //Trading (Only 2 people can trade at once)
-        public static ItemInstance[,] Trade;
+        public static Item[,] Trade;
 
         public static bool InTrade = false;
 

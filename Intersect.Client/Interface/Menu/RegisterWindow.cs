@@ -119,7 +119,7 @@ namespace Intersect.Client.Interface.Menu
         //Methods
         public void Update()
         {
-            if (!GameNetwork.Connected)
+            if (!Networking.Network.Connected)
             {
                 Hide();
                 mMainMenu.Show();
@@ -151,7 +151,7 @@ namespace Intersect.Client.Interface.Menu
             {
                 return;
             }
-            if (GameNetwork.Connected)
+            if (Networking.Network.Connected)
             {
                 if (FieldChecking.IsValidUsername(mUsernameTextbox.Text, Strings.Regex.username))
                 {

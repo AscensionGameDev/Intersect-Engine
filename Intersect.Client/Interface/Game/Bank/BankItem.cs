@@ -98,9 +98,9 @@ namespace Intersect.Client.Interface.Game.Bank
                 mDescWindow.Dispose();
                 mDescWindow = null;
             }
-            if (Globals.Bank[mMySlot]?.Item != null)
+            if (Globals.Bank[mMySlot]?.Base != null)
             {
-                mDescWindow = new ItemDescWindow(Globals.Bank[mMySlot].Item, Globals.Bank[mMySlot].Quantity, mBankWindow.X, mBankWindow.Y, Globals.Bank[mMySlot].StatBuffs);
+                mDescWindow = new ItemDescWindow(Globals.Bank[mMySlot].Base, Globals.Bank[mMySlot].Quantity, mBankWindow.X, mBankWindow.Y, Globals.Bank[mMySlot].StatBuffs);
             }
         }
 

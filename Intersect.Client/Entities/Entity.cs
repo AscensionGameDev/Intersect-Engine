@@ -91,7 +91,7 @@ namespace Intersect.Client.Entities
         public bool HideEntity = false;
 
         //Inventory/Spells/Equipment
-        public ItemInstance[] Inventory = new ItemInstance[Options.MaxInvItems];
+        public Item[] Inventory = new Item[Options.MaxInvItems];
 
         public bool InView = true;
         public bool IsLocal = false;
@@ -119,7 +119,7 @@ namespace Intersect.Client.Entities
         public FloatRect WorldPos = new FloatRect();
 
         public Guid SpellCast;
-        public SpellInstance[] Spells = new SpellInstance[Options.MaxPlayerSkills];
+        public Spell[] Spells = new Spell[Options.MaxPlayerSkills];
         public int[] Stat = new int[(int)Stats.StatCount];
 
         //Status effects
@@ -142,11 +142,11 @@ namespace Intersect.Client.Entities
             {
                 for (int i = 0; i < Options.MaxInvItems; i++)
                 {
-                    Inventory[i] = new ItemInstance();
+                    Inventory[i] = new Item();
                 }
                 for (int i = 0; i < Options.MaxPlayerSkills; i++)
                 {
-                    Spells[i] = new SpellInstance();
+                    Spells[i] = new Spell();
                 }
                 for (int i = 0; i < Options.EquipmentSlots.Count; i++)
                 {

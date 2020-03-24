@@ -16,12 +16,12 @@ using Intersect.Network.Packets;
 
 namespace Intersect.Client.MonoGame.Network
 {
-    public class IntersectNetworkSocket : GameSocket
+    public class MonoSocket : GameSocket
     {
         public static ClientNetwork ClientLidgrenNetwork;
         public static ConcurrentQueue<KeyValuePair<IConnection,IPacket>> PacketQueue = new ConcurrentQueue<KeyValuePair<IConnection,IPacket>>();
 
-        public IntersectNetworkSocket()
+        public MonoSocket()
         {
         }
 

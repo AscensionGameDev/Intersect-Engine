@@ -8,16 +8,16 @@ using Newtonsoft.Json;
 
 namespace Intersect.Client.Items
 {
-    public class ItemInstance
+    public class Item
     {
         public Guid ItemId;
         public int Quantity;
         public int[] StatBuffs = new int[(int) Stats.StatCount];
         public Guid? BagId;
         
-        public ItemBase Item => ItemBase.Get(ItemId);
+        public ItemBase Base => ItemBase.Get(ItemId);
 
-        public ItemInstance()
+        public Item()
         {
         }
 
@@ -29,9 +29,9 @@ namespace Intersect.Client.Items
             StatBuffs = statBuffs;
         }
 
-        public ItemInstance Clone()
+        public Item Clone()
         {
-            ItemInstance newItem = new ItemInstance()
+            Item newItem = new Item()
             {
                 ItemId = ItemId,
                 Quantity = Quantity,
@@ -42,21 +42,6 @@ namespace Intersect.Client.Items
                 newItem.StatBuffs[i] = StatBuffs[i];
             }
             return newItem;
-        }
-    }
-
-    public class MapItemInstance : ItemInstance
-    {
-        public int X;
-        public int Y;
-
-        public MapItemInstance() : base()
-        {
-        }
-
-        public MapItemInstance(string data) : base()
-        {
-            JsonConvert.PopulateObject(data, this);
         }
     }
 }

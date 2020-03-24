@@ -53,7 +53,7 @@ namespace Intersect.Client.Networking
             }
             else
             {
-                GameNetwork.Ping = (int)(Globals.System.GetTimeMs() - PingTime) / 2;
+                Network.Ping = (int)(Globals.System.GetTimeMs() - PingTime) / 2;
             }
         }
 
@@ -61,7 +61,7 @@ namespace Intersect.Client.Networking
         private static void HandlePacket(ConfigPacket packet)
         {
             Options.LoadFromServer(packet.Config);
-            Globals.Bank = new ItemInstance[Options.MaxBankSlots];
+            Globals.Bank = new Item[Options.MaxBankSlots];
             Graphics.InitInGame();
         }
 
@@ -320,7 +320,7 @@ namespace Intersect.Client.Networking
             var map = MapInstance.Get(packet.MapId);
             if (map != null)
             {
-                map.ActionMsgs.Add(new ActionMsgInstance(map, packet.X, packet.Y, packet.Message, new Color(packet.Color.A, packet.Color.R, packet.Color.G, packet.Color.B)));
+                map.ActionMsgs.Add(new ActionMessage(map, packet.X, packet.Y, packet.Message, new Color(packet.Color.A, packet.Color.R, packet.Color.G, packet.Color.B)));
             }
         }
 
@@ -1056,7 +1056,7 @@ namespace Intersect.Client.Networking
             int slot = packet.Slot;
             if (packet.ItemId != Guid.Empty)
             {
-                Globals.Bank[slot] = new ItemInstance();
+                Globals.Bank[slot] = new Item();
                 Globals.Bank[slot].Load(packet.ItemId, packet.Quantity, packet.BagId, packet.StatBuffs);
             }
             else
@@ -1264,14 +1264,14 @@ namespace Intersect.Client.Networking
         {
             if (!string.IsNullOrEmpty(packet.TradePartner))
             {
-                Globals.Trade = new ItemInstance[2, Options.MaxInvItems];
+                Globals.Trade = new Item[2, Options.MaxInvItems];
 
                 //Gotta initialize the trade values
                 for (int x = 0; x < 2; x++)
                 {
                     for (int y = 0; y < Options.MaxInvItems; y++)
                     {
-                        Globals.Trade[x, y] = new ItemInstance();
+                        Globals.Trade[x, y] = new Item();
                     }
                 }
 
@@ -1300,7 +1300,7 @@ namespace Intersect.Client.Networking
             }
             else
             {
-                Globals.Trade[side, slot] = new ItemInstance();
+                Globals.Trade[side, slot] = new Item();
                 Globals.Trade[side, slot].Load(packet.ItemId, packet.Quantity, packet.BagId, packet.StatBuffs);
             }
         }
@@ -1346,7 +1346,7 @@ namespace Intersect.Client.Networking
         {
             if (!packet.Close)
             {
-                Globals.Bag = new ItemInstance[packet.Slots];
+                Globals.Bag = new Item[packet.Slots];
                 Interface.Interface.GameUi.NotifyOpenBag();
             }
             else
@@ -1364,7 +1364,7 @@ namespace Intersect.Client.Networking
             }
             else
             {
-                Globals.Bag[packet.Slot] = new ItemInstance();
+                Globals.Bag[packet.Slot] = new Item();
                 Globals.Bag[packet.Slot].Load(packet.ItemId, packet.Quantity, packet.BagId, packet.StatBuffs);
             }
         }

@@ -64,12 +64,12 @@ namespace Intersect.Client.Maps
         protected long mPanoramaUpdateTime = -1;
 
         //Action Msg's
-        public List<ActionMsgInstance> ActionMsgs = new List<ActionMsgInstance>();
+        public List<ActionMessage> ActionMsgs = new List<ActionMessage>();
 
         public List<MapSound> AttributeSounds = new List<MapSound>();
 
         //Map Animations
-        public List<MapAnimationInstance> LocalAnimations = new List<MapAnimationInstance>();
+        public List<MapAnimation> LocalAnimations = new List<MapAnimation>();
 
         public Dictionary<Guid, Entity> LocalEntities = new Dictionary<Guid, Entity>();
 
@@ -435,7 +435,7 @@ namespace Intersect.Client.Maps
         {
             var animBase = AnimationBase.Get(animId);
             if (animBase == null) return;
-            var anim = new MapAnimationInstance(animBase, tileX, tileY, dir);
+            var anim = new MapAnimation(animBase, tileX, tileY, dir);
             LocalAnimations.Add(anim);
             anim.SetPosition(GetX() + tileX * Options.TileWidth + Options.TileWidth / 2,
                 GetY() + tileY * Options.TileHeight + Options.TileHeight / 2, tileX, tileY,
@@ -995,36 +995,6 @@ namespace Intersect.Client.Maps
             ClearAttributeSounds();
             DestroyVBOs();
             Delete();
-        }
-    }
-
-    public class ActionMsgInstance
-    {
-        public Color Clr = new Color();
-        public MapInstance Map;
-        public string Msg = "";
-        public long TransmittionTimer;
-        public int X;
-        public long XOffset;
-        public int Y;
-
-        public ActionMsgInstance(MapInstance map, int x, int y, string message, Color color)
-        {
-            Map = map;
-            X = x;
-            Y = y;
-            Msg = message;
-            Clr = color;
-            XOffset = Globals.Random.Next(-30, 30); //+- 16 pixels so action msg's don't overlap!
-            TransmittionTimer = Globals.System.GetTimeMs() + 1000;
-        }
-
-        public void TryRemove()
-        {
-            if (TransmittionTimer <= Globals.System.GetTimeMs())
-            {
-                Map.ActionMsgs.Remove(this);
-            }
         }
     }
 }

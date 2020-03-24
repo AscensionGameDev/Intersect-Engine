@@ -89,10 +89,10 @@ namespace Intersect.Client.MonoGame
             (Core.Graphics.Renderer as MonoRenderer)?.Init(GraphicsDevice);
 
             // TODO: Remove old netcode
-            GameNetwork.Socket = new IntersectNetworkSocket();
-            GameNetwork.Socket.Connected += MainMenu.OnNetworkConnected;
-            GameNetwork.Socket.ConnectionFailed += MainMenu.OnNetworkFailed;
-            GameNetwork.Socket.Disconnected += MainMenu.OnNetworkDisconnected;
+            Networking.Network.Socket = new MonoSocket();
+            Networking.Network.Socket.Connected += MainMenu.OnNetworkConnected;
+            Networking.Network.Socket.ConnectionFailed += MainMenu.OnNetworkFailed;
+            Networking.Network.Socket.Disconnected += MainMenu.OnNetworkDisconnected;
 
             Main.Start();
             base.Initialize();
@@ -144,7 +144,7 @@ namespace Intersect.Client.MonoGame
         protected override void OnExiting(object sender, EventArgs args)
         {
             base.OnExiting(sender, args);
-            GameNetwork.Close("quitting");
+            Networking.Network.Close("quitting");
             if (Globals.Me != null && Globals.Me.CombatTimer > Globals.System?.GetTimeMs())
             {
                 MessageBox.Show(Strings.Combat.warningforceclose, Strings.Combat.warningtitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);

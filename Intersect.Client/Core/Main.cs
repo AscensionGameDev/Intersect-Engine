@@ -34,7 +34,7 @@ namespace Intersect.Client.Core
             Audio.PlayMusic(ClientConfiguration.Instance.MenuMusic, 3, 3, true);
 
             //Init Network
-            GameNetwork.InitNetwork();
+            Networking.Network.InitNetwork();
             Fade.FadeIn();
 
             //Make Json.Net Familiar with Our Object Types
@@ -67,7 +67,7 @@ namespace Intersect.Client.Core
         {
             lock (Globals.GameLock)
             {
-                GameNetwork.Update();
+                Networking.Network.Update();
                 Globals.System.Update();
                 Fade.Update();
                 Interface.Interface.ToggleInput(Globals.GameState != GameStates.Intro);

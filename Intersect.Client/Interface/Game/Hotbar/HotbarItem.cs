@@ -24,8 +24,8 @@ namespace Intersect.Client.Interface.Game.Hotbar
         //Item Info
         private Guid mCurrentId = Guid.Empty;
         private int mInventoryItemIndex = -1;
-        private ItemInstance mInventoryItem = null;
-        private SpellInstance mSpellBookItem = null;
+        private Item mInventoryItem = null;
+        private Spell mSpellBookItem = null;
         private ItemBase mCurrentItem = null;
         private SpellBase mCurrentSpell = null;
 

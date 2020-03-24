@@ -132,12 +132,12 @@ namespace Intersect.Client.Interface.Game.Inventory
             }
             if (Globals.GameShop == null)
             {
-                if (Globals.Me.Inventory[mMySlot]?.Item != null)
-                    mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].Item, Globals.Me.Inventory[mMySlot].Quantity, mInventoryWindow.X, mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBuffs);
+                if (Globals.Me.Inventory[mMySlot]?.Base != null)
+                    mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].Base, Globals.Me.Inventory[mMySlot].Quantity, mInventoryWindow.X, mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBuffs);
             }
             else
             {
-                ItemInstance invItem = Globals.Me.Inventory[mMySlot];
+                Item invItem = Globals.Me.Inventory[mMySlot];
                 ShopItem shopItem = null;
                 for (int i = 0; i < Globals.GameShop.BuyingItems.Count; i++)
                 {
@@ -153,24 +153,24 @@ namespace Intersect.Client.Interface.Game.Inventory
                 if (Globals.GameShop.BuyingWhitelist && shopItem != null)
                 {
                     var hoveredItem = ItemBase.Get(shopItem.CostItemId);
-                    if (hoveredItem != null && Globals.Me.Inventory[mMySlot]?.Item != null)
+                    if (hoveredItem != null && Globals.Me.Inventory[mMySlot]?.Base != null)
                     {
-                        mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].Item, Globals.Me.Inventory[mMySlot].Quantity, mInventoryWindow.X, mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBuffs, "", Strings.Shop.sellsfor.ToString( shopItem.CostItemQuantity, hoveredItem.Name));
+                        mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].Base, Globals.Me.Inventory[mMySlot].Quantity, mInventoryWindow.X, mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBuffs, "", Strings.Shop.sellsfor.ToString( shopItem.CostItemQuantity, hoveredItem.Name));
                     }
                 }
                 else if (shopItem == null)
                 {
                     var hoveredItem = ItemBase.Get(invItem.ItemId);
                     var costItem = Globals.GameShop.DefaultCurrency;
-                    if (hoveredItem != null && costItem != null && Globals.Me.Inventory[mMySlot]?.Item != null)
+                    if (hoveredItem != null && costItem != null && Globals.Me.Inventory[mMySlot]?.Base != null)
                     {
-                        mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].Item, Globals.Me.Inventory[mMySlot].Quantity, mInventoryWindow.X, mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBuffs, "", Strings.Shop.sellsfor.ToString( hoveredItem.Price, costItem.Name));
+                        mDescWindow = new ItemDescWindow(Globals.Me.Inventory[mMySlot].Base, Globals.Me.Inventory[mMySlot].Quantity, mInventoryWindow.X, mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBuffs, "", Strings.Shop.sellsfor.ToString( hoveredItem.Price, costItem.Name));
                     }
                 }
                 else
                 {
-                    if (invItem?.Item != null)
-                        mDescWindow = new ItemDescWindow(invItem.Item, invItem.Quantity, mInventoryWindow.X, mInventoryWindow.Y, invItem.StatBuffs, "", Strings.Shop.wontbuy);
+                    if (invItem?.Base != null)
+                        mDescWindow = new ItemDescWindow(invItem.Base, invItem.Quantity, mInventoryWindow.X, mInventoryWindow.Y, invItem.StatBuffs, "", Strings.Shop.wontbuy);
                 }
             }
         }

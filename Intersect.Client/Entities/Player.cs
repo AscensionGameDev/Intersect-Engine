@@ -178,7 +178,7 @@ namespace Intersect.Client.Entities
         //Item Processing
         public void SwapItems(int Label, int Color)
         {
-            ItemInstance tmpInstance = Inventory[Color].Clone();
+            Item tmpInstance = Inventory[Color].Clone();
             Inventory[Color] = Inventory[Label].Clone();
             Inventory[Label] = tmpInstance.Clone();
         }
@@ -578,7 +578,7 @@ namespace Intersect.Client.Entities
         //Spell Processing
         public void SwapSpells(int spell1, int spell2)
         {
-            SpellInstance tmpInstance = Spells[spell2].Clone();
+            Spell tmpInstance = Spells[spell2].Clone();
             Spells[spell2] = Spells[spell1].Clone();
             Spells[spell1] = tmpInstance.Clone();
         }

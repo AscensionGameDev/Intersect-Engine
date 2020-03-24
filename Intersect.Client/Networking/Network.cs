@@ -10,7 +10,7 @@ using Intersect.Network.Packets;
 
 namespace Intersect.Client.Networking
 {
-    public static class GameNetwork
+    public static class Network
     {
         public static GameSocket Socket;
 

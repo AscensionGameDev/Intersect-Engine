@@ -2,13 +2,13 @@
 
 namespace Intersect.Client.Spells
 {
-    public class SpellInstance
+    public class Spell
     {
         public Guid SpellId;
 
-        public SpellInstance Clone()
+        public Spell Clone()
         {
-            SpellInstance newSpell = new SpellInstance()
+            Spell newSpell = new Spell()
             {
                 SpellId = SpellId
             };

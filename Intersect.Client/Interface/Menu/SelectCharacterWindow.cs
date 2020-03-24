@@ -108,7 +108,7 @@ namespace Intersect.Client.Interface.Menu
         //Methods
         public void Update()
         {
-            if (!GameNetwork.Connected)
+            if (!Networking.Network.Connected)
             {
                 Hide();
                 mMainMenu.Show();

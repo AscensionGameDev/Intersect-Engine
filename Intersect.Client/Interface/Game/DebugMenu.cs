@@ -81,7 +81,7 @@ namespace Intersect.Client.Interface.Game
         public void Update()
         {
             mFpsLabel.Text = Strings.Debug.fps.ToString( Graphics.Renderer.GetFps());
-            mPingLabel.Text = Strings.Debug.ping.ToString( GameNetwork.Ping);
+            mPingLabel.Text = Strings.Debug.ping.ToString(Networking.Network.Ping);
             mDrawsLabel.Text = Strings.Debug.draws.ToString( Graphics.DrawCalls);
             if (MapInstance.Get(Globals.Me.CurrentMap) != null)
             {

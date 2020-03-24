@@ -123,7 +123,7 @@ namespace Intersect.Client.Interface.Menu
         //Methods
         public void Update()
         {
-            if (GameNetwork.Connected)
+            if (Networking.Network.Connected)
             {
                 return;
             }
@@ -178,7 +178,7 @@ namespace Intersect.Client.Interface.Menu
                 return;
             }
 
-            if (!GameNetwork.Connected)
+            if (!Networking.Network.Connected)
             {
                 Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.notconnected));
                 return;
