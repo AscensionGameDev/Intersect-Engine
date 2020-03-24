@@ -4,7 +4,9 @@ using System.Drawing;
 using System.Windows.Forms;
 using DarkUI.Controls;
 using DarkUI.Forms;
-using Intersect.Editor.ContentManagement;
+
+using Intersect.Editor.Content;
+using Intersect.Editor.Core;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
@@ -100,12 +102,12 @@ namespace Intersect.Editor.Forms.Editors
             cmbUpperGraphic.Items.AddRange(
                 GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Animation));
 
-            mLowerWindow = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(), picLowerAnimation.Handle,
+            mLowerWindow = new SwapChainRenderTarget(Core.Graphics.GetGraphicsDevice(), picLowerAnimation.Handle,
                 picLowerAnimation.Width, picLowerAnimation.Height);
-            mUpperWindow = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(), picUpperAnimation.Handle,
+            mUpperWindow = new SwapChainRenderTarget(Core.Graphics.GetGraphicsDevice(), picUpperAnimation.Handle,
                 picUpperAnimation.Width, picUpperAnimation.Height);
-            mLowerDarkness = EditorGraphics.CreateRenderTexture(picLowerAnimation.Width, picLowerAnimation.Height);
-            mUpperDarkness = EditorGraphics.CreateRenderTexture(picUpperAnimation.Width, picUpperAnimation.Height);
+            mLowerDarkness = Core.Graphics.CreateRenderTexture(picLowerAnimation.Width, picLowerAnimation.Height);
+            mUpperDarkness = Core.Graphics.CreateRenderTexture(picUpperAnimation.Width, picUpperAnimation.Height);
 
             InitLocalization();
             UpdateEditor();
@@ -314,25 +316,25 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (mLowerWindow == null || mEditorItem == null) return;
             if (!mPlayLower) mLowerFrame = scrlLowerFrame.Value - 1;
-            GraphicsDevice graphicsDevice = EditorGraphics.GetGraphicsDevice();
-            EditorGraphics.EndSpriteBatch();
+            GraphicsDevice graphicsDevice = Core.Graphics.GetGraphicsDevice();
+            Core.Graphics.EndSpriteBatch();
             graphicsDevice.SetRenderTarget(mLowerDarkness);
             graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
             if (mLowerFrame < mEditorItem.Lower.Lights.Length)
             {
-                EditorGraphics.DrawLight(
+                Core.Graphics.DrawLight(
                     picLowerAnimation.Width / 2 +
                     mEditorItem.Lower.Lights[mLowerFrame].OffsetX,
                     picLowerAnimation.Height / 2 +
                     mEditorItem.Lower.Lights[mLowerFrame].OffsetY,
                     mEditorItem.Lower.Lights[mLowerFrame], mLowerDarkness);
             }
-            EditorGraphics.DrawTexture(EditorGraphics.GetWhiteTex(), new RectangleF(0, 0, 1, 1),
+            Core.Graphics.DrawTexture(Core.Graphics.GetWhiteTex(), new RectangleF(0, 0, 1, 1),
                 new RectangleF(0, 0, mLowerDarkness.Width, mLowerDarkness.Height),
                 System.Drawing.Color.FromArgb((byte) (((float) (100 - scrlDarkness.Value) / 100f) * 255), 255, 255,
                     255), mLowerDarkness,
                 BlendState.Additive);
-            EditorGraphics.EndSpriteBatch();
+            Core.Graphics.EndSpriteBatch();
             graphicsDevice.SetRenderTarget(mLowerWindow);
             graphicsDevice.Clear(Microsoft.Xna.Framework.Color.White);
             Texture2D animTexture = GameContentManager.GetTexture(GameContentManager.TextureType.Animation,
@@ -347,12 +349,12 @@ namespace Intersect.Editor.Forms.Editors
                     x = (mLowerFrame % (int) nudLowerHorizontalFrames.Value) * w;
                 }
                 long y = (int) Math.Floor(mLowerFrame / nudLowerHorizontalFrames.Value) * h;
-                EditorGraphics.DrawTexture(animTexture, new RectangleF(x, y, w, h),
+                Core.Graphics.DrawTexture(animTexture, new RectangleF(x, y, w, h),
                     new RectangleF(picLowerAnimation.Width / 2 - (int) w / 2,
-                        (int) picLowerAnimation.Height / 2 - (int) h / 2, w, h), mLowerWindow);
+                        (int)picLowerAnimation.Height / 2 - (int) h / 2, w, h), mLowerWindow);
             }
-            EditorGraphics.DrawTexture(mLowerDarkness, 0, 0, mLowerWindow, EditorGraphics.MultiplyState);
-            EditorGraphics.EndSpriteBatch();
+            Core.Graphics.DrawTexture(mLowerDarkness, 0, 0, mLowerWindow, Core.Graphics.MultiplyState);
+            Core.Graphics.EndSpriteBatch();
             mLowerWindow.Present();
         }
 
@@ -360,25 +362,25 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (mUpperWindow == null || mEditorItem == null) return;
             if (!mPlayUpper) mUpperFrame = scrlUpperFrame.Value - 1;
-            GraphicsDevice graphicsDevice = EditorGraphics.GetGraphicsDevice();
-            EditorGraphics.EndSpriteBatch();
+            GraphicsDevice graphicsDevice = Core.Graphics.GetGraphicsDevice();
+            Core.Graphics.EndSpriteBatch();
             graphicsDevice.SetRenderTarget(mUpperDarkness);
             graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
             if (mUpperFrame < mEditorItem.Upper.Lights.Length)
             {
-                EditorGraphics.DrawLight(
+                Core.Graphics.DrawLight(
                     picUpperAnimation.Width / 2 +
                     mEditorItem.Upper.Lights[mUpperFrame].OffsetX,
                     picUpperAnimation.Height / 2 +
                     mEditorItem.Upper.Lights[mUpperFrame].OffsetY,
                     mEditorItem.Upper.Lights[mUpperFrame], mUpperDarkness);
             }
-            EditorGraphics.DrawTexture(EditorGraphics.GetWhiteTex(), new RectangleF(0, 0, 1, 1),
+            Core.Graphics.DrawTexture(Core.Graphics.GetWhiteTex(), new RectangleF(0, 0, 1, 1),
                 new RectangleF(0, 0, mUpperDarkness.Width, mUpperDarkness.Height),
                 System.Drawing.Color.FromArgb((byte) (((float) (100 - scrlDarkness.Value) / 100f) * 255), 255, 255,
                     255), mUpperDarkness,
                 BlendState.Additive);
-            EditorGraphics.EndSpriteBatch();
+            Core.Graphics.EndSpriteBatch();
             graphicsDevice.SetRenderTarget(mUpperWindow);
             graphicsDevice.Clear(Microsoft.Xna.Framework.Color.White);
             Texture2D animTexture = GameContentManager.GetTexture(GameContentManager.TextureType.Animation,
@@ -393,12 +395,12 @@ namespace Intersect.Editor.Forms.Editors
                     x = (mUpperFrame % (int) nudUpperHorizontalFrames.Value) * w;
                 }
                 long y = (int) Math.Floor(mUpperFrame / nudUpperHorizontalFrames.Value) * h;
-                EditorGraphics.DrawTexture(animTexture, new RectangleF(x, y, w, h),
+                Core.Graphics.DrawTexture(animTexture, new RectangleF(x, y, w, h),
                     new RectangleF(picUpperAnimation.Width / 2 - (int) w / 2,
-                        (int) picUpperAnimation.Height / 2 - (int) h / 2, w, h), mUpperWindow);
+                        (int)picUpperAnimation.Height / 2 - (int) h / 2, w, h), mUpperWindow);
             }
-            EditorGraphics.DrawTexture(mUpperDarkness, 0, 0, mUpperWindow, EditorGraphics.MultiplyState);
-            EditorGraphics.EndSpriteBatch();
+            Core.Graphics.DrawTexture(mUpperDarkness, 0, 0, mUpperWindow, Core.Graphics.MultiplyState);
+            Core.Graphics.EndSpriteBatch();
             mUpperWindow.Present();
         }
 

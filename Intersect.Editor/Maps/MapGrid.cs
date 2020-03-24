@@ -6,6 +6,8 @@ using System.Threading;
 using System.Windows.Forms;
 using DarkUI.Forms;
 using Hjg.Pngcs;
+
+using Intersect.Editor.Core;
 using Intersect.Editor.Forms;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
@@ -237,7 +239,7 @@ namespace Intersect.Editor.Maps
             int cols = colSize * (GridWidth);
             int rows = rowSize * (GridHeight);
             Bitmap tmpBitmap = new Bitmap(colSize, rowSize);
-            Graphics g = Graphics.FromImage(tmpBitmap);
+            System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(tmpBitmap);
             var png = new PngWriter(new FileStream(filename, FileMode.OpenOrCreate),
                 new ImageInfo(cols, rows, 16, true));
             var pngReaderDict = new Dictionary<Guid, Bitmap>();
@@ -355,15 +357,15 @@ namespace Intersect.Editor.Maps
                         Strings.MapGrid.mapcachecaption, DarkDialogButton.YesNo, Properties.Resources.Icon) ==
                     DialogResult.Yes)
                 {
-                    Database.GridHideOverlay = EditorGraphics.HideOverlay;
-                    Database.GridHideDarkness = EditorGraphics.HideDarkness;
-                    Database.GridHideFog = EditorGraphics.HideFog;
-                    Database.GridHideResources = EditorGraphics.HideResources;
-                    if (EditorGraphics.LightColor != null)
+                    Database.GridHideOverlay = Core.Graphics.HideOverlay;
+                    Database.GridHideDarkness = Core.Graphics.HideDarkness;
+                    Database.GridHideFog = Core.Graphics.HideFog;
+                    Database.GridHideResources = Core.Graphics.HideResources;
+                    if (Core.Graphics.LightColor != null)
                     {
                         Database.GridLightColor =
-                            System.Drawing.Color.FromArgb(EditorGraphics.LightColor.A, EditorGraphics.LightColor.R,
-                                EditorGraphics.LightColor.G, EditorGraphics.LightColor.B).ToArgb();
+                            System.Drawing.Color.FromArgb(Core.Graphics.LightColor.A, Core.Graphics.LightColor.R,
+                                Core.Graphics.LightColor.G, Core.Graphics.LightColor.B).ToArgb();
                     }
                     else
                     {
@@ -666,7 +668,7 @@ namespace Intersect.Editor.Maps
                 int wCount = (int)Math.Ceiling((float)panelBounds.Height / TileHeight) + 2;
                 for (int i = 0; i < hCount * wCount && i < GridWidth * GridHeight; i++)
                 {
-                    mTextures.Add(new Texture2D(EditorGraphics.GetGraphicsDevice(), TileWidth, TileHeight));
+                    mTextures.Add(new Texture2D(Core.Graphics.GetGraphicsDevice(), TileWidth, TileHeight));
                 }
                 mFreeTextures.AddRange(mTextures.ToArray());
             }
@@ -739,18 +741,4 @@ namespace Intersect.Editor.Maps
         }
     }
 
-    public class MapGridItem
-    {
-        public MapGridItem(Guid id, string name = "", int revision = 0)
-        {
-            MapId = id;
-            this.Name = name;
-            this.Revision = revision;
-        }
-
-        public string Name { get; set; }
-        public int Revision { get; set; }
-        public Guid MapId { get; set; }
-        public Texture2D Tex { get; set; }
-    }
 }

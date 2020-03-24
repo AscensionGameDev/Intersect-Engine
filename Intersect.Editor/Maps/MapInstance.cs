@@ -4,6 +4,7 @@ using System.Drawing.Imaging;
 using System.IO;
 
 using Intersect.Editor.Classes.Maps;
+using Intersect.Editor.Core;
 using Intersect.Editor.Entities;
 using Intersect.Editor.General;
 using Intersect.GameObjects;
@@ -21,7 +22,7 @@ namespace Intersect.Editor.Maps
         private static MapInstances sLookup;
 
         //Map Attributes
-        private Dictionary<MapAttribute, AnimationInstance> mAttributeAnimInstances = new Dictionary<MapAttribute, AnimationInstance>();
+        private Dictionary<MapAttribute, Animation> mAttributeAnimInstances = new Dictionary<MapAttribute, Animation>();
 
         private MapSaveState mLoadedState;
 
@@ -129,18 +130,18 @@ namespace Intersect.Editor.Maps
         }
 
         //Attribute/Animations
-        public AnimationInstance GetAttributeAnimation(MapAttribute attr, Guid animId)
+        public Animation GetAttributeAnimation(MapAttribute attr, Guid animId)
         {
             if (attr == null) return null;
             if (!mAttributeAnimInstances.ContainsKey(attr))
             {
                 mAttributeAnimInstances.Add(attr,
-                    new AnimationInstance(AnimationBase.Get(animId), true));
+                    new Animation(AnimationBase.Get(animId), true));
             }
             return mAttributeAnimInstances[attr];
         }
 
-        public void SetAttributeAnimation(MapAttribute attribute, AnimationInstance animationInstance)
+        public void SetAttributeAnimation(MapAttribute attribute, Animation animationInstance)
         {
             if (mAttributeAnimInstances.ContainsKey(attribute))
             {
@@ -179,9 +180,9 @@ namespace Intersect.Editor.Maps
                     Globals.CurrentMap = this;
                     using (MemoryStream ms = new MemoryStream())
                     {
-                        lock (EditorGraphics.GraphicsLock)
+                        lock (Graphics.GraphicsLock)
                         {
-                            var screenshotTexture = EditorGraphics.ScreenShotMap();
+                            var screenshotTexture = Graphics.ScreenShotMap();
                             screenshotTexture.Save(ms, ImageFormat.Png);
                             ms.Close();
                         }

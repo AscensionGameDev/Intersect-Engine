@@ -3,6 +3,8 @@ using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
 using DarkUI.Controls;
+
+using Intersect.Editor.Core;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
@@ -101,7 +103,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void pnlColor_Paint(object sender, PaintEventArgs e)
         {
-            var g = Graphics.FromImage(mTileBackbuffer);
+            var g = System.Drawing.Graphics.FromImage(mTileBackbuffer);
             g.Clear(System.Drawing.Color.Transparent);
             g.DrawImage(pnlColor.BackgroundImage, new System.Drawing.Point(0, 0));
             Brush brush =
@@ -133,7 +135,7 @@ namespace Intersect.Editor.Forms.Editors
             var brightness = (int) ((255 - scrlAlpha.Value) / 255f * 100);
             lblBrightness.Text = Strings.TimeEditor.brightness.ToString( brightness);
             pnlColor.Refresh();
-            EditorGraphics.LightColor = mYTime.DaylightHues[lstTimes.SelectedIndex];
+            Core.Graphics.LightColor = mYTime.DaylightHues[lstTimes.SelectedIndex];
         }
 
         private void chkSync_CheckedChanged(object sender, EventArgs e)

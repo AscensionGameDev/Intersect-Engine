@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using DarkUI.Forms;
-using Intersect.Editor.ContentManagement;
+
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
@@ -11,6 +11,8 @@ using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.Utilities;
 using System.Linq;
+
+using Intersect.Editor.Content;
 
 namespace Intersect.Editor.Forms.Editors
 {

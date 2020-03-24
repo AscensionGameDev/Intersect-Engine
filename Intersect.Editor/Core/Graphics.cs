@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
-using Intersect.Editor.ContentManagement;
+
+using Intersect.Editor.Content;
 using Intersect.Editor.Entities;
 using Intersect.Editor.Forms.DockingElements;
 using Intersect.Editor.General;
@@ -13,12 +14,13 @@ using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Logging;
 using Intersect.Utilities;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Intersect.Editor
+namespace Intersect.Editor.Core
 {
-    public static class EditorGraphics
+    public static class Graphics
     {
         //MonoGame Setup/Device
         private static GraphicsDevice sGraphicsDevice;
@@ -1109,7 +1111,7 @@ namespace Intersect.Editor
                                 if (animInstance == null || animInstance.MyBase != animation)
                                 {
                                     tmpMap.SetAttributeAnimation(tmpMap.Attributes[x, y],
-                                        new AnimationInstance(animation, true));
+                                        new Animation(animation, true));
                                 }
                                 animInstance.Update();
                                 animInstance.SetPosition((int) xpos, (int) ypos, 0);

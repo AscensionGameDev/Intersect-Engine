@@ -6,7 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Intersect.Editor.ContentManagement;
+
+using Intersect.Editor.Content;
+
 using Newtonsoft.Json.Linq;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
@@ -20,7 +22,7 @@ namespace Intersect.Editor.Classes.ContentManagement
 
         public List<Rectangle> usedRectangles = new List<Rectangle>();
         public List<Rectangle> freeRectangles = new List<Rectangle>();
-        public Dictionary<GameTexture, Rectangle> textures = new Dictionary<GameTexture, Rectangle>();
+        public Dictionary<Texture, Rectangle> textures = new Dictionary<Texture, Rectangle>();
 
         public enum FreeRectChoiceHeuristic
         {
@@ -54,7 +56,7 @@ namespace Intersect.Editor.Classes.ContentManagement
             freeRectangles.Add(n);
         }
 
-        public bool InsertTex(GameTexture tex)
+        public bool InsertTex(Texture tex)
         {
             var rect = Insert(tex.GetWidth(), tex.GetHeight(), FreeRectChoiceHeuristic.RectBestAreaFit);
             if (rect.Height > 0)

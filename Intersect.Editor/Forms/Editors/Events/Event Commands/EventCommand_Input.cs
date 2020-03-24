@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using Intersect.Editor.ContentManagement;
+
 using Intersect.Editor.Localization;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events.Commands;

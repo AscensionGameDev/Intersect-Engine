@@ -1,12 +1,12 @@
 ﻿using System.Diagnostics;
 
-namespace Intersect.Editor
+namespace Intersect.Editor.Core
 {
-    public class EditorSystem
+    public class Sys
     {
         public Stopwatch StopWatch = new Stopwatch();
 
-        public EditorSystem()
+        public Sys()
         {
             StopWatch.Start();
         }

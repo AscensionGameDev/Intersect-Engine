@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
+
+using Intersect.Editor.Core;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Maps;
@@ -62,17 +64,17 @@ namespace Intersect.Editor.Forms.DockingElements
                 {
                     mChain.Dispose();
                 }
-                if (EditorGraphics.GetGraphicsDevice() != null)
+                if (Graphics.GetGraphicsDevice() != null)
                 {
                     if (pnlMapGrid.Width > 0 && pnlMapGrid.Height > 0)
                     {
                         if (pnlMapGrid.Width > 0 && pnlMapGrid.Height > 0)
                         {
-                            mChain = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(),
+                            mChain = new SwapChainRenderTarget(Graphics.GetGraphicsDevice(),
                                 pnlMapGrid.Handle,
                                 pnlMapGrid.Width, pnlMapGrid.Height, false, SurfaceFormat.Color,
                                 DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents, PresentInterval.Immediate);
-                            EditorGraphics.SetMapGridChain(mChain);
+                            Graphics.SetMapGridChain(mChain);
                         }
                     }
                 }

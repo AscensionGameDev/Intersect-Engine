@@ -1,25 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Reflection;
-using System.Text;
 using System.Windows.Forms;
-using Intersect.Editor.Forms;
+
+using Intersect.Editor.Core;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
-using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Logging;
 using Intersect.Utilities;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Intersect.Editor.ContentManagement
+namespace Intersect.Editor.Content
 {
     public static class GameContentManager
     {
@@ -44,22 +41,22 @@ namespace Intersect.Editor.ContentManagement
         private static string sErrorString = "";
 
         //Game Content
-        public static List<GameTexture> AllTextures = new List<GameTexture>();
-        public static List<GameTexture> TilesetTextures = new List<GameTexture>();
-        public static List<GameTexture> FogTextures = new List<GameTexture>();
+        public static List<Texture> AllTextures = new List<Texture>();
+        public static List<Texture> TilesetTextures = new List<Texture>();
+        public static List<Texture> FogTextures = new List<Texture>();
 
-        static IDictionary<string, GameTexture> sTilesetDict = new Dictionary<string, GameTexture>();
-        static IDictionary<string, GameTexture> sItemDict = new Dictionary<string, GameTexture>();
-        static IDictionary<string, GameTexture> sEntityDict = new Dictionary<string, GameTexture>();
-        static IDictionary<string, GameTexture> sSpellDict = new Dictionary<string, GameTexture>();
-        static IDictionary<string, GameTexture> sAnimationDict = new Dictionary<string, GameTexture>();
-        static IDictionary<string, GameTexture> sFaceDict = new Dictionary<string, GameTexture>();
-        static IDictionary<string, GameTexture> sImageDict = new Dictionary<string, GameTexture>();
-        static IDictionary<string, GameTexture> sFogDict = new Dictionary<string, GameTexture>();
-        static IDictionary<string, GameTexture> sResourceDict = new Dictionary<string, GameTexture>();
-        static IDictionary<string, GameTexture> sPaperdollDict = new Dictionary<string, GameTexture>();
-        static IDictionary<string, GameTexture> sGuiDict = new Dictionary<string, GameTexture>();
-        static IDictionary<string, GameTexture> sMiscDict = new Dictionary<string, GameTexture>();
+        static IDictionary<string, Texture> sTilesetDict = new Dictionary<string, Texture>();
+        static IDictionary<string, Texture> sItemDict = new Dictionary<string, Texture>();
+        static IDictionary<string, Texture> sEntityDict = new Dictionary<string, Texture>();
+        static IDictionary<string, Texture> sSpellDict = new Dictionary<string, Texture>();
+        static IDictionary<string, Texture> sAnimationDict = new Dictionary<string, Texture>();
+        static IDictionary<string, Texture> sFaceDict = new Dictionary<string, Texture>();
+        static IDictionary<string, Texture> sImageDict = new Dictionary<string, Texture>();
+        static IDictionary<string, Texture> sFogDict = new Dictionary<string, Texture>();
+        static IDictionary<string, Texture> sResourceDict = new Dictionary<string, Texture>();
+        static IDictionary<string, Texture> sPaperdollDict = new Dictionary<string, Texture>();
+        static IDictionary<string, Texture> sGuiDict = new Dictionary<string, Texture>();
+        static IDictionary<string, Texture> sMiscDict = new Dictionary<string, Texture>();
         static IDictionary<string, Effect> sShaderDict = new Dictionary<string, Effect>();
         static IDictionary<string, object> sMusicDict = new Dictionary<string, object>();
         static IDictionary<string, object> sSoundDict = new Dictionary<string, object>();
@@ -80,7 +77,7 @@ namespace Intersect.Editor.ContentManagement
             //We create a dummy game service so we can load up a content manager.
             var container = new GameServiceContainer();
             container.AddService(typeof(IGraphicsDeviceService),
-                new DummyGraphicsDeviceManager(EditorGraphics.GetGraphicsDevice()));
+                new DummyGraphicsDeviceManager(Core.Graphics.GetGraphicsDevice()));
             sContentManger = new ContentManager(container, "");
             LoadEntities();
             LoadSpells();
@@ -104,7 +101,7 @@ namespace Intersect.Editor.ContentManagement
         }
 
         //Loading Game Resources
-        public static void LoadTextureGroup(string directory, IDictionary<string, GameTexture> dict)
+        public static void LoadTextureGroup(string directory, IDictionary<string, Texture> dict)
         {
             dict.Clear();
             if (!Directory.Exists("resources/" + directory))
@@ -115,7 +112,7 @@ namespace Intersect.Editor.ContentManagement
             for (int i = 0; i < items.Length; i++)
             {
                 string filename = items[i].Replace("resources/" + directory + "\\", "").ToLower();
-                dict.Add(filename, new GameTexture("resources/" + directory + "/" + filename));
+                dict.Add(filename, new Texture("resources/" + directory + "/" + filename));
             }
         }
 
@@ -170,7 +167,7 @@ namespace Intersect.Editor.ContentManagement
                 {
                     try
                     {
-                        sTilesetDict[tileset.Name.ToLower()] = new GameTexture("resources/tilesets/" + tileset.Name);
+                        sTilesetDict[tileset.Name.ToLower()] = new Texture("resources/tilesets/" + tileset.Name);
                         TilesetTextures.Add(sTilesetDict[tileset.Name.ToLower()]);
                     }
                     catch (Exception exception)
@@ -327,7 +324,7 @@ namespace Intersect.Editor.ContentManagement
                 return null;
             }
 
-            IDictionary<string, GameTexture> textureDict = null;
+            IDictionary<string, Texture> textureDict = null;
             switch (type)
             {
                 case TextureType.Tileset:
@@ -374,9 +371,9 @@ namespace Intersect.Editor.ContentManagement
             if (textureDict == sTilesetDict
             ) //When assigning name in tilebase base we force it to be lowercase.. so lets save some processing time here..
             {
-                return textureDict.TryGetValue(name, out GameTexture texture1) ? texture1.GetTexture() : null;
+                return textureDict.TryGetValue(name, out Texture texture1) ? texture1.GetTexture() : null;
             }
-            return textureDict.TryGetValue(name.ToLower(), out GameTexture texture) ? texture.GetTexture() : null;
+            return textureDict.TryGetValue(name.ToLower(), out Texture texture) ? texture.GetTexture() : null;
         }
 
         public static Effect GetShader(string name)
@@ -420,7 +417,7 @@ namespace Intersect.Editor.ContentManagement
         //Getting Filenames
         public static string[] GetTextureNames(TextureType type)
         {
-            IDictionary<string, GameTexture> textureDict = null;
+            IDictionary<string, Texture> textureDict = null;
             switch (type)
             {
                 case TextureType.Tileset:

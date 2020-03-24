@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Drawing;
-using Intersect.Editor.ContentManagement;
+
+using Intersect.Editor.Content;
+using Intersect.Editor.Core;
 using Intersect.Editor.General;
 using Intersect.GameObjects;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect.Editor.Entities
 {
-    public class AnimationInstance
+    public class Animation
     {
         private int mRenderDir;
         private float mRenderX;
@@ -23,7 +25,7 @@ namespace Intersect.Editor.Entities
         private int mUpperLoop;
         private long mUpperTimer;
 
-        public AnimationInstance(AnimationBase animBase, bool loopForever)
+        public Animation(AnimationBase animBase, bool loopForever)
         {
             MyBase = animBase;
             mLowerLoop = animBase.Lower.LoopCount;
@@ -51,9 +53,9 @@ namespace Intersect.Editor.Entities
                         {
                             int frameWidth = (int) tex.Width / MyBase.Lower.XFrames;
                             int frameHeight = (int) tex.Height / MyBase.Lower.YFrames;
-                            EditorGraphics.DrawTexture(tex,
+                            Core.Graphics.DrawTexture(tex,
                                 new RectangleF((mLowerFrame % MyBase.Lower.XFrames) * frameWidth,
-                                    (float) Math.Floor((double) mLowerFrame / MyBase.Lower.XFrames) * frameHeight,
+                                    (float)Math.Floor((double)mLowerFrame / MyBase.Lower.XFrames) * frameHeight,
                                     frameWidth,
                                     frameHeight),
                                 new RectangleF(mRenderX - frameWidth / 2, mRenderY - frameHeight / 2, frameWidth,
@@ -61,9 +63,9 @@ namespace Intersect.Editor.Entities
                                 System.Drawing.Color.White, target, BlendState.NonPremultiplied);
                         }
                     }
-                    EditorGraphics.AddLight(
-                        Options.MapWidth * Options.TileWidth - EditorGraphics.CurrentView.Left + (int) mRenderX + MyBase.Lower.Lights[mLowerFrame].OffsetX,
-                        Options.MapHeight * Options.TileHeight  - EditorGraphics.CurrentView.Top + (int) mRenderY +
+                    Core.Graphics.AddLight(
+                        Options.MapWidth * Options.TileWidth - Core.Graphics.CurrentView.Left + (int)mRenderX + MyBase.Lower.Lights[mLowerFrame].OffsetX,
+                        Options.MapHeight * Options.TileHeight  - Core.Graphics.CurrentView.Top + (int)mRenderY +
                         MyBase.Lower.Lights[mLowerFrame].OffsetY,
                         MyBase.Lower.Lights[mLowerFrame]);
                 }
@@ -82,9 +84,9 @@ namespace Intersect.Editor.Entities
                         {
                             int frameWidth = (int) tex.Width / MyBase.Upper.XFrames;
                             int frameHeight = (int) tex.Height / MyBase.Upper.YFrames;
-                            EditorGraphics.DrawTexture(tex,
+                            Core.Graphics.DrawTexture(tex,
                                 new RectangleF((mUpperFrame % MyBase.Upper.XFrames) * frameWidth,
-                                    (float) Math.Floor((double) mUpperFrame / MyBase.Upper.XFrames) * frameHeight,
+                                    (float)Math.Floor((double)mUpperFrame / MyBase.Upper.XFrames) * frameHeight,
                                     frameWidth,
                                     frameHeight),
                                 new RectangleF(mRenderX - frameWidth / 2, mRenderY - frameHeight / 2, frameWidth,
@@ -92,9 +94,9 @@ namespace Intersect.Editor.Entities
                                 System.Drawing.Color.White, target, BlendState.NonPremultiplied);
                         }
                     }
-                    EditorGraphics.AddLight(
-                        Options.MapWidth * Options.TileWidth - EditorGraphics.CurrentView.Left + (int) mRenderX + MyBase.Upper.Lights[mUpperFrame].OffsetX,
-                        Options.MapHeight * Options.TileHeight - EditorGraphics.CurrentView.Top + (int) mRenderY +
+                    Core.Graphics.AddLight(
+                        Options.MapWidth * Options.TileWidth - Core.Graphics.CurrentView.Left + (int)mRenderX + MyBase.Upper.Lights[mUpperFrame].OffsetX,
+                        Options.MapHeight * Options.TileHeight - Core.Graphics.CurrentView.Top + (int)mRenderY +
                         MyBase.Upper.Lights[mUpperFrame].OffsetY,
                         MyBase.Upper.Lights[mUpperFrame]);
                 }

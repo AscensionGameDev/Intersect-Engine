@@ -14,45 +14,45 @@ namespace Intersect.Editor.Networking
     {
         public static void SendPing()
         {
-            EditorNetwork.SendPacket(new PingPacket());
+            Network.SendPacket(new PingPacket());
         }
 
         public static void SendLogin(string username, string password)
         {
-            EditorNetwork.SendPacket(new LoginPacket(username,password));
+            Network.SendPacket(new LoginPacket(username,password));
         }
 
         public static void SendNeedMap(Guid mapId)
         {
-            EditorNetwork.SendPacket(new NeedMapPacket(mapId));
+            Network.SendPacket(new NeedMapPacket(mapId));
         }
 
         public static void SendMap(MapInstance map)
         {
-            EditorNetwork.SendPacket(new MapUpdatePacket(map.Id,map.JsonData,map.GenerateTileData(),map.AttributeData));
+            Network.SendPacket(new MapUpdatePacket(map.Id,map.JsonData,map.GenerateTileData(),map.AttributeData));
         }
 
         public static void SendCreateMap(int location, Guid currentMapId, MapListItem parent)
         {
             if (location > -1)
             {
-                EditorNetwork.SendPacket(new CreateMapPacket(currentMapId, (byte) location));
+                Network.SendPacket(new CreateMapPacket(currentMapId, (byte) location));
             }
             else
             {
                 if (parent == null)
                 {
-                    EditorNetwork.SendPacket(new CreateMapPacket(0, Guid.Empty));
+                    Network.SendPacket(new CreateMapPacket(0, Guid.Empty));
                 }
                 else
                 {
                     if (parent.GetType() == typeof(MapListMap))
                     {
-                        EditorNetwork.SendPacket(new CreateMapPacket(1, ((MapListMap)parent).MapId));
+                        Network.SendPacket(new CreateMapPacket(1, ((MapListMap)parent).MapId));
                     }
                     else
                     {
-                        EditorNetwork.SendPacket(new CreateMapPacket(0, ((MapListFolder)parent).FolderId));
+                        Network.SendPacket(new CreateMapPacket(0, ((MapListFolder)parent).FolderId));
                     }
                 }
             }
@@ -60,24 +60,24 @@ namespace Intersect.Editor.Networking
 
         public static void SendMapListMove(int srcType, Guid srcId, int destType, Guid destId)
         {
-            EditorNetwork.SendPacket(new MapListUpdatePacket(MapListUpdates.MoveItem,srcType,srcId,destType,destId,""));
+            Network.SendPacket(new MapListUpdatePacket(MapListUpdates.MoveItem,srcType,srcId,destType,destId,""));
         }
 
         public static void SendAddFolder(MapListItem parent)
         {
             if (parent == null)
             {
-                EditorNetwork.SendPacket(new MapListUpdatePacket(MapListUpdates.AddFolder, 0, Guid.Empty, 0, Guid.Empty, ""));
+                Network.SendPacket(new MapListUpdatePacket(MapListUpdates.AddFolder, 0, Guid.Empty, 0, Guid.Empty, ""));
             }
             else
             {
                 if (parent.GetType() == typeof(MapListMap))
                 {
-                    EditorNetwork.SendPacket(new MapListUpdatePacket(MapListUpdates.AddFolder, 0, Guid.Empty, 1, ((MapListMap)parent).MapId, ""));
+                    Network.SendPacket(new MapListUpdatePacket(MapListUpdates.AddFolder, 0, Guid.Empty, 1, ((MapListMap)parent).MapId, ""));
                 }
                 else
                 {
-                    EditorNetwork.SendPacket(new MapListUpdatePacket(MapListUpdates.AddFolder, 0, Guid.Empty, 0, ((MapListFolder)parent).FolderId, ""));
+                    Network.SendPacket(new MapListUpdatePacket(MapListUpdates.AddFolder, 0, Guid.Empty, 0, ((MapListFolder)parent).FolderId, ""));
                 }
             }
         }
@@ -86,11 +86,11 @@ namespace Intersect.Editor.Networking
         {
             if (parent.GetType() == typeof(MapListMap))
             {
-                EditorNetwork.SendPacket(new MapListUpdatePacket(MapListUpdates.Rename, 1, ((MapListMap)parent).MapId, 0, Guid.Empty, name));
+                Network.SendPacket(new MapListUpdatePacket(MapListUpdates.Rename, 1, ((MapListMap)parent).MapId, 0, Guid.Empty, name));
             }
             else
             {
-                EditorNetwork.SendPacket(new MapListUpdatePacket(MapListUpdates.Rename, 0, ((MapListFolder)parent).FolderId, 0, Guid.Empty, name));
+                Network.SendPacket(new MapListUpdatePacket(MapListUpdates.Rename, 0, ((MapListFolder)parent).FolderId, 0, Guid.Empty, name));
             }
         }
 
@@ -98,63 +98,63 @@ namespace Intersect.Editor.Networking
         {
             if (target.GetType() == typeof(MapListMap))
             {
-                EditorNetwork.SendPacket(new MapListUpdatePacket(MapListUpdates.Delete, 1, ((MapListMap) target).MapId, 0, Guid.Empty, ""));
+                Network.SendPacket(new MapListUpdatePacket(MapListUpdates.Delete, 1, ((MapListMap) target).MapId, 0, Guid.Empty, ""));
             }
             else
             {
-                EditorNetwork.SendPacket(new MapListUpdatePacket(MapListUpdates.Delete, 0, ((MapListFolder)target).FolderId, 0, Guid.Empty, ""));
+                Network.SendPacket(new MapListUpdatePacket(MapListUpdates.Delete, 0, ((MapListFolder)target).FolderId, 0, Guid.Empty, ""));
             }
         }
 
         public static void SendNeedGrid(Guid mapId)
         {
-            EditorNetwork.SendPacket(new RequestGridPacket(mapId));
+            Network.SendPacket(new RequestGridPacket(mapId));
         }
 
         public static void SendUnlinkMap(Guid mapId)
         {
-            EditorNetwork.SendPacket(new UnlinkMapPacket(mapId,Globals.CurrentMap.Id));
+            Network.SendPacket(new UnlinkMapPacket(mapId,Globals.CurrentMap.Id));
         }
 
         public static void SendLinkMap(Guid adjacentMapId, Guid linkMapId, int gridX, int gridY)
         {
-            EditorNetwork.SendPacket(new LinkMapPacket(linkMapId,adjacentMapId,gridX,gridY));
+            Network.SendPacket(new LinkMapPacket(linkMapId,adjacentMapId,gridX,gridY));
         }
 
         public static void SendCreateObject(GameObjectType type)
         {
-            EditorNetwork.SendPacket(new CreateGameObjectPacket(type));
+            Network.SendPacket(new CreateGameObjectPacket(type));
         }
 
         public static void SendOpenEditor(GameObjectType type)
         {
             if (Globals.CurrentEditor != -1) return;
-            EditorNetwork.SendPacket(new RequestOpenEditorPacket(type));
+            Network.SendPacket(new RequestOpenEditorPacket(type));
         }
 
         public static void SendDeleteObject(IDatabaseObject obj)
         {
-            EditorNetwork.SendPacket(new DeleteGameObjectPacket(obj.Type,obj.Id));
+            Network.SendPacket(new DeleteGameObjectPacket(obj.Type,obj.Id));
         }
 
         public static void SendSaveObject(IDatabaseObject obj)
         {
-            EditorNetwork.SendPacket(new SaveGameObjectPacket(obj.Type,obj.Id,obj.JsonData));
+            Network.SendPacket(new SaveGameObjectPacket(obj.Type,obj.Id,obj.JsonData));
         }
 
         public static void SendSaveTime(string timeJson)
         {
-            EditorNetwork.SendPacket(new SaveTimeDataPacket(timeJson));
+            Network.SendPacket(new SaveTimeDataPacket(timeJson));
         }
 
         public static void SendNewTilesets(string[] tilesets)
         {
-            EditorNetwork.SendPacket(new AddTilesetsPacket(tilesets));
+            Network.SendPacket(new AddTilesetsPacket(tilesets));
         }
 
         public static void SendEnterMap(Guid mapId)
         {
-            EditorNetwork.SendPacket(new EnterMapPacket(mapId));
+            Network.SendPacket(new EnterMapPacket(mapId));
         }
     }
 }

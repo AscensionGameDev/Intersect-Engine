@@ -10,7 +10,8 @@ using System.Windows.Forms;
 using DarkUI.Controls;
 using DarkUI.Forms;
 using Intersect.Editor.Classes.ContentManagement;
-using Intersect.Editor.ContentManagement;
+using Intersect.Editor.Content;
+using Intersect.Editor.Core;
 using Intersect.Editor.Forms.DockingElements;
 using Intersect.Editor.Forms.Editors;
 using Intersect.Editor.Forms.Editors.Quest;
@@ -280,22 +281,22 @@ namespace Intersect.Editor.Forms
                             if (ctl.GetType() == typeof(ComboBox) || ctl.GetType() == typeof(DarkComboBox)) return;
                         }
                     }
-                    EditorGraphics.CurrentView.X -= (xDiff);
-                    EditorGraphics.CurrentView.Y -= (yDiff);
-                    if (EditorGraphics.CurrentView.X > Options.MapWidth * Options.TileWidth)
-                        EditorGraphics.CurrentView.X = Options.MapWidth * Options.TileWidth;
-                    if (EditorGraphics.CurrentView.Y > Options.MapHeight * Options.TileHeight)
-                        EditorGraphics.CurrentView.Y = Options.MapHeight * Options.TileHeight;
-                    if (EditorGraphics.CurrentView.X - Globals.MapEditorWindow.picMap.Width <
+                    Core.Graphics.CurrentView.X -= (xDiff);
+                    Core.Graphics.CurrentView.Y -= (yDiff);
+                    if (Core.Graphics.CurrentView.X > Options.MapWidth * Options.TileWidth)
+                        Core.Graphics.CurrentView.X = Options.MapWidth * Options.TileWidth;
+                    if (Core.Graphics.CurrentView.Y > Options.MapHeight * Options.TileHeight)
+                        Core.Graphics.CurrentView.Y = Options.MapHeight * Options.TileHeight;
+                    if (Core.Graphics.CurrentView.X - Globals.MapEditorWindow.picMap.Width <
                         -Options.TileWidth * Options.MapWidth * 2)
                     {
-                        EditorGraphics.CurrentView.X = -Options.TileWidth * Options.MapWidth * 2 +
+                        Core.Graphics.CurrentView.X = -Options.TileWidth * Options.MapWidth * 2 +
                                                        Globals.MapEditorWindow.picMap.Width;
                     }
-                    if (EditorGraphics.CurrentView.Y - Globals.MapEditorWindow.picMap.Height <
+                    if (Core.Graphics.CurrentView.Y - Globals.MapEditorWindow.picMap.Height <
                         -Options.TileHeight * Options.MapHeight * 2)
                     {
-                        EditorGraphics.CurrentView.Y = -Options.TileHeight * Options.MapHeight * 2 +
+                        Core.Graphics.CurrentView.Y = -Options.TileHeight * Options.MapHeight * 2 +
                                                        Globals.MapEditorWindow.picMap.Height;
                     }
                 }
@@ -313,7 +314,7 @@ namespace Intersect.Editor.Forms
 
         private void InitEditor()
         {
-            EditorGraphics.InitMonogame();
+            Core.Graphics.InitMonogame();
             Globals.MapLayersWindow.InitTilesets();
             Globals.MapLayersWindow.Init();
             Globals.InEditor = true;
@@ -323,7 +324,7 @@ namespace Intersect.Editor.Forms
 
         protected override void OnClosed(EventArgs e)
         {
-            EditorNetwork.EditorLidgrenNetwork?.Disconnect("quitting");
+            Networking.Network.EditorLidgrenNetwork?.Disconnect("quitting");
             base.OnClosed(e);
             Application.Exit();
         }
@@ -362,7 +363,7 @@ namespace Intersect.Editor.Forms
             PacketSender.SendEnterMap(mapId);
             PacketSender.SendNeedMap(mapId);
             PacketSender.SendNeedGrid(mapId);
-            EditorGraphics.TilePreviewUpdated = true;
+            Core.Graphics.TilePreviewUpdated = true;
         }
 
         private void GrabMouseDownEvents()
@@ -961,38 +962,38 @@ namespace Intersect.Editor.Forms
         //View
         private void hideDarknessToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            EditorGraphics.HideDarkness = !EditorGraphics.HideDarkness;
-            hideDarknessToolStripMenuItem.Checked = !EditorGraphics.HideDarkness;
+            Core.Graphics.HideDarkness = !Core.Graphics.HideDarkness;
+            hideDarknessToolStripMenuItem.Checked = !Core.Graphics.HideDarkness;
         }
 
         private void hideFogToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            EditorGraphics.HideFog = !EditorGraphics.HideFog;
-            hideFogToolStripMenuItem.Checked = !EditorGraphics.HideFog;
+            Core.Graphics.HideFog = !Core.Graphics.HideFog;
+            hideFogToolStripMenuItem.Checked = !Core.Graphics.HideFog;
         }
 
         private void hideOverlayToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            EditorGraphics.HideOverlay = !EditorGraphics.HideOverlay;
-            hideOverlayToolStripMenuItem.Checked = !EditorGraphics.HideOverlay;
+            Core.Graphics.HideOverlay = !Core.Graphics.HideOverlay;
+            hideOverlayToolStripMenuItem.Checked = !Core.Graphics.HideOverlay;
         }
 
         private void hideTilePreviewToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            EditorGraphics.HideTilePreview = !EditorGraphics.HideTilePreview;
-            hideTilePreviewToolStripMenuItem.Checked = !EditorGraphics.HideTilePreview;
+            Core.Graphics.HideTilePreview = !Core.Graphics.HideTilePreview;
+            hideTilePreviewToolStripMenuItem.Checked = !Core.Graphics.HideTilePreview;
         }
 
         private void hideResourcesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            EditorGraphics.HideResources = !EditorGraphics.HideResources;
-            hideResourcesToolStripMenuItem.Checked = !EditorGraphics.HideResources;
+            Core.Graphics.HideResources = !Core.Graphics.HideResources;
+            hideResourcesToolStripMenuItem.Checked = !Core.Graphics.HideResources;
         }
 
         private void mapGridToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            EditorGraphics.HideGrid = !EditorGraphics.HideGrid;
-            mapGridToolStripMenuItem.Checked = !EditorGraphics.HideGrid;
+            Core.Graphics.HideGrid = !Core.Graphics.HideGrid;
+            mapGridToolStripMenuItem.Checked = !Core.Graphics.HideGrid;
         }
 
         //Content Editors
@@ -1104,7 +1105,7 @@ namespace Intersect.Editor.Forms
                 Globals.MapEditorWindow.CurrentMapState = Globals.MapEditorWindow.MapUndoStates[Globals.MapEditorWindow.MapUndoStates.Count - 1];
                 Globals.MapEditorWindow.MapUndoStates.RemoveAt(Globals.MapEditorWindow.MapUndoStates.Count - 1);
                 Globals.MapPropertiesWindow.Update();
-                EditorGraphics.TilePreviewUpdated = true;
+                Core.Graphics.TilePreviewUpdated = true;
             }
         }
 
@@ -1118,7 +1119,7 @@ namespace Intersect.Editor.Forms
                 Globals.MapEditorWindow.CurrentMapState = Globals.MapEditorWindow.MapRedoStates[Globals.MapEditorWindow.MapRedoStates.Count - 1];
                 Globals.MapEditorWindow.MapRedoStates.RemoveAt(Globals.MapEditorWindow.MapRedoStates.Count - 1);
                 Globals.MapPropertiesWindow.Update();
-                EditorGraphics.TilePreviewUpdated = true;
+                Core.Graphics.TilePreviewUpdated = true;
             }
         }
 
@@ -1145,7 +1146,7 @@ namespace Intersect.Editor.Forms
             {
                 using (var fs = new FileStream(fileDialog.FileName, FileMode.OpenOrCreate))
                 {
-                    var screenshotTexture = EditorGraphics.ScreenShotMap();
+                    var screenshotTexture = Core.Graphics.ScreenShotMap();
                     screenshotTexture.Save(fs, System.Drawing.Imaging.ImageFormat.Png);
                 }
             }
@@ -1253,7 +1254,7 @@ namespace Intersect.Editor.Forms
 
                 //Create image of overlay color
                 var img = new Bitmap(16, 16);
-                var g = Graphics.FromImage(img);
+                var g = System.Drawing.Graphics.FromImage(img);
                 g.Clear(System.Drawing.Color.Transparent);
                 //Draw the trans tile if we have it
                 if (transtile != null)
@@ -1283,11 +1284,11 @@ namespace Intersect.Editor.Forms
         {
             if (((ToolStripDropDownButton) sender).Tag == null)
             {
-                EditorGraphics.LightColor = null;
+                Core.Graphics.LightColor = null;
             }
             else
             {
-                EditorGraphics.LightColor = (Color) ((ToolStripDropDownButton) sender).Tag;
+                Core.Graphics.LightColor = (Color) ((ToolStripDropDownButton) sender).Tag;
             }
         }
 
@@ -1486,7 +1487,7 @@ namespace Intersect.Editor.Forms
             //Create two 'sets' of graphics we want to pack. Tilesets + Fogs in one set, everything else in the other.
             Globals.PackingProgressForm.SetProgress(Strings.TexturePacking.collecting, 20, false);
             Application.DoEvents();
-            var toPack = new HashSet<GameTexture>();
+            var toPack = new HashSet<Texture>();
             foreach (var tex in GameContentManager.TilesetTextures)
                 toPack.Add(tex);
             foreach (var tex in GameContentManager.FogTextures)

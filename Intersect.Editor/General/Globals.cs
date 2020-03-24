@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+
+using Intersect.Editor.Core;
 using Intersect.Editor.Forms;
 using Intersect.Editor.Forms.DockingElements;
 using Intersect.Editor.Forms.Editors;
@@ -20,7 +22,7 @@ namespace Intersect.Editor.General
         public static Thread EditorThread;
 
         public static int CurrentEditor = -1;
-        public static EditorSystem System = new EditorSystem();
+        public static Core.Sys System = new Core.Sys();
 
         public static int MyIndex;
         public static FrmMain MainForm;

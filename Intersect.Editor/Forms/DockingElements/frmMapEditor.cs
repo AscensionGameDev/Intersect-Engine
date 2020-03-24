@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using DarkUI.Forms;
 using Intersect.Editor.Classes.Maps;
+using Intersect.Editor.Core;
 using Intersect.Editor.Forms.Editors;
 using Intersect.Editor.Forms.Editors.Events;
 using Intersect.Editor.General;
@@ -51,7 +52,7 @@ namespace Intersect.Editor.Forms.DockingElements
             picMap.Size = pnlMapContainer.ClientSize;
             picMap.MinimumSize = new Size((Options.MapWidth + 2) * Options.TileWidth,
                 (Options.MapHeight + 2) * Options.TileHeight);
-            EditorGraphics.CurrentView = new Rectangle(
+            Core.Graphics.CurrentView = new Rectangle(
                 (picMap.Size.Width - (Options.MapWidth) * Options.TileWidth) / 2,
                 (picMap.Size.Height - (Options.MapHeight) * Options.TileHeight) / 2, picMap.Size.Width,
                 picMap.Size.Height);
@@ -71,7 +72,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 picMap.Size = pnlMapContainer.ClientSize;
                 picMap.MinimumSize = new Size((Options.MapWidth + 2) * Options.TileWidth,
                     (Options.MapHeight + 2) * Options.TileHeight);
-                EditorGraphics.CurrentView =
+                Core.Graphics.CurrentView =
                     new Rectangle((picMap.Size.Width - (Options.MapWidth) * Options.TileWidth) / 2,
                         (picMap.Size.Height - (Options.MapHeight) * Options.TileHeight) / 2, picMap.Size.Width,
                         picMap.Size.Height);
@@ -92,14 +93,14 @@ namespace Intersect.Editor.Forms.DockingElements
                 {
                     mChain.Dispose();
                 }
-                if (EditorGraphics.GetGraphicsDevice() != null)
+                if (Core.Graphics.GetGraphicsDevice() != null)
                 {
                     if (picMap.Width > 0 && picMap.Height > 0)
                     {
-                        mChain = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(), picMap.Handle,
+                        mChain = new SwapChainRenderTarget(Core.Graphics.GetGraphicsDevice(), picMap.Handle,
                             picMap.Width, picMap.Height, false, SurfaceFormat.Color, DepthFormat.Depth24, 0,
                             RenderTargetUsage.DiscardContents, PresentInterval.Immediate);
-                        EditorGraphics.SetMapEditorChain(mChain);
+                        Core.Graphics.SetMapEditorChain(mChain);
                     }
                 }
             }
@@ -164,9 +165,9 @@ namespace Intersect.Editor.Forms.DockingElements
             }
             var tmpMap = Globals.CurrentMap;
 
-            if (e.X < EditorGraphics.CurrentView.Left || e.Y < EditorGraphics.CurrentView.Top ||
-                e.X > EditorGraphics.CurrentView.Left + Options.MapWidth * Options.TileWidth ||
-                e.Y > EditorGraphics.CurrentView.Top + Options.MapHeight * Options.TileHeight)
+            if (e.X < Core.Graphics.CurrentView.Left || e.Y < Core.Graphics.CurrentView.Top ||
+                e.X > Core.Graphics.CurrentView.Left + Options.MapWidth * Options.TileWidth ||
+                e.Y > Core.Graphics.CurrentView.Top + Options.MapHeight * Options.TileHeight)
             {
                 if (Globals.Dragging)
                 {
@@ -423,7 +424,7 @@ namespace Intersect.Editor.Forms.DockingElements
                         if ((tmpLight = Globals.CurrentMap.FindLightAt(Globals.CurTileX, Globals.CurTileY)) != null)
                         {
                             Globals.CurrentMap.Lights.Remove(tmpLight);
-                            EditorGraphics.TilePreviewUpdated = true;
+                            Core.Graphics.TilePreviewUpdated = true;
                             mMapChanged = true;
                         }
                     }
@@ -490,34 +491,34 @@ namespace Intersect.Editor.Forms.DockingElements
 
             if (e.Button == MouseButtons.Middle)
             {
-                EditorGraphics.CurrentView.X -= (Globals.MouseX - e.X);
-                EditorGraphics.CurrentView.Y -= (Globals.MouseY - e.Y);
-                if (EditorGraphics.CurrentView.X > Options.MapWidth * Options.TileWidth)
-                    EditorGraphics.CurrentView.X = Options.MapWidth * Options.TileWidth;
-                if (EditorGraphics.CurrentView.Y > Options.MapHeight * Options.TileHeight)
-                    EditorGraphics.CurrentView.Y = Options.MapHeight * Options.TileHeight;
-                if (EditorGraphics.CurrentView.X - picMap.Width < -Options.TileWidth * Options.MapWidth * 2)
+                Core.Graphics.CurrentView.X -= (Globals.MouseX - e.X);
+                Core.Graphics.CurrentView.Y -= (Globals.MouseY - e.Y);
+                if (Core.Graphics.CurrentView.X > Options.MapWidth * Options.TileWidth)
+                    Core.Graphics.CurrentView.X = Options.MapWidth * Options.TileWidth;
+                if (Core.Graphics.CurrentView.Y > Options.MapHeight * Options.TileHeight)
+                    Core.Graphics.CurrentView.Y = Options.MapHeight * Options.TileHeight;
+                if (Core.Graphics.CurrentView.X - picMap.Width < -Options.TileWidth * Options.MapWidth * 2)
                 {
-                    EditorGraphics.CurrentView.X = -Options.TileWidth * Options.MapWidth * 2 + picMap.Width;
+                    Core.Graphics.CurrentView.X = -Options.TileWidth * Options.MapWidth * 2 + picMap.Width;
                 }
-                if (EditorGraphics.CurrentView.Y - picMap.Height < -Options.TileHeight * Options.MapHeight * 2)
+                if (Core.Graphics.CurrentView.Y - picMap.Height < -Options.TileHeight * Options.MapHeight * 2)
                 {
-                    EditorGraphics.CurrentView.Y = -Options.TileHeight * Options.MapHeight * 2 + picMap.Height;
+                    Core.Graphics.CurrentView.Y = -Options.TileHeight * Options.MapHeight * 2 + picMap.Height;
                 }
             }
 
             Globals.MouseX = e.X;
             Globals.MouseY = e.Y;
 
-            if (e.X < EditorGraphics.CurrentView.Left || e.Y < EditorGraphics.CurrentView.Top ||
-                e.X > EditorGraphics.CurrentView.Left + Options.MapWidth * Options.TileWidth ||
-                e.Y > EditorGraphics.CurrentView.Top + Options.MapHeight * Options.TileHeight) return;
+            if (e.X < Core.Graphics.CurrentView.Left || e.Y < Core.Graphics.CurrentView.Top ||
+                e.X > Core.Graphics.CurrentView.Left + Options.MapWidth * Options.TileWidth ||
+                e.Y > Core.Graphics.CurrentView.Top + Options.MapHeight * Options.TileHeight) return;
 
 
             int oldx = Globals.CurTileX;
             int oldy = Globals.CurTileY;
-            Globals.CurTileX = (int) Math.Floor((double) (e.X - EditorGraphics.CurrentView.Left) / Options.TileWidth);
-            Globals.CurTileY = (int) Math.Floor((double) (e.Y - EditorGraphics.CurrentView.Top) / Options.TileHeight);
+            Globals.CurTileX = (int)Math.Floor((double) (e.X - Core.Graphics.CurrentView.Left) / Options.TileWidth);
+            Globals.CurTileY = (int)Math.Floor((double) (e.Y - Core.Graphics.CurrentView.Top) / Options.TileHeight);
             if (Globals.CurTileX < 0)
             {
                 Globals.CurTileX = 0;
@@ -533,7 +534,7 @@ namespace Intersect.Editor.Forms.DockingElements
 
                 if (oldx != Globals.CurTileX || oldy != Globals.CurTileY)
             {
-                EditorGraphics.TilePreviewUpdated = true;
+                Core.Graphics.TilePreviewUpdated = true;
             }
 
             if (Globals.CurrentTool == (int) EditingTool.Erase || 
@@ -843,7 +844,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 Globals.TileDragX = 0;
                 Globals.TileDragY = 0;
             }
-            EditorGraphics.TilePreviewUpdated = true;
+            Core.Graphics.TilePreviewUpdated = true;
         }
 
         private void picMap_DoubleClick(object sender, EventArgs e)
@@ -872,10 +873,10 @@ namespace Intersect.Editor.Forms.DockingElements
             //Check Left Column of Maps
             var gridX = 0;
             var gridY = 0;
-            if (Globals.MouseX < EditorGraphics.CurrentView.Left) gridX = -1;
-            if (Globals.MouseX > EditorGraphics.CurrentView.Left + Options.MapWidth * Options.TileWidth) gridX = 1;
-            if (Globals.MouseY < EditorGraphics.CurrentView.Top) gridY = -1;
-            if (Globals.MouseY > EditorGraphics.CurrentView.Top + Options.MapHeight * Options.TileHeight) gridY = 1;
+            if (Globals.MouseX < Core.Graphics.CurrentView.Left) gridX = -1;
+            if (Globals.MouseX > Core.Graphics.CurrentView.Left + Options.MapWidth * Options.TileWidth) gridX = 1;
+            if (Globals.MouseY < Core.Graphics.CurrentView.Top) gridY = -1;
+            if (Globals.MouseY > Core.Graphics.CurrentView.Top + Options.MapHeight * Options.TileHeight) gridY = 1;
 
             if (gridX != 0 || gridY != 0)
             {
@@ -1064,7 +1065,7 @@ namespace Intersect.Editor.Forms.DockingElements
             Globals.TotalTileDragY = 0;
             Globals.MouseButton = -1;
             Globals.SelectionSource = null;
-            EditorGraphics.TilePreviewUpdated = true;
+            Core.Graphics.TilePreviewUpdated = true;
         }
 
         private void picMap_MouseEnter(object sender, EventArgs e)
@@ -1742,7 +1743,7 @@ namespace Intersect.Editor.Forms.DockingElements
             Globals.TotalTileDragX = 0;
             Globals.TotalTileDragY = 0;
             Globals.SelectionSource = null;
-            EditorGraphics.TilePreviewUpdated = true;
+            Core.Graphics.TilePreviewUpdated = true;
             Globals.CurMapSelX = Globals.CurTileX;
             Globals.CurMapSelY = Globals.CurTileY;
             Globals.CurMapSelW = 0;
@@ -1821,7 +1822,7 @@ namespace Intersect.Editor.Forms.DockingElements
 					}
 				}
 
-				EditorGraphics.TilePreviewUpdated = true;
+                Core.Graphics.TilePreviewUpdated = true;
 			}
 		}
 
@@ -1893,7 +1894,7 @@ namespace Intersect.Editor.Forms.DockingElements
 					}
 				}
 
-				EditorGraphics.TilePreviewUpdated = true;
+                Core.Graphics.TilePreviewUpdated = true;
 			}
 		}
 
@@ -1902,7 +1903,7 @@ namespace Intersect.Editor.Forms.DockingElements
         {
             Copy();
             WipeCurrentSelection(Globals.CurrentMap);
-            EditorGraphics.TilePreviewUpdated = true;
+            Core.Graphics.TilePreviewUpdated = true;
             if (CurrentMapState != null) MapUndoStates.Add(CurrentMapState);
             MapRedoStates.Clear();
             CurrentMapState = Globals.CurrentMap.SaveInternal();
@@ -1965,13 +1966,13 @@ namespace Intersect.Editor.Forms.DockingElements
                 Globals.TotalTileDragX = -selX + selX1;
                 Globals.TotalTileDragY = -selY + selY1;
                 Globals.IsPaste = true;
-                EditorGraphics.TilePreviewUpdated = true;
+                Core.Graphics.TilePreviewUpdated = true;
             }
         }
 
         private void pnlMapContainer_Scroll(object sender, ScrollEventArgs e)
         {
-            EditorLoop.DrawFrame();
+            Main.DrawFrame();
         }
 
         private void picMap_Resize(object sender, EventArgs e)
@@ -1984,7 +1985,7 @@ namespace Intersect.Editor.Forms.DockingElements
             picMap.Size = pnlMapContainer.ClientSize;
             picMap.MinimumSize = new Size((Options.MapWidth + 2) * Options.TileWidth,
                 (Options.MapHeight + 2) * Options.TileHeight);
-            EditorGraphics.CurrentView = new Rectangle(
+            Core.Graphics.CurrentView = new Rectangle(
                 (picMap.Size.Width - (Options.MapWidth) * Options.TileWidth) / 2,
                 (picMap.Size.Height - (Options.MapHeight) * Options.TileHeight) / 2, picMap.Size.Width,
                 picMap.Size.Height);

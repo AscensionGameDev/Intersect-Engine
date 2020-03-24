@@ -6,7 +6,7 @@ using System.Windows.Forms;
 using DarkUI.Forms;
 
 using Intersect.Collections;
-using Intersect.Editor.ContentManagement;
+using Intersect.Editor.Content;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;

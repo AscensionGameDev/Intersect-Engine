@@ -76,17 +76,18 @@
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Classes\ContentManagement\GameContentManager.cs" />
-    <Compile Include="Classes\ContentManagement\GameTexture.cs" />
-    <Compile Include="Classes\ContentManagement\TexturePacker.cs" />
-    <Compile Include="Classes\Core\Database.cs" />
-    <Compile Include="Classes\Core\EditorGraphics.cs" />
-    <Compile Include="Classes\Core\EditorLoop.cs" />
-    <Compile Include="Classes\Core\EditorSystem.cs" />
-    <Compile Include="Classes\Core\Preferences.cs" />
-    <Compile Include="Classes\Core\Program.cs" />
-    <Compile Include="Classes\Entities\AnimationInstance.cs" />
-    <Compile Include="Classes\Maps\MapSaveState.cs" />
+    <Compile Include="Content\ContentManager.cs" />
+    <Compile Include="Content\Texture.cs" />
+    <Compile Include="Content\TexturePacker.cs" />
+    <Compile Include="Core\Database.cs" />
+    <Compile Include="Core\Graphics.cs" />
+    <Compile Include="Core\Main.cs" />
+    <Compile Include="Core\Sys.cs" />
+    <Compile Include="Core\Preferences.cs" />
+    <Compile Include="Core\Program.cs" />
+    <Compile Include="Entities\Animation.cs" />
+    <Compile Include="Maps\MapGridItem.cs" />
+    <Compile Include="Maps\MapSaveState.cs" />
     <Compile Include="Forms\Controls\SearchableDarkTreeView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -94,8 +95,8 @@
       <DependentUpon>SearchableDarkTreeView.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Editors\Events\CommandPrinter.cs" />
-    <Compile Include="Classes\General\Enums.cs" />
-    <Compile Include="Classes\General\Globals.cs" />
+    <Compile Include="General\Enums.cs" />
+    <Compile Include="General\Globals.cs" />
     <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeVital.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -127,12 +128,12 @@
       <DependentUpon>EventCommand_Input.cs</DependentUpon>
     </Compile>
     <Compile Include="Localization\Strings.cs" />
-    <Compile Include="Classes\Maps\MapGrid.cs" />
-    <Compile Include="Classes\Maps\MapInstance.cs" />
-    <Compile Include="Classes\Maps\MapProperties.cs" />
-    <Compile Include="Classes\Networking\EditorNetwork.cs" />
-    <Compile Include="Classes\Networking\PacketHandler.cs" />
-    <Compile Include="Classes\Networking\PacketSender.cs" />
+    <Compile Include="Maps\MapGrid.cs" />
+    <Compile Include="Maps\MapInstance.cs" />
+    <Compile Include="Maps\MapProperties.cs" />
+    <Compile Include="Networking\Network.cs" />
+    <Compile Include="Networking\PacketHandler.cs" />
+    <Compile Include="Networking\PacketSender.cs" />
     <Compile Include="Forms\Controls\AutoDragPanel.cs">
       <SubType>Component</SubType>
     </Compile>

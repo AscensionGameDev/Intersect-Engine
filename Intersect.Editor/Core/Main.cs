@@ -2,16 +2,17 @@
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Intersect.Editor.ContentManagement;
+
+using Intersect.Editor.Content;
 using Intersect.Editor.Forms;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Maps;
 using Intersect.Editor.Networking;
 
-namespace Intersect.Editor
+namespace Intersect.Editor.Core
 {
-    public static class EditorLoop
+    public static class Main
     {
         private static int sFps;
         private static int sFpsCount;
@@ -52,7 +53,7 @@ namespace Intersect.Editor
             if (Globals.MapGrid == null) return;
             lock (Globals.MapGrid.GetMapGridLock())
             {
-                EditorGraphics.Render();
+                Graphics.Render();
             }
         }
 
@@ -84,7 +85,7 @@ namespace Intersect.Editor
             DrawFrame();
 
             GameContentManager.Update();
-            EditorNetwork.Update();
+            Networking.Network.Update();
             Application.DoEvents(); // handle form events
 
             sFpsCount++;
@@ -127,7 +128,7 @@ namespace Intersect.Editor
                                     {
                                         map.Update();
                                     }
-                                    EditorNetwork.Update();
+                                    Networking.Network.Update();
                                     Application.DoEvents();
                                 }
                             }

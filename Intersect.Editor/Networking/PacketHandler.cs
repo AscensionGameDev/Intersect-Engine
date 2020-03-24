@@ -4,7 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using Intersect.Editor.ContentManagement;
+
+using Intersect.Editor.Content;
 using Intersect.Editor.General;
 using Intersect.Editor.Maps;
 using Intersect.Enums;

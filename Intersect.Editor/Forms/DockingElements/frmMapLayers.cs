@@ -4,7 +4,9 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using Intersect.Editor.ContentManagement;
+
+using Intersect.Editor.Content;
+using Intersect.Editor.Core;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Enums;
@@ -300,7 +302,7 @@ namespace Intersect.Editor.Forms.DockingElements
             else
             {
             }
-            EditorGraphics.TilePreviewUpdated = true;
+            Core.Graphics.TilePreviewUpdated = true;
         }
 
         //Mapping Attribute Functions
@@ -835,12 +837,12 @@ namespace Intersect.Editor.Forms.DockingElements
                 {
                     mChain.Dispose();
                 }
-                if (EditorGraphics.GetGraphicsDevice() != null)
+                if (Core.Graphics.GetGraphicsDevice() != null)
                 {
-                    mChain = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(), picTileset.Handle,
+                    mChain = new SwapChainRenderTarget(Core.Graphics.GetGraphicsDevice(), picTileset.Handle,
                         picTileset.Width, picTileset.Height, false, SurfaceFormat.Color, DepthFormat.Depth24, 0,
                         RenderTargetUsage.DiscardContents, PresentInterval.Immediate);
-                    EditorGraphics.SetTilesetChain(mChain);
+                    Core.Graphics.SetTilesetChain(mChain);
                 }
             }
         }
@@ -891,7 +893,7 @@ namespace Intersect.Editor.Forms.DockingElements
             Globals.CurrentTool = Globals.SavedTool;
             ChangeTab();
             SetLayer(mLastTileLayer);
-            EditorGraphics.TilePreviewUpdated = true;
+            Core.Graphics.TilePreviewUpdated = true;
             btnTileHeader.BackColor = System.Drawing.Color.FromArgb(90, 90, 90);
             CurrentTab = LayerTabs.Tiles;
             pnlTiles.Show();
@@ -902,7 +904,7 @@ namespace Intersect.Editor.Forms.DockingElements
             Globals.CurrentTool = Globals.SavedTool;
             ChangeTab();
             Globals.CurrentLayer = Options.LayerCount;
-            EditorGraphics.TilePreviewUpdated = true;
+            Core.Graphics.TilePreviewUpdated = true;
             btnAttributeHeader.BackColor = System.Drawing.Color.FromArgb(90, 90, 90);
             CurrentTab = LayerTabs.Attributes;
             pnlAttributes.Show();
@@ -916,7 +918,7 @@ namespace Intersect.Editor.Forms.DockingElements
             }
             ChangeTab();
             Globals.CurrentLayer = Options.LayerCount + 1;
-            EditorGraphics.TilePreviewUpdated = true;
+            Core.Graphics.TilePreviewUpdated = true;
             btnLightsHeader.BackColor = System.Drawing.Color.FromArgb(90, 90, 90);
             CurrentTab = LayerTabs.Lights;
             pnlLights.Show();
@@ -930,7 +932,7 @@ namespace Intersect.Editor.Forms.DockingElements
             }
             ChangeTab();
             Globals.CurrentLayer = Options.LayerCount + 2;
-            EditorGraphics.TilePreviewUpdated = true;
+            Core.Graphics.TilePreviewUpdated = true;
             btnEventsHeader.BackColor = System.Drawing.Color.FromArgb(90, 90, 90);
             CurrentTab = LayerTabs.Events;
             pnlEvents.Show();
@@ -944,7 +946,7 @@ namespace Intersect.Editor.Forms.DockingElements
             }
             ChangeTab();
             Globals.CurrentLayer = Options.LayerCount + 3;
-            EditorGraphics.TilePreviewUpdated = true;
+            Core.Graphics.TilePreviewUpdated = true;
             RefreshNpcList();
             btnNpcsHeader.BackColor = System.Drawing.Color.FromArgb(90, 90, 90);
             CurrentTab = LayerTabs.Npcs;

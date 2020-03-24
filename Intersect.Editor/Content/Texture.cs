@@ -1,10 +1,13 @@
 ﻿using System.IO;
+
+using Intersect.Editor.Core;
 using Intersect.Editor.General;
+
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Intersect.Editor.ContentManagement
+namespace Intersect.Editor.Content
 {
-    public class GameTexture
+    public class Texture
     {
         private int mHeight = -1;
         private long mLastAccessTime;
@@ -13,7 +16,7 @@ namespace Intersect.Editor.ContentManagement
         private Texture2D mTex;
         private int mWidth = -1;
 
-        public GameTexture(string path)
+        public Texture(string path)
         {
             mPath = path;
             GameContentManager.AllTextures.Add(this);
@@ -26,7 +29,7 @@ namespace Intersect.Editor.ContentManagement
             {
                 using (var fileStream = new FileStream(mPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
-                    mTex = Texture2D.FromStream(EditorGraphics.GetGraphicsDevice(), fileStream);
+                    mTex = Texture2D.FromStream(Graphics.GetGraphicsDevice(), fileStream);
                     if (mTex != null)
                     {
                         mWidth = mTex.Width;

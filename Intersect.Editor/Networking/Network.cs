@@ -14,7 +14,7 @@ using Intersect.Network.Packets;
 
 namespace Intersect.Editor.Networking
 {
-    public static class EditorNetwork
+    public static class Network
     {
         public static ClientNetwork EditorLidgrenNetwork;
         public static bool Connecting;

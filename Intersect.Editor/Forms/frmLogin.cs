@@ -6,7 +6,8 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
 using Intersect.Config;
-using Intersect.Editor.ContentManagement;
+using Intersect.Editor.Content;
+using Intersect.Editor.Core;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
@@ -35,7 +36,7 @@ namespace Intersect.Editor.Forms
             GameContentManager.CheckForResources();
             Database.LoadOptions();
             mOptionsLoaded = true;
-            EditorLoopDelegate = EditorLoop.StartLoop;
+            EditorLoopDelegate = Main.StartLoop;
             if (Preferences.LoadPreference("username").Trim().Length > 0)
             {
                 txtUsername.Text = Preferences.LoadPreference("Username");
@@ -62,17 +63,17 @@ namespace Intersect.Editor.Forms
         private void tmrSocket_Tick(object sender, EventArgs e)
         {
             if (!mOptionsLoaded) return;
-            EditorNetwork.Update();
+            Networking.Network.Update();
             var statusString = Strings.Login.connecting;
-            btnLogin.Enabled = EditorNetwork.Connected;
-            if (EditorNetwork.Connected)
+            btnLogin.Enabled = Networking.Network.Connected;
+            if (Networking.Network.Connected)
             {
                 statusString = Strings.Login.connected;
             }
-            else if (EditorNetwork.Connecting)
+            else if (Networking.Network.Connecting)
             {
             }
-            else if (EditorNetwork.ConnectionDenied)
+            else if (Networking.Network.ConnectionDenied)
             {
                 statusString = Strings.Login.Denied;
             }
@@ -92,7 +93,7 @@ namespace Intersect.Editor.Forms
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            if (!EditorNetwork.Connected || !btnLogin.Enabled) return;
+            if (!Networking.Network.Connected || !btnLogin.Enabled) return;
             if (txtUsername.Text.Trim().Length > 0 && txtPassword.Text.Trim().Length > 0)
             {
                 using (var sha = new SHA256Managed())
@@ -121,7 +122,7 @@ namespace Intersect.Editor.Forms
 
         protected override void OnClosed(EventArgs e)
         {
-            EditorNetwork.EditorLidgrenNetwork?.Disconnect("quitting");
+            Networking.Network.EditorLidgrenNetwork?.Disconnect("quitting");
             base.OnClosed(e);
             Application.Exit();
         }

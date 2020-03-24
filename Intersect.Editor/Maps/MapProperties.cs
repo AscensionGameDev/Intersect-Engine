@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using Intersect.Editor.ContentManagement;
+
+using Intersect.Editor.Content;
+using Intersect.Editor.Core;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Enums;
@@ -163,7 +165,7 @@ namespace Intersect.Editor.Maps
                 {
                     Globals.MapEditorWindow.PrepUndoState();
                     mMyMap.IsIndoors = value;
-                    EditorGraphics.TilePreviewUpdated = true;
+                    Graphics.TilePreviewUpdated = true;
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }
@@ -183,7 +185,7 @@ namespace Intersect.Editor.Maps
                     Globals.MapEditorWindow.PrepUndoState();
                     mMyMap.Brightness = Math.Max(value, 0);
                     mMyMap.Brightness = Math.Min(mMyMap.Brightness, 100);
-                    EditorGraphics.TilePreviewUpdated = true;
+                    Graphics.TilePreviewUpdated = true;
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }
@@ -203,7 +205,7 @@ namespace Intersect.Editor.Maps
                     Globals.MapEditorWindow.PrepUndoState();
                     mMyMap.PlayerLightSize = Math.Max(value, 0);
                     mMyMap.PlayerLightSize = Math.Min(mMyMap.PlayerLightSize, 1000);
-                    EditorGraphics.TilePreviewUpdated = true;
+                    Graphics.TilePreviewUpdated = true;
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }
@@ -223,7 +225,7 @@ namespace Intersect.Editor.Maps
                     Globals.MapEditorWindow.PrepUndoState();
                     mMyMap.PlayerLightExpand = Math.Max(value, 0f);
                     mMyMap.PlayerLightExpand = Math.Min(mMyMap.PlayerLightExpand, 1f);
-                    EditorGraphics.TilePreviewUpdated = true;
+                    Graphics.TilePreviewUpdated = true;
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }
@@ -243,7 +245,7 @@ namespace Intersect.Editor.Maps
                     Globals.MapEditorWindow.PrepUndoState();
                     var val = Math.Max(value, (byte)0);
                     mMyMap.PlayerLightIntensity = (byte)Math.Min(val, (byte)255);
-                    EditorGraphics.TilePreviewUpdated = true;
+                    Graphics.TilePreviewUpdated = true;
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }
@@ -268,7 +270,7 @@ namespace Intersect.Editor.Maps
                 {
                     Globals.MapEditorWindow.PrepUndoState();
                     mMyMap.PlayerLightColor = Color.FromArgb(value.A, value.R, value.G, value.B);
-                    EditorGraphics.TilePreviewUpdated = true;
+                    Graphics.TilePreviewUpdated = true;
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }

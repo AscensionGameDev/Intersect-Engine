@@ -5,7 +5,8 @@ using System.Linq;
 using System.Windows.Forms;
 using DarkUI.Controls;
 using DarkUI.Forms;
-using Intersect.Editor.ContentManagement;
+
+using Intersect.Editor.Content;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;

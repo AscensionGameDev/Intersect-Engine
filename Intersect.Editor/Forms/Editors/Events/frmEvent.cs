@@ -6,7 +6,8 @@ using System.Linq;
 using System.Windows.Forms;
 using DarkUI.Controls;
 using DarkUI.Forms;
-using Intersect.Editor.ContentManagement;
+
+using Intersect.Editor.Content;
 using Intersect.Editor.Forms.Editors.Events.Event_Commands;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Maps;

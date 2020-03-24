@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
+
+using Intersect.Editor.Core;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.GameObjects;
@@ -68,7 +70,7 @@ namespace Intersect.Editor.Forms.Controls
                 mEditingLight.OffsetY = mBackupLight.OffsetY;
                 if (mEditingLight == Globals.EditingLight) Globals.EditingLight = null;
             }
-            EditorGraphics.TilePreviewUpdated = true;
+            Graphics.TilePreviewUpdated = true;
             if (CanClose) Visible = false;
         }
 
@@ -79,7 +81,7 @@ namespace Intersect.Editor.Forms.Controls
             pnlLightColor.BackColor = colorDialog.Color;
             mEditingLight.Color = Color.FromArgb(colorDialog.Color.A, colorDialog.Color.R, colorDialog.Color.G,
                 colorDialog.Color.B);
-            EditorGraphics.TilePreviewUpdated = true;
+            Graphics.TilePreviewUpdated = true;
         }
 
         public void Cancel()
@@ -94,7 +96,7 @@ namespace Intersect.Editor.Forms.Controls
                 return;
             }
             mEditingLight.OffsetX = (int) nudOffsetX.Value;
-            EditorGraphics.TilePreviewUpdated = true;
+            Graphics.TilePreviewUpdated = true;
         }
 
         private void nudOffsetY_ValueChanged(object sender, EventArgs e)
@@ -104,7 +106,7 @@ namespace Intersect.Editor.Forms.Controls
                 return;
             }
             mEditingLight.OffsetY = (int) nudOffsetY.Value;
-            EditorGraphics.TilePreviewUpdated = true;
+            Graphics.TilePreviewUpdated = true;
         }
 
         private void nudSize_ValueChanged(object sender, EventArgs e)
@@ -114,7 +116,7 @@ namespace Intersect.Editor.Forms.Controls
                 return;
             }
             mEditingLight.Size = (int) nudSize.Value;
-            EditorGraphics.TilePreviewUpdated = true;
+            Graphics.TilePreviewUpdated = true;
         }
 
         private void nudIntensity_ValueChanged(object sender, EventArgs e)
@@ -124,7 +126,7 @@ namespace Intersect.Editor.Forms.Controls
                 return;
             }
             mEditingLight.Intensity = (byte) nudIntensity.Value;
-            EditorGraphics.TilePreviewUpdated = true;
+            Graphics.TilePreviewUpdated = true;
         }
 
         private void nudExpand_ValueChanged(object sender, EventArgs e)
@@ -134,7 +136,7 @@ namespace Intersect.Editor.Forms.Controls
                 return;
             }
             mEditingLight.Expand = (int) nudExpand.Value;
-            EditorGraphics.TilePreviewUpdated = true;
+            Graphics.TilePreviewUpdated = true;
         }
     }
 }
